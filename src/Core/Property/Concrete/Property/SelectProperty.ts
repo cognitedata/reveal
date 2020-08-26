@@ -5,17 +5,6 @@ import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 export abstract class SelectProperty<T> extends UseProperty<T>
 {
   //==================================================
-  // INSTANCE METHODS
-  //==================================================
-
-  public addOption(option: T): void
-  {
-    if (!this.options)
-      this.options = [];
-    this.options.push(option);
-  }
-
-  //==================================================
   // CONSTRUCTORS
   //==================================================
 

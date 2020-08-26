@@ -272,7 +272,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     {
       if (style.opacity.use)
       {
-        material.opacity = Math.min(100, style.opacity.value) / 100;
+        material.opacity = style.opacity.value;
         material.transparent = true;
       }
     }

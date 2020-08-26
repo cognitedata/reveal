@@ -15,7 +15,7 @@ import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/Co
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import "./SettingsElement.module.scss";
 import { Box } from "@material-ui/core";
-import { ColorMapSelector } from "@/UserInterface/Components/ColoMapSelector/ColorMapSelector";
+import { ColorMapSelector } from "@/UserInterface/Components/ColorMapSelector/ColorMapSelector";
 
 /**
  * Responsible for rendering dynamic inputs
@@ -163,16 +163,16 @@ export default function SettingsElement(props: ISettingsElementProps) {
             onChange={onChange}
           />
         );
-      case ElementTypes.Range:
+      case ElementTypes.Slider:
         return (
           <input
-            type="range"
+            type="slider"
             disabled={disabled}
             value={value}
             onChange={(event) => onChange(id, event.target.value)}
             className="slider"
             min="0"
-            max="100"
+            max="1"
           />
         );
       case ElementTypes.ColorMap: {

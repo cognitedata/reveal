@@ -200,28 +200,28 @@ export const settingsDummyState = {
       isReadOnly: false,
       label: "Transparency",
       checked: false,
-      type: "range",
+      type: "slider",
       value: 95
     },
     "15": {
       isReadOnly: false,
       label: "Shadow",
       checked: false,
-      type: "range",
+      type: "slider",
       value: 45
     },
     "16": {
       isReadOnly: false,
       label: "Specular",
       checked: false,
-      type: "range",
+      type: "slider",
       value: 50
     },
     "17": {
       isReadOnly: false,
       label: "Specular Size",
       checked: false,
-      type: "range",
+      type: "slider",
       value: 67
     },
     "18": {
@@ -324,7 +324,7 @@ export const settingsDummyState = {
       isReadOnly: false,
       label: "Transparency",
       checked: false,
-      type: "range",
+      type: "slider",
       value: 95
     }
   },

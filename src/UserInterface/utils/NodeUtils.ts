@@ -191,8 +191,8 @@ export default class NodeUtils
     if (type === PropertyType.Select)
       return ElementTypes.Select;
 
-    if (type === PropertyType.Range)
-      return ElementTypes.Range;
+    if (type === PropertyType.Slider)
+      return ElementTypes.Slider;
 
     if (type === PropertyType.Boolean)
       return ElementTypes.Boolean;

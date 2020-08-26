@@ -2,7 +2,9 @@ import { PropertyType } from "@/Core/Enums/PropertyType";
 import UseProperty from "@/Core/Property/Base/UseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export class RangeProperty extends UseProperty<number>
+// It goes from 0 to 1
+
+export class SliderProperty extends UseProperty<number>
 {
   //==================================================
   // CONSTRUCTORS
@@ -17,5 +19,5 @@ export class RangeProperty extends UseProperty<number>
   // OVERRIDES of BaseProperty
   //==================================================
 
-  public getType(): PropertyType { return PropertyType.Range; }
+  public getType(): PropertyType { return PropertyType.Slider; }
 }

@@ -16,7 +16,7 @@ import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
-import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
+import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 
 export class SolidStyle extends BaseStyle
 {
@@ -25,8 +25,8 @@ export class SolidStyle extends BaseStyle
   //==================================================
 
   public colorType = new ColorTypeProperty({ name: "Solid color", value: ColorType.DepthColor });
-  public shininess = new RangeProperty({ name: "Shininess", value: 20, use: true });
-  public opacity = new RangeProperty({ name: "Opacity", value: 50, use: false });
+  public shininess = new SliderProperty({ name: "Shininess", value: 0.2, use: true });
+  public opacity = new SliderProperty({ name: "Opacity", value: 0.5, use: false });
 
   //==================================================
   // CONSTRUCTORS

@@ -16,7 +16,7 @@ import * as Lodash from "lodash";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
-import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
+import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
@@ -33,7 +33,7 @@ export class CasingLogStyle extends BaseRenderStyle
     value: ColorType.Specified
   });
 
-  public opacity = new RangeProperty({
+  public opacity = new SliderProperty({
     name: "Opacity",
     value: 0.2,
     use: false

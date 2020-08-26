@@ -89,7 +89,7 @@ export default abstract class UseProperty<T> extends BaseProperty
   }
 
   //==================================================
-  // INSTANCE PROPERTIES
+  // INSTANCE PROPERTIES: Value setter and getter
   //==================================================
 
   public get value(): T
@@ -144,12 +144,6 @@ export default abstract class UseProperty<T> extends BaseProperty
   }
 
   //==================================================
-  // OVERRIDES of BaseProperty
-  //==================================================
-
-  public useComboBox = () => false;
-
-  //==================================================
   // INSTANCE METHODS
   //==================================================
 
@@ -167,5 +161,12 @@ export default abstract class UseProperty<T> extends BaseProperty
     if (!this._getOptionIconDelegate)
       return "";
     return this._getOptionIconDelegate(option);
+  }
+
+  public addOption(option: T): void
+  {
+    if (!this.options)
+      this.options = [];
+    this.options.push(option);
   }
 }

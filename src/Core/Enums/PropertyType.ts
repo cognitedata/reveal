@@ -15,7 +15,7 @@ export enum PropertyType
 {
   Expander,
   Group,
-  Range,
+  Slider,
   String,
   Color,
   ColorMap,

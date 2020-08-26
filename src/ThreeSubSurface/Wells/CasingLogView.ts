@@ -149,7 +149,7 @@ export class CasingLogView extends BaseGroupThreeView
     if (!style)
       return null;
 
-    const color = node.getColorByColorType(style.colorType.value as ColorType);
+    const color = node.getColorByColorType(style.colorType.value);
     const { trajectory } = node;
     if (!trajectory)
       return null;
@@ -170,7 +170,7 @@ export class CasingLogView extends BaseGroupThreeView
       });
       if (style.opacity.use)
       {
-        material.opacity = Math.max(style.opacity.value) / 100;
+        material.opacity = style.opacity.value;
         material.transparent = true;
       }
       const mesh = new THREE.Mesh(geometry, material);

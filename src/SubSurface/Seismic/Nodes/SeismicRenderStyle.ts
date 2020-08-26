@@ -16,7 +16,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
+import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 
 export class SeismicRenderStyle extends BaseRenderStyle
 {
@@ -24,7 +24,7 @@ export class SeismicRenderStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public opacity = new RangeProperty({ name: "Opacity", value: 50, use: false });
+  public opacity = new SliderProperty({ name: "Opacity", value: 0.5, use: false });
 
   //==================================================
   // CONSTRUCTORS

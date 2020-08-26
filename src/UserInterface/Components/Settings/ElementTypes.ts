@@ -1,12 +1,12 @@
 // Input Types
 export default {
-  Expander: "section",
-  String: "text",
-  Group: "input-group",
+  Expander: "expander",
+  String: "string",
+  Group: "group",
   Select: "select",
-  ColorMap: "colormap-select",
-  Color: "color-table",
-  Range: "range",
-  ImageButton: "image-button",
+  ColorMap: "colorMap",
+  Color: "color",
+  Slider: "slider",
+  ImageButton: "imageButton",
   Boolean: "boolean"
 };

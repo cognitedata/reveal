@@ -150,7 +150,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (!grid)
       return null;
 
-    const colorType = style.colorType.value as ColorType;
+    const colorType = style.colorType.value;
     const color = node.getColorByColorType(colorType);
     const buffers = new RegularGrid2Buffers(grid, colorType === ColorType.DepthColor);
     const geometry = buffers.getBufferGeometry();
@@ -174,9 +174,8 @@ export class SurfaceThreeView extends BaseGroupThreeView
     const texture = material.map as THREE.DataTexture;
     if (texture)
     {
-      material.map = TextureKit.create1DContours(ColorMaps.get(node.colorMap), grid.boundingBox.z, this.style.contours.increment.value as number, 1);
+      material.map = TextureKit.create1DContours(ColorMaps.get(node.colorMap), grid.boundingBox.z, this.style.contours.increment.value, 1);
     }
-
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = SolidName;
     return mesh;
@@ -190,9 +189,8 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (!grid)
       return null;
 
-    const colorType = style.colorType.value as ColorType;
-    const color = node.getColorByColorType(colorType as ColorType);
-    const service = new ContouringService(style.increment.value as number);
+    const color = node.getColorByColorType(style.colorType.value);
+    const service = new ContouringService(style.increment.value);
 
     const contoursBuffer = service.createContoursAsXyzArray(grid);
     if (contoursBuffer.length === 0)
@@ -218,13 +216,13 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
     if (style.opacity.use)
     {
-      material.opacity = Math.min(100, style.opacity.value) / 100;
+      material.opacity = style.opacity.value;
       material.transparent = true;
     }
     else
       material.transparent = true;
 
-    material.shininess = style.shininess.use ? style.shininess.value as number : 0;
+    material.shininess = style.shininess.use ? 100 * style.shininess.value : 0;
   }
 }
 
