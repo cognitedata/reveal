@@ -12,7 +12,7 @@
     "stripInternal": true,
     "noUnusedLocals": true,
     "rootDir": "./",
-    "outDir": "dist",
+    "outDir": "dist/local",
     "noUnusedParameters": true
   },
   "lib": ["webworker", "es6"],
