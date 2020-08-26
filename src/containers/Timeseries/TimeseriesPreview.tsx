@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/timeseries';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { TimeseriesGraph, Wrapper } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { useHistory } from 'react-router-dom';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -22,7 +21,6 @@ export const TimeseriesPreview = ({
   timeseriesId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const history = useHistory();
   const dispatch = useDispatch();
   const timeseries = useSelector(itemSelector)(timeseriesId);
 
@@ -34,9 +32,6 @@ export const TimeseriesPreview = ({
 
   return (
     <Wrapper>
-      <Button className="back-button" onClick={() => history.goBack()}>
-        Back
-      </Button>
       <h1>
         <Icon type="Timeseries" />
         {timeseries ? timeseries.name : 'Loading...'}

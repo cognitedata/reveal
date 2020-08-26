@@ -36,12 +36,10 @@ import {
   EventFilterRequest,
   FilesSearchFilter,
 } from 'cognite-sdk-v3';
-import { useHistory } from 'react-router-dom';
 import { DetailsItem, Wrapper, ButtonRow } from 'components/Common';
 import moment from 'moment';
 import unionBy from 'lodash/unionBy';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { useTenant } from 'hooks/CustomHooks';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
@@ -78,9 +76,7 @@ export const AssetPreview = ({
   extraActions?: React.ReactNode[];
 }) => {
   const { openPreview, hidePreview } = useResourcePreview();
-  const history = useHistory();
   const dispatch = useDispatch();
-  const tenant = useTenant();
   const asset = useSelector(assetSelector)(assetId);
   const {
     files: filesByAnnotations,
@@ -145,7 +141,9 @@ export const AssetPreview = ({
         <AssetBreadcrumb
           assetId={assetId}
           onBreadcrumbClick={newAsset =>
-            history.push(`/${tenant}/explore/asset/${newAsset.id}`)
+            openPreview({
+              item: { id: newAsset.id, type: 'asset' },
+            })
           }
         />
       </div>
@@ -270,7 +268,9 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (event) {
-                    history.push(`/${tenant}/explore/event/${event.id}`);
+                    openPreview({
+                      item: { id: event.id, type: 'event' },
+                    });
                   }
                 }}
               >
@@ -292,7 +292,9 @@ export const AssetPreview = ({
             defaultExpandedKeys={[assetId]}
             onSelect={newAsset => {
               if (newAsset.node) {
-                history.push(`/${tenant}/explore/asset/${newAsset.node.id}`);
+                openPreview({
+                  item: { id: newAsset.node!.id, type: 'asset' },
+                });
               }
             }}
           />

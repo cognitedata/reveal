@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Input, Button } from '@cognite/cogs.js';
 import { useQuery } from 'context/ResourceSelectionContext';
-import { GlobalSearchResults } from './GlobalSearchResults';
+import { SearchResults } from 'containers/SearchResults';
 
 const Overlay = styled.div<{ visible: boolean }>`
   display: ${props => (props.visible ? 'block' : 'none')};
@@ -50,7 +50,6 @@ const ResultList = styled.div<{ visible: boolean; offsetTop: number }>`
   transition: 0.3s all;
   overflow: hidden;
   background: white;
-  padding: 16px;
   padding-top: ${props => (props.visible ? '16px' : '0px')};
   padding-bottom: ${props => (props.visible ? '16px' : '0px')};
   overflow: auto;
@@ -68,12 +67,12 @@ const ResultList = styled.div<{ visible: boolean; offsetTop: number }>`
 
 type Props = {
   offsetTop?: number;
-  showSearch?: boolean;
+  disableDropdown?: boolean;
 };
 
-export const GlobalSearchField = ({
+export const ExplorationSearchBar = ({
   offsetTop = 0,
-  showSearch: propShowSearch,
+  disableDropdown = false,
 }: Props) => {
   const [query, setQuery] = useQuery();
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -88,16 +87,10 @@ export const GlobalSearchField = ({
       window.removeEventListener('Resource Selected', onResourceSelected);
   }, [onResourceSelected]);
 
-  useEffect(() => {
-    if (propShowSearch) {
-      setShowSearchResults(propShowSearch);
-    }
-  }, [propShowSearch]);
-
   return (
     <>
       <Overlay
-        visible={showSearchResults}
+        visible={!disableDropdown && showSearchResults}
         onClick={() => setShowSearchResults(false)}
       />
       <SearchWrapper>
@@ -106,7 +99,7 @@ export const GlobalSearchField = ({
           icon="Search"
           containerStyle={{
             flex: 1,
-            width: showSearchResults ? '100%' : '340px',
+            width: disableDropdown || showSearchResults ? '100%' : '340px',
           }}
           style={{ width: '100%' }}
           iconPlacement="left"
@@ -115,13 +108,16 @@ export const GlobalSearchField = ({
           onClick={() => setShowSearchResults(true)}
           value={query}
         />
-        <ResultList visible={showSearchResults} offsetTop={offsetTop}>
+        <ResultList
+          visible={!disableDropdown && showSearchResults}
+          offsetTop={offsetTop}
+        >
           <Button
             style={{ position: 'absolute', top: 24, right: 24, zIndex: 2 }}
             icon="Close"
             onClick={() => setShowSearchResults(false)}
           />
-          <GlobalSearchResults />
+          <SearchResults />
         </ResultList>
       </SearchWrapper>
     </>

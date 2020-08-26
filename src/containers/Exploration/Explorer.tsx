@@ -8,11 +8,13 @@ import { FileExplorer } from 'containers/Files';
 import { AssetExplorer } from 'containers/Assets';
 import { SequenceExplorer } from 'containers/Sequences';
 import { TimeseriesExplorer } from 'containers/Timeseries';
+import { EventExplorer } from 'containers/Events';
 import { useHistory } from 'react-router';
 import { useTenant } from 'hooks/CustomHooks';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
 import { ResourcePreviewProvider } from 'context/ResourcePreviewContext';
+import { SearchResults } from 'containers/SearchResults';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
@@ -58,6 +60,11 @@ export const Explorer = () => {
             case 'sequence': {
               resourceName = 'Sequence';
               path = `sequence/${resourceItem.id}`;
+              break;
+            }
+            case 'event': {
+              resourceName = 'Event';
+              path = `event/${resourceItem.id}`;
               break;
             }
           }
@@ -113,40 +120,30 @@ export const Explorer = () => {
   }, [setResourcesState, cart]);
 
   const match = useRouteMatch();
-  let showSearch = false;
-  if (
-    pathname.endsWith('/file') ||
-    pathname.endsWith('explore') ||
-    pathname.endsWith('explore/')
-  ) {
-    showSearch = true;
-  }
 
   return (
     <Wrapper>
-      <ExplorationNavbar
-        cart={cart}
-        setCart={setCart}
-        showSearch={showSearch}
-      />
+      <ExplorationNavbar cart={cart} setCart={setCart} />
       <ResourcePreviewProvider>
         <Switch>
+          <Route path={`${match.path}/file/:fileId`} component={FileExplorer} />
           <Route
-            path={`${match.path}/file/:fileId?`}
-            component={FileExplorer}
-          />
-          <Route
-            path={`${match.path}/asset/:assetId?`}
+            path={`${match.path}/asset/:assetId`}
             component={AssetExplorer}
           />
           <Route
-            path={`${match.path}/sequence/:sequenceId?`}
+            path={`${match.path}/sequence/:sequenceId`}
             component={SequenceExplorer}
           />
           <Route
-            path={`${match.path}/timeseries/:timeseriesId?`}
+            path={`${match.path}/timeseries/:timeseriesId`}
             component={TimeseriesExplorer}
           />
+          <Route
+            path={`${match.path}/event/:eventId`}
+            component={EventExplorer}
+          />
+          <Route path={`${match.path}/`} component={SearchResults} />
         </Switch>
       </ResourcePreviewProvider>
     </Wrapper>

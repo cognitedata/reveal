@@ -38,6 +38,7 @@ export const SearchFilterSection = ({
           const isLocked = lockedFilters.some(filter => filter === el);
           return (
             <SearchFilterTag
+              key={el}
               isLocked={isLocked}
               filter={el}
               value={filters[el]}

@@ -2,6 +2,7 @@ import React, { useContext, useState, useCallback } from 'react';
 import { ResourceItem } from 'types';
 import { Splitter } from 'components/Common';
 import { ResourcePreviewSidebar } from 'containers/ResourceSidebar';
+import styled from 'styled-components';
 
 export type ResourcePreviewProps = {
   item?: ResourceItem;
@@ -75,7 +76,7 @@ export const ResourcePreviewProvider = ({
       }}
     >
       <Splitter flex={[0]} hide={isOpen ? [] : [1]}>
-        <div>{children}</div>
+        <ChildrenWrapper>{children}</ChildrenWrapper>
         <ResourcePreviewSidebar
           item={item}
           header={header}
@@ -91,4 +92,9 @@ export const ResourcePreviewProvider = ({
     </ResourcePreviewContext.Provider>
   );
 };
+
+const ChildrenWrapper = styled.div`
+  overflow-y: auto;
+`;
+
 export default ResourcePreviewContext;

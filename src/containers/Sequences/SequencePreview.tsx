@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/sequences';
-import { Button, Icon, Title } from '@cognite/cogs.js';
+import { Icon, Title } from '@cognite/cogs.js';
 import {
   SequenceDetailsAbstract,
   DetailsItem,
   Wrapper,
 } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { useHistory } from 'react-router-dom';
 import { Tabs } from 'antd';
 import moment from 'moment';
 import { SequenceColumn } from 'cognite-sdk-v3';
@@ -31,7 +30,6 @@ export const SequencePreview = ({
   sequenceId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const history = useHistory();
   const dispatch = useDispatch();
   const sequence = useSelector(itemSelector)(sequenceId);
 
@@ -43,9 +41,6 @@ export const SequencePreview = ({
 
   return (
     <Wrapper>
-      <Button className="back-button" onClick={() => history.goBack()}>
-        Back
-      </Button>
       <h1>
         <Icon type="GridFilled" />
         {sequence ? sequence.name : 'Loading...'}

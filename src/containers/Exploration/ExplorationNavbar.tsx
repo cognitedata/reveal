@@ -4,10 +4,10 @@ import { Button, Colors, Badge } from '@cognite/cogs.js';
 import { Popover } from 'components/Common';
 import { ShoppingCartPreview } from 'containers/Exploration/ShoppingCart';
 import ShoppingCartIcon from 'assets/shopping-cart.svg';
-import { GlobalSearchField } from 'containers/GlobalSearch';
 import styled from 'styled-components';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
+import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 const Navbar = styled.div`
   display: flex;
@@ -20,15 +20,26 @@ const Navbar = styled.div`
 export const ExplorationNavbar = ({
   cart,
   setCart,
-  showSearch,
 }: {
   cart: ResourceItem[];
   setCart: (cart: ResourceItem[]) => void;
-  showSearch?: boolean;
 }) => {
   const history = useHistory();
   const { mode, setMode } = useContext(ResourceSelectionContext);
   const navbarRef = useRef<HTMLDivElement>(null);
+
+  const { pathname } = history.location;
+
+  const cleanPathname = pathname.substr(
+    0,
+    pathname.charAt(pathname.length - 1) === '/'
+      ? pathname.length - 1
+      : undefined
+  );
+
+  const lastChunk = cleanPathname.substr(cleanPathname.lastIndexOf('/') + 1);
+
+  const disableDropdown = Number.isNaN(Number(lastChunk));
 
   const cartCount = cart.length;
 
@@ -81,7 +92,7 @@ export const ExplorationNavbar = ({
         icon="ArrowLeft"
         onClick={() => history.goBack()}
       />
-      <GlobalSearchField
+      <ExplorationSearchBar
         offsetTop={
           navbarRef && navbarRef.current
             ? navbarRef.current.getBoundingClientRect().y +
@@ -89,7 +100,7 @@ export const ExplorationNavbar = ({
               2
             : 0
         }
-        showSearch={showSearch}
+        disableDropdown={disableDropdown}
       />
       <div style={{ zIndex: 2, marginLeft: 24, display: 'flex' }}>
         {selectionContent}

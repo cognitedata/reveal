@@ -109,7 +109,6 @@ const SearchFilterItemWrapper = styled.div`
 `;
 
 const SearchFilterItem = ({
-  key,
   metadata,
   categories,
   lockedFilters,
@@ -118,7 +117,6 @@ const SearchFilterItem = ({
   initialKey,
   initialValue,
 }: {
-  key: string;
   metadata: {
     [key: string]: string[];
   };
@@ -154,7 +152,7 @@ const SearchFilterItem = ({
     (selectedKey !== initialKey || selectedValue !== initialValue);
   const hasInitialValue = initialKey || initialValue;
   return (
-    <SearchFilterItemWrapper key={key}>
+    <SearchFilterItemWrapper>
       <div className="key">
         <SelectWrapper>
           <Select
@@ -199,7 +197,7 @@ const SearchFilterItem = ({
                   ));
                 }
                 return (
-                  <Select.OptGroup label={category}>
+                  <Select.OptGroup label={category} key={category}>
                     {categories[category].map(el => (
                       <Select.Option
                         disabled={lockedFilters.some(filter => filter === el)}
@@ -348,6 +346,7 @@ export const SearchFilterForm = ({
           const isLocked = lockedFilters.some(filter => filter === el);
           return (
             <SearchFilterTag
+              key={el}
               isLocked={isLocked}
               filter={el}
               value={filters[el]}
