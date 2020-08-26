@@ -86,8 +86,7 @@ jobs:
 
       - name: Build parser-worker
         working-directory: parser-worker
-        run: yarn
-        build:prod
+        run: yarn build:prod
 
   ci-viewer:
     name: Viewer
