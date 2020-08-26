@@ -1,8 +1,8 @@
 # Reveal parser worker
 
-Used as a dependency for @cognite/reveal. 
+Used as a dependency for `@cognite/reveal`. 
 
-Parser-worker has some parts written on Rust. So build output contains
+Parser-worker has some parts written on Rust, so build output contains
 worker files and .wasm file.
 
 <!-- TODO: more interesting overview is highly welcomed -->
@@ -10,14 +10,13 @@ worker files and .wasm file.
 ## Getting started
 
 Note that if you want to simply run the viewer you don't need to build 
-parser-worker. It's already used as a dependency from the NPM.
-
+parser-worker. It's already used as a dependency from the NPM. 
 Build it only if you're about to change parser-worker and want to test local changes.
-Or if you need to create a build with [custom PUBLIC_PATH](https://localhost:9000/reveal/docs/installation#if-you-cant-host-workers-on-the-same-domain)
+
+Also, you might want to build it if you need to create a build with [custom PUBLIC_PATH](https://cognitedata.github.io/reveal/docs/installation#if-you-cant-host-workers-on-the-same-domain)
 and host it on your own static server.
- 
-Don't forget that if you're committing your changes,  
-it will require a new NPM release of it.
+
+Don't forget that if you're committing your changes, you will need to publish a new NPM release. 
 
 ### Prerequisites
  
@@ -42,7 +41,7 @@ yarn
 yarn build
 ```
 
-In case if you want to build with custom publicPath, 
+In case if you need to build with custom public path, 
 just set the environment variable `PUBLIC_PATH` and run the build.
 
 ```bash
@@ -63,7 +62,7 @@ If you set the env variable correctly, during the build you should see this prin
 ```
 
 Now `parser-worker/dist/local` folder contains the built worker and wasm files.
-You can host them wherever at your static server.
+You can host them at your static server.
 
 ### Local development
 

@@ -35,16 +35,6 @@ yarn serve
 If you now navigate to [localhost:3000](https://localhost:3000), you will see a list of examples
 that can be explored in the browser.
 
-## Publishing Viewer
-
-To publish a new version of a viewer follow these steps.
-1) Create new release branch or check out existing release branch
-> **Note**: A release branch is prefixed by `release/` and followed by the major and minor number, e.g. `release/0.8`.
-2) Bump up the version in the `viewer/package.json` file
-> **Note**: When bumping up major and minor version remember that you need to make a new release branch.
-3) Change directory to the viewer folder, `cd viewer`
-4) Run in terminal `yarn publishscript`
-
 ## Use local build with a project that uses reveal
 
 1. Run viewer build
@@ -103,3 +93,13 @@ npm unlink
 
 In case when you need to change and test the latest changes in parser-worker
 consult [parser-worker/README.md](parser-worker/README.md)
+
+## Publishing Viewer
+
+To publish a new version of a viewer follow these steps.
+1) Create new release branch or check out existing release branch
+> **Note**: A release branch is prefixed by `release/` and followed by the major and minor number, e.g. `release/0.8`.
+2) Bump up the version in the `viewer/package.json` file
+> **Note**: When bumping up major and minor version remember that you need to make a new release branch.
+3) Change directory to the viewer folder, `cd viewer`
+4) Run in terminal `yarn publishscript`
