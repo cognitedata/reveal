@@ -18,6 +18,7 @@ import {
   InitialState,
   ThreeColsLayout,
 } from '../elements';
+import { DUMMY_DATA } from '../../../utils/dummy';
 
 type Props = {
   name: string | undefined | null;
@@ -262,10 +263,9 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                       style={{ width: '100%', marginBottom: '16px' }}
                       onChange={updateBusinessTags}
                     >
-                      <Option value="cwp_valhall">cwp_valhall</Option>
-                      <Option value="cwp_alvheim">cwp_alvheim</Option>
-                      <Option value="gas">gas</Option>
-                      <Option value="oil">oil</Option>
+                      {DUMMY_DATA.tags.map((tag) => (
+                        <Option value={tag}>{tag}</Option>
+                      ))}
                     </Select>
                     <div>Select Datatypes:</div>
                     <Checkbox.Group
