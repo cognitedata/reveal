@@ -68,3 +68,28 @@ export const InitialState = styled.div`
     color: var(--cogs-greyscale-grey5);
   }
 `;
+
+export const ConnectorList = styled.ul<{ connectorPosition?: string }>`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  & > li {
+    background-color: var(--cogs-greyscale-grey2);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    padding: 4px 16px;
+    position: relative;
+    &:after {
+      position: absolute;
+      right: ${(props) =>
+        props.connectorPosition === 'right' ? '-32px' : 'calc(100% + 16px)'};
+      top: calc(50% - 8px);
+      display: block;
+      content: '';
+      background-color: var(--cogs-greyscale-grey2);
+      border-radius: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+`;

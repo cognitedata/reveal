@@ -12,6 +12,7 @@ import { SelectValue } from 'antd/es/select';
 import {
   ConfigurationArrow,
   ConfigurationContainer,
+  ConnectorList,
   Header,
   InitialState,
   ThreeColsLayout,
@@ -283,11 +284,11 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           )}
           {sourceUIState === ConfigUIState.CONFIRMED && (
             <main>
-              <ul>
+              <ConnectorList connectorPosition="right">
                 {configuration.datatypes.map((datatype) => (
                   <li key={datatype}>{datatype}</li>
                 ))}
-              </ul>
+              </ConnectorList>
             </main>
           )}
         </ConfigurationContainer>
@@ -363,9 +364,9 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           )}
           {targetUIState === ConfigUIState.CONFIRMED && (
             <main>
-              <ul>
+              <ConnectorList connectorPosition="left">
                 <li>_Root</li>
-              </ul>
+              </ConnectorList>
             </main>
           )}
         </ConfigurationContainer>
