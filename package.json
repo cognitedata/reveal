@@ -58,7 +58,7 @@
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.7.0",
     "husky": "^4.2.5",
-    "prettier": "^2.1.0",
+    "prettier": "^2.1.1",
     "pretty-quick": "^2.0.2",
     "sinon": "^9.0.3",
     "typescript": "^3.9.7"
