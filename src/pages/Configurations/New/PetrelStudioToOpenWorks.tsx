@@ -167,6 +167,20 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     }
   }, [configuration]);
 
+  useEffect(() => {
+    if (
+      sourceUIState === ConfigUIState.CONFIRMED &&
+      targetUIState === ConfigUIState.CONFIRMED &&
+      sourceComplete &&
+      targetComplete
+    ) {
+      setConfigurationIsComplete(true);
+    } else {
+      setConfigurationIsComplete(false);
+    }
+  }, [sourceComplete, targetComplete, sourceUIState, targetUIState]);
+
+  // noinspection HtmlUnknownTarget
   return (
     <div>
       <Header>
@@ -175,6 +189,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           type="primary"
           style={{ height: '36px' }}
           disabled={!configurationIsComplete}
+          onClick={() => alert('TODO: save configuration via API')}
         >
           Save Configuration
         </Button>
