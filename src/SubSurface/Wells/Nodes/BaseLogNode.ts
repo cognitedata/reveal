@@ -72,7 +72,6 @@ export abstract class BaseLogNode extends DataNode
   //==================================================
 
   public /*override*/ get className(): string { return BaseLogNode.className; }
-
   public /*override*/ isA(className: string): boolean { return className === BaseLogNode.className || super.isA(className); }
 
   //==================================================

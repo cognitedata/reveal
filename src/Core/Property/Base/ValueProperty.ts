@@ -3,7 +3,7 @@ import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
 //==================================================
-// Delegates
+// TYPES AND DELEGATES
 //==================================================
 
 export type Action = () => void;
@@ -28,17 +28,12 @@ export default abstract class ValueProperty<T> extends BaseProperty
   private _fieldName?: string;
   private _use?: boolean; // undefined = hide the use button
 
-  private _apply?: Action;
-  private _isEnabled?: IsEnabled;
-  private _optionValidationDelegate?: ValidateOption
-  private _applyByFieldNameDelegate?: StringAction;
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   public get isValueEnabled(): boolean { return this.use && this.isEnabled; }
-  public get isEnabled(): boolean { return this._isEnabled === undefined || this._isEnabled.call(this._instance); }
+  public get isEnabled(): boolean { return this._isEnabledDelegate === undefined || this._isEnabledDelegate(); }
   public get hasOptions(): boolean { return this._options !== undefined; }
   public get options(): T | T[] | undefined { return this._options; }
   public set options(value: T | T[] | undefined) { this._options = value; }
@@ -46,10 +41,24 @@ export default abstract class ValueProperty<T> extends BaseProperty
   public get fieldName(): string | undefined { return this._fieldName; }
   public set fieldName(value: string | undefined) { this._fieldName = value; }
   public get isOptional(): boolean { return this._use !== undefined; }
-  public get optionValidationDelegate(): ValidateOption | undefined { return this._optionValidationDelegate; }
-  public set optionValidationDelegate(value: ValidateOption | undefined) { this._optionValidationDelegate = value; }
+
+  //==================================================
+  // INSTANCE DELEGATES
+  //==================================================
+
+  private _applyDelegate?: Action;
+  private _applyByFieldNameDelegate?: StringAction;
+  private _isEnabledDelegate?: IsEnabled;
+  private _optionValidationDelegate?: ValidateOption
+
+  public get applyDelegate(): Action | undefined { return this._applyDelegate; }
+  public set applyDelegate(value: Action | undefined) { this._applyDelegate = value; }
   public get applyByFieldNameDelegate(): StringAction | undefined { return this._applyByFieldNameDelegate; }
   public set applyByFieldNameDelegate(value: StringAction | undefined) { this._applyByFieldNameDelegate = value; }
+  public get isEnabledDelegate(): IsEnabled | undefined { return this._isEnabledDelegate; }
+  public set isEnabledDelegate(value: IsEnabled | undefined) { this._isEnabledDelegate = value; }
+  public get optionValidationDelegate(): ValidateOption | undefined { return this._optionValidationDelegate; }
+  public set optionValidationDelegate(value: ValidateOption | undefined) { this._optionValidationDelegate = value; }
 
   //==================================================
   // CONSTRUCTORS
@@ -59,13 +68,13 @@ export default abstract class ValueProperty<T> extends BaseProperty
   {
     super(params.name, params.readonly, params.toolTip);
 
-    this._apply = params.apply;
+    this._applyDelegate = params.applyDelegate;
     this._applyByFieldNameDelegate = params.applyByFieldNameDelegate;
-    this._isEnabled = params.isEnabled;
+    this._isEnabledDelegate = params.isEnabledDelegate;
     this._optionValidationDelegate = params.optionValidationDelegate;
 
     this._options = params.options as T | T[];
-    this._fieldName = params.name;
+    this._fieldName = params.fieldName ? params.fieldName : params.name;
 
     // Set the value
     if (params.instance)
@@ -152,13 +161,22 @@ export default abstract class ValueProperty<T> extends BaseProperty
   // INSTANCE METHODS
   //==================================================
 
-  protected apply(): void
+  private apply(): void
   {
-    if (this._instance && this._apply)
-      this._apply.call(this._instance);
+    if (this._instance && this._applyDelegate)
+      //this._applyDelegate.call(this._instance);
+      this._applyDelegate(); // Why is this not working ?
 
     if (this._applyByFieldNameDelegate && this.fieldName)
       this._applyByFieldNameDelegate(this.fieldName);
+  }
+
+  public clearDelegates(): void
+  {
+    this._applyDelegate = undefined;
+    this._applyByFieldNameDelegate = undefined;
+    this._isEnabledDelegate = undefined;
+    this._optionValidationDelegate = undefined;
   }
 
   public getExpandedOptions<K extends keyof T>(): T[] | [K, T[K]][] | []
@@ -172,7 +190,7 @@ export default abstract class ValueProperty<T> extends BaseProperty
         opt = this._options.filter(val => validateOption(val));
       else
       {
-        const optionsTuple: [K, T[K]][]= [];
+        const optionsTuple: [K, T[K]][] = [];
         for (const enumKey of Object.keys(this._options) as K[])
         {
           if (typeof this._options[enumKey] === "number") // get only the Enum Values from enum object
@@ -181,7 +199,6 @@ export default abstract class ValueProperty<T> extends BaseProperty
         opt = optionsTuple.filter(val => validateOption(val[ExpandedOption.value]));
       }
     }
-
     return opt;
   }
 
@@ -189,5 +206,5 @@ export default abstract class ValueProperty<T> extends BaseProperty
   // VIRTUAL METHODS
   //==================================================
 
-  public /** override **/ getOptionIcon(option: T): string { return ""; }
+  public /*virtual*/ getOptionIcon(option: T): string { return ""; }
 }

@@ -35,7 +35,6 @@ export class SeismicPlaneFolder extends BaseNode
   //==================================================
 
   public /*override*/ get className(): string { return SeismicPlaneFolder.className; }
-
   public /*override*/ isA(className: string): boolean { return className === SeismicPlaneFolder.className || super.isA(className); }
 
   //==================================================
@@ -43,11 +42,8 @@ export class SeismicPlaneFolder extends BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Planes"; }
-
   public /*override*/ canChangeName(): boolean { return false; }
-
   public /*override*/ canChangeColor(): boolean { return false; }
-
   public /*override*/ getIcon(): string { return Icon; }
 
   protected /*override*/ initializeCore()

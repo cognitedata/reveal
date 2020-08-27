@@ -14,7 +14,11 @@ export class ColorTypeProperty extends ValueProperty<ColorType>
     this.options = Object(ColorType);
   }
 
-  public getOptionIcon(option: ColorType): string
+  //==================================================
+  // OVERRIDES of ValueProperty
+  //==================================================
+
+  public /*overrides*/ getOptionIcon(option: ColorType): string
   {
     switch (option)
     {

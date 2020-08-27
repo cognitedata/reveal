@@ -227,9 +227,9 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (!material || !style)
       return;
 
-    material.opacity = style.opacity.use ? style.opacity.value : 1;
-    material.transparent = style.opacity.use;
-    material.shininess = style.shininess.use ? 100 * style.shininess.value : 0;
+    material.opacity = style.solidOpacity.use ? style.solidOpacity.value : 1;
+    material.transparent = style.solidOpacity.use;
+    material.shininess = style.solidShininess.use ? 100 * style.solidShininess.value : 0;
   }
 }
 

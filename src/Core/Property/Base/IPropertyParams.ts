@@ -3,6 +3,7 @@ import { Action, IsEnabled, StringAction, ValidateOption } from "@/Core/Property
 export default interface IPropertyParams<T>
 {
   name: string;
+  fieldName?: string;
   toolTip?: string;
   instance?: object; // Either this is set
   value?: T; // Or this
@@ -11,9 +12,9 @@ export default interface IPropertyParams<T>
   use?: boolean;
 
   // Delegates
-  apply?: Action;
+  applyDelegate?: Action;
   applyByFieldNameDelegate?: StringAction;
-  isEnabled?: IsEnabled;
+  isEnabledDelegate?: IsEnabled;
   optionValidationDelegate?: ValidateOption;
   // eslint-disable-next-line semi
 }
