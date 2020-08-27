@@ -14,6 +14,7 @@ import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
 import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
 import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 
 export default class NodeUtils
 {
@@ -192,6 +193,8 @@ export default class NodeUtils
     }
     if (property instanceof StringProperty)
       return ElementTypes.String;
+    if (property instanceof NumberProperty && !property.hasOptions)
+      return ElementTypes.Number;
 
     console.error("property is not supported", property);
     return "";

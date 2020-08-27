@@ -63,9 +63,11 @@ export default function SettingsElement(props: ISettingsElementProps) {
     const disabled = config.isReadOnly || !config.useProperty;
 
     switch (type) {
+      case ElementTypes.Number:
       case ElementTypes.String:
         return (
           <input
+            type={type === ElementTypes.Number ? "number" : "text"}
             disabled={disabled}
             {...keyExtractor(null, type, name)}
             onChange={(event) =>

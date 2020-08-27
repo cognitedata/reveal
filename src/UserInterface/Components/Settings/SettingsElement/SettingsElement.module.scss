@@ -13,7 +13,7 @@
 
   .input-wrap {
     display: grid;
-    place-items: center;
+    place-items: center start;
     width: 100%;
 
     &.optional {

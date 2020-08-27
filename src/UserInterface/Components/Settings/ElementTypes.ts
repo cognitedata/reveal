@@ -2,6 +2,7 @@
 export default {
   Expander: "expander",
   String: "string",
+  Number: "number",
   Group: "group",
   Select: "select",
   ColorMap: "colorMap",
