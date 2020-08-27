@@ -18,6 +18,7 @@ import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { ColorType } from "@/Core/Enums/ColorType";
 
 export abstract class BaseFilterLogNode extends BaseVisualNode
 {
@@ -50,8 +51,23 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*virtual*/ isLabelInItalic(): boolean { return true; }
-  public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
+  public /*override*/ isLabelInItalic(): boolean { return true; }
+  public /*override*/ isFilter(target: ITarget | null): boolean { return true; }
+
+  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  {
+    switch (colorType)
+    {
+      case ColorType.Specified:
+      case ColorType.Parent:
+      case ColorType.Black:
+      case ColorType.White:
+        return true;
+
+      default:
+        return false;
+    }
+  }
 
   protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {

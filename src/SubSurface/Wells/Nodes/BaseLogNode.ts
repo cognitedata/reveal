@@ -21,10 +21,10 @@ import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { ColorType } from "@/Core/Enums/ColorType";
 
 export abstract class BaseLogNode extends DataNode
 {
@@ -94,6 +94,21 @@ export abstract class BaseLogNode extends DataNode
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
+  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  {
+    switch (colorType)
+    {
+      case ColorType.Specified:
+      case ColorType.Parent:
+      case ColorType.Black:
+      case ColorType.White:
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
   protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {
     super.populateStatisticsCore(folder);
@@ -105,15 +120,7 @@ export abstract class BaseLogNode extends DataNode
     folder.addReadOnlyInteger("# Samples", log.length);
   }
 
-  //==================================================
-  // INSTANCE METHODS: Draw styles
-  //==================================================
-
-  public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
-  {
-    const { filterLogNode } = this;
-    return filterLogNode ? filterLogNode.getRenderStyle(targetId) : null;
-  }
+  public /*override*/ get renderStyleRoot(): BaseNode | null { return this.filterLogNode; }
 
   //==================================================
   // VIRTUAL METHODS

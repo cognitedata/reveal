@@ -62,10 +62,14 @@ export default class NodeUtils
     // If node is a GroupProperty
     if (property instanceof GroupProperty)
     {
+      const type = NodeUtils.getControlType(property);
+      if (!type)
+        return null;
+
       const element: ISettingsElement = {
         id: property.name,
         name: property.displayName,
-        type: NodeUtils.getControlType(property),
+        type,
         subValues: [],
         isReadOnly: property.isReadOnly,
         useProperty: true,
@@ -75,13 +79,17 @@ export default class NodeUtils
       {
         property.children.forEach((subProperty) => 
         {
+          const childType = NodeUtils.getControlType(property);
+          if (!childType)
+            return;
+
           if (subProperty instanceof ValueProperty) 
           {
             const subElement: ISettingsElement = {
               id: property.name,
               name: subProperty.displayName,
               isReadOnly: subProperty.isReadOnly,
-              type: NodeUtils.getControlType(subProperty),
+              type: childType,
               value: subProperty.value,
               useProperty: subProperty.isValueEnabled,
               isOptional: subProperty.isOptional
@@ -119,10 +127,14 @@ export default class NodeUtils
       if (!property.isEnabled)
         return null;
 
+      const type = NodeUtils.getControlType(property);
+      if (!type)
+        return null;
+
       const element: ISettingsElement = {
         id: property.name,
         name: property.displayName,
-        type: NodeUtils.getControlType(property),
+        type,
         value: property.value,
         subValues: [],
         isReadOnly: property.isReadOnly,
@@ -142,7 +154,7 @@ export default class NodeUtils
     return null;
   }
 
-  private static createSelectOptions(options: any[] | [string, any][], iconDelegate: Function ): ISelectOption[]
+  private static createSelectOptions(options: any[] | [string, any][], iconDelegate: Function): ISelectOption[]
   {
     const items: ISelectOption[] = [];
     if (options && options.length > 0)
@@ -169,7 +181,7 @@ export default class NodeUtils
     return items;
   }
 
-  private static getControlType(property: BaseProperty): string 
+  private static getControlType(property: BaseProperty): string | null
   {
     // Special properties comes first
     if (property instanceof BooleanProperty)
@@ -185,18 +197,19 @@ export default class NodeUtils
     if (property instanceof GroupProperty)
       return ElementTypes.Group;
 
-    // General properties
+    // All others with options
     if (property instanceof ValueProperty)
     {
       if (property.hasOptions)
         return ElementTypes.Select;
     }
+    // All without options
     if (property instanceof StringProperty)
       return ElementTypes.String;
-    if (property instanceof NumberProperty && !property.hasOptions)
+    if (property instanceof NumberProperty)
       return ElementTypes.Number;
 
     console.error("property is not supported", property);
-    return "";
+    return null;
   }
 }
