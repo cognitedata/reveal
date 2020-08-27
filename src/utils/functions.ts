@@ -1,5 +1,5 @@
-import { ColumnsType } from 'antd/es/table';
-import { GenericResponseObject } from '../typings/interfaces';
+import { ColumnsType, ColumnType } from 'antd/es/table';
+import { GenericResponseObject, Rule } from '../typings/interfaces';
 
 export function stringToBoolean(input: string): boolean | undefined {
   try {
@@ -25,4 +25,22 @@ export function generateColumnsFromData(
   });
 
   return results;
+}
+
+export function curateColumns(
+  columns: ColumnsType<GenericResponseObject> | undefined,
+  rules: any
+) {
+  if (columns) {
+    const tmp = columns;
+    rules.map((rule: Rule) => {
+      const index = columns.findIndex(
+        (column: ColumnType<any>) => column.key === rule.key
+      );
+      tmp[index].render = rule.render;
+      return null;
+    });
+    return tmp;
+  }
+  return [];
 }
