@@ -7,7 +7,6 @@ import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from './RenderMode';
 import { determinePowerOfTwoDimensions } from '@/utilities/determinePowerOfTwoDimensions';
 import matCapTextureImage from './matCapTextureData';
-import { packFloat } from '@/utilities/packFloatToVec4';
 
 export interface Materials {
   // Materials
@@ -46,28 +45,19 @@ export function createMaterials(
   }
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
 
-  // const identityMatrix = new THREE.Matrix4();
-
-  // identityMatrix.setPosition(0.0, 0.0, 5.0);
-  //identityMatrix.makeScale(2, 2, 2);
-  //identityMatrix.makeRotationFromEuler(new Euler(90, 0, 0));
-
-  //const identityMatrixArray = identityMatrix.transpose().toArray();
-
   const transformOverrideBuffer = new Uint8Array(16 * 4 * textureElementCount);
 
-  // for (let i = 0; i < identityMatrixArray.length; i++) {
-  //   const element = packFloat(identityMatrixArray[i]);
-  //   transformOverrideBuffer[i * 4] = element.x;
-  //   transformOverrideBuffer[i * 4 + 1] = element.y;
-  //   transformOverrideBuffer[i * 4 + 2] = element.z;
-  //   transformOverrideBuffer[i * 4 + 3] = element.w;
-  // }
+  for (let i = 0; i < textureElementCount; i++) {
+    transformOverrideBuffer[16 * 4 * i + 0] = 127;
+    transformOverrideBuffer[16 * 4 * i + 20] = 127;
+    transformOverrideBuffer[16 * 4 * i + 40] = 127;
+    transformOverrideBuffer[16 * 4 * i + 60] = 127;
+  }
 
   const dynamicTransformationTexture = new THREE.DataTexture(
     transformOverrideBuffer,
-    textureDims.width * 4,
-    textureDims.height * 4
+    textureDims.width * 16,
+    textureDims.height
   );
 
   const matCapTexture = new THREE.Texture(matCapTextureImage);

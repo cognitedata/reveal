@@ -5,8 +5,7 @@
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
-import { packFloat } from '@/utilities/packFloatToVec4';
-import { Matrix4 } from 'three';
+//import { packFloat } from '@/utilities/packFloatToVec4';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -129,7 +128,8 @@ export class MaterialManager {
       materials.overrideColorPerTreeIndex.needsUpdate = true;
     }
 
-    this.packMatrixToOverrideTransformBuffer(39, new Matrix4(), materials.dynamicTransformationTexture);
+    // const testMat = new Matrix4();
+    // this.packMatrixToOverrideTransformBuffer(1, testMat, materials.dynamicTransformationTexture);
   }
 
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
@@ -153,22 +153,20 @@ export class MaterialManager {
     }
   }
 
-  private packMatrixToOverrideTransformBuffer(
-    treeIndex: number,
-    transform: THREE.Matrix4,
-    dynamicTransformTexture: THREE.DataTexture
-  ) {
-    const transformBuffer = transform.transpose().toArray();
+  // private packMatrixToOverrideTransformBuffer(
+  //   treeIndex: number,
+  //   transform: THREE.Matrix4,
+  //   dynamicTransformTexture: THREE.DataTexture
+  // ) {
+  //   const transformBuffer = transform.transpose().toArray();
 
-    for (let i = 0; i < transformBuffer.length; i++) {
-      const element = packFloat(transformBuffer[i]);
+  //   for (let i = 0; i < transformBuffer.length; i++) {
+  //     const element = packFloat(transformBuffer[i]);
 
-      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4] = element.x;
-      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 1] = element.y;
-      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 2] = element.z;
-      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 3] = element.w;
-    }
-
-    console.log(dynamicTransformTexture.image.data);
-  }
+  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4] = element.x;
+  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 1] = element.y;
+  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 2] = element.z;
+  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 3] = element.w;
+  //   }
+  // }
 }

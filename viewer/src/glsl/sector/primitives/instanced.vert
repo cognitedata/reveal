@@ -47,31 +47,27 @@ void main()
     float dataTextureWidth = dataTextureSize.x;
     float dataTextureHeight = dataTextureSize.y;
 
-    float u = mod(treeIndex, dataTextureWidth);
-    float v = floor(treeIndex / dataTextureWidth);
-    float uCoord = (u + 0.5) / dataTextureWidth;
-    float vCoord = (v + 0.5) / dataTextureHeight; // invert Y axis
-    vec2 treeIndexUv = vec2(uCoord, vCoord) * 16.0;
-    vec4 unpackedFloat = texture2D(matrixTransformTexture, treeIndexUv);
+    float cellWidth = 1.0 / (dataTextureWidth * 16.0);
+    float cellHeight = 1.0 / dataTextureHeight;
 
-    // float matrixElements[12];
+    float xTreeIndexCoord = mod(treeIndex, dataTextureWidth);
+    float yTreeIndexCoord = floor(treeIndex / dataTextureWidth);
+    float uCoord = (xTreeIndexCoord * (cellWidth * 16.0)) + (cellWidth / 2.0);
+    float vCoord = (yTreeIndexCoord * cellHeight) + (cellHeight / 2.0);
+    vec2 treeIndexUv = vec2(uCoord, vCoord);
 
-    // for(int i = 0; i < 12; i++){
-    //   matrixElements[i] = unpackFloatFromRGBATexel(texture2D(matrixTransformTexture, vec2( 1.0 / 32.0 + float(i) / 16.0 , 0.5)));
-    // }
+    float matrixElements[12];
 
-    // mat4 localTransform = mat4(
-    //   matrixElements[0], matrixElements[4], matrixElements[8],  0,
-    //   matrixElements[1], matrixElements[5], matrixElements[9],  0,
-    //   matrixElements[2], matrixElements[6], matrixElements[10], 0,
-    //   matrixElements[3], matrixElements[7], matrixElements[11], 1
-    // );
+    for(int i = 0; i < 12; i++){
+      matrixElements[i] = unpackFloatFromRGBATexel(texture2D(matrixTransformTexture, treeIndexUv + vec2(float(i) * cellWidth, 0.0)));
 
+    }
+    
     mat4 localTransform = mat4(
-      1.0, 0.0, 0.0, 0.0,
-      0.0, 1.0, 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      0.0, 0.0, 0.0, 1.0
+      matrixElements[0], matrixElements[4], matrixElements[8],  0,
+      matrixElements[1], matrixElements[5], matrixElements[9],  0,
+      matrixElements[2], matrixElements[6], matrixElements[10], 0,
+      matrixElements[3], matrixElements[7], matrixElements[11], 1
     );
 
     vec3 transformed = (instanceMatrix * localTransform * vec4(position, 1.0)).xyz;
