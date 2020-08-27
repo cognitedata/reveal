@@ -30,7 +30,8 @@ export class CasingLogStyle extends BaseRenderStyle
 
   public colorType = new ColorTypeProperty({
     name: "Color Type",
-    value: ColorType.Specified
+    value: ColorType.Specified,
+    options: ColorType,
   });
 
   public opacity = new SliderProperty({

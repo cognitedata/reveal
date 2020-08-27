@@ -9,7 +9,12 @@ import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 export type Action = () => void;
 export type StringAction = (fieldName: string) => void;
 export type IsEnabled = () => boolean;
-export type GetOptionIcon = (option: any) => string;
+export type ValidateOption = (option: any) => boolean;
+export enum ExpandedOption 
+{
+  label = 0,
+  value,
+}
 
 export default abstract class ValueProperty<T> extends BaseProperty
 {
@@ -19,13 +24,13 @@ export default abstract class ValueProperty<T> extends BaseProperty
 
   private readonly _instance?: object;
   private _value?: T;
-  private _options?: T[];
+  private _options?: T | T[];
   private _fieldName?: string;
   private _use?: boolean; // undefined = hide the use button
 
   private _apply?: Action;
   private _isEnabled?: IsEnabled;
-  private _getOptionIconDelegate?: GetOptionIcon
+  private _optionValidationDelegate?: ValidateOption
   private _applyByFieldNameDelegate?: StringAction;
 
   //==================================================
@@ -34,15 +39,15 @@ export default abstract class ValueProperty<T> extends BaseProperty
 
   public get isValueEnabled(): boolean { return this.use && this.isEnabled; }
   public get isEnabled(): boolean { return this._isEnabled === undefined || this._isEnabled.call(this._instance); }
-  public get hasOptions(): boolean { return this._options !== undefined && this._options.length > 0; }
-  public get options(): T[] | undefined { return this._options; }
-  public set options(value: T[] | undefined) { this._options = value; }
+  public get hasOptions(): boolean { return this._options !== undefined; }
+  public get options(): T | T[] | undefined { return this._options; }
+  public set options(value: T | T[] | undefined) { this._options = value; }
   public get useName(): string { return `use${this.name.charAt(0).toUpperCase()}${this.name.substring(1)}`; }
   public get fieldName(): string | undefined { return this._fieldName; }
   public set fieldName(value: string | undefined) { this._fieldName = value; }
   public get isOptional(): boolean { return this._use !== undefined; }
-  public get optionIconDelegate(): GetOptionIcon | undefined { return this._getOptionIconDelegate; }
-  public set optionIconDelegate(value: GetOptionIcon | undefined) { this._getOptionIconDelegate = value; }
+  public get optionValidationDelegate(): ValidateOption | undefined { return this._optionValidationDelegate; }
+  public set optionValidationDelegate(value: ValidateOption | undefined) { this._optionValidationDelegate = value; }
   public get applyByFieldNameDelegate(): StringAction | undefined { return this._applyByFieldNameDelegate; }
   public set applyByFieldNameDelegate(value: StringAction | undefined) { this._applyByFieldNameDelegate = value; }
 
@@ -57,9 +62,9 @@ export default abstract class ValueProperty<T> extends BaseProperty
     this._apply = params.apply;
     this._applyByFieldNameDelegate = params.applyByFieldNameDelegate;
     this._isEnabled = params.isEnabled;
-    this._getOptionIconDelegate = params.getOptionIconDelegate;
+    this._optionValidationDelegate = params.optionValidationDelegate;
 
-    this._options = params.options;
+    this._options = params.options as T | T[];
     this._fieldName = params.name;
 
     // Set the value
@@ -156,17 +161,33 @@ export default abstract class ValueProperty<T> extends BaseProperty
       this._applyByFieldNameDelegate(this.fieldName);
   }
 
-  public getOptionIcon(option: T): string
+  public getExpandedOptions<K extends keyof T>(): T[] | [K, T[K]][] | []
   {
-    if (!this._getOptionIconDelegate)
-      return "";
-    return this._getOptionIconDelegate(option);
+    let opt: T[] | [K, T[K]][] = [];
+    const validateOption = (val: T[K] | T): boolean => (this.optionValidationDelegate ? this.optionValidationDelegate(val) : true);
+
+    if (this._options)
+    {
+      if ("length" in this._options)
+        opt = this._options.filter(val => validateOption(val));
+      else
+      {
+        const optionsTuple: [K, T[K]][]= [];
+        for (const enumKey of Object.keys(this._options) as K[])
+        {
+          if (typeof this._options[enumKey] === "number") // get only the Enum Values from enum object
+            optionsTuple.push([enumKey, this._options[enumKey]]);
+        }
+        opt = optionsTuple.filter(val => validateOption(val[ExpandedOption.value]));
+      }
+    }
+
+    return opt;
   }
 
-  public addOption(option: T): void
-  {
-    if (!this.options)
-      this.options = [];
-    this.options.push(option);
-  }
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  public /** override **/ getOptionIcon(option: T): string { return ""; }
 }

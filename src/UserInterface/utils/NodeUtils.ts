@@ -5,7 +5,7 @@ import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
 import { Appearance } from "@/Core/States/Appearance";
-import ValueProperty from "@/Core/Property/Base/ValueProperty";
+import ValueProperty, { ExpandedOption } from "@/Core/Property/Base/ValueProperty";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
@@ -125,7 +125,7 @@ export default class NodeUtils
         value: property.value,
         subValues: [],
         isReadOnly: property.isReadOnly,
-        options: NodeUtils.createSelectOptions(property.options, property.optionIconDelegate),
+        options: NodeUtils.createSelectOptions(property.getExpandedOptions(), property.getOptionIcon),
         useProperty: property.use,
         isOptional: property.isOptional,
       };
@@ -133,7 +133,7 @@ export default class NodeUtils
       // Handle seperate property types
       if (property instanceof ColorMapProperty)
       {
-        element.options = property.options;
+        element.options = property.options as string[];
         element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
       }
       return element;
@@ -141,7 +141,7 @@ export default class NodeUtils
     return null;
   }
 
-  private static createSelectOptions(options, iconDelegate): ISelectOption[] 
+  private static createSelectOptions(options: any[] | [string, any][], iconDelegate: Function ): ISelectOption[]
   {
     const items: ISelectOption[] = [];
     if (options && options.length > 0)
@@ -151,9 +151,9 @@ export default class NodeUtils
         if (typeof option === "object")
         {
           items.push({
-            label: option.label,
-            value: option.value,
-            iconSrc: iconDelegate && iconDelegate(option)
+            label: option[ExpandedOption.label],
+            value: option[ExpandedOption.value],
+            iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.value])
           });
         }
         else 

@@ -1,4 +1,4 @@
-import { Action, IsEnabled, StringAction, GetOptionIcon } from "@/Core/Property/Base/ValueProperty";
+import { Action, IsEnabled, StringAction, ValidateOption } from "@/Core/Property/Base/ValueProperty";
 
 export default interface IPropertyParams<T>
 {
@@ -7,13 +7,13 @@ export default interface IPropertyParams<T>
   instance?: object; // Either this is set
   value?: T; // Or this
   readonly?: boolean;
-  options?: T[];
+  options?: object; // needs this so that options would accept an enum at the runtime
   use?: boolean;
 
   // Delegates
   apply?: Action;
   applyByFieldNameDelegate?: StringAction;
   isEnabled?: IsEnabled;
-  getOptionIconDelegate?: GetOptionIcon;
+  optionValidationDelegate?: ValidateOption;
   // eslint-disable-next-line semi
 }

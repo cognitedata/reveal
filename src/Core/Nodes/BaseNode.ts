@@ -313,20 +313,9 @@ export abstract class BaseNode extends Identifiable
       if (child instanceof ValueProperty)
       {
         child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
-      }
-
-      // TODO: Remove this hack
-      if (child instanceof ValueProperty && (child as ColorTypeProperty != null) && !child.hasOptions)
-      {
-        child.options = [];
-        // eslint-disable-next-line guard-for-in
-        for (const colorType in ColorType)
-        {
-          const colorTypeValue = ColorType[colorType] as unknown as number;
-          if (this.supportsColorType(colorTypeValue))
-            child.options.push({ label: colorType, value: colorTypeValue });
-        }
-        child.optionIconDelegate = BaseNode.GetIconFromColorType;
+        
+        if (child instanceof ColorTypeProperty)
+          child.optionValidationDelegate = (option: ColorType) => this.supportsColorType(option);
       }
     }
   }

@@ -9,4 +9,13 @@ export class ColorTypeProperty extends ValueProperty<ColorType>
   //==================================================
 
   public constructor(params: IPropertyParams<ColorType>) { super(params); }
+
+  public getOptionIcon(option: ColorType): string
+  {
+    switch (option)
+    {
+      case ColorType.Black:
+      default: return "";
+    }
+  }
 }

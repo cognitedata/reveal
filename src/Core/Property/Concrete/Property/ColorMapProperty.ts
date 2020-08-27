@@ -17,10 +17,10 @@ export default class ColorMapProperty extends ValueProperty<string>
 
   public getColorMapOptionColors(colorCount: number): string[][]
   {
-    if (!this.options)
+    if (!this.options || !this.options.length)
       return [];
 
-    return this.options.map(colorMapName =>
+    return (this.options as string[]).map(colorMapName =>
     {
       const colorMap = ColorMaps.get(colorMapName);
       const colors: string[] = [];
