@@ -30,7 +30,8 @@ import {
   distinct,
   catchError,
   mergeAll,
-  throttleTime
+  throttleTime,
+  filter
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -107,6 +108,7 @@ export class CachedRepository implements Repository {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._loadingCounter.getTaskTrackerObservable().pipe(
+      filter(({ taskCount, taskCompleted }) => taskCount !== 0 && taskCompleted !== 0), // Filter away reset events
       throttleTime(30, asyncScheduler, { trailing: true }), // Take 1 emission every 30ms
       map(({ taskCount, taskCompleted }) => ({ itemsRequested: taskCount, itemsLoaded: taskCompleted } as LoadingState))
     );
