@@ -1297,10 +1297,10 @@
     cognite-sdk-v2 "npm:@cognite/sdk@^2.28.0"
     cognite-sdk-v3 "npm:@cognite/sdk@^3.0.0"
 
-"@cognite/cdf-utilities@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.7.0.tgz#2e3c708c1de273d534cb8191948e18b73078513f"
-  integrity sha512-jhV1Z/XPY4d701yxbPRAOYcs8fSR4hwmCuZGu6NXeoqLpFtKI8btVHZAhlY8TRz53LfT0tFPuGYL6irL+fiVFA==
+"@cognite/cdf-utilities@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.7.1.tgz#7f712836babd408632016698f66661998f24e22c"
+  integrity sha512-tTpH9/aGtsJYnseLsFZUTfL1brf8wIggJTxWmL/ImN9cfGoDOMXaYJ5g7r//9eteKMdCeAJk96mTf5VU4C6K2w==
   dependencies:
     query-string "^6.13.1"
 

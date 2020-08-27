@@ -5,7 +5,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@cognite/cdf-sdk-singleton": "^0.5.0",
-    "@cognite/cdf-utilities": "^0.7.0",
+    "@cognite/cdf-utilities": "^0.7.1",
     "@cognite/cogs.js": "^1.18.0",
     "@cognite/gcs-browser-upload": "^1.0.5",
     "@cognite/gearbox": "^2.0.1",
