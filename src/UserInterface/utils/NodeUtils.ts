@@ -18,8 +18,15 @@ import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty
 
 export default class NodeUtils
 {
+  //==================================================
+  // STATIC FIELDS
+  //==================================================
 
   private static _currentProperties: BasePropertyFolder | null = null;
+
+  //==================================================
+  // STATIC PROPERTIES
+  //==================================================
 
   public static get properties(): BasePropertyFolder | null
   {
@@ -30,6 +37,10 @@ export default class NodeUtils
   {
     NodeUtils._currentProperties = properties;
   }
+
+  //==================================================
+  // STATIC METHODS: Getters
+  //==================================================
 
   public static getTreeRoot(): BaseNode | null
   {
@@ -52,106 +63,102 @@ export default class NodeUtils
     return null;
   }
 
-  public static generatePropertyTree(
-    property: BasePropertyFolder | BaseProperty | null
-  ): ISettingsSection | ISettingsElement | null
+  //==================================================
+  // STATIC METHODS: Create element
+  //==================================================
+
+  public static createElementTree(property: BaseProperty | null): ISettingsSection | ISettingsElement | null
   {
     if (!property)
       return null;
 
-    // If node is a GroupProperty
+    // ***** GroupProperty
     if (property instanceof GroupProperty)
     {
-      const type = NodeUtils.getControlType(property);
-      if (!type)
-        return null;
-
-      const element: ISettingsElement = {
-        id: property.name,
-        name: property.displayName,
-        type,
-        subValues: [],
-        isReadOnly: property.isReadOnly,
-        useProperty: true,
-        isOptional: false,
-      };
-      if (property.children?.length > 0) 
+      const parentElement = NodeUtils.createGroupElement(property);
+      for (const childProperty of property.children)
       {
-        property.children.forEach((subProperty) => 
-        {
-          const childType = NodeUtils.getControlType(property);
-          if (!childType)
-            return;
-
-          if (subProperty instanceof ValueProperty) 
-          {
-            const subElement: ISettingsElement = {
-              id: property.name,
-              name: subProperty.displayName,
-              isReadOnly: subProperty.isReadOnly,
-              type: childType,
-              value: subProperty.value,
-              useProperty: subProperty.isValueEnabled,
-              isOptional: subProperty.isOptional
-            };
-            element?.subValues?.push(subElement);
-          }
-        });
+        const childElement = NodeUtils.createControlElement(childProperty);
+        if (childElement)
+          parentElement.subValues?.push(childElement);
       }
-      return element;
+      return parentElement;
     }
-
-    // If the node is PropertyFolder  
-    if (property instanceof BasePropertyFolder)
+    // ***** ExpanderProperty  
+    if (property instanceof ExpanderProperty)
     {
-      const expander = <ExpanderProperty>property;
-      const section: ISettingsSection = {
-        id: expander.name,
-        name: expander.displayName,
-        elements: [],
-      };
-      if (expander.children?.length > 0) 
+      const parentElement = NodeUtils.createExpanderElement(property);
+      for (const childProperty of property.children)
       {
-        expander.children.forEach((child) => 
-        {
-          section.elements.push(NodeUtils.generatePropertyTree(child) as ISettingsElement);
-        });
-        return section;
+        const childElement = NodeUtils.createElementTree(childProperty) as ISettingsElement;
+        if (childElement)
+          parentElement.elements.push(childElement);
       }
-      return section;
+      return parentElement;
     }
-
-    // If the node is Property 
+    // ***** ValueProperty
     if (property instanceof ValueProperty)
     {
-      if (!property.isEnabled)
-        return null;
-
-      const type = NodeUtils.getControlType(property);
-      if (!type)
-        return null;
-
-      const element: ISettingsElement = {
-        id: property.name,
-        name: property.displayName,
-        type,
-        value: property.value,
-        subValues: [],
-        isReadOnly: property.isReadOnly,
-        options: NodeUtils.createSelectOptions(property.getExpandedOptions(), property.getOptionIcon),
-        useProperty: property.use,
-        isOptional: property.isOptional,
-      };
-
-      // Handle seperate property types
-      if (property instanceof ColorMapProperty)
-      {
-        element.options = property.options as string[];
-        element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
-      }
-      return element;
+      return NodeUtils.createControlElement(property);
     }
     return null;
+  }
+
+  private static createExpanderElement(property: ExpanderProperty): ISettingsSection
+  {
+    const element: ISettingsSection = {
+      id: property.name,
+      name: property.displayName,
+      elements: [],
+    };
+    return element;
+  }
+
+  private static createGroupElement(property: GroupProperty): ISettingsElement
+  {
+    const element: ISettingsElement = {
+      id: property.name,
+      name: property.displayName,
+      type: ElementTypes.Group,
+      subValues: [],
+      isReadOnly: property.isReadOnly,
+      useProperty: true,
+      isOptional: false,
+    };
+    return element;
+  }
+
+  private static createControlElement(property: BaseProperty): ISettingsElement | null
+  {
+    if (!(property instanceof ValueProperty))
+      return null;
+
+    if (!property.isEnabled)
+      return null;
+
+    const type = NodeUtils.getControlType(property);
+    if (!type)
+      return null;
+
+    const element: ISettingsElement = {
+      id: property.name,
+      name: property.displayName,
+      type,
+      value: property.value,
+      subValues: [],
+      isReadOnly: property.isReadOnly,
+      useProperty: property.use,
+      isOptional: property.isOptional,
+    };
+    // Handle seperate property types
+    if (property instanceof ColorMapProperty)
+    {
+      element.options = property.options as string[];
+      element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
+    }
+    else
+      element.options = NodeUtils.createSelectOptions(property.getExpandedOptions(), property.getOptionIcon);
+    return element;
   }
 
   private static createSelectOptions(options: any[] | [string, any][], iconDelegate: Function): ISelectOption[]
@@ -181,7 +188,7 @@ export default class NodeUtils
     return items;
   }
 
-  private static getControlType(property: BaseProperty): string | null
+  private static getControlType(property: ValueProperty<any>): string | null
   {
     // Special properties comes first
     if (property instanceof BooleanProperty)
@@ -192,17 +199,11 @@ export default class NodeUtils
       return ElementTypes.Color;
     if (property instanceof ColorMapProperty)
       return ElementTypes.ColorMap;
-    if (property instanceof ExpanderProperty)
-      return ElementTypes.Expander;
-    if (property instanceof GroupProperty)
-      return ElementTypes.Group;
 
     // All others with options
-    if (property instanceof ValueProperty)
-    {
-      if (property.hasOptions)
-        return ElementTypes.Select;
-    }
+    if (property.hasOptions)
+      return ElementTypes.Select;
+
     // All without options
     if (property instanceof StringProperty)
       return ElementTypes.String;

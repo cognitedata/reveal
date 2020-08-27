@@ -21,8 +21,7 @@ export default function SettingsPanel(props: SettingPanelProps) {
   const [, forceUpdate] = useState(0);
 
   const sections =
-    (NodeUtils.generatePropertyTree(NodeUtils.properties) as any)?.elements ??
-    [];
+    (NodeUtils.createElementTree(NodeUtils.properties) as any)?.elements ?? [];
 
   const handleUsePropertyChange = (elementId: string, value: boolean) => {
     onPropertyUseChange(elementId, value);

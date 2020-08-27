@@ -17,7 +17,7 @@ import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
-import { Util } from '@/Core/Primitives/Util';
+import { Util } from "@/Core/Primitives/Util";
 
 const FractionDigitsDefault = 2;
 

@@ -105,7 +105,7 @@ export class MeasureDistanceTool extends BaseTool
       const worldEndPosition = this._worldCoordinates.list[this._worldCoordinates.length - 1].clone();
       worldEndPosition.add(transformer.translation);
 
-      const sumDelta = this._worldCoordinates.getSumDelta();;
+      const sumDelta = this._worldCoordinates.getSumDelta();
       viewInfo.addValue("2D / 3D distance", `${this._worldCoordinates.getLength(2).toFixed(2)} / ${this._worldCoordinates.getLength(3).toFixed(2)}`);
       viewInfo.addValue("Sum delta X,Y,Z", sumDelta.getString(2));
       viewInfo.addValue("2D area", this._worldCoordinates.getArea().toFixed(2));
