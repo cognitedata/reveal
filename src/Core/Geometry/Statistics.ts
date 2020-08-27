@@ -22,7 +22,7 @@ export class Statistics
   private _sumSquared: number = 0;
   private _sum: number = 0;
   private _n: number = 0;
-  private _range: Range1 = new Range1();;
+  private _range: Range1 = new Range1();
 
   //==================================================
   // INSTANCE PROPERTIES
