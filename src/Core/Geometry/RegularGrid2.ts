@@ -414,7 +414,7 @@ export class RegularGrid2 extends Grid2
 }
 
 //==================================================
-// LOCAL METHODS: Helpers
+// LOCAL FUNCTIONS: Helpers
 //==================================================
 
 function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, zMean?: number): number

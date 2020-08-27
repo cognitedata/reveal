@@ -31,6 +31,8 @@ export class Statistics
   public get isEmpty(): boolean { return this._n === 0; }
   public get n(): number { return this._n; }
   public get mean(): number { return this.isEmpty ? Number.NaN : this._sum / this._n; }
+  public get sum(): number { return this._sum; }
+  public get sumSquared(): number { return this._sumSquared; }
   public get variance(): number { return this.isEmpty ? Number.NaN : (this._sumSquared - this._sum * this._sum / this._n) / this._n; }
   public get stdDev(): number { return this.isEmpty ? Number.NaN : Math.sqrt(this.variance); }
   public get range(): Range1 { return this._range; }
@@ -69,6 +71,14 @@ export class Statistics
     this._sum += value;
     this._sumSquared += value * value;
     this.range.add(value);
+  }
+
+  public addStatistics(other: Statistics): void
+  {
+    this._n += other.n;
+    this._sum += other.sum;
+    this._sumSquared += other.sumSquared;
+    this.range.addRange(other.range);
   }
 
   public addWithNaN(value: number): void

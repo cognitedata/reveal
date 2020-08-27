@@ -17,6 +17,7 @@ import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 export abstract class BaseFilterLogNode extends BaseVisualNode
 {
@@ -43,7 +44,6 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get className(): string { return BaseFilterLogNode.className; }
-
   public /*override*/ isA(className: string): boolean { return className === BaseFilterLogNode.className || super.isA(className); }
 
   //==================================================
@@ -51,8 +51,17 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   //==================================================
 
   public /*virtual*/ isLabelInItalic(): boolean { return true; }
-
   public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
+
+  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+    let count = 0;
+    for (const logNode of this.getAllLogs())    
+      count++;
+
+    folder.addReadOnlyInteger("# Logs of this type", count);
+  }
 
   //==================================================
   // VIRTUAL METHODS

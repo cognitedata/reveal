@@ -44,7 +44,6 @@ export class CasingFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get className(): string { return CasingFilterLogNode.className; }
-
   public /*override*/ isA(className: string): boolean { return className === CasingFilterLogNode.className || super.isA(className); }
 
   //==================================================

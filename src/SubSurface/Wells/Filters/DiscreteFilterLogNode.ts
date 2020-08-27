@@ -18,6 +18,9 @@ import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode"
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
 import { ColorType } from "@/Core/Enums/ColorType";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import Range1 from "@/Core/Geometry/Range1";
+import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 
 export class DiscreteFilterLogNode extends BaseFilterLogNode
 {
@@ -59,6 +62,12 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
     return new DiscreteLogStyle(targetId);
   }
 
+  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+    folder.addReadOnlyRange1(null, this.getValueRange());
+  }
+
   public /*override*/ supportsColorType(colorType: ColorType): boolean
   {
     switch (colorType)
@@ -80,4 +89,26 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
 
   public /*override*/ get wellLogType(): WellLogType { return WellLogType.Discrete; }
 
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public getValueRange(): Range1
+  {
+    const valueRange = new Range1();
+    for (const logNode of this.getAllLogs())
+    {
+      if (!(logNode instanceof DiscreteLogNode))
+        continue;
+
+      // if (!logNode.hasDataInMemory)
+      //   continue;
+      const { log } = logNode;
+      if (!log)
+        continue;
+
+      valueRange.addRange(log.valueRange);
+    }
+    return valueRange;
+  }
 }
