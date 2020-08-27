@@ -79,8 +79,8 @@ export class WellTrajectoryNode extends DataNode
     if (!(style instanceof WellTrajectoryStyle))
       return;
 
-    if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.Specified;
+    if (!this.supportsColorType(style.colorType.value))
+      style.colorType.value = ColorType.Specified;
   }
 
   public /*override*/ supportsColorType(colorType: ColorType): boolean

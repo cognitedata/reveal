@@ -343,7 +343,7 @@ export class PointLogView extends BaseGroupThreeView
 
     const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellTrajectoryStyle;
     if (wellRenderStyle)
-      radius += wellRenderStyle.radius;
+      radius += wellRenderStyle.radius.value;
 
     return radius;
   }

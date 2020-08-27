@@ -22,6 +22,8 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
   // INSTANCE FIELDS
   //==================================================
 
+  protected static readonly fontSizeOptions: number[] = [6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 30, 36, 50];
+
   private _targetId: TargetId;
   public isDefault: boolean = false;
 
@@ -31,8 +33,6 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
 
   public get targetId(): TargetId { return this._targetId; }
   public set targetId(value: TargetId) { this._targetId = value; }
-
-  public fontSize = new NumberProperty({ name: "Font Size", value: 20, options: [6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 30, 36] }); 
 
   //==================================================
   // CONSTRUCTORS

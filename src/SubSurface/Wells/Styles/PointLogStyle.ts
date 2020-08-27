@@ -28,8 +28,8 @@ export class PointLogStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
-
-  public radius = new NumberProperty({ name: "Radius", value: 20, options: [10, 20, 25, 30, 50, 75, 100, 200] });
+  public radius = new NumberProperty({ name: "Radius", value: 20, options: [10, 20, 25, 30, 50, 75, 100, 200] }); 
+  public fontSize = new NumberProperty({ name: "Font Size", value: 20, options: BaseRenderStyle.fontSizeOptions }); 
 
   //==================================================
   // CONSTRUCTORS
