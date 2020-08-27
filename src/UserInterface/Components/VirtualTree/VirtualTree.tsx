@@ -8,7 +8,7 @@ import { TreeItemButton } from "@/UserInterface/Components/VirtualTree/TreeItemC
 import { ChromaIcon } from "@/UserInterface/Components/ChromaIcon/ChromaIcon";
 import { ExpandButton } from "./ExpandButton";
 import { VirtualTreeProps } from "./VirtualTreeProps";
-import { ITreeNode } from "./TreeNode";
+import { ITreeNode } from "./ITreeNode";
 
 const DEFAULT_ROW_HEIGHT = 22;
 

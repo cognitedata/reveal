@@ -278,12 +278,12 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ populateInfoCore(folder: BasePropertyFolder): void
   {
-    folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), apply: this.notifyNameChanged });
+    folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), applyDelegate: () => this.notifyNameChanged() });
     if (this.canChangeColor())
-      folder.addColor({ name: "color", instance: this, apply: this.notifyColorChanged });
+      folder.addColor({ name: "color", instance: this, applyDelegate: () => this.notifyColorChanged() });
     folder.addReadOnlyString("Type", this.typeName);
     if (this.hasColorMap())
-      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, apply: this.notifyColorMapChanged });
+      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, applyDelegate: () => this.notifyColorMapChanged() });
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: BasePropertyFolder): void { }
@@ -313,7 +313,7 @@ export abstract class BaseNode extends Identifiable
       if (child instanceof ValueProperty)
       {
         child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
-        
+
         if (child instanceof ColorTypeProperty)
           child.optionValidationDelegate = (option: ColorType) => this.supportsColorType(option);
       }

@@ -50,7 +50,7 @@ export class LogFilterView extends BaseView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    if (args.isChanged(Changes.renderStyle) || args.isChanged(Changes.nodeColor))
+    if (args.isChanged(Changes.renderStyle, Changes.nodeColor))
       this.updateTrajectory(args);
   }
 

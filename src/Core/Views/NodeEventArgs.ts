@@ -38,11 +38,13 @@ export class NodeEventArgs
 
   public get isEmpty(): boolean { return this.changes === null || this.changes.length === 0; }
 
-  public isChanged(changed: symbol): boolean
+  public isChanged(...changes: symbol[]): boolean
   {
     if (!this.changes)
       return false;
-    return this.changes.some((desc: ChangedDescription) => desc.changed === changed);
+    for (const changed of changes)
+      return this.changes.some((desc: ChangedDescription) => desc.changed === changed);
+    return false;
   }
 
   public isFieldNameChanged(changed: symbol, ...fieldNames: string[]): boolean

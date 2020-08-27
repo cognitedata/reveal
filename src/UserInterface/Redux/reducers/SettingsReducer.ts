@@ -26,9 +26,9 @@ const initialState = {
     ]
   },
   expandedSections: {
-    [Appearance.generalSettingsFolder]: Appearance.generalSettingsDefaultExpanded,
-    [Appearance.statisticsFolder]: Appearance.statisticsDefaultExpanded,
-    [Appearance.visualSettingsFolder]: Appearance.visualSettingsDefaultExpanded,
+    [Appearance.generalSettingsName]: Appearance.generalSettingsDefaultExpanded,
+    [Appearance.statisticsName]: Appearance.statisticsDefaultExpanded,
+    [Appearance.visualSettingsName]: Appearance.visualSettingsDefaultExpanded,
   }
 } as ISettingsState;
 // Redux Toolkit package includes a createReducer utility that uses Immer internally.
@@ -70,15 +70,15 @@ export const settingsSlice = createSlice({
             // populate settings object
             settings = new ExpanderProperty("Settings");
             {
-              const expander = settings.createExpander(Appearance.generalSettingsFolder);
+              const expander = settings.createExpander(Appearance.generalSettingsName);
               node.populateInfo(expander);
             }
             {
-              const expander = settings.createExpander(Appearance.statisticsFolder);
+              const expander = settings.createExpander(Appearance.statisticsName);
               node.populateStatistics(expander);
             }
             {
-              const expander = settings.createExpander(Appearance.visualSettingsFolder);
+              const expander = settings.createExpander(Appearance.visualSettingsName);
               node.populateRenderStyle(expander);
             }
             NodeUtils.properties = settings;

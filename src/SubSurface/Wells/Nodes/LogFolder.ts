@@ -33,7 +33,6 @@ export class LogFolder extends FolderNode
   //==================================================
 
   public /*override*/ get className(): string { return LogFolder.className; }
-
   public /*override*/ isA(className: string): boolean { return className === LogFolder.className || super.isA(className); }
 
   //==================================================
@@ -41,8 +40,6 @@ export class LogFolder extends FolderNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Log folder"; }
-
   public /*override*/ getIcon(): string { return FolderNodeGreyscale; }
-
-  public /*virtual*/ canChangeColor(): boolean { return true; }
+  public /*override*/ canChangeColor(): boolean { return true; }
 }

@@ -174,7 +174,6 @@ export class SeismicPlaneNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get className(): string { return SeismicPlaneNode.className; }
-
   public /*override*/ isA(className: string): boolean { return className === SeismicPlaneNode.className || super.isA(className); }
 
   //==================================================

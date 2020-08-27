@@ -54,10 +54,7 @@ export class SeismicOutlineNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Outline"; }
-
   public /*override*/ canChangeName(): boolean { return false; }
-
   public /*override*/ canChangeColor(): boolean { return false; }
-
   public /*override*/ getIcon(): string { return Icon; }
 }

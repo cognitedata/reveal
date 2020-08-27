@@ -1,4 +1,4 @@
-import { ITreeNode } from "@/UserInterface/Components/VirtualTree/TreeNode";
+import { ITreeNode } from "@/UserInterface/Components/VirtualTree/ITreeNode";
 
 export type ExplorerTab = {
   name: string;

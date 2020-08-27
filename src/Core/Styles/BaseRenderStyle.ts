@@ -19,10 +19,14 @@ import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty
 export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAccessor
 {
   //==================================================
-  // INSTANCE FIELDS
+  // STATIC FIELDS
   //==================================================
 
   protected static readonly fontSizeOptions: number[] = [6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 30, 36, 50];
+
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
 
   private _targetId: TargetId;
   public isDefault: boolean = false;

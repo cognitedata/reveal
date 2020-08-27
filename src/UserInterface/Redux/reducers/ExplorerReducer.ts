@@ -7,7 +7,7 @@ import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 import { TreeCheckState } from "@/UserInterface/NodeVisualizer/Explorer/TreeCheckState";
 import ExplorerNodeUtils from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
 import { State } from "@/UserInterface/Redux/State/State";
-import { ITreeNode } from "@/UserInterface/Components/VirtualTree/TreeNode";
+import { ITreeNode } from "@/UserInterface/Components/VirtualTree/ITreeNode";
 
 const initialState: IExplorerState = {
   tabs: [],

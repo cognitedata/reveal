@@ -1,4 +1,4 @@
-import { ITreeNode } from "./TreeNode";
+import { ITreeNode } from "./ITreeNode";
 
 export interface VirtualTreeProps
 {
