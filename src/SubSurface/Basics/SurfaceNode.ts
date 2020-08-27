@@ -106,7 +106,7 @@ export class SurfaceNode extends DataNode
   {
     switch (colorType)
     {
-      case ColorType.Depth:
+      case ColorType.ColorMap:
       case ColorType.Specified:
       case ColorType.Parent:
       case ColorType.Black:

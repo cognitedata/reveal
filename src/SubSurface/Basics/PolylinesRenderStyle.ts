@@ -27,7 +27,7 @@ export class PolylinesRenderStyle extends BaseRenderStyle
 
   public lineWidth = 1;
 
-  public colorType: ColorType = ColorType.DifferentColor;
+  public colorType: ColorType = ColorType.Different;
 
   //==================================================
   // CONSTRUCTORS

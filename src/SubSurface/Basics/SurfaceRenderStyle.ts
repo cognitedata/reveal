@@ -32,7 +32,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   public contourColorType = new ColorTypeProperty({ name: "Contour color", value: ColorType.Black });
   public increment = new NumberProperty({ name: "Increment", value: 0 });
   public showSolid = new BooleanProperty({ name: "Show solid", value: true });
-  public solidColorType = new ColorTypeProperty({ name: "Solid color", value: ColorType.Depth });
+  public solidColorType = new ColorTypeProperty({ name: "Solid color", value: ColorType.ColorMap });
   public solidContour = new SliderProperty({ name: "Solid contour", value: 0.5, use: true });
   public shininess = new SliderProperty({ name: "Shininess", value: 0.5, use: true });
   public opacity = new SliderProperty({ name: "Opacity", value: 0.5, use: false });
