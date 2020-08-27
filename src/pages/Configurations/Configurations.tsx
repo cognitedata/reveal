@@ -3,40 +3,45 @@ import { Table } from 'antd';
 import { ContentContainer } from 'elements';
 import ApiContext from 'contexts/ApiContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType, ColumnType } from 'antd/es/table';
 import { generateColumnsFromData } from 'utils/functions';
 import { GenericResponseObject } from 'typings/interfaces';
-
-enum CellContentType {
-  ARRAY_OF_STRINGS = 'array-of-strings',
-}
-
-enum CellContentRender {
-  BADGES = 'badges',
-}
+import { Badge } from '@cognite/cogs.js';
 
 interface Rule {
-  name: string;
-  column: string;
-  content: CellContentType;
-  renderAs: CellContentRender;
+  key: string;
+  render: (record: any) => React.ReactFragment;
 }
 
 const defaultRules: Rule[] = [
   {
-    name: 'Render Business Tags as Badges',
-    column: 'business_tags',
-    content: CellContentType.ARRAY_OF_STRINGS,
-    renderAs: CellContentRender.BADGES,
+    key: 'business_tags',
+    render: (record: string[]) =>
+      record.map((tag: string) => (
+        <Badge key={tag} text={tag} background="greyscale-grey2" />
+      )),
+  },
+  {
+    key: 'datatypes',
+    render: (record: string[]) =>
+      record.map((tag: string) => (
+        <Badge key={tag} text={tag} background="greyscale-grey2" />
+      )),
   },
 ];
 
 function curateColumns(columns: any, rules: any) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  rules.map((rule: Rule) => {
-    return null;
-  });
-  return columns;
+  const tmp = columns;
+  if (columns) {
+    rules.map((rule: Rule) => {
+      const index = columns.findIndex(
+        (column: ColumnType<any>) => column.key === rule.key
+      );
+      tmp[index].render = rule.render;
+      return null;
+    });
+  }
+  return tmp;
 }
 
 const Configurations = () => {
