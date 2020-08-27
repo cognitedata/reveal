@@ -44,7 +44,6 @@ export class PointFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get className(): string { return PointFilterLogNode.className; }
-
   public /*override*/ isA(className: string): boolean { return className === PointFilterLogNode.className || super.isA(className); }
 
   //==================================================
@@ -52,7 +51,6 @@ export class PointFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "PointLog"; }
-
   public /*override*/ getIcon(): string { return PointLogNodeIcon; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null

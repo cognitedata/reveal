@@ -17,6 +17,7 @@ import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
+import { Util } from '@/Core/Primitives/Util';
 
 const FractionDigitsDefault = 2;
 
@@ -121,16 +122,27 @@ export default abstract class BasePropertyFolder extends BaseProperty
   // INSTANCE METHODS: Add read only values
   //==================================================
 
-  public addReadOnlyStatistics(name: string, statistics: Statistics | undefined, fractionDigits = FractionDigitsDefault): void
+  public addReadOnlyStatistics(name: string | null, statistics: Statistics | undefined, fractionDigits = FractionDigitsDefault): void
   {
-    if (statistics && !statistics.isEmpty)
-      this.addReadOnlyStrings(`${name}[mean/StdDev]`, statistics.mean.toFixed(fractionDigits), statistics.stdDev.toFixed(fractionDigits));
+    if (!statistics || statistics.isEmpty)
+      return;
+
+    let header = "Mean/StdDev";
+    if (!Util.isEmpty(name))
+      header = `${name}[${header}]`;
+
+    this.addReadOnlyStrings(header, statistics.mean.toFixed(fractionDigits), statistics.stdDev.toFixed(fractionDigits));
   }
 
-  public addReadOnlyRange1(name: string, range: Range1 | undefined, fractionDigits = FractionDigitsDefault): void
+  public addReadOnlyRange1(name: string | null, range: Range1 | undefined, fractionDigits = FractionDigitsDefault): void
   {
-    if (range && !range.isEmpty)
-      this.addReadOnlyStrings(`${name}[min/delta/max]`, range.min.toFixed(fractionDigits), range.delta.toFixed(fractionDigits), range.max.toFixed(fractionDigits));
+    if (!range || range.isEmpty)
+      return;
+
+    let header = "Min/Delta/Max";
+    if (!Util.isEmpty(name))
+      header = `${name}[${header}]`;
+    this.addReadOnlyStrings(header, range.min.toFixed(fractionDigits), range.delta.toFixed(fractionDigits), range.max.toFixed(fractionDigits));
   }
 
   public addReadOnlyRange3(range: Range3, fractionDigits: number = FractionDigitsDefault): void

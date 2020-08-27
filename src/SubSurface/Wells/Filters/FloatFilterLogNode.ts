@@ -18,6 +18,10 @@ import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode"
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
 import { ColorType } from "@/Core/Enums/ColorType";
+import Range1 from "@/Core/Geometry/Range1";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { Statistics } from "@/Core/Geometry/Statistics";
+import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
 
 export class FloatFilterLogNode extends BaseFilterLogNode
 {
@@ -26,6 +30,13 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   static className = "FloatFilterLogNode";
+
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  public propertyType = "";
+  public unit = "";
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -44,7 +55,6 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get className(): string { return FloatFilterLogNode.className; }
-
   public /*override*/ isA(className: string): boolean { return className === FloatFilterLogNode.className || super.isA(className); }
 
   //==================================================
@@ -75,9 +85,52 @@ export class FloatFilterLogNode extends BaseFilterLogNode
     }
   }
 
+  protected /*override*/ populateInfoCore(folder: BasePropertyFolder): void
+  {
+    super.populateInfoCore(folder);
+    folder.addString({ name: "propertyType", instance: this, readonly: false });
+    folder.addString({ name: "unit", instance: this, readonly: false });
+  }
+
+  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+    const statistics = this.getStatistics();
+    folder.addReadOnlyRange1(null, statistics.range);
+    folder.addReadOnlyStatistics(null, statistics);
+  }
+
   //==================================================
   // OVERRIDES of BaseLogNode
   //==================================================
 
   public /*override*/ get wellLogType(): WellLogType { return WellLogType.Float; }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public getValueRange(): Range1
+  {
+    return this.getStatistics().range;
+  }
+
+  private getStatistics(): Statistics
+  {
+    const statistics = new Statistics();
+    for (const logNode of this.getAllLogs())
+    {
+      if (!(logNode instanceof FloatLogNode))
+        continue;
+
+      // if (!logNode.hasDataInMemory)
+      //   continue;
+      const { log } = logNode;
+      if (!log)
+        continue;
+
+      statistics.addStatistics(log.statistics);
+    }
+    return statistics;
+  }
 }

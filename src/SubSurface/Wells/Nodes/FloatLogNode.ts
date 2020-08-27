@@ -73,8 +73,8 @@ export class FloatLogNode extends BaseLogNode
     if (!log)
       return;
 
-    folder.addReadOnlyRange1("Values", log.valueRange);
-    folder.addReadOnlyStatistics("Values", log.statistics);
+    folder.addReadOnlyRange1(null, log.valueRange);
+    folder.addReadOnlyStatistics(null, log.statistics);
   }
 
   //==================================================
