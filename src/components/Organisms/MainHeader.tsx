@@ -31,11 +31,13 @@ const TitleContainer = styled(HeaderItem)`
       font-size: 14px;
       font-style: normal;
       font-weight: 600;
+      margin: 0;
     }
     h2 {
       font-size: 12px;
       font-style: normal;
       font-weight: 500;
+      margin: 0;
     }
   }
 `;
