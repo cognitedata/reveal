@@ -5,3 +5,91 @@ export const ContentContainer = styled.div`
   box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
 `;
+
+export const ContentCard = styled(ContentContainer)`
+  border-radius: 16px;
+  padding: 24px 32px;
+`;
+
+export const Header = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+`;
+
+export const ThreeColsLayout = styled.div`
+  display: flex;
+  & > div {
+    width: calc(100% / 3);
+    min-height: 50vh;
+  }
+`;
+
+export const ConfigurationContainer = styled(ContentCard)`
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  & > header {
+    border-bottom: 1px solid var(--cogs-greyscale-grey5);
+    padding: 24px 48px;
+  }
+  & > main {
+    padding: 16px 48px;
+    flex-grow: 1;
+  }
+  & > footer {
+    padding: 16px 48px;
+    display: flex;
+    justify-content: center;
+  }
+`;
+
+export const ConfigurationArrow = styled.div`
+  padding: 48px;
+  display: flex;
+  justify-content: center;
+  & > svg {
+    width: 75%;
+    stroke: var(--cogs-greyscale-grey5);
+  }
+`;
+
+export const InitialState = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  & > p {
+    font-weight: bold;
+    color: var(--cogs-greyscale-grey5);
+  }
+`;
+
+export const ConnectorList = styled.ul<{ connectorPosition?: string }>`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  & > li {
+    background-color: var(--cogs-greyscale-grey2);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    padding: 4px 16px;
+    position: relative;
+    &:after {
+      position: absolute;
+      right: ${(props) =>
+        props.connectorPosition === 'right' ? '-32px' : 'calc(100% + 16px)'};
+      top: calc(50% - 8px);
+      display: block;
+      content: '';
+      background-color: var(--cogs-greyscale-grey2);
+      border-radius: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+`;

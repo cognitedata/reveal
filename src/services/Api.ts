@@ -1,5 +1,10 @@
 import config from 'utils/config';
-import { RESTPackageFilter, RESTProject } from '../typings/interfaces';
+import {
+  GenericResponseObject,
+  RESTPackageFilter,
+  RESTProject,
+  Source,
+} from '../typings/interfaces';
 
 export type QueryParameters = {
   [property: string]: number | string | boolean | object | undefined;
@@ -41,6 +46,15 @@ class Api {
     return response.json();
   }
 
+  private async post(url: string, data: any): Promise<any> {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  }
+
   public datatypes = {
     get: async (projectId: number | null = null): Promise<string[]> => {
       let queryParameters;
@@ -50,7 +64,7 @@ class Api {
   };
 
   public objects = {
-    get: async () => {
+    get: async (): Promise<GenericResponseObject[]> => {
       return this.get(`${config.api.url}/objects`);
     },
   };
@@ -58,6 +72,12 @@ class Api {
   public packages = {
     get: async (filter: RESTPackageFilter): Promise<any> => {
       return this.get(`${config.api.url}/packages`, filter);
+    },
+  };
+
+  public projects = {
+    get: async (source: Source): Promise<GenericResponseObject[]> => {
+      return this.get(`${config.api.url}/sources/${source}/projects`);
     },
   };
 
@@ -82,6 +102,15 @@ class Api {
       return this.get(
         `${config.api.url}/sources/${source}/projects/${projectExternalId}/tree`
       );
+    },
+  };
+
+  public configurations = {
+    get: async (): Promise<GenericResponseObject[]> => {
+      return this.get(`${config.api.url}/configurations`);
+    },
+    create: async (data: any): Promise<GenericResponseObject> => {
+      return this.post(`${config.api.url}/configurations`, data);
     },
   };
 }

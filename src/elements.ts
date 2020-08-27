@@ -15,3 +15,16 @@ export const Main = styled.div`
 export const Content = styled.main`
   padding: 32px 48px;
 `;
+
+export const ContentContainer = styled.div`
+  background-color: var(--cogs-white);
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1);
+  margin-top: 16px;
+`;
+
+export const TableActions = styled.div`
+  padding: 32px 16px;
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  display: flex;
+  justify-content: flex-end;
+`;

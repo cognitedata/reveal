@@ -5,7 +5,7 @@ import { ColumnsType } from 'antd/es/table';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Button, Dropdown, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { ContentContainer } from '../Configurations/elements';
+import { ContentContainer, TableActions } from '../../elements';
 import 'antd/dist/antd.css';
 import config from './datatransfer.config';
 import ApiContext from '../../contexts/ApiContext';
@@ -169,13 +169,6 @@ const SelectColumnsMenu = ({
     </Menu>
   );
 };
-
-const TableActions = styled.div`
-  padding: 32px 16px;
-  border-bottom: 1px solid var(--cogs-greyscale-grey4);
-  display: flex;
-  justify-content: flex-end;
-`;
 
 const ShowDetails = styled.span`
   color: var(--cogs-greyscale-grey6);
