@@ -160,6 +160,11 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     } else {
       setSourceComplete(false);
     }
+    if (configuration.target.external_id.trim() !== '') {
+      setTargetComplete(true);
+    } else {
+      setTargetComplete(false);
+    }
   }, [configuration]);
 
   return (
@@ -182,7 +187,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
               <>
                 <div>{configuration.source.external_id}</div>
                 {configuration.business_tags.map((tag) => (
-                  <Badge key={tag} text={tag} />
+                  <Badge key={tag} text={tag} background="greyscale-grey5" />
                 ))}
               </>
             )}
@@ -287,6 +292,9 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
         <ConfigurationContainer>
           <header>
             <b>OpenWorks</b>
+            {targetUIState === ConfigUIState.CONFIRMED && (
+              <div>{configuration.target.external_id}</div>
+            )}
           </header>
           {targetUIState === ConfigUIState.INITIAL && (
             <main>
@@ -336,6 +344,13 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                 </Button>
               </footer>
             </>
+          )}
+          {targetUIState === ConfigUIState.CONFIRMED && (
+            <main>
+              <ul>
+                <li>_Root</li>
+              </ul>
+            </main>
           )}
         </ConfigurationContainer>
       </ThreeColsLayout>

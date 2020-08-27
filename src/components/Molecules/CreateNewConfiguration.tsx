@@ -47,7 +47,7 @@ const CreateNewConfiguration = () => {
         <>
           <Input
             autoFocus
-            placeholder="DSG session name..."
+            placeholder="Enter configuration name"
             style={{ marginRight: '16px' }}
             onChange={handleChange}
             value={sessionName}
