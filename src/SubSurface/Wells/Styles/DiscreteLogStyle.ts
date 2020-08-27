@@ -42,5 +42,6 @@ export class DiscreteLogStyle extends BaseRenderStyle
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
+    folder.addChild(this.rightBand);
   }
 }
