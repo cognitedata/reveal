@@ -23,7 +23,7 @@ export class WellFolder extends FolderNode
   static className = "WellFolder";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

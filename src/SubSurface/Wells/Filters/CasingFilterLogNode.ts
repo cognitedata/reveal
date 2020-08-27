@@ -34,7 +34,7 @@ export class CasingFilterLogNode extends BaseFilterLogNode
   public get renderStyle(): CasingLogStyle | null { return this.getRenderStyle() as CasingLogStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

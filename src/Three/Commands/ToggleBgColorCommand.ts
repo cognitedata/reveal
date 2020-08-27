@@ -7,7 +7,7 @@ export class ToggleBgColorCommand extends ThreeRenderTargetCommand
 {
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

@@ -73,7 +73,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

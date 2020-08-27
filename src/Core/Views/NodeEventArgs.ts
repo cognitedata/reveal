@@ -24,7 +24,7 @@ export class NodeEventArgs
   private changes: ChangedDescription[] | null = null;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(changed: symbol, fieldName?: string)

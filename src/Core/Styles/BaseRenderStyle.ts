@@ -39,7 +39,7 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
   public set targetId(value: TargetId) { this._targetId = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) 

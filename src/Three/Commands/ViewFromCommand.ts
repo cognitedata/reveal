@@ -12,7 +12,7 @@ export class ViewFromCommand extends ThreeRenderTargetCommand
   private viewFrom: number;
   
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null, viewFrom: number)

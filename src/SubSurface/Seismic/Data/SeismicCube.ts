@@ -46,7 +46,7 @@ export class SeismicCube extends RegularGrid3
   public get statistics(): Statistics | undefined { return this._statistics; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(nodeSize: Index3, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined)

@@ -5,7 +5,7 @@ import ZoomBaseToolIcon from "@images/Commands/ZoomTool.png";
 export class ZoomTool extends BaseTool
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

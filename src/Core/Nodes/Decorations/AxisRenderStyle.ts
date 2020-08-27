@@ -35,7 +35,7 @@ export class AxisRenderStyle extends BaseRenderStyle
   public labelFontSize = 3; // In fraction of the real tickLength
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

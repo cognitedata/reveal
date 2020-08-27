@@ -75,7 +75,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

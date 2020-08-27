@@ -18,7 +18,7 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 export class RegularGrid2Buffers extends TrianglesBuffers
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(grid: RegularGrid2, makeUvs: boolean)

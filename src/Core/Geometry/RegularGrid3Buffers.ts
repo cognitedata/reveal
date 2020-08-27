@@ -19,7 +19,7 @@ import Index2 from "@/Core/Geometry/Index2";
 export class RegularGrid3Buffers extends TrianglesBuffers
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(grid: RegularGrid3, normal: Vector3, cells: Index2[])

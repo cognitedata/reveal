@@ -23,7 +23,7 @@ export class SeismicTreeNode extends BaseTreeNode
   static className = "SeismicTreeNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

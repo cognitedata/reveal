@@ -37,7 +37,7 @@ export class SeismicOutlineNode extends BaseVisualNode
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -34,7 +34,7 @@ export class PointFilterLogNode extends BaseFilterLogNode
   public get renderStyle(): PointLogStyle | null { return this.getRenderStyle() as PointLogStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

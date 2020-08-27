@@ -5,7 +5,7 @@ import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 export class ColorTypeProperty extends ValueProperty<ColorType>
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(params: IPropertyParams<ColorType>) 

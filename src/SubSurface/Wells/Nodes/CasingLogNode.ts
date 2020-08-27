@@ -34,7 +34,7 @@ export class CasingLogNode extends BaseLogNode
   public set log(value: CasingLog | null) { this.anyData = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

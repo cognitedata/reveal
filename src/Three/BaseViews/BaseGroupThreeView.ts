@@ -38,7 +38,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

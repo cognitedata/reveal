@@ -34,7 +34,7 @@ export class PointLogSample extends BaseLogSample
   public isOpen = false;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(description: string, topMd: number, baseMd?: number)

@@ -30,7 +30,7 @@ export class SurveyNode extends BaseVisualNode
   public surveyCube: RegularGrid3 | null = null;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

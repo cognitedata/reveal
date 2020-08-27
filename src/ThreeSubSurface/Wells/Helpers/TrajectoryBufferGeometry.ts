@@ -29,7 +29,7 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry
   private b = Vector3.newZero;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(samples: RenderSample[], radialSegments = 16)

@@ -30,7 +30,7 @@ export default class Index3
   public k: number;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(i: number, j: number, k: number)

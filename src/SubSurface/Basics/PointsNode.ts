@@ -31,7 +31,7 @@ export class PointsNode extends DataNode
   static className = "PointsNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

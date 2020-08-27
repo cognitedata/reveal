@@ -38,7 +38,7 @@ export class Modules
   }
 
   //==================================================
-  // CONSTRUCTORS:
+  // CONSTRUCTOR:
   //==================================================
 
   private constructor()

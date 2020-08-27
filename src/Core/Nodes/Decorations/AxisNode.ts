@@ -26,7 +26,7 @@ export class AxisNode extends BaseVisualNode
   static className = "AxisNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -40,7 +40,7 @@ export class UniqueId
   public /*override*/ toString(): string { return `${this._id}`; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   private constructor(id?: string) { this._id = id; }

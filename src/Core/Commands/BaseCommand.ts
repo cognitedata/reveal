@@ -3,7 +3,7 @@ import { Util } from "@/Core/Primitives/Util";
 export abstract class BaseCommand
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor() { }

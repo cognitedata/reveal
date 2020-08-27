@@ -23,7 +23,7 @@ export class FolderNode extends BaseNode
   static className = "FolderNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

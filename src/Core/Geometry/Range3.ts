@@ -61,7 +61,7 @@ export default class Range3
   public get diagonal(): number { return Math.sqrt(Ma.square(this.x.delta) + Ma.square(this.y.delta) + Ma.square(this.z.delta)); }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(min?: Vector3, max?: Vector3) 

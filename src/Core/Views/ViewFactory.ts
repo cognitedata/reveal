@@ -24,7 +24,7 @@ export class ViewFactory
   private products = new Map<string, Product>();
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   private constructor()

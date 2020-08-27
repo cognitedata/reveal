@@ -32,7 +32,7 @@ export class LogFilterView extends BaseView
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -73,7 +73,7 @@ export class Vector3
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(x: number, y: number, z = 0)

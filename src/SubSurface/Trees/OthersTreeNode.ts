@@ -23,7 +23,7 @@ export class OthersTreeNode extends BaseTreeNode
   static className = "OthersTreeNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -10,7 +10,7 @@ export class ToggleFullscreenCommand extends ThreeRenderTargetCommand
     private _isFullScreen = false;
 
     //==================================================
-    // CONSTRUCTORS
+    // CONSTRUCTOR
     //==================================================
 
     public constructor(target: ThreeRenderTargetNode | null = null) 

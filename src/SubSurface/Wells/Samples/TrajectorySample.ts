@@ -28,7 +28,7 @@ export class TrajectorySample extends MdSample
   public azimuth = 0;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(point: Vector3, md = 0)

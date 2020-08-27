@@ -19,7 +19,7 @@ export default class ExpanderProperty extends BasePropertyFolder
   public set expanded(value: boolean) { this._expanded = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(name: string) { super(name); }

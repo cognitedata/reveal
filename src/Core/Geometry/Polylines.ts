@@ -26,7 +26,7 @@ export class Polylines extends Shape
   public get length(): number { return this.list.length; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -44,7 +44,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

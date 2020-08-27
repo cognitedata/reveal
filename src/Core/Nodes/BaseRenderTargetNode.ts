@@ -40,7 +40,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor(fractionRange: Range3 | undefined)

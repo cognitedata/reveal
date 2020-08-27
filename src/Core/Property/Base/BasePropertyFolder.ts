@@ -35,10 +35,20 @@ export default abstract class BasePropertyFolder extends BaseProperty
   public get children(): BaseProperty[] { return this._children; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor(name: string) { super(name, false); }
+
+  //==================================================
+  // OVERRIDES of BaseProperty
+  //==================================================
+
+  public /*override*/ clearDelegates(): void
+  {
+    for (const child of this.children)
+      child.clearDelegates();
+  }
 
   //==================================================
   // VIRTUAL METHODS

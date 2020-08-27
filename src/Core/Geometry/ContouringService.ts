@@ -33,7 +33,7 @@ export class ContouringService
   private positions: number[] = [];
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(inc: number)

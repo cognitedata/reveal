@@ -30,7 +30,7 @@ export class PolylinesRenderStyle extends BaseRenderStyle
   public colorType: ColorType = ColorType.Different;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

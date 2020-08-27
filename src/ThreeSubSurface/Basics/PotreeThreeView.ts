@@ -33,7 +33,7 @@ export class PotreeThreeView extends BaseGroupThreeView
   protected get style(): PotreeRenderStyle { return super.getStyle() as PotreeRenderStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

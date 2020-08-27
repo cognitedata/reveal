@@ -30,7 +30,7 @@ export class PointsRenderStyle extends BaseRenderStyle
   public colorType: ColorType = ColorType.ColorMap;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

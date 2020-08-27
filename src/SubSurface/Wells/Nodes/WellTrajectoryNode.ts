@@ -46,7 +46,7 @@ export class WellTrajectoryNode extends DataNode
   public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

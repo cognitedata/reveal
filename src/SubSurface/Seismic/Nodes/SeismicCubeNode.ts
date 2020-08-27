@@ -33,7 +33,7 @@ export class SeismicCubeNode extends DataNode
 
   static className = "SeismicCubeNode";
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

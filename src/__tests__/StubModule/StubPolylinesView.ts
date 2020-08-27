@@ -20,7 +20,7 @@ import { StubTargetNode } from "./StubTargetNode";
 export class StubPolylinesView extends Base3DView
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

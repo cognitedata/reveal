@@ -41,7 +41,7 @@ export class LogRender
   private mdRange: Range1;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(bandRange: Range1, mdRange: Range1)

@@ -35,7 +35,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
   protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -4,7 +4,7 @@ import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetComm
 export abstract class BaseTool extends ThreeRenderTargetCommand
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

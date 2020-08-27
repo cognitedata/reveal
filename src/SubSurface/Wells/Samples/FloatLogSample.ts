@@ -24,7 +24,7 @@ export class FloatLogSample extends BaseLogSample
   public value: number;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(value: number, md: number)

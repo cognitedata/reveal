@@ -12,7 +12,7 @@ export class NavigationTool extends BaseTool
   private _movementY = -1;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

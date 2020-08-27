@@ -26,7 +26,7 @@ export class SeismicCubeView extends BaseView
   private get node(): SeismicCubeNode { return super.getNode() as SeismicCubeNode; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

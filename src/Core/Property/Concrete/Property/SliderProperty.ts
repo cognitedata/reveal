@@ -6,7 +6,7 @@ import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 export class SliderProperty extends ValueProperty<number>
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(params: IPropertyParams<number>)

@@ -40,7 +40,7 @@ export class NodePointer
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(node?: BaseNode) 

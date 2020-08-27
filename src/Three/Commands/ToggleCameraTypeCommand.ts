@@ -6,7 +6,7 @@ import ToggleCameraTypeCommandPerspectiveIcon from "@images/Commands/ToggleCamer
 export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

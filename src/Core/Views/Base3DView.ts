@@ -26,7 +26,7 @@ export abstract class Base3DView extends BaseView
   private _boundingBox: Range3 | undefined = undefined;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor() { super(); }

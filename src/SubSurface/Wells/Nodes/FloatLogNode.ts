@@ -43,7 +43,7 @@ export class FloatLogNode extends BaseLogNode
   public set log(value: FloatLog | null) { this.anyData = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

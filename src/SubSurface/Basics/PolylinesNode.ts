@@ -31,7 +31,7 @@ export class PolylinesNode extends DataNode
   static className = "PolylinesNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

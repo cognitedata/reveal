@@ -25,7 +25,7 @@ export class BaseRootNode extends BaseNode
   static className = "BaseRootNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor()

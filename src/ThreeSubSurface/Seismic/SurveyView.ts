@@ -24,7 +24,7 @@ export class SurveyView extends BaseView
   private get node(): SurveyNode { return super.getNode() as SurveyNode; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

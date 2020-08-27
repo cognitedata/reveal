@@ -20,7 +20,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
   static className = "BaseTargetNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor() { super(); }

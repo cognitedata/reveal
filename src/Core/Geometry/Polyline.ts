@@ -25,7 +25,7 @@ export class Polyline extends Points
   public isClosed: boolean = false;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }
