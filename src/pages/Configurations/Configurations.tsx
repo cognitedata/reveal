@@ -10,7 +10,7 @@ import {
   Rule,
   UNIX_TIMESTAMP_FACTOR,
 } from 'typings/interfaces';
-import { Badge } from '@cognite/cogs.js';
+import { Badge, Tooltip } from '@cognite/cogs.js';
 
 // noinspection HtmlUnknownTarget
 const rules: Rule[] = [
@@ -51,11 +51,9 @@ const rules: Rule[] = [
     render: (record: boolean) => {
       const color = record ? 'green' : 'lightgrey';
       return (
-        <StatusIcon
-          type="Info"
-          style={{ color }}
-          title={record ? 'Active' : 'Inactive'}
-        />
+        <Tooltip content={<span>{record ? 'Active' : 'Inactive'}</span>}>
+          <StatusIcon type="Info" style={{ color }} />
+        </Tooltip>
       );
     },
   },
