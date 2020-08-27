@@ -69,7 +69,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
   private get bandRange(): Range1 | undefined
   {
     const { style } = this;
-    return !style ? undefined : new Range1(style.radius, style.bandWidth);
+    return !style ? undefined : new Range1(style.radius.value, style.bandWidth.value);
   }
 
   //==================================================
@@ -171,7 +171,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!style)
       return boundingBox;
 
-    const margin = new Vector3(style.bandWidth, style.bandWidth, style.nameFontSize * 1.25);
+    const margin = new Vector3(style.bandWidth.value, style.bandWidth.value, style.nameFontSize.value * 1.25);
     boundingBox.expandByMargin3(margin);
     return boundingBox;
 
@@ -368,7 +368,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
     const position = trajectory.getBasePosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(node.name, position, 7, style.nameFontSize, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(node.name, position, 7, style.nameFontSize.value, this.fgColor);
     if (!label)
       return;
 
@@ -393,7 +393,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
     const position = trajectory.getTopPosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontSize, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontSize.value, this.fgColor);
     if (!label)
       return;
 
@@ -413,9 +413,9 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!trajectory)
       return;
 
-    const color = node.getColorByColorType(style.colorType);
+    const color = node.getColorByColorType(style.colorType.value);
 
-    const samples = trajectory.createRenderSamples(color, style.radius);
+    const samples = trajectory.createRenderSamples(color, style.radius.value);
     const { transformer } = this;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
@@ -583,7 +583,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
       if (visibleCount === 0)
         continue;
 
-      logRender.addAnnotation(canvas, style.bandFontSize, rightBand);
+      logRender.addAnnotation(canvas, style.bandFontSize.value, rightBand);
       textures[rightBand ? 0 : 1] = canvas.createTexture();
     }
     return textures;

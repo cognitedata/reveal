@@ -18,6 +18,8 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 
 export class WellTrajectoryStyle extends BaseRenderStyle
 {
@@ -25,17 +27,11 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.White;
-
-  public radius = 5; // [1,2,3,5,10,20,30,40,50];
-
-  public nameFontSize = 50; // fontSizeOptions
-
-  public bandFontSize = 30; // fontSizeOptions
-
-  public bandWidth = 50;
-
-  public readonly bandWidthOptions = [20, 25, 30, 50, 75, 100, 200];
+  public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.White });
+  public radius = new NumberProperty({ name: "Radius", value: 5, options: [1, 2, 3, 5, 10, 20, 30, 40, 50] }); 
+  public bandWidth = new NumberProperty({ name: "Band Width", value: 50, options: [20, 25, 30, 50, 75, 100, 200] });
+  public nameFontSize = new NumberProperty({ name: "Name Font Size", value: 50, options: BaseRenderStyle.fontSizeOptions }); 
+  public bandFontSize = new NumberProperty({ name: "Band Font Size", value: 30, options: BaseRenderStyle.fontSizeOptions }); 
 
   //==================================================
   // CONSTRUCTORS
@@ -52,5 +48,10 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
+    folder.addChild(this.colorType);
+    folder.addChild(this.radius);
+    folder.addChild(this.nameFontSize);
+    folder.addChild(this.bandFontSize);
+    folder.addChild(this.bandWidth);
   }
 }

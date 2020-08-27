@@ -33,7 +33,6 @@ import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { Changes } from "@/Core/Views/Changes";
-import { ColorType } from "@/Core/Enums/ColorType";
 
 export class CasingLogView extends BaseGroupThreeView
 {
@@ -292,6 +291,6 @@ export class CasingLogView extends BaseGroupThreeView
     if (!wellRenderStyle)
       return 0;
 
-    return wellRenderStyle.radius;
+    return wellRenderStyle.radius.value;
   }
 }
