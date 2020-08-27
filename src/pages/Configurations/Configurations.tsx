@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
-import { Route, useRouteMatch } from 'react-router-dom';
 import { ContentContainer } from 'elements';
 import ApiContext from 'contexts/ApiContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
 import { ColumnsType } from 'antd/es/table';
 import { generateColumnsFromResponse } from 'utils/functions';
 import { GenericResponseObject } from 'typings/interfaces';
-import New from './New/index';
 
 const Configurations = () => {
   const { api } = useContext(ApiContext);
@@ -15,7 +13,6 @@ const Configurations = () => {
   const [columns, setColumns] = useState<
     ColumnsType<GenericResponseObject> | undefined
   >([]);
-  const { url } = useRouteMatch();
 
   function fetchConfigurations() {
     api!.configurations
@@ -36,15 +33,10 @@ const Configurations = () => {
 
   return (
     <>
-      <Route exact path="/configurations">
-        <CreateNewConfiguration />
-        <ContentContainer>
-          <Table dataSource={data} columns={columns} rowKey="id" />
-        </ContentContainer>
-      </Route>
-      <Route exact path={`${url}/new/:type`}>
-        <New />
-      </Route>
+      <CreateNewConfiguration />
+      <ContentContainer>
+        <Table dataSource={data} columns={columns} rowKey="id" />
+      </ContentContainer>
     </>
   );
 };

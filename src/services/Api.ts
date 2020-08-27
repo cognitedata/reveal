@@ -46,6 +46,15 @@ class Api {
     return response.json();
   }
 
+  private async post(url: string, data: any): Promise<any> {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  }
+
   public datatypes = {
     get: async (projectId: number | null = null): Promise<string[]> => {
       let queryParameters;
@@ -99,6 +108,9 @@ class Api {
   public configurations = {
     get: async (): Promise<GenericResponseObject[]> => {
       return this.get(`${config.api.url}/configurations`);
+    },
+    create: async (data: any): Promise<GenericResponseObject> => {
+      return this.post(`${config.api.url}/configurations`, data);
     },
   };
 }

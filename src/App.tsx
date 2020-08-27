@@ -7,6 +7,7 @@ import DataTransfers from './pages/DataTransfers';
 import Status from './pages/Status';
 import { Content, Layout, Main } from './elements';
 import MainHeader from './components/Organisms/MainHeader';
+import New from './pages/Configurations/New';
 
 const App = () => {
   return (
@@ -21,13 +22,16 @@ const App = () => {
                 <Route exact path="/">
                   <Home />
                 </Route>
-                <Route path="/configurations">
+                <Route exact path="/configurations">
                   <Configurations />
                 </Route>
-                <Route path="/data-transfers">
+                <Route exact path="/configurations/new/:type">
+                  <New />
+                </Route>
+                <Route exact path="/data-transfers">
                   <DataTransfers />
                 </Route>
-                <Route path="/status">
+                <Route exact path="/status">
                   <Status />
                 </Route>
               </Switch>

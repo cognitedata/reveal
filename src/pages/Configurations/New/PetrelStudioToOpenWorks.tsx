@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 import React, { useContext, useEffect, useState } from 'react';
 import { Badge, Button } from '@cognite/cogs.js';
 import { Checkbox, Select } from 'antd';
@@ -9,6 +8,8 @@ import {
   Source,
 } from 'typings/interfaces';
 import { SelectValue } from 'antd/es/select';
+import ApiContext from 'contexts/ApiContext';
+import { useHistory } from 'react-router-dom';
 import {
   ConfigurationArrow,
   ConfigurationContainer,
@@ -17,7 +18,6 @@ import {
   InitialState,
   ThreeColsLayout,
 } from '../elements';
-import ApiContext from '../../../contexts/ApiContext';
 
 type Props = {
   name: string | undefined | null;
@@ -77,6 +77,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     },
   ]);
   const { api } = useContext(ApiContext);
+  const history = useHistory();
   const { Option } = Select;
 
   async function fetchRepositories(): Promise<GenericResponseObject[]> {
@@ -115,6 +116,12 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     } else if (type === ChangeType.DATATYPES) {
       updateDataTypes(value);
     }
+  }
+
+  function handleSaveConfigurationClick() {
+    api!.configurations.create(configuration).then(() => {
+      history.push('/configurations'); // Bug in react-router-dom - does not render after history.push()
+    });
   }
 
   function updateSourceRepository(value: SelectValue) {
@@ -191,7 +198,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           type="primary"
           style={{ height: '36px' }}
           disabled={!configurationIsComplete}
-          onClick={() => alert('TODO: save configuration via API')}
+          onClick={handleSaveConfigurationClick}
         >
           Save Configuration
         </Button>
