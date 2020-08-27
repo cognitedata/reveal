@@ -262,11 +262,10 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                       style={{ width: '100%', marginBottom: '16px' }}
                       onChange={updateBusinessTags}
                     >
+                      <Option value="cwp_valhall">cwp_valhall</Option>
+                      <Option value="cwp_alvheim">cwp_alvheim</Option>
                       <Option value="gas">gas</Option>
                       <Option value="oil">oil</Option>
-                      <Option value="flux-capacitator">flux-capacitator</Option>
-                      <Option value="kerfuffle">kerfuffle</Option>
-                      <Option value="mr-fluffy">mr-fluffy</Option>
                     </Select>
                     <div>Select Datatypes:</div>
                     <Checkbox.Group
