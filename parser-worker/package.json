@@ -11,7 +11,7 @@
     "folder": "local-cdn"
   },
   "scripts": {
-    "build": "yarn clean && yarn run build:wasm && webpack --env.development",
+    "build": "yarn clean && yarn run build:wasm && webpack --env.development && yarn local-cdn:copy",
     "build:wasm": "wasm-pack build --release",
     "build:prod": "yarn clean && yarn build:wasm && webpack",
     "clean": "rimraf -rf ./dist ./pkg",
