@@ -114,8 +114,10 @@ export const AssetFilterSearch = ({ query = '' }: { query?: string }) => {
         <List>
           <Body>
             {query && query.length > 0
-              ? `${assetsCount || 'Loading'} results for "${query}"`
-              : `All ${assetsCount || ''} Results`}
+              ? `${
+                  assetsCount === undefined ? 'Loading' : assetsCount
+                } results for "${query}"`
+              : `All ${assetsCount === undefined ? '' : assetsCount} Results`}
           </Body>
           <AssetTable
             assets={assets}

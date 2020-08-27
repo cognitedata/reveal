@@ -30,8 +30,8 @@ export type ResourceSelectionObserver = {
   setFileFilter: (newFilter: FileFilterProps) => void;
   eventFilter: EventFilter;
   setEventFilter: (newFilter: EventFilter) => void;
-  sequenceFilter: SequenceFilter;
-  setSequenceFilter: (newFilter: SequenceFilter) => void;
+  sequenceFilter: SequenceFilter['filter'];
+  setSequenceFilter: (newFilter: SequenceFilter['filter']) => void;
   onSelect: OnSelectListener;
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
   query: string;
@@ -95,7 +95,7 @@ export const ResourceSelectionProvider = ({
   timeseriesFilter?: TimeseriesFilter;
   fileFilter?: FileFilterProps;
   eventFilter?: EventFilter;
-  sequenceFilter?: SequenceFilter;
+  sequenceFilter?: SequenceFilter['filter'];
   resourcesState?: ResourceItemState[];
   onSelect?: OnSelectListener;
   children: React.ReactNode;
@@ -123,9 +123,9 @@ export const ResourceSelectionProvider = ({
   const [eventFilter, setEventFilter] = useState<EventFilter>(
     initialEventFilter
   );
-  const [sequenceFilter, setSequenceFilter] = useState<SequenceFilter>(
-    initialSequenceFilter
-  );
+  const [sequenceFilter, setSequenceFilter] = useState<
+    SequenceFilter['filter']
+  >(initialSequenceFilter);
 
   useEffect(() => {
     if (initialResourcesState) {

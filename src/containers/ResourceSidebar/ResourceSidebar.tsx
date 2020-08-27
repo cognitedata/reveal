@@ -5,7 +5,7 @@ import { FilePreview } from 'containers/Files';
 import { AssetPreview } from 'containers/Assets';
 import { SequencePreview } from 'containers/Sequences';
 import { TimeseriesPreview } from 'containers/Timeseries';
-import { GlobalSearchResults } from 'containers/GlobalSearch/GlobalSearchResults';
+import { SearchResults } from 'containers/SearchResults';
 import ResourceActionsContext from 'context/ResourceActionsContext';
 import { RenderResourceActionsFunction } from 'types/Types';
 import { useQuery } from 'context/ResourceSelectionContext';
@@ -153,15 +153,15 @@ export const ResourceSidebar = ({
     content = (
       <>
         <Input
-          variant="noBorder"
           icon="Search"
           fullWidth
+          size="large"
           iconPlacement="left"
           placeholder="Search..."
           onChange={ev => setQuery(ev.target.value)}
           value={query}
         />
-        <GlobalSearchResults />
+        <SearchResults />
       </>
     );
   }

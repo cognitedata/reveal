@@ -59,6 +59,12 @@ describe('CogniteFileViewer', () => {
           getById: {},
         },
       },
+      events: {
+        items: {
+          items: Map(),
+          getById: {},
+        },
+      },
       fileContextualization: { similarObjectJobs: {} },
       annotations: { byFileId: {} },
     };

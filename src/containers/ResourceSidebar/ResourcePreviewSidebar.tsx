@@ -16,6 +16,10 @@ import {
   itemSelector as sequenceSelector,
   retrieve as retrieveSequences,
 } from 'modules/sequences';
+import {
+  itemSelector as eventSelector,
+  retrieve as retrieveEvents,
+} from 'modules/events';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { AssetSmallPreview } from 'containers/Assets';
@@ -24,6 +28,7 @@ import { SequenceSmallPreview } from 'containers/Sequences';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { Loader } from 'components/Common';
 import { ResourceItem } from 'types';
+import { EventSmallPreview } from 'containers/Events';
 
 type Props = {
   item?: ResourceItem;
@@ -60,6 +65,7 @@ export const ResourcePreviewSidebar = ({
   const getAsset = useSelector(assetSelector);
   const getTimeseries = useSelector(timeseriesSelector);
   const getSequence = useSelector(sequenceSelector);
+  const getEvent = useSelector(eventSelector);
 
   useEffect(() => {
     if (item) {
@@ -78,6 +84,10 @@ export const ResourcePreviewSidebar = ({
         }
         case 'sequence': {
           dispatch(retrieveSequences([{ id: item.id! }]));
+          break;
+        }
+        case 'event': {
+          dispatch(retrieveEvents([{ id: item.id! }]));
           break;
         }
       }
@@ -113,6 +123,13 @@ export const ResourcePreviewSidebar = ({
         const timeseries = getTimeseries(item.id);
         if (timeseries) {
           content = <TimeseriesSmallPreview timeseriesId={timeseries.id} />;
+        }
+        break;
+      }
+      case 'event': {
+        const event = getEvent(item.id);
+        if (event) {
+          content = <EventSmallPreview eventId={event.id} />;
         }
         break;
       }

@@ -2,7 +2,6 @@ import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { retrieve as retrieveFile } from 'modules/files';
 import { useDispatch } from 'react-redux';
-import { listByFileId } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
 import { Loader } from 'components/Common';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
@@ -47,7 +46,6 @@ export const TimeseriesExplorer = () => {
     if (timeseriesIdNumber) {
       (async () => {
         await dispatch(retrieveFile([{ id: timeseriesIdNumber }]));
-        await dispatch(listByFileId(timeseriesIdNumber));
       })();
     }
   }, [dispatch, timeseriesIdNumber]);
