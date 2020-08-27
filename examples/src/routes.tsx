@@ -20,8 +20,9 @@ import { Testable } from './pages/Testable';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
+// parser-worker has `yarn local-cdn` to set it up quickly
 // import { revealEnv } from '@cognite/reveal';
-// revealEnv.publicPath = `https://localhost:8080${process.env.PUBLIC_URL}/worker-custom-folder/`;
+// revealEnv.publicPath = `/local-cdn/`;
 
 type ExampleRoute = {
   path: string;

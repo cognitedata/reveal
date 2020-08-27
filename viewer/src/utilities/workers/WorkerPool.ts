@@ -57,7 +57,7 @@ export class WorkerPool {
 
     // value by itself doesn't mean that domain is the same
     // if it's relative path - then it's the same, otherwise need to compare domains
-    const isPublicPathHasTheSameDomain = Boolean(revealEnv.publicPath) && isTheSameDomain(revealEnv.publicPath);
+    const isPublicPathHasTheSameDomain = revealEnv.publicPath && isTheSameDomain(revealEnv.publicPath);
 
     if (isPublicPathHasTheSameDomain) {
       return new Worker(workerUrl, options);

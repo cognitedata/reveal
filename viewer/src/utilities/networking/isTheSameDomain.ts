@@ -3,7 +3,7 @@
  */
 
 /**
- * Use to determine if the string that represent urls
+ * Use to determine if the strings that represent urls
  * are pointing on different domains.
  * @param url1
  * @param url2 Optional. Default is `location.origin`. If provided then it must be

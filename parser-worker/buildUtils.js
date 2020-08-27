@@ -20,7 +20,7 @@ function getEnvArg(env, name, defaultValue) {
   if (env[name] === "false") {
     return false;
   }
-  return env[name];
+  return typeof env[name] === "string" ? env[name].trim() : env[name];
 }
 
 const workerCDNPath =
@@ -38,6 +38,9 @@ const workerCDNPath =
 //    * run examples server with `yarn start`
 //  2) link viewer to a target project with yarn link.
 //  3) use `revealEnv.publicPath = https://localhost:8080/local-cdn/` in code of a target project
-const publicPath = getEnvArg(process.env, "PUBLIC_PATH", "");
+let publicPath = getEnvArg(process.env, "PUBLIC_PATH", "");
+if (publicPath && !publicPath.endsWith("/")) {
+  publicPath += "/";
+}
 
 module.exports = { publicPath, workerCDNPath, cdnDistFolderPath, getEnvArg };

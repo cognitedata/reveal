@@ -2,6 +2,10 @@
 
 Documentation for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
 
+We have [demos here](https://cognitedata.github.io/reveal/docs/examples/cad-basic)!
+
+---
+
 ## Code Example
 
 ```typescript
@@ -26,16 +30,17 @@ viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
 npm install @cognite/reveal
 ```
 
-## Coordinate systems
+There are 2 different types of projects:
 
-The data served from Cognite Data Fusion is in a right-handed coordinate system with Z up,
-X to the right and Y pointing into the screen.
+1. These where CDN is available (no restrictive Content-Security-Policy is set)
+2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+that forbids to fetch scripts from jsdeliver.
 
-In Three.js, which is supported by the Reveal viewer, the coordinate system is right-handed with
-Y up, X to the right and Z pointing out of the screen.
+By default, the reveal will try to fetch its worker/wasm files from [jsdeliver](https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.0.0/dist/cdn/).
+If there is no CSP in your project, then it will just work without any additional steps.
 
-### Conversion between the different coordinate systems
+In case if you see an error like that:
 
-The policy in this repository is to stick with the CDF coordinate system in any code that is not
-viewer-specific.
-For viewer-specific code, the conversion should happen as early as possible.
+> Refused to load the script 'https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.0.0/dist/cdn/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
+
+See the next steps in our [documentation](https://cognitedata.github.io/reveal/docs/installation#installation-for-projects-with-csp).

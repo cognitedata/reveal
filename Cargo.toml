@@ -5,3 +5,7 @@ members = [
     "openctm",
     "parser-worker",
 ]
+
+# [profile.release]
+# This enables debug symbols - remove when actually releasing to reduce file size
+# debug = true
