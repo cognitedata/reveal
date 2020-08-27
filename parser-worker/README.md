@@ -46,7 +46,7 @@ In case if you need to build with custom public path,
 just set the environment variable `PUBLIC_PATH` and run the build.
 
 ```bash
-export PUBLIC_PATH="https://static.server/parser-worker/" && yarn build:prod
+PUBLIC_PATH="https://static.server/parser-worker/" yarn build:prod
 ```  
 
 Notice that environment variable setting syntax differs if you use Windows.
@@ -77,16 +77,21 @@ You can simply use `yarn local-cdn` it does:
 * build viewer with publicPath pointing on 'local-cdn' 
 * run the examples server.
 
-Notice that it builds viewer with the same
-public path, so you don't have to override revealEnv in examples. If you do some changes for the viewer at the same time,
-you might want to run viewer build separately. If you're not overriding the `revealEnv` with the path to local-cdn -
+Notice that it builds the viewer with the same
+public path, so you don't have to override `revealEnv` in examples. If you do some changes for the viewer at the same time,
+you might want to run viewer build separately. For the viewer either build it with the same `PUBLIC_PATH` env variable, or
+specify the path to worker files in examples with `revealEnv` (see `examples/routes.tsx`).
+
+If you're not overriding the `revealEnv` with the path to local-cdn -
 you should build the viewer with PUBLIC_PATH env variable that points on `/local-cdn` folder.
 For example:
+
 ```bash
 cd ../viewer
-export PUBLIC_PATH="/local-cdn" && yarn build --watch  
+PUBLIC_PATH="/local-cdn" yarn build --watch  
 ``` 
-Make sure the path you use to build parser-worker matches the path
+
+Make sure the path you use for building the parser-worker matches the path
 you run examples on (where worker files are available).
 
 In case if you want to test worker changes outside examples, 

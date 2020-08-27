@@ -25,8 +25,8 @@ import { Testable } from './pages/Testable';
 
 // import { revealEnv } from '@cognite/reveal';
 // import { revealEnv as revealEnv2 } from '@cognite/reveal/experimental'
-// revealEnv.publicPath = `/local-cdn/`;
-// revealEnv2.publicPath = `/local-cdn/`;
+// revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
+// revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 
 type ExampleRoute = {
   path: string;
