@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { Button } from '@cognite/cogs.js';
+import React, { useContext, useEffect, useState } from 'react';
+import { Badge, Button } from '@cognite/cogs.js';
 import { Checkbox, Select } from 'antd';
 import {
   Configuration,
@@ -21,13 +21,15 @@ type Props = {
   name: string | undefined | null;
 };
 
-enum SourceUIState {
+enum ConfigUIState {
   INITIAL,
   CONFIGURING,
+  CONFIRMED,
 }
 
 enum ChangeType {
   REPO,
+  PROJECT,
   TAGS,
   DATATYPES,
 }
@@ -50,11 +52,18 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   const [configurationIsComplete, setConfigurationIsComplete] = useState<
     boolean
   >(false);
-  const [sourceUIState, setSourceUIState] = useState<SourceUIState>(
-    SourceUIState.INITIAL
+  const [sourceUIState, setSourceUIState] = useState<ConfigUIState>(
+    ConfigUIState.INITIAL
+  );
+  const [targetUIState, setTargetUIState] = useState<ConfigUIState>(
+    ConfigUIState.INITIAL
   );
   const [sourceComplete, setSourceComplete] = useState<boolean>(false);
+  const [targetComplete, setTargetComplete] = useState<boolean>(false);
   const [availableRepositories, setAvailableRepositories] = useState<
+    GenericResponseObject[]
+  >([]);
+  const [availableProjects, setAvailableProjects] = useState<
     GenericResponseObject[]
   >([]);
   const [availableDataTypes, setAvailableDataTypes] = useState<
@@ -70,6 +79,10 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
 
   async function fetchRepositories(): Promise<GenericResponseObject[]> {
     return api!.projects.get(Source.STUDIO);
+  }
+
+  async function fetchProjects(): Promise<GenericResponseObject[]> {
+    return api!.projects.get(Source.OPENWORKS);
   }
 
   async function fetchDataTypes(projectId: number): Promise<string[]> {
@@ -93,6 +106,8 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
         setAvailableDataTypes(results);
         updateDataTypes([]);
       });
+    } else if (type === ChangeType.PROJECT) {
+      updateTargetProject(value);
     } else if (type === ChangeType.TAGS) {
       updateBusinessTags(value);
     } else if (type === ChangeType.DATATYPES) {
@@ -105,6 +120,15 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       return {
         ...prevState,
         source: { ...prevState.source, external_id: value.toString() },
+      };
+    });
+  }
+
+  function updateTargetProject(value: SelectValue) {
+    setConfiguration((prevState) => {
+      return {
+        ...prevState,
+        target: { ...prevState.target, external_id: value.toString() },
       };
     });
   }
@@ -127,6 +151,17 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     });
   }
 
+  useEffect(() => {
+    if (
+      configuration.source.external_id.trim() !== '' &&
+      configuration.datatypes.length > 0
+    ) {
+      setSourceComplete(true);
+    } else {
+      setSourceComplete(false);
+    }
+  }, [configuration]);
+
   return (
     <div>
       <Header>
@@ -143,15 +178,23 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
         <ConfigurationContainer>
           <header>
             <b>Petrel Studio</b>
+            {sourceUIState === ConfigUIState.CONFIRMED && (
+              <>
+                <div>{configuration.source.external_id}</div>
+                {configuration.business_tags.map((tag) => (
+                  <Badge key={tag} text={tag} />
+                ))}
+              </>
+            )}
           </header>
-          {sourceUIState === SourceUIState.INITIAL && (
+          {sourceUIState === ConfigUIState.INITIAL && (
             <main>
               <InitialState>
                 <p>No source repository selected</p>
                 <Button
                   type="primary"
                   onClick={() => {
-                    setSourceUIState(SourceUIState.CONFIGURING);
+                    setSourceUIState(ConfigUIState.CONFIGURING);
                     fetchRepositories().then((response) =>
                       setAvailableRepositories(response)
                     );
@@ -162,7 +205,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
               </InitialState>
             </main>
           )}
-          {sourceUIState === SourceUIState.CONFIGURING && (
+          {sourceUIState === ConfigUIState.CONFIGURING && (
             <>
               <main>
                 <div>Select repository:</div>
@@ -190,11 +233,11 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                       style={{ width: '100%', marginBottom: '16px' }}
                       onChange={updateBusinessTags}
                     >
-                      <Option value="gas">Gas</Option>
-                      <Option value="oil">Oil</Option>
-                      <Option value="flux-capacitator">Flux Capacitator</Option>
-                      <Option value="kerfuffle">Kerfuffle</Option>
-                      <Option value="mr-fluffy">Mr. Fluffy</Option>
+                      <Option value="gas">gas</Option>
+                      <Option value="oil">oil</Option>
+                      <Option value="flux-capacitator">flux-capacitator</Option>
+                      <Option value="kerfuffle">kerfuffle</Option>
+                      <Option value="mr-fluffy">mr-fluffy</Option>
                     </Select>
                     <div>Select Datatypes:</div>
                     <Checkbox.Group
@@ -207,18 +250,93 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                 )}
               </main>
               <footer>
-                <Button type="primary" disabled={!sourceComplete}>
+                <Button
+                  type="primary"
+                  disabled={!sourceComplete}
+                  onClick={() => setSourceUIState(ConfigUIState.CONFIRMED)}
+                >
                   Confirm
                 </Button>
               </footer>
             </>
           )}
+          {sourceUIState === ConfigUIState.CONFIRMED && (
+            <main>
+              <ul>
+                {configuration.datatypes.map((datatype) => (
+                  <li key={datatype}>{datatype}</li>
+                ))}
+              </ul>
+            </main>
+          )}
         </ConfigurationContainer>
-        <ConfigurationArrow />
+        <ConfigurationArrow>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 300 31"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="4"
+              d="M2 16.6337h296L283.383 2M2 16.6337h296l-14.617 11.973"
+            />
+          </svg>
+        </ConfigurationArrow>
         <ConfigurationContainer>
           <header>
             <b>OpenWorks</b>
           </header>
+          {targetUIState === ConfigUIState.INITIAL && (
+            <main>
+              <InitialState>
+                <p>No destination project selected</p>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setTargetUIState(ConfigUIState.CONFIGURING);
+                    fetchProjects().then((response) =>
+                      setAvailableProjects(response)
+                    );
+                  }}
+                >
+                  Configure
+                </Button>
+              </InitialState>
+            </main>
+          )}
+          {targetUIState === ConfigUIState.CONFIGURING && (
+            <>
+              <main>
+                <div>Select project:</div>
+                <Select
+                  defaultValue={undefined}
+                  placeholder="Available projects"
+                  style={{ width: '100%', marginBottom: '16px' }}
+                  onChange={(value) => handleChange(ChangeType.PROJECT, value)}
+                >
+                  {availableProjects.map((project) => (
+                    <Option
+                      key={project.external_id}
+                      value={project.external_id}
+                    >
+                      {project.external_id}
+                    </Option>
+                  ))}
+                </Select>
+              </main>
+              <footer>
+                <Button
+                  type="primary"
+                  disabled={!targetComplete}
+                  onClick={() => setTargetUIState(ConfigUIState.CONFIRMED)}
+                >
+                  Confirm
+                </Button>
+              </footer>
+            </>
+          )}
         </ConfigurationContainer>
       </ThreeColsLayout>
     </div>

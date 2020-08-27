@@ -48,7 +48,13 @@ export const ConfigurationContainer = styled(ContentCard)`
 `;
 
 export const ConfigurationArrow = styled.div`
-  border: 1px solid red;
+  padding: 48px;
+  display: flex;
+  justify-content: center;
+  & > svg {
+    width: 75%;
+    stroke: var(--cogs-greyscale-grey5);
+  }
 `;
 
 export const InitialState = styled.div`
