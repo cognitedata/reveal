@@ -1,4 +1,6 @@
 /* eslint-disable camelcase */
+import React from 'react';
+
 export interface DataTransferObject {
   [key: string]: any;
 }
@@ -28,7 +30,6 @@ export interface RESTPackageFilter {
 export enum Source {
   STUDIO = 'Studio',
   OPENWORKS = 'Openworks',
-  EDM = 'EDM',
 }
 
 export interface Configuration {
@@ -56,7 +57,12 @@ export enum SessionType {
 }
 
 export enum DummyUser {
-  ANONYMOUS = 'Anonymous User',
-  ERLAND = 'Erland Glad Solstrand',
   DEMO = 'Demo User',
 }
+
+export interface Rule {
+  key: string;
+  render: (record: any) => React.ReactFragment;
+}
+
+export const UNIX_TIMESTAMP_FACTOR = 1000;
