@@ -18,6 +18,8 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
 export class PointLogStyle extends BaseRenderStyle
 {
@@ -25,13 +27,16 @@ export class PointLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.Specified;
+  public colorType = new ColorTypeProperty({
+    name: "Color Type",
+    value: ColorType.Specified
+  });
 
-  public radius = 20;
-
-  public readonly radiusOptions = [10, 20, 25, 30, 50, 75, 100, 200];
-
-  public fontSize = 20; // fontSizeOptions
+  public radius = new NumberProperty({
+    name: "Radius",
+    value: 20,
+    options: [10, 20, 25, 30, 50, 75, 100, 200]
+  }); 
 
   //==================================================
   // CONSTRUCTORS
@@ -48,5 +53,8 @@ export class PointLogStyle extends BaseRenderStyle
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
+    folder.addChild(this.colorType);
+    folder.addChild(this.radius);
+    folder.addChild(this.fontSize);
   }
 }

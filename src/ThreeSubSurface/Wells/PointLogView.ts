@@ -247,7 +247,7 @@ export class PointLogView extends BaseGroupThreeView
     if (!style)
       return null;
 
-    const color = node.getColorByColorType(style.colorType);
+    const color = node.getColorByColorType(style.colorType.value);
     const { log } = node;
     if (!log)
       throw Error("Well trajectory is missing");
@@ -308,7 +308,7 @@ export class PointLogView extends BaseGroupThreeView
         const prependicular = cameraDirection.getNormal(tangent);
         position.addWithFactor(prependicular, selectedRadius);
 
-        const label = PointLogView.createLabel(node.name, sample.description, position, style.fontSize);
+        const label = PointLogView.createLabel(node.name, sample.description, position, style.fontSize.value);
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);
@@ -335,7 +335,7 @@ export class PointLogView extends BaseGroupThreeView
 
     const { style } = this;
     if (style)
-      radius = style.radius;
+      radius = style.radius.value;
 
     const { trajectoryNode } = node;
     if (!trajectoryNode)

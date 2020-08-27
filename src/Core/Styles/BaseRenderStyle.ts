@@ -14,6 +14,7 @@
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 
 export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAccessor
 {
@@ -31,6 +32,8 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
 
   public get targetId(): TargetId { return this._targetId; }
   public set targetId(value: TargetId) { this._targetId = value; }
+
+  public fontSize = new NumberProperty({ name: "Font Size", value: 20, options: [6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 30, 36] }); 
 
   //==================================================
   // CONSTRUCTORS
