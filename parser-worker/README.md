@@ -20,8 +20,9 @@ Don't forget that if you're committing your changes, you will need to publish a 
 
 ### Prerequisites
  
-Install [Node](https://nodejs.org/en/download/)
-Install [Rust](https://www.rust-lang.org/)
+* Install [Node](https://nodejs.org/en/download/)
+* Install [Yarn](https://yarnpkg.com/getting-started/install)
+* Install [Rust](https://www.rust-lang.org/)
 
 ### Install wasm-pack
 
@@ -45,13 +46,13 @@ In case if you need to build with custom public path,
 just set the environment variable `PUBLIC_PATH` and run the build.
 
 ```bash
-export PUBLIC_PATH=https://static.server/parser-worker/ && yarn build:prod
+export PUBLIC_PATH="https://static.server/parser-worker/" && yarn build:prod
 ```  
 
 Notice that environment variable setting syntax differs if you use Windows.
 
 ```bash
-set PUBLIC_PATH=https://static.server/parser-worker/ && yarn build:prod
+set PUBLIC_PATH="https://static.server/parser-worker/" && yarn build:prod
 ```  
 
 If you set the env variable correctly, during the build you should see this printing in your console:
