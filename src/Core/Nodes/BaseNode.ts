@@ -266,10 +266,10 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Draw styles
   //==================================================
 
-  public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
-  public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the render style*/ }
   public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
   public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; }
+  public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
+  public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the render style*/ }
   public /*virtual*/ supportsColorType(colorType: ColorType): boolean { return true; }
 
   //==================================================
@@ -278,12 +278,12 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ populateInfoCore(folder: BasePropertyFolder): void
   {
-    folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), applyDelegate: () => this.notifyNameChanged() });
+    folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), applyDelegate: (name: string) => this.notifyNameChanged() });
     if (this.canChangeColor())
-      folder.addColor({ name: "color", instance: this, applyDelegate: () => this.notifyColorChanged() });
+      folder.addColor({ name: "color", instance: this, applyDelegate: (name: string) => this.notifyColorChanged() });
     folder.addReadOnlyString("Type", this.typeName);
     if (this.hasColorMap())
-      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, applyDelegate: () => this.notifyColorMapChanged() });
+      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, applyDelegate: (name: string) => this.notifyColorMapChanged() });
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: BasePropertyFolder): void { }
@@ -312,12 +312,12 @@ export abstract class BaseNode extends Identifiable
     {
       if (child instanceof ValueProperty)
       {
-        child.applyByFieldNameDelegate = (fieldName: string) => 
+        child.applyDelegate = (name: string) => 
         {
           let node = this.renderStyleRoot;
           if (!node)
             node = this;
-          node.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
+          node.notify(new NodeEventArgs(Changes.renderStyle, name));
         };
 
         if (child instanceof ColorTypeProperty)

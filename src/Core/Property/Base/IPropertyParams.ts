@@ -1,9 +1,8 @@
-import { Action, IsEnabled, StringAction, ValidateOption } from "@/Core/Property/Base/ValueProperty";
+import { IsEnabled, StringAction, ValidateOption } from "@/Core/Property/Base/ValueProperty";
 
 export default interface IPropertyParams<T>
 {
   name: string;
-  fieldName?: string;
   toolTip?: string;
   instance?: object; // Either this is set
   value?: T; // Or this
@@ -12,8 +11,7 @@ export default interface IPropertyParams<T>
   use?: boolean;
 
   // Delegates
-  applyDelegate?: Action;
-  applyByFieldNameDelegate?: StringAction;
+  applyDelegate?: StringAction;
   isEnabledDelegate?: IsEnabled;
   optionValidationDelegate?: ValidateOption;
   // eslint-disable-next-line semi

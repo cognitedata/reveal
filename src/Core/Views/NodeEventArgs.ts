@@ -27,9 +27,9 @@ export class NodeEventArgs
   // CONSTRUCTOR
   //==================================================
 
-  public constructor(changed: symbol, fieldName?: string)
+  public constructor(changed: symbol, name?: string)
   {
-    this.add(changed, fieldName);
+    this.add(changed, name);
   }
 
   //==================================================
@@ -47,25 +47,25 @@ export class NodeEventArgs
     return false;
   }
 
-  public isFieldNameChanged(changed: symbol, ...fieldNames: string[]): boolean
+  public isNameChanged(changed: symbol, ...names: string[]): boolean
   {
     // This igonores space and case.
-    const fieldName = this.getFieldName(changed);
-    if (!fieldName)
+    const name = this.getName(changed);
+    if (!name)
       return false;
 
     const isUpperCase = (s: string) => /[A-Z]/.test(s);
     const isSpace = (s: string) => s === " ";
 
-    const { length } = fieldName;
-    for (const otherFieldName of fieldNames)
+    const { length } = name;
+    for (const otherName of names)
     {
       let found = true;
-      const otherLength = otherFieldName.length;
+      const otherLength = otherName.length;
 
       for (let i = 0, j = 0; i < length && found; i++)
       {
-        let a = fieldName.charAt(i);
+        let a = name.charAt(i);
         if (isSpace(a))
           continue;
 
@@ -74,7 +74,7 @@ export class NodeEventArgs
 
         for (; j < otherLength;)
         {
-          let b = otherFieldName.charAt(j);
+          let b = otherName.charAt(j);
           j++;
           if (isSpace(b))
             continue;
@@ -105,10 +105,10 @@ export class NodeEventArgs
     return this.changes.find((desc: ChangedDescription) => desc.changed === changed);
   }
 
-  private getFieldName(changed: symbol): string | undefined
+  private getName(changed: symbol): string | undefined
   {
     const changedDescription = this.getChangedDescription(changed);
-    return changedDescription ? changedDescription.fieldName : undefined;
+    return changedDescription ? changedDescription.name : undefined;
   }
 
   public getOrigin(changed: symbol): BaseNode | null
@@ -121,14 +121,14 @@ export class NodeEventArgs
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public add(changed: symbol, fieldName?: string)
+  public add(changed: symbol, name?: string)
   {
     if (changed === undefined)
       return;
     if (!this.changes)
       this.changes = [];
 
-    this.changes.push(new ChangedDescription(changed, fieldName));
+    this.changes.push(new ChangedDescription(changed, name));
   }
 }
 
@@ -139,13 +139,13 @@ export class NodeEventArgs
 class ChangedDescription
 {
   public changed: symbol;
-  public fieldName: string | undefined;
+  public name: string | undefined;
   public origin: BaseNode | null;
 
-  public constructor(changed: symbol, fieldName?: string, origin: BaseNode | null = null)
+  public constructor(changed: symbol, name?: string, origin: BaseNode | null = null)
   {
     this.changed = changed;
-    this.fieldName = fieldName;
+    this.name = name;
     this.origin = origin;
   }
 }

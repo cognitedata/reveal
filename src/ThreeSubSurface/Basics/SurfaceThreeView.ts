@@ -68,12 +68,13 @@ export class SurfaceThreeView extends BaseGroupThreeView
     {
       if (this._object3D)
       {
-        if (args.isFieldNameChanged(Changes.renderStyle, "Shininess", "Opacity"))
+        const { style } = this;
+        if (args.isNameChanged(Changes.renderStyle, style.solidShininess.name, style.solidOpacity.name))
         {
           const mesh = this._object3D.getObjectByName(SolidName) as THREE.Mesh;
           if (mesh)
           {
-            SurfaceThreeView.setMaterial(mesh.material as THREE.MeshPhongMaterial, this.style);
+            SurfaceThreeView.setMaterial(mesh.material as THREE.MeshPhongMaterial, style);
             this.invalidateTarget();
             return;
           }
