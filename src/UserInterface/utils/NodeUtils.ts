@@ -193,6 +193,7 @@ export default class NodeUtils
     if (property instanceof StringProperty)
       return ElementTypes.String;
 
-    throw Error("property is not supported");
+    console.error("property is not supported", property);
+    return "";
   }
 }

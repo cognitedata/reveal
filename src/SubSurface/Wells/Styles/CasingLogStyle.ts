@@ -28,23 +28,11 @@ export class CasingLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new ColorTypeProperty({
-    name: "Color Type",
-    value: ColorType.Specified,
-    options: ColorType,
-  });
+  public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
 
-  public opacity = new SliderProperty({
-    name: "Opacity",
-    value: 0.2,
-    use: false
-  })
+  public opacity = new SliderProperty({ name: "Opacity", value: 0.2, use: false })
 
-  public radiusFactor = new NumberProperty({
-    name: "Radius",
-    value: 3,
-    options: [1, 2, 3, 4]
-  }); // Radius in 3D = radiusFactor * casing.radius
+  public radiusFactor = new NumberProperty({ name: "Radius", value: 3, options: [1, 2, 3, 4] }); // Radius in 3D = radiusFactor * casing.radius
 
   //==================================================
   // CONSTRUCTORS

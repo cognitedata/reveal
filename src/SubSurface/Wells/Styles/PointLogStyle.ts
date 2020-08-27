@@ -27,16 +27,9 @@ export class PointLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new ColorTypeProperty({
-    name: "Color Type",
-    value: ColorType.Specified
-  });
+  public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
 
-  public radius = new NumberProperty({
-    name: "Radius",
-    value: 20,
-    options: [10, 20, 25, 30, 50, 75, 100, 200]
-  }); 
+  public radius = new NumberProperty({ name: "Radius", value: 20, options: [10, 20, 25, 30, 50, 75, 100, 200] });
 
   //==================================================
   // CONSTRUCTORS
