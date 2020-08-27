@@ -58,4 +58,5 @@ export enum SessionType {
 export enum DummyUser {
   ANONYMOUS = 'Anonymous User',
   ERLAND = 'Erland Glad Solstrand',
+  DEMO = 'Demo User',
 }

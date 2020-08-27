@@ -48,7 +48,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       source: Source.OPENWORKS,
     },
     business_tags: [],
-    author: DummyUser.ERLAND,
+    author: DummyUser.DEMO,
     datatypes: [],
   });
   const [configurationIsComplete, setConfigurationIsComplete] = useState<

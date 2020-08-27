@@ -9,7 +9,7 @@ export function stringToBoolean(input: string): boolean | undefined {
   }
 }
 
-export function generateColumnsFromResponse(
+export function generateColumnsFromData(
   response: GenericResponseObject[]
 ): ColumnsType<GenericResponseObject> | undefined {
   const results: ColumnsType<GenericResponseObject> = [];
