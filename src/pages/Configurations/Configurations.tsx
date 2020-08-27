@@ -3,17 +3,17 @@ import { Table } from 'antd';
 import { ContentContainer } from 'elements';
 import ApiContext from 'contexts/ApiContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
-import { ColumnsType, ColumnType } from 'antd/es/table';
-import { generateColumnsFromData } from 'utils/functions';
-import { GenericResponseObject } from 'typings/interfaces';
+import { ColumnsType } from 'antd/es/table';
+import { curateColumns, generateColumnsFromData } from 'utils/functions';
+import {
+  GenericResponseObject,
+  Rule,
+  UNIX_TIMESTAMP_FACTOR,
+} from 'typings/interfaces';
 import { Badge } from '@cognite/cogs.js';
 
-interface Rule {
-  key: string;
-  render: (record: any) => React.ReactFragment;
-}
-
-const defaultRules: Rule[] = [
+// noinspection HtmlUnknownTarget
+const rules: Rule[] = [
   {
     key: 'business_tags',
     render: (record: string[]) =>
@@ -28,21 +28,25 @@ const defaultRules: Rule[] = [
         <Badge key={tag} text={tag} background="greyscale-grey2" />
       )),
   },
+  {
+    key: 'created_time',
+    render: (record: number) =>
+      new Date(record * UNIX_TIMESTAMP_FACTOR).toLocaleString(),
+  },
+  {
+    key: 'last_updated',
+    render: (record: number) =>
+      new Date(record * UNIX_TIMESTAMP_FACTOR).toLocaleString(),
+  },
+  {
+    key: 'source',
+    render: (record: any) => record.external_id,
+  },
+  {
+    key: 'target',
+    render: (record: any) => record.external_id,
+  },
 ];
-
-function curateColumns(columns: any, rules: any) {
-  const tmp = columns;
-  if (columns) {
-    rules.map((rule: Rule) => {
-      const index = columns.findIndex(
-        (column: ColumnType<any>) => column.key === rule.key
-      );
-      tmp[index].render = rule.render;
-      return null;
-    });
-  }
-  return tmp;
-}
 
 const Configurations = () => {
   const { api } = useContext(ApiContext);
@@ -65,7 +69,7 @@ const Configurations = () => {
 
   useEffect(() => {
     const rawColumns = generateColumnsFromData(data);
-    const curatedColumns = curateColumns(rawColumns, defaultRules);
+    const curatedColumns = curateColumns(rawColumns, rules);
     setColumns(curatedColumns);
   }, [data]);
 
