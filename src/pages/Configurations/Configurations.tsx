@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
-import { ContentContainer } from 'elements';
+import { ContentContainer, StatusIcon } from 'elements';
 import ApiContext from 'contexts/ApiContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
 import { ColumnsType } from 'antd/es/table';
@@ -45,6 +45,19 @@ const rules: Rule[] = [
   {
     key: 'target',
     render: (record: any) => record.external_id,
+  },
+  {
+    key: 'status_active',
+    render: (record: boolean) => {
+      const color = record ? 'green' : 'lightgrey';
+      return (
+        <StatusIcon
+          type="Info"
+          style={{ color }}
+          title={record ? 'Active' : 'Inactive'}
+        />
+      );
+    },
   },
 ];
 
