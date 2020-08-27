@@ -63,7 +63,7 @@ export class CasingLogView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    if (args.isChanged(Changes.nodeColor))
+    if (args.isChanged(Changes.renderStyle, Changes.nodeColor))
       this.touch();
   }
 

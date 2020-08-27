@@ -88,7 +88,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
     if (args.isChanged(Changes.filter) && this._object3D)
       this.clearTextures(this._object3D);
-    if (args.isChanged(Changes.nodeColor))
+    if (args.isChanged(Changes.renderStyle, Changes.nodeColor, Changes.nodeName))
       this.touch();
   }
 
