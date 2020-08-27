@@ -7,16 +7,35 @@ import { ColumnsType } from 'antd/es/table';
 import { generateColumnsFromData } from 'utils/functions';
 import { GenericResponseObject } from 'typings/interfaces';
 
-const defaultRules = {
-  columns: [
-    {
-      name: 'business_tags',
-      content: 'tags',
-    },
-  ],
-};
+enum CellContentType {
+  ARRAY_OF_STRINGS = 'array-of-strings',
+}
+
+enum CellContentRender {
+  BADGES = 'badges',
+}
+
+interface Rule {
+  name: string;
+  column: string;
+  content: CellContentType;
+  renderAs: CellContentRender;
+}
+
+const defaultRules: Rule[] = [
+  {
+    name: 'Render Business Tags as Badges',
+    column: 'business_tags',
+    content: CellContentType.ARRAY_OF_STRINGS,
+    renderAs: CellContentRender.BADGES,
+  },
+];
 
 function curateColumns(columns: any, rules: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  rules.map((rule: Rule) => {
+    return null;
+  });
   return columns;
 }
 
