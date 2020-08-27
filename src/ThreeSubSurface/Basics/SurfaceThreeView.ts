@@ -165,7 +165,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     SurfaceThreeView.setMaterial(material, style);
 
     let texture: THREE.DataTexture | null = null;
-    if (style.solidColorType.value === ColorType.Depth)
+    if (style.solidColorType.value === ColorType.ColorMap)
     {
       material.color = ThreeConverter.toThreeColor(Colors.white);
       if (!style.solidContour.use)

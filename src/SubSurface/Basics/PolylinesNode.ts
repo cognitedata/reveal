@@ -81,7 +81,7 @@ export class PolylinesNode extends DataNode
   {
     switch (colorType)
     {
-      case ColorType.DifferentColor:
+      case ColorType.Different:
       case ColorType.Specified:
         return true;
 

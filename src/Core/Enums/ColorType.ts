@@ -13,10 +13,10 @@
 
 export enum ColorType
 {
-  Depth, // Color by the Z value, using a color table
+  ColorMap, // Color by the given color map
   Specified, // Use the color of the node
   Parent, // Use the color of the parent node
   Black,
   White,
-  DifferentColor, // Use different colors (normally use for debugging)
+  Different, // Use different colors (normally use for debugging)
 };

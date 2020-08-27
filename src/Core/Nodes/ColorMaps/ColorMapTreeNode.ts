@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
-import ColorMapTreeNodeIcon from "@images/Nodes/ColorMapTreeNode.png";
+import Icon from "@images/Nodes/ColorMapNode.png";
 
 export class ColorMapTreeNode extends BaseTreeNode
 {
@@ -40,6 +40,6 @@ export class ColorMapTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Colormaps"; }
-  public /*override*/ getIcon(): string { return ColorMapTreeNodeIcon; }
+  public /*override*/ getIcon(): string { return Icon; }
   public /*override*/ getName(): string { return "Colormaps"; }
 }
