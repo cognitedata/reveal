@@ -5,6 +5,7 @@ import NodeUtils from "@/UserInterface/utils/NodeUtils";
 import { ISettingsState } from "@/UserInterface/Redux/State/settings";
 import Color from "color";
 import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
+import { Appearance } from "@/Core/States/Appearance";
 
 // Initial settings state
 const initialState = {
@@ -24,7 +25,11 @@ const initialState = {
       // }
     ]
   },
-  expandedSections: {}
+  expandedSections: {
+    [Appearance.generalSettingsFolder]: Appearance.generalSettingsDefaultExpanded,
+    [Appearance.statisticsFolder]: Appearance.statisticsDefaultExpanded,
+    [Appearance.visualSettingsFolder]: Appearance.visualSettingsDefaultExpanded,
+  }
 } as ISettingsState;
 // Redux Toolkit package includes a createReducer utility that uses Immer internally.
 // Because of this, we can write reducers that appear to "mutate" state, but the updates
@@ -65,15 +70,15 @@ export const settingsSlice = createSlice({
             // populate settings object
             settings = new ExpanderProperty("Settings");
             {
-              const expander = settings.createExpander("General Settings");
+              const expander = settings.createExpander(Appearance.generalSettingsFolder);
               node.populateInfo(expander);
             }
             {
-              const expander = settings.createExpander("Statistics");
+              const expander = settings.createExpander(Appearance.statisticsFolder);
               node.populateStatistics(expander);
             }
             {
-              const expander = settings.createExpander("Visual Settings");
+              const expander = settings.createExpander(Appearance.visualSettingsFolder);
               node.populateRenderStyle(expander);
             }
             NodeUtils.properties = settings;
