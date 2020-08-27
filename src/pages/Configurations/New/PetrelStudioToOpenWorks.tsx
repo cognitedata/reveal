@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import React, { useContext, useEffect, useState } from 'react';
 import { Badge, Button } from '@cognite/cogs.js';
 import { Checkbox, Select } from 'antd';
