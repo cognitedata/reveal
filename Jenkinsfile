@@ -150,9 +150,7 @@ pods { contexts ->
 
           dir('staging') {
             fas.build(
-              useContainer: true,
               domainName: STAGING_DOMAIN_NAME,
-              iap: true,
               buildCommand: 'yarn build staging',
             )
           }
@@ -167,9 +165,7 @@ pods { contexts ->
 
           dir('release') {
             fas.build(
-              useContainer: true,
               domainName: RELEASE_DOMAIN_NAME,
-              iap: false,
               buildCommand: 'yarn build production',
             )
           }
@@ -182,16 +178,12 @@ pods { contexts ->
   if (isReleaseBranch) {
     stageWithNotify('Publish staging', contexts.publishStaging) {
       dir('staging') {
-        fas.publish(
-          useContainer: true,
-        )
+        fas.publish()
       }
     }
     stageWithNotify('Publish release', contexts.publishRelease) {
       dir('release') {
-        fas.publish(
-          useContainer: true,
-        )
+        fas.publish()
       }
     }
   }
