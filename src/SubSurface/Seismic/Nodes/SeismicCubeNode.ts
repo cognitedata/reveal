@@ -117,7 +117,7 @@ export class SeismicCubeNode extends DataNode
     }).catch(error =>
     {
       this.seismicCube = null;
-      alert(`Can not load seismic cube.\nError message: ${error.message}`);
+      alert(`Can not load seismic cube.\nError message: ${error}`);
     });
   }
 }
