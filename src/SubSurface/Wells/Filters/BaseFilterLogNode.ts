@@ -33,7 +33,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   public get filterLogFolder(): FilterLogFolder | null { return this.getAncestorByType(FilterLogFolder); }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

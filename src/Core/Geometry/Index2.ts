@@ -27,7 +27,7 @@ export default class Index2
   public j: number;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(i: number, j?: number)

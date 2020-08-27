@@ -30,7 +30,7 @@ export abstract class BaseVisualNode extends BaseNode
   static className = "BaseVisualNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor() { super(); }

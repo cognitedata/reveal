@@ -13,7 +13,7 @@ export class EditTool extends BaseTool
   private _currentManipulator: BaseManipulator | null = null;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

@@ -25,7 +25,7 @@ export class Grid2 extends Shape
   public readonly cellSize: Index2;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(nodeSize: Index2)

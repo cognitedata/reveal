@@ -65,7 +65,7 @@ export class RegularGrid2 extends Grid2
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(nodeSize: Index2, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined)

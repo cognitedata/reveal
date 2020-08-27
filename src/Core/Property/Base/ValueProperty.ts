@@ -61,7 +61,7 @@ export default abstract class ValueProperty<T> extends BaseProperty
   public set optionValidationDelegate(value: ValidateOption | undefined) { this._optionValidationDelegate = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor(params: IPropertyParams<T>)
@@ -100,6 +100,18 @@ export default abstract class ValueProperty<T> extends BaseProperty
     }
     else
       throw Error("Property has no value or instance");
+  }
+
+  //==================================================
+  // OVERRIDES of BaseProperty
+  //==================================================
+
+  public /*override*/ clearDelegates(): void
+  {
+    this._applyDelegate = undefined;
+    this._applyByFieldNameDelegate = undefined;
+    this._isEnabledDelegate = undefined;
+    this._optionValidationDelegate = undefined;
   }
 
   //==================================================
@@ -169,14 +181,6 @@ export default abstract class ValueProperty<T> extends BaseProperty
 
     if (this._applyByFieldNameDelegate && this.fieldName)
       this._applyByFieldNameDelegate(this.fieldName);
-  }
-
-  public clearDelegates(): void
-  {
-    this._applyDelegate = undefined;
-    this._applyByFieldNameDelegate = undefined;
-    this._isEnabledDelegate = undefined;
-    this._optionValidationDelegate = undefined;
   }
 
   public getExpandedOptions<K extends keyof T>(): T[] | [K, T[K]][] | []

@@ -33,7 +33,7 @@ export class CasingLogStyle extends BaseRenderStyle
   public radiusFactor = new NumberProperty({ name: "Radius Factor", value: 3, options: [1, 1.5, 2, 2.5, 3, 4, 5, 10] }); // Radius in 3D = radiusFactor * casing.radius
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

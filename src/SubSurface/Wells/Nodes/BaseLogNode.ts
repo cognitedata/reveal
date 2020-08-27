@@ -62,7 +62,7 @@ export abstract class BaseLogNode extends DataNode
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

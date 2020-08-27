@@ -47,7 +47,7 @@ export default class Range1
   public get center(): number { return (this._min + this._max) / 2; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(min?: number, max?: number)

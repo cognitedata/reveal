@@ -40,7 +40,7 @@ export class FloatLogStyle extends BaseRenderStyle
   // public minValue = new UseFloat(true, false, 3);
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

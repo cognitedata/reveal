@@ -34,7 +34,7 @@ export class DiscreteLogNode extends BaseLogNode
   public set log(value: DiscreteLog | null) { this.anyData = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

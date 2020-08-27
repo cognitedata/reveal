@@ -24,7 +24,7 @@ export class WellTreeNode extends BaseTreeNode
   static className = "WellTreeNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

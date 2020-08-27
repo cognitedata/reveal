@@ -37,7 +37,7 @@ export class SeismicOutlineView extends BaseGroupThreeView
   protected get node(): SeismicOutlineNode { return super.getNode() as SeismicOutlineNode; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

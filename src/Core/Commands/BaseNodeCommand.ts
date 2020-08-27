@@ -6,7 +6,7 @@ export abstract class BaseNodeCommand extends BaseCommand
   public node: null | BaseNode = null; // Get the node to invoke the command on
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor(node: BaseNode | null = null)

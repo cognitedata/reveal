@@ -56,7 +56,7 @@ export class PointLogView extends BaseGroupThreeView
   private get style(): PointLogStyle { return super.getStyle() as PointLogStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -27,7 +27,7 @@ export class SeismicRenderStyle extends BaseRenderStyle
   public opacity = new SliderProperty({ name: "Opacity", value: 0.5, use: false });
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId)

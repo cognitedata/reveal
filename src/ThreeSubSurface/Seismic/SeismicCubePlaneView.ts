@@ -53,7 +53,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   protected get style(): SeismicRenderStyle { return super.getStyle() as SeismicRenderStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

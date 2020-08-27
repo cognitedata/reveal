@@ -28,7 +28,7 @@ export class DiscreteLogStyle extends BaseRenderStyle
   public rightBand = new BooleanProperty({ name: "Right Band", value: true });
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

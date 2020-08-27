@@ -28,7 +28,7 @@ export abstract class DataNode extends BaseVisualNode
   static className = "DataNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

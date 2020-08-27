@@ -6,7 +6,7 @@ export class ViewAllCommand extends ThreeRenderTargetCommand
 {
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

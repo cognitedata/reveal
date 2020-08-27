@@ -24,7 +24,7 @@ export class DiscreteLogSample extends BaseLogSample
   public value: number;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(value: number, md: number)

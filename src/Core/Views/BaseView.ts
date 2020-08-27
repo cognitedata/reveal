@@ -36,7 +36,7 @@ export abstract class BaseView
   protected get renderTarget(): BaseTargetNode { return this.getTarget() as BaseTargetNode; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor() { }

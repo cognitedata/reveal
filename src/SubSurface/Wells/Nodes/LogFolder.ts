@@ -23,7 +23,7 @@ export class LogFolder extends FolderNode
   static className = "LogFolder";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

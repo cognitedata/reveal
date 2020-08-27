@@ -32,7 +32,7 @@ export class CasingLogSample extends BaseLogSample
   public currentStatusComment: string = "";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(radius: number, topMd: number, baseMd: number)

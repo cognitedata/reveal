@@ -23,7 +23,7 @@ export default abstract class BaseProperty
   public set toolTip(value) { this._toolTip = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor(name: string, readonly?: boolean, toolTip?: string)
@@ -32,4 +32,10 @@ export default abstract class BaseProperty
     this._toolTip = toolTip;
     this._readonly = readonly === undefined ? false : readonly;
   }
+
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  public /*virtual*/ clearDelegates(): void { }
 }

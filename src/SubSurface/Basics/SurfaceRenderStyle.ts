@@ -38,7 +38,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   public solidOpacity = new SliderProperty({ name: "Solid opacity", value: 0.5, use: false, fieldName: "opacity" });
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId)

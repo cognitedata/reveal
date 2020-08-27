@@ -54,7 +54,7 @@ export class AxisThreeView extends BaseGroupThreeView
   private bgColor: Color = Colors.black;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

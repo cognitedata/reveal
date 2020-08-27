@@ -37,7 +37,7 @@ export class PointsThreeView extends BaseGroupThreeView
   protected get style(): PointsRenderStyle { return super.getStyle() as PointsRenderStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

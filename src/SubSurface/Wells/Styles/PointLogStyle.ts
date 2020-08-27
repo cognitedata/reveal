@@ -32,7 +32,7 @@ export class PointLogStyle extends BaseRenderStyle
   public fontSize = new NumberProperty({ name: "Font Size", value: 20, options: BaseRenderStyle.fontSizeOptions }); 
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

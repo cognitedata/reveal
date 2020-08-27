@@ -37,7 +37,7 @@ export class WellNode extends BaseNode
   public get origin(): Vector3 { return new Vector3(this.wellHead.x, this.wellHead.y, 0); }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -22,7 +22,7 @@ export class StubTargetNode extends BaseTargetNode
   static className = "StubTargetNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

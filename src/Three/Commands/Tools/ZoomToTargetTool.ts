@@ -6,7 +6,7 @@ import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 export class ZoomToTargetTool extends BaseTool
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

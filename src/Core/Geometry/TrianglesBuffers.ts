@@ -40,7 +40,7 @@ export class TrianglesBuffers
   public get hasUvs(): boolean { return this.uvs.length > 0; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(pointCount: number, makeUvs = false)

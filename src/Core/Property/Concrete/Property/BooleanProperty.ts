@@ -4,7 +4,7 @@ import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 export default class BooleanProperty extends ValueProperty<boolean>
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(params: IPropertyParams<boolean>) { super(params); }

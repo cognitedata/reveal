@@ -39,7 +39,7 @@ export class Canvas
   private context: CanvasRenderingContext2D;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(dx: number, dy: number)

@@ -34,7 +34,7 @@ export class PointLogNode extends BaseLogNode
   public set log(value: PointLog | null) { this.anyData = value; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

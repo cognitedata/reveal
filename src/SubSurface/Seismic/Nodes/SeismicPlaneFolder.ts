@@ -25,7 +25,7 @@ export class SeismicPlaneFolder extends BaseNode
   static className = "SeismicPlaneFolder";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -7,7 +7,7 @@ export abstract class ThreeRenderTargetCommand extends BaseCommand
   public target: null | ThreeRenderTargetNode = null; // Get the node to invoke the command on
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor(target: ThreeRenderTargetNode | null = null)

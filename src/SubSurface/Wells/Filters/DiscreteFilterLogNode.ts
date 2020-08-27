@@ -34,7 +34,7 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   public get renderStyle(): DiscreteLogStyle | null { return this.getRenderStyle() as DiscreteLogStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

@@ -22,7 +22,7 @@ export abstract class BaseTreeNode extends BaseNode
   static className = "BaseTreeNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() 

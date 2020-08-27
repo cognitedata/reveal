@@ -23,7 +23,7 @@ export class SettingsTreeNode extends BaseTreeNode
   static className = "SettingsTreeNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

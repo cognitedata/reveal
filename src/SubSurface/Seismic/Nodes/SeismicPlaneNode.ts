@@ -159,7 +159,7 @@ export class SeismicPlaneNode extends BaseVisualNode
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(perpendicularAxis = 0, perpendicularIndex = -1)

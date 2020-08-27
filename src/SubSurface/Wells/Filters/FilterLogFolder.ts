@@ -34,7 +34,7 @@ export class FilterLogFolder extends BaseNode
   static className = "FilterLogFolder";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

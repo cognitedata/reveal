@@ -7,7 +7,7 @@ export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand
 {
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

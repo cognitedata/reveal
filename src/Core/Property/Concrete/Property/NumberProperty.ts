@@ -4,7 +4,7 @@ import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 export class NumberProperty extends ValueProperty<number>
 { 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(params: IPropertyParams<number>) { super(params); }

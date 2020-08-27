@@ -5,7 +5,7 @@ import { Util } from "@/Core/Primitives/Util";
 export class ZScaleCommand extends ThreeRenderTargetCommand
 {
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

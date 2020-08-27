@@ -28,7 +28,7 @@ export class Trace
   public get length(): number { return this.values.length; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(length: number)
@@ -37,7 +37,7 @@ export class Trace
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public getAt(index: number): number { return this.values[index]; }

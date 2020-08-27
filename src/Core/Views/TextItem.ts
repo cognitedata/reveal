@@ -33,7 +33,7 @@ export class TextItem
   public get hasValue(): boolean { return Util.isEmpty(this.value); }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   constructor(key: string, isBold: boolean, value?: string)

@@ -43,7 +43,7 @@ export class RenderSample extends MdSample
   public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point} radius: ${this.radius}`; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   constructor(point: Vector3, md: number, radius = 0, color: Color = Colors.white)

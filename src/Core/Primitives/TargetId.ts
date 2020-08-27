@@ -42,7 +42,7 @@ export class TargetId
   public /*override*/ toString(): string { return `(${this.typeName}, ${this.uniqueId})`; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(typeName: string, uniqueId: UniqueId)

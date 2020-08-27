@@ -34,7 +34,7 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   public get renderStyle(): FloatLogStyle | null { return this.getRenderStyle() as FloatLogStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

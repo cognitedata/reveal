@@ -27,7 +27,7 @@ export class PotreeNode extends BaseVisualNode
   static className = "PotreeNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

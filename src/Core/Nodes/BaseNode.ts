@@ -44,7 +44,7 @@ export abstract class BaseNode extends Identifiable
   static className = "BaseNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   protected constructor() { super(); }

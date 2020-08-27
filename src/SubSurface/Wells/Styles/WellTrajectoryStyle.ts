@@ -34,7 +34,7 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   public bandFontSize = new NumberProperty({ name: "Band Font Size", value: 30, options: BaseRenderStyle.fontSizeOptions }); 
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }

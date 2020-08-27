@@ -45,7 +45,7 @@ export class CasingLogView extends BaseGroupThreeView
   private get style(): CasingLogStyle { return super.getStyle() as CasingLogStyle; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

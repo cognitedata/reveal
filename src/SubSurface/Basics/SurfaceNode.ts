@@ -33,7 +33,7 @@ export class SurfaceNode extends DataNode
   static className = "SurfaceNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor()

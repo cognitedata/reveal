@@ -23,7 +23,7 @@ export class ColorMapNode extends BaseNode
   static className = "ColorMapNode";
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

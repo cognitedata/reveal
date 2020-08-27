@@ -134,7 +134,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(fractionRange: Range3 | undefined) { super(fractionRange); }

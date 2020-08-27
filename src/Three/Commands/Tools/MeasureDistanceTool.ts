@@ -15,7 +15,7 @@ export class MeasureDistanceTool extends BaseTool
   private _worldCoordinates: Polyline = new Polyline();
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(target: ThreeRenderTargetNode | null = null)

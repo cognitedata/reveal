@@ -24,7 +24,7 @@ export class FilterLogFilterView extends BaseView
   private get node(): BaseFilterLogNode { return super.getNode() as BaseFilterLogNode; }
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor() { super(); }

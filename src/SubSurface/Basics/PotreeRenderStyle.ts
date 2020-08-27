@@ -27,7 +27,7 @@ export class PotreeRenderStyle extends BaseRenderStyle
   public budget: number = 2_000_000;
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }
