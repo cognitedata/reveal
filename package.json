@@ -13,7 +13,7 @@
     "@sentry/browser": "^5.21.4",
     "antd": "^3.26.18",
     "cron-validator": "^1.1.1",
-    "cronstrue": "^1.96.0",
+    "cronstrue": "^1.97.0",
     "history": "^4.10.1",
     "immer": "^7.0.8",
     "immutable": "^4.0.0-rc.12",
