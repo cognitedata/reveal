@@ -55,11 +55,7 @@ export class WorkerPool {
     const workerUrl = (revealEnv.publicPath || __webpack_public_path__) + 'reveal.parser.worker.js';
     const options = { name: 'reveal.parser' };
 
-    // value by itself doesn't mean that domain is the same
-    // if it's relative path - then it's the same, otherwise need to compare domains
-    const isPublicPathHasTheSameDomain = revealEnv.publicPath && isTheSameDomain(revealEnv.publicPath);
-
-    if (isPublicPathHasTheSameDomain) {
+    if (isTheSameDomain(workerUrl)) {
       return new Worker(workerUrl, options);
     }
 

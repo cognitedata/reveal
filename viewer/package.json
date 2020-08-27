@@ -12,8 +12,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "build": "cd ../parser-worker && yarn && yarn build && cd ../viewer && yarn build:dev",
-    "build:dev": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
+    "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
     "build:prod": "yarn run mkdist && webpack",
     "build:watch": "yarn run build -- --watch",
     "serve": "cd ../parser-worker && yarn && yarn build && cd ../examples && yarn && yarn start",

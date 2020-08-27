@@ -59,7 +59,7 @@ If you set the env variable correctly, during the build you should see this prin
 
 ```
 > ⬡ <webpack-log>: Worker local build config:
-> ⬡ <webpack-log>:  { env: undefined, publicPath: 'https://static.server/parser-worker/' }
+> ⬡ <webpack-log>:  { publicPath: 'https://static.server/parser-worker/' }
 ```
 
 Now `parser-worker/dist/local` folder contains the built worker and wasm files.
@@ -70,8 +70,24 @@ You can host them at your static server.
 If you want to test your own changes in worker or rust module locally,
 all you need to do is to copy files from `parser-worker/dist/local` to some folder in examples.
 
-You can simply use `yarn local-cdn` which will run build,
-then copy files to `examples/public/local-cdn` and run the examples server. 
+You can simply use `yarn local-cdn` it does:
+
+* run parser-worker build
+* copy files to `examples/public/local-cdn`
+* build viewer with publicPath pointing on 'local-cdn' 
+* run the examples server.
+
+Notice that it builds viewer with the same
+public path, so you don't have to override revealEnv in examples. If you do some changes for the viewer at the same time,
+you might want to run viewer build separately. If you're not overriding the `revealEnv` with the path to local-cdn -
+you should build the viewer with PUBLIC_PATH env variable that points on `/local-cdn` folder.
+For example:
+```bash
+cd ../viewer
+export PUBLIC_PATH="/local-cdn" && yarn build --watch  
+``` 
+Make sure the path you use to build parser-worker matches the path
+you run examples on (where worker files are available).
 
 In case if you want to test worker changes outside examples, 
 you still can use `yarn local-cdn` command,
