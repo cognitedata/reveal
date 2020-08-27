@@ -8,7 +8,11 @@ export class ColorTypeProperty extends ValueProperty<ColorType>
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(params: IPropertyParams<ColorType>) { super(params); }
+  public constructor(params: IPropertyParams<ColorType>) 
+  {
+    super(params);
+    this.options = Object(ColorType);
+  }
 
   public getOptionIcon(option: ColorType): string
   {

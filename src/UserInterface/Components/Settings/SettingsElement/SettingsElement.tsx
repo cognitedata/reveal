@@ -85,20 +85,17 @@ export default function SettingsElement(props: ISettingsElementProps) {
             onChange={(event) =>
               !isReadOnly ? onChange(id, event.target.checked) : null
             }
-            value={value}
+            checked={value}
           />
         );
       case ElementTypes.Select: {
         const options = config.options as ISelectOption[];
-        const [selectedValue, setSelectedValue] = useState(
-          value ?? (options.length > 0 && options[0].value)
-        );
 
         // TODO: Create spare component for each of the types and ove this method select renderer
         const handleSelectUpDown = (isUp: boolean) => {
           if (!isReadOnly) {
             const selectedIndex = options.findIndex(
-              (ele) => ele.value === selectedValue
+              (ele) => ele.value === value
             );
 
             let nextIndex;
@@ -109,7 +106,6 @@ export default function SettingsElement(props: ISettingsElementProps) {
               nextIndex =
                 selectedIndex === options.length - 1 ? 0 : selectedIndex + 1;
             }
-            setSelectedValue(options[nextIndex].value);
             onChange(id, options[nextIndex].value);
           }
         };
@@ -117,10 +113,9 @@ export default function SettingsElement(props: ISettingsElementProps) {
         return (
           <div className="select-group" {...keyExtractor(null, type, name)}>
             <Select
-              value={selectedValue}
+              value={value}
               disabled={disabled}
               onChange={(e) => {
-                setSelectedValue(e.target.value);
                 onChange(id, e.target.value);
               }}
             >

@@ -33,6 +33,18 @@ export class Appearance
   // Settings Panel
 
   static valuesPerColorMap = 20; // values in color map image
+    
+  static generalSettingsFolder = "General Settings";
+
+  static generalSettingsDefaultExpanded = true;
+  
+  static statisticsFolder = "Statistics";
+
+  static statisticsDefaultExpanded = false;
+  
+  static visualSettingsFolder= "Visual Settings"
+
+  static visualSettingsDefaultExpanded = true;
 
   // For the viewer
   static viewerFooter = "Cognite subsurface viewer";
