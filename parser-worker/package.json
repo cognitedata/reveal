@@ -7,6 +7,12 @@
   "files": [
     "dist/*"
   ],
+  "repository": {
+    "type": "git",
+    "directory": "parser-worker",
+    "url": "https://github.com/cognitedata/reveal.git"
+  },
+  "homepage": "https://github.com/cognitedata/reveal/tree/master/parser-worker",
   "conf": {
     "port": 3000,
     "folder": "local-cdn"
@@ -24,8 +30,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "yarn run build:prod"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Lars Moastuen <lars.moastuen@cognite.com>",
+  "contributors": [
+    "Joachim Bjørne <joachim.bjorne@cognite.com>",
+    "Christopher Tannum <christopher.tannum@cognite.com>",
+    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
+  ],
+  "license": "Apache-2.0",
   "dependencies": {
     "comlink": "^4.3.0"
   },
