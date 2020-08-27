@@ -17,6 +17,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
 
 export class DiscreteLogStyle extends BaseRenderStyle
 {
@@ -24,7 +25,7 @@ export class DiscreteLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public rightBand = true;
+  public rightBand = new BooleanProperty({ name: "Right Band", value: true });
 
   //==================================================
   // CONSTRUCTORS
