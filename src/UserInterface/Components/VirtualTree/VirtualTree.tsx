@@ -5,7 +5,7 @@ import { List as VirtualList } from "react-virtualized/dist/es/List";
 import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 import { TreeItemButton } from "@/UserInterface/Components/VirtualTree/TreeItemControl";
-import TreeIcon from "./TreeIcon";
+import { ChromaIcon } from "@/UserInterface/Components/ChromaIcon/ChromaIcon";
 import { ExpandButton } from "./ExpandButton";
 import { VirtualTreeProps } from "./VirtualTreeProps";
 import { ITreeNode } from "./TreeNode";
@@ -74,10 +74,10 @@ export function VirtualTree(props: VirtualTreeProps) {
           </div>
           {item.icon && (
             <div className="tree-item-comp" role="cell">
-              <TreeIcon
+              <ChromaIcon
                 src={item.icon.path}
                 alt={item.icon.description}
-                color={item.icon.color}
+                color={item.icon.color?.hex()}
                 size={props.iconSize}
               />
             </div>

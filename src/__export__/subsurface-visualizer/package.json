@@ -44,7 +44,6 @@
     "camera-controls": "^1.22.1",
     "color": "^3.1.2",
     "core-js": "^3.6.5",
-    "fabric": "^4.0.0-beta.12",
     "gl-matrix": "^3.1.0",
     "immer": "^7.0.5",
     "lodash": "^4.17.15",

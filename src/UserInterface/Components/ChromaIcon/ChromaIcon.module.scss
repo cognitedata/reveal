@@ -1,0 +1,27 @@
+@use "../../styles/scss/variables";
+
+.chroma-icon-container{
+  width: var(--3d-node-viz-icon-size, variables.$icon-size);
+  height: var(--3d-node-viz-icon-size, variables.$icon-size);
+
+  .chroma-icon {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chroma-icon-image-container{
+    background-size: var(--3d-node-viz-icon-size, variables.$icon-size) var(--3d-node-viz-icon-size, variables.$icon-size);
+    mask-size: var(--3d-node-viz-icon-size, variables.$icon-size) var(--3d-node-viz-icon-size, variables.$icon-size);
+    -webkit-mask-size: var(--3d-node-viz-icon-size, variables.$icon-size) var(--3d-node-viz-icon-size, variables.$icon-size);
+    background-repeat: no-repeat;
+    background-position: center;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-mode: alpha;
+  }
+}

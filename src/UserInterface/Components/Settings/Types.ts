@@ -10,7 +10,7 @@ export type ToolBarType = {
 // Setting panel Prop type
 export type SettingPanelProps = {
   id?: string;
-  titleBar?: { name: string; icon: { type: string; name: string }; toolBar: ToolBarType };
+  titleBar?: { name: string; icon?: { src?: string; description?: string, color?: string }; toolBar: ToolBarType };
   expandedSections: {[sectionName: string]: boolean};
   onSectionExpand: (sectionId: string, expandStatus: boolean) => void;
   onPropertyValueChange: (elementId: string, value: any) => void;

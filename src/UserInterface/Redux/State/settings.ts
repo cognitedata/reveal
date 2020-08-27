@@ -4,7 +4,7 @@ import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
 export interface TitleBarState
 {
   name: string;
-  icon: { type: string; name: string };
+  icon: { src?: string; description?: string; color?: string };
   toolBar: ToolBarType;
 }
 

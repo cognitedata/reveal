@@ -37,6 +37,7 @@ setCssVariable(
   "--subsurface-viz-default-font-size",
   `${Appearance.ApplicationDefaultFontSize}rem`
 );
+setCssVariable("--3d-node-viz-icon-size", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-icon-size", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-height", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-comp-width", `${Appearance.treeIconSize}px`);

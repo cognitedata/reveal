@@ -2,15 +2,16 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
-import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
 import { ISettingsState } from "@/UserInterface/Redux/State/settings";
+import Color from "color";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 
 // Initial settings state
 const initialState = {
   currentNodeId: "",
   titleBar: {
     name: "",
-    icon: { type: IconTypes.NODES, name: "FolderNode" },
+    icon: { src: "", description: "", color: "" },
     toolBar: [
       // {
       //   icon: { type: IconTypes.STATES, name: "Pinned" }
@@ -42,11 +43,15 @@ export const settingsSlice = createSlice({
         {
           state.currentNodeId = node.uniqueId.toString();
           state.titleBar.name = node.displayName;
+          state.titleBar.icon.src = node.getIcon();
+          state.titleBar.icon.color = node.hasIconColor() ? node.getColor().hex() : undefined;
+          state.titleBar.icon.description = node.name;
         }
         else
         {
           state.currentNodeId = "";
           state.titleBar.name = "";
+          state.titleBar.icon = {};
         }
       },
       prepare(node: BaseNode): { payload: { node: BaseNode } }
@@ -89,7 +94,34 @@ export const settingsSlice = createSlice({
 
     }
   },
-  extraReducers: {}
+  extraReducers: {
+    [ActionTypes.changeNodeName]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, newLabel: string }>): ISettingsState =>
+    {
+      const uniqueId = action.payload.nodeId;
+      if (state.currentNodeId === uniqueId)
+      {
+        state.titleBar.name = action.payload.newLabel;
+        state.titleBar.icon.description = action.payload.newLabel;
+      }
+      return state;
+    },
+    [ActionTypes.changeNodeColor]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, nodeColor: Color }>): ISettingsState =>
+    {
+      const uniqueId = action.payload.nodeId;
+      if (state.currentNodeId === uniqueId)
+        state.titleBar.icon.color = action.payload.nodeColor.hex();
+
+      return state;
+    },
+    [ActionTypes.changeNodeIcon]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, nodeIcon: string }>): ISettingsState =>
+    {
+      const uniqueId = action.payload.nodeId;
+      if (state.currentNodeId === uniqueId)
+        state.titleBar.icon.src = action.payload.nodeIcon;
+
+      return state;
+    }
+  }
 });
 
 export default settingsSlice.reducer;

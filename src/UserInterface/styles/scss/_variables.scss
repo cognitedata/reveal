@@ -40,7 +40,13 @@ $select-input-background: inherit !default;
 $select-input-option-color: #6a0dad !default;
 $slider-input-background: #d5d5d5 !default;
 
-// set css properties
+// set height css properties
+:root {
+  --3d-node-viz-icon-size: #{$icon-size};
+}
+
+// set color css properties
+// todo: change subsurface names to 3d-node-viz
 :root {
   --subsurface-viz-background: #{$panel-background};
   --subsurface-viz-tree-background: #{$tree-background};

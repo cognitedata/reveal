@@ -44,35 +44,6 @@ $virtual-tree-label-border-radius: 0.3em;
     width: var(--v-tree-item-comp-width, $virtual-tree-item-sub-element-width);
   }
 
-  .tree-icon {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .tree-icon-image-container{
-    background-size: var(--v-tree-icon-size, $virtual-tree-icon-size) var(--v-tree-icon-size, $virtual-tree-icon-size);
-    mask-size: var(--v-tree-icon-size, $virtual-tree-icon-size) var(--v-tree-icon-size, $virtual-tree-icon-size);
-    -webkit-mask-size: var(--v-tree-icon-size, $virtual-tree-icon-size) var(--v-tree-icon-size, $virtual-tree-icon-size);
-    background-repeat: no-repeat;
-    background-position: center;
-    mask-repeat: no-repeat;
-    mask-position: center;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-mode: alpha;
-    filter: saturate(200%);
-  }
-
-  img.tree-icon-image{
-    width: 100%;
-    height: 100%;
-    mix-blend-mode: multiply;
-    filter: contrast(130%);
-  }
-
   .tree-item-lbl-container {
     flex-grow: 1;
     padding: 0 0.3em;

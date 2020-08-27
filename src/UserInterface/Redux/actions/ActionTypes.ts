@@ -11,6 +11,13 @@ export default class ActionTypes
   public static readonly changeSelectState = "settings/onSelectedNodeChange";
 
   //==================================================
+  // Settings Reducer Actions
+  //==================================================
+  public static readonly changeNodeName = "explorer/onNodeNameChange";
+  public static readonly changeNodeColor = "explorer/onNodeColorChange";
+  public static readonly changeNodeIcon = "explorer/onNodeIconChange";
+
+  //==================================================
   // Visualizers Reducer Actions
   //==================================================
   public static readonly setVisualizerData = "SET_VISUALIZER_DATA";
