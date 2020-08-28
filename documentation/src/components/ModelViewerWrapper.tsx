@@ -9,22 +9,21 @@ import { CogniteClient } from '@cognite/sdk';
 import { useBaseTag } from '../hooks/useBaseTag';
 
 const DemoContainer = styled.div`
-  height: calc(min(85vh, 600px));
+  height: calc(min(85vh, 400px));
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--ifm-leading);
 `;
 
 // any component that has client-side only code couldn't be imported directly (it fails SSR)
 const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
 
 const components: Record<string, ComponentType<DemoProps>> = {
-  Cognite3DViewerDemo: React.lazy(() =>
-    import('../../docs/examples/Cognite3DViewerDemo')
+  ModelViewer: React.lazy(() =>
+    import('./ModelViewer')
   ),
 };
 
-export function DemoWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
+export function ModelViewerWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
   useBaseTag('[data-basetagnail]');
 
   if (typeof window === 'undefined') {
@@ -32,7 +31,7 @@ export function DemoWrapper({ name, modelId, revisionId }: { name: string, model
   }
   let LazyComponent = components[name];
   return (
-    <DemoContainer data-basetagnail id="demo-wrapper">
+    <DemoContainer data-basetagnail>
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
           {(client: CogniteClient) => <LazyComponent client={client} modelId={modelId} revisionId={revisionId} />}
