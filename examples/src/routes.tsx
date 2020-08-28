@@ -18,6 +18,16 @@ import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { Testable } from './pages/Testable';
 
+// if you want to test your latest changes in workers or rust files
+// copy your worker files to some folder in /public and specify the path below
+// parser-worker has `yarn local-cdn` to set it up quickly
+// notice that experimental is separate entry point so it required to override env for it too
+
+// import { revealEnv } from '@cognite/reveal';
+// import { revealEnv as revealEnv2 } from '@cognite/reveal/experimental'
+// revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
+// revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
+
 type ExampleRoute = {
   path: string;
   menuTitle: string;
@@ -63,7 +73,8 @@ export const routes: Array<ExampleRoute> = [
     component: <GpuSectorCuller />,
   },
   {
-    path: `/migration?project=${project}` +
+    path:
+      `/migration?project=${project}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Migration',
