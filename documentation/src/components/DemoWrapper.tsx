@@ -32,7 +32,7 @@ export function DemoWrapper({ name, project, modelId, revisionId }: { name: stri
   }
   let LazyComponent = components[name];
   return (
-    <DemoContainer data-basetagnail>
+    <DemoContainer data-basetagnail id="demo-wrapper">
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
           {(client: CogniteClient) => <LazyComponent client={client} project={project} modelId={modelId} revisionId={revisionId} />}
