@@ -23,7 +23,7 @@ rendered in front of other objects, are given an outline and a special color.
   name="Cognite3DViewerDemo"
 />
 
-### Select nodes of a subtree
+### Highlight nodes of a subtree
 
 The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In
 order to highlight equipment it's typically necessary to highlight the entire
@@ -36,7 +36,7 @@ model.selectNodeByTreeIndex(923980, applyToChildren=true);
 `}
 </LiveCodeSnippet>
 
-### Reset selection
+### Reset highlighting
 
 Nodes can be deselected using `Cognite3DModel.deselectNodeByTreeIndex`, e.g.
 
