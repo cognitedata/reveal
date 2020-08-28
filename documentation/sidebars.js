@@ -1,10 +1,20 @@
 module.exports = {
   docs: [
     {
-      type: 'category',
-      label: 'Getting Started',
-      collapsed: false,
-      items: ['overview', 'installation'],
+      type: 'doc',
+      id: 'overview'
+    },
+    {
+      type: 'doc',
+      id: 'getting-started'
+    },
+    {
+      type: 'doc',
+      id: 'installation',
+    },
+    {
+      type: 'doc',
+      id: 'migration-guide',
     },
     {
       type: 'category',
@@ -21,10 +31,6 @@ module.exports = {
     {
       type: 'doc',
       id: 'concepts',
-    },
-    {
-      type: 'doc',
-      id: 'migration-guide',
     },
     {
       type: 'doc',
