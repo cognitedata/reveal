@@ -6,7 +6,7 @@ import {
   CogniteClient,
   isLoginPopupWindow,
   loginPopupHandler,
-  POPUP,
+  REDIRECT,
 } from '@cognite/sdk';
 
 const tokenCacheKey = 'cachedAT';
@@ -35,7 +35,7 @@ class LoginManager {
     this.client.loginWithOAuth({
       project: 'publicdata',
       accessToken,
-      onAuthenticate: POPUP,
+      onAuthenticate: REDIRECT,
       onTokens: (tokens) => {
         sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
       },
