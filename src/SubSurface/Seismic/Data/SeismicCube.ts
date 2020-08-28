@@ -246,10 +246,14 @@ export class SeismicCube extends RegularGrid3
     const cornerPoints: Vector3[] = [];
     const cornerCells: Index2[] = [];
 
-    const traces = await Promise.all(promises);
+    const resultList = await Promise.allSettled(promises);
     let numCellsK = 0;
-    for (const trace of traces)
+    for (const result of resultList)
     {
+      if (result.status !== "fulfilled")
+        continue;
+
+      const trace = result.value;
       numCellsK = Math.max(trace.traceList.length, numCellsK);
 
       if (!trace.coordinate)
@@ -267,33 +271,33 @@ export class SeismicCube extends RegularGrid3
       cell.substract(minCell);
       cornerCells.push(cell);
     }
-    if (numCellsK <= 0)
-      throw Error("numCellsK is 0");
+    // if (numCellsK <= 0)
+    //   throw Error("numCellsK is 0");
 
-    if (cornerPoints.length !== 4 || cornerCells.length !== 4)
-      throw Error("Not 3 corners");
+    // if (cornerPoints.length !== 4 || cornerCells.length !== 4)
+    //   throw Error("Not 3 corners");
 
-    // Get the corners
-    let corner00: Vector3 | null = null;
-    let cornerN0: Vector3 | null = null;
-    let corner0N: Vector3 | null = null;
-    for (let i = 0; i < cornerCells.length; i++)
-    {
-      const cell = cornerCells[i];
-      const corner = cornerPoints[i];
-      if (cell.isZero)
-        corner00 = corner;
-      else if (cell.i > 0 && cell.j === 0)
-        cornerN0 = corner;
-      else if (cell.i === 0 && cell.j > 0)
-        corner0N = corner;
-    }
-    if (!corner00)
-      throw Error("Miss corner00");
-    if (!cornerN0)
-      throw Error("Miss cornerN0");
-    if (!corner0N)
-      throw Error("Miss corner0N");
+    // // Get the corners
+    // let corner00: Vector3 | null = null;
+    // let cornerN0: Vector3 | null = null;
+    // let corner0N: Vector3 | null = null;
+    // for (let i = 0; i < cornerCells.length; i++)
+    // {
+    //   const cell = cornerCells[i];
+    //   const corner = cornerPoints[i];
+    //   if (cell.isZero)
+    //     corner00 = corner;
+    //   else if (cell.i > 0 && cell.j === 0)
+    //     cornerN0 = corner;
+    //   else if (cell.i === 0 && cell.j > 0)
+    //     corner0N = corner;
+    // }
+    // if (!corner00)
+    //   throw Error("Miss corner00");
+    // if (!cornerN0)
+    //   throw Error("Miss cornerN0");
+    // if (!corner0N)
+    //   throw Error("Miss corner0N");
 
     let cube: SeismicCube;
     const nodeSize = new Index3(numCellsI + 1, numCellsJ + 1, numCellsK + 1);
