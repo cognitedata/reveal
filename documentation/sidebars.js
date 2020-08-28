@@ -24,7 +24,8 @@ module.exports = {
         'examples/cad-basic', 
         'examples/cad-colors', 
         'examples/cad-highlighting', 
-        'examples/cad-2doverlay'
+        'examples/cad-2doverlay',
+        'examples/cad-preview',
       ],
     },
     {
