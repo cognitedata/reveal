@@ -17,3 +17,4 @@ export { PotreePointColorType } from './datamodels/pointcloud/types';
 import * as THREE from 'three';
 export { THREE };
 export { SupportedModelTypes } from '@/datamodels/base/SupportedModelTypes';
+export * from './revealEnv';
