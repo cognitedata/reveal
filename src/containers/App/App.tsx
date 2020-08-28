@@ -63,7 +63,7 @@ export default function App() {
 
   return (
     <Suspense fallback={<Spinner />}>
-      <ResourceSelectionProvider>
+      <ResourceSelectionProvider allowEdit>
         <ResourceActionsProvider>
           <Switch>
             <Redirect
