@@ -26,3 +26,11 @@
   position: relative;
   padding: 1rem;
 }
+
+model-viewer {
+  height: calc(min(85vh, 400px));
+  width: 100%;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+}

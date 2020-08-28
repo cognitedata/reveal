@@ -1,0 +1,15 @@
+---
+id: preview
+title: Viewing the gLTF Preview
+---
+
+import { ModelViewerWrapper } from '../../src/components/ModelViewerWrapper';
+import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
+
+Cognite's 3D optimizer now outputs a small GLB file (the binary file format of the gLTF specification) that can be used as a preview for telling models apart.
+
+<ModelViewerWrapper modelId={4715379429968321} revisionId={5688854005909501} name="ModelViewer" />
+
+The GLB file's ID can be obtained by requesting the `'preview-glb'` format in the model's outputs from the API.
+
+This example retrieves the GLB file, converts it to a data url, and displays it using `<model-viewer>`.
