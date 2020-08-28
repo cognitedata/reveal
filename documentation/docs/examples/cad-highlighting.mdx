@@ -63,7 +63,9 @@ model.deselectAllNodes();
 <LiveCodeSnippet>
 {`
 viewer.on('click', event => {
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  const intersection = viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
   if (intersection) {
     // Deselect any previous selected node
     intersection.model.deselectAllNodes();
@@ -76,14 +78,18 @@ viewer.on('click', event => {
 
 ### Highlight tagged equipment
 
-Equipment in CAD models typically consists of several smaller parts. When the user clicks an object in the 3D model, she or he will click one of the individual small parts,
+Equipment in CAD models typically consists of several smaller parts.
+When the user clicks an object in the 3D model, she or he will click one of the individual small parts.
 
-The following examples shows how to use node data retrieved from the Cognite SDK to determine to "tagged equipment" (i.e. named equipment) and highlighting the full equipment, rather than a single individual part.
+The following example shows how to use node data retrieved from the Cognite SDK to determine to "tagged equipment"
+(i.e. named equipment) and highlighting the full equipment, rather than a single individual part.
 
 <LiveCodeSnippet>
 {`
 viewer.on('click', event => {
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  const intersection = viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
   if (intersection) {
     const { modelId, revisionId } = intersection.model;
     const nodeId = intersection.nodeId;
@@ -92,7 +98,9 @@ viewer.on('click', event => {
       .then(ancestors => {
         // Find first ancestor whose name starts with "/" - we assume this
         // is the a tagged equipment
-        const taggedEquipment = ancestors.items.find(x => x.name.startsWith('/'));
+        const taggedEquipment = ancestors.items.find(
+          x => x.name.startsWith('/')
+        );
         if (taggedEquipment) {
           // Highlight tagged equipment and all children
           model.selectNodeByTreeIndex(taggedEquipment.treeIndex, true);
