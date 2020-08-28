@@ -30,7 +30,8 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "styled-components": "^5.1.1",
-    "three": "^0.115.0"
+    "three": "^0.115.0",
+    "@google/model-viewer": "1.1.0"
   },
   "devDependencies": {
     "@types/react": "^16.9.41",
