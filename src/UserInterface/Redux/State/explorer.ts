@@ -15,7 +15,7 @@ export interface IExplorerState
 // Explorer Redux Node interface
 export interface ITreeNodeState
 {
-  nodeType: string, // node Type is used to identify whether node is well type, surface type ..etc
+  nodeType: string, // node Type is used to identify what kind of node it is
   parentId?: string | null;
   uniqueId: string;
   name: string;
