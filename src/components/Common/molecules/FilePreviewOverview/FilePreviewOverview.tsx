@@ -48,8 +48,7 @@ import {
   retrieveExternal as retrieveExternalSequence,
 } from 'modules/sequences';
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
-import { useHistory } from 'react-router-dom';
-import { useTenant } from 'hooks/CustomHooks';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
 import {
   AssetItem,
   EventItem,
@@ -66,7 +65,6 @@ const Sidebar = styled.div`
   box-sizing: border-box;
   z-index: 1;
   background: #fff;
-  border-right: 2px solid ${Colors['greyscale-grey2'].hex()};
   width: 100%;
   height: 100%;
   margin-right: 20px;
@@ -149,6 +147,7 @@ type CategorizedAnnotations = {
   };
 };
 
+// TODO(DE-140) make onclicks also highlight annotations
 export const FilePreviewOverview = ({
   file,
   page,
@@ -162,8 +161,7 @@ export const FilePreviewOverview = ({
   onSequenceClicked,
 }: FilePreviewOverviewProps) => {
   const dispatch = useDispatch();
-  const history = useHistory();
-  const tenant = useTenant();
+  const { openPreview } = useResourcePreview();
   const [currentTab, setTab] = useState('resources');
   const [open, setOpen] = useState<string[]>([]);
   const [query, setQuery] = useState<string>('');
@@ -178,27 +176,27 @@ export const FilePreviewOverview = ({
   const onAssetClickedCallback =
     onAssetClicked ||
     (item => {
-      history.push(`/${tenant}/explore/asset/${item.id}`);
+      openPreview({ item: { id: item.id, type: 'asset' } });
     });
   const onFileClickedCallback =
     onFileClicked ||
     (item => {
-      history.push(`/${tenant}/explore/file/${item.id}`);
+      openPreview({ item: { id: item.id, type: 'file' } });
     });
   const onTimeseriesClickedCallback =
     onTimeseriesClicked ||
     (item => {
-      history.push(`/${tenant}/explore/timeseries/${item.id}`);
+      openPreview({ item: { id: item.id, type: 'timeSeries' } });
     });
   const onEventClickedCallback =
     onEventClicked ||
     (item => {
-      history.push(`/${tenant}/explore/event/${item.id}`);
+      openPreview({ item: { id: item.id, type: 'event' } });
     });
   const onSequenceClickedCallback =
     onSequenceClicked ||
     (item => {
-      history.push(`/${tenant}/explore/sequence/${item.id}`);
+      openPreview({ item: { id: item.id, type: 'sequence' } });
     });
   const categorizedAnnotations: CategorizedAnnotations = {
     file: { annotations: [], ids: new Set() },

@@ -18,6 +18,8 @@ export type OnSelectListener = (items: ResourceItem) => void;
 export type ResourceSelectionObserver = {
   mode: ResourceSelectionMode;
   setMode: (newMode: ResourceSelectionMode) => void;
+  allowEdit: boolean;
+  setAllowEdit: (newMode: boolean) => void;
   resourcesState: ResourceItemState[];
   setResourcesState: React.Dispatch<React.SetStateAction<ResourceItemState[]>>;
   resourceTypes: ResourceType[];
@@ -45,6 +47,10 @@ const ResourceSelectionContext = React.createContext(
 export const useResourceMode = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.mode;
+};
+export const useResourceEditable = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return observer.allowEdit;
 };
 export const useQuery: () => [
   string,
@@ -78,6 +84,7 @@ export const useResourceFilters = () => {
 const defaultOnSelect = () => {};
 
 export const ResourceSelectionProvider = ({
+  allowEdit: propsAllowEdit = false,
   mode: initialMode = 'none',
   resourceTypes: initialResourceTypes,
   assetFilter: initialAssetFilter = {},
@@ -89,6 +96,7 @@ export const ResourceSelectionProvider = ({
   onSelect: initialOnSelect = defaultOnSelect,
   children,
 }: {
+  allowEdit?: boolean;
   mode?: ResourceSelectionMode;
   resourceTypes?: ResourceType[];
   assetFilter?: AssetFilterProps;
@@ -101,6 +109,7 @@ export const ResourceSelectionProvider = ({
   children: React.ReactNode;
 }) => {
   const [query, setQuery] = useState<string>('');
+  const [allowEdit, setAllowEdit] = useState<boolean>(propsAllowEdit);
   const [mode, setMode] = useState<ResourceSelectionMode>(initialMode);
   const [onSelect, setOnSelectListener] = useState<OnSelectListener>(
     () => initialOnSelect
@@ -142,6 +151,8 @@ export const ResourceSelectionProvider = ({
   return (
     <ResourceSelectionContext.Provider
       value={{
+        allowEdit,
+        setAllowEdit,
         mode,
         setMode,
         query,
