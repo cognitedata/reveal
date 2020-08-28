@@ -3,8 +3,7 @@
  */
 
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
-import { ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/reveal.parser.types';
-import { RevealParserWorker } from '@/utilities/workers/reveal.parser.worker';
+import { ParseSectorResult, ParseCtmResult, RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { SectorQuads } from '../rendering/types';
 
 export class CadSectorParser {

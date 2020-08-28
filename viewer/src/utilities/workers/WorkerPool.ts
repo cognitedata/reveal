@@ -1,10 +1,10 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
 import * as Comlink from 'comlink';
-import { RevealParserWorker } from './reveal.parser.worker';
-// IMPORTANT NOTE! The path to the RevealParserWorker needs to be the same in the new Worker constructor
+import type { RevealParserWorker } from '@cognite/reveal-parser-worker';
+import { revealEnv } from '@/revealEnv';
+import { isTheSameDomain } from '@/utilities/networking/isTheSameDomain';
 
 type WorkDelegate<T> = (worker: RevealParserWorker) => Promise<T>;
 
@@ -26,6 +26,8 @@ export class WorkerPool {
 
   private readonly workerList: PooledWorker[] = [];
 
+  private workerObjUrl?: string;
+
   constructor() {
     const numberOfWorkers = this.determineNumberOfWorkers();
 
@@ -33,14 +35,38 @@ export class WorkerPool {
       const newWorker = {
         // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
         // Please feel free to remove `as unknown` if possible.
-        worker: (Comlink.wrap(
-          new Worker('./reveal.parser.worker', { name: 'reveal.parser', type: 'module' })
-        ) as unknown) as RevealParserWorker,
+        worker: (Comlink.wrap(this.createWorker()) as unknown) as RevealParserWorker,
         activeJobCount: 0,
         messageIdCounter: 0
       };
       this.workerList.push(newWorker);
     }
+
+    if (this.workerObjUrl) {
+      URL.revokeObjectURL(this.workerObjUrl);
+    }
+  }
+
+  // Used to construct workers with or without importScripts usage to overcome CORS.
+  // When publicPath is not set we need to fetch worker from CDN (perform cross-origin request)
+  // and that's possible only with importScripts.
+  // If publicPath is set and points on the same domain, we use it normally.
+  private createWorker() {
+    const workerUrl = (revealEnv.publicPath || __webpack_public_path__) + 'reveal.parser.worker.js';
+    const options = { name: 'reveal.parser' };
+
+    if (isTheSameDomain(workerUrl)) {
+      return new Worker(workerUrl, options);
+    }
+
+    if (!this.workerObjUrl) {
+      const blob = new Blob([`importScripts(${JSON.stringify(workerUrl)});`], {
+        type: 'text/javascript'
+      });
+      this.workerObjUrl = URL.createObjectURL(blob);
+    }
+
+    return new Worker(this.workerObjUrl, options);
   }
 
   async postWorkToAvailable<T>(work: WorkDelegate<T>): Promise<T> {
