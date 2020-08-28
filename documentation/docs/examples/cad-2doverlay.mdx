@@ -76,8 +76,8 @@ viewer.on('click', event => {
 
 When the user clicks a position in the 3D model, the overlay will now be placed at the clicked position.
 
-<video preload="auto" autoplay loop controls>
-  <source src={useBaseUrl('/img/cad-overlay-fixed.webm')} /> 
+<video preload="auto" autoPlay="autoplay" loop controls>
+  <source src={useBaseUrl('/img/cad-overlay-fixed.webm')} />
 </video>
 
 However, as shown in the video above, the position is not updated when the camera moves. To do this, we need to update the overlay position when the camera moves.
@@ -120,6 +120,6 @@ viewer.on('click', event => {
 
 Now, the overlay position is updated whenever the camera is moved. Note that we also handle the case when the clicked position goes out of view by hiding the overlay.
 
-<video preload="auto" autoplay loop controls>
-  <source src={useBaseUrl('/img/cad-overlay-updating.webm')} /> 
+<video preload="auto" autoPlay="autoplay" loop controls>
+  <source src={useBaseUrl('/img/cad-overlay-updating.webm')} />
 </video>
