@@ -12,6 +12,7 @@ const DemoContainer = styled.div`
   height: calc(min(85vh, 600px));
   display: flex;
   flex-direction: column;
+  margin-bottom: var(--ifm-leading);
 `;
 
 // any component that has client-side only code couldn't be imported directly (it fails SSR)

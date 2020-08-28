@@ -20,6 +20,7 @@
 }
 
 .codeSnippetPreview {
+  margin-bottom: var(--ifm-leading);
   border: 1px solid var(--ifm-color-emphasis-200);
   border-bottom-left-radius: var(--ifm-global-radius);
   border-bottom-right-radius: var(--ifm-global-radius);
