@@ -1293,6 +1293,11 @@
     url "^0.11.0"
     webpack-sources "^1.4.3"
 
+"@google/model-viewer@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@google/model-viewer/-/model-viewer-1.1.0.tgz#c525c22c615e93f525f50e02e4a33977ae2c6162"
+  integrity sha512-uZkgP87YwYPFxPcpXcLatcNnzvfH54Xh/p+MoXNT0SAZqPJUUCWQtIziNYIwZO0D6R2hxJO2Jvwv0/n2kW0Dfw==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
