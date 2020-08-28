@@ -9,7 +9,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { useBaseTag } from '../hooks/useBaseTag';
 
 const DemoContainer = styled.div`
-  height: calc(min(85vh, 600px));
+  height: calc(min(85vh, 400px));
   display: flex;
   flex-direction: column;
 `;
@@ -18,12 +18,12 @@ const DemoContainer = styled.div`
 const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
 
 const components: Record<string, ComponentType<DemoProps>> = {
-  Cognite3DViewerDemo: React.lazy(() =>
-    import('../../docs/examples/Cognite3DViewerDemo')
+  ModelViewer: React.lazy(() =>
+    import('./ModelViewer')
   ),
 };
 
-export function DemoWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
+export function ModelViewerWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
   useBaseTag('[data-basetagnail]');
 
   if (typeof window === 'undefined') {
