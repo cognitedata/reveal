@@ -27,3 +27,5 @@ export { internal };
 // Utilities
 import * as utilities from './utilities';
 export { utilities };
+
+export * from './revealEnv';

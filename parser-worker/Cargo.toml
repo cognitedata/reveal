@@ -34,7 +34,3 @@ features = [
   'Response',
   'Window',
 ]
-
-[profile.release]
-# TODO this enables debug symbols - remove when actually releasing to reduce file size
-debug = true

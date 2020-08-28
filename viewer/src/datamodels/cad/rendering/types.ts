@@ -27,8 +27,4 @@ export type InstancedMesh = {
   readonly treeIndices: Float32Array;
 };
 
-export interface SectorQuads {
-  readonly nodeIdToTreeIndexMap: Map<number, number>;
-  readonly treeIndexToNodeIdMap: Map<number, number>;
-  readonly buffer: Float32Array;
-}
+export { SectorQuads } from '@cognite/reveal-parser-worker';
