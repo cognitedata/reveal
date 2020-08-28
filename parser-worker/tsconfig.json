@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2019",
+    "module": "esnext",
+    "declaration": true,
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "stripInternal": true,
+    "noUnusedLocals": true,
+    "rootDir": "./",
+    "outDir": "dist/local",
+    "noUnusedParameters": true
+  },
+  "lib": ["webworker", "es6"],
+  "include": ["*.ts"],
+  "exclude": ["node_modules/**/*", "dist/**/*"]
+}
