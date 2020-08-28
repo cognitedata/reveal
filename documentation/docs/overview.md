@@ -1,6 +1,7 @@
 ---
 id: overview
 title: Overview
+description: Reveal is a JavaScript library for visualizing big 3D models on the web. It supports complex CAD models and large point clouds.
 ---
 
 Reveal is a blazing fast library for visualizing huge 3D models on the web. It's written in a combination of TypeScript and Rust.

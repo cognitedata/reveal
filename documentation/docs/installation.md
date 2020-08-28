@@ -1,6 +1,7 @@
 ---
 id: installation
 title: Installation
+description: Installation guide for @cognite/reveal library
 ---
 
 ```bash npm2yarn

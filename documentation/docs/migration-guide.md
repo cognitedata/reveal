@@ -2,6 +2,7 @@
 id: migration-guide
 title: Migrating from @cognite/3d-viewer
 hide_title: true
+description: This page describes the differences between Reveal viewer and @cognite/3d-viewer, which is an older version of Reveal with similar functionality. 
 ---
 
 # Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)

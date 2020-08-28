@@ -1,6 +1,7 @@
 ---
 id: concepts
 title: Concepts
+description: This page explains some basic concepts implemented by Reveal.
 ---
 
 This page explains some basic concepts implemented by Reveal.
