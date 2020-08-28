@@ -36,7 +36,7 @@ import {
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
-import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/reveal.parser.types';
+import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 import { createOffsetsArray, LoadingState } from '@/utilities';
 import { trackError } from '@/utilities/metrics';
