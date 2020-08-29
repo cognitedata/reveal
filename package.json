@@ -27,7 +27,7 @@
     "lodash": "^4.17.20",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-i18next": "^11.7.1",
+    "react-i18next": "^11.7.2",
     "react-scripts": "3.4.1",
     "styled-components": "^5.1.1"
   },
