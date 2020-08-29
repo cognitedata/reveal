@@ -1,19 +1,22 @@
 ---
 id: cad-colors
 title: Coloring CAD models
+describe: Reveal supports updating the color of individual objects by providing tree indices to identify 3D nodes.
 ---
 
-import { LiveCodeSnippet }from '../../src/components/LiveCodeSnippet';
+import { LiveCodeSnippet } from '../../src/components/LiveCodeSnippet';
 import { DemoWrapper } from '../../src/components/DemoWrapper';
-import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 
-Reveal supports updating the color of individual objects by providing [tree indices to identify 3D nodes](../concepts.md). 
+Reveal supports updating the color of individual objects by providing [tree indices to identify 3D nodes](../concepts.md).
 
-# Examples
-
-<DemoWrapper modelId={4715379429968321} revisionId={5688854005909501} name="Cognite3DViewerDemo" />
+<DemoWrapper
+  modelId={4715379429968321}
+  revisionId={5688854005909501}
+  name="Cognite3DViewerDemo"
+/>
 
 ## Update all node colors
+
 To update the colors of all nodes, loop over all tree indices in the model and update the colors
 accordingly:
 
@@ -28,6 +31,7 @@ model.iterateNodesByTreeIndex(treeIndex => {
 ## Reset node colors
 
 Color overrides can be overridden using `Cognite3DModel.resetNodeColorByTreeIndex`, e.g.
+
 <LiveCodeSnippet>
 {`
 model.iterateNodesByTreeIndex(treeIndex => {
@@ -38,6 +42,7 @@ model.iterateNodesByTreeIndex(treeIndex => {
 
 It's also possible (and more performant) to use `Cognite3DModel.resetAllNodeColors()` when
 you want to reset the colors of all nodes:
+
 <LiveCodeSnippet>
 {`
 model.resetAllNodeColors();
@@ -45,10 +50,12 @@ model.resetAllNodeColors();
 </LiveCodeSnippet>
 
 ## Update the colors of a subtree
-The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In 
+
+The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In
 order to update the colors of equipment it's typically necessary to apply the same color to the entire
 subtree. Reveal supports this through the use of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
 set to `true`:
+
 <LiveCodeSnippet>
 {`
 model.setNodeColorByTreeIndex(122, 240, 100, 60, applyToChildren=true);
