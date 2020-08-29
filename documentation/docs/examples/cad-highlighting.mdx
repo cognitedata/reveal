@@ -1,11 +1,11 @@
 ---
 id: cad-highlighting
 title: Highlighting CAD nodes
+description: Reveal supports selecting/highlighting individual objects by providing tree indices to identify 3D nodes
 ---
 
-import { LiveCodeSnippet }from '../../src/components/LiveCodeSnippet';
+import { LiveCodeSnippet } from '../../src/components/LiveCodeSnippet';
 import { DemoWrapper } from '../../src/components/DemoWrapper';
-import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Reveal supports selecting/highlighting individual objects by providing [tree indices to identify 3D nodes](../concepts.md).
@@ -15,25 +15,31 @@ rendered in front of other objects, are given an outline and a special color.
 
 <img src={useBaseUrl('/img/highlighted-object.png')} alt="Highlighted object" />
 
-# Examples
+## Examples
 
-<DemoWrapper modelId={4715379429968321} revisionId={5688854005909501} name="Cognite3DViewerDemo" />
+<DemoWrapper
+  modelId={4715379429968321}
+  revisionId={5688854005909501}
+  name="Cognite3DViewerDemo"
+/>
 
-### Select nodes of a subtree
+### Highlight nodes of a subtree
 
-The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In 
+The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In
 order to highlight equipment it's typically necessary to highlight the entire
 subtree. Reveal supports this through the use of `Cognite3DModel.selectNodeByTreeIndex` with `applyToChildren`
 set to `true`:
+
 <LiveCodeSnippet>
 {`
 model.selectNodeByTreeIndex(923980, applyToChildren=true);
 `}
 </LiveCodeSnippet>
 
-### Reset selection
+### Reset highlighting
 
 Nodes can be deselected using `Cognite3DModel.deselectNodeByTreeIndex`, e.g.
+
 <LiveCodeSnippet>
 {`
 model.iterateNodesByTreeIndex(treeIndex => {
@@ -44,6 +50,7 @@ model.iterateNodesByTreeIndex(treeIndex => {
 
 It's also possible (and more performant) to use `Cognite3DModel.deselectAllNodes()` when
 you want to deselect all nodes:
+
 <LiveCodeSnippet>
 {`
 model.deselectAllNodes();
@@ -57,7 +64,9 @@ model.deselectAllNodes();
 <LiveCodeSnippet>
 {`
 viewer.on('click', event => {
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  const intersection = viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
   if (intersection) {
     // Deselect any previous selected node
     intersection.model.deselectAllNodes();
@@ -70,24 +79,29 @@ viewer.on('click', event => {
 
 ### Highlight tagged equipment
 
-Equipment in CAD models typically consists of several smaller parts. When the user clicks an object in the 3D model, she or he will click one of the individual small parts,
+Equipment in CAD models typically consists of several smaller parts.
+When the user clicks an object in the 3D model, she or he will click one of the individual small parts.
 
-The following examples shows how to use node data retrieved from the Cognite SDK to determine to "tagged equipment" (i.e. named equipment) and highlighting the full equipment, rather than a single individual part.
+The following example shows how to use node data retrieved from the Cognite SDK to determine to "tagged equipment"
+(i.e. named equipment) and highlighting the full equipment, rather than a single individual part.
 
 <LiveCodeSnippet>
 {`
 viewer.on('click', event => {
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  const intersection = viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
   if (intersection) {
     const { modelId, revisionId } = intersection.model;
     const nodeId = intersection.nodeId;
-    
     // Retrieve all ancestors of the clicked node
     sdk.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId)
       .then(ancestors => {
         // Find first ancestor whose name starts with "/" - we assume this
         // is the a tagged equipment
-        const taggedEquipment = ancestors.items.find(x => x.name.startsWith('/'));
+        const taggedEquipment = ancestors.items.find(
+          x => x.name.startsWith('/')
+        );
         if (taggedEquipment) {
           // Highlight tagged equipment and all children
           model.selectNodeByTreeIndex(taggedEquipment.treeIndex, true);
