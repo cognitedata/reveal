@@ -1,11 +1,16 @@
 ---
 id: installation
 title: Installation
+description: Reveal installation guide 
 ---
 
 ```bash npm2yarn
 npm install @cognite/reveal
 ```
+
+:::tip important
+Expose all `*.worker.js` and `*.wasm` files from `@cognite/reveal`
+:::
 
 Reveal uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) and [WebAssembly](https://webassembly.org/) to handle 3D geometry. This causes some problems when bundling and loading packages from NPM. Some effort might therefor be needed before Reveal can be used in your project depending on the servers hosting your application are configured.
 
@@ -14,6 +19,13 @@ There are two different types of deployment scenarios:
 1. Projects where [CDN](https://en.wikipedia.org/wiki/Content_delivery_network) are available (no restrictive [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)-headers are set)
 2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 that forbids to fetch scripts from [jsdelivr.com](https://www.jsdelivr.com/).
+
+It's also required to have a base tag pointing at your app base URL. Add base location for relative URLs:
+
+```html title="/index.html"
+<head>
+   <base href="/" /> 
+```
 
 By default, Reveal will try to fetch its worker/WASM files from [jsdelivr.com](https://www.jsdelivr.com/).
 If there are no CSP in your project, Reveal should work out of the box without any additional steps.
@@ -24,7 +36,7 @@ In case if you see an error like the following in your development console:
 
 See the steps below.
 
-## Installation for projects with CSP
+## Installation for projects with Content-Security-Policy
 
 What you'll need to do is host worker/wasm files somewhere that the browser will allow to download and run code from.
 
@@ -116,7 +128,105 @@ revealEnv.publicPath = `https://my.static.server/parser-worker/`;
 const viewer = new Cognite3DViewer(/*...*/)
 ```
 
-Now it should work.
+Reveal should now be working.
+
+### Option 3: Copy worker files locally in a create-react-app based project
+
+1. Install [react-app-rewired](https://github.com/timarney/react-app-rewired). It's required to slightly modify react-scripts from create-react-app without running `eject`
+
+    ```bash npm2yarn
+    npm install react-app-rewired --save-dev
+    ```
+   
+1. 'Flip' the existing calls to `react-scripts` in `npm` scripts for start, build and test
+ 
+   ```diff title="/package.json"
+     "scripts": {
+   -   "start": "react-scripts start",
+   +   "start": "react-app-rewired start",
+   -   "build": "react-scripts build",
+   +   "build": "react-app-rewired build",
+   -   "test": "react-scripts test",
+   +   "test": "react-app-rewired test",
+       "eject": "react-scripts eject"
+   }
+   ```
+
+1. Install [copy-webpack-plugin](https://webpack.js.org/plugins/copy-webpack-plugin/)
+    
+   ```bash npm2yarn
+    npm install copy-webpack-plugin --save-dev
+    ```
+
+1. Create a `config-overrides.js` file in the root directory with the following content
+
+    ```javascript title="./config-overrides.js"
+    const CopyWebpackPlugin = require('copy-webpack-plugin');
+    
+    const revealSource = 'node_modules/@cognite/reveal';
+    
+    module.exports = function override(config) {
+      if (!config.plugins) {
+        // eslint-disable-next-line no-param-reassign
+        config.plugins = [];
+      }
+    
+      // that's for 6.x version of webpack-copy-plugin
+      // if you use 5.x just put content of patterns into constructor
+      // new CopyWebpackPlugin([ /* { from, to } */ ])
+      config.plugins.push(
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: `${revealSource}/**/*.worker.js`,
+              to: '.',
+              flatten: true,
+            },
+            {
+              from: `${revealSource}/**/*.wasm`,
+              to: '.',
+              flatten: true,
+            },
+          ],
+        })
+      );
+    
+      return config;
+    };
+    ```
+   
+Now all `*.worker.js` and `*.wasm` files from `@cognite/reveal` should be copied into your output folder when you run build.
+
+### Option 4: Copy worker files locally for non-create-react-app based projects
+
+Just make sure that you have `*.worker.js` and `*.wasm` files from `@cognite/reveal` in your output folder.
+If you use webpack, you might want to add [copy-webpack-plugin@^5.1.1](https://webpack.js.org/plugins/copy-webpack-plugin/)
+in your `webpack.config.js`
+
+```javascript
+// webpack.config.js
+const revealSource = 'node_modules/@cognite/reveal';
+
+{
+  /* ... */
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: `${revealSource}/**/*.worker.js`,
+          to: '.',
+          flatten: true,
+        },
+        {
+          from: `${revealSource}/**/*.wasm`,
+          to: '.',
+          flatten: true,
+        },
+      ],
+    })
+  ]
+}
+```
 
 ### A note on Content-type header for .wasm files
 
