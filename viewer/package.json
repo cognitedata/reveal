@@ -61,7 +61,7 @@
     "file-loader": "^6.0.0",
     "gl": "^4.5.2",
     "glslify-loader": "^2.0.0",
-    "html-webpack-plugin": "4.3.0",
+    "html-webpack-plugin": "4.4.0",
     "husky": "^4.2.5",
     "jest": "^26.4.2",
     "jest-canvas-mock": "^2.2.0",
