@@ -9,8 +9,8 @@ import {
   Store,
 } from "redux";
 import App from "@/UserInterface/App/App";
-import SubsurfaceReducer from "@/UserInterface/Redux/reducers/SubsurfaceReducer";
-import SubsurfaceMiddleware from "@/UserInterface/Redux/middlewares/main";
+import NodeVisualizerReducer from "@/UserInterface/Redux/reducers/NodeVisualizerReducer";
+import NodeVisualizerMiddleware from "@/UserInterface/Redux/middlewares/main";
 import "@/UserInterface/styles/scss/standalone-theme.scss";
 import { Appearance } from "@/Core/States/Appearance";
 import { setCssVariable } from "@/UserInterface/Foundation/Utils/cssUtils";
@@ -20,9 +20,9 @@ import { setCssVariable } from "@/UserInterface/Foundation/Utils/cssUtils";
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store: Store = createStore(
-  combineReducers({ ...SubsurfaceReducer }),
-  compose(applyMiddleware(...SubsurfaceMiddleware)) // comment this line to enable Redux dev tools
-  //composeEnhancers(applyMiddleware(...SubsurfaceMiddleware))  // uncomment to enable Redux dev tools
+  combineReducers({ ...NodeVisualizerReducer }),
+  compose(applyMiddleware(...NodeVisualizerMiddleware)) // comment this line to enable Redux dev tools
+  //composeEnhancers(applyMiddleware(...NodeVisualizerMiddleware))  // uncomment to enable Redux dev tools
 );
 
 const root = document.createElement("div");

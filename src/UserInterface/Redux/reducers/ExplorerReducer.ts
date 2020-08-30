@@ -19,10 +19,6 @@ const initialState: IExplorerState = {
   }
 };
 
-// Redux Toolkit package includes a createReducer utility that uses Immer internally.
-// Because of this, we can write reducers that appear to "mutate" state, but the updates
-// are actually applied immutably.
-
 export const explorerSlice = createSlice({
   name: "explorer",
   initialState,

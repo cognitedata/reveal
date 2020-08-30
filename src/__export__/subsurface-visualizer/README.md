@@ -21,9 +21,9 @@ To use this library user must be a member of cognite organization in npm.
 
 ```javascript
 import {
-  SubsurfaceVisualizer,
-  SubsurfaceReducer,
-  SubsurfaceMiddleware
+  NodeVisualizer,
+  NodeVisualizerReducer,
+  NodeVisualizerMiddleware
 } from "@cognite/subsurface-visualizer";
 ```
 
@@ -34,15 +34,15 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 
 const store = createStore(
-  combineReducers({ ...SubsurfaceReducer }),
-  applyMiddleware(...SubsurfaceMiddleware)
+  combineReducers({ ...NodeVisualizerReducer }),
+  applyMiddleware(...NodeVisualizerMiddleware)
 );
 
 function App() {
   return (
     <div className="App">
       <Provider>
-        <SubsurfaceVisualizer />
+        <NodeVisualizer />
       </Provider>
     </div>
   );

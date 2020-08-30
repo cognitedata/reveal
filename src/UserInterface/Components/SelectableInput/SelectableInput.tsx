@@ -253,7 +253,6 @@ export default function SelectableInput(props: {
             disablePortal
           >
             {({ TransitionProps, placement }) => (
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
               <Grow
                 /* eslint-disable-next-line react/jsx-props-no-spreading */
                 {...TransitionProps}

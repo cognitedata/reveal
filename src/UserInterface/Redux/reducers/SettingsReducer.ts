@@ -13,17 +13,7 @@ const initialState = {
   titleBar: {
     name: "",
     icon: { src: "", description: "", color: "" },
-    toolBar: [
-      // {
-      //   icon: { type: IconTypes.STATES, name: "Pinned" }
-      // },
-      // {
-      //   icon: { type: IconTypes.ARROWS, name: "FatLeft" }
-      // },
-      // {
-      //   icon: { type: IconTypes.ARROWS, name: "FatRight" }
-      // }
-    ]
+    toolBar: []
   },
   expandedSections: {
     [Appearance.generalSettingsName]: Appearance.generalSettingsDefaultExpanded,
@@ -31,9 +21,6 @@ const initialState = {
     [Appearance.visualSettingsName]: Appearance.visualSettingsDefaultExpanded,
   }
 } as ISettingsState;
-// Redux Toolkit package includes a createReducer utility that uses Immer internally.
-// Because of this, we can write reducers that appear to "mutate" state, but the updates
-// are actually applied immutably.
 
 export const settingsSlice = createSlice({
   name: "settings",

@@ -9,16 +9,14 @@ enableMapSet();
 enableES5();
 
 /**
- * The combineReducers helper function turns an object whose values
- * are different reducing functions into a single reducing function
- * that can pass to createStore.
+ * Combines child reducers to root NodeVisualizerReducer
  */
 
-const SubsurfaceReducer = {
+const NodeVisualizerReducer = {
   common: commonReducer,
   settings: settingsReducer,
   explorer: explorerReducer,
   visualizers: visualizerReducer
 };
 
-export default SubsurfaceReducer;
+export default NodeVisualizerReducer;

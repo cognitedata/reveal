@@ -132,7 +132,6 @@ export function ColorMapSelector(props: {
     updateState(event.target.value);
   };
   const findIndexOfValueInOptions = (valueOptions: string[], val?: string) => {
-    // will return -1 if value is not found in options
     return valueOptions.findIndex((optionValue) => optionValue === val) || 0;
   };
   const setPrevOption = () => {

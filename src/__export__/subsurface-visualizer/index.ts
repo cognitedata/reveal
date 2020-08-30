@@ -1,6 +1,6 @@
 import NodeVisualizer from "@/UserInterface/NodeVisualizer/NodeVisualizer";
-import SubsurfaceReducer from "@/UserInterface/Redux/reducers/SubsurfaceReducer";
-import SubsurfaceMiddleware from "@/UserInterface/Redux/middlewares/main";
+import NodeVisualizerReducer from "@/UserInterface/Redux/reducers/NodeVisualizerReducer";
+import NodeVisualizerMiddleware from "@/UserInterface/Redux/middlewares/main";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
@@ -9,8 +9,8 @@ import BPDataModule from "@/Solutions/BP/BPDataModule";
 
 export {
   NodeVisualizer,
-  SubsurfaceReducer,
-  SubsurfaceMiddleware,
+  NodeVisualizerReducer,
+  NodeVisualizerMiddleware,
   BaseRootNode,
   Modules,
   ThreeModule,

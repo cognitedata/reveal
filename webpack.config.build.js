@@ -29,9 +29,6 @@ module.exports = (env) => ({
         include: resolve("src"),
         exclude: /node_modules/,
         use: [
-          // {
-          //   loader: 'babel-loader',
-          // },
           {
             loader: "ts-loader",
             options: {
@@ -48,9 +45,6 @@ module.exports = (env) => ({
         include: resolve(SUBSURFACE_COMPONENTS_PATH),
         exclude: /node_modules/,
         use: [
-          // {
-          //   loader: 'babel-loader',
-          // },
           {
             loader: "ts-loader",
             options: {
@@ -67,9 +61,6 @@ module.exports = (env) => ({
         include: resolve(SUBSURFACE_INTERFACES_PATH),
         exclude: /node_modules/,
         use: [
-          // {
-          //   loader: 'babel-loader',
-          // },
           {
             loader: "ts-loader",
             options: {
@@ -203,8 +194,6 @@ module.exports = (env) => ({
       },
       redux: "redux",
       "react-redux": "react-redux",
-      // "three": "three",
-      // "fabric": "fabric"
     },
     /@material-ui\/[a-z,/]*/i,
   ],

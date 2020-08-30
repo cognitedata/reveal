@@ -18,7 +18,7 @@ $multi-input-base-width: 100% - ($select-controls-width + $select-controls-margi
 $status-bar-height: 0px;
 
 // Tree Control
-$tree-padding-left: 7px;
+$tree-padding-left: 0.3rem;
 $tree-padding-top: 5px;
 
 /** Default Font Size **/
@@ -47,7 +47,6 @@ $readonly-input-color: #ffffc4 !default;
 }
 
 // set color css properties
-// todo: change subsurface names to node-viz
 :root {
   --node-viz-background: #{$panel-background};
   --node-viz-tree-background: #{$tree-background};

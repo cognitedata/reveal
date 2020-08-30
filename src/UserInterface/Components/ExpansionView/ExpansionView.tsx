@@ -3,9 +3,8 @@ import "./ExpansionView.module.scss";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronUp";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
+import ExpandMoreSharpIcon from "@material-ui/icons/ExpandMoreSharp";
+import ExpandLessSharpIcon from "@material-ui/icons/ExpandLessSharp";
 import ToolBar from "@/UserInterface/Components/ToolBar/ToolBar";
 import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
 
@@ -27,11 +26,7 @@ export default function ExpansionView(props: {
       <AccordionSummary className="expand-panel-root">
         <div className="expand-summary-header">
           <div className="expand-btn">
-            {isExpanded ? (
-              <FontAwesomeIcon icon={faChevronUp} />
-            ) : (
-              <FontAwesomeIcon icon={faChevronDown} />
-            )}
+            {isExpanded ? <ExpandLessSharpIcon /> : <ExpandMoreSharpIcon />}
           </div>
           <span className="expand-title">
             <b>{title}</b>

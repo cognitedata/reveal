@@ -24,11 +24,10 @@ class NotificationsToActionsAdaptor
 
   processEvent(sender: BaseNode, args: NodeEventArgs): void
   {
-    // console.log('notification ', sender, args);
     if (args.isEmpty)
     { return; }
 
-    // test for all changes that are relevant for us
+    // test for all change notifications
     if (args.isChanged(Changes.visibleState))
       this.dispatcher(onCheckboxStateChange(sender));
     if (args.isChanged(Changes.selected))

@@ -8,12 +8,11 @@
 .settings-section-element-container {
   display: flex;
   flex-direction: column;
-  padding: .5rem .4rem .5rem .8rem;
+  padding: 0.2rem 0.2rem 0.2rem 0.3rem;
 }
 
 .settings-container {
   width: 100%;
-  overflow-y: auto;
   position: relative;
 
   .settings-title-bar {

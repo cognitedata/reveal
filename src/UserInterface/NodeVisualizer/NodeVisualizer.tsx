@@ -20,7 +20,7 @@ import { initializeToolbarStatus } from "@/UserInterface/Redux/reducers/Visualiz
 import ViewerUtils from "./Viewers/ViewerUtils";
 
 /**
- * Subsurface Visualizer Component of the application
+ * Node Visualizer Component of the application
  * This will render all the Components (Settings/Explorer/3D viewers etc.)
  */
 export default function NodeVisualizer(props: { root?: BaseRootNode }) {
@@ -69,13 +69,13 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
       // Add target and toolbar data to state
       dispatch(initializeToolbarStatus());
       dispatch(generateNodeTree());
-      console.log("SubsurfaceVisualizer: Added toolbars and viewers");
+      console.log("NodeVisualizer: Added toolbars and viewers");
     },
     [root]
   );
 
   return (
-    <div className="subsurface-container">
+    <div className="node-viz-container">
       <SplitPane
         split="vertical"
         minSize={common.isFullscreen ? 0 : Appearance.leftPanelDefaultSize}
@@ -88,7 +88,6 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
         }}
       >
         <LeftPanel />
-        {/* Pass viewer callbacks as needed*/}
         <RightPanel viewer3D={viewerElementCallback} />
       </SplitPane>
     </div>
