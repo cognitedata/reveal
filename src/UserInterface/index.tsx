@@ -34,19 +34,23 @@ root.style.height = "100vh";
 document.body.appendChild(root);
 
 setCssVariable(
-  "--subsurface-viz-default-font-size",
+  "--node-viz-default-font-size",
   `${Appearance.ApplicationDefaultFontSize}rem`
 );
-setCssVariable("--3d-node-viz-icon-size", `${Appearance.treeIconSize}px`);
+setCssVariable("--node-viz-icon-size", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-icon-size", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-height", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-comp-width", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-bottom-margin", `${Appearance.treeItemGap}px`);
 setCssVariable("--v-tree-item-indentation", `${Appearance.treeIndentation}px`);
 setCssVariable(
-  "--subsurface-viz-tree-background",
+  "--node-viz-tree-background",
   (Appearance.treeBackgroundColor && Appearance.treeBackgroundColor.hex()) ||
     "inherit"
+);
+setCssVariable(
+  "--node-viz-readonly-input-color",
+  `${Appearance.readonlyInputColor}`
 );
 
 ReactDOM.render(

@@ -1,8 +1,8 @@
 @use "../../styles/scss/variables";
 
 .chroma-icon-container{
-  width: var(--3d-node-viz-icon-size, variables.$icon-size);
-  height: var(--3d-node-viz-icon-size, variables.$icon-size);
+  width: var(--node-viz-icon-size, variables.$icon-size);
+  height: var(--node-viz-icon-size, variables.$icon-size);
 
   .chroma-icon {
     height: 100%;
@@ -13,9 +13,9 @@
   }
 
   .chroma-icon-image-container{
-    background-size: var(--3d-node-viz-icon-size, variables.$icon-size) var(--3d-node-viz-icon-size, variables.$icon-size);
-    mask-size: var(--3d-node-viz-icon-size, variables.$icon-size) var(--3d-node-viz-icon-size, variables.$icon-size);
-    -webkit-mask-size: var(--3d-node-viz-icon-size, variables.$icon-size) var(--3d-node-viz-icon-size, variables.$icon-size);
+    background-size: var(--node-viz-icon-size, variables.$icon-size) var(--node-viz-icon-size, variables.$icon-size);
+    mask-size: var(--node-viz-icon-size, variables.$icon-size) var(--node-viz-icon-size, variables.$icon-size);
+    -webkit-mask-size: var(--node-viz-icon-size, variables.$icon-size) var(--node-viz-icon-size, variables.$icon-size);
     background-repeat: no-repeat;
     background-position: center;
     mask-repeat: no-repeat;

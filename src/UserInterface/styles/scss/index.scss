@@ -21,7 +21,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: var(--subsurface-viz-background, variables.$panel-background);
+    background: var(--node-viz-background, variables.$panel-background);
   }
 
   .right-panel {
@@ -31,7 +31,7 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    background: var(--subsurface-viz-background, variables.$panel-background);
+    background: var(--node-viz-background, variables.$panel-background);
   }
 
   /* Global title bar*/
@@ -49,12 +49,12 @@
       cursor: pointer;
 
       &:hover {
-        background: var(--subsurface-viz-toolbar-icon-hover-background, variables.$tool-bar-icon-hover-background);
+        background: var(--node-viz-toolbar-icon-hover-background, variables.$tool-bar-icon-hover-background);
       }
     }
 
     .icon-selected {
-      background: var(--subsurface-viz-toolbar-icon-selected-background, variables.$tool-bar-icon-selected-background);
+      background: var(--node-viz-toolbar-icon-selected-background, variables.$tool-bar-icon-selected-background);
     }
   }
 
@@ -67,12 +67,12 @@
     cursor: pointer;
 
     &:hover {
-      background: var(--subsurface-viz-toolbar-icon-hover-background, variables.$tool-bar-icon-hover-background);
+      background: var(--node-viz-toolbar-icon-hover-background, variables.$tool-bar-icon-hover-background);
     }
   }
 
   .input-icon-selected {
-    background: var(--subsurface-viz-toolbar-icon-selected-background, variables.$tool-bar-icon-selected-background);
+    background: var(--node-viz-toolbar-icon-selected-background, variables.$tool-bar-icon-selected-background);
   }
 }
 
@@ -83,11 +83,11 @@
   align-items: center;
   justify-content: center;
   img {
-    width: var(--3d-node-viz-icon-size, variables.$icon-size);
-    height: var(--3d-node-viz-icon-size, variables.$icon-size);
+    width: var(--node-viz-icon-size, variables.$icon-size);
+    height: var(--node-viz-icon-size, variables.$icon-size);
   }
 }
 
 .select-option{
-  color: var(--subsurface-viz-select-input-option-color, variables.$select-input-option-color);
+  color: var(--node-viz-select-input-option-color, variables.$select-input-option-color);
 }

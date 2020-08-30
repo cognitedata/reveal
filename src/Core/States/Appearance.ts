@@ -37,6 +37,8 @@ export class Appearance
   static statisticsDefaultExpanded = false;
   static visualSettingsDefaultExpanded = true;
 
+  static readonlyInputColor = "#ffffc4";
+
   // For the viewer
   static viewerFooter = "Cognite subsurface viewer";
   static viewerIsLightBackground = false; // True is white, False is black

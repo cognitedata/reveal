@@ -27,7 +27,7 @@ export function ChromaIcon(props: {
   color?: string;
   size?: number; // todo: add support for dynamic height adjustment
 }) {
-  if (props.size) setCssVariable("--3d-node-viz-icon-size", `${props.size}px`);
+  if (props.size) setCssVariable("--node-viz-icon-size", `${props.size}px`);
 
   const background =
     props.color &&

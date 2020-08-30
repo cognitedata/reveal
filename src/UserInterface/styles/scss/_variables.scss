@@ -39,29 +39,31 @@ $tool-bar-icon-hover-background: lightblue !default;
 $select-input-background: inherit !default;
 $select-input-option-color: #6a0dad !default;
 $slider-input-background: #d5d5d5 !default;
+$readonly-input-color: #ffffc4 !default;
 
 // set height css properties
 :root {
-  --3d-node-viz-icon-size: #{$icon-size};
+  --node-viz-icon-size: #{$icon-size};
 }
 
 // set color css properties
-// todo: change subsurface names to 3d-node-viz
+// todo: change subsurface names to node-viz
 :root {
-  --subsurface-viz-background: #{$panel-background};
-  --subsurface-viz-tree-background: #{$tree-background};
-  --subsurface-viz-tree-color: #{$tree-color};
-  --subsurface-viz-title-bar-background: #{$title-bar-background};
-  --subsurface-viz-title-bar-color: #{$title-bar-color};
-  --subsurface-viz-expansion-header-background: #{$expansion-header-background};
-  --subsurface-viz-expansion-header-color: #{$expansion-header-color};
-  --subsurface-viz-expansion-detail-background: #{$expansion-detail-background};
-  --subsurface-viz-expansion-detail-color: #{$expansion-detail-color};
-  --subsurface-viz-toolbar-icon-selected-background: #{$tool-bar-icon-selected-background};
-  --subsurface-viz-toolbar-icon-hover-background: #{$tool-bar-icon-hover-background};
-  --subsurface-viz-select-input-background: #{$select-input-background};
-  --subsurface-viz-select-input-option-color: #{$select-input-option-color};
-  --subsurface-viz-slider-input-background: #{$slider-input-background};
+  --node-viz-background: #{$panel-background};
+  --node-viz-tree-background: #{$tree-background};
+  --node-viz-tree-color: #{$tree-color};
+  --node-viz-title-bar-background: #{$title-bar-background};
+  --node-viz-title-bar-color: #{$title-bar-color};
+  --node-viz-expansion-header-background: #{$expansion-header-background};
+  --node-viz-expansion-header-color: #{$expansion-header-color};
+  --node-viz-expansion-detail-background: #{$expansion-detail-background};
+  --node-viz-expansion-detail-color: #{$expansion-detail-color};
+  --node-viz-toolbar-icon-selected-background: #{$tool-bar-icon-selected-background};
+  --node-viz-toolbar-icon-hover-background: #{$tool-bar-icon-hover-background};
+  --node-viz-select-input-background: #{$select-input-background};
+  --node-viz-select-input-option-color: #{$select-input-option-color};
+  --node-viz-slider-input-background: #{$slider-input-background};
+  --node-viz-readonly-input-color: #{$readonly-input-color};
 }
 
 

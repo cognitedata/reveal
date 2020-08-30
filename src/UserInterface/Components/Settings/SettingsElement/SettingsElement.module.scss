@@ -5,7 +5,7 @@
   grid-template-columns: 40% 60%;
   place-items: center start;
   font-size: var(
-    --subsurface-viz-default-font-size,
+    --node-viz-default-font-size,
     variables.$application-default-font-size
   );
   height: 1.3rem;
@@ -32,15 +32,12 @@
         border-width: 1px;
         border-color: #c4c4c4;
         border-style: solid;
-        font-size: var(
-          --subsurface-viz-default-font-size,
-          variables.$application-default-font-size
-        );
+        font-size: var(--node-viz-default-font-size, variables.$application-default-font-size);
         box-sizing: border-box;
         width: 100%;
 
         &.readOnlyInput {
-          background: #ffffc4;
+          background: var(--node-viz-readonly-input-color, variables.$readonly-input-color);
         }
       }
 
@@ -88,10 +85,7 @@
   place-items: center start;
   grid-gap: 5px;
   padding: 5px;
-  font-size: var(
-    --subsurface-viz-default-font-size,
-    variables.$application-default-font-size
-  );
+  font-size: var(--node-viz-default-font-size, variables.$application-default-font-size);
 
   .icon {
     width: 20px;

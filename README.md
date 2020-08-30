@@ -56,23 +56,26 @@ If the css properties are not set default values will be used.
 
 | Css Custom Property Name                          |
 | ------------------------------------------------- |
-| --subsurface-viz-background                       |
-| --subsurface-viz-tree-background                  |
-| --subsurface-viz-tree-color                       |
-| --subsurface-viz-tab-background                   |
-| --subsurface-viz-tab-select-background            |
-| --subsurface-viz-tab-select-color                 |
-| --subsurface-viz-title-bar-background             |
-| --subsurface-viz-title-bar-color                  |
-| --subsurface-viz-expansion-header-background      |
-| --subsurface-viz-expansion-header-color           |
-| --subsurface-viz-expansion-detail-background      |
-| --subsurface-viz-expansion-detail-color           |
-| --subsurface-viz-toolbar-icon-selected-background |
-| --subsurface-viz-toolbar-icon-hover-background    |
-| --subsurface-viz-select-input-background          |
-| --subsurface-viz-select-input-option-color        |
-| --subsurface-viz-slider-input-background          |
+| --node-viz-background                       |
+| --node-viz-tree-background                  |
+| --node-viz-tree-color                       |
+| --node-viz-tab-background                   |
+| --node-viz-tab-select-background            |
+| --node-viz-tab-select-color                 |
+| --node-viz-title-bar-background             |
+| --node-viz-title-bar-color                  |
+| --node-viz-expansion-header-background      |
+| --node-viz-expansion-header-color           |
+| --node-viz-expansion-detail-background      |
+| --node-viz-expansion-detail-color           |
+| --node-viz-toolbar-icon-selected-background |
+| --node-viz-toolbar-icon-hover-background    |
+| --node-viz-select-input-background          |
+| --node-viz-select-input-option-color        |
+| --node-viz-slider-input-background          |
+| --node-viz-default-font-size                   |
+| --node-viz-icon-size                           |
+| --node-viz-readonly-input-color                |
 
 refer [default theme section](https://github.com/cognitedata/subsurface-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
 

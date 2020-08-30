@@ -27,10 +27,7 @@
 
   .expand-title {
     margin: 0 0.5rem;
-    font-size: var(
-      --subsurface-viz-default-font-size,
-      variables.$application-default-font-size
-    );
+    font-size: var(--node-viz-default-font-size, variables.$application-default-font-size);
     font-weight: 700;
   }
 

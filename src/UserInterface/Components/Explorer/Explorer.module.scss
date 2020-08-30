@@ -14,7 +14,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
+    font-size: var(--node-viz-default-font-size, variables.$application-default-font-size);
     .img {
       z-index: 1;
       border: 0 !important;
@@ -28,7 +28,7 @@
 .virtual-tree-container {
   padding-inline-start: variables.$tree-padding-left;
   padding-top: variables.$tree-padding-top;
-  background: var(--subsurface-viz-tree-background, variables.$tree-background);
-  color: var(--subsurface-viz-tree-color, variables.$tree-color);
+  background: var(--node-viz-tree-background, variables.$tree-background);
+  color: var(--node-viz-tree-color, variables.$tree-color);
   flex: 15;
 }

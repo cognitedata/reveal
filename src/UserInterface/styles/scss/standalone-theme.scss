@@ -14,7 +14,8 @@ $tool-bar-icon-selected-background: lightblue,
 $tool-bar-icon-hover-background: lightblue,
 $select-input-background: #f0f0f0,
 $select-input-option-color: #6a0dad,
-$slider-input-background: white
+$slider-input-background: white,
+$readonly-input-color: #ffffc4,
 );
 
 // Virtual Tree Customizations
@@ -30,5 +31,5 @@ $slider-input-background: white
 // Font
 
 :root{
-  --subsurface-viz-default-font-size: 0.75rem;
+  --node-viz-default-font-size: 0.75rem;
 }

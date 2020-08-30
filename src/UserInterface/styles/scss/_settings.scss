@@ -32,8 +32,8 @@
   }
 
   .MuiAccordionSummary-root{
-    background: var(--subsurface-viz-expansion-header-background, variables.$expansion-header-background);
-    color: var(--subsurface-viz-expansion-header-color, variables.$expansion-header-color);
+    background: var(--node-viz-expansion-header-background, variables.$expansion-header-background);
+    color: var(--node-viz-expansion-header-color, variables.$expansion-header-color);
   }
 
   .MuiAccordionSummary-content,
@@ -48,7 +48,7 @@
   .MuiAccordionDetails-root {
     padding: 0 !important;
     display: block !important;
-    background: var(--subsurface-viz-expansion-detail-background, variables.$expansion-detail-background);
-    color: var(--subsurface-viz-expansion-detail-color, variables.$expansion-detail-color);
+    background: var(--node-viz-expansion-detail-background, variables.$expansion-detail-background);
+    color: var(--node-viz-expansion-detail-color, variables.$expansion-detail-color);
   }
 }

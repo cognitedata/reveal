@@ -5,8 +5,8 @@
   display: flex;
   align-items: center;
   padding-left: 0.5rem;
-  background: var(--subsurface-viz-title-bar-background, variables.$title-bar-background);
-  color: var(--subsurface-viz-title-bar-color, variables.$title-bar-color);
+  background: var(--node-viz-title-bar-background, variables.$title-bar-background);
+  color: var(--node-viz-title-bar-color, variables.$title-bar-color);
 
   .title {
     margin: 0 0.5rem;
