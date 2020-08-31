@@ -38,17 +38,6 @@ export default function buildList<Q extends Query, T extends InternalId>(
 
   const UPDATE_ITEMS = `${type}/UPDATE_ITEMS`;
 
-  // This fixes the inconsistency between time series.list and all
-  // other list methods in the SDK.
-  function uglySDKHacks(q: Q): Q {
-    if (type === 'timeseries') {
-      const actualQuery = q ? { ...q.filter, ...q } : {};
-      delete actualQuery.filter;
-      return actualQuery;
-    }
-    return q;
-  }
-
   interface ListAction extends Action<typeof LIST> {
     scope: Q;
     all: boolean;
@@ -132,14 +121,13 @@ export default function buildList<Q extends Query, T extends InternalId>(
       });
 
       try {
-        const q = uglySDKHacks(
+        const q =
           partition === 1 && nth === 1
             ? scope
             : {
                 ...scope,
                 partition: subkey,
-              }
-        );
+              };
 
         const listFn =
           // @ts-ignore
