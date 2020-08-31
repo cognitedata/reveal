@@ -21,7 +21,7 @@ merge:
       # "body" defines how the body of the commit message is created when
       # generating a squash commit. The options are "pull_request_body",
       # "summarize_commits", and "empty_body". The default is "empty_body".
-      body: pull_request_body
+      body: empty_body
 
   delete_after_merge: true
   whitelist:
