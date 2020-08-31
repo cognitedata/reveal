@@ -25,6 +25,7 @@ import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
+import { BandPosition } from "@/Core/Enums/BandPosition";
 
 import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
 
@@ -41,6 +42,8 @@ import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { FloatLogStyle } from "@/SubSurface/Wells/Styles/FloatLogStyle";
+import { DiscreteLogStyle } from "@/SubSurface/Wells/Styles/DiscreteLogStyle";
+import { Canvas } from "@/Three/Utilities/Canvas";
 
 const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
@@ -55,8 +58,8 @@ export class WellTrajectoryView extends BaseGroupThreeView
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
   private cameraPosition = new Vector3(0, 0, 1);
   private fgColor: Color = Colors.white;
-  private bandTextures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
-  private getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
+  private bandTextures: (THREE.CanvasTexture | null)[] = [null, null];
+  private getBandName(bandPosition: BandPosition): string { return bandPosition === BandPosition.Right ? "RightBand" : "LeftBand"; }
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -86,10 +89,13 @@ export class WellTrajectoryView extends BaseGroupThreeView
   {
     super.updateCore(args);
 
-    if (args.isChanged(Changes.filter) && this._object3D)
+    if (args.isChanged(Changes.filter))
       this.clearTextures(this._object3D);
     if (args.isChanged(Changes.renderStyle, Changes.nodeColor, Changes.nodeName))
+    {
+      this.clearTextures(this._object3D);
       this.touch();
+    }
   }
 
   protected /*override*/ onShowCore(): void
@@ -130,13 +136,13 @@ export class WellTrajectoryView extends BaseGroupThreeView
     let hasBands = false;
     let hasTexture = false;
 
-    for (const rightBand of [true, false])
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
     {
-      const band = parent.getObjectByName(this.getBandName(rightBand));
+      const band = parent.getObjectByName(this.getBandName(bandPosition));
       if (band)
         hasBands = true;
 
-      const texture = this.bandTextures[rightBand ? 0 : 1];
+      const texture = this.bandTextures[bandPosition];
       if (texture)
         hasTexture = true;
     }
@@ -457,19 +463,16 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!mdRange)
       return;
 
-    const useRightBand = true;
-    const useLeftBand = true;
-
     const logRender = new LogRender(bandRange, mdRange);
-    const bands = logRender.createBands(trajectory, this.transformer, this.cameraPosition, useRightBand, useLeftBand);
+    const bands = logRender.createBands(trajectory, this.transformer, this.cameraPosition, true, true);
 
-    for (const rightBand of [true, false])
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
     {
-      const band = bands[rightBand ? 0 : 1];
+      const band = bands[bandPosition];
       if (!band)
         continue;
 
-      band.name = this.getBandName(rightBand);
+      band.name = this.getBandName(bandPosition);
       parent.add(band);
     }
   }
@@ -478,18 +481,19 @@ export class WellTrajectoryView extends BaseGroupThreeView
   // INSTANCE METHODS: Add 3D objects
   //==================================================
 
-  private clearTextures(parent: THREE.Object3D): void
+  private clearTextures(parent: THREE.Object3D | null): void
   {
     // Clear the textures
     this.bandTextures = [null, null];
-    this.setBandTextures(parent);
+    if (parent)
+      this.setBandTextures(parent);
   }
 
   private clearBands(parent: THREE.Object3D): void
   {
-    for (const rightBand of [true, false])
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
     {
-      const band = parent.getObjectByName(this.getBandName(rightBand));
+      const band = parent.getObjectByName(this.getBandName(bandPosition));
       if (band)
         parent.remove(band);
 
@@ -505,9 +509,9 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
   private setBandTextures(parent: THREE.Object3D): void
   {
-    for (const rightBand of [true, false])
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
     {
-      const object = parent.getObjectByName(this.getBandName(rightBand));
+      const object = parent.getObjectByName(this.getBandName(bandPosition));
       if (!object)
         continue;
 
@@ -519,15 +523,15 @@ export class WellTrajectoryView extends BaseGroupThreeView
       if (!material)
         continue;
 
-      const texture = this.bandTextures[rightBand ? 0 : 1];
+      const texture = this.bandTextures[bandPosition];
       material.map = texture;
       mesh.visible = texture != null;
     }
   }
 
-  private createBandTextures(): [THREE.CanvasTexture | null, THREE.CanvasTexture | null]
+  private createBandTextures(): (THREE.CanvasTexture | null)[]
   {
-    const textures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
+    const textures: (THREE.CanvasTexture | null)[] = [null, null];
     if (!parent)
       return textures;
 
@@ -542,25 +546,54 @@ export class WellTrajectoryView extends BaseGroupThreeView
       return textures;
 
     const logRender = new LogRender(bandRange, mdRange);
-    for (const rightBand of [true, false])
-    {
-      const canvas = logRender.createCanvas(this.transformer.zScale);
-      let filled = 0;
-      let visibleCount = 0;
+    const numLogs: number[] = [0, 0];
+    const canvases: (Canvas | null)[] = [null, null];
+    const { transformer } = this;
 
+    function getOrCreateCanvasAt(bandPosition: BandPosition): Canvas
+    {
+      let canvas = canvases[bandPosition];
+      if (!canvas)
+      {
+        canvas = logRender.createCanvas(transformer.zScale);
+        if (!canvas)
+          throw Error("Can not create canvas");
+        canvases[bandPosition] = canvas;
+      }
+      return canvas;
+    }
+
+    for (let pass = 0; pass < 2; pass++)
+    {
       for (const logNode of node.getDescendantsByType(DiscreteLogNode))
       {
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
-        if (!rightBand)
+        const logStyle = logNode.getRenderStyle(this.targetId) as DiscreteLogStyle;
+        if (!logStyle)
+          continue;
+
+        let bandPosition = logStyle.bandPosition.value;
+        if (pass === 0)
         {
-          logRender.addDiscreteLog(canvas, logNode.log);
-          visibleCount++;
-          filled++;
+          if (bandPosition === BandPosition.Automatic)
+            continue;
         }
+        else
+        {
+          if (bandPosition !== BandPosition.Automatic)
+            continue;
+
+          bandPosition = numLogs[BandPosition.Right] < numLogs[BandPosition.Left] ? BandPosition.Right : BandPosition.Left;
+        }
+        const canvas = getOrCreateCanvasAt(bandPosition);
+        logRender.addDiscreteLog(canvas, logNode.log);
+        numLogs[bandPosition]++;
       }
-      let i = 0;
+    }
+    for (let pass = 0; pass < 2; pass++)
+    {
       for (const logNode of node.getDescendantsByType(FloatLogNode))
       {
         if (!logNode.isVisible(this.renderTarget))
@@ -570,21 +603,35 @@ export class WellTrajectoryView extends BaseGroupThreeView
         if (!logStyle)
           continue;
 
-        if ((i % 2 === 0) === rightBand)
+        let bandPosition = logStyle.bandPosition.value;
+        if (pass === 0)
         {
-          let color = logNode.getColorByColorType(logStyle.colorType.value);
-          logRender.addFloatLog(canvas, logNode.log, logStyle, color, true, false);
-          color = color.darken(0.5);
-          logRender.addFloatLog(canvas, logNode.log, logStyle, color, false, true);
-          visibleCount++;
+          if (bandPosition === BandPosition.Automatic)
+            continue;
         }
-        i++;
+        else
+        {
+          if (bandPosition !== BandPosition.Automatic)
+            continue;
+
+          bandPosition = numLogs[BandPosition.Right] < numLogs[BandPosition.Left] ? BandPosition.Right : BandPosition.Left;
+        }
+        const canvas = getOrCreateCanvasAt(bandPosition);
+        let color = logNode.getColorByColorType(logStyle.colorType.value);
+        logRender.addFloatLog(canvas, logNode.log, logStyle, color, true, false);
+        color = color.darken(0.5);
+        logRender.addFloatLog(canvas, logNode.log, logStyle, color, false, true);
+        numLogs[bandPosition]++;
       }
-      if (visibleCount === 0)
+    }
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
+    {
+      const canvas = canvases[bandPosition];
+      if (!canvas)
         continue;
 
-      logRender.addAnnotation(canvas, style.bandFontSize.value, rightBand);
-      textures[rightBand ? 0 : 1] = canvas.createTexture();
+      logRender.addAnnotation(canvas, style.bandFontSize.value, bandPosition === BandPosition.Right);
+      textures[bandPosition] = canvas.createTexture();
     }
     return textures;
   }
