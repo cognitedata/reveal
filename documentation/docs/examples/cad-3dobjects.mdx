@@ -90,6 +90,7 @@ water = new Water(
     waterColor: 0x442e1f,
   }
 );
+// Make the ocean horizontal
 water.rotation.x = - Math.PI / 2;
 water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
@@ -112,7 +113,7 @@ viewer.on('cameraChange', (position, target) => {
     position.y = 21;
     viewer.setCameraPosition(position);
   }
-  // Clamp point to be within bounding sphere
+  // Clamp point within our skybox to avoid moving outside the defined 'world'
   if (!boundingSphere.containsPoint(position)) {
     boundingSphere.clampPoint(position, position);
     viewer.setCameraPosition(position);
@@ -161,6 +162,7 @@ water = new Water(
     waterColor: 0x442e1f,
   }
 );
+// Make the ocean horizontal
 water.rotation.x = - Math.PI / 2;
 water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);\n
@@ -181,7 +183,7 @@ viewer.on('cameraChange', (position, target) => {
     position.y = 21;
     viewer.setCameraPosition(position);
   }
-  // Clamp point to be within bounding sphere
+  // Clamp point within our skybox to avoid moving outside the defined 'world'
   if (!boundingSphere.containsPoint(position)) {
     boundingSphere.clampPoint(position, position);
     viewer.setCameraPosition(position);
