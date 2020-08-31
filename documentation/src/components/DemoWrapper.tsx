@@ -12,6 +12,7 @@ const DemoContainer = styled.div`
   height: calc(min(85vh, 600px));
   display: flex;
   flex-direction: column;
+  margin-bottom: var(--ifm-leading);
 `;
 
 // any component that has client-side only code couldn't be imported directly (it fails SSR)
@@ -31,7 +32,7 @@ export function DemoWrapper({ name, modelId, revisionId }: { name: string, model
   }
   let LazyComponent = components[name];
   return (
-    <DemoContainer data-basetagnail>
+    <DemoContainer data-basetagnail id="demo-wrapper">
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
           {(client: CogniteClient) => <LazyComponent client={client} modelId={modelId} revisionId={revisionId} />}
