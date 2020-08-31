@@ -109,9 +109,7 @@ pods {
         def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
 
         fas.build(
-          useContainer: true,
           domainName: domainName,
-          iap: isStaging,
           buildCommand: 'yarn build',
         )
       }
@@ -120,9 +118,7 @@ pods {
 
   if (!isPullRequest) {
     stageWithNotify('Publish build', contexts.publishRelease) {
-      fas.publish(
-        useContainer: true,
-      )
+      fas.publish()
     }
   }
 }
