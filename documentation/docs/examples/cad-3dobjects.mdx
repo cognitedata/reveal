@@ -20,7 +20,7 @@ Reveal uses an "implicit lighting model", i.e. no lights are added to the scene.
 
 ## Adding markers to the scene on clicks
 
-The following examples reacts to clicks in the scene and adds markers to the positions clicked.
+The following example reacts to clicks in the scene and adds markers to the positions clicked.
 
 <LiveCodeSnippet>
 {`
@@ -39,12 +39,95 @@ viewer.on('click', (event) => {
 
 ## Add environment
 
-To make a model feel more natural it might be useful to add an environment. The following examples adds sky and a sea effect for the example oil rig. 
+To make a model feel more natural it might be useful to add an environment. The following example adds sky and a sea effect for the example oil rig. 
 
-First, lets encapsulate the model in a large sky-textured sphere to create an illusion of skies. The sphere map is available from [Free HDR - EXR SKIES-blog](http://freepanorama.blogspot.com/).
+<img src={useBaseUrl('/img/cad-skyandocean.png')} alt="Oil rig with sky and ocean" />
 
-<LiveCodeSnippet scope={{skyUrl: useBaseUrl('/img/sky007.jpg')}}>
+Below you'll find [an interactive example](#interactive-example), but first lets walk through the different parts.
+See the bottom of this page for an interactive example.
+
+First, let's encapsulate the model in a large sky-textured sphere to create an illusion of skies. The sphere map is available from [Free HDR - EXR SKIES-blog](http://freepanorama.blogspot.com/).
+
+```js
+const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
+modelCenterAtSeaLevel.y = 0.0;
+
+// Skybox
+const skyBox = new THREE.Mesh(
+  new THREE.SphereBufferGeometry(3000, 15, 15), 
+  new THREE.MeshBasicMaterial(
+    {
+      side: THREE.BackSide,
+      // Skybox texture from http://freepanorama.blogspot.com/2010/01/sky7-spherical.html
+      map: new THREE.TextureLoader().load(skyUrl),
+    }
+  )
+);
+skyBox.position.copy(modelCenterAtSeaLevel);
+viewer.addObject3D(skyBox);
+```
+
+This looks a bit better, but the oil rig appears to be floating mid-air at this point. Lets add an ocean. A plane is rendered at the sea level and an ocean effect is applied to the plane. The example builds upon [the ocean example from ThreeJS](https://threejs.org/examples/?q=ocea#webgl_shaders_ocean).
+
+Note that since the ocean has moving waves we want to render the model continuously and not only when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.forceRerender()`.
+
+```js
+import { Water } from 'three/examples/jsm/objects/Water';
+
+// Water
+var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
+water = new Water(
+  waterGeometry,
+  {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: new THREE.TextureLoader()
+      .load('https://threejs.org/examples/textures/waternormals.jpg', 
+        texture => {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        }
+      ),
+    waterColor: 0x442e1f,
+  }
+);
+water.rotation.x = - Math.PI / 2;
+water.position.copy(modelCenterAtSeaLevel);
+viewer.addObject3D(water);
+
+function updateOcean() {
+  var time = performance.now() * 0.001;
+  water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+  viewer.forceRerender();
+  requestAnimationFrame(updateOcean);
+};
+updateOcean();
+```
+
+The user is available to move below sea level. Let's restrict the movement to avoid this.
+
+```js
+viewer.on('cameraChange', (position, target) => {
+  // Keep camera above sea level
+  if (position.y < 20) {
+    position.y = 21;
+    viewer.setCameraPosition(position);
+  }
+  // Clamp point to be within bounding sphere
+  if (!boundingSphere.containsPoint(position)) {
+    boundingSphere.clampPoint(position, position);
+    viewer.setCameraPosition(position);
+  }
+});
+```
+
+### Interactive example
+
+Below is the complete code for adding a skybox and ocean to the scene.
+
+<LiveCodeSnippet scope={{skyUrl: useBaseUrl('/img/sky007.jpg'), Water}}>
 {`
+// The following has been imported outside this scope:
+// import { Water } from 'three/examples/jsm/objects/Water';
 const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
 modelCenterAtSeaLevel.y = 0.0;
 \
@@ -61,20 +144,6 @@ const skyBox = new THREE.Mesh(
 );
 skyBox.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(skyBox);
-`}
-</LiveCodeSnippet>
-
-This looks a bit better, but the oil rig appears to be floating mid-air at this point. Lets add an ocean. A plane is rendered at the sea level and an ocean effect added to the plane. The example builds upon [the ocean example from ThreeJS](https://threejs.org/examples/?q=ocea#webgl_shaders_ocean).
-
-Also note that since the ocean has moving waves we want to render the model continuously and not only when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.forceRerender()`.
-
-<LiveCodeSnippet scope={{Water}}>
-{`
-// The following has been imported outside this scope:
-// import { Water } from 'three/examples/jsm/objects/Water';
-\
-const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
-modelCenterAtSeaLevel.y = 0.0;
 \
 // Water
 var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
@@ -103,24 +172,15 @@ function updateOcean() {
   requestAnimationFrame(updateOcean);
 };
 updateOcean();
-`}
-</LiveCodeSnippet>
-
-This looks great, but the user is available to move below sea level. Let's restrict the movement to avoid this.
-
-<LiveCodeSnippet>
-{`
-const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
-modelCenterAtSeaLevel.y = 0.0;
-const boundingSphere = new THREE.Sphere(modelCenterAtSeaLevel, 2000);
 \
+// Restrict camera movement
+const boundingSphere = new THREE.Sphere(modelCenterAtSeaLevel, 2000);
 viewer.on('cameraChange', (position, target) => {
   // Keep camera above sea level
   if (position.y < 20) {
     position.y = 21;
     viewer.setCameraPosition(position);
   }
-\
   // Clamp point to be within bounding sphere
   if (!boundingSphere.containsPoint(position)) {
     boundingSphere.clampPoint(position, position);
