@@ -129,7 +129,7 @@ Below is the complete code for adding a skybox and ocean to the scene.
 // The following has been imported outside this scope:
 // import { Water } from 'three/examples/jsm/objects/Water';
 const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
-modelCenterAtSeaLevel.y = 0.0;
+modelCenterAtSeaLevel.y = 0.0;\n
 \
 // Skybox
 const skyBox = new THREE.Mesh(
@@ -143,7 +143,7 @@ const skyBox = new THREE.Mesh(
   )
 );
 skyBox.position.copy(modelCenterAtSeaLevel);
-viewer.addObject3D(skyBox);
+viewer.addObject3D(skyBox);\n
 \
 // Water
 var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
@@ -163,7 +163,7 @@ water = new Water(
 );
 water.rotation.x = - Math.PI / 2;
 water.position.copy(modelCenterAtSeaLevel);
-viewer.addObject3D(water);
+viewer.addObject3D(water);\n
 \
 function updateOcean() {
   var time = performance.now() * 0.001;
@@ -171,7 +171,7 @@ function updateOcean() {
   viewer.forceRerender();
   requestAnimationFrame(updateOcean);
 };
-updateOcean();
+updateOcean();\n
 \
 // Restrict camera movement
 const boundingSphere = new THREE.Sphere(modelCenterAtSeaLevel, 2000);
