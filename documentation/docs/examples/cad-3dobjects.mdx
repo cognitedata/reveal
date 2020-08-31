@@ -45,6 +45,9 @@ First, lets encapsulate the model in a large sky-textured sphere to create an il
 
 <LiveCodeSnippet scope={{skyUrl: useBaseUrl('/img/sky007.jpg')}}>
 {`
+const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
+modelCenterAtSeaLevel.y = 0.0;
+\
 // Skybox
 const skyBox = new THREE.Mesh(
   new THREE.SphereBufferGeometry(3000, 15, 15), 
@@ -56,6 +59,7 @@ const skyBox = new THREE.Mesh(
     }
   )
 );
+skyBox.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(skyBox);
 `}
 </LiveCodeSnippet>
@@ -69,8 +73,11 @@ Also note that since the ocean has moving waves we want to render the model cont
 // The following has been imported outside this scope:
 // import { Water } from 'three/examples/jsm/objects/Water';
 \
+const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
+modelCenterAtSeaLevel.y = 0.0;
+\
 // Water
-var waterGeometry = new THREE.PlaneBufferGeometry(100000, 100000);
+var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
 water = new Water(
   waterGeometry,
   {
@@ -86,6 +93,7 @@ water = new Water(
   }
 );
 water.rotation.x = - Math.PI / 2;
+water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
 \
 function updateOcean() {
@@ -102,7 +110,10 @@ This looks great, but the user is available to move below sea level. Let's restr
 
 <LiveCodeSnippet>
 {`
-const boundingSphere = new THREE.Sphere(new THREE.Vector3(0,0,0), 2000);
+const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
+modelCenterAtSeaLevel.y = 0.0;
+const boundingSphere = new THREE.Sphere(modelCenterAtSeaLevel, 2000);
+\
 viewer.on('cameraChange', (position, target) => {
   // Keep camera above sea level
   if (position.y < 20) {
