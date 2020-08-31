@@ -78,11 +78,7 @@ export const SearchFilterSection = ({
           </div>
         }
       >
-        <Button
-          icon="Filter"
-          style={{ marginBottom: 12 }}
-          onClick={() => setVisible(!visible)}
-        >
+        <Button icon="Filter" onClick={() => setVisible(!visible)}>
           Filters ({Object.keys(filters).length})
         </Button>
       </Dropdown>

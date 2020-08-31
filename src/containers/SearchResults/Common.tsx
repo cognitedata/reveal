@@ -18,3 +18,11 @@ export const Preview = styled.div`
   margin-left: 16px;
   border-left: 2px solid ${Colors['greyscale-grey3'].hex()};
 `;
+export const ActionRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 12px;
+  .spacer {
+    flex: 1;
+  }
+`;

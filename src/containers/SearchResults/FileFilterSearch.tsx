@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Body, Graphic } from '@cognite/cogs.js';
-import { SearchFilterSection, FileTable } from 'components/Common';
+import { Body, Graphic, Button } from '@cognite/cogs.js';
+import {
+  SearchFilterSection,
+  FileTable,
+  FileUploaderModal,
+} from 'components/Common';
 import {
   FileInfo as File,
   FilesSearchFilter,
@@ -9,8 +13,13 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { searchSelector, search, count, countSelector } from 'modules/files';
 import { FileSmallPreview } from 'containers/Files';
-import ResourceSelectionContext from 'context/ResourceSelectionContext';
-import { List, Content, Preview } from './Common';
+import ResourceSelectionContext, {
+  useResourceEditable,
+} from 'context/ResourceSelectionContext';
+import { checkPermission } from 'modules/app';
+import { useHistory } from 'react-router';
+import { useTenant } from 'hooks/CustomHooks';
+import { List, Content, Preview, ActionRow } from './Common';
 
 // const FilesFilterMapping: { [key: string]: string } = {};
 
@@ -34,6 +43,13 @@ const buildFilesFilterQuery = (
 
 export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
   const dispatch = useDispatch();
+  const inEditMode = useResourceEditable();
+  const hasEditPermissions = useSelector(checkPermission)('filesAcl', 'WRITE');
+
+  const history = useHistory();
+  const tenant = useTenant();
+
+  const allowEdit = inEditMode && hasEditPermissions;
   const { fileFilter, setFileFilter } = useContext(ResourceSelectionContext);
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
 
@@ -43,6 +59,8 @@ export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
   const { count: filesCount } = useSelector(countSelector)(
     buildFilesFilterQuery(fileFilter, query)
   );
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     dispatch(search(buildFilesFilterQuery(fileFilter, query)));
@@ -94,23 +112,31 @@ export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
 
   return (
     <>
-      <SearchFilterSection
-        metadata={metadata}
-        filters={filters}
-        metadataCategory={metadataCategories}
-        setFilters={newFilters => {
-          const {
-            source: newSource,
-            mimeType: newMimeType,
-            ...newMetadata
-          } = newFilters;
-          setFileFilter({
-            source: newSource,
-            mimeType: newMimeType,
-            metadata: newMetadata,
-          });
-        }}
-      />
+      <ActionRow>
+        <SearchFilterSection
+          metadata={metadata}
+          filters={filters}
+          metadataCategory={metadataCategories}
+          setFilters={newFilters => {
+            const {
+              source: newSource,
+              mimeType: newMimeType,
+              ...newMetadata
+            } = newFilters;
+            setFileFilter({
+              source: newSource,
+              mimeType: newMimeType,
+              metadata: newMetadata,
+            });
+          }}
+        />
+        <div className="spacer" />
+        {allowEdit && (
+          <Button onClick={() => setModalVisible(true)} icon="Upload">
+            Upload New File
+          </Button>
+        )}
+      </ActionRow>
       <Content>
         <List>
           <Body>
@@ -144,6 +170,13 @@ export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
           )}
         </Preview>
       </Content>
+      <FileUploaderModal
+        visible={modalVisible}
+        onFileSelected={file => {
+          history.push(`/${tenant}/explore/file/${file.id}`);
+        }}
+        onCancel={() => setModalVisible(false)}
+      />
     </>
   );
 };
