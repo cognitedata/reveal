@@ -572,7 +572,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
         if ((i % 2 === 0) === rightBand)
         {
-          let color = logNode.getColorByColorType(logStyle.colorType);
+          let color = logNode.getColorByColorType(logStyle.colorType.value);
           logRender.addFloatLog(canvas, logNode.log, logStyle, color, true, false);
           color = color.darken(0.5);
           logRender.addFloatLog(canvas, logNode.log, logStyle, color, false, true);

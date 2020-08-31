@@ -18,6 +18,10 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
+import { BandPosition } from "@/Core/Enums/BandPosition";
+import BandPositionProperty from "@/Core/Property/Concrete/Property/BandPositionProperty";
 
 export class FloatLogStyle extends BaseRenderStyle
 {
@@ -25,17 +29,13 @@ export class FloatLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.Specified;
+  public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
 
-  public rightBand = false;
+  public bandPosition = new BandPositionProperty({ name: "Band Position", value: BandPosition.Automatic });
 
-  public min = 1; // Type in value
+  public min = new NumberProperty({ name: "Minimum", value: 0, use: false }); // TODO: set a dynamic default value
 
-  public max = 1; // Type in value
-
-  public useMin = false;
-
-  public useMax = false;
+  public max = new NumberProperty({ name: "Maximum", value: 1, use: false }); // TODO: set a dynamic default value
 
   // public minValue = new UseFloat(true, false, 3);
 
@@ -54,5 +54,9 @@ export class FloatLogStyle extends BaseRenderStyle
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
+    folder.addChild(this.colorType);
+    folder.addChild(this.bandPosition);
+    folder.addChild(this.min);
+    folder.addChild(this.max);
   }
 }

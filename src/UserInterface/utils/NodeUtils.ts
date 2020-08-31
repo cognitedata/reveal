@@ -15,6 +15,7 @@ import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
 import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
+import BandPositionProperty from "@/Core/Property/Concrete/Property/BandPositionProperty";
 
 export default class NodeUtils
 {
@@ -156,33 +157,39 @@ export default class NodeUtils
       element.options = property.options as string[];
       element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
     }
+    else if (property instanceof BandPositionProperty)
+    {
+      const enumArr = Object.entries(property.options as Object).map((entry: any) => isNaN(entry[0]) && entry);
+      element.options = NodeUtils.createSelectOptions(enumArr);
+    }
     else
       element.options = NodeUtils.createSelectOptions(property.getExpandedOptions(), property.getOptionIcon);
     return element;
   }
 
-  private static createSelectOptions(options: any[] | [string, any][], iconDelegate: Function): ISelectOption[]
+  private static createSelectOptions(options: any[] | [string, any][], iconDelegate?: Function): ISelectOption[]
   {
     const items: ISelectOption[] = [];
-    if (options && options.length > 0)
+    if (options)
     {
-      for (const option of options)
+      for (const option of Object.values(options))
       {
-        if (typeof option === "object")
-        {
-          items.push({
-            label: option[ExpandedOption.label],
-            value: option[ExpandedOption.value],
-            iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.value])
-          });
-        }
-        else 
-        {
-          items.push({
-            label: `${option}`,
-            value: option
-          });
-        }
+        if (option)
+          if (typeof option === "object")
+          {
+            items.push({
+              label: option[ExpandedOption.label],
+              value: option[ExpandedOption.value],
+              iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.value])
+            });
+          }
+          else
+          {
+            items.push({
+              label: `${option}`,
+              value: option
+            });
+          }
       }
     }
     return items;

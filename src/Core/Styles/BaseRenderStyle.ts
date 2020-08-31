@@ -14,7 +14,6 @@
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
-import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 
 export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAccessor
 {

@@ -17,7 +17,8 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
+import BandPositionProperty from "@/Core/Property/Concrete/Property/BandPositionProperty";
+import { BandPosition } from "@/Core/Enums/BandPosition";
 
 export class DiscreteLogStyle extends BaseRenderStyle
 {
@@ -25,7 +26,7 @@ export class DiscreteLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public rightBand = new BooleanProperty({ name: "Right Band", value: true });
+  public bandPosition = new BandPositionProperty({ name: "Band Position", value: BandPosition.Automatic });
 
   //==================================================
   // CONSTRUCTOR
@@ -42,6 +43,6 @@ export class DiscreteLogStyle extends BaseRenderStyle
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
-    folder.addChild(this.rightBand);
+    folder.addChild(this.bandPosition);
   }
 }
