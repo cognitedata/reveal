@@ -13,7 +13,7 @@
 
 export enum BandPosition
 {
-  Left,
-  Right,
-  Automatic
+  Left = 0,
+  Right = 1,
+  Automatic = 2
 };
