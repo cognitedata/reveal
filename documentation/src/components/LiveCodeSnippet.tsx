@@ -29,12 +29,14 @@ export class LiveCodeSnippet extends React.Component<LiveCodeSnippetProps> {
       <LiveProvider
         code={children.replace(/^\s+|\s+$/g, '')}
         transformCode={((code) => {
-          const fullCode = 
+          const fullCode =
           `
           const viewer = window.viewer;
           const model = window.model;
           const sdk = window.sdk;
-          resetViewerEventHandlers(viewer);
+          if (viewer) resetViewerEventHandlers(viewer);
+          const viewerEl = document.getElementById('demo-wrapper');
+          if (viewerEl) viewerEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
           // User code starts here!
           ${(transformCode ? transformCode(code) : code)}`;
           return `<button onClick={() => \{${fullCode}\}}>Run</button>`;
