@@ -96,8 +96,8 @@ water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);
 
 function updateOcean() {
-  var time = performance.now() * 0.001;
-  water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+  const time = performance.now() * 0.001;
+  water.material.uniforms[ 'time' ].value = time;
   viewer.forceRerender();
   requestAnimationFrame(updateOcean);
 };
@@ -168,8 +168,8 @@ water.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(water);\n
 \
 function updateOcean() {
-  var time = performance.now() * 0.001;
-  water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+  const time = performance.now() * 0.001;
+  water.material.uniforms[ 'time' ].value = time;
   viewer.forceRerender();
   requestAnimationFrame(updateOcean);
 };
