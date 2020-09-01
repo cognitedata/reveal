@@ -71,11 +71,7 @@ export function Migration() {
       async function addModel(options: AddModelOptions) {
         try {
           const model = await viewer.addModel(options);
-          const cameraConfig = model.getCameraConfiguration();
-          if (cameraConfig) {
-            viewer.setCameraPosition(cameraConfig.position);
-            viewer.setCameraTarget(cameraConfig.target);
-          } else {
+          if (!viewer.loadCameraFromModel(model)) {
             viewer.fitCameraToModel(model);
           }        
           if (model instanceof Cognite3DModel) {
