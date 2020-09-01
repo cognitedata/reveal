@@ -1,16 +1,12 @@
 ---
 id: installation
 title: Installation
-description: Reveal installation guide 
+description: Reveal installation guide
 ---
 
 ```bash npm2yarn
 npm install @cognite/reveal
 ```
-
-:::tip important
-Expose all `*.worker.js` and `*.wasm` files from `@cognite/reveal`
-:::
 
 Reveal uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) and [WebAssembly](https://webassembly.org/) to handle 3D geometry. This causes some problems when bundling and loading packages from NPM. Some effort might therefor be needed before Reveal can be used in your project depending on the servers hosting your application are configured.
 
@@ -19,13 +15,6 @@ There are two different types of deployment scenarios:
 1. Projects where [CDN](https://en.wikipedia.org/wiki/Content_delivery_network) are available (no restrictive [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)-headers are set)
 2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 that forbids to fetch scripts from [jsdelivr.com](https://www.jsdelivr.com/).
-
-It's also required to have a base tag pointing at your app base URL. Add base location for relative URLs:
-
-```html title="/index.html"
-<head>
-   <base href="/" /> 
-```
 
 By default, Reveal will try to fetch its worker/WASM files from [jsdelivr.com](https://www.jsdelivr.com/).
 If there are no CSP in your project, Reveal should work out of the box without any additional steps.
@@ -44,6 +33,7 @@ Also, notice that because Safari browser [doesn't support](https://caniuse.com/#
 `WebAssembly.InstantiateStreaming` yet, so it uses `WebAssembly.instantiate` which requires
 `unsafe-eval` to be presented in CSP.
 
+<!-- check the anchor links if change this title -->
 ### Option 1: include Web Worker and WebAssembly files as static assets in your project
 
 Copy all files from `/node_modules/@cognite/reveal-parser-worker/dist/local`
@@ -137,9 +127,9 @@ Reveal should now be working.
     ```bash npm2yarn
     npm install react-app-rewired --save-dev
     ```
-   
+
 1. 'Flip' the existing calls to `react-scripts` in `npm` scripts for start, build and test
- 
+
    ```diff title="/package.json"
      "scripts": {
    -   "start": "react-scripts start",
@@ -153,7 +143,7 @@ Reveal should now be working.
    ```
 
 1. Install [copy-webpack-plugin](https://webpack.js.org/plugins/copy-webpack-plugin/)
-    
+
    ```bash npm2yarn
     npm install copy-webpack-plugin --save-dev
     ```
@@ -162,15 +152,15 @@ Reveal should now be working.
 
     ```javascript title="./config-overrides.js"
     const CopyWebpackPlugin = require('copy-webpack-plugin');
-    
+
     const revealSource = 'node_modules/@cognite/reveal';
-    
+
     module.exports = function override(config) {
       if (!config.plugins) {
         // eslint-disable-next-line no-param-reassign
         config.plugins = [];
       }
-    
+
       // that's for 6.x version of webpack-copy-plugin
       // if you use 5.x just put content of patterns into constructor
       // new CopyWebpackPlugin([ /* { from, to } */ ])
@@ -190,16 +180,17 @@ Reveal should now be working.
           ],
         })
       );
-    
+
       return config;
     };
     ```
-   
+
 Now all `*.worker.js` and `*.wasm` files from `@cognite/reveal` should be copied into your output folder when you run build.
 
 ### Option 4: Copy worker files locally for non-create-react-app based projects
 
 Just make sure that you have `*.worker.js` and `*.wasm` files from `@cognite/reveal` in your output folder.
+
 If you use webpack, you might want to add [copy-webpack-plugin@^5.1.1](https://webpack.js.org/plugins/copy-webpack-plugin/)
 in your `webpack.config.js`
 
@@ -227,6 +218,9 @@ const revealSource = 'node_modules/@cognite/reveal';
   ]
 }
 ```
+
+It's the same idea as behind [Option 1](#option-1-include-web-worker-and-webassembly-files-as-static-assets-in-your-project)
+but you can use webpack to copy things for you instead of doing it manually or with scripts.
 
 ### A note on Content-type header for .wasm files
 
