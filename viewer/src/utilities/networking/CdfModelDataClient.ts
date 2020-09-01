@@ -97,7 +97,7 @@ export class CdfModelDataClient
   }): Promise<CameraConfiguration | undefined> {
     const { modelId, revisionId } = modelIdentifier;
     const model = await this.client.revisions3D.retrieve(modelId, revisionId);
-    if (model.camera !== undefined && model.camera.position !== undefined && model.camera.target !== undefined) {
+    if (model.camera && model.camera.position && model.camera.target) {
       const { position, target } = model.camera;
       return {
         position: new THREE.Vector3(position[0], position[1], position[2]),
