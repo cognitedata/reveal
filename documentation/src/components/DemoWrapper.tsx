@@ -6,7 +6,6 @@ import React, { ComponentType, Suspense } from 'react';
 import styled from 'styled-components';
 import { DemoProps } from './DemoProps';
 import { CogniteClient } from '@cognite/sdk';
-import { useBaseTag } from '../hooks/useBaseTag';
 
 const DemoContainer = styled.div`
   height: calc(min(85vh, 600px));
@@ -25,14 +24,12 @@ const components: Record<string, ComponentType<DemoProps>> = {
 };
 
 export function DemoWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
-  useBaseTag('[data-basetagnail]');
-
   if (typeof window === 'undefined') {
     return <div />;
   }
   let LazyComponent = components[name];
   return (
-    <DemoContainer data-basetagnail id="demo-wrapper">
+    <DemoContainer id="demo-wrapper">
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
           {(client: CogniteClient) => <LazyComponent client={client} modelId={modelId} revisionId={revisionId} />}
