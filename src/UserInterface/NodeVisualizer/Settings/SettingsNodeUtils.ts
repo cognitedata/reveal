@@ -1,6 +1,8 @@
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
 import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import { Appearance } from "@/Core/States/Appearance";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 
 export default class SettingsNodeUtils
 {
@@ -44,4 +46,21 @@ export default class SettingsNodeUtils
     }
   }
 
+  public static populateSettingsFolder(node: BaseNode): void 
+  {
+    const settings = new ExpanderProperty("Settings");
+    {
+      const expander = settings.createExpander(Appearance.generalSettingsName);
+      node.populateInfo(expander);
+    }
+    {
+      const expander = settings.createExpander(Appearance.statisticsName);
+      node.populateStatistics(expander);
+    }
+    {
+      const expander = settings.createExpander(Appearance.visualSettingsName);
+      node.populateRenderStyle(expander);
+    }
+    NodeUtils.properties = settings;
+  }
 }

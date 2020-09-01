@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import NodeUtils from "@/UserInterface/utils/NodeUtils";
 import { ISettingsState } from "@/UserInterface/Redux/State/settings";
 import Color from "color";
 import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 import { Appearance } from "@/Core/States/Appearance";
+import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
 
 // Initial settings state
 const initialState = {
@@ -48,28 +47,9 @@ export const settingsSlice = createSlice({
       },
       prepare(node: BaseNode): { payload: { node: BaseNode } }
       {
-        let settings;
-        if (node)
-        {
-          const selectionState = node.isSelected();
-          if (selectionState)
-          {
-            // populate settings object
-            settings = new ExpanderProperty("Settings");
-            {
-              const expander = settings.createExpander(Appearance.generalSettingsName);
-              node.populateInfo(expander);
-            }
-            {
-              const expander = settings.createExpander(Appearance.statisticsName);
-              node.populateStatistics(expander);
-            }
-            {
-              const expander = settings.createExpander(Appearance.visualSettingsName);
-              node.populateRenderStyle(expander);
-            }
-            NodeUtils.properties = settings;
-          }
+        if (node && node.isSelected())
+        { 
+          SettingsNodeUtils.populateSettingsFolder(node);
         }
         return { payload: { node } };
       }

@@ -36,6 +36,13 @@ export default class NodeUtils
 
   public static set properties(properties: BasePropertyFolder | null)
   {
+    if (NodeUtils._currentProperties)
+    {
+      for (const prop of NodeUtils._currentProperties.children)
+      {
+        prop.clearDelegates();
+      }
+    }
     NodeUtils._currentProperties = properties;
   }
 
