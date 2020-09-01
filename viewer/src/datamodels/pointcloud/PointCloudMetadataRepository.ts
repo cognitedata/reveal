@@ -11,6 +11,7 @@ import {
 import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 import { MetadataRepository } from '../base';
 import { File3dFormat } from '@/utilities/types';
+import { transformCameraConfiguration } from '@/utilities/transformCameraConfiguration';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> &
@@ -40,7 +41,7 @@ export class PointCloudMetadataRepository<TModelIdentifier>
     return {
       blobUrl,
       modelTransformation,
-      cameraConfiguration,
+      cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelTransformation),
       scene
     };
   }

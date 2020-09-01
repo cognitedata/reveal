@@ -13,6 +13,7 @@ import {
   ModelCameraConfigurationProvider
 } from '@/utilities/networking/types';
 import { MetadataRepository } from '../base';
+import { transformCameraConfiguration } from '@/utilities/transformCameraConfiguration';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> &
@@ -50,7 +51,7 @@ export class CadModelMetadataRepository<TModelIdentifier>
     return {
       blobUrl,
       modelTransformation,
-      cameraConfiguration,
+      cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelTransformation),
       scene
     };
   }
