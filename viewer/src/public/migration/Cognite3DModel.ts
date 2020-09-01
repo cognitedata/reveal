@@ -6,7 +6,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
-import { Color } from './types';
+import { Color, CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3, NumericRange } from '@/utilities';
@@ -187,6 +187,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
     const bounds = this.cadModel.scene.root.bounds;
     return toThreeJsBox3(outBbox || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+  }
+
+  /**
+   * Retrieves the camera position and target stored for the model. Typically this
+   * is used to store a good starting position for a model. Returns `undefined` if there
+   * isn't any stored camera configuration for the model.
+   */
+  getCameraConfiguration(): CameraConfiguration | undefined {
+    return this.cadModel.cameraConfiguration;
   }
 
   /**

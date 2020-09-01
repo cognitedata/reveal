@@ -434,11 +434,11 @@ export class Cognite3DViewer {
     }
 
     const { modelId, revisionId } = options;
-    const [potreeGroup, potreeNode] = await this._revealManager.addModel('pointcloud', {
+    const pointCloudNode = await this._revealManager.addModel('pointcloud', {
       modelId,
       revisionId
     });
-    const model = new CognitePointCloudModel(modelId, revisionId, potreeGroup, potreeNode);
+    const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this.models.push(model);
     this.scene.add(model);
     return model;

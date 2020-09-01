@@ -6,7 +6,7 @@ import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
 import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat, ModelTransformation } from '../types';
+import { File3dFormat, ModelTransformation, CameraConfiguration } from '../types';
 import { applyDefaultModelTransformation, createModelTransformation } from './modelTransformation';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
@@ -88,6 +88,23 @@ export class CdfModelDataClient
     }
     applyDefaultModelTransformation(modelMatrix, format);
     return createModelTransformation(modelMatrix);
+  }
+
+  public async getModelCamera(modelIdentifier: {
+    modelId: number;
+    revisionId: number;
+    format: File3dFormat | string;
+  }): Promise<CameraConfiguration | undefined> {
+    const { modelId, revisionId } = modelIdentifier;
+    const model = await this.client.revisions3D.retrieve(modelId, revisionId);
+    if (model.camera !== undefined && model.camera.position !== undefined && model.camera.target !== undefined) {
+      const { position, target } = model.camera;
+      return {
+        position: new THREE.Vector3(position[0], position[1], position[2]),
+        target: new THREE.Vector3(target[0], target[1], target[2])
+      };
+    }
+    return undefined;
   }
 
   private buildBlobRequestPath(blobId: number): string {

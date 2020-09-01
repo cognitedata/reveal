@@ -4,12 +4,10 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { toThreeJsBox3 } from '@/utilities';
-import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
-import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreePointColorType } from '@/datamodels/pointcloud/types';
-import { Matrix4 } from 'three';
 import { SupportedModelTypes } from '../types';
+import { CameraConfiguration } from './types';
+import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
 
 /**
  * Documentation for the Cognite3DModel class
@@ -20,15 +18,15 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   public readonly type: SupportedModelTypes = 'pointcloud';
   public readonly modelId: number;
   public readonly revisionId: number;
-  private readonly potreeNode: PotreeNodeWrapper;
+  private readonly pointCloudNode: PointCloudNode;
 
   /** @internal */
-  constructor(modelId: number, revisionId: number, potreeGroup: PotreeGroupWrapper, potreeNode: PotreeNodeWrapper) {
+  constructor(modelId: number, revisionId: number, pointCloudNode: PointCloudNode) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
-    this.potreeNode = potreeNode;
-    this.add(potreeGroup);
+    this.pointCloudNode = pointCloudNode;
+    this.add(pointCloudNode);
   }
 
   /**
@@ -53,20 +51,29 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * ```
    */
   getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    return toThreeJsBox3(outBbox || new THREE.Box3(), this.potreeNode.boundingBox);
+    return this.pointCloudNode.getBoundingBox(outBbox);
+  }
+
+  /**
+   * Retrieves the camera position and target stored for the model. Typically this
+   * is used to store a good starting position for a model. Returns `undefined` if there
+   * isn't any stored camera configuration for the model.
+   */
+  getCameraConfiguration(): CameraConfiguration | undefined {
+    return this.pointCloudNode.cameraConfiguration;
   }
 
   /**
    * Apply transformation matrix to the model.
    * @param matrix Matrix to be applied.
    */
-  updateTransformation(matrix: Matrix4): void {
+  updateTransformation(matrix: THREE.Matrix4): void {
     this.applyMatrix4(matrix);
     this.updateMatrixWorld(false);
   }
 
   get pointBudget(): number {
-    return this.potreeNode.pointBudget;
+    return this.pointCloudNode.pointBudget;
   }
 
   /**
@@ -74,11 +81,11 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * which helps to adapt performance requirements to the capabilities of different hardware.
    */
   set pointBudget(count: number) {
-    this.potreeNode.pointBudget = count;
+    this.pointCloudNode.pointBudget = count;
   }
 
   get pointColorType(): PotreePointColorType {
-    return this.potreeNode.pointColorType;
+    return this.pointCloudNode.pointColorType;
   }
 
   /**
@@ -89,6 +96,6 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * ```
    */
   set pointColorType(type: PotreePointColorType) {
-    this.potreeNode.pointColorType = type;
+    this.pointCloudNode.pointColorType = type;
   }
 }
