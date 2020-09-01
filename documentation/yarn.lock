@@ -986,12 +986,20 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/reveal@^1.0.0-beta-1":
+"@cognite/reveal-parser-worker@1.0.0-beta-1":
   version "1.0.0-beta-1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-1.0.0-beta-1.tgz#f490e236bbdea5f84a51060308140bdddfd32d7c"
-  integrity sha512-IBEymmimjFLKvLwCykMKdbf7/LOJiRUqas5JACKpWtF5c++f0qUwoob9AH/mAP7HvPu8D221av/kFAj9rh0JVw==
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.0.0-beta-1.tgz#57cf27d6e3130375a9dca53f39a85e9be9432393"
+  integrity sha512-OumTA4QirCei8/bNVywnbvOHklfGRuxw0WOb1EzcH18q6Zfx8k2UCNeg/rBZt8BC/d0+4ehy6gbkKReTKx+SAA==
+  dependencies:
+    comlink "^4.3.0"
+
+"@cognite/reveal@^1.0.0-beta-3":
+  version "1.0.0-beta-3"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-1.0.0-beta-3.tgz#bc054190d81b70818d36e6f356e40ed352aa3777"
+  integrity sha512-spSsjakbd4WMakIejlyz+U68NlHr+vxJ4F+wyvMk9iYBuQPjC5N15Ljv11lXM+GuGklsaVrVIsllhyROO026XA==
   dependencies:
     "@cognite/potree-core" "^1.1.3"
+    "@cognite/reveal-parser-worker" "1.0.0-beta-1"
     "@cognite/three-combo-controls" "^1.4.1"
     "@tweenjs/tween.js" "^18.5.0"
     "@types/lodash" "^4.14.159"
