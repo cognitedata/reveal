@@ -10,7 +10,7 @@ import { CameraConfiguration } from './types';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
 
 /**
- * Documentation for the Cognite3DModel class
+ * Represents a point clouds model loaded from CDF.
  * @noInheritDoc
  * @module @cognite/reveal
  */
@@ -79,6 +79,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * The point budget limits the number of points loaded and rendered at any given time,
    * which helps to adapt performance requirements to the capabilities of different hardware.
+   * Recommended values are between 500.000  and 10.000.000.
    */
   set pointBudget(count: number) {
     this.pointCloudNode.pointBudget = count;
