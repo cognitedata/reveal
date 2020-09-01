@@ -72,7 +72,6 @@ export function Migration() {
         try {
           const model = await viewer.addModel(options);
           const cameraConfig = model.getCameraConfiguration();
-          console.log('Camera config', cameraConfig);
           if (cameraConfig) {
             viewer.setCameraPosition(cameraConfig.position);
             viewer.setCameraTarget(cameraConfig.target);
