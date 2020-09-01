@@ -28,7 +28,10 @@ export default function Cognite3DViewerDemo({ client, modelId, revisionId }: Dem
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
-      viewer.fitCameraToModel(model);
+      if (!viewer.loadCameraFromModel(model)) {
+        // Camera not stored in CDF, determine a default based on the model
+        viewer.fitCameraToModel(model);
+      }
       (window as any).model = model;
     }
 

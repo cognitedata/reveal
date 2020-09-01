@@ -648,6 +648,31 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Attempts to load the camera settings from the settings stored for the
+   * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
+   * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
+   * information on how this settings is retrieved and stored. This setting can
+   * also be changed through the 3D models management interface in Cognite Fustion.
+   * @param model The model to load camera settings from.
+   * @returns True if a camera was stored for the provided model and applied to the
+   * current camera settings.
+   * @example
+   * ```js
+   * if (!viewer.loadCameraFromModel(model)) {
+   *   // Fallback to "fit camera to model"
+   *   viewer.fitCameraToModel(model);
+   * }
+   * ```
+   */
+  loadCameraFromModel(model: CogniteModelBase): boolean {
+    const config = model.getCameraConfiguration();
+    if (config) {
+      this.controls.setState(config.position, config.target);
+    }
+    return false;
+  }
+
+  /**
    * Move camera to a place where the 3D model is visible.
    * It uses the bounding box of the 3D model and calls {@link Cognite3DViewer.fitCameraToBoundingBox}
    * @param model The 3D model

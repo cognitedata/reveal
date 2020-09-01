@@ -36,7 +36,9 @@ async function main() {
     revisionId: 5688854005909501,
   });
 
-  viewer.fitCameraToModel(model);
+  if (!viewer.loadCameraFromModel(model)) {
+    viewer.fitCameraToModel(model);
+  }
 
   // call viewer.dispose() when you don't need the viewer anymore
 }
