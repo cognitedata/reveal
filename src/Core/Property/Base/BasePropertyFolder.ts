@@ -102,12 +102,7 @@ export default abstract class BasePropertyFolder extends BaseProperty
   public addString(params: IPropertyParams<string>): void { this.addChild(new StringProperty(params)); }
   public addColor(params: IPropertyParams<Color>): void { this.addChild(new ColorProperty(params)); }
   public addColorType(params: IPropertyParams<ColorType>): void { this.addChild(new ColorTypeProperty(params)); }
-
-  public addColorMap(params: IPropertyParams<string>): void
-  {
-    params.options = ColorMaps.getOptions();
-    this.addChild(new ColorMapProperty(params));
-  }
+  public addColorMap(params: IPropertyParams<string>): void { this.addChild(new ColorMapProperty(params)); }
 
   //==================================================
   // INSTANCE METHODS: Add readonly

@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import styled from "styled-components";
 import ListItemText from "@material-ui/core/ListItemText";
+import { ISelectOption } from "@/UserInterface/Components/Settings/Types";
 
 const ColorButton = withStyles((theme) => ({
   root: {
@@ -114,7 +115,7 @@ const ColorMap = styled.div<ColorMapProps>`
 `;
 
 export function ColorMapSelector(props: {
-  options?: string[];
+  options?: ISelectOption[];
   colorMapOptions?: Array<string>[];
   value?: string;
   onChange?: (val: string) => void;
@@ -131,21 +132,26 @@ export function ColorMapSelector(props: {
   const handleChange = (event) => {
     updateState(event.target.value);
   };
-  const findIndexOfValueInOptions = (valueOptions: string[], val?: string) => {
-    return valueOptions.findIndex((optionValue) => optionValue === val) || 0;
+  const findIndexOfValueInOptions = (
+    optionValues: ISelectOption[],
+    val?: string
+  ) => {
+    return (
+      optionValues.findIndex((optionValue) => optionValue.value === val) || 0
+    );
   };
   const setPrevOption = () => {
     if (options) {
       const newIndex = findIndexOfValueInOptions(options, value) - 1;
       if (newIndex < 0) return;
-      updateState(options[newIndex]);
+      updateState(options[newIndex].value);
     }
   };
   const setNextOption = () => {
     if (options) {
       const newIndex = findIndexOfValueInOptions(options, value) + 1;
       if (newIndex >= options.length) return;
-      updateState(options[newIndex]);
+      updateState(options[newIndex].value);
     }
   };
 
@@ -159,15 +165,19 @@ export function ColorMapSelector(props: {
         onChange={handleChange}
         input={<StyledInput />}
       >
-        {options?.map((option: string, index: number) => {
+        {options?.map((option: ISelectOption, index: number) => {
           let colors: string[] = [];
           if (colorMapOptions) {
             colors = colorMapOptions[index];
           }
           return (
-            <MenuItem className={classes.menuItem} value={option} key={option}>
+            <MenuItem
+              className={classes.menuItem}
+              value={option.value}
+              key={option.value}
+            >
               {colors.length && <ColorMap colors={colors} />}
-              <StyledListItemText>{option}</StyledListItemText>
+              <StyledListItemText>{option.label}</StyledListItemText>
             </MenuItem>
           );
         })}

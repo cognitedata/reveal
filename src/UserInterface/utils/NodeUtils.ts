@@ -4,7 +4,6 @@ import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
-import { Appearance } from "@/Core/States/Appearance";
 import ValueProperty, { ExpandedOption } from "@/Core/Property/Base/ValueProperty";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
@@ -15,7 +14,6 @@ import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
 import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
-import BandPositionProperty from "@/Core/Property/Concrete/Property/BandPositionProperty";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
 export default class NodeUtils
@@ -171,46 +169,35 @@ export default class NodeUtils
       isReadOnly: property.isReadOnly,
       useProperty: property.use,
       isOptional: property.isOptional,
+      options: NodeUtils.createSelectOptions(property.getExpandedOptions(), property.getOptionIcon),
+      extraOptionsData: property.extraOptionsData,
     };
-    // Handle seperate property types
-    if (property instanceof ColorMapProperty)
-    {
-      element.options = property.options as string[];
-      element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
-    }
-    else if (property instanceof BandPositionProperty)
-    {
-      const enumArr = Object.entries(property.options as Object).map((entry: any) => isNaN(entry[0]) && entry);
-      element.options = NodeUtils.createSelectOptions(enumArr);
-    }
-    else
-      element.options = NodeUtils.createSelectOptions(property.getExpandedOptions(), property.getOptionIcon);
+
     return element;
   }
 
   private static createSelectOptions(options: any[] | [string, any][], iconDelegate?: Function): ISelectOption[]
   {
     const items: ISelectOption[] = [];
-    if (options)
+    if (options && options.length > 0)
     {
-      for (const option of Object.values(options))
+      for (const option of options)
       {
-        if (option)
-          if (typeof option === "object")
-          {
-            items.push({
-              label: option[ExpandedOption.label],
-              value: option[ExpandedOption.value],
-              iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.value])
-            });
-          }
-          else
-          {
-            items.push({
-              label: `${option}`,
-              value: option
-            });
-          }
+        if (typeof option === "object")
+        {
+          items.push({
+            label: option[ExpandedOption.label],
+            value: option[ExpandedOption.value],
+            iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.value])
+          });
+        }
+        else
+        {
+          items.push({
+            label: `${option}`,
+            value: option
+          });
+        }
       }
     }
     return items;
@@ -229,8 +216,7 @@ export default class NodeUtils
       return ElementTypes.ColorMap;
 
     // All others with options
-    if (property.hasOptions)
-      return ElementTypes.Select;
+    if (property.hasOptions) return ElementTypes.Select;
 
     // All without options
     if (property instanceof StringProperty)

@@ -70,7 +70,7 @@ export class CameraControl
 
     this._camera = target.isPerspectiveMode ? this.createPerspectiveCamera(target) : this.createOrthographicCamera(target);
     this._camera.position.set(0, 0, 5);
-    this._camera.up.set(0,0,1);
+    this._camera.up.set(0, 0, 1);
     this._controls = new CameraControls(this._camera, target.domElement);
   }
 

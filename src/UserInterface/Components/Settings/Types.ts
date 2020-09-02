@@ -59,8 +59,8 @@ export interface ISettingsSection
 // SettingsPanel SettingsSection Element
 export interface ISettingsElement extends IBaseSettingsElement
 {
-  options?: ISelectOption[] | string[];
-  colorMapOptions?: string[][];
+  options?: ISelectOption[];
+  extraOptionsData?: string[][];
   icon?: {
     type: string;
     name: string;

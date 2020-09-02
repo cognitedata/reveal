@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Color from "color";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
@@ -174,12 +174,11 @@ export default function SettingsElement(props: ISettingsElementProps) {
           />
         );
       case ElementTypes.ColorMap: {
-        const options = elmConfig.options as string[];
         return (
           <Box className="color-map-select">
             <ColorMapSelector
-              options={options}
-              colorMapOptions={elmConfig.colorMapOptions}
+              options={elmConfig.options}
+              colorMapOptions={elmConfig.extraOptionsData}
               value={value}
               disabled={disabled}
               onChange={(colorMap) => {
