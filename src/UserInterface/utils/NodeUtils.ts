@@ -16,6 +16,7 @@ import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty
 import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import BandPositionProperty from "@/Core/Property/Concrete/Property/BandPositionProperty";
+import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
 export default class NodeUtils
 {
@@ -24,10 +25,16 @@ export default class NodeUtils
   //==================================================
 
   private static _currentProperties: BasePropertyFolder | null = null;
+  private static _renderStyleCommands: BaseCommand[] | null = null;
 
   //==================================================
   // STATIC PROPERTIES
   //==================================================
+
+  public static get renderStyleCommands(): BaseCommand[] | null
+  {
+    return NodeUtils._renderStyleCommands;
+  }
 
   public static get properties(): BasePropertyFolder | null
   {
@@ -75,6 +82,11 @@ export default class NodeUtils
   // STATIC METHODS: Create element
   //==================================================
 
+  public static createRenderStyleCommands(baseNode: BaseNode) 
+  {
+    NodeUtils._renderStyleCommands = baseNode.createRenderStyleCommands();
+  }
+
   public static createElementTree(property: BaseProperty | null): ISettingsSection | ISettingsElement | null
   {
     if (!property)
@@ -119,6 +131,8 @@ export default class NodeUtils
       name: property.displayName,
       elements: [],
     };
+    if (NodeUtils.renderStyleCommands)
+      element.toolBar = NodeUtils.renderStyleCommands;
     return element;
   }
 

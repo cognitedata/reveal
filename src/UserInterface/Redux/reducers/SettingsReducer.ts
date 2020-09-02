@@ -5,6 +5,7 @@ import Color from "color";
 import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 import { Appearance } from "@/Core/States/Appearance";
 import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
+import NodeUtils from "@/UserInterface/utils/NodeUtils";
 
 // Initial settings state
 const initialState = {
@@ -50,6 +51,7 @@ export const settingsSlice = createSlice({
         if (node && node.isSelected())
         { 
           SettingsNodeUtils.populateSettingsFolder(node);
+          NodeUtils.createRenderStyleCommands(node);
         }
         return { payload: { node } };
       }

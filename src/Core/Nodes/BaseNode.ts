@@ -34,6 +34,10 @@ import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypePr
 import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
+import { BaseCommand } from "@/Core/Commands/BaseCommand";
+import { ResetVisualSettingsCommand } from "@/Core/Commands/SettingsPanel/ResetVisualSettingsCommand";
+import { CopyFolderVisualSettingsCommand } from "@/Core/Commands/SettingsPanel/CopyFolderVisualSettingsCommand";
+import { CopySystemVisualSettingsCommand } from "@/Core/Commands/SettingsPanel/CopySystemVisualSettingsCommand";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -371,6 +375,15 @@ export abstract class BaseNode extends Identifiable
   public toggleExpandInteractive() // Use this when clicking on the expand marker in the three control
   {
     this.setExpandedInteractive(!this.isExpanded);
+  }
+
+  public createRenderStyleCommands(): BaseCommand[] | null
+  {
+    const commands = [
+      new ResetVisualSettingsCommand(this),
+      new CopyFolderVisualSettingsCommand(this),
+      new CopySystemVisualSettingsCommand(this)];
+    return commands;
   }
 
   public setExpandedInteractive(value: boolean)

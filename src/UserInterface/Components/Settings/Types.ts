@@ -1,3 +1,5 @@
+import { BaseCommand } from "@/Core/Commands/BaseCommand";
+
 export type ToolBarType = {
   icon: { type: string; name: string };
   selected?: boolean;
@@ -11,7 +13,7 @@ export type ToolBarType = {
 export type SettingPanelProps = {
   id?: string;
   titleBar?: { name: string; icon?: { src?: string; description?: string, color?: string }; toolBar: ToolBarType };
-  expandedSections: {[sectionName: string]: boolean};
+  expandedSections: {[sectionName: string]: boolean},
   onSectionExpand: (sectionId: string, expandStatus: boolean) => void;
   onPropertyValueChange: (elementId: string, value: any) => void;
   onPropertyUseChange: (elementId: string, value: boolean) => void;
@@ -48,7 +50,7 @@ export interface ISettingsSection
   name: string;
   isExpanded?: boolean;
   titleBar?: ITitleBar;
-  toolBar?: ToolBarType;
+  toolBar?: BaseCommand[];
   elements: ISettingsElement[];
   iconIndex?: number;
   subSections?: ISettingsSection[];
