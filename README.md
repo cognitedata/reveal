@@ -1,4 +1,4 @@
-# Cognite Subsurface Visualizer
+# Cognite Node Visualizer
 
 This is a monorepo for all subsurface visualization features in cognite. Please find the links below to eachof the packages available in this repo.
 
