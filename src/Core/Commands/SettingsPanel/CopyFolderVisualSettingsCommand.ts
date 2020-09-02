@@ -1,18 +1,8 @@
-import { BaseNode } from "@/Core/Nodes/BaseNode";
 import FolderIcon from "@images/Actions/Folder.png";
-import { SettingsPanelToolCommand } from "../SettingsPanelToolCommand";
+import { BaseNodeCommand } from "@/Core/Commands/BaseNodeCommand";
 
-export class CopyFolderVisualSettingsCommand extends SettingsPanelToolCommand
+export class CopyFolderVisualSettingsCommand extends BaseNodeCommand
 {
-  //==================================================
-  // CONSTRUCTOR
-  //==================================================
-
-  public constructor(target: BaseNode)
-  {
-    super(target);
-  }
-
   //==================================================
   // OVERRIDES of BaseCommand
   //==================================================

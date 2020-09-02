@@ -9,9 +9,15 @@ export abstract class BaseNodeCommand extends BaseCommand
   // CONSTRUCTOR
   //==================================================
 
-  protected constructor(node: BaseNode | null = null)
+  public constructor(node: BaseNode | null = null)
   {
     super();
     this.node = node;
   }
+
+  //==================================================
+  // OVERRIDES of BaseCommand
+  //==================================================
+
+  public /*override*/ get isEnabled(): boolean { return this.node != null; }
 }
