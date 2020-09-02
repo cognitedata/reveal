@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Draggable from "react-draggable";
 import { Appearance } from "@/Core/States/Appearance";
-import InIcon from "@images/Actions/In.png";
-import OutIcon from "@images/Actions/Out.png";
 import Icon from "@/UserInterface/Components/Icon/Icon";
+import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
 import ToolBarSelect from "@/UserInterface/Components/ToolBarSelect/ToolBarSelect";
+import withStyles from "@material-ui/core/styles/withStyles";
 
 export interface IToolbarButton {
   icon: string;
@@ -25,13 +25,23 @@ const toolBarDimensions = (
   dimension2: number,
   isHorizontal: boolean
 ) => {
-  if (isHorizontal) return { width: "fit-content", height: dimension1 };
+  if (isHorizontal) return { width: "fit-content", height: "fit-content" };
   return { width: dimension1 * 2 };
 };
 
 /**
  * Get bottom and right margins of toolbar
  */
+
+const MoveIcon = withStyles(() => ({
+  root: {
+    width: "1.2rem",
+    height: "1.7rem",
+  },
+  colorPrimary: {
+    color: "#7ebee0",
+  },
+}))(DragIndicatorIcon);
 
 // Visualizer ToolBar Component
 export default function VisualizerToolbar(props: {
@@ -214,7 +224,9 @@ export default function VisualizerToolbar(props: {
               cursor: dragging ? "move" : "pointer",
             }}
           >
-            <img src={horizontal ? InIcon : OutIcon} alt="Tool icon" />
+            <div className="icon">
+              <MoveIcon color="primary" />
+            </div>
           </div>
           {addToolbars()}
         </div>
