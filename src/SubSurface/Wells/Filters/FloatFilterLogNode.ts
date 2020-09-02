@@ -100,6 +100,22 @@ export class FloatFilterLogNode extends BaseFilterLogNode
     folder.addReadOnlyStatistics(null, statistics);
   }
 
+  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
+  {
+    if (!(style instanceof FloatLogStyle))
+      return;
+
+    const valueRange = this.getValueRange();
+    if (valueRange.isEmpty)
+      return;
+
+    function round(value: number) { return Math.round(value * 10000) / 10000; }
+    if (Number.isNaN(style.min.value))
+      style.min.value = round(valueRange.min);
+    if (Number.isNaN(style.max.value))
+      style.max.value = round(valueRange.max);
+  }
+
   //==================================================
   // OVERRIDES of BaseLogNode
   //==================================================

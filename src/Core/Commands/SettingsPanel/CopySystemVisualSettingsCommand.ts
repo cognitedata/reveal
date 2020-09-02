@@ -1,18 +1,8 @@
 import SolutionIcon from "@images/Actions/Solution.png";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { SettingsPanelToolCommand } from "../SettingsPanelToolCommand";
+import { BaseNodeCommand } from "@/Core/Commands/BaseNodeCommand";
 
-export class CopySystemVisualSettingsCommand extends SettingsPanelToolCommand
+export class CopySystemVisualSettingsCommand extends BaseNodeCommand
 {
-  //==================================================
-  // CONSTRUCTOR
-  //==================================================
-
-  public constructor(target: BaseNode)
-  {
-    super(target);
-  }
-
   //==================================================
   // OVERRIDES of BaseCommand
   //==================================================

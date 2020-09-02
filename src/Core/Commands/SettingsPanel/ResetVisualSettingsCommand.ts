@@ -1,18 +1,8 @@
 import ResetIcon from "@images/Actions/Reset.png";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { SettingsPanelToolCommand } from "../SettingsPanelToolCommand";
+import { BaseNodeCommand } from "@/Core/Commands/BaseNodeCommand";
 
-export class ResetVisualSettingsCommand extends SettingsPanelToolCommand
+export class ResetVisualSettingsCommand extends BaseNodeCommand
 {
-  //==================================================
-  // CONSTRUCTOR
-  //==================================================
-
-  public constructor(target: BaseNode)
-  {
-    super(target);
-  }
-
   //==================================================
   // OVERRIDES of BaseCommand
   //==================================================
