@@ -290,40 +290,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Get node color by nodeId. You can only get those colors, that you've set with
-   * {@link Cognite3DModel.setNodeColor} or {@link Cognite3DModel.setNodeColorByTreeIndex}.
-   * Otherwise `{ r: 255, g: 255, b: 255 }` is returned as the fallback.
-   * @param nodeId
-   * @example
-   * ```js
-   * let color = model.getNodeColor(nodeId);
-   * ```
+   * Not supported.
+   * @deprecated This function is no longer supported. There is no replacement.
+   * @throws NotSupportedInMigrationWrapperError
    */
-  async getNodeColor(nodeId: number): Promise<Color> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      const color = this.nodeColors.get(treeIndex);
-      if (!color) {
-        // TODO: migration wrapper currently does not support looking up colors not set by the user
-        throw new NotSupportedInMigrationWrapperError();
-      }
-      const [r, g, b] = color;
-      return {
-        r,
-        g,
-        b
-      };
-    } catch (error) {
-      trackError(error, {
-        moduleName: 'Cognite3DModel',
-        methodName: 'getNodeColor'
-      });
-      return {
-        r: 255,
-        g: 255,
-        b: 255
-      };
-    }
+  getNodeColor(_nodeId: number): Promise<Color> {
+    throw new NotSupportedInMigrationWrapperError('getNodeColor() is not supported');
   }
 
   /**
