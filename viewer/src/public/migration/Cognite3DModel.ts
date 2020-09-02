@@ -16,6 +16,7 @@ import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { trackError } from '@/utilities/metrics';
 import { SupportedModelTypes } from '../types';
+import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -260,13 +261,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @example
    * ```js
    * const logIndex = (treeIndex) => console.log(treeIndex);
-   * model.iterateNodesByTreeIndex(logIndex); // 0, 1, 2, ...
+   * await model.iterateNodesByTreeIndex(logIndex); // 0, 1, 2, ...
    * ```
    */
-  iterateNodesByTreeIndex(action: (treeIndex: number) => void): void {
-    for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
-      action(i);
-    }
+  async iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void> {
+    await callActionWithIndicesAsync(0, this.cadModel.scene.maxTreeIndex - 1, action);
   }
 
   /**
@@ -283,9 +282,21 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       'Use iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void)'
     );
   }
+
+  /**
+   * @param treeIndex
+   * @param action Function that will be called with a treeIndex argument.
+   * @example
+   * ```js
+   * // make a subtree to be gray
+   * await model.iterateNodesByTreeIndex(treeIndex => {
+   *   model.setNodeColorByTreeIndex(treeIndex, 127, 127, 127);
+   * });
+   * ```
+   */
   async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, true);
-    treeIndices.forEach(action);
+    await treeIndices.forEach(action);
     return treeIndices.count;
   }
 
@@ -330,7 +341,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   ): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     const color: [number, number, number] = [r, g, b];
-    treeIndices.forEach(idx => this.nodeColors.set(idx, color));
+    await treeIndices.forEach(idx => this.nodeColors.set(idx, color));
     this.cadNode.requestNodeUpdate(treeIndices);
     return treeIndices.count;
   }
@@ -352,7 +363,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async resetNodeColorByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    treeIndices.forEach(idx => this.nodeColors.delete(idx));
+    await treeIndices.forEach(idx => this.nodeColors.delete(idx));
     this.cadNode.requestNodeUpdate(treeIndices);
     return treeIndices.count;
   }
@@ -383,7 +394,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    treeIndices.forEach(idx => this.selectedNodes.add(idx));
+    await treeIndices.forEach(idx => this.selectedNodes.add(idx));
     this.cadNode.requestNodeUpdate(treeIndices);
     return treeIndices.count;
   }
@@ -401,7 +412,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    treeIndices.forEach(idx => this.selectedNodes.delete(idx));
+    await treeIndices.forEach(idx => this.selectedNodes.delete(idx));
     this.cadNode.requestNodeUpdate(treeIndices);
     return treeIndices.count;
   }
@@ -492,7 +503,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    treeIndices.forEach(idx => this.hiddenNodes.add(idx));
+    await treeIndices.forEach(idx => this.hiddenNodes.add(idx));
     this.cadNode.requestNodeUpdate(treeIndices);
     return treeIndices.count;
   }
