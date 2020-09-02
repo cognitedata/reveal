@@ -8,47 +8,6 @@
     height: 100% !important;
   }
 
-  .visualizer-toolbar-wrapper {
-    position: absolute;
-    z-index: 10;
-  }
-  .visualizer-toolbar-container {
-    display: flex;
-    position: relative;
-    padding: 0 0 0 25px;
-  }
-  .visualizer-toolbar-group {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    margin: 0.25rem;
-    border: 0.01rem solid black;
-    background-color: rgba(223, 223, 223, 0.6);
-    border-radius: 0.2rem;
-    .visualizer-tool-bar-icon {
-      transition: background-color 0.3s;
-      margin:0.025rem;
-      padding: 0.2rem 0.2rem;
-      cursor: pointer;
-      &:hover {
-        background-color: lightblue;
-        border-color: lightblue;
-      }
-    }
-    .visualizer-tool-bar-icon-selected {
-      background-color: lightblue !important;
-    }
-  }
-
-  .handle {
-    position: absolute;
-    left: 0.6rem;
-    top: 0.5rem;
-    .icon {
-      width: 1.2rem;
-      height: 1.7rem;
-    }
-  }
   .visualizer-3d {
     height: 100%;
     width: 100%;

@@ -4,7 +4,9 @@ import { Appearance } from "@/Core/States/Appearance";
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
 import ToolBarSelect from "@/UserInterface/Components/ToolBarSelect/ToolBarSelect";
-import withStyles from "@material-ui/core/styles/withStyles";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 export interface IToolbarButton {
   icon: string;
@@ -17,31 +19,76 @@ export interface IToolbarButton {
   value: string;
   isVisible: boolean;
 }
-/**
- * Get width and height of toolbar
- */
-const toolBarDimensions = (
-  dimension1: number,
-  dimension2: number,
-  isHorizontal: boolean
-) => {
-  if (isHorizontal) return { width: "fit-content", height: "fit-content" };
-  return { width: dimension1 * 2 };
-};
 
-/**
- * Get bottom and right margins of toolbar
- */
-
-const MoveIcon = withStyles(() => ({
-  root: {
+const useStyles = makeStyles(() => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  root: (props: {
+    toolbarIconSize: number;
+    toolbarSelectWidth: number;
+    dragging: boolean;
+    horizontal: boolean;
+  }) => ({}),
+  toolbarWrapper: {
+    position: "absolute",
+    "z-index": "10",
+  },
+  toolbarContainer: (props: { horizontal: boolean }) => ({
+    display: "flex",
+    position: "relative",
+    padding: "0 0 0 25px",
+    flexDirection: props.horizontal ? "row" : "column",
+  }),
+  dragHandle: (props: { dragging: boolean }) => ({
+    position: "absolute",
+    left: "0.6rem",
+    top: "0.5rem",
+    cursor: props.dragging ? "move" : "pointer",
+  }),
+  dragHandleIcon: {
     width: "1.2rem",
     height: "1.7rem",
   },
-  colorPrimary: {
-    color: "#7ebee0",
+  toolbarGroup: (props: { horizontal: boolean }) => ({
+    display: "inline-grid",
+    gridTemplateRows: props.horizontal ? "auto auto" : "auto",
+    gridTemplateColumns: props.horizontal ? "auto" : "auto auto",
+    gridAutoFlow: props.horizontal ? "column" : "row",
+    margin: "0.25rem",
+    border: "0.01rem solid black",
+    backgroundColor: "rgba(223, 223, 223, 0.6)",
+    borderRadius: "0.2rem",
+  }),
+  toolbarIcon: (props: { toolbarIconSize: number }) => ({
+    height: props.toolbarIconSize,
+    width: props.toolbarIconSize,
+    transition: "background-color 0.3s",
+    margin: "0.025rem",
+    padding: "0.2rem 0.2rem",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "lightblue",
+      borderColor: "lightblue",
+    },
+  }),
+  toolbarIconSelected: {
+    backgroundColor: "lightblue !important",
   },
-}))(DragIndicatorIcon);
+  toolbarDropdown: (props: {
+    toolbarIconSize: number;
+    toolbarSelectWidth: number;
+  }) => ({
+    height: props.toolbarIconSize,
+    width: props.toolbarSelectWidth,
+    transition: "background-color 0.3s",
+    margin: "0.025rem",
+    padding: "0.2rem 0.2rem",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "lightblue",
+      borderColor: "lightblue",
+    },
+  }),
+}));
 
 // Visualizer ToolBar Component
 export default function VisualizerToolbar(props: {
@@ -65,14 +112,24 @@ export default function VisualizerToolbar(props: {
     onToolbarButtonClick,
     onToolbarSelectionChange,
   } = props;
+
   if (!toolbar) return null;
   const groupIds: string[] = toolbar ? Object.keys(toolbar) : [];
+
+  const { toolbarIconSize, toolbarSelectWidth } = Appearance;
 
   // Toolbar orientation
   const [horizontal, setHorizontal] = useState(true);
 
   // Whether dragging is happening
   const [dragging, setDragging] = useState(false);
+
+  const classes = useStyles({
+    toolbarIconSize,
+    toolbarSelectWidth,
+    dragging,
+    horizontal,
+  });
 
   // Calls when handle is clicked
   const onToolbarHandleButtonClick = () => {
@@ -90,50 +147,17 @@ export default function VisualizerToolbar(props: {
 
   // Called when dragging
   const onDrag = () => {
-    if (!dragging) {
-      setDragging(true);
-    }
+    if (!dragging) setDragging(true);
   };
-
-  let visibleNonDropdownCommands = [];
-
-  let visibleDropdownCommands = [];
-
-  groupIds?.map((groupId) => {
-    visibleNonDropdownCommands = toolbar[groupId].filter(
-      (command) => command.isVisible && !command.isDropdown
-    );
-    visibleDropdownCommands = toolbar[groupId].filter(
-      (command) => command.isVisible && command.isDropdown
-    );
-  });
-
-  // dropdown Items takes twice the size
-  const noOfSlots =
-    visibleNonDropdownCommands.length + visibleDropdownCommands.length * 2;
-  // No Of commands per line in Toolbar UI
-  const { toolbarCommandsPerLine } = Appearance;
-  // Number of rows in toolbar
-  const numberOfToolbarRows = Math.ceil(noOfSlots / toolbarCommandsPerLine);
-  // Consider borders,margins and padding of img tag
-  const iconSize = Appearance.toolbarIconSize + 7.2;
-  const [dimension1, dimension2] = [
-    numberOfToolbarRows * iconSize,
-    numberOfToolbarRows > 1
-      ? toolbarCommandsPerLine * iconSize
-      : noOfSlots * iconSize,
-  ];
 
   const addButton = (groupId, index, command) => {
     return (
-      <div
-        role="button"
-        tabIndex={0}
+      <Grid
+        className={`${classes.toolbarIcon} ${
+          command.isChecked ? classes.toolbarIconSelected : ""
+        }`}
         onClick={() => onToolbarButtonClick(visualizerId, groupId, index)}
         key={`visualizer-toolbar-icon-${index}`}
-        className={`visualizer-tool-bar-icon ${
-          command.isChecked ? "visualizer-tool-bar-icon-selected" : ""
-        }`}
       >
         {command.icon && (
           <Icon
@@ -148,15 +172,15 @@ export default function VisualizerToolbar(props: {
             }}
           />
         )}
-      </div>
+      </Grid>
     );
   };
 
   const addDropdown = (groupId, index, command) => {
     return (
-      <div
+      <Grid
+        className={classes.toolbarDropdown}
         key={`visualizer-toolbar-icon-${index}`}
-        className="visualizer-tool-bar-icon"
       >
         <ToolBarSelect
           currentValue={command.value}
@@ -173,64 +197,43 @@ export default function VisualizerToolbar(props: {
             height: Appearance.toolbarIconSize,
           }}
         />
-      </div>
+      </Grid>
     );
   };
 
   const addToolbarButtons = (groupId: string) => {
     return toolbar[groupId].map((command, index) => {
-      if (command.isDropdown) {
+      if (command.isDropdown && command.isVisible) {
         return addDropdown(groupId, index, command);
       }
-      return addButton(groupId, index, command);
+      if (!command.isDropdown && command.isVisible)
+        return addButton(groupId, index, command);
+      return null;
     });
   };
 
   const addToolbars = () => {
-    return groupIds ? (
-      groupIds.map((id) => {
-        return (
-          <div
-            className="visualizer-toolbar-group"
-            style={{
-              ...toolBarDimensions(dimension1, dimension2, horizontal),
-              left: horizontal ? "0.3rem" : "-1rem",
-              top: horizontal ? "0rem" : "1.2rem",
-            }}
-            key={`tool-group-${id}`}
-          >
-            {addToolbarButtons(id)}
-          </div>
-        );
-      })
-    ) : (
-      <div />
-    );
+    return groupIds?.map((id) => {
+      return (
+        <Grid className={classes.toolbarGroup} key={`tool-group-${id}`}>
+          {addToolbarButtons(id)}
+        </Grid>
+      );
+    });
   };
 
-  // Render toolbar
   return (
     <Draggable bounds="parent" handle=".handle" onDrag={onDrag} onStop={onStop}>
-      <div className="visualizer-toolbar-wrapper">
-        <div
-          className="visualizer-toolbar-container"
-          style={{
-            flexDirection: horizontal ? "row" : "column",
-          }}
-        >
-          <div
-            className="handle"
-            style={{
-              cursor: dragging ? "move" : "pointer",
-            }}
-          >
-            <div className="icon">
-              <MoveIcon color="primary" />
-            </div>
-          </div>
+      <Box className={classes.toolbarWrapper}>
+        <Box className={classes.toolbarContainer}>
+          <Box className={`handle ${classes.dragHandle}`}>
+            <Box className={classes.dragHandleIcon}>
+              <DragIndicatorIcon color="secondary" />
+            </Box>
+          </Box>
           {addToolbars()}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </Draggable>
   );
 }
