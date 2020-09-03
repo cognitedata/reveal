@@ -59,7 +59,7 @@ function initializeGui(
 
 export function SimplePointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 0, itemsRequested: 0 });
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 1, itemsRequested: 1 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
