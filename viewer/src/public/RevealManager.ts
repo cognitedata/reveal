@@ -15,11 +15,10 @@ import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
 import { distinctUntilChanged, map, share, filter, subscribeOn } from 'rxjs/operators';
 import { trackError, trackLoadModel } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
-import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
 import { SupportedModelTypes } from '@/datamodels/base';
+import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
@@ -157,15 +156,12 @@ export class RevealManager<TModelIdentifier> {
     modelIdentifier: TModelIdentifier,
     nodeAppearanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
-  public addModel(
-    type: 'pointcloud',
-    modelIdentifier: TModelIdentifier
-  ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
+  public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
     nodeAppearanceProvider?: NodeAppearanceProvider
-  ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {
+  ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
