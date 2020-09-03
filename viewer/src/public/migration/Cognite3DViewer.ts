@@ -651,19 +651,6 @@ export class Cognite3DViewer {
    * Attempts to load the camera settings from the settings stored for the
    * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
    * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
-   * information on how this settings is retrieved and stored. This setting can
-   * also be changed through the 3D models management interface in Cognite Fustion.
-   * If no camera configuration is stored in CDF, {@link Cognite3DViewer.fitCameraToModel}
-   * is used as a fallback
-   * @param model The model to load camera settings from.
-   * @returns True if a camera was stored for the provided model and applied to the
-   * current camera settings. False if no camera configuration was stored in CDF and
-   * {@link Cognite3DViewer.fitCameraToModel} is used instead.
-   */
-  /**
-   * Attempts to load the camera settings from the settings stored for the
-   * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
-   * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
    * information on how this setting is retrieved and stored. This setting can
    * also be changed through the 3D models management interface in Cognite Fusion.
    * If no camera configuration is stored in CDF, {@link Cognite3DViewer.fitCameraToModel}
@@ -676,15 +663,6 @@ export class Cognite3DViewer {
       this.controls.setState(config.position, config.target);
     } else {
       this.fitCameraToModel(model, 0);
-    }
-  }
-    const config = model.getCameraConfiguration();
-    if (config) {
-      this.controls.setState(config.position, config.target);
-      return true;
-    } else {
-      this.fitCameraToModel(model, 0);
-      return false;
     }
   }
 
