@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
@@ -525,36 +525,58 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
-  /** @internal */
-  tryGetNodeId(treeIndex: number): number | undefined {
-    return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
-  }
-
   /**
-   * Maps a list of Node IDs to tree indices for use with the API.
-   * This function is useful when you have a list of nodes, e.g. from
-   * Asset Mappings, that you want to highlight, hide, color etc in the viewer.
+   * Maps a list of Node IDs to tree indices. This function is useful when you have
+   * a list of nodes, e.g. from Asset Mappings, that you want to highlight, hide,
+   * color etc in the viewer.
    *
    * @param nodeIds List of node IDs to map to tree indices.
    * @returns A list of tree indices corresponing to the elements in the input.
-   * @throws If an invalid node ID is provided the function throws an error.
+   * @throws If an invalid/non-existant node ID is provided the function throws an error.
    */
-  async mapNodeIdsToTreeIndices(nodeIds: number[]): Promise<number[]> {
+  async mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]> {
     return this.nodeIdAndTreeIndexMaps.getTreeIndices(nodeIds);
   }
 
   /**
-   * Maps a list of tree indices to Node IDs for use with the Cognite SDK.
+   * Maps a single node ID to tree index. This is useful when you e.g. have a
+   * node ID from an asset mapping and want to highlight the given asset using
+   * {@link selectNodeByTreeIndex}. If you have multiple node IDs to map,
+   * {@link mapNodeIdsToTreeIndices} is recommended for better performance.
+   *
+   * @param nodeId A Node ID to map to a tree index.
+   * @returns treeIndex of the provided node.
+   * @throws If an invalid/non-existant node ID is provided the function throws an error.
+   */
+  async mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number> {
+    return this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+  }
+
+  /**
+   * Maps a list of tree indices to node IDs for use with the Cognite SDK.
    * This function is useful if you have a list of tree indices, e.g. from
    * {@link Cognite3DModel.iterateSubtreeByTreeIndex}, and want to perform
    * some operations on these nodes using the SDK.
    *
-   * @param treeIndices Tree indices to map to Node IDs
+   * @param treeIndices Tree indices to map to node IDs
    * @returns A list of node IDs corresponding to the elements of the inpu
    * @throws If an invalid tree index is provided the function throws an error.
    */
-  async mapTreeIndicesToNodeIds(_treeIndices: number[]): Promise<number[]> {
-    throw new Error('Not implemented yet');
+  async mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]> {
+    return this.nodeIdAndTreeIndexMaps.getNodeIds(treeIndices);
+  }
+
+  /**
+   * Maps a single tree index to node ID for use with the API. If you have multiple
+   * tree indices to map, {@link mapNodeIdsToTreeIndices} is recommended for better
+   * performance.
+   *
+   * @param nodeId A Node ID to map to a tree index.
+   * @returns treeIndex of the provided node.
+   * @throws If an invalid/non-existant node ID is provided the function throws an error.
+   */
+  async mapTreeIndexToNodeId(treeIndex: number): Promise<CogniteInternalId> {
+    return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
   }
 
   private async determineTreeIndices(treeIndex: number, includeDescendants: boolean): Promise<NumericRange> {
