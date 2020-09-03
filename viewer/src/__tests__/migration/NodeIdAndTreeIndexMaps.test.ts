@@ -34,42 +34,26 @@ describe('NodeIdAndTreeIndexMaps', () => {
     return nodeId - 1337;
   }
 
-  // beforeAll(() => {
-  // jest.useFakeTimers();
-  nock.disableNetConnect();
-  // nock(/.*/)
-  //   .post(/\/ids\/bytreeindices/)
-  //   .reply(200, {});
-  // nock(/.*/).persist().post('/api/v1/projects/test/3d/models/0/revisions/0/nodes/treeindices/byids').reply(200, {});
-  nock(/.*/)
-    .persist()
-    .post(/.*\/ids\/bytreeindices/)
-    .reply(200, (_uri, requestBody: ByTreeIndicesRequestBody) => {
-      return { items: requestBody.items.map(stubTreeIndexToNodeId) };
-    });
-  nock(/.*/)
-    .persist()
-    .post(/.*\/treeindices\/byids/)
-    .reply(200, (_uri, requestBody: ByNodeIdsRequestBody) => {
-      return { items: requestBody.items.map(stubNodeIdToTreeIndex) };
-    });
+  beforeEach(() => {
+    nock.disableNetConnect();
+    nock(/.*/)
+      .persist()
+      .post(/.*\/ids\/bytreeindices/)
+      .reply(200, (_uri, requestBody: ByTreeIndicesRequestBody) => {
+        return { items: requestBody.items.map(stubTreeIndexToNodeId) };
+      });
+    nock(/.*/)
+      .persist()
+      .post(/.*\/treeindices\/byids/)
+      .reply(200, (_uri, requestBody: ByNodeIdsRequestBody) => {
+        return { items: requestBody.items.map(stubNodeIdToTreeIndex) };
+      });
+  });
 
-  // const CogniteClientMock = CogniteClient as jest.Mock<CogniteClient>;
-  // CogniteClientMock.mockImplementation(() => {
-  //   return {
-  //     revisions3D: {
-  //       retrieve3DNodes: async (_modelId: number, _revisionId: number, ids: InternalId[]) => {
-  //         return ids.map((id: InternalId) => {
-  //           return {
-  //             id: id.id,
-  //             treeIndex: -id.id
-  //           };
-  //         });
-  //       }
-  //     }
-  //   } as CogniteClient;
-  // });
-  // });
+  afterEach(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
 
   test('tree index is returned correctly', async () => {
     const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
