@@ -264,8 +264,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * await model.iterateNodesByTreeIndex(logIndex); // 0, 1, 2, ...
    * ```
    */
-  async iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void> {
-    await callActionWithIndicesAsync(0, this.cadModel.scene.maxTreeIndex - 1, action);
+  iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void> {
+    return callActionWithIndicesAsync(0, this.cadModel.scene.maxTreeIndex - 1, action);
   }
 
   /**
@@ -283,6 +283,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     );
   }
 
+  // TODO: (Lars) Make iterateSubtreeByTreeIndex work similarly to iterateNodesByTreeIndex
   /**
    * @param treeIndex
    * @param action Function that will be called with a treeIndex argument.
@@ -294,10 +295,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * });
    * ```
    */
-  async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<number> {
+  async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void> {
     const treeIndices = await this.determineTreeIndices(treeIndex, true);
-    await treeIndices.forEach(action);
-    return treeIndices.count;
+    return treeIndices.forEach(action);
   }
 
   /**
