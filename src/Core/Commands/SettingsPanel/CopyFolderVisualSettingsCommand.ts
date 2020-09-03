@@ -8,23 +8,12 @@ export class CopyFolderVisualSettingsCommand extends BaseNodeCommand
   //==================================================
 
   public /*override*/ getTooltip(): string { return "Copy the visual settings to all similar domain objects in the folder"; }
-
   public /*override*/ getIcon(): string { return FolderIcon; }
-
   public /*override*/ getName(): string { return "Copy Similar Folder Settings"; };
 
-  public /*override*/ invoke(): boolean 
-  {
-    throw new Error("Method not implemented.");
-  }
-  
   protected /*override*/ invokeCore(): boolean 
   {
-    throw new Error("Method not implemented.");
-  }
-
-  protected /*override*/ invokeValueCore(value: string): boolean 
-  {
-    throw new Error("Method not implemented.");
+    alert("CopyFolderVisualSettingsCommand.InvokeCore is not implemented.");
+    return false;
   }
 }

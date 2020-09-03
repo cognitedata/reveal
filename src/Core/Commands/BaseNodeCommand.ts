@@ -19,5 +19,5 @@ export abstract class BaseNodeCommand extends BaseCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ get isEnabled(): boolean { return this.node != null; }
+  public /*override*/ isEnabled(): boolean { return this.node != null; }
 }
