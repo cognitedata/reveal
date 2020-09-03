@@ -257,7 +257,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * The passed action is applied incrementally to avoid main thread blocking.
+   * That means your changes can be partly applied until promise is resolved (iteration is done).
    * @param action Function that will be called with a treeIndex argument.
+   * @returns Promise that is resolved once the iteration is done.
    * @example
    * ```js
    * const logIndex = (treeIndex) => console.log(treeIndex);
@@ -285,8 +288,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   // TODO: (Lars) Make iterateSubtreeByTreeIndex work similarly to iterateNodesByTreeIndex
   /**
+   * The passed action is applied incrementally to avoid main thread blocking.
+   * That means your changes can be partly applied until promise is resolved (iteration is done).
    * @param treeIndex
    * @param action Function that will be called with a treeIndex argument.
+   * @returns Promise that is resolved once the iteration is done.
    * @example
    * ```js
    * // make a subtree to be gray
