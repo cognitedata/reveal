@@ -6,12 +6,12 @@ import React, { ComponentType, Suspense } from 'react';
 import styled from 'styled-components';
 import { DemoProps } from './DemoProps';
 import { CogniteClient } from '@cognite/sdk';
-import { useBaseTag } from '../hooks/useBaseTag';
 
 const DemoContainer = styled.div`
   height: calc(min(85vh, 600px));
   display: flex;
   flex-direction: column;
+  margin-bottom: var(--ifm-leading);
 `;
 
 // any component that has client-side only code couldn't be imported directly (it fails SSR)
@@ -23,18 +23,16 @@ const components: Record<string, ComponentType<DemoProps>> = {
   ),
 };
 
-export function DemoWrapper({ name, project, modelId, revisionId }: { name: string, project: string, modelId: number, revisionId: number }) {
-  useBaseTag('[data-basetagnail]');
-
+export function DemoWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
   if (typeof window === 'undefined') {
     return <div />;
   }
   let LazyComponent = components[name];
   return (
-    <DemoContainer data-basetagnail>
+    <DemoContainer id="demo-wrapper">
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
-          {(client: CogniteClient) => <LazyComponent client={client} project={project} modelId={modelId} revisionId={revisionId} />}
+          {(client: CogniteClient) => <LazyComponent client={client} modelId={modelId} revisionId={revisionId} />}
         </DemoLoginCover>
       </Suspense>
     </DemoContainer>

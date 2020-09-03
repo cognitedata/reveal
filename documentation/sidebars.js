@@ -1,10 +1,20 @@
 module.exports = {
   docs: [
     {
-      type: 'category',
-      label: 'Getting Started',
-      collapsed: false,
-      items: ['overview', 'installation'],
+      type: 'doc',
+      id: 'overview'
+    },
+    {
+      type: 'doc',
+      id: 'getting-started'
+    },
+    {
+      type: 'doc',
+      id: 'installation',
+    },
+    {
+      type: 'doc',
+      id: 'migration-guide',
     },
     {
       type: 'category',
@@ -14,16 +24,14 @@ module.exports = {
         'examples/cad-basic', 
         'examples/cad-colors', 
         'examples/cad-highlighting', 
-        'examples/cad-2doverlay'
+        'examples/cad-2doverlay',
+        'examples/cad-3dobjects',
+        'examples/cad-preview',
       ],
     },
     {
       type: 'doc',
       id: 'concepts',
-    },
-    {
-      type: 'doc',
-      id: 'migration-guide',
     },
     {
       type: 'doc',

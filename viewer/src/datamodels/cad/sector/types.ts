@@ -7,7 +7,7 @@ import { mat4, vec3 } from 'gl-matrix';
 import { LevelOfDetail } from './LevelOfDetail';
 import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
 import { Box3 } from '@/utilities';
-import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/reveal.parser.types';
+import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@cognite/reveal-parser-worker';
 
 export interface ConsumedSector {
   blobUrl: string;

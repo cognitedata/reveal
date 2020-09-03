@@ -51,36 +51,34 @@ jobs:
         # and needs to be disabled
         cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
         cargo test --all --verbose
+  
+  ci-worker:
+    name: parser-worker
+    runs-on: ubuntu-latest
+    needs: ci-rust
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+
+      - name: Install NPM dependencies
+        working-directory: parser-worker
+        run: yarn
+
+      - name: Build parser-worker
+        working-directory: parser-worker
+        run: yarn build:prod
 
   ci-viewer:
     name: Viewer
     runs-on: ubuntu-latest
-    needs: ci-setup
     strategy:
       matrix:
         node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Install wasm-pack
-      uses: jetli/wasm-pack-action@v0.3.0
-
-    - name: Cache cargo registry
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-    - name: Cache cargo index
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-    - name: Cache cargo build
-      uses: actions/cache@v1
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install NPM dependencies
       working-directory: viewer
@@ -103,9 +101,9 @@ jobs:
       run: |
         xvfb-run yarn run coverage
 
-    - name: Build release
+    - name: Build prod version
       working-directory: viewer
-      run: yarn run release
+      run: yarn run build:prod
 
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
@@ -113,7 +111,6 @@ jobs:
   ci-examples:
     name: Examples
     runs-on: ubuntu-latest
-    needs: ci-setup
     strategy:
       matrix:
         node-version: [12.x]
@@ -121,34 +118,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install wasm-pack
-      uses: jetli/wasm-pack-action@v0.3.0
-
-    - name: Cache cargo registry
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Cache cargo index
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Cache cargo build
-      uses: actions/cache@v1
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
-
     - name: Install NPM dependencies
       working-directory: viewer
       run: yarn
 
     - name: Build release
       working-directory: viewer
-      run: yarn run release
+      run: yarn run build:prod
 
     - name: Install examples-dependencies
       working-directory: examples
