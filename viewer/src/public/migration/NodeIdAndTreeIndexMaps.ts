@@ -199,7 +199,7 @@ type ByNodeIdsReponse = {
 };
 
 // TODO 2020-09-02 larsmoa: Transition to functions that will be added to @cognite/sdk for doing nodeId<>treeIndex mapping
-export class CogniteClientNodeIdAndTreeIndexMapper {
+class CogniteClientNodeIdAndTreeIndexMapper {
   private readonly _client: CogniteClient;
   // The maximum number of items that the mapping endpoints accepts per chunk
   private static readonly MaxItemsPerRequest = 1000;
@@ -243,7 +243,7 @@ export class CogniteClientNodeIdAndTreeIndexMapper {
 
     const outputsUrl = `${this._client.getBaseUrl()}/api/v1/projects/${
       this._client.project
-    }/3d/models/${modelId}/revisions/${revisionId}/nodes/ids/bytreeindices`;
+    }/3d/models/${modelId}/revisions/${revisionId}/nodes/internalids/bytreeindices`;
     const response = await this._client.post<ByTreeIndicesResponse>(outputsUrl, { data: { items: treeIndicesChunk } });
     if (response.status === 200) {
       return response.data.items;
@@ -261,7 +261,7 @@ export class CogniteClientNodeIdAndTreeIndexMapper {
 
     const outputsUrl = `${this._client.getBaseUrl()}/api/v1/projects/${
       this._client.project
-    }/3d/models/${modelId}/revisions/${revisionId}/nodes/treeindices/byids`;
+    }/3d/models/${modelId}/revisions/${revisionId}/nodes/treeindices/byinternalids`;
     const response = await this._client.post<ByNodeIdsReponse>(outputsUrl, { data: { items: nodeIdsChunk } });
     if (response.status === 200) {
       return response.data.items;

@@ -8,8 +8,6 @@ import { NodeIdAndTreeIndexMaps } from '@/public/migration/NodeIdAndTreeIndexMap
 import { sleep } from '../wait';
 import nock from 'nock';
 
-// jest.mock('@cognite/sdk');
-
 type ByTreeIndicesRequestBody = {
   items: CogniteInternalId[];
 };
@@ -38,13 +36,13 @@ describe('NodeIdAndTreeIndexMaps', () => {
     nock.disableNetConnect();
     nock(/.*/)
       .persist()
-      .post(/.*\/ids\/bytreeindices/)
+      .post(/.*\/internalids\/bytreeindices/)
       .reply(200, (_uri, requestBody: ByTreeIndicesRequestBody) => {
         return { items: requestBody.items.map(stubTreeIndexToNodeId) };
       });
     nock(/.*/)
       .persist()
-      .post(/.*\/treeindices\/byids/)
+      .post(/.*\/treeindices\/byinternalids/)
       .reply(200, (_uri, requestBody: ByNodeIdsRequestBody) => {
         return { items: requestBody.items.map(stubNodeIdToTreeIndex) };
       });
