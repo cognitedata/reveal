@@ -27,11 +27,16 @@ export class MeasureDistanceTool extends BaseTool
   // OVERRIDES of BaseCommand
   //==================================================
 
-  protected /*override*/ getTooltipCore(): string { return "Measure distance by click and drag to wantet position. You must hit a 3D object to see the distance."; }
-
   public /*override*/ getName(): string { return "Measure distance"; }
   public /*override*/ getIcon(): string { return MeasureDistanceToolIcon; }
   public /*override*/ getShortCutKeys(): string { return "M"; }
+
+  protected /*override*/ getTooltipCore(): string
+  {
+    return `${this.getDisplayName()}\n` +
+      "Click and drag to wantet position.\n" +
+      "You must hit a 3D object to see the distance.";
+  }
 
   //==================================================
   // OVERRIDES of BaseTool

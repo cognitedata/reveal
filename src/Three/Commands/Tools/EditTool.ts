@@ -25,10 +25,18 @@ export class EditTool extends BaseTool
   // OVERRIDES of BaseCommand
   //==================================================
 
-  protected /*override*/ getTooltipCore(): string { return "Select or edit\nLeft button: Select or edit\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information\nMouse hover: Pick to get information"; }
-
-  public /*override*/ getName(): string { return "Edit"; }
+  public /*override*/ getName(): string { return "Select or edit"; }
   public /*override*/ getIcon(): string { return SelectCommandIcon; }
+
+  protected /*override*/ getTooltipCore(): string 
+  {
+    return `${this.getDisplayName()}\n` +
+      "Left button drag: Context dependent\n" +
+      "Right button drag: Move\n" +
+      "Wheel: Zoom in or out\n" +
+      "Move hover: Pick any object in 3D to get information\n" +
+      "Left click: Context dependent\n";
+  }
 
   //==================================================
   // OVERRIDES of BaseTool
@@ -45,11 +53,6 @@ export class EditTool extends BaseTool
     const { viewInfo } = target;
     viewInfo.clear();
     viewInfo.addActiveTool(this);
-    viewInfo.addValue("Left button drag", "Context dependent");
-    viewInfo.addValue("Right button drag", "Move");
-    viewInfo.addValue("Wheel", "Zoom in or out");
-    viewInfo.addValue("Move hover", "Pick any object in 3D to get information");
-    viewInfo.addValue("Left click", "Context dependent");
     target.invalidate();
   }
 

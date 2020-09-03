@@ -48,7 +48,7 @@ export class ViewInfo
 
   // Add header of various types
   public addHeader(header: string) { this.items.push(new TextItem(`${header}`, true)); }
-  public addActiveTool(tool: BaseTool) { this.items.push(new TextItem(`${tool.getName()}:`, true)); }
+  public addActiveTool(tool: BaseTool) { this.items.push(new TextItem(`${tool.getDisplayName()}`, true)); }
   public addPickedNode(node: BaseNode) { this.items.push(new TextItem(`Picked ${node.displayName}:`, true)); }
 
   // Add text only

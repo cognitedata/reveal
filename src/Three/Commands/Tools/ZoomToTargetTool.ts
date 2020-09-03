@@ -22,6 +22,15 @@ export class ZoomToTargetTool extends BaseTool
   public /*override*/ getIcon(): string { return ZoomToTargetBaseToolIcon; }
   public /*override*/ getShortCutKeys(): string { return "S"; }
 
+  protected /*override*/ getTooltipCore(): string
+  {
+    return `${this.getDisplayName()}\n` +
+      "Zoom by clicking on something in the 3D.\n" +
+      "This position will then be in the center and\n" +
+      "the rotation will be around this point.\n" +
+      "Otherwise it works as the navigation tool";
+  }
+
   //==================================================
   // OVERRIDES of BaseTool
   //==================================================
