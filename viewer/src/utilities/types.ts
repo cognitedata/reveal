@@ -34,3 +34,11 @@ export type ModelTransformation = {
   readonly modelMatrix: mat4;
   readonly inverseModelMatrix: mat4;
 };
+
+/**
+ * Represents a camera configuration, consisting of a camera position and target.
+ */
+export type CameraConfiguration = {
+  readonly position: THREE.Vector3;
+  readonly target: THREE.Vector3;
+}

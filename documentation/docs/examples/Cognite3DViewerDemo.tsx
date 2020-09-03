@@ -28,7 +28,7 @@ export default function Cognite3DViewerDemo({ client, modelId, revisionId }: Dem
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
-      viewer.fitCameraToModel(model);
+      viewer.loadCameraFromModel(model);
       (window as any).model = model;
     }
 
