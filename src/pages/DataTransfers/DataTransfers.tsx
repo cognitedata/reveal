@@ -3,8 +3,8 @@ import { DataTransferObject } from 'typings/interfaces';
 import { Checkbox, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { Button, Dropdown, Icon, Menu, Tooltip } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+// import styled from 'styled-components';
 import { ContentContainer, TableActions } from '../../elements';
 import 'antd/dist/antd.css';
 import config from './datatransfer.config';
@@ -170,10 +170,12 @@ const SelectColumnsMenu = ({
   );
 };
 
+/*
 const ShowDetails = styled.span`
   color: var(--cogs-greyscale-grey6);
   cursor: pointer;
 `;
+*/
 
 function getAllValuesFromColumn(
   dataSet: DataTransferObject[],
@@ -272,6 +274,9 @@ const DataTransfers: React.FC = () => {
     dataIndex: 'actions',
     key: 'actions',
     render: (_: any, record) => {
+      return null;
+      // Temp. out commented because of heard coded values in DetailView
+      /*
       return (
         <Tooltip content={<span>Show {record.name} details</span>}>
           <ShowDetails>
@@ -282,6 +287,7 @@ const DataTransfers: React.FC = () => {
           </ShowDetails>
         </Tooltip>
       );
+      */
     },
   });
 
