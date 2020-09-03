@@ -6,7 +6,7 @@ import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
-import { Color } from './types';
+import { Color, CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3, NumericRange } from '@/utilities';
@@ -190,6 +190,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * Retrieves the camera position and target stored for the model. Typically this
+   * is used to store a good starting position for a model. Returns `undefined` if there
+   * isn't any stored camera configuration for the model.
+   */
+  getCameraConfiguration(): CameraConfiguration | undefined {
+    return this.cadModel.cameraConfiguration;
+  }
+
+  /**
    * Apply transformation matrix to the model.
    * @param matrix Matrix to be applied.
    * @internal
@@ -290,40 +299,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Get node color by nodeId. You can only get those colors, that you've set with
-   * {@link Cognite3DModel.setNodeColor} or {@link Cognite3DModel.setNodeColorByTreeIndex}.
-   * Otherwise `{ r: 255, g: 255, b: 255 }` is returned as the fallback.
-   * @param nodeId
-   * @example
-   * ```js
-   * let color = model.getNodeColor(nodeId);
-   * ```
+   * Not supported.
+   * @deprecated This function is no longer supported. There is no replacement.
+   * @throws NotSupportedInMigrationWrapperError
    */
-  async getNodeColor(nodeId: number): Promise<Color> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      const color = this.nodeColors.get(treeIndex);
-      if (!color) {
-        // TODO: migration wrapper currently does not support looking up colors not set by the user
-        throw new NotSupportedInMigrationWrapperError();
-      }
-      const [r, g, b] = color;
-      return {
-        r,
-        g,
-        b
-      };
-    } catch (error) {
-      trackError(error, {
-        moduleName: 'Cognite3DModel',
-        methodName: 'getNodeColor'
-      });
-      return {
-        r: 255,
-        g: 255,
-        b: 255
-      };
-    }
+  getNodeColor(_nodeId: number): Promise<Color> {
+    throw new NotSupportedInMigrationWrapperError('getNodeColor() is not supported');
   }
 
   /**

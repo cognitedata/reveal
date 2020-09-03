@@ -89,3 +89,8 @@ export interface Intersection {
   treeIndex: number;
   point: THREE.Vector3;
 }
+
+/**
+ * @module @cognite/reveal
+ */
+export { CameraConfiguration } from '@/utilities';

@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RxCounter } from './RxCounter';
+import { RxCounter } from '../../utilities/RxCounter';
 import { interval, queueScheduler } from 'rxjs';
 import { take, flatMap, observeOn } from 'rxjs/operators';
 
