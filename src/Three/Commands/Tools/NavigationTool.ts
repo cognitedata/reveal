@@ -24,10 +24,17 @@ export class NavigationTool extends BaseTool
   // OVERRIDES of BaseCommand
   //==================================================
 
-  protected /*override*/ getTooltipCore(): string { return "Navigation\nLeft button: Rotate\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information"; }
-
   public /*override*/ getName(): string { return "Navigation"; }
   public /*override*/ getIcon(): string { return PanBaseToolIcon; }
+
+  protected /*override*/ getTooltipCore(): string
+  {
+    return `${this.getDisplayName()}\n` +
+    "Left button drag: Rotate" +
+    "Right button drag: Move" +
+    "Wheel: Zoom in or out" +
+    "Left click: Pick any object in 3D to get information";
+  }
 
   //==================================================
   // OVERRIDES of BaseTool
@@ -42,10 +49,6 @@ export class NavigationTool extends BaseTool
     const { viewInfo } = target;
     viewInfo.clear();
     viewInfo.addActiveTool(this);
-    viewInfo.addValue("Left button drag", "Rotate");
-    viewInfo.addValue("Right button drag", "Move");
-    viewInfo.addValue("Wheel", "Zoom in or out");
-    viewInfo.addValue("Left click", "Pick any object in 3D to get information");
     target.invalidate();
   }
 

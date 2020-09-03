@@ -176,6 +176,13 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Visibility
   //==================================================
 
+  public /*virtual*/ getCheckBoxEnabled(target?: ITarget | null): boolean
+  {
+    if (!target)
+      target = this.activeTarget;
+    return true;
+  }
+
   public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
     if (!target)
