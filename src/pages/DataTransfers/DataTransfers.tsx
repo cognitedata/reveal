@@ -273,10 +273,10 @@ const DataTransfers: React.FC = () => {
   data.columns.push({
     dataIndex: 'actions',
     key: 'actions',
+    /*
     render: (_: any, record) => {
-      return null;
       // Temp. out commented because of heard coded values in DetailView
-      /*
+
       return (
         <Tooltip content={<span>Show {record.name} details</span>}>
           <ShowDetails>
@@ -287,7 +287,11 @@ const DataTransfers: React.FC = () => {
           </ShowDetails>
         </Tooltip>
       );
-      */
+
+    },
+    */
+    render: () => {
+      return null;
     },
   });
 
