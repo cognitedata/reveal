@@ -218,10 +218,7 @@ export class CogniteClientNodeIdAndTreeIndexMapper {
       return this.postByTreeIndicesRequest(modelId, revisionId, chunk);
     });
     const mappedIds = await Promise.all(mappedIdsPromises);
-    debugger;
-    console.error(mappedIds);
-    return mappedIds[0];
-    // return mappedIds.flat();
+    return mappedIds.flat();
   }
 
   async mapNodeIdsToTreeIndices(
@@ -233,7 +230,6 @@ export class CogniteClientNodeIdAndTreeIndexMapper {
     const mappedIdsPromises = [...chunks].map(async chunk => {
       return this.postByNodeIdsRequest(modelId, revisionId, chunk);
     });
-    debugger;
     const mappedIds = await Promise.all(mappedIdsPromises);
     return mappedIds.flat();
   }
