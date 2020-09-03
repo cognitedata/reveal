@@ -24,7 +24,7 @@ export default function ToolBar(props: {
         if (config instanceof BaseCommand) {
           name = config.getDisplayName();
           icon = <Icon src={config.getIcon()} />;
-          invoke = config.invoke;
+          invoke = config.invoke.bind(config);
         } else {
           name = config.icon.name;
           icon = <Icon type={config.icon.type} name={config.icon.name} />;
