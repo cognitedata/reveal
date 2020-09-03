@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { File3dFormat, ModelTransformation } from '../types';
+import { File3dFormat, ModelTransformation, CameraConfiguration } from '../types';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 
 export interface BlobOutputMetadata {
@@ -28,6 +28,10 @@ export interface ModelTransformationProvider<TModelIdentifier> {
   getModelTransformation(identifier: TModelIdentifier): Promise<ModelTransformation>;
 }
 
+export interface ModelCameraConfigurationProvider<TModelIdentifier> {
+  getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
+}
+
 export interface JsonFileProvider {
   getJsonFile(blobUrl: string, fileName: string): Promise<any>;
 }
@@ -39,6 +43,7 @@ export interface BinaryFileProvider {
 export interface ModelDataClient<TModelIdentifier>
   extends ModelUrlProvider<TModelIdentifier>,
     ModelTransformationProvider<TModelIdentifier>,
+    ModelCameraConfigurationProvider<TModelIdentifier>,
     JsonFileProvider,
     BinaryFileProvider,
     HttpHeadersProvider {}
