@@ -434,11 +434,11 @@ export class Cognite3DViewer {
     }
 
     const { modelId, revisionId } = options;
-    const [potreeGroup, potreeNode] = await this._revealManager.addModel('pointcloud', {
+    const pointCloudNode = await this._revealManager.addModel('pointcloud', {
       modelId,
       revisionId
     });
-    const model = new CognitePointCloudModel(modelId, revisionId, potreeGroup, potreeNode);
+    const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this.models.push(model);
     this.scene.add(model);
     return model;
@@ -645,6 +645,25 @@ export class Cognite3DViewer {
       return;
     }
     this.controls.setState(this.getCameraPosition(), target);
+  }
+
+  /**
+   * Attempts to load the camera settings from the settings stored for the
+   * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
+   * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
+   * information on how this setting is retrieved and stored. This setting can
+   * also be changed through the 3D models management interface in Cognite Fusion.
+   * If no camera configuration is stored in CDF, {@link Cognite3DViewer.fitCameraToModel}
+   * is used as a fallback
+   * @param model The model to load camera settings from.
+   */
+  loadCameraFromModel(model: CogniteModelBase): void {
+    const config = model.getCameraConfiguration();
+    if (config) {
+      this.controls.setState(config.position, config.target);
+    } else {
+      this.fitCameraToModel(model, 0);
+    }
   }
 
   /**
