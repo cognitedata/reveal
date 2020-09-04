@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
@@ -17,6 +17,7 @@ import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/
 import { trackError } from '@/utilities/metrics';
 import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
+import { CogniteClientNodeIdAndTreeIndexMapper } from '@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -86,7 +87,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
     this.selectedNodes = new Set();
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
+    const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
 
     const nodeAppearanceProvider: NodeAppearanceProvider = {
       styleNode: (treeIndex: number) => {
@@ -253,8 +255,26 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
   }
 
-  async getBoundingBoxByTreeIndex(_treeIndex: number, _box?: THREE.Box3): Promise<THREE.Box3> {
-    throw new NotSupportedInMigrationWrapperError('getBoundingBoxByTreeIndex() is not implemented yet');
+  /**
+   * Determine the bounding box of the node identified by the tree index provided. Note that this
+   * function uses the CDF API to look up the bounding box.
+   * @param treeIndex Tree index of the node to find bounding box for.
+   * @param box Optional preallocated container to hold the bounding box.
+   * @example
+   * ```js
+   * const box = new THREE.Box3()
+   * const treeIndex = 42;
+   * await model.getBoundingBoxByTreeIndex(treeIndex, box);
+   * // box now has the bounding box
+   *```
+   * ```js
+   * // the following code does the same
+   * const box = await model.getBoundingBoxByTreeIndex(treeIndex);
+   * ```
+   */
+  async getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE.Box3): Promise<THREE.Box3> {
+    const nodeId = await this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
+    return this.getBoundingBoxByNodeId(nodeId, box);
   }
 
   /**
@@ -266,8 +286,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * The passed action is applied incrementally to avoid main thread blocking.
-   * That means your changes can be partly applied until promise is resolved (iteration is done).
+   * Iterates over all nodes in the model and applies the provided action to each node (identified by tree index).
+   * The passed action is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
+   * applied until promise is resolved (iteration is done).
    * @param action Function that will be called with a treeIndex argument.
    * @returns Promise that is resolved once the iteration is done.
    * @example
@@ -295,11 +316,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     );
   }
 
-  // TODO: (Lars) Make iterateSubtreeByTreeIndex work similarly to iterateNodesByTreeIndex
   /**
-   * The passed action is applied incrementally to avoid main thread blocking.
-   * That means your changes can be partly applied until promise is resolved (iteration is done).
-   * @param treeIndex
+   * Iterates over all nodes in a subtree of the model and applies the provided action to each node
+   * (identified by tree index). The provided node is included in the visited set.  The passed action
+   * is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
+   * applied until promise is resolved (iteration is done).
+   * @param treeIndex Tree index of the top parent of the subtree.
    * @param action Function that will be called with a treeIndex argument.
    * @returns Promise that is resolved once the iteration is done.
    * @example
@@ -312,7 +334,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void> {
     const treeIndices = await this.determineTreeIndices(treeIndex, true);
-    return treeIndices.forEach(action);
+    return callActionWithIndicesAsync(treeIndices.from, treeIndices.toInclusive, action);
   }
 
   /**
@@ -523,36 +545,58 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
-  /** @internal */
-  tryGetNodeId(treeIndex: number): number | undefined {
-    return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
-  }
-
   /**
-   * Maps a list of Node IDs to tree indices for use with the API.
-   * This function is useful when you have a list of nodes, e.g. from
-   * Asset Mappings, that you want to highlight, hide, color etc in the viewer.
+   * Maps a list of Node IDs to tree indices. This function is useful when you have
+   * a list of nodes, e.g. from Asset Mappings, that you want to highlight, hide,
+   * color etc in the viewer.
    *
    * @param nodeIds List of node IDs to map to tree indices.
    * @returns A list of tree indices corresponing to the elements in the input.
-   * @throws If an invalid node ID is provided the function throws an error.
+   * @throws If an invalid/non-existant node ID is provided the function throws an error.
    */
-  async mapNodeIdsToTreeIndices(nodeIds: number[]): Promise<number[]> {
+  async mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]> {
     return this.nodeIdAndTreeIndexMaps.getTreeIndices(nodeIds);
   }
 
   /**
-   * Maps a list of tree indices to Node IDs for use with the Cognite SDK.
+   * Maps a single node ID to tree index. This is useful when you e.g. have a
+   * node ID from an asset mapping and want to highlight the given asset using
+   * {@link selectNodeByTreeIndex}. If you have multiple node IDs to map,
+   * {@link mapNodeIdsToTreeIndices} is recommended for better performance.
+   *
+   * @param nodeId A Node ID to map to a tree index.
+   * @returns treeIndex of the provided node.
+   * @throws If an invalid/non-existant node ID is provided the function throws an error.
+   */
+  async mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number> {
+    return this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+  }
+
+  /**
+   * Maps a list of tree indices to node IDs for use with the Cognite SDK.
    * This function is useful if you have a list of tree indices, e.g. from
    * {@link Cognite3DModel.iterateSubtreeByTreeIndex}, and want to perform
    * some operations on these nodes using the SDK.
    *
-   * @param treeIndices Tree indices to map to Node IDs
+   * @param treeIndices Tree indices to map to node IDs
    * @returns A list of node IDs corresponding to the elements of the inpu
    * @throws If an invalid tree index is provided the function throws an error.
    */
-  async mapTreeIndicesToNodeIds(_treeIndices: number[]): Promise<number[]> {
-    throw new Error('Not implemented yet');
+  async mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]> {
+    return this.nodeIdAndTreeIndexMaps.getNodeIds(treeIndices);
+  }
+
+  /**
+   * Maps a single tree index to node ID for use with the API. If you have multiple
+   * tree indices to map, {@link mapNodeIdsToTreeIndices} is recommended for better
+   * performance.
+   *
+   * @param nodeId A Node ID to map to a tree index.
+   * @returns treeIndex of the provided node.
+   * @throws If an invalid/non-existant node ID is provided the function throws an error.
+   */
+  async mapTreeIndexToNodeId(treeIndex: number): Promise<CogniteInternalId> {
+    return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
   }
 
   private async determineTreeIndices(treeIndex: number, includeDescendants: boolean): Promise<NumericRange> {

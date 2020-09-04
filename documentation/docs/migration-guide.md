@@ -58,7 +58,13 @@ You can see it in action in our [node visiting example](./examples/node-visiting
 
 ## Accessing node information and mapping between node IDs and tree indices
 
-Reveal supports accessing information about 3D nodes through the [Cognite SDK](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html). However, the SDK identifies nodes by node ID, not tree index. It might be necessary to map between the two concepts. `async Cognite3DModel.mapNodeIdsToTreeIndices(nodeIds)` and `async Cognite3DModel.mapTreeIndicesToNodeIds(treeIndices)` provides such functionality. Note that the operation requires communication with CDF servers and should be kept at a minimum. If possible the calls should be batched to achieve the best performance.
+Reveal supports accessing information about 3D nodes through the [Cognite SDK](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html). However, the SDK identifies nodes by node ID, not tree index. It might be necessary to map between the two concepts. The following functions provide such functionality: 
+- `async Cognite3DModel.mapNodeIdToTreeIndex(nodeId)`
+- `async Cognite3DModel.mapNodeIdsToTreeIndices(nodeIds)`
+- `async Cognite3DModel.mapTreeIndexToNodeId(treeIndex)`
+- `async Cognite3DModel.mapTreeIndicesToNodeIds(treeIndices)` 
+
+Note that the operation requires communication with CDF servers and should be kept at a minimum. It's recommended to use the functions that accepts a list of nodes to map whenever possible. Batching requests is recommended to achieve the best performance.
 
 Access to node information such as name, bounding box and properties/attributes is done through the [3D revision API](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html), specifically:
 
@@ -66,15 +72,17 @@ Access to node information such as name, bounding box and properties/attributes 
 - [`list3DNodeAncestors`](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html#list3dnodeancestors) for retrieving ancestors of a specific node
 - [`retrieve3DNodes`](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html#retrieve3dnodes) for retrieving a set of nodes identified by their node ids
 
-This is not changed from `@cognite/3d-viewer`.
+The API for accessing node information has not changed `@cognite/3d-viewer`, but since Reveal now uses tree indices explicit mapping tree index to node ID is necessary.
 
 ## Working with asset mappings
 
-[3D Asset Mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) enables mapping 3D nodes to [assets](https://docs.cognite.com/api/v1/#tag/Assets). A mapping is a link from `assetId` to `nodeId`, so to use these with Reveal it's necessary to map these to tree indices using `async Cognite3DModel.mapNodeIdsToTreeIndices(nodeIds)`.
+[3D Asset Mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) enables mapping 3D nodes to [assets](https://docs.cognite.com/api/v1/#tag/Assets). A mapping is a link from `assetId` to `nodeId`, so to use these with Reveal it's necessary to [map these to tree indices](#accessing-node-information-and-mapping-between-node-ids-and-tree-indices).
 
 ## Ray picking and intersection for handling click events
 
-In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed in `@cognite/reveal`.
+In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed 
+in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to 
+determine `nodeId` use `async Cognite3DModel.mapNodeId(nodeId)`).
 
 ## Other differences
 

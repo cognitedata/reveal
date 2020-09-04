@@ -877,7 +877,6 @@ export class Cognite3DViewer {
         if (model.cadNode === result.cadNode) {
           const intersection: Intersection = {
             model,
-            nodeId: model.tryGetNodeId(result.treeIndex) || -1,
             treeIndex: result.treeIndex,
             point: result.point
           };

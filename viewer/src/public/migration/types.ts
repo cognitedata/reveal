@@ -86,7 +86,6 @@ export interface AddModelOptions {
  */
 export interface Intersection {
   model: Cognite3DModel;
-  nodeId: number;
   treeIndex: number;
   point: THREE.Vector3;
 }
