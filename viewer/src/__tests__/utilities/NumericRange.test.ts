@@ -39,10 +39,10 @@ describe('NumericRange', () => {
     expect(range.contains(10)).toBeFalse();
   });
 
-  test('forEach applies callback to each value', () => {
+  test('forEach applies callback to each value', async () => {
     const applied: number[] = [];
     const range = new NumericRange(1, 4);
-    range.forEach(v => {
+    await range.forEach(v => {
       applied.push(v);
     });
     expect(applied).toEqual([1, 2, 3, 4]);

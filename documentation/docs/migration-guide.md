@@ -49,9 +49,12 @@ The new functions identify nodes by tree index rather than node ID. It also supp
 ## Node visitor functions
 
 Reveal has functions for iterating over nodes, either all nodes in a 3D model or a subtree of a parent node.
+Notice that all functions are async, and the action that you pass is not applied immediately.
+A single model can have millions of nodes. That's why the iteration functions call the passed action step by step.
+You can see it in action in our [node visiting example](./examples/node-visiting.mdx) where colors are applied gradually to nodes.
 
-- `Cognite3DModel.iterateNodes(action: (nodeId, treeIndex) => void): Promise<boolean>` has been replaced by `iterateNodesByTreeIndex(action: (treeIndex) => void): Promise<number>`. Returns number of visited nodes.
-- `Cognite3DModel.iterateSubtree(nodeId, action: (nodeId, treeIndex) => void, treeIndex?, subtreeSize?)` has been replaced by `iterateSubtreeByTreeIndex(treeIndex, action: (treeIndex) => void): Promise<number>`. Returns the number of visited nodes.
+- `Cognite3DModel.iterateNodes(action: (nodeId, treeIndex) => void): Promise<boolean>` has been replaced by `iterateNodesByTreeIndex(action: (treeIndex) => void): Promise<void>`. Returns promise which resolves once iteration has done. 
+- `Cognite3DModel.iterateSubtree(nodeId, action: (nodeId, treeIndex) => void, treeIndex?, subtreeSize?)` has been replaced by `iterateSubtreeByTreeIndex(treeIndex, action: (treeIndex) => void): Promise<number>`. Returns promise which resolves once iteration has done.
 
 ## Accessing node information and mapping between node IDs and tree indices
 
@@ -79,3 +82,4 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 
 - `@cognite/3d-viewer` supports local caching to reduce the time to load previously opened 3D models. Currently, this is not supported by `@cognite/reveal`, but the need for such functionality is reduced by adding streaming capabilities.
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
+- `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
