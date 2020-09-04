@@ -252,8 +252,26 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
   }
 
-  async getBoundingBoxByTreeIndex(_treeIndex: number, _box?: THREE.Box3): Promise<THREE.Box3> {
-    throw new NotSupportedInMigrationWrapperError('getBoundingBoxByTreeIndex() is not implemented yet');
+  /**
+   * Determine the bounding box of the node identified by the tree index provided. Note that this
+   * function uses the CDF API to look up the bounding box.
+   * @param treeIndex Tree index of the node to find bounding box for.
+   * @param box Optional preallocated container to hold the bounding box.
+   * @example
+   * ```js
+   * const box = new THREE.Box3()
+   * const treeIndex = 42;
+   * await model.getBoundingBoxByTreeIndex(treeIndex, box);
+   * // box now has the bounding box
+   *```
+   * ```js
+   * // the following code does the same
+   * const box = await model.getBoundingBoxByTreeIndex(treeIndex);
+   * ```
+   */
+  async getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE.Box3): Promise<THREE.Box3> {
+    const nodeId = await this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
+    return this.getBoundingBoxByNodeId(nodeId, box);
   }
 
   /**
