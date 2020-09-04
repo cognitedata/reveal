@@ -79,8 +79,6 @@ export class RxTaskTracker {
         },
         { taskCount: 0, taskCompleted: 0 } as TaskTracker
       ),
-      // TODO: 24-08-2020 j-bjorne: figure out a way to get last emission in a time window
-      // throttleTime(200, asyncScheduler, { trailing: true }),
       shareReplay(1)
     );
   }
