@@ -19,7 +19,10 @@ module.exports = {
     '^@/(.*)': '<rootDir>/src/$1'
   },
   globals: {
-    __webpack_public_path__: ''
+    __webpack_public_path__: '',
+    'ts-jest': {
+      tsConfig: 'tsconfig.test.json'
+    }
   },
   coverageDirectory: '../coverage',
   collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json'],
