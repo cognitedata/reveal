@@ -41,4 +41,4 @@ export type ModelTransformation = {
 export type CameraConfiguration = {
   readonly position: THREE.Vector3;
   readonly target: THREE.Vector3;
-}
+};
