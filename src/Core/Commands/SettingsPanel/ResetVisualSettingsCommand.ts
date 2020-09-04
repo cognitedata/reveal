@@ -22,33 +22,9 @@ export class ResetVisualSettingsCommand extends BaseNodeCommand
     if (!node)
       node = this.node;
 
-    const target = node.activeTarget;
-    if (!target)
+    if (!node.replaceRenderStyle())
       return false;
 
-    const { targetId } = target;
-    if (!targetId)
-      return false;
-
-    // Find the style in the node itself
-    for (let i = 0; i < node.renderStyles.length; i++)
-    {
-      const oldStyle = node.renderStyles[i];
-      if (oldStyle.isDefault)
-        continue;
-
-      if (!oldStyle.targetId.equals(targetId, node.renderStyleResolution))
-        continue;
-
-      node.renderStyles.splice(i, 1);
-      break;
-    }
-    const newStyle = node.createRenderStyle(targetId);
-    if (!newStyle)
-      return false;
-
-    newStyle.targetId.set(targetId, node.renderStyleResolution);
-    node.renderStyles.push(newStyle);
     node.notify(new NodeEventArgs(Changes.renderStyle));
     return true;
   }
