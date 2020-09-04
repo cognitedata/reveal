@@ -13,7 +13,6 @@ import {
   Subject,
   onErrorResumeNext,
   defer,
-  partition,
   scheduled,
   asyncScheduler,
   merge,
@@ -30,7 +29,10 @@ import {
   distinct,
   catchError,
   distinctUntilChanged,
-  mergeAll
+  mergeAll,
+  filter,
+  publish,
+  subscribeOn
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -116,15 +118,19 @@ export class CachedRepository implements Repository {
   // unless we want them to eventually set their priority to lower in the cache.
 
   loadSector(): OperatorFunction<WantedSector, ConsumedSector> {
-    return (source$: Observable<WantedSector>) => {
+    return publish((source$: Observable<WantedSector>) => {
       /* Split wantedSectors into a pipe of discarded wantedSectors and a pipe of simple and detailed wantedSectors.
        * ----------- wantedSectors -----------------------
        * \---------- discarded wantedSectors -------------
        *  \--------- simple and detailed wantedSectors ---
        */
-      const [discarded$, simpleAndDetailed$] = partition(
-        source$,
-        wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Discarded
+      const discarded$ = source$.pipe(filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded));
+      const simpleAndDetailed$ = source$.pipe(
+        filter(
+          wantedSector =>
+            wantedSector.levelOfDetail === LevelOfDetail.Simple || wantedSector.levelOfDetail === LevelOfDetail.Detailed
+        ),
+        map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))
       );
 
       /* Split simple and detailed wanted sectors into a pipe of cached request and uncached requests.
@@ -133,19 +139,9 @@ export class CachedRepository implements Repository {
        *  \--------- uncached wantedSectors --------------
        */
       const existsInCache = ({ key }: KeyedWantedSector) => this._consumedSectorCache.has(key);
-      const [cached$, uncached$] = partition(
-        simpleAndDetailed$.pipe(map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))),
-        existsInCache
-      );
-
-      /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
-       * ----------- uncached wantedSectors --------------
-       * \---------- simple wantedSectors ----------------
-       *  \--------- detailed wantedSectors --------------
-       */
-      const [simple$, detailed$] = partition(
-        uncached$.pipe(this._loadingCounter.incrementOnNext()),
-        ({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple
+      const cached$ = simpleAndDetailed$.pipe(filter(existsInCache));
+      const uncached$ = simpleAndDetailed$.pipe(
+        filter((keyedWantedSector: KeyedWantedSector) => !existsInCache(keyedWantedSector))
       );
 
       /* Merge simple and detailed pipeline, save observable to cache, and decrease loadcount
@@ -156,19 +152,35 @@ export class CachedRepository implements Repository {
         observable: this.loadSimpleSectorFromNetwork(wantedSector)
       });
 
+      /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
+       * ----------- uncached wantedSectors --------------
+       * \---------- simple wantedSectors ----------------
+       *  \--------- detailed wantedSectors --------------
+       */
+      const simple$ = uncached$.pipe(
+        subscribeOn(asyncScheduler),
+        filter(({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple),
+        this._loadingCounter.incrementOnNext(),
+        map(getSimpleSectorFromNetwork)
+      );
+
       const getDetailedSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
         key,
         wantedSector,
         observable: this.loadDetailedSectorFromNetwork(wantedSector)
       });
 
+      const detailed$ = uncached$.pipe(
+        subscribeOn(asyncScheduler),
+        filter(({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Detailed),
+        this._loadingCounter.incrementOnNext(),
+        map(getDetailedSectorFromNetwork)
+      );
+
       const saveToCache = ({ key, observable }: WantedSecorWithRequestObservable) =>
         this._consumedSectorCache.forceInsert(key, observable);
 
-      const network$ = merge(
-        simple$.pipe(map(getSimpleSectorFromNetwork)),
-        detailed$.pipe(map(getDetailedSectorFromNetwork))
-      ).pipe(
+      const network$ = merge(simple$, detailed$).pipe(
         tap({
           next: saveToCache
         }),
@@ -184,11 +196,10 @@ export class CachedRepository implements Repository {
         return this._consumedSectorCache.get(key);
       };
 
-      return scheduled(
-        [discarded$.pipe(map(toDiscardedConsumedSector)), cached$.pipe(flatMap(getFromCache)), network$],
-        asyncScheduler
-      ).pipe(mergeAll(), this._loadingCounter.resetOnComplete());
-    };
+      return merge(discarded$.pipe(map(toDiscardedConsumedSector)), cached$.pipe(flatMap(getFromCache)), network$).pipe(
+        this._loadingCounter.resetOnComplete()
+      );
+    });
   }
 
   private catchWantedSectorError<T>(wantedSector: WantedSector, methodName: string) {
