@@ -7,9 +7,10 @@ describe: Reveal has functions for iterating over nodes, either all nodes in a 3
 import { LiveCodeSnippet } from '../../src/components/LiveCodeSnippet';
 import { DemoWrapper } from '../../src/components/DemoWrapper';
 
-Reveal has functions for iterating over nodes, either all nodes in a 3D model or a subtree of a parent node.
-Notice that all functions are async, and the action that you pass is not applied immediately.
-A single model can have millions of nodes. That's why the iteration functions call the passed action step by step.
+Reveal has functions for iterating over CAD nodes, either all nodes in a 3D model or a subtree of a parent node.
+Note that all functions are async, and the action that you pass is not applied immediately. A single model can 
+have millions of nodes. To avoid long blocking operations the action is applied in blocks, allowing for an 
+interactive page while the action is being applied.
 
 <DemoWrapper
   modelId={4715379429968321}
@@ -28,26 +29,21 @@ model
   .iterateNodesByTreeIndex(
     treeIndex => model.setNodeColorByTreeIndex(treeIndex, 127, 127, 127)
   )
-  .then(() => console.log('Iteration is done!'));
+  .then(() => alert('Iteration is done!'));
 `}
 </LiveCodeSnippet>
 
 ## Iterate over subtree nodes
 
-In that example we bind click handler to the viewer and iterate over subtree of the clicked node.
+`Cognite3DModel.iterateSubtreeByTreeIndex` iterates over all descendants of a node by tree index. The provided
+tree index is included in the set of visited nodes. The following example sets the color of all descendants of
+a node. This mimics the functionality of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
+set to `true`.
 
 <LiveCodeSnippet>
 {`
-viewer.on('click', (event) => {
-  // Find 3D coordinate of what the user clicks
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-  if (intersection) {
-    model.resetAllNodeColors();
-    model.iterateSubtreeByTreeIndex(intersection.treeIndex, (i) => {
-      console.log(i);
-      model.setNodeColorByTreeIndex(i, 127, 127, 127);
-    })
-  }
+model.iterateSubtreeByTreeIndex(122, treeIndex => {
+  model.setNodeColorByTreeIndex(treeIndex, 127, 255, 127);
 });
 `}
 </LiveCodeSnippet>
