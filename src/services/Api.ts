@@ -21,7 +21,6 @@ export function buildQueryString(parameters: QueryParameters): string {
 class Api {
   private readonly headers: {
     'Access-Control-Allow-Origin': string;
-    'api-key': string;
     'Content-Type': string;
     Authorization: string;
   };
@@ -29,7 +28,6 @@ class Api {
   constructor(token: string) {
     this.headers = {
       'Access-Control-Allow-Origin': '*',
-      'api-key': config.api.key,
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
