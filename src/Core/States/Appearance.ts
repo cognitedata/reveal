@@ -26,9 +26,8 @@ export class Appearance
   static leftPanelMaxSize = 1000; //Maximum size of left panel
 
   // Settings Panel
-
   static valuesPerColorMap = 20; // values in color map image
-  
+
   static generalSettingsName = "General Settings";
   static statisticsName = "Statistics";
   static visualSettingsName = "Visual Settings"
@@ -37,7 +36,7 @@ export class Appearance
   static statisticsDefaultExpanded = false;
   static visualSettingsDefaultExpanded = true;
 
-  static readonlyInputColor = "#ffffc4";
+  static readonlyInputColor = Color.rgb(217, 247, 253).hex();
 
   // For the viewer
   static viewerFooter = "Cognite subsurface viewer";

@@ -70,7 +70,7 @@ export class NodePointer
       return result;
 
     result = root.getDescendantByUniqueId(this._uniqueId);
-    if (result == null)
+    if (!result)
     {
       // Set it invalid
       this.clear();
@@ -94,10 +94,10 @@ export class NodePointer
     let node = root;
     for (const index of this._indexes)
     {
-      if (node == null)
+      if (!node)
         break;
 
-      if (node.children == null)
+      if (!node.children)
       {
         this.clearIndexes();
         return null;
@@ -107,7 +107,7 @@ export class NodePointer
 
       node = node.children[index];
     }
-    if (node == null)
+    if (!node)
     {
       this.clearIndexes();
       return null;

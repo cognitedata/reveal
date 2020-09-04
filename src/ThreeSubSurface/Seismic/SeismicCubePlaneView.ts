@@ -461,8 +461,9 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   //     for (const cell of cells)
   //     {
   //       const trace = seismicCube.getTrace(cell.i, cell.j);
-  //       if (trace == null)
+  //       if (!trace)
   //         continue;
+  
   //       for (let k = 0; k < trace.length; k++)
   //       {
   //         const u = range.getTruncatedFraction(trace.values[k]);

@@ -38,7 +38,7 @@ export class CopySystemVisualSettingsCommand extends BaseNodeCommand
         continue;
 
       const copyStyle = style.clone() as BaseRenderStyle;
-      if (copyStyle == null)
+      if (!copyStyle)
         return false;
 
       if (!child.replaceRenderStyle(copyStyle))
