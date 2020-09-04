@@ -164,6 +164,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install Reveal dependencies
+        working-directory: viewer
+        run: yarn
+
+      - name: Build Reveal
+        working-directory: viewer
+        run: yarn build:prod
+
       - name: Install NPM dependencies
         working-directory: documentation
         run: yarn
