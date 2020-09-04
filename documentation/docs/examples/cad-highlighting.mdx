@@ -91,12 +91,13 @@ viewer.on('click', event => {
   const intersection = viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
   );
+  model.deselectAllNodes();
   if (intersection) {
-    const { modelId, revisionId } = intersection.model;
-    const nodeId = intersection.nodeId;
-    // Retrieve all ancestors of the clicked node
-    sdk.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId)
-      .then(ancestors => {
+    const model = intersection.model;
+    const { modelId, revisionId } = model;
+    // Map treeIndex to nodeId to be able to lookup node in CDF
+    model.mapTreeIndexToNodeId(intersection.treeIndex).then(nodeId => {
+      sdk.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId).then(ancestors => {
         // Find first ancestor whose name starts with "/" - we assume this
         // is the a tagged equipment
         const taggedEquipment = ancestors.items.find(
@@ -106,7 +107,8 @@ viewer.on('click', event => {
           // Highlight tagged equipment and all children
           model.selectNodeByTreeIndex(taggedEquipment.treeIndex, true);
         }
-      });
+      })
+    })
   }
 });
 `}
