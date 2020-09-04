@@ -2,11 +2,11 @@ module.exports = {
   docs: [
     {
       type: 'doc',
-      id: 'overview'
+      id: 'overview',
     },
     {
       type: 'doc',
-      id: 'getting-started'
+      id: 'getting-started',
     },
     {
       type: 'doc',
@@ -21,11 +21,12 @@ module.exports = {
       label: 'Examples',
       collapsed: false,
       items: [
-        'examples/cad-basic', 
-        'examples/cad-colors', 
-        'examples/cad-highlighting', 
+        'examples/cad-basic',
+        'examples/cad-colors',
+        'examples/cad-highlighting',
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
+        'examples/node-visiting',
         'examples/cad-preview',
       ],
     },
@@ -35,7 +36,7 @@ module.exports = {
     },
     {
       type: 'doc',
-      id: 'API Reference' /* must be generated before start or build */
+      id: 'API Reference' /* must be generated before start or build */,
     },
   ],
 };
