@@ -43,6 +43,15 @@ class Api {
       method: 'GET',
       headers: this.headers,
     });
+    if (!response.ok) {
+      return [
+        {
+          error: true,
+          status: response.status,
+          statusText: response.statusText,
+        },
+      ];
+    }
     return response.json();
   }
 
