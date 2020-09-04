@@ -49,9 +49,12 @@ The new functions identify nodes by tree index rather than node ID. It also supp
 ## Node visitor functions
 
 Reveal has functions for iterating over nodes, either all nodes in a 3D model or a subtree of a parent node.
+Notice that all functions are async, and the action that you pass is not applied immediately.
+A single model can have millions of nodes. That's why the iteration functions call the passed action step by step.
+You can see it in action in our [node visiting example](./examples/node-visiting.mdx) where colors are applied gradually to nodes.
 
-- `Cognite3DModel.iterateNodes(action: (nodeId, treeIndex) => void): Promise<boolean>` has been replaced by `iterateNodesByTreeIndex(action: (treeIndex) => void): Promise<number>`. Returns number of visited nodes.
-- `Cognite3DModel.iterateSubtree(nodeId, action: (nodeId, treeIndex) => void, treeIndex?, subtreeSize?)` has been replaced by `iterateSubtreeByTreeIndex(treeIndex, action: (treeIndex) => void): Promise<number>`. Returns the number of visited nodes.
+- `Cognite3DModel.iterateNodes(action: (nodeId, treeIndex) => void): Promise<boolean>` has been replaced by `iterateNodesByTreeIndex(action: (treeIndex) => void): Promise<void>`. Returns promise which resolves once iteration has done. 
+- `Cognite3DModel.iterateSubtree(nodeId, action: (nodeId, treeIndex) => void, treeIndex?, subtreeSize?)` has been replaced by `iterateSubtreeByTreeIndex(treeIndex, action: (treeIndex) => void): Promise<number>`. Returns promise which resolves once iteration has done.
 
 ## Accessing node information and mapping between node IDs and tree indices
 
