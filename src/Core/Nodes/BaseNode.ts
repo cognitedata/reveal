@@ -274,7 +274,7 @@ export abstract class BaseNode extends Identifiable
   }
 
   //==================================================
-  // VIRTUAL METHODS: Draw styles
+  // VIRTUAL METHODS: Render styles
   //==================================================
 
   public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
@@ -337,9 +337,17 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  static GetIconFromColorType(option: string): string
+  public createRenderStyleCommands(): BaseCommand[] | null
   {
-    return "";
+    const commands: BaseCommand[] = [];
+    commands.push(new ResetVisualSettingsCommand(this));
+    const { renderStyleRoot } = this;
+    if (!renderStyleRoot || renderStyleRoot === this)
+    {
+      commands.push(new CopyFolderVisualSettingsCommand(this));
+      commands.push(new CopySystemVisualSettingsCommand(this));
+    }
+    return commands;
   }
 
   //==================================================
@@ -382,15 +390,6 @@ export abstract class BaseNode extends Identifiable
   public toggleExpandInteractive() // Use this when clicking on the expand marker in the three control
   {
     this.setExpandedInteractive(!this.isExpanded);
-  }
-
-  public createRenderStyleCommands(): BaseCommand[] | null
-  {
-    const commands = [
-      new ResetVisualSettingsCommand(this),
-      new CopyFolderVisualSettingsCommand(this),
-      new CopySystemVisualSettingsCommand(this)];
-    return commands;
   }
 
   public setExpandedInteractive(value: boolean)
@@ -755,7 +754,7 @@ export abstract class BaseNode extends Identifiable
   }
 
   //==================================================
-  // INSTANCE METHODS: Draw styles
+  // INSTANCE METHODS: Render styles
   //==================================================
 
   public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
@@ -819,6 +818,41 @@ export abstract class BaseNode extends Identifiable
     if (style)
       this.verifyRenderStyle(style);
     return style;
+  }
+
+  public replaceRenderStyle(newStyle: BaseRenderStyle | null = null): boolean 
+  {
+    const target = this.activeTargetIdAccessor;
+    if (!target)
+      return false;
+
+    const { targetId } = target;
+    if (!targetId)
+      return false;
+
+    // Find the only style
+    for (let i = 0; i < this.renderStyles.length; i++)
+    {
+      const oldStyle = this.renderStyles[i];
+      if (oldStyle.isDefault)
+        continue;
+
+      if (!oldStyle.targetId.equals(targetId, this.renderStyleResolution))
+        continue;
+
+      this.renderStyles.splice(i, 1);
+      break;
+    }
+    // Set the new style
+    if (!newStyle)
+    {
+      newStyle = this.createRenderStyle(targetId);
+      if (!newStyle)
+        return false;
+    }
+    newStyle.targetId.set(targetId, this.renderStyleResolution);
+    this.renderStyles.push(newStyle);
+    return true;
   }
 
   //==================================================
