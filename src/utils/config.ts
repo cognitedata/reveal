@@ -4,7 +4,6 @@ export default {
   env: process.env.REACT_APP_ENV || process.env.NODE_ENV || 'development',
   api: {
     url: 'https://subsurface-console-cognitedata-development.cognite.ai',
-    key: 'JGqy46bnte5gW7HQ7ttHqGmq85kszdK7rpXmZ2zpSrMwhsXQ',
   },
   app: {
     autoLogin: stringToBoolean(process.env.REACT_APP_AUTO_LOGIN as string),
