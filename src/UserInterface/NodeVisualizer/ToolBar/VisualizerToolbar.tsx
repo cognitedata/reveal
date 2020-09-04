@@ -190,7 +190,7 @@ export default function VisualizerToolbar(props: {
           options={command.dropdownOptions}
           tooltip={{
             text: command.tooltip,
-            placement: horizontal ? "bottom" : "right-start",
+            placement: "right-start",
           }}
           iconSize={{
             width: Appearance.toolbarSelectWidth,
