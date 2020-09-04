@@ -30,11 +30,16 @@ export class NodeIdAndTreeIndexMaps {
   private readonly treeIndexRequestObservable: Subject<TreeIndexRequest>;
   private readonly treeIndexResponse: Observable<{ nodeId: CogniteInternalId; treeIndex: number }>;
 
-  constructor(modelId: number, revisionId: number, client: CogniteClient) {
+  constructor(
+    modelId: number,
+    revisionId: number,
+    client: CogniteClient,
+    indexMapperClient: CogniteClientNodeIdAndTreeIndexMapper
+  ) {
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.client = client;
-    this.indexMapperClient = new CogniteClientNodeIdAndTreeIndexMapper(client);
+    this.indexMapperClient = indexMapperClient;
 
     this.nodeIdToTreeIndexMap = new Map();
     this.treeIndexToNodeIdMap = new Map();

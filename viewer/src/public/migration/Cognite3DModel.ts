@@ -17,6 +17,7 @@ import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/
 import { trackError } from '@/utilities/metrics';
 import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
+import { CogniteClientNodeIdAndTreeIndexMapper } from '@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -86,7 +87,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
     this.selectedNodes = new Set();
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
+    const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
 
     const nodeAppearanceProvider: NodeAppearanceProvider = {
       styleNode: (treeIndex: number) => {

@@ -6,55 +6,38 @@ import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from '@/public/migration/NodeIdAndTreeIndexMaps';
 
 import { sleep } from '../wait';
-import nock from 'nock';
+import { CogniteClientNodeIdAndTreeIndexMapper } from '@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
-type ByTreeIndicesRequestBody = {
-  items: CogniteInternalId[];
-};
+jest.mock('@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper');
 
-type ByNodeIdsRequestBody = {
-  items: number[];
-};
+function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
+  return treeIndex + 1337;
+}
+
+function stubNodeIdToTreeIndex(nodeId: CogniteInternalId): number {
+  return nodeId - 1337;
+}
 
 describe('NodeIdAndTreeIndexMaps', () => {
   let client: CogniteClient;
+  let indexMapper: CogniteClientNodeIdAndTreeIndexMapper;
+  let maps: NodeIdAndTreeIndexMaps;
 
   beforeEach(() => {
     client = new CogniteClient({ appId: 'test' });
     client.loginWithApiKey({ project: 'test', apiKey: 'mykey' });
-  });
+    indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
+    jest.spyOn(indexMapper, 'mapTreeIndicesToNodeIds').mockImplementation((_modelId, _revisionId, treeIndices) => {
+      return Promise.resolve(treeIndices.map(stubTreeIndexToNodeId));
+    });
+    jest.spyOn(indexMapper, 'mapNodeIdsToTreeIndices').mockImplementation((_modelId, _revisionId, nodeIds) => {
+      return Promise.resolve(nodeIds.map(stubNodeIdToTreeIndex));
+    });
 
-  function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
-    return treeIndex + 1337;
-  }
-
-  function stubNodeIdToTreeIndex(nodeId: CogniteInternalId): number {
-    return nodeId - 1337;
-  }
-
-  beforeEach(() => {
-    nock.disableNetConnect();
-    nock(/.*/)
-      .persist()
-      .post(/.*\/internalids\/bytreeindices/)
-      .reply(200, (_uri, requestBody: ByTreeIndicesRequestBody) => {
-        return { items: requestBody.items.map(stubTreeIndexToNodeId) };
-      });
-    nock(/.*/)
-      .persist()
-      .post(/.*\/treeindices\/byinternalids/)
-      .reply(200, (_uri, requestBody: ByNodeIdsRequestBody) => {
-        return { items: requestBody.items.map(stubNodeIdToTreeIndex) };
-      });
-  });
-
-  afterEach(() => {
-    nock.cleanAll();
-    nock.enableNetConnect();
+    maps = new NodeIdAndTreeIndexMaps(0, 0, client, indexMapper);
   });
 
   test('tree index is returned correctly', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const treeIndex1Promise = maps.getTreeIndex(1);
     const treeIndex2Promise = maps.getTreeIndex(2);
     const treeIndices = await Promise.all([treeIndex1Promise, treeIndex2Promise]);
@@ -63,7 +46,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('requesting same index twice returns correctly twice', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const treeIndex1 = await maps.getTreeIndex(1);
     const treeIndex2 = await maps.getTreeIndex(1);
     expect(treeIndex1).toEqual(stubNodeIdToTreeIndex(1));
@@ -71,7 +53,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('requesting same index twice in same batch, returns same result for both', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const treeIndex1Promise = maps.getTreeIndex(1);
     const treeIndex2Promise = maps.getTreeIndex(1);
     const treeIndices = await Promise.all([treeIndex1Promise, treeIndex2Promise]);
@@ -79,7 +60,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('requesting same index twice with sleep in-between returns same result', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const treeIndex1 = await maps.getTreeIndex(1);
     await sleep(100);
     const treeIndex2 = await maps.getTreeIndex(1);
@@ -88,7 +68,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
 
   test('getTreeIndices with cached IDs', async () => {
     // Arrange
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     maps.add(1, 2);
     maps.add(3, 4);
     maps.add(5, 6);
@@ -101,7 +80,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('getTreeIndices without cached IDs returns correct results', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const input = [1, 3, 5];
     const treeIndices = await maps.getTreeIndices([1, 3, 5]);
     expect(treeIndices).toEqual(input.map(stubNodeIdToTreeIndex));
@@ -109,7 +87,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
 
   test('getTreeIndices with partially cached IDs, maps only uncached', async () => {
     // Arrange
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     maps.add(3, 4);
 
     // Act
@@ -120,7 +97,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('requesting same nodeId twice returns correctly twice', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const nodeId1 = await maps.getNodeId(1);
     const nodeId2 = await maps.getNodeId(1);
     expect(nodeId1).toEqual(stubTreeIndexToNodeId(1));
@@ -128,7 +104,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('requesting same nodeId twice in same batch, returns same result for both', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const nodeId1Promise = maps.getNodeId(1);
     const nodeId2Promise = maps.getNodeId(1);
     const nodeIds = await Promise.all([nodeId1Promise, nodeId2Promise]);
@@ -136,7 +111,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('requesting same nodeId twice with sleep in-between returns same result', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const nodeId1 = await maps.getNodeId(1);
     await sleep(100);
     const nodeId2 = await maps.getNodeId(1);
@@ -145,7 +119,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
 
   test('getNodeIds with cached IDs', async () => {
     // Arrange
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     maps.add(1, 2);
     maps.add(3, 4);
     maps.add(5, 6);
@@ -158,7 +131,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
   });
 
   test('getNodeIds without cached IDs returns correct results', async () => {
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     const input = [1, 3, 5];
     const treeIndices = await maps.getNodeIds([1, 3, 5]);
     expect(treeIndices).toEqual(input.map(stubTreeIndexToNodeId));
@@ -166,7 +138,6 @@ describe('NodeIdAndTreeIndexMaps', () => {
 
   test('getNodeIds with partially cached IDs, maps only uncached', async () => {
     // Arrange
-    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
     maps.add(3, 4);
 
     // Act
