@@ -18,7 +18,6 @@ jobs:
         with:
           persist-credentials: false
 
-      # required to correctly inherit types, e.g. from THREE.Object3D
       - name: Build Reveal
         working-directory: viewer
         run: |
