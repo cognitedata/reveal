@@ -62,9 +62,6 @@ export default class WellCasingCreator
     if (log.length === 0)
       return null;
 
-    const last = log.lastSample as CasingLogSample;
-    last.radius = Number.NaN;
-
     // TODO: casing.metadata.assy_name
     return log;
   }

@@ -21,6 +21,10 @@ export class MdSample
 
   public md: number;
 
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
   public get isMdEmpty(): boolean { return Number.isNaN(this.md); }
 
   //==================================================
@@ -34,11 +38,8 @@ export class MdSample
   //==================================================
 
   public /*virtual*/ toString(): string { return `Md: ${this.md}`; }
-
   public /*virtual*/ getSampleText(): string { return ``; }
-
   public /*virtual*/ translate(deltaMd: number, isAtMinMd: boolean): void { this.md += deltaMd; }
-
   public /*virtual*/ isPickedOnEdge(md: number, margin: number) { return Math.abs(this.md - md) <= margin; }
 
   //==================================================
