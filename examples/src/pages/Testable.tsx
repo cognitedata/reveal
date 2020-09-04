@@ -64,7 +64,7 @@ export function Testable() {
       revealManager.on('loadingStateChanged', (loadingState) => {
         if (skipFirstLoadingState) {
           skipFirstLoadingState = false;
-          if(loadingState.itemsLoaded !== 0 && loadingState.itemsRequested !== 0) {
+          if(loadingState.itemsLoaded !== 1 && loadingState.itemsRequested !== 1) {
             setLoadingState(loadingState);
           }
         } else {
