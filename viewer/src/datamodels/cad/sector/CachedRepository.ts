@@ -30,7 +30,8 @@ import {
   distinct,
   catchError,
   mergeAll,
-  throttleTime
+  throttleTime,
+  startWith
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -115,7 +116,10 @@ export class CachedRepository implements Repository {
         return taskTracker;
       }),
       throttleTime(30, asyncScheduler, { trailing: true }), // Take 1 emission every 30ms
-      map(({ taskCount, taskCompleted }) => ({ itemsRequested: taskCount, itemsLoaded: taskCompleted } as LoadingState))
+      map(
+        ({ taskCount, taskCompleted }) => ({ itemsRequested: taskCount, itemsLoaded: taskCompleted } as LoadingState)
+      ),
+      startWith({ itemsRequested: 1, itemsLoaded: 1 })
     );
   }
 
