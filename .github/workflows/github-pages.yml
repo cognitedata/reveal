@@ -19,15 +19,17 @@ jobs:
           persist-credentials: false
 
       # required to correctly inherit types, e.g. from THREE.Object3D
-      - name: Install Viewer Deps
+      - name: Build Reveal
         working-directory: viewer
-        run: yarn
+        run: |
+          yarn
+          yarn build:prod
 
-      - name: Install and Build 🔧
+      - name: Install and Build documentation 🔧
         working-directory: documentation
         run: |
           yarn
-          yarn run build
+          yarn build
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
