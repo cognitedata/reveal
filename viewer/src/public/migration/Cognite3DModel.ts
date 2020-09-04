@@ -284,8 +284,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * The passed action is applied incrementally to avoid main thread blocking.
-   * That means your changes can be partly applied until promise is resolved (iteration is done).
+   * Iterates over all nodes in the model and applies the provided action to each node (identified by tree index).
+   * The passed action is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
+   * applied until promise is resolved (iteration is done).
    * @param action Function that will be called with a treeIndex argument.
    * @returns Promise that is resolved once the iteration is done.
    * @example
@@ -313,11 +314,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     );
   }
 
-  // TODO: (Lars) Make iterateSubtreeByTreeIndex work similarly to iterateNodesByTreeIndex
   /**
-   * The passed action is applied incrementally to avoid main thread blocking.
-   * That means your changes can be partly applied until promise is resolved (iteration is done).
-   * @param treeIndex
+   * Iterates over all nodes in a subtree of the model and applies the provided action to each node
+   * (identified by tree index). The provided node is included in the visited set.  The passed action
+   * is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
+   * applied until promise is resolved (iteration is done).
+   * @param treeIndex Tree index of the top parent of the subtree.
    * @param action Function that will be called with a treeIndex argument.
    * @returns Promise that is resolved once the iteration is done.
    * @example
@@ -330,7 +332,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void> {
     const treeIndices = await this.determineTreeIndices(treeIndex, true);
-    return treeIndices.forEach(action);
+    return callActionWithIndicesAsync(treeIndices.from, treeIndices.toInclusive, action);
   }
 
   /**
