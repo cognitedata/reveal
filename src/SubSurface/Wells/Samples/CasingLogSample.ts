@@ -22,13 +22,9 @@ export class CasingLogSample extends BaseLogSample
   //==================================================
 
   public baseMd: number;
-
   public radius: number;
-
   public name: string = "";
-
   public comments: string = "";
-
   public currentStatusComment: string = "";
 
   //==================================================
@@ -47,7 +43,6 @@ export class CasingLogSample extends BaseLogSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Radius: ${this.radius}`; }
-
   public /*override*/ getSampleText(): string { return Number.isNaN(this.radius) ? "No casing" : `Radius = ${this.radius.toFixed(3)}`; }
 
   //==================================================
@@ -55,6 +50,5 @@ export class CasingLogSample extends BaseLogSample
   //==================================================
 
   public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.radius); }
-
   public /*override*/ clone(): BaseLogSample { return Lodash.clone<CasingLogSample>(this); }
 }  

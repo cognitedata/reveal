@@ -25,9 +25,7 @@ export class RenderSample extends MdSample
   //==================================================
 
   public point: Vector3;
-
   public radius: number;
-
   public color: Color;
 
   //==================================================
