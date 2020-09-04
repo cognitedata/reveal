@@ -1,11 +1,12 @@
 import React from "react";
 import SelectableInput from "@/UserInterface/Components/SelectableInput/SelectableInput";
 import ToolbarToolTip from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
+import { GenericSelect } from "@/UserInterface/Components/GenericSelect/GenericSelect";
 
 export default function ToolBarSelect(props: {
-  options: string[];
-  currentValue: string;
-  onChange: (value: string) => void;
+  options?: string[];
+  currentValue?: string;
+  onChange?: (value: string) => void;
   tooltip?: {
     text: string;
     placement?: "bottom" | "right-start";
@@ -18,14 +19,17 @@ export default function ToolBarSelect(props: {
     : {};
 
   const dropDown = () => {
+    const genericSelectOpts = options?.map((item) => ({
+      label: item,
+      value: item,
+    }));
     return (
       <div style={groupStyle}>
-        <SelectableInput
-          options={options}
+        <GenericSelect
+          options={genericSelectOpts}
           value={currentValue}
           onChange={onChange}
-          optionHeight={40}
-          maxOptions={5}
+          node={<SelectableInput />}
         />
       </div>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { ConnectedViewer3D } from "../Viewers/ConnectedViewer3D";
+import { ConnectedViewer3D } from "@/UserInterface/NodeVisualizer/Viewers/ConnectedViewer3D";
 
 /**
  * Right Panel - 3D/2D viewers

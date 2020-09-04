@@ -40,54 +40,10 @@
           background: var(--node-viz-readonly-input-color, variables.$readonly-input-color);
         }
       }
-
-      .select-group {
-        display: grid;
-        grid-template-columns: auto 15px;
-        border: #b5b5b5 solid 1px;
-        place-items: center stretch;
-        background: #f9f7f7dd;
-
-        .MuiInput-underline::before {
-          border: none;
-        }
-
-        .MuiInput-root {
-          height: 1.3rem;
-        }
-
-        .MuiSelect-select.MuiSelect-select {
-          padding: 0;
-        }
-
-        .select-controls {
-          display: grid;
-          grid-template-rows: 1fr 1fr;
-          place-items: center;
-
-          .svg-inline--fa {
-            height: 0.8em;
-          }
-        }
-      }
-
-      .color-map-select {
+      .common-select {
         height: 1.3rem;
         width: 100%;
       }
     }
-  }
-}
-
-.select-element-option {
-  display: grid;
-  grid-template-columns: auto auto;
-  place-items: center start;
-  grid-gap: 5px;
-  padding: 5px;
-  font-size: var(--node-viz-default-font-size, variables.$application-default-font-size);
-
-  .icon {
-    width: 20px;
   }
 }

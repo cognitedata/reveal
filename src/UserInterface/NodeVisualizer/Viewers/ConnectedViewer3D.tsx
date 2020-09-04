@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { State } from "@/UserInterface/Redux/State/State";
 import { executeVisualizerToolbarCommand } from "@/UserInterface/Redux/reducers/VisualizersReducer";
 import Viewer3D from "@/UserInterface/Components/Viewers/Viewer3D";
+import { IToolbarButton } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 import ViewerUtils from "./ViewerUtils";
-import { IToolbarButton } from "../ToolBar/VisualizerToolbar";
 
 const mapStateToProps = (state: State) => {
   const toolbarCommands = ViewerUtils.getViewers()["3D"]?.getToolbarCommands();

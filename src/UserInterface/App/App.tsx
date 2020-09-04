@@ -10,6 +10,7 @@ import { grey } from "@material-ui/core/colors";
 import { Appearance } from "@/Core/States/Appearance";
 
 const LOAD_MOCK_DATA = false;
+const MOCK_DATA_PATH = "@/Solutions/BP/MockData/Sample";
 
 // customize the colors for changing UI style
 const theme = createMuiTheme({
@@ -47,14 +48,14 @@ export default function App() {
   useEffect(() => {
     if (LOAD_MOCK_DATA) {
       Promise.all([
-        import("@/Solutions/BP/MockData/Sample/wells.json"),
-        import("@/Solutions/BP/MockData/Sample/wellbores.json"),
-        import("@/Solutions/BP/MockData/Sample/trajectories.json"),
-        import("@/Solutions/BP/MockData/Sample/trajectoryData.json"),
-        import("@/Solutions/BP/MockData/Sample/logs.json"),
-        import("@/Solutions/BP/MockData/Sample/casings.json"),
-        import("@/Solutions/BP/MockData/Sample/ndsEvents.json"),
-        import("@/Solutions/BP/MockData/Sample/nptEvents.json"),
+        import(`${MOCK_DATA_PATH}/wells.json`),
+        import(`${MOCK_DATA_PATH}/wellbores.json`),
+        import(`${MOCK_DATA_PATH}/trajectories.json`),
+        import(`${MOCK_DATA_PATH}/trajectoryData.json`),
+        import(`${MOCK_DATA_PATH}/logs.json`),
+        import(`${MOCK_DATA_PATH}/casings.json`),
+        import(`${MOCK_DATA_PATH}/ndsEvents.json`),
+        import(`${MOCK_DATA_PATH}/nptEvents.json`),
       ])
         .then(
           ([

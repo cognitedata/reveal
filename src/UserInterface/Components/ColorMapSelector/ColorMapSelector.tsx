@@ -1,39 +1,11 @@
 import React from "react";
 import { InputBase, MenuItem, Theme } from "@material-ui/core";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { makeStyles } from "@material-ui/core/styles";
 import Select from "@material-ui/core/Select";
 import withStyles from "@material-ui/core/styles/withStyles";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
 import styled from "styled-components";
 import ListItemText from "@material-ui/core/ListItemText";
 import { ISelectOption } from "@/UserInterface/Components/Settings/Types";
-
-const ColorButton = withStyles((theme) => ({
-  root: {
-    color: theme.palette.action.active,
-    backgroundColor: theme.palette.background.paper,
-    width: "100%",
-    minWidth: "100%",
-    borderRadius: 0,
-    border: "none",
-    padding: 0,
-    minHeight: "50%",
-    "&:hover": {
-      border: "none",
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.primary.dark,
-    },
-    "&:focus": {
-      border: "none",
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.primary.dark,
-    },
-  },
-}))(Button);
 
 const StyledSelect = withStyles(() => ({
   root: {
@@ -49,7 +21,7 @@ const StyledSelect = withStyles(() => ({
   },
 }))(Select);
 
-const StyledInput = withStyles((theme) => ({
+const StyledInput = withStyles((theme: Theme) => ({
   root: {
     height: "100%",
     flex: "1 1 auto",
@@ -78,24 +50,10 @@ const StyledListItemText = withStyles(() => ({
   },
 }))(ListItemText);
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    height: "100%",
-    width: "100%",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 0,
-    borderColor: theme.palette.primary.main,
-    boxSizing: "border-box",
-  },
+const useStyles = makeStyles(() => ({
   menuItem: {
     display: "flex",
     padding: "0.3rem 0.3rem",
-  },
-  buttonGroup: {
-    height: "100%",
-    width: "1rem",
-    flex: "0 0 1rem",
   },
 }));
 export interface ColorMapProps {
@@ -118,83 +76,37 @@ export function ColorMapSelector(props: {
   options?: ISelectOption[];
   colorMapOptions?: Array<string>[];
   value?: string;
-  onChange?: (val: string) => void;
+  onChange?: (event: React.ChangeEvent<any>) => void;
   disabled?: boolean;
 }) {
   const { options, colorMapOptions, value, onChange, disabled } = props;
   const classes = useStyles();
 
-  const updateState = (updateVal: string) => {
-    if (onChange) {
-      onChange(updateVal);
-    }
-  };
-  const handleChange = (event) => {
-    updateState(event.target.value);
-  };
-  const findIndexOfValueInOptions = (
-    optionValues: ISelectOption[],
-    val?: string
-  ) => {
-    return (
-      optionValues.findIndex((optionValue) => optionValue.value === val) || 0
-    );
-  };
-  const setPrevOption = () => {
-    if (options) {
-      const newIndex = findIndexOfValueInOptions(options, value) - 1;
-      if (newIndex < 0) return;
-      updateState(options[newIndex].value);
-    }
-  };
-  const setNextOption = () => {
-    if (options) {
-      const newIndex = findIndexOfValueInOptions(options, value) + 1;
-      if (newIndex >= options.length) return;
-      updateState(options[newIndex].value);
-    }
-  };
-
   return (
-    <Box display="flex" className={classes.root}>
-      <StyledSelect
-        labelId="color-map-select"
-        id="color-map-select"
-        value={value}
-        disabled={disabled}
-        onChange={handleChange}
-        input={<StyledInput />}
-      >
-        {options?.map((option: ISelectOption, index: number) => {
-          let colors: string[] = [];
-          if (colorMapOptions) {
-            colors = colorMapOptions[index];
-          }
-          return (
-            <MenuItem
-              className={classes.menuItem}
-              value={option.value}
-              key={option.value}
-            >
-              {colors.length && <ColorMap colors={colors} />}
-              <StyledListItemText>{option.label}</StyledListItemText>
-            </MenuItem>
-          );
-        })}
-      </StyledSelect>
-      <ButtonGroup
-        className={classes.buttonGroup}
-        orientation="vertical"
-        color="primary"
-        aria-label="vertical outlined primary button group"
-      >
-        <ColorButton onClick={setPrevOption} disabled={disabled}>
-          <ArrowDropUpIcon />{" "}
-        </ColorButton>
-        <ColorButton onClick={setNextOption} disabled={disabled}>
-          <ArrowDropDownIcon />{" "}
-        </ColorButton>
-      </ButtonGroup>
-    </Box>
+    <StyledSelect
+      labelId="color-map-select"
+      id="color-map-select"
+      value={value}
+      disabled={disabled}
+      onChange={onChange}
+      input={<StyledInput />}
+    >
+      {options?.map((option: ISelectOption, index: number) => {
+        let colors: string[] = [];
+        if (colorMapOptions) {
+          colors = colorMapOptions[index];
+        }
+        return (
+          <MenuItem
+            className={classes.menuItem}
+            value={option.value}
+            key={option.value}
+          >
+            {colors.length > 0 && <ColorMap colors={colors} />}
+            <StyledListItemText>{option.label}</StyledListItemText>
+          </MenuItem>
+        );
+      })}
+    </StyledSelect>
   );
 }

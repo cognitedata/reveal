@@ -11,10 +11,12 @@ import MenuList from "@material-ui/core/MenuList";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import InputBase from "@material-ui/core/InputBase";
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { Util } from "@/Core/Primitives/Util";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import { NumericUtils } from "@/UserInterface/Foundation/Utils/NumericUtils";
+
+const DEFAULT_OPTION_HEIGHT = 40;
+const DEFAULT_MAX_OPTIONS = 5;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,14 +32,24 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     height: "100%",
   },
-  inputGroup: {
+  paper: {
     display: "flex",
     width: "100%",
     height: "100%",
     boxSizing: "border-box",
+    border: 0,
+    borderRadius: 0,
   },
-  button: {
-    flex: "0 0 2ch",
+  inputAdornment: {
+    height: "100%",
+    width: "2ch",
+    marginInlineStart: 0,
+  },
+  selectButton: {
+    color: theme.palette.action.active,
+    backgroundColor: theme.palette.background.paper,
+    margin: 0,
+    padding: 0,
     minWidth: "2ch",
     height: "100%",
     borderRadius: 0,
@@ -45,20 +57,6 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.dark,
     },
-  },
-  buttonGroup: {
-    height: "100%",
-    width: "1rem",
-    flex: "0 0 1rem",
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-  },
-  divider: {
-    height: "80%",
-    margin: "auto",
   },
   menu: (props: { optionHeight: number; maxOptions: number }) => ({
     height: props.optionHeight * props.maxOptions,
@@ -74,22 +72,6 @@ const useStyles = makeStyles((theme) => ({
   }),
 }));
 
-const ColorButton = withStyles((theme) => ({
-  root: {
-    backgroundColor: "white",
-    width: "100%",
-    minWidth: "0.8rem",
-    padding: 2,
-    borderRadius: 0,
-    minHeight: "0.8rem",
-    height: "50%",
-    "&:hover": {
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.primary.dark,
-    },
-  },
-}))(Button);
-
 const Input = withStyles(() => ({
   root: {
     flex: "auto",
@@ -102,56 +84,55 @@ const Input = withStyles(() => ({
 }))(InputBase);
 
 export default function SelectableInput(props: {
-  options: string[];
-  value: string;
-  onChange: (value: string) => void;
-  optionHeight: number;
-  maxOptions: number;
+  options?: { label: string; value: string }[];
+  value?: string;
+  onChange?: (value: string) => void;
+  optionHeight?: number;
+  maxOptions?: number;
 }) {
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
-  const [selectedIndex, setSelectedIndex] = useState(3);
+  const { options, value, onChange, optionHeight, maxOptions } = props;
   const [displayValue, setDisplayValue] = useState(props.value);
   const classes = useStyles({
-    optionHeight: props.optionHeight,
-    maxOptions: props.maxOptions,
+    optionHeight: optionHeight || DEFAULT_OPTION_HEIGHT,
+    maxOptions: maxOptions || DEFAULT_MAX_OPTIONS,
   });
-  let selectedMenuItem;
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+  const selectedIndex = NumericUtils.findIndexOfValueInOptions(options, value);
 
   useEffect(() => {
-    const value = props.options[selectedIndex];
-    selectedMenuItem = document.getElementById(`item-id-${value}`);
+    const selectedMenuItem = document.getElementById(`item-id-${value}`);
     if (selectedMenuItem) selectedMenuItem.scrollIntoView();
   });
 
-  const updateValue = (event) => {
-    const { value } = event.target;
-    const value2 = Util.getNumber(value);
-    const closest = props.options.reduce((prev, curr) =>
-      Math.abs(Util.getNumber(curr) - value2) <
-      Math.abs(Util.getNumber(prev) - value2)
-        ? curr
-        : prev
-    );
-    const newIndex = props.options.indexOf(closest);
-    setSelectedIndex(newIndex);
+  useEffect(() => {
     setDisplayValue(value);
-    props.onChange(value);
+  }, [value]);
+
+  const updateParent = (val: string) => {
+    if (onChange) {
+      onChange(val);
+    }
+    setDisplayValue(value);
   };
 
-  const handleMenuItemClick = (event, index) => {
-    const value = props.options[index];
-    setSelectedIndex(index);
+  const handleEnter = (evt: any): void => {
+    const val = evt.target.value;
+    if (val) {
+      updateParent(val);
+    }
+  };
+
+  const handleMenuItemClick = (val: string): void => {
     setOpen(false);
-    setDisplayValue(value);
-    props.onChange(value);
+    updateParent(val);
   };
 
-  const handleToggle = () => {
+  const handleToggle = (): void => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
+  const handleClose = (event): void => {
     // @ts-ignore
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
@@ -165,28 +146,7 @@ export default function SelectableInput(props: {
   };
 
   const handleKeyPress = (event) => {
-    HTMLUtils.onEnter(updateValue)(event);
-  };
-
-  const setPrevOption = () => {
-    const newIndex =
-      selectedIndex < props.options.length - 1
-        ? selectedIndex + 1
-        : props.options.length - 1;
-    const value = props.options[newIndex];
-
-    setSelectedIndex(newIndex);
-    setDisplayValue(value);
-    props.onChange(value);
-  };
-
-  const setNextOption = () => {
-    const newIndex = selectedIndex > 0 ? selectedIndex - 1 : 0;
-    const value = props.options[newIndex];
-
-    setSelectedIndex(newIndex);
-    setDisplayValue(value);
-    props.onChange(value);
+    HTMLUtils.onEnter(handleEnter)(event);
   };
 
   return (
@@ -200,7 +160,7 @@ export default function SelectableInput(props: {
         <Grid item xs={12} className={classes.gridItem}>
           <Paper
             variant="outlined"
-            className={classes.inputGroup}
+            className={classes.paper}
             color="primary"
             ref={anchorRef}
             aria-label="split button"
@@ -212,32 +172,26 @@ export default function SelectableInput(props: {
               value={displayValue}
               onChange={handleValueChange}
               onKeyUp={handleKeyPress}
+              endAdornment={
+                <InputAdornment
+                  position="end"
+                  className={classes.inputAdornment}
+                >
+                  <Button
+                    className={classes.selectButton}
+                    color="primary"
+                    size="small"
+                    aria-controls={open ? "split-button-menu" : undefined}
+                    aria-expanded={open ? "true" : undefined}
+                    aria-label="select merge strategy"
+                    aria-haspopup="menu"
+                    onClick={handleToggle}
+                  >
+                    <ArrowDropDownIcon />
+                  </Button>
+                </InputAdornment>
+              }
             />
-            <ButtonGroup
-              className={classes.buttonGroup}
-              orientation="vertical"
-              color="primary"
-              aria-label="vertical outlined primary button group"
-            >
-              <ColorButton>
-                <ArrowDropUpIcon onClick={setPrevOption} />{" "}
-              </ColorButton>
-              <ColorButton>
-                <ArrowDropDownIcon onClick={setNextOption} />{" "}
-              </ColorButton>
-            </ButtonGroup>
-            <Button
-              className={classes.button}
-              color="primary"
-              size="small"
-              aria-controls={open ? "split-button-menu" : undefined}
-              aria-expanded={open ? "true" : undefined}
-              aria-label="select merge strategy"
-              aria-haspopup="menu"
-              onClick={handleToggle}
-            >
-              <ArrowDropDownIcon />
-            </Button>
           </Paper>
           <Popper
             open={open}
@@ -264,15 +218,15 @@ export default function SelectableInput(props: {
                 <Paper>
                   <ClickAwayListener onClickAway={handleClose}>
                     <MenuList id="split-button-menu" className={classes.menu}>
-                      {props.options.map((option, index) => (
+                      {options?.map((option, index) => (
                         <MenuItem
                           className={classes.menuItem}
-                          key={option}
-                          id={`item-id-${option}`}
+                          key={option.value}
+                          id={`item-id-${option.label}`}
                           selected={index === selectedIndex}
-                          onClick={(event) => handleMenuItemClick(event, index)}
+                          onClick={() => handleMenuItemClick(option.value)}
                         >
-                          {option}
+                          {option.label}
                         </MenuItem>
                       ))}
                     </MenuList>

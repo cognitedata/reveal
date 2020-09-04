@@ -10,7 +10,13 @@
       width: 100%;
       margin: 0 !important;
       min-height: 1.8rem !important;
-      padding-left: 0.5rem;
+      padding-left: 0.3rem;
+    }
+
+    .expand-title {
+      margin: 0 0.5rem;
+      font-size: var(--node-viz-default-font-size, variables.$application-default-font-size);
+      font-weight: 700;
     }
 
     .expand-btn {
@@ -26,14 +32,6 @@
       justify-content: center;
     }
 
-    .expand-title {
-      margin: 0 0.5rem;
-      font-size: var(
-        --subsurface-viz-default-font-size,
-        variables.$application-default-font-size
-      );
-      font-weight: 700;
-    }
   }
   .expand-toolbar {
     position: absolute;
