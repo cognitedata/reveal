@@ -332,7 +332,11 @@ export abstract class BaseNode extends Identifiable
         };
 
         if (child instanceof ColorTypeProperty)
+        {
           child.optionValidationDelegate = (option: ColorType) => this.supportsColorType(option);
+          child.nodeColor = this.color;
+          child.parentNodeColor = this.parent?.color;
+        }
       }
     }
   }

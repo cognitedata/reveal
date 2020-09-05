@@ -10,7 +10,8 @@ export class NumericUtils
   public static findClosestOption(optionValues?: { value: string, label: string }[], val?: string): { value: string, label: string } | null 
   {
     let closestOption: { value: string, label: string } | null = null;
-    if (optionValues && val) {
+    if (optionValues && val) 
+    {
       const sanitizedValue = Util.getNumber(val);
       closestOption = optionValues?.reduce((prev, curr) =>
         Math.abs(Util.getNumber(curr.value) - sanitizedValue) <

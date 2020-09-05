@@ -6,6 +6,7 @@ export default {
   Group: "group",
   Select: "select",
   ColorMap: "colorMap",
+  ColorType: "colorType",
   Color: "color",
   Slider: "slider",
   ImageButton: "imageButton",

@@ -15,6 +15,7 @@ import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty
 import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
 export default class NodeUtils
 {
@@ -170,7 +171,7 @@ export default class NodeUtils
       useProperty: property.use,
       isOptional: property.isOptional,
       options: NodeUtils.createSelectOptions(property.getExpandedOptions(), property.getOptionIcon),
-      extraOptionsData: property.extraOptionsData,
+      extraOptionsData: property.extraOptionsData() || undefined,
     };
 
     return element;
@@ -214,6 +215,8 @@ export default class NodeUtils
       return ElementTypes.Color;
     if (property instanceof ColorMapProperty)
       return ElementTypes.ColorMap;
+    if (property instanceof ColorTypeProperty)
+      return ElementTypes.ColorType;
 
     // All others with options
     if (property.hasOptions) return ElementTypes.Select;

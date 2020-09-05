@@ -3,6 +3,7 @@ import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import Range1 from "@/Core/Geometry/Range1";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 import { Appearance } from "@/Core/States/Appearance";
+import { IPropertyExtraOptionDataParams } from "@/Core/Property/Base/IPropertyExtraOptionDataParms";
 
 export default class ColorMapProperty extends ValueProperty<string>
 {
@@ -14,34 +15,42 @@ export default class ColorMapProperty extends ValueProperty<string>
   {
     super(params);
     this.options = ColorMaps.getOptions();
-    this.extraOptionsData = this.getColorMapOptionColors(Appearance.valuesPerColorMap);
   }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  public getColorMapOptionColors(colorCount: number): string[][]
+  public getColorMapOptionColors(colorCount: number): IPropertyExtraOptionDataParams[] | null
   {
     const options = this.getExpandedOptions() as string[];
     if (!options.length)
-      return [];
+      return null;
 
     return (options as string[]).map(colorMapName =>
     {
+      const colorMapOptionData = { colorMapColors: [] as string[] };
       const colorMap = ColorMaps.get(colorMapName);
-      const colors: string[] = [];
       if (!colorMap)
-        return colors;
+        return colorMapOptionData;
         
       const range = new Range1(0, colorCount - 1);
       for (let i = 0; i < colorCount; i++)
       {
         const fraction = range.getFraction(i);
         const color = colorMap.getColor(fraction).hex();
-        colors.push(color);
+        colorMapOptionData.colorMapColors.push(color);
       }
-      return colors;
+      return colorMapOptionData;
     });
+  }
+
+  //==================================================
+  // OVERRIDES OF VALUE PROPERTY
+  //==================================================
+
+  public extraOptionsData(): IPropertyExtraOptionDataParams[] | null 
+  {
+    return this.getColorMapOptionColors(Appearance.valuesPerColorMap);
   }
 }

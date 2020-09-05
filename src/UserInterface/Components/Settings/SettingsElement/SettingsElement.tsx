@@ -1,5 +1,6 @@
 import React from "react";
 import Color from "color";
+import "./SettingsElement.module.scss";
 import {
   ISettingsElement,
   ISettingsElementProps,
@@ -7,9 +8,10 @@ import {
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
 import Icon from "@/UserInterface/Components/Icon/Icon";
-import "./SettingsElement.module.scss";
-import { ColorMapSelector } from "@/UserInterface/Components/ColorMapSelector/ColorMapSelector";
 import { GenericSelect } from "@/UserInterface/Components/GenericSelect/GenericSelect";
+import { CommonSelectBase } from "@/UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase";
+import { ColorMapIcon } from "@/UserInterface/Components/Settings/ColorMapIcon/ColorMapIcon";
+import { ColorTypeIcon } from "@/UserInterface/Components/Settings/ColorTypeIcon/ColorTypeIcon";
 
 /**
  * Responsible for rendering dynamic inputs
@@ -52,6 +54,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
       name,
       value,
       options,
+      extraOptionsData,
     } = elmConfig;
 
     const disabled = elmConfig.isReadOnly || !elmConfig.useProperty;
@@ -80,22 +83,6 @@ export default function SettingsElement(props: ISettingsElementProps) {
             checked={value}
           />
         );
-      case ElementTypes.Select: {
-        return (
-          <div className="common-select">
-            <GenericSelect
-              key={keyExtractor(null, type, name).key}
-              options={options}
-              value={value}
-              disabled={disabled}
-              onChange={(e) => {
-                onChange(id, e);
-              }}
-              node={<ColorMapSelector />}
-            />
-          </div>
-        );
-      }
       case ElementTypes.Color:
         return (
           <CompactColorPicker
@@ -117,7 +104,18 @@ export default function SettingsElement(props: ISettingsElementProps) {
             max="1"
           />
         );
-      case ElementTypes.ColorMap: {
+      case ElementTypes.Select:
+      case ElementTypes.ColorMap:
+      case ElementTypes.ColorType: {
+        const getIconNode = (elementType: string) => {
+          if (elementType === ElementTypes.ColorMap) {
+            return <CommonSelectBase iconNode={<ColorMapIcon />} />;
+          }
+          if (elementType === ElementTypes.ColorType) {
+            return <CommonSelectBase iconNode={<ColorTypeIcon />} />;
+          }
+          return undefined;
+        };
         return (
           <div className="common-select">
             <GenericSelect
@@ -128,11 +126,8 @@ export default function SettingsElement(props: ISettingsElementProps) {
               onChange={(e) => {
                 onChange(id, e);
               }}
-              node={
-                <ColorMapSelector
-                  colorMapOptions={elmConfig.extraOptionsData}
-                />
-              }
+              extraOptionsData={extraOptionsData}
+              node={getIconNode(type)}
             />
           </div>
         );

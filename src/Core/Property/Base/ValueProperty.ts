@@ -1,6 +1,7 @@
 import * as Lodash from "lodash";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { IPropertyExtraOptionDataParams } from "@/Core/Property/Base/IPropertyExtraOptionDataParms";
 
 //==================================================
 // TYPES AND DELEGATES
@@ -24,7 +25,6 @@ export default abstract class ValueProperty<T> extends BaseProperty
   private readonly _instance?: object;
   private _value?: T;
   private _options?: T | T[];
-  private _extraOptionData?: string[][];
   private _use?: boolean; // undefined = hide the use button
 
   //==================================================
@@ -38,8 +38,6 @@ export default abstract class ValueProperty<T> extends BaseProperty
   public set options(value: T | T[] | undefined) { this._options = value; }
   public get useName(): string { return `use${this.name.charAt(0).toUpperCase()}${this.name.substring(1)}`; }
   public get isOptional(): boolean { return this._use !== undefined; }
-  public get extraOptionsData(): string[][] | undefined { return this._extraOptionData; };
-  public set extraOptionsData(extraOptionsData: string[][] | undefined) { this._extraOptionData = extraOptionsData; };
 
   //==================================================
   // INSTANCE DELEGATES
@@ -165,6 +163,8 @@ export default abstract class ValueProperty<T> extends BaseProperty
   //==================================================
   // INSTANCE METHODS
   //==================================================
+
+  public /*virtual*/ extraOptionsData(): IPropertyExtraOptionDataParams[] | null { return null; };
 
   private apply(): void
   {

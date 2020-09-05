@@ -60,7 +60,7 @@ export interface ISettingsSection
 export interface ISettingsElement extends IBaseSettingsElement
 {
   options?: ISelectOption[];
-  extraOptionsData?: string[][];
+  extraOptionsData?: ICommonSelectExtraOptionData[];
   icon?: {
     type: string;
     name: string;
@@ -86,4 +86,19 @@ export interface ISelectOption
   label: string;
   value: any;
   iconSrc?: string
+}
+
+export interface ICommonSelectProps 
+{
+  id?: string;
+  options?: ISelectOption[];
+  extraOptionsData?: ICommonSelectExtraOptionData[];
+  value?: string;
+  onChange?: (val: string) => void;
+  disabled?: boolean;
+}
+export interface ICommonSelectExtraOptionData 
+{
+  colorMapColors?: string[];
+  colorTypeIconData?: { icon?: string, color?: string }
 }

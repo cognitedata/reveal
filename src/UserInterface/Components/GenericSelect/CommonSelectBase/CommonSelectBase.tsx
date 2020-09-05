@@ -1,13 +1,16 @@
 import React from "react";
-import { InputBase, MenuItem, Theme } from "@material-ui/core";
+import { InputBase, MenuItem, Theme, ListItemIcon } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Select from "@material-ui/core/Select";
 import withStyles from "@material-ui/core/styles/withStyles";
-import styled from "styled-components";
 import ListItemText from "@material-ui/core/ListItemText";
-import { ISelectOption } from "@/UserInterface/Components/Settings/Types";
+import {
+  ISelectOption,
+  ICommonSelectProps,
+  ICommonSelectExtraOptionData,
+} from "@/UserInterface/Components/Settings/Types";
 
-const StyledSelect = withStyles(() => ({
+const CommonSelect = withStyles(() => ({
   root: {
     height: "100%",
     padding: "5px 5px",
@@ -21,7 +24,7 @@ const StyledSelect = withStyles(() => ({
   },
 }))(Select);
 
-const StyledInput = withStyles((theme: Theme) => ({
+const CommonSelectInput = withStyles((theme: Theme) => ({
   root: {
     height: "100%",
     flex: "1 1 auto",
@@ -42,7 +45,7 @@ const StyledInput = withStyles((theme: Theme) => ({
   },
 }))(InputBase);
 
-const StyledListItemText = withStyles(() => ({
+const WrappingListItemText = withStyles(() => ({
   primary: {
     whiteSpace: "nowrap",
     overflow: "hidden",
@@ -56,57 +59,60 @@ const useStyles = makeStyles(() => ({
     padding: "0.3rem 0.3rem",
   },
 }));
-export interface ColorMapProps {
-  readonly colors?: string[];
-}
 
-const ColorMap = styled.div<ColorMapProps>`
-  height: 100%;
-  min-height: 1rem;
-  min-width: 2rem;
-  border-radius: 0.15rem;
-  margin-inline-end: 0.5rem;
-  background-image: linear-gradient(
-    to right,
-    ${(props) => (props.colors ? props.colors.join(",") : "")}
-  );
-`;
-
-export function ColorMapSelector(props: {
-  options?: ISelectOption[];
-  colorMapOptions?: Array<string>[];
-  value?: string;
-  onChange?: (event: React.ChangeEvent<any>) => void;
-  disabled?: boolean;
-}) {
-  const { options, colorMapOptions, value, onChange, disabled } = props;
+export function CommonSelectBase(
+  props: ICommonSelectProps & {
+    onChange?: (event: React.ChangeEvent<any>) => void;
+    iconNode?: React.ReactElement<
+      { data?: ICommonSelectExtraOptionData; value?: string },
+      any
+    >;
+  }
+) {
+  const {
+    id,
+    options,
+    extraOptionsData,
+    value,
+    onChange,
+    disabled,
+    iconNode,
+  } = props;
   const classes = useStyles();
 
   return (
-    <StyledSelect
-      labelId="color-map-select"
-      id="color-map-select"
+    <CommonSelect
+      labelId="common-select-base"
+      id={id}
       value={value}
       disabled={disabled}
       onChange={onChange}
-      input={<StyledInput />}
+      input={<CommonSelectInput />}
     >
       {options?.map((option: ISelectOption, index: number) => {
-        let colors: string[] = [];
-        if (colorMapOptions) {
-          colors = colorMapOptions[index];
-        }
+        const getIconNode = () => {
+          if (iconNode) {
+            if (extraOptionsData) {
+              return React.cloneElement(iconNode, {
+                data: extraOptionsData[index],
+                value: option.value,
+              });
+            }
+          }
+          return null;
+        };
+
         return (
           <MenuItem
             className={classes.menuItem}
             value={option.value}
             key={option.value}
           >
-            {colors.length > 0 && <ColorMap colors={colors} />}
-            <StyledListItemText>{option.label}</StyledListItemText>
+            <ListItemIcon>{getIconNode()}</ListItemIcon>
+            <WrappingListItemText>{option.label}</WrappingListItemText>
           </MenuItem>
         );
       })}
-    </StyledSelect>
+    </CommonSelect>
   );
 }

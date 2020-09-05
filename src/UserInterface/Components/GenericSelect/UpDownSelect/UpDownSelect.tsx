@@ -7,7 +7,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import { Theme } from "@material-ui/core/styles";
-import { ISelectOption } from "@/UserInterface/Components/Settings/Types";
+import { ICommonSelectProps } from "@/UserInterface/Components/Settings/Types";
 import { NumericUtils } from "@/UserInterface/Foundation/Utils/NumericUtils";
 
 const ArrowButton = withStyles((theme: Theme) => ({
@@ -50,14 +50,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export function UpDownSelect(props: {
-  options?: ISelectOption[];
-  value?: string;
-  onChange?: (val: string) => void;
-  disabled?: boolean;
-  node: any;
-}) {
-  const { options, value, onChange, disabled, node } = props;
+export function UpDownSelect(
+  props: ICommonSelectProps & {
+    node: React.ReactElement<ICommonSelectProps, any>;
+  }
+) {
+  const { options, extraOptionsData, value, onChange, disabled, node } = props;
   const classes = useStyles();
 
   const updateState = (updateVal: string) => {
@@ -97,6 +95,7 @@ export function UpDownSelect(props: {
         value,
         onChange: handleChange,
         disabled,
+        extraOptionsData,
       })}
       <ButtonGroup
         className={classes.buttonGroup}
