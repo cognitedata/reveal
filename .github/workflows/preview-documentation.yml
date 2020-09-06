@@ -40,5 +40,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: documentation/docs-preview # The folder the action should deploy.
+          BRANCH: master # The branch the action should deploy to.
+          FOLDER: documentation/docs-preview/build # The folder the action should deploy.
+          REPOSITORY: cognitedata/reveal-docs-preview
