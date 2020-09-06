@@ -33,7 +33,8 @@ jobs:
         run: |
           export PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           mkdir -p "docs-preview/$PR_NUMBER"
-          mv "build/*" "docs-preview/$PR_NUMBER/"
+          ls "docs-preview/"
+          cp -R build/ "docs-preview/$PR_NUMBER/"
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
