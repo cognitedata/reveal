@@ -48,6 +48,6 @@ jobs:
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v1
         with:
-          issue-number: ${{ PR_NUMBER }}
+          issue-number: ${{ env.PR_NUMBER }}
           body: |
-            Documentation preview is available form https://cognitedata.github.io/reveal-preview-docs/$PR_NUMBER
+            Documentation preview is available form https://cognitedata.github.io/reveal-preview-docs/${{ env.PR_NUMBER }}/docs.
