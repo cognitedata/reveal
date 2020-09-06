@@ -35,7 +35,7 @@ jobs:
           echo "::set-env name=PR_NUMBER::$PR_NUMBER"
           mkdir -p "docs-preview/$PR_NUMBER"
           ls "docs-preview/"
-          cp -R "build/*" "docs-preview/$PR_NUMBER/"
+          cp -R build/* "docs-preview/$PR_NUMBER/"
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
