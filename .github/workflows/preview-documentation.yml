@@ -45,10 +45,13 @@ jobs:
           FOLDER: documentation/docs-preview # The folder the action should deploy.
           REPOSITORY_NAME: cognitedata/reveal-docs-preview
 
-      - name: Create comment
-        uses: peter-evans/create-or-update-comment@v1
+
+      - name: comment PR
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          issue-number: ${{ env.PR_NUMBER }}
-          body: |
+          msg: |
             :orange_book: Documentation preview is available from
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs.
+          check_for_duplicate_msg: true
