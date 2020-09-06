@@ -50,4 +50,5 @@ jobs:
         with:
           issue-number: ${{ env.PR_NUMBER }}
           body: |
-            Documentation preview is available form https://cognitedata.github.io/reveal-preview-docs/${{ env.PR_NUMBER }}/docs.
+            :orange_book: Documentation preview is available from
+            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs.
