@@ -6967,10 +6967,10 @@ run-script-os@^1.1.1:
   resolved "https://registry.yarnpkg.com/run-script-os/-/run-script-os-1.1.1.tgz#4b4c5fd212b52fe8d9a1bca23f118764ee423c6c"
   integrity sha512-tM3mfchUIpo9WOFioO3eO/lTgRbtqcqBmSkkqfkjXmxn7vvhwykOXxOOKIXFP+ZConvLsS5KskM3yX+XBfDD4g==
 
-rxjs@^6.5.5, rxjs@^6.6.2:
-  version "6.6.2"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.2.tgz#8096a7ac03f2cc4fe5860ef6e572810d9e01c0d2"
-  integrity sha512-BHdBMVoWC2sL26w//BCu3YzKT4s2jip/WhwsGEDmeKYBhKDZeYezVUnHatYB7L85v5xs0BAQmg6BEYJEKxBabg==
+rxjs@^6.6.2, rxjs@^6.6.3:
+  version "6.6.3"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.3.tgz#8ca84635c4daa900c0d3967a6ee7ac60271ee552"
+  integrity sha512-trsQc+xYYXZ3urjOiJOuCOa5N3jAZ3eiSpQB5hIT8zGlL2QfnHLJ2r7GMkBGuIausdJN1OneaI6gQlsqNHHmZQ==
   dependencies:
     tslib "^1.9.0"
 
