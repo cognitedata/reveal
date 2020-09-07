@@ -487,8 +487,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    this.hiddenNodes.delete(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+    treeIndices.forEach(idx => this.hiddenNodes.delete(idx));
+    this.cadNode.requestNodeUpdate(treeIndices.asArray());
     return treeIndices.count;
   }
 
