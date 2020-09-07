@@ -1,11 +1,13 @@
 import { Water } from 'three/examples/jsm/objects/Water';
-import { resetViewerEventHandlers } from "../viewerUtilities";
+import { resetViewerEventHandlers } from '../viewerUtilities';
 import * as THREE from 'three';
-import useBaseUrl from "@docusaurus/useBaseUrl";
 
-export const customScope = {
+export const customScope: Record<string, any> = {
   resetViewerEventHandlers,
   THREE,
   Water,
-  skyUrl: useBaseUrl('/img/sky007.jpg')
-}
+  // you can't simply call useBaseUrl here because it's a react hook...
+  urls: {
+    skyUrl: '/img/sky007.jpg',
+  },
+};
