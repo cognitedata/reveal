@@ -1,10 +1,13 @@
-const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const path = require("path");
 
-const SUBSURFACE_COMPONENTS_PATH = "src/__export__/subsurface-components";
-const SUBSURFACE_INTERFACES_PATH = "src/__export__/subsurface-interfaces";
-const SUBSURFACE_VISUALIZER_PATH = "src/__export__/subsurface-visualizer";
+const NODE_VISUALIZER_COMPONENTS_PATH =
+  "src/__export__/node-visualizer-components";
+const NODE_VISUALIZER_SUBSURFACE_PATH =
+  "src/__export__/node-visualizer-subsurface";
+const NODE_VISUALIZER_PATH = "src/__export__/node-visualizer";
 
 function resolve(dir) {
   return path.resolve(__dirname, dir);
@@ -13,9 +16,9 @@ function resolve(dir) {
 module.exports = (env) => ({
   mode: env.debug === "false" ? "production" : "development",
   entry: {
-    "subsurface-visualizer/subsurface-visualizer": `./${SUBSURFACE_VISUALIZER_PATH}/index.ts`,
-    "subsurface-components/subsurface-components": `./${SUBSURFACE_COMPONENTS_PATH}/index.ts`,
-    "subsurface-interfaces/subsurface-interfaces": `./${SUBSURFACE_INTERFACES_PATH}/index.ts`,
+    "node-visualizer/node-visualizer": `./${NODE_VISUALIZER_PATH}/index.ts`,
+    "node-visualizer-components/node-visualizer-components": `./${NODE_VISUALIZER_COMPONENTS_PATH}/index.ts`,
+    "node-visualizer-subsurface/node-visualizer-subsurface": `./${NODE_VISUALIZER_SUBSURFACE_PATH}/index.ts`,
   },
   module: {
     rules: [
@@ -32,9 +35,23 @@ module.exports = (env) => ({
           {
             loader: "ts-loader",
             options: {
-              instance: "subsurface-visualizer",
+              instance: "node-visualizer",
+              configFile: resolve(`${NODE_VISUALIZER_PATH}/tsconfig.json`),
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(ts|js)x?$/,
+        include: resolve(NODE_VISUALIZER_COMPONENTS_PATH),
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              instance: "node-visualizer-components",
               configFile: resolve(
-                `${SUBSURFACE_VISUALIZER_PATH}/tsconfig.json`
+                `${NODE_VISUALIZER_COMPONENTS_PATH}/tsconfig.json`
               ),
             },
           },
@@ -42,44 +59,32 @@ module.exports = (env) => ({
       },
       {
         test: /\.(ts|js)x?$/,
-        include: resolve(SUBSURFACE_COMPONENTS_PATH),
+        include: resolve(NODE_VISUALIZER_SUBSURFACE_PATH),
         exclude: /node_modules/,
         use: [
           {
             loader: "ts-loader",
             options: {
-              instance: "subsurface-Components",
+              instance: "node-visualizer-subsurface",
               configFile: resolve(
-                `${SUBSURFACE_COMPONENTS_PATH}/tsconfig.json`
+                `${NODE_VISUALIZER_SUBSURFACE_PATH}/tsconfig.json`
               ),
             },
           },
         ],
       },
       {
-        test: /\.(ts|js)x?$/,
-        include: resolve(SUBSURFACE_INTERFACES_PATH),
-        exclude: /node_modules/,
+        test: /\.((c|sa|sc)ss)$/i,
         use: [
-          {
-            loader: "ts-loader",
-            options: {
-              instance: "subsurface-interfaces",
-              configFile: resolve(
-                `${SUBSURFACE_INTERFACES_PATH}/tsconfig.json`
-              ),
-            },
-          },
-        ],
-      },
-      {
-        test: /\.module\.s([ac])ss$/,
-        loader: [
-          "style-loader",
+          env.debug === "true" ? "style-loader" : MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
             options: {
-              modules: true,
+              // Run `postcss-loader` on each CSS `@import`, do not forget that `sass-loader` compile non CSS `@import`'s into a single file
+              // If you need run `sass-loader` and `postcss-loader` on each CSS `@import` please set it to `2`
+              importLoaders: 1,
+              // Automatically enable css modules for files satisfying `/\.module\.\w+$/i` RegExp.
+              modules: { auto: false },
               sourceMap: env.debug === "true",
             },
           },
@@ -87,20 +92,6 @@ module.exports = (env) => ({
             loader: "sass-loader",
             options: {
               sourceMap: env.debug === "true",
-            },
-          },
-        ],
-      },
-      {
-        test: /\.s([ac])ss$/,
-        exclude: /\.module.(s([ac])ss)$/,
-        loader: [
-          "style-loader",
-          "css-loader",
-          {
-            loader: "sass-loader",
-            options: {
-              sourceMap: env.development,
             },
           },
         ],
@@ -123,9 +114,13 @@ module.exports = (env) => ({
     alias: {
       "@": resolve("src"),
       "@images": resolve("images"),
-      "@cognite/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH),
-      "@cognite/subsurface-interfaces": resolve(SUBSURFACE_INTERFACES_PATH),
-      "@cognite/subsurface-visualizer": resolve(SUBSURFACE_VISUALIZER_PATH),
+      "@cognite/node-visualizer-components": resolve(
+        NODE_VISUALIZER_COMPONENTS_PATH
+      ),
+      "@cognite/node-visualizer-subsurface": resolve(
+        NODE_VISUALIZER_SUBSURFACE_PATH
+      ),
+      "@cognite/node-visualizer": resolve(NODE_VISUALIZER_PATH),
     },
   },
   output: {
@@ -140,38 +135,39 @@ module.exports = (env) => ({
     minimize: env.debug === "false",
   },
   plugins: [
+    new MiniCssExtractPlugin(),
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new CopyPlugin({
       patterns: [
         {
-          context: resolve(SUBSURFACE_VISUALIZER_PATH),
+          context: resolve(NODE_VISUALIZER_PATH),
           from: "package.json",
-          to: resolve("dist/subsurface-visualizer"),
+          to: resolve("dist/node-visualizer"),
         },
         {
-          context: resolve(SUBSURFACE_VISUALIZER_PATH),
+          context: resolve(NODE_VISUALIZER_PATH),
           from: "README.md",
-          to: resolve("dist/subsurface-visualizer"),
+          to: resolve("dist/node-visualizer"),
         },
         {
-          context: resolve(SUBSURFACE_COMPONENTS_PATH),
+          context: resolve(NODE_VISUALIZER_COMPONENTS_PATH),
           from: "package.json",
-          to: resolve("dist/subsurface-components"),
+          to: resolve("dist/node-visualizer-components"),
         },
         {
-          context: resolve(SUBSURFACE_COMPONENTS_PATH),
+          context: resolve(NODE_VISUALIZER_COMPONENTS_PATH),
           from: "README.md",
-          to: resolve("dist/subsurface-components"),
+          to: resolve("dist/node-visualizer-components"),
         },
         {
-          context: resolve(SUBSURFACE_INTERFACES_PATH),
+          context: resolve(NODE_VISUALIZER_SUBSURFACE_PATH),
           from: "package.json",
-          to: resolve("dist/subsurface-interfaces"),
+          to: resolve("dist/node-visualizer-subsurface"),
         },
         {
-          context: resolve(SUBSURFACE_INTERFACES_PATH),
+          context: resolve(NODE_VISUALIZER_SUBSURFACE_PATH),
           from: "README.md",
-          to: resolve("dist/subsurface-interfaces"),
+          to: resolve("dist/node-visualizer-subsurface"),
         },
       ],
     }),

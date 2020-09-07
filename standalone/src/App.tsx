@@ -1,48 +1,81 @@
-import React, {useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import {
   NodeVisualizer,
-  SubsurfaceReducer,
-  SubsurfaceMiddleware,
+  NodeVisualizerReducer,
+  NodeVisualizerMiddleware,
   SyntheticSubSurfaceModule,
   ThreeModule,
-  Modules
-} from "@cognite/subsurface-visualizer";
-import {createStore, combineReducers, applyMiddleware, compose} from "redux";
-import {Provider} from "react-redux";
+  Modules, BaseRootNode,
+} from "@cognite/node-visualizer";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
+import { Provider } from "react-redux";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { grey } from "@material-ui/core/colors";
 
 // @ts-ignore
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+}) : compose;
 
-const store = createStore(
-  combineReducers({ ...SubsurfaceReducer }),
-  compose(applyMiddleware(...SubsurfaceMiddleware)) // comment this line to enable Redux dev tools
-  //composeEnhancers(applyMiddleware(...SubsurfaceMiddleware))  // uncomment to enable Redux dev tools
+const enhancer = composeEnhancers(
+  applyMiddleware(...NodeVisualizerMiddleware),
 );
 
-function App() {
+const store = createStore(
+  combineReducers({ ...NodeVisualizerReducer }),
+  enhancer
+);
 
-  // Setup modules
+// customize the colors for changing UI style
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: grey[300]
+    },
+    secondary: {
+      main: grey[50]
+    }
+  },
+  typography: {
+    htmlFontSize: 16,
+    fontSize: 16 * 0.75,
+    h2: {
+      fontSize: 14
+    },
+    body1: {
+      fontSize: 16 * 0.75
+    }
+  }
+});
+
+function App()
+{
+
+  const [root, setRoot] = useState<BaseRootNode>();
+
   const modules = Modules.instance;
+  // Setup modules
+  modules.add(new ThreeModule());
 
   useEffect(() => {
+    modules.add(new SyntheticSubSurfaceModule());
+    modules.install();
+    const rootNode = modules.createRoot();
+    setRoot(rootNode);
+
     return () => {
       // clean modules on unmount
       modules.clearModules();
     };
-  });
-
-  // Setup modules
-  modules.add(new ThreeModule());
-  modules.add(new SyntheticSubSurfaceModule());
-  modules.install();
-
-  const rootObj = modules.createRoot();
+  }, []);
 
   return (
     <div className="App">
-      <Provider store={store}>
-        <NodeVisualizer root={rootObj}/>
+      <Provider store={ store }>
+        <ThemeProvider theme={ theme }>
+          <NodeVisualizer root={ root }/>
+        </ThemeProvider>
       </Provider>
     </div>
   );

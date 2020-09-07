@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "declarationDir": "../../../dist/subsurface-components/types"
+    "declarationDir": "../../../dist/node-visualizer-components/types"
   },
   "include": [
     "../../UserInterface/Components/**/*.ts",

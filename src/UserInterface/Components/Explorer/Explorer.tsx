@@ -1,8 +1,8 @@
 import "@/UserInterface/Components/Explorer/Explorer.module.scss";
 import React from "react";
-import { VirtualTree } from "@cognite/subsurface-components";
 import { ExplorerPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
 import { ExplorerTabs } from "@/UserInterface/Components/Explorer/ExplorerTabs";
+import { VirtualTree } from "@/UserInterface/Components/VirtualTree/VirtualTree"; // todo: get this from @cognite/node-visualizer-components package
 
 // Renders Tree Controller
 export function Explorer(props: ExplorerPropType) {

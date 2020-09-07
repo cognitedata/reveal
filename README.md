@@ -1,35 +1,35 @@
 # Cognite Node Visualizer
 
-This is a monorepo for a generic visualization of a tree of data (called nodes). Please find the links below to eachof the packages available in this repo.
+This is a monorepo for a generic visualization of a tree of data (called nodes). Please find the links below to each of the packages available in this repo.
 
 | Project               |            Package             |                                                                                              Readme |
 | --------------------- | :----------------------------: | --------------------------------------------------------------------------------------------------: |
-| Subsurface Visualizer | @cognite/subsurface-visualizer |                                                                                         This Readme |
-| Subsurface Interfaces | @cognite/subsurface-interfaces |  [Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Interface#readme) |
-| Subsurface Components | @cognite/subsurface-components | [Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Components#readme) |
+| Node Visualizer | @cognite/node-visualizer |                                                                                         This Readme |
+| Node Visualizer Subsurface Module | @cognite/node-visualizer-subsurface |  [Readme](https://github.com/cognitedata/node-visualizer/blob/master/src/Interface#readme) |
+| Node Visualizer Components | @cognite/node-visualizer-components | [Readme](https://github.com/cognitedata/node-visualizer/blob/master/src/Components#readme) |
 
-## Subsurface Visualizer library usage
+## Node Visualizer library usage
 
 ### for cognite org users in npm
 
-This package is available as a private package in [npm](https://www.npmjs.com/package/@cognite/subsurface-visualizer).
-To use this library user must be a member of cognite organization in npm.
+This package is available as a private package in [npm](https://www.npmjs.com/package/@cognite/node-visualizer).
+To use this library user must be a member of cognite NPM organization.
 
 - login to npm and follow steps : `npm login`
-- install library : `npm i @cognite/subsurface-visualizer`
+- install library : `npm i @cognite/node-visualizer`
 - Import React component and reducer and store enhancers:
 
 ```javascript
 import {
-  SubsurfaceVisualizer,
+  NodeVisualizer,
   NodeVisualizerReducer,
   NodeVisualizerMiddleware
-} from "@cognite/subsurface-visualizer";
+} from "@cognite/node-visualizer";
 ```
 
 - Add the component and provide a store
 
-```javascript
+```typescript jsx
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 
@@ -42,17 +42,17 @@ function App() {
   return (
     <div className="App">
       <Provider>
-        <SubsurfaceVisualizer />
+        <NodeVisualizer />
       </Provider>
     </div>
   );
 }
 ```
 
-## Customizing Subsurface Visualizer
+## Customizing Appearance
 
-Limited number of CSS Custom Properties are available to customize the appearance of subsurface visualizer.
-If the css properties are not set default values will be used.
+Limited number of CSS Custom Properties are available to customize the appearance of Application.
+If the css properties are not set, default values will be used.
 
 | Css Custom Property Name                          |
 | ------------------------------------------------- |
@@ -77,15 +77,46 @@ If the css properties are not set default values will be used.
 | --node-viz-icon-size                           |
 | --node-viz-readonly-input-color                |
 
-refer [default theme section](https://github.com/cognitedata/subsurface-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
+refer [default theme section](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
+
+Furthermore override Material Default Theme
+
+example: 
+```typescript jsx
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: grey[300],
+    },
+    secondary: {
+      main: grey[50],
+    },
+  },
+  typography: {
+    htmlFontSize: 16,
+    fontSize: 16 * Appearance.ApplicationDefaultFontSize,
+    h2: {
+      fontSize: 14,
+    },
+    body1: {
+      fontSize: 16 * Appearance.ApplicationDefaultFontSize,
+    },
+  },
+});
+
+<ThemeProvider theme={theme}>
+   <NodeVisualizer root={root} />
+</ThemeProvider>
+```
+Further more custom appearance variables are available in [Appearance.ts](https://github.com/cognitedata/node-visualizer/blob/master/src/Core/States/Appearance.ts)
 
 ### Customizing Tree Control
 
-refer [Tree Control Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Components#readme)
+refer [Tree Control Readme](https://github.com/cognitedata/node-visualization/blob/master/src/Components#readme)
 
 ### Examples
 
-refer [theme for standalone Application](https://github.com/cognitedata/subsurface-visualization/blob/master/src/UserInterface/styles/scss/theme.scss)
+refer [theme for standalone Application](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/theme.scss)
 
 ## For Contributors
 
@@ -93,8 +124,8 @@ refer [theme for standalone Application](https://github.com/cognitedata/subsurfa
 
 Recommended extensions:
 
-- [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) - for continously running unit tests and showing results inline in the editor.
-- [TSLint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin) - for formatting source code
+- [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) - for continuously running unit tests and showing results inline in the editor.
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) - for linting source code
 
 ### Starting development web server
 
@@ -116,7 +147,7 @@ Recommended extensions:
 
 Web server will restart and browser will automatically update whenever a file changes.
 
-### Output Production Bundles - Subsurface Visualizer
+### Output Production Bundles - Node Visualizer
 
 This project exposes the application as a react component library and as well as a standalone react application.
 
@@ -131,30 +162,30 @@ Optimized standalone application build will be created in **standalone/build** d
 
 - Run build command in project base directory: `npm run build`
 
-Project build as a library will be created in **dist/subsurface-visualizer** folder.
+Project build as a library will be created in **dist/node-visualizer** folder.
 
 ### Develop with Yarn Workspaces
 
-- Clone bp-visualization and subsurface-visualization projects into a root folder
+- Clone bp-visualization and Node-visualizer projects into a root folder
 - Create a `package.json` at root folder with the following content.
 ```
     {
         "private": true,
         "workspaces": [
             "bp-visualization",
-            "subsurface-visualization"
+            "node-visualizer"
         ]
     }
 ```
 
-- Change "@cognite/subsurface-visualizer" version in bp-visualization/package.json to match with subsurface-visualization version.
+- Change "@cognite/node-visualizer" version in bp-visualization/package.json to match with node-visualizer version.
 - Run `yarn` command at the root folder.
-- Run `yarn build` command at the subsurface-visualization project. (You might have to run `build:types` also depending on the environment)
+- Run `yarn build` command at the node-visualizer project. (You might have to run `build:types` also depending on the environment)
 - Run `set https=true&&yarn start` at the bp-visualzation project.
-- Make any change in the subsurface-visualzation and run `yarn build` there. The bp-visualization will built automatically to reflect the changes.
+- Make any change in the node-visualizer and run `yarn build` there. The bp-visualization will built automatically to reflect the changes.
 - When subsurface standalone needs to be run, use start:root command which access the node modules from root folder.
 
-#### Get dependancies for bp-visualization again from npm registry
-- Change "@cognite/subsurface-visualizer" version in bp-visualization/package.json to a valid version in npm registry. (It should not match with the locally built subsurface-visualization version).
-- If you face any conflicts/issues while getting dependancies back from npm registry, just remove or rename the root package.json and run `yarn` command from bp-visualization project
+#### Get dependencies for bp-visualization again from npm registry
+- Change "@cognite/node-visualizer" version in bp-visualization/package.json to a valid version in npm registry. (It should not match with the locally built node-visualization version).
+- If you face any conflicts/issues while getting dependencies back from npm registry, just remove or rename the root package.json and run `yarn` command from bp-visualization project
 

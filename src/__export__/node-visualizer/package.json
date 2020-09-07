@@ -1,10 +1,10 @@
 {
   "name": "@cognite/node-visualizer",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Spatial visualizer for Cognite",
-  "main": "subsurface-visualizer.js",
-  "module": "subsurface-visualizer.js",
-  "types": "types/index.d.ts",
+  "main": "node-visualizer.js",
+  "module": "node-visualizer.js",
+  "types": "types/__export__/node-visualizer/index.d.ts",
   "engines": {
     "node": ">=12"
   },
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cognitedata/subsurface-visualization.git"
+    "url": "git+https://github.com/cognitedata/node-visualizer.git"
   },
   "keywords": [
     "subsurface",
@@ -26,9 +26,9 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/cognitedata/subsurface-visualization/issues"
+    "url": "https://github.com/cognitedata/node-visualizer/issues"
   },
-  "homepage": "https://github.com/cognitedata/subsurface-visualization#readme",
+  "homepage": "https://github.com/cognitedata/node-visualizer#readme",
   "peer-dependencies": {
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",

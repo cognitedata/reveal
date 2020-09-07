@@ -1,9 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-const SUBSURFACE_COMPONENTS_PATH = "src/__export__/subsurface-components";
-const SUBSURFACE_INTERFACES_PATH = "src/__export__/subsurface-interfaces";
-const SUBSURFACE_VISUALIZER_PATH = "src/__export__/subsurface-visualizer";
+const SUBSURFACE_COMPONENTS_PATH = "src/__export__/node-visualizer-components";
+const SUBSURFACE_INTERFACES_PATH = "src/__export__/node-visualizer-subsurface";
+const SUBSURFACE_VISUALIZER_PATH = "src/__export__/node-visualizer";
 
 function resolve(dir) {
   return path.resolve(__dirname, dir);

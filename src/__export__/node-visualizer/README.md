@@ -1,22 +1,22 @@
-# Cognite Subsurface Visualizer
+# Cognite Node Visualizer
 
-This is a monorepo for all subsurface visualization features in cognite. Please find the links below to eachof the packages available in this repo.
+This is a monorepo for a generic visualization of a tree of data (called nodes). Please find the links below to each of the packages available in this repo.
 
 | Project               |            Package             |                                                                                              Readme |
 | --------------------- | :----------------------------: | --------------------------------------------------------------------------------------------------: |
-| Subsurface Visualizer | @cognite/subsurface-visualizer |                                                                                         This Readme |
-| Subsurface Interfaces | @cognite/subsurface-interfaces |  [Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Interface#readme) |
-| Subsurface Components | @cognite/subsurface-components | [Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Components#readme) |
+| Node Visualizer | @cognite/node-visualizer |                                                                                         This Readme |
+| Node Visualizer Subsurface Module | @cognite/node-visualizer-subsurface |  [Readme](https://github.com/cognitedata/node-visualizer/blob/master/src/Interface#readme) |
+| Node Visualizer Components | @cognite/node-visualizer-components | [Readme](https://github.com/cognitedata/node-visualizer/blob/master/src/Components#readme) |
 
-## Subsurface Visualizer library usage
+## Node Visualizer library usage
 
 ### for cognite org users in npm
 
-This package is available as a private package in [npm](https://www.npmjs.com/package/@cognite/subsurface-visualizer).
-To use this library user must be a member of cognite organization in npm.
+This package is available as a private package in [npm](https://www.npmjs.com/package/@cognite/node-visualizer).
+To use this library user must be a member of cognite NPM organization.
 
 - login to npm and follow steps : `npm login`
-- install library : `npm i @cognite/subsurface-visualizer`
+- install library : `npm i @cognite/node-visualizer`
 - Import React component and reducer and store enhancers:
 
 ```javascript
@@ -24,12 +24,12 @@ import {
   NodeVisualizer,
   NodeVisualizerReducer,
   NodeVisualizerMiddleware
-} from "@cognite/subsurface-visualizer";
+} from "@cognite/node-visualizer";
 ```
 
 - Add the component and provide a store
 
-```javascript
+```typescript jsx
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 
@@ -49,10 +49,10 @@ function App() {
 }
 ```
 
-## Customizing Subsurface Visualizer
+## Customizing Appearance
 
-Limited number of CSS Custom Properties are available to customize the appearance of subsurface visualizer.
-If the css properties are not set default values will be used.
+Limited number of CSS Custom Properties are available to customize the appearance of Application.
+If the css properties are not set, default values will be used.
 
 | Css Custom Property Name                          |
 | ------------------------------------------------- |
@@ -73,19 +73,49 @@ If the css properties are not set default values will be used.
 | --node-viz-select-input-background          |
 | --node-viz-select-input-option-color        |
 | --node-viz-slider-input-background          |
-| --node-viz-default-font-size                |
-| --node-viz-icon-size                        |
-| --node-viz-readonly-input-color             |
+| --node-viz-default-font-size                   |
+| --node-viz-icon-size                           |
+| --node-viz-readonly-input-color                |
 
-refer [default theme section](https://github.com/cognitedata/subsurface-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
+refer [default theme section](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
+
+Furthermore override Material Default Theme
+
+example: 
+```typescript jsx
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: grey[300],
+    },
+    secondary: {
+      main: grey[50],
+    },
+  },
+  typography: {
+    htmlFontSize: 16,
+    fontSize: 16 * Appearance.ApplicationDefaultFontSize,
+    h2: {
+      fontSize: 14,
+    },
+    body1: {
+      fontSize: 16 * Appearance.ApplicationDefaultFontSize,
+    },
+  },
+});
+
+<ThemeProvider theme={theme}>
+   <NodeVisualizer root={root} />
+</ThemeProvider>
+```
 
 ### Customizing Tree Control
 
-refer [Tree Control Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Components#readme)
+refer [Tree Control Readme](https://github.com/cognitedata/node-visualization/blob/master/src/Components#readme)
 
 ### Examples
 
-refer [theme for standalone Application](https://github.com/cognitedata/subsurface-visualization/blob/master/src/UserInterface/styles/scss/theme.scss)
+refer [theme for standalone Application](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/theme.scss)
 
 ## For Contributors
 
@@ -93,8 +123,8 @@ refer [theme for standalone Application](https://github.com/cognitedata/subsurfa
 
 Recommended extensions:
 
-- [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) - for continously running unit tests and showing results inline in the editor.
-- [TSLint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin) - for formatting source code
+- [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) - for continuously running unit tests and showing results inline in the editor.
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) - for linting source code
 
 ### Starting development web server
 
@@ -107,7 +137,7 @@ Recommended extensions:
 
 #### Application with React User interface
 
-- start react app: `npm install && npm run start-dev`
+- start react app: `npm install && npm run start:dev`
 
 #### Standalone React application that uses library output of this project
 
@@ -116,7 +146,7 @@ Recommended extensions:
 
 Web server will restart and browser will automatically update whenever a file changes.
 
-### Output Production Bundles - Subsurface Visualizer
+### Output Production Bundles - Node Visualizer
 
 This project exposes the application as a react component library and as well as a standalone react application.
 

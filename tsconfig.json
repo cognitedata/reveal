@@ -5,7 +5,7 @@
     "allowJs": true,
     "jsx": "react",
     "declaration": true,
-    "declarationDir": "dist/subsurface-visualizer/types",
+    "declarationDir": "dist/node-visualizer/types",
     "sourceMap": true,
     "outDir": "dist",
     // "rootDir": "./src",
@@ -31,9 +31,9 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "@cognite/subsurface-components": ["src/__export__/subsurface-components"],
-      "@cognite/subsurface-interfaces": ["src/__export__/subsurface-interfaces"],
-      "@cognite/subsurface-visualizer": ["src/__export__/subsurface-visualizer"],
+      "@cognite/node-visualizer-components": ["src/__export__/node-visualizer-components"],
+      "@cognite/node-visualizer-subsurface": ["src/__export__/node-visualizer-subsurface"],
+      "@cognite/node-visualizer": ["src/__export__/node-visualizer"],
       "@/*": ["src/*"],
       "@images/*": ["images/*"]
     },
