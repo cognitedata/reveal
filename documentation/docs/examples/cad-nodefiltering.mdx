@@ -20,8 +20,10 @@ queries and change the appearance of the 3D model based on the result.
 
 ## Only show nodes that has a given node attribute value
 
-The available node properties varies a lot from model to model, and to use this information you will need to investigate
-the structure of the underlying models. For the purpose of this example, we the attributes of the nodes typically looks something like:
+Node properties are defined in the input models and imported to CDF during processing. The available properties will vary from model
+to model and to use this information you will need to investigate the structure of the underlying models. In the example model used 
+here, the attributes of the nodes typically looks something like (excerpt):
+
 ```json
 "PDMS": {
   ":capDisc": "GENE",
