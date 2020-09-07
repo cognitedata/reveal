@@ -30,9 +30,9 @@ export class NavigationTool extends BaseTool
   protected /*override*/ getTooltipCore(): string
   {
     return `${this.getDisplayName()}\n` +
-    "Left button drag: Rotate" +
-    "Right button drag: Move" +
-    "Wheel: Zoom in or out" +
+    "Left button drag: Rotate\n" +
+    "Right button drag: Move\n" +
+    "Wheel: Zoom in or out\n" +
     "Left click: Pick any object in 3D to get information";
   }
 

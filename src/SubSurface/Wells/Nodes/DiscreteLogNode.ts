@@ -64,7 +64,7 @@ export class DiscreteLogNode extends BaseLogNode
     if (!log)
       return;
 
-    folder.addReadOnlyRange1(null, log.valueRange, 0);
+    folder.addReadOnlyRange1("Values", log.valueRange, 0);
   }
 
   //==================================================

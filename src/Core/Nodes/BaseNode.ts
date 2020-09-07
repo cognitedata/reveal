@@ -294,7 +294,7 @@ export abstract class BaseNode extends Identifiable
       folder.addColor({ name: "color", instance: this, applyDelegate: (name: string) => this.notifyColorChanged() });
     folder.addReadOnlyString("Type", this.typeName);
     if (this.hasColorMap())
-      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, applyDelegate: (name: string) => this.notifyColorMapChanged() });
+      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, applyDelegate: (name: string) => this.notifyColorMapChanged(), toolTip: "Color map is used in visualization, see color type " });
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: BasePropertyFolder): void { }
