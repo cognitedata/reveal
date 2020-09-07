@@ -14,7 +14,7 @@
 import * as THREE from "three";
 import Color from "color";
 
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 

@@ -1,6 +1,6 @@
 import { ColorType } from "@/Core/Enums/ColorType";
-import ValueProperty, { ExpandedOption } from "@/Core/Property/Base/ValueProperty";
-import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { ValueProperty, ExpandedOption } from "@/Core/Property/Base/ValueProperty";
+import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
 import ColorPnG from "@images/ColorTypes/Color.png";
 import ColorMap from "@images/ColorTypes/ColorMap.png";
 import Different from "@images/ColorTypes/Different.png";

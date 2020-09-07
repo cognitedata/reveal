@@ -1,9 +1,9 @@
 import React from "react";
 
-import getIcon from "@/UserInterface/Components/Icon/IconSelector";
-import ToolbarToolTip from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
+import { getIcon } from "@/UserInterface/Components/Icon/IconSelector";
+import { ToolbarToolTip } from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
 
-export default function Icon(props: {
+export function Icon(props: {
   type?: string;
   name?: string;
   src?: string;

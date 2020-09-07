@@ -13,7 +13,7 @@
 
 import * as THREE from "three";
 import CameraControls from "camera-controls";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Colors } from "@/Core/Primitives/Colors";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";

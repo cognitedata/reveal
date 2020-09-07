@@ -14,7 +14,7 @@
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { TrianglesBuffers } from "@/Core/Geometry/TrianglesBuffers";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Index2 from "@/Core/Geometry/Index2";
+import { Index2 } from "@/Core/Geometry/Index2";
 
 export class RegularGrid3Buffers extends TrianglesBuffers
 {
@@ -35,7 +35,7 @@ export class RegularGrid3Buffers extends TrianglesBuffers
 
   makeBuffers(grid: RegularGrid3, normal: Vector3, cells: Index2[]): void
   {
-    // Generate the position, normal 
+    // Generate the position, normal
     const position = Vector3.newZero;
 
     let uniqueIndex = 0;

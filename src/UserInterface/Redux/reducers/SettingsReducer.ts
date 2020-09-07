@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { ISettingsState } from "@/UserInterface/Redux/State/settings";
 import Color from "color";
-import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
+import { ActionTypes } from "@/UserInterface/Redux/actions/ActionTypes";
 import { Appearance } from "@/Core/States/Appearance";
-import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
-import NodeUtils from "@/UserInterface/utils/NodeUtils";
+import { SettingsNodeUtils } from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
+import { NodeUtils } from "@/UserInterface/utils/NodeUtils";
 
 // Initial settings state
 const initialState = {
@@ -61,7 +61,7 @@ export const settingsSlice = createSlice({
       prepare(node: BaseNode): { payload: { node: BaseNode } }
       {
         if (node && node.isSelected())
-        { 
+        {
           SettingsNodeUtils.populateSettingsFolder(node);
           NodeUtils.createRenderStyleCommands(node);
         }
@@ -110,5 +110,5 @@ export const settingsSlice = createSlice({
   }
 });
 
-export default settingsSlice.reducer;
+export const settingsReducer = settingsSlice.reducer;
 export const { onSelectedNodeChange, onSectionExpand, onSettingsReset } = settingsSlice.actions;

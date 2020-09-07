@@ -1,27 +1,26 @@
 import Color from "color";
-import Index3 from "@/Core/Geometry/Index3";
-import Index2 from "@/Core/Geometry/Index2";
-import Range1 from "@/Core/Geometry/Range1";
-import Range3 from "@/Core/Geometry/Range3";
+import { Index3 } from "@/Core/Geometry/Index3";
+import { Index2 } from "@/Core/Geometry/Index2";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Statistics } from "@/Core/Geometry/Statistics";
-import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
-import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
-import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
-import { ColorMaps } from "@/Core/Primitives/ColorMaps";
-import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { StringProperty } from "@/Core/Property/Concrete/Property/StringProperty";
+import { ColorProperty } from "@/Core/Property/Concrete/Property/ColorProperty";
+import { ColorMapProperty } from "@/Core/Property/Concrete/Property/ColorMapProperty";
+import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ColorType } from "@/Core/Enums/ColorType";
-import BaseProperty from "@/Core/Property/Base/BaseProperty";
+import { BaseProperty } from "@/Core/Property/Base/BaseProperty";
 import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
-import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
+import { BooleanProperty } from "@/Core/Property/Concrete/Property/BooleanProperty";
 import { Util } from "@/Core/Primitives/Util";
 
 const FractionDigitsDefault = 2;
 
-export default abstract class BasePropertyFolder extends BaseProperty
+export abstract class BasePropertyFolder extends BaseProperty
 {
   //==================================================
   // INSTANCE MEMBERS

@@ -18,7 +18,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 

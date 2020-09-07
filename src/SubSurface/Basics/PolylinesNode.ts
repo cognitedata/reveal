@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Polylines } from "@/Core/Geometry/Polylines";
@@ -20,7 +20,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
 import Icon from "@images/Nodes/PolylinesNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
 export class PolylinesNode extends DataNode
 {
@@ -62,7 +62,7 @@ export class PolylinesNode extends DataNode
   public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
   public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
-  
+
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new PolylinesRenderStyle(targetId);

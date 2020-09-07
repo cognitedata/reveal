@@ -1,11 +1,11 @@
 import "./PanelTitleBar.module.scss";
 import React from "react";
-import ToolBar from "@/UserInterface/Components/ToolBar/ToolBar";
+import { ToolBar } from "@/UserInterface/Components/ToolBar/ToolBar";
 import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
 import { Typography } from "@material-ui/core";
 import { ChromaIcon } from "@/UserInterface/Components/ChromaIcon/ChromaIcon";
 
-export default function PanelTitleBar(props: {
+export function PanelTitleBar(props: {
   sectionId: string;
   className?: string;
   title: string;

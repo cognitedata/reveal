@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import NodeVisualizer from "@/UserInterface/NodeVisualizer/NodeVisualizer";
+import { NodeVisualizer } from "@/UserInterface/NodeVisualizer/NodeVisualizer";
 import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
-import BPDataModule from "@/Solutions/BP/BPDataModule";
+import { BPDataModule } from "@/Solutions/BP/BPDataModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
@@ -37,7 +37,7 @@ const theme = createMuiTheme({
 /**
  * App component acts as a container application. Eg- BP
  */
-export default function App() {
+export function App() {
   const [root, setRoot] = useState<BaseRootNode>();
 
   const modules = Modules.instance;

@@ -1,5 +1,5 @@
 import React from "react";
-import Icon from "@/UserInterface/Components/Icon/Icon";
+import { Icon } from "@/UserInterface/Components/Icon/Icon";
 import { ExplorerTabsPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
 import {
   StyledTabs,

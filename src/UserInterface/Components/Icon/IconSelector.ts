@@ -33,7 +33,7 @@ import ExpandOpen from "@images/Expanders/ExpandOpen.png";
 import ExpandClosed from "@images/Expanders/ExpandClosed.png";
 import ExpandOpenFocus from "@images/Expanders/ExpandOpenFocus.png";
 import ExpandClosedFocus from "@images/Expanders/ExpandClosedFocus.png";
-import { IconTypes } from "./IconTypes";
+import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
 
 export { ExpandOpen, ExpandClosed, ExpandOpenFocus, ExpandClosedFocus };
 export {
@@ -49,12 +49,12 @@ export {
   RadioOn,
 };
 
-export default function getIcon(iconType: string, iconName: string) 
+export function getIcon(iconType: string, iconName: string)
 {
-  switch (iconType) 
+  switch (iconType)
   {
     case IconTypes.ACTIONS:
-      switch (iconName) 
+      switch (iconName)
       {
         case "Close":
           return FatLeft;
@@ -77,14 +77,14 @@ export default function getIcon(iconType: string, iconName: string)
       }
       break;
     case IconTypes.STATES:
-      switch (iconName) 
+      switch (iconName)
       {
         case "Pinned":
           return Pinned;
       }
       break;
     case IconTypes.NODES:
-      switch (iconName) 
+      switch (iconName)
       {
         case "FolderNode":
           return FolderNode;
@@ -93,7 +93,7 @@ export default function getIcon(iconType: string, iconName: string)
       }
       break;
     case IconTypes.ARROWS:
-      switch (iconName) 
+      switch (iconName)
       {
         case "FatRight":
           return FatRight;
@@ -102,7 +102,7 @@ export default function getIcon(iconType: string, iconName: string)
       }
       break;
     case IconTypes.POINT_SYMBOL:
-      switch (iconName) 
+      switch (iconName)
       {
         case "Cube":
           return Cube;
@@ -111,7 +111,7 @@ export default function getIcon(iconType: string, iconName: string)
       }
       break;
     case IconTypes.SHOW:
-      switch (iconName) 
+      switch (iconName)
       {
         case "Label":
           return LabelImage;

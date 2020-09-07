@@ -1,5 +1,5 @@
-import ValueProperty from "@/Core/Property/Base/ValueProperty";
-import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { ValueProperty } from "@/Core/Property/Base/ValueProperty";
+import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
 
 // It goes from 0 to 1
 

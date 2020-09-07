@@ -15,7 +15,7 @@ import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import Icon from "@images/Nodes/PointLogNode.png";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
 export class PointLogNode extends BaseLogNode
 {

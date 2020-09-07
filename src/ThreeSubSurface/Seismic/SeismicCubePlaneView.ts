@@ -23,9 +23,9 @@ import { RegularGrid3Buffers } from "@/Core/Geometry/RegularGrid3Buffers";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { Colors } from "@/Core/Primitives/Colors";
 import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Index2 from "@/Core/Geometry/Index2";
+import { Index2 } from "@/Core/Geometry/Index2";
 import { Changes } from "@/Core/Views/Changes";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
@@ -247,7 +247,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   }
 
   //==================================================
-  // INSTANCE METHODS: 
+  // INSTANCE METHODS:
   //==================================================
 
   private createSolid(node: SeismicPlaneNode, surveyCube: RegularGrid3, style: SeismicRenderStyle | null): THREE.Object3D | null

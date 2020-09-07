@@ -4,7 +4,6 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Index3 from "@/Core/Geometry/Index3";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";

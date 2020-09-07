@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IVisualizerState } from "@/UserInterface/Redux/State/visualizer";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
-import Viewer from "@/UserInterface/Components/Viewers/Viewer";
-import ViewerUtils from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
+import { Viewer } from "@/UserInterface/Components/Viewers/Viewer";
+import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
 import { IToolbarGroups } from "@/Core/Interfaces/IToolbarGroups";
 
 // Initial settings state
@@ -123,5 +123,5 @@ function populateToolCommandState(item: BaseCommand)
   };
 }
 
-export default visualizerSlice.reducer;
+export const visualizerReducer = visualizerSlice.reducer;
 export const { initializeToolbarStatus, executeVisualizerToolbarCommand, updateVisualizerToolbars, updateStatusPanel } = visualizerSlice.actions;

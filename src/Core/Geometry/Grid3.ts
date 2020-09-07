@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Index3 from "@/Core/Geometry/Index3";
+import { Index3 } from "@/Core/Geometry/Index3";
 import { Shape } from "@/Core/Geometry/Shape";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
-export class Grid3 extends Shape 
+export class Grid3 extends Shape
 {
   //==================================================
   // INSTANCE FIELDS

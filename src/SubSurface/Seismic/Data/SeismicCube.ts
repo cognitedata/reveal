@@ -12,15 +12,15 @@
 //=====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Index3 from "@/Core/Geometry/Index3";
+import { Index3 } from "@/Core/Geometry/Index3";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Trace } from "@/SubSurface/Seismic/Data/Trace";
-import Index2 from "@/Core/Geometry/Index2";
+import { Index2 } from "@/Core/Geometry/Index2";
 import SeismicStk from "@cognite/seismic-sdk-js";
-import Range1 from "@/Core/Geometry/Range1";
+import { Range1 } from "@/Core/Geometry/Range1";
 import { Statistics } from "@/Core/Geometry/Statistics";
 import { Ma } from "@/Core/Primitives/Ma";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class SeismicCube extends RegularGrid3
 {
@@ -314,7 +314,7 @@ export class SeismicCube extends RegularGrid3
     //   const a = iAxis.clone();
     //   a.divideScalar(numCellsI);
     //   const b = jAxis.clone();
-    //   b.divideScalar(numCellsJ);      
+    //   b.divideScalar(numCellsJ);
 
     //   const cellToNodeVector = a;
     //   cellToNodeVector.add(b);

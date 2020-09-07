@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
 export abstract class BaseStyle
 {

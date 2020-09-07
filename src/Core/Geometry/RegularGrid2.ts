@@ -14,9 +14,9 @@
 import * as Lodash from "lodash";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Range1 from "@/Core/Geometry/Range1";
-import Range3 from "@/Core/Geometry/Range3";
-import Index2 from "@/Core/Geometry/Index2";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Index2 } from "@/Core/Geometry/Index2";
 import { Grid2 } from "@/Core/Geometry/Grid2";
 import { Random } from "@/Core/Primitives/Random";
 import { Shape } from "@/Core/Geometry/Shape";
@@ -128,7 +128,7 @@ export class RegularGrid2 extends Grid2
   }
 
   //==================================================
-  // INSTANCE METHODS: Getters: Node position 
+  // INSTANCE METHODS: Getters: Node position
   //==================================================
 
   public getNodePosition(i: number, j: number, resultPosition?: Vector3): boolean
@@ -188,7 +188,7 @@ export class RegularGrid2 extends Grid2
   }
 
   //==================================================
-  // INSTANCE METHODS: Getters: Cell position 
+  // INSTANCE METHODS: Getters: Cell position
   //==================================================
 
   public getCellFromPosition(position: Vector3, resultCell?: Index2): Index2
@@ -379,7 +379,7 @@ export class RegularGrid2 extends Grid2
   }
 
   //==================================================
-  // STATIC METHODS: 
+  // STATIC METHODS:
   //==================================================
 
   static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0, rotationAngle: number): RegularGrid2

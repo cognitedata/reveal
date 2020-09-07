@@ -15,8 +15,8 @@ import * as THREE from "three";
 import * as Color from "color";
 import * as Lodash from "lodash";
 
-import Range1 from "@/Core/Geometry/Range1";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Colors } from "@/Core/Primitives/Colors";
 import { Ma } from "@/Core/Primitives/Ma";

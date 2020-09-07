@@ -13,7 +13,7 @@ import
   onNodeIconChange
 } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 
-class NotificationsToActionsAdaptor
+export class NotificationsToActionsAdaptor
 {
   private readonly dispatcher: Dispatch;
 
@@ -46,5 +46,3 @@ class NotificationsToActionsAdaptor
       this.dispatcher(onSettingsReset(sender));
   }
 }
-
-export default NotificationsToActionsAdaptor;

@@ -1,14 +1,14 @@
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Polylines } from "@/Core/Geometry/Polylines";
 import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
 import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
 import { Modules } from "@/Core/Module/Modules";
-import { StubModule } from "./StubModule";
-import { StubTargetNode } from "./StubTargetNode";
+import { StubModule } from "@/__tests__/StubModule/StubModule";
+import { StubTargetNode } from "@/__tests__/StubModule/StubTargetNode";
 
 export class StubRootCreator
 {
-  public static createTestRoot(): SubSurfaceRootNode 
+  public static createTestRoot(): SubSurfaceRootNode
   {
     // Create the module
     const modules = Modules.instance;
@@ -18,7 +18,7 @@ export class StubRootCreator
     const root = modules.createRoot() as SubSurfaceRootNode;
 
     // Create the 2 viewers
-    for (let i = 0; i < 2; i++) 
+    for (let i = 0; i < 2; i++)
     {
       const node = new StubTargetNode();
       node.isActive = true;
@@ -28,7 +28,7 @@ export class StubRootCreator
     if (!root.activeTarget)
       throw Error("target is not added properly");
 
-    // Create 4 polylines 
+    // Create 4 polylines
     for (let i = 0; i < 4; i++)
     {
       const node = new PolylinesNode();

@@ -1,10 +1,11 @@
 import React from "react";
-import VisualizerToolbar, {
+import {
+  VisualizerToolbar,
   IToolbarButton,
 } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
 // 3D Viewer
-export default function Viewer3D(props: {
+export function Viewer3D(props: {
   viewer3D: any;
   toolbar?: Map<string, IToolbarButton[]>;
   onToolbarButtonClick: (

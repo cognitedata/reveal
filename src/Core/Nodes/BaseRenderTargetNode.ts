@@ -1,4 +1,4 @@
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { Base3DView } from "@/Core/Views/Base3DView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";

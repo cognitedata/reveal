@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range1 from "@/Core/Geometry/Range1";
+import { Range1 } from "@/Core/Geometry/Range1";
 import { Random } from "@/Core/Primitives/Random";
 
 import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
@@ -105,4 +105,4 @@ export class DiscreteLog extends BaseLog
     return log;
   }
 
-}  
+}

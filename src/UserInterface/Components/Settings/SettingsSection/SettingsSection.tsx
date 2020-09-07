@@ -4,11 +4,11 @@ import {
   ISettingsElement,
   ISettingsSectionProps,
 } from "@/UserInterface/Components/Settings/Types";
-import ExpansionView from "@/UserInterface/Components/ExpansionView/ExpansionView";
-import SettingsElement from "@/UserInterface/Components/Settings/SettingsElement/SettingsElement";
+import { ExpansionView } from "@/UserInterface/Components/ExpansionView/ExpansionView";
+import { SettingsElement } from "@/UserInterface/Components/Settings/SettingsElement/SettingsElement";
 import "./SettingsSection.module.scss";
 
-export default function SettingsSection(props: ISettingsSectionProps) {
+export function SettingsSection(props: ISettingsSectionProps) {
   const {
     id,
     name,

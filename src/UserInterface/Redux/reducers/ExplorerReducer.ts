@@ -1,11 +1,11 @@
-import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
+import { ActionTypes } from "@/UserInterface/Redux/actions/ActionTypes";
 import Color from "color";
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IExplorerState, ITreeNodeState } from "@/UserInterface/Redux/State/explorer";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 import { TreeCheckState } from "@/UserInterface/NodeVisualizer/Explorer/TreeCheckState";
-import ExplorerNodeUtils from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
+import { ExplorerNodeUtils } from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
 import { State } from "@/UserInterface/Redux/State/State";
 import { ITreeNode } from "@/UserInterface/Components/VirtualTree/ITreeNode";
 
@@ -215,7 +215,7 @@ export const {
   generateNodeTree, onSelectedTabChange, onCheckboxStateChange, onExpandStateChange,
   onActiveStateChange, onNodeColorChange, onNodeNameChange, onNodeIconChange
 } = explorerSlice.actions;
-export default explorerSlice.reducer;
+export const explorerReducer = explorerSlice.reducer;
 
 // selectors
 

@@ -15,11 +15,11 @@ import * as Lodash from "lodash";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
-import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
+import { BooleanProperty } from "@/Core/Property/Concrete/Property/BooleanProperty";
 import { ColorType } from "@/Core/Enums/ColorType";
 
 export class SurfaceRenderStyle extends BaseRenderStyle

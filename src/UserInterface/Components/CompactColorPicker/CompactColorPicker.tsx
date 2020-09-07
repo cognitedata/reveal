@@ -3,7 +3,7 @@ import { ColorResult, CompactPicker } from "react-color";
 import Color from "color";
 import "./CompactColorPicker.module.scss";
 
-export default function CompactColorPicker(props: {
+export function CompactColorPicker(props: {
   value: string;
   onChange: (id: string, value: Color) => void;
   id: string;

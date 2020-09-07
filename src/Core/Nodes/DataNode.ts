@@ -17,7 +17,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import Icon from "@images/Commands/Delete.png";
 import { Changes } from "@/Core/Views/Changes";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
 export abstract class DataNode extends BaseVisualNode
 {

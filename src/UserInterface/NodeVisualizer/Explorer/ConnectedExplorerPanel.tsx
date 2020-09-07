@@ -9,7 +9,7 @@ import {
   onSelectedTabChange,
 } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 import { onSelectedNodeChange } from "@/UserInterface/Redux/reducers/SettingsReducer";
-import ExplorerNodeUtils from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
+import { ExplorerNodeUtils } from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
 
 function mapDispatchToExplorerPanel(dispatch: Dispatch) {
   return {

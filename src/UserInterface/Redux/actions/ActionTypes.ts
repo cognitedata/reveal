@@ -1,4 +1,4 @@
-export default class ActionTypes
+export class ActionTypes
 {
   //==================================================
   // Common Reducer Actions

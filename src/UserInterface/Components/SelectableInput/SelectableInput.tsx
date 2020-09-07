@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@material-ui/core/styles";
 import InputBase from "@material-ui/core/InputBase";
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -83,7 +83,7 @@ const Input = withStyles(() => ({
   },
 }))(InputBase);
 
-export default function SelectableInput(props: {
+export function SelectableInput(props: {
   options?: { label: string; value: string }[];
   value?: string;
   onChange?: (value: string) => void;

@@ -17,11 +17,11 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { BandPosition } from "@/Core/Enums/BandPosition";
-import BandPositionProperty from "@/Core/Property/Concrete/Property/BandPositionProperty";
+import { BandPositionProperty } from "@/Core/Property/Concrete/Property/BandPositionProperty";
 
 export class FloatLogStyle extends BaseRenderStyle
 {

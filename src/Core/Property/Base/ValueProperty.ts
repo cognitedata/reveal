@@ -1,6 +1,6 @@
 import * as Lodash from "lodash";
-import BaseProperty from "@/Core/Property/Base/BaseProperty";
-import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { BaseProperty } from "@/Core/Property/Base/BaseProperty";
+import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
 import { IPropertyExtraOptionDataParams } from "@/Core/Property/Base/IPropertyExtraOptionDataParms";
 
 //==================================================
@@ -10,13 +10,13 @@ import { IPropertyExtraOptionDataParams } from "@/Core/Property/Base/IPropertyEx
 export type StringAction = (name: string) => void;
 export type IsEnabled = () => boolean;
 export type ValidateOption = (option: any) => boolean;
-export enum ExpandedOption 
+export enum ExpandedOption
 {
   label = 0,
   value,
 }
 
-export default abstract class ValueProperty<T> extends BaseProperty
+export abstract class ValueProperty<T> extends BaseProperty
 {
   //==================================================
   // INSTANCE FIELDS

@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range1 from "@/Core/Geometry/Range1";
+import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Ma } from "@/Core/Primitives/Ma";
 
-export default class Range3
+export class Range3
 {
   //==================================================
   // STATIC PROPERTIES
@@ -64,7 +64,7 @@ export default class Range3
   // CONSTRUCTOR
   //==================================================
 
-  public constructor(min?: Vector3, max?: Vector3) 
+  public constructor(min?: Vector3, max?: Vector3)
   {
     if (min === undefined && max !== undefined)
       this.set(max, max);
@@ -112,10 +112,10 @@ export default class Range3
   {
     //      7-------6
     //    / |      /|
-    //   4-------5  | 
+    //   4-------5  |
     //   |  |    |  |
     //   Z  3----|--2
-    //   | /     |Y   
+    //   | /     |Y
     //   0---X---1
 
     switch (corner)

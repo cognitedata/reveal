@@ -13,7 +13,7 @@ import { DiscreteLogSample } from "@/SubSurface/Wells/Samples/DiscreteLogSample"
 import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
-export default class WellLogCreator
+export class WellLogCreator
 {
   //==================================================
   // STATIC METHODS

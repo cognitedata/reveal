@@ -1,13 +1,13 @@
 import React from "react";
 import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
-import Icon from "@/UserInterface/Components/Icon/Icon";
+import { Icon } from "@/UserInterface/Components/Icon/Icon";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
 /**
  * ToolBar component
  * @param props
  */
-export default function ToolBar(props: {
+export function ToolBar(props: {
   sectionId: string;
   toolBar?: BaseCommand[] | ToolBarType;
 }) {

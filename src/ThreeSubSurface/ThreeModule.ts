@@ -61,7 +61,7 @@ import { SeismicCubePlaneManipulator } from "@/ThreeSubSurface/Seismic/SeismicCu
 import { PointLogManipulator } from "@/ThreeSubSurface/Wells/PointLogManipulator";
 import { SeismicOutlineView } from "@/ThreeSubSurface/Seismic/SeismicOutlineView";
 import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class ThreeModule extends BaseModule
 {

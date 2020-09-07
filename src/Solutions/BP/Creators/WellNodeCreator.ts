@@ -4,7 +4,7 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { IWell } from "@cognite/node-visualizer-subsurface";
 import { Util } from "@/Core/Primitives/Util";
 
-export default class WellNodeCreator
+export class WellNodeCreator
 {
   public static create(wellData: IWell | null): WellNode | null
   {

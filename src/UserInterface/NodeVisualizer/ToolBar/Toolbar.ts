@@ -5,7 +5,7 @@ import { IToolbarGroups } from "@/Core/Interfaces/IToolbarGroups";
 /**
  * Visualizer toolbar implementation
  */
-export default class Toolbar implements IToolbar
+export class Toolbar implements IToolbar
 {
   // Array to store toolbar commands
   private toolbarCommands: IToolbarGroups = {};

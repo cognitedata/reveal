@@ -4,7 +4,7 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ITrajectoryColumnIndices, ITrajectoryRows } from "@cognite/node-visualizer-subsurface";
 import { TrajectorySample } from "@/SubSurface/Wells/Samples/TrajectorySample";
 
-export default class WellTrajectoryNodeCreator
+export class WellTrajectoryNodeCreator
 {
   public static create(trajectoryDataColumnIndices: ITrajectoryColumnIndices, trajectoryRows: ITrajectoryRows | null | undefined, elevation: number, unit: number): WellTrajectoryNode | null
   {

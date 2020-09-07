@@ -4,7 +4,7 @@ import {
 } from "@cognite/node-visualizer-subsurface";
 import { Util } from "@/Core/Primitives/Util";
 // Represent BP data
-export default class BPData
+export class BPData
 {
     private _wellMap = new Map<WellId, IWell>();
 
@@ -190,11 +190,11 @@ export default class BPData
       {
         return true;
       }
-        
+
       // tslint:disable-next-line:no-console
       console.error("Well cannot have empty or invalid coordinates!", well);
       return false;
-        
+
     }
 
     private validateWellBore(wellBore: IWellBore): boolean
@@ -203,11 +203,11 @@ export default class BPData
       {
         return true;
       }
-        
+
       // tslint:disable-next-line:no-console
       console.warn("Orphan WellBore, Parent Well not found!", wellBore);
       return false;
-        
+
     }
 
     private validateTrajectory(trajectory: ITrajectory): boolean
@@ -217,11 +217,11 @@ export default class BPData
       {
         return true;
       }
-        
+
       // tslint:disable-next-line:no-console
       console.warn("Orphan Trajectory, Parent Well Bore not found!", trajectory);
       return false;
-        
+
     }
 
     private validateTrajectoryData(trajectoryData: ITrajectoryRows): boolean
@@ -236,11 +236,11 @@ export default class BPData
       {
         return true;
       }
-        
+
       // tslint:disable-next-line:no-console
       console.warn("Orphan Trajectory Data Item, Parent Trajectory not found!", trajectoryData);
       return false;
-        
+
     }
 
     private validateRiskEvent(event: IRiskEvent, wellBoreIds: any[]): boolean
@@ -255,11 +255,11 @@ export default class BPData
       {
         return true;
       }
-        
+
       // tslint:disable-next-line:no-console
       console.warn("Orphan Risk Event, Parent Bore not found!", event);
       return false;
-        
+
     }
 
     private validateCasing(casing: ICasing): boolean
@@ -269,11 +269,11 @@ export default class BPData
       {
         return true;
       }
-        
+
       // tslint:disable-next-line:no-console
       console.warn("Orphan Casing, Parent Well Bore not found!", casing);
       return false;
-        
+
     }
 
     //==================================================

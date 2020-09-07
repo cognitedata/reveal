@@ -6,9 +6,9 @@ import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/css
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 import { TreeItemButton } from "@/UserInterface/Components/VirtualTree/TreeItemControl";
 import { ChromaIcon } from "@/UserInterface/Components/ChromaIcon/ChromaIcon";
-import { ExpandButton } from "./ExpandButton";
-import { VirtualTreeProps } from "./VirtualTreeProps";
-import { ITreeNode } from "./ITreeNode";
+import { ExpandButton } from "@/UserInterface/Components/VirtualTree/ExpandButton";
+import { VirtualTreeProps } from "@/UserInterface/Components/VirtualTree/VirtualTreeProps";
+import { ITreeNode } from "@/UserInterface/Components/VirtualTree//ITreeNode";
 
 const DEFAULT_ROW_HEIGHT = 22;
 

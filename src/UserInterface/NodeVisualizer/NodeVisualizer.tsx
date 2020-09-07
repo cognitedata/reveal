@@ -2,26 +2,26 @@ import "@/UserInterface/styles/scss/index.scss";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SplitPane from "react-split-pane";
-import RightPanel from "@/UserInterface/NodeVisualizer/Panels/RightPanel";
-import LeftPanel from "@/UserInterface/NodeVisualizer/Panels/LeftPanel";
-import NotificationsToActionsAdaptor from "@/UserInterface/Adapters/NotificationToAction";
+import { RightPanel } from "@/UserInterface/NodeVisualizer/Panels/RightPanel";
+import { LeftPanel } from "@/UserInterface/NodeVisualizer/Panels/LeftPanel";
+import { NotificationsToActionsAdaptor } from "@/UserInterface/Adapters/NotificationToAction";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
-import UserInterfaceListener from "@/UserInterface/Adapters/UserInterfaceListener";
+import { UserInterfaceListener } from "@/UserInterface/Adapters/UserInterfaceListener";
 import { Modules } from "@/Core/Module/Modules";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import Viewer from "@/UserInterface/Components/Viewers/Viewer";
-import Toolbar from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
+import { Viewer } from "@/UserInterface/Components/Viewers/Viewer";
+import { Toolbar } from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
 import { Appearance } from "@/Core/States/Appearance";
 import { State } from "@/UserInterface/Redux/State/State";
 import { generateNodeTree } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 import { initializeToolbarStatus } from "@/UserInterface/Redux/reducers/VisualizersReducer";
-import ViewerUtils from "./Viewers/ViewerUtils";
+import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
 
 /**
  * Node Visualizer Component of the application
  * This will render all the Components (Settings/Explorer/3D viewers etc.)
  */
-export default function NodeVisualizer(props: { root?: BaseRootNode }) {
+export function NodeVisualizer(props: { root?: BaseRootNode }) {
   const dispatch = useDispatch();
   const common = useSelector((state: State) => state.common); //TODO: Remove state reference
   const { root } = props;

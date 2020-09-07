@@ -5,10 +5,10 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreSharpIcon from "@material-ui/icons/ExpandMoreSharp";
 import ExpandLessSharpIcon from "@material-ui/icons/ExpandLessSharp";
-import ToolBar from "@/UserInterface/Components/ToolBar/ToolBar";
+import { ToolBar } from "@/UserInterface/Components/ToolBar/ToolBar";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
-export default function ExpansionView(props: {
+export function ExpansionView(props: {
   id: string;
   title: string;
   isExpanded?: boolean;

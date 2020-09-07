@@ -15,7 +15,7 @@ import * as Lodash from "lodash";
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 
 export class AxisRenderStyle extends BaseRenderStyle

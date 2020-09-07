@@ -1,10 +1,10 @@
 import { MiddlewareAPI, Dispatch } from "redux";
-import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
-import ViewerUtils from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
+import { ActionTypes } from "@/UserInterface/Redux/actions/ActionTypes";
+import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
 
 // TODO: Remove this middleware if possible
 // Common middleware
-export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
+export const NodeVisualizerMiddleware = (store: MiddlewareAPI) => (next: Dispatch) => (action: {
   type: string;
   payload: any;
 }) =>

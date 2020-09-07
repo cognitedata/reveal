@@ -2,7 +2,7 @@ import React from "react";
 import "./ToolbarToolTip.module.scss";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import getIcon from "@/UserInterface/Components/Icon/IconSelector";
+import { getIcon } from "@/UserInterface/Components/Icon/IconSelector";
 import { Typography } from "@material-ui/core";
 import { Appearance } from "@/Core/States/Appearance";
 
@@ -16,7 +16,7 @@ const CustomToolTip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export default function ToolbarToolTip(props: {
+export function ToolbarToolTip(props: {
   type?: string;
   name?: string;
   src?: string;

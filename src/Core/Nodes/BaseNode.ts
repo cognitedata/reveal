@@ -29,10 +29,10 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
-import ValueProperty from "@/Core/Property/Base/ValueProperty";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { ValueProperty } from "@/Core/Property/Base/ValueProperty";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 import { ResetVisualSettingsCommand } from "@/Core/Commands/SettingsPanel/ResetVisualSettingsCommand";
@@ -323,7 +323,7 @@ export abstract class BaseNode extends Identifiable
     {
       if (child instanceof ValueProperty)
       {
-        child.applyDelegate = (name: string) => 
+        child.applyDelegate = (name: string) =>
         {
           let node = this.renderStyleRoot;
           if (!node)
@@ -824,7 +824,7 @@ export abstract class BaseNode extends Identifiable
     return style;
   }
 
-  public replaceRenderStyle(newStyle: BaseRenderStyle | null = null): boolean 
+  public replaceRenderStyle(newStyle: BaseRenderStyle | null = null): boolean
   {
     const target = this.activeTargetIdAccessor;
     if (!target)

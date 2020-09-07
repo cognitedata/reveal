@@ -1,9 +1,9 @@
-import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { GroupProperty } from "@/Core/Property/Concrete/Folder/GroupProperty";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
 const FractionDigitsDefault = 2;
 
-export default class ExpanderProperty extends BasePropertyFolder
+export class ExpanderProperty extends BasePropertyFolder
 {
   //==================================================
   // INSTANCE MEMBERS

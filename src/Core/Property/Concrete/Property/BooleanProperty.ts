@@ -1,7 +1,7 @@
-import ValueProperty from "@/Core/Property/Base/ValueProperty";
-import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { ValueProperty } from "@/Core/Property/Base/ValueProperty";
+import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
 
-export default class BooleanProperty extends ValueProperty<boolean>
+export class BooleanProperty extends ValueProperty<boolean>
 {
   //==================================================
   // CONSTRUCTOR

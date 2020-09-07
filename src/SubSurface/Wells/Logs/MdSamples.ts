@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range1 from "@/Core/Geometry/Range1";
+import { Range1 } from "@/Core/Geometry/Range1";
 import { Ma } from "@/Core/Primitives/Ma";
 
 import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
@@ -140,4 +140,4 @@ export abstract class MdSamples
     const seachSample = new MdSample(md);
     return Ma.binarySearch(this.samples, seachSample, MdSample.compareMd);
   }
-}  
+}

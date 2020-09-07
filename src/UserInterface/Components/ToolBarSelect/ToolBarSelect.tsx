@@ -1,9 +1,9 @@
 import React from "react";
-import SelectableInput from "@/UserInterface/Components/SelectableInput/SelectableInput";
-import ToolbarToolTip from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
+import { SelectableInput } from "@/UserInterface/Components/SelectableInput/SelectableInput";
+import { ToolbarToolTip } from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
 import { GenericSelect } from "@/UserInterface/Components/GenericSelect/GenericSelect";
 
-export default function ToolBarSelect(props: {
+export function ToolBarSelect(props: {
   options?: string[];
   currentValue?: string;
   onChange?: (value: string) => void;

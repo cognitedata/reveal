@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseView } from "@/Core/Views/BaseView";
 import { Changes } from "@/Core/Views/Changes";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
@@ -43,7 +43,7 @@ export abstract class Base3DView extends BaseView
   }
 
   //==================================================
-  // VIRTUAL METHODS: 
+  // VIRTUAL METHODS:
   //==================================================
 
   protected /*virtual*/ calculateBoundingBoxCore(): Range3 | undefined
@@ -55,7 +55,7 @@ export abstract class Base3DView extends BaseView
   protected /*virtual*/ getViewInfoCore(viewInfo: ViewInfo): void { }
 
   //==================================================
-  // INSTANCE METHODS: 
+  // INSTANCE METHODS:
   //==================================================
 
   public getViewInfo(viewInfo: ViewInfo): void
@@ -70,7 +70,7 @@ export abstract class Base3DView extends BaseView
     return this._boundingBox;
   }
 
-  public set boundingBox(value: Range3 | undefined) 
+  public set boundingBox(value: Range3 | undefined)
   {
     this._boundingBox = value;
   }

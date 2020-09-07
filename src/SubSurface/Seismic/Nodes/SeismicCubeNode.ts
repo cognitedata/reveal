@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 
@@ -20,7 +20,7 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 import { SeismicRenderStyle } from "@/SubSurface/Seismic/Nodes/SeismicRenderStyle";

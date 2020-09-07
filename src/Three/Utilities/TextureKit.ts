@@ -15,9 +15,9 @@ import * as THREE from "three";
 
 import * as Color from "color";
 import { ColorMap } from "@/Core/Primitives/ColorMap";
-import Range1 from "@/Core/Geometry/Range1";
+import { Range1 } from "@/Core/Geometry/Range1";
 
-export class TextureKit 
+export class TextureKit
 {
   //==================================================
   // STATIC METHODS

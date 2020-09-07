@@ -17,7 +17,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
@@ -28,8 +28,8 @@ export class PointLogStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
-  public radius = new NumberProperty({ name: "Radius", value: 20, options: [10, 20, 25, 30, 50, 75, 100, 200] }); 
-  public fontSize = new NumberProperty({ name: "Font Size", value: 20, options: BaseRenderStyle.fontSizeOptions }); 
+  public radius = new NumberProperty({ name: "Radius", value: 20, options: [10, 20, 25, 30, 50, 75, 100, 200] });
+  public fontSize = new NumberProperty({ name: "Font Size", value: 20, options: BaseRenderStyle.fontSizeOptions });
 
   //==================================================
   // CONSTRUCTOR

@@ -1,6 +1,6 @@
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
-export default class GroupProperty extends BasePropertyFolder
+export class GroupProperty extends BasePropertyFolder
 {
   //==================================================
   // CONSTRUCTOR

@@ -1,5 +1,5 @@
 // Input Types
-export default {
+export const ElementTypes = {
   Expander: "expander",
   String: "string",
   Number: "number",

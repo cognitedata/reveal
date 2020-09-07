@@ -13,7 +13,7 @@
 
 import * as THREE from "three";
 
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
@@ -132,7 +132,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     this.touchBoundingBox();
     this.invalidateTarget();
   }
-  
+
   //==================================================
   // INSTANCE METHODS
   //==================================================

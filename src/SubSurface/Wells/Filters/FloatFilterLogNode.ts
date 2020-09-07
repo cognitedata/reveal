@@ -18,8 +18,8 @@ import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode"
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
 import { ColorType } from "@/Core/Enums/ColorType";
-import Range1 from "@/Core/Geometry/Range1";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { Statistics } from "@/Core/Geometry/Statistics";
 import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
 

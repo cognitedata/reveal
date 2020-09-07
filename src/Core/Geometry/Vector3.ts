@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Random } from "@/Core/Primitives/Random";
 import { Ma } from "@/Core/Primitives/Ma";
 
@@ -39,7 +39,7 @@ export class Vector3
 
   public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }
   public get isZero(): boolean { return this.x === 0 || this.y === 0 || this.z === 0; }
-  
+
   public get squareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
   public get length(): number { return Math.sqrt(this.squareLength); }
   public get angle(): number { return Math.atan2(this.y, this.x); }

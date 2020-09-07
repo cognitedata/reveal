@@ -14,7 +14,7 @@
 import * as THREE from "three";
 
 import { ColorType } from "@/Core/Enums/ColorType";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 import { SurfaceNode } from "@/SubSurface/Basics/SurfaceNode";
 import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
@@ -139,7 +139,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   }
 
   //==================================================
-  // INSTANCE METHODS: 
+  // INSTANCE METHODS:
   //==================================================
 
   private createSolid(): THREE.Object3D | null
@@ -241,13 +241,13 @@ export class SurfaceThreeView extends BaseGroupThreeView
 function vertexShader(): string
 {
   return `
-    varying vec3 vUv; 
+    varying vec3 vUv;
 
     void main() {
-      vUv = position; 
+      vUv = position;
 
       vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-      gl_Position = projectionMatrix * modelViewPosition; 
+      gl_Position = projectionMatrix * modelViewPosition;
     }
   `;
 }

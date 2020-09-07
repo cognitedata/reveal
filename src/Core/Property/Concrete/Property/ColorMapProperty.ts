@@ -1,11 +1,11 @@
-import ValueProperty from "@/Core/Property/Base/ValueProperty";
+import { ValueProperty } from "@/Core/Property/Base/ValueProperty";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
-import Range1 from "@/Core/Geometry/Range1";
-import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
 import { Appearance } from "@/Core/States/Appearance";
 import { IPropertyExtraOptionDataParams } from "@/Core/Property/Base/IPropertyExtraOptionDataParms";
 
-export default class ColorMapProperty extends ValueProperty<string>
+export class ColorMapProperty extends ValueProperty<string>
 {
   //==================================================
   // CONSTRUCTOR

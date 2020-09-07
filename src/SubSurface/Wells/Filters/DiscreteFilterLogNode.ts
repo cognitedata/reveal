@@ -18,8 +18,8 @@ import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode"
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
 import { ColorType } from "@/Core/Enums/ColorType";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import Range1 from "@/Core/Geometry/Range1";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { Range1 } from "@/Core/Geometry/Range1";
 import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 
 export class DiscreteFilterLogNode extends BaseFilterLogNode

@@ -16,8 +16,8 @@ import * as Lodash from "lodash";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import BandPositionProperty from "@/Core/Property/Concrete/Property/BandPositionProperty";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { BandPositionProperty } from "@/Core/Property/Concrete/Property/BandPositionProperty";
 import { BandPosition } from "@/Core/Enums/BandPosition";
 
 export class DiscreteLogStyle extends BaseRenderStyle

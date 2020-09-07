@@ -2,10 +2,10 @@ import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
 import { ILog, ICasing, IWell, IWellBore, ITrajectory, ITrajectoryRows, IRiskEvent } from "@cognite/node-visualizer-subsurface";
-import BPData from "@/Solutions/BP/BPData";
-import WellsCreator from "@/Solutions/BP/Creators/WellNodesCreator";
+import { BPData } from "@/Solutions/BP/BPData";
+import { WellNodesCreator } from "@/Solutions/BP/Creators/WellNodesCreator";
 
-export default class BPDataModule extends BaseModule
+export class BPDataModule extends BaseModule
 {
 
     // Represent data of BP
@@ -26,7 +26,7 @@ export default class BPDataModule extends BaseModule
         return;
         // todo: clear rootNode if needed in the future using proper function
 
-      const wellNodes = WellsCreator.create(this.bpData);
+      const wellNodes = WellNodesCreator.create(this.bpData);
       if (!wellNodes)
         return;
 
@@ -52,7 +52,7 @@ export default class BPDataModule extends BaseModule
         nptEvents?: IRiskEvent[],
         logs?: { [key: number]: ILog[] } | {},
         casings?: ICasing[],
-    }) 
+    })
     {
       const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings } = data;
       this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings);

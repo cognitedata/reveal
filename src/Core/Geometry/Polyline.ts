@@ -13,7 +13,7 @@
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Points } from "@/Core/Geometry/Points";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Shape } from "@/Core/Geometry/Shape";
 
 export class Polyline extends Points
@@ -45,7 +45,7 @@ export class Polyline extends Points
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getLength(dimension: number = 3): number 
+  public getLength(dimension: number = 3): number
   {
     let length = 0;
     const maxIndex = this.list.length - 1;
@@ -66,7 +66,7 @@ export class Polyline extends Points
 
   public getArea(): number { return Math.abs(this.getSignedArea()); }
 
-  public getSignedArea(): number 
+  public getSignedArea(): number
   {
     const n = this.length;
     if (n === 2)
@@ -88,7 +88,7 @@ export class Polyline extends Points
   }
 
   //==================================================
-  // STATIC METHODS: 
+  // STATIC METHODS:
   //==================================================
 
   public static createByRandom(pointCount: number, boundingBox: Range3): Polyline

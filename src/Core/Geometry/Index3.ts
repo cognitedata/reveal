@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Index2 from "@/Core/Geometry/Index2";
+import { Index2 } from "@/Core/Geometry/Index2";
 
-export default class Index3
+export class Index3
 {
   //==================================================
   // STATIC PROPERTIES

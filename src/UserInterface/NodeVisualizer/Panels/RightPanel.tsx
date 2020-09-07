@@ -4,7 +4,7 @@ import { ConnectedViewer3D } from "@/UserInterface/NodeVisualizer/Viewers/Connec
 /**
  * Right Panel - 3D/2D viewers
  */
-export default function RightPanel(props: { viewer3D: any }) {
+export function RightPanel(props: { viewer3D: any }) {
   return (
     <div className="right-panel">
       <ConnectedViewer3D viewer3D={props.viewer3D} />

@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { IUserInterface } from "@/Core/Interfaces/IUserInterface";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import NotificationsToActionsAdaptor from "@/UserInterface/Adapters/NotificationToAction";
+import { NotificationsToActionsAdaptor } from "@/UserInterface/Adapters/NotificationToAction";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { setFullScreen } from "@/UserInterface/Redux/actions/common";
 import { updateVisualizerToolbars, updateStatusPanel } from "@/UserInterface/Redux/reducers/VisualizersReducer";
@@ -10,7 +10,7 @@ import { updateVisualizerToolbars, updateStatusPanel } from "@/UserInterface/Red
  * Gets callbacks from Core Components when various events happen
  * such as creation of a BaseNode.
  */
-class UserInterfaceListener implements IUserInterface
+export class UserInterfaceListener implements IUserInterface
 {
 
   private readonly notificationAdaptor: NotificationsToActionsAdaptor;
@@ -43,5 +43,3 @@ class UserInterfaceListener implements IUserInterface
     this.dispatcher(updateStatusPanel({ text: statusText }));
   }
 }
-
-export default UserInterfaceListener;

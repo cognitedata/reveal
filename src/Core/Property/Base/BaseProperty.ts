@@ -1,4 +1,4 @@
-export default abstract class BaseProperty
+export abstract class BaseProperty
 {
   //==================================================
   // INSTANCE FIELDS

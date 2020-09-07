@@ -1,23 +1,23 @@
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import BaseProperty from "@/Core/Property/Base/BaseProperty";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { BaseProperty } from "@/Core/Property/Base/BaseProperty";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
-import ValueProperty, { ExpandedOption } from "@/Core/Property/Base/ValueProperty";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
-import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
+import { ColorMapProperty } from "@/Core/Property/Concrete/Property/ColorMapProperty";
+import { ValueProperty, ExpandedOption } from "@/Core/Property/Base/ValueProperty";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import { GroupProperty } from "@/Core/Property/Concrete/Folder/GroupProperty";
+import { ElementTypes } from "@/UserInterface/Components/Settings/ElementTypes";
 import { ISettingsSection, ISettingsElement, ISelectOption } from "@/UserInterface/Components/Settings/Types";
-import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
-import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
+import { StringProperty } from "@/Core/Property/Concrete/Property/StringProperty";
+import { ColorProperty } from "@/Core/Property/Concrete/Property/ColorProperty";
 import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
-import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
+import { BooleanProperty } from "@/Core/Property/Concrete/Property/BooleanProperty";
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
-export default class NodeUtils
+export class NodeUtils
 {
   //==================================================
   // STATIC FIELDS
@@ -70,7 +70,7 @@ export default class NodeUtils
     return null;
   }
 
-  public static getPropertyById(name: string): BaseProperty | null 
+  public static getPropertyById(name: string): BaseProperty | null
   {
     if (NodeUtils.properties)
       return NodeUtils.properties.getDescendantByName(name);
@@ -81,7 +81,7 @@ export default class NodeUtils
   // STATIC METHODS: Create element
   //==================================================
 
-  public static createRenderStyleCommands(baseNode: BaseNode) 
+  public static createRenderStyleCommands(baseNode: BaseNode)
   {
     NodeUtils._renderStyleCommands = baseNode.createRenderStyleCommands();
   }
@@ -103,7 +103,7 @@ export default class NodeUtils
       }
       return parentElement;
     }
-    // ***** ExpanderProperty  
+    // ***** ExpanderProperty
     if (property instanceof ExpanderProperty)
     {
       const parentElement = NodeUtils.createExpanderElement(property);

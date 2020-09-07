@@ -5,20 +5,20 @@ import {
   ISettingsElement,
   ISettingsElementProps,
 } from "@/UserInterface/Components/Settings/Types";
-import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
-import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
-import Icon from "@/UserInterface/Components/Icon/Icon";
+import { ElementTypes } from "@/UserInterface/Components/Settings/ElementTypes";
+import { CompactColorPicker } from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
+import { Icon } from "@/UserInterface/Components/Icon/Icon";
 import { GenericSelect } from "@/UserInterface/Components/GenericSelect/GenericSelect";
 import { CommonSelectBase } from "@/UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase";
 import { ColorMapIcon } from "@/UserInterface/Components/Settings/ColorMapIcon/ColorMapIcon";
 import { ColorTypeIcon } from "@/UserInterface/Components/Settings/ColorTypeIcon/ColorTypeIcon";
-import ToolbarToolTip from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
+import { ToolbarToolTip } from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
 
 /**
  * Responsible for rendering dynamic inputs
  * @param props
  */
-export default function SettingsElement(props: ISettingsElementProps) {
+export function SettingsElement(props: ISettingsElementProps) {
   const {
     config,
     onPropertyValueChange: onChange,

@@ -14,11 +14,11 @@
 import * as Lodash from "lodash";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Range3 from "@/Core/Geometry/Range3";
-import Index3 from "@/Core/Geometry/Index3";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Index3 } from "@/Core/Geometry/Index3";
 import { Grid3 } from "@/Core/Geometry/Grid3";
 import { Shape } from "@/Core/Geometry/Shape";
-import Index2 from "@/Core/Geometry/Index2";
+import { Index2 } from "@/Core/Geometry/Index2";
 
 export class RegularGrid3 extends Grid3
 {
@@ -89,7 +89,7 @@ export class RegularGrid3 extends Grid3
   }
 
   //==================================================
-  // INSTANCE METHODS: Getters: Node position 
+  // INSTANCE METHODS: Getters: Node position
   //==================================================
 
   public getNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3
@@ -126,7 +126,7 @@ export class RegularGrid3 extends Grid3
   }
 
   //==================================================
-  // INSTANCE METHODS: Getters: Cell position 
+  // INSTANCE METHODS: Getters: Cell position
   //==================================================
 
   public getRealCell(cell: Index3): Index3

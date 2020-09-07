@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { ColorType } from "@/Core/Enums/ColorType";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
@@ -23,7 +23,7 @@ import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
 
 import Icon from "@images/Nodes/WellTrajectoryNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
 export class WellTrajectoryNode extends DataNode
 {

@@ -16,7 +16,7 @@ import Color from "color";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ColorMapItem } from "@/Core/Primitives/ColorMapItem";
 import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
-import Range1 from "@/Core/Geometry/Range1";
+import { Range1 } from "@/Core/Geometry/Range1";
 import { Colors } from "@/Core/Primitives/Colors";
 
 export class ColorMap

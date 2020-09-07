@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { Polyline } from "@/Core/Geometry/Polyline";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Shape } from "@/Core/Geometry/Shape";
 
 export class Polylines extends Shape
@@ -57,7 +57,7 @@ export class Polylines extends Shape
   public clear(): void { this.list.splice(0, this.list.length); }
 
   //==================================================
-  // STATIC METHODS: 
+  // STATIC METHODS:
   //==================================================
 
   public static createByRandom(polylinesCount: number, pointCount: number, boundingBox: Range3): Polylines

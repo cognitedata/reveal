@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Draggable from "react-draggable";
 import { Appearance } from "@/Core/States/Appearance";
-import Icon from "@/UserInterface/Components/Icon/Icon";
+import { Icon } from "@/UserInterface/Components/Icon/Icon";
 import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
-import ToolBarSelect from "@/UserInterface/Components/ToolBarSelect/ToolBarSelect";
+import { ToolBarSelect } from "@/UserInterface/Components/ToolBarSelect/ToolBarSelect";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -91,7 +91,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 // Visualizer ToolBar Component
-export default function VisualizerToolbar(props: {
+export function VisualizerToolbar(props: {
   visualizerId: string;
   toolbar?: Map<string, IToolbarButton[]>;
   onToolbarButtonClick: (

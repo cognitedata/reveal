@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Shape } from "@/Core/Geometry/Shape";
 
 export class Points extends Shape
@@ -81,7 +81,7 @@ export class Points extends Shape
   public clear(): void { this.list.splice(0, this.list.length); }
 
   //==================================================
-  // STATIC METHODS: 
+  // STATIC METHODS:
   //==================================================
 
   public static createByRandom(pointCount: number, boundingBox: Range3): Points

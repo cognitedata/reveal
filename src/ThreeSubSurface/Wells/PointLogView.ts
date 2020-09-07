@@ -14,7 +14,7 @@
 import * as THREE from "three";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
@@ -309,7 +309,7 @@ export class PointLogView extends BaseGroupThreeView
         position.addWithFactor(prependicular, selectedRadius);
 
         const label = PointLogView.createLabel(node.name, sample.description, position, style.fontSize.value);
-        if (label)  
+        if (label)
         {
           label.center = new THREE.Vector2(0, 1);
           label.userData.label = index;

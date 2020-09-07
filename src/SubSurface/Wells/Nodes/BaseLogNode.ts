@@ -22,7 +22,7 @@ import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode"
 import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { ColorType } from "@/Core/Enums/ColorType";
 

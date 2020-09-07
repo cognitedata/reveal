@@ -5,8 +5,8 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { isInstanceOf } from "@/Core/Primitives/ClassT";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 
-import { StubRootCreator } from "./StubModule/StubRootCreator";
-import { StubTargetNode } from "./StubModule/StubTargetNode";
+import { StubRootCreator } from "@/__tests__/StubModule/StubRootCreator";
+import { StubTargetNode } from "@/__tests__/StubModule/StubTargetNode";
 
 describe("Hierarcy", () =>
 {
@@ -55,7 +55,7 @@ describe("Hierarcy", () =>
 
     expect(node.isA(node.className)).toBe(true);
     expect(node.isA(BaseVisualNode.className)).toBe(true);
-    expect(isInstanceOf(node, PolylinesNode).valueOf()).toBe(true); 
+    expect(isInstanceOf(node, PolylinesNode).valueOf()).toBe(true);
   }
 
   function boundingBox(): void

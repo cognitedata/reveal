@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { ColorType } from "@/Core/Enums/ColorType";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { Points } from "@/Core/Geometry/Points";
 
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
@@ -20,7 +20,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
 import Icon from "@images/Nodes/PointsNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
 export class PointsNode extends DataNode
 {
@@ -60,7 +60,7 @@ export class PointsNode extends DataNode
   public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
   public /*override*/ get boundingBox(): Range3 { return this.points ? this.points.boundingBox : new Range3(); }
-  
+
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new PointsRenderStyle(targetId);

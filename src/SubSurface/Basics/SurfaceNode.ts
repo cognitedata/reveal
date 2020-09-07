@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { ColorType } from "@/Core/Enums/ColorType";
 
@@ -21,7 +21,7 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
 import Icon from "@images/Nodes/SurfaceNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 
 export class SurfaceNode extends DataNode

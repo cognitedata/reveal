@@ -16,8 +16,8 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
 import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import Range3 from "@/Core/Geometry/Range3";
+import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class SurveyNode extends BaseVisualNode
 {

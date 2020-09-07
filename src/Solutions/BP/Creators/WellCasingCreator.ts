@@ -5,7 +5,7 @@ import { Util } from "@/Core/Primitives/Util";
 import { Ma } from "@/Core/Primitives/Ma";
 import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 
-export default class WellCasingCreator
+export class WellCasingCreator
 {
   public static createCasingNodeNew(casings: ICasing[] | undefined, unit: number): CasingLogNode | null
   {

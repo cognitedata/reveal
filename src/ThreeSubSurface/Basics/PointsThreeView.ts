@@ -15,7 +15,7 @@ import * as THREE from "three";
 import * as Color from "color";
 
 import { Points } from "@/Core/Geometry/Points";
-import Range3 from "@/Core/Geometry/Range3";
+import { Range3 } from "@/Core/Geometry/Range3";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Colors } from "@/Core/Primitives/Colors";
 
