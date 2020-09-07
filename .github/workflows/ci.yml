@@ -11,65 +11,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  ci-setup:
-    name: Setup dependencies
-    runs-on: ubuntu-latest
-    steps:
-    - name: Setup Rust
-      run: |
-        rustup component add clippy
-        rustup component add rustfmt
-
-  ci-rust:
-    name: Rust
-    needs: ci-setup
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Cache cargo registry
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-    - name: Cache cargo index
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-    - name: Cache cargo build
-      uses: actions/cache@v1
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Build
-      run: |
-        # fail on warnings, test all features
-        cargo fmt -- --check
-        # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
-        # and needs to be disabled
-        cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
-        cargo test --all --verbose
-  
-  ci-worker:
-    name: parser-worker
-    runs-on: ubuntu-latest
-    needs: ci-rust
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install wasm-pack
-        uses: jetli/wasm-pack-action@v0.3.0
-
-      - name: Install NPM dependencies
-        working-directory: parser-worker
-        run: yarn
-
-      - name: Build parser-worker
-        working-directory: parser-worker
-        run: yarn build:prod
-
   ci-viewer:
     name: Viewer
     runs-on: ubuntu-latest
@@ -179,3 +120,66 @@ jobs:
       - name: Build docs
         working-directory: documentation
         run: yarn run build
+
+  # runs only when there are changes in parser-worker/
+  # we use it here because github haven't figured out conditionally required checks
+  # see https://github.community/t/feature-request-conditional-required-checks/16761/13
+  ci-parser-worker:
+    name: Parser worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: technote-space/get-diff-action@v3
+        with:
+          PREFIX_FILTER: parser-worker
+
+      - name: Setup Rust
+        if: env.GIT_DIFF
+        run: |
+          rustup component add clippy
+          rustup component add rustfmt
+
+      - name: Cache cargo registry
+        if: env.GIT_DIFF
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        if: env.GIT_DIFF
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo build
+        if: env.GIT_DIFF
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build
+        if: env.GIT_DIFF
+        run: |
+          # fail on warnings, test all features
+          cargo fmt -- --check
+          # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
+          # and needs to be disabled
+          cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
+          cargo test --all --verbose
+
+      - name: Install wasm-pack
+        if: env.GIT_DIFF
+        uses: jetli/wasm-pack-action@v0.3.0
+
+      - name: Install NPM dependencies
+        if: env.GIT_DIFF
+        working-directory: parser-worker
+        run: yarn
+
+      - name: Build parser-worker
+        if: env.GIT_DIFF
+        working-directory: parser-worker
+        run: yarn build:prod
