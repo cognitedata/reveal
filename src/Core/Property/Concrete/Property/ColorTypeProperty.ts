@@ -54,22 +54,22 @@ export class ColorTypeProperty extends ValueProperty<ColorType>
       switch (value)
       {
         case ColorType.Black:
-          colorTypeIconData = { icon: ColorPnG, color: "#000000"};
+          colorTypeIconData = { icon: ColorPnG, color: "#000000" };
           break;
         case ColorType.White:
-          colorTypeIconData = { icon: ColorPnG, color: "#FFFFFF"};
+          colorTypeIconData = { icon: ColorPnG, color: "#FFFFFF" };
           break;
         case ColorType.Specified:
           colorTypeIconData = { icon: ColorPnG, color: this.nodeColor?.hex() || "" };
           break;
         case ColorType.ColorMap:
-          colorTypeIconData = { icon: ColorMap};
+          colorTypeIconData = { icon: ColorMap };
           break;
         case ColorType.Different:
-          colorTypeIconData = { icon: Different};
+          colorTypeIconData = { icon: Different };
           break;
         case ColorType.Parent:
-          colorTypeIconData = { icon: Folder, color: this.parentNodeColor?.hex() || ""};
+          colorTypeIconData = { icon: Folder, color: this.parentNodeColor?.hex() || "" };
           break;
         default: colorTypeIconData = {};
       }

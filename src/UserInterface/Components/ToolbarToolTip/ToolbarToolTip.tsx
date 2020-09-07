@@ -4,7 +4,7 @@ import { Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import getIcon from "@/UserInterface/Components/Icon/IconSelector";
 import { Typography } from "@material-ui/core";
-import { Appearance } from '@/Core/States/Appearance';
+import { Appearance } from "@/Core/States/Appearance";
 
 // Custom tooltip with white background
 const CustomToolTip = withStyles((theme: Theme) => ({
@@ -70,7 +70,7 @@ export default function ToolbarToolTip(props: {
                 })}
               </div>
             </div>
-          } 
+          }
           placement={tooltip.placement}
           enterDelay={Appearance.tooltipDisplayDelay}
           enterNextDelay={Appearance.tooltipDisplayDelay}
