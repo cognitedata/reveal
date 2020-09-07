@@ -15,7 +15,7 @@ import { Util } from "@/Core/Primitives/Util";
 import { TextItem } from "@/Core/Views/TextItem";
 import { Polyline } from "@/Core/Geometry/Polyline";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
+import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
 export class ViewInfo
 {
@@ -48,7 +48,7 @@ export class ViewInfo
 
   // Add header of various types
   public addHeader(header: string) { this.items.push(new TextItem(`${header}`, true)); }
-  public addActiveTool(tool: BaseTool) { this.items.push(new TextItem(`${tool.getDisplayName()}`, true)); }
+  public addActiveTool(tool: BaseCommand) { this.items.push(new TextItem(`${tool.getDisplayName()}`, true)); }
   public addPickedNode(node: BaseNode) { this.items.push(new TextItem(`Picked ${node.displayName}:`, true)); }
 
   // Add text only

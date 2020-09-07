@@ -61,6 +61,7 @@ import { SeismicCubePlaneManipulator } from "@/ThreeSubSurface/Seismic/SeismicCu
 import { PointLogManipulator } from "@/ThreeSubSurface/Wells/PointLogManipulator";
 import { SeismicOutlineView } from "@/ThreeSubSurface/Seismic/SeismicOutlineView";
 import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
+import Range3 from "@/Core/Geometry/Range3";
 
 export class ThreeModule extends BaseModule
 {
@@ -105,7 +106,7 @@ export class ThreeModule extends BaseModule
     manipulatorFactory.register(PointLogNode.className, PointLogManipulator, ThreeRenderTargetNode.className);
   }
 
-  public initializeWhenPopulated(root: BaseRootNode): void
+  public /*override*/ initializeWhenPopulated(root: BaseRootNode): void
   {
     document.body.onresize = () =>
     {
@@ -114,11 +115,17 @@ export class ThreeModule extends BaseModule
     };
   }
 
-  public setDefaultVisible(root: BaseRootNode): void
+  public /*override*/ setDefaultVisible(root: BaseRootNode): void
   {
     // Set all axis visible
     for (const target of root.targets.getChildrenByType(BaseTargetNode))
       for (const node of root.getDescendantsByType(AxisNode))
         node.setVisibleInteractive(true, target);
+  }
+
+  public /*override*/ createRenderTargetNode(): BaseRenderTargetNode | null
+  {
+    const fractionRange = Range3.createByMinAndMax(0, 0, 1, 1);
+    return new ThreeRenderTargetNode(fractionRange);
   }
 }

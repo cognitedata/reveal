@@ -110,6 +110,19 @@ export class Modules
     return root;
   }
 
+  public createRenderTargetNode(): BaseRenderTargetNode | null
+  {
+    // Create the render target from the last installed
+    for (let i = this.modules.length - 1; i >= 0; --i)
+    {
+      const module = this.modules[i];
+      const renderTarget = module.createRenderTargetNode();
+      if (renderTarget)
+        return renderTarget;
+    }
+    return null;
+  }
+
   public *getDomElements(root: BaseRootNode): Generator<HTMLElement>
   {
     for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))

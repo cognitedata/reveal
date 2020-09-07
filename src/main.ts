@@ -26,8 +26,9 @@ export default function main(element: HTMLElement)
 
 function addRenderTarget(element: HTMLElement, root: BaseRootNode)
 {
-  const fractionRange = Range3.createByMinAndMax(0, 0, 1, 1);
-  const target = new ThreeRenderTargetNode(fractionRange);
+  const target = Modules.instance.createRenderTargetNode();
+  if (!target)
+    return;
 
   target.domElement.style.height = `${100}vh`;
   target.domElement.style.width = `${100}vw`;
