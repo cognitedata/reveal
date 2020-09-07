@@ -109,6 +109,7 @@ pods {
         def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
 
         fas.build(
+          iap: false,
           domainName: domainName,
           buildCommand: 'yarn build',
         )
