@@ -27,6 +27,7 @@ module.exports = {
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
         'examples/node-visiting',
+        'examples/cad-nodefiltering',
         'examples/cad-preview',
       ],
     },
