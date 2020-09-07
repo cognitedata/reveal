@@ -176,7 +176,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   }
 
   //==================================================
-  // OVERRIDES of RenderTargetNode
+  // OVERRIDES of BaseRenderTargetNode
   //==================================================
 
   public /*override*/ get domElement(): HTMLCanvasElement { return this.renderer.domElement; }
@@ -198,27 +198,28 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return !this._cameraControl ? false : this._cameraControl.viewRange(boundingBox);
   }
 
-  private updateNearAndFarPlane(): void
+  public /*override*/ addTools(toolbar: IToolbar): void
   {
-    if (!this.isInitialized)
-      return;
+    const navigationTool = new NavigationTool(this);
+    this.activeTool = navigationTool;
 
-    const { camera } = this;
-    const boundingBox = this.getBoundingBoxFromViews();
-    if (!boundingBox || boundingBox.isEmpty)
-      return;
+    this.addTool(toolbar, ToolbarGroupIds.Tools, navigationTool);
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new EditTool(this));
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomTool(this));
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomToTargetTool(this));
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
 
-    this.transformer.transformRangeTo3D(boundingBox);
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ViewAllCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleCameraTypeCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new CopyImageCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleBgColorCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleFullscreenCommand(this));
 
-    const { diagonal } = boundingBox;
-    const near = 0.001 * diagonal;
-    const far = 2 * diagonal + this.cameraControl.distance;
-    if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
-    {
-      camera.near = near;
-      camera.far = far;
-      camera.updateProjectionMatrix();
-    }
+    for (let viewFrom = 0; viewFrom < 6; viewFrom++)
+      this.addTool(toolbar, ToolbarGroupIds.ViewFrom, new ViewFromCommand(this, viewFrom));
+
+    this.addTool(toolbar, ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
 
   //==================================================
@@ -282,30 +283,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       this._toolController.add(command);
 
     toolbar.add(groupId, command);
-  }
-
-  public addTools(toolbar: IToolbar)
-  {
-    const navigationTool = new NavigationTool(this);
-    this.activeTool = navigationTool;
-
-    this.addTool(toolbar, ToolbarGroupIds.Tools, navigationTool);
-    this.addTool(toolbar, ToolbarGroupIds.Tools, new EditTool(this));
-    this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomTool(this));
-    this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomToTargetTool(this));
-    this.addTool(toolbar, ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
-
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ViewAllCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleCameraTypeCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new CopyImageCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleBgColorCommand(this));
-    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleFullscreenCommand(this));
-
-    for (let viewFrom = 0; viewFrom < 6; viewFrom++)
-      this.addTool(toolbar, ToolbarGroupIds.ViewFrom, new ViewFromCommand(this, viewFrom));
-
-    this.addTool(toolbar, ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
 
   //==================================================
@@ -476,5 +453,32 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
         return [view, intersection];
     }
     return [null, null];
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Others
+  //==================================================
+
+  private updateNearAndFarPlane(): void
+  {
+    if (!this.isInitialized)
+      return;
+
+    const { camera } = this;
+    const boundingBox = this.getBoundingBoxFromViews();
+    if (!boundingBox || boundingBox.isEmpty)
+      return;
+
+    this.transformer.transformRangeTo3D(boundingBox);
+
+    const { diagonal } = boundingBox;
+    const near = 0.001 * diagonal;
+    const far = 2 * diagonal + this.cameraControl.distance;
+    if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
+    {
+      camera.near = near;
+      camera.far = far;
+      camera.updateProjectionMatrix();
+    }
   }
 }

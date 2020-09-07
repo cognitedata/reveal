@@ -1,6 +1,6 @@
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import Toolbar from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
 import { IToolbarGroups } from "@/Core/Interfaces/IToolbarGroups";
+import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
 export default class Viewer
 {
@@ -12,7 +12,7 @@ export default class Viewer
   private htmlElement: HTMLElement | null = null;
 
   // Holds a reference to ThreeJs target
-  private target: ThreeRenderTargetNode | null = null;
+  private target: BaseRenderTargetNode | null = null;
 
   // Holds a reference to view toolbar
   private toolbarCommands: IToolbarGroups = {};
@@ -23,7 +23,7 @@ export default class Viewer
     this.htmlElement = ref;
   }
 
-  public setTarget(target: ThreeRenderTargetNode) { this.target = target; }
+  public setTarget(target: BaseRenderTargetNode) { this.target = target; }
 
   public setToolbarCommands(toolbar: Toolbar)
   {

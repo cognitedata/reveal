@@ -22,10 +22,6 @@ import { Random } from "@/Core/Primitives/Random";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { SurfaceNode } from "@/SubSurface/Basics/SurfaceNode";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
-import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
-import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { WellFolder } from "@/SubSurface/Wells/Nodes/WellFolder";
 import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
@@ -309,29 +305,10 @@ export class SyntheticSubSurfaceModule extends BaseModule
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
-    const target = root.activeTarget as ThreeRenderTargetNode;
-    if (!target)
-      return;
-
     const { wells } = root;
     return;
 
     // eslint-disable-next-line no-unreachable
-    if (Random.isTrue(0.05))
-    {
-      const command = new ToggleAxisVisibleCommand(target);
-      command.invoke();
-    }
-    if (Random.isTrue(0.2))
-    {
-      const command = new ViewAllCommand(target);
-      command.invoke();
-    }
-    if (Random.isTrue(0.2))
-    {
-      const command = new ToggleBgColorCommand(target);
-      command.invoke();
-    }
     for (const node of wells.getDescendantsByType(WellTrajectoryNode))
     {
 

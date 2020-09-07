@@ -3,6 +3,7 @@ import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { Base3DView } from "@/Core/Views/Base3DView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { Appearance } from "@/Core/States/Appearance";
+import { IToolbar } from "@/Core/Interfaces/IToolbar";
 
 export abstract class BaseRenderTargetNode extends BaseTargetNode
 {
@@ -75,7 +76,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   public abstract get domElement(): HTMLElement;
   public /*virtual*/ onResize(): void { }
   public /*virtual*/ viewAll(): void { }
-
+  public /*virtual*/ addTools(toolbar: IToolbar): void { }
+  
   //==================================================
   // INSTANCE METHODS
   //==================================================

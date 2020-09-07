@@ -10,8 +10,6 @@ import UserInterfaceListener from "@/UserInterface/Adapters/UserInterfaceListene
 import { Modules } from "@/Core/Module/Modules";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import Viewer from "@/UserInterface/Components/Viewers/Viewer";
-import Range3 from "@/Core/Geometry/Range3";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import Toolbar from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
 import { Appearance } from "@/Core/States/Appearance";
 import { State } from "@/UserInterface/Redux/State/State";
@@ -44,9 +42,9 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
       ViewerUtils.addViewer("3D", new Viewer("3D", element));
       // Add targets and toolbars to root node
       for (const viewer of Object.values(ViewerUtils.getViewers())) {
-        const target = new ThreeRenderTargetNode(
-          Range3.createByMinAndMax(0, 0, 1, 1)
-        );
+        const target = Modules.instance.createRenderTargetNode();
+        if (!target) continue;
+
         const toolbar = new Toolbar();
 
         target.addTools(toolbar);
