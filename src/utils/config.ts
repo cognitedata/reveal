@@ -12,7 +12,7 @@ export default {
   auth: {
     appId: 'Cognuit',
     appVersion: '1.0.0',
-    cdfProject: 'publicdata',
+    cdfProject: 'subsurface-test',
     baseUrl: 'https://api.cognitedata.com',
   },
 };

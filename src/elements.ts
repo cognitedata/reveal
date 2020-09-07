@@ -11,6 +11,7 @@ export const Layout = styled.div`
 export const Main = styled.div`
   background-color: var(--cogs-greyscale-grey2);
   flex-grow: 1;
+  overflow-y: scroll;
 `;
 
 export const Content = styled.main`

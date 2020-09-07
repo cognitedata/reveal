@@ -10,6 +10,7 @@ import '@cognite/cogs.js/dist/cogs.css';
 import I18nContainer from './containers/I18nContainer';
 import { ApiProvider } from './contexts/ApiContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { APIErrorProvider } from './contexts/APIErrorContext';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
@@ -27,7 +28,9 @@ ReactDOM.render(
   <I18nContainer>
     <AuthProvider>
       <ApiProvider>
-        <App />
+        <APIErrorProvider>
+          <App />
+        </APIErrorProvider>
       </ApiProvider>
     </AuthProvider>
   </I18nContainer>,

@@ -9,6 +9,7 @@ import {
 } from 'typings/interfaces';
 import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
+import APIErrorContext from 'contexts/APIErrorContext';
 import { useHistory } from 'react-router-dom';
 import {
   ConfigurationArrow,
@@ -19,6 +20,7 @@ import {
   ThreeColsLayout,
 } from '../elements';
 import { DUMMY_DATA } from '../../../utils/dummy';
+import ErrorMessage from '../../../components/Molecules/ErrorMessage';
 
 type Props = {
   name: string | undefined | null;
@@ -28,6 +30,7 @@ enum ConfigUIState {
   INITIAL,
   CONFIGURING,
   CONFIRMED,
+  ERROR,
 }
 
 enum ChangeType {
@@ -78,6 +81,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     },
   ]);
   const { api } = useContext(ApiContext);
+  const { error: apiError, addError } = useContext(APIErrorContext);
   const history = useHistory();
   const { Option } = Select;
 
@@ -120,8 +124,15 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   }
 
   function handleSaveConfigurationClick() {
-    api!.configurations.create(configuration).then(() => {
-      history.push('/configurations'); // Bug in react-router-dom - does not render after history.push()
+    api!.configurations.create(configuration).then((response) => {
+      if (response[0].error) {
+        addError(
+          `Failed to save configuration - ${response[0].statusText}`,
+          response[0].status
+        );
+      } else {
+        history.push('/configurations'); // Bug in react-router-dom - does not render after history.push()
+      }
     });
   }
 
@@ -224,10 +235,15 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                 <Button
                   type="primary"
                   onClick={() => {
-                    setSourceUIState(ConfigUIState.CONFIGURING);
-                    fetchRepositories().then((response) =>
-                      setAvailableRepositories(response)
-                    );
+                    fetchRepositories().then((response) => {
+                      if (!response[0].error) {
+                        setSourceUIState(ConfigUIState.CONFIGURING);
+                        setAvailableRepositories(response);
+                      } else {
+                        setSourceUIState(ConfigUIState.ERROR);
+                        addError('Failed to fetch', response[0].status);
+                      }
+                    });
                   }}
                 >
                   Configure
@@ -297,6 +313,13 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
               </ConnectorList>
             </main>
           )}
+          {sourceUIState === ConfigUIState.ERROR && (
+            <main>
+              <ErrorMessage
+                message={`${apiError?.message} available repositories` || ''}
+              />
+            </main>
+          )}
         </ConfigurationContainer>
         <ConfigurationArrow>
           <svg
@@ -326,10 +349,15 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                 <Button
                   type="primary"
                   onClick={() => {
-                    setTargetUIState(ConfigUIState.CONFIGURING);
-                    fetchProjects().then((response) =>
-                      setAvailableProjects(response)
-                    );
+                    fetchProjects().then((response) => {
+                      if (!response[0].error) {
+                        setTargetUIState(ConfigUIState.CONFIGURING);
+                        setAvailableProjects(response);
+                      } else {
+                        setTargetUIState(ConfigUIState.ERROR);
+                        addError('Failed to fetch', response[0].status);
+                      }
+                    });
                   }}
                 >
                   Configure
@@ -373,6 +401,13 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
               <ConnectorList connectorPosition="left">
                 <li>_Root</li>
               </ConnectorList>
+            </main>
+          )}
+          {targetUIState === ConfigUIState.ERROR && (
+            <main>
+              <ErrorMessage
+                message={`${apiError?.message} available projects` || ''}
+              />
             </main>
           )}
         </ConfigurationContainer>

@@ -41,6 +41,15 @@ class Api {
       method: 'GET',
       headers: this.headers,
     });
+    if (!response.ok) {
+      return [
+        {
+          error: true,
+          status: response.status,
+          statusText: response.statusText,
+        },
+      ];
+    }
     return response.json();
   }
 
@@ -50,6 +59,15 @@ class Api {
       headers: this.headers,
       body: JSON.stringify(data),
     });
+    if (!response.ok) {
+      return [
+        {
+          error: true,
+          status: response.status,
+          statusText: response.statusText,
+        },
+      ];
+    }
     return response.json();
   }
 
