@@ -1134,8 +1134,8 @@ export class Cognite3DViewer {
     // TODO VERSION 5.0.0 remove the test for dom element size once we have removed the getCanvas function
     const clientWidth = this.domElement.clientWidth !== 0 ? this.domElement.clientWidth : this.canvas.clientWidth;
     const clientHeight = this.domElement.clientHeight !== 0 ? this.domElement.clientHeight : this.canvas.clientHeight;
-    const clientPixelWidth = window.devicePixelRatio * clientWidth;
-    const clientPixelHeight = window.devicePixelRatio * clientHeight;
+    const clientPixelWidth = this.renderer.getPixelRatio() * clientWidth;
+    const clientPixelHeight = this.renderer.getPixelRatio() * clientHeight;
     const clientTextureSize = clientPixelWidth * clientPixelHeight;
 
     const scale = clientTextureSize > maxTextureSize ? Math.sqrt(maxTextureSize / clientTextureSize) : 1;
