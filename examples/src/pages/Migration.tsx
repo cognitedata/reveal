@@ -68,7 +68,6 @@ export function Migration() {
       });
       (window as any).viewer = viewer;
 
-
       async function addModel(options: AddModelOptions) {
         try {
           const model = await viewer.addModel(options);
