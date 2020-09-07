@@ -2,8 +2,8 @@ name: preview-documentation
 
 on:
   pull_request:
-    branches:
-      - '**'
+    branches-ignore:
+      - 'dependabot/**'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -44,7 +44,6 @@ jobs:
           BRANCH: master # The branch the action should deploy to.
           FOLDER: documentation/docs-preview # The folder the action should deploy.
           REPOSITORY_NAME: cognitedata/reveal-docs-preview
-
 
       - name: Add comment about preview URL
         uses: unsplash/comment-on-pr@master
