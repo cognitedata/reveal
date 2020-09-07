@@ -28,5 +28,6 @@ export interface ISettingsState
 {
   currentNodeId: string;
   titleBar: TitleBarState;
-  expandedSections: {[sectionName: string]: boolean}
+  expandedSections: {[sectionName: string]: boolean};
+  updateUICount: number;
 }
