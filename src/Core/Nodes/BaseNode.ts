@@ -204,7 +204,7 @@ export abstract class BaseNode extends Identifiable
       numCandidates++;
       if (childState === CheckBoxState.All)
         numAll++;
-      else if (childState === CheckBoxState.None || childState === CheckBoxState.Disabled)
+      else if (childState === CheckBoxState.None || childState === CheckBoxState.CanNotBeChecked)
         numNone++;
 
       // Optimization, not tested
@@ -216,7 +216,7 @@ export abstract class BaseNode extends Identifiable
     if (numCandidates === numAll)
       return CheckBoxState.All;
     if (numCandidates === numNone)
-      return this.canBeChecked(target) ? CheckBoxState.None : CheckBoxState.Disabled;
+      return this.canBeChecked(target) ? CheckBoxState.None : CheckBoxState.CanNotBeChecked;
     return CheckBoxState.Some;
   }
 

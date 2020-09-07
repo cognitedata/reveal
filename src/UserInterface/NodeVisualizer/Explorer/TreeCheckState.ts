@@ -4,5 +4,7 @@ export enum TreeCheckState
   Partial = "partial", // Checked with faded color
   UnChecked = "unchecked", // Empty checkbox
   Disabled = "disabled", // checkbox disabled
-  Default = "unknown"
+  Default = "unknown",
+  CanNotBeChecked = "cannotcheck",
+  NotVisible = "notvisiable",
 }

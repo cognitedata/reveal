@@ -73,7 +73,7 @@ export abstract class BaseVisualNode extends BaseNode
     {
       if (this.canBeChecked(target))
         return CheckBoxState.None;
-      return CheckBoxState.Disabled;
+      return CheckBoxState.CanNotBeChecked;
     }
     return CheckBoxState.Never;
   }

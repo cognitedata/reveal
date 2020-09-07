@@ -14,6 +14,7 @@ import CheckedSome from "@images/Checkboxes/CheckedSome.png";
 interface SpanProps {
   readonly background?: string;
   readonly disabled?: boolean;
+  readonly checkable?: boolean;
 }
 
 const Label = styled.label`
@@ -32,11 +33,13 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: ${(props) => (props.disabled ? "auto" : "pointer")};
+  cursor: ${(props) => (props.checkable ? "pointer" : "auto")};
   background-image: ${(props) => props.background};
   background-repeat: no-repeat;
   background-size: cover;
   outline: none;
+  filter: ${(props) =>
+    props.disabled ? "grayscale(100%) opacity(0.4)" : "none"};
 `;
 
 export function TreeCheckBox(props: {
@@ -52,25 +55,22 @@ export function TreeCheckBox(props: {
   checked?: boolean;
   indeterminate?: boolean;
   disabled?: boolean;
+  checkable?: boolean;
   filter?: boolean;
 }) {
   const stateClassArr: string[] = [];
 
-  if (props.filter) {
-    stateClassArr.push("filter");
-  }
-  if (props.disabled) {
-    stateClassArr.push("disabled");
-  }
-  if (props.checked) {
-    stateClassArr.push("checked");
-  }
-  if (props.indeterminate) {
-    stateClassArr.push("indeterminate");
-  }
+  if (props.filter) stateClassArr.push("filter");
+
+  if (props.checkable) stateClassArr.push("checkable");
+  else stateClassArr.push("uncheckable");
+
+  if (props.checked) stateClassArr.push("checked");
+  if (props.indeterminate) stateClassArr.push("indeterminate");
+  if (props.disabled) stateClassArr.push("disabled");
 
   const backgroundImage = getBackgroundImage(
-    props.disabled,
+    props.checkable,
     props.hover,
     props.filter,
     props.checked,
@@ -91,6 +91,7 @@ export function TreeCheckBox(props: {
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}
         background={backgroundImage}
+        checkable={props.checkable}
         disabled={props.disabled}
       />
     </Label>
@@ -98,36 +99,28 @@ export function TreeCheckBox(props: {
 }
 
 const getBackgroundImage = (
-  disabled = false,
+  checkable = true,
   hover = false,
   filter = false,
   checked = false,
   indeterminate = false
 ) => {
   const imageStringArr: string[] = [];
-  if (disabled) {
-    imageStringArr.push(`url(${FrameStippled})`);
-  } else {
+  if (checkable) {
     imageStringArr.push(`url(${Frame})`);
 
-    if (checked) {
-      imageStringArr.push(`url(${CheckedAll})`);
-    } else if (indeterminate) {
-      imageStringArr.push(`url(${CheckedSome})`);
-    }
+    if (checked) imageStringArr.push(`url(${CheckedAll})`);
+    else if (indeterminate) imageStringArr.push(`url(${CheckedSome})`);
+
     if (hover) {
-      if (filter) {
-        imageStringArr.push(`url(${FocusFilter})`);
-      } else {
-        imageStringArr.push(`url(${FocusNormal})`);
-      }
+      if (filter) imageStringArr.push(`url(${FocusFilter})`);
+      else imageStringArr.push(`url(${FocusNormal})`);
     }
-  }
-  if (filter) {
-    imageStringArr.push(`url(${BackgroundFilter})`);
   } else {
-    imageStringArr.push(`url(${BackgroundNormal})`);
+    imageStringArr.push(`url(${FrameStippled})`);
   }
+  if (filter) imageStringArr.push(`url(${BackgroundFilter})`);
+  else imageStringArr.push(`url(${BackgroundNormal})`);
 
   return imageStringArr.join(",");
 };

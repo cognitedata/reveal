@@ -8,6 +8,7 @@ import RadioOn from "@images/Checkboxes/RadioOn.png";
 interface SpanProps {
   readonly background?: string;
   readonly disabled?: boolean;
+  readonly checkable?: boolean;
 }
 
 const Label = styled.label`
@@ -25,11 +26,13 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: ${(props) => (props.disabled ? "auto" : "pointer")};
+  cursor: ${(props) => (props.checkable ? "pointer" : "auto")};
   background-image: ${(props) => props.background};
   background-repeat: no-repeat;
   background-size: cover;
   outline: none;
+  filter: ${(props) =>
+    props.disabled ? "grayscale(100%) opacity(0.4)" : "none"};
 `;
 
 export function TreeRadioButton(props: {
@@ -44,9 +47,10 @@ export function TreeRadioButton(props: {
   onBlur: () => void;
   checked?: boolean;
   disabled?: boolean;
+  checkable?: boolean;
 }) {
   const backgroundImage = getBackgroundImage(
-    props.disabled,
+    props.checkable,
     props.hover,
     props.checked
   );
@@ -57,6 +61,7 @@ export function TreeRadioButton(props: {
         tabIndex={0}
         background={backgroundImage}
         disabled={props.disabled}
+        checkable={props.checkable}
         onClick={props.onClick}
         onKeyUp={props.onKeyUp}
         onFocus={props.onFocus}
@@ -69,19 +74,19 @@ export function TreeRadioButton(props: {
 }
 
 const getBackgroundImage = (
-  disabled = false,
+  checkable = true,
   hover = false,
   checked = false
 ) => {
   const imageStringArr: string[] = [];
-  if (!disabled) {
+
+  if (checkable) {
     if (hover) {
       if (checked) imageStringArr.push(`url(${FocusRadioOn})`);
 
       imageStringArr.push(`url(${FocusRadioOff})`);
     } else {
       if (checked) imageStringArr.push(`url(${RadioOn})`);
-
       imageStringArr.push(`url(${RadioOff})`);
     }
   }

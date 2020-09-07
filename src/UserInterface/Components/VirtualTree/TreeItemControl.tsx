@@ -8,6 +8,7 @@ export function TreeItemButton(props: {
   visible?: boolean;
   radio?: boolean;
   checkbox?: boolean;
+  checkable?: boolean;
   disabled?: boolean;
   checked?: boolean;
   filter?: boolean;
@@ -50,6 +51,7 @@ export function TreeItemButton(props: {
         class="tree-radio-button"
         id={props.id}
         disabled={props.disabled}
+        checkable={props.checkable}
         checked={props.checked}
         hover={hover}
         onClick={handleToggleEvent}
@@ -70,6 +72,7 @@ export function TreeItemButton(props: {
         checked={props.checked}
         indeterminate={props.indeterminate}
         disabled={props.disabled}
+        checkable={props.checkable}
         hover={hover}
         onClick={handleToggleEvent}
         onKeyUp={onEnter}

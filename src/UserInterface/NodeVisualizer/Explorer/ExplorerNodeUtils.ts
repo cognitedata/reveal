@@ -77,11 +77,14 @@ export class ExplorerNodeUtils
         case CheckBoxState.None:
           checkState = TreeCheckState.UnChecked;
           break;
-        case CheckBoxState.Disabled:
-          checkState = TreeCheckState.Disabled;
+        case CheckBoxState.CanNotBeChecked:
+          checkState = TreeCheckState.CanNotBeChecked;
           break;
         case CheckBoxState.Some:
           checkState = TreeCheckState.Partial;
+          break;
+        case CheckBoxState.Never:
+          checkState = TreeCheckState.NotVisible;
           break;
         default:
           checkState = TreeCheckState.Default;

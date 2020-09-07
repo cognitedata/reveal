@@ -31,6 +31,7 @@ export interface ITreeNodeState
   isRadio: boolean;
   isFilter: boolean;
   disabled: boolean;
+  checkable: boolean;
   checkVisible: boolean;
   visible: boolean;
   label: {

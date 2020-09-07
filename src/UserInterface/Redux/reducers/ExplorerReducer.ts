@@ -3,7 +3,6 @@ import Color from "color";
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IExplorerState, ITreeNodeState } from "@/UserInterface/Redux/State/explorer";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 import { TreeCheckState } from "@/UserInterface/NodeVisualizer/Explorer/TreeCheckState";
 import { ExplorerNodeUtils } from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
 import { State } from "@/UserInterface/Redux/State/State";
@@ -67,45 +66,27 @@ export const explorerSlice = createSlice({
       return state;
     },
     onCheckboxStateChange: {
-      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, checkBoxState: string }>): IExplorerState
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, checkBoxState: string, disabled: boolean }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
         const nodeState = state.nodes.byId[uniqueId];
 
-        switch (action.payload.checkBoxState)
-        {
-          case TreeCheckState.Checked:
-            nodeState.checked = true;
-            nodeState.indeterminate = false;
-            nodeState.disabled = false;
-            break;
-          case TreeCheckState.UnChecked:
-            nodeState.checked = false;
-            nodeState.indeterminate = false;
-            nodeState.disabled = false;
-            break;
-          case TreeCheckState.Disabled:
-            nodeState.checked = false;
-            nodeState.indeterminate = false;
-            nodeState.disabled = true;
-            break;
-          case TreeCheckState.Partial:
-            nodeState.indeterminate = true;
-            nodeState.checked = false;
-            nodeState.disabled = false;
-            break;
-          default:
-          // do nothing
-        }
+        nodeState.disabled = action.payload.disabled;
+        const checkState = action.payload.checkBoxState;
+
+        nodeState.checked = (checkState === TreeCheckState.Checked);
+        nodeState.indeterminate = (checkState === TreeCheckState.Partial);
+        nodeState.checkable = (checkState !== TreeCheckState.CanNotBeChecked);
 
         return state;
       },
-      prepare(node: BaseNode): { payload: { nodeId: string, checkBoxState: string } }
+      prepare(node: BaseNode): { payload: { nodeId: string, checkBoxState: string, disabled: boolean } }
       {
         return {
           payload: {
             nodeId: node.uniqueId.toString(),
-            checkBoxState: ExplorerNodeUtils.getCheckBoxStateByNode(node)
+            checkBoxState: ExplorerNodeUtils.getCheckBoxStateByNode(node),
+            disabled: !node.getCheckBoxEnabled(),
           }
         };
       }
@@ -279,7 +260,7 @@ export const getNodeTree = createSelector([getCurrentNodes],
 // Generate redux store compatible nodes data structure from root node
 function generateNodeState(node: BaseNode, parentId: string | null, typeName: string): ITreeNodeState
 {
-  const checkBoxState = node.getCheckBoxState();
+  const checkBoxState = ExplorerNodeUtils.getCheckBoxStateByNode(node);
 
   return {
     nodeType: typeName,
@@ -293,12 +274,13 @@ function generateNodeState(node: BaseNode, parentId: string | null, typeName: st
       color: (node.hasIconColor() ? node.getColor() : undefined)
     },
     selected: node.isSelected(),
-    checked: (checkBoxState === CheckBoxState.All),
-    indeterminate: (checkBoxState === CheckBoxState.Some),
-    disabled: (checkBoxState === CheckBoxState.Disabled),
+    checked: (checkBoxState === TreeCheckState.Checked),
+    indeterminate: (checkBoxState === TreeCheckState.Partial),
+    checkable: (checkBoxState !== TreeCheckState.CanNotBeChecked),
+    disabled: (!node.getCheckBoxEnabled()),
     isRadio: (node.isRadio(null)),
     isFilter: node.isFilter(null),
-    checkVisible: !(checkBoxState === CheckBoxState.Never),
+    checkVisible: (checkBoxState !== TreeCheckState.NotVisible),
     visible: node.isVisibleInTreeControl(),
     label: {
       italic: node.isLabelInItalic(),

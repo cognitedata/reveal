@@ -89,6 +89,7 @@ export function VirtualTree(props: VirtualTreeProps) {
               radio={item.isRadio}
               checkbox={!item.isRadio}
               disabled={item.disabled}
+              checkable={item.checkable}
               checked={item.checked}
               filter={item.isFilter}
               indeterminate={item.indeterminate}
