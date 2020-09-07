@@ -4,7 +4,6 @@ title: HTML overlays
 description: Demo shows how to add an HTML overlay over 3D objects.
 ---
 
-import { LiveCodeSnippet } from '@site/src/components/LiveCodeSnippet';
 import { DemoWrapper } from '@site/src/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
@@ -53,35 +52,33 @@ Note that the overlay is not placed as a child of the viewer DOM-element. We wil
 
 Next, lets handle mouse clicks and place the overlay where the user clicks.
 
-<LiveCodeSnippet>
-  {`
+```jsx runnable
 const existingOverlay = document.getElementById('overlay');
 if (existingOverlay) {
   existingOverlay.remove()
-}\n
-\
+}
+
 // Clone the overlay and make it to be a child of the viewer
 const overlay = document.getElementById('overlay-demo').cloneNode(true);
 overlay.id = 'overlay';
-viewer.domElement.appendChild(overlay);\n
-\
+viewer.domElement.appendChild(overlay);
+
 // Handle mouse clicks
-viewer.on('click', event => {
+viewer.on('click', (event) => {
   // Find 3D coordinate of what the user clicks
   const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
   if (intersection) {
     // Map from 3D coordinate to relative screen coordinate
-    const screenPos = viewer.worldToScreen(intersection.point);\n
-\
+    const screenPos = viewer.worldToScreen(intersection.point);
+
     // Move overlay
-    overlay.style.left = \`\${screenPos.x}px\`;
-    overlay.style.top = \`\${screenPos.y}px\`;
+    overlay.style.left = `${screenPos.x}px`;
+    overlay.style.top = `${screenPos.y}px`;
     overlay.style.display = 'block';
     overlay.style.position = 'absolute';
   }
 });
-`}
-</LiveCodeSnippet>
+```
 
 When the user clicks a position in the 3D model, the overlay will now be placed at the clicked position.
 
@@ -91,8 +88,7 @@ When the user clicks a position in the 3D model, the overlay will now be placed 
 
 However, as shown in the video above, the position is not updated when the camera moves. To do this, we need to update the overlay position when the camera moves.
 
-<LiveCodeSnippet>
-  {`
+```jsx runnable
 const existingOverlay = document.getElementById('overlay');
 if (existingOverlay) {
   existingOverlay.remove()
@@ -100,24 +96,24 @@ if (existingOverlay) {
 // Clone the overlay and make it to be a child of the viewer
 const overlay = document.getElementById('overlay-demo').cloneNode(true);
 overlay.id = 'overlay';
-viewer.domElement.appendChild(overlay);\n
-\
+viewer.domElement.appendChild(overlay);
+
 function updateOverlayPosition(position3d) {
   // Map from 3D coordinate to relative screen coordinate
-  const screenPos = viewer.worldToScreen(position3d);\n
-\
+  const screenPos = viewer.worldToScreen(position3d);
+
   if (screenPos) {
     // Move overlay
-    overlay.style.left = \`\${screenPos.x}px\`;
-    overlay.style.top = \`\${screenPos.y}px\`;
+    overlay.style.left = `${screenPos.x}px`;
+    overlay.style.top = `${screenPos.y}px`;
     overlay.style.display = 'block';
     overlay.style.position = 'absolute';
   } else {
     // Outside the screen
     overlay.style.display = 'none';
   }
-}\n
-\
+}
+
 // Handle mouse clicks
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
@@ -129,8 +125,7 @@ viewer.on('click', event => {
     });
   }
 });
-`}
-</LiveCodeSnippet>
+```
 
 Now, the overlay position is updated whenever the camera is moved. Note that we also handle the case when the clicked position goes out of view by hiding the overlay.
 

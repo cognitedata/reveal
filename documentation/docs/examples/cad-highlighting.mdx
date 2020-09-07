@@ -4,7 +4,6 @@ title: Highlighting CAD nodes
 description: Reveal supports selecting/highlighting individual objects by providing tree indices to identify 3D nodes
 ---
 
-import { LiveCodeSnippet } from '@site/src/components/LiveCodeSnippet';
 import { DemoWrapper } from '@site/src/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
@@ -30,39 +29,32 @@ order to highlight equipment it's typically necessary to highlight the entire
 subtree. Reveal supports this through the use of `Cognite3DModel.selectNodeByTreeIndex` with `applyToChildren`
 set to `true`:
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.selectNodeByTreeIndex(923980, applyToChildren=true);
-`}
-</LiveCodeSnippet>
+```
 
 ### Reset highlighting
 
 Nodes can be deselected using `Cognite3DModel.deselectNodeByTreeIndex`, e.g.
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.iterateNodesByTreeIndex(treeIndex => {
   model.deselectNodeByTreeIndex(treeIndex);
 });
-`}
-</LiveCodeSnippet>
+```
 
 It's also possible (and more performant) to use `Cognite3DModel.deselectAllNodes()` when
 you want to deselect all nodes:
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.deselectAllNodes();
-`}
-</LiveCodeSnippet>
+```
 
 ### Highlight a single object on click
 
 `Cognite3DViewer.on('click', ...)` can be used to handle mouse click events. This example shows how to highlight objects that are clicked.
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 viewer.on('click', event => {
   const intersection = viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
@@ -74,8 +66,7 @@ viewer.on('click', event => {
     intersection.model.selectNodeByTreeIndex(intersection.treeIndex);
   };
 });
-`}
-</LiveCodeSnippet>
+```
 
 ### Highlight tagged equipment
 
@@ -85,8 +76,7 @@ When the user clicks an object in the 3D model, she or he will click one of the 
 The following example shows how to use node data retrieved from the Cognite SDK to determine to "tagged equipment"
 (i.e. named equipment) and highlighting the full equipment, rather than a single individual part.
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 viewer.on('click', event => {
   const intersection = viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
@@ -111,5 +101,4 @@ viewer.on('click', event => {
     })
   }
 });
-`}
-</LiveCodeSnippet>
+```
