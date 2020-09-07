@@ -16,11 +16,30 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Initialize variables
+        run: |
+          export PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "::set-env name=PR_NUMBER::$PR_NUMBER"
+
       - name: Build Reveal
         working-directory: viewer
         run: |
           yarn
           yarn build:prod
+
+      - name: Update Docosaurus base URL
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "baseUrl: .*"
+          replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
+          include: "docusaurus.config.js"
+
+      - name: Update Docosaurus title
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "title: .*"
+          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
+          include: "docusaurus.config.js"
 
       - name: Install and Build documentation 🔧
         working-directory: documentation
@@ -31,8 +50,6 @@ jobs:
       - name: Create preview folder structure
         working-directory: documentation
         run: |
-          export PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "::set-env name=PR_NUMBER::$PR_NUMBER"
           mkdir -p "docs-preview/$PR_NUMBER"
           ls "docs-preview/"
           cp -R build/* "docs-preview/$PR_NUMBER/"
