@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Icon } from '@cognite/cogs.js';
 
 export const Layout = styled.div`
   height: 100%;
@@ -28,4 +29,13 @@ export const TableActions = styled.div`
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
   justify-content: flex-end;
+`;
+
+export const StatusIcon = styled(Icon)`
+  display: flex;
+  justify-content: center;
+  & > svg {
+    width: 8px;
+    height: 8px;
+  }
 `;
