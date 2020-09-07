@@ -25,7 +25,7 @@ export class NumericRange {
     }
   }
 
-  asArray(): number[] {
+  toArray(): number[] {
     return Array.from(this.values());
   }
 
