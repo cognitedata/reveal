@@ -19,13 +19,25 @@ const initialState = {
     [Appearance.generalSettingsName]: Appearance.generalSettingsDefaultExpanded,
     [Appearance.statisticsName]: Appearance.statisticsDefaultExpanded,
     [Appearance.visualSettingsName]: Appearance.visualSettingsDefaultExpanded,
-  }
+  },
+  updateUICount: 0
 } as ISettingsState;
 
 export const settingsSlice = createSlice({
   name: "settings",
   initialState,
   reducers: {
+    onSettingsReset: {
+      reducer(state: ISettingsState, action: PayloadAction<{}>)
+      {
+        state.updateUICount +=1;
+      },
+      prepare(node: BaseNode): { payload: {} }
+      {
+        SettingsNodeUtils.populateSettingsFolder(node);
+        return { payload: {} };
+      }
+    },
     onSelectedNodeChange: {
       reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode }>)
       {
@@ -99,4 +111,4 @@ export const settingsSlice = createSlice({
 });
 
 export default settingsSlice.reducer;
-export const { onSelectedNodeChange, onSectionExpand } = settingsSlice.actions;
+export const { onSelectedNodeChange, onSectionExpand, onSettingsReset } = settingsSlice.actions;

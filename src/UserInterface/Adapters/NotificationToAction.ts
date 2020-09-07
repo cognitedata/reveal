@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { onSelectedNodeChange } from "@/UserInterface/Redux/reducers/SettingsReducer";
+import { onSelectedNodeChange, onSettingsReset } from "@/UserInterface/Redux/reducers/SettingsReducer";
 import
 {
   onCheckboxStateChange,
@@ -42,6 +42,8 @@ class NotificationsToActionsAdaptor
       this.dispatcher(onNodeColorChange(sender));
     if (args.isChanged(Changes.nodeIcon))
       this.dispatcher(onNodeIconChange(sender));
+    if (args.isChanged(Changes.resetStyle))
+      this.dispatcher(onSettingsReset(sender));
   }
 }
 

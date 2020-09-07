@@ -20,8 +20,13 @@ function mapDispatchToSettingsPanel(dispatch: Dispatch) {
 }
 
 function mapStateToSettingsPanel(state: State) {
-  const { currentNodeId, titleBar, expandedSections } = state.settings;
-  return { id: currentNodeId, titleBar, expandedSections };
+  const {
+    currentNodeId,
+    titleBar,
+    expandedSections,
+    updateUICount,
+  } = state.settings;
+  return { id: currentNodeId, titleBar, expandedSections, updateUICount };
 }
 
 export const ConnectedSettingsPanel = connect(

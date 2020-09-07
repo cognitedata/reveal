@@ -130,7 +130,7 @@ export default class NodeUtils
       name: property.displayName,
       elements: [],
     };
-    if (NodeUtils.renderStyleCommands)
+    if (NodeUtils.renderStyleCommands && property.showToolbar)
       element.toolBar = NodeUtils.renderStyleCommands;
     return element;
   }
@@ -141,6 +141,7 @@ export default class NodeUtils
       id: property.name,
       name: property.displayName,
       type: ElementTypes.Group,
+      toolTip: property.toolTip,
       subValues: [],
       isReadOnly: property.isReadOnly,
       useProperty: true,
@@ -165,6 +166,7 @@ export default class NodeUtils
       id: property.name,
       name: property.displayName,
       type,
+      toolTip: property.toolTip,
       value: property.value,
       subValues: [],
       isReadOnly: property.isReadOnly,

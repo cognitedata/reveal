@@ -11,7 +11,7 @@ export class CopyFolderVisualSettingsCommand extends BaseNodeCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getTooltip(): string { return "Copy the visual settings to all similar domain objects in the folder"; }
+  public /*override*/ getTooltip(): string { return "\nCopy the visual settings to all similar domain objects in the folder"; }
   public /*override*/ getIcon(): string { return FolderIcon; }
   public /*override*/ getName(): string { return "Copy Similar Folder Settings"; };
 

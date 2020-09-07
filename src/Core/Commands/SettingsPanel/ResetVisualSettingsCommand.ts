@@ -9,7 +9,7 @@ export class ResetVisualSettingsCommand extends BaseNodeCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getTooltip(): string { return "Reset to the visual settings to default"; }
+  public /*override*/ getTooltip(): string { return "\nReset to the visual settings to default"; }
   public /*override*/ getIcon(): string { return ResetIcon; }
   public /*override*/ getName(): string { return "Reset Settings"; };
 
@@ -26,6 +26,8 @@ export class ResetVisualSettingsCommand extends BaseNodeCommand
       return false;
 
     node.notify(new NodeEventArgs(Changes.renderStyle));
+    node.notify(new NodeEventArgs(Changes.resetStyle));
+
     return true;
   }
 }

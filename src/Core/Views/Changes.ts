@@ -31,6 +31,7 @@ export class Changes
   public static readonly nodeColorMap: symbol = Symbol("nodeColorMap");
   public static readonly geometry: symbol = Symbol("geometry");
   public static readonly renderStyle: symbol = Symbol("renderStyle");
+  public static readonly resetStyle: symbol = Symbol("resetStyle");
 
   // Parent-child relationship changed
   public static readonly childDeleted: symbol = Symbol("childDeleted");

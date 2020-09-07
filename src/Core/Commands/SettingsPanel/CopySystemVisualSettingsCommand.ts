@@ -11,7 +11,7 @@ export class CopySystemVisualSettingsCommand extends BaseNodeCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getTooltip(): string { return "Copy the visual settings to all similar domain objects in the entire system"; }
+  public /*override*/ getTooltip(): string { return "\nCopy the visual settings to all similar domain objects in the entire system"; }
   public /*override*/ getIcon(): string { return SolutionIcon; }
   public /*override*/ getName(): string { return "Copy Domain Settings"; };
 
