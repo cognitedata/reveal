@@ -81,7 +81,7 @@
     "webpack-dev-server": "^3.11.0",
     "webpack-log": "^3.0.1",
     "webpack-node-externals": "^2.5.2",
-    "whatwg-fetch": "^3.4.0",
+    "whatwg-fetch": "^3.4.1",
     "worker-plugin": "^5.0.0"
   },
   "dependencies": {
