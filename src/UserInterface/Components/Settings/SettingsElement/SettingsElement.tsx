@@ -12,6 +12,7 @@ import { GenericSelect } from "@/UserInterface/Components/GenericSelect/GenericS
 import { CommonSelectBase } from "@/UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase";
 import { ColorMapIcon } from "@/UserInterface/Components/Settings/ColorMapIcon/ColorMapIcon";
 import { ColorTypeIcon } from "@/UserInterface/Components/Settings/ColorTypeIcon/ColorTypeIcon";
+import ToolbarToolTip from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
 
 /**
  * Responsible for rendering dynamic inputs
@@ -166,7 +167,12 @@ export default function SettingsElement(props: ISettingsElementProps) {
             />
           </div>
         )}
-        <div className="element">{renderInputElement(config)}</div>
+        <ToolbarToolTip
+          name={config.name}
+          tooltip={config.toolTip ? { text: `\n${config.toolTip}` } : undefined}
+        >
+          <div className="element">{renderInputElement(config)}</div>
+        </ToolbarToolTip>
       </div>
     </section>
   );

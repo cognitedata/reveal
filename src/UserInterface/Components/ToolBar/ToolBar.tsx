@@ -23,12 +23,17 @@ export default function ToolBar(props: {
 
         if (config instanceof BaseCommand) {
           name = config.getDisplayName();
-          icon = <Icon src={config.getIcon()} />;
+          icon = (
+            <Icon
+              src={config.getIcon()}
+              tooltip={{ text: config.getTooltip() }}
+            />
+          );
           invoke = config.invoke.bind(config);
         } else {
           name = config.icon.name;
           icon = <Icon type={config.icon.type} name={config.icon.name} />;
-          // invoke not implemented yet
+          // invoke,tooltip not implemented for other types of commands
         }
 
         const selected = config.isChecked;

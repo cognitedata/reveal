@@ -58,7 +58,7 @@ export default class SettingsNodeUtils
       node.populateStatistics(expander);
     }
     {
-      const expander = settings.createExpander(Appearance.visualSettingsName);
+      const expander = settings.createExpanderWithToolbar(Appearance.visualSettingsName);
       node.populateRenderStyle(expander);
     }
     NodeUtils.properties = settings;

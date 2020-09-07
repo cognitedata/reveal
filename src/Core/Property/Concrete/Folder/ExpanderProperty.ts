@@ -10,6 +10,7 @@ export default class ExpanderProperty extends BasePropertyFolder
   //==================================================
 
   private _expanded: boolean = true;
+  private _showToolbar: boolean = false;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -17,12 +18,17 @@ export default class ExpanderProperty extends BasePropertyFolder
 
   public get expanded(): boolean { return this._expanded; }
   public set expanded(value: boolean) { this._expanded = value; }
+  public get showToolbar(): boolean { return this._showToolbar; }
 
   //==================================================
   // CONSTRUCTOR
   //==================================================
 
-  public constructor(name: string) { super(name); }
+  public constructor(name: string, showToolbar: boolean = false) 
+  { 
+    super(name);
+    this._showToolbar = showToolbar;
+  }
 
   //==================================================
   // OVERRIDES of BasePropertyFolder
@@ -38,6 +44,17 @@ export default class ExpanderProperty extends BasePropertyFolder
   createExpander(name: string): BasePropertyFolder
   {
     const folder = new ExpanderProperty(name);
+    this.addChild(folder);
+    return folder;
+  }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  createExpanderWithToolbar(name: string,): BasePropertyFolder
+  {
+    const folder = new ExpanderProperty(name, true);
     this.addChild(folder);
     return folder;
   }

@@ -74,6 +74,7 @@ export interface IBaseSettingsElement
   id: string;
   name: string;
   type: string;
+  toolTip?: string;
   value?: any;
   isReadOnly?: boolean;
   useProperty: boolean; 

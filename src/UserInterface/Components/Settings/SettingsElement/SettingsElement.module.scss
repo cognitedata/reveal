@@ -16,6 +16,10 @@
     place-items: center start;
     width: 100%;
 
+    .icon {
+      width: 100%;
+    }
+
     &.optional {
       grid-template-columns: 25px auto;
     }
