@@ -60,10 +60,12 @@ export default function SettingsElement(props: ISettingsElementProps) {
 
     const disabled = elmConfig.isReadOnly || !elmConfig.useProperty;
 
+    let element;
+
     switch (type) {
       case ElementTypes.Number:
       case ElementTypes.String:
-        return (
+        element = (
           <input
             type={type === ElementTypes.Number ? "number" : "text"}
             disabled={disabled}
@@ -73,8 +75,9 @@ export default function SettingsElement(props: ISettingsElementProps) {
             className={disabled ? "textInput readOnlyInput" : "textInput"}
           />
         );
+        break;
       case ElementTypes.Boolean:
-        return (
+        element = (
           <input
             type="checkbox"
             className="checkbox"
@@ -84,16 +87,18 @@ export default function SettingsElement(props: ISettingsElementProps) {
             checked={value}
           />
         );
+        break;
       case ElementTypes.Color:
-        return (
+        element = (
           <CompactColorPicker
             value={value instanceof Color ? value.hex() : ""}
             id={id}
             onChange={onChange}
           />
         );
+        break;
       case ElementTypes.Slider:
-        return (
+        element = (
           <input
             type="range"
             disabled={disabled}
@@ -105,36 +110,39 @@ export default function SettingsElement(props: ISettingsElementProps) {
             max="1"
           />
         );
+        break;
       case ElementTypes.Select:
       case ElementTypes.ColorMap:
-      case ElementTypes.ColorType: {
-        const getIconNode = (elementType: string) => {
-          if (elementType === ElementTypes.ColorMap) {
-            return <CommonSelectBase iconNode={<ColorMapIcon />} />;
-          }
-          if (elementType === ElementTypes.ColorType) {
-            return <CommonSelectBase iconNode={<ColorTypeIcon />} />;
-          }
-          return undefined;
-        };
-        return (
-          <div className="common-select">
-            <GenericSelect
-              key={keyExtractor(null, type, name).key}
-              options={options}
-              value={value}
-              disabled={disabled}
-              onChange={(e) => {
-                onChange(id, e);
-              }}
-              extraOptionsData={extraOptionsData}
-              node={getIconNode(type)}
-            />
-          </div>
-        );
-      }
+      case ElementTypes.ColorType:
+        {
+          const getIconNode = (elementType: string) => {
+            if (elementType === ElementTypes.ColorMap) {
+              return <CommonSelectBase iconNode={<ColorMapIcon />} />;
+            }
+            if (elementType === ElementTypes.ColorType) {
+              return <CommonSelectBase iconNode={<ColorTypeIcon />} />;
+            }
+            return undefined;
+          };
+          element = (
+            <div className="common-select">
+              <GenericSelect
+                key={keyExtractor(null, type, name).key}
+                options={options}
+                value={value}
+                disabled={disabled}
+                onChange={(e) => {
+                  onChange(id, e);
+                }}
+                extraOptionsData={extraOptionsData}
+                node={getIconNode(type)}
+              />
+            </div>
+          );
+        }
+        break;
       case ElementTypes.ImageButton:
-        return (
+        element = (
           <div
             {...keyExtractor(null, type, name)}
             className={`input-icon ${
@@ -144,11 +152,25 @@ export default function SettingsElement(props: ISettingsElementProps) {
             <Icon type={icon?.type} name={icon?.name} />
           </div>
         );
+        break;
       case ElementTypes.Group:
-        return subElements?.map((elm) => renderInputElement(elm));
+        element = subElements?.map((elm) => renderInputElement(elm));
+        break;
       default:
-        return <></>;
+        element = <></>;
     }
+
+    return (
+      <ToolbarToolTip
+        key={elmConfig.id}
+        name={elmConfig.name}
+        tooltip={
+          elmConfig.toolTip ? { text: `\n${elmConfig.toolTip}` } : undefined
+        }
+      >
+        {element}
+      </ToolbarToolTip>
+    );
   };
 
   const displayCheckbox = !config.isReadOnly && config.isOptional;
@@ -167,12 +189,8 @@ export default function SettingsElement(props: ISettingsElementProps) {
             />
           </div>
         )}
-        <ToolbarToolTip
-          name={config.name}
-          tooltip={config.toolTip ? { text: `\n${config.toolTip}` } : undefined}
-        >
-          <div className="element">{renderInputElement(config)}</div>
-        </ToolbarToolTip>
+
+        <div className="element">{renderInputElement(config)}</div>
       </div>
     </section>
   );
