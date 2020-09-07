@@ -12,6 +12,7 @@ import {
 } from 'typings/interfaces';
 import { Badge } from '@cognite/cogs.js';
 import APIErrorContext from '../../contexts/APIErrorContext';
+import ErrorMessage from '../../components/Molecules/ErrorMessage';
 
 // noinspection HtmlUnknownTarget
 const rules: Rule[] = [
@@ -59,7 +60,6 @@ const Configurations = () => {
 
   function fetchConfigurations() {
     api!.configurations.get().then((response: GenericResponseObject[]) => {
-      console.log(response);
       if (!response || response.length < 1 || response[0].error) {
         let errorObj = {
           message: 'No response',
@@ -92,10 +92,12 @@ const Configurations = () => {
   }, [data]);
 
   const getNoDataText = () => {
+    let message = 'No data';
     if (error) {
-      return `API error: ${error.status} ${error.message}`;
+      message = `Failed to fetch configurations. API error: ${error.status} ${error.message}`;
+      return <ErrorMessage message={message} />;
     }
-    return 'No data';
+    return message;
   };
 
   return (

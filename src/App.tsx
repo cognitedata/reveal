@@ -8,12 +8,13 @@ import Status from './pages/Status';
 import { Content, Layout, Main } from './elements';
 import MainHeader from './components/Organisms/MainHeader';
 import New from './pages/Configurations/New';
+import config from './utils/config';
 
 const App = () => {
   return (
     <>
       <GlobalStyles />
-      <Router basename="/publicdata">
+      <Router basename={`/${config.auth.cdfProject}`}>
         <Layout>
           <Main>
             <MainHeader />

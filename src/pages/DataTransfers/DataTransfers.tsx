@@ -10,6 +10,8 @@ import 'antd/dist/antd.css';
 import config from './datatransfer.config';
 import ApiContext from '../../contexts/ApiContext';
 import DetailView from '../../components/Organisms/DetailView';
+import APIErrorContext from '../../contexts/APIErrorContext';
+import ErrorMessage from '../../components/Molecules/ErrorMessage';
 
 enum ProgressState {
   LOADING = 'loading',
@@ -27,6 +29,7 @@ enum Action {
 
 type DataTransfersError = {
   message: string;
+  status: number;
 };
 
 interface Data {
@@ -215,6 +218,7 @@ const DataTransfers: React.FC = () => {
   );
 
   const { api } = useContext(ApiContext);
+  const { addError } = useContext(APIErrorContext);
 
   const [
     selectedTransfer,
@@ -245,29 +249,40 @@ const DataTransfers: React.FC = () => {
       api!.objects
         .get()
         .then((response: DataTransferObject[]) => {
-          dispatch({
-            type: Action.SUCCEED,
-            payload: {
-              data: response,
-              columns: selectColumns(
-                response,
-                config.initialSelectedColumnNames
-              ),
-              rawColumns: selectColumns(response, []),
-              allColumnNames: getColumnNames(response),
-              selectedColumnNames: config.initialSelectedColumnNames,
-            },
-          });
+          if (!response[0].error) {
+            dispatch({
+              type: Action.SUCCEED,
+              payload: {
+                data: response,
+                columns: selectColumns(
+                  response,
+                  config.initialSelectedColumnNames
+                ),
+                rawColumns: selectColumns(response, []),
+                allColumnNames: getColumnNames(response),
+                selectedColumnNames: config.initialSelectedColumnNames,
+              },
+            });
+          } else {
+            throw new Error(response[0].status);
+          }
         })
         .catch((err: DataTransfersError) => {
+          addError(err.message, parseInt(err.message, 10));
           dispatch({ type: Action.FAIL, error: err });
         });
     }
     fetchDataTransfers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
 
   if (error) {
-    return <div>ERROR: {error.message}</div>;
+    return (
+      <ErrorMessage
+        message={`Failed to fetch transfers - ${error.message}`}
+        fullView
+      />
+    );
   }
 
   data.columns.push({

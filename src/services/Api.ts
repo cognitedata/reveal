@@ -59,6 +59,15 @@ class Api {
       headers: this.headers,
       body: JSON.stringify(data),
     });
+    if (!response.ok) {
+      return [
+        {
+          error: true,
+          status: response.status,
+          statusText: response.statusText,
+        },
+      ];
+    }
     return response.json();
   }
 
