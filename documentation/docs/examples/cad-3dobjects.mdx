@@ -5,15 +5,15 @@ description: Extend the scene with custom ThreeJS objects.
 ---
 
 import { Water } from 'three/examples/jsm/objects/Water';
-import { LiveCodeSnippet }from '../../src/components/LiveCodeSnippet';
-import { DemoWrapper } from '../../src/components/DemoWrapper';
+import { LiveCodeSnippet }from '@site/src/components/LiveCodeSnippet';
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
 import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-Sometimes it's useful to add custom content to the 3D scene to model data Reveal doesn't support or to customize the 3D environment. Reveal supports this by using the `Cognite3DViewer.addObject3D`-function which accepts [ThreeJS](https://threejs.org/) objects. 
+Sometimes it's useful to add custom content to the 3D scene to model data Reveal doesn't support or to customize the 3D environment. Reveal supports this by using the `Cognite3DViewer.addObject3D`-function which accepts [ThreeJS](https://threejs.org/) objects.
 
 :::tip
-Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you need lights this needs to be added to the viewer scene. 
+Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you need lights this needs to be added to the viewer scene.
 :::
 
 <DemoWrapper modelId={4715379429968321} revisionId={5688854005909501} name="Cognite3DViewerDemo" />
@@ -39,7 +39,7 @@ viewer.on('click', (event) => {
 
 ## Add environment
 
-To make a model feel more natural it might be useful to add an environment. The following example adds sky and a sea effect for the example oil rig. 
+To make a model feel more natural it might be useful to add an environment. The following example adds sky and a sea effect for the example oil rig.
 
 <img src={useBaseUrl('/img/cad-skyandocean.png')} alt="Oil rig with sky and ocean" />
 
@@ -54,7 +54,7 @@ modelCenterAtSeaLevel.y = 0.0;
 
 // Skybox
 const skyBox = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(3000, 15, 15), 
+  new THREE.SphereBufferGeometry(3000, 15, 15),
   new THREE.MeshBasicMaterial(
     {
       side: THREE.BackSide,
@@ -82,7 +82,7 @@ water = new Water(
     textureWidth: 512,
     textureHeight: 512,
     waterNormals: new THREE.TextureLoader()
-      .load('https://threejs.org/examples/textures/waternormals.jpg', 
+      .load('https://threejs.org/examples/textures/waternormals.jpg',
         texture => {
           texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         }
@@ -134,7 +134,7 @@ modelCenterAtSeaLevel.y = 0.0;\n
 \
 // Skybox
 const skyBox = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(3000, 15, 15), 
+  new THREE.SphereBufferGeometry(3000, 15, 15),
   new THREE.MeshBasicMaterial(
     {
       side: THREE.BackSide,
@@ -154,7 +154,7 @@ water = new Water(
     textureWidth: 512,
     textureHeight: 512,
     waterNormals: new THREE.TextureLoader()
-      .load('https://threejs.org/examples/textures/waternormals.jpg', 
+      .load('https://threejs.org/examples/textures/waternormals.jpg',
         texture => {
           texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         }

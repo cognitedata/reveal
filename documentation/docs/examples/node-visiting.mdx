@@ -4,12 +4,12 @@ title: Node visitor functions
 describe: Reveal has functions for iterating over nodes, either all nodes in a 3D model or a subtree of a parent node.
 ---
 
-import { LiveCodeSnippet } from '../../src/components/LiveCodeSnippet';
-import { DemoWrapper } from '../../src/components/DemoWrapper';
+import { LiveCodeSnippet } from '@site/src/components/LiveCodeSnippet';
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
 
 Reveal has functions for iterating over CAD nodes, either all nodes in a 3D model or a subtree of a parent node.
-Note that all functions are async, and the action that you pass is not applied immediately. A single model can 
-have millions of nodes. To avoid long blocking operations the action is applied in blocks, allowing for an 
+Note that all functions are async, and the action that you pass is not applied immediately. A single model can
+have millions of nodes. To avoid long blocking operations the action is applied in blocks, allowing for an
 interactive page while the action is being applied.
 
 <DemoWrapper

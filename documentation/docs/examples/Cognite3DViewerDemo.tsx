@@ -3,16 +3,16 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import {
-  AddModelOptions,
-  Cognite3DViewer,
-} from '@cognite/reveal';
+import { AddModelOptions, Cognite3DViewer } from '@cognite/reveal';
 
 import { CanvasWrapper } from '../../src/components/styled';
 import { DemoProps } from '../../src/components/DemoProps';
 
-
-export default function Cognite3DViewerDemo({ client, modelId, revisionId }: DemoProps) {
+export default function Cognite3DViewerDemo({
+  client,
+  modelId,
+  revisionId,
+}: DemoProps) {
   const canvasWrapperRef = useRef(null);
   useEffect(() => {
     if (!client || !canvasWrapperRef.current) {

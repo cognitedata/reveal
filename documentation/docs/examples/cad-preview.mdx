@@ -2,9 +2,9 @@
 id: cad-preview
 title: glTF preview models
 ---
-import { LiveCodeSnippet }from '../../src/components/LiveCodeSnippet';
+import { LiveCodeSnippet }from '@site/src/components/LiveCodeSnippet';
 
-import { ModelViewerWrapper } from '../../src/components/ModelViewerWrapper';
+import { ModelViewerWrapper } from '@site/src/components/ModelViewerWrapper';
 import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 
 When ingesting CAD models to [Cognite Data Fusion (CDF)](https://docs.cognite.com/cdf/) a small preview version is generated and stored in the [GLTF format](https://www.khronos.org/gltf/) (more specifically the [GLB-format](https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#glb-file-format-specification)). This is stored as a separate output type in CDF called `preview-glb`. [`<model-viewer>`](https://modelviewer.dev/) can be used to visualize this model, but this component doesn't support authentication. To circumvent this issue we generate a [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) containing binary data.
@@ -25,7 +25,7 @@ export default function ModelViewer({ client, modelId, revisionId }) {
 
     async function getPreviewUrl() {
       const response = await client.get(outputsUrl, params);
-      
+
       // Need to first request the file then convert to a data url because we cannot
       // set the headers for the model-viewer requests so there is no authentication
       const data = await client.files3D.retrieve(response.data.items[0].blobId);
