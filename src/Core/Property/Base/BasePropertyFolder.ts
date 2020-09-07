@@ -117,27 +117,42 @@ export default abstract class BasePropertyFolder extends BaseProperty
   // INSTANCE METHODS: Add read only values
   //==================================================
 
-  public addReadOnlyStatistics(name: string | null, statistics: Statistics | undefined, fractionDigits = FractionDigitsDefault): void
+  public addReadOnlyStatistics(name: string, statistics: Statistics | undefined, fractionDigits = FractionDigitsDefault): void
   {
     if (!statistics || statistics.isEmpty)
       return;
 
-    let header = "Mean/StdDev";
-    if (!Util.isEmpty(name))
-      header = `${name}[${header}]`;
+    // let header = "Mean/StdDev";
+    // if (!Util.isEmpty(name))
+    //   header = `${name}[${header}]`;
 
-    this.addReadOnlyStrings(header, statistics.mean.toFixed(fractionDigits), statistics.stdDev.toFixed(fractionDigits));
+    const group = this.createGroup(name);
+    let value = statistics.mean.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}mean`, value, readonly: true, toolTip: `Mean: ${value}` }));
+
+    value = statistics.stdDev.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}stdDev`, value, readonly: true, toolTip: `Standard deviation: ${value}` }));
+
   }
 
-  public addReadOnlyRange1(name: string | null, range: Range1 | undefined, fractionDigits = FractionDigitsDefault): void
+  public addReadOnlyRange1(name: string, range: Range1 | undefined, fractionDigits = FractionDigitsDefault): void
   {
     if (!range || range.isEmpty)
       return;
 
-    let header = "Min/Delta/Max";
-    if (!Util.isEmpty(name))
-      header = `${name}[${header}]`;
-    this.addReadOnlyStrings(header, range.min.toFixed(fractionDigits), range.delta.toFixed(fractionDigits), range.max.toFixed(fractionDigits));
+    // let header = "Min/Delta/Max";
+    // if (!Util.isEmpty(name))
+    //   header = `${name}[${header}]`;
+
+    const group = this.createGroup(name);
+    let value = range.min.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}min`, value, readonly: true, toolTip: `Minimum: ${value}` }));
+
+    value = range.delta.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}delta`, value, readonly: true, toolTip: `Delta: ${value}` }));
+
+    value = range.max.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}$max`, value, readonly: true, toolTip: `Maximum: ${value}` }));
   }
 
   public addReadOnlyRange3(range: Range3, fractionDigits: number = FractionDigitsDefault): void
@@ -159,17 +174,25 @@ export default abstract class BasePropertyFolder extends BaseProperty
 
   public addReadOnlyVector2(name: string, vector: Vector3, fractionDigits = FractionDigitsDefault): void
   {
-    this.addReadOnlyStrings(name, vector.x.toFixed(fractionDigits), vector.y.toFixed(fractionDigits));
+    const group = this.createGroup(name);
+    let value = vector.x.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}x`, value, readonly: true, toolTip: `X: ${value}` }));
+
+    value = vector.y.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}y`, value, readonly: true, toolTip: `Y: ${value}` }));
   }
 
   public addReadOnlyVector3(name: string, vector: Vector3, fractionDigits = FractionDigitsDefault): void
   {
-    this.addReadOnlyStrings(name, vector.x.toFixed(fractionDigits), vector.y.toFixed(fractionDigits), vector.z.toFixed(fractionDigits));
-  }
+    const group = this.createGroup(name);
+    let value = vector.x.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}x`, value, readonly: true, toolTip: `X: ${value}` }));
 
-  public addReadOnlyXY(name: string, x: number, y: number, fractionDigits = FractionDigitsDefault): void
-  {
-    this.addReadOnlyStrings(name, x.toFixed(fractionDigits), y.toFixed(fractionDigits));
+    value = vector.y.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}y`, value, readonly: true, toolTip: `Y: ${value}` }));
+
+    value = vector.z.toFixed(fractionDigits);
+    group.addChild(new StringProperty({ name: `${name}z`, value, readonly: true, toolTip: `Z: ${value}` }));
   }
 
   public addReadOnlyStrings(name: string, ...args: string[]): void
@@ -178,5 +201,4 @@ export default abstract class BasePropertyFolder extends BaseProperty
     for (const [index, value] of args.entries())
       property.addChild(new StringProperty({ name: name + index, value, readonly: true }));
   }
-
 }

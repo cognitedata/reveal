@@ -96,8 +96,8 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   {
     super.populateStatisticsCore(folder);
     const statistics = this.getStatistics();
-    folder.addReadOnlyRange1(null, statistics.range);
-    folder.addReadOnlyStatistics(null, statistics);
+    folder.addReadOnlyRange1("Values", statistics.range);
+    folder.addReadOnlyStatistics("Statistics", statistics);
   }
 
   public /*override*/ verifyRenderStyle(style: BaseRenderStyle)

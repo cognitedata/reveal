@@ -65,7 +65,7 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    folder.addReadOnlyRange1(null, this.getValueRange());
+    folder.addReadOnlyRange1("Values", this.getValueRange());
   }
 
   public /*override*/ supportsColorType(colorType: ColorType): boolean

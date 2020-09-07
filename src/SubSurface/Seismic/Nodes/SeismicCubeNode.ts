@@ -86,7 +86,7 @@ export class SeismicCubeNode extends DataNode
     folder.addReadOnlyAngle("Rotation", cube.rotationAngle);
     folder.addReadOnlyRange3(cube.boundingBox);
     folder.addReadOnlyRange1("Values (approx)", cube.valueRange);
-    folder.addReadOnlyStatistics("Values (approx)", cube.statistics);
+    folder.addReadOnlyStatistics("Statistics (approx)", cube.statistics);
   }
 
   //==================================================

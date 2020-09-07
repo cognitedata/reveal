@@ -28,10 +28,10 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.White });
-  public radius = new NumberProperty({ name: "Radius", value: 5, options: [1, 2, 3, 5, 10, 20, 30, 40, 50] }); 
-  public bandWidth = new NumberProperty({ name: "Band Width", value: 50, options: [20, 25, 30, 50, 75, 100, 200] });
+  public radius = new NumberProperty({ name: "Radius", value: 5, options: [1, 2, 3, 5, 10, 20, 30, 40, 50], toolTip: "The radius of the well trajectorty" }); 
+  public bandWidth = new NumberProperty({ name: "Band Width", value: 50, options: [20, 25, 30, 50, 75, 100, 200] } );
   public nameFontSize = new NumberProperty({ name: "Name Font Size", value: 50, options: BaseRenderStyle.fontSizeOptions }); 
-  public bandFontSize = new NumberProperty({ name: "Band Font Size", value: 30, options: BaseRenderStyle.fontSizeOptions }); 
+  public bandFontSize = new NumberProperty({ name: "Band Font Size", value: 30, options: BaseRenderStyle.fontSizeOptions, toolTip: "The font of the md values drawn in the bands" }); 
 
   //==================================================
   // CONSTRUCTOR
