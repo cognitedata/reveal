@@ -70,7 +70,7 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
-  private readonly _updateCameraNearAndFarSubject: Subject<THREE.PerspectiveCamera>;
+  private readonly _updateCameraNearAndFarSubject: Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>;
   private readonly _subscription = new Subscription();
   private readonly _revealManager: RevealManager<CdfModelIdentifier>;
 
@@ -83,7 +83,6 @@ export class Cognite3DViewer {
   private readonly extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
-  private forceRendering = false; // For future support
 
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
@@ -498,6 +497,7 @@ export class Cognite3DViewer {
     this.scene.add(object);
     this.extraObjects.push(object);
     this.renderController.redraw();
+    this.triggerUpdateCameraNearAndFar(true);
   }
 
   /**
@@ -519,6 +519,7 @@ export class Cognite3DViewer {
       this.extraObjects.splice(index, 1);
     }
     this.renderController.redraw();
+    this.triggerUpdateCameraNearAndFar(true);
   }
 
   /**
@@ -1004,12 +1005,7 @@ export class Cognite3DViewer {
       renderController.update();
       this._revealManager.update(this.camera);
 
-      if (
-        renderController.needsRedraw ||
-        this.forceRendering ||
-        this._revealManager.needsRedraw ||
-        this._slicingNeedsUpdate
-      ) {
+      if (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
         this.triggerUpdateCameraNearAndFar();
         this._revealManager.render(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
@@ -1019,14 +1015,20 @@ export class Cognite3DViewer {
     }
   }
 
-  private setupUpdateCameraNearAndFar(): Subject<THREE.PerspectiveCamera> {
+  private setupUpdateCameraNearAndFar(): Subject<{ camera: THREE.PerspectiveCamera; force: boolean }> {
     const lastUpdatePosition = new THREE.Vector3(Infinity, Infinity, Infinity);
     const camPosition = new THREE.Vector3();
 
-    const updateNearFarSubject = new Subject<THREE.PerspectiveCamera>();
+    const updateNearFarSubject = new Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>();
     updateNearFarSubject
       .pipe(
-        map(cam => lastUpdatePosition.distanceToSquared(cam.getWorldPosition(camPosition))),
+        map(state => {
+          if (state.force) {
+            // Emulate camera movement to force update
+            return Infinity;
+          }
+          return lastUpdatePosition.distanceToSquared(state.camera.getWorldPosition(camPosition));
+        }),
         (source: Observable<number>) => {
           return merge(
             // When camera is moved more than 10 meters
@@ -1046,8 +1048,8 @@ export class Cognite3DViewer {
     return updateNearFarSubject;
   }
 
-  private triggerUpdateCameraNearAndFar() {
-    this._updateCameraNearAndFarSubject.next(this.camera);
+  private triggerUpdateCameraNearAndFar(force?: boolean) {
+    this._updateCameraNearAndFarSubject.next({ camera: this.camera, force: !!force });
   }
 
   private updateCameraNearAndFar(camera: THREE.PerspectiveCamera) {
