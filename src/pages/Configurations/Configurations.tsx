@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
-import { ContentContainer } from 'elements';
+import { ContentContainer, StatusIcon } from 'elements';
 import ApiContext from 'contexts/ApiContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
 import { ColumnsType } from 'antd/es/table';
@@ -10,7 +10,7 @@ import {
   Rule,
   UNIX_TIMESTAMP_FACTOR,
 } from 'typings/interfaces';
-import { Badge } from '@cognite/cogs.js';
+import { Badge, Tooltip } from '@cognite/cogs.js';
 
 // noinspection HtmlUnknownTarget
 const rules: Rule[] = [
@@ -45,6 +45,17 @@ const rules: Rule[] = [
   {
     key: 'target',
     render: (record: any) => record.external_id,
+  },
+  {
+    key: 'status_active',
+    render: (record: boolean) => {
+      const color = record ? 'green' : 'lightgrey';
+      return (
+        <Tooltip content={<span>{record ? 'Active' : 'Inactive'}</span>}>
+          <StatusIcon type="Info" style={{ color }} />
+        </Tooltip>
+      );
+    },
   },
 ];
 
