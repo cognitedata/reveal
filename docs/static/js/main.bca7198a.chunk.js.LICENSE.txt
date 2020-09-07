@@ -1,0 +1,480 @@
+/*!
+       * The buffer module from node.js, for the browser.
+       *
+       * @author   Feross Aboukhadijeh <http://feross.org>
+       * @license  MIT
+       */
+
+/*!
+      Copyright (c) 2017 Jed Watson.
+      Licensed under the MIT License (MIT), see
+      http://jedwatson.github.io/classnames
+    */
+
+/*! !./node_modules/worker-loader/dist/workers/InlineWorker.js */
+
+/*! *****************************************************************************
+      Copyright (c) Microsoft Corporation.
+      
+      Permission to use, copy, modify, and/or distribute this software for any
+      purpose with or without fee is hereby granted.
+      
+      THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+      REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+      AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+      INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+      LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+      OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+      PERFORMANCE OF THIS SOFTWARE.
+      ***************************************************************************** */
+
+/*! *****************************************************************************
+    Copyright (c) Microsoft Corporation.
+    
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
+    
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
+    ***************************************************************************** */
+
+/*! ../../Global.js */
+
+/*! ../../Gradients.js */
+
+/*! ../../PointAttributes.js */
+
+/*! ../../Potree.js */
+
+/*! ../../Shaders.js */
+
+/*! ../../loaders/GreyhoundLoader.js */
+
+/*! ../../loaders/POCLoader.js */
+
+/*! ../../loaders/ept/EptBinaryLoader */
+
+/*! ../../loaders/ept/EptLaszipLoader */
+
+/*! ../../utils/HelperUtils.js */
+
+/*! ../../utils/VersionUtils.js */
+
+/*! ../../utils/WorkerManager.js */
+
+/*! ../Global.js */
+
+/*! ../LASLoader.js */
+
+/*! ../PointAttributes.js */
+
+/*! ../PointCloudTree.js */
+
+/*! ../Potree.js */
+
+/*! ../Shader.js */
+
+/*! ../WebGLBuffer.js */
+
+/*! ../WebGLTexture.js */
+
+/*! ../pointcloud/PointCloudArena4D.js */
+
+/*! ../pointcloud/PointCloudOctree.js */
+
+/*! ../pointcloud/PointCloudTree.js */
+
+/*! ../pointcloud/geometries/PointCloudEptGeometry.js */
+
+/*! ../pointcloud/geometries/PointCloudGreyhoundGeometry.js */
+
+/*! ../pointcloud/geometries/PointCloudOctreeGeometry.js */
+
+/*! ../utils/HelperUtils.js */
+
+/*! ../utils/VersionUtils.js */
+
+/*! ../utils/WorkerManager.js */
+
+/*! ../workers/BinaryDecoderWorker */
+
+/*! ../workers/DEMWorker */
+
+/*! ../workers/EptBinaryDecoderWorker */
+
+/*! ../workers/EptLaszipDecoderWorker */
+
+/*! ../workers/LASDecoderWorker */
+
+/*! ./BasicGroup.js */
+
+/*! ./BinaryLoader.js */
+
+/*! ./DEM.js */
+
+/*! ./DEMNode.js */
+
+/*! ./Global.js */
+
+/*! ./Gradients.js */
+
+/*! ./GreyhoundBinaryLoader.js */
+
+/*! ./GreyhoundUtils.js */
+
+/*! ./LASLAZLoader.js */
+
+/*! ./LASLoader.js */
+
+/*! ./PointAttributes.js */
+
+/*! ./PointCloudTree.js */
+
+/*! ./Points.js */
+
+/*! ./Potree.js */
+
+/*! ./Shader.js */
+
+/*! ./Shaders.js */
+
+/*! ./WebGLBuffer.js */
+
+/*! ./WebGLTexture.js */
+
+/*! ./geometries/PointCloudOctreeGeometry.js */
+
+/*! ./lib/BinaryHeap.js */
+
+/*! ./loaders/BinaryLoader.js */
+
+/*! ./loaders/EptLoader.js */
+
+/*! ./loaders/GreyhoundBinaryLoader.js */
+
+/*! ./loaders/GreyhoundLoader.js */
+
+/*! ./loaders/GreyhoundUtils.js */
+
+/*! ./loaders/LASLAZLoader.js */
+
+/*! ./loaders/LASLoader.js */
+
+/*! ./loaders/POCLoader.js */
+
+/*! ./loaders/ept/EptBinaryLoader.js */
+
+/*! ./loaders/ept/EptLaszipLoader.js */
+
+/*! ./materials/PointCloudMaterial.js */
+
+/*! ./objects/BasicGroup.js */
+
+/*! ./objects/Group.js */
+
+/*! ./pointcloud/DEM.js */
+
+/*! ./pointcloud/DEMNode.js */
+
+/*! ./pointcloud/PointCloudArena4D.js */
+
+/*! ./pointcloud/PointCloudOctree.js */
+
+/*! ./pointcloud/PointCloudTree.js */
+
+/*! ./pointcloud/geometries/PointCloudArena4DGeometry.js */
+
+/*! ./pointcloud/geometries/PointCloudEptGeometry.js */
+
+/*! ./pointcloud/geometries/PointCloudGreyhoundGeometry.js */
+
+/*! ./pointcloud/geometries/PointCloudOctreeGeometry.js */
+
+/*! ./pointcloud/materials/PointCloudMaterial.js */
+
+/*! ./utils/HelperUtils.js */
+
+/*! ./utils/LRU.js */
+
+/*! ./utils/VersionUtils.js */
+
+/*! ./utils/WorkerManager.js */
+
+/*! 0.1.6 */
+
+/*! exports provided: AttributeLocations, Classification, ClipTask, ClipMethod, PointSizeType, PointShape, PointColorType, TreeType, loadPointCloud, updateVisibility, updatePointClouds, updateVisibilityStructures */
+
+/*! exports provided: BasicGroup */
+
+/*! exports provided: BinaryHeap */
+
+/*! exports provided: BinaryLoader */
+
+/*! exports provided: DEM */
+
+/*! exports provided: DEMNode */
+
+/*! exports provided: EptBinaryLoader */
+
+/*! exports provided: EptLaszipLoader, EptLazBatcher */
+
+/*! exports provided: EptLoader */
+
+/*! exports provided: Global */
+
+/*! exports provided: Global, AttributeLocations, Classification, ClipTask, ClipMethod, PointSizeType, PointShape, PointColorType, TreeType, loadPointCloud, updateVisibility, updatePointClouds, updateVisibilityStructures, BinaryHeap, LRU, HelperUtils, VersionUtils, WorkerManager, PointAttribute, PointAttributes, PointAttributeNames, PointAttributeTypes, Gradients, Points, Shader, WebGLTexture, WebGLBuffer, Shaders, DEM, DEMNode, PointCloudTree, PointCloudArena4D, PointCloudOctree, PointCloudOctreeGeometry, PointCloudArena4DGeometry, PointCloudGreyhoundGeometry, PointCloudEptGeometry, PointCloudMaterial, LASLoader, BinaryLoader, GreyhoundUtils, GreyhoundLoader, GreyhoundBinaryLoader, POCLoader, LASLAZLoader, EptLoader, EptLaszipLoader, EptBinaryLoader, BasicGroup, Group */
+
+/*! exports provided: Gradients */
+
+/*! exports provided: GreyhoundBinaryLoader */
+
+/*! exports provided: GreyhoundLoader */
+
+/*! exports provided: GreyhoundUtils */
+
+/*! exports provided: Group */
+
+/*! exports provided: HelperUtils */
+
+/*! exports provided: LASLAZLoader */
+
+/*! exports provided: LASLoader, LAZLoader, LASFile, LASDecoder */
+
+/*! exports provided: LRU, LRUItem */
+
+/*! exports provided: POCLoader */
+
+/*! exports provided: PointAttribute, PointAttributes, PointAttributeNames, PointAttributeTypes */
+
+/*! exports provided: PointCloudArena4D, PointCloudArena4DNode */
+
+/*! exports provided: PointCloudArena4DGeometry, PointCloudArena4DGeometryNode */
+
+/*! exports provided: PointCloudEptGeometry, PointCloudEptGeometryNode, EptKey */
+
+/*! exports provided: PointCloudGreyhoundGeometry, PointCloudGreyhoundGeometryNode */
+
+/*! exports provided: PointCloudMaterial */
+
+/*! exports provided: PointCloudOctree, PointCloudOctreeNode */
+
+/*! exports provided: PointCloudOctreeGeometry, PointCloudOctreeGeometryNode */
+
+/*! exports provided: PointCloudTree, PointCloudTreeNode */
+
+/*! exports provided: Points */
+
+/*! exports provided: Shader */
+
+/*! exports provided: Shaders */
+
+/*! exports provided: VersionUtils */
+
+/*! exports provided: WebGLBuffer */
+
+/*! exports provided: WebGLTexture */
+
+/*! exports provided: WorkerManager */
+
+/*! no static exports found */
+
+/*! three */
+
+/*!************************!*\
+        !*** ./source/Main.js ***!
+        \************************/
+
+/*!**************************!*\
+        !*** ./source/Global.js ***!
+        \**************************/
+
+/*!**************************!*\
+        !*** ./source/Points.js ***!
+        \**************************/
+
+/*!**************************!*\
+        !*** ./source/Potree.js ***!
+        \**************************/
+
+/*!**************************!*\
+        !*** ./source/Shader.js ***!
+        \**************************/
+
+/*!***************************!*\
+        !*** ./source/Shaders.js ***!
+        \***************************/
+
+/*!*****************************!*\
+        !*** ./source/Gradients.js ***!
+        \*****************************/
+
+/*!*****************************!*\
+        !*** ./source/utils/LRU.js ***!
+        \*****************************/
+
+/*!*******************************!*\
+        !*** ./source/WebGLBuffer.js ***!
+        \*******************************/
+
+/*!********************************!*\
+        !*** ./source/WebGLTexture.js ***!
+        \********************************/
+
+/*!*********************************!*\
+        !*** ./source/objects/Group.js ***!
+        \*********************************/
+
+/*!**********************************!*\
+        !*** ./source/lib/BinaryHeap.js ***!
+        \**********************************/
+
+/*!**********************************!*\
+        !*** ./source/pointcloud/DEM.js ***!
+        \**********************************/
+
+/*!***********************************!*\
+        !*** ./source/PointAttributes.js ***!
+        \***********************************/
+
+/*!*************************************!*\
+        !*** ./source/loaders/EptLoader.js ***!
+        \*************************************/
+
+/*!*************************************!*\
+        !*** ./source/loaders/LASLoader.js ***!
+        \*************************************/
+
+/*!*************************************!*\
+        !*** ./source/loaders/POCLoader.js ***!
+        \*************************************/
+
+/*!*************************************!*\
+        !*** ./source/utils/HelperUtils.js ***!
+        \*************************************/
+
+/*!*************************************!*\
+        !*** ./source/workers/DEMWorker.js ***!
+        \*************************************/
+
+/*!**************************************!*\
+        !*** ./source/objects/BasicGroup.js ***!
+        \**************************************/
+
+/*!**************************************!*\
+        !*** ./source/pointcloud/DEMNode.js ***!
+        \**************************************/
+
+/*!**************************************!*\
+        !*** ./source/utils/VersionUtils.js ***!
+        \**************************************/
+
+/*!***************************************!*\
+        !*** ./source/utils/WorkerManager.js ***!
+        \***************************************/
+
+/*!****************************************!*\
+        !*** ./source/loaders/BinaryLoader.js ***!
+        \****************************************/
+
+/*!****************************************!*\
+        !*** ./source/loaders/LASLAZLoader.js ***!
+        \****************************************/
+
+/*!******************************************!*\
+        !*** ./source/loaders/GreyhoundUtils.js ***!
+        \******************************************/
+
+/*!*******************************************!*\
+        !*** ./source/loaders/GreyhoundLoader.js ***!
+        \*******************************************/
+
+/*!********************************************!*\
+        !*** ./source/workers/LASDecoderWorker.js ***!
+        \********************************************/
+
+/*!*********************************************!*\
+        !*** ./source/pointcloud/PointCloudTree.js ***!
+        \*********************************************/
+
+/*!***********************************************!*\
+        !*** ./source/loaders/ept/EptBinaryLoader.js ***!
+        \***********************************************/
+
+/*!***********************************************!*\
+        !*** ./source/loaders/ept/EptLaszipLoader.js ***!
+        \***********************************************/
+
+/*!***********************************************!*\
+        !*** ./source/pointcloud/PointCloudOctree.js ***!
+        \***********************************************/
+
+/*!***********************************************!*\
+        !*** ./source/workers/BinaryDecoderWorker.js ***!
+        \***********************************************/
+
+/*!************************************************!*\
+        !*** ./source/pointcloud/PointCloudArena4D.js ***!
+        \************************************************/
+
+/*!*************************************************!*\
+        !*** ./source/loaders/GreyhoundBinaryLoader.js ***!
+        \*************************************************/
+
+/*!**************************************************!*\
+        !*** ./source/workers/EptBinaryDecoderWorker.js ***!
+        \**************************************************/
+
+/*!**************************************************!*\
+        !*** ./source/workers/EptLaszipDecoderWorker.js ***!
+        \**************************************************/
+
+/*!***********************************************************!*\
+        !*** ./source/pointcloud/materials/PointCloudMaterial.js ***!
+        \***********************************************************/
+
+/*!**************************************************************!*\
+        !*** external {"commonjs":"three","amd":"three","root":"_"} ***!
+        \**************************************************************/
+
+/*!***************************************************************!*\
+        !*** ./source/pointcloud/geometries/PointCloudEptGeometry.js ***!
+        \***************************************************************/
+
+/*!*****************************************************************!*\
+        !*** ./node_modules/worker-loader/dist/workers/InlineWorker.js ***!
+        \*****************************************************************/
+
+/*!******************************************************************!*\
+        !*** ./source/pointcloud/geometries/PointCloudOctreeGeometry.js ***!
+        \******************************************************************/
+
+/*!*******************************************************************!*\
+        !*** ./source/pointcloud/geometries/PointCloudArena4DGeometry.js ***!
+        \*******************************************************************/
+
+/*!*********************************************************************!*\
+        !*** ./source/pointcloud/geometries/PointCloudGreyhoundGeometry.js ***!
+        \*********************************************************************/
+
+/**
+       * @license
+       * Lodash <https://lodash.com/>
+       * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
+       * Released under MIT license <https://lodash.com/license>
+       * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+       * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+       */
+
+/** @license React v16.13.1
+     * react-is.production.min.js
+     *
+     * Copyright (c) Facebook, Inc. and its affiliates.
+     *
+     * This source code is licensed under the MIT license found in the
+     * LICENSE file in the root directory of this source tree.
+     */

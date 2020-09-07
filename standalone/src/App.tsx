@@ -19,7 +19,7 @@ const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_E
 }) : compose;
 
 const enhancer = composeEnhancers(
-  applyMiddleware(...NodeVisualizerMiddleware),
+  applyMiddleware(...[NodeVisualizerMiddleware]),
 );
 
 const store = createStore(
