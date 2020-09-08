@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+      - larsmoa/publish-docs-to-separate-repository # TODO: Remove
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,3 +37,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BRANCH: gh-pages # The branch the action should deploy to.
           FOLDER: documentation/build # The folder the action should deploy.
+          REPOSITORY_NAME: cognitedata/reveal-docs
