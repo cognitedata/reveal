@@ -31,10 +31,8 @@ export class FloatLogStyle extends BaseRenderStyle
 
   public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
   public bandPosition = new BandPositionProperty({ name: "Band Position", value: BandPosition.Automatic });
-  public min = new NumberProperty({ name: "Minimum", value: Number.NaN, use: false }); // TODO: set a dynamic default value
-  public max = new NumberProperty({ name: "Maximum", value: Number.NaN, use: false }); // TODO: set a dynamic default value
-
-  // public minValue = new UseFloat(true, false, 3);
+  public min = new NumberProperty({ name: "Minimum", value: Number.NaN, use: false });
+  public max = new NumberProperty({ name: "Maximum", value: Number.NaN, use: false });
 
   //==================================================
   // CONSTRUCTOR

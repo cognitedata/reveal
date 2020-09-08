@@ -66,7 +66,7 @@ export abstract class BaseVisualNode extends BaseNode
       if (!target)
         return CheckBoxState.Never;
     }
-    if (this.hasView(target)) // TODO: Not sure? this.isVisible() and remove hasView()
+    if (this.hasView(target))
       return CheckBoxState.All;
 
     if (this.canBeVisible(target))

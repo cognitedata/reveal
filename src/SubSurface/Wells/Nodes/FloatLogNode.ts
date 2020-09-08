@@ -31,9 +31,6 @@ export class FloatLogNode extends BaseLogNode
 
   public unit: string | null = null;
 
-  // TODO: NILS June, 30, 2020:
-  // Add unit, take it from the metadata of the BP data
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================

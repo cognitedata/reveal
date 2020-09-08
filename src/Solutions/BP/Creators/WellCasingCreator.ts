@@ -30,7 +30,6 @@ export class WellCasingCreator
       return Ma.compare(aStartPoint, bStartPoint);
     });
 
-    // TODO: casing.metadata.assy_name
     const log = new CasingLog();
     for (const casing of sortedCasings)
     {
@@ -52,7 +51,6 @@ export class WellCasingCreator
 
       const sample = new CasingLogSample(radius, topMd, baseMd);
 
-      // Meta data to the min, the max may be taken out anyway.
       sample.name = casing.metadata.assy_name;
       sample.comments = casing.metadata.assy_comments;
       sample.currentStatusComment = casing.metadata.assy_current_status_comment;
