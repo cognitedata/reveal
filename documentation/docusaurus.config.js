@@ -103,7 +103,10 @@ module.exports = {
           // Please change this to your repo.
           editUrl:
             'https://github.com/cognitedata/reveal/blob/master/documentation',
-          remarkPlugins: [require('./src/plugins/remark-npm2yarn')],
+          remarkPlugins: [
+            require('./src/plugins/remark-npm2yarn'),
+            require('./src/plugins/remark-runnable-reveal-demo'),
+          ],
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -112,4 +115,5 @@ module.exports = {
     ],
   ],
   themes: ['@docusaurus/theme-live-codeblock'],
+  plugins: ['docusaurus2-dotenv']
 };

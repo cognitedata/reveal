@@ -4,24 +4,18 @@ title: Filtering CAD nodes
 describe: Change the appearance and visibility of nodes based on node properties
 ---
 
-import { LiveCodeSnippet } from '../../src/components/LiveCodeSnippet';
 import { DemoWrapper } from '../../src/components/DemoWrapper';
 
-
 When CAD models are ingested in [Cognite Data Fusion (CDF)](https://docs.cognite.com/cdf/), all node properties
-(also called attributes) are stored and indexed for efficient filtering. This allows applications to perform 
+(also called attributes) are stored and indexed for efficient filtering. This allows applications to perform
 queries and change the appearance of the 3D model based on the result.
 
-<DemoWrapper
-  modelId={4715379429968321}
-  revisionId={5688854005909501}
-  name="Cognite3DViewerDemo"
-/>
+<DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Only show nodes that have a given node attribute value
 
 Node properties are defined in the input models and imported to CDF during processing. The available properties will vary from model
-to model and to use this information you will need to investigate the structure of the underlying models. In the example model used 
+to model and to use this information you will need to investigate the structure of the underlying models. In the example model used
 here, the attributes of the nodes typically looks something like (excerpt):
 
 ```json
@@ -43,19 +37,17 @@ To query for nodes matching a given attribute value, we use [list3DNodes](https:
 from the [Cognite SDK](https://www.npmjs.com/package/@cognite/sdk) which maps to the [List 3D Nodes API endpoint](https://docs.cognite.com/api/v1/#operation/get3DNodes).
 For this example we query for nodes that are within the 'EP' function and hide all other nodes.
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.hideAllNodes();
-sdk.revisions3D.list3DNodes(model.modelId, model.revisionId, 
-  { 
-    limit: 1000, 
+sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
+  {
+    limit: 1000,
     properties: { PDMS: { Function: 'EA' } }
   })
   .autoPagingEach(node => {
     model.showNodeByTreeIndex(node.treeIndex, true);
   });
-`}
-</LiveCodeSnippet>
+```
 
 You can also try filtering on the following filtering queries:
 - `{ PDMS: { Function: 'EP' } }`
