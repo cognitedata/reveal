@@ -71,12 +71,13 @@ export abstract class DataNode extends BaseVisualNode
     if (dataWasLost !== this._dataIsLost)
       this.notify(new NodeEventArgs(Changes.nodeIcon));
 
-    if (this.dataIsLost)
-    {
-      // tslint:disable-next-line:no-console
-      console.warn("The data is lost in", this.name);
-      this.notifyVisibleStateChange(true);
-    }
+    if (!this.dataIsLost)
+      return;
+
+    // tslint:disable-next-line:no-console
+    console.warn("The data is lost in", this.name);
+    this.notify(new NodeEventArgs(Changes.visibleState));
+    this.notify(new NodeEventArgs(Changes.nodeIcon));
   }
 
   //==================================================
