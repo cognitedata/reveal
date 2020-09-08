@@ -56,6 +56,17 @@ type UserAction =
   | { type: Action.ADD_COLUMN; payload: string }
   | { type: Action.REMOVE_COLUMN; payload: string };
 
+type ActiveColumn = {
+  column: {
+    title: string;
+    dataIndex: string;
+    key: string;
+  };
+  columnKey: string;
+  field: string;
+  order: string;
+};
+
 const initialDataTransfersState: DataTransfersState = {
   status: ProgressState.LOADING,
   data: {
@@ -335,11 +346,12 @@ const DataTransfers: React.FC = () => {
           </Button>
         </Dropdown>
       </TableActions>
-      <Table<DataTransferObject>
+      <Table
         dataSource={data.data}
         columns={data.columns}
         loading={status === ProgressState.LOADING}
         rowKey="id"
+        key={data.selectedColumnNames.join('')}
       />
       <DetailView
         showing={!!selectedTransfer}
