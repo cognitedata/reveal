@@ -29,7 +29,7 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector, SectorGeometry } from './sector/types';
 import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
-import { emissionLastMillis } from '@/utilities';
+import { emissionLastMillis, LoadingState } from '@/utilities';
 import { CadModelMetadata } from '.';
 import {
   createDetermineSectorsInputFromArray,
@@ -101,7 +101,7 @@ export class CadModelUpdateHandler {
     return this._updateObservable.pipe(share());
   }
 
-  getLoadingStateObserver(): Observable<boolean> {
+  getLoadingStateObserver(): Observable<LoadingState> {
     return this._sectorRepository.getLoadingStateObserver();
   }
 
