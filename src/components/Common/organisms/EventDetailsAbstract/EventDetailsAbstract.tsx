@@ -5,7 +5,7 @@ import { InfoGrid, InfoCell, DetailsItem, ButtonRow } from 'components/Common';
 import { CogniteEvent } from 'cognite-sdk-v3';
 import moment from 'moment';
 import { useResourcesState } from 'context/ResourceSelectionContext';
-import { renderTitle } from 'containers/Events/EventsUtils';
+import { renderTitle } from 'utils/EventsUtils';
 import { EventInfoGrid } from './EventInfoGrid';
 
 interface AssetDetailsProps {

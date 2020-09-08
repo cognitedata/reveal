@@ -1,20 +1,20 @@
 import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { retrieve as retrieveFile } from 'modules/files';
+import { retrieve as retrieveAsset } from 'modules/assets';
 import { useDispatch } from 'react-redux';
-import { listByFileId } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
 import { Loader } from 'components/Common';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { AssetPreview } from './AssetPreview';
 
-export const AssetExplorer = () => {
+export const AssetPage = () => {
   const dispatch = useDispatch();
   const { assetId } = useParams<{
     assetId: string | undefined;
   }>();
   const assetIdNumber = assetId ? parseInt(assetId, 10) : undefined;
-
+  const { hidePreview } = useResourcePreview();
   useEffect(() => {
     trackUsage('Exploration.Asset', { assetId: assetIdNumber });
   }, [assetIdNumber]);
@@ -40,11 +40,11 @@ export const AssetExplorer = () => {
   useEffect(() => {
     if (assetIdNumber) {
       (async () => {
-        await dispatch(retrieveFile([{ id: assetIdNumber }]));
-        await dispatch(listByFileId(assetIdNumber));
+        await dispatch(retrieveAsset([{ id: assetIdNumber }]));
       })();
     }
-  }, [dispatch, assetIdNumber]);
+    hidePreview();
+  }, [dispatch, assetIdNumber, hidePreview]);
 
   if (!assetIdNumber) {
     return <Loader />;

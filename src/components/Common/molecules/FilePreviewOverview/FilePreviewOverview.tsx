@@ -49,6 +49,7 @@ import {
 } from 'modules/sequences';
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
+import { useViewerQuery } from '@cognite/react-picture-annotation';
 import {
   AssetItem,
   EventItem,
@@ -161,10 +162,10 @@ export const FilePreviewOverview = ({
   onSequenceClicked,
 }: FilePreviewOverviewProps) => {
   const dispatch = useDispatch();
+  const { query, setQuery } = useViewerQuery();
   const { openPreview } = useResourcePreview();
   const [currentTab, setTab] = useState('resources');
   const [open, setOpen] = useState<string[]>([]);
-  const [query, setQuery] = useState<string>('');
 
   useEffect(() => {
     collapseStyles.use();

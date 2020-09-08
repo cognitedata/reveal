@@ -86,6 +86,7 @@ export const ResourcePreviewProvider = ({
           onClose={() => {
             setIsOpen(false);
             onClose();
+            setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
           }}
         />
       </Splitter>

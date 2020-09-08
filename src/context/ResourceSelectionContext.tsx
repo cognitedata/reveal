@@ -83,6 +83,20 @@ export const useResourceFilters = () => {
 
 const defaultOnSelect = () => {};
 
+export type ResourceSelectionProps = {
+  allowEdit?: boolean;
+  mode?: ResourceSelectionMode;
+  resourceTypes?: ResourceType[];
+  assetFilter?: AssetFilterProps;
+  timeseriesFilter?: TimeseriesFilter;
+  fileFilter?: FileFilterProps;
+  eventFilter?: EventFilter;
+  sequenceFilter?: SequenceFilter['filter'];
+  resourcesState?: ResourceItemState[];
+  onSelect?: OnSelectListener;
+  children?: React.ReactNode;
+};
+
 export const ResourceSelectionProvider = ({
   allowEdit: propsAllowEdit = false,
   mode: initialMode = 'none',
@@ -95,19 +109,7 @@ export const ResourceSelectionProvider = ({
   resourcesState: initialResourcesState,
   onSelect: initialOnSelect = defaultOnSelect,
   children,
-}: {
-  allowEdit?: boolean;
-  mode?: ResourceSelectionMode;
-  resourceTypes?: ResourceType[];
-  assetFilter?: AssetFilterProps;
-  timeseriesFilter?: TimeseriesFilter;
-  fileFilter?: FileFilterProps;
-  eventFilter?: EventFilter;
-  sequenceFilter?: SequenceFilter['filter'];
-  resourcesState?: ResourceItemState[];
-  onSelect?: OnSelectListener;
-  children: React.ReactNode;
-}) => {
+}: ResourceSelectionProps) => {
   const [query, setQuery] = useState<string>('');
   const [allowEdit, setAllowEdit] = useState<boolean>(propsAllowEdit);
   const [mode, setMode] = useState<ResourceSelectionMode>(initialMode);
@@ -141,6 +143,12 @@ export const ResourceSelectionProvider = ({
       setResourcesState(initialResourcesState);
     }
   }, [initialResourcesState]);
+
+  useEffect(() => {
+    if (initialMode) {
+      setMode(initialMode);
+    }
+  }, [initialMode]);
 
   useEffect(() => {
     if (initialOnSelect) {

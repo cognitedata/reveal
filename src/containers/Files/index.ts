@@ -1,3 +1,3 @@
 export * from './FilePreview';
 export * from './FileSmallPreview';
-export * from './FileExplorer';
+export * from './FilePage';

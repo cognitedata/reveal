@@ -89,7 +89,7 @@ type WrapperProps = { hide: number[]; lock: number[]; flex: number[] };
 const SplitterWrapper = styled(SplitPane)<WrapperProps>(
   (props: WrapperProps) => css`
     flex: 1;
-    min-height: 200px;
+    height: 100%;
     width: 100%;
     overflow-y: auto;
     position: relative;

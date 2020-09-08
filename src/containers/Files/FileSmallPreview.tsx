@@ -1,10 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { InternalId, ExternalId } from 'cognite-sdk-v3';
-import {
-  FileDetailsAbstract,
-  Loader,
-  isPreviewableImage,
-} from 'components/Common';
+import { FileDetailsAbstract, Loader } from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   retrieve as retrieveFiles,
@@ -19,10 +15,14 @@ import {
   listByFileId,
   linkedAssetsSelector,
   linkedFilesSelectorByFileId,
+  selectAnnotations,
 } from 'modules/annotations';
-import { CogniteFileViewerImage } from 'components/CogniteFileViewer';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
+import { isPreviewableImage } from 'utils/FileUtils';
+import { CogniteFileViewer } from '@cognite/react-picture-annotation';
+import sdk from 'sdk-singleton';
+import styled from 'styled-components';
 
 export const FileSmallPreview = ({
   fileId,
@@ -43,6 +43,11 @@ export const FileSmallPreview = ({
   });
   const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
   const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(fileId);
+  const getAnnotations = useSelector(selectAnnotations);
+  const annotations = useMemo(() => getAnnotations(fileId), [
+    fileId,
+    getAnnotations,
+  ]);
 
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];
@@ -117,9 +122,28 @@ export const FileSmallPreview = ({
       files={files || []}
       extras={extras}
       actions={actions}
-      imgPreview={hasPreview && <CogniteFileViewerImage fileId={file.id} />}
+      imgPreview={
+        hasPreview && (
+          <Preview>
+            <CogniteFileViewer
+              file={file}
+              sdk={sdk}
+              disableAutoFetch
+              hideControls
+              hideDownload
+              hideSearch
+              annotations={annotations}
+              pagination="small"
+            />
+          </Preview>
+        )
+      }
     >
       {children}
     </FileDetailsAbstract>
   );
 };
+
+const Preview = styled.div`
+  height: 300px;
+`;

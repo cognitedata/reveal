@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Button, Title, Icon, Colors } from '@cognite/cogs.js';
-import { ProposedCogniteAnnotation } from 'components/CogniteFileViewer/CogniteFileViewer';
+import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import { ButtonRow } from 'components/Common';
 import { CogniteAnnotation } from '@cognite/annotations';
@@ -18,6 +18,7 @@ export const CreateAnnotationForm = ({
   onCancel,
   onLinkResource,
   previewImageSrc,
+  children,
 }: {
   annotation: ProposedCogniteAnnotation | CogniteAnnotation;
   updateAnnotation: (
@@ -28,6 +29,7 @@ export const CreateAnnotationForm = ({
   onSave: () => void;
   onLinkResource: () => void;
   previewImageSrc?: string;
+  children?: React.ReactNode;
 }) => {
   const getFile = useSelector(fileSelector);
   const getAsset = useSelector(assetSelector);
@@ -135,6 +137,7 @@ export const CreateAnnotationForm = ({
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
         <Button onClick={onDelete} icon="Delete" type="danger" />
       </ButtonRow>
+      {children}
     </Wrapper>
   );
 };

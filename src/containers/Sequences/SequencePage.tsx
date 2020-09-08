@@ -1,14 +1,14 @@
 import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { retrieve as retrieveFile } from 'modules/files';
+import { retrieve as retrieveSequences } from 'modules/sequences';
 import { useDispatch } from 'react-redux';
-import { listByFileId } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
 import { Loader } from 'components/Common';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { SequencePreview } from './SequencePreview';
 
-export const SequenceExplorer = () => {
+export const SequencePage = () => {
   const dispatch = useDispatch();
   const { sequenceId } = useParams<{
     sequenceId: string | undefined;
@@ -18,6 +18,7 @@ export const SequenceExplorer = () => {
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
+  const { hidePreview } = useResourcePreview();
   const isActive = resourcesState.some(
     el =>
       el.state === 'active' &&
@@ -42,11 +43,11 @@ export const SequenceExplorer = () => {
   useEffect(() => {
     if (sequenceIdNumber) {
       (async () => {
-        await dispatch(retrieveFile([{ id: sequenceIdNumber }]));
-        await dispatch(listByFileId(sequenceIdNumber));
+        await dispatch(retrieveSequences([{ id: sequenceIdNumber }]));
       })();
     }
-  }, [dispatch, sequenceIdNumber]);
+    hidePreview();
+  }, [dispatch, sequenceIdNumber, hidePreview]);
 
   if (!sequenceIdNumber) {
     return <Loader />;

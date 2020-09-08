@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
-import { Button, Checkbox } from '@cognite/cogs.js';
+import { Button, Checkbox, Colors } from '@cognite/cogs.js';
 
 export const useSelectionButton = () => {
   const { mode, onSelect, resourcesState } = useContext(
@@ -31,12 +31,12 @@ export const useSelectionButton = () => {
         break;
       }
     }
+    const isInCart = resourcesState.some(
+      el =>
+        el.type === item.type && el.id === item.id && el.state === 'selected'
+    );
 
     if (mode === 'multiple') {
-      const isInCart = resourcesState.some(
-        el =>
-          el.type === item.type && el.id === item.id && el.state === 'selected'
-      );
       return (
         <Button
           key="select-button"
@@ -62,7 +62,7 @@ export const useSelectionButton = () => {
           size={small ? 'small' : 'default'}
           icon="Plus"
         >
-          {`Select ${resourceName}`}
+          {isInCart ? 'Current Selection' : `Select ${resourceName}`}
         </Button>
       );
     }
@@ -78,6 +78,10 @@ export const useSelectionCheckbox = () => {
     if (mode === 'none') {
       return null;
     }
+    const isInCart = resourcesState.some(
+      el =>
+        el.type === item.type && el.id === item.id && el.state === 'selected'
+    );
     if (mode === 'single') {
       return (
         <Button
@@ -86,14 +90,15 @@ export const useSelectionCheckbox = () => {
             e.stopPropagation();
             onSelect(item);
           }}
+          style={{
+            background: isInCart
+              ? Colors['midblue-7'].hex()
+              : Colors['greyscale-grey2'].hex(),
+          }}
           icon="Check"
         />
       );
     }
-    const isInCart = resourcesState.some(
-      el =>
-        el.type === item.type && el.id === item.id && el.state === 'selected'
-    );
     return (
       <Checkbox
         key="select-button"

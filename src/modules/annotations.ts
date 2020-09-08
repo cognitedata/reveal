@@ -435,6 +435,7 @@ const reducer = combineReducers({
 export default reducer;
 
 // Selectors
+
 export const linkedFilesSelectorByAssetId = createSelector(
   (state: RootState) => state.annotations.byAssetId,
   fileSelector,

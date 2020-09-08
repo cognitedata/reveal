@@ -4,10 +4,10 @@ import { Button } from '@cognite/cogs.js';
 import { RenderResourceActionsFunction } from 'types/Types';
 import styled from 'styled-components';
 import ResourceActionsContext from 'context/ResourceActionsContext';
-import { FileExplorer } from 'containers/Files';
-import { AssetExplorer } from 'containers/Assets';
-import { SequenceExplorer } from 'containers/Sequences';
-import { TimeseriesExplorer } from 'containers/Timeseries';
+import { FilePage } from 'containers/Files';
+import { AssetPage } from 'containers/Assets';
+import { SequencePage } from 'containers/Sequences';
+import { TimeseriesPage } from 'containers/Timeseries';
 import { EventExplorer } from 'containers/Events';
 import { useHistory } from 'react-router';
 import { useTenant } from 'hooks/CustomHooks';
@@ -126,18 +126,15 @@ export const Explorer = () => {
       <ExplorationNavbar cart={cart} setCart={setCart} />
       <ResourcePreviewProvider>
         <Switch>
-          <Route path={`${match.path}/file/:fileId`} component={FileExplorer} />
-          <Route
-            path={`${match.path}/asset/:assetId`}
-            component={AssetExplorer}
-          />
+          <Route path={`${match.path}/file/:fileId`} component={FilePage} />
+          <Route path={`${match.path}/asset/:assetId`} component={AssetPage} />
           <Route
             path={`${match.path}/sequence/:sequenceId`}
-            component={SequenceExplorer}
+            component={SequencePage}
           />
           <Route
             path={`${match.path}/timeseries/:timeseriesId`}
-            component={TimeseriesExplorer}
+            component={TimeseriesPage}
           />
           <Route
             path={`${match.path}/event/:eventId`}

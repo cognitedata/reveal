@@ -5,9 +5,10 @@ import { useDispatch } from 'react-redux';
 import { trackUsage } from 'utils/Metrics';
 import { Loader } from 'components/Common';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { TimeseriesPreview } from './TimeseriesPreview';
 
-export const TimeseriesExplorer = () => {
+export const TimeseriesPage = () => {
   const dispatch = useDispatch();
   const { timeseriesId } = useParams<{
     timeseriesId: string | undefined;
@@ -19,6 +20,7 @@ export const TimeseriesExplorer = () => {
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
+  const { hidePreview } = useResourcePreview();
   const isActive = resourcesState.some(
     el =>
       el.state === 'active' &&
@@ -48,7 +50,8 @@ export const TimeseriesExplorer = () => {
         await dispatch(retrieveFile([{ id: timeseriesIdNumber }]));
       })();
     }
-  }, [dispatch, timeseriesIdNumber]);
+    hidePreview();
+  }, [dispatch, timeseriesIdNumber, hidePreview]);
 
   if (!timeseriesIdNumber) {
     return <Loader />;

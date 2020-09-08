@@ -6,7 +6,7 @@ import { EventDetailsAbstract, DetailsItem, Wrapper } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { Tabs } from 'antd';
 import moment from 'moment';
-import { renderTitle } from './EventsUtils';
+import { renderTitle } from 'utils/EventsUtils';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(

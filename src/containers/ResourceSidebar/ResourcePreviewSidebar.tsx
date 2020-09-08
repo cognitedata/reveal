@@ -92,7 +92,6 @@ export const ResourcePreviewSidebar = ({
         }
       }
     }
-    window.dispatchEvent(new Event('resize'));
   }, [dispatch, item]);
 
   let content: React.ReactNode = placeholder || <Loader />;

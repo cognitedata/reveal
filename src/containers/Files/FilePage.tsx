@@ -2,12 +2,13 @@ import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { retrieve as retrieveFile } from 'modules/files';
 import { useDispatch } from 'react-redux';
-import { CogniteFileViewer } from 'components/CogniteFileViewer';
 import { listByFileId } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
+import { FilePreview } from './FilePreview';
 
-export const FileExplorer = () => {
+export const FilePage = () => {
   const dispatch = useDispatch();
   const { fileId } = useParams<{
     fileId: string | undefined;
@@ -16,6 +17,7 @@ export const FileExplorer = () => {
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
+  const { hidePreview } = useResourcePreview();
   const isActive = resourcesState.some(
     el => el.state === 'active' && el.id === fileIdNumber && el.type === 'file'
   );
@@ -41,6 +43,8 @@ export const FileExplorer = () => {
         await dispatch(listByFileId(fileIdNumber));
       })();
     }
-  }, [dispatch, fileIdNumber]);
-  return <CogniteFileViewer fileId={fileIdNumber} />;
+    hidePreview();
+  }, [dispatch, fileIdNumber, hidePreview]);
+
+  return <FilePreview fileId={fileIdNumber} contextualization />;
 };

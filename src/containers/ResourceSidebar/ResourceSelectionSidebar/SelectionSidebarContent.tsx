@@ -1,4 +1,10 @@
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, {
+  useState,
+  useContext,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 import styled from 'styled-components';
 import { Button, Input } from '@cognite/cogs.js';
 import { FilePreview } from 'containers/Files';
@@ -8,8 +14,13 @@ import { TimeseriesPreview } from 'containers/Timeseries';
 import { SearchResults } from 'containers/SearchResults';
 import ResourceActionsContext from 'context/ResourceActionsContext';
 import { RenderResourceActionsFunction } from 'types/Types';
-import { useQuery } from 'context/ResourceSelectionContext';
+import {
+  useQuery,
+  useResourcesState,
+  useResourceMode,
+} from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
+import { Divider, ButtonRow } from 'components/Common';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: fixed;
@@ -44,19 +55,26 @@ const CloseButton = styled(Button)`
   align-self: flex-end;
 `;
 
-export const ResourceSidebar = ({
+export const SelectionSidebarContent = ({
   visible = false,
   onClose,
   children,
 }: {
-  onClose: () => void;
+  onClose: (confirmed: boolean) => void;
   visible?: boolean;
   children?: React.ReactNode;
 }) => {
   const [query, setQuery] = useQuery();
   const { add, remove } = useContext(ResourceActionsContext);
+  const mode = useResourceMode();
+  const resourceState = useResourcesState();
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
+  );
+
+  const selectResourcesCount = useMemo(
+    () => resourceState.filter(el => el.state === 'selected').length,
+    [resourceState]
   );
 
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
@@ -171,13 +189,30 @@ export const ResourceSidebar = ({
       <Drawer visible={visible}>
         {visible && (
           <div>
-            <CloseButton icon="Close" variant="ghost" onClick={onClose} />
+            <CloseButton
+              icon="Close"
+              variant="ghost"
+              onClick={() => onClose(false)}
+            />
             {children}
             {content}
+
+            {mode !== 'none' && (
+              <>
+                <Divider.Horizontal />
+                <ButtonRow>
+                  <Button onClick={() => onClose(false)}>Cancel</Button>
+                  <div className="spacer" />
+                  <Button type="primary" onClick={() => onClose(true)}>
+                    Select {selectResourcesCount} Resources
+                  </Button>
+                </ButtonRow>
+              </>
+            )}
           </div>
         )}
       </Drawer>
-      <Overlay onClick={onClose} visible={visible} />
+      <Overlay onClick={() => onClose(false)} visible={visible} />
     </>
   );
 };

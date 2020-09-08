@@ -30,6 +30,9 @@ export const ButtonRow = styled.div`
     margin-bottom: 6px;
     display: inline-flex;
   }
+  .spacer {
+    flex: 1;
+  }
   & > *:nth-last-child(1) {
     margin-left: 0px;
   }

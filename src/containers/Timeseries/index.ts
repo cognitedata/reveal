@@ -1,3 +1,3 @@
 export * from './TimeseriesPreview';
 export * from './TimeseriesSmallPreview';
-export * from './TimeseriesExplorer';
+export * from './TimeseriesPage';
