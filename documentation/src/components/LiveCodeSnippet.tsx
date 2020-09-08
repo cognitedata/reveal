@@ -16,6 +16,38 @@ export type LiveCodeSnippetProps = {
   scope?: Record<string, any>;
 };
 
+function prependedCodeFn({ resetViewerEventHandlers }: typeof customScope) {
+  // # body-start #
+
+  // make these things to be available in live-editor
+  const viewer = window.viewer;
+  const model = window.model;
+  const sdk = window.sdk;
+
+  const viewerEl = document.getElementById('demo-wrapper');
+  if (viewerEl) {
+    viewerEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
+  if (viewer) {
+    resetViewerEventHandlers(viewer);
+  } else {
+    alert('Login is required to run examples');
+    return;
+  }
+}
+
+function getPrependedCode() {
+  const startSymbol = '# body-start #';
+  const fnString = prependedCodeFn.toString();
+  return fnString
+    .slice(
+      fnString.indexOf(startSymbol) + startSymbol.length,
+      fnString.lastIndexOf('}')
+    )
+    .trim();
+}
+
 export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
   const scope = {
     ...customScope,
@@ -25,23 +57,13 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
     }, {} as any),
   };
 
-  const prependedCode = `
-      const viewer = window.viewer;
-      const model = window.model;
-      const sdk = window.sdk;
-      if (viewer) resetViewerEventHandlers(viewer);
-      const viewerEl = document.getElementById('demo-wrapper');
-      if (viewerEl) viewerEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      // User code starts here!
-    `;
-
   const { transformCode, children, theme } = props;
   return (
     <LiveProvider
       code={children}
       transformCode={(code) => {
         const fullCode = `
-            ${prependedCode}
+            ${getPrependedCode()}
             // User code starts here!
             ${transformCode ? transformCode(code) : code}`;
 

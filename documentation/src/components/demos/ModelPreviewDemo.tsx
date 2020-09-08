@@ -65,8 +65,6 @@ export default function ModelPreviewDemo({ client }: DemoProps) {
       }
     }
 
-    (window as any).sdk = client;
-
     return () => {
       isMounted = false;
     };
