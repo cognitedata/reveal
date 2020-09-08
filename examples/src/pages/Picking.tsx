@@ -11,6 +11,7 @@ import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { RevealOptions } from '@cognite/reveal/public/types';
+import { Vector3 } from 'three';
 
 CameraControls.install({ THREE });
 
@@ -42,9 +43,6 @@ export function Picking() {
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
-          if (treeIndex == 39) {
-            return { color: [255, 0, 0] };
-          }
           if (pickedNodes.has(treeIndex)) {
             return reveal.DefaultNodeAppearance.Highlighted;
           }
@@ -98,6 +96,11 @@ export function Picking() {
       const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
       //scene.add(boxMesh);
 
+      scene.add(createSphere(new Vector3(0, 0, 0), 'black'));
+      scene.add(createSphere(new Vector3(10, 0, 0), 'blue'));
+      scene.add(createSphere(new Vector3(0, 10, 0), 'red'));
+      scene.add(createSphere(new Vector3(0, 0, 10), 'green'));
+
       // Add some light for the box
       for (const position of [
         [-20, 40, 50],
@@ -113,6 +116,7 @@ export function Picking() {
 
       let pickingNeedsUpdate = false;
       animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        renderer.render(scene, camera);
         const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
@@ -123,7 +127,8 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          revealManager.render(renderer, camera, scene);
+          //revealManager.render(renderer, camera, scene);
+          renderer.render(scene, camera);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }

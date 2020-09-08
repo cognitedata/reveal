@@ -1,5 +1,6 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl');
 
 uniform mat4 inverseModelMatrix;
 
@@ -27,11 +28,31 @@ varying float height;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+varying vec3 v_position;
+
+uniform vec2 dataTextureSize;
+
+uniform sampler2D matrixTransformTexture;
+
 void main() {
+
+    float treeIndex = floor(a_treeIndex + 0.5);
+    float dataTextureWidth = dataTextureSize.x;
+    float dataTextureHeight = dataTextureSize.y;
+
+    mat4 localTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+
+    vec3 centerA = mul3(inverseModelMatrix, mul3(localTransform, mul3(modelMatrix, a_centerA)));
+    vec3 centerB = mul3(inverseModelMatrix, mul3(localTransform, mul3(modelMatrix, a_centerB)));
+
+    vec3 normalTest = (inverseModelMatrix * localTransform * modelMatrix * vec4(a_normal, 0)).xyz;
+
     vec3 lDir;
-    height = dot(a_centerA - a_centerB, a_normal);
-    vec3 center = 0.5 * (a_centerA + a_centerB);
+    height = dot(centerA - centerB, normalTest);
+    vec3 center = 0.5 * (centerA + centerB);
     vec3 newPosition = position;
+
+    v_position = position;
 
 #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
       vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
@@ -42,11 +63,11 @@ void main() {
 
 
     // Find the coordinates of centerA and centerB projected down to the end cap plane
-    vec3 maxCenterProjected = a_centerA - dot(a_centerA, a_normal)*a_normal;
-    vec3 minCenterProjected = a_centerB - dot(a_centerB, a_normal)*a_normal;
+    vec3 maxCenterProjected = centerA - dot(centerA, normalTest)*normalTest;
+    vec3 minCenterProjected = centerB - dot(centerB, normalTest)*normalTest;
     float distanceBetweenProjectedCenters = length(maxCenterProjected - minCenterProjected);
 
-    lDir = a_normal;
+    lDir = normalTest;
     float dirSign = 1.0;
     if (dot(objectToCameraModelSpace, lDir) < 0.0) { // direction vector looks away, flip it
       dirSign = -1.0;
@@ -57,7 +78,7 @@ void main() {
     vec3 up = normalize(cross(left, lDir));
 
     // compute basis for cone
-    axis.xyz = -a_normal;
+    axis.xyz = -normalTest;
     U.xyz = cross(objectToCameraModelSpace, axis.xyz);
     V.xyz = cross(U.xyz, axis.xyz);
     // Transform to camera space
@@ -70,11 +91,11 @@ void main() {
     newPosition.x *= 1.0 - (a_radiusA * (position.x + 1.0) * 0.0025 / height);
 #endif
 
-    v_centerA.xyz = mul3(modelViewMatrix, a_centerA);
-    v_centerB.xyz = mul3(modelViewMatrix, a_centerB);
+    v_centerA.xyz = mul3(modelViewMatrix, centerA);
+    v_centerB.xyz = mul3(modelViewMatrix, centerB);
     // Pack radii as w components of v_centerA and v_centerB
-    v_centerA.w = displaceScalar(a_centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
-    v_centerB.w = displaceScalar(a_centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerA.w = displaceScalar(centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.w = displaceScalar(centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
 
     float radiusIncludedDisplacement = 0.5*(2.0*max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
     vec3 surfacePoint = center + mat3(0.5*height*lDir, radiusIncludedDisplacement*left, radiusIncludedDisplacement*up) * newPosition;

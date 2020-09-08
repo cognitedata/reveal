@@ -1,5 +1,5 @@
 #pragma glslify: constructMatrix = require('../../base/constructMatrix.glsl')
-#pragma glslify: unpackVec4ToFloat = require('../../color/unpackVec4ToFloat.glsl')
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 attribute vec4 a_instanceMatrix_column_0;
 attribute vec4 a_instanceMatrix_column_1;
@@ -21,15 +21,6 @@ uniform vec2 dataTextureSize;
 
 uniform sampler2D matrixTransformTexture;
 
-float unpackFloatFromRGBATexel(vec4 texel){
-    float byteValueR = floor((texel.r * 255.0) + 0.5);
-    float byteValueG = floor((texel.g * 255.0) + 0.5);
-    float byteValueB = floor((texel.b * 255.0) + 0.5);
-    float byteValueA = floor((texel.a * 255.0) + 0.5);
-
-    return unpackVec4ToFloat(vec4(byteValueR, byteValueG, byteValueB, byteValueA));
-}
-
 void main()
 {
     mat4 instanceMatrix = constructMatrix(
@@ -39,39 +30,18 @@ void main()
         a_instanceMatrix_column_3
     );
 
-    v_treeIndex = a_treeIndex;
-    v_color = a_color;
-    v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;
-
     float treeIndex = floor(a_treeIndex + 0.5);
     float dataTextureWidth = dataTextureSize.x;
     float dataTextureHeight = dataTextureSize.y;
 
-    float cellWidth = 1.0 / (dataTextureWidth * 16.0);
-    float cellHeight = 1.0 / dataTextureHeight;
-
-    float xTreeIndexCoord = mod(treeIndex, dataTextureWidth);
-    float yTreeIndexCoord = floor(treeIndex / dataTextureWidth);
-    float uCoord = (xTreeIndexCoord * (cellWidth * 16.0)) + (cellWidth / 2.0);
-    float vCoord = (yTreeIndexCoord * cellHeight) + (cellHeight / 2.0);
-    vec2 treeIndexUv = vec2(uCoord, vCoord);
-
-    float matrixElements[12];
-
-    for(int i = 0; i < 12; i++){
-      matrixElements[i] = unpackFloatFromRGBATexel(texture2D(matrixTransformTexture, treeIndexUv + vec2(float(i) * cellWidth, 0.0)));
-
-    }
+    mat4 localTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
     
-    mat4 localTransform = mat4(
-      matrixElements[0], matrixElements[4], matrixElements[8],  0,
-      matrixElements[1], matrixElements[5], matrixElements[9],  0,
-      matrixElements[2], matrixElements[6], matrixElements[10], 0,
-      matrixElements[3], matrixElements[7], matrixElements[11], 1
-    );
+    v_treeIndex = a_treeIndex;
+    v_color = a_color;
+    v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;
 
-    vec3 transformed = (instanceMatrix * localTransform * vec4(position, 1.0)).xyz;
-    vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
+    vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
+    vec4 modelViewPosition = viewMatrix * localTransform * modelMatrix * vec4(transformed, 1.0);
     vViewPosition = modelViewPosition.xyz;
     gl_Position = projectionMatrix * modelViewPosition;
 }

@@ -1,3 +1,5 @@
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+
 attribute float a_treeIndex;
 attribute vec3 a_color;
 attribute vec3 a_vertex1;
@@ -10,6 +12,10 @@ varying vec3 v_color;
 varying vec3 v_normal;
 
 varying vec3 vViewPosition;
+
+uniform vec2 dataTextureSize;
+
+uniform sampler2D matrixTransformTexture;
 
 void main() {
     vec3 transformed;
@@ -26,7 +32,13 @@ void main() {
     v_color = a_color;
     v_normal = normalMatrix * objectNormal;
 
-    vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
+    float treeIndex = floor(a_treeIndex + 0.5);
+    float dataTextureWidth = dataTextureSize.x;
+    float dataTextureHeight = dataTextureSize.y;
+
+    mat4 localTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+
+    vec4 mvPosition = viewMatrix * localTransform * modelMatrix * vec4( transformed, 1.0 );
     vViewPosition = mvPosition.xyz;
     gl_Position = projectionMatrix * mvPosition;
 }

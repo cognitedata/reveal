@@ -5,7 +5,9 @@
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
-//import { packFloat } from '@/utilities/packFloatToVec4';
+import { packFloat } from '@/utilities/packFloatToVec4';
+import * as THREE from 'three';
+//import { Matrix4, Quaternion, Euler } from 'three';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -102,6 +104,25 @@ export class MaterialManager {
       return;
     }
 
+    // console.log('asdasdads');
+
+    // const testMat = new THREE.Matrix4();
+    // const rot = new Quaternion();
+    // rot.setFromEuler(new Euler(0.1, 0.1, 0));
+
+    // const rotA = new Quaternion();
+    // rotA.setFromEuler(new Euler(Math.PI / 100.0, Math.PI / 50.0, Math.PI / 75.0));
+
+    // setInterval(() => {
+    //   rot = rot.multiply(rotA);
+    //   testMat.makeRotationFromQuaternion(rot);
+    //   //testMat.makeRotationY((this.asd % 100) * (Math.PI / 50.0));
+    //   //testMat.setPosition(0, 0, 10);
+    //   //testMat.makeRotationAxis(new THREE.Vector3(0, 1, 0), -(this.asd % 100) * (3.14 / 50.0));
+    //   this.packMatrixToOverrideTransformBuffer(3, testMat, materials.dynamicTransformationTexture);
+    //   this.asd = this.asd + 1;
+    // }, 16);
+
     const count = treeIndices.length;
     const inFrontSet = this._inFrontTreeIndices.get(modelIdentifier)!;
     for (let i = 0; i < count; ++i) {
@@ -126,12 +147,18 @@ export class MaterialManager {
         (style.renderInFront ? 1 << 1 : 0) +
         (style.outlineColor ? style.outlineColor << 2 : 0);
       materials.overrideColorPerTreeIndex.needsUpdate = true;
+
+      const testMat = new THREE.Matrix4();
+      testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
+      //testMat.setPosition(0, 10, 0);
+      this.packMatrixToOverrideTransformBuffer(i, testMat, materials.dynamicTransformationTexture);
     }
 
-    // const testMat = new Matrix4();
-    // this.packMatrixToOverrideTransformBuffer(1, testMat, materials.dynamicTransformationTexture);
+    //console.log(testMat.clone().getInverse(new Matrix4()).clone());
+    //console.log(testMat.clone().multiply(testMat.transpose()).toArray());
   }
 
+  //private asd = 0;
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
     for (const materialWrapper of this.materialsMap.values()) {
       const materials = materialWrapper.materials;
@@ -153,20 +180,21 @@ export class MaterialManager {
     }
   }
 
-  // private packMatrixToOverrideTransformBuffer(
-  //   treeIndex: number,
-  //   transform: THREE.Matrix4,
-  //   dynamicTransformTexture: THREE.DataTexture
-  // ) {
-  //   const transformBuffer = transform.transpose().toArray();
+  private packMatrixToOverrideTransformBuffer(
+    treeIndex: number,
+    transform: THREE.Matrix4,
+    dynamicTransformTexture: THREE.DataTexture
+  ) {
+    const transformBuffer = transform.transpose().toArray();
 
-  //   for (let i = 0; i < transformBuffer.length; i++) {
-  //     const element = packFloat(transformBuffer[i]);
+    for (let i = 0; i < transformBuffer.length; i++) {
+      const element = packFloat(transformBuffer[i]);
 
-  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4] = element.x;
-  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 1] = element.y;
-  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 2] = element.z;
-  //     dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 3] = element.w;
-  //   }
-  // }
+      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4] = element.x;
+      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 1] = element.y;
+      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 2] = element.z;
+      dynamicTransformTexture.image.data[treeIndex * 4 * 16 + i * 4 + 3] = element.w;
+    }
+    dynamicTransformTexture.needsUpdate = true;
+  }
 }

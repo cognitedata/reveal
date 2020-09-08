@@ -1,5 +1,6 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
@@ -28,10 +29,25 @@ varying vec4 sphereNormal;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform vec2 dataTextureSize;
+
+uniform sampler2D matrixTransformTexture;
+
 void main() {
+
+    float treeIndex = floor(a_treeIndex + 0.5);
+    float dataTextureWidth = dataTextureSize.x;
+    float dataTextureHeight = dataTextureSize.y;
+
+    mat4 localTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+
+    vec3 centerTest = mul3(inverseModelMatrix, mul3(localTransform, mul3(modelMatrix, a_center))).xyz;
+
+    vec3 normalTest = (inverseModelMatrix * localTransform * modelMatrix * vec4(a_normal, 0)).xyz;
+
     vec3 lDir;
     float distanceToCenterOfSegment = a_verticalRadius - a_height*0.5;
-    vec3 centerOfSegment = a_center + a_normal*distanceToCenterOfSegment;
+    vec3 centerOfSegment = centerTest + normalTest*distanceToCenterOfSegment;
 
 #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
       vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
@@ -42,11 +58,11 @@ void main() {
 
     vec3 newPosition = position;
 
-    float bb = dot(objectToCameraModelSpace, a_normal);
+    float bb = dot(objectToCameraModelSpace, normalTest);
     if (bb < 0.0) { // direction vector looks away, flip it
-      lDir = -a_normal;
+      lDir = -normalTest;
     } else { // direction vector already looks in my direction
-      lDir = a_normal;
+      lDir = normalTest;
     }
 
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
@@ -69,14 +85,14 @@ void main() {
 
     v_treeIndex = a_treeIndex;
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
-    center.xyz = mul3(modelViewMatrix, a_center);
+    center.xyz = mul3(modelViewMatrix, centerTest);
     center.w = a_verticalRadius; // Pack radius into w-component
     hRadius = a_horizontalRadius;
     height = a_height;
     v_color = a_color;
 
     // compute basis
-    sphereNormal.xyz = normalMatrix * a_normal;
+    sphereNormal.xyz = normalMatrix * normalTest;
     U.xyz = normalMatrix * up;
     V.xyz = normalMatrix * left;
 

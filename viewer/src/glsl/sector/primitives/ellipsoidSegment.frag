@@ -26,6 +26,7 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
+
     if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
         discard;
     }
