@@ -7,7 +7,6 @@ import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
 import { packFloat } from '@/utilities/packFloatToVec4';
 import * as THREE from 'three';
-//import { Matrix4, Quaternion, Euler } from 'three';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -104,25 +103,6 @@ export class MaterialManager {
       return;
     }
 
-    // console.log('asdasdads');
-
-    // const testMat = new THREE.Matrix4();
-    // const rot = new Quaternion();
-    // rot.setFromEuler(new Euler(0.1, 0.1, 0));
-
-    // const rotA = new Quaternion();
-    // rotA.setFromEuler(new Euler(Math.PI / 100.0, Math.PI / 50.0, Math.PI / 75.0));
-
-    // setInterval(() => {
-    //   rot = rot.multiply(rotA);
-    //   testMat.makeRotationFromQuaternion(rot);
-    //   //testMat.makeRotationY((this.asd % 100) * (Math.PI / 50.0));
-    //   //testMat.setPosition(0, 0, 10);
-    //   //testMat.makeRotationAxis(new THREE.Vector3(0, 1, 0), -(this.asd % 100) * (3.14 / 50.0));
-    //   this.packMatrixToOverrideTransformBuffer(3, testMat, materials.dynamicTransformationTexture);
-    //   this.asd = this.asd + 1;
-    // }, 16);
-
     const count = treeIndices.length;
     const inFrontSet = this._inFrontTreeIndices.get(modelIdentifier)!;
     for (let i = 0; i < count; ++i) {
@@ -153,12 +133,8 @@ export class MaterialManager {
       //testMat.setPosition(0, 10, 0);
       this.packMatrixToOverrideTransformBuffer(i, testMat, materials.dynamicTransformationTexture);
     }
-
-    //console.log(testMat.clone().getInverse(new Matrix4()).clone());
-    //console.log(testMat.clone().multiply(testMat.transpose()).toArray());
   }
 
-  //private asd = 0;
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
     for (const materialWrapper of this.materialsMap.values()) {
       const materials = materialWrapper.materials;

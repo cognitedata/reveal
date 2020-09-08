@@ -49,10 +49,12 @@ void main() {
     float dataTextureWidth = dataTextureSize.x;
     float dataTextureHeight = dataTextureSize.y;
 
-    mat4 localTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
 
-    vec3 centerA = mul3(inverseModelMatrix, mul3(localTransform, mul3(modelMatrix, a_centerA)));
-    vec3 centerB = mul3(inverseModelMatrix, mul3(localTransform, mul3(modelMatrix, a_centerB)));
+    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
+
+    vec3 centerA = mul3(modelTransformOffset, a_centerA);
+    vec3 centerB = mul3(modelTransformOffset, a_centerB);
 
     vec3 center = 0.5 * (centerA + centerB);
     float halfHeight = 0.5 * length(centerA - centerB);
@@ -92,7 +94,7 @@ void main() {
 
     // compute basis for cone
     v_W.xyz = dir;
-    v_U.xyz = (inverseModelMatrix * localTransform * modelMatrix * vec4(a_localXAxis, 0)).xyz;
+    v_U.xyz = (modelTransformOffset * vec4(a_localXAxis, 0)).xyz;
     v_W.xyz = normalize(normalMatrix * v_W.xyz);
     v_U.xyz = normalize(normalMatrix * v_U.xyz);
     // We pack surfacePoint as w-components of U and W

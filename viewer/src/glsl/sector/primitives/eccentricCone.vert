@@ -28,8 +28,6 @@ varying float height;
 varying vec3 v_color;
 varying vec3 v_normal;
 
-varying vec3 v_position;
-
 uniform vec2 dataTextureSize;
 
 uniform sampler2D matrixTransformTexture;
@@ -40,19 +38,19 @@ void main() {
     float dataTextureWidth = dataTextureSize.x;
     float dataTextureHeight = dataTextureSize.y;
 
-    mat4 localTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
 
-    vec3 centerA = mul3(inverseModelMatrix, mul3(localTransform, mul3(modelMatrix, a_centerA)));
-    vec3 centerB = mul3(inverseModelMatrix, mul3(localTransform, mul3(modelMatrix, a_centerB)));
+    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
 
-    vec3 normalTest = (inverseModelMatrix * localTransform * modelMatrix * vec4(a_normal, 0)).xyz;
+    vec3 centerA = mul3(modelTransformOffset, a_centerA);
+    vec3 centerB = mul3(modelTransformOffset, a_centerB);
+
+    vec3 normalWithOffset = (modelTransformOffset * vec4(a_normal, 0)).xyz;
 
     vec3 lDir;
-    height = dot(centerA - centerB, normalTest);
+    height = dot(centerA - centerB, normalWithOffset);
     vec3 center = 0.5 * (centerA + centerB);
     vec3 newPosition = position;
-
-    v_position = position;
 
 #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
       vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
@@ -63,11 +61,11 @@ void main() {
 
 
     // Find the coordinates of centerA and centerB projected down to the end cap plane
-    vec3 maxCenterProjected = centerA - dot(centerA, normalTest)*normalTest;
-    vec3 minCenterProjected = centerB - dot(centerB, normalTest)*normalTest;
+    vec3 maxCenterProjected = centerA - dot(centerA, normalWithOffset) * normalWithOffset;
+    vec3 minCenterProjected = centerB - dot(centerB, normalWithOffset) * normalWithOffset;
     float distanceBetweenProjectedCenters = length(maxCenterProjected - minCenterProjected);
 
-    lDir = normalTest;
+    lDir = normalWithOffset;
     float dirSign = 1.0;
     if (dot(objectToCameraModelSpace, lDir) < 0.0) { // direction vector looks away, flip it
       dirSign = -1.0;
@@ -78,7 +76,7 @@ void main() {
     vec3 up = normalize(cross(left, lDir));
 
     // compute basis for cone
-    axis.xyz = -normalTest;
+    axis.xyz = -normalWithOffset;
     U.xyz = cross(objectToCameraModelSpace, axis.xyz);
     V.xyz = cross(U.xyz, axis.xyz);
     // Transform to camera space

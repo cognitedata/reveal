@@ -33,19 +33,12 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
-varying vec3 v_position;
-
 uniform int renderMode;
 
 void main() {
   if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
     discard;
   }
-
-  
-
-  // gl_FragColor = vec4(normalize(v_position), 1.0);
-  // return;
 
   vec3 normal = normalize( v_normal );
   vec4 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
@@ -90,8 +83,6 @@ void main() {
 
   // d < 0.0 means the ray hits outside an infinitely long cone
   if (d < 0.0){
-    // gl_FragColor = vec4(normalize(v_position), 1.0);
-    // return;
     discard;
   }
 

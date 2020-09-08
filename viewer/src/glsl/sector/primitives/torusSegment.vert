@@ -44,7 +44,7 @@ void main() {
     float dataTextureWidth = dataTextureSize.x;
     float dataTextureHeight = dataTextureSize.y;
 
-    mat4 localTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
 
     vec3 transformed = (instanceMatrix * vec4(pos3, 1.0)).xyz;
 
@@ -56,7 +56,7 @@ void main() {
     v_color = a_color;
     v_normal = normalMatrix * objectNormal;
 
-    vec4 modelViewPosition = viewMatrix * localTransform * modelMatrix * vec4(transformed, 1.0);
+    vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(transformed, 1.0);
 
     vViewPosition = modelViewPosition.xyz;
 

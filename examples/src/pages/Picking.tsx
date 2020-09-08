@@ -94,7 +94,7 @@ export function Picking() {
       const boxMaterial = new THREE.MeshPhongMaterial({ color: 'red' });
 
       const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-      //scene.add(boxMesh);
+      scene.add(boxMesh);
 
       scene.add(createSphere(new Vector3(0, 0, 0), 'black'));
       scene.add(createSphere(new Vector3(10, 0, 0), 'blue'));
@@ -116,7 +116,6 @@ export function Picking() {
 
       let pickingNeedsUpdate = false;
       animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
-        renderer.render(scene, camera);
         const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
@@ -127,8 +126,7 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          //revealManager.render(renderer, camera, scene);
-          renderer.render(scene, camera);
+          revealManager.render(renderer, camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
