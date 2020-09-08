@@ -2,6 +2,7 @@
   "name": "subsurface-visualizer-standalone",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://cognitedata.github.io/node-visualizer",
   "dependencies": {
     "@cognite/node-visualizer": "file:../dist/node-visualizer",
     "react": "file:../node_modules/react",

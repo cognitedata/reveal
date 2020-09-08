@@ -125,9 +125,11 @@ export function SettingsElement(props: ISettingsElementProps) {
             return undefined;
           };
           element = (
-            <div className="common-select">
+            <div
+              className="common-select"
+              key={keyExtractor(null, type, name).key}
+            >
               <GenericSelect
-                key={keyExtractor(null, type, name).key}
                 options={options}
                 value={value}
                 disabled={disabled}
