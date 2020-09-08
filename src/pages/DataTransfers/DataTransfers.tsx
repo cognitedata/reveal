@@ -4,13 +4,14 @@ import { Checkbox, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import ApiContext from 'contexts/ApiContext';
+import AuthContext from 'contexts/AuthContext';
+import APIErrorContext from 'contexts/APIErrorContext';
 // import styled from 'styled-components';
 import { ContentContainer, TableActions } from '../../elements';
 import 'antd/dist/antd.css';
 import config from './datatransfer.config';
-import ApiContext from '../../contexts/ApiContext';
 import DetailView from '../../components/Organisms/DetailView';
-import APIErrorContext from '../../contexts/APIErrorContext';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
 
 enum ProgressState {
@@ -218,6 +219,7 @@ const DataTransfers: React.FC = () => {
   );
 
   const { api } = useContext(ApiContext);
+  const { token } = useContext(AuthContext);
   const { addError } = useContext(APIErrorContext);
 
   const [
@@ -272,7 +274,9 @@ const DataTransfers: React.FC = () => {
           dispatch({ type: Action.FAIL, error: err });
         });
     }
-    fetchDataTransfers();
+    if (token && token !== 'NO_TOKEN') {
+      fetchDataTransfers();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
 

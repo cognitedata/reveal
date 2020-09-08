@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { ContentContainer, StatusIcon } from 'elements';
 import ApiContext from 'contexts/ApiContext';
+import AuthContext from 'contexts/AuthContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
 import { ColumnsType } from 'antd/es/table';
 import { curateColumns, generateColumnsFromData } from 'utils/functions';
@@ -63,6 +64,7 @@ const rules: Rule[] = [
 
 const Configurations = () => {
   const { api } = useContext(ApiContext);
+  const { token } = useContext(AuthContext);
   const { error, addError, removeError } = useContext(APIErrorContext);
   const [data, setData] = useState<GenericResponseObject[]>([]);
   const [columns, setColumns] = useState<
@@ -92,9 +94,11 @@ const Configurations = () => {
   }
 
   useEffect(() => {
-    fetchConfigurations();
+    if (token && token !== 'NO_TOKEN') {
+      fetchConfigurations();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     const rawColumns = generateColumnsFromData(data);
