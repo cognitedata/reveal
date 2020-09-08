@@ -110,18 +110,16 @@ export class CachedRepository implements Repository {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._taskTracker.getTaskTrackerObservable().pipe(
-      map(taskTracker => {
-        const { taskCount, taskCompleted } = taskTracker;
-        if (taskCount === 0 && taskCompleted === 0) {
-          return { taskCount: 1, taskCompleted: 1 };
-        }
-        return taskTracker;
-      }),
       throttleTime(30, asyncScheduler, { trailing: true }), // Take 1 emission every 30ms
       map(
-        ({ taskCount, taskCompleted }) => ({ itemsRequested: taskCount, itemsLoaded: taskCompleted } as LoadingState)
+        ({ taskCount, taskCompleted }) =>
+          ({
+            isLoading: taskCount != taskCompleted,
+            itemsRequested: taskCount,
+            itemsLoaded: taskCompleted
+          } as LoadingState)
       ),
-      startWith({ itemsRequested: 1, itemsLoaded: 1 })
+      startWith({ isLoading: false, itemsRequested: 0, itemsLoaded: 0 })
     );
   }
 

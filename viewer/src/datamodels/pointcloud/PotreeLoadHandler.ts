@@ -8,7 +8,11 @@ import { LoadingState } from '@/utilities';
 
 export class PotreeLoadHandler {
   private static getLoadingState(): LoadingState {
-    return { itemsLoaded: 0, itemsRequested: Potree.Global.numNodesLoading };
+    return {
+      isLoading: Potree.Global.numNodesLoading > 0,
+      itemsLoaded: 0,
+      itemsRequested: 0
+    };
   }
 
   private readonly _potreeLoadObservable: Observable<LoadingState>;

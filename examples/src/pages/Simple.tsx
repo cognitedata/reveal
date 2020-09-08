@@ -16,7 +16,7 @@ CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 1, itemsRequested: 1 });
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -98,10 +98,10 @@ export function Simple() {
       animationLoopHandler.dispose();
     };
   }, []);
-  const { itemsLoaded, itemsRequested } = loadingState;
+  const { isLoading, itemsLoaded, itemsRequested } = loadingState;
   return (
     <CanvasWrapper>
-      <Loader isLoading={itemsLoaded !== itemsRequested} style={{ position: 'absolute' }}>
+      <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
         Downloading {itemsLoaded} / {itemsRequested} sectors.
       </Loader>
       <canvas ref={canvas} />

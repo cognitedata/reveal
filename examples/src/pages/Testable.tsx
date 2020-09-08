@@ -17,7 +17,7 @@ CameraControls.install({ THREE });
 
 export function Testable() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 0, itemsRequested: 500 });
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: true, itemsLoaded: 0, itemsRequested: 0 });
 
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
@@ -64,7 +64,7 @@ export function Testable() {
       revealManager.on('loadingStateChanged', (loadingState) => {
         if (skipFirstLoadingState) {
           skipFirstLoadingState = false;
-          if(loadingState.itemsLoaded !== 1 && loadingState.itemsRequested !== 1) {
+          if(loadingState.isLoading) {
             setLoadingState(loadingState);
           }
         } else {
@@ -181,7 +181,7 @@ export function Testable() {
   }, []);
   return (
     <CanvasWrapper>
-      <Loader isLoading={loadingState.itemsLoaded !== loadingState.itemsRequested} style={{ position: 'absolute' }}>
+      <Loader isLoading={loadingState.isLoading} style={{ position: 'absolute' }}>
         Not ready...
       </Loader>
       <canvas ref={canvas} />

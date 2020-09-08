@@ -223,6 +223,7 @@ export class RevealManager<TModelIdentifier> {
           map(
             ([cadLoadingState, pointCloudLoadingState]) =>
               ({
+                isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
                 itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
                 itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested
               } as LoadingState)
