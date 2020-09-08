@@ -11,7 +11,7 @@ export class PotreeLoadHandler {
     return {
       isLoading: Potree.Global.numNodesLoading > 0,
       itemsLoaded: 0,
-      itemsRequested: 0
+      itemsRequested: Potree.Global.numNodesLoading
     };
   }
 
