@@ -66,8 +66,15 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
             ${getPrependedCode()}
             // User code starts here!
             ${transformCode ? transformCode(code) : code}`;
-
-        return `<button onClick={() => \{${fullCode}\}}>Run</button>`;
+        return `
+          <button
+            type="button"
+            className="button button--primary button--lg"
+            onClick={() => \{${fullCode}\}}
+          >
+            Run
+          </button>
+        `;
       }}
       scope={{ ...scope }}
       theme={theme || defaultCodeTheme}
