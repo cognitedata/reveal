@@ -22,7 +22,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
+import { BoundingBoxClipper, File3dFormat, isMobileOrTablet, LoadingState } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { trackError, initMetrics, trackLoadModel } from '@/utilities/metrics';
 import { RevealManager } from '../RevealManager';
@@ -171,18 +171,18 @@ export class Cognite3DViewer {
     this.startPointerEventListeners();
 
     this._subscription.add(
-      fromEventPattern(
+      fromEventPattern<LoadingState>(
         h => this._revealManager.on('loadingStateChanged', h),
         h => this._revealManager.off('loadingStateChanged', h)
       ).subscribe(
-        isLoading => {
-          if (isLoading) {
+        loadingState => {
+          if (loadingState.itemsLoaded != loadingState.itemsRequested) {
             this.spinner.show();
           } else {
             this.spinner.hide();
           }
           if (options.onLoading) {
-            options.onLoading(0, isLoading ? 1 : 0);
+            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
           }
         },
         error =>

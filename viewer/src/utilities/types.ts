@@ -36,6 +36,15 @@ export type ModelTransformation = {
 };
 
 /**
+ * State holding information about data being loaded.
+ */
+export type LoadingState = {
+  isLoading: boolean;
+  itemsLoaded: number;
+  itemsRequested: number;
+};
+
+/**
  * Represents a camera configuration, consisting of a camera position and target.
  */
 export type CameraConfiguration = {
