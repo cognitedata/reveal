@@ -1,0 +1,193 @@
+---
+id: cad-3dobjects
+title: Add custom 3D objects
+description: Extend the scene with custom ThreeJS objects.
+---
+
+import { Water } from 'three/examples/jsm/objects/Water';
+import { LiveCodeSnippet }from '../../src/components/LiveCodeSnippet';
+import { DemoWrapper } from '../../src/components/DemoWrapper';
+import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Sometimes it's useful to add custom content to the 3D scene to model data Reveal doesn't support or to customize the 3D environment. Reveal supports this by using the `Cognite3DViewer.addObject3D`-function which accepts [ThreeJS](https://threejs.org/) objects. 
+
+:::tip
+Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you need lights this needs to be added to the viewer scene. 
+:::
+
+<DemoWrapper modelId={4715379429968321} revisionId={5688854005909501} name="Cognite3DViewerDemo" />
+
+## Adding markers to the scene on clicks
+
+The following example reacts to clicks in the scene and adds markers to the positions clicked.
+
+<LiveCodeSnippet>
+{`
+const markerGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
+const markerMaterial = new THREE.MeshStandardMaterial({ emissive: 'white', wireframe: true });
+viewer.on('click', (event) => {
+  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+    marker.position.copy(intersection.point);
+    viewer.addObject3D(marker);
+  };
+});
+`}
+</LiveCodeSnippet>
+
+## Add environment
+
+To make a model feel more natural it might be useful to add an environment. The following example adds sky and a sea effect for the example oil rig. 
+
+<img src={useBaseUrl('/img/cad-skyandocean.png')} alt="Oil rig with sky and ocean" />
+
+Below you'll find [an interactive example](#interactive-example), but first lets walk through the different parts.
+See the bottom of this page for an interactive example.
+
+First, let's encapsulate the model in a large sky-textured sphere to create an illusion of skies. The sphere map is available from [Free HDR - EXR SKIES-blog](http://freepanorama.blogspot.com/).
+
+```js
+const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
+modelCenterAtSeaLevel.y = 0.0;
+
+// Skybox
+const skyBox = new THREE.Mesh(
+  new THREE.SphereBufferGeometry(3000, 15, 15), 
+  new THREE.MeshBasicMaterial(
+    {
+      side: THREE.BackSide,
+      // Skybox texture from http://freepanorama.blogspot.com/2010/01/sky7-spherical.html
+      map: new THREE.TextureLoader().load(skyUrl),
+    }
+  )
+);
+skyBox.position.copy(modelCenterAtSeaLevel);
+viewer.addObject3D(skyBox);
+```
+
+This looks a bit better, but the oil rig appears to be floating mid-air at this point. Lets add an ocean. A plane is rendered at the sea level and an ocean effect is applied to the plane. The example builds upon [the ocean example from ThreeJS](https://threejs.org/examples/?q=ocea#webgl_shaders_ocean).
+
+Note that since the ocean has moving waves we want to render the model continuously and not only when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.forceRerender()`.
+
+```js
+import { Water } from 'three/examples/jsm/objects/Water';
+
+// Water
+var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
+water = new Water(
+  waterGeometry,
+  {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: new THREE.TextureLoader()
+      .load('https://threejs.org/examples/textures/waternormals.jpg', 
+        texture => {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        }
+      ),
+    waterColor: 0x442e1f,
+  }
+);
+// Make the ocean horizontal
+water.rotation.x = - Math.PI / 2;
+water.position.copy(modelCenterAtSeaLevel);
+viewer.addObject3D(water);
+
+function updateOcean() {
+  const time = performance.now() * 0.001;
+  water.material.uniforms[ 'time' ].value = time;
+  viewer.forceRerender();
+  requestAnimationFrame(updateOcean);
+};
+updateOcean();
+```
+
+The user is available to move below sea level. Let's restrict the movement to avoid this.
+
+```js
+viewer.on('cameraChange', (position, target) => {
+  // Keep camera above sea level
+  if (position.y < 20) {
+    position.y = 21;
+    viewer.setCameraPosition(position);
+  }
+  // Clamp point within our skybox to avoid moving outside the defined 'world'
+  if (!boundingSphere.containsPoint(position)) {
+    boundingSphere.clampPoint(position, position);
+    viewer.setCameraPosition(position);
+  }
+});
+```
+
+### Interactive example
+
+Below is the complete code for adding a skybox and ocean to the scene.
+
+<LiveCodeSnippet scope={{skyUrl: useBaseUrl('/img/sky007.jpg'), Water}}>
+{`
+// The following has been imported outside this scope:
+// import { Water } from 'three/examples/jsm/objects/Water';
+const modelCenterAtSeaLevel = model.getModelBoundingBox().getCenter(new THREE.Vector3());
+modelCenterAtSeaLevel.y = 0.0;\n
+\
+// Skybox
+const skyBox = new THREE.Mesh(
+  new THREE.SphereBufferGeometry(3000, 15, 15), 
+  new THREE.MeshBasicMaterial(
+    {
+      side: THREE.BackSide,
+      // Skybox texture from http://freepanorama.blogspot.com/2010/01/sky7-spherical.html
+      map: new THREE.TextureLoader().load(skyUrl),
+    }
+  )
+);
+skyBox.position.copy(modelCenterAtSeaLevel);
+viewer.addObject3D(skyBox);\n
+\
+// Water
+var waterGeometry = new THREE.PlaneBufferGeometry(6000, 6000);
+water = new Water(
+  waterGeometry,
+  {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: new THREE.TextureLoader()
+      .load('https://threejs.org/examples/textures/waternormals.jpg', 
+        texture => {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        }
+      ),
+    waterColor: 0x442e1f,
+  }
+);
+// Make the ocean horizontal
+water.rotation.x = - Math.PI / 2;
+water.position.copy(modelCenterAtSeaLevel);
+viewer.addObject3D(water);\n
+\
+function updateOcean() {
+  const time = performance.now() * 0.001;
+  water.material.uniforms[ 'time' ].value = time;
+  viewer.forceRerender();
+  requestAnimationFrame(updateOcean);
+};
+updateOcean();\n
+\
+// Restrict camera movement
+const boundingSphere = new THREE.Sphere(modelCenterAtSeaLevel, 2000);
+viewer.on('cameraChange', (position, target) => {
+  // Keep camera above sea level
+  if (position.y < 20) {
+    position.y = 21;
+    viewer.setCameraPosition(position);
+  }
+  // Clamp point within our skybox to avoid moving outside the defined 'world'
+  if (!boundingSphere.containsPoint(position)) {
+    boundingSphere.clampPoint(position, position);
+    viewer.setCameraPosition(position);
+  }
+});
+`}
+</LiveCodeSnippet>

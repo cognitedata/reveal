@@ -1,14 +1,12 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-const WorkerPlugin = require('worker-plugin');
-const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-const getLogger = require('webpack-log');
-const logger = getLogger('reveal');
+const logger = require('webpack-log')('reveal');
 const packageJSON = require('./package.json');
 const webpack = require('webpack');
+const { publicPath, workerCDNPath, getEnvArg } = require('../parser-worker/buildUtils');
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
@@ -17,39 +15,14 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 
-/*
- * Set args on the command line using
- *
- *    webpack --env.argname=value
- *
- */
-function arg(env, name, defaultValue) {
-  if (env === undefined) {
-    return defaultValue;
-  }
-  if (env[name] === undefined) {
-    return defaultValue;
-  }
-  if (env[name] === 'true') {
-    return true;
-  }
-  if (env[name] === 'false') {
-    return false;
-  }
-  return env[name];
-}
-
 module.exports = env => {
-  const development = arg(env, 'development', false);
-  const noCDN = arg(env, 'noCDN', false);
-  const publicPath =
-    arg(process.env, 'PUBLIC_URL', '') ||
-    (development || noCDN ? '' : `https://cdn.jsdelivr.net/npm/${packageJSON.name}@${packageJSON.version}/`);
+  const development = getEnvArg(env, 'development', false);
+  const publicPathViewer = publicPath || workerCDNPath;
 
-  logger.info('Build config:');
-  logger.info(`  - development: ${development}`);
+  logger.info('Viewer build config:');
+  logger.info({ development, publicPathViewer });
 
-  const config = {
+  return {
     mode: development ? 'development' : 'production',
     entry: {
       index: './src/index.ts',
@@ -99,7 +72,7 @@ module.exports = env => {
     externals: [nodeExternals()],
     output: {
       filename: '[name].js',
-      publicPath,
+      publicPath: publicPathViewer,
       path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
@@ -119,19 +92,7 @@ module.exports = env => {
           VERSION: packageJSON.version,
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD
         })
-      }),
-      new WasmPackPlugin({
-        crateDirectory: '.',
-        forceMode: 'production',
-        watchDirectories: [
-          path.resolve(__dirname, 'rust'),
-          path.resolve(__dirname, '..', 'i3df', 'src'),
-          path.resolve(__dirname, '..', 'f3df', 'src')
-        ]
-      }),
-      new WorkerPlugin()
+      })
     ]
   };
-
-  return config;
 };

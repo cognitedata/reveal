@@ -1,0 +1,39 @@
+---
+id: overview
+slug: /
+title: Overview
+description: Reveal is a JavaScript library for visualizing big 3D models on the web. It supports complex CAD models and large point clouds.
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Reveal is a JavaScript library for visualizing big 3D models on the web.
+It supports complex CAD models and large point clouds.
+The library supports 3D model hosted by [Cognite Data Fusion (CDF)](https://docs.cognite.com/cdf/) which supports [ingestion of a variety of 3D formats](https://docs.cognite.com/cdf/3d/). If you do not have access you can use models provided through the [Open Industrial Data project](https://openindustrialdata.com/) for testing.
+
+To get started using Reveal, see the [Getting started guide](./getting-started.md).
+If you have previously used the previous version of Reveal,
+[`@cognite/3d-viewer`](https://www.npmjs.com/package/@cognite/3d-viewer),
+and want to migrate to this package, please see the [Migration guide](./migration-guide.md).
+For details about the installation procedure and how to use Reveal in certain environments,
+see the [Installation guide](./installation.mdx).
+
+## CAD models
+
+CAD (Computer-Aided Design) models are technical design 3D models. For the big asset industry these are typically very complex and can often consist of several million individual objects. To enable interactive visualization of such models [Cognite Data Fusion (CDF)](https://docs.cognite.com/cdf/) processes these models to optimize the geometry and the structure, enabling Reveal to visualize them on the web.
+
+CAD models typically contain attributes/properties associated with each 3D object (also called node). These attributes can provide valuable metadata, such as extent, function, what system the object is part of and it's operation specifications. CDF and Reveal provide functionality for queries based on the attributes to perform filtering, styling and to collect information.
+
+<img src={useBaseUrl('/img/cad-model.png')} alt="A grayscale CAD model" />
+
+## Point cloud models
+
+Point cloud models are 3D models generated from techniques such as 3D scanning or photogrammetry. [Cognite Data Fusion (CDF)](https://docs.cognite.com/cdf/) processes point clouds and stores them in a format suitable for visualization.
+
+<img src={useBaseUrl('/img/pointcloud-model.png')} alt="Point cloud model" />
+
+## Technology
+
+Behind the scenes Reveal based on [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/**WebGL_API**) through [ThreeJS](https://threejs.org/) and uses [potree-core](https://github.com/tentone/potree-core) for point cloud visualization. The library is written in [TypeScript](https://www.typescriptlang.org/) and uses [WebAssembly](https://webassembly.org/) modules written in [Rust](https://www.rust-lang.org/) to do much of the heavy-lifting.
+
+Reveal is available on [Github](https://github.com/cognitedata/reveal). If you find issues, have a feature suggestion or a question, please register a ticket in our [issue tracker](https://github.com/cognitedata/reveal/issues).

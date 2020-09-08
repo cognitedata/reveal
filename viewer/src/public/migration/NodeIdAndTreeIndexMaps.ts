@@ -4,64 +4,121 @@
 
 import { Subject, Observable } from 'rxjs';
 import { bufferTime, flatMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
-import { CogniteClient, InternalId, Node3D } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
-type NodeIdRequest = InternalId;
+type NodeIdRequest = CogniteInternalId;
+type TreeIndexRequest = number;
 
+/**
+ * @internal
+ */
 export class NodeIdAndTreeIndexMaps {
   private readonly modelId: number;
   private readonly revisionId: number;
   private readonly client: CogniteClient;
+  private readonly indexMapperClient: CogniteClientNodeIdAndTreeIndexMapper;
 
   private readonly treeIndexSubTreeSizeMap: Map<number, number>;
 
-  readonly nodeIdToTreeIndexMap: Map<number, number>;
-  readonly treeIndexToNodeIdMap: Map<number, number>;
-  readonly nodeIdRequestObservable: Subject<NodeIdRequest>;
-  readonly nodeIdResponse: Observable<Node3D>;
+  private readonly nodeIdToTreeIndexMap: Map<number, number>;
+  private readonly treeIndexToNodeIdMap: Map<number, number>;
 
-  constructor(modelId: number, revisionId: number, client: CogniteClient) {
+  private readonly nodeIdRequestObservable: Subject<NodeIdRequest>;
+  private readonly nodeIdResponse: Observable<{ nodeId: CogniteInternalId; treeIndex: number }>;
+
+  private readonly treeIndexRequestObservable: Subject<TreeIndexRequest>;
+  private readonly treeIndexResponse: Observable<{ nodeId: CogniteInternalId; treeIndex: number }>;
+
+  constructor(
+    modelId: number,
+    revisionId: number,
+    client: CogniteClient,
+    indexMapperClient: CogniteClientNodeIdAndTreeIndexMapper
+  ) {
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.client = client;
+    this.indexMapperClient = indexMapperClient;
 
     this.nodeIdToTreeIndexMap = new Map();
     this.treeIndexToNodeIdMap = new Map();
     this.treeIndexSubTreeSizeMap = new Map();
+
+    // Setup pipeline for requests for mapping nodeId -> treeIndex
     this.nodeIdRequestObservable = new Subject();
     this.nodeIdResponse = this.nodeIdRequestObservable.pipe(
       bufferTime(50),
       filter((requests: NodeIdRequest[]) => requests.length > 0),
       flatMap(async (requests: NodeIdRequest[]) => {
-        const responses = await client.revisions3D.retrieve3DNodes(modelId, revisionId, requests);
-        return responses;
+        const treeIndices = await this.indexMapperClient.mapNodeIdsToTreeIndices(
+          this.modelId,
+          this.revisionId,
+          requests
+        );
+        return requests.map((nodeId, index) => {
+          return { nodeId, treeIndex: treeIndices[index] };
+        });
       }),
       mergeAll(),
-      tap((node: Node3D) => {
-        this.nodeIdToTreeIndexMap.set(node.id, node.treeIndex);
-        this.treeIndexToNodeIdMap.set(node.treeIndex, node.id);
-        this.treeIndexSubTreeSizeMap.set(node.treeIndex, node.subtreeSize);
+      tap((node: { nodeId: CogniteInternalId; treeIndex: number }) => {
+        this.nodeIdToTreeIndexMap.set(node.nodeId, node.treeIndex);
+        this.treeIndexToNodeIdMap.set(node.treeIndex, node.nodeId);
+      }),
+      share()
+    );
+
+    // Setup pipeline for requests for mapping nodeId -> treeIndex
+    this.treeIndexRequestObservable = new Subject();
+    this.treeIndexResponse = this.treeIndexRequestObservable.pipe(
+      bufferTime(50),
+      filter((requests: TreeIndexRequest[]) => requests.length > 0),
+      flatMap(async (requests: TreeIndexRequest[]) => {
+        const nodeIds = await this.indexMapperClient.mapTreeIndicesToNodeIds(this.modelId, this.revisionId, requests);
+        return requests.map((treeIndex, index) => {
+          return { nodeId: nodeIds[index], treeIndex };
+        });
+      }),
+      mergeAll(),
+      tap((node: { nodeId: CogniteInternalId; treeIndex: number }) => {
+        this.nodeIdToTreeIndexMap.set(node.nodeId, node.treeIndex);
+        this.treeIndexToNodeIdMap.set(node.treeIndex, node.nodeId);
       }),
       share()
     );
   }
 
-  async getTreeIndex(nodeId: number): Promise<number> {
+  async getTreeIndex(nodeId: CogniteInternalId): Promise<number> {
     const treeIndex = this.nodeIdToTreeIndexMap.get(nodeId);
-    if (treeIndex) {
+    if (treeIndex !== undefined) {
       return treeIndex;
     }
 
     const result = this.nodeIdResponse
       .pipe(
-        first((node: Node3D) => node.id === nodeId),
-        map((node: Node3D) => node.treeIndex)
+        first(node => node.nodeId === nodeId),
+        map(node => node.treeIndex)
       )
       .toPromise();
 
-    this.nodeIdRequestObservable.next({
-      id: nodeId
-    });
+    this.nodeIdRequestObservable.next(nodeId);
+    return result;
+  }
+
+  async getNodeId(treeIndex: number): Promise<number> {
+    const nodeId = this.treeIndexToNodeIdMap.get(treeIndex);
+    if (nodeId !== undefined) {
+      return nodeId;
+    }
+
+    const result = this.treeIndexResponse
+      .pipe(
+        first(node => node.treeIndex === treeIndex),
+        map(node => node.nodeId)
+      )
+      .toPromise();
+
+    this.treeIndexRequestObservable.next(treeIndex);
     return result;
   }
 
@@ -71,30 +128,29 @@ export class NodeIdAndTreeIndexMaps {
       return subtreeSize;
     }
 
-    //TODO - christjt 2020-08-04: handle this with with new endpoint to fetch the proper nodeID
-    const nodeId = this.treeIndexToNodeIdMap.get(treeIndex);
-    if (!nodeId) {
-      console.warn(`Could not find nodeID for given treeIndex(${treeIndex})`);
-      return undefined;
-    }
-
+    const nodeId = await this.getNodeId(treeIndex);
     const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
-
     this.treeIndexSubTreeSizeMap.set(treeIndex, nodes[0].subtreeSize);
-
     return nodes[0].subtreeSize;
   }
 
   async getTreeIndices(nodeIds: number[]): Promise<number[]> {
     const mapped = nodeIds.map(id => this.nodeIdToTreeIndexMap.get(id) || -1);
-    const notCachedNodeIds = nodeIds.filter((_value, index) => mapped[index] === -1).map(id => ({ id }));
+    const notCachedNodeIds = nodeIds.filter((_value, index) => mapped[index] === -1);
     if (notCachedNodeIds.length === 0) {
       return mapped;
     }
     const nodeIdToIndex = new Map(nodeIds.map((value, index) => [value, index]));
-    const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, notCachedNodeIds);
-    for (let i = 0; i < nodes.length; i++) {
-      const { id: nodeId, treeIndex } = nodes[i];
+
+    const treeIndices = await this.indexMapperClient.mapNodeIdsToTreeIndices(
+      this.modelId,
+      this.revisionId,
+      notCachedNodeIds
+    );
+    console.assert(notCachedNodeIds.length === treeIndices.length);
+    for (let i = 0; i < treeIndices.length; i++) {
+      const nodeId = notCachedNodeIds[i];
+      const treeIndex = treeIndices[i];
       const index = nodeIdToIndex.get(nodeId)!;
       mapped[index] = treeIndex;
       this.add(nodeId, treeIndex);
@@ -103,8 +159,29 @@ export class NodeIdAndTreeIndexMaps {
     return mapped;
   }
 
-  getNodeId(treeIndex: number): number | undefined {
-    return this.treeIndexToNodeIdMap.get(treeIndex);
+  async getNodeIds(treeIndices: number[]): Promise<number[]> {
+    const mapped = treeIndices.map(idX => this.treeIndexToNodeIdMap.get(idX) || -1);
+    const notCachedTreeIndices = treeIndices.filter((_value, index) => mapped[index] === -1);
+    if (notCachedTreeIndices.length === 0) {
+      return mapped;
+    }
+    const treeIndexToIndex = new Map(treeIndices.map((value, index) => [value, index]));
+
+    const nodeIds = await this.indexMapperClient.mapTreeIndicesToNodeIds(
+      this.modelId,
+      this.revisionId,
+      notCachedTreeIndices
+    );
+    console.assert(nodeIds.length === notCachedTreeIndices.length);
+    for (let i = 0; i < nodeIds.length; i++) {
+      const nodeId = nodeIds[i];
+      const treeIndex = notCachedTreeIndices[i];
+      const index = treeIndexToIndex.get(treeIndex)!;
+      mapped[index] = nodeId;
+      this.add(nodeId, treeIndex);
+    }
+
+    return mapped;
   }
 
   updateMaps(nodeIdToTreeIndexMap: Map<number, number>) {

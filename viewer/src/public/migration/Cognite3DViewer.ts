@@ -14,9 +14,8 @@ import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter } from './types';
+import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, Intersection } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 
@@ -43,6 +42,7 @@ export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vecto
  *   sdk: CogniteClient({...})
  * });
  * ```
+ * @module @cognite/reveal
  */
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
@@ -434,11 +434,11 @@ export class Cognite3DViewer {
     }
 
     const { modelId, revisionId } = options;
-    const [potreeGroup, potreeNode] = await this._revealManager.addModel('pointcloud', {
+    const pointCloudNode = await this._revealManager.addModel('pointcloud', {
       modelId,
       revisionId
     });
-    const model = new CognitePointCloudModel(modelId, revisionId, potreeGroup, potreeNode);
+    const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this.models.push(model);
     this.scene.add(model);
     return model;
@@ -648,6 +648,25 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Attempts to load the camera settings from the settings stored for the
+   * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
+   * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
+   * information on how this setting is retrieved and stored. This setting can
+   * also be changed through the 3D models management interface in Cognite Fusion.
+   * If no camera configuration is stored in CDF, {@link Cognite3DViewer.fitCameraToModel}
+   * is used as a fallback
+   * @param model The model to load camera settings from.
+   */
+  loadCameraFromModel(model: CogniteModelBase): void {
+    const config = model.getCameraConfiguration();
+    if (config) {
+      this.controls.setState(config.position, config.target);
+    } else {
+      this.fitCameraToModel(model, 0);
+    }
+  }
+
+  /**
    * Move camera to a place where the 3D model is visible.
    * It uses the bounding box of the 3D model and calls {@link Cognite3DViewer.fitCameraToBoundingBox}
    * @param model The 3D model
@@ -766,6 +785,7 @@ export class Cognite3DViewer {
    * ```
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
+    this.camera.updateMatrixWorld();
     const p = from3DPositionToRelativeViewportCoordinates(this.camera, point);
     if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.z < 0 || p.z > 1) {
       // Return null if point is outside camera frustum.
@@ -857,7 +877,6 @@ export class Cognite3DViewer {
         if (model.cadNode === result.cadNode) {
           const intersection: Intersection = {
             model,
-            nodeId: model.tryGetNodeId(result.treeIndex) || -1,
             treeIndex: result.treeIndex,
             point: result.point
           };
@@ -962,7 +981,7 @@ export class Cognite3DViewer {
         }
         this.canvas.removeEventListener('pointerdown', stopTween);
       })
-      .start(0);
+      .start(TWEEN.now());
   }
 
   private async animate(time: number) {
@@ -1115,8 +1134,8 @@ export class Cognite3DViewer {
     // TODO VERSION 5.0.0 remove the test for dom element size once we have removed the getCanvas function
     const clientWidth = this.domElement.clientWidth !== 0 ? this.domElement.clientWidth : this.canvas.clientWidth;
     const clientHeight = this.domElement.clientHeight !== 0 ? this.domElement.clientHeight : this.canvas.clientHeight;
-    const clientPixelWidth = window.devicePixelRatio * clientWidth;
-    const clientPixelHeight = window.devicePixelRatio * clientHeight;
+    const clientPixelWidth = this.renderer.getPixelRatio() * clientWidth;
+    const clientPixelHeight = this.renderer.getPixelRatio() * clientHeight;
     const clientTextureSize = clientPixelWidth * clientPixelHeight;
 
     const scale = clientTextureSize > maxTextureSize ? Math.sqrt(maxTextureSize / clientTextureSize) : 1;

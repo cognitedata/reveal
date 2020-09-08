@@ -71,7 +71,7 @@ export function Migration() {
       async function addModel(options: AddModelOptions) {
         try {
           const model = await viewer.addModel(options);
-          viewer.fitCameraToModel(model);
+          viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
           }
@@ -202,18 +202,18 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
-      viewer.on('click', function (event) {
+      viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          const { nodeId, treeIndex, point, model } = intersection;
-          console.log(`Clicked node ${nodeId} at`, point);
+          const { treeIndex, point, model } = intersection;
+          console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
           // highlight the object
+          model.deselectAllNodes();
           model.selectNodeByTreeIndex(treeIndex);
-          // TODO make the camera zoom to the object
-          // const boundingBox = model.getBoundingBox(nodeId);
-          // viewer.fitCameraToBoundingBox(boundingBox, 2000); // 2 sec
+          const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+          viewer.fitCameraToBoundingBox(boundingBox, 1000);
         }
       });
     }

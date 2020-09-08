@@ -15,16 +15,16 @@ describe('NumericRange', () => {
     expect(range.count).toBe(0);
   });
 
-  test('values() and asArray() returns no values when range is empty', () => {
+  test('values() and toArray() returns no values when range is empty', () => {
     const range = new NumericRange(1, 0);
     expect(range.values()).toBeEmpty();
-    expect(range.asArray()).toBeEmpty();
+    expect(range.toArray()).toBeEmpty();
   });
 
-  test('values() and asArray() returns correct values', () => {
+  test('values() and toArray() returns correct values', () => {
     const range = new NumericRange(10, 3);
     expect(Array.from(range.values())).toEqual([10, 11, 12]);
-    expect(range.asArray()).toEqual([10, 11, 12]);
+    expect(range.toArray()).toEqual([10, 11, 12]);
   });
 
   test('contains works', () => {
@@ -39,10 +39,10 @@ describe('NumericRange', () => {
     expect(range.contains(10)).toBeFalse();
   });
 
-  test('forEach applies callback to each value', () => {
+  test('forEach applies callback to each value', async () => {
     const applied: number[] = [];
     const range = new NumericRange(1, 4);
-    range.forEach(v => {
+    await range.forEach(v => {
       applied.push(v);
     });
     expect(applied).toEqual([1, 2, 3, 4]);

@@ -1,0 +1,140 @@
+---
+id: cad-2doverlay
+title: HTML overlays
+description: Demo shows how to add an HTML overlay over 3D objects.
+---
+
+import { LiveCodeSnippet } from '../../src/components/LiveCodeSnippet';
+import { DemoWrapper } from '../../src/components/DemoWrapper';
+import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+A common requirement for a 3D application is to add information overlays hovering over 3D objects
+to provide details or draw the attention to a given point. This can be done by placing HTML elements over the 3D canvas
+that follows the object it's attached to. Note that these overlays always will be placed on top of the 3D viewer,
+they will not be hidden when the object is obscured by other objects.
+To achieve this it's necessary to use custom 3D objects.
+
+<DemoWrapper
+  modelId={4715379429968321}
+  revisionId={5688854005909501}
+  name="Cognite3DViewerDemo"
+/>
+
+Attaching HTML elements to 3D objects/positions requires the following operations:
+
+1. Create a HTML element and place it as a child of the viewer DOM-element (i.e. `Cognite3DViewer.domElement`)
+2. Determine 3D world coordinate of the pivot point (e.g. using intersection when user clicks an object)
+3. Translate 3D world coordinate to 2D screen position (using `Cognite3DViewer.worldToScreen`)
+4. Update overlay position whenever 3D camera changes
+
+First, let's create an HTML overlay element you want to overlay on top of a 3D object:
+
+```jsx live=true
+<div
+  id="overlay-demo"
+  style={{
+    top: 0,
+    left: 0,
+    zIndex: 1,
+    padding: '10px',
+    width: '200px',
+    minHeight: '50px',
+    color: '#fff',
+    background: '#232323da',
+    borderRadius: '0.25em',
+    border: '#ffffff22 solid 2px',
+  }}
+>
+  I am an overlay
+</div>
+```
+
+Note that the overlay is not placed as a child of the viewer DOM-element. We will do this below.
+
+Next, lets handle mouse clicks and place the overlay where the user clicks.
+
+<LiveCodeSnippet>
+  {`
+const existingOverlay = document.getElementById('overlay');
+if (existingOverlay) {
+  existingOverlay.remove()
+}\n
+\
+// Clone the overlay and make it to be a child of the viewer
+const overlay = document.getElementById('overlay-demo').cloneNode(true);
+overlay.id = 'overlay';
+viewer.domElement.appendChild(overlay);\n
+\
+// Handle mouse clicks
+viewer.on('click', event => {
+  // Find 3D coordinate of what the user clicks
+  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    // Map from 3D coordinate to relative screen coordinate
+    const screenPos = viewer.worldToScreen(intersection.point);\n
+\
+    // Move overlay
+    overlay.style.left = \`\${screenPos.x}px\`;
+    overlay.style.top = \`\${screenPos.y}px\`;
+    overlay.style.display = 'block';
+    overlay.style.position = 'absolute';
+  }
+});
+`}
+</LiveCodeSnippet>
+
+When the user clicks a position in the 3D model, the overlay will now be placed at the clicked position.
+
+<video preload="auto" autoPlay="autoplay" loop controls>
+  <source src={useBaseUrl('/img/cad-overlay-fixed.webm')} />
+</video>
+
+However, as shown in the video above, the position is not updated when the camera moves. To do this, we need to update the overlay position when the camera moves.
+
+<LiveCodeSnippet>
+  {`
+const existingOverlay = document.getElementById('overlay');
+if (existingOverlay) {
+  existingOverlay.remove()
+}
+// Clone the overlay and make it to be a child of the viewer
+const overlay = document.getElementById('overlay-demo').cloneNode(true);
+overlay.id = 'overlay';
+viewer.domElement.appendChild(overlay);\n
+\
+function updateOverlayPosition(position3d) {
+  // Map from 3D coordinate to relative screen coordinate
+  const screenPos = viewer.worldToScreen(position3d);\n
+\
+  if (screenPos) {
+    // Move overlay
+    overlay.style.left = \`\${screenPos.x}px\`;
+    overlay.style.top = \`\${screenPos.y}px\`;
+    overlay.style.display = 'block';
+    overlay.style.position = 'absolute';
+  } else {
+    // Outside the screen
+    overlay.style.display = 'none';
+  }
+}\n
+\
+// Handle mouse clicks
+viewer.on('click', event => {
+  // Find 3D coordinate of what the user clicks
+  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    updateOverlayPosition(intersection.point);
+    viewer.on('cameraChange', (_position, _target) => {
+      updateOverlayPosition(intersection.point);
+    });
+  }
+});
+`}
+</LiveCodeSnippet>
+
+Now, the overlay position is updated whenever the camera is moved. Note that we also handle the case when the clicked position goes out of view by hiding the overlay.
+
+<video preload="auto" autoPlay="autoplay" loop controls>
+  <source src={useBaseUrl('/img/cad-overlay-updating.webm')} />
+</video>

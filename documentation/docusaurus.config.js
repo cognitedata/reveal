@@ -2,7 +2,7 @@ module.exports = {
   title: 'Reveal docs',
   tagline: 'The tagline of my site',
   url: 'https://cognitedata.github.io',
-  baseUrl: '/reveal/',
+  baseUrl: '/reveal-docs/',
   favicon: 'img/favicon.ico',
   organizationName: 'cognitedata',
   projectName: 'reveal',
@@ -18,7 +18,7 @@ module.exports = {
         src: 'img/logo.svg',
         srcDark: 'img/logo_dark.svg',
       },
-      links: [
+      items: [
         // {
         //   to: 'docs/',
         //   activeBaseRegex: `docs/(?!(examples|api-reference))`,
@@ -99,8 +99,6 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: 'overview',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:

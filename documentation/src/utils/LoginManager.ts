@@ -2,12 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import {
-  CogniteClient,
-  isLoginPopupWindow,
-  loginPopupHandler,
-  POPUP,
-} from '@cognite/sdk';
+import { CogniteClient, REDIRECT } from '@cognite/sdk';
 
 const tokenCacheKey = 'cachedAT';
 const accessToken = sessionStorage.getItem(tokenCacheKey);
@@ -17,7 +12,7 @@ const accessToken = sessionStorage.getItem(tokenCacheKey);
 class LoginManager {
   isLoggedIn: boolean;
   client: CogniteClient;
-  listeners: Array<(isLoggedIn: boolean) => void>
+  listeners: Array<(isLoggedIn: boolean) => void>;
 
   constructor() {
     this.listeners = [];
@@ -33,27 +28,22 @@ class LoginManager {
     });
 
     this.client.loginWithOAuth({
-      project: '3ddemo',
+      project: 'publicdata',
       accessToken,
-      onAuthenticate: POPUP,
+      onAuthenticate: REDIRECT,
       onTokens: (tokens) => {
         sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
       },
     });
 
-    if (isLoginPopupWindow()) {
-      loginPopupHandler();
-      return;
-    }
-
     this.client.login.status().then((s) => {
       this.isLoggedIn = !!s;
       this.notifyListeners();
-    })
+    });
   }
 
   notifyListeners() {
-    this.listeners.forEach((fn) => fn(this.isLoggedIn))
+    this.listeners.forEach((fn) => fn(this.isLoggedIn));
   }
 
   /**
@@ -61,10 +51,10 @@ class LoginManager {
    * @returns {Function} unsubscribe
    */
   onIsLoggedInChanged(fn: (isLoggedIn: boolean) => void): () => void {
-    this.listeners.push(fn)
+    this.listeners.push(fn);
     return () => {
-      this.listeners = this.listeners.filter((f) => f !== fn)
-    }
+      this.listeners = this.listeners.filter((f) => f !== fn);
+    };
   }
 
   authenticate() {
@@ -74,7 +64,7 @@ class LoginManager {
         this.isLoggedIn = true;
         this.notifyListeners();
       })
-      .catch((e) => console.error(e))
+      .catch((e) => console.error(e));
   }
 }
 
