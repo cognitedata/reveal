@@ -8,7 +8,8 @@
   background: var(--node-viz-title-bar-background, variables.$title-bar-background);
   color: var(--node-viz-title-bar-color, variables.$title-bar-color);
 
-  .title {
+  h2.title {
+    font-size: var(--node-viz-secondary-header-font-size, variables.$application-secondary-header-font-size);
     margin: 0 0.5rem;
     white-space: nowrap;
     overflow: hidden;

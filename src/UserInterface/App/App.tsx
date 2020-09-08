@@ -9,8 +9,7 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { Appearance } from "@/Core/States/Appearance";
 
-const LOAD_MOCK_DATA = false;
-const MOCK_DATA_PATH = "@/Solutions/BP/MockData/Sample";
+const LOAD_MOCK_DATA = true;
 
 // customize the colors for changing UI style
 const theme = createMuiTheme({
@@ -23,11 +22,7 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    htmlFontSize: 16,
     fontSize: 16 * Appearance.ApplicationDefaultFontSize,
-    h2: {
-      fontSize: 14,
-    },
     body1: {
       fontSize: 16 * Appearance.ApplicationDefaultFontSize,
     },
@@ -48,14 +43,14 @@ export function App() {
   useEffect(() => {
     if (LOAD_MOCK_DATA) {
       Promise.all([
-        import(`${MOCK_DATA_PATH}/wells.json`),
-        import(`${MOCK_DATA_PATH}/wellbores.json`),
-        import(`${MOCK_DATA_PATH}/trajectories.json`),
-        import(`${MOCK_DATA_PATH}/trajectoryData.json`),
-        import(`${MOCK_DATA_PATH}/logs.json`),
-        import(`${MOCK_DATA_PATH}/casings.json`),
-        import(`${MOCK_DATA_PATH}/ndsEvents.json`),
-        import(`${MOCK_DATA_PATH}/nptEvents.json`),
+        import("@/Solutions/BP/MockData/Sample/wells.json"),
+        import("@/Solutions/BP/MockData/Sample/wellbores.json"),
+        import("@/Solutions/BP/MockData/Sample/trajectories.json"),
+        import("@/Solutions/BP/MockData/Sample/trajectoryData.json"),
+        import("@/Solutions/BP/MockData/Sample/logs.json"),
+        import("@/Solutions/BP/MockData/Sample/casings.json"),
+        import("@/Solutions/BP/MockData/Sample/ndsEvents.json"),
+        import("@/Solutions/BP/MockData/Sample/nptEvents.json"),
       ])
         .then(
           ([

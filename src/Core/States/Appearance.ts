@@ -9,6 +9,7 @@ export class Appearance
 
   // App
   static ApplicationDefaultFontSize = 0.75; // in rem units relative to default HTML
+  static ApplicationPanelHeaderFontSize = 0.875; // in rem units relative to default HTML
   static tooltipDisplayDelay = 800; // delay for displaying tooltip, in milliseconds
 
   // Tree control

@@ -2,7 +2,6 @@ import "./PanelTitleBar.module.scss";
 import React from "react";
 import { ToolBar } from "@/UserInterface/Components/ToolBar/ToolBar";
 import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
-import { Typography } from "@material-ui/core";
 import { ChromaIcon } from "@/UserInterface/Components/ChromaIcon/ChromaIcon";
 
 export function PanelTitleBar(props: {
@@ -19,9 +18,7 @@ export function PanelTitleBar(props: {
       {icon && icon.src ? (
         <ChromaIcon src={icon.src} alt={icon.description} color={icon.color} />
       ) : null}
-      <Typography variant="h2" component="h2" className="title">
-        {title}
-      </Typography>
+      <h2 className="title">{title}</h2>
       {toolBar && <ToolBar toolBar={toolBar} sectionId={sectionId} />}
     </div>
   );

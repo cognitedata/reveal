@@ -73,9 +73,10 @@ If the css properties are not set, default values will be used.
 | --node-viz-select-input-background          |
 | --node-viz-select-input-option-color        |
 | --node-viz-slider-input-background          |
-| --node-viz-default-font-size                   |
-| --node-viz-icon-size                           |
-| --node-viz-readonly-input-color                |
+| --node-viz-default-font-size                |
+| --node-viz-icon-size                        |
+| --node-viz-readonly-input-color             |
+| --node-viz-secondary-header-font-size       |
 
 refer [default theme section](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
 
@@ -93,11 +94,7 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    htmlFontSize: 16,
     fontSize: 16 * Appearance.ApplicationDefaultFontSize,
-    h2: {
-      fontSize: 14,
-    },
     body1: {
       fontSize: 16 * Appearance.ApplicationDefaultFontSize,
     },

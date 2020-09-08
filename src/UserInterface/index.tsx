@@ -37,6 +37,10 @@ setCssVariable(
   "--node-viz-default-font-size",
   `${Appearance.ApplicationDefaultFontSize}rem`
 );
+setCssVariable(
+  "--node-viz-secondary-header-font-size",
+  `${Appearance.ApplicationPanelHeaderFontSize}rem`
+);
 setCssVariable("--node-viz-icon-size", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-icon-size", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-height", `${Appearance.treeIconSize}px`);
