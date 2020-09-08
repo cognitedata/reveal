@@ -2,7 +2,7 @@ module.exports = {
   title: 'Reveal docs',
   tagline: 'The tagline of my site',
   url: 'https://cognitedata.github.io',
-  baseUrl: '/reveal/',
+  baseUrl: '/reveal-docs/',
   favicon: 'img/favicon.ico',
   organizationName: 'cognitedata',
   projectName: 'reveal',
