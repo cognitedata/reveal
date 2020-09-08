@@ -18,22 +18,12 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     client.loginWithOAuth({
       project: config.auth.cdfProject,
-      onAuthenticate: (login) => {
-        login.redirect({
-          redirectUrl: `${config.app.baseUrl}/${config.auth.cdfProject}`,
-          errorRedirectUrl: `${config.app.baseUrl}/${config.auth.cdfProject}/auth/error`,
-        });
-      },
       onTokens: ({ accessToken }) => {
         localStorage.setItem(storageKey, accessToken);
         setToken(accessToken);
       },
     });
-    if (config.app.autoLogin) {
-      (async () => {
-        await client.authenticate();
-      })();
-    }
+    client.authenticate();
   }, []);
 
   return (
