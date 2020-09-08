@@ -4,11 +4,12 @@
 
 import { Subject, Observable } from 'rxjs';
 import { bufferTime, flatMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
-import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId, InternalId } from '@cognite/sdk';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
 type NodeIdRequest = CogniteInternalId;
 type TreeIndexRequest = number;
+type SubtreeSizeRequest = InternalId;
 
 /**
  * @internal
@@ -29,6 +30,9 @@ export class NodeIdAndTreeIndexMaps {
 
   private readonly treeIndexRequestObservable: Subject<TreeIndexRequest>;
   private readonly treeIndexResponse: Observable<{ nodeId: CogniteInternalId; treeIndex: number }>;
+
+  private readonly subtreeSizeObservable: Subject<SubtreeSizeRequest>;
+  private readonly subtreeSizeResponse: Observable<{ treeIndex: number; subtreeSize: number }>;
 
   constructor(
     modelId: number,
@@ -86,6 +90,24 @@ export class NodeIdAndTreeIndexMaps {
       }),
       share()
     );
+
+    // Setup pipeline for request for determinging subtree size given nodeId
+    this.subtreeSizeObservable = new Subject();
+    this.subtreeSizeResponse = this.subtreeSizeObservable.pipe(
+      bufferTime(50),
+      filter((requests: SubtreeSizeRequest[]) => requests.length > 0),
+      flatMap(async (requests: SubtreeSizeRequest[]) => {
+        const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, requests);
+        return nodes.map(n => {
+          return { treeIndex: n.treeIndex, subtreeSize: n.subtreeSize };
+        });
+      }),
+      mergeAll(),
+      tap((node: { treeIndex: number; subtreeSize: number }) => {
+        this.treeIndexSubTreeSizeMap.set(node.treeIndex, node.subtreeSize);
+      }),
+      share()
+    );
   }
 
   async getTreeIndex(nodeId: CogniteInternalId): Promise<number> {
@@ -122,16 +144,22 @@ export class NodeIdAndTreeIndexMaps {
     return result;
   }
 
-  async getSubtreeSize(treeIndex: number): Promise<number | undefined> {
+  async getSubtreeSize(treeIndex: number): Promise<number> {
     const subtreeSize = this.treeIndexSubTreeSizeMap.get(treeIndex);
     if (subtreeSize) {
       return subtreeSize;
     }
 
     const nodeId = await this.getNodeId(treeIndex);
-    const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
-    this.treeIndexSubTreeSizeMap.set(treeIndex, nodes[0].subtreeSize);
-    return nodes[0].subtreeSize;
+    const result = this.subtreeSizeResponse
+      .pipe(
+        first(node => node.treeIndex === treeIndex),
+        map(node => node.subtreeSize)
+      )
+      .toPromise();
+    this.subtreeSizeObservable.next({ id: nodeId });
+
+    return result;
   }
 
   async getTreeIndices(nodeIds: number[]): Promise<number[]> {
