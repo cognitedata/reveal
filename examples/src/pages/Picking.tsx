@@ -11,7 +11,6 @@ import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { RevealOptions } from '@cognite/reveal/public/types';
-import { Vector3 } from 'three';
 
 CameraControls.install({ THREE });
 
@@ -96,11 +95,6 @@ export function Picking() {
       const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
       scene.add(boxMesh);
 
-      scene.add(createSphere(new Vector3(0, 0, 0), 'black'));
-      scene.add(createSphere(new Vector3(10, 0, 0), 'blue'));
-      scene.add(createSphere(new Vector3(0, 10, 0), 'red'));
-      scene.add(createSphere(new Vector3(0, 0, 10), 'green'));
-
       // Add some light for the box
       for (const position of [
         [-20, 40, 50],
@@ -158,8 +152,6 @@ export function Picking() {
           }
 
           scene.add(createSphere(intersections[0]!.point, 'purple'));
-
-          console.log(intersections[0]);
 
           return intersections[0];
         })();

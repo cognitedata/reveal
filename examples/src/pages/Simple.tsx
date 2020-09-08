@@ -48,12 +48,6 @@ export function Simple() {
 
       revealManager.on('loadingStateChanged', setIsLoading);
 
-      // const test = packFloat(2.5);
-      // console.log(test);
-
-      // const testUnpack = unpackFloat4(test);
-      // console.log(testUnpack);
-
       scene.add(model);
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas.current,
