@@ -18,12 +18,13 @@ const DemoContainer = styled.div`
 const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
 
 const components: Record<string, ComponentType<DemoProps>> = {
-  Cognite3DViewerDemo: React.lazy(() =>
-    import('../../docs/examples/Cognite3DViewerDemo')
-  ),
+  Cognite3DViewerDemo: React.lazy(() => import('./demos/Cognite3DViewerDemo')),
 };
 
-export function DemoWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
+// demo wrapper just wraps the demo. don't pass modelId/revisionId to it, they defined in demos
+// different demos might have different ids, e.g. pointcloud/cad
+// also we can use 3ddemo instead of publicdata so here is .env file to help with it
+export function DemoWrapper({ name }: { name: string }) {
   if (typeof window === 'undefined') {
     return <div />;
   }
@@ -32,7 +33,7 @@ export function DemoWrapper({ name, modelId, revisionId }: { name: string, model
     <DemoContainer id="demo-wrapper">
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
-          {(client: CogniteClient) => <LazyComponent client={client} modelId={modelId} revisionId={revisionId} />}
+          {(client: CogniteClient) => <LazyComponent client={client} />}
         </DemoLoginCover>
       </Suspense>
     </DemoContainer>

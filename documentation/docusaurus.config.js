@@ -115,4 +115,5 @@ module.exports = {
     ],
   ],
   themes: ['@docusaurus/theme-live-codeblock'],
+  plugins: ['docusaurus2-dotenv']
 };

@@ -5,14 +5,14 @@
 import React, { useEffect, useRef } from 'react';
 import { AddModelOptions, Cognite3DViewer } from '@cognite/reveal';
 
-import { CanvasWrapper } from '../../src/components/styled';
-import { DemoProps } from '../../src/components/DemoProps';
+import { CanvasWrapper } from '../styled';
+import { DemoProps } from '../DemoProps';
+import { env } from '../../env';
 
-export default function Cognite3DViewerDemo({
-  client,
-  modelId,
-  revisionId,
-}: DemoProps) {
+const modelId = env.modelId;
+const revisionId = env.revisionId;
+
+export default function Cognite3DViewerDemo({ client }: DemoProps) {
   const canvasWrapperRef = useRef(null);
   useEffect(() => {
     if (!client || !canvasWrapperRef.current) {
