@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient, REDIRECT } from '@cognite/sdk';
+import { env } from '../env';
 
 const tokenCacheKey = 'cachedAT';
 const accessToken = sessionStorage.getItem(tokenCacheKey);
@@ -28,7 +29,7 @@ class LoginManager {
     });
 
     this.client.loginWithOAuth({
-      project: 'publicdata',
+      project: env.project,
       accessToken,
       onAuthenticate: REDIRECT,
       onTokens: (tokens) => {
