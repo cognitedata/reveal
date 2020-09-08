@@ -48,6 +48,7 @@ export class SettingsNodeUtils
 
   public static populateSettingsFolder(node: BaseNode): void
   {
+    NodeUtils.properties = null;
     const settings = new ExpanderProperty("Settings");
     {
       const expander = settings.createExpander(Appearance.generalSettingsName);
