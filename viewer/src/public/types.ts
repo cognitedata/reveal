@@ -6,6 +6,7 @@ import { NodeAppearanceProvider } from '@/datamodels/cad';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorCuller } from '@/internal';
+import { LoadingState } from '@/utilities';
 
 // we use these types in public API so they should be reexported here
 // to appear in the api reference docs
@@ -46,4 +47,4 @@ export type SectorNodeIdToTreeIndexMapLoadedListener = (event: SectorNodeIdToTre
 /**
  * Handler for events about data being loaded.
  */
-export type LoadingStateChangeListener = (isLoading: boolean) => any;
+export type LoadingStateChangeListener = (loadingState: LoadingState) => any;

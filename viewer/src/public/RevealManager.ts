@@ -12,12 +12,13 @@ import {
   LoadingStateChangeListener
 } from './types';
 import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
-import { distinctUntilChanged, map, share, filter, subscribeOn } from 'rxjs/operators';
+import { map, share, filter, observeOn, subscribeOn } from 'rxjs/operators';
 import { trackError, trackLoadModel } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
 import { SupportedModelTypes } from '@/datamodels/base';
+import { LoadingState } from '@/utilities';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
 
 export class RevealManager<TModelIdentifier> {
@@ -204,9 +205,9 @@ export class RevealManager<TModelIdentifier> {
     });
   }
 
-  private notifyLoadingStateChanged(isLoaded: boolean) {
+  private notifyLoadingStateChanged(loadingState: LoadingState) {
     this.eventListeners.loadingStateChanged.forEach(handler => {
-      handler(isLoaded);
+      handler(loadingState);
     });
   }
 
@@ -217,9 +218,16 @@ export class RevealManager<TModelIdentifier> {
     this._subscriptions.add(
       combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
         .pipe(
-          map(loading => loading.some(x => x)),
-          distinctUntilChanged(),
-          subscribeOn(asyncScheduler)
+          observeOn(asyncScheduler),
+          subscribeOn(asyncScheduler),
+          map(
+            ([cadLoadingState, pointCloudLoadingState]) =>
+              ({
+                isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
+                itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
+                itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested
+              } as LoadingState)
+          )
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
           trackError(error, {
