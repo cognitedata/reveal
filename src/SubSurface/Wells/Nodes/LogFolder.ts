@@ -13,6 +13,8 @@
 
 import { FolderNode } from "@/Core/Nodes/FolderNode";
 import FolderNodeGreyscale from "@images/Nodes/FolderNodeGreyscale.png";
+import { ITarget } from "@/Core/Interfaces/ITarget";
+import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
 
 export class LogFolder extends FolderNode
 {
@@ -21,6 +23,12 @@ export class LogFolder extends FolderNode
   //==================================================
 
   static className = "LogFolder";
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
 
   //==================================================
   // CONSTRUCTOR
@@ -42,4 +50,10 @@ export class LogFolder extends FolderNode
   public /*override*/ get typeName(): string { return "Log folder"; }
   public /*override*/ getIcon(): string { return FolderNodeGreyscale; }
   public /*override*/ canChangeColor(): boolean { return true; }
+
+  public /*virtual*/ getCheckBoxEnabled(target?: ITarget | null): boolean
+  {
+    const { trajectoryNode } = this;
+    return trajectoryNode ? trajectoryNode.isVisible(target) : false;
+  }
 }

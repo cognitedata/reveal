@@ -110,7 +110,8 @@ export abstract class BaseVisualNode extends BaseNode
     if (!this.setVisible(visible, target))
       return false;
 
-    this.notifyVisibleStateChange(topLevel);
+    if (topLevel)
+      this.notifyVisibleStateChange();
     return true;
   }
 
@@ -199,18 +200,5 @@ export abstract class BaseVisualNode extends BaseNode
       target.removeViewShownHere(view);
     }
     this.views.clear();
-  }
-
-  protected notifyVisibleStateChange(topLevel: boolean): void
-  {
-    const args = new NodeEventArgs(Changes.visibleState);
-    this.notify(args);
-    if (topLevel)
-    {
-      for (const ancestor of this.getAncestorsExceptRoot())
-        ancestor.notify(args);
-    }
-    for (const child of this.children)
-      child.notify(args);
   }
 }

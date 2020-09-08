@@ -22,9 +22,9 @@ export function TreeItemButton(props: {
   const handleToggleEvent = (e: any) => {
     e.stopPropagation();
     let checkStatus = false;
-    if (props.disabled) {
-      return;
-    }
+    // if (props.disabled) {
+    //   return;
+    // }
     if (!props.checked) {
       checkStatus = true;
     }

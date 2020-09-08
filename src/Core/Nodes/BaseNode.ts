@@ -176,12 +176,7 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Visibility
   //==================================================
 
-  public /*virtual*/ getCheckBoxEnabled(target?: ITarget | null): boolean
-  {
-    if (!target)
-      target = this.activeTarget;
-    return true;
-  }
+  public /*virtual*/ getCheckBoxEnabled(target?: ITarget | null): boolean { return true; }
 
   public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
@@ -240,15 +235,19 @@ export abstract class BaseNode extends Identifiable
     if (!hasChanged)
       return false;
 
-    // Notify
+    if (topLevel)
+      this.notifyVisibleStateChange();
+    return true;
+  }
+
+  protected notifyVisibleStateChange(): void
+  {
     const args = new NodeEventArgs(Changes.visibleState);
     this.notify(args);
-    if (topLevel)
-    {
-      for (const ancestor of this.getAncestorsExceptRoot())
-        ancestor.notify(args);
-    }
-    return true;
+    for (const ancestor of this.getAncestorsExceptRoot())
+      ancestor.notify(args);
+    for (const descendant of this.getDescendants())
+      descendant.notify(args);
   }
 
   public toggleVisibleInteractive(target?: ITarget | null): void // Use this when clicking on the checkbox in the three control

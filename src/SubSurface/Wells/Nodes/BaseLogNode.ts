@@ -88,7 +88,7 @@ export abstract class BaseLogNode extends DataNode
 
   public /*override*/ canChangeColor(): boolean { return false; }
 
-  public /*override*/ canBeChecked(target: ITarget | null): boolean
+  public /*virtual*/ getCheckBoxEnabled(target?: ITarget | null): boolean
   {
     const { trajectoryNode } = this;
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;

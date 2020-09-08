@@ -32,7 +32,7 @@ const Span = styled.span<SpanProps>`
   background-size: cover;
   outline: none;
   filter: ${(props) =>
-    props.disabled ? "grayscale(100%) opacity(0.4)" : "none"};
+    props.disabled ? "grayscale(100%) opacity(0.75)" : "none"};
 `;
 
 export function TreeRadioButton(props: {
