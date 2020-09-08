@@ -29,11 +29,9 @@ const AuthProvider = ({ children }: Props) => {
         setToken(accessToken);
       },
     });
-    if (config.app.autoLogin) {
-      (async () => {
-        await client.authenticate();
-      })();
-    }
+    (async () => {
+      await client.authenticate();
+    })();
   }, []);
 
   return (
