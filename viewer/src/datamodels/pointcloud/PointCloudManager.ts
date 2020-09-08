@@ -8,6 +8,7 @@ import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeLoadHandler } from './PotreeLoadHandler';
 import { Observable } from 'rxjs';
+import { LoadingState } from '@/utilities';
 import { PointCloudNode } from './PointCloudNode';
 
 export class PointCloudManager<TModelIdentifier> {
@@ -33,7 +34,7 @@ export class PointCloudManager<TModelIdentifier> {
     return this._pointCloudGroupWrapper ? this._pointCloudGroupWrapper.needsRedraw : false;
   }
 
-  getLoadingStateObserver(): Observable<boolean> {
+  getLoadingStateObserver(): Observable<LoadingState> {
     return this._potreeLoadHandler.observer();
   }
 
