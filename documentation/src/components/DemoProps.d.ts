@@ -6,6 +6,4 @@ import type { CogniteClient } from '@cognite/sdk';
 
 export type DemoProps = {
   client: CogniteClient;
-  modelId: number;
-  revisionId: number;
 }
