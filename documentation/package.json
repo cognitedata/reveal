@@ -38,6 +38,7 @@
     "@types/styled-components": "^5.1.1",
     "concat-md": "^0.3.5",
     "cpy-cli": "^3.1.1",
+    "docusaurus2-dotenv": "^1.4.0",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-to-markdown": "^6.0.1",
     "typedoc": "0.17.0-3",
