@@ -128,10 +128,10 @@ export class MaterialManager {
         (style.outlineColor ? style.outlineColor << 2 : 0);
       materials.overrideColorPerTreeIndex.needsUpdate = true;
 
-      const testMat = new THREE.Matrix4();
-      testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
-      //testMat.setPosition(0, 10, 0);
-      this.packMatrixToOverrideTransformBuffer(i, testMat, materials.dynamicTransformationTexture);
+      // const testMat = new THREE.Matrix4();
+      // testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
+      // //testMat.setPosition(0, 10, 0);
+      // this.packMatrixToOverrideTransformBuffer(i, testMat, materials.dynamicTransformationTexture);
     }
   }
 
