@@ -14,6 +14,7 @@
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
 import { BaseView } from "@/Core/Views/BaseView";
+import { Changes } from "@/Core/Views/Changes";
 
 export class FilterLogFilterView extends BaseView
 {
@@ -37,6 +38,10 @@ export class FilterLogFilterView extends BaseView
   {
     super.updateCore(args);
     const { node } = this;
+
+    if (args.isChanged(Changes.renderStyle))
+      return; // Update in the node itself
+
     for (const logNode of node.getAllLogs())
     {
       const view = logNode.getViewByTarget(this.renderTarget);
@@ -61,7 +66,7 @@ export class FilterLogFilterView extends BaseView
   // OVERRIDES of BaseView
   //==================================================
 
-  protected onHideOrShowCore( visible:boolean): void
+  protected onHideOrShowCore(visible: boolean): void
   {
     // Pattern: SYNC_LOGS_AND_FILTERLOGS
     const { node } = this;

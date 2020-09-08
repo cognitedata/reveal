@@ -170,13 +170,13 @@ export class LogRender
     if (!log)
       return;
 
-    const { valueRange } = log;
-    if (valueRange.isEmpty)
+    const logValueRange = log.valueRange;
+    if (logValueRange.isEmpty)
       return;
 
-    const min = style.min.use ? style.min.value : valueRange.min;
-    const max = style.max.use ? style.max.value : valueRange.max;
-    valueRange.set(min, max);
+    const min = style.min.use ? style.min.value : logValueRange.min;
+    const max = style.max.use ? style.max.value : logValueRange.max;
+    const valueRange = new Range1(min, max);
     if (!valueRange.hasSpan)
       return;
 

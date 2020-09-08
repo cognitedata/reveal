@@ -19,6 +19,8 @@ import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorType } from "@/Core/Enums/ColorType";
+import { Changes } from "@/Core/Views/Changes";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 export abstract class BaseFilterLogNode extends BaseVisualNode
 {
@@ -77,6 +79,16 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
       count++;
 
     folder.addReadOnlyInteger("# Logs of this type", count);
+  }
+
+  public /*override*/notifyCore(args: NodeEventArgs): void
+  {
+    super.notifyCore(args);
+    if (!args.isChanged(Changes.renderStyle))
+      return;
+
+    for (const logNode of this.getAllLogs())
+      logNode.notify(args);
   }
 
   //==================================================
