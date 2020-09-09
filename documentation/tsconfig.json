@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
+    "target": "es2019",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
-    "lib": ["DOM"],
+    "lib": ["DOM", "DOM.Iterable", "ES6"],
     "noEmit": true,
     "noImplicitAny": true
   },
