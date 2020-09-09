@@ -45,9 +45,28 @@ sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
     properties: { PDMS: { Function: 'EA' } }
   })
   .autoPagingEach(node => {
-    model.showNodeByTreeIndex(node.treeIndex, true);
+    model.showNodeByTreeIndex(node.treeIndex, applyToChildren = true);
   });
 ```
+
+For the example model, which is quite small, this performs well. For larger assets we might improve the performance 
+by avoiding use of `applyToChildren = true` in `Cognite3DModel.showNodeByTreeIndex` which leads to a network request.
+This can be done by using the `node.subtreeSize`-field in the response from `list3DNodes`:
+
+```jsx runnable
+model.hideAllNodes();
+sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
+  {
+    limit: 1000,
+    properties: { PDMS: { Function: 'EA' } }
+  })
+  .autoPagingEach(node => {
+    for (let i = 0; i < node.subtreeSize; i++) {
+      model.showNodeByTreeIndex(node.treeIndex + i);
+    }
+  });
+```
+
 
 You can also try filtering on the following filtering queries:
 - `{ PDMS: { Function: 'EP' } }`
