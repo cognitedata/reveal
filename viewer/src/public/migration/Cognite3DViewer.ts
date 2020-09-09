@@ -1168,8 +1168,10 @@ export class Cognite3DViewer {
   private startPointerEventListeners = () => {
     const canvas = this.canvas;
     const maxMoveDistance = 4;
+    const maxClickDuration = 250;
 
     let pointerDown = false;
+    let pointerDownTimestamp = 0;
     let validClick = false;
 
     const onHoverCallback = debounce((e: MouseEvent) => {
@@ -1191,7 +1193,8 @@ export class Cognite3DViewer {
     };
 
     const onUp = (e: MouseEvent | TouchEvent) => {
-      if (pointerDown && validClick) {
+      const clickDuration = e.timeStamp - pointerDownTimestamp;
+      if (pointerDown && validClick && clickDuration < maxClickDuration) {
         // trigger events
         this.eventListeners.click.forEach(func => {
           func(mouseEventOffset(e, canvas));
@@ -1216,6 +1219,7 @@ export class Cognite3DViewer {
       event = e;
       pointerDown = true;
       validClick = true;
+      pointerDownTimestamp = e.timeStamp;
 
       // move
       canvas.addEventListener('mousemove', onMove);
