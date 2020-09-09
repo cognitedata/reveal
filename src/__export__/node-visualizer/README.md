@@ -83,7 +83,7 @@ refer [default theme section](https://github.com/cognitedata/node-visualization/
 
 Furthermore override Material Default Theme
 
-example: 
+example:
 ```typescript jsx
 const theme = createMuiTheme({
   palette: {
@@ -95,10 +95,10 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontSize: 16 * Appearance.ApplicationDefaultFontSize,
-    body1: {
-      fontSize: 16 * Appearance.ApplicationDefaultFontSize,
-    },
+      fontSize: 12,
+      body1: {
+        fontSize: 12,
+      },
   },
 });
 
