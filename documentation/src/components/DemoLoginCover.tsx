@@ -58,6 +58,7 @@ export default function DemoLoginCover(props: Props): ReactElement {
   }, []);
 
   const coverUrl = useBaseUrl('/img/login_cover.png');
+  const visualInstructionUrl = useBaseUrl('img/publicdata_register.png')
 
   if (!isLoggedIn) {
     return (
@@ -101,7 +102,7 @@ export default function DemoLoginCover(props: Props): ReactElement {
         </CenteredContainer>
 
         <Section style={{ marginTop: 'auto', textAlign: 'right' }}>
-          <a href={useBaseUrl('img/publicdata_register.png')} target="_blank">
+          <a href={visualInstructionUrl} target="_blank">
             visual instruction
           </a>
         </Section>
