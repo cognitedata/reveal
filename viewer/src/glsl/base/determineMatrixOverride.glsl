@@ -10,6 +10,10 @@ float unpackFloatFromRGBATexel(vec4 texel){
 }
 
 mat4 determineMatrixOverride(float treeIndex, float dataTextureWidth, float dataTextureHeight, sampler2D matrixTransformTexture){
+
+    dataTextureWidth = dataTextureWidth / 4.0;
+    dataTextureHeight = dataTextureHeight * 4.0;
+
     float cellWidth = 1.0 / (dataTextureWidth * 16.0);
     float cellHeight = 1.0 / dataTextureHeight;
 

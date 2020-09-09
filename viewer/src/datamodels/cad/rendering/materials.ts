@@ -56,9 +56,17 @@ export function createMaterials(
 
   const dynamicTransformationTexture = new THREE.DataTexture(
     transformOverrideBuffer,
-    textureDims.width * 16,
-    textureDims.height
+    textureDims.width * 4,
+    textureDims.height * 4
   );
+
+  //const transformOverrideIndexBuffer = new Int32Array(textureElementCount);
+
+  // const transformOverrideIndexTexture = new THREE.DataTexture(
+  //   transformOverrideIndexBuffer,
+  //   textureDims.width,
+  //   textureDims.height
+  // );
 
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
