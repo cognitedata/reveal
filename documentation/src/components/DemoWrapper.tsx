@@ -26,13 +26,12 @@ const components: Record<string, ComponentType<DemoProps>> = {
 // different demos might have different ids, e.g. pointcloud/cad
 // also we can use 3ddemo instead of publicdata so here is .env file to help with it
 export function DemoWrapper({ name }: { name: string }) {
-
   if (typeof window === 'undefined') {
     return <div />;
   }
   let LazyComponent = components[name];
   if (!LazyComponent) {
-    throw new Error(`Demo component with name ${name} is not found.`)
+    throw new Error(`Demo component with name ${name} is not found.`);
   }
   return (
     <DemoContainer id="demo-wrapper">
