@@ -3,8 +3,6 @@
  */
 import * as THREE from 'three';
 
-import { mat4 } from 'gl-matrix';
-
 export enum File3dFormat {
   EptPointCloud = 'ept-pointcloud',
   RevealCadModel = 'reveal-directory',
