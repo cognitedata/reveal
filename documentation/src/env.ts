@@ -8,5 +8,3 @@ export const env = {
   revisionId: getNumber(process.env.CAD_REVISION_ID) || 5688854005909501
   // add some pointclouds here later
 }
-
-console.log(env)
