@@ -5,7 +5,7 @@ hide_title: true
 description: This page describes the differences between Reveal viewer and @cognite/3d-viewer, which is an older version of Reveal with similar functionality. 
 ---
 
-## Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
+# Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
 
 `@cognite/3d-viewer` is an older version of Reveal that has similar functionality to this package. However, some important differences caused us to switch the package name to `@cognite/reveal`.
 
@@ -15,15 +15,15 @@ description: This page describes the differences between Reveal viewer and @cogn
 - `@cognite/reveal` supports point cloud models. This is not supported in `@cognite/3d-viewer`.
 - `@cognite/reveal` requires new output file formats. See [Preparing models](#preparing-models-for-use) below for details.
 
-## API changes
+# API changes
 
 The APIs are very similar and the functionality provided in `@cognite/reveal` should feel familiar. There are several operations supported in `@cognite/3d-viewer` which isn't supported by `@cognite/reveal`, but these have been replaced by alternatives that should provide similar functionality.
 
-### Styling nodes
+## Styling nodes
 
 In `@cognite/3d-viewer`, there are several functions for manipulating the styling of 3D nodes. These functions identify nodes by their node IDs. In `@cognite/reveal` similar functions exist, but these identify the nodes by their tree indices. It's therefor necessary to migrate to the new functions.
 
-#### Coloring nodes
+### Coloring nodes
 
 - `Cognite3DModel.setNodeColor(nodeId, r, g, b)` has been replaced by `setNodeColorByTreeIndex(treeIndex, r, g, b, applyToChildren?)`
 - `Cognite3DModel.resetNodeColor(nodeId)` has been replaced by `resetNodeColorByTreeIndex(treeIndex, applyToChildren?)`
@@ -32,7 +32,7 @@ In `@cognite/3d-viewer`, there are several functions for manipulating the stylin
 
 The new functions identify nodes by tree index rather than node ID. It also supports applying the same color to all children of the identified node. Note that the functions identifying nodes by node ID will work, but will be slower and use is not recommended.
 
-#### Selecting/highlighting nodes
+### Selecting/highlighting nodes
 
 - `Cognite3DModel.selectNode(nodeId)` has been replaced by `selectNodeByTreeIndex(treeIndex, applyToChildren?)`
 - `Cognite3DModel.deselectNode(nodeId)` has been replaced by `deselectNodeByTreeIndex(treeIndex, applyToChildren?)`
@@ -40,7 +40,7 @@ The new functions identify nodes by tree index rather than node ID. It also supp
 
 The new functions identify nodes by tree index rather than node ID. It also supports selecting/highlighting all children of the identified node. Note that the functions identifying nodes by node ID will work, but will be slower and use is not recommended.
 
-#### Controlling node visibility
+### Controlling node visibility
 
 - `Cognite3DModel.showNode(nodeId)` has been replaced by `showNodeByTreeIndex(treeIndex, applyToChildren?)`
 - `Cognite3DModel.hideNode(nodeId)` has been replaced by `hideNodeByTreeIndex(treeIndex, applyToChildren?)`
@@ -49,7 +49,7 @@ The new functions identify nodes by tree index rather than node ID. It also supp
 
 The new functions identify nodes by tree index rather than node ID. It also supports showing/hiding all children of the identified node. Note that the functions identifying nodes by node ID will work, but will be slower and use is not recommended.
 
-### Node visitor functions
+## Node visitor functions
 
 Reveal has functions for iterating over nodes, either all nodes in a 3D model or a subtree of a parent node.
 Notice that all functions are async, and the action that you pass is not applied immediately.
@@ -59,7 +59,7 @@ You can see it in action in our [node visiting example](./examples/node-visiting
 - `Cognite3DModel.iterateNodes(action: (nodeId, treeIndex) => void): Promise<boolean>` has been replaced by `iterateNodesByTreeIndex(action: (treeIndex) => void): Promise<void>`. Returns promise which resolves once iteration has done. 
 - `Cognite3DModel.iterateSubtree(nodeId, action: (nodeId, treeIndex) => void, treeIndex?, subtreeSize?)` has been replaced by `iterateSubtreeByTreeIndex(treeIndex, action: (treeIndex) => void): Promise<number>`. Returns promise which resolves once iteration has done.
 
-### Accessing node information and mapping between node IDs and tree indices
+## Accessing node information and mapping between node IDs and tree indices
 
 Reveal supports accessing information about 3D nodes through the [Cognite SDK](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html). However, the SDK identifies nodes by node ID, not tree index. It might be necessary to map between the two concepts. The following functions provide such functionality: 
 - `async Cognite3DModel.mapNodeIdToTreeIndex(nodeId)`
@@ -77,17 +77,17 @@ Access to node information such as name, bounding box and properties/attributes 
 
 The API for accessing node information has not changed `@cognite/3d-viewer`, but since Reveal now uses tree indices explicit mapping tree index to node ID is necessary.
 
-### Working with asset mappings
+## Working with asset mappings
 
 [3D Asset Mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) enables mapping 3D nodes to [assets](https://docs.cognite.com/api/v1/#tag/Assets). A mapping is a link from `assetId` to `nodeId`, so to use these with Reveal it's necessary to [map these to tree indices](#accessing-node-information-and-mapping-between-node-ids-and-tree-indices).
 
-### Ray picking and intersection for handling click events
+## Ray picking and intersection for handling click events
 
 In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed 
 in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to 
 determine `nodeId` use `async Cognite3DModel.mapNodeId(nodeId)`).
 
-### Other differences
+## Other differences
 
 There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite/reveal`:
 
@@ -95,7 +95,7 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
 
-## Preparing models
+# Preparing models
 
 `@cognite/reveal` requires new output file formats which means that 3D models that have been converted before June 2020 might need reconversion. To determine if a model needs reconversion, the [listModelRevisionOutputs API endpoint](https://docs.cognite.com/api/v1/#operation/list3dModelOutputs) can be used with URL parameter `format=reveal-directory`. This can be done using the SDK, e.g.:
 ```jsx
