@@ -13,16 +13,16 @@ varying vec3 v_normal;
 
 varying vec3 vViewPosition;
 
-uniform vec2 dataTextureSize;
+uniform vec2 treeIndexTextureSize;
 
-uniform sampler2D matrixTransformTexture;
+uniform sampler2D transformOverrideIndexTexture;
 
 void main() {
     float treeIndexRounded = floor(treeIndex + 0.5);
-    float dataTextureWidth = dataTextureSize.x;
-    float dataTextureHeight = dataTextureSize.y;
+    float dataTextureWidth = treeIndexTextureSize.x;
+    float dataTextureHeight = treeIndexTextureSize.y;
 
-    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndexRounded, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndexRounded, dataTextureWidth, dataTextureHeight, transformOverrideIndexTexture);
 
     v_treeIndex = treeIndex;
     v_color = color;

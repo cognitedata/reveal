@@ -30,7 +30,7 @@ export class TransformOverrideBuffer {
       this.MIN_NUMBER_OF_TREE_INDECES
     );
 
-    this._unusedIndices = [...Array(this.MIN_NUMBER_OF_TREE_INDECES).map((_, n) => n)];
+    this._unusedIndices = [...Array(this.MIN_NUMBER_OF_TREE_INDECES).keys()].map((_, n) => n);
   }
 
   public overrideTransform(transform: THREE.Matrix4): number {

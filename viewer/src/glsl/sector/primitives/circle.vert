@@ -17,9 +17,9 @@ varying float v_treeIndex;
 
 varying vec3 vViewPosition;
 
-uniform vec2 dataTextureSize;
+uniform vec2 treeIndexTextureSize;
 
-uniform sampler2D matrixTransformTexture;
+uniform sampler2D transformOverrideIndexTexture;
 
 void main() {
     v_xy = vec2(position.x, position.y);
@@ -33,10 +33,10 @@ void main() {
     );
 
     float treeIndex = floor(a_treeIndex + 0.5);
-    float dataTextureWidth = dataTextureSize.x;
-    float dataTextureHeight = dataTextureSize.y;
+    float dataTextureWidth = treeIndexTextureSize.x;
+    float dataTextureHeight = treeIndexTextureSize.y;
 
-    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, transformOverrideIndexTexture);
 
     vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 mvPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4( transformed, 1.0 );

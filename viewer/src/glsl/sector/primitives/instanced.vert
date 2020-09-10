@@ -15,9 +15,11 @@ varying vec3 v_color;
 
 varying vec3 vViewPosition;
 
-uniform vec2 dataTextureSize;
+uniform vec2 treeIndexTextureSize;
+uniform sampler2D transformOverrideIndexTexture;
 
-uniform sampler2D matrixTransformTexture;
+uniform vec2 transformOverrideTextureSize;
+uniform sampler2D transformOverrideTexture;
 
 void main()
 {
@@ -28,12 +30,19 @@ void main()
         a_instanceMatrix_column_3
     );
 
-    float treeIndex = floor(a_treeIndex + 0.5);
-    float dataTextureWidth = dataTextureSize.x;
-    float dataTextureHeight = dataTextureSize.y;
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
 
-    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, matrixTransformTexture);
-    
+    // if(treeIndexWorldTransform[0][0] == 15.0){
+    //   gl_Position = vec4(0.0);
+    //   return;
+    // }
+
     v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;

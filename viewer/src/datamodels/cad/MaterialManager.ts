@@ -6,6 +6,7 @@ import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
 import * as THREE from 'three';
+import { TransformOverrideBuffer } from './rendering/TransformOverrideBuffer';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -126,12 +127,39 @@ export class MaterialManager {
         (style.renderInFront ? 1 << 1 : 0) +
         (style.outlineColor ? style.outlineColor << 2 : 0);
       materials.overrideColorPerTreeIndex.needsUpdate = true;
-
-      // const testMat = new THREE.Matrix4();
-      // testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
-      // //testMat.setPosition(0, 10, 0);
-      // this.packMatrixToOverrideTransformBuffer(i, testMat, materials.dynamicTransformationTexture);
     }
+
+    const testMat = new THREE.Matrix4();
+    //testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
+    testMat.setPosition(0, 10, 0);
+    this.overrideTreeIndexTransform(
+      1,
+      testMat,
+      materials.transformOverrideIndexTexture,
+      materials.transformOverrideBuffer
+    );
+
+    // this.overrideTreeIndexTransform(
+    //   39,
+    //   testMat,
+    //   materials.transformOverrideIndexTexture,
+    //   materials.transformOverrideBuffer
+    // );
+  }
+
+  private overrideTreeIndexTransform(
+    treeIndex: number,
+    transform: THREE.Matrix4,
+    indexTexture: THREE.DataTexture,
+    transformTextureBuffer: TransformOverrideBuffer
+  ) {
+    const transformIndex = transformTextureBuffer.overrideTransform(transform);
+
+    indexTexture.image.data[treeIndex * 3 + 0] = transformIndex >> 16;
+    indexTexture.image.data[treeIndex * 3 + 1] = transformIndex >> 8;
+    indexTexture.image.data[treeIndex * 3 + 2] = transformIndex >> 0;
+
+    indexTexture.needsUpdate = true;
   }
 
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {

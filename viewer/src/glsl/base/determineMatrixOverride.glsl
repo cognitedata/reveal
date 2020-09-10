@@ -9,24 +9,53 @@ float unpackFloatFromRGBATexel(vec4 texel){
     return unpackVec4ToFloat(vec4(byteValueR, byteValueG, byteValueB, byteValueA));
 }
 
-mat4 determineMatrixOverride(float treeIndex, float dataTextureWidth, float dataTextureHeight, sampler2D matrixTransformTexture){
+mat4 determineMatrixOverride(
+  float treeIndex, 
+  vec2 treeIndexTextureSize, 
+  sampler2D transformOverrideIndexTexture, 
+  vec2 transformOverrideTextureSize, 
+  sampler2D transformOverrideTexture
+) {
 
-    dataTextureWidth = dataTextureWidth / 4.0;
-    dataTextureHeight = dataTextureHeight * 4.0;
+    treeIndex = floor(treeIndex + 0.5);
+    float dataTextureWidth = treeIndexTextureSize.x;
+    float dataTextureHeight = treeIndexTextureSize.y;
 
-    float cellWidth = 1.0 / (dataTextureWidth * 16.0);
-    float cellHeight = 1.0 / dataTextureHeight;
+    float xTreeIndexTextureCoord = mod(treeIndex, dataTextureWidth);
+    float yTreeIndexTextureCoord = floor(treeIndex / dataTextureWidth);
 
-    float xTreeIndexCoord = mod(treeIndex, dataTextureWidth);
-    float yTreeIndexCoord = floor(treeIndex / dataTextureWidth);
-    float uCoord = (xTreeIndexCoord * (cellWidth * 16.0)) + (cellWidth / 2.0);
-    float vCoord = (yTreeIndexCoord * cellHeight) + (cellHeight / 2.0);
-    vec2 treeIndexUv = vec2(uCoord, vCoord);
+    vec2 indexUV = vec2((xTreeIndexTextureCoord + 0.5) / dataTextureWidth, (yTreeIndexTextureCoord + 0.5) / dataTextureHeight);
+
+    vec3 indexTexel = texture2D(transformOverrideIndexTexture, indexUV).rgb;
+
+    float index = floor(indexTexel.r * 256.0) * 65536.0  + floor(indexTexel.g * 256.0) * 256.0 + floor(indexTexel.b * 256.0);
+
+    if(index == 0.0){
+      return mat4(
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      0.0, 0.0, 0.0, 1.0
+    );
+    }
+
+    float overridesPerRow = transformOverrideTextureSize.x / 16.0;
+
+    float xOverrideTextureCoord = mod(index, overridesPerRow);
+    float yOverrideTextureCoord = floor(index / overridesPerRow);
+
+    float cellWidth = 1.0 / transformOverrideTextureSize.x;
+    float cellHeight = 1.0 / transformOverrideTextureSize.y;
+
+    float overrideU = (xOverrideTextureCoord / overridesPerRow) + cellWidth / 2.0;
+    float overrideV = (yOverrideTextureCoord / transformOverrideTextureSize.y) + cellHeight / 2.0;
+
+    vec2 overrideUV = vec2(overrideU, overrideV); 
 
     float matrixElements[12];
 
     for(int i = 0; i < 12; i++){
-      matrixElements[i] = unpackFloatFromRGBATexel(texture2D(matrixTransformTexture, treeIndexUv + vec2(float(i) * cellWidth, 0.0)));
+      matrixElements[i] = unpackFloatFromRGBATexel(texture2D(transformOverrideTexture, overrideUV + vec2(float(i) * cellWidth, 0.0)));
     }
     
     return mat4(
