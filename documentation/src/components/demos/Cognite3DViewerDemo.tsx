@@ -29,11 +29,10 @@ export default function Cognite3DViewerDemo({ client }: DemoProps) {
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
       viewer.loadCameraFromModel(model);
-      (window as any).model = model;
+      window.model = model;
     }
 
-    (window as any).viewer = viewer;
-    (window as any).sdk = client;
+    window.viewer = viewer;
     return () => {
       viewer && viewer.dispose();
     };

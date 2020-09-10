@@ -1,6 +1,6 @@
 module.exports = {
   title: 'Reveal docs',
-  tagline: 'The tagline of my site',
+  tagline: '@cognite/reveal documentation site',
   url: 'https://cognitedata.github.io',
   baseUrl: '/reveal-docs/',
   favicon: 'img/favicon.ico',
@@ -19,24 +19,6 @@ module.exports = {
         srcDark: 'img/logo_dark.svg',
       },
       items: [
-        // {
-        //   to: 'docs/',
-        //   activeBaseRegex: `docs/(?!(examples|api-reference))`,
-        //   label: 'DOCS',
-        //   position: 'left',
-        // },
-        // {
-        //   to: 'docs/examples/Cognite3DViewer',
-        //   activeBasePath: `docs/examples`,
-        //   label: 'EXAMPLES',
-        //   position: 'left',
-        // },
-        // {
-        //   to: 'docs/api-reference',
-        //   activeBasePath: `docs/api-reference`,
-        //   label: 'API REFERENCE',
-        //   position: 'left',
-        // },
         {
           href: 'https://github.com/cognitedata/reveal',
           label: 'GITHUB',
@@ -46,51 +28,6 @@ module.exports = {
     },
     footer: {
       style: 'light',
-      // links: [
-      //   {
-      //     title: 'Docs',
-      //     items: [
-      //       {
-      //         label: 'Style Guide',
-      //         to: 'docs/',
-      //       },
-      //       {
-      //         label: 'Second Doc',
-      //         to: 'docs/doc2/',
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     title: 'Community',
-      //     items: [
-      //       {
-      //         label: 'Stack Overflow',
-      //         href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-      //       },
-      //       {
-      //         label: 'Discord',
-      //         href: 'https://discordapp.com/invite/docusaurus',
-      //       },
-      //       {
-      //         label: 'Twitter',
-      //         href: 'https://twitter.com/docusaurus',
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     title: 'More',
-      //     items: [
-      //       {
-      //         label: 'Blog',
-      //         to: 'blog',
-      //       },
-      //       {
-      //         label: 'GitHub',
-      //         href: 'https://github.com/facebook/docusaurus',
-      //       },
-      //     ],
-      //   },
-      // ],
       copyright: `Copyright © ${new Date().getFullYear()} <a href="//cognite.com">Cognite</a>`,
     },
   },
