@@ -59,7 +59,7 @@ function initializeGui(
 
 export function SimplePointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -103,7 +103,7 @@ export function SimplePointcloud() {
       }
       const [pointCloudGroup, pointCloudNode] = model;
       scene.add(pointCloudGroup);
-      revealManager.on('loadingStateChanged', setIsLoading);
+      revealManager.on('loadingStateChanged', setLoadingState);
 
       const camera = new THREE.PerspectiveCamera(
         75,
@@ -182,7 +182,7 @@ export function SimplePointcloud() {
 
   return (
     <CanvasWrapper>
-      <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
+      <Loader isLoading={loadingState.itemsLoaded !== loadingState.itemsRequested} style={{ position: 'absolute' }}>
         Loading...
       </Loader>
       <canvas ref={canvasRef} />

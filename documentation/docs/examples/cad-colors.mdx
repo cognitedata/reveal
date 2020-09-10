@@ -4,16 +4,11 @@ title: Coloring CAD models
 describe: Reveal supports updating the color of individual objects by providing tree indices to identify 3D nodes.
 ---
 
-import { LiveCodeSnippet } from '../../src/components/LiveCodeSnippet';
-import { DemoWrapper } from '../../src/components/DemoWrapper';
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
 
 Reveal supports updating the color of individual objects by providing [tree indices to identify 3D nodes](../concepts.md).
 
-<DemoWrapper
-  modelId={4715379429968321}
-  revisionId={5688854005909501}
-  name="Cognite3DViewerDemo"
-/>
+<DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Update all node colors
 
@@ -22,34 +17,28 @@ accordingly:
 
 <!-- TODO: implement eficcient coloring fn and update these examples -->
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.iterateNodesByTreeIndex(treeIndex => {
   model.setNodeColorByTreeIndex(treeIndex, 127, 127, 127);
 });
-`}
-</LiveCodeSnippet>
+```
 
 ## Reset node colors
 
 Color overrides can be overridden using `Cognite3DModel.resetNodeColorByTreeIndex`, e.g.
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.iterateNodesByTreeIndex(treeIndex => {
   model.resetNodeColorByTreeIndex(treeIndex);
 });
-`}
-</LiveCodeSnippet>
+```
 
 It's also possible (and more performant) to use `Cognite3DModel.resetAllNodeColors()` when
 you want to reset the colors of all nodes:
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.resetAllNodeColors();
-`}
-</LiveCodeSnippet>
+```
 
 ## Update the colors of a subtree
 
@@ -58,8 +47,6 @@ order to update the colors of equipment it's typically necessary to apply the sa
 subtree. Reveal supports this through the use of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
 set to `true`:
 
-<LiveCodeSnippet>
-{`
+```jsx runnable
 model.setNodeColorByTreeIndex(917985, 240, 100, 60, applyToChildren=true);
-`}
-</LiveCodeSnippet>
+```

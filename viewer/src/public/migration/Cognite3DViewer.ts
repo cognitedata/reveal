@@ -22,7 +22,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
+import { BoundingBoxClipper, File3dFormat, isMobileOrTablet, LoadingState } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { trackError, initMetrics, trackLoadModel } from '@/utilities/metrics';
 import { RevealManager } from '../RevealManager';
@@ -70,7 +70,7 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
-  private readonly _updateCameraNearAndFarSubject: Subject<THREE.PerspectiveCamera>;
+  private readonly _updateCameraNearAndFarSubject: Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>;
   private readonly _subscription = new Subscription();
   private readonly _revealManager: RevealManager<CdfModelIdentifier>;
 
@@ -83,7 +83,6 @@ export class Cognite3DViewer {
   private readonly extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
-  private forceRendering = false; // For future support
 
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
@@ -171,18 +170,18 @@ export class Cognite3DViewer {
     this.startPointerEventListeners();
 
     this._subscription.add(
-      fromEventPattern(
+      fromEventPattern<LoadingState>(
         h => this._revealManager.on('loadingStateChanged', h),
         h => this._revealManager.off('loadingStateChanged', h)
       ).subscribe(
-        isLoading => {
-          if (isLoading) {
+        loadingState => {
+          if (loadingState.itemsLoaded != loadingState.itemsRequested) {
             this.spinner.show();
           } else {
             this.spinner.hide();
           }
           if (options.onLoading) {
-            options.onLoading(0, isLoading ? 1 : 0);
+            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
           }
         },
         error =>
@@ -498,6 +497,7 @@ export class Cognite3DViewer {
     this.scene.add(object);
     this.extraObjects.push(object);
     this.renderController.redraw();
+    this.triggerUpdateCameraNearAndFar(true);
   }
 
   /**
@@ -519,6 +519,7 @@ export class Cognite3DViewer {
       this.extraObjects.splice(index, 1);
     }
     this.renderController.redraw();
+    this.triggerUpdateCameraNearAndFar(true);
   }
 
   /**
@@ -1004,12 +1005,7 @@ export class Cognite3DViewer {
       renderController.update();
       this._revealManager.update(this.camera);
 
-      if (
-        renderController.needsRedraw ||
-        this.forceRendering ||
-        this._revealManager.needsRedraw ||
-        this._slicingNeedsUpdate
-      ) {
+      if (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
         this.triggerUpdateCameraNearAndFar();
         this._revealManager.render(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
@@ -1019,14 +1015,20 @@ export class Cognite3DViewer {
     }
   }
 
-  private setupUpdateCameraNearAndFar(): Subject<THREE.PerspectiveCamera> {
+  private setupUpdateCameraNearAndFar(): Subject<{ camera: THREE.PerspectiveCamera; force: boolean }> {
     const lastUpdatePosition = new THREE.Vector3(Infinity, Infinity, Infinity);
     const camPosition = new THREE.Vector3();
 
-    const updateNearFarSubject = new Subject<THREE.PerspectiveCamera>();
+    const updateNearFarSubject = new Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>();
     updateNearFarSubject
       .pipe(
-        map(cam => lastUpdatePosition.distanceToSquared(cam.getWorldPosition(camPosition))),
+        map(state => {
+          if (state.force) {
+            // Emulate camera movement to force update
+            return Infinity;
+          }
+          return lastUpdatePosition.distanceToSquared(state.camera.getWorldPosition(camPosition));
+        }),
         (source: Observable<number>) => {
           return merge(
             // When camera is moved more than 10 meters
@@ -1046,8 +1048,8 @@ export class Cognite3DViewer {
     return updateNearFarSubject;
   }
 
-  private triggerUpdateCameraNearAndFar() {
-    this._updateCameraNearAndFarSubject.next(this.camera);
+  private triggerUpdateCameraNearAndFar(force?: boolean) {
+    this._updateCameraNearAndFarSubject.next({ camera: this.camera, force: !!force });
   }
 
   private updateCameraNearAndFar(camera: THREE.PerspectiveCamera) {
@@ -1166,8 +1168,10 @@ export class Cognite3DViewer {
   private startPointerEventListeners = () => {
     const canvas = this.canvas;
     const maxMoveDistance = 4;
+    const maxClickDuration = 250;
 
     let pointerDown = false;
+    let pointerDownTimestamp = 0;
     let validClick = false;
 
     const onHoverCallback = debounce((e: MouseEvent) => {
@@ -1189,7 +1193,8 @@ export class Cognite3DViewer {
     };
 
     const onUp = (e: MouseEvent | TouchEvent) => {
-      if (pointerDown && validClick) {
+      const clickDuration = e.timeStamp - pointerDownTimestamp;
+      if (pointerDown && validClick && clickDuration < maxClickDuration) {
         // trigger events
         this.eventListeners.click.forEach(func => {
           func(mouseEventOffset(e, canvas));
@@ -1214,6 +1219,7 @@ export class Cognite3DViewer {
       event = e;
       pointerDown = true;
       validClick = true;
+      pointerDownTimestamp = e.timeStamp;
 
       // move
       canvas.addEventListener('mousemove', onMove);

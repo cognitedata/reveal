@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient, REDIRECT } from '@cognite/sdk';
+import { env } from '../env';
 
 const tokenCacheKey = 'cachedAT';
 const accessToken = sessionStorage.getItem(tokenCacheKey);
@@ -16,19 +17,18 @@ class LoginManager {
 
   constructor() {
     this.listeners = [];
-
-    let params = new URL(document.location.toString()).searchParams;
-    // id_token in url means we already redirected from auth api
-    // so it's safe to mark as logged in, when API call will happen
-    // inside demo component - it will be authenticated automatically
-    this.isLoggedIn = !!params.get('id_token') || !!accessToken;
+    // might be expired so it's not a guarantee, but good default state
+    this.isLoggedIn = !!accessToken;
 
     this.client = new CogniteClient({
       appId: 'cognite.reveal.docs.Cognite3DViewer',
     });
 
+    // to make it available in examples
+    window.sdk = this.client;
+
     this.client.loginWithOAuth({
-      project: 'publicdata',
+      project: env.project,
       accessToken,
       onAuthenticate: REDIRECT,
       onTokens: (tokens) => {
@@ -37,7 +37,11 @@ class LoginManager {
     });
 
     this.client.login.status().then((s) => {
-      this.isLoggedIn = !!s;
+      // id_token in url means we already redirected from auth api
+      // so it's safe to mark as logged in, when API call will happen
+      // inside demo component - it will be authenticated automatically
+      let params = new URL(document.location.toString()).searchParams;
+      this.isLoggedIn = !!params.get('id_token') || !!s;
       this.notifyListeners();
     });
   }
@@ -64,7 +68,7 @@ class LoginManager {
         this.isLoggedIn = true;
         this.notifyListeners();
       })
-      .catch((e) => console.error(e));
+      .catch((e: Error) => console.error(e));
   }
 }
 
