@@ -12,6 +12,7 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   BoundingBoxClipper,
+  CognitePointCloudModel,
 } from '@cognite/reveal';
 
 export function Migration() {
@@ -74,6 +75,8 @@ export function Migration() {
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
+          } else if (model instanceof CognitePointCloudModel) {
+            pointCloudModels.push(model);
           }
         } catch (e) {
           console.error(e);
@@ -83,6 +86,7 @@ export function Migration() {
 
       // Add GUI for loading models and such
       const cadModels: Cognite3DModel[] = [];
+      const pointCloudModels: CognitePointCloudModel[] = [];
       const guiState = {
         modelId: 0,
         revisionId: 0,
@@ -102,6 +106,22 @@ export function Migration() {
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
           }),
+        rotateModel: () => {
+          debugger;
+          (window as any).THREE = THREE;
+          const rotation = new THREE.Matrix4();
+          rotation.makeRotationY(Math.PI / 2.0);
+          cadModels.forEach(m => {
+            const matrix: THREE.Matrix4 = m.getModelTransformation();
+            matrix.multiply(rotation);
+            m.setModelTransformation(matrix);
+          });
+          pointCloudModels.forEach(m => {
+          // const matrix: THREE.Matrix4 = m.getModelTransformation();
+            // matrix.multiply(rotation);
+            m.setModelTransformation(rotation);
+          });
+        }
       };
 
       const settingsGui = gui.addFolder('settings');
@@ -112,6 +132,7 @@ export function Migration() {
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
+      gui.add(guiActions, 'rotateModel').name('Rotate model');
 
       const slicing = gui.addFolder('Slicing');
       slicing

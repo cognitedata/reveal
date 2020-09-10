@@ -3,13 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 
 import { SectorMetadata } from '@/datamodels/cad';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
 import { Box3 } from '@/utilities';
-import { fromThreeMatrix } from '@/utilities';
 
 import { createSectorMetadata } from '../../testutils/createSectorMetadata';
 
@@ -52,8 +51,8 @@ describe('SectorSceneImpl', () => {
     camera.lookAt(2.0, 0.5, 0.5);
     camera.updateMatrixWorld();
     camera.updateProjectionMatrix();
-    const cameraModelMatrixInverse = fromThreeMatrix(mat4.create(), camera.matrixWorldInverse);
-    const projectionMatrix = fromThreeMatrix(mat4.create(), camera.projectionMatrix);
+    const cameraModelMatrixInverse = camera.matrixWorldInverse;
+    const projectionMatrix = camera.projectionMatrix;
 
     // Act
     const sectors = scene.getSectorsIntersectingFrustum(projectionMatrix, cameraModelMatrixInverse);
@@ -70,8 +69,8 @@ describe('SectorSceneImpl', () => {
     camera.lookAt(0.5, 0.5, 0.5);
     camera.updateMatrixWorld();
     camera.updateProjectionMatrix();
-    const cameraModelMatrixInverse = fromThreeMatrix(mat4.create(), camera.matrixWorldInverse);
-    const projectionMatrix = fromThreeMatrix(mat4.create(), camera.projectionMatrix);
+    const cameraModelMatrixInverse = camera.matrixWorldInverse;
+    const projectionMatrix = camera.projectionMatrix;
 
     // Act
     const sectors = scene.getSectorsIntersectingFrustum(projectionMatrix, cameraModelMatrixInverse);

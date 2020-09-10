@@ -1,8 +1,9 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+import * as THREE from 'three';
 
-import { File3dFormat, ModelTransformation, CameraConfiguration } from '../types';
+import { File3dFormat, CameraConfiguration } from '../types';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 
 export interface BlobOutputMetadata {
@@ -25,7 +26,7 @@ export interface ModelUrlProvider<TModelIdentifier> {
 }
 
 export interface ModelTransformationProvider<TModelIdentifier> {
-  getModelTransformation(identifier: TModelIdentifier): Promise<ModelTransformation>;
+  getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
 }
 
 export interface ModelCameraConfigurationProvider<TModelIdentifier> {

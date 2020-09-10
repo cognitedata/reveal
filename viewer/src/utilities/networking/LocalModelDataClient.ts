@@ -5,9 +5,8 @@ import * as THREE from 'three';
 
 import { ModelDataClient } from './types';
 import { fetchWithStatusCheck } from './utilities';
-import { ModelTransformation } from '..';
 import { File3dFormat, CameraConfiguration } from '../types';
-import { applyDefaultModelTransformation, createModelTransformation } from './modelTransformation';
+import { applyDefaultModelTransformation } from './modelTransformation';
 
 export class LocalModelDataClient implements ModelDataClient<{ fileName: string }> {
   getModelUrl(params: { fileName: string }): Promise<string> {
@@ -28,10 +27,10 @@ export class LocalModelDataClient implements ModelDataClient<{ fileName: string 
     return response.json();
   }
 
-  async getModelTransformation(_identifier: { fileName: string }): Promise<ModelTransformation> {
+  async getModelMatrix(_identifier: { fileName: string }): Promise<THREE.Matrix4> {
     const matrix = new THREE.Matrix4();
     applyDefaultModelTransformation(matrix, File3dFormat.RevealCadModel);
-    return createModelTransformation(matrix);
+    return matrix;
   }
 
   getModelCamera(_identifier: { fileName: string }): Promise<CameraConfiguration | undefined> {

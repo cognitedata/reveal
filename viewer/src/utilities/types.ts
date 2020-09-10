@@ -28,14 +28,6 @@ export class CogniteColors {
 }
 
 /**
- * Represents the transformation matrix for a model. Stores both the model matrix and the inverse matrix.
- */
-export type ModelTransformation = {
-  readonly modelMatrix: mat4;
-  readonly inverseModelMatrix: mat4;
-};
-
-/**
  * State holding information about data being loaded.
  */
 export type LoadingState = {

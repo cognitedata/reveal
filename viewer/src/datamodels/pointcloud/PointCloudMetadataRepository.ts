@@ -31,17 +31,17 @@ export class PointCloudMetadataRepository<TModelIdentifier>
   async loadData(modelIdentifier: TModelIdentifier): Promise<PointCloudMetadata> {
     const idWithFormat = { format: File3dFormat.EptPointCloud, ...modelIdentifier };
     const blobUrlPromise = this._modelMetadataProvider.getModelUrl(idWithFormat);
-    const modelTransformationPromise = this._modelMetadataProvider.getModelTransformation(idWithFormat);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(idWithFormat);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(idWithFormat);
 
     const blobUrl = await blobUrlPromise;
     const scene = await this._modelMetadataProvider.getJsonFile(blobUrl, this._blobFileName);
-    const modelTransformation = await modelTransformationPromise;
+    const modelMatrix = await modelMatrixPromise;
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
       blobUrl,
-      modelTransformation,
-      cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelTransformation),
+      modelMatrix,
+      cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
   }

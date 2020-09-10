@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { SectorMetadata } from '../types';
 import { coverageShaders } from '../../rendering/shaders';
 import { CadModelMetadata } from '../../CadModelMetadata';
-import { toThreeJsBox3, toThreeMatrix4, ModelTransformation, Box3 } from '@/utilities';
+import { toThreeJsBox3, Box3 } from '@/utilities';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -150,7 +150,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
     for (const model of models) {
       const blobUrl = model.blobUrl;
       keepModelIdentifiers.add(blobUrl);
-      if (!this.containers.has(blobUrl)) {
+      const container = this.containers.get(blobUrl);
+      if (container) {
+        this.updateModel(container, model);
+      } else {
         this.addModel(model);
       }
     }
@@ -237,7 +240,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
   private addModel(model: CadModelMetadata) {
     const sectors = model.scene.getAllSectors();
-    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelTransformation);
+    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelMatrix);
     this.containers.set(model.blobUrl, {
       model,
       sectors,
@@ -246,6 +249,13 @@ export class GpuOrderSectorsByVisibilityCoverage {
     });
     this.sectorIdOffset += sectors.length;
     this.scene.add(mesh);
+  }
+
+  private updateModel(container: SectorContainer, model: CadModelMetadata) {
+    if (!container.renderable.matrix.equals(model.modelMatrix)) {
+      container.renderable.matrix.copy(model.modelMatrix);
+      container.renderable.updateMatrixWorld(true);
+    }
   }
 
   private findSectorContainer(sectorIdWithOffset: number): SectorContainer {
@@ -300,11 +310,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
   private createSectorTreeMesh(
     sectorIdOffset: number,
     sectors: SectorMetadata[],
-    modelTransformation: ModelTransformation
+    modelMatrix: THREE.Matrix4
   ): THREE.Object3D {
-    const transformMatrix = toThreeMatrix4(modelTransformation.modelMatrix);
     const group = new THREE.Group();
-    group.applyMatrix4(transformMatrix);
+    group.applyMatrix4(modelMatrix);
 
     const sectorCount = sectors.length;
 

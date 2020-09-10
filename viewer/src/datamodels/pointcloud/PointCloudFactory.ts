@@ -6,7 +6,6 @@ import * as Potree from '@cognite/potree-core';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 
 import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
-import { toThreeMatrix4 } from '@/utilities/';
 import { HttpHeadersProvider } from '@/utilities/networking/HttpHeadersProvider';
 
 export class PointCloudFactory {
@@ -18,7 +17,7 @@ export class PointCloudFactory {
 
   createModel(modelMetadata: PointCloudMetadata): PotreeNodeWrapper {
     this.initializePointCloudXhrRequestHeaders();
-    const { blobUrl, modelTransformation, scene } = modelMetadata;
+    const { blobUrl, modelMatrix, scene } = modelMetadata;
     const geometry = new Potree.PointCloudEptGeometry(blobUrl + '/', scene);
     const x = geometry.offset.x;
     const y = geometry.offset.y;
@@ -29,7 +28,7 @@ export class PointCloudFactory {
 
     const octtree = new Potree.PointCloudOctree(geometry);
     octtree.name = `PointCloudOctree: ${blobUrl}`;
-    octtree.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
+    octtree.applyMatrix(modelMatrix);
     const node = new PotreeNodeWrapper(octtree);
     return node;
   }
