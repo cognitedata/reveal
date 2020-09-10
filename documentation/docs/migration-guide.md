@@ -97,7 +97,7 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 
 ## Preparing models
 
-`@cognite/reveal` requires new output file formats which means that 3D models that have been converted before June 2020 might need reconversion. To determine if a model needs reconversion, the [listModelRevisionOutputs API endpoint](...) can be used with URL parameter `format=reveal-directory`. This can be done using the SDK, e.g.:
+`@cognite/reveal` requires new output file formats which means that 3D models that have been converted before June 2020 might need reconversion. To determine if a model needs reconversion, the [listModelRevisionOutputs API endpoint](https://docs.cognite.com/api/v1/#operation/list3dModelOutputs) can be used with URL parameter `format=reveal-directory`. This can be done using the SDK, e.g.:
 ```jsx
 // Switch these with your project/model identifier
 const project = 'publicdata';
@@ -143,3 +143,4 @@ where `PROJECT`, `MODELID`, `REVISIONID` and `APIKEY` must be set in the environ
 If the model isn't compatible with `@cognite/reveal`, it must be reprocessed. This can be done by [uploading a new revision in Cognite Fusion](https://docs.cognite.com/cdf/3d/guides/3dmodels_upload.html). When uploading a new revision, asset mappings must be recreated. If the node hierarchy in the new revision is identical to the previous model node IDs should be identical and the asset mappings can be copied from one revision to the other by using the [get3DMappings](https://docs.cognite.com/api/v1/#operation/get3DMappings)- and [create3DMappings](https://docs.cognite.com/api/v1/#operation/create3DMappings)-API endpoints.
 
 Another alternative is to use the experimental 'reprocess' endpoint which generates new model outputs for a 3D model and is less intrusive than uploading a new revision. Since this endpoint is experimental it's not publicly exposed in the API yet. Please contact [lars.moastuen@cognite.com](mailto:lars.moastuen@cognite.com) if you want to explore this option.
+
