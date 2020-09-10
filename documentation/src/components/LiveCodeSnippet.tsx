@@ -25,27 +25,39 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
     }, {} as any),
   };
 
-  const prependedCode = `
-      const viewer = window.viewer;
-      const model = window.model;
-      const sdk = window.sdk;
-      if (viewer) resetViewerEventHandlers(viewer);
-      const viewerEl = document.getElementById('demo-wrapper');
-      if (viewerEl) viewerEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      // User code starts here!
-    `;
-
   const { transformCode, children, theme } = props;
   return (
     <LiveProvider
       code={children}
-      transformCode={(code) => {
+      transformCode={(code: string) => {
         const fullCode = `
-            ${prependedCode}
+            // make these things to be available in live-editor
+            const viewer = window.viewer;
+            const model = window.model;
+            const sdk = window.sdk;
+
+            const viewerEl = document.getElementById('demo-wrapper');
+            if (viewerEl) {
+              viewerEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }
+
+            if (viewer) {
+              resetViewerEventHandlers(viewer);
+            } else {
+              alert('Login is required to run examples');
+              return;
+            }
             // User code starts here!
             ${transformCode ? transformCode(code) : code}`;
-
-        return `<button onClick={() => \{${fullCode}\}}>Run</button>`;
+        return `
+          <button
+            type="button"
+            className="button button--primary button--lg"
+            onClick={() => \{${fullCode}\}}
+          >
+            Run
+          </button>
+        `;
       }}
       scope={{ ...scope }}
       theme={theme || defaultCodeTheme}

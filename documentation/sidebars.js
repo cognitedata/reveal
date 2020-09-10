@@ -4,10 +4,10 @@ module.exports = {
       type: 'doc',
       id: 'overview',
     },
-    {
-      type: 'doc',
-      id: 'getting-started',
-    },
+    // {
+    //   type: 'doc',
+    //   id: 'getting-started',
+    // },
     {
       type: 'doc',
       id: 'installation',
