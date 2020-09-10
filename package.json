@@ -9,7 +9,9 @@
     "node": ">=12"
   },
   "files": [
-    "types"
+    "types",
+    "node-visualizer.**",
+    "README.md"
   ],
   "scripts": {
     "build": "webpack --env.debug=false --config webpack.config.build.js",
