@@ -140,4 +140,4 @@ where `PROJECT`, `MODELID`, `REVISIONID` and `APIKEY` must be set in the environ
 }
 ```
 
-If the model isn't compatible with `@cognite/reveal`, it must be reprocessed. This can be done by [uploading a new revision in Cognite Fusion](https://docs.cognite.com/cdf/3d/guides/3dmodels_upload.html).
+If the model isn't compatible with `@cognite/reveal`, it must be reprocessed. This can be done by [uploading a new revision in Cognite Data Fusion](https://docs.cognite.com/cdf/3d/guides/3dmodels_upload.html).
