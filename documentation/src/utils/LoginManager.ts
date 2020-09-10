@@ -24,6 +24,9 @@ class LoginManager {
       appId: 'cognite.reveal.docs.Cognite3DViewer',
     });
 
+    // to make it available in examples
+    window.sdk = this.client;
+
     this.client.loginWithOAuth({
       project: env.project,
       accessToken,
