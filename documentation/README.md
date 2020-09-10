@@ -18,7 +18,7 @@ This command starts a local development server and open up a browser window. Mos
 
 #### .env file
 
-See `.env.sample` to override project or model ids for local development. You need to copy it as `.env` file. It won't be commited.
+See `.env.example` to override project or model ids for local development. You need to copy it as `.env` file. It won't be commited.
 
 ### Build
 
