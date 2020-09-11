@@ -47,6 +47,7 @@ const CommonSelectInput = withStyles((theme: Theme) => ({
 
 const WrappingListItemText = withStyles(() => ({
   primary: {
+    display: "flex",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
