@@ -16,6 +16,8 @@ export class TransformOverrideBuffer {
 
   private _unusedIndices: number[];
 
+  private _treeIndexToOverrideIndex: Map<number, number>;
+
   private _onGenerateNewDataTextureCallback: (datatexture: THREE.DataTexture) => void;
 
   get dataTexture(): THREE.DataTexture {
@@ -36,22 +38,30 @@ export class TransformOverrideBuffer {
     this._onGenerateNewDataTextureCallback = onGenerateNewDataTexture;
 
     this._unusedIndices = [...Array(this.MIN_NUMBER_OF_TREE_INDECES).keys()].map((_, n) => n);
+
+    this._treeIndexToOverrideIndex = new Map();
   }
 
-  public overrideTransform(transform: THREE.Matrix4): number {
-    //TODO christjt - 09/09/2020: Can be made more efficient by
-    //dropping transpose and just accessing correct indecies in the loop
-    const transformBuffer = transform.transpose().toArray();
+  public addOverrideTransform(treeIndex: number, transform: THREE.Matrix4): number {
+    const transformBuffer = transform.toArray();
 
-    let matrixIndex = this._unusedIndices.pop();
+    let matrixIndex: number | undefined;
 
-    if (matrixIndex === undefined) {
-      this.reComputeDataTexture();
-      matrixIndex = this._unusedIndices.pop()!;
+    if (this._treeIndexToOverrideIndex.has(treeIndex)) {
+      matrixIndex = this._treeIndexToOverrideIndex.get(treeIndex)!;
+    } else {
+      matrixIndex = this._unusedIndices.pop();
+
+      if (matrixIndex === undefined) {
+        this.reComputeDataTexture();
+        matrixIndex = this._unusedIndices.pop()!;
+      }
+
+      this._treeIndexToOverrideIndex.set(treeIndex, matrixIndex);
     }
 
     for (let i = 0; i < this.NUMBER_OF_ELEMENTS_PER_MATRIX; i++) {
-      const element = packFloat(transformBuffer[i]);
+      const element = packFloat(transformBuffer[(i % 4) * 4 + Math.floor(i / 4)]);
 
       const byteIndex = (matrixIndex * this.NUMBER_OF_ELEMENTS_PER_MATRIX + i) * this.BYTES_PER_FLOAT;
 
@@ -62,6 +72,15 @@ export class TransformOverrideBuffer {
     }
 
     return matrixIndex;
+  }
+
+  public removeOverrideTransform(treeIndex: number) {
+    if (!this._treeIndexToOverrideIndex.has(treeIndex)) return;
+
+    const matrixIndex = this._treeIndexToOverrideIndex.get(treeIndex)!;
+
+    this._unusedIndices.push(matrixIndex);
+    this._treeIndexToOverrideIndex.delete(matrixIndex);
   }
 
   private reComputeDataTexture() {

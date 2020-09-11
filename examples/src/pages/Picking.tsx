@@ -93,7 +93,7 @@ export function Picking() {
       const boxMaterial = new THREE.MeshPhongMaterial({ color: 'red' });
 
       const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-      scene.add(boxMesh);
+      //scene.add(boxMesh);
 
       // Add some light for the box
       for (const position of [
