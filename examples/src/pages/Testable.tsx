@@ -84,6 +84,17 @@ export function Testable() {
       let { position, target, near, far } = model.suggestCameraConfig();
       let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, 2, near, far);;
 
+      const controls = new CameraControls(camera, renderer.domElement);
+      controls.setLookAt(
+        position.x,
+        position.y,
+        position.z,
+        target.x,
+        target.y,
+        target.z
+      );
+      controls.update(0.0);
+
       // Test presets
       const url = new URL(window.location.href);
       const searchParams = url.searchParams;
@@ -93,6 +104,18 @@ export function Testable() {
         camera = new THREE.PerspectiveCamera();
       } else if (test === "suggested_camera") {
         // Nothing - the suggested camera is default
+      }
+      else if (test === 'rotate_cad_model') {
+        const matrix = model.getModelTransformation();
+        const newMatrix = new THREE.Matrix4().multiplyMatrices(matrix, new THREE.Matrix4().makeRotationY(Math.PI / 3.0));
+        model.setModelTransformation(newMatrix);
+        const cameraConfig = model.suggestCameraConfig();
+        camera.near = cameraConfig.near;
+        camera.far = cameraConfig.far;
+        const { position, target } = cameraConfig;
+        controls.setPosition(position.x, position.y, position.z);
+        controls.setTarget(target.x, target.y, target.z);
+        controls.update(0.0);
       }
       else if (test === "highlight") {
         camera = new THREE.PerspectiveCamera();
@@ -135,16 +158,6 @@ export function Testable() {
         revealManager.clipIntersection = boxClipper.intersection;
       }
 
-      const controls = new CameraControls(camera, renderer.domElement);
-      controls.setLookAt(
-        position.x,
-        position.y,
-        position.z,
-        target.x,
-        target.y,
-        target.z
-      );
-      controls.update(0.0);
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
