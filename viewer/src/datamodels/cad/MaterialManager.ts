@@ -129,16 +129,15 @@ export class MaterialManager {
       materials.overrideColorPerTreeIndex.needsUpdate = true;
     }
 
-    const testMat = new THREE.Matrix4();
-    //testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
-    testMat.setPosition(0, 10, 0);
-    this.overrideTreeIndexTransform(
-      1,
-      testMat,
-      materials.transformOverrideIndexTexture,
-      materials.transformOverrideBuffer
-    );
-
+    // const testMat = new THREE.Matrix4();
+    // testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
+    // //testMat.setPosition(0, 10, 0);
+    // this.overrideTreeIndexTransform(
+    //   0,
+    //   testMat,
+    //   materials.transformOverrideIndexTexture,
+    //   materials.transformOverrideBuffer
+    // );
     // this.overrideTreeIndexTransform(
     //   39,
     //   testMat,

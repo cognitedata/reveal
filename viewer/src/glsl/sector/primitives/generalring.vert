@@ -28,6 +28,9 @@ uniform vec2 treeIndexTextureSize;
 
 uniform sampler2D transformOverrideIndexTexture;
 
+uniform vec2 transformOverrideTextureSize; 
+uniform sampler2D transformOverrideTexture;
+
 void main() {
     mat4 instanceMatrix = constructMatrix(
         a_instanceMatrix_column_0,
@@ -42,11 +45,13 @@ void main() {
     v_angle = a_angle;
     v_arcAngle = a_arcAngle;
 
-    float treeIndex = floor(a_treeIndex + 0.5);
-    float dataTextureWidth = treeIndexTextureSize.x;
-    float dataTextureHeight = treeIndexTextureSize.y;
-
-    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, transformOverrideIndexTexture);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
 
     vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 mvPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4( transformed, 1.0 );

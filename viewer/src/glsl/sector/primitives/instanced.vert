@@ -38,11 +38,6 @@ void main()
       transformOverrideTexture
     );
 
-    // if(treeIndexWorldTransform[0][0] == 15.0){
-    //   gl_Position = vec4(0.0);
-    //   return;
-    // }
-
     v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;

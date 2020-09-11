@@ -33,13 +33,18 @@ uniform vec2 treeIndexTextureSize;
 
 uniform sampler2D transformOverrideIndexTexture;
 
+uniform vec2 transformOverrideTextureSize; 
+uniform sampler2D transformOverrideTexture;
+
 void main() {
 
-    float treeIndex = floor(a_treeIndex + 0.5);
-    float dataTextureWidth = treeIndexTextureSize.x;
-    float dataTextureHeight = treeIndexTextureSize.y;
-
-    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndex, dataTextureWidth, dataTextureHeight, transformOverrideIndexTexture);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
 
     mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
 

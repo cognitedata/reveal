@@ -17,12 +17,18 @@ uniform vec2 treeIndexTextureSize;
 
 uniform sampler2D transformOverrideIndexTexture;
 
-void main() {
-    float treeIndexRounded = floor(treeIndex + 0.5);
-    float dataTextureWidth = treeIndexTextureSize.x;
-    float dataTextureHeight = treeIndexTextureSize.y;
+uniform vec2 transformOverrideTextureSize; 
+uniform sampler2D transformOverrideTexture;
 
-    mat4 treeIndexWorldTransform = determineMatrixOverride(treeIndexRounded, dataTextureWidth, dataTextureHeight, transformOverrideIndexTexture);
+void main() {
+    
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
 
     v_treeIndex = treeIndex;
     v_color = color;
