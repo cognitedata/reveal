@@ -22,32 +22,4 @@
     z-index: 3;
     flex: 1;
   }
-
-
-  /* Tweak expansion panel */
-
-  .MuiAccordion-root {
-    border-radius: 0 !important;
-  }
-
-  .MuiAccordionSummary-root{
-    background: var(--node-viz-expansion-header-background, variables.$expansion-header-background);
-    color: var(--node-viz-expansion-header-color, variables.$expansion-header-color);
-  }
-
-  .MuiAccordionSummary-content,
-  .MuiAccordion-root.Mui-expanded {
-    margin: 0 !important;
-  }
-
-  .MuiCollapse-wrapperInner {
-    position: relative;
-  }
-
-  .MuiAccordionDetails-root {
-    padding: 0 !important;
-    display: block !important;
-    background: var(--node-viz-expansion-detail-background, variables.$expansion-detail-background);
-    color: var(--node-viz-expansion-detail-color, variables.$expansion-detail-color);
-  }
 }
