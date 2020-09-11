@@ -155,8 +155,9 @@ export function Testable() {
         target.z
       );
       controls.update(0.0);
-      camera.near = near;
-      camera.far = far;
+      // camera.near = near;
+      // camera.far = far;
+      // camera.updateProjectionMatrix();
 
       camera.updateMatrixWorld();
       revealManager.update(camera);
