@@ -72,6 +72,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   private readonly cadModel: CadModelMetadata;
   private readonly nodeColors: Map<number, [number, number, number]>;
+  private readonly nodeTransforms: Map<number, { position: THREE.Vector3; rotation: THREE.Euler }>;
+
   private readonly selectedNodes: Set<number>;
   private readonly hiddenNodes: Set<number>;
   private readonly client: CogniteClient;
@@ -85,6 +87,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
     this.nodeColors = new Map();
+    this.nodeTransforms = new Map();
     this.hiddenNodes = new Set();
     this.selectedNodes = new Set();
     const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
@@ -101,6 +104,18 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         }
         if (this.selectedNodes.has(treeIndex)) {
           style = { ...style, ...DefaultNodeAppearance.Highlighted };
+        }
+
+        // if (treeIndex == 599) {
+        //   style = {
+        //     ...style,
+        //     worldTransform: { position: new THREE.Vector3(0, 50, 0), rotation: new THREE.Euler(0, 0, 0) }
+        //   };
+        // }
+
+        if (this.nodeTransforms.has(treeIndex)) {
+          style = { ...style, worldTransform: this.nodeTransforms.get(treeIndex)! };
+          console.log('test', style);
         }
         return style;
       }
@@ -461,6 +476,18 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const selectedNodes = Array.from(this.selectedNodes);
     this.selectedNodes.clear();
     this.cadNode.requestNodeUpdate(selectedNodes);
+  }
+
+  setNodeTransformByTreeIndex(treeIndex: number, position: THREE.Vector3, rotation: THREE.Euler) {
+    this.nodeTransforms.set(treeIndex, { position, rotation });
+    this.cadNode.requestNodeUpdate([treeIndex]);
+  }
+
+  resetNodeTransformByTreeIndex(treeIndex: number) {
+    if (!this.nodeTransforms.has(treeIndex)) return;
+
+    this.nodeTransforms.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   /**

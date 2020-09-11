@@ -167,6 +167,8 @@ export class MaterialManager {
     indexTexture.image.data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
     indexTexture.image.data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
     indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
+
+    indexTexture.needsUpdate = true;
   }
 
   private removeOverrideTreeIndexTransform(

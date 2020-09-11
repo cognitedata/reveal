@@ -71,6 +71,8 @@ export class TransformOverrideBuffer {
       this._dataTexture.image.data[byteIndex + 3] = element.w;
     }
 
+    this._dataTexture.needsUpdate = true;
+
     return matrixIndex;
   }
 
