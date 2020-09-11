@@ -52,8 +52,6 @@ export class TransformOverrideBuffer {
       this._dataTexture.image.data[byteIndex + 2] = element.z;
       this._dataTexture.image.data[byteIndex + 3] = element.w;
     }
-    //TODO christjt - 09/09/2020: check if this is actually needed
-    this._dataTexture.needsUpdate = true;
 
     return matrixIndex;
   }
