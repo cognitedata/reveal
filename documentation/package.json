@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-documentation",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "author": "Maksim Nesterenko <maksim.nesterenko@cognite.com>",
   "contributors": [
