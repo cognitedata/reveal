@@ -128,11 +128,9 @@ export class MaterialManager {
         (style.outlineColor ? style.outlineColor << 2 : 0);
       materials.overrideColorPerTreeIndex.needsUpdate = true;
 
-      if (i > 18 || i < 8) continue;
-
       const testMat = new THREE.Matrix4();
-      testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
-      //testMat.setPosition(0, 10, 0);
+      //testMat.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 2.1, 0));
+      testMat.setPosition(0, 10, 0);
       this.overrideTreeIndexTransform(
         i,
         testMat,
@@ -140,13 +138,6 @@ export class MaterialManager {
         materials.transformOverrideBuffer
       );
     }
-
-    // this.overrideTreeIndexTransform(
-    //   39,
-    //   testMat,
-    //   materials.transformOverrideIndexTexture,
-    //   materials.transformOverrideBuffer
-    // );
   }
 
   private overrideTreeIndexTransform(
@@ -157,9 +148,15 @@ export class MaterialManager {
   ) {
     const transformIndex = transformTextureBuffer.overrideTransform(transform);
 
-    indexTexture.image.data[treeIndex * 3 + 0] = transformIndex >> 16;
-    indexTexture.image.data[treeIndex * 3 + 1] = transformIndex >> 8;
-    indexTexture.image.data[treeIndex * 3 + 2] = transformIndex >> 0;
+    indexTexture.image.data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
+    indexTexture.image.data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
+    indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
+  }
+
+  private removeOverrideTreeIndexTransform(treeIndex: number, indexTexture: THREE.DataTexture) {
+    indexTexture.image.data[treeIndex * 3 + 0] = 0;
+    indexTexture.image.data[treeIndex * 3 + 1] = 0;
+    indexTexture.image.data[treeIndex * 3 + 2] = 0;
   }
 
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {

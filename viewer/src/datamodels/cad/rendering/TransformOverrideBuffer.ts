@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { packFloat } from '@/utilities/packFloatToVec4';
+import { determinePowerOfTwoDimensions } from '@/utilities/determinePowerOfTwoDimensions';
 
 export class TransformOverrideBuffer {
   private readonly MIN_NUMBER_OF_TREE_INDECES = 16;
@@ -15,11 +16,13 @@ export class TransformOverrideBuffer {
 
   private _unusedIndices: number[];
 
+  private _onGenerateNewDataTextureCallback: (datatexture: THREE.DataTexture) => void;
+
   get dataTexture(): THREE.DataTexture {
     return this._dataTexture;
   }
 
-  constructor() {
+  constructor(onGenerateNewDataTexture: (datatexture: THREE.DataTexture) => void) {
     this._textureBuffer = new Uint8Array(
       this.MIN_NUMBER_OF_TREE_INDECES * this.NUMBER_OF_ELEMENTS_PER_MATRIX * this.BYTES_PER_FLOAT
     );
@@ -30,6 +33,8 @@ export class TransformOverrideBuffer {
       this.MIN_NUMBER_OF_TREE_INDECES
     );
 
+    this._onGenerateNewDataTextureCallback = onGenerateNewDataTexture;
+
     this._unusedIndices = [...Array(this.MIN_NUMBER_OF_TREE_INDECES).keys()].map((_, n) => n);
   }
 
@@ -38,9 +43,12 @@ export class TransformOverrideBuffer {
     //dropping transpose and just accessing correct indecies in the loop
     const transformBuffer = transform.transpose().toArray();
 
-    const matrixIndex = this._unusedIndices.pop();
+    let matrixIndex = this._unusedIndices.pop();
 
-    if (!matrixIndex) throw new Error('Matrix-override buffer is full');
+    if (matrixIndex === undefined) {
+      this.reComputeDataTexture();
+      matrixIndex = this._unusedIndices.pop()!;
+    }
 
     for (let i = 0; i < this.NUMBER_OF_ELEMENTS_PER_MATRIX; i++) {
       const element = packFloat(transformBuffer[i]);
@@ -54,5 +62,27 @@ export class TransformOverrideBuffer {
     }
 
     return matrixIndex;
+  }
+
+  private reComputeDataTexture() {
+    const currentTextureBufferLength = this._textureBuffer.length;
+
+    const newTextureBuffer = new Uint8Array(currentTextureBufferLength * 2);
+
+    newTextureBuffer.set(this._textureBuffer);
+
+    const textureDims = determinePowerOfTwoDimensions((currentTextureBufferLength * 2) / this.BYTES_PER_FLOAT);
+
+    const newDataTexture = new THREE.DataTexture(newTextureBuffer, textureDims.width, textureDims.height);
+
+    const numberOfNewTreeIndices =
+      currentTextureBufferLength / (this.BYTES_PER_FLOAT * this.NUMBER_OF_ELEMENTS_PER_MATRIX);
+
+    this._unusedIndices.push(...[...Array(numberOfNewTreeIndices).keys()].map((_, n) => n + numberOfNewTreeIndices));
+
+    this._textureBuffer = newTextureBuffer;
+    this._dataTexture = newDataTexture;
+
+    this._onGenerateNewDataTextureCallback(newDataTexture);
   }
 }

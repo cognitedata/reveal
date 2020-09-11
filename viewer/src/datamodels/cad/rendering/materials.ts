@@ -47,8 +47,6 @@ export function createMaterials(
   }
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
 
-  const transformOverrideBuffer = new TransformOverrideBuffer();
-
   const transformOverrideIndexBuffer = new Uint8Array(textureElementCount * 3);
 
   const transformOverrideIndexTexture = new THREE.DataTexture(
@@ -277,6 +275,20 @@ export function createMaterials(
     triangleMesh: triangleMeshMaterial,
     simple: simpleMaterial
   };
+
+  const transformOverrideBuffer = new TransformOverrideBuffer((newOverrideDataTexture: THREE.DataTexture) => {
+    for (const material of Object.values(allMaterials)) {
+      updateDefinesAndUniforms(
+        material,
+        treeIndexTextureSize,
+        overrideColorPerTreeIndex,
+        transformOverrideIndexTexture,
+        newOverrideDataTexture,
+        matCapTexture,
+        renderMode
+      );
+    }
+  });
 
   for (const material of Object.values(allMaterials)) {
     updateDefinesAndUniforms(

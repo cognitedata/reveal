@@ -29,16 +29,18 @@ mat4 determineMatrixOverride(
     vec3 indexTexel = texture2D(transformOverrideIndexTexture, indexUV).rgb;
 
     float index = floor(indexTexel.r * 256.0) * 65536.0  + floor(indexTexel.g * 256.0) * 256.0 + floor(indexTexel.b * 256.0);
-
+    
+    
     if(index == 0.0){
       return mat4(
-      1.0, 0.0, 0.0, 0.0,
-      0.0, 1.0, 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      0.0, 0.0, 0.0, 1.0
-    );
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0
+      );
     }
 
+    index = index - 1.0;
     float overridesPerRow = transformOverrideTextureSize.x / 16.0;
 
     float xOverrideTextureCoord = mod(index, overridesPerRow);

@@ -151,6 +151,8 @@ export function Picking() {
             return;
           }
 
+          console.log(intersections[0].treeIndex);
+
           scene.add(createSphere(intersections[0]!.point, 'purple'));
 
           return intersections[0];

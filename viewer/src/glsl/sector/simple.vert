@@ -23,7 +23,7 @@ uniform sampler2D transformOverrideTexture;
 void main() {
     
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
+      treeIndex, 
       treeIndexTextureSize, 
       transformOverrideIndexTexture, 
       transformOverrideTextureSize, 
