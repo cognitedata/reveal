@@ -252,10 +252,8 @@ export class GpuOrderSectorsByVisibilityCoverage {
   }
 
   private updateModel(container: SectorContainer, model: CadModelMetadata) {
-    if (!container.renderable.matrix.equals(model.modelMatrix)) {
-      container.renderable.matrix.copy(model.modelMatrix);
-      container.renderable.updateMatrixWorld(true);
-    }
+    container.renderable.matrix.copy(model.modelMatrix);
+    container.renderable.updateMatrixWorld(true);
   }
 
   private findSectorContainer(sectorIdWithOffset: number): SectorContainer {
@@ -313,7 +311,9 @@ export class GpuOrderSectorsByVisibilityCoverage {
     modelMatrix: THREE.Matrix4
   ): THREE.Object3D {
     const group = new THREE.Group();
+    group.matrixAutoUpdate = false;
     group.applyMatrix4(modelMatrix);
+    group.updateMatrixWorld();
 
     const sectorCount = sectors.length;
 

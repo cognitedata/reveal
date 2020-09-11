@@ -155,6 +155,7 @@ export class CadNode extends THREE.Object3D {
    */
   setModelTransformation(matrix: THREE.Matrix4): void {
     this._rootSector.setModelTransformation(matrix);
+    this._cadModelMetadata.modelMatrix.copy(matrix);
     this._boundingBoxNode.matrix.copy(matrix);
     this._boundingBoxNode.updateMatrixWorld(true);
   }
