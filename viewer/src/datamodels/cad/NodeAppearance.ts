@@ -32,6 +32,11 @@ export type NodeAppearance = {
    * node to make it stand out.
    */
   readonly outlineColor?: OutlineColor;
+  /**
+   * When set, a position and rotation is applied
+   * to the node in world space.
+   */
+  readonly worldTransform?: { position: THREE.Vector3; rotation: THREE.Euler };
 };
 
 export interface NodeAppearanceProvider {

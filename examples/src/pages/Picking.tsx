@@ -93,7 +93,7 @@ export function Picking() {
       const boxMaterial = new THREE.MeshPhongMaterial({ color: 'red' });
 
       const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-      //scene.add(boxMesh);
+      scene.add(boxMesh);
 
       // Add some light for the box
       for (const position of [
@@ -150,8 +150,6 @@ export function Picking() {
           if (intersections.length === 0) {
             return;
           }
-
-          console.log(intersections[0].treeIndex);
 
           scene.add(createSphere(intersections[0]!.point, 'purple'));
 

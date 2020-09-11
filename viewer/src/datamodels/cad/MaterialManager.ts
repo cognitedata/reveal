@@ -127,7 +127,33 @@ export class MaterialManager {
         (style.renderInFront ? 1 << 1 : 0) +
         (style.outlineColor ? style.outlineColor << 2 : 0);
       materials.overrideColorPerTreeIndex.needsUpdate = true;
+
+      if (style.worldTransform === undefined) {
+        this.removeOverrideTreeIndexTransform(
+          treeIndex,
+          materials.transformOverrideIndexTexture,
+          materials.transformOverrideBuffer
+        );
+      } else {
+        const overrideMatrix = this.buildMatrixFromTranslationAndRotation(
+          style.worldTransform.position,
+          style.worldTransform.rotation
+        );
+        this.overrideTreeIndexTransform(
+          treeIndex,
+          overrideMatrix,
+          materials.transformOverrideIndexTexture,
+          materials.transformOverrideBuffer
+        );
+      }
     }
+  }
+
+  private buildMatrixFromTranslationAndRotation(translation: THREE.Vector3, rotation: THREE.Euler): THREE.Matrix4 {
+    const matrix = new THREE.Matrix4();
+    matrix.makeRotationFromEuler(rotation);
+    matrix.setPosition(translation);
+    return matrix;
   }
 
   private overrideTreeIndexTransform(
