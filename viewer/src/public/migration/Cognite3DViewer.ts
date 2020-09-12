@@ -1005,7 +1005,7 @@ export class Cognite3DViewer {
       renderController.update();
       this._revealManager.update(this.camera);
 
-      if (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
+      if (true || renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
         this.triggerUpdateCameraNearAndFar();
         this._revealManager.render(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();

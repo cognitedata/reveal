@@ -222,6 +222,7 @@ export class EffectRenderManager {
   }
 
   private renderTargetToCanvas(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    this._combineEdgeDetectionMaterial.uniforms['time'] = { value: performance.now() / 1000 };
     this._combineEdgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
     this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
 

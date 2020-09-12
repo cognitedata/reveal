@@ -23,6 +23,8 @@ uniform sampler2D tOutlineColors;
 uniform float cameraNear;
 uniform float cameraFar;
 
+uniform float time;
+
 const float infinity = 1e20;
 
 float readDepth( sampler2D depthSampler, vec2 coord ) {
@@ -47,7 +49,9 @@ void main() {
       && frontOutlineIndex > 0.0) 
   { 
     float borderColorIndex = max(max(frontOutlineIndex0, frontOutlineIndex1), max(frontOutlineIndex2, frontOutlineIndex3));
-    gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+    vec4 outlineColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+    float t = mod(time, 1.0);
+    gl_FragColor = sin(3.14* (1.0 - t)) * vec4(1.0, 0.0, 0.0, 0.0) + sin(3.14*t) * outlineColor;
     return;
   }
 
