@@ -17,7 +17,7 @@ export class PointCloudFactory {
 
   createModel(modelMetadata: PointCloudMetadata): PotreeNodeWrapper {
     this.initializePointCloudXhrRequestHeaders();
-    const { blobUrl, modelMatrix, scene } = modelMetadata;
+    const { blobUrl, scene } = modelMetadata;
     const geometry = new Potree.PointCloudEptGeometry(blobUrl + '/', scene);
     const x = geometry.offset.x;
     const y = geometry.offset.y;
@@ -28,7 +28,6 @@ export class PointCloudFactory {
 
     const octtree = new Potree.PointCloudOctree(geometry);
     octtree.name = `PointCloudOctree: ${blobUrl}`;
-    octtree.applyMatrix(modelMatrix);
     const node = new PotreeNodeWrapper(octtree);
     return node;
   }

@@ -15,6 +15,8 @@ import {
   CognitePointCloudModel,
 } from '@cognite/reveal';
 
+window.THREE = THREE;
+
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -107,7 +109,6 @@ export function Migration() {
             revisionId: guiState.revisionId,
           }),
         rotateModel: () => {
-          debugger;
           (window as any).THREE = THREE;
           const rotation = new THREE.Matrix4();
           rotation.makeRotationY(Math.PI / 2.0);
@@ -115,11 +116,6 @@ export function Migration() {
             const matrix: THREE.Matrix4 = m.getModelTransformation();
             matrix.multiply(rotation);
             m.setModelTransformation(matrix);
-          });
-          pointCloudModels.forEach(m => {
-          // const matrix: THREE.Matrix4 = m.getModelTransformation();
-            // matrix.multiply(rotation);
-            m.setModelTransformation(rotation);
           });
         }
       };
