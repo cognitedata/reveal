@@ -24,6 +24,8 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode = potreeNode;
     this._cameraConfiguration = cameraConfiguration;
     this.add(this._potreeGroup);
+
+    this.matrixAutoUpdate = false;
   }
 
   get potreeGroup(): PotreeGroupWrapper {
@@ -91,6 +93,18 @@ export class PointCloudNode extends THREE.Group {
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    return toThreeJsBox3(outBbox || new THREE.Box3(), this._potreeNode.boundingBox);
+    outBbox = toThreeJsBox3(outBbox || new THREE.Box3(), this._potreeNode.boundingBox);
+    outBbox.applyMatrix4(this.matrixWorld);
+    return outBbox;
+  }
+
+  setModelTransformation(matrix: THREE.Matrix4): void {
+    this.matrix.copy(matrix);
+    this.updateMatrixWorld(true);
+  }
+
+  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    out = out || new THREE.Matrix4();
+    return out.copy(this.matrix);
   }
 }

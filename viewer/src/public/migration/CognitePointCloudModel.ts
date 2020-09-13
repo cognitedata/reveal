@@ -64,6 +64,22 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     return this.pointCloudNode.cameraConfiguration;
   }
 
+  /**
+   * Sets transformation matrix of the model. This overrides the current transformation.
+   * @param matrix Transformation matrix.
+   */
+  setModelTransformation(matrix: THREE.Matrix4): void {
+    this.pointCloudNode.setModelTransformation(matrix);
+  }
+
+  /**
+   * Gets transformation matrix of the model
+   * @param out Preallocated `THREE.Matrix4` (optional).
+   */
+  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this.pointCloudNode.getModelTransformation(out);
+  }
+
   get pointBudget(): number {
     return this.pointCloudNode.pointBudget;
   }
