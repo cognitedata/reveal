@@ -77,6 +77,7 @@ export class CadNode extends THREE.Object3D {
 
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
+    this.setModelTransformation(model.modelMatrix);
   }
 
   get clippingPlanes(): THREE.Plane[] {
