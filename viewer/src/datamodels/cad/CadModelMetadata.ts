@@ -9,7 +9,6 @@ import { CameraConfiguration } from '@/utilities';
 export interface CadModelMetadata {
   blobUrl: string;
   modelMatrix: THREE.Matrix4;
-  // modelTransformation: ModelTransformation;
   cameraConfiguration?: CameraConfiguration;
   scene: SectorScene;
 }
