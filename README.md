@@ -94,12 +94,78 @@ npm unlink
 In case when you need to change and test the latest changes in parser-worker
 consult [parser-worker/README.md](parser-worker/README.md)
 
-## Publishing Viewer
+## Publishing packages
 
-To publish a new version of a viewer follow these steps.
-1) Create new release branch or check out existing release branch
-> **Note**: A release branch is prefixed by `release/` and followed by the major and minor number, e.g. `release/0.8`.
-2) Bump up the version in the `viewer/package.json` file
-> **Note**: When bumping up major and minor version remember that you need to make a new release branch.
-3) Change directory to the viewer folder, `cd viewer`
-4) Run in terminal `yarn publishscript`
+To publish a new version of `@cognite/reveal` or `@cognite/reveal-parser-worker` follow the steps below
+(example is for the viewer package, but commands are the same for parser-worker except folder name).
+
+### Git setup
+
+Checkout at some stable revision that you want to release (normally, the latest state from master)
+and create a new branch from it. 
+
+```bash
+git checkout master
+git pull
+git checkout -b <your_username>/<package-name>@<version_to_release>
+```
+
+### Bump version and create a PR
+
+Navigate to the `viewer` (or `parser-worker`) folder and run `yarn bump` script 
+
+```bash
+cd viewer
+
+# it will ask you to enter a new version number
+yarn bump
+```
+
+The version you specified will be committed and pushed to the remote repository among with the version tag.
+Create a PR with the changes.
+
+**Don't merge it yet**, but wait for the CI checks to complete.
+
+### Publish to NPM
+
+Once CI checks are completed – go ahead and publish the package to npm.
+
+Stay on your local branch `<your_username>/<package-name>@<version_to_release>`
+
+Make sure you have access to package publishing.
+
+```bash
+# find package name in the list 
+npm access ls-packages | grep 'reveal'
+``` 
+
+If you see `"@cognite/<package-name>": "read-write"` you're good to go. 
+If you don't have access, then you need to create a PR where you add your npm username to access file. See [that PR](https://github.com/cognitedata/terraform-npm/pull/14/files) for example.
+
+If you are not currently logged into npm on your CLI, do the following:
+* Run `npm login` (must be `npm login`, not `yarn login`).
+* Enter your npm username and password.
+* Enable [2FA](https://docs.npmjs.com/configuring-two-factor-authentication) for your npm account. 
+    You will need to enter one time password (OTP) to publish a package.
+
+Once logged in, run:
+
+```bash
+yarn release
+```
+
+It creates a build, copies package.json into /dist with modifications and runs npm publish from viewer/dist.
+
+Now, if published successfully, **merge the pull request**.
+
+### Create a release on GitHub
+
+1. Go to [https://github.com/cognitedata/reveal/releases/new](https://github.com/cognitedata/reveal/releases/new)
+1. Under the "Tag version" field, look for the newly-created tag, e.g. `@cognite/reveal@1.0.1`
+1. Specify the same release title as the tag name.
+1. Write the changes that new version brings. Get inspired by done tasks from your spring board. 
+Also, you can check what's committed from the previous tag with that command:
+    ```bash
+    git log --pretty=format:"%s <%an> – %h" v1.0.0...HEAD
+    ```
+1. Hit the green "Publish release" button
