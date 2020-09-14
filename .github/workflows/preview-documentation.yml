@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
         with:
           persist-credentials: false
+          path: reveal
 
       - name: Initialize variables
         run: |
@@ -22,7 +23,7 @@ jobs:
           echo "::set-env name=PR_NUMBER::$PR_NUMBER"
 
       - name: Build Reveal
-        working-directory: viewer
+        working-directory: reveal/viewer
         run: |
           yarn
           yarn build:prod
@@ -42,26 +43,44 @@ jobs:
           include: "docusaurus.config.js"
 
       - name: Install and Build documentation 🔧
-        working-directory: documentation
+        working-directory: reveal/documentation
         run: |
           yarn
           yarn build
 
       - name: Create preview folder structure
-        working-directory: documentation
+        working-directory: reveal/documentation
         run: |
           mkdir -p "docs-preview/$PR_NUMBER"
           ls "docs-preview/"
           cp -R build/* "docs-preview/$PR_NUMBER/"
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2 
         with:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: master # The branch the action should deploy to.
-          FOLDER: documentation/docs-preview # The folder the action should deploy.
-          REPOSITORY_NAME: cognitedata/reveal-docs-preview
-          BASE_BRANCH: master
+          repository: cognitedata/reveal-docs-preview
+          path: reveal-docs-preview
+          persist-credentials: false
+          ref: master
+
+      - name: Copy build docs to preview documentation 
+        run: |
+          cp -R reveal/documentation/docs-preview/* reveal-docs-preview/
+
+      - name: Deploy 🚀
+        working-directory: reveal-docs-preview
+        run: |
+          ls -l reveal-docs-preview/
+
+
+      # - name: Deploy 🚀
+      #   uses: JamesIves/github-pages-deploy-action@releases/v3
+      #   with:
+      #     ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      #     BRANCH: master # The branch the action should deploy to.
+      #     FOLDER: documentation/docs-preview # The folder the action should deploy.
+      #     REPOSITORY_NAME: cognitedata/reveal-docs-preview
+      #     BASE_BRANCH: master
 
       - name: Add comment about preview URL
         uses: unsplash/comment-on-pr@master
