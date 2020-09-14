@@ -95,7 +95,7 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
 
-# Preparing models
+## Preparing models
 
 `@cognite/reveal` requires new output file formats which means that 3D models that have been converted before June 2020 might need reconversion. To determine if a model needs reconversion, the [listModelRevisionOutputs API endpoint](https://docs.cognite.com/api/v1/#operation/list3dModelOutputs) can be used with URL parameter `format=reveal-directory`. This can be done using the SDK, e.g.:
 ```jsx
