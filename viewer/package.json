@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "repository": {
@@ -13,21 +13,24 @@
   "types": "index.d.ts",
   "scripts": {
     "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
-    "build:prod": "yarn run mkdist && webpack",
+    "build:prod": "yarn run mkdist && webpack && node script/copyPackage.js",
     "build:watch": "yarn run build -- --watch",
     "serve": "cd ../parser-worker && yarn && yarn build && cd ../examples && yarn && yarn start",
-    "mkdist": "run-script-os",
+    "mkdist": "npx run-script-os",
     "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md, LICENSE -Destination dist;$?)",
-    "mkdist:linux:darwin": "mkdir -p dist && cp package.json README.md LICENSE dist",
+    "mkdist:default": "mkdir -p dist && cp package.json README.md LICENSE dist",
     "clean": "rimraf -rf dist/ ../target ../parser-worker/pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
     "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
     "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
-    "prepublishscript": "yarn run build:prod && yarn run coverage",
-    "publishscript": "node script/copyPackage.js",
-    "postpublishscript": "cd dist && yarn publish"
+    "prebump": "yarn version --no-git-tag-version && yarn",
+    "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
+    "bump:commit": "git commit -am \"chore(viewer): bump version ${npm_package_version}\"",
+    "bump:tag": "git tag $npm_package_name@$npm_package_version",
+    "bump:push": "git push -u origin head && git push --tags",
+    "release": "yarn build:prod && cd dist && npm publish --dry-run --non-interactive"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
