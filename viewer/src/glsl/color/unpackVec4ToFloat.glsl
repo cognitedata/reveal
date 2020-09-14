@@ -1,13 +1,12 @@
+// https://stackoverflow.com/questions/7059962/how-do-i-convert-a-vec4-rgba-value-to-a-float @ Arjan
 float unpackVec4ToFloat( vec4 packedFloat)
 {
-    float sign = step(-128.0, -packedFloat[1]) * 2.0 - 1.0;
-    float exponent = packedFloat[0] - 127.0;    
-    if (abs(exponent + 127.0) < 0.001){
-        return 0.0;           
-    }
-
-    float mantissa = mod(packedFloat[1], 128.0) * 65536.0 + packedFloat[2] * 256.0 + packedFloat[3] + 8388608.0; //8388608.0 == 0x800000
-    return sign * exp2(exponent-23.0) * mantissa ;     
+  vec4 rgba = packedFloat;
+  float sign = 1.0 - step(128.0, rgba.x) * 2.0;
+  float exponent = 2.0 * mod(rgba.x, 128.0) + step(128.0, rgba.y) - 127.0;
+  if (exponent == -127.0) return 0.0;
+  float mantissa = mod(rgba.y, 128.0) * 65536.0 + rgba.z * 256.0 + rgba.w + 8388608.0;
+  return sign * exp2(exponent - 23.0) * mantissa;   
 }
 
 #pragma glslify: export(unpackVec4ToFloat)
