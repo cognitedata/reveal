@@ -82,7 +82,7 @@ The API for accessing node information has not changed `@cognite/3d-viewer`, but
 
 In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed 
 in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to 
-determine `nodeId` use `async Cognite3DModel.mapNodeId(nodeId)`).
+determine `nodeId` use `async Cognite3DModel.mapTreeIndexToNodeId(treeIndex)`).
 
 ## Other differences
 
@@ -91,3 +91,6 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - `@cognite/3d-viewer` supports local caching to reduce the time to load previously opened 3D models. Currently, this is not supported by `@cognite/reveal`, but the need for such functionality is reduced by adding streaming capabilities.
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
+
+- Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function no longer accepts a `onProgress` parameter
+- If you were accessing the private property `_camera` in the past, you can do so now by using `viewer.getCamera()`
