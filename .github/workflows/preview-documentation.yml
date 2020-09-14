@@ -71,6 +71,8 @@ jobs:
       - name: Deploy 🚀
         working-directory: reveal-docs-preview
         run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
           git add -A ${{ env.PR_NUMBER }}
           git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }}"
           git push
