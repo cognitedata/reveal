@@ -105,17 +105,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         if (this.selectedNodes.has(treeIndex)) {
           style = { ...style, ...DefaultNodeAppearance.Highlighted };
         }
-
-        // if (treeIndex == 599) {
-        //   style = {
-        //     ...style,
-        //     worldTransform: { position: new THREE.Vector3(0, 50, 0), rotation: new THREE.Euler(0, 0, 0) }
-        //   };
-        // }
-
         if (this.nodeTransforms.has(treeIndex)) {
           style = { ...style, worldTransform: this.nodeTransforms.get(treeIndex)! };
-          console.log('test', style);
         }
         return style;
       }
@@ -478,9 +469,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate(selectedNodes);
   }
 
-  setNodeTransformByTreeIndex(treeIndex: number, position: THREE.Vector3, rotation: THREE.Euler) {
-    this.nodeTransforms.set(treeIndex, { position, rotation });
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async setNodeTransformByTreeIndex(
+    treeIndex: number,
+    position: THREE.Vector3,
+    rotation: THREE.Euler,
+    applyToChildren = true
+  ) {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.nodeTransforms.set(idx, { position, rotation }));
+    this.cadNode.requestNodeUpdate(treeIndices);
   }
 
   resetNodeTransformByTreeIndex(treeIndex: number) {

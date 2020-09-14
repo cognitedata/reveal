@@ -99,7 +99,9 @@ export class TransformOverrideBuffer {
     const numberOfNewTreeIndices =
       currentTextureBufferLength / (this.BYTES_PER_FLOAT * this.NUMBER_OF_ELEMENTS_PER_MATRIX);
 
-    this._unusedIndices.push(...[...Array(numberOfNewTreeIndices).keys()].map((_, n) => n + numberOfNewTreeIndices));
+    for (let i = numberOfNewTreeIndices; i < numberOfNewTreeIndices * 2; i++) {
+      this._unusedIndices.push(i);
+    }
 
     this._textureBuffer = newTextureBuffer;
     this._dataTexture = newDataTexture;
