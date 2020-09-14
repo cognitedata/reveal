@@ -55,10 +55,11 @@ jobs:
           ls "docs-preview/"
           cp -R build/* "docs-preview/$PR_NUMBER/"
 
-      - name: Checkout 🛎️
+      - name: Checkout reveal-docs-preview 🛎️
         uses: actions/checkout@v2 
         with:
           repository: cognitedata/reveal-docs-preview
+          token: ${{ secrets.ACCESS_TOKEN }}
           path: reveal-docs-preview
           persist-credentials: false
           ref: master
