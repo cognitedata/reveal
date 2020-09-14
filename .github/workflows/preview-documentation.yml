@@ -82,6 +82,7 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           directory: reveal-docs-preview
           branch: master
+          repository: cognitedata/reveal-docs-preview
 
       # - name: Deploy 🚀
       #   uses: JamesIves/github-pages-deploy-action@releases/v3
