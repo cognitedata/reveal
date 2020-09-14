@@ -212,7 +212,6 @@ export function Migration() {
           // highlight the object
           model.deselectAllNodes();
           model.selectNodeByTreeIndex(treeIndex);
-          model.setNodeTransformByTreeIndex(treeIndex, new THREE.Vector3(0, 50, 0), new THREE.Euler(0, 0, 0));
           const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
           viewer.fitCameraToBoundingBox(boundingBox, 1000);
         }
