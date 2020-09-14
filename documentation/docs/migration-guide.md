@@ -15,7 +15,7 @@ description: This page describes the differences between Reveal viewer and @cogn
 - `@cognite/reveal` supports point cloud models. This is not supported in `@cognite/3d-viewer`.
 - `@cognite/reveal` requires new output file formats. See [Preparing models](#preparing-models-for-use) below for details.
 
-# API changes
+## API changes
 
 The APIs are very similar and the functionality provided in `@cognite/reveal` should feel familiar. There are several operations supported in `@cognite/3d-viewer` which isn't supported by `@cognite/reveal`, but these have been replaced by alternatives that should provide similar functionality.
 
