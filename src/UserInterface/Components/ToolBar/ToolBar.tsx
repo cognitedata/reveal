@@ -37,9 +37,15 @@ export function ToolBar(props: {
         }
 
         const selected = config.isChecked;
+
+        const handleClick = (event) => {
+          event.stopPropagation();
+          invoke();
+        };
+
         return (
           <div
-            onClick={invoke}
+            onClick={handleClick}
             tabIndex={0}
             role="button"
             key={`${sectionId}-toolbar-${name}`}
