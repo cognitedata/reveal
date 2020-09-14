@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-parser-worker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parser worker for reveal viewer",
   "main": "./dist/local/reveal.parser.worker.js",
   "types": "./dist/local/reveal.parser.worker.d.ts",
