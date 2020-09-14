@@ -26,7 +26,7 @@ export class ResetVisualSettingsCommand extends BaseNodeCommand
       return false;
 
     node.notify(new NodeEventArgs(Changes.renderStyle));
-    node.notify(new NodeEventArgs(Changes.resetStyle));
+    this.node.notify(new NodeEventArgs(Changes.resetStyle));
 
     return true;
   }
