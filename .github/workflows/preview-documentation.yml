@@ -17,6 +17,15 @@ jobs:
           persist-credentials: false
           path: reveal
 
+      - name: Checkout reveal-docs-preview 🛎️
+        uses: actions/checkout@v2 
+        with:
+          repository: cognitedata/reveal-docs-preview
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: reveal-docs-preview
+          persist-credentials: false
+          ref: master
+    
       - name: Initialize variables
         run: |
           export PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
@@ -55,15 +64,6 @@ jobs:
           ls "docs-preview/"
           cp -R build/* "docs-preview/$PR_NUMBER/"
 
-      - name: Checkout reveal-docs-preview 🛎️
-        uses: actions/checkout@v2 
-        with:
-          repository: cognitedata/reveal-docs-preview
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: reveal-docs-preview
-          persist-credentials: false
-          ref: master
-
       - name: Copy build docs to preview documentation 
         run: |
           cp -R reveal/documentation/docs-preview/* reveal-docs-preview/
@@ -71,7 +71,9 @@ jobs:
       - name: Deploy 🚀
         working-directory: reveal-docs-preview
         run: |
-          ls -l reveal-docs-preview/
+          git add -A ${{ env.PR_NUMBER }}
+          git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }}"
+          git push
 
 
       # - name: Deploy 🚀
