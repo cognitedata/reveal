@@ -68,15 +68,20 @@ jobs:
         run: |
           cp -R reveal/documentation/docs-preview/* reveal-docs-preview/
 
-      - name: Deploy 🚀
+      - name: Commit documentation
         working-directory: reveal-docs-preview
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add -A ${{ env.PR_NUMBER }}
           git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }}"
-          git push
 
+      - name: Deploy  🚀
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          directory: reveal-docs-preview
+          branch: master
 
       # - name: Deploy 🚀
       #   uses: JamesIves/github-pages-deploy-action@releases/v3
