@@ -363,10 +363,10 @@ export class Cognite3DViewer {
     );
 
     if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
     }
     if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
     if (options.geometryFilter) {
       this._geometryFilters.push(options.geometryFilter);
@@ -424,16 +424,16 @@ export class Cognite3DViewer {
     );
 
     if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
     }
     if (options.geometryFilter) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
     if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
     }
     if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
 
     const { modelId, revisionId } = options;
