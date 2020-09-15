@@ -16,16 +16,7 @@ jobs:
         with:
           persist-credentials: false
           path: reveal
-
-      - name: Checkout reveal-docs-preview 🛎️
-        uses: actions/checkout@v2 
-        with:
-          repository: cognitedata/reveal-docs-preview
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: reveal-docs-preview
-          persist-credentials: false
-          ref: master
-    
+   
       - name: Initialize variables
         run: |
           export PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
@@ -63,6 +54,15 @@ jobs:
           mkdir -p "docs-preview/$PR_NUMBER"
           ls "docs-preview/"
           cp -R build/* "docs-preview/$PR_NUMBER/"
+
+      - name: Checkout reveal-docs-preview 🛎️
+        uses: actions/checkout@v2 
+        with:
+          repository: cognitedata/reveal-docs-preview
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: reveal-docs-preview
+          persist-credentials: false
+          ref: master
 
       - name: Clean PR deployment folder
         working-directory: reveal-docs-preview
