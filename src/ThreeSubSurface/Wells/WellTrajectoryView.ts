@@ -372,9 +372,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!style)
       return;
 
+    const color = node.getColorByColorType(style.colorType.value);
     const position = trajectory.getBasePosition().clone();
+
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(node.name, position, 7, style.nameFontSize.value, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(node.name, position, 7, style.nameFontSize.value, color);
     if (!label)
       return;
 
@@ -397,9 +399,10 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!style)
       return;
 
+    const color = wellNode.getColorByColorType(style.colorType.value);
     const position = trajectory.getTopPosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontSize.value, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontSize.value, color);
     if (!label)
       return;
 
@@ -429,11 +432,15 @@ export class WellTrajectoryView extends BaseGroupThreeView
       const geometry = new TrajectoryBufferGeometry(samples);
       const material = new THREE.MeshPhongMaterial({
         color: ThreeConverter.toThreeColor(Colors.white),
-        shininess: 75,
+        shininess: this.renderTarget.is2D ? 0 : 75,
         vertexColors: true,
-        emissive: ThreeConverter.toThreeColor(Colors.cyan),
-        emissiveIntensity: 0.25,
       });
+
+      if (!this.renderTarget.is2D)
+      {
+        material.emissive = ThreeConverter.toThreeColor(Colors.cyan);
+        material.emissiveIntensity = 0.25;
+      }
       const mesh = new THREE.Mesh(geometry, material);
       mesh.name = TrajectoryName;
       parent.add(mesh);

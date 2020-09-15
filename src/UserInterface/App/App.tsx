@@ -9,7 +9,7 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { Appearance } from "@/Core/States/Appearance";
 
-const LOAD_MOCK_DATA = true;
+const LoadMockData = false;
 
 // customize the colors for changing UI style
 const theme = createMuiTheme({
@@ -41,7 +41,7 @@ export function App() {
   modules.add(new ThreeModule());
 
   useEffect(() => {
-    if (LOAD_MOCK_DATA) {
+    if (LoadMockData) {
       Promise.all([
         import("@/Solutions/BP/MockData/Sample/wells.json"),
         import("@/Solutions/BP/MockData/Sample/wellbores.json"),

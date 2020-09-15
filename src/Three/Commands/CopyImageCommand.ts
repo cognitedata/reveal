@@ -19,9 +19,8 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
   //==================================================
 
   public /*override*/ getName(): string { return "Copy a image of the viewer to the clipboard"; }
-
   public /*override*/ getIcon(): string { return CopyImageIcon; }
-
+  
   protected /*override*/ invokeCore(): boolean 
   {
     this.target?.domElement.toBlob((blob: any) => 

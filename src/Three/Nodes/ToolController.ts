@@ -66,16 +66,7 @@ export class ToolController
     if (!cameraControl)
       return;
 
-    const { controls } = cameraControl;
-    if (tool.overrideLeftButton())
-      controls.mouseButtons.left = CameraControls.ACTION.NONE;
-    else
-      controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
-
-    // default values:
-    // controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
-    // controls.mouseButtons.right = CameraControls.ACTION.TRUCK;
-    // controls.mouseButtons.wheel = CameraControls.ACTION.DOLLY;
+    cameraControl.setLeftButton(this._activeTool);
   }
 
   //==================================================

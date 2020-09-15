@@ -29,6 +29,7 @@ import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { Changes } from "@/Core/Views/Changes";
 import { Colors } from "@/Core/Primitives/Colors";
+import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 
 const SolidName = "Solid";
 const ContoursName = "Contour";
@@ -74,7 +75,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
           const mesh = this._object3D.getObjectByName(SolidName) as THREE.Mesh;
           if (mesh)
           {
-            SurfaceThreeView.setMaterial(mesh.material as THREE.MeshPhongMaterial, style);
+            SurfaceThreeView.setMaterial(mesh.material as THREE.MeshPhongMaterial, style, this.renderTarget.is2D);
             this.invalidateTarget();
             return;
           }
@@ -163,7 +164,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
       polygonOffsetFactor: 1,
       polygonOffsetUnits: 4.0,
     });
-    SurfaceThreeView.setMaterial(material, style);
+    SurfaceThreeView.setMaterial(material, style, this.renderTarget.is2D);
 
     let texture: THREE.DataTexture | null = null;
     if (style.solidColorType.value === ColorType.ColorMap)
@@ -223,14 +224,17 @@ export class SurfaceThreeView extends BaseGroupThreeView
   // INSTANCE METHODS: Shader experiments
   //==================================================
 
-  private static setMaterial(material: THREE.MeshPhongMaterial | null, style: SurfaceRenderStyle | null)
+  private static setMaterial(material: THREE.MeshPhongMaterial | null, style: SurfaceRenderStyle | null, is2D: boolean)
   {
     if (!material || !style)
       return;
 
     material.opacity = style.solidOpacity.use ? style.solidOpacity.value : 1;
     material.transparent = style.solidOpacity.use;
-    material.shininess = style.solidShininess.use ? 100 * style.solidShininess.value : 0;
+    if (is2D)
+      material.shininess = 0;
+    else
+      material.shininess = style.solidShininess.use ? 100 * style.solidShininess.value : 0;
   }
 }
 
