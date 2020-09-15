@@ -64,6 +64,14 @@ jobs:
           ls "docs-preview/"
           cp -R build/* "docs-preview/$PR_NUMBER/"
 
+      - name: Clean PR deployment folder
+        working-directory: reveal-docs-preview
+        run: |
+          if [[ -d "${{ env.PR_NUMBER }}" ]]
+          then
+            git rm -r "${{ env.PR_NUMBER }}"
+          fi
+
       - name: Copy build docs to preview documentation 
         run: |
           cp -R reveal/documentation/docs-preview/* reveal-docs-preview/
@@ -73,7 +81,8 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add -A ${{ env.PR_NUMBER }}
+          git rm -r "${{ env.PR_NUMBER }}/"
+          git add -A "${{ env.PR_NUMBER }}
           git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }}"
 
       - name: Deploy  🚀
