@@ -94,3 +94,4 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 
 - Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function no longer accepts a `onProgress` parameter
 - If you were accessing the private property `_camera` in the past, you can do so now by using `viewer.getCamera()`
+- You can no longer pass `onComplete` to the `addModel` functions - it will throw (without a reasonable error)
