@@ -43,7 +43,7 @@
     "@actions/github": "^4.0.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.4",
-    "@testing-library/user-event": "^12.1.4",
+    "@testing-library/user-event": "^12.1.5",
     "@types/dat.gui": "^0.7.5",
     "@types/jest": "^26.0.13",
     "@types/jest-environment-puppeteer": "^4.3.2",
