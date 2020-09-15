@@ -625,9 +625,13 @@ export class WellTrajectoryView extends BaseGroupThreeView
         }
         const canvas = getOrCreateCanvasAt(bandPosition);
         let color = logNode.getColorByColorType(logStyle.colorType.value);
-        logRender.addFloatLog(canvas, logNode.log, logStyle, color, true, false);
+        if (logStyle.fill.value)
+          logRender.addFloatLog(canvas, logNode.log, logStyle, color);
+
         color = color.darken(0.5);
-        logRender.addFloatLog(canvas, logNode.log, logStyle, color, false, true);
+        if (logStyle.lineWidth.use)
+          logRender.addFloatLog(canvas, logNode.log, logStyle, color, false, logStyle.lineWidth.value);
+
         numLogs[bandPosition]++;
       }
     }

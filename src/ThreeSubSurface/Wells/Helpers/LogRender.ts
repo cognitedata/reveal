@@ -165,7 +165,7 @@ export class LogRender
     }
   }
 
-  public addFloatLog(canvas: Canvas, log: FloatLog | null, style: FloatLogStyle, color: Color, fill: boolean, stroke: boolean): void
+  public addFloatLog(canvas: Canvas, log: FloatLog | null, style: FloatLogStyle, color: Color, fill = true, lineWidth = 0): void
   {
     if (!log)
       return;
@@ -186,7 +186,7 @@ export class LogRender
       const sample = log.getAt(i);
       if (sample.isEmpty || sample.isMdEmpty)
       {
-        this.closePath(canvas, color, fill, stroke);
+        this.closePath(canvas, color, fill, lineWidth);
         canvas.beginFunction(fill);
         continue;
       }
@@ -194,21 +194,18 @@ export class LogRender
       const valueFraction = valueRange.getTruncatedFraction(sample.value);
       canvas.addFunctionValue(mdFraction, valueFraction);
     }
-    this.closePath(canvas, color, fill, stroke);
+    this.closePath(canvas, color, fill, lineWidth);
   }
 
-  private closePath(canvas: Canvas, color: Color, fill: boolean, stroke: boolean): void
+  private closePath(canvas: Canvas, color: Color, fill: boolean, lineWidth: number): void
   {
     if (!canvas.closeFunction())
       return;
 
     if (fill)
       canvas.fillPathBySemiTransparentGradient(color, 1);
-    if (stroke)
-    {
-      //canvas.drawPath(null, 3);
-      canvas.drawPath(color, 2);
-    }
+    if (lineWidth > 0)
+      canvas.drawPath(color, lineWidth);
   }
 
   public addDiscreteLog(canvas: Canvas, log: DiscreteLog | null): void
