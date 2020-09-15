@@ -2,8 +2,7 @@
 
 //  Staging deployments are protected by CogniteIAP, meaning they're only accessible to Cogniters.
 static final String STAGING_DOMAIN_NAME = "staging.cwp.cogniteapp.com"
-// We do not have a production app yet
-// static final String RELEASE_DOMAIN_NAME = ""
+static final String RELEASE_DOMAIN_NAME = "cwp.cogniteapp.com"
 
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -109,7 +108,6 @@ pods {
         def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
 
         fas.build(
-          iap: false,
           domainName: domainName,
           buildCommand: 'yarn build',
         )
