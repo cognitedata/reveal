@@ -74,7 +74,7 @@ jobs:
 
       - name: Copy build docs to preview documentation 
         run: |
-          cp -R reveal/documentation/docs-preview/* reveal-docs-preview/
+          cp -vR reveal/documentation/docs-preview/* reveal-docs-preview/
 
       - name: Commit documentation
         working-directory: reveal-docs-preview
