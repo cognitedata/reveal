@@ -108,16 +108,12 @@ void main() {
   ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity; 
 
   if(backDepth <= 1.0){
-      // Regular geometry in front of ghost
-    if (backDepth <= ghostDepth) {
-      gl_FragColor = vec4(backAlbedo.rgb, 1.0);
-      return;
-    } else if (ghostDepth <= 1.0) {
-      // Regular geometry behind ghost, blend
-      float s = ghostAlpha;
-      gl_FragColor = vec4(s*ghostColor + (1.0 - s)*backAlbedo.rgb, 1.0);
-      return;
-    }
+    // s will be:
+    // - zero when regular geometry is in front of ghost
+    // - ghostAlpha when regular geometry is behind ghost
+    float s = (1.0 - step(backDepth, ghostDepth)) * ghostAlpha;
+    gl_FragColor = vec4(mix(backAlbedo.rgb, ghostColor, s), 1.0);
+    return;
   } else if (ghostDepth <= 1.0) {
     gl_FragColor = vec4(ghostAlpha * ghostColor, 1.0);
     return;
