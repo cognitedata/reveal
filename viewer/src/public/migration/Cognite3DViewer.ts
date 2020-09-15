@@ -133,6 +133,7 @@ export class Cognite3DViewer {
       new THREE.WebGLRenderer({
         antialias: shouldEnableAntialiasing()
       });
+    this.renderer.sortObjects = false;
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';

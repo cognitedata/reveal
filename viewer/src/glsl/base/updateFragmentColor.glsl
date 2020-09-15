@@ -8,6 +8,7 @@ const int RenderTypeTreeIndex = 3;
 const int RenderTypePackColorAndNormal = 4;
 const int RenderTypeDepth = 5;
 const int RenderTypeEffects = 6;
+const int RenderTypeGhost = 7;
 
 #include <packing>
 
@@ -29,7 +30,12 @@ void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 norma
         vec4 mc = vec4(texture2D(matCapTexture, cap).rgb, 1.0);
         
         gl_FragColor = vec4(albedo.rgb * mc.rgb * 1.7, color.a);
-
+    } else if (renderMode == RenderTypeGhost) {
+        float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
+        vec3 ghostRGB = vec3(0.8, 0.8, 0.8);
+        vec4 albedo = vec4(ghostRGB * (0.4 + 0.6 * amplitude), 1.0);
+        
+        gl_FragColor = vec4(albedo.rgb, 0.2);
     } else if (renderMode == RenderTypePackColorAndNormal) {
         vec3 hsv = rgb2hsv(color.rgb);
         float a = 0.0;
@@ -53,7 +59,7 @@ void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 norma
     } else if (renderMode == RenderTypeDepth) {
         gl_FragColor = packDepthToRGBA(depth);
     } else {
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
     }
 }
 

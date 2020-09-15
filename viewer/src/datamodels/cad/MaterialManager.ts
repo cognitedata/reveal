@@ -5,6 +5,7 @@
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
+import { timeStamp } from 'console';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -39,13 +40,17 @@ export class MaterialManager {
   private _clippingPlanes: THREE.Plane[] = [];
   private _clipIntersection: boolean = false;
 
+  private readonly _backTreeIndices = new Map<string, Set<number>>();
   private readonly _inFrontTreeIndices = new Map<string, Set<number>>();
+  private readonly _ghostTreeIndices = new Map<string, Set<number>>();
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
     this.materialsMap.set(modelIdentifier, { materials });
 
+    this._backTreeIndices.set(modelIdentifier, new Set());
     this._inFrontTreeIndices.set(modelIdentifier, new Set());
+    this._ghostTreeIndices.set(modelIdentifier, new Set());
   }
 
   setNodeAppearanceProvider(modelIdentifier: string, nodeAppearanceProvider?: NodeAppearanceProvider) {
@@ -62,14 +67,24 @@ export class MaterialManager {
     return this.materialsMap.get(modelIdentifier)!.nodeAppearanceProvider;
   }
 
+  getModelBackTreeIndices(modelIdentifier: string): Set<number> | undefined {
+    return this._backTreeIndices.get(modelIdentifier);
+  }
+
   getModelInFrontTreeIndices(modelIdentifier: string): Set<number> | undefined {
     return this._inFrontTreeIndices.get(modelIdentifier);
   }
 
+  getModelGhostedTreeIndices(modelIdentifier: string): Set<number> | undefined {
+    return this._ghostTreeIndices.get(modelIdentifier);
+  }
+
   setRenderMode(mode: RenderMode) {
     this._renderMode = mode;
+    const transparent = mode === RenderMode.Ghost;
     this.applyToAllMaterials(material => {
       material.uniforms.renderMode.value = mode;
+      material.transparent = transparent;
     });
   }
 
@@ -102,7 +117,9 @@ export class MaterialManager {
     }
 
     const count = treeIndices.length;
+    const backSet = this._backTreeIndices.get(modelIdentifier)!;
     const inFrontSet = this._inFrontTreeIndices.get(modelIdentifier)!;
+    const ghostSet = this._ghostTreeIndices.get(modelIdentifier)!;
     for (let i = 0; i < count; ++i) {
       const treeIndex = treeIndices[i];
       const style = appearanceProvider.styleNode(treeIndex) || {};
@@ -117,6 +134,18 @@ export class MaterialManager {
         inFrontSet.add(treeIndex);
       } else if (inFrontSet.has(treeIndex)) {
         inFrontSet.delete(treeIndex);
+      }
+
+      if (style.renderGhosted) {
+        ghostSet.add(treeIndex);
+      } else if (ghostSet.has(treeIndex)) {
+        ghostSet.delete(treeIndex);
+      }
+
+      if (!ghostSet.has(treeIndex) && !inFrontSet.has(treeIndex)) {
+        backSet.add(treeIndex);
+      } else if (backSet.has(treeIndex)) {
+        backSet.delete(treeIndex);
       }
 
       const visible = style!.visible === undefined ? true : style.visible;

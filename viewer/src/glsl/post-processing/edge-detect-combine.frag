@@ -18,6 +18,9 @@ uniform sampler2D tBackDepth;
 uniform sampler2D tCustom;
 uniform sampler2D tCustomDepth;
 
+uniform sampler2D tGhost;
+uniform sampler2D tGhostDepth;
+
 uniform sampler2D tOutlineColors;
 
 uniform float cameraNear;
@@ -35,6 +38,7 @@ void main() {
   vec4 frontAlbedo = texture2D(tFront, vUv);
   vec4 backAlbedo = texture2D(tBack, vUv);
   vec4 customAlbedo = texture2D(tCustom, vUv);
+  vec4 ghostColor = texture2D(tGhost, vUv);
 
   float frontOutlineIndex = floatBitsSubset(floor((frontAlbedo.a * 255.0) + 0.5), 2, 5);
   float frontOutlineIndex0 = floatBitsSubset(floor((texture2D(tFront, vUv0).a * 255.0) + 0.5), 2, 5);
@@ -43,13 +47,13 @@ void main() {
   float frontOutlineIndex3 = floatBitsSubset(floor((texture2D(tFront, vUv3).a * 255.0) + 0.5), 2, 5);
 
   // There exsists fragments of rendered objects within the edge width that should have border
-  // if( any(equal(vec4(frontOutlineIndex0, frontOutlineIndex1, frontOutlineIndex2, frontOutlineIndex3), vec4(0.0))) 
-  //     && frontOutlineIndex > 0.0) 
-  // { 
-  //   float borderColorIndex = max(max(frontOutlineIndex0, frontOutlineIndex1), max(frontOutlineIndex2, frontOutlineIndex3));
-  //   gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
-  //   return;
-  // }
+  if( any(equal(vec4(frontOutlineIndex0, frontOutlineIndex1, frontOutlineIndex2, frontOutlineIndex3), vec4(0.0))) 
+      && frontOutlineIndex > 0.0) 
+  { 
+    float borderColorIndex = max(max(frontOutlineIndex0, frontOutlineIndex1), max(frontOutlineIndex2, frontOutlineIndex3));
+    gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+    return;
+  }
 
   float customDepth = readDepth(tCustomDepth, vUv);
   customDepth = customDepth > 0.0 ? customDepth : infinity; 
@@ -78,27 +82,41 @@ void main() {
   float backOutlineIndex2 = floatBitsSubset(floor((texture2D(tBack, vUv2).a * 255.0) + 0.5), 2, 5);
   float backOutlineIndex3 = floatBitsSubset(floor((texture2D(tBack, vUv3).a * 255.0) + 0.5), 2, 5);
 
-  // if( any(equal(vec4(backOutlineIndex0, backOutlineIndex1, backOutlineIndex2, backOutlineIndex3), vec4(0.0)))
-  //     && backOutlineIndex > 0.0) 
-  //  { 
+  if( any(equal(vec4(backOutlineIndex0, backOutlineIndex1, backOutlineIndex2, backOutlineIndex3), vec4(0.0)))
+      && backOutlineIndex > 0.0) 
+   { 
     
-  //   float d0 = readDepth(tBackDepth, vUv);
-  //   float d1 = readDepth(tBackDepth, vUv0);
-  //   float d2 = readDepth(tBackDepth, vUv1);
-  //   float d3 = readDepth(tBackDepth, vUv2);
-  //   float d4 = readDepth(tBackDepth, vUv3);
+    float d0 = readDepth(tBackDepth, vUv);
+    float d1 = readDepth(tBackDepth, vUv0);
+    float d2 = readDepth(tBackDepth, vUv1);
+    float d3 = readDepth(tBackDepth, vUv2);
+    float d4 = readDepth(tBackDepth, vUv3);
 
-  //   float averageNeighbourFragmentDepth = (d1 + d2 + d3 + d4) / 4.0;
+    float averageNeighbourFragmentDepth = (d1 + d2 + d3 + d4) / 4.0;
 
-  //   if(d0 < averageNeighbourFragmentDepth){
-  //     float borderColorIndex = max(max(backOutlineIndex0, backOutlineIndex1), max(backOutlineIndex2, backOutlineIndex3));
-  //     gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
-  //     return;
-  //   }
-  // }
+    if(d0 < averageNeighbourFragmentDepth){
+      float borderColorIndex = max(max(backOutlineIndex0, backOutlineIndex1), max(backOutlineIndex2, backOutlineIndex3));
+      gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+      return;
+    }
+  }
 
-  if(texture2D(tBackDepth, vUv).r < 1.0){
-    gl_FragColor = vec4(backAlbedo.rgb, 1.0);
+  float ghostDepth = readDepth(tGhostDepth, vUv);
+  ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity; 
+
+  if(backDepth <= 1.0){
+      // Regular geometry in front of ghost
+    if (backDepth <= ghostDepth) {
+      gl_FragColor = vec4(backAlbedo.rgb, 1.0);
+      return;
+    } else if (ghostDepth <= 1.0) {
+      // Regular geometry behind ghost, blend
+      float s = backDepth - ghostDepth;
+      gl_FragColor = vec4(s*ghostColor.rgb + 0.5 * (1.0 - s)*backAlbedo.rgb, 1.0);
+      return;
+    }
+  } else if (ghostDepth <= 1.0) {
+    gl_FragColor = ghostColor;
     return;
   }
 

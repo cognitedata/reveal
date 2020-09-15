@@ -16,12 +16,15 @@ export class EffectRenderManager {
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
   private readonly _triScene: THREE.Scene;
+  private readonly _backScene: THREE.Scene;
   private readonly _inFrontScene: THREE.Scene;
   private readonly _cadScene: THREE.Scene;
+  private readonly _ghostScene: THREE.Scene;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
 
   private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
   private readonly _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
@@ -31,7 +34,16 @@ export class EffectRenderManager {
     inFrontParent: THREE.Object3D;
     inFrontSceneParent: THREE.Object3D;
   }> = new Set();
-
+  private readonly _backObjectBuffer: Set<{
+    object: THREE.Object3D;
+    parent: THREE.Object3D;
+    sceneParent: THREE.Object3D;
+  }> = new Set();
+  private readonly _ghostObjectBuffer: Set<{
+    object: THREE.Object3D;
+    parent: THREE.Object3D;
+    sceneParent: THREE.Object3D;
+  }> = new Set();
   private readonly outlineTexelSize = 2;
 
   constructor(materialManager: MaterialManager) {
@@ -39,8 +51,10 @@ export class EffectRenderManager {
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     this._cadScene = new THREE.Scene();
+    this._backScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
     this._triScene = new THREE.Scene();
+    this._ghostScene = new THREE.Scene();
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
@@ -53,6 +67,11 @@ export class EffectRenderManager {
     this._backRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._backRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._backRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
+
+    this._ghostObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._ghostObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._ghostObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
+    this._ghostObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._customObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
     this._customObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
@@ -69,6 +88,8 @@ export class EffectRenderManager {
         tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
         tCustom: { value: this._customObjectRenderTarget.texture },
         tCustomDepth: { value: this._customObjectRenderTarget.depthTexture },
+        tGhost: { value: this._ghostObjectRenderTarget.texture },
+        tGhostDepth: { value: this._ghostObjectRenderTarget.depthTexture },
         tOutlineColors: { value: outlineColorTexture },
         cameraNear: { value: 0.1 },
         cameraFar: { value: 10000 }
@@ -106,12 +127,18 @@ export class EffectRenderManager {
       // Render in -front cad models
       this.renderInFrontCadModels(renderer, camera);
 
+      // Render ghost objects
+      this.renderGhostedCadModels(renderer, camera);
+
       // Render custom objects
       this.renderCustomObjects(renderer, scene, camera);
 
       renderer.setClearAlpha(original.clearAlpha);
 
       this.renderTargetToCanvas(renderer, camera);
+
+      // this.renderGhostedCadModels(renderer, camera);
+      // this.renderTargetToCanvas(renderer, camera);
     } finally {
       // Restore state
       renderer.setClearAlpha(original.clearAlpha);
@@ -125,9 +152,41 @@ export class EffectRenderManager {
     }
   }
 
+  // private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+  //   renderer.setRenderTarget(this._backRenderedCadModelTarget);
+  //   renderer.render(this._cadScene, camera);
+  // }
+
   private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     renderer.setRenderTarget(this._backRenderedCadModelTarget);
-    renderer.render(this._cadScene, camera);
+
+    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
+      const cadNode = rootSectorNodeData[1] as CadNode;
+
+      const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      console.log(`Backset: ${backSet?.size}`);
+
+      if (!backSet) {
+        return;
+      }
+
+      this.traverseForBackObjects(rootSectorNodeData[0], backSet);
+    });
+
+    this._backObjectBuffer.forEach(p => {
+      p.sceneParent.add(p.object);
+    });
+
+    this._materialManager.setRenderMode(RenderMode.Color);
+
+    renderer.render(this._backScene, camera);
+
+    this._backObjectBuffer.forEach(p => {
+      p.parent.add(p.object);
+    });
+
+    this._backObjectBuffer.clear();
+    this._backScene.remove(...this._backScene.children);
   }
 
   private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
@@ -137,6 +196,7 @@ export class EffectRenderManager {
       const cadNode = rootSectorNodeData[1] as CadNode;
 
       const inFrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      console.log(`InFrontSet: ${inFrontSet?.size}`);
 
       if (!inFrontSet) {
         return;
@@ -163,25 +223,90 @@ export class EffectRenderManager {
     this._inFrontScene.remove(...this._inFrontScene.children);
   }
 
-  private traverseForInFrontObjects(root: THREE.Object3D, frontSet: Set<number>) {
-    const objectStack = [root];
+  private renderGhostedCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    renderer.setRenderTarget(this._ghostObjectRenderTarget);
 
+    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
+      const cadNode = rootSectorNodeData[1] as CadNode;
+
+      const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      console.log(`ghostSet: ${ghostSet?.size}`);
+
+      if (!ghostSet) {
+        return;
+      }
+
+      this.traverseForGhostObjects(rootSectorNodeData[0], ghostSet);
+    });
+
+    this._ghostObjectBuffer.forEach(p => {
+      p.sceneParent.add(p.object);
+    });
+
+    this._materialManager.setRenderMode(RenderMode.Ghost);
+
+    renderer.render(this._ghostScene, camera);
+
+    this._ghostObjectBuffer.forEach(p => {
+      p.parent.add(p.object);
+    });
+
+    this._ghostObjectBuffer.clear();
+    this._ghostScene.remove(...this._ghostScene.children);
+  }
+
+  private traverseForInFrontObjects(root: THREE.Object3D, frontSet: Set<number>) {
     const rootTransformObject = new THREE.Object3D();
     rootTransformObject.applyMatrix4(root.matrix);
-
     this._inFrontScene.add(rootTransformObject);
+
+    this.traverseObjects(root, frontSet, element => {
+      this._inFrontObjectBuffer.add({
+        inFrontObject: element,
+        inFrontParent: element.parent!,
+        inFrontSceneParent: rootTransformObject
+      });
+    });
+  }
+
+  private traverseForBackObjects(root: THREE.Object3D, ghostSet: Set<number>) {
+    const rootTransformObject = new THREE.Object3D();
+    rootTransformObject.applyMatrix4(root.matrix);
+    this._backScene.add(rootTransformObject);
+
+    this.traverseObjects(root, ghostSet, element => {
+      this._backObjectBuffer.add({
+        object: element,
+        parent: element.parent!,
+        sceneParent: rootTransformObject
+      });
+    });
+  }
+
+  private traverseForGhostObjects(root: THREE.Object3D, ghostSet: Set<number>) {
+    const rootTransformObject = new THREE.Object3D();
+    rootTransformObject.applyMatrix4(root.matrix);
+    this._ghostScene.add(rootTransformObject);
+
+    this.traverseObjects(root, ghostSet, element => {
+      this._ghostObjectBuffer.add({
+        object: element,
+        parent: element.parent!,
+        sceneParent: rootTransformObject
+      });
+    });
+  }
+
+  private traverseObjects(root: THREE.Object3D, objectSet: Set<number>, visitor: (element: THREE.Object3D) => void) {
+    const objectStack = [root];
 
     while (objectStack.length > 0) {
       const element = objectStack.pop()!;
 
       const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
 
-      if (objectTreeIndices && hasIntersection(frontSet, objectTreeIndices)) {
-        this._inFrontObjectBuffer.add({
-          inFrontObject: element,
-          inFrontParent: element.parent!,
-          inFrontSceneParent: rootTransformObject
-        });
+      if (objectTreeIndices && hasIntersection(objectSet, objectTreeIndices)) {
+        visitor(element);
       } else {
         objectStack.push(...element.children);
       }
@@ -208,6 +333,7 @@ export class EffectRenderManager {
       this._backRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
       this._frontRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
       this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
+      this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
 
       this._combineEdgeDetectionMaterial.setValues({
         uniforms: {

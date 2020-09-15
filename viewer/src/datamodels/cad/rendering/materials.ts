@@ -37,6 +37,7 @@ export function createMaterials(
   const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = textureDims.width * textureDims.height;
   const dataTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
+  const transparent = false;
 
   const colors = new Uint8Array(4 * textureElementCount);
   for (let i = 0; i < textureElementCount; i++) {
@@ -55,7 +56,7 @@ export function createMaterials(
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const circleMaterial = new THREE.ShaderMaterial({
@@ -68,7 +69,7 @@ export function createMaterials(
     // TODO double side is not necessary for all,
     // we should indicate this in the data from Rust
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const nutMaterial = new THREE.ShaderMaterial({
@@ -78,7 +79,7 @@ export function createMaterials(
     vertexShader: sectorShaders.nutPrimitive.vertex,
     fragmentShader: sectorShaders.nutPrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const quadMaterial = new THREE.ShaderMaterial({
@@ -88,7 +89,7 @@ export function createMaterials(
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const generalRingMaterial = new THREE.ShaderMaterial({
@@ -106,7 +107,7 @@ export function createMaterials(
     // TODO we can avoid drawing DoubleSide if we flip the ring in Rust and adjust the angle and
     // arc_angle accordingly
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const coneMaterial = new THREE.ShaderMaterial({
@@ -122,7 +123,7 @@ export function createMaterials(
     vertexShader: sectorShaders.conePrimitive.vertex,
     fragmentShader: sectorShaders.conePrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const eccentricConeMaterial = new THREE.ShaderMaterial({
@@ -138,7 +139,7 @@ export function createMaterials(
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
     fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const ellipsoidSegmentMaterial = new THREE.ShaderMaterial({
@@ -155,7 +156,7 @@ export function createMaterials(
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const generalCylinderMaterial = new THREE.ShaderMaterial({
@@ -171,7 +172,7 @@ export function createMaterials(
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const trapeziumMaterial = new THREE.ShaderMaterial({
@@ -187,7 +188,7 @@ export function createMaterials(
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
     fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const torusSegmentMaterial = new THREE.ShaderMaterial({
@@ -207,7 +208,7 @@ export function createMaterials(
     fragmentShader: sectorShaders.torusSegmentPrimitive.fragment,
     // TODO we can drop the double sided rendering if we add end caps
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const sphericalSegmentMaterial = new THREE.ShaderMaterial({
@@ -223,7 +224,7 @@ export function createMaterials(
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
     side: THREE.DoubleSide,
-    transparent: true
+    transparent
   });
 
   const triangleMeshMaterial = new THREE.ShaderMaterial({
@@ -236,7 +237,7 @@ export function createMaterials(
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
     vertexShader: sectorShaders.detailedMesh.vertex,
-    transparent: true
+    transparent
   });
 
   const instancedMeshMaterial = new THREE.ShaderMaterial({
@@ -249,7 +250,7 @@ export function createMaterials(
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
     vertexShader: sectorShaders.instancedMesh.vertex,
-    transparent: true
+    transparent
   });
 
   const simpleMaterial = new THREE.ShaderMaterial({
@@ -258,7 +259,7 @@ export function createMaterials(
     clippingPlanes,
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex,
-    transparent: true
+    transparent
   });
 
   const allMaterials = {
