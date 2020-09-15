@@ -4,7 +4,6 @@ import ViewAllCommandIcon from "@images/Commands/ViewAllCommand.png";
 
 export class ViewAllCommand extends ThreeRenderTargetCommand
 {
-
   //==================================================
   // CONSTRUCTOR
   //==================================================
@@ -19,7 +18,6 @@ export class ViewAllCommand extends ThreeRenderTargetCommand
   //==================================================
 
   public /*override*/ getName(): string { return "View all"; }
-
   public /*override*/ getIcon(): string { return ViewAllCommandIcon; }
 
   protected /*override*/ invokeCore(): boolean

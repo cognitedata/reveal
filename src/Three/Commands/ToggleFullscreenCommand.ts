@@ -23,11 +23,8 @@ export class ToggleFullscreenCommand extends ThreeRenderTargetCommand
     //==================================================
 
     public /*override*/ getName(): string { return this._isFullScreen ? "Exit Full Screen" : "Full Screen"; }
-
     public /*override*/ getIcon(): string { return this._isFullScreen ? ExitFullScreenCommandIcon : FullScreenCommandIcon; }
-
     public /*override*/ get isCheckable(): boolean { return true; }
-
     public /*override*/ get isChecked(): boolean { return this._isFullScreen; }
 
     protected /*override*/ invokeCore(): boolean 

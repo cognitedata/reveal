@@ -39,18 +39,13 @@ export class AxisThreeView extends BaseGroupThreeView
   //==================================================
 
   private corners: Vector3[] = [];
-
   private centersIn3d = new Array<Vector3>(6);
 
   // Set to read in order to see if they change later on
   private textColor = Colors.red;
-
   private axisColor = Colors.red;
-
   private gridColor = Colors.red;
-
   private wallColor = Colors.red;
-
   private bgColor: Color = Colors.black;
 
   //==================================================
@@ -70,7 +65,6 @@ export class AxisThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): AxisNode { return super.getNode() as AxisNode; }
-
   protected get style(): AxisRenderStyle { return super.getStyle() as AxisRenderStyle; }
 
   //==================================================
@@ -502,7 +496,7 @@ export class AxisThreeView extends BaseGroupThreeView
       cameraDirection = Vector3.substract(this.centersIn3d[wallIndex], cameraPosition);
     }
     const normal = Range3.getWallNormal(wallIndex);
-    return cameraDirection.getDot(normal) > 0;
+    return cameraDirection.getDot(normal) > 0.02;
   }
 
   //==================================================

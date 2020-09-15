@@ -18,6 +18,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { Vector3 } from "@/Core/Geometry/Vector3";
+import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 
 // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
 // https://github.com/yomotsu/camera-controls
@@ -32,6 +33,7 @@ export class CameraControl
   private static _isCameraControlInstalled = false;
   private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   private _controls: CameraControls | null = null;
+  public is2D: boolean = false;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -60,7 +62,7 @@ export class CameraControl
   // CONSTRUCTOR
   //==================================================
 
-  constructor(target: ThreeRenderTargetNode)
+  constructor(target: ThreeRenderTargetNode, isPerspectiveMode: boolean)
   {
     if (!CameraControl._isCameraControlInstalled)
     {
@@ -68,7 +70,7 @@ export class CameraControl
       CameraControl._isCameraControlInstalled = true;
     }
 
-    this._camera = target.isPerspectiveMode ? this.createPerspectiveCamera(target) : this.createOrthographicCamera(target);
+    this._camera = isPerspectiveMode ? this.createPerspectiveCamera(target) : this.createOrthographicCamera(target);
     this._camera.position.set(0, 0, 5);
     this._camera.up.set(0, 0, 1);
     this._controls = new CameraControls(this._camera, target.domElement);
@@ -78,23 +80,47 @@ export class CameraControl
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public onResize(aspectRatio: number): void
+  public onResize(target: ThreeRenderTargetNode): void
   {
     const camera = this._camera;
     if (!this._camera)
       return;
 
-    if (!(camera instanceof THREE.PerspectiveCamera))
-      return;
+    if (camera instanceof THREE.PerspectiveCamera)
+    {
+      camera.aspect = target.aspectRatio;
+      camera.updateProjectionMatrix();
+    }
+    else if (camera instanceof THREE.OrthographicCamera)
+    {
+      const range = target.pixelRange;
+      camera.left = -range.x.delta / 2;
+      camera.right = range.x.delta / 2;
+      camera.top = range.y.delta / 2;
+      camera.bottom = -range.y.delta / 2;
 
-    camera.aspect = aspectRatio;
-    camera.updateProjectionMatrix();
-
+      camera.updateProjectionMatrix();
+    }
   }
 
   public viewRange(boundingBox: Range3 | undefined): boolean
   {
     return this.viewFrom(boundingBox, -2);
+  }
+
+  public setLeftButton(activeTool: BaseTool | null): void
+  {
+    if (activeTool && activeTool.overrideLeftButton())
+      this.controls.mouseButtons.left = CameraControls.ACTION.NONE;
+    else if (this.is2D)
+      this.controls.mouseButtons.left = CameraControls.ACTION.TRUCK;
+    else
+      this.controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
+
+    // default values:
+    // controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
+    // controls.mouseButtons.right = CameraControls.ACTION.TRUCK;
+    // controls.mouseButtons.wheel = CameraControls.ACTION.DOLLY;
   }
 
   public viewFrom(boundingBox: Range3 | undefined, index: number): boolean
@@ -111,6 +137,9 @@ export class CameraControl
       const fov = Ma.toRad(camera.fov);
       distanceFactor = 0.65 / (camera.aspect * Math.tan(fov / 2));
     }
+    else
+      distanceFactor = 2;
+
     const targetPosition = boundingBox.center;
     const position = boundingBox.center;
 
@@ -255,14 +284,12 @@ export class CameraControl
   private createPerspectiveCamera(target: ThreeRenderTargetNode): THREE.PerspectiveCamera
   {
     const aspectRatio = target ? target.aspectRatio : undefined;
-    const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10_000);
-    return camera;
+    return new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10_000);
   }
 
   private createOrthographicCamera(target: ThreeRenderTargetNode): THREE.OrthographicCamera
   {
     const range = target.pixelRange;
-    const camera = new THREE.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.y.delta / 2, -range.y.delta / 2, 0.1, 10_000);
-    return camera;
+    return new THREE.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.y.delta / 2, -range.y.delta / 2, 0.1, 10_000);
   }
 }
