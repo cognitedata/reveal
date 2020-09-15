@@ -81,9 +81,8 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git rm -r "${{ env.PR_NUMBER }}/"
           git add -A "${{ env.PR_NUMBER }}
-          git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }}"
+          git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
 
       - name: Deploy  🚀
         uses: ad-m/github-push-action@master
