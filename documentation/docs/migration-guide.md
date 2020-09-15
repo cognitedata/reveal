@@ -13,6 +13,9 @@ description: This page describes the differences between Reveal viewer and @cogn
 - `@cognite/3d-viewer` supports styling 3D nodes by node ID. In `@cognite/reveal` the recommended approach is to use tree indices instead. See [Styling nodes](#styling-nodes) for more information. For an introduction to the differences between these concepts, see [Concepts](./concepts.md). The new component supports [mapping between the two identifiers](#accessing-node-information-and-mapping-between-node-ids-and-tree-indices) when necessary.
 - `@cognite/reveal` supports styling a 3D node and all it's children in one operation. In `@cognite/3d-viewer` it's necessary to iterate over all children and manually apply the same change to all nodes.
 - `@cognite/reveal` supports point cloud models. This is not supported in `@cognite/3d-viewer`.
+- `@cognite/reveal` requires new output file formats. See [Preparing models](#preparing-models-for-use) below for details.
+
+## API changes
 
 The APIs are very similar and the functionality provided in `@cognite/reveal` should feel familiar. There are several operations supported in `@cognite/3d-viewer` which isn't supported by `@cognite/reveal`, but these have been replaced by alternatives that should provide similar functionality.
 
@@ -91,7 +94,59 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - `@cognite/3d-viewer` supports local caching to reduce the time to load previously opened 3D models. Currently, this is not supported by `@cognite/reveal`, but the need for such functionality is reduced by adding streaming capabilities.
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
+- Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function 
+  no longer accepts an `onProgress` parameter. Because of this the `onComplete` option in `Cognite3DViewer.addModel` has 
+  been deprecated.
+- `Cognite3DViewer.getCamera()` can now be used to access the `THREE.Camera` of the viewer. Note that this camera shouldn't be
+  modified.
+- `Cognite3DViewer.addModel` no longer supports options `localPath`, `orthographicCamera` and `onComplete`. Point clouds currently
+  don't support `geometryFilter`.
 
-- Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function no longer accepts a `onProgress` parameter
-- If you were accessing the private property `_camera` in the past, you can do so now by using `viewer.getCamera()`
-- You can no longer pass `onComplete` to the `addModel` functions - it will throw (without a reasonable error)
+## Preparing models
+
+`@cognite/reveal` requires new output file formats which means that 3D models that have been converted before June 2020 might need reconversion. To determine if a model needs reconversion, the [listModelRevisionOutputs API endpoint](https://docs.cognite.com/api/v1/#operation/list3dModelOutputs) can be used with URL parameter `format=reveal-directory`. This can be done using the SDK, e.g.:
+```jsx
+// Switch these with your project/model identifier
+const project = 'publicdata';
+const modelId = 4715379429968321;
+const revisionId = 5688854005909501; 
+
+// Prepare a SDK client and authenticate
+const sdk = new CogniteClient({ appId: 'cognite.reveal.docs.IsModelCompatible' });
+sdk.loginWithOAuth({ project });
+await sdk.authenticate();
+
+// Request a list of formats
+const url = `https://api.cognitedata.com/api/v1/projects/${project}/3d/models/${modelId}/revisions/${revisionId}/outputs`;
+const response = await sdk.get(url, { params: { format: 'reveal-directory' } });
+
+// Determine if there's compatible outputs
+const hasCompatibleOutputs = response.data.items.length > 0;
+alert(`Is model compatible with @cognite/reveal: ${hasCompatibleOutputs}`);
+```
+
+Or by using `curl` (requires a [Cognite API key or access token](https://docs.cognite.com/dev/guides/iam/authentication.html#api-keys)):
+
+```bash
+> curl "https://api.cognitedata.com/api/v1/projects/$PROJECT/3d/models/$MODELID/revisions/$REVISIONID/outputs?format=reveal-directory" --header 'api-key: $APIKEY'
+
+{
+  "items": [
+    {
+      "format": "reveal-directory",
+      "version": 8,
+      "blobId": 42723775736403107
+    }
+  ]
+}
+```
+where `PROJECT`, `MODELID`, `REVISIONID` and `APIKEY` must be set in the environment variables. If the model isn't compatible the response will be an empty list, i.e.
+```bash
+{
+  "items": []
+}
+```
+
+If the model isn't compatible with `@cognite/reveal`, it must be reprocessed. This can be done by [uploading a new revision in Cognite Data Fusion](https://docs.cognite.com/cdf/3d/guides/3dmodels_upload.html). When uploading a new revision, asset mappings must be recreated. If the node hierarchy in the new revision is identical to the previous model node IDs should be identical and the asset mappings can be copied from one revision to the other by using the [get3DMappings](https://docs.cognite.com/api/v1/#operation/get3DMappings) and [create3DMappings](https://docs.cognite.com/api/v1/#operation/create3DMappings) API endpoints.
+
+Another alternative is to use the experimental 'reprocess' endpoint which generates new model outputs for a 3D model and is less intrusive than uploading a new revision. Since this endpoint is experimental it's not publicly exposed in the API yet. Please contact [lars.moastuen@cognite.com](mailto:lars.moastuen@cognite.com) if you want to explore this option.
