@@ -29,7 +29,12 @@
     "local-cdn:start": "cd ../examples && cross-var cross-env PORT=$npm_package_conf_port yarn start",
     "local-cdn": "yarn local-cdn:build && yarn local-cdn:copy && yarn local-cdn:viewer && yarn local-cdn:start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly": "yarn run build:prod"
+    "prebump": "yarn version --no-git-tag-version && yarn",
+    "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
+    "bump:commit": "cross-var git commit -am \"chore(parser-worker): bump version $npm_package_version\"",
+    "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
+    "bump:push": "git push -u origin head && git push --tags",
+    "release": "yarn build:prod && npm publish --non-interactive"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
