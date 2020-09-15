@@ -83,6 +83,19 @@ class Api {
     get: async (): Promise<GenericResponseObject[]> => {
       return this.get(`${config.api.url}/objects`);
     },
+    getSingleObject: async (
+      objectId: number
+    ): Promise<GenericResponseObject[]> => {
+      return this.post(`${config.api.url}/objects/byids`, [objectId]);
+    },
+    getDatatransfersForRevision: async (
+      objectId: number,
+      revision: string
+    ): Promise<GenericResponseObject> => {
+      return this.get(
+        `${config.api.url}/objects/${objectId}/revisions/${revision}/datatransfers`
+      );
+    },
   };
 
   public packages = {
@@ -127,6 +140,26 @@ class Api {
     },
     create: async (data: any): Promise<GenericResponseObject> => {
       return this.post(`${config.api.url}/configurations`, data);
+    },
+  };
+
+  public revisions = {
+    get: async (objectId: string): Promise<GenericResponseObject[]> => {
+      return this.get(`${config.api.url}/objects/${objectId}/revisions`);
+    },
+    getSingleRevision: async (
+      objectId: string,
+      revisionId: string
+    ): Promise<GenericResponseObject[]> => {
+      return this.get(`
+      ${config.api.url}/objects/${objectId}/revisions/${revisionId}`);
+    },
+    getRevisionTranslations: async (
+      objectId: string,
+      revisionId: string
+    ): Promise<GenericResponseObject[]> => {
+      return this.get(`
+      ${config.api.url}/objects/${objectId}/revisions/${revisionId}/translations`);
     },
   };
 }
