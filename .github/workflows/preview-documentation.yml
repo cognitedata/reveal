@@ -69,7 +69,7 @@ jobs:
         run: |
           if [[ -d "${{ env.PR_NUMBER }}" ]]
           then
-            git rm -r "${{ env.PR_NUMBER }}"
+            git rm -r ${{ env.PR_NUMBER }}
           fi
 
       - name: Copy build docs to preview documentation 
@@ -81,7 +81,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add -A "${{ env.PR_NUMBER }}
+          git add -A ${{ env.PR_NUMBER }}
           git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
 
       - name: Deploy  🚀
