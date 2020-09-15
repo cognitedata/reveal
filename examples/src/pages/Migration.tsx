@@ -107,17 +107,7 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
-          }),
-        rotateModel: () => {
-          (window as any).THREE = THREE;
-          const rotation = new THREE.Matrix4();
-          rotation.makeRotationY(Math.PI / 2.0);
-          cadModels.forEach(m => {
-            const matrix: THREE.Matrix4 = m.getModelTransformation();
-            matrix.multiply(rotation);
-            m.setModelTransformation(matrix);
-          });
-        }
+          })
       };
 
       const settingsGui = gui.addFolder('settings');
@@ -128,7 +118,6 @@ export function Migration() {
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
-      gui.add(guiActions, 'rotateModel').name('Rotate model');
 
       const slicing = gui.addFolder('Slicing');
       slicing
