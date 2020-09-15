@@ -365,6 +365,9 @@ export class Cognite3DViewer {
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError('localPath is not supported');
     }
+    if (options.orthographicCamera) {
+      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
+    }
     if (options.onComplete) {
       throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
