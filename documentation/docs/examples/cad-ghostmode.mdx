@@ -1,0 +1,17 @@
+---
+id: cad-ghostmode
+title: Ghost mode for CAD
+describe: In ghost mode most of the geometry is made transparent to highlight interesting objects
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Ghost colors
+
+```jsx runnable
+model.ghostAllNodes();
+model.unghostNodeByTreeIndex(901135, applyToChildren=true);
+```
