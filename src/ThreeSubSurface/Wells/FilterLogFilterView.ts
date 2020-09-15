@@ -39,7 +39,7 @@ export class FilterLogFilterView extends BaseView
     super.updateCore(args);
     const { node } = this;
 
-    if (args.isChanged(Changes.renderStyle))
+    if (args.isChanged(Changes.renderStyle, Changes.nodeName, Changes.nodeColor))
       return; // Update in the node itself
 
     for (const logNode of node.getAllLogs())

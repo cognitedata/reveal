@@ -22,6 +22,7 @@ import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypePr
 import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { BandPosition } from "@/Core/Enums/BandPosition";
 import { BandPositionProperty } from "@/Core/Property/Concrete/Property/BandPositionProperty";
+import { BooleanProperty } from "@/Core/Property/Concrete/Property/BooleanProperty";
 
 export class FloatLogStyle extends BaseRenderStyle
 {
@@ -31,6 +32,8 @@ export class FloatLogStyle extends BaseRenderStyle
 
   public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
   public bandPosition = new BandPositionProperty({ name: "Band Position", value: BandPosition.Automatic });
+  public lineWidth = new NumberProperty({ use: true, name: "Stroke", value: 2, options: [ 1, 2, 3, 4, 5] });
+  public fill = new BooleanProperty({ name: "Fill", value: true });
   public min = new NumberProperty({ name: "Minimum", value: Number.NaN, use: false });
   public max = new NumberProperty({ name: "Maximum", value: Number.NaN, use: false });
 
@@ -51,6 +54,8 @@ export class FloatLogStyle extends BaseRenderStyle
     super.populateCore(folder);
     folder.addChild(this.colorType);
     folder.addChild(this.bandPosition);
+    folder.addChild(this.lineWidth);
+    folder.addChild(this.fill);
     folder.addChild(this.min);
     folder.addChild(this.max);
   }

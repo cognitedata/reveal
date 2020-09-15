@@ -30,7 +30,7 @@ export class CasingLogStyle extends BaseRenderStyle
 
   public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
   public opacity = new SliderProperty({ name: "Opacity", value: 0.2, use: false })
-  public radiusFactor = new NumberProperty({ name: "Radius Factor", value: 3, options: [1, 1.5, 2, 2.5, 3, 4, 5, 10], toolTip: "To get the radius, the casing radius is multiplied with this factor" });
+  public radiusFactor = new NumberProperty({ name: "Radius Factor", value: 1, options: [0.25, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 10], toolTip: "To get the radius, the casing radius is multiplied with this factor" });
 
   //==================================================
   // CONSTRUCTOR

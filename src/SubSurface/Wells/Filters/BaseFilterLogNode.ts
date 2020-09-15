@@ -84,7 +84,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   public /*override*/notifyCore(args: NodeEventArgs): void
   {
     super.notifyCore(args);
-    if (!args.isChanged(Changes.renderStyle))
+    if (!args.isChanged(Changes.renderStyle, Changes.nodeName, Changes.nodeColor))
       return;
 
     for (const logNode of this.getAllLogs())

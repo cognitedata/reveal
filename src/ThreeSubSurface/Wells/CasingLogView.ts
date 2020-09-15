@@ -81,6 +81,10 @@ export class CasingLogView extends BaseGroupThreeView
     if (!trajectory)
       return undefined;
 
+    const { style } = this;
+    if (!style)
+      return undefined;
+
     const { wellNode } = this.node;
     if (!wellNode)
       return undefined;
@@ -99,13 +103,14 @@ export class CasingLogView extends BaseGroupThreeView
       if (sample.isMdEmpty || sample.isEmpty)
         continue;
 
-      maxSampleRadius = Math.max(maxSampleRadius, sample.radius);
+      maxSampleRadius = Math.max(sample.radius, maxSampleRadius);
       if (trajectory.getPositionAtMd(sample.md, position))
         boundingBox.add(position);
       if (trajectory.getPositionAtMd(sample.baseMd, position))
         boundingBox.add(position);
     }
-    boundingBox.expandByMargin(maxSampleRadius + this.trajectoryRadius);
+    const maxRadius = maxSampleRadius * style.radiusFactor.value + this.trajectoryRadius;
+    boundingBox.expandByMargin(maxRadius);
     boundingBox.translate(wellNode.origin);
     return boundingBox;
   }
@@ -158,7 +163,7 @@ export class CasingLogView extends BaseGroupThreeView
       throw Error("Well trajectory is missing");
 
     const parent = new THREE.Group();
-    const samples = this.createRenderSamples(trajectory, log, color);
+    const samples = this.createRenderSamples(trajectory, log, color, style.radiusFactor.value);
     if (samples && samples.length > 0)
     {
       const geometry = new TrajectoryBufferGeometry(samples);
@@ -183,7 +188,7 @@ export class CasingLogView extends BaseGroupThreeView
   // INSTANCE METHODS: Creators
   //==================================================
 
-  public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color): RenderSample[]
+  public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color, radiusFactor: number): RenderSample[]
   {
     const { trajectoryRadius } = this;
 
@@ -200,7 +205,7 @@ export class CasingLogView extends BaseGroupThreeView
       if (Number.isNaN(sample.radius))
         continue;
 
-      const sampleRadius = sample.radius + trajectoryRadius;
+      const sampleRadius = sample.radius * radiusFactor + trajectoryRadius;
       const topPosition = Vector3.newZero;
       if (trajectory.getPositionAtMd(sample.md, topPosition))
         samples.push(new RenderSample(topPosition, sample.md, sampleRadius, color));

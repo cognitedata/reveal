@@ -43,7 +43,8 @@ export class NodeEventArgs
     if (!this.changes)
       return false;
     for (const changed of changes)
-      return this.changes.some((desc: ChangedDescription) => desc.changed === changed);
+      if (this.changes.some((desc: ChangedDescription) => desc.changed === changed))
+        return true;
     return false;
   }
 
