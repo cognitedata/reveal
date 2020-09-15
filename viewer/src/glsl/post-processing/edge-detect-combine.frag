@@ -38,7 +38,10 @@ void main() {
   vec4 frontAlbedo = texture2D(tFront, vUv);
   vec4 backAlbedo = texture2D(tBack, vUv);
   vec4 customAlbedo = texture2D(tCustom, vUv);
-  vec4 ghostColor = texture2D(tGhost, vUv);
+  // Decompose and clamp "ghost" color
+  vec4 ghostColorRGBA = texture2D(tGhost, vUv);
+  vec3 ghostColor = max(ghostColorRGBA.rgb, 0.5);
+  float ghostAlpha = min(ghostColorRGBA.a, 0.8);
 
   float frontOutlineIndex = floatBitsSubset(floor((frontAlbedo.a * 255.0) + 0.5), 2, 5);
   float frontOutlineIndex0 = floatBitsSubset(floor((texture2D(tFront, vUv0).a * 255.0) + 0.5), 2, 5);
@@ -111,12 +114,12 @@ void main() {
       return;
     } else if (ghostDepth <= 1.0) {
       // Regular geometry behind ghost, blend
-      float s = backDepth - ghostDepth;
-      gl_FragColor = vec4(s*ghostColor.rgb + 0.5 * (1.0 - s)*backAlbedo.rgb, 1.0);
+      float s = ghostAlpha;
+      gl_FragColor = vec4(s*ghostColor + (1.0 - s)*backAlbedo.rgb, 1.0);
       return;
     }
   } else if (ghostDepth <= 1.0) {
-    gl_FragColor = ghostColor;
+    gl_FragColor = vec4(ghostAlpha * ghostColor, 1.0);
     return;
   }
 
