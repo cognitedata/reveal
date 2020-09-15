@@ -164,7 +164,6 @@ export class EffectRenderManager {
       const cadNode = rootSectorNodeData[1] as CadNode;
 
       const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.blobUrl);
-      console.log(`Backset: ${backSet?.size}`);
 
       if (!backSet) {
         return;
@@ -196,7 +195,6 @@ export class EffectRenderManager {
       const cadNode = rootSectorNodeData[1] as CadNode;
 
       const inFrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
-      console.log(`InFrontSet: ${inFrontSet?.size}`);
 
       if (!inFrontSet) {
         return;
@@ -230,7 +228,6 @@ export class EffectRenderManager {
       const cadNode = rootSectorNodeData[1] as CadNode;
 
       const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.blobUrl);
-      console.log(`ghostSet: ${ghostSet?.size}`);
 
       if (!ghostSet) {
         return;
