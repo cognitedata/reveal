@@ -55,7 +55,7 @@ export const Base = () => {
         <DetailView onClose={hide} data={mockObj} />
       </div>
       <Button type="primary" onClick={toggle}>
-        Toggle Detail View
+        Toggle Detail View {showing}
       </Button>
     </>
   );
