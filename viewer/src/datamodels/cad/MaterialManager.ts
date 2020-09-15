@@ -5,7 +5,6 @@
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
-import { timeStamp } from 'console';
 
 interface MaterialsWrapper {
   materials: Materials;
