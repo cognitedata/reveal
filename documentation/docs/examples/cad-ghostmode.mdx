@@ -5,13 +5,34 @@ describe: In ghost mode most of the geometry is made transparent to highlight in
 ---
 
 import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
+"Ghosting" can be used to make parts of the model appear transparent and with a fixed color to highlight
+other objects and provide context for location. Reveal supports toggling ghosting of CAD models using 
+`Cognite3DModel.ghostNodeByTreeindex` and `Cognite3DModel.unghostNodeByTreeIndex`. In addition, ghosting 
+for all nodes can be toggled using `Cognite3DModel.ghostAllNodes` and `Cognite3DModel.unghostAllNodes`.
+
+<img src={useBaseUrl('/img/cad-ghostmode.png')} alt="Ghosted CAD model" />
+
+## Examples
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-## Ghost colors
+### Ghost model to identify the location of a piece of equipment
+
+A typical use case for ghosting is to show the location of a piece of equipment. To do this,
+first ghost all nodes and unghost the relevant nodes.
 
 ```jsx runnable
 model.ghostAllNodes();
-model.unghostNodeByTreeIndex(778306, applyToChildren=true);
+model.unghostNodeByTreeIndex(409228, applyToChildren=true);
+```
+
+### Picking in ghost mode
+
+When nodes are ghosted, they are not clickable and the user will be able to click nodes that otherwise
+would be occluded by the ghosted nodes.
+
+
+```jsx runnable
 ```
