@@ -29,8 +29,7 @@ export class RootSectorNode extends SectorNode {
     this.updateMatrixWorld(true);
   }
 
-  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
-    out = out ?? new THREE.Matrix4();
+  getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
     return out.copy(this.matrix);
   }
 }
