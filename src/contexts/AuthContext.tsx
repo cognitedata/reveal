@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CogniteClient } from '@cognite/sdk';
+import { SIDECAR } from '../utils/sidecar';
 import config from '../utils/config';
 
 type Props = {
@@ -7,17 +8,17 @@ type Props = {
 };
 
 const AuthContext = React.createContext({ token: 'NO_TOKEN' });
-const storageKey = `${config.auth.appId}/${config.auth.appVersion}/${config.auth.cdfProject}/auth`;
+const storageKey = `${SIDECAR.applicationId}/${config.app.version}/${SIDECAR.cognuitCdfProject}/auth`;
 const client = new CogniteClient({
-  appId: config.auth.appId,
-  baseUrl: config.auth.baseUrl,
+  appId: SIDECAR.applicationId,
+  baseUrl: 'https://api.cognitedata.com',
 });
 
 const AuthProvider = ({ children }: Props) => {
   const [token, setToken] = useState('NO_TOKEN');
   useEffect(() => {
     client.loginWithOAuth({
-      project: config.auth.cdfProject,
+      project: SIDECAR.cognuitCdfProject,
       onTokens: ({ accessToken }) => {
         localStorage.setItem(storageKey, accessToken);
         setToken(accessToken);

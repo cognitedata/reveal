@@ -1,4 +1,4 @@
-import config from 'utils/config';
+import { SIDECAR } from 'utils/sidecar';
 import {
   GenericResponseObject,
   RESTPackageFilter,
@@ -25,12 +25,15 @@ class Api {
     Authorization: string;
   };
 
+  private readonly baseURL: string;
+
   constructor(token: string) {
     this.headers = {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
+    this.baseURL = SIDECAR.cognuitApiBaseUrl;
   }
 
   private async get(url: string, parameters?: QueryParameters): Promise<any> {
@@ -75,13 +78,13 @@ class Api {
     get: async (projectId: number | null = null): Promise<string[]> => {
       let queryParameters;
       if (projectId) queryParameters = { project_id: projectId };
-      return this.get(`${config.api.url}/datatypes`, queryParameters);
+      return this.get(`${this.baseURL}/datatypes`, queryParameters);
     },
   };
 
   public objects = {
     get: async (): Promise<GenericResponseObject[]> => {
-      return this.get(`${config.api.url}/objects`);
+      return this.get(`${this.baseURL}/objects`);
     },
     getSingleObject: async (
       objectId: number
@@ -100,46 +103,46 @@ class Api {
 
   public packages = {
     get: async (filter: RESTPackageFilter): Promise<any> => {
-      return this.get(`${config.api.url}/packages`, filter);
+      return this.get(`${this.baseURL}/packages`, filter);
     },
   };
 
   public projects = {
     get: async (source: Source): Promise<GenericResponseObject[]> => {
-      return this.get(`${config.api.url}/sources/${source}/projects`);
+      return this.get(`${this.baseURL}/sources/${source}/projects`);
     },
   };
 
   public sources = {
     get: async (): Promise<string[]> => {
-      return this.get(`${config.api.url}/sources`);
+      return this.get(`${this.baseURL}/sources`);
     },
     getHeartbeats: async (source: string, after: number): Promise<number[]> => {
       const queryParameters = { after };
       return this.get(
-        `${config.api.url}/sources/${source}/heartbeats`,
+        `${this.baseURL}/sources/${source}/heartbeats`,
         queryParameters
       );
     },
     getProjects: async (source: string): Promise<RESTProject[]> => {
-      return this.get(`${config.api.url}/sources/${source}/projects`);
+      return this.get(`${this.baseURL}/sources/${source}/projects`);
     },
     getRepositoryTree: async (
       source: string,
       projectExternalId: string
     ): Promise<any> => {
       return this.get(
-        `${config.api.url}/sources/${source}/projects/${projectExternalId}/tree`
+        `${this.baseURL}/sources/${source}/projects/${projectExternalId}/tree`
       );
     },
   };
 
   public configurations = {
     get: async (): Promise<GenericResponseObject[]> => {
-      return this.get(`${config.api.url}/configurations`);
+      return this.get(`${this.baseURL}/configurations`);
     },
     create: async (data: any): Promise<GenericResponseObject> => {
-      return this.post(`${config.api.url}/configurations`, data);
+      return this.post(`${this.baseURL}/configurations`, data);
     },
   };
 
