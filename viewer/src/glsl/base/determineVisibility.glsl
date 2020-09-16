@@ -33,7 +33,7 @@ bool determineVisibility(sampler2D visibilityTexture, vec2 textureSize, float tr
          // In ghost mode
          ((renderMode == RenderTypeGhost) && isVisible && renderGhosted) ||
          // Not ghost mode
-         (renderMode != RenderTypeGhost) && 
+         ((renderMode != RenderTypeGhost) && 
          !renderGhosted && isVisible && (renderInFront || renderMode != RenderTypeEffects));
 }
 
