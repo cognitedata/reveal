@@ -1,21 +1,21 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { CameraConfiguration, ModelTransformation } from './types';
-import { toThreeMatrix4 } from './threeConverters';
+import * as THREE from 'three';
+
+import { CameraConfiguration } from './types';
 
 export function transformCameraConfiguration(
   cameraConfiguration: CameraConfiguration | undefined,
-  modelTransformation: ModelTransformation
+  modelMatrix: THREE.Matrix4
 ): CameraConfiguration | undefined {
   if (cameraConfiguration === undefined) {
     return undefined;
   }
 
   const { position, target } = cameraConfiguration;
-  const matrix = toThreeMatrix4(modelTransformation.modelMatrix);
-  position.applyMatrix4(matrix);
-  target.applyMatrix4(matrix);
+  position.applyMatrix4(modelMatrix);
+  target.applyMatrix4(modelMatrix);
   return {
     position,
     target
