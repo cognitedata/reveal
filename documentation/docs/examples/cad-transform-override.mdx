@@ -1,0 +1,37 @@
+---
+id: cad-transform-override
+title: Override CAD nodes transforms
+description: Reveal supports overriding transforms of individual objects by providing tree indices to identify 3D nodes
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Reveal supports overriding transforms of individual objects by providing [tree indices to identify 3D nodes.](../concepts.md)
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+
+```jsx runnable
+model.getBoundingBoxByTreeIndex(533010).then(boundingBox => {
+  const center = boundingBox.getCenter(new THREE.Vector3());
+  let counter = 0;
+  setInterval(function () {
+    const modelToWorld = new THREE.Matrix4();
+    modelToWorld.setPosition(center);
+    const worldToModel = new THREE.Matrix4();
+    worldToModel.getInverse(modelToWorld.clone());
+    const rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.makeRotationFromEuler(new THREE.Euler(0, -Math.PI / 400 * counter, 0));
+    const matrixOverride = modelToWorld.multiply(rotationMatrix.multiply(worldToModel));
+    const outRotation = new THREE.Euler();
+    outRotation.setFromRotationMatrix(matrixOverride);
+    const outPosition = new THREE.Vector3();
+    outPosition.setFromMatrixColumn(matrixOverride, 3);
+    model.setNodeTransformByTreeIndex(532261, outPosition, outRotation, true);
+    counter++;
+  }, 16);
+});
+```

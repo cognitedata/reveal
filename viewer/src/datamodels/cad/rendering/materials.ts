@@ -293,14 +293,10 @@ export function createMaterials(
 
   const transformOverrideBuffer = new TransformOverrideBuffer((newOverrideDataTexture: THREE.DataTexture) => {
     for (const material of Object.values(allMaterials)) {
-      updateDefinesAndUniforms(
-        material,
-        treeIndexTextureSize,
-        overrideColorPerTreeIndex,
-        transformOverrideIndexTexture,
-        newOverrideDataTexture,
-        matCapTexture,
-        renderMode
+      material.uniforms.transformOverrideTexture.value = newOverrideDataTexture;
+      material.uniforms.transformOverrideTextureSize.value = new THREE.Vector2(
+        newOverrideDataTexture.image.width,
+        newOverrideDataTexture.image.height
       );
     }
   });
@@ -362,4 +358,6 @@ function updateDefinesAndUniforms(
       }
     }
   });
+
+  material.uniformsNeedUpdate = true;
 }
