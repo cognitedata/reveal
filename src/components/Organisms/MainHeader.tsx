@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import AuthContext from 'contexts/AuthContext';
+import sdk from 'utils/cognitesdk';
 import Logo from 'components/Atoms/Logo';
-import { Avatar } from '@cognite/cogs.js';
+import { Avatar, Tooltip } from '@cognite/cogs.js';
 import AppSwitcher from '../Atoms/AppSwitcher';
 
 const Header = styled.header`
@@ -100,6 +102,19 @@ const ActionsContainer = styled(HeaderItem)`
 `;
 
 const MainHeader = (): React.ReactElement => {
+  const { user, setUser } = useContext(AuthContext);
+  useEffect(() => {
+    if (!user || user.length <= 0) {
+      (async () => {
+        const status = await sdk.login.status();
+        if (status && status.user) {
+          setUser(status.user);
+        }
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Header>
       <TitleContainer>
@@ -129,7 +144,9 @@ const MainHeader = (): React.ReactElement => {
         </nav>
       </MenuContainer>
       <AvatarContainer>
-        <Avatar text="Erland Solstrand" />
+        <Tooltip content={`Logged in: ${String(user)}`}>
+          <Avatar text={String(user)} />
+        </Tooltip>
       </AvatarContainer>
       <ActionsContainer>
         <AppSwitcher />
