@@ -5,12 +5,13 @@ export default {
     'datatype',
     'author',
     'project',
+    'report',
     'status',
     'source_project',
-    'connector',
     'source',
   ],
   filterableColumns: ['datatype', 'connector', 'source', 'status', 'name'],
+  nonSortableColumns: ['status_ok'],
   ignoreColumns: ['cdf_metadata', 'business_tags'],
   keyColumn: 'id',
   columnOrder: [
@@ -20,13 +21,14 @@ export default {
     'datatype',
     'author',
     'project',
+    'report',
     'connector',
     'actions',
   ],
   columnNameMapping: [
     {
       keyName: 'status_ok',
-      value: 'Status',
+      value: '',
     },
     {
       keyName: 'created_time',

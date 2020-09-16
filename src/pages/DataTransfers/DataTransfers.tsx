@@ -88,7 +88,9 @@ function selectColumns(
         title: getMappedColumnName(key),
         dataIndex: key,
         key,
-        sorter: (a, b) => (a[key] < b[key] ? -1 : 1),
+        sorter: !config.nonSortableColumns.includes(key)
+          ? (a, b) => (a[key] < b[key] ? -1 : 1)
+          : false,
         filters: config.filterableColumns.includes(key)
           ? createFiltersArrayForColumn(dataTransferObjects, key)
           : undefined,
@@ -103,6 +105,9 @@ function selectColumns(
                 bgColor={value ? Colors.success.hex() : Colors.danger.hex()}
               />
             );
+          }
+          if (key === 'report') {
+            return <div>{value ? 'Success' : 'Error'}</div>;
           }
           return value;
         },
@@ -324,16 +329,20 @@ const DataTransfers: React.FC = () => {
         .get()
         .then((response: DataTransferObject[]) => {
           if (!response[0].error) {
+            const handledData = response.map((item) => ({
+              ...item,
+              report: item.status_ok,
+            }));
             dispatch({
               type: Action.SUCCEED,
               payload: {
-                data: response,
+                data: handledData,
                 columns: selectColumns(
-                  response,
+                  handledData,
                   config.initialSelectedColumnNames
                 ),
-                rawColumns: selectColumns(response, []),
-                allColumnNames: getColumnNames(response),
+                rawColumns: selectColumns(handledData, []),
+                allColumnNames: getColumnNames(handledData),
                 selectedColumnNames: config.initialSelectedColumnNames,
               },
             });

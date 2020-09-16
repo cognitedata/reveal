@@ -89,14 +89,14 @@ class Api {
     getSingleObject: async (
       objectId: number
     ): Promise<GenericResponseObject[]> => {
-      return this.post(`${config.api.url}/objects/byids`, [objectId]);
+      return this.post(`${this.baseURL}/objects/byids`, [objectId]);
     },
     getDatatransfersForRevision: async (
       objectId: number,
       revision: string
     ): Promise<GenericResponseObject> => {
       return this.get(
-        `${config.api.url}/objects/${objectId}/revisions/${revision}/datatransfers`
+        `${this.baseURL}/objects/${objectId}/revisions/${revision}/datatransfers`
       );
     },
   };
@@ -148,21 +148,21 @@ class Api {
 
   public revisions = {
     get: async (objectId: string): Promise<GenericResponseObject[]> => {
-      return this.get(`${config.api.url}/objects/${objectId}/revisions`);
+      return this.get(`${this.baseURL}/objects/${objectId}/revisions`);
     },
     getSingleRevision: async (
       objectId: string,
       revisionId: string
     ): Promise<GenericResponseObject[]> => {
       return this.get(`
-      ${config.api.url}/objects/${objectId}/revisions/${revisionId}`);
+      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}`);
     },
     getRevisionTranslations: async (
       objectId: string,
       revisionId: string
     ): Promise<GenericResponseObject[]> => {
       return this.get(`
-      ${config.api.url}/objects/${objectId}/revisions/${revisionId}/translations`);
+      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}/translations`);
     },
   };
 }
