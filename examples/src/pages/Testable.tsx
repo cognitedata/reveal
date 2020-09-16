@@ -94,6 +94,16 @@ export function Testable() {
       } else if (test === "suggested_camera") {
         // Nothing - the suggested camera is default
       }
+      else if (test === 'rotate_cad_model') {
+        const matrix = model.getModelTransformation();
+        const newMatrix = new THREE.Matrix4().multiplyMatrices(matrix, new THREE.Matrix4().makeRotationY(Math.PI / 3.0));
+        model.setModelTransformation(newMatrix);
+        const cameraConfig = model.suggestCameraConfig();
+        position.copy(cameraConfig.position);
+        target.copy(cameraConfig.target);
+        near = cameraConfig.near;
+        far = cameraConfig.far;
+      }
       else if (test === "highlight") {
         camera = new THREE.PerspectiveCamera();
         position.x = 12;
@@ -145,6 +155,10 @@ export function Testable() {
         target.z
       );
       controls.update(0.0);
+      camera.near = near;
+      camera.far = far;
+      camera.updateProjectionMatrix();
+
       camera.updateMatrixWorld();
       revealManager.update(camera);
 

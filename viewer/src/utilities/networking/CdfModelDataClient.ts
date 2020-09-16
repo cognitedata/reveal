@@ -6,8 +6,8 @@ import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
 import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat, ModelTransformation, CameraConfiguration } from '../types';
-import { applyDefaultModelTransformation, createModelTransformation } from './modelTransformation';
+import { File3dFormat, CameraConfiguration } from '../types';
+import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -74,11 +74,11 @@ export class CdfModelDataClient
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 
-  public async getModelTransformation(modelIdentifier: {
+  public async getModelMatrix(modelIdentifier: {
     modelId: number;
     revisionId: number;
     format: File3dFormat | string;
-  }): Promise<ModelTransformation> {
+  }): Promise<THREE.Matrix4> {
     const { modelId, revisionId, format } = modelIdentifier;
     const model = await this.client.revisions3D.retrieve(modelId, revisionId);
 
@@ -87,7 +87,7 @@ export class CdfModelDataClient
       modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
     }
     applyDefaultModelTransformation(modelMatrix, format);
-    return createModelTransformation(modelMatrix);
+    return modelMatrix;
   }
 
   public async getModelCamera(modelIdentifier: {

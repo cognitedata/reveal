@@ -2,12 +2,13 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
 import { SectorScene } from './sector/types';
-import { ModelTransformation, CameraConfiguration } from '@/utilities';
+import { CameraConfiguration } from '@/utilities';
 
 export interface CadModelMetadata {
   blobUrl: string;
-  modelTransformation: ModelTransformation;
+  modelMatrix: THREE.Matrix4;
   cameraConfiguration?: CameraConfiguration;
   scene: SectorScene;
 }
