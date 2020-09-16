@@ -113,6 +113,8 @@ export class EffectRenderManager {
 
     try {
       this.updateRenderSize(renderer);
+      renderer.info.autoReset = false;
+      renderer.info.reset();
       renderer.setClearAlpha(0);
 
       this.splitToScenes();
