@@ -325,6 +325,7 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
 }
 
 function hasIntersection(left: Set<number>, right: Set<number>): boolean {
+  // Can we improve performance by using a bloom filter before comparing full sets?
   const needles = left.size < right.size ? left : right;
   const haystack = left.size > right.size ? left : right;
 
