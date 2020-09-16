@@ -14,7 +14,6 @@ export interface CogniteModelBase {
   dispose(): void;
   getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3;
   getCameraConfiguration(): CameraConfiguration | undefined;
-
-  /** @internal */
-  updateTransformation(matrix: THREE.Matrix4): void;
+  setModelTransformation(matrix: THREE.Matrix4): void;
+  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
 }

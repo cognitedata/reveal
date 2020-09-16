@@ -26,6 +26,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.pointCloudNode = pointCloudNode;
+    // this.matrixAutoUpdate = false;
     this.add(pointCloudNode);
   }
 
@@ -64,12 +65,19 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Apply transformation matrix to the model.
-   * @param matrix Matrix to be applied.
+   * Sets transformation matrix of the model. This overrides the current transformation.
+   * @param matrix Transformation matrix.
    */
-  updateTransformation(matrix: THREE.Matrix4): void {
-    this.applyMatrix4(matrix);
-    this.updateMatrixWorld(false);
+  setModelTransformation(matrix: THREE.Matrix4): void {
+    this.pointCloudNode.setModelTransformation(matrix);
+  }
+
+  /**
+   * Gets transformation matrix of the model
+   * @param out Preallocated `THREE.Matrix4` (optional).
+   */
+  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this.pointCloudNode.getModelTransformation(out);
   }
 
   get pointBudget(): number {
