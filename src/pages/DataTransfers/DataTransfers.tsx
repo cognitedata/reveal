@@ -3,16 +3,22 @@ import { DataTransferObject } from 'typings/interfaces';
 import { Checkbox, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Colors } from '@cognite/cogs.js';
 import ApiContext from 'contexts/ApiContext';
 import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-// import styled from 'styled-components';
+import sortBy from 'lodash/sortBy';
+import indexOf from 'lodash/indexOf';
 import { ContentContainer, TableActions } from '../../elements';
+import { ExpandRowIcon, StatusDot } from './elements';
+import Revisions from './Revisions';
 import 'antd/dist/antd.css';
 import config from './datatransfer.config';
-import DetailView from '../../components/Organisms/DetailView';
+import DetailView, {
+  DetailDataProps,
+} from '../../components/Organisms/DetailView/DetailView';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
+import { getMappedColumnName } from './utils';
 
 enum ProgressState {
   LOADING = 'loading',
@@ -56,17 +62,6 @@ type UserAction =
   | { type: Action.ADD_COLUMN; payload: string }
   | { type: Action.REMOVE_COLUMN; payload: string };
 
-type ActiveColumn = {
-  column: {
-    title: string;
-    dataIndex: string;
-    key: string;
-  };
-  columnKey: string;
-  field: string;
-  order: string;
-};
-
 const initialDataTransfersState: DataTransfersState = {
   status: ProgressState.LOADING,
   data: {
@@ -85,17 +80,36 @@ function selectColumns(
 ): ColumnsType<DataTransferObject> {
   const results: ColumnsType<DataTransferObject> = [];
   Object.keys(dataTransferObjects[0]).forEach((key) => {
-    if (columnNames.length === 0 || columnNames.includes(key)) {
+    if (
+      (columnNames.length === 0 || columnNames.includes(key)) &&
+      !config.ignoreColumns.includes(key)
+    ) {
       results.push({
-        title: key,
+        title: getMappedColumnName(key),
         dataIndex: key,
         key,
-        sorter: (a, b) => (a[key] < b[key] ? -1 : 1),
+        sorter: !config.nonSortableColumns.includes(key)
+          ? (a, b) => (a[key] < b[key] ? -1 : 1)
+          : false,
         filters: config.filterableColumns.includes(key)
           ? createFiltersArrayForColumn(dataTransferObjects, key)
           : undefined,
         onFilter: (value, record) => {
           return record[key]?.includes(value);
+        },
+        width: key === 'status_ok' ? 70 : undefined,
+        render: (value) => {
+          if (key === 'status_ok') {
+            return (
+              <StatusDot
+                bgColor={value ? Colors.success.hex() : Colors.danger.hex()}
+              />
+            );
+          }
+          if (key === 'report') {
+            return <div>{value ? 'Success' : 'Error'}</div>;
+          }
+          return value;
         },
       });
     }
@@ -169,28 +183,26 @@ const SelectColumnsMenu = ({
 }) => {
   return (
     <Menu>
-      {columnNames.map((name) => (
-        <Menu.Item key={name}>
-          <Checkbox
-            name={name}
-            id={name}
-            onChange={onChange}
-            checked={selectedColumnNames.includes(name)}
-          >
-            {name}
-          </Checkbox>
-        </Menu.Item>
-      ))}
+      {columnNames.map((name) => {
+        if (config.ignoreColumns.includes(name)) {
+          return null;
+        }
+        return (
+          <Menu.Item key={name}>
+            <Checkbox
+              name={name}
+              id={name}
+              onChange={onChange}
+              checked={selectedColumnNames.includes(name)}
+            >
+              {getMappedColumnName(name)}
+            </Checkbox>
+          </Menu.Item>
+        );
+      })}
     </Menu>
   );
 };
-
-/*
-const ShowDetails = styled.span`
-  color: var(--cogs-greyscale-grey6);
-  cursor: pointer;
-`;
-*/
 
 function getAllValuesFromColumn(
   dataSet: DataTransferObject[],
@@ -236,7 +248,7 @@ const DataTransfers: React.FC = () => {
   const [
     selectedTransfer,
     setSelectedTransfer,
-  ] = useState<DataTransferObject | null>(null);
+  ] = useState<DetailDataProps | null>(null);
 
   function getColumnNames(dataTransferObjects: DataTransferObject[]): string[] {
     const results: string[] = [];
@@ -256,6 +268,61 @@ const DataTransfers: React.FC = () => {
     }
   }
 
+  function handleOpenDetailClick(
+    sourceObj: DataTransferObject,
+    revision: DataTransferObject
+  ) {
+    setSelectedTransfer({
+      isLoading: true,
+      id: sourceObj.id,
+      source: {},
+      targets: [],
+    });
+    const selectedObject: DetailDataProps = {
+      id: sourceObj.id,
+      source: {},
+      targets: [],
+    };
+
+    api!.objects
+      .getDatatransfersForRevision(sourceObj.id, revision.revision)
+      .then((response) => {
+        if (response) {
+          const selectedRevision = response.source.revisions.find(
+            (rev: any) => rev.revision === revision.revision
+          );
+          selectedObject.source = {
+            name: response.source.name,
+            externalId: response.source.external_id,
+            crs: response.source.crs,
+            dataType: response.source.datatype,
+            createdTime:
+              response.source_created_time || response.source.created_time,
+            repository: response.source.project,
+            businessTag: response.source.business_tags.join(', '),
+            revision: selectedRevision.revision,
+            revisionSteps: selectedRevision.steps,
+            interpreter: response.source.author,
+          };
+          if (response.targets && response.targets.length > 0) {
+            selectedObject.targets = response.targets.map(
+              (item: DataTransferObject) => ({
+                name: item.name,
+                crs: item.crs,
+                dataType: item.datatype,
+                createdTime: item.created_time,
+                repository: item.project,
+                revision: item.revisions[item.revisions.length - 1].revision,
+                revisionSteps: item.revisions[item.revisions.length - 1].steps,
+              })
+            );
+          }
+          selectedObject.isLoading = false;
+        }
+        setSelectedTransfer(selectedObject);
+      });
+  }
+
   useEffect(() => {
     function fetchDataTransfers() {
       dispatch({ type: Action.LOAD });
@@ -263,16 +330,20 @@ const DataTransfers: React.FC = () => {
         .get()
         .then((response: DataTransferObject[]) => {
           if (!response[0].error) {
+            const handledData = response.map((item) => ({
+              ...item,
+              report: item.status_ok,
+            }));
             dispatch({
               type: Action.SUCCEED,
               payload: {
-                data: response,
+                data: handledData,
                 columns: selectColumns(
-                  response,
+                  handledData,
                   config.initialSelectedColumnNames
                 ),
-                rawColumns: selectColumns(response, []),
-                allColumnNames: getColumnNames(response),
+                rawColumns: selectColumns(handledData, []),
+                allColumnNames: getColumnNames(handledData),
                 selectedColumnNames: config.initialSelectedColumnNames,
               },
             });
@@ -300,30 +371,9 @@ const DataTransfers: React.FC = () => {
     );
   }
 
-  data.columns.push({
-    dataIndex: 'actions',
-    key: 'actions',
-    /*
-    render: (_: any, record) => {
-      // Temp. out commented because of heard coded values in DetailView
-
-      return (
-        <Tooltip content={<span>Show {record.name} details</span>}>
-          <ShowDetails>
-            <Icon
-              type="VerticalEllipsis"
-              onClick={() => setSelectedTransfer(record)}
-            />
-          </ShowDetails>
-        </Tooltip>
-      );
-
-    },
-    */
-    render: () => {
-      return null;
-    },
-  });
+  function renderExpandedRow(record: DataTransferObject) {
+    return <Revisions record={record} onDetailClick={handleOpenDetailClick} />;
+  }
 
   return (
     <ContentContainer>
@@ -348,14 +398,29 @@ const DataTransfers: React.FC = () => {
       </TableActions>
       <Table
         dataSource={data.data}
-        columns={data.columns}
+        columns={sortBy(data.columns, (obj) =>
+          indexOf(config.columnOrder, obj.key)
+        )}
         loading={status === ProgressState.LOADING}
         rowKey="id"
         key={data.selectedColumnNames.join('')}
+        expandable={{
+          expandedRowRender: renderExpandedRow,
+          // eslint-disable-next-line react/prop-types
+          expandIcon: ({ expanded, onExpand, record }) =>
+            expanded ? (
+              <ExpandRowIcon type="Down" onClick={(e) => onExpand(record, e)} />
+            ) : (
+              <ExpandRowIcon
+                type="Right"
+                onClick={(e) => onExpand(record, e)}
+              />
+            ),
+        }}
       />
       <DetailView
-        showing={!!selectedTransfer}
         onClose={() => setSelectedTransfer(null)}
+        data={selectedTransfer}
       />
     </ContentContainer>
   );

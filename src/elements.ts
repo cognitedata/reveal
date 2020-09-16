@@ -22,6 +22,13 @@ export const ContentContainer = styled.div`
   background-color: var(--cogs-white);
   box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
+
+  .ant-table .ant-table-thead tr th.ant-table-cell {
+    background: #ffffff;
+  }
+  .ant-table-column-sorters {
+    text-transform: capitalize;
+  }
 `;
 
 export const TableActions = styled.div`
@@ -29,6 +36,10 @@ export const TableActions = styled.div`
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
   justify-content: flex-end;
+
+  .cogs-menu-item {
+    text-transform: capitalize;
+  }
 `;
 
 export const StatusIcon = styled(Icon)`

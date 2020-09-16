@@ -7,6 +7,33 @@ export default {
   title: 'DetailView',
 };
 
+const mockObj = {
+  id: 1,
+  source: {
+    name: 'SourceName',
+    externalId: undefined,
+    crs: undefined,
+    dataType: undefined,
+    createdTime: undefined,
+    repository: undefined,
+    businessTag: undefined,
+    revision: undefined,
+  },
+  targets: [
+    {
+      name: 'TranslationName',
+      owId: undefined,
+      crs: undefined,
+      dataType: undefined,
+      createdTime: undefined,
+      repository: undefined,
+      configTag: undefined,
+      revision: undefined,
+      interpreter: undefined,
+    },
+  ],
+};
+
 // noinspection JSUnusedGlobalSymbols
 export const Base = () => {
   const [showing, setShowing] = useState(false);
@@ -25,10 +52,10 @@ export const Base = () => {
           height: '700px',
         }}
       >
-        <DetailView showing={showing} onClose={hide} />
+        <DetailView onClose={hide} data={mockObj} />
       </div>
       <Button type="primary" onClick={toggle}>
-        Toggle Detail View
+        Toggle Detail View {showing}
       </Button>
     </>
   );
