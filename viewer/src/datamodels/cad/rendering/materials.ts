@@ -66,7 +66,12 @@ export function createMaterials(
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    }
   });
 
   const circleMaterial = new THREE.ShaderMaterial({
@@ -78,7 +83,12 @@ export function createMaterials(
     fragmentShader: sectorShaders.circlePrimitive.fragment,
     // TODO double side is not necessary for all,
     // we should indicate this in the data from Rust
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    }
   });
 
   const nutMaterial = new THREE.ShaderMaterial({
@@ -254,6 +264,11 @@ export function createMaterials(
     name: 'Low detail material',
     clipping: true,
     clippingPlanes,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    },
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex
   });

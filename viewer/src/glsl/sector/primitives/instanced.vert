@@ -1,6 +1,8 @@
 #pragma glslify: constructMatrix = require('../../base/constructMatrix.glsl')
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
+uniform mat4 inverseModelMatrix;
+
 attribute vec4 a_instanceMatrix_column_0;
 attribute vec4 a_instanceMatrix_column_1;
 attribute vec4 a_instanceMatrix_column_2;
@@ -40,7 +42,8 @@ void main()
 
     v_treeIndex = a_treeIndex;
     v_color = a_color;
-    v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;
+    v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * instanceMatrix * vec4(normalize(normal), 0.0)).xyz;
+    //v_normal = normal;
 
     vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(transformed, 1.0);
