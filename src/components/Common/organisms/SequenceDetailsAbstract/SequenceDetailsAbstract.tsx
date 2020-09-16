@@ -1,9 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title, Body, Colors } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, DetailsItem, ButtonRow } from 'components/Common';
+import {
+  InfoGrid,
+  InfoCell,
+  DetailsItem,
+  ButtonRow,
+  TimeDisplay,
+} from 'components/Common';
 import { Sequence } from 'cognite-sdk-v3';
-import moment from 'moment';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { SequenceInfoGrid } from './SequenceInfoGrid';
 
@@ -98,12 +103,12 @@ export const SequenceDetailsAbstract = ({
           <DetailsItem
             key="createdTime"
             name="Created at"
-            value={moment(sequence.createdTime).format('MM/DD/YYYY HH:MM')}
+            value={<TimeDisplay value={sequence.createdTime} />}
           />,
           <DetailsItem
             key="lastUpdatedTime"
             name="Updated at"
-            value={moment(sequence.lastUpdatedTime).format('MM/DD/YYYY HH:MM')}
+            value={<TimeDisplay value={sequence.lastUpdatedTime} />}
           />,
           <DetailsItem
             key="externalId"

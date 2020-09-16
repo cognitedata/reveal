@@ -6,10 +6,10 @@ import {
   SequenceDetailsAbstract,
   DetailsItem,
   Wrapper,
+  TimeDisplay,
 } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { Tabs } from 'antd';
-import moment from 'moment';
 import { SequenceColumn } from 'cognite-sdk-v3';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
@@ -55,13 +55,11 @@ export const SequencePreview = ({
             <DetailsItem name="Description" value={sequence.description} />
             <DetailsItem
               name="Created at"
-              value={moment(sequence.createdTime).format('MM/DD/YYYY HH:MM')}
+              value={<TimeDisplay value={sequence.createdTime} />}
             />
             <DetailsItem
               name="Updated at"
-              value={moment(sequence.lastUpdatedTime).format(
-                'MM/DD/YYYY HH:MM'
-              )}
+              value={<TimeDisplay value={sequence.lastUpdatedTime} />}
             />
             <DetailsItem name="External ID" value={sequence.externalId} />
             <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>

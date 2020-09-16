@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-import { InfoCell } from 'components/Common';
+import { InfoCell, TimeDisplay } from 'components/Common';
 import { Row, Col } from 'antd';
 import { Timeseries, DoubleDatapoint, StringDatapoint } from 'cognite-sdk-v3';
 
@@ -39,7 +38,13 @@ export const LatestDatapoint = ({ timeSeries }: LatestDatapointProps) => {
           </strong>
         </Col>
         <Col>
-          {latestDatapoint && moment(latestDatapoint.timestamp).fromNow()}
+          {latestDatapoint && (
+            <TimeDisplay
+              value={latestDatapoint.timestamp}
+              relative
+              withTooltip
+            />
+          )}
         </Col>
       </Row>
     </InfoCell>

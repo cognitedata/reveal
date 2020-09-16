@@ -1,9 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title, Body, Colors } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, DetailsItem, ButtonRow } from 'components/Common';
+import {
+  InfoGrid,
+  InfoCell,
+  DetailsItem,
+  ButtonRow,
+  TimeDisplay,
+} from 'components/Common';
 import { CogniteEvent } from 'cognite-sdk-v3';
-import moment from 'moment';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { renderTitle } from 'utils/EventsUtils';
 import { EventInfoGrid } from './EventInfoGrid';
@@ -102,12 +107,12 @@ export const EventDetailsAbstract = ({
           <DetailsItem
             key="createdTime"
             name="Created at"
-            value={moment(event.createdTime).format('MM/DD/YYYY HH:MM')}
+            value={<TimeDisplay value={event.createdTime} />}
           />,
           <DetailsItem
             key="lastUpdatedTime"
             name="Updated at"
-            value={moment(event.lastUpdatedTime).format('MM/DD/YYYY HH:MM')}
+            value={<TimeDisplay value={event.lastUpdatedTime} />}
           />,
         ]}
       />

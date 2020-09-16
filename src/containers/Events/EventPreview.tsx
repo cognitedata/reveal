@@ -2,10 +2,14 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/events';
 import { Icon, Title } from '@cognite/cogs.js';
-import { EventDetailsAbstract, DetailsItem, Wrapper } from 'components/Common';
+import {
+  EventDetailsAbstract,
+  DetailsItem,
+  Wrapper,
+  TimeDisplay,
+} from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { Tabs } from 'antd';
-import moment from 'moment';
 import { renderTitle } from 'utils/EventsUtils';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
@@ -50,11 +54,11 @@ export const EventPreview = ({
             <DetailsItem name="Description" value={event.description} />
             <DetailsItem
               name="Created at"
-              value={moment(event.createdTime).format('MM/DD/YYYY HH:MM')}
+              value={<TimeDisplay value={event.createdTime} />}
             />
             <DetailsItem
               name="Updated at"
-              value={moment(event.lastUpdatedTime).format('MM/DD/YYYY HH:MM')}
+              value={<TimeDisplay value={event.lastUpdatedTime} />}
             />
             <DetailsItem name="External ID" value={event.externalId} />
             <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>

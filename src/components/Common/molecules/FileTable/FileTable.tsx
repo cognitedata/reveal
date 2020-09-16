@@ -10,8 +10,7 @@ import {
   useResourcesState,
 } from 'context/ResourceSelectionContext';
 import Highlighter from 'react-highlight-words';
-import { TableWrapper } from 'components/Common';
-import moment from 'moment';
+import { TableWrapper, TimeDisplay } from 'components/Common';
 
 const headerRenderer = ({
   column: { title },
@@ -109,21 +108,25 @@ export const FileTable = ({
               },
               {
                 key: 'uploadedTime',
-                title: 'Uploaded Time',
+                title: 'Uploaded',
                 width: 200,
                 headerRenderer,
                 cellRenderer: ({ cellData: file }: { cellData: File }) => (
                   <Body level={2}>
-                    {file &&
-                      file.uploaded &&
-                      moment(file.uploadedTime).format('YYYY-MM-DD, hh:mm')}
+                    {file && file.uploaded && (
+                      <TimeDisplay
+                        value={file.uploadedTime}
+                        relative
+                        withTooltip
+                      />
+                    )}
                   </Body>
                 ),
                 resizable: true,
               },
               {
                 key: 'lastUpdatedTime',
-                title: 'Last Updated Time',
+                title: 'Last updated',
                 dataKey: 'lastUpdatedTime',
                 width: 200,
                 headerRenderer,
@@ -133,14 +136,14 @@ export const FileTable = ({
                   cellData?: number;
                 }) => (
                   <Body level={2}>
-                    {moment(lastUpdatedTime).format('YYYY-MM-DD, hh:mm')}
+                    <TimeDisplay value={lastUpdatedTime} relative withTooltip />
                   </Body>
                 ),
                 resizable: true,
               },
               {
                 key: 'createdTime',
-                title: 'Created Time',
+                title: 'Created',
                 dataKey: 'createdTime',
                 width: 200,
                 headerRenderer,
@@ -150,7 +153,7 @@ export const FileTable = ({
                   cellData?: number;
                 }) => (
                   <Body level={2}>
-                    {moment(createdTime).format('YYYY-MM-DD, hh:mm')}
+                    <TimeDisplay value={createdTime} relative withTooltip />
                   </Body>
                 ),
                 resizable: true,

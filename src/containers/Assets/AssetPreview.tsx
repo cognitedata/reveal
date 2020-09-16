@@ -36,8 +36,12 @@ import {
   EventFilterRequest,
   FilesSearchFilter,
 } from 'cognite-sdk-v3';
-import { DetailsItem, Wrapper, ButtonRow } from 'components/Common';
-import moment from 'moment';
+import {
+  DetailsItem,
+  Wrapper,
+  ButtonRow,
+  TimeDisplay,
+} from 'components/Common';
 import unionBy from 'lodash/unionBy';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
@@ -163,17 +167,17 @@ export const AssetPreview = ({
           <DetailsItem
             name="Created at"
             value={
-              asset
-                ? moment(asset.createdTime).format('MM/DD/YYYY HH:MM')
-                : 'Loading...'
+              asset ? <TimeDisplay value={asset.createdTime} /> : 'Loading...'
             }
           />
           <DetailsItem
             name="Updated at"
             value={
-              asset
-                ? moment(asset.lastUpdatedTime).format('MM/DD/YYYY HH:MM')
-                : 'Loading...'
+              asset ? (
+                <TimeDisplay value={asset.lastUpdatedTime} />
+              ) : (
+                'Loading...'
+              )
             }
           />
           <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>

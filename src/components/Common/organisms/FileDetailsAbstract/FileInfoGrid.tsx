@@ -1,7 +1,6 @@
 import React from 'react';
 import { FileInfo } from 'cognite-sdk-v3';
-import { InfoGrid, DetailsItem } from 'components/Common';
-import moment from 'moment';
+import { InfoGrid, DetailsItem, TimeDisplay } from 'components/Common';
 
 export const FileInfoGrid = ({ file }: { file: FileInfo }) => {
   return (
@@ -11,18 +10,20 @@ export const FileInfoGrid = ({ file }: { file: FileInfo }) => {
       <DetailsItem
         name="Uploaded at"
         value={
-          file.uploadedTime
-            ? moment(file.uploadedTime).format('MM/DD/YYYY HH:MM')
-            : 'undefined'
+          file.uploadedTime ? (
+            <TimeDisplay value={file.uploadedTime} />
+          ) : (
+            'undefined'
+          )
         }
       />
       <DetailsItem
         name="Created at"
-        value={moment(file.createdTime).format('MM/DD/YYYY HH:MM')}
+        value={<TimeDisplay value={file.createdTime} />}
       />
       <DetailsItem
         name="Updated at"
-        value={moment(file.lastUpdatedTime).format('MM/DD/YYYY HH:MM')}
+        value={<TimeDisplay value={file.lastUpdatedTime} />}
       />
     </InfoGrid>
   );
