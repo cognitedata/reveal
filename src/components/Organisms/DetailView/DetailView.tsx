@@ -41,6 +41,7 @@ export type DetailDataProps = {
     businessTag?: string;
     revision?: number;
     revisionSteps?: StepType[];
+    interpreter?: string;
   };
   targets: {
     name?: string;
@@ -53,7 +54,6 @@ export type DetailDataProps = {
     configTag?: string;
     revision?: number;
     revisionSteps?: StepType[];
-    interpreter?: string;
   }[];
 } | null;
 
@@ -178,6 +178,13 @@ const DetailView = ({ onClose, data }: Props) => {
                   variant="noBorder"
                   readOnly
                 />
+                <h3>Interpreter</h3>
+                <Input
+                  type="text"
+                  value={source.interpreter || ''}
+                  variant="noBorder"
+                  readOnly
+                />
               </div>
               <hr />
             </details>
@@ -259,13 +266,6 @@ const DetailView = ({ onClose, data }: Props) => {
                           ? format(new Date(item.revision * 1000), 'Pp')
                           : ''
                       }
-                      variant="noBorder"
-                      readOnly
-                    />
-                    <h3>Interpreter</h3>
-                    <Input
-                      type="text"
-                      value={item.interpreter || ''}
                       variant="noBorder"
                       readOnly
                     />

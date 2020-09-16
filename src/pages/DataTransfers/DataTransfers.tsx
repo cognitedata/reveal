@@ -296,11 +296,13 @@ const DataTransfers: React.FC = () => {
             externalId: response.source.external_id,
             crs: response.source.crs,
             dataType: response.source.datatype,
-            createdTime: response.source.created_time,
-            repository: response.source.project, // ADD second part here from translated object
+            createdTime:
+              response.source_created_time || response.source.created_time,
+            repository: response.source.project,
             businessTag: response.source.business_tags.join(', '),
             revision: selectedRevision.revision,
             revisionSteps: selectedRevision.steps,
+            interpreter: response.source.author,
           };
           if (response.targets && response.targets.length > 0) {
             selectedObject.targets = response.targets.map(
@@ -312,7 +314,6 @@ const DataTransfers: React.FC = () => {
                 repository: item.project,
                 revision: item.revisions[item.revisions.length - 1].revision,
                 revisionSteps: item.revisions[item.revisions.length - 1].steps,
-                interpreter: item.author,
               })
             );
           }
