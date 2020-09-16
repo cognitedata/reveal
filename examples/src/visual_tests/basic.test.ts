@@ -4,7 +4,8 @@ const test_presets = [
   "clipping",
   "default_camera",
   "highlight",
-  "rotate_cad_model"
+  "rotate_cad_model",
+  "node_transform"
 ]
 
 describe('Testable', () => {

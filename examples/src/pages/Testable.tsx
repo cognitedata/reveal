@@ -37,9 +37,13 @@ export function Testable() {
       const scene = new THREE.Scene();
 
       const pickedNodes: Set<number> = new Set();
+      const transformedNodes: Map<number, { position: THREE.Vector3, rotation: THREE.Euler }> = new Map();
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
+          if (transformedNodes.has(treeIndex)) {
+            return { worldTransform: transformedNodes.get(treeIndex)! };
+          }
           if (pickedNodes.has(treeIndex)) {
             return reveal.DefaultNodeAppearance.Highlighted;
           }
@@ -64,7 +68,7 @@ export function Testable() {
       revealManager.on('loadingStateChanged', (loadingState) => {
         if (skipFirstLoadingState) {
           skipFirstLoadingState = false;
-          if(loadingState.isLoading) {
+          if (loadingState.isLoading) {
             setLoadingState(loadingState);
           }
         } else {
@@ -93,8 +97,7 @@ export function Testable() {
         camera = new THREE.PerspectiveCamera();
       } else if (test === "suggested_camera") {
         // Nothing - the suggested camera is default
-      }
-      else if (test === 'rotate_cad_model') {
+      } else if (test === 'rotate_cad_model') {
         const matrix = model.getModelTransformation();
         const newMatrix = new THREE.Matrix4().multiplyMatrices(matrix, new THREE.Matrix4().makeRotationY(Math.PI / 3.0));
         model.setModelTransformation(newMatrix);
@@ -103,8 +106,7 @@ export function Testable() {
         target.copy(cameraConfig.target);
         near = cameraConfig.near;
         far = cameraConfig.far;
-      }
-      else if (test === "highlight") {
+      } else if (test === "highlight") {
         camera = new THREE.PerspectiveCamera();
         position.x = 12;
         position.y = -4;
@@ -112,6 +114,13 @@ export function Testable() {
         const highlightedTreeIndexes = [...Array(15).keys()];
         highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
         model.requestNodeUpdate(highlightedTreeIndexes);
+
+      } else if (test === "node_transform") {
+
+        const transformedTreeIndexes = [...Array(80).keys()].filter(p => p % 2 === 0);
+        transformedTreeIndexes.forEach(p => transformedNodes.set(p, { position: new THREE.Vector3(5, 6, 7), rotation: new THREE.Euler(Math.PI / 2, Math.PI / 2, -Math.PI) }));
+        model.requestNodeUpdate(transformedTreeIndexes);
+
       } else if (test === "clipping") {
         camera = new THREE.PerspectiveCamera();
         const params = {
