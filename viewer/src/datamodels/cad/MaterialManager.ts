@@ -127,7 +127,6 @@ export class MaterialManager {
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color ? style.color[0] : 0;
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color ? style.color[1] : 0;
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color ? style.color[2] : 0;
-      materials.overrideColorPerTreeIndex.needsUpdate = true;
 
       if (style.renderInFront) {
         inFrontSet.add(treeIndex);
@@ -147,11 +146,15 @@ export class MaterialManager {
         backSet.delete(treeIndex);
       }
 
-      const visible = style!.visible === undefined ? true : style.visible;
-      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] =
+      const visible = style.visible === undefined ? true : style.visible;
+      // Byte layout:
+      // [isVisible, renderInFront, renderGhosted, outlineColor0, outlineColor1, outlineColor2, unused, unused]
+      const bytePattern =
         (visible ? 1 << 0 : 0) +
         (style.renderInFront ? 1 << 1 : 0) +
-        (style.outlineColor ? style.outlineColor << 2 : 0);
+        (style.renderGhosted ? 1 << 2 : 0) +
+        (style.outlineColor ? style.outlineColor << 3 : 0);
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = bytePattern;
       materials.overrideColorPerTreeIndex.needsUpdate = true;
     }
   }

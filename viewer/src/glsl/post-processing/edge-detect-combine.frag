@@ -43,11 +43,11 @@ void main() {
   vec3 ghostColor = max(ghostColorRGBA.rgb, 0.5);
   float ghostAlpha = min(ghostColorRGBA.a, 0.8);
 
-  float frontOutlineIndex = floatBitsSubset(floor((frontAlbedo.a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex0 = floatBitsSubset(floor((texture2D(tFront, vUv0).a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex1 = floatBitsSubset(floor((texture2D(tFront, vUv1).a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex2 = floatBitsSubset(floor((texture2D(tFront, vUv2).a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex3 = floatBitsSubset(floor((texture2D(tFront, vUv3).a * 255.0) + 0.5), 2, 5);
+  float frontOutlineIndex = floatBitsSubset(floor((frontAlbedo.a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex0 = floatBitsSubset(floor((texture2D(tFront, vUv0).a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex1 = floatBitsSubset(floor((texture2D(tFront, vUv1).a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex2 = floatBitsSubset(floor((texture2D(tFront, vUv2).a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex3 = floatBitsSubset(floor((texture2D(tFront, vUv3).a * 255.0) + 0.5), 3, 6);
 
   // There exsists fragments of rendered objects within the edge width that should have border
   if( any(equal(vec4(frontOutlineIndex0, frontOutlineIndex1, frontOutlineIndex2, frontOutlineIndex3), vec4(0.0))) 
@@ -79,11 +79,11 @@ void main() {
     return;
   }
 
-  float backOutlineIndex = floatBitsSubset(floor((backAlbedo.a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex0 = floatBitsSubset(floor((texture2D(tBack, vUv0).a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex1 = floatBitsSubset(floor((texture2D(tBack, vUv1).a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex2 = floatBitsSubset(floor((texture2D(tBack, vUv2).a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex3 = floatBitsSubset(floor((texture2D(tBack, vUv3).a * 255.0) + 0.5), 2, 5);
+  float backOutlineIndex = floatBitsSubset(floor((backAlbedo.a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex0 = floatBitsSubset(floor((texture2D(tBack, vUv0).a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex1 = floatBitsSubset(floor((texture2D(tBack, vUv1).a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex2 = floatBitsSubset(floor((texture2D(tBack, vUv2).a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex3 = floatBitsSubset(floor((texture2D(tBack, vUv3).a * 255.0) + 0.5), 3, 6);
 
   if( any(equal(vec4(backOutlineIndex0, backOutlineIndex1, backOutlineIndex2, backOutlineIndex3), vec4(0.0)))
       && backOutlineIndex > 0.0) 
