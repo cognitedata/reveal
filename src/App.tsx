@@ -2,19 +2,19 @@ import React from 'react';
 import GlobalStyles from 'global-styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from 'pages/Home';
+import { SIDECAR } from 'utils/sidecar';
 import Configurations from './pages/Configurations';
 import DataTransfers from './pages/DataTransfers';
 import Status from './pages/Status';
 import { Content, Layout, Main } from './elements';
 import MainHeader from './components/Organisms/MainHeader';
 import New from './pages/Configurations/New';
-import config from './utils/config';
 
 const App = () => {
   return (
     <>
       <GlobalStyles />
-      <Router basename={`/${config.auth.cdfProject}`}>
+      <Router basename={`/${SIDECAR.cognuitCdfProject}`}>
         <Layout>
           <Main>
             <MainHeader />
