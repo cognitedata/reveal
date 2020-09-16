@@ -3,13 +3,12 @@
  */
 import * as THREE from 'three';
 import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
-import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3, NumericRange } from '@/utilities';
+import { toThreeJsBox3, NumericRange } from '@/utilities';
 import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
@@ -20,7 +19,7 @@ import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsy
 import { CogniteClientNodeIdAndTreeIndexMapper } from '@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
 const mapCoordinatesBuffers = {
-  v: vec3.create()
+  inverseModelMatrix: new THREE.Matrix4()
 };
 
 /**
@@ -123,9 +122,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   mapFromCdfToModelCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     out = out !== undefined ? out : new THREE.Vector3();
-    const { v } = mapCoordinatesBuffers;
-    fromThreeVector3(v, p);
-    return toThreeVector3(out, v, this.cadModel.modelTransformation);
+    out.copy(p);
+    p.applyMatrix4(this.cadModel.modelMatrix);
+    return p;
   }
 
   /**
@@ -137,9 +136,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     out = out !== undefined ? out : new THREE.Vector3();
-    const { v } = mapCoordinatesBuffers;
-    fromThreeVector3(v, p, this.cadModel.modelTransformation);
-    return toThreeVector3(out, v);
+    const { inverseModelMatrix } = mapCoordinatesBuffers;
+    // TODO 2020-09-10 larsmoa: Avoid creating the inverse every time
+    inverseModelMatrix.getInverse(this.cadModel.modelMatrix);
+    p.applyMatrix4(inverseModelMatrix);
+    return p;
   }
 
   /**
@@ -189,7 +190,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
     const bounds = this.cadModel.scene.root.bounds;
-    return toThreeJsBox3(outBbox || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+    outBbox = outBbox || new THREE.Box3();
+    toThreeJsBox3(outBbox, bounds);
+    outBbox.applyMatrix4(this.cadModel.modelMatrix);
+    return outBbox;
   }
 
   /**
@@ -202,13 +206,19 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Apply transformation matrix to the model.
-   * @param matrix Matrix to be applied.
-   * @internal
+   * Sets transformation matrix of the model. This overrides the current transformation.
+   * @param matrix Transformation matrix.
    */
-  updateTransformation(matrix: THREE.Matrix4): void {
-    this.cadNode.applyMatrix4(matrix);
-    this.cadNode.updateMatrixWorld(false);
+  setModelTransformation(matrix: THREE.Matrix4): void {
+    this.cadNode.setModelTransformation(matrix);
+  }
+
+  /**
+   * Gets transformation matrix of the model
+   * @param out Preallocated `THREE.Matrix4` (optional).
+   */
+  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this.cadNode.getModelTransformation(out);
   }
 
   /** @internal */
@@ -252,7 +262,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const result = box || new THREE.Box3();
     result.min.set(min[0], min[1], min[2]);
     result.max.set(max[0], max[1], max[2]);
-    return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
+    return result.applyMatrix4(this.cadModel.modelMatrix);
   }
 
   /**

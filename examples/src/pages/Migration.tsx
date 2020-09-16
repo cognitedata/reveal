@@ -12,7 +12,10 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   BoundingBoxClipper,
+  CognitePointCloudModel,
 } from '@cognite/reveal';
+
+window.THREE = THREE;
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -74,6 +77,8 @@ export function Migration() {
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
+          } else if (model instanceof CognitePointCloudModel) {
+            pointCloudModels.push(model);
           }
         } catch (e) {
           console.error(e);
@@ -83,6 +88,7 @@ export function Migration() {
 
       // Add GUI for loading models and such
       const cadModels: Cognite3DModel[] = [];
+      const pointCloudModels: CognitePointCloudModel[] = [];
       const guiState = {
         modelId: 0,
         revisionId: 0,
@@ -101,7 +107,7 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
-          }),
+          })
       };
 
       const settingsGui = gui.addFolder('settings');
