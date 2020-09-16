@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { mat4 } from 'gl-matrix';
+import * as THREE from 'three';
 
 import { SectorMetadata, CadModelMetadata } from '@/datamodels/cad';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
@@ -13,10 +13,7 @@ export function createCadModelMetadata(root: SectorMetadata): CadModelMetadata {
   const scene = SectorSceneImpl.createFromRootSector(8, 1, root);
   const model: CadModelMetadata = {
     blobUrl: `testModel_${modelIdRunningNumber++}`,
-    modelTransformation: {
-      inverseModelMatrix: mat4.identity(mat4.create()),
-      modelMatrix: mat4.identity(mat4.create())
-    },
+    modelMatrix: new THREE.Matrix4().identity(),
     scene
   };
   return model;

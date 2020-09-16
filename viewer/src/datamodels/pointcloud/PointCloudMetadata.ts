@@ -2,11 +2,12 @@
  * Copyright 2020 Cognite AS
  */
 
-import { ModelTransformation, CameraConfiguration } from '@/utilities';
+import * as THREE from 'three';
+import { CameraConfiguration } from '@/utilities';
 
 export interface PointCloudMetadata {
   blobUrl: string;
-  modelTransformation: ModelTransformation;
+  modelMatrix: THREE.Matrix4;
   cameraConfiguration?: CameraConfiguration;
   scene: any;
 }

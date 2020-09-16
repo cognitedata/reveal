@@ -3,10 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { mat4, vec3 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import { Box3 } from '@/utilities/Box3';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/threeConverters';
+import { toThreeJsBox3 } from '@/utilities/threeConverters';
 import { SectorMetadata, SectorScene } from './types';
 
 export class SectorSceneImpl implements SectorScene {
@@ -67,11 +67,12 @@ export class SectorSceneImpl implements SectorScene {
     return accepted;
   }
 
-  getSectorsIntersectingFrustum(projectionMatrix: mat4, inverseCameraModelMatrix: mat4): SectorMetadata[] {
-    const frustumMatrix = mat4.multiply(mat4.create(), projectionMatrix, inverseCameraModelMatrix);
-    // This causes us to require ThreeJS, but I decided this was acceptable for now
-    // as the dependency doesn't leak to the API and ThreeJS will be bundled anyways.
-    const frustum = new THREE.Frustum().setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
+  getSectorsIntersectingFrustum(
+    projectionMatrix: THREE.Matrix4,
+    inverseCameraModelMatrix: THREE.Matrix4
+  ): SectorMetadata[] {
+    const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, inverseCameraModelMatrix);
+    const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
     const bbox = new THREE.Box3();
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
