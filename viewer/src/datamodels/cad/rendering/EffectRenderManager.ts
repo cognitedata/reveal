@@ -183,11 +183,6 @@ export class EffectRenderManager {
           objectStack.push(...element.children);
         }
       }
-
-      // Build scenes
-      this._inFrontObjectBuffer.forEach(x => x.sceneParent.add(x.object));
-      this._ghostObjectBuffer.forEach(x => x.sceneParent.add(x.object));
-      this._backObjectBuffer.forEach(x => x.sceneParent.add(x.object));
     });
   }
 
@@ -212,19 +207,27 @@ export class EffectRenderManager {
   }
 
   private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    // Build scene
+    this._backObjectBuffer.forEach(x => x.sceneParent.add(x.object));
+
     renderer.setRenderTarget(this._backRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._backScene, camera);
   }
 
   private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    // Build scene
+    this._inFrontObjectBuffer.forEach(x => x.sceneParent.add(x.object));
+
     renderer.setRenderTarget(this._frontRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Effects);
     renderer.render(this._inFrontScene, camera);
-    this._materialManager.setRenderMode(RenderMode.Color);
   }
 
   private renderGhostedCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    // Build scene
+    this._ghostObjectBuffer.forEach(x => x.sceneParent.add(x.object));
+
     renderer.setRenderTarget(this._ghostObjectRenderTarget);
     this._materialManager.setRenderMode(RenderMode.Ghost);
     renderer.render(this._ghostScene, camera);
