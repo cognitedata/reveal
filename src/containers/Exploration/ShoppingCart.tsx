@@ -4,16 +4,19 @@ import { ListItem } from 'components/Common';
 import {
   itemSelector as fileSelector,
   retrieve as retrieveFiles,
-} from 'modules/files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   itemSelector as timeseriesSelector,
   retrieve as retrieveTimeseries,
-} from 'modules/timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import {
   itemSelector as assetsSelector,
   retrieve as retrieveAssets,
-} from 'modules/assets';
-import { useSelector, useDispatch } from 'react-redux';
+} from '@cognite/cdf-resources-store/dist/assets';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
 import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'hooks/CustomHooks';
 import { ResourceItem } from 'types';
@@ -25,12 +28,12 @@ export const ShoppingCartPreview = ({
   cart: ResourceItem[];
   setCart: (cart: ResourceItem[]) => void;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const tenant = useTenant();
   const env = useEnv();
-  const getFile = useSelector(fileSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
-  const getAsset = useSelector(assetsSelector);
+  const getFile = useResourcesSelector(fileSelector);
+  const getTimeseries = useResourcesSelector(timeseriesSelector);
+  const getAsset = useResourcesSelector(assetsSelector);
 
   useEffect(() => {
     dispatch(

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import {
   ProposedCogniteAnnotation,
   ExtractFromCanvasFunction,
@@ -13,7 +13,6 @@ import {
 import { PNID_ANNOTATION_TYPE } from 'utils/AnnotationUtils';
 import { v4 as uuid } from 'uuid';
 import { RootState } from 'reducers';
-import { createSelector } from 'reselect';
 import { selectObjectJobForFile } from 'modules/fileContextualization/objectDetectionJob';
 import { InfoGrid, InfoCell, Divider } from 'components/Common';
 import { Title, Body, Colors } from '@cognite/cogs.js';
@@ -33,10 +32,12 @@ export const ContextualizationModule = ({
   const [visibleSimilarJobs, setVisibleSimilarJobs] = useState<string[]>([]);
   const [isObjectJobVisible, setObjectJobVisible] = useState<boolean>(false);
 
-  const similarObjectJobs = useSelector((state: RootState) =>
+  const similarObjectJobs = useResourcesSelector((state: RootState) =>
     fileId ? state.fileContextualization.similarObjectJobs[fileId] : {}
   );
-  const objectDetectionJobs = useSelector(selectObjectJobForFile)(fileId);
+  const objectDetectionJobs = useResourcesSelector(selectObjectJobForFile)(
+    fileId
+  );
 
   useEffect(() => {
     const newItems: ProposedCogniteAnnotation[] = [];
@@ -125,24 +126,8 @@ export const ContextualizationModule = ({
     setObjectJobVisible(false);
   }, [fileId]);
 
-  return null;
+  return <></>;
 };
-
-export const findingObjectStatus = createSelector(
-  (state: RootState) => state.fileContextualization.similarObjectJobs,
-  similarObjectJobs => (fileId?: number) => {
-    if (!fileId) {
-      return false;
-    }
-    const jobs = similarObjectJobs[fileId] || {};
-
-    const isFindingSimilarObjects = jobs
-      ? Object.values(jobs).some(el => !el.jobDone)
-      : false;
-
-    return isFindingSimilarObjects;
-  }
-);
 
 export const ContextualizationData = ({
   selectedAnnotation,

@@ -1,15 +1,21 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { itemSelector, retrieve } from 'modules/events';
-import { Icon, Title } from '@cognite/cogs.js';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import {
+  itemSelector,
+  retrieve,
+} from '@cognite/cdf-resources-store/dist/events';
+import { Button, Icon, Title } from '@cognite/cogs.js';
 import {
   EventDetailsAbstract,
   DetailsItem,
   Wrapper,
   TimeDisplay,
+  SpacedRow,
 } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { Tabs } from 'antd';
 import { renderTitle } from 'utils/EventsUtils';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
@@ -28,14 +34,57 @@ export const EventPreview = ({
   eventId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const dispatch = useDispatch();
-  const event = useSelector(itemSelector)(eventId);
+  const dispatch = useResourcesDispatch();
+  const event = useResourcesSelector(itemSelector)(eventId);
 
   useEffect(() => {
     if (!event) {
       dispatch(retrieve([{ id: eventId }]));
     }
   }, [dispatch, event, eventId]);
+  const tabs = {
+    'event-metadata': 'Event Details',
+    metadata: 'Metadata',
+  };
+
+  const [currentTab, setTab] = useState<keyof typeof tabs>('event-metadata');
+
+  const content = useMemo(() => {
+    if (event) {
+      switch (currentTab) {
+        case 'event-metadata': {
+          return (
+            <>
+              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+                Details
+              </Title>
+              <DetailsItem name="External ID" value={event.externalId} />
+              <DetailsItem name="Description" value={event.description} />
+              <DetailsItem
+                name="Created at"
+                value={<TimeDisplay value={event.createdTime} />}
+              />
+              <DetailsItem
+                name="Updated at"
+                value={<TimeDisplay value={event.lastUpdatedTime} />}
+              />
+              <DetailsItem name="External ID" value={event.externalId} />
+              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+                Metadata
+              </Title>
+              <EventDetailsAbstract.EventInfoGrid event={event} showAll />
+            </>
+          );
+        }
+        case 'metadata': {
+          return (
+            <DescriptionList valueSet={formatMetadata(event.metadata ?? {})} />
+          );
+        }
+      }
+    }
+    return <></>;
+  }, [event, currentTab]);
 
   return (
     <Wrapper>
@@ -43,34 +92,23 @@ export const EventPreview = ({
         <Icon type="Events" />
         {renderTitle(event)}
       </h1>
-      {extraActions}
-      {event && (
-        <Tabs>
-          <Tabs.TabPane key="details" tab="Event Details">
-            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-              Details
-            </Title>
-            <DetailsItem name="External ID" value={event.externalId} />
-            <DetailsItem name="Description" value={event.description} />
-            <DetailsItem
-              name="Created at"
-              value={<TimeDisplay value={event.createdTime} />}
-            />
-            <DetailsItem
-              name="Updated at"
-              value={<TimeDisplay value={event.lastUpdatedTime} />}
-            />
-            <DetailsItem name="External ID" value={event.externalId} />
-            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-              Metadata
-            </Title>
-            <EventDetailsAbstract.EventInfoGrid event={event} showAll />
-          </Tabs.TabPane>
-          <Tabs.TabPane key="metadata" tab="Metadata">
-            <DescriptionList valueSet={formatMetadata(event.metadata ?? {})} />
-          </Tabs.TabPane>
-        </Tabs>
-      )}
+      <SpacedRow>{extraActions}</SpacedRow>
+      <SpacedRow>
+        {Object.keys(tabs).map(el => {
+          const key = el as keyof typeof tabs;
+          return (
+            <Button
+              variant={key === currentTab ? 'default' : 'ghost'}
+              type={key === currentTab ? 'primary' : 'secondary'}
+              onClick={() => setTab(key)}
+              key={key}
+            >
+              {tabs[key]}
+            </Button>
+          );
+        })}
+      </SpacedRow>
+      {event && content}
     </Wrapper>
   );
 };

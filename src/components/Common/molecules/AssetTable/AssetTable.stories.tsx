@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Provider } from 'react-redux';
+import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
 import { mockStore } from 'utils/mockStore';
 import { Map } from 'immutable';
 import {
@@ -31,7 +31,7 @@ export const ExampleSingleSelect = () => {
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [selection, setSelection] = useState<ResourceItemState[]>([
-    { id: 1635401930580505, type: 'assets', state: 'selected' },
+    { id: 1635401930580505, type: 'asset', state: 'selected' },
   ]);
 
   const onSelect = newItem => {
@@ -52,7 +52,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       resourcesState={selection}
       onSelect={onSelect}
     >
-      <Provider
+      <CogniteResourceProvider
         store={mockStore({
           assets: {
             items: {
@@ -75,7 +75,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
         })}
       >
         <Container>{children}</Container>
-      </Provider>
+      </CogniteResourceProvider>
     </ResourceSelectionProvider>
   );
 };

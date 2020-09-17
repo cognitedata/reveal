@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { TimeseriesDetailsAbstract, Loader } from 'components/Common';
-import { useDispatch, useSelector } from 'react-redux';
-import { itemSelector, retrieve } from 'modules/timeseries';
+import {
+  useResourcesDispatch,
+  useResourcesSelector,
+} from '@cognite/cdf-resources-store';
+import {
+  itemSelector,
+  retrieve,
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
 
@@ -16,7 +22,7 @@ export const TimeseriesSmallPreview = ({
   extras?: React.ReactNode[];
   children?: React.ReactNode;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
     type: 'timeSeries',
@@ -27,7 +33,7 @@ export const TimeseriesSmallPreview = ({
     dispatch(retrieve([{ id: timeseriesId }]));
   }, [dispatch, timeseriesId]);
 
-  const timeseries = useSelector(itemSelector)(timeseriesId);
+  const timeseries = useResourcesSelector(itemSelector)(timeseriesId);
 
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];

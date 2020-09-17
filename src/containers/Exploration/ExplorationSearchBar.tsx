@@ -113,10 +113,15 @@ export const ExplorationSearchBar = ({
           offsetTop={offsetTop}
         >
           <Button
-            style={{ position: 'absolute', top: 24, right: 24, zIndex: 2 }}
-            icon="Close"
+            style={{
+              alignSelf: 'flex-end',
+              margin: '0 12px 12px',
+            }}
+            icon="ArrowUp"
             onClick={() => setShowSearchResults(false)}
-          />
+          >
+            Hide
+          </Button>
           <SearchResults />
         </ResultList>
       </SearchWrapper>

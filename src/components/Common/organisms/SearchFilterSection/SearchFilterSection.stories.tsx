@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Provider } from 'react-redux';
+import { Provider } from '@cognite/cdf-resources-store';
 import { mockStore } from 'utils/mockStore';
 import { SearchFilterSection } from './SearchFilterSection';
 

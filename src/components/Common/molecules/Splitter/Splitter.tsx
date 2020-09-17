@@ -118,8 +118,6 @@ const SplitterWrapper = styled(SplitPane)<WrapperProps>(
 
     ${props.hide.map(i => hideCss(i)).join('')}
     ${props.lock.map(i => lockCss(i)).join('')}
-    ${props.flex
-      .map(i => flexCss(i))
-      .join('')}
+    ${props.flex.map(i => flexCss(i)).join('')}
   `
 );

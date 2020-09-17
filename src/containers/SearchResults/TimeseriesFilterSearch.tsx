@@ -1,25 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Body, Graphic } from '@cognite/cogs.js';
+import React, { useEffect, useContext } from 'react';
+import { Body } from '@cognite/cogs.js';
 import { SearchFilterSection, TimeseriesTable } from 'components/Common';
+import { TimeseriesSearchFilter, TimeseriesFilter } from 'cognite-sdk-v3';
 import {
-  Timeseries,
-  TimeseriesSearchFilter,
-  TimeseriesFilter,
-} from 'cognite-sdk-v3';
-import { useSelector, useDispatch } from 'react-redux';
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
 import {
   searchSelector,
   search,
   count,
   countSelector,
-} from 'modules/timeseries';
-import { TimeseriesSmallPreview } from 'containers/Timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
-import { List, Content, Preview } from './Common';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
+import { List, Content } from './Common';
 
 // const TimeseriessFilterMapping: { [key: string]: string } = {};
 
-const buildTimeseriessFilterQuery = (
+export const buildTimeseriesFilterQuery = (
   filter: TimeseriesFilter,
   query: string | undefined
 ): TimeseriesSearchFilter => {
@@ -38,24 +37,22 @@ const buildTimeseriessFilterQuery = (
 };
 
 export const TimeseriesFilterSearch = ({ query = '' }: { query?: string }) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const { timeseriesFilter, setTimeseriesFilter } = useContext(
     ResourceSelectionContext
   );
-  const [selectedTimeseries, setSelectedTimeseries] = useState<
-    Timeseries | undefined
-  >(undefined);
+  const { openPreview } = useResourcePreview();
 
-  const { items: timeseries } = useSelector(searchSelector)(
-    buildTimeseriessFilterQuery(timeseriesFilter, query)
+  const { items: timeseries } = useResourcesSelector(searchSelector)(
+    buildTimeseriesFilterQuery(timeseriesFilter, query)
   );
-  const { count: timeseriesCount } = useSelector(countSelector)(
-    buildTimeseriessFilterQuery(timeseriesFilter, query)
+  const { count: timeseriesCount } = useResourcesSelector(countSelector)(
+    buildTimeseriesFilterQuery(timeseriesFilter, query)
   );
 
   useEffect(() => {
-    dispatch(search(buildTimeseriessFilterQuery(timeseriesFilter, query)));
-    dispatch(count(buildTimeseriessFilterQuery(timeseriesFilter, query)));
+    dispatch(search(buildTimeseriesFilterQuery(timeseriesFilter, query)));
+    dispatch(count(buildTimeseriesFilterQuery(timeseriesFilter, query)));
   }, [dispatch, timeseriesFilter, query]);
 
   const metadataCategories: { [key: string]: string } = {};
@@ -120,29 +117,12 @@ export const TimeseriesFilterSearch = ({ query = '' }: { query?: string }) => {
           </Body>
           <TimeseriesTable
             timeseries={timeseries}
-            onTimeseriesClicked={setSelectedTimeseries}
+            onTimeseriesClicked={ts =>
+              openPreview({ item: { id: ts.id, type: 'timeSeries' } })
+            }
             query={query}
           />
         </List>
-        <Preview>
-          {selectedTimeseries && (
-            <TimeseriesSmallPreview timeseriesId={selectedTimeseries.id} />
-          )}
-          {!selectedTimeseries && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                height: '100%',
-              }}
-            >
-              <Graphic type="Search" />
-              <p>Click on an time series to preview here</p>
-            </div>
-          )}
-        </Preview>
       </Content>
     </>
   );

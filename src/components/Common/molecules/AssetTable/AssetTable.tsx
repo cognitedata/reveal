@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Asset } from 'cognite-sdk-v3';
 import Table, { Column } from 'react-base-table';
 import { Body, Button } from '@cognite/cogs.js';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import TableStyle from 'react-base-table/styles.css';
-import { useSelector } from 'react-redux';
-import { itemSelector } from 'modules/assets';
+import { useResourcesSelector } from '@cognite/cdf-resources-store';
+import { itemSelector } from '@cognite/cdf-resources-store/dist/assets';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import {
   useResourceMode,
@@ -35,7 +34,7 @@ const ParentCell = ({
   asset: Asset;
   onAssetSelected: (asset: Asset) => void;
 }) => {
-  const getAsset = useSelector(itemSelector);
+  const getAsset = useResourcesSelector(itemSelector);
   const rootAsset = getAsset(asset.rootId);
   return (
     <Button
@@ -79,10 +78,6 @@ export const AssetTable = ({
   const resourcesState = useResourcesState();
 
   const currentItems = resourcesState.filter(el => el.state === 'active');
-  useEffect(() => {
-    TableStyle.use();
-    return () => TableStyle.unuse();
-  }, []);
 
   const onAssetSelected = (asset: Asset) => {
     onAssetClicked(asset);

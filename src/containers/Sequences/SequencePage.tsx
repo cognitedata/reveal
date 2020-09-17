@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { retrieve as retrieveSequences } from 'modules/sequences';
-import { useDispatch } from 'react-redux';
+import { retrieve as retrieveSequences } from '@cognite/cdf-resources-store/dist/sequences';
+import { useResourcesDispatch } from '@cognite/cdf-resources-store';
 import { trackUsage } from 'utils/Metrics';
 import { Loader } from 'components/Common';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
@@ -9,7 +9,7 @@ import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { SequencePreview } from './SequencePreview';
 
 export const SequencePage = () => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const { sequenceId } = useParams<{
     sequenceId: string | undefined;
   }>();

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title, Badge, Body, Colors } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
+import { InfoGrid, InfoCell, ListItem, SpacedRow } from 'components/Common';
 import { FileInfo, Asset } from 'cognite-sdk-v3';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { FileInfoGrid } from './FileInfoGrid';
@@ -85,7 +85,7 @@ export const FileDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <ButtonRow>{actions}</ButtonRow>
+          <SpacedRow>{actions}</SpacedRow>
         </InfoCell>
       )}
 
@@ -102,7 +102,7 @@ export const FileDetailsAbstract = ({
               marginBottom: '8px',
             }}
             title={
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Icon type="DataStudio" style={{ marginRight: '4px' }} />
                 <span>Detected Asset Tags</span>
               </div>
@@ -122,7 +122,7 @@ export const FileDetailsAbstract = ({
               marginBottom: '8px',
             }}
             title={
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Icon type="DataStudio" style={{ marginRight: '4px' }} />
                 <span>Detected File Tags</span>
               </div>

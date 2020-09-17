@@ -8,13 +8,14 @@ import { FilePage } from 'containers/Files';
 import { AssetPage } from 'containers/Assets';
 import { SequencePage } from 'containers/Sequences';
 import { TimeseriesPage } from 'containers/Timeseries';
-import { EventExplorer } from 'containers/Events';
+import { EventPage } from 'containers/Events';
 import { useHistory } from 'react-router';
 import { useTenant } from 'hooks/CustomHooks';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
 import { ResourcePreviewProvider } from 'context/ResourcePreviewContext';
 import { SearchResults } from 'containers/SearchResults';
+import { ResourceSelectorProvider } from 'context/ResourceSelectorContext';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
@@ -124,25 +125,30 @@ export const Explorer = () => {
   return (
     <Wrapper>
       <ExplorationNavbar cart={cart} setCart={setCart} />
-      <ResourcePreviewProvider>
-        <Switch>
-          <Route path={`${match.path}/file/:fileId`} component={FilePage} />
-          <Route path={`${match.path}/asset/:assetId`} component={AssetPage} />
-          <Route
-            path={`${match.path}/sequence/:sequenceId`}
-            component={SequencePage}
-          />
-          <Route
-            path={`${match.path}/timeseries/:timeseriesId`}
-            component={TimeseriesPage}
-          />
-          <Route
-            path={`${match.path}/event/:eventId`}
-            component={EventExplorer}
-          />
-          <Route path={`${match.path}/`} component={SearchResults} />
-        </Switch>
-      </ResourcePreviewProvider>
+      <ResourceSelectorProvider>
+        <ResourcePreviewProvider>
+          <Switch>
+            <Route path={`${match.path}/file/:fileId`} component={FilePage} />
+            <Route
+              path={`${match.path}/asset/:assetId`}
+              component={AssetPage}
+            />
+            <Route
+              path={`${match.path}/sequence/:sequenceId`}
+              component={SequencePage}
+            />
+            <Route
+              path={`${match.path}/timeseries/:timeseriesId`}
+              component={TimeseriesPage}
+            />
+            <Route
+              path={`${match.path}/event/:eventId`}
+              component={EventPage}
+            />
+            <Route path={`${match.path}/`} component={SearchResults} />
+          </Switch>
+        </ResourcePreviewProvider>
+      </ResourceSelectorProvider>
     </Wrapper>
   );
 };

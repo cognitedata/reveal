@@ -6,32 +6,32 @@ import {
   TimeseriesFilterQuery,
   EventFilterRequest,
 } from 'cognite-sdk-v3';
-import { ResourceType } from 'modules/sdk-builder/types';
+import { ResourceType } from '@cognite/cdf-resources-store';
 import {
   list as listTimeseries,
   search as searchTimeseries,
   count as countTimeseries,
-} from './timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import {
   list as listAssets,
   search as searchAssets,
   count as countAssets,
-} from './assets';
+} from '@cognite/cdf-resources-store/dist/assets';
 import {
   list as listFiles,
   search as searchFiles,
   count as countFiles,
-} from './files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   list as listSequences,
   search as searchSequences,
   count as countSequences,
-} from './sequences';
+} from '@cognite/cdf-resources-store/dist/sequences';
 import {
   list as listEvents,
   search as searchEvents,
   count as countEvents,
-} from './events';
+} from '@cognite/cdf-resources-store/dist/events';
 
 export interface Filter {
   filter?: any;

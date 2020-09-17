@@ -5,6 +5,8 @@ import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
 
+jest.mock('utils/SDK');
+
 const timeseries: Timeseries = {
   name: 'Hello',
   description: 'Hello',

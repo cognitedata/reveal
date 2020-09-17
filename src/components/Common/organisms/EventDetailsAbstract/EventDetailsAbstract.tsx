@@ -5,7 +5,7 @@ import {
   InfoGrid,
   InfoCell,
   DetailsItem,
-  ButtonRow,
+  SpacedRow,
   TimeDisplay,
 } from 'components/Common';
 import { CogniteEvent } from 'cognite-sdk-v3';
@@ -88,7 +88,7 @@ export const EventDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <ButtonRow>{actions}</ButtonRow>
+          <SpacedRow>{actions}</SpacedRow>
         </InfoCell>
       )}
       <EventInfoGrid

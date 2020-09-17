@@ -3,23 +3,23 @@ import {
   itemSelector as assetSelector,
   retrieve as retrieveAssets,
   retrieveExternal as retrieveExternalAssets,
-} from 'modules/assets';
+} from '@cognite/cdf-resources-store/dist/assets';
 import {
   itemSelector as timeseriesSelector,
   retrieve as retrieveTimeseries,
   retrieveExternal as retrieveExternalTimeseries,
-} from 'modules/timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import {
   itemSelector as fileSelector,
   retrieve as retrieveFiles,
   retrieveExternal as retrieveExternalFiles,
-} from 'modules/files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   itemSelector as sequenceSelector,
   retrieve as retrieveSequences,
   retrieveExternal as retrieveExternalSequences,
-} from 'modules/sequences';
-import { useSelector } from 'react-redux';
+} from '@cognite/cdf-resources-store/dist/sequences';
+import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { ResourceItem } from 'types';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
@@ -28,10 +28,10 @@ import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 export const useResourceItemFromAnnotation = (
   annotation?: CogniteAnnotation | ProposedCogniteAnnotation
 ): ResourceItem | undefined => {
-  const getFile = useSelector(fileSelector);
-  const getAsset = useSelector(assetSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
-  const getSequence = useSelector(sequenceSelector);
+  const getFile = useResourcesSelector(fileSelector);
+  const getAsset = useResourcesSelector(assetSelector);
+  const getTimeseries = useResourcesSelector(timeseriesSelector);
+  const getSequence = useResourcesSelector(sequenceSelector);
   let resourceItem: ResourceItem | undefined;
   if (annotation) {
     switch (annotation.resourceType) {

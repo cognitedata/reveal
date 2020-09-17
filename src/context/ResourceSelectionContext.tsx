@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { ResourceType } from 'modules/sdk-builder/types';
+import { ResourceType } from '@cognite/cdf-resources-store';
 import { ResourceItem } from 'types';
 import {
   AssetFilterProps,
@@ -40,7 +40,7 @@ export type ResourceSelectionObserver = {
   setQuery: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const ResourceSelectionContext = React.createContext(
+export const ResourceSelectionContext = React.createContext(
   {} as ResourceSelectionObserver
 );
 
@@ -48,10 +48,12 @@ export const useResourceMode = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.mode;
 };
+
 export const useResourceEditable = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.allowEdit;
 };
+
 export const useQuery: () => [
   string,
   React.Dispatch<React.SetStateAction<string>>
@@ -65,6 +67,11 @@ export const useSelectResource = () => {
   return observer.onSelect;
 };
 
+export const useSetOnSelectResource = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return observer.setOnSelectListener;
+};
+
 export const useResourcesState = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.resourcesState;
@@ -73,11 +80,11 @@ export const useResourcesState = () => {
 export const useResourceFilters = () => {
   const observer = useContext(ResourceSelectionContext);
   return {
-    asset: observer.assetFilter,
-    timeseries: observer.timeseriesFilter,
-    event: observer.eventFilter,
-    sequence: observer.sequenceFilter,
-    file: observer.fileFilter,
+    assetFilter: observer.assetFilter,
+    timeseriesFilter: observer.timeseriesFilter,
+    eventFilter: observer.eventFilter,
+    sequenceFilter: observer.sequenceFilter,
+    fileFilter: observer.fileFilter,
   };
 };
 
@@ -97,24 +104,28 @@ export type ResourceSelectionProps = {
   children?: React.ReactNode;
 };
 
+const defaultMode = 'none';
+
 export const ResourceSelectionProvider = ({
-  allowEdit: propsAllowEdit = false,
-  mode: initialMode = 'none',
+  allowEdit: propsAllowEdit,
+  mode: initialMode,
   resourceTypes: initialResourceTypes,
-  assetFilter: initialAssetFilter = {},
-  timeseriesFilter: initialTimeseriesFilter = {},
-  fileFilter: initialFileFilter = {},
-  eventFilter: initialEventFilter = {},
-  sequenceFilter: initialSequenceFilter = {},
+  assetFilter: initialAssetFilter,
+  timeseriesFilter: initialTimeseriesFilter,
+  fileFilter: initialFileFilter,
+  eventFilter: initialEventFilter,
+  sequenceFilter: initialSequenceFilter,
   resourcesState: initialResourcesState,
-  onSelect: initialOnSelect = defaultOnSelect,
+  onSelect: initialOnSelect,
   children,
 }: ResourceSelectionProps) => {
   const [query, setQuery] = useState<string>('');
-  const [allowEdit, setAllowEdit] = useState<boolean>(propsAllowEdit);
-  const [mode, setMode] = useState<ResourceSelectionMode>(initialMode);
+  const [allowEdit, setAllowEdit] = useState<boolean>(propsAllowEdit || false);
+  const [mode, setMode] = useState<ResourceSelectionMode>(
+    initialMode || defaultMode
+  );
   const [onSelect, setOnSelectListener] = useState<OnSelectListener>(
-    () => initialOnSelect
+    () => initialOnSelect || defaultOnSelect
   );
   const [resourcesState, setResourcesState] = useState<ResourceItemState[]>(
     initialResourcesState || []
@@ -123,20 +134,20 @@ export const ResourceSelectionProvider = ({
     initialResourceTypes || ['assets', 'files']
   );
   const [assetFilter, setAssetFilter] = useState<AssetFilterProps>(
-    initialAssetFilter
+    initialAssetFilter || {}
   );
   const [timeseriesFilter, setTimeseriesFilter] = useState<TimeseriesFilter>(
-    initialTimeseriesFilter
+    initialTimeseriesFilter || {}
   );
   const [fileFilter, setFileFilter] = useState<FileFilterProps>(
-    initialFileFilter
+    initialFileFilter || {}
   );
   const [eventFilter, setEventFilter] = useState<EventFilter>(
-    initialEventFilter
+    initialEventFilter || {}
   );
   const [sequenceFilter, setSequenceFilter] = useState<
     SequenceFilter['filter']
-  >(initialSequenceFilter);
+  >(initialSequenceFilter || {});
 
   useEffect(() => {
     if (initialResourcesState) {

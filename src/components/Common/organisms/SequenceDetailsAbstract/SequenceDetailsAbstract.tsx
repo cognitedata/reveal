@@ -5,7 +5,7 @@ import {
   InfoGrid,
   InfoCell,
   DetailsItem,
-  ButtonRow,
+  SpacedRow,
   TimeDisplay,
 } from 'components/Common';
 import { Sequence } from 'cognite-sdk-v3';
@@ -89,7 +89,7 @@ export const SequenceDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <ButtonRow>{actions}</ButtonRow>
+          <SpacedRow>{actions}</SpacedRow>
         </InfoCell>
       )}
       <SequenceInfoGrid

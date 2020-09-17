@@ -1,5 +1,6 @@
 import * as mixpanelConfig from 'mixpanel-browser';
-import sdk, { getAuthState } from 'sdk-singleton';
+// import { useResourcesStore } from '@cognite/cdf-resources-store';
+// import { RootState } from '../reducers/index';
 
 const MIXPANEL_TOKEN = '6224e7d34f0878286d265714eeca40e3';
 
@@ -23,16 +24,16 @@ export const trackUsage = (
 
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
 
-  const { username } = getAuthState();
+  // const { email, tenant } = (useResourcesStore().getState() as RootState).app;
 
   if (host.indexOf('localhost') === -1) {
     mixpanel.track(event, {
       ...metadata,
-      project: sdk.project,
+      // project: tenant,
       version: 1,
       appVersion: process.env.REACT_APP_VERSION,
       location: window.location.pathname,
-      user: username,
+      // user: email,
       pathname: pathWithoutTenant,
     });
   }

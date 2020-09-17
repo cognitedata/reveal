@@ -1,16 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Body, Graphic } from '@cognite/cogs.js';
+import React, { useEffect, useContext } from 'react';
+import { Body } from '@cognite/cogs.js';
 import { SearchFilterSection, EventTable } from 'components/Common';
-import { CogniteEvent, EventSearchRequest, EventFilter } from 'cognite-sdk-v3';
-import { useSelector, useDispatch } from 'react-redux';
-import { searchSelector, search, count, countSelector } from 'modules/events';
-import { EventSmallPreview } from 'containers/Events';
+import { EventSearchRequest, EventFilter } from 'cognite-sdk-v3';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import {
+  searchSelector,
+  search,
+  count,
+  countSelector,
+} from '@cognite/cdf-resources-store/dist/events';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
-import { List, Content, Preview } from './Common';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
+import { List, Content } from './Common';
 
 // const EventsFilterMapping: { [key: string]: string } = {};
 
-const buildEventsFilterQuery = (
+export const buildEventsFilterQuery = (
   filter: EventFilter,
   query: string | undefined
 ): EventSearchRequest => {
@@ -29,16 +37,14 @@ const buildEventsFilterQuery = (
 };
 
 export const EventFilterSearch = ({ query = '' }: { query?: string }) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const { eventFilter, setEventFilter } = useContext(ResourceSelectionContext);
-  const [selectedEvent, setSelectedEvent] = useState<CogniteEvent | undefined>(
-    undefined
-  );
+  const { openPreview } = useResourcePreview();
 
-  const { items: events } = useSelector(searchSelector)(
+  const { items: events } = useResourcesSelector(searchSelector)(
     buildEventsFilterQuery(eventFilter, query)
   );
-  const { count: eventsCount } = useSelector(countSelector)(
+  const { count: eventsCount } = useResourcesSelector(countSelector)(
     buildEventsFilterQuery(eventFilter, query)
   );
 
@@ -125,27 +131,12 @@ export const EventFilterSearch = ({ query = '' }: { query?: string }) => {
           </Body>
           <EventTable
             events={events}
-            onEventClicked={setSelectedEvent}
+            onEventClicked={event =>
+              openPreview({ item: { id: event.id, type: 'event' } })
+            }
             query={query}
           />
         </List>
-        <Preview>
-          {selectedEvent && <EventSmallPreview eventId={selectedEvent.id} />}
-          {!selectedEvent && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                height: '100%',
-              }}
-            >
-              <Graphic type="Search" />
-              <p>Click on an event to preview here</p>
-            </div>
-          )}
-        </Preview>
       </Content>
     </>
   );

@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { SequenceDetailsAbstract, Loader } from 'components/Common';
-import { useDispatch, useSelector } from 'react-redux';
-import { itemSelector, retrieve } from 'modules/sequences';
+import {
+  useResourcesDispatch,
+  useResourcesSelector,
+} from '@cognite/cdf-resources-store';
+import {
+  itemSelector,
+  retrieve,
+} from '@cognite/cdf-resources-store/dist/sequences';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
 
@@ -22,13 +28,13 @@ export const SequenceSmallPreview = ({
     id: sequenceId,
   });
 
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
 
   useEffect(() => {
     dispatch(retrieve([{ id: sequenceId }]));
   }, [dispatch, sequenceId]);
 
-  const sequence = useSelector(itemSelector)(sequenceId);
+  const sequence = useResourcesSelector(itemSelector)(sequenceId);
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));

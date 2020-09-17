@@ -8,26 +8,27 @@ jest.mock('mixpanel-browser', () => {
   };
 });
 
+jest.mock('utils/SDK');
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
 import { MemoryRouter } from 'react-router';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-
+import { getSDK } from 'utils/SDK';
+import { mockStore } from 'utils/mockStore';
 import App from './App';
-
-const middlewares = [thunk]; // add your middlewares like `redux-thunk`
-const mockStore = configureStore(middlewares);
-
-jest.mock('modules/files');
 
 const initialStoreState = {
   app: {},
   router: { location: { pathname: 'foo' } },
   login: {},
   annotations: { byAssetId: {} },
+  files: { items: {} },
+  timeseries: { items: {} },
+  assets: { items: {} },
+  events: { items: {} },
 };
+
 const store = mockStore(initialStoreState);
 
 describe('App', () => {
@@ -35,11 +36,11 @@ describe('App', () => {
     expect(() => {
       const div = document.createElement('div');
       ReactDOM.render(
-        <Provider store={store}>
+        <CogniteResourceProvider sdk={getSDK()} store={store}>
           <MemoryRouter>
             <App />
           </MemoryRouter>
-        </Provider>,
+        </CogniteResourceProvider>,
         div
       );
       ReactDOM.unmountComponentAtNode(div);

@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { EventDetailsAbstract, Loader } from 'components/Common';
-import { useDispatch, useSelector } from 'react-redux';
-import { itemSelector, retrieve } from 'modules/events';
+import {
+  useResourcesDispatch,
+  useResourcesSelector,
+} from '@cognite/cdf-resources-store';
+import {
+  itemSelector,
+  retrieve,
+} from '@cognite/cdf-resources-store/dist/events';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
 
@@ -22,13 +28,13 @@ export const EventSmallPreview = ({
     id: eventId,
   });
 
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
 
   useEffect(() => {
     dispatch(retrieve([{ id: eventId }]));
   }, [dispatch, eventId]);
 
-  const event = useSelector(itemSelector)(eventId);
+  const event = useResourcesSelector(itemSelector)(eventId);
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));

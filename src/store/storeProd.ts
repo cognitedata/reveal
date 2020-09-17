@@ -6,6 +6,8 @@ import createRootReducer from 'reducers';
 const middlewares = [ReduxThunk];
 const enhancer = [applyMiddleware(...middlewares)];
 
-export default function configureStore(initialState = {}) {
+const configureStore = (initialState = {}) => {
   return createStore(createRootReducer(), initialState, ...enhancer);
-}
+};
+
+export default configureStore;

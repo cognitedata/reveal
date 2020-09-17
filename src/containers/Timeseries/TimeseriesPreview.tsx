@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { itemSelector, retrieve } from 'modules/timeseries';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import {
+  itemSelector,
+  retrieve,
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import { Icon } from '@cognite/cogs.js';
 import { TimeseriesGraph, Wrapper } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
@@ -21,8 +27,8 @@ export const TimeseriesPreview = ({
   timeseriesId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const dispatch = useDispatch();
-  const timeseries = useSelector(itemSelector)(timeseriesId);
+  const dispatch = useResourcesDispatch();
+  const timeseries = useResourcesSelector(itemSelector)(timeseriesId);
 
   useEffect(() => {
     if (!timeseries) {

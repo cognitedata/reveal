@@ -1,13 +1,22 @@
 import React, { useEffect, useMemo } from 'react';
 import { TimeseriesFilterQuery } from 'cognite-sdk-v3';
 import { AssetDetailsAbstract, Loader } from 'components/Common';
-import { useSelector, useDispatch } from 'react-redux';
-import { list as listTimeseries, listSelector } from 'modules/timeseries';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import {
+  list as listTimeseries,
+  listSelector,
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import {
   linkedFilesSelectorByAssetId,
   listFilesLinkedToAsset,
 } from 'modules/annotations';
-import { retrieve, itemSelector } from 'modules/assets';
+import {
+  retrieve,
+  itemSelector,
+} from '@cognite/cdf-resources-store/dist/assets';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { FileSmallPreview } from 'containers/Files';
@@ -29,13 +38,13 @@ export const AssetSmallPreview = ({
   children?: React.ReactNode;
 }) => {
   const renderResourceActions = useResourceActionsContext();
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const selectionButton = useSelectionButton()({ type: 'asset', id: assetId });
-  const { files: assetFiles } = useSelector(linkedFilesSelectorByAssetId)(
-    assetId
-  );
+  const { files: assetFiles } = useResourcesSelector(
+    linkedFilesSelectorByAssetId
+  )(assetId);
 
-  const { items: assetTimeseries } = useSelector(listSelector)(
+  const { items: assetTimeseries } = useResourcesSelector(listSelector)(
     createTimeseriesFilter(assetId),
     false
   );
@@ -58,7 +67,7 @@ export const AssetSmallPreview = ({
     return items;
   }, [renderResourceActions, selectionButton, assetId, propActions]);
 
-  const asset = useSelector(itemSelector)(assetId);
+  const asset = useResourcesSelector(itemSelector)(assetId);
   if (!asset) {
     return <Loader />;
   }

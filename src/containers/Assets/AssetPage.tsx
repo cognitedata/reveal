@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { retrieve as retrieveAsset } from 'modules/assets';
-import { useDispatch } from 'react-redux';
+import { retrieve as retrieveAsset } from '@cognite/cdf-resources-store/dist/assets';
+import { useResourcesDispatch } from '@cognite/cdf-resources-store';
 import { trackUsage } from 'utils/Metrics';
 import { Loader } from 'components/Common';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
@@ -9,7 +9,7 @@ import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { AssetPreview } from './AssetPreview';
 
 export const AssetPage = () => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const { assetId } = useParams<{
     assetId: string | undefined;
   }>();

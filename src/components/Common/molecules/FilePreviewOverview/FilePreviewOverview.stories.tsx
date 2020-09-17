@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Provider } from 'react-redux';
+import { Provider } from '@cognite/cdf-resources-store';
 import { mockStore } from 'utils/mockStore';
 import { Map } from 'immutable';
 import { CogniteAnnotation } from '@cognite/annotations';

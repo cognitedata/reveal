@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { RootState } from 'reducers/index';
 
 export function usePrevious<T>(value: T) {
@@ -10,8 +10,8 @@ export function usePrevious<T>(value: T) {
   return ref.current as T;
 }
 export const useTenant = () => {
-  return useSelector((state: RootState) => state.app.tenant);
+  return useResourcesSelector((state: RootState) => state.app.tenant);
 };
 export const useEnv = () => {
-  return useSelector((state: RootState) => state.app.cdfEnv);
+  return useResourcesSelector((state: RootState) => state.app.cdfEnv);
 };

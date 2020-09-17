@@ -12,6 +12,9 @@ export const Wrapper = styled.div`
   flex: 1;
   padding: 24px;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: ${Colors['greyscale-grey1'].hex()};
 
   dl,
@@ -21,7 +24,7 @@ export const Wrapper = styled.div`
   }
 `;
 
-export const ButtonRow = styled.div`
+export const SpacedRow = styled.div`
   display: flex;
   align-items: stretch;
 
@@ -44,6 +47,7 @@ const HorizontalDivider = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
   background: ${Colors['greyscale-grey3'].hex()};
+  display: inline-table;
 `;
 
 const VerticalDivider = styled.div`
@@ -52,6 +56,7 @@ const VerticalDivider = styled.div`
   margin-left: 8px;
   margin-right: 8px;
   background: ${Colors['greyscale-grey3'].hex()};
+  display: inline-table;
 `;
 
 export const Divider = {

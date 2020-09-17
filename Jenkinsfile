@@ -2,12 +2,12 @@
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
-previewServer.pod(nodeVersion: 'node:10') {
+previewServer.pod(nodeVersion: 'node:12') {
   podTemplate(
     containers: [
       containerTemplate(
         name: 'node',
-        image: 'node:10',
+        image: 'node:12',
         envVars: [
           envVar(key: 'CI', value: 'true'),
         ],

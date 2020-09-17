@@ -3,24 +3,27 @@ import styled from 'styled-components';
 import {
   itemSelector as assetSelector,
   retrieve as retrieveAssets,
-} from 'modules/assets';
+} from '@cognite/cdf-resources-store/dist/assets';
 import {
   itemSelector as timeseriesSelector,
   retrieve as retrieveTimeseries,
-} from 'modules/timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import {
   itemSelector as fileSelector,
   retrieve as retrieveFiles,
-} from 'modules/files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   itemSelector as sequenceSelector,
   retrieve as retrieveSequences,
-} from 'modules/sequences';
+} from '@cognite/cdf-resources-store/dist/sequences';
 import {
   itemSelector as eventSelector,
   retrieve as retrieveEvents,
-} from 'modules/events';
-import { useSelector, useDispatch } from 'react-redux';
+} from '@cognite/cdf-resources-store/dist/events';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { AssetSmallPreview } from 'containers/Assets';
 import { FileSmallPreview } from 'containers/Files/FileSmallPreview';
@@ -60,12 +63,12 @@ export const ResourcePreviewSidebar = ({
   content: propContent,
   onClose,
 }: Props) => {
-  const dispatch = useDispatch();
-  const getFile = useSelector(fileSelector);
-  const getAsset = useSelector(assetSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
-  const getSequence = useSelector(sequenceSelector);
-  const getEvent = useSelector(eventSelector);
+  const dispatch = useResourcesDispatch();
+  const getFile = useResourcesSelector(fileSelector);
+  const getAsset = useResourcesSelector(assetSelector);
+  const getTimeseries = useResourcesSelector(timeseriesSelector);
+  const getSequence = useResourcesSelector(sequenceSelector);
+  const getEvent = useResourcesSelector(eventSelector);
 
   useEffect(() => {
     if (item) {

@@ -6,8 +6,11 @@ import React, {
   useState,
   useContext,
 } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { itemSelector } from 'modules/files';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import { itemSelector } from '@cognite/cdf-resources-store/dist/files';
 import { selectAnnotations } from 'modules/annotations';
 import {
   CogniteFileViewer,
@@ -20,21 +23,21 @@ import styled from 'styled-components';
 import { isFilePreviewable } from 'utils/FileUtils';
 import queryString from 'query-string';
 import { useLocation } from 'react-router';
-import sdk from 'sdk-singleton';
 import { AnnotationPreviewSidebar } from 'containers/Files/FilePreview/AnnotationPreviewSidebar';
 import { v4 as uuid } from 'uuid';
 import { PendingCogniteAnnotation } from '@cognite/annotations';
 import { FileOverviewPanel } from 'containers/Files/FilePreview/FileOverviewPanel';
 import { fetchResourceForAnnotation } from 'utils/AnnotationUtils';
 import { ContextualizationModule } from 'containers/Files/FilePreview/ContextualizationModule';
+import { getSDK } from 'utils/SDK';
 
 type Props = { fileId?: number; contextualization?: boolean };
 
 const FilePreview = ({ fileId, contextualization = false }: Props) => {
   const history = useHistory();
   const { search } = useLocation();
-  const dispatch = useDispatch();
-  const file = useSelector(itemSelector)(fileId);
+  const dispatch = useResourcesDispatch();
+  const file = useResourcesSelector(itemSelector)(fileId);
   const [creatable, setCreatable] = useState(false);
 
   const [pendingAnnotations, setPendingAnnotations] = useState<
@@ -47,7 +50,7 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
     setSelectedAnnotation,
   } = useContext(CogniteFileViewer.Context);
 
-  const getAnnotations = useSelector(selectAnnotations);
+  const getAnnotations = useResourcesSelector(selectAnnotations);
   const annotations = useMemo(() => getAnnotations(fileId), [
     fileId,
     getAnnotations,
@@ -172,6 +175,7 @@ const CenteredPlaceholder = styled.div`
 `;
 
 const WrappedFilePreview = (props: Props) => {
+  const sdk = getSDK();
   return (
     <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
       <FilePreview {...props} />

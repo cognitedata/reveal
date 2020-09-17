@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Body, Graphic } from '@cognite/cogs.js';
+import React, { useEffect, useContext } from 'react';
+import { Body } from '@cognite/cogs.js';
 import { SearchFilterSection, AssetTable } from 'components/Common';
-import { Asset, AssetSearchFilter, AssetFilterProps } from 'cognite-sdk-v3';
-import { useSelector, useDispatch } from 'react-redux';
+import { AssetSearchFilter, AssetFilterProps } from 'cognite-sdk-v3';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
 import {
   searchSelector,
   search,
@@ -10,14 +13,14 @@ import {
   countSelector,
   itemSelector,
   retrieve,
-} from 'modules/assets';
-import { AssetSmallPreview } from 'containers/Assets';
+} from '@cognite/cdf-resources-store/dist/assets';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
-import { List, Content, Preview } from './Common';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
+import { List, Content } from './Common';
 
 // const AssetsFilterMapping: { [key: string]: string } = {};
 
-const buildAssetsFilterQuery = (
+export const buildAssetsFilterQuery = (
   filter: AssetFilterProps,
   query: string | undefined
 ): AssetSearchFilter => {
@@ -36,17 +39,15 @@ const buildAssetsFilterQuery = (
 };
 
 export const AssetFilterSearch = ({ query = '' }: { query?: string }) => {
-  const dispatch = useDispatch();
-  const getAsset = useSelector(itemSelector);
+  const dispatch = useResourcesDispatch();
+  const getAsset = useResourcesSelector(itemSelector);
   const { assetFilter, setAssetFilter } = useContext(ResourceSelectionContext);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
-    undefined
-  );
+  const { openPreview } = useResourcePreview();
 
-  const { items: assets } = useSelector(searchSelector)(
+  const { items: assets } = useResourcesSelector(searchSelector)(
     buildAssetsFilterQuery(assetFilter, query)
   );
-  const { count: assetsCount } = useSelector(countSelector)(
+  const { count: assetsCount } = useResourcesSelector(countSelector)(
     buildAssetsFilterQuery(assetFilter, query)
   );
 
@@ -121,27 +122,12 @@ export const AssetFilterSearch = ({ query = '' }: { query?: string }) => {
           </Body>
           <AssetTable
             assets={assets}
-            onAssetClicked={setSelectedAsset}
+            onAssetClicked={asset =>
+              openPreview({ item: { id: asset.id, type: 'asset' } })
+            }
             query={query}
           />
         </List>
-        <Preview>
-          {selectedAsset && <AssetSmallPreview assetId={selectedAsset.id} />}
-          {!selectedAsset && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                height: '100%',
-              }}
-            >
-              <Graphic type="Search" />
-              <p>Click on an asset to preview here</p>
-            </div>
-          )}
-        </Preview>
       </Content>
     </>
   );

@@ -1,24 +1,22 @@
 import React, { useEffect } from 'react';
-import { Provider } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from 'styled-components';
-
 import { ClientSDKProvider } from '@cognite/gearbox/dist/components/ClientSDKProvider';
 import GlobalStyle from 'styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk from 'sdk-singleton';
 import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
-
-// import Routes from './routes';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
 import { Loader } from 'components/Common';
-import store from './store';
+import { setSDK } from 'utils/SDK';
+import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
+import collapseStyle from 'rc-collapse/assets/index.css';
 import theme from './styles/theme';
 import { setupSentry } from './utils/sentry';
-
 import rootStyles from './styles/index.css';
+import store from './store/index';
 
 export default () => {
   const tenant = window.location.pathname.split('/')[1];
@@ -31,10 +29,13 @@ export default () => {
   useEffect(() => {
     cogsStyles.use();
     rootStyles.use();
+    collapseStyle.use();
     setupSentry();
+    setSDK(sdk);
     return () => {
       cogsStyles.unuse();
       rootStyles.unuse();
+      collapseStyle.unuse();
     };
   }, []);
 
@@ -49,13 +50,13 @@ export default () => {
         >
           <ClientSDKProvider client={sdk}>
             <ThemeProvider theme={theme}>
-              <Provider store={store}>
+              <CogniteResourceProvider sdk={sdk} store={store}>
                 <Router history={history}>
                   <Switch>
                     <Route path="/:tenant" component={RootApp} />
                   </Switch>
                 </Router>
-              </Provider>
+              </CogniteResourceProvider>
             </ThemeProvider>
             <GlobalStyle theme={theme} />
           </ClientSDKProvider>

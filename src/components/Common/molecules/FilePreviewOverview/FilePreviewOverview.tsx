@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import collapseStyles from 'rc-collapse/assets/index.css';
 import {
   Input,
   Collapse,
@@ -21,32 +20,35 @@ import {
   Sequence,
   CogniteEvent,
 } from 'cognite-sdk-v3';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  useResourcesDispatch,
+  useResourcesSelector,
+} from '@cognite/cdf-resources-store';
 import {
   itemSelector as fileSelector,
   retrieve as retrieveFile,
   retrieveExternal as retrieveExternalFile,
-} from 'modules/files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   itemSelector as assetSelector,
   retrieve as retrieveAsset,
   retrieveExternal as retrieveExternalAsset,
-} from 'modules/assets';
+} from '@cognite/cdf-resources-store/dist/assets';
 import {
   itemSelector as timeseriesSelector,
   retrieve as retrieveTimeSeries,
   retrieveExternal as retrieveExternalTimeSeries,
-} from 'modules/timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import {
   itemSelector as eventSelector,
   retrieve as retrieveEvent,
   retrieveExternal as retrieveExternalEvent,
-} from 'modules/events';
+} from '@cognite/cdf-resources-store/dist/events';
 import {
   itemSelector as sequenceSelector,
   retrieve as retrieveSequence,
   retrieveExternal as retrieveExternalSequence,
-} from 'modules/sequences';
+} from '@cognite/cdf-resources-store/dist/sequences';
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { useViewerQuery } from '@cognite/react-picture-annotation';
@@ -161,18 +163,11 @@ export const FilePreviewOverview = ({
   onEventClicked,
   onSequenceClicked,
 }: FilePreviewOverviewProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const { query, setQuery } = useViewerQuery();
   const { openPreview } = useResourcePreview();
   const [currentTab, setTab] = useState('resources');
   const [open, setOpen] = useState<string[]>([]);
-
-  useEffect(() => {
-    collapseStyles.use();
-    return () => {
-      collapseStyles.unuse();
-    };
-  });
 
   const onAssetClickedCallback =
     onAssetClicked ||
@@ -327,11 +322,11 @@ export const FilePreviewOverview = ({
     );
   }, [dispatch, sequenceIds]);
 
-  const getAsset = useSelector(assetSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
-  const getFile = useSelector(fileSelector);
-  const getSequence = useSelector(sequenceSelector);
-  const getEvent = useSelector(eventSelector);
+  const getAsset = useResourcesSelector(assetSelector);
+  const getTimeseries = useResourcesSelector(timeseriesSelector);
+  const getFile = useResourcesSelector(fileSelector);
+  const getSequence = useResourcesSelector(sequenceSelector);
+  const getEvent = useResourcesSelector(eventSelector);
 
   const renderDetectedResources = () => {
     return (

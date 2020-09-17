@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, Suspense } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { init, setCdfEnv } from 'modules/app';
+import {
+  useResourcesDispatch,
+  useResourcesSelector,
+} from '@cognite/cdf-resources-store';
+import { init, setCdfEnv, selectUserName } from 'modules/app';
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import * as mixpanelConfig from 'mixpanel-browser';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { RootState } from 'reducers';
-import { getAuthState } from 'sdk-singleton';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
 import { Loader } from 'components/Common';
 import { ResourceActionsProvider } from 'context/ResourceActionsContext';
@@ -15,7 +17,7 @@ import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 const Spinner = () => <Loader />;
 
 export default function App() {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const history = useHistory();
   const { pathname, search, hash } = useLocation();
   const { location } = history;
@@ -24,7 +26,7 @@ export default function App() {
     params: { tenant: pathTenant },
   } = useRouteMatch<{ tenant: string }>();
   const cdfEnv = queryString.parse(window.location.search).env as string;
-  const { username } = getAuthState();
+  const username = useResourcesSelector(selectUserName);
 
   useEffect(() => {
     dispatch(init(pathTenant));
@@ -34,7 +36,9 @@ export default function App() {
     dispatch(setCdfEnv(cdfEnv));
   }, [dispatch, cdfEnv]);
 
-  const storeCdfEnv = useSelector((state: RootState) => state.app.cdfEnv);
+  const storeCdfEnv = useResourcesSelector(
+    (state: RootState) => state.app.cdfEnv
+  );
 
   useEffect(() => {
     if (storeCdfEnv && !cdfEnv) {

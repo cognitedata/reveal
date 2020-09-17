@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Timeseries } from 'cognite-sdk-v3';
 import Table, { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import TableStyle from 'react-base-table/styles.css';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import {
   useResourceMode,
@@ -41,10 +40,6 @@ export const TimeseriesTable = ({
   const resourcesState = useResourcesState();
 
   const currentItems = resourcesState.filter(el => el.state === 'active');
-  useEffect(() => {
-    TableStyle.use();
-    return () => TableStyle.unuse();
-  }, []);
 
   const onTimeseriesSelected = (sequence: Timeseries) => {
     onTimeseriesClicked(sequence);

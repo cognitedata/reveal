@@ -5,43 +5,48 @@ import { RootState } from 'reducers';
 import { isSimilarBoundingBox } from 'utils/AnnotationUtils';
 import { trackTimedUsage } from 'utils/Metrics';
 import { AnnotationBoundingBox } from '@cognite/annotations';
-import sdk from 'sdk-singleton';
 import { ModelStatus } from 'types/Types';
+import { createSelector } from 'reselect';
+import { getSDK } from 'utils/SDK';
 
-const SIMILARITY_JOB_CREATE_STARTED = 'pnid/SIMILARITY_JOB_CREATE_STARTED';
-const SIMILARITY_JOB_CREATED = 'pnid/SIMILARITY_JOB_CREATED';
-const SIMILARITY_JOB_STATUS_UPDATED = 'pnid/SIMILARITY_JOB_STATUS_UPDATED';
-const SIMILARITY_JOB_DONE = 'pnid/SIMILARITY_JOB_DONE';
-const SIMILARITY_JOB_ERROR = 'pnid/SIMILARITY_JOB_ERROR';
-interface CreateSimilarityJobStartedAction
+export const SIMILARITY_JOB_CREATE_STARTED =
+  'pnid/SIMILARITY_JOB_CREATE_STARTED';
+export const SIMILARITY_JOB_CREATED = 'pnid/SIMILARITY_JOB_CREATED';
+export const SIMILARITY_JOB_STATUS_UPDATED =
+  'pnid/SIMILARITY_JOB_STATUS_UPDATED';
+export const SIMILARITY_JOB_DONE = 'pnid/SIMILARITY_JOB_DONE';
+export const SIMILARITY_JOB_ERROR = 'pnid/SIMILARITY_JOB_ERROR';
+export interface CreateSimilarityJobStartedAction
   extends Action<typeof SIMILARITY_JOB_CREATE_STARTED> {
   fileId: number;
   boundingBox: string;
 }
-interface SimilarityJobCreatedAction
+export interface SimilarityJobCreatedAction
   extends Action<typeof SIMILARITY_JOB_CREATED> {
   fileId: number;
   boundingBox: string;
   jobId: number;
 }
-interface SimilarityJobStatusUpdatedAction
+export interface SimilarityJobStatusUpdatedAction
   extends Action<typeof SIMILARITY_JOB_STATUS_UPDATED> {
   fileId: number;
   boundingBox: string;
   jobId: number;
   status: ModelStatus;
 }
-interface SimilarityJobDoneAction extends Action<typeof SIMILARITY_JOB_DONE> {
+export interface SimilarityJobDoneAction
+  extends Action<typeof SIMILARITY_JOB_DONE> {
   fileId: number;
   boundingBox: string;
   annotations: SimilarResponseEntity[];
 }
-interface SimilarityJobErrorAction extends Action<typeof SIMILARITY_JOB_ERROR> {
+export interface SimilarityJobErrorAction
+  extends Action<typeof SIMILARITY_JOB_ERROR> {
   fileId: number;
   boundingBox: string;
 }
 
-type SimilarityJobActions =
+export type SimilarityJobActions =
   | CreateSimilarityJobStartedAction
   | SimilarityJobCreatedAction
   | SimilarityJobStatusUpdatedAction
@@ -61,6 +66,7 @@ export const findSimilarObjects = (
     dispatch: ThunkDispatch<any, any, SimilarityJobActions>,
     getState: () => RootState
   ) => {
+    const sdk = getSDK();
     const {
       annotations: {
         byFileId: { [fileId]: currentAnnotation },
@@ -308,3 +314,19 @@ export const similarObjectJobsReducer = (
     }
   }
 };
+
+export const selectObjectStatus = createSelector(
+  (state: RootState) => state.fileContextualization.similarObjectJobs,
+  similarObjectJobs => (fileId?: number) => {
+    if (!fileId) {
+      return false;
+    }
+    const jobs = similarObjectJobs[fileId] || {};
+
+    const isFindingSimilarObjects = jobs
+      ? Object.values(jobs).some(el => !el.jobDone)
+      : false;
+
+    return isFindingSimilarObjects;
+  }
+);

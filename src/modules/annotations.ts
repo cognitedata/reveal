@@ -5,7 +5,6 @@ import produce from 'immer';
 import unionBy from 'lodash/unionBy';
 import { FileInfo, Asset } from 'cognite-sdk-v3';
 import { createSelector } from 'reselect';
-import sdk from 'sdk-singleton';
 import {
   CogniteAnnotation,
   listAnnotationsForFile,
@@ -17,9 +16,10 @@ import {
   linkFileToAssetIds,
   hardDeleteAnnotations,
 } from '@cognite/annotations';
-import { itemSelector as fileSelector } from './files';
-import { itemSelector as assetSelector } from './assets';
-import { ApiCall } from './sdk-builder/types';
+import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
+import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
+import { ApiCall } from '@cognite/cdf-resources-store';
+import { getSDK } from 'utils/SDK';
 
 const LIST_ANNOTATIONS = 'annotations/LIST_ANNOTATIONS';
 const LIST_ANNOTATIONS_DONE = 'annotations/LIST_ANNOTATIONS_DONE';
@@ -122,6 +122,7 @@ export function list(
   includeDeleted = false
 ) {
   return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
+    const sdk = getSDK();
     dispatch({
       type: LIST_ANNOTATIONS,
       fileId: file.id,
@@ -153,6 +154,7 @@ export function create(
   pendingAnnotations: PendingCogniteAnnotation[]
 ) {
   return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
+    const sdk = getSDK();
     try {
       const annotations = await createAnnotations(sdk, pendingAnnotations);
 
@@ -171,6 +173,7 @@ export function create(
 
 export function remove(file: FileInfo, annotations: CogniteAnnotation[]) {
   return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
+    const sdk = getSDK();
     try {
       await deleteAnnotations(sdk, annotations);
 
@@ -189,6 +192,7 @@ export function remove(file: FileInfo, annotations: CogniteAnnotation[]) {
 
 export function clear(file: FileInfo) {
   return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
+    const sdk = getSDK();
     try {
       const deletedAnnotations = await clearAnnotationsForFile(sdk, file);
 
@@ -209,6 +213,7 @@ export function hardDeleteAnnotationsForFile(file: FileInfo) {
     dispatch: ThunkDispatch<any, any, AnnotationActions>,
     getState: () => RootState
   ) => {
+    const sdk = getSDK();
     try {
       const annotations = selectAnnotations(getState())(file.id);
       await hardDeleteAnnotations(sdk, file);
@@ -231,6 +236,7 @@ export function listFilesLinkedToAsset(assetId: number) {
     dispatch: ThunkDispatch<any, any, AnyAction>,
     getState: () => RootState
   ) => {
+    const sdk = getSDK();
     dispatch({
       type: LIST_FILES_LINKED_TO_ASSET,
       assetId,
@@ -266,6 +272,7 @@ export function linkFileWithAssetsFromAnnotations(fileId: number) {
     dispatch: ThunkDispatch<any, any, AnyAction>,
     getState: () => RootState
   ) => {
+    const sdk = getSDK();
     const annotations = getState().annotations.byFileId[fileId];
     if (annotations) {
       const updatedFile = await linkFileToAssetIds(
@@ -289,10 +296,10 @@ interface LinkedFilesResult extends ApiCall {
   fileIds: number[];
 }
 
-interface AnnotationByIdStore {
+export interface AnnotationByIdStore {
   [key: number]: AnnotationResult;
 }
-interface LinkedFilesByIdStore {
+export interface LinkedFilesByIdStore {
   [key: number]: LinkedFilesResult;
 }
 
@@ -414,7 +421,7 @@ function byAssetIdAnnotationReducer(
       return {
         ...state,
         [action.assetId]: {
-          ...(state[action.assetId] || annotationsDefaultState),
+          ...(state[action.assetId] || linkedFilesDefaultState),
           done: true,
           error: true,
           fetching: false,

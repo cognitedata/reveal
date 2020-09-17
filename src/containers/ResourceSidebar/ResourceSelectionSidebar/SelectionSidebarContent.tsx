@@ -20,7 +20,7 @@ import {
   useResourceMode,
 } from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
-import { Divider, ButtonRow } from 'components/Common';
+import { Divider, SpacedRow } from 'components/Common';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: fixed;
@@ -200,13 +200,13 @@ export const SelectionSidebarContent = ({
             {mode !== 'none' && (
               <>
                 <Divider.Horizontal />
-                <ButtonRow>
+                <SpacedRow>
                   <Button onClick={() => onClose(false)}>Cancel</Button>
                   <div className="spacer" />
                   <Button type="primary" onClick={() => onClose(true)}>
                     Select {selectResourcesCount} Resources
                   </Button>
-                </ButtonRow>
+                </SpacedRow>
               </>
             )}
           </div>

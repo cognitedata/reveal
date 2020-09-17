@@ -12,14 +12,12 @@ export type OpenSelectorProps = ResourceSelectionProps & {
   onClose?: (confirmed: boolean) => void;
 };
 
-export type ResourcePreviewObserver = {
+export type ResourceSelector = {
   openResourceSelector: (props: OpenSelectorProps) => void;
   hideResourceSelector: () => void;
 };
 
-const ResourceSelectorContext = React.createContext(
-  {} as ResourcePreviewObserver
-);
+const ResourceSelectorContext = React.createContext({} as ResourceSelector);
 
 export const useResourceSelector = () => {
   const observer = useContext(ResourceSelectorContext);

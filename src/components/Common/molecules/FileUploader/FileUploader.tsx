@@ -3,10 +3,10 @@ import { Upload, Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse } from 'cognite-sdk-v3';
 import { UploadFile } from 'antd/lib/upload/interface';
-import sdk from 'sdk-singleton';
 import { getMIMEType } from 'utils/FileUtils';
-import { ButtonRow } from 'components/Common';
+import { SpacedRow } from 'components/Common';
 import { Body, Icon, Button } from '@cognite/cogs.js';
+import { getSDK } from 'utils/SDK';
 
 export const GCSUploader = (
   file: Blob | UploadFile,
@@ -63,6 +63,7 @@ export const FileUploader = ({
   beforeUploadStart = () => {},
   onFileListChange = () => {},
 }: Props) => {
+  const sdk = getSDK();
   const currentUploads: { [key: string]: any } = {};
   const [uploadStatus, setUploadStatus] = useState<STATUS>(STATUS.WAITING);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -272,7 +273,7 @@ export const FileUploader = ({
     }
 
     return (
-      <ButtonRow style={{ marginTop: '12px' }}>{uploaderButton}</ButtonRow>
+      <SpacedRow style={{ marginTop: '12px' }}>{uploaderButton}</SpacedRow>
     );
   };
 

@@ -4,8 +4,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { v4 as uuid } from 'uuid';
 import { createSelector } from 'reselect';
 import { InternalId } from 'cognite-sdk-v3';
-import { RootState } from '../reducers/index';
-import { ResourceType } from './sdk-builder/types';
 import {
   countSelector as countTimeseriesSelector,
   list as listTimeseries,
@@ -15,7 +13,7 @@ import {
   retrieve as retrieveTimeseries,
   retrieveSelector as retrieveTimeseriesSelector,
   searchSelector as searchTimeseriesSelector,
-} from './timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 
 import {
   countSelector as countFileSelector,
@@ -25,7 +23,7 @@ import {
   retrieve as retrieveFiles,
   retrieveSelector as retrieveFileSelector,
   searchSelector as searchFileSelector,
-} from './files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   countSelector as countAssetSelector,
   list as listAssets,
@@ -35,7 +33,7 @@ import {
   retrieve as retrieveAssets,
   retrieveSelector as retrieveAssetSelector,
   searchSelector as searchAssetSelector,
-} from './assets';
+} from '@cognite/cdf-resources-store/dist/assets';
 import {
   countSelector as countSequencesSelector,
   list as listSequences,
@@ -44,7 +42,7 @@ import {
   retrieve as retrieveSequences,
   retrieveSelector as retrieveSequencesSelector,
   searchSelector as searchSequencesSelector,
-} from './sequences';
+} from '@cognite/cdf-resources-store/dist/sequences';
 import {
   countSelector as countEventsSelector,
   list as listEvents,
@@ -53,7 +51,9 @@ import {
   retrieve as retrieveEvents,
   retrieveSelector as retrieveEventsSelector,
   searchSelector as searchEventsSelector,
-} from './events';
+} from '@cognite/cdf-resources-store/dist/events';
+import { ResourceType } from '@cognite/cdf-resources-store';
+import { RootState } from '../reducers/index';
 
 // Constants
 const CREATE_SELECTION = 'selection/CREATE_SELECTION';

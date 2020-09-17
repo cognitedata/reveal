@@ -1,21 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Body, Graphic } from '@cognite/cogs.js';
+import React, { useEffect, useContext } from 'react';
+import { Body } from '@cognite/cogs.js';
 import { SearchFilterSection, SequenceTable } from 'components/Common';
-import { Sequence, SequenceSearchFilter, SequenceFilter } from 'cognite-sdk-v3';
-import { useSelector, useDispatch } from 'react-redux';
+import { SequenceSearchFilter, SequenceFilter } from 'cognite-sdk-v3';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
 import {
   searchSelector,
   search,
   count,
   countSelector,
-} from 'modules/sequences';
-import { SequenceSmallPreview } from 'containers/Sequences';
+} from '@cognite/cdf-resources-store/dist/sequences';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
-import { List, Content, Preview } from './Common';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
+import { List, Content } from './Common';
 
 // const SequencesFilterMapping: { [key: string]: string } = {};
 
-const buildSequencesFilterQuery = (
+export const buildSequencesFilterQuery = (
   filter: SequenceFilter['filter'],
   query: string | undefined
 ): SequenceSearchFilter => {
@@ -34,18 +37,16 @@ const buildSequencesFilterQuery = (
 };
 
 export const SequenceFilterSearch = ({ query = '' }: { query?: string }) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const { sequenceFilter, setSequenceFilter } = useContext(
     ResourceSelectionContext
   );
-  const [selectedSequence, setSelectedSequence] = useState<
-    Sequence | undefined
-  >(undefined);
+  const { openPreview } = useResourcePreview();
 
-  const { items: sequences } = useSelector(searchSelector)(
+  const { items: sequences } = useResourcesSelector(searchSelector)(
     buildSequencesFilterQuery(sequenceFilter, query)
   );
-  const { count: sequencesCount } = useSelector(countSelector)(
+  const { count: sequencesCount } = useResourcesSelector(countSelector)(
     buildSequencesFilterQuery(sequenceFilter, query)
   );
 
@@ -108,29 +109,12 @@ export const SequenceFilterSearch = ({ query = '' }: { query?: string }) => {
           </Body>
           <SequenceTable
             sequences={sequences}
-            onSequenceClicked={setSelectedSequence}
+            onSequenceClicked={sequence =>
+              openPreview({ item: { id: sequence.id, type: 'sequence' } })
+            }
             query={query}
           />
         </List>
-        <Preview>
-          {selectedSequence && (
-            <SequenceSmallPreview sequenceId={selectedSequence.id} />
-          )}
-          {!selectedSequence && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                height: '100%',
-              }}
-            >
-              <Graphic type="Search" />
-              <p>Click on an sequence to preview here</p>
-            </div>
-          )}
-        </Preview>
       </Content>
     </>
   );

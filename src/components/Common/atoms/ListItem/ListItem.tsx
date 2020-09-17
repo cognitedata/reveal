@@ -1,5 +1,5 @@
 import styled, { CSSProperties, css } from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Title } from '@cognite/cogs.js';
 import React from 'react';
 
 type WrapperProps = {
@@ -35,9 +35,9 @@ export const ListItem = ({
       style={style}
     >
       {title && (
-        <div className="list-title">
-          {typeof title === 'string' ? <strong>{title}</strong> : title}
-        </div>
+        <Title level={6} className="list-title">
+          {title}
+        </Title>
       )}
       {children}
     </ListItemWrapper>

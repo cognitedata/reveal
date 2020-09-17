@@ -1,14 +1,14 @@
 import React from 'react';
-import { Input, Button, Title, Icon, Colors } from '@cognite/cogs.js';
+import { Input, Button, Title, Icon, Colors, Body } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
-import { ButtonRow } from 'components/Common';
+import { SpacedRow } from 'components/Common';
 import { CogniteAnnotation } from '@cognite/annotations';
-import { itemSelector as assetSelector } from 'modules/assets';
-import { itemSelector as timeseriesSelector } from 'modules/timeseries';
-import { itemSelector as fileSelector } from 'modules/files';
-import { itemSelector as sequenceSelector } from 'modules/sequences';
-import { useSelector } from 'react-redux';
+import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
+import { itemSelector as timeseriesSelector } from '@cognite/cdf-resources-store/dist/timeseries';
+import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
+import { itemSelector as sequenceSelector } from '@cognite/cdf-resources-store/dist/sequences';
+import { useResourcesSelector } from '@cognite/cdf-resources-store';
 
 export const CreateAnnotationForm = ({
   annotation,
@@ -31,10 +31,10 @@ export const CreateAnnotationForm = ({
   previewImageSrc?: string;
   children?: React.ReactNode;
 }) => {
-  const getFile = useSelector(fileSelector);
-  const getAsset = useSelector(assetSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
-  const getSequence = useSelector(sequenceSelector);
+  const getFile = useResourcesSelector(fileSelector);
+  const getAsset = useResourcesSelector(assetSelector);
+  const getTimeseries = useResourcesSelector(timeseriesSelector);
+  const getSequence = useResourcesSelector(sequenceSelector);
   let buttonText = <>Not linked to a Resource</>;
   if (annotation.resourceType) {
     switch (annotation.resourceType) {
@@ -94,7 +94,7 @@ export const CreateAnnotationForm = ({
         {onCancel ? 'Edit annotation' : 'Create annotation'}
       </Title>
       {previewImageSrc && <PreviewImage src={previewImageSrc} alt="preview" />}
-      <p>{buttonText}</p>
+      <Body>{buttonText}</Body>
       <Button onClick={onLinkResource}>
         {annotation.resourceType ? (
           <>
@@ -125,7 +125,7 @@ export const CreateAnnotationForm = ({
           })
         }
       />
-      <ButtonRow>
+      <SpacedRow>
         <Button
           onClick={onSave}
           type="primary"
@@ -136,7 +136,7 @@ export const CreateAnnotationForm = ({
         <div style={{ flex: 1 }} />
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
         <Button onClick={onDelete} icon="Delete" type="danger" />
-      </ButtonRow>
+      </SpacedRow>
       {children}
     </Wrapper>
   );

@@ -1,7 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { itemSelector } from 'modules/files';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import { itemSelector } from '@cognite/cdf-resources-store/dist/files';
 import { Button, Dropdown, Menu, Icon, AllIconTypes } from '@cognite/cogs.js';
 import { hardDeleteAnnotationsForFile } from 'modules/annotations';
 import {
@@ -9,7 +12,7 @@ import {
   ProposedCogniteAnnotation,
   useDownloadPDF,
 } from '@cognite/react-picture-annotation';
-import { ButtonRow, FilePreviewOverview, Loader } from 'components/Common';
+import { SpacedRow, FilePreviewOverview, Loader } from 'components/Common';
 import styled from 'styled-components';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
@@ -38,9 +41,9 @@ export const FileOverviewPanel = ({
   setCreatable,
   contextualization,
 }: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const download = useDownloadPDF();
-  const file = useSelector(itemSelector)(fileId);
+  const file = useResourcesSelector(itemSelector)(fileId);
 
   const { page, setPage, annotations } = useContext(CogniteFileViewer.Context);
 
@@ -48,7 +51,7 @@ export const FileOverviewPanel = ({
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton();
 
-  const detectObjectJob = useSelector(selectObjectJobForFile)(fileId);
+  const detectObjectJob = useResourcesSelector(selectObjectJobForFile)(fileId);
 
   const detectObjectJobIcon: AllIconTypes = useMemo(() => {
     if (!detectObjectJob) {
@@ -216,11 +219,11 @@ export const FileOverviewPanel = ({
           }
           onPageChange={setPage}
           extras={
-            <ButtonRow>
+            <SpacedRow>
               {selectionButton({ id: file.id, type: 'file' })}
               {renderResourceActions({ id: file.id, type: 'file' })}
               {renderMenuButton()}
-            </ButtonRow>
+            </SpacedRow>
           }
         />
       ) : (

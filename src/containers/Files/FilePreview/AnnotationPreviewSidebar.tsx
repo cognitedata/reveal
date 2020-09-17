@@ -1,10 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { itemSelector as fileSelector } from 'modules/files';
-import { itemSelector as assetSelector } from 'modules/assets';
-import { itemSelector as timeseriesSelector } from 'modules/timeseries';
-import { itemSelector as sequenceSelector } from 'modules/sequences';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
+import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
+import { itemSelector as timeseriesSelector } from '@cognite/cdf-resources-store/dist/timeseries';
+import { itemSelector as sequenceSelector } from '@cognite/cdf-resources-store/dist/sequences';
 import {
   Button,
   Icon,
@@ -24,7 +27,7 @@ import {
   useExtractFromCanvas,
 } from '@cognite/react-picture-annotation';
 import {
-  ButtonRow,
+  SpacedRow,
   Divider,
   InfoGrid,
   InfoCell,
@@ -35,17 +38,14 @@ import { trackUsage } from 'utils/Metrics';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import styled from 'styled-components';
-import { findSimilarObjects } from 'modules/fileContextualization/similarObjectJobs';
+import {
+  findSimilarObjects,
+  selectObjectStatus,
+} from 'modules/fileContextualization/similarObjectJobs';
 import { useResourceItemFromAnnotation } from 'utils/AnnotationUtils';
-import {
-  ResourceSelectorProvider,
-  useResourceSelector,
-} from 'context/ResourceSelectorContext';
+import { useResourceSelector } from 'context/ResourceSelectorContext';
 import { ResourceItemState } from 'context/ResourceSelectionContext';
-import {
-  findingObjectStatus,
-  ContextualizationData,
-} from './ContextualizationModule';
+import { ContextualizationData } from './ContextualizationModule';
 
 type Props = {
   fileId?: number;
@@ -61,11 +61,11 @@ const AnnotationPreviewSidebar = ({
   contextualization,
 }: Props) => {
   const { selectedAnnotation, setSelectedAnnotation } = useSelectedAnnotation();
-  const dispatch = useDispatch();
-  const getFile = useSelector(fileSelector);
-  const getAsset = useSelector(assetSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
-  const getSequence = useSelector(sequenceSelector);
+  const dispatch = useResourcesDispatch();
+  const getFile = useResourcesSelector(fileSelector);
+  const getAsset = useResourcesSelector(assetSelector);
+  const getTimeseries = useResourcesSelector(timeseriesSelector);
+  const getSequence = useResourcesSelector(sequenceSelector);
   const file = getFile(fileId);
 
   const [editing, setEditing] = useState<boolean>(false);
@@ -90,7 +90,9 @@ const AnnotationPreviewSidebar = ({
     selectedAnnotation
   );
 
-  const isFindingSimilarObjects = useSelector(findingObjectStatus)(fileId);
+  const isFindingSimilarObjects = useResourcesSelector(selectObjectStatus)(
+    fileId
+  );
 
   let annotationPreview: string | undefined;
   if (selectedAnnotation && extractFromCanvas) {
@@ -273,7 +275,7 @@ const AnnotationPreviewSidebar = ({
           </InfoCell>
           {contextualization && (
             <InfoCell noBorders>
-              <ButtonRow>
+              <SpacedRow>
                 <Button onClick={() => onDeleteAnnotation()}>
                   <Icon type="Delete" />
                   Delete
@@ -287,7 +289,7 @@ const AnnotationPreviewSidebar = ({
                   Edit
                 </Button>
                 {similarButton}
-              </ButtonRow>
+              </SpacedRow>
             </InfoCell>
           )}
           <Divider.Horizontal />
@@ -326,7 +328,7 @@ const AnnotationPreviewSidebar = ({
           onCancel={isPendingAnnotation ? undefined : () => setEditing(false)}
         >
           <Divider.Horizontal />
-          <ButtonRow>{similarButton}</ButtonRow>
+          <SpacedRow>{similarButton}</SpacedRow>
         </CreateAnnotationForm>
       );
     }
@@ -372,7 +374,7 @@ const AnnotationPreviewSidebar = ({
     }
   }, [selectedAnnotation, hidePreview]);
 
-  return null;
+  return <></>;
 };
 
 const PreviewImage = styled.img`
@@ -386,12 +388,4 @@ const PreviewImage = styled.img`
   margin-bottom: 16px;
 `;
 
-const WrappedAnnotationPreviewSidebar = (props: Props) => {
-  return (
-    <ResourceSelectorProvider>
-      <AnnotationPreviewSidebar {...props} />
-    </ResourceSelectorProvider>
-  );
-};
-
-export { WrappedAnnotationPreviewSidebar as AnnotationPreviewSidebar };
+export { AnnotationPreviewSidebar };

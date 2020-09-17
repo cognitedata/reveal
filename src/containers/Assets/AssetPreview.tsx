@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState, useMemo } from 'react';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
 import {
   itemSelector as assetSelector,
   retrieve as retrieveAsset,
-} from 'modules/assets';
-import { Icon, Title } from '@cognite/cogs.js';
-import { List, Tabs } from 'antd';
+} from '@cognite/cdf-resources-store/dist/assets';
+import { Button, Icon, Title } from '@cognite/cogs.js';
 import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-import { TimeseriesPreview } from '@cognite/gearbox/dist/components/TimeseriesPreview';
 import {
   linkedFilesSelectorByAssetId,
   listFilesLinkedToAsset,
@@ -17,19 +18,19 @@ import {
   list as listFiles,
   retrieve as retrieveFiles,
   listSelector as listFileSelector,
-} from 'modules/files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   list as listTimeseries,
   listSelector as listTimeseriesSelector,
-} from 'modules/timeseries';
+} from '@cognite/cdf-resources-store/dist/timeseries';
 import {
   listSelector as listEventSelector,
   list as listEvent,
-} from 'modules/events';
+} from '@cognite/cdf-resources-store/dist/events';
 import {
   listSelector as listSequenceSelector,
   list as listSequence,
-} from 'modules/sequences';
+} from '@cognite/cdf-resources-store/dist/sequences';
 import {
   TimeseriesFilterQuery,
   SequenceListScope,
@@ -39,12 +40,18 @@ import {
 import {
   DetailsItem,
   Wrapper,
-  ButtonRow,
   TimeDisplay,
+  TimeseriesTable,
+  Divider,
+  SequenceTable,
+  EventTable,
+  FileTable,
+  SpacedRow,
 } from 'components/Common';
 import unionBy from 'lodash/unionBy';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
+import styled from 'styled-components';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -80,25 +87,25 @@ export const AssetPreview = ({
   extraActions?: React.ReactNode[];
 }) => {
   const { openPreview, hidePreview } = useResourcePreview();
-  const dispatch = useDispatch();
-  const asset = useSelector(assetSelector)(assetId);
+  const dispatch = useResourcesDispatch();
+  const asset = useResourcesSelector(assetSelector)(assetId);
   const {
     files: filesByAnnotations,
     fileIds: filesByAnnotationsIds,
-  } = useSelector(linkedFilesSelectorByAssetId)(assetId);
-  const { items: filesByAssetId } = useSelector(listFileSelector)(
+  } = useResourcesSelector(linkedFilesSelectorByAssetId)(assetId);
+  const { items: filesByAssetId } = useResourcesSelector(listFileSelector)(
     createFilesFilter(assetId),
     true
   );
-  const { items: timeseries } = useSelector(listTimeseriesSelector)(
+  const { items: timeseries } = useResourcesSelector(listTimeseriesSelector)(
     createTimeseriesFilter(assetId),
     true
   );
-  const { items: sequences } = useSelector(listSequenceSelector)(
+  const { items: sequences } = useResourcesSelector(listSequenceSelector)(
     createSequenceFilter(assetId),
     true
   );
-  const { items: events } = useSelector(listEventSelector)(
+  const { items: events } = useResourcesSelector(listEventSelector)(
     createEventFilter(assetId),
     true
   );
@@ -127,10 +134,136 @@ export const AssetPreview = ({
 
   useEffect(() => {
     if (filesByAnnotationsIds) {
-      dispatch(retrieveFiles(filesByAnnotationsIds.map(id => ({ id }))));
+      dispatch(
+        retrieveFiles(filesByAnnotationsIds.map((id: number) => ({ id })))
+      );
     }
   }, [dispatch, filesByAnnotationsIds]);
 
+  const tabs = {
+    'asset-metadata': 'Asset Details',
+    timeseries: <span>Linked Timeseries ({timeseries.length})</span>,
+    files: <span>Linked Files ({files.length})</span>,
+    sequences: <span>Linked Sequences ({sequences.length})</span>,
+    events: <span>Linked Events ({events.length})</span>,
+    children: 'Children',
+  };
+
+  const [currentTab, setTab] = useState<keyof typeof tabs>('asset-metadata');
+
+  const content = useMemo(() => {
+    switch (currentTab) {
+      case 'asset-metadata': {
+        return (
+          <>
+            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+              Details
+            </Title>
+            <DetailsItem name="Description" value={asset?.description} />
+            <DetailsItem name="Source" value={asset?.source} />
+            <DetailsItem name="External ID" value={asset?.externalId} />
+            <DetailsItem
+              name="Created at"
+              value={
+                asset ? <TimeDisplay value={asset.createdTime} /> : 'Loading...'
+              }
+            />
+            <DetailsItem
+              name="Updated at"
+              value={
+                asset ? (
+                  <TimeDisplay value={asset.lastUpdatedTime} />
+                ) : (
+                  'Loading...'
+                )
+              }
+            />
+            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+              Metadata
+            </Title>
+            <DescriptionList
+              valueSet={formatMetadata((asset && asset.metadata) ?? {})}
+            />
+          </>
+        );
+      }
+      case 'timeseries': {
+        return (
+          <TimeseriesTable
+            onTimeseriesClicked={ts => {
+              if (ts) {
+                openPreview({
+                  item: { id: ts.id, type: 'timeSeries' },
+                });
+              }
+            }}
+            timeseries={timeseries}
+          />
+        );
+      }
+      case 'files': {
+        return (
+          <FileTable
+            onFileClicked={file => {
+              openPreview({
+                item: { id: file.id, type: 'file' },
+              });
+            }}
+            files={files}
+          />
+        );
+      }
+      case 'sequences': {
+        return (
+          <SequenceTable
+            onSequenceClicked={sequence => {
+              openPreview({
+                item: { id: sequence.id, type: 'sequence' },
+              });
+            }}
+            sequences={sequences}
+          />
+        );
+      }
+      case 'events': {
+        return (
+          <EventTable
+            onEventClicked={event => {
+              openPreview({
+                item: { id: event.id, type: 'event' },
+              });
+            }}
+            events={events}
+          />
+        );
+      }
+      case 'children': {
+        return (
+          <AssetTree
+            assetIds={[assetId]}
+            defaultExpandedKeys={[assetId]}
+            onSelect={newAsset => {
+              if (newAsset.node) {
+                openPreview({
+                  item: { id: newAsset.node!.id, type: 'asset' },
+                });
+              }
+            }}
+          />
+        );
+      }
+    }
+    return <></>;
+  }, [
+    asset,
+    assetId,
+    currentTab,
+    events,
+    files,
+    openPreview,
+    sequences,
+    timeseries,
+  ]);
   return (
     <Wrapper>
       <div
@@ -154,156 +287,28 @@ export const AssetPreview = ({
       <h1>
         <Icon type="DataStudio" /> {asset ? asset.name : 'Loading...'}
       </h1>
-
-      <ButtonRow>{extraActions}</ButtonRow>
-      <Tabs>
-        <Tabs.TabPane key="asset-metadata" tab="Asset Details">
-          <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-            Details
-          </Title>
-          <DetailsItem name="Description" value={asset?.description} />
-          <DetailsItem name="Source" value={asset?.source} />
-          <DetailsItem name="External ID" value={asset?.externalId} />
-          <DetailsItem
-            name="Created at"
-            value={
-              asset ? <TimeDisplay value={asset.createdTime} /> : 'Loading...'
-            }
-          />
-          <DetailsItem
-            name="Updated at"
-            value={
-              asset ? (
-                <TimeDisplay value={asset.lastUpdatedTime} />
-              ) : (
-                'Loading...'
-              )
-            }
-          />
-          <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-            Metadata
-          </Title>
-          <DescriptionList
-            valueSet={formatMetadata((asset && asset.metadata) ?? {})}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          key="timeseries"
-          tab={<span>Linked Timeseries ({timeseries.length})</span>}
-        >
-          <List
-            renderItem={ts => (
-              <List.Item
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (ts) {
-                    openPreview({
-                      item: { id: ts.id, type: 'timeSeries' },
-                    });
-                  }
-                }}
-              >
-                <TimeseriesPreview timeseriesId={ts.id} />
-              </List.Item>
-            )}
-            pagination={{ position: 'bottom' }}
-            dataSource={timeseries}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          key="files"
-          tab={<span>Linked Files ({files.length})</span>}
-        >
-          <List
-            renderItem={file => (
-              <List.Item
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (file) {
-                    openPreview({
-                      item: { id: file.id, type: 'file' },
-                    });
-                  }
-                }}
-              >
-                <List.Item.Meta
-                  title={file.name}
-                  description={file.externalId}
-                />
-              </List.Item>
-            )}
-            pagination={{ position: 'bottom' }}
-            dataSource={files}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          key="sequences"
-          tab={<span>Linked Sequences ({sequences.length})</span>}
-        >
-          <List
-            renderItem={sequence => (
-              <List.Item
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (sequence) {
-                    openPreview({
-                      item: { id: sequence.id, type: 'sequence' },
-                    });
-                  }
-                }}
-              >
-                <List.Item.Meta
-                  title={sequence.name}
-                  description={sequence.externalId}
-                />
-              </List.Item>
-            )}
-            pagination={{ position: 'bottom' }}
-            dataSource={sequences}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          key="events"
-          tab={<span>Linked Events ({events.length})</span>}
-        >
-          <List
-            renderItem={event => (
-              <List.Item
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (event) {
-                    openPreview({
-                      item: { id: event.id, type: 'event' },
-                    });
-                  }
-                }}
-              >
-                <List.Item.Meta
-                  title={`${[event.type, event.subtype]
-                    .filter(el => !!el)
-                    .join(' - ')}: ${event.externalId || event.id}`}
-                  description={event.externalId}
-                />
-              </List.Item>
-            )}
-            pagination={{ position: 'bottom' }}
-            dataSource={events}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane key="children" tab="Children">
-          <AssetTree
-            assetIds={[assetId]}
-            defaultExpandedKeys={[assetId]}
-            onSelect={newAsset => {
-              if (newAsset.node) {
-                openPreview({
-                  item: { id: newAsset.node!.id, type: 'asset' },
-                });
-              }
-            }}
-          />
-        </Tabs.TabPane>
-      </Tabs>
+      <SpacedRow>{extraActions}</SpacedRow>
+      <SpacedRow>
+        {Object.keys(tabs).map(el => {
+          const key = el as keyof typeof tabs;
+          return (
+            <Button
+              variant={key === currentTab ? 'default' : 'ghost'}
+              type={key === currentTab ? 'primary' : 'secondary'}
+              onClick={() => setTab(key)}
+              key={key}
+            >
+              {tabs[key]}
+            </Button>
+          );
+        })}
+      </SpacedRow>
+      <Divider.Horizontal />
+      <PreviewWrapper>{content}</PreviewWrapper>
     </Wrapper>
   );
 };
+
+const PreviewWrapper = styled.div`
+  height: 100%;
+`;

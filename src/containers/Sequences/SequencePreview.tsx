@@ -1,15 +1,21 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { itemSelector, retrieve } from 'modules/sequences';
-import { Icon, Title } from '@cognite/cogs.js';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import {
+  itemSelector,
+  retrieve,
+} from '@cognite/cdf-resources-store/dist/sequences';
+import { Button, Icon, Title } from '@cognite/cogs.js';
 import {
   SequenceDetailsAbstract,
   DetailsItem,
   Wrapper,
   TimeDisplay,
+  SpacedRow,
 } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { Tabs } from 'antd';
 import { SequenceColumn } from 'cognite-sdk-v3';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
@@ -30,8 +36,8 @@ export const SequencePreview = ({
   sequenceId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const dispatch = useDispatch();
-  const sequence = useSelector(itemSelector)(sequenceId);
+  const dispatch = useResourcesDispatch();
+  const sequence = useResourcesSelector(itemSelector)(sequenceId);
 
   useEffect(() => {
     if (!sequence) {
@@ -39,44 +45,77 @@ export const SequencePreview = ({
     }
   }, [dispatch, sequence, sequenceId]);
 
+  const tabs = {
+    'sequence-metadata': 'Sequence Details',
+    columns: 'Columns',
+  };
+
+  const [currentTab, setTab] = useState<keyof typeof tabs>('sequence-metadata');
+
+  const content = useMemo(() => {
+    if (sequence) {
+      switch (currentTab) {
+        case 'sequence-metadata': {
+          return (
+            <>
+              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+                Details
+              </Title>
+              <DetailsItem name="Description" value={sequence.description} />
+              <DetailsItem
+                name="Created at"
+                value={<TimeDisplay value={sequence.createdTime} />}
+              />
+              <DetailsItem
+                name="Updated at"
+                value={<TimeDisplay value={sequence.lastUpdatedTime} />}
+              />
+              <DetailsItem name="External ID" value={sequence.externalId} />
+              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+                Metadata
+              </Title>
+              <SequenceDetailsAbstract.SequenceInfoGrid
+                sequence={sequence}
+                showAll
+              />
+            </>
+          );
+        }
+        case 'columns': {
+          return (
+            <DescriptionList
+              valueSet={formatSequenceColumns(sequence.columns ?? [])}
+            />
+          );
+        }
+      }
+    }
+    return <></>;
+  }, [sequence, currentTab]);
+
   return (
     <Wrapper>
       <h1>
         <Icon type="GridFilled" />
         {sequence ? sequence.name : 'Loading...'}
       </h1>
-      {extraActions}
-      {sequence && (
-        <Tabs>
-          <Tabs.TabPane key="details" tab="Sequence Details">
-            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-              Details
-            </Title>
-            <DetailsItem name="Description" value={sequence.description} />
-            <DetailsItem
-              name="Created at"
-              value={<TimeDisplay value={sequence.createdTime} />}
-            />
-            <DetailsItem
-              name="Updated at"
-              value={<TimeDisplay value={sequence.lastUpdatedTime} />}
-            />
-            <DetailsItem name="External ID" value={sequence.externalId} />
-            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-              Metadata
-            </Title>
-            <SequenceDetailsAbstract.SequenceInfoGrid
-              sequence={sequence}
-              showAll
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane key="columns" tab="Columns">
-            <DescriptionList
-              valueSet={formatSequenceColumns(sequence.columns ?? [])}
-            />
-          </Tabs.TabPane>
-        </Tabs>
-      )}
+      <SpacedRow>{extraActions}</SpacedRow>
+      <SpacedRow>
+        {Object.keys(tabs).map(el => {
+          const key = el as keyof typeof tabs;
+          return (
+            <Button
+              variant={key === currentTab ? 'default' : 'ghost'}
+              type={key === currentTab ? 'primary' : 'secondary'}
+              onClick={() => setTab(key)}
+              key={key}
+            >
+              {tabs[key]}
+            </Button>
+          );
+        })}
+      </SpacedRow>
+      {sequence && content}
     </Wrapper>
   );
 };

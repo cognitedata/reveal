@@ -7,7 +7,7 @@ import {
   InfoCell,
   LatestDatapoint,
   DetailsItem,
-  ButtonRow,
+  SpacedRow,
 } from 'components/Common';
 import { TimeseriesGraph } from 'components/Common/';
 import { useResourcesState } from 'context/ResourceSelectionContext';
@@ -85,7 +85,7 @@ export const TimeseriesDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <ButtonRow>{actions}</ButtonRow>
+          <SpacedRow>{actions}</SpacedRow>
         </InfoCell>
       )}
 

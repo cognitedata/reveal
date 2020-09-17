@@ -3,36 +3,38 @@ import { ThunkDispatch } from 'redux-thunk';
 import { callUntilCompleted } from 'helpers/Helpers';
 import { RootState } from 'reducers';
 import { trackTimedUsage } from 'utils/Metrics';
-import sdk from 'sdk-singleton';
 import { ModelStatus } from 'types/Types';
 import { createSelector } from 'reselect';
+import { getSDK } from 'utils/SDK';
 
-const OBJECT_DETECTION_CREATE_STARTED = 'pnid/OBJECT_DETECTION_CREATE_STARTED';
-const OBJECT_DETECTION_CREATED = 'pnid/OBJECT_DETECTION_CREATED';
-const OBJECT_DETECTION_STATUS_UPDATED = 'pnid/OBJECT_DETECTION_STATUS_UPDATED';
-const OBJECT_DETECTION_DONE = 'pnid/OBJECT_DETECTION_DONE';
-const OBJECT_DETECTION_ERROR = 'pnid/OBJECT_DETECTION_ERROR';
-interface CreateObjectDetectionStartedAction
+export const OBJECT_DETECTION_CREATE_STARTED =
+  'pnid/OBJECT_DETECTION_CREATE_STARTED';
+export const OBJECT_DETECTION_CREATED = 'pnid/OBJECT_DETECTION_CREATED';
+export const OBJECT_DETECTION_STATUS_UPDATED =
+  'pnid/OBJECT_DETECTION_STATUS_UPDATED';
+export const OBJECT_DETECTION_DONE = 'pnid/OBJECT_DETECTION_DONE';
+export const OBJECT_DETECTION_ERROR = 'pnid/OBJECT_DETECTION_ERROR';
+export interface CreateObjectDetectionStartedAction
   extends Action<typeof OBJECT_DETECTION_CREATE_STARTED> {
   fileId: number;
 }
-interface ObjectDetectionCreatedAction
+export interface ObjectDetectionCreatedAction
   extends Action<typeof OBJECT_DETECTION_CREATED> {
   fileId: number;
   jobId: number;
 }
-interface ObjectDetectionStatusUpdatedAction
+export interface ObjectDetectionStatusUpdatedAction
   extends Action<typeof OBJECT_DETECTION_STATUS_UPDATED> {
   fileId: number;
   jobId: number;
   status: ModelStatus;
 }
-interface ObjectDetectionDoneAction
+export interface ObjectDetectionDoneAction
   extends Action<typeof OBJECT_DETECTION_DONE> {
   fileId: number;
   annotations: ObjectDetectionEntity[];
 }
-interface ObjectDetectionErrorAction
+export interface ObjectDetectionErrorAction
   extends Action<typeof OBJECT_DETECTION_ERROR> {
   fileId: number;
 }
@@ -54,6 +56,7 @@ export const detectObject = (fileId: number) => {
     dispatch: ThunkDispatch<any, any, ObjectDetectionActions>,
     getState: () => RootState
   ) => {
+    const sdk = getSDK();
     const {
       fileContextualization: {
         objectDetectionJobs: { [fileId]: currentJob },
@@ -168,9 +171,15 @@ export interface ObjectDetectionState {
   jobStatus: ModelStatus;
   jobDone: boolean;
   jobError: boolean;
-  datasetId: number;
   annotations?: ObjectDetectionEntity[];
 }
+
+const defaultJob: ObjectDetectionState = {
+  jobStarted: true,
+  jobStatus: 'New',
+  jobDone: false,
+  jobError: false,
+};
 
 type Actions = ObjectDetectionActions;
 
@@ -186,7 +195,7 @@ export const objectDetectionJobsReducer = (
 ): ObjectDetectionJobStore => {
   switch (action.type) {
     case OBJECT_DETECTION_CREATE_STARTED: {
-      const fileJobs = state[action.fileId] || {};
+      const fileJobs = state[action.fileId] || defaultJob;
       return {
         ...state,
         [action.fileId]: {
@@ -199,7 +208,7 @@ export const objectDetectionJobsReducer = (
       };
     }
     case OBJECT_DETECTION_CREATED: {
-      const fileJobs = state[action.fileId] || {};
+      const fileJobs = state[action.fileId] || defaultJob;
       return {
         ...state,
         [action.fileId]: {
@@ -209,7 +218,7 @@ export const objectDetectionJobsReducer = (
       };
     }
     case OBJECT_DETECTION_STATUS_UPDATED: {
-      const fileJobs = state[action.fileId] || {};
+      const fileJobs = state[action.fileId] || defaultJob;
       return {
         ...state,
         [action.fileId]: {
@@ -220,7 +229,7 @@ export const objectDetectionJobsReducer = (
       };
     }
     case OBJECT_DETECTION_DONE: {
-      const fileJobs = state[action.fileId] || {};
+      const fileJobs = state[action.fileId] || defaultJob;
       return {
         ...state,
         [action.fileId]: {
@@ -231,7 +240,7 @@ export const objectDetectionJobsReducer = (
       };
     }
     case OBJECT_DETECTION_ERROR: {
-      const fileJobs = state[action.fileId] || {};
+      const fileJobs = state[action.fileId] || defaultJob;
       return {
         ...state,
         [action.fileId]: {

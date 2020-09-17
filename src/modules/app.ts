@@ -2,8 +2,7 @@ import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { SingleCogniteCapability } from 'cognite-sdk-v3';
 import { RootState } from 'reducers/index';
-
-import sdk, { getAuthState } from 'sdk-singleton';
+import { getSDK } from 'utils/SDK';
 
 // Constants
 export type OnResourceSelectedParams = {
@@ -21,6 +20,7 @@ export const CLEAR_APP_STATE = 'app/CLEAR_APP_STATE';
 export interface SetAppStateAction extends Action<typeof SET_APP_STATE> {
   payload: {
     tenant?: string;
+    email?: string;
     cdfEnv?: string;
     groups?: { [key: string]: string[] };
     loaded?: boolean;
@@ -35,16 +35,6 @@ export function init(tenant: string) {
     dispatch(setTenant(tenant));
     dispatch(fetchUserGroups());
   };
-}
-
-// selectors
-export function isCogniteUser(): boolean {
-  const { username } = getAuthState();
-
-  return (
-    username?.search(/cognite.com$/) !== -1 ||
-    username?.search(/cognitedata.com$/) !== -1
-  );
 }
 
 export const setTenant = (tenant: string) => async (
@@ -73,7 +63,18 @@ const fetchUserGroups = () => async (
   dispatch: ThunkDispatch<any, any, SetAppStateAction>
 ) => {
   try {
+    const sdk = getSDK();
     const response = await sdk.groups.list();
+    const userResponse = await sdk.login.status();
+
+    if (userResponse) {
+      dispatch({
+        type: SET_APP_STATE,
+        payload: {
+          email: userResponse.user,
+        },
+      });
+    }
 
     const groups = response.reduce(
       (prev, current) => {
@@ -135,17 +136,21 @@ export interface LoginAction {
 // Reducer
 export interface AppState {
   tenant?: string;
+  email?: string;
   loaded: boolean;
   groups: { [key: string]: string[] };
   cdfEnv?: string;
 }
 
-const initialState: AppState = {
+export const ASSET_INITIAL_STATE: AppState = {
   loaded: false,
   groups: {},
 };
 
-export default function app(state = initialState, action: AppAction): AppState {
+export default function app(
+  state = ASSET_INITIAL_STATE,
+  action: AppAction
+): AppState {
   switch (action.type) {
     case SET_APP_STATE:
       return { ...state, ...action.payload };
@@ -160,6 +165,8 @@ export default function app(state = initialState, action: AppAction): AppState {
 
 // Selectors
 export const selectAppState = (state: RootState) => state.app || {};
+export const selectUserName = (state: RootState) =>
+  state.app.email || undefined;
 
 export const checkPermission = (state: RootState) => (
   key: string,

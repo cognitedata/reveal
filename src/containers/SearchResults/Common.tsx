@@ -6,6 +6,12 @@ export const List = styled.div`
   flex-direction: column;
   flex: 1;
 `;
+export const Filters = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  margin-right: 16px;
+`;
 export const Content = styled.div`
   display: flex;
   flex: 1;

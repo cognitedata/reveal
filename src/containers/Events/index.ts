@@ -1,3 +1,3 @@
 export * from './EventPreview';
 export * from './EventSmallPreview';
-export * from './EventExplorer';
+export * from './EventPage';

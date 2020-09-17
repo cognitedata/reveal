@@ -1,16 +1,19 @@
 import React, { useEffect, useMemo } from 'react';
 import { InternalId, ExternalId } from 'cognite-sdk-v3';
 import { FileDetailsAbstract, Loader } from 'components/Common';
-import { useSelector, useDispatch } from 'react-redux';
+import {
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
 import {
   retrieve as retrieveFiles,
   retrieveExternal as retrieveFilesExternal,
   itemSelector,
-} from 'modules/files';
+} from '@cognite/cdf-resources-store/dist/files';
 import {
   retrieve as retrieveAssets,
   retrieveExternal as retrieveAssetsExternal,
-} from 'modules/assets';
+} from '@cognite/cdf-resources-store/dist/assets';
 import {
   listByFileId,
   linkedAssetsSelector,
@@ -21,8 +24,8 @@ import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
 import { isPreviewableImage } from 'utils/FileUtils';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
-import sdk from 'sdk-singleton';
 import styled from 'styled-components';
+import { getSDK } from 'utils/SDK';
 
 export const FileSmallPreview = ({
   fileId,
@@ -35,15 +38,20 @@ export const FileSmallPreview = ({
   extras?: React.ReactNode[];
   children?: React.ReactNode;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
+  const sdk = getSDK();
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
     type: 'file',
     id: fileId,
   });
-  const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
-  const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(fileId);
-  const getAnnotations = useSelector(selectAnnotations);
+  const { assetIds, assets } = useResourcesSelector(linkedAssetsSelector)(
+    fileId
+  );
+  const { fileIds, files } = useResourcesSelector(linkedFilesSelectorByFileId)(
+    fileId
+  );
+  const getAnnotations = useResourcesSelector(selectAnnotations);
   const annotations = useMemo(() => getAnnotations(fileId), [
     fileId,
     getAnnotations,
@@ -101,7 +109,7 @@ export const FileSmallPreview = ({
     );
   }, [dispatch, fileIds]);
 
-  const file = useSelector(itemSelector)(fileId);
+  const file = useResourcesSelector(itemSelector)(fileId);
 
   const hasPreview = useMemo(
     () =>

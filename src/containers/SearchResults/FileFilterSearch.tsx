@@ -1,29 +1,34 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Body, Graphic, Button } from '@cognite/cogs.js';
+import { Body, Button } from '@cognite/cogs.js';
 import {
   SearchFilterSection,
   FileTable,
   FileUploaderModal,
+  SpacedRow,
 } from 'components/Common';
+import { FilesSearchFilter, FileFilterProps } from 'cognite-sdk-v3';
 import {
-  FileInfo as File,
-  FilesSearchFilter,
-  FileFilterProps,
-} from 'cognite-sdk-v3';
-import { useSelector, useDispatch } from 'react-redux';
-import { searchSelector, search, count, countSelector } from 'modules/files';
-import { FileSmallPreview } from 'containers/Files';
+  useResourcesSelector,
+  useResourcesDispatch,
+} from '@cognite/cdf-resources-store';
+import {
+  searchSelector,
+  search,
+  count,
+  countSelector,
+} from '@cognite/cdf-resources-store/dist/files';
 import ResourceSelectionContext, {
   useResourceEditable,
 } from 'context/ResourceSelectionContext';
 import { checkPermission } from 'modules/app';
 import { useHistory } from 'react-router';
 import { useTenant } from 'hooks/CustomHooks';
-import { List, Content, Preview, ActionRow } from './Common';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
+import { List, Content } from './Common';
 
 // const FilesFilterMapping: { [key: string]: string } = {};
 
-const buildFilesFilterQuery = (
+export const buildFilesFilterQuery = (
   filter: FileFilterProps,
   query: string | undefined
 ): FilesSearchFilter => {
@@ -42,21 +47,24 @@ const buildFilesFilterQuery = (
 };
 
 export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
-  const dispatch = useDispatch();
+  const dispatch = useResourcesDispatch();
   const inEditMode = useResourceEditable();
-  const hasEditPermissions = useSelector(checkPermission)('filesAcl', 'WRITE');
+  const hasEditPermissions = useResourcesSelector(checkPermission)(
+    'filesAcl',
+    'WRITE'
+  );
 
   const history = useHistory();
   const tenant = useTenant();
 
   const allowEdit = inEditMode && hasEditPermissions;
   const { fileFilter, setFileFilter } = useContext(ResourceSelectionContext);
-  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+  const { openPreview } = useResourcePreview();
 
-  const { items: files } = useSelector(searchSelector)(
+  const { items: files } = useResourcesSelector(searchSelector)(
     buildFilesFilterQuery(fileFilter, query)
   );
-  const { count: filesCount } = useSelector(countSelector)(
+  const { count: filesCount } = useResourcesSelector(countSelector)(
     buildFilesFilterQuery(fileFilter, query)
   );
 
@@ -112,7 +120,7 @@ export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
 
   return (
     <>
-      <ActionRow>
+      <SpacedRow>
         <SearchFilterSection
           metadata={metadata}
           filters={filters}
@@ -136,7 +144,7 @@ export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
             Upload New File
           </Button>
         )}
-      </ActionRow>
+      </SpacedRow>
       <Content>
         <List>
           <Body>
@@ -148,27 +156,12 @@ export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
           </Body>
           <FileTable
             files={files}
-            onFileClicked={setSelectedFile}
+            onFileClicked={file =>
+              openPreview({ item: { type: 'file', id: file.id } })
+            }
             query={query}
           />
         </List>
-        <Preview>
-          {selectedFile && <FileSmallPreview fileId={selectedFile.id} />}
-          {!selectedFile && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                height: '100%',
-              }}
-            >
-              <Graphic type="Search" />
-              <p>Click on an file to preview here</p>
-            </div>
-          )}
-        </Preview>
       </Content>
       <FileUploaderModal
         visible={modalVisible}

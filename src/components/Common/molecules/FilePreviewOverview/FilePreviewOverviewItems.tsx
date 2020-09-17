@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button, Overline, Icon, Body, Colors } from '@cognite/cogs.js';
 import { CogniteAnnotation } from '@cognite/annotations';
 import Highlighter from 'react-highlight-words';
-import { ButtonRow } from 'components/Common';
+import { SpacedRow } from 'components/Common';
 
 import {
   Asset,
@@ -81,7 +81,7 @@ const preparedPages = (
       <Overline level="2" style={{ marginBottom: 8, marginTop: 6 }}>
         Located on Pages
       </Overline>
-      <ButtonRow className="button-row">
+      <SpacedRow className="button-row">
         {pages.map(page => (
           <PageButton
             key={`page-${page}`}
@@ -96,7 +96,7 @@ const preparedPages = (
             {Number(page)}
           </PageButton>
         ))}
-      </ButtonRow>
+      </SpacedRow>
     </>
   );
 };
