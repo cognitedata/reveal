@@ -24,6 +24,10 @@ export class TransformOverrideBuffer {
     return this._dataTexture;
   }
 
+  get overrideIndices() {
+    return this._treeIndexToOverrideIndex;
+  }
+
   constructor(onGenerateNewDataTexture: (datatexture: THREE.DataTexture) => void) {
     this._textureBuffer = new Uint8Array(
       this.MIN_NUMBER_OF_TREE_INDECES * this.NUMBER_OF_ELEMENTS_PER_MATRIX * this.BYTES_PER_FLOAT
@@ -82,7 +86,7 @@ export class TransformOverrideBuffer {
     const matrixIndex = this._treeIndexToOverrideIndex.get(treeIndex)!;
 
     this._unusedIndices.push(matrixIndex);
-    this._treeIndexToOverrideIndex.delete(matrixIndex);
+    this._treeIndexToOverrideIndex.delete(treeIndex);
   }
 
   private reComputeDataTexture() {

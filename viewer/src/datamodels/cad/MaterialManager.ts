@@ -129,11 +129,13 @@ export class MaterialManager {
       materials.overrideColorPerTreeIndex.needsUpdate = true;
 
       if (style.worldTransform === undefined) {
-        this.removeOverrideTreeIndexTransform(
-          treeIndex,
-          materials.transformOverrideIndexTexture,
-          materials.transformOverrideBuffer
-        );
+        if (materials.transformOverrideBuffer.overrideIndices.has(treeIndex)) {
+          this.removeOverrideTreeIndexTransform(
+            treeIndex,
+            materials.transformOverrideIndexTexture,
+            materials.transformOverrideBuffer
+          );
+        }
       } else {
         const overrideMatrix = this.buildMatrixFromTranslationAndRotation(
           style.worldTransform.position,
@@ -181,6 +183,8 @@ export class MaterialManager {
     indexTexture.image.data[treeIndex * 3 + 2] = 0;
 
     transformTextureBuffer.removeOverrideTransform(treeIndex);
+
+    indexTexture.needsUpdate = true;
   }
 
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
