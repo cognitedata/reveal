@@ -117,11 +117,27 @@ export class EffectRenderManager {
       renderer.info.reset();
       renderer.setClearAlpha(0);
 
-      this.splitToScenes();
+      const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
-      this.renderBackCadModels(renderer, camera);
-      this.renderInFrontCadModels(renderer, camera);
-      this.renderGhostedCadModels(renderer, camera);
+      if (hasGhostElements && hasBackElements) {
+        this.renderBackCadModels(renderer, camera);
+      } else if (hasBackElements) {
+        // When there are no ghost elements we render "back elements" directly from the
+        // base scene to avoid overhead in maintaining the scenes
+        this.renderBackCadModelsFromBaseScene(renderer, camera);
+      } else {
+        this.clearTarget(renderer, this._backRenderedCadModelTarget);
+      }
+      if (hasInFrontElements) {
+        this.renderInFrontCadModels(renderer, camera);
+      } else {
+        this.clearTarget(renderer, this._frontRenderedCadModelTarget);
+      }
+      if (hasGhostElements) {
+        this.renderGhostedCadModels(renderer, camera);
+      } else {
+        this.clearTarget(renderer, this._ghostObjectRenderTarget);
+      }
       this.renderCustomObjects(renderer, scene, camera);
 
       renderer.setClearAlpha(original.clearAlpha);
@@ -140,7 +156,13 @@ export class EffectRenderManager {
     }
   }
 
-  private splitToScenes() {
+  private clearTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget) {
+    renderer.setRenderTarget(target);
+    renderer.clear(true, true, false); // Clear color and depth
+  }
+
+  private splitToScenes(): { hasBackElements: boolean; hasInFrontElements: boolean; hasGhostElements: boolean } {
+    const result = { hasBackElements: false, hasInFrontElements: false, hasGhostElements: false };
     this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
       const cadNode: CadNode = rootSectorNodeData[1];
       const root: RootSectorNode = rootSectorNodeData[0];
@@ -148,18 +170,30 @@ export class EffectRenderManager {
       const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.blobUrl);
       const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
       const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      const hasBackElements = backSet !== undefined && backSet.size > 0;
+      const hasInFrontElements = infrontSet !== undefined && infrontSet.size > 0;
+      const hasGhostElements = ghostSet !== undefined && ghostSet.size > 0;
+      result.hasBackElements = result.hasBackElements || hasBackElements;
+      result.hasInFrontElements = result.hasInFrontElements || hasInFrontElements;
+      result.hasGhostElements = result.hasGhostElements || hasGhostElements;
 
       const backRoot = new THREE.Object3D();
       backRoot.applyMatrix4(root.matrix);
-      this._backScene.add(backRoot);
+      if (hasBackElements && hasGhostElements) {
+        this._backScene.add(backRoot);
+      }
 
       const infrontRoot = new THREE.Object3D();
       infrontRoot.applyMatrix4(root.matrix);
-      this._inFrontScene.add(infrontRoot);
+      if (hasInFrontElements) {
+        this._inFrontScene.add(infrontRoot);
+      }
 
       const ghostRoot = new THREE.Object3D();
       ghostRoot.applyMatrix4(root.matrix);
-      this._ghostScene.add(ghostRoot);
+      if (hasGhostElements) {
+        this._ghostScene.add(ghostRoot);
+      }
 
       function storeToBuffer(buffer: Set<Object3DStructure>, element: THREE.Object3D, sceneParent: THREE.Object3D) {
         buffer.add({ object: element, parent: element.parent!, sceneParent });
@@ -171,13 +205,14 @@ export class EffectRenderManager {
         const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
 
         if (objectTreeIndices) {
-          if (infrontSet && hasIntersection(infrontSet, objectTreeIndices)) {
+          if (hasInFrontElements && infrontSet && hasIntersection(infrontSet, objectTreeIndices)) {
             storeToBuffer(this._inFrontObjectBuffer, element, infrontRoot);
           }
-          if (ghostSet && hasIntersection(ghostSet, objectTreeIndices)) {
+          if (hasGhostElements && ghostSet && hasIntersection(ghostSet, objectTreeIndices)) {
             storeToBuffer(this._ghostObjectBuffer, element, ghostRoot);
           }
-          if (backSet && hasIntersection(backSet, objectTreeIndices)) {
+          // If we don't have ghost elements, we use the "default" scene for rendering back objects
+          if (hasGhostElements && hasBackElements && backSet && hasIntersection(backSet, objectTreeIndices)) {
             storeToBuffer(this._backObjectBuffer, element, backRoot);
           }
         } else {
@@ -186,6 +221,8 @@ export class EffectRenderManager {
         }
       }
     });
+
+    return result;
   }
 
   private restoreScenes() {
@@ -215,6 +252,12 @@ export class EffectRenderManager {
     renderer.setRenderTarget(this._backRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._backScene, camera);
+  }
+
+  private renderBackCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    renderer.setRenderTarget(this._backRenderedCadModelTarget);
+    this._materialManager.setRenderMode(RenderMode.Color);
+    renderer.render(this._cadScene, camera);
   }
 
   private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
