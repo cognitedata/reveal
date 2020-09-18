@@ -36,7 +36,7 @@ export type NodeAppearance = {
    * When set, a position and rotation is applied
    * to the node in world space.
    */
-  readonly worldTransform?: { position: THREE.Vector3; rotation: THREE.Euler };
+  readonly worldTransform?: { position: THREE.Vector3; rotation: THREE.Euler } | THREE.Matrix4;
 };
 
 export interface NodeAppearanceProvider {

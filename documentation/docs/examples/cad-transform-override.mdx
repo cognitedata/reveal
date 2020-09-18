@@ -25,7 +25,7 @@ position, rotation and a flag if this transformation also should be applied to c
 ```jsx runnable
 const position = new THREE.Vector3(10, 10, 0);
 const rotation = new THREE.Euler(0, 0, 0);
-model.setNodeTransformByTreeIndex(532261, position, rotation, true);
+model.setNodeTransformByTreeIndex(532261, {position, rotation}, true);
 ```
 
 ### Remove node transform
@@ -63,8 +63,8 @@ model.getBoundingBoxByTreeIndex(533010).then(boundingBox => {
   const worldToModel = new THREE.Matrix4();
   const rotationMatrix = new THREE.Matrix4();
 
-  const outRotation = new THREE.Euler();
-  const outPosition = new THREE.Vector3();
+  const rotation = new THREE.Euler();
+  const position = new THREE.Vector3();
 
   const intervalID = setInterval(function () {
     modelToWorld.setPosition(center);
@@ -75,13 +75,13 @@ model.getBoundingBoxByTreeIndex(533010).then(boundingBox => {
 
     const matrixOverride = modelToWorld.multiply(rotationMatrix.multiply(worldToModel));
 
-    outRotation.setFromRotationMatrix(matrixOverride);
-    outPosition.setFromMatrixColumn(matrixOverride, 3);
+    rotation.setFromRotationMatrix(matrixOverride);
+    position.setFromMatrixColumn(matrixOverride, 3);
 
-    model.setNodeTransformByTreeIndex(532261, outPosition, outRotation, true);
-    
+    model.setNodeTransformByTreeIndex(532261, { position, rotation }, true);
+
     counter++;
-    if(counter >= 150) clearInterval(intervalID);
+    if (counter >= 150) clearInterval(intervalID);
   }, 20);
 });
 ```

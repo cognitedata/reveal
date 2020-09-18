@@ -137,10 +137,12 @@ export class MaterialManager {
           );
         }
       } else {
-        const overrideMatrix = this.buildMatrixFromTranslationAndRotation(
-          style.worldTransform.position,
-          style.worldTransform.rotation
-        );
+        let overrideMatrix = style.worldTransform;
+
+        if (!(overrideMatrix instanceof THREE.Matrix4)) {
+          overrideMatrix = this.buildMatrixFromTranslationAndRotation(overrideMatrix.position, overrideMatrix.rotation);
+        }
+
         this.overrideTreeIndexTransform(
           treeIndex,
           overrideMatrix,
