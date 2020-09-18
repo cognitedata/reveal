@@ -11,33 +11,16 @@ import { CadNode } from '..';
 import { Cognite3DModel } from '@/migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 
-/**
- * Holds parent-child relationship for a ThreeJS element in order to restore
- * the relationship after moving it temporarily.
- */
-type Object3DStructure = {
-  /**
-   * Element described.
-   */
-  object: THREE.Object3D;
-  /**
-   * The previous parent of the element.
-   */
-  parent: THREE.Object3D;
-  /**
-   * The object that temporarily holds the elemnt.
-   */
-  sceneParent: THREE.Object3D;
-};
-
 export class EffectRenderManager {
   private readonly _materialManager: MaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
   private readonly _triScene: THREE.Scene;
+  private readonly _cadScene: THREE.Scene;
   private readonly _backScene: THREE.Scene;
   private readonly _inFrontScene: THREE.Scene;
-  private readonly _cadScene: THREE.Scene;
+  private readonly _backSceneBuilder: TemporarySceneBuilder;
+  private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
 
@@ -47,8 +30,6 @@ export class EffectRenderManager {
   private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
-  private readonly _inFrontObjectBuffer: Set<Object3DStructure> = new Set();
-  private readonly _backObjectBuffer: Set<Object3DStructure> = new Set();
   private readonly outlineTexelSize = 2;
 
   constructor(materialManager: MaterialManager) {
@@ -59,6 +40,8 @@ export class EffectRenderManager {
     this._backScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
     this._triScene = new THREE.Scene();
+    this._backSceneBuilder = new TemporarySceneBuilder(this._backScene);
+    this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
@@ -134,7 +117,7 @@ export class EffectRenderManager {
         this.clearTarget(renderer, this._ghostObjectRenderTarget);
       } else if (hasBackElements && hasGhostElements) {
         this.renderBackCadModels(renderer, camera);
-        this.restoreBackScene();
+        this._backSceneBuilder.restoreOriginalScene();
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else if (!hasBackElements && hasGhostElements) {
         this.clearTarget(renderer, this._backRenderedCadModelTarget);
@@ -145,7 +128,7 @@ export class EffectRenderManager {
       }
       if (hasInFrontElements) {
         this.renderInFrontCadModels(renderer, camera);
-        this.restoreInFrontScene();
+        this._inFrontSceneBuilder.restoreOriginalScene();
       } else {
         this.clearTarget(renderer, this._frontRenderedCadModelTarget);
       }
@@ -199,10 +182,6 @@ export class EffectRenderManager {
         this._inFrontScene.add(infrontRoot);
       }
 
-      function storeToBuffer(buffer: Set<Object3DStructure>, element: THREE.Object3D, sceneParent: THREE.Object3D) {
-        buffer.add({ object: element, parent: element.parent!, sceneParent });
-      }
-
       const objectStack: THREE.Object3D[] = [rootSectorNodeData[0]];
       while (objectStack.length > 0) {
         const element = objectStack.pop()!;
@@ -210,12 +189,12 @@ export class EffectRenderManager {
 
         if (objectTreeIndices) {
           if (hasInFrontElements && hasIntersection(infrontSet, objectTreeIndices)) {
-            storeToBuffer(this._inFrontObjectBuffer, element, infrontRoot);
+            this._inFrontSceneBuilder.addElement(element, infrontRoot);
           }
           // Note! When we don't have any ghost, we use _cadScene to hold back objects, so no action required
           if (hasBackElements && !hasGhostElements) {
           } else if (hasGhostElements && hasIntersection(backSet, objectTreeIndices)) {
-            storeToBuffer(this._backObjectBuffer, element, backRoot);
+            this._backSceneBuilder.addElement(element, backRoot);
             // Use _cadScene to hold ghost objects (we assume we have more ghost objects than back objects)
           }
 
@@ -231,26 +210,8 @@ export class EffectRenderManager {
     return result;
   }
 
-  private restoreBackScene() {
-    this._backObjectBuffer.forEach(p => {
-      p.parent.add(p.object);
-    });
-    this._backObjectBuffer.clear();
-    this._backScene.remove(...this._backScene.children);
-  }
-
-  private restoreInFrontScene() {
-    this._inFrontObjectBuffer.forEach(p => {
-      p.parent.add(p.object);
-    });
-    this._inFrontObjectBuffer.clear();
-    this._inFrontScene.remove(...this._inFrontScene.children);
-  }
-
   private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    // Build scene
-    this._backObjectBuffer.forEach(x => x.sceneParent.add(x.object));
-
+    this._backSceneBuilder.populateTemporaryScene();
     renderer.setRenderTarget(this._backRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._backScene, camera);
@@ -263,9 +224,7 @@ export class EffectRenderManager {
   }
 
   private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    // Build scene
-    this._inFrontObjectBuffer.forEach(x => x.sceneParent.add(x.object));
-
+    this._inFrontSceneBuilder.populateTemporaryScene();
     renderer.setRenderTarget(this._frontRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Effects);
     renderer.render(this._inFrontScene, camera);
@@ -355,9 +314,7 @@ export class EffectRenderManager {
       const element = objectStack.pop()!;
       if (element instanceof RootSectorNode) {
         this._rootSectorNodeBuffer.add([element, element.parent! as CadNode]);
-      } else if (element instanceof THREE.Group) {
-        continue;
-      } else {
+      } else if (!(element instanceof THREE.Group)) {
         objectStack.push(...element.children);
       }
     }
@@ -385,4 +342,49 @@ function hasIntersection(left: Set<number>, right: Set<number>): boolean {
   }
 
   return intersects;
+}
+
+/**
+ * Holds parent-child relationship for a ThreeJS element in order to restore
+ * the relationship after moving it temporarily.
+ */
+type Object3DStructure = {
+  /**
+   * Element described.
+   */
+  object: THREE.Object3D;
+  /**
+   * The previous parent of the element.
+   */
+  parent: THREE.Object3D;
+  /**
+   * The object that temporarily holds the elemnt.
+   */
+  sceneParent: THREE.Object3D;
+};
+
+class TemporarySceneBuilder {
+  private readonly buffer: Object3DStructure[];
+  private readonly temporaryScene: THREE.Scene;
+
+  constructor(temporaryScene: THREE.Scene) {
+    this.buffer = [];
+    this.temporaryScene = temporaryScene;
+  }
+
+  addElement(element: THREE.Object3D, temporaryModelRootElement: THREE.Object3D): void {
+    this.buffer.push({ object: element, parent: element.parent!, sceneParent: temporaryModelRootElement });
+  }
+
+  populateTemporaryScene(): void {
+    this.buffer.forEach(x => x.sceneParent.add(x.object));
+  }
+
+  restoreOriginalScene(): void {
+    this.buffer.forEach(p => {
+      p.parent.add(p.object);
+    });
+    this.buffer.length = 0; // clear
+    this.temporaryScene.remove(...this.temporaryScene.children);
+  }
 }
