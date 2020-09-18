@@ -12,9 +12,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 const StyledAccordion = withStyles({
   root: {
     borderRadius: 0,
-    "&$expanded": {
-      margin: 0,
-    },
   },
 })(Accordion);
 
