@@ -215,12 +215,7 @@ pods { context ->
             return
           }
           stageWithNotify('Storybook', CONTEXTS.storybook) {
-            previewServer(
-              buildCommand: 'yarn build-storybook',
-              commentPrefix: STORYBOOK_COMMENT_MARKER,
-              buildFolder: 'storybook-static',
-              prefix: 'storybook',
-            )
+            previewServer.deployStorybook()
           }
         }
       },
