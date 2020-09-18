@@ -120,7 +120,7 @@ class TakenSectorMap {
  * and loads sectors based on priority within a budget.
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
-  public static readonly DefaultCostLimit = 35 * 1024 * 1024;
+  public static readonly DefaultCostLimit = 50 * 1024 * 1024;
   public static readonly DefaultHighDetailProximityThreshold = 10;
 
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
