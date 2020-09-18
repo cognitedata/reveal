@@ -183,7 +183,7 @@ const SelectColumnsMenu = ({
 }) => {
   return (
     <Menu>
-      {columnNames.map((name) => {
+      {columnNames.sort().map((name) => {
         if (config.ignoreColumns.includes(name)) {
           return null;
         }
@@ -194,8 +194,9 @@ const SelectColumnsMenu = ({
               id={name}
               onChange={onChange}
               checked={selectedColumnNames.includes(name)}
+              disabled={config.mandatoryColumns.includes(name)}
             >
-              {getMappedColumnName(name)}
+              {name === 'status_ok' ? 'Status' : getMappedColumnName(name)}
             </Checkbox>
           </Menu.Item>
         );
