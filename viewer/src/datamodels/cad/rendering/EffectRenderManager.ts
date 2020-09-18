@@ -11,9 +11,22 @@ import { CadNode } from '..';
 import { Cognite3DModel } from '@/migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 
+/**
+ * Holds parent-child relationship for a ThreeJS element in order to restore
+ * the relationship after moving it temporarily.
+ */
 type Object3DStructure = {
+  /**
+   * Element described.
+   */
   object: THREE.Object3D;
+  /**
+   * The previous parent of the element.
+   */
   parent: THREE.Object3D;
+  /**
+   * The object that temporarily holds the elemnt.
+   */
   sceneParent: THREE.Object3D;
 };
 
