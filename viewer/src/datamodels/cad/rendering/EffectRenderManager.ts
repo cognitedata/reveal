@@ -25,7 +25,6 @@ export class EffectRenderManager {
   private readonly _backScene: THREE.Scene;
   private readonly _inFrontScene: THREE.Scene;
   private readonly _cadScene: THREE.Scene;
-  private readonly _ghostScene: THREE.Scene;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
 
@@ -37,7 +36,6 @@ export class EffectRenderManager {
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly _inFrontObjectBuffer: Set<Object3DStructure> = new Set();
   private readonly _backObjectBuffer: Set<Object3DStructure> = new Set();
-  private readonly _ghostObjectBuffer: Set<Object3DStructure> = new Set();
   private readonly outlineTexelSize = 2;
 
   constructor(materialManager: MaterialManager) {
@@ -48,7 +46,6 @@ export class EffectRenderManager {
     this._backScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
     this._triScene = new THREE.Scene();
-    this._ghostScene = new THREE.Scene();
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
@@ -119,24 +116,29 @@ export class EffectRenderManager {
 
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
-      if (hasGhostElements && hasBackElements) {
-        this.renderBackCadModels(renderer, camera);
-      } else if (hasBackElements) {
-        // When there are no ghost elements we render "back elements" directly from the
-        // base scene to avoid overhead in maintaining the scenes
+      if (hasBackElements && !hasGhostElements) {
+        renderer.info.reset();
         this.renderBackCadModelsFromBaseScene(renderer, camera);
+        this.clearTarget(renderer, this._ghostObjectRenderTarget);
+      } else if (hasBackElements && hasGhostElements) {
+        renderer.info.reset();
+        this.renderBackCadModels(renderer, camera);
+        renderer.info.reset();
+        this.restoreBackScene();
+        this.renderGhostedCadModelsFromBaseScene(renderer, camera);
+      } else if (!hasBackElements && hasGhostElements) {
+        renderer.info.reset();
+        this.clearTarget(renderer, this._backRenderedCadModelTarget);
+        this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else {
         this.clearTarget(renderer, this._backRenderedCadModelTarget);
+        this.clearTarget(renderer, this._ghostObjectRenderTarget);
       }
       if (hasInFrontElements) {
         this.renderInFrontCadModels(renderer, camera);
+        this.restoreInFrontScene();
       } else {
         this.clearTarget(renderer, this._frontRenderedCadModelTarget);
-      }
-      if (hasGhostElements) {
-        this.renderGhostedCadModels(renderer, camera);
-      } else {
-        this.clearTarget(renderer, this._ghostObjectRenderTarget);
       }
       this.renderCustomObjects(renderer, scene, camera);
 
@@ -144,7 +146,6 @@ export class EffectRenderManager {
       this.renderTargetToCanvas(renderer, camera);
     } finally {
       // Restore state
-      this.restoreScenes();
       renderer.setClearAlpha(original.clearAlpha);
       renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
@@ -170,9 +171,9 @@ export class EffectRenderManager {
       const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.blobUrl);
       const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
       const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.blobUrl);
-      const hasBackElements = backSet !== undefined && backSet.size > 0;
-      const hasInFrontElements = infrontSet !== undefined && infrontSet.size > 0;
-      const hasGhostElements = ghostSet !== undefined && ghostSet.size > 0;
+      const hasBackElements = backSet.size > 0;
+      const hasInFrontElements = infrontSet.size > 0;
+      const hasGhostElements = ghostSet.size > 0;
       result.hasBackElements = result.hasBackElements || hasBackElements;
       result.hasInFrontElements = result.hasInFrontElements || hasInFrontElements;
       result.hasGhostElements = result.hasGhostElements || hasGhostElements;
@@ -189,12 +190,6 @@ export class EffectRenderManager {
         this._inFrontScene.add(infrontRoot);
       }
 
-      const ghostRoot = new THREE.Object3D();
-      ghostRoot.applyMatrix4(root.matrix);
-      if (hasGhostElements) {
-        this._ghostScene.add(ghostRoot);
-      }
-
       function storeToBuffer(buffer: Set<Object3DStructure>, element: THREE.Object3D, sceneParent: THREE.Object3D) {
         buffer.add({ object: element, parent: element.parent!, sceneParent });
       }
@@ -205,15 +200,14 @@ export class EffectRenderManager {
         const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
 
         if (objectTreeIndices) {
-          if (hasInFrontElements && infrontSet && hasIntersection(infrontSet, objectTreeIndices)) {
+          if (hasInFrontElements && hasIntersection(infrontSet!, objectTreeIndices)) {
             storeToBuffer(this._inFrontObjectBuffer, element, infrontRoot);
           }
-          if (hasGhostElements && ghostSet && hasIntersection(ghostSet, objectTreeIndices)) {
-            storeToBuffer(this._ghostObjectBuffer, element, ghostRoot);
-          }
-          // If we don't have ghost elements, we use the "default" scene for rendering back objects
-          if (hasGhostElements && hasBackElements && backSet && hasIntersection(backSet, objectTreeIndices)) {
+          // Note! When we don't have any ghost, we use _cadScene to hold back objects, so no action required
+          if (hasBackElements && !hasGhostElements) {
+          } else if (hasGhostElements && hasIntersection(backSet!, objectTreeIndices)) {
             storeToBuffer(this._backObjectBuffer, element, backRoot);
+            // Use _cadScene to hold ghost objects (we assume we have more ghost objects than back objects)
           }
         } else {
           // Not a leaf, traverse children
@@ -225,24 +219,20 @@ export class EffectRenderManager {
     return result;
   }
 
-  private restoreScenes() {
-    this._inFrontObjectBuffer.forEach(p => {
-      p.parent.add(p.object);
-    });
-    this._inFrontObjectBuffer.clear();
-    this._inFrontScene.remove(...this._inFrontScene.children);
-
-    this._ghostObjectBuffer.forEach(p => {
-      p.parent.add(p.object);
-    });
-    this._ghostObjectBuffer.clear();
-    this._ghostScene.remove(...this._ghostScene.children);
-
+  private restoreBackScene() {
     this._backObjectBuffer.forEach(p => {
       p.parent.add(p.object);
     });
     this._backObjectBuffer.clear();
     this._backScene.remove(...this._backScene.children);
+  }
+
+  private restoreInFrontScene() {
+    this._inFrontObjectBuffer.forEach(p => {
+      p.parent.add(p.object);
+    });
+    this._inFrontObjectBuffer.clear();
+    this._inFrontScene.remove(...this._inFrontScene.children);
   }
 
   private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
@@ -269,13 +259,10 @@ export class EffectRenderManager {
     renderer.render(this._inFrontScene, camera);
   }
 
-  private renderGhostedCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    // Build scene
-    this._ghostObjectBuffer.forEach(x => x.sceneParent.add(x.object));
-
+  private renderGhostedCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     renderer.setRenderTarget(this._ghostObjectRenderTarget);
     this._materialManager.setRenderMode(RenderMode.Ghost);
-    renderer.render(this._ghostScene, camera);
+    renderer.render(this._cadScene, camera);
   }
 
   private renderCustomObjects(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {

@@ -2,6 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
@@ -66,24 +68,38 @@ export class MaterialManager {
     return this.materialsMap.get(modelIdentifier)!.nodeAppearanceProvider;
   }
 
-  getModelBackTreeIndices(modelIdentifier: string): Set<number> | undefined {
-    return this._backTreeIndices.get(modelIdentifier);
+  getModelBackTreeIndices(modelIdentifier: string): Set<number> {
+    const set = this._backTreeIndices.get(modelIdentifier);
+    if (!set) {
+      throw new Error(`Invalid model identifier '${modelIdentifier}'`);
+    }
+    return set;
   }
 
-  getModelInFrontTreeIndices(modelIdentifier: string): Set<number> | undefined {
-    return this._inFrontTreeIndices.get(modelIdentifier);
+  getModelInFrontTreeIndices(modelIdentifier: string): Set<number> {
+    const set = this._inFrontTreeIndices.get(modelIdentifier);
+    if (!set) {
+      throw new Error(`Invalid model identifier '${modelIdentifier}'`);
+    }
+    return set;
   }
 
-  getModelGhostedTreeIndices(modelIdentifier: string): Set<number> | undefined {
-    return this._ghostTreeIndices.get(modelIdentifier);
+  getModelGhostedTreeIndices(modelIdentifier: string): Set<number> {
+    const set = this._ghostTreeIndices.get(modelIdentifier);
+    if (!set) {
+      throw new Error(`Invalid model identifier '${modelIdentifier}'`);
+    }
+    return set;
   }
 
   setRenderMode(mode: RenderMode) {
     this._renderMode = mode;
     const transparent = mode === RenderMode.Ghost;
+    const side = mode === RenderMode.Ghost ? THREE.DoubleSide : THREE.FrontSide;
     this.applyToAllMaterials(material => {
       material.uniforms.renderMode.value = mode;
       material.transparent = transparent;
+      material.side = side;
     });
   }
 
