@@ -21,6 +21,8 @@ import { SupportedModelTypes } from '@/datamodels/base';
 import { LoadingState } from '@/utilities';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
 
+/* eslint-disable jsdoc/require-jsdoc */
+
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
   private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
@@ -39,7 +41,11 @@ export class RevealManager<TModelIdentifier> {
     loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
-  /** @internal */
+  /**
+   * @param cadManager
+   * @param pointCloudManager
+   * @internal
+   */
   constructor(cadManager: CadManager<TModelIdentifier>, pointCloudManager: PointCloudManager<TModelIdentifier>) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
