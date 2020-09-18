@@ -48,7 +48,6 @@ export function Testable() {
           if (ghostedNodes.has(treeIndex)) {
             style = {...style, ...reveal.DefaultNodeAppearance.Ghosted };
           }
-          console.log(treeIndex, style);
           return style;
         }
       };
@@ -128,7 +127,6 @@ export function Testable() {
         ghostedTreeIndices.forEach(p => ghostedNodes.add(p));
         const highlightedTreeIndexes = [0,1,2,3,4,5,6,20,22,33,34,35];
         highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
-        console.log(ghostedTreeIndices);
         model.requestNodeUpdate([...ghostedTreeIndices, ...highlightedTreeIndexes]);
       } else if (test === "clipping") {
         camera = new THREE.PerspectiveCamera();
