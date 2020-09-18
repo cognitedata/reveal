@@ -478,14 +478,26 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate(selectedNodes);
   }
 
+  /**
+   * Enables ghost mode for the tree index given, making the object appear transparant and gray.
+   * Note that ghosted objects are ignored in ray picking actions.
+   * @param treeIndex       Tree index of node to ghost.
+   * @param applyToChildren When true, all descendants of the node is also ghosted.
+   * @returns Promise that resolves to the number of affected nodes.
+   */
   async ghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    debugger;
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     treeIndices.forEach(idx => this.ghostedNodes.add(idx));
     this.cadNode.requestNodeUpdate(treeIndices.toArray());
     return treeIndices.count;
   }
 
+  /**
+   * Disables ghost mode for the tree index given, making the object be rendered normal.
+   * @param treeIndex       Tree index of node to un-ghost.
+   * @param applyToChildren When true, all descendants of the node is also un-ghosted.
+   * @returns Promise that resolves to the number of affected nodes.
+   */
   async unghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     treeIndices.forEach(idx => this.ghostedNodes.delete(idx));
@@ -494,6 +506,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
+  /**
+   * Enable ghost mode for all nodes in the model, making the whole model be rendered transparent
+   * and in gray.
+   */
   ghostAllNodes(): void {
     for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
       this.ghostedNodes.add(i);
@@ -501,6 +517,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate(Array.from(this.ghostedNodes.values()));
   }
 
+  /**
+   * Disable ghost mode for all nodes in the model.
+   */
   unghostAllNodes(): void {
     const ghostedNodes = Array.from(this.ghostedNodes);
     this.ghostedNodes.clear();
