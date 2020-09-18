@@ -21,7 +21,7 @@ for all nodes can be toggled using `Cognite3DModel.ghostAllNodes` and `Cognite3D
 ### Ghost model to identify the location of a piece of equipment
 
 A typical use case for ghosting is to show the location of a piece of equipment. To do this,
-first ghost all nodes and unghost the relevant nodes.
+first ghost all nodes and un-ghost the relevant nodes.
 
 ```jsx runnable
 model.ghostAllNodes();
@@ -33,7 +33,7 @@ model.unghostNodeByTreeIndex(409228, applyToChildren=true);
 When nodes are ghosted, they are not clickable and the user will be able to click nodes that otherwise
 would be occluded by the ghosted nodes.
 
-In this example equipment is made visible through a ghosted model. When the user clicks the equipment
+In this example, equipment is made visible through a ghosted model. When the user clicks the equipment
 the other nodes are hidden and the camera is zoomed in to the equipment.
 
 ```jsx runnable
