@@ -117,17 +117,13 @@ export class EffectRenderManager {
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
       if (hasBackElements && !hasGhostElements) {
-        renderer.info.reset();
         this.renderBackCadModelsFromBaseScene(renderer, camera);
         this.clearTarget(renderer, this._ghostObjectRenderTarget);
       } else if (hasBackElements && hasGhostElements) {
-        renderer.info.reset();
         this.renderBackCadModels(renderer, camera);
-        renderer.info.reset();
         this.restoreBackScene();
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else if (!hasBackElements && hasGhostElements) {
-        renderer.info.reset();
         this.clearTarget(renderer, this._backRenderedCadModelTarget);
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else {
@@ -200,15 +196,18 @@ export class EffectRenderManager {
         const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
 
         if (objectTreeIndices) {
-          if (hasInFrontElements && hasIntersection(infrontSet!, objectTreeIndices)) {
+          if (hasInFrontElements && hasIntersection(infrontSet, objectTreeIndices)) {
             storeToBuffer(this._inFrontObjectBuffer, element, infrontRoot);
           }
           // Note! When we don't have any ghost, we use _cadScene to hold back objects, so no action required
           if (hasBackElements && !hasGhostElements) {
-          } else if (hasGhostElements && hasIntersection(backSet!, objectTreeIndices)) {
+          } else if (hasGhostElements && hasIntersection(backSet, objectTreeIndices)) {
             storeToBuffer(this._backObjectBuffer, element, backRoot);
             // Use _cadScene to hold ghost objects (we assume we have more ghost objects than back objects)
           }
+
+          // TODO 2020-09-18 larsmoa: A potential optimization to rendering is to avoid rendering the full
+          // set of objects if most are hidden.
         } else {
           // Not a leaf, traverse children
           objectStack.push(...element.children);
