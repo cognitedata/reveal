@@ -90,6 +90,9 @@ export class Cognite3DViewer {
   private _slicingNeedsUpdate: boolean = false;
   private _geometryFilters: GeometryFilter[] = [];
 
+  private _lastCameraChangedTimestamp: number = -1;
+  private _lastFrameTimestamp: number = -1;
+
   private readonly spinner: Spinner;
 
   /**
@@ -154,6 +157,7 @@ export class Cognite3DViewer {
     this.controls.dollyFactor = 0.992;
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
+      this._lastCameraChangedTimestamp = performance.now();
       this.eventListeners.cameraChange.forEach(f => {
         f(position.clone(), target.clone());
       });
@@ -1005,14 +1009,27 @@ export class Cognite3DViewer {
       renderController.update();
       this._revealManager.update(this.camera);
 
-      if (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
+      if (
+        (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) &&
+        !this.shouldSuspendRendering()
+      ) {
         this.triggerUpdateCameraNearAndFar();
         this._revealManager.render(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
+        this._lastFrameTimestamp = performance.now();
       }
     }
+  }
+
+  private shouldSuspendRendering(): boolean {
+    // Reduce to 3 FPS when we are not moving the camera to give more time for loading and other operations
+    const now = performance.now();
+    const cameraChangedSinceLastFrame = this._lastFrameTimestamp < this._lastCameraChangedTimestamp;
+    const lastFrameDt = now - this._lastFrameTimestamp;
+    const suspend = !cameraChangedSinceLastFrame && lastFrameDt < 1000 / 5.0;
+    return suspend;
   }
 
   private setupUpdateCameraNearAndFar(): Subject<{ camera: THREE.PerspectiveCamera; force: boolean }> {
