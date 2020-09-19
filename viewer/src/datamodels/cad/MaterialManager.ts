@@ -144,21 +144,23 @@ export class MaterialManager {
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color ? style.color[1] : 0;
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color ? style.color[2] : 0;
 
-      if (style.renderInFront) {
+      const infront = !!style.renderInFront;
+      const ghosted = !!style.renderGhosted;
+      if (infront) {
         inFrontSet.add(treeIndex);
-      } else if (inFrontSet.has(treeIndex)) {
+      } else {
         inFrontSet.delete(treeIndex);
       }
 
-      if (style.renderGhosted) {
+      if (ghosted) {
         ghostSet.add(treeIndex);
-      } else if (ghostSet.has(treeIndex)) {
+      } else {
         ghostSet.delete(treeIndex);
       }
 
-      if (!ghostSet.has(treeIndex) && !inFrontSet.has(treeIndex)) {
+      if (!ghosted && !infront) {
         backSet.add(treeIndex);
-      } else if (backSet.has(treeIndex)) {
+      } else {
         backSet.delete(treeIndex);
       }
 
