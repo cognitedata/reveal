@@ -19,7 +19,7 @@
     "@cognite/sdk": "^2.33.0",
     "@sentry/browser": "^5.24.2",
     "@types/lodash": "^4.14.161",
-    "antd": "^4.6.2",
+    "antd": "^4.6.5",
     "date-fns": "^2.16.1",
     "i18next": "^19.7.0",
     "i18next-chained-backend": "^2.0.1",
