@@ -92,6 +92,7 @@ export class Cognite3DViewer {
 
   private _lastCameraChangedTimestamp: number = -1;
   private _lastFrameTimestamp: number = -1;
+  private _isLoading: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -187,6 +188,7 @@ export class Cognite3DViewer {
           if (options.onLoading) {
             options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
           }
+          this._isLoading = loadingState.itemsLoaded < loadingState.itemsRequested;
         },
         error =>
           trackError(error, {
@@ -1024,11 +1026,11 @@ export class Cognite3DViewer {
   }
 
   private shouldSuspendRendering(): boolean {
-    // Reduce to 3 FPS when we are not moving the camera to give more time for loading and other operations
+    // Reduce framerate when we are not moving the camera to give more time for loading and other operations
     const now = performance.now();
     const cameraChangedSinceLastFrame = this._lastFrameTimestamp < this._lastCameraChangedTimestamp;
     const lastFrameDt = now - this._lastFrameTimestamp;
-    const suspend = !cameraChangedSinceLastFrame && lastFrameDt < 1000 / 5.0;
+    const suspend = this._isLoading && !cameraChangedSinceLastFrame && lastFrameDt < 1000 / 5.0;
     return suspend;
   }
 
