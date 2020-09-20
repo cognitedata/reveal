@@ -5,7 +5,7 @@
 import { MaterialManager } from '../MaterialManager';
 import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
-import { edgeDetectionShaders } from './shaders';
+import { edgeDetectionShaders, fxaaShaders } from './shaders';
 import { CogniteColors } from '@/utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '@/migration';
@@ -15,15 +15,18 @@ export class EffectRenderManager {
   private readonly _materialManager: MaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
-  private readonly _triScene: THREE.Scene;
+  private readonly _compositionScene: THREE.Scene;
+  private readonly _fxaaScene: THREE.Scene;
   private readonly _inFrontScene: THREE.Scene;
   private readonly _cadScene: THREE.Scene;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
+  private readonly _fxaaMaterial: THREE.ShaderMaterial;
 
   private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
   private readonly _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _compositionTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly _inFrontObjectBuffer: Set<{
@@ -40,7 +43,8 @@ export class EffectRenderManager {
 
     this._cadScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
-    this._triScene = new THREE.Scene();
+    this._compositionScene = new THREE.Scene();
+    this._fxaaScene = new THREE.Scene();
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
@@ -59,9 +63,11 @@ export class EffectRenderManager {
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
+    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false, depthBuffer: false });
+
     this._combineEdgeDetectionMaterial = new THREE.ShaderMaterial({
       vertexShader: edgeDetectionShaders.vertex,
-      fragmentShader: edgeDetectionShaders.combine,
+      fragmentShader: edgeDetectionShaders.fragment,
       uniforms: {
         tFront: { value: this._frontRenderedCadModelTarget.texture },
         tFrontDepth: { value: this._frontRenderedCadModelTarget.depthTexture },
@@ -73,10 +79,22 @@ export class EffectRenderManager {
         cameraNear: { value: 0.1 },
         cameraFar: { value: 10000 }
       },
-      depthTest: false
+      depthTest: false,
+      depthWrite: false
+    });
+    this._fxaaMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        tDiffuse: { value: this._compositionTarget.texture },
+        resolution: { value: new THREE.Vector2() }
+      },
+      vertexShader: fxaaShaders.vertex,
+      fragmentShader: fxaaShaders.fragment,
+      depthTest: false,
+      depthWrite: false
     });
 
-    this.setupTextureRenderScene(this._combineEdgeDetectionMaterial);
+    this.setupCompositionScene();
+    this.setupFxaaScene();
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
@@ -111,7 +129,9 @@ export class EffectRenderManager {
 
       renderer.setClearAlpha(original.clearAlpha);
 
-      this.renderTargetToCanvas(renderer, camera);
+      // Composite view and anti-aliased version to screen
+      this.renderComposition(renderer, camera);
+      this.renderAntiAliasToCanvas(renderer);
     } finally {
       // Restore state
       renderer.setClearAlpha(original.clearAlpha);
@@ -208,6 +228,7 @@ export class EffectRenderManager {
       this._backRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
       this._frontRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
       this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
+      this._compositionTarget.setSize(renderSize.x, renderSize.y);
 
       this._combineEdgeDetectionMaterial.setValues({
         uniforms: {
@@ -217,16 +238,28 @@ export class EffectRenderManager {
           }
         }
       });
+
+      this._fxaaMaterial.setValues({
+        uniforms: {
+          ...this._fxaaMaterial.uniforms,
+          resolution: { value: renderSize }
+        }
+      });
     }
     return renderSize;
   }
 
-  private renderTargetToCanvas(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+  private renderComposition(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     this._combineEdgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
     this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
+    renderer.setRenderTarget(this._compositionTarget);
+    renderer.render(this._compositionScene, this._orthographicCamera);
+  }
+
+  private renderAntiAliasToCanvas(renderer: THREE.WebGLRenderer) {
     renderer.setRenderTarget(null);
-    renderer.render(this._triScene, this._orthographicCamera);
+    renderer.render(this._fxaaScene, this._orthographicCamera);
   }
 
   private createOutlineColorTexture(): THREE.DataTexture {
@@ -242,7 +275,7 @@ export class EffectRenderManager {
     return outlineColorTexture;
   }
 
-  private setupTextureRenderScene(material: THREE.ShaderMaterial) {
+  private setupCompositionScene() {
     const geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
     geometry.vertices.push(new THREE.Vector3(3, -1, 0));
@@ -253,9 +286,25 @@ export class EffectRenderManager {
 
     geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
 
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry, this._combineEdgeDetectionMaterial);
 
-    this._triScene.add(mesh);
+    this._compositionScene.add(mesh);
+  }
+
+  private setupFxaaScene() {
+    const geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
+    geometry.vertices.push(new THREE.Vector3(3, -1, 0));
+    geometry.vertices.push(new THREE.Vector3(-1, 3, 0));
+
+    const face = new THREE.Face3(0, 1, 2);
+    geometry.faces.push(face);
+
+    geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
+
+    const mesh = new THREE.Mesh(geometry, this._fxaaMaterial);
+
+    this._fxaaScene.add(mesh);
   }
 
   private traverseForRootSectorNode(root: THREE.Object3D) {
