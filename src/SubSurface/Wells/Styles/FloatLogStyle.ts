@@ -30,7 +30,7 @@ export class FloatLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public fillColorType = new ColorTypeProperty({ use: true, name: "Fill Color Type", value: ColorType.Specified });
+  public fillColorType = new ColorTypeProperty({ use: true, name: "Fill Color Type", value: ColorType.ColorMap });
   public strokeColorType = new ColorTypeProperty({ use: true, name: "Stroke Color Type", value: ColorType.Specified });
   public bandPosition = new BandPositionProperty({ name: "Band Position", value: BandPosition.Automatic });
   public lineWidth = new NumberProperty({ name: "Stroke", value: 2, options: [1, 2, 3, 4, 5] });

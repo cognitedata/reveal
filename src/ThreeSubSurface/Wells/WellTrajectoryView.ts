@@ -601,6 +601,8 @@ export class WellTrajectoryView extends BaseGroupThreeView
         numLogs[bandPosition]++;
       }
     }
+    // Calulate the band positions
+    const bandPositions = new Map<FloatLogNode, BandPosition>();
     for (let pass = 0; pass < 2; pass++)
     {
       for (const logNode of node.getDescendantsByType(FloatLogNode))
@@ -625,22 +627,33 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
           bandPosition = numLogs[BandPosition.Right] < numLogs[BandPosition.Left] ? BandPosition.Right : BandPosition.Left;
         }
-        const canvas = getOrCreateCanvasAt(bandPosition);
+        bandPositions.set(logNode, bandPosition);
+        numLogs[bandPosition]++;
+      }
+    }
+    // Now render them, the fill first and then the stroke
+    for (let pass = 0; pass < 2; pass++)
+    {
+      for (const pair of bandPositions)
+      {
+        const logNode = pair[0];
+        const bandPosition = pair[1];
 
-        if (logStyle.fillColorType.use)
+        const logStyle = logNode.getRenderStyle(this.targetId) as FloatLogStyle;
+        if (pass === 0 && logStyle.fillColorType.use)
         {
           const color = logNode.getColorByColorType(logStyle.fillColorType.value);
           const colorMap = logStyle.fillColorType.value === ColorType.ColorMap ? ColorMaps.get(logNode.colorMap) : null;
+          const canvas = getOrCreateCanvasAt(bandPosition);
           logRender.addFloatLog(canvas, logNode.log, logStyle, color, colorMap);
         }
-        if (logStyle.strokeColorType.use)
+        if (pass === 1 && logStyle.strokeColorType.use)
         {
           let color = logNode.getColorByColorType(logStyle.strokeColorType.value);
           color = color.darken(0.5);
-          if (logStyle.lineWidth)
-            logRender.addFloatLog(canvas, logNode.log, logStyle, color, null, false, logStyle.lineWidth.value);
+          const canvas = getOrCreateCanvasAt(bandPosition);
+          logRender.addFloatLog(canvas, logNode.log, logStyle, color, null, false, logStyle.lineWidth.value);
         }
-        numLogs[bandPosition]++;
       }
     }
     for (const bandPosition of [BandPosition.Left, BandPosition.Right])
