@@ -44,6 +44,8 @@ import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { FloatLogStyle } from "@/SubSurface/Wells/Styles/FloatLogStyle";
 import { DiscreteLogStyle } from "@/SubSurface/Wells/Styles/DiscreteLogStyle";
 import { Canvas } from "@/Three/Utilities/Canvas";
+import { ColorMaps } from "@/Core/Primitives/ColorMaps";
+import { ColorType } from "@/Core/Enums/ColorType";
 
 const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
@@ -599,6 +601,8 @@ export class WellTrajectoryView extends BaseGroupThreeView
         numLogs[bandPosition]++;
       }
     }
+    // Calulate the band positions
+    const bandPositions = new Map<FloatLogNode, BandPosition>();
     for (let pass = 0; pass < 2; pass++)
     {
       for (const logNode of node.getDescendantsByType(FloatLogNode))
@@ -623,16 +627,33 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
           bandPosition = numLogs[BandPosition.Right] < numLogs[BandPosition.Left] ? BandPosition.Right : BandPosition.Left;
         }
-        const canvas = getOrCreateCanvasAt(bandPosition);
-        let color = logNode.getColorByColorType(logStyle.colorType.value);
-        if (logStyle.fill.value)
-          logRender.addFloatLog(canvas, logNode.log, logStyle, color);
-
-        color = color.darken(0.5);
-        if (logStyle.lineWidth.use)
-          logRender.addFloatLog(canvas, logNode.log, logStyle, color, false, logStyle.lineWidth.value);
-
+        bandPositions.set(logNode, bandPosition);
         numLogs[bandPosition]++;
+      }
+    }
+    // Now render them, the fill first and then the stroke
+    for (let pass = 0; pass < 2; pass++)
+    {
+      for (const pair of bandPositions)
+      {
+        const logNode = pair[0];
+        const bandPosition = pair[1];
+
+        const logStyle = logNode.getRenderStyle(this.targetId) as FloatLogStyle;
+        if (pass === 0 && logStyle.fillColorType.use)
+        {
+          const color = logNode.getColorByColorType(logStyle.fillColorType.value);
+          const colorMap = logStyle.fillColorType.value === ColorType.ColorMap ? ColorMaps.get(logNode.colorMap) : null;
+          const canvas = getOrCreateCanvasAt(bandPosition);
+          logRender.addFloatLog(canvas, logNode.log, logStyle, color, colorMap);
+        }
+        if (pass === 1 && logStyle.strokeColorType.use)
+        {
+          let color = logNode.getColorByColorType(logStyle.strokeColorType.value);
+          color = color.darken(0.5);
+          const canvas = getOrCreateCanvasAt(bandPosition);
+          logRender.addFloatLog(canvas, logNode.log, logStyle, color, null, false, logStyle.lineWidth.value);
+        }
       }
     }
     for (const bandPosition of [BandPosition.Left, BandPosition.Right])

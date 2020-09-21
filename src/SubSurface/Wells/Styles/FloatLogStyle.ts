@@ -30,12 +30,13 @@ export class FloatLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new ColorTypeProperty({ name: "Color Type", value: ColorType.Specified });
+  public fillColorType = new ColorTypeProperty({ use: true, name: "Fill Color Type", value: ColorType.ColorMap });
+  public strokeColorType = new ColorTypeProperty({ use: true, name: "Stroke Color Type", value: ColorType.Specified });
   public bandPosition = new BandPositionProperty({ name: "Band Position", value: BandPosition.Automatic });
-  public lineWidth = new NumberProperty({ use: true, name: "Stroke", value: 2, options: [ 1, 2, 3, 4, 5] });
-  public fill = new BooleanProperty({ name: "Fill", value: true });
+  public lineWidth = new NumberProperty({ name: "Stroke", value: 2, options: [1, 2, 3, 4, 5] });
   public min = new NumberProperty({ name: "Minimum", value: Number.NaN, use: false });
   public max = new NumberProperty({ name: "Maximum", value: Number.NaN, use: false });
+  public reverse = new BooleanProperty({ name: "Reverse Scale", value: false });
 
   //==================================================
   // CONSTRUCTOR
@@ -52,11 +53,16 @@ export class FloatLogStyle extends BaseRenderStyle
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
-    folder.addChild(this.colorType);
+
+    this.lineWidth.isEnabledDelegate = () => this.strokeColorType.use;
+    this.fillColorType.solid = true;
+
     folder.addChild(this.bandPosition);
+    folder.addChild(this.fillColorType);
+    folder.addChild(this.strokeColorType);
     folder.addChild(this.lineWidth);
-    folder.addChild(this.fill);
     folder.addChild(this.min);
     folder.addChild(this.max);
+    folder.addChild(this.reverse);
   }
 }

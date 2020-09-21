@@ -28,7 +28,7 @@ export class TextureKit
     return new THREE.DataTexture(rgbs, rgbs.length / (2 * 3), 2, THREE.RGBFormat);
   }
 
-  public static create1D(colorMap?: ColorMap): THREE.DataTexture | null
+  public static create1D(colorMap: ColorMap | null): THREE.DataTexture | null
   {
     if (!colorMap)
       return null;
@@ -36,7 +36,7 @@ export class TextureKit
     return TextureKit.createTexture(rgbs);
   }
 
-  public static create1DContours(colorMap: ColorMap | undefined, range: Range1, increment: number, volume: number, color?: Color): THREE.DataTexture | null
+  public static create1DContours(colorMap: ColorMap | null, range: Range1, increment: number, volume: number, color?: Color): THREE.DataTexture | null
   {
     if (!colorMap)
       return null;

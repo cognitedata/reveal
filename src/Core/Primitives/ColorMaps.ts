@@ -36,10 +36,11 @@ export class ColorMaps
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public static get(name: string): ColorMap | undefined
+  public static get(name: string): ColorMap | null
   {
     const { colorMaps } = ColorMaps;
-    return colorMaps.get(name);
+    const colorMap = colorMaps.get(name);
+    return colorMap || null;
   }
 
   public static getOptions(): string[]

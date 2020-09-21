@@ -59,7 +59,7 @@ export class CasingFilterLogNode extends BaseFilterLogNode
     return new CasingLogStyle(targetId);
   }
 
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  public /*override*/ supportsColorType(colorType: ColorType, solid: boolean): boolean
   {
     switch (colorType)
     {

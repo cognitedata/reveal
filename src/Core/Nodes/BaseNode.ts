@@ -280,7 +280,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; }
   public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
   public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the render style*/ }
-  public /*virtual*/ supportsColorType(colorType: ColorType): boolean { return true; }
+  public /*virtual*/ supportsColorType(colorType: ColorType, solid: boolean): boolean { return true; }
 
   //==================================================
   // VIRTUAL METHODS: Populate Settings
@@ -332,7 +332,7 @@ export abstract class BaseNode extends Identifiable
 
         if (child instanceof ColorTypeProperty)
         {
-          child.optionValidationDelegate = (option: ColorType) => this.supportsColorType(option);
+          child.optionValidationDelegate = (colorType: ColorType) => this.supportsColorType(colorType, child.solid);
           child.nodeColor = this.color;
           child.parentNodeColor = this.parent?.color;
         }

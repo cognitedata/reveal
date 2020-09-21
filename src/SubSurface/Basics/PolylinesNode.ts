@@ -73,11 +73,11 @@ export class PolylinesNode extends DataNode
     if (!(style instanceof PolylinesRenderStyle))
       return;
 
-    if (!this.supportsColorType(style.colorType))
+    if (!this.supportsColorType(style.colorType, false))
       style.colorType = ColorType.Specified;
   }
 
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  public /*override*/ supportsColorType(colorType: ColorType, solid: boolean): boolean
   {
     switch (colorType)
     {

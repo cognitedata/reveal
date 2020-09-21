@@ -102,16 +102,18 @@ export class SurfaceNode extends DataNode
     }
   }
 
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  public /*override*/ supportsColorType(colorType: ColorType, solid: boolean): boolean
   {
     switch (colorType)
     {
-      case ColorType.ColorMap:
       case ColorType.Specified:
       case ColorType.Parent:
       case ColorType.Black:
       case ColorType.White:
         return true;
+
+      case ColorType.ColorMap:
+        return solid;
 
       default:
         return false;

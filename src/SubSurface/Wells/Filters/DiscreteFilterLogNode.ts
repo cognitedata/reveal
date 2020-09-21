@@ -68,21 +68,6 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
     folder.addReadOnlyRange1("Values", this.getValueRange());
   }
 
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
-    {
-      case ColorType.Specified:
-      case ColorType.Parent:
-      case ColorType.Black:
-      case ColorType.White:
-        return true;
-
-      default:
-        return false;
-    }
-  }
-
   //==================================================
   // OVERRIDES of BaseLogNode
   //==================================================
