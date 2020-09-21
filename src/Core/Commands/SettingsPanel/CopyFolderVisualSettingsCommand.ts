@@ -34,7 +34,7 @@ export class CopyFolderVisualSettingsCommand extends BaseNodeCommand
       if (child === node)
         continue;
 
-      if (typeof child !== typeof node)
+      if (child.className !== node.className)
         continue;
 
       const copyStyle = style.clone() as BaseRenderStyle;
