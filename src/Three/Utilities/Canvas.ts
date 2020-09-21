@@ -16,6 +16,7 @@ import * as Color from "color";
 
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { Appearance } from "@/Core/States/Appearance";
+import { ColorMap } from "@/Core/Primitives/ColorMap";
 
 export class Canvas
 {
@@ -34,6 +35,7 @@ export class Canvas
   private lastX = Number.NaN;
   private fillFunction = false;
   private canvas: HTMLCanvasElement
+  private gradient: CanvasGradient | null = null;
 
   // eslint-disable-next-line react/static-property-placement
   private context: CanvasRenderingContext2D;
@@ -116,33 +118,40 @@ export class Canvas
   {
     this.fillFunction = fillPath;
     this.firstX = Number.NaN;
+    this.gradient = null;
   }
 
-  public closeFunction(): boolean
+  public closeFunction(reverse: boolean): boolean
   {
     if (Number.isNaN(this.firstX))
       return false;
 
     if (this.fillFunction)
-      this.context.lineTo(this.lastX, 0);
+      this.context.lineTo(this.lastX, reverse ? this.dy : 0);
 
     this.lastX = Number.NaN;
     this.firstX = Number.NaN;
     return true;
   }
 
-  public addFunctionValue(x: number, y: number)
+  public addFunctionValue(xFraction: number, yFraction: number, reverse: boolean, colorMap: ColorMap | null = null)
   {
-    // assume: x and y in [0,1]
-    x *= this.dx;
-    y *= this.dy;
+    // assume: xFraction and yFraction in [0,1]
+    if (colorMap)
+    {
+      if (!this.gradient)
+        this.gradient = this.context.createLinearGradient(0, 0, this.dx, 0);
+      this.gradient.addColorStop(xFraction, Canvas.getColor(colorMap.getColor(yFraction)));
+    }
+    const x = this.dx * xFraction;
+    const y = this.dy * (reverse ? 1 - yFraction : yFraction);
 
     if (Number.isNaN(this.firstX))
     {
       this.beginPath();
       this.firstX = x;
       if (this.fillFunction)
-        this.context.moveTo(x, 0);
+        this.context.moveTo(x, reverse ? this.dy : 0);
     }
     this.context.lineTo(x, y);
     this.lastX = x;
@@ -166,10 +175,10 @@ export class Canvas
     this.context.translate(x * this.dx - borderSize, outerMost ? this.dy - borderSize : borderSize);
 
     this.context.rotate(-Math.PI / 2);
-    if (rightBand)
+    if (!rightBand)
       this.context.scale(-1, 1);
 
-    if (rightBand !== outerMost)
+    if (rightBand === outerMost)
       this.context.textAlign = "left";
     else
       this.context.textAlign = "right";
@@ -202,18 +211,25 @@ export class Canvas
     this.context.fillRect(x0, 0, x1 - x0, this.dy);
   }
 
-  public fillPathBySemiTransparentGradient(color: Color, alphaFraction = 1)
+  public fillPathBySemiTransparentGradient(color: Color, alphaFraction: number, reverse: boolean)
   {
     const operation = this.context.globalCompositeOperation;
     this.context.globalCompositeOperation = "darker";
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
-    const gradient = this.context.createLinearGradient(0, 0, 0, this.dy);
-    gradient.addColorStop(0, "transparent");
-    gradient.addColorStop(1, Canvas.getColor(color));
-
-    this.context.fillStyle = gradient;
+    if (this.gradient)
+    {
+      this.context.fillStyle = this.gradient;
+      this.gradient = null;
+    }
+    else
+    {
+      const gradient = this.context.createLinearGradient(0, reverse ? this.dy : 0, 0, reverse ? 0 : this.dy);
+      gradient.addColorStop(0, "transparent");
+      gradient.addColorStop(1, Canvas.getColor(color));
+      this.context.fillStyle = gradient;
+    }
     this.context.fill();
     this.context.globalCompositeOperation = operation;
   }
@@ -244,19 +260,19 @@ export class Canvas
     let line = "";
     let height = 0;
     const draw = x >= 0 && y >= 0;
-    for (let n = 0; n < words.length; n++)
+    for (let index = 0; index < words.length; index++)
     {
       let testLine = line;
       if (line.length > 0)
         testLine += " ";
-      testLine += words[n];
+      testLine += words[index];
       const metrics = context.measureText(testLine);
       const testWidth = metrics.width;
-      if (testWidth > maxWidth && n > 0)
+      if (testWidth > maxWidth && index > 0)
       {
         if (draw)
           context.fillText(line, x, y + height);
-        line = words[n];
+        line = words[index];
         height += lineHeight;
       }
       else

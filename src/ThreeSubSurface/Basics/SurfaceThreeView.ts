@@ -146,7 +146,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   private createSolid(): THREE.Object3D | null
   {
     const { style } = this;
-    if (!style.showSolid.value)
+    if (!style.solidColorType.use)
       return null;
 
     const { node } = this;
@@ -196,7 +196,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   private createContours(): THREE.Object3D | null
   {
     const { style } = this;
-    if (!style.showContours.value)
+    if (!style.contourColorType.use)
       return null;
 
     const { node } = this;

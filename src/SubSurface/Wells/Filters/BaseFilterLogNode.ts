@@ -56,21 +56,6 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   public /*override*/ isLabelInItalic(): boolean { return true; }
   public /*override*/ isFilter(target: ITarget | null): boolean { return true; }
 
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
-    {
-      case ColorType.Specified:
-      case ColorType.Parent:
-      case ColorType.Black:
-      case ColorType.White:
-        return true;
-
-      default:
-        return false;
-    }
-  }
-
   protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {
     super.populateStatisticsCore(folder);

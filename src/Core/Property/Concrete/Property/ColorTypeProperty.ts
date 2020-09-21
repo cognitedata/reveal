@@ -13,8 +13,10 @@ export class ColorTypeProperty extends ValueProperty<ColorType>
   //==================================================
   // INSTANCE FIELDS
   //==================================================
+
   private _nodeColor?: Color;
   private _parentNodeColor? : Color;
+  public solid = false;
 
   //==================================================
   // CONSTRUCTOR

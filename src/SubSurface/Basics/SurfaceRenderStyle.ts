@@ -28,14 +28,12 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public showContours = new BooleanProperty({ name: "Show contours", value: true });
-  public showSolid = new BooleanProperty({ name: "Show solid", value: true });
-  public increment = new NumberProperty({ name: "Increment", value: 0 });
-  public contourColorType = new ColorTypeProperty({ name: "Contour color", value: ColorType.Black });
-  public solidColorType = new ColorTypeProperty({ name: "Solid color", value: ColorType.ColorMap });
+  public contourColorType = new ColorTypeProperty({ use: true, name: "Contour color", value: ColorType.Black });
+  public solidColorType = new ColorTypeProperty({ use: true, name: "Solid color", value: ColorType.ColorMap });
   public solidContour = new SliderProperty({ name: "Solid contour", value: 0.5, use: true });
   public solidShininess = new SliderProperty({ name: "Solid shininess", value: 0.5, use: true });
   public solidOpacity = new SliderProperty({ name: "Solid opacity", value: 0.5, use: false });
+  public increment = new NumberProperty({ name: "Increment", value: 0 });
 
   //==================================================
   // CONSTRUCTOR
@@ -54,23 +52,19 @@ export class SurfaceRenderStyle extends BaseRenderStyle
 
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
-    folder.addChild(this.showContours);
-    folder.addChild(this.showSolid);
-    folder.addChild(this.increment);
+    const showSolid = (): boolean => this.solidColorType.use;
+
+    this.increment.isEnabledDelegate = (): boolean => this.contourColorType.use || (this.solidColorType.use && this.solidContour.use);
+    this.solidContour.isEnabledDelegate = showSolid;
+    this.solidShininess.isEnabledDelegate = showSolid;
+    this.solidOpacity.isEnabledDelegate = showSolid;
+    this.solidColorType.solid = true;
+
     folder.addChild(this.contourColorType);
     folder.addChild(this.solidColorType);
     folder.addChild(this.solidContour);
     folder.addChild(this.solidShininess);
     folder.addChild(this.solidOpacity);
-
-    const showCountour = (): boolean => this.showContours.value;
-    const showSolid = (): boolean => this.showSolid.value;
-
-    this.increment.isEnabledDelegate = (): boolean => this.showContours.value || (this.showSolid.value && this.solidContour.use);
-    this.contourColorType.isEnabledDelegate = showCountour;
-    this.solidColorType.isEnabledDelegate = showSolid;
-    this.solidContour.isEnabledDelegate = showSolid;
-    this.solidShininess.isEnabledDelegate = showSolid;
-    this.solidOpacity.isEnabledDelegate = showSolid;
+    folder.addChild(this.increment);
   }
 }

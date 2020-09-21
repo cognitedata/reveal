@@ -29,6 +29,7 @@ import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { FloatLogStyle } from "@/SubSurface/Wells/Styles/FloatLogStyle";
+import { ColorMap } from "@/Core/Primitives/ColorMap";
 
 export class LogRender
 {
@@ -165,7 +166,7 @@ export class LogRender
     }
   }
 
-  public addFloatLog(canvas: Canvas, log: FloatLog | null, style: FloatLogStyle, color: Color, fill = true, lineWidth = 0): void
+  public addFloatLog(canvas: Canvas, log: FloatLog | null, style: FloatLogStyle, color: Color, colorMap: ColorMap | null = null, fill = true, lineWidth = 0): void
   {
     if (!log)
       return;
@@ -180,30 +181,31 @@ export class LogRender
     if (!valueRange.hasSpan)
       return;
 
+    const reverse = style.reverse.value;
     canvas.beginFunction(fill);
     for (let i = 0; i < log.samples.length; i++)
     {
       const sample = log.getAt(i);
       if (sample.isEmpty || sample.isMdEmpty)
       {
-        this.closePath(canvas, color, fill, lineWidth);
+        this.closePath(canvas, color, fill, lineWidth, reverse);
         canvas.beginFunction(fill);
         continue;
       }
       const mdFraction = this.mdRange.getFraction(sample.md);
       const valueFraction = valueRange.getTruncatedFraction(sample.value);
-      canvas.addFunctionValue(mdFraction, valueFraction);
+      canvas.addFunctionValue(mdFraction, valueFraction, reverse, colorMap);
     }
-    this.closePath(canvas, color, fill, lineWidth);
+    this.closePath(canvas, color, fill, lineWidth, reverse);
   }
 
-  private closePath(canvas: Canvas, color: Color, fill: boolean, lineWidth: number): void
+  private closePath(canvas: Canvas, color: Color, fill: boolean, lineWidth: number, reverse: boolean): void
   {
-    if (!canvas.closeFunction())
+    if (!canvas.closeFunction(reverse))
       return;
 
     if (fill)
-      canvas.fillPathBySemiTransparentGradient(color, 1);
+      canvas.fillPathBySemiTransparentGradient(color, 1, reverse);
     if (lineWidth > 0)
       canvas.drawPath(color, lineWidth);
   }

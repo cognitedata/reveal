@@ -70,7 +70,7 @@ export class FloatFilterLogNode extends BaseFilterLogNode
     return new FloatLogStyle(targetId);
   }
 
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  public /*override*/ supportsColorType(colorType: ColorType, solid: boolean): boolean
   {
     switch (colorType)
     {
@@ -79,6 +79,9 @@ export class FloatFilterLogNode extends BaseFilterLogNode
       case ColorType.Black:
       case ColorType.White:
         return true;
+
+      case ColorType.ColorMap:
+        return solid;
 
       default:
         return false;
