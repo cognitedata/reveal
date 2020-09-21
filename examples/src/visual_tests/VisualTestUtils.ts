@@ -43,5 +43,8 @@ export async function screenShotTest(url: string) {
   removeTestableText(page);
 
   const image = await page.screenshot({ fullPage: true });
-  expect(image).toMatchImageSnapshot();
+  expect(image).toMatchImageSnapshot({ 
+    failureThreshold: 0.001, // 0.1% of all pixels may differ
+    failureThresholdType: 'percent'
+  });
 }

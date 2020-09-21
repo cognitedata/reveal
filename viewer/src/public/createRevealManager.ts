@@ -13,11 +13,21 @@ import { RevealOptions } from './types';
 import { initMetrics } from '@/utilities/metrics';
 import { omit } from 'lodash';
 
+/**
+ * Used to create an instance of reveal manager that works with localhost.
+ * @param revealOptions
+ * @returns RevealManager instance.
+ */
 export function createLocalRevealManager(revealOptions: RevealOptions = {}): RevealManager<LocalModelIdentifier> {
   const modelDataClient = new LocalModelDataClient();
   return createRevealManager('local', modelDataClient, revealOptions);
 }
 
+/**
+ * Used to create an instance of reveal manager that works with the CDF.
+ * @param client
+ * @param revealOptions
+ */
 export function createCdfRevealManager(
   client: CogniteClient,
   revealOptions: RevealOptions = {}
@@ -27,7 +37,11 @@ export function createCdfRevealManager(
 }
 
 /**
+ * Used to create an instance of reveal manager.
  * @internal
+ * @param project
+ * @param client
+ * @param revealOptions
  */
 export function createRevealManager<T>(
   project: string,

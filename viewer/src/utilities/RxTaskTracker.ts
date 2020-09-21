@@ -21,7 +21,7 @@ export class RxTaskTracker {
 
   /**
    * Increment counter for each element in the observable.
-   * @return {MonoTypeOperatorFunction<T>} The operator function to increment counter.
+   * @returns The operator function to increment counter.
    */
   public incrementTaskCountOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
@@ -33,7 +33,7 @@ export class RxTaskTracker {
 
   /**
    * Decrement counter for each element in the observable.
-   * @return {MonoTypeOperatorFunction<T>} The operator function to decrement counter.
+   * @returns The operator function to decrement counter.
    */
   public incrementTaskCompletedOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
@@ -45,7 +45,7 @@ export class RxTaskTracker {
 
   /**
    * Reset counter when observable completes.
-   * @return {MonoTypeOperatorFunction<T>} The operator function to reset counter.
+   * @returns The operator function to reset counter.
    */
   public resetOnComplete<T>(): MonoTypeOperatorFunction<T> {
     return finalize<T>(() => {
@@ -55,7 +55,7 @@ export class RxTaskTracker {
 
   /**
    * Get counter observable.
-   * @return {Observable<number>} The counter observable.
+   * @returns The counter observable.
    */
   public getTaskTrackerObservable(): Observable<TaskTracker> {
     return this._actionSubject.pipe(

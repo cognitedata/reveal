@@ -3,22 +3,20 @@
  */
 
 import * as THREE from 'three';
-import { mat4 } from 'gl-matrix';
 
 import { createSectorMetadata, SectorTree } from '../../testutils/createSectorMetadata';
 import { Box3 } from '@/utilities/Box3';
 import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
-import { fromThreeMatrix, ModelTransformation } from '@/utilities';
 import { CadModelMetadata } from '@/datamodels/cad/';
 import { SectorScene, SectorMetadata } from '@/datamodels/cad/sector/types';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
   const renderSize = new THREE.Vector2(64, 64);
-  const identityTransform = createModelTransformation(new THREE.Matrix4().identity());
+  const identityMatrix = new THREE.Matrix4().identity();
   const singleSectorScene = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
-  const cadModel = createStubModel('model', singleSectorScene, identityTransform);
+  const cadModel = createStubModel('model', singleSectorScene, identityMatrix);
 
   test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
@@ -69,8 +67,8 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   test('two models, rendered result returns value at offset', () => {
     // Arrange
     const scene2 = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
-    const model1 = createStubModel('model1', singleSectorScene, identityTransform);
-    const model2 = createStubModel('model2', scene2, identityTransform);
+    const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
+    const model2 = createStubModel('model2', scene2, identityMatrix);
     const util = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
     util.setModels([model1, model2]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
@@ -101,7 +99,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
       ],
       Box3.fromBounds(-1, -1, -1, 1, 1, 1)
     ]);
-    const model = createStubModel('model1', scene, identityTransform);
+    const model = createStubModel('model1', scene, identityMatrix);
     const util = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
     util.setModels([model]);
 
@@ -133,18 +131,10 @@ function createStubScene(tree: SectorTree): SectorScene {
   return new SectorSceneImpl(8, 1, root, sectorsMap);
 }
 
-function createModelTransformation(modelTransform?: THREE.Matrix4): ModelTransformation {
-  modelTransform = modelTransform || new THREE.Matrix4().identity();
-  return {
-    modelMatrix: fromThreeMatrix(mat4.create(), modelTransform),
-    inverseModelMatrix: fromThreeMatrix(mat4.create(), new THREE.Matrix4().getInverse(modelTransform))
-  };
-}
-
-function createStubModel(blobUrl: string, scene: SectorScene, modelTransformation: ModelTransformation) {
+function createStubModel(blobUrl: string, scene: SectorScene, modelMatrix: THREE.Matrix4) {
   const cadModel: CadModelMetadata = {
     blobUrl,
-    modelTransformation,
+    modelMatrix,
     scene
   };
   return cadModel;

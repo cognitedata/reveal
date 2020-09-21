@@ -6,7 +6,6 @@
 // If we add other rendering engines, we should consider to implement this in 'pure'
 // WebGL.
 import * as THREE from 'three';
-import { mat4 } from 'gl-matrix';
 
 import {
   GpuOrderSectorsByVisibilityCoverage,
@@ -18,7 +17,7 @@ import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsI
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
-import { fromThreeMatrix, toThreeVector3, ModelTransformation } from '@/utilities';
+import { toThreeVector3 } from '@/utilities';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -121,7 +120,7 @@ class TakenSectorMap {
  * and loads sectors based on priority within a budget.
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
-  public static readonly DefaultCostLimit = 50 * 1024 * 1024;
+  public static readonly DefaultCostLimit = 35 * 1024 * 1024;
   public static readonly DefaultHighDetailProximityThreshold = 10;
 
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
@@ -233,17 +232,13 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const shortRangeCamera = camera.clone(true);
     shortRangeCamera.far = proximityThreshold;
     shortRangeCamera.updateProjectionMatrix();
-    const cameraMatrixWorldInverse = fromThreeMatrix(mat4.create(), shortRangeCamera.matrixWorldInverse);
-    const cameraProjectionMatrix = fromThreeMatrix(mat4.create(), shortRangeCamera.projectionMatrix);
+    const cameraMatrixWorldInverse = shortRangeCamera.matrixWorldInverse;
+    const cameraProjectionMatrix = shortRangeCamera.projectionMatrix;
 
-    const transformedCameraMatrixWorldInverse = mat4.create();
+    const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
     models.forEach(model => {
       // Apply model transformation to camera matrix
-      mat4.multiply(
-        transformedCameraMatrixWorldInverse,
-        cameraMatrixWorldInverse,
-        model.modelTransformation.modelMatrix
-      );
+      transformedCameraMatrixWorldInverse.multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix);
 
       let intersectingSectors = model.scene.getSectorsIntersectingFrustum(
         cameraProjectionMatrix,
@@ -254,7 +249,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         intersectingSectors = this.testForClippingOcclusion(
           intersectingSectors,
           clippingPlanes,
-          model.modelTransformation,
+          model.modelMatrix,
           clipIntersection
         );
       }
@@ -266,7 +261,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private testForClippingOcclusion(
     intersectingSectors: SectorMetadata[],
     clippingPlanes: THREE.Plane[],
-    modelTransform: ModelTransformation,
+    modelMatrix: THREE.Matrix4,
     clipIntersection: boolean
   ): SectorMetadata[] {
     const passingSectors = [];
@@ -275,7 +270,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       const boundPoints = intersectingSectors[i].bounds.getCornerPoints().map(p => {
         const outvec = new THREE.Vector3();
 
-        toThreeVector3(outvec, p, modelTransform);
+        toThreeVector3(outvec, p);
+        outvec.applyMatrix4(modelMatrix);
 
         return outvec;
       });

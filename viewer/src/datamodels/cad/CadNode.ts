@@ -16,7 +16,7 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { MaterialManager } from './MaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
-import { toThreeVector3, toThreeMatrix4, toThreeJsBox3, ModelTransformation, NumericRange } from '@/utilities';
+import { toThreeVector3, toThreeJsBox3, NumericRange } from '@/utilities';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -35,8 +35,6 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  public readonly modelTransformation: ModelTransformation;
-
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
 
@@ -60,10 +58,9 @@ export class CadNode extends THREE.Object3D {
 
     const rootSector = new RootSectorNode(model);
     this._cadModelMetadata = model;
-    const { scene, modelTransformation } = model;
+    const { scene } = model;
 
     this._sectorScene = scene;
-    this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
 
@@ -80,6 +77,7 @@ export class CadNode extends THREE.Object3D {
 
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
+    this.setModelTransformation(model.modelMatrix);
   }
 
   get clippingPlanes(): THREE.Plane[] {
@@ -152,16 +150,37 @@ export class CadNode extends THREE.Object3D {
     return this._loadingHints;
   }
 
-  // private get shouldRenderSectorBoundingBoxes(): boolean {
-  //   return this._renderHints.showSectorBoundingBoxes || false;
-  // }
+  /**
+   * Sets transformation matrix of the model. This overrides the current transformation.
+   * @param matrix Transformation matrix.
+   */
+  setModelTransformation(matrix: THREE.Matrix4): void {
+    this._rootSector.setModelTransformation(matrix);
+    this._cadModelMetadata.modelMatrix.copy(matrix);
+    this._boundingBoxNode.matrix.copy(matrix);
+    this._boundingBoxNode.updateMatrixWorld(true);
+  }
+
+  /**
+   * Gets transformation matrix of the model
+   * @param out Preallocated `THREE.Matrix4` (optional).
+   */
+  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this._rootSector.getModelTransformation(out);
+  }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
     const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root);
 
+    const modelMatrix = this.getModelTransformation();
+    const threePos = toThreeVector3(new THREE.Vector3(), position);
+    const threeTarget = toThreeVector3(new THREE.Vector3(), target);
+    threePos.applyMatrix4(modelMatrix);
+    threeTarget.applyMatrix4(modelMatrix);
+
     return {
-      position: toThreeVector3(new THREE.Vector3(), position, this.modelTransformation),
-      target: toThreeVector3(new THREE.Vector3(), target, this.modelTransformation),
+      position: threePos,
+      target: threeTarget,
       near,
       far
     };
@@ -201,7 +220,7 @@ export class CadNode extends THREE.Object3D {
       boxMesh.updateMatrixWorld(true);
     });
     boxesNode.matrixAutoUpdate = false;
-    boxesNode.applyMatrix4(toThreeMatrix4(this.modelTransformation.modelMatrix));
+    boxesNode.applyMatrix4(this.getModelTransformation());
     boxesNode.updateMatrixWorld(true);
     return boxesNode;
   }
