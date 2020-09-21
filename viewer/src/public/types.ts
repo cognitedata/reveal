@@ -15,9 +15,9 @@ export { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 export * from '@/datamodels/base/SupportedModelTypes';
 
 /**
- * @property logMetrics might be used to disable usage statistics
- * @property nodeAppearanceProvider style node by tree-index
- * @property internal internals are for internal usage only (like unit-testing)
+ * @property logMetrics Might be used to disable usage statistics.
+ * @property nodeAppearanceProvider Style node by tree-index.
+ * @property internal Internals are for internal usage only (like unit-testing).
  */
 export type RevealOptions = {
   logMetrics?: boolean;
