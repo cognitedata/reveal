@@ -20,6 +20,7 @@ import UploadFunctionModal from 'components/FunctionModals/UploadFunctionModal';
 import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import styled from 'styled-components';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
+import { PageTitle } from '@cognite/cdf-utilities';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -134,6 +135,7 @@ function Functions() {
 
   return (
     <>
+      <PageTitle title="Functions" />
       <Row>
         <h1 style={{ display: 'inline-block' }}>Functions</h1>
         <div

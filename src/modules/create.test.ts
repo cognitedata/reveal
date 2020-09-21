@@ -224,7 +224,7 @@ describe('function create module', () => {
   });
   describe('reducer', () => {
     describe('imutability', () => {
-      it('it should not mutate the old state, but return the new', () => {
+      it('should not mutate the old state, but return the new', () => {
         const initialState = reducer(undefined, {
           type: 'functions/CREATE',
           functionName: mockFunctionName,

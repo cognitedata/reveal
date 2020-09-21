@@ -53,7 +53,7 @@ describe('function response module', () => {
   });
   describe('reducer', () => {
     describe('imutability', () => {
-      it('it should not mutate the old state, but return the new', () => {
+      it('should not mutate the old state, but return the new', () => {
         const initialState = reducer(undefined, {
           type: 'functions/RESPONSE',
           callId: mockCallId,

@@ -13,6 +13,10 @@ import { Collapse } from 'antd';
 import sdk from 'sdk-singleton';
 import Functions from './Functions';
 
+jest.mock('@cognite/cdf-utilities', () => ({
+  PageTitle: () => null,
+}));
+
 const middlewares = [thunk]; // add your middlewares like `redux-thunk`
 const mockStore = configureStore(middlewares);
 

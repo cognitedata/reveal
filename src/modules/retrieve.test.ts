@@ -66,7 +66,7 @@ describe('functions retrieve module', () => {
           type: 'functions/UPDATE_ITEMS',
           result: [mockFunction],
         };
-        it('should add functions to the items part of the store ', () => {
+        it('should add functions to the items part of the store', () => {
           expect(reducer(initialState, action)).toEqual({
             items: Map([[mockFunctionId, mockFunction]]),
             getByExternalId: {},
@@ -103,7 +103,7 @@ describe('functions retrieve module', () => {
 
   describe('selectors', () => {
     describe('functionsSortedRecentlyCreated', () => {
-      it('it should return an array of functions sorted by createdTime', () => {
+      it('should return an array of functions sorted by createdTime', () => {
         expect(
           functionsSortedRecentlyCreated({
             items: {
@@ -117,7 +117,7 @@ describe('functions retrieve module', () => {
       });
     });
     describe('functionsSortedLastCallSelector', () => {
-      it('it should return an array of functions sorted by its last call', () => {
+      it('should return an array of functions sorted by its last call', () => {
         expect(
           functionsSortedLastCallSelector({
             items: {
