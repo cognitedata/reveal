@@ -1,5 +1,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Run Node-Visualizer Standalone App
+
+1. build node visualizer first (using dev build or prod build in root directory)
+2. Navigate to this (standalone) folder.
+2. npm install
+3. npm run start
+
 ## Available Scripts
 
 In the project directory, you can run:
