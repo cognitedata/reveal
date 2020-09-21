@@ -20,7 +20,12 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   public readonly revisionId: number;
   private readonly pointCloudNode: PointCloudNode;
 
-  /** @internal */
+  /**
+   * @param modelId
+   * @param revisionId
+   * @param pointCloudNode
+   * @internal
+   */
   constructor(modelId: number, revisionId: number, pointCloudNode: PointCloudNode) {
     super();
     this.modelId = modelId;
@@ -37,9 +42,10 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     this.children = [];
   }
 
+  // eslint-disable-next-line jsdoc/require-description
   /**
    * @param outBbox Optional. Used to write result to.
-   * @returns model's bounding box.
+   * @returns Model's bounding box.
    * @example
    * ```js
    * const box = new THREE.Box3()
@@ -73,7 +79,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Gets transformation matrix of the model
+   * Gets transformation matrix of the model.
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
@@ -98,7 +104,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * @see {@link PotreePointColorType} for available types
+   * @see {@link PotreePointColorType} For available types.
    * @example
    * ```js
    * model.pointColorType = PotreePointColorType.Rgb

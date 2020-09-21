@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 
+/* eslint-disable jsdoc/require-jsdoc */
 /**
  * @internal
  * @module @cognite/reveal
