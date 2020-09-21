@@ -11,6 +11,7 @@ type NodeIdRequest = CogniteInternalId;
 type TreeIndexRequest = number;
 type SubtreeSizeRequest = InternalId;
 
+/* eslint-disable jsdoc/require-jsdoc */
 /**
  * @internal
  */
