@@ -27,6 +27,11 @@ export const explorerSlice = createSlice({
       {
         const { tabNodes } = action.payload;
 
+        state.tabs = [];
+        state.selectedTabIndex = 0;
+        state.selectedNodeId = null;
+        state.nodes = { byId: {}, allIds: [] };
+
         for (const tabNode of tabNodes)
         {
           const nodeType = tabNode.typeName;
@@ -68,16 +73,17 @@ export const explorerSlice = createSlice({
     onCheckboxStateChange: {
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, checkBoxState: string, disabled: boolean }>): IExplorerState
       {
+        const checkState = action.payload.checkBoxState;
         const uniqueId = action.payload.nodeId;
         const nodeState = state.nodes.byId[uniqueId];
 
-        nodeState.disabled = action.payload.disabled;
-        const checkState = action.payload.checkBoxState;
-
-        nodeState.checked = (checkState === TreeCheckState.Checked);
-        nodeState.indeterminate = (checkState === TreeCheckState.Partial);
-        nodeState.checkable = (checkState !== TreeCheckState.CanNotBeChecked);
-
+        if (nodeState)
+        {
+          nodeState.disabled = action.payload.disabled;
+          nodeState.checked = (checkState === TreeCheckState.Checked);
+          nodeState.indeterminate = (checkState === TreeCheckState.Partial);
+          nodeState.checkable = (checkState !== TreeCheckState.CanNotBeChecked);
+        }
         return state;
       },
       prepare(node: BaseNode): { payload: { nodeId: string, checkBoxState: string, disabled: boolean } }
@@ -128,8 +134,10 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, newLabel: string }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
+        const node = state.nodes[uniqueId];
 
-        state.nodes.byId[uniqueId].name = action.payload.newLabel;
+        if (node)
+          node.name = action.payload.newLabel;
 
         return state;
       },
@@ -142,10 +150,10 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeColor: Color }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
-        const { icon } = state.nodes.byId[uniqueId];
+        const node = state.nodes.byId[uniqueId];
 
-        if (icon)
-          icon.color = action.payload.nodeColor;
+        if (node)
+          node.icon.color = action.payload.nodeColor;
 
         return state;
       },
@@ -158,10 +166,10 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeIcon: string }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
-        const { icon } = state.nodes.byId[uniqueId];
+        const node = state.nodes.byId[uniqueId];
 
-        if (icon)
-          icon.path = action.payload.nodeIcon;
+        if (node)
+          node.icon.path = action.payload.nodeIcon;
 
         return state;
       },

@@ -13,21 +13,24 @@ const mapStateToProps = (state: State) => {
   const toolbarCommandStates = state.visualizers.viewers["3D"];
   const displayToolbar = new Map<string, IToolbarButton[]>();
 
-  toolbarGroupIds.forEach((groupId) => {
-    toolbarCommands[groupId].forEach((command, index) => {
-      if (!displayToolbar[groupId]) displayToolbar[groupId] = [];
-      displayToolbar[groupId].push({
-        icon: command.getIcon(),
-        isDropdown: command.isDropdown,
-        tooltip: command.getTooltip(),
-        dropdownOptions: command.dropdownOptions,
-        // from state
-        isChecked: toolbarCommandStates[groupId][index].isChecked,
-        value: toolbarCommandStates[groupId][index].value,
-        isVisible: toolbarCommandStates[groupId][index].isVisible,
+  if (toolbarCommandStates) {
+    toolbarGroupIds.forEach((groupId) => {
+      toolbarCommands[groupId].forEach((command, index) => {
+        if (!displayToolbar[groupId]) displayToolbar[groupId] = [];
+
+        displayToolbar[groupId].push({
+          icon: command.getIcon(),
+          isDropdown: command.isDropdown,
+          tooltip: command.getTooltip(),
+          dropdownOptions: command.dropdownOptions,
+          // from state
+          isChecked: toolbarCommandStates[groupId][index].isChecked,
+          value: toolbarCommandStates[groupId][index].value,
+          isVisible: toolbarCommandStates[groupId][index].isVisible,
+        });
       });
     });
-  });
+  }
   return { toolbar: displayToolbar };
 };
 

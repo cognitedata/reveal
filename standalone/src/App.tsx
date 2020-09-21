@@ -1,83 +1,57 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
-import {
-  NodeVisualizer,
-  NodeVisualizerReducer,
-  NodeVisualizerMiddleware,
-  SyntheticSubSurfaceModule,
-  ThreeModule,
-  Modules, BaseRootNode,
-} from "@cognite/node-visualizer";
-import { createStore, combineReducers, applyMiddleware, compose } from "redux";
+// import { Trajectory } from "./Trajectory";
+import { SimpleTabs } from "./SimpleTabs";
 import { Provider } from "react-redux";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { grey } from "@material-ui/core/colors";
-
-// @ts-ignore
-const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
-}) : compose;
-
-const enhancer = composeEnhancers(
-  applyMiddleware(...[NodeVisualizerMiddleware]),
-);
-
-const store = createStore(
-  combineReducers({ ...NodeVisualizerReducer }),
-  enhancer
-);
-
-// customize the colors for changing UI style
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: grey[300]
-    },
-    secondary: {
-      main: grey[50]
-    }
-  },
-  typography: {
-    htmlFontSize: 16,
-    fontSize: 16 * 0.75,
-    h2: {
-      fontSize: 14
-    },
-    body1: {
-      fontSize: 16 * 0.75
-    }
-  }
-});
+import { store } from "./store";
+import { BPDataModule } from "@cognite/node-visualizer";
 
 function App()
 {
+  const [data, setData] = useState<BPDataModule>(null);
 
-  const [root, setRoot] = useState<BaseRootNode>();
+  const loadNewData = () => {
 
-  const modules = Modules.instance;
-  // Setup modules
-  modules.add(new ThreeModule());
-
-  useEffect(() => {
-    modules.add(new SyntheticSubSurfaceModule());
-    modules.install();
-    const rootNode = modules.createRoot();
-    setRoot(rootNode);
-
-    return () => {
-      // clean modules on unmount
-      modules.clearModules();
-    };
-  }, []);
+    if (data !== null) {
+      setData(null);
+      return;
+    }
+    Promise.all([
+      import("./mockdata/sample/wells.json"),
+      import("./mockdata/sample/wellbores.json"),
+      import("./mockdata/sample/trajectories.json"),
+      import("./mockdata/sample/trajectoryData.json"),
+    ])
+    .then(
+      ([
+         wellsJson,
+         wellBoresJson,
+         trajectoriesJson,
+         trajectoryDataJson,
+       ]) => {
+        const module = new BPDataModule();
+        module.setModuleData({
+          wells: wellsJson.default,
+          wellBores: wellBoresJson.default,
+          trajectories: trajectoriesJson.default,
+          trajectoryData: trajectoryDataJson.default,
+        });
+        setData(module);
+      }
+    )
+    .catch((err) => {
+      // tslint:disable-next-line:no-console
+      console.error(`Sample Data not found for standalone app!`, err);
+    });
+  };
 
   return (
-    <div className="App">
-      <Provider store={ store }>
-        <ThemeProvider theme={ theme }>
-          <NodeVisualizer root={ root }/>
-        </ThemeProvider>
-      </Provider>
-    </div>
+    <Provider store={ store }>
+      <div className="App">
+        <SimpleTabs data={data} onLoadData={loadNewData}/>
+        {/*<Trajectory />*/}
+      </div>
+    </Provider>
   );
 }
 

@@ -14,7 +14,7 @@ export class VirtualUserInterface
   // STATIC METHODS
   //==================================================
 
-  static install(userInterface: IUserInterface): void
+  static install(userInterface: IUserInterface | null): void
   {
     this.userInterface = userInterface;
   }

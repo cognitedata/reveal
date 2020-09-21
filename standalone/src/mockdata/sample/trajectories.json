@@ -1,0 +1,578 @@
+[
+  {
+    "id": 3834212211319012,
+    "name": "Compass",
+    "description": "",
+    "assetId": 2163474498381558,
+    "externalId": "cxLVjMnvF8-oQI4tqHDiH-9BRlG",
+    "metadata": {
+      "acscan_md_min": "0.0",
+      "tortuosity_type": "",
+      "b_interp": "",
+      "final_error": "",
+      "bh_tvd": "18740.8441434013",
+      "source": "BP-EDM",
+      "final_north": "-329.506911366735",
+      "planned_azimuth": "140.793749934655",
+      "type": "Trajectory",
+      "b_range": "Y",
+      "acscan_md_max": "268.799137564065",
+      "vs_north": "0.0",
+      "ko_tvd": "5404.010808",
+      "effective_date": "2012-04-04T00:00:00",
+      "tortuosity_period": "",
+      "interpolation_interval": "10.0",
+      "object_state": "ACTUAL",
+      "create_date": "2012-08-22T10:56:36",
+      "create_app_id": "COMPASS",
+      "final_east": "268.799137564065",
+      "create_user_id": "adeoa3",
+      "bh_md": "18760.0374541875",
+      "interpolate": "",
+      "is_definitive": "Y",
+      "version": "",
+      "update_date": "2016-09-26T08:14:13",
+      "is_readonly": "Y",
+      "definitive_path": "",
+      "tortuosity": "0.154287122642898",
+      "name": "Compass",
+      "ko_north": "",
+      "average_dogleg": "0.295287245767252",
+      "ko_md": "5404.010808",
+      "acscan_ratio_max": "19.0252395879879",
+      "is_survey_program_read_only": "N",
+      "maximum_dls_value": "1.14923010338405",
+      "update_user_id": "BP1\\mitst0(BP1\\MITST0)",
+      "wellboreName": "OCS-G 15604 / GC 743 DC313 ST00BP00",
+      "b_ratio": "",
+      "update_app_id": "COMPASS",
+      "directional_difficulty_index": "4.47138268459158",
+      "maximum_dls_depth": "13547.0270281875",
+      "definitive_version": "9.0",
+      "use_actual_data": "N",
+      "parentExternalId": "USA0000571200",
+      "acscan_radius_max": "-329.506911366735",
+      "ko_east": "",
+      "vs_east": "0.0",
+      "remarks": "",
+      "use_planned_program": ""
+    },
+    "columns": [
+      {
+        "name": "sequence_no",
+        "externalId": "sequence_no",
+        "valueType": "LONG",
+        "metadata": {},
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "azimuth",
+        "externalId": "azimuth",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "inclination",
+        "externalId": "inclination",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "md",
+        "externalId": "md",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "tvd",
+        "externalId": "tvd",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "x_offset",
+        "externalId": "x_offset",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "y_offset",
+        "externalId": "y_offset",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "definitive_survey_id",
+        "externalId": "definitive_survey_id",
+        "valueType": "STRING",
+        "metadata": {},
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "covariance_yy",
+        "externalId": "covariance_yy",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "ellipse_vertical",
+        "externalId": "ellipse_vertical",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "covariance_yz",
+        "externalId": "covariance_yz",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "covariance_zz",
+        "externalId": "covariance_zz",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "covariance_xx",
+        "externalId": "covariance_xx",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "data_entry_mode",
+        "externalId": "data_entry_mode",
+        "valueType": "LONG",
+        "metadata": {},
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "covariance_xy",
+        "externalId": "covariance_xy",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "dogleg_severity",
+        "externalId": "dogleg_severity",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°/100ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "dogleg_severity_max",
+        "externalId": "dogleg_severity_max",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°/100ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "covariance_xz",
+        "externalId": "covariance_xz",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "ellipse_east",
+        "externalId": "ellipse_east",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "ellipse_north",
+        "externalId": "ellipse_north",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "casing_radius",
+        "externalId": "casing_radius",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "in"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "global_lateral_error",
+        "externalId": "global_lateral_error",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      },
+      {
+        "name": "vertical_sect",
+        "externalId": "vertical_sect",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:07:26.982Z",
+        "lastUpdatedTime": "2020-06-19T17:07:26.982Z"
+      }
+    ],
+    "createdTime": "2020-06-19T17:07:26.982Z",
+    "lastUpdatedTime": "2020-08-24T14:27:01.558Z",
+    "dataSetId": 5699559864799135
+  },
+  {
+    "id": 5639579305725962,
+    "name": "",
+    "description": "",
+    "assetId": 2163474498381558,
+    "externalId": "BBHLH0L1CT-POS7ICp7Al-0001o",
+    "metadata": {
+      "acscan_md_min": "",
+      "tortuosity_type": "",
+      "b_interp": "",
+      "final_error": "",
+      "bh_tvd": "18731.968177588",
+      "source": "BP-EDM",
+      "final_north": "0.0",
+      "planned_azimuth": "0.0",
+      "type": "Trajectory",
+      "b_range": "",
+      "acscan_md_max": "",
+      "vs_north": "0.0",
+      "ko_tvd": "5396.01096002192",
+      "effective_date": "",
+      "tortuosity_period": "",
+      "interpolation_interval": "",
+      "object_state": "ACTUAL",
+      "create_date": "2010-02-06T07:05:08",
+      "create_app_id": "Data Migration Tool",
+      "final_east": "0.0",
+      "create_user_id": "Data Migration Tool - DIMS",
+      "bh_md": "18751.0376700753",
+      "interpolate": "",
+      "is_definitive": "",
+      "version": "",
+      "update_date": "2011-04-19T10:33:26",
+      "is_readonly": "N",
+      "definitive_path": "",
+      "tortuosity": "",
+      "name": "",
+      "ko_north": "0.0",
+      "average_dogleg": "",
+      "ko_md": "5396.01096002192",
+      "acscan_ratio_max": "",
+      "is_survey_program_read_only": "N",
+      "maximum_dls_value": "",
+      "update_user_id": "holikcm",
+      "wellboreName": "OCS-G 15607 /GC 743/ #5",
+      "b_ratio": "",
+      "update_app_id": "OpenWells",
+      "directional_difficulty_index": "",
+      "maximum_dls_depth": "",
+      "definitive_version": "",
+      "use_actual_data": "",
+      "parentExternalId": "USA0000571200",
+      "acscan_radius_max": "",
+      "ko_east": "0.0",
+      "vs_east": "0.0",
+      "remarks": "",
+      "use_planned_program": ""
+    },
+    "columns": [
+      {
+        "name": "sequence_no",
+        "externalId": "sequence_no",
+        "valueType": "LONG",
+        "metadata": {},
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "azimuth",
+        "externalId": "azimuth",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "inclination",
+        "externalId": "inclination",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "md",
+        "externalId": "md",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "tvd",
+        "externalId": "tvd",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "x_offset",
+        "externalId": "x_offset",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "y_offset",
+        "externalId": "y_offset",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "definitive_survey_id",
+        "externalId": "definitive_survey_id",
+        "valueType": "STRING",
+        "metadata": {},
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "covariance_yy",
+        "externalId": "covariance_yy",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "ellipse_vertical",
+        "externalId": "ellipse_vertical",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "covariance_yz",
+        "externalId": "covariance_yz",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "covariance_zz",
+        "externalId": "covariance_zz",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "covariance_xx",
+        "externalId": "covariance_xx",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "data_entry_mode",
+        "externalId": "data_entry_mode",
+        "valueType": "LONG",
+        "metadata": {},
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "covariance_xy",
+        "externalId": "covariance_xy",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "dogleg_severity",
+        "externalId": "dogleg_severity",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°/100ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "dogleg_severity_max",
+        "externalId": "dogleg_severity_max",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "°/100ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "covariance_xz",
+        "externalId": "covariance_xz",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft²"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "ellipse_east",
+        "externalId": "ellipse_east",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "ellipse_north",
+        "externalId": "ellipse_north",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "casing_radius",
+        "externalId": "casing_radius",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "in"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "global_lateral_error",
+        "externalId": "global_lateral_error",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      },
+      {
+        "name": "vertical_sect",
+        "externalId": "vertical_sect",
+        "valueType": "DOUBLE",
+        "metadata": {
+          "unit": "ft"
+        },
+        "createdTime": "2020-06-19T17:08:42.668Z",
+        "lastUpdatedTime": "2020-06-19T17:08:42.668Z"
+      }
+    ],
+    "createdTime": "2020-06-19T17:08:42.668Z",
+    "lastUpdatedTime": "2020-08-24T14:27:58.391Z",
+    "dataSetId": 5699559864799135
+  }
+]

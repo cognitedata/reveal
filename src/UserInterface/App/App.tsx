@@ -82,11 +82,10 @@ export function App() {
         .catch((err) => {
           // tslint:disable-next-line:no-console
           console.error(
-            "Sample Data not found synthetic data will be loaded!",
+            `Sample Data not found synthetic data will be loaded! 
+Disable loadMockData constant in App.tsx to remove this warning!`,
             err
           );
-          window.alert(`Sample Data not found! App Loaded with Synthetic Module!
-          Disable LOAD_MOCK_DATA constant in App.tsx to remove this warning!`);
           modules.add(new SyntheticSubSurfaceModule());
           modules.install();
           const rootNode = modules.createRoot();

@@ -15,6 +15,7 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
 import { BaseModule } from "@/Core/Module/BaseModule";
+import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
 export class Modules
 {
@@ -65,6 +66,7 @@ export class Modules
   public clearModules()
   {
     this.modules = [];
+    VirtualUserInterface.install(null);
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void
