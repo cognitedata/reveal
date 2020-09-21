@@ -58,8 +58,8 @@ export const TimeseriesDetailsAbstract = ({
               display: 'flex',
             }}
           >
-            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently Viewing
-            Sequence
+            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently viewing
+            sequence
           </Body>
         </InfoCell>
       )}

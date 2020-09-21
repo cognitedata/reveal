@@ -63,8 +63,8 @@ export const EventDetailsAbstract = ({
               display: 'flex',
             }}
           >
-            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently Viewing
-            Event
+            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently viewing
+            event
           </Body>
         </InfoCell>
       )}

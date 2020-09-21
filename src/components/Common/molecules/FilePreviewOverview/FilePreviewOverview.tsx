@@ -445,14 +445,14 @@ export const FilePreviewOverview = ({
             </div>
           </Collapse.Panel>
 
-          {/** Time Series */}
+          {/** Time series */}
           <Collapse.Panel
             showArrow={false}
             key="timeseries"
             header={
               <CollapseHeader>
                 <Icon className="cogs-icon resource-icon" type="Timeseries" />
-                <Title level={5}>Time Series</Title>
+                <Title level={5}>Time series</Title>
                 <div className="spacer" />
                 <Badge
                   text={`${categorizedAnnotations.timeSeries.annotations.length}`}
@@ -638,7 +638,7 @@ export const FilePreviewOverview = ({
                 currentTab === 'resources' ? Colors.midblue.hex() : 'inherit',
             }}
           >
-            Detected Resources
+            Detected resources
           </Title>
         </Button>
         <Button variant="ghost" onClick={() => setTab('fileInfo')}>
@@ -649,7 +649,7 @@ export const FilePreviewOverview = ({
                 currentTab !== 'resources' ? Colors.midblue.hex() : 'inherit',
             }}
           >
-            File Info
+            File info
           </Title>
         </Button>
       </Tabs>

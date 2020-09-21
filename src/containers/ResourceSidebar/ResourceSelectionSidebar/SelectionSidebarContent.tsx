@@ -91,7 +91,7 @@ export const SelectionSidebarContent = ({
           break;
         }
         case 'timeSeries': {
-          resourceName = 'Time Series';
+          resourceName = 'Time series';
           break;
         }
         case 'sequence': {
@@ -110,7 +110,7 @@ export const SelectionSidebarContent = ({
               }}
               icon="ArrowRight"
             >
-              View {resourceName}
+              View {resourceName.toLowerCase()}
             </Button>
           );
         }

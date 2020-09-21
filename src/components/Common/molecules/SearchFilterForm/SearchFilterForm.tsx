@@ -405,7 +405,7 @@ export const SearchFilterForm = ({
         />
       )}
       <Button disabled={isAdding} onClick={() => setIsAdding(true)} icon="Plus">
-        Add New Filter
+        Add new filter
       </Button>
     </Wrapper>
   );

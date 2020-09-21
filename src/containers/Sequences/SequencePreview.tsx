@@ -46,7 +46,7 @@ export const SequencePreview = ({
   }, [dispatch, sequence, sequenceId]);
 
   const tabs = {
-    'sequence-metadata': 'Sequence Details',
+    'sequence-metadata': 'Sequence details',
     columns: 'Columns',
   };
 

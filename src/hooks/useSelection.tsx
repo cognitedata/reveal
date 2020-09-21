@@ -27,7 +27,7 @@ export const useSelectionButton = () => {
         break;
       }
       case 'timeSeries': {
-        resourceName = 'Time Series';
+        resourceName = 'Time series';
         break;
       }
     }

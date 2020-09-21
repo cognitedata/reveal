@@ -57,7 +57,7 @@ export const CreateAnnotationForm = ({
         buttonText = (
           <>
             Linked to <Icon type="Timeseries" style={{ marginLeft: 4 }} />{' '}
-            {resource ? resource.name : 'Time Series'}
+            {resource ? resource.name : 'Time series'}
           </>
         );
         break;

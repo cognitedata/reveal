@@ -49,7 +49,7 @@ export const Explorer = () => {
               break;
             }
             case 'timeSeries': {
-              resourceName = 'Time Series';
+              resourceName = 'Time series';
               path = `timeseries/${resourceItem.id}`;
               break;
             }
@@ -80,7 +80,7 @@ export const Explorer = () => {
                 }}
                 icon="ArrowRight"
               >
-                View {resourceName}
+                View {resourceName.toLowerCase()}
               </Button>
             );
           }

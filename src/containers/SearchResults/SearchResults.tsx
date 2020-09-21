@@ -63,7 +63,7 @@ const ResourceMap: { [key in ResourceType]: string } = {
   asset: 'Assets',
   file: 'Files',
   event: 'Events',
-  timeSeries: 'Time Series',
+  timeSeries: 'Time series',
   sequence: 'Sequences',
 };
 
@@ -152,7 +152,7 @@ export const SearchResults = ({
       <Wrapper>
         <Filters>
           <Title level={4} style={{ marginBottom: 12 }}>
-            Resource Types
+            Resource types
           </Title>
           {resourceTypes.map(el => (
             <ListItem

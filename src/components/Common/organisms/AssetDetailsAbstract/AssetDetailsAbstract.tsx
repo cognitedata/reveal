@@ -139,8 +139,8 @@ export const AssetDetailsAbstract = ({
               display: 'flex',
             }}
           >
-            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently Viewing
-            Asset
+            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently viewing
+            asset
           </Body>
         </InfoCell>
       )}

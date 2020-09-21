@@ -113,7 +113,7 @@ export const TimeseriesFilterSearch = ({ query = '' }: { query?: string }) => {
                 } results for "${query}"`
               : `All ${
                   timeseriesCount === undefined ? '' : timeseriesCount
-                } Results`}
+                } results`}
           </Body>
           <TimeseriesTable
             timeseries={timeseries}

@@ -90,7 +90,7 @@ export const FileTable = ({
               },
               {
                 key: 'mimeType',
-                title: 'Mime Type',
+                title: 'MIME type',
                 dataKey: 'mimeType',
                 width: 200,
                 headerRenderer,
@@ -152,14 +152,6 @@ export const FileTable = ({
                   </Body>
                 ),
                 resizable: true,
-              },
-              {
-                key: 'labels',
-                title: 'Labels',
-                width: 200,
-                resizable: true,
-                headerRenderer,
-                cellRenderer: () => <Body level={3}>Coming soon....</Body>,
               },
               ...(mode !== 'none'
                 ? [

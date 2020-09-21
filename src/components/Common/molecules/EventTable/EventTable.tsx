@@ -84,7 +84,7 @@ export const EventTable = ({
               },
               {
                 key: 'subtype',
-                title: 'Sub Type',
+                title: 'Subtype',
                 dataKey: 'subtype',
                 width: 200,
                 headerRenderer,
@@ -161,14 +161,6 @@ export const EventTable = ({
                   </Body>
                 ),
                 resizable: true,
-              },
-              {
-                key: 'labels',
-                title: 'Labels',
-                width: 200,
-                resizable: true,
-                headerRenderer,
-                cellRenderer: () => <Body level={3}>Coming soon....</Body>,
               },
               ...(mode !== 'none'
                 ? [

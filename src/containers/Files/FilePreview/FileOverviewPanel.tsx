@@ -96,7 +96,7 @@ export const FileOverviewPanel = ({
               }
             }}
           >
-            Finish Adding
+            Finish adding
           </Button>
         </div>
       );
@@ -111,17 +111,17 @@ export const FileOverviewPanel = ({
                 <Menu.Header>Contextualization</Menu.Header>
                 <Menu.Item onClick={() => setCreatable(true)}>
                   <Icon type="Plus" />
-                  <span>Add New Tags</span>
+                  <span>Add new tags</span>
                 </Menu.Item>
                 {pendingAnnotations.length !== 0 && (
                   <Menu.Item onClick={() => setPendingAnnotations([])}>
                     <Icon type="Delete" />
-                    <span>Clear Pending Tags</span>
+                    <span>Clear pending tags</span>
                   </Menu.Item>
                 )}
                 <Menu.Item onClick={() => dispatch(detectObject(fileId!))}>
                   <Icon type={detectObjectJobIcon} />
-                  <span>Detect Objects</span>
+                  <span>Detect objects</span>
                 </Menu.Item>
                 <Menu.Item
                   onClick={() =>
@@ -145,7 +145,7 @@ export const FileOverviewPanel = ({
                   }
                 >
                   <Icon type="Close" style={{ width: 16 }} />
-                  <span>Clear Tags</span>
+                  <span>Clear tags</span>
                 </Menu.Item>
               </>
             )}
@@ -180,7 +180,7 @@ export const FileOverviewPanel = ({
                       }
                     }}
                   >
-                    Include Annotations
+                    Include annotations
                   </Menu.Item>
                 </Menu>
               }

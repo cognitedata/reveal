@@ -49,7 +49,7 @@ export const ExplorationNavbar = ({
     case 'none': {
       selectionContent = (
         <Button icon="Plus" onClick={() => setMode('multiple')}>
-          Start Selection
+          Start selection
         </Button>
       );
       break;

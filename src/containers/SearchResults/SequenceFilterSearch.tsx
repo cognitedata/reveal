@@ -105,7 +105,7 @@ export const SequenceFilterSearch = ({ query = '' }: { query?: string }) => {
                 } results for "${query}"`
               : `All ${
                   sequencesCount === undefined ? '' : sequencesCount
-                } Results`}
+                } results`}
           </Body>
           <SequenceTable
             sequences={sequences}

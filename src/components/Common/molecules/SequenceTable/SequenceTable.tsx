@@ -148,14 +148,6 @@ export const SequenceTable = ({
                 ),
                 resizable: true,
               },
-              {
-                key: 'labels',
-                title: 'Labels',
-                width: 200,
-                resizable: true,
-                headerRenderer,
-                cellRenderer: () => <Body level={3}>Coming soon....</Body>,
-              },
               ...(mode !== 'none'
                 ? [
                     {

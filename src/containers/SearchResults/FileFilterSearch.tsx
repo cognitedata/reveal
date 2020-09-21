@@ -152,7 +152,7 @@ export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
               ? `${
                   filesCount === undefined ? 'Loading' : filesCount
                 } results for "${query}"`
-              : `All ${filesCount === undefined ? '' : filesCount} Results`}
+              : `All ${filesCount === undefined ? '' : filesCount} results`}
           </Body>
           <FileTable
             files={files}

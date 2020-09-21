@@ -137,7 +137,7 @@ export const AssetTable = ({
               },
               {
                 key: 'root',
-                title: 'Root Asset',
+                title: 'Root asset',
                 width: 200,
                 resizable: true,
                 headerRenderer,
@@ -148,24 +148,6 @@ export const AssetTable = ({
                       onAssetSelected={onAssetSelected}
                     />
                   );
-                },
-              },
-              {
-                key: 'labels',
-                title: 'Labels',
-                width: 200,
-                resizable: true,
-                headerRenderer,
-                cellRenderer: () => <Body level={3}>Coming soon....</Body>,
-              },
-              {
-                key: 'templates',
-                title: 'Templates',
-                width: 200,
-                resizable: true,
-                headerRenderer,
-                cellRenderer: () => {
-                  return <Body level={3}>Coming soon....</Body>;
                 },
               },
               ...(mode !== 'none'

@@ -127,7 +127,7 @@ export const WithActions = () => {
             timeSeries={timeseries}
             actions={[
               <Button key="view" type="primary" icon="ArrowRight">
-                View Details
+                View details
               </Button>,
             ]}
           />
@@ -176,7 +176,7 @@ export const WithExtras = () => {
             timeSeries={timeseries}
             actions={[
               <Button key="view" type="primary" icon="ArrowRight">
-                View Details
+                View details
               </Button>,
             ]}
           />

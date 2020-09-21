@@ -141,11 +141,11 @@ export const AssetPreview = ({
   }, [dispatch, filesByAnnotationsIds]);
 
   const tabs = {
-    'asset-metadata': 'Asset Details',
-    timeseries: <span>Linked Timeseries ({timeseries.length})</span>,
-    files: <span>Linked Files ({files.length})</span>,
-    sequences: <span>Linked Sequences ({sequences.length})</span>,
-    events: <span>Linked Events ({events.length})</span>,
+    'asset-metadata': 'Asset details',
+    timeseries: <span>Linked time series ({timeseries.length})</span>,
+    files: <span>Linked files ({files.length})</span>,
+    sequences: <span>Linked sequences ({sequences.length})</span>,
+    events: <span>Linked events ({events.length})</span>,
     children: 'Children',
   };
 

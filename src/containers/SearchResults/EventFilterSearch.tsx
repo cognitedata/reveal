@@ -127,7 +127,7 @@ export const EventFilterSearch = ({ query = '' }: { query?: string }) => {
               ? `${
                   eventsCount === undefined ? 'Loading' : eventsCount
                 } results for "${query}"`
-              : `All ${eventsCount === undefined ? '' : eventsCount} Results`}
+              : `All ${eventsCount === undefined ? '' : eventsCount} results`}
           </Body>
           <EventTable
             events={events}

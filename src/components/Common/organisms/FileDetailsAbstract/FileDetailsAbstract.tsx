@@ -58,8 +58,8 @@ export const FileDetailsAbstract = ({
               display: 'flex',
             }}
           >
-            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently Viewing
-            File
+            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently viewing
+            file
           </Body>
         </InfoCell>
       )}
@@ -104,7 +104,7 @@ export const FileDetailsAbstract = ({
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Icon type="DataStudio" style={{ marginRight: '4px' }} />
-                <span>Detected Asset Tags</span>
+                <span>Detected asset tags</span>
               </div>
             }
             bordered={false}
@@ -124,7 +124,7 @@ export const FileDetailsAbstract = ({
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Icon type="DataStudio" style={{ marginRight: '4px' }} />
-                <span>Detected File Tags</span>
+                <span>Detected file tags</span>
               </div>
             }
             bordered={false}

@@ -6,7 +6,7 @@ export const FileInfoGrid = ({ file }: { file: FileInfo }) => {
   return (
     <InfoGrid noBorders>
       <DetailsItem name="Source" value={file.source} />
-      <DetailsItem name="MimeType" value={file.mimeType} />
+      <DetailsItem name="MIME type" value={file.mimeType} />
       <DetailsItem
         name="Uploaded at"
         value={

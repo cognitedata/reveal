@@ -103,7 +103,7 @@ export const FileUploaderModal = ({
                         }) => {
                           return (
                             <Button onClick={() => onFileSelected(file)}>
-                              View File
+                              View file
                             </Button>
                           );
                         },

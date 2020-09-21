@@ -43,7 +43,7 @@ export const EventPreview = ({
     }
   }, [dispatch, event, eventId]);
   const tabs = {
-    'event-metadata': 'Event Details',
+    'event-metadata': 'Event details',
     metadata: 'Metadata',
   };
 
