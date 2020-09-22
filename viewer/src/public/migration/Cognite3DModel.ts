@@ -71,7 +71,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   private readonly cadModel: CadModelMetadata;
   private readonly nodeColors: Map<number, [number, number, number]>;
-  private readonly nodeTransforms: Map<number, { position: THREE.Vector3; rotation: THREE.Euler } | THREE.Matrix4>;
+  private readonly nodeTransforms: Map<number, THREE.Matrix4>;
 
   private readonly selectedNodes: Set<number>;
   private readonly hiddenNodes: Set<number>;
@@ -520,35 +520,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param transform
    * @param applyToChildren
    */
-  async setNodeTransformByTreeIndex(
-    treeIndex: number,
-    transform: THREE.Matrix4,
-    applyToChildren: boolean
-  ): Promise<void>;
-
-  /**
-   * Set override transform of the node by tree index.
-   * @param treeIndex
-   * @param transform
-   * @param applyToChildren
-   */
-  async setNodeTransformByTreeIndex(
-    treeIndex: number,
-    transform: { position: THREE.Vector3; rotation: THREE.Euler },
-    applyToChildren: boolean
-  ): Promise<void>;
-
-  /**
-   * Set override transform of the node by tree index.
-   * @param treeIndex
-   * @param transform
-   * @param applyToChildren
-   */
-  async setNodeTransformByTreeIndex(
-    treeIndex: number,
-    transform: { position: THREE.Vector3; rotation: THREE.Euler } | THREE.Matrix4,
-    applyToChildren = true
-  ) {
+  async setNodeTransformByTreeIndex(treeIndex: number, transform: THREE.Matrix4, applyToChildren = true) {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     treeIndices.forEach(idx => this.nodeTransforms.set(idx, transform));
     this.cadNode.requestNodeUpdate(treeIndices);

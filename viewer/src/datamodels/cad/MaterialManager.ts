@@ -185,11 +185,7 @@ export class MaterialManager {
           );
         }
       } else {
-        let overrideMatrix = style.worldTransform;
-
-        if (!(overrideMatrix instanceof THREE.Matrix4)) {
-          overrideMatrix = this.buildMatrixFromTranslationAndRotation(overrideMatrix.position, overrideMatrix.rotation);
-        }
+        const overrideMatrix = style.worldTransform;
 
         this.overrideTreeIndexTransform(
           treeIndex,
@@ -199,13 +195,6 @@ export class MaterialManager {
         );
       }
     }
-  }
-
-  private buildMatrixFromTranslationAndRotation(translation: THREE.Vector3, rotation: THREE.Euler): THREE.Matrix4 {
-    const matrix = new THREE.Matrix4();
-    matrix.makeRotationFromEuler(rotation);
-    matrix.setPosition(translation);
-    return matrix;
   }
 
   private overrideTreeIndexTransform(

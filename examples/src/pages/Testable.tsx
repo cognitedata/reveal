@@ -37,7 +37,7 @@ export function Testable() {
       const scene = new THREE.Scene();
 
       const pickedNodes: Set<number> = new Set();
-      const transformedNodes: Map<number, { position: THREE.Vector3, rotation: THREE.Euler }> = new Map();
+      const transformedNodes: Map<number, THREE.Matrix4> = new Map();
 
       const ghostedNodes: Set<number> = new Set();
 
@@ -124,7 +124,12 @@ export function Testable() {
       } else if (test === "node_transform") {
 
         const transformedTreeIndexes = [...Array(80).keys()].filter(p => p % 2 === 0);
-        transformedTreeIndexes.forEach(p => transformedNodes.set(p, { position: new THREE.Vector3(5, 6, 7), rotation: new THREE.Euler(Math.PI / 2, Math.PI / 2, -Math.PI) }));
+        transformedTreeIndexes.forEach(p => {
+          const transform = new THREE.Matrix4();
+          transform.makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI / 2, -Math.PI));
+          transform.setPosition(new THREE.Vector3(5, 6, 7));
+          transformedNodes.set(p, transform);
+        });
         model.requestNodeUpdate(transformedTreeIndexes);
 
       } else if (test === 'ghost_mode') {

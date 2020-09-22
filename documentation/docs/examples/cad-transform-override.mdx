@@ -9,8 +9,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Reveal supports overriding transforms of individual objects by providing [tree indices to identify 3D nodes.](../concepts.md)
 
-Note that any transformation override is applied with respect to the THREE.js world coordinate space. Also note that the node transform is not accounted for when determining geometry to load. Due to this node transforms shouldn't apply too drastic changes to the position and extend of the nodes. For model wide changes `Cognite3DModel.setModelTransformation` should be used in stead.
-
+Note that any transformation override is applied with respect to the THREE.js world coordinate space. Also note that the node transform is not accounted for when determining geometry to load. Due to this node transforms shouldn't apply too drastic changes to the position and extend of the nodes. For model wide changes `Cognite3DModel.setModelTransformation` should be used instead.
+Also note that non-uniform scaling of nodes are not currently supported and may give unexpected results. 
 
 ## Examples
 
@@ -19,14 +19,14 @@ Note that any transformation override is applied with respect to the THREE.js wo
 ### Setting node transform
 
 Setting the transform of a given node is done by `Cognite3DModel.setNodeTransformByTreeIndex` and takes a tree index,
-position, rotation and a flag if this transformation also should be applied to children of the given node.
+a matrix transformation and a flag if the transformation also should be applied to children of the given node.
 
 
 
 ```jsx runnable
-const position = new THREE.Vector3(10, 10, 0);
-const rotation = new THREE.Euler(0, 0, 0);
-model.setNodeTransformByTreeIndex(532261, {position, rotation}, true);
+const transform = new THREE.Matrix4();
+transform.setPosition(new THREE.Vector3(10, 10, 0));
+model.setNodeTransformByTreeIndex(532261, transform, true);
 ```
 
 ### Remove node transform

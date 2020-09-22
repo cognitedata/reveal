@@ -38,10 +38,10 @@ export type NodeAppearance = {
    */
   readonly outlineColor?: OutlineColor;
   /**
-   * When set, a position and rotation or matrix4 is applied
+   * When set, a matrix4 transformation is applied
    * to the node in world space.
    */
-  readonly worldTransform?: { position: THREE.Vector3; rotation: THREE.Euler } | THREE.Matrix4;
+  readonly worldTransform?: THREE.Matrix4;
 };
 
 export interface NodeAppearanceProvider {
