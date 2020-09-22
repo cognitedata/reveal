@@ -19,7 +19,7 @@ describe('EffectRenderManager', () => {
     expect(() => new EffectRenderManager(materialManager)).not.toThrow();
   });
 
-  test('addPostRenderEffects reset settings after completed', () => {
+  test('render() reset settings after completed', () => {
     // Arrange
     const target = new THREE.WebGLRenderTarget(64, 64);
     renderer.setRenderTarget(target);
