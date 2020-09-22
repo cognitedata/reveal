@@ -24,6 +24,7 @@ module.exports = {
         'examples/cad-basic',
         'examples/cad-colors',
         'examples/cad-highlighting',
+        'examples/cad-transform-override',
         'examples/cad-ghostmode',
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',

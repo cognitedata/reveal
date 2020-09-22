@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearanceProvider } from './NodeAppearance';
+import { TransformOverrideBuffer } from './rendering/TransformOverrideBuffer';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -174,7 +175,55 @@ export class MaterialManager {
         (style.outlineColor ? style.outlineColor << 3 : 0);
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = bytePattern;
       materials.overrideColorPerTreeIndex.needsUpdate = true;
+
+      if (style.worldTransform === undefined) {
+        if (materials.transformOverrideBuffer.overrideIndices.has(treeIndex)) {
+          this.removeOverrideTreeIndexTransform(
+            treeIndex,
+            materials.transformOverrideIndexTexture,
+            materials.transformOverrideBuffer
+          );
+        }
+      } else {
+        const overrideMatrix = style.worldTransform;
+
+        this.overrideTreeIndexTransform(
+          treeIndex,
+          overrideMatrix,
+          materials.transformOverrideIndexTexture,
+          materials.transformOverrideBuffer
+        );
+      }
     }
+  }
+
+  private overrideTreeIndexTransform(
+    treeIndex: number,
+    transform: THREE.Matrix4,
+    indexTexture: THREE.DataTexture,
+    transformTextureBuffer: TransformOverrideBuffer
+  ) {
+    const transformIndex = transformTextureBuffer.addOverrideTransform(treeIndex, transform);
+
+    indexTexture.image.data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
+    indexTexture.image.data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
+    indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
+
+    indexTexture.needsUpdate = true;
+  }
+
+  private removeOverrideTreeIndexTransform(
+    treeIndex: number,
+    indexTexture: THREE.DataTexture,
+    transformTextureBuffer: TransformOverrideBuffer
+  ) {
+    indexTexture.image.data[treeIndex * 3 + 0] = 0;
+    indexTexture.image.data[treeIndex * 3 + 1] = 0;
+    indexTexture.image.data[treeIndex * 3 + 2] = 0;
+
+    transformTextureBuffer.removeOverrideTransform(treeIndex);
+
+    indexTexture.needsUpdate = true;
   }
 
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
