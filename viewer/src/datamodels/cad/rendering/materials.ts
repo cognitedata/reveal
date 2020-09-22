@@ -7,6 +7,7 @@ import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from './RenderMode';
 import { determinePowerOfTwoDimensions } from '@/utilities/determinePowerOfTwoDimensions';
 import matCapTextureImage from './matCapTextureData';
+import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
 export interface Materials {
   // Materials
@@ -27,6 +28,8 @@ export interface Materials {
   simple: THREE.ShaderMaterial;
   // Data textures
   overrideColorPerTreeIndex: THREE.DataTexture;
+  transformOverrideIndexTexture: THREE.DataTexture;
+  transformOverrideBuffer: TransformOverrideBuffer;
 }
 
 export function createMaterials(
@@ -36,7 +39,7 @@ export function createMaterials(
 ): Materials {
   const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = textureDims.width * textureDims.height;
-  const dataTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
+  const treeIndexTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
   const transparent = false;
 
   const colors = new Uint8Array(4 * textureElementCount);
@@ -44,6 +47,15 @@ export function createMaterials(
     colors[4 * i + 3] = 1;
   }
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
+
+  const transformOverrideIndexBuffer = new Uint8Array(textureElementCount * 3);
+
+  const transformOverrideIndexTexture = new THREE.DataTexture(
+    transformOverrideIndexBuffer,
+    textureDims.width,
+    textureDims.height,
+    THREE.RGBFormat
+  );
 
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
@@ -56,6 +68,11 @@ export function createMaterials(
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
     side: THREE.DoubleSide,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    },
     transparent
   });
 
@@ -69,6 +86,11 @@ export function createMaterials(
     // TODO double side is not necessary for all,
     // we should indicate this in the data from Rust
     side: THREE.DoubleSide,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    },
     transparent
   });
 
@@ -257,6 +279,11 @@ export function createMaterials(
     name: 'Low detail material',
     clipping: true,
     clippingPlanes,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    },
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex,
     transparent
@@ -279,17 +306,43 @@ export function createMaterials(
     triangleMesh: triangleMeshMaterial,
     simple: simpleMaterial
   };
+
+  const transformOverrideBuffer = new TransformOverrideBuffer((newOverrideDataTexture: THREE.DataTexture) => {
+    for (const material of Object.values(allMaterials)) {
+      material.uniforms.transformOverrideTexture.value = newOverrideDataTexture;
+      material.uniforms.transformOverrideTextureSize.value = new THREE.Vector2(
+        newOverrideDataTexture.image.width,
+        newOverrideDataTexture.image.height
+      );
+    }
+  });
+
   for (const material of Object.values(allMaterials)) {
-    updateDefinesAndUniforms(material, dataTextureSize, overrideColorPerTreeIndex, matCapTexture, renderMode);
+    updateDefinesAndUniforms(
+      material,
+      treeIndexTextureSize,
+      overrideColorPerTreeIndex,
+      transformOverrideIndexTexture,
+      transformOverrideBuffer.dataTexture,
+      matCapTexture,
+      renderMode
+    );
   }
 
-  return { ...allMaterials, overrideColorPerTreeIndex };
+  return {
+    ...allMaterials,
+    overrideColorPerTreeIndex,
+    transformOverrideIndexTexture,
+    transformOverrideBuffer: transformOverrideBuffer
+  };
 }
 
 function updateDefinesAndUniforms(
   material: THREE.ShaderMaterial,
-  dataTextureSize: THREE.Vector2,
+  treeIndexTextureSize: THREE.Vector2,
   overrideColorPerTreeIndex: THREE.DataTexture,
+  transformOverrideIndexTexture: THREE.DataTexture,
+  transformOverrideTexture: THREE.DataTexture,
   matCapTexture: THREE.Texture,
   renderMode: RenderMode
 ) {
@@ -304,12 +357,23 @@ function updateDefinesAndUniforms(
       colorDataTexture: {
         value: overrideColorPerTreeIndex
       },
-      dataTextureSize: {
-        value: dataTextureSize
+      treeIndexTextureSize: {
+        value: treeIndexTextureSize
+      },
+      transformOverrideIndexTexture: {
+        value: transformOverrideIndexTexture
+      },
+      transformOverrideTexture: {
+        value: transformOverrideTexture
+      },
+      transformOverrideTextureSize: {
+        value: new THREE.Vector2(transformOverrideTexture.image.width, transformOverrideTexture.image.height)
       },
       matCapTexture: {
         value: matCapTexture
       }
     }
   });
+
+  material.uniformsNeedUpdate = true;
 }
