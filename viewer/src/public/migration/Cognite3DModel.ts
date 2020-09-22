@@ -73,6 +73,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly nodeColors: Map<number, [number, number, number]>;
   private readonly selectedNodes: Set<number>;
   private readonly hiddenNodes: Set<number>;
+  private readonly ghostedNodes: Set<number>;
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
@@ -92,6 +93,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
     this.selectedNodes = new Set();
+    this.ghostedNodes = new Set();
     const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
 
@@ -103,6 +105,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         }
         if (this.nodeColors.has(treeIndex)) {
           style = { ...style, color: this.nodeColors.get(treeIndex) };
+        }
+        if (this.ghostedNodes.has(treeIndex)) {
+          style = { ...style, ...DefaultNodeAppearance.Ghosted };
         }
         if (this.selectedNodes.has(treeIndex)) {
           style = { ...style, ...DefaultNodeAppearance.Highlighted };
@@ -504,6 +509,54 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * Enables ghost mode for the tree index given, making the object appear transparant and gray.
+   * Note that ghosted objects are ignored in ray picking actions.
+   * @param treeIndex       Tree index of node to ghost.
+   * @param applyToChildren When true, all descendants of the node is also ghosted.
+   * @returns Promise that resolves to the number of affected nodes.
+   */
+  async ghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.ghostedNodes.add(idx));
+    this.cadNode.requestNodeUpdate(treeIndices.toArray());
+    return treeIndices.count;
+  }
+
+  /**
+   * Disables ghost mode for the tree index given, making the object be rendered normal.
+   * @param treeIndex       Tree index of node to un-ghost.
+   * @param applyToChildren When true, all descendants of the node is also un-ghosted.
+   * @returns Promise that resolves to the number of affected nodes.
+   */
+  async unghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.ghostedNodes.delete(idx));
+    const allIndices = Array.from(new Array(this.cadModel.scene.maxTreeIndex + 1).keys());
+    this.cadNode.requestNodeUpdate(allIndices);
+    return treeIndices.count;
+  }
+
+  /**
+   * Enable ghost mode for all nodes in the model, making the whole model be rendered transparent
+   * and in gray.
+   */
+  ghostAllNodes(): void {
+    for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
+      this.ghostedNodes.add(i);
+    }
+    this.cadNode.requestNodeUpdate(Array.from(this.ghostedNodes.values()));
+  }
+
+  /**
+   * Disable ghost mode for all nodes in the model.
+   */
+  unghostAllNodes(): void {
+    const ghostedNodes = Array.from(this.ghostedNodes);
+    this.ghostedNodes.clear();
+    this.cadNode.requestNodeUpdate(ghostedNodes);
+  }
+
+  /**
    * Show the node by node ID, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
    * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
    * This method is async because nodeId might be not loaded yet.
@@ -552,7 +605,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
-    for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
+    for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
       this.hiddenNodes.add(i);
     }
     this.cadNode.requestNodeUpdate(Array.from(this.hiddenNodes.values()));

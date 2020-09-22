@@ -150,6 +150,7 @@ export function Picking() {
           if (intersections.length === 0) {
             return;
           }
+          console.log('Intersections:', intersections);
 
           scene.add(createSphere(intersections[0]!.point, 'purple'));
 
