@@ -56,33 +56,29 @@ first applies `worldToModel`, then `rotationMatrix` and finally `modelToWorld`.
 
 ```jsx runnable
 model.getBoundingBoxByTreeIndex(533010).then(boundingBox => {
-  let counter = 0;
-
   const center = boundingBox.getCenter(new THREE.Vector3());
 
   const modelToWorld = new THREE.Matrix4();
   const worldToModel = new THREE.Matrix4();
   const rotationMatrix = new THREE.Matrix4();
 
-  const rotation = new THREE.Euler();
-  const position = new THREE.Vector3();
+  const clock = new THREE.Clock(true);
+  clock.start();
 
   const intervalID = setInterval(function () {
+    clock.getElapsedTime();
+
     modelToWorld.setPosition(center);
     worldToModel.getInverse(modelToWorld.clone());
 
-    const newRotation = new THREE.Euler(0, -Math.PI / 300 * counter, 0);
+    const newRotation = new THREE.Euler(0, -Math.PI * clock.elapsedTime / 20, 0);
     rotationMatrix.makeRotationFromEuler(newRotation);
 
     const matrixOverride = modelToWorld.multiply(rotationMatrix.multiply(worldToModel));
 
-    rotation.setFromRotationMatrix(matrixOverride);
-    position.setFromMatrixColumn(matrixOverride, 3);
+    model.setNodeTransformByTreeIndex(532261, matrixOverride, true);
 
-    model.setNodeTransformByTreeIndex(532261, { position, rotation }, true);
-
-    counter++;
-    if (counter >= 150) clearInterval(intervalID);
+    if (clock.elapsedTime >= 10) clearInterval(intervalID);
   }, 20);
 });
 ```
