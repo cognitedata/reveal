@@ -37,6 +37,11 @@ export type NodeAppearance = {
    * node to make it stand out.
    */
   readonly outlineColor?: OutlineColor;
+  /**
+   * When set, a matrix4 transformation is applied
+   * to the node in world space.
+   */
+  readonly worldTransform?: THREE.Matrix4;
 };
 
 export interface NodeAppearanceProvider {

@@ -37,16 +37,21 @@ export function Testable() {
       const scene = new THREE.Scene();
 
       const pickedNodes: Set<number> = new Set();
+      const transformedNodes: Map<number, THREE.Matrix4> = new Map();
+
       const ghostedNodes: Set<number> = new Set();
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
           let style = reveal.DefaultNodeAppearance.NoOverrides;
+          if (transformedNodes.has(treeIndex)) {
+            return { worldTransform: transformedNodes.get(treeIndex)! };
+          }
           if (pickedNodes.has(treeIndex)) {
-            style = {...style, ...reveal.DefaultNodeAppearance.Highlighted };
+            style = { ...style, ...reveal.DefaultNodeAppearance.Highlighted };
           }
           if (ghostedNodes.has(treeIndex)) {
-            style = {...style, ...reveal.DefaultNodeAppearance.Ghosted };
+            style = { ...style, ...reveal.DefaultNodeAppearance.Ghosted };
           }
           return style;
         }
@@ -69,7 +74,7 @@ export function Testable() {
       revealManager.on('loadingStateChanged', (loadingState) => {
         if (skipFirstLoadingState) {
           skipFirstLoadingState = false;
-          if(loadingState.isLoading) {
+          if (loadingState.isLoading) {
             setLoadingState(loadingState);
           }
         } else {
@@ -98,8 +103,7 @@ export function Testable() {
         camera = new THREE.PerspectiveCamera();
       } else if (test === "suggested_camera") {
         // Nothing - the suggested camera is default
-      }
-      else if (test === 'rotate_cad_model') {
+      } else if (test === 'rotate_cad_model') {
         const matrix = model.getModelTransformation();
         const newMatrix = new THREE.Matrix4().multiplyMatrices(matrix, new THREE.Matrix4().makeRotationY(Math.PI / 3.0));
         model.setModelTransformation(newMatrix);
@@ -108,8 +112,7 @@ export function Testable() {
         target.copy(cameraConfig.target);
         near = cameraConfig.near;
         far = cameraConfig.far;
-      }
-      else if (test === "highlight") {
+      } else if (test === "highlight") {
         camera = new THREE.PerspectiveCamera();
         position.x = 12;
         position.y = -4;
@@ -117,15 +120,27 @@ export function Testable() {
         const highlightedTreeIndexes = [...Array(15).keys()];
         highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
         model.requestNodeUpdate(highlightedTreeIndexes);
+
+      } else if (test === "node_transform") {
+
+        const transformedTreeIndexes = [...Array(80).keys()].filter(p => p % 2 === 0);
+        transformedTreeIndexes.forEach(p => {
+          const transform = new THREE.Matrix4();
+          transform.makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI / 2, -Math.PI));
+          transform.setPosition(new THREE.Vector3(5, 6, 7));
+          transformedNodes.set(p, transform);
+        });
+        model.requestNodeUpdate(transformedTreeIndexes);
+
       } else if (test === 'ghost_mode') {
         camera = new THREE.PerspectiveCamera();
         position.x = 45;
         position.y = 3;
         position.z = 13;
 
-        const ghostedTreeIndices = [...Array(32).keys()].map((_value, index) => 2*index);
+        const ghostedTreeIndices = [...Array(32).keys()].map((_value, index) => 2 * index);
         ghostedTreeIndices.forEach(p => ghostedNodes.add(p));
-        const highlightedTreeIndexes = [0,1,2,3,4,5,6,20,22,33,34,35];
+        const highlightedTreeIndexes = [0, 1, 2, 3, 4, 5, 6, 20, 22, 33, 34, 35];
         highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
         model.requestNodeUpdate([...ghostedTreeIndices, ...highlightedTreeIndexes]);
       } else if (test === "clipping") {

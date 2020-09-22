@@ -1,4 +1,7 @@
 #pragma glslify: constructMatrix = require('../../base/constructMatrix.glsl')
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+
+uniform mat4 inverseModelMatrix;
 
 attribute vec4 a_instanceMatrix_column_0;
 attribute vec4 a_instanceMatrix_column_1;
@@ -23,6 +26,13 @@ varying vec3 v_normal;
 
 varying vec3 vViewPosition;
 
+uniform vec2 treeIndexTextureSize;
+
+uniform sampler2D transformOverrideIndexTexture;
+
+uniform vec2 transformOverrideTextureSize; 
+uniform sampler2D transformOverrideTexture;
+
 void main() {
     mat4 instanceMatrix = constructMatrix(
         a_instanceMatrix_column_0,
@@ -37,11 +47,19 @@ void main() {
     v_angle = a_angle;
     v_arcAngle = a_arcAngle;
 
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
+
     vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
-    vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
+    vec4 mvPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4( transformed, 1.0 );
     v_color = a_color;
 
-    v_normal = normalMatrix * a_normal;
+    v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(normalize(a_normal), 0.0)).xyz;
     vViewPosition = mvPosition.xyz;
     gl_Position = projectionMatrix * mvPosition;
 }

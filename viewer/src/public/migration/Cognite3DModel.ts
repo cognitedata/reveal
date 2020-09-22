@@ -71,6 +71,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   private readonly cadModel: CadModelMetadata;
   private readonly nodeColors: Map<number, [number, number, number]>;
+  private readonly nodeTransforms: Map<number, THREE.Matrix4>;
+
   private readonly selectedNodes: Set<number>;
   private readonly hiddenNodes: Set<number>;
   private readonly ghostedNodes: Set<number>;
@@ -91,6 +93,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
     this.nodeColors = new Map();
+    this.nodeTransforms = new Map();
     this.hiddenNodes = new Set();
     this.selectedNodes = new Set();
     this.ghostedNodes = new Set();
@@ -111,6 +114,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         }
         if (this.selectedNodes.has(treeIndex)) {
           style = { ...style, ...DefaultNodeAppearance.Highlighted };
+        }
+        if (this.nodeTransforms.has(treeIndex)) {
+          style = { ...style, worldTransform: this.nodeTransforms.get(treeIndex)! };
         }
         return style;
       }
@@ -506,6 +512,29 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const selectedNodes = Array.from(this.selectedNodes);
     this.selectedNodes.clear();
     this.cadNode.requestNodeUpdate(selectedNodes);
+  }
+
+  /**
+   * Set override transform of the node by tree index.
+   * @param treeIndex
+   * @param transform
+   * @param applyToChildren
+   */
+  async setNodeTransformByTreeIndex(treeIndex: number, transform: THREE.Matrix4, applyToChildren = true) {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.nodeTransforms.set(idx, transform));
+    this.cadNode.requestNodeUpdate(treeIndices);
+  }
+
+  /**
+   * Remove override transform of the node by tree index.
+   * @param treeIndex
+   * @param applyToChildren
+   */
+  async resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren = true) {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.nodeTransforms.delete(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
   }
 
   /**
