@@ -14,7 +14,7 @@ uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
-uniform vec2 dataTextureSize;
+uniform vec2 treeIndexTextureSize;
 
 uniform mat4 projectionMatrix;
 
@@ -36,12 +36,12 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
-  if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
+  if (!determineVisibility(colorDataTexture, treeIndexTextureSize, v_treeIndex, renderMode)) {
     discard;
   }
 
   vec3 normal = normalize( v_normal );
-  vec4 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
+  vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
 
   float R1 = v_centerB.w;
   vec4 U = v_U;
@@ -82,8 +82,9 @@ void main() {
   float d = b*b - a*c;
 
   // d < 0.0 means the ray hits outside an infinitely long cone
-  if (d < 0.0)
+  if (d < 0.0) {
     discard;
+  }
 
   float sqrtd = sqrt(d);
   float dist1 = (-b - sqrtd)/a;
