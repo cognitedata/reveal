@@ -29,9 +29,11 @@ transform.setPosition(new THREE.Vector3(10, 10, 0));
 model.setNodeTransformByTreeIndex(532261, transform, true);
 ```
 
-### Remove node transform
+### Reset node transform
 
-Removing the transformation is done with `Cognite3DModel.resetNodeTransformByTreeIndex` and takes the given tree index,
+
+Resetting the transformation is done with `Cognite3DModel.resetNodeTransformByTreeIndex` and takes the given tree index,
+
 and a flag that determines if the node transform reset also should be applied to any child nodes of the given tree index.
 
 ```jsx runnable
@@ -40,12 +42,14 @@ model.resetNodeTransformByTreeIndex(532261, true);
 
 ### Animations
 
-Creating an animations is a matter of applying transformations multiple times. As stated above, any transformation (position and / or rotation),
+Creating animations is a matter of applying transformations multiple times. As stated above, any transformation
+
 is applied in the global world coordinate system of THREE.js. This means that if you want to rotate a model around a given point (and not around the world origin),
 you first need to transform the model to that given point, then rotate, then transform back into the world coordinate space. An example of this is done below to create an animation
 of the crane rotating. First we get the center of the bounding box for node with id `533010` which is close to the base of the crane.
 Then we set up an interval which triggers a function that transforms the entire crane (`532261`): first to the base of the crane, then rotates the model,
-then transforms it back, thus giving us the wanted rotation. Keep in mind that THREE.js uses column matrix notation, such that
+then transforms it back, thus giving us the wanted rotation. Keep in mind that [THREE.js uses column matrix notation](https://threejs.org/docs/#api/en/math/Matrix4), such that
+
 the following statement: 
 
 ```js

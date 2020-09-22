@@ -535,7 +535,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
 
     treeIndices.forEach(idx => this.nodeTransforms.delete(idx));
-
     this.cadNode.requestNodeUpdate(treeIndices);
   }
 
