@@ -7,6 +7,9 @@ import 'regenerator-runtime/runtime';
 configure({ adapter: new Adapter() });
 
 jest.mock('utils/Metrics');
+jest.mock('@cognite/cdf-utilities', () => ({
+  createLink: jest.fn(),
+}));
 
 let consoleWrittenTo;
 

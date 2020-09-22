@@ -2,6 +2,7 @@ import React from 'react';
 import SplitPane from 'react-split';
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
+import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 
 export type SplitterProps = {
   minSize?: number[];
@@ -34,7 +35,7 @@ export const Splitter = ({
       dragInterval={1}
       cursor="col-resize"
       onDragEnd={() => {
-        window.dispatchEvent(new Event('resize'));
+        window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
       }}
       hide={hide
         .map(el => {

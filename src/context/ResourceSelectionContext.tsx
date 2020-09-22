@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { ResourceType } from '@cognite/cdf-resources-store';
-import { ResourceItem } from 'types';
+import { ResourceItem, ResourceType } from 'types';
 import {
   AssetFilterProps,
   TimeseriesFilter,
@@ -25,15 +24,17 @@ export type ResourceSelectionObserver = {
   resourceTypes: ResourceType[];
   setResourceTypes: (newTypes: ResourceType[]) => void;
   assetFilter: AssetFilterProps;
-  setAssetFilter: (newFilter: AssetFilterProps) => void;
+  setAssetFilter: React.Dispatch<React.SetStateAction<AssetFilterProps>>;
   timeseriesFilter: TimeseriesFilter;
-  setTimeseriesFilter: (newFilter: TimeseriesFilter) => void;
+  setTimeseriesFilter: React.Dispatch<React.SetStateAction<TimeseriesFilter>>;
   fileFilter: FileFilterProps;
-  setFileFilter: (newFilter: FileFilterProps) => void;
+  setFileFilter: React.Dispatch<React.SetStateAction<FileFilterProps>>;
   eventFilter: EventFilter;
-  setEventFilter: (newFilter: EventFilter) => void;
+  setEventFilter: React.Dispatch<React.SetStateAction<EventFilter>>;
   sequenceFilter: SequenceFilter['filter'];
-  setSequenceFilter: (newFilter: SequenceFilter['filter']) => void;
+  setSequenceFilter: React.Dispatch<
+    React.SetStateAction<SequenceFilter['filter']>
+  >;
   onSelect: OnSelectListener;
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
   query: string;
@@ -43,6 +44,11 @@ export type ResourceSelectionObserver = {
 export const ResourceSelectionContext = React.createContext(
   {} as ResourceSelectionObserver
 );
+
+export const useResourceTypes = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return observer.resourceTypes;
+};
 
 export const useResourceMode = () => {
   const observer = useContext(ResourceSelectionContext);
@@ -131,7 +137,7 @@ export const ResourceSelectionProvider = ({
     initialResourcesState || []
   );
   const [resourceTypes, setResourceTypes] = useState<ResourceType[]>(
-    initialResourceTypes || ['assets', 'files']
+    initialResourceTypes || ['asset', 'file', 'event', 'sequence', 'timeSeries']
   );
   const [assetFilter, setAssetFilter] = useState<AssetFilterProps>(
     initialAssetFilter || {}

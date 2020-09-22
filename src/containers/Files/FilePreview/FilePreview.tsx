@@ -30,6 +30,7 @@ import { FileOverviewPanel } from 'containers/Files/FilePreview/FileOverviewPane
 import { fetchResourceForAnnotation } from 'utils/AnnotationUtils';
 import { ContextualizationModule } from 'containers/Files/FilePreview/ContextualizationModule';
 import { getSDK } from 'utils/SDK';
+import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 
 type Props = { fileId?: number; contextualization?: boolean };
 
@@ -127,7 +128,10 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
     if (selectedAnnotation) {
       dispatch(fetchResourceForAnnotation(selectedAnnotation));
     }
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    setTimeout(
+      () => window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT)),
+      200
+    );
   }, [dispatch, selectedAnnotation]);
 
   useEffect(() => {

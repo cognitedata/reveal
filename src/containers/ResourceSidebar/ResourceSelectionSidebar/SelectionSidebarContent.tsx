@@ -19,8 +19,9 @@ import {
   useResourcesState,
   useResourceMode,
 } from 'context/ResourceSelectionContext';
-import { ResourceItem } from 'types';
+import { ResourceItem, ResourceType } from 'types';
 import { Divider, SpacedRow } from 'components/Common';
+import { useResourceTypes } from '../../../context/ResourceSelectionContext';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: fixed;
@@ -71,6 +72,8 @@ export const SelectionSidebarContent = ({
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
   );
+  const resourceTypes = useResourceTypes();
+  const [activeKey, setActiveKey] = useState<ResourceType>(resourceTypes[0]);
 
   const selectResourcesCount = useMemo(
     () => resourceState.filter(el => el.state === 'selected').length,
@@ -179,7 +182,10 @@ export const SelectionSidebarContent = ({
           onChange={ev => setQuery(ev.target.value)}
           value={query}
         />
-        <SearchResults />
+        <SearchResults
+          currentResourceType={activeKey}
+          setCurrentResourceType={setActiveKey}
+        />
       </>
     );
   }

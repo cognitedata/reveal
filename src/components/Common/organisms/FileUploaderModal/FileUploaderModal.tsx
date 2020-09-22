@@ -4,7 +4,7 @@ import { Modal } from 'antd';
 import { Button, Body } from '@cognite/cogs.js';
 import Table from 'react-base-table';
 import styled from 'styled-components';
-import { FileUploader } from 'components/Common';
+import { FileUploader, TableWrapper } from 'components/Common';
 import { trackUsage } from 'utils/Metrics';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -71,49 +71,51 @@ export const FileUploaderModal = ({
         >
           <>
             {fileList.length !== 0 && (
-              <AutoSizer disableHeight>
-                {({ width }) => (
-                  <Table
-                    width={width}
-                    height={300}
-                    columns={[
-                      {
-                        title: 'File Name',
-                        key: 'name',
-                        dataKey: 'name',
-                        headerRenderer,
-                        width: 200,
-                      },
-                      {
-                        title: 'File Type',
-                        key: 'type',
-                        dataKey: 'mimeType',
-                        headerRenderer,
-                        width: 200,
-                      },
-                      {
-                        title: 'Actions',
-                        key: 'actions',
-                        width: 200,
-                        headerRenderer,
-                        cellRenderer: ({
-                          rowData: file,
-                        }: {
-                          rowData: FileInfo;
-                        }) => {
-                          return (
-                            <Button onClick={() => onFileSelected(file)}>
-                              View file
-                            </Button>
-                          );
+              <TableWrapper>
+                <AutoSizer disableHeight>
+                  {({ width }) => (
+                    <Table
+                      width={width}
+                      height={300}
+                      columns={[
+                        {
+                          title: 'File Name',
+                          key: 'name',
+                          dataKey: 'name',
+                          headerRenderer,
+                          width: 200,
                         },
-                      },
-                    ]}
-                    rowKey="id"
-                    data={fileList}
-                  />
-                )}
-              </AutoSizer>
+                        {
+                          title: 'File Type',
+                          key: 'type',
+                          dataKey: 'mimeType',
+                          headerRenderer,
+                          width: 200,
+                        },
+                        {
+                          title: 'Actions',
+                          key: 'actions',
+                          width: 200,
+                          headerRenderer,
+                          cellRenderer: ({
+                            rowData: file,
+                          }: {
+                            rowData: FileInfo;
+                          }) => {
+                            return (
+                              <Button onClick={() => onFileSelected(file)}>
+                                View file
+                              </Button>
+                            );
+                          },
+                        },
+                      ]}
+                      rowKey="id"
+                      data={fileList}
+                    />
+                  )}
+                </AutoSizer>
+              </TableWrapper>
             )}
           </>
         </FileUploader>

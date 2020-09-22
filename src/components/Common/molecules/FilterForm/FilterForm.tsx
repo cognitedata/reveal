@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Select, message } from 'antd';
 import { SelectWrapper } from 'components/Common';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 
 const LOCKSVG = (
@@ -23,19 +23,10 @@ const LOCKSVG = (
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px;
   background: #fff;
-  min-width: 480px;
   .tags {
     display: flex;
     flex-wrap: wrap;
-  }
-  .tags .label {
-    align-self: center;
-    margin-right: 8px;
-    margin-bottom: 12px;
-    font-weight: 800;
-    color: #000;
   }
 `;
 type TagProps = { isLocked: boolean };
@@ -53,6 +44,7 @@ const Tag = styled.div<TagProps>(
     transition: 0.3s all;
     word-break: break-all;
     white-space: nowrap;
+    max-width: 100%;
 
     .cogs-icon {
       opacity: 0.1;
@@ -70,6 +62,12 @@ const Tag = styled.div<TagProps>(
       opacity: 0.1;
       margin-left: 12px;
     }
+
+    span {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
     ${!props.isLocked &&
     css`
       &&:hover {
@@ -81,7 +79,7 @@ const Tag = styled.div<TagProps>(
     `}
   `
 );
-const SearchFilterItemWrapper = styled.div`
+const FilterItemWrapper = styled.div`
   display: flex;
   margin-bottom: 12px;
   .key,
@@ -89,7 +87,6 @@ const SearchFilterItemWrapper = styled.div`
     display: flex;
     margin-right: 4px;
     flex: 1;
-    width: 140px;
     overflow: hidden;
     > div {
       flex: 1;
@@ -99,7 +96,6 @@ const SearchFilterItemWrapper = styled.div`
     }
   }
   .buttons {
-    width: 160px;
     display: flex;
     align-items: stretch;
     > * {
@@ -108,7 +104,7 @@ const SearchFilterItemWrapper = styled.div`
   }
 `;
 
-const SearchFilterItem = ({
+const FilterItem = ({
   metadata,
   categories,
   lockedFilters,
@@ -152,7 +148,7 @@ const SearchFilterItem = ({
     (selectedKey !== initialKey || selectedValue !== initialValue);
   const hasInitialValue = initialKey || initialValue;
   return (
-    <SearchFilterItemWrapper>
+    <FilterItemWrapper>
       <div className="key">
         <SelectWrapper>
           <Select
@@ -262,33 +258,31 @@ const SearchFilterItem = ({
           />
         )}
       </div>
-    </SearchFilterItemWrapper>
+    </FilterItemWrapper>
   );
 };
 
-export const SearchFilterTag = ({
+export const FilterTag = ({
   isLocked = false,
   onClick = () => {},
   onDeleteClicked = () => {},
-  category,
   filter,
   value,
 }: {
   isLocked?: boolean;
   onClick?: () => void;
   onDeleteClicked?: () => void;
-  category?: string;
   filter: string;
   value: string;
 }) => {
   return (
     <Tag isLocked={isLocked} onClick={onClick}>
       {isLocked && LOCKSVG}
-      <strong>
-        {category && `${category}: `}
-        {filter}
-      </strong>
-      : {value}
+      <Tooltip content={`${filter}: ${value}`}>
+        <span>
+          <strong>{filter}</strong>: {value}
+        </span>
+      </Tooltip>
       {!isLocked && onDeleteClicked && (
         <Icon
           type="Delete"
@@ -303,7 +297,7 @@ export const SearchFilterTag = ({
   );
 };
 
-export type SearchFilterFormProps = {
+export type FilterFormProps = {
   metadata: {
     [key: string]: string[];
   };
@@ -317,13 +311,13 @@ export type SearchFilterFormProps = {
   setFilters: (filter: { [key: string]: string }) => void;
 };
 
-export const SearchFilterForm = ({
+export const FilterForm = ({
   metadata,
   metadataCategory = {},
   filters = {},
   lockedFilters = [],
   setFilters = () => {},
-}: SearchFilterFormProps) => {
+}: FilterFormProps) => {
   const [editingKeys, setEditingKeys] = useState<string[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
 
@@ -341,11 +335,10 @@ export const SearchFilterForm = ({
   return (
     <Wrapper>
       <div className="tags">
-        <span className="label">Filters</span>
         {Object.keys(filters).map(el => {
           const isLocked = lockedFilters.some(filter => filter === el);
           return (
-            <SearchFilterTag
+            <FilterTag
               key={el}
               isLocked={isLocked}
               filter={el}
@@ -360,7 +353,6 @@ export const SearchFilterForm = ({
                 delete newFilter[el];
                 setFilters(newFilter);
               }}
-              category={metadataCategory[el]}
             />
           );
         })}
@@ -368,7 +360,7 @@ export const SearchFilterForm = ({
       {Object.keys(filters)
         .filter(el => editingKeys.includes(el))
         .map(key => (
-          <SearchFilterItem
+          <FilterItem
             key={key}
             categories={categories}
             lockedFilters={lockedFilters}
@@ -390,7 +382,7 @@ export const SearchFilterForm = ({
           />
         ))}
       {isAdding && (
-        <SearchFilterItem
+        <FilterItem
           key="add"
           metadata={metadata}
           categories={categories}
@@ -405,7 +397,7 @@ export const SearchFilterForm = ({
         />
       )}
       <Button disabled={isAdding} onClick={() => setIsAdding(true)} icon="Plus">
-        Add new filter
+        Add new metadata filter
       </Button>
     </Wrapper>
   );

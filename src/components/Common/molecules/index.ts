@@ -5,7 +5,7 @@ export * from './FileTable/FileTable';
 export * from './FileUploader/FileUploader';
 export * from './InfoGrid/InfoGrid';
 export * from './Popover/Popover';
-export * from './SearchFilterForm/SearchFilterForm';
+export * from './FilterForm/FilterForm';
 export * from './SequenceTable/SequenceTable';
 export * from './Splitter/Splitter';
 export * from './TimeseriesTable/TimeseriesTable';

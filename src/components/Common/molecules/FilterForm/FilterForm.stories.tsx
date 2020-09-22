@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Provider } from '@cognite/cdf-resources-store';
-import { mockStore } from 'utils/mockStore';
-import { SearchFilterSection } from './SearchFilterSection';
+import { FilterForm } from './FilterForm';
 
-export default { title: 'Organisms/SearchFilterSection' };
+export default { title: 'Molecules/FilterForm' };
 
 export const Example = () => {
   const [filters, setFilters] = useState<{
@@ -12,7 +10,7 @@ export const Example = () => {
   }>({ testing: 'yay' });
   return (
     <Container>
-      <SearchFilterSection
+      <FilterForm
         metadata={{
           testing: ['yay', 'ayy2'],
           'Should Work': ['Yepp', 'asdfa asdf '],
@@ -29,7 +27,7 @@ export const ExampleWithCategories = () => {
   }>({ testing: 'yay' });
   return (
     <Container>
-      <SearchFilterSection
+      <FilterForm
         metadata={{
           top_level: ['yay', 'ayy2'],
           testing: ['yay', 'ayy2'],
@@ -53,7 +51,7 @@ export const ExampleWithLockedCategories = () => {
   }>({ testing: 'yay' });
   return (
     <Container>
-      <SearchFilterSection
+      <FilterForm
         metadata={{
           top_level: ['yay', 'ayy2'],
           testing: ['yay', 'ayy2'],
@@ -73,20 +71,12 @@ export const ExampleWithLockedCategories = () => {
   );
 };
 
-const Container = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <Provider store={mockStore({})}>
-      <Wrapper>{children}</Wrapper>
-    </Provider>
-  );
-};
-
-const Wrapper = styled.div`
+const Container = styled.div`
   padding: 20px;
   height: 400px;
   width: 600px;
   background: grey;
   display: flex;
-  justify-content: start;
+  justify-content: center;
   align-items: center;
 `;

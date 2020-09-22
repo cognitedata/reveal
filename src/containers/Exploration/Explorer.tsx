@@ -14,8 +14,9 @@ import { useTenant } from 'hooks/CustomHooks';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
 import { ResourcePreviewProvider } from 'context/ResourcePreviewContext';
-import { SearchResults } from 'containers/SearchResults';
 import { ResourceSelectorProvider } from 'context/ResourceSelectorContext';
+import { SearchResultsPage } from 'containers/SearchResults/SearchResultsPage';
+import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
@@ -75,7 +76,7 @@ export const Explorer = () => {
                 type="primary"
                 key="view"
                 onClick={() => {
-                  window.dispatchEvent(new Event('Resource Selected'));
+                  window.dispatchEvent(new Event(CLOSE_DROPDOWN_EVENT));
                   history.push(`/${tenant}/explore/${path}`);
                 }}
                 icon="ArrowRight"
@@ -145,7 +146,10 @@ export const Explorer = () => {
               path={`${match.path}/event/:eventId`}
               component={EventPage}
             />
-            <Route path={`${match.path}/`} component={SearchResults} />
+            <Route
+              path={`${match.path}/:resourceType?`}
+              component={SearchResultsPage}
+            />
           </Switch>
         </ResourcePreviewProvider>
       </ResourceSelectorProvider>

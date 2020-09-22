@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Input, Button } from '@cognite/cogs.js';
 import { useQuery } from 'context/ResourceSelectionContext';
 import { SearchResults } from 'containers/SearchResults';
+import { ResourceType } from 'types';
+import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
 
 const Overlay = styled.div<{ visible: boolean }>`
   display: ${props => (props.visible ? 'block' : 'none')};
@@ -76,15 +78,16 @@ export const ExplorationSearchBar = ({
 }: Props) => {
   const [query, setQuery] = useQuery();
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [activeKey, setActiveKey] = useState<ResourceType>('asset');
 
   const onResourceSelected = useCallback(() => {
     setShowSearchResults(false);
   }, []);
 
   useEffect(() => {
-    window.addEventListener('Resource Selected', onResourceSelected);
+    window.addEventListener(CLOSE_DROPDOWN_EVENT, onResourceSelected);
     return () =>
-      window.removeEventListener('Resource Selected', onResourceSelected);
+      window.removeEventListener(CLOSE_DROPDOWN_EVENT, onResourceSelected);
   }, [onResourceSelected]);
 
   return (
@@ -122,7 +125,10 @@ export const ExplorationSearchBar = ({
           >
             Hide
           </Button>
-          <SearchResults />
+          <SearchResults
+            currentResourceType={activeKey}
+            setCurrentResourceType={setActiveKey}
+          />
         </ResultList>
       </SearchWrapper>
     </>

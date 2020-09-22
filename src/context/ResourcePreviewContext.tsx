@@ -3,6 +3,7 @@ import { ResourceItem } from 'types';
 import { Splitter } from 'components/Common';
 import { ResourcePreviewSidebar } from 'containers/ResourceSidebar';
 import styled from 'styled-components';
+import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 
 export type ResourcePreviewProps = {
   item?: ResourceItem;
@@ -86,7 +87,10 @@ export const ResourcePreviewProvider = ({
           onClose={() => {
             setIsOpen(false);
             onClose();
-            setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+            setTimeout(
+              () => window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT)),
+              200
+            );
           }}
         />
       </Splitter>
