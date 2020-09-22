@@ -18,6 +18,9 @@ uniform sampler2D tBackDepth;
 uniform sampler2D tCustom;
 uniform sampler2D tCustomDepth;
 
+uniform sampler2D tGhost;
+uniform sampler2D tGhostDepth;
+
 uniform sampler2D tOutlineColors;
 
 uniform float cameraNear;
@@ -35,12 +38,16 @@ void main() {
   vec4 frontAlbedo = texture2D(tFront, vUv);
   vec4 backAlbedo = texture2D(tBack, vUv);
   vec4 customAlbedo = texture2D(tCustom, vUv);
+  // Decompose and clamp "ghost" color
+  vec4 ghostColorRGBA = texture2D(tGhost, vUv);
+  vec3 ghostColor = max(ghostColorRGBA.rgb, 0.5);
+  float ghostAlpha = min(ghostColorRGBA.a, 0.8);
 
-  float frontOutlineIndex = floatBitsSubset(floor((frontAlbedo.a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex0 = floatBitsSubset(floor((texture2D(tFront, vUv0).a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex1 = floatBitsSubset(floor((texture2D(tFront, vUv1).a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex2 = floatBitsSubset(floor((texture2D(tFront, vUv2).a * 255.0) + 0.5), 2, 5);
-  float frontOutlineIndex3 = floatBitsSubset(floor((texture2D(tFront, vUv3).a * 255.0) + 0.5), 2, 5);
+  float frontOutlineIndex = floatBitsSubset(floor((frontAlbedo.a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex0 = floatBitsSubset(floor((texture2D(tFront, vUv0).a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex1 = floatBitsSubset(floor((texture2D(tFront, vUv1).a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex2 = floatBitsSubset(floor((texture2D(tFront, vUv2).a * 255.0) + 0.5), 3, 6);
+  float frontOutlineIndex3 = floatBitsSubset(floor((texture2D(tFront, vUv3).a * 255.0) + 0.5), 3, 6);
 
   // There exsists fragments of rendered objects within the edge width that should have border
   if( any(equal(vec4(frontOutlineIndex0, frontOutlineIndex1, frontOutlineIndex2, frontOutlineIndex3), vec4(0.0))) 
@@ -72,11 +79,11 @@ void main() {
     return;
   }
 
-  float backOutlineIndex = floatBitsSubset(floor((backAlbedo.a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex0 = floatBitsSubset(floor((texture2D(tBack, vUv0).a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex1 = floatBitsSubset(floor((texture2D(tBack, vUv1).a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex2 = floatBitsSubset(floor((texture2D(tBack, vUv2).a * 255.0) + 0.5), 2, 5);
-  float backOutlineIndex3 = floatBitsSubset(floor((texture2D(tBack, vUv3).a * 255.0) + 0.5), 2, 5);
+  float backOutlineIndex = floatBitsSubset(floor((backAlbedo.a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex0 = floatBitsSubset(floor((texture2D(tBack, vUv0).a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex1 = floatBitsSubset(floor((texture2D(tBack, vUv1).a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex2 = floatBitsSubset(floor((texture2D(tBack, vUv2).a * 255.0) + 0.5), 3, 6);
+  float backOutlineIndex3 = floatBitsSubset(floor((texture2D(tBack, vUv3).a * 255.0) + 0.5), 3, 6);
 
   if( any(equal(vec4(backOutlineIndex0, backOutlineIndex1, backOutlineIndex2, backOutlineIndex3), vec4(0.0)))
       && backOutlineIndex > 0.0) 
@@ -97,8 +104,18 @@ void main() {
     }
   }
 
-  if(texture2D(tBackDepth, vUv).r < 1.0){
-    gl_FragColor = vec4(backAlbedo.rgb, 1.0);
+  float ghostDepth = readDepth(tGhostDepth, vUv);
+  ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity; 
+
+  if(backDepth <= 1.0){
+    // s will be:
+    // - zero when regular geometry is in front of ghost
+    // - ghostAlpha when regular geometry is behind ghost
+    float s = (1.0 - step(backDepth, ghostDepth)) * ghostAlpha;
+    gl_FragColor = vec4(mix(backAlbedo.rgb, ghostColor, s), 1.0);
+    return;
+  } else if (ghostDepth <= 1.0) {
+    gl_FragColor = vec4(ghostAlpha * ghostColor, 1.0);
     return;
   }
 

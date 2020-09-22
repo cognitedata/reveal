@@ -5,7 +5,8 @@ const test_presets = [
   "default_camera",
   "highlight",
   "rotate_cad_model",
-  "node_transform"
+  "node_transform",
+  "ghost_mode"
 ]
 
 describe('Testable', () => {

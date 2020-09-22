@@ -28,6 +28,11 @@ export type NodeAppearance = {
    */
   readonly renderInFront?: boolean;
   /**
+   * When set to true, the node is rendered ghosted, i.e.
+   * transparent with a fixed color.
+   */
+  readonly renderGhosted?: boolean;
+  /**
    * When set, an outline is drawn around the
    * node to make it stand out.
    */
@@ -59,10 +64,15 @@ const HighlightedColorApperance: NodeAppearance = {
   color: [100, 100, 255]
 };
 
+const GhostedApperance: NodeAppearance = {
+  renderGhosted: true
+};
+
 export const DefaultNodeAppearance = {
   NoOverrides: undefined as NodeAppearance | undefined,
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
+  Ghosted: GhostedApperance,
   Highlighted: { ...InFrontAppearance, ...HighlightedColorApperance, ...OutlinedAppearance }
 };

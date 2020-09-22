@@ -16,22 +16,20 @@ export class EffectRenderManager {
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
   private readonly _triScene: THREE.Scene;
-  private readonly _inFrontScene: THREE.Scene;
   private readonly _cadScene: THREE.Scene;
+  private readonly _backScene: THREE.Scene;
+  private readonly _inFrontScene: THREE.Scene;
+  private readonly _backSceneBuilder: TemporarySceneBuilder;
+  private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
 
   private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
   private readonly _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
-  private readonly _inFrontObjectBuffer: Set<{
-    inFrontObject: THREE.Object3D;
-    inFrontParent: THREE.Object3D;
-    inFrontSceneParent: THREE.Object3D;
-  }> = new Set();
-
   private readonly outlineTexelSize = 2;
 
   constructor(materialManager: MaterialManager) {
@@ -39,8 +37,11 @@ export class EffectRenderManager {
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     this._cadScene = new THREE.Scene();
+    this._backScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
     this._triScene = new THREE.Scene();
+    this._backSceneBuilder = new TemporarySceneBuilder(this._backScene);
+    this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
@@ -53,6 +54,11 @@ export class EffectRenderManager {
     this._backRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._backRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._backRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
+
+    this._ghostObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._ghostObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._ghostObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
+    this._ghostObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._customObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
     this._customObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
@@ -69,6 +75,8 @@ export class EffectRenderManager {
         tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
         tCustom: { value: this._customObjectRenderTarget.texture },
         tCustomDepth: { value: this._customObjectRenderTarget.depthTexture },
+        tGhost: { value: this._ghostObjectRenderTarget.texture },
+        tGhostDepth: { value: this._ghostObjectRenderTarget.depthTexture },
         tOutlineColors: { value: outlineColorTexture },
         cameraNear: { value: 0.1 },
         cameraFar: { value: 10000 }
@@ -98,19 +106,35 @@ export class EffectRenderManager {
 
     try {
       this.updateRenderSize(renderer);
+      renderer.info.autoReset = false;
+      renderer.info.reset();
       renderer.setClearAlpha(0);
 
-      // Render behind cad models
-      this.renderBackCadModels(renderer, camera);
+      const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
-      // Render in -front cad models
-      this.renderInFrontCadModels(renderer, camera);
-
-      // Render custom objects
+      if (hasBackElements && !hasGhostElements) {
+        this.renderBackCadModelsFromBaseScene(renderer, camera);
+        this.clearTarget(renderer, this._ghostObjectRenderTarget);
+      } else if (hasBackElements && hasGhostElements) {
+        this.renderBackCadModels(renderer, camera);
+        this._backSceneBuilder.restoreOriginalScene();
+        this.renderGhostedCadModelsFromBaseScene(renderer, camera);
+      } else if (!hasBackElements && hasGhostElements) {
+        this.clearTarget(renderer, this._backRenderedCadModelTarget);
+        this.renderGhostedCadModelsFromBaseScene(renderer, camera);
+      } else {
+        this.clearTarget(renderer, this._backRenderedCadModelTarget);
+        this.clearTarget(renderer, this._ghostObjectRenderTarget);
+      }
+      if (hasInFrontElements) {
+        this.renderInFrontCadModels(renderer, camera);
+        this._inFrontSceneBuilder.restoreOriginalScene();
+      } else {
+        this.clearTarget(renderer, this._frontRenderedCadModelTarget);
+      }
       this.renderCustomObjects(renderer, scene, camera);
 
       renderer.setClearAlpha(original.clearAlpha);
-
       this.renderTargetToCanvas(renderer, camera);
     } finally {
       // Restore state
@@ -125,67 +149,91 @@ export class EffectRenderManager {
     }
   }
 
+  private clearTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget) {
+    renderer.setRenderTarget(target);
+    renderer.clear(true, true, false); // Clear color and depth
+  }
+
+  private splitToScenes(): { hasBackElements: boolean; hasInFrontElements: boolean; hasGhostElements: boolean } {
+    const result = { hasBackElements: false, hasInFrontElements: false, hasGhostElements: false };
+    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
+      const cadNode: CadNode = rootSectorNodeData[1];
+      const root: RootSectorNode = rootSectorNodeData[0];
+
+      const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      const hasBackElements = backSet.size > 0;
+      const hasInFrontElements = infrontSet.size > 0;
+      const hasGhostElements = ghostSet.size > 0;
+      result.hasBackElements = result.hasBackElements || hasBackElements;
+      result.hasInFrontElements = result.hasInFrontElements || hasInFrontElements;
+      result.hasGhostElements = result.hasGhostElements || hasGhostElements;
+
+      const backRoot = new THREE.Object3D();
+      backRoot.applyMatrix4(root.matrix);
+      if (hasBackElements && hasGhostElements) {
+        this._backScene.add(backRoot);
+      }
+
+      const infrontRoot = new THREE.Object3D();
+      infrontRoot.applyMatrix4(root.matrix);
+      if (hasInFrontElements) {
+        this._inFrontScene.add(infrontRoot);
+      }
+
+      const objectStack: THREE.Object3D[] = [rootSectorNodeData[0]];
+      while (objectStack.length > 0) {
+        const element = objectStack.pop()!;
+        const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
+
+        if (objectTreeIndices) {
+          if (hasInFrontElements && hasIntersection(infrontSet, objectTreeIndices)) {
+            this._inFrontSceneBuilder.addElement(element, infrontRoot);
+          }
+          // Note! When we don't have any ghost, we use _cadScene to hold back objects, so no action required
+          if (hasBackElements && !hasGhostElements) {
+          } else if (hasGhostElements && hasIntersection(backSet, objectTreeIndices)) {
+            this._backSceneBuilder.addElement(element, backRoot);
+            // Use _cadScene to hold ghost objects (we assume we have more ghost objects than back objects)
+          }
+
+          // TODO 2020-09-18 larsmoa: A potential optimization to rendering is to avoid rendering the full
+          // set of objects if most are hidden.
+        } else {
+          // Not a leaf, traverse children
+          objectStack.push(...element.children);
+        }
+      }
+    });
+
+    return result;
+  }
+
   private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    this._backSceneBuilder.populateTemporaryScene();
     renderer.setRenderTarget(this._backRenderedCadModelTarget);
+    this._materialManager.setRenderMode(RenderMode.Color);
+    renderer.render(this._backScene, camera);
+  }
+
+  private renderBackCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    renderer.setRenderTarget(this._backRenderedCadModelTarget);
+    this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._cadScene, camera);
   }
 
   private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    this._inFrontSceneBuilder.populateTemporaryScene();
     renderer.setRenderTarget(this._frontRenderedCadModelTarget);
-
-    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
-      const cadNode = rootSectorNodeData[1] as CadNode;
-
-      const inFrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
-
-      if (!inFrontSet) {
-        return;
-      }
-
-      this.traverseForInFrontObjects(rootSectorNodeData[0], inFrontSet);
-    });
-
-    this._inFrontObjectBuffer.forEach(p => {
-      p.inFrontSceneParent.add(p.inFrontObject);
-    });
-
     this._materialManager.setRenderMode(RenderMode.Effects);
-
     renderer.render(this._inFrontScene, camera);
-
-    this._materialManager.setRenderMode(RenderMode.Color);
-
-    this._inFrontObjectBuffer.forEach(p => {
-      p.inFrontParent.add(p.inFrontObject);
-    });
-
-    this._inFrontObjectBuffer.clear();
-    this._inFrontScene.remove(...this._inFrontScene.children);
   }
 
-  private traverseForInFrontObjects(root: THREE.Object3D, frontSet: Set<number>) {
-    const objectStack = [root];
-
-    const rootTransformObject = new THREE.Object3D();
-    rootTransformObject.applyMatrix4(root.matrix);
-
-    this._inFrontScene.add(rootTransformObject);
-
-    while (objectStack.length > 0) {
-      const element = objectStack.pop()!;
-
-      const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
-
-      if (objectTreeIndices && hasIntersection(frontSet, objectTreeIndices)) {
-        this._inFrontObjectBuffer.add({
-          inFrontObject: element,
-          inFrontParent: element.parent!,
-          inFrontSceneParent: rootTransformObject
-        });
-      } else {
-        objectStack.push(...element.children);
-      }
-    }
+  private renderGhostedCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    renderer.setRenderTarget(this._ghostObjectRenderTarget);
+    this._materialManager.setRenderMode(RenderMode.Ghost);
+    renderer.render(this._cadScene, camera);
   }
 
   private renderCustomObjects(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -208,6 +256,7 @@ export class EffectRenderManager {
       this._backRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
       this._frontRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
       this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
+      this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
 
       this._combineEdgeDetectionMaterial.setValues({
         uniforms: {
@@ -265,9 +314,7 @@ export class EffectRenderManager {
       const element = objectStack.pop()!;
       if (element instanceof RootSectorNode) {
         this._rootSectorNodeBuffer.add([element, element.parent! as CadNode]);
-      } else if (element instanceof THREE.Group) {
-        continue;
-      } else {
+      } else if (!(element instanceof THREE.Group)) {
         objectStack.push(...element.children);
       }
     }
@@ -282,6 +329,7 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
 }
 
 function hasIntersection(left: Set<number>, right: Set<number>): boolean {
+  // Can we improve performance by using a bloom filter before comparing full sets?
   const needles = left.size < right.size ? left : right;
   const haystack = left.size > right.size ? left : right;
 
@@ -294,4 +342,49 @@ function hasIntersection(left: Set<number>, right: Set<number>): boolean {
   }
 
   return intersects;
+}
+
+/**
+ * Holds parent-child relationship for a ThreeJS element in order to restore
+ * the relationship after moving it temporarily.
+ */
+type Object3DStructure = {
+  /**
+   * Element described.
+   */
+  object: THREE.Object3D;
+  /**
+   * The previous parent of the element.
+   */
+  parent: THREE.Object3D;
+  /**
+   * The object that temporarily holds the elemnt.
+   */
+  sceneParent: THREE.Object3D;
+};
+
+class TemporarySceneBuilder {
+  private readonly buffer: Object3DStructure[];
+  private readonly temporaryScene: THREE.Scene;
+
+  constructor(temporaryScene: THREE.Scene) {
+    this.buffer = [];
+    this.temporaryScene = temporaryScene;
+  }
+
+  addElement(element: THREE.Object3D, temporaryModelRootElement: THREE.Object3D): void {
+    this.buffer.push({ object: element, parent: element.parent!, sceneParent: temporaryModelRootElement });
+  }
+
+  populateTemporaryScene(): void {
+    this.buffer.forEach(x => x.sceneParent.add(x.object));
+  }
+
+  restoreOriginalScene(): void {
+    this.buffer.forEach(p => {
+      p.parent.add(p.object);
+    });
+    this.buffer.length = 0; // clear
+    this.temporaryScene.remove(...this.temporaryScene.children);
+  }
 }
