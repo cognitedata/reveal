@@ -9,7 +9,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Reveal supports overriding transforms of individual objects by providing [tree indices to identify 3D nodes.](../concepts.md)
 
-Note that any transformation override is applied with respect to the THREE.js world coordinate space.
+Note that any transformation override is applied with respect to the THREE.js world coordinate space. Also note that the node transform is not accounted for when determining geometry to load. Due to this node transforms shouldn't apply too drastic changes to the position and extend of the nodes. For model wide changes `Cognite3DModel.setModelTransformation` should be used in stead.
+
 
 ## Examples
 

@@ -82,7 +82,7 @@ void main() {
   float d = b*b - a*c;
 
   // d < 0.0 means the ray hits outside an infinitely long cone
-  if (d < 0.0){
+  if (d < 0.0) {
     discard;
   }
 
