@@ -96,6 +96,9 @@ export class CadNode extends THREE.Object3D {
     this._materialManager.clipIntersection = intersection;
   }
 
+  requestNodeUpdate(treeIndices: number[]): void;
+  // @internal
+  requestNodeUpdate(treeIndices: NumericRange): void;
   requestNodeUpdate(treeIndices: number[] | NumericRange) {
     if (treeIndices instanceof NumericRange) {
       // TODO 2020-08-10 larsmoa: Avoid expanding the array to avoid uncessary allocations (this

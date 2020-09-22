@@ -37,13 +37,18 @@ export function Testable() {
       const scene = new THREE.Scene();
 
       const pickedNodes: Set<number> = new Set();
+      const ghostedNodes: Set<number> = new Set();
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
+          let style = reveal.DefaultNodeAppearance.NoOverrides;
           if (pickedNodes.has(treeIndex)) {
-            return reveal.DefaultNodeAppearance.Highlighted;
+            style = {...style, ...reveal.DefaultNodeAppearance.Highlighted };
           }
-          return reveal.DefaultNodeAppearance.NoOverrides;
+          if (ghostedNodes.has(treeIndex)) {
+            style = {...style, ...reveal.DefaultNodeAppearance.Ghosted };
+          }
+          return style;
         }
       };
 
@@ -112,6 +117,17 @@ export function Testable() {
         const highlightedTreeIndexes = [...Array(15).keys()];
         highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
         model.requestNodeUpdate(highlightedTreeIndexes);
+      } else if (test === 'ghost_mode') {
+        camera = new THREE.PerspectiveCamera();
+        position.x = 45;
+        position.y = 3;
+        position.z = 13;
+
+        const ghostedTreeIndices = [...Array(32).keys()].map((_value, index) => 2*index);
+        ghostedTreeIndices.forEach(p => ghostedNodes.add(p));
+        const highlightedTreeIndexes = [0,1,2,3,4,5,6,20,22,33,34,35];
+        highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
+        model.requestNodeUpdate([...ghostedTreeIndices, ...highlightedTreeIndexes]);
       } else if (test === "clipping") {
         camera = new THREE.PerspectiveCamera();
         const params = {

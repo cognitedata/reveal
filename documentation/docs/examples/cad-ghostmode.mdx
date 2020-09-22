@@ -1,0 +1,71 @@
+---
+id: cad-ghostmode
+title: Ghost mode for CAD
+describe: In ghost mode most of the geometry is made transparent to highlight interesting objects
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+"Ghosting" can be used to make parts of the model appear transparent and with a fixed color to highlight
+other objects and provide context for location. Reveal supports toggling ghosting of CAD models using 
+`Cognite3DModel.ghostNodeByTreeindex` and `Cognite3DModel.unghostNodeByTreeIndex`. In addition, ghosting 
+for all nodes can be toggled using `Cognite3DModel.ghostAllNodes` and `Cognite3DModel.unghostAllNodes`.
+
+<img src={useBaseUrl('/img/cad-ghostmode.png')} alt="Ghosted CAD model" />
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+### Ghost model to identify the location of a piece of equipment
+
+A typical use case for ghosting is to show the location of a piece of equipment. To do this,
+first ghost all nodes and un-ghost the relevant nodes.
+
+```jsx runnable
+model.ghostAllNodes();
+model.unghostNodeByTreeIndex(409228, applyToChildren=true);
+```
+
+### Picking in ghost mode
+
+When nodes are ghosted, they are not clickable and the user will be able to click nodes that otherwise
+would be occluded by the ghosted nodes.
+
+In this example, equipment is made visible through a ghosted model. When the user clicks the equipment
+the other nodes are hidden and the camera is zoomed in to the equipment.
+
+```jsx runnable
+const treeIndex = 409228;
+
+model.showAllNodes();
+model.ghostAllNodes();
+model.unghostNodeByTreeIndex(treeIndex, applyToChildren=true);
+
+viewer.on('click', event => {
+  const intersection = viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+    const bboxPromise = model.getBoundingBoxByTreeIndex(treeIndex);
+
+    model.hideAllNodes();
+    model.unghostAllNodes();
+    model.showNodeByTreeIndex(treeIndex, applyToChildren=true);
+
+    bboxPromise.then(bbox => {
+      viewer.fitCameraToBoundingBox(bbox);
+    });
+  };
+});
+```
+
+### Performance remarks
+
+Note that rendering performance might be affected by enabling ghost mode. Especially if only a few objects are ghosted there might be a considerable
+performance degradation as the rendering pipeline is optimized for either no ghosted objects or that most of the objects in the 3D model are ghosted.
+
+To ensure the best performance, follow these guidelines:
+- Ghost most of the model or no objects in the model. Ghosting just a few objects will decrease performance considerably
+- Prefer hiding nodes over ghosting when possible
