@@ -16,13 +16,18 @@ import { Appearance } from "@/Core/States/Appearance";
 import { setCssVariable } from "@/UserInterface/Foundation/Utils/cssUtils";
 
 // @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers =
+  typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
+    : compose;
+
+const enhancer = composeEnhancers(
+  applyMiddleware(...[NodeVisualizerMiddleware])
+);
 
 const store: Store = createStore(
   combineReducers({ ...NodeVisualizerReducer }),
-  compose(applyMiddleware(...[NodeVisualizerMiddleware])) // comment this line to enable Redux dev tools
-  //composeEnhancers(applyMiddleware(...NodeVisualizerMiddleware))  // uncomment to enable Redux dev tools
+  enhancer
 );
 
 const root = document.createElement("div");

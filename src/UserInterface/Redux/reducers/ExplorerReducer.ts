@@ -118,7 +118,7 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, activeState: boolean }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
-        const node = state.nodes[uniqueId];
+        const node = state.nodes.byId[uniqueId];
 
         if (node)
           state.nodes.byId[uniqueId].label.bold = action.payload.activeState;
@@ -134,7 +134,7 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, newLabel: string }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
-        const node = state.nodes[uniqueId];
+        const node = state.nodes.byId[uniqueId];
 
         if (node)
           node.name = action.payload.newLabel;
