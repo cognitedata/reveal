@@ -15,19 +15,32 @@ export class EffectRenderManager {
   private readonly _materialManager: MaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
-  private readonly _triScene: THREE.Scene;
+  // Simple scene with a single triangle with UVs [0,1] in both directions
+  // used for post processing
+  private readonly _surfaceScene: THREE.Scene;
+
+  // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
-  private readonly _backScene: THREE.Scene;
+
+  // "Working scene" used to hold "normal" objects, i.e.
+  // objects that are depth tested and not "ghosted". Populated
+  // during render()
+  private readonly _normalScene: THREE.Scene;
+  // "Working scene" used to hold objects that are rendered in front
+  // of other objects. Populated during render().
   private readonly _inFrontScene: THREE.Scene;
-  private readonly _backSceneBuilder: TemporarySceneBuilder;
+
+  // Used to build _normalScene during render()
+  private readonly _normalSceneBuilder: TemporarySceneBuilder;
+  // Used to build _infrontScene during render()
   private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
 
   private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
   private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
-  private readonly _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly outlineTexelSize = 2;
@@ -37,23 +50,23 @@ export class EffectRenderManager {
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     this._cadScene = new THREE.Scene();
-    this._backScene = new THREE.Scene();
+    this._normalScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
-    this._triScene = new THREE.Scene();
-    this._backSceneBuilder = new TemporarySceneBuilder(this._backScene);
+    this._surfaceScene = new THREE.Scene();
+    this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
-    this._frontRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._frontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
-    this._frontRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
-    this._frontRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
+    this._inFrontRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._inFrontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._inFrontRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
+    this._inFrontRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._backRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._backRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
-    this._backRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
-    this._backRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
+    this._normalRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._normalRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._normalRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
+    this._normalRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._ghostObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
     this._ghostObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
@@ -69,10 +82,10 @@ export class EffectRenderManager {
       vertexShader: edgeDetectionShaders.vertex,
       fragmentShader: edgeDetectionShaders.combine,
       uniforms: {
-        tFront: { value: this._frontRenderedCadModelTarget.texture },
-        tFrontDepth: { value: this._frontRenderedCadModelTarget.depthTexture },
-        tBack: { value: this._backRenderedCadModelTarget.texture },
-        tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
+        tFront: { value: this._inFrontRenderedCadModelTarget.texture },
+        tFrontDepth: { value: this._inFrontRenderedCadModelTarget.depthTexture },
+        tBack: { value: this._normalRenderedCadModelTarget.texture },
+        tBackDepth: { value: this._normalRenderedCadModelTarget.depthTexture },
         tCustom: { value: this._customObjectRenderTarget.texture },
         tCustomDepth: { value: this._customObjectRenderTarget.depthTexture },
         tGhost: { value: this._ghostObjectRenderTarget.texture },
@@ -113,24 +126,24 @@ export class EffectRenderManager {
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
       if (hasBackElements && !hasGhostElements) {
-        this.renderBackCadModelsFromBaseScene(renderer, camera);
+        this.renderNormalCadModelsFromBaseScene(renderer, camera);
         this.clearTarget(renderer, this._ghostObjectRenderTarget);
       } else if (hasBackElements && hasGhostElements) {
-        this.renderBackCadModels(renderer, camera);
-        this._backSceneBuilder.restoreOriginalScene();
+        this.renderNormalCadModels(renderer, camera);
+        this._normalSceneBuilder.restoreOriginalScene();
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else if (!hasBackElements && hasGhostElements) {
-        this.clearTarget(renderer, this._backRenderedCadModelTarget);
+        this.clearTarget(renderer, this._normalRenderedCadModelTarget);
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else {
-        this.clearTarget(renderer, this._backRenderedCadModelTarget);
+        this.clearTarget(renderer, this._normalRenderedCadModelTarget);
         this.clearTarget(renderer, this._ghostObjectRenderTarget);
       }
       if (hasInFrontElements) {
         this.renderInFrontCadModels(renderer, camera);
         this._inFrontSceneBuilder.restoreOriginalScene();
       } else {
-        this.clearTarget(renderer, this._frontRenderedCadModelTarget);
+        this.clearTarget(renderer, this._inFrontRenderedCadModelTarget);
       }
       this.renderCustomObjects(renderer, scene, camera);
 
@@ -173,7 +186,7 @@ export class EffectRenderManager {
       const backRoot = new THREE.Object3D();
       backRoot.applyMatrix4(root.matrix);
       if (hasBackElements && hasGhostElements) {
-        this._backScene.add(backRoot);
+        this._normalScene.add(backRoot);
       }
 
       const infrontRoot = new THREE.Object3D();
@@ -194,7 +207,7 @@ export class EffectRenderManager {
           // Note! When we don't have any ghost, we use _cadScene to hold back objects, so no action required
           if (hasBackElements && !hasGhostElements) {
           } else if (hasGhostElements && hasIntersection(backSet, objectTreeIndices)) {
-            this._backSceneBuilder.addElement(element, backRoot);
+            this._normalSceneBuilder.addElement(element, backRoot);
             // Use _cadScene to hold ghost objects (we assume we have more ghost objects than back objects)
           }
 
@@ -210,22 +223,22 @@ export class EffectRenderManager {
     return result;
   }
 
-  private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    this._backSceneBuilder.populateTemporaryScene();
-    renderer.setRenderTarget(this._backRenderedCadModelTarget);
+  private renderNormalCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    this._normalSceneBuilder.populateTemporaryScene();
+    renderer.setRenderTarget(this._normalRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Color);
-    renderer.render(this._backScene, camera);
+    renderer.render(this._normalScene, camera);
   }
 
-  private renderBackCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    renderer.setRenderTarget(this._backRenderedCadModelTarget);
+  private renderNormalCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    renderer.setRenderTarget(this._normalRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._cadScene, camera);
   }
 
   private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     this._inFrontSceneBuilder.populateTemporaryScene();
-    renderer.setRenderTarget(this._frontRenderedCadModelTarget);
+    renderer.setRenderTarget(this._inFrontRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Effects);
     renderer.render(this._inFrontScene, camera);
   }
@@ -250,11 +263,11 @@ export class EffectRenderManager {
     renderer.getSize(renderSize);
 
     if (
-      renderSize.x !== this._backRenderedCadModelTarget.width ||
-      renderSize.y !== this._backRenderedCadModelTarget.height
+      renderSize.x !== this._normalRenderedCadModelTarget.width ||
+      renderSize.y !== this._normalRenderedCadModelTarget.height
     ) {
-      this._backRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
-      this._frontRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
+      this._normalRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
+      this._inFrontRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
       this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
 
@@ -275,7 +288,7 @@ export class EffectRenderManager {
     this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
     renderer.setRenderTarget(null);
-    renderer.render(this._triScene, this._orthographicCamera);
+    renderer.render(this._surfaceScene, this._orthographicCamera);
   }
 
   private createOutlineColorTexture(): THREE.DataTexture {
@@ -304,7 +317,7 @@ export class EffectRenderManager {
 
     const mesh = new THREE.Mesh(geometry, material);
 
-    this._triScene.add(mesh);
+    this._surfaceScene.add(mesh);
   }
 
   private traverseForRootSectorNode(root: THREE.Object3D) {
