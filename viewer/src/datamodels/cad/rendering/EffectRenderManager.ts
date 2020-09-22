@@ -5,7 +5,7 @@
 import { MaterialManager } from '../MaterialManager';
 import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
-import { edgeDetectionShaders, fxaaShaders } from './shaders';
+import { edgeDetectionShaders, edgesShaders, fxaaShaders } from './shaders';
 import { CogniteColors } from '@/utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '@/migration';
@@ -22,6 +22,10 @@ export class EffectRenderManager {
   // Simple scene with a single triangle with UVs [0,1] in both directions
   // used for applying FXAA to the final result
   private readonly _fxaaScene: THREE.Scene;
+
+  // Simple scene with a single triangle with UVs [0,1] in both directions
+  // used to outlining edges
+  private readonly _highlightEdgeScene: THREE.Scene;
 
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
@@ -40,6 +44,7 @@ export class EffectRenderManager {
   private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
+  private readonly _hightlightEdgesMaterial: THREE.ShaderMaterial;
   private readonly _fxaaMaterial: THREE.ShaderMaterial;
 
   private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
@@ -47,6 +52,7 @@ export class EffectRenderManager {
   private readonly _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private readonly _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private readonly _compositionTarget: THREE.WebGLRenderTarget;
+  private readonly _edgedTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly outlineTexelSize = 2;
@@ -60,6 +66,7 @@ export class EffectRenderManager {
     this._inFrontScene = new THREE.Scene();
     this._compositionScene = new THREE.Scene();
     this._fxaaScene = new THREE.Scene();
+    this._highlightEdgeScene = new THREE.Scene();
     this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
@@ -86,6 +93,7 @@ export class EffectRenderManager {
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false, depthBuffer: false });
+    this._edgedTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false, depthBuffer: false });
 
     this._combineEdgeDetectionMaterial = new THREE.ShaderMaterial({
       vertexShader: edgeDetectionShaders.vertex,
@@ -108,7 +116,7 @@ export class EffectRenderManager {
     });
     this._fxaaMaterial = new THREE.ShaderMaterial({
       uniforms: {
-        tDiffuse: { value: this._compositionTarget.texture },
+        tDiffuse: { value: this._edgedTarget.texture },
         resolution: { value: new THREE.Vector2() }
       },
       vertexShader: fxaaShaders.vertex,
@@ -116,9 +124,20 @@ export class EffectRenderManager {
       depthTest: false,
       depthWrite: false
     });
+    this._hightlightEdgesMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        tDiffuse: { value: this._compositionTarget.texture },
+        resolution: { value: new THREE.Vector2() }
+      },
+      vertexShader: edgesShaders.vertex,
+      fragmentShader: edgesShaders.fragment,
+      depthTest: false,
+      depthWrite: false
+    });
 
     this.setupCompositionScene();
     this.setupFxaaScene();
+    this.setupHighlightEdgesScene();
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
@@ -172,6 +191,7 @@ export class EffectRenderManager {
 
       // Composite view and anti-aliased version to screen
       this.renderComposition(renderer, camera);
+      this.renderEdges(renderer);
       this.renderAntiAliasToCanvas(renderer);
     } finally {
       // Restore state
@@ -295,6 +315,7 @@ export class EffectRenderManager {
       this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._compositionTarget.setSize(renderSize.x, renderSize.y);
+      this._edgedTarget.setSize(renderSize.x, renderSize.y);
 
       this._combineEdgeDetectionMaterial.setValues({
         uniforms: {
@@ -311,6 +332,13 @@ export class EffectRenderManager {
           resolution: { value: renderSize }
         }
       });
+
+      this._hightlightEdgesMaterial.setValues({
+        uniforms: {
+          ...this._hightlightEdgesMaterial.uniforms,
+          resolution: { value: renderSize }
+        }
+      });
     }
     return renderSize;
   }
@@ -321,6 +349,11 @@ export class EffectRenderManager {
 
     renderer.setRenderTarget(this._compositionTarget);
     renderer.render(this._compositionScene, this._orthographicCamera);
+  }
+
+  private renderEdges(renderer: THREE.WebGLRenderer) {
+    renderer.setRenderTarget(this._edgedTarget);
+    renderer.render(this._highlightEdgeScene, this._orthographicCamera);
   }
 
   private renderAntiAliasToCanvas(renderer: THREE.WebGLRenderer) {
@@ -370,6 +403,21 @@ export class EffectRenderManager {
 
     const mesh = new THREE.Mesh(geometry, this._fxaaMaterial);
     this._fxaaScene.add(mesh);
+  }
+
+  private setupHighlightEdgesScene() {
+    const geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
+    geometry.vertices.push(new THREE.Vector3(3, -1, 0));
+    geometry.vertices.push(new THREE.Vector3(-1, 3, 0));
+
+    const face = new THREE.Face3(0, 1, 2);
+    geometry.faces.push(face);
+
+    geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
+
+    const mesh = new THREE.Mesh(geometry, this._hightlightEdgesMaterial);
+    this._highlightEdgeScene.add(mesh);
   }
 
   private traverseForRootSectorNode(root: THREE.Object3D) {

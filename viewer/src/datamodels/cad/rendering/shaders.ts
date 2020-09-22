@@ -94,6 +94,15 @@ export const fxaaShaders = {
 };
 
 /**
+ * Highlight edges
+ */
+export const edgesShaders = {
+  fragment: glsl(require('@/glsl/post-processing/outline-edges.frag').default),
+  vertex: glsl(require('@/glsl/post-processing/outline-edges.vert').default)
+};
+
+
+/**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
 export const coverageShaders = {
