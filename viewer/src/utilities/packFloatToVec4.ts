@@ -28,6 +28,26 @@ export function packFloat(f: number) {
   return rgba;
 }
 
+export function packFloatInto(f: number, targetBuffer: Uint8ClampedArray, offset: number) {
+  const F = abs(f);
+  if (F == 0) {
+    return;
+  }
+  const Sign = step(0.0, -f);
+  let Exponent = floor(log2(F));
+
+  const Mantissa = F / exp2(Exponent);
+
+  if (Mantissa < 1) Exponent -= 1;
+
+  Exponent += 127;
+
+  targetBuffer[offset] = 128.0 * Sign + floor(Exponent * exp2(-1.0));
+  targetBuffer[offset + 1] = 128.0 * mod(Exponent, 2.0) + mod(floor(Mantissa * 128.0), 128.0);
+  targetBuffer[offset + 2] = floor(mod(floor(Mantissa * exp2(23.0 - 8.0)), exp2(8.0)));
+  targetBuffer[offset + 3] = floor(exp2(23.0) * mod(Mantissa, exp2(-15.0)));
+}
+
 export function unpackFloat4(packedFloat: THREE.Vector4) {
   const rgba = packedFloat;
   const sign = 1.0 - step(128.0, rgba.x) * 2.0;

@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { packFloat } from '@/utilities/packFloatToVec4';
+import { packFloatInto } from '@/utilities/packFloatToVec4';
 import { determinePowerOfTwoDimensions } from '@/utilities/determinePowerOfTwoDimensions';
 
 export class TransformOverrideBuffer {
-  private static readonly MIN_NUMBER_OF_TREE_INDECES = 16;
+  private static readonly MIN_NUMBER_OF_TREE_INDICES = 16;
   private static readonly NUMBER_OF_ELEMENTS_PER_MATRIX = 16;
   private static readonly BYTES_PER_FLOAT = 4;
 
@@ -30,7 +30,7 @@ export class TransformOverrideBuffer {
 
   constructor(onGenerateNewDataTexture: (datatexture: THREE.DataTexture) => void) {
     this._textureBuffer = new Uint8Array(
-      TransformOverrideBuffer.MIN_NUMBER_OF_TREE_INDECES *
+      TransformOverrideBuffer.MIN_NUMBER_OF_TREE_INDICES *
         TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX *
         TransformOverrideBuffer.BYTES_PER_FLOAT
     );
@@ -38,12 +38,12 @@ export class TransformOverrideBuffer {
     this._dataTexture = new THREE.DataTexture(
       this._textureBuffer,
       TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX,
-      TransformOverrideBuffer.MIN_NUMBER_OF_TREE_INDECES
+      TransformOverrideBuffer.MIN_NUMBER_OF_TREE_INDICES
     );
 
     this._onGenerateNewDataTextureCallback = onGenerateNewDataTexture;
 
-    this._unusedIndices = [...Array(TransformOverrideBuffer.MIN_NUMBER_OF_TREE_INDECES).keys()].map((_, n) => n);
+    this._unusedIndices = [...Array(TransformOverrideBuffer.MIN_NUMBER_OF_TREE_INDICES).keys()].map((_, n) => n);
 
     this._treeIndexToOverrideIndex = new Map();
   }
@@ -67,16 +67,13 @@ export class TransformOverrideBuffer {
     }
 
     for (let i = 0; i < TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX; i++) {
-      const element = packFloat(transformBuffer[(i % 4) * 4 + Math.floor(i / 4)]);
-
       const byteIndex =
         (matrixIndex * TransformOverrideBuffer.NUMBER_OF_ELEMENTS_PER_MATRIX + i) *
         TransformOverrideBuffer.BYTES_PER_FLOAT;
 
-      this._dataTexture.image.data[byteIndex] = element.x;
-      this._dataTexture.image.data[byteIndex + 1] = element.y;
-      this._dataTexture.image.data[byteIndex + 2] = element.z;
-      this._dataTexture.image.data[byteIndex + 3] = element.w;
+      const matrixElement = transformBuffer[(i % 4) * 4 + Math.floor(i / 4)];
+
+      packFloatInto(matrixElement, this._dataTexture.image.data, byteIndex);
     }
 
     this._dataTexture.needsUpdate = true;
