@@ -1,0 +1,50 @@
+---
+id: pointcloud
+title: Pointcloud models
+description: Usage of pointcloud models with Cognite3DViewer
+---
+
+`Cognite3DViewer` can be used to load photogrammetry models from Cognite Data Fusion.
+It works in exactly the same way as for [CAD](./cad-basic.mdx).
+
+<!--
+Notice however that pointcloud models are different.
+    TODO: here we should have some more meaningfull explanation about coloring/traversing etc
+-->
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+<DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
+
+
+<!-- fixme: specify correct ids -->
+
+```jsx
+import { CogniteClient } from '@cognite/sdk';
+import { Cognite3DViewer } from '@cognite/reveal';
+
+const client = new CogniteClient({
+  appId: 'cognite.reveal.docs.Cognite3DViewer',
+});
+
+// to view models from CDF authentication is required
+client.loginWithOAuth({ project: 'publicdata' });
+
+// some div in your html page for Cognite3DViewer to insert a canvas
+const domElement = document.getElementById('canvas-wrapper');
+
+async function main() {
+  const viewer = new Cognite3DViewer({ sdk: client, domElement });
+
+  // load a model and add it on 3d scene
+  // https://console.cognitedata.com/publicdata/3d-models/4715379429968321/revisions/5688854005909501
+  const model = await viewer.addModel({
+    modelId: 4715379429968321,
+    revisionId: 5688854005909501,
+  });
+  viewer.loadCameraFromModel(model);
+
+  // call viewer.dispose() when you don't need the viewer anymore
+}
+main();
+```
