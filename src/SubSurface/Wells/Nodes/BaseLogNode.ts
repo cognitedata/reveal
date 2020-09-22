@@ -25,6 +25,7 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { ColorType } from "@/Core/Enums/ColorType";
+import { NodePointer } from "@/Core/Nodes/Utilities/NodePointer";
 
 export abstract class BaseLogNode extends DataNode
 {
@@ -33,6 +34,12 @@ export abstract class BaseLogNode extends DataNode
   //==================================================
 
   static className = "BaseLogNode";
+
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private nodePointer = new NodePointer();
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -46,6 +53,10 @@ export abstract class BaseLogNode extends DataNode
 
   public get filterLogNode(): BaseFilterLogNode | null
   {
+    const { node } = this.nodePointer;
+    if (node instanceof BaseFilterLogNode)
+      return node;
+
     const { trajectoryNode } = this;
     if (!trajectoryNode)
       return null;
@@ -58,6 +69,7 @@ export abstract class BaseLogNode extends DataNode
     if (!filterLogNode)
       return null;
 
+    this.nodePointer.node = filterLogNode;
     return filterLogNode;
   }
 
@@ -79,14 +91,22 @@ export abstract class BaseLogNode extends DataNode
   //==================================================
 
   public /*override*/ hasIconColor(): boolean { return true; }
+  public /*override*/ canChangeColor(): boolean { return false; }
+  public /*override*/ canChangeName(): boolean { return this.nodePointer.isEmpty; }
+
+  public /*override*/ getName(): string
+  {
+    if (this.nodePointer.isEmpty)
+      return super.getName();
+    const { filterLogNode } = this;
+    return filterLogNode ? filterLogNode.getName() : super.getName();
+  }
 
   public /*override*/ getColor(): Color
   {
     const { filterLogNode } = this;
     return filterLogNode ? filterLogNode.getColor() : super.getColor();
   }
-
-  public /*override*/ canChangeColor(): boolean { return false; }
 
   public /*virtual*/ getCheckBoxEnabled(target?: ITarget | null): boolean
   {
@@ -123,7 +143,7 @@ export abstract class BaseLogNode extends DataNode
   // INSTANCE METHODS
   //==================================================
 
-  public isEqual(other: BaseFilterLogNode): boolean
+  public isEqual(other: BaseFilterLogNode): boolean 
   {
     return this.wellLogType === other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
   }

@@ -72,7 +72,7 @@ export class FilterLogFolder extends BaseNode
   {
     for (const filterLogNode of this.getChildrenByType(BaseFilterLogNode))
     {
-      if (filterLogNode.isEqual(logNode))
+      if (logNode.isEqual(filterLogNode))
         return filterLogNode;
     }
     return null;
