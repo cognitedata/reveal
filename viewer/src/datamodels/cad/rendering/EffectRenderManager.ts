@@ -20,7 +20,6 @@ export class EffectRenderManager {
   private readonly _inFrontScene: THREE.Scene;
   private readonly _cadScene: THREE.Scene;
   private readonly _backScene: THREE.Scene;
-  private readonly _inFrontScene: THREE.Scene;
   private readonly _backSceneBuilder: TemporarySceneBuilder;
   private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
 
