@@ -86,11 +86,6 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   // INSTANCE METHODS
   //==================================================
 
-  public isEqual(other: BaseLogNode): boolean
-  {
-    return this.wellLogType === other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
-  }
-
   public * getAllLogs(): Generator<BaseLogNode>
   {
     const treeNode = this.getTreeNode();
@@ -99,7 +94,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
 
     for (const logNode of treeNode.getDescendantsByType(BaseLogNode))
     {
-      if (logNode.isEqual(this))
+      if (logNode.filterLogNode === this)
         yield logNode;
     }
   }

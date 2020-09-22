@@ -113,7 +113,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
     for (const logNode of trajectoryNode.getDescendantsByType(BaseLogNode))
     {
-      const filterLogNode = filterLogFolder.getFilterLogNode(logNode);
+      const { filterLogNode } = logNode;
       if (!filterLogNode)
         continue;
 
