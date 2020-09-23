@@ -18,8 +18,8 @@ const DemoContainer = styled.div`
 const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
 
 const components: Record<string, ComponentType<DemoProps>> = {
-  Cognite3DViewerDemo: React.lazy(() => import('./demos/Cognite3DViewerDemo')),
-  ModelPreviewDemo: React.lazy(() => import('./demos/ModelPreviewDemo')),
+  Cognite3DViewerDemo: React.lazy(() => import('@site/docs/demos/Cognite3DViewerDemo')),
+  ModelPreviewDemo: React.lazy(() => import('@site/docs/demos/ModelPreviewDemo')),
 };
 
 // demo wrapper just wraps the demo. don't pass modelId/revisionId to it, they defined in demos
