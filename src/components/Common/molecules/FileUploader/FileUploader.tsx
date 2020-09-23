@@ -24,7 +24,7 @@ export const GCSUploader = (
   );
 
   return new UploadGCS({
-    id: 'discovery-upload',
+    id: 'cognite-data-fusion-upload',
     url: uploadUrl,
     file,
     chunkSize: 262144 * chunkMultiple,
@@ -58,7 +58,7 @@ export const FileUploader = ({
   assetIds,
   validExtensions,
   onUploadSuccess = () => {},
-  onUploadFailure = message.error,
+  onUploadFailure = alert,
   onCancel = () => {},
   beforeUploadStart = () => {},
   onFileListChange = () => {},
@@ -84,15 +84,11 @@ export const FileUploader = ({
 
     fileList.forEach(async file => {
       const mimeType = getMIMEType(file.name);
-      if (!mimeType) {
-        onUploadFailure(`Unable to detect file type for ${file.name}`);
-        return;
-      }
 
       const fileMetadata = (await sdk.files.upload({
         name: file.name,
-        mimeType,
-        source: 'Data Explorer',
+        mimeType: mimeType || undefined,
+        source: 'Cognite Data Fusion',
         ...(assetIds && { assetIds }),
       })) as FileUploadResponse;
       const { uploadUrl, id } = fileMetadata;
