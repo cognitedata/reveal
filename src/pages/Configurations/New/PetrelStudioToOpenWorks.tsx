@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Badge, Button } from '@cognite/cogs.js';
-import { Checkbox, Select } from 'antd';
+import { Checkbox, notification, Select } from 'antd';
 import {
   Configuration,
-  DummyUser,
   GenericResponseObject,
   Source,
 } from 'typings/interfaces';
 import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
+import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { useHistory } from 'react-router-dom';
+import ErrorMessage from 'components/Molecules/ErrorMessage';
+
 import {
   ConfigurationArrow,
   ConfigurationContainer,
@@ -19,8 +21,6 @@ import {
   InitialState,
   ThreeColsLayout,
 } from '../elements';
-import { DUMMY_DATA } from '../../../utils/dummy';
-import ErrorMessage from '../../../components/Molecules/ErrorMessage';
 
 type Props = {
   name: string | undefined | null;
@@ -41,6 +41,7 @@ enum ChangeType {
 }
 
 const PetrelStudioToOpenWorks = ({ name }: Props) => {
+  const { user } = useContext(AuthContext);
   const [configuration, setConfiguration] = useState<Configuration>({
     name,
     source: {
@@ -52,7 +53,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       source: Source.OPENWORKS,
     },
     business_tags: [],
-    author: DummyUser.DEMO,
+    author: String(user),
     datatypes: [],
   });
   const [configurationIsComplete, setConfigurationIsComplete] = useState<
@@ -80,10 +81,20 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       value: 'apple',
     },
   ]);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const { api } = useContext(ApiContext);
   const { error: apiError, addError } = useContext(APIErrorContext);
   const history = useHistory();
   const { Option } = Select;
+
+  useEffect(() => {
+    setConfiguration((prevState) => {
+      return {
+        ...prevState,
+        author: String(user),
+      };
+    });
+  }, [user]);
 
   async function fetchRepositories(): Promise<GenericResponseObject[]> {
     return api!.projects.get(Source.STUDIO);
@@ -95,6 +106,15 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
 
   async function fetchDataTypes(projectId: number): Promise<string[]> {
     return api!.datatypes.get(projectId);
+  }
+
+  async function fetchBusinessTags(
+    repository: string = configuration.source.external_id
+  ): Promise<string[]> {
+    return api!.projects.getBusinessTags(
+      configuration.source.source,
+      repository
+    );
   }
 
   function getRepositoryIdInArrayFromExternalId(externalId: string) {
@@ -125,12 +145,16 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
 
   function handleSaveConfigurationClick() {
     api!.configurations.create(configuration).then((response) => {
-      if (response[0].error) {
+      if (Array.isArray(response) && response.length > 0 && response[0].error) {
         addError(
           `Failed to save configuration - ${response[0].statusText}`,
           response[0].status
         );
       } else {
+        notification.success({
+          message: 'Configuration created',
+          description: 'Configuration was created successfully',
+        });
         history.push('/configurations'); // Bug in react-router-dom - does not render after history.push()
       }
     });
@@ -141,8 +165,13 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       return {
         ...prevState,
         source: { ...prevState.source, external_id: value.toString() },
+        business_tags: [],
+        datatypes: [],
       };
     });
+    fetchBusinessTags(value.toString()).then((response) =>
+      setAvailableTags(response)
+    );
   }
 
   function updateTargetProject(value: SelectValue) {
@@ -270,28 +299,31 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                     </Option>
                   ))}
                 </Select>
-                {configuration.source.external_id !== '' && (
-                  <>
-                    <div>Select tags:</div>
-                    <Select
-                      mode="tags"
-                      placeholder="Available tags"
-                      style={{ width: '100%', marginBottom: '16px' }}
-                      onChange={updateBusinessTags}
-                    >
-                      {DUMMY_DATA.tags.map((tag) => (
-                        <Option value={tag}>{tag}</Option>
-                      ))}
-                    </Select>
-                    <div>Select Datatypes:</div>
-                    <Checkbox.Group
-                      options={availableDataTypes}
-                      onChange={(value: any) =>
-                        handleChange(ChangeType.DATATYPES, value)
-                      }
-                    />
-                  </>
-                )}
+                {configuration.source.external_id !== '' &&
+                  availableTags.length > 0 && (
+                    <>
+                      <div>Select tags:</div>
+                      <Select
+                        mode="tags"
+                        placeholder="Available tags"
+                        style={{ width: '100%', marginBottom: '16px' }}
+                        onChange={updateBusinessTags}
+                      >
+                        {availableTags.map((tag) => (
+                          <Option key={`tag_${tag}`} value={tag}>
+                            {tag}
+                          </Option>
+                        ))}
+                      </Select>
+                      <div>Select Datatypes:</div>
+                      <Checkbox.Group
+                        options={availableDataTypes}
+                        onChange={(value: any) =>
+                          handleChange(ChangeType.DATATYPES, value)
+                        }
+                      />
+                    </>
+                  )}
               </main>
               <footer>
                 <Button

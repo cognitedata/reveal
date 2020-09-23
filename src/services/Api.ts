@@ -111,6 +111,14 @@ class Api {
     get: async (source: Source): Promise<GenericResponseObject[]> => {
       return this.get(`${this.baseURL}/sources/${source}/projects`);
     },
+    getBusinessTags: async (
+      source: Source,
+      project: string
+    ): Promise<string[]> => {
+      return this.get(
+        `${this.baseURL}/sources/${source}/projects/${project}/tags`
+      );
+    },
   };
 
   public sources = {
