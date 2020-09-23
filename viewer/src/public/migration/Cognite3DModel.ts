@@ -12,7 +12,7 @@ import { toThreeJsBox3, NumericRange } from '@/utilities';
 import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
+import { NodeAppearanceProvider, DefaultNodeAppearance, NodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { trackError } from '@/utilities/metrics';
 import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
@@ -449,6 +449,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     await treeIndices.forEach(idx => this.nodeColors.delete(idx));
     this.cadNode.requestNodeUpdate(treeIndices);
     return treeIndices.count;
+  }
+
+  /**
+   * Overrrides color for all nodes in the scene.
+   * @param r Red component between 0 and 255.
+   * @param g Green component between 0 and 255.
+   * @param b Blue component between 0 and 255.
+   */
+  setAllNodeColors(r: number, g: number, b: number): void {
+    const color: [number, number, number] = [r, g, b];
+    for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
+      this.nodeColors.set(i, color);
+    }
+    this.cadNode.requestNodeUpdate([...this.nodeColors.keys()]);
   }
 
   /**

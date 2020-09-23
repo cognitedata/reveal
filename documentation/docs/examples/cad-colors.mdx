@@ -15,17 +15,23 @@ Reveal supports updating the color of individual objects by providing [tree indi
 To update the colors of all nodes, loop over all tree indices in the model and update the colors
 accordingly:
 
-<!-- TODO: implement eficcient coloring fn and update these examples -->
-
 ```jsx runnable
 model.iterateNodesByTreeIndex(treeIndex => {
-  model.setNodeColorByTreeIndex(treeIndex, 127, 127, 127);
+  const value = treeIndex % 200;
+  model.setNodeColorByTreeIndex(treeIndex, 200, value, 200);
 });
+```
+
+Notice how colors are applied in batches using this approach. A more performant choice when a single color is 
+to be applied to all nodes is to use `Cognite3DModel.setAllNodeColors`:
+
+```jsx runnable
+model.setAllNodeColors(127, 127, 127);
 ```
 
 ## Reset node colors
 
-Color overrides can be overridden using `Cognite3DModel.resetNodeColorByTreeIndex`, e.g.
+Color overrides can be reset using `Cognite3DModel.resetNodeColorByTreeIndex`, e.g.
 
 ```jsx runnable
 model.iterateNodesByTreeIndex(treeIndex => {
