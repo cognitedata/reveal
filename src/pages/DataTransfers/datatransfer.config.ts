@@ -62,5 +62,13 @@ export default {
       keyName: 'revisions_count',
       value: 'Revisions count',
     },
+    {
+      keyName: 'business_tags',
+      value: 'Business tags',
+    },
+    {
+      keyName: 'status_active',
+      value: 'Status active',
+    },
   ],
 };

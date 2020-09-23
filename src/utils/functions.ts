@@ -1,5 +1,6 @@
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { GenericResponseObject, Rule } from '../typings/interfaces';
+import { getMappedColumnName } from '../pages/DataTransfers/utils';
 
 export function stringToBoolean(input: string): boolean | undefined {
   try {
@@ -32,7 +33,10 @@ export function curateColumns(
   rules: any
 ) {
   if (columns) {
-    const tmp = columns;
+    const tmp = columns.map((col) => ({
+      ...col,
+      title: getMappedColumnName(String(col.title)),
+    }));
     rules.map((rule: Rule) => {
       const index = columns.findIndex(
         (column: ColumnType<any>) => column.key === rule.key

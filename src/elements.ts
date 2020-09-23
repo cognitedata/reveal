@@ -25,9 +25,14 @@ export const ContentContainer = styled.div`
 
   .ant-table .ant-table-thead tr th.ant-table-cell {
     background: #ffffff;
+    text-transform: capitalize;
   }
   .ant-table-column-sorters {
     text-transform: capitalize;
+  }
+  .ant-pagination.ant-table-pagination {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 `;
 
