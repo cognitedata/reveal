@@ -12,7 +12,7 @@ import { toThreeJsBox3, NumericRange } from '@/utilities';
 import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { NodeAppearanceProvider, DefaultNodeAppearance, NodeAppearance } from '@/datamodels/cad/NodeAppearance';
+import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { trackError } from '@/utilities/metrics';
 import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
