@@ -140,7 +140,7 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
 
   return (
     <>
-      <Splitter flex={[1]} sizes={[0, 100]}>
+      <Splitter primaryIndex={1}>
         <FileOverviewPanel
           fileId={fileId}
           pendingAnnotations={pendingAnnotations}

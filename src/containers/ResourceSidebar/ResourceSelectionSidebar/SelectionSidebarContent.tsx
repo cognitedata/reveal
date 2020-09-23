@@ -12,16 +12,17 @@ import { AssetPreview } from 'containers/Assets';
 import { SequencePreview } from 'containers/Sequences';
 import { TimeseriesPreview } from 'containers/Timeseries';
 import { SearchResults } from 'containers/SearchResults';
-import ResourceActionsContext from 'context/ResourceActionsContext';
 import { RenderResourceActionsFunction } from 'types/Types';
 import {
+  ResourceActionsContext,
+  ResourcePreviewProvider,
   useQuery,
   useResourcesState,
   useResourceMode,
-} from 'context/ResourceSelectionContext';
+  useResourceTypes,
+} from 'context';
 import { ResourceItem, ResourceType } from 'types';
 import { Divider, SpacedRow } from 'components/Common';
-import { useResourceTypes } from '../../../context/ResourceSelectionContext';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: fixed;
@@ -158,7 +159,7 @@ export const SelectionSidebarContent = ({
       }
     }
     content = (
-      <>
+      <ResourcePreviewProvider>
         <Button
           variant="ghost"
           icon="ArrowLeft"
@@ -168,7 +169,7 @@ export const SelectionSidebarContent = ({
           Back to search
         </Button>
         {preview}
-      </>
+      </ResourcePreviewProvider>
     );
   } else {
     content = (

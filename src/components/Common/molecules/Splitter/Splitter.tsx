@@ -1,124 +1,108 @@
 import React from 'react';
-import SplitPane from 'react-split';
+import SplitterLayout from 'react-splitter-layout';
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 
 export type SplitterProps = {
-  minSize?: number[];
-  hide?: number[];
-  flex?: number[];
-  sizes?: number[];
+  secondaryMinSize?: number;
+  percentage?: boolean;
+  primaryIndex?: 0 | 1;
   children: React.ReactNode | React.ReactNode[];
-  style?: React.CSSProperties;
 };
-const defaultMinSize: number[] = [360, 360];
-const defaultHide: number[] = [];
-const defaultFlex: number[] = [];
 
 export const Splitter = ({
-  hide = defaultHide,
-  flex = defaultFlex,
   children,
-  minSize = defaultMinSize,
-  style = {},
-  sizes,
+  secondaryMinSize = 360,
+  percentage = false,
+  primaryIndex = 0,
 }: SplitterProps) => {
   return (
-    <SplitterWrapper
-      style={style}
-      minSize={minSize}
-      sizes={sizes}
-      expandToMin
-      gutterSize={10}
-      gutterAlign="center"
-      dragInterval={1}
-      cursor="col-resize"
-      onDragEnd={() => {
-        window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
-      }}
-      hide={hide
-        .map(el => {
-          return el * 2 + 1;
-        })
-        .concat(
-          hide.map(el => {
-            if (el === 0) {
-              return 2;
-            }
-            return el * 2;
-          })
-        )}
-      lock={hide.map(el => {
-        if (el === 0) {
-          return 2;
-        }
-        return el * 2;
-      })}
-      flex={flex.map(el => {
-        return el * 2 + 1;
-      })}
-    >
-      {children}
+    <SplitterWrapper>
+      <SplitterLayout
+        secondaryMinSize={secondaryMinSize}
+        secondaryInitialSize={secondaryMinSize}
+        primaryIndex={primaryIndex}
+        onDragEnd={() => {
+          window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
+        }}
+        percentage={percentage}
+      >
+        {children}
+      </SplitterLayout>
     </SplitterWrapper>
   );
 };
 
-const hideCss = (i: number) => {
-  return `
-      && > div:nth-child(${i}) {
-        display: none;
-      }
-    `;
-};
-const flexCss = (i: number) => {
-  return `
-      && > div:nth-child(${i}) {
-        flex: 1;
-      }
-    `;
-};
-const lockCss = (i: number) => {
-  return `
-      && > div:nth-child(${i}) {
-        pointer-events: none;
-        background-color: inherit;
-      }
-    `;
-};
-type WrapperProps = { hide: number[]; lock: number[]; flex: number[] };
-const SplitterWrapper = styled(SplitPane)<WrapperProps>(
-  (props: WrapperProps) => css`
+const SplitterWrapper = styled.div(
+  () => css`
     flex: 1;
     height: 100%;
     width: 100%;
     overflow-y: auto;
     position: relative;
-    display: flex;
 
     button.cogs-menu-item {
       color: ${Colors.black.hex()};
     }
 
-    .rp-stage {
+    .splitter-layout {
+      position: absolute;
       display: flex;
-      position: relative;
+      flex-direction: row;
+      width: 100%;
       height: 100%;
-      flex: 1;
       overflow: hidden;
     }
 
-    .gutter {
+    .splitter-layout .layout-pane {
+      position: relative;
+      flex: 0 0 auto;
+      overflow: auto;
+    }
+
+    .splitter-layout .layout-pane > * {
+      height: 100%;
+      width: 100%;
+    }
+
+    .splitter-layout .layout-pane.layout-pane-primary {
+      flex: 1 1 auto;
+    }
+
+    .splitter-layout > .layout-splitter {
+      flex: 0 0 auto;
+      width: 4px;
+      height: 100%;
       cursor: col-resize;
       transition: 0.3s all;
       background-color: rgba(0, 0, 0, 0.1);
     }
-    .gutter:hover {
+
+    .splitter-layout .layout-splitter:hover {
       background-color: ${Colors['midblue-7'].hex()};
     }
 
-    ${props.hide.map(i => hideCss(i)).join('')}
-    ${props.lock.map(i => lockCss(i)).join('')}
-    ${props.flex.map(i => flexCss(i)).join('')}
+    .splitter-layout.layout-changing {
+      cursor: col-resize;
+    }
+
+    .splitter-layout.layout-changing > .layout-splitter {
+      background-color: #aaa;
+    }
+
+    .splitter-layout.splitter-layout-vertical {
+      flex-direction: column;
+    }
+
+    .splitter-layout.splitter-layout-vertical.layout-changing {
+      cursor: row-resize;
+    }
+
+    .splitter-layout.splitter-layout-vertical > .layout-splitter {
+      width: 100%;
+      height: 4px;
+      cursor: row-resize;
+    }
   `
 );

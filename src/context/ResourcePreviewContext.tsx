@@ -76,23 +76,25 @@ export const ResourcePreviewProvider = ({
         hidePreview,
       }}
     >
-      <Splitter flex={[0]} hide={isOpen ? [] : [1]}>
+      <Splitter>
         <ChildrenWrapper>{children}</ChildrenWrapper>
-        <ResourcePreviewSidebar
-          item={item}
-          header={header}
-          footer={footer}
-          content={content}
-          placeholder={placeholder}
-          onClose={() => {
-            setIsOpen(false);
-            onClose();
-            setTimeout(
-              () => window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT)),
-              200
-            );
-          }}
-        />
+        {isOpen && (
+          <ResourcePreviewSidebar
+            item={item}
+            header={header}
+            footer={footer}
+            content={content}
+            placeholder={placeholder}
+            onClose={() => {
+              setIsOpen(false);
+              onClose();
+              setTimeout(
+                () => window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT)),
+                200
+              );
+            }}
+          />
+        )}
       </Splitter>
     </ResourcePreviewContext.Provider>
   );
