@@ -3,7 +3,6 @@
 @use "utils";
 @use "variables";
 @import "~react-virtualized/styles.css";
-@import "~reset-css/reset.css";
 
 .node-viz-container {
   height: variables.$root-container-height;

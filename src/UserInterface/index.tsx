@@ -12,14 +12,13 @@ import { App } from "@/UserInterface/App/App";
 import { NodeVisualizerReducer } from "@/UserInterface/Redux/reducers/NodeVisualizerReducer";
 import { NodeVisualizerMiddleware } from "@/UserInterface/Redux/Middlewares/NodeVisualizerMiddleware";
 import "@/UserInterface/styles/scss/standalone-theme.scss";
+import "@/UserInterface/styles/scss/styles.dev.scss";
 import { Appearance } from "@/Core/States/Appearance";
 import { setCssVariable } from "@/UserInterface/Foundation/Utils/cssUtils";
 
 // @ts-ignore
-const composeEnhancers =
-  typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
-    : compose;
+// eslint-disable-next-line prettier/prettier
+const composeEnhancers = typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose;
 
 const enhancer = composeEnhancers(
   applyMiddleware(...[NodeVisualizerMiddleware])
@@ -33,9 +32,6 @@ const store: Store = createStore(
 const root = document.createElement("div");
 
 root.setAttribute("id", "root");
-root.style.width = "100vw";
-root.style.height = "100vh";
-
 document.body.appendChild(root);
 
 setCssVariable(

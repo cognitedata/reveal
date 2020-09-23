@@ -105,10 +105,8 @@ Disable loadMockData constant in App.tsx to remove this warning!`,
   }, []);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <ThemeProvider theme={theme}>
-        <NodeVisualizer root={root} />
-      </ThemeProvider>
-    </div>
+    <ThemeProvider theme={theme}>
+      <NodeVisualizer root={root} />
+    </ThemeProvider>
   );
 }

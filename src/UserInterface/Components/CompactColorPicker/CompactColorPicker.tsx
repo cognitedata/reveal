@@ -25,9 +25,7 @@ export function CompactColorPicker(props: {
         onClick={() => setVisibility(!visible)}
       >
         <span className="color-box" style={{ backgroundColor: color }} />
-        <span className="color-name">
-          <b>{color}</b>
-        </span>
+        <span className="color-name">{color}</span>
       </div>
       {visible && (
         <div

@@ -10,6 +10,7 @@
 
   h2.title {
     font-size: var(--node-viz-secondary-header-font-size, variables.$application-secondary-header-font-size);
+    font-weight: normal;
     margin: 0 0.5rem;
     white-space: nowrap;
     overflow: hidden;

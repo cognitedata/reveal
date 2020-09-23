@@ -125,7 +125,6 @@
     "react-split-pane": "^0.1.91",
     "react-virtualized": "^9.21.2",
     "reselect": "^4.0.0",
-    "reset-css": "^5.0.1",
     "sass": "^1.26.10",
     "styled-components": "^5.1.1",
     "three": "^0.119.0",

@@ -54,6 +54,12 @@ const WrappingListItemText = withStyles(() => ({
   },
 }))(ListItemText);
 
+const SelectOptionIcon = withStyles(() => ({
+  root: {
+    minWidth: 40,
+  },
+}))(ListItemIcon);
+
 const useStyles = makeStyles(() => ({
   menuItem: {
     display: "flex",
@@ -109,7 +115,7 @@ export function CommonSelectBase(
             value={option.value}
             key={option.value}
           >
-            <ListItemIcon>{getIconNode()}</ListItemIcon>
+            <SelectOptionIcon>{getIconNode()}</SelectOptionIcon>
             <WrappingListItemText>{option.label}</WrappingListItemText>
           </MenuItem>
         );
