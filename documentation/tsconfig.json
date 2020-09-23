@@ -16,5 +16,5 @@
       "@site/*": ["*"]
     }
   },
-  "include": ["src", "docs"]
+  "include": ["src", "docs", "versioned_docs"]
 }
