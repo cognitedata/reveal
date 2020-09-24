@@ -1,0 +1,88 @@
+---
+id: cad-transform-override
+title: Override CAD nodes transforms
+description: Reveal supports overriding transforms of individual objects by providing tree indices to identify 3D nodes
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Reveal supports overriding transforms of individual objects by providing [tree indices to identify 3D nodes.](../concepts.md)
+
+Note that any transformation override is applied with respect to the THREE.js world coordinate space. Also note that the node transform is not accounted for when determining geometry to load. Due to this node transforms shouldn't apply too drastic changes to the position and extend of the nodes. For model wide changes `Cognite3DModel.setModelTransformation` should be used instead.
+Also note that non-uniform scaling of nodes are not currently supported and may give unexpected results. 
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+### Setting node transform
+
+Setting the transform of a given node is done by `Cognite3DModel.setNodeTransformByTreeIndex` and takes a tree index,
+a matrix transformation and a flag if the transformation also should be applied to children of the given node.
+
+
+
+```jsx runnable
+const transform = new THREE.Matrix4();
+transform.setPosition(new THREE.Vector3(10, 10, 0));
+model.setNodeTransformByTreeIndex(532261, transform, true);
+```
+
+### Reset node transform
+
+
+Resetting the transformation is done with `Cognite3DModel.resetNodeTransformByTreeIndex` and takes the given tree index,
+
+and a flag that determines if the node transform reset also should be applied to any child nodes of the given tree index.
+
+```jsx runnable
+model.resetNodeTransformByTreeIndex(532261, true);
+```
+
+### Animations
+
+Creating animations is a matter of applying transformations multiple times. As stated above, any transformation
+
+is applied in the global world coordinate system of THREE.js. This means that if you want to rotate a model around a given point (and not around the world origin),
+you first need to transform the model to that given point, then rotate, then transform back into the world coordinate space. An example of this is done below to create an animation
+of the crane rotating. First we get the center of the bounding box for node with id `533010` which is close to the base of the crane.
+Then we set up an interval which triggers a function that transforms the entire crane (`532261`): first to the base of the crane, then rotates the model,
+then transforms it back, thus giving us the wanted rotation. Keep in mind that [THREE.js uses column matrix notation](https://threejs.org/docs/#api/en/math/Matrix4), such that
+
+the following statement: 
+
+```js
+  const matrixOverride = modelToWorld.multiply(rotationMatrix.multiply(worldToModel));
+```
+
+first applies `worldToModel`, then `rotationMatrix` and finally `modelToWorld`.
+
+```jsx runnable
+model.getBoundingBoxByTreeIndex(533010).then(boundingBox => {
+  const center = boundingBox.getCenter(new THREE.Vector3());
+
+  const modelToWorld = new THREE.Matrix4();
+  const worldToModel = new THREE.Matrix4();
+  const rotationMatrix = new THREE.Matrix4();
+
+  const clock = new THREE.Clock(true);
+  clock.start();
+
+  const intervalID = setInterval(function () {
+    clock.getElapsedTime();
+
+    modelToWorld.setPosition(center);
+    worldToModel.getInverse(modelToWorld.clone());
+
+    const newRotation = new THREE.Euler(0, -Math.PI * clock.elapsedTime / 20, 0);
+    rotationMatrix.makeRotationFromEuler(newRotation);
+
+    const matrixOverride = modelToWorld.multiply(rotationMatrix.multiply(worldToModel));
+
+    model.setNodeTransformByTreeIndex(532261, matrixOverride, true);
+
+    if (clock.elapsedTime >= 10) clearInterval(intervalID);
+  }, 20);
+});
+```
