@@ -24,6 +24,7 @@ import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 import { SeismicRenderStyle } from "@/SubSurface/Seismic/Nodes/SeismicRenderStyle";
+import { Util } from "@/Core/Primitives/Util";
 
 export class SeismicCubeNode extends DataNode
 {
@@ -93,9 +94,9 @@ export class SeismicCubeNode extends DataNode
   // INSTANCE METHODS
   //==================================================
 
-  public load(client?: CogniteSeismicClient, fileId?: string): void
+  public load(client: CogniteSeismicClient, fileId: string): void
   {
-    if (!client || !fileId)
+    if (!client || Util.isEmpty(fileId))
     {
       console.error("Cannot load Seismic Data!, Cognite client or file id is not available!");
       return;
