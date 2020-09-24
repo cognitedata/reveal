@@ -454,6 +454,21 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * Overrrides color for all nodes in the scene.
+   * @param r Red component between 0 and 255.
+   * @param g Green component between 0 and 255.
+   * @param b Blue component between 0 and 255.
+   * @version new in 1.1.0
+   */
+  setAllNodeColors(r: number, g: number, b: number): void {
+    const color: [number, number, number] = [r, g, b];
+    for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
+      this.nodeColors.set(i, color);
+    }
+    this.cadNode.requestNodeUpdate([...this.nodeColors.keys()]);
+  }
+
+  /**
    * Restore original colors for all nodes.
    */
   resetAllNodeColors() {
