@@ -17,7 +17,13 @@ import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'pointcloud';
   public readonly modelId: number;
+  /**
+   * The modelId of the point cloud model in Cognite Data Fusion.
+   */
   public readonly revisionId: number;
+  /**
+   * The revisionId of the specific model revision in Cognite Data Fusion.
+   */
   private readonly pointCloudNode: PointCloudNode;
 
   /**
@@ -88,6 +94,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     return this.pointCloudNode.getModelTransformation(out);
   }
 
+  /**
+   * Returns the current budget measured in number of points.
+   */
   get pointBudget(): number {
     return this.pointCloudNode.pointBudget;
   }
@@ -101,6 +110,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     this.pointCloudNode.pointBudget = count;
   }
 
+  /**
+   * Determines how points currently are colored.
+   */
   get pointColorType(): PotreePointColorType {
     return this.pointCloudNode.pointColorType;
   }
