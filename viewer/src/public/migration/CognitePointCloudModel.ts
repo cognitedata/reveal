@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from '@/datamodels/pointcloud/types';
+import { PotreePointColorType, PotreePointShape } from '@/datamodels/pointcloud/types';
 import { SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
