@@ -127,17 +127,17 @@ Recommended extensions:
 ### Starting development web server
 
 - Create a folder as /src/Solutions/BP/MockData/Sample and place the sample data files which can be downloaded from https://drive.google.com/drive/folders/1bCFeC9YcWdbDsx0vZ1Uf59PJoreLBGYj?usp=sharing
+- create file .env in the root folder with entries  </br>
+  `API_URL=<your cognite api url>` </br>
+  `FILE_ID=<your seismic api file id>` </br>
+  `API_KEY=<your seismic api key>`
 
-#### 3D view only
 
-- Start the web server: `npm install && npm run serve`
-- Open a browser to [localhost:8080](http://localhost:8080).
-
-#### Application with React User interface
+#### Application In Development Mode with React User Interface
 
 - start react app: `npm install && npm run start:dev`
 
-#### Standalone React application that uses library output of this project
+#### Application as a Embedded Application of a React Application
 
 - Navigate to _standalone_ directory: `cd standalone`
 - Start react app with web server: `npm run start`
@@ -148,18 +148,19 @@ Web server will restart and browser will automatically update whenever a file ch
 
 This project exposes the application as a react component library and as well as a standalone react application.
 
-#### Standalone application
-
-- Navigate to _standalone_ directory: `cd standalone`
-- Produce standalone application build: `npm run build`
-
-Optimized standalone application build will be created in **standalone/build** directory.
-
 #### React component
 
 - Run build command in project base directory: `npm run build`
 
 Project build as a library will be created in **dist/node-visualizer** folder.
+
+#### Standalone application
+
+- Build as React Component
+- Navigate to _standalone_ directory: `cd standalone`
+- Produce standalone application build: `npm run build`
+
+Optimized standalone application build will be created in **standalone/build** directory.
 
 ### Develop with Yarn Workspaces
 

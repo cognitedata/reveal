@@ -1,9 +1,8 @@
-import { Range3 } from "@/Core/Geometry/Range3";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 import { Modules } from "@/Core/Module/Modules";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 main(document.body);
 
@@ -12,7 +11,14 @@ export default function main(element: HTMLElement)
   // Create the module and install it it
   const modules = Modules.instance;
   modules.add(new ThreeModule());
-  modules.add(new SyntheticSubSurfaceModule());
+  modules.add(new SyntheticSubSurfaceModule(
+    new CogniteSeismicClient({
+      api_url: process.env.API_URL || "",
+      api_key: process.env.API_KEY || "",
+      debug: true,
+    }),
+    process.env.FILE_ID || ""
+  ));
   modules.install();
 
   // Load the data

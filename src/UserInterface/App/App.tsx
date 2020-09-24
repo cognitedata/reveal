@@ -8,6 +8,7 @@ import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModul
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { Appearance } from "@/Core/States/Appearance";
+import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 const LoadMockData = false;
 
@@ -39,6 +40,15 @@ export function App() {
   // Setup modules
   const module = new BPDataModule();
   modules.add(new ThreeModule());
+
+  const syntheticDataModule = new SyntheticSubSurfaceModule(
+    new CogniteSeismicClient({
+      api_url: process.env.API_URL || "",
+      api_key: process.env.API_KEY || "",
+      debug: true,
+    }),
+    process.env.FILE_ID || ""
+  );
 
   useEffect(() => {
     if (LoadMockData) {
@@ -86,13 +96,13 @@ export function App() {
 Disable loadMockData constant in App.tsx to remove this warning!`,
             err
           );
-          modules.add(new SyntheticSubSurfaceModule());
+          modules.add(syntheticDataModule);
           modules.install();
           const rootNode = modules.createRoot();
           setRoot(rootNode);
         });
     } else {
-      modules.add(new SyntheticSubSurfaceModule());
+      modules.add(syntheticDataModule);
       modules.install();
       const rootNode = modules.createRoot();
       setRoot(rootNode);

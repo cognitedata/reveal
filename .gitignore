@@ -37,6 +37,7 @@ yarn-error.log*
 src/UserInterface/styles/css
 yarn.lock
 
+.env
 .env.local
 standalone/package-lock.json
 package-lock.json

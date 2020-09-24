@@ -93,8 +93,14 @@ export class SeismicCubeNode extends DataNode
   // INSTANCE METHODS
   //==================================================
 
-  public load(client: CogniteSeismicClient, fileId: string): void
+  public load(client?: CogniteSeismicClient, fileId?: string): void
   {
+    if (!client || !fileId)
+    {
+      console.error("Cannot load Seismic Data!, Cognite client or file id is not available!");
+      return;
+    }
+
     SeismicCube.loadCube(client, fileId).then(cube =>
     {
       if (!cube)

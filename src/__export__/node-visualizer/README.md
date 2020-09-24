@@ -78,7 +78,6 @@ If the css properties are not set, default values will be used.
 | --node-viz-readonly-input-color             |
 | --node-viz-secondary-header-font-size       |
 
-
 refer [default theme section](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
 
 Furthermore override Material Default Theme
@@ -106,6 +105,7 @@ const theme = createMuiTheme({
    <NodeVisualizer root={root} />
 </ThemeProvider>
 ```
+Further more custom appearance variables are available in [Appearance.ts](https://github.com/cognitedata/node-visualizer/blob/master/src/Core/States/Appearance.ts)
 
 ### Customizing Tree Control
 
@@ -127,17 +127,17 @@ Recommended extensions:
 ### Starting development web server
 
 - Create a folder as /src/Solutions/BP/MockData/Sample and place the sample data files which can be downloaded from https://drive.google.com/drive/folders/1bCFeC9YcWdbDsx0vZ1Uf59PJoreLBGYj?usp=sharing
+- create file .env in the root folder with entries  </br>
+  `API_URL=<your cognite api url>` </br>
+  `FILE_ID=<your seismic api file id>` </br>
+  `API_KEY=<your seismic api key>`
 
-#### 3D view only
 
-- Start the web server: `npm install && npm run serve`
-- Open a browser to [localhost:8080](http://localhost:8080).
-
-#### Application with React User interface
+#### Application In Development Mode with React User Interface
 
 - start react app: `npm install && npm run start:dev`
 
-#### Standalone React application that uses library output of this project
+#### Application as a Embedded Application of a React Application
 
 - Navigate to _standalone_ directory: `cd standalone`
 - Start react app with web server: `npm run start`
@@ -148,15 +148,42 @@ Web server will restart and browser will automatically update whenever a file ch
 
 This project exposes the application as a react component library and as well as a standalone react application.
 
+#### React component
+
+- Run build command in project base directory: `npm run build`
+
+Project build as a library will be created in **dist/node-visualizer** folder.
+
 #### Standalone application
 
+- Build as React Component
 - Navigate to _standalone_ directory: `cd standalone`
 - Produce standalone application build: `npm run build`
 
 Optimized standalone application build will be created in **standalone/build** directory.
 
-#### React component
+### Develop with Yarn Workspaces
 
-- Run build command in project base directory: `npm run build`
+- Clone bp-visualization and Node-visualizer projects into a root folder
+- Create a `package.json` at root folder with the following content.
+```
+    {
+        "private": true,
+        "workspaces": [
+            "bp-visualization",
+            "node-visualizer"
+        ]
+    }
+```
 
-Project build as a library will be created in **dist/subsurface-visualizer** folder.
+- Change "@cognite/node-visualizer" version in bp-visualization/package.json to match with node-visualizer version.
+- Run `yarn` command at the root folder.
+- Run `yarn build` command at the node-visualizer project. (You might have to run `build:types` also depending on the environment)
+- Run `set https=true&&yarn start` at the bp-visualzation project.
+- Make any change in the node-visualizer and run `yarn build` there. The bp-visualization will built automatically to reflect the changes.
+- When subsurface standalone needs to be run, use start:root command which access the node modules from root folder.
+
+#### Get dependencies for bp-visualization again from npm registry
+- Change "@cognite/node-visualizer" version in bp-visualization/package.json to a valid version in npm registry. (It should not match with the locally built node-visualization version).
+- If you face any conflicts/issues while getting dependencies back from npm registry, just remove or rename the root package.json and run `yarn` command from bp-visualization project
+

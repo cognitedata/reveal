@@ -39,6 +39,31 @@ import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 export class SyntheticSubSurfaceModule extends BaseModule
 {
   //==================================================
+  // PRIVATE fields
+  //==================================================
+
+  private _cogniteClient?: CogniteSeismicClient;
+  private _fileId?: string;
+
+  //==================================================
+  // Constructors
+  //==================================================
+
+  constructor(client?: CogniteSeismicClient, fileId?: string) 
+  {
+    super();
+
+    this._cogniteClient = client;
+    this._fileId = fileId;
+  }
+
+  //==================================================
+  // PUBLIC Properties
+  //==================================================
+
+  public get cogniteClient(): CogniteSeismicClient | undefined { return this._cogniteClient; };
+  public get fileId(): string | undefined { return this._fileId; }
+  //==================================================
   // OVERRIDES of BaseModule
   //==================================================
 
@@ -49,7 +74,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
-    SyntheticSubSurfaceModule.addSeismic(root);
+    this.addSeismic(root);
     SyntheticSubSurfaceModule.addWells(root);
     SyntheticSubSurfaceModule.addSurfaces(root);
   }
@@ -232,18 +257,13 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
   }
 
-  private static addSeismic(root: BaseRootNode)
+  private addSeismic(root: BaseRootNode)
   {
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
-    const api_key = "MzI0MTA3OGEtZjMxNi00MmQ0LWI5ODYtMzFiYTEyZmQ0MThh";
-    const fileId = "cc0f791f-e206-4c08-a139-c5d08eea8afc";
-    const api_url = "https://api.cognitedata.com";
-
     try
     {
-      const client = new CogniteSeismicClient({ api_url, api_key, debug: true });
       const seismicTree = root.seismic;
       const survey = new SurveyNode();
       survey.name = "Survey";
@@ -252,14 +272,14 @@ export class SyntheticSubSurfaceModule extends BaseModule
         seismicCubeNode.colorMap = ColorMaps.seismicName;
         survey.addChild(seismicCubeNode);
         seismicTree.addChild(survey);
-        seismicCubeNode.load(client, fileId);
+        seismicCubeNode.load(this.cogniteClient, this.fileId);
       }
       {
         const seismicCubeNode = new SeismicCubeNode();
         seismicCubeNode.colorMap = ColorMaps.greyScaleName;
         survey.addChild(seismicCubeNode);
         seismicTree.addChild(survey);
-        seismicCubeNode.load(client, fileId);
+        seismicCubeNode.load(this.cogniteClient, this.fileId);
       }
     }
     catch (error)

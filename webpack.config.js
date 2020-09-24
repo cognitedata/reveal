@@ -1,4 +1,5 @@
 const path = require("path");
+const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const SUBSURFACE_COMPONENTS_PATH = "src/__export__/node-visualizer-components";
@@ -17,7 +18,7 @@ module.exports = (env) => ({
   // and output it into /dist as bundle.js
   output: {
     path: path.join(__dirname, "UserInterface", "/dist"),
-    filename: "bundle.js"
+    filename: "bundle.js",
   },
 
   // adding .ts and .tsx to resolve.extensions will help babel look for .ts and .tsx files to transpile
@@ -28,8 +29,8 @@ module.exports = (env) => ({
       "@images": resolve("images"),
       "@cognite/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH),
       "@cognite/subsurface-interfaces": resolve(SUBSURFACE_INTERFACES_PATH),
-      "@cognite/subsurface-visualizer": resolve(SUBSURFACE_VISUALIZER_PATH)
-    }
+      "@cognite/subsurface-visualizer": resolve(SUBSURFACE_VISUALIZER_PATH),
+    },
   },
 
   module: {
@@ -38,12 +39,12 @@ module.exports = (env) => ({
       {
         test: /\.tsx?$/,
         use: "ts-loader",
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       // sass-loader to bundle all the css files into one file and style-loader to add all the styles  inside the style tag of the document
       {
         test: /\.s?css$/,
-        use: ["style-loader", "css-loader", "sass-loader"]
+        use: ["style-loader", "css-loader", "sass-loader"],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -51,16 +52,16 @@ module.exports = (env) => ({
           {
             loader: "file-loader",
             options: {
-              esModule: false
-            }
-          }
-        ]
-      }
-    ]
+              esModule: false,
+            },
+          },
+        ],
+      },
+    ],
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [new HtmlWebpackPlugin(), new Dotenv()],
   devtool: "source-map",
   optimization: {
-    minimize: false
+    minimize: false,
   },
 });

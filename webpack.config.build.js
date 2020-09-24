@@ -2,6 +2,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const path = require("path");
+const Dotenv = require("dotenv-webpack");
 
 const NODE_VISUALIZER_COMPONENTS_PATH =
   "src/__export__/node-visualizer-components";
@@ -171,6 +172,7 @@ module.exports = (env) => ({
         },
       ],
     }),
+    new Dotenv(),
   ],
   externals: [
     {

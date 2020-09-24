@@ -4,8 +4,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 1. build node visualizer first (using dev build or prod build in root directory)
 2. Navigate to this (standalone) folder.
-2. npm install
-3. npm run start
+3. create file .env.local with entry `REACT_APP_API_KEY=<your cognite api key>`
+4. npm install
+5. npm run start
 
 ## Available Scripts
 
