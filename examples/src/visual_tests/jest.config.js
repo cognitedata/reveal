@@ -7,5 +7,6 @@ module.exports = {
     setupFilesAfterEnv: ['./setupTests.ts'],
     globalSetup: "jest-environment-puppeteer/setup",
     globalTeardown: "jest-environment-puppeteer/teardown",
-    testEnvironment: "jest-environment-puppeteer"
+    testEnvironment: "jest-environment-puppeteer",
+    testTimeout: 10000
 };
