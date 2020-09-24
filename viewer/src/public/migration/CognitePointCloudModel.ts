@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { PotreePointColorType } from '@/datamodels/pointcloud/types';
+import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from '@/datamodels/pointcloud/types';
 import { SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
@@ -112,5 +112,42 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    */
   set pointColorType(type: PotreePointColorType) {
     this.pointCloudNode.pointColorType = type;
+  }
+
+  /**
+   * Returns the size of each rendered point in the point cloud.
+   * @version New in 1.1
+   */
+  get pointSize(): number {
+    return this.pointCloudNode.pointSize;
+  }
+
+  /**
+   * Sets the size of each rendered point in the point cloud.
+   * Default is 1.
+   * @version New in 1.1
+   * @see {@link adaptivePointSize}.
+   */
+  set pointSize(size: number) {
+    this.pointCloudNode.pointSize = size;
+  }
+
+  /**
+   * Sets the point shape of eeach rendered point in the point cloud.
+   * Default is `CIRCLE`.
+   * @see {@link PotreePointShape}.
+   * @version New in 1.1
+   */
+  get pointShape(): PotreePointShape {
+    return this.pointCloudNode.pointShape;
+  }
+
+  /**
+   * Gets the point shape of each rendered point in the point cloud.
+   * @see {@link PotreePointShape}.
+   * @version New in 1.1
+   */
+  set pointShape(shape: PotreePointShape) {
+    this.pointCloudNode.pointShape = shape;
   }
 }
