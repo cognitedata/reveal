@@ -74,36 +74,44 @@ void main() {
     return;
   }
 
-  if(customDepth < backDepth){
-    gl_FragColor = customAlbedo;
-    return;
-  }
+  // if(customDepth < backDepth){
+  //  gl_FragColor = customAlbedo;
+  //  return;
+  // }
 
-  float backOutlineIndex = floatBitsSubset(floor((backAlbedo.a * 255.0) + 0.5), 3, 6);
-  float backOutlineIndex0 = floatBitsSubset(floor((texture2D(tBack, vUv0).a * 255.0) + 0.5), 3, 6);
-  float backOutlineIndex1 = floatBitsSubset(floor((texture2D(tBack, vUv1).a * 255.0) + 0.5), 3, 6);
-  float backOutlineIndex2 = floatBitsSubset(floor((texture2D(tBack, vUv2).a * 255.0) + 0.5), 3, 6);
-  float backOutlineIndex3 = floatBitsSubset(floor((texture2D(tBack, vUv3).a * 255.0) + 0.5), 3, 6);
+  if (customDepth >= backDepth) {
+    float backOutlineIndex = floatBitsSubset(floor((backAlbedo.a * 255.0) + 0.5), 3, 6);
+    float backOutlineIndex0 = floatBitsSubset(floor((texture2D(tBack, vUv0).a * 255.0) + 0.5), 3, 6);
+    float backOutlineIndex1 = floatBitsSubset(floor((texture2D(tBack, vUv1).a * 255.0) + 0.5), 3, 6);
+    float backOutlineIndex2 = floatBitsSubset(floor((texture2D(tBack, vUv2).a * 255.0) + 0.5), 3, 6);
+    float backOutlineIndex3 = floatBitsSubset(floor((texture2D(tBack, vUv3).a * 255.0) + 0.5), 3, 6);
 
-  if( any(equal(vec4(backOutlineIndex0, backOutlineIndex1, backOutlineIndex2, backOutlineIndex3), vec4(0.0)))
-      && backOutlineIndex > 0.0) 
-   { 
-    
-    float d0 = readDepth(tBackDepth, vUv);
-    float d1 = readDepth(tBackDepth, vUv0);
-    float d2 = readDepth(tBackDepth, vUv1);
-    float d3 = readDepth(tBackDepth, vUv2);
-    float d4 = readDepth(tBackDepth, vUv3);
+    if( any(equal(vec4(backOutlineIndex0, backOutlineIndex1, backOutlineIndex2, backOutlineIndex3), vec4(0.0)))
+        && backOutlineIndex > 0.0) 
+     { 
 
-    float averageNeighbourFragmentDepth = (d1 + d2 + d3 + d4) / 4.0;
+      float d0 = readDepth(tBackDepth, vUv);
+      float d1 = readDepth(tBackDepth, vUv0);
+      float d2 = readDepth(tBackDepth, vUv1);
+      float d3 = readDepth(tBackDepth, vUv2);
+      float d4 = readDepth(tBackDepth, vUv3);
 
-    if(d0 < averageNeighbourFragmentDepth){
-      float borderColorIndex = max(max(backOutlineIndex0, backOutlineIndex1), max(backOutlineIndex2, backOutlineIndex3));
-      gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
-      return;
+      float averageNeighbourFragmentDepth = (d1 + d2 + d3 + d4) / 4.0;
+
+      if(d0 < averageNeighbourFragmentDepth){
+        float borderColorIndex = max(max(backOutlineIndex0, backOutlineIndex1), max(backOutlineIndex2, backOutlineIndex3));
+        gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
+        return;
+      }
     }
   }
+  
+  if(customDepth < backDepth){
+    backDepth = customDepth;
+    backAlbedo = customAlbedo;
+  }
 
+  backDepth = min(customDepth, backDepth);
   float ghostDepth = readDepth(tGhostDepth, vUv);
   ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity; 
 
