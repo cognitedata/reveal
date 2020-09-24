@@ -106,7 +106,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * @see {@link PotreePointColorType} For available types.
+   * Specifies how points are colored.
+   * @default PotreePointColorType.Rgb
    * @example
    * ```js
    * model.pointColorType = PotreePointColorType.Rgb
@@ -118,7 +119,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Returns the size of each rendered point in the point cloud.
-   * @version New in 1.1
+   * @version new in 1.1.0
    */
   get pointSize(): number {
     return this.pointCloudNode.pointSize;
@@ -126,9 +127,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Sets the size of each rendered point in the point cloud.
-   * Default is 1.
-   * @version New in 1.1
-   * @see {@link adaptivePointSize}.
+   * @default 1
+   * @version new in 1.1.0
    */
   set pointSize(size: number) {
     this.pointCloudNode.pointSize = size;
@@ -136,9 +136,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Sets the point shape of eeach rendered point in the point cloud.
-   * Default is `CIRCLE`.
-   * @see {@link PotreePointShape}.
-   * @version New in 1.1
+   * @default PotreePointShape.CIRCLE
+   * @version new in 1.1.0
    */
   get pointShape(): PotreePointShape {
     return this.pointCloudNode.pointShape;
@@ -146,8 +145,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Gets the point shape of each rendered point in the point cloud.
-   * @see {@link PotreePointShape}.
-   * @version New in 1.1
+   * @version new in 1.1.0
    */
   set pointShape(shape: PotreePointShape) {
     this.pointCloudNode.pointShape = shape;
