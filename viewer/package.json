@@ -25,7 +25,7 @@
     "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
     "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
     "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
-    "prebump": "yarn version --no-git-tag-version && yarn",
+    "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-1.x",
     "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
     "bump:commit": "cross-var git commit -am \"chore(viewer): bump version $npm_package_version\"",
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
