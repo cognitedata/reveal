@@ -456,6 +456,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param r Red component between 0 and 255.
    * @param g Green component between 0 and 255.
    * @param b Blue component between 0 and 255.
+   * @version New in 1.1
    */
   setAllNodeColors(r: number, g: number, b: number): void {
     const color: [number, number, number] = [r, g, b];
