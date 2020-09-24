@@ -233,6 +233,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Sets transformation matrix of the model. This overrides the current transformation.
+   * @version new in 1.1.0
    * @param matrix Transformation matrix.
    */
   setModelTransformation(matrix: THREE.Matrix4): void {
@@ -241,6 +242,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Gets transformation matrix of the model.
+   * @version new in 1.1.0
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
@@ -531,6 +533,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Set override transform of the node by tree index.
+   * @version new in 1.1.0
    * @param treeIndex
    * @param transform
    * @param applyToChildren
@@ -543,6 +546,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Remove override transform of the node by tree index.
+   * @version new in 1.1.0
    * @param treeIndex
    * @param applyToChildren
    */
@@ -553,8 +557,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Enables ghost mode for the tree index given, making the object appear transparant and gray.
+   * Enables ghost mode for the tree index given, making the object appear transparent and gray.
    * Note that ghosted objects are ignored in ray picking actions.
+   * @version new in 1.1.0
    * @param treeIndex       Tree index of node to ghost.
    * @param applyToChildren When true, all descendants of the node is also ghosted.
    * @returns Promise that resolves to the number of affected nodes.
@@ -568,6 +573,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Disables ghost mode for the tree index given, making the object be rendered normal.
+   * @version new in 1.1.0
    * @param treeIndex       Tree index of node to un-ghost.
    * @param applyToChildren When true, all descendants of the node is also un-ghosted.
    * @returns Promise that resolves to the number of affected nodes.
@@ -583,6 +589,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Enable ghost mode for all nodes in the model, making the whole model be rendered transparent
    * and in gray.
+   * @version new in 1.1.0
    */
   ghostAllNodes(): void {
     for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
@@ -593,6 +600,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Disable ghost mode for all nodes in the model.
+   * @version new in 1.1.0
    */
   unghostAllNodes(): void {
     const ghostedNodes = Array.from(this.ghostedNodes);

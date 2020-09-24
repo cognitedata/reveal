@@ -1,0 +1,71 @@
+{
+  "version-1.x/docs": [
+    {
+      "type": "doc",
+      "id": "version-1.x/overview"
+    },
+    {
+      "type": "doc",
+      "id": "version-1.x/installation"
+    },
+    {
+      "type": "doc",
+      "id": "version-1.x/migration-guide"
+    },
+    {
+      "collapsed": false,
+      "type": "category",
+      "label": "Examples",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-basic"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-colors"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-highlighting"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-transform-override"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-ghostmode"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-2doverlay"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-3dobjects"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/node-visiting"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-nodefiltering"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-preview"
+        }
+      ]
+    },
+    {
+      "type": "doc",
+      "id": "version-1.x/concepts"
+    },
+    {
+      "type": "doc",
+      "id": "version-1.x/API Reference"
+    }
+  ]
+}
