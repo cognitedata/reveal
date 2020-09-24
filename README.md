@@ -6,9 +6,7 @@
 
 [![Build Status](https://travis-ci.org/cognitedata/reveal.svg?branch=master)](https://travis-ci.org/cognitedata/reveal)
 
-Documentation for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
-
-We have [demos here](https://cognitedata.github.io/reveal/docs/examples/cad-basic)!
+Documentation with interactive examples for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
 
 ---
 
