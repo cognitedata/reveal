@@ -47,3 +47,13 @@ Use the following comment:
 ```
 
 > **New in 1.1.0**
+
+For API reference use `@version` tag in jsdoc. For example:
+
+```js
+/**
+  * Sets transformation matrix of the model.
+  * @version new in 1.1.0
+  * @param transformationMatrix
+  */
+```
