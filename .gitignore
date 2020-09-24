@@ -52,4 +52,4 @@ documentation/.cache-loader
 documentation/static/*.worker.js
 documentation/static/*.wasm
 documentation/generated
-documentation/**/API Reference.md
+documentation/docs/API Reference.md
