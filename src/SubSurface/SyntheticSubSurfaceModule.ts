@@ -42,17 +42,16 @@ export class SyntheticSubSurfaceModule extends BaseModule
   // PRIVATE fields
   //==================================================
 
-  private _cogniteClient?: CogniteSeismicClient;
-  private _fileId?: string;
+  private _cogniteClient: CogniteSeismicClient;
+  private _fileId: string;
 
   //==================================================
   // Constructors
   //==================================================
 
-  constructor(client?: CogniteSeismicClient, fileId?: string) 
+  constructor(client: CogniteSeismicClient, fileId: string) 
   {
     super();
-
     this._cogniteClient = client;
     this._fileId = fileId;
   }
@@ -61,8 +60,9 @@ export class SyntheticSubSurfaceModule extends BaseModule
   // PUBLIC Properties
   //==================================================
 
-  public get cogniteClient(): CogniteSeismicClient | undefined { return this._cogniteClient; };
-  public get fileId(): string | undefined { return this._fileId; }
+  public get cogniteClient(): CogniteSeismicClient { return this._cogniteClient; };
+  public get fileId(): string { return this._fileId; }
+
   //==================================================
   // OVERRIDES of BaseModule
   //==================================================
