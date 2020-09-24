@@ -5,9 +5,9 @@
 import React, { useEffect, useRef } from 'react';
 import { AddModelOptions, Cognite3DViewer } from '@cognite/reveal';
 
-import { CanvasWrapper } from '../styled';
-import { DemoProps } from '../DemoProps';
-import { env } from '../../env';
+import { CanvasWrapper } from '@site/src/components/styled';
+import { DemoProps } from '@site/src/components/DemoProps';
+import { env } from '@site/src/env';
 
 const modelId = env.modelId;
 const revisionId = env.revisionId;

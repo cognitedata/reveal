@@ -81,8 +81,16 @@ export const sectorShaders = {
 };
 
 export const edgeDetectionShaders = {
-  combine: glsl(require('@/glsl/post-processing/edge-detect-combine.frag').default),
+  fragment: glsl(require('@/glsl/post-processing/edge-detect-combine.frag').default),
   vertex: glsl(require('@/glsl/post-processing/edge-detection.vert').default)
+};
+
+/**
+ * FXAA anti-aliasing shader
+ */
+export const fxaaShaders = {
+  fragment: glsl(require('@/glsl/post-processing/fxaa.frag').default),
+  vertex: glsl(require('@/glsl/post-processing/fxaa.vert').default)
 };
 
 /**

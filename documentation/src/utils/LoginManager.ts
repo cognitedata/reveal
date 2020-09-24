@@ -40,9 +40,14 @@ class LoginManager {
       // id_token in url means we already redirected from auth api
       // so it's safe to mark as logged in, when API call will happen
       // inside demo component - it will be authenticated automatically
-      let params = new URL(document.location.toString()).searchParams;
-      this.isLoggedIn = !!params.get('id_token') || !!s;
-      this.notifyListeners();
+      if (s && s.project !== env.project) {
+        sessionStorage.removeItem(tokenCacheKey);
+        this.isLoggedIn = false;
+      } else {
+        let params = new URL(document.location.toString()).searchParams;
+        this.isLoggedIn = !!params.get('id_token') || !!s;
+        this.notifyListeners();
+      }
     });
   }
 

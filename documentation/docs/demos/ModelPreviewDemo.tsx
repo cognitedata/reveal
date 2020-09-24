@@ -2,10 +2,10 @@
  * Copyright 2020 Cognite AS
  */
 import React, { useEffect } from 'react';
-import { DemoProps } from '../DemoProps';
+import { DemoProps } from '@site/src/components/DemoProps';
 import '@google/model-viewer';
 import { ItemsResponse } from '@cognite/sdk';
-import { env } from '../../env';
+import { env } from '@site/src/env';
 
 declare global {
   export namespace JSX {
