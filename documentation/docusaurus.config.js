@@ -20,6 +20,10 @@ module.exports = {
       },
       items: [
         {
+          type: 'docsVersionDropdown',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/cognitedata/reveal',
           label: 'GITHUB',
           position: 'right',
