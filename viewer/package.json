@@ -30,7 +30,7 @@
     "bump:commit": "cross-var git commit -am \"chore(viewer): bump version $npm_package_version\"",
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
     "bump:push": "git push -u origin head && git push --tags",
-    "release": "yarn build:prod && cd dist && npm publish --non-interactive"
+    "release": "yarn build:prod && cd dist && yarn publish --non-interactive"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
