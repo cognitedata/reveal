@@ -1,0 +1,26 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  labels:
+  - auto-merge
+  ignore:
+  - dependency-name: antd
+    versions:
+    - ">= 4.a"
+    - "< 5"
+  - dependency-name: eslint
+    versions:
+    - ">= 7.a"
+    - "< 8"
+  - dependency-name: history
+    versions:
+    - ">= 5.a"
+    - "< 6"
+  - dependency-name: typescript
+    versions:
+    - ">= 4.a"
+    - "< 5"
