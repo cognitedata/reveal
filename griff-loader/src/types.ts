@@ -2,6 +2,10 @@ import {
   GetAggregateDatapoint,
   GetStringDatapoint,
   GetDoubleDatapoint,
+  DatapointsMultiQueryBase,
+  DatapointsGetAggregateDatapoint,
+  DatapointsGetDatapoint,
+  TimeSeriesList,
 } from '@cognite/sdk';
 
 export type AggregateDatapoint = Omit<GetAggregateDatapoint, 'timestamp'> & {
@@ -23,6 +27,15 @@ export type SDKDatapoint =
   | GetStringDatapoint
   | GetDoubleDatapoint;
 
+export type OnFetchDatapoints = (
+  externalId: string,
+  params: DatapointsMultiQueryBase
+) => Promise<DatapointsGetAggregateDatapoint[] | DatapointsGetDatapoint[]>;
+
+export type OnFetchTimeseries = (externalId: string) => Promise<TimeSeriesList>;
+
 export type Options = {
   scaleYAxis?: boolean;
+  onFetchTimeseries?: OnFetchTimeseries;
+  onFetchDatapoints?: OnFetchDatapoints;
 };

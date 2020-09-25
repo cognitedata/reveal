@@ -37,6 +37,8 @@ createLoader is a function that creates a data loader based on some given option
 Optional parameters:
 
 - scaleYAxis: boolean: whether the yAxis (ySubDomain) should be adjusted when a time subdomain changes. This defaults to false.
+- onFetchTimeseries: an optional function that receives the external id and returns Promise<TImeseriesList>. This defaults to the old behaviour.
+- onFetchDatapoints: an optional function that receives the external id and granularity parameters and returns Promise<DatapointsGetAggregateDatapoint[] | DatapointsGetDatapoint[]>. This defaults to the old behaviour.
 
 ## Contributing
 

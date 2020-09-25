@@ -9,19 +9,11 @@ import {
   StringDatapoint,
   SDKDatapoint,
   Options,
+  OnFetchDatapoints,
+  OnFetchTimeseries,
 } from './types';
-import { Console } from 'console';
 
 let cogniteClient: CogniteClient | undefined = undefined;
-
-function getSdk(): CogniteClient {
-  if (!cogniteClient) {
-    throw new Error(
-      'CogniteClient has no been configured. You can configure it using setClient(client)'
-    );
-  }
-  return cogniteClient;
-}
 
 function isAggregateDatapoint(
   datapoint: Datapoint
@@ -116,7 +108,10 @@ const calculateGranularity = (domain: number[], pps: number) => {
   return 'day';
 };
 
-const getTimeSeries = (id: TimeseriesId): Promise<TimeSeries> => {
+const getTimeSeries = (
+  id: TimeseriesId,
+  fetchTimeseries: OnFetchTimeseries
+): Promise<TimeSeries> => {
   const inFlightEquest = timeseries.requests.get(id);
   if (inFlightEquest) {
     return inFlightEquest;
@@ -127,14 +122,12 @@ const getTimeSeries = (id: TimeseriesId): Promise<TimeSeries> => {
     return cachedResponse;
   }
 
-  const promise = getSdk()
-    .timeseries.retrieve([{ externalId: String(id) }])
-    .then((resp) => {
-      if (resp.length === 0) {
-        throw new Error(`Could not find a timeseries with name ${id}`);
-      }
-      return resp[0];
-    });
+  const promise = fetchTimeseries(String(id)).then((resp) => {
+    if (resp.length === 0) {
+      throw new Error(`Could not find a timeseries with name ${id}`);
+    }
+    return resp[0];
+  });
 
   timeseries.requests = timeseries.requests.set(id, promise);
   return promise.then((response) => {
@@ -151,6 +144,7 @@ const getDataPoints = async ({
   end,
   limit,
   granularity,
+  fetchDatapoints,
 }: {
   id: TimeseriesId;
   step?: boolean;
@@ -158,6 +152,7 @@ const getDataPoints = async ({
   end: number;
   limit?: number;
   granularity?: string;
+  fetchDatapoints: OnFetchDatapoints;
 }): Promise<Datapoint[]> => {
   const params: DatapointsMultiQueryBase = { start, end, limit };
   if (granularity) {
@@ -171,10 +166,7 @@ const getDataPoints = async ({
     }
   }
 
-  const resp = await getSdk().datapoints.retrieve({
-    items: [{ externalId: String(id) }],
-    ...params,
-  });
+  const resp = await fetchDatapoints(String(id), params);
 
   const datapoints = resp[0].datapoints as SDKDatapoint[];
   return datapoints.map((dp) => ({ ...dp, timestamp: dp.timestamp.getTime() }));
@@ -243,6 +235,24 @@ export const createLoader = (opts: Options = {}) => async ({
   reason: string;
 }) => {
   const options = { ...defaultOptions, ...opts };
+  const getSdk = (): CogniteClient => {
+    if (!cogniteClient) {
+      throw new Error(
+        'CogniteClient has no been configured. You can configure it using setClient(client)'
+      );
+    }
+    return cogniteClient;
+  };
+  const onFetchTimeseries =
+    options.onFetchTimeseries ||
+    ((externalId: string) => getSdk().timeseries.retrieve([{ externalId }]));
+  const onFetchDatapoints =
+    options.onFetchDatapoints ||
+    ((externalId: string, params: DatapointsMultiQueryBase) =>
+      getSdk().datapoints.retrieve({
+        items: [{ externalId: String(id) }],
+        ...params,
+      }));
   const baseDomain = timeDomain || deprecatedXDomain || deprecatedBaseDomain;
   const subDomain =
     timeSubDomain || deprecatedXSubDomain || deprecatedSubDomain;
@@ -272,6 +282,7 @@ export const createLoader = (opts: Options = {}) => async ({
       end: Date.now(),
       step,
       granularity: oldSeries.drawPoints ? '' : granularity,
+      fetchDatapoints: onFetchDatapoints,
     });
     const newDatapoints = await requestPromise;
 
@@ -294,7 +305,7 @@ export const createLoader = (opts: Options = {}) => async ({
     return { data: [], ...oldSeries };
   }
 
-  return getTimeSeries(id)
+  return getTimeSeries(id, onFetchTimeseries)
     .then((timeseries: TimeSeries) => {
       const { isStep: step } = timeseries;
       return (
@@ -304,6 +315,7 @@ export const createLoader = (opts: Options = {}) => async ({
           start: fetchDomain[0],
           end: fetchDomain[1],
           limit: pointsPerSeries,
+          fetchDatapoints: onFetchDatapoints,
         })
           .then(async (points) => {
             const RAW_DATA_POINTS_THRESHOLD = pointsPerSeries / 2;
@@ -321,6 +333,7 @@ export const createLoader = (opts: Options = {}) => async ({
                 start: fetchDomain[0],
                 end: fetchDomain[1],
                 limit: pointsPerSeries,
+                fetchDatapoints: onFetchDatapoints,
               });
 
               let data = result;
