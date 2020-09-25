@@ -13,6 +13,8 @@ import {
   Cognite3DModel,
   BoundingBoxClipper,
   CognitePointCloudModel,
+  PotreePointColorType, 
+  PotreePointShape
 } from '@cognite/reveal';
 
 window.THREE = THREE;
@@ -39,6 +41,21 @@ export function Migration() {
         y: 0,
         z: 0,
         showHelpers: false,
+      };
+      const pointCloudParams = {
+        pointSize: 1.0,
+        budget: 2_000_000,
+        pointColorType: PotreePointColorType.Rgb,
+        pointShape: PotreePointShape.Circle,
+        apply: () => {
+          pointCloudModels.forEach(model => {
+            model.pointBudget = pointCloudParams.budget;
+            model.pointSize = pointCloudParams.pointSize;
+            model.pointColorType = pointCloudParams.pointColorType;
+            model.pointShape = pointCloudParams.pointShape;
+            console.log(model.pointColorType, model.pointShape);
+          });
+        }
       };
 
       const boxClipper = new BoundingBoxClipper(
@@ -79,6 +96,7 @@ export function Migration() {
             cadModels.push(model);
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
+            pointCloudParams.apply();
           }
         } catch (e) {
           console.error(e);
@@ -198,6 +216,28 @@ export function Migration() {
             slicingParams.enabled ? boxClipper.clippingPlanes : []
           );
         });
+
+      const pcSettings = gui.addFolder('Point clouds');
+      pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
+      pcSettings.add(pointCloudParams, 'pointSize', 0, 20, 0.25).onFinishChange(() => pointCloudParams.apply());
+      pcSettings.add(pointCloudParams, 'pointColorType', {
+        Rgb: PotreePointColorType.Rgb,
+        Depth: PotreePointColorType.Depth,
+        Height: PotreePointColorType.Height,
+        PointIndex: PotreePointColorType.PointIndex,
+        LevelOfDetail: PotreePointColorType.LevelOfDetail,
+        Classification: PotreePointColorType.Classification,
+      }).onFinishChange(valueStr => {
+        pointCloudParams.pointColorType = parseInt(valueStr, 10);  
+        pointCloudParams.apply()
+      });
+      pcSettings.add(pointCloudParams, 'pointShape', {
+        Circle: PotreePointShape.Circle,
+        Square: PotreePointShape.Square
+      }).onFinishChange(valueStr => {
+        pointCloudParams.pointShape = parseInt(valueStr, 10);  
+        pointCloudParams.apply()
+      });
 
       // Load model if provided by URL
       const modelIdStr = urlParams.get('modelId');
