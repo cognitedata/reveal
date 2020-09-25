@@ -166,4 +166,18 @@ Also, you can check what's committed from the previous tag with that command:
     ```bash
     git log --pretty=format:"%s <%an> – %h" v1.0.0...HEAD
     ```
+   Use the following template:
+   ```md
+       ### 🚀 Features
+       
+       * commit message
+       
+       ### 🐞 Bug fixes and enhancements
+       
+       * commit message
+       
+       ### 📖 Documentation
+       
+       * commit message
+   ```
 1. Hit the green "Publish release" button
