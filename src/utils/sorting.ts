@@ -1,4 +1,5 @@
-import { Function } from 'types';
+import { Function, Call } from 'types';
+import { QueryCache } from 'react-query';
 
 export const recentlyCreated = (a: Function, b: Function) => {
   if (a.createdTime > b.createdTime) {
@@ -9,17 +10,26 @@ export const recentlyCreated = (a: Function, b: Function) => {
   }
   return 0;
 };
-export const sortLastCall = (a: Function, b: Function) => {
-  const callsA = a.calls;
-  const callsB = b.calls;
+export const sortLastCall = (cache: QueryCache) => (
+  a: Function,
+  b: Function
+) => {
+  const callsA = cache.getQueryData<{ items: Call[] }>([
+    `/functions/calls`,
+    { id: a.id },
+  ]);
+  const callsB = cache.getQueryData<{ items: Call[] }>([
+    `/functions/calls`,
+    { id: b.id },
+  ]);
   if (!callsA || !callsB) {
     return 0;
   }
-  const latestACallTime = callsA.reduce(
+  const latestACallTime = callsA?.items?.reduce(
     (prev, el) => (el.startTime > prev ? el.startTime : prev),
     new Date(0)
   );
-  const latestBCallTime = callsB.reduce(
+  const latestBCallTime = callsB?.items.reduce(
     (prev, el) => (el.startTime > prev ? el.startTime : prev),
     new Date(0)
   );

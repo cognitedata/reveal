@@ -1,12 +1,12 @@
 import React from 'react';
-import sdk from 'sdk-singleton';
 import moment from 'moment';
 import { CSSProperties } from 'styled-components';
 
 import { Alert, Table, Tag } from 'antd';
 import { Icon, Button } from '@cognite/cogs.js';
 import { Call } from 'types';
-import { useQuery, QueryKey } from 'react-query';
+import { useQuery } from 'react-query';
+import { getCalls } from 'utils/api';
 
 export const callStatusTag = (status: string, style?: CSSProperties) => {
   switch (status) {
@@ -116,20 +116,9 @@ type Props = {
 };
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
-  console.log('call', id);
   const { data, isFetched, error } = useQuery<{ items: Call[] }>(
-    [`/functions/${id}/calls`, { scheduleId }],
-    async (_: QueryKey, { scheduleId }: any) => {
-      const filter = scheduleId ? { scheduleId } : {};
-      return await sdk
-        .post(
-          `/api/playground/projects/${sdk.project}/functions/${id}/calls/list`,
-          {
-            data: { filter },
-          }
-        )
-        .then(response => response.data);
-    }
+    [`/functions/calls`, { id, scheduleId }],
+    getCalls
   );
   const functionCalls = data?.items || [];
   const columns = callTableColumns({});

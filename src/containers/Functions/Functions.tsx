@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useQuery, useQueryCache } from 'react-query';
 import { Row, Collapse, Input, Pagination, Select } from 'antd';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
 
-import { Function } from 'types';
-// import CallFunctionModal from 'components/FunctionModals/CallFunctionModal';
-// import { selectFunctionToCall } from 'modules/call';
-import { recentlyCreated, sortLastCall } from 'utils/sorting';
-// import UploadFunctionModal from 'components/FunctionModals/UploadFunctionModal';
 import styled from 'styled-components';
 
 import { PageTitle } from '@cognite/cdf-utilities';
-import { useQuery, useQueryCache } from 'react-query';
-import { getFunctions } from 'utils/api';
-
+import { Function } from 'types';
+import { getCalls } from 'utils/api';
+import { recentlyCreated, sortLastCall } from 'utils/sorting';
 import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 
@@ -24,15 +20,23 @@ const CollapseDiv = styled.div`
 
 function Functions() {
   const queryCache = useQueryCache();
+  const [callsDone, setCallsDone] = useState(false);
 
-  const { data: functions, isFetching } = useQuery(
-    ['/functions'],
-    getFunctions
-  );
+  const { data, isFetching } = useQuery<{ items: Function[] }>('/functions');
+  const functions = data?.items;
 
-  // const functionToRun = useSelector(selectFunctionToCall);
+  useEffect(() => {
+    if (functions) {
+      Promise.all(
+        functions.map(({ id }) =>
+          queryCache.prefetchQuery([`/functions/calls`, { id }], getCalls)
+        )
+      ).then(() => {
+        setCallsDone(true);
+      });
+    }
+  }, [queryCache, functions]);
 
-  // const [showUploadModal, setShowUploadModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [functionFilter, setFunctionFilter] = useState('');
@@ -44,7 +48,9 @@ function Functions() {
   const { Panel } = Collapse;
 
   const sortFn =
-    sortFunctionCriteria === 'recentlyCalled' ? sortLastCall : recentlyCreated;
+    sortFunctionCriteria === 'recentlyCalled' && callsDone
+      ? sortLastCall(queryCache)
+      : recentlyCreated;
 
   const sortedFunctions = functions?.sort(sortFn);
 
@@ -77,7 +83,7 @@ function Functions() {
             Upload function
           </Button>
           <Button
-            icon={isFetching ? 'Loading' : 'Refresh'}
+            icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
             disabled={isFetching}
             onClick={() => queryCache.invalidateQueries('/functions')}
             style={{ marginLeft: '8px' }}

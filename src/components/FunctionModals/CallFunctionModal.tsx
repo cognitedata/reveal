@@ -28,7 +28,7 @@ type Props = {
   closeModal: () => void;
 };
 
-export default function CallFunctionModal({ id , closeModal }: Props) {
+export default function CallFunctionModal({ id, closeModal }: Props) {
   const [inputData, setInputData] = useState('');
   const { data: fn } = useQuery<Function>(`/functions/${id}`);
 
@@ -45,13 +45,13 @@ export default function CallFunctionModal({ id , closeModal }: Props) {
 
   const [updateInterval, setUpdateInteval] = useState<number | boolean>(1000);
 
-
-  const { data: callResponse } = useQuery<
-    CallResponse
-  >(`/functions/${id}/calls/${data?.id}`, {
-    enabled: isSuccess,
-    refetchInterval: updateInterval,
-  });
+  const { data: callResponse } = useQuery<CallResponse>(
+    `/functions/${id}/calls/${data?.id}`,
+    {
+      enabled: isSuccess,
+      refetchInterval: updateInterval,
+    }
+  );
   const callStatus = callResponse?.status;
 
   useEffect(() => {
@@ -61,7 +61,6 @@ export default function CallFunctionModal({ id , closeModal }: Props) {
       setUpdateInteval(1000);
     }
   }, [callResponse, callStatus]);
-
 
   const validJSONMessage = <div style={{ color: 'green' }}>JSON is valid</div>;
 
@@ -182,12 +181,7 @@ export default function CallFunctionModal({ id , closeModal }: Props) {
   };
 
   return (
-    <Modal
-    footer={null}
-    visible={true}
-      width="900px"
-      onCancel={handleCancel}
-    >
+    <Modal footer={null} visible width="900px" onCancel={handleCancel}>
       <Card title="Call Function" style={{ marginRight: '24px' }}>
         <div style={{ display: 'inline' }}>
           <div>

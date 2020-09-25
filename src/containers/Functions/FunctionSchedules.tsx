@@ -132,8 +132,6 @@ export default function FunctionSchedules({ externalId, id }: Props) {
     return <Icon type="Loading" />;
   }
 
-  console.log({ schedules });
-
   return (
     <Table
       rowKey={s => s.id.toString()}
@@ -141,7 +139,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
       dataSource={schedules}
       columns={scheduleTableColumns}
       expandedRowRender={(s: Schedule) => {
-        return <FunctionCalls id={id} name="" scheduleId={s.id} />;
+        return <FunctionCalls name={s.name} id={id} scheduleId={s.id} />;
 
         // return (
         //   <Table

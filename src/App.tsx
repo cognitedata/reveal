@@ -34,7 +34,7 @@ export default () => {
   const queryCache = new QueryCache({
     defaultConfig: {
       queries: {
-        staleTime: 0, // 5 * 60 * 1000,
+        staleTime: 60 * 1000,
         cacheTime: 5 * 60 * 1000,
         queryFn: defaultQueryFn,
       },

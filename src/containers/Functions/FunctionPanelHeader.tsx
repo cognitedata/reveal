@@ -7,7 +7,8 @@ import { Function, Call, Schedule } from 'types';
 import moment from 'moment';
 import { callStatusTag } from 'containers/Functions/FunctionCalls';
 import DeleteFunctionButton from 'components/DeleteFunctionButton';
-import RunFunctionButton from 'components/RunFunctionButton';
+import CallFunctionButton from 'components/CallFunctionButton';
+import { getCalls } from 'utils/api';
 
 type Props = {
   currentFunction: Function;
@@ -28,7 +29,10 @@ export default function FunctionPanelHeader(props: Props) {
       s => s.functionExternalId === currentFunction.externalId
     ) || [];
 
-  const { data } = useQuery<{ items: Call[] }>(`/functions/${id}/calls`);
+  const { data } = useQuery<{ items: Call[] }>(
+    ['/functions/calls', { id }],
+    getCalls
+  );
   const calls = data?.items || [];
 
   const functionStatusTag = (status: string) => {
@@ -118,7 +122,7 @@ export default function FunctionPanelHeader(props: Props) {
         {mostRecentCall ? <>{lastCallStatus(mostRecentCall)}</> : null}
       </span>
       <span style={{ float: 'right', marginTop: '4px', marginRight: '4px' }}>
-        <RunFunctionButton id={id} />
+        <CallFunctionButton id={id} />
         <DeleteFunctionButton id={id} />
       </span>
     </div>

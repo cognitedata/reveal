@@ -9,7 +9,7 @@ type Props = {
   id: number;
 };
 
-export default function RunFunctionButton({ id }: Props) {
+export default function CallFunctionButton({ id }: Props) {
   const { data: fn } = useQuery<Function>(`/functions/${id}`);
   const [showModal, setShowModal] = useState(false);
 
@@ -29,7 +29,9 @@ export default function RunFunctionButton({ id }: Props) {
           }}
         />
       </Tooltip>
-      { showModal ? <CallFunctionModal id={id} closeModal={() => setShowModal(false)} />: null}
+      {showModal ? (
+        <CallFunctionModal id={id} closeModal={() => setShowModal(false)} />
+      ) : null}
     </>
   );
 }
