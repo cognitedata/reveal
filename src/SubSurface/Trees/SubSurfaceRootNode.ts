@@ -14,8 +14,6 @@
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 import { WellTreeNode } from "@/SubSurface/Trees/WellTreeNode";
-import { ColorMapTreeNode } from "@/Core/Nodes/ColorMaps/ColorMapTreeNode";
-import { SettingsTreeNode } from "@/Core/Nodes/Trees/SettingsTreeNode";
 import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 
 import { OthersTreeNode } from "@/SubSurface/Trees/OthersTreeNode";
@@ -34,44 +32,19 @@ export class SubSurfaceRootNode extends BaseRootNode
   //PROPERTIES
   //==================================================
 
-  public get wells(): WellTreeNode
+  public get wells(): WellTreeNode | null
   {
-    const child = this.getChildByType(WellTreeNode);
-    if (!child)
-      throw new Error(`Cannot find the ${WellTreeNode.className}`);
-    return child;
+    return this.getChildByType(WellTreeNode);
   }
 
-  public get seismic(): SeismicTreeNode
+  public get seismic(): SeismicTreeNode | null
   {
-    const child = this.getChildByType(SeismicTreeNode);
-    if (!child)
-      throw new Error(`Cannot find the ${SeismicTreeNode.className}`);
-    return child;
+    return this.getChildByType(SeismicTreeNode);
   }
 
-  public get others(): OthersTreeNode
+  public get others(): OthersTreeNode | null
   {
-    const child = this.getChildByType(OthersTreeNode);
-    if (!child)
-      throw new Error(`Cannot find the ${OthersTreeNode.className}`);
-    return child;
-  }
-
-  public get colorMaps(): ColorMapTreeNode
-  {
-    const child = this.getChildByType(ColorMapTreeNode);
-    if (!child)
-      throw new Error(`Cannot find the ${ColorMapTreeNode.className}`);
-    return child;
-  }
-
-  public get settingsTree(): SettingsTreeNode
-  {
-    const child = this.getChildByType(SettingsTreeNode);
-    if (!child)
-      throw new Error(`Cannot find the ${SettingsTreeNode.className}`);
-    return child;
+    return this.getChildByType(OthersTreeNode);
   }
 
   //==================================================
@@ -99,19 +72,68 @@ export class SubSurfaceRootNode extends BaseRootNode
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
-    if (!this.hasChildByType(SeismicTreeNode))
-      this.addChild(new SeismicTreeNode());
-    if (!this.hasChildByType(WellTreeNode))
-      this.addChild(new WellTreeNode());
-    if (!this.hasChildByType(OthersTreeNode))
-      this.addChild(new OthersTreeNode());
-    if (!this.hasChildByType(ColorMapTreeNode))
-      this.addChild(new ColorMapTreeNode());
-    if (!this.hasChildByType(SettingsTreeNode))
-      this.addChild(new SettingsTreeNode());
-
+    // if (!this.hasChildByType(SeismicTreeNode))
+    //   this.addChild(new SeismicTreeNode());
+    // if (!this.hasChildByType(WellTreeNode))
+    //   this.addChild(new WellTreeNode());
+    // if (!this.hasChildByType(OthersTreeNode))
+    //   this.addChild(new OthersTreeNode());
     if (!this.targets.hasChildByType(AxisNode))
       this.targets.addChild(new AxisNode());
+  }
 
+  //==================================================
+  // OVERRIDES of BaseRootNode
+  //==================================================
+
+  public /*override*/ clearData(): void
+  {
+    super.clearData();
+    const { wells } = this;
+    if (wells)
+      wells.remove();
+    const { seismic } = this;
+    if (seismic)
+      seismic.remove();
+    const { others } = this;
+    if (others)
+      others.remove();
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getWellsByForce(): WellTreeNode
+  {
+    let tree = this.wells;
+    if (!tree)
+    {
+      tree = new WellTreeNode();
+      this.addChild(tree);
+    }
+    return tree;
+  }
+
+  public getSeismicByForce(): SeismicTreeNode
+  {
+    let tree = this.seismic;
+    if (!tree)
+    {
+      tree = new SeismicTreeNode();
+      this.addChild(tree);
+    }
+    return tree;
+  }
+
+  public getOthersByForce(): OthersTreeNode
+  {
+    let tree = this.others;
+    if (!tree)
+    {
+      tree = new OthersTreeNode();
+      this.addChild(tree);
+    }
+    return tree;
   }
 }

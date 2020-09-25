@@ -115,10 +115,10 @@ export abstract class BaseVisualNode extends BaseNode
     return true;
   }
 
-  protected /*override*/ removeInteractiveCore(): void
+  protected /*override*/ removeInternalData(): void
   {
     this.removeAllViews();
-    super.removeInteractiveCore();
+    super.removeInternalData();
   }
 
   public /*override*/ getDebugString(): string

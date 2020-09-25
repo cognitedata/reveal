@@ -103,8 +103,10 @@ export class Modules
     if (!root)
       throw Error("No module has implemented createRoot()");
 
-    // Load the data
     root.initializeRecursive();
+    root.clearData();
+
+    // Load the data
     for (const module of this.modules)
       module.loadData(root);
 

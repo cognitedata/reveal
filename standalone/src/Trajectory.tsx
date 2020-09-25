@@ -40,7 +40,13 @@ export function Trajectory(props: { data: BaseModule }) {
   if(props.data) {
     modules.add(props.data);
   } else {
-    modules.add(new SyntheticSubSurfaceModule(SyntheticSubSurfaceModule.createSeismicClient(), process.env.FILE_ID || ""));
+
+    const syntheticModule = new SyntheticSubSurfaceModule();
+    syntheticModule.addSeismicCube(
+      SyntheticSubSurfaceModule.createSeismicClient(),
+      process.env.FILE_ID || ""
+    );  
+    modules.add(syntheticModule);
   }
   modules.install();
 

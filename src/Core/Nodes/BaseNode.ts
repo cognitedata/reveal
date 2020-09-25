@@ -265,7 +265,7 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ initializeCore(): void { }
   protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
-  protected /*virtual*/ removeInteractiveCore(): void { }
+  protected /*virtual*/ removeInternalData(): void { }
   protected /*virtual*/ get activeTargetIdAccessor(): ITargetIdAccessor | null
   {
     const { root } = this;
@@ -671,9 +671,28 @@ export abstract class BaseNode extends Identifiable
       Error(`The child ${this.typeName} is not child of it's parent`);
       return false;
     }
+    this.clearChilderen();
+    this.removeInternalData();
     this.parent.children.splice(childIndex, 1);
     this._parent = null;
     return true;
+  }
+
+  protected clearChilderen(): void
+  {
+    const { children } = this;
+    if (!children)
+      return;
+
+    for (const child of children)
+      child.clearChilderen();
+
+    for (const child of children)
+    {
+      this.removeInternalData();
+      child._parent = null;
+    }
+    children.splice(0, children.length);
   }
 
   public sortChildrenByName(): void
@@ -719,7 +738,6 @@ export abstract class BaseNode extends Identifiable
   {
     // To be called when a node is removed
     // It is not finished, because the children it not taken properly care of
-    this.removeInteractiveCore();
     const { parent } = this;
     this.remove();
     parent?.notify(new NodeEventArgs(Changes.childDeleted));

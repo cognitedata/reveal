@@ -5,7 +5,7 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
-import { BPDataModule } from "@/Solutions/BP/BPDataModule";
+import { SubSurfaceModule } from "@/Solutions/BP/SubSurfaceModule";
 
 export {
   NodeVisualizer,
@@ -15,5 +15,5 @@ export {
   Modules,
   ThreeModule,
   SyntheticSubSurfaceModule,
-  BPDataModule
+  SubSurfaceModule
 };
