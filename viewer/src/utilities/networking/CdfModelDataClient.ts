@@ -52,7 +52,7 @@ export class CdfModelDataClient
     const mostRecentOutput = outputs.findMostRecentOutput(format);
     if (!mostRecentOutput) {
       throw new Error(
-        `Model '${modelId}/${revisionId} (${format})' is not compatible with this version of Reveal. If this model works with a previous version of Reveal it must be reconverted to support this version.`
+        `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal, because no outputs for format '(${format})' was found. If this model works with a previous version of Reveal it must be reconverted to support this version.`
       );
     }
     const blobId = mostRecentOutput.blobId;
