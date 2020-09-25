@@ -62,8 +62,8 @@ export class TrajectorySample extends MdSample
     // Code take from https://gis.stackexchange.com/questions/13484/how-to-convert-distance-azimuth-dip-to-xyz
 
     const deltaMd = this.md - prevSample.md;
-    const b = Math.acos(Math.cos(i2 - i1) - (Math.sin(i1) * Math.sin(i2) * (1 - Math.cos(a2 - a1))));
-    const rf = Math.abs(b) < 0.00001 ? 1 : 2 / b * Math.tan(b / 2);
+    const b = Math.acos(Math.cos(i2 - i1) - (Math.sin(i1) * Math.sin(i2) * (1 - Math.cos(a2 - a1)))); // f(x)
+    const rf = Math.abs(b) < 0.00001 ? 1 : 2 / b * Math.tan(b / 2); // Note: lim x->0 => f(x)->1
     const a = rf * deltaMd / 2;
     const c = Math.sin(i1) * Math.sin(a1);
 

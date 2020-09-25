@@ -49,6 +49,14 @@ export class SyntheticSubSurfaceModule extends BaseModule
   // Constructors
   //==================================================
 
+  public static createSeismicClient(): CogniteSeismicClient
+  {
+    return new CogniteSeismicClient({
+      api_url: process.env.API_URL || "",
+      api_key: process.env.API_KEY || "", debug: true
+    });
+  }
+
   constructor(client: CogniteSeismicClient, fileId: string) 
   {
     super();

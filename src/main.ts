@@ -11,14 +11,7 @@ export default function main(element: HTMLElement)
   // Create the module and install it it
   const modules = Modules.instance;
   modules.add(new ThreeModule());
-  modules.add(new SyntheticSubSurfaceModule(
-    new CogniteSeismicClient({
-      api_url: process.env.API_URL || "",
-      api_key: process.env.API_KEY || "",
-      debug: true,
-    }),
-    process.env.FILE_ID || ""
-  ));
+  modules.add(new SyntheticSubSurfaceModule(SyntheticSubSurfaceModule.createSeismicClient(), process.env.FILE_ID || ""));
   modules.install();
 
   // Load the data

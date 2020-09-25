@@ -8,7 +8,6 @@ import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModul
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { Appearance } from "@/Core/States/Appearance";
-import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 const LoadMockData = false;
 
@@ -42,14 +41,9 @@ export function App() {
   modules.add(new ThreeModule());
 
   const syntheticDataModule = new SyntheticSubSurfaceModule(
-    new CogniteSeismicClient({
-      api_url: process.env.API_URL || "",
-      api_key: process.env.API_KEY || "",
-      debug: true,
-    }),
+    SyntheticSubSurfaceModule.createSeismicClient(),
     process.env.FILE_ID || ""
   );
-
   useEffect(() => {
     if (LoadMockData) {
       Promise.all([

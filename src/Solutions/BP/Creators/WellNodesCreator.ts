@@ -65,13 +65,13 @@ export class WellNodesCreator
       const { metadata } = wellBoreToWell.data;
       wellNode.elevationType = metadata.elevation_type; //KB
       const elevationUnit = metadata.elevation_value_unit;
-      let elevation = Util.getNumberWithUnit(metadata.elevation_value, elevationUnit);
-      if (Number.isNaN(elevation))
-        elevation = 0;
+      let startMd = Util.getNumberWithUnit(metadata.elevation_value, elevationUnit);
+      if (Number.isNaN(startMd))
+        startMd = 0;
 
       const unit = Units.isFeet(elevationUnit) ? Units.Feet : 1;
       const trajectoryRows = trajectoryDataMap.get(trajectory.id);
-      const trajectoryNode = WellTrajectoryNodeCreator.create(bpData.trajectoryDataColumnIndexes, trajectoryRows, elevation, unit);
+      const trajectoryNode = WellTrajectoryNodeCreator.create(bpData.trajectoryDataColumnIndexes, trajectoryRows, startMd, unit);
       if (!trajectoryNode)
         continue;
 
