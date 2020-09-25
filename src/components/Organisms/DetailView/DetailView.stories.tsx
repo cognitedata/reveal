@@ -19,19 +19,17 @@ const mockObj = {
     businessTag: undefined,
     revision: undefined,
   },
-  targets: [
-    {
-      name: 'TranslationName',
-      owId: undefined,
-      crs: undefined,
-      dataType: undefined,
-      createdTime: undefined,
-      repository: undefined,
-      configTag: undefined,
-      revision: undefined,
-      interpreter: undefined,
-    },
-  ],
+  target: {
+    name: 'TranslationName',
+    owId: undefined,
+    crs: undefined,
+    dataType: undefined,
+    createdTime: undefined,
+    repository: undefined,
+    configTag: undefined,
+    revision: undefined,
+    interpreter: undefined,
+  },
 };
 
 // noinspection JSUnusedGlobalSymbols

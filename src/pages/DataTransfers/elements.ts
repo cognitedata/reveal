@@ -2,6 +2,61 @@ import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 import { Table } from 'antd';
 
+export const TableActions = styled.div`
+  padding: 2rem;
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  .cogs-menu-item {
+    text-transform: capitalize;
+  }
+`;
+
+export const FiltersWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+
+  > div {
+    margin-right: 1rem;
+  }
+
+  .cogs-btn {
+    min-width: 150px;
+    height: 36px;
+    display: flex;
+    justify-content: space-between;
+  }
+`;
+
+export const SecondaryFilters = styled.div`
+  margin-left: auto;
+  display: flex;
+
+  > div {
+    margin-right: 1rem;
+  }
+`;
+
+export const DropdownLabel = styled.span`
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--cogs-greyscale-grey10);
+  display: block;
+  margin-bottom: 4px;
+`;
+
+export const ColumnsSelector = styled.div`
+  margin-left: auto;
+
+  > div {
+    margin-top: 2rem;
+  }
+`;
+
 export const ExpandRowIcon = styled(Icon)`
   cursor: pointer;
 `;

@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react';
-import { DataTransferObject } from 'typings/interfaces';
+import {
+  DataTransferObject,
+  GenericResponseObject,
+  RESTConfigurationsFilter,
+  RESTTransfersFilter,
+  RevisionObject,
+} from 'typings/interfaces';
 import { Checkbox, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
@@ -9,8 +15,13 @@ import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
-import { ContentContainer, TableActions } from '../../elements';
-import { ExpandRowIcon, StatusDot } from './elements';
+import { ContentContainer } from '../../elements';
+import {
+  TableActions,
+  ColumnsSelector,
+  ExpandRowIcon,
+  StatusDot,
+} from './elements';
 import Revisions from './Revisions';
 import 'antd/dist/antd.css';
 import config from './datatransfer.config';
@@ -18,7 +29,8 @@ import DetailView, {
   DetailDataProps,
 } from '../../components/Organisms/DetailView/DetailView';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
-import { getMappedColumnName } from './utils';
+import { getMappedColumnName, getFormattedTimestampOrString } from './utils';
+import Filters from './Filters';
 
 enum ProgressState {
   LOADING = 'loading',
@@ -109,7 +121,7 @@ function selectColumns(
           if (key === 'report') {
             return <div>{value ? 'Success' : 'Error'}</div>;
           }
-          return value;
+          return getFormattedTimestampOrString(value);
         },
       });
     }
@@ -143,8 +155,7 @@ function DataTransfersReducer(
       };
     }
     case Action.ADD_COLUMN: {
-      const tmp = [...state.data!.selectedColumnNames];
-      tmp.push(action.payload);
+      const tmp = [action.payload, ...state.data!.selectedColumnNames];
       return {
         ...state,
         data: {
@@ -241,6 +252,32 @@ const DataTransfers: React.FC = () => {
     DataTransfersReducer,
     initialDataTransfersState
   );
+  const [sources, setSources] = useState<string[]>([]);
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [configurations, setConfigurations] = useState<GenericResponseObject[]>(
+    []
+  );
+  const [
+    selectedConfiguration,
+    setSelectedConfiguration,
+  ] = useState<GenericResponseObject | null>(null);
+  const [sourceProjects, setSourceProjects] = useState<DataTransferObject[]>(
+    []
+  );
+  const [
+    selectedSourceProject,
+    setSelectedSourceProject,
+  ] = useState<DataTransferObject | null>(null);
+  const [targetProjects, setTargetProjects] = useState<DataTransferObject[]>(
+    []
+  );
+  const [
+    selectedTargetProject,
+    setSelectedTargetProject,
+  ] = useState<DataTransferObject | null>(null);
+  const [datatypes, setDatatypes] = useState<string[]>([]);
+  const [selectedDatatype, setSelectedDatatype] = useState<string | null>(null);
 
   const { api } = useContext(ApiContext);
   const { token } = useContext(AuthContext);
@@ -269,87 +306,57 @@ const DataTransfers: React.FC = () => {
     }
   }
 
-  function handleOpenDetailClick(
-    sourceObj: DataTransferObject,
-    revision: DataTransferObject
-  ) {
-    setSelectedTransfer({
-      isLoading: true,
-      id: sourceObj.id,
-      source: {},
-      targets: [],
-    });
-    const selectedObject: DetailDataProps = {
-      id: sourceObj.id,
-      source: {},
-      targets: [],
-    };
-
-    api!.objects
-      .getDatatransfersForRevision(sourceObj.id, revision.revision)
-      .then((response) => {
-        if (response) {
-          const selectedRevision = response.source.revisions.find(
-            (rev: any) => rev.revision === revision.revision
-          );
-          selectedObject.source = {
-            name: response.source.name,
-            externalId: response.source.external_id,
-            crs: response.source.crs,
-            dataType: response.source.datatype,
-            createdTime:
-              response.source_created_time || response.source.created_time,
-            repository: response.source.project,
-            businessTag: response.source.business_tags.join(', '),
-            revision: selectedRevision.revision,
-            revisionSteps: selectedRevision.steps,
-            interpreter: response.source.author,
-          };
-          if (response.targets && response.targets.length > 0) {
-            selectedObject.targets = response.targets.map(
-              (item: DataTransferObject) => ({
-                name: item.name,
-                crs: item.crs,
-                dataType: item.datatype,
-                createdTime: item.created_time,
-                repository: item.project,
-                revision: item.revisions[item.revisions.length - 1].revision,
-                revisionSteps: item.revisions[item.revisions.length - 1].steps,
-              })
-            );
-          }
-          selectedObject.isLoading = false;
-        }
-        setSelectedTransfer(selectedObject);
-      });
-  }
-
-  useEffect(() => {
-    function fetchDataTransfers() {
+  function fetchDataTransfers() {
+    if (
+      selectedSource &&
+      selectedSourceProject &&
+      selectedTarget &&
+      selectedTargetProject
+    ) {
       dispatch({ type: Action.LOAD });
-      api!.objects
-        .get()
+      const options: RESTTransfersFilter = {
+        source: {
+          source: selectedSource,
+          external_id: selectedSourceProject.external_id,
+        },
+        target: {
+          source: selectedTarget,
+          external_id: selectedTargetProject.external_id,
+        },
+      };
+      if (selectedConfiguration) {
+        options.configuration = selectedConfiguration.name;
+      }
+      if (selectedDatatype) {
+        options.datatype = selectedDatatype;
+      }
+      api!.datatransfers
+        .get(options)
         .then((response: DataTransferObject[]) => {
-          if (!response[0].error) {
-            const handledData = response.map((item) => ({
-              ...item,
-              report: item.status_ok,
-            }));
+          if (response.length > 0) {
+            if (!response[0].error) {
+              const handledData = response.map((item) => item.source);
+              dispatch({
+                type: Action.SUCCEED,
+                payload: {
+                  data: handledData,
+                  columns: selectColumns(
+                    handledData,
+                    config.initialSelectedColumnNames
+                  ),
+                  rawColumns: selectColumns(handledData, []),
+                  allColumnNames: getColumnNames(handledData),
+                  selectedColumnNames: config.initialSelectedColumnNames,
+                },
+              });
+            } else {
+              throw new Error(response[0].status);
+            }
+          } else {
             dispatch({
               type: Action.SUCCEED,
-              payload: {
-                data: handledData,
-                columns: selectColumns(
-                  handledData,
-                  config.initialSelectedColumnNames
-                ),
-                rawColumns: selectColumns(handledData, []),
-                allColumnNames: getColumnNames(handledData),
-                selectedColumnNames: config.initialSelectedColumnNames,
-              },
+              payload: initialDataTransfersState.data,
             });
-          } else {
-            throw new Error(response[0].status);
           }
         })
         .catch((err: DataTransfersError) => {
@@ -357,11 +364,202 @@ const DataTransfers: React.FC = () => {
           dispatch({ type: Action.FAIL, error: err });
         });
     }
+  }
+
+  function fetchProjects() {
+    if (selectedSource) {
+      api!.projects
+        .get(selectedSource)
+        .then((response) => {
+          if (response.length > 0) {
+            if (!response[0].error) {
+              setSourceProjects(response);
+            } else {
+              throw new Error(response[0].status);
+            }
+          }
+        })
+        .catch((err: DataTransfersError) => {
+          addError(err.message, parseInt(err.message, 10));
+        });
+    }
+    if (selectedTarget) {
+      api!.projects
+        .get(selectedTarget)
+        .then((response) => {
+          if (response.length > 0) {
+            if (!response[0].error) {
+              setTargetProjects(response);
+            } else {
+              throw new Error(response[0].status);
+            }
+          }
+        })
+        .catch((err: DataTransfersError) => {
+          addError(err.message, parseInt(err.message, 10));
+        });
+    }
+  }
+
+  function fetchDatatypes() {
+    if (selectedSourceProject) {
+      api!.datatypes
+        .get(selectedSourceProject.id)
+        .then((response: string[]) => {
+          setDatatypes(response);
+        })
+        .catch((err: DataTransfersError) => {
+          addError(err.message, parseInt(err.message, 10));
+        });
+    }
+  }
+
+  function fetchConfigurations() {
+    if (
+      selectedSource &&
+      selectedSourceProject &&
+      selectedTarget &&
+      selectedTargetProject
+    ) {
+      const options: RESTConfigurationsFilter = {
+        source: {
+          source: selectedSource,
+          external_id: selectedSourceProject.external_id,
+        },
+        target: {
+          source: selectedTarget,
+          external_id: selectedTargetProject.external_id,
+        },
+      };
+      if (selectedDatatype) {
+        options.datatypes = [selectedDatatype];
+      }
+      api!.configurations
+        .getFiltered(options)
+        .then((response: GenericResponseObject[]) => {
+          if (response.length > 0 && !response[0].error) {
+            setConfigurations(response);
+          } else if (response.length === 0) {
+            setConfigurations([]);
+          } else {
+            throw new Error(response[0].status);
+          }
+        })
+        .catch((err: DataTransfersError) => {
+          addError(err.message, parseInt(err.message, 10));
+        });
+    }
+  }
+
+  function handleOpenDetailClick(
+    sourceObj: DataTransferObject,
+    revision: RevisionObject
+  ) {
+    setSelectedTransfer({
+      isLoading: true,
+      id: sourceObj.id,
+      source: {},
+      target: {},
+    });
+    const selectedObject: DetailDataProps = {
+      id: sourceObj.id,
+      source: {
+        name: sourceObj.name,
+        externalId: sourceObj.external_id,
+        crs: sourceObj.crs,
+        dataType: sourceObj.datatype,
+        createdTime: sourceObj.source_created_time || sourceObj.created_time,
+        repository: sourceObj.project,
+        businessTag: sourceObj.business_tags.join(', '),
+        revision: revision.revision,
+        revisionSteps: revision.steps,
+        interpreter: sourceObj.author,
+      },
+      target: {},
+    };
+    const translation = revision.translations[revision.translations.length - 1];
+    api!.objects.getSingleObject(translation.object_id).then((response) => {
+      if (response && response.length > 0 && !response[0].error) {
+        const item = response[0];
+        selectedObject.target = {
+          name: item.name,
+          crs: item.crs,
+          dataType: item.datatype,
+          createdTime: translation.created_time,
+          repository: item.project,
+          revision: translation.revision,
+          revisionSteps: translation.steps,
+        };
+        selectedObject.isLoading = false;
+      }
+      setSelectedTransfer(selectedObject);
+    });
+  }
+
+  useEffect(() => {
+    dispatch({ type: Action.LOAD });
+    function fetchSources() {
+      api!.sources
+        .get()
+        .then((response: string[]) => {
+          setSources(response);
+          dispatch({ type: Action.SUCCEED });
+        })
+        .catch((err: DataTransfersError) => {
+          addError(err.message, parseInt(err.message, 10));
+          dispatch({ type: Action.FAIL, error: err });
+        });
+    }
+
     if (token && token !== 'NO_TOKEN') {
-      fetchDataTransfers();
+      fetchSources();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
+
+  useEffect(() => {
+    if (token && token !== 'NO_TOKEN') {
+      fetchProjects();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSource]);
+
+  useEffect(() => {
+    if (token && token !== 'NO_TOKEN') {
+      fetchDatatypes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSourceProject]);
+
+  useEffect(() => {
+    if (token && token !== 'NO_TOKEN') {
+      fetchProjects();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTarget]);
+
+  useEffect(() => {
+    if (token && token !== 'NO_TOKEN') {
+      fetchProjects();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTarget]);
+
+  useEffect(() => {
+    if (token && token !== 'NO_TOKEN') {
+      fetchDataTransfers();
+      fetchConfigurations();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTargetProject]);
+
+  useEffect(() => {
+    setSelectedConfiguration(null);
+    if (token && token !== 'NO_TOKEN') {
+      fetchConfigurations();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDatatype]);
 
   if (error) {
     return (
@@ -376,26 +574,79 @@ const DataTransfers: React.FC = () => {
     return <Revisions record={record} onDetailClick={handleOpenDetailClick} />;
   }
 
+  function getNoDataText() {
+    if (selectedSource) {
+      if (selectedSourceProject) {
+        if (selectedTarget) {
+          if (selectedTargetProject) {
+            return 'No data';
+          }
+          return 'Select target project';
+        }
+        return 'Select target';
+      }
+      return 'Select source project';
+    }
+    return 'Select source';
+  }
+
   return (
     <ContentContainer>
       <TableActions>
-        <Dropdown
-          content={
-            <SelectColumnsMenu
-              columnNames={data.allColumnNames}
-              selectedColumnNames={data.selectedColumnNames}
-              onChange={updateColumnSelection}
-            />
-          }
-        >
-          <Button
-            type="link"
-            size="small"
-            style={{ color: 'var(--cogs-greyscale-grey7)' }}
-          >
-            <Icon type="Settings" />
-          </Button>
-        </Dropdown>
+        {sources.length > 0 && (
+          <Filters
+            source={{
+              sources,
+              selected: selectedSource,
+              onSelectSource: (nextSelected) => setSelectedSource(nextSelected),
+              projects: sourceProjects,
+              selectedProject: selectedSourceProject,
+              onSelectProject: (nextSelected) =>
+                setSelectedSourceProject(nextSelected),
+            }}
+            target={{
+              targets: sources,
+              selected: selectedTarget,
+              onSelectTarget: (nextSelected) => setSelectedTarget(nextSelected),
+              projects: targetProjects,
+              selectedProject: selectedTargetProject,
+              onSelectProject: (nextSelected) =>
+                setSelectedTargetProject(nextSelected),
+            }}
+            configuration={{
+              configurations,
+              selected: selectedConfiguration,
+              onSelectConfiguration: (nextSelected: GenericResponseObject) =>
+                setSelectedConfiguration(nextSelected),
+            }}
+            datatype={{
+              types: datatypes,
+              selected: selectedDatatype,
+              onSelectType: (nextSelected) => setSelectedDatatype(nextSelected),
+            }}
+          />
+        )}
+        {data.data.length > 0 && (
+          <ColumnsSelector>
+            <Dropdown
+              content={
+                <SelectColumnsMenu
+                  columnNames={data.allColumnNames}
+                  selectedColumnNames={data.selectedColumnNames}
+                  onChange={updateColumnSelection}
+                />
+              }
+            >
+              <Button
+                type="link"
+                size="small"
+                style={{ color: 'var(--cogs-greyscale-grey7)' }}
+              >
+                <Icon type="Settings" />
+              </Button>
+            </Dropdown>
+          </ColumnsSelector>
+        )}
       </TableActions>
       <Table
         dataSource={data.data}
@@ -417,6 +668,11 @@ const DataTransfers: React.FC = () => {
                 onClick={(e) => onExpand(record, e)}
               />
             ),
+        }}
+        locale={{
+          emptyText:
+            // eslint-disable-next-line no-nested-ternary
+            status === ProgressState.LOADING ? 'Loading...' : getNoDataText(),
         }}
       />
       <DetailView

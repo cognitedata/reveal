@@ -9,6 +9,26 @@ export interface GenericResponseObject {
   [key: string]: any;
 }
 
+export interface RevisionObject {
+  id: number;
+  created_time: number;
+  last_updated: number;
+  object_id: number;
+  revision: string;
+  cdf_file?: {
+    id?: 0;
+    upload_link?: string;
+    uploaded?: boolean;
+  };
+  status?: string;
+  steps: {
+    status: string;
+    error_message: string;
+    created_time: number;
+  }[];
+  translations: RevisionObject[];
+}
+
 export interface RESTProject {
   created_time: number;
   external_id: string;
@@ -27,9 +47,44 @@ export interface RESTPackageFilter {
   [property: string]: any;
 }
 
+export interface RESTObjectsFilter {
+  connector: string;
+  project?: string;
+  configuration?: string;
+  [property: string]: any;
+}
+
+export interface RESTConfigurationsFilter {
+  source: {
+    external_id?: string;
+    source: string;
+  };
+  target: {
+    external_id?: string;
+    source: string;
+  };
+  datatypes?: string[];
+  [property: string]: any;
+}
+
+export interface RESTTransfersFilter {
+  source: {
+    external_id: string;
+    source: string;
+  };
+  target: {
+    external_id: string;
+    source: string;
+  };
+  configuration?: string;
+  datatype?: string;
+  [property: string]: any;
+}
+
 export enum Source {
   STUDIO = 'Studio',
   OPENWORKS = 'Openworks',
+  EDM = 'EDM',
 }
 
 export interface Configuration {

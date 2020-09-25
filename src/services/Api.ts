@@ -1,8 +1,11 @@
 import { SIDECAR } from 'utils/sidecar';
 import {
   GenericResponseObject,
+  RESTConfigurationsFilter,
+  RESTObjectsFilter,
   RESTPackageFilter,
   RESTProject,
+  RESTTransfersFilter,
   Source,
 } from '../typings/interfaces';
 
@@ -74,6 +77,12 @@ class Api {
     return response.json();
   }
 
+  public datatransfers = {
+    get: async (filter: RESTTransfersFilter): Promise<any> => {
+      return this.post(`${this.baseURL}/datatransfers/filter`, filter);
+    },
+  };
+
   public datatypes = {
     get: async (projectId: number | null = null): Promise<string[]> => {
       let queryParameters;
@@ -85,6 +94,11 @@ class Api {
   public objects = {
     get: async (): Promise<GenericResponseObject[]> => {
       return this.get(`${this.baseURL}/objects`);
+    },
+    getFiltered: async (
+      options: RESTObjectsFilter
+    ): Promise<GenericResponseObject[]> => {
+      return this.post(`${this.baseURL}/objects/filter`, options);
     },
     getSingleObject: async (
       objectId: number
@@ -108,7 +122,7 @@ class Api {
   };
 
   public projects = {
-    get: async (source: Source): Promise<GenericResponseObject[]> => {
+    get: async (source: Source | string): Promise<GenericResponseObject[]> => {
       return this.get(`${this.baseURL}/sources/${source}/projects`);
     },
     getBusinessTags: async (
@@ -151,6 +165,11 @@ class Api {
     },
     create: async (data: any): Promise<GenericResponseObject> => {
       return this.post(`${this.baseURL}/configurations`, data);
+    },
+    getFiltered: async (
+      options: RESTConfigurationsFilter
+    ): Promise<GenericResponseObject[]> => {
+      return this.post(`${this.baseURL}/configurations/filter`, options);
     },
   };
 

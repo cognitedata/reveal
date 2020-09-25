@@ -11,9 +11,9 @@ export default {
     'source_project',
   ],
   filterableColumns: ['datatype', 'connector', 'project'],
-  mandatoryColumns: ['datatype', 'name', 'report', 'status_ok'],
+  mandatoryColumns: ['datatype', 'name', 'report'],
   nonSortableColumns: ['status_ok'],
-  ignoreColumns: ['cdf_metadata', 'business_tags'],
+  ignoreColumns: ['cdf_metadata', 'business_tags', 'status_ok'],
   keyColumn: 'id',
   columnOrder: [
     'status_ok',

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Icon, Input, Colors } from '@cognite/cogs.js';
 import { format } from 'date-fns';
-import { getRevisionDateOrString } from '../../../pages/DataTransfers/utils';
+import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
+import { getFormattedTimestampOrString } from '../../../pages/DataTransfers/utils';
 import {
   Container,
   Header,
@@ -39,11 +40,11 @@ export type DetailDataProps = {
     createdTime?: number;
     repository?: string;
     businessTag?: string;
-    revision?: number;
+    revision?: string | number | null;
     revisionSteps?: StepType[];
     interpreter?: string;
   };
-  targets: {
+  target: {
     name?: string;
     owId?: string;
     crs?: string;
@@ -52,9 +53,9 @@ export type DetailDataProps = {
     createdTime?: number;
     repository?: string;
     configTag?: string;
-    revision?: number;
+    revision?: string | number | null;
     revisionSteps?: StepType[];
-  }[];
+  };
 } | null;
 
 const DetailView = ({ onClose, data }: Props) => {
@@ -72,7 +73,7 @@ const DetailView = ({ onClose, data }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { isLoading, source, targets } = data || {};
+  const { isLoading, source, target } = data || {};
 
   const renderStep = (step: StepType) => {
     return (
@@ -95,7 +96,10 @@ const DetailView = ({ onClose, data }: Props) => {
             <span>
               {step.error_message}{' '}
               <StepTime>
-                {format(new Date(step.created_time * 1000), 'Pp')}
+                {format(
+                  new Date(step.created_time * UNIX_TIMESTAMP_FACTOR),
+                  'Pp'
+                )}
               </StepTime>
             </span>
           ) : (
@@ -113,7 +117,7 @@ const DetailView = ({ onClose, data }: Props) => {
         <CloseIcon type="LargeClose" onClick={onClose} />
       </Header>
       {isLoading && <p>LOADING!</p>}
-      {source && targets && (
+      {source && target && (
         <Content>
           <Section>
             <details open>
@@ -147,7 +151,10 @@ const DetailView = ({ onClose, data }: Props) => {
                   type="text"
                   value={
                     source.createdTime
-                      ? format(new Date(source.createdTime * 1000), 'Pp')
+                      ? format(
+                          new Date(source.createdTime * UNIX_TIMESTAMP_FACTOR),
+                          'Pp'
+                        )
                       : ''
                   }
                   variant="noBorder"
@@ -172,7 +179,7 @@ const DetailView = ({ onClose, data }: Props) => {
                   type="text"
                   value={
                     source.revision
-                      ? getRevisionDateOrString(source.revision)
+                      ? getFormattedTimestampOrString(source.revision)
                       : ''
                   }
                   variant="noBorder"
@@ -199,79 +206,80 @@ const DetailView = ({ onClose, data }: Props) => {
             </details>
           </Section>
           <Section>
-            {targets &&
-              targets.length > 0 &&
-              targets.map((item, index) => (
-                <details open key={`${item.name}-${item.createdTime}`}>
-                  <summary>
-                    Translation{targets.length > 1 && ` – ${index + 1}`}
-                  </summary>
-                  {item.revisionSteps &&
-                    item.revisionSteps.length > 0 &&
-                    item.revisionSteps.map((step) => renderStep(step))}
-                  <div>
-                    <h3>Name</h3>
-                    <Input
-                      type="text"
-                      value={item.name || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                    <h3>Openworks Id</h3>
-                    <Input
-                      type="text"
-                      value={item.openWorksId || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                    <h3>CRS</h3>
-                    <TextArea value={item.crs || ''} readOnly rows={5} />
-                    <h3>Data type</h3>
-                    <Input
-                      type="text"
-                      value={item.dataType || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                    <h3>Created time</h3>
-                    <Input
-                      type="text"
-                      value={
-                        item.createdTime
-                          ? format(new Date(item.createdTime * 1000), 'Pp')
-                          : ''
-                      }
-                      variant="noBorder"
-                      readOnly
-                    />
-                    <h3>Repository / Project</h3>
-                    <Input
-                      type="text"
-                      value={item.repository || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                    <h3>Configuration Tag</h3>
-                    <Input
-                      type="text"
-                      value={item.configTag || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                    <h3>Revision</h3>
-                    <Input
-                      type="text"
-                      value={
-                        item.revision
-                          ? format(new Date(item.revision * 1000), 'Pp')
-                          : ''
-                      }
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </div>
-                </details>
-              ))}
+            {target && (
+              <details open key={`${target.name}-${target.createdTime}`}>
+                <summary>Translation</summary>
+                {target.revisionSteps &&
+                  target.revisionSteps.length > 0 &&
+                  target.revisionSteps.map((step) => renderStep(step))}
+                <div>
+                  <h3>Name</h3>
+                  <Input
+                    type="text"
+                    value={target.name || ''}
+                    variant="noBorder"
+                    readOnly
+                  />
+                  <h3>Openworks Id</h3>
+                  <Input
+                    type="text"
+                    value={target.openWorksId || ''}
+                    variant="noBorder"
+                    readOnly
+                  />
+                  <h3>CRS</h3>
+                  <TextArea value={target.crs || ''} readOnly rows={5} />
+                  <h3>Data type</h3>
+                  <Input
+                    type="text"
+                    value={target.dataType || ''}
+                    variant="noBorder"
+                    readOnly
+                  />
+                  <h3>Created time</h3>
+                  <Input
+                    type="text"
+                    value={
+                      target.createdTime
+                        ? format(
+                            new Date(
+                              target.createdTime * UNIX_TIMESTAMP_FACTOR
+                            ),
+                            'Pp'
+                          )
+                        : ''
+                    }
+                    variant="noBorder"
+                    readOnly
+                  />
+                  <h3>Repository / Project</h3>
+                  <Input
+                    type="text"
+                    value={target.repository || ''}
+                    variant="noBorder"
+                    readOnly
+                  />
+                  <h3>Configuration Tag</h3>
+                  <Input
+                    type="text"
+                    value={target.configTag || ''}
+                    variant="noBorder"
+                    readOnly
+                  />
+                  <h3>Revision</h3>
+                  <Input
+                    type="text"
+                    value={
+                      target.revision
+                        ? getFormattedTimestampOrString(target.revision)
+                        : ''
+                    }
+                    variant="noBorder"
+                    readOnly
+                  />
+                </div>
+              </details>
+            )}
           </Section>
         </Content>
       )}

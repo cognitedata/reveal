@@ -1,9 +1,10 @@
 import { format } from 'date-fns';
+import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 import config from './datatransfer.config';
 
-export const getRevisionDateOrString = (revision: string | number) => {
-  if (new Date(Number(revision) * 1000).getTime() > 0) {
-    return format(new Date(Number(revision) * 1000), 'Pp');
+export const getFormattedTimestampOrString = (revision: string | number) => {
+  if (new Date(Number(revision) * UNIX_TIMESTAMP_FACTOR).getTime() > 0) {
+    return format(new Date(Number(revision) * UNIX_TIMESTAMP_FACTOR), 'Pp');
   }
   return revision;
 };

@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, Colors } from '@cognite/cogs.js';
-import { DataTransferObject } from '../../typings/interfaces';
+import { DataTransferObject, RevisionObject } from '../../typings/interfaces';
 import ApiContext from '../../contexts/ApiContext';
 import { SubTable, RevisionLabel, StatusDot } from './elements';
-import { getRevisionDateOrString } from './utils';
+import { getFormattedTimestampOrString } from './utils';
 
 type Props = {
   record: DataTransferObject;
-  onDetailClick: (
-    record: DataTransferObject,
-    revision: DataTransferObject
-  ) => void;
+  onDetailClick: (record: DataTransferObject, revision: RevisionObject) => void;
 };
 
 type DataType = {
@@ -25,6 +22,7 @@ type DataType = {
 
 const Revisions = ({ record, onDetailClick }: Props) => {
   const [data, setData] = useState<DataType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { api } = useContext(ApiContext);
 
   const columns = [
@@ -37,20 +35,31 @@ const Revisions = ({ record, onDetailClick }: Props) => {
     { title: 'Details', dataIndex: 'details', key: 'details' },
   ];
 
-  const getRevisionsList = async () => {
-    return api!.revisions.get(record.id).then((response) => {
-      return response.map((rev) => ({
+  const getRevisionsList = () =>
+    record.revisions.reverse().map((rev: RevisionObject) => {
+      let statusColor = Colors.yellow.hex();
+      if (
+        rev.translations &&
+        rev.translations.length > 0 &&
+        rev.translations[rev.translations.length - 1].steps &&
+        rev.steps.length > 0
+      ) {
+        const translation = rev.translations[rev.translations.length - 1];
+        const step = translation.steps[translation.steps.length - 1];
+        if (step.status === 'Uploaded to connector') {
+          statusColor = Colors.success.hex();
+        } else if (step.error_message) {
+          statusColor = Colors.danger.hex();
+        }
+      }
+      return {
         key: rev.id,
         objectId: rev.object_id,
-        statusOk: (
-          <StatusDot
-            bgColor={rev.status_ok ? Colors.success.hex() : Colors.danger.hex()}
-          />
-        ),
+        statusOk: <StatusDot bgColor={statusColor} />,
         name: (
           <div>
             <RevisionLabel>Revision</RevisionLabel>
-            <div>{getRevisionDateOrString(rev.revision)}</div>
+            <div>{getFormattedTimestampOrString(rev.revision)}</div>
           </div>
         ),
         details: (
@@ -58,9 +67,8 @@ const Revisions = ({ record, onDetailClick }: Props) => {
             Detail view
           </Button>
         ),
-      }));
+      };
     });
-  };
 
   const getSingleObj = async (revision: DataTransferObject) => {
     return api!.objects
@@ -70,10 +78,11 @@ const Revisions = ({ record, onDetailClick }: Props) => {
 
   useEffect(() => {
     const runEffect = async () => {
-      const revisions = await getRevisionsList();
+      const revisions = getRevisionsList();
       setData(revisions);
+      setIsLoading(false);
       Promise.all(
-        revisions.map(async (rev) => {
+        revisions.map(async (rev: RevisionObject) => {
           const singleObj: DataTransferObject = await getSingleObj(rev);
           return {
             ...rev,
@@ -91,7 +100,7 @@ const Revisions = ({ record, onDetailClick }: Props) => {
             ),
           };
         })
-      ).then((resp) => {
+      ).then((resp: any) => {
         setData(resp);
       });
     };
@@ -105,6 +114,10 @@ const Revisions = ({ record, onDetailClick }: Props) => {
       dataSource={data}
       pagination={false}
       showHeader={false}
+      loading={isLoading}
+      locale={{
+        emptyText: isLoading ? 'Loading...' : 'No data',
+      }}
     />
   );
 };
