@@ -1,22 +1,33 @@
 @Library('jenkins-helpers') _
 
-// This is your staging domain. Staging deployments are protected by Cognite
+// This is your FAS staging app id. Staging deployments are protected by Cognite
 // IAP, meaning they're only accessible to Cogniters.
-static final String STAGING_DOMAIN_NAME =
+static final String STAGING_APP_ID =
     // This ternary is only in here to avoid accidentally publishing to the
     // wrong app once this template is used. You should remove this whole thing
     // and replace it with a static string.
     jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "react-demo.cognite.ai"
+      ? "fas-demo"
       : ""
 
+// This is your FAS production app id.
 // A this time, there is no production build for the demo app.
-static final String PRODUCTION_DOMAIN_NAME =
+static final String PRODUCTION_APP_ID =
     // This ternary is only in here to avoid accidentally publishing to the
     // wrong app once this template is used. You should remove this whole thing
     // and replace it with a static string.
     jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "react-demo-prod.cognite.ai"
+      ? "fas-demo-prod"
+      : ""
+
+// This is your FAS app identifier (repo) shared across both production and staging apps
+// in order to do a commit lookup (commits are shared between apps).
+static final String APPLICATION_REPO_ID =
+    // This ternary is only in here to avoid accidentally publishing to the
+    // wrong app once this template is used. You should remove this whole thing
+    // and replace it with a static string.
+    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
+      ? "fas-demo"
       : ""
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -239,7 +250,7 @@ pods { context ->
 
       'Staging': {
         dir('staging') {
-          if (!STAGING_DOMAIN_NAME) {
+          if (!STAGING_APP_ID) {
             print "No staging domain given; this app will not go to staging"
             return
           }
@@ -250,7 +261,8 @@ pods { context ->
           stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
             fas.build(
               useContainer: true,
-              domainName: STAGING_DOMAIN_NAME,
+              appId: STAGING_APP_ID,
+              repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build staging',
             )
           }
@@ -259,7 +271,7 @@ pods { context ->
 
       'Production': {
         dir('production') {
-          if (!PRODUCTION_DOMAIN_NAME) {
+          if (!PRODUCTION_APP_ID) {
             print "No production domain given; this app will not go to production"
             return
           }
@@ -270,7 +282,8 @@ pods { context ->
           stageWithNotify('Build for production', CONTEXTS.buildProduction) {
             fas.build(
               useContainer: true,
-              domainName: PRODUCTION_DOMAIN_NAME,
+              appId: PRODUCTION_APP_ID,
+              repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build production'
             )
           }
@@ -280,7 +293,7 @@ pods { context ->
     workers: 3,
   )
 
-  if (isStaging && STAGING_DOMAIN_NAME) {
+  if (isStaging && STAGING_APP_ID) {
     stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
       dir('staging') {
         fas.publish(
@@ -290,7 +303,7 @@ pods { context ->
     }
   }
 
-  if (isProduction && PRODUCTION_DOMAIN_NAME) {
+  if (isProduction && PRODUCTION_APP_ID) {
     stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
       dir('production') {
         fas.publish(
