@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NodeVisualizer } from "@/UserInterface/NodeVisualizer/NodeVisualizer";
 import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
-import { BPDataModule } from "@/Solutions/BP/BPDataModule";
+import { SubSurfaceModule } from "@/Solutions/BP/SubSurfaceModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
@@ -37,13 +37,15 @@ export function App() {
 
   const modules = Modules.instance;
   // Setup modules
-  const module = new BPDataModule();
+  const module = new SubSurfaceModule();
   modules.add(new ThreeModule());
 
-  const syntheticDataModule = new SyntheticSubSurfaceModule(
+  const syntheticModule = new SyntheticSubSurfaceModule();
+  syntheticModule.addSeismicCube(
     SyntheticSubSurfaceModule.createSeismicClient(),
     process.env.FILE_ID || ""
   );
+
   useEffect(() => {
     if (LoadMockData) {
       Promise.all([
@@ -67,7 +69,7 @@ export function App() {
             ndsEventsJson,
             nptEventsJson,
           ]) => {
-            module.setModuleData({
+            module.addWellData({
               wells: wellsJson.default,
               wellBores: wellBoresJson.default,
               trajectories: trajectoriesJson.default,
@@ -90,13 +92,13 @@ export function App() {
 Disable loadMockData constant in App.tsx to remove this warning!`,
             err
           );
-          modules.add(syntheticDataModule);
+          modules.add(syntheticModule);
           modules.install();
           const rootNode = modules.createRoot();
           setRoot(rootNode);
         });
     } else {
-      modules.add(syntheticDataModule);
+      modules.add(syntheticModule);
       modules.install();
       const rootNode = modules.createRoot();
       setRoot(rootNode);

@@ -23,7 +23,6 @@ import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { SurfaceNode } from "@/SubSurface/Basics/SurfaceNode";
 import { WellFolder } from "@/SubSurface/Wells/Nodes/WellFolder";
-import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { LogFolder } from "@/SubSurface/Wells/Nodes/LogFolder";
 import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
@@ -31,46 +30,11 @@ import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from "@/Core/Primitives/Ma";
 import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
-import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
-import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
-import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
+import { SubSurfaceModule } from "@/Solutions/BP/SubSurfaceModule";
 
-export class SyntheticSubSurfaceModule extends BaseModule
+export class SyntheticSubSurfaceModule extends SubSurfaceModule
 {
-  //==================================================
-  // PRIVATE fields
-  //==================================================
-
-  private _cogniteClient: CogniteSeismicClient;
-  private _fileId: string;
-
-  //==================================================
-  // Constructors
-  //==================================================
-
-  public static createSeismicClient(): CogniteSeismicClient
-  {
-    return new CogniteSeismicClient({
-      api_url: process.env.API_URL || "",
-      api_key: process.env.API_KEY || "", debug: true
-    });
-  }
-
-  constructor(client: CogniteSeismicClient, fileId: string) 
-  {
-    super();
-    this._cogniteClient = client;
-    this._fileId = fileId;
-  }
-
-  //==================================================
-  // PUBLIC Properties
-  //==================================================
-
-  public get cogniteClient(): CogniteSeismicClient { return this._cogniteClient; };
-  public get fileId(): string { return this._fileId; }
-
   //==================================================
   // OVERRIDES of BaseModule
   //==================================================
@@ -82,7 +46,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
-    this.addSeismic(root);
+    super.loadData(root);
     SyntheticSubSurfaceModule.addWells(root);
     SyntheticSubSurfaceModule.addSurfaces(root);
   }
@@ -109,10 +73,12 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
     const smoothNumberOfPasses = 3;
     const powerOf2 = 8;
+    const tree = root.getOthersByForce();
+
     for (let i = 0; i < 1; i++)
     {
       const parent0 = new FolderNode();
-      root.others.addChild(parent0);
+      tree.addChild(parent0);
 
       for (let j = 0; j < 2; j++)
       {
@@ -155,7 +121,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const numberOfFolder = 5;
     const numberOfTrajectories = 2;
 
-    const wellTree = root.wells;
+    const tree = root.getWellsByForce();
     const logDataLoader = new LogDataLoader();
     const trajectoryDataLoader = new TrajectoryDataLoader();
 
@@ -163,7 +129,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     for (let folderIndex = 0; folderIndex < numberOfFolder; folderIndex++)
     {
       const wellFolder = new WellFolder();
-      wellTree.addChild(wellFolder);
+      tree.addChild(wellFolder);
       wellFolder.name = `Area ${folderIndex + 1}`;
 
       const numberOfWells = Random.getInt2(2, 6);
@@ -241,7 +207,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
         }
       }
     }
-    wellTree.synchronize();
+    tree.synchronize();
   }
 
   private static setWellsAndLogsVisible(root: BaseRootNode): void
@@ -265,99 +231,49 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
   }
 
-  private addSeismic(root: BaseRootNode)
-  {
-    if (!(root instanceof SubSurfaceRootNode))
-      return;
-
-    try
-    {
-      const seismicTree = root.seismic;
-      const survey = new SurveyNode();
-      survey.name = "Survey";
-      {
-        const seismicCubeNode = new SeismicCubeNode();
-        seismicCubeNode.colorMap = ColorMaps.seismicName;
-        survey.addChild(seismicCubeNode);
-        seismicTree.addChild(survey);
-        seismicCubeNode.load(this.cogniteClient, this.fileId);
-      }
-      {
-        const seismicCubeNode = new SeismicCubeNode();
-        seismicCubeNode.colorMap = ColorMaps.greyScaleName;
-        survey.addChild(seismicCubeNode);
-        seismicTree.addChild(survey);
-        seismicCubeNode.load(this.cogniteClient, this.fileId);
-      }
-    }
-    catch (error)
-    {
-      alert(error);
-    }
-
-    // Get trace 1
-    // const range = Range3.newTest;
-
-    // const seismicTree = root.seismic;
-
-    // const survey = new SurveyNode();
-
-    // const nodeSize = new Index3(90, 100, 80);
-    // const origin = range.min;
-    // const inc = new Vector3(20, 20, 20);
-    // const rotationAngle = Math.PI / 10;
-
-    // let cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
-    // let seismicCubeNode = new SeismicCubeNode();
-    // seismicCubeNode.seismicCube = cube;
-    // seismicCubeNode.colorMap = ColorMaps.rainbowName;
-    // survey.addChild(seismicCubeNode);
-
-    // cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
-    // seismicCubeNode = new SeismicCubeNode();
-    // seismicCubeNode.seismicCube = cube;
-    // seismicCubeNode.colorMap = ColorMaps.commonSeismicName;
-    // survey.addChild(seismicCubeNode);
-
-    // survey.surveyCube = cube.getRegularGrid();
-
-    // seismicTree.addChild(survey);
-  }
-
   //==================================================
   // STATIC METHODS: Others
   //==================================================
 
+  public static createSeismicClient(): CogniteSeismicClient
+  {
+    return new CogniteSeismicClient({
+      api_url: process.env.API_URL || "",
+      api_key: process.env.API_KEY || "", debug: true
+    });
+  }
+
   private static animate(root: BaseRootNode)
   {
-    if (!(root instanceof SubSurfaceRootNode))
-      return;
+    // if (!(root instanceof SubSurfaceRootNode))
+    //   return;
 
-    const { wells } = root;
-    return;
+    // const { wells } = root;
+    // if (!wells)
+    //   return;
 
     // eslint-disable-next-line no-unreachable
-    for (const node of wells.getDescendantsByType(WellTrajectoryNode))
-    {
+    // for (const node of wells.getDescendantsByType(WellTrajectoryNode))
+    // {
 
-      if (Random.isTrue(0.025))
-        node.toggleVisibleInteractive();
-    }
-    for (const node of wells.getDescendantsByType(BaseLogNode))
-    {
-      if (Random.isTrue(0.05))
-        node.toggleVisibleInteractive();
-    }
-    if (Random.isTrue(0.05))
-    {
-      const n = Random.getInt2(0, 4);
-      let i = 0;
-      for (const node of root.getDescendantsByType(SurfaceNode))
-      {
-        node.setVisibleInteractive(i === n);
-        i++;
-      }
-    }
+    //   if (Random.isTrue(0.025))
+    //     node.toggleVisibleInteractive();
+    // }
+    // for (const node of wells.getDescendantsByType(BaseLogNode))
+    // {
+    //   if (Random.isTrue(0.05))
+    //     node.toggleVisibleInteractive();
+    // }
+    // if (Random.isTrue(0.05))
+    // {
+    //   const n = Random.getInt2(0, 4);
+    //   let i = 0;
+    //   for (const node of root.getDescendantsByType(SurfaceNode))
+    //   {
+    //     node.setVisibleInteractive(i === n);
+    //     i++;
+    //   }
+    // }
   }
 }
 

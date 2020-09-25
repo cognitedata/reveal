@@ -25,8 +25,9 @@ describe("Hierarcy", () =>
     for (const isVisible of [true, false])
     {
       const styles: BaseRenderStyle[] = [];
+      const tree = root.getOthersByForce();
       for (const target of root.targets.getChildrenByType(BaseTargetNode))
-        for (const node of root.others.getChildrenByType(BaseVisualNode))
+        for (const node of tree.getChildrenByType(BaseVisualNode))
         {
           node.setVisible(isVisible, target);
           const style = node.getRenderStyle(target.targetId);
@@ -89,6 +90,8 @@ describe("Hierarcy", () =>
     expect(child.parent).toBe(child.root);
     expect(child.root).toBe(root);
 
+    const tree = root.getOthersByForce();
+
     // Test Descendants
     {
       let n = 0;
@@ -110,11 +113,11 @@ describe("Hierarcy", () =>
     }
     {
       let n = 0;
-      for (const descentor of root.others.getChildrenByType(PolylinesNode))
+      for (const descentor of tree.getChildrenByType(PolylinesNode))
         n++;
       expect(n).toBe(4);
     }
-    expect(root.others.getChildByType(PolylinesNode)).not.toBeNull();
+    expect(tree.getChildByType(PolylinesNode)).not.toBeNull();
 
     // Test Ancestors
     {
@@ -164,11 +167,12 @@ describe("Hierarcy", () =>
   function isVisibleSetVisible(): void
   {
     const root = StubRootCreator.createTestRoot();
+    const tree = root.getOthersByForce();
 
     for (const isVisible of [true, false])
     {
       for (const target of root.targets.getChildrenByType(BaseTargetNode))
-        for (const node of root.others.getChildrenByType(BaseVisualNode))
+        for (const node of tree.getChildrenByType(BaseVisualNode))
         {
           node.setVisible(isVisible, target);
           expect(node.views.isOk()).toBe(true);
@@ -176,7 +180,7 @@ describe("Hierarcy", () =>
 
       let visibleCount = 0;
       for (const target of root.targets.getChildrenByType(BaseTargetNode))
-        for (const node of root.others.getChildrenByType(BaseVisualNode))
+        for (const node of tree.getChildrenByType(BaseVisualNode))
           if (node.isVisible(target))
             visibleCount++;
 
@@ -184,11 +188,11 @@ describe("Hierarcy", () =>
     }
     for (const isVisible of [true, false])
     {
-      for (const node of root.others.getChildrenByType(BaseVisualNode))
+      for (const node of tree.getChildrenByType(BaseVisualNode))
         node.setVisible(isVisible);
 
       let visibleCount = 0;
-      for (const node of root.others.getChildrenByType(BaseVisualNode))
+      for (const node of tree.getChildrenByType(BaseVisualNode))
         if (node.isVisible())
           visibleCount++;
       expect(visibleCount).toBe(isVisible ? 4 : 0);
@@ -200,11 +204,12 @@ describe("Hierarcy", () =>
     for (const testType of [0, 1, 2, 3])
     {
       const root = StubRootCreator.createTestRoot();
+      const tree = root.getOthersByForce();
 
       // Set all visible
       let expectedVisibleCount = 0;
       for (const target of root.targets.getChildrenByType(BaseTargetNode))
-        for (const node of root.others.getChildrenByType(BaseVisualNode))
+        for (const node of tree.getChildrenByType(BaseVisualNode))
           if (node.setVisible(true, target))
             expectedVisibleCount++;
 
@@ -214,7 +219,7 @@ describe("Hierarcy", () =>
       {
         // Set all invisible
         for (const target of root.targets.getChildrenByType(BaseTargetNode))
-          for (const node of root.others.getChildrenByType(BaseVisualNode))
+          for (const node of tree.getChildrenByType(BaseVisualNode))
             node.setVisible(false, target);
 
         expectedVisibleCount = 0;

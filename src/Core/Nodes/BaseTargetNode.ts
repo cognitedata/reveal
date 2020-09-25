@@ -64,10 +64,10 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     return result;
   }
 
-  protected /*override*/ removeInteractiveCore(): void
+  protected /*override*/ removeInternalData(): void
   {
     this.removeAllViewsShownHere();
-    super.removeInteractiveCore();
+    super.removeInternalData();
   }
 
   //==================================================

@@ -29,11 +29,12 @@ export class StubRootCreator
       throw Error("target is not added properly");
 
     // Create 4 polylines
+    const tree = root.getOthersByForce();
     for (let i = 0; i < 4; i++)
     {
       const node = new PolylinesNode();
       node.polylines = Polylines.createByRandom(10, 10, Range3.newTest);
-      root.others.addChild(node);
+      tree.addChild(node);
       node.initialize();
     }
     modules.initializeWhenPopulated(root);

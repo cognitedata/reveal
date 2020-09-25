@@ -4,11 +4,11 @@ import "./App.css";
 import { SimpleTabs } from "./SimpleTabs";
 import { Provider } from "react-redux";
 import { store } from "./store";
-import { BPDataModule } from "@cognite/node-visualizer";
+import { SubSurfaceModule } from "@cognite/node-visualizer";
 
 function App()
 {
-  const [data, setData] = useState<BPDataModule>(null);
+  const [data, setData] = useState<SubSurfaceModule>(null);
 
   const loadNewData = () => {
 
@@ -29,8 +29,8 @@ function App()
          trajectoriesJson,
          trajectoryDataJson,
        ]) => {
-        const module = new BPDataModule();
-        module.setModuleData({
+        const module = new SubSurfaceModule();
+        module.addWellData({
           wells: wellsJson.default,
           wellBores: wellBoresJson.default,
           trajectories: trajectoriesJson.default,
