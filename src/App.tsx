@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query-devtools';
 import { Provider } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
@@ -21,6 +23,7 @@ import rootStyles from './styles/index.css';
 export default () => {
   const tenant = window.location.pathname.split('/')[1];
   const history = createBrowserHistory();
+  const queryCache = new QueryCache();
 
   if (!tenant) {
     throw new Error('tenant missing');
@@ -48,9 +51,11 @@ export default () => {
             <ThemeProvider theme={theme}>
               <Provider store={store}>
                 <Router history={history}>
-                  <Switch>
-                    <Route path="/:tenant" component={RootApp} />
-                  </Switch>
+                  <ReactQueryCacheProvider queryCache={queryCache}>
+                    <Switch>
+                      <Route path="/:tenant" component={RootApp} />
+                    </Switch>
+                  </ReactQueryCacheProvider>
                 </Router>
               </Provider>
             </ThemeProvider>
@@ -58,6 +63,7 @@ export default () => {
           </ClientSDKProvider>
         </AuthWrapper>
       </SubAppWrapper>
+      <ReactQueryDevtools initialIsOpen={false} />
     </AntStyles>
   );
 };
