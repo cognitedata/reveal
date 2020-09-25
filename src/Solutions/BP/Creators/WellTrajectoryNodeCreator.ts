@@ -6,13 +6,24 @@ import { TrajectorySample } from "@/SubSurface/Wells/Samples/TrajectorySample";
 
 export class WellTrajectoryNodeCreator
 {
-  public static create(trajectoryDataColumnIndices: ITrajectoryColumnIndices, trajectoryRows: ITrajectoryRows | null | undefined, elevation: number, unit: number): WellTrajectoryNode | null
+  public static create(trajectoryDataColumnIndices: ITrajectoryColumnIndices, trajectoryRows: ITrajectoryRows | null | undefined, startMd: number, unit: number): WellTrajectoryNode | null
+  {
+    const trajectory = WellTrajectoryNodeCreator.createTrajectory(trajectoryDataColumnIndices, trajectoryRows, startMd, unit);
+    if (trajectory == null)
+      return null; // Missing data
+
+    const node = new WellTrajectoryNode();
+    node.trajectory = trajectory;
+    return node;
+  }
+
+  public static createTrajectory(trajectoryDataColumnIndices: ITrajectoryColumnIndices, trajectoryRows: ITrajectoryRows | null | undefined, startMd: number, unit: number): WellTrajectory | null
   {
     function getIndex(value?: number): number { return value === undefined ? -1 : value; }
 
-    // Some trajectories missing data
     if (!trajectoryRows || !trajectoryRows.rows.length)
     {
+      // If no rows at all
       // tslint:disable-next-line: no-console
       console.warn("NodeVisualizer: No trajectory available for well");
       return null;
@@ -25,7 +36,8 @@ export class WellTrajectoryNodeCreator
     const yOffsetIndex = getIndex(trajectoryDataColumnIndices.y_offset);
 
     const trajectory = new WellTrajectory();
-    // Iterate through rows array
+    
+    // If you have xOffset, yOffset, and Tvd (basically the same as x, y, z)
     if (xOffsetIndex >= 0 && yOffsetIndex >= 0 && tvdIndex >= 0)
     {
       for (const curvePointData of trajectoryRows.rows)
@@ -48,7 +60,7 @@ export class WellTrajectoryNodeCreator
             md *= unit;
         }
         z *= unit;
-        const sample = new TrajectorySample(new Vector3(x, y, elevation - z), Number.isNaN(md) ? z : md);
+        const sample = new TrajectorySample(new Vector3(x, y, startMd - z), Number.isNaN(md) ? z : md);
         if (azimuthIndex >= 0 && inclinationIndex >= 0)
         {
           sample.inclination = curvePoint[inclinationIndex];
@@ -60,6 +72,7 @@ export class WellTrajectoryNodeCreator
         trajectory.add(sample);
       }
     }
+    // Otherwise if you have md, azimuth, and inclination 
     else if (mdIndex >= 0 && azimuthIndex >= 0 && inclinationIndex >= 0)
     {
       for (const curvePointData of trajectoryRows.rows)
@@ -75,7 +88,7 @@ export class WellTrajectoryNodeCreator
         if (Number.isNaN(inclination))
           continue;
         md *= unit;
-        const sample = new TrajectorySample(new Vector3(0, 0, elevation), md);
+        const sample = new TrajectorySample(new Vector3(0, 0, startMd), md);
         sample.inclination = inclination;
         sample.azimuth = azimuth;
         const { length } = trajectory;
@@ -85,9 +98,8 @@ export class WellTrajectoryNodeCreator
       }
     }
     if (trajectory.length < 2)
-      return null;
-    const node = new WellTrajectoryNode();
-    node.trajectory = trajectory;
-    return node;
+      return null; // Missing data
+
+    return trajectory;
   }
 }
