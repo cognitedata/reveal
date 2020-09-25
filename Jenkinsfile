@@ -260,7 +260,6 @@ pods { context ->
           }
           stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
             fas.build(
-              useContainer: true,
               appId: STAGING_APP_ID,
               repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build staging',
@@ -281,7 +280,6 @@ pods { context ->
           }
           stageWithNotify('Build for production', CONTEXTS.buildProduction) {
             fas.build(
-              useContainer: true,
               appId: PRODUCTION_APP_ID,
               repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build production'
@@ -296,9 +294,7 @@ pods { context ->
   if (isStaging && STAGING_APP_ID) {
     stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
       dir('staging') {
-        fas.publish(
-          useContainer: true,
-        )
+        fas.publish()
       }
     }
   }
@@ -306,9 +302,7 @@ pods { context ->
   if (isProduction && PRODUCTION_APP_ID) {
     stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
       dir('production') {
-        fas.publish(
-          useContainer: true,
-        )
+        fas.publish()
       }
     }
   }
