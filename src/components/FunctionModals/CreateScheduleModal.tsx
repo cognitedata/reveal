@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Alert } from 'antd';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectCreateScheduleState,
-  createSchedule,
-  createScheduleReset,
-} from 'modules/schedules';
+// import {
+//   selectCreateScheduleState,
+//   createSchedule,
+//   createScheduleReset,
+// } from 'modules/schedules';
 import { isValidCron } from 'cron-validator';
 
 const isValidData = (data: string) => {
@@ -42,9 +41,9 @@ type Props = {
 
 export default function CreateScheduleModal(props: Props) {
   const { visible, onCancel, functionExternalId } = props;
-  const { creating, done, error, errorMessage } = useSelector(
-    selectCreateScheduleState
-  );
+  // const { creating, done, error, errorMessage } = useSelector(
+  //   selectCreateScheduleState
+  // );
   const [scheduleName, setScheduleName] = useState({
     value: '',
     touched: false,
@@ -55,8 +54,6 @@ export default function CreateScheduleModal(props: Props) {
   });
   const [description, setDescription] = useState('');
   const [data, setData] = useState('');
-
-  const dispatch = useDispatch();
 
   const cancelAndCreateButtons = (isCreateDisabled: boolean) => {
     const cancelButton = (
@@ -90,14 +87,14 @@ export default function CreateScheduleModal(props: Props) {
       );
     }
 
-    if (creating) {
+    if (false) {
       createStatusButton = (
         <Button icon="Loading" type="primary">
           Creating
         </Button>
       );
     }
-    if (done) {
+    if (false) {
       createStatusButton = (
         <Button icon="Check" onClick={handleCancel} type="primary">
           Done
@@ -149,22 +146,22 @@ export default function CreateScheduleModal(props: Props) {
     if (!canBeSubmitted) {
       evt.preventDefault();
     }
-    const formattedData = data === '' ? {} : JSON.parse(data);
+    // const formattedData = data === '' ? {} : JSON.parse(data);
 
-    dispatch(
-      createSchedule(
-        scheduleName.value,
-        description,
-        cronExpression.value,
-        formattedData,
-        functionExternalId
-      )
-    );
+    // dispatch(
+    //   createSchedule(
+    //     scheduleName.value,
+    //     description,
+    //     cronExpression.value,
+    //     formattedData,
+    //     functionExternalId
+    //   )
+    // );
   };
 
   const handleCancel = () => {
     onCancel();
-    dispatch(createScheduleReset());
+    // dispatch(createScheduleReset());
     setScheduleName({ value: '', touched: false });
     setCronExpression({ value: '', touched: false });
     setDescription('');
@@ -257,6 +254,7 @@ export default function CreateScheduleModal(props: Props) {
     );
   };
 
+  const errorMessage = 'TODO';
   return (
     <Modal
       title="Create Schedule"
@@ -265,7 +263,7 @@ export default function CreateScheduleModal(props: Props) {
       width="550px"
       onCancel={handleCancel}
     >
-      {error && !creating ? (
+      {false ? (
         <Alert
           message={`Error: ${errorMessage}`}
           type="error"

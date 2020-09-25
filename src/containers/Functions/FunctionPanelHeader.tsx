@@ -1,14 +1,13 @@
 import React from 'react';
-import { Tag, Modal, message, Icon } from 'antd';
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { deleteFunction, selectDeleteFunctionState } from 'modules/delete';
-import { selectFunctionCalls } from 'modules/functionCalls';
-import { storeFunctionToCall } from 'modules/call';
-import { useDispatch, useSelector } from 'react-redux';
-import { Function, Call } from 'types';
+
+import { useQuery } from 'react-query';
+import { Tag, Icon } from 'antd';
+import { Tooltip } from '@cognite/cogs.js';
+import { Function, Call, Schedule } from 'types';
 import moment from 'moment';
-import { callStatusTag } from 'containers/Functions/FunctionPanelContent';
-import { selectFunctionSchedules } from 'modules/schedules';
+import { callStatusTag } from 'containers/Functions/FunctionCalls';
+import DeleteFunctionButton from 'components/DeleteFunctionButton';
+import RunFunctionButton from 'components/RunFunctionButton';
 
 type Props = {
   currentFunction: Function;
@@ -16,20 +15,21 @@ type Props = {
 
 export default function FunctionPanelHeader(props: Props) {
   const { currentFunction } = props;
-  const dispatch = useDispatch();
-  const calls = useSelector(selectFunctionCalls(currentFunction.id))
-    .functionCalls;
-  const {
-    functionToDelete,
-    deleting,
-    error: errorInDeletingFunction,
-  } = useSelector(selectDeleteFunctionState);
-  const schedules = useSelector(
-    selectFunctionSchedules(currentFunction.externalId)
-  );
+  const { id } = currentFunction;
 
-  const deletingFunction =
-    deleting && functionToDelete && currentFunction.id === functionToDelete.id;
+  const {
+    data: scheduleResponse,
+    // error: scheduleError
+  } = useQuery<{
+    items: Schedule[];
+  }>('/functions/schedules');
+  const schedules =
+    scheduleResponse?.items?.filter(
+      s => s.functionExternalId === currentFunction.externalId
+    ) || [];
+
+  const { data } = useQuery<{ items: Call[] }>(`/functions/${id}/calls`);
+  const calls = data?.items || [];
 
   const functionStatusTag = (status: string) => {
     let color;
@@ -59,55 +59,6 @@ export default function FunctionPanelHeader(props: Props) {
   };
   const mostRecentCall = calls && calls.length > 0 ? calls[0] : undefined;
 
-  const deleteFunctionButton = deletingFunction ? (
-    <Button
-      icon="Loading"
-      size="small"
-      style={{
-        marginLeft: '8px',
-        justifyContent: 'center',
-      }}
-    />
-  ) : (
-    <Button
-      icon="Delete"
-      size="small"
-      style={{
-        marginLeft: '8px',
-        justifyContent: 'center',
-      }}
-      onClick={e => {
-        e.stopPropagation();
-        Modal.confirm({
-          title: 'Are you sure?',
-          content: 'Are you sure you want to delete this function?',
-          onOk: () => {
-            dispatch(deleteFunction(currentFunction));
-          },
-          onCancel: () => {},
-          okText: 'Delete',
-        });
-      }}
-    />
-  );
-
-  const runFunctionButton = (
-    <Tooltip placement="top" content="Click to call the function">
-      <Button
-        icon="TriangleRight"
-        size="small"
-        style={{
-          justifyContent: 'center',
-        }}
-        disabled={currentFunction.status !== 'Ready'}
-        onClick={e => {
-          e.stopPropagation();
-          dispatch(storeFunctionToCall(currentFunction));
-        }}
-      />
-    </Tooltip>
-  );
-
   const lastCallDuration = (call: Call) => {
     return moment.utc(call.endTime).fromNow();
   };
@@ -117,12 +68,6 @@ export default function FunctionPanelHeader(props: Props) {
       marginLeft: '8px',
     });
   };
-
-  React.useEffect(() => {
-    if (functionToDelete && errorInDeletingFunction) {
-      message.error(`Unable to delete ${functionToDelete.name}`);
-    }
-  }, [errorInDeletingFunction, functionToDelete]);
 
   return (
     <div style={{ overflow: 'auto', display: 'flex', alignItems: 'center' }}>
@@ -173,8 +118,8 @@ export default function FunctionPanelHeader(props: Props) {
         {mostRecentCall ? <>{lastCallStatus(mostRecentCall)}</> : null}
       </span>
       <span style={{ float: 'right', marginTop: '4px', marginRight: '4px' }}>
-        {runFunctionButton}
-        {deleteFunctionButton}
+        <RunFunctionButton id={id} />
+        <DeleteFunctionButton id={id} />
       </span>
     </div>
   );

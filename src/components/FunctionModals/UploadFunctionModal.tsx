@@ -1,17 +1,10 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Upload, Alert } from 'antd';
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  uploadFile,
-  createFunction,
-  selectCreateFunctionState,
-  createFunctionReset,
-  selectCreateFunctionFields,
-  selectUploadFileState,
-} from 'modules/create';
 import { UploadFile } from 'antd/lib/upload/interface';
 import Link from 'components/Link';
 

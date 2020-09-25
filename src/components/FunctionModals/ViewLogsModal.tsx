@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Modal, Input } from 'antd';
 import { Icon, Tooltip } from '@cognite/cogs.js';
-import { useSelector } from 'react-redux';
-import { selectFunctionCallLogs } from 'modules/functionCalls';
 import moment from 'moment';
 import { Call, Log } from 'types';
 import Highlighter from 'react-highlight-words';
@@ -22,11 +20,11 @@ const errorIcon = (
   </Tooltip>
 );
 export default function ViewLogsModal(props: Props) {
-  const { onCancel, visible, functionId, call } = props;
+  const { onCancel, visible, call } = props; // functionId
   const [logsSearch, setLogsSearch] = useState('');
-  const { logs, fetching, error } = useSelector(
-    selectFunctionCallLogs(functionId, call.id)
-  );
+  const logs = [] as any[];
+  const fetching = false;
+  const error = false;
 
   let displayLogs;
   if (fetching) {

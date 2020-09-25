@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+// @ts-nocheck
+import React, { useState, useEffect } from 'react';
 import { Card, Modal, Input, Form } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  selectCallInfo,
-  callFunction,
-  selectFunctionToCall,
-  callFunctionReset,
-} from 'modules/call';
-import { callStatusTag } from 'containers/Functions/FunctionPanelContent';
-import { responsesSelector } from 'modules/response';
+import { useMutation, useQuery } from 'react-query';
+
+import sdk from 'sdk-singleton';
+import { Function, CallResponse } from 'types';
+import { callStatusTag } from 'containers/Functions/FunctionCalls';
 
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {
@@ -27,72 +24,101 @@ const canParseInputData = (inputData: string) => {
 };
 
 type Props = {
-  visible: boolean;
+  id: number;
+  closeModal: () => void;
 };
 
-export default function CallFunctionModal(props: Props) {
-  const { visible } = props;
-  const functionToCall = useSelector(selectFunctionToCall);
-  const { result, creating, calling, error } = useSelector(selectCallInfo);
-  const callResponses = useSelector(responsesSelector)(
-    functionToCall?.externalId
-  );
+export default function CallFunctionModal({ id , closeModal }: Props) {
   const [inputData, setInputData] = useState('');
-  const dispatch = useDispatch();
+  const { data: fn } = useQuery<Function>(`/functions/${id}`);
+
+  const [
+    createFunctionCall,
+    { data, error, isLoading, isSuccess },
+  ] = useMutation<CallResponse>(({ id: number, data: any }) =>
+    sdk
+      .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
+        data: data || {},
+      })
+      .then(response => response?.data)
+  );
+
+  const [updateInterval, setUpdateInteval] = useState<number | boolean>(1000);
+
+
+  const { data: callResponse } = useQuery<
+    CallResponse
+  >(`/functions/${id}/calls/${data?.id}`, {
+    enabled: isSuccess,
+    refetchInterval: updateInterval,
+  });
+  const callStatus = callResponse?.status;
+
+  useEffect(() => {
+    if (callStatus && callStatus !== 'Running') {
+      setUpdateInteval(false);
+    } else {
+      setUpdateInteval(1000);
+    }
+  }, [callResponse, callStatus]);
+
 
   const validJSONMessage = <div style={{ color: 'green' }}>JSON is valid</div>;
 
-  const getResult = () => {
-    let formattedResult = <em>No results available yet</em>;
-    if (creating || calling) {
-      formattedResult = <em>Calling...</em>;
-    } else if (result) {
-      const callResponse = callResponses[result.id];
-      if (callResponse && callResponse.done) {
-        if (callResponse.response) {
-          formattedResult = (
-            <pre>{JSON.stringify(callResponse.response, null, 4)}</pre>
-          );
-        } else {
-          formattedResult = (
-            <em>No response was returned from this function call</em>
-          );
-        }
-      }
-      if (result.status === 'Failed') {
-        if (result.error) {
-          formattedResult = (
-            <div style={{ overflowY: 'scroll', height: '300px' }}>
-              <p>
-                <b>Message: </b>
-                {result.error.message}
-              </p>
-              <b>Trace: </b>
-              {result.error.trace.split('\n').map((i, index) => {
-                return <p key={`resultErrorTrace-${index.toString()}`}>{i}</p>;
-              })}
-            </div>
-          );
-        } else {
-          formattedResult = <em>There was an error from this function call</em>;
-        }
-      }
-      if (result.status === 'Timeout') {
-        formattedResult = <p>The function call timed out </p>;
-      }
-    } else if (error) {
-      formattedResult = <em>There was an error calling the function</em>;
-    }
+  // const getResult = () => {
+  //   let formattedResult = <em>No results available yet</em>;
+  //   if (isLoading || calling) {
+  //     formattedResult = <em>Calling...</em>;
+  //   } else if (result) {
+  //     const callResponse = callResponses[result.id];
+  //     if (callResponse && callResponse.done) {
+  //       if (callResponse.response) {
+  //         formattedResult = (
+  //           <pre>{JSON.stringify(callResponse.response, null, 4)}</pre>
+  //         );
+  //       } else {
+  //         formattedResult = (
+  //           <em>No response was returned from this function call</em>
+  //         );
+  //       }
+  //     }
+  //     if (result.status === 'Failed') {
+  //       if (result.error) {
+  //         formattedResult = (
+  //           <div style={{ overflowY: 'scroll', height: '300px' }}>
+  //             <p>
+  //               <b>Message: </b>
+  //               {result.error.message}
+  //             </p>
+  //             <b>Trace: </b>
+  //             {/**
+  //             {result?.error?.trace?.split('\n')?.map((i, index) => {
+  //               return <p key={`resultErrorTrace-${index.toString()}`}>{i}</p>;
+  //             })}
+  //            * */}
+  //           </div>
+  //         );
+  //       } else {
+  //         formattedResult = <em>There was an error from this function call</em>;
+  //       }
+  //     }
+  //     if (result.status === 'Timeout') {
+  //       formattedResult = <p>The function call timed out </p>;
+  //     }
+  //   } else if (error) {
+  //     formattedResult = <em>There was an error calling the function</em>;
+  //   }
 
-    return formattedResult;
-  };
+  //   return formattedResult;
+  // };
 
   const getCallStatus = () => {
     let callStatus = <em>No status available yet</em>;
-    if (creating) {
+
+    if (isLoading) {
       callStatus = <em>Calling...</em>;
-    } else if (result) {
-      callStatus = callStatusTag(result.status);
+    } else if (data) {
+      callStatus = callStatusTag(callResponse?.status);
     } else if (error) {
       callStatus = <em>There was an error calling the function</em>;
     }
@@ -103,9 +129,10 @@ export default function CallFunctionModal(props: Props) {
     setInputData(evt.target.value);
   };
 
-  const handleCancel = () => {
-    dispatch(callFunctionReset());
+  const handleCancel = e => {
+    e.stopPropagation();
     setInputData('');
+    closeModal();
   };
 
   const inputDataField = (
@@ -132,13 +159,11 @@ export default function CallFunctionModal(props: Props) {
     e.stopPropagation();
     const formattedInputData =
       inputData === '' ? undefined : JSON.parse(inputData);
-    if (functionToCall) {
-      dispatch(callFunction(functionToCall, formattedInputData));
-    }
+    createFunctionCall({ id, data: formattedInputData });
   };
 
   const callButton = () => {
-    if (result && result.status === 'Running') {
+    if (callResponse && callResponse.status === 'Running') {
       return (
         <Button type="primary" disabled>
           Calling <Icon type="Loading" style={{ paddingLeft: '8px' }} />
@@ -148,7 +173,7 @@ export default function CallFunctionModal(props: Props) {
     return (
       <Button
         type="primary"
-        disabled={creating || !canParseInputData(inputData)}
+        disabled={isLoading || !canParseInputData(inputData)}
         onClick={e => handleCallButtonClick(e)}
       >
         Call
@@ -158,15 +183,15 @@ export default function CallFunctionModal(props: Props) {
 
   return (
     <Modal
-      visible={visible}
-      footer={null}
+    footer={null}
+    visible={true}
       width="900px"
       onCancel={handleCancel}
     >
       <Card title="Call Function" style={{ marginRight: '24px' }}>
         <div style={{ display: 'inline' }}>
           <div>
-            <b>Function: </b> {functionToCall?.name}
+            <b>Function: </b> {fn?.name}
           </div>
           <>
             <b>Input data:</b>
@@ -181,7 +206,7 @@ export default function CallFunctionModal(props: Props) {
           </>
           <div>
             <b>Result: </b>
-            {getResult()}
+            TODO
           </div>
         </div>
       </Card>

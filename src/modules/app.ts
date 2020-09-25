@@ -35,6 +35,7 @@ type AppAction = SetAppStateAction | ClearAppStateAction;
 export function init(tenant: string) {
   return async (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     dispatch(setTenant(tenant));
+    console.log('TODO: remove groups from redux');
     dispatch(fetchUserGroups());
   };
 }

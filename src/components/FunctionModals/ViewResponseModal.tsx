@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Card, Modal, Tooltip } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { Call, Function } from 'types/Types';
-import { useSelector, useDispatch } from 'react-redux';
-import { responseSelector, retrieveFunctionResponse } from 'modules/response';
+import { Call, Function, CallResponse } from 'types/Types';
+import { useQuery } from 'react-query';
 import NoLogs from './icons/emptyLogs';
 
 type Props = {
@@ -15,20 +14,10 @@ type Props = {
 
 export default function ViewResponseModal(props: Props) {
   const { onCancel, visible, call, currentFunction } = props;
-  const dispatch = useDispatch();
 
-  const callResponse = useSelector(responseSelector)(
-    currentFunction.externalId,
-    call.id
-  );
-
-  useEffect(() => {
-    dispatch(retrieveFunctionResponse(currentFunction, call.id));
-  }, [dispatch, currentFunction, call.id]);
-
-  const error = false;
-  const fetching = callResponse ? !callResponse.done : true;
-  const response = callResponse?.response;
+  const { data: response, error, isFetching: fetching } = useQuery<
+    CallResponse
+  >(`/functions/${currentFunction.id}/calls/${call.id}/response`);
 
   let displayResponse;
   if (fetching) {

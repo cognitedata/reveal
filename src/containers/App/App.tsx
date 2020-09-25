@@ -9,6 +9,7 @@ import { useRouteMatch, useHistory } from 'react-router-dom';
 import { RootState } from 'reducers';
 import { getAuthState } from 'sdk-singleton';
 import { Loader } from 'components/Common';
+import ErrorBoundary from 'components/ErrorBoundary';
 import GroupsRequired from '../../components/GroupsRequired';
 
 type RouteDef = {
@@ -91,25 +92,27 @@ export default function App() {
   return (
     <Suspense fallback={<Loader />}>
       <GroupsRequired>
-        <Switch>
-          <Redirect
-            from="/:url*(/+)"
-            to={{
-              pathname: pathname.slice(0, -1),
-              search,
-              hash,
-            }}
-          />
-          {routes.map(route => (
-            <Route
-              key={route.path}
-              exact={!!route.exact}
-              stric={!!route.strict}
-              path={route.path}
-              component={route.component}
+        <ErrorBoundary>
+          <Switch>
+            <Redirect
+              from="/:url*(/+)"
+              to={{
+                pathname: pathname.slice(0, -1),
+                search,
+                hash,
+              }}
             />
-          ))}
-        </Switch>
+            {routes.map(route => (
+              <Route
+                key={route.path}
+                exact={!!route.exact}
+                stric={!!route.strict}
+                path={route.path}
+                component={route.component}
+              />
+            ))}
+          </Switch>
+        </ErrorBoundary>
       </GroupsRequired>
     </Suspense>
   );

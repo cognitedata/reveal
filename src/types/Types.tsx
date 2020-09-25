@@ -35,6 +35,7 @@ export interface Function {
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
   externalId: string;
   error?: Error;
+  calls?: Call[];
 }
 
 export interface Error {
@@ -42,11 +43,13 @@ export interface Error {
   trace: string;
 }
 
+type CallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
+
 export interface Call {
   id: number;
   startTime: Date;
   endTime: Date;
-  status: 'Running' | 'Completed' | 'Failed' | 'Timeout';
+  status: CallStatus;
   error?: Error;
 }
 
@@ -54,6 +57,7 @@ export interface CallResponse {
   callId: number;
   functionId: number;
   response: any;
+  status: CallStatus;
 }
 
 export interface Log {

@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
-import { Row, Collapse, Input, Pagination, message, Select } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
+import { Row, Collapse, Input, Pagination, Select } from 'antd';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
+
 import { Function } from 'types';
-import CallFunctionModal from 'components/FunctionModals/CallFunctionModal';
-import {
-  functionsSortedRecentlyCreated,
-  retrieve as retrieveFunctions,
-  functionsSortedLastCallSelector,
-} from 'modules/retrieve';
-import { selectFunctionToCall } from 'modules/call';
-import { getFunctionsCalls } from 'modules/functionCalls';
-import {
-  loadSchedules,
-  selectSchedulesState,
-  getSchedulesCalls,
-} from 'modules/schedules';
-import UploadFunctionModal from 'components/FunctionModals/UploadFunctionModal';
-import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
+// import CallFunctionModal from 'components/FunctionModals/CallFunctionModal';
+// import { selectFunctionToCall } from 'modules/call';
+import { recentlyCreated, sortLastCall } from 'utils/sorting';
+// import UploadFunctionModal from 'components/FunctionModals/UploadFunctionModal';
 import styled from 'styled-components';
-import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
+
 import { PageTitle } from '@cognite/cdf-utilities';
+import { useQuery, useQueryCache } from 'react-query';
+import { getFunctions } from 'utils/api';
+
+import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
+import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -29,16 +23,16 @@ const CollapseDiv = styled.div`
 `;
 
 function Functions() {
-  const sortedFunctionsRecentlyCreated = useSelector(
-    functionsSortedRecentlyCreated
+  const queryCache = useQueryCache();
+
+  const { data: functions, isFetching } = useQuery(
+    ['/functions'],
+    getFunctions
   );
-  const sortedFunctionsLastCall = useSelector(functionsSortedLastCallSelector);
-  const { items: schedules, error: getSchedulesError } = useSelector(
-    selectSchedulesState
-  );
-  const functionToRun = useSelector(selectFunctionToCall);
-  const dispatch = useDispatch();
-  const [showUploadModal, setShowUploadModal] = useState(false);
+
+  // const functionToRun = useSelector(selectFunctionToCall);
+
+  // const [showUploadModal, setShowUploadModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [functionFilter, setFunctionFilter] = useState('');
@@ -49,89 +43,17 @@ function Functions() {
   const FUNCTIONS_PER_PAGE = 10;
   const { Panel } = Collapse;
 
-  const filteredAndSortedFunctions = () => {
-    let sortedFunctions;
-    switch (sortFunctionCriteria) {
-      case 'recentlyCreated':
-        sortedFunctions = sortedFunctionsRecentlyCreated;
-        break;
-      case 'recentlyCalled':
-        sortedFunctions = sortedFunctionsLastCall;
-        break;
-      default:
-        sortedFunctions = sortedFunctionsRecentlyCreated;
-    }
+  const sortFn =
+    sortFunctionCriteria === 'recentlyCalled' ? sortLastCall : recentlyCreated;
 
-    return (
-      sortedFunctions?.filter((f: Function) =>
-        [f.name, f.externalId || '', f.owner || '']
-          .join('')
-          .toLowerCase()
-          .includes(functionFilter.toLowerCase())
-      ) || []
-    );
-  };
+  const sortedFunctions = functions?.sort(sortFn);
 
-  const handleRefreshFunctions = () => {
-    dispatch(retrieveFunctions([], true));
-    dispatch(getFunctionsCalls());
-    dispatch(loadSchedules());
-    dispatch(getSchedulesCalls());
-  };
-
-  const functionsDisplay = (allFunctions: Function[]) => {
-    return (
-      <CollapseDiv>
-        <Collapse>
-          {allFunctions
-            .slice(
-              (currentPage - 1) * FUNCTIONS_PER_PAGE,
-              currentPage * FUNCTIONS_PER_PAGE
-            )
-            .map((currentFunction: Function) => {
-              return (
-                <Panel
-                  key={currentFunction.id}
-                  header={
-                    <FunctionPanelHeader currentFunction={currentFunction} />
-                  }
-                >
-                  <FunctionPanelContent currentFunction={currentFunction} />
-                </Panel>
-              );
-            })}
-        </Collapse>
-        <Pagination
-          current={currentPage}
-          total={allFunctions.length}
-          defaultPageSize={FUNCTIONS_PER_PAGE}
-          onChange={page => setCurrentPage(page)}
-          style={{ float: 'right' }}
-        />
-      </CollapseDiv>
-    );
-  };
-
-  const numberOfFunctions = filteredAndSortedFunctions().length;
-  const numberOfSchedules = schedules ? schedules.length : 0;
-  React.useEffect(() => {
-    dispatch(retrieveFunctions([], true));
-    dispatch(loadSchedules());
-  }, [dispatch]);
-
-  React.useEffect(() => {
-    dispatch(getFunctionsCalls());
-  }, [dispatch, numberOfFunctions]);
-
-  React.useEffect(() => {
-    dispatch(getSchedulesCalls());
-  }, [dispatch, numberOfFunctions, numberOfSchedules]);
-
-  React.useEffect(() => {
-    if (getSchedulesError) {
-      message.error('Could not get schedules');
-    }
-  }, [getSchedulesError]);
+  const filteredFunctions = sortedFunctions?.filter((f: Function) =>
+    [f.name, f.externalId || '', f.owner || '']
+      .join('')
+      .toLowerCase()
+      .includes(functionFilter.toLowerCase())
+  );
 
   return (
     <>
@@ -148,13 +70,16 @@ function Functions() {
           <Button
             icon="Upload"
             type="primary"
-            onClick={() => setShowUploadModal(true)}
+            onClick={() => {
+              // setShowUploadModal(true)
+            }}
           >
             Upload function
           </Button>
           <Button
-            icon="Refresh"
-            onClick={handleRefreshFunctions}
+            icon={isFetching ? 'Loading' : 'Refresh'}
+            disabled={isFetching}
+            onClick={() => queryCache.invalidateQueries('/functions')}
             style={{ marginLeft: '8px' }}
           >
             Refresh
@@ -190,12 +115,46 @@ function Functions() {
         <Select.Option value="recentlyCreated">Recently Created</Select.Option>
       </Select>
       <div style={{ marginTop: '8px' }}>
-        {functionsDisplay(filteredAndSortedFunctions())}
-        <CallFunctionModal visible={!!functionToRun} />
+        <CollapseDiv>
+          <Collapse>
+            {filteredFunctions
+              ? filteredFunctions
+                  .slice(
+                    (currentPage - 1) * FUNCTIONS_PER_PAGE,
+                    currentPage * FUNCTIONS_PER_PAGE
+                  )
+                  .map((currentFunction: Function) => {
+                    return (
+                      <Panel
+                        key={currentFunction.id}
+                        header={
+                          <FunctionPanelHeader
+                            currentFunction={currentFunction}
+                          />
+                        }
+                      >
+                        <FunctionPanelContent
+                          currentFunction={currentFunction}
+                        />
+                      </Panel>
+                    );
+                  })
+              : null}
+          </Collapse>
+          <Pagination
+            current={currentPage}
+            total={filteredFunctions?.length}
+            defaultPageSize={FUNCTIONS_PER_PAGE}
+            onChange={page => setCurrentPage(page)}
+            style={{ float: 'right' }}
+          />
+        </CollapseDiv>
+        {/** <CallFunctionModal visible={!!functionToRun} />
         <UploadFunctionModal
           visible={showUploadModal}
           onCancel={() => setShowUploadModal(false)}
         />
+* */}
       </div>
     </>
   );
