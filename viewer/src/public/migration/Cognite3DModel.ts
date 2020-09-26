@@ -202,7 +202,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Determines the full bounding box of the model.
    * @param outBbox Optional. Used to write result to.
-   * @returns Models bounding box.
+   * @returns Model bounding box.
    * @example
    * ```js
    * const box = new THREE.Box3()
@@ -628,8 +628,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Show the node by tree index, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
    * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}.
-   * @param treeIndex
-   * @param applyToChildren
+   * @param treeIndex Tree index of node to make visible.
+   * @param applyToChildren When true all descendants of the provided node is also shown.
+   * @returns Number of nodes affected.
    */
   async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
@@ -677,9 +678,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Hide the node by tree index.
-   * @param treeIndex
+   * @param treeIndex Tree index of node to hide.
    * @param makeGray Not supported.
-   * @param applyToChildren
+   * @param applyToChildren When true, all descendants of the node is also hidden.
+   * @returns Number of nodes affected.
    * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed.
    */
   async hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean, applyToChildren = false): Promise<number> {
