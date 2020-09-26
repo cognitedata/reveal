@@ -8,6 +8,7 @@ import { CogFunction, CallResponse } from 'types';
 import { callFunction, getCall } from 'utils/api';
 import FunctionCallStatus from 'components/FunctionCallStatus';
 
+
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {
     return true;
@@ -157,6 +158,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
       );
     }
     return (
+      <LastFu
       <Button
         type="primary"
         disabled={isLoading || !canParseInputData(inputData)}
