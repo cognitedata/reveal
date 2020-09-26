@@ -41,9 +41,6 @@ type Props = {
 
 export default function CreateScheduleModal(props: Props) {
   const { visible, onCancel, functionExternalId } = props;
-  // const { creating, done, error, errorMessage } = useSelector(
-  //   selectCreateScheduleState
-  // );
   const [scheduleName, setScheduleName] = useState({
     value: '',
     touched: false,
@@ -146,17 +143,6 @@ export default function CreateScheduleModal(props: Props) {
     if (!canBeSubmitted) {
       evt.preventDefault();
     }
-    // const formattedData = data === '' ? {} : JSON.parse(data);
-
-    // dispatch(
-    //   createSchedule(
-    //     scheduleName.value,
-    //     description,
-    //     cronExpression.value,
-    //     formattedData,
-    //     functionExternalId
-    //   )
-    // );
   };
 
   const handleCancel = () => {

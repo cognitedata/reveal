@@ -3,8 +3,8 @@ import { Card, Modal, Tooltip } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { CallResponse } from 'types/Types';
 import { useQuery } from 'react-query';
-import NoLogs from './icons/emptyLogs';
 import { getResponse } from 'utils/api';
+import NoLogs from './icons/emptyLogs';
 
 type Props = {
   onCancel: () => void;
@@ -13,9 +13,10 @@ type Props = {
 };
 
 export default function ViewResponseModal({ id, callId, onCancel }: Props) {
-  const { data: response, error, isFetched } = useQuery<
-    CallResponse
-    >(['/function/call/response', { id, callId }], getResponse);
+  const { data: response, error, isFetched } = useQuery<CallResponse>(
+    ['/function/call/response', { id, callId }],
+    getResponse
+  );
 
   let displayResponse;
   if (!isFetched) {
@@ -63,7 +64,7 @@ export default function ViewResponseModal({ id, callId, onCancel }: Props) {
 
   return (
     <Modal
-      visible={true}
+      visible
       footer={null}
       width="900px"
       onCancel={onCancel}

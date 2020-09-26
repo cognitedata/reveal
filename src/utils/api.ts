@@ -60,16 +60,22 @@ export const callFunction = async ({ id, data }: CallArgs) => {
 type GetResponseArgs = {
   id: number;
   callId: number;
-}
-export const getResponse = async (_:QueryKey, { id, callId }: GetResponseArgs) => {
+};
+export const getResponse = async (
+  _: QueryKey,
+  { id, callId }: GetResponseArgs
+) => {
   return sdk
-    .get(`/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/response`)
+    .get(
+      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/response`
+    )
     .then(response => response?.data);
 };
 
-
-export const getLogs = async (_:QueryKey, { id, callId }: GetResponseArgs) => {
+export const getLogs = async (_: QueryKey, { id, callId }: GetResponseArgs) => {
   return sdk
-    .get(`/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/logs`)
+    .get(
+      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/logs`
+    )
     .then(response => response?.data);
 };

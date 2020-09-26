@@ -4,9 +4,9 @@ import { Icon, Tooltip } from '@cognite/cogs.js';
 import moment from 'moment';
 import { Call, Log } from 'types';
 import Highlighter from 'react-highlight-words';
-import NoLogs from './icons/emptyLogs';
 import { useQuery } from 'react-query';
 import { getLogs, getCall } from 'utils/api';
+import NoLogs from './icons/emptyLogs';
 
 type Props = {
   onCancel: () => void;
@@ -104,7 +104,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
   };
 
   return (
-    <Modal visible={true} footer={null} width="900px" onCancel={onCancel}>
+    <Modal visible footer={null} width="900px" onCancel={onCancel}>
       <Card title={title()} style={{ marginRight: '24px' }}>
         <Input
           name="filter"

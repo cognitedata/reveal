@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import { Provider } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from 'styled-components';
@@ -15,13 +14,11 @@ import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
 import { Loader } from 'components/Common';
-import store from './store';
 import theme from './styles/theme';
 import { setupSentry } from './utils/sentry';
 import rootStyles from './styles/index.css';
 
 export default () => {
-  const tenant = window.location.pathname.split('/')[1];
   const history = createBrowserHistory();
 
   const defaultQueryFn = async (key: string) => {
@@ -40,10 +37,6 @@ export default () => {
       },
     },
   });
-
-  if (!tenant) {
-    throw new Error('tenant missing');
-  }
 
   useEffect(() => {
     cogsStyles.use();
@@ -65,16 +58,14 @@ export default () => {
         >
           <ClientSDKProvider client={sdk}>
             <ThemeProvider theme={theme}>
-              <Provider store={store}>
-                <Router history={history}>
-                  <ReactQueryCacheProvider queryCache={queryCache}>
-                    <Switch>
-                      <Route path="/:tenant" component={RootApp} />
-                    </Switch>
-                    <ReactQueryDevtools initialIsOpen={false} />
-                  </ReactQueryCacheProvider>
-                </Router>
-              </Provider>
+              <Router history={history}>
+                <ReactQueryCacheProvider queryCache={queryCache}>
+                  <Switch>
+                    <Route path="/:tenant" component={RootApp} />
+                  </Switch>
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </ReactQueryCacheProvider>
+              </Router>
             </ThemeProvider>
             <GlobalStyle theme={theme} />
           </ClientSDKProvider>

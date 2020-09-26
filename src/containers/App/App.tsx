@@ -1,16 +1,12 @@
-import React, { useEffect, useMemo, Suspense } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useMemo, Suspense, useState } from 'react';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
-import { init, setCdfEnv } from 'modules/app';
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import * as mixpanelConfig from 'mixpanel-browser';
-import { useRouteMatch, useHistory } from 'react-router-dom';
-import { RootState } from 'reducers';
+import { useHistory } from 'react-router-dom';
 import { getAuthState } from 'sdk-singleton';
 import { Loader } from 'components/Common';
 import ErrorBoundary from 'components/ErrorBoundary';
-import GroupsRequired from '../../components/GroupsRequired';
 
 type RouteDef = {
   exact?: boolean;
@@ -26,35 +22,25 @@ function PageNotFound() {
 
 export default function App() {
   const { pathname, search, hash } = useLocation();
-  const dispatch = useDispatch();
   const history = useHistory();
   const { location } = history;
 
-  const {
-    params: { tenant: pathTenant },
-  } = useRouteMatch<{ tenant: string }>();
-  const cdfEnv = queryString.parse(window.location.search).env as string;
+  const [initialCdfEnv] = useState(
+    queryString.parse(window.location.search).env as string
+  );
   const { username } = getAuthState();
 
-  useEffect(() => {
-    dispatch(init(pathTenant));
-  }, [dispatch, pathTenant]);
+  const cdfEnv = queryString.parse(window.location.search).env as string;
 
   useEffect(() => {
-    dispatch(setCdfEnv(cdfEnv));
-  }, [dispatch, cdfEnv]);
-
-  const storeCdfEnv = useSelector((state: RootState) => state.app.cdfEnv);
-
-  useEffect(() => {
-    if (storeCdfEnv && !cdfEnv) {
+    if (initialCdfEnv && !cdfEnv) {
       // if env is not visible via URL add it in
       history.replace({
         pathname: location.pathname,
-        search: `?env=${storeCdfEnv}`,
+        search: `?env=${initialCdfEnv}`,
       });
     }
-  }, [cdfEnv, storeCdfEnv, history, location.pathname]);
+  }, [cdfEnv, initialCdfEnv, history, location.pathname]);
 
   useEffect(() => {
     if (username) {
@@ -91,29 +77,27 @@ export default function App() {
 
   return (
     <Suspense fallback={<Loader />}>
-      <GroupsRequired>
-        <ErrorBoundary>
-          <Switch>
-            <Redirect
-              from="/:url*(/+)"
-              to={{
-                pathname: pathname.slice(0, -1),
-                search,
-                hash,
-              }}
+      <ErrorBoundary>
+        <Switch>
+          <Redirect
+            from="/:url*(/+)"
+            to={{
+              pathname: pathname.slice(0, -1),
+              search,
+              hash,
+            }}
+          />
+          {routes.map(route => (
+            <Route
+              key={route.path}
+              exact={!!route.exact}
+              stric={!!route.strict}
+              path={route.path}
+              component={route.component}
             />
-            {routes.map(route => (
-              <Route
-                key={route.path}
-                exact={!!route.exact}
-                stric={!!route.strict}
-                path={route.path}
-                component={route.component}
-              />
-            ))}
-          </Switch>
-        </ErrorBoundary>
-      </GroupsRequired>
+          ))}
+        </Switch>
+      </ErrorBoundary>
     </Suspense>
   );
 }

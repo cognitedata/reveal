@@ -26,7 +26,6 @@ export default function LastFunctionCall({
   const call = calls?.[0];
   if (call) {
     return renderCall(id, call);
-  } else {
-    return renderMissing ? renderMissing() : null;
   }
+  return renderMissing ? renderMissing() : null;
 }
