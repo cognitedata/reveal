@@ -5,12 +5,13 @@ import moment from 'moment';
 import { Call, Log } from 'types';
 import Highlighter from 'react-highlight-words';
 import NoLogs from './icons/emptyLogs';
+import { useQuery } from 'react-query';
+import { getLogs, getCall } from 'utils/api';
 
 type Props = {
   onCancel: () => void;
-  visible: boolean;
-  functionId: number;
-  call: Call;
+  id: number;
+  callId: number;
 };
 const titleText = 'Logs';
 const fetchingIcon = <Icon type="Loading" style={{ paddingLeft: '8px' }} />;
@@ -19,12 +20,18 @@ const errorIcon = (
     <Icon type="Close" style={{ paddingLeft: '8px', color: '#ff0000' }} />
   </Tooltip>
 );
-export default function ViewLogsModal(props: Props) {
-  const { onCancel, visible, call } = props; // functionId
+export default function ViewLogsModal({ onCancel, id, callId }: Props) {
   const [logsSearch, setLogsSearch] = useState('');
-  const logs = [] as any[];
-  const fetching = false;
-  const error = false;
+  const { data, isFetched: isLogsFetched, error } = useQuery<{ items: Log[] }>(
+    ['/function/call/logs', { id, callId }],
+    getLogs
+  );
+  const { data: call, isFetched: isCallFetched } = useQuery<Call>(
+    ['/function/calls', { id, callId }],
+    getCall
+  );
+  const logs = data?.items;
+  const fetching = !isLogsFetched || !isCallFetched;
 
   let displayLogs;
   if (fetching) {
@@ -34,11 +41,11 @@ export default function ViewLogsModal(props: Props) {
       <>
         <p>
           <b>
-            {moment.utc(call.startTime).format('YYYY-MM-DD hh:mm')} Function
+            {moment.utc(call?.startTime).format('YYYY-MM-DD hh:mm')} Function
             started
           </b>
         </p>
-        <p key={`${call.id}-logs`}>
+        <p key={`${call?.id}-logs`}>
           {logs?.map((log: Log, index) => (
             <React.Fragment key={index}>
               <Highlighter
@@ -51,10 +58,10 @@ export default function ViewLogsModal(props: Props) {
             </React.Fragment>
           ))}
         </p>
-        {call.endTime && (
+        {call?.endTime && (
           <p>
             <b>
-              {moment.utc(call.endTime).format('YYYY-MM-DD hh:mm')} Function
+              {moment.utc(call?.endTime).format('YYYY-MM-DD hh:mm')} Function
               ended
             </b>
           </p>
@@ -97,7 +104,7 @@ export default function ViewLogsModal(props: Props) {
   };
 
   return (
-    <Modal visible={visible} footer={null} width="900px" onCancel={onCancel}>
+    <Modal visible={true} footer={null} width="900px" onCancel={onCancel}>
       <Card title={title()} style={{ marginRight: '24px' }}>
         <Input
           name="filter"

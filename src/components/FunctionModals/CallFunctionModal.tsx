@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryCache } from 'react-query';
 import { CogFunction, CallResponse } from 'types';
 import { callFunction, getCall } from 'utils/api';
 import FunctionCallStatus from 'components/FunctionCallStatus';
-
+import FunctionCallResponse from 'components/FunctionCallResponse';
 
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {
@@ -40,7 +40,9 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   ] = useMutation<CallResponse>(callFunction, {
     onSuccess() {
       // TODO: excact: true shouldn't be needed?
-      queryCache.invalidateQueries(['/functions/calls', { id }], { exact: true });
+      queryCache.invalidateQueries(['/functions/calls', { id }], {
+        exact: true,
+      });
     },
   });
 
@@ -64,53 +66,6 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   }, [callResponse, callStatus]);
 
   const validJSONMessage = <div style={{ color: 'green' }}>JSON is valid</div>;
-
-  // const getResult = () => {
-  //   let formattedResult = <em>No results available yet</em>;
-  //   if (isLoading || calling) {
-  //     formattedResult = <em>Calling...</em>;
-  //   } else if (result) {
-  //     const callResponse = callResponses[result.id];
-  //     if (callResponse && callResponse.done) {
-  //       if (callResponse.response) {
-  //         formattedResult = (
-  //           <pre>{JSON.stringify(callResponse.response, null, 4)}</pre>
-  //         );
-  //       } else {
-  //         formattedResult = (
-  //           <em>No response was returned from this function call</em>
-  //         );
-  //       }
-  //     }
-  //     if (result.status === 'Failed') {
-  //       if (result.error) {
-  //         formattedResult = (
-  //           <div style={{ overflowY: 'scroll', height: '300px' }}>
-  //             <p>
-  //               <b>Message: </b>
-  //               {result.error.message}
-  //             </p>
-  //             <b>Trace: </b>
-  //             {/**
-  //             {result?.error?.trace?.split('\n')?.map((i, index) => {
-  //               return <p key={`resultErrorTrace-${index.toString()}`}>{i}</p>;
-  //             })}
-  //            * */}
-  //           </div>
-  //         );
-  //       } else {
-  //         formattedResult = <em>There was an error from this function call</em>;
-  //       }
-  //     }
-  //     if (result.status === 'Timeout') {
-  //       formattedResult = <p>The function call timed out </p>;
-  //     }
-  //   } else if (error) {
-  //     formattedResult = <em>There was an error calling the function</em>;
-  //   }
-
-  //   return formattedResult;
-  // };
 
   const handleInputDataChange = (evt: { target: { value: string } }) => {
     setInputData(evt.target.value);
@@ -158,7 +113,6 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
       );
     }
     return (
-      <LastFu
       <Button
         type="primary"
         disabled={isLoading || !canParseInputData(inputData)}
@@ -188,7 +142,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
           </>
           <div>
             <b>Result: </b>
-            TODO
+            <FunctionCallResponse id={id} callId={data?.id} />
           </div>
         </div>
       </Card>

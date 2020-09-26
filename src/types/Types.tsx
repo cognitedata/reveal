@@ -47,6 +47,7 @@ type CallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
 
 export interface Call {
   id: number;
+  functionId: number;
   startTime: Date;
   endTime: Date;
   status: CallStatus;

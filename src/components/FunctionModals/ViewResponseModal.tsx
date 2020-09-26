@@ -1,26 +1,24 @@
 import React from 'react';
 import { Card, Modal, Tooltip } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { Call, CogFunction, CallResponse } from 'types/Types';
+import { CallResponse } from 'types/Types';
 import { useQuery } from 'react-query';
 import NoLogs from './icons/emptyLogs';
+import { getResponse } from 'utils/api';
 
 type Props = {
   onCancel: () => void;
-  visible: boolean;
-  call: Call;
-  currentFunction: CogFunction;
+  id: number;
+  callId: number;
 };
 
-export default function ViewResponseModal(props: Props) {
-  const { onCancel, visible, call, currentFunction } = props;
-
-  const { data: response, error, isFetching: fetching } = useQuery<
+export default function ViewResponseModal({ id, callId, onCancel }: Props) {
+  const { data: response, error, isFetched } = useQuery<
     CallResponse
-  >(`/functions/${currentFunction.id}/calls/${call.id}/response`);
+    >(['/function/call/response', { id, callId }], getResponse);
 
   let displayResponse;
-  if (fetching) {
+  if (!isFetched) {
     displayResponse = <em>Loading...</em>;
   } else if (response) {
     displayResponse = <pre>{JSON.stringify(response, null, 4)}</pre>;
@@ -45,7 +43,7 @@ export default function ViewResponseModal(props: Props) {
 
   const title = () => {
     let icon = null;
-    if (fetching) {
+    if (!isFetched) {
       icon = <Icon type="Loading" style={{ paddingLeft: '8px' }} />;
     }
     if (error) {
@@ -65,7 +63,7 @@ export default function ViewResponseModal(props: Props) {
 
   return (
     <Modal
-      visible={visible}
+      visible={true}
       footer={null}
       width="900px"
       onCancel={onCancel}

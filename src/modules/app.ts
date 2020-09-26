@@ -194,13 +194,3 @@ export default function app(state = initialState, action: AppAction): AppState {
 
 // Selectors
 export const selectAppState = (state: RootState) => state.app || {};
-
-export const checkPermission = (state: RootState) => (
-  key: string,
-  type: string
-) => {
-  const { groups } = state.app || {};
-  return (
-    groups && groups.groupsAcl && groups[key] && groups[key].includes(type)
-  );
-};

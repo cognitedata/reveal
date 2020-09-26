@@ -3,10 +3,12 @@ import moment from 'moment';
 import { CSSProperties } from 'styled-components';
 
 import { Alert, Table, Tag } from 'antd';
-import { Icon, Button } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { Call } from 'types';
 import { useQuery } from 'react-query';
 import { getCalls } from 'utils/api';
+import ViewLogsButton from 'components/ViewLogsButton';
+import ViewResponseButton from 'components/ViewResponseButton';
 
 export const callStatusTag = (status: string, style?: CSSProperties) => {
   switch (status) {
@@ -43,13 +45,7 @@ export const callStatusTag = (status: string, style?: CSSProperties) => {
   }
 };
 
-export const callTableColumns = ({
-  handleViewResponse,
-  handleViewLogs,
-}: {
-  handleViewResponse?: (call: Call) => void;
-  handleViewLogs?: (call: Call) => void;
-}) => [
+const callTableColumns = [
   {
     title: 'Call Time',
     key: 'Call Time',
@@ -87,13 +83,7 @@ export const callTableColumns = ({
     key: 'response',
     render: (call: Call) => {
       if (!call.error && call.status === 'Completed') {
-        return (
-          <Button
-            onClick={() => handleViewResponse && handleViewResponse(call)}
-          >
-            View Response
-          </Button>
-        );
+        return <ViewResponseButton id={call.functionId} callId={call.id} />;
       }
       return null;
     },
@@ -102,9 +92,7 @@ export const callTableColumns = ({
     title: 'Logs',
     key: 'logs',
     render: (call: Call) => (
-      <Button onClick={() => handleViewLogs && handleViewLogs(call)}>
-        View Logs
-      </Button>
+      <ViewLogsButton id={call.functionId} callId={call.id} />
     ),
   },
 ];
@@ -121,7 +109,6 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
     getCalls
   );
   const functionCalls = data || [];
-  const columns = callTableColumns({});
 
   if (error) {
     return (
@@ -140,7 +127,7 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
       rowKey={call => call.id.toString()}
       pagination={{ pageSize: 25 }}
       dataSource={functionCalls}
-      columns={columns}
+      columns={callTableColumns}
     />
   );
 }
