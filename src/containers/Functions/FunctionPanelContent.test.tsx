@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
-import { Function, Schedule, Call } from 'types/Types';
+import { CogFunction, Schedule, Call } from 'types/Types';
 import { mount } from 'enzyme';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -26,7 +26,7 @@ const mockFunction = {
   apiKey: 'key',
   externalId: mockFunctionExternalId,
   secrets: { key: 'value' },
-} as Function;
+} as CogFunction;
 const mockCallId = 100;
 const mockCall = {
   id: mockCallId,
@@ -112,7 +112,7 @@ describe('FunctionPanelContent', () => {
         message: 'error message',
         trace: 'error trace',
       },
-    } as Function;
+    } as CogFunction;
     const wrapper = mount(
       <Provider store={initialStore}>
         <MemoryRouter>
@@ -178,7 +178,7 @@ describe('FunctionPanelContent', () => {
     const mockFunctionNoExternalId = {
       ...mockFunction,
       externalId: '',
-    } as Function;
+    } as CogFunction;
     const wrapper = mount(
       <Provider store={initialStore}>
         <MemoryRouter>
@@ -195,7 +195,7 @@ describe('FunctionPanelContent', () => {
     const mockFunctionIncorrectStatus = {
       ...mockFunction,
       status: 'Failed',
-    } as Function;
+    } as CogFunction;
     const wrapper = mount(
       <Provider store={initialStore}>
         <MemoryRouter>

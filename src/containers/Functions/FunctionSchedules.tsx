@@ -99,7 +99,7 @@ const scheduleTableColumns = [
 ];
 
 type Props = {
-  externalId: string;
+  externalId?: string;
   id: number;
 };
 

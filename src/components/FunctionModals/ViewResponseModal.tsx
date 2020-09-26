@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Modal, Tooltip } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { Call, Function, CallResponse } from 'types/Types';
+import { Call, CogFunction, CallResponse } from 'types/Types';
 import { useQuery } from 'react-query';
 import NoLogs from './icons/emptyLogs';
 
@@ -9,7 +9,7 @@ type Props = {
   onCancel: () => void;
   visible: boolean;
   call: Call;
-  currentFunction: Function;
+  currentFunction: CogFunction;
 };
 
 export default function ViewResponseModal(props: Props) {

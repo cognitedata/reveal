@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Modal, Input, Form } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryCache } from 'react-query';
 
-import sdk from 'sdk-singleton';
-import { Function, CallResponse } from 'types';
-import { callStatusTag } from 'containers/Functions/FunctionCalls';
+import { CogFunction, CallResponse } from 'types';
+import { callFunction, getCall } from 'utils/api';
+import FunctionCallStatus from 'components/FunctionCallStatus';
 
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {
@@ -29,24 +29,24 @@ type Props = {
 };
 
 export default function CallFunctionModal({ id, closeModal }: Props) {
+  const queryCache = useQueryCache();
   const [inputData, setInputData] = useState('');
-  const { data: fn } = useQuery<Function>(`/functions/${id}`);
+  const { data: fn } = useQuery<CogFunction>(`/functions/${id}`);
 
   const [
     createFunctionCall,
-    { data, error, isLoading, isSuccess },
-  ] = useMutation<CallResponse>(({ id: number, data: any }) =>
-    sdk
-      .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
-        data: data || {},
-      })
-      .then(response => response?.data)
-  );
+    { data, isLoading, isSuccess }, // TODO: error handling
+  ] = useMutation<CallResponse>(callFunction, {
+    onSuccess() {
+      // TODO: excact: true shouldn't be needed?
+      queryCache.invalidateQueries(['/functions/calls', { id }], { exact: true });
+    },
+  });
 
   const [updateInterval, setUpdateInteval] = useState<number | boolean>(1000);
-
   const { data: callResponse } = useQuery<CallResponse>(
-    `/functions/${id}/calls/${data?.id}`,
+    ['/functions/calls', { id, callId: data?.id }],
+    getCall,
     {
       enabled: isSuccess,
       refetchInterval: updateInterval,
@@ -111,19 +111,6 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   //   return formattedResult;
   // };
 
-  const getCallStatus = () => {
-    let callStatus = <em>No status available yet</em>;
-
-    if (isLoading) {
-      callStatus = <em>Calling...</em>;
-    } else if (data) {
-      callStatus = callStatusTag(callResponse?.status);
-    } else if (error) {
-      callStatus = <em>There was an error calling the function</em>;
-    }
-    return callStatus;
-  };
-
   const handleInputDataChange = (evt: { target: { value: string } }) => {
     setInputData(evt.target.value);
   };
@@ -179,7 +166,6 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
       </Button>
     );
   };
-
   return (
     <Modal footer={null} visible width="900px" onCancel={handleCancel}>
       <Card title="Call Function" style={{ marginRight: '24px' }}>
@@ -196,7 +182,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
         <div style={{ marginTop: '32px' }}>
           <>
             <b>Call Status: </b>
-            {getCallStatus()}
+            <FunctionCallStatus id={id} callId={data?.id} />
           </>
           <div>
             <b>Result: </b>

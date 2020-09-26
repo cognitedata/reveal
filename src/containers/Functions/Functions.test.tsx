@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
-import { Function, Schedule, Call } from 'types/Types';
+import { CogFunction, Schedule, Call } from 'types/Types';
 import { mount } from 'enzyme';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -31,7 +31,7 @@ const mockFunction = {
   description: 'some description',
   status: 'Ready',
   externalId: mockFunctionExternalId,
-} as Function;
+} as CogFunction;
 const mockCall = {
   id: 100,
   startTime: new Date(),
@@ -245,7 +245,7 @@ describe('Functions', () => {
       owner: 'somebody@cognite.com',
       description: 'some description',
       status: 'Ready',
-    } as Function;
+    } as CogFunction;
     const searchStoreState = {
       ...initialStoreState,
       items: {
@@ -280,7 +280,7 @@ describe('Functions', () => {
       owner: 'somebody@cognite.com',
       description: 'some description',
       status: 'Ready',
-    } as Function;
+    } as CogFunction;
     const searchStoreState = {
       ...initialStoreState,
       items: {

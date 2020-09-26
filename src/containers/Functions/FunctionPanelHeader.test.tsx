@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
-import { Function } from 'types/Types';
+import { CogFunction } from 'types/Types';
 import { mount } from 'enzyme';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -18,7 +18,7 @@ const mockFunction = {
   name: 'testFunc',
   id: mockFunctionId,
   status: 'Ready',
-} as Function;
+} as CogFunction;
 const initialStoreState = {
   app: {},
   call: {},
@@ -69,7 +69,7 @@ describe('FunctionPanelHeader', () => {
       name: 'testFunc',
       id: mockFunctionId,
       status: 'Failed',
-    } as Function;
+    } as CogFunction;
 
     const mockFailedFunctionPanelHeader = (
       <Provider store={initialStore}>

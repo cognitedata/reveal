@@ -6,7 +6,7 @@ import { Colors, Button, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { PageTitle } from '@cognite/cdf-utilities';
-import { Function } from 'types';
+import { CogFunction, Call } from 'types';
 import { getCalls } from 'utils/api';
 import { recentlyCreated, sortLastCall } from 'utils/sorting';
 import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
@@ -18,25 +18,10 @@ const CollapseDiv = styled.div`
   }
 `;
 
+const FUNCTIONS_PER_PAGE = 10;
+
 function Functions() {
   const queryCache = useQueryCache();
-  const [callsDone, setCallsDone] = useState(false);
-
-  const { data, isFetching } = useQuery<{ items: Function[] }>('/functions');
-  const functions = data?.items;
-
-  useEffect(() => {
-    if (functions) {
-      Promise.all(
-        functions.map(({ id }) =>
-          queryCache.prefetchQuery([`/functions/calls`, { id }], getCalls)
-        )
-      ).then(() => {
-        setCallsDone(true);
-      });
-    }
-  }, [queryCache, functions]);
-
   const [currentPage, setCurrentPage] = useState(1);
 
   const [functionFilter, setFunctionFilter] = useState('');
@@ -44,22 +29,70 @@ function Functions() {
   const [sortFunctionCriteria, setSortFunctionCriteria] = useState<
     SortFunctions
   >('recentlyCalled');
-  const FUNCTIONS_PER_PAGE = 10;
+
+  const { data, isFetching, isFetched: functionsDone } = useQuery<{
+    items: CogFunction[];
+  }>('/functions');
+  const functions = data?.items;
+
+  const { data: calls, isFetched: callsDone } = useQuery<{
+    [id: number]: Call[];
+  }>(
+    [
+      `/functions/calls`,
+      functions
+        ?.sort(({ id: id1 }, { id: id2 }) => id1 - id2)
+        .map(({ id }) => ({ id })),
+    ],
+    getCalls,
+    { enabled: functionsDone }
+  );
+
   const { Panel } = Collapse;
 
   const sortFn =
-    sortFunctionCriteria === 'recentlyCalled' && callsDone
-      ? sortLastCall(queryCache)
+    sortFunctionCriteria === 'recentlyCalled' && calls
+      ? sortLastCall(calls)
       : recentlyCreated;
 
   const sortedFunctions = functions?.sort(sortFn);
 
-  const filteredFunctions = sortedFunctions?.filter((f: Function) =>
+  const filteredFunctions = sortedFunctions?.filter((f: CogFunction) =>
     [f.name, f.externalId || '', f.owner || '']
       .join('')
       .toLowerCase()
       .includes(functionFilter.toLowerCase())
   );
+
+  // Warm up the cache for the first page rendered
+  useEffect(() => {
+    if (functionsDone && filteredFunctions) {
+      filteredFunctions.slice(0, FUNCTIONS_PER_PAGE).forEach(fn => {
+        queryCache.setQueryData(`/functions/${fn.id}`, fn);
+      });
+    }
+  }, [functionsDone, filteredFunctions, queryCache]);
+
+  useEffect(() => {
+    if (callsDone && calls) {
+      Object.entries(calls)
+        .filter(
+          ([id]) =>
+            filteredFunctions?.findIndex(f => f.id.toString() === id) !== -1
+        )
+        .slice(0, FUNCTIONS_PER_PAGE)
+        .forEach(([id, calls]) => {
+          queryCache.setQueryData([`/functions/calls`, { id }], calls);
+          if (calls.length > 0) {
+            const latestCall = calls[0];
+            queryCache.setQueryData(
+              [`/functions/calls`, { id, callId: latestCall.id }],
+              latestCall
+            );
+          }
+        });
+    }
+  }, [callsDone, calls, queryCache, filteredFunctions]);
 
   return (
     <>
@@ -129,18 +162,22 @@ function Functions() {
                     (currentPage - 1) * FUNCTIONS_PER_PAGE,
                     currentPage * FUNCTIONS_PER_PAGE
                   )
-                  .map((currentFunction: Function) => {
+                  .map(({ id, name, externalId }: CogFunction) => {
                     return (
                       <Panel
-                        key={currentFunction.id}
+                        key={id}
                         header={
                           <FunctionPanelHeader
-                            currentFunction={currentFunction}
+                            id={id}
+                            name={name}
+                            externalId={externalId}
                           />
                         }
                       >
                         <FunctionPanelContent
-                          currentFunction={currentFunction}
+                          id={id}
+                          name={name}
+                          externalId={externalId}
                         />
                       </Panel>
                     );

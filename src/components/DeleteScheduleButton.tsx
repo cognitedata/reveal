@@ -22,7 +22,7 @@ export default function DeleteScheduleButton({ id }: Props) {
           title: 'Are you sure?',
           content: 'Are you sure you want to delete this schedule?',
           onOk: () => {
-            // console.log('TODO', id);
+            console.log('TODO', id);
           },
           onCancel: () => {},
           okText: 'Delete',

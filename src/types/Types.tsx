@@ -23,7 +23,7 @@ export interface Relationship {
   relationshipType: RelationshipType;
 }
 
-export interface Function {
+export interface CogFunction {
   id: number;
   name: string;
   fileId: number;
@@ -33,7 +33,7 @@ export interface Function {
   secrets: {};
   createdTime: Date;
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
-  externalId: string;
+  externalId?: string;
   error?: Error;
   calls?: Call[];
 }
@@ -54,7 +54,7 @@ export interface Call {
 }
 
 export interface CallResponse {
-  callId: number;
+  id: number;
   functionId: number;
   response: any;
   status: CallStatus;

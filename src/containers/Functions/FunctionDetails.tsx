@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { Descriptions, Alert } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { Function } from 'types';
+import { CogFunction } from 'types';
 import { useQuery } from 'react-query';
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function FunctionDetails({ id, name }: Props) {
-  const { data: currentFunction, isFetched, error } = useQuery<Function>(
+  const { data: currentFunction, isFetched, error } = useQuery<CogFunction>(
     `/functions/${id}`
   );
 

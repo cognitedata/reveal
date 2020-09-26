@@ -116,11 +116,11 @@ type Props = {
 };
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
-  const { data, isFetched, error } = useQuery<{ items: Call[] }>(
+  const { data, isFetched, error } = useQuery<Call[]>(
     [`/functions/calls`, { id, scheduleId }],
     getCalls
   );
-  const functionCalls = data?.items || [];
+  const functionCalls = data || [];
   const columns = callTableColumns({});
 
   if (error) {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { useQuery } from 'react-query';
 
-import { Function } from 'types';
+import { CogFunction } from 'types';
 import CallFunctionModal from 'components/FunctionModals/CallFunctionModal';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function CallFunctionButton({ id }: Props) {
-  const { data: fn } = useQuery<Function>(`/functions/${id}`);
+  const { data: fn } = useQuery<CogFunction>(`/functions/${id}`);
   const [showModal, setShowModal] = useState(false);
 
   return (

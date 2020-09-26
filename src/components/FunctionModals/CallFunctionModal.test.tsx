@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
-import { Function, Call, Error } from 'types/Types';
+import { CogFunction, Call, Error } from 'types/Types';
 import { mount, shallow } from 'enzyme';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -16,7 +16,7 @@ const mockFunction = {
   fileId: 1,
   name: 'testFunc',
   id: 2,
-} as Function;
+} as CogFunction;
 const mockSimpleResult = {
   id: 1,
   startTime: new Date(),

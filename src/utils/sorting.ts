@@ -1,7 +1,6 @@
-import { Function, Call } from 'types';
-import { QueryCache } from 'react-query';
+import { CogFunction, Call } from 'types';
 
-export const recentlyCreated = (a: Function, b: Function) => {
+export const recentlyCreated = (a: CogFunction, b: CogFunction) => {
   if (a.createdTime > b.createdTime) {
     return -1;
   }
@@ -10,26 +9,20 @@ export const recentlyCreated = (a: Function, b: Function) => {
   }
   return 0;
 };
-export const sortLastCall = (cache: QueryCache) => (
-  a: Function,
-  b: Function
+export const sortLastCall = (calls: { [id: number]: Call[] }) => (
+  a: CogFunction,
+  b: CogFunction
 ) => {
-  const callsA = cache.getQueryData<{ items: Call[] }>([
-    `/functions/calls`,
-    { id: a.id },
-  ]);
-  const callsB = cache.getQueryData<{ items: Call[] }>([
-    `/functions/calls`,
-    { id: b.id },
-  ]);
+  const callsA = calls[a.id];
+  const callsB = calls[b.id];
   if (!callsA || !callsB) {
     return 0;
   }
-  const latestACallTime = callsA?.items?.reduce(
+  const latestACallTime = callsA?.reduce(
     (prev, el) => (el.startTime > prev ? el.startTime : prev),
     new Date(0)
   );
-  const latestBCallTime = callsB?.items.reduce(
+  const latestBCallTime = callsB?.reduce(
     (prev, el) => (el.startTime > prev ? el.startTime : prev),
     new Date(0)
   );
