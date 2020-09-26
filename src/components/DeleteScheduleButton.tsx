@@ -8,7 +8,6 @@ type Props = {
   id: number;
 };
 
-// @ts-ignore
 export default function DeleteScheduleButton({ id }: Props) {
   const queryCache = useQueryCache();
   const [doDelete, { isLoading, isSuccess }] = useMutation(deleteSchedule, {
