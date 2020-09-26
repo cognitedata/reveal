@@ -4,32 +4,28 @@ import { Tabs } from 'antd';
 import FunctionDetails from './FunctionDetails';
 import FunctionCalls from './FunctionCalls';
 import FunctionSchedules from './FunctionSchedules';
+import FunctionErrors from './FunctionErrors';
 
 type Props = {
   id: number;
   name: string;
   externalId?: string;
+  error?: any;
 };
 
-export default function FunctionPanelContent({ id, externalId, name }: Props) {
-  const error: boolean | any = false;
+export default function FunctionPanelContent({
+  id,
+  externalId,
+  name,
+  error,
+}: Props) {
   return (
     <Tabs>
       {error ? (
-        <></>
-      ) : // <Tabs.TabPane tab="Error Info" key="error">
-      //   <div style={{ overflowY: 'scroll', height: '300px' }}>
-      //     <p>
-      //       <b>Message: </b>
-      //       {error?.message}
-      //     </p>
-      //     <b>Trace: </b>
-      //     {error?.trace?.split('\n').map((i, index) => {
-      //       return <p key={`functionErrortrace-${index.toString()}`}>{i}</p>;
-      //     })}
-      //   </div>
-      // </Tabs.TabPane>
-      undefined}
+        <Tabs.TabPane tab="Error Info" key="error">
+          <FunctionErrors error={error} />
+        </Tabs.TabPane>
+      ) : null}
       <Tabs.TabPane tab="Calls" key="calls">
         <FunctionCalls id={id} name={name} />
       </Tabs.TabPane>

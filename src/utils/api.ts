@@ -5,8 +5,6 @@ import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
 
-console.log(sdk);
-
 type _GetCallsArgs = { id: number; scheduleId?: number };
 type GetCallsArgs = _GetCallsArgs | _GetCallsArgs;
 

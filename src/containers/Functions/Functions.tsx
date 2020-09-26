@@ -106,8 +106,8 @@ function Functions() {
             marginTop: '8px',
             display: 'inline-flex',
           }}
-    >
-    <UploadFunctionButton />
+        >
+          <UploadFunctionButton />
 
           <Button
             icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
@@ -156,7 +156,7 @@ function Functions() {
                     (currentPage - 1) * FUNCTIONS_PER_PAGE,
                     currentPage * FUNCTIONS_PER_PAGE
                   )
-                  .map(({ id, name, externalId }: CogFunction) => {
+                  .map(({ id, name, externalId, error }: CogFunction) => {
                     return (
                       <Panel
                         key={id}
@@ -172,6 +172,7 @@ function Functions() {
                           id={id}
                           name={name}
                           externalId={externalId}
+                          error={error}
                         />
                       </Panel>
                     );
