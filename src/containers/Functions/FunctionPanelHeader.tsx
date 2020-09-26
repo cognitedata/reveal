@@ -56,8 +56,8 @@ export default function FunctionPanelHeader({ id, externalId, name }: Props) {
           id={id}
           renderLoading={() => <Icon type="Loading" />}
           renderMissing={() => <Tag>Not called yet</Tag>}
-          renderCall={(id: number, call: Call) => (
-            <FunctionCallStatus id={id} callId={call.id} />
+          renderCall={(functionId: number, call: Call) => (
+            <FunctionCallStatus id={functionId} callId={call.id} />
           )}
         />
       </span>

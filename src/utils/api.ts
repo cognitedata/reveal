@@ -4,10 +4,10 @@ import { QueryKey } from 'react-query';
 type _GetCallsArgs = { id: number; scheduleId?: number };
 type GetCallsArgs = _GetCallsArgs | _GetCallsArgs;
 
-const _getCalls = async (args: _GetCallsArgs) => {
+const getCallsSdk = (args: _GetCallsArgs) => {
   const { id, scheduleId } = args;
   const filter = args ? { scheduleId } : {};
-  return await sdk
+  return sdk
     .post(
       `/api/playground/projects/${sdk.project}/functions/${id}/calls/list`,
       {
@@ -19,7 +19,7 @@ const _getCalls = async (args: _GetCallsArgs) => {
 
 export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
   if (Array.isArray(args)) {
-    const results = await Promise.all(args.map(a => _getCalls(a)));
+    const results = await Promise.all(args.map(a => getCallsSdk(a)));
     return args.reduce(
       (accl, { id }, index) => ({
         ...accl,
@@ -28,17 +28,16 @@ export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
       {}
     );
   }
-  return _getCalls(args);
+  return getCallsSdk(args);
 };
 
 type GetCallArgs = {
   id: number;
   callId: number;
 };
-export const getCall = async (_: QueryKey, args: GetCallArgs) => {
+export const getCall = (_: QueryKey, args: GetCallArgs) => {
   const { id, callId } = args;
-
-  return await sdk
+  return sdk
     .get(
       `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}`
     )
@@ -79,3 +78,10 @@ export const getLogs = async (_: QueryKey, { id, callId }: GetResponseArgs) => {
     )
     .then(response => response?.data);
 };
+
+export const deleteFunction = ({ id }: { id: number }) =>
+  sdk
+    .post(`/api/playground/projects/${sdk.project}/functions/delete`, {
+      data: { items: [{ id }] },
+    })
+    .then(response => response?.data);
