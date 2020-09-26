@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { Modal } from 'antd';
+import { useMutation, useQueryCache } from 'react-query';
+import { deleteSchedule } from 'utils/api';
 
 type Props = {
   id: number;
@@ -8,21 +10,32 @@ type Props = {
 
 // @ts-ignore
 export default function DeleteScheduleButton({ id }: Props) {
+  const queryCache = useQueryCache();
+  const [doDelete, { isLoading, isSuccess }] = useMutation(deleteSchedule, {
+    onSuccess() {
+      queryCache.invalidateQueries('/functions/schedules');
+    },
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      Modal.success({
+        title: 'Schedule deleted',
+        content: `Schedule ${id} deleted successfully`,
+      });
+    }
+  }, [isSuccess, id]);
+
   return (
     <Button
-      icon="Delete"
-      size="small"
-      style={{
-        marginLeft: '8px',
-        justifyContent: 'center',
-      }}
+      icon={isLoading ? 'Loading' : 'Delete'}
       onClick={e => {
         e.stopPropagation();
         Modal.confirm({
           title: 'Are you sure?',
           content: 'Are you sure you want to delete this schedule?',
           onOk: () => {
-            console.log('TODO', id);
+            doDelete(id);
           },
           onCancel: () => {},
           okText: 'Delete',

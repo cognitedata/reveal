@@ -93,3 +93,10 @@ export const createSchedule = (schedule: CreateSchedule ) =>
       data: { items: [schedule] },
     })
     .then(response => response?.data);
+
+export const deleteSchedule = (id: number ) =>
+  sdk
+    .post(`/api/playground/projects/${sdk.project}/functions/schedules/delete`, {
+      data: { items: [{id}] },
+    })
+    .then(response => response?.data);

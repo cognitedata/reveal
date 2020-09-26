@@ -64,37 +64,6 @@ const scheduleTableColumns = [
     key: 'deleteSchedule',
     render: (s: Schedule) => {
       return <DeleteScheduleButton id={s.id} />;
-      // if (
-      //   errorInDeletingSchedule // &&
-      //   // scheduleToDelete &&
-      //   // s.id === scheduleToDelete
-      // ) {
-      //   message.error('Unable to delete schedule');
-      // }
-
-      // if (
-      //   deleting // &&
-      //   // scheduleToDelete &&
-      //   // s.id === scheduleToDelete
-      // ) {
-      //   return <Button icon="Loading">Delete</Button>;
-      // }
-      // return (
-      //   <Button
-      //     icon="Delete"
-      //     onClick={() => {
-      //       Modal.confirm({
-      //         title: 'Are you sure?',
-      //         content: 'Are you sure you want to delete this schedule?',
-      //         onOk: () => {
-      //           //                  dispatch(deleteSchedule(s.schedule));
-      //         },
-      //         onCancel: () => {},
-      //         okText: 'Delete',
-      //       });
-      //     }}
-      //   />
-      // );
     },
   },
 ];
