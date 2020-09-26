@@ -1,9 +1,9 @@
 @Library('jenkins-helpers') _
 
 //  Staging deployments are protected by CogniteIAP, meaning they're only accessible to Cogniters.
-static final String STAGING_DOMAIN_NAME = "staging.cwp.cogniteapp.com"
-static final String RELEASE_DOMAIN_NAME = "cwp.cogniteapp.com"
-
+static final String STAGING_APP_ID = "cognuit-dev"
+static final String PRODUCTION_APP_ID = "cognuit"
+static final String APPLICATION_REPO_ID = "cognuit"
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
@@ -105,10 +105,11 @@ pods {
           return
         }
 
-        def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
+        def appId = isStaging ? STAGING_APP_ID : PRODUCTION_APP_ID
 
         fas.build(
-          domainName: domainName,
+          appId: appId,
+          repo: APPLICATION_REPO_ID,
           buildCommand: 'yarn build',
         )
       }
