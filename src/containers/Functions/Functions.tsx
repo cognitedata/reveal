@@ -11,6 +11,7 @@ import { getCalls } from 'utils/api';
 import { recentlyCreated, sortLastCall } from 'utils/sorting';
 import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
+import UploadFunctionButton from 'components/UploadFunctionButton';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -105,16 +106,9 @@ function Functions() {
             marginTop: '8px',
             display: 'inline-flex',
           }}
-        >
-          <Button
-            icon="Upload"
-            type="primary"
-            onClick={() => {
-              // setShowUploadModal(true)
-            }}
-          >
-            Upload function
-          </Button>
+    >
+    <UploadFunctionButton />
+
           <Button
             icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
             disabled={isFetching}

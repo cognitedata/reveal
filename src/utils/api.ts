@@ -1,6 +1,11 @@
 import sdk from 'sdk-singleton';
 import { QueryKey } from 'react-query';
-import { CreateSchedule } from 'types';
+import { CreateSchedule, CogFunctionUpload, CogFunction } from 'types';
+import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
+import { UploadFile } from 'antd/lib/upload/interface';
+import UploadGCS from '@cognite/gcs-browser-upload';
+
+console.log(sdk);
 
 type _GetCallsArgs = { id: number; scheduleId?: number };
 type GetCallsArgs = _GetCallsArgs | _GetCallsArgs;
@@ -87,16 +92,99 @@ export const deleteFunction = ({ id }: { id: number }) =>
     })
     .then(response => response?.data);
 
-export const createSchedule = (schedule: CreateSchedule ) =>
+export const createSchedule = (schedule: CreateSchedule) =>
   sdk
     .post(`/api/playground/projects/${sdk.project}/functions/schedules`, {
       data: { items: [schedule] },
     })
     .then(response => response?.data);
 
-export const deleteSchedule = (id: number ) =>
+export const deleteSchedule = (id: number) =>
   sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/schedules/delete`, {
-      data: { items: [{id}] },
+    .post(
+      `/api/playground/projects/${sdk.project}/functions/schedules/delete`,
+      {
+        data: { items: [{ id }] },
+      }
+    )
+    .then(response => response?.data);
+
+const sleep = async (ms: number) =>
+  new Promise(resolve => {
+    setTimeout(() => resolve(), ms);
+  });
+
+const createFunction = async (
+  cogfunction: CogFunctionUpload
+): Promise<CogFunction> => {
+  return await sdk
+    .post(`/api/playground/projects/${sdk.project}/functions`, {
+      data: { items: [cogfunction] },
     })
     .then(response => response?.data);
+};
+
+const GCSUploader = (
+  file: Blob | UploadFile,
+  uploadUrl: string,
+  callback: (info: any) => void = () => {}
+) => {
+  // This is what is recommended from google when uploading files.
+  // https://github.com/QubitProducts/gcs-browser-upload
+  const chunkMultiple = Math.min(
+    Math.max(
+      2, // 0.5MB min chunks
+      Math.ceil((file.size / 20) * 262144) // will divide into 20 segments
+    ),
+    200 // 50 MB max
+  );
+
+  return new UploadGCS({
+    id: 'datastudio-upload',
+    url: uploadUrl,
+    file,
+    chunkSize: 262144 * chunkMultiple,
+    onChunkUpload: callback,
+  });
+};
+
+const uploadFile = async (file: UploadFile) => {
+  const { uploadUrl, id } = (await sdk.files.upload({
+    name: file.name,
+    source: 'Datastudio',
+  })) as FileUploadResponse;
+  if (!uploadUrl || !id) {
+    return Promise.reject('upload-error');
+  }
+
+  const currentUpload = await GCSUploader(file, uploadUrl, (info: any) => {
+    file.response = info;
+    file.percent = (info.uploadedBytes / info.totalBytes) * 100;
+  });
+
+  await currentUpload.start();
+
+  return id;
+};
+
+export const deleteFile = sdk.files.delete;
+
+export const uploadFunction = async ({
+  data,
+  file,
+}: {
+  data: Omit<CogFunctionUpload, 'fileId'>;
+  file: UploadFile;
+}) => {
+  const fileId = await uploadFile(file);
+  // The function api will sometimes claim that a file id doesn't
+  // exist right after the upload completes.
+  await sleep(1000);
+  try {
+    const { id } = await createFunction({ ...data, fileId });
+    return id;
+  } catch (e) {
+    await deleteFile([{ id: fileId }]);
+    throw e;
+  }
+};

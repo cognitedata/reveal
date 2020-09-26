@@ -1,12 +1,12 @@
-// @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Form, Input, Upload, Alert } from 'antd';
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { UploadChangeParam } from 'antd/lib/upload';
-import { useDispatch, useSelector } from 'react-redux';
 import { UploadFile } from 'antd/lib/upload/interface';
 import Link from 'components/Link';
+import { useMutation, useQueryCache } from 'react-query';
+import { uploadFunction } from 'utils/api';
 
 const UploadFunctionContentRow = styled.div`
   display: flex;
@@ -218,21 +218,22 @@ interface Secret {
 
 type Props = {
   onCancel: () => void;
-  visible: boolean;
 };
 
-export default function UploadFunctionModal(props: Props) {
-  const { visible, onCancel } = props;
-  const { file: fileInStore } = useSelector(selectCreateFunctionFields);
-  const {
-    creating,
-    done: createFunctionDone,
-    error: createFunctionError,
-    errorMessage: createFunctionErrorMessage,
-  } = useSelector(selectCreateFunctionState);
-  const { uploading, error: uploadFileError } = useSelector(
-    selectUploadFileState
-  );
+export default function UploadFunctionModal({ onCancel }: Props) {
+  const queryCache = useQueryCache();
+
+  const [
+    doUploadFunction,
+    { isLoading, isSuccess, isError, error },
+  ] = useMutation(uploadFunction, {
+    onSuccess() {
+      queryCache.invalidateQueries('/functions');
+    },
+  });
+
+  const disableForm = isLoading || isSuccess;
+
   const [functionName, setFunctionName] = useState({
     value: '',
     touched: false,
@@ -244,12 +245,6 @@ export default function UploadFunctionModal(props: Props) {
   const [file, setFile] = useState<UploadFile>();
   const [fileTouched, setFileTouched] = useState(false);
   const [secrets, setSecrets] = useState([] as Secret[]);
-
-  const dispatch = useDispatch();
-
-  if (!file && fileInStore.file) {
-    setFile(fileInStore.file);
-  }
 
   const apiKeyTitle = (
     <div style={{ display: 'inline-flex' }}>
@@ -414,10 +409,7 @@ export default function UploadFunctionModal(props: Props) {
 
   const cancelAndUploadButtons = (isUploadDisabled: boolean) => {
     const cancelButton = (
-      <Button
-        style={{ marginRight: '8px', float: 'left' }}
-        onClick={handleCancel}
-      >
+      <Button style={{ marginRight: '8px', float: 'left' }} onClick={onCancel}>
         Cancel
       </Button>
     );
@@ -446,12 +438,12 @@ export default function UploadFunctionModal(props: Props) {
       );
     }
 
-    if (creating) {
+    if (isLoading) {
       uploadStatusButton = <Button icon="Loading">Loading</Button>;
     }
-    if (createFunctionDone) {
+    if (isSuccess) {
       uploadStatusButton = (
-        <Button icon="Check" onClick={handleCancel} type="primary">
+        <Button icon="Check" onClick={onCancel} type="primary">
           Done
         </Button>
       );
@@ -484,7 +476,6 @@ export default function UploadFunctionModal(props: Props) {
   const handleExternalIdChange = (evt: { target: { value: string } }) => {
     setExternalId(evt.target.value);
   };
-
   const handleFileUploadChange = (evt: UploadChangeParam) => {
     if (evt.file.status === 'removed') {
       setFile(undefined);
@@ -498,42 +489,25 @@ export default function UploadFunctionModal(props: Props) {
       evt.fileList.shift();
     }
   };
-  const handleSubmit = (evt: { preventDefault: () => void }) => {
-    if (!canBeSubmitted) {
+
+  const handleSubmit = async (evt: { preventDefault: () => void }) => {
+    if (canBeSubmitted) {
       evt.preventDefault();
-      return;
+      // Function creation / file deletion on error is handled by useEffect above
+      doUploadFunction({
+        data: {
+          name: functionName.value,
+          externalId,
+          owner,
+          secrets: secrets.reduce(
+            (accl, s) => ({ ...accl, [s.key]: s.value }),
+            {}
+          ),
+          description,
+        },
+        file: file!,
+      });
     }
-
-    const formattedSecrets = secrets.reduce((obj, s) => {
-      return {
-        ...obj,
-        [s.key]: s.value,
-      };
-    }, {});
-
-    dispatch(
-      createFunction(
-        functionName.value,
-        description,
-        apiKey,
-        owner,
-        externalId,
-        formattedSecrets
-      )
-    );
-  };
-
-  const handleCancel = () => {
-    onCancel();
-    dispatch(createFunctionReset());
-    setApiKey('');
-    setDescription('');
-    setFile(undefined);
-    setFileTouched(false);
-    setFunctionName({ value: '', touched: false });
-    setOwner('');
-    setExternalId('');
-    setSecrets([]);
   };
 
   const uploadFunctionDiv = () => {
@@ -568,7 +542,7 @@ export default function UploadFunctionModal(props: Props) {
           beforeUpload={() => false}
           multiple={false}
           fileList={file ? [file] : []}
-          disabled={uploading}
+          disabled={isLoading}
           name="fileUpload"
           style={{ marginTop: '8px' }}
         >
@@ -602,6 +576,7 @@ export default function UploadFunctionModal(props: Props) {
             required
           >
             <Input
+              disabled={disableForm}
               name="functionName"
               value={functionName.value}
               allowClear
@@ -614,6 +589,7 @@ export default function UploadFunctionModal(props: Props) {
             help={checkOwner(owner).message}
           >
             <Input
+              disabled={disableForm}
               name="owner"
               value={owner}
               allowClear
@@ -628,6 +604,7 @@ export default function UploadFunctionModal(props: Props) {
             help={checkDescription(description).message}
           >
             <Input.TextArea
+              disabled={disableForm}
               name="description"
               value={description}
               allowClear
@@ -640,6 +617,7 @@ export default function UploadFunctionModal(props: Props) {
             help={checkApiKey(apiKey).message}
           >
             <Input.Password
+              disabled={disableForm}
               name="apiKey"
               visibilityToggle={false}
               value={apiKey}
@@ -655,6 +633,7 @@ export default function UploadFunctionModal(props: Props) {
             help={checkExternalId(externalId).message}
           >
             <Input
+              disabled={disableForm}
               name="externalId"
               value={externalId}
               allowClear
@@ -668,6 +647,7 @@ export default function UploadFunctionModal(props: Props) {
   };
 
   const canBeSubmitted =
+    !!file &&
     !checkFunctionName(functionName.value).error &&
     !checkOwner(owner).error &&
     !checkDescription(description).error &&
@@ -676,32 +656,17 @@ export default function UploadFunctionModal(props: Props) {
     checkSecrets(secrets, apiKey) &&
     !checkFile(file).error;
 
-  useEffect(() => {
-    if (file) {
-      dispatch(uploadFile(file));
-    }
-  }, [dispatch, file]);
-
   return (
     <Modal
       title="Upload Function"
-      visible={visible}
+      visible
       footer={null}
       width="975px"
-      onCancel={handleCancel}
+      onCancel={onCancel}
     >
-      {uploadFileError && !uploading ? (
+      {isError ? (
         <Alert
-          message="Error: Unable to upload file"
-          type="error"
-          closable
-          showIcon
-          style={{ marginBottom: '8px' }}
-        />
-      ) : undefined}
-      {createFunctionError && !creating ? (
-        <Alert
-          message={`Error: ${createFunctionErrorMessage}`}
+          message={`Error: ${JSON.stringify(error)}`}
           type="error"
           closable
           showIcon

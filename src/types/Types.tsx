@@ -23,20 +23,23 @@ export interface Relationship {
   relationshipType: RelationshipType;
 }
 
-export interface CogFunction {
-  id: number;
+
+export interface CogFunctionUpload {
   name: string;
   fileId: number;
   owner: string;
-  description: string;
-  apiKey: string;
-  secrets: {};
+  description?: string;
+  apiKey?: string;
+  secrets?: {};
+  externalId?: string;
+}
+export interface CogFunction extends CogFunctionUpload {
+  id: number;
   createdTime: Date;
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
-  externalId?: string;
   error?: Error;
-  calls?: Call[];
 }
+
 
 export interface Error {
   message: string;

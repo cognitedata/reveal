@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 
-import CreateFunctionModal from 'components/FunctionModals/CreateFunctionModal';
+import UploadFunctionModal from 'components/FunctionModals/UploadFunctionModal';
 
-export default function CreateFunctionButton() {
+export default function UploadFunctionButton() {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -18,10 +18,10 @@ export default function CreateFunctionButton() {
           setShowModal(true);
         }}
       >
-        Create Schedule
+        Upload function
       </Button>
       {showModal ? (
-        <CreateFunctionModalo
+        <UploadFunctionModal
           onCancel={() => setShowModal(false)}
         />
       ) : null}
