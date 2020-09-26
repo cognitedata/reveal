@@ -7,8 +7,8 @@ import { Icon, Button } from '@cognite/cogs.js';
 import { Schedule } from 'types';
 import { useQuery } from 'react-query';
 
-import DeleteScheduleButton from 'components/DeleteScheduleButton';
-import CreateScheduleButton from 'components/CreateScheduleButton';
+import DeleteScheduleButton from 'components/buttons/DeleteScheduleButton';
+import CreateScheduleButton from 'components/buttons/CreateScheduleButton';
 import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [

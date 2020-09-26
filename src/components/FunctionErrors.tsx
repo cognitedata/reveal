@@ -4,7 +4,7 @@ interface Props {
   error?: {
     message?: string;
     trace?: string;
-  }
+  };
 }
 export default function FunctionErrors({ error }: Props) {
   return (

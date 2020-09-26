@@ -23,7 +23,6 @@ export interface Relationship {
   relationshipType: RelationshipType;
 }
 
-
 export interface CogFunctionUpload {
   name: string;
   fileId: number;
@@ -39,7 +38,6 @@ export interface CogFunction extends CogFunctionUpload {
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
   error?: Error;
 }
-
 
 export interface Error {
   message: string;

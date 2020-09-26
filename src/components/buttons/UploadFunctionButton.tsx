@@ -21,9 +21,7 @@ export default function UploadFunctionButton() {
         Upload function
       </Button>
       {showModal ? (
-        <UploadFunctionModal
-          onCancel={() => setShowModal(false)}
-        />
+        <UploadFunctionModal onCancel={() => setShowModal(false)} />
       ) : null}
     </>
   );

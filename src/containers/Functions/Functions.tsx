@@ -11,7 +11,7 @@ import { getCalls } from 'utils/api';
 import { recentlyCreated, sortLastCall } from 'utils/sorting';
 import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
-import UploadFunctionButton from 'components/UploadFunctionButton';
+import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -82,10 +82,10 @@ function Functions() {
             filteredFunctions?.findIndex(f => f.id.toString() === id) !== -1
         )
         .slice(0, FUNCTIONS_PER_PAGE)
-        .forEach(([id, calls]) => {
-          queryCache.setQueryData([`/functions/calls`, { id }], calls);
-          if (calls.length > 0) {
-            const latestCall = calls[0];
+        .forEach(([id, relevantCalls]) => {
+          queryCache.setQueryData([`/functions/calls`, { id }], relevantCalls);
+          if (relevantCalls.length > 0) {
+            const latestCall = relevantCalls[0];
             queryCache.setQueryData(
               [`/functions/calls`, { id, callId: latestCall.id }],
               latestCall

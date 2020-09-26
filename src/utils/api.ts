@@ -112,15 +112,12 @@ const sleep = async (ms: number) =>
     setTimeout(() => resolve(), ms);
   });
 
-const createFunction = async (
-  cogfunction: CogFunctionUpload
-): Promise<CogFunction> => {
-  return await sdk
+const createFunction = (cogfunction: CogFunctionUpload): Promise<CogFunction> =>
+  sdk
     .post(`/api/playground/projects/${sdk.project}/functions`, {
       data: { items: [cogfunction] },
     })
     .then(response => response?.data);
-};
 
 const GCSUploader = (
   file: Blob | UploadFile,
@@ -151,8 +148,11 @@ const uploadFile = async (file: UploadFile) => {
     name: file.name,
     source: 'Datastudio',
   })) as FileUploadResponse;
-  if (!uploadUrl || !id) {
-    return Promise.reject('upload-error');
+  if (!uploadUrl) {
+    throw new Error('Upload error, did not recieve "uploadUrl"');
+  }
+  if (!id) {
+    throw new Error('Upload error, did not recieve "id"');
   }
 
   const currentUpload = await GCSUploader(file, uploadUrl, (info: any) => {
