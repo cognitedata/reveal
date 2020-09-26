@@ -67,8 +67,6 @@ export interface Log {
 }
 
 export interface CreateSchedule {
-  id: number;
-  createdTime: Date;
   name: string;
   description?: string;
   functionExternalId: string;

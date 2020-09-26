@@ -13,6 +13,7 @@ export default function CreateScheduleButton({ externalId }: Props) {
   return (
     <>
       <Button
+        type="primary"
         style={{
           justifyContent: 'center',
         }}
@@ -21,7 +22,7 @@ export default function CreateScheduleButton({ externalId }: Props) {
           setShowModal(true);
         }}
       >
-        View Logs
+        Create Schedule
       </Button>
       {showModal ? (
         <CreateScheduleModal

@@ -8,6 +8,7 @@ import { Schedule } from 'types';
 import { useQuery } from 'react-query';
 
 import DeleteScheduleButton from 'components/DeleteScheduleButton';
+import CreateScheduleButton from 'components/CreateScheduleButton';
 import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [
@@ -110,11 +111,11 @@ export default function FunctionSchedules({ externalId, id }: Props) {
   const schedules =
     data?.items
       ?.filter(s => s.functionExternalId === externalId)
-      ?.sort((a: any, b: any) => {
-        if (a.schedule.createdTime > b.schedule.createdTime) {
+      ?.sort((a: Schedule, b: Schedule) => {
+        if (a.createdTime > b.createdTime) {
           return -1;
         }
-        if (a.schedule.createdTime < b.schedule.createdTime) {
+        if (a.createdTime < b.createdTime) {
           return 1;
         }
         return 0;
@@ -133,23 +134,17 @@ export default function FunctionSchedules({ externalId, id }: Props) {
   }
 
   return (
-    <Table
-      rowKey={s => s.id.toString()}
-      pagination={{ pageSize: 25 }}
-      dataSource={schedules}
-      columns={scheduleTableColumns}
-      expandedRowRender={(s: Schedule) => {
-        return <FunctionCalls name={s.name} id={id} scheduleId={s.id} />;
-
-        // return (
-        //   <Table
-        //     rowKey={(call: Call) => call.id.toString()}
-        //     pagination={{ pageSize: 5 }}
-        //     dataSource={[]}
-        //     columns={callTableColumns({})}
-        //   />
-        // );
-      }}
-    />
+    <>
+      {externalId ? <CreateScheduleButton externalId={externalId} /> : null}
+      <Table
+        rowKey={s => s.id.toString()}
+        pagination={{ pageSize: 25 }}
+        dataSource={schedules}
+        columns={scheduleTableColumns}
+        expandedRowRender={(s: Schedule) => {
+          return <FunctionCalls name={s.name} id={id} scheduleId={s.id} />;
+        }}
+      />
+    </>
   );
 }
