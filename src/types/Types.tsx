@@ -66,7 +66,7 @@ export interface Log {
   message: string;
 }
 
-export interface Schedule {
+export interface CreateSchedule {
   id: number;
   createdTime: Date;
   name: string;
@@ -74,4 +74,8 @@ export interface Schedule {
   functionExternalId: string;
   cronExpression: string;
   data?: {};
+}
+export interface Schedule extends CreateSchedule {
+  id: number;
+  createdTime: Date;
 }

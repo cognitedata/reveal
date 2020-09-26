@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Alert } from 'antd';
 import { Button, Tooltip } from '@cognite/cogs.js';
-// import {
-//   selectCreateScheduleState,
-//   createSchedule,
-//   createScheduleReset,
-// } from 'modules/schedules';
 import { isValidCron } from 'cron-validator';
 
 const isValidData = (data: string) => {
@@ -35,12 +30,10 @@ const isValidCronExpression = (cronExpression: string) =>
 
 type Props = {
   onCancel: () => void;
-  visible: boolean;
-  functionExternalId: string;
+  externalId: string;
 };
 
-export default function CreateScheduleModal(props: Props) {
-  const { visible, onCancel, functionExternalId } = props;
+export default function CreateScheduleModal({ externalId, onCancel}: Props) {
   const [scheduleName, setScheduleName] = useState({
     value: '',
     touched: false,
@@ -53,57 +46,7 @@ export default function CreateScheduleModal(props: Props) {
   const [data, setData] = useState('');
 
   const cancelAndCreateButtons = (isCreateDisabled: boolean) => {
-    const cancelButton = (
-      <Button
-        style={{ marginRight: '8px', float: 'left' }}
-        onClick={handleCancel}
-      >
-        Cancel
-      </Button>
-    );
 
-    let createStatusButton = (
-      <Button
-        type="primary"
-        icon="Upload"
-        disabled={isCreateDisabled}
-        onClick={handleCreate}
-        htmlType="submit"
-      >
-        Create
-      </Button>
-    );
-
-    if (isCreateDisabled) {
-      createStatusButton = (
-        <Tooltip placement="top" content="Fill out the required fields">
-          <Button type="primary" icon="Upload" disabled>
-            Create
-          </Button>
-        </Tooltip>
-      );
-    }
-
-    if (false) {
-      createStatusButton = (
-        <Button icon="Loading" type="primary">
-          Creating
-        </Button>
-      );
-    }
-    if (false) {
-      createStatusButton = (
-        <Button icon="Check" onClick={handleCancel} type="primary">
-          Done
-        </Button>
-      );
-    }
-
-    return (
-      <div style={{ float: 'right', display: 'inline-flex' }}>
-        {cancelButton}
-        {createStatusButton}
-      </div>
     );
   };
 
@@ -139,24 +82,32 @@ export default function CreateScheduleModal(props: Props) {
     isValidDescription(description) &&
     isValidData(data);
 
-  const handleCreate = (evt: { preventDefault: () => void }) => {
-    if (!canBeSubmitted) {
-      evt.preventDefault();
-    }
-  };
-
-  const handleCancel = () => {
-    onCancel();
-    // dispatch(createScheduleReset());
-    setScheduleName({ value: '', touched: false });
-    setCronExpression({ value: '', touched: false });
-    setDescription('');
-    setData('');
-  };
-
   const scheduleInformation = () => {
     return (
-      <div>
+
+    );
+  };
+
+  const errorMessage = 'TODO';
+  return (
+    <Modal
+      title="Create Schedule"
+      visible={true}
+      footer={null}
+      width="550px"
+      onCancel={handleCancel}
+    >
+      {false ? (
+        <Alert
+          message={`Error: ${errorMessage}`}
+          type="error"
+          closable
+          showIcon
+          style={{ marginBottom: '8px' }}
+        />
+      ) : undefined}
+      <div style={{ display: 'flow-root' }}>
+             <div>
         <Form layout="vertical">
           <Form.Item
             label="Schedule Name"
@@ -237,30 +188,24 @@ export default function CreateScheduleModal(props: Props) {
           </Form.Item>
         </Form>
       </div>
-    );
-  };
-
-  const errorMessage = 'TODO';
-  return (
-    <Modal
-      title="Create Schedule"
-      visible={visible}
-      footer={null}
-      width="550px"
-      onCancel={handleCancel}
-    >
-      {false ? (
-        <Alert
-          message={`Error: ${errorMessage}`}
-          type="error"
-          closable
-          showIcon
-          style={{ marginBottom: '8px' }}
-        />
-      ) : undefined}
-      <div style={{ display: 'flow-root' }}>
-        {scheduleInformation()}
-        {cancelAndCreateButtons(!canBeSubmitted)}
+           <div style={{ float: 'right', display: 'inline-flex' }}>
+            <Button
+        style={{ marginRight: '8px', float: 'left' }}
+        onClick={handleCancel}
+      >
+        Cancel
+    </Button>
+      <Tooltip placement="top" content="Fill out the required fields">
+      <Button
+        type="primary"
+        icon="Upload"
+        disabled={isCreateDisabled}
+        onClick={handleCreate}
+        htmlType="submit"
+      >
+        Create/Creating/Done
+      </Button>
+      </div>
       </div>
     </Modal>
   );

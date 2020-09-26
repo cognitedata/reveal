@@ -1,5 +1,6 @@
 import sdk from 'sdk-singleton';
 import { QueryKey } from 'react-query';
+import { CreateSchedule } from 'types';
 
 type _GetCallsArgs = { id: number; scheduleId?: number };
 type GetCallsArgs = _GetCallsArgs | _GetCallsArgs;
@@ -83,5 +84,12 @@ export const deleteFunction = ({ id }: { id: number }) =>
   sdk
     .post(`/api/playground/projects/${sdk.project}/functions/delete`, {
       data: { items: [{ id }] },
+    })
+    .then(response => response?.data);
+
+export const createSchedule = ({ shedule }: { shedule: CreateSchedule }) =>
+  sdk
+    .post(`/api/playground/projects/${sdk.project}/functions/schedules`, {
+      data: { items: [schedule] },
     })
     .then(response => response?.data);
