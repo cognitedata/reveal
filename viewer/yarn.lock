@@ -3565,10 +3565,10 @@ gl-matrix@*, gl-matrix@^3.3.0:
   resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.3.0.tgz#232eef60b1c8b30a28cbbe75b2caf6c48fd6358b"
   integrity sha512-COb7LDz+SXaHtl/h4LeaFcNdJdAQSDeVqjiIihSXNrkWObZLhDI4hIkZC11Aeqp7bcE72clzB0BnDXr2SmslRA==
 
-gl@^4.7.0:
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/gl/-/gl-4.7.0.tgz#c3f4fd1e91b8fa3320916623b430885f902abf66"
-  integrity sha512-neTID37XTnk3MKvQdsuTmmhnz3dVfCQkLtqm/Z1JtAMFoTru6lsO3RsotHEUz+TOsrBSnQu2tsSMp0/Ztsp2AQ==
+gl@^4.8.0:
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/gl/-/gl-4.8.0.tgz#2bf8702d11ae5a76412f3731f3ed652bd77d043b"
+  integrity sha512-aH73Ilq5cnfa9hF829UqWMjZBdYbIC7aNHYYpisZMN9QJttj8p/nyhxcJ1aGDTwjoL1keR3oN5nkNnAlNSuVcw==
   dependencies:
     bindings "^1.5.0"
     bit-twiddle "^1.0.2"
