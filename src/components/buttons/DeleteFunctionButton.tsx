@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Modal, notification } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { useMutation, useQueryCache } from 'react-query';
@@ -8,7 +8,10 @@ type Props = {
   id: number;
   name: string;
 };
-const NOTIFICATION_KEY='delete-notifications';
+const NOTIFICATION_KEY = 'delete-notifications';
+
+// TODO: This function could also ask the user if the file asossiated
+// with the function should be deleted
 export default function DeleteFunctionButton({ id, name }: Props) {
   const queryCache = useQueryCache();
   const [
@@ -25,19 +28,18 @@ export default function DeleteFunctionButton({ id, name }: Props) {
       notification.info({
         message: 'Deleting function',
         description: `Deleting function ${name} (${id}).`,
-        key: NOTIFICATION_KEY
+        key: NOTIFICATION_KEY,
       });
     }
   }, [isDeleting, id, name]);
-
 
   useEffect(() => {
     if (isDeleted) {
       notification.success({
         message: 'Function deleted',
         description: `Function ${name} (${id}) deleted successfully.`,
-        key: NOTIFICATION_KEY
-      })
+        key: NOTIFICATION_KEY,
+      });
     }
   }, [isDeleted, id, name]);
 
@@ -46,7 +48,7 @@ export default function DeleteFunctionButton({ id, name }: Props) {
       notification.error({
         message: 'Deleting function',
         description: `An error occured when trying to delete function ${name} (${id}).`,
-        key: NOTIFICATION_KEY
+        key: NOTIFICATION_KEY,
       });
     }
   }, [isError, id, name]);
