@@ -124,10 +124,9 @@ CogsTooltip.defaultProps = {
   appendTo: () => document.getElementsByClassName(ids.styleScope).item(0)!,
 };
 
-notification.defaultProps = {
-  ...notification.defaultProps,
+notification.config({
   getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
-};
+});
 
 export default function AntStyles(props: { children: React.Node }) {
   useEffect(() => {

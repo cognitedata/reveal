@@ -62,7 +62,7 @@ export default function FunctionPanelHeader({ id, externalId, name }: Props) {
       <Col span={2}>
         <PullRight>
           <CallFunctionButton id={id} />
-          <DeleteFunctionButton id={id} />
+      <DeleteFunctionButton id={id} name={name} />
         </PullRight>
       </Col>
     </Row>

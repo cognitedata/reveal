@@ -148,6 +148,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
       title="Upload Function"
       visible
       width="975px"
+      style={{ top: 20 }}
       onCancel={onCancel}
       footer={[
         <Button icon="XLarge" onClick={onCancel}>

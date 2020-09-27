@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from 'react';
-import { Modal } from 'antd';
+import React, { useEffect} from 'react';
+import { Modal, notification } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { useMutation, useQueryCache } from 'react-query';
 import { deleteFunction } from 'utils/api';
 
 type Props = {
   id: number;
+  name: string;
 };
-
-export default function DeleteFunctionButton({ id }: Props) {
+const NOTIFICATION_KEY='delete-notifications';
+export default function DeleteFunctionButton({ id, name }: Props) {
   const queryCache = useQueryCache();
   const [
     deleteFn,
@@ -18,39 +19,37 @@ export default function DeleteFunctionButton({ id }: Props) {
       queryCache.invalidateQueries('/functions');
     },
   });
-  const modal = useRef<() => void>();
+
   useEffect(() => {
     if (isDeleting) {
-      modal.current = Modal.info({
-        title: 'Deleting function',
-        content: `Deleting function ${id}.`,
-      }).destroy;
+      notification.info({
+        message: 'Deleting function',
+        description: `Deleting function ${name} (${id}).`,
+        key: NOTIFICATION_KEY
+      });
     }
-  }, [isDeleting, id]);
+  }, [isDeleting, id, name]);
+
 
   useEffect(() => {
     if (isDeleted) {
-      if (modal.current) {
-        modal.current();
-      }
-      Modal.success({
-        title: 'Deleting function',
-        content: `Function ${id} deleted successfully.`,
-      });
+      notification.success({
+        message: 'Function deleted',
+        description: `Function ${name} (${id}) deleted successfully.`,
+        key: NOTIFICATION_KEY
+      })
     }
-  }, [isDeleted, id]);
+  }, [isDeleted, id, name]);
 
   useEffect(() => {
     if (isError) {
-      if (modal.current) {
-        modal.current();
-      }
-      Modal.error({
-        title: 'Deleting function',
-        content: `An error occured when trying to delete function ${id}.`,
+      notification.error({
+        message: 'Deleting function',
+        description: `An error occured when trying to delete function ${name} (${id}).`,
+        key: NOTIFICATION_KEY
       });
     }
-  }, [isError, id]);
+  }, [isError, id, name]);
 
   return (
     <>
