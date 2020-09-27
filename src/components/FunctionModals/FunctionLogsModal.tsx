@@ -1,13 +1,13 @@
 import React, { useState, SyntheticEvent } from 'react';
-import { Modal, Input, Alert, Row, Col } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Modal, Input, Alert } from 'antd';
+import { Icon, Button } from '@cognite/cogs.js';
 import moment from 'moment';
 import { Call, Log } from 'types';
 import Highlighter from 'react-highlight-words';
 import { useQuery, useQueryCache } from 'react-query';
 import { getLogs, getCall } from 'utils/api';
-import LoadingIcon from 'components/LoadingIcon';
-import { fnCallsKey, fnLogsKey } from 'utils/queryKeys';
+import { callsKey, logsKey } from 'utils/queryKeys';
+import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import NoLogs from './icons/emptyLogs';
 
 type Props = {
@@ -19,29 +19,29 @@ type Props = {
 type BodyProps = {
   logs?: Log[];
   call?: Call;
-  error: boolean;
+  errors?: any[];
   fetched: boolean;
 };
-function ModalBody({ logs, call, error, fetched }: BodyProps) {
+function ModalBody({ logs, call, errors, fetched }: BodyProps) {
   const [logsSearch, setLogsSearch] = useState('');
 
-  if (fetched) {
-    return (
-      <Row>
-        <Col span={1}>
-          <LoadingIcon />
-        </Col>
-        <Col span={23}>Fetching logs</Col>
-      </Row>
-    );
+  if (!fetched) {
+    return <p>Fetching logs</p>;
   }
-  if (error) {
+
+  if (errors) {
     return (
       <Alert
         type="error"
-        icon={<Icon type="ErrorFilled" />}
         message="Error"
-        description="There was an error fetching the logs"
+        description={
+          <>
+            <p>There was an error fetching the logs.</p>
+            {errors?.map(e => (
+              <ErrorFeedback error={e} />
+            ))}
+          </>
+        }
       />
     );
   }
@@ -49,7 +49,7 @@ function ModalBody({ logs, call, error, fetched }: BodyProps) {
   if (logs?.length === 0) {
     return (
       <>
-        <em>No logs were returned from this function call</em>
+        <p>No logs were returned from this function call</p>
         <NoLogs />
       </>
     );
@@ -64,7 +64,6 @@ function ModalBody({ logs, call, error, fetched }: BodyProps) {
         onChange={evt => setLogsSearch(evt.target.value)}
         style={{ marginBottom: '16px' }}
       />
-      {fetched && <LoadingIcon />}
       <p>
         <b>
           {moment.utc(call?.startTime).format('YYYY-MM-DD hh:mm')} Function
@@ -102,25 +101,28 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
     data: logs,
     isFetching: logsFetching,
     isFetched: isLogsFetched,
-    isError: logError,
+    error: logError,
   } = useQuery<{
     items: Log[];
-  }>(fnCallsKey({ id, callId }), getLogs);
+  }>(callsKey({ id, callId }), getLogs);
   const {
     data: call,
     isFetching: callFetching,
     isFetched: isCallFetched,
-    isError: callError,
-  } = useQuery<Call>(fnLogsKey({ id, callId }), getCall);
+    error: callError,
+  } = useQuery<Call>(logsKey({ id, callId }), getCall);
 
-  const fetched = !isLogsFetched || !isCallFetched;
+  const fetched = isLogsFetched && isCallFetched;
   const fetching = logsFetching || callFetching;
-  const error = logError || callError;
+  const errors = [logError, callError].filter(Boolean);
+  const error: undefined | any[] = errors.length > 0 ? errors : undefined;
+
+  console.log({ logError, callError, error, s: JSON.stringify(error) });
 
   const update = (e: SyntheticEvent) => {
     e.preventDefault();
-    queryCache.invalidateQueries(fnCallsKey({ id, callId }));
-    queryCache.invalidateQueries(fnLogsKey({ id, callId }));
+    queryCache.invalidateQueries(callsKey({ id, callId }));
+    queryCache.invalidateQueries(logsKey({ id, callId }));
   };
 
   return (
@@ -128,15 +130,33 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
       visible
       title="Logs"
       width={900}
-      closeIcon={fetching ? <LoadingIcon /> : null}
-      cancelText="Close"
-      okText={error ? 'Retry' : 'Update'}
       onCancel={onCancel}
-      onOk={update}
+      footer={[
+        <Button
+          key="close"
+          icon="XLarge"
+          onClick={onCancel}
+          style={{
+            /** Padding needed because of inconsistent icon sizes in cogs * */
+            paddingTop: 10,
+          }}
+        >
+          Close
+        </Button>,
+        <Button
+          key="button"
+          type="primary"
+          icon={fetching ? 'Loading' : 'Refresh'}
+          disabled={fetching}
+          onClick={update}
+        >
+          {error ? 'Retry' : 'Update'}
+        </Button>,
+      ]}
     >
       <ModalBody
         fetched={fetched}
-        error={error}
+        errors={error}
         call={call}
         logs={logs?.items}
       />

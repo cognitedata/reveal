@@ -4,9 +4,12 @@ type Args = {
   id?: number;
   callId: number;
 };
-export function fnCallsKey({ id, callId }: Args): QueryKey {
+export function callsKey({ id, callId }: Args): QueryKey {
   return ['/function/calls', { id, callId }];
 }
-export function fnLogsKey({ id, callId }: Args): QueryKey {
+export function logsKey({ id, callId }: Args): QueryKey {
   return ['/function/logs', { id, callId }];
+}
+export function responseKey({ id, callId }: Args): QueryKey {
+  return ['/function/call/response', { id, callId }]
 }

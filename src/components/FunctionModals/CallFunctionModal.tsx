@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { Card, Modal, Input, Form } from 'antd';
+import { Modal, Input, Form } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryCache } from 'react-query';
 
@@ -123,8 +123,13 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
     );
   };
   return (
-    <Modal footer={null} visible width="900px" onCancel={handleCancel}>
-      <Card title="Call Function" style={{ marginRight: '24px' }}>
+    <Modal
+    title="Call function"
+    visible
+    width={900}
+    onCancel={handleCancel}
+      >
+
         <div style={{ display: 'inline' }}>
           <div>
             <b>Function: </b> {fn?.name}
@@ -145,7 +150,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
             <FunctionCallResponse id={id} callId={data?.id} />
           </div>
         </div>
-      </Card>
+
     </Modal>
   );
 }

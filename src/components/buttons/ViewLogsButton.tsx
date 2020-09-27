@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 
-import ViewLogsModal from 'components/FunctionModals/ViewLogsModal';
+import FunctionLogsModal from 'components/FunctionModals/FunctionLogsModal';
 
 type Props = {
   id: number;
@@ -22,10 +22,10 @@ export default function ViewLogsButton({ id, callId }: Props) {
           setShowModal(true);
         }}
       >
-        View Logs
+        View logs
       </Button>
       {showModal ? (
-        <ViewLogsModal
+        <FunctionLogsModal
           id={id}
           callId={callId}
           onCancel={() => setShowModal(false)}
