@@ -49,28 +49,28 @@ export default () => {
   }, []);
 
   return (
-    <AntStyles>
-      <SubAppWrapper>
-        <AuthWrapper
-          subAppName="functions-ui"
-          showLoader
-          loadingScreen={<Loader />}
-        >
-          <ClientSDKProvider client={sdk}>
-            <ThemeProvider theme={theme}>
-              <Router history={history}>
-                <ReactQueryCacheProvider queryCache={queryCache}>
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <AntStyles>
+        <SubAppWrapper>
+          <AuthWrapper
+            subAppName="functions-ui"
+            showLoader
+            loadingScreen={<Loader />}
+          >
+            <ClientSDKProvider client={sdk}>
+              <ThemeProvider theme={theme}>
+                <Router history={history}>
                   <Switch>
                     <Route path="/:tenant" component={RootApp} />
                   </Switch>
-                  <ReactQueryDevtools initialIsOpen={false} />
-                </ReactQueryCacheProvider>
-              </Router>
-            </ThemeProvider>
-            <GlobalStyle theme={theme} />
-          </ClientSDKProvider>
-        </AuthWrapper>
-      </SubAppWrapper>
-    </AntStyles>
+                </Router>
+              </ThemeProvider>
+              <GlobalStyle theme={theme} />
+            </ClientSDKProvider>
+          </AuthWrapper>
+        </SubAppWrapper>
+      </AntStyles>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </ReactQueryCacheProvider>
   );
 };

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tag } from 'antd';
-import { Icon } from '@cognite/cogs.js';
 import { CallResponse } from 'types';
 import FunctionCall from './FunctionCall';
+import LoadingIcon from 'components/LoadingIcon';
 
 type Props = {
   id: number;
@@ -31,7 +31,7 @@ export default function FunctionCallStatus({ id, callId }: Props) {
     <FunctionCall
       id={id}
       callId={callId}
-      renderLoading={() => <Icon type="Loading" />}
+      renderLoading={() => <LoadingIcon />}
       renderCall={response => <InnerFunctionCallStatus response={response} />}
     />
   );

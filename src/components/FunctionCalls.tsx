@@ -3,12 +3,12 @@ import moment from 'moment';
 import { CSSProperties } from 'styled-components';
 
 import { Alert, Table, Tag } from 'antd';
-import { Icon } from '@cognite/cogs.js';
 import { Call } from 'types';
 import { useQuery } from 'react-query';
 import { getCalls } from 'utils/api';
 import ViewLogsButton from 'components/buttons/ViewLogsButton';
 import ViewResponseButton from 'components/buttons/ViewResponseButton';
+import LoadingIcon from 'components/LoadingIcon';
 
 export const callStatusTag = (status: string, style?: CSSProperties) => {
   switch (status) {
@@ -119,7 +119,7 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
     );
   }
   if (!isFetched) {
-    return <Icon type="Loading" />;
+    return <LoadingIcon />
   }
 
   return (

@@ -2,13 +2,14 @@ import React from 'react';
 import moment from 'moment';
 import cronstrue from 'cronstrue';
 import { Table, Alert, List, Popover } from 'antd';
-import { Icon, Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 
 import { Schedule } from 'types';
 import { useQuery } from 'react-query';
 
 import DeleteScheduleButton from 'components/buttons/DeleteScheduleButton';
 import CreateScheduleButton from 'components/buttons/CreateScheduleButton';
+import LoadingIcon from 'components/LoadingIcon';
 import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [
@@ -99,7 +100,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
     );
   }
   if (!isFetched) {
-    return <Icon type="Loading" />;
+    return <LoadingIcon />
   }
 
   return (

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { Card, Modal, Input } from 'antd';
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import React, { useState, SyntheticEvent } from 'react';
+import { Modal, Input, Alert, Row, Col } from 'antd';
+import { Icon } from '@cognite/cogs.js';
 import moment from 'moment';
 import { Call, Log } from 'types';
 import Highlighter from 'react-highlight-words';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryCache } from 'react-query';
 import { getLogs, getCall } from 'utils/api';
+import LoadingIcon from 'components/LoadingIcon';
+import { fnCallsKey, fnLogsKey } from 'utils/queryKeys';
 import NoLogs from './icons/emptyLogs';
 
 type Props = {
@@ -13,118 +15,131 @@ type Props = {
   id: number;
   callId: number;
 };
-const titleText = 'Logs';
-const fetchingIcon = <Icon type="Loading" style={{ paddingLeft: '8px' }} />;
-const errorIcon = (
-  <Tooltip placement="right" content="There was an error ">
-    <Icon type="Close" style={{ paddingLeft: '8px', color: '#ff0000' }} />
-  </Tooltip>
-);
-export default function ViewLogsModal({ onCancel, id, callId }: Props) {
-  const [logsSearch, setLogsSearch] = useState('');
-  const { data, isFetched: isLogsFetched, error } = useQuery<{ items: Log[] }>(
-    ['/function/call/logs', { id, callId }],
-    getLogs
-  );
-  const { data: call, isFetched: isCallFetched } = useQuery<Call>(
-    ['/function/calls', { id, callId }],
-    getCall
-  );
-  const logs = data?.items;
-  const fetching = !isLogsFetched || !isCallFetched;
 
-  let displayLogs;
-  if (fetching) {
-    displayLogs = <em>Loading...</em>;
-  } else if (logs && logs.length > 0) {
-    displayLogs = (
-      <>
-        <p>
-          <b>
-            {moment.utc(call?.startTime).format('YYYY-MM-DD hh:mm')} Function
-            started
-          </b>
-        </p>
-        <p key={`${call?.id}-logs`}>
-          {logs?.map((log: Log, index) => (
-            <React.Fragment key={index}>
-              <Highlighter
-                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                searchWords={[logsSearch]}
-                autoEscape
-                textToHighlight={log.message}
-              />
-              <br />
-            </React.Fragment>
-          ))}
-        </p>
-        {call?.endTime && (
-          <p>
-            <b>
-              {moment.utc(call?.endTime).format('YYYY-MM-DD hh:mm')} Function
-              ended
-            </b>
-          </p>
-        )}
-      </>
+type BodyProps = {
+  logs?: Log[];
+  call?: Call;
+  error: boolean;
+  fetched: boolean;
+};
+function ModalBody({ logs, call, error, fetched }: BodyProps) {
+  const [logsSearch, setLogsSearch] = useState('');
+
+  if (fetched) {
+    return (
+      <Row>
+        <Col span={1}>
+          <LoadingIcon />
+        </Col>
+        <Col span={23}>Fetching logs</Col>
+      </Row>
     );
-  } else if (error) {
-    displayLogs = <em>There was an error fetching the logs</em>;
-  } else {
-    displayLogs = (
+  }
+  if (error) {
+    return (
+      <Alert
+        type="error"
+        icon={<Icon type="ErrorFilled" />}
+        message="Error"
+        description="There was an error fetching the logs"
+      />
+    );
+  }
+
+  if (logs?.length === 0) {
+    return (
       <>
         <em>No logs were returned from this function call</em>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <NoLogs />
-        </div>
+        <NoLogs />
       </>
     );
   }
 
-  const title = () => {
-    let icon = null;
-    if (fetching) {
-      icon = fetchingIcon;
-    }
-    if (error) {
-      icon = errorIcon;
-    }
-    return (
-      <div>
-        {titleText}
-        {icon}
-      </div>
-    );
-  };
-
   return (
-    <Modal visible footer={null} width="900px" onCancel={onCancel}>
-      <Card title={title()} style={{ marginRight: '24px' }}>
-        <Input
-          name="filter"
-          prefix={
-            <Icon
-              type="Search"
-              style={{
-                height: '16px',
-                width: '16px',
-              }}
+    <>
+      <Input
+        name="filter"
+        prefix={<Icon type="Search" />}
+        value={logsSearch}
+        onChange={evt => setLogsSearch(evt.target.value)}
+        style={{ marginBottom: '16px' }}
+      />
+      {fetched && <LoadingIcon />}
+      <p>
+        <b>
+          {moment.utc(call?.startTime).format('YYYY-MM-DD hh:mm')} Function
+          started
+        </b>
+      </p>
+      <p key={`${call?.id}-logs`}>
+        {logs?.map((log: Log, index) => (
+          <React.Fragment key={index}>
+            <Highlighter
+              highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+              searchWords={[logsSearch]}
+              autoEscape
+              textToHighlight={log.message}
             />
-          }
-          value={logsSearch}
-          onChange={evt => setLogsSearch(evt.target.value)}
-          style={{ marginBottom: '16px' }}
-        />
-        {displayLogs}
-      </Card>
-    </Modal>
+            <br />
+          </React.Fragment>
+        ))}
+      </p>
+      {call?.endTime && (
+        <p>
+          <b>
+            {moment.utc(call?.endTime).format('YYYY-MM-DD hh:mm')} Function
+            ended
+          </b>
+        </p>
+      )}
+    </>
   );
 }
 
-export const stuffForUnitTests = { titleText, fetchingIcon, errorIcon };
+export default function ViewLogsModal({ onCancel, id, callId }: Props) {
+  const queryCache = useQueryCache();
+  const {
+    data: logs,
+    isFetching: logsFetching,
+    isFetched: isLogsFetched,
+    isError: logError,
+  } = useQuery<{
+    items: Log[];
+  }>(fnCallsKey({ id, callId }), getLogs);
+  const {
+    data: call,
+    isFetching: callFetching,
+    isFetched: isCallFetched,
+    isError: callError,
+  } = useQuery<Call>(fnLogsKey({ id, callId }), getCall);
+
+  const fetched = !isLogsFetched || !isCallFetched;
+  const fetching = logsFetching || callFetching;
+  const error = logError || callError;
+
+  const update = (e: SyntheticEvent) => {
+    e.preventDefault();
+    queryCache.invalidateQueries(fnCallsKey({ id, callId }));
+    queryCache.invalidateQueries(fnLogsKey({ id, callId }));
+  };
+
+  return (
+    <Modal
+      visible
+      title="Logs"
+      width={900}
+      closeIcon={fetching ? <LoadingIcon /> : null}
+      cancelText="Close"
+      okText={error ? 'Retry' : 'Update'}
+      onCancel={onCancel}
+      onOk={update}
+    >
+      <ModalBody
+        fetched={fetched}
+        error={error}
+        call={call}
+        logs={logs?.items}
+      />
+    </Modal>
+  );
+}
