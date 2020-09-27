@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tag } from 'antd';
 import { CallResponse } from 'types';
-import FunctionCall from './FunctionCall';
 import LoadingIcon from 'components/LoadingIcon';
+import FunctionCall from './FunctionCall';
 
 type Props = {
   id: number;

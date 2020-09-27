@@ -12,6 +12,7 @@ import { recentlyCreated, sortLastCall } from 'utils/sorting';
 import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
+import { sortFunctionKey } from 'utils/queryKeys';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -36,18 +37,15 @@ function Functions() {
   }>('/functions');
   const functions = data?.items;
 
+  const functionIds = functions
+    ?.sort(({ id: id1 }, { id: id2 }) => id1 - id2)
+    .map(({ id }) => ({ id }));
+
   const { data: calls, isFetched: callsDone } = useQuery<{
     [id: number]: Call[];
-  }>(
-    [
-      `/functions/calls`,
-      functions
-        ?.sort(({ id: id1 }, { id: id2 }) => id1 - id2)
-        .map(({ id }) => ({ id })),
-    ],
-    getCalls,
-    { enabled: functionsDone }
-  );
+  }>([sortFunctionKey, functionIds!], getCalls, {
+    enabled: functionsDone && functionIds,
+  });
 
   const { Panel } = Collapse;
 

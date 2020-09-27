@@ -100,7 +100,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
     );
   }
   if (!isFetched) {
-    return <LoadingIcon />
+    return <LoadingIcon />;
   }
 
   return (

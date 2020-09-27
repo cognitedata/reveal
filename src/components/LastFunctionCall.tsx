@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 import { Call } from 'types';
 import { getCalls } from 'utils/api';
+import { callsKey } from 'utils/queryKeys';
 
 type Props = {
   id: number;
@@ -15,7 +16,7 @@ export default function LastFunctionCall({
   renderMissing,
 }: Props) {
   const { data: calls, isFetched } = useQuery<Call[]>(
-    ['/functions/calls', { id }],
+    callsKey({ id }),
     getCalls
   );
 

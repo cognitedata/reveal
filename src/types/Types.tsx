@@ -78,3 +78,7 @@ export interface Schedule extends CreateSchedule {
   id: number;
   createdTime: Date;
 }
+export type GetCallArgs = {
+  id: number;
+  callId: number;
+};

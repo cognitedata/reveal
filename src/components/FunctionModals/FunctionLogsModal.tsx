@@ -6,7 +6,7 @@ import { Call, Log } from 'types';
 import Highlighter from 'react-highlight-words';
 import { useQuery, useQueryCache } from 'react-query';
 import { getLogs, getCall } from 'utils/api';
-import { callsKey, logsKey } from 'utils/queryKeys';
+import { logsKey, callKey } from 'utils/queryKeys';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import NoLogs from './icons/emptyLogs';
 
@@ -104,24 +104,22 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
     error: logError,
   } = useQuery<{
     items: Log[];
-  }>(callsKey({ id, callId }), getLogs);
+  }>(logsKey({ id, callId }), getLogs);
   const {
     data: call,
     isFetching: callFetching,
     isFetched: isCallFetched,
     error: callError,
-  } = useQuery<Call>(logsKey({ id, callId }), getCall);
+  } = useQuery<Call>(callKey({ id, callId }), getCall);
 
   const fetched = isLogsFetched && isCallFetched;
   const fetching = logsFetching || callFetching;
   const errors = [logError, callError].filter(Boolean);
   const error: undefined | any[] = errors.length > 0 ? errors : undefined;
 
-  console.log({ logError, callError, error, s: JSON.stringify(error) });
-
   const update = (e: SyntheticEvent) => {
     e.preventDefault();
-    queryCache.invalidateQueries(callsKey({ id, callId }));
+    queryCache.invalidateQueries(callKey({ id, callId }));
     queryCache.invalidateQueries(logsKey({ id, callId }));
   };
 

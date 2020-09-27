@@ -1,16 +1,26 @@
 import sdk from 'sdk-singleton';
 import { QueryKey } from 'react-query';
-import { CreateSchedule, CogFunctionUpload, CogFunction } from 'types';
+import {
+  CreateSchedule,
+  CogFunctionUpload,
+  CogFunction,
+  GetCallArgs,
+  CallResponse,
+} from 'types';
 import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
 
-type _GetCallsArgs = { id: number; scheduleId?: number };
-type GetCallsArgs = _GetCallsArgs | _GetCallsArgs;
+// Using react-query#useQuery calls the function with a QueryKey as the first
+// argument, useMutation does not.
 
-const getCallsSdk = (args: _GetCallsArgs) => {
-  const { id, scheduleId } = args;
-  const filter = args ? { scheduleId } : {};
+type GetCallsArgs = { id: number; scheduleId?: number };
+
+const getCallsSdk = ({ id, scheduleId }: GetCallsArgs) => {
+  if (!id) {
+    throw new Error('id missing');
+  }
+  const filter = scheduleId ? { scheduleId } : {};
   return sdk
     .post(
       `/api/playground/projects/${sdk.project}/functions/${id}/calls/list`,
@@ -21,7 +31,10 @@ const getCallsSdk = (args: _GetCallsArgs) => {
     .then(response => response.data?.items);
 };
 
-export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
+export const getCalls = async (
+  _: QueryKey,
+  args: GetCallsArgs | GetCallsArgs[]
+) => {
   if (Array.isArray(args)) {
     const results = await Promise.all(args.map(a => getCallsSdk(a)));
     return args.reduce(
@@ -35,12 +48,13 @@ export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
   return getCallsSdk(args);
 };
 
-type GetCallArgs = {
-  id: number;
-  callId: number;
-};
-export const getCall = (_: QueryKey, args: GetCallArgs) => {
-  const { id, callId } = args;
+export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
+  if (!id) {
+    throw new Error('id missing');
+  }
+  if (!callId) {
+    throw new Error('callId missing');
+  }
   return sdk
     .get(
       `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}`
@@ -48,34 +62,31 @@ export const getCall = (_: QueryKey, args: GetCallArgs) => {
     .then(response => response.data);
 };
 
-type CallArgs = {
-  id: number;
-  data: any;
-};
-export const callFunction = async ({ id, data }: CallArgs) => {
-  return sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
-      data: data || {},
-    })
-    .then(response => response?.data);
-};
-
 type GetResponseArgs = {
   id: number;
   callId: number;
 };
-export const getResponse = async (
-  _: QueryKey,
-  { id, callId }: GetResponseArgs
-) => {
+export const getResponse = (_: QueryKey, { id, callId }: GetResponseArgs) => {
+  if (!id) {
+    throw new Error('id missing');
+  }
+  if (!callId) {
+    throw new Error('callId missing');
+  }
   return sdk
     .get(
       `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/response`
     )
-    .then(response => response?.data);
+    .then(response => response?.data?.response);
 };
 
-export const getLogs = async (_: QueryKey, { id, callId }: GetResponseArgs) => {
+export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
+  if (!id) {
+    throw new Error('id missing');
+  }
+  if (!callId) {
+    throw new Error('callId missing');
+  }
   return sdk
     .get(
       `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/logs`
@@ -83,12 +94,25 @@ export const getLogs = async (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .then(response => response?.data);
 };
 
-export const deleteFunction = ({ id }: { id: number }) =>
-  sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/delete`, {
-      data: { items: [{ id }] },
+export const getFile = (_: QueryKey, id: number) =>
+  sdk.files.retrieve([{ id }]).then(r => r[0]);
+
+export const callFunction = ({
+  id,
+  data,
+}: {
+  id: number;
+  data: any;
+}): Promise<CallResponse> => {
+  if (!id) {
+    throw new Error('id missing');
+  }
+  return sdk
+    .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
+      data: data || {},
     })
     .then(response => response?.data);
+};
 
 export const createSchedule = (schedule: CreateSchedule) =>
   sdk
@@ -112,12 +136,35 @@ const sleep = async (ms: number) =>
     setTimeout(() => resolve(), ms);
   });
 
-const createFunction = (cogfunction: CogFunctionUpload): Promise<CogFunction> =>
-  sdk
+const createFunction = (
+  cogfunction: CogFunctionUpload
+): Promise<CogFunction> => {
+  return sdk
     .post(`/api/playground/projects/${sdk.project}/functions`, {
       data: { items: [cogfunction] },
     })
     .then(response => response?.data);
+};
+export const deleteFunction = async ({
+  id,
+  fileId,
+}: {
+  id: number;
+  fileId?: number;
+}) => {
+  if (!id) {
+    throw new Error('id missing');
+  }
+  const deleteResponse = await sdk
+    .post(`/api/playground/projects/${sdk.project}/functions/delete`, {
+      data: { items: [{ id }] },
+    })
+    .then(response => response?.data);
+  if (fileId) {
+    await sdk.files.delete([{ id: fileId }]);
+  }
+  return deleteResponse;
+};
 
 const GCSUploader = (
   file: Blob | UploadFile,
@@ -165,8 +212,6 @@ const uploadFile = async (file: UploadFile) => {
   return id;
 };
 
-export const deleteFile = sdk.files.delete;
-
 export const uploadFunction = async ({
   data,
   file,
@@ -182,7 +227,7 @@ export const uploadFunction = async ({
     const { id } = await createFunction({ ...data, fileId });
     return id;
   } catch (e) {
-    await deleteFile([{ id: fileId }]);
+    await sdk.files.delete([{ id: fileId }]);
     throw e;
   }
 };

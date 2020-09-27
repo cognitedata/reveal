@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Modal, Form, Input, Upload, Alert, Row, Col } from 'antd';
+import {
+  Modal,
+  Form,
+  Input,
+  Upload,
+  Alert,
+  Row,
+  Col,
+  notification,
+} from 'antd';
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -19,6 +28,7 @@ import {
   checkSecrets,
   checkFile,
 } from 'utils/formValidations';
+import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 
 export interface Secret {
   key: string;
@@ -48,16 +58,21 @@ const StyledForm = styled(Form)`
 export default function UploadFunctionModal({ onCancel }: Props) {
   const queryCache = useQueryCache();
 
-  const [
-    doUploadFunction,
-    { isLoading, isSuccess, isError, error },
-  ] = useMutation(uploadFunction, {
-    onSuccess() {
-      queryCache.invalidateQueries('/functions');
-    },
-  });
+  const [doUploadFunction, { isLoading, isError, error }] = useMutation(
+    uploadFunction,
+    {
+      onSuccess(id) {
+        notification.success({
+          message: 'Function created',
+          description: `Fuction ${id} was successfully created`,
+        });
+        queryCache.invalidateQueries('/functions');
+        onCancel();
+      },
+    }
+  );
 
-  const disableForm = isLoading || isSuccess;
+  const disableForm = isLoading;
 
   const [functionName, setFunctionName] = useState({
     value: '',
@@ -151,11 +166,12 @@ export default function UploadFunctionModal({ onCancel }: Props) {
       style={{ top: 20 }}
       onCancel={onCancel}
       footer={[
-        <Button icon="XLarge" onClick={onCancel}>
+        <Button key="cance" icon="XLarge" onClick={onCancel}>
           Cancel
         </Button>,
         <Button
           type="primary"
+          key="upload"
           icon={isLoading ? 'Loading' : 'Upload'}
           disabled={disableForm || !canBeSubmitted}
           onClick={handleSubmit}
@@ -167,7 +183,13 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     >
       {isError ? (
         <Alert
-          message={`Error: ${JSON.stringify(error)}`}
+          message="Error"
+          description={
+            <>
+              <p>An error occured when trying to upload this function.</p>
+              <ErrorFeedback error={error} />
+            </>
+          }
           type="error"
           closable
           showIcon

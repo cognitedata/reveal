@@ -1,19 +1,25 @@
-import React, { useEffect } from 'react';
-import { Modal, notification } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { notification } from 'antd';
+import { useMutation, useQueryCache, useQuery } from 'react-query';
+
 import { Button } from '@cognite/cogs.js';
-import { useMutation, useQueryCache } from 'react-query';
 import { deleteFunction } from 'utils/api';
+import DeleteFunctionModal from 'components/FunctionModals/DeleteFunctionModal';
+import { CogFunction } from 'types';
 
 type Props = {
   id: number;
-  name: string;
 };
-const NOTIFICATION_KEY = 'delete-notifications';
 
-// TODO: This function could also ask the user if the file asossiated
-// with the function should be deleted
-export default function DeleteFunctionButton({ id, name }: Props) {
+const NOTIFICATION_KEY = `delete-notifications`;
+
+export default function DeleteFunctionButton({ id }: Props) {
   const queryCache = useQueryCache();
+  const [showModal, setShowModal] = useState(false);
+
+  const { data } = useQuery<CogFunction>(`/functions/${id}`);
+  const name = data?.name;
+
   const [
     deleteFn,
     { isLoading: isDeleting, isSuccess: isDeleted, isError },
@@ -27,7 +33,11 @@ export default function DeleteFunctionButton({ id, name }: Props) {
     if (isDeleting) {
       notification.info({
         message: 'Deleting function',
-        description: `Deleting function ${name} (${id}).`,
+        description: (
+          <>
+            Deleting function <strong>{name}</strong> ({id})
+          </>
+        ),
         key: NOTIFICATION_KEY,
       });
     }
@@ -37,7 +47,11 @@ export default function DeleteFunctionButton({ id, name }: Props) {
     if (isDeleted) {
       notification.success({
         message: 'Function deleted',
-        description: `Function ${name} (${id}) deleted successfully.`,
+        description: (
+          <>
+            Function <strong>{name}</strong> ({id}) deleted successfully
+          </>
+        ),
         key: NOTIFICATION_KEY,
       });
     }
@@ -47,7 +61,12 @@ export default function DeleteFunctionButton({ id, name }: Props) {
     if (isError) {
       notification.error({
         message: 'Deleting function',
-        description: `An error occured when trying to delete function ${name} (${id}).`,
+        description: (
+          <>
+            An error occured when trying to delete function{' '}
+            <strong>{name}</strong> (${id})
+          </>
+        ),
         key: NOTIFICATION_KEY,
       });
     }
@@ -56,7 +75,7 @@ export default function DeleteFunctionButton({ id, name }: Props) {
   return (
     <>
       <Button
-        icon={isDeleting ? 'Loading' : 'Delete'}
+        icon="Delete"
         size="small"
         style={{
           marginLeft: '8px',
@@ -64,17 +83,19 @@ export default function DeleteFunctionButton({ id, name }: Props) {
         }}
         onClick={e => {
           e.stopPropagation();
-          Modal.confirm({
-            title: 'Are you sure?',
-            content: 'Are you sure you want to delete this function?',
-            onOk: () => {
-              deleteFn({ id });
-            },
-            onCancel: () => {},
-            okText: 'Delete',
-          });
+          setShowModal(true);
         }}
       />
+      {showModal && (
+        <DeleteFunctionModal
+          id={id}
+          onCancel={() => setShowModal(false)}
+          onDelete={(functionId: number, fileId?: number) => {
+            deleteFn({ id: functionId, fileId });
+            setShowModal(false);
+          }}
+        />
+      )}
     </>
   );
 }

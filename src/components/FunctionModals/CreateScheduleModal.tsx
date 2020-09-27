@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Alert } from 'antd';
+import { Modal, Form, Input, Alert, notification } from 'antd';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { isValidCron } from 'cron-validator';
 import { useMutation, useQueryCache } from 'react-query';
@@ -75,9 +75,10 @@ export default function CreateScheduleModal({ externalId, onCancel }: Props) {
 
   useEffect(() => {
     if (isSuccess) {
-      Modal.success({
-        title: 'Schedule created',
-        content: `Schedule '${scheduleName.value}' for function ${externalId} created successfully`,
+      notification.success({
+        message: 'Schedule created',
+        description: `Schedule '${scheduleName.value}' for function ${externalId} created successfully`,
+        key: 'schedules',
       });
     }
   }, [isSuccess, externalId, scheduleName.value]);

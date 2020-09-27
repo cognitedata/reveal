@@ -2,19 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { CallResponse } from 'types';
 import { getCall } from 'utils/api';
+import { callKey } from 'utils/queryKeys';
 
-type Props = {
+interface Props {
   id: number;
   callId?: number;
   renderCall: (call: CallResponse) => JSX.Element | null;
   renderLoading?: () => JSX.Element | null;
-};
+}
 
-function InnerFunctionCall({ id, callId, renderCall, renderLoading }: Props) {
+interface InnerProps extends Props {
+  callId: number;
+}
+
+function InnerFunctionCall({
+  id,
+  callId,
+  renderCall,
+  renderLoading,
+}: InnerProps) {
   const [refetchInterval, setInterval] = useState<number | false>(1000);
 
   const { data: callResponse, isFetched } = useQuery<CallResponse>(
-    [`/functions/calls`, { id, callId }],
+    callKey({ id, callId }),
     getCall,
     {
       refetchInterval,

@@ -8,11 +8,7 @@ export default function ErrorFeedback({ error }: Props) {
     return null;
   }
   if (error?.message) {
-    return (
-      <pre>
-        {error.message}
-      </pre>
-    );
+    return <pre>{error.message}</pre>;
   }
   return <pre>{JSON.stringify(error, null, 2)}</pre>;
 }

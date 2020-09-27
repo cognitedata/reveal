@@ -105,7 +105,7 @@ type Props = {
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
   const { data, isFetched, error } = useQuery<Call[]>(
-    [`/functions/calls`, { id, scheduleId }],
+    [`/functions/calls`, { id, scheduleId }], // TODO
     getCalls
   );
   const functionCalls = data || [];
@@ -119,7 +119,7 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
     );
   }
   if (!isFetched) {
-    return <LoadingIcon />
+    return <LoadingIcon />;
   }
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { Descriptions, Alert } from 'antd';
-import LoadingIcon from 'components/LoadingIcon'
+import LoadingIcon from 'components/LoadingIcon';
 import { CogFunction } from 'types';
 import { useQuery } from 'react-query';
 
@@ -24,7 +24,7 @@ export default function FunctionDetails({ id, name }: Props) {
     );
   }
   if (!isFetched) {
-    return <LoadingIcon />
+    return <LoadingIcon />;
   }
 
   const notSet = <em>Not Set</em>;

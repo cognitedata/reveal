@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button } from '@cognite/cogs.js';
-import { Modal } from 'antd';
+import { Modal, notification } from 'antd';
 import { useMutation, useQueryCache } from 'react-query';
 import { deleteSchedule } from 'utils/api';
 
@@ -10,20 +10,32 @@ type Props = {
 
 export default function DeleteScheduleButton({ id }: Props) {
   const queryCache = useQueryCache();
-  const [doDelete, { isLoading, isSuccess }] = useMutation(deleteSchedule, {
-    onSuccess() {
-      queryCache.invalidateQueries('/functions/schedules');
-    },
-  });
+  const [doDelete, { isLoading, isSuccess, isError }] = useMutation(
+    deleteSchedule,
+    {
+      onSuccess() {
+        queryCache.invalidateQueries('/functions/schedules');
+      },
+    }
+  );
 
   useEffect(() => {
     if (isSuccess) {
-      Modal.success({
-        title: 'Schedule deleted',
-        content: `Schedule ${id} deleted successfully`,
+      notification.success({
+        message: 'Success',
+        description: `Schedule ${id} deleted successfully`,
       });
     }
   }, [isSuccess, id]);
+  useEffect(() => {
+    if (isError) {
+      notification.error({
+        message: 'Error',
+        description: `An error occured when trying to delete schedule ${id}`,
+        key: 'schedules',
+      });
+    }
+  }, [isError, id]);
 
   return (
     <Button
