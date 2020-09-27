@@ -185,12 +185,6 @@ function Functions() {
             style={{ float: 'right' }}
           />
         </CollapseDiv>
-        {/** <CallFunctionModal visible={!!functionToRun} />
-        <UploadFunctionModal
-          visible={showUploadModal}
-          onCancel={() => setShowUploadModal(false)}
-        />
-* */}
       </div>
     </>
   );

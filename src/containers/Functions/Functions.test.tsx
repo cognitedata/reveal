@@ -1,15 +1,23 @@
-import { Map } from 'immutable';
+/* eslint-disable import/first */
+jest.mock('sdk-singleton', () => {
+  return {
+    __esModule: true,
+    default: {
+      project: 'unittests',
+      get: jest.fn(),
+      post: jest.fn(),
+    },
+  };
+});
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+
 import { MemoryRouter } from 'react-router';
-import { CogFunction, Schedule, Call } from 'types/Types';
+import { CogFunction, Call } from 'types/Types';
 import { mount } from 'enzyme';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
-import CallFunctionModal from 'components/FunctionModals/CallFunctionModal';
-import UploadFunctionModal from 'components/FunctionModals/UploadFunctionModal';
-import { Collapse } from 'antd';
+
+import TestWrapper from 'utils/TestWrapper';
 import sdk from 'sdk-singleton';
 import Functions from './Functions';
 
@@ -17,20 +25,15 @@ jest.mock('@cognite/cdf-utilities', () => ({
   PageTitle: () => null,
 }));
 
-const middlewares = [thunk]; // add your middlewares like `redux-thunk`
-const mockStore = configureStore(middlewares);
-
-const mockFunctionId = 2;
-const mockFunctionExternalId = 'externalid';
 const mockFunction = {
   fileId: 1,
   name: 'testFunc',
-  id: mockFunctionId,
+  id: 1,
   createdTime: new Date(),
   owner: 'somebody@cognite.com',
   description: 'some description',
   status: 'Ready',
-  externalId: mockFunctionExternalId,
+  externalId: 'externalid',
 } as CogFunction;
 const mockCall = {
   id: 100,
@@ -38,271 +41,104 @@ const mockCall = {
   endTime: new Date(),
   status: 'Completed',
 } as Call;
-const mockSchedule = {
-  id: 6,
+const mockFunction2 = {
+  fileId: 1,
+  name: 'secondFunc',
+  id: 2,
   createdTime: new Date(),
-  name: 'mock schedule',
-  description: 'mock Schedule description',
-  functionExternalId: mockFunctionExternalId,
-  cronExpression: '* * * * *',
-  data: {},
-} as Schedule;
+  owner: 'somebody@cognite.com',
+  description: 'some description',
+  status: 'Ready',
+} as CogFunction;
 
-sdk.get.mockReturnValue({ data: { items: {} } });
-sdk.get.mockClear();
-const initialStoreState = {
-  items: {
-    items: Map([[mockFunctionId, mockFunction]]),
-  },
-  call: {},
-  delete: {},
-  create: { fileInfo: {} },
-  allCalls: {},
-  schedules: {
-    list: {
-      items: {
-        [mockSchedule.id]: {
-          schedule: mockSchedule,
-          calls: [mockCall],
-        },
-      },
-    },
-    create: {},
-    delete: {},
-  },
-  response: {
-    [mockFunctionExternalId]: {},
-  },
-};
-let initialStore = mockStore(initialStoreState);
+sdk.get.mockResolvedValue({ items: [mockFunction, mockFunction2] });
+sdk.post.mockResolvedValue({ data: { items: [mockCall] } });
+
+const wrap = (node: React.ReactNode) =>
+  mount(<TestWrapper>{node}</TestWrapper>);
+
+const sleep = async (ms: number) =>
+  new Promise(resolve => {
+    setTimeout(() => resolve(), ms);
+  });
 
 describe('Functions', () => {
-  beforeEach(() => {
-    initialStore = mockStore(initialStoreState);
-  });
+  beforeEach(() => sdk.get.mockClear());
+  beforeEach(() => sdk.post.mockClear());
+
   it('renders without crashing', () => {
     expect(() => {
       const div = document.createElement('div');
       ReactDOM.render(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <Functions />
-          </MemoryRouter>
-        </Provider>,
+        <MemoryRouter>
+          <Functions />
+        </MemoryRouter>,
         div
       );
       ReactDOM.unmountComponentAtNode(div);
     }).not.toThrow();
   });
-  it('should load functions upon mount', () => {
+
+  it('should load functions and calls upon mount', async () => {
     const useEffect = jest.spyOn(React, 'useEffect');
+    wrap(<Functions />);
 
-    mount(
-      <Provider store={initialStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
+    await sleep(100);
+
     expect(useEffect).toHaveBeenCalled();
-    expect(initialStore.getActions()[0]).toEqual({
-      type: 'functions/RETRIEVE',
-      ids: [],
-    });
-    expect(initialStore.getActions()).toHaveLength(4);
-  });
-  it('should load function calls upon mount', () => {
-    const useEffect = jest.spyOn(React, 'useEffect');
+    expect(sdk.get).toHaveBeenCalled();
+    expect(sdk.post).toHaveBeenCalled();
 
-    mount(
-      <Provider store={initialStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
+    expect(sdk.get).toHaveBeenCalledWith('/functions');
+    expect(
+      sdk.post
+    ).toHaveBeenCalledWith(
+      '/api/playground/projects/unittests/functions/1/calls/list',
+      { data: { filter: {} } }
     );
-    expect(useEffect).toHaveBeenCalled();
-    expect(initialStore.getActions()).toHaveLength(4);
-    expect(initialStore.getActions()[2]).toEqual({
-      type: 'functions/LIST_CALLS',
-      functionId: mockFunctionId,
-    });
-  });
-  it('should load schedules upon mount', () => {
-    const useEffect = jest.spyOn(React, 'useEffect');
-
-    mount(
-      <Provider store={initialStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
-    expect(useEffect).toHaveBeenCalled();
-    expect(initialStore.getActions()).toHaveLength(4);
-    expect(initialStore.getActions()[1]).toEqual({
-      type: 'functions/SCHEDULES_LIST',
-    });
-  });
-  it('should load schedule calls upon mount', () => {
-    const useEffect = jest.spyOn(React, 'useEffect');
-
-    mount(
-      <Provider store={initialStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
-    expect(useEffect).toHaveBeenCalled();
-    expect(initialStore.getActions()).toHaveLength(4);
-    expect(initialStore.getActions()[3]).toEqual({
-      type: 'functions/SCHEDULE_LIST_CALLS',
-      schedule: mockSchedule,
-    });
   });
 
-  it('should not show any modals', () => {
-    const wrapper = mount(
-      <Provider store={initialStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
-    const uploadFunctionModal = wrapper.find(UploadFunctionModal);
-    expect(uploadFunctionModal.prop('visible')).toBe(false);
-    const callFunctionModal = wrapper.find(CallFunctionModal);
-    expect(callFunctionModal.prop('visible')).toBe(false);
-  });
-  it('should show upload modal if that button is clicked on', () => {
-    const wrapper = mount(
-      <Provider store={initialStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
-    const beforeClickModal = wrapper.find(UploadFunctionModal);
-    expect(beforeClickModal.prop('visible')).toBe(false);
-    const uploadFunctionButton = wrapper.find('button.cogs-btn').at(0);
-    uploadFunctionButton.simulate('click');
-    const afterClickModal = wrapper.find(UploadFunctionModal);
-    expect(afterClickModal.prop('visible')).toBe(true);
-  });
-  it('should show run modal if a function is selected to run', () => {
-    const runFunctionStoreState = {
-      ...initialStoreState,
-      call: { function: mockFunction },
-      response: {},
-    };
-    const runFunctionStore = mockStore(runFunctionStoreState);
-    const wrapper = mount(
-      <Provider store={runFunctionStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
-    const modal = wrapper.find(CallFunctionModal);
-    expect(modal.prop('visible')).toBe(true);
-  });
-  it('should refresh functions when button is clicked', () => {
-    const wrapper = mount(
-      <Provider store={initialStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
+  it('should refresh functions when button is clicked', async () => {
+    const wrapper = wrap(<Functions />);
+    await sleep(100);
+
+    sdk.get.mockClear();
+    expect(sdk.get).not.toHaveBeenCalledWith('/functions');
+    await sleep(100);
     const refreshButton = wrapper.find('button.cogs-btn').at(1);
     refreshButton.simulate('click');
-    expect(initialStore.getActions()).toHaveLength(8);
-    // first 5 are on mount
-    expect(initialStore.getActions()[4]).toEqual({
-      type: 'functions/RETRIEVE',
-      ids: [],
-    });
-    expect(initialStore.getActions()[5]).toEqual({
-      type: 'functions/LIST_CALLS',
-      functionId: mockFunctionId,
-    });
-    expect(initialStore.getActions()[6]).toEqual({
-      type: 'functions/SCHEDULES_LIST',
-    });
-    expect(initialStore.getActions()[7]).toEqual({
-      type: 'functions/SCHEDULE_LIST_CALLS',
-      schedule: mockSchedule,
-    });
+    expect(refreshButton).toBeDefined();
+
+    expect(sdk.get).toHaveBeenCalledWith('/functions');
   });
-  it('should update functions shown if search field is filled', () => {
-    const mockFunctionId2 = 3;
-    const mockFunction2 = {
-      fileId: 1,
-      name: 'secondFunc',
-      id: mockFunctionId2,
-      createdTime: new Date(),
-      owner: 'somebody@cognite.com',
-      description: 'some description',
-      status: 'Ready',
-    } as CogFunction;
-    const searchStoreState = {
-      ...initialStoreState,
-      items: {
-        items: Map([
-          [mockFunctionId, mockFunction],
-          [mockFunctionId2, mockFunction2],
-        ]),
-      },
-    };
-    const searchStore = mockStore(searchStoreState);
-    const wrapper = mount(
-      <Provider store={searchStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
-    const functionsDisplayed = wrapper.find(Collapse.Panel);
-    expect(functionsDisplayed).toHaveLength(2);
+
+  it('should update functions shown if search field is filled', async () => {
+    const wrapper = wrap(<Functions />);
+    await sleep(100);
+
+    const functionsDisplayed = wrapper.render().find('.ant-collapse-item');
+    expect(functionsDisplayed.length).toBe(2);
     const search = wrapper.find('input[name="filter"]');
+    debugger;
     search.simulate('change', { target: { value: 'second' } });
-    const functionsDisplayedAfterSearch = wrapper.find(Collapse.Panel);
+    const functionsDisplayedAfterSearch = wrapper
+      .render()
+      .find('.ant-collapse-item');
     expect(functionsDisplayedAfterSearch).toHaveLength(1);
   });
-  it('search field is case insensitive', () => {
-    const mockFunctionId2 = 3;
-    const mockFunction2 = {
-      fileId: 1,
-      name: 'secondFunc',
-      id: mockFunctionId2,
-      createdTime: new Date(),
-      owner: 'somebody@cognite.com',
-      description: 'some description',
-      status: 'Ready',
-    } as CogFunction;
-    const searchStoreState = {
-      ...initialStoreState,
-      items: {
-        items: Map([
-          [mockFunctionId, mockFunction],
-          [mockFunctionId2, mockFunction2],
-        ]),
-      },
-    };
-    const searchStore = mockStore(searchStoreState);
-    const wrapper = mount(
-      <Provider store={searchStore}>
-        <MemoryRouter>
-          <Functions />
-        </MemoryRouter>
-      </Provider>
-    );
-    const functionsDisplayed = wrapper.find(Collapse.Panel);
-    expect(functionsDisplayed).toHaveLength(2);
+
+  it('search field is case insensitive', async () => {
+    const wrapper = wrap(<Functions />);
+    await sleep(500);
+
+    const functionsDisplayed = wrapper.render().find('.ant-collapse-item');
+    expect(functionsDisplayed.length).toBe(2);
     const search = wrapper.find('input[name="filter"]');
+    debugger;
     search.simulate('change', { target: { value: 'SECOND' } });
-    const functionsDisplayedAfterSearch = wrapper.find(Collapse.Panel);
+    const functionsDisplayedAfterSearch = wrapper
+      .render()
+      .find('.ant-collapse-item');
     expect(functionsDisplayedAfterSearch).toHaveLength(1);
   });
 });
