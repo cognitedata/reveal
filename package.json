@@ -171,6 +171,6 @@
     "rollup-plugin-typescript2": "^0.27.2",
     "style-loader": "^1.2.1",
     "typescript": "^3.9.7",
-    "webpack-bundle-analyzer": "^3.8.0"
+    "webpack-bundle-analyzer": "^3.9.0"
   }
 }
