@@ -1,7 +1,11 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+
+// To avoid direct dependency on @cognite/sdk we use sdk-core here for HttpError.
+// that's why it's avoided https://github.com/cognitedata/cdf-hub/pull/687/files#r489204315
+import { HttpError } from '@cognite/sdk-core';
 
 type ByTreeIndicesResponse = {
   items: CogniteInternalId[];
