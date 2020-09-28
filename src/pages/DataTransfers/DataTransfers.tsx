@@ -15,6 +15,7 @@ import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
+import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
 import { ContentContainer } from '../../elements';
 import {
   TableActions,
@@ -367,6 +368,7 @@ const DataTransfers: React.FC = () => {
   }
 
   function fetchProjects() {
+    dispatch({ type: Action.LOAD });
     if (selectedSource) {
       api!.projects
         .get(selectedSource)
@@ -378,6 +380,7 @@ const DataTransfers: React.FC = () => {
               throw new Error(response[0].status);
             }
           }
+          dispatch({ type: Action.SUCCEED });
         })
         .catch((err: DataTransfersError) => {
           addError(err.message, parseInt(err.message, 10));
@@ -393,6 +396,7 @@ const DataTransfers: React.FC = () => {
             } else {
               throw new Error(response[0].status);
             }
+            dispatch({ type: Action.SUCCEED });
           }
         })
         .catch((err: DataTransfersError) => {
@@ -575,19 +579,29 @@ const DataTransfers: React.FC = () => {
   }
 
   function getNoDataText() {
+    let message = 'Select source';
     if (selectedSource) {
       if (selectedSourceProject) {
         if (selectedTarget) {
           if (selectedTargetProject) {
-            return 'No data';
+            message = 'No data';
+          } else {
+            message = 'Select target project';
           }
-          return 'Select target project';
+        } else {
+          message = 'Select target';
         }
-        return 'Select target';
+      } else {
+        message = 'Select source project';
       }
-      return 'Select source project';
     }
-    return 'Select source';
+
+    return (
+      <EmptyTableMessage
+        text={message}
+        isLoading={status === ProgressState.LOADING}
+      />
+    );
   }
 
   return (
@@ -653,7 +667,6 @@ const DataTransfers: React.FC = () => {
         columns={sortBy(data.columns, (obj) =>
           indexOf(config.columnOrder, obj.key)
         )}
-        loading={status === ProgressState.LOADING}
         rowKey="id"
         key={`${data.selectedColumnNames.join('')}_${selectedSource}_${
           // eslint-disable-next-line camelcase
@@ -674,9 +687,7 @@ const DataTransfers: React.FC = () => {
             ),
         }}
         locale={{
-          emptyText:
-            // eslint-disable-next-line no-nested-ternary
-            status === ProgressState.LOADING ? 'Loading...' : getNoDataText(),
+          emptyText: getNoDataText(),
         }}
       />
       <DetailView

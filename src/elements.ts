@@ -34,6 +34,14 @@ export const ContentContainer = styled.div`
     padding-left: 1rem;
     padding-right: 1rem;
   }
+
+  .ant-table-empty
+    .ant-table-thead
+    > tr
+    .ant-table-cell.ant-table-row-expand-icon-cell {
+    border: none;
+    padding: 0;
+  }
 `;
 
 export const StatusIcon = styled(Icon)`

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
+import { Badge, Tooltip } from '@cognite/cogs.js';
 import { ContentContainer, StatusIcon } from 'elements';
 import ApiContext from 'contexts/ApiContext';
 import AuthContext from 'contexts/AuthContext';
@@ -11,7 +12,7 @@ import {
   Rule,
   UNIX_TIMESTAMP_FACTOR,
 } from 'typings/interfaces';
-import { Badge, Tooltip } from '@cognite/cogs.js';
+import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
 import APIErrorContext from '../../contexts/APIErrorContext';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
 
@@ -66,12 +67,14 @@ const Configurations = () => {
   const { api } = useContext(ApiContext);
   const { token } = useContext(AuthContext);
   const { error, addError, removeError } = useContext(APIErrorContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<GenericResponseObject[]>([]);
   const [columns, setColumns] = useState<
     ColumnsType<GenericResponseObject> | undefined
   >([]);
 
   function fetchConfigurations() {
+    setIsLoading(true);
     api!.configurations.get().then((response: GenericResponseObject[]) => {
       if (!response || response.length < 1 || response[0].error) {
         let errorObj = {
@@ -89,6 +92,7 @@ const Configurations = () => {
         removeError();
         setData(response);
       }
+      setIsLoading(false);
       return response;
     });
   }
@@ -107,12 +111,12 @@ const Configurations = () => {
   }, [data]);
 
   const getNoDataText = () => {
-    let message = 'No data';
+    let message = isLoading ? 'Loading...' : 'No data';
     if (error) {
       message = `Failed to fetch configurations. API error: ${error.status} ${error.message}`;
       return <ErrorMessage message={message} />;
     }
-    return message;
+    return <EmptyTableMessage text={message} isLoading={isLoading} />;
   };
 
   return (
