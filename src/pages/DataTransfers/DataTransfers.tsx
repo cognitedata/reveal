@@ -1,15 +1,25 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react';
+import { format } from 'date-fns';
+import set from 'date-fns/set';
 import {
   DataTransferObject,
   GenericResponseObject,
   RESTConfigurationsFilter,
   RESTTransfersFilter,
   RevisionObject,
+  SelectedDateRangeType,
 } from 'typings/interfaces';
 import { Checkbox, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { Button, Dropdown, Icon, Menu, Colors } from '@cognite/cogs.js';
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Menu,
+  Colors,
+  Tooltip,
+} from '@cognite/cogs.js';
 import ApiContext from 'contexts/ApiContext';
 import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
@@ -277,6 +287,10 @@ const DataTransfers: React.FC = () => {
     selectedTargetProject,
     setSelectedTargetProject,
   ] = useState<DataTransferObject | null>(null);
+  const [
+    selectedDateRange,
+    setSelectedDateRange,
+  ] = useState<SelectedDateRangeType | null>(null);
   const [datatypes, setDatatypes] = useState<string[]>([]);
   const [selectedDatatype, setSelectedDatatype] = useState<string | null>(null);
 
@@ -325,11 +339,21 @@ const DataTransfers: React.FC = () => {
           external_id: selectedTargetProject.external_id,
         },
       };
+      if (selectedDateRange) {
+        let after = selectedDateRange[0];
+        let before = selectedDateRange[1];
+        if (after && before) {
+          after = set(after, { hours: 0, minutes: 0, seconds: 0 });
+          before = set(before, { hours: 23, minutes: 59, seconds: 59 });
+          options.updated_after = Number(format(after, 't'));
+          options.updated_before = Number(format(before, 't'));
+        }
+      }
       if (selectedConfiguration) {
         options.configuration = selectedConfiguration.name;
       }
       if (selectedDatatype) {
-        options.datatype = selectedDatatype;
+        options.datatypes = [selectedDatatype];
       }
       api!.datatransfers
         .get(options)
@@ -558,9 +582,17 @@ const DataTransfers: React.FC = () => {
   }, [selectedTargetProject]);
 
   useEffect(() => {
+    if (token && token !== 'NO_TOKEN') {
+      fetchDataTransfers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDateRange, selectedConfiguration]);
+
+  useEffect(() => {
     setSelectedConfiguration(null);
     if (token && token !== 'NO_TOKEN') {
       fetchConfigurations();
+      fetchDataTransfers();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDatatype]);
@@ -630,7 +662,7 @@ const DataTransfers: React.FC = () => {
             configuration={{
               configurations,
               selected: selectedConfiguration,
-              onSelectConfiguration: (nextSelected: GenericResponseObject) =>
+              onSelectConfiguration: (nextSelected) =>
                 setSelectedConfiguration(nextSelected),
             }}
             datatype={{
@@ -638,27 +670,35 @@ const DataTransfers: React.FC = () => {
               selected: selectedDatatype,
               onSelectType: (nextSelected) => setSelectedDatatype(nextSelected),
             }}
+            date={{
+              selectedRange: selectedDateRange,
+              onSelectDate: (nextSelected) =>
+                setSelectedDateRange(nextSelected),
+            }}
           />
         )}
         {data.data.length > 0 && (
           <ColumnsSelector>
-            <Dropdown
-              content={
-                <SelectColumnsMenu
-                  columnNames={data.allColumnNames}
-                  selectedColumnNames={data.selectedColumnNames}
-                  onChange={updateColumnSelection}
-                />
-              }
-            >
-              <Button
-                type="link"
-                size="small"
-                style={{ color: 'var(--cogs-greyscale-grey7)' }}
+            <Tooltip content="Show/hide table columns">
+              <Dropdown
+                content={
+                  <SelectColumnsMenu
+                    columnNames={data.allColumnNames}
+                    selectedColumnNames={data.selectedColumnNames}
+                    onChange={updateColumnSelection}
+                  />
+                }
               >
-                <Icon type="Settings" />
-              </Button>
-            </Dropdown>
+                <Button
+                  type="link"
+                  size="small"
+                  style={{ marginTop: '0.3rem' }}
+                  aria-label="Show/hide table columns"
+                >
+                  <Icon type="Settings" />
+                </Button>
+              </Dropdown>
+            </Tooltip>
           </ColumnsSelector>
         )}
       </TableActions>

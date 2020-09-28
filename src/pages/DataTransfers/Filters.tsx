@@ -1,7 +1,21 @@
 import React, { useState } from 'react';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
-import { DataTransferObject, GenericResponseObject } from 'typings/interfaces';
-import { DropdownLabel, FiltersWrapper } from './elements';
+import { format } from 'date-fns';
+import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns';
+import generatePicker from 'antd/es/date-picker/generatePicker';
+import 'antd/es/date-picker/style/index';
+import { Button, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
+import {
+  DataTransferObject,
+  GenericResponseObject,
+  SelectedDateRangeType,
+} from 'typings/interfaces';
+import {
+  CalendarWrapper,
+  CalendarBtnWrapper,
+  DropdownLabel,
+  FiltersWrapper,
+  SecondaryFilters,
+} from './elements';
 
 type Props = {
   source: {
@@ -23,22 +37,30 @@ type Props = {
   configuration: {
     configurations: GenericResponseObject[];
     selected: GenericResponseObject | null;
-    onSelectConfiguration: (selected: GenericResponseObject) => void;
+    onSelectConfiguration: (selected: GenericResponseObject | null) => void;
   };
   datatype: {
     types: string[];
     selected: string | null;
-    onSelectType: (selected: string) => void;
+    onSelectType: (selected: string | null) => void;
+  };
+  date: {
+    selectedRange: SelectedDateRangeType | null;
+    onSelectDate: (selected: SelectedDateRangeType | null) => void;
   };
 };
 
-const Filters = ({ source, target }: Props) => {
+const DatePicker = generatePicker<Date>(dateFnsGenerateConfig);
+
+const Filters = ({ source, target, date, datatype, configuration }: Props) => {
   const [sourceOpen, setSourceOpen] = useState(false);
   const [sourceProjectOpen, setSourceProjectOpen] = useState(false);
   const [targetOpen, setTargetOpen] = useState(false);
   const [targetProjectOpen, setTargetProjectOpen] = useState(false);
-  // const [configOpen, setConfigOpen] = useState(false);
-  // const [datatypesOpen, setDatatypesOpen] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
+  const [configOpen, setConfigOpen] = useState(false);
+  const [datatypesOpen, setDatatypesOpen] = useState(false);
+  const { RangePicker } = DatePicker;
 
   const SourcesContent = (
     <Menu>
@@ -107,9 +129,34 @@ const Filters = ({ source, target }: Props) => {
       ))}
     </Menu>
   );
-  /*
+
+  const DateContent = (
+    <CalendarWrapper>
+      <RangePicker
+        onChange={(selected) => {
+          date.onSelectDate(selected);
+          setDateOpen(false);
+        }}
+        value={date.selectedRange}
+        open={dateOpen}
+      />
+    </CalendarWrapper>
+  );
+
   const DatatypesContent = (
     <Menu>
+      {datatype.selected && (
+        <Menu.Item
+          key="removeDatatypeItem"
+          onClick={() => {
+            datatype.onSelectType(null);
+            setDatatypesOpen(false);
+          }}
+          appendIcon="Close"
+        >
+          Reset
+        </Menu.Item>
+      )}
       {datatype.types.map((item) => (
         <Menu.Item
           key={item}
@@ -127,6 +174,18 @@ const Filters = ({ source, target }: Props) => {
 
   const ConfigsContent = (
     <Menu>
+      {configuration.selected && (
+        <Menu.Item
+          key="removeConfigItem"
+          onClick={() => {
+            configuration.onSelectConfiguration(null);
+            setConfigOpen(false);
+          }}
+          appendIcon="Close"
+        >
+          Reset
+        </Menu.Item>
+      )}
       {configuration.configurations.map((item) => (
         <Menu.Item
           key={`${item.id}_${item.name}`}
@@ -141,7 +200,16 @@ const Filters = ({ source, target }: Props) => {
       ))}
     </Menu>
   );
-*/
+
+  function getFormattedDateRange(selectedRange: SelectedDateRangeType) {
+    const first = selectedRange[0];
+    const second = selectedRange[1];
+    if (first && second) {
+      return `${format(first, 'P')} - ${format(second, 'P')}`;
+    }
+    return selectedRange.join(' - ');
+  }
+
   return (
     <FiltersWrapper>
       {source.sources.length > 0 && (
@@ -220,12 +288,12 @@ const Filters = ({ source, target }: Props) => {
           </>
         </Dropdown>
       )}
-      {/* source.selected &&
+      {source.selected &&
         source.selectedProject &&
         target.selected &&
         target.selectedProject && (
           <SecondaryFilters>
-            {datatype.types.length > 0 && (
+            {datatype.types.length > 0 && !dateOpen && (
               <Dropdown
                 content={DatatypesContent}
                 visible={datatypesOpen}
@@ -243,7 +311,7 @@ const Filters = ({ source, target }: Props) => {
                 </>
               </Dropdown>
             )}
-            {configuration.configurations.length > 0 && (
+            {configuration.configurations.length > 0 && !dateOpen && (
               <Dropdown
                 content={ConfigsContent}
                 visible={configOpen}
@@ -263,8 +331,38 @@ const Filters = ({ source, target }: Props) => {
                 </>
               </Dropdown>
             )}
+            <div
+              style={{
+                alignSelf: 'flex-end',
+                marginLeft: '0.5rem',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <Dropdown content={DateContent} visible={dateOpen}>
+                <>
+                  {!dateOpen && (
+                    <Tooltip
+                      content={
+                        date.selectedRange
+                          ? getFormattedDateRange(date.selectedRange)
+                          : 'Filter by updated date'
+                      }
+                    >
+                      <CalendarBtnWrapper active={date.selectedRange !== null}>
+                        <Button
+                          unstyled
+                          icon="Calendar"
+                          onClick={() => setDateOpen(!dateOpen)}
+                          aria-label="Filter by updated date"
+                        />
+                      </CalendarBtnWrapper>
+                    </Tooltip>
+                  )}
+                </>
+              </Dropdown>
+            </div>
           </SecondaryFilters>
-        ) */}
+        )}
     </FiltersWrapper>
   );
 };

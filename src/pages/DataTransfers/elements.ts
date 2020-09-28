@@ -12,6 +12,10 @@ export const TableActions = styled.div`
   .cogs-menu-item {
     text-transform: capitalize;
   }
+
+  .cogs-btn {
+    color: var(--cogs-black);
+  }
 `;
 
 export const FiltersWrapper = styled.div`
@@ -19,6 +23,7 @@ export const FiltersWrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
+  flex-wrap: wrap;
 
   > div {
     margin-right: 1rem;
@@ -33,11 +38,29 @@ export const FiltersWrapper = styled.div`
 `;
 
 export const SecondaryFilters = styled.div`
-  margin-left: auto;
   display: flex;
+  margin-top: 1rem;
 
   > div {
     margin-right: 1rem;
+  }
+
+  @media screen and (min-width: 1285px) {
+    margin-top: 0;
+    margin-left: auto;
+  }
+`;
+
+export const CalendarWrapper = styled.div`
+  margin-top: -1.55rem;
+`;
+
+export const CalendarBtnWrapper = styled.div<{ active: boolean }>`
+  color: ${(props) =>
+    props.active ? 'var(--cogs-midblue)' : 'var(--cogs--black)'};
+
+  .cogs-btn {
+    min-width: 0;
   }
 `;
 
@@ -51,6 +74,8 @@ export const DropdownLabel = styled.span`
 
 export const ColumnsSelector = styled.div`
   margin-left: auto;
+  align-self: flex-end;
+  margin-bottom: 0.3rem;
 
   > div {
     margin-top: 2rem;
