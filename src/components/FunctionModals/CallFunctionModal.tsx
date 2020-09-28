@@ -42,7 +42,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
 
   const [
     createFunctionCall,
-    { data, isSuccess: callCreated, isLoading, error }, // TODO: error handling
+    { data, isSuccess: callCreated, isLoading, error },
   ] = useMutation(callFunction, {
     onSuccess() {
       const queryKey = callsKey({ id });

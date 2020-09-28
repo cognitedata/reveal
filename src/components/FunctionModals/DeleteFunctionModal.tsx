@@ -15,8 +15,6 @@ type Props = {
   onDelete: (id: number, fileId?: number) => void;
 };
 
-// TODO: This function could also ask the user if the file asossiated
-// with the function should be deleted
 export default function DeleteFunctionModal({ id, onCancel, onDelete }: Props) {
   const [deleteFile, setDeleteFile] = useState(false);
 
@@ -32,19 +30,19 @@ export default function DeleteFunctionModal({ id, onCancel, onDelete }: Props) {
     }
   );
   return (
-    <Modal
-      title="Are you sure?"
-      visible
-      okText="Delete"
-      onOk={() => {
-        onDelete(id, deleteFile ? fileId : undefined);
-        onCancel();
-      }}
-      onCancel={() => {
-        onCancel();
-      }}
-    >
-      <div onClick={e => e.stopPropagation()}>
+    <div onClick={e => e.stopPropagation()}>
+      <Modal
+        title="Are you sure?"
+        visible
+        okText="Delete"
+        onOk={() => {
+          onDelete(id, deleteFile ? fileId : undefined);
+          onCancel();
+        }}
+        onCancel={() => {
+          onCancel();
+        }}
+      >
         <Alert
           type="warning"
           message={
@@ -75,7 +73,7 @@ export default function DeleteFunctionModal({ id, onCancel, onDelete }: Props) {
             </Form>
           </>
         )}
-      </div>
-    </Modal>
+      </Modal>
+    </div>
   );
 }

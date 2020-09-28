@@ -1,7 +1,10 @@
 import { QueryKey } from 'react-query';
 import { GetCallArgs } from 'types';
 
-type CallsArg = Omit<GetCallArgs, 'callId'>;
+type CallsArg = {
+  id: number;
+  scheduleId?: number;
+};
 export function callsKey(args: CallsArg | CallsArg[]): QueryKey {
   return ['/function/allCalls', args];
 }

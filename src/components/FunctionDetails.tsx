@@ -5,6 +5,8 @@ import LoadingIcon from 'components/LoadingIcon';
 import { CogFunction } from 'types';
 import { useQuery } from 'react-query';
 
+const { Item } = Descriptions;
+
 type Props = {
   id: number;
   name: string;
@@ -31,32 +33,39 @@ export default function FunctionDetails({ id, name }: Props) {
 
   return (
     <Descriptions>
-      <Descriptions.Item label="Description" span={3}>
+      <Item label="Description" span={3}>
         {currentFunction?.description || notSet}
-      </Descriptions.Item>
-      <Descriptions.Item label="Created by" span={3}>
+      </Item>
+      <Item label="CPU" span={3}>
+        {currentFunction?.cpu || notSet}
+      </Item>
+      <Item label="Memory" span={3}>
+        {currentFunction?.memory || notSet}
+      </Item>
+
+      <Item label="Created by" span={3}>
         {currentFunction?.owner || notSet}
-      </Descriptions.Item>
-      <Descriptions.Item label="Date Created" span={3}>
+      </Item>
+      <Item label="Date Created" span={3}>
         {moment.utc(currentFunction?.createdTime).format('LLL')}
-      </Descriptions.Item>
-      <Descriptions.Item label="API Key" span={3}>
+      </Item>
+      <Item label="API Key" span={3}>
         {currentFunction?.apiKey || notSet}
-      </Descriptions.Item>
-      <Descriptions.Item label="Function Id" span={3}>
+      </Item>
+      <Item label="Function Id" span={3}>
         {currentFunction?.id}
-      </Descriptions.Item>
-      <Descriptions.Item label="File Id" span={3}>
+      </Item>
+      <Item label="File Id" span={3}>
         {currentFunction?.fileId}
-      </Descriptions.Item>
-      <Descriptions.Item label="External Id" span={3}>
+      </Item>
+      <Item label="External Id" span={3}>
         {currentFunction?.externalId || notSet}
-      </Descriptions.Item>
-      <Descriptions.Item label="Secrets" span={3}>
+      </Item>
+      <Item label="Secrets" span={3}>
         <div style={{ display: 'flex' }}>
           <pre>{JSON.stringify(currentFunction?.secrets, null, 4)}</pre>
         </div>
-      </Descriptions.Item>
+      </Item>
     </Descriptions>
   );
 }

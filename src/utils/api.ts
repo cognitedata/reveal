@@ -209,6 +209,18 @@ const uploadFile = async (file: UploadFile) => {
 
   await currentUpload.start();
 
+  let fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+  let retries = 0;
+  while (!fileInfo.uploaded && retries <= 10) {
+    retries += 1;
+    await sleep(retries * 1000);
+    fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+  }
+
+  if (!fileInfo.uploaded) {
+    return Promise.reject(fileInfo.id);
+  }
+
   return id;
 };
 
@@ -220,9 +232,6 @@ export const uploadFunction = async ({
   file: UploadFile;
 }) => {
   const fileId = await uploadFile(file);
-  // The function api will sometimes claim that a file id doesn't
-  // exist right after the upload completes.
-  await sleep(1000);
   try {
     const { id } = await createFunction({ ...data, fileId });
     return id;
