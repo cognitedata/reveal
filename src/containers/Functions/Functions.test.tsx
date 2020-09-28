@@ -25,34 +25,7 @@ jest.mock('@cognite/cdf-utilities', () => ({
   PageTitle: () => null,
 }));
 
-const mockFunction = {
-  fileId: 1,
-  name: 'testFunc',
-  id: 1,
-  createdTime: new Date(),
-  owner: 'somebody@cognite.com',
-  description: 'some description',
-  status: 'Ready',
-  externalId: 'externalid',
-} as CogFunction;
-const mockCall = {
-  id: 100,
-  startTime: new Date(),
-  endTime: new Date(),
-  status: 'Completed',
-} as Call;
-const mockFunction2 = {
-  fileId: 1,
-  name: 'secondFunc',
-  id: 2,
-  createdTime: new Date(),
-  owner: 'somebody@cognite.com',
-  description: 'some description',
-  status: 'Ready',
-} as CogFunction;
 
-sdk.get.mockResolvedValue({ items: [mockFunction, mockFunction2] });
-sdk.post.mockResolvedValue({ data: { items: [mockCall] } });
 
 const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
@@ -63,6 +36,35 @@ const sleep = async (ms: number) =>
   });
 
 describe('Functions', () => {
+  const mockFunction = {
+    fileId: 1,
+    name: 'testFunc',
+    id: 1,
+    createdTime: new Date(),
+    owner: 'somebody@cognite.com',
+    description: 'some description',
+    status: 'Ready',
+    externalId: 'externalid',
+  } as CogFunction;
+  const mockCall = {
+    id: 100,
+    startTime: new Date(),
+    endTime: new Date(),
+    status: 'Completed',
+  } as Call;
+  const mockFunction2 = {
+    fileId: 1,
+    name: 'secondFunc',
+    id: 2,
+    createdTime: new Date(),
+    owner: 'somebody@cognite.com',
+    description: 'some description',
+    status: 'Ready',
+  } as CogFunction;
+
+  sdk.get.mockResolvedValue({ items: [mockFunction, mockFunction2] });
+  sdk.post.mockResolvedValue({ data: { items: [mockCall] } });
+
   beforeEach(() => sdk.get.mockClear());
   beforeEach(() => sdk.post.mockClear());
 

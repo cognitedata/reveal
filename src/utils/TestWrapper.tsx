@@ -20,7 +20,7 @@ export default function TestWrapper({
       },
     },
   });
-    sdk.get.mockResolvedValue({ items: [mockFunction, mockFunction2] });
+
   return (
     <ReactQueryCacheProvider queryCache={queryCache}>
       <MemoryRouter>{children}</MemoryRouter>
