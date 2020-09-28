@@ -7,6 +7,7 @@ It demonstrates best practices, such as:
 - Jenkinsfile steps
 - TypeScript usage
 - Storybook usage
+- Testcafe
 - Folder / component layout
 - ...
 
@@ -19,6 +20,22 @@ Please see the [deployment guide] for more information how to actually get this 
 
 This repo is configured as a template, so it's easy to get started.
 Simply go to the [create repo page] and select "cognitedata/react-demo-app" as a template.
+
+### Run e2e tests with testcafe
+
+End-to-end tests are written and run using the [Testcafe](https://github.com/DevExpress/testcafe) testing framework. They are stored in `/testcafe`.
+
+To run testcafe tests locally, first start the app on port 11111
+
+```sh
+yarn testcafe:start-live
+```
+
+In order to run tests in the browser and keep the browser window open to watch and auto re-run on test file changes, run in a separate tab the following command:
+
+```sh
+yarn testcafe:run-live
+```
 
 ## Help
 

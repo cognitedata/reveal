@@ -103,6 +103,7 @@ static final Map<String, String> CONTEXTS = [
   setup: "continuous-integration/jenkins/setup",
   lint: "continuous-integration/jenkins/lint",
   unitTests: "continuous-integration/jenkins/unit-tests",
+  e2eTests: "continuous-integration/jenkins/e2e-tests",
   preview: "continuous-integration/jenkins/preview",
   storybook: "continuous-integration/jenkins/storybook",
   buildStaging: "continuous-integration/jenkins/build-staging",
@@ -140,49 +141,51 @@ def pods = { body ->
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
       ) {
-        properties([
-          buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
-        ])
-        node(POD_LABEL) {
+        testcafe.pod() {
+          properties([
+            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+          ])
+          node(POD_LABEL) {
 
-          dir('main') {
-            stageWithNotify('Checkout code', CONTEXTS.checkout) {
-              checkout(scm)
-            }
-          }
-
-          stage('Copy folders') {
-            DIRS.each({
-              sh("cp -r main ${it}")
-            })
-          }
-
-          dir('main') {
-            stageWithNotify('Install dependencies', CONTEXTS.setup) {
-              yarn.setup()
+            dir('main') {
+              stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                checkout(scm)
+              }
             }
 
-            stage('Symlink dependencies') {
-              // Use symlinks to the dependency tree so that the entire
-              // node_modules folder doesn't have to be copied.
-
+            stage('Copy folders') {
               DIRS.each({
-                sh("ln -s \$(pwd)/node_modules ../${it}/node_modules")
+                sh("cp -r main ${it}")
               })
             }
+
+            dir('main') {
+              stageWithNotify('Install dependencies', CONTEXTS.setup) {
+                yarn.setup()
+              }
+
+              stage('Symlink dependencies') {
+                // Use symlinks to the dependency tree so that the entire
+                // node_modules folder doesn't have to be copied.
+
+                DIRS.each({
+                  sh("ln -s \$(pwd)/node_modules ../${it}/node_modules")
+                })
+              }
+            }
+
+            final boolean isStaging = env.BRANCH_NAME == "master"
+            final boolean isProduction =
+                VERSIONING_STRATEGY == 'single-branch'
+                  ? isStaging
+                  : env.BRANCH_NAME.startsWith("release-")
+
+            body([
+              isStaging: isStaging,
+              isProduction: isProduction,
+              isPullRequest: !!env.CHANGE_ID
+            ])
           }
-
-          final boolean isStaging = env.BRANCH_NAME == "master"
-          final boolean isProduction =
-              VERSIONING_STRATEGY == 'single-branch'
-                ? isStaging
-                : env.BRANCH_NAME.startsWith("release-")
-
-          body([
-            isStaging: isStaging,
-            isProduction: isProduction,
-            isPullRequest: !!env.CHANGE_ID
-          ])
         }
       }
     }
@@ -284,6 +287,16 @@ pods { context ->
     ],
     workers: 3,
   )
+
+  stageWithNotify('Execute e2e tests', CONTEXTS.e2eTests) {
+    dir('preview') {
+      container('testcafe') {
+        testcafe.runTests(
+          runCommand: 'yarn testcafe:start'
+        )
+      }
+    }
+  }
 
   if (isStaging && STAGING_APP_ID) {
     stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {

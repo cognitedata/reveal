@@ -28,7 +28,7 @@ const Home = () => {
 
   return (
     <Container>
-      <Header>
+      <Header data-test-id="header">
         <p>
           <Trans i18nKey="Home:versionInfo_paragraph" t={t}>
             This is v
