@@ -655,7 +655,11 @@ const DataTransfers: React.FC = () => {
         )}
         loading={status === ProgressState.LOADING}
         rowKey="id"
-        key={data.selectedColumnNames.join('')}
+        key={`${data.selectedColumnNames.join('')}_${selectedSource}_${
+          // eslint-disable-next-line camelcase
+          selectedSourceProject?.external_id
+          // eslint-disable-next-line camelcase
+        }_${selectedTarget}_${selectedTargetProject?.external_id}`}
         expandable={{
           expandedRowRender: renderExpandedRow,
           // eslint-disable-next-line react/prop-types
