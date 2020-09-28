@@ -76,7 +76,7 @@
     "raw-loader": "^4.0.1",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.1",
-    "three": "^0.117.1",
+    "three": "0.117.1",
     "ts-jest": "^26.2.0",
     "ts-loader": "8.0.2",
     "typescript": "3.9.7",
@@ -104,7 +104,7 @@
   },
   "peerDependencies": {
     "@cognite/sdk": "^3.0.0",
-    "three": "^0.117.1"
+    "three": "0.117.x"
   },
   "husky": {
     "hooks": {
