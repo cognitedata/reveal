@@ -54,7 +54,6 @@ function Functions() {
       : recentlyCreated;
 
   const sortedFunctions = functions?.sort(sortFn);
-
   const filteredFunctions = sortedFunctions?.filter((f: CogFunction) =>
     [f.name, f.externalId || '', f.owner || '']
       .join('')
@@ -70,27 +69,6 @@ function Functions() {
       });
     }
   }, [functionsDone, filteredFunctions, queryCache]);
-
-  useEffect(() => {
-    if (callsDone && calls) {
-      Object.entries(calls)
-        .filter(
-          ([id]) =>
-            filteredFunctions?.findIndex(f => f.id.toString() === id) !== -1
-        )
-        .slice(0, FUNCTIONS_PER_PAGE)
-        .forEach(([id, relevantCalls]) => {
-          queryCache.setQueryData([`/functions/calls`, { id }], relevantCalls);
-          if (relevantCalls.length > 0) {
-            const latestCall = relevantCalls[0];
-            queryCache.setQueryData(
-              [`/functions/calls`, { id, callId: latestCall.id }],
-              latestCall
-            );
-          }
-        });
-    }
-  }, [callsDone, calls, queryCache, filteredFunctions]);
 
   return (
     <>

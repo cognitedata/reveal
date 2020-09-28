@@ -6,7 +6,7 @@ type CallsArg = {
   scheduleId?: number;
 };
 export function callsKey(args: CallsArg | CallsArg[]): QueryKey {
-  return ['/function/allCalls', args];
+  return ['/function/calls', args];
 }
 export function callKey(args: GetCallArgs): QueryKey {
   return ['/function/call', args];

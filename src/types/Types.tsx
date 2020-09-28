@@ -34,7 +34,7 @@ export interface CogFunctionUpload {
 }
 export interface CogFunction extends CogFunctionUpload {
   id: number;
-  createdTime: Date;
+  createdTime: number;
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
   error?: Error;
   cpu: number;
@@ -56,13 +56,13 @@ export interface CallResponse {
 }
 
 export interface Call extends CallResponse {
-  startTime: Date;
-  endTime: Date;
+  startTime: number;
+  endTime: number;
   error?: Error;
 }
 
 export interface Log {
-  timestamp: Date;
+  timestamp: number;
   message: string;
 }
 
@@ -75,9 +75,12 @@ export interface CreateSchedule {
 }
 export interface Schedule extends CreateSchedule {
   id: number;
-  createdTime: Date;
+  createdTime: number;
 }
-export type GetCallsArgs = { id: number; scheduleId?: number };
+export type GetCallsArgs = {
+  id: number;
+  scheduleId?: number;
+};
 export type GetCallArgs = {
   id: number;
   callId: number;

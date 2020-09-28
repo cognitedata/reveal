@@ -16,8 +16,9 @@ import {
   responseKey,
   logsKey,
   functionKey,
+  sortFunctionKey,
 } from './queryKeys';
-import { getCalls, getCall, getResponse, getLogs } from './api';
+import { getCalls, getCall, getResponse, getLogs, getLatestCalls } from './api';
 
 export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) =>
   useQuery<CogFunction[]>(
@@ -57,8 +58,13 @@ export const useCalls = (
 
 export const useMultipleCalls = (
   args: GetCallsArgs[],
-  config?: QueryConfig<{ [id: number]: Call[] }, unknown>
-) => useQuery<{ [id: number]: Call[] }>(callsKey(args), getCalls, config);
+  config?: QueryConfig<{ [id: number]: Call | undefined }, unknown>
+) =>
+  useQuery<{ [id: number]: Call | undefined }>(
+    [sortFunctionKey, args],
+    getLatestCalls,
+    config
+  );
 
 export const useCall = (
   args: GetCallArgs,

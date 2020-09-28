@@ -45,8 +45,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
     { data, isSuccess: callCreated, isLoading, error },
   ] = useMutation(callFunction, {
     onSuccess() {
-      const queryKey = callsKey({ id });
-      queryCache.invalidateQueries(queryKey, { exact: true });
+      queryCache.invalidateQueries(callsKey({ id }));
       queryCache.invalidateQueries(sortFunctionKey);
     },
   });

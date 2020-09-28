@@ -89,7 +89,9 @@ describe('Functions', () => {
     expect(sdk.get).toHaveBeenCalled();
     expect(sdk.post).toHaveBeenCalled();
 
-    expect(sdk.get).toHaveBeenCalledWith('/api/playground/projects/unittests/functions');
+    expect(sdk.get).toHaveBeenCalledWith(
+      '/api/playground/projects/unittests/functions'
+    );
     expect(
       sdk.post
     ).toHaveBeenCalledWith(
@@ -103,13 +105,17 @@ describe('Functions', () => {
     await sleep(100);
 
     sdk.get.mockClear();
-    expect(sdk.get).not.toHaveBeenCalledWith('/api/playground/projects/unittests/functions');
+    expect(sdk.get).not.toHaveBeenCalledWith(
+      '/api/playground/projects/unittests/functions'
+    );
     await sleep(100);
     const refreshButton = wrapper.find('button.cogs-btn').at(1);
     refreshButton.simulate('click');
     expect(refreshButton).toBeDefined();
 
-    expect(sdk.get).toHaveBeenCalledWith('/api/playground/projects/unittests/functions');
+    expect(sdk.get).toHaveBeenCalledWith(
+      '/api/playground/projects/unittests/functions'
+    );
   });
 
   it('should update functions shown if search field is filled', async () => {
@@ -119,7 +125,6 @@ describe('Functions', () => {
     const functionsDisplayed = wrapper.render().find('.ant-collapse-item');
     expect(functionsDisplayed.length).toBe(2);
     const search = wrapper.find('input[name="filter"]');
-    debugger;
     search.simulate('change', { target: { value: 'second' } });
     const functionsDisplayedAfterSearch = wrapper
       .render()
@@ -134,7 +139,6 @@ describe('Functions', () => {
     const functionsDisplayed = wrapper.render().find('.ant-collapse-item');
     expect(functionsDisplayed.length).toBe(2);
     const search = wrapper.find('input[name="filter"]');
-    debugger;
     search.simulate('change', { target: { value: 'SECOND' } });
     const functionsDisplayedAfterSearch = wrapper
       .render()

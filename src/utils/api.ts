@@ -7,15 +7,17 @@ import {
   GetCallArgs,
   CallResponse,
   GetCallsArgs,
+  Call,
 } from 'types';
 import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
+import { newestCall } from './sorting';
 
 // Using react-query#useQuery calls the function with a QueryKey as the first
 // argument, useMutation does not.
 
-const getCallsSdk = ({ id, scheduleId }: GetCallsArgs) => {
+const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
   if (!id) {
     throw new Error('id missing');
   }
@@ -30,21 +32,20 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs) => {
     .then(response => response.data?.items);
 };
 
-export const getCalls = async (
-  _: QueryKey,
-  args: GetCallsArgs | GetCallsArgs[]
-) => {
-  if (Array.isArray(args)) {
-    const results = await Promise.all(args.map(a => getCallsSdk(a)));
-    return args.reduce(
-      (accl, { id }, index) => ({
-        ...accl,
-        [id]: results[index],
-      }),
-      {}
-    );
-  }
+export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
   return getCallsSdk(args);
+};
+
+export const getLatestCalls = async (_: QueryKey, args: GetCallsArgs[]) => {
+  const requests = args.map(a => getCallsSdk(a));
+  const results = await Promise.all(requests);
+  return args.reduce(
+    (accl, { id }, index) => ({
+      ...accl,
+      [id]: results[index].sort(newestCall)[0],
+    }),
+    {}
+  );
 };
 
 export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
@@ -209,6 +210,7 @@ const uploadFile = async (file: UploadFile) => {
   let retries = 0;
   while (!fileInfo.uploaded && retries <= 10) {
     retries += 1;
+    /* eslint-disable no-await-in-loop */
     await sleep(retries * 1000);
     fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
   }
