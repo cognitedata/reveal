@@ -2,6 +2,7 @@ import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 import { Modules } from "@/Core/Module/Modules";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 main(document.body);
 
@@ -11,7 +12,10 @@ export default function main(element: HTMLElement)
   const modules = Modules.instance;
   modules.add(new ThreeModule());
   const module = new SyntheticSubSurfaceModule();
-  module.addSeismicCube(SyntheticSubSurfaceModule.createSeismicClient(), process.env.FILE_ID || "");
+  module.addSeismicCube(new CogniteSeismicClient({
+    api_url: process.env.API_URL || "",
+    api_key: process.env.API_KEY || "", debug: true
+  }), process.env.FILE_ID || "");
   modules.add(module);
   modules.install();
 

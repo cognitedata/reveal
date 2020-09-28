@@ -235,14 +235,6 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule
   // STATIC METHODS: Others
   //==================================================
 
-  public static createSeismicClient(): CogniteSeismicClient
-  {
-    return new CogniteSeismicClient({
-      api_url: process.env.API_URL || "",
-      api_key: process.env.API_KEY || "", debug: true
-    });
-  }
-
   private static animate(root: BaseRootNode)
   {
     // if (!(root instanceof SubSurfaceRootNode))

@@ -9,6 +9,7 @@ import {
 import { grey } from "@material-ui/core/colors";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import { BaseModule } from "../../src/Core/Module/BaseModule";
+import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 // customize the colors for changing UI style
 const theme = createMuiTheme({
@@ -43,8 +44,11 @@ export function Trajectory(props: { data: BaseModule }) {
 
     const syntheticModule = new SyntheticSubSurfaceModule();
     syntheticModule.addSeismicCube(
-      SyntheticSubSurfaceModule.createSeismicClient(),
-      process.env.FILE_ID || ""
+      new CogniteSeismicClient({
+        api_url: process.env.REACT_APP_API_URL || "",
+        api_key: process.env.REACT_APP_API_KEY || "", debug: true
+      }),
+      process.env.REACT_APP_FILE_ID || ""
     );  
     modules.add(syntheticModule);
   }
