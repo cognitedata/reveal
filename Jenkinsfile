@@ -124,13 +124,6 @@ static final String[] DIRS = [
   'production',
 ]
 
-if (!
-  (VERSIONING_STRATEGY == "single-branch"
-  || VERSIONING_STRATEGY == "multi-branch")
-) {
-  throw new Error("Unknown value for VERSIONING_STRATEGY (${VERSIONING_STRATEGY})")
-}
-
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
@@ -174,17 +167,7 @@ def pods = { body ->
               }
             }
 
-            final boolean isStaging = env.BRANCH_NAME == "master"
-            final boolean isProduction =
-                VERSIONING_STRATEGY == 'single-branch'
-                  ? isStaging
-                  : env.BRANCH_NAME.startsWith("release-")
-
-            body([
-              isStaging: isStaging,
-              isProduction: isProduction,
-              isPullRequest: !!env.CHANGE_ID
-            ])
+            body()
           }
         }
       }
@@ -192,10 +175,13 @@ def pods = { body ->
   }
 }
 
-pods { context ->
-  final boolean isStaging = context.isStaging
-  final boolean isProduction = context.isProduction
-  final boolean isPullRequest = context.isPullRequest
+pods {
+  static final Map<String, Boolean> env = versioning.getEnv(
+    versioningStrategy: VERSIONING_STRATEGY
+  )
+  final boolean isStaging = env.isStaging
+  final boolean isProduction = env.isProduction
+  final boolean isPullRequest = env.isPullRequest
 
   threadPool(
     tasks: [
