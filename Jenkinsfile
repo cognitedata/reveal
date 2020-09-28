@@ -96,9 +96,6 @@ static final String VERSIONING_STRATEGY = "single-branch"
 
 // == End of customization. Everything below here is common. == \\
 
-static final String PR_COMMENT_MARKER = "[pr-server]\n"
-static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
-
 static final String NODE_VERSION = 'node:12'
 
 static final Map<String, String> CONTEXTS = [
@@ -239,10 +236,7 @@ pods { context ->
           }
           stageWithNotify('Preview', CONTEXTS.preview) {
             previewServer(
-              buildCommand: 'yarn build preview',
-              commentPrefix: PR_COMMENT_MARKER,
-              buildFolder: 'build',
-              prefix: 'pr',
+              buildCommand: 'yarn build preview'
             )
           }
         }
