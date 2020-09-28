@@ -60,7 +60,7 @@ describe('Functions', () => {
     status: 'Ready',
   } as CogFunction;
 
-  sdk.get.mockResolvedValue({ items: [mockFunction, mockFunction2] });
+  sdk.get.mockResolvedValue({ data: { items: [mockFunction, mockFunction2] }});
   sdk.post.mockResolvedValue({ data: { items: [mockCall] } });
 
   beforeEach(() => sdk.get.mockClear());
@@ -108,7 +108,9 @@ describe('Functions', () => {
     expect(sdk.get).not.toHaveBeenCalledWith(
       '/api/playground/projects/unittests/functions'
     );
+
     await sleep(100);
+
     const refreshButton = wrapper.find('button.cogs-btn').at(1);
     refreshButton.simulate('click');
     expect(refreshButton).toBeDefined();
@@ -120,6 +122,7 @@ describe('Functions', () => {
 
   it('should update functions shown if search field is filled', async () => {
     const wrapper = wrap(<Functions />);
+
     await sleep(100);
 
     const functionsDisplayed = wrapper.render().find('.ant-collapse-item');
@@ -134,7 +137,8 @@ describe('Functions', () => {
 
   it('search field is case insensitive', async () => {
     const wrapper = wrap(<Functions />);
-    await sleep(500);
+
+    await sleep(100);
 
     const functionsDisplayed = wrapper.render().find('.ant-collapse-item');
     expect(functionsDisplayed.length).toBe(2);

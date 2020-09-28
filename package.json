@@ -58,6 +58,7 @@
     "generate-preview-artifacts": "node ./scripts/generate-mfe-artifacts.js -p @cognite/cdf-functions-ui -b cdf-hub-production --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test",
+    "test:debugger": "rescripts --inspect-brk test --runInBand --no-cache",
     "test:once": "rescripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
