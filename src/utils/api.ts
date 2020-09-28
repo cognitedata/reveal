@@ -13,6 +13,7 @@ import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { newestCall } from './sorting';
+import { sleep } from 'react-query/types/core/utils';
 
 // Using react-query#useQuery calls the function with a QueryKey as the first
 // argument, useMutation does not.
@@ -128,10 +129,6 @@ export const deleteSchedule = (id: number) =>
     )
     .then(response => response?.data);
 
-const sleep = async (ms: number) =>
-  new Promise(resolve => {
-    setTimeout(() => resolve(), ms);
-  });
 
 const createFunction = (
   cogfunction: CogFunctionUpload
