@@ -5,11 +5,11 @@ import { Table, Alert, List, Popover } from 'antd';
 import { Button } from '@cognite/cogs.js';
 
 import { Schedule } from 'types';
-import { useQuery } from 'react-query';
 
 import DeleteScheduleButton from 'components/buttons/DeleteScheduleButton';
 import CreateScheduleButton from 'components/buttons/CreateScheduleButton';
 import LoadingIcon from 'components/LoadingIcon';
+import { useSchedules } from 'utils/hooks';
 import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [
@@ -75,11 +75,9 @@ type Props = {
 };
 
 export default function FunctionSchedules({ externalId, id }: Props) {
-  const { data, isFetched, error } = useQuery<{ items: Schedule[] }>(
-    `/functions/schedules`
-  );
+  const { data, isFetched, error } = useSchedules();
   const schedules =
-    data?.items
+    data
       ?.filter(s => s.functionExternalId === externalId)
       ?.sort((a: Schedule, b: Schedule) => {
         if (a.createdTime > b.createdTime) {

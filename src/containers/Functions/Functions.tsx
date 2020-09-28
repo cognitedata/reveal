@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, useQueryCache } from 'react-query';
+import { useQueryCache } from 'react-query';
 import { Row, Collapse, Input, Pagination, Select } from 'antd';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
 import { PageTitle } from '@cognite/cdf-utilities';
-import { CogFunction, Call } from 'types';
-import { getCalls } from 'utils/api';
+import { CogFunction } from 'types';
+
 import { recentlyCreated, sortLastCall } from 'utils/sorting';
 import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
-import { sortFunctionKey } from 'utils/queryKeys';
+
+import { useFunctions, useMultipleCalls } from 'utils/hooks';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -32,23 +33,21 @@ function Functions() {
     SortFunctions
   >('recentlyCalled');
 
-  const { data, isFetching, isFetched: functionsDone } = useQuery<{
-    items: CogFunction[];
-  }>('/functions');
-  const functions = data?.items;
+  const {
+    data: functions,
+    isFetching,
+    isFetched: functionsDone,
+  } = useFunctions();
 
   const functionIds = functions
     ?.sort(({ id: id1 }, { id: id2 }) => id1 - id2)
     .map(({ id }) => ({ id }));
 
-  const { data: calls, isFetched: callsDone } = useQuery<{
-    [id: number]: Call[];
-  }>([sortFunctionKey, functionIds!], getCalls, {
+  const { data: calls, isFetched: callsDone } = useMultipleCalls(functionIds!, {
     enabled: functionsDone && functionIds,
   });
 
   const { Panel } = Collapse;
-
   const sortFn =
     sortFunctionCriteria === 'recentlyCalled' && calls
       ? sortLastCall(calls)

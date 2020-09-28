@@ -1,8 +1,7 @@
 import React from 'react';
 import { Tag } from 'antd';
-import { useQuery } from 'react-query';
-import { CogFunction } from 'types';
 import LoadingIcon from 'components/LoadingIcon';
+import { useFunction } from 'utils/hooks';
 
 type Props = {
   id: number;
@@ -28,7 +27,7 @@ const getStatusColor = (status: string) => {
 };
 
 export default function FunctionStatus({ id }: Props) {
-  const { data: fn } = useQuery<CogFunction>(`/functions/${id}`);
+  const { data: fn } = useFunction(id);
   const status = fn?.status;
   if (!status) {
     return <LoadingIcon />;

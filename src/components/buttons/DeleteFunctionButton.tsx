@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { notification } from 'antd';
-import { useMutation, useQueryCache, useQuery } from 'react-query';
+import { useMutation, useQueryCache } from 'react-query';
 
 import { Button } from '@cognite/cogs.js';
 import { deleteFunction } from 'utils/api';
 import DeleteFunctionModal from 'components/FunctionModals/DeleteFunctionModal';
-import { CogFunction } from 'types';
+
+import { allFunctionsKey } from 'utils/queryKeys';
+import { useFunction } from 'utils/hooks';
 
 type Props = {
   id: number;
@@ -17,7 +19,7 @@ export default function DeleteFunctionButton({ id }: Props) {
   const queryCache = useQueryCache();
   const [showModal, setShowModal] = useState(false);
 
-  const { data } = useQuery<CogFunction>(`/functions/${id}`);
+  const { data } = useFunction(id);
   const name = data?.name;
 
   const [
@@ -25,7 +27,7 @@ export default function DeleteFunctionButton({ id }: Props) {
     { isLoading: isDeleting, isSuccess: isDeleted, isError },
   ] = useMutation(deleteFunction, {
     onSuccess() {
-      queryCache.invalidateQueries('/functions');
+      queryCache.invalidateQueries(allFunctionsKey);
     },
   });
 

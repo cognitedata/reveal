@@ -6,6 +6,7 @@ import {
   CogFunction,
   GetCallArgs,
   CallResponse,
+  GetCallsArgs,
 } from 'types';
 import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -13,8 +14,6 @@ import UploadGCS from '@cognite/gcs-browser-upload';
 
 // Using react-query#useQuery calls the function with a QueryKey as the first
 // argument, useMutation does not.
-
-type GetCallsArgs = { id: number; scheduleId?: number };
 
 const getCallsSdk = ({ id, scheduleId }: GetCallsArgs) => {
   if (!id) {
@@ -91,11 +90,8 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .get(
       `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/logs`
     )
-    .then(response => response?.data);
+    .then(response => response?.data?.items);
 };
-
-export const getFile = (_: QueryKey, id: number) =>
-  sdk.files.retrieve([{ id }]).then(r => r[0]);
 
 export const callFunction = ({
   id,

@@ -4,10 +4,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Checkbox, Alert } from 'antd';
 import { FileInfo } from '@cognite/sdk';
-import { useQuery } from 'react-query';
-import { getFile } from 'utils/api';
-import { CogFunction } from 'types';
-import { filesKey } from 'utils/queryKeys';
+import { useSDK, useFunction } from 'utils/hooks';
 
 type Props = {
   id: number;
@@ -18,17 +15,17 @@ type Props = {
 export default function DeleteFunctionModal({ id, onCancel, onDelete }: Props) {
   const [deleteFile, setDeleteFile] = useState(false);
 
-  const { data: cogFunction } = useQuery<CogFunction>(`/functions/${id}`);
+  const { data: cogFunction } = useFunction(id);
   const name = cogFunction?.name;
   const fileId = cogFunction?.fileId;
-  const { data: file, isSuccess: fileFound } = useQuery<FileInfo>(
-    filesKey({ id: fileId! }),
-    getFile,
-    {
-      enabled: !!fileId,
-      retry: 0,
-    }
+
+  const { data: files, isSuccess: fileFound } = useSDK<FileInfo[]>(
+    'files',
+    'retrieve',
+    [{ id: fileId }]
   );
+  const file = files && files[0];
+
   return (
     <div onClick={e => e.stopPropagation()}>
       <Modal

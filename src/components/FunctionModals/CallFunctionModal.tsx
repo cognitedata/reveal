@@ -1,14 +1,14 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { Modal, Input, Form, Alert } from 'antd';
 import { Button } from '@cognite/cogs.js';
-import { useMutation, useQuery, useQueryCache } from 'react-query';
+import { useMutation, useQueryCache } from 'react-query';
 
-import { CogFunction, CallResponse } from 'types';
-import { callFunction, getCall } from 'utils/api';
+import { callFunction } from 'utils/api';
 import FunctionCallStatus from 'components/FunctionCallStatus';
 import FunctionCallResponse from 'components/FunctionCallResponse';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
-import { callKey, callsKey, sortFunctionKey } from 'utils/queryKeys';
+import { callsKey, sortFunctionKey } from 'utils/queryKeys';
+import { useCall, useFunction } from 'utils/hooks';
 
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {
@@ -57,10 +57,9 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
     }
   }, [callCreated, data]);
 
-  const { data: fn } = useQuery<CogFunction>(`/functions/${id}`);
-  const { data: callResponse } = useQuery<CallResponse>(
-    callKey({ id, callId: callId! }),
-    getCall,
+  const { data: fn } = useFunction(id);
+  const { data: callResponse } = useCall(
+    { id, callId: callId! },
     {
       enabled: !!callId,
       refetchInterval: updateInterval,

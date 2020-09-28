@@ -9,6 +9,7 @@ export const recentlyCreated = (a: CogFunction, b: CogFunction) => {
   }
   return 0;
 };
+
 export const sortLastCall = (calls: { [id: number]: Call[] }) => (
   a: CogFunction,
   b: CogFunction

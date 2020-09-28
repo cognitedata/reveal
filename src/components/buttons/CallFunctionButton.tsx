@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { useQuery } from 'react-query';
 
-import { CogFunction } from 'types';
 import CallFunctionModal from 'components/FunctionModals/CallFunctionModal';
+import { useFunction } from 'utils/hooks';
 
 type Props = {
   id: number;
 };
 
 export default function CallFunctionButton({ id }: Props) {
-  const { data: fn } = useQuery<CogFunction>(`/functions/${id}`);
+  const { data: fn } = useFunction(id);
   const [showModal, setShowModal] = useState(false);
 
   return (

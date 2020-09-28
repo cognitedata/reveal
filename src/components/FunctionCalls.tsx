@@ -4,12 +4,11 @@ import { CSSProperties } from 'styled-components';
 
 import { Alert, Table, Tag } from 'antd';
 import { Call } from 'types';
-import { useQuery } from 'react-query';
-import { getCalls } from 'utils/api';
+
 import ViewLogsButton from 'components/buttons/ViewLogsButton';
 import ViewResponseButton from 'components/buttons/ViewResponseButton';
 import LoadingIcon from 'components/LoadingIcon';
-import { callsKey } from 'utils/queryKeys';
+import { useCalls } from 'utils/hooks';
 
 export const callStatusTag = (status: string, style?: CSSProperties) => {
   switch (status) {
@@ -105,10 +104,7 @@ type Props = {
 };
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
-  const { data, isFetched, error } = useQuery<Call[]>(
-    callsKey({ id, scheduleId }),
-    getCalls
-  );
+  const { data, isFetched, error } = useCalls({ id, scheduleId });
   const functionCalls = data || [];
 
   if (error) {

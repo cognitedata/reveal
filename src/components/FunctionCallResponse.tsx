@@ -1,6 +1,5 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import { getResponse } from 'utils/api';
+import { useResponse } from 'utils/hooks';
 import FunctionCall from './FunctionCall';
 
 const loading = <> No results available yet</>;
@@ -15,10 +14,7 @@ type ResponseProps = {
   callId: number;
 };
 function SucessReponse({ id, callId }: ResponseProps) {
-  const { data, isFetched } = useQuery<{ response?: any }>(
-    ['/function/call/response', { id, callId }],
-    getResponse
-  );
+  const { data, isFetched } = useResponse({ id, callId });
   const response = data?.response;
 
   if (!isFetched) {

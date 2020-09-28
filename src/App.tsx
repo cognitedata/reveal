@@ -21,19 +21,11 @@ import rootStyles from './styles/index.css';
 export default () => {
   const history = createBrowserHistory();
 
-  const defaultQueryFn = async (key: string) => {
-    const { data } = await sdk.get(
-      `/api/playground/projects/${sdk.project}${key}`
-    );
-    return data;
-  };
-
   const queryCache = new QueryCache({
     defaultConfig: {
       queries: {
         staleTime: 60 * 1000,
         cacheTime: 5 * 60 * 1000,
-        queryFn: defaultQueryFn,
       },
     },
   });

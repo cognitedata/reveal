@@ -4,10 +4,10 @@ import { Icon, Button } from '@cognite/cogs.js';
 import moment from 'moment';
 import { Call, Log } from 'types';
 import Highlighter from 'react-highlight-words';
-import { useQuery, useQueryCache } from 'react-query';
-import { getLogs, getCall } from 'utils/api';
+import { useQueryCache } from 'react-query';
 import { logsKey, callKey } from 'utils/queryKeys';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
+import { useCall, useLogs } from 'utils/hooks';
 import NoLogs from './icons/emptyLogs';
 
 type Props = {
@@ -102,15 +102,13 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
     isFetching: logsFetching,
     isFetched: isLogsFetched,
     error: logError,
-  } = useQuery<{
-    items: Log[];
-  }>(logsKey({ id, callId }), getLogs);
+  } = useLogs({ id, callId });
   const {
     data: call,
     isFetching: callFetching,
     isFetched: isCallFetched,
     error: callError,
-  } = useQuery<Call>(callKey({ id, callId }), getCall);
+  } = useCall({ id, callId });
 
   const fetched = isLogsFetched && isCallFetched;
   const fetching = logsFetching || callFetching;
@@ -152,12 +150,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
         </Button>,
       ]}
     >
-      <ModalBody
-        fetched={fetched}
-        errors={error}
-        call={call}
-        logs={logs?.items}
-      />
+      <ModalBody fetched={fetched} errors={error} call={call} logs={logs} />
     </Modal>
   );
 }

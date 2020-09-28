@@ -1,20 +1,16 @@
 import React from 'react';
 import { Icon } from 'antd';
 import { Tooltip } from '@cognite/cogs.js';
-import { useQuery } from 'react-query';
-import { Schedule } from 'types';
+import { useSchedules } from 'utils/hooks';
 
 type Props = {
   externalId?: string;
 };
 export default function FunctionScheduleIndicator({ externalId }: Props) {
-  const { data: scheduleResponse } = useQuery<{
-    items: Schedule[];
-  }>('/functions/schedules');
+  const { data: scheduleResponse } = useSchedules();
 
   const schedules =
-    scheduleResponse?.items?.filter(s => s.functionExternalId === externalId) ||
-    [];
+    scheduleResponse?.filter(s => s.functionExternalId === externalId) || [];
 
   if (schedules.length > 0) {
     return (

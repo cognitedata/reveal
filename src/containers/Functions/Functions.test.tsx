@@ -25,8 +25,6 @@ jest.mock('@cognite/cdf-utilities', () => ({
   PageTitle: () => null,
 }));
 
-
-
 const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
 
@@ -91,7 +89,7 @@ describe('Functions', () => {
     expect(sdk.get).toHaveBeenCalled();
     expect(sdk.post).toHaveBeenCalled();
 
-    expect(sdk.get).toHaveBeenCalledWith('/functions');
+    expect(sdk.get).toHaveBeenCalledWith('/api/playground/projects/unittests/functions');
     expect(
       sdk.post
     ).toHaveBeenCalledWith(
@@ -105,13 +103,13 @@ describe('Functions', () => {
     await sleep(100);
 
     sdk.get.mockClear();
-    expect(sdk.get).not.toHaveBeenCalledWith('/functions');
+    expect(sdk.get).not.toHaveBeenCalledWith('/api/playground/projects/unittests/functions');
     await sleep(100);
     const refreshButton = wrapper.find('button.cogs-btn').at(1);
     refreshButton.simulate('click');
     expect(refreshButton).toBeDefined();
 
-    expect(sdk.get).toHaveBeenCalledWith('/functions');
+    expect(sdk.get).toHaveBeenCalledWith('/api/playground/projects/unittests/functions');
   });
 
   it('should update functions shown if search field is filled', async () => {

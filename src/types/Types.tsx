@@ -48,20 +48,17 @@ export interface Error {
 
 type CallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
 
-export interface Call {
-  id: number;
-  functionId: number;
-  startTime: Date;
-  endTime: Date;
-  status: CallStatus;
-  error?: Error;
-}
-
 export interface CallResponse {
   id: number;
   functionId: number;
   response: any;
   status: CallStatus;
+}
+
+export interface Call extends CallResponse {
+  startTime: Date;
+  endTime: Date;
+  error?: Error;
 }
 
 export interface Log {
@@ -80,6 +77,7 @@ export interface Schedule extends CreateSchedule {
   id: number;
   createdTime: Date;
 }
+export type GetCallsArgs = { id: number; scheduleId?: number };
 export type GetCallArgs = {
   id: number;
   callId: number;

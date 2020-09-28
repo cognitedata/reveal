@@ -4,8 +4,6 @@ import { MemoryRouter } from 'react-router';
 
 import sdk from 'sdk-singleton';
 
-
-
 export default function TestWrapper({
   children,
 }: {

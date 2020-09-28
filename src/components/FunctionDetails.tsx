@@ -2,8 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { Descriptions, Alert } from 'antd';
 import LoadingIcon from 'components/LoadingIcon';
-import { CogFunction } from 'types';
-import { useQuery } from 'react-query';
+import { useFunction } from 'utils/hooks';
 
 const { Item } = Descriptions;
 
@@ -13,9 +12,7 @@ type Props = {
 };
 
 export default function FunctionDetails({ id, name }: Props) {
-  const { data: currentFunction, isFetched, error } = useQuery<CogFunction>(
-    `/functions/${id}`
-  );
+  const { data: currentFunction, isFetched, error } = useFunction(id);
 
   if (error) {
     return (

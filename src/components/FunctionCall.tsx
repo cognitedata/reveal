@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
+
 import { CallResponse } from 'types';
-import { getCall } from 'utils/api';
-import { callKey } from 'utils/queryKeys';
+import { useCall } from 'utils/hooks';
 
 interface Props {
   id: number;
@@ -23,13 +22,13 @@ function InnerFunctionCall({
 }: InnerProps) {
   const [refetchInterval, setInterval] = useState<number | false>(1000);
 
-  const { data: callResponse, isFetched } = useQuery<CallResponse>(
-    callKey({ id, callId }),
-    getCall,
+  const { data: callResponse, isFetched } = useCall(
+    { id, callId },
     {
       refetchInterval,
     }
   );
+
   const callStatus = callResponse?.status;
   useEffect(() => {
     if (callStatus && callStatus !== 'Running') {

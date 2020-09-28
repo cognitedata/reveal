@@ -29,6 +29,7 @@ import {
   checkFile,
 } from 'utils/formValidations';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
+import { allFunctionsKey } from 'utils/queryKeys';
 
 export interface Secret {
   key: string;
@@ -66,7 +67,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
           message: 'Function created',
           description: `Fuction ${id} was successfully created`,
         });
-        queryCache.invalidateQueries('/functions');
+        queryCache.invalidateQueries(allFunctionsKey);
         onCancel();
       },
     }
