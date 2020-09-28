@@ -144,27 +144,14 @@ def pods = { body ->
               stageWithNotify('Checkout code', CONTEXTS.checkout) {
                 checkout(scm)
               }
-            }
 
-            stage('Copy folders') {
-              DIRS.each({
-                sh("cp -r main ${it}")
-              })
-            }
-
-            dir('main') {
               stageWithNotify('Install dependencies', CONTEXTS.setup) {
                 yarn.setup()
               }
 
-              stage('Symlink dependencies') {
-                // Use symlinks to the dependency tree so that the entire
-                // node_modules folder doesn't have to be copied.
-
-                DIRS.each({
-                  sh("ln -s \$(pwd)/node_modules ../${it}/node_modules")
-                })
-              }
+              yarn.copy(
+                dirs: DIRS
+              )
             }
 
             body()
