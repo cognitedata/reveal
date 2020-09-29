@@ -2,8 +2,6 @@ import React from 'react';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 
-import sdk from 'sdk-singleton';
-
 export default function TestWrapper({
   children,
 }: {
@@ -12,9 +10,9 @@ export default function TestWrapper({
   const queryCache = new QueryCache({
     defaultConfig: {
       queries: {
+        retry: false,
         staleTime: 60000,
         cacheTime: 60000,
-        queryFn: sdk.get,
       },
     },
   });

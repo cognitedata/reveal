@@ -1,15 +1,3 @@
-/* eslint-disable import/first */
-jest.mock('sdk-singleton', () => {
-  return {
-    __esModule: true,
-    default: {
-      project: 'unittests',
-      get: jest.fn(),
-      post: jest.fn(),
-    },
-  };
-});
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -17,6 +5,7 @@ import { MemoryRouter } from 'react-router';
 import { CogFunction, Call } from 'types/Types';
 import { mount } from 'enzyme';
 
+import { sleep } from 'helpers';
 import TestWrapper from 'utils/TestWrapper';
 import sdk from 'sdk-singleton';
 import Functions from './Functions';
@@ -28,14 +17,10 @@ jest.mock('@cognite/cdf-utilities', () => ({
 const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
 
-const sleep = async (ms: number) =>
-  new Promise(resolve => {
-    setTimeout(() => resolve(), ms);
-  });
 
 describe('Functions', () => {
+
   const mockFunction = {
-    fileId: 1,
     name: 'testFunc',
     id: 1,
     createdTime: new Date(),
@@ -60,6 +45,8 @@ describe('Functions', () => {
     status: 'Ready',
   } as CogFunction;
 
+  sdk.get.mockReset();
+  sdk.post.mockReset();
   sdk.get.mockResolvedValue({ data: { items: [mockFunction, mockFunction2] }});
   sdk.post.mockResolvedValue({ data: { items: [mockCall] } });
 
@@ -90,12 +77,12 @@ describe('Functions', () => {
     expect(sdk.post).toHaveBeenCalled();
 
     expect(sdk.get).toHaveBeenCalledWith(
-      '/api/playground/projects/unittests/functions'
+      '/api/playground/projects/mockProject/functions'
     );
     expect(
       sdk.post
     ).toHaveBeenCalledWith(
-      '/api/playground/projects/unittests/functions/1/calls/list',
+      '/api/playground/projects/mockProject/functions/1/calls/list',
       { data: { filter: {} } }
     );
   });
@@ -106,7 +93,7 @@ describe('Functions', () => {
 
     sdk.get.mockClear();
     expect(sdk.get).not.toHaveBeenCalledWith(
-      '/api/playground/projects/unittests/functions'
+      '/api/playground/projects/mockProject/functions'
     );
 
     await sleep(100);
@@ -116,7 +103,7 @@ describe('Functions', () => {
     expect(refreshButton).toBeDefined();
 
     expect(sdk.get).toHaveBeenCalledWith(
-      '/api/playground/projects/unittests/functions'
+      '/api/playground/projects/mockProject/functions'
     );
   });
 

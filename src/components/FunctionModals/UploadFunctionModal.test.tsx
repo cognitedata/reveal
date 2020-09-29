@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { mount, shallow, ReactWrapper } from 'enzyme';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
+
+
 import { Upload, Form } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadFunctionModal, { stuffForUnitTests } from './UploadFunctionModal';

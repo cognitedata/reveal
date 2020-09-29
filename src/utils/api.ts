@@ -13,7 +13,7 @@ import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { newestCall } from './sorting';
-import { sleep } from 'react-query/types/core/utils';
+import { sleep } from 'helpers';
 
 // Using react-query#useQuery calls the function with a QueryKey as the first
 // argument, useMutation does not.
