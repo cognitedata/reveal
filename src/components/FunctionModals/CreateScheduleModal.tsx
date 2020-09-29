@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
-import { Modal, Form, Input, Alert } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Input, Alert, notification } from 'antd';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectCreateScheduleState,
-  createSchedule,
-  createScheduleReset,
-} from 'modules/schedules';
 import { isValidCron } from 'cron-validator';
+import { useMutation, useQueryCache } from 'react-query';
+import { createSchedule as createScheduleApi } from 'utils/api';
 
 const isValidData = (data: string) => {
   if (data === '') {
@@ -36,15 +32,11 @@ const isValidCronExpression = (cronExpression: string) =>
 
 type Props = {
   onCancel: () => void;
-  visible: boolean;
-  functionExternalId: string;
+  externalId: string;
 };
 
-export default function CreateScheduleModal(props: Props) {
-  const { visible, onCancel, functionExternalId } = props;
-  const { creating, done, error, errorMessage } = useSelector(
-    selectCreateScheduleState
-  );
+export default function CreateScheduleModal({ externalId, onCancel }: Props) {
+  const queryCache = useQueryCache();
   const [scheduleName, setScheduleName] = useState({
     value: '',
     touched: false,
@@ -55,63 +47,6 @@ export default function CreateScheduleModal(props: Props) {
   });
   const [description, setDescription] = useState('');
   const [data, setData] = useState('');
-
-  const dispatch = useDispatch();
-
-  const cancelAndCreateButtons = (isCreateDisabled: boolean) => {
-    const cancelButton = (
-      <Button
-        style={{ marginRight: '8px', float: 'left' }}
-        onClick={handleCancel}
-      >
-        Cancel
-      </Button>
-    );
-
-    let createStatusButton = (
-      <Button
-        type="primary"
-        icon="Upload"
-        disabled={isCreateDisabled}
-        onClick={handleCreate}
-        htmlType="submit"
-      >
-        Create
-      </Button>
-    );
-
-    if (isCreateDisabled) {
-      createStatusButton = (
-        <Tooltip placement="top" content="Fill out the required fields">
-          <Button type="primary" icon="Upload" disabled>
-            Create
-          </Button>
-        </Tooltip>
-      );
-    }
-
-    if (creating) {
-      createStatusButton = (
-        <Button icon="Loading" type="primary">
-          Creating
-        </Button>
-      );
-    }
-    if (done) {
-      createStatusButton = (
-        <Button icon="Check" onClick={handleCancel} type="primary">
-          Done
-        </Button>
-      );
-    }
-
-    return (
-      <div style={{ float: 'right', display: 'inline-flex' }}>
-        {cancelButton}
-        {createStatusButton}
-      </div>
-    );
-  };
 
   const handleScheduleNameChange = (evt: { target: { value: string } }) => {
     setScheduleName({ value: evt.target.value, touched: true });
@@ -128,6 +63,26 @@ export default function CreateScheduleModal(props: Props) {
     setData(evt.target.value);
   };
 
+  const [
+    triggerCreateSchedule,
+    { isLoading, isSuccess, isError, error },
+  ] = useMutation(createScheduleApi, {
+    onSuccess() {
+      queryCache.invalidateQueries('/functions/schedules');
+      onCancel();
+    },
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      notification.success({
+        message: 'Schedule created',
+        description: `Schedule '${scheduleName.value}' for function ${externalId} created successfully`,
+        key: 'schedules',
+      });
+    }
+  }, [isSuccess, externalId, scheduleName.value]);
+
   const getCronExpressionHelpMessage = () => {
     if (cronExpression.touched) {
       if (!isValidCronExpression(cronExpression.value)) {
@@ -139,41 +94,30 @@ export default function CreateScheduleModal(props: Props) {
   };
 
   const canBeSubmitted =
-    functionExternalId &&
+    !!externalId &&
     isValidScheduleName(scheduleName.value) &&
     isValidCronExpression(cronExpression.value) &&
     isValidDescription(description) &&
     isValidData(data);
 
-  const handleCreate = (evt: { preventDefault: () => void }) => {
-    if (!canBeSubmitted) {
-      evt.preventDefault();
-    }
-    const formattedData = data === '' ? {} : JSON.parse(data);
-
-    dispatch(
-      createSchedule(
-        scheduleName.value,
-        description,
-        cronExpression.value,
-        formattedData,
-        functionExternalId
-      )
-    );
-  };
-
-  const handleCancel = () => {
-    onCancel();
-    dispatch(createScheduleReset());
-    setScheduleName({ value: '', touched: false });
-    setCronExpression({ value: '', touched: false });
-    setDescription('');
-    setData('');
-  };
-
-  const scheduleInformation = () => {
-    return (
-      <div>
+  return (
+    <Modal
+      title="Create Schedule"
+      visible
+      footer={null}
+      width="550px"
+      onCancel={onCancel}
+    >
+      {isError ? (
+        <Alert
+          message={`Error: ${JSON.stringify(error, null, 2)}`}
+          type="error"
+          closable
+          showIcon
+          style={{ marginBottom: '8px' }}
+        />
+      ) : null}
+      <div style={{ display: 'flow-root' }}>
         <Form layout="vertical">
           <Form.Item
             label="Schedule Name"
@@ -253,30 +197,34 @@ export default function CreateScheduleModal(props: Props) {
             />
           </Form.Item>
         </Form>
-      </div>
-    );
-  };
 
-  return (
-    <Modal
-      title="Create Schedule"
-      visible={visible}
-      footer={null}
-      width="550px"
-      onCancel={handleCancel}
-    >
-      {error && !creating ? (
-        <Alert
-          message={`Error: ${errorMessage}`}
-          type="error"
-          closable
-          showIcon
-          style={{ marginBottom: '8px' }}
-        />
-      ) : undefined}
-      <div style={{ display: 'flow-root' }}>
-        {scheduleInformation()}
-        {cancelAndCreateButtons(!canBeSubmitted)}
+        <div style={{ float: 'right', display: 'inline-flex' }}>
+          <Button
+            style={{ marginRight: '8px', float: 'left' }}
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+          <Tooltip placement="top" content="Fill out the required fields">
+            <Button
+              type="primary"
+              icon={isLoading ? 'Loading' : 'Upload'}
+              disabled={!canBeSubmitted && !isLoading}
+              onClick={() => {
+                triggerCreateSchedule({
+                  name: scheduleName.value,
+                  functionExternalId: externalId,
+                  description,
+                  cronExpression: cronExpression.value,
+                  data: data === '' ? {} : JSON.parse(data),
+                });
+              }}
+              htmlType="submit"
+            >
+              {isLoading ? 'Creating' : 'Create'}
+            </Button>
+          </Tooltip>
+        </div>
       </div>
     </Modal>
   );

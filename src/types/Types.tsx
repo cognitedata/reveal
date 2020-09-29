@@ -23,18 +23,22 @@ export interface Relationship {
   relationshipType: RelationshipType;
 }
 
-export interface Function {
-  id: number;
+export interface CogFunctionUpload {
   name: string;
   fileId: number;
   owner: string;
-  description: string;
-  apiKey: string;
-  secrets: {};
-  createdTime: Date;
+  description?: string;
+  apiKey?: string;
+  secrets?: {};
+  externalId?: string;
+}
+export interface CogFunction extends CogFunctionUpload {
+  id: number;
+  createdTime: number;
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
-  externalId: string;
   error?: Error;
+  cpu: number;
+  memory: number;
 }
 
 export interface Error {
@@ -42,31 +46,42 @@ export interface Error {
   trace: string;
 }
 
-export interface Call {
+type CallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
+
+export interface CallResponse {
   id: number;
-  startTime: Date;
-  endTime: Date;
-  status: 'Running' | 'Completed' | 'Failed' | 'Timeout';
+  functionId: number;
+  response: any;
+  status: CallStatus;
+}
+
+export interface Call extends CallResponse {
+  startTime: number;
+  endTime: number;
   error?: Error;
 }
 
-export interface CallResponse {
-  callId: number;
-  functionId: number;
-  response: any;
-}
-
 export interface Log {
-  timestamp: Date;
+  timestamp: number;
   message: string;
 }
 
-export interface Schedule {
-  id: number;
-  createdTime: Date;
+export interface CreateSchedule {
   name: string;
   description?: string;
   functionExternalId: string;
   cronExpression: string;
   data?: {};
 }
+export interface Schedule extends CreateSchedule {
+  id: number;
+  createdTime: number;
+}
+export type GetCallsArgs = {
+  id: number;
+  scheduleId?: number;
+};
+export type GetCallArgs = {
+  id: number;
+  callId: number;
+};

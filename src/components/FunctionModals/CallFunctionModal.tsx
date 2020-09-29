@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { Card, Modal, Input, Form } from 'antd';
-import { Button, Icon } from '@cognite/cogs.js';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  selectCallInfo,
-  callFunction,
-  selectFunctionToCall,
-  callFunctionReset,
-} from 'modules/call';
-import { callStatusTag } from 'containers/Functions/FunctionPanelContent';
-import { responsesSelector } from 'modules/response';
+import React, { useState, useEffect, SyntheticEvent } from 'react';
+import { Modal, Input, Form, Alert } from 'antd';
+import { Button } from '@cognite/cogs.js';
+import { useMutation, useQueryCache } from 'react-query';
+
+import { callFunction } from 'utils/api';
+import FunctionCallStatus from 'components/FunctionCallStatus';
+import FunctionCallResponse from 'components/FunctionCallResponse';
+import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
+import { callsKey, sortFunctionKey } from 'utils/queryKeys';
+import { useCall, useFunction } from 'utils/hooks';
 
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {
@@ -27,164 +26,139 @@ const canParseInputData = (inputData: string) => {
 };
 
 type Props = {
-  visible: boolean;
+  id: number;
+  closeModal?: () => void;
 };
 
-export default function CallFunctionModal(props: Props) {
-  const { visible } = props;
-  const functionToCall = useSelector(selectFunctionToCall);
-  const { result, creating, calling, error } = useSelector(selectCallInfo);
-  const callResponses = useSelector(responsesSelector)(
-    functionToCall?.externalId
-  );
+export default function CallFunctionModal({ id, closeModal }: Props) {
+  const queryCache = useQueryCache();
+
+  const [updateInterval, setUpdateInteval] = useState<number | false>(1000);
   const [inputData, setInputData] = useState('');
-  const dispatch = useDispatch();
+  // The statefull `callId` could be replaced with wrapping the
+  // relevant components in a <LastFunctionCall>, but then it would
+  // not be possible to start a new call when one is already running.
+  const [callId, setCallId] = useState<number | undefined>();
+
+  const [
+    createFunctionCall,
+    { data, isSuccess: callCreated, isLoading, error },
+  ] = useMutation(callFunction, {
+    onSuccess() {
+      queryCache.invalidateQueries(callsKey({ id }));
+      queryCache.invalidateQueries(sortFunctionKey);
+    },
+  });
+
+  useEffect(() => {
+    if (callCreated && data?.id) {
+      setCallId(data?.id);
+    }
+  }, [callCreated, data]);
+
+  const { data: fn } = useFunction(id);
+  const { data: callResponse } = useCall(
+    { id, callId: callId! },
+    {
+      enabled: !!callId,
+      refetchInterval: updateInterval,
+    }
+  );
+
+  const running = isLoading || (!!callId && callResponse?.status === 'Running');
+
+  useEffect(() => {
+    if (!!callId && !running) {
+      setUpdateInteval(false);
+    } else {
+      setUpdateInteval(1000);
+    }
+  }, [callId, running]);
 
   const validJSONMessage = <div style={{ color: 'green' }}>JSON is valid</div>;
-
-  const getResult = () => {
-    let formattedResult = <em>No results available yet</em>;
-    if (creating || calling) {
-      formattedResult = <em>Calling...</em>;
-    } else if (result) {
-      const callResponse = callResponses[result.id];
-      if (callResponse && callResponse.done) {
-        if (callResponse.response) {
-          formattedResult = (
-            <pre>{JSON.stringify(callResponse.response, null, 4)}</pre>
-          );
-        } else {
-          formattedResult = (
-            <em>No response was returned from this function call</em>
-          );
-        }
-      }
-      if (result.status === 'Failed') {
-        if (result.error) {
-          formattedResult = (
-            <div style={{ overflowY: 'scroll', height: '300px' }}>
-              <p>
-                <b>Message: </b>
-                {result.error.message}
-              </p>
-              <b>Trace: </b>
-              {result.error.trace.split('\n').map((i, index) => {
-                return <p key={`resultErrorTrace-${index.toString()}`}>{i}</p>;
-              })}
-            </div>
-          );
-        } else {
-          formattedResult = <em>There was an error from this function call</em>;
-        }
-      }
-      if (result.status === 'Timeout') {
-        formattedResult = <p>The function call timed out </p>;
-      }
-    } else if (error) {
-      formattedResult = <em>There was an error calling the function</em>;
-    }
-
-    return formattedResult;
-  };
-
-  const getCallStatus = () => {
-    let callStatus = <em>No status available yet</em>;
-    if (creating) {
-      callStatus = <em>Calling...</em>;
-    } else if (result) {
-      callStatus = callStatusTag(result.status);
-    } else if (error) {
-      callStatus = <em>There was an error calling the function</em>;
-    }
-    return callStatus;
-  };
 
   const handleInputDataChange = (evt: { target: { value: string } }) => {
     setInputData(evt.target.value);
   };
 
-  const handleCancel = () => {
-    dispatch(callFunctionReset());
-    setInputData('');
+  const handleCancel = (e: SyntheticEvent) => {
+    // Avoid toggling the above <Panel />
+    e.stopPropagation();
+    if (closeModal) {
+      closeModal();
+    }
   };
 
-  const inputDataField = (
-    <Form.Item
-      validateStatus={canParseInputData(inputData) ? 'success' : 'error'}
-      help={
-        !canParseInputData(inputData)
-          ? 'Input data must be a valid JSON object'
-          : validJSONMessage
-      }
-      hasFeedback
-    >
-      <Input.TextArea
-        rows={4}
-        value={inputData}
-        onChange={handleInputDataChange}
-        allowClear
-        style={{ marginTop: '8px' }}
-      />
-    </Form.Item>
-  );
-
-  const handleCallButtonClick = (e: any) => {
+  const onCallClick = (e: SyntheticEvent) => {
     e.stopPropagation();
     const formattedInputData =
       inputData === '' ? undefined : JSON.parse(inputData);
-    if (functionToCall) {
-      dispatch(callFunction(functionToCall, formattedInputData));
-    }
-  };
-
-  const callButton = () => {
-    if (result && result.status === 'Running') {
-      return (
-        <Button type="primary" disabled>
-          Calling <Icon type="Loading" style={{ paddingLeft: '8px' }} />
-        </Button>
-      );
-    }
-    return (
-      <Button
-        type="primary"
-        disabled={creating || !canParseInputData(inputData)}
-        onClick={e => handleCallButtonClick(e)}
-      >
-        Call
-      </Button>
-    );
+    createFunctionCall({ id, data: formattedInputData });
   };
 
   return (
     <Modal
-      visible={visible}
-      footer={null}
-      width="900px"
+      title="Call function"
+      visible
+      width={900}
       onCancel={handleCancel}
+      footer={[
+        <Button key="close" onClick={handleCancel}>
+          Cancel
+        </Button>,
+        <Button
+          key="call"
+          type="primary"
+          disabled={
+            isLoading || (callId && running) || !canParseInputData(inputData)
+          }
+          onClick={onCallClick}
+        >
+          Call
+        </Button>,
+      ]}
     >
-      <Card title="Call Function" style={{ marginRight: '24px' }}>
-        <div style={{ display: 'inline' }}>
-          <div>
-            <b>Function: </b> {functionToCall?.name}
-          </div>
-          <>
-            <b>Input data:</b>
-            {inputDataField}
-          </>
-          <>{callButton()}</>
-        </div>
-        <div style={{ marginTop: '32px' }}>
-          <>
-            <b>Call Status: </b>
-            {getCallStatus()}
-          </>
-          <div>
-            <b>Result: </b>
-            {getResult()}
-          </div>
-        </div>
-      </Card>
+      <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+        <Form.Item label="Function name">
+          <Input disabled value={fn?.name} />
+        </Form.Item>
+        <Form.Item
+          label="Input data"
+          validateStatus={canParseInputData(inputData) ? 'success' : 'error'}
+          help={
+            !canParseInputData(inputData)
+              ? 'Input data must be a valid JSON object'
+              : validJSONMessage
+          }
+          hasFeedback
+        >
+          <Input.TextArea
+            rows={4}
+            disabled={running}
+            value={inputData}
+            onChange={handleInputDataChange}
+            allowClear
+          />
+        </Form.Item>
+        <Form.Item label="Call status">
+          <FunctionCallStatus id={id} callId={callId} />
+        </Form.Item>
+        <Form.Item label="Call response">
+          {error && (
+            <Alert
+              type="error"
+              message="Error"
+              description={
+                <>
+                  <p>An error occured when calling the function.</p>
+                  <ErrorFeedback error={error} />
+                </>
+              }
+            />
+          )}
+          <FunctionCallResponse id={id} callId={data?.id} />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 }

@@ -76,11 +76,9 @@ previewServer.pod(nodeVersion: 'node:10') {
                 sh("yarn ci")
               }
               stageWithNotify('Unit tests') {
-                sh("./bin/ci-run-unittest.sh test:once:unittests")
+                sh("./bin/ci-run-unittest.sh test:once")
               }
-              stageWithNotify('Performance regression tests') {
-                sh("./bin/ci-run-unittest.sh test:once:performanceTests")
-              }
+
             }
           }
         },
