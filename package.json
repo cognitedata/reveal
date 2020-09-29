@@ -15,6 +15,7 @@
     "testcafe:run-live": "BASE_URL=http://localhost:11111 testcafe 'chrome' 'testcafe/desktop' --live",
     "testcafe:start": "./scripts/testcafe-serve-run.sh",
     "testcafe:start-live": "./scripts/testcafe-start.sh",
+    "testcafe:build": "./scripts/testcafe-build.sh",
     "testcafe:serve": "serve -s build -l 11111"
   },
   "dependencies": {

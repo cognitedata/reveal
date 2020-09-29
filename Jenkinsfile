@@ -257,19 +257,24 @@ pods {
           }
         }
       },
+
+      'E2e': {
+        stageWithNotify('Execute e2e tests', CONTEXTS.e2eTests) {
+          dir('testcafe') {
+            container('fas') {
+              sh('yarn testcafe:build')
+            }
+            container('testcafe') {
+              testcafe.runTests(
+                runCommand: 'yarn testcafe:start'
+              )
+            }
+          }
+        }
+      },
     ],
     workers: 3,
   )
-
-  stageWithNotify('Execute e2e tests', CONTEXTS.e2eTests) {
-    dir('preview') {
-      container('testcafe') {
-        testcafe.runTests(
-          runCommand: 'yarn testcafe:start'
-        )
-      }
-    }
-  }
 
   if (isStaging && STAGING_APP_ID) {
     stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {

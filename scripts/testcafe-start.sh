@@ -2,7 +2,8 @@
 
 SERVE_PID=$!
 
-PORT=11111 \
+REACT_APP_E2E_MOCK=true \
+  PORT=11111 \
   HTTPS=false \
   yarn start;
 EXIT_CODE=$?
