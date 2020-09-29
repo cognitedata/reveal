@@ -1,5 +1,42 @@
 import styled from 'styled-components';
 
+export const ConfigurationsMainContainer = styled.div`
+  display: block;
+`;
+
+export const ConnectionLinesWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+
+  #connectorLinesSvg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+
+    .connectorLine {
+      stroke-width: 2px;
+      stroke: var(--cogs-midblue);
+      stroke-linecap: round;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: dash 2s 0.5s linear forwards;
+    }
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+`;
+
 export const ContentContainer = styled.div`
   background-color: var(--cogs-white);
   box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1);
@@ -69,7 +106,10 @@ export const InitialState = styled.div`
   }
 `;
 
-export const ConnectorList = styled.ul<{ connectorPosition?: string }>`
+export const ConnectorList = styled.ul<{
+  connectorPosition?: string;
+  connected?: boolean;
+}>`
   list-style: none;
   margin: 0;
   padding: 0;
@@ -79,17 +119,23 @@ export const ConnectorList = styled.ul<{ connectorPosition?: string }>`
     margin-bottom: 16px;
     padding: 4px 16px;
     position: relative;
-    &:after {
+
+    .connectorPoint,
+    .connectorTarget {
       position: absolute;
       right: ${(props) =>
         props.connectorPosition === 'right' ? '-32px' : 'calc(100% + 16px)'};
-      top: calc(50% - 8px);
-      display: block;
-      content: '';
-      background-color: var(--cogs-greyscale-grey2);
-      border-radius: 16px;
-      width: 16px;
-      height: 16px;
+      top: calc(50% - 10px);
+      background-color: ${(props) =>
+        props.connected
+          ? 'var(--cogs-midblue)'
+          : 'var(--cogs-greyscale-grey2)'};
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      border: 4px solid var(--cogs-greyscale-grey2);
+      box-sizing: content-box;
+      transition: background-color 0.3s ease;
     }
   }
 `;

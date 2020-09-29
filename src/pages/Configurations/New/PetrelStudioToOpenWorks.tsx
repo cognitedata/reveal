@@ -16,11 +16,14 @@ import ErrorMessage from 'components/Molecules/ErrorMessage';
 import {
   ConfigurationArrow,
   ConfigurationContainer,
+  ConfigurationsMainContainer,
+  ConnectionLinesWrapper,
   ConnectorList,
   Header,
   InitialState,
   ThreeColsLayout,
 } from '../elements';
+import { makeConnectorLines } from './utils';
 
 type Props = {
   name: string | undefined | null;
@@ -230,221 +233,259 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     }
   }, [sourceComplete, targetComplete, sourceUIState, targetUIState]);
 
+  useEffect(() => {
+    if (configurationIsComplete) {
+      makeConnectorLines();
+    }
+  }, [configurationIsComplete]);
+
   // noinspection HtmlUnknownTarget
   return (
-    <div>
-      <Header>
-        <b>{name}</b>
-        <Button
-          type="primary"
-          style={{ height: '36px' }}
-          disabled={!configurationIsComplete}
-          onClick={handleSaveConfigurationClick}
-        >
-          Save Configuration
-        </Button>
-      </Header>
-      <ThreeColsLayout>
-        <ConfigurationContainer>
-          <header>
-            <b>Petrel Studio</b>
-            {sourceUIState === ConfigUIState.CONFIRMED && (
+    <>
+      <ConfigurationsMainContainer>
+        <Header>
+          <b>{name}</b>
+          <Button
+            type="primary"
+            style={{ height: '36px' }}
+            disabled={!configurationIsComplete}
+            onClick={handleSaveConfigurationClick}
+          >
+            Save Configuration
+          </Button>
+        </Header>
+        <ThreeColsLayout>
+          <ConfigurationContainer>
+            <header>
+              <b>Petrel Studio</b>
+              {sourceUIState === ConfigUIState.CONFIRMED && (
+                <>
+                  <div>{configuration.source.external_id}</div>
+                  {configuration.business_tags.map((tag) => (
+                    <Badge key={tag} text={tag} background="greyscale-grey5" />
+                  ))}
+                </>
+              )}
+            </header>
+            {sourceUIState === ConfigUIState.INITIAL && (
+              <main>
+                <InitialState>
+                  <p>No source repository selected</p>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      fetchRepositories().then((response) => {
+                        if (!response[0].error) {
+                          setSourceUIState(ConfigUIState.CONFIGURING);
+                          setAvailableRepositories(response);
+                        } else {
+                          setSourceUIState(ConfigUIState.ERROR);
+                          addError('Failed to fetch', response[0].status);
+                        }
+                      });
+                    }}
+                  >
+                    Configure
+                  </Button>
+                </InitialState>
+              </main>
+            )}
+            {sourceUIState === ConfigUIState.CONFIGURING && (
               <>
-                <div>{configuration.source.external_id}</div>
-                {configuration.business_tags.map((tag) => (
-                  <Badge key={tag} text={tag} background="greyscale-grey5" />
-                ))}
+                <main>
+                  <div>Select repository:</div>
+                  <Select
+                    defaultValue={undefined}
+                    placeholder="Available repositories"
+                    style={{ width: '100%', marginBottom: '16px' }}
+                    onChange={(value) => handleChange(ChangeType.REPO, value)}
+                  >
+                    {availableRepositories.map((repository) => (
+                      <Option
+                        key={repository.external_id}
+                        value={repository.external_id}
+                      >
+                        {repository.external_id}
+                      </Option>
+                    ))}
+                  </Select>
+                  {configuration.source.external_id !== '' &&
+                    availableTags.length > 0 && (
+                      <>
+                        <div>Select tags:</div>
+                        <Select
+                          mode="tags"
+                          placeholder="Available tags"
+                          style={{ width: '100%', marginBottom: '16px' }}
+                          onChange={updateBusinessTags}
+                        >
+                          {availableTags.map((tag) => (
+                            <Option key={`tag_${tag}`} value={tag}>
+                              {tag}
+                            </Option>
+                          ))}
+                        </Select>
+                        <div>Select Datatypes:</div>
+                        <Checkbox.Group
+                          options={availableDataTypes}
+                          onChange={(value: any) =>
+                            handleChange(ChangeType.DATATYPES, value)
+                          }
+                        />
+                      </>
+                    )}
+                </main>
+                <footer>
+                  <Button
+                    type="primary"
+                    disabled={!sourceComplete}
+                    onClick={() => setSourceUIState(ConfigUIState.CONFIRMED)}
+                  >
+                    Confirm
+                  </Button>
+                </footer>
               </>
             )}
-          </header>
-          {sourceUIState === ConfigUIState.INITIAL && (
-            <main>
-              <InitialState>
-                <p>No source repository selected</p>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    fetchRepositories().then((response) => {
-                      if (!response[0].error) {
-                        setSourceUIState(ConfigUIState.CONFIGURING);
-                        setAvailableRepositories(response);
-                      } else {
-                        setSourceUIState(ConfigUIState.ERROR);
-                        addError('Failed to fetch', response[0].status);
-                      }
-                    });
-                  }}
-                >
-                  Configure
-                </Button>
-              </InitialState>
-            </main>
-          )}
-          {sourceUIState === ConfigUIState.CONFIGURING && (
-            <>
+            {sourceUIState === ConfigUIState.CONFIRMED && (
               <main>
-                <div>Select repository:</div>
-                <Select
-                  defaultValue={undefined}
-                  placeholder="Available repositories"
-                  style={{ width: '100%', marginBottom: '16px' }}
-                  onChange={(value) => handleChange(ChangeType.REPO, value)}
+                <ConnectorList
+                  connectorPosition="right"
+                  connected={targetUIState === ConfigUIState.CONFIRMED}
                 >
-                  {availableRepositories.map((repository) => (
-                    <Option
-                      key={repository.external_id}
-                      value={repository.external_id}
-                    >
-                      {repository.external_id}
-                    </Option>
-                  ))}
-                </Select>
-                {configuration.source.external_id !== '' &&
-                  availableTags.length > 0 && (
-                    <>
-                      <div>Select tags:</div>
-                      <Select
-                        mode="tags"
-                        placeholder="Available tags"
-                        style={{ width: '100%', marginBottom: '16px' }}
-                        onChange={updateBusinessTags}
-                      >
-                        {availableTags.map((tag) => (
-                          <Option key={`tag_${tag}`} value={tag}>
-                            {tag}
-                          </Option>
-                        ))}
-                      </Select>
-                      <div>Select Datatypes:</div>
-                      <Checkbox.Group
-                        options={availableDataTypes}
-                        onChange={(value: any) =>
-                          handleChange(ChangeType.DATATYPES, value)
-                        }
+                  {configuration.datatypes.map((datatype, index) => (
+                    <li key={`datatypeItem${datatype}`}>
+                      {datatype}
+                      <div
+                        key={`connectorPoint${datatype}`}
+                        id={`connectorPoint${index}`}
+                        className={`connectorPoint connectorPoint${index}`}
                       />
-                    </>
-                  )}
-              </main>
-              <footer>
-                <Button
-                  type="primary"
-                  disabled={!sourceComplete}
-                  onClick={() => setSourceUIState(ConfigUIState.CONFIRMED)}
-                >
-                  Confirm
-                </Button>
-              </footer>
-            </>
-          )}
-          {sourceUIState === ConfigUIState.CONFIRMED && (
-            <main>
-              <ConnectorList connectorPosition="right">
-                {configuration.datatypes.map((datatype) => (
-                  <li key={datatype}>{datatype}</li>
-                ))}
-              </ConnectorList>
-            </main>
-          )}
-          {sourceUIState === ConfigUIState.ERROR && (
-            <main>
-              <ErrorMessage
-                message={`${apiError?.message} available repositories` || ''}
-              />
-            </main>
-          )}
-        </ConfigurationContainer>
-        <ConfigurationArrow>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 300 31"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="4"
-              d="M2 16.6337h296L283.383 2M2 16.6337h296l-14.617 11.973"
-            />
-          </svg>
-        </ConfigurationArrow>
-        <ConfigurationContainer>
-          <header>
-            <b>OpenWorks</b>
-            {targetUIState === ConfigUIState.CONFIRMED && (
-              <div>{configuration.target.external_id}</div>
-            )}
-          </header>
-          {targetUIState === ConfigUIState.INITIAL && (
-            <main>
-              <InitialState>
-                <p>No destination project selected</p>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    fetchProjects().then((response) => {
-                      if (!response[0].error) {
-                        setTargetUIState(ConfigUIState.CONFIGURING);
-                        setAvailableProjects(response);
-                      } else {
-                        setTargetUIState(ConfigUIState.ERROR);
-                        addError('Failed to fetch', response[0].status);
-                      }
-                    });
-                  }}
-                >
-                  Configure
-                </Button>
-              </InitialState>
-            </main>
-          )}
-          {targetUIState === ConfigUIState.CONFIGURING && (
-            <>
-              <main>
-                <div>Select project:</div>
-                <Select
-                  defaultValue={undefined}
-                  placeholder="Available projects"
-                  style={{ width: '100%', marginBottom: '16px' }}
-                  onChange={(value) => handleChange(ChangeType.PROJECT, value)}
-                >
-                  {availableProjects.map((project) => (
-                    <Option
-                      key={project.external_id}
-                      value={project.external_id}
-                    >
-                      {project.external_id}
-                    </Option>
+                    </li>
                   ))}
-                </Select>
+                </ConnectorList>
               </main>
-              <footer>
-                <Button
-                  type="primary"
-                  disabled={!targetComplete}
-                  onClick={() => setTargetUIState(ConfigUIState.CONFIRMED)}
-                >
-                  Confirm
-                </Button>
-              </footer>
-            </>
-          )}
-          {targetUIState === ConfigUIState.CONFIRMED && (
-            <main>
-              <ConnectorList connectorPosition="left">
-                <li>_Root</li>
-              </ConnectorList>
-            </main>
-          )}
-          {targetUIState === ConfigUIState.ERROR && (
-            <main>
-              <ErrorMessage
-                message={`${apiError?.message} available projects` || ''}
+            )}
+            {sourceUIState === ConfigUIState.ERROR && (
+              <main>
+                <ErrorMessage
+                  message={`${apiError?.message} available repositories` || ''}
+                />
+              </main>
+            )}
+          </ConfigurationContainer>
+          <ConfigurationArrow>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 300 31"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="4"
+                d="M2 16.6337h296L283.383 2M2 16.6337h296l-14.617 11.973"
               />
-            </main>
-          )}
-        </ConfigurationContainer>
-      </ThreeColsLayout>
-    </div>
+            </svg>
+          </ConfigurationArrow>
+          <ConfigurationContainer>
+            <header>
+              <b>OpenWorks</b>
+              {targetUIState === ConfigUIState.CONFIRMED && (
+                <div>{configuration.target.external_id}</div>
+              )}
+            </header>
+            {targetUIState === ConfigUIState.INITIAL && (
+              <main>
+                <InitialState>
+                  <p>No destination project selected</p>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      fetchProjects().then((response) => {
+                        if (!response[0].error) {
+                          setTargetUIState(ConfigUIState.CONFIGURING);
+                          setAvailableProjects(response);
+                        } else {
+                          setTargetUIState(ConfigUIState.ERROR);
+                          addError('Failed to fetch', response[0].status);
+                        }
+                      });
+                    }}
+                  >
+                    Configure
+                  </Button>
+                </InitialState>
+              </main>
+            )}
+            {targetUIState === ConfigUIState.CONFIGURING && (
+              <>
+                <main>
+                  <div>Select project:</div>
+                  <Select
+                    defaultValue={undefined}
+                    placeholder="Available projects"
+                    style={{ width: '100%', marginBottom: '16px' }}
+                    onChange={(value) =>
+                      handleChange(ChangeType.PROJECT, value)
+                    }
+                  >
+                    {availableProjects.map((project) => (
+                      <Option
+                        key={project.external_id}
+                        value={project.external_id}
+                      >
+                        {project.external_id}
+                      </Option>
+                    ))}
+                  </Select>
+                </main>
+                <footer>
+                  <Button
+                    type="primary"
+                    disabled={!targetComplete}
+                    onClick={() => setTargetUIState(ConfigUIState.CONFIRMED)}
+                  >
+                    Confirm
+                  </Button>
+                </footer>
+              </>
+            )}
+            {targetUIState === ConfigUIState.CONFIRMED && (
+              <main>
+                <ConnectorList connectorPosition="left" connected>
+                  <li>
+                    _Root
+                    <div id="connectorTarget" className="connectorTarget" />
+                  </li>
+                </ConnectorList>
+              </main>
+            )}
+            {targetUIState === ConfigUIState.ERROR && (
+              <main>
+                <ErrorMessage
+                  message={`${apiError?.message} available projects` || ''}
+                />
+              </main>
+            )}
+          </ConfigurationContainer>
+        </ThreeColsLayout>
+      </ConfigurationsMainContainer>
+      {targetUIState === ConfigUIState.CONFIRMED && (
+        <ConnectionLinesWrapper>
+          <svg id="connectorLinesSvg">
+            {configuration.datatypes.map((datatype, index) => (
+              <path
+                key={`connectorLine${datatype}`}
+                id={`connectorLine${index}`}
+                className={`connectorLine connectorLine${datatype}`}
+                d="M0 0"
+                fill="transparent"
+              />
+            ))}
+          </svg>
+        </ConnectionLinesWrapper>
+      )}
+    </>
   );
 };
 

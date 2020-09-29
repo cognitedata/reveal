@@ -12,6 +12,7 @@ export const Main = styled.div`
   background-color: var(--cogs-greyscale-grey2);
   flex-grow: 1;
   overflow-y: scroll;
+  position: relative;
 `;
 
 export const Content = styled.main`
