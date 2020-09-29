@@ -143,6 +143,7 @@ export function Testable() {
         const highlightedTreeIndexes = [0, 1, 2, 3, 4, 5, 6, 20, 22, 33, 34, 35];
         highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
         model.requestNodeUpdate([...ghostedTreeIndices, ...highlightedTreeIndexes]);
+        renderer.setClearColor('magenta');
       } else if (test === "clipping") {
         camera = new THREE.PerspectiveCamera();
         const params = {
