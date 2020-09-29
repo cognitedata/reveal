@@ -43,7 +43,7 @@
     "single-spa-react": "^3.0.1",
     "styled-components": "^5.2.0",
     "systemjs-webpack-interop": "^2.1.1",
-    "use-debounce": "^5.0.0",
+    "use-debounce": "^5.0.1",
     "uuid": "^8.3.0"
   },
   "peerDependencies": {
