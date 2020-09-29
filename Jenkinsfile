@@ -194,25 +194,20 @@ pods {
 
       'Storybook': {
         dir('storybook') {
-          if (!isPullRequest) {
-            print "Preview storybooks only work for PRs"
-            return
-          }
           stageWithNotify('Storybook', CONTEXTS.storybook) {
-            previewServer.deployStorybook()
+            previewServer.deployStorybook(
+              shouldExecute: isPullRequest
+            )
           }
         }
       },
 
       'Preview': {
         dir('preview') {
-          if (!isPullRequest) {
-            print "No PR previews for release builds"
-            return
-          }
           stageWithNotify('Preview', CONTEXTS.preview) {
             previewServer(
-              buildCommand: 'yarn build preview'
+              buildCommand: 'yarn build preview',
+              shouldExecute: isPullRequest
             )
           }
         }
@@ -220,19 +215,12 @@ pods {
 
       'Staging': {
         dir('staging') {
-          if (!STAGING_APP_ID) {
-            print "No staging domain given; this app will not go to staging"
-            return
-          }
-          if (!isStaging) {
-            print "Staging builds only build on staging branches"
-            return
-          }
           stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
             fas.build(
               appId: STAGING_APP_ID,
               repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build staging',
+              shouldExecute: isStaging
             )
           }
         }
@@ -240,19 +228,12 @@ pods {
 
       'Production': {
         dir('production') {
-          if (!PRODUCTION_APP_ID) {
-            print "No production domain given; this app will not go to production"
-            return
-          }
-          if (!isProduction) {
-            print "Production builds only build on production branches"
-            return
-          }
           stageWithNotify('Build for production', CONTEXTS.buildProduction) {
             fas.build(
               appId: PRODUCTION_APP_ID,
               repo: APPLICATION_REPO_ID,
-              buildCommand: 'yarn build production'
+              buildCommand: 'yarn build production',
+              shouldExecute: isProduction
             )
           }
         }
