@@ -94,6 +94,8 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - `@cognite/3d-viewer` supports local caching to reduce the time to load previously opened 3D models. Currently, this is not supported by `@cognite/reveal`, but the need for such functionality is reduced by adding streaming capabilities.
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
+- The `onComplete`-callback when loading models using `Cognite3DViewer.addModel`, `Cognite3DViewer.addCadModel` or `Cognite3DViewer.addPointCloudModel` is not supported since models are streamed on demand, and will never complete. To monitor loading activity, use the `onLoading`-callback provided as an option when constructing `Cognite3DViewer`.
+- Textures are not supported by `@cognite/reveal`. Models can be loaded, but textures are not applied to the geometry.
 
 ## Preparing models
 
@@ -143,3 +145,15 @@ where `PROJECT`, `MODELID`, `REVISIONID` and `APIKEY` must be set in the environ
 If the model isn't compatible with `@cognite/reveal`, it must be reprocessed. This can be done by [uploading a new revision in Cognite Data Fusion](https://docs.cognite.com/cdf/3d/guides/3dmodels_upload.html). When uploading a new revision, asset mappings must be recreated. If the node hierarchy in the new revision is identical to the previous model node IDs should be identical and the asset mappings can be copied from one revision to the other by using the [get3DMappings](https://docs.cognite.com/api/v1/#operation/get3DMappings) and [create3DMappings](https://docs.cognite.com/api/v1/#operation/create3DMappings) API endpoints.
 
 Another alternative is to use the experimental 'reprocess' endpoint which generates new model outputs for a 3D model and is less intrusive than uploading a new revision. Since this endpoint is experimental it's not publicly exposed in the API yet. Please contact [lars.moastuen@cognite.com](mailto:lars.moastuen@cognite.com) if you want to explore this option.
+
+## Common issues
+
+**`TypeError: e.applyMatrix4 is not a function`**
+
+If you experience  `TypeError: e.applyMatrix4 is not a function` after migrating from 
+`@cognite/3d-viewer` to `@cognite/reveal`, the problem is usually caused by missing or 
+outdated ThreeJS.
+
+To fix this issue, install or update ThreeJS using the 
+[`three`-package](https://www.npmjs.com/package/three). This should match the version 
+used by `@cognite/reveal`.
