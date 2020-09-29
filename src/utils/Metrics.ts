@@ -1,14 +1,15 @@
-import * as mixpanelConfig from 'mixpanel-browser';
-// import { useResourcesStore } from '@cognite/cdf-resources-store';
-// import { RootState } from '../reducers/index';
+import { Metrics, ITimer } from '@cognite/metrics';
+import { isDevelopment } from '@cognite/cdf-utilities';
 
-const MIXPANEL_TOKEN = '6224e7d34f0878286d265714eeca40e3';
+let mixpanelToken = '5c4d853e7c3b77b1eb4468d5329b278c'; // fusion token
 
-const mixpanel = mixpanelConfig.init(
-  MIXPANEL_TOKEN,
-  { persistence: 'localStorage' },
-  'data-exploration'
-);
+if (isDevelopment()) {
+  mixpanelToken = '643d35354aa468504d01f2dd33d8f726'; // fusion-dev token
+}
+
+Metrics.init({ mixpanelToken });
+
+const mixpanel = Metrics.create('DataExplorer');
 
 export type Props = { [key: string]: string | number | boolean | Props | null };
 
@@ -24,34 +25,25 @@ export const trackUsage = (
 
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
 
-  // const { email, tenant } = (useResourcesStore().getState() as RootState).app;
-
   if (host.indexOf('localhost') === -1) {
     mixpanel.track(event, {
       ...metadata,
-      // project: tenant,
       version: 1,
       appVersion: process.env.REACT_APP_VERSION,
       location: window.location.pathname,
-      // user: email,
       pathname: pathWithoutTenant,
     });
   }
 };
 
 export class Timer {
-  private timerEvent: string;
-
-  private startProps: Props = {};
+  private timer: ITimer | undefined;
 
   private finished = false;
 
   constructor(event: string, startProps: Props = {}) {
-    this.timerEvent = event;
-    this.startProps = startProps;
-
     try {
-      mixpanel.time_event(event);
+      this.timer = mixpanel.start(event, startProps);
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
@@ -61,8 +53,9 @@ export class Timer {
       return;
     }
     try {
-      const combined = { ...this.startProps, ...props };
-      trackUsage(this.timerEvent, combined);
+      if (this.timer) {
+        this.timer.stop(props);
+      }
       this.finished = true;
       // eslint-disable-next-line no-empty
     } catch (e) {}

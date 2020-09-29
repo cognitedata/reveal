@@ -5,8 +5,7 @@ import {
 } from '@cognite/cdf-resources-store';
 import { init, setCdfEnv, selectUserName } from 'modules/app';
 import queryString from 'query-string';
-import { trackUsage } from 'utils/Metrics';
-import * as mixpanelConfig from 'mixpanel-browser';
+import { Metrics } from '@cognite/metrics';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { RootState } from 'reducers';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
@@ -52,18 +51,9 @@ export default function App() {
 
   useEffect(() => {
     if (username) {
-      const company = username.split('@').pop();
-      // @ts-ignore
-      mixpanelConfig['data-exploration'].add_group('company', company);
-      // @ts-ignore
-      mixpanelConfig['data-exploration'].identify(username);
+      Metrics.identify(username);
     }
-    trackUsage('App.Load');
   }, [username]);
-
-  useEffect(() => {
-    trackUsage('App.navigation');
-  }, [location]);
 
   return (
     <Suspense fallback={<Spinner />}>
