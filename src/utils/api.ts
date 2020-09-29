@@ -25,7 +25,7 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
   const filter = scheduleId ? { scheduleId } : {};
   return sdk
     .post(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/list/`,
+      `/api/playground/projects/${sdk.project}/functions/${id}/calls/list`,
       {
         data: { filter },
       }
