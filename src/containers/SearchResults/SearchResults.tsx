@@ -63,7 +63,7 @@ export const SearchResults = ({
     <ResourcePreviewProvider>
       <Wrapper>
         <Filters>
-          {resourceTypes.length > 0 && (
+          {resourceTypes.length > 1 && (
             <FormItem>
               <ResourceFilters
                 currentResourceType={currentResourceType}

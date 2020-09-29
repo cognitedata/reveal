@@ -6,25 +6,35 @@ import {
   ResourceSelectionProvider,
   ResourceItemState,
 } from 'context/ResourceSelectionContext';
+import { action } from '@storybook/addon-actions';
+import { text } from '@storybook/addon-knobs';
 import { FileTable } from './FileTable';
 import { files } from './files';
 
-export default { title: 'Molecules/FileTable' };
+export default {
+  title: 'Molecules/FileTable',
+  component: FileTable,
+  decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
+};
 
 export const Example = () => {
   return (
-    <ResourceSelectionProvider>
-      <Wrapper>
-        <FileTable files={files} onFileClicked={() => {}} />
-      </Wrapper>
-    </ResourceSelectionProvider>
+    <FileTable
+      files={files}
+      onFileClicked={action('onFileClicked')}
+      query={text('query', '')}
+    />
   );
 };
 export const ExampleSingleSelect = () => {
   return (
-    <Wrapper>
-      <FileTable files={files} onFileClicked={() => {}} />
-    </Wrapper>
+    <ResourceSelectionProvider mode="single">
+      <FileTable
+        files={files}
+        onFileClicked={action('onFileClicked')}
+        query={text('query', '')}
+      />
+    </ResourceSelectionProvider>
   );
 };
 
@@ -47,7 +57,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   };
   return (
     <ResourceSelectionProvider
-      mode="single"
+      mode="none"
       resourcesState={selection}
       onSelect={onSelect}
     >

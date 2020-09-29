@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import { Splitter } from './Splitter';
 
-export default { title: 'Molecules/Splitter' };
+export default { title: 'Molecules/Splitter', component: Splitter };
 
 export const Example = () => {
   return (
@@ -20,17 +20,23 @@ export const Example = () => {
   );
 };
 export const ExampleHide = () => {
+  const [visible, setVisible] = useState(false);
   return (
-    <Container>
-      <Splitter hide={[1]} flex={[0]}>
-        <div>
-          <Title>1</Title>
-        </div>
-        <div>
-          <Title>2</Title>
-        </div>
-      </Splitter>
-    </Container>
+    <>
+      <Button onClick={() => setVisible(!visible)}>Change Visiblity</Button>
+      <Container>
+        <Splitter>
+          <div>
+            <Title>1</Title>
+          </div>
+          {visible && (
+            <div>
+              <Title>2</Title>
+            </div>
+          )}
+        </Splitter>
+      </Container>
+    </>
   );
 };
 

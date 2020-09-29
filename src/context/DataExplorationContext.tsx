@@ -32,19 +32,28 @@ export const DataExplorationContext = React.createContext(
   {} as DataExplorationContextObserver
 );
 
-const DataExplorationProvider = ({
+export type DataExplorationProviderProps = {
+  sdk: CogniteClient;
+  store?: ReturnType<typeof configureStoreProd>;
+};
+
+export const DataExplorationProvider = ({
   children,
   sdk,
-}: {
+  store: storeProps,
+}: DataExplorationProviderProps & {
   children: React.ReactNode;
-  sdk: CogniteClient;
 }) => {
   const [isStoreReady, setIsStoreReady] = useState<boolean>(false);
   useEffect(() => {
     setSDK(sdk);
-    store = configureStoreProd();
+    if (!storeProps) {
+      store = configureStoreProd();
+    } else {
+      store = storeProps;
+    }
     setIsStoreReady(true);
-  }, [sdk]);
+  }, [sdk, storeProps]);
   if (!isStoreReady) {
     return <Loader />;
   }
@@ -52,18 +61,17 @@ const DataExplorationProvider = ({
     <DataExplorationContext.Provider value={{ sdk }}>
       <ClientSDKProvider client={sdk}>
         <CogniteResourceProvider sdk={sdk} store={store}>
-          <ResourcePreviewProvider>
-            <ResourceSelectorProvider>
-              <ResourceSelectionProvider>
-                <ResourceActionsProvider>{children}</ResourceActionsProvider>
-              </ResourceSelectionProvider>
-            </ResourceSelectorProvider>
-          </ResourcePreviewProvider>
+          <ResourceSelectionProvider>
+            <ResourceActionsProvider>
+              <ResourcePreviewProvider>
+                <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
+              </ResourcePreviewProvider>
+            </ResourceActionsProvider>
+          </ResourceSelectionProvider>
         </CogniteResourceProvider>
       </ClientSDKProvider>
     </DataExplorationContext.Provider>
   );
 };
 
-export { DataExplorationProvider };
 export default DataExplorationContext;

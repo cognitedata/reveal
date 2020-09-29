@@ -2,7 +2,7 @@ import React from 'react';
 import { ResourceType } from 'types';
 import { useHistory, useParams } from 'react-router-dom';
 import { SearchResults } from 'containers/SearchResults';
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink } from 'utils/URLUtils';
 
 export const SearchResultsPage = () => {
   const history = useHistory();

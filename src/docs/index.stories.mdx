@@ -1,0 +1,87 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks';
+import { DataExplorationProvider } from '../context';
+import { PreviewingResources } from './ResourcePreview.stories.tsx';
+import { SelectingResources } from './ResourceSelector.stories.tsx';
+
+import {
+  ResourcePreviewContextFunctions,
+  ResourcePreviewPropsFunctions,
+  ResourceSelectorContextFunctions,
+  ResourceSelectorPropsFunctions,
+} from './stub.tsx';
+
+<Meta
+  title="Data Exploration"
+  component={DataExplorationProvider}
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: { canvas: { hidden: true } },
+  }}
+/>
+
+# Cognite Data Exploration Package
+
+This is the early documentation for using the Cognite Data Exploration Package. Simply add
+
+```js
+<DataExplorationProvider sdk={sdk}>...</DataExplorationProvider>
+```
+
+to your app and you will have access to the following abilities in any of the components under the `DataExplorationProvider`: **resource previewing** and **resource selection**
+
+These are the props for `DataExplorationProvider`, only the SDK is necessary.
+
+<ArgsTable of={DataExplorationProvider} />
+
+## Previewing resources
+
+<Canvas>
+  <Story story={PreviewingResources} />
+</Canvas>
+
+To look into the code sample, please look into [Previewing Resources Playground](?path=/story/resource-preview--previewing-resources).
+
+You can preview any of the CDF resources within your app via the `useResourcePreview()` hook. which gives the components access to the following 2 functions. The side panel will show up to the right and you can add additional actions easily.
+
+<ArgsTable of={ResourcePreviewContextFunctions} />
+
+You can also customize the various parts of the resource preview sidebar when `openPreview` is being called. The following are the options ResourcePreviewProps.
+
+These are the props for `ResourcePreviewProps`.
+
+<ArgsTable of={ResourcePreviewPropsFunctions} />
+
+## Selecting resources
+
+<Canvas>
+  <Story story={SelectingResources} />
+</Canvas>
+
+To look into the code sample, please look into [Selecting Resources Playground](?path=/story/resource-selector--selecting-resources).
+
+You can select CDF resource(s) within your app via the `useResourceSelector()` hook, which gives the component access to the following 2 functions. The side drawer will show up to the right and you can add additional actions easily.
+
+<ArgsTable of={ResourceSelectorContextFunctions} />
+
+You can also customize the various parts of the resource preview sidebar when `openResourceSelector` is being called. The following are the options OpenSelectorProps.
+
+These are the props for `OpenSelectorProps`.
+
+<ArgsTable of={ResourceSelectorPropsFunctions} />
+
+## [Advanced Use Cases](?path=/story/data-exploration-components).
+
+TODO: Add advanced use cases for `ResourceActionsContext` and `ResourceSelectionContext`.
+
+To use various components of resources that are available withing this package
+
+- [Using Preview Components of Resources](?path=/story/data-exploration-components--resource-large-previews).
+- [Using Table Components of Resources](?path=/story/data-exploration-components--resources-large-tables).
+
+To add additional actions, and search results directly from the package (skipping the drawer)
+
+- [Adding Actions + Search Results of Resources](?path=/story/data-exploration-components--resources-search-results-with-actions).
+
+To use preview in a complex, nesting manner
+
+- [Adding Actions + Search Results of Resources](?path=/story/data-exploration-components--nesting-previews).

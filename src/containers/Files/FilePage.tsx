@@ -1,11 +1,13 @@
 import React, { useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { retrieve as retrieveFile } from '@cognite/cdf-resources-store/dist/files';
 import { useResourcesDispatch } from '@cognite/cdf-resources-store';
 import { listByFileId } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
+import queryString from 'query-string';
+import { useLocation } from 'react-router';
 import { FilePreview } from './FilePreview';
 
 export const FilePage = () => {
@@ -13,6 +15,8 @@ export const FilePage = () => {
   const { fileId } = useParams<{
     fileId: string | undefined;
   }>();
+  const { search } = useLocation();
+  const history = useHistory();
   const fileIdNumber = fileId ? parseInt(fileId, 10) : undefined;
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
@@ -46,5 +50,24 @@ export const FilePage = () => {
     hidePreview();
   }, [dispatch, fileIdNumber, hidePreview]);
 
-  return <FilePreview fileId={fileIdNumber} contextualization />;
+  const { page = 1 }: { page?: number } = queryString.parse(search, {
+    parseNumbers: true,
+  });
+
+  return (
+    <FilePreview
+      fileId={fileIdNumber}
+      contextualization
+      page={page}
+      onPageChange={newPage => {
+        const currentSearch = queryString.parse(search);
+        history.replace({
+          search: queryString.stringify({
+            ...currentSearch,
+            page: newPage,
+          }),
+        });
+      }}
+    />
+  );
 };

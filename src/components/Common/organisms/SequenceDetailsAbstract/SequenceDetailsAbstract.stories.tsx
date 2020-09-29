@@ -75,44 +75,40 @@ const sequence = ({
   lastUpdatedTime: new Date(),
 } as unknown) as Sequence;
 
-export default { title: 'Organisms/SequenceDetailsAbstract' };
+export default {
+  title: 'Organisms/SequenceDetailsAbstract',
+  component: SequenceDetailsAbstract,
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+};
 
 export const Example = () => {
-  return (
-    <Container>
-      <SequenceDetailsAbstract sequence={sequence} />
-    </Container>
-  );
+  return <SequenceDetailsAbstract sequence={sequence} />;
 };
 
 export const WithActions = () => {
   return (
-    <Container>
-      <SequenceDetailsAbstract
-        sequence={sequence}
-        actions={[
-          <Button type="primary">Click me</Button>,
-          <Button>Click me too</Button>,
-        ]}
-      />
-    </Container>
+    <SequenceDetailsAbstract
+      sequence={sequence}
+      actions={[
+        <Button type="primary">Click me</Button>,
+        <Button>Click me too</Button>,
+      ]}
+    />
   );
 };
 export const WithExtras = () => {
   return (
-    <Container>
-      <SequenceDetailsAbstract
-        sequence={sequence}
-        extras={
-          <Button
-            type="primary"
-            variant="ghost"
-            shape="round"
-            icon="VerticalEllipsis"
-          />
-        }
-      />
-    </Container>
+    <SequenceDetailsAbstract
+      sequence={sequence}
+      extras={
+        <Button
+          type="primary"
+          variant="ghost"
+          shape="round"
+          icon="VerticalEllipsis"
+        />
+      }
+    />
   );
 };
 

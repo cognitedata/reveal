@@ -6,7 +6,11 @@ import { CURRENT_VERSION } from '@cognite/annotations';
 import { v4 as uuid } from 'uuid';
 import { CreateAnnotationForm } from './CreateAnnotationForm';
 
-export default { title: 'Organisms/CreateAnnotationForm' };
+export default {
+  title: 'Organisms/CreateAnnotationForm',
+  component: CreateAnnotationForm,
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+};
 
 export const Default = () => {
   const [pendingAnnotation, setPendingAnnotation] = useState<
@@ -27,14 +31,12 @@ export const Default = () => {
     },
   });
   return (
-    <Container>
-      <CreateAnnotationForm
-        annotation={pendingAnnotation}
-        updateAnnotation={setPendingAnnotation}
-        onSave={() => {}}
-        onDelete={() => {}}
-      />
-    </Container>
+    <CreateAnnotationForm
+      annotation={pendingAnnotation}
+      updateAnnotation={setPendingAnnotation}
+      onSave={() => {}}
+      onDelete={() => {}}
+    />
   );
 };
 

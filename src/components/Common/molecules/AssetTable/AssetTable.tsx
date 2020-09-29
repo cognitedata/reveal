@@ -63,19 +63,20 @@ const HighlightCell = ({ text, query }: { text?: string; query?: string }) => {
     </Body>
   );
 };
+export type AssetTableProps = {
+  assets: Asset[];
+  query?: string;
+  onAssetClicked: (asset: Asset) => void;
+};
 
 export const AssetTable = ({
   assets,
   query,
   onAssetClicked,
-}: {
-  assets: Asset[];
-  query?: string;
-  onAssetClicked: (asset: Asset) => void;
-}) => {
+}: AssetTableProps) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-  const mode = useResourceMode();
-  const resourcesState = useResourcesState();
+  const { mode } = useResourceMode();
+  const { resourcesState } = useResourcesState();
 
   const currentItems = resourcesState.filter(el => el.state === 'active');
 

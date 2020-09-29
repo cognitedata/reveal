@@ -5,7 +5,7 @@ import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { useResourceEditable } from 'context/ResourceSelectionContext';
 import { checkPermission } from 'modules/app';
 import { useHistory } from 'react-router';
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink } from 'utils/URLUtils';
 import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
 
 export const FileToolbar = () => {

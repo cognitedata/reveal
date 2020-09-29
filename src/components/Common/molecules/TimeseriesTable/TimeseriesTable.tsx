@@ -36,8 +36,8 @@ export const TimeseriesTable = ({
   onTimeseriesClicked: (sequence: Timeseries) => void;
 }) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-  const mode = useResourceMode();
-  const resourcesState = useResourcesState();
+  const { mode } = useResourceMode();
+  const { resourcesState } = useResourcesState();
 
   const currentItems = resourcesState.filter(el => el.state === 'active');
 

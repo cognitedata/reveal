@@ -17,44 +17,40 @@ const event = ({
   lastUpdatedTime: new Date(),
 } as unknown) as CogniteEvent;
 
-export default { title: 'Organisms/EventDetailsAbstract' };
+export default {
+  title: 'Organisms/EventDetailsAbstract',
+  component: EventDetailsAbstract,
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+};
 
 export const Example = () => {
-  return (
-    <Container>
-      <EventDetailsAbstract event={event} />
-    </Container>
-  );
+  return <EventDetailsAbstract event={event} />;
 };
 
 export const WithActions = () => {
   return (
-    <Container>
-      <EventDetailsAbstract
-        event={event}
-        actions={[
-          <Button type="primary">Click me</Button>,
-          <Button>Click me too</Button>,
-        ]}
-      />
-    </Container>
+    <EventDetailsAbstract
+      event={event}
+      actions={[
+        <Button type="primary">Click me</Button>,
+        <Button>Click me too</Button>,
+      ]}
+    />
   );
 };
 export const WithExtras = () => {
   return (
-    <Container>
-      <EventDetailsAbstract
-        event={event}
-        extras={
-          <Button
-            type="primary"
-            variant="ghost"
-            shape="round"
-            icon="VerticalEllipsis"
-          />
-        }
-      />
-    </Container>
+    <EventDetailsAbstract
+      event={event}
+      extras={
+        <Button
+          type="primary"
+          variant="ghost"
+          shape="round"
+          icon="VerticalEllipsis"
+        />
+      }
+    />
   );
 };
 

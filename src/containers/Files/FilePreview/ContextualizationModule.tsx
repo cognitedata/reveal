@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import {

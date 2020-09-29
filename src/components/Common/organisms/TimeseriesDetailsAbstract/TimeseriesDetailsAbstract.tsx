@@ -34,7 +34,7 @@ export const TimeseriesDetailsAbstract = ({
   children?: React.ReactNode;
   style?: React.CSSProperties;
 }) => {
-  const resourcesState = useResourcesState();
+  const { resourcesState } = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
     el => el.type === 'timeSeries' && el.state === 'active'

@@ -34,7 +34,7 @@ export const SequenceDetailsAbstract = ({
   extras,
   children,
 }: AssetDetailsProps) => {
-  const resourcesState = useResourcesState();
+  const { resourcesState } = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
     el => el.type === 'sequence' && el.state === 'active'

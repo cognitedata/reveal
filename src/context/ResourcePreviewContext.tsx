@@ -6,16 +6,40 @@ import styled from 'styled-components';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 
 export type ResourcePreviewProps = {
+  /**
+   * The resource to preview, this is the easiest way to preview something with the default resource preview
+   */
   item?: ResourceItem;
+  /**
+   * Additional header
+   */
   header?: React.ReactNode;
+  /**
+   * Additional footer
+   */
   footer?: React.ReactNode;
+  /**
+   * Replace the content (would cover over the item preview)
+   */
   content?: React.ReactNode;
+  /**
+   * Placeholder for when no item is provided
+   */
   placeholder?: React.ReactNode;
+  /**
+   * Callback for when the preview is closed
+   */
   onClose?: () => void;
 };
 
 export type ResourcePreviewObserver = {
-  openPreview: (props: ResourcePreviewProps) => void;
+  /**
+   * Opens the preview for a resource
+   */
+  openPreview: (props?: ResourcePreviewProps) => void;
+  /**
+   * Closes the current preview
+   */
   hidePreview: () => void;
 };
 
@@ -41,23 +65,26 @@ export const ResourcePreviewProvider = ({
   const [onClose, setOnCloseCallback] = useState<() => void>(() => () => {});
   const [item, setItem] = useState<ResourceItem | undefined>(undefined);
 
-  const openPreview = useCallback((previewDetails: ResourcePreviewProps) => {
-    const {
-      item: newItem,
-      content: newContent,
-      header: newHeader,
-      footer: newFooter,
-      placeholder: newPlaceholder,
-      onClose: newOnClose = () => {},
-    } = previewDetails;
-    setItem(newItem);
-    setContent(newContent);
-    setHeader(newHeader);
-    setFooter(newFooter);
-    setPlaceholder(newPlaceholder);
-    setOnCloseCallback(() => newOnClose);
-    setIsOpen(true);
-  }, []);
+  const openPreview = useCallback(
+    (previewDetails: ResourcePreviewProps = {}) => {
+      const {
+        item: newItem,
+        content: newContent,
+        header: newHeader,
+        footer: newFooter,
+        placeholder: newPlaceholder,
+        onClose: newOnClose = () => {},
+      } = previewDetails;
+      setItem(newItem);
+      setContent(newContent);
+      setHeader(newHeader);
+      setFooter(newFooter);
+      setPlaceholder(newPlaceholder);
+      setOnCloseCallback(() => newOnClose);
+      setIsOpen(true);
+    },
+    []
+  );
 
   const hidePreview = useCallback(() => {
     setIsOpen(false);

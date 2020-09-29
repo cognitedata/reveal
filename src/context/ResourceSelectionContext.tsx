@@ -41,9 +41,9 @@ export type ResourceSelectionObserver = {
   setQuery: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const ResourceSelectionContext = React.createContext(
-  {} as ResourceSelectionObserver
-);
+export const ResourceSelectionContext = React.createContext({
+  resourcesState: [] as ResourceItemState[],
+} as ResourceSelectionObserver);
 
 export const useResourceTypes = () => {
   const observer = useContext(ResourceSelectionContext);
@@ -52,7 +52,7 @@ export const useResourceTypes = () => {
 
 export const useResourceMode = () => {
   const observer = useContext(ResourceSelectionContext);
-  return observer.mode;
+  return { mode: observer.mode, setMode: observer.setMode };
 };
 
 export const useResourceEditable = () => {
@@ -80,7 +80,10 @@ export const useSetOnSelectResource = () => {
 
 export const useResourcesState = () => {
   const observer = useContext(ResourceSelectionContext);
-  return observer.resourcesState;
+  return {
+    resourcesState: observer.resourcesState,
+    setResourcesState: observer.setResourcesState,
+  };
 };
 
 export const useResourceFilters = () => {
@@ -97,15 +100,45 @@ export const useResourceFilters = () => {
 const defaultOnSelect = () => {};
 
 export type ResourceSelectionProps = {
+  /**
+   * Allow users to have access to editing/creating utilities
+   */
   allowEdit?: boolean;
+  /**
+   * Mode of the selection journey, defaults to 'none'
+   */
   mode?: ResourceSelectionMode;
+  /**
+   * Allowed resource types, default is all resources
+   */
   resourceTypes?: ResourceType[];
+  /**
+   * The initial asset filter
+   */
   assetFilter?: AssetFilterProps;
+  /**
+   * The initial timeseries filter
+   */
   timeseriesFilter?: TimeseriesFilter;
+  /**
+   * The initial file filter
+   */
   fileFilter?: FileFilterProps;
+  /**
+   * The initial event filter
+   */
   eventFilter?: EventFilter;
+  /**
+   * The initial sequence filter
+   */
   sequenceFilter?: SequenceFilter['filter'];
+  /**
+   * Resources' states (disabled, selected, active etc.)
+   */
   resourcesState?: ResourceItemState[];
+  /**
+   * The callback when a resource is selected
+   */
   onSelect?: OnSelectListener;
   children?: React.ReactNode;
 };
@@ -160,6 +193,12 @@ export const ResourceSelectionProvider = ({
       setResourcesState(initialResourcesState);
     }
   }, [initialResourcesState]);
+
+  useEffect(() => {
+    if (initialResourceTypes) {
+      setResourceTypes(initialResourceTypes);
+    }
+  }, [initialResourceTypes]);
 
   useEffect(() => {
     if (initialMode) {

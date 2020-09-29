@@ -26,12 +26,12 @@ import {
 } from '@cognite/cdf-resources-store';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { AssetSmallPreview } from 'containers/Assets';
-import { FileSmallPreview } from 'containers/Files/FileSmallPreview';
+import { FileSmallPreview } from 'containers/Files';
 import { SequenceSmallPreview } from 'containers/Sequences';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
+import { EventSmallPreview } from 'containers/Events';
 import { Loader } from 'components/Common';
 import { ResourceItem } from 'types';
-import { EventSmallPreview } from 'containers/Events';
 
 type Props = {
   item?: ResourceItem;

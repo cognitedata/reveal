@@ -17,65 +17,61 @@ const file: FileInfo = {
   },
 };
 
-export default { title: 'Organisms/FileDetailsAbstract' };
+export default {
+  title: 'Organisms/FileDetailsAbstract',
+  component: FileDetailsAbstract,
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+};
 
 export const Example = () => {
   return (
-    <Container>
-      <FileDetailsAbstract
-        file={file}
-        imgPreview={
-          <img
-            src="//unsplash.it/400/200"
-            alt=""
-            style={{ width: '100%', height: 'auto' }}
-          />
-        }
-        files={[file]}
-      >
-        <Button>Hover me!</Button>
-      </FileDetailsAbstract>
-    </Container>
+    <FileDetailsAbstract
+      file={file}
+      imgPreview={
+        <img
+          src="//unsplash.it/400/200"
+          alt=""
+          style={{ width: '100%', height: 'auto' }}
+        />
+      }
+      files={[file]}
+    />
   );
 };
 
 export const WithActions = () => {
   return (
-    <Container>
-      <FileDetailsAbstract
-        file={file}
-        actions={[
-          <Button type="primary">Click me</Button>,
-          <Button>Click me too</Button>,
-        ]}
-      >
-        <Button>Hover me!</Button>
-      </FileDetailsAbstract>
-    </Container>
+    <FileDetailsAbstract
+      file={file}
+      actions={[
+        <Button type="primary">Click me</Button>,
+        <Button>Click me too</Button>,
+      ]}
+    >
+      <Button>Hover me!</Button>
+    </FileDetailsAbstract>
   );
 };
 
 export const WithExtras = () => {
   return (
-    <Container>
-      <FileDetailsAbstract
-        file={file}
-        actions={[
-          <Button type="primary">Click me</Button>,
-          <Button>Click me too</Button>,
-        ]}
-        extras={
-          <Button
-            type="primary"
-            variant="ghost"
-            shape="round"
-            icon="VerticalEllipsis"
-          />
-        }
-      >
-        <Button>Hover me!</Button>
-      </FileDetailsAbstract>
-    </Container>
+    <FileDetailsAbstract
+      file={file}
+      actions={[
+        <Button type="primary">Click me</Button>,
+        <Button>Click me too</Button>,
+      ]}
+      extras={
+        <Button
+          type="primary"
+          variant="ghost"
+          shape="round"
+          icon="VerticalEllipsis"
+        />
+      }
+    >
+      <Button>Hover me!</Button>
+    </FileDetailsAbstract>
   );
 };
 

@@ -6,25 +6,35 @@ import {
   ResourceSelectionProvider,
   ResourceItemState,
 } from 'context/ResourceSelectionContext';
+import { action } from '@storybook/addon-actions';
+import { text } from '@storybook/addon-knobs';
 import { EventTable } from './EventTable';
 import { events } from './events';
 
-export default { title: 'Molecules/EventTable' };
+export default {
+  title: 'Molecules/EventTable',
+  component: EventTable,
+  decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
+};
 
 export const Example = () => {
   return (
-    <ResourceSelectionProvider>
-      <Wrapper>
-        <EventTable events={events} onEventClicked={() => {}} />
-      </Wrapper>
-    </ResourceSelectionProvider>
+    <EventTable
+      events={events}
+      onEventClicked={action('onEventClicked')}
+      query={text('query', '')}
+    />
   );
 };
 export const ExampleSingleSelect = () => {
   return (
-    <Wrapper>
-      <EventTable events={events} onEventClicked={() => {}} />
-    </Wrapper>
+    <ResourceSelectionProvider mode="single">
+      <EventTable
+        events={events}
+        onEventClicked={action('onEventClicked')}
+        query={text('query', '')}
+      />
+    </ResourceSelectionProvider>
   );
 };
 
@@ -47,7 +57,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   };
   return (
     <ResourceSelectionProvider
-      mode="single"
+      mode="none"
       resourcesState={selection}
       onSelect={onSelect}
     >

@@ -20,6 +20,11 @@ export const useResourceActionsContext = () => {
   return observer.run;
 };
 
+export const useAddResourceActions = () => {
+  const observer = useContext(ResourceActionsContext);
+  return observer.add;
+};
+
 export const ResourceActionsProvider = ({
   children,
 }: {

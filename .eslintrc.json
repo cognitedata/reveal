@@ -11,6 +11,8 @@
       "error",
       {
         "vars": "all",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
         "args": "after-used",
         "ignoreRestSiblings": true
       }

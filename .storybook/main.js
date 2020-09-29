@@ -1,7 +1,11 @@
 const path = require('path');
 
 module.exports = {
-  stories: ['../src/**/*.stories.tsx'],
+  stories: [
+    '../src/docs/index.stories.mdx',
+    '../src/**/*.stories.tsx',
+    '../src/**/*.stories.mdx',
+  ],
   webpackFinal: async (webpackConfig) => {
     webpackConfig.resolve.extensions.push('.ts', '.tsx');
     webpackConfig.node = {
@@ -13,10 +17,7 @@ module.exports = {
     ];
     webpackConfig.resolve.alias = {
       ...webpackConfig.resolve.alias,
-      '@cognite/cdf-sdk-singleton': path.resolve(
-        __dirname,
-        'sdk-singleton-mock.js'
-      ),
+      'utils/SDK': path.resolve(__dirname, 'sdk-singleton-mock.js'),
     };
     webpackConfig.module.rules = webpackConfig.module.rules
       .filter((rule) => !Array.isArray(rule.oneOf))
@@ -46,11 +47,26 @@ module.exports = {
       ]);
     return webpackConfig;
   },
-  typescript: { reactDocgen: false },
+  typescript: {
+    check: false,
+    checkOptions: {},
+    reactDocgen: 'react-docgen-typescript',
+    reactDocgenTypescriptOptions: {
+      shouldRemoveUndefinedFromOptional: false,
+      shouldExtractLiteralValuesFromEnum: true,
+      propFilter: (prop) =>
+        prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
+    },
+  },
   addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
     '@storybook/preset-create-react-app',
+    '@storybook/addon-knobs',
+    '@storybook/addon-links',
+    {
+      name: '@storybook/addon-docs',
+      options: { configureJSX: true },
+    },
+    '@storybook/addon-essentials',
     {
       name: '@storybook/addon-storysource',
       options: {

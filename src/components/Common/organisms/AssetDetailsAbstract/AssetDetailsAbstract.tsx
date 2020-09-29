@@ -74,7 +74,7 @@ export const AssetDetailsAbstract = ({
   timeseriesPreview,
   filePreview,
 }: AssetDetailsProps) => {
-  const resourcesState = useResourcesState();
+  const { resourcesState } = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
     el => el.type === 'asset' && el.state === 'active'

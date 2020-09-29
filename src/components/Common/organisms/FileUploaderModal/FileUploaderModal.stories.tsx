@@ -3,7 +3,10 @@ import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
 import { FileUploaderModal } from './FileUploaderModal';
 
-export default { title: 'Organisms/FileUploaderModal' };
+export default {
+  title: 'Organisms/FileUploaderModal',
+  component: FileUploaderModal,
+};
 
 export const Example = () => {
   const [visible, setVisible] = useState(false);

@@ -6,28 +6,35 @@ import {
   ResourceSelectionProvider,
   ResourceItemState,
 } from 'context/ResourceSelectionContext';
+import { action } from '@storybook/addon-actions';
+import { text } from '@storybook/addon-knobs';
 import { TimeseriesTable } from './TimeseriesTable';
 import { timeseries } from './timeseries';
 
-export default { title: 'Molecules/TimeseriesTable' };
+export default {
+  title: 'Molecules/TimeseriesTable',
+  component: TimeseriesTable,
+  decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
+};
 
 export const Example = () => {
   return (
-    <ResourceSelectionProvider>
-      <Wrapper>
-        <TimeseriesTable
-          timeseries={timeseries}
-          onTimeseriesClicked={() => {}}
-        />
-      </Wrapper>
-    </ResourceSelectionProvider>
+    <TimeseriesTable
+      timeseries={timeseries}
+      onTimeseriesClicked={action('onTimeseriesClicked')}
+      query={text('query', '')}
+    />
   );
 };
 export const ExampleSingleSelect = () => {
   return (
-    <Wrapper>
-      <TimeseriesTable timeseries={timeseries} onTimeseriesClicked={() => {}} />
-    </Wrapper>
+    <ResourceSelectionProvider mode="single">
+      <TimeseriesTable
+        timeseries={timeseries}
+        onTimeseriesClicked={action('onTimeseriesClicked')}
+        query={text('query', '')}
+      />
+    </ResourceSelectionProvider>
   );
 };
 
@@ -50,7 +57,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   };
   return (
     <ResourceSelectionProvider
-      mode="single"
+      mode="none"
       resourcesState={selection}
       onSelect={onSelect}
     >

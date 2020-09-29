@@ -20,171 +20,133 @@ const asset: Asset = {
   },
 };
 
-export default { title: 'Organisms/AssetDetailsAbstract' };
+const files = [
+  {
+    name: 'Hello.pdf',
+    id: 123,
+    uploaded: false,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    mimeType: 'application/pdf',
+  },
+  {
+    name: 'Hello.pdf',
+    id: 123,
+    uploaded: false,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    mimeType: 'application/pdf',
+  },
+  {
+    name: 'Hello.pdf',
+    id: 123,
+    uploaded: false,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    mimeType: 'application/pdf',
+  },
+  {
+    name: 'Hello.pdf',
+    id: 123,
+    uploaded: false,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    mimeType: 'application/pdf',
+  },
+  {
+    name: 'Hello.pdf',
+    id: 123,
+    uploaded: false,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    mimeType: 'application/pdf',
+  },
+  {
+    name: 'Hello.pdf',
+    id: 123,
+    uploaded: false,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    mimeType: 'application/pdf',
+  },
+];
+
+const timeseries = [
+  {
+    name: 'Hello',
+    id: 123,
+    isString: false,
+    isStep: false,
+    description: 'asdfasdfdas',
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+  },
+];
+
+export default {
+  title: 'Organisms/AssetDetailsAbstract',
+  component: AssetDetailsAbstract,
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+};
 
 export const Example = () => {
   return (
-    <Container>
-      <AssetDetailsAbstract
-        asset={asset}
-        files={[
-          {
-            name: 'Hello.pdf',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-            mimeType: 'application/pdf',
-          },
-          {
-            name: 'Hello.pdf',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-            mimeType: 'application/pdf',
-          },
-          {
-            name: 'Hello.pdf',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-            mimeType: 'application/pdf',
-          },
-          {
-            name: 'Hello.pdf',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-            mimeType: 'application/pdf',
-          },
-          {
-            name: 'Hello.pdf',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-            mimeType: 'application/pdf',
-          },
-          {
-            name: 'Hello.pdf',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-            mimeType: 'application/pdf',
-          },
-        ]}
-        timeseries={[
-          {
-            name: 'Hello',
-            id: 123,
-            isString: false,
-            isStep: false,
-            description: 'asdfasdfdas',
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
-      />
-    </Container>
+    <AssetDetailsAbstract asset={asset} files={files} timeseries={timeseries} />
   );
 };
 
 export const WithActions = () => {
   return (
-    <Container>
-      <AssetDetailsAbstract
-        asset={asset}
-        files={[
-          {
-            name: 'Hello',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
-        timeseries={[
-          {
-            name: 'Hello',
-            id: 123,
-            isString: false,
-            isStep: false,
-            description: 'asdfasdfdas',
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
-        actions={[
-          <Button type="primary">Click me</Button>,
-          <Button>Click me too</Button>,
-        ]}
-        timeseriesPreview={timeseries => (
-          <TimeseriesDetailsAbstract
-            timeSeries={timeseries}
-            actions={[
-              <Button key="view" type="primary" icon="ArrowRight">
-                View details
-              </Button>,
-            ]}
-          />
-        )}
-      >
-        <Button>Hover me!</Button>
-      </AssetDetailsAbstract>
-    </Container>
+    <AssetDetailsAbstract
+      asset={asset}
+      files={[files[0]]}
+      timeseries={timeseries}
+      actions={[
+        <Button type="primary">Click me</Button>,
+        <Button>Click me too</Button>,
+      ]}
+      timeseriesPreview={ts => (
+        <TimeseriesDetailsAbstract
+          timeSeries={ts}
+          actions={[
+            <Button key="view" type="primary" icon="ArrowRight">
+              View details
+            </Button>,
+          ]}
+        />
+      )}
+    >
+      <Button>Hover me!</Button>
+    </AssetDetailsAbstract>
   );
 };
 export const WithExtras = () => {
   return (
-    <Container>
-      <AssetDetailsAbstract
-        asset={asset}
-        files={[
-          {
-            name: 'Hello',
-            id: 123,
-            uploaded: false,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
-        timeseries={[
-          {
-            name: 'Hello',
-            id: 123,
-            isString: false,
-            isStep: false,
-            description: 'asdfasdfdas',
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
-        extras={
-          <Button
-            type="primary"
-            variant="ghost"
-            shape="round"
-            icon="VerticalEllipsis"
-          />
-        }
-        timeseriesPreview={timeseries => (
-          <TimeseriesDetailsAbstract
-            timeSeries={timeseries}
-            actions={[
-              <Button key="view" type="primary" icon="ArrowRight">
-                View details
-              </Button>,
-            ]}
-          />
-        )}
-      >
-        <Button>Hover me!</Button>
-      </AssetDetailsAbstract>
-    </Container>
+    <AssetDetailsAbstract
+      asset={asset}
+      files={[files[0]]}
+      timeseries={timeseries}
+      extras={
+        <Button
+          type="primary"
+          variant="ghost"
+          shape="round"
+          icon="VerticalEllipsis"
+        />
+      }
+      timeseriesPreview={ts => (
+        <TimeseriesDetailsAbstract
+          timeSeries={ts}
+          actions={[
+            <Button key="view" type="primary" icon="ArrowRight">
+              View details
+            </Button>,
+          ]}
+        />
+      )}
+    >
+      <Button>Hover me!</Button>
+    </AssetDetailsAbstract>
   );
 };
 

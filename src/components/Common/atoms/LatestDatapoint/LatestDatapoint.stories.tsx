@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import '@cognite/cogs.js/dist/antd.css';
-import '@cognite/cogs.js/dist/cogs.css';
 import { Timeseries } from 'cognite-sdk-v3';
 import { LatestDatapoint } from './LatestDatapoint';
 
@@ -32,7 +30,7 @@ const exampleTimeSeries: Timeseries[] = [
   },
 ];
 
-export default { title: 'Molecules/LatestDatapoint' };
+export default { title: 'Atoms/LatestDatapoint', component: LatestDatapoint };
 
 export const Example = () => (
   <Container>

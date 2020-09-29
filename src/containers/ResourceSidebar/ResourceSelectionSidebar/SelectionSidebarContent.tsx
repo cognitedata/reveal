@@ -68,8 +68,8 @@ export const SelectionSidebarContent = ({
 }) => {
   const [query, setQuery] = useQuery();
   const { add, remove } = useContext(ResourceActionsContext);
-  const mode = useResourceMode();
-  const resourceState = useResourcesState();
+  const { mode } = useResourceMode();
+  const { resourcesState } = useResourcesState();
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
   );
@@ -77,8 +77,8 @@ export const SelectionSidebarContent = ({
   const [activeKey, setActiveKey] = useState<ResourceType>(resourceTypes[0]);
 
   const selectResourcesCount = useMemo(
-    () => resourceState.filter(el => el.state === 'selected').length,
-    [resourceState]
+    () => resourcesState.filter(el => el.state === 'selected').length,
+    [resourcesState]
   );
 
   const renderResourceActions: RenderResourceActionsFunction = useCallback(

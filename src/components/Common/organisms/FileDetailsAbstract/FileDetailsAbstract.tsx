@@ -34,7 +34,7 @@ export const FileDetailsAbstract = ({
   extras,
   files,
 }: FileDetailsProps) => {
-  const resourcesState = useResourcesState();
+  const { resourcesState } = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
     el => el.type === 'file' && el.state === 'active'

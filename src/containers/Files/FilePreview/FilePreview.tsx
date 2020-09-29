@@ -17,12 +17,9 @@ import {
   ProposedCogniteAnnotation,
   convertCogniteAnnotationToIAnnotation,
 } from '@cognite/react-picture-annotation';
-import { useHistory } from 'react-router-dom';
 import { Splitter, Loader } from 'components/Common';
 import styled from 'styled-components';
 import { isFilePreviewable } from 'utils/FileUtils';
-import queryString from 'query-string';
-import { useLocation } from 'react-router';
 import { AnnotationPreviewSidebar } from 'containers/Files/FilePreview/AnnotationPreviewSidebar';
 import { v4 as uuid } from 'uuid';
 import { PendingCogniteAnnotation } from '@cognite/annotations';
@@ -32,11 +29,19 @@ import { ContextualizationModule } from 'containers/Files/FilePreview/Contextual
 import { getSDK } from 'utils/SDK';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 
-type Props = { fileId?: number; contextualization?: boolean };
+type Props = {
+  fileId?: number;
+  contextualization?: boolean;
+  page?: number;
+  onPageChange?: (newPage: number) => void;
+};
 
-const FilePreview = ({ fileId, contextualization = false }: Props) => {
-  const history = useHistory();
-  const { search } = useLocation();
+const FilePreview = ({
+  fileId,
+  contextualization = false,
+  page,
+  onPageChange,
+}: Props) => {
   const dispatch = useResourcesDispatch();
   const file = useResourcesSelector(itemSelector)(fileId);
   const [creatable, setCreatable] = useState(false);
@@ -62,21 +67,11 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
     [annotations, pendingAnnotations]
   );
 
-  const { page = 1 }: { page?: number } = queryString.parse(search, {
-    parseNumbers: true,
-  });
-
   useEffect(() => {
-    if (pageFromStore !== page) {
-      const currentSearch = queryString.parse(search);
-      history.replace({
-        search: queryString.stringify({
-          ...currentSearch,
-          page: pageFromStore,
-        }),
-      });
+    if (!!page && pageFromStore !== page && onPageChange) {
+      onPageChange(page);
     }
-  }, [pageFromStore, page, search, history]);
+  }, [pageFromStore, page, onPageChange]);
 
   const canPreviewFile = useMemo(() => isFilePreviewable(file), [file]);
 

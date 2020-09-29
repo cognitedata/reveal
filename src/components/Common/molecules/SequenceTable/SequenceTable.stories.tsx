@@ -6,25 +6,35 @@ import {
   ResourceSelectionProvider,
   ResourceItemState,
 } from 'context/ResourceSelectionContext';
+import { action } from '@storybook/addon-actions';
+import { text } from '@storybook/addon-knobs';
 import { SequenceTable } from './SequenceTable';
 import { sequences } from './sequences';
 
-export default { title: 'Molecules/SequenceTable' };
+export default {
+  title: 'Molecules/SequenceTable',
+  component: SequenceTable,
+  decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
+};
 
 export const Example = () => {
   return (
-    <ResourceSelectionProvider>
-      <Wrapper>
-        <SequenceTable sequences={sequences} onSequenceClicked={() => {}} />
-      </Wrapper>
-    </ResourceSelectionProvider>
+    <SequenceTable
+      sequences={sequences}
+      onSequenceClicked={action('onSequenceClicked')}
+      query={text('query', '')}
+    />
   );
 };
 export const ExampleSingleSelect = () => {
   return (
-    <Wrapper>
-      <SequenceTable sequences={sequences} onSequenceClicked={() => {}} />
-    </Wrapper>
+    <ResourceSelectionProvider mode="single">
+      <SequenceTable
+        sequences={sequences}
+        onSequenceClicked={action('onSequenceClicked')}
+        query={text('query', '')}
+      />
+    </ResourceSelectionProvider>
   );
 };
 
@@ -47,7 +57,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   };
   return (
     <ResourceSelectionProvider
-      mode="single"
+      mode="none"
       resourcesState={selection}
       onSelect={onSelect}
     >

@@ -1,12 +1,24 @@
 import React from 'react';
+import { boolean, text } from '@storybook/addon-knobs';
 import { InfoGrid, InfoCell } from './InfoGrid';
 
-export default { title: 'Molecules/InfoGrid' };
+export default {
+  title: 'Molecules/InfoGrid',
+  component: InfoGrid,
+  subcomponents: { InfoCell },
+};
 
 export const Example = () => (
   <>
-    <InfoGrid>
-      <InfoCell title="Latest reading">Data</InfoCell>
+    <InfoGrid noBorders={boolean('InfoGrid/noBorders', false)}>
+      <InfoCell
+        title={text('InfoCell/title', 'Latest reading')}
+        half={boolean('InfoCell/half', true)}
+        noBorders={boolean('InfoCell/noBorders', false)}
+        noPadding={boolean('InfoCell/noPadding', false)}
+      >
+        Data
+      </InfoCell>
       <InfoCell title="Type" half>
         Small data
       </InfoCell>

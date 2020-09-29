@@ -7,25 +7,35 @@ import {
   ResourceSelectionProvider,
   ResourceItemState,
 } from 'context/ResourceSelectionContext';
+import { action } from '@storybook/addon-actions';
+import { text } from '@storybook/addon-knobs';
 import { AssetTable } from './AssetTable';
 import { assets } from './assets';
 
-export default { title: 'Molecules/AssetTable' };
+export default {
+  title: 'Molecules/AssetTable',
+  component: AssetTable,
+  decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
+};
 
 export const Example = () => {
   return (
-    <ResourceSelectionProvider mode="none">
-      <Wrapper>
-        <AssetTable assets={assets} onAssetClicked={() => {}} />
-      </Wrapper>
-    </ResourceSelectionProvider>
+    <AssetTable
+      assets={assets}
+      onAssetClicked={action('onAssetClicked')}
+      query={text('query', '')}
+    />
   );
 };
 export const ExampleSingleSelect = () => {
   return (
-    <Wrapper>
-      <AssetTable assets={assets} onAssetClicked={() => {}} />
-    </Wrapper>
+    <ResourceSelectionProvider mode="single">
+      <AssetTable
+        assets={assets}
+        onAssetClicked={action('onAssetClicked')}
+        query={text('query', '')}
+      />
+    </ResourceSelectionProvider>
   );
 };
 
@@ -48,7 +58,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   };
   return (
     <ResourceSelectionProvider
-      mode="single"
+      mode="none"
       resourcesState={selection}
       onSelect={onSelect}
     >

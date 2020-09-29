@@ -1,7 +1,7 @@
 import React from 'react';
 import { Loader } from './Loader';
 
-export default { title: 'Atoms/Loader' };
+export default { title: 'Atoms/Loader', component: Loader };
 export const Simple = () => (
   <div style={{ padding: '40px', background: 'grey' }}>
     <Loader />

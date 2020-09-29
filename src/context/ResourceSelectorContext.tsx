@@ -9,11 +9,12 @@ import {
 } from './ResourceSelectionContext';
 
 export type OpenSelectorProps = ResourceSelectionProps & {
+  /** Callback for when the selector is closed */
   onClose?: (confirmed: boolean) => void;
 };
 
 export type ResourceSelector = {
-  openResourceSelector: (props: OpenSelectorProps) => void;
+  openResourceSelector: (props?: OpenSelectorProps) => void;
   hideResourceSelector: () => void;
 };
 
@@ -42,13 +43,20 @@ export const ResourceSelectorProvider = ({
   );
 
   const openResourceSelector = useCallback(
-    ({
-      onClose: propsOnClose = () => {},
-      onSelect: propsOnSelect = () => {},
-      resourcesState: propsResourceItemState = [],
-      mode = 'single',
-      ...selectionProps
-    }: OpenSelectorProps) => {
+    (
+      {
+        onClose: propsOnClose = () => {},
+        onSelect: propsOnSelect = () => {},
+        resourcesState: propsResourceItemState = [],
+        mode = 'single',
+        ...selectionProps
+      }: OpenSelectorProps = {
+        onClose: () => {},
+        onSelect: () => {},
+        resourcesState: [],
+        mode: 'single',
+      }
+    ) => {
       setProps({
         allowEdit: false,
         mode,
