@@ -123,6 +123,7 @@ export class EffectRenderManager {
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
     const original = {
+      autoClear: renderer.autoClear,
       clearAlpha: renderer.getClearAlpha(),
       renderTarget: renderer.getRenderTarget(),
       renderMode: this._materialManager.getRenderMode()
@@ -140,41 +141,47 @@ export class EffectRenderManager {
 
     try {
       this.updateRenderSize(renderer);
+
       renderer.info.autoReset = false;
       renderer.info.reset();
-      renderer.setClearAlpha(0);
+      renderer.autoClear = false;
+      
+      // Clear targets
+      this.clearTarget(renderer, this._ghostObjectRenderTarget);
+      this.clearTarget(renderer, this._compositionTarget);
+      this.clearTarget(renderer, this._customObjectRenderTarget);      
+      // We use alpha to store special state for the next targets
+      renderer.setClearAlpha(0.0);
+      this.clearTarget(renderer, this._inFrontRenderedCadModelTarget);
+      this.clearTarget(renderer, this._normalRenderedCadModelTarget);
+      renderer.setClearAlpha(original.clearAlpha);
 
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
-
       if (hasBackElements && !hasGhostElements) {
         this.renderNormalCadModelsFromBaseScene(renderer, camera);
-        this.clearTarget(renderer, this._ghostObjectRenderTarget);
       } else if (hasBackElements && hasGhostElements) {
         this.renderNormalCadModels(renderer, camera);
         this._normalSceneBuilder.restoreOriginalScene();
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else if (!hasBackElements && hasGhostElements) {
-        this.clearTarget(renderer, this._normalRenderedCadModelTarget);
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
-      } else {
-        this.clearTarget(renderer, this._normalRenderedCadModelTarget);
-        this.clearTarget(renderer, this._ghostObjectRenderTarget);
-      }
+      } 
+
       if (hasInFrontElements) {
         this.renderInFrontCadModels(renderer, camera);
         this._inFrontSceneBuilder.restoreOriginalScene();
-      } else {
-        this.clearTarget(renderer, this._inFrontRenderedCadModelTarget);
-      }
+      } 
       this.renderCustomObjects(renderer, scene, camera);
-
-      renderer.setClearAlpha(original.clearAlpha);
-
-      // Composite view and anti-aliased version to screen
+      
+      // Composite view
       this.renderComposition(renderer, camera);
+
+      // Anti-aliased version to screen
+      renderer.autoClear = original.autoClear;
       this.renderAntiAliasToCanvas(renderer);
     } finally {
       // Restore state
+      renderer.autoClear = original.autoClear;
       renderer.setClearAlpha(original.clearAlpha);
       renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
@@ -186,7 +193,7 @@ export class EffectRenderManager {
     }
   }
 
-  private clearTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget) {
+  private clearTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
     renderer.setRenderTarget(target);
     renderer.clear(true, true, false); // Clear color and depth
   }

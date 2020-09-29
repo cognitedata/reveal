@@ -104,20 +104,11 @@ void main() {
     }
   }
 
+  if (texture2D(tBackDepth, vUv).x == 1.0 && texture2D(tGhostDepth, vUv).x == 1.0) {
+    discard;
+  }
   float ghostDepth = readDepth(tGhostDepth, vUv);
   ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity; 
-
-  if(backDepth <= 1.0){
-    // s will be:
-    // - zero when regular geometry is in front of ghost
-    // - ghostAlpha when regular geometry is behind ghost
-    float s = (1.0 - step(backDepth, ghostDepth)) * ghostAlpha;
-    gl_FragColor = vec4(mix(backAlbedo.rgb, ghostColor, s), 1.0);
-    return;
-  } else if (ghostDepth <= 1.0) {
-    gl_FragColor = vec4(ghostAlpha * ghostColor, 1.0);
-    return;
-  }
-
-  discard;
+  float s = (1.0 - step(backDepth, ghostDepth)) * ghostAlpha;
+  gl_FragColor = vec4(mix(backAlbedo.rgb, ghostColor, s), 1.0);
 }
