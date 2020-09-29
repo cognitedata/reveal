@@ -66,6 +66,11 @@
     {
       "type": "doc",
       "id": "version-1.x/API Reference"
+    },
+    {
+      "type": "link",
+      "href": "https://github.com/cognitedata/reveal/releases",
+      "label": "Release notes"
     }
   ]
 }
