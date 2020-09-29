@@ -134,27 +134,38 @@ def pods = { body ->
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
       ) {
-        testcafe.pod() {
-          properties([
-            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
-          ])
-          node(POD_LABEL) {
+        // This enables codecov for the repo. If this fails to start, then
+        // do the following:
+        //  1. Obtain a token by going to:
+        //     https://codecov.io/gh/cognitedata/YOUR-REPO-HERE
+        //  2. Create a PR similar to:
+        //     https://github.com/cognitedata/terraform/pull/1923
+        //  3. Get that PR approved, applied, and merged
+        //
+        // If you don't want codecoverage, then you can just remove this.
+        codecov.pod {
+          testcafe.pod() {
+            properties([
+              buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+            ])
+            node(POD_LABEL) {
 
-            dir('main') {
-              stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                checkout(scm)
+              dir('main') {
+                stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                  checkout(scm)
+                }
+
+                stageWithNotify('Install dependencies', CONTEXTS.setup) {
+                  yarn.setup()
+                }
+
+                yarn.copy(
+                  dirs: DIRS
+                )
               }
 
-              stageWithNotify('Install dependencies', CONTEXTS.setup) {
-                yarn.setup()
-              }
-
-              yarn.copy(
-                dirs: DIRS
-              )
+              body()
             }
-
-            body()
           }
         }
       }
@@ -187,6 +198,13 @@ pods {
           dir('unit-tests') {
             container('fas') {
               sh('yarn test')
+              junit(allowEmptyResults: true, testResults: '**/junit.xml')
+              if (isPullRequest) {
+                summarizeTestResults()
+              }
+              stage("Upload coverage reports") {
+                codecov.uploadCoverageReport()
+              }
             }
           }
         }
