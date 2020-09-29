@@ -1,7 +1,8 @@
 @Library('jenkins-helpers') _
 
-static final String STAGING_DOMAIN_NAME = "tenant-selector.cognite.ai"
-static final String RELEASE_DOMAIN_NAME = "tenant-selector-prod.cognite.ai"
+static final String STAGING_APP_ID = "tenant-selector-staging"
+static final String PRODUCTION_APP_ID = "tenant-selector"
+static final String APPLICATION_REPO_ID = "tenant-selector"
 static final String SENTRY_PROJECT_NAME = "tenant-selector"
 static final String SENTRY_DSN = "https://4558e4f6faaf4948ab9327457827a301@o124058.ingest.sentry.io/5193370"
 static final String LOCIZE_PROJECT_ID = "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d"
@@ -150,7 +151,8 @@ pods { contexts ->
 
           dir('staging') {
             fas.build(
-              domainName: STAGING_DOMAIN_NAME,
+              appId: STAGING_APP_ID,
+              repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build staging',
             )
           }
@@ -165,7 +167,8 @@ pods { contexts ->
 
           dir('release') {
             fas.build(
-              domainName: RELEASE_DOMAIN_NAME,
+              appId: PRODUCTION_APP_ID,
+              repo: APPLICATION_REPO_ID,
               buildCommand: 'yarn build production',
             )
           }
