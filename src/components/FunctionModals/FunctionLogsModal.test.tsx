@@ -8,8 +8,9 @@ import TestWrapper from 'utils/TestWrapper';
 import sdk from 'sdk-singleton';
 import { sleep } from 'helpers';
 import FunctionLogsModal from './FunctionLogsModal';
+import { setConsole } from 'react-query';
 
-export const wrap = (node: React.ReactNode) =>
+const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
 
 sdk.get.mockResolvedValue({});
@@ -21,11 +22,7 @@ describe('FunctionLogsModal', () => {
       const div = document.createElement('div');
       ReactDOM.render(
         <MemoryRouter>
-          <FunctionLogsModal
-            onCancel={jest.fn()}
-            id={1}
-            callId={2}
-          />
+          <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
         </MemoryRouter>,
         div
       );
@@ -35,11 +32,7 @@ describe('FunctionLogsModal', () => {
 
   it('displays a normal title', () => {
     const wrapper = wrap(
-      <FunctionLogsModal
-        onCancel={jest.fn()}
-        id={1}
-        callId={2}
-      />
+      <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
     );
     const title = wrapper.find('.ant-modal-title');
     expect(title.text()).toBe('Logs');
@@ -70,8 +63,6 @@ describe('FunctionLogsModal', () => {
       },
     });
 
-    debugger;
-
     const wrapper = wrap(
       <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
     );
@@ -87,7 +78,6 @@ describe('FunctionLogsModal', () => {
       '/api/playground/projects/mockProject/functions/1/calls/2'
     );
 
-
     const result = wrapper.find('.ant-modal-content');
     expect(result.text()).toBeTruthy();
     expect(result.text()).toContain(
@@ -95,34 +85,36 @@ describe('FunctionLogsModal', () => {
     );
   });
 
-  // it('displays text if error is set', async () => {
-  //   sdk.post.mockReset();
-  //   sdk.post.mockRejectedValue('nope');
-  //   const wrapper = wrap(
-  //     <FunctionLogsModal
-  //       onCancel={jest.fn()}
-  //       id={1}
-  //       callId={2}
-  //     />
-  //   );
-  //   await sleep(100);
-  //   const alert = wrapper.render().find('.ant-alert-error');
-  //   expect(alert).toBeDefined();
-  //   expect(alert.text()).toContain('nope');
-  // });
+  it('displays text if error is set', async () => {
+    setConsole({
+      log: () => {},
+      warn: () => {},
+      error: () => {},
+    });
 
-  // it('should call onCancel when button is clicked', () => {
-  //   const cancelFunc = jest.fn();
-  //   const wrapper = wrap(
-  //     <FunctionLogsModal
-  //       onCancel={cancelFunc}
-  //       id={1}
-  //       callId={2}
-  //     />
-  //   );
+    sdk.get.mockReset();
+    sdk.get.mockRejectedValue('log error');
+    const wrapper = wrap(
+      <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
+    );
+    await sleep(100);
+    const alert = wrapper.render().find('.ant-alert-error');
+    expect(alert).toBeDefined();
+    expect(alert.text()).toContain('log error');
+  });
 
-  //   const b = wrapper.find('button.ant-modal-close');
-  //   b.simulate('click');
-  //   expect(cancelFunc).toBeCalledTimes(1);
-  // });
+  it('should call onCancel when button is clicked', () => {
+    const cancelFunc = jest.fn();
+    const wrapper = wrap(
+      <FunctionLogsModal
+        onCancel={cancelFunc}
+        id={1}
+        callId={2}
+      />
+    );
+
+    const b = wrapper.find('button.ant-modal-close');
+    b.simulate('click');
+    expect(cancelFunc).toBeCalledTimes(1);
+  });
 });

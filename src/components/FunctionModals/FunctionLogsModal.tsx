@@ -37,8 +37,8 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
         description={
           <>
             <p>There was an error fetching the logs.</p>
-            {errors?.map(e => (
-              <ErrorFeedback error={e} />
+            {errors?.map((e, i) => (
+              <ErrorFeedback key={i} error={e} />
             ))}
           </>
         }

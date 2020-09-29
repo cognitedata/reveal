@@ -17,9 +17,7 @@ jest.mock('@cognite/cdf-utilities', () => ({
 const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
 
-
 describe('Functions', () => {
-
   const mockFunction = {
     name: 'testFunc',
     id: 1,
@@ -47,7 +45,7 @@ describe('Functions', () => {
 
   sdk.get.mockReset();
   sdk.post.mockReset();
-  sdk.get.mockResolvedValue({ data: { items: [mockFunction, mockFunction2] }});
+  sdk.get.mockResolvedValue({ data: { items: [mockFunction, mockFunction2] } });
   sdk.post.mockResolvedValue({ data: { items: [mockCall] } });
 
   beforeEach(() => sdk.get.mockClear());

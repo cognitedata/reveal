@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { mount, shallow, ReactWrapper } from 'enzyme';
 
-
 import { Upload, Form } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadFunctionModal, { stuffForUnitTests } from './UploadFunctionModal';

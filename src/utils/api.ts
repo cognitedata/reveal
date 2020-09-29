@@ -12,8 +12,8 @@ import {
 import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { newestCall } from './sorting';
 import { sleep } from 'helpers';
+import { newestCall } from './sorting';
 
 // Using react-query#useQuery calls the function with a QueryKey as the first
 // argument, useMutation does not.
@@ -25,7 +25,7 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
   const filter = scheduleId ? { scheduleId } : {};
   return sdk
     .post(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/list`,
+      `/api/playground/projects/${sdk.project}/functions/${id}/calls/list/`,
       {
         data: { filter },
       }
@@ -128,7 +128,6 @@ export const deleteSchedule = (id: number) =>
       }
     )
     .then(response => response?.data);
-
 
 const createFunction = (
   cogfunction: CogFunctionUpload
