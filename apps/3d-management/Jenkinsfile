@@ -1,0 +1,164 @@
+@Library('jenkins-helpers') _
+
+static final String REPO = "unified-cdf-ui-demo-app"
+static final String APP_NAME = "cognite-cdf-demo-app"
+static final String PR_SERVER_MARKER = "[pr-server]\n";
+
+def label = "${REPO}-${UUID.randomUUID().toString().substring(0, 5)}"
+podTemplate(
+    label: label,
+    containers: [
+        containerTemplate(	
+            name: 'cloudsdk',	
+            image: 'google/cloud-sdk:277.0.0',	
+            resourceRequestCpu: '500m',	
+            resourceRequestMemory: '500Mi',	
+            resourceLimitCpu: '500m',	
+            resourceLimitMemory: '500Mi',	
+            ttyEnabled: true,
+            envVars: [
+                envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/jenkins-cdf-hub-deployer/credentials.json'),
+            ]
+        )
+    ]
+    .plus(fas.containers(sentryProjectName: 'watchtower'))
+    .plus(previewServer.containers())
+    .plus(yarn.containers()),
+    envVars: [
+        envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
+    ],
+    volumes: [
+        secretVolume(secretName: 'jenkins-cdf-hub-deployer',
+            mountPath: '/jenkins-cdf-hub-deployer',
+            readOnly: true
+        ),
+    ]
+    .plus(fas.volumes())
+    .plus(previewServer.volumes())
+    .plus(yarn.volumes())
+) {
+   properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
+    def newVersion
+    def currentVersion
+    def remote
+    def isPullRequest = !!env.CHANGE_ID
+
+    def projectProduction = "cognitedata-production"
+    def bucketBundles = "cdf-hub-bundles"
+
+    def gitCommit
+    def context_checkout = "continuous-integration/jenkins/checkout"
+    def context_install = "continuous-integration/jenkins/install"
+    def context_setup = "continuous-integration/jenkins/setup"
+    def context_lint = "continuous-integration/jenkins/lint"
+    def context_test = "continuous-integration/jenkins/test"
+    def context_unitTests = "continuous-integration/jenkins/unit-tests"
+    def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
+    def context_build_fas = "continuous-integration/jenkins/build-fas"
+    def context_build = "continuous-integration/jenkins/build"
+    def context_deploy_app = "continuous-integration/jenkins/deploy-app"
+    def context_publishRelease = "continuous-integration/jenkins/publish-release"
+    
+    node(label) {
+        
+        dir('main') {
+            stage("Checkout code") {
+                githubNotifyWrapper(context_checkout) {
+                    checkout scm
+                    gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                }
+            }
+        }
+        
+        dir('main') {
+            githubNotifyWrapper(context_install) {
+                stage('Install dependencies') {
+                    yarn.setup()
+                }
+            }
+        }
+
+        parallel(
+            'Linting': {
+                githubNotifyWrapper(context_lint) {
+                    dir('main') {
+                        container('fas') {
+                            stage("eslint") {
+                                sh("yarn lint")
+                            }
+                        }
+                    }
+                }
+            },
+            'Test and coverage': {
+                githubNotifyWrapper(context_test) {
+                    dir('main') {
+                        container('fas') {
+                            if (isPullRequest) {
+                                stage('Remove GitHub comments') {
+                                    deleteComments(PR_SERVER_MARKER)
+                                }
+                            }
+                            stage("Test") {
+                                sh("yarn test")
+                                junit(allowEmptyResults: true, testResults: '**/junit.xml')
+                                if (isPullRequest) {
+                                    summarizeTestResults()
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            'Build PR preview': {
+                githubNotifyWrapper(context_buildPrPreview) {
+                    if (!isPullRequest) {
+                        println "Skipping PR build for releases"
+                        return
+                    }
+                    dir('main') {
+                        previewServer(
+                            commentPrefix: PR_SERVER_MARKER,
+                            buildCommand: "yarn build:preview",
+                        )
+                        stage('Archive build') {
+                            archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/*', onlyIfSuccessful: true
+                        }
+                    }
+                }
+            },
+            'Build': {
+                githubNotifyWrapper(context_build) {
+                    dir('main') {
+                        container('fas') {
+                            if (isPullRequest) {
+                                println "Skipping build for pull requests"
+                                return
+                            }
+                            stage("Checking filesize of chunks") {
+                                sh("yarn build")
+                            }
+                        }
+                    }
+                }
+            }
+        )
+
+        if(!isPullRequest) {
+            parallel(
+                'Deploy': {
+                    dir('main') {
+                        container('cloudsdk') {
+                            stage('Deploy to cdf-hub') {
+                                sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=${projectProduction}")
+                                // Upload the root config js to the bundles bucket
+                                sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/${gitCommit}/")
+                                sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/latest/")
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
