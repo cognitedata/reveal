@@ -17,6 +17,7 @@ import {
   logsKey,
   functionKey,
   sortFunctionKey,
+  allSchedulesKey,
 } from './queryKeys';
 import { getCalls, getCall, getResponse, getLogs, getLatestCalls } from './api';
 
@@ -43,7 +44,7 @@ export const useFunction = (
   );
 export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
   useQuery<Schedule[]>(
-    [allFunctionsKey],
+    [allSchedulesKey],
     () =>
       sdk
         .get(`/api/playground/projects/${sdk.project}/functions/schedules`)

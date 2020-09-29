@@ -22,4 +22,5 @@ export function filesKey(args: CallsArg) {
 }
 export const sortFunctionKey = '/functions/calls-for-sorting';
 export const allFunctionsKey = '/functions';
+export const allSchedulesKey = '/functions/schedules';
 export const functionKey = '/function';
