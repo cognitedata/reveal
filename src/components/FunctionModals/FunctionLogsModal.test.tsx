@@ -7,8 +7,8 @@ import { mount } from 'enzyme';
 import TestWrapper from 'utils/TestWrapper';
 import sdk from 'sdk-singleton';
 import { sleep } from 'helpers';
-import FunctionLogsModal from './FunctionLogsModal';
 import { setConsole } from 'react-query';
+import FunctionLogsModal from './FunctionLogsModal';
 
 const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
@@ -106,11 +106,7 @@ describe('FunctionLogsModal', () => {
   it('should call onCancel when button is clicked', () => {
     const cancelFunc = jest.fn();
     const wrapper = wrap(
-      <FunctionLogsModal
-        onCancel={cancelFunc}
-        id={1}
-        callId={2}
-      />
+      <FunctionLogsModal onCancel={cancelFunc} id={1} callId={2} />
     );
 
     const b = wrapper.find('button.ant-modal-close');

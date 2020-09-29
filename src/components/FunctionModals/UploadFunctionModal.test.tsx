@@ -1,15 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router';
-import { mount, shallow, ReactWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 
 import { Upload, Form } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadFunctionModal, { stuffForUnitTests } from './UploadFunctionModal';
 
-const middlewares = [thunk]; // add your middlewares like `redux-thunk`
-const mockStore = configureStore(middlewares);
 const mockFile = {
   uid: '123',
   size: 1,
@@ -17,88 +13,36 @@ const mockFile = {
   type: '.zip',
 } as UploadFile;
 
-const initialStoreState = {
-  create: {
-    fileInfo: {},
-  },
-};
-let initialStore = mockStore(initialStoreState);
-
 describe('UploadFunctionModal', () => {
-  beforeEach(() => {
-    initialStore = mockStore(initialStoreState);
-  });
   describe('component', () => {
     it('renders without crashing', () => {
       expect(() => {
         const div = document.createElement('div');
         ReactDOM.render(
-          <Provider store={initialStore}>
-            <MemoryRouter>
-              <UploadFunctionModal visible onCancel={jest.fn()} />
-            </MemoryRouter>
-          </Provider>,
+          <UploadFunctionModal onCancel={jest.fn()} />,
+
           div
         );
         ReactDOM.unmountComponentAtNode(div);
       }).not.toThrow();
     });
-    it('should be visible based on input', () => {
-      const wrapperWithVisibleModal = shallow(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
-      const uploadFunctionModal = wrapperWithVisibleModal.find(
-        UploadFunctionModal
-      );
-      expect(uploadFunctionModal.prop('visible')).toBe(true);
-    });
-    it('should be invisible based on input', () => {
-      const wrapperWithoutVisibleModal = shallow(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible={false} onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
-      const uploadFunctionModal = wrapperWithoutVisibleModal.find(
-        UploadFunctionModal
-      );
-      expect(uploadFunctionModal.prop('visible')).toBe(false);
-    });
+
     it('should call onCancel when button is clicked', () => {
       const cancelFunc = jest.fn();
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={cancelFunc} />
-          </MemoryRouter>
-        </Provider>
-      );
+      const wrapper = mount(<UploadFunctionModal onCancel={cancelFunc} />);
 
       const b = wrapper.find('button.ant-modal-close');
       b.simulate('click');
       expect(cancelFunc).toBeCalledTimes(1);
 
       // should also dispatch createfunctionreset
-      expect(initialStore.getActions()).toHaveLength(1);
-      expect(initialStore.getActions()[0]).toEqual({
-        type: 'functions/CREATE_RESET',
-      });
+
       wrapper.unmount();
     });
+
     it('should have input areas for all the necessary information', () => {
       // should have function name, description, apikey, owneremail, file, externalId, secrets
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
+      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
       const allFormItems = wrapper.find(Form.Item);
       expect(allFormItems).toHaveLength(7);
       const allFormItemsLabels = allFormItems.map(i => i.text());
@@ -112,110 +56,24 @@ describe('UploadFunctionModal', () => {
       expect(allFormItemsLabels[0]).toContain('Function File');
       wrapper.unmount();
     });
+
     it('should only allow zip files to be uploaded', () => {
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
+      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
       expect(wrapper.find(Upload).prop('accept')).toBe('.zip');
       wrapper.unmount();
     });
+
     it('should have disabled submit button by default', () => {
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
+      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
       const uploadButton = wrapper
         .find('button.cogs-btn')
         .filterWhere((b: ReactWrapper) => b.text() === 'Upload');
       expect(uploadButton.prop('disabled')).toBe(true);
       wrapper.unmount();
     });
-    it('should allow function upload if all criteria is met', () => {
-      // criteria: lowercase function name with 1+ characters & a zip file & all other fields are within their character bounds
-      const createFuncStoreState = {
-        create: {
-          fileInfo: {
-            file: mockFile,
-          },
-          name: 'mocknewfunc',
-        },
-      };
-      const createFuncStore = mockStore(createFuncStoreState);
 
-      const wrapper = mount(
-        <Provider store={createFuncStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
-      const nameInput = wrapper.find('input[name="functionName"]');
-      nameInput.simulate('change', { target: { value: 'mocknewfunc' } });
-
-      const uploadButton = wrapper
-        .find('button.cogs-btn')
-        .filterWhere((b: ReactWrapper) => b.text() === 'Upload');
-      expect(uploadButton.prop('disabled')).toBe(false);
-
-      wrapper.unmount();
-    });
-    it('should dispatch createFunction if submit button is clicked', () => {
-      const mockFunctionName = 'mocknewfunc';
-      const createFunctionStoreState = {
-        create: {
-          fileInfo: {
-            file: mockFile,
-            fileId: 200,
-          },
-          name: mockFunctionName,
-        },
-      };
-      const createFunctionStore = mockStore(createFunctionStoreState);
-
-      const wrapper = mount(
-        <Provider store={createFunctionStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
-
-      const nameInput = wrapper.find('input[name="functionName"]');
-      nameInput.simulate('change', { target: { value: 'mocknewfunc' } });
-
-      const uploadButton = wrapper
-        .find('button.cogs-btn')
-        .filterWhere((b: ReactWrapper) => b.text() === 'Upload');
-      uploadButton.simulate('click');
-
-      // first 2 are related to uploadFile
-      expect(createFunctionStore.getActions()).toHaveLength(3);
-      expect(createFunctionStore.getActions()[2]).toEqual({
-        type: 'functions/CREATE',
-        apiKey: '',
-        description: '',
-        functionName: mockFunctionName,
-        owner: '',
-        externalId: '',
-        secrets: {},
-      });
-      wrapper.unmount();
-    });
     it('should add a key input field and value input field when Add Secret is clicked', () => {
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
+      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addSecretButton = wrapper
         .find('button.cogs-btn')
@@ -228,14 +86,9 @@ describe('UploadFunctionModal', () => {
       expect(valueInput).toHaveLength(1);
       wrapper.unmount();
     });
+
     it('should remove a key input field and value input field when remove button is clicked', () => {
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <UploadFunctionModal visible onCancel={jest.fn()} />
-          </MemoryRouter>
-        </Provider>
-      );
+      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addSecretButton = wrapper
         .find('button.cogs-btn')
@@ -247,7 +100,7 @@ describe('UploadFunctionModal', () => {
       const valueInput = wrapper.find('input[name="value"]');
       expect(valueInput).toHaveLength(1);
 
-      const removeSecretButton = wrapper.find('button.cogs-btn').at(2);
+      const removeSecretButton = wrapper.find('button.cogs-btn').at(1);
       removeSecretButton.simulate('click');
 
       const removedKeyInput = wrapper.find('input[name="key"]');
@@ -263,12 +116,14 @@ describe('UploadFunctionModal', () => {
         const invalidName = '';
         expect(checkFunctionName(invalidName).error).toBeTruthy();
       });
+
       it('error if > 140 char', () => {
         const invalidName =
           'a-really-really-really-really-really-really-really-really-really-really' +
           '-really-really-really-really-really-really-really-really-long-function-name';
         expect(checkFunctionName(invalidName).error).toBeTruthy();
       });
+
       it('valid example', () => {
         const validName = 'name';
         expect(checkFunctionName(validName).error).toBeFalsy();
@@ -279,10 +134,12 @@ describe('UploadFunctionModal', () => {
       it('error if empty', () => {
         expect(checkFile().error).toBeTruthy();
       });
+
       it('error if undefined', () => {
         const invalidFile = undefined;
         expect(checkFile(invalidFile).error).toBeTruthy();
       });
+
       it('valid example', () => {
         expect(checkFile(mockFile).error).toBeFalsy();
       });
@@ -295,10 +152,12 @@ describe('UploadFunctionModal', () => {
           '-really-really-really-really-really-really-really-really-long-function-description';
         expect(checkDescription(invalidDescription).error).toBeTruthy();
       });
+
       it('valid if empty', () => {
         const validDescription = '';
         expect(checkDescription(validDescription).error).toBeFalsy();
       });
+
       it('valid example', () => {
         const validDescription = 'description';
         expect(checkDescription(validDescription).error).toBeFalsy();
@@ -311,6 +170,7 @@ describe('UploadFunctionModal', () => {
           '-really-really-really-really-really-really-really-really-long-function-apiKey';
         expect(checkApiKey(invalidApiKey).error).toBeTruthy();
       });
+
       it('valid if empty', () => {
         const validApiKey = '';
         expect(checkApiKey(validApiKey).error).toBeFalsy();

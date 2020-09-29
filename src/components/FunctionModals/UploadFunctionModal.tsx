@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
@@ -344,7 +346,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
             </Form.Item>
             <Form.Item label="Secrets">
               {secrets.map((s: Secret, index) => (
-                <Row type="flex">
+                <Row type="flex" key={`secret-${index}`}>
                   <Col span={10}>
                     <Form.Item
                       label="Key"

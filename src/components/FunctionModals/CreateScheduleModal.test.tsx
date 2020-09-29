@@ -1,95 +1,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router';
-import { mount, shallow, ReactWrapper } from 'enzyme';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { Form } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { mount } from 'enzyme';
 import CreateScheduleModal, { stuffForUnitTests } from './CreateScheduleModal';
 
-const middlewares = [thunk]; // add your middlewares like `redux-thunk`
-const mockStore = configureStore(middlewares);
-
 const mockFunctionExternalId = 'external id';
-const initialStoreState = {
-  app: {},
-  schedules: {
-    create: {},
-  },
-};
-let initialStore = mockStore(initialStoreState);
 
 describe('CreateScheduleModal', () => {
-  beforeEach(() => {
-    initialStore = mockStore(initialStoreState);
-  });
   describe('component', () => {
     it('renders without crashing', () => {
       expect(() => {
         const div = document.createElement('div');
         ReactDOM.render(
-          <Provider store={initialStore}>
-            <MemoryRouter>
-              <CreateScheduleModal
-                visible
-                onCancel={jest.fn()}
-                functionExternalId={mockFunctionExternalId}
-              />
-            </MemoryRouter>
-          </Provider>,
+          <CreateScheduleModal
+            onCancel={jest.fn()}
+            externalId={mockFunctionExternalId}
+          />,
+
           div
         );
         ReactDOM.unmountComponentAtNode(div);
       }).not.toThrow();
     });
-    it('should be visible based on input', () => {
-      const wrapperWithVisibleModal = shallow(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible
-              onCancel={jest.fn()}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
-      );
-      const createScheduleModal = wrapperWithVisibleModal.find(
-        CreateScheduleModal
-      );
-      expect(createScheduleModal.prop('visible')).toBe(true);
-    });
-    it('should be invisible based on input', () => {
-      const wrapperWithoutVisibleModal = shallow(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible={false}
-              onCancel={jest.fn()}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
-      );
-      const createScheduleModal = wrapperWithoutVisibleModal.find(
-        CreateScheduleModal
-      );
-      expect(createScheduleModal.prop('visible')).toBe(false);
-    });
+
     it('should call onCancel when button is clicked', () => {
       const cancelFunc = jest.fn();
       const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible
-              onCancel={cancelFunc}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
+        <CreateScheduleModal
+          onCancel={cancelFunc}
+          externalId={mockFunctionExternalId}
+        />
       );
 
       const b = wrapper.find('button.ant-modal-close');
@@ -97,48 +37,17 @@ describe('CreateScheduleModal', () => {
       expect(cancelFunc).toBeCalledTimes(1);
 
       // should also dispatch createschedulereset
-      expect(initialStore.getActions()).toHaveLength(1);
-      expect(initialStore.getActions()[0]).toEqual({
-        type: 'functions/SCHEDULE_CREATE_RESET',
-      });
-      wrapper.unmount();
-    });
-    it('should call onCancel when cancel is clicked', () => {
-      const cancelFunc = jest.fn();
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible
-              onCancel={cancelFunc}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
-      );
-      const cancelButton = wrapper.find(Button).at(0);
-      cancelButton.simulate('click');
-      expect(cancelFunc).toBeCalledTimes(1);
 
-      // should also dispatch createschedulereset
-      expect(initialStore.getActions()).toHaveLength(1);
-      expect(initialStore.getActions()[0]).toEqual({
-        type: 'functions/SCHEDULE_CREATE_RESET',
-      });
       wrapper.unmount();
     });
+
     it('should have input areas for all the necessary information', () => {
       // should have schedule name, description, cronExpression, data
       const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible
-              onCancel={jest.fn()}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
+        <CreateScheduleModal
+          onCancel={jest.fn()}
+          externalId={mockFunctionExternalId}
+        />
       );
       const allFormItems = wrapper.find(Form.Item);
       expect(allFormItems).toHaveLength(4);
@@ -149,17 +58,13 @@ describe('CreateScheduleModal', () => {
       expect(allFormItemsLabels).toContain('Data');
       wrapper.unmount();
     });
+
     it('should have disabled create button by default', () => {
       const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible
-              onCancel={jest.fn()}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
+        <CreateScheduleModal
+          onCancel={jest.fn()}
+          externalId={mockFunctionExternalId}
+        />
       );
       const createButton = wrapper
         .find('button.cogs-btn')
@@ -167,21 +72,17 @@ describe('CreateScheduleModal', () => {
       expect(createButton.prop('disabled')).toBe(true);
       wrapper.unmount();
     });
+
     it('should allow function upload if all criteria is met', () => {
       // criteria: name and cronExpression exist
       const mockScheduleName = 'mockScheduleName';
       const mockCronExpression = '* * * * *';
 
       const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible
-              onCancel={jest.fn()}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
+        <CreateScheduleModal
+          onCancel={jest.fn()}
+          externalId={mockFunctionExternalId}
+        />
       );
       const nameInput = wrapper.find('input[name="scheduleName"]');
       nameInput.simulate('change', { target: { value: mockScheduleName } });
@@ -195,46 +96,6 @@ describe('CreateScheduleModal', () => {
         .filterWhere((b: ReactWrapper) => b.text() === 'Create');
       expect(createButton.prop('disabled')).toBe(false);
 
-      wrapper.unmount();
-    });
-    it('should dispatch createFunction if submit button is clicked', () => {
-      const mockScheduleName = 'mockScheduleName';
-      const mockCronExpression = '* * * * *';
-
-      const wrapper = mount(
-        <Provider store={initialStore}>
-          <MemoryRouter>
-            <CreateScheduleModal
-              visible
-              onCancel={jest.fn()}
-              functionExternalId={mockFunctionExternalId}
-            />
-          </MemoryRouter>
-        </Provider>
-      );
-      const nameInput = wrapper.find('input[name="scheduleName"]');
-      nameInput.simulate('change', { target: { value: mockScheduleName } });
-      const cronExpressionInput = wrapper.find('input[name="cronExpression"]');
-      cronExpressionInput.simulate('change', {
-        target: { value: mockCronExpression },
-      });
-
-      const createButton = wrapper
-        .find('button.cogs-btn')
-        .filterWhere((b: ReactWrapper) => b.text() === 'Create');
-
-      createButton.simulate('click');
-
-      // first 2 are related to uploadFile
-      expect(initialStore.getActions()).toHaveLength(1);
-      expect(initialStore.getActions()[0]).toEqual({
-        type: 'functions/SCHEDULE_CREATE',
-        scheduleName: mockScheduleName,
-        description: '',
-        cronExpression: mockCronExpression,
-        data: {},
-        functionExternalId: mockFunctionExternalId,
-      });
       wrapper.unmount();
     });
   });

@@ -84,7 +84,9 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   const handleCancel = (e: SyntheticEvent) => {
     // Avoid toggling the above <Panel />
     e.stopPropagation();
-    closeModal && closeModal();
+    if (closeModal) {
+      closeModal();
+    }
   };
 
   const onCallClick = (e: SyntheticEvent) => {
