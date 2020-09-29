@@ -11,6 +11,7 @@ import { FilePreview } from 'containers/Files';
 import { AssetPreview } from 'containers/Assets';
 import { SequencePreview } from 'containers/Sequences';
 import { TimeseriesPreview } from 'containers/Timeseries';
+import { EventPreview } from 'containers/Events';
 import { SearchResults } from 'containers/SearchResults';
 import { RenderResourceActionsFunction } from 'types/Types';
 import {
@@ -81,6 +82,10 @@ export const SelectionSidebarContent = ({
     [resourcesState]
   );
 
+  useEffect(() => {
+    setSelectedItem(undefined);
+  }, [visible]);
+
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
     resourceItem => {
       let resourceName = 'Resource';
@@ -102,9 +107,17 @@ export const SelectionSidebarContent = ({
           resourceName = 'Sequence';
           break;
         }
+        case 'event': {
+          resourceName = 'Event';
+          break;
+        }
       }
       const viewButton = () => {
-        if (resourceType) {
+        if (
+          resourceType &&
+          selectedItem?.id !== resourceItem.id &&
+          selectedItem?.type !== resourceItem.type
+        ) {
           return (
             <Button
               type="secondary"
@@ -123,7 +136,7 @@ export const SelectionSidebarContent = ({
 
       return [viewButton()];
     },
-    []
+    [selectedItem]
   );
 
   useEffect(() => {
@@ -151,6 +164,10 @@ export const SelectionSidebarContent = ({
       }
       case 'sequence': {
         preview = <SequencePreview sequenceId={selectedItem.id} />;
+        break;
+      }
+      case 'event': {
+        preview = <EventPreview eventId={selectedItem.id} />;
         break;
       }
       case 'file': {

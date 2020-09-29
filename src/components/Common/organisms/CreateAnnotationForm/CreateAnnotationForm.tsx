@@ -8,7 +8,9 @@ import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist
 import { itemSelector as timeseriesSelector } from '@cognite/cdf-resources-store/dist/timeseries';
 import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
 import { itemSelector as sequenceSelector } from '@cognite/cdf-resources-store/dist/sequences';
+import { itemSelector as eventSelector } from '@cognite/cdf-resources-store/dist/events';
 import { useResourcesSelector } from '@cognite/cdf-resources-store';
+import { renderTitle } from 'utils/EventsUtils';
 
 export const CreateAnnotationForm = ({
   annotation,
@@ -35,6 +37,7 @@ export const CreateAnnotationForm = ({
   const getAsset = useResourcesSelector(assetSelector);
   const getTimeseries = useResourcesSelector(timeseriesSelector);
   const getSequence = useResourcesSelector(sequenceSelector);
+  const getEvent = useResourcesSelector(eventSelector);
   let buttonText = <>Not linked to a Resource</>;
   if (annotation.resourceType) {
     switch (annotation.resourceType) {
@@ -82,6 +85,18 @@ export const CreateAnnotationForm = ({
           <>
             Linked to <Icon type="Document" style={{ marginLeft: 4 }} />{' '}
             {resource ? resource.name : 'File'}
+          </>
+        );
+        break;
+      }
+      case 'event': {
+        const resource = getEvent(
+          annotation.resourceExternalId || annotation.resourceId
+        );
+        buttonText = (
+          <>
+            Linked to <Icon type="Events" style={{ marginLeft: 4 }} />{' '}
+            {resource ? renderTitle(resource) : 'Event'}
           </>
         );
         break;

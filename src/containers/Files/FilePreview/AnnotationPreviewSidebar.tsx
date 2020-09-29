@@ -8,6 +8,7 @@ import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/
 import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
 import { itemSelector as timeseriesSelector } from '@cognite/cdf-resources-store/dist/timeseries';
 import { itemSelector as sequenceSelector } from '@cognite/cdf-resources-store/dist/sequences';
+import { itemSelector as eventSelector } from '@cognite/cdf-resources-store/dist/events';
 import {
   Button,
   Icon,
@@ -66,6 +67,7 @@ const AnnotationPreviewSidebar = ({
   const getAsset = useResourcesSelector(assetSelector);
   const getTimeseries = useResourcesSelector(timeseriesSelector);
   const getSequence = useResourcesSelector(sequenceSelector);
+  const getEvent = useResourcesSelector(eventSelector);
   const file = getFile(fileId);
 
   const [editing, setEditing] = useState<boolean>(false);
@@ -73,7 +75,7 @@ const AnnotationPreviewSidebar = ({
   const extractFromCanvas = useExtractFromCanvas();
 
   const { openPreview, hidePreview } = useResourcePreview();
-  const { openResourceSelector, hideResourceSelector } = useResourceSelector();
+  const { openResourceSelector } = useResourceSelector();
 
   const selectedAnnotationId = selectedAnnotation
     ? selectedAnnotation.id
@@ -83,8 +85,7 @@ const AnnotationPreviewSidebar = ({
 
   useEffect(() => {
     setEditing(false);
-    hideResourceSelector();
-  }, [selectedAnnotationId, hideResourceSelector]);
+  }, [selectedAnnotationId]);
 
   const selectedResourceItem = useResourceItemFromAnnotation(
     selectedAnnotation
@@ -150,37 +151,37 @@ const AnnotationPreviewSidebar = ({
   const onLinkResource = useCallback(() => {
     openResourceSelector({
       onSelect: item => {
-        let itemType: CogniteAnnotation['resourceType'];
         let externalId: string | undefined;
         switch (item.type) {
           case 'asset': {
-            itemType = 'asset';
             const asset = getAsset(item.id);
             externalId = asset?.externalId;
             break;
           }
           case 'file': {
-            itemType = 'file';
             const previewFile = getFile(item.id);
             externalId = previewFile?.externalId;
             break;
           }
           case 'sequence': {
-            itemType = 'sequence';
             const sequence = getSequence(item.id);
             externalId = sequence?.externalId;
             break;
           }
           case 'timeSeries': {
-            itemType = 'timeSeries';
             const timeseries = getTimeseries(item.id);
             externalId = timeseries?.externalId;
+            break;
+          }
+          case 'event': {
+            const event = getEvent(item.id);
+            externalId = event?.externalId;
             break;
           }
         }
         setSelectedAnnotation({
           ...selectedAnnotation!,
-          resourceType: itemType,
+          resourceType: item.type,
           resourceExternalId: externalId,
           resourceId: item.id,
         });
@@ -208,6 +209,7 @@ const AnnotationPreviewSidebar = ({
     getFile,
     getSequence,
     getTimeseries,
+    getEvent,
     selectedAnnotation,
     annotationPreview,
     setSelectedAnnotation,
