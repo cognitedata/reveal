@@ -20,52 +20,58 @@ import { buildAssetsFilterQuery } from 'containers/Assets';
 import { buildSequencesFilterQuery } from 'containers/Sequences';
 import { buildFilesFilterQuery, MimeTypeFilter } from 'containers/Files';
 import { buildTimeseriesFilterQuery, UnitFilter } from 'containers/Timeseries';
-import { MetadataFilter } from './Filters/MetadataFilters';
+import { MetadataFilter, DataSetFilters } from './Filters';
 
 type FilterRenderFn<T> = (items: T[]) => React.ReactNode;
 
-type AssetFiltersKey = 'metadata' | 'source';
+type AssetFiltersKey = 'metadata' | 'dataset';
 
 const AssetFilters: { [key in AssetFiltersKey]: FilterRenderFn<Asset> } = {
   metadata: items => <MetadataFilter resourceType="asset" items={items} />,
-  source: () => <></>,
+  dataset: () => <DataSetFilters resourceType="asset" />,
 };
-type TimeseriesFiltersKey = 'metadata' | 'unit';
+type TimeseriesFiltersKey = 'metadata' | 'unit' | 'dataset';
 
 const TimeseriesFilters: {
   [key in TimeseriesFiltersKey]: FilterRenderFn<Timeseries>;
 } = {
   metadata: items => <MetadataFilter resourceType="timeSeries" items={items} />,
   unit: items => <UnitFilter items={items} />,
+  dataset: () => <DataSetFilters resourceType="timeSeries" />,
 };
-type EventFiltersKey = 'metadata' | 'source';
+type EventFiltersKey = 'metadata' | 'dataset';
 
 const EventFilters: {
   [key in EventFiltersKey]: FilterRenderFn<CogniteEvent>;
 } = {
   metadata: items => <MetadataFilter resourceType="event" items={items} />,
-  source: () => <></>,
+  dataset: () => <DataSetFilters resourceType="event" />,
 };
-type SequenceFiltersKey = 'metadata' | 'source';
+type SequenceFiltersKey = 'metadata' | 'dataset';
 
 const SequenceFilters: {
   [key in SequenceFiltersKey]: FilterRenderFn<Sequence>;
 } = {
   metadata: items => <MetadataFilter resourceType="sequence" items={items} />,
-  source: () => <></>,
+  dataset: () => <DataSetFilters resourceType="sequence" />,
 };
-type FileFiltersKey = 'metadata' | 'mimeType';
+type FileFiltersKey = 'metadata' | 'mimeType' | 'dataset';
 
 const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
   metadata: items => <MetadataFilter resourceType="file" items={items} />,
   mimeType: items => <MimeTypeFilter items={items} />,
+  dataset: () => <DataSetFilters resourceType="file" />,
 };
 
-const ActiveAssetFilters: AssetFiltersKey[] = ['metadata'];
-const ActiveEventFilters: EventFiltersKey[] = ['metadata'];
-const ActiveTimeseriesFilters: TimeseriesFiltersKey[] = ['unit', 'metadata'];
-const ActiveFileFilters: FileFiltersKey[] = ['metadata', 'mimeType'];
-const ActiveSequenceFilters: SequenceFiltersKey[] = ['metadata'];
+const ActiveAssetFilters: AssetFiltersKey[] = ['dataset', 'metadata'];
+const ActiveEventFilters: EventFiltersKey[] = ['dataset', 'metadata'];
+const ActiveTimeseriesFilters: TimeseriesFiltersKey[] = [
+  'unit',
+  'dataset',
+  'metadata',
+];
+const ActiveFileFilters: FileFiltersKey[] = ['dataset', 'mimeType', 'metadata'];
+const ActiveSequenceFilters: SequenceFiltersKey[] = ['dataset', 'metadata'];
 
 export const SearchResultFilters = ({
   currentResourceType,
