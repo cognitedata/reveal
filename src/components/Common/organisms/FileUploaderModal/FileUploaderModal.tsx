@@ -62,7 +62,7 @@ export const FileUploaderModal = ({
         <FileUploader
           onUploadSuccess={file => {
             trackUsage('File.Create.UploadSuccess', { id: file.id });
-            setFileList([...fileList, file]);
+            setFileList(list => [...list, file]);
           }}
           beforeUploadStart={() => {
             trackUsage('File.Create.StartUpload', {});

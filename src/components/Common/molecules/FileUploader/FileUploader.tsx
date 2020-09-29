@@ -52,6 +52,7 @@ type Props = {
   beforeUploadStart?: () => void;
   children?: React.ReactNode;
 };
+const currentUploads: { [key: string]: any } = {};
 
 export const FileUploader = ({
   children,
@@ -64,7 +65,6 @@ export const FileUploader = ({
   onFileListChange = () => {},
 }: Props) => {
   const sdk = getSDK();
-  const currentUploads: { [key: string]: any } = {};
   const [uploadStatus, setUploadStatus] = useState<STATUS>(STATUS.WAITING);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -101,8 +101,8 @@ export const FileUploader = ({
       file.status = 'uploading';
       file.percent = 0;
 
-      setFileList(
-        fileList.map(el => {
+      setFileList(list =>
+        list.map(el => {
           if (el.uid === file.uid) {
             return file;
           }
@@ -117,8 +117,8 @@ export const FileUploader = ({
           file.response = info;
           file.percent = (info.uploadedBytes / info.totalBytes) * 100;
 
-          setFileList(
-            fileList.map(el => {
+          setFileList(list =>
+            list.map(el => {
               if (el.uid === file.uid) {
                 return file;
               }
@@ -136,7 +136,7 @@ export const FileUploader = ({
         message.error('Unable to upload file to server.');
       }
 
-      setFileList(fileList.filter(el => el.uid !== file.uid));
+      setFileList(list => list.filter(el => el.uid !== file.uid));
       if (fileList.length === 1) {
         setUploadStatus(STATUS.WAITING);
       }
@@ -144,7 +144,6 @@ export const FileUploader = ({
       onUploadSuccess(fileMetadata);
 
       currentUploads[file.uid].meta.reset(); // clears the locally stored metadata
-      setFileList([]);
       setUploadStatus(STATUS.WAITING);
     });
   };
@@ -197,7 +196,7 @@ export const FileUploader = ({
   };
 
   const removeFile = (file: UploadFile) => {
-    setFileList(fileList.filter(el => el.uid !== file.uid));
+    setFileList(list => list.filter(el => el.uid !== file.uid));
     onFileListChange(fileList);
   };
 
@@ -207,7 +206,7 @@ export const FileUploader = ({
       validExtensions.length === 0 ||
       validExtensions.includes(file.name.split('.').pop().toLowerCase())
     ) {
-      setFileList([...fileList, file]);
+      setFileList(list => [...list, file]);
       setUploadStatus(STATUS.READY);
       onFileListChange(fileList);
     } else {
@@ -236,6 +235,7 @@ export const FileUploader = ({
       case STATUS.READY:
         uploaderButton = (
           <>
+            <div style={{ flex: 1 }} />
             <Button type="primary" onClick={startUpload} icon="Upload">
               Upload
             </Button>
