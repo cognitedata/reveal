@@ -64,7 +64,7 @@
     "react-app-rewired": "^2.1.6",
     "react-scripts": "3.4.3",
     "start-server-and-test": "^1.11.4",
-    "ts-jest": "^26.4.0",
+    "ts-jest": "^26.4.1",
     "typescript": "3.9.7"
   },
   "eslintConfig": {
