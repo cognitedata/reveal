@@ -81,7 +81,7 @@ export interface AddModelOptions {
 }
 
 /**
- * Represents the result from {@link Cognite3DViewer.getInterSectionFromPixel}.
+ * Represents the result from {@link Cognite3DViewer.getIntersectionFromPixel}.
  * @module @cognite/reveal
  */
 export interface Intersection {
