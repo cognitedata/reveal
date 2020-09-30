@@ -1,5 +1,5 @@
 import { Metrics, ITimer } from '@cognite/metrics';
-import { isDevelopment } from '@cognite/cdf-utilities';
+import { isDevelopment } from './URLUtils';
 
 let mixpanelToken = '5c4d853e7c3b77b1eb4468d5329b278c'; // fusion token
 

@@ -1,4 +1,10 @@
-# Data Exploration
+# [Data Exploration](https://cognitedata.github.io/data-exploration/?path=/docs/data-exploration--previewing-resources)
+
+## Using the library
+
+To use the `@cognite/data-exploration` library, check out the [storybook](https://cognitedata.github.io/data-exploration/?path=/docs/data-exploration--previewing-resources).
+
+## Running Locally
 
 ```js
 yarn

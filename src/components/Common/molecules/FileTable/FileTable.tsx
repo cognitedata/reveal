@@ -1,25 +1,13 @@
 import React, { useState } from 'react';
-import { FileInfo as File } from 'cognite-sdk-v3';
-import Table, { Column } from 'react-base-table';
+import { FileInfo as File, FileInfo } from 'cognite-sdk-v3';
+import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import Highlighter from 'react-highlight-words';
-import { TableWrapper, TimeDisplay } from 'components/Common';
-
-const headerRenderer = ({
-  column: { title },
-}: {
-  column: { title: string };
-}) => (
-  <Body level={3} strong>
-    {title}
-  </Body>
-);
+import { Table, TimeDisplay } from 'components/Common';
 
 const ActionCell = ({ file }: { file: File }) => {
   const getButton = useSelectionCheckbox();
@@ -47,134 +35,85 @@ export const FileTable = ({
   };
 
   return (
-    <TableWrapper>
-      <AutoSizer>
-        {({ width, height }) => (
-          <Table
-            rowEventHandlers={{
-              onClick: ({ rowData: file, event }) => {
-                onFileSelected(file);
-                return event;
-              },
-            }}
-            rowClassName={({ rowData }) => {
-              const extraClasses: string[] = [];
-              if (previewId === rowData.id) {
-                extraClasses.push('previewing');
-              }
-              if (currentItems.some(el => el.id === rowData.id)) {
-                extraClasses.push('active');
-              }
-              return `row clickable ${extraClasses.join(' ')}`;
-            }}
-            width={width}
-            height={height}
-            columns={[
+    <Table<FileInfo>
+      rowEventHandlers={{
+        onClick: ({ rowData: file, event }) => {
+          onFileSelected(file);
+          return event;
+        },
+      }}
+      query={query}
+      previewingIds={previewId ? [previewId] : undefined}
+      activeIds={currentItems.map(el => el.id)}
+      columns={[
+        {
+          key: 'name',
+          title: 'Name',
+          dataKey: 'name',
+          width: 300,
+          frozen: Column.FrozenDirection.LEFT,
+        },
+        {
+          key: 'mimeType',
+          title: 'MIME type',
+          dataKey: 'mimeType',
+          width: 200,
+        },
+        {
+          key: 'uploadedTime',
+          title: 'Uploaded',
+          width: 200,
+          cellRenderer: ({ cellData: file }: { cellData: File }) => (
+            <Body level={2}>
+              {file && file.uploaded && (
+                <TimeDisplay value={file.uploadedTime} relative withTooltip />
+              )}
+            </Body>
+          ),
+        },
+        {
+          key: 'lastUpdatedTime',
+          title: 'Last updated',
+          dataKey: 'lastUpdatedTime',
+          width: 200,
+          cellRenderer: ({
+            cellData: lastUpdatedTime,
+          }: {
+            cellData?: number;
+          }) => (
+            <Body level={2}>
+              <TimeDisplay value={lastUpdatedTime} relative withTooltip />
+            </Body>
+          ),
+        },
+        {
+          key: 'createdTime',
+          title: 'Created',
+          dataKey: 'createdTime',
+          width: 200,
+          cellRenderer: ({ cellData: createdTime }: { cellData?: number }) => (
+            <Body level={2}>
+              <TimeDisplay value={createdTime} relative withTooltip />
+            </Body>
+          ),
+        },
+        ...(mode !== 'none'
+          ? [
               {
-                key: 'name',
-                title: 'Name',
-                dataKey: 'name',
-                headerRenderer,
-                width: 300,
-                resizable: true,
-                cellProps: { query },
-                cellRenderer: ({ cellData: name }: { cellData: string }) => (
-                  <Body level={2} strong>
-                    <Highlighter
-                      searchWords={(query || '').split(' ')}
-                      textToHighlight={name}
-                    />
-                  </Body>
-                ),
-                frozen: Column.FrozenDirection.LEFT,
+                key: 'action',
+                title: 'Select',
+                width: 80,
+                align: Column.Alignment.CENTER,
+                frozen: Column.FrozenDirection.RIGHT,
+                cellRenderer: ({ rowData: file }: { rowData: File }) => {
+                  return <ActionCell file={file} />;
+                },
               },
-              {
-                key: 'mimeType',
-                title: 'MIME type',
-                dataKey: 'mimeType',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: mimeType,
-                }: {
-                  cellData?: string;
-                }) => <Body level={2}>{mimeType}</Body>,
-                resizable: true,
-              },
-              {
-                key: 'uploadedTime',
-                title: 'Uploaded',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({ cellData: file }: { cellData: File }) => (
-                  <Body level={2}>
-                    {file && file.uploaded && (
-                      <TimeDisplay
-                        value={file.uploadedTime}
-                        relative
-                        withTooltip
-                      />
-                    )}
-                  </Body>
-                ),
-                resizable: true,
-              },
-              {
-                key: 'lastUpdatedTime',
-                title: 'Last updated',
-                dataKey: 'lastUpdatedTime',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: lastUpdatedTime,
-                }: {
-                  cellData?: number;
-                }) => (
-                  <Body level={2}>
-                    <TimeDisplay value={lastUpdatedTime} relative withTooltip />
-                  </Body>
-                ),
-                resizable: true,
-              },
-              {
-                key: 'createdTime',
-                title: 'Created',
-                dataKey: 'createdTime',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: createdTime,
-                }: {
-                  cellData?: number;
-                }) => (
-                  <Body level={2}>
-                    <TimeDisplay value={createdTime} relative withTooltip />
-                  </Body>
-                ),
-                resizable: true,
-              },
-              ...(mode !== 'none'
-                ? [
-                    {
-                      key: 'action',
-                      title: 'Select',
-                      width: 80,
-                      resizable: true,
-                      align: Column.Alignment.CENTER,
-                      frozen: Column.FrozenDirection.RIGHT,
-                      headerRenderer,
-                      cellRenderer: ({ rowData: file }: { rowData: File }) => {
-                        return <ActionCell file={file} />;
-                      },
-                    },
-                  ]
-                : []),
-            ]}
-            fixed
-            data={files}
-          />
-        )}
-      </AutoSizer>
-    </TableWrapper>
+            ]
+          : []),
+      ]}
+      fixed
+      data={files}
+    />
   );
 };

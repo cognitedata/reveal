@@ -1,25 +1,13 @@
 import React, { useState } from 'react';
 import { CogniteEvent } from 'cognite-sdk-v3';
-import Table, { Column } from 'react-base-table';
+import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import Highlighter from 'react-highlight-words';
-import { TableWrapper, TimeDisplay } from 'components/Common';
-
-const headerRenderer = ({
-  column: { title },
-}: {
-  column: { title: string };
-}) => (
-  <Body level={3} strong>
-    {title}
-  </Body>
-);
+import { Table, TimeDisplay } from 'components/Common';
 
 const ActionCell = ({ event }: { event: CogniteEvent }) => {
   const getButton = useSelectionCheckbox();
@@ -47,147 +35,89 @@ export const EventTable = ({
   };
 
   return (
-    <TableWrapper>
-      <AutoSizer>
-        {({ width, height }) => (
-          <Table
-            rowEventHandlers={{
-              onClick: ({ rowData: event, event: ev }) => {
-                onEventSelected(event);
-                return ev;
-              },
-            }}
-            rowClassName={({ rowData }) => {
-              const extraClasses: string[] = [];
-              if (previewId === rowData.id) {
-                extraClasses.push('previewing');
-              }
-              if (currentItems.some(el => el.id === rowData.id)) {
-                extraClasses.push('active');
-              }
-              return `row clickable ${extraClasses.join(' ')}`;
-            }}
-            width={width}
-            height={height}
-            columns={[
+    <Table<CogniteEvent>
+      rowEventHandlers={{
+        onClick: ({ rowData: event, event: ev }) => {
+          onEventSelected(event);
+          return ev;
+        },
+      }}
+      query={query}
+      previewingIds={previewId ? [previewId] : undefined}
+      activeIds={currentItems.map(el => el.id)}
+      columns={[
+        {
+          key: 'type',
+          title: 'Type',
+          dataKey: 'type',
+          width: 200,
+          frozen: Column.FrozenDirection.LEFT,
+        },
+        {
+          key: 'subtype',
+          title: 'Subtype',
+          dataKey: 'subtype',
+          width: 200,
+        },
+        {
+          key: 'description',
+          title: 'Description',
+          dataKey: 'description',
+          width: 200,
+        },
+        {
+          key: 'externalId',
+          title: 'External ID',
+          dataKey: 'externalId',
+          width: 200,
+        },
+        {
+          key: 'lastUpdatedTime',
+          title: 'Last updated',
+          dataKey: 'lastUpdatedTime',
+          width: 200,
+          cellRenderer: ({
+            cellData: lastUpdatedTime,
+          }: {
+            cellData?: number;
+          }) => (
+            <Body level={2}>
+              <TimeDisplay value={lastUpdatedTime} relative withTooltip />
+            </Body>
+          ),
+        },
+        {
+          key: 'createdTime',
+          title: 'Created',
+          dataKey: 'createdTime',
+          width: 200,
+          cellRenderer: ({ cellData: createdTime }: { cellData?: number }) => (
+            <Body level={2}>
+              <TimeDisplay value={createdTime} relative withTooltip />
+            </Body>
+          ),
+        },
+        ...(mode !== 'none'
+          ? [
               {
-                key: 'type',
-                title: 'Type',
-                dataKey: 'type',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({ cellData: type }: { cellData?: string }) => (
-                  <Body level={2}>{type}</Body>
-                ),
-                resizable: true,
-                frozen: Column.FrozenDirection.LEFT,
-              },
-              {
-                key: 'subtype',
-                title: 'Subtype',
-                dataKey: 'subtype',
-                width: 200,
-                headerRenderer,
+                key: 'action',
+                title: 'Select',
+                width: 80,
+                align: Column.Alignment.CENTER,
+                frozen: Column.FrozenDirection.RIGHT,
                 cellRenderer: ({
-                  cellData: subtype,
+                  rowData: event,
                 }: {
-                  cellData?: string;
-                }) => <Body level={2}>{subtype}</Body>,
-                resizable: true,
+                  rowData: CogniteEvent;
+                }) => {
+                  return <ActionCell event={event} />;
+                },
               },
-              {
-                key: 'description',
-                title: 'Description',
-                dataKey: 'description',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: description,
-                }: {
-                  cellData?: string;
-                }) => (
-                  <Body level={2}>
-                    <Highlighter
-                      searchWords={(query || '').split(' ')}
-                      textToHighlight={description || ''}
-                    />
-                  </Body>
-                ),
-                resizable: true,
-              },
-              {
-                key: 'externalId',
-                title: 'External ID',
-                dataKey: 'externalId',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: externalId,
-                }: {
-                  cellData?: string;
-                }) => <Body level={2}>{externalId}</Body>,
-                resizable: true,
-              },
-              {
-                key: 'lastUpdatedTime',
-                title: 'Last updated',
-                dataKey: 'lastUpdatedTime',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: lastUpdatedTime,
-                }: {
-                  cellData?: number;
-                }) => (
-                  <Body level={2}>
-                    <TimeDisplay value={lastUpdatedTime} relative withTooltip />
-                  </Body>
-                ),
-                resizable: true,
-              },
-              {
-                key: 'createdTime',
-                title: 'Created',
-                dataKey: 'createdTime',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: createdTime,
-                }: {
-                  cellData?: number;
-                }) => (
-                  <Body level={2}>
-                    <TimeDisplay value={createdTime} relative withTooltip />
-                  </Body>
-                ),
-                resizable: true,
-              },
-              ...(mode !== 'none'
-                ? [
-                    {
-                      key: 'action',
-                      title: 'Select',
-                      width: 80,
-                      resizable: true,
-                      align: Column.Alignment.CENTER,
-                      frozen: Column.FrozenDirection.RIGHT,
-                      headerRenderer,
-                      cellRenderer: ({
-                        rowData: event,
-                      }: {
-                        rowData: CogniteEvent;
-                      }) => {
-                        return <ActionCell event={event} />;
-                      },
-                    },
-                  ]
-                : []),
-            ]}
-            fixed
-            data={events}
-          />
-        )}
-      </AutoSizer>
-    </TableWrapper>
+            ]
+          : []),
+      ]}
+      fixed
+      data={events}
+    />
   );
 };

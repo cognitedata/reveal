@@ -1,25 +1,13 @@
 import React, { useState } from 'react';
 import { Sequence, SequenceColumn } from 'cognite-sdk-v3';
-import Table, { Column } from 'react-base-table';
+import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import Highlighter from 'react-highlight-words';
-import { TableWrapper, TimeDisplay } from 'components/Common';
-
-const headerRenderer = ({
-  column: { title },
-}: {
-  column: { title: string };
-}) => (
-  <Body level={3} strong>
-    {title}
-  </Body>
-);
+import { Table, TimeDisplay } from 'components/Common';
 
 const ActionCell = ({ sequence }: { sequence: Sequence }) => {
   const getButton = useSelectionCheckbox();
@@ -47,133 +35,88 @@ export const SequenceTable = ({
   };
 
   return (
-    <TableWrapper>
-      <AutoSizer>
-        {({ width, height }) => (
-          <Table
-            rowEventHandlers={{
-              onClick: ({ rowData: sequence, event }) => {
-                onSequenceSelected(sequence);
-                return event;
-              },
-            }}
-            rowClassName={({ rowData }) => {
-              const extraClasses: string[] = [];
-              if (previewId === rowData.id) {
-                extraClasses.push('previewing');
-              }
-              if (currentItems.some(el => el.id === rowData.id)) {
-                extraClasses.push('active');
-              }
-              return `row clickable ${extraClasses.join(' ')}`;
-            }}
-            width={width}
-            height={height}
-            columns={[
+    <Table<Sequence>
+      rowEventHandlers={{
+        onClick: ({ rowData: sequence, event }) => {
+          onSequenceSelected(sequence);
+          return event;
+        },
+      }}
+      query={query}
+      previewingIds={previewId ? [previewId] : undefined}
+      activeIds={currentItems.map(el => el.id)}
+      columns={[
+        {
+          key: 'name',
+          title: 'Name',
+          dataKey: 'name',
+          width: 300,
+          frozen: Column.FrozenDirection.LEFT,
+        },
+        {
+          key: 'externalId',
+          title: 'External ID',
+          dataKey: 'externalId',
+          width: 200,
+        },
+        {
+          key: 'columns',
+          title: '# of Columns',
+          dataKey: 'columns',
+          width: 200,
+          cellRenderer: ({
+            cellData: columns,
+          }: {
+            cellData: SequenceColumn[];
+          }) => <Body level={2}>{columns.length}</Body>,
+        },
+        {
+          key: 'lastUpdatedTime',
+          title: 'Last updated',
+          dataKey: 'lastUpdatedTime',
+          width: 200,
+          cellRenderer: ({
+            cellData: lastUpdatedTime,
+          }: {
+            cellData?: number;
+          }) => (
+            <Body level={2}>
+              <TimeDisplay value={lastUpdatedTime} relative withTooltip />
+            </Body>
+          ),
+        },
+        {
+          key: 'createdTime',
+          title: 'Created',
+          dataKey: 'createdTime',
+          width: 200,
+          cellRenderer: ({ cellData: createdTime }: { cellData?: number }) => (
+            <Body level={2}>
+              <TimeDisplay value={createdTime} relative withTooltip />
+            </Body>
+          ),
+        },
+        ...(mode !== 'none'
+          ? [
               {
-                key: 'name',
-                title: 'Name',
-                dataKey: 'name',
-                headerRenderer,
-                width: 300,
-                resizable: true,
-                cellProps: { query },
-                cellRenderer: ({ cellData: name }: { cellData: string }) => (
-                  <Body level={2} strong>
-                    <Highlighter
-                      searchWords={(query || '').split(' ')}
-                      textToHighlight={name}
-                    />
-                  </Body>
-                ),
-                frozen: Column.FrozenDirection.LEFT,
-              },
-              {
-                key: 'externalId',
-                title: 'External ID',
-                dataKey: 'externalId',
-                width: 200,
-                headerRenderer,
+                key: 'action',
+                title: 'Select',
+                width: 80,
+                align: Column.Alignment.CENTER,
+                frozen: Column.FrozenDirection.RIGHT,
                 cellRenderer: ({
-                  cellData: externalId,
+                  rowData: sequence,
                 }: {
-                  cellData?: string;
-                }) => <Body level={2}>{externalId}</Body>,
-                resizable: true,
+                  rowData: Sequence;
+                }) => {
+                  return <ActionCell sequence={sequence} />;
+                },
               },
-              {
-                key: 'columns',
-                title: '# of Columns',
-                dataKey: 'columns',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: columns,
-                }: {
-                  cellData: SequenceColumn[];
-                }) => <Body level={2}>{columns.length}</Body>,
-                resizable: true,
-              },
-              {
-                key: 'lastUpdatedTime',
-                title: 'Last updated',
-                dataKey: 'lastUpdatedTime',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: lastUpdatedTime,
-                }: {
-                  cellData?: number;
-                }) => (
-                  <Body level={2}>
-                    <TimeDisplay value={lastUpdatedTime} relative withTooltip />
-                  </Body>
-                ),
-                resizable: true,
-              },
-              {
-                key: 'createdTime',
-                title: 'Created',
-                dataKey: 'createdTime',
-                width: 200,
-                headerRenderer,
-                cellRenderer: ({
-                  cellData: createdTime,
-                }: {
-                  cellData?: number;
-                }) => (
-                  <Body level={2}>
-                    <TimeDisplay value={createdTime} relative withTooltip />
-                  </Body>
-                ),
-                resizable: true,
-              },
-              ...(mode !== 'none'
-                ? [
-                    {
-                      key: 'action',
-                      title: 'Select',
-                      width: 80,
-                      resizable: true,
-                      align: Column.Alignment.CENTER,
-                      frozen: Column.FrozenDirection.RIGHT,
-                      headerRenderer,
-                      cellRenderer: ({
-                        rowData: sequence,
-                      }: {
-                        rowData: Sequence;
-                      }) => {
-                        return <ActionCell sequence={sequence} />;
-                      },
-                    },
-                  ]
-                : []),
-            ]}
-            fixed
-            data={sequences}
-          />
-        )}
-      </AutoSizer>
-    </TableWrapper>
+            ]
+          : []),
+      ]}
+      fixed
+      data={sequences}
+    />
   );
 };

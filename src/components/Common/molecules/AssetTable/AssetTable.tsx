@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Asset } from 'cognite-sdk-v3';
-import Table, { Column } from 'react-base-table';
-import { Body, Button } from '@cognite/cogs.js';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import { Column } from 'react-base-table';
+import { Button } from '@cognite/cogs.js';
 import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { itemSelector } from '@cognite/cdf-resources-store/dist/assets';
 import { useSelectionCheckbox } from 'hooks/useSelection';
@@ -10,23 +9,13 @@ import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import Highlighter from 'react-highlight-words';
-import { TableWrapper } from 'components/Common';
-
-const headerRenderer = ({
-  column: { title },
-}: {
-  column: { title: string };
-}) => (
-  <Body level={3} strong>
-    {title}
-  </Body>
-);
+import { Table } from 'components/Common';
 
 const ActionCell = ({ asset }: { asset: Asset }) => {
   const getButton = useSelectionCheckbox();
   return getButton({ id: asset.id, type: 'asset' });
 };
+
 const ParentCell = ({
   asset,
   onAssetSelected,
@@ -53,16 +42,7 @@ const ParentCell = ({
     </Button>
   );
 };
-const HighlightCell = ({ text, query }: { text?: string; query?: string }) => {
-  return (
-    <Body level={2} strong>
-      <Highlighter
-        searchWords={(query || '').split(' ')}
-        textToHighlight={text || ''}
-      />
-    </Body>
-  );
-};
+
 export type AssetTableProps = {
   assets: Asset[];
   query?: string;
@@ -86,97 +66,57 @@ export const AssetTable = ({
   };
 
   return (
-    <TableWrapper>
-      <AutoSizer>
-        {({ width, height }) => (
-          <Table
-            rowEventHandlers={{
-              onClick: ({ rowData: asset, event }) => {
-                onAssetSelected(asset);
-                return event;
-              },
-            }}
-            rowClassName={({ rowData }) => {
-              const extraClasses: string[] = [];
-              if (previewId === rowData.id) {
-                extraClasses.push('previewing');
-              }
-              if (currentItems.some(el => el.id === rowData.id)) {
-                extraClasses.push('active');
-              }
-              return `row clickable ${extraClasses.join(' ')}`;
-            }}
-            width={width}
-            height={height}
-            columns={[
+    <Table<Asset>
+      query={query}
+      rowEventHandlers={{
+        onClick: ({ rowData: asset, event }) => {
+          onAssetSelected(asset);
+          return event;
+        },
+      }}
+      previewingIds={previewId ? [previewId] : []}
+      activeIds={currentItems.map(el => el.id)}
+      columns={[
+        {
+          key: 'name',
+          title: 'Name',
+          dataKey: 'name',
+          width: 300,
+          frozen: Column.FrozenDirection.LEFT,
+        },
+        {
+          key: 'description',
+          title: 'Description',
+          dataKey: 'description',
+          width: 300,
+        },
+        {
+          key: 'root',
+          title: 'Root asset',
+          width: 200,
+          cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
+            return (
+              <ParentCell asset={asset} onAssetSelected={onAssetSelected} />
+            );
+          },
+        },
+        ...(mode !== 'none'
+          ? [
               {
-                key: 'name',
-                title: 'Name',
-                dataKey: 'name',
-                headerRenderer,
-                width: 300,
-                resizable: true,
-                cellProps: { query },
-                cellRenderer: ({ cellData: name }: { cellData: string }) => (
-                  <HighlightCell text={name} query={query} />
-                ),
-                frozen: Column.FrozenDirection.LEFT,
-              },
-              {
-                key: 'description',
-                title: 'Description',
-                dataKey: 'description',
-                width: 300,
-                headerRenderer,
-                cellProps: { query },
-                cellRenderer: ({
-                  cellData: description,
-                }: {
-                  cellData?: string;
-                }) => <HighlightCell text={description} query={query} />,
-                resizable: true,
-              },
-              {
-                key: 'root',
-                title: 'Root asset',
-                width: 200,
-                resizable: true,
-                headerRenderer,
+                key: 'action',
+                title: 'Select',
+                width: 80,
+                align: Column.Alignment.CENTER,
+                frozen: Column.FrozenDirection.RIGHT,
                 cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-                  return (
-                    <ParentCell
-                      asset={asset}
-                      onAssetSelected={onAssetSelected}
-                    />
-                  );
+                  return <ActionCell asset={asset} />;
                 },
               },
-              ...(mode !== 'none'
-                ? [
-                    {
-                      key: 'action',
-                      title: 'Select',
-                      width: 80,
-                      resizable: true,
-                      align: Column.Alignment.CENTER,
-                      frozen: Column.FrozenDirection.RIGHT,
-                      headerRenderer,
-                      cellRenderer: ({
-                        rowData: asset,
-                      }: {
-                        rowData: Asset;
-                      }) => {
-                        return <ActionCell asset={asset} />;
-                      },
-                    },
-                  ]
-                : []),
-            ]}
-            fixed
-            data={assets}
-          />
-        )}
-      </AutoSizer>
-    </TableWrapper>
+            ]
+          : []),
+      ]}
+      fixed
+      data={assets}
+    />
   );
 };
