@@ -4,20 +4,15 @@ title: Pointcloud models
 description: Usage of pointcloud models with Cognite3DViewer
 ---
 
-`Cognite3DViewer` can be used to load photogrammetry models from Cognite Data Fusion.
-It works in exactly the same way as for [CAD](./cad-basic.mdx).
-
-<!--
-Notice however that pointcloud models are different.
-    TODO: here we should have some more meaningfull explanation about coloring/traversing etc
--->
+`@cognite/reveal` supports point clouds through a third-party library, [`potree-core`](https://github.com/tentone/potree-core). The viewer 
+supports loading both point clouds and CAD models at the same time. Point clouds can be generated from various sources including 
+[laser scans](https://en.wikipedia.org/wiki/Laser_scanning) and [photogrammetry models](https://en.wikipedia.org/wiki/Photogrammetry).
+Loading point clouds is done with identical code to when [loading CAD models](./cad-basic) - Reveal will determine that the model 
+is a point cloud model and act accordingly.
 
 import { DemoWrapper } from '@site/src/components/DemoWrapper';
 
 <DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
-
-
-<!-- fixme: specify correct ids -->
 
 ```jsx
 import { CogniteClient } from '@cognite/sdk';
