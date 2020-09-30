@@ -74,10 +74,6 @@ void main() {
     return;
   }
 
-  // if(customDepth < backDepth){
-  //  gl_FragColor = customAlbedo;
-  //  return;
-  // }
 
   if (customDepth >= backDepth) {
     float backOutlineIndex = floatBitsSubset(floor((backAlbedo.a * 255.0) + 0.5), 3, 6);
