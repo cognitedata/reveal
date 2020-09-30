@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useDebounce } from 'use-debounce/lib';
 import { useQuery, useResourceTypes } from 'context/ResourceSelectionContext';
 import { ResourcePreviewProvider } from 'context';
-import { ResourceFilters } from 'containers/SearchResults/Filters';
+import FilteredResourceFilters from 'containers/SearchResults/Filters/FilteredResourceFilters';
 import { SequenceSearchResults } from 'containers/Sequences';
 import { AssetSearchResults } from 'containers/Assets';
 import { FileSearchResults, FileToolbar } from 'containers/Files';
@@ -65,7 +65,7 @@ export const SearchResults = ({
         <Filters>
           {resourceTypes.length > 1 && (
             <FormItem>
-              <ResourceFilters
+              <FilteredResourceFilters
                 currentResourceType={currentResourceType}
                 setCurrentResourceType={setCurrentResourceType}
               />

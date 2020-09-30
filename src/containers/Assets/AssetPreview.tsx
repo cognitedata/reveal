@@ -1,41 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector as assetSelector,
-  retrieve as retrieveAsset,
-} from '@cognite/cdf-resources-store/dist/assets';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
+
 import {
-  linkedFilesSelectorByAssetId,
-  listFilesLinkedToAsset,
-} from 'modules/annotations';
-import {
-  list as listFiles,
-  retrieve as retrieveFiles,
-  listSelector as listFileSelector,
-} from '@cognite/cdf-resources-store/dist/files';
-import {
-  list as listTimeseries,
-  listSelector as listTimeseriesSelector,
-} from '@cognite/cdf-resources-store/dist/timeseries';
-import {
-  listSelector as listEventSelector,
-  list as listEvent,
-} from '@cognite/cdf-resources-store/dist/events';
-import {
-  listSelector as listSequenceSelector,
-  list as listSequence,
-} from '@cognite/cdf-resources-store/dist/sequences';
-import {
-  TimeseriesFilterQuery,
-  SequenceListScope,
-  EventFilterRequest,
-  FilesSearchFilter,
+  Sequence,
+  Timeseries,
+  Asset,
+  FileInfo,
+  CogniteEvent,
 } from 'cognite-sdk-v3';
 import {
   DetailsItem,
@@ -48,10 +21,12 @@ import {
   FileTable,
   SpacedRow,
 } from 'components/Common';
-import unionBy from 'lodash/unionBy';
+import CdfCount from 'components/Common/atoms/CdfCount';
+
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import styled from 'styled-components';
+import { useCdfItem, useList } from 'hooks/sdk';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -62,23 +37,6 @@ const formatMetadata = (metadata: { [key: string]: any }) =>
     {}
   );
 
-const createFilesFilter = (assetId: number): FilesSearchFilter => ({
-  filter: { assetSubtreeIds: [{ id: assetId }] },
-  limit: 1000,
-});
-const createTimeseriesFilter = (assetId: number): TimeseriesFilterQuery => ({
-  filter: { assetSubtreeIds: [{ id: assetId }] },
-  limit: 1000,
-});
-const createSequenceFilter = (assetId: number): SequenceListScope => ({
-  filter: { assetIds: [assetId] },
-  limit: 1000,
-});
-const createEventFilter = (assetId: number): EventFilterRequest => ({
-  filter: { assetIds: [assetId] },
-  limit: 1000,
-});
-
 export const AssetPreview = ({
   assetId,
   extraActions,
@@ -87,41 +45,36 @@ export const AssetPreview = ({
   extraActions?: React.ReactNode[];
 }) => {
   const { openPreview, hidePreview } = useResourcePreview();
-  const dispatch = useResourcesDispatch();
-  const asset = useResourcesSelector(assetSelector)(assetId);
-  const {
-    files: filesByAnnotations,
-    fileIds: filesByAnnotationsIds,
-  } = useResourcesSelector(linkedFilesSelectorByAssetId)(assetId);
-  const { items: filesByAssetId } = useResourcesSelector(listFileSelector)(
-    createFilesFilter(assetId),
-    true
-  );
-  const { items: timeseries } = useResourcesSelector(listTimeseriesSelector)(
-    createTimeseriesFilter(assetId),
-    true
-  );
-  const { items: sequences } = useResourcesSelector(listSequenceSelector)(
-    createSequenceFilter(assetId),
-    true
-  );
-  const { items: events } = useResourcesSelector(listEventSelector)(
-    createEventFilter(assetId),
-    true
-  );
 
-  const files = unionBy(filesByAnnotations, filesByAssetId, el => el.id);
+  const { data: asset, isFetched } = useCdfItem<Asset>('assets', assetId, {
+    enabled: !!assetId,
+  });
 
-  useEffect(() => {
-    (async () => {
-      await dispatch(retrieveAsset([{ id: assetId }]));
-      await dispatch(listFilesLinkedToAsset(assetId));
-      await dispatch(listFiles(createFilesFilter(assetId), true));
-      await dispatch(listTimeseries(createTimeseriesFilter(assetId), true));
-      await dispatch(listEvent(createEventFilter(assetId), true));
-      await dispatch(listSequence(createSequenceFilter(assetId), true));
-    })();
-  }, [dispatch, assetId]);
+  const assetFilter = { assetIds: [assetId] };
+  const assetSubtreeFilter = { assetSubtreeIds: [{ id: assetId }] };
+  const { data: files } = useList<FileInfo[]>(
+    'files',
+    100,
+    assetSubtreeFilter,
+    { enabled: isFetched }
+  );
+  const { data: timeseries } = useList<Timeseries[]>(
+    'timeseries',
+    100,
+    assetSubtreeFilter,
+    { enabled: isFetched }
+  );
+  const { data: sequences } = useList<Sequence[]>(
+    'sequences',
+    100,
+    assetFilter,
+    { enabled: isFetched }
+  );
+  const { data: events } = useList<CogniteEvent[]>('events', 100, assetFilter, {
+    enabled: isFetched,
+  });
+
+  // const files = unionBy(filesByAnnotations, filesByAssetId, el => el.id);
 
   useEffect(() => {
     if (assetId) {
@@ -130,22 +83,31 @@ export const AssetPreview = ({
     return () => {
       hidePreview();
     };
-  }, [dispatch, hidePreview, assetId]);
-
-  useEffect(() => {
-    if (filesByAnnotationsIds) {
-      dispatch(
-        retrieveFiles(filesByAnnotationsIds.map((id: number) => ({ id })))
-      );
-    }
-  }, [dispatch, filesByAnnotationsIds]);
+  }, [hidePreview, assetId]);
 
   const tabs = {
     'asset-metadata': 'Asset details',
-    timeseries: <span>Linked time series ({timeseries.length})</span>,
-    files: <span>Linked files ({files.length})</span>,
-    sequences: <span>Linked sequences ({sequences.length})</span>,
-    events: <span>Linked events ({events.length})</span>,
+    timeseries: (
+      <span>
+        Linked time series (
+        <CdfCount type="timeseries" filter={assetSubtreeFilter} />)
+      </span>
+    ),
+    files: (
+      <span>
+        Linked files (<CdfCount type="files" filter={assetFilter} />)
+      </span>
+    ),
+    sequences: (
+      <span>
+        Linked sequences (<CdfCount type="sequences" filter={assetFilter} />)
+      </span>
+    ),
+    events: (
+      <span>
+        Linked events (<CdfCount type="events" filter={assetFilter} />)
+      </span>
+    ),
     children: 'Children',
   };
 
@@ -188,7 +150,7 @@ export const AssetPreview = ({
         );
       }
       case 'timeseries': {
-        return (
+        return timeseries ? (
           <TimeseriesTable
             onTimeseriesClicked={ts => {
               if (ts) {
@@ -199,10 +161,10 @@ export const AssetPreview = ({
             }}
             timeseries={timeseries}
           />
-        );
+        ) : null;
       }
       case 'files': {
-        return (
+        return files ? (
           <FileTable
             onFileClicked={file => {
               openPreview({
@@ -211,10 +173,10 @@ export const AssetPreview = ({
             }}
             files={files}
           />
-        );
+        ) : null;
       }
       case 'sequences': {
-        return (
+        return sequences ? (
           <SequenceTable
             onSequenceClicked={sequence => {
               openPreview({
@@ -223,10 +185,10 @@ export const AssetPreview = ({
             }}
             sequences={sequences}
           />
-        );
+        ) : null;
       }
       case 'events': {
-        return (
+        return events ? (
           <EventTable
             onEventClicked={event => {
               openPreview({
@@ -235,7 +197,7 @@ export const AssetPreview = ({
             }}
             events={events}
           />
-        );
+        ) : null;
       }
       case 'children': {
         return (

@@ -86,6 +86,29 @@ export const useResourcesState = () => {
   };
 };
 
+export const useResourceFilter = (type: ResourceType) => {
+  const observer = useContext(ResourceSelectionContext);
+  switch (type) {
+    case 'asset': {
+      return observer.assetFilter;
+    }
+    case 'event': {
+      return observer.eventFilter;
+    }
+    case 'file': {
+      return observer.fileFilter;
+    }
+    case 'sequence': {
+      return observer.sequenceFilter;
+    }
+    case 'timeSeries': {
+      return observer.timeseriesFilter;
+    }
+    default:
+      throw new Error('Unknown sdk type');
+  }
+};
+
 export const useResourceFilters = () => {
   const observer = useContext(ResourceSelectionContext);
   return {

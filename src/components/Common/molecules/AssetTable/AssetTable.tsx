@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Asset } from 'cognite-sdk-v3';
 import { Column } from 'react-base-table';
 import { Button } from '@cognite/cogs.js';
-import { useResourcesSelector } from '@cognite/cdf-resources-store';
-import { itemSelector } from '@cognite/cdf-resources-store/dist/assets';
+
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
 import { Table } from 'components/Common';
+import { useCdfItem } from 'hooks/sdk';
 
 const ActionCell = ({ asset }: { asset: Asset }) => {
   const getButton = useSelectionCheckbox();
@@ -17,14 +17,16 @@ const ActionCell = ({ asset }: { asset: Asset }) => {
 };
 
 const ParentCell = ({
-  asset,
+  rootId,
   onAssetSelected,
 }: {
-  asset: Asset;
+  rootId: number;
   onAssetSelected: (asset: Asset) => void;
 }) => {
-  const getAsset = useResourcesSelector(itemSelector);
-  const rootAsset = getAsset(asset.rootId);
+  const { data: rootAsset, isFetched } = useCdfItem<Asset>('assets', rootId, {
+    enabled: !!rootId,
+  });
+
   return (
     <Button
       type="link"
@@ -38,7 +40,7 @@ const ParentCell = ({
         }
       }}
     >
-      {rootAsset ? rootAsset.name : 'Loading...'}
+      {isFetched ? rootAsset?.name : 'Loading...'}
     </Button>
   );
 };
@@ -96,7 +98,10 @@ export const AssetTable = ({
           width: 200,
           cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
             return (
-              <ParentCell asset={asset} onAssetSelected={onAssetSelected} />
+              <ParentCell
+                rootId={asset.rootId}
+                onAssetSelected={onAssetSelected}
+              />
             );
           },
         },
