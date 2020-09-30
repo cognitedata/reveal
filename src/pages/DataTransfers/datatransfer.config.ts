@@ -13,7 +13,13 @@ export default {
   filterableColumns: ['datatype', 'connector', 'project'],
   mandatoryColumns: ['datatype', 'name', 'report'],
   nonSortableColumns: ['status_ok'],
-  ignoreColumns: ['cdf_metadata', 'business_tags', 'status_ok'],
+  ignoreColumns: [
+    'cdf_metadata',
+    'business_tags',
+    'revision',
+    'revisions',
+    'status_ok',
+  ],
   keyColumn: 'id',
   columnOrder: [
     'status_ok',
