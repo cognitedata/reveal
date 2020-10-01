@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useQueryCache } from 'react-query';
+import React, { useState } from 'react';
 import { Row, Collapse, Input, Pagination, Select } from 'antd';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
 
@@ -13,7 +12,7 @@ import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
 
-import { useFunctions, useMultipleCalls } from 'utils/hooks';
+import { useFunctions, useMultipleCalls, useRefreshApp } from 'utils/hooks';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -24,7 +23,7 @@ const CollapseDiv = styled.div`
 const FUNCTIONS_PER_PAGE = 10;
 
 function Functions() {
-  const queryCache = useQueryCache();
+  const refresh = useRefreshApp();
   const [currentPage, setCurrentPage] = useState(1);
 
   const [functionFilter, setFunctionFilter] = useState('');
@@ -61,15 +60,6 @@ function Functions() {
       .includes(functionFilter.toLowerCase())
   );
 
-  // Warm up the cache for the first page rendered
-  useEffect(() => {
-    if (functionsDone && filteredFunctions) {
-      filteredFunctions.slice(0, FUNCTIONS_PER_PAGE).forEach(fn => {
-        queryCache.setQueryData(`/functions/${fn.id}`, fn);
-      });
-    }
-  }, [functionsDone, filteredFunctions, queryCache]);
-
   return (
     <>
       <PageTitle title="Functions" />
@@ -87,7 +77,7 @@ function Functions() {
           <Button
             icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
             disabled={isFetching}
-            onClick={() => queryCache.invalidateQueries('/functions')}
+            onClick={() => refresh()}
             style={{ marginLeft: '8px' }}
           >
             Refresh

@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, QueryConfig, useQueryCache } from 'react-query';
 import {
   CogFunction,
   GetCallsArgs,
@@ -10,32 +10,40 @@ import {
 } from 'types';
 import sdk from 'sdk-singleton';
 import {
+  allCallsPrefix,
   allFunctionsKey,
-  callsKey,
-  callKey,
-  responseKey,
-  logsKey,
-  functionKey,
-  sortFunctionKey,
   allSchedulesKey,
+  callKey,
+  callPrefix,
+  callsKey,
+  functionKey,
+  logsKey,
+  responseKey,
+  sortFunctionKey,
 } from './queryKeys';
 import { getCalls, getCall, getResponse, getLogs, getLatestCalls } from './api';
 
-export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) =>
-  useQuery<CogFunction[]>(
+export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
+  const cache = useQueryCache();
+  return useQuery<CogFunction[]>(
     [allFunctionsKey],
     () =>
       sdk
         .get(`/api/playground/projects/${sdk.project}/functions`)
         .then(r => r.data?.items),
-    config
+    { onSuccess: functions => {
+      functions.forEach(fn => {
+        cache.setQueryData(functionKey({ id: fn.id }), fn, { initialStale: false});
+      });
+    }, ...config }
   );
+};
 export const useFunction = (
   id: number,
   config?: QueryConfig<CogFunction, unknown>
 ) =>
   useQuery<CogFunction>(
-    [functionKey, id],
+    functionKey({ id }),
     () =>
       sdk
         .get(`/api/playground/projects/${sdk.project}/functions/${id}`)
@@ -89,3 +97,12 @@ export const useSDK = <T>(assetType: AssetType, method: Method, data: any) =>
     // @ts-ignore
     sdk[assetType][method](data)
   );
+
+export const useRefreshApp = () => {
+  const cache = useQueryCache();
+  return () => {
+    cache.invalidateQueries(allFunctionsKey);
+    cache.invalidateQueries(allCallsPrefix);
+    cache.invalidateQueries(callPrefix);
+  };
+};
