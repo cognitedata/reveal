@@ -15,7 +15,7 @@ type ResponseProps = {
 };
 function SucessReponse({ id, callId }: ResponseProps) {
   const { data, isFetched } = useResponse({ id, callId });
-  const response = data?.response;
+  const response = data;
 
   if (!isFetched) {
     return loading;
