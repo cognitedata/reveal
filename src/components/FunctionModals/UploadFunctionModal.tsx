@@ -140,6 +140,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
           name: functionName.value,
           externalId,
           owner,
+          apiKey,
           secrets: secrets.reduce(
             (accl, s) => ({ ...accl, [s.key]: s.value }),
             {}
