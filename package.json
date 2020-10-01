@@ -18,7 +18,7 @@
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-picture-annotation": "^1.1.2",
     "@sentry/browser": "^5.24.2",
-    "@types/react-select": "^3.0.20",
+    "@types/react-select": "^3.0.21",
     "antd": "^3.26.18",
     "copy-to-clipboard": "^3.3.1",
     "history": "^4.10.1",
