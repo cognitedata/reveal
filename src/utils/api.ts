@@ -95,7 +95,7 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .then(response => response?.data?.items);
 };
 
-export const callFunction = ({
+export const createFunctionCall = ({
   id,
   data,
 }: {
