@@ -20,11 +20,11 @@ export function responseKey(args: GetCallArgs): QueryKey {
 export function filesKey(args: CallsArg) {
   return ['/files', args.id];
 }
-export function functionKey({ id } : { id: number }): QueryKey {
+export function functionKey({ id }: { id: number }): QueryKey {
   return [functionPrefix, id];
 }
 export const callPrefix = '/function/call';
-export const allCallsPrefix = '/function/calls'
+export const allCallsPrefix = '/function/calls';
 export const sortFunctionKey = '/functions/calls-for-sorting';
 export const allFunctionsKey = '/functions';
 export const allSchedulesKey = '/functions/schedules';

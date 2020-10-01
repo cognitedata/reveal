@@ -107,7 +107,7 @@ export const createFunctionCall = ({
   }
   return sdk
     .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
-      data: { data: data || {} }
+      data: { data: data || {} },
     })
     .then(response => response?.data);
 };

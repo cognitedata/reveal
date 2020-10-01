@@ -31,11 +31,16 @@ export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
       sdk
         .get(`/api/playground/projects/${sdk.project}/functions`)
         .then(r => r.data?.items),
-    { onSuccess: functions => {
-      functions.forEach(fn => {
-        cache.setQueryData(functionKey({ id: fn.id }), fn, { initialStale: false});
-      });
-    }, ...config }
+    {
+      onSuccess: functions => {
+        functions.forEach(fn => {
+          cache.setQueryData(functionKey({ id: fn.id }), fn, {
+            initialStale: false,
+          });
+        });
+      },
+      ...config,
+    }
   );
 };
 export const useFunction = (
