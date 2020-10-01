@@ -3,7 +3,7 @@ import { Modal, Input, Form, Alert } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { useMutation, useQueryCache } from 'react-query';
 
-import { callFunction } from 'utils/api';
+import { createFunctionCall } from 'utils/api';
 import FunctionCallStatus from 'components/FunctionCallStatus';
 import FunctionCallResponse from 'components/FunctionCallResponse';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
@@ -41,9 +41,9 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   const [callId, setCallId] = useState<number | undefined>();
 
   const [
-    createFunctionCall,
+    createCall,
     { data, isSuccess: callCreated, isLoading, error },
-  ] = useMutation(callFunction, {
+  ] = useMutation(createFunctionCall, {
     onSuccess() {
       queryCache.invalidateQueries(callsKey({ id }));
       queryCache.invalidateQueries(sortFunctionKey);
@@ -93,7 +93,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
     e.stopPropagation();
     const formattedInputData =
       inputData === '' ? undefined : JSON.parse(inputData);
-    createFunctionCall({ id, data: formattedInputData });
+    createCall({ id, data: formattedInputData });
   };
 
   return (

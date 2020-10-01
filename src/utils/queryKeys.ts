@@ -6,10 +6,10 @@ type CallsArg = {
   scheduleId?: number;
 };
 export function callsKey(args: CallsArg | CallsArg[]): QueryKey {
-  return ['/function/calls', args];
+  return [allCallsPrefix, args];
 }
 export function callKey(args: GetCallArgs): QueryKey {
-  return ['/function/call', args];
+  return [callPrefix, args];
 }
 export function logsKey(args: GetCallArgs): QueryKey {
   return ['/function/logs', args];
@@ -20,7 +20,12 @@ export function responseKey(args: GetCallArgs): QueryKey {
 export function filesKey(args: CallsArg) {
   return ['/files', args.id];
 }
+export function functionKey({ id }: { id: number }): QueryKey {
+  return [functionPrefix, id];
+}
+export const callPrefix = '/function/call';
+export const allCallsPrefix = '/function/calls';
 export const sortFunctionKey = '/functions/calls-for-sorting';
 export const allFunctionsKey = '/functions';
 export const allSchedulesKey = '/functions/schedules';
-export const functionKey = '/function';
+export const functionPrefix = '/function';

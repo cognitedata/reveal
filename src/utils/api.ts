@@ -95,7 +95,7 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .then(response => response?.data?.items);
 };
 
-export const callFunction = ({
+export const createFunctionCall = ({
   id,
   data,
 }: {
@@ -107,7 +107,7 @@ export const callFunction = ({
   }
   return sdk
     .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
-      data: data || {},
+      data: { data: data || {} },
     })
     .then(response => response?.data);
 };
