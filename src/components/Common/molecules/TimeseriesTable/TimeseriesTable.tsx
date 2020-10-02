@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Timeseries } from 'cognite-sdk-v3';
 import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
@@ -7,7 +7,8 @@ import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import { Table, TimeDisplay } from 'components/Common';
+import { Table, TimeDisplay, Loader } from 'components/Common';
+import { useInfiniteList, useSearch } from 'hooks/sdk';
 
 const ActionCell = ({ sequence }: { sequence: Timeseries }) => {
   const getButton = useSelectionCheckbox();
@@ -15,11 +16,11 @@ const ActionCell = ({ sequence }: { sequence: Timeseries }) => {
 };
 
 export const TimeseriesTable = ({
-  timeseries,
+  filter,
   query,
   onTimeseriesClicked,
 }: {
-  timeseries: Timeseries[];
+  filter?: any;
   query?: string;
   onTimeseriesClicked: (sequence: Timeseries) => void;
 }) => {
@@ -34,8 +35,45 @@ export const TimeseriesTable = ({
     setPreviewId(sequence.id);
   };
 
+  const chunkSize = 50;
+
+  const {
+    data: listData,
+    isFetched: listFetched,
+    canFetchMore,
+    isFetchingMore,
+    fetchMore,
+  } = useInfiniteList<Timeseries>('timeseries', chunkSize, filter, {
+    enabled: !!filter && !query,
+  });
+  const listTimeseries = useMemo(
+    () =>
+      listData?.reduce((accl, t) => accl.concat(t.items), [] as Timeseries[]),
+    [listData]
+  );
+
+  const { data: searchData, isFetched: searchFetched } = useSearch<Timeseries>(
+    'timeseries',
+    query!,
+    1000,
+    filter,
+    { enabled: !!query }
+  );
+
+  const isFetched = listFetched || searchFetched;
+  const timeseries = searchData || listTimeseries;
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
   return (
     <Table<Timeseries>
+      onEndReached={() => {
+        if (canFetchMore && !isFetchingMore) {
+          fetchMore();
+        }
+      }}
       rowEventHandlers={{
         onClick: ({ rowData: sequence, event }) => {
           onTimeseriesSelected(sequence);
