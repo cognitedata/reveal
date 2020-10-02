@@ -35,6 +35,7 @@ import { ResourceItem } from 'types';
 
 type Props = {
   item?: ResourceItem;
+  closable?: boolean;
   placeholder?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
@@ -44,6 +45,7 @@ type Props = {
 
 export const ResourcePreviewSidebar = ({
   item,
+  closable = true,
   placeholder = (
     <div
       style={{
@@ -140,7 +142,9 @@ export const ResourcePreviewSidebar = ({
 
   return (
     <ResourcePreviewWrapper>
-      <CloseButton icon="Close" variant="ghost" onClick={onClose} />
+      {closable && (
+        <CloseButton icon="Close" variant="ghost" onClick={onClose} />
+      )}
       {header}
       {propContent || content}
       {footer}
@@ -155,6 +159,7 @@ const ResourcePreviewWrapper = styled.div`
   background: #fff;
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 
 const CloseButton = styled(Button)`

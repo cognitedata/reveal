@@ -1,16 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useState, useCallback } from 'react';
 import { ResourceSelectionSidebar } from 'containers/ResourceSidebar';
-import { ResourceSelectionProps } from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
 import {
+  ResourceSelectionProps,
   ResourceItemState,
   OnSelectListener,
 } from './ResourceSelectionContext';
 
 export type OpenSelectorProps = ResourceSelectionProps & {
   /** Callback for when the selector is closed */
-  onClose?: (confirmed: boolean) => void;
+  onClose?: (confirmed: boolean, results?: ResourceItem[]) => void;
 };
 
 export type ResourceSelector = {
@@ -35,9 +35,9 @@ export const ResourceSelectorProvider = ({
   const [resourceItemState, setResourceItemState] = useState<
     ResourceItemState[]
   >([]);
-  const [onClose, setOnCloseCallback] = useState<(confirmed: boolean) => void>(
-    () => () => {}
-  );
+  const [onClose, setOnCloseCallback] = useState<
+    (confirmed: boolean, results?: ResourceItem[]) => void
+  >(() => () => {});
   const [onSelect, setOnSelectListener] = useState<OnSelectListener>(
     () => () => {}
   );
@@ -67,13 +67,23 @@ export const ResourceSelectorProvider = ({
         propsOnSelect(item);
         if (mode === 'single') {
           setIsOpen(false);
+          setResourceItemState(value => {
+            propsOnClose(
+              true,
+              value.filter(el => el.state === 'selected')
+            );
+            return [];
+          });
           setOnCloseCallback(() => () => {});
-          propsOnClose(true);
         } else {
-          setResourceItemState(value => [
-            ...value,
-            { ...item, state: 'selected' },
-          ]);
+          setResourceItemState(items => {
+            const newItems = items.filter(
+              el => !(el.id === item.id && el.type === item.type)
+            );
+            return newItems.length !== items.length
+              ? newItems
+              : [...items, { ...item, state: 'selected' }];
+          });
         }
       });
       setResourceItemState(propsResourceItemState);
@@ -96,8 +106,11 @@ export const ResourceSelectorProvider = ({
     >
       {children}
       <ResourceSelectionSidebar
-        onClose={() => {
-          onClose(false);
+        onClose={success => {
+          onClose(
+            success,
+            resourceItemState.filter(el => el.state === 'selected')
+          );
           hideResourceSelector();
         }}
         visible={isOpen}

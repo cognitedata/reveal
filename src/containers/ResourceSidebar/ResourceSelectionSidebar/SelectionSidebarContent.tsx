@@ -26,11 +26,11 @@ import { ResourceItem, ResourceType } from 'types';
 import { Divider, SpacedRow } from 'components/Common';
 
 const Drawer = styled.div<{ visible: boolean }>`
-  position: fixed;
-  top: 64px;
+  position: absolute;
+  top: 0;
   right: 0;
   width: ${props => (props.visible ? '80vw' : '0')};
-  height: calc(100vh - 64px);
+  height: 100%;
   z-index: 4;
   background: #fff;
   transition: 0.3s all;
@@ -42,11 +42,11 @@ const Drawer = styled.div<{ visible: boolean }>`
   }
 `;
 const Overlay = styled.div<{ visible: boolean }>`
-  position: fixed;
-  top: 64px;
+  position: absolute;
+  top: 0;
   right: 0;
   width: 100vw;
-  height: calc(100vh - 64px);
+  height: 100%;
   z-index: 3;
   display: ${props => (props.visible ? 'block' : 'none')};
   background-color: ${props =>

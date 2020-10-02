@@ -12,6 +12,7 @@ import { ResourceSelectorProvider } from 'context/ResourceSelectorContext';
 import { ResourceActionsProvider } from 'context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { ClientSDKProvider } from '@cognite/gearbox';
+import { SDKProvider } from './sdk';
 
 export const history = createPreserveQueryAndHashHistory(createBrowserHistory, [
   'env',
@@ -59,17 +60,21 @@ export const DataExplorationProvider = ({
   }
   return (
     <DataExplorationContext.Provider value={{ sdk }}>
-      <ClientSDKProvider client={sdk}>
-        <CogniteResourceProvider sdk={sdk} store={store}>
-          <ResourceSelectionProvider>
-            <ResourceActionsProvider>
-              <ResourcePreviewProvider>
-                <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
-              </ResourcePreviewProvider>
-            </ResourceActionsProvider>
-          </ResourceSelectionProvider>
-        </CogniteResourceProvider>
-      </ClientSDKProvider>
+      <SDKProvider sdk={sdk}>
+        <ClientSDKProvider client={sdk}>
+          <CogniteResourceProvider sdk={sdk} store={store}>
+            <ResourceSelectionProvider>
+              <ResourceActionsProvider>
+                <ResourcePreviewProvider>
+                  <ResourceSelectorProvider>
+                    {children}
+                  </ResourceSelectorProvider>
+                </ResourcePreviewProvider>
+              </ResourceActionsProvider>
+            </ResourceSelectionProvider>
+          </CogniteResourceProvider>
+        </ClientSDKProvider>
+      </SDKProvider>
     </DataExplorationContext.Provider>
   );
 };
