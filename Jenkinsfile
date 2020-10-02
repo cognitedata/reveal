@@ -211,13 +211,10 @@ pods {
       },
 
       'Storybook': {
-        dir('storybook') {
-          stageWithNotify('Storybook', CONTEXTS.storybook) {
-            previewServer.deployStorybook(
-              shouldExecute: isPullRequest
-            )
-          }
-        }
+        previewServer.runStorybookStage(
+          context: CONTEXTS.storybook,
+          shouldExecute: isPullRequest
+        )
       },
 
       'Preview': {
