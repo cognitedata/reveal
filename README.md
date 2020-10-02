@@ -22,7 +22,7 @@ yarn test
 For non-interactive single run:
 
 ```js
-yarn test:once:unittests
+yarn test:once
 ```
 
 ## Running local copy online
