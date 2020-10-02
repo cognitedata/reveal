@@ -1,27 +1,6 @@
 import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 
-export const Container = styled.article<{ expanded: boolean }>`
-  transform: translateX(${(props) => (props.expanded ? 0 : '362px')});
-  opacity: ${(props) => (props.expanded ? 1 : 0)};
-  transition-property: opacity, transform;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 32px;
-  margin: 32px 0;
-  width: 352px;
-  height: 100vh;
-  box-sizing: border-box;
-  overflow-y: hidden;
-
-  background-color: var(--cogs-white);
-  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1), 0 0 4px rgba(0, 0, 0, 0.1);
-  border-radius: 16px 0 0 16px;
-`;
-
 export const Header = styled.header`
   display: flex;
   justify-content: space-between;
@@ -58,14 +37,14 @@ export const Section = styled.section`
     }
     & > div {
       margin: 16px 0 0 16px;
-      & > h3 {
+      & h3 {
         padding-left: 16px;
         margin-bottom: 4px;
         font-size: 14px;
         font-style: normal;
         font-weight: 600;
       }
-      & > Input {
+      & Input {
         width: 100%;
         margin-bottom: 16px;
         font-size: 14px;
@@ -75,7 +54,7 @@ export const Section = styled.section`
           border: none;
         }
       }
-      & > TextArea {
+      & TextArea {
         width: 100%;
         font-family: 'Inter', sans-serif;
         font-size: 14px;

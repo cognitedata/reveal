@@ -10,9 +10,9 @@ export default {
     'status',
     'source_project',
   ],
-  filterableColumns: ['datatype', 'connector', 'project'],
-  mandatoryColumns: ['datatype', 'name', 'report'],
-  nonSortableColumns: ['status_ok'],
+  filterableColumns: ['report', 'author'],
+  mandatoryColumns: ['status', 'datatype', 'name', 'report'],
+  nonSortableColumns: ['status'],
   ignoreColumns: [
     'cdf_metadata',
     'business_tags',
@@ -22,7 +22,7 @@ export default {
   ],
   keyColumn: 'id',
   columnOrder: [
-    'status_ok',
+    'status',
     'name',
     'connector',
     'datatype',
@@ -33,7 +33,7 @@ export default {
   ],
   columnNameMapping: [
     {
-      keyName: 'status_ok',
+      keyName: 'status',
       value: '',
     },
     {

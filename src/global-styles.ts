@@ -18,5 +18,11 @@ export default createGlobalStyle`
     overflow: hidden;
     background-color: var(--cogs-greyscale-grey3);
     color: var(--cogs-greyscale-grey9);
+    
+    .cogs-modal-footer-buttons {
+    .cogs-btn.cogs-btn-secondary {
+      display: none;
+    }
+  }
   }
 `;

@@ -32,6 +32,7 @@ import {
   ColumnsSelector,
   ExpandRowIcon,
   StatusDot,
+  DetailViewWrapper,
 } from './elements';
 import Revisions from './Revisions';
 import 'antd/dist/antd.css';
@@ -120,17 +121,16 @@ function selectColumns(
         onFilter: (value, record) => {
           return record[key]?.includes(value);
         },
-        width: key === 'status_ok' ? 70 : undefined,
+        width: key === 'status' ? 70 : undefined,
         render: (value) => {
-          if (key === 'status_ok') {
-            return (
-              <StatusDot
-                bgColor={value ? Colors.success.hex() : Colors.danger.hex()}
-              />
-            );
-          }
-          if (key === 'report') {
-            return <div>{value ? 'Success' : 'Error'}</div>;
+          if (key === 'status') {
+            let color = Colors.yellow.hex();
+            if (value.toLowerCase() === 'failed') {
+              color = Colors.danger.hex();
+            } else if (value.toLowerCase() === 'succeeded') {
+              color = Colors.success.hex();
+            }
+            return <StatusDot bgColor={color} />;
           }
           return getFormattedTimestampOrString(value);
         },
@@ -360,7 +360,11 @@ const DataTransfers: React.FC = () => {
         .then((response: DataTransferObject[]) => {
           if (response.length > 0) {
             if (!response[0].error) {
-              const handledData = response.map((item) => item.source);
+              const handledData = response.map((item) => ({
+                ...item.source,
+                status: item.status,
+                report: item.status,
+              }));
               dispatch({
                 type: Action.SUCCEED,
                 payload: {
@@ -506,22 +510,24 @@ const DataTransfers: React.FC = () => {
       target: {},
     };
     const translation = revision.translations[revision.translations.length - 1];
-    api!.objects.getSingleObject(translation.object_id).then((response) => {
-      if (response && response.length > 0 && !response[0].error) {
-        const item = response[0];
-        selectedObject.target = {
-          name: item.name,
-          crs: item.crs,
-          dataType: item.datatype,
-          createdTime: translation.created_time,
-          repository: item.project,
-          revision: translation.revision,
-          revisionSteps: translation.steps,
-        };
-        selectedObject.isLoading = false;
-      }
-      setSelectedTransfer(selectedObject);
-    });
+    api!.objects
+      .getSingleObject(translation.revision.object_id)
+      .then((response) => {
+        if (response && response.length > 0 && !response[0].error) {
+          const item = response[0];
+          selectedObject.target = {
+            name: item.name,
+            crs: item.crs,
+            dataType: item.datatype,
+            createdTime: translation.revision.created_time,
+            repository: item.project,
+            revision: translation.revision.revision,
+            revisionSteps: translation.revision.steps,
+          };
+          selectedObject.isLoading = false;
+        }
+        setSelectedTransfer(selectedObject);
+      });
   }
 
   useEffect(() => {
@@ -547,6 +553,9 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
+      setSelectedSourceProject(null);
+      setSelectedTarget(null);
+      setSelectedTargetProject(null);
       fetchProjects();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -555,6 +564,8 @@ const DataTransfers: React.FC = () => {
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
       fetchDatatypes();
+      setSelectedTarget(null);
+      setSelectedTargetProject(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSourceProject]);
@@ -562,6 +573,7 @@ const DataTransfers: React.FC = () => {
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
       fetchProjects();
+      setSelectedTargetProject(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTarget]);
@@ -634,6 +646,10 @@ const DataTransfers: React.FC = () => {
         isLoading={status === ProgressState.LOADING}
       />
     );
+  }
+
+  if (!sources) {
+    return null;
   }
 
   return (
@@ -730,10 +746,12 @@ const DataTransfers: React.FC = () => {
           emptyText: getNoDataText(),
         }}
       />
-      <DetailView
-        onClose={() => setSelectedTransfer(null)}
-        data={selectedTransfer}
-      />
+      <DetailViewWrapper>
+        <DetailView
+          onClose={() => setSelectedTransfer(null)}
+          data={selectedTransfer}
+        />
+      </DetailViewWrapper>
     </ContentContainer>
   );
 };

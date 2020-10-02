@@ -94,6 +94,14 @@ export const RevisionLabel = styled.div`
   font-size: 0.65rem;
 `;
 
+export const DetailViewWrapper = styled.div`
+  .cogs-modal-footer-buttons {
+    .cogs-btn.cogs-btn-secondary {
+      display: none;
+    }
+  }
+`;
+
 export const SubTable = styled(Table)`
   .ant-table {
     .ant-table-tbody .ant-table-row {

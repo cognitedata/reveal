@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import { Icon, Input, Colors } from '@cognite/cogs.js';
+import { Icon, Input, Colors, Modal, Row, Col } from '@cognite/cogs.js';
 import { format } from 'date-fns';
 import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 import { getFormattedTimestampOrString } from '../../../pages/DataTransfers/utils';
 import {
-  Container,
   Header,
   CloseIcon,
   Section,
@@ -111,10 +110,16 @@ const DetailView = ({ onClose, data }: Props) => {
   };
 
   return (
-    <Container expanded={data !== null}>
+    <Modal
+      visible={data !== null}
+      okText="Close"
+      cancelText=""
+      onOk={onClose}
+      width={768}
+      closeIcon={<CloseIcon type="LargeClose" onClick={onClose} />}
+    >
       <Header>
         <h2>Detail View</h2>
-        <CloseIcon type="LargeClose" onClick={onClose} />
       </Header>
       {isLoading && <p>LOADING!</p>}
       {source && target && (
@@ -123,75 +128,107 @@ const DetailView = ({ onClose, data }: Props) => {
             <details open>
               <summary>Source</summary>
               <div>
-                <h3>Name</h3>
-                <Input
-                  type="text"
-                  value={source.name || ''}
-                  variant="noBorder"
-                  readOnly
-                />
-                <h3>External Id</h3>
-                <Input
-                  type="text"
-                  value={source.externalId || ''}
-                  variant="noBorder"
-                  readOnly
-                />
-                <h3>CRS</h3>
-                <TextArea value={source.crs || ''} readOnly rows={5} />
-                <h3>Data type</h3>
-                <Input
-                  type="text"
-                  value={source.dataType || ''}
-                  variant="noBorder"
-                  readOnly
-                />
-                <h3>Created time</h3>
-                <Input
-                  type="text"
-                  value={
-                    source.createdTime
-                      ? format(
-                          new Date(source.createdTime * UNIX_TIMESTAMP_FACTOR),
-                          'Pp'
-                        )
-                      : ''
-                  }
-                  variant="noBorder"
-                  readOnly
-                />
-                <h3>Repository / Project</h3>
-                <Input
-                  type="text"
-                  value={source.repository || ''}
-                  variant="noBorder"
-                  readOnly
-                />
-                <h3>Business project tag</h3>
-                <Input
-                  type="text"
-                  value={source.businessTag || ''}
-                  variant="noBorder"
-                  readOnly
-                />
-                <h3>Revision</h3>
-                <Input
-                  type="text"
-                  value={
-                    source.revision
-                      ? getFormattedTimestampOrString(source.revision)
-                      : ''
-                  }
-                  variant="noBorder"
-                  readOnly
-                />
-                <h3>Interpreter</h3>
-                <Input
-                  type="text"
-                  value={source.interpreter || ''}
-                  variant="noBorder"
-                  readOnly
-                />
+                <Row>
+                  <Col span={24}>
+                    <h3>Name</h3>
+                    <Input
+                      type="text"
+                      value={source.name || ''}
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <h3>External Id</h3>
+                    <Input
+                      type="text"
+                      value={source.externalId || ''}
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <h3>Data type</h3>
+                    <Input
+                      type="text"
+                      value={source.dataType || ''}
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={24}>
+                    <h3>CRS</h3>
+                    <TextArea value={source.crs || ''} readOnly rows={3} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <h3>Created time</h3>
+                    <Input
+                      type="text"
+                      value={
+                        source.createdTime
+                          ? format(
+                              new Date(
+                                source.createdTime * UNIX_TIMESTAMP_FACTOR
+                              ),
+                              'Pp'
+                            )
+                          : ''
+                      }
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <h3>Repository / Project</h3>
+                    <Input
+                      type="text"
+                      value={source.repository || ''}
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={24}>
+                    <h3>Business project tag</h3>
+                    <Input
+                      type="text"
+                      value={source.businessTag || ''}
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={12}>
+                    <h3>Revision</h3>
+                    <Input
+                      type="text"
+                      value={
+                        source.revision
+                          ? getFormattedTimestampOrString(source.revision)
+                          : ''
+                      }
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <h3>Interpreter</h3>
+                    <Input
+                      type="text"
+                      value={source.interpreter || ''}
+                      variant="noBorder"
+                      readOnly
+                    />
+                  </Col>
+                </Row>
               </div>
               <hr />
             </details>
@@ -213,77 +250,103 @@ const DetailView = ({ onClose, data }: Props) => {
                   target.revisionSteps.length > 0 &&
                   target.revisionSteps.map((step) => renderStep(step))}
                 <div>
-                  <h3>Name</h3>
-                  <Input
-                    type="text"
-                    value={target.name || ''}
-                    variant="noBorder"
-                    readOnly
-                  />
-                  <h3>Openworks Id</h3>
-                  <Input
-                    type="text"
-                    value={target.openWorksId || ''}
-                    variant="noBorder"
-                    readOnly
-                  />
-                  <h3>CRS</h3>
-                  <TextArea value={target.crs || ''} readOnly rows={5} />
-                  <h3>Data type</h3>
-                  <Input
-                    type="text"
-                    value={target.dataType || ''}
-                    variant="noBorder"
-                    readOnly
-                  />
-                  <h3>Created time</h3>
-                  <Input
-                    type="text"
-                    value={
-                      target.createdTime
-                        ? format(
-                            new Date(
-                              target.createdTime * UNIX_TIMESTAMP_FACTOR
-                            ),
-                            'Pp'
-                          )
-                        : ''
-                    }
-                    variant="noBorder"
-                    readOnly
-                  />
-                  <h3>Repository / Project</h3>
-                  <Input
-                    type="text"
-                    value={target.repository || ''}
-                    variant="noBorder"
-                    readOnly
-                  />
-                  <h3>Configuration Tag</h3>
-                  <Input
-                    type="text"
-                    value={target.configTag || ''}
-                    variant="noBorder"
-                    readOnly
-                  />
-                  <h3>Revision</h3>
-                  <Input
-                    type="text"
-                    value={
-                      target.revision
-                        ? getFormattedTimestampOrString(target.revision)
-                        : ''
-                    }
-                    variant="noBorder"
-                    readOnly
-                  />
+                  <Row>
+                    <Col span={24}>
+                      <h3>Name</h3>
+                      <Input
+                        type="text"
+                        value={target.name || ''}
+                        variant="noBorder"
+                        readOnly
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={12}>
+                      <h3>Openworks Id</h3>
+                      <Input
+                        type="text"
+                        value={target.openWorksId || ''}
+                        variant="noBorder"
+                        readOnly
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <h3>Data type</h3>
+                      <Input
+                        type="text"
+                        value={target.dataType || ''}
+                        variant="noBorder"
+                        readOnly
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={24}>
+                      <h3>CRS</h3>
+                      <TextArea value={target.crs || ''} readOnly rows={3} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={12}>
+                      <h3>Created time</h3>
+                      <Input
+                        type="text"
+                        value={
+                          target.createdTime
+                            ? format(
+                                new Date(
+                                  target.createdTime * UNIX_TIMESTAMP_FACTOR
+                                ),
+                                'Pp'
+                              )
+                            : ''
+                        }
+                        variant="noBorder"
+                        readOnly
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <h3>Repository / Project</h3>
+                      <Input
+                        type="text"
+                        value={target.repository || ''}
+                        variant="noBorder"
+                        readOnly
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={12}>
+                      <h3>Configuration Tag</h3>
+                      <Input
+                        type="text"
+                        value={target.configTag || ''}
+                        variant="noBorder"
+                        readOnly
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <h3>Revision</h3>
+                      <Input
+                        type="text"
+                        value={
+                          target.revision
+                            ? getFormattedTimestampOrString(target.revision)
+                            : ''
+                        }
+                        variant="noBorder"
+                        readOnly
+                      />
+                    </Col>
+                  </Row>
                 </div>
               </details>
             )}
           </Section>
         </Content>
       )}
-    </Container>
+    </Modal>
   );
 };
 

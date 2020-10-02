@@ -14,7 +14,6 @@ export interface RevisionObject {
   created_time: number;
   last_updated: number;
   object_id: number;
-  revision: string;
   cdf_file?: {
     id?: 0;
     upload_link?: string;
@@ -26,6 +25,7 @@ export interface RevisionObject {
     error_message: string;
     created_time: number;
   }[];
+  revision: any;
   translations: RevisionObject[];
 }
 

@@ -62,6 +62,10 @@ const Filters = ({ source, target, date, datatype, configuration }: Props) => {
   const [datatypesOpen, setDatatypesOpen] = useState(false);
   const { RangePicker } = DatePicker;
 
+  if (!source.sources || source.sources.length < 1) {
+    return null;
+  }
+
   const SourcesContent = (
     <Menu>
       {source.sources.map((item) => (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Colors } from '@cognite/cogs.js';
+import { Button, Colors, Tooltip } from '@cognite/cogs.js';
+import { apiStatuses } from 'utils/statuses';
 import { DataTransferObject, RevisionObject } from '../../typings/interfaces';
 import ApiContext from '../../contexts/ApiContext';
 import { SubTable, RevisionLabel, StatusDot } from './elements';
@@ -38,24 +39,28 @@ const Revisions = ({ record, onDetailClick }: Props) => {
   const getRevisionsList = () =>
     record.revisions.reverse().map((rev: RevisionObject) => {
       let statusColor = Colors.yellow.hex();
+      let statusText = 'Couldn`t find status';
       if (
         rev.translations &&
         rev.translations.length > 0 &&
-        rev.translations[rev.translations.length - 1].steps &&
-        rev.steps.length > 0
+        rev.translations[rev.translations.length - 1].revision
       ) {
         const translation = rev.translations[rev.translations.length - 1];
-        const step = translation.steps[translation.steps.length - 1];
-        if (step.status === 'Uploaded to connector') {
+        if (translation.revision.status === apiStatuses.UploadedToConnector) {
           statusColor = Colors.success.hex();
-        } else if (step.error_message) {
+        } else if (translation.revision.status === apiStatuses.Failed) {
           statusColor = Colors.danger.hex();
         }
+        statusText = translation.revision.status;
       }
       return {
         key: rev.id,
         objectId: rev.object_id,
-        statusOk: <StatusDot bgColor={statusColor} />,
+        statusOk: (
+          <Tooltip content={statusText}>
+            <StatusDot bgColor={statusColor} />
+          </Tooltip>
+        ),
         name: (
           <div>
             <RevisionLabel>Revision</RevisionLabel>

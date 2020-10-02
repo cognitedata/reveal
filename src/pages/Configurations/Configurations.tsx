@@ -81,7 +81,7 @@ const Configurations = () => {
           message: 'No response',
           status: 400,
         };
-        if (response[0].error) {
+        if (response.length > 0 && response[0].error) {
           errorObj = {
             message: response[0].statusText,
             status: response[0].status,

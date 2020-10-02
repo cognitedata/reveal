@@ -8,6 +8,7 @@ import {
   RESTTransfersFilter,
   Source,
 } from '../typings/interfaces';
+import sdk from '../utils/cognitesdk';
 
 export type QueryParameters = {
   [property: string]: number | string | boolean | object | undefined;
@@ -40,6 +41,18 @@ class Api {
   }
 
   private async get(url: string, parameters?: QueryParameters): Promise<any> {
+    const status = await sdk.login.status();
+    if (!status) {
+      console.error('Not logged into sdk');
+      return [
+        {
+          error: true,
+          status: 401,
+          statusText:
+            'No user logged in. Refresh page to auto authenticate again',
+        },
+      ];
+    }
     const urlWithStringQuery: string = `${url}?${buildQueryString(
       parameters || {}
     )}`;
@@ -60,6 +73,18 @@ class Api {
   }
 
   private async post(url: string, data: any): Promise<any> {
+    const status = await sdk.login.status();
+    if (!status) {
+      console.error('Not logged into sdk');
+      return [
+        {
+          error: true,
+          status: 401,
+          statusText:
+            'No user logged in. Refresh page to auto authenticate again',
+        },
+      ];
+    }
     const response = await fetch(url, {
       method: 'POST',
       headers: this.headers,
