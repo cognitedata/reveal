@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FileInfo as File, FileInfo } from 'cognite-sdk-v3';
+import { Loader, Table, TimeDisplay } from 'components/Common';
 import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
 import { useSelectionCheckbox } from 'hooks/useSelection';
@@ -7,7 +8,8 @@ import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import { Table, TimeDisplay } from 'components/Common';
+
+import { useInfiniteList, useSearch } from 'hooks/sdk';
 
 const ActionCell = ({ file }: { file: File }) => {
   const getButton = useSelectionCheckbox();
@@ -15,15 +17,16 @@ const ActionCell = ({ file }: { file: File }) => {
 };
 
 export const FileTable = ({
-  files,
   query,
+  filter,
   onFileClicked,
 }: {
-  files: File[];
   query?: string;
+  filter?: any;
   onFileClicked: (file: File) => void;
 }) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
+
   const { mode } = useResourceMode();
   const { resourcesState } = useResourcesState();
 
@@ -34,8 +37,42 @@ export const FileTable = ({
     setPreviewId(file.id);
   };
 
+  const useSearchApi = query && query.length > 0;
+
+  const {
+    data: listData,
+    isFetched: listFetched,
+    canFetchMore,
+    isFetchingMore,
+    fetchMore,
+  } = useInfiniteList<FileInfo>('files', 50, filter, {
+    enabled: !useSearchApi,
+  });
+  const listFiles = useMemo(
+    () => listData?.reduce((accl, t) => accl.concat(t.items), [] as FileInfo[]),
+    [listData]
+  );
+  const { data: searchFiles, isFetched: searchFetched } = useSearch<FileInfo>(
+    'timeseries',
+    query!,
+    1000,
+    filter,
+    { enabled: useSearchApi }
+  );
+  const isFetched = listFetched || searchFetched;
+  const files = searchFiles || listFiles;
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
   return (
     <Table<FileInfo>
+      onEndReached={() => {
+        if (canFetchMore && !isFetchingMore) {
+          fetchMore();
+        }
+      }}
       rowEventHandlers={{
         onClick: ({ rowData: file, event }) => {
           onFileSelected(file);

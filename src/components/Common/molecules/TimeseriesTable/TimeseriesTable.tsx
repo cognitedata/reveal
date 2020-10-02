@@ -35,16 +35,15 @@ export const TimeseriesTable = ({
     setPreviewId(sequence.id);
   };
 
-  const chunkSize = 50;
-
+  const useSearchApi = query && query.length > 0;
   const {
     data: listData,
     isFetched: listFetched,
     canFetchMore,
     isFetchingMore,
     fetchMore,
-  } = useInfiniteList<Timeseries>('timeseries', chunkSize, filter, {
-    enabled: !!filter && !query,
+  } = useInfiniteList<Timeseries>('timeseries', 50, filter, {
+    enabled: !useSearchApi,
   });
   const listTimeseries = useMemo(
     () =>
@@ -57,7 +56,7 @@ export const TimeseriesTable = ({
     query!,
     1000,
     filter,
-    { enabled: !!query }
+    { enabled: useSearchApi }
   );
 
   const isFetched = listFetched || searchFetched;

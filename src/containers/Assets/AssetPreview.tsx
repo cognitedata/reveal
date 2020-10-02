@@ -13,7 +13,7 @@ import {
   SpacedRow,
 } from 'components/Common';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-import { Sequence, Asset, FileInfo, CogniteEvent } from 'cognite-sdk-v3';
+import { Sequence, Asset, CogniteEvent } from 'cognite-sdk-v3';
 
 import CdfCount from 'components/Common/atoms/CdfCount';
 
@@ -41,9 +41,6 @@ export const AssetPreview = ({
 
   const assetFilter = { assetIds: [assetId] };
   const assetSubtreeFilter = { assetSubtreeIds: [{ id: assetId }] };
-  const { data: files } = useList<FileInfo>('files', 100, assetSubtreeFilter, {
-    enabled: isFetched,
-  });
 
   const { data: sequences } = useList<Sequence>('sequences', 100, assetFilter, {
     enabled: isFetched,
@@ -111,16 +108,16 @@ export const AssetPreview = ({
         );
       }
       case 'files': {
-        return files ? (
+        return (
           <FileTable
             onFileClicked={file => {
               openPreview({
                 item: { id: file.id, type: 'file' },
               });
             }}
-            files={files}
+            filter={assetSubtreeFilter}
           />
-        ) : null;
+        );
       }
       case 'sequences': {
         return sequences ? (
@@ -163,15 +160,7 @@ export const AssetPreview = ({
       }
     }
     return <></>;
-  }, [
-    assetId,
-    currentTab,
-    events,
-    files,
-    openPreview,
-    sequences,
-    assetSubtreeFilter,
-  ]);
+  }, [assetId, currentTab, events, openPreview, sequences, assetSubtreeFilter]);
 
   if (!isFetched) {
     return <Loader />;
