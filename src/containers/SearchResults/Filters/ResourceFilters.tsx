@@ -18,6 +18,18 @@ type Props = {
   setCurrentResourceType: (newResourceType: ResourceType) => void;
   filter?: any;
 };
+
+const typeMapping = (s: string): string => {
+  switch (s) {
+    case 'timeseries': {
+      return 'timeSeries';
+    }
+    default: {
+      return s.substring(0, s.length - 1);
+    }
+  }
+};
+
 export default function ResourceFilters({
   currentResourceType,
   setCurrentResourceType,
@@ -31,11 +43,9 @@ export default function ResourceFilters({
       {sdkResourceTypes.map(el => (
         <ListItem
           key={el}
-          onClick={() =>
-            setCurrentResourceType(
-              el.substring(0, el.length - 1) as ResourceType
-            )
-          }
+          onClick={() => {
+            setCurrentResourceType(typeMapping(el) as ResourceType);
+          }}
           selected={el.includes(currentResourceType)}
           title={ResourceMap[el]}
         >
