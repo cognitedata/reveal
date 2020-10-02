@@ -143,7 +143,7 @@ export const DataSetFilters = ({
   return (
     <>
       <Title level={4} style={{ marginBottom: 12 }} className="title">
-        Metadata filters
+        Data set
       </Title>
       <Select
         options={dataSets.map(el => ({ label: el.name, value: el.id }))}

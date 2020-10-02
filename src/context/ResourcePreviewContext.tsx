@@ -27,6 +27,10 @@ export type ResourcePreviewProps = {
    */
   placeholder?: React.ReactNode;
   /**
+   * Is the preview closable, default to `true`
+   */
+  closable?: boolean;
+  /**
    * Callback for when the preview is closed
    */
   onClose?: () => void;
@@ -61,6 +65,7 @@ export const ResourcePreviewProvider = ({
   const [header, setHeader] = useState<React.ReactNode>(null);
   const [footer, setFooter] = useState<React.ReactNode>(null);
   const [content, setContent] = useState<React.ReactNode>(null);
+  const [closable, setClosable] = useState<boolean>(true);
   const [placeholder, setPlaceholder] = useState<React.ReactNode>(null);
   const [onClose, setOnCloseCallback] = useState<() => void>(() => () => {});
   const [item, setItem] = useState<ResourceItem | undefined>(undefined);
@@ -74,12 +79,14 @@ export const ResourcePreviewProvider = ({
         footer: newFooter,
         placeholder: newPlaceholder,
         onClose: newOnClose = () => {},
+        closable: newClosable = true,
       } = previewDetails;
       setItem(newItem);
       setContent(newContent);
       setHeader(newHeader);
       setFooter(newFooter);
       setPlaceholder(newPlaceholder);
+      setClosable(newClosable);
       setOnCloseCallback(() => newOnClose);
       setIsOpen(true);
     },
@@ -112,6 +119,7 @@ export const ResourcePreviewProvider = ({
             footer={footer}
             content={content}
             placeholder={placeholder}
+            closable={closable}
             onClose={() => {
               setIsOpen(false);
               onClose();
