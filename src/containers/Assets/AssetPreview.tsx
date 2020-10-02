@@ -1,16 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Icon, Title } from '@cognite/cogs.js';
-import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
-import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-
 import {
-  Sequence,
-  Timeseries,
-  Asset,
-  FileInfo,
-  CogniteEvent,
-} from 'cognite-sdk-v3';
-import {
+  Loader,
+  ErrorFeedback,
   DetailsItem,
   Wrapper,
   TimeDisplay,
@@ -21,6 +13,11 @@ import {
   FileTable,
   SpacedRow,
 } from 'components/Common';
+import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
+import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
+
+import { Sequence, Asset, FileInfo, CogniteEvent } from 'cognite-sdk-v3';
+
 import CdfCount from 'components/Common/atoms/CdfCount';
 
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
@@ -46,31 +43,24 @@ export const AssetPreview = ({
 }) => {
   const { openPreview, hidePreview } = useResourcePreview();
 
-  const { data: asset, isFetched } = useCdfItem<Asset>('assets', assetId, {
-    enabled: !!assetId,
-  });
+  const { data: asset, isFetched, error } = useCdfItem<Asset>(
+    'assets',
+    assetId,
+    {
+      enabled: !!assetId,
+    }
+  );
 
   const assetFilter = { assetIds: [assetId] };
   const assetSubtreeFilter = { assetSubtreeIds: [{ id: assetId }] };
-  const { data: files } = useList<FileInfo[]>(
-    'files',
-    100,
-    assetSubtreeFilter,
-    { enabled: isFetched }
-  );
-  const { data: timeseries } = useList<Timeseries[]>(
-    'timeseries',
-    100,
-    assetSubtreeFilter,
-    { enabled: isFetched }
-  );
-  const { data: sequences } = useList<Sequence[]>(
-    'sequences',
-    100,
-    assetFilter,
-    { enabled: isFetched }
-  );
-  const { data: events } = useList<CogniteEvent[]>('events', 100, assetFilter, {
+  const { data: files } = useList<FileInfo>('files', 100, assetSubtreeFilter, {
+    enabled: isFetched,
+  });
+
+  const { data: sequences } = useList<Sequence>('sequences', 100, assetFilter, {
+    enabled: isFetched,
+  });
+  const { data: events } = useList<CogniteEvent>('events', 100, assetFilter, {
     enabled: isFetched,
   });
 
@@ -121,6 +111,7 @@ export const AssetPreview = ({
             <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
               Details
             </Title>
+            <DetailsItem name="ID" value={asset?.id} />
             <DetailsItem name="Description" value={asset?.description} />
             <DetailsItem name="Source" value={asset?.source} />
             <DetailsItem name="External ID" value={asset?.externalId} />
@@ -150,7 +141,7 @@ export const AssetPreview = ({
         );
       }
       case 'timeseries': {
-        return timeseries ? (
+        return (
           <TimeseriesTable
             onTimeseriesClicked={ts => {
               if (ts) {
@@ -159,9 +150,9 @@ export const AssetPreview = ({
                 });
               }
             }}
-            timeseries={timeseries}
+            filter={assetSubtreeFilter}
           />
-        ) : null;
+        );
       }
       case 'files': {
         return files ? (
@@ -224,8 +215,17 @@ export const AssetPreview = ({
     files,
     openPreview,
     sequences,
-    timeseries,
+    assetSubtreeFilter,
   ]);
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+
   return (
     <Wrapper>
       <div

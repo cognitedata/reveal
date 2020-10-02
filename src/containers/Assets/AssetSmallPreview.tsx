@@ -25,13 +25,13 @@ export const AssetSmallPreview = ({
     enabled: !!assetId,
   });
 
-  const { data: assetFiles } = useList<FileInfo[]>(
+  const { data: assetFiles } = useList<FileInfo>(
     'files',
     10,
     { assetSubtreeIds: [{ id: assetId }] },
     { enabled: isFetched }
   );
-  const { data: assetTimeseries } = useList<Timeseries[]>(
+  const { data: assetTimeseries } = useList<Timeseries>(
     'timeseries',
     100,
     { assetSubtreeIds: [{ id: assetId }] },
