@@ -96,8 +96,8 @@ export const DataSetFilters = ({
     .filter(el => !!el) as DataSet[];
 
   const setDataSetFilter = useCallback(
-    (ids: number[]) => {
-      const newFilters = ids.map(id => ({ id }));
+    (ids?: number[]) => {
+      const newFilters = ids ? ids.map(id => ({ id })) : undefined;
       switch (resourceType) {
         case 'asset':
           setAssetFilter(currentFilter => ({
@@ -151,7 +151,7 @@ export const DataSetFilters = ({
           setDataSetFilter(
             value
               ? (value as OptionsType<OptionTypeBase>).map(el => el.value)
-              : []
+              : undefined
           );
         }}
         value={currentDataSets.map(el => ({ label: el.name, value: el.id }))}
