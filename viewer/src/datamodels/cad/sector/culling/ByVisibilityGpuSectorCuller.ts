@@ -146,6 +146,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
   }
 
+  dispose() {
+    this.options.coverageUtil.dispose();
+  }
+
   determineSectors(input: DetermineSectorsInput): WantedSector[] {
     const takenSectors = this.update(
       input.camera,

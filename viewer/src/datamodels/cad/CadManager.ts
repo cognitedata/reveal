@@ -82,6 +82,7 @@ export class CadManager<TModelIdentifier> {
   }
 
   dispose() {
+    this._cadModelUpdateHandler.dispose();
     this._subscription.unsubscribe();
   }
 
