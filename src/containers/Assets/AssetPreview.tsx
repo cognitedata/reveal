@@ -13,12 +13,12 @@ import {
   SpacedRow,
 } from 'components/Common';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-import { Sequence, Asset } from 'cognite-sdk-v3';
+import { Asset } from 'cognite-sdk-v3';
 import CdfCount from 'components/Common/atoms/CdfCount';
 
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import styled from 'styled-components';
-import { useCdfItem, useList } from 'hooks/sdk';
+import { useCdfItem } from 'hooks/sdk';
 import AssetDetails from './AssetDetails';
 
 export const AssetPreview = ({
@@ -40,10 +40,6 @@ export const AssetPreview = ({
 
   const assetFilter = { assetIds: [assetId] };
   const assetSubtreeFilter = { assetSubtreeIds: [{ id: assetId }] };
-
-  const { data: sequences } = useList<Sequence>('sequences', 100, assetFilter, {
-    enabled: isFetched,
-  });
   // const files = unionBy(filesByAnnotations, filesByAssetId, el => el.id);
 
   useEffect(() => {
@@ -115,16 +111,16 @@ export const AssetPreview = ({
         );
       }
       case 'sequences': {
-        return sequences ? (
+        return (
           <SequenceTable
             onSequenceClicked={sequence => {
               openPreview({
                 item: { id: sequence.id, type: 'sequence' },
               });
             }}
-            sequences={sequences}
+            filter={assetSubtreeFilter}
           />
-        ) : null;
+        );
       }
       case 'events': {
         return (
@@ -155,7 +151,7 @@ export const AssetPreview = ({
       }
     }
     return <></>;
-  }, [assetId, currentTab, openPreview, sequences, assetSubtreeFilter]);
+  }, [assetId, currentTab, openPreview, assetSubtreeFilter]);
 
   if (!isFetched) {
     return <Loader />;

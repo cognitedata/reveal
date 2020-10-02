@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Sequence, SequenceColumn } from 'cognite-sdk-v3';
 import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
@@ -7,7 +7,8 @@ import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import { Table, TimeDisplay } from 'components/Common';
+import { Table, TimeDisplay, Loader } from 'components/Common';
+import { useInfiniteList, useSearch } from 'hooks/sdk';
 
 const ActionCell = ({ sequence }: { sequence: Sequence }) => {
   const getButton = useSelectionCheckbox();
@@ -15,11 +16,11 @@ const ActionCell = ({ sequence }: { sequence: Sequence }) => {
 };
 
 export const SequenceTable = ({
-  sequences,
+  filter,
   query,
   onSequenceClicked,
 }: {
-  sequences: Sequence[];
+  filter?: any;
   query?: string;
   onSequenceClicked: (sequence: Sequence) => void;
 }) => {
@@ -34,8 +35,42 @@ export const SequenceTable = ({
     setPreviewId(sequence.id);
   };
 
+  const useSearchApi = query && query.length > 0;
+
+  const {
+    data: listData,
+    isFetched: listFetched,
+    canFetchMore,
+    isFetchingMore,
+    fetchMore,
+  } = useInfiniteList<Sequence>('sequences', 50, filter, {
+    enabled: !useSearchApi,
+  });
+  const sequenceList = useMemo(
+    () => listData?.reduce((accl, t) => accl.concat(t.items), [] as Sequence[]),
+    [listData]
+  );
+  const { data: searchFiles, isFetched: searchFetched } = useSearch<Sequence>(
+    'timeseries',
+    query!,
+    1000,
+    filter,
+    { enabled: useSearchApi }
+  );
+  const isFetched = listFetched || searchFetched;
+  const sequences = searchFiles || sequenceList;
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
   return (
     <Table<Sequence>
+      onEndReached={() => {
+        if (canFetchMore && !isFetchingMore) {
+          fetchMore();
+        }
+      }}
       rowEventHandlers={{
         onClick: ({ rowData: sequence, event }) => {
           onSequenceSelected(sequence);
