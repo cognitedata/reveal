@@ -84,6 +84,14 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
+  get classification() {
+    return this.octtree.material.classification;
+  }
+
+  recomputeClassification() {
+    this.octtree.material.recomputeClassification();
+  }
+
   resetNeedsRedraw() {
     this._needsRedraw = false;
   }

@@ -42,3 +42,17 @@ export enum PotreePointSizeType {
   Adaptive = Potree.PointSizeType.ADAPTIVE,
   Fixed = Potree.PointSizeType.FIXED
 }
+
+export enum PotreePointClassType {
+  Unclassified = 1,
+  Ground = 2,
+  LowVegetation = 3,
+  MedVegetation = 4,
+  HighVegetation = 5,
+  Building = 6,
+  ViolatingVegetation = 8,
+  PowerLine = 9,
+  Pole = 10,
+  DroneFlight = 10,
+  Size
+}

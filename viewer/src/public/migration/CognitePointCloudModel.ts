@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { PotreePointColorType, PotreePointShape } from '@/datamodels/pointcloud/types';
+import { PotreePointClassType, PotreePointColorType, PotreePointShape } from '@/datamodels/pointcloud/types';
 import { SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
@@ -92,6 +92,16 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
     return this.pointCloudNode.getModelTransformation(out);
+  }
+
+  /**
+   * Sets a visible filter on points of a given class.
+   * @param pointClass The point class type to which the filter should be applied.
+   * @param visible Boolean flag that determines if the point class type should be visible or not.
+   */
+  setClassVisible(pointClass: PotreePointClassType, visible: boolean): void {
+    this.pointCloudNode.potreeNode.classification[pointClass].w = visible ? 1.0 : 0.0;
+    this.pointCloudNode.potreeNode.recomputeClassification();
   }
 
   /**
