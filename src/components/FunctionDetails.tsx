@@ -34,10 +34,10 @@ export default function FunctionDetails({ id, name }: Props) {
         {currentFunction?.description || notSet}
       </Item>
       <Item label="CPU" span={3}>
-        {currentFunction?.cpu || notSet}
+        {currentFunction?.cpu ? `${currentFunction?.cpu} Cores` : notSet}
       </Item>
       <Item label="Memory" span={3}>
-        {currentFunction?.memory || notSet}
+        {currentFunction?.memory ? `${currentFunction?.memory} GB` : notSet}
       </Item>
 
       <Item label="Created by" span={3}>

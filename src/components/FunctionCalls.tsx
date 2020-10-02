@@ -1,49 +1,14 @@
 import React from 'react';
 import moment from 'moment';
-import { CSSProperties } from 'styled-components';
-
-import { Alert, Table, Tag } from 'antd';
+import { Alert, Table } from 'antd';
 import { Call } from 'types';
 
 import ViewLogsButton from 'components/buttons/ViewLogsButton';
 import ViewResponseButton from 'components/buttons/ViewResponseButton';
 import LoadingIcon from 'components/LoadingIcon';
+import FunctionCallStatus from 'components/FunctionCallStatus';
+import FunctionCall from 'components/FunctionCall';
 import { useCalls } from 'utils/hooks';
-
-export const callStatusTag = (status: string, style?: CSSProperties) => {
-  switch (status) {
-    case 'Running':
-      return (
-        <Tag color="blue" style={style}>
-          Running
-        </Tag>
-      );
-    case 'Completed':
-      return (
-        <Tag color="green" style={style}>
-          Completed
-        </Tag>
-      );
-    case 'Failed':
-      return (
-        <Tag color="red" style={style}>
-          Failed
-        </Tag>
-      );
-    case 'Timeout':
-      return (
-        <Tag color="red" style={style}>
-          Timeout
-        </Tag>
-      );
-    default:
-      return (
-        <Tag color="orange" style={style}>
-          {status}
-        </Tag>
-      );
-  }
-};
 
 const callTableColumns = [
   {
@@ -75,17 +40,25 @@ const callTableColumns = [
     title: 'Call Status',
     key: 'callStatus',
     render: (call: Call) => {
-      return callStatusTag(call.status);
+      return <FunctionCallStatus id={call.functionId} callId={call.id} />;
     },
   },
   {
     title: 'Response',
     key: 'response',
     render: (call: Call) => {
-      if (!call.error && call.status === 'Completed') {
-        return <ViewResponseButton id={call.functionId} callId={call.id} />;
-      }
-      return null;
+      return (
+        <FunctionCall
+          id={call.functionId}
+          callId={call.id}
+          renderCall={({ functionId, id, status }) => {
+            if (status !== 'Running') {
+              return <ViewResponseButton id={functionId} callId={id} />;
+            }
+            return null;
+          }}
+        />
+      );
     },
   },
   {
