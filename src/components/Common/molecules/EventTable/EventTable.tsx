@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CogniteEvent } from 'cognite-sdk-v3';
 import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
@@ -7,7 +7,8 @@ import {
   useResourceMode,
   useResourcesState,
 } from 'context/ResourceSelectionContext';
-import { Table, TimeDisplay } from 'components/Common';
+import { Table, TimeDisplay, Loader } from 'components/Common';
+import { useInfiniteList, useSearch } from 'hooks/sdk';
 
 const ActionCell = ({ event }: { event: CogniteEvent }) => {
   const getButton = useSelectionCheckbox();
@@ -15,12 +16,12 @@ const ActionCell = ({ event }: { event: CogniteEvent }) => {
 };
 
 export const EventTable = ({
-  events,
   query,
+  filter,
   onEventClicked,
 }: {
-  events: CogniteEvent[];
   query?: string;
+  filter?: any;
   onEventClicked: (event: CogniteEvent) => void;
 }) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
@@ -34,8 +35,39 @@ export const EventTable = ({
     setPreviewId(event.id);
   };
 
+  const useSearchApi = query && query.length > 0;
+
+  const {
+    data: listData,
+    isFetched: listFetched,
+    canFetchMore,
+    isFetchingMore,
+    fetchMore,
+  } = useInfiniteList<CogniteEvent>('events', 50, filter, {
+    enabled: !useSearchApi,
+  });
+  const listEvents = useMemo(
+    () =>
+      listData?.reduce((accl, t) => accl.concat(t.items), [] as CogniteEvent[]),
+    [listData]
+  );
+  const { data: searchFiles, isFetched: searchFetched } = useSearch<
+    CogniteEvent
+  >('timeseries', query!, 1000, filter, { enabled: useSearchApi });
+  const isFetched = listFetched || searchFetched;
+  const events = searchFiles || listEvents;
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
   return (
     <Table<CogniteEvent>
+      onEndReached={() => {
+        if (canFetchMore && !isFetchingMore) {
+          fetchMore();
+        }
+      }}
       rowEventHandlers={{
         onClick: ({ rowData: event, event: ev }) => {
           onEventSelected(event);
