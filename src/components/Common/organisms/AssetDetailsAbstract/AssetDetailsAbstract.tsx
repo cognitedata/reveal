@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Icon, Button, Title, Badge, Colors, Body } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, ListItem, SpacedRow } from 'components/Common';
+import {
+  InfoGrid,
+  InfoCell,
+  ListItem,
+  SpacedRow,
+  AssetBreadcrumb,
+} from 'components/Common';
 import { Asset, FileInfo, Timeseries } from 'cognite-sdk-v3';
-import { AssetBreadcrumb } from '@cognite/gearbox';
+
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ResourceType } from '@cognite/cdf-resources-store';

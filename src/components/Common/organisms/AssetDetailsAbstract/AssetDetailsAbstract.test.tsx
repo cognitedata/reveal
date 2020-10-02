@@ -53,8 +53,8 @@ const sdk = {
   },
 };
 
-jest.mock('@cognite/gearbox', () => {
-  const Gearbox = jest.requireActual('@cognite/gearbox');
+jest.mock('components/Common', () => {
+  const Gearbox = jest.requireActual('components/Common');
   return { ...Gearbox, AssetBreadcrumb: () => <p>Mocked</p> };
 });
 

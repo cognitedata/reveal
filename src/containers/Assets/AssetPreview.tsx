@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import {
+  AssetBreadcrumb,
   Loader,
   ErrorFeedback,
   DetailsItem,
@@ -13,9 +14,7 @@ import {
   FileTable,
   SpacedRow,
 } from 'components/Common';
-import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-
 import { Sequence, Asset, FileInfo, CogniteEvent } from 'cognite-sdk-v3';
 
 import CdfCount from 'components/Common/atoms/CdfCount';
@@ -115,6 +114,7 @@ export const AssetPreview = ({
             <DetailsItem name="Description" value={asset?.description} />
             <DetailsItem name="Source" value={asset?.source} />
             <DetailsItem name="External ID" value={asset?.externalId} />
+            <DetailsItem name="Parent ID" value={asset?.parentId} />
             <DetailsItem
               name="Created at"
               value={
