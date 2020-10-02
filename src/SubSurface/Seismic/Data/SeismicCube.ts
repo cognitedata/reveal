@@ -16,7 +16,7 @@ import { Index3 } from "@/Core/Geometry/Index3";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Trace } from "@/SubSurface/Seismic/Data/Trace";
 import { Index2 } from "@/Core/Geometry/Index2";
-import SeismicStk from "@cognite/seismic-sdk-js";
+import SeismicSDK from "@cognite/seismic-sdk-js";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Statistics } from "@/Core/Geometry/Statistics";
 import { Ma } from "@/Core/Primitives/Ma";
@@ -31,7 +31,7 @@ export class SeismicCube extends RegularGrid3
   private readonly _traces: (Trace | null)[];
   private readonly _usedTraces: Index2[] = [];
   private _maxTracesInMemory: number = 1000;
-  public client: SeismicStk.CogniteSeismicClient | null = null;
+  public client: SeismicSDK.CogniteSeismicClient | null = null;
   public fileId = "";
   private _valueRange?: Range1;
   private _statistics?: Statistics;
@@ -129,7 +129,7 @@ export class SeismicCube extends RegularGrid3
   // INSTANCE METHODS: Load
   //==================================================
 
-  public loadTraces(minCell: Index2, maxCell: Index2, include_trace_header?: boolean): Promise<SeismicStk.Trace[]> | null
+  public loadTraces(minCell: Index2, maxCell: Index2, include_trace_header?: boolean): Promise<SeismicSDK.Trace[]> | null
   {
     if (!this.client || !this.fileId)
       return null;
@@ -146,7 +146,7 @@ export class SeismicCube extends RegularGrid3
     return this.client.volume.get(this, { iline, xline }, include_trace_header);
   }
 
-  public loadTrace(cell: Index2): Promise<SeismicStk.Trace> | null
+  public loadTrace(cell: Index2): Promise<SeismicSDK.Trace> | null
   {
     if (!this.client || !this.fileId)
       return null;
@@ -200,7 +200,7 @@ export class SeismicCube extends RegularGrid3
   // STATIC METHODS: Load
   //==================================================
 
-  public static async loadCube(client: SeismicStk.CogniteSeismicClient, fileId: string): Promise<SeismicCube | null>
+  public static async loadCube(client: SeismicSDK.CogniteSeismicClient, fileId: string): Promise<SeismicCube | null>
   {
     const lineRange = await client.file.getLineRange({ fileId });
     if (!lineRange)

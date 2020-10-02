@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import { Theme } from "@material-ui/core/styles";
 import { ICommonSelectProps } from "@/UserInterface/Components/Settings/Types";
-import { NumericUtils } from "@/UserInterface/Foundation/Utils/NumericUtils";
+import { NumericUtils } from "@/UserInterface/Foundation/Utils/numericUtils";
 
 const ArrowButton = withStyles((theme: Theme) => ({
   root: {

@@ -13,7 +13,7 @@ import InputBase from "@material-ui/core/InputBase";
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 import withStyles from "@material-ui/core/styles/withStyles";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { NumericUtils } from "@/UserInterface/Foundation/Utils/NumericUtils";
+import { NumericUtils } from "@/UserInterface/Foundation/Utils/numericUtils";
 
 const DEFAULT_OPTION_HEIGHT = 40;
 const DEFAULT_MAX_OPTIONS = 5;

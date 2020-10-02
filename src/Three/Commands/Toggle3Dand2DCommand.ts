@@ -1,5 +1,3 @@
-import CameraControls from "camera-controls";
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import Icon from "@images/Commands/Toggle3Dand2DCommand.png";
