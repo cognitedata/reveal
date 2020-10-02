@@ -15,7 +15,7 @@ function preserveQueryAndHashParameters(
 ): LocationDescriptorObject {
   const currentQuery = queryString.parse(history.location.search);
   if (currentQuery) {
-    const preservedQuery: { [key: string]: unknown } = {};
+    const preservedQuery: { [key: string]: string | string[] | null } = {};
     preserve.forEach(p => {
       const v = currentQuery[p];
       if (v) {
@@ -30,7 +30,7 @@ function preserveQueryAndHashParameters(
   }
   const currentHash = queryString.parse(history.location.hash);
   if (currentHash) {
-    const preservedHash: { [key: string]: unknown } = {};
+    const preservedHash: { [key: string]: string | string[] | null } = {};
     preserve.forEach(p => {
       const v = currentHash[p];
       if (v) {
