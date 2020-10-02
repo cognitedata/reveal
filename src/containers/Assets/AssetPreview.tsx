@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Button, Icon, Title } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import {
   AssetBreadcrumb,
   Loader,
   ErrorFeedback,
-  DetailsItem,
   Wrapper,
-  TimeDisplay,
   TimeseriesTable,
   Divider,
   SequenceTable,
@@ -19,19 +17,10 @@ import { Sequence, Asset, FileInfo, CogniteEvent } from 'cognite-sdk-v3';
 
 import CdfCount from 'components/Common/atoms/CdfCount';
 
-import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import styled from 'styled-components';
 import { useCdfItem, useList } from 'hooks/sdk';
-
-const formatMetadata = (metadata: { [key: string]: any }) =>
-  Object.keys(metadata).reduce(
-    (agg, cur) => ({
-      ...agg,
-      [cur]: String(metadata[cur]) || '',
-    }),
-    {}
-  );
+import AssetDetails from './AssetDetails';
 
 export const AssetPreview = ({
   assetId,
@@ -105,40 +94,7 @@ export const AssetPreview = ({
   const content = useMemo(() => {
     switch (currentTab) {
       case 'asset-metadata': {
-        return (
-          <>
-            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-              Details
-            </Title>
-            <DetailsItem name="ID" value={asset?.id} />
-            <DetailsItem name="Description" value={asset?.description} />
-            <DetailsItem name="Source" value={asset?.source} />
-            <DetailsItem name="External ID" value={asset?.externalId} />
-            <DetailsItem name="Parent ID" value={asset?.parentId} />
-            <DetailsItem
-              name="Created at"
-              value={
-                asset ? <TimeDisplay value={asset.createdTime} /> : 'Loading...'
-              }
-            />
-            <DetailsItem
-              name="Updated at"
-              value={
-                asset ? (
-                  <TimeDisplay value={asset.lastUpdatedTime} />
-                ) : (
-                  'Loading...'
-                )
-              }
-            />
-            <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-              Metadata
-            </Title>
-            <DescriptionList
-              valueSet={formatMetadata((asset && asset.metadata) ?? {})}
-            />
-          </>
-        );
+        return <AssetDetails id={assetId} />;
       }
       case 'timeseries': {
         return (
@@ -208,7 +164,6 @@ export const AssetPreview = ({
     }
     return <></>;
   }, [
-    asset,
     assetId,
     currentTab,
     events,
