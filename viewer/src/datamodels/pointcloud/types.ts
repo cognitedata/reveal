@@ -44,6 +44,7 @@ export enum PotreePointSizeType {
 }
 
 export enum PotreePointClassType {
+  Default = 0,
   Unclassified = 1,
   Ground = 2,
   LowVegetation = 3,
