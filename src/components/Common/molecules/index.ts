@@ -9,3 +9,4 @@ export * from './FilterForm/FilterForm';
 export * from './SequenceTable/SequenceTable';
 export * from './Splitter/Splitter';
 export * from './TimeseriesTable/TimeseriesTable';
+export * from './AssetBreadcrumb/AssetBreadcrumb';
