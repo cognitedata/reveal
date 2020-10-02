@@ -63,7 +63,7 @@
     "puppeteer": "^5.3.1",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "3.4.3",
-    "start-server-and-test": "^1.11.4",
+    "start-server-and-test": "^1.11.5",
     "ts-jest": "^26.4.1",
     "typescript": "3.9.7"
   },
