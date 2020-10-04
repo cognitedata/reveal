@@ -18,7 +18,8 @@ describe('Cognite3DViewer', () => {
   const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
   const _sectorCuller: SectorCuller = {
-    determineSectors: jest.fn()
+    determineSectors: jest.fn(),
+    dispose: jest.fn()
   };
 
   beforeAll(() => {
@@ -59,6 +60,7 @@ describe('Cognite3DViewer', () => {
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     viewer.dispose();
     expect(disposeSpy).toBeCalledTimes(1);
+    expect(_sectorCuller.dispose).toBeCalledTimes(1);
   });
 
   test('on cameraChange triggers when position and target is changed', () => {
