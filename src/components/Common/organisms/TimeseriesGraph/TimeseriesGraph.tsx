@@ -3,8 +3,19 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { Timeseries } from 'cognite-sdk-v3';
 import { TimeseriesChart } from '@cognite/gearbox';
-import { Select } from 'antd';
-import { SelectWrapper, Loader } from 'components/Common';
+import { Select, Loader } from 'components/Common';
+
+const TIME_PERIOD_OPTIONS = [
+  { value: 'last10Year', label: '10 years' },
+  { value: 'last5Year', label: '5 years' },
+  { value: 'last2Year', label: '2 years' },
+  { value: 'lastYear', label: '1 year' },
+  { value: 'lastMonth', label: '1 month' },
+  { value: 'lastWeek', label: '1 week' },
+  { value: 'lastDay', label: '1 day' },
+  { value: 'lastHour', label: '1 hour' },
+  { value: 'last15Minutes', label: '15 minutes' },
+];
 
 interface TimeseriesGraphProps {
   timeseries?: Timeseries;
@@ -19,7 +30,6 @@ const ChartToolbar = styled.div`
   -webkit-box-align: center;
   align-items: center;
   min-height: 50px;
-  padding-left: 16px;
   width: 100%;
   top: 0px;
   z-index: 190;
@@ -76,28 +86,24 @@ export const TimeseriesGraph = ({
   return (
     <div ref={wrapper}>
       <ChartToolbar>
-        <span>
-          Time period:{' '}
-          <SelectWrapper style={{ display: 'inline-block' }}>
-            <Select
-              style={{
-                width: '200px',
-              }}
-              value={timePeriod}
-              onChange={(value: string) => setTimePeriod(value)}
-            >
-              <Select.Option value="last10Year">10 years</Select.Option>
-              <Select.Option value="last5Year">5 years</Select.Option>
-              <Select.Option value="last2Year">2 years</Select.Option>
-              <Select.Option value="lastYear">1 year</Select.Option>
-              <Select.Option value="lastMonth">1 month</Select.Option>
-              <Select.Option value="lastWeek">1 week</Select.Option>
-              <Select.Option value="lastDay">1 day</Select.Option>
-              <Select.Option value="lastHour">1 hour</Select.Option>
-              <Select.Option value="last15Minutes">15 minutes</Select.Option>
-            </Select>
-          </SelectWrapper>
-        </span>
+        <span>Time period: </span>
+        <Select
+          styles={{
+            container: style => ({
+              ...style,
+              display: 'inline-flex',
+              flex: 1,
+            }),
+            control: () => ({
+              width: '100%',
+              display: 'flex',
+            }),
+          }}
+          isClearable={false}
+          value={TIME_PERIOD_OPTIONS.find(el => el.value === timePeriod)}
+          onChange={item => setTimePeriod((item as { value: string }).value)}
+          options={TIME_PERIOD_OPTIONS}
+        />
       </ChartToolbar>
 
       <div style={{ marginTop: '12px', width: '100%' }}>

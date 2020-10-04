@@ -1,8 +1,7 @@
 import React, { useContext } from 'react';
 import { Timeseries } from 'cognite-sdk-v3';
-import { Select } from 'antd';
 import { ResourceSelectionContext } from 'context';
-import { SelectWrapper } from 'components/Common';
+import { Select } from 'components/Common';
 import { Title } from '@cognite/cogs.js';
 
 export const UnitFilter = ({ items }: { items: Timeseries[] }) => {
@@ -22,29 +21,29 @@ export const UnitFilter = ({ items }: { items: Timeseries[] }) => {
       <Title level={4} style={{ marginBottom: 12 }} className="title">
         Unit type
       </Title>
-      <SelectWrapper>
-        <Select
-          value={timeseriesFilter.unit}
-          onSelect={(el: string) => {
-            setTimeseriesFilter(filter => ({ ...filter, unit: el }));
-          }}
-          onChange={(el: string) => {
-            if (!el) {
-              setTimeseriesFilter(filter => ({ ...filter, unit: undefined }));
-            }
-          }}
-          style={{ width: '100%' }}
-          allowClear
-        >
-          {[...units].map(el => {
-            return (
-              <Select.Option key={el} value={el}>
-                {el}
-              </Select.Option>
-            );
-          })}
-        </Select>
-      </SelectWrapper>
+      <Select
+        value={
+          timeseriesFilter.unit
+            ? { value: timeseriesFilter.unit, label: timeseriesFilter.unit }
+            : undefined
+        }
+        onChange={item => {
+          if (!item) {
+            setTimeseriesFilter(filter => ({ ...filter, unit: undefined }));
+          } else {
+            setTimeseriesFilter(filter => ({
+              ...filter,
+              unit: (item as { value: string }).value,
+            }));
+          }
+        }}
+        options={[...units].map(el => {
+          return {
+            value: el,
+            label: el,
+          };
+        })}
+      />
     </>
   );
 };

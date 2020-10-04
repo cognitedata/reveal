@@ -10,10 +10,15 @@ export const Select = <
 ) => {
   return (
     <ReactSelect
+      isClearable
       {...props}
       styles={{
-        control: styles => ({
+        ...props.styles,
+        control: (styles, styleProps) => ({
           ...styles,
+          ...(props.styles &&
+            props.styles.control &&
+            props.styles.control(styles, styleProps)),
           color: Colors['greyscale-grey8'].hex(),
           backgroundColor: Colors['greyscale-grey2'].hex(),
           fontWeight: 800,

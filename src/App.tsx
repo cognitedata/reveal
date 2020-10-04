@@ -12,7 +12,7 @@ import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
 import { SDKProvider } from 'context/sdk';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
-import { Loader } from 'components/Common';
+import { Loader } from '@cognite/cogs.js';
 import { setSDK } from 'utils/SDK';
 import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
 import collapseStyle from 'rc-collapse/assets/index.css';

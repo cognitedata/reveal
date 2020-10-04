@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Select, message } from 'antd';
-import { SelectWrapper } from 'components/Common';
+import { message } from 'antd';
+import { Select, SpacedRow } from 'components/Common';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 
@@ -87,12 +87,8 @@ const FilterItemWrapper = styled.div`
     display: flex;
     margin-right: 4px;
     flex: 1;
-    overflow: hidden;
     > div {
       flex: 1;
-    }
-    .ant-select-selection-selected-value {
-      max-width: 108px;
     }
   }
   .buttons {
@@ -148,30 +144,41 @@ const FilterItem = ({
     (selectedKey !== initialKey || selectedValue !== initialValue);
   const hasInitialValue = initialKey || initialValue;
   return (
-    <FilterItemWrapper>
-      <div className="key">
-        <SelectWrapper>
-          <Select
+    <>
+      <FilterItemWrapper>
+        <div className="key">
+          <Select<{
+            label: string;
+            value: string;
+            disabled?: boolean;
+          }>
+            styles={{
+              menu: style => ({
+                ...style,
+                width: 'auto',
+                maxWidth: '320px',
+              }),
+            }}
             placeholder="Key"
             disabled={!!initialKey}
-            showSearch
-            dropdownMatchSelectWidth={false}
-            dropdownStyle={{ zIndex: 9999 }}
-            dropdownMenuStyle={{ zIndex: 9999 }}
-            style={{ width: '100%' }}
-            value={selectedKey}
-            allowClear
-            onChange={(value: any) => {
-              if (value === undefined) {
-                setSelectedKey(value);
+            value={
+              selectedKey
+                ? { label: selectedKey, value: selectedKey }
+                : undefined
+            }
+            onChange={item => {
+              if (item === undefined) {
+                setSelectedKey(undefined);
+              } else {
+                setSelectedKey(
+                  (item as {
+                    value: string;
+                  }).value
+                );
               }
-            }}
-            onSelect={(value: string | undefined) => {
-              setSelectedKey(value);
               setSelectedValue(undefined);
             }}
-          >
-            {Object.keys(categories)
+            options={Object.keys(categories)
               .sort((a, b) => {
                 if (a === 'undefined') {
                   return -1;
@@ -182,60 +189,53 @@ const FilterItem = ({
                 return a.localeCompare(b);
               })
               .map(category => {
-                if (category === 'undefined') {
-                  return categories[category].map(el => (
-                    <Select.Option
-                      disabled={lockedFilters.some(filter => filter === el)}
-                      key={el}
-                    >
-                      {el}
-                    </Select.Option>
-                  ));
-                }
-                return (
-                  <Select.OptGroup label={category} key={category}>
-                    {categories[category].map(el => (
-                      <Select.Option
-                        disabled={lockedFilters.some(filter => filter === el)}
-                        key={el}
-                      >
-                        {el}
-                      </Select.Option>
-                    ))}
-                  </Select.OptGroup>
-                );
+                return {
+                  label: category,
+                  options: categories[category].map(el => ({
+                    label: el,
+                    value: el,
+                    disabled: lockedFilters.includes(el),
+                  })),
+                };
               })}
-          </Select>
-        </SelectWrapper>
-      </div>
-      <div className="value">
-        <SelectWrapper>
-          <Select
+          />
+        </div>
+        <div className="value">
+          <Select<{
+            label: string;
+            value: string;
+            disabled?: boolean;
+          }>
+            styles={{
+              menu: style => ({
+                ...style,
+                width: 'auto',
+                maxWidth: '320px',
+              }),
+            }}
             placeholder="Value"
-            showSearch
-            dropdownMatchSelectWidth={false}
-            style={{ width: '100%' }}
-            dropdownStyle={{ zIndex: 9999 }}
-            dropdownMenuStyle={{ zIndex: 9999 }}
             disabled={!selectedKey}
-            value={selectedValue}
-            onSelect={setSelectedValue}
-            allowClear
-            mode="tags"
-            onChange={(value: any) => {
-              if (value === undefined || value.length === 0) {
+            value={
+              selectedValue
+                ? { label: selectedValue, value: selectedValue }
+                : undefined
+            }
+            onChange={item => {
+              if (item === undefined) {
                 setSelectedValue(undefined);
+              } else {
+                setSelectedValue((item as { value: string }).value);
               }
             }}
-          >
-            {selectedKey &&
-              metadata[selectedKey].map(el => (
-                <Select.Option key={el}>{el}</Select.Option>
-              ))}
-          </Select>
-        </SelectWrapper>
-      </div>
-      <div className="buttons">
+            options={
+              selectedKey
+                ? metadata[selectedKey].map(el => ({ label: el, value: el }))
+                : []
+            }
+          />
+        </div>
+      </FilterItemWrapper>
+      <SpacedRow>
         <Button
           type="primary"
           icon={initialKey && initialValue ? 'Edit' : 'Plus'}
@@ -257,8 +257,8 @@ const FilterItem = ({
             disabled={!hasInitialValue}
           />
         )}
-      </div>
-    </FilterItemWrapper>
+      </SpacedRow>
+    </>
   );
 };
 
