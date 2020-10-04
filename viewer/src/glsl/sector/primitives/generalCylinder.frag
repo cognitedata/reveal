@@ -1,7 +1,6 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
@@ -44,10 +43,6 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
-    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, v_treeIndex, renderMode)) {
-        discard;
-    }
-
     vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
     vec3 normal = normalize( v_normal );
 

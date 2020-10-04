@@ -1,6 +1,8 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
+#pragma glslify: CULL_VERTEX = require('../../base/cullVertex.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
@@ -31,12 +33,18 @@ varying vec3 v_normal;
 
 uniform vec2 treeIndexTextureSize;
 
+uniform sampler2D colorDataTexture;
 uniform sampler2D transformOverrideIndexTexture;
-
 uniform vec2 transformOverrideTextureSize; 
 uniform sampler2D transformOverrideTexture;
 
+uniform int renderMode;
+
 void main() {
+    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, a_treeIndex, renderMode)) {
+      gl_Position = CULL_VERTEX;
+      return;
+    }
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 
