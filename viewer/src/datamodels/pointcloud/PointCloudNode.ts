@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { CameraConfiguration, toThreeJsBox3 } from '@/utilities';
-import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
+import { PotreePointSizeType, PotreePointColorType, PotreePointShape, WellKnownPointClassTypes } from './types';
 
 export class PointCloudNode extends THREE.Group {
   private readonly _potreeGroup: PotreeGroupWrapper;
@@ -90,6 +90,28 @@ export class PointCloudNode extends THREE.Group {
 
   set pointShape(value: PotreePointShape) {
     this._potreeNode.pointShape = value;
+  }
+
+  /**
+   * Sets a visible filter on points of a given class.
+   * @param pointClass The point class type to which the filter should be applied. This can either
+   * be one of the well known classes from {@link WellKnownPointClassTypes} or a number for user defined
+   * classes.
+   * @param visible Boolean flag that determines if the point class type should be visible or not.
+   */
+  setClassVisible(pointClass: number | WellKnownPointClassTypes, visible: boolean): void {
+    this._potreeNode.classification[pointClass].w = visible ? 1.0 : 0.0;
+    this._potreeNode.recomputeClassification();
+  }
+
+  /**
+   * Determines if points from a given class are visible.
+   * @param pointClass Either one of the well known classes from {@link WellKnownPointClassTypes}
+   * or a number for user defined classes.
+   * @return true if points from the given class will be visible.
+   */
+  isClassVisible(pointClass: number | WellKnownPointClassTypes): boolean {
+    return this._potreeNode.classification[pointClass].w !== 0.0;
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {

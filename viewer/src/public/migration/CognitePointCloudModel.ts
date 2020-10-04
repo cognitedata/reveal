@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { PotreePointClassType, PotreePointColorType, PotreePointShape } from '@/datamodels/pointcloud/types';
+import { WellKnownPointClassTypes, PotreePointColorType, PotreePointShape } from '@/datamodels/pointcloud/types';
 import { SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
@@ -96,12 +96,23 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Sets a visible filter on points of a given class.
-   * @param pointClass The point class type to which the filter should be applied.
+   * @param pointClass The point class type to which the filter should be applied. This can either
+   * be one of the well known classes from {@link WellKnownPointClassTypes} or a number for user defined
+   * classes.
    * @param visible Boolean flag that determines if the point class type should be visible or not.
    */
-  setClassVisible(pointClass: PotreePointClassType, visible: boolean): void {
-    this.pointCloudNode.potreeNode.classification[pointClass].w = visible ? 1.0 : 0.0;
-    this.pointCloudNode.potreeNode.recomputeClassification();
+  setClassVisible(pointClass: number | WellKnownPointClassTypes, visible: boolean): void {
+    this.pointCloudNode.setClassVisible(pointClass, visible);
+  }
+
+  /**
+   * Determines if points from a given class are visible.
+   * @param pointClass Either one of the well known classes from {@link WellKnownPointClassTypes}
+   * or a number for user defined classes.
+   * @return true if points from the given class will be visible.
+   */
+  isClassVisible(pointClass: number | WellKnownPointClassTypes): boolean {
+    return this.pointCloudNode.isClassVisible(pointClass);
   }
 
   /**
