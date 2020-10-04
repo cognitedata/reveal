@@ -1838,10 +1838,10 @@
     "@types/puppeteer" "*"
     jest-environment-node ">=24 && <=26"
 
-"@types/jest-image-snapshot@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@types/jest-image-snapshot/-/jest-image-snapshot-4.1.0.tgz#787c9af8bc69f733895972e15f40c9ae8fde9e81"
-  integrity sha512-C6jmexjimSMO1or8LvprZgfoFCCMV9uAvxRH38pd6KleTuwDqG8EZpe9Ivng/ZSirq/RqzrcBHjChqXoO9rUCg==
+"@types/jest-image-snapshot@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@types/jest-image-snapshot/-/jest-image-snapshot-4.1.1.tgz#96b7f9421b3db4eb48e335e1ad360e1f35a30b38"
+  integrity sha512-fUFPCO6CIKSd7bhN5BAnYLwpjJOvZ9i2w8WtnqiRBlDUrpkpLby5b/EiL5/obUCLTQLikknVXiO6NDZkOiV+9Q==
   dependencies:
     "@types/jest" "*"
     "@types/pixelmatch" "*"
