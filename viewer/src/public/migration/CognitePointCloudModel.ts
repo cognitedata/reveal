@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { WellKnownPointClassTypes, PotreePointColorType, PotreePointShape } from '@/datamodels/pointcloud/types';
 import { SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
+import { PotreePointColorType, PotreePointShape, WellKnownPointClassTypes } from '../..';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
 
 /**
@@ -100,6 +100,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * be one of the well known classes from {@link WellKnownPointClassTypes} or a number for user defined
    * classes.
    * @param visible Boolean flag that determines if the point class type should be visible or not.
+   * @version New in 1.2.0
    */
   setClassVisible(pointClass: number | WellKnownPointClassTypes, visible: boolean): void {
     this.pointCloudNode.setClassVisible(pointClass, visible);
@@ -110,6 +111,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @param pointClass Either one of the well known classes from {@link WellKnownPointClassTypes}
    * or a number for user defined classes.
    * @return true if points from the given class will be visible.
+   * @version New in 1.2.0
    */
   isClassVisible(pointClass: number | WellKnownPointClassTypes): boolean {
     return this.pointCloudNode.isClassVisible(pointClass);
