@@ -1,4 +1,6 @@
 #pragma glslify: determineMatrixOverride = require('../base/determineMatrixOverride.glsl')
+#pragma glslify: determineVisibility = require('../base/determineVisibility.glsl');
+#pragma glslify: CULL_VERTEX = require('../base/cullVertex.glsl');
 
 uniform mat4 inverseModelMatrix;
 
@@ -16,14 +18,19 @@ varying vec3 v_normal;
 varying vec3 vViewPosition;
 
 uniform vec2 treeIndexTextureSize;
-
+uniform sampler2D colorDataTexture;
 uniform sampler2D transformOverrideIndexTexture;
-
 uniform vec2 transformOverrideTextureSize; 
 uniform sampler2D transformOverrideTexture;
 
+uniform int renderMode;
+
 void main() {
-    
+    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, treeIndex, renderMode)) {
+      gl_Position = CULL_VERTEX;
+      return;
+    }
+
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       treeIndex, 
       treeIndexTextureSize, 

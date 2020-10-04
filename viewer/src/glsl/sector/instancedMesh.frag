@@ -1,6 +1,5 @@
 #pragma glslify: derivateNormal = require('../math/derivateNormal.glsl')
 #pragma glslify: updateFragmentColor = require('../base/updateFragmentColor.glsl')
-#pragma glslify: determineVisibility = require('../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../base/determineColor.glsl');
 #pragma glslify: isSliced = require('../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 
@@ -17,10 +16,6 @@ varying vec3 v_viewPosition;
 uniform int renderMode;
 
 void main() {
-    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, v_treeIndex, renderMode)) {
-        discard;
-    }
-
     if (isSliced(v_viewPosition)) {
         discard;
     }
