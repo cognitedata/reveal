@@ -10,6 +10,8 @@ import { fromThreeJsBox3 } from '@/utilities';
 import { Box3 } from '@/utilities/Box3';
 import { vec3 } from 'gl-matrix';
 
+export type PotreeClassification = { [clazz: number]: { x: number, y: number, z: number, w: number }};
+
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convinence functions.
  */
@@ -84,8 +86,8 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  get classification() {
-    return this.octtree.material.classification;
+  get classification(): PotreeClassification {
+    return this.octtree.material.classification as PotreeClassification;
   }
 
   recomputeClassification() {
