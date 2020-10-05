@@ -19,7 +19,7 @@ import {
   auditTime,
   filter,
   map,
-  flatMap,
+  mergeMap,
   distinctUntilChanged,
   finalize,
   observeOn
@@ -120,7 +120,7 @@ export class CadModelUpdateHandler {
    */
   private loadingModelObservable() {
     return this._modelSubject.pipe(
-      flatMap(
+      mergeMap(
         cadNode => {
           return fromEventPattern<Readonly<CadLoadingHints>>(
             h => cadNode.on('loadingHintsChanged', h),

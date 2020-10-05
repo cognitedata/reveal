@@ -19,7 +19,7 @@ import {
   NextObserver
 } from 'rxjs';
 import {
-  flatMap,
+  mergeMap,
   map,
   tap,
   shareReplay,
@@ -205,9 +205,11 @@ export class CachedRepository implements Repository {
         return this._consumedSectorCache.get(key);
       };
 
-      return merge(discarded$.pipe(map(toDiscardedConsumedSector)), cached$.pipe(flatMap(getFromCache)), network$).pipe(
-        this._taskTracker.resetOnComplete()
-      );
+      return merge(
+        discarded$.pipe(map(toDiscardedConsumedSector)),
+        cached$.pipe(mergeMap(getFromCache)),
+        network$
+      ).pipe(this._taskTracker.resetOnComplete());
     });
   }
 
@@ -255,7 +257,7 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
-        flatMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
+        mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
         tap(this.parsedDataObserver(wantedSector)),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
@@ -277,7 +279,7 @@ export class CachedRepository implements Repository {
             this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, indexFile.fileName)
           ).pipe(
             retry(3),
-            flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
+            mergeMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
           );
           const ctmFilesObservable = from(indexFile.peripheralFiles).pipe(
             map(fileName => ({
@@ -310,7 +312,7 @@ export class CachedRepository implements Repository {
   }
 
   private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
-    return flatMap(ctmRequest => {
+    return mergeMap(ctmRequest => {
       const key = this.ctmFileCacheKey(ctmRequest);
       if (this._ctmFileCache.has(key)) {
         return this._ctmFileCache.get(key);
@@ -325,7 +327,7 @@ export class CachedRepository implements Repository {
       defer(() => this._modelSectorProvider.getBinaryFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
         this.catchCtmFileError(ctmRequest, 'loadCtmFileFromNetwork'),
         retry(3),
-        flatMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
+        mergeMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
         map(data => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })),
         shareReplay(1),
         take(1)

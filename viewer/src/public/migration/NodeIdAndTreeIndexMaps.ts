@@ -3,7 +3,7 @@
  */
 
 import { Subject, Observable } from 'rxjs';
-import { bufferTime, flatMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
+import { bufferTime, mergeMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
 import { CogniteClient, CogniteInternalId, InternalId } from '@cognite/sdk';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
@@ -55,7 +55,7 @@ export class NodeIdAndTreeIndexMaps {
     this.nodeIdResponse = this.nodeIdRequestObservable.pipe(
       bufferTime(50),
       filter((requests: NodeIdRequest[]) => requests.length > 0),
-      flatMap(async (requests: NodeIdRequest[]) => {
+      mergeMap(async (requests: NodeIdRequest[]) => {
         const treeIndices = await this.indexMapperClient.mapNodeIdsToTreeIndices(
           this.modelId,
           this.revisionId,
@@ -78,7 +78,7 @@ export class NodeIdAndTreeIndexMaps {
     this.treeIndexResponse = this.treeIndexRequestObservable.pipe(
       bufferTime(50),
       filter((requests: TreeIndexRequest[]) => requests.length > 0),
-      flatMap(async (requests: TreeIndexRequest[]) => {
+      mergeMap(async (requests: TreeIndexRequest[]) => {
         const nodeIds = await this.indexMapperClient.mapTreeIndicesToNodeIds(this.modelId, this.revisionId, requests);
         return requests.map((treeIndex, index) => {
           return { nodeId: nodeIds[index], treeIndex };
@@ -97,7 +97,7 @@ export class NodeIdAndTreeIndexMaps {
     this.subtreeSizeResponse = this.subtreeSizeObservable.pipe(
       bufferTime(50),
       filter((requests: SubtreeSizeRequest[]) => requests.length > 0),
-      flatMap(async (requests: SubtreeSizeRequest[]) => {
+      mergeMap(async (requests: SubtreeSizeRequest[]) => {
         const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, requests);
         return nodes.map(n => {
           return { treeIndex: n.treeIndex, subtreeSize: n.subtreeSize };
