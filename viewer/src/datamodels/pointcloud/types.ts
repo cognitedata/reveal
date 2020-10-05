@@ -48,7 +48,7 @@ export enum PotreePointSizeType {
  * ASPRS well known point class types.
  * @see {@link http://www.asprs.org/wp-content/uploads/2019/03/LAS_1_4_r14.pdf} (page 30)
  */
-export enum WellKnownPointClassTypes {
+export enum WellKnownAsprsPointClassCodes {
   /**
    * Created, never classified.
    */
@@ -90,13 +90,13 @@ export enum WellKnownPointClassTypes {
    */
   WireStructureConnector = 16,
   /**
-   * Note that {@link WellKnownPointClassTypes.ReservedOrBridgeDeck} has been used
+   * Note that {@link WellKnownAsprsPointClassCodes.ReservedOrBridgeDeck} has been used
    * historically.
    */
   BridgeDeck = 17,
   /**
    * High point, or "high noise".
-   * Note that {@link WellKnownPointClassTypes.ReservedOrHighPoint} has been used
+   * Note that {@link WellKnownAsprsPointClassCodes.ReservedOrHighPoint} has been used
    * historically.
    */
   HighNoise = 18,
