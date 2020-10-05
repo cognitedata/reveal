@@ -134,9 +134,44 @@ export const useList = <T>(
 
   return useQuery<T[]>(
     listKey(type, filter, limit),
-    () => listApi(sdk, type, limit, filter),
+    () =>
+      listApi(
+        sdk,
+        type,
+        limit,
+        Object.keys(filter).length > 0 ? filter : undefined
+      ),
     config
   );
+};
+
+const getSearchArgs = (type: SdkResourceType, query: string) => {
+  switch (type) {
+    case 'files':
+      return { name: query };
+    case 'events':
+      return { description: query };
+    default:
+      return { query };
+  }
+};
+const searchApi = (
+  sdk: CogniteClient,
+  type: SdkResourceType,
+  query: string,
+  limit: number,
+  filter?: any
+) => {
+  const f = filter && Object.keys(filter).length > 0 ? filter : undefined;
+  return sdk
+    .post(`/api/v1/projects/${sdk.project}/${type}/search`, {
+      data: {
+        filter: f,
+        search: getSearchArgs(type, query),
+        limit,
+      },
+    })
+    .then(r => r.data?.items);
 };
 
 export const useSearch = <T>(
@@ -150,12 +185,7 @@ export const useSearch = <T>(
 
   return useQuery<T[]>(
     ['cdf', type, 'search', query, filter],
-    () =>
-      post(sdk, `/${type}/search`, {
-        limit,
-        search: { query },
-        filter,
-      }).then(data => data?.items),
+    () => searchApi(sdk, type, query, limit, filter),
     config
   );
 };

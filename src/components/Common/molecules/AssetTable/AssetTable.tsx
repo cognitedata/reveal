@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Asset } from 'cognite-sdk-v3';
-import { Column } from 'react-base-table';
 import { Button } from '@cognite/cogs.js';
 
 import { useSelectionCheckbox } from 'hooks/useSelection';
-import {
-  useResourceMode,
-  useResourcesState,
-} from 'context/ResourceSelectionContext';
-import { Table } from 'components/Common';
+import { useResourceMode } from 'context/ResourceSelectionContext';
+import { ResourceTable, ResourceTableColumns } from 'components/Common';
 import { useCdfItem } from 'hooks/sdk';
 
 const ActionCell = ({ asset }: { asset: Asset }) => {
@@ -46,82 +42,48 @@ const ParentCell = ({
 };
 
 export type AssetTableProps = {
-  assets: Asset[];
+  filter?: any;
   query?: string;
   onAssetClicked: (asset: Asset) => void;
 };
 
 export const AssetTable = ({
-  assets,
+  filter,
   query,
   onAssetClicked,
 }: AssetTableProps) => {
-  const [previewId, setPreviewId] = useState<number | undefined>(undefined);
   const { mode } = useResourceMode();
-  const { resourcesState } = useResourcesState();
 
-  const currentItems = resourcesState.filter(el => el.state === 'active');
-
-  const onAssetSelected = (asset: Asset) => {
-    onAssetClicked(asset);
-    setPreviewId(asset.id);
-  };
+  const columns = [
+    ResourceTableColumns.name,
+    ResourceTableColumns.description,
+    {
+      ...ResourceTableColumns.root,
+      cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
+        return (
+          <ParentCell rootId={asset.rootId} onAssetSelected={onAssetClicked} />
+        );
+      },
+    },
+    ...(mode !== 'none'
+      ? [
+          {
+            ...ResourceTableColumns.select,
+            cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
+              return <ActionCell asset={asset} />;
+            },
+          },
+        ]
+      : []),
+  ];
 
   return (
-    <Table<Asset>
+    <ResourceTable<Asset>
+      api="assets"
       query={query}
-      rowEventHandlers={{
-        onClick: ({ rowData: asset, event }) => {
-          onAssetSelected(asset);
-          return event;
-        },
-      }}
-      previewingIds={previewId ? [previewId] : []}
-      activeIds={currentItems.map(el => el.id)}
-      columns={[
-        {
-          key: 'name',
-          title: 'Name',
-          dataKey: 'name',
-          width: 300,
-          frozen: Column.FrozenDirection.LEFT,
-        },
-        {
-          key: 'description',
-          title: 'Description',
-          dataKey: 'description',
-          width: 300,
-        },
-        {
-          key: 'root',
-          title: 'Root asset',
-          width: 200,
-          cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-            return (
-              <ParentCell
-                rootId={asset.rootId}
-                onAssetSelected={onAssetSelected}
-              />
-            );
-          },
-        },
-        ...(mode !== 'none'
-          ? [
-              {
-                key: 'action',
-                title: 'Select',
-                width: 80,
-                align: Column.Alignment.CENTER,
-                frozen: Column.FrozenDirection.RIGHT,
-                cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-                  return <ActionCell asset={asset} />;
-                },
-              },
-            ]
-          : []),
-      ]}
-      fixed
-      data={assets}
+      filter={filter}
+      columns={columns}
+      onRowClick={onAssetClicked}
     />
   );
 };

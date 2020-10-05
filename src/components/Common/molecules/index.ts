@@ -10,3 +10,4 @@ export * from './SequenceTable/SequenceTable';
 export * from './Splitter/Splitter';
 export * from './TimeseriesTable/TimeseriesTable';
 export * from './AssetBreadcrumb/AssetBreadcrumb';
+export * from './ResourceTable/ResourceTable';
