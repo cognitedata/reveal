@@ -16,9 +16,9 @@ describe('RxTaskTracker', () => {
     };
     expect.assertions(incrementCount);
     const increment$ = interval(10).pipe(
-      finalize(() => done()), // Needs to be the first command to be called last
       take(incrementCount),
-      counter.incrementTaskCountOnNext()
+      counter.incrementTaskCountOnNext(),
+      finalize(() => done())
     );
     counter.getTaskTrackerObservable().subscribe({
       next: count => {
@@ -41,12 +41,12 @@ describe('RxTaskTracker', () => {
     const wait = mergeMap(value => new Promise(resolve => setTimeout(resolve, 100, value)));
     expect.assertions(operationCount * 2);
     const operation$ = interval(10).pipe(
-      finalize(() => done()), // Needs to be the first command to be called last
       take(operationCount),
       observeOn(queueScheduler),
       counter.incrementTaskCountOnNext(),
       wait,
-      counter.incrementTaskCompletedOnNext()
+      counter.incrementTaskCompletedOnNext(),
+      finalize(() => done())
     );
     let operation = 0;
     counter.getTaskTrackerObservable().subscribe({
@@ -71,9 +71,9 @@ describe('RxTaskTracker', () => {
     };
     expect.assertions(operationCount + 1);
     const operation$ = interval(10).pipe(
-      finalize(() => done()), // Needs to be the first command to be called last
       take(operationCount),
       counter.incrementTaskCountOnNext(),
+      finalize(() => done()), // First finalize is called last
       counter.resetOnComplete()
     );
     let operation: number = 0;
