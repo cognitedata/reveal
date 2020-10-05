@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
-import { groupBy, distinctUntilKeyChanged, withLatestFrom, flatMap, filter, map } from 'rxjs/operators';
+import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
@@ -133,10 +133,10 @@ export function discardSector(group: THREE.Group) {
 export function distinctUntilLevelOfDetailChanged() {
   return pipe(
     groupBy((sector: ConsumedSector) => sector.blobUrl),
-    flatMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
+    mergeMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
       return modelGroup.pipe(
         groupBy((sector: ConsumedSector) => sector.metadata.id),
-        flatMap((group: GroupedObservable<number, ConsumedSector>) =>
+        mergeMap((group: GroupedObservable<number, ConsumedSector>) =>
           group.pipe(distinctUntilKeyChanged('levelOfDetail'))
         )
       );
