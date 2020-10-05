@@ -1,5 +1,5 @@
 import React from 'react';
-import { CogniteClient } from 'cognite-sdk-v3';
+import { CogniteClient } from '@cognite/sdk';
 
 export const SdkContext = React.createContext<CogniteClient | null>(null);
 SdkContext.displayName = 'CogniteSdkProvider';

@@ -5,7 +5,7 @@ import {
   clearAnnotationsForFile,
   linkFileToAssetIds,
 } from '@cognite/annotations';
-import { FileInfo } from 'cognite-sdk-v3';
+import { FileInfo } from '@cognite/sdk';
 import reducer, * as Annotations from './annotations';
 import { mockStore } from '../utils/mockStore';
 

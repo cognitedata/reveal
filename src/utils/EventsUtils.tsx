@@ -1,4 +1,4 @@
-import { CogniteEvent } from 'cognite-sdk-v3';
+import { CogniteEvent } from '@cognite/sdk';
 
 // TODO(DE-136) What to do with these utils?
 export const renderTitle = (event?: CogniteEvent) => {

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import '@cognite/cogs.js/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
-import { Asset } from 'cognite-sdk-v3';
+import { Asset } from '@cognite/sdk';
 import { TimeseriesDetailsAbstract } from 'components/Common';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';

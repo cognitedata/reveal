@@ -6,7 +6,7 @@ import {
   CogniteEvent,
   Sequence,
   FileInfo,
-} from 'cognite-sdk-v3';
+} from '@cognite/sdk';
 import styled from 'styled-components';
 import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { searchSelector as assetsSearchSelector } from '@cognite/cdf-resources-store/dist/assets';

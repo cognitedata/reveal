@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileInfo as File, FileInfo } from 'cognite-sdk-v3';
+import { FileInfo as File, FileInfo } from '@cognite/sdk';
 import {
   TimeDisplay,
   ResourceTable,

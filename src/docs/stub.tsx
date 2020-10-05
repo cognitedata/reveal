@@ -1,4 +1,4 @@
-import { Asset, FileInfo } from 'cognite-sdk-v3';
+import { Asset, FileInfo } from '@cognite/sdk';
 import {
   ResourcePreviewObserver,
   ResourcePreviewProps,

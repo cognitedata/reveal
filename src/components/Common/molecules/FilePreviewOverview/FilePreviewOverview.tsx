@@ -19,7 +19,7 @@ import {
   Timeseries,
   Sequence,
   CogniteEvent,
-} from 'cognite-sdk-v3';
+} from '@cognite/sdk';
 import {
   useResourcesDispatch,
   useResourcesSelector,

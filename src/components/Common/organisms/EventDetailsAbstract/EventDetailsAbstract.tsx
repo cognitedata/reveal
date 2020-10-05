@@ -8,7 +8,7 @@ import {
   SpacedRow,
   TimeDisplay,
 } from 'components/Common';
-import { CogniteEvent } from 'cognite-sdk-v3';
+import { CogniteEvent } from '@cognite/sdk';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { renderTitle } from 'utils/EventsUtils';
 import { EventInfoGrid } from './EventInfoGrid';

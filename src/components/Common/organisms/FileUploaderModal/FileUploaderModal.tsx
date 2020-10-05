@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileInfo } from 'cognite-sdk-v3';
+import { FileInfo } from '@cognite/sdk';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';

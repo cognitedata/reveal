@@ -11,7 +11,7 @@ import {
   Timeseries,
   Sequence,
   CogniteEvent,
-} from 'cognite-sdk-v3';
+} from '@cognite/sdk';
 
 const PageButton = styled(Button)`
   padding: 10px;

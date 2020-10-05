@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { InfoCell, SpacedRow, TimeDisplay } from 'components/Common';
-import { Timeseries, DoubleDatapoint, StringDatapoint } from 'cognite-sdk-v3';
+import { Timeseries, DoubleDatapoint, StringDatapoint } from '@cognite/sdk';
 import { getSDK } from 'utils/SDK';
 
 interface LatestDatapointProps {

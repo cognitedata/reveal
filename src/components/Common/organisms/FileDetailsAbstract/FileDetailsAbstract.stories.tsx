@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import { FileInfo } from 'cognite-sdk-v3';
+import { FileInfo } from '@cognite/sdk';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { FileDetailsAbstract } from './FileDetailsAbstract';
 

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { EventTable } from 'components/Common';
-import { EventSearchRequest, EventFilter } from 'cognite-sdk-v3';
+import { EventSearchRequest, EventFilter } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 

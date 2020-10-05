@@ -1420,14 +1420,6 @@
     rollup-plugin-typescript2 "^0.27.2"
     typescript "^3.7.3"
 
-"@cognite/cdf-sdk-singleton@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-sdk-singleton/-/cdf-sdk-singleton-0.6.0.tgz#4942d354de96155bb21bdbf59623d30dc7e26bbd"
-  integrity sha512-uACXTK5CxB+2prqC+da1w6t+ouqp4Ni612V2RB6ye7FpBhZv1ZzodCqmCUmM5MmpX/3JRjsoue89DMqJywBetw==
-  dependencies:
-    cognite-sdk-v2 "npm:@cognite/sdk@^2.28.0"
-    cognite-sdk-v3 "npm:@cognite/sdk@^3.0.0"
-
 "@cognite/cdf-utilities@^0.7.1":
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.7.1.tgz#7f712836babd408632016698f66661998f24e22c"
@@ -1569,7 +1561,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.0.0", "cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
+"@cognite/sdk@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.0.0.tgz#99c9f600129e1f525f2214a7f5f11cf90095e25f"
   integrity sha512-5zyHEh8drYGQ++4NOjdRr/9XIzHdoI7ssL66ZTJ/uGaLxMhXGa/hq2GK8RaN6uGf0PsirOS9VeU08zA8b2baWQ==
@@ -6459,16 +6451,6 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
-
-"cognite-sdk-v2@npm:@cognite/sdk@^2.28.0":
-  version "2.33.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
-  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
-  dependencies:
-    cross-fetch "^3.0.4"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
 
 collapse-white-space@^1.0.0, collapse-white-space@^1.0.2:
   version "1.0.6"

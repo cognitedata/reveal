@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import '@cognite/cogs.js/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
-import { CogniteEvent } from 'cognite-sdk-v3';
+import { CogniteEvent } from '@cognite/sdk';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { EventDetailsAbstract } from './EventDetailsAbstract';
 

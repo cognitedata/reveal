@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { TimeseriesTable } from 'components/Common';
-import { TimeseriesSearchFilter, TimeseriesFilter } from 'cognite-sdk-v3';
+import { TimeseriesSearchFilter, TimeseriesFilter } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 

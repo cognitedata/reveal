@@ -1,6 +1,6 @@
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { SingleCogniteCapability } from 'cognite-sdk-v3';
+import { SingleCogniteCapability } from '@cognite/sdk';
 import { RootState } from 'reducers/index';
 import { getSDK } from 'utils/SDK';
 

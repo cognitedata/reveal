@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { Asset } from 'cognite-sdk-v3';
+import { Asset } from '@cognite/sdk';
 import { useCdfItem } from 'hooks/sdk';
 
 const BreadCrumbItem = styled.li`

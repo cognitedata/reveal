@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import '@cognite/cogs.js/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
-import { Sequence } from 'cognite-sdk-v3';
+import { Sequence } from '@cognite/sdk';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { SequenceDetailsAbstract } from './SequenceDetailsAbstract';
 

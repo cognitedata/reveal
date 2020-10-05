@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileInfo } from 'cognite-sdk-v3';
+import { FileInfo } from '@cognite/sdk';
 import { InfoGrid, DetailsItem, TimeDisplay } from 'components/Common';
 
 export const FileInfoGrid = ({ file }: { file: FileInfo }) => {

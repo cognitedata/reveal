@@ -8,7 +8,7 @@ import {
   SpacedRow,
   TimeDisplay,
 } from 'components/Common';
-import { Sequence } from 'cognite-sdk-v3';
+import { Sequence } from '@cognite/sdk';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { SequenceInfoGrid } from './SequenceInfoGrid';
 

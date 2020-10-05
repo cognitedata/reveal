@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Timeseries, Asset, FileInfo } from 'cognite-sdk-v3';
+import { Timeseries, Asset, FileInfo } from '@cognite/sdk';
 import { AssetDetailsAbstract, Loader } from 'components/Common';
 
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
