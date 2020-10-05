@@ -3,9 +3,10 @@ import { ResourceType } from 'types';
 import { Title } from '@cognite/cogs.js';
 import { ListItem } from 'components/Common';
 import CdfCount from 'components/Common/atoms/CdfCount';
-import { sdkResourceTypes, SdkResourceType } from 'hooks/sdk';
+import { SdkResourceType } from 'hooks/sdk';
 
-const ResourceMap: { [key in SdkResourceType]: string } = {
+type FilterTypes = Exclude<SdkResourceType, 'datasets'>;
+const ResourceMap: Record<FilterTypes, string> = {
   assets: 'Assets',
   files: 'Files',
   events: 'Events',
@@ -40,16 +41,18 @@ export default function ResourceFilters({
       <Title level={4} style={{ marginBottom: 12 }} className="title">
         Resource types
       </Title>
-      {sdkResourceTypes.map(el => (
+      {Object.keys(ResourceMap).map(type => (
         <ListItem
-          key={el}
+          key={type}
           onClick={() => {
-            setCurrentResourceType(typeMapping(el) as ResourceType);
+            setCurrentResourceType(
+              typeMapping(type as FilterTypes) as ResourceType
+            );
           }}
-          selected={el.includes(currentResourceType)}
-          title={ResourceMap[el]}
+          selected={type.includes(currentResourceType)}
+          title={ResourceMap[type as FilterTypes]}
         >
-          <CdfCount type={el} filter={filter} />
+          <CdfCount type={type as FilterTypes} filter={filter} />
         </ListItem>
       ))}
     </>
