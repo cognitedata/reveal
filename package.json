@@ -122,7 +122,7 @@
     "@rollup/plugin-multi-entry": "^4.0.0",
     "@storybook/addon-actions": "^6.0.25",
     "@storybook/addon-essentials": "^6.0.26",
-    "@storybook/addon-links": "^6.0.25",
+    "@storybook/addon-links": "^6.0.26",
     "@storybook/addon-storysource": "^6.0.26",
     "@storybook/node-logger": "^6.0.25",
     "@storybook/preset-create-react-app": "^3.1.4",
