@@ -43,12 +43,16 @@ export enum PotreePointSizeType {
   Fixed = Potree.PointSizeType.FIXED
 }
 
-
 /**
  * ASPRS well known point class types.
  * @see {@link http://www.asprs.org/wp-content/uploads/2019/03/LAS_1_4_r14.pdf} (page 30)
  */
 export enum WellKnownAsprsPointClassCodes {
+  /**
+   * Special value for all other classes. Some point in Potree might be in this class
+   * 
+   */
+  Default = -1,
   /**
    * Created, never classified.
    */

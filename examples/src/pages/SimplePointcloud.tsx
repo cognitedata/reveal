@@ -100,9 +100,21 @@ export function SimplePointcloud() {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
-      }
+      }      
       scene.add(pointCloudNode);
       revealManager.on('loadingStateChanged', setLoadingState);
+
+      const classesGui = gui.addFolder('Class filters');
+      const enabledClasses: { [clazz: number]: boolean } = {};
+      console.log(pointCloudNode.getClasses());
+      for (const clazz of pointCloudNode.getClasses()) {
+        enabledClasses[clazz] = true;
+        classesGui.add(enabledClasses, `${clazz}`, true)
+          .name(`Class ${clazz}`)
+          .onChange(visible => {
+            pointCloudNode.setClassVisible(clazz, visible);
+          });
+      }
 
       const camera = new THREE.PerspectiveCamera(
         75,

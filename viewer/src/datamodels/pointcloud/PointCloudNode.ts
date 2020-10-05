@@ -8,6 +8,8 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { CameraConfiguration, toThreeJsBox3 } from '@/utilities';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from './types';
 
+const PotreeDefaultPointClass = 'DEFAULT';
+
 export class PointCloudNode extends THREE.Group {
   private readonly _potreeGroup: PotreeGroupWrapper;
   private readonly _potreeNode: PotreeNodeWrapper;
@@ -103,7 +105,8 @@ export class PointCloudNode extends THREE.Group {
     if (!this.hasClass(pointClass)) {
       throw new Error(`Point cloud model doesn't have class ${pointClass}`);
     }
-    this._potreeNode.classification[pointClass].w = visible ? 1.0 : 0.0;
+    const key = createPointClassKey(pointClass);
+    this._potreeNode.classification[key].w = visible ? 1.0 : 0.0;
     this._potreeNode.recomputeClassification();
   }
 
@@ -118,7 +121,8 @@ export class PointCloudNode extends THREE.Group {
     if (!this.hasClass(pointClass)) {
       throw new Error(`Point cloud model doesn't have class ${pointClass}`);
     }
-    return this._potreeNode.classification[pointClass].w !== 0.0;
+    const key = createPointClassKey(pointClass);
+    return this._potreeNode.classification[key].w !== 0.0;
   }
 
   /**
@@ -128,7 +132,8 @@ export class PointCloudNode extends THREE.Group {
    * @return true if model has values in the class given.
    */
   hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
-    return this._potreeNode.classification[pointClass] !== undefined;
+    const key = createPointClassKey(pointClass);
+    return this._potreeNode.classification[key] !== undefined;
   }
 
   /**
@@ -136,7 +141,9 @@ export class PointCloudNode extends THREE.Group {
    * @returns A sorted list of classification codes from the model.
    */
   getClasses(): number | WellKnownAsprsPointClassCodes[] {
-    return Object.keys(this._potreeNode.classification).map(x => parseInt(x, 10)).sort((a,b) => a - b);
+    return Object.keys(this._potreeNode.classification).map(x => {
+      return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
+    }).sort((a,b) => a - b);
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
@@ -153,4 +160,13 @@ export class PointCloudNode extends THREE.Group {
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
     return out.copy(this.matrix);
   }
+}
+
+function createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {
+  if (pointClass === WellKnownAsprsPointClassCodes.Default) {
+    // Potree has a special class 'DEFAULT'. Our map has number keys, but this one is specially 
+    // handled in Potree so we ignore type.
+    return PotreeDefaultPointClass as any;
+  }
+  return pointClass;
 }
