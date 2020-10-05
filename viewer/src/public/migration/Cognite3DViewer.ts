@@ -233,7 +233,6 @@ export class Cognite3DViewer {
     this._revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
-    this.scene.dispose();
     for (const model of this.models.values()) {
       model.dispose();
     }
