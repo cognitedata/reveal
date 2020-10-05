@@ -2,9 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import * as THREE from 'three';
-import { CadLoadingHints } from '../CadLoadingHints';
-import { CadModelMetadata } from '../CadModelMetadata';
 import { DetermineSectorsInput } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
@@ -13,33 +10,6 @@ import { ConsumedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import { filter, switchMap, tap, publish, subscribeOn } from 'rxjs/operators';
-
-type UpdateEvent = [
-  THREE.PerspectiveCamera,
-  THREE.Plane[] | never[],
-  boolean,
-  CadLoadingHints,
-  boolean,
-  CadModelMetadata[]
-];
-
-export function createDetermineSectorsInputFromArray([
-  camera,
-  clippingPlanes,
-  clipIntersection,
-  loadingHints,
-  cameraInMotion,
-  cadModelsMetadata
-]: UpdateEvent) {
-  return {
-    camera,
-    clippingPlanes,
-    clipIntersection,
-    loadingHints,
-    cameraInMotion,
-    cadModelsMetadata
-  };
-}
 
 export function handleDetermineSectorsInput(
   sectorRepository: Repository,
