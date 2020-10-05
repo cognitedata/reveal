@@ -3,7 +3,7 @@
  */
 
 import { of } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
@@ -22,7 +22,7 @@ describe('CadSectorParser', () => {
     let events = 0;
     let errors = 0;
     // Act
-    const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(flatMap(x => parser.parseI3D(x.data)));
+    const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(mergeMap(x => parser.parseI3D(x.data)));
 
     // Assert
     observable.subscribe(
@@ -56,7 +56,7 @@ describe('CadSectorParser', () => {
     });
 
     // Act
-    const observable = of({ format: 'f3d', data: new Uint8Array() }).pipe(flatMap(x => parser.parseF3D(x.data)));
+    const observable = of({ format: 'f3d', data: new Uint8Array() }).pipe(mergeMap(x => parser.parseF3D(x.data)));
 
     // Assert
     observable.subscribe(
