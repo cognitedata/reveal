@@ -96,7 +96,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Sets a visible filter on points of a given class.
-   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * @param pointClass ASPRS classification class code. Either one of the well known
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
    * @param visible Boolean flag that determines if the point class type should be visible or not.
    * @throws Error if the model doesn't have the class given.
@@ -108,9 +108,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Determines if points from a given class are visible.
-   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * @param pointClass ASPRS classification class code. Either one of the well known
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
-   * @return true if points from the given class will be visible.
+   * @returns True if points from the given class will be visible.
    * @throws Error if the model doesn't have the class given.
    * @version New in 1.2.0
    */
@@ -120,9 +120,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Returns true if the model has values with the given classification class.
-   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * @param pointClass ASPRS classification class code. Either one of the well known
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
-   * @return true if model has values in the class given.
+   * @returns True if model has values in the class given.
    * @version New in 1.2.0
    */
   hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
@@ -134,7 +134,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @returns A sorted list of classification codes from the model.
    * @version New in 1.2.0
    */
-  getClasses(): number | WellKnownAsprsPointClassCodes[] {
+  getClasses(): Array<number | WellKnownAsprsPointClassCodes> {
     return this.pointCloudNode.getClasses();
   }
 
