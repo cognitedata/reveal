@@ -4,7 +4,7 @@
 
 import { RxTaskTracker, TaskTracker } from './RxTaskTracker';
 import { interval, queueScheduler } from 'rxjs';
-import { take, flatMap, observeOn } from 'rxjs/operators';
+import { take, mergeMap, observeOn, finalize } from 'rxjs/operators';
 
 describe('RxTaskTracker', () => {
   test('increment on next', done => {
@@ -15,18 +15,18 @@ describe('RxTaskTracker', () => {
       taskCompleted: 0
     };
     expect.assertions(incrementCount);
-    const increment$ = interval(10).pipe(take(incrementCount), counter.incrementTaskCountOnNext());
+    const increment$ = interval(10).pipe(
+      take(incrementCount),
+      counter.incrementTaskCountOnNext(),
+      finalize(() => done())
+    );
     counter.getTaskTrackerObservable().subscribe({
       next: count => {
         taskTracker.taskCount++;
         expect(count).toStrictEqual(taskTracker);
       }
     });
-    increment$.subscribe({
-      complete: () => {
-        done();
-      }
-    });
+    increment$.subscribe();
   });
 
   test('decrement on next', done => {
@@ -38,14 +38,15 @@ describe('RxTaskTracker', () => {
       taskCount: 0,
       taskCompleted: 0
     };
-    const wait = flatMap(value => new Promise(resolve => setTimeout(resolve, 100, value)));
+    const wait = mergeMap(value => new Promise(resolve => setTimeout(resolve, 100, value)));
     expect.assertions(operationCount * 2);
     const operation$ = interval(10).pipe(
       take(operationCount),
       observeOn(queueScheduler),
       counter.incrementTaskCountOnNext(),
       wait,
-      counter.incrementTaskCompletedOnNext()
+      counter.incrementTaskCompletedOnNext(),
+      finalize(() => done())
     );
     let operation = 0;
     counter.getTaskTrackerObservable().subscribe({
@@ -59,11 +60,7 @@ describe('RxTaskTracker', () => {
         operation++;
       }
     });
-    operation$.subscribe({
-      complete: () => {
-        done();
-      }
-    });
+    operation$.subscribe();
   });
   test('reset counter', done => {
     const counter = new RxTaskTracker();
@@ -76,6 +73,7 @@ describe('RxTaskTracker', () => {
     const operation$ = interval(10).pipe(
       take(operationCount),
       counter.incrementTaskCountOnNext(),
+      finalize(() => done()), // First finalize is called last
       counter.resetOnComplete()
     );
     let operation: number = 0;
@@ -91,10 +89,6 @@ describe('RxTaskTracker', () => {
         operation++;
       }
     });
-    operation$.subscribe({
-      complete: () => {
-        done();
-      }
-    });
+    operation$.subscribe();
   });
 });
