@@ -6,7 +6,9 @@ import * as THREE from 'three';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { CameraConfiguration, toThreeJsBox3 } from '@/utilities';
-import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
+import { PotreePointSizeType, PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from './types';
+
+const PotreeDefaultPointClass = 'DEFAULT';
 
 export class PointCloudNode extends THREE.Group {
   private readonly _potreeGroup: PotreeGroupWrapper;
@@ -92,6 +94,58 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointShape = value;
   }
 
+  /**
+   * Sets a visible filter on points of a given class.
+   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
+   * @param visible Boolean flag that determines if the point class type should be visible or not.
+   * @throws Error if the model doesn't have the class given.
+   */
+  setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
+    if (!this.hasClass(pointClass)) {
+      throw new Error(`Point cloud model doesn't have class ${pointClass}`);
+    }
+    const key = createPointClassKey(pointClass);
+    this._potreeNode.classification[key].w = visible ? 1.0 : 0.0;
+    this._potreeNode.recomputeClassification();
+  }
+
+  /**
+   * Determines if points from a given class are visible.
+   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
+   * @return true if points from the given class will be visible.
+   * @throws Error if the model doesn't have the class given.
+   */
+  isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
+    if (!this.hasClass(pointClass)) {
+      throw new Error(`Point cloud model doesn't have class ${pointClass}`);
+    }
+    const key = createPointClassKey(pointClass);
+    return this._potreeNode.classification[key].w !== 0.0;
+  }
+
+  /**
+   * Returns true if the model has values with the given classification class.
+   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
+   * @return true if model has values in the class given.
+   */
+  hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
+    const key = createPointClassKey(pointClass);
+    return this._potreeNode.classification[key] !== undefined;
+  }
+
+  /**
+   * Returns a list of sorted classification codes present in the model.
+   * @returns A sorted list of classification codes from the model.
+   */
+  getClasses(): number | WellKnownAsprsPointClassCodes[] {
+    return Object.keys(this._potreeNode.classification).map(x => {
+      return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
+    }).sort((a,b) => a - b);
+  }
+
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
     outBbox = toThreeJsBox3(outBbox || new THREE.Box3(), this._potreeNode.boundingBox);
     outBbox.applyMatrix4(this.matrixWorld);
@@ -106,4 +160,13 @@ export class PointCloudNode extends THREE.Group {
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
     return out.copy(this.matrix);
   }
+}
+
+function createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {
+  if (pointClass === WellKnownAsprsPointClassCodes.Default) {
+    // Potree has a special class 'DEFAULT'. Our map has number keys, but this one is specially 
+    // handled in Potree so we ignore type.
+    return PotreeDefaultPointClass as any;
+  }
+  return pointClass;
 }
