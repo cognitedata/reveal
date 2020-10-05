@@ -96,7 +96,7 @@ export class PointCloudNode extends THREE.Group {
 
   /**
    * Sets a visible filter on points of a given class.
-   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * @param pointClass ASPRS classification class code. Either one of the well known
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
    * @param visible Boolean flag that determines if the point class type should be visible or not.
    * @throws Error if the model doesn't have the class given.
@@ -112,9 +112,9 @@ export class PointCloudNode extends THREE.Group {
 
   /**
    * Determines if points from a given class are visible.
-   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * @param pointClass ASPRS classification class code. Either one of the well known
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
-   * @return true if points from the given class will be visible.
+   * @returns true if points from the given class will be visible.
    * @throws Error if the model doesn't have the class given.
    */
   isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
@@ -127,9 +127,9 @@ export class PointCloudNode extends THREE.Group {
 
   /**
    * Returns true if the model has values with the given classification class.
-   * @param pointClass ASPRS classification class code. Either one of the well known 
+   * @param pointClass ASPRS classification class code. Either one of the well known
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
-   * @return true if model has values in the class given.
+   * @returns true if model has values in the class given.
    */
   hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
     const key = createPointClassKey(pointClass);
@@ -140,10 +140,12 @@ export class PointCloudNode extends THREE.Group {
    * Returns a list of sorted classification codes present in the model.
    * @returns A sorted list of classification codes from the model.
    */
-  getClasses(): number | WellKnownAsprsPointClassCodes[] {
-    return Object.keys(this._potreeNode.classification).map(x => {
-      return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
-    }).sort((a,b) => a - b);
+  getClasses(): Array<number | WellKnownAsprsPointClassCodes> {
+    return Object.keys(this._potreeNode.classification)
+      .map(x => {
+        return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
+      })
+      .sort((a, b) => a - b);
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
@@ -164,7 +166,7 @@ export class PointCloudNode extends THREE.Group {
 
 function createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {
   if (pointClass === WellKnownAsprsPointClassCodes.Default) {
-    // Potree has a special class 'DEFAULT'. Our map has number keys, but this one is specially 
+    // Potree has a special class 'DEFAULT'. Our map has number keys, but this one is specially
     // handled in Potree so we ignore type.
     return PotreeDefaultPointClass as any;
   }
