@@ -3,17 +3,38 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { AddModelOptions, Cognite3DViewer } from '@cognite/reveal';
+import {
+  AddModelOptions,
+  Cognite3DViewer,
+  SupportedModelTypes,
+} from '@cognite/reveal';
 
 import { CanvasWrapper } from '@site/src/components/styled';
 import { DemoProps } from '@site/src/components/DemoProps';
 import { env } from '@site/src/env';
 
-const modelId = env.modelId;
-const revisionId = env.revisionId;
+const cadIds = {
+  modelId: env.modelId,
+  revisionId: env.revisionId,
+};
 
-export default function Cognite3DViewerDemo({ client }: DemoProps) {
+const pointcloudIds = {
+  modelId: env.pointCloud.modelId,
+  revisionId: env.pointCloud.revisionId,
+};
+
+type OwnProps = {
+  modelType?: SupportedModelTypes;
+};
+
+export default function Cognite3DViewerDemo({
+  client,
+  modelType,
+}: DemoProps & OwnProps) {
   const canvasWrapperRef = useRef(null);
+  const { modelId, revisionId } =
+    modelType === 'pointcloud' ? pointcloudIds : cadIds;
+
   useEffect(() => {
     if (!client || !canvasWrapperRef.current) {
       return;

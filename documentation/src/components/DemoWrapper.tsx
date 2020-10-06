@@ -25,7 +25,13 @@ const components: Record<string, ComponentType<DemoProps>> = {
 // demo wrapper just wraps the demo. don't pass modelId/revisionId to it, they defined in demos
 // different demos might have different ids, e.g. pointcloud/cad
 // also we can use 3ddemo instead of publicdata so here is .env file to help with it
-export function DemoWrapper({ name }: { name: string }) {
+export function DemoWrapper({
+  name,
+  ...rest
+}: {
+  name: string;
+  [key: string]: any;
+}) {
   if (typeof window === 'undefined') {
     return <div />;
   }
@@ -37,7 +43,9 @@ export function DemoWrapper({ name }: { name: string }) {
     <DemoContainer id="demo-wrapper">
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
-          {(client: CogniteClient) => <LazyComponent client={client} />}
+          {(client: CogniteClient) => (
+            <LazyComponent client={client} {...rest} />
+          )}
         </DemoLoginCover>
       </Suspense>
     </DemoContainer>
