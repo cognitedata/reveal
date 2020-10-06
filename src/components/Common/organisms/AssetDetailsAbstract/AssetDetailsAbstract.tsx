@@ -8,7 +8,7 @@ import {
   SpacedRow,
   AssetBreadcrumb,
 } from 'components/Common';
-import { Asset, FileInfo, Timeseries } from 'cognite-sdk-v3';
+import { Asset, FileInfo, Timeseries } from '@cognite/sdk';
 
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';

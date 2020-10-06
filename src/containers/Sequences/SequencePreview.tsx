@@ -16,7 +16,7 @@ import {
   SpacedRow,
 } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { SequenceColumn } from 'cognite-sdk-v3';
+import { SequenceColumn } from '@cognite/sdk';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(

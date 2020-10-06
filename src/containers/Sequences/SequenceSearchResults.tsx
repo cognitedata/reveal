@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { SequenceTable } from 'components/Common';
-import { SequenceSearchFilter, SequenceFilter } from 'cognite-sdk-v3';
+import { SequenceSearchFilter, SequenceFilter } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 

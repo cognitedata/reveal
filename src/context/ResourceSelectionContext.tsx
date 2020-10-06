@@ -6,7 +6,7 @@ import {
   FileFilterProps,
   EventFilter,
   SequenceFilter,
-} from 'cognite-sdk-v3';
+} from '@cognite/sdk';
 
 export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
 export type ResourceItemState = ResourceItem & {

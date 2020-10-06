@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { FileInfo } from 'cognite-sdk-v3';
+import { FileInfo } from '@cognite/sdk';
 import { ResourceSelectionContext } from 'context';
 import { Select } from 'components/Common';
 import { Title } from '@cognite/cogs.js';

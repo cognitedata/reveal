@@ -1,4 +1,4 @@
-import { CogniteEvent } from 'cognite-sdk-v3';
+import { CogniteEvent } from '@cognite/sdk';
 
 // TODO(DE-135) Clean up shared resources
 export const events: CogniteEvent[] = [

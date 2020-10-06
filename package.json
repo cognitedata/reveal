@@ -8,8 +8,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@cognite/annotations": "^1.0.3",
-    "@cognite/cdf-resources-store": "^0.0.1-rc6",
-    "@cognite/cdf-sdk-singleton": "^0.6.0",
+    "@cognite/cdf-resources-store": "^0.0.2",
     "@cognite/cdf-utilities": "^0.7.1",
     "@cognite/cogs.js": "^1.21.3",
     "@cognite/gcs-browser-upload": "^1.0.5",
@@ -17,6 +16,7 @@
     "@cognite/griff-react": "~0.4.2",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-picture-annotation": "^1.1.2",
+    "@cognite/sdk": "^3.1.1",
     "@sentry/browser": "^5.25.0",
     "@types/react-select": "^3.0.21",
     "antd": "^3.26.18",

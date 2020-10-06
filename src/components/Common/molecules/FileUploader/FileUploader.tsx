@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { FileUploadResponse } from 'cognite-sdk-v3';
+import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { getMIMEType } from 'utils/FileUtils';
 import { SpacedRow } from 'components/Common';

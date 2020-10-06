@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Timeseries } from 'cognite-sdk-v3';
+import { Timeseries } from '@cognite/sdk';
 import { LatestDatapoint } from './LatestDatapoint';
 
 const exampleTimeSeries: Timeseries[] = [

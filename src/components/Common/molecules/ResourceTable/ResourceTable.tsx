@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FileInfo, Asset, CogniteEvent } from 'cognite-sdk-v3';
+import { FileInfo, Asset, CogniteEvent } from '@cognite/sdk';
 import { Body, Icon } from '@cognite/cogs.js';
 import { Row } from 'antd';
 import { Loader, Table, TimeDisplay } from 'components/Common';

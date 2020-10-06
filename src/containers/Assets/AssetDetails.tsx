@@ -1,5 +1,5 @@
 import React from 'react';
-import { Asset } from 'cognite-sdk-v3';
+import { Asset } from '@cognite/sdk';
 import { Title } from '@cognite/cogs.js';
 import {
   DetailsItem,

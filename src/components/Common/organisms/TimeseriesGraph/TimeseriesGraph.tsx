@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import { Timeseries } from 'cognite-sdk-v3';
+import { Timeseries } from '@cognite/sdk';
 import { TimeseriesChart } from '@cognite/gearbox';
 import { Select, Loader } from 'components/Common';
 

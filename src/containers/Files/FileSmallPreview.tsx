@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { InternalId, ExternalId } from 'cognite-sdk-v3';
+import { InternalId, ExternalId } from '@cognite/sdk';
 import { FileDetailsAbstract, Loader } from 'components/Common';
 import {
   useResourcesSelector,

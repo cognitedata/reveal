@@ -20,7 +20,7 @@ import {
   SpacedRow,
 } from 'components/Common';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-import { Asset } from 'cognite-sdk-v3';
+import { Asset } from '@cognite/sdk';
 import CdfCount from 'components/Common/atoms/CdfCount';
 
 import { useResourcePreview } from 'context/ResourcePreviewContext';

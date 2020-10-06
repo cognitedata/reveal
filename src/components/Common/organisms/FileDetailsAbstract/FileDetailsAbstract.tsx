@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title, Badge, Body, Colors } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, ListItem, SpacedRow } from 'components/Common';
-import { FileInfo, Asset } from 'cognite-sdk-v3';
+import { FileInfo, Asset } from '@cognite/sdk';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { FileInfoGrid } from './FileInfoGrid';
 

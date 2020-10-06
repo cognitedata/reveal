@@ -1,4 +1,4 @@
-import { Asset } from 'cognite-sdk-v3';
+import { Asset } from '@cognite/sdk';
 
 export const assets: Asset[] = [
   {

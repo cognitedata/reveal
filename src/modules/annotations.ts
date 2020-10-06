@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { RootState } from 'reducers';
 import produce from 'immer';
 import unionBy from 'lodash/unionBy';
-import { FileInfo, Asset } from 'cognite-sdk-v3';
+import { FileInfo, Asset } from '@cognite/sdk';
 import { createSelector } from 'reselect';
 import {
   CogniteAnnotation,

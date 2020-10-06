@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { Timeseries } from 'cognite-sdk-v3';
+import { Timeseries } from '@cognite/sdk';
 import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';

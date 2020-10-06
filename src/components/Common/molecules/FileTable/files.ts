@@ -1,4 +1,4 @@
-import { FileInfo } from 'cognite-sdk-v3';
+import { FileInfo } from '@cognite/sdk';
 
 export const files: FileInfo[] = [
   {

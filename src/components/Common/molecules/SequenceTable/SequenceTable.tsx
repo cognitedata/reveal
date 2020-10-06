@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sequence } from 'cognite-sdk-v3';
+import { Sequence } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import { useResourceMode } from 'context/ResourceSelectionContext';
 import { ResourceTable, ResourceTableColumns } from 'components/Common';

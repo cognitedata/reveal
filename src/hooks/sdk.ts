@@ -11,7 +11,7 @@ import {
   CogniteClient,
   DataSet,
   IdEither,
-} from 'cognite-sdk-v3';
+} from '@cognite/sdk';
 import { useContext } from 'react';
 import { SdkContext } from 'context/sdk';
 

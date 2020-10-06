@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { AssetTable } from 'components/Common';
-import { AssetSearchFilter, AssetFilterProps } from 'cognite-sdk-v3';
+import { AssetSearchFilter, AssetFilterProps } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 

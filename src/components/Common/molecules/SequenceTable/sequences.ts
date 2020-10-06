@@ -1,4 +1,4 @@
-import { Sequence } from 'cognite-sdk-v3';
+import { Sequence } from '@cognite/sdk';
 
 // TODO(DE-135) Clean up shared resources
 export const sequences: Sequence[] = [

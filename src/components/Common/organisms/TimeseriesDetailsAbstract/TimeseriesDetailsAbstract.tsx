@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Timeseries } from 'cognite-sdk-v3';
+import { Timeseries } from '@cognite/sdk';
 import { Icons, Title, Body, Icon, Colors } from '@cognite/cogs.js';
 import {
   InfoGrid,

@@ -1,4 +1,4 @@
-import { Timeseries } from 'cognite-sdk-v3';
+import { Timeseries } from '@cognite/sdk';
 
 // TODO(DE-135) Clean up shared resources
 export const timeseries: Timeseries[] = [

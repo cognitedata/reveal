@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { ModalProps, Loader } from '@cognite/cogs.js';
-import { CogniteClient } from 'cognite-sdk-v3';
+import { CogniteClient } from '@cognite/sdk';
 import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
 import { createBrowserHistory } from 'history';
 import configureStoreProd from 'store/storeProd';

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CogniteClient } from 'cognite-sdk-v3';
+import { CogniteClient } from '@cognite/sdk';
 
 const client = () => ({
   get: jest.fn(),
