@@ -132,6 +132,9 @@ function selectColumns(
             }
             return <StatusDot bgColor={color} />;
           }
+          if (key === 'id') {
+            return value;
+          }
           return getFormattedTimestampOrString(value);
         },
       });
@@ -321,6 +324,19 @@ const DataTransfers: React.FC = () => {
     }
   }
 
+  function clearData() {
+    dispatch({
+      type: Action.SUCCEED,
+      payload: {
+        data: [],
+        columns: data.columns,
+        rawColumns: data.rawColumns,
+        allColumnNames: data.allColumnNames,
+        selectedColumnNames: data.selectedColumnNames,
+      },
+    });
+  }
+
   function fetchDataTransfers() {
     if (
       selectedSource &&
@@ -365,17 +381,28 @@ const DataTransfers: React.FC = () => {
                 status: item.status,
                 report: item.status,
               }));
+              console.log(data.selectedColumnNames);
               dispatch({
                 type: Action.SUCCEED,
                 payload: {
                   data: handledData,
                   columns: selectColumns(
-                    handledData,
-                    config.initialSelectedColumnNames
+                    handledData.length > 0 ? handledData : data.data,
+                    data.selectedColumnNames.length > 0
+                      ? data.selectedColumnNames
+                      : config.initialSelectedColumnNames
                   ),
-                  rawColumns: selectColumns(handledData, []),
-                  allColumnNames: getColumnNames(handledData),
-                  selectedColumnNames: config.initialSelectedColumnNames,
+                  rawColumns: selectColumns(
+                    handledData.length > 0 ? handledData : data.data,
+                    []
+                  ),
+                  allColumnNames: getColumnNames(
+                    handledData.length > 0 ? handledData : data.data
+                  ),
+                  selectedColumnNames:
+                    data.selectedColumnNames.length > 0
+                      ? data.selectedColumnNames
+                      : config.initialSelectedColumnNames,
                 },
               });
             } else {
@@ -384,7 +411,21 @@ const DataTransfers: React.FC = () => {
           } else {
             dispatch({
               type: Action.SUCCEED,
-              payload: initialDataTransfersState.data,
+              payload: {
+                ...initialDataTransfersState.data,
+                columns: selectColumns(
+                  data.data,
+                  data.selectedColumnNames.length > 0
+                    ? data.selectedColumnNames
+                    : config.initialSelectedColumnNames
+                ),
+                rawColumns: selectColumns(data.data, []),
+                allColumnNames: getColumnNames(data.data),
+                selectedColumnNames:
+                  data.selectedColumnNames.length > 0
+                    ? data.selectedColumnNames
+                    : config.initialSelectedColumnNames,
+              },
             });
           }
         })
@@ -531,6 +572,20 @@ const DataTransfers: React.FC = () => {
   }
 
   useEffect(() => {
+    dispatch({
+      type: Action.SUCCEED,
+      payload: {
+        data: [],
+        columns: data.columns,
+        rawColumns: data.rawColumns,
+        allColumnNames: data.allColumnNames,
+        selectedColumnNames: config.initialSelectedColumnNames,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     dispatch({ type: Action.LOAD });
     function fetchSources() {
       api!.sources
@@ -553,6 +608,7 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
+      clearData();
       setSelectedSourceProject(null);
       setSelectedTarget(null);
       setSelectedTargetProject(null);
@@ -563,6 +619,7 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
+      clearData();
       fetchDatatypes();
       setSelectedTarget(null);
       setSelectedTargetProject(null);
@@ -572,6 +629,7 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
+      clearData();
       fetchProjects();
       setSelectedTargetProject(null);
     }
@@ -580,6 +638,7 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
+      clearData();
       fetchProjects();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -587,6 +646,7 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
+      clearData();
       fetchDataTransfers();
       fetchConfigurations();
     }
@@ -595,6 +655,7 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
+      clearData();
       fetchDataTransfers();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -603,6 +664,7 @@ const DataTransfers: React.FC = () => {
   useEffect(() => {
     setSelectedConfiguration(null);
     if (token && token !== 'NO_TOKEN') {
+      clearData();
       fetchConfigurations();
       fetchDataTransfers();
     }
@@ -693,7 +755,7 @@ const DataTransfers: React.FC = () => {
             }}
           />
         )}
-        {data.data.length > 0 && (
+        {selectedSourceProject && (
           <ColumnsSelector>
             <Tooltip content="Show/hide table columns">
               <Dropdown
