@@ -19,8 +19,10 @@ import {
   ConfigurationsMainContainer,
   ConnectionLinesWrapper,
   ConnectorList,
+  EditButton,
   Header,
   InitialState,
+  SaveButton,
   ThreeColsLayout,
 } from '../elements';
 import { makeConnectorLines } from './utils';
@@ -245,14 +247,14 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       <ConfigurationsMainContainer>
         <Header>
           <b>{name}</b>
-          <Button
+          <SaveButton
             type="primary"
-            style={{ height: '36px' }}
             disabled={!configurationIsComplete}
             onClick={handleSaveConfigurationClick}
+            className={configurationIsComplete ? 'enabled' : ''}
           >
             Save Configuration
-          </Button>
+          </SaveButton>
         </Header>
         <ThreeColsLayout>
           <ConfigurationContainer>
@@ -264,6 +266,12 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                   {configuration.business_tags.map((tag) => (
                     <Badge key={tag} text={tag} background="greyscale-grey5" />
                   ))}
+                  <EditButton
+                    type="primary"
+                    onClick={() => setSourceUIState(ConfigUIState.CONFIGURING)}
+                  >
+                    Edit
+                  </EditButton>
                 </>
               )}
             </header>
@@ -295,7 +303,11 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                 <main>
                   <div>Select repository:</div>
                   <Select
-                    defaultValue={undefined}
+                    value={
+                      configuration.source.external_id.length > 0
+                        ? configuration.source.external_id
+                        : undefined
+                    }
                     placeholder="Available repositories"
                     style={{ width: '100%', marginBottom: '16px' }}
                     onChange={(value) => handleChange(ChangeType.REPO, value)}
@@ -318,6 +330,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                           placeholder="Available tags"
                           style={{ width: '100%', marginBottom: '16px' }}
                           onChange={updateBusinessTags}
+                          value={configuration.business_tags}
                         >
                           {availableTags.map((tag) => (
                             <Option key={`tag_${tag}`} value={tag}>
@@ -331,6 +344,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                           onChange={(value: any) =>
                             handleChange(ChangeType.DATATYPES, value)
                           }
+                          value={configuration.datatypes}
                         />
                       </>
                     )}
@@ -391,7 +405,15 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
             <header>
               <b>OpenWorks</b>
               {targetUIState === ConfigUIState.CONFIRMED && (
-                <div>{configuration.target.external_id}</div>
+                <>
+                  <div>{configuration.target.external_id}</div>
+                  <EditButton
+                    type="primary"
+                    onClick={() => setTargetUIState(ConfigUIState.CONFIGURING)}
+                  >
+                    Edit
+                  </EditButton>
+                </>
               )}
             </header>
             {targetUIState === ConfigUIState.INITIAL && (

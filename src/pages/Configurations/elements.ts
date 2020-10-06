@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from '@cognite/cogs.js';
 
 export const ConfigurationsMainContainer = styled.div`
   display: block;
@@ -53,6 +54,50 @@ export const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
+`;
+
+export const SaveButton = styled(Button)`
+  height: 36px;
+
+  &.enabled {
+    animation: pulsate 5s 0s ease 1 forwards;
+  }
+
+  @keyframes pulsate {
+    0% {
+      transform: scale(1, 1);
+    }
+    10% {
+      transform: scale(1.07, 1.07);
+    }
+    20% {
+      transform: scale(1, 1);
+    }
+    30% {
+      transform: scale(1.07, 1.07);
+    }
+    40% {
+      transform: scale(1, 1);
+    }
+    50% {
+      transform: scale(1.07, 1.07);
+    }
+    60% {
+      transform: scale(1, 1);
+    }
+    70% {
+      transform: scale(1.07, 1.07);
+    }
+    80% {
+      transform: scale(1, 1);
+    }
+    90% {
+      transform: scale(1.07, 1.07);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }
 `;
 
 export const ThreeColsLayout = styled.div`
@@ -138,4 +183,9 @@ export const ConnectorList = styled.ul<{
       transition: background-color 0.3s ease;
     }
   }
+`;
+
+export const EditButton = styled(Button)`
+  float: right;
+  margin-top: -2.6rem;
 `;

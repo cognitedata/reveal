@@ -381,7 +381,7 @@ const DataTransfers: React.FC = () => {
                 status: item.status,
                 report: item.status,
               }));
-              console.log(data.selectedColumnNames);
+
               dispatch({
                 type: Action.SUCCEED,
                 payload: {
