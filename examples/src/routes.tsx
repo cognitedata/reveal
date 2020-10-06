@@ -8,7 +8,6 @@ import { DistanceMeasurement } from './pages/DistanceMeasurement';
 import { SideBySide } from './pages/SideBySide';
 import { Clipping } from './pages/Clipping';
 import { Filtering } from './pages/Filtering';
-import { GpuSectorCuller } from './pages/GpuSectorCuller';
 import { Migration } from './pages/Migration';
 import { Picking } from './pages/Picking';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
@@ -66,11 +65,6 @@ export const routes: Array<ExampleRoute> = [
     path: '/filtering',
     menuTitle: 'Filtering',
     component: <Filtering />,
-  },
-  {
-    path: '/gpu-sector-culler',
-    menuTitle: 'GPU Sector Culler',
-    component: <GpuSectorCuller />,
   },
   {
     path:

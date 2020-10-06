@@ -18,27 +18,17 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
 import { toThreeVector3 } from '@/utilities';
+import { CadModelSectorBudget } from '../../CadModelBudget';
 
 /**
  * Options for creating GpuBasedSectorCuller.
  */
 export type ByVisibilityGpuSectorCullerOptions = {
   /**
-   * Limit of how much data to load for a given view point. By default cost is measured in
-   * downloaded bytes per sector.
-   */
-  costLimit?: number;
-
-  /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
   determineSectorCost?: DetermineSectorCostDelegate;
-
-  /**
-   * Sectors within this distance from the camera will always be loaded in high details.
-   */
-  highDetailProximityThreshold?: number;
 
   /**
    * Use a custom coverage utility to determine how "visible" each sector is.
@@ -89,12 +79,11 @@ class TakenSectorMap {
     tree!.markSectorDetailed(sectorId, priority);
   }
 
+  isWithinBudget(budget: CadModelSectorBudget): boolean {
+    return this.totalCost < budget.geometryDownloadSizeBytes;
+  }
+
   collectWantedSectors(): PrioritizedWantedSector[] {
-    // Count sectors to pre-allocate array of sectors
-    // let sectorCount = 0;
-    // for (const tree of this.maps.values()) {
-    //   sectorCount += tree.determineWantedSectorCount();
-    // }
     const allWanted = new Array<PrioritizedWantedSector>();
 
     // Collect sectors
@@ -120,21 +109,13 @@ class TakenSectorMap {
  * and loads sectors based on priority within a budget.
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
-  public static readonly DefaultCostLimit = 35 * 1024 * 1024;
-  public static readonly DefaultHighDetailProximityThreshold = 10;
-
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
   private readonly takenSectors: TakenSectorMap;
 
   constructor(options?: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
-      costLimit: options && options.costLimit ? options.costLimit : ByVisibilityGpuSectorCuller.DefaultCostLimit,
       determineSectorCost:
         options && options.determineSectorCost ? options.determineSectorCost : computeSectorCostAsDownloadSize,
-      highDetailProximityThreshold:
-        options && options.highDetailProximityThreshold
-          ? options.highDetailProximityThreshold
-          : ByVisibilityGpuSectorCuller.DefaultHighDetailProximityThreshold,
       logCallback:
         options && options.logCallback
           ? options.logCallback
@@ -151,7 +132,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       input.camera,
       input.cadModelsMetadata,
       input.clippingPlanes,
-      input.clipIntersection
+      input.clipIntersection,
+      input.budget
     );
     const wanted = takenSectors.collectWantedSectors();
 
@@ -177,7 +159,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     clippingPlanes: THREE.Plane[] | null,
-    clipIntersection: boolean
+    clipIntersection: boolean,
+    budget: CadModelSectorBudget
   ): TakenSectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
@@ -188,14 +171,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     coverageUtil.setModels(models);
     coverageUtil.setClipping(clippingPlanes, clipIntersection);
     const prioritized = coverageUtil.orderSectorsByVisibility(camera);
-    const costLimit = this.options.costLimit;
 
     // Add high details for all sectors the camera is inside or near
-    const proximityThreshold = this.options.highDetailProximityThreshold;
     this.addHighDetailsForNearSectors(
       camera,
       models,
-      proximityThreshold,
+      budget.highDetailProximityThreshold,
       takenSectors,
       clippingPlanes,
       clipIntersection
@@ -205,7 +186,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const prioritizedLength = prioritized.length;
 
     let i = 0;
-    for (i = 0; i < prioritizedLength && takenSectors.totalCost < costLimit; i++) {
+    for (i = 0; i < prioritizedLength && takenSectors.isWithinBudget(budget); i++) {
       const x = prioritized[i];
       takenSectors.markSectorDetailed(x.model, x.sectorId, x.priority);
       debugAccumulatedPriority += x.priority;
@@ -215,7 +196,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.log(
       `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${
         takenSectors.totalCost / 1024 / 1024
-      }/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
+      }/${budget.geometryDownloadSizeBytes / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
     );
 
     return takenSectors;

@@ -88,7 +88,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
           return 0;
       }
     };
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost, costLimit: 20 });
+    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(generateSectorTree(2, 2));
     const cadNode = new CadNode(model, materialManager);
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
@@ -123,7 +123,8 @@ function createDetermineSectorInput(
     clipIntersection: false,
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {},
-    cameraInMotion: false
+    cameraInMotion: false,
+    budget: { geometryDownloadSizeBytes: 20, highDetailProximityThreshold: 10 }
   };
   return determineSectorsInput;
 }
