@@ -48,5 +48,5 @@ yarn test:once
 ## Releasing new version of @cognite/data-exploration
 
 1. Bump version in `package.json`
-2. Create a PR with `Release: v...`
+2. Create a PR with `Release ...`
 3. Get ✅ and 🚀
