@@ -16,6 +16,7 @@
     "@cognite/griff-react": "~0.4.2",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-picture-annotation": "^1.1.2",
+    "@cognite/sdk": "^3.1.1",
     "@sentry/browser": "^5.25.0",
     "@types/react-select": "^3.0.21",
     "antd": "^3.26.18",
