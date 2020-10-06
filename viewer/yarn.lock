@@ -757,10 +757,10 @@
   resolved "https://registry.yarnpkg.com/@types/mixpanel-browser/-/mixpanel-browser-2.35.4.tgz#ea297c3dcfc15bd8f310c7104f4eb5c9ff7586ad"
   integrity sha512-Qfr9XChsDsqAo5FM9IGQffbelX1w0xonSTUcsW2SXQeOORgDDA4bSTNZstFPxTpU5FYj+nNjjqmII6bCPvod5A==
 
-"@types/node@*", "@types/node@^14.11.2":
-  version "14.11.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.11.2.tgz#2de1ed6670439387da1c9f549a2ade2b0a799256"
-  integrity sha512-jiE3QIxJ8JLNcb1Ps6rDbysDhN4xa8DJJvuC9prr6w+1tIh+QAbYyNF3tyiZNLDBIuBCf4KEcV2UvQm/V60xfA==
+"@types/node@*", "@types/node@^14.11.5":
+  version "14.11.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.11.5.tgz#fecad41c041cae7f2404ad4b2d0742fdb628b305"
+  integrity sha512-jVFzDV6NTbrLMxm4xDSIW/gKnk8rQLF9wAzLWIOg+5nU6ACrIMndeBdXci0FGtqJbP9tQvm6V39eshc96TO2wQ==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
