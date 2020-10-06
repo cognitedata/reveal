@@ -21,6 +21,12 @@ Please see the [deployment guide] for more information how to actually get this 
 This repo is configured as a template, so it's easy to get started.
 Simply go to the [create repo page] and select "cognitedata/react-demo-app" as a template.
 
+## Some quick things to remember after cloning this
+
+- Update the `.github/CODEOWNERS` files to list your teams email.
+- Modify the tokens and names in the `Jenkinsfile`
+- Customise this `README.md` file!
+
 ### Run e2e tests with testcafe
 
 End-to-end tests are written and run using the [Testcafe](https://github.com/DevExpress/testcafe) testing framework. They are stored in `/testcafe`.

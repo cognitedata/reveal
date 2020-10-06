@@ -103,9 +103,7 @@ static final Map<String, String> CONTEXTS = [
   setup: "continuous-integration/jenkins/setup",
   lint: "continuous-integration/jenkins/lint",
   unitTests: "continuous-integration/jenkins/unit-tests",
-  e2eTests: "continuous-integration/jenkins/e2e-tests",
   preview: "continuous-integration/jenkins/preview",
-  storybook: "continuous-integration/jenkins/storybook",
   buildStaging: "continuous-integration/jenkins/build-staging",
   publishStaging: "continuous-integration/jenkins/publish-staging",
   buildProduction: "continuous-integration/jenkins/build-production",
@@ -212,7 +210,6 @@ pods {
 
       'Storybook': {
         previewServer.runStorybookStage(
-          context: CONTEXTS.storybook,
           shouldExecute: isPullRequest
         )
       },
@@ -255,18 +252,29 @@ pods {
       },
 
       'E2e': {
-        stageWithNotify('Execute e2e tests', CONTEXTS.e2eTests) {
-          dir('testcafe') {
-            container('fas') {
-              sh('yarn testcafe:build')
-            }
-            container('testcafe') {
-              testcafe.runTests(
-                runCommand: 'yarn testcafe:start'
-              )
-            }
-          }
-        }
+        testcafe.runE2EStage(
+          //
+          // multi-branch mode:
+          //
+          // We don't need to run end-to-end tests against release because
+          // we're in one of two states:
+          //   1. Cutting a new release
+          //      In this state, staging has e2e already passing.
+          //   2. Cherry-picking in a hotfix
+          //      In this state, the PR couldn't have been merged without
+          //      passing end-to-end tests.
+          // As such, we can skip end-to-end tests on release branches. As
+          // a side-effect, this will make hotfixes hit production faster!            
+          // shouldExecute: !isRelease,
+
+          //
+          // single-branch mode:
+          //
+          shouldExecute: true,
+
+          buildCommand: 'yarn testcafe:build',  
+          runCommand: 'yarn testcafe:start'
+        )
       },
     ],
     workers: 3,
