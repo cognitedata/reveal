@@ -37,9 +37,9 @@ export const ExplorationNavbar = ({
       : undefined
   );
 
-  const lastChunk = cleanPathname.substr(cleanPathname.lastIndexOf('/') + 1);
+  const [, , , resourceId] = cleanPathname.split('/');
 
-  const disableDropdown = Number.isNaN(Number(lastChunk));
+  const disableDropdown = !resourceId;
 
   const cartCount = cart.length;
 
