@@ -44,3 +44,9 @@ yarn test:once
 - `yarn` -> `yarn bootstrap` -> `yarn start`
 - clone the Data Studio repository - `git clone https://github.com/cognitedata/data-exploration.git`
 - `yarn` -> `yarn start
+
+## Releasing new version of @cognite/data-exploration
+
+1. Bump version in `package.json`
+2. Create a PR with `Release: v...`
+3. Get ✅ and 🚀
