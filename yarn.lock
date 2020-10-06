@@ -1394,18 +1394,18 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-resources-store@^0.0.1-rc6":
-  version "0.0.1-rc6"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-resources-store/-/cdf-resources-store-0.0.1-rc6.tgz#04ad20200d86bb3bcb19ae6c6ab7b8adfa9c68da"
-  integrity sha512-mTNm4z6ns3glxOTjR0NRVKjyy3lgw3Ucdv1WlLpmywPjktqn4bgDZr418/4dh/N0n+gGmbrrO6ZHdxx7gUxBNA==
+"@cognite/cdf-resources-store@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-resources-store/-/cdf-resources-store-0.0.2.tgz#daf01fa2df29e1688669c47b08faf44a2f3db9b9"
+  integrity sha512-tTuJ2R2m/JvPH2FvdK4NllIFeEBiIZItzZ1HdjGFRkV7Ks4EESGgx6xDzIQTVY/yJbnLrcYSzQRVQoACRpJ1dg==
   dependencies:
-    "@cognite/sdk" "^3.0.0"
+    "@cognite/sdk" "^3.1.1"
     "@types/lodash" "^4.14.161"
-    "@types/react" "^16.9.49"
+    "@types/react" "^16.9.51"
     "@types/react-dom" "^16.9.8"
     "@types/react-redux" "^7.1.9"
     enzyme "^3.11.0"
-    enzyme-adapter-react-16 "^1.15.4"
+    enzyme-adapter-react-16 "^1.15.5"
     g "^2.0.1"
     immutable "^4.0.0-rc.12"
     lodash "^4.17.20"
@@ -1417,7 +1417,7 @@
     redux-mock-store "^1.5.4"
     redux-thunk "^2.3.0"
     reselect "^4.0.0"
-    rollup-plugin-typescript2 "^0.27.2"
+    rollup-plugin-typescript2 "^0.27.3"
     typescript "^3.7.3"
 
 "@cognite/cdf-utilities@^0.7.1":
@@ -1551,16 +1551,6 @@
     typescript "^4.0.2"
     uuid "^8.3.0"
 
-"@cognite/sdk-core@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.0.tgz#8b2ea9a30dc54396cd4980633b92c1714bc27864"
-  integrity sha512-zNarUtJc9RwruDDYukfcUw4FKP9LMc1fMwDYde7WE465kiekCfaE5iEhxNd5TP0tp8fmGyT2YvI/b8Ka9nqu1A==
-  dependencies:
-    cross-fetch "^3.0.4"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk-core@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.2.tgz#fab634f9661d76e49288eb121f9706bf5a37e478"
@@ -1570,14 +1560,6 @@
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
-
-"@cognite/sdk@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.0.0.tgz#99c9f600129e1f525f2214a7f5f11cf90095e25f"
-  integrity sha512-5zyHEh8drYGQ++4NOjdRr/9XIzHdoI7ssL66ZTJ/uGaLxMhXGa/hq2GK8RaN6uGf0PsirOS9VeU08zA8b2baWQ==
-  dependencies:
-    "@cognite/sdk-core" "^1.0.0"
-    lodash "^4.17.11"
 
 "@cognite/sdk@^3.1.1":
   version "3.1.1"
@@ -3719,7 +3701,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^16.9.49", "@types/react@^16.9.51":
+"@types/react@*", "@types/react@^16.9.51":
   version "16.9.51"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.51.tgz#f8aa51ffa9996f1387f63686696d9b59713d2b60"
   integrity sha512-lQa12IyO+DMlnSZ3+AGHRUiUcpK47aakMMoBG8f7HGxJT8Yfe+WE128HIXaHOHVPReAW0oDS3KAI0JI2DDe1PQ==
@@ -7960,7 +7942,7 @@ entities@^2.0.0:
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.0.3.tgz#5c487e5742ab93c15abb5da22759b8590ec03b7f"
   integrity sha512-MyoZ0jgnLvB2X3Lg5HqpFmn1kybDiIfEQmKzTb5apr51Rb+T3KdmMiqa70T+bhGnyv7bQ6WMj2QMHpGMmlrUYQ==
 
-enzyme-adapter-react-16@^1.15.4, enzyme-adapter-react-16@^1.15.5:
+enzyme-adapter-react-16@^1.15.5:
   version "1.15.5"
   resolved "https://registry.yarnpkg.com/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.15.5.tgz#7a6f0093d3edd2f7025b36e7fbf290695473ee04"
   integrity sha512-33yUJGT1nHFQlbVI5qdo5Pfqvu/h4qPwi1o0a6ZZsjpiqq92a3HjynDhwd1IeED+Su60HDWV8mxJqkTnLYdGkw==
@@ -16016,7 +15998,7 @@ rollup-plugin-terser@^7.0.2:
     serialize-javascript "^4.0.0"
     terser "^5.0.0"
 
-rollup-plugin-typescript2@^0.27.2, rollup-plugin-typescript2@^0.27.3:
+rollup-plugin-typescript2@^0.27.3:
   version "0.27.3"
   resolved "https://registry.yarnpkg.com/rollup-plugin-typescript2/-/rollup-plugin-typescript2-0.27.3.tgz#cd9455ac026d325b20c5728d2cc54a08a771b68b"
   integrity sha512-gmYPIFmALj9D3Ga1ZbTZAKTXq1JKlTQBtj299DXhqYz9cL3g/AQfUvbb2UhH+Nf++cCq941W2Mv7UcrcgLzJJg==
