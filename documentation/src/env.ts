@@ -7,8 +7,7 @@ export const env = {
   modelId: getNumber(process.env.CAD_ID) || 3356984403684032,
   revisionId: getNumber(process.env.CAD_REVISION_ID) || 6664823881595566,
   pointCloud: {
-    // fixme: here must be defaults from publicdata project (currently has no pointcloud model uploaded)
-    modelId: getNumber(process.env.POINTCLOUD_ID),
-    revisionId: getNumber(process.env.POINTCLOUD_REVISION_ID)
+    modelId: getNumber(process.env.POINTCLOUD_ID) || 5564365369975452,
+    revisionId: getNumber(process.env.POINTCLOUD_REVISION_ID) || 2817572261344477
   }
 }
