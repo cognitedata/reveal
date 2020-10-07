@@ -38,20 +38,22 @@ const Revisions = ({ record, onDetailClick }: Props) => {
 
   const getRevisionsList = () =>
     record.revisions.reverse().map((rev: RevisionObject) => {
-      let statusColor = Colors.yellow.hex();
-      let statusText = 'Couldn`t find status';
+      let statusColor = Colors['greyscale-grey3'].hex();
+      let statusText: string | undefined = 'Couldn`t find status';
       if (
         rev.translations &&
         rev.translations.length > 0 &&
-        rev.translations[rev.translations.length - 1].revision
+        rev.translations[rev.translations.length - 1].status
       ) {
         const translation = rev.translations[rev.translations.length - 1];
-        if (translation.revision.status === apiStatuses.UploadedToConnector) {
+        if (translation.status === apiStatuses.Succeeded) {
           statusColor = Colors.success.hex();
-        } else if (translation.revision.status === apiStatuses.Failed) {
+        } else if (translation.status === apiStatuses.InProgress) {
+          statusColor = Colors.yellow.hex();
+        } else if (translation.status === apiStatuses.Failed) {
           statusColor = Colors.danger.hex();
         }
-        statusText = translation.revision.status;
+        statusText = translation.status;
       }
       return {
         key: rev.id,

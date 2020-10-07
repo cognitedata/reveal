@@ -18,4 +18,7 @@ export const apiStatuses = {
   // Connector output statuses
   DetectedTranslation: 'Detected translation',
   UploadedToConnector: 'Uploaded to connector',
+  // Data transfer statuses (+ failed which you find higher up here)
+  Succeeded: 'Succeeded',
+  InProgress: 'In progress',
 };

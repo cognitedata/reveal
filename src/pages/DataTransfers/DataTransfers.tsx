@@ -26,6 +26,7 @@ import APIErrorContext from 'contexts/APIErrorContext';
 import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
+import { apiStatuses } from 'utils/statuses';
 import { ContentContainer } from '../../elements';
 import {
   TableActions,
@@ -124,11 +125,13 @@ function selectColumns(
         width: key === 'status' ? 70 : undefined,
         render: (value) => {
           if (key === 'status') {
-            let color = Colors.yellow.hex();
-            if (value.toLowerCase() === 'failed') {
+            let color = Colors['greyscale-grey3'].hex();
+            if (value === apiStatuses.Failed) {
               color = Colors.danger.hex();
-            } else if (value.toLowerCase() === 'succeeded') {
+            } else if (value === apiStatuses.Succeeded) {
               color = Colors.success.hex();
+            } else if (value === apiStatuses.InProgress) {
+              color = Colors.yellow.hex();
             }
             return <StatusDot bgColor={color} />;
           }
