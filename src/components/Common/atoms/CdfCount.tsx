@@ -6,10 +6,10 @@ type Props = {
   filter?: any;
 };
 
-export default function CdfCount({ type, filter }: Props) {
+export const CdfCount = ({ type, filter }: Props) => {
   const { data, isFetched } = useAggregate(type, filter);
   if (isFetched) {
     return <>{data?.count}</>;
   }
   return null;
-}
+};

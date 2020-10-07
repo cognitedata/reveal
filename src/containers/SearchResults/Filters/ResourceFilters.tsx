@@ -1,8 +1,7 @@
 import React from 'react';
 import { ResourceType } from 'types';
 import { Title } from '@cognite/cogs.js';
-import { ListItem } from 'components/Common';
-import CdfCount from 'components/Common/atoms/CdfCount';
+import { ListItem, CdfCount } from 'components/Common';
 import { SdkResourceType } from 'hooks/sdk';
 
 type FilterTypes = Exclude<SdkResourceType, 'datasets'>;
