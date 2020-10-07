@@ -538,6 +538,7 @@ const DataTransfers: React.FC = () => {
       target: {},
     });
     const selectedObject: DetailDataProps = {
+      isLoading: true,
       id: sourceObj.id,
       source: {
         name: sourceObj.name,

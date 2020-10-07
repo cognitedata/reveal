@@ -1,6 +1,17 @@
 import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 
+export const LoaderBg = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--cogs-black);
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+`;
+
 export const Layout = styled.div`
   height: 100%;
   display: flex;

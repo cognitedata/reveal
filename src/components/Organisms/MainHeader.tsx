@@ -1,8 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import AuthContext from 'contexts/AuthContext';
-import sdk from 'utils/cognitesdk';
 import Logo from 'components/Atoms/Logo';
 import { Avatar, Tooltip } from '@cognite/cogs.js';
 import AppSwitcher from '../Atoms/AppSwitcher';
@@ -101,20 +99,7 @@ const ActionsContainer = styled(HeaderItem)`
   padding: 0 12px;
 `;
 
-const MainHeader = (): React.ReactElement => {
-  const { user, setUser } = useContext(AuthContext);
-  useEffect(() => {
-    if (!user || user.length <= 0) {
-      (async () => {
-        const status = await sdk.login.status();
-        if (status && status.user) {
-          setUser(status.user);
-        }
-      })();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+const MainHeader = ({ user }: { user: string | null | undefined }) => {
   return (
     <Header>
       <TitleContainer>

@@ -11,6 +11,8 @@ type AuthContextType = {
   token: string;
   user?: string;
   setUser: (nextUser: string) => void;
+  authenticating: boolean;
+  setAuthenticating: (nextState: boolean) => void;
 };
 
 const AuthContext = React.createContext({
@@ -21,6 +23,7 @@ const storageKey = `${SIDECAR.applicationId}/${config.app.version}/${SIDECAR.cog
 const AuthProvider = ({ children }: Props) => {
   const [token, setToken] = useState('NO_TOKEN');
   const [user, setUser] = useState<string>('');
+  const [authenticating, setAuthenticating] = useState<boolean>(false);
   useEffect(() => {
     sdk.loginWithOAuth({
       project: SIDECAR.cognuitCdfProject,
@@ -49,6 +52,8 @@ const AuthProvider = ({ children }: Props) => {
       token,
       user,
       setUser,
+      authenticating,
+      setAuthenticating,
     };
   };
 

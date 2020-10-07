@@ -14,6 +14,7 @@ import {
   StepText,
   StepTime,
 } from './elements';
+import LoadingBox from '../../Molecules/LoadingBox';
 
 type Props = {
   onClose: () => void;
@@ -121,230 +122,245 @@ const DetailView = ({ onClose, data }: Props) => {
       <Header>
         <h2>Detail View</h2>
       </Header>
-      {isLoading && <p>LOADING!</p>}
-      {source && target && (
-        <Content>
-          <Section>
-            <details open>
-              <summary>Source</summary>
-              <div>
-                <Row>
-                  <Col span={24}>
-                    <h3>Name</h3>
-                    <Input
-                      type="text"
-                      value={source.name || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={12}>
-                    <h3>External Id</h3>
-                    <Input
-                      type="text"
-                      value={source.externalId || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <h3>Data type</h3>
-                    <Input
-                      type="text"
-                      value={source.dataType || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={24}>
-                    <h3>CRS</h3>
-                    <TextArea value={source.crs || ''} readOnly rows={3} />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={12}>
-                    <h3>Created time</h3>
-                    <Input
-                      type="text"
-                      value={
-                        source.createdTime
-                          ? format(
-                              new Date(
-                                source.createdTime * UNIX_TIMESTAMP_FACTOR
-                              ),
-                              'Pp'
-                            )
-                          : ''
-                      }
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <h3>Repository / Project</h3>
-                    <Input
-                      type="text"
-                      value={source.repository || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={24}>
-                    <h3>Business project tag</h3>
-                    <Input
-                      type="text"
-                      value={source.businessTag || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={12}>
-                    <h3>Revision</h3>
-                    <Input
-                      type="text"
-                      value={
-                        source.revision
-                          ? getFormattedTimestampOrString(source.revision)
-                          : ''
-                      }
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <h3>Interpreter</h3>
-                    <Input
-                      type="text"
-                      value={source.interpreter || ''}
-                      variant="noBorder"
-                      readOnly
-                    />
-                  </Col>
-                </Row>
-              </div>
-              <hr />
-            </details>
-          </Section>
-          <Section>
-            <details open>
-              <summary>Upload to CDF</summary>
-              {source.revisionSteps &&
-                source.revisionSteps.length > 0 &&
-                source.revisionSteps.map((step) => renderStep(step))}
-              <hr />
-            </details>
-          </Section>
-          <Section>
-            {target && (
-              <details open key={`${target.name}-${target.createdTime}`}>
-                <summary>Translation</summary>
-                {target.revisionSteps &&
-                  target.revisionSteps.length > 0 &&
-                  target.revisionSteps.map((step) => renderStep(step))}
-                <div>
-                  <Row>
-                    <Col span={24}>
-                      <h3>Name</h3>
-                      <Input
-                        type="text"
-                        value={target.name || ''}
-                        variant="noBorder"
-                        readOnly
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12}>
-                      <h3>Openworks Id</h3>
-                      <Input
-                        type="text"
-                        value={target.openWorksId || ''}
-                        variant="noBorder"
-                        readOnly
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <h3>Data type</h3>
-                      <Input
-                        type="text"
-                        value={target.dataType || ''}
-                        variant="noBorder"
-                        readOnly
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={24}>
-                      <h3>CRS</h3>
-                      <TextArea value={target.crs || ''} readOnly rows={3} />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12}>
-                      <h3>Created time</h3>
-                      <Input
-                        type="text"
-                        value={
-                          target.createdTime
-                            ? format(
-                                new Date(
-                                  target.createdTime * UNIX_TIMESTAMP_FACTOR
-                                ),
-                                'Pp'
-                              )
-                            : ''
-                        }
-                        variant="noBorder"
-                        readOnly
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <h3>Repository / Project</h3>
-                      <Input
-                        type="text"
-                        value={target.repository || ''}
-                        variant="noBorder"
-                        readOnly
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12}>
-                      <h3>Configuration Tag</h3>
-                      <Input
-                        type="text"
-                        value={target.configTag || ''}
-                        variant="noBorder"
-                        readOnly
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <h3>Revision</h3>
-                      <Input
-                        type="text"
-                        value={
-                          target.revision
-                            ? getFormattedTimestampOrString(target.revision)
-                            : ''
-                        }
-                        variant="noBorder"
-                        readOnly
-                      />
-                    </Col>
-                  </Row>
-                </div>
-              </details>
-            )}
-          </Section>
-        </Content>
+      {isLoading ? (
+        <div style={{ textAlign: 'center' }}>
+          <LoadingBox
+            text="Loading..."
+            backgroundColor={Colors.white.hex()}
+            textColor={Colors.black.hex()}
+          />
+        </div>
+      ) : (
+        <>
+          {source && target && (
+            <Content>
+              <Section>
+                <details open>
+                  <summary>Source</summary>
+                  <div>
+                    <Row>
+                      <Col span={24}>
+                        <h3>Name</h3>
+                        <Input
+                          type="text"
+                          value={source.name || ''}
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={12}>
+                        <h3>External Id</h3>
+                        <Input
+                          type="text"
+                          value={source.externalId || ''}
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <h3>Data type</h3>
+                        <Input
+                          type="text"
+                          value={source.dataType || ''}
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={24}>
+                        <h3>CRS</h3>
+                        <TextArea value={source.crs || ''} readOnly rows={3} />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={12}>
+                        <h3>Created time</h3>
+                        <Input
+                          type="text"
+                          value={
+                            source.createdTime
+                              ? format(
+                                  new Date(
+                                    source.createdTime * UNIX_TIMESTAMP_FACTOR
+                                  ),
+                                  'Pp'
+                                )
+                              : ''
+                          }
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <h3>Repository / Project</h3>
+                        <Input
+                          type="text"
+                          value={source.repository || ''}
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={24}>
+                        <h3>Business project tag</h3>
+                        <Input
+                          type="text"
+                          value={source.businessTag || ''}
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={12}>
+                        <h3>Revision</h3>
+                        <Input
+                          type="text"
+                          value={
+                            source.revision
+                              ? getFormattedTimestampOrString(source.revision)
+                              : ''
+                          }
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <h3>Interpreter</h3>
+                        <Input
+                          type="text"
+                          value={source.interpreter || ''}
+                          variant="noBorder"
+                          readOnly
+                        />
+                      </Col>
+                    </Row>
+                  </div>
+                  <hr />
+                </details>
+              </Section>
+              <Section>
+                <details open>
+                  <summary>Upload to CDF</summary>
+                  {source.revisionSteps &&
+                    source.revisionSteps.length > 0 &&
+                    source.revisionSteps.map((step) => renderStep(step))}
+                  <hr />
+                </details>
+              </Section>
+              <Section>
+                {target && (
+                  <details open key={`${target.name}-${target.createdTime}`}>
+                    <summary>Translation</summary>
+                    {target.revisionSteps &&
+                      target.revisionSteps.length > 0 &&
+                      target.revisionSteps.map((step) => renderStep(step))}
+                    <div>
+                      <Row>
+                        <Col span={24}>
+                          <h3>Name</h3>
+                          <Input
+                            type="text"
+                            value={target.name || ''}
+                            variant="noBorder"
+                            readOnly
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col span={12}>
+                          <h3>Openworks Id</h3>
+                          <Input
+                            type="text"
+                            value={target.openWorksId || ''}
+                            variant="noBorder"
+                            readOnly
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <h3>Data type</h3>
+                          <Input
+                            type="text"
+                            value={target.dataType || ''}
+                            variant="noBorder"
+                            readOnly
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col span={24}>
+                          <h3>CRS</h3>
+                          <TextArea
+                            value={target.crs || ''}
+                            readOnly
+                            rows={3}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col span={12}>
+                          <h3>Created time</h3>
+                          <Input
+                            type="text"
+                            value={
+                              target.createdTime
+                                ? format(
+                                    new Date(
+                                      target.createdTime * UNIX_TIMESTAMP_FACTOR
+                                    ),
+                                    'Pp'
+                                  )
+                                : ''
+                            }
+                            variant="noBorder"
+                            readOnly
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <h3>Repository / Project</h3>
+                          <Input
+                            type="text"
+                            value={target.repository || ''}
+                            variant="noBorder"
+                            readOnly
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col span={12}>
+                          <h3>Configuration Tag</h3>
+                          <Input
+                            type="text"
+                            value={target.configTag || ''}
+                            variant="noBorder"
+                            readOnly
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <h3>Revision</h3>
+                          <Input
+                            type="text"
+                            value={
+                              target.revision
+                                ? getFormattedTimestampOrString(target.revision)
+                                : ''
+                            }
+                            variant="noBorder"
+                            readOnly
+                          />
+                        </Col>
+                      </Row>
+                    </div>
+                  </details>
+                )}
+              </Section>
+            </Content>
+          )}
+        </>
       )}
     </Modal>
   );
