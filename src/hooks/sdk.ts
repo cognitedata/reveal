@@ -87,6 +87,14 @@ export const useCdfItem = <T>(
   );
 };
 
+export const retrieveItemsKey = (type: SdkResourceType, ids: IdEither[]) => [
+  'cdf',
+  'get',
+  type,
+  'byIds',
+  ids,
+];
+
 export const useCdfItems = <T>(
   type: SdkResourceType,
   ids: IdEither[],
@@ -95,52 +103,30 @@ export const useCdfItems = <T>(
   const sdk = useContext(SdkContext)!;
 
   return useQuery<T[], Error>(
-    ['cdf', 'get', type, 'byIds', ids],
-    () => post(sdk, `/${type}/byIds`, { items: ids }),
+    retrieveItemsKey(type, ids),
+    () => post(sdk, `/${type}/byids`, { items: ids }),
     config
   );
 };
-const listKey = (type: SdkResourceType, filter: any, limit: number) => [
+export const listKey = (type: SdkResourceType, filter: any) => [
   'cdf',
   type,
   'list',
   filter,
-  limit,
 ];
-const listApi = (
-  sdk: CogniteClient,
-  type: SdkResourceType,
-  limit: number,
-  filter: any
-) =>
-  post(
-    sdk,
-    `/${type}/list`,
-    filter
-      ? {
-          limit,
-          filter,
-        }
-      : { limit }
-  ).then(data => data?.items);
+const listApi = (sdk: CogniteClient, type: SdkResourceType, filter: any) =>
+  post(sdk, `/${type}/list`, filter).then(data => data?.items);
 
 export const useList = <T>(
   type: SdkResourceType,
-  limit: number = 100,
   filter?: any,
   config?: QueryConfig<T[]>
 ) => {
   const sdk = useContext(SdkContext)!;
 
   return useQuery<T[]>(
-    listKey(type, filter, limit),
-    () =>
-      listApi(
-        sdk,
-        type,
-        limit,
-        Object.keys(filter).length > 0 ? filter : undefined
-      ),
+    listKey(type, filter),
+    () => listApi(sdk, type, filter),
     config
   );
 };
@@ -159,16 +145,13 @@ const searchApi = (
   sdk: CogniteClient,
   type: SdkResourceType,
   query: string,
-  limit: number,
   filter?: any
 ) => {
-  const f = filter && Object.keys(filter).length > 0 ? filter : undefined;
   return sdk
     .post(`/api/v1/projects/${sdk.project}/${type}/search`, {
       data: {
-        filter: f,
+        ...filter,
         search: getSearchArgs(type, query),
-        limit,
       },
     })
     .then(r => r.data?.items);
@@ -177,7 +160,6 @@ const searchApi = (
 export const useSearch = <T>(
   type: SdkResourceType,
   query: string,
-  limit: number = 100,
   filter?: any,
   config?: QueryConfig<T[]>
 ) => {
@@ -185,7 +167,7 @@ export const useSearch = <T>(
 
   return useQuery<T[]>(
     ['cdf', type, 'search', query, filter],
-    () => searchApi(sdk, type, query, limit, filter),
+    () => searchApi(sdk, type, query, filter),
     config
   );
 };

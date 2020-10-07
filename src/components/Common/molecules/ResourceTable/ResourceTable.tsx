@@ -61,9 +61,17 @@ export const ResourceTable = <T extends ResourceType>({
     isFetched: searchFetched,
     refetch,
     isFetching: isSearching,
-  } = useSearch<T>(api, query!, searchCount, filter, {
-    enabled: searchEnabled,
-  });
+  } = useSearch<T>(
+    api,
+    query!,
+    {
+      limit: searchCount,
+      filter: Object.keys(filter).length > 0 ? filter : undefined,
+    },
+    {
+      enabled: searchEnabled,
+    }
+  );
   const isFetched = listFetched || searchFetched;
   const isFetching = isFetchingList || isSearching;
   const files = searchEnabled ? searchFiles : listItems;
