@@ -1,7 +1,8 @@
 import { Water } from 'three/examples/jsm/objects/Water';
 import { resetViewerEventHandlers } from '../viewerUtilities';
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal'
+
+const reveal = typeof window === "undefined" ? {} : require('@cognite/reveal');
 
 export const customScope: Record<string, any> = {
   resetViewerEventHandlers,
