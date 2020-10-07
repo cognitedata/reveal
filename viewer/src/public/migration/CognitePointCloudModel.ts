@@ -191,7 +191,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Sets the point shape of eeach rendered point in the point cloud.
+   * Sets the point shape of each rendered point in the point cloud.
    * @default `PotreePointShape.Circle`
    * @see {@link PotreePointShape}.
    * @version New in 1.1.0
