@@ -7,12 +7,12 @@ import { AddModelOptions, Cognite3DViewer } from '@cognite/reveal';
 
 import { CanvasWrapper } from '@site/src/components/styled';
 import { DemoProps } from '@site/src/components/DemoProps';
-import { env } from '@site/src/env';
 
-const modelId = env.modelId;
-const revisionId = env.revisionId;
-
-export default function Cognite3DViewerDemo({ client }: DemoProps) {
+export default function Cognite3DViewerDemo({
+  client,
+  modelId,
+  revisionId,
+}: DemoProps) {
   const canvasWrapperRef = useRef(null);
   useEffect(() => {
     if (!client || !canvasWrapperRef.current) {
