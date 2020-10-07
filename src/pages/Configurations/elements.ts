@@ -189,3 +189,18 @@ export const EditButton = styled(Button)`
   float: right;
   margin-top: -2.6rem;
 `;
+
+export const ErrorModal = styled.div`
+  > div {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  p {
+    margin-top: 1em;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+`;

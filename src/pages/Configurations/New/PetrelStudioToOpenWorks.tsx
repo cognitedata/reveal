@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Badge, Button } from '@cognite/cogs.js';
+import { Badge, Button, Modal } from '@cognite/cogs.js';
 import { Checkbox, notification, Select } from 'antd';
 import {
   Configuration,
@@ -10,7 +10,7 @@ import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
 import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
 
 import {
@@ -20,12 +20,14 @@ import {
   ConnectionLinesWrapper,
   ConnectorList,
   EditButton,
+  ErrorModal,
   Header,
   InitialState,
   SaveButton,
   ThreeColsLayout,
 } from '../elements';
 import { makeConnectorLines } from './utils';
+import { CloseIcon } from '../../../components/Organisms/DetailView/elements';
 
 type Props = {
   name: string | undefined | null;
@@ -87,6 +89,8 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     },
   ]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [creationError, setCreationError] = useState<string | null>(null);
   const { api } = useContext(ApiContext);
   const { error: apiError, addError } = useContext(APIErrorContext);
   const history = useHistory();
@@ -149,13 +153,19 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   }
 
   function handleSaveConfigurationClick() {
+    setIsSaving(true);
     api!.configurations.create(configuration).then((response) => {
       if (Array.isArray(response) && response.length > 0 && response[0].error) {
+        setIsSaving(false);
         addError(
           `Failed to save configuration - ${response[0].statusText}`,
           response[0].status
         );
+        setCreationError(
+          `Server status: - ${response[0].status}: ${response[0].statusText}`
+        );
       } else {
+        setIsSaving(false);
         notification.success({
           message: 'Configuration created',
           description: 'Configuration was created successfully',
@@ -252,8 +262,9 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
             disabled={!configurationIsComplete}
             onClick={handleSaveConfigurationClick}
             className={configurationIsComplete ? 'enabled' : ''}
+            loading={isSaving}
           >
-            Save Configuration
+            {isSaving ? 'Saving configuration...' : 'Save Configuration'}
           </SaveButton>
         </Header>
         <ThreeColsLayout>
@@ -506,6 +517,33 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
             ))}
           </svg>
         </ConnectionLinesWrapper>
+      )}
+      {creationError && (
+        <Modal
+          visible={creationError !== null}
+          okText="Close"
+          cancelText=""
+          onOk={() => setCreationError(null)}
+          width={450}
+          closeIcon={
+            <CloseIcon
+              type="LargeClose"
+              onClick={() => setCreationError(null)}
+            />
+          }
+        >
+          <ErrorModal>
+            <h2>Sorry! We failed to save your configuration</h2>
+            <p>{creationError}</p>
+            <div>
+              <Button type="primary" onClick={() => window.location.reload()}>
+                Start over
+              </Button>
+              <p>or</p>
+              <Link to="/configurations">Go back to configurations list</Link>
+            </div>
+          </ErrorModal>
+        </Modal>
       )}
     </>
   );
