@@ -1,0 +1,29 @@
+---
+id: pointcloud-classification
+title: Pointcloud render classes
+description: CognitePointCloudModel example for render classes
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+<DemoWrapper
+  name="Cognite3DViewerDemo"
+  ids={{ modelId: 8876052652573398, revisionId: 3969540806112351 }}
+/>
+
+```js runnable
+// import { WellKnownAsprsPointClassCodes } from '@cognite/reveal'
+
+const modelClasses = model.getClasses();
+
+// specify classes you want to be displayed
+const classesToShow = [
+  WellKnownAsprsPointClassCodes.HighWegetation,
+  WellKnownAsprsPointClassCodes.Ground,
+];
+
+// show only selected classes, hide all the others
+modelClasses.forEach((classCode) => {
+  model.setClassVisible(classCode, classesToShow.includes(classCode));
+});
+```

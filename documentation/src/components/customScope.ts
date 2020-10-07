@@ -2,7 +2,7 @@ import { Water } from 'three/examples/jsm/objects/Water';
 import { resetViewerEventHandlers } from '../viewerUtilities';
 import * as THREE from 'three';
 
-const reveal = typeof window === "undefined" ? {} : require('@cognite/reveal');
+const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal');
 
 export const customScope: Record<string, any> = {
   resetViewerEventHandlers,
@@ -13,5 +13,10 @@ export const customScope: Record<string, any> = {
     skyUrl: '/img/sky007.jpg',
   },
   PotreePointShape: reveal.PotreePointShape,
-  PotreePointColorType: reveal.PotreePointColorType
+  PotreePointColorType: reveal.PotreePointColorType,
+
+  // new in 1.2
+  ...(reveal.WellKnownAsprsPointClassCodes && {
+    WellKnownAsprsPointClassCodes: reveal.WellKnownAsprsPointClassCodes,
+  }),
 };

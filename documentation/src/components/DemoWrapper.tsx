@@ -32,12 +32,12 @@ const components: Record<string, ComponentType<DemoProps>> = {
 // also we can use 3ddemo instead of publicdata so here is .env file to help with it
 export function DemoWrapper({
   name,
-  model,
+  ids,
   modelType,
   ...rest
 }: {
   name: string;
-  model?: { id: number; revisionId: number };
+  ids?: { modelId: number; revisionId: number };
   modelType?: string;
   [key: string]: any; // any other props that might be bypassed to specific Demo
 }) {
@@ -49,7 +49,8 @@ export function DemoWrapper({
     throw new Error(`Demo component with the name "${name}" is not found.`);
   }
 
-  let ids = model || modelType === 'pointcloud' ? env.pointCloud : env.cad;
+  let modelAndRevisionIds =
+    ids || (modelType === 'pointcloud' ? env.pointCloud : env.cad);
 
   return (
     <DemoContainer id="demo-wrapper">
@@ -59,8 +60,8 @@ export function DemoWrapper({
             <LazyComponent
               client={client}
               {...rest}
-              modelId={ids.modelId}
-              revisionId={ids.revisionId}
+              modelId={modelAndRevisionIds.modelId}
+              revisionId={modelAndRevisionIds.revisionId}
             />
           )}
         </DemoLoginCover>

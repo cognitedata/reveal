@@ -32,6 +32,7 @@ module.exports = {
         'examples/cad-nodefiltering',
         'examples/cad-preview',
         'examples/pointcloud',
+        'examples/pointcloud-classification',
       ],
     },
     {
@@ -42,10 +43,10 @@ module.exports = {
       type: 'doc',
       id: 'API Reference' /* must be generated before start or build */,
     },
-    { 
+    {
       type: 'link',
-      href: 'https://github.com/cognitedata/reveal/releases', 
-      label: 'Release notes' 
-    }
+      href: 'https://github.com/cognitedata/reveal/releases',
+      label: 'Release notes',
+    },
   ],
 };
