@@ -104,45 +104,47 @@ function selectColumns(
   columnNames: string[]
 ): ColumnsType<DataTransferObject> {
   const results: ColumnsType<DataTransferObject> = [];
-  Object.keys(dataTransferObjects[0]).forEach((key) => {
-    if (
-      (columnNames.length === 0 || columnNames.includes(key)) &&
-      !config.ignoreColumns.includes(key)
-    ) {
-      results.push({
-        title: getMappedColumnName(key),
-        dataIndex: key,
-        key,
-        sorter: !config.nonSortableColumns.includes(key)
-          ? (a, b) => (a[key] < b[key] ? -1 : 1)
-          : false,
-        filters: config.filterableColumns.includes(key)
-          ? createFiltersArrayForColumn(dataTransferObjects, key)
-          : undefined,
-        onFilter: (value, record) => {
-          return record[key]?.includes(value);
-        },
-        width: key === 'status' ? 70 : undefined,
-        render: (value) => {
-          if (key === 'status') {
-            let color = Colors['greyscale-grey3'].hex();
-            if (value === apiStatuses.Failed) {
-              color = Colors.danger.hex();
-            } else if (value === apiStatuses.Succeeded) {
-              color = Colors.success.hex();
-            } else if (value === apiStatuses.InProgress) {
-              color = Colors.yellow.hex();
+  if (dataTransferObjects.length > 0) {
+    Object.keys(dataTransferObjects[0]).forEach((key) => {
+      if (
+        (columnNames.length === 0 || columnNames.includes(key)) &&
+        !config.ignoreColumns.includes(key)
+      ) {
+        results.push({
+          title: getMappedColumnName(key),
+          dataIndex: key,
+          key,
+          sorter: !config.nonSortableColumns.includes(key)
+            ? (a, b) => (a[key] < b[key] ? -1 : 1)
+            : false,
+          filters: config.filterableColumns.includes(key)
+            ? createFiltersArrayForColumn(dataTransferObjects, key)
+            : undefined,
+          onFilter: (value, record) => {
+            return record[key]?.includes(value);
+          },
+          width: key === 'status' ? 70 : undefined,
+          render: (value) => {
+            if (key === 'status') {
+              let color = Colors['greyscale-grey3'].hex();
+              if (value === apiStatuses.Failed) {
+                color = Colors.danger.hex();
+              } else if (value === apiStatuses.Succeeded) {
+                color = Colors.success.hex();
+              } else if (value === apiStatuses.InProgress) {
+                color = Colors.yellow.hex();
+              }
+              return <StatusDot bgColor={color} />;
             }
-            return <StatusDot bgColor={color} />;
-          }
-          if (key === 'id') {
-            return value;
-          }
-          return getFormattedTimestampOrString(value);
-        },
-      });
-    }
-  });
+            if (key === 'id') {
+              return value;
+            }
+            return getFormattedTimestampOrString(value);
+          },
+        });
+      }
+    });
+  }
   return results;
 }
 
@@ -311,9 +313,11 @@ const DataTransfers: React.FC = () => {
 
   function getColumnNames(dataTransferObjects: DataTransferObject[]): string[] {
     const results: string[] = [];
-    Object.keys(dataTransferObjects[0]).forEach((k) => {
-      results.push(k);
-    });
+    if (dataTransferObjects.length > 0) {
+      Object.keys(dataTransferObjects[0]).forEach((k) => {
+        results.push(k);
+      });
+    }
     return results;
   }
 
