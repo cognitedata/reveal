@@ -27,14 +27,12 @@ export const AssetSmallPreview = ({
 
   const { data: assetFiles } = useList<FileInfo>(
     'files',
-    10,
-    { assetSubtreeIds: [{ id: assetId }] },
+    { filter: { assetSubtreeIds: [{ id: assetId }] }, limit: 10 },
     { enabled: isFetched }
   );
   const { data: assetTimeseries } = useList<Timeseries>(
     'timeseries',
-    100,
-    { assetSubtreeIds: [{ id: assetId }] },
+    { filter: { assetSubtreeIds: [{ id: assetId }] }, limit: 100 },
     { enabled: isFetched }
   );
 
