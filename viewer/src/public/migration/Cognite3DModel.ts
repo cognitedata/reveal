@@ -426,10 +426,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     b: number,
     applyToChildren = false
   ): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     const color: [number, number, number] = [r, g, b];
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, true);
-      treeIndices.forEach(idx => this.nodeColors.set(idx, color));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.nodeColors.set(idx, color);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -456,9 +461,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async resetNodeColorByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.nodeColors.delete(idx));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.nodeColors.delete(idx);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -510,9 +520,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise with a number of selected tree indices.
    */
   async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.selectedNodes.add(idx));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.selectedNodes.add(idx);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -537,9 +552,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.selectedNodes.delete(idx));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.selectedNodes.delete(idx);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -570,9 +590,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     transform: THREE.Matrix4,
     applyToChildren = true
   ): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.nodeTransforms.set(idx, transform));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.nodeTransforms.set(idx, transform);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -589,9 +614,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren = true): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.nodeTransforms.delete(idx));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.nodeTransforms.delete(idx);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -610,9 +640,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise that resolves to the number of affected nodes.
    */
   async ghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.ghostedNodes.add(idx));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.ghostedNodes.add(idx);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -630,9 +665,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise that resolves to the number of affected nodes.
    */
   async unghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.ghostedNodes.delete(idx));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.ghostedNodes.delete(idx);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
@@ -689,9 +729,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Number of nodes affected.
    */
   async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    // Note! There's a lot of code duplication in this function. This is done because
+    // all our efforts into trying to share code here has reduced it's performance.
+    // Since performance is key for this function we've decided to duplicate code.
     if (applyToChildren) {
       const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(idx => this.hiddenNodes.delete(idx));
+      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
+        this.hiddenNodes.delete(idx);
+      }
       this.updateNodeStyle(treeIndices);
       return treeIndices.count;
     } else {
