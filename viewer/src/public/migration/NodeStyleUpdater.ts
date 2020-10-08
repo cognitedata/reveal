@@ -8,12 +8,12 @@ import { NumericRange } from '@/utilities';
  * node apperance being updated unnecessary much.
  */
 export class NodeStyleUpdater {
-  private readonly updateNodesApperanceCb: (treeIndices: number[]) => void;
+  private readonly updateNodesApperanceCallback: (treeIndices: number[]) => void;
   private readonly toBeUpdatedTreeIndices: Set<number> = new Set();
   private updateHandle: ReturnType<typeof setTimeout> | undefined;
 
-  constructor(updateNodesApperanceCb: (treeIndices: number[]) => void) {
-    this.updateNodesApperanceCb = updateNodesApperanceCb;
+  constructor(updateNodesApperanceCallback: (treeIndices: number[]) => void) {
+    this.updateNodesApperanceCallback = updateNodesApperanceCallback;
   }
 
   /**
@@ -63,7 +63,7 @@ export class NodeStyleUpdater {
         const treeIndices = Array.from(this.toBeUpdatedTreeIndices);
         treeIndices.sort((a, b) => a - b);
         this.toBeUpdatedTreeIndices.clear();
-        this.updateNodesApperanceCb(treeIndices);
+        this.updateNodesApperanceCallback(treeIndices);
         this.updateHandle = undefined;
       }, 0);
     }
