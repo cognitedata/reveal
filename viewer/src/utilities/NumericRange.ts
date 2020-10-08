@@ -2,8 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
-
 export class NumericRange {
   readonly from: number;
   readonly count: number;
