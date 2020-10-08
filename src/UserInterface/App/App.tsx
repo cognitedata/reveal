@@ -45,7 +45,8 @@ export function App() {
   syntheticModule.addSeismicCube(
     new CogniteSeismicClient({
       api_url: process.env.API_URL || "",
-      api_key: process.env.API_KEY || "", debug: true
+      api_key: process.env.API_KEY || "",
+      debug: true,
     }),
     process.env.FILE_ID || ""
   );
