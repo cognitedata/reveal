@@ -427,7 +427,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     applyToChildren = false
   ): Promise<number> {
     const color: [number, number, number] = [r, g, b];
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.nodeColors.set(idx, color));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, true);
+      treeIndices.forEach(idx => this.nodeColors.set(idx, color));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.nodeColors.set(treeIndex, color);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -447,7 +456,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async resetNodeColorByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.nodeColors.delete(idx));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.nodeColors.delete(idx));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.nodeColors.delete(treeIndex);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -492,7 +510,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise with a number of selected tree indices.
    */
   async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.selectedNodes.add(idx));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.selectedNodes.add(idx));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.selectedNodes.add(treeIndex);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -510,7 +537,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.selectedNodes.delete(idx));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.selectedNodes.delete(idx));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.selectedNodes.delete(treeIndex);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -534,7 +570,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     transform: THREE.Matrix4,
     applyToChildren = true
   ): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.nodeTransforms.set(idx, transform));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.nodeTransforms.set(idx, transform));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.nodeTransforms.set(treeIndex, transform);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -544,7 +589,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren = true): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.nodeTransforms.delete(idx));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.nodeTransforms.delete(idx));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.nodeTransforms.delete(treeIndex);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -556,7 +610,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise that resolves to the number of affected nodes.
    */
   async ghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.ghostedNodes.add(idx));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.ghostedNodes.add(idx));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.ghostedNodes.add(treeIndex);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -567,7 +630,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise that resolves to the number of affected nodes.
    */
   async unghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.ghostedNodes.delete(idx));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.ghostedNodes.delete(idx));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.ghostedNodes.delete(treeIndex);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -617,7 +689,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Number of nodes affected.
    */
   async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.hiddenNodes.delete(idx));
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+      treeIndices.forEach(idx => this.hiddenNodes.delete(idx));
+      this.updateNodeStyle(treeIndices);
+      return treeIndices.count;
+    } else {
+      this.hiddenNodes.delete(treeIndex);
+      this.updateNodeStyle(treeIndex);
+      return 1;
+    }
   }
 
   /**
@@ -668,7 +749,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
-    return this.applyNodeStyling(treeIndex, applyToChildren, idx => this.hiddenNodes.add(idx));
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.hiddenNodes.add(idx));
+    this.updateNodeStyle(treeIndices);
+    return treeIndices.count;
   }
 
   /**
@@ -742,30 +826,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       this.nodeStyleUpdater.triggerUpdateArray(treeIndices);
     } else {
       this.nodeStyleUpdater.triggerUpdateSingle(treeIndices);
-    }
-  }
-
-  /**
-   * Apply node styling to the tree index given and it's descendants, if applyToChildren
-   * is true.
-   * @param treeIndex
-   * @param applyToChildren
-   * @param applyChangeToTreeIndexCb Callback to apply a given change.
-   */
-  private async applyNodeStyling(
-    treeIndex: number,
-    applyToChildren: boolean,
-    applyChangeToTreeIndexCb: (treeIndex: number) => void
-  ): Promise<number> {
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      treeIndices.forEach(applyChangeToTreeIndexCb);
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      applyChangeToTreeIndexCb(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
     }
   }
 }
