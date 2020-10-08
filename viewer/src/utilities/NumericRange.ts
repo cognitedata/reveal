@@ -2,8 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
-
 export class NumericRange {
   readonly from: number;
   readonly count: number;
@@ -33,7 +31,9 @@ export class NumericRange {
     return value >= this.from && value <= this.toInclusive;
   }
 
-  async forEach(action: (value: number) => any): Promise<void> {
-    return callActionWithIndicesAsync(this.from, this.toInclusive, action);
+  forEach(action: (value: number) => void): void {
+    for (let i = this.from; i <= this.toInclusive; ++i) {
+      action(i);
+    }
   }
 }
