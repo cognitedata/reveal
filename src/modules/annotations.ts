@@ -1,54 +1,30 @@
-import { Action, combineReducers, AnyAction } from 'redux';
+import { Action, combineReducers } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RootState } from 'reducers';
 import produce from 'immer';
-import unionBy from 'lodash/unionBy';
-import { FileInfo, Asset } from '@cognite/sdk';
+import { FileInfo } from '@cognite/sdk';
 import { createSelector } from 'reselect';
 import {
   CogniteAnnotation,
-  listAnnotationsForFile,
+  // listAnnotationsForFile,
   PendingCogniteAnnotation,
   createAnnotations,
   deleteAnnotations,
   clearAnnotationsForFile,
-  listFilesAnnotatedWithAssetId,
-  linkFileToAssetIds,
+  // listFilesAnnotatedWithAssetId,
+  // linkFileToAssetIds,
   hardDeleteAnnotations,
 } from '@cognite/annotations';
-import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
-import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
+// import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
+// import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
 import { ApiCall } from '@cognite/cdf-resources-store';
 import { getSDK } from 'utils/SDK';
 
-const LIST_ANNOTATIONS = 'annotations/LIST_ANNOTATIONS';
-const LIST_ANNOTATIONS_DONE = 'annotations/LIST_ANNOTATIONS_DONE';
 const CREATE_ANNOTATIONS_DONE = 'annotations/CREATE_ANNOTATIONS_DONE';
-const LIST_ANNOTATIONS_ERROR = 'annotations/LIST_ANNOTATIONS_ERROR';
-
-const LIST_FILES_LINKED_TO_ASSET = 'annotations/LIST_FILES_LINKED_TO_ASSET';
-const LIST_FILES_LINKED_TO_ASSET_DONE =
-  'annotations/LIST_FILES_LINKED_TO_ASSET_DONE';
-const LIST_FILES_LINKED_TO_ASSET_ERROR =
-  'annotations/LIST_FILES_LINKED_TO_ASSET_ERROR';
 const CREATE_ANNOTATIONS_ERROR = 'annotations/CREATE_ANNOTATIONS_ERROR';
 const DELETE_ANNOTATIONS_DONE = 'annotations/DELETE_ANNOTATIONS_DONE';
 const DELETE_ANNOTATIONS_ERROR = 'annotations/DELETE_ANNOTATIONS_ERROR';
 
-interface ListAnnotationAction extends Action<typeof LIST_ANNOTATIONS> {
-  fileId: number;
-}
-
-interface ListAnnotationDoneAction
-  extends Action<typeof LIST_ANNOTATIONS_DONE> {
-  fileId: number;
-  shouldClear: boolean;
-  annotations: CogniteAnnotation[];
-}
-interface ListAnnotationErrorAction
-  extends Action<typeof LIST_ANNOTATIONS_ERROR> {
-  fileId: number;
-}
 interface CreateAnnotationDoneAction
   extends Action<typeof CREATE_ANNOTATIONS_DONE> {
   fileId: number;
@@ -56,11 +32,6 @@ interface CreateAnnotationDoneAction
 }
 interface CreateAnnotationErrorAction
   extends Action<typeof CREATE_ANNOTATIONS_ERROR> {}
-
-interface ListAnnotationErrorAction
-  extends Action<typeof LIST_ANNOTATIONS_ERROR> {
-  fileId: number;
-}
 
 interface DeleteAnnotationDoneAction
   extends Action<typeof DELETE_ANNOTATIONS_DONE> {
@@ -71,83 +42,10 @@ interface DeleteAnnotationErrorAction
   extends Action<typeof DELETE_ANNOTATIONS_ERROR> {}
 
 type AnnotationActions =
-  | ListAnnotationAction
-  | ListAnnotationDoneAction
   | CreateAnnotationErrorAction
   | DeleteAnnotationErrorAction
   | DeleteAnnotationDoneAction
-  | CreateAnnotationDoneAction
-  | ListAnnotationErrorAction;
-
-interface ListFileLinkedToAssetAction
-  extends Action<typeof LIST_FILES_LINKED_TO_ASSET> {
-  assetId: number;
-}
-
-interface ListFileLinkedToAssetErrorAction
-  extends Action<typeof LIST_FILES_LINKED_TO_ASSET_ERROR> {
-  assetId: number;
-}
-
-interface ListFileLinkedToAssetDoneAction
-  extends Action<typeof LIST_FILES_LINKED_TO_ASSET_DONE> {
-  assetId: number;
-  files: FileInfo[];
-}
-
-type ListFilesLinkedToAssetActions =
-  | ListFileLinkedToAssetAction
-  | ListFileLinkedToAssetErrorAction
-  | ListFileLinkedToAssetDoneAction;
-
-export function listByFileId(
-  fileId: number | string,
-  shouldClear = true,
-  includeDeleted = false
-) {
-  return async (
-    dispatch: ThunkDispatch<any, any, AnnotationActions>,
-    getState: () => RootState
-  ) => {
-    const file = fileSelector(getState())(fileId);
-    if (file) {
-      dispatch(list(file, shouldClear, includeDeleted));
-    }
-  };
-}
-
-export function list(
-  file: FileInfo,
-  shouldClear = true,
-  includeDeleted = false
-) {
-  return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
-    const sdk = getSDK();
-    dispatch({
-      type: LIST_ANNOTATIONS,
-      fileId: file.id,
-    });
-    try {
-      const annotations = await listAnnotationsForFile(
-        sdk,
-        file,
-        includeDeleted
-      );
-
-      dispatch({
-        type: LIST_ANNOTATIONS_DONE,
-        fileId: file.id,
-        shouldClear,
-        annotations,
-      });
-    } catch (e) {
-      dispatch({
-        type: LIST_ANNOTATIONS_ERROR,
-        fileId: file.id,
-      });
-    }
-  };
-}
+  | CreateAnnotationDoneAction;
 
 export function create(
   file: FileInfo,
@@ -231,63 +129,6 @@ export function hardDeleteAnnotationsForFile(file: FileInfo) {
   };
 }
 
-export function listFilesLinkedToAsset(assetId: number) {
-  return async (
-    dispatch: ThunkDispatch<any, any, AnyAction>,
-    getState: () => RootState
-  ) => {
-    const sdk = getSDK();
-    dispatch({
-      type: LIST_FILES_LINKED_TO_ASSET,
-      assetId,
-    });
-    const asset = assetSelector(getState())(assetId);
-    if (!asset) {
-      return;
-    }
-    try {
-      const files = await listFilesAnnotatedWithAssetId(sdk, asset);
-
-      dispatch({
-        type: 'files/UPDATE_ITEMS',
-        result: files,
-        ids: files.map(el => ({ id: el.id })),
-      });
-      dispatch({
-        type: LIST_FILES_LINKED_TO_ASSET_DONE,
-        assetId,
-        files,
-      });
-    } catch (e) {
-      dispatch({
-        type: LIST_FILES_LINKED_TO_ASSET_ERROR,
-        assetId,
-      });
-    }
-  };
-}
-
-export function linkFileWithAssetsFromAnnotations(fileId: number) {
-  return async (
-    dispatch: ThunkDispatch<any, any, AnyAction>,
-    getState: () => RootState
-  ) => {
-    const sdk = getSDK();
-    const annotations = getState().annotations.byFileId[fileId];
-    if (annotations) {
-      const updatedFile = await linkFileToAssetIds(
-        sdk,
-        annotations.annotations
-      );
-
-      dispatch({
-        type: 'files/UPDATE_ITEMS',
-        result: [updatedFile],
-      });
-    }
-  };
-}
-
 interface AnnotationResult extends ApiCall {
   annotations: CogniteAnnotation[];
 }
@@ -319,39 +160,12 @@ const annotationsDefaultState: AnnotationResult = {
   annotations: [],
 };
 
-const linkedFilesDefaultState: LinkedFilesResult = {
-  ...defaultState,
-  fileIds: [],
-};
-
 function byFileIdAnnotationReducer(
   state: AnnotationByIdStore = {},
   action: AnnotationActions
 ): AnnotationByIdStore {
   return produce(state, draft => {
     switch (action.type) {
-      case LIST_ANNOTATIONS: {
-        draft[action.fileId] = {
-          ...(draft[action.fileId] || annotationsDefaultState),
-          fetching: true,
-        };
-        break;
-      }
-
-      case LIST_ANNOTATIONS_DONE: {
-        draft[action.fileId] = {
-          ...(draft[action.fileId] || annotationsDefaultState),
-        };
-        const currentAnnotations = draft[action.fileId]
-          ? draft[action.fileId].annotations || []
-          : [];
-        draft[action.fileId].done = true;
-        draft[action.fileId].fetching = false;
-        draft[action.fileId].annotations = action.shouldClear
-          ? action.annotations
-          : unionBy(currentAnnotations, action.annotations, 'id');
-        break;
-      }
       case CREATE_ANNOTATIONS_DONE: {
         if (!draft[action.fileId]) {
           draft[action.fileId] = {
@@ -377,147 +191,18 @@ function byFileIdAnnotationReducer(
         });
         break;
       }
-
-      case LIST_ANNOTATIONS_ERROR: {
-        draft[action.fileId] = {
-          ...(draft[action.fileId] || annotationsDefaultState),
-        };
-        draft[action.fileId].done = true;
-        draft[action.fileId].error = true;
-        draft[action.fileId].fetching = false;
-        break;
-      }
     }
   });
-}
-function byAssetIdAnnotationReducer(
-  state: LinkedFilesByIdStore = {},
-  action: ListFilesLinkedToAssetActions
-): LinkedFilesByIdStore {
-  switch (action.type) {
-    case LIST_FILES_LINKED_TO_ASSET: {
-      return {
-        ...state,
-        [action.assetId]: {
-          ...(state[action.assetId] || linkedFilesDefaultState),
-          fetching: true,
-        },
-      };
-    }
-
-    case LIST_FILES_LINKED_TO_ASSET_DONE: {
-      return {
-        ...state,
-        [action.assetId]: {
-          ...(state[action.assetId] || linkedFilesDefaultState),
-          done: true,
-          fetching: false,
-          fileIds: action.files.map(el => el.id),
-        },
-      };
-    }
-
-    case LIST_FILES_LINKED_TO_ASSET_ERROR: {
-      return {
-        ...state,
-        [action.assetId]: {
-          ...(state[action.assetId] || linkedFilesDefaultState),
-          done: true,
-          error: true,
-          fetching: false,
-        },
-      };
-    }
-
-    default: {
-      return state;
-    }
-  }
 }
 
 const reducer = combineReducers({
   byFileId: byFileIdAnnotationReducer,
-  byAssetId: byAssetIdAnnotationReducer,
 });
 export default reducer;
 
 // Selectors
 
-export const linkedFilesSelectorByAssetId = createSelector(
-  (state: RootState) => state.annotations.byAssetId,
-  fileSelector,
-  (assetIdMap, files) => (assetId: number | undefined) => {
-    if (!assetId || !assetIdMap[assetId]) {
-      return {
-        ...linkedFilesDefaultState,
-        fileIds: [],
-        files: [],
-      };
-    }
-    const { fileIds } = assetIdMap[assetId];
-    return {
-      ...assetIdMap[assetId],
-      files: (fileIds || [])
-        .map(id => files(id))
-        .filter(el => !!el) as FileInfo[],
-    };
-  }
-);
-export const linkedFilesSelectorByFileId = createSelector(
-  (state: RootState) => state.annotations.byFileId,
-  fileSelector,
-  (annotationsMap, filesMap) => (fileId: number | undefined) => {
-    if (!fileId || !annotationsMap || !annotationsMap[fileId]) {
-      return {
-        ...linkedFilesDefaultState,
-        fileIds: [] as (string | number)[],
-        files: [],
-      };
-    }
-    const { annotations } = annotationsMap[fileId];
-    const fileIdsSet = new Set<number | string>();
-    annotations.forEach(el => {
-      if (el.resourceType === 'file') {
-        fileIdsSet.add(el.resourceExternalId || el.resourceId!);
-      }
-    });
-    const fileIds = [...fileIdsSet];
-    return {
-      ...annotationsMap[fileId],
-      fileIds,
-      files: fileIds.map(id => filesMap(id)).filter(el => !!el) as FileInfo[],
-    };
-  }
-);
-
-export const linkedAssetsSelector = createSelector(
-  (state: RootState) => state.annotations.byFileId,
-  assetSelector,
-  (fileIdMap, assetIdMap) => (fileId: number | undefined) => {
-    if (!fileId || !fileIdMap[fileId]) {
-      return {
-        ...annotationsDefaultState,
-        assetIds: [],
-        assets: [],
-      };
-    }
-    const { annotations } = fileIdMap[fileId];
-    const assetIdsMap = new Set<number | string>();
-    annotations.forEach(el => {
-      if (el.resourceType === 'asset') {
-        assetIdsMap.add(el.resourceExternalId || el.resourceId!);
-      }
-    });
-    const assetIds = [...assetIdsMap];
-    return {
-      ...fileIdMap[fileId],
-      assetIds,
-      assets: assetIds.map(id => assetIdMap(id)).filter(el => !!el) as Asset[],
-    };
-  }
-);
-
-export const selectAnnotations = createSelector(
+const selectAnnotations = createSelector(
   (state: RootState) => state.annotations.byFileId,
   annotationMap => (fileId?: number, includeDeleted = false) => {
     if (!fileId) {
@@ -528,17 +213,5 @@ export const selectAnnotations = createSelector(
       return items;
     }
     return items.filter(el => el.status !== 'deleted');
-  }
-);
-
-export const selectAnnotationsForSource = createSelector(
-  selectAnnotations,
-  annotationSelector => (
-    fileId: number,
-    source: string,
-    includeDeleted = false
-  ) => {
-    const items = annotationSelector(fileId, includeDeleted);
-    return items.filter(el => el.source === source);
   }
 );

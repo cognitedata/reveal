@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@babel/runtime": "^7.11.2",
-    "@cognite/annotations": "^1.0.3",
+    "@cognite/annotations": "^0.4.0",
     "@cognite/cdf-resources-store": "^0.0.2",
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "^1.21.3",

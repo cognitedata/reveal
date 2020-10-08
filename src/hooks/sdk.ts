@@ -102,9 +102,15 @@ export const useCdfItems = <T>(
 ) => {
   const sdk = useContext(SdkContext)!;
 
+  const sortedIds = ids
+    .filter((i: any) => !!i.id || !!i.externalId)
+    .sort((a: any, b: any) =>
+      `${a?.id}${a?.externalId}`.localeCompare(`${b?.id}${b?.externalId}`)
+    );
+
   return useQuery<T[], Error>(
-    retrieveItemsKey(type, ids),
-    () => post(sdk, `/${type}/byids`, { items: ids }),
+    retrieveItemsKey(type, sortedIds),
+    () => post(sdk, `/${type}/byids`, { items: sortedIds }).then(d => d?.items),
     config
   );
 };
@@ -149,14 +155,10 @@ const searchApi = (
   query: string,
   filter?: any
 ) => {
-  return sdk
-    .post(`/api/v1/projects/${sdk.project}/${type}/search`, {
-      data: {
-        ...filter,
-        search: getSearchArgs(type, query),
-      },
-    })
-    .then(r => r.data?.items);
+  return post(sdk, `/${type}/search`, {
+    ...filter,
+    search: getSearchArgs(type, query),
+  }).then(r => r?.items);
 };
 
 export const useSearch = <T>(

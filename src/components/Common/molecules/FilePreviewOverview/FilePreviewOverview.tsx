@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
   Input,
@@ -20,38 +20,11 @@ import {
   Sequence,
   CogniteEvent,
 } from '@cognite/sdk';
-import {
-  useResourcesDispatch,
-  useResourcesSelector,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector as fileSelector,
-  retrieve as retrieveFile,
-  retrieveExternal as retrieveExternalFile,
-} from '@cognite/cdf-resources-store/dist/files';
-import {
-  itemSelector as assetSelector,
-  retrieve as retrieveAsset,
-  retrieveExternal as retrieveExternalAsset,
-} from '@cognite/cdf-resources-store/dist/assets';
-import {
-  itemSelector as timeseriesSelector,
-  retrieve as retrieveTimeSeries,
-  retrieveExternal as retrieveExternalTimeSeries,
-} from '@cognite/cdf-resources-store/dist/timeseries';
-import {
-  itemSelector as eventSelector,
-  retrieve as retrieveEvent,
-  retrieveExternal as retrieveExternalEvent,
-} from '@cognite/cdf-resources-store/dist/events';
-import {
-  itemSelector as sequenceSelector,
-  retrieve as retrieveSequence,
-  retrieveExternal as retrieveExternalSequence,
-} from '@cognite/cdf-resources-store/dist/sequences';
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { useViewerQuery } from '@cognite/react-picture-annotation';
+import { useCdfItems } from 'hooks/sdk';
+import { getIdParam } from 'helpers';
 import {
   AssetItem,
   EventItem,
@@ -163,7 +136,6 @@ export const FilePreviewOverview = ({
   onEventClicked,
   onSequenceClicked,
 }: FilePreviewOverviewProps) => {
-  const dispatch = useResourcesDispatch();
   const { query, setQuery } = useViewerQuery();
   const { openPreview } = useResourcePreview();
   const [currentTab, setTab] = useState('resources');
@@ -219,114 +191,39 @@ export const FilePreviewOverview = ({
   });
 
   const fileIds = Array.from(categorizedAnnotations.file.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveFile(
-        (fileIds.filter(el => typeof el === 'number') as number[]).map(id => ({
-          id,
-        }))
-      )
-    );
-    dispatch(
-      retrieveExternalFile(
-        (fileIds.filter(el => typeof el === 'string') as string[]).map(
-          externalId => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, fileIds]);
+  const { data: files = [] } = useCdfItems<FileInfo>(
+    'files',
+    fileIds.map(getIdParam),
+    { enabled: fileIds && fileIds.length > 0 }
+  );
 
   const assetIds = Array.from(categorizedAnnotations.asset.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveAsset(
-        (assetIds.filter(el => typeof el === 'number') as number[]).map(id => ({
-          id,
-        }))
-      )
-    );
-    dispatch(
-      retrieveExternalAsset(
-        (assetIds.filter(el => typeof el === 'string') as string[]).map(
-          externalId => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, assetIds]);
+  const { data: assets = [] } = useCdfItems<Asset>(
+    'assets',
+    assetIds.map(getIdParam),
+    { enabled: assetIds && assetIds.length > 0 }
+  );
 
   const timeseriesIds = Array.from(categorizedAnnotations.timeSeries.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveTimeSeries(
-        (timeseriesIds.filter(el => typeof el === 'number') as number[]).map(
-          id => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalTimeSeries(
-        (timeseriesIds.filter(el => typeof el === 'string') as string[]).map(
-          externalId => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, timeseriesIds]);
+  const { data: timeseries = [] } = useCdfItems<Timeseries>(
+    'timeseries',
+    timeseriesIds.map(getIdParam),
+    { enabled: timeseriesIds && timeseriesIds.length > 0 }
+  );
 
   const eventIds = Array.from(categorizedAnnotations.event.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveEvent(
-        (eventIds.filter(el => typeof el === 'number') as number[]).map(id => ({
-          id,
-        }))
-      )
-    );
-    dispatch(
-      retrieveExternalEvent(
-        (eventIds.filter(el => typeof el === 'string') as string[]).map(
-          externalId => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, eventIds]);
+  const { data: events = [] } = useCdfItems<CogniteEvent>(
+    'events',
+    eventIds.map(getIdParam),
+    { enabled: eventIds && eventIds.length > 0 }
+  );
 
   const sequenceIds = Array.from(categorizedAnnotations.sequence.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveSequence(
-        (sequenceIds.filter(el => typeof el === 'number') as number[]).map(
-          id => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalSequence(
-        (sequenceIds.filter(el => typeof el === 'string') as string[]).map(
-          externalId => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, sequenceIds]);
-
-  const getAsset = useResourcesSelector(assetSelector);
-  const getTimeseries = useResourcesSelector(timeseriesSelector);
-  const getFile = useResourcesSelector(fileSelector);
-  const getSequence = useResourcesSelector(sequenceSelector);
-  const getEvent = useResourcesSelector(eventSelector);
+  const { data: sequences = [] } = useCdfItems<Sequence>(
+    'sequences',
+    sequenceIds.map(getIdParam),
+    { enabled: sequenceIds && sequenceIds.length > 0 }
+  );
 
   const renderDetectedResources = () => {
     return (
@@ -363,21 +260,11 @@ export const FilePreviewOverview = ({
             }
           >
             <div>
-              {assetIds.map(id => {
-                const asset = getAsset(id);
-                if (asset && query.length > 0) {
-                  if (
-                    `${asset.name}${asset.description}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
+              {assets.map(asset => {
                 return (
                   <FilePreviewOverview.AssetItem
                     onItemClick={() => asset && onAssetClickedCallback(asset)}
-                    key={id}
+                    key={asset.id}
                     asset={asset}
                     currentPage={page}
                     query={query}
@@ -413,21 +300,11 @@ export const FilePreviewOverview = ({
             }
           >
             <div>
-              {fileIds.map(id => {
-                const linkedFile = getFile(id);
-                if (file && query.length > 0) {
-                  if (
-                    `${file!.name}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
+              {files.map(linkedFile => {
                 return (
                   <FilePreviewOverview.FileItem
                     onItemClick={() => file && onFileClickedCallback(file)}
-                    key={id}
+                    key={linkedFile.id}
                     file={linkedFile}
                     currentPage={page}
                     query={query}
@@ -463,32 +340,20 @@ export const FilePreviewOverview = ({
             }
           >
             <div>
-              {timeseriesIds.map(id => {
-                const timeseries = getTimeseries(id);
-                if (timeseries && query.length > 0) {
-                  if (
-                    `${timeseries.name}${timeseries.externalId}${timeseries.description}${timeseries.id}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
+              {timeseries.map(ts => {
                 return (
                   <FilePreviewOverview.TimeseriesItem
-                    onItemClick={() =>
-                      timeseries && onTimeseriesClickedCallback(timeseries)
-                    }
-                    key={id}
-                    timeseries={timeseries}
+                    onItemClick={() => ts && onTimeseriesClickedCallback(ts)}
+                    key={ts.id}
+                    timeseries={ts}
                     currentPage={page}
                     query={query}
                     annotations={categorizedAnnotations.timeSeries.annotations.filter(
                       el =>
-                        timeseries &&
-                        ((el.resourceId && el.resourceId === timeseries.id) ||
+                        ts &&
+                        ((el.resourceId && el.resourceId === ts.id) ||
                           (el.resourceExternalId &&
-                            el.resourceExternalId === timeseries.externalId))
+                            el.resourceExternalId === ts.externalId))
                     )}
                     selectPage={onPageChange}
                   />
@@ -515,21 +380,11 @@ export const FilePreviewOverview = ({
             }
           >
             <div>
-              {eventIds.map(id => {
-                const event = getEvent(id);
-                if (event && query.length > 0) {
-                  if (
-                    `${event.type}${event.subtype}${event.description}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
+              {events.map(event => {
                 return (
                   <FilePreviewOverview.EventItem
                     onItemClick={() => event && onEventClickedCallback(event)}
-                    key={id}
+                    key={event.id}
                     event={event}
                     currentPage={page}
                     query={query}
@@ -565,23 +420,13 @@ export const FilePreviewOverview = ({
             }
           >
             <div>
-              {sequenceIds.map(id => {
-                const sequence = getSequence(id);
-                if (sequence && query.length > 0) {
-                  if (
-                    `${sequence.name}${sequence.externalId}${sequence.description}${sequence.id}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
+              {sequences.map(sequence => {
                 return (
                   <FilePreviewOverview.SequenceItem
                     onItemClick={() =>
                       sequence && onSequenceClickedCallback(sequence)
                     }
-                    key={id}
+                    key={sequence.id}
                     sequence={sequence}
                     currentPage={page}
                     query={query}

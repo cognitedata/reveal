@@ -120,3 +120,10 @@ export async function boundedParallelRequests<T, K>(
 export const stuffForUnitTests = {
   oneAtATime,
 };
+
+export const getIdParam = (id: number | string) => {
+  if (typeof id === 'string') {
+    return { externalId: id };
+  }
+  return { id };
+};

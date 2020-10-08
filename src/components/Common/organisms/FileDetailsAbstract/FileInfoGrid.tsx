@@ -5,6 +5,8 @@ import { InfoGrid, DetailsItem, TimeDisplay } from 'components/Common';
 export const FileInfoGrid = ({ file }: { file: FileInfo }) => {
   return (
     <InfoGrid noBorders>
+      <DetailsItem name="ID" value={file.id} />
+      {file.externalId && <DetailsItem name="Source" value={file.externalId} />}
       <DetailsItem name="Source" value={file.source} />
       <DetailsItem name="MIME type" value={file.mimeType} />
       <DetailsItem

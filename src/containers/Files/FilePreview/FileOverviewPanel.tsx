@@ -4,7 +4,6 @@ import {
   useResourcesSelector,
   useResourcesDispatch,
 } from '@cognite/cdf-resources-store';
-import { itemSelector } from '@cognite/cdf-resources-store/dist/files';
 import { Button, Dropdown, Menu, Icon, AllIconTypes } from '@cognite/cogs.js';
 import { hardDeleteAnnotationsForFile } from 'modules/annotations';
 import {
@@ -23,9 +22,11 @@ import {
   detectObject,
   selectObjectJobForFile,
 } from 'modules/fileContextualization/objectDetectionJob';
+import { useCdfItem } from 'hooks/sdk';
+import { FileInfo } from '@cognite/sdk';
 
 type Props = {
-  fileId?: number;
+  fileId: number;
   pendingAnnotations: ProposedCogniteAnnotation[];
   setPendingAnnotations: (annos: ProposedCogniteAnnotation[]) => void;
   contextualization: boolean;
@@ -43,7 +44,8 @@ export const FileOverviewPanel = ({
 }: Props) => {
   const dispatch = useResourcesDispatch();
   const download = useDownloadPDF();
-  const file = useResourcesSelector(itemSelector)(fileId);
+
+  const { data: file } = useCdfItem<FileInfo>('files', fileId);
 
   const { page, setPage, annotations } = useContext(CogniteFileViewer.Context);
 

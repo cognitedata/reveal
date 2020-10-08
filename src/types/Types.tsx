@@ -35,6 +35,7 @@ export function convertResourceType(t: ResourceType): SdkResourceType {
 
 export type ResourceItem = {
   id: number;
+  externalId?: string;
   type: ResourceType;
 };
 

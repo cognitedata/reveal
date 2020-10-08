@@ -1377,6 +1377,13 @@
   dependencies:
     protobufjs "^6.8.8"
 
+"@cognite/annotations@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@cognite/annotations/-/annotations-0.4.0.tgz#3eb60c9c71ffb9a18da3227c3df12a225638c58a"
+  integrity sha512-yYV4WEIVN+vcopfpiACB4SBwhBFwIm5CYfsJmUVtlzYNsjsH+SwcKngm+0qujbrkKZv/U6aOOO+M5WKUuKST7w==
+  dependencies:
+    lodash "^4.17.20"
+
 "@cognite/annotations@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@cognite/annotations/-/annotations-1.0.3.tgz#bbd054e6058ef287c1bf1952ce3201afbc2bf0c2"
