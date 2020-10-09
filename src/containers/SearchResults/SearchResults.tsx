@@ -10,7 +10,7 @@ import { FileSearchResults, FileToolbar } from 'containers/Files';
 import { TimeseriesSearchResults } from 'containers/Timeseries';
 import { EventSearchResults } from 'containers/Events';
 import { SearchResultFilters } from './SearchResultFilters';
-import { ResourceFilters } from './Filters';
+import { ResourceTypeTabs } from './Filters';
 
 const Wrapper = styled.div`
   display: flex;
@@ -62,7 +62,7 @@ export const SearchResults = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {resourceTypes.length > 1 && (
-        <ResourceFilters
+        <ResourceTypeTabs
           currentResourceType={currentResourceType}
           setCurrentResourceType={setCurrentResourceType}
         />
