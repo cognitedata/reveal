@@ -47,17 +47,14 @@ const useClusterSelector = (appName: string) => {
     setValidatingCluster(true);
     return axios
       .get(`https://${cluster}.apps-api.cognite.ai/tenant`, {
-        params: { tenant, app: appName, cluster },
+        params: {
+          tenant,
+          app: appName,
+          redirectUrl: `https://${getNewDomain(cluster)}`,
+        },
       })
       .then(() => {
-        return axios
-          .get(`https://${getNewDomain(cluster)}`)
-          .then(() => {
-            return true;
-          })
-          .catch((e) => {
-            throw e;
-          });
+        return true;
       })
       .catch((e) => {
         throw e;
