@@ -4,17 +4,19 @@ import ResourceSelectionContext, {
   useResourceFilter,
 } from 'context/ResourceSelectionContext';
 import { ResourceType, convertResourceType } from 'types';
-import { Title } from '@cognite/cogs.js';
+import { Title, Tooltip } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
 
 import { OptionsType, OptionTypeBase } from 'react-select';
 import { useRelevantDatasets, useCdfItems, DataSetWCount } from 'hooks/sdk';
+import { usePermissions } from 'hooks/CustomHooks';
 
 export const DataSetFilters = ({
   resourceType,
 }: {
   resourceType: ResourceType;
 }) => {
+  const hasPermissions = usePermissions('datasetsAcl', 'READ');
   const filter = useResourceFilter(resourceType);
   const currentDataSetIds = filter?.dataSetIds || [];
   const { data: currentDataSets } = useCdfItems<DataSet>(
@@ -88,24 +90,30 @@ export const DataSetFilters = ({
   };
 
   return (
-    <>
-      <Title level={4} style={{ marginBottom: 12 }} className="title">
-        Data set
-      </Title>
-      <Select
-        options={validDatasets?.map(formatOption)}
-        onChange={value => {
-          setDataSetFilter(
-            value
-              ? (value as OptionsType<OptionTypeBase>).map(el => el.value)
-              : undefined
-          );
-        }}
-        value={currentDataSets?.map(el => ({ label: el.name, value: el.id }))}
-        isMulti
-        isSearchable
-        isClearable
-      />
-    </>
+    <Tooltip
+      disabled={hasPermissions}
+      content="You do not have access to data sets, please make sure you have datasetsAcl:READ"
+    >
+      <>
+        <Title level={4} style={{ marginBottom: 12 }} className="title">
+          Data set
+        </Title>
+        <Select
+          options={validDatasets?.map(formatOption)}
+          isDisabled={!hasPermissions}
+          onChange={value => {
+            setDataSetFilter(
+              value
+                ? (value as OptionsType<OptionTypeBase>).map(el => el.value)
+                : undefined
+            );
+          }}
+          value={currentDataSets?.map(el => ({ label: el.name, value: el.id }))}
+          isMulti
+          isSearchable
+          isClearable
+        />
+      </>
+    </Tooltip>
   );
 };
