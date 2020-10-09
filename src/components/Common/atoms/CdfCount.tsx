@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAggregate, SdkResourceType } from 'hooks/sdk';
+import { Badge, Colors } from '@cognite/cogs.js';
 
 type Props = {
   type: SdkResourceType;
@@ -9,7 +10,12 @@ type Props = {
 export const CdfCount = ({ type, filter }: Props) => {
   const { data, isFetched } = useAggregate(type, filter);
   if (isFetched) {
-    return <>{data?.count}</>;
+    return (
+      <Badge
+        text={`${data?.count}`}
+        background={Colors['greyscale-grey3'].hex()}
+      />
+    );
   }
   return null;
 };

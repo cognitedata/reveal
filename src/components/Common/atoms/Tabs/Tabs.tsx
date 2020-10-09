@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { SpacedRow } from 'components/Common';
-import { Button } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
+import styled, { css } from 'styled-components';
 
 export type TabsPane = {
   children: React.ReactElement<TabPaneProps>[];
@@ -27,7 +27,7 @@ export const Tabs = ({
 
   return (
     <>
-      <SpacedRow>
+      <HeaderWrapper>
         {tabs.map(el => {
           const key = el as typeof tabs[number];
 
@@ -35,13 +35,9 @@ export const Tabs = ({
             tab => tab.key === key
           )! as unknown) as React.ReactElement<TabPaneProps>;
 
-          if (item.props.titleRenderer) {
-            return item.props.titleRenderer();
-          }
           return (
-            <Button
-              variant={key === currentTab ? 'default' : 'ghost'}
-              type={key === currentTab ? 'primary' : 'secondary'}
+            <TabHeader
+              selected={key === currentTab}
               onClick={() => {
                 setTab(key);
                 onTabChange(key);
@@ -49,10 +45,10 @@ export const Tabs = ({
               key={key}
             >
               {item.props.title}
-            </Button>
+            </TabHeader>
           );
         })}
-      </SpacedRow>
+      </HeaderWrapper>
 
       {children.find(el => el.key === currentTab)}
     </>
@@ -63,7 +59,6 @@ export type TabPaneProps = {
   children?: React.ReactNode;
   key: string;
   title: React.ReactNode;
-  titleRenderer?: () => React.ReactNode;
 };
 
 const TabPane: React.FC<TabPaneProps> = ({ children }: TabPaneProps) => {
@@ -71,3 +66,26 @@ const TabPane: React.FC<TabPaneProps> = ({ children }: TabPaneProps) => {
 };
 
 Tabs.Pane = TabPane;
+
+const HeaderWrapper = styled.div`
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  display: flex;
+  align-items: stretch;
+  && > *:nth-child(0) {
+    margin-left: 0px;
+  }
+`;
+
+const TabHeader = styled.div<{ selected?: boolean }>(
+  props => css`
+    margin-left: 16px;
+    margin-right: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    transition: 0.3s all;
+
+    border-bottom: 3px solid
+      ${props.selected ? Colors.midblue.hex() : 'rgba(0,0,0,0)'};
+  `
+);

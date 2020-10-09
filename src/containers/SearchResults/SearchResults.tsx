@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { useDebounce } from 'use-debounce/lib';
 import { useQuery, useResourceTypes } from 'context/ResourceSelectionContext';
 import { ResourcePreviewProvider } from 'context';
-import FilteredResourceFilters from 'containers/SearchResults/Filters/FilteredResourceFilters';
 import { SequenceSearchResults } from 'containers/Sequences';
 import { AssetSearchResults } from 'containers/Assets';
 import { FileSearchResults, FileToolbar } from 'containers/Files';
 import { TimeseriesSearchResults } from 'containers/Timeseries';
 import { EventSearchResults } from 'containers/Events';
-import { FormItem, SearchResultFilters } from './SearchResultFilters';
+import { SearchResultFilters } from './SearchResultFilters';
+import { ResourceTypeTabs } from './Filters';
 
 const Wrapper = styled.div`
   display: flex;
@@ -60,25 +60,27 @@ export const SearchResults = ({
   }, [currentResourceType]);
 
   return (
-    <ResourcePreviewProvider>
-      <Wrapper>
-        <Filters>
-          {resourceTypes.length > 1 && (
-            <FormItem>
-              <FilteredResourceFilters
-                currentResourceType={currentResourceType}
-                setCurrentResourceType={setCurrentResourceType}
-              />
-            </FormItem>
-          )}
-          <SearchResultFilters currentResourceType={currentResourceType} />
-        </Filters>
-        <Content>
-          {toolbar}
-          {content}
-        </Content>
-      </Wrapper>
-    </ResourcePreviewProvider>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {resourceTypes.length > 1 && (
+        <ResourceTypeTabs
+          currentResourceType={currentResourceType}
+          setCurrentResourceType={setCurrentResourceType}
+        />
+      )}
+      <div style={{ flex: 1 }}>
+        <ResourcePreviewProvider>
+          <Wrapper>
+            <Filters>
+              <SearchResultFilters currentResourceType={currentResourceType} />
+            </Filters>
+            <Content>
+              {toolbar}
+              {content}
+            </Content>
+          </Wrapper>
+        </ResourcePreviewProvider>
+      </div>
+    </div>
   );
 };
 
