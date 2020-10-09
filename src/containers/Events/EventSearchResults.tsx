@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { EventTable } from 'components/Common';
-import { EventSearchRequest, EventFilter } from '@cognite/sdk';
+import { ResourceTable } from 'components/Common';
+import { EventSearchRequest, EventFilter, CogniteEvent } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 
@@ -24,12 +24,13 @@ export const EventSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <EventTable
-      onEventClicked={event =>
+    <ResourceTable<CogniteEvent>
+      api="events"
+      filter={eventFilter}
+      query={query}
+      onRowClick={event =>
         openPreview({ item: { id: event.id, type: 'event' } })
       }
-      query={query}
-      filter={eventFilter}
     />
   );
 };

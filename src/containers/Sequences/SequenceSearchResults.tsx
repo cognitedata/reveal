@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { SequenceTable } from 'components/Common';
-import { SequenceSearchFilter, SequenceFilter } from '@cognite/sdk';
+import { ResourceTable } from 'components/Common';
+import { SequenceSearchFilter, SequenceFilter, Sequence } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 
@@ -24,12 +24,13 @@ export const SequenceSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <SequenceTable
-      onSequenceClicked={sequence =>
+    <ResourceTable<Sequence>
+      api="sequences"
+      filter={sequenceFilter}
+      query={query}
+      onRowClick={sequence =>
         openPreview({ item: { id: sequence.id, type: 'sequence' } })
       }
-      query={query}
-      filter={sequenceFilter}
     />
   );
 };

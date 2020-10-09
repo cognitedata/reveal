@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { AssetTable } from 'components/Common';
-import { AssetSearchFilter, AssetFilterProps } from '@cognite/sdk';
+import { ResourceTable } from 'components/Common';
+import { AssetSearchFilter, AssetFilterProps, Asset } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 
@@ -24,10 +24,11 @@ export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <AssetTable
+    <ResourceTable<Asset>
+      api="assets"
       filter={assetFilter}
       query={query}
-      onAssetClicked={asset =>
+      onRowClick={asset =>
         openPreview({ item: { id: asset.id, type: 'asset' } })
       }
     />

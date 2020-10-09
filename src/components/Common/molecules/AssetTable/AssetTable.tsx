@@ -1,10 +1,9 @@
 import React from 'react';
 import { Asset } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
-
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import { useResourceMode } from 'context/ResourceSelectionContext';
-import { ResourceTable, ResourceTableColumns } from 'components/Common';
+import { TableProps, Table } from 'components/Common';
 import { useCdfItem } from 'hooks/sdk';
 
 const ActionCell = ({ asset }: { asset: Asset }) => {
@@ -14,10 +13,10 @@ const ActionCell = ({ asset }: { asset: Asset }) => {
 
 const ParentCell = ({
   rootId,
-  onAssetSelected,
+  onItemClicked,
 }: {
   rootId: number;
-  onAssetSelected: (asset: Asset) => void;
+  onItemClicked: (asset: Asset) => void;
 }) => {
   const { data: rootAsset, isFetched } = useCdfItem<Asset>('assets', rootId, {
     enabled: !!rootId,
@@ -32,7 +31,7 @@ const ParentCell = ({
       onClick={e => {
         e.stopPropagation();
         if (rootAsset) {
-          onAssetSelected(rootAsset);
+          onItemClicked(rootAsset);
         }
       }}
     >
@@ -42,33 +41,32 @@ const ParentCell = ({
 };
 
 export type AssetTableProps = {
-  filter?: any;
-  query?: string;
-  onAssetClicked: (asset: Asset) => void;
-};
+  items: Asset[];
+  onItemClicked: (asset: Asset) => void;
+} & TableProps<Asset>;
 
 export const AssetTable = ({
-  filter,
-  query,
-  onAssetClicked,
+  items,
+  onItemClicked,
+  ...props
 }: AssetTableProps) => {
   const { mode } = useResourceMode();
 
   const columns = [
-    ResourceTableColumns.name,
-    ResourceTableColumns.description,
+    Table.Columns.name,
+    Table.Columns.description,
     {
-      ...ResourceTableColumns.root,
+      ...Table.Columns.root,
       cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
         return (
-          <ParentCell rootId={asset.rootId} onAssetSelected={onAssetClicked} />
+          <ParentCell rootId={asset.rootId} onItemClicked={onItemClicked} />
         );
       },
     },
     ...(mode !== 'none'
       ? [
           {
-            ...ResourceTableColumns.select,
+            ...Table.Columns.select,
             cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
               return <ActionCell asset={asset} />;
             },
@@ -78,12 +76,12 @@ export const AssetTable = ({
   ];
 
   return (
-    <ResourceTable<Asset>
-      api="assets"
-      query={query}
-      filter={filter}
+    <Table<Asset>
+      data={items}
       columns={columns}
-      onRowClick={onAssetClicked}
+      onRowClick={onItemClicked}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
     />
   );
 };

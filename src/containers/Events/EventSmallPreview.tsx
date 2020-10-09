@@ -1,15 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
-import { EventDetailsAbstract, Loader } from 'components/Common';
-import {
-  useResourcesDispatch,
-  useResourcesSelector,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector,
-  retrieve,
-} from '@cognite/cdf-resources-store/dist/events';
+import React, { useMemo } from 'react';
+import { ErrorFeedback, EventDetailsAbstract, Loader } from 'components/Common';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
+import { useCdfItem } from 'hooks/sdk';
+import { CogniteEvent } from '@cognite/sdk';
 
 export const EventSmallPreview = ({
   eventId,
@@ -28,13 +22,11 @@ export const EventSmallPreview = ({
     id: eventId,
   });
 
-  const dispatch = useResourcesDispatch();
+  const { data: event, isFetched, error } = useCdfItem<CogniteEvent>(
+    'events',
+    eventId
+  );
 
-  useEffect(() => {
-    dispatch(retrieve([{ id: eventId }]));
-  }, [dispatch, eventId]);
-
-  const event = useResourcesSelector(itemSelector)(eventId);
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));
@@ -47,8 +39,16 @@ export const EventSmallPreview = ({
     return items;
   }, [selectionButton, renderResourceActions, eventId, propActions]);
 
-  if (!event) {
+  if (!isFetched) {
     return <Loader />;
+  }
+
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!event) {
+    return <>Event {eventId} not found!</>;
   }
 
   return (

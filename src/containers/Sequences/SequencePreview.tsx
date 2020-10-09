@@ -1,22 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
+import { Icon, Title } from '@cognite/cogs.js';
 import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector,
-  retrieve,
-} from '@cognite/cdf-resources-store/dist/sequences';
-import { Button, Icon, Title } from '@cognite/cogs.js';
-import {
-  SequenceDetailsAbstract,
   DetailsItem,
-  Wrapper,
-  TimeDisplay,
+  ErrorFeedback,
+  Loader,
+  SequenceDetailsAbstract,
   SpacedRow,
+  Tabs,
+  TimeDisplay,
+  Wrapper,
 } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { SequenceColumn } from '@cognite/sdk';
+import { Sequence, SequenceColumn } from '@cognite/sdk';
+import { useCdfItems } from 'hooks/sdk';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(
@@ -29,6 +25,28 @@ const formatSequenceColumns = (columns: SequenceColumn[]) =>
     {}
   );
 
+const SequenceDetails = ({ sequence }: { sequence: Sequence }) => (
+  <div>
+    <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+      Details
+    </Title>
+    <DetailsItem name="Description" value={sequence.description} />
+    <DetailsItem
+      name="Created at"
+      value={<TimeDisplay value={sequence.createdTime} />}
+    />
+    <DetailsItem
+      name="Updated at"
+      value={<TimeDisplay value={sequence.lastUpdatedTime} />}
+    />
+    <DetailsItem name="External ID" value={sequence.externalId} />
+    <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+      Metadata
+    </Title>
+    <SequenceDetailsAbstract.SequenceInfoGrid sequence={sequence} showAll />
+  </div>
+);
+
 export const SequencePreview = ({
   sequenceId,
   extraActions,
@@ -36,86 +54,48 @@ export const SequencePreview = ({
   sequenceId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const dispatch = useResourcesDispatch();
-  const sequence = useResourcesSelector(itemSelector)(sequenceId);
+  // GET /sequence/id does not exist
+  const { data: sequences = [], isFetched, error } = useCdfItems<Sequence>(
+    'sequences',
+    [{ id: sequenceId }]
+  );
 
-  useEffect(() => {
-    if (!sequence) {
-      dispatch(retrieve([{ id: sequenceId }]));
-    }
-  }, [dispatch, sequence, sequenceId]);
+  const sequence = isFetched && sequences[0];
 
-  const tabs = {
-    'sequence-metadata': 'Sequence details',
-    columns: 'Columns',
-  };
+  const [currentTab, setTab] = useState('details');
 
-  const [currentTab, setTab] = useState<keyof typeof tabs>('sequence-metadata');
+  if (!isFetched) {
+    return <Loader />;
+  }
 
-  const content = useMemo(() => {
-    if (sequence) {
-      switch (currentTab) {
-        case 'sequence-metadata': {
-          return (
-            <>
-              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-                Details
-              </Title>
-              <DetailsItem name="Description" value={sequence.description} />
-              <DetailsItem
-                name="Created at"
-                value={<TimeDisplay value={sequence.createdTime} />}
-              />
-              <DetailsItem
-                name="Updated at"
-                value={<TimeDisplay value={sequence.lastUpdatedTime} />}
-              />
-              <DetailsItem name="External ID" value={sequence.externalId} />
-              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-                Metadata
-              </Title>
-              <SequenceDetailsAbstract.SequenceInfoGrid
-                sequence={sequence}
-                showAll
-              />
-            </>
-          );
-        }
-        case 'columns': {
-          return (
-            <DescriptionList
-              valueSet={formatSequenceColumns(sequence.columns ?? [])}
-            />
-          );
-        }
-      }
-    }
-    return <></>;
-  }, [sequence, currentTab]);
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!sequence) {
+    return <>Sequence {sequenceId} not found!</>;
+  }
 
   return (
     <Wrapper>
       <h1>
         <Icon type="GridFilled" />
-        {sequence ? sequence.name : 'Loading...'}
+        {sequence?.name}
       </h1>
       <SpacedRow>{extraActions}</SpacedRow>
-      <SpacedRow>
-        {Object.keys(tabs).map(el => {
-          const key = el as keyof typeof tabs;
-          return (
-            <Button
-              variant={key === currentTab ? 'default' : 'ghost'}
-              type={key === currentTab ? 'primary' : 'secondary'}
-              onClick={() => setTab(key)}
-              key={key}
-            >
-              {tabs[key]}
-            </Button>
-          );
-        })}
-      </SpacedRow>
-      {sequence && content}
+
+      <Tabs tab={currentTab} onTabChange={setTab}>
+        <Tabs.Pane title="Details" key="details">
+          <SequenceDetails sequence={sequence} />
+        </Tabs.Pane>
+        <Tabs.Pane title="Columns " key="columns">
+          <div>
+            <DescriptionList
+              valueSet={formatSequenceColumns(sequence.columns ?? [])}
+            />
+          </div>
+        </Tabs.Pane>
+      </Tabs>
     </Wrapper>
   );
 };

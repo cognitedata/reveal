@@ -1,20 +1,32 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { FileInfo, Asset, CogniteEvent } from '@cognite/sdk';
-import { Body, Icon } from '@cognite/cogs.js';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useState, useEffect } from 'react';
+import {
+  FileInfo,
+  Asset,
+  CogniteEvent,
+  Timeseries,
+  Sequence,
+} from '@cognite/sdk';
+import { Icon } from '@cognite/cogs.js';
 import { Row } from 'antd';
-import { Loader, Table, TimeDisplay } from 'components/Common';
-import { ColumnShape, Column } from 'react-base-table';
+import {
+  Loader,
+  AssetTable,
+  FileTable,
+  EventTable,
+  TimeseriesTable,
+  SequenceTable,
+} from 'components/Common';
 import { useResourcesState } from 'context/ResourceSelectionContext';
+import { SdkResourceType } from 'hooks/sdk';
+import { useResourceResults } from './hooks';
 
-import { useInfiniteList, useSearch, SdkResourceType } from 'hooks/sdk';
-
-type ResourceType = FileInfo | Asset | CogniteEvent;
+type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
 const PAGE_SIZE = 50;
 
 export const ResourceTable = <T extends ResourceType>({
   api,
-  columns,
   query,
   filter,
   onRowClick,
@@ -22,7 +34,6 @@ export const ResourceTable = <T extends ResourceType>({
   api: SdkResourceType;
   query?: string;
   filter?: any;
-  columns: ColumnShape<T>[];
   onRowClick: (file: T) => void;
 }) => {
   const [searchCount, setSearchCount] = useState(PAGE_SIZE);
@@ -39,175 +50,94 @@ export const ResourceTable = <T extends ResourceType>({
     onRowClick(file);
     setPreviewId(file.id);
   };
-
-  const searchEnabled = !!query && query.length > 0;
-
   const {
-    data: listData,
-    isFetched: listFetched,
-    canFetchMore,
-    isFetchingMore,
-    fetchMore,
-    isFetching: isFetchingList,
-  } = useInfiniteList<T>(api, PAGE_SIZE, filter, {
-    enabled: !searchEnabled,
-  });
-  const listItems = useMemo(
-    () => listData?.reduce((accl, t) => accl.concat(t.items), [] as T[]),
-    [listData]
-  );
-  const {
-    data: searchFiles,
-    isFetched: searchFetched,
-    refetch,
-    isFetching: isSearching,
-  } = useSearch<T>(
-    api,
-    query!,
-    {
-      limit: searchCount,
-      filter: Object.keys(filter).length > 0 ? filter : undefined,
-    },
-    {
-      enabled: searchEnabled,
-    }
-  );
-  const isFetched = listFetched || searchFetched;
-  const isFetching = isFetchingList || isSearching;
-  const files = searchEnabled ? searchFiles : listItems;
+    list: { canFetchMore, isFetchingMore, fetchMore },
+    search: { refetchSearch, isSearching },
+    isFetched,
+    isFetching,
+    items,
+    searchEnabled,
+  } = useResourceResults(api, searchCount, query, filter);
 
   useEffect(() => {
     if (searchEnabled) {
-      refetch();
+      refetchSearch();
     }
-  }, [searchCount, searchEnabled, refetch]);
+  }, [searchCount, searchEnabled, refetchSearch]);
 
   if (!isFetched) {
     return <Loader />;
   }
 
-  return (
-    <Table<T>
-      onEndReached={() => {
-        if (searchEnabled && !isSearching) {
-          setSearchCount(searchCount + PAGE_SIZE);
-        } else if (canFetchMore && !isFetchingMore) {
-          fetchMore();
-        }
-      }}
-      rowEventHandlers={{
-        onClick: ({ rowData: file, event }) => {
-          onItemSelected(file);
-          return event;
-        },
-      }}
-      footerHeight={isFetching ? 20 : 0}
-      footerRenderer={
-        <Row type="flex" justify="space-around">
-          <Icon type="Loading" />
-        </Row>
-      }
-      query={query}
-      previewingIds={previewId ? [previewId] : undefined}
-      activeIds={currentItems.map(el => el.id)}
-      columns={columns}
-      fixed
-      data={files}
-    />
-  );
-};
+  const previewIds = previewId ? [previewId] : undefined;
+  const activeIds = currentItems.map(el => el.id);
 
-export const ResourceTableColumns = {
-  name: {
-    key: 'name',
-    title: 'Name',
-    dataKey: 'name',
-    width: 300,
-    frozen: Column.FrozenDirection.LEFT,
-  },
-  root: {
-    key: 'root',
-    title: 'Root asset',
-    width: 200,
-  },
-  type: {
-    key: 'type',
-    title: 'Type',
-    dataKey: 'type',
-    width: 200,
-    frozen: Column.FrozenDirection.LEFT,
-  },
-  subtype: {
-    key: 'subtype',
-    title: 'Subtype',
-    dataKey: 'subtype',
-    width: 200,
-  },
-  description: {
-    key: 'description',
-    title: 'Description',
-    dataKey: 'description',
-    width: 200,
-  },
-  externalId: {
-    key: 'externalId',
-    title: 'External ID',
-    dataKey: 'externalId',
-    width: 200,
-  },
-  lastUpdatedTime: {
-    key: 'lastUpdatedTime',
-    title: 'Last updated',
-    dataKey: 'lastUpdatedTime',
-    width: 200,
-    cellRenderer: ({ cellData: lastUpdatedTime }: { cellData?: number }) => (
-      <Body level={2}>
-        <TimeDisplay value={lastUpdatedTime} relative withTooltip />
-      </Body>
+  const commonProps = {
+    query,
+    previewingIds: previewIds,
+    activeIds,
+    onEndReached: () => {
+      if (searchEnabled && !isSearching) {
+        setSearchCount(searchCount + PAGE_SIZE);
+      } else if (canFetchMore && !isFetchingMore) {
+        fetchMore();
+      }
+    },
+    footerHeight: isFetching ? 20 : 0,
+    footerRenderer: (
+      <Row type="flex" justify="space-around">
+        <Icon type="Loading" />
+      </Row>
     ),
-  },
-  unit: {
-    key: 'unit',
-    title: 'Unit',
-    dataKey: 'unit',
-    width: 200,
-  },
-  columns: {
-    key: 'columns',
-    title: '# of Columns',
-    dataKey: 'columns',
-    width: 200,
-    cellRenderer: ({ cellData: columns }: { cellData: any[] }) => (
-      <Body level={2}>{columns.length}</Body>
-    ),
-  },
-  createdTime: {
-    key: 'createdTime',
-    title: 'Created',
-    dataKey: 'createdTime',
-    width: 200,
-    cellRenderer: ({ cellData: createdTime }: { cellData?: number }) => (
-      <Body level={2}>
-        <TimeDisplay value={createdTime} relative withTooltip />
-      </Body>
-    ),
-  },
-  mimeType: {
-    key: 'mimeType',
-    title: 'MIME type',
-    dataKey: 'mimeType',
-    width: 200,
-  },
-  uploadedTime: {
-    key: 'uploadedTime',
-    title: 'Uploaded',
-    width: 200,
-  },
-  select: {
-    key: 'action',
-    title: 'Select',
-    width: 80,
-    align: Column.Alignment.CENTER,
-    frozen: Column.FrozenDirection.RIGHT,
-  },
+  };
+
+  switch (api) {
+    case 'assets': {
+      return (
+        <AssetTable
+          items={items as Asset[]}
+          onItemClicked={item => onItemSelected(item as T)}
+          {...commonProps}
+        />
+      );
+    }
+    case 'files': {
+      return (
+        <FileTable
+          items={items as FileInfo[]}
+          onItemClicked={item => onItemSelected(item as T)}
+          {...commonProps}
+        />
+      );
+    }
+    case 'events': {
+      return (
+        <EventTable
+          items={items as CogniteEvent[]}
+          onItemClicked={item => onItemSelected(item as T)}
+          {...commonProps}
+        />
+      );
+    }
+    case 'timeseries': {
+      return (
+        <TimeseriesTable
+          items={items as Timeseries[]}
+          onItemClicked={item => onItemSelected(item as T)}
+          {...commonProps}
+        />
+      );
+    }
+    case 'sequences': {
+      return (
+        <SequenceTable
+          items={items as Sequence[]}
+          onItemClicked={item => onItemSelected(item as T)}
+          {...commonProps}
+        />
+      );
+    }
+  }
+
+  return null;
 };

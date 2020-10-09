@@ -1,6 +1,10 @@
 import React, { useContext } from 'react';
-import { TimeseriesTable } from 'components/Common';
-import { TimeseriesSearchFilter, TimeseriesFilter } from '@cognite/sdk';
+import { ResourceTable } from 'components/Common';
+import {
+  TimeseriesSearchFilter,
+  TimeseriesFilter,
+  Timeseries,
+} from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 
@@ -24,12 +28,13 @@ export const TimeseriesSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <TimeseriesTable
-      onTimeseriesClicked={ts =>
-        openPreview({ item: { id: ts.id, type: 'timeSeries' } })
-      }
+    <ResourceTable<Timeseries>
+      api="timeseries"
       filter={timeseriesFilter}
       query={query}
+      onRowClick={ts =>
+        openPreview({ item: { id: ts.id, type: 'timeSeries' } })
+      }
     />
   );
 };

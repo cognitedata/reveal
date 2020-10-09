@@ -37,7 +37,7 @@ export const ExplorationNavbar = ({
       : undefined
   );
 
-  const [, , , resourceId] = cleanPathname.split('/');
+  const [, , , , resourceId] = cleanPathname.split('/');
 
   const disableDropdown = !resourceId;
 

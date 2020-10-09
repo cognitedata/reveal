@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { FileTable } from 'components/Common';
-import { FilesSearchFilter, FileFilterProps } from '@cognite/sdk';
+import { ResourceTable } from 'components/Common';
+import { FilesSearchFilter, FileFilterProps, FileInfo } from '@cognite/sdk';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 
@@ -24,12 +24,11 @@ export const FileSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <FileTable
-      onFileClicked={file =>
-        openPreview({ item: { type: 'file', id: file.id } })
-      }
-      query={query}
+    <ResourceTable<FileInfo>
+      api="files"
       filter={fileFilter}
+      query={query}
+      onRowClick={file => openPreview({ item: { id: file.id, type: 'file' } })}
     />
   );
 };
