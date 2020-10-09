@@ -102,6 +102,7 @@ export const SaveButton = styled(Button)`
 
 export const ThreeColsLayout = styled.div`
   display: flex;
+  align-items: flex-start;
   & > div {
     width: calc(100% / 3);
     min-height: 50vh;
@@ -114,19 +115,38 @@ export const ConfigurationContainer = styled(ContentCard)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  font-weight: 500;
+
   & > header {
     border-bottom: 1px solid var(--cogs-greyscale-grey5);
     padding: 24px 48px;
+    margin-bottom: 12px;
   }
   & > main {
     padding: 16px 48px;
     flex-grow: 1;
+
+    &.initial-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 0;
+    }
   }
   & > footer {
-    padding: 16px 48px;
+    padding: 16px 48px 48px 48px;
     display: flex;
     justify-content: center;
   }
+
+  .ant-select {
+    font-weight: 400;
+  }
+`;
+
+export const ContainerHeading = styled.div`
+  font-weight: 600;
+  font-size: 1rem;
 `;
 
 export const ConfigurationArrow = styled.div`
@@ -137,6 +157,10 @@ export const ConfigurationArrow = styled.div`
     width: 75%;
     stroke: var(--cogs-greyscale-grey5);
   }
+`;
+
+export const BadgesContainer = styled.div`
+  margin-top: 0.75rem;
 `;
 
 export const InitialState = styled.div`
@@ -185,9 +209,20 @@ export const ConnectorList = styled.ul<{
   }
 `;
 
+export const BorderedBottomContainer = styled.div`
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+`;
+
 export const EditButton = styled(Button)`
   float: right;
   margin-top: -2.6rem;
+`;
+
+export const CenteredLoader = styled.div`
+  text-align: center;
 `;
 
 export const ErrorModal = styled.div`

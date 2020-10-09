@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Badge, Button, Modal } from '@cognite/cogs.js';
+import { Badge, Button, Icon, Modal } from '@cognite/cogs.js';
 import { Checkbox, notification, Select } from 'antd';
 import {
   Configuration,
@@ -14,11 +14,13 @@ import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
 
 import {
+  BadgesContainer,
   ConfigurationArrow,
   ConfigurationContainer,
   ConfigurationsMainContainer,
   ConnectionLinesWrapper,
   ConnectorList,
+  ContainerHeading,
   EditButton,
   ErrorModal,
   Header,
@@ -270,13 +272,19 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
         <ThreeColsLayout>
           <ConfigurationContainer>
             <header>
-              <b>Petrel Studio</b>
+              <ContainerHeading>Petrel Studio</ContainerHeading>
               {sourceUIState === ConfigUIState.CONFIRMED && (
                 <>
                   <div>{configuration.source.external_id}</div>
-                  {configuration.business_tags.map((tag) => (
-                    <Badge key={tag} text={tag} background="greyscale-grey5" />
-                  ))}
+                  <BadgesContainer>
+                    {configuration.business_tags?.map((tag) => (
+                      <Badge
+                        key={tag}
+                        text={tag}
+                        background="greyscale-grey3"
+                      />
+                    ))}
+                  </BadgesContainer>
                   <EditButton
                     type="primary"
                     onClick={() => setSourceUIState(ConfigUIState.CONFIGURING)}
@@ -287,7 +295,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
               )}
             </header>
             {sourceUIState === ConfigUIState.INITIAL && (
-              <main>
+              <main className="initial-main">
                 <InitialState>
                   <p>No source repository selected</p>
                   <Button
@@ -322,6 +330,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                     placeholder="Available repositories"
                     style={{ width: '100%', marginBottom: '16px' }}
                     onChange={(value) => handleChange(ChangeType.REPO, value)}
+                    suffixIcon={<Icon type="Down" />}
                   >
                     {availableRepositories.map((repository) => (
                       <Option
@@ -341,6 +350,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                           placeholder="Available tags"
                           style={{ width: '100%', marginBottom: '16px' }}
                           onChange={updateBusinessTags}
+                          suffixIcon={<Icon type="Down" />}
                           value={configuration.business_tags}
                         >
                           {availableTags.map((tag) => (
@@ -414,7 +424,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           </ConfigurationArrow>
           <ConfigurationContainer>
             <header>
-              <b>OpenWorks</b>
+              <ContainerHeading>OpenWorks</ContainerHeading>
               {targetUIState === ConfigUIState.CONFIRMED && (
                 <>
                   <div>{configuration.target.external_id}</div>
@@ -461,6 +471,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                     onChange={(value) =>
                       handleChange(ChangeType.PROJECT, value)
                     }
+                    suffixIcon={<Icon type="Down" />}
                   >
                     {availableProjects.map((project) => (
                       <Option
