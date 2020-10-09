@@ -77,5 +77,43 @@ You can specify in which way points should be colored. Values are defined by `Po
 
 ```js runnable
 // import { PotreePointColorType } from '@cognite/reveal'
-model.pointColorType = PotreePointColorType.Depth
+model.pointColorType = PotreePointColorType.Depth;
+```
+
+Other useful coloring schemes are `Rgb` (color) , `Classification` (color by point class) and `Intensity` 
+(strength of the backscattered signal in a laser scan).
+
+## Classification filtering
+
+Some point clouds have classification information associated with each point.  This can
+be used for coloring or to filter the point cloud.
+
+:::note
+The demonstration model doesn't have classification data so the examples below are not
+runnable.
+:::
+
+To list classes available in a point cloud model, use `CognitePointCloudModel.getClasses`:
+
+```js
+const classes = model.getClasses();
+for (const pointClass of classes) {
+  console.log(pointClass); // Prints a numeric class code
+}
+```
+
+It's also possible to check if a model has a given class by using `CognitePointCloudModel.hasClass`. 
+A list of well-known point class codes are defined in `WellKnownAsprsPointClassCodes`. These definitions
+by the [ASPRS LAS 1.4 specifications](http://www.asprs.org/wp-content/uploads/2019/03/LAS_1_4_r14.pdf).
+
+To filter away certain classes, use `CognitePointCloudModel.setClassVisible`:
+
+```js
+model.setClassVisible(WellKnownAsprsPointClassCodes.Ground, false);
+```
+
+To check if a class currently is visible, use `isClassVisible`:
+
+```js
+const visible = model.isClassVisible(WellKnownAsprsPointClassCodes.Ground);
 ```
