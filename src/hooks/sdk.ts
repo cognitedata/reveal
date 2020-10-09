@@ -29,7 +29,7 @@ export type SdkResourceType =
   | 'datasets'
   | 'labels';
 
-const aggregateKey = (type: SdkResourceType, filter: any) => [
+export const aggregateKey = (type: SdkResourceType, filter: any) => [
   'cdf',
   type,
   'aggregate',
@@ -39,7 +39,7 @@ const aggregateKey = (type: SdkResourceType, filter: any) => [
 // The aggregate APIs are a bit strange, filtering on irrelevant data
 // set ids results in { items: [{ count: 0 }]} and invalid data set
 // ids results in { items: [] }.
-const aggregate = (
+export const aggregate = (
   sdk: CogniteClient,
   type: SdkResourceType,
   filter: any
@@ -118,7 +118,8 @@ export const listKey = (type: SdkResourceType, body: any) => [
   'list',
   body,
 ];
-const listApi = (sdk: CogniteClient, type: SdkResourceType, body: any) =>
+
+export const listApi = (sdk: CogniteClient, type: SdkResourceType, body: any) =>
   post(sdk, `/${type}/list`, body).then(data => data?.items);
 
 export const useList = <T>(

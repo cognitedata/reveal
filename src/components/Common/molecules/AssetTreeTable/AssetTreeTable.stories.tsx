@@ -7,18 +7,18 @@ import {
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
 import { SDKProvider } from 'context/sdk';
-import { AssetTable } from './AssetTable';
+import { AssetTreeTable } from './AssetTreeTable';
 import { assets } from './assets';
 
 export default {
-  title: 'Molecules/AssetTable',
-  component: AssetTable,
+  title: 'Molecules/AssetTreeTable',
+  component: AssetTreeTable,
   decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
 };
 
 export const Example = () => {
   return (
-    <AssetTable
+    <AssetTreeTable
       filter={{}}
       onAssetClicked={action('onAssetClicked')}
       query={text('query', '')}
@@ -28,7 +28,7 @@ export const Example = () => {
 export const ExampleSingleSelect = () => {
   return (
     <ResourceSelectionProvider mode="single">
-      <AssetTable
+      <AssetTreeTable
         filter={{}}
         onAssetClicked={action('onAssetClicked')}
         query={text('query', '')}

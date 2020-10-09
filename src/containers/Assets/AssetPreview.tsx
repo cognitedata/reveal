@@ -9,8 +9,8 @@ import {
   Tabs,
   CdfCount,
   ResourceTable,
+  AssetTreeTable,
 } from 'components/Common';
-import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
 import {
   Asset,
   Timeseries,
@@ -173,15 +173,12 @@ export const AssetPreview = ({
           />
         </Tabs.Pane>
         <Tabs.Pane title="Children" key="children">
-          <AssetTree
-            assetIds={[assetId]}
-            defaultExpandedKeys={[assetId]}
-            onSelect={newAsset => {
-              if (newAsset.node) {
-                openPreview({
-                  item: { id: newAsset.node!.id, type: 'asset' },
-                });
-              }
+          <AssetTreeTable
+            filter={{ parentIds: [assetId] }}
+            onAssetClicked={newAsset => {
+              openPreview({
+                item: { id: newAsset.id, type: 'asset' },
+              });
             }}
           />
         </Tabs.Pane>

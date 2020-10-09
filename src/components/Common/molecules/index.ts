@@ -1,4 +1,5 @@
 export * from './AssetTable/AssetTable';
+export * from './AssetTreeTable/AssetTreeTable';
 export * from './EventTable/EventTable';
 export * from './FilePreviewOverview/FilePreviewOverview';
 export * from './FileTable/FileTable';
