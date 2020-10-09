@@ -1,31 +1,40 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
+import { Icon, Title } from '@cognite/cogs.js';
 import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector,
-  retrieve,
-} from '@cognite/cdf-resources-store/dist/events';
-import { Button, Icon, Title } from '@cognite/cogs.js';
-import {
-  EventDetailsAbstract,
   DetailsItem,
-  Wrapper,
-  TimeDisplay,
+  ErrorFeedback,
+  EventDetailsAbstract,
+  Loader,
   SpacedRow,
+  TimeDisplay,
+  Wrapper,
 } from 'components/Common';
-import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { renderTitle } from 'utils/EventsUtils';
+import { useCdfItem } from 'hooks/sdk';
+import { CogniteEvent } from '@cognite/sdk';
 
-const formatMetadata = (metadata: { [key: string]: any }) =>
-  Object.keys(metadata).reduce(
-    (agg, cur) => ({
-      ...agg,
-      [cur]: String(metadata[cur]) || '',
-    }),
-    {}
-  );
+const EventDetails = ({ event }: { event: CogniteEvent }) => (
+  <div>
+    <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+      Details
+    </Title>
+    <DetailsItem name="ID" value={event.id} />
+    <DetailsItem name="Description" value={event.description} />
+    <DetailsItem
+      name="Created at"
+      value={<TimeDisplay value={event.createdTime} />}
+    />
+    <DetailsItem
+      name="Updated at"
+      value={<TimeDisplay value={event.lastUpdatedTime} />}
+    />
+    <DetailsItem name="External ID" value={event.externalId} />
+    <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
+      Metadata
+    </Title>
+    <EventDetailsAbstract.EventInfoGrid event={event} showAll />
+  </div>
+);
 
 export const EventPreview = ({
   eventId,
@@ -34,57 +43,22 @@ export const EventPreview = ({
   eventId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const dispatch = useResourcesDispatch();
-  const event = useResourcesSelector(itemSelector)(eventId);
+  const { data: event, error, isFetched } = useCdfItem<CogniteEvent>(
+    'events',
+    eventId
+  );
 
-  useEffect(() => {
-    if (!event) {
-      dispatch(retrieve([{ id: eventId }]));
-    }
-  }, [dispatch, event, eventId]);
-  const tabs = {
-    'event-metadata': 'Event details',
-    metadata: 'Metadata',
-  };
+  if (!isFetched) {
+    return <Loader />;
+  }
 
-  const [currentTab, setTab] = useState<keyof typeof tabs>('event-metadata');
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
 
-  const content = useMemo(() => {
-    if (event) {
-      switch (currentTab) {
-        case 'event-metadata': {
-          return (
-            <>
-              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-                Details
-              </Title>
-              <DetailsItem name="External ID" value={event.externalId} />
-              <DetailsItem name="Description" value={event.description} />
-              <DetailsItem
-                name="Created at"
-                value={<TimeDisplay value={event.createdTime} />}
-              />
-              <DetailsItem
-                name="Updated at"
-                value={<TimeDisplay value={event.lastUpdatedTime} />}
-              />
-              <DetailsItem name="External ID" value={event.externalId} />
-              <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-                Metadata
-              </Title>
-              <EventDetailsAbstract.EventInfoGrid event={event} showAll />
-            </>
-          );
-        }
-        case 'metadata': {
-          return (
-            <DescriptionList valueSet={formatMetadata(event.metadata ?? {})} />
-          );
-        }
-      }
-    }
-    return <></>;
-  }, [event, currentTab]);
+  if (!event) {
+    return <>Event {eventId} not found!</>;
+  }
 
   return (
     <Wrapper>
@@ -93,22 +67,7 @@ export const EventPreview = ({
         {renderTitle(event)}
       </h1>
       <SpacedRow>{extraActions}</SpacedRow>
-      <SpacedRow>
-        {Object.keys(tabs).map(el => {
-          const key = el as keyof typeof tabs;
-          return (
-            <Button
-              variant={key === currentTab ? 'default' : 'ghost'}
-              type={key === currentTab ? 'primary' : 'secondary'}
-              onClick={() => setTab(key)}
-              key={key}
-            >
-              {tabs[key]}
-            </Button>
-          );
-        })}
-      </SpacedRow>
-      {event && content}
+      <EventDetails event={event} />
     </Wrapper>
   );
 };
