@@ -52,7 +52,7 @@ export const ResourceTable = <T extends ResourceType>({
   };
   const {
     list: { canFetchMore, isFetchingMore, fetchMore },
-    search: { refetchSearch, isSearching },
+    search: { searchItems, refetchSearch, isSearching },
     isFetched,
     isFetching,
     items,
@@ -77,7 +77,12 @@ export const ResourceTable = <T extends ResourceType>({
     previewingIds: previewIds,
     activeIds,
     onEndReached: () => {
-      if (searchEnabled && !isSearching) {
+      if (
+        searchEnabled &&
+        !isSearching &&
+        !!searchItems &&
+        searchItems.length >= searchCount
+      ) {
         setSearchCount(searchCount + PAGE_SIZE);
       } else if (canFetchMore && !isFetchingMore) {
         fetchMore();
