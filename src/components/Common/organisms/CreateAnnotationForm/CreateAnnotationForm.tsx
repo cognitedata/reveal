@@ -2,15 +2,25 @@ import React from 'react';
 import { Input, Button, Title, Icon, Colors, Body } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
-import { SpacedRow } from 'components/Common';
+import { Loader, SpacedRow } from 'components/Common';
 import { CogniteAnnotation } from '@cognite/annotations';
-import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
-import { itemSelector as timeseriesSelector } from '@cognite/cdf-resources-store/dist/timeseries';
-import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
-import { itemSelector as sequenceSelector } from '@cognite/cdf-resources-store/dist/sequences';
-import { itemSelector as eventSelector } from '@cognite/cdf-resources-store/dist/events';
-import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { renderTitle } from 'utils/EventsUtils';
+import { useCdfItem } from 'hooks/sdk';
+import { IdEither } from '@cognite/sdk';
+import { convertResourceType } from 'types';
+import { ResourceType } from '@cognite/cdf-resources-store';
+
+const getId = (
+  annotation?: ProposedCogniteAnnotation | CogniteAnnotation
+): IdEither | undefined => {
+  if (annotation?.resourceExternalId) {
+    return { externalId: annotation.resourceExternalId };
+  }
+  if (annotation?.resourceId) {
+    return { id: annotation?.resourceId };
+  }
+  return undefined;
+};
 
 export const CreateAnnotationForm = ({
   annotation,
@@ -33,70 +43,63 @@ export const CreateAnnotationForm = ({
   previewImageSrc?: string;
   children?: React.ReactNode;
 }) => {
-  const getFile = useResourcesSelector(fileSelector);
-  const getAsset = useResourcesSelector(assetSelector);
-  const getTimeseries = useResourcesSelector(timeseriesSelector);
-  const getSequence = useResourcesSelector(sequenceSelector);
-  const getEvent = useResourcesSelector(eventSelector);
+  const id = getId(annotation);
+  // @ts-ignore
+  const api: ResourceType | undefined =
+    // @ts-ignore
+    annotation.resourceType && convertResourceType(annotation.resourceType);
+
+  const enabled = !!api && !!id;
+  const { data: item, isFetched } = useCdfItem<any>(api!, id!, { enabled });
+
+  if (enabled && !isFetched) {
+    return <Loader />;
+  }
+
   let buttonText = <>Not linked to a Resource</>;
   if (annotation.resourceType) {
     switch (annotation.resourceType) {
       case 'asset': {
-        const resource = getAsset(
-          annotation.resourceExternalId || annotation.resourceId
-        );
         buttonText = (
           <>
             Linked to <Icon type="DataStudio" style={{ marginLeft: 4 }} />{' '}
-            {resource ? resource.name : 'Asset'}
+            {item?.name || 'Asset'}
           </>
         );
         break;
       }
       case 'timeSeries': {
-        const resource = getTimeseries(
-          annotation.resourceExternalId || annotation.resourceId
-        );
         buttonText = (
           <>
             Linked to <Icon type="Timeseries" style={{ marginLeft: 4 }} />{' '}
-            {resource ? resource.name : 'Time series'}
+            {item?.name || 'Time series'}
           </>
         );
         break;
       }
       case 'sequence': {
-        const resource = getSequence(
-          annotation.resourceExternalId || annotation.resourceId
-        );
         buttonText = (
           <>
             Linked to <Icon type="GridFilled" style={{ marginLeft: 4 }} />{' '}
-            {resource ? resource.name : 'Sequence'}
+            {item?.name || 'Sequence'}
           </>
         );
         break;
       }
       case 'file': {
-        const resource = getFile(
-          annotation.resourceExternalId || annotation.resourceId
-        );
         buttonText = (
           <>
             Linked to <Icon type="Document" style={{ marginLeft: 4 }} />{' '}
-            {resource ? resource.name : 'File'}
+            {item?.name || 'File'}
           </>
         );
         break;
       }
       case 'event': {
-        const resource = getEvent(
-          annotation.resourceExternalId || annotation.resourceId
-        );
         buttonText = (
           <>
             Linked to <Icon type="Events" style={{ marginLeft: 4 }} />{' '}
-            {resource ? renderTitle(resource) : 'Event'}
+            {item ? renderTitle(item) : 'Event'}
           </>
         );
         break;

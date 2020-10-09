@@ -6,7 +6,7 @@ import {
 } from 'components/Common';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
-import { useCdfItems } from 'hooks/sdk';
+import { useCdfItem } from 'hooks/sdk';
 import { Timeseries } from '@cognite/sdk';
 
 export const TimeseriesSmallPreview = ({
@@ -20,12 +20,10 @@ export const TimeseriesSmallPreview = ({
   extras?: React.ReactNode[];
   children?: React.ReactNode;
 }) => {
-  // There is no GET /timeseries/id api
-  const { data = [], isFetched, error } = useCdfItems<Timeseries>(
+  const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
     'timeseries',
-    [{ id: timeseriesId }]
+    { id: timeseriesId }
   );
-  const timeseries = isFetched && data[0];
 
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({

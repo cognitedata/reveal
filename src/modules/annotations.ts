@@ -6,17 +6,13 @@ import { FileInfo } from '@cognite/sdk';
 import { createSelector } from 'reselect';
 import {
   CogniteAnnotation,
-  // listAnnotationsForFile,
   PendingCogniteAnnotation,
   createAnnotations,
   deleteAnnotations,
   clearAnnotationsForFile,
-  // listFilesAnnotatedWithAssetId,
-  // linkFileToAssetIds,
   hardDeleteAnnotations,
 } from '@cognite/annotations';
-// import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
-// import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
+
 import { ApiCall } from '@cognite/cdf-resources-store';
 import { getSDK } from 'utils/SDK';
 

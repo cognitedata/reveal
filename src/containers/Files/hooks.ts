@@ -8,10 +8,9 @@ import {
 import { QueryCache } from 'react-query';
 
 export const useAnnotations = (fileId: number) => {
-  const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>(
-    'files',
-    fileId
-  );
+  const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
+    id: fileId,
+  });
   const { data: eventsById = [] } = useList<CogniteEvent>(
     'events',
     {

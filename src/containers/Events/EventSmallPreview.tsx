@@ -22,10 +22,9 @@ export const EventSmallPreview = ({
     id: eventId,
   });
 
-  const { data: event, isFetched, error } = useCdfItem<CogniteEvent>(
-    'events',
-    eventId
-  );
+  const { data: event, isFetched, error } = useCdfItem<CogniteEvent>('events', {
+    id: eventId,
+  });
 
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];

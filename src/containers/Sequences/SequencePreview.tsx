@@ -12,7 +12,7 @@ import {
 } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
-import { useCdfItems } from 'hooks/sdk';
+import { useCdfItem } from 'hooks/sdk';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(
@@ -54,13 +54,10 @@ export const SequencePreview = ({
   sequenceId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  // GET /sequence/id does not exist
-  const { data: sequences = [], isFetched, error } = useCdfItems<Sequence>(
+  const { data: sequence, isFetched, error } = useCdfItem<Sequence>(
     'sequences',
-    [{ id: sequenceId }]
+    { id: sequenceId }
   );
-
-  const sequence = isFetched && sequences[0];
 
   const [currentTab, setTab] = useState('details');
 

@@ -26,9 +26,13 @@ export function AssetBreadcrumbItems({
   parents = 0,
   onBreadcrumbClick = () => {},
 }: Props) {
-  const { data: asset, isFetched } = useCdfItem<Asset>('assets', assetId!, {
-    enabled: !!assetId,
-  });
+  const { data: asset, isFetched } = useCdfItem<Asset>(
+    'assets',
+    { id: assetId! },
+    {
+      enabled: !!assetId,
+    }
+  );
 
   if (!isFetched) {
     return null;

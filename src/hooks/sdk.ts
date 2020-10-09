@@ -15,10 +15,6 @@ import {
 import { useContext } from 'react';
 import { SdkContext } from 'context/sdk';
 
-const get = (sdk: CogniteClient, path: string) =>
-  sdk
-    .get(`/api/v1/projects/${sdk.project}${path}`)
-    .then(response => response.data);
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk
     .post(`/api/v1/projects/${sdk.project}${path}`, { data })
@@ -66,23 +62,24 @@ export const useAggregate = (
   );
 };
 
-const retrieveKey = (type: SdkResourceType, id: number) => [
+const byIdKey = (type: SdkResourceType, id: IdEither) => [
   'cdf',
   'get',
   type,
-  'retrieve',
+  'byIds',
   id,
 ];
+
 export const useCdfItem = <T>(
   type: SdkResourceType,
-  id: number,
+  id: IdEither,
   config?: QueryConfig<T, Error>
 ) => {
   const sdk = useContext(SdkContext)!;
-
+  const ids = [id];
   return useQuery<T, Error>(
-    retrieveKey(type, id),
-    () => get(sdk, `/${type}/${id}`),
+    byIdKey(type, id),
+    () => post(sdk, `/${type}/byids`, { items: ids }).then(d => d?.items[0]),
     config
   );
 };

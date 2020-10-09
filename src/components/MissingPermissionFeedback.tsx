@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
-import { checkPermission } from 'modules/app';
-import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { notification } from 'antd';
-import { RootState } from 'reducers';
 import { useParams } from 'react-router-dom';
-// @ts-nocheck
+
 import { ids } from 'cogs-variables';
+import { usePermissions } from 'hooks/CustomHooks';
 
 type Props = {
   key: string;
@@ -15,10 +13,9 @@ type Props = {
 export default function MissingPermissionFeedback(props: Props) {
   const { key, type } = props;
   const { tenant } = useParams<{ tenant: string }>();
-  const groupPermission = useResourcesSelector(
-    (state: RootState) => !!state.app.groups.groupAcl
-  );
-  const hasPermission = useResourcesSelector(checkPermission)(key, type);
+
+  const groupPermission = usePermissions('groupAcl');
+  const hasPermission = usePermissions(key, type);
 
   useEffect(() => {
     if (!groupPermission) {

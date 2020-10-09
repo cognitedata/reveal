@@ -64,7 +64,7 @@ const AnnotationPreviewSidebar = ({
   const [editing, setEditing] = useState<boolean>(false);
 
   const { selectedAnnotation, setSelectedAnnotation } = useSelectedAnnotation();
-  const { data: file } = useCdfItem<FileInfo>('files', fileId);
+  const { data: file } = useCdfItem<FileInfo>('files', { id: fileId });
 
   const extractFromCanvas = useExtractFromCanvas();
 

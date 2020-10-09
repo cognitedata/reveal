@@ -36,7 +36,7 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
 
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>(
     'files',
-    fileId!,
+    { id: fileId! },
     {
       enabled: !!fileId,
     }

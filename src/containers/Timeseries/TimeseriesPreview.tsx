@@ -28,7 +28,7 @@ export const TimeseriesPreview = ({
 }) => {
   const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
     'timeseries',
-    timeseriesId
+    { id: timeseriesId }
   );
 
   if (!isFetched) {

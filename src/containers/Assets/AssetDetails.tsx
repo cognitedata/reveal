@@ -23,7 +23,7 @@ type Props = {
   id: number;
 };
 export default function AssetDetails({ id }: Props) {
-  const { data: asset, error, isFetched } = useCdfItem<Asset>('assets', id);
+  const { data: asset, error, isFetched } = useCdfItem<Asset>('assets', { id });
 
   if (error) {
     return <ErrorFeedback error={error} />;

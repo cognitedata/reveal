@@ -43,10 +43,9 @@ export const EventPreview = ({
   eventId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const { data: event, error, isFetched } = useCdfItem<CogniteEvent>(
-    'events',
-    eventId
-  );
+  const { data: event, error, isFetched } = useCdfItem<CogniteEvent>('events', {
+    id: eventId,
+  });
 
   if (!isFetched) {
     return <Loader />;

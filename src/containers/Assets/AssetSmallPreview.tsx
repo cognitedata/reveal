@@ -21,9 +21,13 @@ export const AssetSmallPreview = ({
 }) => {
   const renderResourceActions = useResourceActionsContext();
 
-  const { data: asset, isFetched } = useCdfItem<Asset>('assets', assetId, {
-    enabled: !!assetId,
-  });
+  const { data: asset, isFetched } = useCdfItem<Asset>(
+    'assets',
+    { id: assetId },
+    {
+      enabled: !!assetId,
+    }
+  );
 
   const { data: assetFiles } = useList<FileInfo>(
     'files',

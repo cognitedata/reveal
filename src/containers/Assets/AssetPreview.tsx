@@ -37,7 +37,7 @@ export const AssetPreview = ({
 
   const { data: asset, isFetched, error } = useCdfItem<Asset>(
     'assets',
-    assetId,
+    { id: assetId },
     {
       enabled: !!assetId,
     }

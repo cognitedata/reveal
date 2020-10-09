@@ -30,7 +30,7 @@ export const FileSmallPreview = ({
     id: fileId,
   });
 
-  const { data: file } = useCdfItem<FileInfo>('files', fileId);
+  const { data: file } = useCdfItem<FileInfo>('files', { id: fileId });
 
   const annotations = useAnnotations(fileId);
 

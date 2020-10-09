@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { FileUploaderModal, SpacedRow } from 'components/Common';
-import { useResourcesSelector } from '@cognite/cdf-resources-store';
 import { useResourceEditable } from 'context/ResourceSelectionContext';
-import { checkPermission } from 'modules/app';
 import { useHistory } from 'react-router';
 import { createLink } from 'utils/URLUtils';
 import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
+import { usePermissions } from 'hooks/CustomHooks';
 
 export const FileToolbar = () => {
   const history = useHistory();
   const inEditMode = useResourceEditable();
-  const hasEditPermissions = useResourcesSelector(checkPermission)(
-    'filesAcl',
-    'WRITE'
-  );
+  const hasEditPermissions = usePermissions('filesAcl', 'WRITE');
 
   const [modalVisible, setModalVisible] = useState(false);
   if (!inEditMode) {

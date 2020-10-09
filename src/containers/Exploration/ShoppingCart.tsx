@@ -1,25 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Icon, Colors, Button, Title, Dropdown, Menu } from '@cognite/cogs.js';
 import { ListItem } from 'components/Common';
-import {
-  itemSelector as fileSelector,
-  retrieve as retrieveFiles,
-} from '@cognite/cdf-resources-store/dist/files';
-import {
-  itemSelector as timeseriesSelector,
-  retrieve as retrieveTimeseries,
-} from '@cognite/cdf-resources-store/dist/timeseries';
-import {
-  itemSelector as assetsSelector,
-  retrieve as retrieveAssets,
-} from '@cognite/cdf-resources-store/dist/assets';
-import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
 import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'hooks/CustomHooks';
 import { ResourceItem } from 'types';
+import { useCdfItems } from 'hooks/sdk';
+import { FileInfo, Asset, Timeseries } from '@cognite/sdk';
 
 export const ShoppingCartPreview = ({
   cart,
@@ -28,36 +14,32 @@ export const ShoppingCartPreview = ({
   cart: ResourceItem[];
   setCart: (cart: ResourceItem[]) => void;
 }) => {
-  const dispatch = useResourcesDispatch();
+  const fileIds = cart
+    .filter(el => el.type === 'file')
+    .map(({ id }) => ({ id }));
+  const { data: files = [] } = useCdfItems<FileInfo>('files', fileIds);
+
+  const assetIds = cart
+    .filter(el => el.type === 'asset')
+    .map(({ id }) => ({ id }));
+  const { data: assets = [] } = useCdfItems<Asset>('assets', assetIds);
+
+  const timeseriesIds = cart
+    .filter(el => el.type === 'timeSeries')
+    .map(({ id }) => ({ id }));
+  const { data: timeseries = [] } = useCdfItems<Timeseries>(
+    'timeseries',
+    timeseriesIds
+  );
+
   const tenant = useTenant();
   const env = useEnv();
-  const getFile = useResourcesSelector(fileSelector);
-  const getTimeseries = useResourcesSelector(timeseriesSelector);
-  const getAsset = useResourcesSelector(assetsSelector);
 
-  useEffect(() => {
-    dispatch(
-      retrieveFiles(
-        cart.filter(el => el.type === 'file').map(({ id }) => ({ id }))
-      )
-    );
-    dispatch(
-      retrieveAssets(
-        cart.filter(el => el.type === 'asset').map(({ id }) => ({ id }))
-      )
-    );
-    dispatch(
-      retrieveTimeseries(
-        cart.filter(el => el.type === 'timeSeries').map(({ id }) => ({ id }))
-      )
-    );
-  }, [dispatch, cart]);
-
-  const onDeleteClicked = (item: ResourceItem) => {
-    setCart(cart.filter(el => el.type !== item.type && el.id !== item.id));
+  const onDeleteClicked = (item: { id: number }) => {
+    setCart(cart.filter(el => el.id !== item.id));
   };
 
-  const renderDeleteItemButton = (item: ResourceItem) => (
+  const renderDeleteItemButton = (item: { id: number }) => (
     <Icon
       style={{
         alignSelf: 'center',
@@ -68,107 +50,78 @@ export const ShoppingCartPreview = ({
     />
   );
 
-  const assets: ResourceItem[] = [];
-  const files: ResourceItem[] = [];
-  const timeseries: ResourceItem[] = [];
-
-  cart.forEach(el => {
-    switch (el.type) {
-      case 'asset': {
-        assets.push(el);
-        break;
-      }
-      case 'timeSeries': {
-        timeseries.push(el);
-        break;
-      }
-      case 'file': {
-        files.push(el);
-        break;
-      }
-    }
-  });
   return (
     <div style={{ width: 300, position: 'relative' }}>
       <div style={{ height: '400px', overflowY: 'auto' }}>
         <Title level={5} style={{ marginBottom: 8 }}>
           Asset
         </Title>
-        {assets.map(item => {
-          const asset = getAsset(item.id);
-          return (
-            <ListItem
-              key={item.id}
-              bordered
-              title={
-                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  <Icon
-                    style={{
-                      alignSelf: 'center',
-                      marginRight: '4px',
-                    }}
-                    type="DataStudio"
-                  />
-                  <span>{asset ? asset.name : 'Loading'}</span>
-                </div>
-              }
-            >
-              {renderDeleteItemButton(item)}
-            </ListItem>
-          );
-        })}
+        {assets.map(asset => (
+          <ListItem
+            key={asset.id}
+            bordered
+            title={
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <Icon
+                  style={{
+                    alignSelf: 'center',
+                    marginRight: '4px',
+                  }}
+                  type="DataStudio"
+                />
+                <span>{asset ? asset.name : 'Loading'}</span>
+              </div>
+            }
+          >
+            {renderDeleteItemButton(asset)}
+          </ListItem>
+        ))}
         <Title level={5} style={{ marginBottom: 8 }}>
           Time series
         </Title>
-        {timeseries.map(item => {
-          const ts = getTimeseries(item.id);
-          return (
-            <ListItem
-              key={item.id}
-              bordered
-              title={
-                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  <Icon
-                    style={{
-                      alignSelf: 'center',
-                      marginRight: '4px',
-                    }}
-                    type="DataStudio"
-                  />
-                  <span>{ts ? ts.name : 'Loading...'}</span>
-                </div>
-              }
-            >
-              {renderDeleteItemButton(item)}
-            </ListItem>
-          );
-        })}
+        {timeseries.map(ts => (
+          <ListItem
+            key={ts.id}
+            bordered
+            title={
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <Icon
+                  style={{
+                    alignSelf: 'center',
+                    marginRight: '4px',
+                  }}
+                  type="DataStudio"
+                />
+                <span>{ts ? ts.name : 'Loading...'}</span>
+              </div>
+            }
+          >
+            {renderDeleteItemButton(ts)}
+          </ListItem>
+        ))}
         <Title level={5} style={{ marginBottom: 8 }}>
           Files
         </Title>
-        {files.map(item => {
-          const file = getFile(item.id);
-          return (
-            <ListItem
-              key={item.id}
-              bordered
-              title={
-                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  <Icon
-                    style={{
-                      alignSelf: 'center',
-                      marginRight: '4px',
-                    }}
-                    type="DataStudio"
-                  />
-                  <span>{file ? file.name : 'Loading...'}</span>
-                </div>
-              }
-            >
-              {renderDeleteItemButton(item)}
-            </ListItem>
-          );
-        })}
+        {files.map(file => (
+          <ListItem
+            key={file.id}
+            bordered
+            title={
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <Icon
+                  style={{
+                    alignSelf: 'center',
+                    marginRight: '4px',
+                  }}
+                  type="DataStudio"
+                />
+                <span>{file ? file.name : 'Loading...'}</span>
+              </div>
+            }
+          >
+            {renderDeleteItemButton(file)}
+          </ListItem>
+        ))}
       </div>
       <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
         <Button

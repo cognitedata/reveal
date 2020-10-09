@@ -18,9 +18,13 @@ const ParentCell = ({
   rootId: number;
   onItemClicked: (asset: Asset) => void;
 }) => {
-  const { data: rootAsset, isFetched } = useCdfItem<Asset>('assets', rootId, {
-    enabled: !!rootId,
-  });
+  const { data: rootAsset, isFetched } = useCdfItem<Asset>(
+    'assets',
+    { id: rootId },
+    {
+      enabled: !!rootId,
+    }
+  );
 
   return (
     <Button

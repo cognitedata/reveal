@@ -1,29 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import {
-  itemSelector as assetSelector,
-  retrieve as retrieveAssets,
-} from '@cognite/cdf-resources-store/dist/assets';
-import {
-  itemSelector as timeseriesSelector,
-  retrieve as retrieveTimeseries,
-} from '@cognite/cdf-resources-store/dist/timeseries';
-import {
-  itemSelector as fileSelector,
-  retrieve as retrieveFiles,
-} from '@cognite/cdf-resources-store/dist/files';
-import {
-  itemSelector as sequenceSelector,
-  retrieve as retrieveSequences,
-} from '@cognite/cdf-resources-store/dist/sequences';
-import {
-  itemSelector as eventSelector,
-  retrieve as retrieveEvents,
-} from '@cognite/cdf-resources-store/dist/events';
-import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { AssetSmallPreview } from 'containers/Assets';
 import { FileSmallPreview } from 'containers/Files';
@@ -65,76 +41,27 @@ export const ResourcePreviewSidebar = ({
   content: propContent,
   onClose,
 }: Props) => {
-  const dispatch = useResourcesDispatch();
-  const getFile = useResourcesSelector(fileSelector);
-  const getAsset = useResourcesSelector(assetSelector);
-  const getTimeseries = useResourcesSelector(timeseriesSelector);
-  const getSequence = useResourcesSelector(sequenceSelector);
-  const getEvent = useResourcesSelector(eventSelector);
-
-  useEffect(() => {
-    if (item) {
-      switch (item.type) {
-        case 'asset': {
-          dispatch(retrieveAssets([{ id: item.id! }]));
-          break;
-        }
-        case 'timeSeries': {
-          dispatch(retrieveTimeseries([{ id: item.id! }]));
-          break;
-        }
-        case 'file': {
-          dispatch(retrieveFiles([{ id: item.id! }]));
-          break;
-        }
-        case 'sequence': {
-          dispatch(retrieveSequences([{ id: item.id! }]));
-          break;
-        }
-        case 'event': {
-          dispatch(retrieveEvents([{ id: item.id! }]));
-          break;
-        }
-      }
-    }
-  }, [dispatch, item]);
-
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {
       case 'asset': {
-        const asset = getAsset(item.id);
-        if (asset) {
-          content = <AssetSmallPreview assetId={asset.id} />;
-        }
+        content = <AssetSmallPreview assetId={item.id} />;
         break;
       }
       case 'file': {
-        const previewFile = getFile(item.id);
-        if (previewFile) {
-          content = <FileSmallPreview fileId={previewFile.id} />;
-        }
+        content = <FileSmallPreview fileId={item.id} />;
         break;
       }
       case 'sequence': {
-        const sequence = getSequence(item.id);
-        if (sequence) {
-          content = <SequenceSmallPreview sequenceId={sequence.id} />;
-        }
+        content = <SequenceSmallPreview sequenceId={item.id} />;
         break;
       }
       case 'timeSeries': {
-        const timeseries = getTimeseries(item.id);
-        if (timeseries) {
-          content = <TimeseriesSmallPreview timeseriesId={timeseries.id} />;
-        }
+        content = <TimeseriesSmallPreview timeseriesId={item.id} />;
         break;
       }
       case 'event': {
-        const event = getEvent(item.id);
-        if (event) {
-          content = <EventSmallPreview eventId={event.id} />;
-        }
+        content = <EventSmallPreview eventId={item.id} />;
         break;
       }
     }

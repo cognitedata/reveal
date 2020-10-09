@@ -45,7 +45,7 @@ export const FileOverviewPanel = ({
   const dispatch = useResourcesDispatch();
   const download = useDownloadPDF();
 
-  const { data: file } = useCdfItem<FileInfo>('files', fileId);
+  const { data: file } = useCdfItem<FileInfo>('files', { id: fileId });
 
   const { page, setPage, annotations } = useContext(CogniteFileViewer.Context);
 
