@@ -1,15 +1,13 @@
-import React, { useEffect, useMemo } from 'react';
-import { TimeseriesDetailsAbstract, Loader } from 'components/Common';
+import React, { useMemo } from 'react';
 import {
-  useResourcesDispatch,
-  useResourcesSelector,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector,
-  retrieve,
-} from '@cognite/cdf-resources-store/dist/timeseries';
+  ErrorFeedback,
+  Loader,
+  TimeseriesDetailsAbstract,
+} from 'components/Common';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
+import { useCdfItems } from 'hooks/sdk';
+import { Timeseries } from '@cognite/sdk';
 
 export const TimeseriesSmallPreview = ({
   timeseriesId,
@@ -22,18 +20,18 @@ export const TimeseriesSmallPreview = ({
   extras?: React.ReactNode[];
   children?: React.ReactNode;
 }) => {
-  const dispatch = useResourcesDispatch();
+  // There is no GET /timeseries/id api
+  const { data = [], isFetched, error } = useCdfItems<Timeseries>(
+    'timeseries',
+    [{ id: timeseriesId }]
+  );
+  const timeseries = isFetched && data[0];
+
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
     type: 'timeSeries',
     id: timeseriesId,
   });
-
-  useEffect(() => {
-    dispatch(retrieve([{ id: timeseriesId }]));
-  }, [dispatch, timeseriesId]);
-
-  const timeseries = useResourcesSelector(itemSelector)(timeseriesId);
 
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];
@@ -47,9 +45,18 @@ export const TimeseriesSmallPreview = ({
     return items;
   }, [selectionButton, renderResourceActions, timeseriesId, propActions]);
 
-  if (!timeseries) {
+  if (!isFetched) {
     return <Loader />;
   }
+
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!timeseries) {
+    return <>Time series {timeseriesId} not found!</>;
+  }
+
   return (
     <TimeseriesDetailsAbstract
       key={timeseries.id}

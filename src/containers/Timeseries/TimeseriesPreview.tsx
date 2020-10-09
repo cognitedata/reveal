@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react';
-import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector,
-  retrieve,
-} from '@cognite/cdf-resources-store/dist/timeseries';
+import React from 'react';
 import { Icon } from '@cognite/cogs.js';
-import { TimeseriesGraph, Wrapper } from 'components/Common';
+import {
+  Loader,
+  ErrorFeedback,
+  TimeseriesGraph,
+  Wrapper,
+} from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
+import { useCdfItem } from 'hooks/sdk';
+import { Timeseries } from '@cognite/sdk';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -27,14 +26,22 @@ export const TimeseriesPreview = ({
   timeseriesId: number;
   extraActions?: React.ReactNode[];
 }) => {
-  const dispatch = useResourcesDispatch();
-  const timeseries = useResourcesSelector(itemSelector)(timeseriesId);
+  const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
+    'timeseries',
+    timeseriesId
+  );
 
-  useEffect(() => {
-    if (!timeseries) {
-      dispatch(retrieve([{ id: timeseriesId }]));
-    }
-  }, [dispatch, timeseries, timeseriesId]);
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!timeseries) {
+    return <>Sequence {timeseriesId} not found!</>;
+  }
 
   return (
     <Wrapper>

@@ -1,15 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
-import { SequenceDetailsAbstract, Loader } from 'components/Common';
+import React, { useMemo } from 'react';
 import {
-  useResourcesDispatch,
-  useResourcesSelector,
-} from '@cognite/cdf-resources-store';
-import {
-  itemSelector,
-  retrieve,
-} from '@cognite/cdf-resources-store/dist/sequences';
+  ErrorFeedback,
+  SequenceDetailsAbstract,
+  Loader,
+} from 'components/Common';
+
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
+import { useCdfItems } from 'hooks/sdk';
+import { Sequence } from '@cognite/sdk';
 
 export const SequenceSmallPreview = ({
   sequenceId,
@@ -22,19 +21,19 @@ export const SequenceSmallPreview = ({
   extras?: React.ReactNode[];
   children?: React.ReactNode;
 }) => {
+  const { data: sequences = [], isFetched, error } = useCdfItems<Sequence>(
+    'sequences',
+    [{ id: sequenceId }]
+  );
+
+  const sequence = isFetched && sequences[0];
+
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
     type: 'sequence',
     id: sequenceId,
   });
 
-  const dispatch = useResourcesDispatch();
-
-  useEffect(() => {
-    dispatch(retrieve([{ id: sequenceId }]));
-  }, [dispatch, sequenceId]);
-
-  const sequence = useResourcesSelector(itemSelector)(sequenceId);
   const actions = useMemo(() => {
     const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));
@@ -47,8 +46,16 @@ export const SequenceSmallPreview = ({
     return items;
   }, [selectionButton, renderResourceActions, sequenceId, propActions]);
 
-  if (!sequence) {
+  if (!isFetched) {
     return <Loader />;
+  }
+
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!sequence) {
+    return <>Sequence {sequenceId} not found!</>;
   }
 
   return (
