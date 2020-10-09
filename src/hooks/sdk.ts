@@ -26,7 +26,8 @@ export type SdkResourceType =
   | 'sequences'
   | 'files'
   | 'events'
-  | 'datasets';
+  | 'datasets'
+  | 'labels';
 
 const aggregateKey = (type: SdkResourceType, filter: any) => [
   'cdf',
@@ -123,11 +124,12 @@ const listApi = (sdk: CogniteClient, type: SdkResourceType, body: any) =>
 export const useList = <T>(
   type: SdkResourceType,
   body?: any,
-  config?: QueryConfig<T[]>
+  config?: QueryConfig<T[]>,
+  noCleanUp = false
 ) => {
   const sdk = useContext(SdkContext)!;
 
-  const processedBody = cleanupBody(body);
+  const processedBody = noCleanUp ? body : cleanupBody(body);
 
   return useQuery<T[]>(
     listKey(type, processedBody),

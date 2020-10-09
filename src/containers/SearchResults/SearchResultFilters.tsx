@@ -12,15 +12,16 @@ import { useResourceFilters } from 'context';
 import { MimeTypeFilter } from 'containers/Files';
 import { UnitFilter } from 'containers/Timeseries';
 import { SdkResourceType, useList } from 'hooks/sdk';
-import { MetadataFilter, DataSetFilters } from './Filters';
+import { MetadataFilter, DataSetFilters, LabelFilters } from './Filters';
 
 type FilterRenderFn<T> = (items: T[]) => React.ReactNode;
 
-type AssetFiltersKey = 'metadata' | 'dataset';
+type AssetFiltersKey = 'metadata' | 'dataset' | 'label';
 
 const AssetFilters: { [key in AssetFiltersKey]: FilterRenderFn<Asset> } = {
   metadata: items => <MetadataFilter resourceType="asset" items={items} />,
   dataset: () => <DataSetFilters resourceType="asset" />,
+  label: () => <LabelFilters resourceType="asset" />,
 };
 type TimeseriesFiltersKey = 'metadata' | 'unit' | 'dataset';
 
@@ -47,22 +48,28 @@ const SequenceFilters: {
   metadata: items => <MetadataFilter resourceType="sequence" items={items} />,
   dataset: () => <DataSetFilters resourceType="sequence" />,
 };
-type FileFiltersKey = 'metadata' | 'mimeType' | 'dataset';
+type FileFiltersKey = 'metadata' | 'mimeType' | 'dataset' | 'label';
 
 const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
   metadata: items => <MetadataFilter resourceType="file" items={items} />,
   mimeType: items => <MimeTypeFilter items={items} />,
   dataset: () => <DataSetFilters resourceType="file" />,
+  label: () => <LabelFilters resourceType="file" />,
 };
 
-const ActiveAssetFilters: AssetFiltersKey[] = ['dataset', 'metadata'];
+const ActiveAssetFilters: AssetFiltersKey[] = ['label', 'dataset', 'metadata'];
 const ActiveEventFilters: EventFiltersKey[] = ['dataset', 'metadata'];
 const ActiveTimeseriesFilters: TimeseriesFiltersKey[] = [
   'unit',
   'dataset',
   'metadata',
 ];
-const ActiveFileFilters: FileFiltersKey[] = ['dataset', 'mimeType', 'metadata'];
+const ActiveFileFilters: FileFiltersKey[] = [
+  'label',
+  'dataset',
+  'mimeType',
+  'metadata',
+];
 const ActiveSequenceFilters: SequenceFiltersKey[] = ['dataset', 'metadata'];
 
 export const SearchResultFilters = ({
@@ -100,7 +107,7 @@ export const SearchResultFilters = ({
     timeseriesFilter,
   ]);
 
-  const { data: items = [] } = useList(type, { ...filter, limit: 1000 });
+  const { data: items = [] } = useList(type, { filter, limit: 1000 });
 
   return (
     <>
