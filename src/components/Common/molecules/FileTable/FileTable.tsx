@@ -1,10 +1,6 @@
 import React from 'react';
 import { FileInfo as File, FileInfo } from '@cognite/sdk';
-import {
-  TimeDisplay,
-  ResourceTable,
-  ResourceTableColumns,
-} from 'components/Common';
+import { TimeDisplay, TableProps, Table } from 'components/Common';
 import { Body } from '@cognite/cogs.js';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import { useResourceMode } from 'context/ResourceSelectionContext';
@@ -15,21 +11,20 @@ const ActionCell = ({ file }: { file: File }) => {
 };
 
 export const FileTable = ({
-  query,
-  filter,
-  onFileClicked,
+  items,
+  onItemClicked,
+  ...props
 }: {
-  query?: string;
-  filter?: any;
-  onFileClicked: (file: File) => void;
-}) => {
+  items: File[];
+  onItemClicked: (file: File) => void;
+} & TableProps<File>) => {
   const { mode } = useResourceMode();
 
   const columns = [
-    ResourceTableColumns.name,
-    ResourceTableColumns.mimeType,
+    Table.Columns.name,
+    Table.Columns.mimeType,
     {
-      ...ResourceTableColumns.uploadedTime,
+      ...Table.Columns.uploadedTime,
       cellRenderer: ({ cellData: file }: { cellData: File }) => (
         <Body level={2}>
           {file && file.uploaded && (
@@ -38,12 +33,12 @@ export const FileTable = ({
         </Body>
       ),
     },
-    ResourceTableColumns.lastUpdatedTime,
-    ResourceTableColumns.createdTime,
+    Table.Columns.lastUpdatedTime,
+    Table.Columns.createdTime,
     ...(mode !== 'none'
       ? [
           {
-            ...ResourceTableColumns.select,
+            ...Table.Columns.select,
             cellRenderer: ({ rowData: file }: { rowData: File }) => {
               return <ActionCell file={file} />;
             },
@@ -53,12 +48,12 @@ export const FileTable = ({
   ];
 
   return (
-    <ResourceTable<FileInfo>
-      api="files"
-      filter={filter}
-      query={query}
+    <Table<FileInfo>
+      data={items}
       columns={columns}
-      onRowClick={onFileClicked}
+      onRowClick={onItemClicked}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
     />
   );
 };

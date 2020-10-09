@@ -4,6 +4,7 @@ import ReactBaseTable, { BaseTableProps, ColumnShape } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { TableWrapper } from './TableWrapper';
+import { ResourceTableColumns } from './Columns';
 
 const headerRenderer = ({
   column: { title },
@@ -27,11 +28,12 @@ const HighlightCell = ({ text, query }: { text?: string; query?: string }) => {
 };
 
 type AllowedId = number | string;
-type Props<T> = Partial<BaseTableProps<T>> & {
+export type TableProps<T> = Partial<BaseTableProps<T>> & {
   previewingIds?: AllowedId[];
   activeIds?: AllowedId[];
   disabledIds?: AllowedId[];
   query?: string;
+  onRowClick?: (item: T, event: React.SyntheticEvent<Element, Event>) => void;
 };
 
 export const Table = <T extends { id: AllowedId }>({
@@ -40,8 +42,9 @@ export const Table = <T extends { id: AllowedId }>({
   disabledIds,
   columns = [],
   query,
+  onRowClick,
   ...props
-}: Props<T>) => (
+}: TableProps<T>) => (
   <TableWrapper>
     <AutoSizer>
       {({ width, height }) => (
@@ -61,8 +64,18 @@ export const Table = <T extends { id: AllowedId }>({
             }
             return `row clickable ${extraClasses.join(' ')}`;
           }}
+          fixed
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
+          rowEventHandlers={{
+            onClick: ({ rowData: item, event }) => {
+              if (onRowClick) {
+                onRowClick(item, event);
+              }
+              return event;
+            },
+            ...props.rowEventHandlers,
+          }}
           columns={columns.map((el: ColumnShape<T>) => ({
             headerRenderer,
             resizable: true,
@@ -79,3 +92,4 @@ export const Table = <T extends { id: AllowedId }>({
 );
 
 Table.HighlightCell = HighlightCell;
+Table.Columns = ResourceTableColumns;

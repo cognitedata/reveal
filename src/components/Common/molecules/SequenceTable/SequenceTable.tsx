@@ -2,7 +2,7 @@ import React from 'react';
 import { Sequence } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import { useResourceMode } from 'context/ResourceSelectionContext';
-import { ResourceTable, ResourceTableColumns } from 'components/Common';
+import { Table, TableProps } from 'components/Common';
 
 const ActionCell = ({ sequence }: { sequence: Sequence }) => {
   const getButton = useSelectionCheckbox();
@@ -10,26 +10,25 @@ const ActionCell = ({ sequence }: { sequence: Sequence }) => {
 };
 
 export const SequenceTable = ({
-  filter,
-  query,
-  onSequenceClicked,
+  items,
+  onItemClicked,
+  ...props
 }: {
-  filter?: any;
-  query?: string;
-  onSequenceClicked: (sequence: Sequence) => void;
-}) => {
+  items: Sequence[];
+  onItemClicked: (sequence: Sequence) => void;
+} & TableProps<Sequence>) => {
   const { mode } = useResourceMode();
 
   const columns = [
-    ResourceTableColumns.name,
-    ResourceTableColumns.externalId,
-    ResourceTableColumns.columns,
-    ResourceTableColumns.lastUpdatedTime,
-    ResourceTableColumns.createdTime,
+    Table.Columns.name,
+    Table.Columns.externalId,
+    Table.Columns.columns,
+    Table.Columns.lastUpdatedTime,
+    Table.Columns.createdTime,
     ...(mode !== 'none'
       ? [
           {
-            ...ResourceTableColumns.select,
+            ...Table.Columns.select,
 
             cellRenderer: ({ rowData: sequence }: { rowData: Sequence }) => {
               return <ActionCell sequence={sequence} />;
@@ -40,12 +39,12 @@ export const SequenceTable = ({
   ];
 
   return (
-    <ResourceTable<Sequence>
-      api="sequences"
-      filter={filter}
-      query={query}
+    <Table<Sequence>
+      data={items}
       columns={columns}
-      onRowClick={onSequenceClicked}
+      onRowClick={onItemClicked}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
     />
   );
 };

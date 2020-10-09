@@ -2,7 +2,7 @@ import React from 'react';
 import { Timeseries } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import { useResourceMode } from 'context/ResourceSelectionContext';
-import { ResourceTable, ResourceTableColumns } from 'components/Common';
+import { Table, TableProps } from 'components/Common';
 
 const ActionCell = ({ sequence }: { sequence: Timeseries }) => {
   const getButton = useSelectionCheckbox();
@@ -10,26 +10,25 @@ const ActionCell = ({ sequence }: { sequence: Timeseries }) => {
 };
 
 export const TimeseriesTable = ({
-  filter,
-  query,
-  onTimeseriesClicked,
+  items,
+  onItemClicked,
+  ...props
 }: {
-  filter?: any;
-  query?: string;
-  onTimeseriesClicked: (sequence: Timeseries) => void;
-}) => {
+  items: Timeseries[];
+  onItemClicked: (sequence: Timeseries) => void;
+} & TableProps<Timeseries>) => {
   const { mode } = useResourceMode();
 
   const columns = [
-    ResourceTableColumns.name,
-    ResourceTableColumns.externalId,
-    ResourceTableColumns.unit,
-    ResourceTableColumns.lastUpdatedTime,
-    ResourceTableColumns.createdTime,
+    Table.Columns.name,
+    Table.Columns.externalId,
+    Table.Columns.unit,
+    Table.Columns.lastUpdatedTime,
+    Table.Columns.createdTime,
     ...(mode !== 'none'
       ? [
           {
-            ...ResourceTableColumns.select,
+            ...Table.Columns.select,
             cellRenderer: ({ rowData: sequence }: { rowData: Timeseries }) => {
               return <ActionCell sequence={sequence} />;
             },
@@ -39,12 +38,12 @@ export const TimeseriesTable = ({
   ];
 
   return (
-    <ResourceTable<Timeseries>
-      api="timeseries"
-      filter={filter}
-      query={query}
+    <Table<Timeseries>
+      data={items}
       columns={columns}
-      onRowClick={onTimeseriesClicked}
+      onRowClick={onItemClicked}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
     />
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ResourceType } from 'types';
 import {
   Asset,
@@ -8,18 +8,10 @@ import {
   FileInfo,
 } from '@cognite/sdk';
 import styled from 'styled-components';
-import { useResourcesSelector } from '@cognite/cdf-resources-store';
-import { searchSelector as assetsSearchSelector } from '@cognite/cdf-resources-store/dist/assets';
-import { searchSelector as filesSearchSelector } from '@cognite/cdf-resources-store/dist/files';
-import { searchSelector as eventsSearchSelector } from '@cognite/cdf-resources-store/dist/events';
-import { searchSelector as sequencesSearchSelector } from '@cognite/cdf-resources-store/dist/sequences';
-import { searchSelector as timeseriesSearchSelector } from '@cognite/cdf-resources-store/dist/timeseries';
-import { useResourceFilters, useQuery } from 'context';
-import { buildEventsFilterQuery } from 'containers/Events';
-import { buildAssetsFilterQuery } from 'containers/Assets';
-import { buildSequencesFilterQuery } from 'containers/Sequences';
-import { buildFilesFilterQuery, MimeTypeFilter } from 'containers/Files';
-import { buildTimeseriesFilterQuery, UnitFilter } from 'containers/Timeseries';
+import { useResourceFilters } from 'context';
+import { MimeTypeFilter } from 'containers/Files';
+import { UnitFilter } from 'containers/Timeseries';
+import { SdkResourceType, useList } from 'hooks/sdk';
 import { MetadataFilter, DataSetFilters } from './Filters';
 
 type FilterRenderFn<T> = (items: T[]) => React.ReactNode;
@@ -85,23 +77,30 @@ export const SearchResultFilters = ({
     fileFilter,
     timeseriesFilter,
   } = useResourceFilters();
-  const [query] = useQuery();
 
-  const { items: assets } = useResourcesSelector(assetsSearchSelector)(
-    buildAssetsFilterQuery(assetFilter, query)
-  );
-  const { items: sequences } = useResourcesSelector(sequencesSearchSelector)(
-    buildSequencesFilterQuery(sequenceFilter, query)
-  );
-  const { items: events } = useResourcesSelector(eventsSearchSelector)(
-    buildEventsFilterQuery(eventFilter, query)
-  );
-  const { items: files } = useResourcesSelector(filesSearchSelector)(
-    buildFilesFilterQuery(fileFilter, query)
-  );
-  const { items: timeseries } = useResourcesSelector(timeseriesSearchSelector)(
-    buildTimeseriesFilterQuery(timeseriesFilter, query)
-  );
+  const [type, filter] = useMemo<[SdkResourceType, any]>(() => {
+    switch (currentResourceType) {
+      case 'file':
+        return ['files', fileFilter];
+      case 'sequence':
+        return ['sequences', sequenceFilter];
+      case 'timeSeries':
+        return ['timeseries', timeseriesFilter];
+      case 'event':
+        return ['events', eventFilter];
+      default:
+        return ['assets', assetFilter];
+    }
+  }, [
+    currentResourceType,
+    eventFilter,
+    assetFilter,
+    sequenceFilter,
+    fileFilter,
+    timeseriesFilter,
+  ]);
+
+  const { data: items = [] } = useList(type, { ...filter, limit: 1000 });
 
   return (
     <>
@@ -110,33 +109,35 @@ export const SearchResultFilters = ({
           case 'asset': {
             return ActiveAssetFilters.map(key => (
               <FormItem key={`asset-${key}`}>
-                {AssetFilters[key](assets)}
+                {AssetFilters[key](items as Asset[])}
               </FormItem>
             ));
           }
           case 'event': {
             return ActiveEventFilters.map(key => (
               <FormItem key={`event-${key}`}>
-                {EventFilters[key](events)}
+                {EventFilters[key](items as CogniteEvent[])}
               </FormItem>
             ));
           }
           case 'timeSeries': {
             return ActiveTimeseriesFilters.map(key => (
               <FormItem key={`timeseries-${key}`}>
-                {TimeseriesFilters[key](timeseries)}
+                {TimeseriesFilters[key](items as Timeseries[])}
               </FormItem>
             ));
           }
           case 'file': {
             return ActiveFileFilters.map(key => (
-              <FormItem key={`file-${key}`}>{FileFilters[key](files)}</FormItem>
+              <FormItem key={`file-${key}`}>
+                {FileFilters[key](items as FileInfo[])}
+              </FormItem>
             ));
           }
           case 'sequence': {
             return ActiveSequenceFilters.map(key => (
               <FormItem key={`sequence-${key}`}>
-                {SequenceFilters[key](sequences)}
+                {SequenceFilters[key](items as Sequence[])}
               </FormItem>
             ));
           }

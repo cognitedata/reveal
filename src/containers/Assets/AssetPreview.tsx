@@ -5,16 +5,19 @@ import {
   Loader,
   ErrorFeedback,
   Wrapper,
-  TimeseriesTable,
-  SequenceTable,
-  EventTable,
-  FileTable,
   SpacedRow,
   Tabs,
   CdfCount,
+  ResourceTable,
 } from 'components/Common';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-import { Asset } from '@cognite/sdk';
+import {
+  Asset,
+  Timeseries,
+  Sequence,
+  FileInfo,
+  CogniteEvent,
+} from '@cognite/sdk';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { useCdfItem } from 'hooks/sdk';
 import AssetDetails from './AssetDetails';
@@ -97,8 +100,9 @@ export const AssetPreview = ({
           }
           key="timeseries"
         >
-          <TimeseriesTable
-            onTimeseriesClicked={ts => {
+          <ResourceTable<Timeseries>
+            api="timeseries"
+            onRowClick={ts => {
               if (ts) {
                 openPreview({
                   item: { id: ts.id, type: 'timeSeries' },
@@ -116,11 +120,14 @@ export const AssetPreview = ({
           }
           key="files"
         >
-          <FileTable
-            onFileClicked={file => {
-              openPreview({
-                item: { id: file.id, type: 'file' },
-              });
+          <ResourceTable<FileInfo>
+            api="files"
+            onRowClick={file => {
+              if (file) {
+                openPreview({
+                  item: { id: file.id, type: 'file' },
+                });
+              }
             }}
             filter={filter}
           />
@@ -133,11 +140,14 @@ export const AssetPreview = ({
           }
           key="sequences"
         >
-          <SequenceTable
-            onSequenceClicked={sequence => {
-              openPreview({
-                item: { id: sequence.id, type: 'sequence' },
-              });
+          <ResourceTable<Sequence>
+            api="sequences"
+            onRowClick={sequence => {
+              if (sequence) {
+                openPreview({
+                  item: { id: sequence.id, type: 'sequence' },
+                });
+              }
             }}
             filter={filter}
           />
@@ -150,11 +160,14 @@ export const AssetPreview = ({
           }
           key="events"
         >
-          <EventTable
-            onEventClicked={event => {
-              openPreview({
-                item: { id: event.id, type: 'event' },
-              });
+          <ResourceTable<CogniteEvent>
+            api="events"
+            onRowClick={event => {
+              if (event) {
+                openPreview({
+                  item: { id: event.id, type: 'event' },
+                });
+              }
             }}
             filter={filter}
           />
