@@ -1,17 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, {
-  useEffect,
-  useMemo,
-  useCallback,
-  useState,
-  useContext,
-} from 'react';
-import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
-import { itemSelector } from '@cognite/cdf-resources-store/dist/files';
-import { selectAnnotations } from 'modules/annotations';
+import React, { useEffect, useState, useContext } from 'react';
+import { FileInfo } from '@cognite/sdk';
 import {
   CogniteFileViewer,
   ProposedCogniteAnnotation,
@@ -24,61 +13,65 @@ import { AnnotationPreviewSidebar } from 'containers/Files/FilePreview/Annotatio
 import { v4 as uuid } from 'uuid';
 import { PendingCogniteAnnotation } from '@cognite/annotations';
 import { FileOverviewPanel } from 'containers/Files/FilePreview/FileOverviewPanel';
-import { fetchResourceForAnnotation } from 'utils/AnnotationUtils';
 import { ContextualizationModule } from 'containers/Files/FilePreview/ContextualizationModule';
-import { getSDK } from 'utils/SDK';
-import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
+import { useCdfItem } from 'hooks/sdk';
+import { SdkContext } from 'context/sdk';
+import { useAnnotations } from '../hooks';
 
 type Props = {
-  fileId?: number;
+  fileId: number;
   contextualization?: boolean;
-  page?: number;
-  onPageChange?: (newPage: number) => void;
 };
 
-const FilePreview = ({
-  fileId,
-  contextualization = false,
-  page,
-  onPageChange,
-}: Props) => {
-  const dispatch = useResourcesDispatch();
-  const file = useResourcesSelector(itemSelector)(fileId);
+const FilePreview = ({ fileId, contextualization = false }: Props) => {
   const [creatable, setCreatable] = useState(false);
 
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ProposedCogniteAnnotation[]
   >([]);
 
-  const {
-    page: pageFromStore,
-    selectedAnnotation,
-    setSelectedAnnotation,
-  } = useContext(CogniteFileViewer.Context);
+  useEffect(() => {
+    setPendingAnnotations([]);
+  }, [fileId]);
 
-  const getAnnotations = useResourcesSelector(selectAnnotations);
-  const annotations = useMemo(() => getAnnotations(fileId), [
-    fileId,
-    getAnnotations,
-  ]);
-
-  const allAnnotations = useMemo(
-    () => [...annotations, ...pendingAnnotations],
-    [annotations, pendingAnnotations]
+  const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>(
+    'files',
+    fileId!,
+    {
+      enabled: !!fileId,
+    }
   );
 
-  useEffect(() => {
-    if (!!page && pageFromStore !== page && onPageChange) {
-      onPageChange(page);
-    }
-  }, [pageFromStore, page, onPageChange]);
+  const annotations = useAnnotations(fileId);
+  const allAnnotations = [...annotations, ...pendingAnnotations];
 
-  const canPreviewFile = useMemo(() => isFilePreviewable(file), [file]);
+  const canPreviewFile = file && isFilePreviewable(file);
 
-  const renderContent = useCallback(() => {
-    if (file) {
-      if (canPreviewFile) {
-        return (
+  if (!fileFetched) {
+    return <Loader />;
+  }
+
+  if (!canPreviewFile) {
+    return (
+      <CenteredPlaceholder>
+        <h1>No Preview For File</h1>
+        <p>Please search for a File to start viewing.</p>
+      </CenteredPlaceholder>
+    );
+  }
+
+  return (
+    <>
+      <Splitter primaryIndex={1}>
+        <FileOverviewPanel
+          fileId={fileId}
+          pendingAnnotations={pendingAnnotations}
+          setPendingAnnotations={setPendingAnnotations}
+          creatable={creatable}
+          setCreatable={setCreatable}
+          contextualization={contextualization}
+        />
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
           <CogniteFileViewer.FileViewer
             file={file}
             creatable={creatable}
@@ -99,7 +92,6 @@ const FilePreview = ({
               onCreate: (item: PendingCogniteAnnotation) => {
                 const newItem = { ...item, id: uuid() };
                 setPendingAnnotations([newItem]);
-                setSelectedAnnotation(newItem);
                 return false;
               },
               onUpdate: () => {
@@ -107,45 +99,6 @@ const FilePreview = ({
               },
             }}
           />
-        );
-      }
-      return (
-        <CenteredPlaceholder>
-          <h1>No Preview For File</h1>
-          <p>Please search for a File to start viewing.</p>
-        </CenteredPlaceholder>
-      );
-    }
-    return <Loader />;
-  }, [file, canPreviewFile, creatable, allAnnotations, setSelectedAnnotation]);
-
-  useEffect(() => {
-    if (selectedAnnotation) {
-      dispatch(fetchResourceForAnnotation(selectedAnnotation));
-    }
-    setTimeout(
-      () => window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT)),
-      200
-    );
-  }, [dispatch, selectedAnnotation]);
-
-  useEffect(() => {
-    setPendingAnnotations([]);
-  }, [fileId]);
-
-  return (
-    <>
-      <Splitter primaryIndex={1}>
-        <FileOverviewPanel
-          fileId={fileId}
-          pendingAnnotations={pendingAnnotations}
-          setPendingAnnotations={setPendingAnnotations}
-          creatable={creatable}
-          setCreatable={setCreatable}
-          contextualization={contextualization}
-        />
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-          {renderContent()}
         </div>
       </Splitter>
       <AnnotationPreviewSidebar
@@ -174,7 +127,7 @@ const CenteredPlaceholder = styled.div`
 `;
 
 const WrappedFilePreview = (props: Props) => {
-  const sdk = getSDK();
+  const sdk = useContext(SdkContext)!;
   return (
     <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
       <FilePreview {...props} />

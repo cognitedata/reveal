@@ -1,22 +1,14 @@
 import React, { useEffect, useContext } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { retrieve as retrieveFile } from '@cognite/cdf-resources-store/dist/files';
-import { useResourcesDispatch } from '@cognite/cdf-resources-store';
-import { listByFileId } from 'modules/annotations';
+import { useParams } from 'react-router-dom';
 import { trackUsage } from 'utils/Metrics';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
-import queryString from 'query-string';
-import { useLocation } from 'react-router';
 import { FilePreview } from './FilePreview';
 
 export const FilePage = () => {
-  const dispatch = useResourcesDispatch();
   const { fileId } = useParams<{
     fileId: string | undefined;
   }>();
-  const { search } = useLocation();
-  const history = useHistory();
   const fileIdNumber = fileId ? parseInt(fileId, 10) : undefined;
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
@@ -38,36 +30,17 @@ export const FilePage = () => {
 
   useEffect(() => {
     trackUsage('Exploration.File', { fileId: fileIdNumber });
-  }, [fileIdNumber]);
-
-  useEffect(() => {
-    if (fileIdNumber) {
-      (async () => {
-        await dispatch(retrieveFile([{ id: fileIdNumber }]));
-        await dispatch(listByFileId(fileIdNumber));
-      })();
-    }
     hidePreview();
-  }, [dispatch, fileIdNumber, hidePreview]);
+  }, [fileIdNumber, hidePreview]);
 
-  const { page = 1 }: { page?: number } = queryString.parse(search, {
-    parseNumbers: true,
-  });
+  if (
+    !fileId ||
+    fileId.length === 0 ||
+    !fileIdNumber ||
+    Number.isNaN(fileIdNumber)
+  ) {
+    return null;
+  }
 
-  return (
-    <FilePreview
-      fileId={fileIdNumber}
-      contextualization
-      page={page}
-      onPageChange={newPage => {
-        const currentSearch = queryString.parse(search);
-        history.replace({
-          search: queryString.stringify({
-            ...currentSearch,
-            page: newPage,
-          }),
-        });
-      }}
-    />
-  );
+  return <FilePreview fileId={fileIdNumber} contextualization />;
 };

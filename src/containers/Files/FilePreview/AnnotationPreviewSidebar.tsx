@@ -4,11 +4,6 @@ import {
   useResourcesSelector,
   useResourcesDispatch,
 } from '@cognite/cdf-resources-store';
-import { itemSelector as fileSelector } from '@cognite/cdf-resources-store/dist/files';
-import { itemSelector as assetSelector } from '@cognite/cdf-resources-store/dist/assets';
-import { itemSelector as timeseriesSelector } from '@cognite/cdf-resources-store/dist/timeseries';
-import { itemSelector as sequenceSelector } from '@cognite/cdf-resources-store/dist/sequences';
-import { itemSelector as eventSelector } from '@cognite/cdf-resources-store/dist/events';
 import {
   Button,
   Icon,
@@ -43,13 +38,16 @@ import {
   findSimilarObjects,
   selectObjectStatus,
 } from 'modules/fileContextualization/similarObjectJobs';
-import { useResourceItemFromAnnotation } from 'utils/AnnotationUtils';
 import { useResourceSelector } from 'context/ResourceSelectorContext';
 import { ResourceItemState } from 'context/ResourceSelectionContext';
+import { useCdfItem } from 'hooks/sdk';
+import { FileInfo } from '@cognite/sdk';
+import { useQueryCache } from 'react-query';
 import { ContextualizationData } from './ContextualizationModule';
+import { invalidateEvents } from '../hooks';
 
 type Props = {
-  fileId?: number;
+  fileId: number;
   contextualization: boolean;
   pendingAnnotations: ProposedCogniteAnnotation[];
   setPendingAnnotations: (annos: ProposedCogniteAnnotation[]) => void;
@@ -61,16 +59,12 @@ const AnnotationPreviewSidebar = ({
   setPendingAnnotations,
   contextualization,
 }: Props) => {
-  const { selectedAnnotation, setSelectedAnnotation } = useSelectedAnnotation();
+  const queryCache = useQueryCache();
   const dispatch = useResourcesDispatch();
-  const getFile = useResourcesSelector(fileSelector);
-  const getAsset = useResourcesSelector(assetSelector);
-  const getTimeseries = useResourcesSelector(timeseriesSelector);
-  const getSequence = useResourcesSelector(sequenceSelector);
-  const getEvent = useResourcesSelector(eventSelector);
-  const file = getFile(fileId);
-
   const [editing, setEditing] = useState<boolean>(false);
+
+  const { selectedAnnotation, setSelectedAnnotation } = useSelectedAnnotation();
+  const { data: file } = useCdfItem<FileInfo>('files', fileId);
 
   const extractFromCanvas = useExtractFromCanvas();
 
@@ -86,10 +80,6 @@ const AnnotationPreviewSidebar = ({
   useEffect(() => {
     setEditing(false);
   }, [selectedAnnotationId]);
-
-  const selectedResourceItem = useResourceItemFromAnnotation(
-    selectedAnnotation
-  );
 
   const isFindingSimilarObjects = useResourcesSelector(selectObjectStatus)(
     fileId
@@ -133,6 +123,11 @@ const AnnotationPreviewSidebar = ({
         delete pendingObj.id;
         delete pendingObj.metadata;
         dispatch(createAnnotations(file!, [pendingObj]));
+        setTimeout(() => {
+          if (file) {
+            invalidateEvents(file, queryCache);
+          }
+        }, 2000);
         setPendingAnnotations(
           pendingAnnotations.filter(el => el.id !== selectedAnnotation.id)
         );
@@ -143,6 +138,7 @@ const AnnotationPreviewSidebar = ({
   }, [
     dispatch,
     file,
+    queryCache,
     pendingAnnotations,
     selectedAnnotation,
     setPendingAnnotations,
@@ -151,38 +147,10 @@ const AnnotationPreviewSidebar = ({
   const onLinkResource = useCallback(() => {
     openResourceSelector({
       onSelect: item => {
-        let externalId: string | undefined;
-        switch (item.type) {
-          case 'asset': {
-            const asset = getAsset(item.id);
-            externalId = asset?.externalId;
-            break;
-          }
-          case 'file': {
-            const previewFile = getFile(item.id);
-            externalId = previewFile?.externalId;
-            break;
-          }
-          case 'sequence': {
-            const sequence = getSequence(item.id);
-            externalId = sequence?.externalId;
-            break;
-          }
-          case 'timeSeries': {
-            const timeseries = getTimeseries(item.id);
-            externalId = timeseries?.externalId;
-            break;
-          }
-          case 'event': {
-            const event = getEvent(item.id);
-            externalId = event?.externalId;
-            break;
-          }
-        }
         setSelectedAnnotation({
           ...selectedAnnotation!,
           resourceType: item.type,
-          resourceExternalId: externalId,
+          resourceExternalId: item.externalId,
           resourceId: item.id,
         });
       },
@@ -205,11 +173,6 @@ const AnnotationPreviewSidebar = ({
     });
   }, [
     openResourceSelector,
-    getAsset,
-    getFile,
-    getSequence,
-    getTimeseries,
-    getEvent,
     selectedAnnotation,
     annotationPreview,
     setSelectedAnnotation,
@@ -347,11 +310,14 @@ const AnnotationPreviewSidebar = ({
     onLinkResource,
   ]);
 
-  const { id, type } = selectedResourceItem || {};
+  const type = selectedAnnotation?.resourceType;
+  const id =
+    selectedAnnotation?.resourceExternalId || selectedAnnotation?.resourceId;
 
   useEffect(() => {
     if (selectedAnnotationId) {
       openPreview({
+        // @ts-ignore
         item: id && type ? { id, type } : undefined,
         header,
         footer,
