@@ -58,6 +58,7 @@ export const AssetTable = ({
 
   const columns = [
     Table.Columns.name,
+    Table.Columns.externalId,
     Table.Columns.description,
     {
       ...Table.Columns.root,

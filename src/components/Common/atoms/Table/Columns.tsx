@@ -33,7 +33,7 @@ export const ResourceTableColumns = {
     key: 'description',
     title: 'Description',
     dataKey: 'description',
-    width: 200,
+    width: 400,
   },
   externalId: {
     key: 'externalId',
