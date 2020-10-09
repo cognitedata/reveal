@@ -1,59 +1,74 @@
 import React from 'react';
-import { ResourceType } from 'types';
-import { Title } from '@cognite/cogs.js';
-import { ListItem, CdfCount } from 'components/Common';
-import { SdkResourceType } from 'hooks/sdk';
+import { ResourceType, convertResourceType } from 'types';
+import { Tabs, CdfCount } from 'components/Common';
+import { useResourceFilters } from 'context';
+import styled from 'styled-components';
+import { Icon } from '@cognite/cogs.js';
 
-type FilterTypes = Exclude<SdkResourceType, 'datasets'>;
-const ResourceMap: Record<FilterTypes, string> = {
-  assets: 'Assets',
-  files: 'Files',
-  events: 'Events',
-  timeseries: 'Time series',
-  sequences: 'Sequences',
+const ResourceMap: Record<ResourceType, string> = {
+  asset: 'Assets',
+  file: 'Files',
+  event: 'Events',
+  timeSeries: 'Time series',
+  sequence: 'Sequences',
 };
 
 type Props = {
   currentResourceType: ResourceType;
   setCurrentResourceType: (newResourceType: ResourceType) => void;
-  filter?: any;
 };
 
-const typeMapping = (s: string): string => {
-  switch (s) {
-    case 'timeseries': {
-      return 'timeSeries';
-    }
-    default: {
-      return s.substring(0, s.length - 1);
-    }
-  }
-};
-
-export default function ResourceFilters({
+export const ResourceFilters = ({
   currentResourceType,
   setCurrentResourceType,
-  filter,
-}: Props) {
+}: Props) => {
+  const {
+    assetFilter,
+    timeseriesFilter,
+    fileFilter,
+    sequenceFilter,
+    eventFilter,
+  } = useResourceFilters();
+
+  const filtersMap: { [key in ResourceType]: any } = {
+    asset: assetFilter,
+    timeSeries: timeseriesFilter,
+    file: fileFilter,
+    sequence: sequenceFilter,
+    event: eventFilter,
+  };
+
   return (
-    <>
-      <Title level={4} style={{ marginBottom: 12 }} className="title">
-        Resource types
-      </Title>
-      {Object.keys(ResourceMap).map(type => (
-        <ListItem
-          key={type}
-          onClick={() => {
-            setCurrentResourceType(
-              typeMapping(type as FilterTypes) as ResourceType
-            );
-          }}
-          selected={type.includes(currentResourceType)}
-          title={ResourceMap[type as FilterTypes]}
-        >
-          <CdfCount type={type as FilterTypes} filter={filter} />
-        </ListItem>
-      ))}
-    </>
+    <Tabs
+      tab={currentResourceType}
+      onTabChange={tab => setCurrentResourceType(tab as ResourceType)}
+    >
+      {Object.keys(ResourceMap).map(type => {
+        const sdkType = convertResourceType(type as ResourceType);
+        return (
+          <Tabs.Pane
+            key={type}
+            title={
+              <div>
+                <IconWithBackground type="DataStudio" />
+                {ResourceMap[type as ResourceType]}{' '}
+                <CdfCount
+                  type={sdkType}
+                  filter={filtersMap[type as ResourceType]}
+                />
+              </div>
+            }
+          />
+        );
+      })}
+    </Tabs>
   );
-}
+};
+
+const IconWithBackground = styled(Icon)`
+  padding: 8px;
+  background-color: red;
+  color: blue;
+  border-radius: 4px;
+  margin-right: 10px;
+`;
