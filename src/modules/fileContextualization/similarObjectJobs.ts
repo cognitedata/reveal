@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { callUntilCompleted } from 'helpers/Helpers';
@@ -62,16 +63,9 @@ export const findSimilarObjects = (
   fileId: number,
   boundingBox: AnnotationBoundingBox
 ) => {
-  return async (
-    dispatch: ThunkDispatch<any, any, SimilarityJobActions>,
-    getState: () => RootState
-  ) => {
+  return async (dispatch: ThunkDispatch<any, any, SimilarityJobActions>) => {
     const sdk = getSDK();
-    const {
-      annotations: {
-        byFileId: { [fileId]: currentAnnotation },
-      },
-    } = getState();
+    const currentAnnotation = { annotations: [] };
 
     const annotations = currentAnnotation
       ? currentAnnotation.annotations || []

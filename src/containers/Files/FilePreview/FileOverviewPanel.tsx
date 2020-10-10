@@ -5,7 +5,6 @@ import {
   useResourcesDispatch,
 } from '@cognite/cdf-resources-store';
 import { Button, Dropdown, Menu, Icon, AllIconTypes } from '@cognite/cogs.js';
-import { hardDeleteAnnotationsForFile } from 'modules/annotations';
 import {
   CogniteFileViewer,
   ProposedCogniteAnnotation,
@@ -15,15 +14,17 @@ import { SpacedRow, FilePreviewOverview, Loader } from 'components/Common';
 import styled from 'styled-components';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
-import { Modal, message } from 'antd';
+import { Modal, notification } from 'antd';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
-import { CogniteAnnotation } from '@cognite/annotations';
+import { CogniteAnnotation, hardDeleteAnnotations } from '@cognite/annotations';
 import {
   detectObject,
   selectObjectJobForFile,
 } from 'modules/fileContextualization/objectDetectionJob';
 import { useCdfItem } from 'hooks/sdk';
 import { FileInfo } from '@cognite/sdk';
+import { useMutation, useQueryCache } from 'react-query';
+import { SdkContext } from 'context/sdk';
 
 type Props = {
   fileId: number;
@@ -42,10 +43,30 @@ export const FileOverviewPanel = ({
   setCreatable,
   contextualization,
 }: Props) => {
+  const queryCache = useQueryCache();
   const dispatch = useResourcesDispatch();
   const download = useDownloadPDF();
 
   const { data: file } = useCdfItem<FileInfo>('files', { id: fileId });
+
+  const sdk = useContext(SdkContext)!;
+  const [deleteAnnotations] = useMutation(
+    () => {
+      if (file) {
+        return hardDeleteAnnotations(sdk, file);
+      }
+      return Promise.reject(new Error('file not ready'));
+    },
+    {
+      onSuccess() {
+        queryCache.invalidateQueries(['cdf', 'events', 'list']);
+
+        notification.success({
+          message: `Successfully cleared annotation for ${file!.name}`,
+        });
+      },
+    }
+  );
 
   const { page, setPage, annotations } = useContext(CogniteFileViewer.Context);
 
@@ -137,10 +158,7 @@ export const FileOverviewPanel = ({
                       ),
                       onOk: async () => {
                         setCreatable(false);
-                        await dispatch(hardDeleteAnnotationsForFile(file!));
-                        message.success(
-                          `Successfully cleared annotation for ${file!.name}`
-                        );
+                        deleteAnnotations();
                       },
                       onCancel: () => {},
                     })

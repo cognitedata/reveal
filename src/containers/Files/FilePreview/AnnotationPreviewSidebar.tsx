@@ -1,9 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
-import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
+import React, { useEffect, useCallback, useState, useContext } from 'react';
 import {
   Button,
   Icon,
@@ -13,10 +8,6 @@ import {
   Colors,
   Collapse,
 } from '@cognite/cogs.js';
-import {
-  create as createAnnotations,
-  remove as removeAnnotations,
-} from 'modules/annotations';
 import {
   useSelectedAnnotation,
   ProposedCogniteAnnotation,
@@ -29,22 +20,25 @@ import {
   InfoCell,
   CreateAnnotationForm,
 } from 'components/Common';
-import { Modal, message } from 'antd';
+import { Modal, notification } from 'antd';
 import { trackUsage } from 'utils/Metrics';
-import { CogniteAnnotation } from '@cognite/annotations';
+import {
+  CogniteAnnotation,
+  convertAnnotationsToEvents,
+  deleteAnnotations as deleteAnnotationApi,
+} from '@cognite/annotations';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import styled from 'styled-components';
-import {
-  findSimilarObjects,
-  selectObjectStatus,
-} from 'modules/fileContextualization/similarObjectJobs';
+import { findSimilarObjects } from 'modules/fileContextualization/similarObjectJobs';
 import { useResourceSelector } from 'context/ResourceSelectorContext';
 import { ResourceItemState } from 'context/ResourceSelectionContext';
-import { useCdfItem } from 'hooks/sdk';
-import { FileInfo } from '@cognite/sdk';
-import { useQueryCache } from 'react-query';
+import { useCreate } from 'hooks/sdk';
+import { useQueryCache, useMutation } from 'react-query';
+import { sleep } from 'helpers';
+import { SdkContext } from 'context/sdk';
+import { CogniteEvent, EventChange } from '@cognite/sdk';
+import { useResourcesDispatch } from '@cognite/cdf-resources-store';
 import { ContextualizationData } from './ContextualizationModule';
-import { invalidateEvents } from '../hooks';
 
 type Props = {
   fileId: number;
@@ -64,11 +58,11 @@ const AnnotationPreviewSidebar = ({
   const [editing, setEditing] = useState<boolean>(false);
 
   const { selectedAnnotation, setSelectedAnnotation } = useSelectedAnnotation();
-  const { data: file } = useCdfItem<FileInfo>('files', { id: fileId });
 
   const extractFromCanvas = useExtractFromCanvas();
 
   const { openPreview, hidePreview } = useResourcePreview();
+
   const { openResourceSelector } = useResourceSelector();
 
   const selectedAnnotationId = selectedAnnotation
@@ -81,9 +75,7 @@ const AnnotationPreviewSidebar = ({
     setEditing(false);
   }, [selectedAnnotationId]);
 
-  const isFindingSimilarObjects = useResourcesSelector(selectObjectStatus)(
-    fileId
-  );
+  const isFindingSimilarObjects = false;
 
   let annotationPreview: string | undefined;
   if (selectedAnnotation && extractFromCanvas) {
@@ -93,56 +85,116 @@ const AnnotationPreviewSidebar = ({
 
   const isEditingMode = isPendingAnnotation || editing;
 
-  const similarButton = useMemo(() => {
-    if (selectedAnnotation) {
-      return (
-        <Button
-          loading={isFindingSimilarObjects}
-          icon="Search"
-          onClick={() => {
-            if (fileId) {
-              dispatch(findSimilarObjects(fileId, selectedAnnotation.box));
-            }
-          }}
-        >
-          Find Similar
-        </Button>
-      );
-    }
-    return null;
-  }, [dispatch, selectedAnnotation, isFindingSimilarObjects, fileId]);
+  const similarButton = selectedAnnotation && (
+    <Button
+      loading={isFindingSimilarObjects}
+      icon="Search"
+      onClick={() => {
+        if (fileId) {
+          dispatch(findSimilarObjects(fileId, selectedAnnotation.box));
+        }
+      }}
+    >
+      Find Similar
+    </Button>
+  );
 
-  const onSaveDetection = useCallback(async () => {
-    if (selectedAnnotation) {
-      if (typeof selectedAnnotation.id === 'string') {
-        trackUsage('FileViewer.CreateAnnotation', {
-          annotation: selectedAnnotation,
-        });
-        const pendingObj = { ...selectedAnnotation };
-        // @ts-ignore
-        delete pendingObj.id;
-        delete pendingObj.metadata;
-        dispatch(createAnnotations(file!, [pendingObj]));
-        setTimeout(() => {
-          if (file) {
-            invalidateEvents(file, queryCache);
-          }
-        }, 2000);
-        setPendingAnnotations(
-          pendingAnnotations.filter(el => el.id !== selectedAnnotation.id)
-        );
-      } else {
-        message.info('Coming Soon');
+  const onSuccess = () => {
+    const invalidate = () =>
+      queryCache.invalidateQueries(['cdf', 'events', 'list']);
+    invalidate();
+    // The sleep shouldn't be necessary, but await (POST /resource
+    // {data}) && await(POST /resource/byids) might not return the
+    // newly created item.
+    sleep(500).then(invalidate);
+    sleep(1500).then(invalidate);
+    sleep(5000).then(invalidate);
+
+    hidePreview();
+    setPendingAnnotations(
+      pendingAnnotations.filter(el => el.id !== selectedAnnotation?.id)
+    );
+    notification.success({
+      message: 'Annotation saved!',
+    });
+  };
+
+  const [createEvent] = useCreate('events', {
+    onSuccess,
+  });
+  const sdk = useContext(SdkContext)!;
+  const [updateEvent] = useMutation(
+    (updates: EventChange) => sdk.events.update([updates]),
+    {
+      onSuccess,
+    }
+  );
+
+  const [deleteAnnotations] = useMutation(
+    (annotations: CogniteAnnotation[]) => deleteAnnotationApi(sdk, annotations),
+    {
+      onSuccess,
+    }
+  );
+
+  const onSaveAnnotation = (
+    annotation: ProposedCogniteAnnotation | CogniteAnnotation
+  ) => {
+    if (typeof annotation.id === 'string') {
+      trackUsage('FileViewer.CreateAnnotation', {
+        annotation,
+      });
+      const item = convertAnnotationsToEvents([annotation])[0];
+      item.id = undefined;
+      createEvent(item);
+    } else {
+      const event = convertAnnotationsToEvents([annotation])[0] as CogniteEvent;
+      const update: EventChange = {
+        id: event.id,
+        update: {},
+      };
+      if (event.description) {
+        update.update.description = { set: event.description };
+      }
+      if (event.metadata) {
+        update.update.metadata = {
+          set: event.metadata,
+        };
+      }
+
+      if (Object.keys(update.update).length > 0) {
+        updateEvent(update);
       }
     }
-  }, [
-    dispatch,
-    file,
-    queryCache,
-    pendingAnnotations,
-    selectedAnnotation,
-    setPendingAnnotations,
-  ]);
+  };
+
+  const onDeleteAnnotation = (
+    annotation: CogniteAnnotation | ProposedCogniteAnnotation
+  ) => {
+    if (pendingAnnotations.find(el => el.id === annotation.id)) {
+      setPendingAnnotations(
+        pendingAnnotations.filter(el => el.id !== annotation.id)
+      );
+    } else {
+      trackUsage('FileViewer.DeleteAnnotation', {
+        annotation,
+      });
+      Modal.confirm({
+        title: 'Are you sure?',
+        content: (
+          <span>
+            This annotations will be deleted. However, you can always
+            re-contextualize the file.
+          </span>
+        ),
+        onOk: async () => {
+          deleteAnnotations([annotation as CogniteAnnotation]);
+          setSelectedAnnotation(undefined);
+        },
+        onCancel: () => {},
+      });
+    }
+  };
 
   const onLinkResource = useCallback(() => {
     openResourceSelector({
@@ -178,162 +230,100 @@ const AnnotationPreviewSidebar = ({
     setSelectedAnnotation,
   ]);
 
-  const onDeleteAnnotation = useCallback(async () => {
-    if (selectedAnnotation) {
-      if (pendingAnnotations.find(el => el.id === selectedAnnotation.id)) {
-        setPendingAnnotations(
-          pendingAnnotations.filter(el => el.id !== selectedAnnotation.id)
-        );
-      } else {
-        trackUsage('FileViewer.DeleteAnnotation', {
-          annotation: selectedAnnotation,
-        });
-        Modal.confirm({
-          title: 'Are you sure?',
-          content: (
-            <span>
-              This annotations will be deleted. However, you can always
-              re-contextualize the file.
-            </span>
-          ),
-          onOk: async () => {
-            dispatch(
-              removeAnnotations(file!, [
-                selectedAnnotation as CogniteAnnotation,
-              ])
-            );
-            setSelectedAnnotation(undefined);
-          },
-          onCancel: () => {},
-        });
-      }
-    }
-  }, [
-    selectedAnnotation,
-    setSelectedAnnotation,
-    dispatch,
-    file,
-    pendingAnnotations,
-    setPendingAnnotations,
-  ]);
+  const Header = ({
+    annotation,
+  }: {
+    annotation: CogniteAnnotation | ProposedCogniteAnnotation;
+  }) => (
+    <InfoGrid noBorders>
+      <InfoCell noBorders>
+        <Overline level={2}>LABEL</Overline>
+        <Title level={5}>{annotation.label}</Title>
+        <Overline level={2} style={{ marginTop: 8 }}>
+          DESCRIPTION
+        </Overline>
+        <Body level={2}>{annotation.description || 'N/A'}</Body>
+      </InfoCell>
+      {contextualization && (
+        <InfoCell noBorders>
+          <SpacedRow>
+            <Button onClick={() => onDeleteAnnotation(annotation)}>
+              <Icon type="Delete" />
+              Delete
+            </Button>
+            <Button
+              onClick={() => {
+                setEditing(true);
+              }}
+            >
+              <Icon type="Edit" />
+              Edit
+            </Button>
+            {similarButton}
+          </SpacedRow>
+        </InfoCell>
+      )}
+      <Divider.Horizontal />
+    </InfoGrid>
+  );
 
-  const footer = useMemo(() => {
-    return (
-      <ContextualizationData
-        selectedAnnotation={selectedAnnotation}
-        extractFromCanvas={extractFromCanvas}
-      />
-    );
-  }, [selectedAnnotation, extractFromCanvas]);
-
-  const header = useMemo(() => {
-    if (selectedAnnotation && !isEditingMode) {
-      return (
-        <InfoGrid noBorders>
-          <InfoCell noBorders>
-            <Overline level={2}>LABEL</Overline>
-            <Title level={5}>{selectedAnnotation.label}</Title>
-            <Overline level={2} style={{ marginTop: 8 }}>
-              DESCRIPTION
-            </Overline>
-            <Body level={2}>{selectedAnnotation.description || 'N/A'}</Body>
-          </InfoCell>
-          {contextualization && (
-            <InfoCell noBorders>
-              <SpacedRow>
-                <Button onClick={() => onDeleteAnnotation()}>
-                  <Icon type="Delete" />
-                  Delete
-                </Button>
-                <Button
-                  onClick={() => {
-                    setEditing(true);
-                  }}
-                >
-                  <Icon type="Edit" />
-                  Edit
-                </Button>
-                {similarButton}
-              </SpacedRow>
-            </InfoCell>
-          )}
-          <Divider.Horizontal />
-        </InfoGrid>
-      );
-    }
-    return undefined;
-  }, [
-    selectedAnnotation,
-    onDeleteAnnotation,
-    isEditingMode,
-    contextualization,
-    similarButton,
-  ]);
-
-  const content = useMemo(() => {
-    if (selectedAnnotation && isEditingMode) {
-      return (
-        <CreateAnnotationForm
-          annotation={selectedAnnotation}
-          updateAnnotation={setSelectedAnnotation}
-          onLinkResource={onLinkResource}
-          onDelete={() => {
-            onDeleteAnnotation();
-            setSelectedAnnotation(undefined);
-            setEditing(false);
-          }}
-          onSave={() => {
-            onSaveDetection();
-            setEditing(false);
-            if (isPendingAnnotation) {
-              setSelectedAnnotation(undefined);
-            }
-          }}
-          previewImageSrc={annotationPreview}
-          onCancel={isPendingAnnotation ? undefined : () => setEditing(false)}
-        >
-          <Divider.Horizontal />
-          <SpacedRow>{similarButton}</SpacedRow>
-        </CreateAnnotationForm>
-      );
-    }
-    return undefined;
-  }, [
-    isPendingAnnotation,
-    selectedAnnotation,
-    isEditingMode,
-    annotationPreview,
-    setSelectedAnnotation,
-    onDeleteAnnotation,
-    onSaveDetection,
-    similarButton,
-    onLinkResource,
-  ]);
+  const Content = ({
+    annotation,
+  }: {
+    annotation: ProposedCogniteAnnotation | CogniteAnnotation;
+  }) => (
+    <CreateAnnotationForm
+      annotation={annotation}
+      updateAnnotation={setSelectedAnnotation}
+      onLinkResource={onLinkResource}
+      onDelete={() => {
+        onDeleteAnnotation(annotation);
+      }}
+      onSave={() => {
+        if (annotation) {
+          onSaveAnnotation(annotation);
+        }
+        setEditing(false);
+        if (isPendingAnnotation) {
+          setSelectedAnnotation(undefined);
+        }
+      }}
+      previewImageSrc={annotationPreview}
+      onCancel={isPendingAnnotation ? undefined : () => setEditing(false)}
+    >
+      <Divider.Horizontal />
+      <SpacedRow>{similarButton}</SpacedRow>
+    </CreateAnnotationForm>
+  );
 
   const type = selectedAnnotation?.resourceType;
   const id =
     selectedAnnotation?.resourceExternalId || selectedAnnotation?.resourceId;
 
   useEffect(() => {
-    if (selectedAnnotationId) {
+    if (selectedAnnotation) {
       openPreview({
         // @ts-ignore
         item: id && type ? { id, type } : undefined,
-        header,
-        footer,
-        content,
+        header: <Header annotation={selectedAnnotation} />,
+        footer: (
+          <ContextualizationData
+            selectedAnnotation={selectedAnnotation}
+            extractFromCanvas={extractFromCanvas}
+          />
+        ),
+        content: <Content annotation={selectedAnnotation} />,
         onClose: () => setSelectedAnnotation(undefined),
       });
     }
   }, [
-    openPreview,
-    selectedAnnotationId,
+    extractFromCanvas,
     id,
-    type,
-    header,
-    content,
-    footer,
+    isEditingMode,
+    openPreview,
+    selectedAnnotation,
     setSelectedAnnotation,
+    type,
   ]);
 
   useEffect(() => {

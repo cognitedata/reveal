@@ -1,9 +1,10 @@
 import {
-  useQuery,
-  QueryConfig,
   InfiniteQueryConfig,
-  useInfiniteQuery,
+  QueryConfig,
   QueryKey,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
   useQueryCache,
 } from 'react-query';
 import {
@@ -200,6 +201,39 @@ export const useInfiniteList = <T>(
         cursor: nextCursor,
       }),
     { getFetchMore: r => r?.nextCursor, ...config }
+  );
+};
+
+export const useCreate = (type: SdkResourceType, options?: any) => {
+  const sdk = useContext(SdkContext)!;
+
+  return useMutation(
+    (data: any | any[]) => {
+      const items = Array.isArray(data) ? data : [data];
+      return post(sdk, `/${type}`, { items });
+    },
+    {
+      onSuccess: options?.onSuccess,
+      onError: options?.onError,
+      onMutate: options?.onMutate,
+      onSettled: options?.onSettled,
+    }
+  );
+};
+export const useUpdate = (type: SdkResourceType, options?: any) => {
+  const sdk = useContext(SdkContext)!;
+
+  return useMutation(
+    (data: any | any[]) => {
+      const items = Array.isArray(data) ? data : [data];
+      return post(sdk, `/${type}/update`, { items });
+    },
+    {
+      onSuccess: options?.onSuccess,
+      onError: options?.onError,
+      onMutate: options?.onMutate,
+      onSettled: options?.onSettled,
+    }
   );
 };
 
