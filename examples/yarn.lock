@@ -3232,10 +3232,10 @@ camelize@^1.0.0:
   resolved "https://registry.yarnpkg.com/camelize/-/camelize-1.0.0.tgz#164a5483e630fa4321e5af07020e531831b2609b"
   integrity sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=
 
-camera-controls@^1.25.0:
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/camera-controls/-/camera-controls-1.25.0.tgz#4dd6c08e4ba8d0b0164d60024e12a35c6227a7d9"
-  integrity sha512-twHHZ8Bp2zx8JatpmPXGN3ttVpzGeQj4p+9lz69Il3orsbcv8J812A3a3kPENE8xqvMlwyRlUJ8zwQau2gqdJA==
+camera-controls@^1.25.1:
+  version "1.25.1"
+  resolved "https://registry.yarnpkg.com/camera-controls/-/camera-controls-1.25.1.tgz#ab2bc9532a6b0597d3020f897cbc18c242d6e645"
+  integrity sha512-cs9PHLHgRYd+iHkswfhUMjETMne4BXpCIHYFDRPkCSfHtAF8mF+hN7m3/uW7mndmiQQk8JqMl3Pa0HiGYuXbTg==
 
 caniuse-api@^3.0.0:
   version "3.0.0"
