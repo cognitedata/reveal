@@ -23,6 +23,7 @@ export const useLoadSearchTree = (
     'assets',
     query,
     {
+      limit: 1000,
       filter: Object.keys(filter || {}).length > 0 ? filter : undefined,
     },
     config
