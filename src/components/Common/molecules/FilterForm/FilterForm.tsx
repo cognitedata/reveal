@@ -152,6 +152,7 @@ const FilterItem = ({
             value: string;
             disabled?: boolean;
           }>
+            creatable
             styles={{
               menu: style => ({
                 ...style,
@@ -206,6 +207,7 @@ const FilterItem = ({
             value: string;
             disabled?: boolean;
           }>
+            creatable
             styles={{
               menu: style => ({
                 ...style,

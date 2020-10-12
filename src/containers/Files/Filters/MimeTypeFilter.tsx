@@ -20,6 +20,7 @@ export const MimeTypeFilter = ({ items }: { items: FileInfo[] }) => {
         File type
       </Title>
       <Select
+        creatable
         value={
           fileFilter.mimeType
             ? { label: fileFilter.mimeType, value: fileFilter.mimeType }

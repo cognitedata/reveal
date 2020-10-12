@@ -22,6 +22,7 @@ export const UnitFilter = ({ items }: { items: Timeseries[] }) => {
         Unit type
       </Title>
       <Select
+        creatable
         value={
           timeseriesFilter.unit
             ? { value: timeseriesFilter.unit, label: timeseriesFilter.unit }

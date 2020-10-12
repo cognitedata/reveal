@@ -12,22 +12,30 @@ import { useResourceFilters } from 'context';
 import { DirectoryPrefixFilter, MimeTypeFilter } from 'containers/Files';
 import { UnitFilter } from 'containers/Timeseries';
 import { SdkResourceType, useList } from 'hooks/sdk';
+import { EventSubTypeFilter, EventTypeFilter } from 'containers/Events';
 import {
   MetadataFilter,
   DataSetFilter,
   LabelFilter,
+  SourceFilter,
   ExternalIDPrefixFilter,
 } from './Filters';
 
 type FilterRenderFn<T> = (items: T[]) => React.ReactNode;
 
-type AssetFiltersKey = 'metadata' | 'dataset' | 'label' | 'externalId';
+type AssetFiltersKey =
+  | 'metadata'
+  | 'dataset'
+  | 'label'
+  | 'source'
+  | 'externalId';
 
 const AssetFilters: { [key in AssetFiltersKey]: FilterRenderFn<Asset> } = {
   metadata: items => <MetadataFilter resourceType="asset" items={items} />,
   dataset: () => <DataSetFilter resourceType="asset" />,
   label: () => <LabelFilter resourceType="asset" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="asset" />,
+  source: items => <SourceFilter resourceType="asset" items={items} />,
 };
 type TimeseriesFiltersKey = 'metadata' | 'unit' | 'dataset' | 'externalId';
 
@@ -39,12 +47,21 @@ const TimeseriesFilters: {
   dataset: () => <DataSetFilter resourceType="timeSeries" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="timeSeries" />,
 };
-type EventFiltersKey = 'metadata' | 'dataset' | 'externalId';
+type EventFiltersKey =
+  | 'metadata'
+  | 'dataset'
+  | 'source'
+  | 'type'
+  | 'subtype'
+  | 'externalId';
 
 const EventFilters: {
   [key in EventFiltersKey]: FilterRenderFn<CogniteEvent>;
 } = {
   metadata: items => <MetadataFilter resourceType="event" items={items} />,
+  source: items => <SourceFilter resourceType="event" items={items} />,
+  type: items => <EventTypeFilter items={items} />,
+  subtype: items => <EventSubTypeFilter items={items} />,
   dataset: () => <DataSetFilter resourceType="event" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="event" />,
 };
@@ -61,13 +78,15 @@ type FileFiltersKey =
   | 'metadata'
   | 'mimeType'
   | 'dataset'
-  | 'directory'
   | 'label'
+  | 'source'
+  | 'directory'
   | 'externalId';
 
 const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
   metadata: items => <MetadataFilter resourceType="file" items={items} />,
   mimeType: items => <MimeTypeFilter items={items} />,
+  source: items => <SourceFilter resourceType="file" items={items} />,
   directory: () => <DirectoryPrefixFilter />,
   dataset: () => <DataSetFilter resourceType="file" />,
   label: () => <LabelFilter resourceType="file" />,
@@ -77,11 +96,15 @@ const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
 const ActiveAssetFilters: AssetFiltersKey[] = [
   'label',
   'dataset',
+  'source',
   'externalId',
   'metadata',
 ];
 const ActiveEventFilters: EventFiltersKey[] = [
   'dataset',
+  'type',
+  'subtype',
+  'source',
   'externalId',
   'metadata',
 ];
@@ -95,6 +118,7 @@ const ActiveFileFilters: FileFiltersKey[] = [
   'label',
   'dataset',
   'mimeType',
+  'source',
   'externalId',
   'directory',
   'metadata',
