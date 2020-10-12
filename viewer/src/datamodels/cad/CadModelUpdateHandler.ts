@@ -37,6 +37,7 @@ import { DetermineSectorsInput } from './sector/culling/types';
 
 export class CadModelUpdateHandler {
   private readonly _sectorRepository: Repository;
+  private readonly _sectorCuller: SectorCuller;
   private _budget: CadModelSectorBudget;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
@@ -50,6 +51,7 @@ export class CadModelUpdateHandler {
 
   constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
     this._sectorRepository = sectorRepository;
+    this._sectorCuller = sectorCuller;
     this._budget = defaultCadModelSectorBudget;
 
     /* Creates and observable that emits an event when either of the observables emitts an item.
@@ -86,6 +88,10 @@ export class CadModelUpdateHandler {
         this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
       })
     );
+  }
+
+  dispose() {
+    this._sectorCuller.dispose();
   }
 
   updateCamera(camera: THREE.PerspectiveCamera): void {

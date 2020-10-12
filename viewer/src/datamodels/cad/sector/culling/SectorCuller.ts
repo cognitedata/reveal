@@ -11,4 +11,9 @@ import { WantedSector } from '../types';
  */
 export interface SectorCuller {
   determineSectors(input: DetermineSectorsInput): WantedSector[];
+
+  /**
+   * Dispose all non-GCed resoures held.
+   */
+  dispose(): void;
 }
