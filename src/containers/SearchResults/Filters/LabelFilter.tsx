@@ -11,7 +11,7 @@ import { OptionsType, OptionTypeBase } from 'react-select';
 import { useList } from 'hooks/sdk';
 import { usePermissions } from 'hooks/CustomHooks';
 
-export const LabelFilters = ({
+export const LabelFilter = ({
   resourceType,
 }: {
   resourceType: ResourceType;

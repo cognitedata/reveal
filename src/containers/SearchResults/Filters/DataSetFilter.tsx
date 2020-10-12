@@ -11,7 +11,7 @@ import { OptionsType, OptionTypeBase } from 'react-select';
 import { useRelevantDatasets, useCdfItems, DataSetWCount } from 'hooks/sdk';
 import { usePermissions } from 'hooks/CustomHooks';
 
-export const DataSetFilters = ({
+export const DataSetFilter = ({
   resourceType,
 }: {
   resourceType: ResourceType;

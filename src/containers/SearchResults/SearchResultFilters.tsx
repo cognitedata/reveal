@@ -9,68 +9,101 @@ import {
 } from '@cognite/sdk';
 import styled from 'styled-components';
 import { useResourceFilters } from 'context';
-import { MimeTypeFilter } from 'containers/Files';
+import { DirectoryPrefixFilter, MimeTypeFilter } from 'containers/Files';
 import { UnitFilter } from 'containers/Timeseries';
 import { SdkResourceType, useList } from 'hooks/sdk';
-import { MetadataFilter, DataSetFilters, LabelFilters } from './Filters';
+import {
+  MetadataFilter,
+  DataSetFilter,
+  LabelFilter,
+  ExternalIDPrefixFilter,
+} from './Filters';
 
 type FilterRenderFn<T> = (items: T[]) => React.ReactNode;
 
-type AssetFiltersKey = 'metadata' | 'dataset' | 'label';
+type AssetFiltersKey = 'metadata' | 'dataset' | 'label' | 'externalId';
 
 const AssetFilters: { [key in AssetFiltersKey]: FilterRenderFn<Asset> } = {
   metadata: items => <MetadataFilter resourceType="asset" items={items} />,
-  dataset: () => <DataSetFilters resourceType="asset" />,
-  label: () => <LabelFilters resourceType="asset" />,
+  dataset: () => <DataSetFilter resourceType="asset" />,
+  label: () => <LabelFilter resourceType="asset" />,
+  externalId: () => <ExternalIDPrefixFilter resourceType="asset" />,
 };
-type TimeseriesFiltersKey = 'metadata' | 'unit' | 'dataset';
+type TimeseriesFiltersKey = 'metadata' | 'unit' | 'dataset' | 'externalId';
 
 const TimeseriesFilters: {
   [key in TimeseriesFiltersKey]: FilterRenderFn<Timeseries>;
 } = {
   metadata: items => <MetadataFilter resourceType="timeSeries" items={items} />,
   unit: items => <UnitFilter items={items} />,
-  dataset: () => <DataSetFilters resourceType="timeSeries" />,
+  dataset: () => <DataSetFilter resourceType="timeSeries" />,
+  externalId: () => <ExternalIDPrefixFilter resourceType="timeSeries" />,
 };
-type EventFiltersKey = 'metadata' | 'dataset';
+type EventFiltersKey = 'metadata' | 'dataset' | 'externalId';
 
 const EventFilters: {
   [key in EventFiltersKey]: FilterRenderFn<CogniteEvent>;
 } = {
   metadata: items => <MetadataFilter resourceType="event" items={items} />,
-  dataset: () => <DataSetFilters resourceType="event" />,
+  dataset: () => <DataSetFilter resourceType="event" />,
+  externalId: () => <ExternalIDPrefixFilter resourceType="event" />,
 };
-type SequenceFiltersKey = 'metadata' | 'dataset';
+type SequenceFiltersKey = 'metadata' | 'dataset' | 'externalId';
 
 const SequenceFilters: {
   [key in SequenceFiltersKey]: FilterRenderFn<Sequence>;
 } = {
   metadata: items => <MetadataFilter resourceType="sequence" items={items} />,
-  dataset: () => <DataSetFilters resourceType="sequence" />,
+  dataset: () => <DataSetFilter resourceType="sequence" />,
+  externalId: () => <ExternalIDPrefixFilter resourceType="sequence" />,
 };
-type FileFiltersKey = 'metadata' | 'mimeType' | 'dataset' | 'label';
+type FileFiltersKey =
+  | 'metadata'
+  | 'mimeType'
+  | 'dataset'
+  | 'directory'
+  | 'label'
+  | 'externalId';
 
 const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
   metadata: items => <MetadataFilter resourceType="file" items={items} />,
   mimeType: items => <MimeTypeFilter items={items} />,
-  dataset: () => <DataSetFilters resourceType="file" />,
-  label: () => <LabelFilters resourceType="file" />,
+  directory: () => <DirectoryPrefixFilter />,
+  dataset: () => <DataSetFilter resourceType="file" />,
+  label: () => <LabelFilter resourceType="file" />,
+  externalId: () => <ExternalIDPrefixFilter resourceType="file" />,
 };
 
-const ActiveAssetFilters: AssetFiltersKey[] = ['label', 'dataset', 'metadata'];
-const ActiveEventFilters: EventFiltersKey[] = ['dataset', 'metadata'];
+const ActiveAssetFilters: AssetFiltersKey[] = [
+  'label',
+  'dataset',
+  'externalId',
+  'metadata',
+];
+const ActiveEventFilters: EventFiltersKey[] = [
+  'dataset',
+  'externalId',
+  'metadata',
+];
 const ActiveTimeseriesFilters: TimeseriesFiltersKey[] = [
   'unit',
   'dataset',
+  'externalId',
   'metadata',
 ];
 const ActiveFileFilters: FileFiltersKey[] = [
   'label',
   'dataset',
   'mimeType',
+  'externalId',
+  'directory',
   'metadata',
 ];
-const ActiveSequenceFilters: SequenceFiltersKey[] = ['dataset', 'metadata'];
+const ActiveSequenceFilters: SequenceFiltersKey[] = [
+  'dataset',
+  'externalId',
+  'metadata',
+];
 
 export const SearchResultFilters = ({
   currentResourceType,
