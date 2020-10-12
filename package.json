@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/lib.d.ts",
@@ -79,6 +79,7 @@
     "start": "env BROWSER=none WDS_SOCKET_PORT=3010 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3010 rescripts --max_old_space_size=8192 start",
     "build": "rescripts --max_old_space_size=8192 build",
     "build-lib": "yarn clean ; NODE_ENV=production rollup -c",
+    "watch-lib": "NODE_ENV=development rollup -cw",
     "clean": "rm -rf dist/",
     "generate-preview-artifacts": "cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-data-exploration --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
