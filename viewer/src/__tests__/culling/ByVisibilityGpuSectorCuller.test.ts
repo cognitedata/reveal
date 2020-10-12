@@ -29,7 +29,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     orderSectorsByVisibility: camera => {
       orderSectorsByVisibilityMock(camera);
       return [];
-    }
+    },
+    dispose: jest.fn()
   };
   const camera = new THREE.PerspectiveCamera();
 
@@ -110,6 +111,12 @@ describe('ByVisibilityGpuSectorCuller', () => {
     // Assert
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).map(x => x.metadata.id)).toEqual([0, 1]);
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Simple).map(x => x.metadata.id)).toEqual([2]);
+  });
+
+  test('dispose() disposes coverge utility', () => {
+    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    culler.dispose();
+    expect(coverageUtil.dispose).toBeCalledTimes(1);
   });
 });
 
