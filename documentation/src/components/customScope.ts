@@ -15,8 +15,5 @@ export const customScope: Record<string, any> = {
   PotreePointShape: reveal.PotreePointShape,
   PotreePointColorType: reveal.PotreePointColorType,
 
-  // new in 1.2
-  ...(reveal.WellKnownAsprsPointClassCodes && {
-    WellKnownAsprsPointClassCodes: reveal.WellKnownAsprsPointClassCodes,
-  }),
+  WellKnownAsprsPointClassCodes: reveal.WellKnownAsprsPointClassCodes,
 };

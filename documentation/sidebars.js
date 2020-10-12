@@ -32,7 +32,6 @@ module.exports = {
         'examples/cad-nodefiltering',
         'examples/cad-preview',
         'examples/pointcloud',
-        'examples/pointcloud-classification',
       ],
     },
     {
