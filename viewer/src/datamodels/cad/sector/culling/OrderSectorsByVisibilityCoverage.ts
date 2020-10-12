@@ -58,6 +58,11 @@ export type PrioritizedSectorIdentifier = {
  */
 export interface OrderSectorsByVisibilityCoverage {
   /**
+   * Dispose any resources that cannot be garbage collected.
+   */
+  dispose(): void;
+  
+  /**
    * Specifies what CAD models to estimate sector visibility for.
    * @param models Models to estimate sector visibility for.
    */
@@ -120,6 +125,13 @@ export class GpuOrderSectorsByVisibilityCoverage {
       stencilBuffer: true
     });
     this._renderer.setRenderTarget(this.renderTarget);
+  }
+
+  dispose() {
+    this._renderer.dispose();
+    if (this.debugRenderer) {
+      this.debugRenderer.dispose();
+    }
   }
 
   get renderer(): THREE.WebGLRenderer {
