@@ -9,8 +9,16 @@ import {
 } from '@cognite/sdk';
 import styled from 'styled-components';
 import { useResourceFilters } from 'context';
-import { DirectoryPrefixFilter, MimeTypeFilter } from 'containers/Files';
-import { UnitFilter } from 'containers/Timeseries';
+import {
+  DirectoryPrefixFilter,
+  MimeTypeFilter,
+  UploadedFilter,
+} from 'containers/Files';
+import {
+  IsStepFilter,
+  IsStringFilter,
+  UnitFilter,
+} from 'containers/Timeseries';
 import { SdkResourceType, useList } from 'hooks/sdk';
 import { EventSubTypeFilter, EventTypeFilter } from 'containers/Events';
 import {
@@ -37,13 +45,21 @@ const AssetFilters: { [key in AssetFiltersKey]: FilterRenderFn<Asset> } = {
   externalId: () => <ExternalIDPrefixFilter resourceType="asset" />,
   source: items => <SourceFilter resourceType="asset" items={items} />,
 };
-type TimeseriesFiltersKey = 'metadata' | 'unit' | 'dataset' | 'externalId';
+type TimeseriesFiltersKey =
+  | 'metadata'
+  | 'unit'
+  | 'dataset'
+  | 'externalId'
+  | 'isString'
+  | 'isStep';
 
 const TimeseriesFilters: {
   [key in TimeseriesFiltersKey]: FilterRenderFn<Timeseries>;
 } = {
   metadata: items => <MetadataFilter resourceType="timeSeries" items={items} />,
   unit: items => <UnitFilter items={items} />,
+  isString: () => <IsStringFilter />,
+  isStep: () => <IsStepFilter />,
   dataset: () => <DataSetFilter resourceType="timeSeries" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="timeSeries" />,
 };
@@ -78,14 +94,16 @@ type FileFiltersKey =
   | 'metadata'
   | 'mimeType'
   | 'dataset'
+  | 'uploaded'
+  | 'directory'
   | 'label'
   | 'source'
-  | 'directory'
   | 'externalId';
 
 const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
   metadata: items => <MetadataFilter resourceType="file" items={items} />,
   mimeType: items => <MimeTypeFilter items={items} />,
+  uploaded: () => <UploadedFilter />,
   source: items => <SourceFilter resourceType="file" items={items} />,
   directory: () => <DirectoryPrefixFilter />,
   dataset: () => <DataSetFilter resourceType="file" />,
@@ -111,6 +129,8 @@ const ActiveEventFilters: EventFiltersKey[] = [
 const ActiveTimeseriesFilters: TimeseriesFiltersKey[] = [
   'unit',
   'dataset',
+  'isString',
+  'isStep',
   'externalId',
   'metadata',
 ];
@@ -118,6 +138,7 @@ const ActiveFileFilters: FileFiltersKey[] = [
   'label',
   'dataset',
   'mimeType',
+  'uploaded',
   'source',
   'externalId',
   'directory',
