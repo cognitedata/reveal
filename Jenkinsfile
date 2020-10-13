@@ -149,9 +149,6 @@ pods {
               if (isPullRequest) {
                 summarizeTestResults()
               }
-              stage("Upload coverage reports") {
-                codecov.uploadCoverageReport()
-              }
             }
           }
         }
