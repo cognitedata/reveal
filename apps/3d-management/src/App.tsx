@@ -1,18 +1,46 @@
 import React from 'react';
-import Home from 'pages/Home';
-import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
+import { ThemeProvider } from 'styled-components';
+import { AuthWrapper, PageTitle, SubAppWrapper } from '@cognite/cdf-utilities';
 import GlobalStyles from 'styles/GlobalStyles';
+import { Provider } from 'react-redux';
+import configureStore from 'store';
+import { ConnectedRouter } from 'connected-react-router';
+import theme from 'styles/theme';
+import { Routes } from 'Routes';
+import { setupUserTracking } from 'utils/userTracking';
+import { Loader } from '@cognite/cogs.js';
+import { createBrowserHistory } from 'history';
+import { APP_TITLE } from 'utils';
+import ErrorBoundary from './components/ErrorBoundary';
 
-const App = () => {
+setupUserTracking();
+
+export const App = () => {
+  const history = createBrowserHistory();
+  const store = configureStore(history, {});
+
   return (
-    // If styles are broken please check: .rescripts#PrefixWrap(
-    <GlobalStyles>
-      <SubAppWrapper>
-        <AuthWrapper subAppName="unified-cdf-ui-demo">
-          <Home />
+    <ErrorBoundary>
+      <GlobalStyles>
+        <AuthWrapper
+          subAppName="cdf-3d-management"
+          showLoader
+          includeGroups
+          loadingScreen={<Loader />}
+        >
+          <Provider store={store}>
+            <ThemeProvider theme={theme}>
+              <ConnectedRouter history={history}>
+                <SubAppWrapper>
+                  <PageTitle title={APP_TITLE} />
+                  <Routes />
+                </SubAppWrapper>
+              </ConnectedRouter>
+            </ThemeProvider>
+          </Provider>
         </AuthWrapper>
-      </SubAppWrapper>
-    </GlobalStyles>
+      </GlobalStyles>
+    </ErrorBoundary>
   );
 };
 

@@ -1,0 +1,49 @@
+.ant-input,
+.ant-tag {
+  font-family: BlinkMacSystemFont, Arial, sans-serif;
+}
+
+.ant-form-explain-holder {
+  display: none;
+}
+
+.ant-table-column-title {
+  white-space: nowrap;
+}
+.ant-table-column-title > * {
+  white-space: nowrap;
+}
+h1 {
+  font-size: 28px;
+}
+
+a {
+  color: var(--cogs-midblue);
+}
+a:hover {
+  color: var(--cogs-midblue);
+}
+.ant-table {
+  overflow: auto;
+}
+.antd-table table {
+  min-width: 1100px;
+}
+.pointerMouse {
+  cursor: pointer;
+}
+.no-border {
+  border: none;
+}
+.cogs-input {
+  width: 600px;
+}
+.ant-popover-buttons {
+  display: flex;
+}
+.clickableBox {
+  cursor: pointer;
+}
+.clickableBox:hover {
+  box-shadow: 0 2px 7px grey;
+}

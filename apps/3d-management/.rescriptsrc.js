@@ -1,5 +1,6 @@
 const { edit, remove, getPaths } = require('@rescripts/utilities');
 const PrefixWrap = require('postcss-prefixwrap');
+const { styleScope } = require('./src/utils/styleScope');
 
 const addLoaders = (config) => {
   const cssRegex = /\.css$/;
@@ -36,7 +37,7 @@ const addLoaders = (config) => {
       loader: 'postcss-loader',
       options: {
         plugins: [
-          PrefixWrap('.unified-cdf-demo-app-style-scope', {
+          PrefixWrap(`.${styleScope}`, {
             ignoredSelectors: [':root'],
           }),
         ],

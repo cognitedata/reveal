@@ -7,6 +7,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noImplicitAny": false, // temporary thing until js migration is done
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",

@@ -1,7 +1,7 @@
 @Library('jenkins-helpers') _
 
-static final String REPO = "unified-cdf-ui-demo-app"
-static final String APP_NAME = "cognite-cdf-demo-app"
+static final String REPO = "cdf-3d-management"
+static final String APP_NAME = "cognite-cdf-3d-management"
 static final String PR_SERVER_MARKER = "[pr-server]\n";
 
 def label = "${REPO}-${UUID.randomUUID().toString().substring(0, 5)}"

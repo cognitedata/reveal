@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import './set-public-path';
 import singleSpaReact from 'single-spa-react';
 
-import App from './App';
+import { App } from './App';
 
 // if (process.env.REACT_APP_SENTRY_DSN) {
 //   Sentry.init({
@@ -27,7 +27,7 @@ const lifecycles = singleSpaReact({
   errorBoundary() {
     // eslint-disable-line
     // Customize the root error boundary for your microfrontend here.
-    return <span>An error occured in your app</span>;
+    return <span>An error occurred in your app</span>;
   },
 });
 
