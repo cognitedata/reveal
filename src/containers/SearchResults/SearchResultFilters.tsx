@@ -20,6 +20,7 @@ import {
   UnitFilter,
 } from 'containers/Timeseries';
 import { SdkResourceType, useList } from 'hooks/sdk';
+import { SubtreeFilter } from 'containers/Assets';
 import { EventSubTypeFilter, EventTypeFilter } from 'containers/Events';
 import {
   MetadataFilter,
@@ -27,6 +28,7 @@ import {
   LabelFilter,
   SourceFilter,
   ExternalIDPrefixFilter,
+  ByAssetFilter,
 } from './Filters';
 
 type FilterRenderFn<T> = (items: T[]) => React.ReactNode;
@@ -35,14 +37,16 @@ type AssetFiltersKey =
   | 'metadata'
   | 'dataset'
   | 'label'
-  | 'source'
-  | 'externalId';
+  | 'externalId'
+  | 'subtree'
+  | 'source';
 
 const AssetFilters: { [key in AssetFiltersKey]: FilterRenderFn<Asset> } = {
   metadata: items => <MetadataFilter resourceType="asset" items={items} />,
   dataset: () => <DataSetFilter resourceType="asset" />,
   label: () => <LabelFilter resourceType="asset" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="asset" />,
+  subtree: () => <SubtreeFilter />,
   source: items => <SourceFilter resourceType="asset" items={items} />,
 };
 type TimeseriesFiltersKey =
@@ -51,6 +55,7 @@ type TimeseriesFiltersKey =
   | 'dataset'
   | 'externalId'
   | 'isString'
+  | 'asset'
   | 'isStep';
 
 const TimeseriesFilters: {
@@ -62,6 +67,7 @@ const TimeseriesFilters: {
   isStep: () => <IsStepFilter />,
   dataset: () => <DataSetFilter resourceType="timeSeries" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="timeSeries" />,
+  asset: () => <ByAssetFilter resourceType="timeSeries" />,
 };
 type EventFiltersKey =
   | 'metadata'
@@ -69,6 +75,7 @@ type EventFiltersKey =
   | 'source'
   | 'type'
   | 'subtype'
+  | 'asset'
   | 'externalId';
 
 const EventFilters: {
@@ -80,8 +87,9 @@ const EventFilters: {
   subtype: items => <EventSubTypeFilter items={items} />,
   dataset: () => <DataSetFilter resourceType="event" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="event" />,
+  asset: () => <ByAssetFilter resourceType="event" />,
 };
-type SequenceFiltersKey = 'metadata' | 'dataset' | 'externalId';
+type SequenceFiltersKey = 'metadata' | 'dataset' | 'externalId' | 'asset';
 
 const SequenceFilters: {
   [key in SequenceFiltersKey]: FilterRenderFn<Sequence>;
@@ -89,6 +97,7 @@ const SequenceFilters: {
   metadata: items => <MetadataFilter resourceType="sequence" items={items} />,
   dataset: () => <DataSetFilter resourceType="sequence" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="sequence" />,
+  asset: () => <ByAssetFilter resourceType="sequence" />,
 };
 type FileFiltersKey =
   | 'metadata'
@@ -98,6 +107,7 @@ type FileFiltersKey =
   | 'directory'
   | 'label'
   | 'source'
+  | 'asset'
   | 'externalId';
 
 const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
@@ -109,6 +119,7 @@ const FileFilters: { [key in FileFiltersKey]: FilterRenderFn<FileInfo> } = {
   dataset: () => <DataSetFilter resourceType="file" />,
   label: () => <LabelFilter resourceType="file" />,
   externalId: () => <ExternalIDPrefixFilter resourceType="file" />,
+  asset: () => <ByAssetFilter resourceType="file" />,
 };
 
 const ActiveAssetFilters: AssetFiltersKey[] = [
@@ -116,19 +127,22 @@ const ActiveAssetFilters: AssetFiltersKey[] = [
   'dataset',
   'source',
   'externalId',
+  'subtree',
   'metadata',
 ];
 const ActiveEventFilters: EventFiltersKey[] = [
   'dataset',
   'type',
   'subtype',
-  'source',
+  'asset',
   'externalId',
+  'source',
   'metadata',
 ];
 const ActiveTimeseriesFilters: TimeseriesFiltersKey[] = [
   'unit',
   'dataset',
+  'asset',
   'isString',
   'isStep',
   'externalId',
@@ -138,15 +152,17 @@ const ActiveFileFilters: FileFiltersKey[] = [
   'label',
   'dataset',
   'mimeType',
+  'asset',
   'uploaded',
-  'source',
   'externalId',
   'directory',
+  'source',
   'metadata',
 ];
 const ActiveSequenceFilters: SequenceFiltersKey[] = [
   'dataset',
   'externalId',
+  'asset',
   'metadata',
 ];
 

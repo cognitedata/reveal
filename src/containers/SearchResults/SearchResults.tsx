@@ -97,4 +97,6 @@ export const Filters = styled.div`
   flex-direction: column;
   width: 260px;
   margin-right: 16px;
+  overflow-x: visible;
+  overflow-y: auto;
 `;

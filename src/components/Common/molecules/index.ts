@@ -1,3 +1,4 @@
+export * from './AssetSelect/AssetSelect';
 export * from './AssetTable/AssetTable';
 export * from './AssetTreeTable/AssetTreeTable';
 export * from './EventTable/EventTable';

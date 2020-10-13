@@ -109,7 +109,14 @@ export const useCdfItems = <T>(
 
   return useQuery<T[], Error>(
     retrieveItemsKey(type, sortedIds),
-    () => post(sdk, `/${type}/byids`, { items: sortedIds }).then(d => d?.items),
+    () => {
+      if (sortedIds.length > 0) {
+        return post(sdk, `/${type}/byids`, { items: sortedIds }).then(
+          d => d?.items
+        );
+      }
+      return [];
+    },
     config
   );
 };

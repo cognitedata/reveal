@@ -5,7 +5,7 @@ import {
   listKey,
   listApi,
 } from 'hooks/sdk';
-import { AssetFilterProps, Asset } from '@cognite/sdk';
+import { AssetFilterProps, Asset, InternalId } from '@cognite/sdk';
 import { useContext } from 'react';
 import { SdkContext } from 'context/sdk';
 import { QueryKey, useQueryCache, useQuery, QueryConfig } from 'react-query';
@@ -30,7 +30,7 @@ export const useLoadSearchTree = (
   );
 
   return useQuery<(Asset & { children?: Asset[] })[]>(
-    ['asset-list-tree', isFetched, query],
+    ['asset-list-tree', isFetched, filter, query],
     async () => {
       if (searchResults) {
         const rootAssets: number[] = [];
@@ -111,7 +111,9 @@ export const useLoadListTree = (
     ['asset-list-tree', (searchResults || []).map(e => e.id), openIds],
     async (_: QueryKey, _2: number[], ids: number[]) => {
       if (searchResults) {
-        const rootAssets: number[] = searchResults.map(el => el.id);
+        const rootAssets: number[] = filter.assetSubtreeIds
+          ? filter.assetSubtreeIds.map(el => (el as InternalId).id)
+          : searchResults.map(el => el.id);
         const assetsChildrenMap: {
           [key in number]: number[];
         } = {};

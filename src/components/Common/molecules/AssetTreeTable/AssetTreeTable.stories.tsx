@@ -8,7 +8,7 @@ import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
 import { SDKProvider } from 'context/sdk';
 import { AssetTreeTable } from './AssetTreeTable';
-import { assets } from './assets';
+import { assets } from '../AssetTable/assets';
 
 export default {
   title: 'Molecules/AssetTreeTable',

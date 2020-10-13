@@ -46,7 +46,7 @@ export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
     return (
       <AssetTreeTable
         filter={assetFilter}
-        startFromRoot
+        startFromRoot={!assetFilter.assetSubtreeIds}
         query={query}
         onAssetClicked={asset =>
           openPreview({ item: { id: asset.id, type: 'asset' } })
