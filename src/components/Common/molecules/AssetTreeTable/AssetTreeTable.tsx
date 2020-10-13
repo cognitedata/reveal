@@ -7,6 +7,7 @@ import {
 } from 'context/ResourceSelectionContext';
 import { Loader, Table } from 'components/Common';
 import { usePrevious } from 'hooks/CustomHooks';
+import styled from 'styled-components';
 import { useLoadListTree, useLoadSearchTree } from './AssetTreeTableHooks';
 
 const PAGE_SIZE = 50;
@@ -82,7 +83,11 @@ export const AssetTreeTable = ({
     setPreviewId(file.id);
   };
 
-  const { data: listItems, isFetched: listFetched } = useLoadListTree(
+  const {
+    data: listItems,
+    isFetched: listFetched,
+    isLoading: isListLoading,
+  } = useLoadListTree(
     startFromRoot ? { ...filter, root: true } : filter,
     listExpandedRowKeys
   );
@@ -91,7 +96,11 @@ export const AssetTreeTable = ({
     previousListExpandedRowKeys
   );
 
-  const { data: searchFiles, refetch } = useLoadSearchTree(
+  const {
+    data: searchFiles,
+    refetch,
+    isLoading: isSearchLoading,
+  } = useLoadSearchTree(
     query || '',
     filter,
     {
@@ -114,6 +123,8 @@ export const AssetTreeTable = ({
       },
     }
   );
+
+  const isLoading = isListLoading || isSearchLoading;
 
   const assets = useMemo(() => {
     if (searchEnabled) {
@@ -175,6 +186,16 @@ export const AssetTreeTable = ({
           setListExpandedRowKeys(ids as number[]);
         }
       }}
+      emptyRenderer={() => {
+        if (isLoading) {
+          return (
+            <LoaderWrapper>
+              <Loader />
+            </LoaderWrapper>
+          );
+        }
+        return null;
+      }}
       rowRenderer={({ rowData, cells }) => {
         // @ts-ignore
         // eslint-disable-next-line react/prop-types
@@ -186,3 +207,12 @@ export const AssetTreeTable = ({
     />
   );
 };
+
+const LoaderWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: rgba(256, 256, 256, 0.3);
+  align-items: center;
+  justify-content: center;
+`;
