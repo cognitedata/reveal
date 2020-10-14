@@ -44,7 +44,7 @@
     "lodash": "^4.17.20",
     "query-string": "^6.13.4",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react-dom": "^16.14.0",
     "react-i18next": "^11.7.3",
     "react-iframe": "^1.8.0",
     "react-redux": "^7.2.1",
