@@ -1,8 +1,71 @@
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
+import { NavLink } from 'react-router-dom';
 
 export const ConfigurationsMainContainer = styled.div`
   display: block;
+`;
+
+export const TableActionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const ActionWrapper = styled.div`
+  display: inline-block;
+  margin-right: 3rem;
+
+  &:last-of-type {
+    margin-right: 0;
+  }
+`;
+
+export const PlayStopButton = styled(Button)`
+  border: 2px solid var(--cogs-greyscale-grey5);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  color: var(--cogs-greyscale-grey5);
+
+  &:hover {
+    border: 2px solid;
+    display: flex;
+  }
+`;
+
+export const LinkButton = styled(NavLink)`
+  color: var(--cogs-greyscale-grey5);
+
+  &:hover {
+    color: var(--cogs-greyscale-grey9);
+  }
+
+  .cogs-icon-Link {
+    margin-top: 6px;
+  }
+`;
+
+export const ExpandedRow = styled.div`
+  padding-left: 4rem;
+  padding-right: 2rem;
+  display: inline-block;
+  width: 100%;
+
+  .expanded-item {
+    margin-right: 5rem;
+    float: left;
+  }
+
+  .expanded-item__label {
+    font-weight: 500;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  .expanded-item__content {
+    display: inline-block;
+  }
 `;
 
 export const ConnectionLinesWrapper = styled.div`

@@ -196,6 +196,19 @@ class Api {
     ): Promise<GenericResponseObject[]> => {
       return this.post(`${this.baseURL}/configurations/filter`, options);
     },
+    startOrStopConfiguration: async (
+      id: number,
+      isActive: boolean
+    ): Promise<GenericResponseObject[] | GenericResponseObject> => {
+      if (isActive) {
+        return this.post(`${this.baseURL}/configurations/${id}/update`, {
+          status_active: false,
+        });
+      }
+      return this.post(`${this.baseURL}/configurations/${id}/update`, {
+        status_active: true,
+      });
+    },
   };
 
   public revisions = {

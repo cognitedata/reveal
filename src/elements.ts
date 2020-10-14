@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
 
 export const LoaderBg = styled.div`
   width: 100vw;
@@ -54,13 +53,16 @@ export const ContentContainer = styled.div`
     border: none;
     padding: 0;
   }
-`;
 
-export const StatusIcon = styled(Icon)`
-  display: flex;
-  justify-content: center;
-  & > svg {
-    width: 8px;
-    height: 8px;
+  .ant-table-thead > tr > th {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .ant-table-tbody > tr > td,
+  .ant-table tfoot > tr > th,
+  .ant-table tfoot > tr > td {
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 `;
