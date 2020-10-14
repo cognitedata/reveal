@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { GenericResponseObject, Rule } from '../typings/interfaces';
 import { getMappedColumnName } from '../pages/DataTransfers/utils';
@@ -74,4 +75,8 @@ export function curateColumns(
     return tmp;
   }
   return [];
+}
+
+export function useQuery() {
+  return new URLSearchParams(useLocation().search);
 }

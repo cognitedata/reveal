@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { format } from 'date-fns';
 import set from 'date-fns/set';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import {
   DataTransferObject,
   GenericResponseObject,
-  RESTConfigurationsFilter,
   RESTTransfersFilter,
   RevisionObject,
   SelectedDateRangeType,
@@ -27,6 +27,7 @@ import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
 import { apiStatuses } from 'utils/statuses';
+import { useQuery } from 'utils/functions';
 import { ContentContainer } from '../../elements';
 import {
   TableActions,
@@ -301,10 +302,15 @@ const DataTransfers: React.FC = () => {
   ] = useState<SelectedDateRangeType | null>(null);
   const [datatypes, setDatatypes] = useState<string[]>([]);
   const [selectedDatatype, setSelectedDatatype] = useState<string | null>(null);
+  const [filterByProjects, setFilterByProjects] = useState<boolean>(false);
 
   const { api } = useContext(ApiContext);
   const { token } = useContext(AuthContext);
   const { addError } = useContext(APIErrorContext);
+  const query = useQuery();
+  const configurationNameFromUrl = query.get('configuration');
+  const { url } = useRouteMatch();
+  const history = useHistory();
 
   const [
     selectedTransfer,
@@ -346,22 +352,31 @@ const DataTransfers: React.FC = () => {
 
   function fetchDataTransfers() {
     if (
-      selectedSource &&
-      selectedSourceProject &&
-      selectedTarget &&
-      selectedTargetProject
+      selectedConfiguration ||
+      (selectedSource &&
+        selectedSourceProject &&
+        selectedTarget &&
+        selectedTargetProject)
     ) {
       dispatch({ type: Action.LOAD });
-      const options: RESTTransfersFilter = {
-        source: {
-          source: selectedSource,
-          external_id: selectedSourceProject.external_id,
-        },
-        target: {
-          source: selectedTarget,
-          external_id: selectedTargetProject.external_id,
-        },
-      };
+      let options: RESTTransfersFilter = {};
+      if (
+        selectedSource &&
+        selectedSourceProject &&
+        selectedTarget &&
+        selectedTargetProject
+      ) {
+        options = {
+          source: {
+            source: selectedSource,
+            external_id: selectedSourceProject.external_id,
+          },
+          target: {
+            source: selectedTarget,
+            external_id: selectedTargetProject.external_id,
+          },
+        };
+      }
       if (selectedDateRange) {
         let after = selectedDateRange[0];
         let before = selectedDateRange[1];
@@ -494,43 +509,6 @@ const DataTransfers: React.FC = () => {
     }
   }
 
-  function fetchConfigurations() {
-    if (
-      selectedSource &&
-      selectedSourceProject &&
-      selectedTarget &&
-      selectedTargetProject
-    ) {
-      const options: RESTConfigurationsFilter = {
-        source: {
-          source: selectedSource,
-          external_id: selectedSourceProject.external_id,
-        },
-        target: {
-          source: selectedTarget,
-          external_id: selectedTargetProject.external_id,
-        },
-      };
-      if (selectedDatatype) {
-        options.datatypes = [selectedDatatype];
-      }
-      api!.configurations
-        .getFiltered(options)
-        .then((response: GenericResponseObject[]) => {
-          if (response.length > 0 && !response[0].error) {
-            setConfigurations(response);
-          } else if (response.length === 0) {
-            setConfigurations([]);
-          } else {
-            throw new Error(response[0].status);
-          }
-        })
-        .catch((err: DataTransfersError) => {
-          addError(err.message, parseInt(err.message, 10));
-        });
-    }
-  }
-
   function handleOpenDetailClick(
     sourceObj: DataTransferObject,
     revision: RevisionObject
@@ -595,6 +573,23 @@ const DataTransfers: React.FC = () => {
 
   useEffect(() => {
     dispatch({ type: Action.LOAD });
+    function fetchConfigurations() {
+      api!.configurations
+        .get()
+        .then((response: GenericResponseObject[]) => {
+          if (response.length > 0 && !response[0].error) {
+            setConfigurations(response);
+          } else if (response.length === 0) {
+            setConfigurations([]);
+          } else {
+            throw new Error(response[0].status);
+          }
+        })
+        .catch((err: DataTransfersError) => {
+          addError(err.message, parseInt(err.message, 10));
+        });
+    }
+
     function fetchSources() {
       api!.sources
         .get()
@@ -609,6 +604,7 @@ const DataTransfers: React.FC = () => {
     }
 
     if (token && token !== 'NO_TOKEN') {
+      fetchConfigurations();
       fetchSources();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -656,7 +652,6 @@ const DataTransfers: React.FC = () => {
     if (token && token !== 'NO_TOKEN') {
       clearData();
       fetchDataTransfers();
-      fetchConfigurations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTargetProject]);
@@ -667,17 +662,49 @@ const DataTransfers: React.FC = () => {
       fetchDataTransfers();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDateRange, selectedConfiguration]);
+  }, [selectedDateRange]);
 
   useEffect(() => {
-    setSelectedConfiguration(null);
+    if (configurationNameFromUrl && configurations.length > 0) {
+      const selectedConfig = configurations.find(
+        (item) => item.name === configurationNameFromUrl
+      );
+      if (selectedConfig) {
+        setSelectedConfiguration(selectedConfig);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configurations]);
+
+  useEffect(() => {
+    if (token && token !== 'NO_TOKEN') {
+      if (selectedConfiguration) {
+        history.push(`${url}?configuration=${selectedConfiguration?.name}`);
+      } else {
+        history.push(url);
+      }
+      clearData();
+      fetchDataTransfers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConfiguration]);
+
+  useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
       clearData();
-      fetchConfigurations();
       fetchDataTransfers();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDatatype]);
+
+  useEffect(() => {
+    setSelectedConfiguration(null);
+    setSelectedSource(null);
+    if (token && token !== 'NO_TOKEN') {
+      clearData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterByProjects]);
 
   if (error) {
     return (
@@ -693,7 +720,7 @@ const DataTransfers: React.FC = () => {
   }
 
   function getNoDataText() {
-    let message = 'Select source';
+    let message = filterByProjects ? 'Select source' : 'Select configuration';
     if (selectedSource) {
       if (selectedSourceProject) {
         if (selectedTarget) {
@@ -761,6 +788,8 @@ const DataTransfers: React.FC = () => {
               onSelectDate: (nextSelected) =>
                 setSelectedDateRange(nextSelected),
             }}
+            filterByProjects={filterByProjects}
+            setFilterByProjects={setFilterByProjects}
           />
         )}
         {selectedSourceProject && (

@@ -70,11 +70,11 @@ export interface RESTConfigurationsFilter {
 export type SelectedDateRangeType = [Date | null, Date | null];
 
 export interface RESTTransfersFilter {
-  source: {
+  source?: {
     external_id: string;
     source: string;
   };
-  target: {
+  target?: {
     external_id: string;
     source: string;
   };

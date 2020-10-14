@@ -1,11 +1,8 @@
 import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useQuery } from 'utils/functions';
 import { SessionType } from '../../../typings/interfaces';
 import PetrelStudioToOpenWorks from './PetrelStudioToOpenWorks';
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
 
 const New = () => {
   const query = useQuery();

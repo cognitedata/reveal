@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { Table } from 'antd';
 
 export const TableActions = styled.div`
@@ -29,12 +29,32 @@ export const FiltersWrapper = styled.div`
     margin-right: 1rem;
   }
 
+  > span {
+    align-self: flex-end;
+  }
+
   .cogs-btn {
     min-width: 150px;
     height: 36px;
     display: flex;
     justify-content: space-between;
   }
+`;
+
+export const StartContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  > span {
+    margin: 0 1rem;
+    font-weight: 500;
+  }
+`;
+
+export const BackButton = styled(Button)`
+  align-self: flex-end;
+  min-width: 0 !important;
+  margin-right: 1rem;
 `;
 
 export const SecondaryFilters = styled.div`
