@@ -25,7 +25,8 @@ describe('CadModelUpdateHandler', () => {
   const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
   const repository = new CachedRepository(modelSectorProvider, modelDataParser, modelDataTransformer);
   const mockCuller: SectorCuller = {
-    determineSectors: jest.fn()
+    determineSectors: jest.fn(),
+    dispose: jest.fn()
   };
 
   const cadModelMetadata = createCadModelMetadata(generateSectorTree(5));
@@ -51,5 +52,11 @@ describe('CadModelUpdateHandler', () => {
     updateHandler.updateLoadingHints({});
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(4);
+  });
+
+  test('dipose() disposes culler', () => {
+    const updateHandler = new CadModelUpdateHandler(repository, mockCuller);
+    updateHandler.dispose();
+    expect(mockCuller.dispose).toBeCalledTimes(1);
   });
 });
