@@ -11,17 +11,6 @@ import {
 
 import { CanvasWrapper } from '@site/src/components/styled';
 import { DemoProps } from '@site/src/components/DemoProps';
-import { env } from '@site/src/env';
-
-const cadIds = {
-  modelId: env.modelId,
-  revisionId: env.revisionId,
-};
-
-const pointcloudIds = {
-  modelId: env.pointCloud.modelId,
-  revisionId: env.pointCloud.revisionId,
-};
 
 type OwnProps = {
   modelType?: SupportedModelTypes;
@@ -29,11 +18,10 @@ type OwnProps = {
 
 export default function Cognite3DViewerDemo({
   client,
-  modelType,
+  modelId,
+  revisionId,
 }: DemoProps & OwnProps) {
   const canvasWrapperRef = useRef(null);
-  const { modelId, revisionId } =
-    modelType === 'pointcloud' ? pointcloudIds : cadIds;
 
   useEffect(() => {
     if (!client || !canvasWrapperRef.current) {
@@ -45,13 +33,14 @@ export default function Cognite3DViewerDemo({
       sdk: client,
       domElement: canvasWrapperRef.current,
     });
-    addModel({ modelId, revisionId });
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
       viewer.loadCameraFromModel(model);
       window.model = model;
     }
+
+    addModel({ modelId, revisionId });
 
     window.viewer = viewer;
     return () => {
