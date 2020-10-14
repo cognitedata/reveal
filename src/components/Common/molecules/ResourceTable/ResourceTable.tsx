@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   FileInfo,
   Asset,
@@ -23,8 +23,6 @@ import { useResourceResults } from './hooks';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
-const PAGE_SIZE = 50;
-
 export const ResourceTable = <T extends ResourceType>({
   api,
   query,
@@ -36,11 +34,6 @@ export const ResourceTable = <T extends ResourceType>({
   filter?: any;
   onRowClick: (file: T) => void;
 }) => {
-  const [searchCount, setSearchCount] = useState(PAGE_SIZE);
-
-  useEffect(() => {
-    setSearchCount(PAGE_SIZE);
-  }, [query]);
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
 
   const { resourcesState } = useResourcesState();
@@ -51,19 +44,13 @@ export const ResourceTable = <T extends ResourceType>({
     setPreviewId(file.id);
   };
   const {
-    list: { canFetchMore, isFetchingMore, fetchMore },
-    search: { searchItems, refetchSearch, isSearching },
+    canFetchMore,
+    isFetchingMore,
+    fetchMore,
     isFetched,
     isFetching,
     items,
-    searchEnabled,
-  } = useResourceResults(api, searchCount, query, filter);
-
-  useEffect(() => {
-    if (searchEnabled) {
-      refetchSearch();
-    }
-  }, [searchCount, searchEnabled, refetchSearch]);
+  } = useResourceResults(api, query, filter);
 
   if (!isFetched) {
     return <Loader />;
@@ -77,14 +64,7 @@ export const ResourceTable = <T extends ResourceType>({
     previewingIds: previewIds,
     activeIds,
     onEndReached: () => {
-      if (
-        searchEnabled &&
-        !isSearching &&
-        !!searchItems &&
-        searchItems.length >= searchCount
-      ) {
-        setSearchCount(searchCount + PAGE_SIZE);
-      } else if (canFetchMore && !isFetchingMore) {
+      if (canFetchMore && !isFetchingMore) {
         fetchMore();
       }
     },

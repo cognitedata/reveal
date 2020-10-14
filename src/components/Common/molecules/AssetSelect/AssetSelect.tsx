@@ -24,14 +24,17 @@ export const AssetSelect = ({
   const { data: searchData, isLoading } = useSearch<Asset>(
     'assets',
     debouncedQuery,
-    {
-      limit: 50,
-    }
+    { limit: 50 },
+    { enabled: debouncedQuery && debouncedQuery.length > 0 }
   );
   const { data: rootSearchData, isLoading: isRootLoading } = useSearch<Asset>(
     'assets',
     debouncedQuery,
-    { limit: 50, filter: { root: true } }
+    {
+      limit: 50,
+      filter: { root: true },
+    },
+    { enabled: debouncedQuery && debouncedQuery.length > 0 }
   );
   const { data: listData } = useList<Asset>('assets', {
     limit: 50,

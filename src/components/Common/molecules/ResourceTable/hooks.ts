@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import flatten from 'lodash/flatten';
 import {
   FileInfo,
   Asset,
@@ -6,7 +7,7 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
-import { useInfiniteList, useSearch, SdkResourceType } from 'hooks/sdk';
+import { useInfiniteList, useInfiniteSearch, SdkResourceType } from 'hooks/sdk';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -14,7 +15,6 @@ const PAGE_SIZE = 50;
 
 export const useResourceResults = <T extends ResourceType>(
   api: SdkResourceType,
-  searchCount?: number,
   query?: string,
   filter?: any
 ) => {
@@ -23,10 +23,9 @@ export const useResourceResults = <T extends ResourceType>(
   const {
     data: listData,
     isFetched: listFetched,
-    canFetchMore,
-    isFetchingMore,
-    fetchMore,
-    refetch: refetchList,
+    canFetchMore: listCanFetchMore,
+    isFetchingMore: listIsFetchingMore,
+    fetchMore: listFetchMore,
     isFetching: isFetchingList,
   } = useInfiniteList<T>(api, PAGE_SIZE, filter, {
     enabled: !searchEnabled,
@@ -37,39 +36,36 @@ export const useResourceResults = <T extends ResourceType>(
   );
 
   const {
-    data: searchItems,
+    data: searchData,
     isFetched: searchFetched,
-    refetch: refetchSearch,
     isFetching: isSearching,
-  } = useSearch<T>(
+    isFetchingMore: searchIsFetchingMore,
+    fetchMore: searchFetchMore,
+    canFetchMore: searchCanFetchMore,
+  } = useInfiniteSearch<T>(
     api,
     query!,
-    {
-      limit: searchCount,
-      filter: Object.keys(filter).length > 0 ? filter : undefined,
-    },
+    PAGE_SIZE,
+    Object.keys(filter).length > 0 ? filter : undefined,
     {
       enabled: searchEnabled,
     }
   );
-  const isFetched = listFetched || searchFetched;
-  const isFetching = isFetchingList || isSearching;
+  const searchItems = useMemo(() => flatten(searchData), [searchData]);
+
+  const isFetched = searchEnabled ? searchFetched : listFetched;
+  const isFetching = searchEnabled ? isSearching : isFetchingList;
+  const fetchMore = searchEnabled ? searchFetchMore : listFetchMore;
+  const isFetchingMore = searchEnabled
+    ? searchIsFetchingMore
+    : listIsFetchingMore;
+  const canFetchMore = searchEnabled ? searchCanFetchMore : listCanFetchMore;
   const items = searchEnabled ? searchItems : listItems;
 
   return {
-    list: {
-      listItems,
-      refetchList,
-      canFetchMore,
-      isFetchingMore,
-      fetchMore,
-      isFetchingList,
-    },
-    search: {
-      searchItems,
-      refetchSearch,
-      isSearching,
-    },
+    canFetchMore,
+    fetchMore,
+    isFetchingMore,
     isFetched,
     isFetching,
     items,

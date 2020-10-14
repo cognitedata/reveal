@@ -157,14 +157,14 @@ const getSearchArgs = (type: SdkResourceType, query: string) => {
       return { query };
   }
 };
-const searchApi = (
+const searchApi = <T>(
   sdk: CogniteClient,
   type: SdkResourceType,
   query: string,
-  filter?: any
-) => {
+  body?: any
+): Promise<T[]> => {
   return post(sdk, `/${type}/search`, {
-    ...filter,
+    ...body,
     search: getSearchArgs(type, query),
   }).then(r => r?.items);
 };
@@ -180,8 +180,51 @@ export const useSearch = <T>(
 
   return useQuery<T[]>(
     ['cdf', type, 'search', query, processedBody],
-    () => searchApi(sdk, type, query, processedBody),
+    () => searchApi<T>(sdk, type, query, processedBody),
     config
+  );
+};
+
+export const useInfiniteSearch = <T>(
+  type: SdkResourceType,
+  query: string,
+  limit: number = 10,
+  filter?: any,
+  config?: InfiniteQueryConfig<T[]>
+) => {
+  const sdk = useContext(SdkContext)!;
+
+  return useInfiniteQuery<T[]>(
+    ['cdf', type, 'infinite-search', query, filter],
+    async (
+      _: string,
+      t: SdkResourceType,
+      __: string,
+      q: string,
+      f?: any,
+      offset?: number
+    ) => {
+      const offsetLimit = offset ? limit + offset : limit;
+      const body = f
+        ? { filter: f, limit: offsetLimit }
+        : { limit: offsetLimit };
+      const result = await searchApi<T>(sdk, t, q, body);
+
+      if (offset) {
+        return result.slice(offset, offset + limit);
+      }
+      return result;
+    },
+    {
+      getFetchMore: (page, allPages) => {
+        const itemCount = allPages.reduce((accl, p) => accl + p.length, 0);
+        if (page.length === limit) {
+          return itemCount;
+        }
+        return undefined;
+      },
+      ...config,
+    }
   );
 };
 
