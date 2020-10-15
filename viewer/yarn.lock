@@ -1053,10 +1053,10 @@
     "@cognite/sdk-core" "^1.0.0"
     lodash "^4.17.11"
 
-"@cognite/three-combo-controls@^1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@cognite/three-combo-controls/-/three-combo-controls-1.4.2.tgz#e3a8b20ae988b219f57a8b510dc9cdbbf0edfc8c"
-  integrity sha512-hYKgzf7+JDNhkrM/08vwE7kOb9BiiXGidX+F4FVsQEiCsEYPORVQ2yHttXoXZNZGAWxuDMtYjRWJkBw98NWz/Q==
+"@cognite/three-combo-controls@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@cognite/three-combo-controls/-/three-combo-controls-1.4.3.tgz#0850ec57035b3cf3f65ab5b619fcf9eee87646c8"
+  integrity sha512-wkUqf/TyRlHFbMqELzVjJM7M1HWDGSp1V1Bgo+WH3yefOQgcgYsb8kOyJhMPuL4i1BqtxAc9E48n9TDCDD3mYQ==
   dependencies:
     lodash "^4.17.15"
 
