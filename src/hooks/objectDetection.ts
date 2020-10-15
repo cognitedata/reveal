@@ -68,6 +68,7 @@ export const useJob = (jobId?: number) => {
     },
     {
       enabled: !!jobId,
+      staleTime: Infinity,
       refetchInterval: (!!jobId && refetchInterval[jobId]) || false,
     }
   );
