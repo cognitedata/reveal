@@ -59,7 +59,7 @@ export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
     <>
       <SpacedRow>
         <ButtonGroup currentKey={currentView} onButtonClicked={setCurrentView}>
-          <Button icon="BulletList" key="tree">
+          <Button icon="Tree" key="tree">
             Tree View
           </Button>
           <Button icon="List" key="list">

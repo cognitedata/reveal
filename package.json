@@ -10,7 +10,7 @@
     "@cognite/annotations": "^0.4.0",
     "@cognite/cdf-resources-store": "^0.0.2",
     "@cognite/cdf-utilities": "^0.7.3",
-    "@cognite/cogs.js": "^1.21.3",
+    "@cognite/cogs.js": "^1.24.0",
     "@cognite/gcs-browser-upload": "^1.0.5",
     "@cognite/gearbox": "^2.1.0",
     "@cognite/griff-react": "~0.4.2",
