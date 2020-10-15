@@ -13,8 +13,7 @@ import {
   DataSet,
   IdEither,
 } from '@cognite/sdk';
-import { useContext } from 'react';
-import { SdkContext } from 'context/sdk';
+import { useSDK } from 'context/sdk';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk
@@ -55,7 +54,7 @@ export const useAggregate = (
   filter: any,
   config?: QueryConfig<AggregateResponse, Error>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
 
   return useQuery<AggregateResponse, Error>(
     aggregateKey(type, filter),
@@ -77,7 +76,7 @@ export const useCdfItem = <T>(
   id: IdEither,
   config?: QueryConfig<T, Error>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const ids = [id];
   return useQuery<T, Error>(
     byIdKey(type, id),
@@ -99,7 +98,7 @@ export const useCdfItems = <T>(
   ids: IdEither[],
   config?: QueryConfig<T[], Error>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
 
   const sortedIds = ids
     .filter((i: any) => !!i.id || !!i.externalId)
@@ -136,7 +135,7 @@ export const useList = <T>(
   config?: QueryConfig<T[]>,
   noCleanUp = false
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
 
   const processedBody = noCleanUp ? body : cleanupBody(body);
 
@@ -175,7 +174,7 @@ export const useSearch = <T>(
   body?: any,
   config?: QueryConfig<T[]>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const processedBody = cleanupBody(body);
 
   return useQuery<T[]>(
@@ -192,7 +191,7 @@ export const useInfiniteSearch = <T>(
   filter?: any,
   config?: InfiniteQueryConfig<T[]>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
 
   return useInfiniteQuery<T[]>(
     ['cdf', type, 'infinite-search', query, filter],
@@ -234,7 +233,7 @@ export const useInfiniteList = <T>(
   filter?: any,
   config?: InfiniteQueryConfig<{ items: T[]; nextCursor?: string }>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
 
   return useInfiniteQuery<{ items: T[]; nextCursor?: string }>(
     ['cdf', type, 'infinite-list', filter],
@@ -255,7 +254,7 @@ export const useInfiniteList = <T>(
 };
 
 export const useCreate = (type: SdkResourceType, options?: any) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
 
   return useMutation(
     (data: any | any[]) => {
@@ -271,7 +270,7 @@ export const useCreate = (type: SdkResourceType, options?: any) => {
   );
 };
 export const useUpdate = (type: SdkResourceType, options?: any) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
 
   return useMutation(
     (data: any | any[]) => {
@@ -294,7 +293,7 @@ export const useRelevantDatasets = (
   type: SdkResourceType
 ): DataSetWCount[] | undefined => {
   const cache = useQueryCache();
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const {
     data,
     isFetching: dataSetsFetching,

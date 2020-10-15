@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import {
   CogniteFileViewer,
@@ -15,7 +15,7 @@ import { PendingCogniteAnnotation } from '@cognite/annotations';
 import { FileOverviewPanel } from 'containers/Files/FilePreview/FileOverviewPanel';
 import { ContextualizationModule } from 'containers/Files/FilePreview/ContextualizationModule';
 import { useCdfItem } from 'hooks/sdk';
-import { SdkContext } from 'context/sdk';
+import { useSDK } from 'context/sdk';
 import { useAnnotations } from '../hooks';
 
 type Props = {
@@ -127,7 +127,7 @@ const CenteredPlaceholder = styled.div`
 `;
 
 const WrappedFilePreview = (props: Props) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   return (
     <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
       <FilePreview {...props} />

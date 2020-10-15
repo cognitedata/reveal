@@ -1,5 +1,5 @@
-import { useEffect, useRef, useContext } from 'react';
-import { SdkContext } from 'context/sdk';
+import { useEffect, useRef } from 'react';
+import { useSDK } from 'context/sdk';
 import { useQuery } from 'react-query';
 import { CogniteClient, SingleCogniteCapability } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
@@ -29,7 +29,7 @@ export const useEnv = (): string | undefined => {
 };
 
 export const useUserStatus = () => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   return useQuery(['login'], () => sdk.login.status());
 };
 
@@ -73,7 +73,7 @@ const getGroups = async (sdk: CogniteClient) => {
 };
 
 export const usePermissions = (key: string, type?: string): boolean => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const { data: groups = {} } = useQuery(['groups'], () => getGroups(sdk), {
     staleTime: 10000,
   });

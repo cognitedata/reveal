@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, useContext } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import {
   Button,
   Icon,
@@ -35,7 +35,7 @@ import { ResourceItemState } from 'context/ResourceSelectionContext';
 import { useCreate } from 'hooks/sdk';
 import { useQueryCache, useMutation } from 'react-query';
 import { sleep } from 'helpers';
-import { SdkContext } from 'context/sdk';
+import { useSDK } from 'context/sdk';
 import { CogniteEvent, EventChange } from '@cognite/sdk';
 import { useResourcesDispatch } from '@cognite/cdf-resources-store';
 import { ContextualizationData } from './ContextualizationModule';
@@ -122,7 +122,7 @@ const AnnotationPreviewSidebar = ({
   const [createEvent] = useCreate('events', {
     onSuccess,
   });
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const [updateEvent] = useMutation(
     (updates: EventChange) => sdk.events.update([updates]),
     {

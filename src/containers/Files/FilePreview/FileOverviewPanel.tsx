@@ -24,7 +24,7 @@ import {
 import { useCdfItem } from 'hooks/sdk';
 import { FileInfo } from '@cognite/sdk';
 import { useMutation, useQueryCache } from 'react-query';
-import { SdkContext } from 'context/sdk';
+import { useSDK } from 'context/sdk';
 
 type Props = {
   fileId: number;
@@ -49,7 +49,7 @@ export const FileOverviewPanel = ({
 
   const { data: file } = useCdfItem<FileInfo>('files', { id: fileId });
 
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const [deleteAnnotations] = useMutation(
     () => {
       if (file) {

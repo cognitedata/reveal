@@ -6,8 +6,7 @@ import {
   listApi,
 } from 'hooks/sdk';
 import { AssetFilterProps, Asset, InternalId } from '@cognite/sdk';
-import { useContext } from 'react';
-import { SdkContext } from 'context/sdk';
+import { useSDK } from 'context/sdk';
 import { QueryKey, useQueryCache, useQuery, QueryConfig } from 'react-query';
 
 export const useLoadSearchTree = (
@@ -16,7 +15,7 @@ export const useLoadSearchTree = (
   config?: QueryConfig<Asset[]>,
   config2?: QueryConfig<Asset[]>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const cache = useQueryCache();
 
   const { data: searchResults, isFetched } = useSearch<Asset>(
@@ -91,7 +90,7 @@ export const useLoadListTree = (
   openIds: number[] = [],
   config?: QueryConfig<Asset[]>
 ) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const cache = useQueryCache();
 
   const { data: searchResults } = useList<Asset>(

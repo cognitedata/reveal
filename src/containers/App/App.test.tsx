@@ -16,6 +16,7 @@ import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
 import { MemoryRouter } from 'react-router';
 import { getSDK } from 'utils/SDK';
 import { mockStore } from 'utils/mockStore';
+import { SDKProvider } from 'context/sdk';
 import App from './App';
 
 const initialStoreState = {
@@ -36,11 +37,13 @@ describe('App', () => {
     expect(() => {
       const div = document.createElement('div');
       ReactDOM.render(
-        <CogniteResourceProvider sdk={getSDK()} store={store}>
-          <MemoryRouter>
-            <App />
-          </MemoryRouter>
-        </CogniteResourceProvider>,
+        <SDKProvider sdk={getSDK()}>
+          <CogniteResourceProvider sdk={getSDK()} store={store}>
+            <MemoryRouter>
+              <App />
+            </MemoryRouter>
+          </CogniteResourceProvider>
+        </SDKProvider>,
         div
       );
       ReactDOM.unmountComponentAtNode(div);

@@ -1,4 +1,4 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useMemo } from 'react';
 import { FileInfo, Asset } from '@cognite/sdk';
 import { FileDetailsAbstract, Loader } from 'components/Common';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
@@ -8,7 +8,7 @@ import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import { useCdfItem, useCdfItems } from 'hooks/sdk';
 import { getIdParam } from 'helpers';
-import { SdkContext } from 'context/sdk';
+import { useSDK } from 'context/sdk';
 import uniq from 'lodash/uniq';
 import { useAnnotations } from './hooks';
 
@@ -23,7 +23,7 @@ export const FileSmallPreview = ({
   extras?: React.ReactNode[];
   children?: React.ReactNode;
 }) => {
-  const sdk = useContext(SdkContext)!;
+  const sdk = useSDK();
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
     type: 'file',
