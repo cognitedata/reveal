@@ -510,9 +510,10 @@ class RevisionDetails extends React.Component {
         <ErrorBoundary>
           <div style={{ textAlign: 'center', bottom: '0px', flex: 1 }}>
             <ThreeDViewerWrapper
-              match={this.props.match}
+              modelId={this.props.match.params.modelId}
               revision={this.revision}
               useOldViewer={this.state.reprocessingButtonVisible}
+              revisionLogs={this.props.revisionLogs[this.revisionId]}
             />
           </div>
         </ErrorBoundary>

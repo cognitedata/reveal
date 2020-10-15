@@ -48,14 +48,10 @@ const MultiLayeredContainer = styled.div<{ errorState?: boolean }>`
 `;
 
 type Props = {
-  match: {
-    params: {
-      modelId: string;
-      revisionId: string;
-    };
-  };
+  modelId: string;
   revision: v3.Revision3D;
   useOldViewer?: boolean;
+  revisionLogs: { type: string }[];
 };
 
 const ThreeDViewer = (props: ThreeDViewerProps) =>
@@ -103,14 +99,21 @@ export default function ThreeDViewerWrapper(props: Props) {
   if (isViewerOpened && ViewerConstructor) {
     return (
       <MemoizedThreeDViewer
-        modelId={props.match.params.modelId}
+        modelId={props.modelId}
         revision={props.revision}
         ViewerConstructor={ViewerConstructor}
       />
     );
   }
+  if (!props.revisionLogs) return null;
 
-  if (props.revision.status !== 'Done') {
+  const canBeViewed =
+    props.revision.status === 'Done' ||
+    props.revisionLogs.find(
+      (log) => log.type === 'reveal-optimizer/Success'
+    ) !== undefined;
+
+  if (!canBeViewed) {
     return (
       <div style={{ textAlign: 'center', bottom: '0px', flex: 1 }}>
         <ErrorText>{ERROR_TEXT[props.revision.status]}</ErrorText>
@@ -137,7 +140,7 @@ export default function ThreeDViewerWrapper(props: Props) {
         <ThumbnailJS
           {...(props.revision.thumbnailThreedFileId
             ? { fileId: Number(props.revision.thumbnailThreedFileId) }
-            : { modelId: Number(props.match.params.modelId) })}
+            : { modelId: Number(props.modelId) })}
           width="600px"
           style={{
             position: 'relative',
