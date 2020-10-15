@@ -39,7 +39,7 @@
     "@storybook/preset-create-react-app": "^3.1.4",
     "@storybook/react": "^6.0.26",
     "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.0.4",
+    "@testing-library/react": "^11.1.0",
     "@testing-library/testcafe": "^4.2.3",
     "@types/jest": "^26.0.13",
     "@types/lodash": "^4.14.162",
