@@ -3,9 +3,8 @@ import { mount } from 'enzyme';
 import { Timeseries } from '@cognite/sdk';
 import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
+import { SDKProvider } from 'context/sdk';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
-
-jest.mock('utils/SDK');
 
 const timeseries: Timeseries = {
   name: 'Hello',
@@ -34,11 +33,13 @@ const sdk = {
 describe('TimeseriesDetailsAbstract', () => {
   it('render normally', () => {
     const container = mount(
-      <ClientSDKProvider client={sdk}>
-        <ResourceSelectionProvider>
-          <TimeseriesDetailsAbstract timeSeries={timeseries} />
-        </ResourceSelectionProvider>
-      </ClientSDKProvider>
+      <SDKProvider sdk={sdk}>
+        <ClientSDKProvider client={sdk}>
+          <ResourceSelectionProvider>
+            <TimeseriesDetailsAbstract timeSeries={timeseries} />
+          </ResourceSelectionProvider>
+        </ClientSDKProvider>
+      </SDKProvider>
     );
 
     expect(container.text()).toContain(timeseries.name);

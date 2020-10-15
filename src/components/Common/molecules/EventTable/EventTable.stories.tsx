@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
-import { mockStore } from 'utils/mockStore';
 import {
   ResourceSelectionProvider,
   ResourceItemState,
@@ -61,9 +59,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       resourcesState={selection}
       onSelect={onSelect}
     >
-      <CogniteResourceProvider store={mockStore({})}>
-        <Container>{children}</Container>
-      </CogniteResourceProvider>
+      <Container>{children}</Container>
     </ResourceSelectionProvider>
   );
 };

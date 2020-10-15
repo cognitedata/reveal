@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 import { FileInfo } from '@cognite/sdk';
 import {
   CogniteFileViewer,
@@ -10,11 +11,23 @@ import { Splitter, Loader } from 'components/Common';
 import styled from 'styled-components';
 import { isFilePreviewable } from 'utils/FileUtils';
 import { AnnotationPreviewSidebar } from 'containers/Files/FilePreview/AnnotationPreviewSidebar';
-import { v4 as uuid } from 'uuid';
-import { PendingCogniteAnnotation } from '@cognite/annotations';
+import {
+  PendingCogniteAnnotation,
+  CURRENT_VERSION,
+  AnnotationStatus,
+} from '@cognite/annotations';
 import { FileOverviewPanel } from 'containers/Files/FilePreview/FileOverviewPanel';
-import { ContextualizationModule } from 'containers/Files/FilePreview/ContextualizationModule';
 import { useCdfItem } from 'hooks/sdk';
+import {
+  PNID_ANNOTATION_TYPE,
+  removeSimilarAnnotations,
+} from 'utils/AnnotationUtils';
+import {
+  useJob,
+  useFindObjectsJobId,
+  ObjectDetectionEntity,
+  useFindSimilarJobId,
+} from 'hooks/objectDetection';
 import { useSDK } from 'context/sdk';
 import { useAnnotations } from '../hooks';
 
@@ -22,6 +35,24 @@ type Props = {
   fileId: number;
   contextualization?: boolean;
 };
+
+const convertAnnotation = (jobId: number, fileId: number) => (
+  el: ObjectDetectionEntity
+): ProposedCogniteAnnotation => ({
+  id: el.id,
+  box: el.boundingBox,
+  version: CURRENT_VERSION,
+  fileId,
+  type: PNID_ANNOTATION_TYPE,
+  label: '',
+  source: `job:${jobId}`,
+  status: 'unhandled' as AnnotationStatus,
+  metadata: {
+    fromSimilarObject: 'true',
+    score: `${el.score}`,
+    originalBoxJson: `${jobId}`,
+  },
+});
 
 const FilePreview = ({ fileId, contextualization = false }: Props) => {
   const [creatable, setCreatable] = useState(false);
@@ -34,6 +65,22 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
     setPendingAnnotations([]);
   }, [fileId]);
 
+  const findObjectsJobId = useFindObjectsJobId(fileId);
+  const { data: objectData } = useJob(findObjectsJobId);
+  const { annotations: findObjectsItems } = objectData || {};
+  const findObjectsAnnotations =
+    findObjectsJobId && findObjectsItems
+      ? findObjectsItems.map(convertAnnotation(findObjectsJobId, fileId))
+      : [];
+
+  const findSimilarJobId = useFindSimilarJobId(fileId);
+  const { data: similarData } = useJob(findSimilarJobId);
+  const { annotations: findSimilarItems } = similarData || {};
+  const findSimilarAnnotations =
+    findSimilarJobId && findSimilarItems
+      ? findSimilarItems.map(convertAnnotation(findSimilarJobId, fileId))
+      : [];
+
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>(
     'files',
     { id: fileId! },
@@ -42,8 +89,13 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
     }
   );
 
-  const annotations = useAnnotations(fileId);
-  const allAnnotations = [...annotations, ...pendingAnnotations];
+  const persistedAnnotations = useAnnotations(fileId);
+  const allAnnotations = [
+    ...persistedAnnotations,
+    ...pendingAnnotations,
+    ...findSimilarAnnotations,
+    ...findObjectsAnnotations,
+  ].filter(removeSimilarAnnotations);
 
   const canPreviewFile = file && isFilePreviewable(file);
 
@@ -107,13 +159,6 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
         setPendingAnnotations={setPendingAnnotations}
         contextualization={contextualization}
       />
-      {contextualization && (
-        <ContextualizationModule
-          fileId={fileId}
-          pendingAnnotations={pendingAnnotations}
-          setPendingAnnotations={setPendingAnnotations}
-        />
-      )}
     </>
   );
 };

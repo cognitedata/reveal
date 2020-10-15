@@ -36,3 +36,17 @@ export const isSimilarBoundingBox = (
   }
   return false;
 };
+
+type T = { box: AnnotationBoundingBox };
+export const removeSimilarAnnotations = (
+  el: T,
+  index: number,
+  allAnnotations: T[]
+) => {
+  return !allAnnotations.some(
+    (anno, otherIndex) =>
+      index < otherIndex &&
+      (isSimilarBoundingBox(anno.box, el.box, 0.5, true) ||
+        isSimilarBoundingBox(anno.box, el.box, 0.1, false))
+  );
+};

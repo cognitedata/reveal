@@ -5,10 +5,9 @@ import styled from 'styled-components';
 import { Loader, SpacedRow } from 'components/Common';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { renderTitle } from 'utils/EventsUtils';
-import { useCdfItem } from 'hooks/sdk';
+import { useCdfItem, SdkResourceType } from 'hooks/sdk';
 import { IdEither } from '@cognite/sdk';
 import { convertResourceType } from 'types';
-import { ResourceType } from '@cognite/cdf-resources-store';
 
 const getId = (
   annotation?: ProposedCogniteAnnotation | CogniteAnnotation
@@ -45,7 +44,7 @@ export const CreateAnnotationForm = ({
 }) => {
   const id = getId(annotation);
   // @ts-ignore
-  const api: ResourceType | undefined =
+  const api: SdkResourceType | undefined =
     // @ts-ignore
     annotation.resourceType && convertResourceType(annotation.resourceType);
 

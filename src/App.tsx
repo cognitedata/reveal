@@ -13,13 +13,10 @@ import { SDKProvider } from 'context/sdk';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
 import { Loader } from '@cognite/cogs.js';
-import { setSDK } from 'utils/SDK';
-import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import theme from './styles/theme';
 import { setupSentry } from './utils/sentry';
 import rootStyles from './styles/index.css';
-import store from './store/index';
 
 export default () => {
   const tenant = window.location.pathname.split('/')[1];
@@ -43,7 +40,6 @@ export default () => {
     rootStyles.use();
     collapseStyle.use();
     setupSentry();
-    setSDK(sdk);
     return () => {
       cogsStyles.unuse();
       rootStyles.unuse();
@@ -64,13 +60,11 @@ export default () => {
             <ClientSDKProvider client={sdk}>
               <SDKProvider sdk={sdk}>
                 <ThemeProvider theme={theme}>
-                  <CogniteResourceProvider sdk={sdk} store={store}>
-                    <Router history={history}>
-                      <Switch>
-                        <Route path="/:tenant" component={RootApp} />
-                      </Switch>
-                    </Router>
-                  </CogniteResourceProvider>
+                  <Router history={history}>
+                    <Switch>
+                      <Route path="/:tenant" component={RootApp} />
+                    </Switch>
+                  </Router>
                 </ThemeProvider>
                 <GlobalStyle theme={theme} />
               </SDKProvider>

@@ -1,10 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useContext, useMemo } from 'react';
-import {
-  useResourcesSelector,
-  useResourcesDispatch,
-} from '@cognite/cdf-resources-store';
-import { Button, Dropdown, Menu, Icon, AllIconTypes } from '@cognite/cogs.js';
+import React, { useContext } from 'react';
+import { Button, Dropdown, Menu, Icon } from '@cognite/cogs.js';
 import {
   CogniteFileViewer,
   ProposedCogniteAnnotation,
@@ -17,14 +13,13 @@ import { useSelectionButton } from 'hooks/useSelection';
 import { Modal, notification } from 'antd';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import { CogniteAnnotation, hardDeleteAnnotations } from '@cognite/annotations';
-import {
-  detectObject,
-  selectObjectJobForFile,
-} from 'modules/fileContextualization/objectDetectionJob';
 import { useCdfItem } from 'hooks/sdk';
 import { FileInfo } from '@cognite/sdk';
 import { useMutation, useQueryCache } from 'react-query';
+import { useJob, useFindObjectsJobId } from 'hooks/objectDetection';
+import { isModelRunning } from 'types';
 import { useSDK } from 'context/sdk';
+import DetectObjectsMenuItem from './DetectObjectsMenuItem';
 
 type Props = {
   fileId: number;
@@ -44,7 +39,6 @@ export const FileOverviewPanel = ({
   contextualization,
 }: Props) => {
   const queryCache = useQueryCache();
-  const dispatch = useResourcesDispatch();
   const download = useDownloadPDF();
 
   const { data: file } = useCdfItem<FileInfo>('files', { id: fileId });
@@ -74,20 +68,9 @@ export const FileOverviewPanel = ({
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton();
 
-  const detectObjectJob = useResourcesSelector(selectObjectJobForFile)(fileId);
-
-  const detectObjectJobIcon: AllIconTypes = useMemo(() => {
-    if (!detectObjectJob) {
-      return 'ThreeD';
-    }
-    if (detectObjectJob.jobError) {
-      return 'Beware';
-    }
-    if (detectObjectJob.jobDone) {
-      return 'Check';
-    }
-    return 'Loading';
-  }, [detectObjectJob]);
+  const jobId = useFindObjectsJobId(fileId);
+  const { data: job } = useJob(jobId);
+  const running = !!jobId && isModelRunning(job?.status);
 
   const renderMenuButton = () => {
     if (creatable) {
@@ -142,10 +125,7 @@ export const FileOverviewPanel = ({
                     <span>Clear pending tags</span>
                   </Menu.Item>
                 )}
-                <Menu.Item onClick={() => dispatch(detectObject(fileId!))}>
-                  <Icon type={detectObjectJobIcon} />
-                  <span>Detect objects</span>
-                </Menu.Item>
+                <DetectObjectsMenuItem fileId={fileId} />
                 <Menu.Item
                   onClick={() =>
                     Modal.confirm({
@@ -211,7 +191,11 @@ export const FileOverviewPanel = ({
         }
         placement="bottom-end"
       >
-        <Button icon="CaretDown" iconPlacement="right" type="primary">
+        <Button
+          icon={running ? 'Loading' : 'CaretDown'}
+          iconPlacement="right"
+          type="primary"
+        >
           Actions
         </Button>
       </Dropdown>

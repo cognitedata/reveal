@@ -50,3 +50,18 @@ export type ModelStatus =
   | 'Completed'
   | 'Running'
   | 'Failed';
+
+export const isModelRunning = (s?: ModelStatus) => {
+  switch (s) {
+    case 'New':
+    case 'Scheduled':
+    case 'Queued':
+    case 'Running':
+    case undefined:
+      return true;
+    default:
+      return false;
+  }
+};
+
+export const LocalStorageFileContextKey = 'LocalStorageFileContextKey';

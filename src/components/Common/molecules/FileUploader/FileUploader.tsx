@@ -6,7 +6,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { getMIMEType } from 'utils/FileUtils';
 import { SpacedRow } from 'components/Common';
 import { Body, Icon, Button } from '@cognite/cogs.js';
-import { getSDK } from 'utils/SDK';
+import { useSDK } from 'context/sdk';
 
 export const GCSUploader = (
   file: Blob | UploadFile,
@@ -64,7 +64,7 @@ export const FileUploader = ({
   beforeUploadStart = () => {},
   onFileListChange = () => {},
 }: Props) => {
-  const sdk = getSDK();
+  const sdk = useSDK();
   const [uploadStatus, setUploadStatus] = useState<STATUS>(STATUS.WAITING);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 

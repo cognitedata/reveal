@@ -12,8 +12,8 @@ import { Asset, FileInfo, Timeseries } from '@cognite/sdk';
 
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { ResourceType } from '@cognite/cdf-resources-store';
 import { useResourcesState } from 'context/ResourceSelectionContext';
+import { SdkResourceType } from 'hooks/sdk';
 
 const LIST_ITEM_HEIGHT = 42;
 
@@ -86,7 +86,7 @@ export const AssetDetailsAbstract = ({
     el => el.type === 'asset' && el.state === 'active'
   );
   const [selected, setSelected] = useState<
-    { type: ResourceType; id: number } | undefined
+    { type: SdkResourceType; id: number } | undefined
   >(undefined);
   if (selected) {
     let content: React.ReactNode = null;

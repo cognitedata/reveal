@@ -15,10 +15,6 @@ module.exports = {
       path.resolve(__dirname, '../src'),
       'node_modules',
     ];
-    webpackConfig.resolve.alias = {
-      ...webpackConfig.resolve.alias,
-      'utils/SDK': path.resolve(__dirname, 'sdk-singleton-mock.js'),
-    };
     webpackConfig.module.rules = webpackConfig.module.rules
       .filter((rule) => !Array.isArray(rule.oneOf))
       .filter((el) => el.test !== /\.css$/)

@@ -29,7 +29,6 @@ import {
 } from '@cognite/annotations';
 import { useResourcePreview } from 'context/ResourcePreviewContext';
 import styled from 'styled-components';
-import { findSimilarObjects } from 'modules/fileContextualization/similarObjectJobs';
 import { useResourceSelector } from 'context/ResourceSelectorContext';
 import { ResourceItemState } from 'context/ResourceSelectionContext';
 import { useCreate } from 'hooks/sdk';
@@ -37,8 +36,47 @@ import { useQueryCache, useMutation } from 'react-query';
 import { sleep } from 'helpers';
 import { useSDK } from 'context/sdk';
 import { CogniteEvent, EventChange } from '@cognite/sdk';
-import { useResourcesDispatch } from '@cognite/cdf-resources-store';
+import {
+  useJob,
+  useFindObjects,
+  useFindSimilarJobId,
+  useDeleteFindSimilarJob,
+  useDeleteFindObjectsJob,
+  useFindObjectsJobId,
+} from 'hooks/objectDetection';
+import { isModelRunning } from 'types';
 import { ContextualizationData } from './ContextualizationModule';
+
+const FindSimilarButton = ({
+  fileId,
+  selectedAnnotation,
+}: {
+  fileId: number;
+  selectedAnnotation?: CogniteAnnotation | ProposedCogniteAnnotation;
+}) => {
+  const jobId = useFindSimilarJobId(fileId);
+  const { data } = useJob(jobId);
+  const running = !!jobId && isModelRunning(data?.status);
+
+  const [findSimilarObjects] = useFindObjects();
+  return (
+    <Button
+      loading={running}
+      icon="Search"
+      onClick={() => {
+        if (
+          (!jobId || !running) &&
+          selectedAnnotation &&
+          selectedAnnotation.box
+        ) {
+          findSimilarObjects({ fileId, boundingBox: selectedAnnotation.box });
+        }
+      }}
+    >
+      Find similar
+    </Button>
+  );
+};
 
 type Props = {
   fileId: number;
@@ -53,8 +91,14 @@ const AnnotationPreviewSidebar = ({
   setPendingAnnotations,
   contextualization,
 }: Props) => {
+  const cancelFindObjects = useDeleteFindObjectsJob();
+  const cancelFindSimilar = useDeleteFindSimilarJob();
+  const findObjectsJobId = useFindObjectsJobId(fileId);
+  const findSimilarJobId = useFindSimilarJobId(fileId);
+  const { data: findObjectsJob } = useJob(findObjectsJobId);
+  const { data: findSimilarJob } = useJob(findSimilarJobId);
+
   const queryCache = useQueryCache();
-  const dispatch = useResourcesDispatch();
   const [editing, setEditing] = useState<boolean>(false);
 
   const { selectedAnnotation, setSelectedAnnotation } = useSelectedAnnotation();
@@ -75,8 +119,6 @@ const AnnotationPreviewSidebar = ({
     setEditing(false);
   }, [selectedAnnotationId]);
 
-  const isFindingSimilarObjects = false;
-
   let annotationPreview: string | undefined;
   if (selectedAnnotation && extractFromCanvas) {
     const { xMin, yMin, xMax, yMax } = selectedAnnotation.box;
@@ -84,20 +126,6 @@ const AnnotationPreviewSidebar = ({
   }
 
   const isEditingMode = isPendingAnnotation || editing;
-
-  const similarButton = selectedAnnotation && (
-    <Button
-      loading={isFindingSimilarObjects}
-      icon="Search"
-      onClick={() => {
-        if (fileId) {
-          dispatch(findSimilarObjects(fileId, selectedAnnotation.box));
-        }
-      }}
-    >
-      Find Similar
-    </Button>
-  );
 
   const onSuccess = () => {
     const invalidate = () =>
@@ -175,7 +203,11 @@ const AnnotationPreviewSidebar = ({
       setPendingAnnotations(
         pendingAnnotations.filter(el => el.id !== annotation.id)
       );
-    } else {
+    } else if (findObjectsJob?.annotations?.find(a => a.id === annotation.id)) {
+      cancelFindObjects(fileId);
+    } else if (findSimilarJob?.annotations?.find(a => a.id === annotation.id)) {
+      cancelFindSimilar(fileId);
+    } else if (Number.isFinite(annotation.id)) {
       trackUsage('FileViewer.DeleteAnnotation', {
         annotation,
       });
@@ -259,7 +291,10 @@ const AnnotationPreviewSidebar = ({
               <Icon type="Edit" />
               Edit
             </Button>
-            {similarButton}
+            <FindSimilarButton
+              selectedAnnotation={selectedAnnotation}
+              fileId={fileId}
+            />
           </SpacedRow>
         </InfoCell>
       )}
@@ -292,7 +327,9 @@ const AnnotationPreviewSidebar = ({
       onCancel={isPendingAnnotation ? undefined : () => setEditing(false)}
     >
       <Divider.Horizontal />
-      <SpacedRow>{similarButton}</SpacedRow>
+      <SpacedRow>
+        <FindSimilarButton fileId={fileId} />
+      </SpacedRow>
     </CreateAnnotationForm>
   );
 

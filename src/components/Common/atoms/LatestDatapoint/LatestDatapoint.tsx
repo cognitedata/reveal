@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { InfoCell, SpacedRow, TimeDisplay } from 'components/Common';
 import { Timeseries, DoubleDatapoint, StringDatapoint } from '@cognite/sdk';
-import { getSDK } from 'utils/SDK';
+import { useSDK } from 'context/sdk';
 
 interface LatestDatapointProps {
   timeSeries: Timeseries;
 }
 export const LatestDatapoint = ({ timeSeries }: LatestDatapointProps) => {
-  const sdk = getSDK();
+  const sdk = useSDK();
   const [latestDatapoint, setLatestDatapoint] = useState<
     DoubleDatapoint | StringDatapoint | undefined
   >({ value: 0, timestamp: new Date(), isString: false } as DoubleDatapoint);

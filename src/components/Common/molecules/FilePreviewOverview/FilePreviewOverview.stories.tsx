@@ -1,13 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CogniteResourceProvider } from '@cognite/cdf-resources-store';
-import { mockStore } from 'utils/mockStore';
-import { Map } from 'immutable';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { number } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
-import { getSDK } from 'utils/SDK';
+import { CogniteClient } from '@cognite/sdk';
 import { FilePreviewOverview } from './FilePreviewOverview';
 
 export default {
@@ -28,42 +25,7 @@ const file = {
     RANDOM2: 'yes',
     RANDOM3: 'yes',
     RANDOM4: 'yes',
-    RANDOM5: 'lorem ipsum asd asdf ds dsaf  sf as',
-  },
-};
-
-const store = {
-  assets: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([
-        [1, { id: 1, name: 'Sample asset', description: 'Random string' }],
-      ]),
-    },
-  },
-  files: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([[1, { id: 1, name: 'Sample file', mimeType: 'png' }]]),
-    },
-  },
-  sequences: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([[1, { id: 1, name: 'Sample sequence' }]]),
-    },
-  },
-  events: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([[1, { id: 1, type: 'Sample event' }]]),
-    },
-  },
-  timeseries: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([[1, { id: 1, name: 'Sample ts' }]]),
-    },
+    RANDOM5: 'lorem ipsum asd asdf ds dsaf sf as',
   },
 };
 
@@ -145,16 +107,13 @@ export const ExampleWithAnnotations = () => (
   />
 );
 
-const sdk = getSDK();
-
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  const sdk = new CogniteClient({ appId: 'invalid' });
   return (
     <Container>
-      <CogniteResourceProvider store={mockStore(store)} sdk={sdk}>
-        <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
-          {children}
-        </CogniteFileViewer.Provider>
-      </CogniteResourceProvider>
+      <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
+        {children}
+      </CogniteFileViewer.Provider>
     </Container>
   );
 };
