@@ -11,7 +11,6 @@ import {
   AddModelOptions,
   Cognite3DViewer,
   Cognite3DModel,
-  BoundingBoxClipper,
   CognitePointCloudModel,
   PotreePointColorType, 
   PotreePointShape
