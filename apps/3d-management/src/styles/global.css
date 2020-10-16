@@ -1,3 +1,7 @@
+:root {
+  --cogs-input-default-height: 36px;
+}
+
 .ant-input,
 .ant-tag {
   font-family: BlinkMacSystemFont, Arial, sans-serif;
@@ -46,4 +50,14 @@ a:hover {
 }
 .clickableBox:hover {
   box-shadow: 0 2px 7px grey;
+}
+
+.ant-select-selection {
+  height: var(--cogs-input-default-height);
+}
+.ant-select-selection__rendered {
+  line-height: var(--cogs-input-default-height);
+}
+.ant-btn {
+  height: var(--cogs-input-default-height);
 }
