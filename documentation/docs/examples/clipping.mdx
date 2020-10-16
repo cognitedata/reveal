@@ -1,0 +1,47 @@
+---
+id: clipping
+title: Clipping/slicing planes
+describe: Reveal support adding a number of slicing planes to "cut through" the models.
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Slicing planes, also called clipping planes, can be used to "cut through" the model to reveal the interior. This is 
+useful to isolate interesting parts of the model and hide obscuring geometry. Reveal supports having multiple slicing planes
+in arbitrary position and orientation. When slicing planes are active,
+the amount of geometry loaded might be reduced since culled geometry doesn't need
+to be loaded (or rather loaded in a lower detail level).
+
+<video preload="auto" autoPlay="autoplay" loop controls>
+  <source src={useBaseUrl('/img/cad-clipping.webm')} />
+</video>
+
+:::note
+Clipping planes are currently not supported by point cloud models.
+:::
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+### Single, fixed slicing plane
+
+Slicing planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane) 
+to `Cognite3DViewer.setSlicingPlanes`. The slicing planes are activated for all models and
+replaces any active slicing planes.
+
+Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math/Plane.setFromNormalAndCoplanarPoint)
+is used to create slicing planes. This function accepts a direction that defines the orientation of
+the plane and a point on the plane. For example will the following
+code create a slicing plane that only accepts geometry below `Y = 55`:
+```jsx runnable
+const point = new THREE.Vector3(0, 55, 0);
+const orientation = new THREE.Vector3(0, -1, 0);
+const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation, point);
+viewer.setSlicingPlanes([plane]);
+```
+
+### Animated slicing plane
+
+### CAD geometry filter
