@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "BROWSER=none WDS_SOCKET_PORT=3033 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3033 rescripts start",
+    "start": "BROWSER=none WDS_SOCKET_PORT=3033 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3033 HTTPS=true rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
     "generate-preview-artifacts": "cdf-ui-cli -pr -b cdf-hub-production -p @cognite/cdf-3d-management --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
@@ -22,7 +22,7 @@
     "@cognite/gearbox": "^2.1.0",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-feature-flags": "^0.0.1",
-    "@cognite/reveal": "^1.1.0",
+    "@cognite/reveal": "npm:mn-reveal-release-test@1.2.0-alpha",
     "@cognite/z-index": "^0.1.0",
     "@google-cloud/storage": "^5.3.0",
     "@rescripts/cli": "^0.0.14",

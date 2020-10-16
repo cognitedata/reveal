@@ -23,6 +23,7 @@ import {
   Legacy3DModel,
   Legacy3DViewer,
 } from '../ThreeDViewer/legacyViewerTypes';
+import { ClassPicker } from './ClassPicker';
 
 const ButtonContainer = styled.div`
   position: absolute;
@@ -193,16 +194,22 @@ function ThreeDViewerToolbar(props: Props) {
           </MenuItem>
 
           {props.model instanceof CognitePointCloudModel && (
-            <MenuItem>
-              <ColorTypePicker
-                onChange={(colorType: PotreePointColorType) => {
-                  if (props.model instanceof CognitePointCloudModel) {
-                    // eslint-disable-next-line no-param-reassign
-                    props.model.pointColorType = colorType;
-                  }
-                }}
-              />
-            </MenuItem>
+            <>
+              <MenuItem>
+                <ColorTypePicker
+                  onChange={(colorType: PotreePointColorType) => {
+                    if (props.model instanceof CognitePointCloudModel) {
+                      // eslint-disable-next-line no-param-reassign
+                      props.model.pointColorType = colorType;
+                    }
+                  }}
+                />
+              </MenuItem>
+
+              <MenuItem>
+                <ClassPicker model={props.model} />
+              </MenuItem>
+            </>
           )}
         </Card>
       </ButtonContainer>
