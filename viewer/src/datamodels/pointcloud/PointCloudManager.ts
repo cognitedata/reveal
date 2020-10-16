@@ -49,6 +49,7 @@ export class PointCloudManager<TModelIdentifier> {
     const nodeWrapper = this._pointCloudFactory.createModel(metadata);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
+    node.setModelTransformation(metadata.modelMatrix);
     return node;
   }
 }

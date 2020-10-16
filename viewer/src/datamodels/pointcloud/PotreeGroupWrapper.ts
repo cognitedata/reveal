@@ -46,12 +46,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.nodes.push(node);
   }
 
-  *pointClouds(): Generator<PotreeNodeWrapper> {
-    for (const child of this.potreeGroup.children) {
-      yield new PotreeNodeWrapper(child as Potree.PointCloudOcttree);
-    }
-  }
-
   requestRedraw() {
     this._needsRedraw = true;
   }

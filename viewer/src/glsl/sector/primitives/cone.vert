@@ -1,5 +1,6 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
@@ -34,10 +35,30 @@ varying float v_arcAngle;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform vec2 treeIndexTextureSize;
+
+uniform sampler2D transformOverrideIndexTexture;
+
+uniform vec2 transformOverrideTextureSize; 
+uniform sampler2D transformOverrideTexture;
+
 void main() {
-    vec3 center = 0.5 * (a_centerA + a_centerB);
-    float halfHeight = 0.5 * length(a_centerA - a_centerB);
-    vec3 dir = normalize(a_centerA - a_centerB);
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
+
+    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
+
+    vec3 centerA = mul3(modelTransformOffset, a_centerA);
+    vec3 centerB = mul3(modelTransformOffset, a_centerB);
+
+    vec3 center = 0.5 * (centerA + centerB);
+    float halfHeight = 0.5 * length(centerA - centerB);
+    vec3 dir = normalize(centerA - centerB);
     vec3 newPosition = position;
 
 #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
@@ -74,7 +95,7 @@ void main() {
 
     // compute basis for cone
     v_W.xyz = dir;
-    v_U.xyz = a_localXAxis;
+    v_U.xyz = (modelTransformOffset * vec4(a_localXAxis, 0.0)).xyz;
     v_W.xyz = normalize(normalMatrix * v_W.xyz);
     v_U.xyz = normalize(normalMatrix * v_U.xyz);
     // We pack surfacePoint as w-components of U and W
@@ -82,16 +103,15 @@ void main() {
     v_U.w = surfacePoint.x;
 
     // We pack radii as w-components of v_centerB
-    v_centerB.xyz = mul3(modelViewMatrix, a_centerB);
-    v_centerB.w = displaceScalar(a_centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.xyz = mul3(modelViewMatrix, centerB);
+    v_centerB.w = displaceScalar(centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
 
     v_V.xyz = -cross(v_U.xyz, v_W.xyz);
     v_V.w = surfacePoint.y;
 
-    v_centerA.xyz = mul3(modelViewMatrix, a_centerA);
-    v_centerA.w = displaceScalar(a_centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerA.xyz = mul3(modelViewMatrix, centerA);
+    v_centerA.w = displaceScalar(centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
 
-    // START NEW CODE
     v_color = a_color;
     v_normal = normalMatrix * normal;
 

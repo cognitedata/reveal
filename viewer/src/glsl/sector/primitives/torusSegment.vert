@@ -1,4 +1,7 @@
 #pragma glslify: constructMatrix = require('../../base/constructMatrix.glsl')
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
+
+uniform mat4 inverseModelMatrix;
 
 attribute vec4 a_instanceMatrix_column_0;
 attribute vec4 a_instanceMatrix_column_1;
@@ -16,6 +19,13 @@ varying vec3 v_color;
 varying vec3 v_normal;
 
 varying vec3 vViewPosition;
+
+uniform vec2 treeIndexTextureSize;
+
+uniform sampler2D transformOverrideIndexTexture;
+
+uniform vec2 transformOverrideTextureSize; 
+uniform sampler2D transformOverrideTexture;
 
 void main() {
     mat4 instanceMatrix = constructMatrix(
@@ -35,6 +45,14 @@ void main() {
     pos3.y = (a_radius + a_tubeRadius*cos(phi)) * sinTheta;
     pos3.z = a_tubeRadius*sin(phi);
 
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
+    
     vec3 transformed = (instanceMatrix * vec4(pos3, 1.0)).xyz;
 
     // Calculate normal vectors if we're not picking
@@ -43,9 +61,9 @@ void main() {
 
     v_treeIndex = a_treeIndex;
     v_color = a_color;
-    v_normal = normalMatrix * objectNormal;
+    v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
 
-    vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
+    vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(transformed, 1.0);
 
     vViewPosition = modelViewPosition.xyz;
 

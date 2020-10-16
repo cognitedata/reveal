@@ -41,7 +41,6 @@ export function Clipping() {
       const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
       const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller({
         coverageUtil,
-        costLimit: 70 * 1024 * 1024,
         logCallback: console.log,
       });
       const debugCanvas = coverageUtil.createDebugCanvas({

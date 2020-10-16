@@ -168,6 +168,8 @@ function createBoxes(
   geometry.setAttribute('normal', boxGeometry.normal);
   setAttributes(geometry, boxCollection, boxAttributes, mesh);
 
+  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+
   // TODO add frustum culling back for all meshes after adding proper boudning boxes
   mesh.frustumCulled = false;
   mesh.name = `Primitives (Boxes)`;
@@ -187,6 +189,8 @@ function createCircles(
   geometry.setAttribute('position', quadGeometry.position);
   geometry.setAttribute('normal', quadGeometry.position);
   setAttributes(geometry, circleCollection, circleAttributes, mesh);
+
+  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
   mesh.frustumCulled = false;
 
@@ -381,6 +385,8 @@ function createTorusSegments(
     mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
 
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLODs.length));
+
+    mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   }
 
   return lod;

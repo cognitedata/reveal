@@ -7,7 +7,7 @@ uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
 uniform sampler2D matCapTexture;
 
-uniform vec2 dataTextureSize;
+uniform vec2 treeIndexTextureSize;
 
 varying float v_treeIndex;
 varying vec3 v_color;
@@ -18,13 +18,13 @@ uniform int renderMode;
 varying vec3 vViewPosition;
 
 void main() {
-    if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
+    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, v_treeIndex, renderMode)) {
         discard;
     }
     if (isSliced(vViewPosition)) {
         discard;
     }
 
-    vec4 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
+    vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
     updateFragmentColor(renderMode, color, v_treeIndex, v_normal, gl_FragCoord.z, matCapTexture);
 }

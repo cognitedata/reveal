@@ -34,10 +34,10 @@ export function Simple() {
 
       const scene = new THREE.Scene();
       let model: reveal.CadNode;
-      if(modelRevision) {
+      if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
+      } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager();
         model = await revealManager.addModel('cad', modelUrl);
       } else {

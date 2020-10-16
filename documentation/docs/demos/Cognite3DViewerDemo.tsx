@@ -3,17 +3,26 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { AddModelOptions, Cognite3DViewer } from '@cognite/reveal';
+import {
+  AddModelOptions,
+  Cognite3DViewer,
+  SupportedModelTypes,
+} from '@cognite/reveal';
 
-import { CanvasWrapper } from '../styled';
-import { DemoProps } from '../DemoProps';
-import { env } from '../../env';
+import { CanvasWrapper } from '@site/src/components/styled';
+import { DemoProps } from '@site/src/components/DemoProps';
 
-const modelId = env.modelId;
-const revisionId = env.revisionId;
+type OwnProps = {
+  modelType?: SupportedModelTypes;
+};
 
-export default function Cognite3DViewerDemo({ client }: DemoProps) {
+export default function Cognite3DViewerDemo({
+  client,
+  modelId,
+  revisionId,
+}: DemoProps & OwnProps) {
   const canvasWrapperRef = useRef(null);
+
   useEffect(() => {
     if (!client || !canvasWrapperRef.current) {
       return;
@@ -24,13 +33,14 @@ export default function Cognite3DViewerDemo({ client }: DemoProps) {
       sdk: client,
       domElement: canvasWrapperRef.current,
     });
-    addModel({ modelId, revisionId });
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
       viewer.loadCameraFromModel(model);
       window.model = model;
     }
+
+    addModel({ modelId, revisionId });
 
     window.viewer = viewer;
     return () => {

@@ -3,7 +3,10 @@ import { screenShotTest } from "./VisualTestUtils";
 const test_presets = [
   "clipping",
   "default_camera",
-  "highlight"
+  "highlight",
+  "rotate_cad_model",
+  "node_transform",
+  "ghost_mode"
 ]
 
 describe('Testable', () => {

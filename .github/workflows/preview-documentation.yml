@@ -99,5 +99,5 @@ jobs:
         with:
           msg: |
             :orange_book: Documentation preview is available from
-            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs.
+            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
           check_for_duplicate_msg: true

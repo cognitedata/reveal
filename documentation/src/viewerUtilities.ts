@@ -1,11 +1,14 @@
-import { Cognite3DViewer } from '@cognite/reveal';
-import { CameraChangeDelegate, PointerEventDelegate } from '@cognite/reveal/public/migration/Cognite3DViewer';
+import {
+  CameraChangeDelegate,
+  PointerEventDelegate,
+  Cognite3DViewer,
+} from '@cognite/reveal';
 
 type InternalEventListeners = {
   cameraChange: CameraChangeDelegate[];
   click: PointerEventDelegate[];
   hover: PointerEventDelegate[];
-}
+};
 
 /**
  * Resets all event handlers on the viewer provided. This uses
@@ -15,7 +18,7 @@ type InternalEventListeners = {
 export function resetViewerEventHandlers(viewer: Cognite3DViewer): void {
   // @ts-expect-error
   const eventListeners: InternalEventListeners = viewer.eventListeners;
-  eventListeners.cameraChange.forEach(l => viewer.off('cameraChange', l));
-  eventListeners.click.forEach(l => viewer.off('click', l));
-  eventListeners.hover.forEach(l => viewer.off('hover', l));
+  eventListeners.cameraChange.forEach((l) => viewer.off('cameraChange', l));
+  eventListeners.click.forEach((l) => viewer.off('click', l));
+  eventListeners.hover.forEach((l) => viewer.off('hover', l));
 }

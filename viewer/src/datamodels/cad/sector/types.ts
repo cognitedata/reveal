@@ -1,8 +1,8 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
-import { mat4, vec3 } from 'gl-matrix';
+import * as THREE from 'three';
+import { vec3 } from 'gl-matrix';
 
 import { LevelOfDetail } from './LevelOfDetail';
 import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
@@ -45,25 +45,26 @@ export interface SectorScene {
    * of the metadata. See below how to convert ThreeJS camera matrices to the correct format.
    *
    * @example Converting a ThreeJS camera to a frustum
-   * const cameraMatrixWorldInverse = fromThreeMatrix(mat4.create(), camera.matrixWorldInverse);
-   * const cameraProjectionMatrix = fromThreeMatrix(mat4.create(), camera.projectionMatrix);
+   * ```
+   * const cameraMatrixWorldInverse = camera.matrixWorldInverse;
+   * const cameraProjectionMatrix = camera.projectionMatrix;
    *
    * const transformedCameraMatrixWorldInverse =
-   *   mat4.multiply(
-   *     transformedCameraMatrixWorldInverse,
-   *     cameraMatrixWorldInverse,
-   *     model.modelTransformation.modelMatrix
-   *   );
+   *  new THREE.Matrix4().multiplyMatrices()
+   *   mat4.multiply(cameraMatrixWorldInverse, model.modelMatrix);
    *
    * const intersectingSectors = model.scene.getSectorsIntersectingFrustum(
    *   cameraProjectionMatrix,
    *   transformedCameraMatrixWorldInverse
    * );
-   *
+   * ```
    * @param projectionMatrix
    * @param inverseCameraModelMatrix
    */
-  getSectorsIntersectingFrustum(projectionMatrix: mat4, inverseCameraModelMatrix: mat4): SectorMetadata[];
+  getSectorsIntersectingFrustum(
+    projectionMatrix: THREE.Matrix4,
+    inverseCameraModelMatrix: THREE.Matrix4
+  ): SectorMetadata[];
   getAllSectors(): SectorMetadata[];
 
   // Available, but not supported:

@@ -8,7 +8,13 @@
     "jsx": "react",
     "lib": ["DOM", "DOM.Iterable", "ES6"],
     "noEmit": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "paths": {
+      // it's aligned with docusaurus @site alias
+      // https://v2.docusaurus.io/docs/versioning/#use-absolute-import-within-the-docs
+      "@site/*": ["*"]
+    }
   },
-  "include": ["src/"]
+  "include": ["src", "docs", "versioned_docs"]
 }

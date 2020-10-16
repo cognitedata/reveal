@@ -34,22 +34,22 @@ export interface Cognite3DViewerOptions {
   /** Send anonymous usage statistics. */
   logMetrics?: boolean;
 
-  /** @deprecated and ignored */
+  /** @deprecated And ignored. */
   highlightColor?: THREE.Color;
 
-  /** @deprecated and ignored */
+  /** @deprecated And ignored. */
   noBackground?: boolean;
 
-  /** @deprecated and not supported */
+  /** @deprecated And not supported. */
   viewCube?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
 
-  /** @deprecated and not supported */
+  /** @deprecated And not supported. */
   enableCache?: boolean;
 
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 
-  /** Callback to download stream progress */
+  /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 
   /**
@@ -81,7 +81,7 @@ export interface AddModelOptions {
 }
 
 /**
- * Represents the result from {@link Cognite3DViewer.getInterSectionFromPixel}.
+ * Represents the result from {@link Cognite3DViewer.getIntersectionFromPixel}.
  * @module @cognite/reveal
  */
 export interface Intersection {

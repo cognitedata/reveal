@@ -29,7 +29,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     orderSectorsByVisibility: camera => {
       orderSectorsByVisibilityMock(camera);
       return [];
-    }
+    },
+    dispose: jest.fn()
   };
   const camera = new THREE.PerspectiveCamera();
 
@@ -88,7 +89,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
           return 0;
       }
     };
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost, costLimit: 20 });
+    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(generateSectorTree(2, 2));
     const cadNode = new CadNode(model, materialManager);
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
@@ -111,6 +112,12 @@ describe('ByVisibilityGpuSectorCuller', () => {
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).map(x => x.metadata.id)).toEqual([0, 1]);
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Simple).map(x => x.metadata.id)).toEqual([2]);
   });
+
+  test('dispose() disposes coverge utility', () => {
+    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    culler.dispose();
+    expect(coverageUtil.dispose).toBeCalledTimes(1);
+  });
 });
 
 function createDetermineSectorInput(
@@ -123,7 +130,8 @@ function createDetermineSectorInput(
     clipIntersection: false,
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {},
-    cameraInMotion: false
+    cameraInMotion: false,
+    budget: { geometryDownloadSizeBytes: 20, highDetailProximityThreshold: 10 }
   };
   return determineSectorsInput;
 }

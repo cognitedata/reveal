@@ -1183,10 +1183,12 @@
   version "0.0.0"
   uid ""
 
-"@cognite/three-combo-controls@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@cognite/three-combo-controls/-/three-combo-controls-1.4.1.tgz#1a00ccab1fd5d320b40b315e708e816d7e3ec2a0"
-  integrity sha512-8bqM8DkuUi/uQq1ydDBDrj/FXnjRLDxFggtQ6VlaichbyLIWiOhNuIR3BTeyVjynncFydnQ+/accjOzWebJN3A==
+"@cognite/three-combo-controls@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@cognite/three-combo-controls/-/three-combo-controls-1.4.3.tgz#0850ec57035b3cf3f65ab5b619fcf9eee87646c8"
+  integrity sha512-wkUqf/TyRlHFbMqELzVjJM7M1HWDGSp1V1Bgo+WH3yefOQgcgYsb8kOyJhMPuL4i1BqtxAc9E48n9TDCDD3mYQ==
+  dependencies:
+    lodash "^4.17.15"
 
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
