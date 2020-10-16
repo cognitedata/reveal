@@ -11,7 +11,7 @@ static final String STAGING_APP_ID =
       : ""
 
 // This is your FAS production app id.
-// A this time, there is no production build for the demo app.
+// At this time, there is no production build for the demo app.
 static final String PRODUCTION_APP_ID =
     // This ternary is only in here to avoid accidentally publishing to the
     // wrong app once this template is used. You should remove this whole thing
@@ -75,6 +75,16 @@ static final String MIXPANEL_TOKEN =
     // and replace it with a static string.
     jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
       ? "1cc1cdc82fb93ec9a20a690216de41e4"
+      : ""
+
+// Specify your projects alerting slack channel here. If you do not have one of these, please
+// consider creating one for your projects alerts
+static final String SLACK_CHANNEL =
+    // This ternary is only in here to avoid accidentally publishing to the
+    // wrong app once this template is used. You should remove this whole thing
+    // and replace it with a static string.
+    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
+      ? "frontend-firehose"
       : ""
 
 // This determines how this app is versioned. See https://cog.link/releases for
@@ -146,8 +156,8 @@ def pods = { body ->
             properties([
               buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
             ])
-            node(POD_LABEL) {
 
+            node(POD_LABEL) {
               dir('main') {
                 stageWithNotify('Checkout code', CONTEXTS.checkout) {
                   checkout(scm)
@@ -172,127 +182,148 @@ def pods = { body ->
 }
 
 pods {
-  static final Map<String, Boolean> env = versioning.getEnv(
+  static final Map<String, Boolean> version = versioning.getEnv(
     versioningStrategy: VERSIONING_STRATEGY
   )
-  final boolean isStaging = env.isStaging
-  final boolean isProduction = env.isProduction
-  final boolean isPullRequest = env.isPullRequest
+  final boolean isStaging = version.isStaging
+  final boolean isProduction = version.isProduction
+  final boolean isPullRequest = version.isPullRequest
 
-  threadPool(
-    tasks: [
-      'Lint': {
-        stageWithNotify('Check linting', CONTEXTS.lint) {
-          dir('lint') {
-            container('fas') {
-              sh('yarn lint')
-            }
-          }
-        }
-      },
-
-      'Unit tests': {
-        stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
-          dir('unit-tests') {
-            container('fas') {
-              sh('yarn test')
-              junit(allowEmptyResults: true, testResults: '**/junit.xml')
-              if (isPullRequest) {
-                summarizeTestResults()
-              }
-              stage("Upload coverage reports") {
-                codecov.uploadCoverageReport()
+  app.safeRun(
+    slackChannel: SLACK_CHANNEL,
+    logErrors: isStaging || isProduction
+  ) {
+    threadPool(
+      tasks: [
+        'Lint': {
+          stageWithNotify('Check linting', CONTEXTS.lint) {
+            dir('lint') {
+              container('fas') {
+                sh('yarn lint')
               }
             }
           }
-        }
-      },
+        },
 
-      'Storybook': {
-        previewServer.runStorybookStage(
-          shouldExecute: isPullRequest
-        )
-      },
-
-      'Preview': {
-        dir('preview') {
-          stageWithNotify('Preview', CONTEXTS.preview) {
-            previewServer(
-              buildCommand: 'yarn build preview',
-              shouldExecute: isPullRequest
-            )
+        'Unit tests': {
+          stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
+            dir('unit-tests') {
+              container('fas') {
+                sh('yarn test')
+                junit(allowEmptyResults: true, testResults: '**/junit.xml')
+                if (isPullRequest) {
+                  summarizeTestResults()
+                }
+                stage("Upload coverage reports") {
+                  codecov.uploadCoverageReport()
+                }
+              }
+            }
           }
-        }
-      },
+        },
 
-      'Staging': {
+        'Storybook': {
+          previewServer.runStorybookStage(
+            shouldExecute: isPullRequest
+          )
+        },
+
+        'Preview': {
+          dir('preview') {
+            stageWithNotify('Preview', CONTEXTS.preview) {
+              previewServer(
+                buildCommand: 'yarn build preview',
+                shouldExecute: isPullRequest
+              )
+            }
+          }
+        },
+
+        'Staging': {
+          dir('staging') {
+            stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
+              fas.build(
+                appId: STAGING_APP_ID,
+                repo: APPLICATION_REPO_ID,
+                buildCommand: 'yarn build staging',
+                shouldExecute: isStaging
+              )
+            }
+          }
+        },
+
+        'Production': {
+          dir('production') {
+            stageWithNotify('Build for production', CONTEXTS.buildProduction) {
+              fas.build(
+                appId: PRODUCTION_APP_ID,
+                repo: APPLICATION_REPO_ID,
+                buildCommand: 'yarn build production',
+                shouldExecute: isProduction
+              )
+            }
+          }
+        },
+
+        'E2e': {
+          testcafe.runE2EStage(
+            //
+            // multi-branch mode:
+            //
+            // We don't need to run end-to-end tests against release because
+            // we're in one of two states:
+            //   1. Cutting a new release
+            //      In this state, staging has e2e already passing.
+            //   2. Cherry-picking in a hotfix
+            //      In this state, the PR couldn't have been merged without
+            //      passing end-to-end tests.
+            // As such, we can skip end-to-end tests on release branches. As
+            // a side-effect, this will make hotfixes hit production faster!            
+            // shouldExecute: !isRelease,
+
+            //
+            // single-branch mode:
+            //
+            shouldExecute: true,
+
+            buildCommand: 'yarn testcafe:build',  
+            runCommand: 'yarn testcafe:start'
+          )
+        },
+      ],
+      workers: 3,
+    )
+
+    if (isStaging && STAGING_APP_ID) {
+      stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
         dir('staging') {
-          stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
-            fas.build(
-              appId: STAGING_APP_ID,
-              repo: APPLICATION_REPO_ID,
-              buildCommand: 'yarn build staging',
-              shouldExecute: isStaging
-            )
-          }
-        }
-      },
+          fas.publish()
 
-      'Production': {
+        }
+
+        dir('main') {
+          slack.send(
+            channel: SLACK_CHANNEL,
+            message: "Deployment of ${env.BRANCH_NAME} complete!"
+          )
+        }
+      }
+    }
+
+    if (isProduction && PRODUCTION_APP_ID) {
+      stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
         dir('production') {
-          stageWithNotify('Build for production', CONTEXTS.buildProduction) {
-            fas.build(
-              appId: PRODUCTION_APP_ID,
-              repo: APPLICATION_REPO_ID,
-              buildCommand: 'yarn build production',
-              shouldExecute: isProduction
-            )
-          }
+          fas.publish()
+
         }
-      },
 
-      'E2e': {
-        testcafe.runE2EStage(
-          //
-          // multi-branch mode:
-          //
-          // We don't need to run end-to-end tests against release because
-          // we're in one of two states:
-          //   1. Cutting a new release
-          //      In this state, staging has e2e already passing.
-          //   2. Cherry-picking in a hotfix
-          //      In this state, the PR couldn't have been merged without
-          //      passing end-to-end tests.
-          // As such, we can skip end-to-end tests on release branches. As
-          // a side-effect, this will make hotfixes hit production faster!            
-          // shouldExecute: !isRelease,
-
-          //
-          // single-branch mode:
-          //
-          shouldExecute: true,
-
-          buildCommand: 'yarn testcafe:build',  
-          runCommand: 'yarn testcafe:start'
-        )
-      },
-    ],
-    workers: 3,
-  )
-
-  if (isStaging && STAGING_APP_ID) {
-    stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
-      dir('staging') {
-        fas.publish()
+        dir('main') {
+          slack.send(
+            channel: SLACK_CHANNEL,
+            message: "Deployment of ${env.BRANCH_NAME} complete!"
+          )
+        }
       }
     }
-  }
-
-  if (isProduction && PRODUCTION_APP_ID) {
-    stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
-      dir('production') {
-        fas.publish()
-      }
-    }
-  }
+  } 
 }
