@@ -60,6 +60,8 @@ type Props = OwnProps & DispatchProps;
 
 function ThreeDViewerToolbar(props: Props) {
   (window as any).model = props.model;
+  (window as any).viewer = props.viewer;
+
   const onRotationChange = (rotationMatrix: THREE.Matrix4) => {
     if ('setModelTransformation' in props.model) {
       const matrix = props.model.getModelTransformation();
