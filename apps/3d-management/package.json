@@ -15,7 +15,7 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/3d-viewer": "6.1.3",
+    "@cognite/3d-viewer": "6.1.4",
     "@cognite/cdf-sdk-singleton": "^0.6.1",
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "^1.23.1",

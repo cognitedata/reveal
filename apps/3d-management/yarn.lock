@@ -1262,24 +1262,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/3d-viewer@6.1.3":
-  version "6.1.3"
-  resolved "https://registry.yarnpkg.com/@cognite/3d-viewer/-/3d-viewer-6.1.3.tgz#cc3d2d362f5bbf3d701b85093fbf583eb8656f0e"
-  integrity sha512-ZZsjUKvY09yjkocWjxGSPQGjtmV82t829oAGLfTTgjmgSzi+pOvC8//ujwdR+tnhgD40F1CU/zj7ZbNv90gl/A==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@cognite/3d-web-parser" "^0.13.5"
-    "@cognite/three-combo-controls" "^1.4.1"
-    "@tweenjs/tween.js" "^17.2.0"
-    is-function "^1.0.1"
-    mixpanel-browser "^2.27.1"
-    mouse-event-offset "^3.0.2"
-    query-string "5"
-    right-now "^1.0.0"
-    simple-statistics "^7.0.2"
-    three "0.98.0"
-
-"@cognite/3d-viewer@^6.1.4":
+"@cognite/3d-viewer@6.1.4", "@cognite/3d-viewer@^6.1.4":
   version "6.1.4"
   resolved "https://registry.yarnpkg.com/@cognite/3d-viewer/-/3d-viewer-6.1.4.tgz#19f9fe04d1d82343613d75a7195c492f23c667c6"
   integrity sha512-2qH4aC7NbxYE+m3st8+c+S69bBzYR/p/ju0WBvIOhZgHX60A2oiwJIUPIrRciWR80d8N73JPhn43ZfVPu4ciaA==
