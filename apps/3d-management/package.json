@@ -42,7 +42,7 @@
     "i18next-locize-backend": "^4.1.8",
     "i18next-pseudo": "^2.2.0",
     "lodash": "^4.17.20",
-    "query-string": "^6.13.4",
+    "query-string": "^6.13.6",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-i18next": "^11.7.3",
