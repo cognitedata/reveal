@@ -79,7 +79,7 @@ jobs:
           # running in parallel
           sleep $[ $RANDOM % 10 ]s
           cd reveal-docs-preview/
-          git pull -no-ff
+          git pull --no-ff
 
       - name: Commit documentation
         working-directory: reveal-docs-preview
