@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
@@ -665,6 +666,24 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Gets wheter camera controls through mouse, touch and keyboard are enabled.
+   * @version new in 1.2.0
+   */
+  get cameraControlsEnabled(): boolean {
+    return this.controls.enabled;
+  }
+
+  /**
+   * Sets wheter camera controls through mouse, touch and keyboard are enabled.
+   * This can be useful to e.g. temporarily disable navigation when manipulating other
+   * objects in the scene or when implementing a "cinematic" viewer.
+   * @version new in 1.2.0
+   */
+  set cameraControlsEnabled(enabled: boolean) {
+    this.controls.enabled = enabled;
+  }
+
+  /**
    * Attempts to load the camera settings from the settings stored for the
    * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
    * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
@@ -1258,11 +1277,11 @@ export class Cognite3DViewer {
     };
 
     // down
-    canvas.addEventListener('mousedown', onDown);
-    canvas.addEventListener('touchstart', onDown);
+    // canvas.addEventListener('mousedown', onDown);
+    // canvas.addEventListener('touchstart', onDown);
 
     // on hover callback
-    canvas.addEventListener('mousemove', onHoverCallback);
+    // canvas.addEventListener('mousemove', onHoverCallback);
   };
 }
 
