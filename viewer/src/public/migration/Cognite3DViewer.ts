@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
@@ -662,6 +663,24 @@ export class Cognite3DViewer {
       return;
     }
     this.controls.setState(this.getCameraPosition(), target);
+  }
+
+  /**
+   * Gets wheter camera controls through mouse, touch and keyboard are enabled.
+   * @version new in 1.2.0
+   */
+  get cameraControlsEnabled(): boolean {
+    return this.controls.enabled;
+  }
+
+  /**
+   * Sets wheter camera controls through mouse, touch and keyboard are enabled.
+   * This can be useful to e.g. temporarily disable navigation when manipulating other
+   * objects in the scene or when implementing a "cinematic" viewer.
+   * @version new in 1.2.0
+   */
+  set cameraControlsEnabled(enabled: boolean) {
+    this.controls.enabled = enabled;
   }
 
   /**
