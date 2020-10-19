@@ -85,9 +85,9 @@ The API for accessing node information has not changed `@cognite/3d-viewer`, but
 
 ## Ray picking and intersection for handling click events
 
-In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed
-in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to
-determine `nodeId` use `async Cognite3DModel.mapNodeId(nodeId)`).
+In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed 
+in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to 
+determine `nodeId` use `async Cognite3DModel.mapTreeIndexToNodeId(treeIndex)`).
 
 ## Other differences
 
@@ -96,7 +96,13 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - `@cognite/3d-viewer` supports local caching to reduce the time to load previously opened 3D models. Currently, this is not supported by `@cognite/reveal`, but the need for such functionality is reduced by adding streaming capabilities.
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
-- The `onComplete`-callback when loading models using `Cognite3DViewer.addModel`, `Cognite3DViewer.addCadModel` or `Cognite3DViewer.addPointCloudModel` is not supported since models are streamed on demand, and will never complete. To monitor loading activity, use the `onLoading`-callback provided as an option when constructing `Cognite3DViewer`.
+- Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function 
+  no longer accepts an `onProgress` parameter. Because of this the `onComplete` option in `Cognite3DViewer.addModel` has 
+  been deprecated. To monitor loading activity, use the `onLoading`-callback provided as an option when constructing `Cognite3DViewer`.
+- `Cognite3DViewer.getCamera()` can now be used to access the `THREE.Camera` of the viewer. Note that this camera shouldn't be
+  modified.
+- `Cognite3DViewer.addModel` no longer supports options `localPath`, `orthographicCamera` and `onComplete`. Point clouds currently
+  don't support `geometryFilter`.
 - Textures are not supported by `@cognite/reveal`. Models can be loaded, but textures are not applied to the geometry.
 
 ## Preparing models
