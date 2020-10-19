@@ -75,6 +75,9 @@ jobs:
       - name: Copy build docs to preview documentation 
         run: |
           cp -vR reveal/documentation/docs-preview/* reveal-docs-preview/
+          # Sleep random amount to reduce chance of commit clash when multiple builds are
+          # running in parallel
+          sleep $[ $RANDOM % 10 ]s
 
       - name: Commit documentation
         working-directory: reveal-docs-preview
@@ -83,6 +86,7 @@ jobs:
           git config --global user.name "GitHub Action"
           git add -A ${{ env.PR_NUMBER }}
           git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
+          git pull --ff-only
 
       - name: Deploy  🚀
         uses: ad-m/github-push-action@master
