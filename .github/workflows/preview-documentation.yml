@@ -78,18 +78,15 @@ jobs:
           # Sleep random amount to reduce chance of commit clash when multiple builds are
           # running in parallel
           sleep $[ $RANDOM % 10 ]s
+          git pull -no-ff
 
       - name: Commit documentation
-        uses: actions/checkout@v2 
-        with:
-          token: ${{ secrets.ACCESS_TOKEN }}
         working-directory: reveal-docs-preview
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add -A ${{ env.PR_NUMBER }}
           git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
-          git pull --ff-only
 
       - name: Deploy  🚀
         uses: ad-m/github-push-action@master
