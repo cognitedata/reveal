@@ -80,6 +80,9 @@ jobs:
           sleep $[ $RANDOM % 10 ]s
 
       - name: Commit documentation
+        uses: actions/checkout@v2 
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
         working-directory: reveal-docs-preview
         run: |
           git config --global user.email "action@github.com"
