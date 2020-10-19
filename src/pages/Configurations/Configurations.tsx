@@ -163,7 +163,10 @@ const Configurations = () => {
   const hasError = (
     response: GenericResponseObject[] | GenericResponseObject
   ) => {
-    if (!response || (Array.isArray(response) && response[0].error)) {
+    if (
+      !response ||
+      (Array.isArray(response) && response.length > 0 && response[0].error)
+    ) {
       let errorObj = {
         message: 'No response',
         status: 400,
