@@ -15,7 +15,14 @@ import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, Intersection } from './types';
+import {
+  AddModelOptions,
+  Cognite3DViewerOptions,
+  GeometryFilter,
+  Intersection,
+  CameraChangeDelegate,
+  PointerEventDelegate
+} from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
@@ -31,9 +38,6 @@ import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 import { SupportedModelTypes } from '@/datamodels/base';
-
-export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
-export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 /**
  * @example
@@ -363,10 +367,13 @@ export class Cognite3DViewer {
     );
 
     if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
+    }
+    if (options.orthographicCamera) {
+      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
     }
     if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
     if (options.geometryFilter) {
       this._geometryFilters.push(options.geometryFilter);
@@ -425,16 +432,16 @@ export class Cognite3DViewer {
     );
 
     if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
     }
     if (options.geometryFilter) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
     if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
     }
     if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
 
     const { modelId, revisionId } = options;
