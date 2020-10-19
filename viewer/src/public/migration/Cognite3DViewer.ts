@@ -1277,11 +1277,11 @@ export class Cognite3DViewer {
     };
 
     // down
-    // canvas.addEventListener('mousedown', onDown);
-    // canvas.addEventListener('touchstart', onDown);
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('touchstart', onDown);
 
     // on hover callback
-    // canvas.addEventListener('mousemove', onHoverCallback);
+    canvas.addEventListener('mousemove', onHoverCallback);
   };
 }
 
