@@ -11,6 +11,7 @@ import {
 
 import { CanvasWrapper } from '@site/src/components/styled';
 import { DemoProps } from '@site/src/components/DemoProps';
+import { DragControls } from 'three/examples/jsm/controls/DragControls';
 
 type OwnProps = {
   modelType?: SupportedModelTypes;
@@ -43,6 +44,7 @@ export default function Cognite3DViewerDemo({
     addModel({ modelId, revisionId });
 
     window.viewer = viewer;
+    (window as any).DragControls = DragControls;
     return () => {
       viewer && viewer.dispose();
     };

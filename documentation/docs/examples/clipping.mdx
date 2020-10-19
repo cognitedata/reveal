@@ -56,6 +56,7 @@ const bbox = model.getModelBoundingBox();
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, bbox.max.y, 0);
 const plane = new THREE.Plane();
+plane.setFromNormalAndCoplanarPoint(orientation, point);
 viewer.setSlicingPlanes([plane]);
 
 const start = performance.now();
@@ -77,3 +78,54 @@ not load data during animation, but initiate data after an animation is complete
 :::
 
 ### CAD geometry filter
+
+```js runnable
+// import { DragControls } from 'three/examples/jsm/controls/DragControls';
+
+const bounds = model.getModelBoundingBox();
+
+
+// Create draggable cone at center of bounds
+const center = bounds.getCenter(new THREE.Vector3());
+var geometry = new THREE.BoxBufferGeometry(10, 10, 10);
+var mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 'green' }));
+mesh.position.copy(center);
+viewer.addObject3D(mesh);
+
+// Prepare a clipping plane
+const orientation = new THREE.Vector3(0, -1, 0);
+const point = new THREE.Vector3(0, center.y, 0);
+const plane = new THREE.Plane();
+plane.setFromNormalAndCoplanarPoint(orientation, point);
+viewer.setSlicingPlanes([plane]);
+
+
+const controls = new DragControls([mesh], viewer.getCamera(), viewer.domElement);
+controls.addEventListener('drag', () => {
+  // Fix XZ-poistion
+  mesh.position.set(center.x, mesh.position.y, center.z);
+  // Update slicing plane
+  plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), mesh.position);
+  viewer.forceRerender();
+});
+controls.addEventListener('dragstart', () => viewer.cameraControlsEnabled = false);
+controls.addEventListener('dragend', () => viewer.cameraControlsEnabled = true);
+/*
+const transformControls = new TransformControls(viewer.getCamera(), viewer.domElement);
+// Rerender whenever controls is moved
+transformControls.addEventListener('change', () => {
+  viewer.forceRerender();
+  plane.setFromNormalAndCoplanarPoint(orientation, mesh.position);
+});
+// Temporarily disable navigation when control manipulation starts
+transformControls.addEventListener('mouseDown', () => {
+  viewer.cameraControlsEnabled = false;
+});
+transformControls.addEventListener('mouseUp', () => {
+  viewer.cameraControlsEnabled = true;
+  viewer.setSlicingPlanes([plane]); // Trigger load after manipulation ends
+});
+transformControls.attach(mesh);
+viewer.addObject3D(transformControls);
+*/
+```
