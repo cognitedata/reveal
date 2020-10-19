@@ -8,7 +8,7 @@ import {
 import { Loader, Table } from 'components/Common';
 import { usePrevious } from 'hooks/CustomHooks';
 import styled from 'styled-components';
-import { useLoadListTree, useLoadSearchTree } from './AssetTreeTableHooks';
+import { useLoadListTree, useLoadSearchTree } from './hooks';
 
 const PAGE_SIZE = 50;
 
@@ -83,11 +83,7 @@ export const AssetTreeTable = ({
     setPreviewId(file.id);
   };
 
-  const {
-    data: listItems,
-    isFetched: listFetched,
-    isLoading: isListLoading,
-  } = useLoadListTree(
+  const { data: listItems, isFetched: listFetched } = useLoadListTree(
     startFromRoot ? { ...filter, root: true } : filter,
     listExpandedRowKeys
   );
@@ -98,33 +94,31 @@ export const AssetTreeTable = ({
 
   const {
     data: searchFiles,
+    isFetched: searchFetched,
     refetch,
-    isLoading: isSearchLoading,
-  } = useLoadSearchTree(
-    query || '',
-    filter,
-    {
-      enabled: searchEnabled,
-    },
-    {
-      onSuccess: data => {
-        const reducer = (
-          prev: number[],
-          el: Asset & { children?: Asset[] }
-        ): number[] => {
-          if (el.children) {
-            const childrenIds = (el.children || []).reduce(reducer, prev);
-            return childrenIds.concat([el.id]);
-          }
-          return prev;
-        };
-        const items = data.reduce(reducer, [] as number[]);
-        setSearchExpandedRowKeys(items);
-      },
-    }
-  );
+  } = useLoadSearchTree(query || '', filter, {
+    enabled: searchEnabled,
+  });
 
-  const isLoading = isListLoading || isSearchLoading;
+  const items = useMemo(() => {
+    const reducer = (
+      prev: number[],
+      el: Asset & { children?: Asset[] }
+    ): number[] => {
+      if (el.children) {
+        const childrenIds = (el.children || []).reduce(reducer, prev);
+        return childrenIds.concat([el.id]);
+      }
+      return prev;
+    };
+    return searchFiles && searchFiles.reduce(reducer, [] as number[]);
+  }, [searchFiles]);
+
+  if (items && items !== searchExpandedRowKeys) {
+    setSearchExpandedRowKeys(items);
+  }
+
+  const isLoading = searchEnabled ? !searchFetched : !listFetched;
 
   const assets = useMemo(() => {
     if (searchEnabled) {

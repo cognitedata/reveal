@@ -12,13 +12,12 @@ import { QueryKey, useQueryCache, useQuery, QueryConfig } from 'react-query';
 export const useLoadSearchTree = (
   query: string,
   filter: AssetFilterProps,
-  config?: QueryConfig<Asset[]>,
-  config2?: QueryConfig<Asset[]>
+  config?: QueryConfig<Asset[]>
 ) => {
   const sdk = useSDK();
   const cache = useQueryCache();
 
-  const { data: searchResults, isFetched } = useSearch<Asset>(
+  const searchResult = useSearch<Asset>(
     'assets',
     query,
     {
@@ -28,10 +27,10 @@ export const useLoadSearchTree = (
     config
   );
 
-  return useQuery<(Asset & { children?: Asset[] })[]>(
-    ['asset-list-tree', isFetched, filter, query],
+  const treeResult = useQuery<(Asset & { children?: Asset[] })[]>(
+    ['asset-list-tree', searchResult.isFetched, filter, query],
     async () => {
-      if (searchResults) {
+      if (searchResult.data) {
         const rootAssets: number[] = [];
         const assetsMap: {
           [key in number]: Asset;
@@ -59,7 +58,7 @@ export const useLoadSearchTree = (
           }
         };
 
-        searchResults.forEach(processItems);
+        searchResult.data.forEach(processItems);
 
         while (parentIds.size !== 0) {
           const parentIdsList = [...parentIds].map(id => ({ id }));
@@ -81,8 +80,16 @@ export const useLoadSearchTree = (
       }
       return [];
     },
-    config2
+    config
   );
+
+  return {
+    ...treeResult,
+    isFetching: treeResult.isFetching || searchResult.isFetching,
+    isFetched: treeResult.isFetched && searchResult.isFetched,
+    isError: treeResult.isError || searchResult.isError,
+    error: treeResult.error || searchResult.error,
+  };
 };
 
 export const useLoadListTree = (
@@ -93,7 +100,7 @@ export const useLoadListTree = (
   const sdk = useSDK();
   const cache = useQueryCache();
 
-  const { data: searchResults } = useList<Asset>(
+  const { data: listResult } = useList<Asset>(
     'assets',
     {
       limit: 1000,
@@ -107,16 +114,16 @@ export const useLoadListTree = (
   );
 
   return useQuery<(Asset & { children?: Asset[] })[]>(
-    ['asset-list-tree', (searchResults || []).map(e => e.id), openIds],
+    ['asset-list-tree', (listResult || []).map(e => e.id), openIds],
     async (_: QueryKey, _2: number[], ids: number[]) => {
-      if (searchResults) {
+      if (listResult) {
         const rootAssets: number[] = filter.assetSubtreeIds
           ? filter.assetSubtreeIds.map(el => (el as InternalId).id)
-          : searchResults.map(el => el.id);
+          : listResult.map(el => el.id);
         const assetsChildrenMap: {
           [key in number]: number[];
         } = {};
-        const assetsMap = searchResults.reduce(
+        const assetsMap = listResult.reduce(
           (prev, el) => {
             prev[el.id] = {
               ...el,
@@ -183,7 +190,7 @@ export const useLoadListTree = (
   );
 };
 
-const constructTree = <T,>(
+const constructTree = <T>(
   ids: number[],
   idsChildrenMap: { [key in number]: number[] },
   resourceMap: { [key in number]: T }
