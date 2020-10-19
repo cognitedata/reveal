@@ -25,6 +25,10 @@ export function curateConfigurationsData(data: GenericResponseObject[]) {
         id: item.id,
         name: item.name,
       },
+      conf_name: {
+        name: item.name,
+        id: item.id,
+      },
     };
   });
 }

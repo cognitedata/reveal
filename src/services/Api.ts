@@ -209,6 +209,12 @@ class Api {
         status_active: true,
       });
     },
+    update: async (
+      id: number,
+      options: any
+    ): Promise<GenericResponseObject[] | GenericResponseObject> => {
+      return this.post(`${this.baseURL}/configurations/${id}/update`, options);
+    },
   };
 
   public revisions = {

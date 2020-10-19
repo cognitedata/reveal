@@ -2,7 +2,7 @@ export default {
   visibleColumns: [
     'statusColor',
     'status_active',
-    'name',
+    'conf_name',
     'last_updated',
     'author',
     'repoProject',
@@ -57,6 +57,10 @@ export default {
     {
       keyName: 'status_active',
       value: 'Status',
+    },
+    {
+      keyName: 'conf_name',
+      value: 'Name',
     },
   ],
 };
