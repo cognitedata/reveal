@@ -8,8 +8,8 @@ import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import Spinner from 'src/components/Spinner';
 import { Tooltip, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import * as FileActions from '../../store/modules/File';
-import * as RevisionActions from '../../store/modules/Revision';
+import * as FileActions from 'src/store/modules/File';
+import * as RevisionActions from 'src/store/modules/Revision';
 
 const ThumbnailHint = styled.div`
   display: flex;

@@ -3,7 +3,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { Button } from '@cognite/cogs.js';
 
-import Provider from 'src/components/EmptyState/.storybook/boilerplate';
+import Provider from 'src/pages/AllModels/components/EmptyState/.storybook/boilerplate';
 import EmptyState from './EmptyState';
 
 storiesOf('watchtower|EmptyState', module)

@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { useUserContext } from '@cognite/cdf-utilities';
 import { handleUserIdentification } from 'src/utils/userTracking';
-import NotFound from 'src/components/NotFound';
+import NotFound from 'src/pages/NotFound';
 import { LazyWrapper } from 'src/components/LazyWrapper';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import { userHasCapabilities } from './utils';
-import NoAccessPage from './components/NoAccessPage';
+import NoAccessPage from './pages/NoAccessPage';
 
 // checks access to 3d and passes down the user prop
 // (user prop is unnecessary, might be refactored in favor of using user context)

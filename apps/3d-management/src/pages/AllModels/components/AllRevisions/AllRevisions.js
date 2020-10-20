@@ -11,17 +11,17 @@ import * as Sentry from '@sentry/browser';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { projectName, userHasCapabilities } from 'src/utils';
+import { projectName, userHasCapabilities, getContainer } from 'src/utils';
 import { createLink } from '@cognite/cdf-utilities';
 import { userPropType } from 'src/utils/PropTypes';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
 import Spinner from 'src/components/Spinner';
-import { getContainer } from 'src/utils';
-import FileUploader from '../FileUploader';
+
+import * as RevisionActions from 'src/store/modules/Revision';
+import Thumbnail from 'src/components/Thumbnail';
+import * as FileActions from 'src/store/modules/File';
 import RevisionsTable from '../RevisionsTable';
-import * as RevisionActions from '../../store/modules/Revision';
-import Thumbnail from '../Thumbnail';
-import * as FileActions from '../../store/modules/File';
+import FileUploader from '../FileUploader';
 
 const RevisionWrapper = styled.div`
   margin-top: 20px;

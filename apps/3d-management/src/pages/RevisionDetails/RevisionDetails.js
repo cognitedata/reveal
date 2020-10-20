@@ -13,7 +13,12 @@ import Modal from 'antd/lib/modal';
 import * as Sentry from '@sentry/browser';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { projectName, userHasCapabilities, getContainer } from 'src/utils';
+import {
+  projectName,
+  userHasCapabilities,
+  getContainer,
+  APP_TITLE,
+} from 'src/utils';
 import { createLink } from '@cognite/cdf-utilities';
 import { userPropType } from 'src/utils/PropTypes';
 import { Card, Icon, Timeline } from 'antd';
@@ -26,16 +31,14 @@ import NewHeader from 'src/components/NewHeader';
 
 import ErrorBoundary from 'src/components/ErrorBoundary';
 
-import NotFound from 'src/components/NotFound';
-import * as ModelActions from '../../store/modules/Model';
-import * as RevisionActions from '../../store/modules/Revision';
-import ThreeDViewerWrapper from '../../components/ThreeDViewerWrapper';
-
+import NotFound from 'src/pages/NotFound';
+import * as ModelActions from 'src/store/modules/Model';
+import * as RevisionActions from 'src/store/modules/Revision';
 import {
   isReprocessingRequired,
   requestReprocessing,
-} from '../../utils/3dApiUtils';
-import { APP_TITLE } from 'src/utils';
+} from 'src/utils/3dApiUtils';
+import ThreeDViewerWrapper from './components/ThreeDViewerWrapper';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of

@@ -11,11 +11,11 @@ import dayjs from 'dayjs';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import EmptyState from 'src/components/EmptyState';
-import { TableOperations } from 'src/components/TableOperations';
-import Thumbnail from '../Thumbnail';
+import EmptyState from 'src/pages/AllModels/components/EmptyState';
+import { TableOperations } from 'src/pages/AllModels/components/TableOperations';
+import Thumbnail from 'src/components/Thumbnail';
 
-import { setSelectedModels, setModelTableState } from '../../store/modules/App';
+import { setSelectedModels, setModelTableState } from 'src/store/modules/App';
 
 const NestedTable = styled(Table)`
   && td:last-child {

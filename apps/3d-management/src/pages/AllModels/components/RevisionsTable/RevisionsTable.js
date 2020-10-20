@@ -7,11 +7,11 @@ import Icon from 'antd/lib/icon';
 import Popover from 'antd/lib/popover';
 import dayjs from 'dayjs';
 
-import EmptyState from 'src/components/EmptyState';
+import EmptyState from 'src/pages/AllModels/components/EmptyState';
 import { getContainer } from 'src/utils';
-import { TableOperations } from 'src/components/TableOperations';
-import Status from '../Status';
-import Thumbnail from '../Thumbnail';
+import { TableOperations } from 'src/pages/AllModels/components/TableOperations';
+import Status from 'src/components/Status';
+import Thumbnail from 'src/components/Thumbnail';
 
 class RevisionsTable extends React.Component {
   constructor(props) {

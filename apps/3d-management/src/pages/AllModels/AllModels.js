@@ -19,11 +19,11 @@ import { userHasCapabilities, getContainer, APP_TITLE } from 'src/utils';
 import Spinner from 'src/components/Spinner';
 import { userPropType } from 'src/utils/PropTypes';
 
-import FileUploader from 'src/components/FileUploader';
+import FileUploader from 'src/pages/AllModels/components/FileUploader';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
 import * as FileActions from 'src/store/modules/File';
-import AllRevisions from 'src/components/AllRevisions';
-import ModelsTable from 'src/components/ModelsTable';
+import AllRevisions from 'src/pages/AllModels/components/AllRevisions';
+import ModelsTable from 'src/pages/AllModels/components/ModelsTable';
 import * as RevisionActions from 'src/store/modules/Revision';
 import * as ModelActions from 'src/store/modules/Model';
 
