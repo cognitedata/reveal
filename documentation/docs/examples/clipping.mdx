@@ -44,8 +44,8 @@ viewer.setSlicingPlanes([plane]);
 
 ### Animated slicing plane
 
-Planes can be manipulated runtime and effects will have effect in the viewer. Note however that rendering must be 
-triggered after updating the plane before the change will have visual effect. This can be done using 
+Planes can be manipulated runtime and effects will have an effect in the viewer. Note however that rendering must be 
+triggered after updating the plane before the change will have a visual effect. This can be done using 
 `Cognite3DViewer.forceRerender()`.
 
 Below is an example animates a slicing plane by ping-ponging the plane in the vertical direction.
@@ -84,48 +84,35 @@ not load data during animation, but initiate data after an animation is complete
 
 const bounds = model.getModelBoundingBox();
 
-
 // Create draggable cone at center of bounds
-const center = bounds.getCenter(new THREE.Vector3());
-var geometry = new THREE.BoxBufferGeometry(10, 10, 10);
-var mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 'green' }));
-mesh.position.copy(center);
-viewer.addObject3D(mesh);
+const initialDragPosition = new THREE.Vector3(bounds.min.x, 0.5*(bounds.max.y + bounds.min.y), bounds.min.z);
+const draggerGeometry = new THREE.SphereBufferGeometry(5);
+const draggerMaterial = new THREE.MeshBasicMaterial({ color: 'white' });
+const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
+draggerMesh.position.copy(initialDragPosition);
+viewer.addObject3D(draggerMesh);
 
 // Prepare a clipping plane
 const orientation = new THREE.Vector3(0, -1, 0);
-const point = new THREE.Vector3(0, center.y, 0);
 const plane = new THREE.Plane();
-plane.setFromNormalAndCoplanarPoint(orientation, point);
+plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
 viewer.setSlicingPlanes([plane]);
 
-
-const controls = new DragControls([mesh], viewer.getCamera(), viewer.domElement);
+// Handle drag events
+const controls = new DragControls([draggerMesh], viewer.getCamera(), viewer.domElement);
 controls.addEventListener('drag', () => {
   // Fix XZ-poistion
-  mesh.position.set(center.x, mesh.position.y, center.z);
+  draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
   // Update slicing plane
-  plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), mesh.position);
+  plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
   viewer.forceRerender();
 });
-controls.addEventListener('dragstart', () => viewer.cameraControlsEnabled = false);
-controls.addEventListener('dragend', () => viewer.cameraControlsEnabled = true);
-/*
-const transformControls = new TransformControls(viewer.getCamera(), viewer.domElement);
-// Rerender whenever controls is moved
-transformControls.addEventListener('change', () => {
-  viewer.forceRerender();
-  plane.setFromNormalAndCoplanarPoint(orientation, mesh.position);
-});
-// Temporarily disable navigation when control manipulation starts
-transformControls.addEventListener('mouseDown', () => {
+controls.addEventListener('dragstart', () => {
+  draggerMaterial.color = 'lightGray';
   viewer.cameraControlsEnabled = false;
 });
-transformControls.addEventListener('mouseUp', () => {
+controls.addEventListener('dragend', () => {
+  draggerMaterial.color = 'white';
   viewer.cameraControlsEnabled = true;
-  viewer.setSlicingPlanes([plane]); // Trigger load after manipulation ends
 });
-transformControls.attach(mesh);
-viewer.addObject3D(transformControls);
-*/
 ```
