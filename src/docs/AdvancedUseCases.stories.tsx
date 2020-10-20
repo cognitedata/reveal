@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button, Input } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
-import { ResourceItem, ResourceType } from '../types';
-import { AssetTable, FileTable, Splitter } from '../components/Common';
-import { FilePreview } from '../containers/Files';
-import { AssetPreview } from '../containers/Assets';
-import { SearchResults } from '../containers/SearchResults';
+import { ResourceItem, ResourceType } from '../lib/types';
+import {
+  AssetTable,
+  FilePreview,
+  AssetPreview,
+  SearchResults,
+  FileTable,
+  Splitter,
+} from '../lib';
 import {
   useAddResourceActions,
   useQuery,
@@ -15,9 +19,9 @@ import {
   ResourcePreviewProvider,
   useResourceMode,
   useSetOnSelectResource,
-} from '../context';
+} from '../lib/context';
 import { asset, file } from './stub';
-import { store, Wrapper } from './utils';
+import { Wrapper } from './utils';
 
 export const ResourceLargePreviews = () => {
   return (
@@ -29,14 +33,6 @@ export const ResourceLargePreviews = () => {
 };
 ResourceLargePreviews.decorators = [
   Story => {
-    store.dispatch({
-      type: 'assets/UPDATE_ITEMS',
-      result: [asset],
-    });
-    store.dispatch({
-      type: 'files/UPDATE_ITEMS',
-      result: [file],
-    });
     return (
       <Wrapper>
         <Story />
@@ -48,8 +44,8 @@ ResourceLargePreviews.decorators = [
 export const ResourcesLargeTables = () => {
   return (
     <Splitter percentage secondaryMinSize={50}>
-      <AssetTable assets={[asset]} onAssetClicked={action('onAssetClicked')} />
-      <FileTable files={[file]} onFileClicked={action('onFileClicked')} />
+      <AssetTable items={[asset]} onItemClicked={action('onItemClicked')} />
+      <FileTable items={[file]} onItemClicked={action('onItemClicked')} />
     </Splitter>
   );
 };
@@ -161,50 +157,6 @@ const ArgType: {
 ResourcesSearchResultsWithActions.argTypes = ArgType;
 ResourcesSearchResultsWithActions.decorators = [
   Story => {
-    store.dispatch({
-      type: 'assets/SEARCH',
-      filter: { filter: {} },
-    });
-    store.dispatch({
-      type: 'assets/COUNT',
-      scope: { filter: {} },
-    });
-    store.dispatch({
-      type: 'assets/UPDATE_ITEMS',
-      result: [asset],
-    });
-    store.dispatch({
-      type: 'assets/SEARCH_DONE',
-      filter: { filter: {} },
-      result: [asset],
-    });
-    store.dispatch({
-      type: 'assets/COUNT_DONE',
-      scope: { filter: {} },
-      count: 1,
-    });
-    store.dispatch({
-      type: 'files/SEARCH',
-      filter: { filter: {} },
-    });
-    store.dispatch({
-      type: 'files/COUNT',
-      scope: { filter: {} },
-    });
-    store.dispatch({
-      type: 'files/UPDATE_ITEMS',
-      result: [file],
-    });
-    store.dispatch({
-      type: 'files/SEARCH_DONE',
-      filter: { filter: {} },
-      result: [file],
-    });
-    store.dispatch({
-      type: 'files/COUNT_DONE',
-      scope: { filter: {} },
-      count: 1,
-    });
     return (
       <Wrapper>
         <Story />

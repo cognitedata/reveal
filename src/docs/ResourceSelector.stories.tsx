@@ -1,15 +1,15 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
-import { ResourceType } from '../types';
-import { asset, ResourceSelectorPropsFunctions } from './stub';
-import { store, Wrapper } from './utils';
+import { ResourceType } from '../lib/types';
+import { ResourceSelectorPropsFunctions } from './stub';
+import { Wrapper } from './utils';
 import {
   ResourceSelectionMode,
   useResourceSelector,
   OpenSelectorProps,
   ResourceSelectionProps,
-} from '../context';
+} from '../lib/context';
 
 export const SelectingResources = (args: OpenSelectorProps) => {
   const { openResourceSelector } = useResourceSelector();
@@ -90,28 +90,6 @@ const ArgType: {
 SelectingResources.argTypes = ArgType;
 SelectingResources.decorators = [
   Story => {
-    store.dispatch({
-      type: 'assets/SEARCH',
-      filter: { filter: {} },
-    });
-    store.dispatch({
-      type: 'assets/COUNT',
-      scope: { filter: {} },
-    });
-    store.dispatch({
-      type: 'assets/UPDATE_ITEMS',
-      result: [asset],
-    });
-    store.dispatch({
-      type: 'assets/SEARCH_DONE',
-      filter: { filter: {} },
-      result: [asset],
-    });
-    store.dispatch({
-      type: 'assets/COUNT_DONE',
-      scope: { filter: {} },
-      count: 1,
-    });
     return (
       <Wrapper>
         <Story />

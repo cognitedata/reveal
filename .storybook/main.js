@@ -3,8 +3,8 @@ const path = require('path');
 module.exports = {
   stories: [
     '../src/docs/index.stories.mdx',
-    '../src/**/*.stories.tsx',
     '../src/**/*.stories.mdx',
+    '../src/**/*.stories.tsx',
   ],
   webpackFinal: async (webpackConfig) => {
     webpackConfig.resolve.extensions.push('.ts', '.tsx');

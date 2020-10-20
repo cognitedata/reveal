@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
-import { asset, ResourcePreviewPropsFunctions } from './stub';
-import { store, Wrapper } from './utils';
-import { useResourcePreview, ResourcePreviewProps } from '../context';
+import { ResourcePreviewPropsFunctions } from './stub';
+import { Wrapper } from './utils';
+import { useResourcePreview, ResourcePreviewProps } from '../lib/context';
 
 export const PreviewingResources = (args: ResourcePreviewProps) => {
   const { openPreview, hidePreview } = useResourcePreview();
@@ -59,10 +59,6 @@ const ArgType: {
 PreviewingResources.argTypes = ArgType;
 PreviewingResources.decorators = [
   Story => {
-    store.dispatch({
-      type: 'assets/UPDATE_ITEMS',
-      result: [asset],
-    });
     return (
       <Wrapper>
         <Story />

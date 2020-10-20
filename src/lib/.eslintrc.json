@@ -1,0 +1,13 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "root": false,
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": ["app"],
+        "patterns": ["app/*", "@cognite/cdf-*", "@cognite/metrics"]
+      }
+    ]
+  }
+}

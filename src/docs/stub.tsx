@@ -4,7 +4,8 @@ import {
   ResourcePreviewProps,
   OpenSelectorProps,
   ResourceSelector,
-} from '../context';
+  ResourceSelectionObserver,
+} from '../lib/context';
 
 export const ResourcePreviewContextFunctions = (_: ResourcePreviewObserver) =>
   null;
@@ -16,10 +17,13 @@ export const ResourceSelectorPropsFunctions: React.FC<OpenSelectorProps> = (
   _: OpenSelectorProps
 ) => null;
 
+export const ResourceSelectionPropsFunctions = (_: ResourceSelectionObserver) =>
+  null;
+
 export const asset: Asset = {
   externalId: 'From3D_/ASDAA-1"-WP-101006-AK_121275507867333',
   name: '/ASDAA-1"-WP-101006-AK',
-  parentId: 7220949428049946,
+  parentId: 1,
   parentExternalId: 'From3D_ZONE 2 of SITE /DAL2-PVV-AB_3174871612398173',
   metadata: {
     Item_Hidden: 'false',
@@ -32,7 +36,7 @@ export const asset: Asset = {
   id: 1,
   createdTime: new Date(),
   lastUpdatedTime: new Date(),
-  rootId: 992198577673480,
+  rootId: 1,
 };
 export const file: FileInfo = {
   id: 1,
