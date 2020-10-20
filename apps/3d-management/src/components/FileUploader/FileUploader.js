@@ -9,8 +9,8 @@ import UploadGCS from 'gcs-browser-upload';
 import mime from 'mime-types';
 import styled from 'styled-components';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { fireErrorNotification } from 'utils/notifications';
-import { getContainer } from 'utils';
+import { fireErrorNotification } from 'src/utils/notifications';
+import { getContainer } from 'src/utils';
 
 const { Dragger } = Upload;
 const { confirm } = Modal;

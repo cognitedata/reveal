@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import theme from 'styles/theme';
+import theme from 'src/styles/theme';
 import Spin from 'antd/lib/spin';
 
 interface CardProps {

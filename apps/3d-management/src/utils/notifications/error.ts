@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/browser';
 import notification from 'antd/lib/notification';
 import { ErrorResponse } from '@cognite/gearbox';
-import { getContainer } from 'utils';
+import { getContainer } from 'src/utils';
 import { isDevelopment } from '@cognite/cdf-utilities';
 
 interface ErrorNotificationProps {

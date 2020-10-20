@@ -1,16 +1,16 @@
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { AuthWrapper, PageTitle, SubAppWrapper } from '@cognite/cdf-utilities';
-import GlobalStyles from 'styles/GlobalStyles';
+import GlobalStyles from 'src/styles/GlobalStyles';
 import { Provider } from 'react-redux';
-import configureStore from 'store';
+import configureStore from 'src/store';
 import { ConnectedRouter } from 'connected-react-router';
-import theme from 'styles/theme';
-import { Routes } from 'Routes';
-import { setupUserTracking } from 'utils/userTracking';
+import theme from 'src/styles/theme';
+import { Routes } from 'src/Routes';
+import { setupUserTracking } from 'src/utils/userTracking';
 import { Loader } from '@cognite/cogs.js';
 import { createBrowserHistory } from 'history';
-import { APP_TITLE } from 'utils';
+import { APP_TITLE } from 'src/utils';
 import ErrorBoundary from './components/ErrorBoundary';
 
 setupUserTracking();

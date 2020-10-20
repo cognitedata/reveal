@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Breadcrumb from 'antd/lib/breadcrumb';
-import Link from 'components/Link';
-import theme from 'styles/theme';
+import Link from 'src/components/Link';
+import theme from 'src/styles/theme';
 
 interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];

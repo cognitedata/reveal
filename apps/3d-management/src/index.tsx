@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 // import * as Sentry from '@sentry/browser';
-// import config from 'utils/config';
+// import config from 'src/utils/config';
 import './set-public-path';
 import singleSpaReact from 'single-spa-react';
 

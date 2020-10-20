@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions';
 import { combineReducers } from 'redux';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { fireErrorNotification } from 'utils';
+import { fireErrorNotification } from 'src/utils';
 
 // Constants
 export const REQUEST_MODELS = 'model/REQUEST_MODELS';

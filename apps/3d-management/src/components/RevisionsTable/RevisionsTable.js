@@ -7,9 +7,9 @@ import Icon from 'antd/lib/icon';
 import Popover from 'antd/lib/popover';
 import dayjs from 'dayjs';
 
-import EmptyState from 'components/EmptyState';
-import { getContainer } from 'utils';
-import { TableOperations } from 'components/TableOperations';
+import EmptyState from 'src/components/EmptyState';
+import { getContainer } from 'src/utils';
+import { TableOperations } from 'src/components/TableOperations';
 import Status from '../Status';
 import Thumbnail from '../Thumbnail';
 

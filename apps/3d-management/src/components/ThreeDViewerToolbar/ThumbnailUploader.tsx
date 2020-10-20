@@ -3,8 +3,8 @@ import { Button } from '@cognite/cogs.js';
 import Modal from 'antd/lib/modal';
 import message from 'antd/lib/message';
 import { v3Client as sdk, v3 } from '@cognite/cdf-sdk-singleton';
-import { base64ToBlob } from 'utils/base64ToBlob';
-import { fireErrorNotification } from 'utils/notifications';
+import { base64ToBlob } from 'src/utils/base64ToBlob';
+import { fireErrorNotification } from 'src/utils/notifications';
 
 type Props = {
   onUploadDone: () => void;

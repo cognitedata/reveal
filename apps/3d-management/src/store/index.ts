@@ -4,10 +4,10 @@ import { isProduction } from '@cognite/cdf-utilities';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import ReduxThunk from 'redux-thunk';
 
-import ModelReducer from 'store/modules/Model';
-import AppReducer from 'store/modules/App';
-import RevisionReducer from 'store/modules/Revision';
-import FileReducer from 'store/modules/File';
+import ModelReducer from 'src/store/modules/Model';
+import AppReducer from 'src/store/modules/App';
+import RevisionReducer from 'src/store/modules/Revision';
+import FileReducer from 'src/store/modules/File';
 
 const createRootReducer = (browserHistory) =>
   combineReducers({

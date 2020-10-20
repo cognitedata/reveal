@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import Card from 'antd/lib/card';
 import message from 'antd/lib/message';
 import * as Sentry from '@sentry/browser';
-import zIndex from 'utils/zIndex';
+import zIndex from 'src/utils/zIndex';
 import * as FileActions from '../../store/modules/File/index';
 import * as RevisionActions from '../../store/modules/Revision/index';
 import { EditRotation } from './EditRotation';

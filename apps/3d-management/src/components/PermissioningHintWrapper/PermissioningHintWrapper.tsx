@@ -1,6 +1,6 @@
 import React, { ReactChild, ReactChildren, ReactNode } from 'react';
 import Tooltip from 'antd/lib/tooltip';
-import { getContainer } from 'utils';
+import { getContainer } from 'src/utils';
 
 export default ({
   children,

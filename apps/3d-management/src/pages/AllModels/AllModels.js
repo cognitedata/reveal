@@ -13,19 +13,19 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import NewHeader from 'components/NewHeader';
-import { userHasCapabilities, getContainer, APP_TITLE } from 'utils';
+import NewHeader from 'src/components/NewHeader';
+import { userHasCapabilities, getContainer, APP_TITLE } from 'src/utils';
 
-import Spinner from 'components/Spinner';
-import { userPropType } from 'utils/PropTypes';
+import Spinner from 'src/components/Spinner';
+import { userPropType } from 'src/utils/PropTypes';
 
-import FileUploader from 'components/FileUploader';
-import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
-import * as FileActions from 'store/modules/File';
-import AllRevisions from 'components/AllRevisions';
-import ModelsTable from 'components/ModelsTable';
-import * as RevisionActions from 'store/modules/Revision';
-import * as ModelActions from 'store/modules/Model';
+import FileUploader from 'src/components/FileUploader';
+import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
+import * as FileActions from 'src/store/modules/File';
+import AllRevisions from 'src/components/AllRevisions';
+import ModelsTable from 'src/components/ModelsTable';
+import * as RevisionActions from 'src/store/modules/Revision';
+import * as ModelActions from 'src/store/modules/Model';
 
 const { Step } = Steps;
 

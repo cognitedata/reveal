@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import uniqWith from 'lodash/uniqWith';
 import isEqual from 'lodash/isEqual';
-import { fireErrorNotification } from 'utils';
+import { fireErrorNotification } from 'src/utils';
 
 // Constants
 export const REQUEST_REVISIONS = 'revisions/REQUEST_REVISIONS';

@@ -2,7 +2,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import Provider from 'components/Card/.storybook/boilerplate';
+import Provider from 'src/components/Card/.storybook/boilerplate';
 import Card from './Card';
 
 storiesOf('watchtower|Card', module)

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Breadcrumbs from 'components/Breadcrumbs';
-import theme from 'styles/theme';
+import Breadcrumbs from 'src/components/Breadcrumbs';
+import theme from 'src/styles/theme';
 import Icon from 'antd/lib/icon';
 import Tooltip from 'antd/lib/tooltip';
-import { projectName, getContainer } from 'utils';
+import { projectName, getContainer } from 'src/utils';
 import Drawer from 'antd/lib/drawer';
 import Iframe from 'react-iframe';
 import { useMetrics } from '@cognite/metrics';

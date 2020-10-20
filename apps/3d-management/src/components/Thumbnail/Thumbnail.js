@@ -5,7 +5,7 @@ import { createStructuredSelector, createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import Spinner from 'components/Spinner';
+import Spinner from 'src/components/Spinner';
 import { Tooltip, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import * as FileActions from '../../store/modules/File';

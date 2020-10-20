@@ -11,8 +11,8 @@ import dayjs from 'dayjs';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import EmptyState from 'components/EmptyState';
-import { TableOperations } from 'components/TableOperations';
+import EmptyState from 'src/components/EmptyState';
+import { TableOperations } from 'src/components/TableOperations';
 import Thumbnail from '../Thumbnail';
 
 import { setSelectedModels, setModelTableState } from '../../store/modules/App';

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icons } from '@cognite/cogs.js';
-import NewHeader from 'components/NewHeader';
-import { APP_TITLE } from 'utils';
+import NewHeader from 'src/components/NewHeader';
+import { APP_TITLE } from 'src/utils';
 
 const NoAccessPage = (): JSX.Element => {
   return (

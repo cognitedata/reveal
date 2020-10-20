@@ -2,7 +2,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import Provider from 'components/PageTitle/.storybook/boilerplate';
+import Provider from 'src/components/PageTitle/.storybook/boilerplate';
 import PageTitle from './PageTitle';
 
 storiesOf('watchtower|PageTitle', module)

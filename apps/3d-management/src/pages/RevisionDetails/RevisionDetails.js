@@ -13,20 +13,20 @@ import Modal from 'antd/lib/modal';
 import * as Sentry from '@sentry/browser';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { projectName, userHasCapabilities, getContainer } from 'utils';
+import { projectName, userHasCapabilities, getContainer } from 'src/utils';
 import { createLink } from '@cognite/cdf-utilities';
-import { userPropType } from 'utils/PropTypes';
+import { userPropType } from 'src/utils/PropTypes';
 import { Card, Icon, Timeline } from 'antd';
 import Tooltip from 'antd/lib/tooltip';
-import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
-import Status, { mapStatusToColor } from 'components/Status';
+import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
+import Status, { mapStatusToColor } from 'src/components/Status';
 import uniqBy from 'lodash/uniqBy';
-import Spinner from 'components/Spinner';
-import NewHeader from 'components/NewHeader';
+import Spinner from 'src/components/Spinner';
+import NewHeader from 'src/components/NewHeader';
 
-import ErrorBoundary from 'components/ErrorBoundary';
+import ErrorBoundary from 'src/components/ErrorBoundary';
 
-import NotFound from 'components/NotFound';
+import NotFound from 'src/components/NotFound';
 import * as ModelActions from '../../store/modules/Model';
 import * as RevisionActions from '../../store/modules/Revision';
 import ThreeDViewerWrapper from '../../components/ThreeDViewerWrapper';
@@ -35,7 +35,7 @@ import {
   isReprocessingRequired,
   requestReprocessing,
 } from '../../utils/3dApiUtils';
-import { APP_TITLE } from 'utils';
+import { APP_TITLE } from 'src/utils';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of
