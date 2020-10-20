@@ -108,11 +108,11 @@ controls.addEventListener('drag', () => {
   viewer.forceRerender();
 });
 controls.addEventListener('dragstart', () => {
-  draggerMaterial.color = 'lightGray';
+  draggerMaterial.color = new THREE.Color('gray');
   viewer.cameraControlsEnabled = false;
 });
 controls.addEventListener('dragend', () => {
-  draggerMaterial.color = 'white';
+  draggerMaterial.color = new THREE.Color('white');
   viewer.cameraControlsEnabled = true;
 });
 ```
