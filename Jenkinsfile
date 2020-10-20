@@ -113,11 +113,12 @@ static final Map<String, String> CONTEXTS = [
   setup: "continuous-integration/jenkins/setup",
   lint: "continuous-integration/jenkins/lint",
   unitTests: "continuous-integration/jenkins/unit-tests",
-  preview: "continuous-integration/jenkins/preview",
   buildStaging: "continuous-integration/jenkins/build-staging",
   publishStaging: "continuous-integration/jenkins/publish-staging",
   buildProduction: "continuous-integration/jenkins/build-production",
   publishProduction: "continuous-integration/jenkins/publish-production",
+  buildPreview: "continuous-integration/jenkins/build-preview",
+  publishPreview: "continuous-integration/jenkins/publish-preview",
 ]
 
 // Copy these before installing dependencies so that we don't have to
@@ -230,8 +231,10 @@ pods {
 
         'Preview': {
           dir('preview') {
-            stageWithNotify('Preview', CONTEXTS.preview) {
-              previewServer(
+            stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
+              fas.build(
+                appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
+                repo: APPLICATION_REPO_ID,
                 buildCommand: 'yarn build preview',
                 shouldExecute: isPullRequest
               )
@@ -278,7 +281,7 @@ pods {
             //      In this state, the PR couldn't have been merged without
             //      passing end-to-end tests.
             // As such, we can skip end-to-end tests on release branches. As
-            // a side-effect, this will make hotfixes hit production faster!            
+            // a side-effect, this will make hotfixes hit production faster!
             // shouldExecute: !isRelease,
 
             //
@@ -286,13 +289,23 @@ pods {
             //
             shouldExecute: true,
 
-            buildCommand: 'yarn testcafe:build',  
+            buildCommand: 'yarn testcafe:build',
             runCommand: 'yarn testcafe:start'
           )
         },
       ],
       workers: 3,
     )
+
+    if (isPullRequest) {
+      stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
+        dir('preview') {
+          fas.publish(
+            previewSubdomain: 'react-demo'
+          )
+        }
+      }
+    }
 
     if (isStaging && STAGING_APP_ID) {
       stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
@@ -325,5 +338,5 @@ pods {
         }
       }
     }
-  } 
+  }
 }
