@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDirs": ["src"],
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "tslib" : ["../../../../node_modules/tslib/tslib.d.ts"]
+    }
+  }
+}
