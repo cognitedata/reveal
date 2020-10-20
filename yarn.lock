@@ -14861,10 +14861,10 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
-react-base-table@^1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/react-base-table/-/react-base-table-1.11.3.tgz#9b77b84347e905ec68bd0b5e9639ac4c41b53e5e"
-  integrity sha512-JBYtRQBVrNxdP2QpuRyi3+FXRViTmNuCHeV6LwTpWY10x/AwqtGmamNdtYI5hZ95f8lIvo2nTfZeRgOmdyveQw==
+react-base-table@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/react-base-table/-/react-base-table-1.12.0.tgz#3fc39f1cc7d1a4b349572e1d2b283626987d5dcc"
+  integrity sha512-CaS8iI8JyK5rGjggfupZWKBPypNxlXrjOi+ndUsLMCJaoKCgUXZSlYv2oihq44c10MgaH/eEgEvkMV6dIGa59w==
   dependencies:
     "@babel/runtime" "^7.0.0"
     classnames "^2.2.5"
