@@ -4,19 +4,12 @@ import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { PNID_ANNOTATION_TYPE } from 'lib/utils/AnnotationUtils';
 import { CURRENT_VERSION } from '@cognite/annotations';
 import { v4 as uuid } from 'uuid';
-import { SDKProvider } from 'lib/context';
 import { CreateAnnotationForm } from './CreateAnnotationForm';
 
 export default {
   title: 'Files/Annotations/CreateAnnotationForm',
   component: CreateAnnotationForm,
-  decorators: [
-    (storyFn: any) => (
-      <Container>
-        <SDKProvider sdk={{}}>{storyFn()}</SDKProvider>
-      </Container>
-    ),
-  ],
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
 export const Default = () => {

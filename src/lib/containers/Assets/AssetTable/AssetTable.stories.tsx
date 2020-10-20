@@ -6,7 +6,6 @@ import {
 } from 'lib/context/ResourceSelectionContext';
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
-import { SDKProvider } from 'lib/context/sdk';
 import { assets } from 'stubs/assets';
 import { AssetTable } from './AssetTable';
 
@@ -38,7 +37,6 @@ export const ExampleSingleSelect = () => {
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const sdk = { post: async (..._props) => ({ data: { items: assets } }) };
   const [selection, setSelection] = useState<ResourceItemState[]>([
     { id: 1635401930580505, type: 'asset', state: 'selected' },
   ]);
@@ -56,27 +54,16 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
     }
   };
   return (
-    <SDKProvider sdk={sdk}>
-      <ResourceSelectionProvider
-        mode="none"
-        resourcesState={selection}
-        onSelect={onSelect}
-      >
-        <Container>{children}</Container>
-      </ResourceSelectionProvider>
-    </SDKProvider>
+    <ResourceSelectionProvider
+      mode="none"
+      resourcesState={selection}
+      onSelect={onSelect}
+    >
+      <Container>{children}</Container>
+    </ResourceSelectionProvider>
   );
 };
 
 const Container = styled.div`
-  padding: 20px;
-  width: 100%;
   height: 600px;
-  background: grey;
-  display: flex;
-  position: relative;
-
-  && > * {
-    background: #fff;
-  }
 `;

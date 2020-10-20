@@ -85,8 +85,8 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .jsx,.js,.tsx,.ts --fix",
     "ci": "yarn lint --max-warnings 0",
-    "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public",
+    "storybook": "start-storybook -c ./src/lib/.storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -c ./src/lib/.storybook -s public",
     "deploy": "gsutil -m cp -r build/. gs://cdf-hub-dev"
   },
   "browserslist": {

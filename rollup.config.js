@@ -13,7 +13,7 @@ const projectRootDir = path.resolve(__dirname);
 
 export default [
   {
-    input: 'src/lib.tsx',
+    input: 'src/lib/index.tsx',
     output: [
       {
         file: pkg.main,

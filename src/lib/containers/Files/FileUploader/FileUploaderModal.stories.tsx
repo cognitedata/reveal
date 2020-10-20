@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
-import { SDKProvider } from 'lib/context';
 import { FileUploaderModal } from './FileUploaderModal';
 
 export default {
   title: 'Files/FileUploaderModal',
   component: FileUploaderModal,
-  decorators: [
-    (storyFn: any) => <SDKProvider sdk={{}}>{storyFn()}</SDKProvider>,
-  ],
 };
 
 export const Example = () => {

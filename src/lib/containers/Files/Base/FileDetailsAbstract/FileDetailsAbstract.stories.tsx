@@ -1,21 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
 import { ResourceSelectionProvider } from 'lib/context/ResourceSelectionContext';
+import { files } from 'stubs/files';
 import { FileDetailsAbstract } from './FileDetailsAbstract';
-
-const file: FileInfo = {
-  id: 5927592366707648,
-  createdTime: new Date(1580503121335),
-  lastUpdatedTime: new Date(1580503121335),
-  name: '001wdtQD',
-  uploaded: true,
-  metadata: {
-    someAttribute: 'Some value',
-    someOtherAttribute: 'Some other value',
-  },
-};
 
 export default {
   title: 'Files/Base/FileDetailsAbstract',
@@ -26,7 +14,7 @@ export default {
 export const Example = () => {
   return (
     <FileDetailsAbstract
-      file={file}
+      file={files[0]}
       imgPreview={
         <img
           src="//unsplash.it/400/200"
@@ -34,7 +22,7 @@ export const Example = () => {
           style={{ width: '100%', height: 'auto' }}
         />
       }
-      files={[file]}
+      files={files}
     />
   );
 };
@@ -42,10 +30,12 @@ export const Example = () => {
 export const WithActions = () => {
   return (
     <FileDetailsAbstract
-      file={file}
+      file={files[0]}
       actions={[
-        <Button type="primary">Click me</Button>,
-        <Button>Click me too</Button>,
+        <Button key="1" type="primary">
+          Click me
+        </Button>,
+        <Button key="2">Click me too</Button>,
       ]}
     >
       <Button>Hover me!</Button>
@@ -56,7 +46,7 @@ export const WithActions = () => {
 export const WithExtras = () => {
   return (
     <FileDetailsAbstract
-      file={file}
+      file={files[0]}
       actions={[
         <Button type="primary">Click me</Button>,
         <Button>Click me too</Button>,
@@ -78,7 +68,7 @@ export const WithExtras = () => {
 const Container = ({ children }: { children: React.ReactNode }) => {
   return (
     <ResourceSelectionProvider
-      resourcesState={[{ id: file.id, type: 'files', state: 'active' }]}
+      resourcesState={[{ id: files[0].id, type: 'files', state: 'active' }]}
     >
       <Wrapper>{children}</Wrapper>
     </ResourceSelectionProvider>

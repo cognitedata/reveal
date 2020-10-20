@@ -1,8 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
 import { DataExplorationProvider } from 'lib/context';
 import { boolean } from '@storybook/addon-knobs';
 import { files } from 'stubs/files';
+import { sdkMock } from 'lib/docs/stub';
 import { FilePreview } from './FilePreview';
 
 export default {
@@ -10,16 +10,15 @@ export default {
   component: FilePreview,
   decorators: [
     (storyFn: any) => (
-      <Container>
-        <DataExplorationProvider sdk={sdkMock}>
-          {storyFn()}
-        </DataExplorationProvider>
-      </Container>
+      <DataExplorationProvider sdk={tempSdk}>
+        {storyFn()}
+      </DataExplorationProvider>
     ),
   ],
 };
 
-const sdkMock = {
+const tempSdk = {
+  ...sdkMock,
   post: async (query: string) => {
     if (query.includes('aggregate')) {
       return { data: { items: [{ count: 1 }] } };
@@ -29,15 +28,6 @@ const sdkMock = {
     }
     return { data: { items: [] } };
   },
-  datasets: {
-    list: async () => ({ data: { items: [] } }),
-  },
-  groups: {
-    list: async () => ({ items: [] }),
-  },
-  files: {
-    getDownloadUrls: async () => [{ downloadUrl: '//unsplash.it/300/300' }],
-  },
 };
 export const Example = () => (
   <FilePreview
@@ -45,8 +35,3 @@ export const Example = () => (
     contextualization={boolean('contextualization', false)}
   />
 );
-
-const Container = styled.div`
-  padding: 20px;
-  display: flex;
-`;

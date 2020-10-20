@@ -1,49 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import { Timeseries } from '@cognite/sdk';
-import { ResourceSelectionProvider, SDKProvider } from 'lib/context';
+import { timeseries } from 'stubs/timeseries';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
-
-const exampleTimeSeries: Timeseries = {
-  id: 5927592366707648,
-  createdTime: new Date(1580503121335),
-  lastUpdatedTime: new Date(1580503121335),
-  name: '001wdtQD',
-  description: 'asdasd',
-  unit: 'pressure',
-  isString: false,
-  isStep: false,
-  dataSetId: 1640958057260772,
-  metadata: {
-    someAttribute: 'Some value',
-    someOtherAttribute: 'Some other value',
-  },
-};
 
 export default {
   title: 'Time Series/Base/TimeseriesDetailsAbstract',
   component: TimeseriesDetailsAbstract,
-  decorators: [
-    (storyFn: any) => (
-      <Container>
-        <SDKProvider sdk={{}}>{storyFn()}</SDKProvider>
-      </Container>
-    ),
-  ],
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
 export const Example = () => {
-  return <TimeseriesDetailsAbstract timeSeries={exampleTimeSeries} />;
+  return <TimeseriesDetailsAbstract timeSeries={timeseries[0]} />;
 };
 
 export const WithActions = () => {
   return (
     <TimeseriesDetailsAbstract
-      timeSeries={exampleTimeSeries}
+      timeSeries={timeseries[0]}
       actions={[
-        <Button type="primary">Click me</Button>,
-        <Button>Click me too</Button>,
+        <Button key="1" type="primary">
+          Click me
+        </Button>,
+        <Button key="2">Click me too</Button>,
       ]}
     />
   );
@@ -51,7 +30,7 @@ export const WithActions = () => {
 export const WithExtras = () => {
   return (
     <TimeseriesDetailsAbstract
-      timeSeries={exampleTimeSeries}
+      timeSeries={timeseries[0]}
       extras={
         <Button
           type="primary"
@@ -65,11 +44,7 @@ export const WithExtras = () => {
 };
 
 const Container = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ResourceSelectionProvider>
-      <Wrapper>{children}</Wrapper>
-    </ResourceSelectionProvider>
-  );
+  return <Wrapper>{children}</Wrapper>;
 };
 
 const Wrapper = styled.div`

@@ -3,7 +3,7 @@ import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
 import { ResourcePreviewPropsFunctions } from './stub';
 import { Wrapper } from './utils';
-import { useResourcePreview, ResourcePreviewProps } from '../lib/context';
+import { useResourcePreview, ResourcePreviewProps } from '../context';
 
 export const PreviewingResources = (args: ResourcePreviewProps) => {
   const { openPreview, hidePreview } = useResourcePreview();

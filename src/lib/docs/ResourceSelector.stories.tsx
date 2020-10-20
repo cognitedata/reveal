@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
-import { ResourceType } from '../lib/types';
+import { ResourceType } from '../types';
 import { ResourceSelectorPropsFunctions } from './stub';
 import { Wrapper } from './utils';
 import {
@@ -9,7 +9,7 @@ import {
   useResourceSelector,
   OpenSelectorProps,
   ResourceSelectionProps,
-} from '../lib/context';
+} from '../context';
 
 export const SelectingResources = (args: OpenSelectorProps) => {
   const { openResourceSelector } = useResourceSelector();
