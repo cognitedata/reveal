@@ -16368,10 +16368,10 @@ single-spa-react@^3.1.0:
   resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-3.1.0.tgz#4e98eb0fd3358e585cb5b696d9e0874bf473d443"
   integrity sha512-dzSAFk0W3bNf0B3fvyjgji7ukBn8L4erHCBqbU7hgqrwu88ro8pqcWDJKugQPruRp3dceSXunMw4n9epzE1t8w==
 
-single-spa@^5.6.1:
-  version "5.6.1"
-  resolved "https://registry.yarnpkg.com/single-spa/-/single-spa-5.6.1.tgz#c541b2074860d357c35f34e06c903e638fbcabb5"
-  integrity sha512-EpN/RfS518UhAAgj6xauIFmYHqj/wy9FHHHGbT5+PI6cTaOxmWnQqfTtpb+Ape3SumIGaP65S4P56NCM64iXxg==
+single-spa@^5.8.0:
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/single-spa/-/single-spa-5.8.0.tgz#edfa0ab04e1fafbc4e1a46a110e1a692a6f1af88"
+  integrity sha512-lLjcRuljtaprvN0LRBf8358awAjWU29II1y20yqmuablGYXw0RIpYDWDl+oLMS5ZzTAJk2t7L1NY47LFP5Qw/Q==
 
 sisteransi@^1.0.4:
   version "1.0.5"

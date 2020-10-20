@@ -41,7 +41,7 @@
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "reselect": "^4.0.0",
-    "single-spa": "^5.6.1",
+    "single-spa": "^5.8.0",
     "single-spa-react": "^3.1.0",
     "styled-components": "^5.2.0",
     "systemjs-webpack-interop": "^2.1.1",
