@@ -17,7 +17,7 @@ to be loaded (or rather loaded in a lower detail level).
   <source src={useBaseUrl('/img/cad-clipping.webm')} />
 </video>
 
-:::warning
+:::caution
 Clipping planes are currently not supported by point cloud models.
 :::
 
@@ -33,8 +33,8 @@ replaces any active slicing planes.
 
 Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math/Plane.setFromNormalAndCoplanarPoint)
 is used to create slicing planes. This function accepts a direction that defines the orientation of
-the plane and a point on the plane. For example will the following
-code create a slicing plane that only accepts geometry below `Y = 55`:
+the plane and a point on the plane. For example, the following
+code will create a slicing plane that only accepts geometry below `Y = 55`:
 ```jsx runnable
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, 55, 0);

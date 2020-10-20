@@ -31,8 +31,8 @@ module.exports = {
         'examples/node-visiting',
         'examples/cad-nodefiltering',
         'examples/cad-preview',
-        'examples/pointcloud',
         'examples/clipping',
+        'examples/pointcloud',
       ],
     },
     {
