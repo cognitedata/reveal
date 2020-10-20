@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Timeseries } from '@cognite/sdk';
-import { SDKProvider } from 'lib/context';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { LatestDatapoint } from './LatestDatapoint';
 
 const exampleTimeSeries: Timeseries[] = [

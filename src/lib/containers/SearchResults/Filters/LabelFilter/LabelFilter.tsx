@@ -5,7 +5,7 @@ import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'lib/components';
 import { ResourceSelectionContext, useResourceFilter } from 'lib/context';
 import { ResourceType } from 'lib/types';
-import { useList } from 'lib/hooks/sdk';
+import { useList } from '@cognite/sdk-react-query-hooks';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 
 export const LabelFilter = ({

@@ -6,7 +6,7 @@ import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { InfoGrid, InfoCell, ListItem, SpacedRow } from 'lib/components';
 import { useResourcesState } from 'lib/context';
-import { SdkResourceType } from 'lib/hooks/sdk';
+import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { AssetBreadcrumb } from 'lib/containers/Assets';
 
 const LIST_ITEM_HEIGHT = 42;

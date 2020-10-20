@@ -8,7 +8,7 @@ import {
   TimeDisplay,
 } from 'lib/components';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { useCdfItem } from 'lib/hooks/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(

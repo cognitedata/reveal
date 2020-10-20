@@ -11,8 +11,8 @@ import {
   TimeDisplay,
   Wrapper,
 } from 'lib/components';
-import { useCdfItem } from 'lib/hooks/sdk';
 import { SequenceDetailsAbstract } from 'lib/containers/Sequences';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(

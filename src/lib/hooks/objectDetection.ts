@@ -1,8 +1,8 @@
 import { v4 as uuid } from 'uuid';
 import { useMutation, useQuery } from 'react-query';
 import { useContext, useState } from 'react';
-import { useSDK } from 'lib/context/sdk';
 import { ModelStatus } from 'lib/types';
+import { useSDK } from '@cognite/sdk-provider';
 import { AnnotationBoundingBox } from '@cognite/annotations';
 import { FileContextualizationContext } from 'lib/context/FileContextualization';
 

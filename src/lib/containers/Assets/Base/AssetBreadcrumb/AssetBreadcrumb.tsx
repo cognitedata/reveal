@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import { useCdfItem } from 'lib/hooks/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 const BreadCrumbItem = styled.li`
   color: ${Colors['greyscale-grey6'].hex()};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAggregate, SdkResourceType } from 'lib/hooks/sdk';
+import { useAggregate, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { Badge, Colors } from '@cognite/cogs.js';
 
 type Props = {

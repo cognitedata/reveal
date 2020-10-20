@@ -9,7 +9,7 @@ import GlobalStyle from 'app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk from 'sdk-singleton';
 import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
-import { SDKProvider } from 'lib/context/sdk';
+import { SDKProvider } from '@cognite/sdk-provider';
 import RootApp from 'app/containers/App';
 import AntStyles from 'app/styles/AntStyles';
 import { Loader } from '@cognite/cogs.js';

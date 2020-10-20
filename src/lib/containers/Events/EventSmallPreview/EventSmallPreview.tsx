@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 import { ErrorFeedback, Loader } from 'lib/components';
 import { EventDetailsAbstract } from 'lib/containers/Events';
 import { useResourceActionsContext } from 'lib/context';
 import { useSelectionButton } from 'lib/hooks/useSelection';
-import { useCdfItem } from 'lib/hooks/sdk';
 
 export const EventSmallPreview = ({
   eventId,

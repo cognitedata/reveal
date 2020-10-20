@@ -1,9 +1,9 @@
 import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
 import { Loader, ErrorFeedback, Wrapper } from 'lib/components';
-import { useCdfItem } from 'lib/hooks/sdk';
 import { TimeseriesGraph } from 'lib/containers/Timeseries';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>

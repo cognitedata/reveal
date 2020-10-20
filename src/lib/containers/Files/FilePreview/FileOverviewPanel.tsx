@@ -13,12 +13,12 @@ import { useSelectionButton } from 'lib/hooks/useSelection';
 import { Modal, notification } from 'antd';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { CogniteAnnotation, hardDeleteAnnotations } from '@cognite/annotations';
-import { useCdfItem } from 'lib/hooks/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { useSDK } from '@cognite/sdk-provider';
 import { FileInfo } from '@cognite/sdk';
 import { useMutation, useQueryCache } from 'react-query';
 import { useJob, useFindObjectsJobId } from 'lib/hooks/objectDetection';
 import { isModelRunning } from 'lib/types';
-import { useSDK } from 'lib/context';
 import DetectObjectsMenuItem from './DetectObjectsMenuItem';
 import { FilePreviewOverview } from './FilePreviewOverview/FilePreviewOverview';
 

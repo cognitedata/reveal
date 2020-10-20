@@ -11,7 +11,7 @@ import {
   useInfiniteList,
   useInfiniteSearch,
   SdkResourceType,
-} from 'lib/hooks/sdk';
+} from '@cognite/sdk-react-query-hooks';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 

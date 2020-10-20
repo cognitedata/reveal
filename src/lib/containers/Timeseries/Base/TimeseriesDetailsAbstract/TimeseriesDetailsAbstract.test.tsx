@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import { Timeseries } from '@cognite/sdk';
 import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'lib/context/ResourceSelectionContext';
-import { SDKProvider } from 'lib/context/sdk';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
 
 const timeseries: Timeseries = {

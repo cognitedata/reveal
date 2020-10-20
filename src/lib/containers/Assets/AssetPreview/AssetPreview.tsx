@@ -16,7 +16,7 @@ import {
   CdfCount,
 } from 'lib/components';
 import { useResourcePreview } from 'lib/context';
-import { useCdfItem } from 'lib/hooks/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import {
   AssetDetails,
   AssetBreadcrumb,
