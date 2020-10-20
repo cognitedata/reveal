@@ -2,35 +2,46 @@ import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
 import { usePermissions } from 'lib/hooks/CustomHooks';
-import { SpacedRow } from 'lib/components';
+import { ButtonGroup, SpacedRow } from 'lib/components';
 import { useResourceEditable } from 'lib/context';
 import { FileUploaderModal } from 'lib/containers/Files';
 import { FileInfo } from '@cognite/sdk';
 
 export const FileToolbar = ({
   onFileClicked,
+  onViewChange,
+  currentView = 'list',
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
+  onViewChange?: (view: string) => void;
+  currentView?: string;
 }) => {
   const inEditMode = useResourceEditable();
   const hasEditPermissions = usePermissions('filesAcl', 'WRITE');
 
   const [modalVisible, setModalVisible] = useState(false);
-  if (!inEditMode) {
-    return null;
-  }
 
   return (
     <>
       <SpacedRow>
+        <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
+          <ButtonGroup.Button key="list" icon="List">
+            List View
+          </ButtonGroup.Button>
+          <ButtonGroup.Button key="grid" icon="Grid">
+            Grid View
+          </ButtonGroup.Button>
+        </ButtonGroup>
         <div className="spacer" />
-        <Button
-          onClick={() => setModalVisible(true)}
-          icon="Upload"
-          disabled={!hasEditPermissions}
-        >
-          Upload new file
-        </Button>
+        {inEditMode && (
+          <Button
+            onClick={() => setModalVisible(true)}
+            icon="Upload"
+            disabled={!hasEditPermissions}
+          >
+            Upload new file
+          </Button>
+        )}
       </SpacedRow>
       <FileUploaderModal
         visible={modalVisible}
