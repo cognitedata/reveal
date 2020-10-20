@@ -61,3 +61,7 @@ a:hover {
 .ant-btn {
   height: var(--cogs-input-default-height);
 }
+.ant-select-selection--multiple > ul > li,
+.ant-select-selection--multiple .ant-select-selection__rendered > ul > li {
+  margin-top: 5px;
+}
