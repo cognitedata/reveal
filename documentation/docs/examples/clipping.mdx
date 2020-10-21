@@ -116,3 +116,24 @@ controls.addEventListener('dragend', () => {
   viewer.cameraControlsEnabled = true;
 });
 ```
+
+### CAD geometry filter
+
+A special type of slicing is to provide a "geometry filter" when loading the model. A geometry filter restricts the 
+area to load geometry for and is specified when the model is created.
+
+```js 
+const min = new THREE.Vector3(10, 20, 30);
+const max = new THREE.Vector3(20, 30, 40);
+viewer.addModel({
+  modelId, 
+  revisionId, 
+  geometryFilter: { 
+    boundingBox: new THREE.Box3(min, max)
+  }
+});
+```
+
+:::note
+Geometry filters are static and cannot be changed after creating the model.
+:::
