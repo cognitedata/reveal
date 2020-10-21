@@ -1,9 +1,8 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
 import { ResourceType, convertResourceType } from 'lib/types';
 import { Tabs, CdfCount } from 'lib/components';
 import { useResourceFilters } from 'lib/context';
+import { ResourceIcons } from 'lib/components/ResourceIcons/ResourceIcons';
 
 const ResourceMap: Record<ResourceType, string> = {
   asset: 'Assets',
@@ -18,8 +17,6 @@ type Props = {
   setCurrentResourceType: (newResourceType: ResourceType) => void;
 };
 
-// eslint-disable-next-line
-// TODO clean up colors
 export const ResourceTypeTabs = ({
   currentResourceType,
   setCurrentResourceType,
@@ -39,43 +36,6 @@ export const ResourceTypeTabs = ({
     sequence: sequenceFilter,
     event: eventFilter,
   };
-  const iconsMap: { [key in ResourceType]: React.ReactNode } = {
-    asset: (
-      <IconWithBackground
-        type="DataStudio"
-        $color="#8D1E47"
-        $backgroundColor="#FDCED6"
-      />
-    ),
-    timeSeries: (
-      <IconWithBackground
-        type="Timeseries"
-        $color="#642175"
-        $backgroundColor="#F4DAF8"
-      />
-    ),
-    file: (
-      <IconWithBackground
-        type="FolderLine"
-        $color="#D27200"
-        $backgroundColor="#FFF1CC"
-      />
-    ),
-    sequence: (
-      <IconWithBackground
-        type="Duplicate"
-        $color="#CC512B"
-        $backgroundColor="#FFE1D1"
-      />
-    ),
-    event: (
-      <IconWithBackground
-        type="Events"
-        $color="#00665C"
-        $backgroundColor="#C8F4E7"
-      />
-    ),
-  };
 
   return (
     <Tabs
@@ -90,7 +50,7 @@ export const ResourceTypeTabs = ({
             key={type}
             title={
               <div>
-                {iconsMap[type]}
+                <ResourceIcons style={{ marginRight: 12 }} type={type} />
                 {ResourceMap[type]}{' '}
                 <CdfCount type={sdkType} filter={filtersMap[type]} />
               </div>
@@ -101,16 +61,3 @@ export const ResourceTypeTabs = ({
     </Tabs>
   );
 };
-
-const IconWithBackground = styled(Icon)<{
-  $backgroundColor: string;
-  $color: string;
-}>(
-  props => css`
-    padding: 8px;
-    background-color: ${props.$backgroundColor};
-    color: ${props.$color};
-    border-radius: 4px;
-    margin-right: 10px;
-  `
-);
