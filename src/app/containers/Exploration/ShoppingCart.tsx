@@ -149,6 +149,7 @@ export const ShoppingCartPreview = ({
               <Overline level={2}>COLLECTIONS</Overline>
               {renderedCollections.map(el => (
                 <Menu.Item
+                  key={el.id}
                   onClick={() =>
                     updateCollections([
                       {
