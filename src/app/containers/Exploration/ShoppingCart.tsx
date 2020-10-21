@@ -189,141 +189,161 @@ export const ShoppingCartPreview = ({
   return (
     <div style={{ width: 300, position: 'relative' }}>
       <div style={{ height: '400px', overflowY: 'auto' }}>
-        <SpacedRow>
-          <Overline level={2} style={{ marginBottom: 8 }}>
-            Asset
-          </Overline>
-          <div className="spacer" />
-          {generateButton('asset')}
-        </SpacedRow>
-        {assets.map(asset => (
-          <ListItem
-            key={asset.id}
-            bordered
-            title={
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <Icon
-                  style={{
-                    alignSelf: 'center',
-                    marginRight: '4px',
-                  }}
-                  type="DataStudio"
-                />
-                <span>{asset ? asset.name : 'Loading'}</span>
-              </div>
-            }
-          >
-            {renderDeleteItemButton(asset)}
-          </ListItem>
-        ))}
-        <SpacedRow>
-          <Overline level={2} style={{ marginBottom: 8 }}>
-            Time series
-          </Overline>
-          <div className="spacer" />
-          {generateButton('timeSeries')}
-        </SpacedRow>
-        {timeseries.map(ts => (
-          <ListItem
-            key={ts.id}
-            bordered
-            title={
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <Icon
-                  style={{
-                    alignSelf: 'center',
-                    marginRight: '4px',
-                  }}
-                  type="Timeseries"
-                />
-                <span>{ts ? ts.name : 'Loading...'}</span>
-              </div>
-            }
-          >
-            {renderDeleteItemButton(ts)}
-          </ListItem>
-        ))}
-        <SpacedRow>
-          <Overline level={2} style={{ marginBottom: 8 }}>
-            Files
-          </Overline>
-          <div className="spacer" />
-          {generateButton('file')}
-        </SpacedRow>
-        {files.map(file => (
-          <ListItem
-            key={file.id}
-            bordered
-            title={
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <Icon
-                  style={{
-                    alignSelf: 'center',
-                    marginRight: '4px',
-                  }}
-                  type="FolderLine"
-                />
-                <span>{file ? file.name : 'Loading...'}</span>
-              </div>
-            }
-          >
-            {renderDeleteItemButton(file)}
-          </ListItem>
-        ))}
-        <SpacedRow>
-          <Overline level={2} style={{ marginBottom: 8 }}>
-            Events
-          </Overline>
-          <div className="spacer" />
-          {generateButton('event')}
-        </SpacedRow>
-        {events.map(event => (
-          <ListItem
-            key={event.id}
-            bordered
-            title={
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <Icon
-                  style={{
-                    alignSelf: 'center',
-                    marginRight: '4px',
-                  }}
-                  type="Events"
-                />
-                <span>{event ? event.id : 'Loading'}</span>
-              </div>
-            }
-          >
-            {renderDeleteItemButton(event)}
-          </ListItem>
-        ))}
-        <SpacedRow>
-          <Overline level={2} style={{ marginBottom: 8 }}>
-            Sequences
-          </Overline>
-          <div className="spacer" />
-          {generateButton('sequence')}
-        </SpacedRow>
-        {sequences.map(sequence => (
-          <ListItem
-            key={sequence.id}
-            bordered
-            title={
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <Icon
-                  style={{
-                    alignSelf: 'center',
-                    marginRight: '4px',
-                  }}
-                  type="Duplicate"
-                />
-                <span>{sequence ? sequence.name : 'Loading'}</span>
-              </div>
-            }
-          >
-            {renderDeleteItemButton(sequence)}
-          </ListItem>
-        ))}
+        {assets.length > 0 && (
+          <>
+            <SpacedRow>
+              <Overline level={2} style={{ marginBottom: 8 }}>
+                Asset
+              </Overline>
+              <div className="spacer" />
+              {generateButton('asset')}
+            </SpacedRow>
+            {assets.map(asset => (
+              <ListItem
+                key={asset.id}
+                bordered
+                title={
+                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <Icon
+                      style={{
+                        alignSelf: 'center',
+                        marginRight: '4px',
+                      }}
+                      type="DataStudio"
+                    />
+                    <span>{asset ? asset.name : 'Loading'}</span>
+                  </div>
+                }
+              >
+                {renderDeleteItemButton(asset)}
+              </ListItem>
+            ))}
+          </>
+        )}
+        {timeseries.length > 0 && (
+          <>
+            <SpacedRow>
+              <Overline level={2} style={{ marginBottom: 8 }}>
+                Time series
+              </Overline>
+              <div className="spacer" />
+              {generateButton('timeSeries')}
+            </SpacedRow>
+            {timeseries.map(ts => (
+              <ListItem
+                key={ts.id}
+                bordered
+                title={
+                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <Icon
+                      style={{
+                        alignSelf: 'center',
+                        marginRight: '4px',
+                      }}
+                      type="Timeseries"
+                    />
+                    <span>{ts ? ts.name : 'Loading...'}</span>
+                  </div>
+                }
+              >
+                {renderDeleteItemButton(ts)}
+              </ListItem>
+            ))}
+          </>
+        )}
+        {files.length > 0 && (
+          <>
+            <SpacedRow>
+              <Overline level={2} style={{ marginBottom: 8 }}>
+                Files
+              </Overline>
+              <div className="spacer" />
+              {generateButton('file')}
+            </SpacedRow>
+            {files.map(file => (
+              <ListItem
+                key={file.id}
+                bordered
+                title={
+                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <Icon
+                      style={{
+                        alignSelf: 'center',
+                        marginRight: '4px',
+                      }}
+                      type="FolderLine"
+                    />
+                    <span>{file ? file.name : 'Loading...'}</span>
+                  </div>
+                }
+              >
+                {renderDeleteItemButton(file)}
+              </ListItem>
+            ))}
+          </>
+        )}
+        {events.length > 0 && (
+          <>
+            <SpacedRow>
+              <Overline level={2} style={{ marginBottom: 8 }}>
+                Events
+              </Overline>
+              <div className="spacer" />
+              {generateButton('event')}
+            </SpacedRow>
+            {events.map(event => (
+              <ListItem
+                key={event.id}
+                bordered
+                title={
+                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <Icon
+                      style={{
+                        alignSelf: 'center',
+                        marginRight: '4px',
+                      }}
+                      type="Events"
+                    />
+                    <span>{event ? event.id : 'Loading'}</span>
+                  </div>
+                }
+              >
+                {renderDeleteItemButton(event)}
+              </ListItem>
+            ))}
+          </>
+        )}
+        {sequences.length > 0 && (
+          <>
+            <SpacedRow>
+              <Overline level={2} style={{ marginBottom: 8 }}>
+                Sequences
+              </Overline>
+              <div className="spacer" />
+              {generateButton('sequence')}
+            </SpacedRow>
+            {sequences.map(sequence => (
+              <ListItem
+                key={sequence.id}
+                bordered
+                title={
+                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <Icon
+                      style={{
+                        alignSelf: 'center',
+                        marginRight: '4px',
+                      }}
+                      type="Duplicate"
+                    />
+                    <span>{sequence ? sequence.name : 'Loading'}</span>
+                  </div>
+                }
+              >
+                {renderDeleteItemButton(sequence)}
+              </ListItem>
+            ))}
+          </>
+        )}
       </div>
       <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
         <Button
