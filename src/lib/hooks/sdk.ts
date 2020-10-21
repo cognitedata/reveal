@@ -1,5 +1,10 @@
 import { QueryKey, useMutation, useQuery, useQueryCache } from 'react-query';
-import { CogniteClient, DataSet } from '@cognite/sdk';
+import {
+  CogniteClient,
+  DataSet,
+  FileInfo,
+  HttpRequestOptions,
+} from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   SdkResourceType,
@@ -7,10 +12,21 @@ import {
   aggregateKey,
   aggregate,
 } from '@cognite/sdk-react-query-hooks';
+import { isFileOfType } from 'lib/utils/FileUtils';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk
     .post(`/api/v1/projects/${sdk.project}${path}`, { data })
+    .then(response => response.data);
+
+const get = (
+  sdk: CogniteClient,
+  path: string,
+  data: any,
+  options?: HttpRequestOptions
+) =>
+  sdk
+    .get(`/api/v1/projects/${sdk.project}${path}`, { params: data, ...options })
     .then(response => response.data);
 
 export const useCreate = (type: SdkResourceType, options?: any) => {
@@ -42,6 +58,30 @@ export const useUpdate = (type: SdkResourceType, options?: any) => {
       onError: options?.onError,
       onMutate: options?.onMutate,
       onSettled: options?.onSettled,
+    }
+  );
+};
+
+export const useFileIcon = (file: FileInfo) => {
+  const sdk = useSDK();
+
+  return useQuery<ArrayBuffer | undefined>(
+    ['cdf', 'file', 'icon', file.id],
+    () => {
+      if (isFileOfType(file, ['png', 'jpg', 'jpeg', 'tiff', 'gif'])) {
+        return get(
+          sdk,
+          '/files/icon',
+          { id: file.id },
+          {
+            headers: {
+              Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+            },
+            responseType: 'arraybuffer',
+          }
+        );
+      }
+      return undefined;
     }
   );
 };

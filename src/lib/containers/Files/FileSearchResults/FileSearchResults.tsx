@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
-import { SearchResultTable } from 'lib/containers/SearchResults';
+import React, { useContext, useState } from 'react';
 import { FilesSearchFilter, FileFilterProps, FileInfo } from '@cognite/sdk';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
+import { FileFilterGridTable } from 'lib/containers/Files';
+import { SearchResultTable } from 'lib/containers/SearchResults';
 import { FileToolbar } from './FileToolbar';
 
 export const buildFilesFilterQuery = (
@@ -20,6 +21,7 @@ export const buildFilesFilterQuery = (
 };
 
 export const FileSearchResults = ({ query = '' }: { query?: string }) => {
+  const [currentView, setCurrentView] = useState<string>('list');
   const { fileFilter } = useContext(ResourceSelectionContext);
   const { openPreview } = useResourcePreview();
 
@@ -30,15 +32,28 @@ export const FileSearchResults = ({ query = '' }: { query?: string }) => {
           openPreview({ item: { id: file.id, type: 'file' } });
           return true;
         }}
+        currentView={currentView}
+        onViewChange={setCurrentView}
       />
-      <SearchResultTable<FileInfo>
-        api="files"
-        filter={fileFilter}
-        query={query}
-        onRowClick={file =>
-          openPreview({ item: { id: file.id, type: 'file' } })
-        }
-      />
+      {currentView === 'grid' ? (
+        <FileFilterGridTable
+          filter={fileFilter}
+          query={query}
+          onRowClick={file =>
+            openPreview({ item: { id: file.id, type: 'file' } })
+          }
+        />
+      ) : (
+        <SearchResultTable<FileInfo>
+          api="files"
+          filter={fileFilter}
+          query={query}
+          onRowClick={file => {
+            openPreview({ item: { id: file.id, type: 'file' } });
+            return true;
+          }}
+        />
+      )}
     </>
   );
 };

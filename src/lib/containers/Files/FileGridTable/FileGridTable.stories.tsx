@@ -5,33 +5,25 @@ import {
   ResourceItemState,
 } from 'lib/context/ResourceSelectionContext';
 import { action } from '@storybook/addon-actions';
-import { text } from '@storybook/addon-knobs';
+// import { text } from '@storybook/addon-knobs';
 import { files } from 'stubs/files';
-import { FileTable } from './FileTable';
+import { FileGridTable } from './FileGridTable';
 
 export default {
-  title: 'Files/FileTable',
-  component: FileTable,
+  title: 'Files/FileGridTable',
+  component: FileGridTable,
   decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
 };
 
 export const Example = () => {
   return (
-    <FileTable
-      items={files}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
+    <FileGridTable items={files} onItemClicked={action('onItemClicked')} />
   );
 };
 export const ExampleSingleSelect = () => {
   return (
     <ResourceSelectionProvider mode="single">
-      <FileTable
-        items={files}
-        onItemClicked={action('onItemClicked')}
-        query={text('query', '')}
-      />
+      <FileGridTable items={files} onItemClicked={action('onItemClicked')} />
     </ResourceSelectionProvider>
   );
 };
