@@ -27,7 +27,7 @@
     "@google-cloud/storage": "^5.3.0",
     "@rescripts/cli": "^0.0.14",
     "@rescripts/utilities": "^0.0.7",
-    "@sentry/browser": "^5.24.2",
+    "@sentry/browser": "^5.27.0",
     "antd": "3.24.0",
     "commander": "^5.1.0",
     "connected-react-router": "^6.8.0",
