@@ -1,4 +1,4 @@
-import { useCdfItem, useList } from 'lib/hooks/sdk';
+import { useCdfItem, useList } from '@cognite/sdk-react-query-hooks';
 import { FileInfo, CogniteEvent } from '@cognite/sdk';
 import {
   getIdFilter,

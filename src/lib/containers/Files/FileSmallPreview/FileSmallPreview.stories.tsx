@@ -1,7 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import { DataExplorationProvider } from 'lib/context';
 import { files } from 'stubs/files';
+import { sdkMock } from 'lib/docs/stub';
 import { FileSmallPreview } from './FileSmallPreview';
 
 export default {
@@ -9,15 +9,14 @@ export default {
   component: FileSmallPreview,
   decorators: [
     (storyFn: any) => (
-      <Container>
-        <DataExplorationProvider sdk={sdkMock}>
-          {storyFn()}
-        </DataExplorationProvider>
-      </Container>
+      <DataExplorationProvider sdk={tempSdk}>
+        {storyFn()}
+      </DataExplorationProvider>
     ),
   ],
 };
-const sdkMock = {
+const tempSdk = {
+  ...sdkMock,
   post: async (query: string) => {
     if (query.includes('aggregate')) {
       return { data: { items: [{ count: 1 }] } };
@@ -27,15 +26,5 @@ const sdkMock = {
     }
     return { data: { items: [] } };
   },
-  files: {
-    getDownloadUrls: async () => [{ downloadUrl: '//unsplash.it/300/300' }],
-  },
 };
 export const Example = () => <FileSmallPreview fileId={files[0].id} />;
-
-const Container = styled.div`
-  padding: 20px;
-  min-height: 400px;
-  width: 300px;
-  display: flex;
-`;

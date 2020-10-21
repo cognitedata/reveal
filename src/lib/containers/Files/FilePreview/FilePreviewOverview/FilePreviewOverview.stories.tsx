@@ -1,44 +1,16 @@
 import React from 'react';
-import styled from 'styled-components';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { number } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { CogniteClient } from '@cognite/sdk';
-import { SDKProvider } from 'lib/context';
+import { files } from 'stubs/files';
 import { FilePreviewOverview } from './FilePreviewOverview';
 
 export default {
   title: 'Files/FilePreviewOverview',
   component: FilePreviewOverview,
-  decorators: [
-    (storyFn: any) => (
-      <Wrapper>
-        <SDKProvider sdk={sdkMock}>{storyFn()}</SDKProvider>
-      </Wrapper>
-    ),
-  ],
-};
-const sdkMock = {
-  post: async () => {
-    return { data: { items: [] } };
-  },
-};
-
-const file = {
-  id: 1,
-  lastUpdatedTime: new Date(),
-  uploaded: false,
-  createdTime: new Date(),
-  name: 'Random File',
-  mimeType: 'png',
-  metadata: {
-    RANDOM: 'yes',
-    RANDOM2: 'yes',
-    RANDOM3: 'yes',
-    RANDOM4: 'yes',
-    RANDOM5: 'lorem ipsum asd asdf ds dsaf sf as',
-  },
+  decorators: [(storyFn: any) => <Wrapper>{storyFn()}</Wrapper>],
 };
 
 const filler = {
@@ -93,7 +65,7 @@ const annotations = [
 
 export const Example = () => (
   <FilePreviewOverview
-    file={file}
+    file={files[0]}
     annotations={[]}
     page={number('page', 0)}
     onPageChange={action('onPageChange')}
@@ -107,7 +79,7 @@ export const Example = () => (
 
 export const ExampleWithAnnotations = () => (
   <FilePreviewOverview
-    file={file}
+    file={files[0]}
     page={number('page', 0)}
     onPageChange={action('onPageChange')}
     onAssetClicked={action('onAssetClicked')}
@@ -122,17 +94,8 @@ export const ExampleWithAnnotations = () => (
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const sdk = new CogniteClient({ appId: 'invalid' });
   return (
-    <Container>
-      <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
-        {children}
-      </CogniteFileViewer.Provider>
-    </Container>
+    <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
+      {children}
+    </CogniteFileViewer.Provider>
   );
 };
-
-const Container = styled.div`
-  width: 400px;
-  padding: 40px;
-  height: 800px;
-  background: grey;
-`;

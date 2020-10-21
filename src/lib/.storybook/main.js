@@ -2,17 +2,14 @@ const path = require('path');
 
 module.exports = {
   stories: [
-    '../src/docs/index.stories.mdx',
-    '../src/**/*.stories.mdx',
-    '../src/**/*.stories.tsx',
+    '../docs/index.stories.mdx',
+    '../**/*.stories.mdx',
+    '../**/*.stories.tsx',
   ],
   webpackFinal: async (webpackConfig) => {
     webpackConfig.resolve.extensions.push('.ts', '.tsx');
-    webpackConfig.node = {
-      '@cognite/cdf-sdk-singleton': 'mock',
-    };
     webpackConfig.resolve.modules = [
-      path.resolve(__dirname, '../src'),
+      path.resolve(__dirname, '../../'),
       'node_modules',
     ];
     webpackConfig.module.rules = webpackConfig.module.rules

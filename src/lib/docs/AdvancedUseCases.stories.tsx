@@ -1,15 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button, Input } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
-import { ResourceItem, ResourceType } from '../lib/types';
+import { assets } from 'stubs/assets';
+import { files } from 'stubs/files';
+import { events } from 'stubs/events';
+import { ResourceItem, ResourceType } from '../types';
 import {
   AssetTable,
-  FilePreview,
+  EventPreview,
   AssetPreview,
   SearchResults,
   FileTable,
   Splitter,
-} from '../lib';
+} from '..';
 import {
   useAddResourceActions,
   useQuery,
@@ -19,15 +22,14 @@ import {
   ResourcePreviewProvider,
   useResourceMode,
   useSetOnSelectResource,
-} from '../lib/context';
-import { asset, file } from './stub';
+} from '../context';
 import { Wrapper } from './utils';
 
 export const ResourceLargePreviews = () => {
   return (
     <Splitter percentage secondaryMinSize={50}>
-      <AssetPreview assetId={asset.id} />
-      <FilePreview fileId={file.id} />
+      <AssetPreview assetId={assets[0].id} />
+      <EventPreview eventId={events[0].id} />
     </Splitter>
   );
 };
@@ -44,8 +46,8 @@ ResourceLargePreviews.decorators = [
 export const ResourcesLargeTables = () => {
   return (
     <Splitter percentage secondaryMinSize={50}>
-      <AssetTable items={[asset]} onItemClicked={action('onItemClicked')} />
-      <FileTable items={[file]} onItemClicked={action('onItemClicked')} />
+      <AssetTable items={assets} onItemClicked={action('onItemClicked')} />
+      <FileTable items={files} onItemClicked={action('onItemClicked')} />
     </Splitter>
   );
 };

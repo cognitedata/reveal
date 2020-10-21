@@ -27,7 +27,7 @@ import { ResourceItemState } from 'lib/context/ResourceSelectionContext';
 import { useCreate } from 'lib/hooks/sdk';
 import { useQueryCache, useMutation } from 'react-query';
 import { sleep } from 'lib/helpers';
-import { useSDK } from 'lib/context/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange } from '@cognite/sdk';
 import {
   useJob,

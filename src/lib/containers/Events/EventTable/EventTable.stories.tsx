@@ -62,14 +62,5 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Container = styled.div`
-  padding: 20px;
-  width: 100%;
   height: 600px;
-  background: grey;
-  display: flex;
-  position: relative;
-
-  && > * {
-    background: #fff;
-  }
 `;

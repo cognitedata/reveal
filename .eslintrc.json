@@ -32,6 +32,7 @@
         "endOfLine": "auto"
       }
     ],
-    "@cognite/no-number-z-index": "off"
+    "@cognite/no-number-z-index": "off",
+    "@cognite/no-sdk-submodule-imports": "off"
   }
 }

@@ -11,7 +11,7 @@ jest.mock('mixpanel-browser', () => {
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router';
-import { SDKProvider } from 'lib/context/sdk';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { CogniteClient } from '@cognite/sdk';
 import App from './App';
 

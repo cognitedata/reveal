@@ -2,7 +2,8 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Asset } from '@cognite/sdk';
 import { ClientSDKProvider } from '@cognite/gearbox';
-import { ResourceSelectionProvider, SDKProvider } from 'lib/context';
+import { ResourceSelectionProvider } from 'lib/context';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';
 
 const asset: Asset = {

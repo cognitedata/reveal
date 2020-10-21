@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useCdfItems } from 'lib/hooks/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Sequence } from '@cognite/sdk';
 import { ErrorFeedback, Loader } from 'lib/components';
 import { useResourceActionsContext } from 'lib/context';

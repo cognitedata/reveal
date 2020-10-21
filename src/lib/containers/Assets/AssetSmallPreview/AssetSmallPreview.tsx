@@ -3,7 +3,7 @@ import { Timeseries, Asset, FileInfo } from '@cognite/sdk';
 import { Loader } from 'lib/components';
 import { useResourceActionsContext } from 'lib/context';
 import { useSelectionButton } from 'lib/hooks/useSelection';
-import { useCdfItem, useList } from 'lib/hooks/sdk';
+import { useCdfItem, useList } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesSmallPreview } from 'lib/containers/Timeseries';
 import { AssetDetailsAbstract } from 'lib/containers/Assets';
 import { FileSmallPreview } from 'lib/containers/Files';

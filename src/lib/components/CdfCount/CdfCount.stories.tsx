@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SDKProvider } from 'lib/context';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { CdfCount } from './CdfCount';
 
 export default {

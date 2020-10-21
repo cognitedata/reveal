@@ -81,6 +81,13 @@ previewServer.pod(nodeVersion: 'node:12') {
             }
           }
         },
+        'Build Library': {
+          dir('main') {
+            container('node') {
+              sh("yarn build-lib")
+            }
+          }
+        },
         'Build and Deploy':{
           dir('main') {
             if (isPullRequest) {

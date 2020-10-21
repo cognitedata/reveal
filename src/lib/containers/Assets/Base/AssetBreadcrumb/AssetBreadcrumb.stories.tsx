@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { DataExplorationProvider } from 'lib/context';
 import { assets } from 'stubs/assets';
 import { action } from '@storybook/addon-actions';
@@ -10,11 +9,9 @@ export default {
   component: AssetBreadcrumb,
   decorators: [
     (storyFn: any) => (
-      <Container>
-        <DataExplorationProvider sdk={sdkMock}>
-          {storyFn()}
-        </DataExplorationProvider>
-      </Container>
+      <DataExplorationProvider sdk={sdkMock}>
+        {storyFn()}
+      </DataExplorationProvider>
     ),
   ],
 };
@@ -32,8 +29,3 @@ export const Example = () => (
     onBreadcrumbClick={action('onBreadcrumbClick')}
   />
 );
-
-const Container = styled.div`
-  padding: 20px;
-  display: flex;
-`;

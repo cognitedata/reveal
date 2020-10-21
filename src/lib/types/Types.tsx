@@ -1,4 +1,4 @@
-import { SdkResourceType } from 'lib/hooks/sdk';
+import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 export type ResourceType =
   | 'asset'

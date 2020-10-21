@@ -6,7 +6,7 @@ import { ResourceActionsProvider } from 'lib/context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'lib/context/ResourceSelectionContext';
 import { FileContextualizationContextProvider } from 'lib/context/FileContextualization';
 import { ClientSDKProvider } from '@cognite/gearbox';
-import { SDKProvider } from './sdk';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 export type DataExplorationProviderProps = {
   sdk: CogniteClient;

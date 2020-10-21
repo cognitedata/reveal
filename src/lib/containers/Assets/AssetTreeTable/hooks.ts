@@ -1,12 +1,12 @@
 import { AssetFilterProps, Asset, InternalId } from '@cognite/sdk';
-import { useSDK } from 'lib/context';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   useSearch,
   useList,
   retrieveItemsKey,
   listKey,
   listApi,
-} from 'lib/hooks/sdk';
+} from '@cognite/sdk-react-query-hooks';
 import { QueryKey, useQueryCache, useQuery, QueryConfig } from 'react-query';
 
 export const useLoadSearchTree = (

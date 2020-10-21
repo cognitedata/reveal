@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useSDK } from 'lib/context/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 import { CogniteClient, SingleCogniteCapability } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';

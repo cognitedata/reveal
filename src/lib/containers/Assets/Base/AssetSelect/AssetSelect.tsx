@@ -1,6 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { Asset } from '@cognite/sdk';
-import { useCdfItems, useSearch, useList } from 'lib/hooks/sdk';
+import {
+  useCdfItems,
+  useSearch,
+  useList,
+} from '@cognite/sdk-react-query-hooks';
 import { useDebounce } from 'use-debounce/lib';
 import { Select } from 'lib/components';
 import { Props, OptionTypeBase } from 'react-select';

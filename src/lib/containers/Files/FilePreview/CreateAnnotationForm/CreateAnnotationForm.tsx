@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Loader, SpacedRow } from 'lib/components';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { renderTitle } from 'lib/utils/EventsUtils';
-import { useCdfItem, SdkResourceType } from 'lib/hooks/sdk';
+import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { IdEither } from '@cognite/sdk';
 import { convertResourceType } from 'lib/types';
 

@@ -6,7 +6,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { Body, Icon, Button } from '@cognite/cogs.js';
 import { getMIMEType } from 'lib/utils/FileUtils';
 import { SpacedRow } from 'lib/components';
-import { useSDK } from 'lib/context';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const GCSUploader = (
   file: Blob | UploadFile,

@@ -11,7 +11,7 @@ import { ListItem, SpacedRow } from 'lib/components';
 import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'lib/hooks/CustomHooks';
 import { ResourceItem, ResourceType } from 'lib/types';
-import { useCdfItems } from 'lib/hooks/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { FileInfo, Asset, Timeseries } from '@cognite/sdk';
 import {
   useCollections,

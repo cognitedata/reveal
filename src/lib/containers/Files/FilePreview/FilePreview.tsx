@@ -15,7 +15,8 @@ import {
   CURRENT_VERSION,
   AnnotationStatus,
 } from '@cognite/annotations';
-import { useCdfItem } from 'lib/hooks/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   PNID_ANNOTATION_TYPE,
   removeSimilarAnnotations,
@@ -26,7 +27,6 @@ import {
   ObjectDetectionEntity,
   useFindSimilarJobId,
 } from 'lib/hooks/objectDetection';
-import { useSDK } from 'lib/context/sdk';
 import { FileOverviewPanel } from './FileOverviewPanel';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';

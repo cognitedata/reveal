@@ -21,7 +21,7 @@ import {
   CogniteEvent,
 } from '@cognite/sdk';
 import { useViewerQuery } from '@cognite/react-picture-annotation';
-import { useCdfItems } from 'lib/hooks/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { getIdParam } from 'lib/helpers';
 import { DetailsItem, InfoGrid } from 'lib/components';
 import { FileDetailsAbstract } from 'lib/containers/Files';

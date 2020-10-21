@@ -3,7 +3,7 @@ import { Asset } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import { useResourceMode, TableProps, Table } from 'lib';
 import { useSelectionCheckbox } from 'lib/hooks/useSelection';
-import { useCdfItem } from 'lib/hooks/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 const ActionCell = ({ asset }: { asset: Asset }) => {
   const getButton = useSelectionCheckbox();

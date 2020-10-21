@@ -19,7 +19,7 @@ import {
   IsStringFilter,
   UnitFilter,
 } from 'lib/containers/Timeseries';
-import { SdkResourceType, useList } from 'lib/hooks/sdk';
+import { SdkResourceType, useList } from '@cognite/sdk-react-query-hooks';
 import { SubtreeFilter } from 'lib/containers/Assets';
 import { EventSubTypeFilter, EventTypeFilter } from 'lib/containers/Events';
 import {

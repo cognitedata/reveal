@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon, Title } from '@cognite/cogs.js';
-import { useCdfItem } from 'lib/hooks/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 import {
   DetailsItem,
