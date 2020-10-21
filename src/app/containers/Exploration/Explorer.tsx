@@ -11,12 +11,12 @@ import { ResourceItem } from 'lib/types';
 import { ResourcePreviewProvider } from 'lib/context/ResourcePreviewContext';
 import { ResourceSelectorProvider } from 'lib/context/ResourceSelectorContext';
 import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
-import { useTenant } from 'lib/hooks/CustomHooks';
 import { AssetPage } from 'app/containers/AssetPage';
 import { SequencePage } from 'app/containers/SequencePage';
 import { TimeseriesPage } from 'app/containers/TimeseriesPage';
 import { EventPage } from 'app/containers/EventPage';
 import { SearchResultsPage } from 'app/containers/SearchResultsPage';
+import { createLink } from '@cognite/cdf-utilities';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
@@ -28,7 +28,6 @@ const Wrapper = styled.div`
 
 export const Explorer = () => {
   const history = useHistory();
-  const tenant = useTenant();
   const { add, remove } = useContext(ResourceActionsContext);
   const { setOnSelectListener, setResourcesState } = useContext(
     ResourceSelectionContext
@@ -77,7 +76,7 @@ export const Explorer = () => {
                 key="view"
                 onClick={() => {
                   window.dispatchEvent(new Event(CLOSE_DROPDOWN_EVENT));
-                  history.push(`/${tenant}/explore/${path}`);
+                  history.push(createLink(`/explore/${path}`));
                 }}
                 icon="ArrowRight"
               >
@@ -91,7 +90,7 @@ export const Explorer = () => {
 
       return [viewButton()];
     },
-    [tenant, history, pathname]
+    [history, pathname]
   );
 
   useEffect(() => {
