@@ -792,7 +792,7 @@ const DataTransfers: React.FC = () => {
             setFilterByProjects={setFilterByProjects}
           />
         )}
-        {selectedSourceProject && (
+        {(selectedConfiguration || selectedSourceProject) && (
           <ColumnsSelector>
             <Tooltip content="Show/hide table columns">
               <Dropdown
