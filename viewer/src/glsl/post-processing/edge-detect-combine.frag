@@ -40,7 +40,7 @@ void main() {
   vec4 customAlbedo = texture2D(tCustom, vUv);
   // Decompose and clamp "ghost" color
   vec4 ghostColorRGBA = texture2D(tGhost, vUv);
-  vec3 ghostColor = max(ghostColorRGBA.rgb, 0.5);
+  vec3 ghostColor = vec3(0.3);
   float ghostAlpha = min(ghostColorRGBA.a, 0.8);
 
   float frontOutlineIndex = floatBitsSubset(floor((frontAlbedo.a * 255.0) + 0.5), 3, 6);
