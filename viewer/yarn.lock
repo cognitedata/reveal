@@ -291,15 +291,23 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/sdk@^2.32.0":
-  version "2.33.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
-  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
+"@cognite/sdk-core@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.2.tgz#fab634f9661d76e49288eb121f9706bf5a37e478"
+  integrity sha512-0M5n+tmJc9B6oVzrGGOE16eAWwzq4a2eTBJzU0QTLajHOx3sTsDsuAKvQ7nE9ucaN+MqXuO5vERSjLMlOWkJQQ==
   dependencies:
     cross-fetch "^3.0.4"
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
+
+"@cognite/sdk@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.1.1.tgz#3a0e259dbdaaa88f7225cc2f9f2530034674040d"
+  integrity sha512-L5UXQNa8tPk/s0UG6vAGqoYajv8219z4zYPyBQWHrhPXoXMEJdLxy4l6YG3f9UnCRTWDqWUrtlYni4T4sX/Xlg==
+  dependencies:
+    "@cognite/sdk-core" "^1.0.2"
+    lodash "^4.17.11"
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"
