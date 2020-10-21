@@ -71,13 +71,13 @@ setInterval(() => {
 }, 1000 / 60);
 ```
 :::tip
-Updating `THREE.Plane`-instances will not trigger data loading. Typically you will need to trigger data loading if
-you do substantial changes to the slicing planes. In these cases, use `Cognite3DViewer.setSlicingPlanes`. The example 
-above performs substantial changes to the planes without loading data. In a real application it's recommended to 
-not load data during animation, but initiate data after an animation is completed.
+Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing 
+substantial changes to the slicing planes, use `Cognite3DViewer.setSlicingPlanes`. Note that the example
+above performs substantial changes to the planes without loading data. In a real application it's recommended 
+to not load data during animation, but initiate data after an animation is completed.
 :::
 
-### CAD geometry filter
+### Interactable slicing planes
 
 ```js runnable
 // import { DragControls } from 'three/examples/jsm/controls/DragControls';
