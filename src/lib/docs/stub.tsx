@@ -26,6 +26,14 @@ export const ResourceSelectionPropsFunctions = (_: ResourceSelectionObserver) =>
   null;
 
 export const sdkMock = {
+  get: async (query: string) => {
+    if (query.includes('icon')) {
+      const reponse = await fetch('//unsplash.it/300/400');
+      const arrayBuffer = await reponse.arrayBuffer();
+      return arrayBuffer;
+    }
+    return { data: { items: [] } };
+  },
   post: async (query: string, body: any) => {
     if (query.includes('aggregate')) {
       return { data: { items: [{ count: 1 }] } };

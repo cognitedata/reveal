@@ -1,6 +1,7 @@
 import sdk from 'sdk-singleton';
 import { useMutation, useQuery, useQueryCache } from 'react-query';
 import { ResourceType } from 'lib/types';
+import { getEnv } from '../utils/URLUtils';
 
 export type CollectionOperationType = 'retrieve' | 'list';
 
@@ -169,6 +170,7 @@ export const useCollections = () => {
         cached.setQueryData(`/collections/${collection.id}`, collection);
       });
     },
+    enabled: getEnv() === 'greenfield',
   });
 };
 
