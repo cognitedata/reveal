@@ -54,14 +54,21 @@ export const SearchResults = ({
   }, [currentResourceType, debouncedQuery]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        overflow: 'hidden',
+      }}
+    >
       {resourceTypes.length > 1 && (
         <ResourceTypeTabs
           currentResourceType={currentResourceType}
           setCurrentResourceType={setCurrentResourceType}
         />
       )}
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, overflow: 'auto' }}>
         <ResourcePreviewProvider>
           <Wrapper>
             <Filters>
