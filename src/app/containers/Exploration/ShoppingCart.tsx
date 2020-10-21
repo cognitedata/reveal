@@ -12,7 +12,13 @@ import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'lib/hooks/CustomHooks';
 import { ResourceItem, ResourceType } from 'lib/types';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { FileInfo, Asset, Timeseries } from '@cognite/sdk';
+import {
+  FileInfo,
+  Asset,
+  Timeseries,
+  CogniteEvent,
+  Sequence,
+} from '@cognite/sdk';
 import {
   useCollections,
   Collection,
@@ -26,15 +32,20 @@ export const ShoppingCartPreview = ({
   cart: ResourceItem[];
   setCart: (cart: ResourceItem[]) => void;
 }) => {
+  const assetIds = cart
+    .filter(el => el.type === 'asset')
+    .map(({ id }) => ({ id }));
+  const { data: assets = [] } = useCdfItems<Asset>('assets', assetIds);
+
   const fileIds = cart
     .filter(el => el.type === 'file')
     .map(({ id }) => ({ id }));
   const { data: files = [] } = useCdfItems<FileInfo>('files', fileIds);
 
-  const assetIds = cart
-    .filter(el => el.type === 'asset')
+  const eventIds = cart
+    .filter(el => el.type === 'event')
     .map(({ id }) => ({ id }));
-  const { data: assets = [] } = useCdfItems<Asset>('assets', assetIds);
+  const { data: events = [] } = useCdfItems<CogniteEvent>('events', eventIds);
 
   const timeseriesIds = cart
     .filter(el => el.type === 'timeSeries')
@@ -44,29 +55,49 @@ export const ShoppingCartPreview = ({
     timeseriesIds
   );
 
+  const sequenceIds = cart
+    .filter(el => el.type === 'sequence')
+    .map(({ id }) => ({ id }));
+  const { data: sequences = [] } = useCdfItems<Sequence>(
+    'sequences',
+    sequenceIds
+  );
+
   const tenant = useTenant();
   const env = useEnv();
 
   const { data: collections } = useCollections();
   const [updateCollections] = useUpdateCollections();
 
-  const [assetCollections, tsCollections, fileCollections] = useMemo(() => {
+  const [
+    assetCollections,
+    fileCollections,
+    eventCollections,
+    tsCollections,
+    sequenceCollections,
+  ] = useMemo(() => {
     return (collections || []).reduce(
       (prev, el) => {
         switch (el.type) {
           case 'asset':
             prev[0].push(el);
             break;
-          case 'timeSeries':
+          case 'file':
             prev[1].push(el);
             break;
-          case 'file':
+          case 'event':
             prev[2].push(el);
+            break;
+          case 'timeSeries':
+            prev[3].push(el);
+            break;
+          case 'sequence':
+            prev[4].push(el);
             break;
         }
         return prev;
       },
-      [[], [], []] as Collection[][]
+      [[], [], [], [], []] as Collection[][]
     );
   }, [collections]);
 
@@ -86,15 +117,29 @@ export const ShoppingCartPreview = ({
   );
 
   const generateButton = (type: ResourceType) => {
-    let renderedCollections = assetCollections;
-    let currentItems: { id: number }[] = assets;
-    if (type === 'file') {
-      renderedCollections = fileCollections;
-      currentItems = files;
-    }
-    if (type === 'timeSeries') {
-      renderedCollections = tsCollections;
-      currentItems = timeseries;
+    let renderedCollections;
+    let currentItems: { id: number }[];
+    switch (type) {
+      case 'asset':
+        renderedCollections = assetCollections;
+        currentItems = assets;
+        break;
+      case 'file':
+        renderedCollections = fileCollections;
+        currentItems = files;
+        break;
+      case 'event':
+        renderedCollections = eventCollections;
+        currentItems = events;
+        break;
+      case 'timeSeries':
+        renderedCollections = tsCollections;
+        currentItems = timeseries;
+        break;
+      case 'sequence':
+        renderedCollections = sequenceCollections;
+        currentItems = sequences;
+        break;
     }
     return (
       <Dropdown
@@ -222,6 +267,60 @@ export const ShoppingCartPreview = ({
             }
           >
             {renderDeleteItemButton(file)}
+          </ListItem>
+        ))}
+        <SpacedRow>
+          <Overline level={2} style={{ marginBottom: 8 }}>
+            Events
+          </Overline>
+          <div className="spacer" />
+          {generateButton('event')}
+        </SpacedRow>
+        {events.map(event => (
+          <ListItem
+            key={event.id}
+            bordered
+            title={
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <Icon
+                  style={{
+                    alignSelf: 'center',
+                    marginRight: '4px',
+                  }}
+                  type="DataStudio"
+                />
+                <span>{event ? event.id : 'Loading'}</span>
+              </div>
+            }
+          >
+            {renderDeleteItemButton(event)}
+          </ListItem>
+        ))}
+        <SpacedRow>
+          <Overline level={2} style={{ marginBottom: 8 }}>
+            Sequences
+          </Overline>
+          <div className="spacer" />
+          {generateButton('sequence')}
+        </SpacedRow>
+        {sequences.map(sequence => (
+          <ListItem
+            key={sequence.id}
+            bordered
+            title={
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <Icon
+                  style={{
+                    alignSelf: 'center',
+                    marginRight: '4px',
+                  }}
+                  type="DataStudio"
+                />
+                <span>{sequence ? sequence.name : 'Loading'}</span>
+              </div>
+            }
+          >
+            {renderDeleteItemButton(sequence)}
           </ListItem>
         ))}
       </div>
