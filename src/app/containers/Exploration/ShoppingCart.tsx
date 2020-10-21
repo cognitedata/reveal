@@ -233,7 +233,7 @@ export const ShoppingCartPreview = ({
                     alignSelf: 'center',
                     marginRight: '4px',
                   }}
-                  type="DataStudio"
+                  type="Timeseries"
                 />
                 <span>{ts ? ts.name : 'Loading...'}</span>
               </div>
@@ -260,7 +260,7 @@ export const ShoppingCartPreview = ({
                     alignSelf: 'center',
                     marginRight: '4px',
                   }}
-                  type="DataStudio"
+                  type="FolderLine"
                 />
                 <span>{file ? file.name : 'Loading...'}</span>
               </div>
@@ -287,7 +287,7 @@ export const ShoppingCartPreview = ({
                     alignSelf: 'center',
                     marginRight: '4px',
                   }}
-                  type="DataStudio"
+                  type="Events"
                 />
                 <span>{event ? event.id : 'Loading'}</span>
               </div>
@@ -314,7 +314,7 @@ export const ShoppingCartPreview = ({
                     alignSelf: 'center',
                     marginRight: '4px',
                   }}
-                  type="DataStudio"
+                  type="Duplicate"
                 />
                 <span>{sequence ? sequence.name : 'Loading'}</span>
               </div>
