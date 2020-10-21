@@ -39,6 +39,10 @@ export type ResourceSelectionObserver = {
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  selectedResource: ResourceItem | undefined;
+  setSelectedResource: React.Dispatch<
+    React.SetStateAction<ResourceItem | undefined>
+  >;
 };
 
 export const ResourceSelectionContext = React.createContext({
@@ -117,6 +121,14 @@ export const useResourceFilters = () => {
     eventFilter: observer.eventFilter,
     sequenceFilter: observer.sequenceFilter,
     fileFilter: observer.fileFilter,
+  };
+};
+
+export const useSelectedResource = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return {
+    selectedResource: observer.selectedResource,
+    setSelectedResource: observer.setSelectedResource,
   };
 };
 
@@ -211,6 +223,8 @@ export const ResourceSelectionProvider = ({
     SequenceFilter['filter']
   >(initialSequenceFilter || {});
 
+  const [selectedResource, setSelectedResource] = useState<ResourceItem>();
+
   useEffect(() => {
     if (initialResourcesState) {
       setResourcesState(initialResourcesState);
@@ -260,6 +274,8 @@ export const ResourceSelectionProvider = ({
         setResourcesState,
         onSelect,
         setOnSelectListener,
+        selectedResource,
+        setSelectedResource,
       }}
     >
       {children}
