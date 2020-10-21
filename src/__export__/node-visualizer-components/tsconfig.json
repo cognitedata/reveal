@@ -5,6 +5,7 @@
   },
   "include": [
     "../../UserInterface/Components/**/*.ts",
-    "../../UserInterface/Components/**/*.tsx"
+    "../../UserInterface/Components/**/*.tsx",
+    "../../../typings.d.ts"
   ]
 }

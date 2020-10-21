@@ -4,6 +4,7 @@
     "declarationDir": "../../../dist/node-visualizer-subsurface/types"
   },
   "include": [
-    "../../SubSurface/Wells/Interfaces"
+    "../../SubSurface/Wells/Interfaces",
+    "../../../typings.d.ts"
   ]
 }

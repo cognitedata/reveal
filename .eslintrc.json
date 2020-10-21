@@ -25,7 +25,7 @@
     "comma-spacing":"error",
     "no-irregular-whitespace": "off",
     "jsx-a11y/click-events-have-key-events": "off", // needs to be enabled in the future
-    "react/jsx-props-no-spreading": ["error", { "html":  "ignore", "exceptions": ["React.Fragment"] }],
+    "react/jsx-props-no-spreading": ["off"],
     "no-restricted-syntax": "off",
     "no-param-reassign": "off",
     "spaced-comment": "off",

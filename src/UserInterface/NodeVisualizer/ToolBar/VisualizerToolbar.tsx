@@ -20,6 +20,22 @@ export interface IToolbarButton {
   isVisible: boolean;
 }
 
+export interface ToolbarConfig {
+  [groupId: string]: IToolbarButton[];
+}
+export type ToolbarButtonClickHandler = (
+  visualizerId: string,
+  groupId: string,
+  index: number
+) => void;
+
+export type ToolbarSelectChangeHandler = (
+  visualizerId: string,
+  groupId: string,
+  index: number,
+  value: string
+) => void;
+
 const useStyles = makeStyles(() => ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   root: (props: {
@@ -90,31 +106,25 @@ const useStyles = makeStyles(() => ({
   }),
 }));
 
-// Visualizer ToolBar Component
-export function VisualizerToolbar(props: {
+export interface VisualizerToolbarProps {
   visualizerId: string;
-  toolbar?: Map<string, IToolbarButton[]>;
-  onToolbarButtonClick: (
-    visualizerId: string,
-    groupId: string,
-    index: number
-  ) => void;
-  onToolbarSelectionChange: (
-    visualizerId: string,
-    groupId: string,
-    index: number,
-    value: string
-  ) => void;
-}) {
+  config?: ToolbarConfig;
+  onToolbarButtonClick: ToolbarButtonClickHandler;
+  onToolbarSelectionChange: ToolbarSelectChangeHandler;
+}
+
+// Visualizer ToolBar Component
+export function VisualizerToolbar(props: VisualizerToolbarProps) {
   const {
-    toolbar,
+    config,
     visualizerId,
     onToolbarButtonClick,
     onToolbarSelectionChange,
   } = props;
 
-  if (!toolbar) return null;
-  const groupIds: string[] = toolbar ? Object.keys(toolbar) : [];
+  if (!config) return null;
+
+  const groupIds: string[] = config ? Object.keys(config) : [];
 
   const { toolbarIconSize, toolbarSelectWidth } = Appearance;
 
@@ -202,7 +212,7 @@ export function VisualizerToolbar(props: {
   };
 
   const addToolbarButtons = (groupId: string) => {
-    return toolbar[groupId].map((command, index) => {
+    return config[groupId].map((command, index) => {
       if (command.isDropdown && command.isVisible) {
         return addDropdown(groupId, index, command);
       }

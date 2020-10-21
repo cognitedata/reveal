@@ -15,39 +15,7 @@ import Cube from "@images/PointSymbol/Cube.png";
 import Sphere from "@images/PointSymbol/Sphere.png";
 import LabelImage from "@images/Show/Label.png";
 
-// checkboxes
-
-import Frame from "@images/Checkboxes/Frame.png";
-import FrameStippled from "@images/Checkboxes/FrameStippled.png";
-import FocusNormal from "@images/Checkboxes/FocusNormal.png";
-import FocusFilter from "@images/Checkboxes/FocusFilter.png";
-import BackgroundNormal from "@images/Checkboxes/BackgroundNormal.png";
-import BackgroundFilter from "@images/Checkboxes/BackgroundFilter.png";
-import CheckedAll from "@images/Checkboxes/CheckedAll.png";
-import CheckedSome from "@images/Checkboxes/CheckedSome.png";
-import RadioOff from "@images/Checkboxes/RadioOff.png";
-import RadioOn from "@images/Checkboxes/RadioOn.png";
-
-// expanders
-import ExpandOpen from "@images/Expanders/ExpandOpen.png";
-import ExpandClosed from "@images/Expanders/ExpandClosed.png";
-import ExpandOpenFocus from "@images/Expanders/ExpandOpenFocus.png";
-import ExpandClosedFocus from "@images/Expanders/ExpandClosedFocus.png";
 import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
-
-export { ExpandOpen, ExpandClosed, ExpandOpenFocus, ExpandClosedFocus };
-export {
-  Frame,
-  FrameStippled,
-  FocusNormal,
-  FocusFilter,
-  BackgroundNormal,
-  BackgroundFilter,
-  CheckedAll,
-  CheckedSome,
-  RadioOff,
-  RadioOn,
-};
 
 export function getIcon(iconType: string, iconName: string)
 {

@@ -93,8 +93,8 @@ export function App() {
         .catch((err) => {
           // tslint:disable-next-line:no-console
           console.error(
-            `Sample Data not found synthetic data will be loaded! 
-Disable loadMockData constant in App.tsx to remove this warning!`,
+            `Sample Data not found synthetic data will be loaded!
+              Disable loadMockData constant in App.tsx to remove this warning!`,
             err
           );
           modules.add(syntheticModule);

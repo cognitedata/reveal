@@ -1,5 +1,5 @@
 import "@/UserInterface/styles/scss/index.scss";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SplitPane from "react-split-pane";
 import { RightPanel } from "@/UserInterface/NodeVisualizer/Panels/RightPanel";
@@ -16,15 +16,25 @@ import { State } from "@/UserInterface/Redux/State/State";
 import { generateNodeTree } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 import { initializeToolbarStatus } from "@/UserInterface/Redux/reducers/VisualizersReducer";
 import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
+import { ExplorerPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
+import { Explorer } from "@/UserInterface/Components/Explorer/Explorer";
+import {
+  VisualizerToolbar,
+  VisualizerToolbarProps,
+} from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
 /**
  * Node Visualizer Component of the application
  * This will render all the Components (Settings/Explorer/3D viewers etc.)
  */
-export function NodeVisualizer(props: { root?: BaseRootNode }) {
+export function NodeVisualizer(props: {
+  root?: BaseRootNode;
+  explorer?: React.ComponentType<ExplorerPropType>;
+  toolbar?: React.ComponentType<VisualizerToolbarProps>;
+}) {
   const dispatch = useDispatch();
   const common = useSelector((state: State) => state.common); //TODO: Remove state reference
-  const { root } = props;
+  const { root, explorer, toolbar } = props;
 
   if (root) {
     BaseRootNode.active = root;
@@ -45,12 +55,12 @@ export function NodeVisualizer(props: { root?: BaseRootNode }) {
         const target = Modules.instance.createRenderTargetNode();
         if (!target) continue;
 
-        const toolbar = new Toolbar();
+        const toolbarTools = new Toolbar();
 
-        target.addTools(toolbar);
+        target.addTools(toolbarTools);
         target.setName(viewer.getName());
         viewer.setTarget(target);
-        viewer.setToolbarCommands(toolbar);
+        viewer.setToolbarCommands(toolbarTools);
         root.targets.addChild(target);
         element.appendChild(target.domElement);
         target.setActiveInteractive();
@@ -67,9 +77,24 @@ export function NodeVisualizer(props: { root?: BaseRootNode }) {
       // Add target and toolbar data to state
       dispatch(initializeToolbarStatus());
       dispatch(generateNodeTree());
-      console.log("NodeVisualizer: Added toolbars and viewers");
     },
     [root]
+  );
+
+  const renderExplorer = useMemo(
+    () =>
+      explorer ||
+      ((explorerProps: ExplorerPropType) => <Explorer {...explorerProps} />),
+    [explorer]
+  );
+
+  const renderToolbar = useMemo(
+    () =>
+      toolbar ||
+      ((toolbarProps: VisualizerToolbarProps) => (
+        <VisualizerToolbar {...toolbarProps} />
+      )),
+    [toolbar]
   );
 
   return (
@@ -85,8 +110,8 @@ export function NodeVisualizer(props: { root?: BaseRootNode }) {
           }
         }}
       >
-        <LeftPanel />
-        <RightPanel viewer3D={viewerElementCallback} />
+        <LeftPanel explorer={renderExplorer} />
+        <RightPanel viewer3D={viewerElementCallback} toolbar={renderToolbar} />
       </SplitPane>
     </div>
   );

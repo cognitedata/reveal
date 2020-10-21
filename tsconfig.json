@@ -11,7 +11,6 @@
     // "rootDir": "./src",
     "importHelpers": true,                 /* Import emit helpers from 'tslib' when using only ts-loader. */
     "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
-    "isolatedModules": true,
     "strict": true,
     "noImplicitAny": false,
     "strictNullChecks": true,

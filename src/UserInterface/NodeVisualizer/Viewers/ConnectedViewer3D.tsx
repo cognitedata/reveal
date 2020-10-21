@@ -4,17 +4,16 @@ import { State } from "@/UserInterface/Redux/State/State";
 import { executeVisualizerToolbarCommand } from "@/UserInterface/Redux/reducers/VisualizersReducer";
 import { Viewer3D } from "@/UserInterface/Components/Viewers/Viewer3D";
 import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
-import { IToolbarButton } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
+import { ToolbarConfig } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
 const mapStateToProps = (state: State) => {
   const toolbarCommands = ViewerUtils.getViewers()["3D"]?.getToolbarCommands();
-  const toolbarGroupIds = toolbarCommands ? Object.keys(toolbarCommands) : [];
 
   const toolbarCommandStates = state.visualizers.viewers["3D"];
-  const displayToolbar = new Map<string, IToolbarButton[]>();
+  const displayToolbar: ToolbarConfig = {};
 
   if (toolbarCommandStates) {
-    toolbarGroupIds.forEach((groupId) => {
+    Object.keys(toolbarCommands).forEach((groupId) => {
       toolbarCommands[groupId].forEach((command, index) => {
         if (!displayToolbar[groupId]) displayToolbar[groupId] = [];
 
@@ -31,7 +30,7 @@ const mapStateToProps = (state: State) => {
       });
     });
   }
-  return { toolbar: displayToolbar };
+  return { toolbarConfig: displayToolbar };
 };
 
 const mapDispatchToPros = (dispatch: Dispatch) => {

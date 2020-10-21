@@ -1,13 +1,14 @@
 import React from "react";
 import {
-  VisualizerToolbar,
-  IToolbarButton,
+  ToolbarConfig,
+  VisualizerToolbarProps,
 } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
 // 3D Viewer
 export function Viewer3D(props: {
-  viewer3D: any;
-  toolbar?: Map<string, IToolbarButton[]>;
+  viewer3D: React.RefCallback<HTMLElement>;
+  toolbar: React.ComponentType<VisualizerToolbarProps>;
+  toolbarConfig?: ToolbarConfig;
   onToolbarButtonClick: (
     visualizerId: string,
     groupId: string,
@@ -22,16 +23,17 @@ export function Viewer3D(props: {
 }) {
   const {
     viewer3D,
-    toolbar,
+    toolbar: Toolbar,
+    toolbarConfig,
     onToolbarButtonClick,
     onToolbarSelectionChange,
   } = props;
 
   return (
     <div className="visualizer">
-      <VisualizerToolbar
+      <Toolbar
         visualizerId="3D"
-        toolbar={toolbar}
+        config={toolbarConfig}
         onToolbarButtonClick={onToolbarButtonClick}
         onToolbarSelectionChange={onToolbarSelectionChange}
       />

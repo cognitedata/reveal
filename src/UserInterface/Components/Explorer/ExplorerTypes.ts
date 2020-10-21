@@ -1,12 +1,14 @@
 import { ITreeNode } from "@/UserInterface/Components/VirtualTree/ITreeNode";
 
-export type ExplorerTab = {
+export interface ExplorerTab
+{
   name: string;
   icon: string;
   type: string | null;
 }
 
-export type ExplorerPropType = {
+export interface ExplorerPropType
+{
   onTabChange: (tabIndex: number) => void;
   onNodeExpandToggle: (nodeId: string, expandState: boolean) => void;
   onToggleVisible: (nodeId: string) => void;
@@ -14,9 +16,10 @@ export type ExplorerPropType = {
   data: ITreeNode[];
   tabs: ExplorerTab[];
   selectedTabIndex: number;
-};
+}
 
-export type ExplorerTabsPropType = {
+export interface ExplorerTabsPropType
+{
   tabs: ExplorerTab[];
   selectedTabIndex: number;
   onTabChange: (tabIndex: number) => void;

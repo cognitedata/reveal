@@ -4,6 +4,6 @@
     "declarationDir": "../../../dist/node-visualizer/types"
   },
   "include": [
-    "../../**/*.ts", "../../**/*.tsx"
+    "../../**/*.ts", "../../**/*.tsx", "../../../typings.d.ts"
   ]
 }
