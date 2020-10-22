@@ -99,18 +99,51 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
 
   const canPreviewFile = file && isFilePreviewable(file);
 
-  if (!fileFetched) {
-    return <Loader />;
-  }
+  const content = () => {
+    if (!fileFetched) {
+      return <Loader />;
+    }
 
-  if (!canPreviewFile) {
+    if (!canPreviewFile) {
+      return (
+        <CenteredPlaceholder>
+          <h1>No Preview For File</h1>
+          <p>Please search for a File to start viewing.</p>
+        </CenteredPlaceholder>
+      );
+    }
     return (
-      <CenteredPlaceholder>
-        <h1>No Preview For File</h1>
-        <p>Please search for a File to start viewing.</p>
-      </CenteredPlaceholder>
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        <CogniteFileViewer.FileViewer
+          file={file}
+          creatable={creatable}
+          annotations={allAnnotations}
+          hideDownload
+          hideSearch
+          renderAnnotation={(annotation, isSelected) => {
+            const iAnnotation = convertCogniteAnnotationToIAnnotation(
+              annotation,
+              isSelected
+            );
+            if (annotation.metadata && annotation.metadata.color) {
+              iAnnotation.mark.strokeColor = annotation.metadata.color;
+            }
+            return iAnnotation;
+          }}
+          editCallbacks={{
+            onCreate: (item: PendingCogniteAnnotation) => {
+              const newItem = { ...item, id: uuid() };
+              setPendingAnnotations([newItem]);
+              return false;
+            },
+            onUpdate: () => {
+              return false;
+            },
+          }}
+        />
+      </div>
     );
-  }
+  };
 
   return (
     <>
@@ -123,35 +156,7 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
           setCreatable={setCreatable}
           contextualization={contextualization}
         />
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-          <CogniteFileViewer.FileViewer
-            file={file}
-            creatable={creatable}
-            annotations={allAnnotations}
-            hideDownload
-            hideSearch
-            renderAnnotation={(annotation, isSelected) => {
-              const iAnnotation = convertCogniteAnnotationToIAnnotation(
-                annotation,
-                isSelected
-              );
-              if (annotation.metadata && annotation.metadata.color) {
-                iAnnotation.mark.strokeColor = annotation.metadata.color;
-              }
-              return iAnnotation;
-            }}
-            editCallbacks={{
-              onCreate: (item: PendingCogniteAnnotation) => {
-                const newItem = { ...item, id: uuid() };
-                setPendingAnnotations([newItem]);
-                return false;
-              },
-              onUpdate: () => {
-                return false;
-              },
-            }}
-          />
-        </div>
+        {content()}
       </Splitter>
       <AnnotationPreviewSidebar
         fileId={fileId}

@@ -337,7 +337,9 @@ const AnnotationPreviewSidebar = ({
             extractFromCanvas={extractFromCanvas}
           />
         ),
-        content: <Content annotation={selectedAnnotation} />,
+        content: isEditingMode ? (
+          <Content annotation={selectedAnnotation} />
+        ) : undefined,
         onClose: () => setSelectedAnnotation(undefined),
       });
     }
