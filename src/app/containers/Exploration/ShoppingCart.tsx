@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import styled from 'styled-components';
 import {
   Icon,
   Colors,
@@ -141,6 +142,14 @@ export const ShoppingCartPreview = ({
     ]);
   };
 
+  const collectionContainsItems = (
+    collection: Collection,
+    items: { id: number }[]
+  ) =>
+    items.every(item =>
+      collection.operationBody.items.some((el: any) => el.id === item.id)
+    );
+
   const generateButton = (type: ResourceType) => {
     let renderedCollections;
     let currentItems: { id: number }[];
@@ -172,14 +181,24 @@ export const ShoppingCartPreview = ({
           <Menu>
             <Menu.Header>
               <Overline level={2}>COLLECTIONS</Overline>
-              {renderedCollections.map(collection => (
-                <Menu.Item
-                  key={collection.id}
-                  onClick={() => addToCollection(collection, currentItems)}
-                >
-                  {collection.name}
-                </Menu.Item>
-              ))}
+              {renderedCollections.map(collection => {
+                const containsItems = collectionContainsItems(
+                  collection,
+                  currentItems
+                );
+                return (
+                  <Menu.Item
+                    key={collection.id}
+                    disabled={containsItems}
+                    onClick={() => addToCollection(collection, currentItems)}
+                  >
+                    <CollectionItem>
+                      {collection.name}
+                      {containsItems && <Icon type="Check" />}
+                    </CollectionItem>
+                  </Menu.Item>
+                );
+              })}
             </Menu.Header>
           </Menu>
         }
@@ -417,5 +436,11 @@ export const ShoppingCartPreview = ({
     </div>
   );
 };
+
+const CollectionItem = styled.div`
+  justify-content: space-between;
+  width: 100%;
+  display: flex;
+`;
 
 // https://api.cognitedata.com/odata/v1/projects/contextualization/Assets?$filter=(Id eq 51865490571) or (Id eq 52579923080)
