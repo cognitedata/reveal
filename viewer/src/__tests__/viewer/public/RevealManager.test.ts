@@ -10,12 +10,16 @@ import { createRevealManager } from '@/public/createRevealManager';
 import { RevealManager } from '@/public/RevealManager';
 
 describe('RevealManager', () => {
-  const mockClient: ModelDataClient<{ id: number }> = jest.fn() as any;
+  const mockClient: ModelDataClient<{ id: number }> = {
+    getApplicationIdentifier: () => {
+      return 'dummy';
+    }
+  } as any;
   const sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
     dispose: jest.fn()
   };
-  let manager: RevealManager<{id: number}>;
+  let manager: RevealManager<{ id: number }>;
 
   beforeEach(() => {
     jest.clearAllMocks();
