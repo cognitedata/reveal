@@ -217,7 +217,7 @@ export const ShoppingCartPreview = ({
           <>
             <SpacedRow>
               <Overline level={2} style={{ marginBottom: 8 }}>
-                Asset
+                Assets
               </Overline>
               <div className="spacer" />
               {generateButton('asset')}
