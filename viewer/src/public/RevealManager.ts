@@ -155,11 +155,13 @@ export class RevealManager<TModelIdentifier> {
   ): void {
     switch (event) {
       case 'loadingStateChanged':
-        this.eventListeners.loadingStateChanged.filter(x => x !== listener);
+        this.eventListeners.loadingStateChanged = this.eventListeners.loadingStateChanged.filter(x => x !== listener);
         break;
 
       case 'nodeIdToTreeIndexMapLoaded':
-        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.filter(x => x !== listener);
+        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded = this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.filter(
+          x => x !== listener
+        );
         break;
 
       default:
