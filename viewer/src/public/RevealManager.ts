@@ -11,8 +11,8 @@ import {
   SectorNodeIdToTreeIndexMapLoadedEvent,
   LoadingStateChangeListener
 } from './types';
-import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
-import { map, share, filter, observeOn, subscribeOn } from 'rxjs/operators';
+import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
+import { map, share, filter, observeOn, subscribeOn, throttleTime, tap, auditTime } from 'rxjs/operators';
 import { trackError, trackLoadModel, trackNavigation } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
@@ -20,6 +20,7 @@ import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderMana
 import { SupportedModelTypes } from '@/datamodels/base';
 import { LoadingState } from '@/utilities';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
+import { throttle } from 'lodash';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -41,6 +42,8 @@ export class RevealManager<TModelIdentifier> {
     loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
+  private readonly _updateSubject: Subject<void>;
+
   /**
    * @param cadManager
    * @param pointCloudManager
@@ -51,6 +54,15 @@ export class RevealManager<TModelIdentifier> {
     this._pointCloudManager = pointCloudManager;
     this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
+    this._updateSubject = new Subject();
+    this._updateSubject
+      .pipe(
+        auditTime(5000),
+        tap(() => {
+          trackNavigation({ moduleName: 'RevealManager', methodName: 'update' });
+        })
+      )
+      .subscribe();
   }
 
   public dispose(): void {
@@ -85,9 +97,9 @@ export class RevealManager<TModelIdentifier> {
       this._lastCamera.position.copy(camera.position);
       this._lastCamera.quaternion.copy(camera.quaternion);
       this._lastCamera.zoom = camera.zoom;
-
       this._cadManager.updateCamera(camera);
-      trackNavigation({ moduleName: 'RevealManager', methodName: 'update' });
+
+      this._updateSubject.next();
     }
   }
 
