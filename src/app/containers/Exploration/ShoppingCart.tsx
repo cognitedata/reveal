@@ -116,6 +116,31 @@ export const ShoppingCartPreview = ({
     />
   );
 
+  const addToCollection = (
+    collection: Collection,
+    currentItems: { id: number }[]
+  ) => {
+    updateCollections([
+      {
+        id: collection.id,
+        update: {
+          operationBody: {
+            items: collection.operationBody.items.concat(
+              currentItems
+                .filter(
+                  asset =>
+                    !collection.operationBody.items.some(
+                      (item: any) => item.id === asset.id
+                    )
+                )
+                .map(({ id }) => ({ id }))
+            ),
+          },
+        },
+      },
+    ]);
+  };
+
   const generateButton = (type: ResourceType) => {
     let renderedCollections;
     let currentItems: { id: number }[];
@@ -147,32 +172,12 @@ export const ShoppingCartPreview = ({
           <Menu>
             <Menu.Header>
               <Overline level={2}>COLLECTIONS</Overline>
-              {renderedCollections.map(el => (
+              {renderedCollections.map(collection => (
                 <Menu.Item
-                  key={el.id}
-                  onClick={() =>
-                    updateCollections([
-                      {
-                        id: el.id,
-                        update: {
-                          operationBody: {
-                            items: el.operationBody.items.concat(
-                              currentItems
-                                .filter(
-                                  asset =>
-                                    !el.operationBody.items.some(
-                                      (item: any) => item.id === asset.id
-                                    )
-                                )
-                                .map(({ id }) => ({ id }))
-                            ),
-                          },
-                        },
-                      },
-                    ])
-                  }
+                  key={collection.id}
+                  onClick={() => addToCollection(collection, currentItems)}
                 >
-                  {el.name}
+                  {collection.name}
                 </Menu.Item>
               ))}
             </Menu.Header>
