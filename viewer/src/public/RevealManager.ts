@@ -173,6 +173,7 @@ export class RevealManager<TModelIdentifier> {
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
+        type,
         options: { nodeAppearanceProvider }
       },
       modelIdentifier

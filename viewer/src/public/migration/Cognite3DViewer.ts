@@ -32,13 +32,12 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet, LoadingState } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
-import { trackError, initMetrics, trackLoadModel } from '@/utilities/metrics';
+import { trackError, trackEvent } from '@/utilities/metrics';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 import { SupportedModelTypes } from '@/datamodels/base';
-import { getSdkApplicationId } from '@/utilities/networking/utilities';
 
 /**
  * @example
@@ -128,13 +127,6 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    const applicationId = getSdkApplicationId(options.sdk);
-    initMetrics(options.logMetrics !== false, options.sdk.project, applicationId, {
-      moduleName: 'Cognite3DViewer',
-      methodName: 'constructor',
-      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
-    });
-
     this.renderer =
       options.renderer ||
       new THREE.WebGLRenderer({
@@ -173,7 +165,6 @@ export class Cognite3DViewer {
     revealOptions.internal = { sectorCuller: options._sectorCuller };
 
     this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
-
     this.startPointerEventListeners();
 
     this._subscription.add(
@@ -200,8 +191,13 @@ export class Cognite3DViewer {
     );
 
     this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
-
     this.animate(0);
+
+    trackEvent('construct3dViewer', {
+      moduleName: 'Cognite3DViewer',
+      methodName: 'constructor',
+      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
+    });
   }
 
   /**
@@ -359,19 +355,6 @@ export class Cognite3DViewer {
    * ```
    */
   async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
-    trackLoadModel(
-      {
-        options: omit(options, ['modelId', 'revisionId']),
-        type: 'cad',
-        moduleName: 'Cognite3DViewer',
-        methodName: 'addCadModel'
-      },
-      {
-        modelId: options.modelId,
-        revisionId: options.revisionId
-      }
-    );
-
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError('localPath is not supported');
     }
@@ -424,19 +407,6 @@ export class Cognite3DViewer {
    * ```
    */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
-    trackLoadModel(
-      {
-        options: omit(options, ['modelId', 'revisionId']),
-        type: 'pointcloud',
-        moduleName: 'Cognite3DViewer',
-        methodName: 'addPointCloudModel'
-      },
-      {
-        modelId: options.modelId,
-        revisionId: options.revisionId
-      }
-    );
-
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError('localPath is not supported');
     }

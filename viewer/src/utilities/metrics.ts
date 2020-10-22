@@ -4,7 +4,7 @@
 
 import mixpanel from 'mixpanel-browser';
 
-type TrackedEvents = 'init' | 'loadModel' | 'error';
+type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error';
 type EventProps = {
   [key: string]: any;
   // names mentioned instead of just `string` type for typo protection,
