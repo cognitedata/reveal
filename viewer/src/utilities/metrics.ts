@@ -25,10 +25,11 @@ const { VERSION, MIXPANEL_TOKEN } = process.env;
 let globalLogMetrics = true;
 const globalProps = {
   VERSION,
-  project: 'unknown'
+  project: 'unknown',
+  application: 'unknown'
 };
 
-export function initMetrics(logMetrics: boolean, project: string, eventProps: EventProps) {
+export function initMetrics(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps) {
   // Even though mixpanel has an opt out property, the mixpanel object
   // used by Metrics is not available here, so we have our own way of opting out.
   globalLogMetrics = logMetrics;
@@ -39,7 +40,9 @@ export function initMetrics(logMetrics: boolean, project: string, eventProps: Ev
   if (project) {
     globalProps.project = project;
   }
-
+  if (applicationId) {
+    globalProps.application = applicationId;
+  }
   trackEvent('init', eventProps);
 }
 

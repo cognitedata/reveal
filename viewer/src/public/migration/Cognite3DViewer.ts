@@ -38,6 +38,7 @@ import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 import { SupportedModelTypes } from '@/datamodels/base';
+import { getSdkApplicationId } from '@/utilities/networking/utilities';
 
 /**
  * @example
@@ -127,7 +128,8 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    initMetrics(options.logMetrics !== false, options.sdk.project, {
+    const applicationId = getSdkApplicationId(options.sdk);
+    initMetrics(options.logMetrics !== false, options.sdk.project, applicationId, {
       moduleName: 'Cognite3DViewer',
       methodName: 'constructor',
       constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])

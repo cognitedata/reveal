@@ -48,7 +48,8 @@ export function createRevealManager<T>(
   client: ModelDataClient<T>,
   revealOptions: RevealOptions = {}
 ): RevealManager<T> {
-  initMetrics(revealOptions.logMetrics !== false, project, {
+  const applicationId = client.getApplicationIdentifier();
+  initMetrics(revealOptions.logMetrics !== false, project, applicationId, {
     moduleName: 'createRevealManager',
     methodName: 'createRevealManager',
     constructorOptions: omit(revealOptions, ['internal'])
