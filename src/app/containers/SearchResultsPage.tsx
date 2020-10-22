@@ -42,7 +42,6 @@ export const SearchResultsPage = () => {
   const timer = useRef<Timer>();
 
   useEffect(() => {
-    console.log(resourcesState);
     const activeResource = resourcesState.find(
       resource => resource.state === 'active' && resource.type === resourceType
     );
