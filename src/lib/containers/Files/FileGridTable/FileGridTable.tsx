@@ -29,7 +29,7 @@ const Cell = ({
   onClick?: () => void;
 }) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
-  const { data } = useFileIcon(file);
+  const { data, isError } = useFileIcon(file);
   const isPreviewable = isFileOfType(file, [
     'png',
     'jpg',
@@ -59,10 +59,17 @@ const Cell = ({
       if (imageUrl) {
         return <img src={imageUrl} alt="" />;
       }
-      return <Loader />;
+      if (!isError) {
+        return <Loader />;
+      }
     }
-    return <DocumentIcon file={file.name} style={{ height: 36, width: 36 }} />;
-  }, [imageUrl, isPreviewable, file]);
+    return (
+      <>
+        <DocumentIcon file={file.name} style={{ height: 36, width: 36 }} />
+        {isError && <Body level={3}>Unable to preview file.</Body>}
+      </>
+    );
+  }, [imageUrl, isPreviewable, file, isError]);
   return (
     <PreviewCell
       onClick={onClick}
@@ -270,6 +277,7 @@ const PreviewCell = styled.div<{ isActive: boolean; isPreviewing: boolean }>(
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
     }
     img {
       height: 100%;

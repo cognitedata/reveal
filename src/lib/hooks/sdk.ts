@@ -82,6 +82,10 @@ export const useFileIcon = (file: FileInfo) => {
         );
       }
       return undefined;
+    },
+    {
+      retry: false,
+      staleTime: Infinity,
     }
   );
 };
