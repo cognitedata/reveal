@@ -33,7 +33,7 @@ const TimeseriesIcon = ({ style }: { style?: React.CSSProperties }) => (
 );
 const FileIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconWithBackground
-    type="FolderLine"
+    type="Document"
     $color="#D27200"
     $backgroundColor="#FFF1CC"
     style={style}
