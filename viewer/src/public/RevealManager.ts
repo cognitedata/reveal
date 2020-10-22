@@ -13,7 +13,7 @@ import {
 } from './types';
 import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
 import { map, share, filter, observeOn, subscribeOn } from 'rxjs/operators';
-import { trackError, trackEvent, trackLoadModel, trackNavigation } from '@/utilities/metrics';
+import { trackError, trackLoadModel, trackNavigation } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
