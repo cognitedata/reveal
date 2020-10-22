@@ -26,6 +26,7 @@ export type OnLoadingCallback = (itemsDownloaded: number, itemsRequested: number
  * @module @cognite/reveal
  */
 export interface Cognite3DViewerOptions {
+  /** Initialized connection to CDF used to load data. */
   sdk: CogniteClient;
 
   /** An existing DOM element that we will render canvas into. */
@@ -98,13 +99,13 @@ export { CameraConfiguration } from '@/utilities';
 /**
  * Delegate for pointer events.
  * @module @cognite/reveal
- * @see {@link Cognite3DViewer.on}
+ * @see {@link Cognite3DViewer.on}.
  */
 export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
 /**
  * Delegate for camera update events.
  * @module @cognite/reveal
- * @see {@link Cognite3DViewer.on}
+ * @see {@link Cognite3DViewer.on}.
  */
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
