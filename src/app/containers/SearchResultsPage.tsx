@@ -7,7 +7,7 @@ import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
 import {
   useResourceFilter,
   useQuery,
-  useSelectedResource,
+  useResourcesState,
 } from 'lib/context/ResourceSelectionContext';
 
 export const SearchResultsPage = () => {
@@ -23,7 +23,7 @@ export const SearchResultsPage = () => {
 
   const [query] = useQuery();
   const filter = useResourceFilter(resourceType);
-  const { selectedResource } = useSelectedResource();
+  const { resourcesState } = useResourcesState();
 
   useEffect(() => {
     trackUsage('Exploration.ResourceType', { resourceType });
@@ -42,12 +42,17 @@ export const SearchResultsPage = () => {
   const timer = useRef<Timer>();
 
   useEffect(() => {
-    if (selectedResource) {
-      trackUsage('Exploration.PreviewResource', selectedResource);
+    console.log(resourcesState);
+    const activeResource = resourcesState.find(
+      resource => resource.state === 'active' && resource.type === resourceType
+    );
+
+    if (activeResource) {
+      trackUsage('Exploration.PreviewResource', activeResource);
       if (timer.current) {
         timer.current.stop({
-          type: selectedResource.type,
-          id: selectedResource.id,
+          type: activeResource.type,
+          id: activeResource.id,
         });
       }
     } else {
@@ -55,7 +60,7 @@ export const SearchResultsPage = () => {
     }
 
     return () => timer.current?.stop();
-  }, [selectedResource]);
+  }, [resourcesState, resourceType]);
 
   return (
     <SearchResults
