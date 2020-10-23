@@ -1130,7 +1130,17 @@ export class Cognite3DViewer {
 
     const debugElement = document.getElementById('debug');
     if (debugElement) {
-      debugElement.innerText = `Near: ${near.toPrecision(1)} Far: ${far.toPrecision(1)}`;
+      // @ts-expect-error
+      const highDetailThreshold: number = this._revealManager._cadManager._cadModelUpdateHandler._budget
+        .highDetailProximityThreshold;
+      // @ts-expect-error
+      const byteBudget: number = this._revealManager._cadManager._cadModelUpdateHandler._budget
+        .geometryDownloadSizeBytes;
+      debugElement.innerText = `Near: ${near.toPrecision(5)} 
+         Far: ${far.toPrecision(5)} 
+         HighDetail: ${highDetailThreshold.toPrecision(3)}
+         Budget: ${(byteBudget / 1024 / 1024).toPrecision(2)} Mb
+        `;
     }
     // The minDistance of the camera controller determines at which distance
     // we will push the target in front of us instead of getting closer to it.
