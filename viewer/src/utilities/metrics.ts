@@ -4,7 +4,7 @@
 
 import mixpanel from 'mixpanel-browser';
 
-type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error';
+type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error' | 'navigated';
 type EventProps = {
   [key: string]: any;
   // names mentioned instead of just `string` type for typo protection,
@@ -67,4 +67,8 @@ export function trackError(error: Error, eventProps: EventProps) {
     stack: error.stack,
     ...eventProps
   });
+}
+
+export function trackNavigation(eventProps: EventProps) {
+  trackEvent('navigated', eventProps);
 }
