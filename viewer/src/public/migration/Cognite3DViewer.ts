@@ -30,7 +30,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { BoundingBoxClipper, File3dFormat, isMobileOrTablet, LoadingState } from '@/utilities';
+import { BoundingBoxClipper, File3dFormat, LoadingState } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { trackError, initMetrics, trackLoadModel } from '@/utilities/metrics';
 import { RevealManager } from '../RevealManager';
@@ -133,11 +133,7 @@ export class Cognite3DViewer {
       constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
     });
 
-    this.renderer =
-      options.renderer ||
-      new THREE.WebGLRenderer({
-        antialias: shouldEnableAntialiasing()
-      });
+    this.renderer = options.renderer || new THREE.WebGLRenderer();
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -1290,10 +1286,6 @@ export class Cognite3DViewer {
     // on hover callback
     canvas.addEventListener('mousemove', onHoverCallback);
   };
-}
-
-function shouldEnableAntialiasing(): boolean {
-  return !isMobileOrTablet();
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
