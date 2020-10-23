@@ -11,7 +11,6 @@ import { RevealManager } from './RevealManager';
 import { LocalModelDataClient } from '@/utilities/networking/LocalModelDataClient';
 import { RevealOptions } from './types';
 import { initMetrics } from '@/utilities/metrics';
-import { omit } from 'lodash';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -52,7 +51,7 @@ export function createRevealManager<T>(
   initMetrics(revealOptions.logMetrics !== false, project, applicationId, {
     moduleName: 'createRevealManager',
     methodName: 'createRevealManager',
-    constructorOptions: omit(revealOptions, ['internal'])
+    constructorOptions: revealOptions
   });
   const cadManager = createCadManager(client, revealOptions);
   const pointCloudManager = createPointCloudManager(client);

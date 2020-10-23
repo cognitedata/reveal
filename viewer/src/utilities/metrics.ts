@@ -4,7 +4,7 @@
 
 import mixpanel from 'mixpanel-browser';
 
-type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error' | 'navigated';
+type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error' | 'cameraNavigated';
 type EventProps = {
   [key: string]: any;
   // names mentioned instead of just `string` type for typo protection,
@@ -69,6 +69,6 @@ export function trackError(error: Error, eventProps: EventProps) {
   });
 }
 
-export function trackNavigation(eventProps: EventProps) {
-  trackEvent('navigated', eventProps);
+export function trackCameraNavigation(eventProps: EventProps) {
+  trackEvent('cameraNavigated', eventProps);
 }
