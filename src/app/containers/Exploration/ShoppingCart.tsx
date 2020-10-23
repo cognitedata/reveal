@@ -7,6 +7,7 @@ import {
   Dropdown,
   Menu,
   Overline,
+  Body,
 } from '@cognite/cogs.js';
 import { ListItem, SpacedRow } from 'lib/components';
 import copy from 'copy-to-clipboard';
@@ -25,6 +26,7 @@ import {
   Collection,
   useUpdateCollections,
 } from 'lib/hooks/CollectionsHooks';
+import EmptyCartImage from 'app/assets/empty-cart.svg';
 
 export const ShoppingCartPreview = ({
   cart,
@@ -212,167 +214,187 @@ export const ShoppingCartPreview = ({
 
   return (
     <div style={{ width: 300, position: 'relative' }}>
-      <div style={{ height: '400px', overflowY: 'auto' }}>
-        {assets.length > 0 && (
-          <ResourceTypeSection>
-            <SpacedRow>
-              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                Assets
-              </ResourceTypeHeader>
-              <div className="spacer" />
-              {generateButton('asset')}
-            </SpacedRow>
-            {assets.map(asset => (
-              <ListItem
-                key={asset.id}
-                bordered
-                title={
-                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <Icon
-                      style={{
-                        alignSelf: 'center',
-                        marginRight: '4px',
-                      }}
-                      type="DataStudio"
-                    />
-                    <span>{asset ? asset.name : 'Loading'}</span>
-                  </div>
-                }
-              >
-                {renderDeleteItemButton(asset)}
-              </ListItem>
-            ))}
-          </ResourceTypeSection>
-        )}
-        {timeseries.length > 0 && (
-          <ResourceTypeSection>
-            <SpacedRow>
-              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                Time series
-              </ResourceTypeHeader>
-              <div className="spacer" />
-              {generateButton('timeSeries')}
-            </SpacedRow>
-            {timeseries.map(ts => (
-              <ListItem
-                key={ts.id}
-                bordered
-                title={
-                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <Icon
-                      style={{
-                        alignSelf: 'center',
-                        marginRight: '4px',
-                      }}
-                      type="Timeseries"
-                    />
-                    <span>{ts ? ts.name : 'Loading...'}</span>
-                  </div>
-                }
-              >
-                {renderDeleteItemButton(ts)}
-              </ListItem>
-            ))}
-          </ResourceTypeSection>
-        )}
-        {files.length > 0 && (
-          <ResourceTypeSection>
-            <SpacedRow>
-              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                Files
-              </ResourceTypeHeader>
-              <div className="spacer" />
-              {generateButton('file')}
-            </SpacedRow>
-            {files.map(file => (
-              <ListItem
-                key={file.id}
-                bordered
-                title={
-                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <Icon
-                      style={{
-                        alignSelf: 'center',
-                        marginRight: '4px',
-                      }}
-                      type="Document"
-                    />
-                    <span>{file ? file.name : 'Loading...'}</span>
-                  </div>
-                }
-              >
-                {renderDeleteItemButton(file)}
-              </ListItem>
-            ))}
-          </ResourceTypeSection>
-        )}
-        {events.length > 0 && (
-          <ResourceTypeSection>
-            <SpacedRow>
-              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                Events
-              </ResourceTypeHeader>
-              <div className="spacer" />
-              {generateButton('event')}
-            </SpacedRow>
-            {events.map(event => (
-              <ListItem
-                key={event.id}
-                bordered
-                title={
-                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <Icon
-                      style={{
-                        alignSelf: 'center',
-                        marginRight: '4px',
-                      }}
-                      type="Events"
-                    />
-                    <span>{event ? event.id : 'Loading'}</span>
-                  </div>
-                }
-              >
-                {renderDeleteItemButton(event)}
-              </ListItem>
-            ))}
-          </ResourceTypeSection>
-        )}
-        {sequences.length > 0 && (
-          <ResourceTypeSection>
-            <SpacedRow>
-              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                Sequences
-              </ResourceTypeHeader>
-              <div className="spacer" />
-              {generateButton('sequence')}
-            </SpacedRow>
-            {sequences.map(sequence => (
-              <ListItem
-                key={sequence.id}
-                bordered
-                title={
-                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <Icon
-                      style={{
-                        alignSelf: 'center',
-                        marginRight: '4px',
-                      }}
-                      type="Duplicate"
-                    />
-                    <span>{sequence ? sequence.name : 'Loading'}</span>
-                  </div>
-                }
-              >
-                {renderDeleteItemButton(sequence)}
-              </ListItem>
-            ))}
-          </ResourceTypeSection>
-        )}
-      </div>
+      {cart.length === 0 ? (
+        <EmptyCart>
+          <img src={EmptyCartImage} alt="Empty cart" />
+          <Body level={1}>
+            Select resources to download or add to collection
+          </Body>
+        </EmptyCart>
+      ) : (
+        <div style={{ height: '400px', overflowY: 'auto' }}>
+          {assets.length > 0 && (
+            <ResourceTypeSection>
+              <SpacedRow>
+                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
+                  Assets
+                </ResourceTypeHeader>
+                <div className="spacer" />
+                {generateButton('asset')}
+              </SpacedRow>
+              {assets.map(asset => (
+                <ListItem
+                  key={asset.id}
+                  bordered
+                  title={
+                    <div
+                      style={{ display: 'inline-flex', alignItems: 'center' }}
+                    >
+                      <Icon
+                        style={{
+                          alignSelf: 'center',
+                          marginRight: '4px',
+                        }}
+                        type="DataStudio"
+                      />
+                      <span>{asset ? asset.name : 'Loading'}</span>
+                    </div>
+                  }
+                >
+                  {renderDeleteItemButton(asset)}
+                </ListItem>
+              ))}
+            </ResourceTypeSection>
+          )}
+          {timeseries.length > 0 && (
+            <ResourceTypeSection>
+              <SpacedRow>
+                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
+                  Time series
+                </ResourceTypeHeader>
+                <div className="spacer" />
+                {generateButton('timeSeries')}
+              </SpacedRow>
+              {timeseries.map(ts => (
+                <ListItem
+                  key={ts.id}
+                  bordered
+                  title={
+                    <div
+                      style={{ display: 'inline-flex', alignItems: 'center' }}
+                    >
+                      <Icon
+                        style={{
+                          alignSelf: 'center',
+                          marginRight: '4px',
+                        }}
+                        type="Timeseries"
+                      />
+                      <span>{ts ? ts.name : 'Loading...'}</span>
+                    </div>
+                  }
+                >
+                  {renderDeleteItemButton(ts)}
+                </ListItem>
+              ))}
+            </ResourceTypeSection>
+          )}
+          {files.length > 0 && (
+            <ResourceTypeSection>
+              <SpacedRow>
+                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
+                  Files
+                </ResourceTypeHeader>
+                <div className="spacer" />
+                {generateButton('file')}
+              </SpacedRow>
+              {files.map(file => (
+                <ListItem
+                  key={file.id}
+                  bordered
+                  title={
+                    <div
+                      style={{ display: 'inline-flex', alignItems: 'center' }}
+                    >
+                      <Icon
+                        style={{
+                          alignSelf: 'center',
+                          marginRight: '4px',
+                        }}
+                        type="Document"
+                      />
+                      <span>{file ? file.name : 'Loading...'}</span>
+                    </div>
+                  }
+                >
+                  {renderDeleteItemButton(file)}
+                </ListItem>
+              ))}
+            </ResourceTypeSection>
+          )}
+          {events.length > 0 && (
+            <ResourceTypeSection>
+              <SpacedRow>
+                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
+                  Events
+                </ResourceTypeHeader>
+                <div className="spacer" />
+                {generateButton('event')}
+              </SpacedRow>
+              {events.map(event => (
+                <ListItem
+                  key={event.id}
+                  bordered
+                  title={
+                    <div
+                      style={{ display: 'inline-flex', alignItems: 'center' }}
+                    >
+                      <Icon
+                        style={{
+                          alignSelf: 'center',
+                          marginRight: '4px',
+                        }}
+                        type="Events"
+                      />
+                      <span>{event ? event.id : 'Loading'}</span>
+                    </div>
+                  }
+                >
+                  {renderDeleteItemButton(event)}
+                </ListItem>
+              ))}
+            </ResourceTypeSection>
+          )}
+          {sequences.length > 0 && (
+            <ResourceTypeSection>
+              <SpacedRow>
+                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
+                  Sequences
+                </ResourceTypeHeader>
+                <div className="spacer" />
+                {generateButton('sequence')}
+              </SpacedRow>
+              {sequences.map(sequence => (
+                <ListItem
+                  key={sequence.id}
+                  bordered
+                  title={
+                    <div
+                      style={{ display: 'inline-flex', alignItems: 'center' }}
+                    >
+                      <Icon
+                        style={{
+                          alignSelf: 'center',
+                          marginRight: '4px',
+                        }}
+                        type="Duplicate"
+                      />
+                      <span>{sequence ? sequence.name : 'Loading'}</span>
+                    </div>
+                  }
+                >
+                  {renderDeleteItemButton(sequence)}
+                </ListItem>
+              ))}
+            </ResourceTypeSection>
+          )}
+        </div>
+      )}
       <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
         <Button
           style={{ flex: 1 }}
           type="primary"
+          disabled={cart.length === 0}
           onClick={() => {
             const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
               JSON.stringify(cart)
@@ -449,6 +471,14 @@ const ResourceTypeHeader = styled(Overline)`
 
 const ResourceTypeSection = styled(Overline)`
   margin-bottom: 8px;
+`;
+
+const EmptyCart = styled.div`
+  text-align: center;
+  margin: 8px 0 16px;
+  padding: 24px;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
 `;
 
 // https://api.cognitedata.com/odata/v1/projects/contextualization/Assets?$filter=(Id eq 51865490571) or (Id eq 52579923080)
