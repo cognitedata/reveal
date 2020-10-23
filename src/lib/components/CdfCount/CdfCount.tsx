@@ -8,8 +8,11 @@ type Props = {
 };
 
 export const CdfCount = ({ type, filter }: Props) => {
-  const { data, isFetched } = useAggregate(type, filter);
-  if (isFetched) {
+  const { data, isFetched, isError } = useAggregate(type, filter);
+  if (isError) {
+    return null;
+  }
+  if (isFetched && data && data?.count > 0) {
     return (
       <Badge
         text={`${data?.count}`}
