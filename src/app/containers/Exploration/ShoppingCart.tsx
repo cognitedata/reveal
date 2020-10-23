@@ -295,7 +295,7 @@ export const ShoppingCartPreview = ({
                         alignSelf: 'center',
                         marginRight: '4px',
                       }}
-                      type="FolderLine"
+                      type="Document"
                     />
                     <span>{file ? file.name : 'Loading...'}</span>
                   </div>
