@@ -128,8 +128,9 @@ export function Migration() {
             revisionId: guiState.revisionId,
           }),
         screenshot: async () => {
-          const screenshotUrl = await viewer.getScreenshot();
-          window.open(screenshotUrl, '_blank');
+          const blob = await viewer.getScreenshot();
+          const tab = window.open()!;
+          tab.document.body.innerHTML = `<img src="${blob}">`;
         }
       };
 
