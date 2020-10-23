@@ -6954,10 +6954,10 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
-run-script-os@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/run-script-os/-/run-script-os-1.1.1.tgz#4b4c5fd212b52fe8d9a1bca23f118764ee423c6c"
-  integrity sha512-tM3mfchUIpo9WOFioO3eO/lTgRbtqcqBmSkkqfkjXmxn7vvhwykOXxOOKIXFP+ZConvLsS5KskM3yX+XBfDD4g==
+run-script-os@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/run-script-os/-/run-script-os-1.1.3.tgz#1069b418307f4fd36ff056b5eda309c273fca8b0"
+  integrity sha512-xPlzE6533nvWVea5z7e5J7+JAIepfpxTu/HLGxcjJYlemVukOCWJBaRCod/DWXJFRIWEFOgSGbjd2m1QWTJi5w==
 
 rxjs@^6.6.2, rxjs@^6.6.3:
   version "6.6.3"
