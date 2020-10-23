@@ -46,7 +46,8 @@ export function Filtering() {
         }
       };
       const revealOptions: RevealOptions = {
-        nodeAppearanceProvider
+        nodeAppearanceProvider,
+        logMetrics: false
       }
 
       let model: reveal.CadNode;
