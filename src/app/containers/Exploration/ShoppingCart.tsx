@@ -21,6 +21,7 @@ import {
   CogniteEvent,
   Sequence,
 } from '@cognite/sdk';
+import { useFlag } from '@cognite/react-feature-flags';
 import EmptyCartImage from 'app/assets/empty-cart.svg';
 import CartCollections from './CartCollections';
 
@@ -77,6 +78,8 @@ export const ShoppingCartPreview = ({
   const tenant = useTenant();
   const env = useEnv();
 
+  const showCollections = useFlag('COLLECTIONS_allowlist');
+
   const onDeleteClicked = (item: { id: number }) => {
     setCart(cart.filter(el => el.id !== item.id));
   };
@@ -112,10 +115,12 @@ export const ShoppingCartPreview = ({
                     {resource.header}
                   </ResourceTypeHeader>
                   <div className="spacer" />
-                  <CartCollections
-                    type={resource.type}
-                    items={resource.items}
-                  />
+                  {showCollections && (
+                    <CartCollections
+                      type={resource.type}
+                      items={resource.items}
+                    />
+                  )}
                 </SpacedRow>
                 {resource.items.map(item => (
                   <ListItem
@@ -135,6 +140,7 @@ export const ShoppingCartPreview = ({
                           }}
                           type="DataStudio"
                         />
+                        {/* Use id when item is event and item.name is undefined */}
                         <span>{item ? item.name || item.id : 'Loading'}</span>
                       </div>
                     }

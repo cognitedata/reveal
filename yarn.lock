@@ -1535,6 +1535,13 @@
     mixpanel-browser "^2.35.0"
     react "^16.13.1"
 
+"@cognite/react-feature-flags@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-0.0.1.tgz#67452b7e6213ea3ab2dd87e7b0feadf1bc07eb55"
+  integrity sha512-pWAKzxdQKls77acnQcNH/m22QWnxJz0fnIFVk+vj2x1tEUqYH7woXO+MqDeDa07ZU2IE/2ebD5r8ZSCkH7lFHg==
+  dependencies:
+    unleash-proxy-client "^1.0.1"
+
 "@cognite/react-picture-annotation@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.1.2.tgz#798d78a6ad62b8a46c77304285246857ed062d84"
@@ -17281,7 +17288,7 @@ timsort@^0.3.0:
   resolved "https://registry.yarnpkg.com/timsort/-/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
 
-tiny-emitter@^2.0.0:
+tiny-emitter@^2.0.0, tiny-emitter@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tiny-emitter/-/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
   integrity sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==
@@ -17706,6 +17713,13 @@ universalify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-1.0.0.tgz#b61a1da173e8435b2fe3c67d29b9adf8594bd16d"
   integrity sha512-rb6X1W158d7pRQBg5gkR8uPaSfiids68LTJQYOtEUhoJUWBdaQHsuT/EUduxXYxcrt4r5PJ4fuHW1MHT6p0qug==
+
+unleash-proxy-client@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/unleash-proxy-client/-/unleash-proxy-client-1.0.1.tgz#12131b305b462e6040a39a8b0d917526b0a547aa"
+  integrity sha512-Q7BsRI+vSH5ZbkIdRlRPqWwvK+mBeOvNfyFiokIBTaYBPi7QEGTuTFTEubszXb6BGS6zrkui6joF3EmLvOQBag==
+  dependencies:
+    tiny-emitter "^2.1.0"
 
 unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"

@@ -14,6 +14,7 @@
     "@cognite/gearbox": "^2.1.0",
     "@cognite/griff-react": "~0.4.2",
     "@cognite/metrics": "^0.1.7",
+    "@cognite/react-feature-flags": "^0.0.1",
     "@cognite/react-picture-annotation": "^1.1.2",
     "@cognite/sdk": "^3.1.1",
     "@cognite/sdk-provider": "^1.0.0",

@@ -9,6 +9,7 @@ import GlobalStyle from 'app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk from 'sdk-singleton';
 import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 import RootApp from 'app/containers/App';
 import AntStyles from 'app/styles/AntStyles';
@@ -60,11 +61,17 @@ export default () => {
             <ClientSDKProvider client={sdk}>
               <SDKProvider sdk={sdk}>
                 <ThemeProvider theme={theme}>
-                  <Router history={history}>
-                    <Switch>
-                      <Route path="/:tenant" component={RootApp} />
-                    </Switch>
-                  </Router>
+                  <FlagProvider
+                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                    appName="data-exploration"
+                    projectName={tenant}
+                  >
+                    <Router history={history}>
+                      <Switch>
+                        <Route path="/:tenant" component={RootApp} />
+                      </Switch>
+                    </Router>
+                  </FlagProvider>
                 </ThemeProvider>
                 <GlobalStyle theme={theme} />
               </SDKProvider>
