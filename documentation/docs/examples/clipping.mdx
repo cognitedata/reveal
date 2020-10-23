@@ -70,7 +70,7 @@ setInterval(() => {
   viewer.forceRerender();
 }, 1000 / 60);
 ```
-:::tip
+:::info
 Updating `THREE.Plane`-instances will not trigger data loading. Typically you will need to trigger data loading if
 you do substantial changes to the slicing planes. In these cases, use `Cognite3DViewer.setSlicingPlanes`. The example 
 above performs substantial changes to the planes without loading data. In a real application it's recommended to 
