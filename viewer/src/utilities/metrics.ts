@@ -49,27 +49,36 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
   }
 
   mixpanel.init(MIXPANEL_TOKEN, {
-    persistence: 'localStorage',
     disable_cookie: true,
     disable_persistence: true,
-    ip: false
+    // Don't send IP which disables geolocation
+    ip: false,
+    // Avoid sending a bunch of properties that might help identifying a user
+    property_blacklist: [
+      // https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel#profile-properties-javascript
+      '$city',
+      '$region',
+      'mp_country_code',
+      '$geo_source',
+      '$timezone',
+      'mp_lib',
+      '$lib_version',
+      '$device_id',
+      '$user_id',
+      '$current_url',
+      '$screen_width',
+      '$screen_height',
+      '$referrer',
+      '$referring_domain',
+      '$initial_referrer',
+      '$initial_referring_domain'
+    ]
   });
-
-  // https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel#profile-properties-javascript
-  mixpanel.people.set('$city', '<none>');
-  mixpanel.people.set('$region', '<none>');
-  mixpanel.people.set('mp_country_code', '<none>');
-  mixpanel.people.set('$geo_source', '<none>');
-  mixpanel.people.set('$timezone', '<none>');
-  mixpanel.people.set('mp_lib', '<none>');
-  mixpanel.people.set('$device_id', '<none>');
-  mixpanel.people.set('$user_id', '<none>');
-  mixpanel.people.set('$current_url', '<none>');
-  mixpanel.people.set('$screen_width', '<none>');
-  mixpanel.people.set('$screen_height', '<none>');
+  // Reset device ID (even if we don't send it)
+  mixpanel.reset();
 
   // Use a random identifier because we want to don't track users over multiple sessions to not
-  // violate GDPR
+  // violate GDPR. This overrides "distinct_id".
   const randomIdentifier = generateUuidv4();
   mixpanel.identify(randomIdentifier);
 
