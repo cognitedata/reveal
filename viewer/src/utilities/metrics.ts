@@ -54,6 +54,7 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
   mixpanel.identify(randomIdentifier);
 
   mixpanel.init(MIXPANEL_TOKEN, { persistence: 'localStorage' });
+  mixpanel.identify(randomIdentifier);
   if (project) {
     globalProps.project = project;
   }
