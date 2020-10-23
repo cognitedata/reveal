@@ -1136,10 +1136,14 @@ export class Cognite3DViewer {
       // @ts-expect-error
       const byteBudget: number = this._revealManager._cadManager._cadModelUpdateHandler._budget
         .geometryDownloadSizeBytes;
+      // @ts-expect-error
+      const spentBudget: number = this._revealManager._cadManager._cadModelUpdateHandler._sectorCuller.takenSectors
+        .totalCost;
+
       debugElement.innerText = `Near: ${near.toPrecision(5)} 
          Far: ${far.toPrecision(5)} 
          HighDetail: ${highDetailThreshold.toPrecision(3)}
-         Budget: ${(byteBudget / 1024 / 1024).toPrecision(2)} Mb
+         Spent/budget: ${(spentBudget / 1024 / 1024).toPrecision(2)}/${(byteBudget / 1024 / 1024).toPrecision(2)} Mb
         `;
     }
     // The minDistance of the camera controller determines at which distance
