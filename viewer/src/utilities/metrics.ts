@@ -48,7 +48,25 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
     return;
   }
 
-  mixpanel.init(MIXPANEL_TOKEN, { persistence: 'localStorage' });
+  mixpanel.init(MIXPANEL_TOKEN, {
+    persistence: 'localStorage',
+    disable_cookie: true,
+    disable_persistence: true,
+    ip: false
+  });
+
+  // https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel#profile-properties-javascript
+  mixpanel.people.set('$city', '<none>');
+  mixpanel.people.set('$region', '<none>');
+  mixpanel.people.set('mp_country_code', '<none>');
+  mixpanel.people.set('$geo_source', '<none>');
+  mixpanel.people.set('$timezone', '<none>');
+  mixpanel.people.set('mp_lib', '<none>');
+  mixpanel.people.set('$device_id', '<none>');
+  mixpanel.people.set('$user_id', '<none>');
+  mixpanel.people.set('$current_url', '<none>');
+  mixpanel.people.set('$screen_width', '<none>');
+  mixpanel.people.set('$screen_height', '<none>');
 
   // Use a random identifier because we want to don't track users over multiple sessions to not
   // violate GDPR
