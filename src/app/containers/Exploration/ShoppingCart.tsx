@@ -12,7 +12,7 @@ import {
 import { ListItem, SpacedRow } from 'lib/components';
 import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'lib/hooks/CustomHooks';
-import { ResourceItem } from 'lib/types';
+import { ResourceItem, ResourceType } from 'lib/types';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import {
   FileInfo,
@@ -62,6 +62,18 @@ export const ShoppingCartPreview = ({
     sequenceIds
   );
 
+  const resources: {
+    type: ResourceType;
+    header: string;
+    items: any[];
+  }[] = [
+    { type: 'asset', header: 'Assets', items: assets },
+    { type: 'file', header: 'Files', items: files },
+    { type: 'event', header: 'Events', items: events },
+    { type: 'timeSeries', header: 'Timeseries', items: timeseries },
+    { type: 'sequence', header: 'Sequences', items: sequences },
+  ];
+
   const tenant = useTenant();
   const env = useEnv();
 
@@ -91,171 +103,47 @@ export const ShoppingCartPreview = ({
         </EmptyCart>
       ) : (
         <div style={{ height: '400px', overflowY: 'auto' }}>
-          {assets.length > 0 && (
-            <ResourceTypeSection>
-              <SpacedRow>
-                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                  Assets
-                </ResourceTypeHeader>
-                <div className="spacer" />
-                <CartCollections type="asset" items={assets} />
-              </SpacedRow>
-              {assets.map(asset => (
-                <ListItem
-                  key={asset.id}
-                  bordered
-                  title={
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
+          {resources
+            .filter(resource => resource.items.length > 0)
+            .map(resource => (
+              <ResourceTypeSection key={resource.header}>
+                <SpacedRow>
+                  <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
+                    {resource.header}
+                  </ResourceTypeHeader>
+                  <div className="spacer" />
+                  <CartCollections
+                    type={resource.type}
+                    items={resource.items}
+                  />
+                </SpacedRow>
+                {resource.items.map(item => (
+                  <ListItem
+                    key={item.id}
+                    bordered
+                    title={
+                      <div
                         style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
                         }}
-                        type="DataStudio"
-                      />
-                      <span>{asset ? asset.name : 'Loading'}</span>
-                    </div>
-                  }
-                >
-                  {renderDeleteItemButton(asset)}
-                </ListItem>
-              ))}
-            </ResourceTypeSection>
-          )}
-          {timeseries.length > 0 && (
-            <ResourceTypeSection>
-              <SpacedRow>
-                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                  Time series
-                </ResourceTypeHeader>
-                <div className="spacer" />
-                <CartCollections type="timeSeries" items={timeseries} />
-              </SpacedRow>
-              {timeseries.map(ts => (
-                <ListItem
-                  key={ts.id}
-                  bordered
-                  title={
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
-                        style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
-                        }}
-                        type="Timeseries"
-                      />
-                      <span>{ts ? ts.name : 'Loading...'}</span>
-                    </div>
-                  }
-                >
-                  {renderDeleteItemButton(ts)}
-                </ListItem>
-              ))}
-            </ResourceTypeSection>
-          )}
-          {files.length > 0 && (
-            <ResourceTypeSection>
-              <SpacedRow>
-                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                  Files
-                </ResourceTypeHeader>
-                <div className="spacer" />
-                <CartCollections type="file" items={files} />
-              </SpacedRow>
-              {files.map(file => (
-                <ListItem
-                  key={file.id}
-                  bordered
-                  title={
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
-                        style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
-                        }}
-                        type="Document"
-                      />
-                      <span>{file ? file.name : 'Loading...'}</span>
-                    </div>
-                  }
-                >
-                  {renderDeleteItemButton(file)}
-                </ListItem>
-              ))}
-            </ResourceTypeSection>
-          )}
-          {events.length > 0 && (
-            <ResourceTypeSection>
-              <SpacedRow>
-                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                  Events
-                </ResourceTypeHeader>
-                <div className="spacer" />
-                <CartCollections type="event" items={events} />
-              </SpacedRow>
-              {events.map(event => (
-                <ListItem
-                  key={event.id}
-                  bordered
-                  title={
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
-                        style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
-                        }}
-                        type="Events"
-                      />
-                      <span>{event ? event.id : 'Loading'}</span>
-                    </div>
-                  }
-                >
-                  {renderDeleteItemButton(event)}
-                </ListItem>
-              ))}
-            </ResourceTypeSection>
-          )}
-          {sequences.length > 0 && (
-            <ResourceTypeSection>
-              <SpacedRow>
-                <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
-                  Sequences
-                </ResourceTypeHeader>
-                <div className="spacer" />
-                <CartCollections type="sequence" items={sequences} />
-              </SpacedRow>
-              {sequences.map(sequence => (
-                <ListItem
-                  key={sequence.id}
-                  bordered
-                  title={
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
-                        style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
-                        }}
-                        type="Duplicate"
-                      />
-                      <span>{sequence ? sequence.name : 'Loading'}</span>
-                    </div>
-                  }
-                >
-                  {renderDeleteItemButton(sequence)}
-                </ListItem>
-              ))}
-            </ResourceTypeSection>
-          )}
+                      >
+                        <Icon
+                          style={{
+                            alignSelf: 'center',
+                            marginRight: '4px',
+                          }}
+                          type="DataStudio"
+                        />
+                        <span>{item ? item.name || item.id : 'Loading'}</span>
+                      </div>
+                    }
+                  >
+                    {renderDeleteItemButton(item)}
+                  </ListItem>
+                ))}
+              </ResourceTypeSection>
+            ))}
         </div>
       )}
       <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>

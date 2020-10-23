@@ -18,7 +18,7 @@ const CartCollections = ({
   const { data: collections } = useCollections();
   const [updateCollections] = useUpdateCollections();
 
-  const currentCollections = (collections || []).filter(
+  const resourceCollections = (collections || []).filter(
     collection => collection.type === type
   );
 
@@ -58,7 +58,7 @@ const CartCollections = ({
         <Menu>
           <Menu.Header>
             <Overline level={2}>COLLECTIONS</Overline>
-            {currentCollections.map(collection => {
+            {resourceCollections.map(collection => {
               const containsItems = collectionContainsItems(collection);
               return (
                 <Menu.Item
