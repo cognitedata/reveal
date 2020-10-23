@@ -26,6 +26,7 @@ export type OnLoadingCallback = (itemsDownloaded: number, itemsRequested: number
  * @module @cognite/reveal
  */
 export interface Cognite3DViewerOptions {
+  /** Initialized connection to CDF used to load data. */
   sdk: CogniteClient;
 
   /** An existing DOM element that we will render canvas into. */

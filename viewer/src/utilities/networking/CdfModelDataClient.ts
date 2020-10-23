@@ -8,6 +8,7 @@ import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat, CameraConfiguration } from '../types';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
+import { getSdkApplicationId } from './utilities';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -18,6 +19,7 @@ import { applyDefaultModelTransformation } from './applyDefaultModelTransformati
 export class CdfModelDataClient
   implements ModelDataClient<{ modelId: number; revisionId: number; format: File3dFormat }> {
   private readonly client: CogniteClient;
+  private appId: string | undefined;
 
   constructor(client: CogniteClient) {
     this.client = client;
@@ -105,6 +107,13 @@ export class CdfModelDataClient
       };
     }
     return undefined;
+  }
+
+  public getApplicationIdentifier(): string {
+    if (this.appId === undefined) {
+      this.appId = getSdkApplicationId(this.client);
+    }
+    return this.appId;
   }
 
   private buildBlobRequestPath(blobId: number): string {
