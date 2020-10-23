@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {
   Icon,
@@ -12,7 +12,7 @@ import {
 import { ListItem, SpacedRow } from 'lib/components';
 import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'lib/hooks/CustomHooks';
-import { ResourceItem, ResourceType } from 'lib/types';
+import { ResourceItem } from 'lib/types';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import {
   FileInfo,
@@ -21,12 +21,8 @@ import {
   CogniteEvent,
   Sequence,
 } from '@cognite/sdk';
-import {
-  useCollections,
-  Collection,
-  useUpdateCollections,
-} from 'lib/hooks/CollectionsHooks';
 import EmptyCartImage from 'app/assets/empty-cart.svg';
+import CartCollections from './CartCollections';
 
 export const ShoppingCartPreview = ({
   cart,
@@ -69,41 +65,6 @@ export const ShoppingCartPreview = ({
   const tenant = useTenant();
   const env = useEnv();
 
-  const { data: collections } = useCollections();
-  const [updateCollections] = useUpdateCollections();
-
-  const [
-    assetCollections,
-    fileCollections,
-    eventCollections,
-    tsCollections,
-    sequenceCollections,
-  ] = useMemo(() => {
-    return (collections || []).reduce(
-      (prev, el) => {
-        switch (el.type) {
-          case 'asset':
-            prev[0].push(el);
-            break;
-          case 'file':
-            prev[1].push(el);
-            break;
-          case 'event':
-            prev[2].push(el);
-            break;
-          case 'timeSeries':
-            prev[3].push(el);
-            break;
-          case 'sequence':
-            prev[4].push(el);
-            break;
-        }
-        return prev;
-      },
-      [[], [], [], [], []] as Collection[][]
-    );
-  }, [collections]);
-
   const onDeleteClicked = (item: { id: number }) => {
     setCart(cart.filter(el => el.id !== item.id));
   };
@@ -118,99 +79,6 @@ export const ShoppingCartPreview = ({
       onClick={() => onDeleteClicked(item)}
     />
   );
-
-  const addToCollection = (
-    collection: Collection,
-    currentItems: { id: number }[]
-  ) => {
-    updateCollections([
-      {
-        id: collection.id,
-        update: {
-          operationBody: {
-            items: collection.operationBody.items.concat(
-              currentItems
-                .filter(
-                  asset =>
-                    !collection.operationBody.items.some(
-                      (item: any) => item.id === asset.id
-                    )
-                )
-                .map(({ id }) => ({ id }))
-            ),
-          },
-        },
-      },
-    ]);
-  };
-
-  const collectionContainsItems = (
-    collection: Collection,
-    items: { id: number }[]
-  ) =>
-    items.every(item =>
-      collection.operationBody.items.some((el: any) => el.id === item.id)
-    );
-
-  const generateButton = (type: ResourceType) => {
-    let renderedCollections;
-    let currentItems: { id: number }[];
-    switch (type) {
-      case 'asset':
-        renderedCollections = assetCollections;
-        currentItems = assets;
-        break;
-      case 'file':
-        renderedCollections = fileCollections;
-        currentItems = files;
-        break;
-      case 'event':
-        renderedCollections = eventCollections;
-        currentItems = events;
-        break;
-      case 'timeSeries':
-        renderedCollections = tsCollections;
-        currentItems = timeseries;
-        break;
-      case 'sequence':
-        renderedCollections = sequenceCollections;
-        currentItems = sequences;
-        break;
-    }
-    return (
-      <Dropdown
-        content={
-          <Menu>
-            <Menu.Header>
-              <Overline level={2}>COLLECTIONS</Overline>
-              {renderedCollections.map(collection => {
-                const containsItems = collectionContainsItems(
-                  collection,
-                  currentItems
-                );
-                return (
-                  <Menu.Item
-                    key={collection.id}
-                    disabled={containsItems}
-                    onClick={() => addToCollection(collection, currentItems)}
-                  >
-                    <CollectionItem>
-                      {collection.name}
-                      {containsItems && <Icon type="Check" />}
-                    </CollectionItem>
-                  </Menu.Item>
-                );
-              })}
-            </Menu.Header>
-          </Menu>
-        }
-      >
-        <Button size="small" variant="ghost">
-          Add to
-        </Button>
-      </Dropdown>
-    );
-  };
 
   return (
     <div style={{ width: 300, position: 'relative' }}>
@@ -230,7 +98,7 @@ export const ShoppingCartPreview = ({
                   Assets
                 </ResourceTypeHeader>
                 <div className="spacer" />
-                {generateButton('asset')}
+                <CartCollections type="asset" items={assets} />
               </SpacedRow>
               {assets.map(asset => (
                 <ListItem
@@ -263,7 +131,7 @@ export const ShoppingCartPreview = ({
                   Time series
                 </ResourceTypeHeader>
                 <div className="spacer" />
-                {generateButton('timeSeries')}
+                <CartCollections type="timeSeries" items={timeseries} />
               </SpacedRow>
               {timeseries.map(ts => (
                 <ListItem
@@ -296,7 +164,7 @@ export const ShoppingCartPreview = ({
                   Files
                 </ResourceTypeHeader>
                 <div className="spacer" />
-                {generateButton('file')}
+                <CartCollections type="file" items={files} />
               </SpacedRow>
               {files.map(file => (
                 <ListItem
@@ -329,7 +197,7 @@ export const ShoppingCartPreview = ({
                   Events
                 </ResourceTypeHeader>
                 <div className="spacer" />
-                {generateButton('event')}
+                <CartCollections type="event" items={events} />
               </SpacedRow>
               {events.map(event => (
                 <ListItem
@@ -362,7 +230,7 @@ export const ShoppingCartPreview = ({
                   Sequences
                 </ResourceTypeHeader>
                 <div className="spacer" />
-                {generateButton('sequence')}
+                <CartCollections type="sequence" items={sequences} />
               </SpacedRow>
               {sequences.map(sequence => (
                 <ListItem
@@ -459,17 +327,11 @@ export const ShoppingCartPreview = ({
   );
 };
 
-const CollectionItem = styled.div`
-  justify-content: space-between;
-  width: 100%;
-  display: flex;
-`;
-
 const ResourceTypeHeader = styled(Overline)`
   margin-top: 8px;
 `;
 
-const ResourceTypeSection = styled(Overline)`
+const ResourceTypeSection = styled.div`
   margin-bottom: 8px;
 `;
 
