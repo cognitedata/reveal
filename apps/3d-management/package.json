@@ -70,7 +70,7 @@
     "@rescripts/rescript-use-babel-config": "^0.0.10",
     "@storybook/preset-create-react-app": "^3.1.4",
     "@storybook/react": "^6.0.27",
-    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@types/enzyme": "^3.10.7",
     "@types/enzyme-adapter-react-16": "^1.0.6",
