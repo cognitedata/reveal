@@ -130,7 +130,10 @@ export function Migration() {
         screenshot: async () => {
           const blob = await viewer.getScreenshot();
           const tab = window.open()!;
-          tab.document.body.innerHTML = `<img src="${blob}">`;
+          tab.document.body.innerHTML = `
+            <img src="${blob}">
+            <p>Near: ${(viewer.getCamera() as THREE.PerspectiveCamera).near} Far: ${(viewer.getCamera() as THREE.PerspectiveCamera).far}</p>
+          `;
         }
       };
 
