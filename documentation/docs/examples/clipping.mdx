@@ -98,7 +98,6 @@ const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, point);
 viewer.setSlicingPlanes([plane]);
 
-
 const controls = new DragControls([mesh], viewer.getCamera(), viewer.domElement);
 controls.addEventListener('drag', () => {
   // Fix XZ-poistion
@@ -109,22 +108,4 @@ controls.addEventListener('drag', () => {
 });
 controls.addEventListener('dragstart', () => viewer.cameraControlsEnabled = false);
 controls.addEventListener('dragend', () => viewer.cameraControlsEnabled = true);
-/*
-const transformControls = new TransformControls(viewer.getCamera(), viewer.domElement);
-// Rerender whenever controls is moved
-transformControls.addEventListener('change', () => {
-  viewer.forceRerender();
-  plane.setFromNormalAndCoplanarPoint(orientation, mesh.position);
-});
-// Temporarily disable navigation when control manipulation starts
-transformControls.addEventListener('mouseDown', () => {
-  viewer.cameraControlsEnabled = false;
-});
-transformControls.addEventListener('mouseUp', () => {
-  viewer.cameraControlsEnabled = true;
-  viewer.setSlicingPlanes([plane]); // Trigger load after manipulation ends
-});
-transformControls.attach(mesh);
-viewer.addObject3D(transformControls);
-*/
 ```
