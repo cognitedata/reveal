@@ -50,7 +50,7 @@ export enum PotreePointSizeType {
 export enum WellKnownAsprsPointClassCodes {
   /**
    * Special value for all other classes. Some point in Potree might be in this class
-   * 
+   *
    */
   Default = -1,
   /**
@@ -68,7 +68,7 @@ export enum WellKnownAsprsPointClassCodes {
    */
   LowPoint = 7,
   /**
-   * In previous revisions of LAS this was High point ("high noise"), in more recent 
+   * In previous revisions of LAS this was High point ("high noise"), in more recent
    * revisions this value is reserved.
    */
   ReservedOrHighPoint = 8,
