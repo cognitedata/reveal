@@ -16,6 +16,7 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
+import { getuid } from 'process';
 
 window.THREE = THREE;
 
@@ -134,6 +135,13 @@ export function Migration() {
             <img src="${blob}">
             <p>Near: ${(viewer.getCamera() as THREE.PerspectiveCamera).near} Far: ${(viewer.getCamera() as THREE.PerspectiveCamera).far}</p>
           `;
+        },
+        debugCuller: () => {
+          // @ts-ignore
+          const debugElement: HTMLCanvasElement = viewer._revealManager._cadManager._cadModelUpdateHandler._sectorCuller.options.coverageUtil.createDebugCanvas(
+            { width: 320, height: 400 }
+          );
+          document.body.appendChild(debugElement);
         }
       };
 
@@ -146,6 +154,7 @@ export function Migration() {
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'screenshot').name('Screenshot');
+      gui.add(guiActions, 'debugCuller').name('Culler canvas');
 
       const slicing = gui.addFolder('Slicing');
       slicing

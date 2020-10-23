@@ -1130,7 +1130,7 @@ export class Cognite3DViewer {
 
     const debugElement = document.getElementById('debug');
     if (debugElement) {
-      debugElement.innerText = `Near: ${near} Far: ${far}`;
+      debugElement.innerText = `Near: ${near.toPrecision(1)} Far: ${far.toPrecision(1)}`;
     }
     // The minDistance of the camera controller determines at which distance
     // we will push the target in front of us instead of getting closer to it.
