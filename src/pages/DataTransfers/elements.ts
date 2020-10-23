@@ -69,6 +69,17 @@ export const SecondaryFilters = styled.div`
     margin-top: 0;
     margin-left: auto;
   }
+
+  .cogs-input-container {
+    .title {
+      font-size: 0.88rem;
+      line-height: 1.4rem;
+      font-weight: 500;
+      color: var(--cogs-greyscale-grey10);
+      display: block;
+      margin-bottom: 4px;
+    }
+  }
 `;
 
 export const CalendarWrapper = styled.div`

@@ -272,6 +272,9 @@ const DataTransfers: React.FC = () => {
     DataTransfersReducer,
     initialDataTransfersState
   );
+  const [filteredData, setFilteredData] = useState<DataTransferObject[]>(
+    data.data
+  );
   const [sources, setSources] = useState<string[]>([]);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
@@ -611,6 +614,11 @@ const DataTransfers: React.FC = () => {
   }, [api]);
 
   useEffect(() => {
+    setFilteredData(data.data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  useEffect(() => {
     if (token && token !== 'NO_TOKEN') {
       clearData();
       setSelectedSourceProject(null);
@@ -671,6 +679,7 @@ const DataTransfers: React.FC = () => {
       );
       if (selectedConfig) {
         setSelectedConfiguration(selectedConfig);
+        fetchDatatypes();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -685,6 +694,7 @@ const DataTransfers: React.FC = () => {
       }
       clearData();
       fetchDataTransfers();
+      fetchDatatypes();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConfiguration]);
@@ -736,6 +746,9 @@ const DataTransfers: React.FC = () => {
         message = 'Select source project';
       }
     }
+    if (selectedConfiguration && data.data.length < 1) {
+      message = 'No data';
+    }
 
     return (
       <EmptyTableMessage
@@ -743,6 +756,16 @@ const DataTransfers: React.FC = () => {
         isLoading={status === ProgressState.LOADING}
       />
     );
+  }
+
+  function filterByNameSearch(name: string) {
+    let filtered = data.data;
+    if (name.length > 0) {
+      filtered = data.data.filter((item) =>
+        item.name.toLowerCase().includes(name.toLowerCase())
+      );
+    }
+    setFilteredData(filtered);
   }
 
   if (!sources) {
@@ -790,6 +813,7 @@ const DataTransfers: React.FC = () => {
             }}
             filterByProjects={filterByProjects}
             setFilterByProjects={setFilterByProjects}
+            onNameSearchChange={filterByNameSearch}
           />
         )}
         {(selectedConfiguration || selectedSourceProject) && (
@@ -818,7 +842,7 @@ const DataTransfers: React.FC = () => {
         )}
       </TableActions>
       <Table
-        dataSource={data.data}
+        dataSource={filteredData}
         columns={sortBy(data.columns, (obj) =>
           indexOf(config.columnOrder, obj.key)
         )}
