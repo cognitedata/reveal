@@ -1127,6 +1127,11 @@ export class Cognite3DViewer {
     camera.near = near;
     camera.far = far;
     camera.updateProjectionMatrix();
+
+    const debugElement = document.getElementById('debug');
+    if (debugElement) {
+      debugElement.innerText = `Near: ${near} Far: ${far}`;
+    }
     // The minDistance of the camera controller determines at which distance
     // we will push the target in front of us instead of getting closer to it.
     // This is also used to determine the speed of the camera when flying with ASDW.

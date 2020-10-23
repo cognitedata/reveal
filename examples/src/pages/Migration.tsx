@@ -281,5 +281,11 @@ export function Migration() {
       viewer?.dispose();
     };
   });
-  return <CanvasWrapper ref={canvasWrapperRef} />;
+  return (
+    <div>
+      <p id='debug'></p>
+      <CanvasWrapper ref={canvasWrapperRef} />;
+    </div>
+  );
+    
 }
