@@ -12,7 +12,7 @@ import {
   LoadingStateChangeListener
 } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
-import { map, share, filter, observeOn, subscribeOn, throttleTime, tap, auditTime } from 'rxjs/operators';
+import { map, share, filter, observeOn, subscribeOn, tap, auditTime } from 'rxjs/operators';
 import { trackError, trackLoadModel, trackNavigation } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
@@ -20,7 +20,6 @@ import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderMana
 import { SupportedModelTypes } from '@/datamodels/base';
 import { LoadingState } from '@/utilities';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
-import { throttle } from 'lodash';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
