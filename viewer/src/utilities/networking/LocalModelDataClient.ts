@@ -36,4 +36,8 @@ export class LocalModelDataClient implements ModelDataClient<{ fileName: string 
   getModelCamera(_identifier: { fileName: string }): Promise<CameraConfiguration | undefined> {
     return Promise.resolve(undefined);
   }
+
+  getApplicationIdentifier(): string {
+    return 'LocalClient';
+  }
 }

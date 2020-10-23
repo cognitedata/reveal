@@ -47,4 +47,9 @@ export interface ModelDataClient<TModelIdentifier>
     ModelCameraConfigurationProvider<TModelIdentifier>,
     JsonFileProvider,
     BinaryFileProvider,
-    HttpHeadersProvider {}
+    HttpHeadersProvider {
+  /**
+   * Returns an identifier that can be used to identify the application Reveal is used in.
+   */
+  getApplicationIdentifier(): string;
+}
