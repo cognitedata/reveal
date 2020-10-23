@@ -1,4 +1,4 @@
 // used both at runtime and build time
 module.exports = {
-  styleScope: 'unified-cdf-demo-app-style-scope',
+  styleScope: 'cdf-integrations-ui-style-scope',
 };

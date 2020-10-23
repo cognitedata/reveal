@@ -11,7 +11,7 @@
       [
         "@cognite/babel-plugin-styled-components",
         {
-          "namespace": "workflow-orchestration",
+          "namespace": "cdf-integrations-ui",
           "fileName": false
         }
       ]
