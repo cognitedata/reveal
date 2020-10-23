@@ -61,7 +61,7 @@ export interface OrderSectorsByVisibilityCoverage {
    * Dispose any resources that cannot be garbage collected.
    */
   dispose(): void;
-  
+
   /**
    * Specifies what CAD models to estimate sector visibility for.
    * @param models Models to estimate sector visibility for.

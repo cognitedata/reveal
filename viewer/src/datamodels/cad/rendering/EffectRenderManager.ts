@@ -145,11 +145,11 @@ export class EffectRenderManager {
       renderer.info.autoReset = false;
       renderer.info.reset();
       renderer.autoClear = false;
-      
+
       // Clear targets
       this.clearTarget(renderer, this._ghostObjectRenderTarget);
       this.clearTarget(renderer, this._compositionTarget);
-      this.clearTarget(renderer, this._customObjectRenderTarget);      
+      this.clearTarget(renderer, this._customObjectRenderTarget);
       // We use alpha to store special state for the next targets
       renderer.setClearAlpha(0.0);
       this.clearTarget(renderer, this._inFrontRenderedCadModelTarget);
@@ -165,14 +165,14 @@ export class EffectRenderManager {
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
       } else if (!hasBackElements && hasGhostElements) {
         this.renderGhostedCadModelsFromBaseScene(renderer, camera);
-      } 
+      }
 
       if (hasInFrontElements) {
         this.renderInFrontCadModels(renderer, camera);
         this._inFrontSceneBuilder.restoreOriginalScene();
-      } 
+      }
       this.renderCustomObjects(renderer, scene, camera);
-      
+
       // Composite view
       this.renderComposition(renderer, camera);
 

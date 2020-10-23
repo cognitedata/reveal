@@ -15,7 +15,7 @@ describe('RevealManager', () => {
     determineSectors: jest.fn(),
     dispose: jest.fn()
   };
-  let manager: RevealManager<{id: number}>;
+  let manager: RevealManager<{ id: number }>;
 
   beforeEach(() => {
     jest.clearAllMocks();
