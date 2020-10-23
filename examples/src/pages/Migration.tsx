@@ -126,7 +126,11 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
-          })
+          }),
+        screenshot: async () => {
+          const screenshotUrl = await viewer.getScreenshot();
+          window.open(screenshotUrl, '_blank');
+        }
       };
 
       const settingsGui = gui.addFolder('settings');
@@ -137,6 +141,7 @@ export function Migration() {
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
+      gui.add(guiActions, 'screenshot').name('Screenshot');
 
       const slicing = gui.addFolder('Slicing');
       slicing
