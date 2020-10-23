@@ -49,7 +49,7 @@ export function Picking() {
         }
       };
 
-      const revealOptions: RevealOptions = { nodeAppearanceProvider };
+      const revealOptions: RevealOptions = { nodeAppearanceProvider, logMetrics: false };
       let model: reveal.CadNode;
       if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, revealOptions);

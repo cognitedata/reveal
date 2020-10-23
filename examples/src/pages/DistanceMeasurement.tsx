@@ -80,10 +80,10 @@ export function DistanceMeasurement() {
 
       let model: CadNode;
       if(modelRevision) {
-        revealManager = createCdfRevealManager(client);
+        revealManager = createCdfRevealManager(client, { logMetrics: false });
         model = await revealManager.addModel('cad', modelRevision);
       } else if (modelUrl) {
-        revealManager = createLocalRevealManager();
+        revealManager = createLocalRevealManager({ logMetrics: false });
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
