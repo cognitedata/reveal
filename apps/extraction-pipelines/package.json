@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=8000 rescripts start",
+    "start": "BROWSER=none WDS_SOCKET_PORT=3015 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3015 rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
     "generate-preview-artifacts": "cdf-ui-cli -pr -b cdf-hub-production -p @cognite/cdf-demo-app -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
