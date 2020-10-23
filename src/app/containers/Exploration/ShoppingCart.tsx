@@ -214,11 +214,11 @@ export const ShoppingCartPreview = ({
     <div style={{ width: 300, position: 'relative' }}>
       <div style={{ height: '400px', overflowY: 'auto' }}>
         {assets.length > 0 && (
-          <>
+          <ResourceTypeSection>
             <SpacedRow>
-              <Overline level={2} style={{ marginBottom: 8 }}>
+              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
                 Assets
-              </Overline>
+              </ResourceTypeHeader>
               <div className="spacer" />
               {generateButton('asset')}
             </SpacedRow>
@@ -242,14 +242,14 @@ export const ShoppingCartPreview = ({
                 {renderDeleteItemButton(asset)}
               </ListItem>
             ))}
-          </>
+          </ResourceTypeSection>
         )}
         {timeseries.length > 0 && (
-          <>
+          <ResourceTypeSection>
             <SpacedRow>
-              <Overline level={2} style={{ marginBottom: 8 }}>
+              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
                 Time series
-              </Overline>
+              </ResourceTypeHeader>
               <div className="spacer" />
               {generateButton('timeSeries')}
             </SpacedRow>
@@ -273,14 +273,14 @@ export const ShoppingCartPreview = ({
                 {renderDeleteItemButton(ts)}
               </ListItem>
             ))}
-          </>
+          </ResourceTypeSection>
         )}
         {files.length > 0 && (
-          <>
+          <ResourceTypeSection>
             <SpacedRow>
-              <Overline level={2} style={{ marginBottom: 8 }}>
+              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
                 Files
-              </Overline>
+              </ResourceTypeHeader>
               <div className="spacer" />
               {generateButton('file')}
             </SpacedRow>
@@ -304,14 +304,14 @@ export const ShoppingCartPreview = ({
                 {renderDeleteItemButton(file)}
               </ListItem>
             ))}
-          </>
+          </ResourceTypeSection>
         )}
         {events.length > 0 && (
-          <>
+          <ResourceTypeSection>
             <SpacedRow>
-              <Overline level={2} style={{ marginBottom: 8 }}>
+              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
                 Events
-              </Overline>
+              </ResourceTypeHeader>
               <div className="spacer" />
               {generateButton('event')}
             </SpacedRow>
@@ -335,14 +335,14 @@ export const ShoppingCartPreview = ({
                 {renderDeleteItemButton(event)}
               </ListItem>
             ))}
-          </>
+          </ResourceTypeSection>
         )}
         {sequences.length > 0 && (
-          <>
+          <ResourceTypeSection>
             <SpacedRow>
-              <Overline level={2} style={{ marginBottom: 8 }}>
+              <ResourceTypeHeader level={2} style={{ marginBottom: 8 }}>
                 Sequences
-              </Overline>
+              </ResourceTypeHeader>
               <div className="spacer" />
               {generateButton('sequence')}
             </SpacedRow>
@@ -366,7 +366,7 @@ export const ShoppingCartPreview = ({
                 {renderDeleteItemButton(sequence)}
               </ListItem>
             ))}
-          </>
+          </ResourceTypeSection>
         )}
       </div>
       <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
@@ -441,6 +441,14 @@ const CollectionItem = styled.div`
   justify-content: space-between;
   width: 100%;
   display: flex;
+`;
+
+const ResourceTypeHeader = styled(Overline)`
+  margin-top: 8px;
+`;
+
+const ResourceTypeSection = styled(Overline)`
+  margin-bottom: 8px;
 `;
 
 // https://api.cognitedata.com/odata/v1/projects/contextualization/Assets?$filter=(Id eq 51865490571) or (Id eq 52579923080)
