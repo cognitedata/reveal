@@ -29,6 +29,17 @@ const globalProps = {
   application: 'unknown'
 };
 
+/**
+ * Source: https://stackoverflow.com/a/2117523/167251
+ */
+function generateUuidv4(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 export function initMetrics(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps) {
   // Even though mixpanel has an opt out property, the mixpanel object
   // used by Metrics is not available here, so we have our own way of opting out.
@@ -36,6 +47,12 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
   if (!globalLogMetrics) {
     return;
   }
+
+  // Use a random identifier because we want to don't track users over multiple sessions to not
+  // violate GDPR
+  const randomIdentifier = generateUuidv4();
+  mixpanel.identify(randomIdentifier);
+
   mixpanel.init(MIXPANEL_TOKEN, { persistence: 'localStorage' });
   if (project) {
     globalProps.project = project;
