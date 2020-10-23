@@ -48,13 +48,13 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
     return;
   }
 
+  mixpanel.init(MIXPANEL_TOKEN, { persistence: 'localStorage' });
+
   // Use a random identifier because we want to don't track users over multiple sessions to not
   // violate GDPR
   const randomIdentifier = generateUuidv4();
   mixpanel.identify(randomIdentifier);
 
-  mixpanel.init(MIXPANEL_TOKEN, { persistence: 'localStorage' });
-  mixpanel.identify(randomIdentifier);
   if (project) {
     globalProps.project = project;
   }
