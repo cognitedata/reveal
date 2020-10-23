@@ -277,7 +277,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
-    // TODO 2020-08-13 larsmoa: Implement getBoundingBoxByTreeIndex
     const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
     if (response.length < 1) {
       throw new Error('NodeId not found');
