@@ -105,10 +105,30 @@ export interface Configuration {
     external_id: string;
     source: Source;
   };
-  business_tags: string[];
+  business_tags?: string[];
   author: string;
   status_active?: boolean;
   datatypes: string[];
+}
+
+export interface ConfigurationOWtoPS {
+  source: {
+    external_id: string;
+    source: Source;
+  };
+  target: {
+    external_id: string;
+    source: Source;
+  };
+  author: string;
+  name: string | null | undefined;
+  well_plan: number[];
+  targets: number[];
+  ow_to_studio_config: {
+    folder?: string | null | undefined;
+    session_name?: string | null | undefined;
+    tag_name?: string | null | undefined;
+  };
 }
 
 export enum SessionType {

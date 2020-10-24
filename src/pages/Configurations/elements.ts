@@ -212,16 +212,6 @@ export const ContainerHeading = styled.div`
   font-size: 1rem;
 `;
 
-export const ConfigurationArrow = styled.div`
-  padding: 48px;
-  display: flex;
-  justify-content: center;
-  & > svg {
-    width: 75%;
-    stroke: var(--cogs-greyscale-grey5);
-  }
-`;
-
 export const BadgesContainer = styled.div`
   margin-top: 0.75rem;
 `;
@@ -272,12 +262,16 @@ export const ConnectorList = styled.ul<{
   }
 `;
 
-export const BorderedBottomContainer = styled.div`
+export const BorderedBottomContainer = styled.div<{ leftPad?: boolean }>`
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   padding-bottom: 1rem;
-  padding-left: 1rem;
+  padding-left: ${(props) => (props.leftPad ? '1rem' : '0')};
   margin-bottom: 1rem;
 `;
+
+BorderedBottomContainer.defaultProps = {
+  leftPad: true,
+};
 
 export const EditButton = styled(Button)`
   float: right;

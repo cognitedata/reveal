@@ -12,10 +12,8 @@ import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
-
 import {
   BadgesContainer,
-  ConfigurationArrow,
   ConfigurationContainer,
   ConfigurationsMainContainer,
   ConnectionLinesWrapper,
@@ -30,6 +28,7 @@ import {
 } from '../elements';
 import { makeConnectorLines } from './utils';
 import { CloseIcon } from '../../../components/Organisms/DetailView/elements';
+import ConfigArrow from './ConfigArrow';
 
 type Props = {
   name: string | undefined | null;
@@ -408,20 +407,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
               </main>
             )}
           </ConfigurationContainer>
-          <ConfigurationArrow>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 300 31"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="4"
-                d="M2 16.6337h296L283.383 2M2 16.6337h296l-14.617 11.973"
-              />
-            </svg>
-          </ConfigurationArrow>
+          <ConfigArrow />
           <ConfigurationContainer>
             <header>
               <ContainerHeading>OpenWorks</ContainerHeading>
@@ -438,7 +424,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
               )}
             </header>
             {targetUIState === ConfigUIState.INITIAL && (
-              <main>
+              <main className="initial-main">
                 <InitialState>
                   <p>No destination project selected</p>
                   <Button
