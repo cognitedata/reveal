@@ -1,15 +1,6 @@
 import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 
-export const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 32px;
-  & h2 {
-    font-size: 16px;
-  }
-`;
-
 export const CloseIcon = styled(Icon)`
   cursor: pointer;
 `;
@@ -21,8 +12,6 @@ export const Content = styled.div`
     display: none;
   }
 `;
-
-export const TextArea = styled.textarea``;
 
 export const Section = styled.section`
   margin-bottom: 24px;
@@ -37,41 +26,51 @@ export const Section = styled.section`
     }
     & > div {
       margin: 16px 0 0 16px;
-      & h3 {
-        padding-left: 16px;
-        margin-bottom: 4px;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 600;
-      }
-      & Input {
-        width: 100%;
-        margin-bottom: 16px;
-        font-size: 14px;
-        &.cogs-input.cogs-input-no-border:hover {
-          background: var(--cogs-greyscale-grey2);
-          box-shadow: none;
-          border: none;
-        }
-      }
-      & TextArea {
-        width: 100%;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        padding: 8px 16px;
-        background-color: var(--cogs-greyscale-grey2);
-        border: none;
-        border-radius: 8px;
-        box-sizing: border-box;
-        resize: none;
-        outline: none;
-      }
     }
-    & hr {
+  }
+
+  & details[open] {
+    .hide-on-open {
+      display: none;
+    }
+  }
+
+  & h3 {
+    padding-left: 16px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+
+    &.last-step-heading {
+      padding-left: 0;
+    }
+  }
+  & Input {
+    width: 100%;
+    margin-bottom: 16px;
+    font-size: 14px;
+    &.cogs-input.cogs-input-no-border:hover {
+      background: var(--cogs-greyscale-grey2);
+      box-shadow: none;
       border: none;
-      border-bottom: 1px solid var(--cogs-greyscale-grey4);
-      margin: 16px 0 16px 16px;
     }
+  }
+  & TextArea {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 8px 16px;
+    background-color: var(--cogs-greyscale-grey2);
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    resize: none;
+    outline: none;
+  }
+
+  .all-steps-wrapper {
+    margin-bottom: 1rem;
   }
 `;
 

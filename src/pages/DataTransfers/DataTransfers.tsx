@@ -522,6 +522,7 @@ const DataTransfers: React.FC = () => {
       source: {},
       target: {},
     });
+    console.log(sourceObj);
     const selectedObject: DetailDataProps = {
       isLoading: true,
       id: sourceObj.id,
@@ -536,6 +537,7 @@ const DataTransfers: React.FC = () => {
         revision: revision.revision,
         revisionSteps: revision.steps,
         interpreter: sourceObj.author,
+        cdfMetadata: sourceObj.cdf_metadata,
       },
       target: {},
     };
@@ -544,6 +546,7 @@ const DataTransfers: React.FC = () => {
       .getSingleObject(translation.revision.object_id)
       .then((response) => {
         if (response && response.length > 0 && !response[0].error) {
+          console.log(response);
           const item = response[0];
           selectedObject.target = {
             name: item.name,
@@ -553,6 +556,7 @@ const DataTransfers: React.FC = () => {
             repository: item.project,
             revision: translation.revision.revision,
             revisionSteps: translation.revision.steps,
+            cdfMetadata: item.cdf_metadata,
           };
           selectedObject.isLoading = false;
         }

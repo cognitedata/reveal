@@ -27,6 +27,7 @@ export interface RevisionObject {
   }[];
   revision: any;
   translations: RevisionObject[];
+  cdf_metadata: any;
 }
 
 export interface RESTProject {
