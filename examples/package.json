@@ -62,7 +62,7 @@
     "prettier": "^2.1.2",
     "puppeteer": "^5.4.0",
     "react-app-rewired": "^2.1.6",
-    "react-scripts": "3.4.4",
+    "react-scripts": "4.0.0",
     "start-server-and-test": "^1.11.5",
     "ts-jest": "^26.4.2",
     "typescript": "3.9.7"
