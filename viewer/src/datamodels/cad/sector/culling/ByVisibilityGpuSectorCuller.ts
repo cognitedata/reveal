@@ -183,7 +183,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       budget.highDetailProximityThreshold,
       takenSectors,
       clippingPlanes,
-      clipIntersection
+      clipIntersection,
+      budget
     );
 
     let debugAccumulatedPriority = 0.0;
@@ -212,7 +213,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     proximityThreshold: number,
     takenSectors: TakenSectorMap,
     clippingPlanes: THREE.Plane[] | null,
-    clipIntersection: boolean
+    clipIntersection: boolean,
+    budget: CadModelSectorBudget
   ) {
     const shortRangeCamera = camera.clone(true);
     shortRangeCamera.far = proximityThreshold;
@@ -239,7 +241,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         );
       }
 
-      this.markSectorsAsDetailed(intersectingSectors, takenSectors, model);
+      this.markSectorsAsDetailed(intersectingSectors, takenSectors, model, budget);
     });
   }
 
@@ -286,9 +288,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private markSectorsAsDetailed(
     intersectingSectors: SectorMetadata[],
     takenSectors: TakenSectorMap,
-    model: CadModelMetadata
+    model: CadModelMetadata,
+    budget: CadModelSectorBudget
   ) {
-    for (let i = 0; i < intersectingSectors.length; i++) {
+    for (let i = 0; i < intersectingSectors.length && takenSectors.isWithinBudget(budget); i++) {
       takenSectors.markSectorDetailed(model, intersectingSectors[i].id, Infinity);
     }
   }
