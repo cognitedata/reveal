@@ -26,6 +26,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 103350,
+      unit: 'Meters',
       sectors: [createSectorMetadata(1)]
     };
     expect(() => parseCadMetadataV8(metadata)).toThrow();
@@ -277,7 +278,7 @@ describe('parseCadMetadataV8', () => {
       version: 8,
       maxTreeIndex: 4,
       unit: 'AU',
-      sectors: []
+      sectors: [createSectorMetadata(0)]
     };
 
     // Act
