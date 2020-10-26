@@ -19,7 +19,12 @@ export type CadModelSectorBudget = {
   readonly geometryDownloadSizeBytes: number;
 };
 
-export const defaultCadModelSectorBudget = {
-  highDetailProximityThreshold: 10 * 1000,
-  geometryDownloadSizeBytes: (isMobileOrTablet() ? 15 : 35) * 1024 * 1024
-};
+export const defaultCadModelSectorBudget = isMobileOrTablet()
+  ? {
+      highDetailProximityThreshold: 5 * 1000,
+      geometryDownloadSizeBytes: 10 * 1024 * 1024
+    }
+  : {
+      highDetailProximityThreshold: 10 * 1000,
+      geometryDownloadSizeBytes: 35 * 1024 * 1024
+    };
