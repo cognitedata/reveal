@@ -21,18 +21,6 @@ export interface CdfModelIdentifier {
   revisionId: number;
 }
 
-export interface ModelUrlProvider<TModelIdentifier> {
-  getModelUrl(identifier: TModelIdentifier): Promise<string>;
-}
-
-export interface ModelTransformationProvider<TModelIdentifier> {
-  getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
-}
-
-export interface ModelCameraConfigurationProvider<TModelIdentifier> {
-  getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
-}
-
 export interface JsonFileProvider {
   getJsonFile(blobUrl: string, fileName: string): Promise<any>;
 }
@@ -41,13 +29,20 @@ export interface BinaryFileProvider {
   getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
+export interface ModelMetadataProvider<TModelIdentifier> {
+  getModelUrl(identifier: TModelIdentifier): Promise<string>;
+  getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
+  getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
+}
+
 export interface ModelDataClient<TModelIdentifier>
-  extends ModelUrlProvider<TModelIdentifier>,
-    ModelTransformationProvider<TModelIdentifier>,
-    ModelCameraConfigurationProvider<TModelIdentifier>,
+  extends HttpHeadersProvider,
+    ModelMetadataProvider<TModelIdentifier>,
     JsonFileProvider,
-    BinaryFileProvider,
-    HttpHeadersProvider {
+    BinaryFileProvider {
+  getJsonFile(blobUrl: string, fileName: string): Promise<any>;
+  getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer>;
+
   /**
    * Returns an identifier that can be used to identify the application Reveal is used in.
    */
