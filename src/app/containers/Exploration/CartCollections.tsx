@@ -58,22 +58,27 @@ const CartCollections = ({
         <Menu>
           <Menu.Header>
             <Overline level={2}>COLLECTIONS</Overline>
-            {resourceCollections.map(collection => {
-              const containsItems = collectionContainsItems(collection);
-              return (
-                <Menu.Item
-                  key={collection.id}
-                  disabled={containsItems}
-                  onClick={() => addToCollection(collection, items)}
-                >
-                  <CollectionItem>
-                    {collection.name}
-                    {containsItems && <Icon type="Check" />}
-                  </CollectionItem>
-                </Menu.Item>
-              );
-            })}
           </Menu.Header>
+          {resourceCollections.length === 0 && (
+            <NoCollectionsMessage>
+              You have no collections for this resource type
+            </NoCollectionsMessage>
+          )}
+          {resourceCollections.map(collection => {
+            const containsItems = collectionContainsItems(collection);
+            return (
+              <Menu.Item
+                key={collection.id}
+                disabled={containsItems}
+                onClick={() => addToCollection(collection, items)}
+              >
+                <CollectionItem>
+                  {collection.name}
+                  {containsItems && <Icon type="Check" />}
+                </CollectionItem>
+              </Menu.Item>
+            );
+          })}
         </Menu>
       }
     >
@@ -88,6 +93,11 @@ const CollectionItem = styled.div`
   justify-content: space-between;
   width: 100%;
   display: flex;
+`;
+
+const NoCollectionsMessage = styled(Menu.Footer)`
+  color: black;
+  text-align: center;
 `;
 
 export default CartCollections;
