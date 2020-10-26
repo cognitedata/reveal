@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import queryString from 'query-string';
 import { ResourceType } from 'lib/types';
 import { useHistory, useParams } from 'react-router-dom';
 import { SearchResults } from 'lib/containers/SearchResults';
@@ -14,7 +15,12 @@ export const SearchResultsPage = () => {
   const history = useHistory();
 
   const setCurrentResourceType = (newResourceType: ResourceType) => {
-    history.push(createLink(`/explore/${newResourceType}`));
+    const { query } = queryString.parse(history.location.search);
+    if (typeof query === 'string') {
+      history.push(createLink(`/explore/${newResourceType}?query=${query}`));
+    } else {
+      history.push(createLink(`/explore/${newResourceType}`));
+    }
   };
 
   const { resourceType = 'asset' } = useParams<{

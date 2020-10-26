@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import queryString from 'query-string';
 import { ResourceItem, ResourceType } from 'lib/types';
 import {
   AssetFilterProps,
@@ -7,6 +8,7 @@ import {
   EventFilter,
   SequenceFilter,
 } from '@cognite/sdk';
+import { useHistory } from 'react-router-dom';
 
 export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
 export type ResourceItemState = ResourceItem & {
@@ -37,13 +39,13 @@ export type ResourceSelectionObserver = {
   >;
   onSelect: OnSelectListener;
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
-  query: string;
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
+  queryKey: string;
 };
 
 export const ResourceSelectionContext = React.createContext({
   resourcesState: [] as ResourceItemState[],
 } as ResourceSelectionObserver);
+ResourceSelectionContext.displayName = 'ResourceSelectionContext';
 
 export const useResourceTypes = () => {
   const observer = useContext(ResourceSelectionContext);
@@ -60,12 +62,21 @@ export const useResourceEditable = () => {
   return observer.allowEdit;
 };
 
-export const useQuery: () => [
-  string,
-  React.Dispatch<React.SetStateAction<string>>
-] = () => {
-  const observer = useContext(ResourceSelectionContext);
-  return [observer.query, observer.setQuery];
+export const useQuery: () => [string, (q: string) => void] = () => {
+  const history = useHistory();
+  const key = useContext(ResourceSelectionContext).queryKey;
+  const search = queryString.parse(history.location.search);
+  const query = (search[key] || '') as string;
+
+  const setQuery = (q?: string) =>
+    history.push({
+      pathname: history.location.pathname,
+      search: queryString.stringify({
+        ...search,
+        [key]: q || undefined,
+      }),
+    });
+  return [query, setQuery];
 };
 
 export const useSelectResource = () => {
@@ -163,6 +174,12 @@ export type ResourceSelectionProps = {
    * The callback when a resource is selected
    */
   onSelect?: OnSelectListener;
+
+  /**
+   * The search param where the currrent query is stored. Default value is 'query'.
+   */
+  queryKey?: string;
+
   children?: React.ReactNode;
 };
 
@@ -179,9 +196,9 @@ export const ResourceSelectionProvider = ({
   sequenceFilter: initialSequenceFilter,
   resourcesState: initialResourcesState,
   onSelect: initialOnSelect,
+  queryKey = 'query',
   children,
 }: ResourceSelectionProps) => {
-  const [query, setQuery] = useState<string>('');
   const [allowEdit, setAllowEdit] = useState<boolean>(propsAllowEdit || false);
   const [mode, setMode] = useState<ResourceSelectionMode>(
     initialMode || defaultMode
@@ -242,8 +259,6 @@ export const ResourceSelectionProvider = ({
         setAllowEdit,
         mode,
         setMode,
-        query,
-        setQuery,
         resourceTypes,
         setResourceTypes,
         assetFilter,
@@ -260,6 +275,7 @@ export const ResourceSelectionProvider = ({
         setResourcesState,
         onSelect,
         setOnSelectListener,
+        queryKey,
       }}
     >
       {children}
