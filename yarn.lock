@@ -2816,10 +2816,10 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@^14.14.3":
-  version "14.14.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.3.tgz#e1c09064121f894baaad2bd9f12ce4a41bffb274"
-  integrity sha512-33/L34xS7HVUx23e0wOT2V1qPF1IrHgQccdJVm9uXGTB9vFBrrzBtkQymT8VskeKOxjz55MSqMv0xuLq+u98WQ==
+"@types/node@*", "@types/node@^14.14.4":
+  version "14.14.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.4.tgz#38ca24d94a935506eeaf77b6062c906fba054ef0"
+  integrity sha512-AtE3ulstIxbCVBYMrO178jewndK5OzcwvHDAjv69N9G3TcXHyZe7Jr0MuPhqRkf7Bik/bt3vpg19ALxvJO0rAg==
 
 "@types/node@^10.12.19":
   version "10.17.35"
