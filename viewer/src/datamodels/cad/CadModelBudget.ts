@@ -2,6 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
+import { isMobileOrTablet } from '@/utilities';
+
 /**
  * Represents a measurement of how much geometry can be loaded.
  */
@@ -19,5 +21,5 @@ export type CadModelSectorBudget = {
 
 export const defaultCadModelSectorBudget = {
   highDetailProximityThreshold: 10 * 1000,
-  geometryDownloadSizeBytes: 35 * 1024 * 1024
+  geometryDownloadSizeBytes: (isMobileOrTablet() ? 15 : 35) * 1024 * 1024
 };
