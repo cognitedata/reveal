@@ -10,25 +10,33 @@ import { toThreeJsBox3 } from '@/utilities/threeConverters';
 import { SectorMetadata, SectorScene } from './types';
 
 export class SectorSceneImpl implements SectorScene {
-  static createFromRootSector(version: number, maxTreeIndex: number, root: SectorMetadata): SectorScene {
+  static createFromRootSector(version: number, maxTreeIndex: number, unit: string, root: SectorMetadata): SectorScene {
     const sectorsById: Map<number, SectorMetadata> = new Map();
     traverseDepthFirst(root, x => {
       sectorsById.set(x.id, x);
       return true;
     });
-    return new SectorSceneImpl(version, maxTreeIndex, root, sectorsById);
+    return new SectorSceneImpl(version, maxTreeIndex, unit, root, sectorsById);
   }
 
   readonly version: number;
   readonly maxTreeIndex: number;
   readonly root: SectorMetadata;
+  readonly unit: string;
   private readonly sectors: Map<number, SectorMetadata>;
 
-  constructor(version: number, maxTreeIndex: number, root: SectorMetadata, sectorsById: Map<number, SectorMetadata>) {
+  constructor(
+    version: number,
+    maxTreeIndex: number,
+    unit: string,
+    root: SectorMetadata,
+    sectorsById: Map<number, SectorMetadata>
+  ) {
     this.version = version;
     this.maxTreeIndex = maxTreeIndex;
     this.root = root;
     this.sectors = sectorsById;
+    this.unit = unit;
   }
 
   get sectorCount(): number {
