@@ -65,14 +65,25 @@ export const ShoppingCartPreview = ({
 
   const resources: {
     type: ResourceType;
+    iconType: 'DataStudio' | 'Document' | 'Events' | 'Timeseries' | 'Duplicate';
     header: string;
     items: any[];
   }[] = [
-    { type: 'asset', header: 'Assets', items: assets },
-    { type: 'file', header: 'Files', items: files },
-    { type: 'event', header: 'Events', items: events },
-    { type: 'timeSeries', header: 'Timeseries', items: timeseries },
-    { type: 'sequence', header: 'Sequences', items: sequences },
+    { type: 'asset', iconType: 'DataStudio', header: 'Assets', items: assets },
+    { type: 'file', iconType: 'Document', header: 'Files', items: files },
+    { type: 'event', iconType: 'Events', header: 'Events', items: events },
+    {
+      type: 'timeSeries',
+      iconType: 'Timeseries',
+      header: 'Timeseries',
+      items: timeseries,
+    },
+    {
+      type: 'sequence',
+      iconType: 'Duplicate',
+      header: 'Sequences',
+      items: sequences,
+    },
   ];
 
   const tenant = useTenant();
@@ -138,7 +149,7 @@ export const ShoppingCartPreview = ({
                             alignSelf: 'center',
                             marginRight: '4px',
                           }}
-                          type="DataStudio"
+                          type={resource.iconType}
                         />
                         {/* Use id when item is event and item.name is undefined */}
                         <span>{item ? item.name || item.id : 'Loading'}</span>
