@@ -57,10 +57,6 @@ function createScaleToMetersModelMatrix(unit: string, modelMatrix: THREE.Matrix4
     throw new Error(`Unknown model unit '${unit}'`);
   }
 
-  const scaledModelMatrix = new THREE.Matrix4().makeScale(
-    1.0 / conversionFactor,
-    1.0 / conversionFactor,
-    1.0 / conversionFactor
-  );
+  const scaledModelMatrix = new THREE.Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
   return scaledModelMatrix.multiply(modelMatrix);
 }
