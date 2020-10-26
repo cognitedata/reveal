@@ -100,7 +100,7 @@
     "pretty-quick": "^3.1.0",
     "sinon": "^9.0.3",
     "style-loader": "^1.2.1",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.5"
   },
   "eslintConfig": {
     "extends": "react-app"
