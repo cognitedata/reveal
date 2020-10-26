@@ -42,8 +42,6 @@ export class CadModelMetadataRepository<TModelIdentifier>
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const cameraConfiguration = await modelCameraPromise;
 
-    console.log(modelMatrix);
-
     return {
       blobUrl,
       modelMatrix,
