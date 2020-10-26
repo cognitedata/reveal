@@ -33,7 +33,7 @@
     "@cognite/eslint-config": "^1.6.0",
     "@cognite/eslint-plugin": "^1.3.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@storybook/addon-docs": "^6.0.26",
+    "@storybook/addon-docs": "^6.0.27",
     "@storybook/addon-knobs": "^6.0.27",
     "@storybook/addon-viewport": "^6.0.27",
     "@storybook/preset-create-react-app": "^3.1.4",
