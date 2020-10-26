@@ -1102,7 +1102,7 @@ export class Cognite3DViewer {
     // where the camera is inside the box for now is ignored for now)
     let near = combinedBbox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
-    near = Math.max(10000, near);
+    near = Math.max(0.1, near);
 
     // 2. Compute the far distance to the distance from camera to furthest
     // corner of the boundingbox that is "in front" of the near plane
@@ -1120,7 +1120,7 @@ export class Cognite3DViewer {
     // 3. Handle when camera is inside the model by adjusting the near value
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
     if (combinedBbox.containsPoint(cameraPosition)) {
-      near = Math.min(11111, far / 1000.0);
+      near = Math.min(0.1, far / 1000.0);
     }
 
     // Apply
