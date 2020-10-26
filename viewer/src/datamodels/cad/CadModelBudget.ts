@@ -20,11 +20,13 @@ export type CadModelSectorBudget = {
 };
 
 export const defaultCadModelSectorBudget = isMobileOrTablet()
-  ? {
+  ? // Mobile/tablet
+    {
       highDetailProximityThreshold: 5 * 1000,
       geometryDownloadSizeBytes: 10 * 1024 * 1024
     }
-  : {
+  : // Desktop
+    {
       highDetailProximityThreshold: 10 * 1000,
       geometryDownloadSizeBytes: 35 * 1024 * 1024
     };
