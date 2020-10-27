@@ -3,7 +3,6 @@
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
-uniform mat4 inverseNormalMatrix;
 
 attribute float a_treeIndex;
 attribute vec3 a_centerA;
@@ -66,12 +65,8 @@ void main() {
     vec3 dir = normalize(centerA - centerB);
     vec3 newPosition = position;
 
-#if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
-    vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
-#else
     vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
     vec3 objectToCameraModelSpace = rayOrigin - center;
-#endif
 
     float leftUpScale = a_radius;
 
@@ -107,13 +102,23 @@ void main() {
     v_U.w = surfacePoint.x;
 
     // We pack radii as w-components of v_centerB
-    v_centerB.xyz = mul3(modelViewMatrix, centerB);
-    v_centerB.w = displaceScalar(centerB, a_radius, a_treeIndex, cameraPosition, inverseModelMatrix);
 
-    v_planeA = a_planeA;
-    v_planeB = a_planeB;
+    mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
+    float radius = length(mul3(modelToTransformOffset, (a_localXAxis * a_radius)));
+
+    v_centerB.xyz = mul3(modelViewMatrix, centerB);
+    v_centerB.w = radius; //displaceScalar(centerB, a_radius, a_treeIndex, cameraPosition, inverseModelMatrix);
+
+    vec4 planeA = a_planeA;
+    planeA.w = length(mul3(modelToTransformOffset, (planeA.xyz * planeA.w)));
+
+    vec4 planeB = a_planeB;
+    planeB.w = length(mul3(modelToTransformOffset, (planeB.xyz * planeB.w)));
+
+    v_planeA = planeA;
+    v_planeB = planeB;
     v_surfacePointY = surfacePoint.y;
-    v_centerB.w = a_radius;
+    v_centerB.w = radius;
 
     v_color = a_color;
     v_normal = normalMatrix * normal;
