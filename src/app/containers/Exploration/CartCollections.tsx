@@ -26,21 +26,26 @@ const CartCollections = ({
     collection: Collection,
     currentItems: { id: number }[]
   ) => {
+    // If the collection is not empty, concat the items in the collection
+    // with the selected items, else set the items to the selected items
+    const updatedItems = collection.operationBody.items
+      ? collection.operationBody.items.concat(
+          currentItems
+            .filter(
+              asset =>
+                !collection.operationBody.items.some(
+                  (item: any) => item.id === asset.id
+                )
+            )
+            .map(({ id }) => ({ id }))
+        )
+      : currentItems;
     updateCollections([
       {
         id: collection.id,
         update: {
           operationBody: {
-            items: collection.operationBody.items.concat(
-              currentItems
-                .filter(
-                  asset =>
-                    !collection.operationBody.items.some(
-                      (item: any) => item.id === asset.id
-                    )
-                )
-                .map(({ id }) => ({ id }))
-            ),
+            items: updatedItems,
           },
         },
       },
@@ -49,7 +54,7 @@ const CartCollections = ({
 
   const collectionContainsItems = (collection: Collection) =>
     items.every(item =>
-      collection.operationBody.items.some((el: any) => el.id === item.id)
+      collection.operationBody.items?.some((el: any) => el.id === item.id)
     );
 
   return (
