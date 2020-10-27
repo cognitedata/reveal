@@ -78,7 +78,6 @@ export interface SectorScene {
 export interface SectorMetadataIndexFileSection {
   readonly fileName: string;
   readonly peripheralFiles: string[];
-  readonly estimatedDrawCallCount: number;
   readonly downloadSize: number;
 }
 
@@ -112,6 +111,7 @@ export interface SectorMetadata {
   readonly indexFile: SectorMetadataIndexFileSection;
   readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];
+  readonly estimatedDrawCallCount: number;
 
   // TODO 2019-12-21 larsmoa: Make readonly
   parent?: SectorMetadata;
