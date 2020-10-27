@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { IH1 } from '../../components/heading/IH1';
+import IntegrationsTabs from '../../components/tabs/IntegrationsTabs';
 
 const Home = () => {
   return (
@@ -9,6 +10,7 @@ const Home = () => {
       <Suspense fallback={<Loader />}>
         <Wrapper>
           <IH1>Integrations</IH1>
+          <IntegrationsTabs />
         </Wrapper>
       </Suspense>
     </>
