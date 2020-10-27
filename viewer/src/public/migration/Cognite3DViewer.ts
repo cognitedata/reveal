@@ -38,6 +38,7 @@ import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 import { SupportedModelTypes } from '@/datamodels/base';
+import { SectorCost } from '@/datamodels/cad/sector/culling/types';
 
 /**
  * @example
@@ -1137,13 +1138,17 @@ export class Cognite3DViewer {
       const byteBudget: number = this._revealManager._cadManager._cadModelUpdateHandler._budget
         .geometryDownloadSizeBytes;
       // @ts-expect-error
-      const spentBudget: number = this._revealManager._cadManager._cadModelUpdateHandler._sectorCuller.takenSectors
+      const spentBudget: SectorCost = this._revealManager._cadManager._cadModelUpdateHandler._sectorCuller.takenSectors
         .totalCost;
 
       debugElement.innerText = `Near: ${near.toPrecision(5)} 
          Far: ${far.toPrecision(5)} 
          HighDetail: ${highDetailThreshold.toPrecision(3)}
-         Spent/budget: ${(spentBudget / 1024 / 1024).toPrecision(2)}/${(byteBudget / 1024 / 1024).toPrecision(2)} Mb
+         Spent/budget: ${(spentBudget.downloadSize / 1024 / 1024).toPrecision(2)}/${(
+        byteBudget /
+        1024 /
+        1024
+      ).toPrecision(2)} Mb
         `;
     }
     // The minDistance of the camera controller determines at which distance
