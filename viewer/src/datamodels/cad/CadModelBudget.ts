@@ -17,16 +17,23 @@ export type CadModelSectorBudget = {
    * Number of bytes of the geometry that must be downloaded.
    */
   readonly geometryDownloadSizeBytes: number;
+
+  /**
+   * Maximum number of estimated drawcalls of geometry to load.
+   */
+  readonly maximumNumberOfDrawCalls: number;
 };
 
 export const defaultCadModelSectorBudget = isMobileOrTablet()
   ? // Mobile/tablet
     {
       highDetailProximityThreshold: 5 * 1000,
-      geometryDownloadSizeBytes: 10 * 1024 * 1024
+      geometryDownloadSizeBytes: 10 * 1024 * 1024,
+      maximumNumberOfDrawCalls: 1000
     }
   : // Desktop
     {
       highDetailProximityThreshold: 10 * 1000,
-      geometryDownloadSizeBytes: 35 * 1024 * 1024
+      geometryDownloadSizeBytes: 35 * 1024 * 1024,
+      maximumNumberOfDrawCalls: 2000
     };

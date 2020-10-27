@@ -13,7 +13,13 @@ import {
 } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
-import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsInput } from './types';
+import {
+  PrioritizedWantedSector,
+  DetermineSectorCostDelegate,
+  DetermineSectorsInput,
+  SectorCost,
+  addSectorCost
+} from './types';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
@@ -46,10 +52,10 @@ function assert(condition: boolean, message: string = 'assertion hit') {
 }
 
 class TakenSectorMap {
-  get totalCost() {
-    let totalCost = 0;
+  get totalCost(): SectorCost {
+    const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0 };
     this.maps.forEach(tree => {
-      totalCost += tree.totalCost;
+      addSectorCost(totalCost, tree.totalCost);
     });
     return totalCost;
   }
@@ -80,7 +86,10 @@ class TakenSectorMap {
   }
 
   isWithinBudget(budget: CadModelSectorBudget): boolean {
-    return this.totalCost < budget.geometryDownloadSizeBytes;
+    return (
+      this.totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
+      this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls
+    );
   }
 
   collectWantedSectors(): PrioritizedWantedSector[] {
@@ -114,8 +123,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
   constructor(options?: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
-      determineSectorCost:
-        options && options.determineSectorCost ? options.determineSectorCost : computeSectorCostAsDownloadSize,
+      determineSectorCost: options && options.determineSectorCost ? options.determineSectorCost : computeSectorCost,
       logCallback:
         options && options.logCallback
           ? options.logCallback
@@ -200,8 +208,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.log(`Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`);
     this.log(
       `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${
-        takenSectors.totalCost / 1024 / 1024
-      }/${budget.geometryDownloadSizeBytes / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
+        takenSectors.totalCost.downloadSize / 1024 / 1024
+      }/${budget.geometryDownloadSizeBytes / 1024 / 1024}, drawCalls: ${takenSectors.totalCost.drawCalls}/${
+        budget.maximumNumberOfDrawCalls
+      }, priority: ${debugAccumulatedPriority})`
     );
 
     return takenSectors;
@@ -301,12 +311,15 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 }
 
-function computeSectorCostAsDownloadSize(metadata: SectorMetadata, lod: LevelOfDetail): number {
+function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): SectorCost {
   switch (lod) {
     case LevelOfDetail.Detailed:
-      return metadata.indexFile.downloadSize;
+      return {
+        downloadSize: metadata.indexFile.downloadSize,
+        drawCalls: metadata.estimatedDrawCallCount
+      };
     case LevelOfDetail.Simple:
-      return metadata.facesFile.downloadSize;
+      return { downloadSize: metadata.facesFile.downloadSize, drawCalls: 1 };
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);
   }
