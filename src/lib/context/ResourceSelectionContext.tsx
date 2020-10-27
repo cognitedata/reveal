@@ -40,6 +40,10 @@ export type ResourceSelectionObserver = {
   onSelect: OnSelectListener;
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
   queryKey: string;
+  selectedResource: ResourceItem | undefined;
+  setSelectedResource: React.Dispatch<
+    React.SetStateAction<ResourceItem | undefined>
+  >;
 };
 
 export const ResourceSelectionContext = React.createContext({
@@ -65,12 +69,12 @@ export const useResourceEditable = () => {
 export const useQuery: () => [string, (q: string) => void] = () => {
   const history = useHistory();
   const key = useContext(ResourceSelectionContext).queryKey;
-  const search = queryString.parse(history.location.search);
+  const search = queryString.parse(history?.location?.search);
   const query = (search[key] || '') as string;
 
   const setQuery = (q?: string) =>
     history.push({
-      pathname: history.location.pathname,
+      pathname: history?.location?.pathname,
       search: queryString.stringify({
         ...search,
         [key]: q || undefined,
@@ -128,6 +132,14 @@ export const useResourceFilters = () => {
     eventFilter: observer.eventFilter,
     sequenceFilter: observer.sequenceFilter,
     fileFilter: observer.fileFilter,
+  };
+};
+
+export const useSelectedResource = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return {
+    selectedResource: observer.selectedResource,
+    setSelectedResource: observer.setSelectedResource,
   };
 };
 
@@ -227,6 +239,7 @@ export const ResourceSelectionProvider = ({
   const [sequenceFilter, setSequenceFilter] = useState<
     SequenceFilter['filter']
   >(initialSequenceFilter || {});
+  const [selectedResource, setSelectedResource] = useState<ResourceItem>();
 
   useEffect(() => {
     if (initialResourcesState) {
@@ -276,6 +289,8 @@ export const ResourceSelectionProvider = ({
         onSelect,
         setOnSelectListener,
         queryKey,
+        selectedResource,
+        setSelectedResource,
       }}
     >
       {children}
