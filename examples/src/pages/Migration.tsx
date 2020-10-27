@@ -142,6 +142,9 @@ export function Migration() {
             { width: 320, height: 400 }
           );
           document.body.appendChild(debugElement);
+        },
+        makeAllGhost: () => {
+          cadModels.forEach(m => m.ghostAllNodes());
         }
       };
 
@@ -155,6 +158,7 @@ export function Migration() {
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'screenshot').name('Screenshot');
       gui.add(guiActions, 'debugCuller').name('Culler canvas');
+      gui.add(guiActions, 'makeAllGhost').name('Ghost mode');
 
       const slicing = gui.addFolder('Slicing');
       slicing
