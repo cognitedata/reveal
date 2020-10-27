@@ -158,7 +158,19 @@ const Filters = ({
         }}
         value={date.selectedRange}
         open={dateOpen}
+        popupStyle={{ backgroundColor: 'white', paddingTop: '52px' }}
       />
+      <Button
+        className="close-button"
+        icon="Close"
+        iconPlacement="right"
+        size="small"
+        variant="outline"
+        aria-label="Close"
+        onClick={() => setDateOpen(false)}
+      >
+        Close
+      </Button>
     </CalendarWrapper>
   );
 
@@ -250,6 +262,7 @@ const Filters = ({
             }}
             title="Filter by name"
             placeholder="Search by name"
+            className={!dateOpen ? 'input-visible' : 'input-hidden'}
           />
           {datatype.types.length > 0 && !dateOpen && (
             <Dropdown

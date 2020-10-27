@@ -71,6 +71,12 @@ export const SecondaryFilters = styled.div`
   }
 
   .cogs-input-container {
+    &.input-visible {
+      opacity: 1;
+    }
+    &.input-hidden {
+      opacity: 0;
+    }
     .title {
       font-size: 0.88rem;
       line-height: 1.4rem;
@@ -83,7 +89,22 @@ export const SecondaryFilters = styled.div`
 `;
 
 export const CalendarWrapper = styled.div`
-  margin-top: -1.55rem;
+  margin-top: -2.55rem;
+
+  .ant-picker {
+    border-color: #a3a3a3;
+
+    .ant-picker-input > input::placeholder {
+      color: #a3a3a3;
+    }
+  }
+
+  .close-button {
+    justify-self: flex-end;
+    margin-left: auto;
+    margin-top: 8px;
+    min-width: 0;
+  }
 `;
 
 export const CalendarBtnWrapper = styled.div<{ active: boolean }>`
