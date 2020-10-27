@@ -22,7 +22,7 @@ const useTenantSelector = (appName: string) => {
     setValidatingTenant(true);
     return axios
       .get(`${appsApiBaseUrl}/tenant`, {
-        params: { tenant, app: appName, redirectUrl: window.location.hostname },
+        params: { tenant, app: appName, redirectUrl: window.location.origin },
       })
       .then(() => {
         return true;
