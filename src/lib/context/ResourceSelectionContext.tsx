@@ -69,12 +69,12 @@ export const useResourceEditable = () => {
 export const useQuery: () => [string, (q: string) => void] = () => {
   const history = useHistory();
   const key = useContext(ResourceSelectionContext).queryKey;
-  const search = queryString.parse(history.location.search);
+  const search = queryString.parse(history?.location?.search);
   const query = (search[key] || '') as string;
 
   const setQuery = (q?: string) =>
     history.push({
-      pathname: history.location.pathname,
+      pathname: history?.location?.pathname,
       search: queryString.stringify({
         ...search,
         [key]: q || undefined,
