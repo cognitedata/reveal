@@ -1,26 +1,25 @@
-import React, { useContext } from 'react';
-import { Button, Loader } from '@cognite/cogs.js';
-import { UserContext } from '@cognite/cdf-utilities';
+import React, { Suspense } from 'react';
+import { Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { IH1 } from '../../components/heading/IH1';
 
 const Home = () => {
-  const user = useContext(UserContext);
   return (
     <>
-      <Loader />
-      <Container>
-        <p>Your Unified UI Subapp is now running! Congrats {user.username}!</p>
-        <Button type="primary">My first Cog.js button</Button>
-      </Container>
+      <Suspense fallback={<Loader />}>
+        <Wrapper>
+          <IH1>Integrations</IH1>
+        </Wrapper>
+      </Suspense>
     </>
   );
 };
 
-const Container = styled.div`
+const Wrapper = styled.div`
+  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  background-color: #fff;
 `;
-
 export default Home;
