@@ -113,6 +113,7 @@ export function Migration() {
         modelId: 0,
         revisionId: 0,
         showSectorBoundingBoxes: false,
+        drawCalls: 0
       };
       function applySettingsToModels() {
         cadModels.forEach((m) => {
@@ -159,7 +160,13 @@ export function Migration() {
       gui.add(guiActions, 'screenshot').name('Screenshot');
       gui.add(guiActions, 'debugCuller').name('Culler canvas');
       gui.add(guiActions, 'makeAllGhost').name('Ghost mode');
-
+      const drawcallController = gui.add(guiState, 'drawCalls').name('Draw calls');
+      setInterval(() => {
+        // @ts-expect-error
+        const renderer: THREE.WebGLRenderer = viewer.renderer;
+        guiState.drawCalls = renderer.info.render.calls;
+        drawcallController.updateDisplay();
+      });
       const slicing = gui.addFolder('Slicing');
       slicing
         .add(slicingParams, 'enabled')
