@@ -3,7 +3,6 @@
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
-uniform mat4 inverseNormalMatrix;
 
 attribute float a_treeIndex;
 attribute vec3 a_centerA;
@@ -61,12 +60,8 @@ void main() {
     vec3 dir = normalize(centerA - centerB);
     vec3 newPosition = position;
 
-#if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
-    vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
-#else
     vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
     vec3 objectToCameraModelSpace = rayOrigin - center;
-#endif
 
     float maxRadius = max(a_radiusA, a_radiusB);
     float leftUpScale = maxRadius;
@@ -102,15 +97,20 @@ void main() {
     v_W.w = surfacePoint.z;
     v_U.w = surfacePoint.x;
 
+    mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
+
+    float radiusB = length(mul3(modelToTransformOffset, (a_localXAxis * a_radiusB)));
+    float radiusA = length(mul3(modelToTransformOffset, (a_localXAxis * a_radiusA)));
+
     // We pack radii as w-components of v_centerB
     v_centerB.xyz = mul3(modelViewMatrix, centerB);
-    v_centerB.w = displaceScalar(centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.w = radiusB; //displaceScalar(centerB, radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
 
     v_V.xyz = -cross(v_U.xyz, v_W.xyz);
     v_V.w = surfacePoint.y;
 
     v_centerA.xyz = mul3(modelViewMatrix, centerA);
-    v_centerA.w = displaceScalar(centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerA.w = radiusA; //displaceScalar(centerA, radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
 
     v_color = a_color;
     v_normal = normalMatrix * normal;
