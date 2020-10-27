@@ -19,5 +19,5 @@ export type CadModelSectorBudget = {
 
 export const defaultCadModelSectorBudget = {
   highDetailProximityThreshold: 10,
-  geometryDownloadSizeBytes: 35 * 1024 * 1024
+  geometryDownloadSizeBytes: 5 * 1024 * 1024
 };
