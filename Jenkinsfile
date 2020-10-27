@@ -314,11 +314,18 @@ pods {
 
         }
 
-        dir('main') {
-          slack.send(
-            channel: SLACK_CHANNEL,
-            message: "Deployment of ${env.BRANCH_NAME} complete!"
-          )
+        // in 'single-branch' mode we always publish 'staging' and 'master' builds
+        // from the main branch, but we only need to notify about one of them.
+        // so it is ok to skip this message in that case
+        //
+        // note: the actual deployment of each is determined by versionSpec in FAS
+        if (VERSIONING_STRATEGY != "single-branch") {
+          dir('main') {
+            slack.send(
+              channel: SLACK_CHANNEL,
+                message: "Deployment of ${env.BRANCH_NAME} complete!"
+            )
+          }
         }
       }
     }
