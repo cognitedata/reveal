@@ -4,14 +4,14 @@ import { Title, Input } from '@cognite/cogs.js';
 
 export const DirectoryPrefixFilter = () => {
   const { fileFilter, setFileFilter } = useContext(ResourceSelectionContext);
-  // @ts-ignore
-  const currentDirectoryPrefix = fileFilter?.directoryPrefix || '';
+  // @ts-ignore - Needed because the type in @cognite/sdk is incomplete
+  const currentDirectoryPrefix = fileFilter?.directoryPrefix;
 
   const setDirectoryPrefix = useCallback(
-    (value: string) => {
+    (value?: string) => {
       setFileFilter(currentFilter => ({
         ...currentFilter,
-        directoryPrefix: value,
+        directoryPrefix: value || undefined,
       }));
     },
     [setFileFilter]
