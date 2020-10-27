@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { DetermineSectorsInput } from '@/datamodels/cad/sector/culling/types';
+import { DetermineSectorsInput, SectorCost } from '@/datamodels/cad/sector/culling/types';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { OrderSectorsByVisibilityCoverage } from '@/datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
@@ -79,14 +79,18 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   test('determineSectors returns sector from coverage utility by priority', () => {
     // Arrange
-    const determineSectorCost = (sector: SectorMetadata, lod: LevelOfDetail) => {
+    const determineSectorCost = (sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
       switch (lod) {
         case LevelOfDetail.Detailed:
-          return [10, 10, 100][sector.id];
+          return [
+            { downloadSize: 10, drawCalls: 0 },
+            { downloadSize: 10, drawCalls: 0 },
+            { downloadSize: 100, drawCalls: 0 }
+          ][sector.id];
         case LevelOfDetail.Simple:
-          return 1;
+          return { downloadSize: 1, drawCalls: 0 };
         default:
-          return 0;
+          return { downloadSize: 0, drawCalls: 0 };
       }
     };
     const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost });
@@ -131,7 +135,7 @@ function createDetermineSectorInput(
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {},
     cameraInMotion: false,
-    budget: { geometryDownloadSizeBytes: 20, highDetailProximityThreshold: 10 }
+    budget: { geometryDownloadSizeBytes: 20, highDetailProximityThreshold: 10, maximumNumberOfDrawCalls: Infinity }
   };
   return determineSectorsInput;
 }
