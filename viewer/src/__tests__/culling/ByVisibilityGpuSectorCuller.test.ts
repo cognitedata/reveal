@@ -11,6 +11,7 @@ import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
 
 import { generateSectorTree } from '../testutils/createSectorMetadata';
 import { createCadModelMetadata } from '../testutils/createCadModelMetadata';
+import { CadModelSectorBudget } from '@/datamodels/cad/CadModelBudget';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
@@ -107,7 +108,51 @@ describe('ByVisibilityGpuSectorCuller', () => {
     };
     // Place camera far away to avoid sectors being loaded because camera is near them
     camera.position.set(1000, 1000, 1000);
-    const input = createDetermineSectorInput(camera, model);
+    const input = createDetermineSectorInput(camera, model, {
+      geometryDownloadSizeBytes: 20,
+      maximumNumberOfDrawCalls: Infinity,
+      highDetailProximityThreshold: 10
+    });
+
+    // Act
+    const sectors = culler.determineSectors(input);
+
+    // Assert
+    expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).map(x => x.metadata.id)).toEqual([0, 1]);
+    expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Simple).map(x => x.metadata.id)).toEqual([2]);
+  });
+
+  test('determineSectors limits sectors by draw calls', () => {
+    // Arrange
+    const determineSectorCost = (sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
+      switch (lod) {
+        case LevelOfDetail.Detailed:
+          return { downloadSize: 0, drawCalls: 5 };
+        case LevelOfDetail.Simple:
+          return { downloadSize: 0, drawCalls: 1 };
+        default:
+          return { downloadSize: 0, drawCalls: 0 };
+      }
+    };
+    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost });
+    const model = createCadModelMetadata(generateSectorTree(2, 2));
+    const cadNode = new CadNode(model, materialManager);
+    Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
+    // culler.(model);
+    coverageUtil.orderSectorsByVisibility = () => {
+      return [
+        { model, sectorId: 0, priority: 1000.0 },
+        { model, sectorId: 1, priority: 100.0 },
+        { model, sectorId: 2, priority: 10.0 }
+      ];
+    };
+    // Place camera far away to avoid sectors being loaded because camera is near them
+    camera.position.set(1000, 1000, 1000);
+    const input = createDetermineSectorInput(camera, model, {
+      geometryDownloadSizeBytes: Infinity,
+      maximumNumberOfDrawCalls: 10,
+      highDetailProximityThreshold: -1
+    });
 
     // Act
     const sectors = culler.determineSectors(input);
@@ -126,7 +171,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
 function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
-  models: CadModelMetadata | CadModelMetadata[]
+  models: CadModelMetadata | CadModelMetadata[],
+  budget?: CadModelSectorBudget
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
@@ -135,7 +181,11 @@ function createDetermineSectorInput(
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {},
     cameraInMotion: false,
-    budget: { geometryDownloadSizeBytes: 20, highDetailProximityThreshold: 10, maximumNumberOfDrawCalls: Infinity }
+    budget: budget || {
+      geometryDownloadSizeBytes: 20,
+      highDetailProximityThreshold: 10,
+      maximumNumberOfDrawCalls: Infinity
+    }
   };
   return determineSectorsInput;
 }
