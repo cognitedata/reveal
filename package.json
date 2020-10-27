@@ -3,7 +3,7 @@
   "version": "0.0.13",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
-  "typings": "dist/lib.d.ts",
+  "typings": "dist/lib/index.d.ts",
   "license": "UNLICENSED",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
