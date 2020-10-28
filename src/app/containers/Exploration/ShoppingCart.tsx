@@ -21,9 +21,7 @@ import {
   CogniteEvent,
   Sequence,
 } from '@cognite/sdk';
-import { useFlag } from '@cognite/react-feature-flags';
 import EmptyCartImage from 'app/assets/empty-cart.svg';
-import CartCollections from './CartCollections';
 
 export const ShoppingCartPreview = ({
   cart,
@@ -89,8 +87,6 @@ export const ShoppingCartPreview = ({
   const tenant = useTenant();
   const env = useEnv();
 
-  const showCollections = useFlag('COLLECTIONS_allowlist');
-
   const onDeleteClicked = (item: { id: number }) => {
     setCart(cart.filter(el => el.id !== item.id));
   };
@@ -111,9 +107,7 @@ export const ShoppingCartPreview = ({
       {cart.length === 0 ? (
         <EmptyCart>
           <img src={EmptyCartImage} alt="Empty cart" />
-          <Body level={1}>
-            Select resources to download or add to collection
-          </Body>
+          <Body level={1}>Select resources to download</Body>
         </EmptyCart>
       ) : (
         <div style={{ height: '400px', overflowY: 'auto' }}>
@@ -126,12 +120,6 @@ export const ShoppingCartPreview = ({
                     {resource.header}
                   </ResourceTypeHeader>
                   <div className="spacer" />
-                  {showCollections && (
-                    <CartCollections
-                      type={resource.type}
-                      items={resource.items}
-                    />
-                  )}
                 </SpacedRow>
                 {resource.items.map(item => (
                   <ListItem
