@@ -79,6 +79,7 @@ export const LabelFilter = ({
 
   return (
     <Tooltip
+      interactive
       disabled={hasPermission}
       content="You do not have access to labels, please make sure you have labelsAcl:READ"
     >

@@ -114,7 +114,7 @@ export const DetailsItem = (props: { name: string; value: any }) => (
         overflow: 'hidden',
       }}
     >
-      <Tooltip placement="bottom" content={props.name}>
+      <Tooltip interactive placement="bottom" content={props.name}>
         <span>{props.name}:</span>
       </Tooltip>
     </InfoCell>
@@ -122,7 +122,11 @@ export const DetailsItem = (props: { name: string; value: any }) => (
       half
       containerStyles={{ borderRight: 'none', overflow: 'hidden' }}
     >
-      <Tooltip placement="bottom" content={props.value || 'Not set'}>
+      <Tooltip
+        interactive
+        placement="bottom"
+        content={props.value || 'Not set'}
+      >
         {props.value || <NoDataText>Not set</NoDataText>}
       </Tooltip>
     </InfoCell>
