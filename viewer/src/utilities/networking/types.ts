@@ -1,8 +1,9 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+import * as THREE from 'three';
 
-import { File3dFormat, ModelTransformation } from '../types';
+import { File3dFormat, CameraConfiguration } from '../types';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 
 export interface BlobOutputMetadata {
@@ -25,7 +26,11 @@ export interface ModelUrlProvider<TModelIdentifier> {
 }
 
 export interface ModelTransformationProvider<TModelIdentifier> {
-  getModelTransformation(identifier: TModelIdentifier): Promise<ModelTransformation>;
+  getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
+}
+
+export interface ModelCameraConfigurationProvider<TModelIdentifier> {
+  getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
 }
 
 export interface JsonFileProvider {
@@ -39,6 +44,12 @@ export interface BinaryFileProvider {
 export interface ModelDataClient<TModelIdentifier>
   extends ModelUrlProvider<TModelIdentifier>,
     ModelTransformationProvider<TModelIdentifier>,
+    ModelCameraConfigurationProvider<TModelIdentifier>,
     JsonFileProvider,
     BinaryFileProvider,
-    HttpHeadersProvider {}
+    HttpHeadersProvider {
+  /**
+   * Returns an identifier that can be used to identify the application Reveal is used in.
+   */
+  getApplicationIdentifier(): string;
+}

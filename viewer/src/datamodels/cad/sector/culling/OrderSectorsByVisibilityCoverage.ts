@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { SectorMetadata } from '../types';
 import { coverageShaders } from '../../rendering/shaders';
 import { CadModelMetadata } from '../../CadModelMetadata';
-import { toThreeJsBox3, toThreeMatrix4, ModelTransformation, Box3 } from '@/utilities';
+import { toThreeJsBox3, Box3 } from '@/utilities';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -57,6 +57,11 @@ export type PrioritizedSectorIdentifier = {
  * Interface for classes that estimates how visible a sector will be on screen.
  */
 export interface OrderSectorsByVisibilityCoverage {
+  /**
+   * Dispose any resources that cannot be garbage collected.
+   */
+  dispose(): void;
+
   /**
    * Specifies what CAD models to estimate sector visibility for.
    * @param models Models to estimate sector visibility for.
@@ -122,6 +127,13 @@ export class GpuOrderSectorsByVisibilityCoverage {
     this._renderer.setRenderTarget(this.renderTarget);
   }
 
+  dispose() {
+    this._renderer.dispose();
+    if (this.debugRenderer) {
+      this.debugRenderer.dispose();
+    }
+  }
+
   get renderer(): THREE.WebGLRenderer {
     return this._renderer;
   }
@@ -150,7 +162,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
     for (const model of models) {
       const blobUrl = model.blobUrl;
       keepModelIdentifiers.add(blobUrl);
-      if (!this.containers.has(blobUrl)) {
+      const container = this.containers.get(blobUrl);
+      if (container) {
+        this.updateModel(container, model);
+      } else {
         this.addModel(model);
       }
     }
@@ -237,7 +252,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
   private addModel(model: CadModelMetadata) {
     const sectors = model.scene.getAllSectors();
-    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelTransformation);
+    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelMatrix);
     this.containers.set(model.blobUrl, {
       model,
       sectors,
@@ -246,6 +261,11 @@ export class GpuOrderSectorsByVisibilityCoverage {
     });
     this.sectorIdOffset += sectors.length;
     this.scene.add(mesh);
+  }
+
+  private updateModel(container: SectorContainer, model: CadModelMetadata) {
+    container.renderable.matrix.copy(model.modelMatrix);
+    container.renderable.updateMatrixWorld(true);
   }
 
   private findSectorContainer(sectorIdWithOffset: number): SectorContainer {
@@ -300,11 +320,12 @@ export class GpuOrderSectorsByVisibilityCoverage {
   private createSectorTreeMesh(
     sectorIdOffset: number,
     sectors: SectorMetadata[],
-    modelTransformation: ModelTransformation
+    modelMatrix: THREE.Matrix4
   ): THREE.Object3D {
-    const transformMatrix = toThreeMatrix4(modelTransformation.modelMatrix);
     const group = new THREE.Group();
-    group.applyMatrix4(transformMatrix);
+    group.matrixAutoUpdate = false;
+    group.applyMatrix4(modelMatrix);
+    group.updateMatrixWorld();
 
     const sectorCount = sectors.length;
 

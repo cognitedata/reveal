@@ -3,8 +3,6 @@
  */
 import * as THREE from 'three';
 
-import { mat4 } from 'gl-matrix';
-
 export enum File3dFormat {
   EptPointCloud = 'ept-pointcloud',
   RevealCadModel = 'reveal-directory',
@@ -28,9 +26,18 @@ export class CogniteColors {
 }
 
 /**
- * Represents the transformation matrix for a model. Stores both the model matrix and the inverse matrix.
+ * State holding information about data being loaded.
  */
-export type ModelTransformation = {
-  readonly modelMatrix: mat4;
-  readonly inverseModelMatrix: mat4;
+export type LoadingState = {
+  isLoading: boolean;
+  itemsLoaded: number;
+  itemsRequested: number;
+};
+
+/**
+ * Represents a camera configuration, consisting of a camera position and target.
+ */
+export type CameraConfiguration = {
+  readonly position: THREE.Vector3;
+  readonly target: THREE.Vector3;
 };

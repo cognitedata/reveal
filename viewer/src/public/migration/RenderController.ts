@@ -4,6 +4,11 @@
 
 import * as THREE from 'three';
 
+/* eslint-disable jsdoc/require-jsdoc */
+/**
+ * @internal
+ * @module @cognite/reveal
+ */
 export default class RenderController {
   private _needsRedraw: boolean;
   private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;

@@ -1,6 +1,7 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+
 export class NumericRange {
   readonly from: number;
   readonly count: number;
@@ -22,7 +23,7 @@ export class NumericRange {
     }
   }
 
-  asArray(): number[] {
+  toArray(): number[] {
     return Array.from(this.values());
   }
 
@@ -30,7 +31,7 @@ export class NumericRange {
     return value >= this.from && value <= this.toInclusive;
   }
 
-  forEach(action: (value: number) => void) {
+  forEach(action: (value: number) => void): void {
     for (let i = this.from; i <= this.toInclusive; ++i) {
       action(i);
     }

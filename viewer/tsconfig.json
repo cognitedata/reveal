@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "esnext",
+    "target": "ES2019",
     "module": "esnext",
     "declaration": true,
     "declarationDir": "dist",
@@ -30,6 +30,6 @@
     }
   },
   // include is also used for eslint to understand which files should be linted
-  "include": ["*.js", "*.ts", "src/**/*", ".eslintrc.js", "script", "src/@types"],
+  "include": ["*.js", "*.ts", "src/**/*", ".eslintrc.js", "script", "src/@types", "src/utilities/disposeAttributeArrayOnUpload.ts"],
   "exclude": ["node_modules/**/*", "dist/**/*"]
 }

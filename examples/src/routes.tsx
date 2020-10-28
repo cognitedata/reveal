@@ -8,7 +8,6 @@ import { DistanceMeasurement } from './pages/DistanceMeasurement';
 import { SideBySide } from './pages/SideBySide';
 import { Clipping } from './pages/Clipping';
 import { Filtering } from './pages/Filtering';
-import { GpuSectorCuller } from './pages/GpuSectorCuller';
 import { Migration } from './pages/Migration';
 import { Picking } from './pages/Picking';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
@@ -17,6 +16,16 @@ import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { Testable } from './pages/Testable';
+
+// if you want to test your latest changes in workers or rust files
+// copy your worker files to some folder in /public and specify the path below
+// parser-worker has `yarn local-cdn` to set it up quickly
+// notice that experimental is separate entry point so it required to override env for it too
+
+// import { revealEnv } from '@cognite/reveal';
+// import { revealEnv as revealEnv2 } from '@cognite/reveal/experimental'
+// revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
+// revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 
 type ExampleRoute = {
   path: string;
@@ -58,12 +67,8 @@ export const routes: Array<ExampleRoute> = [
     component: <Filtering />,
   },
   {
-    path: '/gpu-sector-culler',
-    menuTitle: 'GPU Sector Culler',
-    component: <GpuSectorCuller />,
-  },
-  {
-    path: `/migration?project=${project}` +
+    path:
+      `/migration?project=${project}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Migration',

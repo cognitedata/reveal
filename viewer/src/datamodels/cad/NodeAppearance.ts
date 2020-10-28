@@ -28,10 +28,20 @@ export type NodeAppearance = {
    */
   readonly renderInFront?: boolean;
   /**
+   * When set to true, the node is rendered ghosted, i.e.
+   * transparent with a fixed color.
+   */
+  readonly renderGhosted?: boolean;
+  /**
    * When set, an outline is drawn around the
    * node to make it stand out.
    */
   readonly outlineColor?: OutlineColor;
+  /**
+   * When set, a matrix4 transformation is applied
+   * to the node in world space.
+   */
+  readonly worldTransform?: THREE.Matrix4;
 };
 
 export interface NodeAppearanceProvider {
@@ -54,10 +64,15 @@ const HighlightedColorApperance: NodeAppearance = {
   color: [100, 100, 255]
 };
 
+const GhostedApperance: NodeAppearance = {
+  renderGhosted: true
+};
+
 export const DefaultNodeAppearance = {
   NoOverrides: undefined as NodeAppearance | undefined,
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
+  Ghosted: GhostedApperance,
   Highlighted: { ...InFrontAppearance, ...HighlightedColorApperance, ...OutlinedAppearance }
 };

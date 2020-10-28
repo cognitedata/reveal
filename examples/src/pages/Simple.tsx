@@ -16,7 +16,7 @@ CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -34,11 +34,11 @@ export function Simple() {
 
       const scene = new THREE.Scene();
       let model: reveal.CadNode;
-      if(modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client);
+      if (modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
         model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager();
+      } else if (modelUrl) {
+        revealManager = reveal.createLocalRevealManager({ logMetrics: false });
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
@@ -46,7 +46,7 @@ export function Simple() {
         );
       }
 
-      revealManager.on('loadingStateChanged', setIsLoading);
+      revealManager.on('loadingStateChanged', setLoadingState);
 
       scene.add(model);
       const renderer = new THREE.WebGLRenderer({
@@ -98,10 +98,11 @@ export function Simple() {
       animationLoopHandler.dispose();
     };
   }, []);
+  const { isLoading, itemsLoaded, itemsRequested } = loadingState;
   return (
     <CanvasWrapper>
       <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
-        Loading...
+        Downloading {itemsLoaded} / {itemsRequested} sectors.
       </Loader>
       <canvas ref={canvas} />
     </CanvasWrapper>

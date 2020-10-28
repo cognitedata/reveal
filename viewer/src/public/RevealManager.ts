@@ -11,15 +11,17 @@ import {
   SectorNodeIdToTreeIndexMapLoadedEvent,
   LoadingStateChangeListener
 } from './types';
-import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
-import { distinctUntilChanged, map, share, filter, subscribeOn } from 'rxjs/operators';
-import { trackError, trackLoadModel } from '@/utilities/metrics';
+import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
+import { map, share, filter, observeOn, subscribeOn, tap, auditTime } from 'rxjs/operators';
+import { trackError, trackLoadModel, trackCameraNavigation } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
-import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
 import { SupportedModelTypes } from '@/datamodels/base';
+import { LoadingState } from '@/utilities';
+import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
+
+/* eslint-disable jsdoc/require-jsdoc */
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
@@ -39,12 +41,27 @@ export class RevealManager<TModelIdentifier> {
     loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
-  /** @internal */
+  private readonly _updateSubject: Subject<void>;
+
+  /**
+   * @param cadManager
+   * @param pointCloudManager
+   * @internal
+   */
   constructor(cadManager: CadManager<TModelIdentifier>, pointCloudManager: PointCloudManager<TModelIdentifier>) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
     this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
+    this._updateSubject = new Subject();
+    this._updateSubject
+      .pipe(
+        auditTime(5000),
+        tap(() => {
+          trackCameraNavigation({ moduleName: 'RevealManager', methodName: 'update' });
+        })
+      )
+      .subscribe();
   }
 
   public dispose(): void {
@@ -79,8 +96,9 @@ export class RevealManager<TModelIdentifier> {
       this._lastCamera.position.copy(camera.position);
       this._lastCamera.quaternion.copy(camera.quaternion);
       this._lastCamera.zoom = camera.zoom;
-
       this._cadManager.updateCamera(camera);
+
+      this._updateSubject.next();
     }
   }
 
@@ -136,11 +154,13 @@ export class RevealManager<TModelIdentifier> {
   ): void {
     switch (event) {
       case 'loadingStateChanged':
-        this.eventListeners.loadingStateChanged.filter(x => x !== listener);
+        this.eventListeners.loadingStateChanged = this.eventListeners.loadingStateChanged.filter(x => x !== listener);
         break;
 
       case 'nodeIdToTreeIndexMapLoaded':
-        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.filter(x => x !== listener);
+        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded = this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.filter(
+          x => x !== listener
+        );
         break;
 
       default:
@@ -157,19 +177,17 @@ export class RevealManager<TModelIdentifier> {
     modelIdentifier: TModelIdentifier,
     nodeAppearanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
-  public addModel(
-    type: 'pointcloud',
-    modelIdentifier: TModelIdentifier
-  ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
+  public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
     nodeAppearanceProvider?: NodeAppearanceProvider
-  ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {
+  ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
+        type,
         options: { nodeAppearanceProvider }
       },
       modelIdentifier
@@ -208,9 +226,9 @@ export class RevealManager<TModelIdentifier> {
     });
   }
 
-  private notifyLoadingStateChanged(isLoaded: boolean) {
+  private notifyLoadingStateChanged(loadingState: LoadingState) {
     this.eventListeners.loadingStateChanged.forEach(handler => {
-      handler(isLoaded);
+      handler(loadingState);
     });
   }
 
@@ -221,9 +239,16 @@ export class RevealManager<TModelIdentifier> {
     this._subscriptions.add(
       combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
         .pipe(
-          map(loading => loading.some(x => x)),
-          distinctUntilChanged(),
-          subscribeOn(asyncScheduler)
+          observeOn(asyncScheduler),
+          subscribeOn(asyncScheduler),
+          map(
+            ([cadLoadingState, pointCloudLoadingState]) =>
+              ({
+                isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
+                itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
+                itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested
+              } as LoadingState)
+          )
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
           trackError(error, {

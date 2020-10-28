@@ -2,12 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import {
-  CogniteClient,
-  isLoginPopupWindow,
-  loginPopupHandler,
-  POPUP,
-} from '@cognite/sdk';
+import { CogniteClient, REDIRECT } from '@cognite/sdk';
+import { env } from '../env';
 
 const tokenCacheKey = 'cachedAT';
 const accessToken = sessionStorage.getItem(tokenCacheKey);
@@ -17,43 +13,46 @@ const accessToken = sessionStorage.getItem(tokenCacheKey);
 class LoginManager {
   isLoggedIn: boolean;
   client: CogniteClient;
-  listeners: Array<(isLoggedIn: boolean) => void>
+  listeners: Array<(isLoggedIn: boolean) => void>;
 
   constructor() {
     this.listeners = [];
-
-    let params = new URL(document.location.toString()).searchParams;
-    // id_token in url means we already redirected from auth api
-    // so it's safe to mark as logged in, when API call will happen
-    // inside demo component - it will be authenticated automatically
-    this.isLoggedIn = !!params.get('id_token') || !!accessToken;
+    // might be expired so it's not a guarantee, but good default state
+    this.isLoggedIn = !!accessToken;
 
     this.client = new CogniteClient({
       appId: 'cognite.reveal.docs.Cognite3DViewer',
     });
 
+    // to make it available in examples
+    window.sdk = this.client;
+
     this.client.loginWithOAuth({
-      project: '3ddemo',
+      project: env.project,
       accessToken,
-      onAuthenticate: POPUP,
+      onAuthenticate: REDIRECT,
       onTokens: (tokens) => {
         sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
       },
     });
 
-    if (isLoginPopupWindow()) {
-      loginPopupHandler();
-      return;
-    }
-
     this.client.login.status().then((s) => {
-      this.isLoggedIn = !!s;
-      this.notifyListeners();
-    })
+      // id_token in url means we already redirected from auth api
+      // so it's safe to mark as logged in, when API call will happen
+      // inside demo component - it will be authenticated automatically
+      if (s && s.project !== env.project) {
+        sessionStorage.removeItem(tokenCacheKey);
+        this.isLoggedIn = false;
+      } else {
+        let params = new URL(document.location.toString()).searchParams;
+        this.isLoggedIn = !!params.get('id_token') || !!s;
+        this.notifyListeners();
+      }
+    });
   }
 
   notifyListeners() {
-    this.listeners.forEach((fn) => fn(this.isLoggedIn))
+    this.listeners.forEach((fn) => fn(this.isLoggedIn));
   }
 
   /**
@@ -61,10 +60,10 @@ class LoginManager {
    * @returns {Function} unsubscribe
    */
   onIsLoggedInChanged(fn: (isLoggedIn: boolean) => void): () => void {
-    this.listeners.push(fn)
+    this.listeners.push(fn);
     return () => {
-      this.listeners = this.listeners.filter((f) => f !== fn)
-    }
+      this.listeners = this.listeners.filter((f) => f !== fn);
+    };
   }
 
   authenticate() {
@@ -74,7 +73,7 @@ class LoginManager {
         this.isLoggedIn = true;
         this.notifyListeners();
       })
-      .catch((e) => console.error(e))
+      .catch((e: Error) => console.error(e));
   }
 }
 

@@ -15,6 +15,7 @@ import { SectorGeometry } from './sector/types';
 import { SectorQuads } from './rendering/types';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
+import { LoadingState } from '@/utilities';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;
@@ -81,6 +82,7 @@ export class CadManager<TModelIdentifier> {
   }
 
   dispose() {
+    this._cadModelUpdateHandler.dispose();
     this._subscription.unsubscribe();
   }
 
@@ -140,7 +142,7 @@ export class CadManager<TModelIdentifier> {
     return model;
   }
 
-  getLoadingStateObserver(): Observable<boolean> {
+  getLoadingStateObserver(): Observable<LoadingState> {
     return this._cadModelUpdateHandler.getLoadingStateObserver();
   }
 

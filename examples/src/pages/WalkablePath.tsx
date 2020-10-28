@@ -80,10 +80,10 @@ export function WalkablePath() {
 
       let model: reveal.CadNode;
       if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client);
+        revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
         model = await revealManager.addModel('cad', modelRevision);
       } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager();
+        revealManager = reveal.createLocalRevealManager({ logMetrics: false });
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
@@ -132,7 +132,7 @@ export function WalkablePath() {
           removeWalkablePath();
           const vector3Path = convertToVector3Array(
             walkablePathResponse,
-            model.modelTransformation
+            model.getModelTransformation()
           );
           const meshes = createWalkablePathMeshes(vector3Path);
           for (const mesh of meshes) {
@@ -216,7 +216,7 @@ function createWalkablePathMeshes(
 
 function convertToVector3Array(
   pointData: TransitPathResponse,
-  modelTransformation: reveal.utilities.ModelTransformation
+  modelMatrix: THREE.Matrix4
 ): THREE.Vector3[][] {
   const paths: THREE.Vector3[][] = [];
   const vector: vec3 = vec3.create();
@@ -225,13 +225,9 @@ function convertToVector3Array(
     for (const segment of item.segments) {
       for (const path of segment.path) {
         vec3.set(vector, path.x, path.y, path.z);
-        pathVectors.push(
-          reveal.utilities.toThreeVector3(
-            new THREE.Vector3(),
-            vector,
-            modelTransformation
-          )
-        );
+        const point = reveal.utilities.toThreeVector3(new THREE.Vector3(), vector);
+        point.applyMatrix4(modelMatrix);
+        pathVectors.push(point);
       }
     }
     paths.push(pathVectors);

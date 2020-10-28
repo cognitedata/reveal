@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 
 /**
- * Generate a three-dimensional plane geometry, with an optional applied tranformation function
- *   (u, v) => [ x, y, z ]
+ * Generate a three-dimensional plane geometry,
+ * with an optional applied tranformation function (u, v) => [ x, y, z ]
  */
 function generatePlane3D(
   segmentsX: number,

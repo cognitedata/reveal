@@ -6,6 +6,7 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata, WantedSector } from '../types';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { CadLoadingHints } from '../../CadLoadingHints';
+import { CadModelSectorBudget } from '../../CadModelBudget';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
@@ -14,6 +15,7 @@ export interface DetermineSectorsInput {
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
+  budget: CadModelSectorBudget;
 }
 
 export type PrioritizedWantedSector = WantedSector & { priority: number };

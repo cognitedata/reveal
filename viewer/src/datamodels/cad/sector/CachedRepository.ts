@@ -13,14 +13,13 @@ import {
   Subject,
   onErrorResumeNext,
   defer,
-  partition,
   scheduled,
   asyncScheduler,
   merge,
   NextObserver
 } from 'rxjs';
 import {
-  flatMap,
+  mergeMap,
   map,
   tap,
   shareReplay,
@@ -29,19 +28,23 @@ import {
   reduce,
   distinct,
   catchError,
-  distinctUntilChanged,
-  mergeAll
+  throttleTime,
+  startWith,
+  filter,
+  subscribeOn,
+  mergeAll,
+  publish
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
-import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/reveal.parser.types';
+import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
-import { createOffsetsArray } from '@/utilities';
+import { createOffsetsArray, LoadingState } from '@/utilities';
 import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
 import { Group } from 'three';
-import { RxCounter } from '@/utilities/RxCounter';
+import { RxTaskTracker } from '@/utilities/RxTaskTracker';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {
@@ -67,7 +70,7 @@ export class CachedRepository implements Repository {
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _loadingCounter: RxCounter = new RxCounter();
+  private readonly _taskTracker: RxTaskTracker = new RxTaskTracker();
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
@@ -105,10 +108,18 @@ export class CachedRepository implements Repository {
     ); // TODO: Should we do replay subject here instead of variable type?
   }
 
-  getLoadingStateObserver(): Observable<boolean> {
-    return this._loadingCounter.countObservable().pipe(
-      distinctUntilChanged(),
-      map(count => count != 0)
+  getLoadingStateObserver(): Observable<LoadingState> {
+    return this._taskTracker.getTaskTrackerObservable().pipe(
+      throttleTime(30, asyncScheduler, { trailing: true }), // Take 1 emission every 30ms
+      map(
+        ({ taskCount, taskCompleted }) =>
+          ({
+            isLoading: taskCount != taskCompleted,
+            itemsRequested: taskCount,
+            itemsLoaded: taskCompleted
+          } as LoadingState)
+      ),
+      startWith({ isLoading: false, itemsRequested: 0, itemsLoaded: 0 })
     );
   }
 
@@ -116,15 +127,19 @@ export class CachedRepository implements Repository {
   // unless we want them to eventually set their priority to lower in the cache.
 
   loadSector(): OperatorFunction<WantedSector, ConsumedSector> {
-    return (source$: Observable<WantedSector>) => {
+    return publish((source$: Observable<WantedSector>) => {
       /* Split wantedSectors into a pipe of discarded wantedSectors and a pipe of simple and detailed wantedSectors.
        * ----------- wantedSectors -----------------------
        * \---------- discarded wantedSectors -------------
        *  \--------- simple and detailed wantedSectors ---
        */
-      const [discarded$, simpleAndDetailed$] = partition(
-        source$,
-        wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Discarded
+      const discarded$ = source$.pipe(filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded));
+      const simpleAndDetailed$ = source$.pipe(
+        filter(
+          wantedSector =>
+            wantedSector.levelOfDetail === LevelOfDetail.Simple || wantedSector.levelOfDetail === LevelOfDetail.Detailed
+        ),
+        map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))
       );
 
       /* Split simple and detailed wanted sectors into a pipe of cached request and uncached requests.
@@ -133,19 +148,9 @@ export class CachedRepository implements Repository {
        *  \--------- uncached wantedSectors --------------
        */
       const existsInCache = ({ key }: KeyedWantedSector) => this._consumedSectorCache.has(key);
-      const [cached$, uncached$] = partition(
-        simpleAndDetailed$.pipe(map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))),
-        existsInCache
-      );
-
-      /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
-       * ----------- uncached wantedSectors --------------
-       * \---------- simple wantedSectors ----------------
-       *  \--------- detailed wantedSectors --------------
-       */
-      const [simple$, detailed$] = partition(
-        uncached$.pipe(this._loadingCounter.incrementOnNext()),
-        ({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple
+      const cached$ = simpleAndDetailed$.pipe(filter(existsInCache));
+      const uncached$ = simpleAndDetailed$.pipe(
+        filter((keyedWantedSector: KeyedWantedSector) => !existsInCache(keyedWantedSector))
       );
 
       /* Merge simple and detailed pipeline, save observable to cache, and decrease loadcount
@@ -156,25 +161,41 @@ export class CachedRepository implements Repository {
         observable: this.loadSimpleSectorFromNetwork(wantedSector)
       });
 
+      /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
+       * ----------- uncached wantedSectors --------------
+       * \---------- simple wantedSectors ----------------
+       *  \--------- detailed wantedSectors --------------
+       */
+      const simple$ = uncached$.pipe(
+        subscribeOn(asyncScheduler),
+        filter(({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple),
+        this._taskTracker.incrementTaskCountOnNext(),
+        map(getSimpleSectorFromNetwork)
+      );
+
       const getDetailedSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
         key,
         wantedSector,
         observable: this.loadDetailedSectorFromNetwork(wantedSector)
       });
 
+      const detailed$ = uncached$.pipe(
+        subscribeOn(asyncScheduler),
+        filter(({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Detailed),
+        this._taskTracker.incrementTaskCountOnNext(),
+        map(getDetailedSectorFromNetwork)
+      );
+
       const saveToCache = ({ key, observable }: WantedSecorWithRequestObservable) =>
         this._consumedSectorCache.forceInsert(key, observable);
 
-      const network$ = merge(
-        simple$.pipe(map(getSimpleSectorFromNetwork)),
-        detailed$.pipe(map(getDetailedSectorFromNetwork))
-      ).pipe(
+      const network$ = merge(simple$, detailed$).pipe(
         tap({
           next: saveToCache
         }),
         map(({ observable }) => observable),
         mergeAll(this._concurrentNetworkOperations),
-        this._loadingCounter.decrementOnNext()
+        this._taskTracker.incrementTaskCompletedOnNext()
       );
 
       const toDiscardedConsumedSector = (wantedSector: WantedSector) =>
@@ -184,11 +205,12 @@ export class CachedRepository implements Repository {
         return this._consumedSectorCache.get(key);
       };
 
-      return scheduled(
-        [discarded$.pipe(map(toDiscardedConsumedSector)), cached$.pipe(flatMap(getFromCache)), network$],
-        asyncScheduler
-      ).pipe(mergeAll(), this._loadingCounter.resetOnComplete());
-    };
+      return merge(
+        discarded$.pipe(map(toDiscardedConsumedSector)),
+        cached$.pipe(mergeMap(getFromCache)),
+        network$
+      ).pipe(this._taskTracker.resetOnComplete());
+    });
   }
 
   private catchWantedSectorError<T>(wantedSector: WantedSector, methodName: string) {
@@ -235,7 +257,7 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
-        flatMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
+        mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
         tap(this.parsedDataObserver(wantedSector)),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
@@ -257,7 +279,7 @@ export class CachedRepository implements Repository {
             this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, indexFile.fileName)
           ).pipe(
             retry(3),
-            flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
+            mergeMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
           );
           const ctmFilesObservable = from(indexFile.peripheralFiles).pipe(
             map(fileName => ({
@@ -290,7 +312,7 @@ export class CachedRepository implements Repository {
   }
 
   private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
-    return flatMap(ctmRequest => {
+    return mergeMap(ctmRequest => {
       const key = this.ctmFileCacheKey(ctmRequest);
       if (this._ctmFileCache.has(key)) {
         return this._ctmFileCache.get(key);
@@ -305,7 +327,7 @@ export class CachedRepository implements Repository {
       defer(() => this._modelSectorProvider.getBinaryFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
         this.catchCtmFileError(ctmRequest, 'loadCtmFileFromNetwork'),
         retry(3),
-        flatMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
+        mergeMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
         map(data => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })),
         shareReplay(1),
         take(1)

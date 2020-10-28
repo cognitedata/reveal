@@ -8,5 +8,6 @@ export enum RenderMode {
   TreeIndex,
   PackColorAndNormal,
   Depth,
-  Effects
+  Effects,
+  Ghost
 }

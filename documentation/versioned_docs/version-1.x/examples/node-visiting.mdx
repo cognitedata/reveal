@@ -1,0 +1,40 @@
+---
+id: node-visiting
+title: Node visitor functions
+describe: Reveal has functions for iterating over nodes, either all nodes in a 3D model or a subtree of a parent node.
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+Reveal has functions for iterating over CAD nodes, either all nodes in a 3D model or a subtree of a parent node.
+Note that all functions are async, and the action that you pass is not applied immediately. A single model can
+have millions of nodes. To avoid long blocking operations the action is applied in blocks, allowing for an
+interactive page while the action is being applied.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Iterate over all nodes
+
+This example only demonstrates how iteration over model nodes performed gradually.
+For more efficient coloring consult our [coloring examples](./cad-colors.mdx).
+
+```jsx runnable
+model
+  .iterateNodesByTreeIndex(
+    treeIndex => model.setNodeColorByTreeIndex(treeIndex, 127, 127, 127)
+  )
+  .then(() => alert('Iteration is done!'));
+```
+
+## Iterate over subtree nodes
+
+`Cognite3DModel.iterateSubtreeByTreeIndex` iterates over all descendants of a node by tree index. The provided
+tree index is included in the set of visited nodes. The following example sets the color of all descendants of
+a node. This mimics the functionality of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
+set to `true`.
+
+```jsx runnable
+model.iterateSubtreeByTreeIndex(917985, treeIndex => {
+  model.setNodeColorByTreeIndex(treeIndex, 127, 255, 127);
+});
+```

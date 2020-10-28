@@ -1,5 +1,6 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
+#pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
@@ -28,13 +29,35 @@ varying vec4 sphereNormal;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform vec2 treeIndexTextureSize;
+
+uniform sampler2D transformOverrideIndexTexture;
+
+uniform vec2 transformOverrideTextureSize; 
+uniform sampler2D transformOverrideTexture;
+
 void main() {
+
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
+      transformOverrideTexture
+    );
+
+    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
+
+    vec3 centerWithOffset = mul3(modelTransformOffset, a_center).xyz;
+
+    vec3 normalWithOffset = (modelTransformOffset * vec4(a_normal, 0)).xyz;
+
     vec3 lDir;
-    float distanceToCenterOfSegment = a_verticalRadius - a_height*0.5;
-    vec3 centerOfSegment = a_center + a_normal*distanceToCenterOfSegment;
+    float distanceToCenterOfSegment = a_verticalRadius - a_height * 0.5;
+    vec3 centerOfSegment = centerWithOffset + normalWithOffset * distanceToCenterOfSegment;
 
 #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
-      vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
+      vec3 objectToCameraModelSpace = inverseNormalMatrix * vec3(0.0, 0.0, 1.0);
 #else
       vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
       vec3 objectToCameraModelSpace = rayOrigin - centerOfSegment;
@@ -42,11 +65,11 @@ void main() {
 
     vec3 newPosition = position;
 
-    float bb = dot(objectToCameraModelSpace, a_normal);
+    float bb = dot(objectToCameraModelSpace, normalWithOffset);
     if (bb < 0.0) { // direction vector looks away, flip it
-      lDir = -a_normal;
+      lDir = -normalWithOffset;
     } else { // direction vector already looks in my direction
-      lDir = a_normal;
+      lDir = normalWithOffset;
     }
 
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
@@ -69,14 +92,14 @@ void main() {
 
     v_treeIndex = a_treeIndex;
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
-    center.xyz = mul3(modelViewMatrix, a_center);
+    center.xyz = mul3(modelViewMatrix, centerWithOffset);
     center.w = a_verticalRadius; // Pack radius into w-component
     hRadius = a_horizontalRadius;
     height = a_height;
     v_color = a_color;
 
     // compute basis
-    sphereNormal.xyz = normalMatrix * a_normal;
+    sphereNormal.xyz = normalMatrix * normalWithOffset;
     U.xyz = normalMatrix * up;
     V.xyz = normalMatrix * left;
 

@@ -2,7 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Versioned3DFile, HttpError } from '@cognite/sdk';
+import { CogniteClient, Versioned3DFile } from '@cognite/sdk';
+
+// To avoid direct dependency on @cognite/sdk we use sdk-core here for HttpError.
+// that's why it's avoided https://github.com/cognitedata/cdf-hub/pull/687/files#r489204315
+import { HttpError } from '@cognite/sdk-core';
 
 export const supportedVersions = [8];
 
@@ -25,4 +29,14 @@ export async function fetchWithStatusCheck(url: string): Promise<Response> {
     throw new HttpError(response.status, response.body, headers);
   }
   return response;
+}
+
+/**
+ * Determines the `appId` of the `CogniteClient` provided.
+ * @param sdk Instance of `CogniteClient`.
+ * @returns Application ID or 'unknown' if not found.
+ */
+export function getSdkApplicationId(sdk: CogniteClient): string {
+  const headers = sdk.getDefaultRequestHeaders();
+  return headers['x-cdp-app'] || 'unknown';
 }

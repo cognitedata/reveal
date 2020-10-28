@@ -7,17 +7,23 @@ import * as THREE from 'three';
 import { ModelDataClient } from '@/utilities/networking/types';
 import { SectorCuller } from '@/internal';
 import { createRevealManager } from '@/public/createRevealManager';
+import { RevealManager } from '@/public/RevealManager';
 
 describe('RevealManager', () => {
-  const mockClient: ModelDataClient<{ id: number }> = jest.fn() as any;
+  const mockClient: ModelDataClient<{ id: number }> = {
+    getApplicationIdentifier: () => {
+      return 'dummy';
+    }
+  } as any;
   const sectorCuller: SectorCuller = {
-    determineSectors: jest.fn()
+    determineSectors: jest.fn(),
+    dispose: jest.fn()
   };
-  const manager = createRevealManager('test', mockClient, { internal: { sectorCuller } });
+  let manager: RevealManager<{ id: number }>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    manager.resetRedraw();
+    manager = createRevealManager('test', mockClient, { internal: { sectorCuller } });
   });
 
   test('resetRedraw() resets needsRedraw', () => {
@@ -54,5 +60,10 @@ describe('RevealManager', () => {
     camera.position.set(1, 2, 3);
     manager.update(camera);
     expect(manager.needsRedraw).toBeTrue(); // Changed again
+  });
+
+  test('dispose() disposes culler', () => {
+    manager.dispose();
+    expect(sectorCuller.dispose).toBeCalled();
   });
 });

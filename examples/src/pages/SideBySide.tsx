@@ -81,7 +81,8 @@ export function SideBySide() {
 
       const sectorCuller1 = new OverrideSectorCuller();
       const revealOptions1: RevealOptions = {
-        internal: { sectorCuller: sectorCuller1 }
+        internal: { sectorCuller: sectorCuller1 },
+        logMetrics: false
       }
       let model1: CadNode;
       if(modelRevision) {
@@ -98,7 +99,8 @@ export function SideBySide() {
 
       const sectorCuller2 = new OverrideSectorCuller();
       const revealOptions2: RevealOptions = {
-        internal: { sectorCuller: sectorCuller2 }
+        internal: { sectorCuller: sectorCuller2 },
+        logMetrics: false
       };
       let model2: CadNode;
       if(modelRevision2) {

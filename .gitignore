@@ -29,15 +29,14 @@ target
 
 **/.env
 **/.env.*
+!**/.env.example
 
 # Viewer ignores
 viewer/public/
-viewer/pkg/
 viewer/false
 
 # Examples
 
-!examples/.env.example
 examples/coverage
 # Public is also used for temorary local models so ignore everything
 examples/public/

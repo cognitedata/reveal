@@ -49,7 +49,7 @@ export function Picking() {
         }
       };
 
-      const revealOptions: RevealOptions = { nodeAppearanceProvider };
+      const revealOptions: RevealOptions = { nodeAppearanceProvider, logMetrics: false };
       let model: reveal.CadNode;
       if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, revealOptions);
@@ -150,6 +150,7 @@ export function Picking() {
           if (intersections.length === 0) {
             return;
           }
+          console.log('Intersections:', intersections);
 
           scene.add(createSphere(intersections[0]!.point, 'purple'));
 

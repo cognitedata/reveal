@@ -6,8 +6,9 @@ import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
 import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat, ModelTransformation } from '../types';
-import { applyDefaultModelTransformation, createModelTransformation } from './modelTransformation';
+import { File3dFormat, CameraConfiguration } from '../types';
+import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
+import { getSdkApplicationId } from './utilities';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -18,6 +19,7 @@ import { applyDefaultModelTransformation, createModelTransformation } from './mo
 export class CdfModelDataClient
   implements ModelDataClient<{ modelId: number; revisionId: number; format: File3dFormat }> {
   private readonly client: CogniteClient;
+  private appId: string | undefined;
 
   constructor(client: CogniteClient) {
     this.client = client;
@@ -52,7 +54,7 @@ export class CdfModelDataClient
     const mostRecentOutput = outputs.findMostRecentOutput(format);
     if (!mostRecentOutput) {
       throw new Error(
-        `Model '${modelId}/${revisionId} (${format})' is not compatible with this version of Reveal. If this model works with a previous version of Reveal it must be reconverted to support this version.`
+        `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal, because no outputs for format '(${format})' was found. If this model works with a previous version of Reveal it must be reprocessed to support this version.`
       );
     }
     const blobId = mostRecentOutput.blobId;
@@ -74,11 +76,11 @@ export class CdfModelDataClient
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 
-  public async getModelTransformation(modelIdentifier: {
+  public async getModelMatrix(modelIdentifier: {
     modelId: number;
     revisionId: number;
     format: File3dFormat | string;
-  }): Promise<ModelTransformation> {
+  }): Promise<THREE.Matrix4> {
     const { modelId, revisionId, format } = modelIdentifier;
     const model = await this.client.revisions3D.retrieve(modelId, revisionId);
 
@@ -87,7 +89,31 @@ export class CdfModelDataClient
       modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
     }
     applyDefaultModelTransformation(modelMatrix, format);
-    return createModelTransformation(modelMatrix);
+    return modelMatrix;
+  }
+
+  public async getModelCamera(modelIdentifier: {
+    modelId: number;
+    revisionId: number;
+    format: File3dFormat | string;
+  }): Promise<CameraConfiguration | undefined> {
+    const { modelId, revisionId } = modelIdentifier;
+    const model = await this.client.revisions3D.retrieve(modelId, revisionId);
+    if (model.camera && model.camera.position && model.camera.target) {
+      const { position, target } = model.camera;
+      return {
+        position: new THREE.Vector3(position[0], position[1], position[2]),
+        target: new THREE.Vector3(target[0], target[1], target[2])
+      };
+    }
+    return undefined;
+  }
+
+  public getApplicationIdentifier(): string {
+    if (this.appId === undefined) {
+      this.appId = getSdkApplicationId(this.client);
+    }
+    return this.appId;
   }
 
   private buildBlobRequestPath(blobId: number): string {

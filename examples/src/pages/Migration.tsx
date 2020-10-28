@@ -12,7 +12,12 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   BoundingBoxClipper,
+  CognitePointCloudModel,
+  PotreePointColorType, 
+  PotreePointShape
 } from '@cognite/reveal';
+
+window.THREE = THREE;
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -37,6 +42,21 @@ export function Migration() {
         z: 0,
         showHelpers: false,
       };
+      const pointCloudParams = {
+        pointSize: 1.0,
+        budget: 2_000_000,
+        pointColorType: PotreePointColorType.Rgb,
+        pointShape: PotreePointShape.Circle,
+        apply: () => {
+          pointCloudModels.forEach(model => {
+            model.pointBudget = pointCloudParams.budget;
+            model.pointSize = pointCloudParams.pointSize;
+            model.pointColorType = pointCloudParams.pointColorType;
+            model.pointShape = pointCloudParams.pointShape;
+            console.log(model.pointColorType, model.pointShape);
+          });
+        }
+      };
 
       const boxClipper = new BoundingBoxClipper(
         new THREE.Box3(
@@ -59,19 +79,25 @@ export function Migration() {
       client.loginWithOAuth({ project });
       await client.authenticate();
 
+      const progress = (itemsDownloaded: number, itemsRequested: number) => console.log('onDownload', itemsDownloaded, itemsRequested);
       // Prepare viewer
       viewer = new Cognite3DViewer({
         sdk: client,
         domElement: canvasWrapperRef.current!,
+        onLoading: progress,
+        logMetrics: false
       });
       (window as any).viewer = viewer;
 
       async function addModel(options: AddModelOptions) {
         try {
           const model = await viewer.addModel(options);
-          viewer.fitCameraToModel(model);
+          viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
+          } else if (model instanceof CognitePointCloudModel) {
+            pointCloudModels.push(model);
+            pointCloudParams.apply();
           }
         } catch (e) {
           console.error(e);
@@ -81,6 +107,7 @@ export function Migration() {
 
       // Add GUI for loading models and such
       const cadModels: Cognite3DModel[] = [];
+      const pointCloudModels: CognitePointCloudModel[] = [];
       const guiState = {
         modelId: 0,
         revisionId: 0,
@@ -99,7 +126,7 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
-          }),
+          })
       };
 
       const settingsGui = gui.addFolder('settings');
@@ -191,6 +218,28 @@ export function Migration() {
           );
         });
 
+      const pcSettings = gui.addFolder('Point clouds');
+      pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
+      pcSettings.add(pointCloudParams, 'pointSize', 0, 20, 0.25).onFinishChange(() => pointCloudParams.apply());
+      pcSettings.add(pointCloudParams, 'pointColorType', {
+        Rgb: PotreePointColorType.Rgb,
+        Depth: PotreePointColorType.Depth,
+        Height: PotreePointColorType.Height,
+        PointIndex: PotreePointColorType.PointIndex,
+        LevelOfDetail: PotreePointColorType.LevelOfDetail,
+        Classification: PotreePointColorType.Classification,
+      }).onFinishChange(valueStr => {
+        pointCloudParams.pointColorType = parseInt(valueStr, 10);  
+        pointCloudParams.apply()
+      });
+      pcSettings.add(pointCloudParams, 'pointShape', {
+        Circle: PotreePointShape.Circle,
+        Square: PotreePointShape.Square
+      }).onFinishChange(valueStr => {
+        pointCloudParams.pointShape = parseInt(valueStr, 10);  
+        pointCloudParams.apply()
+      });
+
       // Load model if provided by URL
       const modelIdStr = urlParams.get('modelId');
       const revisionIdStr = urlParams.get('revisionId');
@@ -200,18 +249,18 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
-      viewer.on('click', function (event) {
+      viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          const { nodeId, treeIndex, point, model } = intersection;
-          console.log(`Clicked node ${nodeId} at`, point);
+          const { treeIndex, point, model } = intersection;
+          console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
           // highlight the object
+          model.deselectAllNodes();
           model.selectNodeByTreeIndex(treeIndex);
-          // TODO make the camera zoom to the object
-          // const boundingBox = model.getBoundingBox(nodeId);
-          // viewer.fitCameraToBoundingBox(boundingBox, 2000); // 2 sec
+          const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+          viewer.fitCameraToBoundingBox(boundingBox, 1000);
         }
       });
     }
