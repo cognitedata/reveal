@@ -14,7 +14,6 @@ import {
   createLocalRevealManager,
 } from '@cognite/reveal/experimental';
 import CameraControls from 'camera-controls';
-import { Scene, WebGLRenderer } from 'three';
 import { addWASDHandling } from '../utils/cameraControls';
 import { getParamsFromURL } from '../utils/example-helpers';
 import dat from 'dat.gui';
@@ -57,7 +56,7 @@ export function DistanceMeasurement() {
   const [measuredDistance, setMeasuredDistance] = useState<any>();
 
   useEffect(() => {
-    let renderer: WebGLRenderer | undefined;
+    let renderer: THREE.WebGLRenderer | undefined;
     let revealManager: RevealManager<unknown>;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     const gui = new dat.GUI();
