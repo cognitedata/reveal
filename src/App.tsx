@@ -2,6 +2,7 @@ import React from 'react';
 import GlobalStyles from 'global-styles';
 
 import { I18nContainer } from '@cognite/react-i18n';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import Home from 'pages/Home';
 
@@ -10,7 +11,13 @@ const App = () => {
     <>
       <GlobalStyles />
       <I18nContainer>
-        <Home />
+        <Router>
+          <Switch>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </Router>
       </I18nContainer>
     </>
   );

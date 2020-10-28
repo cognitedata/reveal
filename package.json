@@ -16,7 +16,8 @@
     "testcafe:start": "./scripts/testcafe-serve-run.sh",
     "testcafe:start-live": "./scripts/testcafe-start.sh",
     "testcafe:build": "./scripts/testcafe-build.sh",
-    "testcafe:serve": "serve -s build -l 11111"
+    "testcafe:serve": "serve -s build -l 11111",
+    "commit": "git cz"
   },
   "dependencies": {
     "@cognite/cogs.js": "^1.17.1",
@@ -25,9 +26,14 @@
     "@sentry/browser": "^5.27.1",
     "lodash": "^4.17.19",
     "react": "^16.14.0",
-    "react-dom": "^17.0.1",
+    "react-dom": "^16.14.0",
+    "react-redux": "^7.2.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.4",
-    "styled-components": "^5.2.0"
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^5.2.0",
+    "typesafe-actions": "^5.1.0"
   },
   "devDependencies": {
     "@cognite/eslint-config": "^1.6.0",
@@ -46,9 +52,12 @@
     "@types/node": "^14.14.4",
     "@types/react": "^16.9.54",
     "@types/react-dom": "^16.9.9",
+    "@types/react-redux": "^7.1.9",
+    "@types/react-router-dom": "^5.1.6",
     "@types/sinon": "^9.0.7",
     "@types/styled-components": "^5.1.4",
     "babel-loader": "^8.1.0",
+    "commitizen": "^4.2.1",
     "concurrently": "^5.3.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.2.0",
@@ -59,6 +68,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.9.2",
+    "git-cz": "^4.7.1",
     "husky": "^4.3.0",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^12.0.0",
@@ -86,7 +96,13 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "yarn lint"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
     }
   }
 }
