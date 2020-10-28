@@ -280,7 +280,7 @@ export const FilterTag = ({
   return (
     <Tag isLocked={isLocked} onClick={onClick}>
       {isLocked && LOCKSVG}
-      <Tooltip content={`${filter}: ${value}`}>
+      <Tooltip interactive content={`${filter}: ${value}`}>
         <span>
           <strong>{filter}</strong>: {value}
         </span>

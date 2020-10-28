@@ -30,7 +30,7 @@ export const TimeDisplay = ({
 
   if (withTooltip) {
     return (
-      <Tooltip placement="bottom" content={tooltipTime}>
+      <Tooltip interactive placement="bottom" content={tooltipTime}>
         <>{displayTime}</>
       </Tooltip>
     );

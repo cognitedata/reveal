@@ -89,6 +89,7 @@ export const DataSetFilter = ({
 
   return (
     <Tooltip
+      interactive
       disabled={hasPermissions}
       content="You do not have access to data sets, please make sure you have datasetsAcl:READ"
     >
