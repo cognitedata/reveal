@@ -232,7 +232,6 @@ export function DistanceMeasurement() {
     })();
 
     return () => {
-      scene?.dispose();
       renderer?.dispose();
       animationLoopHandler.dispose();
       gui.destroy();
