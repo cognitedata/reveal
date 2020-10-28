@@ -18,7 +18,7 @@ type SectorContainer = {
 
 type SectorVisibility = {
   sectorIdWithOffset: number;
-  hitCount: number;
+  weight: number;
   distance: number;
 };
 
@@ -213,13 +213,13 @@ export class GpuOrderSectorsByVisibilityCoverage {
     );
 
     // 5. Map to IDs that the world understands
-    const totalHits = sectorVisibility.reduce((hits, x) => x.hitCount + hits, 0);
+    const totalWeight = sectorVisibility.reduce((weight, x) => x.weight + weight, 0);
     const result = sectorVisibility
-      .filter(x => x.hitCount > 0)
+      .filter(x => x.weight > 0)
       // Sort by "hit" to put most visible sectors first
       .sort((left, right) => {
         if (left && right) {
-          return right.hitCount - left.hitCount;
+          return right.weight - left.weight;
         } else if (left) {
           return -1;
         } else if (right) {
@@ -233,11 +233,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
         return {
           model: container.model,
           sectorId,
-          priority: x.hitCount / totalHits,
+          priority: x.weight / totalWeight,
           depth: x.distance
         };
       });
-    console.log(result);
     return result;
   }
 
@@ -293,8 +292,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
     }
 
     const sectorVisibility = this.buffers.sectorVisibilityBuffer;
+    const halfHeight = renderTargetHeight / 2;
+    const halfWidth = renderTargetWidth / 2;
     for (let y = 0; y < renderTargetHeight; y++) {
-      const ry = (y - renderTargetHeight / 2) / (renderTargetHeight / 2);
+      const ry = (y - renderTargetHeight / 2) / halfHeight;
       for (let x = 0; x < renderTargetWidth; x++) {
         const i = x + renderTargetWidth * y;
         const r = renderTargetBuffer[4 * i + 0];
@@ -302,12 +303,11 @@ export class GpuOrderSectorsByVisibilityCoverage {
         const b = renderTargetBuffer[4 * i + 2];
         const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
         if (r !== 255 || g !== 255 || b !== 255) {
-          const rx = (y - renderTargetWidth / 2) / (renderTargetWidth / 2);
-          const w = weight(rx, ry);
+          const rx = (y - halfWidth) / halfWidth;
 
           const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
-          const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, hitCount: 0, distance };
-          value.hitCount += w;
+          const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, weight: 0, distance };
+          value.weight += weight(rx, ry);
           value.distance = Math.min(value.distance, distance);
           sectorVisibility[sectorIdWithOffset] = value;
         }
@@ -326,7 +326,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
     for (let i = 0; i < this.buffers.sectorVisibilityBuffer.length; i++) {
       const entry = this.buffers.sectorVisibilityBuffer[i];
       if (entry) {
-        entry.hitCount = 0;
+        entry.weight = 0;
       }
     }
   }
