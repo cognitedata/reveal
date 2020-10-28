@@ -176,13 +176,9 @@ export function Testable() {
         revealManager.clippingPlanes = boxClipper.clippingPlanes;
         revealManager.clipIntersection = boxClipper.intersection;
       } else if (test === 'scaled_model') {
-        const scale = new THREE.Matrix4().makeScale(0.5, 0.5, 0.5);
-        model.setModelTransformation(scale);
-        const cameraConfig = model.suggestCameraConfig();
-        position.copy(cameraConfig.position);
-        target.copy(cameraConfig.target);
-        near = cameraConfig.near;
-        far = cameraConfig.far;
+        const matrix = model.getModelTransformation();
+        const newMatrix = matrix.scale(new THREE.Vector3(5, 5, 5));
+        model.setModelTransformation(newMatrix);
       }
 
       const controls = new CameraControls(camera, renderer.domElement);
