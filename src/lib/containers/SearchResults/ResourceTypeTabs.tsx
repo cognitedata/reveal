@@ -4,7 +4,7 @@ import { Tabs, CdfCount } from 'lib/components';
 import { useResourceFilters } from 'lib/context';
 import { ResourceIcons } from 'lib/components/ResourceIcons/ResourceIcons';
 
-const ResourceMap: Record<ResourceType, string> = {
+const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
   file: 'Files',
   event: 'Events',
@@ -13,6 +13,7 @@ const ResourceMap: Record<ResourceType, string> = {
 };
 
 type Props = {
+  resourceTypes?: ResourceType[];
   currentResourceType: ResourceType;
   setCurrentResourceType: (newResourceType: ResourceType) => void;
 };
@@ -20,6 +21,7 @@ type Props = {
 export const ResourceTypeTabs = ({
   currentResourceType,
   setCurrentResourceType,
+  resourceTypes = Object.keys(resourceTypeMap) as ResourceType[],
 }: Props) => {
   const {
     assetFilter,
@@ -42,7 +44,7 @@ export const ResourceTypeTabs = ({
       tab={currentResourceType}
       onTabChange={tab => setCurrentResourceType(tab as ResourceType)}
     >
-      {Object.keys(ResourceMap).map(key => {
+      {resourceTypes.map(key => {
         const type = key as ResourceType;
         const sdkType = convertResourceType(type);
         return (
@@ -51,7 +53,7 @@ export const ResourceTypeTabs = ({
             title={
               <div>
                 <ResourceIcons style={{ marginRight: 12 }} type={type} />
-                {ResourceMap[type]}{' '}
+                {resourceTypeMap[type]}{' '}
                 <CdfCount type={sdkType} filter={filtersMap[type]} />
               </div>
             }

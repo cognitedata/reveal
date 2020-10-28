@@ -77,6 +77,12 @@ export const SelectionSidebarContent = ({
   const resourceTypes = useResourceTypes();
   const [activeKey, setActiveKey] = useState<ResourceType>(resourceTypes[0]);
 
+  useEffect(() => {
+    if (!resourceTypes.includes(activeKey)) {
+      setActiveKey(resourceTypes[0]);
+    }
+  }, [activeKey, resourceTypes]);
+
   const selectResourcesCount = useMemo(
     () => resourcesState.filter(el => el.state === 'selected').length,
     [resourcesState]
@@ -84,7 +90,7 @@ export const SelectionSidebarContent = ({
 
   useEffect(() => {
     setSelectedItem(undefined);
-  }, [visible]);
+  }, [visible, activeKey]);
 
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
     resourceItem => {

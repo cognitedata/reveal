@@ -64,6 +64,7 @@ export const SearchResults = ({
     >
       {resourceTypes.length > 1 && (
         <ResourceTypeTabs
+          resourceTypes={resourceTypes}
           currentResourceType={currentResourceType}
           setCurrentResourceType={setCurrentResourceType}
         />

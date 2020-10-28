@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import queryString from 'query-string';
 import { ResourceType } from 'lib/types';
 import { useHistory, useParams } from 'react-router-dom';
 import { SearchResults } from 'lib/containers/SearchResults';
@@ -7,14 +8,19 @@ import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
 import {
   useResourceFilter,
   useQuery,
-  useResourcesState,
+  useSelectedResource,
 } from 'lib/context/ResourceSelectionContext';
 
 export const SearchResultsPage = () => {
   const history = useHistory();
 
   const setCurrentResourceType = (newResourceType: ResourceType) => {
-    history.push(createLink(`/explore/${newResourceType}`));
+    const { query } = queryString.parse(history.location.search);
+    if (typeof query === 'string') {
+      history.push(createLink(`/explore/${newResourceType}?query=${query}`));
+    } else {
+      history.push(createLink(`/explore/${newResourceType}`));
+    }
   };
 
   const { resourceType = 'asset' } = useParams<{
@@ -23,7 +29,7 @@ export const SearchResultsPage = () => {
 
   const [query] = useQuery();
   const filter = useResourceFilter(resourceType);
-  const { resourcesState } = useResourcesState();
+  const { selectedResource } = useSelectedResource();
 
   useEffect(() => {
     trackUsage('Exploration.ResourceType', { resourceType });
@@ -42,16 +48,12 @@ export const SearchResultsPage = () => {
   const timer = useRef<Timer>();
 
   useEffect(() => {
-    const activeResource = resourcesState.find(
-      resource => resource.state === 'active' && resource.type === resourceType
-    );
-
-    if (activeResource) {
-      trackUsage('Exploration.PreviewResource', activeResource);
+    if (selectedResource) {
+      trackUsage('Exploration.PreviewResource', selectedResource);
       if (timer.current) {
         timer.current.stop({
-          type: activeResource.type,
-          id: activeResource.id,
+          type: selectedResource.type,
+          id: selectedResource.id,
         });
       }
     } else {
@@ -59,7 +61,7 @@ export const SearchResultsPage = () => {
     }
 
     return () => timer.current?.stop();
-  }, [resourcesState, resourceType]);
+  }, [selectedResource]);
 
   return (
     <SearchResults
