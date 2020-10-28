@@ -92,10 +92,11 @@
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.3",
-    "@cognite/three-combo-controls": "^1.4.3",
-    "@tweenjs/tween.js": "^18.6.4",
     "@cognite/reveal-parser-worker": "1.0.0",
     "@cognite/sdk-core": "^1.0.0",
+    "@cognite/three-combo-controls": "^1.4.3",
+    "@tweenjs/tween.js": "^18.6.4",
+    "@types/lodash": "^4.14.162",
     "comlink": "^4.3.0",
     "eslint-plugin-unused-imports": "^0.1.3",
     "gl-matrix": "^3.3.0",
