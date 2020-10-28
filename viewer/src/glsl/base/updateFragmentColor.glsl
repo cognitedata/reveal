@@ -19,7 +19,7 @@ vec3 packNormalToRgb( const in vec3 normal ) {
 void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 normal, float depth, sampler2D matCapTexture) {
     if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
         vec3 hsv = rgb2hsv(color.rgb);
-        hsv.z = min(0.6 * hsv.z + 0.4, 1.0);
+        hsv.z = min(0.5 * hsv.z + 0.5, 1.0);
         vec3 colorRGB = hsv2rgb(hsv);
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
         vec4 albedo = vec4(colorRGB * (0.4 + 0.6 * amplitude), 1.0);
