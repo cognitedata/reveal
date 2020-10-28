@@ -11,7 +11,6 @@ import {
   AddModelOptions,
   Cognite3DViewer,
   Cognite3DModel,
-  BoundingBoxClipper,
   CognitePointCloudModel,
   PotreePointColorType, 
   PotreePointShape
@@ -32,11 +31,15 @@ export function Migration() {
         throw new Error('Must provide "project"as URL parameter');
       }
 
+      const totalBounds  = new THREE.Box3();
+
       const slicingParams = {
-        enabled: false,
-        width: 100,
-        height: 100,
-        depth: 100,
+        enabledX: false,
+        enabledY: false,
+        enabledZ: false,
+        flipX: false,
+        flipY: false,
+        flipZ: false,
         x: 0,
         y: 0,
         z: 0,
@@ -58,22 +61,6 @@ export function Migration() {
         }
       };
 
-      const boxClipper = new BoundingBoxClipper(
-        new THREE.Box3(
-          new THREE.Vector3(
-            slicingParams.x - slicingParams.width / 2,
-            slicingParams.y - slicingParams.height / 2,
-            slicingParams.z - slicingParams.depth / 2
-          ),
-          new THREE.Vector3(
-            slicingParams.x + slicingParams.width / 2,
-            slicingParams.y + slicingParams.height / 2,
-            slicingParams.z + slicingParams.depth / 2
-          )
-        ),
-        false
-      );
-
       // Login
       const client = new CogniteClient({ appId: 'cognite.reveal.example' });
       client.loginWithOAuth({ project });
@@ -92,6 +79,12 @@ export function Migration() {
       async function addModel(options: AddModelOptions) {
         try {
           const model = await viewer.addModel(options);
+
+          const bounds = model.getModelBoundingBox();
+          totalBounds.expandByPoint(bounds.min);
+          totalBounds.expandByPoint(bounds.max);
+          updateSlicingGui();
+
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
@@ -139,84 +132,51 @@ export function Migration() {
       gui.add(guiActions, 'addModel').name('Load model');
 
       const slicing = gui.addFolder('Slicing');
+      
+      // X 
       slicing
-        .add(slicingParams, 'enabled')
-        .name('enabled')
-        .onChange((enabled) => {
-          viewer.setSlicingPlanes(enabled ? boxClipper.clippingPlanes : []);
-        });
-
+        .add(slicingParams, 'enabledX')
+        .name('X')
+        .onChange(updateSlicingPlanes);
       slicing
+        .add(slicingParams, 'flipX')
+        .name('Flip X')
+        .onChange(updateSlicingPlanes);
+      const slicingXGui = slicing
         .add(slicingParams, 'x', -600, 600)
         .step(0.1)
-        .name('x')
-        .onChange((_) => {
-          boxClipper.minX = slicingParams.x - slicingParams.width / 2;
-          boxClipper.maxX = slicingParams.x + slicingParams.width / 2;
-          viewer.setSlicingPlanes(
-            slicingParams.enabled ? boxClipper.clippingPlanes : []
-          );
-        });
-
+        .name('X')
+        .onChange(updateSlicingPlanes);
+      
+      // Y
       slicing
+        .add(slicingParams, 'enabledY')
+        .name('Y')
+        .onChange(updateSlicingPlanes);
+      slicing
+        .add(slicingParams, 'flipY')
+        .name('Flip Y')
+        .onChange(updateSlicingPlanes);
+      const slicingYGui = slicing
         .add(slicingParams, 'y', -600, 600)
         .step(0.1)
         .name('y')
-        .onChange((_) => {
-          boxClipper.minY = slicingParams.y - slicingParams.height / 2;
-          boxClipper.maxY = slicingParams.y + slicingParams.height / 2;
-          viewer.setSlicingPlanes(
-            slicingParams.enabled ? boxClipper.clippingPlanes : []
-          );
-        });
+        .onChange(updateSlicingPlanes);
 
+      // Z
       slicing
+        .add(slicingParams, 'enabledZ')
+        .name('Z')
+        .onChange(updateSlicingPlanes);
+      slicing
+        .add(slicingParams, 'flipZ')
+        .name('Flip Z')
+        .onChange(updateSlicingPlanes);
+      const slicingZGui = slicing
         .add(slicingParams, 'z', -600, 600)
         .step(0.1)
         .name('z')
-        .onChange((_) => {
-          boxClipper.minZ = slicingParams.z - slicingParams.depth / 2;
-          boxClipper.maxZ = slicingParams.z + slicingParams.depth / 2;
-          viewer.setSlicingPlanes(
-            slicingParams.enabled ? boxClipper.clippingPlanes : []
-          );
-        });
-
-      slicing
-        .add(slicingParams, 'width', 0, 100)
-        .step(0.1)
-        .name('width')
-        .onChange((_) => {
-          boxClipper.minX = slicingParams.x - slicingParams.width / 2;
-          boxClipper.maxX = slicingParams.x + slicingParams.width / 2;
-          viewer.setSlicingPlanes(
-            slicingParams.enabled ? boxClipper.clippingPlanes : []
-          );
-        });
-
-      slicing
-        .add(slicingParams, 'height', 0, 100)
-        .step(0.1)
-        .name('height')
-        .onChange((_) => {
-          boxClipper.minY = slicingParams.y - slicingParams.height / 2;
-          boxClipper.maxY = slicingParams.y + slicingParams.height / 2;
-          viewer.setSlicingPlanes(
-            slicingParams.enabled ? boxClipper.clippingPlanes : []
-          );
-        });
-
-      slicing
-        .add(slicingParams, 'depth', 0, 100)
-        .step(0.1)
-        .name('depth')
-        .onChange((_) => {
-          boxClipper.minZ = slicingParams.z - slicingParams.depth / 2;
-          boxClipper.maxZ = slicingParams.z + slicingParams.depth / 2;
-          viewer.setSlicingPlanes(
-            slicingParams.enabled ? boxClipper.clippingPlanes : []
-          );
-        });
+        .onChange(updateSlicingPlanes);
 
       const pcSettings = gui.addFolder('Point clouds');
       pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
@@ -263,6 +223,36 @@ export function Migration() {
           viewer.fitCameraToBoundingBox(boundingBox, 1000);
         }
       });
+
+      function updateSlicingGui() {
+        slicingXGui.min(totalBounds.min.x);
+        slicingXGui.max(totalBounds.max.x);
+        slicingYGui.min(totalBounds.min.y);
+        slicingYGui.max(totalBounds.max.y);
+        slicingZGui.min(totalBounds.min.z);
+        slicingZGui.max(totalBounds.max.z);
+      }
+  
+      function updateSlicingPlanes() {
+        const dirX = new THREE.Vector3(1, 0, 0);
+        const dirY = new THREE.Vector3(0, -1, 0);
+        const dirZ = new THREE.Vector3(0, 0, 1);
+        const planes: THREE.Plane[] = [];
+        const point = new THREE.Vector3(slicingParams.x, slicingParams.y, slicingParams.z);
+        if (slicingParams.enabledX) {
+          const normal = dirX.clone().multiplyScalar(slicingParams.flipX ? -1 : 1);
+          planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
+        }
+        if (slicingParams.enabledY) {
+          const normal = dirY.clone().multiplyScalar(slicingParams.flipY ? -1 : 1);
+          planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
+        }
+        if (slicingParams.enabledZ) {
+          const normal = dirZ.clone().multiplyScalar(slicingParams.flipZ ? -1 : 1);
+          planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
+        }
+        viewer.setSlicingPlanes(planes);
+      }  
     }
 
     main();
