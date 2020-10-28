@@ -10,7 +10,7 @@
     "test": "react-app-rewired test --testPathIgnorePatterns 'src/visual_tests'",
     "test:visual": "jest --testTimeout=30000 --runInBand --detectOpenHandles --verbose false -c src/visual_tests/jest.config.js",
     "test:ghprcomment": "node src/visual_tests/GithubActionsPRComment.js",
-    "snapshots:update": "start-server-and-test start:nossl http://localhost:3000 snapshots:capture",
+    "snapshots:update": "cross-env PORT=3000 BROWSER=none start-server-and-test start:nossl http://localhost:3000 snapshots:capture",
     "snapshots:capture": "jest --runInBand --detectOpenHandles --updateSnapshot -c src/visual_tests/jest.config.js",
     "ci:nossl": "start-server-and-test start:nossl http://localhost:3000 test:visual",
     "eject": "react-scripts eject"
