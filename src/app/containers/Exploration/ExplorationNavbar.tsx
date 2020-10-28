@@ -1,9 +1,7 @@
 import React, { useRef, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Colors, Badge } from '@cognite/cogs.js';
-import { Popover } from 'lib/components';
+import { Button, Colors, Dropdown } from '@cognite/cogs.js';
 import { ShoppingCartPreview } from 'app/containers/Exploration/ShoppingCart';
-import ShoppingCartIcon from 'app/assets/shopping-cart.svg';
 import styled from 'styled-components';
 import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
 import { ResourceItem } from 'lib/types';
@@ -15,6 +13,16 @@ const Navbar = styled.div`
   padding: 18px 26px 12px;
   background: #fff;
   border-bottom: 2px solid ${Colors['greyscale-grey2'].hex()};
+`;
+
+const CartDropdown = styled(Dropdown)`
+  background: #fff;
+  color: #000;
+  box-shadow: 0px 0px 8px ${Colors['greyscale-grey3'].hex()};
+  padding: 8px;
+  .tippy-arrow {
+    color: #fff;
+  }
 `;
 
 export const ExplorationNavbar = ({
@@ -57,24 +65,18 @@ export const ExplorationNavbar = ({
     default: {
       selectionContent = (
         <>
-          <Popover
-            trigger="click"
+          <CartDropdown
             content={<ShoppingCartPreview cart={cart} setCart={setCart} />}
             placement="bottom-end"
           >
-            <Button style={{ height: '100%' }}>
-              <img
-                src={ShoppingCartIcon}
-                alt=""
-                style={{ height: 16, width: 16, marginRight: 8 }}
-              />
-              <span style={{ marginRight: 8 }}>Kit</span>
-              <Badge
-                background={Colors['greyscale-grey7'].hex()}
-                text={`${cartCount}`}
-              />
+            <Button
+              icon="Down"
+              iconPlacement="right"
+              style={{ height: '100%' }}
+            >
+              {`Selection (${cartCount})`}
             </Button>
-          </Popover>
+          </CartDropdown>
           <Button
             style={{ marginLeft: 8 }}
             onClick={() => setMode('none')}
