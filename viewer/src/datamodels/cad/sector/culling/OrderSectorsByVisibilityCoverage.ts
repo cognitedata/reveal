@@ -237,7 +237,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
           depth: x.distance
         };
       });
-
+    console.log(result);
     return result;
   }
 
@@ -285,18 +285,32 @@ export class GpuOrderSectorsByVisibilityCoverage {
     renderTargetHeight: number,
     renderTargetBuffer: Uint8Array
   ): SectorVisibility[] {
+    // Weight function that prioritizes pixels in the middle of the screen.
+    // See https://www.wolframalpha.com/input/?i=plot+%282.5+-+%28x%5E2+%2B+y%5E2%29+%2B+2*e%5E%28-sqrt%28x%5E2+%2B+y%5E2%29%29%29%2F2%2C+x+in+%5B-1%2C+1%5D+y+in+%5B-1%2C+1%5D
+    function weight(x: number, y: number): number {
+      const s = x * x + y * y;
+      return 0.5 * (2.5 - s) + Math.exp(-Math.sqrt(s));
+    }
+
     const sectorVisibility = this.buffers.sectorVisibilityBuffer;
-    for (let i = 0; i < renderTargetWidth * renderTargetHeight; i++) {
-      const r = renderTargetBuffer[4 * i + 0];
-      const g = renderTargetBuffer[4 * i + 1];
-      const b = renderTargetBuffer[4 * i + 2];
-      const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
-      if (r !== 255 || g !== 255 || b !== 255) {
-        const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
-        const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, hitCount: 0, distance };
-        value.hitCount++;
-        value.distance = Math.min(value.distance, distance);
-        sectorVisibility[sectorIdWithOffset] = value;
+    for (let y = 0; y < renderTargetHeight; y++) {
+      const ry = (y - renderTargetHeight / 2) / (renderTargetHeight / 2);
+      for (let x = 0; x < renderTargetWidth; x++) {
+        const i = x + renderTargetWidth * y;
+        const r = renderTargetBuffer[4 * i + 0];
+        const g = renderTargetBuffer[4 * i + 1];
+        const b = renderTargetBuffer[4 * i + 2];
+        const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
+        if (r !== 255 || g !== 255 || b !== 255) {
+          const rx = (y - renderTargetWidth / 2) / (renderTargetWidth / 2);
+          const w = weight(rx, ry);
+
+          const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
+          const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, hitCount: 0, distance };
+          value.hitCount += w;
+          value.distance = Math.min(value.distance, distance);
+          sectorVisibility[sectorIdWithOffset] = value;
+        }
       }
     }
     return sectorVisibility;
