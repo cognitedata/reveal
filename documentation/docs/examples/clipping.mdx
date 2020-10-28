@@ -1,0 +1,111 @@
+---
+id: clipping
+title: Clipping/slicing planes
+describe: Reveal support adding a number of slicing planes to "cut through" the models.
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Slicing planes, also called clipping planes, can be used to "cut through" the model to reveal the interior. This is 
+useful to isolate interesting parts of the model and hide obscuring geometry. Reveal supports having multiple slicing planes
+in arbitrary position and orientation. When slicing planes are active,
+the amount of geometry loaded might be reduced since culled geometry doesn't need
+to be loaded (or rather loaded in a lower detail level).
+
+<video preload="auto" autoPlay="autoplay" loop controls>
+  <source src={useBaseUrl('/img/cad-clipping.webm')} />
+</video>
+
+:::warning
+Clipping planes are currently not supported by point cloud models.
+:::
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+### Single, fixed slicing plane
+
+Slicing planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane) 
+to `Cognite3DViewer.setSlicingPlanes`. The slicing planes are activated for all models and
+replaces any active slicing planes.
+
+Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math/Plane.setFromNormalAndCoplanarPoint)
+is used to create slicing planes. This function accepts a direction that defines the orientation of
+the plane and a point on the plane. For example will the following
+code create a slicing plane that only accepts geometry below `Y = 55`:
+```jsx runnable
+const orientation = new THREE.Vector3(0, -1, 0);
+const point = new THREE.Vector3(0, 55, 0);
+const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation, point);
+viewer.setSlicingPlanes([plane]);
+```
+
+### Animated slicing plane
+
+Planes can be manipulated runtime and effects will have effect in the viewer. Note however that rendering must be 
+triggered after updating the plane before the change will have visual effect. This can be done using 
+`Cognite3DViewer.forceRerender()`.
+
+Below is an example animates a slicing plane by ping-ponging the plane in the vertical direction.
+
+```js runnable
+const bbox = model.getModelBoundingBox();
+
+const orientation = new THREE.Vector3(0, -1, 0);
+const point = new THREE.Vector3(0, bbox.max.y, 0);
+const plane = new THREE.Plane();
+plane.setFromNormalAndCoplanarPoint(orientation, point);
+viewer.setSlicingPlanes([plane]);
+
+const start = performance.now();
+setInterval(() => {
+  // Ping-pong plane between top of model and half-way to the bottom
+  const dt = (performance.now() - start) / 1000.0
+  const s = 0.5 * (Math.sin(Math.PI * dt / 10.0) + 1.0);
+  point.y = bbox.max.y - (bbox.max.y - bbox.min.y) / 2.0 * s;
+  plane.setFromNormalAndCoplanarPoint(orientation, point);
+
+  viewer.forceRerender();
+}, 1000 / 60);
+```
+:::info
+Updating `THREE.Plane`-instances will not trigger data loading. Typically you will need to trigger data loading if
+you do substantial changes to the slicing planes. In these cases, use `Cognite3DViewer.setSlicingPlanes`. The example 
+above performs substantial changes to the planes without loading data. In a real application it's recommended to 
+not load data during animation, but initiate data after an animation is completed.
+:::
+
+### CAD geometry filter
+
+```js runnable
+// import { DragControls } from 'three/examples/jsm/controls/DragControls';
+
+const bounds = model.getModelBoundingBox();
+
+// Create draggable cone at center of bounds
+const center = bounds.getCenter(new THREE.Vector3());
+var geometry = new THREE.BoxBufferGeometry(10, 10, 10);
+var mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 'green' }));
+mesh.position.copy(center);
+viewer.addObject3D(mesh);
+
+// Prepare a clipping plane
+const orientation = new THREE.Vector3(0, -1, 0);
+const point = new THREE.Vector3(0, center.y, 0);
+const plane = new THREE.Plane();
+plane.setFromNormalAndCoplanarPoint(orientation, point);
+viewer.setSlicingPlanes([plane]);
+
+const controls = new DragControls([mesh], viewer.getCamera(), viewer.domElement);
+controls.addEventListener('drag', () => {
+  // Fix XZ-poistion
+  mesh.position.set(center.x, mesh.position.y, center.z);
+  // Update slicing plane
+  plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), mesh.position);
+  viewer.forceRerender();
+});
+controls.addEventListener('dragstart', () => viewer.cameraControlsEnabled = false);
+controls.addEventListener('dragend', () => viewer.cameraControlsEnabled = true);
+```
