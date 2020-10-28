@@ -57,7 +57,6 @@ export function DistanceMeasurement() {
   const [measuredDistance, setMeasuredDistance] = useState<any>();
 
   useEffect(() => {
-    let scene: Scene | undefined;
     let renderer: WebGLRenderer | undefined;
     let revealManager: RevealManager<unknown>;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
