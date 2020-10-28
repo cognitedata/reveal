@@ -68,8 +68,7 @@ export interface SectorScene {
    * const cameraProjectionMatrix = camera.projectionMatrix;
    *
    * const transformedCameraMatrixWorldInverse =
-   *  new THREE.Matrix4().multiplyMatrices()
-   *   mat4.multiply(cameraMatrixWorldInverse, model.modelMatrix);
+   *  new THREE.Matrix4().multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix)
    *
    * const intersectingSectors = model.scene.getSectorsIntersectingFrustum(
    *   cameraProjectionMatrix,
