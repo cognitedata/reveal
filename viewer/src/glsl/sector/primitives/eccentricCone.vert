@@ -53,7 +53,7 @@ void main() {
 
     vec3 normalWithOffset = normalize((modelTransformOffset * vec4(a_normal, 0)).xyz);
 
-    float uniformScaleFactor = length(mul3(modelToTransformOffset, normalize(vec3(1.0))));
+    float uniformScaleFactor = length(mul3(modelMatrix, normalize(vec3(1.0))));
 
     height = dot(centerA - centerB, normalWithOffset) * uniformScaleFactor;
 
