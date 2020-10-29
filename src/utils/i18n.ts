@@ -6,6 +6,7 @@ import HttpBackend from 'i18next-http-backend';
 import Pseudo from 'i18next-pseudo';
 import { initReactI18next } from 'react-i18next';
 import config from './config';
+import { getItem } from './localStorage';
 
 const {
   REACT_APP_I18N_PSEUDO,
@@ -14,6 +15,8 @@ const {
   REACT_APP_LOCIZE_PROJECT_ID,
   REACT_APP_LOCIZE_API_KEY,
 } = process.env;
+
+const LOCIZE_LANGUAGE_KEY = 'currentLanguage';
 
 const pseudo = REACT_APP_I18N_PSEUDO === 'true';
 const debug = REACT_APP_I18N_DEBUG === 'true';
@@ -27,10 +30,12 @@ if (!REACT_APP_LOCIZE_PROJECT_ID) {
   }
 }
 
+const getLanguage = () => REACT_APP_LANGUAGE || getItem(LOCIZE_LANGUAGE_KEY);
+
 let initOptions: InitOptions = {
   debug: true,
   interpolation: { escapeValue: false },
-  lng: REACT_APP_LANGUAGE || 'en',
+  lng: getLanguage() || 'en',
   fallbackLng: 'en',
   load: 'currentOnly',
   fallbackNS: ['global'],
