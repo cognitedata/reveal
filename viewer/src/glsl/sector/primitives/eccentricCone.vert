@@ -46,23 +46,23 @@ void main() {
     );
 
     mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
+    mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
 
     vec3 centerA = mul3(modelTransformOffset, a_centerA);
     vec3 centerB = mul3(modelTransformOffset, a_centerB);
 
-    vec3 normalWithOffset = (modelTransformOffset * vec4(a_normal, 0)).xyz;
+    vec3 normalWithOffset = normalize((modelTransformOffset * vec4(a_normal, 0)).xyz);
+
+    float uniformScaleFactor = length(mul3(modelToTransformOffset, normalize(vec3(1.0))));
+
+    height = dot(centerA - centerB, normalWithOffset) * uniformScaleFactor;
 
     vec3 lDir;
-    height = dot(centerA - centerB, normalWithOffset);
     vec3 center = 0.5 * (centerA + centerB);
     vec3 newPosition = position;
 
-#if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
-      vec3 objectToCameraModelSpace = inverseNormalMatrix*vec3(0.0, 0.0, 1.0);
-#else
-      vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
-      vec3 objectToCameraModelSpace = rayOrigin - center;
-#endif
+    vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
+    vec3 objectToCameraModelSpace = rayOrigin - center;
 
 
     // Find the coordinates of centerA and centerB projected down to the end cap plane
@@ -94,18 +94,24 @@ void main() {
     newPosition.x *= 1.0 - (a_radiusA * (position.x + 1.0) * 0.0025 / height);
 #endif
 
-    v_centerA.xyz = mul3(modelViewMatrix, centerA);
-    v_centerB.xyz = mul3(modelViewMatrix, centerB);
+    v_centerA.xyz = mul3(viewMatrix, mul3(modelMatrix, centerA));
+    v_centerB.xyz = mul3(viewMatrix, mul3(modelMatrix, centerB));
+
+
+    float radiusA = length(mul3(modelToTransformOffset, (normalize(vec3(1.0)) * a_radiusA)));
+    float radiusB = length(mul3(modelToTransformOffset, (normalize(vec3(1.0)) * a_radiusB)));
+
+
     // Pack radii as w components of v_centerA and v_centerB
-    v_centerA.w = displaceScalar(centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
-    v_centerB.w = displaceScalar(centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerA.w = radiusA; //displaceScalar(centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.w = radiusB; //displaceScalar(centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
 
     float radiusIncludedDisplacement = 0.5*(2.0*max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
-    vec3 surfacePoint = center + mat3(0.5*height*lDir, radiusIncludedDisplacement*left, radiusIncludedDisplacement*up) * newPosition;
+    vec3 surfacePoint = center + mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement*left, radiusIncludedDisplacement*up) * newPosition;
     vec3 transformed = surfacePoint;
 
-    // We pack radii as w-components of coneTop and coneBase
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
+
     // We pack surfacePoint as w-components of U, V and axis
     U.w = surfacePoint.x;
     V.w = surfacePoint.y;
