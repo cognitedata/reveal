@@ -35,6 +35,7 @@ Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math
 is used to create slicing planes. This function accepts a direction that defines the orientation of
 the plane and a point on the plane. For example, the following
 code will create a slicing plane that only accepts geometry below `Y = 55`:
+
 ```jsx runnable
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, 55, 0);
@@ -70,7 +71,8 @@ setInterval(() => {
   viewer.forceRerender();
 }, 1000 / 60);
 ```
-:::tip
+
+:::note
 Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing 
 substantial changes to the slicing planes, use `Cognite3DViewer.setSlicingPlanes`. Note that the example
 above performs substantial changes to the planes without loading data. In a real application it's recommended 
