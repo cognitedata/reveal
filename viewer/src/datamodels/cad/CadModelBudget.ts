@@ -29,7 +29,7 @@ export const defaultCadModelSectorBudget = isMobileOrTablet()
     {
       highDetailProximityThreshold: 5 * 1000,
       geometryDownloadSizeBytes: 20 * 1024 * 1024,
-      maximumNumberOfDrawCalls: 1000
+      maximumNumberOfDrawCalls: 700
     }
   : // Desktop
     {
