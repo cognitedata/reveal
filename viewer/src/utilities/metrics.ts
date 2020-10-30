@@ -29,6 +29,17 @@ const globalProps = {
   application: 'unknown'
 };
 
+/**
+ * Source: https://stackoverflow.com/a/2117523/167251
+ */
+function generateUuidv4(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 export function initMetrics(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps) {
   // Even though mixpanel has an opt out property, the mixpanel object
   // used by Metrics is not available here, so we have our own way of opting out.
@@ -36,7 +47,41 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
   if (!globalLogMetrics) {
     return;
   }
-  mixpanel.init(MIXPANEL_TOKEN, { persistence: 'localStorage' });
+
+  mixpanel.init(MIXPANEL_TOKEN, {
+    disable_cookie: true,
+    disable_persistence: true,
+    // Don't send IP which disables geolocation
+    ip: false,
+    // Avoid sending a bunch of properties that might help identifying a user
+    property_blacklist: [
+      // https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel#profile-properties-javascript
+      '$city',
+      '$region',
+      'mp_country_code',
+      '$geo_source',
+      '$timezone',
+      'mp_lib',
+      '$lib_version',
+      '$device_id',
+      '$user_id',
+      '$current_url',
+      '$screen_width',
+      '$screen_height',
+      '$referrer',
+      '$referring_domain',
+      '$initial_referrer',
+      '$initial_referring_domain'
+    ]
+  });
+  // Reset device ID (even if we don't send it)
+  mixpanel.reset();
+
+  // Use a random identifier because we want to don't track users over multiple sessions to not
+  // violate GDPR. This overrides "distinct_id".
+  const randomIdentifier = generateUuidv4();
+  mixpanel.identify(randomIdentifier);
+
   if (project) {
     globalProps.project = project;
   }
