@@ -1,5 +1,4 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl');
 
 uniform mat4 inverseModelMatrix;
@@ -103,8 +102,8 @@ void main() {
 
 
     // Pack radii as w components of v_centerA and v_centerB
-    v_centerA.w = radiusA; //displaceScalar(centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
-    v_centerB.w = radiusB; //displaceScalar(centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerA.w = radiusA;
+    v_centerB.w = radiusB;
 
     float radiusIncludedDisplacement = 0.5*(2.0*max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
     vec3 surfacePoint = center + mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement*left, radiusIncludedDisplacement*up) * newPosition;
