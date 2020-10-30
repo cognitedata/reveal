@@ -16,6 +16,7 @@ import {
   PotreePointShape
 } from '@cognite/reveal';
 import { getuid } from 'process';
+import { createRendererDebugWidget } from '../utils/renderer-debug-widget';
 
 window.THREE = THREE;
 
@@ -85,9 +86,16 @@ export function Migration() {
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);
           updateSlicingGui();
-
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
+            const modelGui = gui.addFolder('Model debug');
+            // @ts-expect-error
+            const cadNode = model.cadNode;
+            // @ts-expect-error
+            const renderer = viewer.renderer;
+            const sectorMetadata = cadNode._cadModelMetadata.scene.root;
+            createRendererDebugWidget(sectorMetadata, renderer, cadNode, modelGui);
+  
             cadModels.push(model);
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
