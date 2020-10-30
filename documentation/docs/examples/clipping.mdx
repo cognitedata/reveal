@@ -18,7 +18,7 @@ to be loaded (or rather loaded in a lower detail level).
 </video>
 
 :::caution
-Clipping planes are currently not supported by point cloud models.
+Slicing planes are currently not supported by point cloud models.
 :::
 
 ## Examples
@@ -81,6 +81,10 @@ to not load data during animation, but initiate data after an animation is compl
 
 ### Interactable slicing planes
 
+Often it's required to have interactive slicing planes that the user can modify. The following example 
+show how [ThreeJS DragControls](https://threejs.org/docs/#examples/en/controls/DragControls) can be used 
+to manipulate the slicing planes.
+
 ```js runnable
 // import { DragControls } from 'three/examples/jsm/controls/DragControls';
 
@@ -94,7 +98,7 @@ const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
 draggerMesh.position.copy(initialDragPosition);
 viewer.addObject3D(draggerMesh);
 
-// Prepare a clipping plane
+// Prepare a slicing plane
 const orientation = new THREE.Vector3(0, -1, 0);
 const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
