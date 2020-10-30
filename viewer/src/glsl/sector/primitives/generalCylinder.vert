@@ -102,7 +102,6 @@ void main() {
     v_U.w = surfacePoint.x;
 
     // We pack radii as w-components of v_centerB
-
     mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
     float radius = length(mul3(modelToTransformOffset, (a_localXAxis * a_radius)));
 
