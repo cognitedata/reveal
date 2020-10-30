@@ -98,8 +98,8 @@ void main() {
 
     mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
 
-    float radiusB = length(mul3(modelToTransformOffset, (a_localXAxis * a_radiusB)));
-    float radiusA = length(mul3(modelToTransformOffset, (a_localXAxis * a_radiusA)));
+    float radiusB = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusB, 0.0)).xyz);
+    float radiusA = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusA, 0.0)).xyz);
 
     // We pack radii as w-components of v_centerB
     v_centerB.xyz = mul3(modelViewMatrix, centerB);

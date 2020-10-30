@@ -102,16 +102,16 @@ void main() {
 
     // We pack radii as w-components of v_centerB
     mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
-    float radius = length(mul3(modelToTransformOffset, (a_localXAxis * a_radius)));
+    float radius = length((modelToTransformOffset * vec4(a_localXAxis * a_radius, 0.0)).xyz);
 
     v_centerB.xyz = mul3(modelViewMatrix, centerB);
     v_centerB.w = radius;
 
     vec4 planeA = a_planeA;
-    planeA.w = length(mul3(modelToTransformOffset, (planeA.xyz * planeA.w)));
+    planeA.w = length((modelToTransformOffset * vec4(planeA.xyz * planeA.w, 0.0)).xyz);
 
     vec4 planeB = a_planeB;
-    planeB.w = length(mul3(modelToTransformOffset, (planeB.xyz * planeB.w)));
+    planeB.w = length((modelToTransformOffset * vec4(planeB.xyz * planeB.w, 0.0)).xyz);
 
     v_planeA = planeA;
     v_planeB = planeB;

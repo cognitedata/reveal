@@ -96,10 +96,8 @@ void main() {
     v_centerA.xyz = mul3(viewMatrix, mul3(modelMatrix, centerA));
     v_centerB.xyz = mul3(viewMatrix, mul3(modelMatrix, centerB));
 
-
-    float radiusA = length(mul3(modelToTransformOffset, (normalize(vec3(1.0)) * a_radiusA)));
-    float radiusB = length(mul3(modelToTransformOffset, (normalize(vec3(1.0)) * a_radiusB)));
-
+    float radiusA = length((modelToTransformOffset * vec4(normalize(vec3(1.0)) * a_radiusA, 0.0)).xyz);
+    float radiusB = length((modelToTransformOffset * vec4(normalize(vec3(1.0)) * a_radiusB, 0.0)).xyz);
 
     // Pack radii as w components of v_centerA and v_centerB
     v_centerA.w = radiusA;
