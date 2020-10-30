@@ -9,9 +9,12 @@ import {
   SpacedRow,
   TimeDisplay,
   Wrapper,
+  Splitter,
 } from 'lib/components';
 import { renderTitle } from 'lib/utils/EventsUtils';
 import { EventDetailsAbstract } from 'lib/containers/Events';
+import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
+import { useRelationships } from 'lib/hooks/RelationshipHooks';
 
 const EventDetails = ({ event }: { event: CogniteEvent }) => (
   <div>
@@ -47,6 +50,8 @@ export const EventPreview = ({
     id: eventId,
   });
 
+  const { data: relationships } = useRelationships(event?.externalId);
+
   if (!isFetched) {
     return <Loader />;
   }
@@ -66,7 +71,10 @@ export const EventPreview = ({
         {renderTitle(event)}
       </h1>
       <SpacedRow>{extraActions}</SpacedRow>
-      <EventDetails event={event} />
+      <Splitter>
+        <EventDetails event={event} />
+        <ResourceDetailsSidebar relations={relationships} />
+      </Splitter>
     </Wrapper>
   );
 };

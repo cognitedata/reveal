@@ -10,9 +10,12 @@ import {
   Tabs,
   TimeDisplay,
   Wrapper,
+  Splitter,
 } from 'lib/components';
 import { SequenceDetailsAbstract } from 'lib/containers/Sequences';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
+import { useRelationships } from 'lib/hooks/RelationshipHooks';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(
@@ -59,6 +62,8 @@ export const SequencePreview = ({
     { id: sequenceId }
   );
 
+  const { data: relationships } = useRelationships(sequence?.externalId);
+
   const [currentTab, setTab] = useState('details');
 
   if (!isFetched) {
@@ -81,18 +86,21 @@ export const SequencePreview = ({
       </h1>
       <SpacedRow>{extraActions}</SpacedRow>
 
-      <Tabs tab={currentTab} onTabChange={setTab}>
-        <Tabs.Pane title="Details" key="details">
-          <SequenceDetails sequence={sequence} />
-        </Tabs.Pane>
-        <Tabs.Pane title="Columns " key="columns">
-          <div>
-            <DescriptionList
-              valueSet={formatSequenceColumns(sequence.columns ?? [])}
-            />
-          </div>
-        </Tabs.Pane>
-      </Tabs>
+      <Splitter>
+        <Tabs tab={currentTab} onTabChange={setTab}>
+          <Tabs.Pane title="Details" key="details">
+            <SequenceDetails sequence={sequence} />
+          </Tabs.Pane>
+          <Tabs.Pane title="Columns " key="columns">
+            <div>
+              <DescriptionList
+                valueSet={formatSequenceColumns(sequence.columns ?? [])}
+              />
+            </div>
+          </Tabs.Pane>
+        </Tabs>
+        <ResourceDetailsSidebar relations={relationships} />
+      </Splitter>
     </Wrapper>
   );
 };

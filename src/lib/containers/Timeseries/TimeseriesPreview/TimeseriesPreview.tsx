@@ -1,10 +1,12 @@
-import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
-import { Loader, ErrorFeedback, Wrapper } from 'lib/components';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { ErrorFeedback, Loader, Splitter, Wrapper } from 'lib/components';
 import { TimeseriesGraph } from 'lib/containers/Timeseries';
+import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
+import { useRelationships } from 'lib/hooks/RelationshipHooks';
+import React from 'react';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -27,6 +29,8 @@ export const TimeseriesPreview = ({
     { id: timeseriesId }
   );
 
+  const { data: relationships } = useRelationships(timeseries?.externalId);
+
   if (!isFetched) {
     return <Loader />;
   }
@@ -36,7 +40,7 @@ export const TimeseriesPreview = ({
   }
 
   if (!timeseries) {
-    return <>Sequence {timeseriesId} not found!</>;
+    return <>Timeseries {timeseriesId} not found!</>;
   }
 
   return (
@@ -47,16 +51,22 @@ export const TimeseriesPreview = ({
       </h1>
       {extraActions}
       {timeseries && (
-        <>
-          <TimeseriesGraph
-            timeseries={timeseries}
-            contextChart
-            graphHeight={500}
+        <Splitter>
+          <div>
+            <TimeseriesGraph
+              timeseries={timeseries}
+              contextChart
+              graphHeight={500}
+            />
+            <DescriptionList
+              valueSet={formatMetadata(timeseries.metadata ?? {})}
+            />
+          </div>
+          <ResourceDetailsSidebar
+            assetId={timeseries.assetId}
+            relations={relationships}
           />
-          <DescriptionList
-            valueSet={formatMetadata(timeseries.metadata ?? {})}
-          />
-        </>
+        </Splitter>
       )}
     </Wrapper>
   );
