@@ -2262,10 +2262,10 @@
   dependencies:
     query-string "^6.13.1"
 
-"@cognite/cogs.js@^1.29.1":
-  version "1.29.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.29.1.tgz#fde58882e147e4926f0c75d7ee589dec1536c5c2"
-  integrity sha512-r+hxXhTdSe8QggMWrLOvpfKAJy7LlfQWpXDH92UG6ewtOV0dxv70RX1t3OMAODvL9I71xueEIp9fUxNOHM/6Bg==
+"@cognite/cogs.js@^1.30.0":
+  version "1.30.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.30.0.tgz#9773efc282e7985d8b962fd3a4b9e9b21b4b4ebf"
+  integrity sha512-HahZngCY80rTthvvY9F9SYX1E2qjfi9Dex31k6dB+KuL9CoGRp+pP77iGtObe+2c2WZj2esd9/A0YYxymIRX2Q==
   dependencies:
     "@tippyjs/react" "4.0.2"
     color "^3.1.2"
@@ -2276,6 +2276,7 @@
     rc-tabs "^11.6.2"
     react-modal "^3.11.2"
     react-select "^3.1.0"
+    react-table "^7.6.0"
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
@@ -15206,6 +15207,11 @@ react-syntax-highlighter@^12.2.1:
     lowlight "1.12.1"
     prismjs "^1.8.4"
     refractor "^2.4.1"
+
+react-table@^7.6.0:
+  version "7.6.1"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.6.1.tgz#33ad2bfc58de619678694c5452597544f4864266"
+  integrity sha512-XQyvombPoFbNiDHWAXdxbN78kFpsT1/aJuRSupFfBhO3FJtEVIIq2xbV1NvLzrd1YwfCYRm07ln5OHlfz0SXBg==
 
 react-textarea-autosize@^8.1.1:
   version "8.2.0"

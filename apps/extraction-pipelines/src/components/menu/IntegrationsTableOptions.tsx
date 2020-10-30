@@ -1,0 +1,52 @@
+import React, { FunctionComponent } from 'react';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { Integration } from '../../model/Integration';
+
+const TableOptionDropdown = styled((props) => (
+  <Dropdown {...props}>{props.children}</Dropdown>
+))`
+  .tippy-content {
+    padding: 0;
+  }
+`;
+const OptionMenuBtn = styled((props) => (
+  <Button {...props}>{props.children}</Button>
+))`
+  background-color: transparent;
+  :hover {
+    background-color: transparent;
+    box-shadow: none;
+  }
+`;
+interface OwnProps {
+  integration: Integration;
+}
+
+type Props = OwnProps;
+
+const IntegrationsTableOptions: FunctionComponent<Props> = ({
+  integration,
+}: Props) => {
+  const MenuContent = (
+    <Menu>
+      <Menu.Header>{integration.name}</Menu.Header>
+      <Menu.Item key="0">View integration details</Menu.Item>
+      <Menu.Item key="1">Update integration</Menu.Item>
+      <Menu.Item key="2">View data stream and source</Menu.Item>
+      <Menu.Item key="3">Create new dataset</Menu.Item>
+      <Menu.Item key="4">Download configuration</Menu.Item>
+    </Menu>
+  );
+  return (
+    <>
+      <TableOptionDropdown content={MenuContent}>
+        <OptionMenuBtn aria-label={`Options menu for ${integration.name}`}>
+          <Icon type="HorizontalEllipsis" />
+        </OptionMenuBtn>
+      </TableOptionDropdown>
+    </>
+  );
+};
+
+export default IntegrationsTableOptions;

@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 import { Tabs } from 'antd';
-
 import styled from 'styled-components';
 
 const { TabPane } = Tabs;
