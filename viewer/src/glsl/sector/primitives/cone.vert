@@ -1,5 +1,4 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
@@ -104,13 +103,13 @@ void main() {
 
     // We pack radii as w-components of v_centerB
     v_centerB.xyz = mul3(modelViewMatrix, centerB);
-    v_centerB.w = radiusB; //displaceScalar(centerB, radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.w = radiusB;
 
     v_V.xyz = -cross(v_U.xyz, v_W.xyz);
     v_V.w = surfacePoint.y;
 
     v_centerA.xyz = mul3(modelViewMatrix, centerA);
-    v_centerA.w = radiusA; //displaceScalar(centerA, radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerA.w = radiusA;
 
     v_color = a_color;
     v_normal = normalMatrix * normal;
