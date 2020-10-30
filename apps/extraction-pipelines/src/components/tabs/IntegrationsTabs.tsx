@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Tabs } from 'antd';
 import styled from 'styled-components';
+import Integrations from 'components/integrations/Integrations';
 
 const { TabPane } = Tabs;
 
@@ -29,7 +30,7 @@ const IntegrationsTabs: FunctionComponent<Props> = () => {
   return (
     <StyledTabs className="cdf-tabs">
       <StyledTabPane tab="Overview" key="overview" className="tab-pane">
-        Integrations
+        <Integrations />
       </StyledTabPane>
       <StyledTabPane tab="Learning and resources" key="create-db">
         Learing and resources

@@ -10,7 +10,7 @@ import alertStyle from 'antd/es/alert/style/index.less';
 // import autoCompleteStyle from 'antd/es/auto-complete/style/index.less';
 import avatarStyle from 'antd/es/avatar/style/index.less';
 // import backTopStyle from 'antd/es/back-top/style/index.less';
-// import badgeStyle from 'antd/es/badge/style/index.less';
+import badgeStyle from 'antd/es/badge/style/index.less';
 import breadcrumbStyle from 'antd/es/breadcrumb/style/index.less';
 import buttonStyle from 'antd/es/button/style/index.less';
 // import calendarStyle from 'antd/es/calendar/style/index.less';
@@ -75,6 +75,7 @@ const styles = [
   affixStyle,
   alertStyle,
   avatarStyle,
+  badgeStyle,
   breadcrumbStyle,
   buttonStyle,
   cardStyle,
