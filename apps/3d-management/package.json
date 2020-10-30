@@ -57,7 +57,7 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "single-spa-react": "^3.0.1",
-    "styled-components": "^5.2.0",
+    "styled-components": "^5.2.1",
     "systemjs-webpack-interop": "^2.1.2",
     "three": "0.117.1"
   },
