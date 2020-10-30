@@ -18,7 +18,7 @@
     "@cognite/metrics": "^0.0.32",
     "@cognite/sdk": "^2.33.0",
     "@sentry/browser": "^5.25.0",
-    "@types/lodash": "^4.14.161",
+    "@types/lodash": "^4.14.164",
     "antd": "^4.6.6",
     "date-fns": "^2.16.1",
     "i18next": "^19.8.2",
