@@ -19,32 +19,7 @@ import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArray
 export function* createPrimitives(sector: SectorGeometry, materials: Materials) {
   const primitives = sector.primitives;
 
-  // console.log(
-  //   `Boxes:`,
-  //   primitives.boxCollection?.length,
-  //   `Circles:`,
-  //   primitives.circleCollection?.length,
-  //   `Cones:`,
-  //   primitives.coneCollection?.length,
-  //   `EccentricCone:`,
-  //   primitives.eccentricConeCollection?.length,
-  //   `EllipsoidSegments:`,
-  //   primitives.ellipsoidSegmentCollection?.length,
-  //   `GeneralCylinders:`,
-  //   primitives.generalCylinderCollection?.length,
-  //   `GeneralRing:`,
-  //   primitives.generalRingCollection?.length,
-  //   `Quads:`,
-  //   primitives.quadCollection?.length,
-  //   `SphericalSegment:`,
-  //   primitives.sphericalSegmentCollection?.length,
-  //   `TorusSegments:`,
-  //   primitives.torusSegmentCollection?.length,
-  //   `Trapeziums:`,
-  //   primitives.trapeziumCollection?.length,
-  //   `Nuts:`,
-  //   primitives.nutCollection?.length
-  // );
+ 
 
   if (hasAny(primitives.boxCollection)) {
     yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box);
