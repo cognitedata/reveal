@@ -17,8 +17,8 @@ to be loaded (or rather loaded in a lower detail level).
   <source src={useBaseUrl('/img/cad-clipping.webm')} />
 </video>
 
-:::warning
-Clipping planes are currently not supported by point cloud models.
+:::caution
+Slicing planes are currently not supported by point cloud models.
 :::
 
 ## Examples
@@ -33,8 +33,9 @@ replaces any active slicing planes.
 
 Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math/Plane.setFromNormalAndCoplanarPoint)
 is used to create slicing planes. This function accepts a direction that defines the orientation of
-the plane and a point on the plane. For example will the following
-code create a slicing plane that only accepts geometry below `Y = 55`:
+the plane and a point on the plane. For example, the following
+code will create a slicing plane that only accepts geometry below `Y = 55`:
+
 ```jsx runnable
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, 55, 0);
@@ -44,8 +45,8 @@ viewer.setSlicingPlanes([plane]);
 
 ### Animated slicing plane
 
-Planes can be manipulated runtime and effects will have effect in the viewer. Note however that rendering must be 
-triggered after updating the plane before the change will have visual effect. This can be done using 
+Planes can be manipulated runtime and effects will have an effect in the viewer. Note however that rendering must be 
+triggered after updating the plane before the change will have a visual effect. This can be done using 
 `Cognite3DViewer.forceRerender()`.
 
 Below is an example animates a slicing plane by ping-ponging the plane in the vertical direction.
@@ -70,14 +71,21 @@ setInterval(() => {
   viewer.forceRerender();
 }, 1000 / 60);
 ```
-:::info
-Updating `THREE.Plane`-instances will not trigger data loading. Typically you will need to trigger data loading if
-you do substantial changes to the slicing planes. In these cases, use `Cognite3DViewer.setSlicingPlanes`. The example 
-above performs substantial changes to the planes without loading data. In a real application it's recommended to 
-not load data during animation, but initiate data after an animation is completed.
+
+:::note
+Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing 
+substantial changes to the slicing planes, use `Cognite3DViewer.setSlicingPlanes`. Note that the example
+above performs substantial changes to the planes without loading data. In a real application it's recommended 
+to not load data during animation, but initiate data after an animation is completed.
 :::
 
-### CAD geometry filter
+### Interactable slicing planes
+
+Often it's required to have interactive slicing planes that the user can modify. The following example 
+show how [ThreeJS DragControls](https://threejs.org/docs/#examples/en/controls/DragControls) can be used 
+to manipulate the slicing planes.
+
+After running this snippet the slicing plane can be manipulated by dragging the white manipulator.
 
 ```js runnable
 // import { DragControls } from 'three/examples/jsm/controls/DragControls';
@@ -85,27 +93,55 @@ not load data during animation, but initiate data after an animation is complete
 const bounds = model.getModelBoundingBox();
 
 // Create draggable cone at center of bounds
-const center = bounds.getCenter(new THREE.Vector3());
-var geometry = new THREE.BoxBufferGeometry(10, 10, 10);
-var mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 'green' }));
-mesh.position.copy(center);
-viewer.addObject3D(mesh);
+const initialDragPosition = new THREE.Vector3(bounds.min.x, 0.5*(bounds.max.y + bounds.min.y), bounds.min.z);
+const draggerGeometry = new THREE.SphereBufferGeometry(5);
+const draggerMaterial = new THREE.MeshBasicMaterial({ color: 'white' });
+const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
+draggerMesh.position.copy(initialDragPosition);
+viewer.addObject3D(draggerMesh);
 
-// Prepare a clipping plane
+// Prepare a slicing plane
 const orientation = new THREE.Vector3(0, -1, 0);
-const point = new THREE.Vector3(0, center.y, 0);
 const plane = new THREE.Plane();
-plane.setFromNormalAndCoplanarPoint(orientation, point);
+plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
 viewer.setSlicingPlanes([plane]);
 
-const controls = new DragControls([mesh], viewer.getCamera(), viewer.domElement);
+// Handle drag events
+const controls = new DragControls([draggerMesh], viewer.getCamera(), viewer.domElement);
 controls.addEventListener('drag', () => {
   // Fix XZ-poistion
-  mesh.position.set(center.x, mesh.position.y, center.z);
+  draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
   // Update slicing plane
-  plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), mesh.position);
+  plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
   viewer.forceRerender();
 });
-controls.addEventListener('dragstart', () => viewer.cameraControlsEnabled = false);
-controls.addEventListener('dragend', () => viewer.cameraControlsEnabled = true);
+controls.addEventListener('dragstart', () => {
+  draggerMaterial.color = new THREE.Color('gray');
+  viewer.cameraControlsEnabled = false;
+});
+controls.addEventListener('dragend', () => {
+  draggerMaterial.color = new THREE.Color('white');
+  viewer.cameraControlsEnabled = true;
+});
 ```
+
+### CAD geometry filter
+
+A special type of slicing is to provide a "geometry filter" when loading the model. A geometry filter restricts the 
+area to load geometry for and is specified when the model is created.
+
+```js 
+const min = new THREE.Vector3(10, 20, 30);
+const max = new THREE.Vector3(20, 30, 40);
+viewer.addModel({
+  modelId, 
+  revisionId, 
+  geometryFilter: { 
+    boundingBox: new THREE.Box3(min, max)
+  }
+});
+```
+
+:::note
+Geometry filters are static and cannot be changed after creating the model.
+:::
