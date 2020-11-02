@@ -19,6 +19,8 @@ import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArray
 export function* createPrimitives(sector: SectorGeometry, materials: Materials) {
   const primitives = sector.primitives;
 
+ 
+
   if (hasAny(primitives.boxCollection)) {
     yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box);
   }

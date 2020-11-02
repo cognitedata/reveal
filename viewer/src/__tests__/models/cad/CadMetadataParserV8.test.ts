@@ -54,7 +54,8 @@ describe('parseCadMetadataV8', () => {
         ...sectorRoot.facesFile!,
         recursiveCoverageFactors: sectorRoot.facesFile!.recursiveCoverageFactors!
       },
-      children: []
+      children: [],
+      estimatedDrawCallCount: 10
     };
 
     // Act
@@ -86,7 +87,8 @@ describe('parseCadMetadataV8', () => {
       depth: sectorRoot.depth,
       indexFile: sectorRoot.indexFile,
       facesFile: { ...sectorRoot.facesFile!, recursiveCoverageFactors: sectorRoot.facesFile!.coverageFactors },
-      children: []
+      children: [],
+      estimatedDrawCallCount: 10
     };
 
     // Act
@@ -295,6 +297,7 @@ function createSectorMetadata(id: number, parentId: number = -1): CadSectorMetad
     parentId,
     path: '0/',
     depth: 0,
+    estimatedDrawCallCount: 10,
     boundingBox: {
       min: {
         x: 0.0,
@@ -310,7 +313,6 @@ function createSectorMetadata(id: number, parentId: number = -1): CadSectorMetad
     indexFile: {
       fileName: `sector_${id}.i3d`,
       peripheralFiles: [],
-      estimatedDrawCallCount: 10,
       downloadSize: 19996
     },
     facesFile: {
