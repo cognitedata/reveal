@@ -9,6 +9,23 @@ import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types
 import { Box3 } from '@/utilities';
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@cognite/reveal-parser-worker';
 
+/**
+ * Conversion factors from a given unit to meters.
+ */
+export const WellKnownDistanceToMeterConversionFactors = new Map<string, number>([
+  ['Meters', 1.0],
+  ['Centimeters', 0.01],
+  ['Millimeters', 0.001],
+  ['Micrometers', 1e-6],
+  ['Kilometers', 1000],
+  ['Feet', 0.3048],
+  ['Inches', 0.0254],
+  ['Yards', 0.9144],
+  ['Miles', 1609.34],
+  ['Mils', 0.0254 * 1e-3],
+  ['Microinches', 0.0254 * 1e-6]
+]);
+
 export interface ConsumedSector {
   blobUrl: string;
   metadata: SectorMetadata;
@@ -33,6 +50,7 @@ export interface SectorScene {
   readonly version: number;
   readonly maxTreeIndex: number;
   readonly root: SectorMetadata;
+  readonly unit: string;
 
   readonly sectorCount: number;
   getSectorById(sectorId: number): SectorMetadata | undefined;
