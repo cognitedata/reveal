@@ -44,7 +44,6 @@ export default function Cognite3DViewerDemo({
     addModel({ modelId, revisionId });
 
     window.viewer = viewer;
-    (window as any).DragControls = DragControls;
     return () => {
       viewer && viewer.dispose();
     };
