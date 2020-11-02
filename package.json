@@ -55,7 +55,7 @@
     "react-splitter-layout": "^4.0.0",
     "react-string-replace": "^0.4.4",
     "react-virtualized-auto-sizer": "^1.0.2",
-    "react-window": "^1.8.5",
+    "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.5",
     "single-spa": "^5.8.0",
     "single-spa-react": "^3.1.0",
