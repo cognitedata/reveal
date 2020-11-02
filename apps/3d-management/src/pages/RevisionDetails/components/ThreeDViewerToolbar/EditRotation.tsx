@@ -74,6 +74,13 @@ export function EditRotation(props: RotationMenyProps) {
 
   return (
     <RotationContainer>
+      <Button
+        type={rotationControlsOpened ? 'primary' : 'secondary'}
+        icon="Edit"
+        onClick={onPrimaryButtonClicked}
+      >
+        {rotationControlsOpened ? 'Done editing rotation' : 'Edit rotation'}
+      </Button>
       {rotationControlsOpened && (
         <>
           <ButtonGroup>
@@ -95,9 +102,6 @@ export function EditRotation(props: RotationMenyProps) {
           </Radio.Group>
         </>
       )}
-      <Button type="primary" icon="Edit" onClick={onPrimaryButtonClicked}>
-        {rotationControlsOpened ? 'Done editing rotation' : 'Edit rotation'}
-      </Button>
     </RotationContainer>
   );
 }

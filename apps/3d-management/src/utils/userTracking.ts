@@ -3,6 +3,7 @@ import {
   getProject,
   getEnvironment,
   isDevelopment,
+  checkUrl,
 } from '@cognite/cdf-utilities';
 import { Metrics } from '@cognite/metrics';
 
@@ -27,11 +28,13 @@ import { Metrics } from '@cognite/metrics';
 // };
 
 const setupSentry = () => {
-  Sentry.init({
-    dsn: 'https://d09f6d3557114e6cbaa63b56d7ef86cc@sentry.io/1288725',
-    environment: getEnvironment(),
-    release: process.env.REACT_APP_RELEASE || 'unknown',
-  });
+  if (!checkUrl('dev')) {
+    Sentry.init({
+      dsn: 'https://d09f6d3557114e6cbaa63b56d7ef86cc@sentry.io/1288725',
+      environment: getEnvironment(),
+      release: process.env.REACT_APP_RELEASE || 'unknown',
+    });
+  }
 };
 
 const setupMixpanel = () => {

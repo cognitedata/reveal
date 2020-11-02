@@ -8,6 +8,8 @@ export { default as zIndex } from './zIndex';
 
 export * from './notifications';
 
+export * from './revealUtils';
+
 export { styleScope } from './styleScope';
 
 export const APP_TITLE = '3D models';

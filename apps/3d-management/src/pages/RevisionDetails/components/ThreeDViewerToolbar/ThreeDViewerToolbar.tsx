@@ -10,35 +10,46 @@ import { v3 } from '@cognite/cdf-sdk-singleton';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import Card from 'antd/lib/card';
 import message from 'antd/lib/message';
 import * as Sentry from '@sentry/browser';
 import zIndex from 'src/utils/zIndex';
 import * as FileActions from 'src/store/modules/File/index';
 import * as RevisionActions from 'src/store/modules/Revision/index';
-import { EditRotation } from './EditRotation';
-import { ThumbnailUploader } from './ThumbnailUploader';
-import { ColorTypePicker } from './ColorTypePicker';
 import {
   Legacy3DModel,
   Legacy3DViewer,
-} from '../ThreeDViewer/legacyViewerTypes';
+} from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ThreeDViewerToolbar/ToolbarTreeView';
+import { isOldViewer } from 'src/utils';
+import { EditRotation } from './EditRotation';
+import { ThumbnailUploader } from './ThumbnailUploader';
+import { ColorTypePicker } from './ColorTypePicker';
 import { ClassPicker } from './ClassPicker';
 
-const ButtonContainer = styled.div`
+const CONTAINER_PADDING = 8;
+const CONTAINER_WIDTH = 400;
+const DEFAULT_MARGIN = 16;
+const SCROLLBAR_WIDTH = 2;
+
+const ToolbarContainer = styled.div`
   position: absolute;
-  right: 32px;
+  padding: ${CONTAINER_PADDING}px;
   top: 0;
+  right: 0;
+  height: 100%;
+  width: ${CONTAINER_WIDTH}px;
+  display: flex;
+  flex-direction: column;
   z-index: ${zIndex.DEFAULT};
-  && .ant-card-body {
-    display: flex;
-  }
+  background-color: #fff;
+  border: 1px solid var(--cogs-greyscale-grey3);
 `;
 
-const MenuItem = styled.div`
+const MenuSection = styled.div`
   &:not(:first-child) {
-    margin-left: 16px;
+    margin-top: ${DEFAULT_MARGIN}px;
   }
+  width: fit-content;
 `;
 
 type RevisionUpdatePayload = {
@@ -175,47 +186,66 @@ function ThreeDViewerToolbar(props: Props) {
     });
   };
 
+  const showTreeView =
+    !(props.model instanceof CognitePointCloudModel) &&
+    !isOldViewer(props.viewer);
+
   return (
-    <div style={{ position: 'relative' }}>
-      <ButtonContainer>
-        <Card>
-          <MenuItem>
-            <ThumbnailUploader
-              onUploadDone={updateInitialLocation}
-              getScreenshot={(w, h) => props.viewer.getScreenshot(w, h)}
-              modelId={props.model.modelId}
-              revisionId={props.model.revisionId}
+    <ToolbarContainer>
+      <div>
+        <MenuSection>
+          <ThumbnailUploader
+            onUploadDone={updateInitialLocation}
+            getScreenshot={(w, h) => props.viewer.getScreenshot(w, h)}
+            modelId={props.model.modelId}
+            revisionId={props.model.revisionId}
+          />
+        </MenuSection>
+
+        <MenuSection>
+          <EditRotation
+            onRotationChange={onRotationChange}
+            onEditRotationDone={onEditRotationDone}
+          />
+        </MenuSection>
+
+        {props.model instanceof CognitePointCloudModel && (
+          <MenuSection style={{ display: 'flex' }}>
+            <ColorTypePicker
+              onChange={(colorType: PotreePointColorType) => {
+                if (props.model instanceof CognitePointCloudModel) {
+                  // eslint-disable-next-line no-param-reassign
+                  props.model.pointColorType = colorType;
+                }
+              }}
             />
-          </MenuItem>
 
-          <MenuItem>
-            <EditRotation
-              onRotationChange={onRotationChange}
-              onEditRotationDone={onEditRotationDone}
-            />
-          </MenuItem>
+            <div style={{ marginLeft: DEFAULT_MARGIN }}>
+              <ClassPicker model={props.model} />
+            </div>
+          </MenuSection>
+        )}
+      </div>
 
-          {props.model instanceof CognitePointCloudModel && (
-            <>
-              <MenuItem>
-                <ColorTypePicker
-                  onChange={(colorType: PotreePointColorType) => {
-                    if (props.model instanceof CognitePointCloudModel) {
-                      // eslint-disable-next-line no-param-reassign
-                      props.model.pointColorType = colorType;
-                    }
-                  }}
-                />
-              </MenuItem>
-
-              <MenuItem>
-                <ClassPicker model={props.model} />
-              </MenuItem>
-            </>
-          )}
-        </Card>
-      </ButtonContainer>
-    </div>
+      {showTreeView && (
+        <>
+          <div
+            style={{
+              marginTop: DEFAULT_MARGIN,
+            }}
+          >
+            <hr />
+          </div>
+          <ToolbarTreeView
+            style={{
+              marginTop: DEFAULT_MARGIN,
+            }}
+            width={CONTAINER_WIDTH - 2 * CONTAINER_PADDING - SCROLLBAR_WIDTH}
+            model={props.model as Cognite3DModel}
+          />
+        </>
+      )}
+    </ToolbarContainer>
   );
 }
 

@@ -84,12 +84,13 @@ export function ThumbnailUploader(props: Props) {
   return (
     <>
       <Button
-        type="primary"
         shape="round"
         icon="Camera"
         title="Take a screenshot for the thumbnail"
         onClick={takeScreenshot}
-      />
+      >
+        Create a thumbnail
+      </Button>
       <Modal
         title="Screenshot Preview: Confirm Upload"
         visible={isOpenModal}

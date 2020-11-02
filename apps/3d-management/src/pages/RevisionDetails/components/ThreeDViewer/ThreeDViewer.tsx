@@ -138,7 +138,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
     throw new Error(error);
   }
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       {viewer && model && <ThreeDViewerToolbar viewer={viewer} model={model} />}
       <CanvasContainer ref={canvasWrapperRef} />
     </div>

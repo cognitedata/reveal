@@ -5,6 +5,7 @@ import zIndex from 'src/utils/zIndex';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { LazyWrapper } from 'src/components/LazyWrapper';
 import Thumbnail from 'src/components/Thumbnail/index';
+
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 
 const ThumbnailJS: any = Thumbnail;
