@@ -1,4 +1,6 @@
-export const mockResponse = [
+import { Integration } from '../model/Integration';
+
+export const mockResponse: Integration[] = [
   {
     createdTime: 1584065700000,
     lastUpdatedTime: 1584137100000,
@@ -20,6 +22,10 @@ export const mockResponse = [
       {
         email: 'Jacek.Fijalkowski@itera.no',
         name: 'Jacek Fijalkowski',
+      },
+      {
+        email: 'lisa.halvorsen@item.no',
+        name: 'Lisa Halvorsen',
       },
     ],
     metadata: {

@@ -1,13 +1,16 @@
 import React, { FunctionComponent } from 'react';
-import { Avatar } from 'antd';
 import styled from 'styled-components';
-import { Tooltip } from '@cognite/cogs.js';
+import { Avatar, Tooltip } from '@cognite/cogs.js';
 import { User } from '../../../model/User';
 
-const OwnedByAvatar = styled((props) => (
-  <Avatar {...props}>{props.children}</Avatar>
-))`
+const OwnedByAvatar = styled((props) => <Avatar {...props} />)`
   margin-right: 0.5rem;
+`;
+const Wrapper = styled.div`
+  span {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 interface OwnProps {
@@ -19,19 +22,18 @@ type Props = OwnProps;
 const OwnedBy: FunctionComponent<Props> = ({ owner }: Props) => {
   const display = owner.name ? owner.name : owner.email;
   return (
-    <>
+    <Wrapper>
       <Tooltip placement="bottom" content={owner.email}>
         <>
           <OwnedByAvatar
+            text={display}
             key={`avatar-${owner.email}`}
-            alt={`avatar for ${owner.name}`}
-          >
-            {display.substr(0, 1)}
-          </OwnedByAvatar>
+            aria-label={`Avatar for ${owner.name}`}
+          />
           {display}
         </>
       </Tooltip>
-    </>
+    </Wrapper>
   );
 };
 

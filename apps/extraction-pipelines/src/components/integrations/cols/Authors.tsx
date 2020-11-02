@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { Avatar } from 'antd';
-import { Colors } from '@cognite/cogs.js';
+import { Avatar, Tooltip } from '@cognite/cogs.js';
 import { User } from '../../../model/User';
+import AvatarGroup from '../../Avatar/AvatarGroup';
 
 interface OwnProps {
   authors: User[];
@@ -11,22 +11,26 @@ type Props = OwnProps;
 
 const Authors: FunctionComponent<Props> = ({ authors }: Props) => {
   return (
-    <Avatar.Group
-      maxCount={1}
-      maxStyle={{ color: '#fff', backgroundColor: Colors.primary.hex() }}
-    >
-      {authors &&
-        authors.map((author) => {
-          return (
-            <Avatar
-              key={`avatar-${author.email}`}
-              alt={`avatar for ${author.name}`}
-            >
-              {author.name.substr(0, 1)}
-            </Avatar>
-          );
-        })}
-    </Avatar.Group>
+    <AvatarGroup>
+      {authors.map((author) => {
+        const display = author.name ? author.name : author.email;
+        return (
+          <Tooltip
+            placement="bottom"
+            content={author.email}
+            key={`tooltip-${display}`}
+          >
+            <>
+              <Avatar
+                text={display}
+                key={`avatar-${author.email}`}
+                aria-label={`Avatar for ${author.name}`}
+              />
+            </>
+          </Tooltip>
+        );
+      })}
+    </AvatarGroup>
   );
 };
 
