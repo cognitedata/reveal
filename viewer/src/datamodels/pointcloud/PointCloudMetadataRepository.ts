@@ -4,30 +4,22 @@
 
 import * as THREE from 'three';
 
-import {
-  ModelUrlProvider,
-  JsonFileProvider,
-  ModelTransformationProvider,
-  ModelCameraConfigurationProvider
-} from '@/utilities/networking/types';
 import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 import { MetadataRepository } from '../base';
 import { File3dFormat } from '@/utilities/types';
 import { transformCameraConfiguration } from '@/utilities/transformCameraConfiguration';
+import { ModelDataClient } from '@/utilities/networking/types';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
-type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> &
-  ModelTransformationProvider<TModelIdentifier> &
-  ModelCameraConfigurationProvider<TModelIdentifier> &
-  JsonFileProvider;
 
 const identityMatrix = new THREE.Matrix4().identity();
 
 export class PointCloudMetadataRepository<TModelIdentifier>
   implements MetadataRepository<TModelIdentifier, Promise<PointCloudMetadata>> {
-  private readonly _modelMetadataProvider: ModelMetadataProvider<ModelIdentifierWithFormat<TModelIdentifier>>;
+  private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _blobFileName: string;
-  constructor(modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>, blobFileName: string = 'ept.json') {
+
+  constructor(modelMetadataProvider: ModelDataClient<TModelIdentifier>, blobFileName: string = 'ept.json') {
     this._modelMetadataProvider = modelMetadataProvider;
     this._blobFileName = blobFileName;
   }

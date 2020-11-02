@@ -28,7 +28,7 @@ describe('SectorSceneImpl', () => {
   });
 
   test('getSectorsContainingPoint', () => {
-    const scene = new SectorSceneImpl(8, 3, root, sectorsById);
+    const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
 
     expect(sectorIds(scene.getSectorsContainingPoint(vec3.fromValues(0.2, 0.5, 0.5)))).toEqual([0, 1]);
     expect(sectorIds(scene.getSectorsContainingPoint(vec3.fromValues(0.75, 0.5, 0.5)))).toEqual([0, 2]);
@@ -36,7 +36,7 @@ describe('SectorSceneImpl', () => {
   });
 
   test('getSectorsIntersectingBox', () => {
-    const scene = new SectorSceneImpl(8, 3, root, sectorsById);
+    const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
 
     expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(-10, -10, -10, 10, 10, 10)))).toEqual([0, 1, 2]);
     expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(0, 0, 0, 0.2, 0.2, 0.2)))).toEqual([0, 1]);
@@ -45,7 +45,7 @@ describe('SectorSceneImpl', () => {
 
   test('getSectorsIntersectingFrustum, some sectors inside', () => {
     // Arrange
-    const scene = new SectorSceneImpl(8, 3, root, sectorsById);
+    const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10.0);
     camera.position.set(2.0, 0.5, -1);
     camera.lookAt(2.0, 0.5, 0.5);
@@ -63,7 +63,7 @@ describe('SectorSceneImpl', () => {
 
   test('getSectorsIntersectingFrustum, all sectors inside frustum', () => {
     // Arrange
-    const scene = new SectorSceneImpl(8, 3, root, sectorsById);
+    const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10.0);
     camera.position.set(0.5, 0.5, -1);
     camera.lookAt(0.5, 0.5, 0.5);
