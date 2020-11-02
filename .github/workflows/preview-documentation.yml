@@ -84,8 +84,25 @@ jobs:
           git add -A ${{ env.PR_NUMBER }}
           git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
 
-      - name: Deploy  🚀
+      - name: Deploy 🚀
+        id: deploy
         uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          directory: reveal-docs-preview
+          branch: master
+          repository: cognitedata/reveal-docs-preview
+
+      - name: Retry deploy 🚀 - pull
+        working-directory: reveal-docs-preview
+        if: steps.deploy.outcome=='failure'
+        run: |
+          git pull --commit
+        
+      - name: Retry deploy 🚀 - push
+        id: deploy2
+        uses: ad-m/github-push-action@master
+        if: steps.deploy.outcome=='failure'
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           directory: reveal-docs-preview
