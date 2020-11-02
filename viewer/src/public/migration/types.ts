@@ -123,4 +123,10 @@ export type CadModelBudget = {
    * Number of bytes of the geometry that must be downloaded.
    */
   readonly geometryDownloadSizeBytes: number;
+
+  /**
+   * Estimated maximum number of WebGL draw calls to download geometry for. Draw calls
+   * are very important for the framerate.
+   */
+  readonly maximumNumberOfDrawCalls: number;
 };
