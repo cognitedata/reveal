@@ -15,9 +15,15 @@ export type CadModelSectorBudget = {
    * Number of bytes of the geometry that must be downloaded.
    */
   readonly geometryDownloadSizeBytes: number;
+
+  /**
+   * Maximum number of estimated drawcalls of geometry to load.
+   */
+  readonly maximumNumberOfDrawCalls: number;
 };
 
 export const defaultCadModelSectorBudget = {
   highDetailProximityThreshold: 10,
-  geometryDownloadSizeBytes: 35 * 1024 * 1024
+  geometryDownloadSizeBytes: 35 * 1024 * 1024,
+  maximumNumberOfDrawCalls: 1000
 };

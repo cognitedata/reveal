@@ -4,30 +4,41 @@
 
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
-import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
+import {
+  PrioritizedWantedSector,
+  DetermineSectorCostDelegate,
+  SectorCost,
+  reduceSectorCost,
+  addSectorCost
+} from './types';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { traverseUpwards, traverseDepthFirst } from '@/utilities/objectTraversal';
 
 export class TakenSectorTree {
-  get totalCost(): number {
+  get totalCost(): SectorCost {
     return this._totalCost;
   }
   private readonly sectors: {
     sector: SectorMetadata;
     priority: number;
-    cost: number;
+    cost: SectorCost;
     lod: LevelOfDetail;
   }[] = [];
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
-  private _totalCost = 0.0;
+  private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0 };
 
   constructor(sectorRoot: SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
     this.determineSectorCost = determineSectorCost;
     // Allocate space for all sectors
     traverseDepthFirst(sectorRoot, x => {
       this.sectors.length = Math.max(this.sectors.length, x.id);
-      this.sectors[x.id] = { sector: x, priority: -1, cost: 0, lod: LevelOfDetail.Discarded };
+      this.sectors[x.id] = {
+        sector: x,
+        priority: -1,
+        cost: { downloadSize: 0, drawCalls: 0 },
+        lod: LevelOfDetail.Discarded
+      };
       return true;
     });
     this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
@@ -100,16 +111,19 @@ export class TakenSectorTree {
       }
     }
   }
+
   private setSectorLod(sectorId: number, lod: LevelOfDetail) {
     assert(lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile.fileName !== null);
     this.sectors[sectorId].lod = lod;
-    this._totalCost -= this.sectors[sectorId].cost;
+    reduceSectorCost(this._totalCost, this.sectors[sectorId].cost);
     this.sectors[sectorId].cost = this.determineSectorCost(this.sectors[sectorId].sector, lod);
-    this._totalCost += this.sectors[sectorId].cost;
+    addSectorCost(this._totalCost, this.sectors[sectorId].cost);
   }
+
   private setSectorPriority(sectorId: number, priority: number) {
     this.sectors[sectorId].priority = priority;
   }
+
   private getSectorLod(sectorId: number): LevelOfDetail {
     return this.sectors[sectorId].lod;
   }
