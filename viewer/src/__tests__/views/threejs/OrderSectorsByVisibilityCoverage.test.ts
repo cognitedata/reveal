@@ -128,7 +128,7 @@ function createStubScene(tree: SectorTree): SectorScene {
     sectorsMap.set(x.id, x);
     return true;
   });
-  return new SectorSceneImpl(8, 1, root, sectorsMap);
+  return new SectorSceneImpl(8, 1, 'Meters', root, sectorsMap);
 }
 
 function createStubModel(blobUrl: string, scene: SectorScene, modelMatrix: THREE.Matrix4) {
