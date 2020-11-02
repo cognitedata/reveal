@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { isMobileOrTablet } from "@/utilities";
+import { isMobileOrTablet } from '@/utilities';
 
 /**
  * Represents a measurement of how much geometry can be loaded.
@@ -24,17 +24,16 @@ export type CadModelSectorBudget = {
   readonly maximumNumberOfDrawCalls: number;
 };
 
-
 export const defaultCadModelSectorBudget = isMobileOrTablet()
   ? // Mobile/tablet
     {
-      highDetailProximityThreshold: 5 * 1000,
+      highDetailProximityThreshold: 5,
       geometryDownloadSizeBytes: 20 * 1024 * 1024,
       maximumNumberOfDrawCalls: 700
     }
   : // Desktop
     {
-      highDetailProximityThreshold: 10 * 1000,
+      highDetailProximityThreshold: 10,
       geometryDownloadSizeBytes: 35 * 1024 * 1024,
       maximumNumberOfDrawCalls: 2000
     };
