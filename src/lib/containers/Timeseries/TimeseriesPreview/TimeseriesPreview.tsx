@@ -3,7 +3,7 @@ import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionLis
 import { Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ErrorFeedback, Loader, Splitter, Wrapper } from 'lib/components';
-import { TimeseriesGraph } from 'lib/containers/Timeseries';
+import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
 import React from 'react';
@@ -53,10 +53,10 @@ export const TimeseriesPreview = ({
       {timeseries && (
         <Splitter>
           <div>
-            <TimeseriesGraph
-              timeseries={timeseries}
-              contextChart
-              graphHeight={500}
+            <TimeseriesChart
+              timeseriesId={timeseries.id}
+              height={500}
+              defaultOption="2Y"
             />
             <DescriptionList
               valueSet={formatMetadata(timeseries.metadata ?? {})}

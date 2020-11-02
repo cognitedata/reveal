@@ -1,3 +1,4 @@
+export * from './Chart';
 export * from './Common';
 export * from './InfoGrid/InfoGrid';
 export * from './Popover/Popover';

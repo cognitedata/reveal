@@ -10,7 +10,7 @@ import {
   SpacedRow,
 } from 'lib/components';
 import { useResourcesState } from 'lib/context';
-import { TimeseriesGraph } from 'lib/containers/Timeseries';
+import { TimeseriesChart } from 'lib/containers/Timeseries';
 
 export const IconWrapper = styled.span`
   background: #f5f5f5;
@@ -91,7 +91,13 @@ export const TimeseriesDetailsAbstract = ({
 
       <LatestDatapoint timeSeries={timeSeries} />
       <InfoCell noPadding noBorders>
-        <TimeseriesGraph timeseries={timeSeries} />
+        <TimeseriesChart
+          timeseriesId={timeSeries.id}
+          height={150}
+          showContextGraph={false}
+          timeOptions={['1H', '1D', '1W', '1M', '1Y']}
+          defaultOption="1Y"
+        />
       </InfoCell>
 
       <InfoCell noPadding noBorders>

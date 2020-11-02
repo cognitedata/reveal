@@ -5,7 +5,6 @@ import { ResourceSelectorProvider } from 'lib/context/ResourceSelectorContext';
 import { ResourceActionsProvider } from 'lib/context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'lib/context/ResourceSelectionContext';
 import { FileContextualizationContextProvider } from 'lib/context/FileContextualization';
-import { ClientSDKProvider } from '@cognite/gearbox';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 export type DataExplorationProviderProps = {
@@ -20,17 +19,15 @@ export const DataExplorationProvider = ({
 }) => {
   return (
     <SDKProvider sdk={sdk}>
-      <ClientSDKProvider client={sdk}>
-        <FileContextualizationContextProvider>
-          <ResourceSelectionProvider>
-            <ResourceActionsProvider>
-              <ResourcePreviewProvider>
-                <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
-              </ResourcePreviewProvider>
-            </ResourceActionsProvider>
-          </ResourceSelectionProvider>
-        </FileContextualizationContextProvider>
-      </ClientSDKProvider>
+      <FileContextualizationContextProvider>
+        <ResourceSelectionProvider>
+          <ResourceActionsProvider>
+            <ResourcePreviewProvider>
+              <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
+            </ResourcePreviewProvider>
+          </ResourceActionsProvider>
+        </ResourceSelectionProvider>
+      </FileContextualizationContextProvider>
     </SDKProvider>
   );
 };

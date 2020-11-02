@@ -4,6 +4,7 @@ import { sequences } from 'stubs/sequences';
 import { events } from 'stubs/events';
 import { files } from 'stubs/files';
 import styled from 'styled-components';
+import { datapoints } from 'stubs/timeseriesData';
 import {
   ResourcePreviewObserver,
   ResourcePreviewProps,
@@ -73,6 +74,9 @@ export const sdkMock = {
   },
   files: {
     getDownloadUrls: async () => [{ downloadUrl: '//unsplash.it/300/300' }],
+  },
+  datapoints: {
+    retrieve: async () => datapoints.items,
   },
 };
 

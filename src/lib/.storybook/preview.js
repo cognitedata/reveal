@@ -4,6 +4,8 @@ import '@cognite/cogs.js/dist/antd.css';
 import 'rc-collapse/assets/index.css';
 import { Container, sdkMock } from '../docs/stub';
 import { DataExplorationProvider } from '../context';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -13,9 +15,11 @@ export const parameters = {
 export const decorators = [
   (storyFn) => (
     <Container>
-      <DataExplorationProvider sdk={sdkMock}>
-        {storyFn()}
-      </DataExplorationProvider>
+      <Router history={createBrowserHistory()}>
+        <DataExplorationProvider sdk={sdkMock}>
+          {storyFn()}
+        </DataExplorationProvider>
+      </Router>
     </Container>
   ),
 ];

@@ -10,6 +10,7 @@ export const Simple = () => (
   <div style={{ padding: '40px', background: 'lightgrey' }}>
     <ButtonGroup
       currentKey={text('currentKey', '1')}
+      variant={text('variant', 'default') as 'default' | 'ghost'}
       onButtonClicked={action('onButtonClicked')}
     >
       <Button key="1">Button 1</Button>
