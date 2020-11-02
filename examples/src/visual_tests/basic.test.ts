@@ -6,7 +6,8 @@ const test_presets = [
   "highlight",
   "rotate_cad_model",
   "node_transform",
-  "ghost_mode"
+  "ghost_mode",
+  "scaled_model"
 ]
 
 describe('Testable', () => {
