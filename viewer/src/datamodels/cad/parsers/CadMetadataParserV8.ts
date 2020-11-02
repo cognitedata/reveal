@@ -55,13 +55,13 @@ export interface CadMetadataV8 {
   readonly version: 8;
   readonly maxTreeIndex: number;
   readonly sectors: CadSectorMetadataV8[];
+  readonly unit: string | null;
 
   // Available, but unused:
   // readonly projectId: number;
   // readonly modelId: number;
   // readonly revisionId: number;
   // readonly subRevisionId: number;
-  // readonly unit: string | null;
 }
 
 export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
@@ -97,7 +97,9 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
     throw new Error('Root sector not found, must have ID 0');
   }
 
-  return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, rootSector, sectorsById);
+  const unit = metadata.unit !== null ? metadata.unit : 'Meters';
+
+  return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
 function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
