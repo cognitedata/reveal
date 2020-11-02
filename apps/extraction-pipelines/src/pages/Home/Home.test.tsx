@@ -6,7 +6,8 @@ import Home from './Home';
 describe('<Home />', () => {
   test('Renders Home page', async () => {
     render(<Home />);
-    const linkElement = screen.getByRole('heading');
-    expect(linkElement.textContent).toEqual('Integrations');
+    const headings = screen.getAllByRole('heading');
+    expect(headings[0].textContent).toEqual('Integrations');
+    expect(headings.length).toEqual(2);
   });
 });

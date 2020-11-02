@@ -1,21 +1,32 @@
 import React, { FunctionComponent } from 'react';
 import { Tabs } from 'antd';
 import styled from 'styled-components';
-import Integrations from 'components/integrations/Integrations';
+import OverviewTab from './OverviewTab';
 
 const { TabPane } = Tabs;
 
 const StyledTabs = styled((props) => <Tabs {...props} />)`
+  height: 100%;
   .ant-tabs-nav {
     padding: 0 1rem;
+    margin-bottom: 0;
   }
   .ant-tabs-tabpane {
-    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: auto 25rem;
   }
-  .ant-tabs-tab.ant-tabs-tab-active {
-    .ant-tabs-tab-btn {
-      color: black;
+  .ant-tabs-tab {
+    &.ant-tabs-tab-active {
+      .ant-tabs-tab-btn {
+        color: black;
+      }
     }
+    .ant-tabs-tab-btn {
+      font-weight: 600;
+    }
+  }
+  .ant-tabs-content {
+    height: 100%;
   }
 `;
 const StyledTabPane = styled((props) => (
@@ -30,7 +41,7 @@ const IntegrationsTabs: FunctionComponent<Props> = () => {
   return (
     <StyledTabs className="cdf-tabs">
       <StyledTabPane tab="Overview" key="overview" className="tab-pane">
-        <Integrations />
+        <OverviewTab />
       </StyledTabPane>
       <StyledTabPane tab="Learning and resources" key="create-db">
         Learing and resources
