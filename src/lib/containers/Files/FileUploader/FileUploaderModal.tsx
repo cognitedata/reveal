@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useQueryCache } from 'react-query';
 import { FileInfo } from '@cognite/sdk';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Table } from 'lib/components';
+import {
+  searchBaseCacheKey,
+  listBaseCacheKey,
+} from '@cognite/sdk-react-query-hooks';
 import { FileUploader } from './FileUploader';
 
 const Wrapper = styled.div`
@@ -37,6 +41,7 @@ export const FileUploaderModal = ({
   visible = true,
 }: Props) => {
   const [fileList, setFileList] = useState<FileInfo[]>([]);
+  const cache = useQueryCache();
 
   return (
     <Modal
@@ -49,6 +54,8 @@ export const FileUploaderModal = ({
         <FileUploader
           onUploadSuccess={file => {
             setFileList(list => [...list, file]);
+            cache.refetchQueries(listBaseCacheKey('files'));
+            cache.refetchQueries(searchBaseCacheKey('files'));
           }}
           beforeUploadStart={() => {
             setFileList([]);
@@ -56,41 +63,17 @@ export const FileUploaderModal = ({
         >
           <>
             {fileList.length !== 0 && (
-              <Table
-                height={300}
-                columns={[
-                  {
-                    title: 'File name',
-                    key: 'name',
-                    dataKey: 'name',
-                    width: 200,
-                  },
-                  {
-                    title: 'File type',
-                    key: 'type',
-                    dataKey: 'mimeType',
-                    width: 200,
-                  },
-                  {
-                    title: 'Actions',
-                    key: 'actions',
-                    width: 200,
-                    cellRenderer: ({
-                      rowData: file,
-                    }: {
-                      rowData: FileInfo;
-                    }) => {
-                      return (
-                        <Button onClick={() => onFileSelected(file)}>
-                          View file
-                        </Button>
-                      );
-                    },
-                  },
-                ]}
-                rowKey="id"
-                data={fileList}
-              />
+              <ul>
+                {fileList.map(file => (
+                  <li>
+                    File{' '}
+                    <Button type="link" onClick={() => onFileSelected(file)}>
+                      {file.name}
+                    </Button>{' '}
+                    successfully uploaded!
+                  </li>
+                ))}
+              </ul>
             )}
           </>
         </FileUploader>

@@ -18,7 +18,7 @@
     "@cognite/react-picture-annotation": "^1.1.2",
     "@cognite/sdk": "^3.1.1",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "^1.0.0",
+    "@cognite/sdk-react-query-hooks": "^2.0.1",
     "@sentry/browser": "^5.27.1",
     "@types/d3-array": "^2.3.0",
     "@types/d3-time-format": "^3.0.0",

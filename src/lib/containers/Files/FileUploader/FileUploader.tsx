@@ -7,6 +7,7 @@ import { Body, Icon, Button } from '@cognite/cogs.js';
 import { getMIMEType } from 'lib/utils/FileUtils';
 import { SpacedRow } from 'lib/components';
 import { useSDK } from '@cognite/sdk-provider';
+import { sleep } from 'lib/helpers';
 
 export const GCSUploader = (
   file: Blob | UploadFile,
@@ -132,6 +133,18 @@ export const FileUploader = ({
 
       try {
         await currentUploads[file.uid].start();
+        // Files are not available through the files API immediately after upload. Wait up 10
+        // seconds.
+        let fileInfo = await sdk.files
+          .retrieve([{ id: fileMetadata.id }])
+          .then(r => r[0]);
+        let retries = 0;
+        while (!fileInfo.uploaded && retries <= 4) {
+          retries += 1;
+          /* eslint-disable no-await-in-loop */
+          await sleep(retries * 1000);
+          fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+        }
       } catch (e) {
         message.error('Unable to upload file to server.');
       }
