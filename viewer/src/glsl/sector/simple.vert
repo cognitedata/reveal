@@ -34,7 +34,7 @@ void main() {
 
     v_treeIndex = treeIndex;
     v_color = color;
-    v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(normalize(normal), 0.0)).xyz;
+    v_normal = normalize(normalMatrix * (inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(normalize(normal), 0.0)).xyz);
     mat4 instanceMatrix = mat4(matrix0, matrix1, matrix2, matrix3);
     vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 mvPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4( transformed, 1.0 );

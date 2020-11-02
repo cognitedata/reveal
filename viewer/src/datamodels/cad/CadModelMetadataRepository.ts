@@ -2,32 +2,26 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { CadMetadataParser } from './parsers/CadMetadataParser';
-import { SectorScene } from './sector/types';
+import { SectorScene, WellKnownDistanceToMeterConversionFactors } from './sector/types';
 import { File3dFormat } from '@/utilities';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import {
-  ModelUrlProvider,
-  ModelTransformationProvider,
-  JsonFileProvider,
-  ModelCameraConfigurationProvider
-} from '@/utilities/networking/types';
 import { MetadataRepository } from '../base';
 import { transformCameraConfiguration } from '@/utilities/transformCameraConfiguration';
+import { ModelDataClient } from '@/utilities/networking/types';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
-type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> &
-  ModelTransformationProvider<TModelIdentifier> &
-  ModelCameraConfigurationProvider<TModelIdentifier> &
-  JsonFileProvider;
 
 export class CadModelMetadataRepository<TModelIdentifier>
   implements MetadataRepository<TModelIdentifier, Promise<CadModelMetadata>> {
-  private readonly _modelMetadataProvider: ModelMetadataProvider<ModelIdentifierWithFormat<TModelIdentifier>>;
+  private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
+
   constructor(
-    modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
+    modelMetadataProvider: ModelDataClient<TModelIdentifier>,
     cadMetadataParser: CadMetadataParser,
     blobFileName: string = 'scene.json'
   ) {
@@ -45,7 +39,7 @@ export class CadModelMetadataRepository<TModelIdentifier>
     const blobUrl = await blobUrlPromise;
     const json = await this._modelMetadataProvider.getJsonFile(blobUrl, this._blobFileName);
     const scene: SectorScene = this._cadSceneParser.parse(json);
-    const modelMatrix = await modelMatrixPromise;
+    const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const cameraConfiguration = await modelCameraPromise;
 
     return {
@@ -55,4 +49,14 @@ export class CadModelMetadataRepository<TModelIdentifier>
       scene
     };
   }
+}
+
+function createScaleToMetersModelMatrix(unit: string, modelMatrix: THREE.Matrix4): THREE.Matrix4 {
+  const conversionFactor = WellKnownDistanceToMeterConversionFactors.get(unit);
+  if (conversionFactor === undefined) {
+    throw new Error(`Unknown model unit '${unit}'`);
+  }
+
+  const scaledModelMatrix = new THREE.Matrix4().makeScale(conversionFactor, conversionFactor, conversionFactor);
+  return scaledModelMatrix.multiply(modelMatrix);
 }

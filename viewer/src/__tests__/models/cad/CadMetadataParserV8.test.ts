@@ -16,6 +16,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 103350,
+      unit: 'Meters',
       sectors: []
     };
     expect(() => parseCadMetadataV8(metadata)).toThrow();
@@ -25,6 +26,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 103350,
+      unit: 'Meters',
       sectors: [createSectorMetadata(1)]
     };
     expect(() => parseCadMetadataV8(metadata)).toThrow();
@@ -36,6 +38,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 8000,
+      unit: 'Meters',
       sectors: [sectorRoot]
     };
     const expectedRoot: SectorMetadata = {
@@ -71,6 +74,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 8000,
+      unit: 'Meters',
       sectors: [sectorRoot]
     };
     const expectedRoot: SectorMetadata = {
@@ -103,6 +107,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 8000,
+      unit: 'Meters',
       sectors: [
         createSectorMetadata(0),
         createSectorMetadata(1, 0),
@@ -129,6 +134,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 4,
+      unit: 'Meters',
       sectors: [
         /*
               0
@@ -177,6 +183,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 4,
+      unit: 'Meters',
       sectors: [root]
     };
 
@@ -198,6 +205,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 4,
+      unit: 'Meters',
       sectors: [
         /*
               0
@@ -249,6 +257,7 @@ describe('parseCadMetadataV8', () => {
     const metadata: CadMetadataV8 = {
       version: 8,
       maxTreeIndex: 4,
+      unit: 'Meters',
       sectors
     };
 
@@ -263,6 +272,22 @@ describe('parseCadMetadataV8', () => {
       expect(sector.facesFile.coverageFactors).not.toBeNull();
       expect(sector.facesFile.recursiveCoverageFactors).not.toBeNull();
     }
+  });
+
+  test('Unit is passed through', () => {
+    // Arrange
+    const metadata: CadMetadataV8 = {
+      version: 8,
+      maxTreeIndex: 4,
+      unit: 'AU',
+      sectors: [createSectorMetadata(0)]
+    };
+
+    // Act
+    const result = parseCadMetadataV8(metadata);
+
+    // Assert
+    expect(result.unit).toBe('AU');
   });
 });
 
