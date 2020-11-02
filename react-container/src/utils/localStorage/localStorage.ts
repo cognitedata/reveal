@@ -1,6 +1,8 @@
 import noop from 'lodash/noop';
-import { captureException } from '../utils/captureException';
-import { log } from '../utils/log';
+import { reportException } from '@cognite/react-errors';
+import { Metrics } from '@cognite/metrics';
+
+import { log } from '../log';
 
 const STORAGE_VERSION = 2;
 
@@ -19,6 +21,8 @@ const FAKE_LOCAL_STORAGE = {
   setItem: () => undefined,
 };
 
+const metrics = Metrics.create('LocalStorage');
+
 /**
  * Provide a reference to localStorage that's safe to use (because it falls back
  * to the no-op implementation).
@@ -29,7 +33,6 @@ interface InitOptions {
   tenant?: string;
   appName?: string;
 }
-
 export const init = ({ tenant, appName }: InitOptions) => {
   currentTenant = tenant || currentTenant;
   currentAppName = appName;
@@ -103,8 +106,12 @@ export const getRootString = <T, D = undefined>(
 
   try {
     return JSON.parse(maybeJson);
-  } catch (e) {
-    captureException(e, { maybeJson });
+  } catch (error) {
+    reportException(error, { maybeJson }).then((errorId) => {
+      metrics.track('getRootString', {
+        errorId,
+      });
+    });
     return defaultValue;
   }
 };

@@ -47,6 +47,7 @@
   },
   "peerDependencies": {
     "@cognite/metrics": "^0.1.2",
+    "react-i18next": "^11.7.0",
     "react": "^16.13.1"
   }
 }

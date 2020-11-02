@@ -11,8 +11,9 @@ export const useFlag = (
   { fallback = false, forceRerender = false }: Options = {}
 ) => {
   const { client } = useContext(FlagContext);
+
   const [isEnabled, setIsEnabled] = useState<boolean>(() => {
-    let value = client.isEnabled(flagName);
+    let value = client && client.isEnabled(flagName);
     if (value === undefined) {
       value = fallback;
     }
@@ -20,15 +21,19 @@ export const useFlag = (
   });
 
   const update = useCallback(() => {
-    setIsEnabled(client.isEnabled(flagName));
+    setIsEnabled(client && client.isEnabled(flagName));
   }, [flagName, client]);
 
   useEffect(() => {
     if (forceRerender) {
-      client.on('update', update);
+      if (client) {
+        client.on('update', update);
+      }
     }
     return () => {
-      client.off('update', update);
+      if (client) {
+        client.off('update', update);
+      }
     };
   }, [forceRerender, update, client]);
 

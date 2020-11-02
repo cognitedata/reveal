@@ -2,6 +2,12 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "rootDirs": ["src"],
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   }
 }

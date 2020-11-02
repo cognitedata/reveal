@@ -1,2 +1,2 @@
 export * from './utils';
-export * from './localStorageCache';
+export * from './providers';
