@@ -21,7 +21,7 @@
     "@sentry/browser": "^5.27.1",
     "@types/d3-array": "^2.3.0",
     "@types/d3-time-format": "^3.0.0",
-    "@types/react-select": "^3.0.22",
+    "@types/react-select": "^3.0.23",
     "@visx/axis": "^1.1.0",
     "@visx/event": "^1.0.0",
     "@visx/gradient": "^1.0.0",
