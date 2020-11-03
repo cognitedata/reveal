@@ -2,9 +2,8 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { mockResponse } from '../../utils/mockResponse';
-import { useIntegrationTableCol } from '../../hooks/useIntegrationTableCol';
-import { useIntegrationTableDataSource } from '../../hooks/useIntegrationTableDataSource';
 import ITable from '../table/ITable';
+import { getIntegrationTableCol } from '../table/IntegrationTableCol';
 
 const Wrapper = styled.div`
   .cogs-table {
@@ -29,6 +28,9 @@ const Wrapper = styled.div`
             background-color: ${Colors['midblue-7'].hex()};
           }
         }
+        &.row-active {
+          background-color: ${Colors['midblue-7'].hex()};
+        }
         td {
           padding: 0.75rem;
         }
@@ -41,11 +43,9 @@ interface OwnProps {}
 
 type Props = OwnProps;
 const IntegrationsTable: FunctionComponent<Props> = () => {
-  const data = useIntegrationTableDataSource(mockResponse);
-  const columns = useIntegrationTableCol();
   return (
     <Wrapper>
-      <ITable data={data} columns={columns} />
+      <ITable data={mockResponse} columns={getIntegrationTableCol()} />
     </Wrapper>
   );
 };
