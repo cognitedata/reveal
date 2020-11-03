@@ -124,7 +124,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   test('determineSectors limits sectors by draw calls', () => {
     // Arrange
-    const determineSectorCost = (sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
+    const determineSectorCost = (_sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
       switch (lod) {
         case LevelOfDetail.Detailed:
           return { downloadSize: 0, drawCalls: 5 };
