@@ -1,53 +1,87 @@
 @Library('jenkins-helpers') _
 
-static final String REPO = "cdf-3d-management"
-static final String APP_NAME = "cognite-cdf-3d-management"
-static final String PR_SERVER_MARKER = "[pr-server]\n";
+static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
+static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
+static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
+static final String APP_ID = 'cdf-3d-management'
+static final String APPLICATION_REPO_ID = 'cdf-3d-management'
+static final String NODE_VERSION = 'node:12'
+static final String VERSIONING_STRATEGY = "single-branch"
+static final String SENTRY_PROJECT_NAME = "watchtower"
+static final String SENTRY_DSN = "https://d09f6d3557114e6cbaa63b56d7ef86cc@o124058.ingest.sentry.io/1288725"
+static final String LOCIZE_PROJECT_ID = "0774e318-387b-4e68-94cc-7b270321bbf1" // not used
 
-def label = "${REPO}-${UUID.randomUUID().toString().substring(0, 5)}"
-podTemplate(
-    label: label,
-    containers: [
-        containerTemplate(	
-            name: 'cloudsdk',	
-            image: 'google/cloud-sdk:277.0.0',	
-            resourceRequestCpu: '500m',	
-            resourceRequestMemory: '500Mi',	
-            resourceLimitCpu: '500m',	
-            resourceLimitMemory: '500Mi',	
-            ttyEnabled: true,
-            envVars: [
-                envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/jenkins-cdf-hub-deployer/credentials.json'),
-            ]
-        )
-    ]
-    .plus(fas.containers(sentryProjectName: 'watchtower'))
-    .plus(previewServer.containers())
-    .plus(yarn.containers()),
-    envVars: [
-        envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
-    ],
-    volumes: [
-        secretVolume(secretName: 'jenkins-cdf-hub-deployer',
-            mountPath: '/jenkins-cdf-hub-deployer',
-            readOnly: true
-        ),
-    ]
-    .plus(fas.volumes())
-    .plus(previewServer.volumes())
-    .plus(yarn.volumes())
-) {
-   properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
-    def newVersion
-    def currentVersion
-    def remote
-    def isPullRequest = !!env.CHANGE_ID
 
-    def projectProduction = "cognitedata-production"
-    def bucketBundles = "cdf-hub-bundles"
+def pods = { body ->
+  yarn.pod(nodeVersion: NODE_VERSION) {
+    previewServer.pod(nodeVersion: NODE_VERSION) {
+      fas.pod(
+        nodeVersion: NODE_VERSION,
+        sentryProjectName: SENTRY_PROJECT_NAME,
+        sentryDsn: SENTRY_DSN,
+        locizeProjectId: LOCIZE_PROJECT_ID
+      ) {
+        // This enables codecov for the repo. If this fails to start, then
+        // do the following:
+        //  1. Obtain a token by going to:
+        //     https://codecov.io/gh/cognitedata/YOUR-REPO-HERE
+        //  2. Create a PR similar to:
+        //     https://github.com/cognitedata/terraform/pull/1923
+        //  3. Get that PR approved, applied, and merged
+        //
+        // If you don't want codecoverage, then you can just remove this.
+        testcafe.pod() {
+          podTemplate(
+            containers: [
+              containerTemplate(
+                name: 'cloudsdk',
+                image: 'google/cloud-sdk:277.0.0',
+                resourceRequestCpu: '500m',
+                resourceRequestMemory: '500Mi',
+                resourceLimitCpu: '500m',
+                resourceLimitMemory: '500Mi',
+                ttyEnabled: true,
+                envVars: [
+                  envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/jenkins-cdf-hub-deployer/credentials.json'),
+                ]
+             )],
+             envVars: [
+              envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
+            ],
+            volumes: [
+              secretVolume(secretName: 'npm-credentials',
+                           mountPath: '/npm-credentials',
+                           defaultMode: '400'),
+              secretVolume(secretName: 'jenkins-cdf-hub-deployer',
+                           mountPath: '/jenkins-cdf-hub-deployer',
+                           readOnly: true),
+              hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
+            ]) {
+            properties([
+              buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+            ])
 
-    def gitCommit
-    def context_checkout = "continuous-integration/jenkins/checkout"
+            node(POD_LABEL) {
+
+              body()
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+pods {
+  def gitCommit
+  def gitAuthor
+  def getTitle
+  def isPullRequest = !!env.CHANGE_ID
+  def isRelease = env.BRANCH_NAME == 'master'
+  def bucketBundles = "cdf-hub-bundles"
+  def projectProduction = "cognitedata-production"
+
+  def context_checkout = "continuous-integration/jenkins/checkout"
     def context_install = "continuous-integration/jenkins/install"
     def context_setup = "continuous-integration/jenkins/setup"
     def context_lint = "continuous-integration/jenkins/lint"
@@ -58,107 +92,89 @@ podTemplate(
     def context_build = "continuous-integration/jenkins/build"
     def context_deploy_app = "continuous-integration/jenkins/deploy-app"
     def context_publishRelease = "continuous-integration/jenkins/publish-release"
-    
-    node(label) {
-        
-        dir('main') {
-            stage("Checkout code") {
-                githubNotifyWrapper(context_checkout) {
-                    checkout scm
-                    gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-                }
-            }
-        }
-        
-        dir('main') {
-            githubNotifyWrapper(context_install) {
-                stage('Install dependencies') {
-                    yarn.setup()
-                }
-            }
-        }
+  static final Map<String, Boolean> version = versioning.getEnv(
+    versioningStrategy: VERSIONING_STRATEGY
+  )
 
-        parallel(
-            'Linting': {
-                githubNotifyWrapper(context_lint) {
-                    dir('main') {
-                        container('fas') {
-                            stage("eslint") {
-                                sh("yarn lint")
-                            }
-                        }
-                    }
-                }
-            },
-            'Test and coverage': {
-                githubNotifyWrapper(context_test) {
-                    dir('main') {
-                        container('fas') {
-                            if (isPullRequest) {
-                                stage('Remove GitHub comments') {
-                                    deleteComments(PR_SERVER_MARKER)
-                                }
-                            }
-                            stage("Test") {
-                                sh("yarn test")
-                                junit(allowEmptyResults: true, testResults: '**/junit.xml')
-                                if (isPullRequest) {
-                                    summarizeTestResults()
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            'Build PR preview': {
-                githubNotifyWrapper(context_buildPrPreview) {
-                    if (!isPullRequest) {
-                        println "Skipping PR build for releases"
-                        return
-                    }
-                    dir('main') {
-                        previewServer(
-                            commentPrefix: PR_SERVER_MARKER,
-                            buildCommand: "yarn build:preview",
-                        )
-                        stage('Archive build') {
-                            archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/*', onlyIfSuccessful: true
-                        }
-                    }
-                }
-            },
-            'Build': {
-                githubNotifyWrapper(context_build) {
-                    dir('main') {
-                        container('fas') {
-                            if (isPullRequest) {
-                                println "Skipping build for pull requests"
-                                return
-                            }
-                            stage("Checking filesize of chunks") {
-                                sh("yarn build")
-                            }
-                        }
-                    }
-                }
-            }
-        )
-
-        if(!isPullRequest) {
-            parallel(
-                'Deploy': {
-                    dir('main') {
-                        container('cloudsdk') {
-                            stage('Deploy to cdf-hub') {
-                                sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=${projectProduction}")
-                                // Upload the root config js to the bundles bucket
-                                sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/${gitCommit}/")
-                                sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/latest/")
-                            }
-                        }
-                    }
-                }
-            )
+  dir('main') {
+    stage("Checkout code") {
+      checkout(scm)
+      gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+      gitTitle = sh(returnStdout: true, script: "git show -s --format='%s' HEAD").trim()
+      gitAuthor = sh(returnStdout: true, script: "git show -s --format='%ae' HEAD").trim()
+    }
+  
+    githubNotifyWrapper(context_install) {
+        stage('Install dependencies') {
+            yarn.setup()
         }
     }
+
+    parallel(
+      'Lint': {
+        container('fas') {
+          stageWithNotify('Lint') {
+            sh("yarn lint")
+          }
+        }
+      },
+      'Test': {
+        container('fas') {
+          stageWithNotify('Unit tests') {
+            sh("yarn test")
+            junit(allowEmptyResults: true, testResults: '**/junit.xml')
+            if (isPullRequest) {
+                summarizeTestResults()
+            }
+          }
+        }
+      },
+      'Preview': {
+        if(!isPullRequest) {
+          print "No PR previews for release builds"
+          return;
+        }
+        stageWithNotify('Build and deploy PR') {
+          previewServer(
+            buildCommand: 'yarn build:preview',
+            prefix: 'pr',
+            buildFolder: 'build',
+            commentPrefix: PR_COMMENT_MARKER
+          )
+        }
+      },
+      'Build': {
+            if (isPullRequest) {
+                println "Skipping build for pull requests"
+                return
+            }
+            stageWithNotify('Build for FAS') {
+                fas.build(
+                    appId: APP_ID,
+                    repo: APPLICATION_REPO_ID,
+                    buildCommand: 'yarn build',
+                    shouldPublishSourceMap: false
+                )
+            }   
+        }
+    )
+
+    if (isRelease) {
+
+      stageWithNotify('Deploy to FAS') {
+        fas.publish(
+          shouldPublishSourceMap: false
+        )
+      }
+
+      container('cloudsdk') {
+        stage('Deploy to cdf-hub') {
+            sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=${projectProduction}")
+            // Upload the root config js to the bundles bucket
+            sh("gsutil cp -r build/. gs://${bucketBundles}/cognite-cdf-3d-management/${gitCommit}/")
+            sh("gsutil cp -r build/. gs://${bucketBundles}/cognite-cdf-3d-management/latest/")
+        }
+      }
+    }
+  }
 }
