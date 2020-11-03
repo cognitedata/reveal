@@ -26,7 +26,7 @@ import { useResourceSelector } from 'lib/context/ResourceSelectorContext';
 import { ResourceItemState } from 'lib/context/ResourceSelectionContext';
 import { useCreate } from 'lib/hooks/sdk';
 import { useQueryCache, useMutation } from 'react-query';
-import { sleep } from 'lib/helpers';
+import { sleep } from 'lib/utils';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange } from '@cognite/sdk';
 import {

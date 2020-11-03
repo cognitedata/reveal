@@ -46,6 +46,9 @@ export type LineChartProps = {
   height: number;
   domain?: [Date, Date];
   showGridLine?: 'both' | 'horizontal' | 'vertical' | 'none';
+  showAxis?: 'both' | 'horizontal' | 'vertical' | 'none';
+  enableTooltip?: boolean;
+  showPoints?: boolean;
   values: DatapointAggregate[];
   margin?: { top: number; right: number; bottom: number; left: number };
 };
@@ -56,6 +59,9 @@ export const LineChart = ({
   height,
   domain,
   showGridLine = 'horizontal',
+  showAxis = 'both',
+  enableTooltip = true,
+  showPoints = true,
   margin = { top: 0, right: 40, bottom: 40, left: 0 },
 }: LineChartProps) => {
   const {
@@ -121,6 +127,8 @@ export const LineChart = ({
     [margin.left, values, showTooltip, valuesScale, dateScale]
   );
 
+  const numRowTicks = Math.max(5, Math.floor(height / 30));
+  const numColumnTicks = Math.max(5, Math.floor(width / 100));
   const getXWithScale = (d: DatapointAggregate) => {
     return dateScale(getDate(d));
   };
@@ -133,6 +141,7 @@ export const LineChart = ({
             scale={valuesScale}
             width={innerWidth}
             height={innerHeight}
+            numTicks={numColumnTicks}
             strokeDasharray="1,3"
             stroke={Colors['greyscale-grey3'].hex()}
             strokeWidth="1.3"
@@ -143,6 +152,7 @@ export const LineChart = ({
             scale={dateScale}
             width={innerWidth}
             height={innerHeight}
+            numTicks={numRowTicks}
             stroke={Colors['greyscale-grey3'].hex()}
             strokeWidth="1.3"
           />
@@ -153,33 +163,38 @@ export const LineChart = ({
   const renderAxis = () => {
     return (
       <>
-        <AxisBottom
-          top={innerHeight}
-          scale={dateScale}
-          numTicks={Math.max(5, Math.floor(width / 100))}
-          tickStroke={Colors['greyscale-grey3'].hex()}
-          strokeWidth={0}
-          tickLabelProps={() => ({
-            fontFamily: 'Inter',
-            fontSize: 12,
-            fill: Colors['greyscale-grey6'].hex(),
-            textAnchor: 'middle',
-          })}
-        />
-        <AxisRight
-          scale={valuesScale}
-          left={innerWidth}
-          tickStroke={Colors['greyscale-grey3'].hex()}
-          strokeWidth={0}
-          tickLabelProps={() => ({
-            fontFamily: 'Inter',
-            fontSize: 12,
-            dy: 5,
-            dx: 8,
-            fill: Colors['greyscale-grey6'].hex(),
-            textAnchor: 'start',
-          })}
-        />
+        {(showAxis === 'both' || showAxis === 'horizontal') && (
+          <AxisBottom
+            top={innerHeight}
+            scale={dateScale}
+            numTicks={numColumnTicks}
+            tickStroke={Colors['greyscale-grey3'].hex()}
+            strokeWidth={0}
+            tickLabelProps={() => ({
+              fontFamily: 'Inter',
+              fontSize: 12,
+              fill: Colors['greyscale-grey6'].hex(),
+              textAnchor: 'middle',
+            })}
+          />
+        )}
+        {(showAxis === 'both' || showAxis === 'vertical') && (
+          <AxisRight
+            scale={valuesScale}
+            left={innerWidth}
+            numTicks={numRowTicks}
+            tickStroke={Colors['greyscale-grey3'].hex()}
+            strokeWidth={0}
+            tickLabelProps={() => ({
+              fontFamily: 'Inter',
+              fontSize: 12,
+              dy: 5,
+              dx: 8,
+              fill: Colors['greyscale-grey6'].hex(),
+              textAnchor: 'start',
+            })}
+          />
+        )}
       </>
     );
   };
@@ -234,6 +249,9 @@ export const LineChart = ({
   };
 
   const renderPoints = () => {
+    if (!showPoints) {
+      return <></>;
+    }
     return (
       <Group>
         {values.map(d => {
@@ -254,6 +272,9 @@ export const LineChart = ({
   };
 
   const renderTooltip = () => {
+    if (!enableTooltip) {
+      return <></>;
+    }
     return (
       <>
         <Bar

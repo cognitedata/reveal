@@ -1,7 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { Timeseries } from '@cognite/sdk';
-import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'lib/context/ResourceSelectionContext';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
@@ -34,11 +33,9 @@ describe('TimeseriesDetailsAbstract', () => {
   it('render normally', () => {
     const container = mount(
       <SDKProvider sdk={sdk}>
-        <ClientSDKProvider client={sdk}>
-          <ResourceSelectionProvider>
-            <TimeseriesDetailsAbstract timeSeries={timeseries} />
-          </ResourceSelectionProvider>
-        </ClientSDKProvider>
+        <ResourceSelectionProvider>
+          <TimeseriesDetailsAbstract timeSeries={timeseries} />
+        </ResourceSelectionProvider>
       </SDKProvider>
     );
 

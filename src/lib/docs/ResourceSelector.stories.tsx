@@ -91,7 +91,7 @@ SelectingResources.argTypes = ArgType;
 SelectingResources.decorators = [
   Story => {
     return (
-      <Wrapper>
+      <Wrapper style={{ height: 800 }}>
         <Story />
       </Wrapper>
     );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { LineChart, LineChartProps, ButtonGroup } from 'lib/components';
+import { LineChart, LineChartProps, ButtonGroup, Loader } from 'lib/components';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -44,6 +44,7 @@ export type TimeseriesChartProps = {
   showContextGraph?: boolean;
   timeOptions?: TIME_OPTION_KEY[];
   defaultOption?: TIME_OPTION_KEY;
+  cacheToDate?: boolean;
 } & Omit<
   LineChartProps,
   'values' | 'focusedValues' | 'zoom' | 'scaleType' | 'onZoomChanged' | 'width'
@@ -55,25 +56,36 @@ export const TimeseriesChart = ({
   numberOfPoints = 1000,
   timeOptions = ['15M', '1H', '6H', '12H', '1D', '1M', '1Y', '2Y', '5Y', '10Y'],
   defaultOption,
+  cacheToDate = true,
   ...otherProps
 }: TimeseriesChartProps) => {
   const sdk = useSDK();
-
-  const [presetZoom, setPresetZoomDomain] = useState<[Date, Date]>([
-    moment().subtract(2, 'years').toDate(),
-    new Date(),
-  ]);
   const [timePeriod, setTimePeriod] = useState<TIME_OPTION_KEY>(
     defaultOption || timeOptions[0]
   );
 
+  const [presetZoom, setPresetZoomDomain] = useState<[Date, Date]>([
+    TIME_SELECT[timePeriod]
+      .getStartTime()
+      .startOf(cacheToDate ? 'day' : 'ms')
+      .toDate(),
+    moment()
+      .startOf(cacheToDate ? 'day' : 'ms')
+      .toDate(),
+  ]);
+
   useEffect(() => {
     setPresetZoomDomain([
-      TIME_SELECT[timePeriod].getStartTime().toDate(),
-      new Date(),
+      TIME_SELECT[timePeriod]
+        .getStartTime()
+        .startOf(cacheToDate ? 'day' : 'ms')
+        .toDate(),
+      moment()
+        .startOf(cacheToDate ? 'day' : 'ms')
+        .toDate(),
     ]);
-  }, [timePeriod]);
-  const { data: overallData } = useQuery(
+  }, [timePeriod, cacheToDate]);
+  const { data: overallData, isLoading } = useQuery(
     [
       'timeseries',
       timeseriesId,
@@ -105,6 +117,13 @@ export const TimeseriesChart = ({
       <div style={{ ...(height ? { height } : { flex: 1 }), width: '100%' }}>
         <AutoSizer disableHeight={!!height}>
           {({ width, height: innerHeight }) => {
+            if (isLoading) {
+              return (
+                <div style={{ height: height || innerHeight, width }}>
+                  <Loader />
+                </div>
+              );
+            }
             return (
               <LineChart
                 width={width}
@@ -120,19 +139,21 @@ export const TimeseriesChart = ({
           }}
         </AutoSizer>
       </div>
-      <div>
-        <ButtonGroup
-          variant="ghost"
-          currentKey={timePeriod}
-          onButtonClicked={key => setTimePeriod(key as TIME_OPTION_KEY)}
-        >
-          {timeOptions.map(key => (
-            <ButtonGroup.Button key={key}>
-              {TIME_SELECT[key].label}
-            </ButtonGroup.Button>
-          ))}
-        </ButtonGroup>
-      </div>
+      {timeOptions.length > 1 && (
+        <div>
+          <ButtonGroup
+            variant="ghost"
+            currentKey={timePeriod}
+            onButtonClicked={key => setTimePeriod(key as TIME_OPTION_KEY)}
+          >
+            {timeOptions.map(key => (
+              <ButtonGroup.Button key={key}>
+                {TIME_SELECT[key].label}
+              </ButtonGroup.Button>
+            ))}
+          </ButtonGroup>
+        </div>
+      )}
     </>
   );
 };

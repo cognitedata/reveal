@@ -9,7 +9,7 @@ import { Loader } from 'lib/components';
 import { isFilePreviewable } from 'lib/utils/FileUtils';
 import { useResourceActionsContext } from 'lib/context';
 import { useSelectionButton } from 'lib/hooks/useSelection';
-import { getIdParam } from 'lib/helpers';
+import { getIdParam } from 'lib/utils';
 import { FileDetailsAbstract } from 'lib/containers/Files';
 import { useAnnotations } from '../hooks';
 

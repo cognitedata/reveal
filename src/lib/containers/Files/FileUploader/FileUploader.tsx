@@ -7,7 +7,7 @@ import { Body, Icon, Button } from '@cognite/cogs.js';
 import { getMIMEType } from 'lib/utils/FileUtils';
 import { SpacedRow } from 'lib/components';
 import { useSDK } from '@cognite/sdk-provider';
-import { sleep } from 'lib/helpers';
+import { sleep } from 'lib/utils';
 
 export const GCSUploader = (
   file: Blob | UploadFile,

@@ -7,17 +7,8 @@ import {
   ErrorFeedback,
   TimeDisplay,
 } from 'lib/components';
-import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-
-const formatMetadata = (metadata: { [key: string]: any }) =>
-  Object.keys(metadata).reduce(
-    (agg, cur) => ({
-      ...agg,
-      [cur]: String(metadata[cur]) || '',
-    }),
-    {}
-  );
+import { formatMetadata } from 'lib/utils';
 
 type Props = {
   id: number;
@@ -56,9 +47,9 @@ export const AssetDetails = ({ id }: Props) => {
       <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
         Metadata
       </Title>
-      <DescriptionList
-        valueSet={formatMetadata((asset && asset.metadata) ?? {})}
-      />
+      {formatMetadata((asset && asset.metadata) ?? {}).map(el => (
+        <DetailsItem key={el.key} name={el.key} value={el.value} />
+      ))}
     </div>
   );
 };

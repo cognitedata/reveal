@@ -90,10 +90,17 @@ export const TimeseriesDetailsAbstract = ({
       )}
 
       <LatestDatapoint timeSeries={timeSeries} />
-      <InfoCell noPadding noBorders>
+      <InfoCell
+        noPadding
+        noBorders
+        containerStyles={{
+          overflow: 'visible',
+        }}
+      >
         <TimeseriesChart
           timeseriesId={timeSeries.id}
           height={150}
+          numberOfPoints={300}
           showContextGraph={false}
           timeOptions={['1H', '1D', '1W', '1M', '1Y']}
           defaultOption="1Y"

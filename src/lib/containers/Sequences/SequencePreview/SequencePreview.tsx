@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Icon, Title } from '@cognite/cogs.js';
-import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 import {
   DetailsItem,
@@ -19,13 +18,16 @@ import { useRelationships } from 'lib/hooks/RelationshipHooks';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(
-    (agg, cur) => ({
-      ...agg,
-      [cur.name || cur.externalId || cur.id]: `${cur.valueType}${
-        cur.description ? ` - ${cur.description}` : ''
-      }`,
-    }),
-    {}
+    (agg, cur) =>
+      agg.concat([
+        {
+          column: cur.name || cur.externalId || `${cur.id}`,
+          value: `${cur.valueType}${
+            cur.description ? ` - ${cur.description}` : ''
+          }`,
+        },
+      ]),
+    [] as { column: string; value: string }[]
   );
 
 const SequenceDetails = ({ sequence }: { sequence: Sequence }) => (
@@ -92,11 +94,15 @@ export const SequencePreview = ({
             <SequenceDetails sequence={sequence} />
           </Tabs.Pane>
           <Tabs.Pane title="Columns " key="columns">
-            <div>
-              <DescriptionList
-                valueSet={formatSequenceColumns(sequence.columns ?? [])}
-              />
-            </div>
+            {formatSequenceColumns((sequence && sequence.columns) ?? {}).map(
+              el => (
+                <DetailsItem
+                  key={el.column}
+                  name={el.column}
+                  value={el.value}
+                />
+              )
+            )}
           </Tabs.Pane>
         </Tabs>
         <ResourceDetailsSidebar relations={relationships} />

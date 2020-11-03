@@ -8,10 +8,9 @@ import {
   Sequence,
 } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
-import { Row } from 'antd';
 import { useResourcesState } from 'lib/context';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
-import { Loader } from 'lib/components';
+import { Loader, SpacedRow } from 'lib/components';
 import { FileTable } from 'lib/containers/Files';
 import { AssetTable } from 'lib/containers/Assets';
 import { SequenceTable } from 'lib/containers/Sequences';
@@ -68,9 +67,11 @@ export const SearchResultTable = <T extends ResourceType>({
     },
     footerHeight: isFetching ? 20 : 0,
     footerRenderer: (
-      <Row type="flex" justify="space-around">
+      <SpacedRow>
+        <div className="spacer" />
         <Icon type="Loading" />
-      </Row>
+        <div className="spacer" />
+      </SpacedRow>
     ),
   };
 

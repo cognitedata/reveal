@@ -5,7 +5,6 @@ import { DataExplorationProvider } from '../context/DataExplorationContext';
 
 export const Container = styled.div`
   width: 100%;
-  height: 300px;
   display: flex;
 `;
 

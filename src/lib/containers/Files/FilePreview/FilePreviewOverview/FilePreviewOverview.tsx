@@ -22,7 +22,7 @@ import {
 } from '@cognite/sdk';
 import { useViewerQuery } from '@cognite/react-picture-annotation';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { getIdParam } from 'lib/helpers';
+import { getIdParam } from 'lib/utils';
 import { DetailsItem, InfoGrid } from 'lib/components';
 import { FileDetailsAbstract } from 'lib/containers/Files';
 import { useResourcePreview } from 'lib/context';

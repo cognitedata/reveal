@@ -1,21 +1,18 @@
+import React from 'react';
 import { Icon } from '@cognite/cogs.js';
-import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
-import { Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { ErrorFeedback, Loader, Splitter, Wrapper } from 'lib/components';
+import { Timeseries } from '@cognite/sdk';
+import {
+  Loader,
+  ErrorFeedback,
+  Wrapper,
+  DetailsItem,
+  Splitter,
+} from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
+import { formatMetadata } from 'lib/utils';
 import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
-import React from 'react';
-
-const formatMetadata = (metadata: { [key: string]: any }) =>
-  Object.keys(metadata).reduce(
-    (agg, cur) => ({
-      ...agg,
-      [cur]: String(metadata[cur]) || '',
-    }),
-    {}
-  );
 
 export const TimeseriesPreview = ({
   timeseriesId,
@@ -58,9 +55,11 @@ export const TimeseriesPreview = ({
               height={500}
               defaultOption="2Y"
             />
-            <DescriptionList
-              valueSet={formatMetadata(timeseries.metadata ?? {})}
-            />
+            {formatMetadata((timeseries && timeseries.metadata) ?? {}).map(
+              el => (
+                <DetailsItem key={el.key} name={el.key} value={el.value} />
+              )
+            )}
           </div>
           <ResourceDetailsSidebar
             assetId={timeseries.assetId}

@@ -1,7 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { Asset } from '@cognite/sdk';
-import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'lib/context';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';
@@ -63,11 +62,9 @@ describe('AssetDetailsAbstract', () => {
   it('render normally', () => {
     const container = mount(
       <SDKProvider sdk={sdk}>
-        <ClientSDKProvider client={sdk}>
-          <ResourceSelectionProvider>
-            <AssetDetailsAbstract asset={asset} />
-          </ResourceSelectionProvider>
-        </ClientSDKProvider>
+        <ResourceSelectionProvider>
+          <AssetDetailsAbstract asset={asset} />
+        </ResourceSelectionProvider>
       </SDKProvider>
     );
 
@@ -77,11 +74,9 @@ describe('AssetDetailsAbstract', () => {
   it('render normally with files and timeseries', () => {
     const container = mount(
       <SDKProvider sdk={sdk}>
-        <ClientSDKProvider client={sdk}>
-          <ResourceSelectionProvider>
-            <AssetDetailsAbstract asset={asset} files={files} timeseries={ts} />
-          </ResourceSelectionProvider>
-        </ClientSDKProvider>
+        <ResourceSelectionProvider>
+          <AssetDetailsAbstract asset={asset} files={files} timeseries={ts} />
+        </ResourceSelectionProvider>
       </SDKProvider>
     );
 

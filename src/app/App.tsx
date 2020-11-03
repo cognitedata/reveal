@@ -4,7 +4,6 @@ import { createBrowserHistory } from 'history';
 import { ThemeProvider } from 'styled-components';
 import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import { ClientSDKProvider } from '@cognite/gearbox/dist/components/ClientSDKProvider';
 import GlobalStyle from 'app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk from 'sdk-singleton';
@@ -58,24 +57,22 @@ export default () => {
             loadingScreen={<Loader />}
             subAppName="data-exploration"
           >
-            <ClientSDKProvider client={sdk}>
-              <SDKProvider sdk={sdk}>
-                <ThemeProvider theme={theme}>
-                  <FlagProvider
-                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                    appName="data-exploration"
-                    projectName={tenant}
-                  >
-                    <Router history={history}>
-                      <Switch>
-                        <Route path="/:tenant" component={RootApp} />
-                      </Switch>
-                    </Router>
-                  </FlagProvider>
-                </ThemeProvider>
-                <GlobalStyle theme={theme} />
-              </SDKProvider>
-            </ClientSDKProvider>
+            <SDKProvider sdk={sdk}>
+              <ThemeProvider theme={theme}>
+                <FlagProvider
+                  apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                  appName="data-exploration"
+                  projectName={tenant}
+                >
+                  <Router history={history}>
+                    <Switch>
+                      <Route path="/:tenant" component={RootApp} />
+                    </Switch>
+                  </Router>
+                </FlagProvider>
+              </ThemeProvider>
+              <GlobalStyle theme={theme} />
+            </SDKProvider>
           </AuthWrapper>
         </SubAppWrapper>
       </AntStyles>
