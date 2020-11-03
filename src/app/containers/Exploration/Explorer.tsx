@@ -50,7 +50,7 @@ export const Explorer = () => {
             }
             case 'timeSeries': {
               resourceName = 'Time series';
-              path = `timeseries/${resourceItem.id}`;
+              path = `timeSeries/${resourceItem.id}`;
               break;
             }
             case 'file': {

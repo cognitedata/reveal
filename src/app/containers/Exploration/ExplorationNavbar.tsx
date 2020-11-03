@@ -4,8 +4,10 @@ import { Button, Colors, Dropdown } from '@cognite/cogs.js';
 import { ShoppingCartPreview } from 'app/containers/Exploration/ShoppingCart';
 import styled from 'styled-components';
 import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
-import { ResourceItem } from 'lib/types';
+import { ResourceItem, ResourceType } from 'lib/types';
+import { useFlag } from '@cognite/react-feature-flags';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
+import CollectionsDropdown from './CollectionsDropdown';
 
 const Navbar = styled.div`
   display: flex;
@@ -23,6 +25,10 @@ const CartDropdown = styled(Dropdown)`
   .tippy-arrow {
     color: #fff;
   }
+`;
+
+const AddToCollectionButton = styled(Button)`
+  margin-right: 8px;
 `;
 
 export const ExplorationNavbar = ({
@@ -45,7 +51,7 @@ export const ExplorationNavbar = ({
       : undefined
   );
 
-  const [, , , , resourceId] = cleanPathname.split('/');
+  const [, , , resourceType, resourceId] = cleanPathname.split('/');
 
   const disableDropdown = !resourceId;
 
@@ -87,6 +93,9 @@ export const ExplorationNavbar = ({
     }
   }
 
+  const collectionsFlag = useFlag('COLLECTIONS_allowlist');
+  const showCollections = resourceId && collectionsFlag;
+
   return (
     <Navbar ref={navbarRef}>
       <Button
@@ -105,6 +114,20 @@ export const ExplorationNavbar = ({
         disableDropdown={disableDropdown}
       />
       <div style={{ zIndex: 2, marginLeft: 24, display: 'flex' }}>
+        {showCollections && (
+          <CollectionsDropdown
+            type={resourceType as ResourceType}
+            items={[{ id: Number(resourceId) }]}
+            button={
+              <AddToCollectionButton
+                icon="ChevronDownCompact"
+                iconPlacement="right"
+              >
+                Add to collection
+              </AddToCollectionButton>
+            }
+          />
+        )}
         {selectionContent}
       </div>
     </Navbar>

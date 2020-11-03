@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, Button, Dropdown, Menu, Overline } from '@cognite/cogs.js';
+import { Icon, Dropdown, Menu, Overline } from '@cognite/cogs.js';
 import {
   useCollections,
   Collection,
@@ -8,12 +8,14 @@ import {
 } from 'lib/hooks/CollectionsHooks';
 import { ResourceType } from 'lib/types';
 
-const CartCollections = ({
+const CollectionsDropdown = ({
   type,
   items,
+  button,
 }: {
   type: ResourceType;
   items: { id: number }[];
+  button: React.ReactElement;
 }) => {
   const { data: collections } = useCollections();
   const [updateCollections] = useUpdateCollections();
@@ -87,9 +89,7 @@ const CartCollections = ({
         </Menu>
       }
     >
-      <Button size="small" variant="ghost">
-        Add to
-      </Button>
+      {button}
     </Dropdown>
   );
 };
@@ -105,4 +105,4 @@ const NoCollectionsMessage = styled(Menu.Footer)`
   text-align: center;
 `;
 
-export default CartCollections;
+export default CollectionsDropdown;
