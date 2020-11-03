@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, Dropdown, Menu, Overline } from '@cognite/cogs.js';
+import { Icon, Dropdown, Menu, Overline, Colors } from '@cognite/cogs.js';
 import {
   useCollections,
   Collection,
@@ -81,7 +81,7 @@ const CollectionsDropdown = ({
               >
                 <CollectionItem>
                   {collection.name}
-                  {containsItems && <Icon type="Check" />}
+                  {containsItems && <CheckIcon type="Check" />}
                 </CollectionItem>
               </Menu.Item>
             );
@@ -96,6 +96,7 @@ const CollectionsDropdown = ({
 
 const CollectionItem = styled.div`
   justify-content: space-between;
+  text-align: left;
   width: 100%;
   display: flex;
 `;
@@ -103,6 +104,11 @@ const CollectionItem = styled.div`
 const NoCollectionsMessage = styled(Menu.Footer)`
   color: black;
   text-align: center;
+`;
+
+const CheckIcon = styled(Icon)`
+  color: ${Colors.success.hex()};
+  margin-left: 8px;
 `;
 
 export default CollectionsDropdown;
