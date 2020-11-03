@@ -3,6 +3,7 @@ import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import { Button } from '@cognite/cogs.js';
 import { RenderResourceActionsFunction } from 'lib/types/Types';
 import styled from 'styled-components';
+import { useFlag } from '@cognite/react-feature-flags';
 import ResourceActionsContext from 'lib/context/ResourceActionsContext';
 import { FilePage } from 'app/containers/FilePage';
 import { useHistory } from 'react-router';
@@ -18,12 +19,22 @@ import { EventPage } from 'app/containers/EventPage';
 import { SearchResultsPage } from 'app/containers/SearchResultsPage';
 import { createLink } from '@cognite/cdf-utilities';
 import { ExplorationNavbar } from './ExplorationNavbar';
+import CollectionsDropdown from './CollectionsDropdown';
 
 const Wrapper = styled.div`
   flex: 1;
   height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const AddToCollectionButton = styled(Button)`
+  margin-top: 8px;
+`;
+
+const ResourceActionsWrapper = styled.div`
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
 export const Explorer = () => {
@@ -35,6 +46,8 @@ export const Explorer = () => {
   const [cart, setCart] = useState<ResourceItem[]>([]);
 
   const { pathname } = history.location;
+
+  const showCollections = useFlag('COLLECTIONS_allowlist');
 
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
     resourceItem => {
@@ -71,17 +84,33 @@ export const Explorer = () => {
           }
           if (!pathname.includes(path)) {
             return (
-              <Button
-                type="primary"
-                key="view"
-                onClick={() => {
-                  window.dispatchEvent(new Event(CLOSE_DROPDOWN_EVENT));
-                  history.push(createLink(`/explore/${path}`));
-                }}
-                icon="ArrowRight"
-              >
-                View {resourceName.toLowerCase()}
-              </Button>
+              <ResourceActionsWrapper>
+                <Button
+                  type="primary"
+                  key="view"
+                  onClick={() => {
+                    window.dispatchEvent(new Event(CLOSE_DROPDOWN_EVENT));
+                    history.push(createLink(`/explore/${path}`));
+                  }}
+                  icon="ArrowRight"
+                >
+                  View {resourceName.toLowerCase()}
+                </Button>
+                {showCollections && (
+                  <CollectionsDropdown
+                    type={resourceItem.type}
+                    items={[{ id: Number(resourceItem.id) }]}
+                    button={
+                      <AddToCollectionButton
+                        icon="ChevronDownCompact"
+                        iconPlacement="right"
+                      >
+                        Add to collection
+                      </AddToCollectionButton>
+                    }
+                  />
+                )}
+              </ResourceActionsWrapper>
             );
           }
         }
@@ -90,7 +119,7 @@ export const Explorer = () => {
 
       return [viewButton()];
     },
-    [history, pathname]
+    [history, pathname, showCollections]
   );
 
   useEffect(() => {
