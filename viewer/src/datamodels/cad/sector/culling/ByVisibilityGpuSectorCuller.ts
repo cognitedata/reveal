@@ -18,7 +18,7 @@ import {
   DetermineSectorCostDelegate,
   DetermineSectorsInput,
   SectorCost,
-  addSectorCost
+  addSectorCost../../CadModelSectorBudget
 } from './types';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';

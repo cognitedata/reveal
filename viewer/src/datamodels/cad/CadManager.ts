@@ -16,7 +16,7 @@ import { SectorQuads } from './rendering/types';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '@/utilities';
-import { CadModelSectorBudget } from './CadModelBudget';
+import { CadModelSectorBudget } from './CadModelSectorBudget';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;

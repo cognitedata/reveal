@@ -20,7 +20,7 @@ import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderMana
 import { SupportedModelTypes } from '@/datamodels/base';
 import { LoadingState } from '@/utilities';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
-import { CadModelSectorBudget } from '@/datamodels/cad/CadModelBudget';
+import { CadModelSectorBudget } from '@/datamodels/cad/CadModelSectorBudget';
 
 /* eslint-disable jsdoc/require-jsdoc */
 

@@ -24,7 +24,7 @@ export type CadModelSectorBudget = {
   readonly maximumNumberOfDrawCalls: number;
 };
 
-export const defaultCadModelSectorBudget = isMobileOrTablet()
+export const defaultCadModelSectorBudget: CadModelSectorBudget = isMobileOrTablet()
   ? // Mobile/tablet
     {
       highDetailProximityThreshold: 5,

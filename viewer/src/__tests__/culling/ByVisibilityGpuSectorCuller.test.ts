@@ -11,7 +11,7 @@ import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
 
 import { generateSectorTree } from '../testutils/createSectorMetadata';
 import { createCadModelMetadata } from '../testutils/createCadModelMetadata';
-import { CadModelSectorBudget } from '@/datamodels/cad/CadModelBudget';
+import { CadModelSectorBudget } from '@/datamodels/cad/CadModelSectorBudget';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
