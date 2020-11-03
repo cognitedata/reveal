@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
-import { CameraConfiguration, toThreeJsBox3 } from '@/utilities';
+import { CameraConfiguration, toThreeJsBox3 } from '../../utilities';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from './types';
 
 const PotreeDefaultPointClass = 'DEFAULT';

@@ -5,11 +5,11 @@
 import * as THREE from 'three';
 
 import { createSectorMetadata, SectorTree } from '../../testutils/createSectorMetadata';
-import { Box3 } from '@/utilities/Box3';
-import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
-import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
-import { CadModelMetadata } from '@/datamodels/cad/';
-import { SectorScene, SectorMetadata } from '@/datamodels/cad/sector/types';
+import { Box3 } from '../../../utilities/Box3';
+import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '../../../internal';
+import { SectorSceneImpl } from '../../../datamodels/cad/sector/SectorScene';
+import { CadModelMetadata } from '../../../datamodels/cad/';
+import { SectorScene, SectorMetadata } from '../../../datamodels/cad/sector/types';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);

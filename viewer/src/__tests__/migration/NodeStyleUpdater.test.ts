@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { NodeStyleUpdater } from '@/public/migration/NodeStyleUpdater';
-import { NumericRange } from '@/utilities';
+import { NodeStyleUpdater } from '../../public/migration/NodeStyleUpdater';
+import { NumericRange } from '../../utilities';
 
 describe('NodeStyleUpdater', () => {
   const updateCallback: (treeIndices: number[]) => void = jest.fn();

@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { SectorScene } from './sector/types';
-import { CameraConfiguration } from '@/utilities';
+import { CameraConfiguration } from '../../utilities';
 
 export interface CadModelMetadata {
   blobUrl: string;

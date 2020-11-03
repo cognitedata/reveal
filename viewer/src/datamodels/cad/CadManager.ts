@@ -10,12 +10,12 @@ import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { discardSector } from './sector/sectorUtilities';
 import { Subscription, Observable } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
-import { trackError } from '@/utilities/metrics';
+import { trackError } from '../../utilities/metrics';
 import { SectorGeometry } from './sector/types';
 import { SectorQuads } from './rendering/types';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
-import { LoadingState } from '@/utilities';
+import { LoadingState } from '../../utilities';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;

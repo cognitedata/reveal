@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { RenderMode } from './RenderMode';
-import { RevealManager } from '@/public/RevealManager';
+import { RevealManager } from '../../../public/RevealManager';
 
 export function addPostRenderEffects(
   renderManager: RevealManager<unknown>,

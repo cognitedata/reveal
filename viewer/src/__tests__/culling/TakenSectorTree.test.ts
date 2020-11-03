@@ -4,10 +4,10 @@
 
 import { expectContainsSectorsWithLevelOfDetail } from '../expects';
 import { generateSectorTree } from '../testutils/createSectorMetadata';
-import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '@/datamodels/cad/sector/culling/types';
-import { TakenSectorTree } from '@/datamodels/cad/sector/culling/TakenSectorTree';
-import { LevelOfDetail, traverseDepthFirst } from '@/internal';
-import { SectorMetadata, CadModelMetadata } from '@/experimental';
+import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '../../datamodels/cad/sector/culling/types';
+import { TakenSectorTree } from '../../datamodels/cad/sector/culling/TakenSectorTree';
+import { LevelOfDetail, traverseDepthFirst } from '../../internal';
+import { SectorMetadata, CadModelMetadata } from '../../experimental';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };

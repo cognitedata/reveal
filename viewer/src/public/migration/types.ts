@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
+import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
 import { Cognite3DModel } from './Cognite3DModel';
 
 /**
@@ -94,7 +94,7 @@ export interface Intersection {
 /**
  * @module @cognite/reveal
  */
-export { CameraConfiguration } from '@/utilities';
+export { CameraConfiguration } from '../../utilities';
 
 /**
  * Delegate for pointer events.

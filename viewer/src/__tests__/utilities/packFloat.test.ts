@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { packFloat, unpackFloat4 } from '@/utilities/packFloatToVec4';
+import { packFloat, unpackFloat4 } from '../../utilities/packFloatToVec4';
 import * as THREE from 'three';
 
 describe('Pack & unpack floats to 4 byte channels', () => {
