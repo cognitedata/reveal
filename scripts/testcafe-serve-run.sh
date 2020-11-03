@@ -1,5 +1,7 @@
 #!/bin/sh
 
+yarn kill-port --port 11111
+
 yarn testcafe:serve &
 SERVE_PID=$!
 

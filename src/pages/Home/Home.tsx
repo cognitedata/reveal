@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { Button, A, Body } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
-import sidecar from 'utils/sidecar';
+import { Link } from 'react-router-dom';
 
-import { Container, Header } from './elements';
+import { Header } from './elements';
+import { Container } from '../elements';
 
 const Home = () => {
   const [crashing, setCrashing] = useState(false);
@@ -31,8 +32,7 @@ const Home = () => {
       <Header data-test-id="header">
         <p>
           <Trans i18nKey="Home:versionInfo_paragraph" t={t}>
-            This is v
-            {{ versionName: process.env.REACT_APP_VERSION_NAME || '0.0.0' }}
+            This is v{process.env.REACT_APP_VERSION_NAME || '0.0.0'}
           </Trans>
         </p>
         <A
@@ -47,24 +47,7 @@ const Home = () => {
         </A>
       </Header>
       <Body>
-        <Trans t={t} i18nKey="cdfBaseUrl_paragraph">
-          The CDF base URL for this cluster is{' '}
-          <code>{{ baseURL: sidecar.cdfApiBaseUrl }}</code>
-        </Trans>
-      </Body>
-      <Body>
-        <Trans t={t} i18nKey="info-sidecar">
-          Learn more about{' '}
-          <A
-            isExternal
-            href="https://cog.link/sidecar"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            sidecars
-          </A>
-          !
-        </Trans>
+        <Link to="/info">What are sidecars?</Link>
       </Body>
       <Button
         disabled={crashing}

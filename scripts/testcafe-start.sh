@@ -1,5 +1,7 @@
 #!/bin/sh
 
+yarn kill-port --port 11111
+
 SERVE_PID=$!
 
 REACT_APP_E2E_MOCK=true \

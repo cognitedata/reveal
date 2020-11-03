@@ -1,9 +1,5 @@
 import styled from 'styled-components/macro';
 
-export const Container = styled.div`
-  text-align: center;
-`;
-
 export const Header = styled.header`
   background-color: #282c34;
   min-height: 10vh;

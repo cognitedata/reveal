@@ -9,7 +9,7 @@ It demonstrates best practices, such as:
 - Storybook usage
 - Testcafe
 - Folder / component layout
-- ...
+- Authentication workflow
 
 ## Deploying the app
 
