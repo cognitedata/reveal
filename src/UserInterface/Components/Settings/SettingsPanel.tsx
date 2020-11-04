@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { SettingPanelProps } from "@/UserInterface/Components/Settings/Types";
-import { SettingsSection } from "@/UserInterface/Components/Settings/SettingsSection/SettingsSection";
-import { PanelTitleBar } from "@/UserInterface/Components/PanelTitleBar/PanelTitleBar";
-import { NodeUtils } from "@/UserInterface/utils/NodeUtils";
+import React, { useState } from 'react';
+import { SettingPanelProps } from '@/UserInterface/Components/Settings/Types';
+import { SettingsSection } from '@/UserInterface/Components/Settings/SettingsSection/SettingsSection';
+import { PanelTitleBar } from '@/UserInterface/Components/PanelTitleBar/PanelTitleBar';
+import { NodeUtils } from '@/UserInterface/utils/NodeUtils';
 
-//==================================================
+//= =================================================
 // Main Settings Panel Component
-//==================================================
+//= =================================================
 
-export function SettingsPanel(props: SettingPanelProps) {
+export const SettingsPanel = (props: SettingPanelProps) => {
   const {
     id,
     titleBar,
@@ -25,12 +25,12 @@ export function SettingsPanel(props: SettingPanelProps) {
 
   const handleUsePropertyChange = (elementId: string, value: boolean) => {
     onPropertyUseChange(elementId, value);
-    forceUpdate((val) => ++val);
+    forceUpdate((val) => val + 1);
   };
 
   const handleValueChange = (elementId: string, value: boolean) => {
     onPropertyValueChange(elementId, value);
-    forceUpdate((val) => ++val);
+    forceUpdate((val) => val + 1);
   };
 
   return (
@@ -68,4 +68,4 @@ export function SettingsPanel(props: SettingPanelProps) {
       ) : null}
     </div>
   );
-}
+};

@@ -3,27 +3,26 @@ import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import ZoomToTargetBaseToolIcon from "@images/Commands/ZoomToTargetTool.png";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
-export class ZoomToTargetTool extends BaseTool
-{
-  //==================================================
+export class ZoomToTargetTool extends BaseTool {
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null)
-  {
+  public constructor(target: ThreeRenderTargetNode | null = null) {
     super(target);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getName(): string { return "Zoom to target"; }
-  public /*override*/ getIcon(): string { return ZoomToTargetBaseToolIcon; }
-  public /*override*/ getShortCutKeys(): string { return "S"; }
+  public /* override */ getName(): string { return "Zoom to target"; }
 
-  protected /*override*/ getTooltipCore(): string
-  {
+  public /* override */ getIcon(): string { return ZoomToTargetBaseToolIcon; }
+
+  public /* override */ getShortCutKeys(): string { return "S"; }
+
+  protected /* override */ getTooltipCore(): string {
     return `${this.getDisplayName()}\n` +
       "Zoom by clicking on something in the 3D.\n" +
       "This position will then be in the center and\n" +
@@ -31,14 +30,13 @@ export class ZoomToTargetTool extends BaseTool
       "Otherwise it works as the navigation tool";
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseTool
-  //==================================================
+  //= =================================================
 
-  public /*override*/ overrideLeftButton(): boolean { return true; }
+  public /* override */ overrideLeftButton(): boolean { return true; }
 
-  public /*override*/ onActivate(): void
-  {
+  public /* override */ onActivate(): void {
     const { target } = this;
     if (!target)
       return;
@@ -52,8 +50,7 @@ export class ZoomToTargetTool extends BaseTool
     target.invalidate();
   }
 
-  public /*override*/ onMouseClick(event: MouseEvent): void
-  {
+  public /* override */ onMouseClick(event: MouseEvent): void {
     const { target } = this;
     if (!target)
       return;

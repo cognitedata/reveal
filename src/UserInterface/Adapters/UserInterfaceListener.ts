@@ -10,36 +10,30 @@ import { updateVisualizerToolbars, updateStatusPanel } from "@/UserInterface/Red
  * Gets callbacks from Core Components when various events happen
  * such as creation of a BaseNode.
  */
-export class UserInterfaceListener implements IUserInterface
-{
+export class UserInterfaceListener implements IUserInterface {
 
   private readonly notificationAdaptor: NotificationsToActionsAdaptor;
 
   private readonly dispatcher: Dispatch;
 
-  public constructor(notificationAdaptor: NotificationsToActionsAdaptor, dispatcher: Dispatch)
-  {
+  public constructor(notificationAdaptor: NotificationsToActionsAdaptor, dispatcher: Dispatch) {
     this.notificationAdaptor = notificationAdaptor;
     this.dispatcher = dispatcher;
   }
 
-  updateNode(node: BaseNode, args: NodeEventArgs): void
-  {
+  updateNode(node: BaseNode, args: NodeEventArgs): void {
     this.notificationAdaptor.processEvent(node, args);
   }
 
-  setFullScreen(isFullScreen: boolean): void
-  {
+  setFullScreen(isFullScreen: boolean): void {
     this.dispatcher(setFullScreen(isFullScreen));
   }
 
-  updateToolbars(): void
-  {
+  updateToolbars(): void {
     this.dispatcher(updateVisualizerToolbars());
   }
 
-  updateStatusPanel(statusText: string): void
-  {
+  updateStatusPanel(statusText: string): void {
     this.dispatcher(updateStatusPanel({ text: statusText }));
   }
 }

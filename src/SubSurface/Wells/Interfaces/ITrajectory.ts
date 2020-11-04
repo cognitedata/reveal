@@ -9,8 +9,7 @@
 
 export type TrajectoryId = number;
 
-export interface ITrajectoryMeta 
-{
+export interface ITrajectoryMeta {
   type: string;
   object_state: string;
   effective_data?: string;
@@ -60,8 +59,7 @@ export interface ITrajectoryMeta
   is_survey_program_read_only: string;
 }
 
-export interface ITrajectoryColumn 
-{
+export interface ITrajectoryColumn {
   name: string;
   externalId: string;
   description?: string;
@@ -75,8 +73,7 @@ export interface ITrajectoryColumn
 // { "name":"x_offset" ,    "valueType":"DOUBLE" }
 // { "name":"y_offset" ,    "valueType":"DOUBLE" }
 
-export interface ITrajectory 
-{
+export interface ITrajectory {
   id: TrajectoryId;
   assetId: number;
   externalId: string;

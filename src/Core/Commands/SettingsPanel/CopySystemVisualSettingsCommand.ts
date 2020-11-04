@@ -5,18 +5,18 @@ import { BaseRenderStyle } from '@/Core/Styles/BaseRenderStyle';
 import { NodeEventArgs } from '@/Core/Views/NodeEventArgs';
 import { Changes } from '@/Core/Views/Changes';
 
-export class CopySystemVisualSettingsCommand extends BaseNodeCommand
-{
-  //==================================================
+export class CopySystemVisualSettingsCommand extends BaseNodeCommand {
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getTooltip(): string { return "\nCopy the visual settings to all similar domain objects in the entire system"; }
-  public /*override*/ getIcon(): string { return SolutionIcon; }
-  public /*override*/ getName(): string { return "Copy Domain Settings"; };
+  public /* override */ getTooltip(): string { return "\nCopy the visual settings to all similar domain objects in the entire system"; }
 
-  protected /*override*/ invokeCore(): boolean 
-  {
+  public /* override */ getIcon(): string { return SolutionIcon; }
+
+  public /* override */ getName(): string { return "Copy Domain Settings"; };
+
+  protected /* override */ invokeCore(): boolean {
     const { node } = this;
     if (!node)
       return false;
@@ -29,8 +29,7 @@ export class CopySystemVisualSettingsCommand extends BaseNodeCommand
     if (!style)
       return false;
 
-    for (const child of root.getDescendants())
-    {
+    for (const child of root.getDescendants()) {
       if (child === node)
         continue;
 

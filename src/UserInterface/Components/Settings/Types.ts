@@ -1,4 +1,5 @@
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
+import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
 
 export type ToolBarType = {
   icon: { type: string; name: string };
@@ -19,16 +20,14 @@ export type SettingPanelProps = {
   onPropertyUseChange: (elementId: string, value: boolean) => void;
 };
 
-export interface ISettingsSectionProps 
-{
+export interface ISettingsSectionProps {
   section: ISettingsSection;
   onExpand: (id: string, expandStatus: boolean) => void;
   onPropertyValueChange: (elementId: string, value: any) => void;
   onPropertyUseChange: (elementId: string, value: boolean) => void;
 }
 
-export interface ISettingsElementProps 
-{
+export interface ISettingsElementProps {
   config: ISettingsElement;
   sectionId: string;
   onPropertyValueChange: (id: string, value: any) => void;
@@ -36,16 +35,14 @@ export interface ISettingsElementProps
 }
 
 // TitleBar interface
-export interface ITitleBar 
-{
+export interface ITitleBar {
   name: string;
   icon: { type: string; name: string };
   toolBar: ToolBarType;
 }
 
 // SettingsPanel SettingsSection Prop Type
-export interface ISettingsSection
-{
+export interface ISettingsSection {
   id: string;
   name: string;
   isExpanded?: boolean;
@@ -57,40 +54,36 @@ export interface ISettingsSection
 }
 
 // SettingsPanel SettingsSection Element
-export interface ISettingsElement extends IBaseSettingsElement
-{
+export interface ISettingsElement extends IBaseSettingsElement {
   options?: ISelectOption[];
   extraOptionsData?: ICommonSelectExtraOptionData[];
   icon?: {
-    type: string;
+    type: IconTypes;
     name: string;
     selected?: boolean;
   };
   subValues?: IBaseSettingsElement[];
 }
 
-export interface IBaseSettingsElement 
-{
+export interface IBaseSettingsElement {
   id: string;
   name: string;
   type: string;
   toolTip?: string;
   value?: any;
   isReadOnly?: boolean;
-  useProperty: boolean; 
+  useProperty: boolean;
   isOptional: boolean;
 }
 
 // SettingsPanel Option selector option
-export interface ISelectOption 
-{
+export interface ISelectOption {
   label: string;
   value: any;
   iconSrc?: string
 }
 
-export interface ICommonSelectProps 
-{
+export interface ICommonSelectProps {
   id?: string;
   options?: ISelectOption[];
   extraOptionsData?: ICommonSelectExtraOptionData[];
@@ -98,8 +91,7 @@ export interface ICommonSelectProps
   onChange?: (val: string) => void;
   disabled?: boolean;
 }
-export interface ICommonSelectExtraOptionData 
-{
+export interface ICommonSelectExtraOptionData {
   colorMapColors?: string[];
   colorTypeIconData?: { icon?: string, color?: string }
 }

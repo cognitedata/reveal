@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 
@@ -36,54 +36,51 @@ import { ViewInfo } from "@/Core/Views/ViewInfo";
 
 const selectedRadiusFactor = 1.2;
 
-export class PointLogView extends BaseGroupThreeView
-{
-  //==================================================
+export class PointLogView extends BaseGroupThreeView {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
 
   private cameraPosition = new Vector3(0, 0, 1);
+
   public static readonly sphereName = "sphere";
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   protected get node(): PointLogNode { return super.getNode() as PointLogNode; }
 
   private get style(): PointLogStyle { return super.getStyle() as PointLogStyle; }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseView
-  //==================================================
+  //= =================================================
 
-  public get /*override*/ isVisible(): boolean
-  {
+  public get /* override */ isVisible(): boolean {
     const parent = this.node.trajectoryNode;
     return parent != null && parent.isVisible(this.renderTarget);
   }
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
     if (args.isChanged(Changes.renderStyle, Changes.nodeColor, Changes.pointOpenOrClosed))
       this.touch();
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Base3DView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
-  {
+  public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
     if (!this.isVisible)
       return undefined;
 
@@ -102,8 +99,7 @@ export class PointLogView extends BaseGroupThreeView
 
     const boundingBox = new Range3();
     const position = Vector3.newZero;
-    for (let i = log.samples.length - 1; i >= 0; i--)
-    {
+    for (let i = log.samples.length - 1; i >= 0; i--) {
       const sample = log.getAt(i);
       if (sample.isMdEmpty)
         continue;
@@ -117,12 +113,11 @@ export class PointLogView extends BaseGroupThreeView
     return boundingBox;
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseThreeView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ beforeRender(): void
-  {
+  public /* override */ beforeRender(): void {
     super.beforeRender();
     const parent = this.object3D;
     if (!parent)
@@ -166,8 +161,7 @@ export class PointLogView extends BaseGroupThreeView
     const tangent = Vector3.newZero;
     const selectedRadius = this.radius * selectedRadiusFactor;
 
-    for (const child of parent.children)
-    {
+    for (const child of parent.children) {
       const index = child.userData.label;
       if (index === undefined)
         continue;
@@ -194,8 +188,7 @@ export class PointLogView extends BaseGroupThreeView
     }
   }
 
-  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
-  {
+  public /* override */ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void {
     const parent = this.object3D;
     if (!parent)
       return;
@@ -228,12 +221,11 @@ export class PointLogView extends BaseGroupThreeView
     viewInfo.addTabbedValue("Details", sample.details);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseGroupThreeView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const { node } = this;
     const { wellNode } = node;
     if (!wellNode)
@@ -270,8 +262,7 @@ export class PointLogView extends BaseGroupThreeView
     const tangent = Vector3.newZero;
     const position = Vector3.newZero;
 
-    for (let index = 0; index < log.samples.length; index++)
-    {
+    for (let index = 0; index < log.samples.length; index++) {
       const sample = log.getAt(index);
       if (sample.isMdEmpty)
         continue;
@@ -288,8 +279,7 @@ export class PointLogView extends BaseGroupThreeView
       const sphere = new THREE.Mesh(sample.isOpen ? openGeometry : closedGeometry, sample.isOpen ? openMaterial : closedMaterial);
       sphere.scale.z = 0.3333;
 
-      if (Math.abs(tangent.z) < 0.999)
-      {
+      if (Math.abs(tangent.z) < 0.999) {
         const axis = up.getCross(tangent);
         // determine the amount to rotate
         const radians = Math.acos(tangent.getDot(up));
@@ -302,15 +292,13 @@ export class PointLogView extends BaseGroupThreeView
 
       group.add(sphere);
 
-      if (sample.isOpen)
-      {
+      if (sample.isOpen) {
         const cameraDirection = Vector3.substract(position, this.cameraPosition);
         const prependicular = cameraDirection.getNormal(tangent);
         position.addWithFactor(prependicular, selectedRadius);
 
         const label = PointLogView.createLabel(node.name, sample.description, position, style.fontSize.value);
-        if (label)
-        {
+        if (label) {
           label.center = new THREE.Vector2(0, 1);
           label.userData.label = index;
           label.userData[BaseThreeView.noPicking] = true;
@@ -322,12 +310,11 @@ export class PointLogView extends BaseGroupThreeView
     return group;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  protected get radius(): number
-  {
+  protected get radius(): number {
     let radius = 20;
     const { node } = this;
     if (!node)
@@ -348,8 +335,7 @@ export class PointLogView extends BaseGroupThreeView
     return radius;
   }
 
-  public static createLabel(header: string, text: string, position: Vector3, worldfontSize: number): THREE.Sprite | null
-  {
+  public static createLabel(header: string, text: string, position: Vector3, worldfontSize: number): THREE.Sprite | null {
     const pixelfontSize = 30;
     const maxWidth = pixelfontSize * 20;
     const canvas = PointLogView.createCanvasWithText(header, text, maxWidth, pixelfontSize);
@@ -369,8 +355,7 @@ export class PointLogView extends BaseGroupThreeView
     return sprite;
   }
 
-  public static createCanvasWithText(header: string, text: string, maxWidth: number, fontSize: number): HTMLCanvasElement | null
-  {
+  public static createCanvasWithText(header: string, text: string, maxWidth: number, fontSize: number): HTMLCanvasElement | null {
     const margin = 0.025 * maxWidth;
     const lineSpacing = 0.5;
     const lineHeight = fontSize * (1 + lineSpacing);
@@ -388,15 +373,12 @@ export class PointLogView extends BaseGroupThreeView
     let headerHeight;
     let headerMultiLine;
     let headerWidth = context.measureText(header).width;
-    if (headerWidth > maxWidth)
-    {
+    if (headerWidth > maxWidth) {
       headerMultiLine = true;
       headerWidth = maxWidth;
       headerHeight = Canvas.measureTextHeight(context, header, maxWidth + margin, lineHeight);
       headerHeight -= fontSize * lineSpacing / 2;
-    }
-    else
-    {
+    } else {
       headerMultiLine = false;
       headerHeight = fontSize;
     }
@@ -405,15 +387,12 @@ export class PointLogView extends BaseGroupThreeView
     let textHeight;
     let textMultiLine;
     let textWidth = context.measureText(text).width;
-    if (textWidth > maxWidth)
-    {
+    if (textWidth > maxWidth) {
       textMultiLine = true;
       textWidth = maxWidth;
       textHeight = Canvas.measureTextHeight(context, text, maxWidth + margin, lineHeight);
       textHeight -= fontSize * lineSpacing / 2;
-    }
-    else
-    {
+    } else {
       textMultiLine = false;
       textHeight = fontSize;
     }

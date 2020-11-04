@@ -5,34 +5,20 @@
     "allowJs": true,
     "jsx": "react",
     "declaration": true,
-    "declarationDir": "dist/node-visualizer/types",
+    "declarationDir": "dist/types",
     "sourceMap": true,
     "outDir": "dist",
-    // "rootDir": "./src",
     "importHelpers": true,                 /* Import emit helpers from 'tslib' when using only ts-loader. */
     "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
     "strict": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    // "strictFunctionTypes": true,           /* Enable strict checking of function types. */
-    // "strictBindCallApply": true,           /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
-    // "strictPropertyInitialization": true,  /* Enable strict checking of property initialization in classes. */
     "noImplicitThis": true,
-    // "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
-    /* Additional Checks */
-    // "noUnusedLocals": true,                /* Report errors on unused locals. */
-    // "noUnusedParameters": true,            /* Report errors on unused parameters. */
     "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
-    // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
-
-    /* Module Resolution Options */
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "@cognite/node-visualizer-components": ["src/__export__/node-visualizer-components"],
-      "@cognite/node-visualizer-subsurface": ["src/__export__/node-visualizer-subsurface"],
-      "@cognite/node-visualizer": ["src/__export__/node-visualizer"],
       "@/*": ["src/*"],
       "@images/*": ["images/*"]
     },

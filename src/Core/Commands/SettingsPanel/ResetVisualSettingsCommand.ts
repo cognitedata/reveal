@@ -3,18 +3,18 @@ import { BaseNodeCommand } from "@/Core/Commands/BaseNodeCommand";
 import { Changes } from "@/Core/Views/Changes";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
-export class ResetVisualSettingsCommand extends BaseNodeCommand
-{
-  //==================================================
+export class ResetVisualSettingsCommand extends BaseNodeCommand {
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getTooltip(): string { return "\nReset to the visual settings to default"; }
-  public /*override*/ getIcon(): string { return ResetIcon; }
-  public /*override*/ getName(): string { return "Reset Settings"; };
+  public /* override */ getTooltip(): string { return "\nReset to the visual settings to default"; }
 
-  protected /*override*/ invokeCore(): boolean 
-  {
+  public /* override */ getIcon(): string { return ResetIcon; }
+
+  public /* override */ getName(): string { return "Reset Settings"; };
+
+  protected /* override */ invokeCore(): boolean {
     if (!this.node)
       return false;
 

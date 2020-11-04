@@ -1,21 +1,18 @@
 /* eslint-disable no-lonely-if */
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
-import * as Color from "color";
-
-export enum ColorInterpolation
-{
+export enum ColorInterpolation {
   Rgb,
   HsvMin,
   HsvMax,

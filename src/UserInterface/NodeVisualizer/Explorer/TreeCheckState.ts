@@ -1,5 +1,4 @@
-export enum TreeCheckState
-{
+export enum TreeCheckState {
   Checked = "checked", // Checked
   Partial = "partial", // Checked with faded color
   UnChecked = "unchecked", // Empty checkbox

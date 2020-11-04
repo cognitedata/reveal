@@ -1,11 +1,11 @@
-import "@/UserInterface/Components/Explorer/Explorer.module.scss";
-import React from "react";
-import { ExplorerPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
-import { ExplorerTabs } from "@/UserInterface/Components/Explorer/ExplorerTabs";
-import { VirtualTree } from "@/UserInterface/Components/VirtualTree/VirtualTree"; // todo: get this from @cognite/node-visualizer-components package
+import '@/UserInterface/Components/Explorer/Explorer.module.scss';
+import React from 'react';
+import { ExplorerPropType } from '@/UserInterface/Components/Explorer/ExplorerTypes';
+import { ExplorerTabs } from '@/UserInterface/Components/Explorer/ExplorerTabs';
+import { VirtualTree } from '@/UserInterface/Components/VirtualTree/VirtualTree';
 
 // Renders Tree Controller
-export function Explorer(props: ExplorerPropType) {
+export const Explorer = (props: ExplorerPropType) => {
   // Handle Node Check
   const handleToggleVisible = (uniqueId: string) => {
     props.onToggleVisible(uniqueId);
@@ -36,4 +36,4 @@ export function Explorer(props: ExplorerPropType) {
       />
     </div>
   );
-}
+};

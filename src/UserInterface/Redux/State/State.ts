@@ -4,8 +4,7 @@ import { ICommonState } from "@/UserInterface/Redux/State/common";
 import { IVisualizerState } from "@/UserInterface/Redux/State/visualizer";
 
 // Top level state for the sub-surface component
-export interface State
-{
+export interface State {
   common: ICommonState;
   settings: ISettingsState;
   explorer: IExplorerState;

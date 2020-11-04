@@ -28,40 +28,32 @@ export const settingsSlice = createSlice({
   initialState,
   reducers: {
     onSettingsReset: {
-      reducer(state: ISettingsState, action: PayloadAction<{}>)
-      {
+      reducer(state: ISettingsState) {
         state.updateUICount +=1;
       },
-      prepare(node: BaseNode): { payload: {} }
-      {
+      prepare(node: BaseNode): { payload: {} } {
         SettingsNodeUtils.populateSettingsFolder(node);
         return { payload: {} };
       }
     },
     onSelectedNodeChange: {
-      reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode }>)
-      {
+      reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode }>) {
         const { node } = action.payload;
 
-        if (node && node.isSelected())
-        {
+        if (node && node.isSelected()) {
           state.currentNodeId = node.uniqueId.toString();
           state.titleBar.name = node.displayName;
           state.titleBar.icon.src = node.getIcon();
           state.titleBar.icon.color = node.hasIconColor() ? node.getColor().hex() : undefined;
           state.titleBar.icon.description = node.name;
-        }
-        else
-        {
+        } else {
           state.currentNodeId = "";
           state.titleBar.name = "";
           state.titleBar.icon = {};
         }
       },
-      prepare(node: BaseNode): { payload: { node: BaseNode } }
-      {
-        if (node && node.isSelected())
-        {
+      prepare(node: BaseNode): { payload: { node: BaseNode } } {
+        if (node && node.isSelected()) {
           SettingsNodeUtils.populateSettingsFolder(node);
           NodeUtils.createRenderStyleCommands(node);
         }
@@ -69,38 +61,32 @@ export const settingsSlice = createSlice({
       }
     },
     onSectionExpand: {
-      reducer(state: ISettingsState, action: PayloadAction<{ sectionName: string, expandStatus: boolean }>)
-      {
+      reducer(state: ISettingsState, action: PayloadAction<{ sectionName: string, expandStatus: boolean }>) {
         state.expandedSections[action.payload.sectionName] = action.payload.expandStatus;
       },
-      prepare(sectionName: string, expandStatus: boolean)
-      {
+      prepare(sectionName: string, expandStatus: boolean) {
         return { payload: { sectionName, expandStatus } };
       }
 
     }
   },
   extraReducers: {
-    [ActionTypes.changeNodeName]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, newLabel: string }>): ISettingsState =>
-    {
+    [ActionTypes.changeNodeName]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, newLabel: string }>): ISettingsState => {
       const uniqueId = action.payload.nodeId;
-      if (state.currentNodeId === uniqueId)
-      {
+      if (state.currentNodeId === uniqueId) {
         state.titleBar.name = action.payload.newLabel;
         state.titleBar.icon.description = action.payload.newLabel;
       }
       return state;
     },
-    [ActionTypes.changeNodeColor]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, nodeColor: Color }>): ISettingsState =>
-    {
+    [ActionTypes.changeNodeColor]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, nodeColor: Color }>): ISettingsState => {
       const uniqueId = action.payload.nodeId;
       if (state.currentNodeId === uniqueId)
         state.titleBar.icon.color = action.payload.nodeColor.hex();
 
       return state;
     },
-    [ActionTypes.changeNodeIcon]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, nodeIcon: string }>): ISettingsState =>
-    {
+    [ActionTypes.changeNodeIcon]: (state: ISettingsState, action: PayloadAction<{ nodeId: string, nodeIcon: string }>): ISettingsState => {
       const uniqueId = action.payload.nodeId;
       if (state.currentNodeId === uniqueId)
         state.titleBar.icon.src = action.payload.nodeIcon;

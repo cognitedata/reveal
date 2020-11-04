@@ -1,15 +1,15 @@
-import React, { KeyboardEvent, MouseEvent } from "react";
-import styled from "styled-components";
+import React, { KeyboardEvent, MouseEvent } from 'react';
+import styled from 'styled-components';
 
 // icons
-import Frame from "@images/Checkboxes/Frame.png";
-import FrameStippled from "@images/Checkboxes/FrameStippled.png";
-import FocusNormal from "@images/Checkboxes/FocusNormal.png";
-import FocusFilter from "@images/Checkboxes/FocusFilter.png";
-import BackgroundNormal from "@images/Checkboxes/BackgroundNormal.png";
-import BackgroundFilter from "@images/Checkboxes/BackgroundFilter.png";
-import CheckedAll from "@images/Checkboxes/CheckedAll.png";
-import CheckedSome from "@images/Checkboxes/CheckedSome.png";
+import Frame from '@images/Checkboxes/Frame.png';
+import FrameStippled from '@images/Checkboxes/FrameStippled.png';
+import FocusNormal from '@images/Checkboxes/FocusNormal.png';
+import FocusFilter from '@images/Checkboxes/FocusFilter.png';
+import BackgroundNormal from '@images/Checkboxes/BackgroundNormal.png';
+import BackgroundFilter from '@images/Checkboxes/BackgroundFilter.png';
+import CheckedAll from '@images/Checkboxes/CheckedAll.png';
+import CheckedSome from '@images/Checkboxes/CheckedSome.png';
 
 interface SpanProps {
   readonly background?: string;
@@ -33,16 +33,16 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: ${(props) => (props.checkable ? "pointer" : "auto")};
+  cursor: ${(props) => (props.checkable ? 'pointer' : 'auto')};
   background-image: ${(props) => props.background};
   background-repeat: no-repeat;
   background-size: cover;
   outline: none;
   filter: ${(props) =>
-    props.disabled ? "grayscale(100%) opacity(0.75)" : "none"};
+    props.disabled ? 'grayscale(100%) opacity(0.75)' : 'none'};
 `;
 
-export function TreeCheckBox(props: {
+interface TreeCheckBoxProps {
   class: string;
   id: string;
   hover: boolean;
@@ -57,17 +57,19 @@ export function TreeCheckBox(props: {
   disabled?: boolean;
   checkable?: boolean;
   filter?: boolean;
-}) {
+}
+
+export const TreeCheckBox = (props: TreeCheckBoxProps) => {
   const stateClassArr: string[] = [];
 
-  if (props.filter) stateClassArr.push("filter");
+  if (props.filter) stateClassArr.push('filter');
 
-  if (props.checkable) stateClassArr.push("checkable");
-  else stateClassArr.push("uncheckable");
+  if (props.checkable) stateClassArr.push('checkable');
+  else stateClassArr.push('uncheckable');
 
-  if (props.checked) stateClassArr.push("checked");
-  if (props.indeterminate) stateClassArr.push("indeterminate");
-  if (props.disabled) stateClassArr.push("disabled");
+  if (props.checked) stateClassArr.push('checked');
+  if (props.indeterminate) stateClassArr.push('indeterminate');
+  if (props.disabled) stateClassArr.push('disabled');
 
   const backgroundImage = getBackgroundImage(
     props.checkable,
@@ -79,7 +81,7 @@ export function TreeCheckBox(props: {
 
   return (
     <Label
-      className={`${props.class} ${stateClassArr.join(" ")}`}
+      className={`${props.class} ${stateClassArr.join(' ')}`}
       htmlFor={props.id}
     >
       <Span
@@ -96,7 +98,7 @@ export function TreeCheckBox(props: {
       />
     </Label>
   );
-}
+};
 
 const getBackgroundImage = (
   checkable = true,
@@ -122,5 +124,5 @@ const getBackgroundImage = (
   if (filter) imageStringArr.push(`url(${BackgroundFilter})`);
   else imageStringArr.push(`url(${BackgroundNormal})`);
 
-  return imageStringArr.join(",");
+  return imageStringArr.join(',');
 };

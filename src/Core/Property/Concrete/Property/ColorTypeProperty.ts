@@ -8,53 +8,53 @@ import Folder from "@images/ColorTypes/Folder.png";
 import Color from "color";
 import { IPropertyExtraOptionDataParams, ColorTypeIconParams } from "@/Core/Property/Base/IPropertyExtraOptionDataParms";
 
-export class ColorTypeProperty extends ValueProperty<ColorType>
-{
-  //==================================================
+export class ColorTypeProperty extends ValueProperty<ColorType> {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _nodeColor?: Color;
+
   private _parentNodeColor? : Color;
+
   public solid = false;
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(params: IPropertyParams<ColorType>, nodeColor?: Color) 
-  {
-    super(params); 
+  public constructor(params: IPropertyParams<ColorType>, nodeColor?: Color) {
+    super(params);
     this.options = Object(ColorType);
     this._nodeColor = nodeColor;
   }
-  
-  //==================================================
+
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
-  
+  //= =================================================
+
   public get nodeColor(): Color | undefined { return this._nodeColor; };
+
   public set nodeColor(color: Color | undefined) { this._nodeColor = color; };
+
   public get parentNodeColor(): Color | undefined { return this._parentNodeColor; };
+
   public set parentNodeColor(color: Color | undefined) { this._parentNodeColor = color; };
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of ValueProperty
-  //==================================================
+  //= =================================================
 
-  public /*overrides*/ getColorTypeOptionIcons(): IPropertyExtraOptionDataParams[] | null
-  {
+  public /* overrides */ getColorTypeOptionIcons(): IPropertyExtraOptionDataParams[] | null {
     const options = this.getExpandedOptions() as [string, ColorType][];
     if (!options.length)
       return null;
 
-    return (options).map(colorTypeOption =>
-    {
-      const value = colorTypeOption[ExpandedOption.value];
+    return (options).map(colorTypeOption => {
+      const value = colorTypeOption[ExpandedOption.Value];
       let colorTypeIconData: ColorTypeIconParams = {};
 
-      switch (value)
-      {
+      switch (value) {
         case ColorType.Black:
           colorTypeIconData = { icon: ColorPnG, color: "#000000" };
           break;
@@ -80,12 +80,11 @@ export class ColorTypeProperty extends ValueProperty<ColorType>
     });
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES OF VALUE PROPERTY
-  //==================================================
+  //= =================================================
 
-  public extraOptionsData(): IPropertyExtraOptionDataParams[] | null 
-  {
+  public extraOptionsData(): IPropertyExtraOptionDataParams[] | null {
     return this.getColorTypeOptionIcons();
   }
 

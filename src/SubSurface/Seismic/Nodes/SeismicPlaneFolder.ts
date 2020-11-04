@@ -1,56 +1,57 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import Icon from "@images/Nodes/SeismicPlaneFolder.png";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
-export class SeismicPlaneFolder extends BaseNode
-{
-  //==================================================
+export class SeismicPlaneFolder extends BaseNode {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   static className = "SeismicPlaneFolder";
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Identifiable
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get className(): string { return SeismicPlaneFolder.className; }
-  public /*override*/ isA(className: string): boolean { return className === SeismicPlaneFolder.className || super.isA(className); }
+  public /* override */ get className(): string { return SeismicPlaneFolder.className; }
 
-  //==================================================
+  public /* override */ isA(className: string): boolean { return className === SeismicPlaneFolder.className || super.isA(className); }
+
+  //= =================================================
   // OVERRIDES of BaseNode
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get typeName(): string { return "Planes"; }
-  public /*override*/ canChangeName(): boolean { return false; }
-  public /*override*/ canChangeColor(): boolean { return false; }
-  public /*override*/ getIcon(): string { return Icon; }
+  public /* override */ get typeName(): string { return "Planes"; }
 
-  protected /*override*/ initializeCore()
-  {
+  public /* override */ canChangeName(): boolean { return false; }
+
+  public /* override */ canChangeColor(): boolean { return false; }
+
+  public /* override */ getIcon(): string { return Icon; }
+
+  protected /* override */ initializeCore() {
     super.initializeCore();
-    if (!this.hasChildByType(SeismicPlaneNode))
-    {
+    if (!this.hasChildByType(SeismicPlaneNode)) {
       this.addChild(new SeismicPlaneNode(0, 0));
       this.addChild(new SeismicPlaneNode(0));
       this.addChild(new SeismicPlaneNode(0, Number.MAX_VALUE));
@@ -61,8 +62,7 @@ export class SeismicPlaneFolder extends BaseNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
-  {
+  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
     super.populateStatisticsCore(folder);
     folder.addReadOnlyInteger("# Planes", this.childCount);
   }

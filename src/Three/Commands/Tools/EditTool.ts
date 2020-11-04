@@ -4,32 +4,30 @@ import SelectCommandIcon from "@images/Commands/EditTool.png";
 import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";
 import { ManipulatorFactory } from "@/Three/Commands/Manipulators/ManipulatorFactory";
 
-export class EditTool extends BaseTool
-{
-  //==================================================
+export class EditTool extends BaseTool {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _currentManipulator: BaseManipulator | null = null;
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null)
-  {
+  public constructor(target: ThreeRenderTargetNode | null = null) {
     super(target);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getName(): string { return "Select or edit"; }
-  public /*override*/ getIcon(): string { return SelectCommandIcon; }
+  public /* override */ getName(): string { return "Select or edit"; }
 
-  protected /*override*/ getTooltipCore(): string 
-  {
+  public /* override */ getIcon(): string { return SelectCommandIcon; }
+
+  protected /* override */ getTooltipCore(): string {
     return `${this.getDisplayName()}\n` +
       "Left button drag: Context dependent\n" +
       "Right button drag: Move\n" +
@@ -38,14 +36,13 @@ export class EditTool extends BaseTool
       "Left click: Context dependent\n";
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseTool
-  //==================================================
+  //= =================================================
 
-  public /*override*/ overrideLeftButton(): boolean { return true; }
+  public /* override */ overrideLeftButton(): boolean { return true; }
 
-  public /*override*/ onActivate(): void
-  {
+  public /* override */ onActivate(): void {
     const { target } = this;
     if (!target)
       return;
@@ -56,16 +53,13 @@ export class EditTool extends BaseTool
     target.invalidate();
   }
 
-  public /*override*/ onMouseHover(event: MouseEvent): void
-  {
+  public /* override */ onMouseHover(event: MouseEvent): void {
     this.onShowInfo(event);
   }
 
-  public /*override*/ onMouseDown(event: MouseEvent): void
-  {
+  public /* override */ onMouseDown(event: MouseEvent): void {
     // In case it is not finished
-    if (this._currentManipulator)
-    {
+    if (this._currentManipulator) {
       this._currentManipulator.clear();
       this._currentManipulator = null;
     }
@@ -89,8 +83,7 @@ export class EditTool extends BaseTool
     this._currentManipulator = manipulator;
   }
 
-  public /*override*/ onMouseDrag(event: MouseEvent): void
-  {
+  public /* override */ onMouseDrag(event: MouseEvent): void {
     const { target } = this;
     if (!target)
       return;
@@ -102,8 +95,7 @@ export class EditTool extends BaseTool
     this._currentManipulator.onMouseDrag(target, ray, false);
   }
 
-  public /*override*/ onMouseUp(event: MouseEvent): void
-  {
+  public /* override */ onMouseUp(event: MouseEvent): void {
     const { target } = this;
     if (!target)
       return;

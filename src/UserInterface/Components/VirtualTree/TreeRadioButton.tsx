@@ -1,9 +1,9 @@
-import React, { KeyboardEvent, MouseEvent } from "react";
-import styled from "styled-components";
-import FocusRadioOff from "@images/Checkboxes/FocusRadioOff.png";
-import FocusRadioOn from "@images/Checkboxes/FocusRadioOn.png";
-import RadioOff from "@images/Checkboxes/RadioOff.png";
-import RadioOn from "@images/Checkboxes/RadioOn.png";
+import React, { KeyboardEvent, MouseEvent } from 'react';
+import styled from 'styled-components';
+import FocusRadioOff from '@images/Checkboxes/FocusRadioOff.png';
+import FocusRadioOn from '@images/Checkboxes/FocusRadioOn.png';
+import RadioOff from '@images/Checkboxes/RadioOff.png';
+import RadioOn from '@images/Checkboxes/RadioOn.png';
 
 interface SpanProps {
   readonly background?: string;
@@ -26,16 +26,16 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: ${(props) => (props.checkable ? "pointer" : "auto")};
+  cursor: ${(props) => (props.checkable ? 'pointer' : 'auto')};
   background-image: ${(props) => props.background};
   background-repeat: no-repeat;
   background-size: cover;
   outline: none;
   filter: ${(props) =>
-    props.disabled ? "grayscale(100%) opacity(0.75)" : "none"};
+    props.disabled ? 'grayscale(100%) opacity(0.75)' : 'none'};
 `;
 
-export function TreeRadioButton(props: {
+interface TreeRadioButtonProps {
   class: string;
   id: string;
   hover: boolean;
@@ -48,7 +48,9 @@ export function TreeRadioButton(props: {
   checked?: boolean;
   disabled?: boolean;
   checkable?: boolean;
-}) {
+}
+
+export const TreeRadioButton = (props: TreeRadioButtonProps) => {
   const backgroundImage = getBackgroundImage(
     props.checkable,
     props.hover,
@@ -71,7 +73,7 @@ export function TreeRadioButton(props: {
       />
     </Label>
   );
-}
+};
 
 const getBackgroundImage = (
   checkable = true,
@@ -91,5 +93,5 @@ const getBackgroundImage = (
     }
   }
 
-  return imageStringArr.join(",");
+  return imageStringArr.join(',');
 };

@@ -1,67 +1,125 @@
-const path = require("path");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path');
 const Dotenv = require('dotenv-webpack');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-
-const SUBSURFACE_COMPONENTS_PATH = "src/__export__/node-visualizer-components";
-const SUBSURFACE_INTERFACES_PATH = "src/__export__/node-visualizer-subsurface";
-const SUBSURFACE_VISUALIZER_PATH = "src/__export__/node-visualizer";
 
 function resolve(dir) {
   return path.resolve(__dirname, dir);
 }
 
 module.exports = (env) => ({
-  mode: "development",
-  // webpack will take the files from ./src/index
-  entry: "./src/UserInterface/index",
-
-  // and output it into /dist as bundle.js
-  output: {
-    path: path.join(__dirname, "UserInterface", "/dist"),
-    filename: "bundle.js",
+  mode: env.debug === 'false' ? 'production' : 'development',
+  entry: {
+    index: './src/index.ts',
   },
-
-  // adding .ts and .tsx to resolve.extensions will help babel look for .ts and .tsx files to transpile
-  resolve: {
-    extensions: [".tsx", ".ts", ".js", ".png", ".svg"],
-    alias: {
-      "@": resolve("src"),
-      "@images": resolve("images"),
-      "@cognite/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH),
-      "@cognite/subsurface-interfaces": resolve(SUBSURFACE_INTERFACES_PATH),
-      "@cognite/subsurface-visualizer": resolve(SUBSURFACE_VISUALIZER_PATH),
-    },
-  },
-
   module: {
     rules: [
-      // use babel-loader to load our tsx files
+      // {
+      //   test: /\.js$/,
+      //   enforce: 'pre',
+      //   use: ['source-map-loader'],
+      // },
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
+        include: resolve('src'),
         exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              configFile: resolve(`./tsconfig.json`),
+            },
+          },
+        ],
       },
-      // sass-loader to bundle all the css files into one file and style-loader to add all the styles  inside the style tag of the document
       {
-        test: /\.s?css$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        test: /\.((c|sa|sc)ss)$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              // Run `postcss-loader` on each CSS `@import`, do not forget that `sass-loader` compile non CSS `@import`'s into a single file
+              // If you need run `sass-loader` and `postcss-loader` on each CSS `@import` please set it to `2`
+              importLoaders: 1,
+              // Automatically enable css modules for files satisfying `/\.module\.\w+$/i` RegExp.
+              modules: { auto: false },
+              sourceMap: env.debug === 'true',
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: env.debug === 'true',
+            },
+          },
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
           {
-            loader: "file-loader",
+            loader: 'url-loader',
             options: {
-              esModule: false,
+              limit: 8192,
             },
           },
         ],
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin(), new Dotenv()],
-  devtool: "source-map",
-  optimization: {
-    minimize: false,
+  resolve: {
+    extensions: ['.tsx', '.scss', '.ts', '.js', '.png', '.svg'],
+    alias: {
+      '@': resolve('src'),
+      '@images': resolve('images'),
+    },
   },
+  output: {
+    filename: '[name].js',
+    path: resolve('dist'),
+    sourceMapFilename: '[name].map',
+    library: '[name]',
+    libraryTarget: 'umd',
+  },
+  devtool: env.debug === 'false' ? undefined : 'inline-source-map',
+  optimization: {
+    minimize: env.debug === 'false',
+  },
+  plugins: [
+    new MiniCssExtractPlugin({ filename: 'node-visualizer.css' }),
+    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
+    new CopyPlugin({
+      patterns: [
+        {
+          context: resolve(`./`),
+          from: 'package.json',
+          to: resolve('dist'),
+        },
+      ],
+    }),
+    new Dotenv(),
+  ],
+  externals: [
+    {
+      react: {
+        root: 'React',
+        commonjs2: 'react',
+        commonjs: 'react',
+        amd: 'react',
+        umd: 'react',
+      },
+      'react-dom': {
+        root: 'ReactDOM',
+        commonjs2: 'react-dom',
+        commonjs: 'react-dom',
+        amd: 'react-dom',
+        umd: 'react-dom',
+      },
+      redux: 'redux',
+      'react-redux': 'react-redux',
+      'styled-components': 'styled-components',
+    },
+  ],
 });

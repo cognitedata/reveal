@@ -35,10 +35,6 @@ yarn-error.log*
 .vs/reveal-architecture/v16/.suo
 
 src/UserInterface/styles/css
-yarn.lock
 
 .env
-.env.local
-standalone/package-lock.json
-package-lock.json
 debug.log

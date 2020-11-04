@@ -1,13 +1,13 @@
-import React from "react";
-import { Icon } from "@/UserInterface/Components/Icon/Icon";
-import { ExplorerTabsPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
+import React from 'react';
+import { Icon } from '@/UserInterface/Components/Icon/Icon';
+import { ExplorerTabsPropType } from '@/UserInterface/Components/Explorer/ExplorerTypes';
 import {
   StyledTabs,
   StyledTab,
-} from "@/UserInterface/Components/Tabs/StyledTabs";
+} from '@/UserInterface/Components/Tabs/StyledTabs';
 
 // Renders Explorer Tabs
-export function ExplorerTabs(props: ExplorerTabsPropType) {
+export const ExplorerTabs = (props: ExplorerTabsPropType) => {
   const { onTabChange, tabs, selectedTabIndex } = props;
   if (!tabs) {
     return null;
@@ -39,4 +39,4 @@ export function ExplorerTabs(props: ExplorerTabsPropType) {
       </StyledTabs>
     </div>
   );
-}
+};

@@ -1,18 +1,18 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import CameraControls from "camera-controls";
-import * as THREE from "three";
+import * as Three from "three";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Ma } from "@/Core/Primitives/Ma";
@@ -24,49 +24,48 @@ import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 // https://github.com/yomotsu/camera-controls
 // https://www.npmjs.com/package/camera-controls
 
-export class CameraControl
-{
-  //==================================================
+export class CameraControl {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private static _isCameraControlInstalled = false;
-  private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+
+  private _camera: Three.PerspectiveCamera | Three.OrthographicCamera;
+
   private _controls: CameraControls | null = null;
+
   public is2D: boolean = false;
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
-  public get camera(): THREE.PerspectiveCamera | THREE.OrthographicCamera { return this._camera; }
+  public get camera(): Three.PerspectiveCamera | Three.OrthographicCamera { return this._camera; }
 
-  public get controls(): CameraControls
-  {
+  public get controls(): CameraControls {
     if (!this._controls)
       throw Error("Controls is not set");
     return this._controls;
   }
 
-  public get distance(): number
-  {
+  public get distance(): number {
     const { controls } = this;
-    let position = new THREE.Vector3();
-    let target = new THREE.Vector3();
+    let position = new Three.Vector3();
+    let target = new Three.Vector3();
     position = controls.getPosition(position);
     target = controls.getTarget(target);
     return target.distanceTo(position);
   }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  constructor(target: ThreeRenderTargetNode, isPerspectiveMode: boolean)
-  {
-    if (!CameraControl._isCameraControlInstalled)
-    {
-      CameraControls.install({ THREE });
+  constructor(target: ThreeRenderTargetNode, isPerspectiveMode: boolean) {
+    if (!CameraControl._isCameraControlInstalled) {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      CameraControls.install({ THREE: Three });
       CameraControl._isCameraControlInstalled = true;
     }
 
@@ -76,23 +75,19 @@ export class CameraControl
     this._controls = new CameraControls(this._camera, target.domElement);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Operations
-  //==================================================
+  //= =================================================
 
-  public onResize(target: ThreeRenderTargetNode): void
-  {
+  public onResize(target: ThreeRenderTargetNode): void {
     const camera = this._camera;
     if (!this._camera)
       return;
 
-    if (camera instanceof THREE.PerspectiveCamera)
-    {
+    if (camera instanceof Three.PerspectiveCamera) {
       camera.aspect = target.aspectRatio;
       camera.updateProjectionMatrix();
-    }
-    else if (camera instanceof THREE.OrthographicCamera)
-    {
+    } else if (camera instanceof Three.OrthographicCamera) {
       const range = target.pixelRange;
       camera.left = -range.x.delta / 2;
       camera.right = range.x.delta / 2;
@@ -103,13 +98,11 @@ export class CameraControl
     }
   }
 
-  public viewRange(boundingBox: Range3 | undefined): boolean
-  {
+  public viewRange(boundingBox: Range3 | undefined): boolean {
     return this.viewFrom(boundingBox, -2);
   }
 
-  public setLeftButton(activeTool: BaseTool | null): void
-  {
+  public setLeftButton(activeTool: BaseTool | null): void {
     if (activeTool && activeTool.overrideLeftButton())
       this.controls.mouseButtons.left = CameraControls.ACTION.NONE;
     else if (this.is2D)
@@ -123,8 +116,7 @@ export class CameraControl
     // controls.mouseButtons.wheel = CameraControls.ACTION.DOLLY;
   }
 
-  public viewFrom(boundingBox: Range3 | undefined, index: number): boolean
-  {
+  public viewFrom(boundingBox: Range3 | undefined, index: number): boolean {
     if (!boundingBox || boundingBox.isEmpty)
       return false;
 
@@ -132,24 +124,21 @@ export class CameraControl
     const { camera } = this;
 
     let distanceFactor = 1;
-    if (camera instanceof THREE.PerspectiveCamera)
-    {
+    if (camera instanceof Three.PerspectiveCamera) {
       const fov = Ma.toRad(camera.fov);
       distanceFactor = 0.65 / (camera.aspect * Math.tan(fov / 2));
-    }
-    else
+    } else
       distanceFactor = 2;
 
     const targetPosition = boundingBox.center;
     const position = boundingBox.center;
 
-    if (index < -1)
-    {
+    if (index < -1) {
       // this.viewAllAlternative(camera as THREE.PerspectiveCamera, this.controls, boundingBox);
       // return true;
 
-      let tempPosition = new THREE.Vector3();
-      let tempTarget = new THREE.Vector3();
+      let tempPosition = new Three.Vector3();
+      let tempTarget = new Three.Vector3();
       tempPosition = controls.getPosition(tempPosition);
       tempTarget = controls.getTarget(tempTarget);
 
@@ -172,8 +161,7 @@ export class CameraControl
       direction.multiplyScalar(distance);
       position.add(direction);
     }
-    if (index === -1)
-    {
+    if (index === -1) {
       // View all with a slope
       distanceFactor /= 2;
       const distanceX = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
@@ -182,51 +170,37 @@ export class CameraControl
       position.x = boundingBox.max.x + distanceX;
       position.y = boundingBox.max.y + distanceY;
       position.z = boundingBox.max.z + distanceZ;
-    }
-    else if (index === 0 || index === 1)
-    {
+    } else if (index === 0 || index === 1) {
       const distance = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor;
-      if (index === 0)
-      {
+      if (index === 0) {
         // Top
         controls.rotateTo(0, Math.PI / 2, false);
         position.z = boundingBox.max.z + distance;
       }
-      if (index === 1)
-      {
-        //Bottom
+      if (index === 1) {
+        // Bottom
         controls.rotateTo(Math.PI, Math.PI / 2, false);
         position.z = boundingBox.min.z - distance;
       }
-    }
-    else if (index === 2 || index === 3)
-    {
+    } else if (index === 2 || index === 3) {
       const distance = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor;
-      if (index === 2)
-      {
-        //South
+      if (index === 2) {
+        // South
         controls.rotateTo(Math.PI / 2, 0, false);
         position.y = boundingBox.min.y - distance;
-      }
-      else
-      {
-        //North
+      } else {
+        // North
         controls.rotateTo(-Math.PI / 2, 0, false);
         position.y = boundingBox.max.y + distance;
       }
-    }
-    else if (index === 4 || index === 5)
-    {
+    } else if (index === 4 || index === 5) {
       const distance = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor;
-      if (index === 4)
-      {
-        //West
+      if (index === 4) {
+        // West
         controls.rotateTo(0, 0, false);
         position.x = boundingBox.min.x - distance;
-      }
-      else
-      {
-        //East
+      } else {
+        // East
         controls.rotateTo(Math.PI, 0, false);
         position.x = boundingBox.max.x + distance;
       }
@@ -236,22 +210,19 @@ export class CameraControl
     return true;
   }
 
-  public zoomToTarget(position: THREE.Vector3): void
-  {
+  public zoomToTarget(position: Three.Vector3): void {
     const { controls } = this;
-    const tmp = new THREE.Vector3();
+    const tmp = new Three.Vector3();
     const distance = controls.getPosition(tmp).distanceTo(position);
     controls.setTarget(position.x, position.y, position.z, true);
     controls.dollyTo(distance / 2, true);
   }
 
-  public viewAllAlternative(camera: THREE.PerspectiveCamera, controls: CameraControls, boundingBox: Range3 | undefined, fitOffset = 1.2)
-  {
+  public viewAllAlternative(camera: Three.PerspectiveCamera, controls: CameraControls, boundingBox: Range3 | undefined, fitOffset = 1.2) {
     if (!boundingBox)
       return;
 
     // Transform it......
-    const box = new THREE.Box3();
     const size = ThreeConverter.toThreeVector3(boundingBox.delta);
     const center = ThreeConverter.toThreeVector3(boundingBox.center);
 
@@ -260,9 +231,7 @@ export class CameraControl
     const fitWidthDistance = fitHeightDistance / camera.aspect;
     const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
 
-    let position = new THREE.Vector3();
-    let target = new THREE.Vector3();
-    position = controls.getPosition(position);
+    let target = new Three.Vector3();
     target = controls.getTarget(target);
 
     const direction = target.clone()
@@ -277,19 +246,17 @@ export class CameraControl
     controls.setPosition(target.x, target.y, target.z);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Creators
-  //==================================================
+  //= =================================================
 
-  private createPerspectiveCamera(target: ThreeRenderTargetNode): THREE.PerspectiveCamera
-  {
+  private createPerspectiveCamera(target: ThreeRenderTargetNode): Three.PerspectiveCamera {
     const aspectRatio = target ? target.aspectRatio : undefined;
-    return new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10_000);
+    return new Three.PerspectiveCamera(45, aspectRatio, 0.1, 10_000);
   }
 
-  private createOrthographicCamera(target: ThreeRenderTargetNode): THREE.OrthographicCamera
-  {
+  private createOrthographicCamera(target: ThreeRenderTargetNode): Three.OrthographicCamera {
     const range = target.pixelRange;
-    return new THREE.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.y.delta / 2, -range.y.delta / 2, 0.1, 10_000);
+    return new Three.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.y.delta / 2, -range.y.delta / 2, 0.1, 10_000);
   }
 }

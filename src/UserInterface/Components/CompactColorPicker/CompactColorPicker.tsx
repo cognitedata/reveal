@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { ColorResult, CompactPicker } from "react-color";
-import Color from "color";
-import "./CompactColorPicker.module.scss";
+import React, { useState } from 'react';
+import { ColorResult, CompactPicker } from 'react-color';
+import Color from 'color';
+import './CompactColorPicker.module.scss';
 
-export function CompactColorPicker(props: {
+interface CompactColorPickerProps {
   value: string;
   onChange: (id: string, value: Color) => void;
   id: string;
-}) {
+}
+
+export const CompactColorPicker = (props: CompactColorPickerProps) => {
   const { value: color, id } = props;
   const [visible, setVisibility] = useState(false);
 
@@ -57,4 +59,4 @@ export function CompactColorPicker(props: {
       )}
     </div>
   );
-}
+};

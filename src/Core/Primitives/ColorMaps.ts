@@ -1,67 +1,68 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as Color from "color";
 import { Colors } from "@/Core/Primitives/Colors";
 import { ColorMap } from "@/Core/Primitives/ColorMap";
 import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
 
-export class ColorMaps
-{
-  //==================================================
+export class ColorMaps {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   public static readonly seismicName = "Seismic";
+
   public static readonly seismicRevName = "Seismic Rev";
+
   public static readonly rainbowName = "Rainbow";
+
   public static readonly rainbowRevName = "Rainbow Rev";
+
   public static readonly greyScaleName = "GreyScale";
+
   public static readonly greyScaleRevName = "GreyScale Rev";
+
   public static readonly terrainName = "terrain";
 
   private static _map: Map<string, ColorMap> | null = null;
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  public static get(name: string): ColorMap | null
-  {
+  public static get(name: string): ColorMap | null {
     const { colorMaps } = ColorMaps;
     const colorMap = colorMaps.get(name);
     return colorMap || null;
   }
 
-  public static getOptions(): string[]
-  {
+  public static getOptions(): string[] {
     const { colorMaps } = ColorMaps;
     return Array.from(colorMaps.keys());
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Operations
-  //==================================================
+  //= =================================================
 
-  private static get colorMaps(): Map<string, ColorMap>
-  {
+  private static get colorMaps(): Map<string, ColorMap> {
     if (!ColorMaps._map)
       ColorMaps._map = ColorMaps.createColorMaps();
     return ColorMaps._map;
   }
 
-  private static createColorMaps(): Map<string, ColorMap>
-  {
+  private static createColorMaps(): Map<string, ColorMap> {
     const map = new Map<string, ColorMap>();
     ColorMaps.add(map, ColorMaps.createTerrain());
     ColorMaps.add(map, ColorMaps.createRainbow(false));
@@ -73,17 +74,15 @@ export class ColorMaps
     return map;
   }
 
-  private static add(map: Map<string, ColorMap>, colorMap: ColorMap): void
-  {
+  private static add(map: Map<string, ColorMap>, colorMap: ColorMap): void {
     map.set(colorMap.name, colorMap);
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Create various color maps
-  //==================================================
+  //= =================================================
 
-  private static createSeismic(reverse: boolean): ColorMap
-  {
+  private static createSeismic(reverse: boolean): ColorMap {
     const colorMap = new ColorMap();
     const a = 0.20;
     const b = 0.25;
@@ -103,8 +102,7 @@ export class ColorMaps
     return colorMap;
   }
 
-  private static createRainbow(reverse: boolean): ColorMap
-  {
+  private static createRainbow(reverse: boolean): ColorMap {
     const colorMap = new ColorMap();
     const interpolation = ColorInterpolation.HsvMax;
     colorMap.add(Colors.magenta, 0, interpolation);
@@ -115,8 +113,7 @@ export class ColorMaps
     return colorMap;
   }
 
-  private static createGreyScale(reverse: boolean): ColorMap
-  {
+  private static createGreyScale(reverse: boolean): ColorMap {
     const colorMap = new ColorMap();
     const interpolation = ColorInterpolation.HsvMax;
     colorMap.add(Colors.white, 0, interpolation);
@@ -127,14 +124,13 @@ export class ColorMaps
     return colorMap;
   }
 
-  private static createTerrain(): ColorMap
-  {
+  private static createTerrain(): ColorMap {
     const colorMap = new ColorMap();
     const interpolation = ColorInterpolation.Rgb;
     colorMap.add(Colors.white, 0, interpolation);
     colorMap.add(Color.rgb(168, 144, 140), 0.2, interpolation); // brown
-    colorMap.add(Color.rgb(255, 255, 150), 0.4, interpolation); //Yellow
-    colorMap.add(Color.rgb(87, 221, 119), 0.6, interpolation); //green
+    colorMap.add(Color.rgb(255, 255, 150), 0.4, interpolation); // Yellow
+    colorMap.add(Color.rgb(87, 221, 119), 0.6, interpolation); // green
     colorMap.add(Color.rgb(0, 147, 255), 0.8, interpolation); // blue
     colorMap.add(Color.rgb(50, 50, 156), 1, interpolation); // Dark blue
     colorMap.name = ColorMaps.terrainName;

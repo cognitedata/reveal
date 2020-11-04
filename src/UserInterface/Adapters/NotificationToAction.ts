@@ -13,19 +13,15 @@ import
   onNodeIconChange
 } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 
-export class NotificationsToActionsAdaptor
-{
+export class NotificationsToActionsAdaptor {
   private readonly dispatcher: Dispatch;
 
-  public constructor(dispatcher: Dispatch)
-  {
+  public constructor(dispatcher: Dispatch) {
     this.dispatcher = dispatcher;
   }
 
-  processEvent(sender: BaseNode, args: NodeEventArgs): void
-  {
-    if (args.isEmpty)
-    { return; }
+  processEvent(sender: BaseNode, args: NodeEventArgs): void {
+    if (args.isEmpty) { return; }
 
     // test for all change notifications
     if (args.isChanged(Changes.visibleState))

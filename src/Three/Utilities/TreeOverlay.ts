@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 import Color from "color";
@@ -21,28 +21,28 @@ import { Canvas } from "@/Three/Utilities/Canvas";
 import { Util } from "@/Core/Primitives/Util";
 import { Appearance } from "@/Core/States/Appearance";
 import { Polyline } from "@/Core/Geometry/Polyline";
-import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from "constants";
 
-export class TreeOverlay
-{
-  //==================================================
+export class TreeOverlay {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private scene: THREE.Scene | null = null;
+
   private camera: THREE.Camera | null = null;
 
   // eslint-disable-next-line react/static-property-placement
   private context: CanvasRenderingContext2D | null = null;
+
   private texture: THREE.Texture | null = null;
+
   private delta = new Vector3(-1, -1);
 
-  //==================================================
-  // INSTANCE METHODS: 
-  //==================================================
+  //= =================================================
+  // INSTANCE METHODS:
+  //= =================================================
 
-  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3, fgColor: Color, bgColor: Color): void
-  {
+  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3, fgColor: Color, bgColor: Color): void {
     if (viewInfo.isEmpty)
       return;
 
@@ -71,14 +71,12 @@ export class TreeOverlay
     renderer.render(this.scene, this.camera);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Helpers
-  //==================================================
+  //= =================================================
 
-  private clear(): void
-  {
-    if (this.texture)
-    {
+  private clear(): void {
+    if (this.texture) {
       this.texture.dispose();
       this.texture = null;
     }
@@ -86,14 +84,11 @@ export class TreeOverlay
       this.context = null;
     if (this.camera)
       this.camera = null;
-    if (this.scene)
-    {
-      while (this.scene.children.length)
-      {
+    if (this.scene) {
+      while (this.scene.children.length) {
         const child = this.scene.children[0];
         this.scene.remove(child);
-        if (child instanceof THREE.Mesh)
-        {
+        if (child instanceof THREE.Mesh) {
           const material = child.material as THREE.Material;
           if (material)
             material.dispose();
@@ -105,12 +100,11 @@ export class TreeOverlay
     }
   }
 
-  private initialize(delta: Vector3): void
-  {
+  private initialize(delta: Vector3): void {
     //  Very simple example rendering pure Three.js HUD on top of
-    //  a 3D scene. 
+    //  a 3D scene.
     //  For more info, read the blog post about this experiment:
-    //  http://www.evermade.fi/pure-three-js-hud/ 
+    //  http://www.evermade.fi/pure-three-js-hud/
     //  For more fanciness, follow me on Twitter @jalajoki
     this.clear();
     const canvas = document.createElement("canvas");
@@ -145,12 +139,11 @@ export class TreeOverlay
     this.scene.add(plane);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Render
-  //==================================================
+  //= =================================================
 
-  public renderTextItems(context: CanvasRenderingContext2D, items: TextItem[], delta: Vector3, fontSize: number, fgColor: Color, bgColor: Color): void
-  {
+  public renderTextItems(context: CanvasRenderingContext2D, items: TextItem[], delta: Vector3, fontSize: number, fgColor: Color, bgColor: Color): void {
     if (!items || !items.length)
       return;
 
@@ -164,8 +157,7 @@ export class TreeOverlay
     // Measure the keys
     let keyDx = 0;
     let allDx = 0;
-    for (const item of items)
-    {
+    for (const item of items) {
       context.font = item.isBold ? Canvas.getBoldFont(fontSize) : Canvas.getNormalFont(fontSize);
       const metric = context.measureText(item.key);
       allDx = Math.max(allDx, metric.width);
@@ -180,15 +172,14 @@ export class TreeOverlay
     context.font = Canvas.getNormalFont(fontSize);
     let valueDx = 0;
     let textDy = 0;
-    for (const item of items)
-    {
+    for (const item of items) {
       this.measureValue(context, item, maxKeyDx, lineDy);
       valueDx = Math.max(valueDx, item.dx);
       textDy += item.dy;
     }
     textDy -= 0.4 * fontSize;
 
-    // Calulate the size    
+    // Calulate the size
     const dx = margin + allDx + spacing + valueDx + margin;
     const dy = margin + textDy + margin;
     const xmin = margin;
@@ -218,8 +209,7 @@ export class TreeOverlay
     // Draw the keys
     x += margin;
     y += margin;
-    for (const item of items)
-    {
+    for (const item of items) {
       context.font = item.isBold ? Canvas.getBoldFont(fontSize) : Canvas.getNormalFont(fontSize);
       context.fillText(item.key, x, y);
       y += item.dy;
@@ -229,10 +219,8 @@ export class TreeOverlay
     x += keyDx + spacing;
     y = ymin + margin;
     context.font = Canvas.getNormalFont(fontSize);
-    for (const item of items)
-    {
-      if (item.value !== undefined)
-      {
+    for (const item of items) {
+      if (item.value !== undefined) {
         if (item.isMultiLine)
           Canvas.fillText(context, item.value, x, y, maxKeyDx + margin, lineDy);
         else
@@ -242,8 +230,7 @@ export class TreeOverlay
     }
   }
 
-  public measureValue(context: CanvasRenderingContext2D, item: TextItem, maxWidth: number, lineHeight: number): void
-  {
+  public measureValue(context: CanvasRenderingContext2D, item: TextItem, maxWidth: number, lineHeight: number): void {
     if (item.dy > 0)
       return; // Already done
 
@@ -255,16 +242,14 @@ export class TreeOverlay
       return;
 
     item.dx = context.measureText(item.value).width;
-    if (item.dx > maxWidth)
-    {
+    if (item.dx > maxWidth) {
       item.isMultiLine = true;
       item.dx = maxWidth;
       item.dy = Canvas.measureTextHeight(context, item.value, 1.025 * maxWidth, lineHeight);
     }
   }
 
-  public renderFooter(context: CanvasRenderingContext2D, text: string, fontSize: number, fgColor: Color, bgColor: Color): void
-  {
+  public renderFooter(context: CanvasRenderingContext2D, text: string, fontSize: number, fgColor: Color, _bgColor: Color): void {
     if (Util.isEmpty(text))
       return;
 
@@ -285,16 +270,14 @@ export class TreeOverlay
     context.shadowOffsetY = 0;
   }
 
-  public renderPolyline(context: CanvasRenderingContext2D, polyline: Polyline | null, fgColor: Color, bgColor: Color): void
-  {
+  public renderPolyline(context: CanvasRenderingContext2D, polyline: Polyline | null, fgColor: Color, bgColor: Color): void {
     if (!polyline || polyline.length < 1)
       return;
 
     context.beginPath();
     let point = polyline.list[0];
     context.moveTo(point.x, point.y);
-    for (let i = 1; i < polyline.list.length; i++)
-    {
+    for (let i = 1; i < polyline.list.length; i++) {
       point = polyline.list[i];
       context.lineTo(point.x, point.y);
     }

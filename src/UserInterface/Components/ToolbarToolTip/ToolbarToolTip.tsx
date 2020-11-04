@@ -1,36 +1,41 @@
-import React from "react";
-import "./ToolbarToolTip.module.scss";
-import { Theme, withStyles } from "@material-ui/core/styles";
-import Tooltip from "@material-ui/core/Tooltip";
-import { getIcon } from "@/UserInterface/Components/Icon/IconSelector";
-import { Typography } from "@material-ui/core";
-import { Appearance } from "@/Core/States/Appearance";
+import React from 'react';
+import './ToolbarToolTip.module.scss';
+import { Theme, withStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
+import { getIcon } from '@/UserInterface/Components/Icon/IconSelector';
+import { Typography } from '@material-ui/core';
+import { Appearance } from '@/Core/States/Appearance';
+import { IconTypes } from '@/UserInterface/Components/Icon/IconTypes';
 
 // Custom tooltip with white background
 const CustomToolTip = withStyles((theme: Theme) => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
+    color: 'rgba(0, 0, 0, 0.87)',
     boxShadow: theme.shadows[1],
     fontSize: theme.typography.fontSize,
   },
 }))(Tooltip);
 
-export function ToolbarToolTip(props: {
-  type?: string;
+interface ToolbarToolTipProps {
+  type?: IconTypes;
   name?: string;
   src?: string;
   tooltip?: {
     text: string;
-    placement?: "bottom" | "right-start";
+    placement?: 'bottom' | 'right-start';
   };
   iconSize?: { width: number; height: number };
   children: any;
-}) {
+}
+
+export const ToolbarToolTip: React.FC<ToolbarToolTipProps> = (
+  props: ToolbarToolTipProps
+) => {
   const { type, name, src, tooltip, iconSize } = props;
 
   // TODO - Remove getIcon once Settings implementation complete
-  const imgSrc = src || (type && name ? getIcon(type, name) : "");
+  const imgSrc = src || (type && name ? getIcon(type, name) : '');
   const style = iconSize
     ? { width: iconSize.width, height: iconSize.height }
     : {};
@@ -45,7 +50,7 @@ export function ToolbarToolTip(props: {
             <div className="image-tooltip">
               {image}
               <div className="tooltip">
-                {tooltip.text.split("\n").map((line, index) => {
+                {tooltip.text.split('\n').map((line, index) => {
                   if (index === 0) {
                     return (
                       <Typography
@@ -82,4 +87,4 @@ export function ToolbarToolTip(props: {
       )}
     </div>
   );
-}
+};

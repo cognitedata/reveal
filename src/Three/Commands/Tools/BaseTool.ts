@@ -1,33 +1,29 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 
-export abstract class BaseTool extends ThreeRenderTargetCommand
-{
-  //==================================================
+export abstract class BaseTool extends ThreeRenderTargetCommand {
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null)
-  {
+  public constructor(target: ThreeRenderTargetNode | null = null) {
     super(target);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get isCheckable(): boolean { return true; }
+  public /* override */ get isCheckable(): boolean { return true; }
 
-  public /*override*/ get isChecked(): boolean
-  {
+  public /* override */ get isChecked(): boolean {
     if (!this.target)
       return false;
 
     return this.target.activeTool === this;
   }
 
-  protected /*override*/ invokeCore(): boolean
-  {
+  protected /* override */ invokeCore(): boolean {
     if (!this.target)
       return false;
 
@@ -35,26 +31,33 @@ export abstract class BaseTool extends ThreeRenderTargetCommand
     return true;
   }
 
-  //==================================================
+  //= =================================================
   // VIRTUAL METHODS
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ overrideLeftButton(): boolean { return false; }
-  public /*virtual*/ onActivate(): void { }
-  public /*virtual*/ onDeactivate(): void { }
-  public /*virtual*/ onMouseHover(event: MouseEvent): void { }
-  public /*virtual*/ onMouseClick(event: MouseEvent): void { }
-  public /*virtual*/ onMouseDown(event: MouseEvent): void { }
-  public /*virtual*/ onMouseDrag(event: MouseEvent): void { }
-  public /*virtual*/ onMouseUp(event: MouseEvent): void { }
-  public /*virtual*/ onKeyDown(event: KeyboardEvent): void { }
+  public /* virtual */ overrideLeftButton(): boolean { return false; }
 
-  //==================================================
+  public /* virtual */ onActivate(): void { }
+
+  public /* virtual */ onDeactivate(): void { }
+
+  public /* virtual */ onMouseHover(_event: MouseEvent): void { }
+
+  public /* virtual */ onMouseClick(_event: MouseEvent): void { }
+
+  public /* virtual */ onMouseDown(_event: MouseEvent): void { }
+
+  public /* virtual */ onMouseDrag(_event: MouseEvent): void { }
+
+  public /* virtual */ onMouseUp(_event: MouseEvent): void { }
+
+  public /* virtual */ onKeyDown(_event: KeyboardEvent): void { }
+
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  public onShowInfo(event: MouseEvent): void
-  {
+  public onShowInfo(event: MouseEvent): void {
     const { target } = this;
     if (!target)
       return;

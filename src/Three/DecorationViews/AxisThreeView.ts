@@ -1,19 +1,19 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple data set in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple data set in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 import * as Color from "color";
-import * as Lodash from "lodash";
+import isEqual from "lodash/isEqual";
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
@@ -28,79 +28,82 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
-const WallIndex0Name = "wallIndex0";
-const WallIndex1Name = "wallIndex1";
-const MainAxisName = "mainAxis";
+const wallIndex0Name = "wallIndex0";
+const wallIndex1Name = "wallIndex1";
+const mainAxisName = "mainAxis";
 
-export class AxisThreeView extends BaseGroupThreeView
-{
-  //==================================================
+export class AxisThreeView extends BaseGroupThreeView {
+  //= =================================================
   // INSTANCE MEMBERS
-  //==================================================
+  //= =================================================
 
   private corners: Vector3[] = [];
+
   private centersIn3d = new Array<Vector3>(6);
 
   // Set to read in order to see if they change later on
   private textColor = Colors.red;
+
   private axisColor = Colors.red;
+
   private gridColor = Colors.red;
+
   private wallColor = Colors.red;
+
   private bgColor: Color = Colors.black;
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private boundingBoxFromViews: Range3 | undefined = undefined; // Caching the bounding box of the scene
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   protected get node(): AxisNode { return super.getNode() as AxisNode; }
+
   protected get style(): AxisRenderStyle { return super.getStyle() as AxisRenderStyle; }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseThreeView
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ shouldPick(): boolean { return false; } // Newer pick on axis
+  public /* virtual */ shouldPick(): boolean { return false; } // Newer pick on axis
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Base3DView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined { return new Range3(); }
+  public /* override */ calculateBoundingBoxCore(): Range3 | undefined { return new Range3(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseGroupThreeView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ mustTouch(): boolean
-  {
+  public /* override */ mustTouch(): boolean {
     const target = this.renderTarget;
 
     // Check if bounding box is different
     const boundingBoxFromViews = target.getBoundingBoxFromViews();
     if (!boundingBoxFromViews.isEmpty)
       boundingBoxFromViews.expandByFraction(0.02);
-    if (boundingBoxFromViews.isEqual(this.boundingBoxFromViews) && Lodash.isEqual(target.bgColor, this.bgColor))
+    if (boundingBoxFromViews.isEqual(this.boundingBoxFromViews) && isEqual(target.bgColor, this.bgColor))
       return false;
 
     this.bgColor = target.bgColor;
@@ -108,8 +111,7 @@ export class AxisThreeView extends BaseGroupThreeView
     return true;
   }
 
-  public /*override*/ beforeRender(): void
-  {
+  public /* override */ beforeRender(): void {
     super.beforeRender();
     const { object3D } = this;
     if (!object3D)
@@ -119,25 +121,21 @@ export class AxisThreeView extends BaseGroupThreeView
     let cameraDirection: Vector3 | null = null;
     let cameraPosition: Vector3 | null = null;
 
-    if (camera instanceof THREE.OrthographicCamera)
-    {
+    if (camera instanceof THREE.OrthographicCamera) {
       const temp = new THREE.Vector3(0, 0, 0);
       cameraDirection = ThreeConverter.fromThreeVector3(camera.getWorldDirection(temp));
-    }
-    else
-    {
+    } else {
       cameraPosition = ThreeConverter.fromThreeVector3(camera.position);
     }
     for (const child of object3D.children)
       this.updateVisible(child, cameraPosition, cameraDirection);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseGroupThreeView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const target = this.renderTarget;
     const boundingBox = this.boundingBoxFromViews;
     if (!boundingBox)
@@ -160,8 +158,7 @@ export class AxisThreeView extends BaseGroupThreeView
     this.corners = boundingBox.getCornerPoints();
     const useWall = AxisThreeView.getUseWall(boundingBox);
     const { transformer } = this;
-    for (let wallIndex = 0; wallIndex < 6; wallIndex++)
-    {
+    for (let wallIndex = 0; wallIndex < 6; wallIndex++) {
       const indexes = Range3.getWallCornerIndexes(wallIndex);
       this.centersIn3d[wallIndex] = Vector3.getCenterOf4(this.corners[indexes[0]], this.corners[indexes[1]], this.corners[indexes[2]], this.corners[indexes[3]]);
       transformer.transformTo3D(this.centersIn3d[wallIndex]);
@@ -174,24 +171,21 @@ export class AxisThreeView extends BaseGroupThreeView
       this.addWall(group, useWall, wallIndex);
 
     const inc = AxisThreeView.getGridInc(boundingBox, style.numTicks);
-    if (boundingBox.x.hasSpan)
-    {
+    if (boundingBox.x.hasSpan) {
       this.addAxis(group, style, useWall, inc, tickLength, 0, 1, 0, 1, 2);
       this.addAxis(group, style, useWall, inc, tickLength, 3, 2, 0, 2, 4);
       this.addAxis(group, style, useWall, inc, tickLength, 7, 6, 0, 4, 5);
       this.addAxis(group, style, useWall, inc, tickLength, 4, 5, 0, 1, 5);
     }
     // Add Y axis
-    if (boundingBox.y.hasSpan)
-    {
+    if (boundingBox.y.hasSpan) {
       this.addAxis(group, style, useWall, inc, tickLength, 3, 0, 1, 0, 2);
       this.addAxis(group, style, useWall, inc, tickLength, 1, 2, 1, 2, 3);
       this.addAxis(group, style, useWall, inc, tickLength, 5, 6, 1, 3, 5);
       this.addAxis(group, style, useWall, inc, tickLength, 7, 4, 1, 0, 5);
     }
     // Add Z axis
-    if (boundingBox.z.hasSpan)
-    {
+    if (boundingBox.z.hasSpan) {
       this.addAxis(group, style, useWall, inc, tickLength, 0, 4, 2, 0, 1);
       this.addAxis(group, style, useWall, inc, tickLength, 1, 5, 2, 1, 3);
       this.addAxis(group, style, useWall, inc, tickLength, 2, 6, 2, 3, 4);
@@ -199,8 +193,7 @@ export class AxisThreeView extends BaseGroupThreeView
     }
 
     // Add Grid
-    if (style.showGrid)
-    {
+    if (style.showGrid) {
       this.addGrid(group, useWall, 0, inc, 1, 2);
       this.addGrid(group, useWall, 1, inc, 0, 2);
       this.addGrid(group, useWall, 2, inc, 0, 1);
@@ -211,34 +204,29 @@ export class AxisThreeView extends BaseGroupThreeView
     return group;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Add wall
-  //==================================================
+  //= =================================================
 
-  private addAxis(group: THREE.Group, style: AxisRenderStyle, usedWall: boolean[], inc: number, tickLength: number, i0: number, i1: number, dimension: number, wallIndex0: number, wallIndex1: number): void
-  {
+  private addAxis(group: THREE.Group, style: AxisRenderStyle, usedWall: boolean[], inc: number, tickLength: number, i0: number, i1: number, dimension: number, wallIndex0: number, wallIndex1: number): void {
     if (!usedWall[wallIndex0] && !usedWall[wallIndex1])
       return;
 
     const { transformer } = this;
 
     // Draw X axis
-    if (style.showAxis)
-    {
-      for (let i = 0; i < 2; i++)
-      {
+    if (style.showAxis) {
+      for (let i = 0; i < 2; i++) {
         const isMainAxis = i === 0;
         let color: Color;
-        if (isMainAxis)
-        {
+        if (isMainAxis) {
           if (dimension === 0)
             color = this.axisColor.mix(Colors.red, 0.3 * 2);
           else if (dimension === 1)
             color = this.axisColor.mix(Colors.green, 0.3 * 2);
           else
             color = this.axisColor.mix(Colors.blue, 0.4 * 2);
-        }
-        else
+        } else
           color = this.axisColor;
 
         const lineWidth = isMainAxis ? 2 : 1;
@@ -267,12 +255,10 @@ export class AxisThreeView extends BaseGroupThreeView
       const tickDirection = Range3.getTickDirection(wallIndex0, wallIndex1);
 
       // Add tick marks and labels
-      if (style.showAxisTicks || style.showAxisNumbers)
-      {
+      if (style.showAxisTicks || style.showAxisNumbers) {
         const geometry = new THREE.Geometry();
         const tickFontSize = style.tickFontSize * tickLength;
-        for (const anyTick of realRange.getTicks(tickInc))
-        {
+        for (const anyTick of realRange.getTicks(tickInc)) {
           const tick = Number(anyTick);
           const start = this.corners[i0].clone();
           start.setAt(dimension, tick);
@@ -282,37 +268,33 @@ export class AxisThreeView extends BaseGroupThreeView
 
           vector.multiplyScalar(tickLength);
 
-          if (style.showAxisTicks)
-          {
+          if (style.showAxisTicks) {
             end.add(vector);
 
             // Add tick mark
             geometry.vertices.push(transformer.to3D(start));
             geometry.vertices.push(transformer.to3D(end));
           }
-          if (style.showAxisNumbers)
-          {
+          if (style.showAxisNumbers) {
             if (!Ma.isInc(tick, labelInc))
               continue;
 
             if (labelCount === 0)
               minLabelTick = tick;
-            labelCount++;
+            labelCount += 1;
 
             end.add(vector);
             transformer.transformTo3D(end);
 
             // Add label
             const label = SpriteCreator.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, this.textColor);
-            if (label)
-            {
+            if (label) {
               group.add(label);
               this.setUserDataOnAxis(label, wallIndex0, wallIndex1, true);
             }
           }
         }
-        if (style.showAxisTicks)
-        {
+        if (style.showAxisTicks) {
           const threeColor = ThreeConverter.toThreeColor(this.axisColor);
           const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 1 });
           const lineSegments = new THREE.LineSegments(geometry, material);
@@ -322,14 +304,12 @@ export class AxisThreeView extends BaseGroupThreeView
         }
       }
       // Add axis label
-      if (style.showAxisLabel)
-      {
+      if (style.showAxisLabel) {
         const labelFontSize = style.labelFontSize * tickLength;
 
         // Find the position by collision detect
         let position: Vector3;
-        if (labelCount >= 2)
-        {
+        if (labelCount >= 2) {
           let tick = minLabelTick + Math.round(0.5 * labelCount - 0.5) * labelInc;
           if (labelInc === tickInc)
             tick -= tickInc / 2;
@@ -338,9 +318,7 @@ export class AxisThreeView extends BaseGroupThreeView
 
           position = this.corners[i0].clone();
           position.setAt(dimension, tick);
-        }
-        else
-        {
+        } else {
           position = Vector3.getCenterOf2(this.corners[i0], this.corners[i1]);
         }
         position = Vector3.addWithFactor(position, tickDirection, tickLength * 5);
@@ -349,8 +327,7 @@ export class AxisThreeView extends BaseGroupThreeView
 
         // Align the text
         const label = SpriteCreator.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, this.textColor);
-        if (label)
-        {
+        if (label) {
           group.add(label);
           this.setUserDataOnAxis(label, wallIndex0, wallIndex1, true);
         }
@@ -358,12 +335,11 @@ export class AxisThreeView extends BaseGroupThreeView
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Add wall
-  //==================================================
+  //= =================================================
 
-  private addWall(group: THREE.Group, usedWall: boolean[], wallIndex: number): void
-  {
+  private addWall(group: THREE.Group, usedWall: boolean[], wallIndex: number): void {
     if (!usedWall[wallIndex])
       return;
 
@@ -391,12 +367,11 @@ export class AxisThreeView extends BaseGroupThreeView
     group.add(object);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Add grid
-  //==================================================
+  //= =================================================
 
-  private addGrid(group: THREE.Group, usedWall: boolean[], wallIndex: number, inc: number, dim1: number, dim2: number): void
-  {
+  private addGrid(group: THREE.Group, usedWall: boolean[], wallIndex: number, inc: number, dim1: number, dim2: number): void {
     if (!usedWall[wallIndex])
       return;
 
@@ -414,8 +389,7 @@ export class AxisThreeView extends BaseGroupThreeView
     group.add(lineSegments);
   }
 
-  private addGridInOneDirection(geometry: THREE.Geometry, inc: number, i0: number, i1: number, i2: number, dimension: number): void
-  {
+  private addGridInOneDirection(geometry: THREE.Geometry, inc: number, i0: number, i1: number, i2: number, dimension: number): void {
     //   p2
     //     +-----------+
     //     | | | | | | |
@@ -436,8 +410,7 @@ export class AxisThreeView extends BaseGroupThreeView
       return;
 
     const boldInc = realRange.getBoldInc(realInc);
-    for (const anyTick of realRange.getTicks(realInc))
-    {
+    for (const anyTick of realRange.getTicks(realInc)) {
       const tick = Number(anyTick);
       if (!Ma.isInc(tick, boldInc))
         continue;
@@ -450,61 +423,55 @@ export class AxisThreeView extends BaseGroupThreeView
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Visibility
-  //==================================================
+  //= =================================================
 
-  private setUserDataOnWall(object: THREE.Object3D, setUserDataOnWall: number): void
-  {
-    object.userData[WallIndex0Name] = setUserDataOnWall;
+  private setUserDataOnWall(object: THREE.Object3D, setUserDataOnWall: number): void {
+    object.userData[wallIndex0Name] = setUserDataOnWall;
   }
 
-  private setUserDataOnAxis(object: THREE.Object3D, wallIndex0: number, wallIndex1: number, mainAxis: boolean): void
-  {
-    object.userData[WallIndex0Name] = wallIndex0;
-    object.userData[WallIndex1Name] = wallIndex1;
-    object.userData[MainAxisName] = mainAxis;
+  private setUserDataOnAxis(object: THREE.Object3D, wallIndex0: number, wallIndex1: number, mainAxis: boolean): void {
+    object.userData[wallIndex0Name] = wallIndex0;
+    object.userData[wallIndex1Name] = wallIndex1;
+    object.userData[mainAxisName] = mainAxis;
   }
 
-  private updateVisible(object: THREE.Object3D, cameraPosition: Vector3 | null, cameraDirection: Vector3 | null): void
-  {
-    const wallIndex0 = object.userData[WallIndex0Name];
+  private updateVisible(object: THREE.Object3D, cameraPosition: Vector3 | null, cameraDirection: Vector3 | null): void {
+    const wallIndex0 = object.userData[wallIndex0Name];
     if (wallIndex0 === undefined)
       return;
 
     const visible0 = this.isWallVisible(wallIndex0, cameraPosition, cameraDirection);
-    const wallIndex1 = object.userData[WallIndex1Name];
-    if (wallIndex1 === undefined)
-    {
+    const wallIndex1 = object.userData[wallIndex1Name];
+    if (wallIndex1 === undefined) {
       object.visible = visible0;
       return;
     }
     const visible1 = this.isWallVisible(wallIndex1, cameraPosition, cameraDirection);
-    const mainAxis = object.userData[MainAxisName];
+    const mainAxis = object.userData[mainAxisName];
     if (mainAxis)
       object.visible = visible0 !== visible1;
     else
       object.visible = visible0 && visible1;
   }
 
-  private isWallVisible(wallIndex: number, cameraPosition: Vector3 | null, cameraDirection: Vector3 | null): boolean
-  {
-    if (!cameraDirection)
-    {
+  private isWallVisible(wallIndex: number, cameraPosition: Vector3 | null, cameraDirection: Vector3 | null): boolean {
+    if (!cameraDirection) {
       if (!cameraPosition)
         return false;
+      // eslint-disable-next-line no-param-reassign
       cameraDirection = Vector3.substract(this.centersIn3d[wallIndex], cameraPosition);
     }
     const normal = Range3.getWallNormal(wallIndex);
     return cameraDirection.getDot(normal) > 0.02;
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  private static getGridInc(range: Range3, numTicks: number): number
-  {
+  private static getGridInc(range: Range3, numTicks: number): number {
     let inc = 0;
     if (range.x.hasSpan)
       inc = Math.max(inc, range.x.getBestInc(numTicks));
@@ -515,24 +482,24 @@ export class AxisThreeView extends BaseGroupThreeView
     return inc;
   }
 
-  private static getRealRange(inc: number, min: number, max: number, dimension: number, zScale: number): [Range1, number]
-  {
+  private static getRealRange(increment: number, min: number, max: number, dimension: number, zScale: number): [Range1, number] {
     // Calculate the correct inc and range
     const range = new Range1(min, max);
-    if (dimension === 2 && zScale !== 1) // If z scale:
-    {
+    let inc = increment;
+
+    // If z scale:
+    if (dimension === 2 && zScale !== 1) {
       const numTicks = range.getNumTicks(inc);
       inc = range.getBestInc(numTicks * zScale * 2);
     }
     return [range, inc];
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Visibility
-  //==================================================
+  //= =================================================
 
-  private static getUseWall(range: Range3): boolean[]
-  {
+  private static getUseWall(range: Range3): boolean[] {
     const usedWall: boolean[] = new Array<boolean>(6);
     usedWall[0] = range.y.hasSpan && range.z.hasSpan;
     usedWall[1] = range.x.hasSpan && range.z.hasSpan;

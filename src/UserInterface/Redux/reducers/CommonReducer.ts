@@ -7,8 +7,7 @@ const initialState: ICommonState = {
 };
 
 export const commonReducer = createReducer(initialState, {
-  [ActionTypes.setFullScreenStatus]: (state, action) =>
-  {
+  [ActionTypes.setFullScreenStatus]: (state, action) => {
     state.isFullscreen = action.payload;
   }
 });

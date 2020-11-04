@@ -1,58 +1,57 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { MdSample } from "@/SubSurface/Wells/Samples/MdSample";
 import { Ma } from "@/Core/Primitives/Ma";
 
-export class TrajectorySample extends MdSample 
-{
-  //==================================================
+export class TrajectorySample extends MdSample {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   public point: Vector3;
+
   public inclination = 0;
+
   public azimuth = 0;
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(point: Vector3, md = 0)
-  {
+  public constructor(point: Vector3, md = 0) {
     super(md);
     this.point = point.clone();
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES from MdSample
-  //==================================================
+  //= =================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point}`; }
-  public /*override*/ getSampleText(): string { return this.point.toString(); }
+  public /* override */ toString(): string { return `${super.toString()} Point: ${this.point}`; }
 
-  //==================================================
+  public /* override */ getSampleText(): string { return this.point.toString(); }
+
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  public updateMdFromPrevSample(prevSample: TrajectorySample): void
-  {
+  public updateMdFromPrevSample(prevSample: TrajectorySample): void {
     this.md = prevSample.md + prevSample.point.distance(this.point);
   }
 
-  public updatePointFromPrevSample(prevSample: TrajectorySample): boolean
-  {
+  public updatePointFromPrevSample(prevSample: TrajectorySample): boolean {
     const a1 = Ma.toRad(prevSample.azimuth);
     const a2 = Ma.toRad(this.azimuth);
     const i1 = Ma.toRad(prevSample.inclination);
@@ -84,4 +83,4 @@ export class TrajectorySample extends MdSample
     this.point.z = prevPoint.z - dz;
     return true;
   }
-}  
+}

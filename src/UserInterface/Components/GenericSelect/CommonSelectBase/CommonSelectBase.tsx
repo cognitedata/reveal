@@ -1,56 +1,56 @@
-import React from "react";
-import { InputBase, MenuItem, Theme, ListItemIcon } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import Select from "@material-ui/core/Select";
-import withStyles from "@material-ui/core/styles/withStyles";
-import ListItemText from "@material-ui/core/ListItemText";
+import React from 'react';
+import { InputBase, MenuItem, Theme, ListItemIcon } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import Select from '@material-ui/core/Select';
+import withStyles from '@material-ui/core/styles/withStyles';
+import ListItemText from '@material-ui/core/ListItemText';
 import {
   ISelectOption,
   ICommonSelectProps,
   ICommonSelectExtraOptionData,
-} from "@/UserInterface/Components/Settings/Types";
+} from '@/UserInterface/Components/Settings/Types';
 
 const CommonSelect = withStyles(() => ({
   root: {
-    height: "100%",
-    padding: "5px 5px",
-    flex: "1 1 auto",
+    height: '100%',
+    padding: '5px 5px',
+    flex: '1 1 auto',
     borderRadius: 0,
-    boxSizing: "border-box",
+    boxSizing: 'border-box',
   },
   select: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
   },
 }))(Select);
 
 const CommonSelectInput = withStyles((theme: Theme) => ({
   root: {
-    height: "100%",
-    flex: "1 1 auto",
-    width: "50px",
+    height: '100%',
+    flex: '1 1 auto',
+    width: '50px',
     borderRadius: 0,
   },
   input: {
     borderRadius: 0,
-    position: "relative",
+    position: 'relative',
     fontSize: theme.typography.button.fontSize,
     color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.background.paper,
     borderColor: theme.palette.primary.contrastText,
-    transition: theme.transitions.create(["border-color"]),
-    "&:focus": {
-      borderColor: "#80bdff",
+    transition: theme.transitions.create(['border-color']),
+    '&:focus': {
+      borderColor: '#80bdff',
     },
   },
 }))(InputBase);
 
 const WrappingListItemText = withStyles(() => ({
   primary: {
-    display: "flex",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    display: 'flex',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 }))(ListItemText);
 
@@ -62,20 +62,20 @@ const SelectOptionIcon = withStyles(() => ({
 
 const useStyles = makeStyles(() => ({
   menuItem: {
-    display: "flex",
-    padding: "0.3rem 0.3rem",
+    display: 'flex',
+    padding: '0.3rem 0.3rem',
   },
 }));
 
-export function CommonSelectBase(
-  props: ICommonSelectProps & {
-    onChange?: (event: React.ChangeEvent<any>) => void;
-    iconNode?: React.ReactElement<
-      { data?: ICommonSelectExtraOptionData; value?: string },
-      any
-    >;
-  }
-) {
+type CommonSelectBaseProps = ICommonSelectProps & {
+  onChange?: (event: React.ChangeEvent<any>) => void;
+  iconNode?: React.ReactElement<
+    { data?: ICommonSelectExtraOptionData; value?: string },
+    any
+  >;
+};
+
+export const CommonSelectBase = (props: CommonSelectBaseProps) => {
   const {
     id,
     options,
@@ -122,4 +122,4 @@ export function CommonSelectBase(
       })}
     </CommonSelect>
   );
-}
+};

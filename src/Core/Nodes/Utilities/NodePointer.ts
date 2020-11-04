@@ -1,60 +1,58 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
-export class NodePointer
-{
-  //==================================================
+export class NodePointer {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private readonly _indexes: number[] = [];
 
   private _uniqueId: UniqueId | null = null;
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get uniqueId(): UniqueId | null { return this._uniqueId; };
+
   public get isEmpty(): boolean { return !this._uniqueId || this._uniqueId.isEmpty; }
+
   public get node(): BaseNode | null { return this.getNode(); }
 
-  public set node(value: BaseNode | null)
-  {
+  public set node(value: BaseNode | null) {
     this.clearIndexes();
     this._uniqueId = value ? value.uniqueId : null;
   }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(node?: BaseNode) 
-  {
+  public constructor(node?: BaseNode) {
     if (node)
       this._uniqueId = node.uniqueId.clone();
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  public getNode(anyInTheSameTree?: BaseNode): BaseNode | null
-  {
+  public getNode(anyInTheSameTree?: BaseNode): BaseNode | null {
     if (this.isEmpty)
       return null;
 
@@ -70,8 +68,7 @@ export class NodePointer
       return result;
 
     result = root.getDescendantByUniqueId(this._uniqueId);
-    if (!result)
-    {
+    if (!result) {
       // Set it invalid
       this.clear();
       return null;
@@ -81,24 +78,20 @@ export class NodePointer
     return result;
   }
 
-  private getRoot(anyInTheSameTree?: BaseNode): BaseNode | null
-  {
+  private getRoot(anyInTheSameTree?: BaseNode): BaseNode | null {
     return anyInTheSameTree ? anyInTheSameTree.root : BaseRootNode.active;
   }
 
-  private getNodeByIndexes(root: BaseNode): BaseNode | null
-  {
+  private getNodeByIndexes(root: BaseNode): BaseNode | null {
     if (this._indexes.length === 0)
       return null;
 
     let node = root;
-    for (const index of this._indexes)
-    {
+    for (const index of this._indexes) {
       if (!node)
         break;
 
-      if (!node.children)
-      {
+      if (!node.children) {
         this.clearIndexes();
         return null;
       }
@@ -107,43 +100,37 @@ export class NodePointer
 
       node = node.children[index];
     }
-    if (!node)
-    {
+    if (!node) {
       this.clearIndexes();
       return null;
     }
-    if (node.uniqueId !== this._uniqueId)
-    {
+    if (node.uniqueId !== this._uniqueId) {
       this.clearIndexes();
       return null;
     }
     return node;
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Operations
-  //==================================================
+  //= =================================================
 
-  private clearIndexes(): void
-  {
+  private clearIndexes(): void {
     this._indexes.splice(0, this._indexes.length);
   }
 
-  private clear(): void
-  {
+  private clear(): void {
     // Set it invalid
     this.clearIndexes();
     this._uniqueId = null;
   }
 
-  private rebuildIndexes(node: BaseNode, root: BaseNode): void
-  {
+  private rebuildIndexes(node: BaseNode, root: BaseNode): void {
     this.clearIndexes();
 
     let child = node;
     let { parent } = child;
-    while (parent)
-    {
+    while (parent) {
       const index = parent.children.indexOf(child);
       if (index < 0)
         throw new Error("index < 0");

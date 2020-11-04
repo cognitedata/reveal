@@ -7,10 +7,8 @@ import { WellCasingCreator } from "@/Solutions/BP/Creators/WellCasingCreator";
 import { Util } from "@/Core/Primitives/Util";
 import { Units } from "@/Core/Primitives/Units";
 
-export class WellNodesCreator
-{
-  static create(bpData: BPData | null): WellNode[] | null
-  {
+export class WellNodesCreator {
+  static create(bpData: BPData | null): WellNode[] | null {
     if (!bpData)
       return null;
 
@@ -22,8 +20,7 @@ export class WellNodesCreator
     const wellNodeMap = new Map<number, WellNode>();
     const wellNodes: WellNode[] = [];
 
-    for (const wellData of wellMap.values())
-    {
+    for (const wellData of wellMap.values()) {
       const wellNode = WellNodeCreator.create(wellData);
       if (!wellNode)
         continue;
@@ -51,8 +48,7 @@ export class WellNodesCreator
     const { wellBoreToLogsMap } = bpData;
     const { wellBoreToCasingDataMap } = bpData;
 
-    for (const trajectory of trajectoryMap.values())
-    {
+    for (const trajectory of trajectoryMap.values()) {
       const wellBoreId = trajectory.assetId;
       const wellBoreToWell = wellBoreToWellMap.get(wellBoreId);
       if (!wellBoreToWell)
@@ -63,7 +59,7 @@ export class WellNodesCreator
         continue;
 
       const { metadata } = wellBoreToWell.data;
-      wellNode.elevationType = metadata.elevation_type; //KB
+      wellNode.elevationType = metadata.elevation_type; // KB
       const elevationUnit = metadata.elevation_value_unit;
       let startMd = Util.getNumberWithUnit(metadata.elevation_value, elevationUnit);
       if (Number.isNaN(startMd))
@@ -80,32 +76,26 @@ export class WellNodesCreator
 
       wellNode.addChild(trajectoryNode);
 
-      if (wellBoreToNDSEventsMap)
-      {
+      if (wellBoreToNDSEventsMap) {
         const events = wellBoreToNDSEventsMap.get(wellBoreId);
         const logNode = WellLogCreator.createRiskLogNode(events);
-        if (logNode)
-        {
+        if (logNode) {
           logNode.name = "NDS Risk Events";
           trajectoryNode.addChild(logNode);
         }
       }
-      if (wellBoreToNPTEventsMap)
-      {
+      if (wellBoreToNPTEventsMap) {
         const events = wellBoreToNPTEventsMap.get(wellBoreId);
         const logNode = WellLogCreator.createRiskLogNode(events);
-        if (logNode)
-        {
+        if (logNode) {
           logNode.name = "NPT Risk Events";
           trajectoryNode.addChild(logNode);
         }
       }
-      if (wellBoreToCasingDataMap)
-      {
+      if (wellBoreToCasingDataMap) {
         const casingData = wellBoreToCasingDataMap.get(wellBoreId);
         const logNode = WellCasingCreator.createCasingNodeNew(casingData, unit);
-        if (logNode)
-        {
+        if (logNode) {
           logNode.name = "Casing";
           trajectoryNode.addChild(logNode);
         }

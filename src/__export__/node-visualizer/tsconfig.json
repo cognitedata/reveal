@@ -1,9 +1,0 @@
-{
-  "extends": "../../../tsconfig.json",
-  "compilerOptions": {
-    "declarationDir": "../../../dist/node-visualizer/types"
-  },
-  "include": [
-    "../../**/*.ts", "../../**/*.tsx", "../../../typings.d.ts"
-  ]
-}

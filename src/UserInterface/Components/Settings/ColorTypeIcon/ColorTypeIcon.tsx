@@ -1,9 +1,11 @@
-import React from "react";
-import { ChromaIcon } from "@/UserInterface/Components/ChromaIcon/ChromaIcon";
-import { Box } from "@material-ui/core";
-import { ICommonSelectExtraOptionData } from "@/UserInterface/Components/Settings/Types";
+import React from 'react';
+import { ChromaIcon } from '@/UserInterface/Components/ChromaIcon/ChromaIcon';
+import { Box } from '@material-ui/core';
+import { ICommonSelectExtraOptionData } from '@/UserInterface/Components/Settings/Types';
 
-export function ColorTypeIcon(props: { data?: ICommonSelectExtraOptionData }) {
+export const ColorTypeIcon = (props: {
+  data?: ICommonSelectExtraOptionData;
+}) => {
   if (!props.data) {
     return null;
   }
@@ -22,4 +24,4 @@ export function ColorTypeIcon(props: { data?: ICommonSelectExtraOptionData }) {
     );
   }
   return null;
-}
+};

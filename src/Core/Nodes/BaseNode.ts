@@ -1,15 +1,15 @@
-//=====================================================================================  
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as Color from "color";
 
@@ -39,148 +39,187 @@ import { ResetVisualSettingsCommand } from "@/Core/Commands/SettingsPanel/ResetV
 import { CopyFolderVisualSettingsCommand } from "@/Core/Commands/SettingsPanel/CopyFolderVisualSettingsCommand";
 import { CopySystemVisualSettingsCommand } from "@/Core/Commands/SettingsPanel/CopySystemVisualSettingsCommand";
 
-export abstract class BaseNode extends Identifiable
-{
-  //==================================================
+export abstract class BaseNode extends Identifiable {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   static className = "BaseNode";
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   protected constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _color: Color | undefined = undefined;
+
   private _colorMap = ColorMaps.rainbowName;
+
   private _name: string | undefined = undefined;
+
   private _isExpanded = false;
+
   private _isActive: boolean = false;
+
   private _isSelected: boolean = false;
+
   private _isInitialized: boolean = false;
+
   private _uniqueId: UniqueId = UniqueId.new();
+
   private _children: BaseNode[] = [];
+
   private _parent: BaseNode | null = null;
+
   private _renderStyles: BaseRenderStyle[] = [];
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get name(): string { return this.getName(); }
+
   public set name(value: string) { this.setName(value); }
+
   public get color(): Color { return this.getColor(); }
+
   public set color(value: Color) { this.setColor(value); }
+
   public get colorMap(): string { return this._colorMap; }
+
   public set colorMap(value: string) { this._colorMap = value; }
+
   public get uniqueId(): UniqueId { return this._uniqueId; }
+
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
+
   public get path(): string { return `${this.parent ? this.parent.path : ""}\\${this.name}`; }
+
   public get isInitialized(): boolean { return this._isInitialized; }
+
   public get activeTarget(): ITarget | null { return this.activeTargetIdAccessor as ITarget; }
-  public get displayName(): string // This is the text shown in the tree control
-  {
+
+  // This is the text shown in the tree control
+  public get displayName(): string {
     const nameExtension = this.getNameExtension();
     if (Util.isEmpty(nameExtension))
       return this.name;
     return `${this.name} [${nameExtension}]`;
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Identifiable
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get className(): string { return BaseNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === BaseNode.className || super.isA(className); }
-  public /*override*/ toString(): string { return this.getDebugString(); }
+  public /* override */ get className(): string { return BaseNode.className; }
 
-  //==================================================
+  public /* override */ isA(className: string): boolean { return className === BaseNode.className || super.isA(className); }
+
+  public /* override */ toString(): string { return this.getDebugString(); }
+
+  //= =================================================
   // VIRTUAL METHODS: Name
-  //==================================================
+  //= =================================================
 
   public abstract get typeName(): string;
-  public /*virtual*/ setName(value: string) { this._name = value; }
-  public /*virtual*/ getName(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
-  public /*virtual*/ canChangeName(): boolean { return true; }
-  public /*virtual*/ getNameExtension(): string | null { return null; }
 
-  //==================================================
+  public /* virtual */ setName(value: string) { this._name = value; }
+
+  public /* virtual */ getName(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
+
+  public /* virtual */ canChangeName(): boolean { return true; }
+
+  public /* virtual */ getNameExtension(): string | null { return null; }
+
+  //= =================================================
   // VIRTUAL METHODS: Label
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
-  public /*virtual*/ getLabelColor(): Color { return Colors.black; }
-  public /*virtual*/ isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
-  public /*virtual*/ isLabelInItalic(): boolean { return !this.canBeDeleted(); } // true shows the label in italic font
+  public /* virtual */ isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
 
-  //==================================================
+  public /* virtual */ getLabelColor(): Color { return Colors.black; }
+
+  public /* virtual */ isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
+
+  public /* virtual */ isLabelInItalic(): boolean { return !this.canBeDeleted(); } // true shows the label in italic font
+
+  //= =================================================
   // VIRTUAL METHODS: Tabs
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ get isTab(): boolean { return false; }
+  public /* virtual */ get isTab(): boolean { return false; }
 
-  //==================================================
+  //= =================================================
   // VIRTUAL METHODS: Color
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ getColor(): Color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
-  public /*virtual*/ setColor(value: Color) { this._color = value; }
-  public /*virtual*/ canChangeColor(): boolean { return true; }
-  public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor(); }
-  public /*virtual*/ hasColorMap(): boolean { return false; }
+  public /* virtual */ getColor(): Color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
 
-  //==================================================
+  public /* virtual */ setColor(value: Color) { this._color = value; }
+
+  public /* virtual */ canChangeColor(): boolean { return true; }
+
+  public /* virtual */ hasIconColor(): boolean { return this.canChangeColor(); }
+
+  public /* virtual */ hasColorMap(): boolean { return false; }
+
+  //= =================================================
   // VIRTUAL METHODS: Icon
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ getIcon(): string { return (this.typeName + FileType.png); }
+  public /* virtual */ getIcon(): string { return (this.typeName + FileType.Png); }
 
-  //==================================================
+  //= =================================================
   // VIRTUAL METHODS: Bounding box
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ get boundingBox(): Range3
-  {
+  public /* virtual */ get boundingBox(): Range3 {
     const range = new Range3();
     for (const child of this.children)
       range.addRange(child.boundingBox);
     return range;
   }
 
-  //==================================================
+  //= =================================================
   // VIRTUAL METHODS: Active / Selected
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ get isActive(): boolean { return this._isActive; }
-  public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
-  public /*virtual*/ canBeActive(): boolean { return false; }
-  public /*virtual*/ canBeSelected(): boolean { return true; }
+  public /* virtual */ get isActive(): boolean { return this._isActive; }
 
-  //==================================================
+  public /* virtual */ set isActive(value: boolean) { this._isActive = value; }
+
+  public /* virtual */ canBeActive(): boolean { return false; }
+
+  public /* virtual */ canBeSelected(): boolean { return true; }
+
+  //= =================================================
   // VIRTUAL METHODS: Appearance in the explorer
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ canBeDeleted(): boolean { return true; }
-  public /*virtual*/ canBeChecked(target: ITarget | null): boolean { return true; }
-  public /*virtual*/ isFilter(target: ITarget | null): boolean { return false; }
-  public /*virtual*/ isRadio(target: ITarget | null): boolean { return false; }
-  public /*virtual*/ isTree(): boolean { return false; }
+  public /* virtual */ canBeDeleted(): boolean { return true; }
 
-  //==================================================
+  public /* virtual */ canBeChecked(_: ITarget | null): boolean { return true; }
+
+  public /* virtual */ isFilter(_: ITarget | null): boolean { return false; }
+
+  public /* virtual */ isRadio(_: ITarget | null): boolean { return false; }
+
+  public /* virtual */ isTree(): boolean { return false; }
+
+  //= =================================================
   // VIRTUAL METHODS: Visibility
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ getCheckBoxEnabled(target?: ITarget | null): boolean { return true; }
+  public /* virtual */ getCheckBoxEnabled(_?: ITarget | null): boolean { return true; }
 
-  public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
-  {
+  public /* virtual */ getCheckBoxState(target?: ITarget | null): CheckBoxState {
     if (!target)
+      // eslint-disable-next-line no-param-reassign
       target = this.activeTarget;
 
     if (!target)
@@ -190,17 +229,16 @@ export abstract class BaseNode extends Identifiable
     let numAll = 0;
     let numNone = 0;
 
-    for (const child of this.children)
-    {
+    for (const child of this.children) {
       const childState = child.getCheckBoxState(target);
       if (childState === CheckBoxState.Never)
         continue;
 
-      numCandidates++;
+      numCandidates += 1;
       if (childState === CheckBoxState.All)
-        numAll++;
+        numAll += 1;
       else if (childState === CheckBoxState.None || childState === CheckBoxState.CanNotBeChecked)
-        numNone++;
+        numNone += 1;
 
       // Optimization, not tested
       if (numNone < numCandidates && numCandidates < numAll)
@@ -215,9 +253,9 @@ export abstract class BaseNode extends Identifiable
     return CheckBoxState.Some;
   }
 
-  public /*virtual*/ setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean
-  {
+  public /* virtual */ setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean {
     if (!target)
+      // eslint-disable-next-line no-param-reassign
       target = this.activeTarget;
     if (!target)
       return false;
@@ -240,8 +278,7 @@ export abstract class BaseNode extends Identifiable
     return true;
   }
 
-  protected notifyVisibleStateChange(): void
-  {
+  protected notifyVisibleStateChange(): void {
     const args = new NodeEventArgs(Changes.visibleState);
     this.notify(args);
     for (const ancestor of this.getAncestorsExceptRoot())
@@ -250,8 +287,8 @@ export abstract class BaseNode extends Identifiable
       descendant.notify(args);
   }
 
-  public toggleVisibleInteractive(target?: ITarget | null): void // Use this when clicking on the checkbox in the three control
-  {
+  // Use this when clicking on the checkbox in the three control
+  public toggleVisibleInteractive(target?: ITarget | null): void {
     const checkBoxState = this.getCheckBoxState(target);
     if (checkBoxState === CheckBoxState.None)
       this.setVisibleInteractive(true, target);
@@ -259,79 +296,77 @@ export abstract class BaseNode extends Identifiable
       this.setVisibleInteractive(false, target);
   }
 
-  //==================================================
+  //= =================================================
   // VIRTUAL METHODS: Others
-  //==================================================
+  //= =================================================
 
-  protected /*virtual*/ initializeCore(): void { }
-  protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
-  protected /*virtual*/ removeInternalData(): void { }
-  protected /*virtual*/ get activeTargetIdAccessor(): ITargetIdAccessor | null
-  {
+  protected /* virtual */ initializeCore(): void { }
+
+  protected /* virtual */ notifyCore(_args: NodeEventArgs): void { }
+
+  protected /* virtual */ removeInternalData(): void { }
+
+  protected /* virtual */ get activeTargetIdAccessor(): ITargetIdAccessor | null {
     const { root } = this;
     return root ? root.activeTargetIdAccessor : null;
   }
 
-  //==================================================
+  //= =================================================
   // VIRTUAL METHODS: Render styles
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
-  public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; }
-  public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
-  public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the render style*/ }
-  public /*virtual*/ supportsColorType(colorType: ColorType, solid: boolean): boolean { return true; }
+  public /* virtual */ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
 
-  //==================================================
+  public /* virtual */ get renderStyleRoot(): BaseNode | null { return null; }
+
+  public /* virtual */ createRenderStyle(_targetId: TargetId): BaseRenderStyle | null { return null; }
+
+  public /* virtual */ verifyRenderStyle(_style: BaseRenderStyle) { /* overide when validating the render style */ }
+
+  public /* virtual */ supportsColorType(_colorType: ColorType, _solid: boolean): boolean { return true; }
+
+  //= =================================================
   // VIRTUAL METHODS: Populate Settings
-  //==================================================
+  //= =================================================
 
-  protected /*virtual*/ populateInfoCore(folder: BasePropertyFolder): void
-  {
-    folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), applyDelegate: (name: string) => this.notifyNameChanged() });
+  protected /* virtual */ populateInfoCore(folder: BasePropertyFolder): void {
+    folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), applyDelegate: (_name: string) => this.notifyNameChanged() });
     if (this.canChangeColor())
-      folder.addColor({ name: "color", instance: this, applyDelegate: (name: string) => this.notifyColorChanged() });
+      folder.addColor({ name: "color", instance: this, applyDelegate: (_name: string) => this.notifyColorChanged() });
     folder.addReadOnlyString("Type", this.typeName);
     if (this.hasColorMap())
-      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, applyDelegate: (name: string) => this.notifyColorMapChanged(), toolTip: "Color map is used in visualization, see color type " });
+      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, applyDelegate: (_name: string) => this.notifyColorMapChanged(), toolTip: "Color map is used in visualization, see color type " });
   }
 
-  protected /*virtual*/ populateStatisticsCore(folder: BasePropertyFolder): void { }
+  protected /* virtual */ populateStatisticsCore(_folder: BasePropertyFolder): void { }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Populate Settings
-  //==================================================
+  //= =================================================
 
-  public populateInfo(folder: BasePropertyFolder): void
-  {
+  public populateInfo(folder: BasePropertyFolder): void {
     this.populateInfoCore(folder);
   }
 
-  public populateStatistics(folder: BasePropertyFolder): void
-  {
+  public populateStatistics(folder: BasePropertyFolder): void {
     this.populateStatisticsCore(folder);
   }
 
-  public populateRenderStyle(folder: BasePropertyFolder): void
-  {
+  public populateRenderStyle(folder: BasePropertyFolder): void {
     const style = this.getRenderStyle();
     if (style)
       style.populate(folder);
 
-    for (const child of folder.children)
-    {
-      if (child instanceof ValueProperty)
-      {
-        child.applyDelegate = (name: string) =>
-        {
+    for (const child of folder.children) {
+      if (child instanceof ValueProperty) {
+        child.applyDelegate = (name: string) => {
           let node = this.renderStyleRoot;
           if (!node)
             node = this;
           node.notify(new NodeEventArgs(Changes.renderStyle, name));
         };
 
-        if (child instanceof ColorTypeProperty)
-        {
+        if (child instanceof ColorTypeProperty) {
           child.optionValidationDelegate = (colorType: ColorType) => this.supportsColorType(colorType, child.solid);
           child.nodeColor = this.color;
           child.parentNodeColor = this.parent?.color;
@@ -340,39 +375,35 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  public createRenderStyleCommands(): BaseCommand[] | null
-  {
+  public createRenderStyleCommands(): BaseCommand[] | null {
     const commands: BaseCommand[] = [];
     commands.push(new ResetVisualSettingsCommand(this));
     const { renderStyleRoot } = this;
-    if (!renderStyleRoot || renderStyleRoot === this)
-    {
+    if (!renderStyleRoot || renderStyleRoot === this) {
       commands.push(new CopyFolderVisualSettingsCommand(this));
       commands.push(new CopySystemVisualSettingsCommand(this));
     }
     return commands;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Selected
-  //==================================================
+  //= =================================================
 
   public isSelected(): boolean { return this._isSelected; }
+
   public setSelected(value: boolean) { this._isSelected = value; }
 
-  public setSelectedInteractive(value: boolean)
-  {
+  public setSelectedInteractive(value: boolean) {
     if (this._isSelected === value)
       return false;
 
     if (!this.isVisibleInTreeControl)
       return false;
 
-    if (value)
-    {
+    if (value) {
       const treeNode = this.getTreeNode();
-      if (treeNode)
-      {
+      if (treeNode) {
         for (const descendant of treeNode.getDescendants())
           if (descendant.isSelected())
             descendant.setSelectedInteractive(false);
@@ -383,20 +414,20 @@ export abstract class BaseNode extends Identifiable
     return true;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Expand
-  //==================================================
+  //= =================================================
 
   public get isExpanded(): boolean { return this._isExpanded; }
+
   public set isExpanded(value: boolean) { this._isExpanded = value; }
 
-  public toggleExpandInteractive() // Use this when clicking on the expand marker in the three control
-  {
+  // Use this when clicking on the expand marker in the three control
+  public toggleExpandInteractive() {
     this.setExpandedInteractive(!this.isExpanded);
   }
 
-  public setExpandedInteractive(value: boolean)
-  {
+  public setExpandedInteractive(value: boolean) {
     if (this.isExpanded === value)
       return false;
 
@@ -408,35 +439,37 @@ export abstract class BaseNode extends Identifiable
     return true;
   }
 
-  public canBeExpanded(): boolean // if true show expander marker
-  {
-    for (const child of this.children)
-    {
+  // if true show expander marker
+  public canBeExpanded(): boolean {
+    for (const child of this.children) {
       if (child.isVisibleInTreeControl())
         return true;
     }
     return false;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES: Child-Parent relationship
-  //==================================================
+  //= =================================================
 
   public get children(): BaseNode[] { return this._children; }
+
   public get childCount(): number { return this._children.length; }
+
   public get childIndex(): number | undefined { return !this.parent ? undefined : this.parent.children.indexOf(this); }
+
   public get parent(): BaseNode | null { return this._parent; }
+
   public get root(): BaseNode { return this.parent != null ? this.parent.root : this; }
+
   public get hasParent(): boolean { return this._parent != null; }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  public getColorByColorType(colorType: ColorType): Color
-  {
-    switch (colorType)
-    {
+  public getColorByColorType(colorType: ColorType): Color {
+    switch (colorType) {
       case ColorType.Specified: return this.getColor();
       case ColorType.Parent: return this.parent ? this.parent.getColor() : Colors.grey;
       case ColorType.Black: return Colors.black;
@@ -445,98 +478,83 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Get a child or children
-  //==================================================
+  //= =================================================
 
   public hasChildByType<T extends BaseNode>(classType: Class<T>): boolean { return this.getChildByType(classType) !== null; }
+
   public getChild(index: number): BaseNode { return this._children[index]; }
 
-  public getChildByName(name: string): BaseNode | null
-  {
+  public getChildByName(name: string): BaseNode | null {
     for (const child of this.children)
       if (child.name === name)
         return child;
     return null;
   }
 
-  public getChildByUniqueId(uniqueId: UniqueId): BaseNode | null
-  {
+  public getChildByUniqueId(uniqueId: UniqueId): BaseNode | null {
     for (const child of this.children)
       if (child.uniqueId.equals(uniqueId))
         return child;
     return null;
   }
 
-  public getChildByType<T extends BaseNode>(classType: Class<T>): T | null
-  {
-    for (const child of this.children)
-    {
+  public getChildByType<T extends BaseNode>(classType: Class<T>): T | null {
+    for (const child of this.children) {
       if (isInstanceOf(child, classType))
         return child as T;
     }
     return null;
   }
 
-  public getActiveChildByType<T extends BaseNode>(classType: Class<T>): T | null
-  {
-    for (const child of this.children)
-    {
+  public getActiveChildByType<T extends BaseNode>(classType: Class<T>): T | null {
+    for (const child of this.children) {
       if (child.isActive && isInstanceOf(child, classType))
         return child as T;
     }
     return null;
   }
 
-  public * getChildrenByType<T extends BaseNode>(classType: Class<T>): Generator<T>
-  {
-    for (const child of this.children)
-    {
+  public * getChildrenByType<T extends BaseNode>(classType: Class<T>): Generator<T> {
+    for (const child of this.children) {
       if (isInstanceOf(child, classType))
         yield child as T;
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Get descendants
-  //==================================================
+  //= =================================================
 
-  public * getDescendants(): Generator<BaseNode>
-  {
-    for (const child of this.children)
-    {
+  public * getDescendants(): Generator<BaseNode> {
+    for (const child of this.children) {
       yield child;
       for (const descendant of child.getDescendants())
         yield descendant;
     }
   }
 
-  public * getThisAndDescendants(): Generator<BaseNode>
-  {
+  public * getThisAndDescendants(): Generator<BaseNode> {
     yield this;
     for (const descendant of this.getDescendants())
       yield descendant;
   }
 
-  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>): Generator<T>
-  {
-    for (const child of this.children)
-    {
+  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>): Generator<T> {
+    for (const child of this.children) {
       if (isInstanceOf(child, classType))
         yield child as T;
 
-      for (const descendant of child.getDescendantsByType<T>(classType))
-      {
+      for (const descendant of child.getDescendantsByType<T>(classType)) {
         if (isInstanceOf(descendant, classType))
           yield descendant as T;
       }
     }
   }
 
-  public getActiveDescendantByType<T extends BaseNode>(classType: Class<T>): T | null
-  {
-    for (const child of this.children)
-    {
+  public getActiveDescendantByType<T extends BaseNode>(classType: Class<T>): T | null {
+    for (const child of this.children) {
       if (child.isActive && isInstanceOf(child, classType))
         return child as T;
 
@@ -547,10 +565,8 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public getDescendantByUniqueId(uniqueId: UniqueId): BaseNode | null
-  {
-    for (const child of this.children)
-    {
+  public getDescendantByUniqueId(uniqueId: UniqueId): BaseNode | null {
+    for (const child of this.children) {
       if (child.uniqueId.equals(uniqueId))
         return child;
 
@@ -561,93 +577,76 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Get ancestors
-  //==================================================
+  //= =================================================
 
-  public getSelectedNode(): BaseNode | null
-  {
-    for (const descendant of this.getThisAndDescendants())
-    {
+  public getSelectedNode(): BaseNode | null {
+    for (const descendant of this.getThisAndDescendants()) {
       if (descendant.isSelected())
         return descendant;
     }
     return null;
   }
 
-  public getTreeNode(): BaseNode | null
-  {
-    for (const ancestor of this.getThisAndAncestors())
-    {
+  public getTreeNode(): BaseNode | null {
+    for (const ancestor of this.getThisAndAncestors()) {
       if (ancestor.isTree())
         return ancestor;
     }
     return null;
   }
 
-  public * getThisAndAncestors(): Generator<BaseNode>
-  {
+  public * getThisAndAncestors(): Generator<BaseNode> {
     let ancestor: BaseNode | null = this;
-    while (ancestor)
-    {
+    while (ancestor) {
       yield ancestor;
       ancestor = ancestor.parent;
     }
   }
 
-  public * getAncestors(): Generator<BaseNode>
-  {
+  public * getAncestors(): Generator<BaseNode> {
     let ancestor = this.parent;
-    while (ancestor)
-    {
+    while (ancestor) {
       yield ancestor;
       ancestor = ancestor.parent;
     }
   }
 
-  public * getAncestorsExceptRoot(): Generator<BaseNode>
-  {
+  public * getAncestorsExceptRoot(): Generator<BaseNode> {
     let ancestor = this.parent;
-    while (ancestor && ancestor.hasParent)
-    {
+    while (ancestor && ancestor.hasParent) {
       yield ancestor;
       ancestor = ancestor.parent;
     }
   }
 
-  public getAncestorByType<T>(classType: Class<T>): T | null
-  {
-    for (const ancestor of this.getAncestors())
-    {
+  public getAncestorByType<T>(classType: Class<T>): T | null {
+    for (const ancestor of this.getAncestors()) {
       if (isInstanceOf(ancestor, classType))
         return ancestor as T;
     }
     return null;
   }
 
-  public getThisOrAncestorByType<T>(classType: Class<T>): T | null
-  {
-    for (const ancestor of this.getThisAndAncestors())
-    {
+  public getThisOrAncestorByType<T>(classType: Class<T>): T | null {
+    for (const ancestor of this.getThisAndAncestors()) {
       if (isInstanceOf(ancestor, classType))
         return ancestor as T;
     }
     return null;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Child-Parent relationship
-  //==================================================
+  //= =================================================
 
-  public addChild(child: BaseNode, insertFirst = false): void
-  {
-    if (child.hasParent)
-    {
+  public addChild(child: BaseNode, insertFirst = false): void {
+    if (child.hasParent) {
       Error(`The child ${child.typeName} already has a parent`);
       return;
     }
-    if (child === this)
-    {
+    if (child === this) {
       Error(`Trying to add illegal child ${child.typeName}`);
       return;
     }
@@ -658,16 +657,13 @@ export abstract class BaseNode extends Identifiable
     child._parent = this;
   }
 
-  public remove(): boolean
-  {
-    if (!this.parent)
-    {
+  public remove(): boolean {
+    if (!this.parent) {
       Error(`The child ${this.typeName} don't have a parent`);
       return false;
     }
     const { childIndex } = this;
-    if (childIndex === undefined)
-    {
+    if (childIndex === undefined) {
       Error(`The child ${this.typeName} is not child of it's parent`);
       return false;
     }
@@ -678,8 +674,7 @@ export abstract class BaseNode extends Identifiable
     return true;
   }
 
-  protected clearChilderen(): void
-  {
+  protected clearChilderen(): void {
     const { children } = this;
     if (!children)
       return;
@@ -687,55 +682,51 @@ export abstract class BaseNode extends Identifiable
     for (const child of children)
       child.clearChilderen();
 
-    for (const child of children)
-    {
+    for (const child of children) {
       this.removeInternalData();
       child._parent = null;
     }
     children.splice(0, children.length);
   }
 
-  public sortChildrenByName(): void
-  {
+  public sortChildrenByName(): void {
     this.children.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Notifying
-  //==================================================
+  //= =================================================
 
   public notifyNameChanged(): void { this.notify(new NodeEventArgs(Changes.nodeName)); }
+
   public notifyColorChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColor)); }
+
   public notifyColorMapChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColorMap)); }
 
-  public notify(args: NodeEventArgs): void
-  {
+  public notify(args: NodeEventArgs): void {
     VirtualUserInterface.updateNode(this, args);
     VirtualUserInterface.updateStatusPanel(JSON.stringify(args));
     this.notifyCore(args);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Misc
-  //==================================================
+  //= =================================================
 
-  public initialize(): void
-  {
+  public initialize(): void {
     if (this._isInitialized)
       return; // This should be done once
     this.initializeCore();
     this._isInitialized = true;
   }
 
-  public initializeRecursive(): void
-  {
+  public initializeRecursive(): void {
     this.initialize();
     for (const child of this.children)
       child.initializeRecursive();
   }
 
-  public removeInteractive(): void
-  {
+  public removeInteractive(): void {
     // To be called when a node is removed
     // It is not finished, because the children it not taken properly care of
     const { parent } = this;
@@ -743,8 +734,7 @@ export abstract class BaseNode extends Identifiable
     parent?.notify(new NodeEventArgs(Changes.childDeleted));
   }
 
-  public setActiveInteractive(): void
-  {
+  public setActiveInteractive(): void {
     // To be called when a object should be active
     if (this.isActive)
       return;
@@ -752,11 +742,9 @@ export abstract class BaseNode extends Identifiable
     if (!this.canBeActive())
       return;
 
-    if (this.parent)
-    {
+    if (this.parent) {
       // Turn the others off
-      for (const sibling of this.parent.getDescendants())
-      {
+      for (const sibling of this.parent.getDescendants()) {
         if (sibling === this)
           continue;
         if (sibling.className !== this.className)
@@ -774,21 +762,20 @@ export abstract class BaseNode extends Identifiable
     this.notify(new NodeEventArgs(Changes.active));
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Render styles
-  //==================================================
+  //= =================================================
 
-  public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
-  {
+  public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null {
     const root = this.renderStyleRoot;
     if (root != null && root !== this)
       return root.getRenderStyle(targetId);
 
     // Find the targetId if not present
-    if (!targetId)
-    {
+    if (!targetId) {
       const target = this.activeTargetIdAccessor;
       if (target)
+        // eslint-disable-next-line no-param-reassign
         targetId = target.targetId;
       else
         return null;
@@ -797,8 +784,7 @@ export abstract class BaseNode extends Identifiable
     }
     // Find the style in the node itself
     let style: BaseRenderStyle | null = null;
-    for (const thisStyle of this.renderStyles)
-    {
+    for (const thisStyle of this.renderStyles) {
       if (thisStyle.isDefault)
         continue;
 
@@ -809,10 +795,8 @@ export abstract class BaseNode extends Identifiable
       break;
     }
     // If still not find and unique, copy one of the existing
-    if (!style && this.renderStyleResolution === RenderStyleResolution.Unique)
-    {
-      for (const thisStyle of this.renderStyles)
-      {
+    if (!style && this.renderStyleResolution === RenderStyleResolution.Unique) {
+      for (const thisStyle of this.renderStyles) {
         if (thisStyle.isDefault)
           continue;
 
@@ -827,11 +811,9 @@ export abstract class BaseNode extends Identifiable
       }
     }
     // If still not found: Create it
-    if (!style)
-    {
+    if (!style) {
       style = this.createRenderStyle(targetId);
-      if (style)
-      {
+      if (style) {
         style.targetId.set(targetId, this.renderStyleResolution);
         this.renderStyles.push(style);
       }
@@ -841,8 +823,7 @@ export abstract class BaseNode extends Identifiable
     return style;
   }
 
-  public replaceRenderStyle(newStyle: BaseRenderStyle | null = null): boolean
-  {
+  public replaceRenderStyle(newStyle: BaseRenderStyle | null = null): boolean {
     const target = this.activeTargetIdAccessor;
     if (!target)
       return false;
@@ -852,8 +833,7 @@ export abstract class BaseNode extends Identifiable
       return false;
 
     // Find the only style
-    for (let i = 0; i < this.renderStyles.length; i++)
-    {
+    for (let i = 0; i < this.renderStyles.length; i++) {
       const oldStyle = this.renderStyles[i];
       if (oldStyle.isDefault)
         continue;
@@ -865,8 +845,8 @@ export abstract class BaseNode extends Identifiable
       break;
     }
     // Set the new style
-    if (!newStyle)
-    {
+    if (!newStyle) {
+      // eslint-disable-next-line no-param-reassign
       newStyle = this.createRenderStyle(targetId);
       if (!newStyle)
         return false;
@@ -876,17 +856,15 @@ export abstract class BaseNode extends Identifiable
     return true;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Some helpers
-  //==================================================
+  //= =================================================
 
-  protected generateNewColor(): Color
-  {
+  protected generateNewColor(): Color {
     return this.canChangeColor() ? Colors.nextColor : Colors.white;
   }
 
-  protected generateNewName(): string
-  {
+  protected generateNewName(): string {
     let result = this.typeName;
     if (!this.canChangeName())
       return result;
@@ -895,23 +873,21 @@ export abstract class BaseNode extends Identifiable
       return result;
 
     let childIndex = 0;
-    for (const child of this.parent.children)
-    {
+    for (const child of this.parent.children) {
       if (child === this)
         break;
       if (this.typeName === child.typeName)
-        childIndex++;
+        childIndex += 1;
     }
     result += ` ${childIndex + 1}`;
     return result;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Debugging
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ getDebugString(): string
-  {
+  public /* virtual */ getDebugString(): string {
     let result = this.name;
     result += Util.cocatinate("typeName", this.typeName);
     result += Util.cocatinate("className", this.className);
@@ -925,20 +901,15 @@ export abstract class BaseNode extends Identifiable
     return result;
   }
 
-  public toHierarcyString(): string
-  {
+  public toHierarcyString(): string {
     let text = "";
-    for (const node of this.getThisAndDescendants())
-    {
+    for (const node of this.getThisAndDescendants()) {
       let padding = 0;
-      for (const ancestor of node.getAncestors())
-        padding++;
+      for (const _ of node.getAncestors())
+        padding += 1;
       const line = `${" ".padStart(padding * 4) + node.toString()}\n`;
       text += line;
     }
     return text;
   }
-
-  // tslint:disable-next-line: no-console
-  public debugHierarcy(): void { console.log(this.toHierarcyString()); }
 }

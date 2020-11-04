@@ -1,7 +1,6 @@
 import { ITreeNode } from "@/UserInterface/Components/VirtualTree/ITreeNode";
 
-export interface VirtualTreeProps
-{
+export interface VirtualTreeProps {
   data?: ITreeNode[];
   iconSize?: number;
   rowHeight?: number;

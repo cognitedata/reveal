@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 import {
   ISettingsSection,
   ISettingsElement,
   ISettingsSectionProps,
-} from "@/UserInterface/Components/Settings/Types";
-import { ExpansionView } from "@/UserInterface/Components/ExpansionView/ExpansionView";
-import { SettingsElement } from "@/UserInterface/Components/Settings/SettingsElement/SettingsElement";
-import "./SettingsSection.module.scss";
+} from '@/UserInterface/Components/Settings/Types';
+import { ExpansionView } from '@/UserInterface/Components/ExpansionView/ExpansionView';
+import { SettingsElement } from '@/UserInterface/Components/Settings/SettingsElement/SettingsElement';
+import './SettingsSection.module.scss';
 
-export function SettingsSection(props: ISettingsSectionProps) {
+export const SettingsSection = (props: ISettingsSectionProps) => {
   const {
     id,
     name,
@@ -59,4 +59,4 @@ export function SettingsSection(props: ISettingsSectionProps) {
       </>
     </ExpansionView>
   );
-}
+};

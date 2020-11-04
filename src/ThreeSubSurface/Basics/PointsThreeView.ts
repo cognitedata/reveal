@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 import * as Color from "color";
@@ -26,37 +26,34 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 
-export class PointsThreeView extends BaseGroupThreeView
-{
-  //==================================================
+export class PointsThreeView extends BaseGroupThreeView {
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   protected get node(): PointsNode { return super.getNode() as PointsNode; }
 
   protected get style(): PointsRenderStyle { return super.getStyle() as PointsRenderStyle; }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Base3DView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
-  {
+  public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
     const { boundingBox } = this.node;
     if (!boundingBox)
       return undefined;
@@ -65,12 +62,11 @@ export class PointsThreeView extends BaseGroupThreeView
     return boundingBox;
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseGroupThreeView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const { node } = this;
     const { style } = this;
 
@@ -84,36 +80,31 @@ export class PointsThreeView extends BaseGroupThreeView
 
     const geometry = PointsThreeView.createBufferGeometry(points, this.transformer);
     const material = new THREE.PointsMaterial({ color: ThreeConverter.toThreeColor(color), size: style.size, sizeAttenuation: true });
-    if (style.colorType === ColorType.ColorMap)
-    {
+    if (style.colorType === ColorType.ColorMap) {
       geometry.setAttribute("color", PointsThreeView.createColorsAttribute(points));
       material.vertexColors = true;
     }
     return new THREE.Points(geometry, material);
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS
-  //==================================================
+  //= =================================================
 
-  public static createBufferGeometry(points: Points, transformer: ThreeTransformer): THREE.BufferGeometry
-  {
+  public static createBufferGeometry(points: Points, transformer: ThreeTransformer): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.Float32BufferAttribute(PointsThreeView.createPositions(points, transformer), 3, true));
     return geometry;
   }
 
-  public static createColorsAttribute(points: Points): THREE.Uint8BufferAttribute
-  {
+  public static createColorsAttribute(points: Points): THREE.Uint8BufferAttribute {
     return new THREE.Uint8BufferAttribute(PointsThreeView.createColors(points), 3, true);
   }
 
-  private static createPositions(points: Points, transformer: ThreeTransformer): Float32Array
-  {
+  private static createPositions(points: Points, transformer: ThreeTransformer): Float32Array {
     const positions = new Float32Array(points.length * 3);
     let index = 0;
-    for (let i = 0; i < points.length; i++)
-    {
+    for (let i = 0; i < points.length; i++) {
       const point = points.list[i].clone();
       transformer.transformTo3D(point);
 
@@ -124,14 +115,12 @@ export class PointsThreeView extends BaseGroupThreeView
     return positions;
   }
 
-  private static createColors(points: Points): Uint8Array
-  {
+  private static createColors(points: Points): Uint8Array {
     const { zRange } = points;
     let index = 0;
 
     const colors = new Uint8Array(points.length * 3);
-    for (let i = 0; i < points.length; i++)
-    {
+    for (let i = 0; i < points.length; i++) {
       const { z } = points.list[i];
       const fraction = zRange.getFraction(z);
       const color = Color.hsv(fraction * 360, 255, 200);

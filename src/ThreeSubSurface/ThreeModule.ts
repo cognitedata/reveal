@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import CameraControls from "camera-controls";
 import * as THREE from "three";
@@ -63,19 +63,17 @@ import { SeismicOutlineView } from "@/ThreeSubSurface/Seismic/SeismicOutlineView
 import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
 import { Range3 } from "@/Core/Geometry/Range3";
 
-export class ThreeModule extends BaseModule
-{
-  //==================================================
+export class ThreeModule extends BaseModule {
+  //= =================================================
   // OVERRIDES of BaseModule
-  //==================================================
+  //= =================================================
 
-  public /*override*/ installPackages(): void
-  {
+  public /* override */ installPackages(): void {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     CameraControls.install({ THREE });
   }
 
-  public /*override*/ registerViews(factory: ViewFactory): void
-  {
+  public /* override */ registerViews(factory: ViewFactory): void {
     factory.register(AxisNode.className, AxisThreeView, ThreeRenderTargetNode.className);
     factory.register(PointsNode.className, PointsThreeView, ThreeRenderTargetNode.className);
     factory.register(PolylinesNode.className, PolylinesThreeView, ThreeRenderTargetNode.className);
@@ -106,25 +104,21 @@ export class ThreeModule extends BaseModule
     manipulatorFactory.register(PointLogNode.className, PointLogManipulator, ThreeRenderTargetNode.className);
   }
 
-  public /*override*/ initializeWhenPopulated(root: BaseRootNode): void
-  {
-    document.body.onresize = () =>
-    {
+  public /* override */ initializeWhenPopulated(root: BaseRootNode): void {
+    document.body.onresize = () => {
       for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
         target.invalidate();
     };
   }
 
-  public /*override*/ setDefaultVisible(root: BaseRootNode): void
-  {
+  public /* override */ setDefaultVisible(root: BaseRootNode): void {
     // Set all axis visible
     for (const target of root.targets.getChildrenByType(BaseTargetNode))
       for (const node of root.getDescendantsByType(AxisNode))
         node.setVisibleInteractive(true, target);
   }
 
-  public /*override*/ createRenderTargetNode(): BaseRenderTargetNode | null
-  {
+  public /* override */ createRenderTargetNode(): BaseRenderTargetNode | null {
     const fractionRange = Range3.createByMinAndMax(0, 0, 1, 1);
     return new ThreeRenderTargetNode(fractionRange);
   }

@@ -1,5 +1,4 @@
-export enum FileType 
-{
-  png = ".png",
-  svg = ".svg"
+export enum FileType {
+  Png = ".png",
+  Svg = ".svg"
 }

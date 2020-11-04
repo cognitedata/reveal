@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import Draggable from "react-draggable";
-import { Appearance } from "@/Core/States/Appearance";
-import { Icon } from "@/UserInterface/Components/Icon/Icon";
-import DragIndicatorIcon from "@material-ui/icons/DragIndicator";
-import { ToolBarSelect } from "@/UserInterface/Components/ToolBarSelect/ToolBarSelect";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import React, { useState } from 'react';
+import Draggable from 'react-draggable';
+import { Appearance } from '@/Core/States/Appearance';
+import { Icon } from '@/UserInterface/Components/Icon/Icon';
+import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
+import { ToolBarSelect } from '@/UserInterface/Components/ToolBarSelect/ToolBarSelect';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
 export interface IToolbarButton {
   icon: string;
@@ -45,49 +45,49 @@ const useStyles = makeStyles(() => ({
     horizontal: boolean;
   }) => ({}),
   toolbarWrapper: {
-    position: "absolute",
-    "z-index": "10",
+    position: 'absolute',
+    'z-index': '10',
   },
   toolbarContainer: (props: { horizontal: boolean }) => ({
-    display: "flex",
-    position: "relative",
-    padding: "0 0 0 25px",
-    flexDirection: props.horizontal ? "row" : "column",
+    display: 'flex',
+    position: 'relative',
+    padding: '0 0 0 25px',
+    flexDirection: props.horizontal ? 'row' : 'column',
   }),
   dragHandle: (props: { dragging: boolean }) => ({
-    position: "absolute",
-    left: "0.6rem",
-    top: "0.5rem",
-    cursor: props.dragging ? "move" : "pointer",
+    position: 'absolute',
+    left: '0.6rem',
+    top: '0.5rem',
+    cursor: props.dragging ? 'move' : 'pointer',
   }),
   dragHandleIcon: {
-    width: "1.2rem",
-    height: "1.7rem",
+    width: '1.2rem',
+    height: '1.7rem',
   },
   toolbarGroup: (props: { horizontal: boolean }) => ({
-    display: "inline-grid",
-    gridTemplateRows: props.horizontal ? "auto auto" : "auto",
-    gridTemplateColumns: props.horizontal ? "auto" : "auto auto",
-    gridAutoFlow: props.horizontal ? "column" : "row",
-    margin: "0.25rem",
-    border: "0.01rem solid black",
-    backgroundColor: "rgba(223, 223, 223, 0.6)",
-    borderRadius: "0.2rem",
+    display: 'inline-grid',
+    gridTemplateRows: props.horizontal ? 'auto auto' : 'auto',
+    gridTemplateColumns: props.horizontal ? 'auto' : 'auto auto',
+    gridAutoFlow: props.horizontal ? 'column' : 'row',
+    margin: '0.25rem',
+    border: '0.01rem solid black',
+    backgroundColor: 'rgba(223, 223, 223, 0.6)',
+    borderRadius: '0.2rem',
   }),
   toolbarIcon: (props: { toolbarIconSize: number }) => ({
     height: props.toolbarIconSize,
     width: props.toolbarIconSize,
-    transition: "background-color 0.3s",
-    margin: "0.025rem",
-    padding: "0.2rem 0.2rem",
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: "lightblue",
-      borderColor: "lightblue",
+    transition: 'background-color 0.3s',
+    margin: '0.025rem',
+    padding: '0.2rem 0.2rem',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: 'lightblue',
+      borderColor: 'lightblue',
     },
   }),
   toolbarIconSelected: {
-    backgroundColor: "lightblue !important",
+    backgroundColor: 'lightblue !important',
   },
   toolbarDropdown: (props: {
     toolbarIconSize: number;
@@ -95,26 +95,38 @@ const useStyles = makeStyles(() => ({
   }) => ({
     height: props.toolbarIconSize,
     width: props.toolbarSelectWidth,
-    transition: "background-color 0.3s",
-    margin: "0.025rem",
-    padding: "0.2rem 0.2rem",
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: "lightblue",
-      borderColor: "lightblue",
+    transition: 'background-color 0.3s',
+    margin: '0.025rem',
+    padding: '0.2rem 0.2rem',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: 'lightblue',
+      borderColor: 'lightblue',
     },
   }),
 }));
 
 export interface VisualizerToolbarProps {
+  /**
+   * Visualizer instance id
+   */
   visualizerId: string;
+  /**
+   * Toolbar configuration object
+   */
   config?: ToolbarConfig;
+  /**
+   * Callback for toolbar click handling
+   */
   onToolbarButtonClick: ToolbarButtonClickHandler;
+  /**
+   * Callback for toolbar selection changes
+   */
   onToolbarSelectionChange: ToolbarSelectChangeHandler;
 }
 
 // Visualizer ToolBar Component
-export function VisualizerToolbar(props: VisualizerToolbarProps) {
+export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
   const {
     config,
     visualizerId,
@@ -164,7 +176,7 @@ export function VisualizerToolbar(props: VisualizerToolbarProps) {
     return (
       <Grid
         className={`${classes.toolbarIcon} ${
-          command.isChecked ? classes.toolbarIconSelected : ""
+          command.isChecked ? classes.toolbarIconSelected : ''
         }`}
         onClick={() => onToolbarButtonClick(visualizerId, groupId, index)}
         key={`visualizer-toolbar-icon-${index}`}
@@ -174,7 +186,7 @@ export function VisualizerToolbar(props: VisualizerToolbarProps) {
             src={command.icon}
             tooltip={{
               text: command.tooltip,
-              placement: horizontal ? "bottom" : "right-start",
+              placement: horizontal ? 'bottom' : 'right-start',
             }}
             iconSize={{
               width: Appearance.toolbarIconSize,
@@ -200,7 +212,7 @@ export function VisualizerToolbar(props: VisualizerToolbarProps) {
           options={command.dropdownOptions}
           tooltip={{
             text: command.tooltip,
-            placement: "right-start",
+            placement: 'right-start',
           }}
           iconSize={{
             width: Appearance.toolbarSelectWidth,
@@ -246,4 +258,4 @@ export function VisualizerToolbar(props: VisualizerToolbarProps) {
       </Box>
     </Draggable>
   );
-}
+};

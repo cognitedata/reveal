@@ -7,30 +7,26 @@ import ViewFromCommandWestIcon from "@images/Commands/ViewFromCommand_West.png";
 import ViewFromCommandSouthIcon from "@images/Commands/ViewFromCommand_South.png";
 import ViewFromCommandNorthIcon from "@images/Commands/ViewFromCommand_North.png";
 
-export class ViewFromCommand extends ThreeRenderTargetCommand
-{
+export class ViewFromCommand extends ThreeRenderTargetCommand {
   private viewFrom: number;
   
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(target: ThreeRenderTargetNode | null, viewFrom: number)
-  {
+  public constructor(target: ThreeRenderTargetNode | null, viewFrom: number) {
     super(target);
     this.viewFrom = viewFrom;
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getName(): string { return `View from ${this.directionName}`; }
+  public /* override */ getName(): string { return `View from ${this.directionName}`; }
 
-  public /*override*/ getIcon(): string
-  {
-    switch (this.viewFrom)
-    {
+  public /* override */ getIcon(): string {
+    switch (this.viewFrom) {
       case -1: return "";
       case 0: return ViewFromCommandTopIcon;
       case 1: return ViewFromCommandBottomIcon;
@@ -42,8 +38,7 @@ export class ViewFromCommand extends ThreeRenderTargetCommand
     }
   }
 
-  protected /*override*/ invokeCore(): boolean
-  {
+  protected /* override */ invokeCore(): boolean {
     if (!this.target)
       return false;
 
@@ -51,15 +46,13 @@ export class ViewFromCommand extends ThreeRenderTargetCommand
     return true;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  private get directionName(): string
-  {
+  private get directionName(): string {
 
-    switch (this.viewFrom)
-    {
+    switch (this.viewFrom) {
       case -1: return "Side";
       case 0: return "Top";
       case 1: return "Bottom";

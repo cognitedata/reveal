@@ -1,13 +1,11 @@
 import * as utm from "utm";
 import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { IWell } from "@cognite/node-visualizer-subsurface";
 import { Util } from "@/Core/Primitives/Util";
+import {IWell} from "@/SubSurface/Wells/Interfaces/IWell";
 
-export class WellNodeCreator
-{
-  public static create(wellData: IWell | null): WellNode | null
-  {
+export class WellNodeCreator {
+  public static create(wellData: IWell | null): WellNode | null {
     if (!wellData)
       return null;
 
@@ -17,8 +15,7 @@ export class WellNodeCreator
 
     const x = Util.getNumber(metadata.x_coordinate); // CHECK: Which is Longitude or latitude
     const y = Util.getNumber(metadata.y_coordinate); // CHECK: Which is Longitude or latitude
-    if (Number.isNaN(x) || Number.isNaN(y))
-    {
+    if (Number.isNaN(x) || Number.isNaN(y)) {
       // tslint:disable-next-line:no-console
       console.warn("Well cannot have empty or invalid coordinates!", wellData.description);
       return null;

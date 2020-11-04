@@ -1,11 +1,10 @@
-import React from "react";
+import React from 'react';
 import {
   ToolbarConfig,
   VisualizerToolbarProps,
-} from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
+} from '@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
 
-// 3D Viewer
-export function Viewer3D(props: {
+interface Viewer3DProps {
   viewer3D: React.RefCallback<HTMLElement>;
   toolbar: React.ComponentType<VisualizerToolbarProps>;
   toolbarConfig?: ToolbarConfig;
@@ -20,7 +19,10 @@ export function Viewer3D(props: {
     index: number,
     value: string
   ) => void;
-}) {
+}
+
+// 3D Viewer
+export const Viewer3D = (props: Viewer3DProps) => {
   const {
     viewer3D,
     toolbar: Toolbar,
@@ -40,4 +42,4 @@ export function Viewer3D(props: {
       <div ref={viewer3D} id="visualizer-3d" className="visualizer-3d" />
     </div>
   );
-}
+};

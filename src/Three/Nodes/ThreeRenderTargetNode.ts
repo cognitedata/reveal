@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 import CameraControls from "camera-controls";
@@ -45,52 +45,64 @@ import { ToolbarGroupIds } from "@/Three/Nodes/ToolbarGroupIds";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 import { Toggle3Dand2DCommand } from "@/Three/Commands/Toggle3Dand2DCommand";
 
-const DirectionalLightName = "DirectionalLight";
+const directionalLightName = "DirectionalLight";
 
-export class ThreeRenderTargetNode extends BaseRenderTargetNode
-{
-  //==================================================
+export class ThreeRenderTargetNode extends BaseRenderTargetNode {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   static className = "ThreeRenderTargetNode";
 
-  //==================================================
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _scene: THREE.Scene | null = null;
+
   private _renderer: THREE.WebGLRenderer | null = null;
+
   private _overlay = new TreeOverlay();
+
   private isEmpty = true;
+
   private clock = new THREE.Clock();
+
   private _cameraControl: CameraControl | null = null;
+
   private _toolController = new ToolController();
+
   private _raycaster = new THREE.Raycaster();
+
   private _transformer = new ThreeTransformer();
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES: Tools
-  //==================================================
+  //= =================================================
 
   public setPreviousTool() { this._toolController.setPreviousTool(this._cameraControl); }
 
   public set activeTool(tool: BaseTool | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
+
   public get activeTool(): BaseTool | null { return this._toolController.activeTool; }
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get is2D(): boolean { return this.cameraControl.is2D; }
+
   public get camera(): THREE.PerspectiveCamera | THREE.OrthographicCamera { return this.cameraControl.camera; }
+
   private get controls(): CameraControls { return this.cameraControl.controls; }
+
   public get transformer(): ThreeTransformer { return this._transformer; }
-  private get directionalLight(): THREE.DirectionalLight | null { return this.scene.getObjectByName(DirectionalLightName) as THREE.DirectionalLight; }
+
+  private get directionalLight(): THREE.DirectionalLight | null { return this.scene.getObjectByName(directionalLightName) as THREE.DirectionalLight; }
+
   public get zScale(): number { return this._transformer.zScale; }
 
-  public set zScale(value: number)
-  {
+  public set zScale(value: number) {
     if (this._transformer.zScale <= 0)
       throw Error("ZScale cannot be less or equal 0");
 
@@ -102,24 +114,20 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.updateAllViews();
   }
 
-  public get scene(): THREE.Scene
-  {
+  public get scene(): THREE.Scene {
     if (!this._scene)
       throw Error("Scene is not set");
     return this._scene;
   }
 
-  public get cameraControl(): CameraControl
-  {
+  public get cameraControl(): CameraControl {
     if (!this._cameraControl)
       throw Error("Camera is not set");
     return this._cameraControl;
   }
 
-  private get renderer(): THREE.WebGLRenderer
-  {
-    if (!this._renderer)
-    {
+  private get renderer(): THREE.WebGLRenderer {
+    if (!this._renderer) {
       const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
       renderer.autoClear = false;
       renderer.gammaFactor = 2.2;
@@ -128,26 +136,25 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return this._renderer;
   }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor(fractionRange: Range3 | undefined) { super(fractionRange); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of TargetNode
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get className(): string { return ThreeRenderTargetNode.className; }
+  public /* override */ get className(): string { return ThreeRenderTargetNode.className; }
 
-  public /*override*/ isA(className: string): boolean { return className === ThreeRenderTargetNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean { return className === ThreeRenderTargetNode.className || super.isA(className); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseNode
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ initializeCore(): void
-  {
+  protected /* override */ initializeCore(): void {
     super.initializeCore();
 
     this._scene = new THREE.Scene();
@@ -156,7 +163,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     // Create lights
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
     const directionalLight = new THREE.DirectionalLight(ThreeConverter.toThreeColor(Colors.white), 0.95);
-    directionalLight.name = DirectionalLightName;
+    directionalLight.name = directionalLightName;
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
 
@@ -170,14 +177,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.render();
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseRenderTargetNode
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get domElement(): HTMLCanvasElement { return this.renderer.domElement; }
+  public /* override */ get domElement(): HTMLCanvasElement { return this.renderer.domElement; }
 
-  public /*override*/ onResize(): void
-  {
+  public /* override */ onResize(): void {
     const { pixelRange } = this;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
     if (this._cameraControl)
@@ -186,15 +192,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this._prevPixelRange = pixelRange;
   }
 
-  public /*override*/ viewAll(): boolean
-  {
+  public /* override */ viewAll(): boolean {
     const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
     return !this._cameraControl ? false : this._cameraControl.viewRange(boundingBox);
   }
 
-  public /*override*/ addTools(toolbar: IToolbar): void
-  {
+  public /* override */ addTools(toolbar: IToolbar): void {
     const navigationTool = new NavigationTool(this);
     this.activeTool = navigationTool;
 
@@ -218,33 +222,29 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.addTool(toolbar, ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  public getRayFromEvent(event: MouseEvent): THREE.Ray
-  {
+  public getRayFromEvent(event: MouseEvent): THREE.Ray {
     const pixel = this.getMouseRelativePosition(event);
-    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
+    // https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
     return this._raycaster.ray;
   }
 
-  private getIntersections(pixel: THREE.Vector2): THREE.Intersection[]
-  {
-    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
+  private getIntersections(pixel: THREE.Vector2): THREE.Intersection[] {
+    // https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
     return this._raycaster.intersectObjects(this.scene.children, true);
   }
 
-  public getClickPosition(event: MouseEvent): THREE.Vector3 | null
-  {
+  public getClickPosition(event: MouseEvent): THREE.Vector3 | null {
     const [, intersection] = this.getViewByMouseEvent(event);
     return intersection ? intersection.point : null;
   }
 
-  public getMouseRelativePosition(event: MouseEvent): THREE.Vector2
-  {
+  public getMouseRelativePosition(event: MouseEvent): THREE.Vector2 {
     const rect = this.domElement.getBoundingClientRect();
     let x = (event.clientX - rect.left) / rect.width;
     let y = (event.clientY - rect.top) / rect.height;
@@ -253,10 +253,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return new THREE.Vector2(x, y);
   }
 
-  private getViewByObject(object: THREE.Object3D): BaseThreeView | null
-  {
-    for (; ;)
-    {
+  private getViewByObject(object: THREE.Object3D): BaseThreeView | null {
+    for (; ;) {
       if (!object.visible)
         return null;
 
@@ -264,10 +262,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       if (object.userData[BaseThreeView.noPicking])
         return null;
 
-      if (object.name)
-      {
-        for (const view of this.viewsShownHere.list)
-        {
+      if (object.name) {
+        for (const view of this.viewsShownHere.list) {
           if (!(view instanceof BaseThreeView))
             continue;
 
@@ -285,23 +281,21 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       if (!object.parent)
         break;
 
+      // eslint-disable-next-line no-param-reassign
       object = object.parent;
     }
     return null;
   }
 
-  public getNodeByMouseEvent(event: MouseEvent): [BaseNode | null, THREE.Intersection | null]
-  {
+  public getNodeByMouseEvent(event: MouseEvent): [BaseNode | null, THREE.Intersection | null] {
     const [view, intersection] = this.getViewByMouseEvent(event);
     return view ? [view.getNode(), intersection] : [null, null];
   }
 
-  public getViewByMouseEvent(event: MouseEvent): [BaseThreeView | null, THREE.Intersection | null]
-  {
+  public getViewByMouseEvent(event: MouseEvent): [BaseThreeView | null, THREE.Intersection | null] {
     const pixel = this.getMouseRelativePosition(event);
     const intersections = this.getIntersections(pixel);
-    for (const intersection of intersections)
-    {
+    for (const intersection of intersections) {
       const view = this.getViewByObject(intersection.object);
       if (view)
         return [view, intersection];
@@ -309,24 +303,22 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return [null, null];
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Add toolbar
-  //==================================================
+  //= =================================================
 
-  public addTool(toolbar: IToolbar, groupId: string, command: BaseCommand)
-  {
+  public addTool(toolbar: IToolbar, groupId: string, command: BaseCommand) {
     if (command instanceof BaseTool)
       this._toolController.add(command);
 
     toolbar.add(groupId, command);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Operations on camera or light
-  //==================================================
+  //= =================================================
 
-  public updateLightPosition(): void
-  {
+  public updateLightPosition(): void {
     const { camera } = this;
     const { controls } = this;
     const light = this.directionalLight;
@@ -369,19 +361,17 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     light.position.copy(vectorToCenter);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Perspective mode
-  //==================================================
+  //= =================================================
 
-  public get isPerspectiveMode(): boolean
-  {
+  public get isPerspectiveMode(): boolean {
     if (this.camera instanceof THREE.PerspectiveCamera)
       return true;
     return false;
   }
 
-  public set isPerspectiveMode(isPerspectiveMode: boolean)
-  {
+  public set isPerspectiveMode(isPerspectiveMode: boolean) {
     if (isPerspectiveMode === this.isPerspectiveMode)
       return;
 
@@ -410,21 +400,18 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this._cameraControl.viewRange(boundingBox);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Others
-  //==================================================
+  //= =================================================
 
-  public viewFrom(index: number): boolean
-  {
+  public viewFrom(index: number): boolean {
     const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
     return !this._cameraControl ? false : this._cameraControl.viewFrom(boundingBox, index);
   }
 
-  public updateAllViews(): void
-  {
-    for (const view of this.viewsShownHere.list)
-    {
+  public updateAllViews(): void {
+    for (const view of this.viewsShownHere.list) {
       if (!(view instanceof BaseGroupThreeView))
         continue;
       view.touch();
@@ -432,16 +419,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.invalidate();
   }
 
-  private addOrRemoveUpdateEvent(add: boolean): void
-  {
+  private addOrRemoveUpdateEvent(add: boolean): void {
     if (add)
       this.controls.addEventListener("update", () => this.updateLightPosition());
     else
       this.controls.removeEventListener("update", () => this.updateLightPosition());
   }
 
-  private updateNearAndFarPlane(): void
-  {
+  private updateNearAndFarPlane(): void {
     if (!this.isInitialized)
       return;
 
@@ -455,22 +440,20 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const { diagonal } = boundingBox;
     const near = 0.001 * diagonal;
     const far = 2 * diagonal + this.cameraControl.distance;
-    if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
-    {
+    if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far)) {
       camera.near = near;
       camera.far = far;
       camera.updateProjectionMatrix();
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Render
-  //==================================================
+  //= =================================================
 
   private _prevPixelRange: Range3 = new Range3();
 
-  public render(): void
-  {
+  public render(): void {
     requestAnimationFrame(() => { this.render(); });
 
     if (!this.isInitialized)
@@ -481,8 +464,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     const { controls } = this;
     let needsUpdate = true;
-    if (controls)
-    {
+    if (controls) {
       const delta = this.clock.getDelta();
       needsUpdate = controls.update(delta);
     }
@@ -507,8 +489,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.invalidate(false);
   }
 
-  public renderFast(): void
-  {
+  public renderFast(): void {
     this.renderer.render(this.scene, this.camera);
     const viewInfo = this.fillViewInfo();
     this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);

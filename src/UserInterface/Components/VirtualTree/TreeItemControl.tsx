@@ -1,9 +1,9 @@
-import { TreeCheckBox } from "@/UserInterface/Components/VirtualTree/TreeCheckbox";
-import { TreeRadioButton } from "@/UserInterface/Components/VirtualTree/TreeRadioButton";
-import React, { KeyboardEvent, useState } from "react";
-import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
+import { TreeCheckBox } from '@/UserInterface/Components/VirtualTree/TreeCheckbox';
+import { TreeRadioButton } from '@/UserInterface/Components/VirtualTree/TreeRadioButton';
+import React, { KeyboardEvent, useState } from 'react';
+import { HTMLUtils } from '@/UserInterface/Foundation/Utils/HTMLUtils';
 
-export function TreeItemButton(props: {
+interface TreeItemButtonProps {
   id: string;
   visible?: boolean;
   radio?: boolean;
@@ -14,7 +14,9 @@ export function TreeItemButton(props: {
   filter?: boolean;
   indeterminate?: boolean;
   onToggleCheck?: (e: any, state: boolean) => void;
-}) {
+}
+
+export const TreeItemButton = (props: TreeItemButtonProps) => {
   if (!props.visible) return null;
 
   const [hover, hoverChanged] = useState(false);
@@ -85,4 +87,4 @@ export function TreeItemButton(props: {
   }
 
   return null;
-}
+};

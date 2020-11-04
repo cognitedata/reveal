@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 import Color from "color";
@@ -34,45 +34,41 @@ import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { Changes } from "@/Core/Views/Changes";
 
-export class CasingLogView extends BaseGroupThreeView
-{
-  //==================================================
+export class CasingLogView extends BaseGroupThreeView {
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   protected get node(): CasingLogNode { return super.getNode() as CasingLogNode; }
 
   private get style(): CasingLogStyle { return super.getStyle() as CasingLogStyle; }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseView
-  //==================================================
+  //= =================================================
 
-  public get /*override*/ isVisible(): boolean
-  {
+  public get /* override */ isVisible(): boolean {
     const parent = this.node.trajectoryNode;
     return parent != null && parent.isVisible(this.renderTarget);
   }
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
     if (args.isChanged(Changes.renderStyle, Changes.nodeColor))
       this.touch();
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Base3DView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
-  {
+  public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
     if (!this.isVisible)
       return undefined;
 
@@ -97,8 +93,7 @@ export class CasingLogView extends BaseGroupThreeView
     let maxSampleRadius = 0;
     const position = Vector3.newZero;
 
-    for (let i = log.samples.length - 1; i >= 0; i--)
-    {
+    for (let i = log.samples.length - 1; i >= 0; i--) {
       const sample = log.getAt(i);
       if (sample.isMdEmpty || sample.isEmpty)
         continue;
@@ -115,8 +110,7 @@ export class CasingLogView extends BaseGroupThreeView
     return boundingBox;
   }
 
-  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
-  {
+  public /* override */ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void {
     const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection);
     if (md === undefined)
       return;
@@ -138,12 +132,11 @@ export class CasingLogView extends BaseGroupThreeView
     viewInfo.addTabbedValue("Status comment", sample.currentStatusComment);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseGroupThreeView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const { node } = this;
     const { wellNode } = node;
     if (!wellNode)
@@ -164,16 +157,14 @@ export class CasingLogView extends BaseGroupThreeView
 
     const parent = new THREE.Group();
     const samples = this.createRenderSamples(trajectory, log, color, style.radiusFactor.value);
-    if (samples && samples.length > 0)
-    {
+    if (samples && samples.length > 0) {
       const geometry = new TrajectoryBufferGeometry(samples);
       const material = new THREE.MeshStandardMaterial({
         color: ThreeConverter.toThreeColor(Colors.white),
         vertexColors: true,
         transparent: true,
       });
-      if (style.opacity.use)
-      {
+      if (style.opacity.use) {
         material.opacity = style.opacity.value;
         material.transparent = true;
       }
@@ -184,17 +175,15 @@ export class CasingLogView extends BaseGroupThreeView
     return parent;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Creators
-  //==================================================
+  //= =================================================
 
-  public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color, radiusFactor: number): RenderSample[]
-  {
+  public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color, radiusFactor: number): RenderSample[] {
     const { trajectoryRadius } = this;
 
     const samples: RenderSample[] = [];
-    for (let logIndex = 0; logIndex < log.length; logIndex++)
-    {
+    for (let logIndex = 0; logIndex < log.length; logIndex++) {
       const sample = log.getAt(logIndex);
       if (sample.isMdEmpty)
         continue;
@@ -211,8 +200,7 @@ export class CasingLogView extends BaseGroupThreeView
         samples.push(new RenderSample(topPosition, sample.md, sampleRadius, color));
 
       // Push in all values between <sample.md, sample.baseMd>
-      for (let wellIndex = 0; wellIndex < trajectory.length; wellIndex++)
-      {
+      for (let wellIndex = 0; wellIndex < trajectory.length; wellIndex++) {
         const trajectorySample = trajectory.getAt(wellIndex);
         if (trajectorySample.md >= sample.baseMd)
           break; // Too far
@@ -278,12 +266,11 @@ export class CasingLogView extends BaseGroupThreeView
   //     transformer.transformRelativeTo3D(sample.point);
   //   return samples;
   // }
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  protected get trajectoryRadius(): number
-  {
+  protected get trajectoryRadius(): number {
     const { node } = this;
     if (!node)
       return 0;

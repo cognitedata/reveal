@@ -5,18 +5,18 @@ import { BaseRenderStyle } from '@/Core/Styles/BaseRenderStyle';
 import { NodeEventArgs } from '@/Core/Views/NodeEventArgs';
 import { Changes } from '@/Core/Views/Changes';
 
-export class CopyFolderVisualSettingsCommand extends BaseNodeCommand
-{
-  //==================================================
+export class CopyFolderVisualSettingsCommand extends BaseNodeCommand {
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getTooltip(): string { return "\nCopy the visual settings to all similar domain objects in the folder"; }
-  public /*override*/ getIcon(): string { return FolderIcon; }
-  public /*override*/ getName(): string { return "Copy Similar Folder Settings"; };
+  public /* override */ getTooltip(): string { return "\nCopy the visual settings to all similar domain objects in the folder"; }
 
-  protected /*override*/ invokeCore(): boolean 
-  {
+  public /* override */ getIcon(): string { return FolderIcon; }
+
+  public /* override */ getName(): string { return "Copy Similar Folder Settings"; };
+
+  protected /* override */ invokeCore(): boolean {
     const { node } = this;
     if (!node)
       return false;
@@ -29,8 +29,7 @@ export class CopyFolderVisualSettingsCommand extends BaseNodeCommand
     if (!style)
       return false;
 
-    for (const child of root.children)
-    {
+    for (const child of root.children) {
       if (child === node)
         continue;
 

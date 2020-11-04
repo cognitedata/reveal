@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import { Range3 } from "@/Core/Geometry/Range3";
 import { TargetId } from "@/Core/Primitives/TargetId";
@@ -22,23 +22,22 @@ import Icon from "@images/Nodes/PolylinesNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
-export class PolylinesNode extends DataNode
-{
-  //==================================================
+export class PolylinesNode extends DataNode {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   static className = "PolylinesNode";
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get polylines(): Polylines | null { return this.anyData; }
 
@@ -46,30 +45,31 @@ export class PolylinesNode extends DataNode
 
   public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Identifiable
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get className(): string { return PolylinesNode.className; }
+  public /* override */ get className(): string { return PolylinesNode.className; }
 
-  public /*override*/ isA(className: string): boolean { return className === PolylinesNode.className || super.isA(className); }
+  public /* override */ isA(className: string): boolean { return className === PolylinesNode.className || super.isA(className); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseNode
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get typeName(): string { return "Polylines"; }
-  public /*override*/ hasColorMap(): boolean { return true; }
-  public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
-  public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
+  public /* override */ get typeName(): string { return "Polylines"; }
 
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
+  public /* override */ hasColorMap(): boolean { return true; }
+
+  public /* override */ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
+
+  public /* override */ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
+
+  public /* override */ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
     return new PolylinesRenderStyle(targetId);
   }
 
-  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-  {
+  public /* override */ verifyRenderStyle(style: BaseRenderStyle) {
     if (!(style instanceof PolylinesRenderStyle))
       return;
 
@@ -77,10 +77,8 @@ export class PolylinesNode extends DataNode
       style.colorType = ColorType.Specified;
   }
 
-  public /*override*/ supportsColorType(colorType: ColorType, solid: boolean): boolean
-  {
-    switch (colorType)
-    {
+  public /* override */ supportsColorType(colorType: ColorType, _: boolean): boolean {
+    switch (colorType) {
       case ColorType.Different:
       case ColorType.Specified:
         return true;
@@ -90,8 +88,7 @@ export class PolylinesNode extends DataNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
-  {
+  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
     super.populateStatisticsCore(folder);
 
     const { polylines } = this;

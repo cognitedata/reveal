@@ -1,16 +1,16 @@
-import React, { useMemo } from "react";
-import { ExplorerPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import React, { useMemo } from 'react';
+import { ExplorerPropType } from '@/UserInterface/Components/Explorer/ExplorerTypes';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import {
   getAllTabs,
   getCurrentTabIndex,
   getNodeTree,
   onSelectedTabChange,
-} from "@/UserInterface/Redux/reducers/ExplorerReducer";
-import { ExplorerNodeUtils } from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
-import { onSelectedNodeChange } from "@/UserInterface/Redux/reducers/SettingsReducer";
-import { State } from "@/UserInterface/Redux/State/State";
+} from '@/UserInterface/Redux/reducers/ExplorerReducer';
+import { ExplorerNodeUtils } from '@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils';
+import { onSelectedNodeChange } from '@/UserInterface/Redux/reducers/SettingsReducer';
+import { State } from '@/UserInterface/Redux/State/State';
 
 function mapDispatchToExplorerPanel(dispatch: Dispatch) {
   return {
@@ -42,12 +42,12 @@ function mapStateToExplorerPanel(state: State) {
   return { tabs, data, selectedTabIndex };
 }
 
-// Renders Explorer
-export function LeftPanel({
-  explorer,
-}: {
+interface LeftPanelProps {
   explorer: React.ComponentType<ExplorerPropType>;
-}) {
+}
+
+// Renders Explorer
+export const LeftPanel = ({ explorer }: LeftPanelProps) => {
   const Explorer = useMemo(
     () =>
       connect(mapStateToExplorerPanel, mapDispatchToExplorerPanel)(explorer),
@@ -59,4 +59,4 @@ export function LeftPanel({
       <Explorer />
     </div>
   );
-}
+};

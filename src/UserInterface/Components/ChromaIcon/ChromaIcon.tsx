@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import "./ChromaIcon.module.scss";
-import { setCssVariable } from "@/UserInterface/Foundation/Utils/cssUtils";
+import React from 'react';
+import styled from 'styled-components';
+import './ChromaIcon.module.scss';
+import { setCssVariable } from '@/UserInterface/Foundation/Utils/cssUtils';
 
 export interface ImageProps {
   readonly background?: string;
@@ -9,25 +9,27 @@ export interface ImageProps {
 }
 const ImageContainer = styled.div<ImageProps>`
   background: ${(props) => props.background};
-  mask-image: ${(props) => (props.picture ? `url(${props.picture})` : "none")};
+  mask-image: ${(props) => (props.picture ? `url(${props.picture})` : 'none')};
   -webkit-mask-image: ${(props) =>
-    props.picture ? `url(${props.picture})` : "none"};
+    props.picture ? `url(${props.picture})` : 'none'};
 `;
 
 const BlendImage = styled.img<ImageProps>`
   width: 100%;
   height: 100%;
   mix-blend-mode: multiply;
-  filter: ${(props) => (props.background ? "brightness(1.3)" : "")};
+  filter: ${(props) => (props.background ? 'brightness(1.3)' : '')};
 `;
 
-export function ChromaIcon(props: {
+interface ChromaIconProps {
   src?: string;
   alt?: string;
   color?: string;
   size?: number;
-}) {
-  if (props.size) setCssVariable("--node-viz-icon-size", `${props.size}px`);
+}
+
+export const ChromaIcon = (props: ChromaIconProps) => {
+  if (props.size) setCssVariable('--node-viz-icon-size', `${props.size}px`);
 
   const background =
     props.color &&
@@ -50,4 +52,4 @@ export function ChromaIcon(props: {
       </ImageContainer>
     </div>
   );
-}
+};

@@ -1,17 +1,17 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
-import * as Lodash from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range3 } from "@/Core/Geometry/Range3";
@@ -20,50 +20,49 @@ import { Grid3 } from "@/Core/Geometry/Grid3";
 import { Shape } from "@/Core/Geometry/Shape";
 import { Index2 } from "@/Core/Geometry/Index2";
 
-export class RegularGrid3 extends Grid3
-{
-  //==================================================
+export class RegularGrid3 extends Grid3 {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   public origin: Vector3;
+
   public inc: Vector3;
+
   public startCell = new Index2(0, 0);
 
   private _hasRotationAngle = false;
+
   private _rotationAngle = 0;
+
   private _sinRotationAngle = 0;
+
   private _cosRotationAngle = 1;
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get rotationAngle(): number { return this._rotationAngle; }
 
-  public set rotationAngle(value: number)
-  {
+  public set rotationAngle(value: number) {
     this._hasRotationAngle = value !== 0;
-    if (this._hasRotationAngle)
-    {
+    if (this._hasRotationAngle) {
       this._rotationAngle = value;
       this._sinRotationAngle = Math.sin(this._rotationAngle);
       this._cosRotationAngle = Math.cos(this._rotationAngle);
-    }
-    else
-    {
+    } else {
       this._rotationAngle = 0;
       this._sinRotationAngle = 0;
       this._cosRotationAngle = 1;
     }
   }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(nodeSize: Index3, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined)
-  {
+  public constructor(nodeSize: Index3, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined) {
     super(nodeSize);
     this.origin = origin;
     this.inc = inc;
@@ -71,41 +70,37 @@ export class RegularGrid3 extends Grid3
       this.rotationAngle = rotationAngle;
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of object
-  //==================================================
+  //= =================================================
 
-  public /*override*/ toString(): string { return `nodeSize: ${this.nodeSize} origin: ${this.origin} inc: ${this.inc} rotationAngle: ${this.rotationAngle}`; }
+  public /* override */ toString(): string { return `nodeSize: ${this.nodeSize} origin: ${this.origin} inc: ${this.inc} rotationAngle: ${this.rotationAngle}`; }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Shape
-  //==================================================
+  //= =================================================
 
-  public /*override*/ clone(): Shape { return Lodash.cloneDeep(this); }
+  public /* override */ clone(): Shape { return cloneDeep(this); }
 
-  public expandBoundingBox(boundingBox: Range3): void
-  {
+  public expandBoundingBox(boundingBox: Range3): void {
     boundingBox.addRange(this.getCornerRange());
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters: Node position
-  //==================================================
+  //= =================================================
 
-  public getNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3
-  {
+  public getNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3 {
     if (!result)
+      // eslint-disable-next-line no-param-reassign
       result = Vector3.newZero;
 
-    if (this._hasRotationAngle)
-    {
+    if (this._hasRotationAngle) {
       const dx = this.inc.x * i;
       const dy = this.inc.y * j;
       result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
-    }
-    else
-    {
+    } else {
       result.x = this.inc.x * i;
       result.y = this.inc.y * j;
     }
@@ -114,9 +109,9 @@ export class RegularGrid3 extends Grid3
     return result;
   }
 
-  public getRelativeNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3
-  {
+  public getRelativeNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3 {
     if (!result)
+      // eslint-disable-next-line no-param-reassign
       result = Vector3.newZero;
 
     result.x = this.inc.x * i;
@@ -125,30 +120,27 @@ export class RegularGrid3 extends Grid3
     return result;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters: Cell position
-  //==================================================
+  //= =================================================
 
-  public getRealCell(cell: Index3): Index3
-  {
+  public getRealCell(cell: Index3): Index3 {
     const result = cell.clone();
     result.addIndex2(this.startCell);
     return result;
   }
 
-  public getCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3
-  {
+  public getCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3 {
     return this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
-  public getRelativeCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3
-  {
+  public getRelativeCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3 {
     return this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
-  public getCellFromPosition(position: Vector3, resultCell?: Index3): Index3
-  {
+  public getCellFromPosition(position: Vector3, resultCell?: Index3): Index3 {
     if (!resultCell)
+      // eslint-disable-next-line no-param-reassign
       resultCell = Index3.newZero;
 
     const dx = position.x - this.origin.x;
@@ -156,15 +148,12 @@ export class RegularGrid3 extends Grid3
     const dz = position.z - this.origin.z;
 
     let i; let j: number;
-    if (this._hasRotationAngle)
-    {
+    if (this._hasRotationAngle) {
       const x = dx * this._cosRotationAngle + dy * this._sinRotationAngle;
       const y = -dx * this._sinRotationAngle + dy * this._cosRotationAngle;
       i = x / this.inc.x;
       j = y / this.inc.y;
-    }
-    else
-    {
+    } else {
       i = dx / this.inc.x;
       j = dy / this.inc.y;
     }
@@ -175,15 +164,13 @@ export class RegularGrid3 extends Grid3
     return resultCell;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters: Others
-  //==================================================
+  //= =================================================
 
-  public getAxis(dimension: number): Vector3
-  {
+  public getAxis(dimension: number): Vector3 {
     const axis = Vector3.getAxis(dimension);
-    if (dimension < 2 && this._hasRotationAngle)
-    {
+    if (dimension < 2 && this._hasRotationAngle) {
       const dx = axis.x;
       const dy = axis.y;
       axis.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
@@ -192,8 +179,7 @@ export class RegularGrid3 extends Grid3
     return axis;
   }
 
-  public getCornerRange(): Range3
-  {
+  public getCornerRange(): Range3 {
     const corner = Vector3.newZero;
     const range = new Range3();
     range.add(this.origin);

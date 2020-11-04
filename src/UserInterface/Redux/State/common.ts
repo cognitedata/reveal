@@ -1,4 +1,3 @@
-export interface ICommonState
-{
+export interface ICommonState {
   isFullscreen: boolean;
 }

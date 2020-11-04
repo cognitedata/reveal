@@ -1,13 +1,13 @@
-import React from "react";
-import "./ExpansionView.module.scss";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import ExpandMoreSharpIcon from "@material-ui/icons/ExpandMoreSharp";
-import ExpandLessSharpIcon from "@material-ui/icons/ExpandLessSharp";
-import { ToolBar } from "@/UserInterface/Components/ToolBar/ToolBar";
-import { BaseCommand } from "@/Core/Commands/BaseCommand";
-import withStyles from "@material-ui/core/styles/withStyles";
+import React from 'react';
+import './ExpansionView.module.scss';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import ExpandMoreSharpIcon from '@material-ui/icons/ExpandMoreSharp';
+import ExpandLessSharpIcon from '@material-ui/icons/ExpandLessSharp';
+import { ToolBar } from '@/UserInterface/Components/ToolBar/ToolBar';
+import { BaseCommand } from '@/Core/Commands/BaseCommand';
+import withStyles from '@material-ui/core/styles/withStyles';
 
 const StyledAccordion = withStyles({
   root: {
@@ -21,7 +21,7 @@ const StyledAccordionSummary = withStyles({
   },
   content: {
     margin: 0,
-    "&$expanded": {
+    '&$expanded': {
       margin: 0,
     },
   },
@@ -30,18 +30,20 @@ const StyledAccordionSummary = withStyles({
 const StyledAccordionDetails = withStyles({
   root: {
     padding: 0,
-    display: "block",
+    display: 'block',
   },
 })(AccordionDetails);
 
-export function ExpansionView(props: {
+interface ExpansionViewProps {
   id: string;
   title: string;
   isExpanded?: boolean;
   onSectionExpand: (id: string, expandStatus: boolean) => void;
   toolBar?: BaseCommand[];
-  children: JSX.Element;
-}) {
+  children: any;
+}
+
+export const ExpansionView = (props: ExpansionViewProps) => {
   const { id, title, isExpanded, onSectionExpand, toolBar, children } = props;
 
   return (
@@ -73,4 +75,4 @@ export function ExpansionView(props: {
       </StyledAccordion>
     </div>
   );
-}
+};

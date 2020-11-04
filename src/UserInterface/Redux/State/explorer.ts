@@ -1,8 +1,7 @@
 import Color from "color";
 
 // Explorer component state interface
-export interface IExplorerState
-{
+export interface IExplorerState {
   tabs: string[];
   selectedTabIndex: number;
   selectedNodeId: string | null;
@@ -13,8 +12,7 @@ export interface IExplorerState
 }
 
 // Explorer Redux Node interface
-export interface ITreeNodeState
-{
+export interface ITreeNodeState {
   nodeType: string, // node Type is used to identify what kind of node it is
   parentId?: string | null;
   uniqueId: string;

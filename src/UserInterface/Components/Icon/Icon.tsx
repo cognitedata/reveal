@@ -1,21 +1,24 @@
-import React from "react";
+import React from 'react';
 
-import { getIcon } from "@/UserInterface/Components/Icon/IconSelector";
-import { ToolbarToolTip } from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
+import { getIcon } from '@/UserInterface/Components/Icon/IconSelector';
+import { ToolbarToolTip } from '@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
+import { IconTypes } from '@/UserInterface/Components/Icon/IconTypes';
 
-export function Icon(props: {
-  type?: string;
+interface IconProps {
+  type?: IconTypes;
   name?: string;
   src?: string;
   tooltip?: {
     text: string;
-    placement?: "bottom" | "right-start";
+    placement?: 'bottom' | 'right-start';
   };
   iconSize?: { width: number; height: number };
-}) {
+}
+
+export const Icon = (props: IconProps) => {
   const { type, name, src, tooltip, iconSize } = props;
   // TODO - Remove getIcon once Settings implementation complete
-  const imgSrc = src || (type && name ? getIcon(type, name) : "");
+  const imgSrc = src || (type && name ? getIcon(type, name) : '');
   const style = iconSize
     ? { width: iconSize.width, height: iconSize.height }
     : {};
@@ -33,4 +36,4 @@ export function Icon(props: {
       {image}
     </ToolbarToolTip>
   );
-}
+};

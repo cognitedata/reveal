@@ -5,47 +5,46 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { Polyline } from "@/Core/Geometry/Polyline";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 
-export class MeasureDistanceTool extends BaseTool
-{
-  //==================================================
+export class MeasureDistanceTool extends BaseTool {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _pixelCoordinates: Polyline = new Polyline();
+
   private _worldCoordinates: Polyline = new Polyline();
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null)
-  {
+  public constructor(target: ThreeRenderTargetNode | null = null) {
     super(target);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseCommand
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getName(): string { return "Measure distance"; }
-  public /*override*/ getIcon(): string { return MeasureDistanceToolIcon; }
-  public /*override*/ getShortCutKeys(): string { return "M"; }
+  public /* override */ getName(): string { return "Measure distance"; }
 
-  protected /*override*/ getTooltipCore(): string
-  {
+  public /* override */ getIcon(): string { return MeasureDistanceToolIcon; }
+
+  public /* override */ getShortCutKeys(): string { return "M"; }
+
+  protected /* override */ getTooltipCore(): string {
     return `${this.getDisplayName()}\n` +
       "Click and drag to wantet position.\n" +
       "You must hit a 3D object to see the distance.";
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseTool
-  //==================================================
+  //= =================================================
 
-  public /*override*/ overrideLeftButton(): boolean { return true; }
+  public /* override */ overrideLeftButton(): boolean { return true; }
 
-  public /*override*/ onActivate(): void
-  {
+  public /* override */ onActivate(): void {
     const { target } = this;
     if (!target)
       return;
@@ -60,22 +59,18 @@ export class MeasureDistanceTool extends BaseTool
     this._worldCoordinates.clear();
   }
 
-  public /*override*/ onKeyDown(event: KeyboardEvent): void
-  {
-    if (event.code === "Escape")
-    {
+  public /* override */ onKeyDown(event: KeyboardEvent): void {
+    if (event.code === "Escape") {
       this.onActivate(); // Reactive it
     }
   }
 
-  public /*override*/ onDeactivate(): void
-  {
+  public /* override */ onDeactivate(): void {
     this._pixelCoordinates.clear();
     this._worldCoordinates.clear();
   }
 
-  public /*override*/ onMouseDown(event: MouseEvent): void
-  {
+  public /* override */ onMouseDown(event: MouseEvent): void {
     const { target } = this;
     if (!target)
       return;
@@ -100,13 +95,10 @@ export class MeasureDistanceTool extends BaseTool
 
     viewInfo.clear();
     viewInfo.addActiveTool(this);
-    if (this._worldCoordinates.length <= 1)
-    {
+    if (this._worldCoordinates.length <= 1) {
       viewInfo.addText("Click on another location in 3D to end.");
       viewInfo.addValue("Start Position", worldStartPosition.getString(2));
-    }
-    else
-    {
+    } else {
       const worldEndPosition = this._worldCoordinates.list[this._worldCoordinates.length - 1].clone();
       worldEndPosition.add(transformer.translation);
 

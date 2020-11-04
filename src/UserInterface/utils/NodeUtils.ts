@@ -1,3 +1,5 @@
+import isObject from 'lodash/isObject';
+
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
@@ -17,81 +19,71 @@ import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
-export class NodeUtils
-{
-  //==================================================
+export class NodeUtils {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   private static _currentProperties: BasePropertyFolder | null = null;
+
   private static _renderStyleCommands: BaseCommand[] | null = null;
 
-  //==================================================
+  //= =================================================
   // STATIC PROPERTIES
-  //==================================================
+  //= =================================================
 
-  public static get renderStyleCommands(): BaseCommand[] | null
-  {
+  public static get renderStyleCommands(): BaseCommand[] | null {
     return NodeUtils._renderStyleCommands;
   }
 
-  public static get properties(): BasePropertyFolder | null
-  {
+  public static get properties(): BasePropertyFolder | null {
     return NodeUtils._currentProperties;
   }
 
-  public static set properties(properties: BasePropertyFolder | null)
-  {
+  public static set properties(properties: BasePropertyFolder | null) {
     if (NodeUtils._currentProperties)
       NodeUtils._currentProperties.clearDelegates();
     NodeUtils._currentProperties = properties;
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  public static getTreeRoot(): BaseNode | null
-  {
+  public static getTreeRoot(): BaseNode | null {
     if (BaseRootNode.active)
       return BaseRootNode.active;
     return null;
   }
 
-  public static getNodeById(id: string): BaseNode | null
-  {
+  public static getNodeById(id: string): BaseNode | null {
     if (BaseRootNode.active)
       return BaseRootNode.active.getDescendantByUniqueId(UniqueId.create(id));
     return null;
   }
 
-  public static getPropertyById(name: string): BaseProperty | null
-  {
+  public static getPropertyById(name: string): BaseProperty | null {
     if (NodeUtils.properties)
       return NodeUtils.properties.getDescendantByName(name);
     return null;
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Create element
-  //==================================================
+  //= =================================================
 
-  public static createRenderStyleCommands(baseNode: BaseNode)
-  {
+  public static createRenderStyleCommands(baseNode: BaseNode) {
     NodeUtils._renderStyleCommands = baseNode.createRenderStyleCommands();
   }
 
-  public static createElementTree(property: BaseProperty | null): ISettingsSection | ISettingsElement | null
-  {
+  public static createElementTree(property: BaseProperty | null): ISettingsSection | ISettingsElement | null {
     if (!property)
       return null;
 
     // ***** GroupProperty
-    if (property instanceof GroupProperty)
-    {
+    if (property instanceof GroupProperty) {
       const parentElement = NodeUtils.createGroupElement(property);
-      for (const childProperty of property.children)
-      {
+      for (const childProperty of property.children) {
         const childElement = NodeUtils.createControlElement(childProperty);
         if (childElement)
           parentElement.subValues?.push(childElement);
@@ -99,11 +91,9 @@ export class NodeUtils
       return parentElement;
     }
     // ***** ExpanderProperty
-    if (property instanceof ExpanderProperty)
-    {
+    if (property instanceof ExpanderProperty) {
       const parentElement = NodeUtils.createExpanderElement(property);
-      for (const childProperty of property.children)
-      {
+      for (const childProperty of property.children) {
         const childElement = NodeUtils.createElementTree(childProperty) as ISettingsElement;
         if (childElement)
           parentElement.elements.push(childElement);
@@ -111,15 +101,13 @@ export class NodeUtils
       return parentElement;
     }
     // ***** ValueProperty
-    if (property instanceof ValueProperty)
-    {
+    if (property instanceof ValueProperty) {
       return NodeUtils.createControlElement(property);
     }
     return null;
   }
 
-  private static createExpanderElement(property: ExpanderProperty): ISettingsSection
-  {
+  private static createExpanderElement(property: ExpanderProperty): ISettingsSection {
     const element: ISettingsSection = {
       id: property.name,
       name: property.displayName,
@@ -130,8 +118,7 @@ export class NodeUtils
     return element;
   }
 
-  private static createGroupElement(property: GroupProperty): ISettingsElement
-  {
+  private static createGroupElement(property: GroupProperty): ISettingsElement {
     const element: ISettingsElement = {
       id: property.name,
       name: property.displayName,
@@ -145,8 +132,7 @@ export class NodeUtils
     return element;
   }
 
-  private static createControlElement(property: BaseProperty): ISettingsElement | null
-  {
+  private static createControlElement(property: BaseProperty): ISettingsElement | null {
     if (!(property instanceof ValueProperty))
       return null;
 
@@ -174,23 +160,17 @@ export class NodeUtils
     return element;
   }
 
-  private static createSelectOptions(options: any[] | [string, any][], iconDelegate?: Function): ISelectOption[]
-  {
+  private static createSelectOptions(options: any[] | [string, any][], iconDelegate?: Function): ISelectOption[] {
     const items: ISelectOption[] = [];
-    if (options && options.length > 0)
-    {
-      for (const option of options)
-      {
-        if (typeof option === "object")
-        {
+    if (options && options.length > 0) {
+      for (const option of options) {
+        if (isObject(option)) {
           items.push({
-            label: option[ExpandedOption.label],
-            value: option[ExpandedOption.value],
-            iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.value])
+            label: option[ExpandedOption.Label],
+            value: option[ExpandedOption.Value],
+            iconSrc: iconDelegate && iconDelegate(option[ExpandedOption.Value])
           });
-        }
-        else
-        {
+        } else {
           items.push({
             label: `${option}`,
             value: option
@@ -201,8 +181,7 @@ export class NodeUtils
     return items;
   }
 
-  private static getControlType(property: ValueProperty<any>): string | null
-  {
+  private static getControlType(property: ValueProperty<any>): string | null {
     // Special properties comes first
     if (property instanceof BooleanProperty)
       return ElementTypes.Boolean;

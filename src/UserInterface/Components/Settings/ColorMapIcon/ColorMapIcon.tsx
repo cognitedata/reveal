@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import { ICommonSelectExtraOptionData } from "@/UserInterface/Components/Settings/Types";
+import React from 'react';
+import { ICommonSelectExtraOptionData } from '@/UserInterface/Components/Settings/Types';
+import styled from 'styled-components';
 
 export interface ColorMapIconProps {
   readonly colors: string[];
@@ -14,11 +14,13 @@ const ColorMapIconContainer = styled.div<ColorMapIconProps>`
   margin-inline-end: 0.5rem;
   background-image: linear-gradient(
     to right,
-    ${(props) => (props.colors ? props.colors.join(",") : "")}
+    ${(props) => (props.colors ? props.colors.join(',') : '')}
   );
 `;
 
-export function ColorMapIcon(props: { data?: ICommonSelectExtraOptionData }) {
+export const ColorMapIcon = (props: {
+  data?: ICommonSelectExtraOptionData;
+}) => {
   if (!props.data) {
     return null;
   }
@@ -28,4 +30,4 @@ export function ColorMapIcon(props: { data?: ICommonSelectExtraOptionData }) {
     return <ColorMapIconContainer colors={colorMapColors} />;
   }
   return null;
-}
+};

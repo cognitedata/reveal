@@ -4,64 +4,71 @@
     "es2020": true
   },
   "extends": [
-    "@cognite"
-    // "plugin:lodash/recommended"
+    "@cognite",
+    "plugin:lodash/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": 11,
-    "sourceType": "module"
-  },
-  "plugins": ["@typescript-eslint", "@cognite", "lodash"],
+  "plugins": ["@cognite", "lodash"],
   "rules": {
-    "@typescript-eslint/no-non-null-assertion": "error",
-    "lines-between-class-members": "off",
-    "no-multiple-empty-lines": "error",
-    "indent": "error",
-    "no-alert": "off",
-    "comma-spacing":"error",
-    "no-irregular-whitespace": "off",
-    "jsx-a11y/click-events-have-key-events": "off", // needs to be enabled in the future
-    "react/jsx-props-no-spreading": ["off"],
-    "no-restricted-syntax": "off",
-    "no-param-reassign": "off",
-    "spaced-comment": "off",
-    "no-plusplus": "off",
-    "no-bitwise": "off",
-    "react/require-default-props": "off",
-    "no-continue": "off",
-    "no-underscore-dangle": "off",
-    "semi": "error",
-    "template-curly-spacing": "error",
-    "no-console": "off",
-    "no-multi-spaces": "error",
-    "block-spacing": "error",
-    "class-methods-use-this": "off",
-    "@cognite/no-unissued-todos": "off",
-    "prettier/prettier": [
+    "camelcase": "off",
+    "@typescript-eslint/naming-convention": [
       "error",
       {
-        "endOfLine": "auto"
+        "selector": "default",
+        "format": ["camelCase"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "variable",
+        "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "memberLike",
+        "format": ["camelCase", "snake_case", "PascalCase"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "enumMember",
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase"]
       }
     ],
-    "object-curly-spacing": ["error", "always"],
+
     "brace-style": "off",
-    "keyword-spacing": ["error", { "after": true }],
-    "quotes": ["error", "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
-  },
-  "overrides": [
-    {
-      "files": ["*.js", "*.ts"],
-      "rules": {
-        "no-empty-function": "off",
-        "@typescript-eslint/no-unused-vars": "off",
-        "camelcase": "off",
-        "no-restricted-globals": "off",
-        "@typescript-eslint/brace-style": ["error", "allman", { "allowSingleLine": true }]
-      }
-    }
-  ]
+    "@typescript-eslint/brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+
+    "class-methods-use-this": "off",
+    "lodash/prefer-constant": "off",
+    "lodash/prefer-matches": "off",
+    "no-continue": "off",
+    "no-bitwise": "off",
+    "no-plusplus": "off",
+
+    // todo: things inside the Core use mutation to modify vectors, need to be reimplemented
+    "no-param-reassign": ["error", { "props": false }],
+
+    "react/jsx-props-no-spreading": 0,
+    "react/prop-types": 0,
+    "react/require-default-props": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "no-underscore-dangle": 0,
+    "lodash/prefer-lodash-method": 0,
+
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+
+    "jest/expect-expect": 0,
+    "jest/no-test-callback": 0,
+
+    // todo: need to be defined as error under active development
+    "@cognite/no-unissued-todos": "off",
+
+    "@cognite/no-number-z-index-inline-styling": "off",
+    "@cognite/require-t-function": "error"
+  }
 }

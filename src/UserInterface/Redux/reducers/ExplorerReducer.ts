@@ -23,8 +23,7 @@ export const explorerSlice = createSlice({
   initialState,
   reducers: {
     generateNodeTree: {
-      reducer(state: IExplorerState, action: PayloadAction<{ tabNodes: BaseNode[] }>): IExplorerState
-      {
+      reducer(state: IExplorerState, action: PayloadAction<{ tabNodes: BaseNode[] }>): IExplorerState {
         const { tabNodes } = action.payload;
 
         state.tabs = [];
@@ -32,8 +31,7 @@ export const explorerSlice = createSlice({
         state.selectedNodeId = null;
         state.nodes = { byId: {}, allIds: [] };
 
-        for (const tabNode of tabNodes)
-        {
+        for (const tabNode of tabNodes) {
           const nodeType = tabNode.typeName;
           const tabNodeState = generateNodeState(tabNode, null, nodeType);
           const tabNodeId = tabNodeState.uniqueId;
@@ -42,10 +40,8 @@ export const explorerSlice = createSlice({
           state.nodes.byId[tabNodeId] = tabNodeState;
           state.nodes.allIds.push(tabNodeId);
 
-          for (const descendent of tabNode.getDescendants())
-          {
-            if (descendent.parent)
-            {
+          for (const descendent of tabNode.getDescendants()) {
+            if (descendent.parent) {
               const nodeState = generateNodeState(descendent, descendent.parent.uniqueId.toString(), nodeType);
               const nodeId = nodeState.uniqueId;
 
@@ -57,28 +53,24 @@ export const explorerSlice = createSlice({
 
         return state;
       },
-      prepare(): { payload: { tabNodes: BaseNode[] } }
-      {
+      prepare(): { payload: { tabNodes: BaseNode[] } } {
         const tabNodes = ExplorerNodeUtils.getAllTabNodes();
 
         return { payload: { tabNodes } };
       }
     },
-    onSelectedTabChange(state: IExplorerState, action: PayloadAction<{ selectedTabIndex: number }>): IExplorerState
-    {
+    onSelectedTabChange(state: IExplorerState, action: PayloadAction<{ selectedTabIndex: number }>): IExplorerState {
       state.selectedTabIndex = action.payload.selectedTabIndex;
 
       return state;
     },
     onCheckboxStateChange: {
-      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, checkBoxState: string, disabled: boolean }>): IExplorerState
-      {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, checkBoxState: string, disabled: boolean }>): IExplorerState {
         const checkState = action.payload.checkBoxState;
         const uniqueId = action.payload.nodeId;
         const nodeState = state.nodes.byId[uniqueId];
 
-        if (nodeState)
-        {
+        if (nodeState) {
           nodeState.disabled = action.payload.disabled;
           nodeState.checked = (checkState === TreeCheckState.Checked);
           nodeState.indeterminate = (checkState === TreeCheckState.Partial);
@@ -86,8 +78,7 @@ export const explorerSlice = createSlice({
         }
         return state;
       },
-      prepare(node: BaseNode): { payload: { nodeId: string, checkBoxState: string, disabled: boolean } }
-      {
+      prepare(node: BaseNode): { payload: { nodeId: string, checkBoxState: string, disabled: boolean } } {
         return {
           payload: {
             nodeId: node.uniqueId.toString(),
@@ -98,8 +89,7 @@ export const explorerSlice = createSlice({
       }
     },
     onExpandStateChange: {
-      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, expandState: boolean }>): IExplorerState
-      {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, expandState: boolean }>): IExplorerState {
         const uniqueId = action.payload.nodeId;
         const expandStatus = action.payload.expandState;
         const node = state.nodes.byId[uniqueId];
@@ -109,14 +99,12 @@ export const explorerSlice = createSlice({
 
         return state;
       },
-      prepare(node: BaseNode): { payload: { nodeId: string, expandState: boolean } }
-      {
+      prepare(node: BaseNode): { payload: { nodeId: string, expandState: boolean } } {
         return { payload: { nodeId: node.uniqueId.toString(), expandState: node.isExpanded } };
       }
     },
     onActiveStateChange: {
-      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, activeState: boolean }>): IExplorerState
-      {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, activeState: boolean }>): IExplorerState {
         const uniqueId = action.payload.nodeId;
         const node = state.nodes.byId[uniqueId];
 
@@ -125,14 +113,12 @@ export const explorerSlice = createSlice({
 
         return state;
       },
-      prepare(node: BaseNode): { payload: { nodeId: string, activeState: boolean } }
-      {
+      prepare(node: BaseNode): { payload: { nodeId: string, activeState: boolean } } {
         return { payload: { nodeId: node.uniqueId.toString(), activeState: node.isActive } };
       }
     },
     onNodeNameChange: {
-      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, newLabel: string }>): IExplorerState
-      {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, newLabel: string }>): IExplorerState {
         const uniqueId = action.payload.nodeId;
         const node = state.nodes.byId[uniqueId];
 
@@ -141,14 +127,12 @@ export const explorerSlice = createSlice({
 
         return state;
       },
-      prepare(node: BaseNode): { payload: { nodeId: string, newLabel: string } }
-      {
+      prepare(node: BaseNode): { payload: { nodeId: string, newLabel: string } } {
         return { payload: { nodeId: node.uniqueId.toString(), newLabel: node.displayName } };
       }
     },
     onNodeColorChange: {
-      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeColor: Color }>): IExplorerState
-      {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeColor: Color }>): IExplorerState {
         const uniqueId = action.payload.nodeId;
         const node = state.nodes.byId[uniqueId];
 
@@ -157,14 +141,12 @@ export const explorerSlice = createSlice({
 
         return state;
       },
-      prepare(node: BaseNode): { payload: { nodeId: string, nodeColor: Color } }
-      {
+      prepare(node: BaseNode): { payload: { nodeId: string, nodeColor: Color } } {
         return { payload: { nodeId: node.uniqueId.toString(), nodeColor: node.color } };
       }
     },
     onNodeIconChange: {
-      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeIcon: string }>): IExplorerState
-      {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeIcon: string }>): IExplorerState {
         const uniqueId = action.payload.nodeId;
         const node = state.nodes.byId[uniqueId];
 
@@ -173,22 +155,19 @@ export const explorerSlice = createSlice({
 
         return state;
       },
-      prepare(node: BaseNode): { payload: { nodeId: string, nodeIcon: string } }
-      {
+      prepare(node: BaseNode): { payload: { nodeId: string, nodeIcon: string } } {
         return { payload: { nodeId: node.uniqueId.toString(), nodeIcon: node.getIcon() } };
       }
     }
   },
   extraReducers: {
-    [ActionTypes.changeSelectState]: (state: IExplorerState, action: PayloadAction<{ node: BaseNode }>): IExplorerState =>
-    {
+    [ActionTypes.changeSelectState]: (state: IExplorerState, action: PayloadAction<{ node: BaseNode }>): IExplorerState => {
       const { node } = action.payload;
       const uniqueId = node.uniqueId.toString();
       const selectStatus = node.isSelected();
       const nodeState = state.nodes.byId[uniqueId];
 
-      if (nodeState)
-      {
+      if (nodeState) {
         state.nodes.byId[uniqueId].selected = selectStatus;
 
         if (selectStatus)
@@ -214,18 +193,15 @@ export const getAllTabIds = (state: State): string[] => state.explorer.tabs;
 export const getCurrentTabIndex = (state: State): number => state.explorer.selectedTabIndex;
 
 export const getAllNodeStates = createSelector([getAllNodeStateMap, getAllNodeStateIds],
-  (nodeStateMap, allNodeStateIds) =>
-  {
+  (nodeStateMap, allNodeStateIds) => {
     return allNodeStateIds.map(id => nodeStateMap[id]);
   });
 
 export const getAllTabs = createSelector([getAllTabIds, getAllNodeStateMap],
-  (tabStateIds, nodeStateMap) =>
-  {
+  (tabStateIds, nodeStateMap) => {
     const allTabStates = tabStateIds.map(id => nodeStateMap[id]);
 
-    return allTabStates.map(tabNodeState =>
-    {
+    return allTabStates.map(tabNodeState => {
       return { name: tabNodeState.name, icon: tabNodeState.icon.path, type: tabNodeState.nodeType };
     });
   });
@@ -240,19 +216,16 @@ export const getCurrentNodes = createSelector([getVisibleNodeStates, getCurrentN
   (nodeStates: ITreeNodeState[], currentNodeType: string) => nodeStates.filter(nodeState => nodeState.nodeType === currentNodeType));
 
 export const getNodeTree = createSelector([getCurrentNodes],
-  (nodeStates) =>
-  {
+  (nodeStates) => {
     const nodeTree: ITreeNode[] = [];
     const nodeTreeMap = {};
 
-    for (const nodeState of nodeStates)
-    {
+    for (const nodeState of nodeStates) {
       const treeNode = { ...nodeState, children: [] };
 
       nodeTreeMap[nodeState.uniqueId] = treeNode;
 
-      if (nodeState.parentId)
-      {
+      if (nodeState.parentId) {
         const parent = nodeTreeMap[nodeState.parentId];
 
         if (parent) // if parent is not available that means it's a node in first level
@@ -266,8 +239,7 @@ export const getNodeTree = createSelector([getCurrentNodes],
   });
 
 // Generate redux store compatible nodes data structure from root node
-function generateNodeState(node: BaseNode, parentId: string | null, typeName: string): ITreeNodeState
-{
+function generateNodeState(node: BaseNode, parentId: string | null, typeName: string): ITreeNodeState {
   const checkBoxState = ExplorerNodeUtils.getCheckBoxStateByNode(node);
 
   return {

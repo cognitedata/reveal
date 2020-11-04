@@ -1,7 +1,6 @@
 import * as Color from "color";
 
-export interface ITreeNode
-{
+export interface ITreeNode {
   uniqueId: string;
   parentId?: string | null;
   name: string;

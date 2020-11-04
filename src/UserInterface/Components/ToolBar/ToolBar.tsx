@@ -1,16 +1,18 @@
-import React from "react";
-import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
-import { Icon } from "@/UserInterface/Components/Icon/Icon";
-import { BaseCommand } from "@/Core/Commands/BaseCommand";
+import React from 'react';
+import { ToolBarType } from '@/UserInterface/Components/Settings/Types';
+import { Icon } from '@/UserInterface/Components/Icon/Icon';
+import { BaseCommand } from '@/Core/Commands/BaseCommand';
+
+interface ToolBarProps {
+  sectionId: string;
+  toolBar?: BaseCommand[] | ToolBarType;
+}
 
 /**
  * ToolBar component
  * @param props
  */
-export function ToolBar(props: {
-  sectionId: string;
-  toolBar?: BaseCommand[] | ToolBarType;
-}) {
+export const ToolBar = (props: ToolBarProps) => {
   const { toolBar, sectionId } = props;
   if (!toolBar || !toolBar.length) return null;
 
@@ -49,7 +51,7 @@ export function ToolBar(props: {
             tabIndex={0}
             role="button"
             key={`${sectionId}-toolbar-${name}`}
-            className={`tool-bar-icon ${selected ? "icon-selected" : ""}`}
+            className={`tool-bar-icon ${selected ? 'icon-selected' : ''}`}
           >
             {icon}
           </div>
@@ -57,4 +59,4 @@ export function ToolBar(props: {
       })}
     </div>
   );
-}
+};

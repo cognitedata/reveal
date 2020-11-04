@@ -1,17 +1,17 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
-import * as Lodash from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range1 } from "@/Core/Geometry/Range1";
@@ -21,55 +21,55 @@ import { Grid2 } from "@/Core/Geometry/Grid2";
 import { Random } from "@/Core/Primitives/Random";
 import { Shape } from "@/Core/Geometry/Shape";
 
-export class RegularGrid2 extends Grid2
-{
-  //==================================================
+export class RegularGrid2 extends Grid2 {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   public origin: Vector3; // Z is translation in Z
+
   public inc: Vector3; // Z is ignored
 
   private _hasRotationAngle = false;
+
   private _rotationAngle = 0;
+
   private _sinRotationAngle = 0;
+
   private _cosRotationAngle = 1;
 
   private _buffer: Float32Array;
 
   static readonly _staticHelperA = Vector3.newZero;
+
   static readonly _staticHelperB = Vector3.newZero;
+
   static readonly _staticHelperC = Vector3.newZero;
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get rotationAngle(): number { return this._rotationAngle; }
 
-  public set rotationAngle(value: number)
-  {
+  public set rotationAngle(value: number) {
     this._hasRotationAngle = value !== 0;
-    if (this._hasRotationAngle)
-    {
+    if (this._hasRotationAngle) {
       this._rotationAngle = value;
       this._sinRotationAngle = Math.sin(this._rotationAngle);
       this._cosRotationAngle = Math.cos(this._rotationAngle);
-    }
-    else
-    {
+    } else {
       this._rotationAngle = 0;
       this._sinRotationAngle = 0;
       this._cosRotationAngle = 1;
     }
   }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(nodeSize: Index2, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined)
-  {
+  public constructor(nodeSize: Index2, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined) {
     super(nodeSize);
     this.origin = origin;
     this.inc = inc;
@@ -78,77 +78,68 @@ export class RegularGrid2 extends Grid2
     this._buffer = new Float32Array(nodeSize.size);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of object
-  //==================================================
+  //= =================================================
 
-  public /*override*/ toString(): string { return `nodeSize: (${this.nodeSize}) origin: (${this.origin.x}, ${this.origin.y}) inc: (${this.inc.x}, ${this.inc.y})`; }
+  public /* override */ toString(): string { return `nodeSize: (${this.nodeSize}) origin: (${this.origin.x}, ${this.origin.y}) inc: (${this.inc.x}, ${this.inc.y})`; }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Shape
-  //==================================================
+  //= =================================================
 
-  public /*override*/ clone(): Shape { return Lodash.cloneDeep(this); }
+  public /* override */ clone(): Shape { return cloneDeep(this); }
 
-  public expandBoundingBox(boundingBox: Range3): void
-  {
+  public expandBoundingBox(boundingBox: Range3): void {
     const position = Vector3.newZero;
-    for (let j = this.nodeSize.j - 1; j >= 0; j--)
-    {
-      for (let i = this.nodeSize.i - 1; i >= 0; i--)
-      {
+    for (let j = this.nodeSize.j - 1; j >= 0; j--) {
+      for (let i = this.nodeSize.i - 1; i >= 0; i--) {
         if (this.getNodePosition(i, j, position))
           boundingBox.add(position);
       }
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Requests
-  //==================================================
+  //= =================================================
 
-  public isNodeDef(i: number, j: number): boolean
-  {
+  public isNodeDef(i: number, j: number): boolean {
     return !Number.isNaN(this.getZ(i, j));
   }
 
-  public isNodeInsideDef(i: number, j: number): boolean
-  {
+  public isNodeInsideDef(i: number, j: number): boolean {
     return this.isNodeInside(i, j) && this.isNodeDef(i, j);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  public getZ(i: number, j: number): number
-  {
+  public getZ(i: number, j: number): number {
     const index = this.getNodeIndex(i, j);
     return this._buffer[index];
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters: Node position
-  //==================================================
+  //= =================================================
 
-  public getNodePosition(i: number, j: number, resultPosition?: Vector3): boolean
-  {
+  public getNodePosition(i: number, j: number, resultPosition?: Vector3): boolean {
     if (!resultPosition)
+      // eslint-disable-next-line no-param-reassign
       resultPosition = Vector3.newZero;
 
     const z = this.getZ(i, j);
     if (Number.isNaN(z))
       return false;
 
-    if (this._hasRotationAngle)
-    {
+    if (this._hasRotationAngle) {
       const dx = this.inc.x * i;
       const dy = this.inc.y * j;
       resultPosition.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       resultPosition.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
-    }
-    else
-    {
+    } else {
       resultPosition.x = this.inc.x * i;
       resultPosition.y = this.inc.y * j;
     }
@@ -157,17 +148,13 @@ export class RegularGrid2 extends Grid2
     return true;
   }
 
-  public getNodePosition2(i: number, j: number, resultPosition: Vector3): void
-  {
-    if (this._hasRotationAngle)
-    {
+  public getNodePosition2(i: number, j: number, resultPosition: Vector3): void {
+    if (this._hasRotationAngle) {
       const dx = this.inc.x * i;
       const dy = this.inc.y * j;
       resultPosition.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       resultPosition.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
-    }
-    else
-    {
+    } else {
       resultPosition.x = this.inc.x * i;
       resultPosition.y = this.inc.y * j;
     }
@@ -175,8 +162,7 @@ export class RegularGrid2 extends Grid2
     resultPosition.y += this.origin.y;
   }
 
-  public getRelativeNodePosition(i: number, j: number, resultPosition: Vector3): boolean
-  {
+  public getRelativeNodePosition(i: number, j: number, resultPosition: Vector3): boolean {
     const z = this.getZ(i, j);
     if (Number.isNaN(z))
       return false;
@@ -187,28 +173,25 @@ export class RegularGrid2 extends Grid2
     return true;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters: Cell position
-  //==================================================
+  //= =================================================
 
-  public getCellFromPosition(position: Vector3, resultCell?: Index2): Index2
-  {
+  public getCellFromPosition(position: Vector3, resultCell?: Index2): Index2 {
     if (!resultCell)
+      // eslint-disable-next-line no-param-reassign
       resultCell = Index2.newZero;
 
     const dx = position.x - this.origin.x;
     const dy = position.y - this.origin.y;
 
     let i; let j: number;
-    if (this._hasRotationAngle)
-    {
+    if (this._hasRotationAngle) {
       const x = dx * this._cosRotationAngle + dy * this._sinRotationAngle;
       const y = -dx * this._sinRotationAngle + dy * this._cosRotationAngle;
       i = x / this.inc.x;
       j = y / this.inc.y;
-    }
-    else
-    {
+    } else {
       i = dx / this.inc.x;
       j = dy / this.inc.y;
     }
@@ -217,16 +200,17 @@ export class RegularGrid2 extends Grid2
     return resultCell;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters: Others
-  //==================================================
+  //= =================================================
 
-  public getNormal(i: number, j: number, z: number, normalize: boolean, resultNormal?: Vector3): Vector3
-  {
+  public getNormal(i: number, j: number, z: number, normalize: boolean, resultNormal?: Vector3): Vector3 {
     if (!resultNormal)
+      // eslint-disable-next-line no-param-reassign
       resultNormal = Vector3.newZero;
 
     if (!z)
+      // eslint-disable-next-line no-param-reassign
       z = this.getZ(i, j);
 
     const a = RegularGrid2._staticHelperA;
@@ -254,29 +238,25 @@ export class RegularGrid2 extends Grid2
     if (def2) { if (Number.isNaN(z2)) def2 = false; else z2 -= z; }
     if (def3) { if (Number.isNaN(z3)) def3 = false; else z3 -= z; }
 
-    if (def0 && def1)
-    {
+    if (def0 && def1) {
       a.set(+this.inc.x, 0, z0);
       b.set(0, +this.inc.y, z1);
       a.crossProduct(b);
       resultNormal.add(a);
     }
-    if (def1 && def2)
-    {
+    if (def1 && def2) {
       a.set(0, +this.inc.y, z1);
       b.set(-this.inc.x, 0, z2);
       a.crossProduct(b);
       resultNormal.add(a);
     }
-    if (def2 && def3)
-    {
+    if (def2 && def3) {
       a.set(-this.inc.x, 0, z2);
       b.set(0, -this.inc.y, z3);
       a.crossProduct(b);
       resultNormal.add(a);
     }
-    if (def3 && def0)
-    {
+    if (def3 && def0) {
       a.set(0, -this.inc.y, z3);
       b.set(+this.inc.x, 0, z0);
       a.crossProduct(b);
@@ -287,8 +267,7 @@ export class RegularGrid2 extends Grid2
     return resultNormal;
   }
 
-  public getCornerRange(): Range3
-  {
+  public getCornerRange(): Range3 {
     const corner = Vector3.newZero;
     const range = new Range3();
     range.add(this.origin);
@@ -301,30 +280,26 @@ export class RegularGrid2 extends Grid2
     return range;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Setters
-  //==================================================
+  //= =================================================
 
-  public setNodeUndef(i: number, j: number): void
-  {
+  public setNodeUndef(i: number, j: number): void {
     this.setZ(i, j, Number.NaN);
   }
 
-  public setZ(i: number, j: number, value: number): void
-  {
+  public setZ(i: number, j: number, value: number): void {
     const index = this.getNodeIndex(i, j);
     this._buffer[index] = value;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Operation
-  //==================================================
+  //= =================================================
 
-  public normalizeZ(wantedRange?: Range1): void
-  {
+  public normalizeZ(wantedRange?: Range1): void {
     const currentRange = this.zRange;
-    for (let i = this._buffer.length - 1; i >= 0; i--)
-    {
+    for (let i = this._buffer.length - 1; i >= 0; i--) {
       let z = this._buffer[i];
       z = currentRange.getFraction(z);
       if (wantedRange !== undefined)
@@ -334,16 +309,13 @@ export class RegularGrid2 extends Grid2
     this.touch();
   }
 
-  public smoothSimple(numberOfPasses: number = 1): void
-  {
+  public smoothSimple(numberOfPasses: number = 1): void {
     if (numberOfPasses <= 0)
       return;
     let buffer = new Float32Array(this.nodeSize.size);
-    for (let pass = 0; pass < numberOfPasses; pass++)
-    {
+    for (let pass = 0; pass < numberOfPasses; pass++) {
       for (let i = this.nodeSize.i - 1; i >= 0; i--)
-        for (let j = this.nodeSize.j - 1; j >= 0; j--)
-        {
+        for (let j = this.nodeSize.j - 1; j >= 0; j--) {
           if (!this.isNodeDef(i, j))
             continue;
 
@@ -357,8 +329,7 @@ export class RegularGrid2 extends Grid2
 
           // New value = (Sum the surrunding values + 2 * Current value) / N
           for (let ii = iMin; ii <= iMax; ii++)
-            for (let jj = jMin; jj <= jMax; jj++)
-            {
+            for (let jj = jMin; jj <= jMax; jj++) {
               if (ii === i && jj === j)
                 continue;
 
@@ -366,7 +337,7 @@ export class RegularGrid2 extends Grid2
                 continue;
 
               sum += this.getZ(ii, jj);
-              count++;
+              count += 1;
             }
           sum += this.getZ(i, j) * count;
           count += count;
@@ -378,12 +349,11 @@ export class RegularGrid2 extends Grid2
     this.touch();
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS:
-  //==================================================
+  //= =================================================
 
-  static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0, rotationAngle: number): RegularGrid2
-  {
+  static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0, rotationAngle: number): RegularGrid2 {
     const origin = Vector3.newZero;
     const inc = new Vector3(1, 1, 0);
     const nodeSize = new Index2(2 ** powerOf2 + 1);
@@ -413,12 +383,11 @@ export class RegularGrid2 extends Grid2
   }
 }
 
-//==================================================
+//= =================================================
 // LOCAL FUNCTIONS: Helpers
-//==================================================
+//= =================================================
 
-function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, zMean?: number): number
-{
+function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, zMean?: number): number {
   const i1 = Math.trunc((i0 + i2) / 2);
   const j1 = Math.trunc((j0 + j2) / 2);
 
@@ -427,6 +396,7 @@ function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number,
     return oldZ; // Assume already calculated (little bit dirty...)
 
   if (zMean === undefined)
+    // eslint-disable-next-line no-param-reassign
     zMean = (grid.getZ(i0, j0) + grid.getZ(i2, j2)) / 2;
 
   const newZ = Random.getGaussian(zMean, stdDev);
@@ -434,13 +404,13 @@ function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number,
   return newZ;
 }
 
-function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, level: number, dampning: number): void
-{
+function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, level: number, dampning: number): void {
   if (i2 - i0 <= 1 && j2 - j0 <= 1)
     return; // Nothing more to update
   if (i2 - i0 !== j2 - j0)
     throw Error("Logical bug, should be a square");
 
+  // eslint-disable-next-line no-param-reassign
   stdDev *= dampning;
   let z = 0;
   z += setValueBetween(grid, i0, j0, i2, j0, stdDev);
@@ -450,7 +420,8 @@ function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: n
 
   setValueBetween(grid, i0, j0, i2, j2, stdDev, z / 4);
 
-  level--;
+  // eslint-disable-next-line no-param-reassign
+  level -= 1;
   if (level === 0)
     return;
 

@@ -1,39 +1,50 @@
-import "@/UserInterface/styles/scss/index.scss";
-import React, { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import SplitPane from "react-split-pane";
-import { RightPanel } from "@/UserInterface/NodeVisualizer/Panels/RightPanel";
-import { LeftPanel } from "@/UserInterface/NodeVisualizer/Panels/LeftPanel";
-import { NotificationsToActionsAdaptor } from "@/UserInterface/Adapters/NotificationToAction";
-import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
-import { UserInterfaceListener } from "@/UserInterface/Adapters/UserInterfaceListener";
-import { Modules } from "@/Core/Module/Modules";
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { Viewer } from "@/UserInterface/Components/Viewers/Viewer";
-import { Toolbar } from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
-import { Appearance } from "@/Core/States/Appearance";
-import { State } from "@/UserInterface/Redux/State/State";
-import { generateNodeTree } from "@/UserInterface/Redux/reducers/ExplorerReducer";
-import { initializeToolbarStatus } from "@/UserInterface/Redux/reducers/VisualizersReducer";
-import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
-import { ExplorerPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
-import { Explorer } from "@/UserInterface/Components/Explorer/Explorer";
+import '@/UserInterface/styles/scss/index.scss';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import SplitPane from 'react-split-pane';
+import { RightPanel } from '@/UserInterface/NodeVisualizer/Panels/RightPanel';
+import { LeftPanel } from '@/UserInterface/NodeVisualizer/Panels/LeftPanel';
+import { NotificationsToActionsAdaptor } from '@/UserInterface/Adapters/NotificationToAction';
+import { VirtualUserInterface } from '@/Core/States/VirtualUserInterface';
+import { UserInterfaceListener } from '@/UserInterface/Adapters/UserInterfaceListener';
+import { Modules } from '@/Core/Module/Modules';
+import { BaseRootNode } from '@/Core/Nodes/BaseRootNode';
+import { Viewer } from '@/UserInterface/Components/Viewers/Viewer';
+import { Toolbar } from '@/UserInterface/NodeVisualizer/ToolBar/Toolbar';
+import { Appearance } from '@/Core/States/Appearance';
+import { State } from '@/UserInterface/Redux/State/State';
+import { generateNodeTree } from '@/UserInterface/Redux/reducers/ExplorerReducer';
+import { initializeToolbarStatus } from '@/UserInterface/Redux/reducers/VisualizersReducer';
+import { ViewerUtils } from '@/UserInterface/NodeVisualizer/Viewers/ViewerUtils';
+import { ExplorerPropType } from '@/UserInterface/Components/Explorer/ExplorerTypes';
+import { Explorer } from '@/UserInterface/Components/Explorer/Explorer';
 import {
   VisualizerToolbar,
   VisualizerToolbarProps,
-} from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
+} from '@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
+
+export interface NodeVisualizerProps {
+  /**
+   * root node
+   */
+  root?: BaseRootNode;
+  /**
+   * explorer render prop - uses for customisation of node tree explorer
+   */
+  explorer?: React.ComponentType<ExplorerPropType>;
+  /**
+   * toolbar render prop - uses for customisation of visualizer toolbar
+   */
+  toolbar?: React.ComponentType<VisualizerToolbarProps>;
+}
 
 /**
  * Node Visualizer Component of the application
  * This will render all the Components (Settings/Explorer/3D viewers etc.)
  */
-export function NodeVisualizer(props: {
-  root?: BaseRootNode;
-  explorer?: React.ComponentType<ExplorerPropType>;
-  toolbar?: React.ComponentType<VisualizerToolbarProps>;
-}) {
+export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
   const dispatch = useDispatch();
-  const common = useSelector((state: State) => state.common); //TODO: Remove state reference
+  const common = useSelector((state: State) => state.common); // TODO: Remove state reference
   const { root, explorer, toolbar } = props;
 
   if (root) {
@@ -46,10 +57,10 @@ export function NodeVisualizer(props: {
       if (!element || !root) return;
 
       // clear Node
-      element.innerHTML = "";
+      element.innerHTML = '';
 
       // Add new viewers here Eg - new Viewer("2D", htmlElement2D)
-      ViewerUtils.addViewer("3D", new Viewer("3D", element));
+      ViewerUtils.addViewer('3D', new Viewer('3D', element));
       // Add targets and toolbars to root node
       for (const viewer of Object.values(ViewerUtils.getViewers())) {
         const target = Modules.instance.createRenderTargetNode();
@@ -115,4 +126,4 @@ export function NodeVisualizer(props: {
       </SplitPane>
     </div>
   );
-}
+};

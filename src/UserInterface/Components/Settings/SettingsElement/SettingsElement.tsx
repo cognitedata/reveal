@@ -1,24 +1,24 @@
-import React from "react";
-import Color from "color";
-import "./SettingsElement.module.scss";
+import React from 'react';
+import Color from 'color';
+import './SettingsElement.module.scss';
 import {
   ISettingsElement,
   ISettingsElementProps,
-} from "@/UserInterface/Components/Settings/Types";
-import { ElementTypes } from "@/UserInterface/Components/Settings/ElementTypes";
-import { CompactColorPicker } from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
-import { Icon } from "@/UserInterface/Components/Icon/Icon";
-import { GenericSelect } from "@/UserInterface/Components/GenericSelect/GenericSelect";
-import { CommonSelectBase } from "@/UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase";
-import { ColorMapIcon } from "@/UserInterface/Components/Settings/ColorMapIcon/ColorMapIcon";
-import { ColorTypeIcon } from "@/UserInterface/Components/Settings/ColorTypeIcon/ColorTypeIcon";
-import { ToolbarToolTip } from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
+} from '@/UserInterface/Components/Settings/Types';
+import { ElementTypes } from '@/UserInterface/Components/Settings/ElementTypes';
+import { CompactColorPicker } from '@/UserInterface/Components/CompactColorPicker/CompactColorPicker';
+import { Icon } from '@/UserInterface/Components/Icon/Icon';
+import { GenericSelect } from '@/UserInterface/Components/GenericSelect/GenericSelect';
+import { CommonSelectBase } from '@/UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
+import { ColorMapIcon } from '@/UserInterface/Components/Settings/ColorMapIcon/ColorMapIcon';
+import { ColorTypeIcon } from '@/UserInterface/Components/Settings/ColorTypeIcon/ColorTypeIcon';
+import { ToolbarToolTip } from '@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
 
 /**
  * Responsible for rendering dynamic inputs
  * @param props
  */
-export function SettingsElement(props: ISettingsElementProps) {
+export const SettingsElement = (props: ISettingsElementProps) => {
   const {
     config,
     onPropertyValueChange: onChange,
@@ -67,12 +67,12 @@ export function SettingsElement(props: ISettingsElementProps) {
       case ElementTypes.String:
         element = (
           <input
-            type={type === ElementTypes.Number ? "number" : "text"}
+            type={type === ElementTypes.Number ? 'number' : 'text'}
             disabled={disabled}
             {...keyExtractor(null, type, name)}
             onChange={(event) => onChange(id, event.target.value)}
             value={value}
-            className={disabled ? "textInput readOnlyInput" : "textInput"}
+            className={disabled ? 'textInput readOnlyInput' : 'textInput'}
           />
         );
         break;
@@ -91,7 +91,7 @@ export function SettingsElement(props: ISettingsElementProps) {
       case ElementTypes.Color:
         element = (
           <CompactColorPicker
-            value={value instanceof Color ? value.hex() : ""}
+            value={value instanceof Color ? value.hex() : ''}
             id={id}
             onChange={onChange}
           />
@@ -148,7 +148,7 @@ export function SettingsElement(props: ISettingsElementProps) {
           <div
             {...keyExtractor(null, type, name)}
             className={`input-icon ${
-              icon?.selected ? "input-icon-selected" : ""
+              icon?.selected ? 'input-icon-selected' : ''
             }`}
           >
             <Icon type={icon?.type} name={icon?.name} />
@@ -180,7 +180,7 @@ export function SettingsElement(props: ISettingsElementProps) {
   return (
     <section className="form-field">
       <div>{labelElement}</div>
-      <div className={`input-wrap ${displayCheckbox ? "optional" : ""}`}>
+      <div className={`input-wrap ${displayCheckbox ? 'optional' : ''}`}>
         {displayCheckbox && (
           <div>
             <input
@@ -196,4 +196,4 @@ export function SettingsElement(props: ISettingsElementProps) {
       </div>
     </section>
   );
-}
+};

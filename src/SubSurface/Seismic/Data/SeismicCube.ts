@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Index3 } from "@/Core/Geometry/Index3";
@@ -22,45 +22,51 @@ import { Statistics } from "@/Core/Geometry/Statistics";
 import { Ma } from "@/Core/Primitives/Ma";
 import { Range3 } from "@/Core/Geometry/Range3";
 
-export class SeismicCube extends RegularGrid3
-{
-  //==================================================
+export class SeismicCube extends RegularGrid3 {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private readonly _traces: (Trace | null)[];
+
   private readonly _usedTraces: Index2[] = [];
+
   private _maxTracesInMemory: number = 1000;
+
   public client: SeismicSDK.CogniteSeismicClient | null = null;
+
   public fileId = "";
+
   private _valueRange?: Range1;
+
   private _statistics?: Statistics;
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get numberOfTraces(): number { return (this.nodeSize.i - 1) * (this.nodeSize.j - 1); }
+
   public get valueRange(): Range1 | undefined { return this._valueRange; }
+
   public set valueRange(range: Range1 | undefined) { this._valueRange = range; }
+
   public get statistics(): Statistics | undefined { return this._statistics; }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(nodeSize: Index3, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined)
-  {
+  public constructor(nodeSize: Index3, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined) {
     super(nodeSize, origin, inc, rotationAngle);
     this._traces = new Array<Trace | null>(this.numberOfTraces);
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  public getTrace(i: number, j: number): Trace | null
-  {
+  public getTrace(i: number, j: number): Trace | null {
     const index = this.getCellIndex2(i, j);
     let trace = this._traces[index];
     if (trace)
@@ -75,48 +81,41 @@ export class SeismicCube extends RegularGrid3
     return trace;
   }
 
-  public getRegularGrid(): RegularGrid3
-  {
+  public getRegularGrid(): RegularGrid3 {
     const result = new RegularGrid3(this.nodeSize, this.origin, this.inc, this.rotationAngle);
     result.startCell.copy(this.startCell);
     return result;
   }
 
-  public getRealValue(value: number)
-  {
+  public getRealValue(value: number) {
     return value;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Read trace
-  //==================================================
+  //= =================================================
 
-  private readTrace(i: number, j: number): Trace | null
-  {
+  private readTrace(i: number, j: number): Trace | null {
     const trace = new Trace(this.cellSize.k);
     trace.generateSynthetic(i / (this.cellSize.i - 1), j / (this.cellSize.j - 1));
     return trace;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Garbage collection
-  //==================================================
+  //= =================================================
 
-  private garbageCollectAt(i: number, j: number): void
-  {
+  private garbageCollectAt(i: number, j: number): void {
     this._usedTraces.push(new Index2(i, j));
     this.garbageCollect();
   }
 
-  private garbageCollect(): void
-  {
-    if (this._usedTraces.length > this._maxTracesInMemory)
-    {
+  private garbageCollect(): void {
+    if (this._usedTraces.length > this._maxTracesInMemory) {
       const lowerLimit = this._maxTracesInMemory / 2;
       const deleteCount = this._usedTraces.length - lowerLimit;
       const startIndex = 0;
-      for (let i = startIndex; i < deleteCount; i++)
-      {
+      for (let i = startIndex; i < deleteCount; i++) {
         const cell = this._usedTraces[i];
         const index = this.getCellIndex2(cell.i, cell.j);
         this._traces[index] = null;
@@ -125,12 +124,11 @@ export class SeismicCube extends RegularGrid3
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Load
-  //==================================================
+  //= =================================================
 
-  public loadTraces(minCell: Index2, maxCell: Index2, include_trace_header?: boolean): Promise<SeismicSDK.Trace[]> | null
-  {
+  public loadTraces(minCell: Index2, maxCell: Index2, includeTraceHeader?: boolean): Promise<SeismicSDK.Trace[]> | null {
     if (!this.client || !this.fileId)
       return null;
 
@@ -143,11 +141,10 @@ export class SeismicCube extends RegularGrid3
     xline.max += this.startCell.j;
 
     // console.log(`volume.get() inline: ${iline.min} / ${iline.max} xline: ${xline.min} / ${xline.max}`);
-    return this.client.volume.get(this, { iline, xline }, include_trace_header);
+    return this.client.volume.get(this, { iline, xline }, includeTraceHeader);
   }
 
-  public loadTrace(cell: Index2): Promise<SeismicSDK.Trace> | null
-  {
+  public loadTrace(cell: Index2): Promise<SeismicSDK.Trace> | null {
     if (!this.client || !this.fileId)
       return null;
 
@@ -156,8 +153,7 @@ export class SeismicCube extends RegularGrid3
     return this.client.volume.getTrace(this, inline, xline);
   }
 
-  public calculateStatistics(): void
-  {
+  public calculateStatistics(): void {
     const iHalf = Math.round(this.cellSize.i / 2);
     const jHalf = Math.round(this.cellSize.j / 2);
     const iMax = this.cellSize.i - 1;
@@ -171,18 +167,14 @@ export class SeismicCube extends RegularGrid3
     maxCell = new Index2(iMax, jHalf);
     const promise2 = this.loadTraces(minCell, maxCell);
 
-    Promise.all([promise1, promise2]).then(multiTraces =>
-    {
+    Promise.all([promise1, promise2]).then(multiTraces => {
       const statistics = new Statistics();
-      for (const traces of multiTraces)
-      {
+      for (const traces of multiTraces) {
         if (!traces)
           continue;
 
-        for (const trace of traces)
-        {
-          for (let value of trace.traceList)
-          {
+        for (const trace of traces) {
+          for (let value of trace.traceList) {
             if (value === 0)
               continue;
 
@@ -196,12 +188,11 @@ export class SeismicCube extends RegularGrid3
     });
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Load
-  //==================================================
+  //= =================================================
 
-  public static async loadCube(client: SeismicSDK.CogniteSeismicClient, fileId: string): Promise<SeismicCube | null>
-  {
+  public static async loadCube(client: SeismicSDK.CogniteSeismicClient, fileId: string): Promise<SeismicCube | null> {
     const lineRange = await client.file.getLineRange({ fileId });
     if (!lineRange)
       throw Error("lineRange in undefined");
@@ -248,8 +239,7 @@ export class SeismicCube extends RegularGrid3
 
     const resultList = await Promise.allSettled(promises);
     let numCellsK = 0;
-    for (const result of resultList)
-    {
+    for (const result of resultList) {
       if (result.status !== "fulfilled")
         continue;
 
@@ -326,7 +316,7 @@ export class SeismicCube extends RegularGrid3
     //   const rotationAngle = iAxis.angle;
     //   cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
     // }
-    //else
+    // else
     {
       const range = Range3.newTest;
       range.expandByFraction(0.3);

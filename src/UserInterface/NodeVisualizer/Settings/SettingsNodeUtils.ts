@@ -4,50 +4,38 @@ import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProper
 import { Appearance } from "@/Core/States/Appearance";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
-export class SettingsNodeUtils
-{
-  public static setPropertyValue<T>(id: string, value: T): void
-  {
+export class SettingsNodeUtils {
+  public static setPropertyValue<T>(id: string, value: T): void {
     const property = NodeUtils.getPropertyById(id);
 
-    if (property)
-    {
+    if (property) {
       (property as ValueProperty<T>).value = value;
-    }
-    else
-    {
-      console.log("Couldn't find property!");
+    } else {
+      console.warn("Couldn't find property!");
     }
   }
 
-  public static setPropertyFolderExpand(id: string, expand: boolean): void
-  {
+  public static setPropertyFolderExpand(id: string, expand: boolean): void {
     const property = NodeUtils.getPropertyById(id);
 
     if (property instanceof ExpanderProperty)
       property.expanded = expand;
-    else
-    {
-      console.log("Couldn't find property!");
+    else {
+      console.warn("Couldn't find property!");
     }
   }
 
-  public static setPropertyUse(id: string, useProperty: boolean): void
-  {
+  public static setPropertyUse(id: string, useProperty: boolean): void {
     const property = NodeUtils.getPropertyById(id);
 
-    if (property instanceof ValueProperty)
-    {
+    if (property instanceof ValueProperty) {
       property.use = useProperty;
-    }
-    else
-    {
-      console.log("Couldn't find property!", id);
+    } else {
+      console.warn("Couldn't find property!", id);
     }
   }
 
-  public static populateSettingsFolder(node: BaseNode): void
-  {
+  public static populateSettingsFolder(node: BaseNode): void {
     NodeUtils.properties = null;
     const settings = new ExpanderProperty("Settings");
     {

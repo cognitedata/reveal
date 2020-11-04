@@ -9,27 +9,25 @@ import { Changes } from "@/Core/Views/Changes";
 import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
-export class SeismicCubePlaneManipulator extends BaseManipulator
-{
-  //==================================================
+export class SeismicCubePlaneManipulator extends BaseManipulator {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _capureNode: SeismicPlaneNode | null = null;
+
   private _perpedicularPlane: THREE.Plane | null = null;
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseTool
-  //==================================================
+  //= =================================================
 
-  public /*override*/ clear(): void
-  {
+  public /* override */ clear(): void {
     this._capureNode = null;
     this._perpedicularPlane = null;
   }
 
-  public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node: BaseNode, intersection: THREE.Intersection, ray: THREE.Ray): boolean
-  {
+  public /* override */ onMouseDown(target: ThreeRenderTargetNode, node: BaseNode, intersection: THREE.Intersection, ray: THREE.Ray): boolean {
     const planeNode = node as SeismicPlaneNode;
     if (!planeNode)
       return false;
@@ -43,8 +41,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     const angle = Math.acos(Math.abs(cosAngle));
 
     // When the plane normal and ray are close to colinear
-    if (angle < Math.PI / 10)
-    {
+    if (angle < Math.PI / 10) {
       perpedicularPlaneNormal = planeNormal;
       perpedicularPlaneNormal.z -= Math.sign(cosAngle);
       perpedicularPlaneNormal.normalize();
@@ -53,8 +50,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     return true;
   }
 
-  public /*override*/ onMouseDrag(target: ThreeRenderTargetNode, ray: THREE.Ray, finished: boolean): void
-  {
+  public /* override */ onMouseDrag(target: ThreeRenderTargetNode, ray: THREE.Ray, finished: boolean): void {
     const planeNode = this._capureNode as SeismicPlaneNode;
     if (!planeNode)
       return;
@@ -76,8 +72,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     cube.getCellFromPosition(position, resultCell);
 
     const perpendicularIndex = resultCell.getAt(planeNode.perpendicularAxis);
-    if (planeNode.moveTo(perpendicularIndex))
-    {
+    if (planeNode.moveTo(perpendicularIndex)) {
       planeNode.notify(new NodeEventArgs(Changes.geometry, finished ? "" : "InDragging"));
       target.viewInfo.clear();
       target.viewInfo.addText(`Moving plane \`${planeNode.name}\` to index ${planeNode.realPerpendicularIndex + 1}.`);

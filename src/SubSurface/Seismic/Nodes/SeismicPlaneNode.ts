@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import IconI from "@images/Nodes/SeismicPlaneNodeI.png";
 import IconJ from "@images/Nodes/SeismicPlaneNodeJ.png";
@@ -21,29 +21,28 @@ import { Index2 } from "@/Core/Geometry/Index2";
 import { Index3 } from "@/Core/Geometry/Index3";
 import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 
-export class SeismicPlaneNode extends BaseVisualNode
-{
-  //==================================================
+export class SeismicPlaneNode extends BaseVisualNode {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   static className = "SeismicPlaneNode";
 
-  //==================================================
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _perpendicularAxis;
+
   private _perpendicularIndex; // Not used if arbitrary plane
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get surveyNode(): SurveyNode | null { return this.getAncestorByType(SurveyNode); }
 
-  public get surveyCube(): RegularGrid3 | null
-  {
+  public get surveyCube(): RegularGrid3 | null {
     const { surveyNode } = this;
     return surveyNode ? surveyNode.surveyCube : null;
   }
@@ -54,14 +53,12 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public get perpendicularAxis(): number { return this._perpendicularAxis; }
 
-  public get perpendicularIndex(): number
-  {
+  public get perpendicularIndex(): number {
     if (this.isArbitrary)
       throw Error(this.generalName);
 
     const maxIndex = this.maxPerpendicularIndex;
-    if (maxIndex > 0)
-    {
+    if (maxIndex > 0) {
       if (this._perpendicularIndex < 0)
         this._perpendicularIndex = maxIndex / 2;
       else if (this._perpendicularIndex > maxIndex)
@@ -70,16 +67,14 @@ export class SeismicPlaneNode extends BaseVisualNode
     return this._perpendicularIndex;
   }
 
-  public set perpendicularIndex(value: number)
-  {
+  public set perpendicularIndex(value: number) {
     if (this.isArbitrary)
       throw Error(this.generalName);
 
     this._perpendicularIndex = value;
   }
 
-  public get realPerpendicularIndex(): number
-  {
+  public get realPerpendicularIndex(): number {
     const { surveyCube } = this;
     if (!surveyCube)
       return 0;
@@ -91,8 +86,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     throw new Error("getMinIndex is not implemented for this case");
   }
 
-  private get maxPerpendicularIndex(): number
-  {
+  private get maxPerpendicularIndex(): number {
     const { surveyCube } = this;
     if (!surveyCube)
       return -1;
@@ -103,10 +97,8 @@ export class SeismicPlaneNode extends BaseVisualNode
     return surveyCube.cellSize.getAt(this.perpendicularAxis) - 1;
   }
 
-  public get shortName(): string
-  {
-    switch (this.perpendicularAxis)
-    {
+  public get shortName(): string {
+    switch (this.perpendicularAxis) {
       case 0: return "I"; // Inline
       case 1: return "X"; // X-line
       case 2: return "T"; // Time slice
@@ -114,10 +106,8 @@ export class SeismicPlaneNode extends BaseVisualNode
     }
   }
 
-  public get generalName(): string
-  {
-    switch (this.perpendicularAxis)
-    {
+  public get generalName(): string {
+    switch (this.perpendicularAxis) {
       case 0: return "Inline";
       case 1: return "Crossline";
       case 2: return "Time Slice";
@@ -125,10 +115,8 @@ export class SeismicPlaneNode extends BaseVisualNode
     }
   }
 
-  public get unrotatedNormal(): Vector3
-  {
-    switch (this.perpendicularAxis)
-    {
+  public get unrotatedNormal(): Vector3 {
+    switch (this.perpendicularAxis) {
       case 0:
       case 1:
       case 2: return Vector3.getAxis(this.perpendicularAxis);
@@ -136,8 +124,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     }
   }
 
-  public get normal(): Vector3
-  {
+  public get normal(): Vector3 {
     if (this.perpendicularAxis === 2)
       return Vector3.newUp;
 
@@ -148,8 +135,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     return cube.getAxis(this.perpendicularAxis);
   }
 
-  public get vectorInPlane(): Vector3
-  {
+  public get vectorInPlane(): Vector3 {
     if (this.perpendicularAxis === 2)
       return new Vector3(1, 0, 0);
 
@@ -158,39 +144,39 @@ export class SeismicPlaneNode extends BaseVisualNode
     return normal;
   }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(perpendicularAxis = 0, perpendicularIndex = -1)
-  {
+  public constructor(perpendicularAxis = 0, perpendicularIndex = -1) {
     super();
     this._perpendicularAxis = perpendicularAxis;
     this._perpendicularIndex = perpendicularIndex;
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Identifiable
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get className(): string { return SeismicPlaneNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === SeismicPlaneNode.className || super.isA(className); }
+  public /* override */ get className(): string { return SeismicPlaneNode.className; }
 
-  //==================================================
+  public /* override */ isA(className: string): boolean { return className === SeismicPlaneNode.className || super.isA(className); }
+
+  //= =================================================
   // OVERRIDES of BaseNode
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get typeName(): string { return "Plane"; }
-  public /*override*/ canChangeColor(): boolean { return false; }
-  public /*override*/ canChangeName(): boolean { return false; }
+  public /* override */ get typeName(): string { return "Plane"; }
 
-  public /*override*/ getName(): string
-  {
+  public /* override */ canChangeColor(): boolean { return false; }
+
+  public /* override */ canChangeName(): boolean { return false; }
+
+  public /* override */ getName(): string {
     return this.generalName;
   }
 
-  public /*override*/ getNameExtension(): string | null
-  {
+  public /* override */ getNameExtension(): string | null {
     if (this.perpendicularAxis < 0 || this.perpendicularAxis >= 3)
       return super.getNameExtension();
     if (!this.surveyCube)
@@ -198,10 +184,8 @@ export class SeismicPlaneNode extends BaseVisualNode
     return `${this.realPerpendicularIndex}`;
   }
 
-  public /*override*/ getIcon(): string
-  {
-    switch (this.perpendicularAxis)
-    {
+  public /* override */ getIcon(): string {
+    switch (this.perpendicularAxis) {
       case 0: return IconI;
       case 1: return IconJ;
       case 2: return IconJ;
@@ -209,8 +193,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
-  {
+  protected /* override */ populateStatisticsCore(folder: BasePropertyFolder): void {
     super.populateStatisticsCore(folder);
     if (this.isArbitrary)
       folder.addReadOnlyStrings("Along", this.generalName);
@@ -218,50 +201,46 @@ export class SeismicPlaneNode extends BaseVisualNode
       folder.addReadOnlyStrings("Along/Index", this.generalName, this.realPerpendicularIndex.toString());
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  public moveTo(perpendicularIndex: number): boolean
-  {
+  public moveTo(perpendicularIndex: number): boolean {
     if (this.isArbitrary)
       throw Error(this.generalName);
 
-    if (perpendicularIndex < 0)
-      perpendicularIndex = 0;
-    else if (perpendicularIndex > this.maxPerpendicularIndex)
-      perpendicularIndex = this.maxPerpendicularIndex;
+    let perpendicularIndexNormalized = perpendicularIndex;
 
-    if (this.perpendicularIndex === perpendicularIndex)
+    if (perpendicularIndex < 0)
+      perpendicularIndexNormalized = 0;
+    else if (perpendicularIndex > this.maxPerpendicularIndex)
+      perpendicularIndexNormalized = this.maxPerpendicularIndex;
+
+    if (this.perpendicularIndex === perpendicularIndexNormalized)
       return false;
 
-    this._perpendicularIndex = perpendicularIndex;
+    this._perpendicularIndex = perpendicularIndexNormalized;
     return true;
   }
 
-  public createCells(useIndex: boolean = true): Index2[]
-  {
+  public createCells(useIndex: boolean = true): Index2[] {
     const { surveyCube } = this;
     if (!surveyCube)
       throw Error("surveyCube is not set");
 
     const cells: Index2[] = [];
     const index = useIndex ? this.perpendicularIndex : 0;
-    if (this.perpendicularAxis === 0)
-    {
+    if (this.perpendicularAxis === 0) {
       for (let j = 0; j < surveyCube.cellSize.j; j++)
         cells.push(new Index2(index, j));
-    }
-    else if (this.perpendicularAxis === 1)
-    {
+    } else if (this.perpendicularAxis === 1) {
       for (let i = 0; i < surveyCube.cellSize.i; i++)
         cells.push(new Index2(i, index));
     }
     return cells;
   }
 
-  public getMinCell(): Index3
-  {
+  public getMinCell(): Index3 {
     if (this.perpendicularAxis === 0)
       return new Index3(this.perpendicularIndex, 0, 0);
     if (this.perpendicularAxis === 1)
@@ -269,8 +248,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     throw new Error("getMinCell is not implemented for this case");
   }
 
-  public getMaxCell(): Index3
-  {
+  public getMaxCell(): Index3 {
     const { surveyCube } = this;
     if (!surveyCube)
       throw Error("surveyCube is not set");

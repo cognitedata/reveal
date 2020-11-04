@@ -1,9 +1,6 @@
 import * as THREE from "three";
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { Vector3 } from "@/Core/Geometry/Vector3";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";
@@ -11,14 +8,12 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
 import { PointLogView } from "@/ThreeSubSurface/Wells/PointLogView";
 
-export class PointLogManipulator extends BaseManipulator
-{
-  //==================================================
+export class PointLogManipulator extends BaseManipulator {
+  //= =================================================
   // OVERRIDES of BaseTool
-  //==================================================
+  //= =================================================
 
-  public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node: BaseNode, intersection: THREE.Intersection, ray: THREE.Ray): boolean
-  {
+  public /* override */ onMouseDown(target: ThreeRenderTargetNode, node: BaseNode, intersection: THREE.Intersection, _ray: THREE.Ray): boolean {
     const pointLogNode = node as PointLogNode;
     if (!pointLogNode)
       return false;

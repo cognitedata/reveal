@@ -6,10 +6,8 @@ import { Modules } from "@/Core/Module/Modules";
 import { StubModule } from "@/__tests__/StubModule/StubModule";
 import { StubTargetNode } from "@/__tests__/StubModule/StubTargetNode";
 
-export class StubRootCreator
-{
-  public static createTestRoot(): SubSurfaceRootNode
-  {
+export class StubRootCreator {
+  public static createTestRoot(): SubSurfaceRootNode {
     // Create the module
     const modules = Modules.instance;
     modules.add(new StubModule());
@@ -18,8 +16,7 @@ export class StubRootCreator
     const root = modules.createRoot() as SubSurfaceRootNode;
 
     // Create the 2 viewers
-    for (let i = 0; i < 2; i++)
-    {
+    for (let i = 0; i < 2; i++) {
       const node = new StubTargetNode();
       node.isActive = true;
       root.targets.addChild(node);
@@ -30,8 +27,7 @@ export class StubRootCreator
 
     // Create 4 polylines
     const tree = root.getOthersByForce();
-    for (let i = 0; i < 4; i++)
-    {
+    for (let i = 0; i < 4; i++) {
       const node = new PolylinesNode();
       node.polylines = Polylines.createByRandom(10, 10, Range3.newTest);
       tree.addChild(node);
@@ -39,7 +35,6 @@ export class StubRootCreator
     }
     modules.initializeWhenPopulated(root);
 
-    // root.debugHierarcy();
     return root;
   }
 }

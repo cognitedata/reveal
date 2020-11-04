@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as Color from "color";
 import * as THREE from "three";
@@ -47,61 +47,60 @@ import { Canvas } from "@/Three/Utilities/Canvas";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { ColorType } from "@/Core/Enums/ColorType";
 
-const TrajectoryName = "trajectory";
-const TrajectoryLabelName = "trajectoryLabel";
-const WellLabelName = "wellLabel";
+const trajectoryName = "trajectory";
+const trajectoryLabelName = "trajectoryLabel";
+const wellLabelName = "wellLabel";
 
-export class WellTrajectoryView extends BaseGroupThreeView
-{
-  //==================================================
+export class WellTrajectoryView extends BaseGroupThreeView {
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
+
   private cameraPosition = new Vector3(0, 0, 1);
+
   private fgColor: Color = Colors.white;
+
   private bandTextures: (THREE.CanvasTexture | null)[] = [null, null];
+
   private getBandName(bandPosition: BandPosition): string { return bandPosition === BandPosition.Right ? "RightBand" : "LeftBand"; }
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   private get node(): WellTrajectoryNode { return super.getNode() as WellTrajectoryNode; }
 
   private get style(): WellTrajectoryStyle { return super.getStyle() as WellTrajectoryStyle; }
 
-  private get bandRange(): Range1 | undefined
-  {
+  private get bandRange(): Range1 | undefined {
     const { style } = this;
     return !style ? undefined : new Range1(style.radius.value, style.bandWidth.value);
   }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
 
     if (args.isChanged(Changes.filter))
       this.clearTextures(this._object3D);
-    if (args.isChanged(Changes.renderStyle, Changes.nodeColor, Changes.nodeName))
-    {
+    if (args.isChanged(Changes.renderStyle, Changes.nodeColor, Changes.nodeName)) {
       this.clearTextures(this._object3D);
       this.touch();
     }
   }
 
-  protected /*override*/ onShowCore(): void
-  {
+  protected /* override */ onShowCore(): void {
     // Pattern: SYNC_LOGS_AND_FILTERLOGS
     super.onShowCore();
 
@@ -111,8 +110,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!filterLogFolder)
       return;
 
-    for (const logNode of trajectoryNode.getDescendantsByType(BaseLogNode))
-    {
+    for (const logNode of trajectoryNode.getDescendantsByType(BaseLogNode)) {
       const { filterLogNode } = logNode;
       if (!filterLogNode)
         continue;
@@ -122,13 +120,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     }
   }
 
-  protected /*override*/ onHideCore(): void
-  {
+  protected /* override */ onHideCore(): void {
     super.onHideCore();
   }
 
-  public /*override*/ beforeRender(): void
-  {
+  public /* override */ beforeRender(): void {
     super.beforeRender();
     const parent = this.object3D;
     if (!parent)
@@ -138,8 +134,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     let hasBands = false;
     let hasTexture = false;
 
-    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
-    {
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right]) {
       const band = parent.getObjectByName(this.getBandName(bandPosition));
       if (band)
         hasBands = true;
@@ -148,8 +143,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
       if (texture)
         hasTexture = true;
     }
-    if (!hasBands || !hasTexture)
-    {
+    if (!hasBands || !hasTexture) {
       if (!hasBands)
         this.addBands(parent);
 
@@ -158,18 +152,17 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
       this.setBandTextures(parent);
     }
-    if (!parent.getObjectByName(TrajectoryLabelName))
+    if (!parent.getObjectByName(trajectoryLabelName))
       this.addTrajectoryLabel(parent);
-    if (!parent.getObjectByName(WellLabelName))
+    if (!parent.getObjectByName(wellLabelName))
       this.addWellLabel(parent);
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Base3DView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
-  {
+  public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
     const boundingBox = super.calculateBoundingBoxCore();
     if (!boundingBox)
       return boundingBox;
@@ -211,16 +204,14 @@ export class WellTrajectoryView extends BaseGroupThreeView
     // return boundingBox;
   }
 
-  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
-  {
+  public /* override */ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void {
     const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection);
     if (md === undefined)
       return;
 
     const { node } = this;
     let counter = 0;
-    for (const logNode of node.getDescendantsByType(BaseLogNode))
-    {
+    for (const logNode of node.getDescendantsByType(BaseLogNode)) {
       if (!logNode.isVisible(this.renderTarget))
         continue;
 
@@ -240,12 +231,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     }
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseGroupThreeView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const { node } = this;
     const { wellNode } = node;
     if (!wellNode)
@@ -260,8 +250,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     return parent;
   }
 
-  public /*override*/ mustTouch(): boolean
-  {
+  public /* override */ mustTouch(): boolean {
     const { node } = this;
     const { trajectory } = node;
     if (!trajectory)
@@ -274,8 +263,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     const target = this.renderTarget;
     let colorChanged = false;
 
-    if (this.fgColor !== target.fgColor)
-    {
+    if (this.fgColor !== target.fgColor) {
       this.fgColor = target.fgColor;
       colorChanged = true;
     }
@@ -297,8 +285,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
       // Check if camera has move slightly
       const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-      if (angle > Appearance.viewerSmallestCameraDeltaAngle)
-      {
+      if (angle > Appearance.viewerSmallestCameraDeltaAngle) {
         this.cameraDirection = cameraDirection;
         this.cameraPosition = cameraPosition;
         cameraChanged = true;
@@ -307,8 +294,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     return cameraChanged || colorChanged;
   }
 
-  public /*override*/ touchPart(): void
-  {
+  public /* override */ touchPart(): void {
     // This will be called when the camera has rotated
     const parent = this._object3D;
     if (parent)
@@ -317,12 +303,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
       super.touchPart();
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Getters
-  //==================================================
+  //= =================================================
 
-  private getMdRange(): Range1 | undefined
-  {
+  private getMdRange(): Range1 | undefined {
     const { node } = this;
     const { bandRange } = this;
     if (!bandRange)
@@ -333,8 +318,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
       return undefined;
 
     const mdRange = new Range1();
-    for (const logNode of node.getDescendantsByType(BaseLogNode))
-    {
+    for (const logNode of node.getDescendantsByType(BaseLogNode)) {
       if (!this.isInBand(logNode))
         continue;
 
@@ -350,8 +334,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     return mdRange;
   }
 
-  private isInBand(node: BaseNode): boolean
-  {
+  private isInBand(node: BaseNode): boolean {
     if (node instanceof FloatLogNode)
       return true;
     if (node instanceof DiscreteLogNode)
@@ -359,12 +342,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     return false;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Add 3D objects
-  //==================================================
+  //= =================================================
 
-  private addTrajectoryLabel(parent: THREE.Object3D)
-  {
+  private addTrajectoryLabel(parent: THREE.Object3D) {
     const { node } = this;
     const { trajectory } = node;
     if (!trajectory)
@@ -382,12 +364,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!label)
       return;
 
-    label.name = TrajectoryLabelName;
+    label.name = trajectoryLabelName;
     parent.add(label);
   }
 
-  private addWellLabel(parent: THREE.Object3D)
-  {
+  private addWellLabel(parent: THREE.Object3D) {
     const { node } = this;
     const { wellNode } = node;
     if (!wellNode)
@@ -408,12 +389,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!label)
       return;
 
-    label.name = WellLabelName;
+    label.name = wellLabelName;
     parent.add(label);
   }
 
-  private addTrajectory(parent: THREE.Object3D): void
-  {
+  private addTrajectory(parent: THREE.Object3D): void {
     const { node } = this;
     const { wellNode } = node;
     if (!wellNode)
@@ -438,13 +418,12 @@ export class WellTrajectoryView extends BaseGroupThreeView
         vertexColors: true,
       });
 
-      if (!this.renderTarget.is2D)
-      {
+      if (!this.renderTarget.is2D) {
         material.emissive = ThreeConverter.toThreeColor(Colors.cyan);
         material.emissiveIntensity = 0.25;
       }
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.name = TrajectoryName;
+      mesh.name = trajectoryName;
       parent.add(mesh);
     }
     {
@@ -457,8 +436,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     }
   }
 
-  private addBands(parent: THREE.Object3D): void
-  {
+  private addBands(parent: THREE.Object3D): void {
     const { node } = this;
     const { bandRange } = this;
     if (!bandRange)
@@ -475,8 +453,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
     const logRender = new LogRender(bandRange, mdRange);
     const bands = logRender.createBands(trajectory, this.transformer, this.cameraPosition, true, true);
 
-    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
-    {
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right]) {
       const band = bands[bandPosition];
       if (!band)
         continue;
@@ -486,40 +463,35 @@ export class WellTrajectoryView extends BaseGroupThreeView
     }
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Add 3D objects
-  //==================================================
+  //= =================================================
 
-  private clearTextures(parent: THREE.Object3D | null): void
-  {
+  private clearTextures(parent: THREE.Object3D | null): void {
     // Clear the textures
     this.bandTextures = [null, null];
     if (parent)
       this.setBandTextures(parent);
   }
 
-  private clearBands(parent: THREE.Object3D): void
-  {
-    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
-    {
+  private clearBands(parent: THREE.Object3D): void {
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right]) {
       const band = parent.getObjectByName(this.getBandName(bandPosition));
       if (band)
         parent.remove(band);
 
-      const trajectoryLabel = parent.getObjectByName(TrajectoryLabelName);
+      const trajectoryLabel = parent.getObjectByName(trajectoryLabelName);
       if (trajectoryLabel)
         parent.remove(trajectoryLabel);
 
-      const wellLabel = parent.getObjectByName(WellLabelName);
+      const wellLabel = parent.getObjectByName(wellLabelName);
       if (wellLabel)
         parent.remove(wellLabel);
     }
   }
 
-  private setBandTextures(parent: THREE.Object3D): void
-  {
-    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
-    {
+  private setBandTextures(parent: THREE.Object3D): void {
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right]) {
       const object = parent.getObjectByName(this.getBandName(bandPosition));
       if (!object)
         continue;
@@ -538,10 +510,9 @@ export class WellTrajectoryView extends BaseGroupThreeView
     }
   }
 
-  private createBandTextures(): (THREE.CanvasTexture | null)[]
-  {
+  private createBandTextures(): (THREE.CanvasTexture | null)[] {
     const textures: (THREE.CanvasTexture | null)[] = [null, null];
-    if (!parent)
+    if (!window.parent)
       return textures;
 
     const { node } = this;
@@ -559,11 +530,9 @@ export class WellTrajectoryView extends BaseGroupThreeView
     const canvases: (Canvas | null)[] = [null, null];
     const { transformer } = this;
 
-    function getOrCreateCanvasAt(bandPosition: BandPosition): Canvas
-    {
+    function getOrCreateCanvasAt(bandPosition: BandPosition): Canvas {
       let canvas = canvases[bandPosition];
-      if (!canvas)
-      {
+      if (!canvas) {
         canvas = logRender.createCanvas(transformer.zScale);
         if (!canvas)
           throw Error("Can not create canvas");
@@ -572,10 +541,8 @@ export class WellTrajectoryView extends BaseGroupThreeView
       return canvas;
     }
 
-    for (let pass = 0; pass < 2; pass++)
-    {
-      for (const logNode of node.getDescendantsByType(DiscreteLogNode))
-      {
+    for (let pass = 0; pass < 2; pass++) {
+      for (const logNode of node.getDescendantsByType(DiscreteLogNode)) {
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
@@ -584,13 +551,10 @@ export class WellTrajectoryView extends BaseGroupThreeView
           continue;
 
         let bandPosition = logStyle.bandPosition.value;
-        if (pass === 0)
-        {
+        if (pass === 0) {
           if (bandPosition === BandPosition.Automatic)
             continue;
-        }
-        else
-        {
+        } else {
           if (bandPosition !== BandPosition.Automatic)
             continue;
 
@@ -603,10 +567,8 @@ export class WellTrajectoryView extends BaseGroupThreeView
     }
     // Calulate the band positions
     const bandPositions = new Map<FloatLogNode, BandPosition>();
-    for (let pass = 0; pass < 2; pass++)
-    {
-      for (const logNode of node.getDescendantsByType(FloatLogNode))
-      {
+    for (let pass = 0; pass < 2; pass++) {
+      for (const logNode of node.getDescendantsByType(FloatLogNode)) {
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
@@ -615,13 +577,10 @@ export class WellTrajectoryView extends BaseGroupThreeView
           continue;
 
         let bandPosition = logStyle.bandPosition.value;
-        if (pass === 0)
-        {
+        if (pass === 0) {
           if (bandPosition === BandPosition.Automatic)
             continue;
-        }
-        else
-        {
+        } else {
           if (bandPosition !== BandPosition.Automatic)
             continue;
 
@@ -632,23 +591,19 @@ export class WellTrajectoryView extends BaseGroupThreeView
       }
     }
     // Now render them, the fill first and then the stroke
-    for (let pass = 0; pass < 2; pass++)
-    {
-      for (const pair of bandPositions)
-      {
+    for (let pass = 0; pass < 2; pass++) {
+      for (const pair of bandPositions) {
         const logNode = pair[0];
         const bandPosition = pair[1];
 
         const logStyle = logNode.getRenderStyle(this.targetId) as FloatLogStyle;
-        if (pass === 0 && logStyle.fillColorType.use)
-        {
+        if (pass === 0 && logStyle.fillColorType.use) {
           const color = logNode.getColorByColorType(logStyle.fillColorType.value);
           const colorMap = logStyle.fillColorType.value === ColorType.ColorMap ? ColorMaps.get(logNode.colorMap) : null;
           const canvas = getOrCreateCanvasAt(bandPosition);
           logRender.addFloatLog(canvas, logNode.log, logStyle, color, colorMap);
         }
-        if (pass === 1 && logStyle.strokeColorType.use)
-        {
+        if (pass === 1 && logStyle.strokeColorType.use) {
           let color = logNode.getColorByColorType(logStyle.strokeColorType.value);
           color = color.darken(0.5);
           const canvas = getOrCreateCanvasAt(bandPosition);
@@ -656,8 +611,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
         }
       }
     }
-    for (const bandPosition of [BandPosition.Left, BandPosition.Right])
-    {
+    for (const bandPosition of [BandPosition.Left, BandPosition.Right]) {
       const canvas = canvases[bandPosition];
       if (!canvas)
         continue;
@@ -668,12 +622,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     return textures;
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS:
-  //==================================================
+  //= =================================================
 
-  public static startPickingAndReturnMd(view: BaseThreeView, viewInfo: ViewInfo, intersection: THREE.Intersection, md?: number): number | undefined
-  {
+  public static startPickingAndReturnMd(view: BaseThreeView, viewInfo: ViewInfo, intersection: THREE.Intersection, md?: number): number | undefined {
     const node = view.getNode();
     const wellNode = node.getThisOrAncestorByType(WellNode);
     if (!wellNode)
@@ -687,11 +640,11 @@ export class WellTrajectoryView extends BaseGroupThreeView
     if (!trajectory)
       return undefined;
 
-    if (md === undefined)
-    {
+    if (md === undefined) {
       const { transformer } = view;
       const position = transformer.toWorld(intersection.point);
       position.substract(wellNode.origin);
+      // eslint-disable-next-line no-param-reassign
       md = trajectory.getClosestMd(position);
     }
     const positionAtMd = Vector3.newEmpty;

@@ -4,28 +4,22 @@ import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils"
 
 // TODO: Remove this middleware if possible
 // Common middleware
-export const NodeVisualizerMiddleware = (store: MiddlewareAPI) => (next: Dispatch) => (action: {
+export const NodeVisualizerMiddleware = (_: MiddlewareAPI) => (next: Dispatch) => (action: {
   type: string;
   payload: any;
-}) =>
-{
+}) => {
   const viewerList = Object.values(ViewerUtils.getViewers());
   const { type } = action;
 
-  switch (type)
-  {
+  switch (type) {
     case ActionTypes.setFullScreenStatus:
     {
-      try
-      {
+      try {
         next(action);
-        for (const viewer of viewerList)
-        {
+        for (const viewer of viewerList) {
           viewer.getTarget()?.onResize();
         }
-      }
-      catch (err)
-      {
+      } catch (err) {
         console.error(err);
       }
 

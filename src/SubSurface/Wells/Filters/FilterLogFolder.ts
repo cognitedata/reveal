@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
@@ -25,68 +25,64 @@ import { CasingFilterLogNode } from "@/SubSurface/Wells/Filters/CasingFilterLogN
 import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
 import FilterLogFolderIcon from "@images/Nodes/FilterLogFolder.png";
 
-export class FilterLogFolder extends BaseNode
-{
-  //==================================================
+export class FilterLogFolder extends BaseNode {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   static className = "FilterLogFolder";
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Identifiable
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get className(): string { return FilterLogFolder.className; }
-  public /*override*/ isA(className: string): boolean { return className === FilterLogFolder.className || super.isA(className); }
+  public /* override */ get className(): string { return FilterLogFolder.className; }
 
-  //==================================================
+  public /* override */ isA(className: string): boolean { return className === FilterLogFolder.className || super.isA(className); }
+
+  //= =================================================
   // OVERRIDES of BaseNode
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get typeName(): string { return "Log filter"; }
-  
-  public /*override*/ getIcon(): string { return FilterLogFolderIcon; }
+  public /* override */ get typeName(): string { return "Log filter"; }
 
-  public /*override*/ canChangeName(): boolean { return false; }
+  public /* override */ getIcon(): string { return FilterLogFolderIcon; }
 
-  public /*override*/ canChangeColor(): boolean { return false; }
+  public /* override */ canChangeName(): boolean { return false; }
 
-  public /*override*/ isLabelInItalic(): boolean { return true; }
+  public /* override */ canChangeColor(): boolean { return false; }
 
-  public /*override*/ isFilter(target: ITarget | null): boolean { return true; }
+  public /* override */ isLabelInItalic(): boolean { return true; }
 
-  public /*override*/ canBeChecked(target: ITarget | null): boolean { return false; }
+  public /* override */ isFilter(_target: ITarget | null): boolean { return true; }
 
-  //==================================================
+  public /* override */ canBeChecked(_target: ITarget | null): boolean { return false; }
+
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  public getFilterLogNode(logNode: BaseLogNode): BaseFilterLogNode | null
-  {
-    for (const filterLogNode of this.getChildrenByType(BaseFilterLogNode))
-    {
+  public getFilterLogNode(logNode: BaseLogNode): BaseFilterLogNode | null {
+    for (const filterLogNode of this.getChildrenByType(BaseFilterLogNode)) {
       if (logNode.isEqual(filterLogNode))
         return filterLogNode;
     }
     return null;
   }
 
-  public synchronize(): void
-  {
+  public synchronize(): void {
     const treeNode = this.getTreeNode();
     if (!treeNode)
       return;
 
     // Iterate over all logs
-    for (const logNode of treeNode.getDescendantsByType(BaseLogNode))
-    {
+    for (const logNode of treeNode.getDescendantsByType(BaseLogNode)) {
       let filterLogNode = this.getFilterLogNode(logNode);
       if (filterLogNode)
         continue;
@@ -102,8 +98,7 @@ export class FilterLogFolder extends BaseNode
     this.sortChildrenByName();
   }
 
-  private createFilterLogNode(logNode: BaseLogNode): BaseFilterLogNode | null
-  {
+  private createFilterLogNode(logNode: BaseLogNode): BaseFilterLogNode | null {
     if (logNode instanceof CasingLogNode)
       return new CasingFilterLogNode();
     if (logNode instanceof DiscreteLogNode)

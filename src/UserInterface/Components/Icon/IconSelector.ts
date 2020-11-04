@@ -17,13 +17,10 @@ import LabelImage from "@images/Show/Label.png";
 
 import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
 
-export function getIcon(iconType: string, iconName: string)
-{
-  switch (iconType)
-  {
-    case IconTypes.ACTIONS:
-      switch (iconName)
-      {
+export function getIcon(iconType: IconTypes, iconName: string) {
+  switch (iconType) {
+    case IconTypes.Actions:
+      switch (iconName) {
         case "Close":
           return FatLeft;
         case "Clean":
@@ -44,43 +41,38 @@ export function getIcon(iconType: string, iconName: string)
           return FontUnderline;
       }
       break;
-    case IconTypes.STATES:
-      switch (iconName)
-      {
+    case IconTypes.States:
+      switch (iconName) {
         case "Pinned":
           return Pinned;
       }
       break;
-    case IconTypes.NODES:
-      switch (iconName)
-      {
+    case IconTypes.Nodes:
+      switch (iconName) {
         case "FolderNode":
           return FolderNode;
         case "MapIcon":
           return MapIcon;
       }
       break;
-    case IconTypes.ARROWS:
-      switch (iconName)
-      {
+    case IconTypes.Arrows:
+      switch (iconName) {
         case "FatRight":
           return FatRight;
         case "FatLeft":
           return FatLeft;
       }
       break;
-    case IconTypes.POINT_SYMBOL:
-      switch (iconName)
-      {
+    case IconTypes.PointSymbol:
+      switch (iconName) {
         case "Cube":
           return Cube;
         case "Sphere":
           return Sphere;
       }
       break;
-    case IconTypes.SHOW:
-      switch (iconName)
-      {
+    case IconTypes.Show:
+      switch (iconName) {
         case "Label":
           return LabelImage;
       }

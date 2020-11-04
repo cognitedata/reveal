@@ -1,4 +1,4 @@
-import { NodeVisualizer } from "@/UserInterface/NodeVisualizer/NodeVisualizer";
+import { NodeVisualizer, NodeVisualizerProps } from "@/UserInterface/NodeVisualizer/NodeVisualizer";
 import { NodeVisualizerReducer } from "@/UserInterface/Redux/reducers/NodeVisualizerReducer";
 import { NodeVisualizerMiddleware } from "@/UserInterface/Redux/Middlewares/NodeVisualizerMiddleware";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
@@ -10,8 +10,17 @@ import { ExplorerPropType } from "@/UserInterface/Components/Explorer/ExplorerTy
 import { ITreeNode } from "@/UserInterface/Components/VirtualTree/ITreeNode";
 import { VisualizerToolbarProps, IToolbarButton, ToolbarButtonClickHandler, ToolbarSelectChangeHandler } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
+export * from "@/SubSurface/Wells/Interfaces/ITrajectory";
+export * from "@/SubSurface/Wells/Interfaces/ITrajectoryRows";
+export * from "@/SubSurface/Wells/Interfaces/IWell";
+export * from "@/SubSurface/Wells/Interfaces/IWellBore";
+export * from "@/SubSurface/Wells/Interfaces/IRisk";
+export * from "@/SubSurface/Wells/Interfaces/ILog";
+export * from "@/SubSurface/Wells/Interfaces/ICasing";
+
 export {
   NodeVisualizer,
+  NodeVisualizerProps,
   NodeVisualizerReducer,
   NodeVisualizerMiddleware,
   BaseRootNode,

@@ -3,74 +3,57 @@ import { TreeCheckState } from "@/UserInterface/NodeVisualizer/Explorer/TreeChec
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 
-export class ExplorerNodeUtils
-{
-  public static selectNodeById(nodeId: string, selectionState: boolean)
-  {
+export class ExplorerNodeUtils {
+  public static selectNodeById(nodeId: string, selectionState: boolean) {
     const node = NodeUtils.getNodeById(nodeId);
 
     if (!node)
       return;
 
-    try
-    {
+    try {
       node.setSelectedInteractive(selectionState);
-    }
-    catch (err)
-    {
+    } catch (err) {
       // tslint:disable-next-line:no-console
-      console.log("Error Selecting Node", err);
+      console.warn("Error Selecting Node", err);
     }
   }
 
-  public static toggleVisibleById(nodeId: string)
-  {
+  public static toggleVisibleById(nodeId: string) {
     const node = NodeUtils.getNodeById(nodeId);
 
     if (!node)
       return;
 
-    try
-    {
+    try {
       node.toggleVisibleInteractive();
-    }
-    catch (err)
-    {
+    } catch (err) {
       // tslint:disable-next-line:no-console
-      console.log("Error Viewing Node", err);
+      console.warn("Error Viewing Node", err);
     }
   }
 
-  public static setNodeExpandById(nodeId: string, expandState: boolean)
-  {
+  public static setNodeExpandById(nodeId: string, expandState: boolean) {
     const node = NodeUtils.getNodeById(nodeId);
     if (!node)
       return;
 
-    try
-    {
-      if (expandState !== node.isExpanded)
-      {
+    try {
+      if (expandState !== node.isExpanded) {
         node.toggleExpandInteractive();
       }
-    }
-    catch (err)
-    {
+    } catch (err) {
       // tslint:disable-next-line:no-console
-      console.log("Error Expanding Node", err);
+      console.warn("Error Expanding Node", err);
     }
   }
 
-  public static getCheckBoxStateByNode(node: BaseNode): TreeCheckState
-  {
+  public static getCheckBoxStateByNode(node: BaseNode): TreeCheckState {
     let checkState = TreeCheckState.Default;
 
-    if (node)
-    {
+    if (node) {
       const coreCheckState = node.getCheckBoxState();
 
-      switch (coreCheckState)
-      {
+      switch (coreCheckState) {
         case CheckBoxState.All:
           checkState = TreeCheckState.Checked;
           break;
@@ -93,15 +76,12 @@ export class ExplorerNodeUtils
     return checkState;
   }
 
-  public static getAllTabNodes(): BaseNode[]
-  {
+  public static getAllTabNodes(): BaseNode[] {
     const rootNode = NodeUtils.getTreeRoot();
     const tabNodes: BaseNode[] = [];
 
-    if (rootNode)
-    {
-      for (const child of rootNode.children)
-      {
+    if (rootNode) {
+      for (const child of rootNode.children) {
         if (child.isTab)
           tabNodes.push(child);
       }
@@ -109,8 +89,7 @@ export class ExplorerNodeUtils
     return tabNodes;
   }
 
-  public static getSelectedNodeOfCurrentTab(tabIndex: number): BaseNode | null
-  {
+  public static getSelectedNodeOfCurrentTab(tabIndex: number): BaseNode | null {
     const tabNodes = ExplorerNodeUtils.getAllTabNodes();
     const currentTabNode = tabNodes[tabIndex];
 

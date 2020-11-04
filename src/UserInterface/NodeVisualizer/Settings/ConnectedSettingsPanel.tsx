@@ -1,9 +1,9 @@
-import { connect } from "react-redux";
-import { State } from "@/UserInterface/Redux/State/State";
-import { SettingsPanel } from "@/UserInterface/Components/Settings/SettingsPanel";
-import { onSectionExpand } from "@/UserInterface/Redux/reducers/SettingsReducer";
-import { Dispatch } from "redux";
-import { SettingsNodeUtils } from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
+import { connect } from 'react-redux';
+import { State } from '@/UserInterface/Redux/State/State';
+import { SettingsPanel } from '@/UserInterface/Components/Settings/SettingsPanel';
+import { onSectionExpand } from '@/UserInterface/Redux/reducers/SettingsReducer';
+import { Dispatch } from 'redux';
+import { SettingsNodeUtils } from '@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils';
 
 function mapDispatchToSettingsPanel(dispatch: Dispatch) {
   return {

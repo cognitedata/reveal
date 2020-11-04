@@ -1,13 +1,5 @@
 # Cognite Node Visualizer
 
-This is a monorepo for a generic visualization of a tree of data (called nodes). Please find the links below to each of the packages available in this repo.
-
-| Project               |            Package             |                                                                                              Readme |
-| --------------------- | :----------------------------: | --------------------------------------------------------------------------------------------------: |
-| Node Visualizer | @cognite/node-visualizer |                                                                                         This Readme |
-| Node Visualizer Subsurface Module | @cognite/node-visualizer-subsurface |  [Readme](https://github.com/cognitedata/node-visualizer/blob/master/src/Interface#readme) |
-| Node Visualizer Components | @cognite/node-visualizer-components | [Readme](https://github.com/cognitedata/node-visualizer/blob/master/src/Components#readme) |
-
 ## Node Visualizer library usage
 
 ### for cognite org users in npm
@@ -15,8 +7,8 @@ This is a monorepo for a generic visualization of a tree of data (called nodes).
 This package is available as a private package in [npm](https://www.npmjs.com/package/@cognite/node-visualizer).
 To use this library user must be a member of cognite NPM organization.
 
-- login to npm and follow steps : `npm login`
-- install library : `npm i @cognite/node-visualizer`
+- login to npm and follow steps : `yarn login`
+- install library : `yarn add @cognite/node-visualizer`
 - Import React component and reducer and store enhancers:
 
 ```javascript
@@ -30,19 +22,41 @@ import {
 - Add the component and provide a store
 
 ```typescript jsx
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { ThreeModule, SyntheticSubSurfaceModule } from '@cognite/node-visualizer';
+import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import { Provider } from "react-redux";
 
+// Create redux store
 const store = createStore(
   combineReducers({ ...NodeVisualizerReducer }),
   applyMiddleware(...NodeVisualizerMiddleware)
 );
 
+// init three module
+const modules = Modules.instance;
+
+modules.clearModules();
+modules.add(new ThreeModule());
+
+// API_URL, API_KEY and FILE_ID come from env variables in this case
+const syntheticModule = new SyntheticSubSurfaceModule();
+syntheticModule.addSeismicCube(
+  new CogniteSeismicClient({
+    api_url: process.env.API_URL || 'https://api.cognitedata.com',
+    api_key: process.env.API_KEY,
+  }),
+  process.env.FILE_ID
+);
+modules.add(syntheticModule);
+modules.install();
+
+const root = modules.createRoot();
+
 function App() {
   return (
     <div className="App">
-      <Provider>
-        <NodeVisualizer />
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
       </Provider>
     </div>
   );
@@ -107,14 +121,6 @@ const theme = createMuiTheme({
 ```
 Further more custom appearance variables are available in [Appearance.ts](https://github.com/cognitedata/node-visualizer/blob/master/src/Core/States/Appearance.ts)
 
-### Customizing Tree Control
-
-refer [Tree Control Readme](https://github.com/cognitedata/node-visualization/blob/master/src/Components#readme)
-
-### Examples
-
-refer [theme for standalone Application](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/theme.scss)
-
 ## For Contributors
 
 ### Developing on Visual Studio Code
@@ -126,64 +132,16 @@ Recommended extensions:
 
 ### Starting development web server
 
-- Create a folder as /src/Solutions/BP/MockData/Sample and place the sample data files which can be downloaded from https://drive.google.com/drive/folders/1bCFeC9YcWdbDsx0vZ1Uf59PJoreLBGYj?usp=sharing
-- create file .env in the root folder with entries  </br>
-  `API_URL=<your cognite api url>` </br>
-  `FILE_ID=<your seismic api file id>` </br>
-  `API_KEY=<your seismic api key>`
-
-
-#### Application In Development Mode with React User Interface
-
-- start react app: `npm install && npm run start:dev`
-
-#### Application as a Embedded Application of a React Application
-
-- Navigate to _standalone_ directory: `cd standalone`
-- Start react app with web server: `npm run start`
-
-Web server will restart and browser will automatically update whenever a file changes.
-
-### Output Production Bundles - Node Visualizer
-
-This project exposes the application as a react component library and as well as a standalone react application.
+To start development you can run
+```
+yarn build:watch
+yarn storybook
+```
+Then you can add some story to document functionality that you want add.
 
 #### React component
 
 - Run build command in project base directory: `npm run build`
 
 Project build as a library will be created in **dist/node-visualizer** folder.
-
-#### Standalone application
-
-- Build as React Component
-- Navigate to _standalone_ directory: `cd standalone`
-- Produce standalone application build: `npm run build`
-
-Optimized standalone application build will be created in **standalone/build** directory.
-
-### Develop with Yarn Workspaces
-
-- Clone bp-visualization and Node-visualizer projects into a root folder
-- Create a `package.json` at root folder with the following content.
-```
-    {
-        "private": true,
-        "workspaces": [
-            "bp-visualization",
-            "node-visualizer"
-        ]
-    }
-```
-
-- Change "@cognite/node-visualizer" version in bp-visualization/package.json to match with node-visualizer version.
-- Run `yarn` command at the root folder.
-- Run `yarn build` command at the node-visualizer project. (You might have to run `build:types` also depending on the environment)
-- Run `set https=true&&yarn start` at the bp-visualzation project.
-- Make any change in the node-visualizer and run `yarn build` there. The bp-visualization will built automatically to reflect the changes.
-- When subsurface standalone needs to be run, use start:root command which access the node modules from root folder.
-
-#### Get dependencies for bp-visualization again from npm registry
-- Change "@cognite/node-visualizer" version in bp-visualization/package.json to a valid version in npm registry. (It should not match with the locally built node-visualization version).
-- If you face any conflicts/issues while getting dependencies back from npm registry, just remove or rename the root package.json and run `yarn` command from bp-visualization project
 

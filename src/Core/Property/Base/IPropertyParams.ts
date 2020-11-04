@@ -1,7 +1,6 @@
 import { IsEnabled, StringAction, ValidateOption } from "@/Core/Property/Base/ValueProperty";
 
-export interface IPropertyParams<T>
-{
+export interface IPropertyParams<T> {
   name: string;
   toolTip?: string;
   instance?: object; // Either this is set

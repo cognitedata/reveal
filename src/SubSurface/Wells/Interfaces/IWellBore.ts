@@ -8,8 +8,7 @@
  */
 export type WellBoreId = number;
 
-export interface IWellBoreMeta 
-{
+export interface IWellBoreMeta {
   type: string;
   active_indicator: string;
   asset_rig: string;
@@ -37,8 +36,7 @@ export interface IWellBoreMeta
   wellbore_remark: string;
 }
 
-export interface IWellBore 
-{
+export interface IWellBore {
   externalId: string;
   name: string;
   parentId: number;

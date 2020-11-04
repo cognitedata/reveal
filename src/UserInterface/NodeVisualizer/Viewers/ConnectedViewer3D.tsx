@@ -1,15 +1,15 @@
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
-import { State } from "@/UserInterface/Redux/State/State";
-import { executeVisualizerToolbarCommand } from "@/UserInterface/Redux/reducers/VisualizersReducer";
-import { Viewer3D } from "@/UserInterface/Components/Viewers/Viewer3D";
-import { ViewerUtils } from "@/UserInterface/NodeVisualizer/Viewers/ViewerUtils";
-import { ToolbarConfig } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { State } from '@/UserInterface/Redux/State/State';
+import { executeVisualizerToolbarCommand } from '@/UserInterface/Redux/reducers/VisualizersReducer';
+import { Viewer3D } from '@/UserInterface/Components/Viewers/Viewer3D';
+import { ViewerUtils } from '@/UserInterface/NodeVisualizer/Viewers/ViewerUtils';
+import { ToolbarConfig } from '@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
 
 const mapStateToProps = (state: State) => {
-  const toolbarCommands = ViewerUtils.getViewers()["3D"]?.getToolbarCommands();
+  const toolbarCommands = ViewerUtils.getViewers()['3D']?.getToolbarCommands();
 
-  const toolbarCommandStates = state.visualizers.viewers["3D"];
+  const toolbarCommandStates = state.visualizers.viewers['3D'];
   const displayToolbar: ToolbarConfig = {};
 
   if (toolbarCommandStates) {

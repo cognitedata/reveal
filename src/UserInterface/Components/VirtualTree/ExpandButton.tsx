@@ -1,11 +1,11 @@
-import React, { useState, KeyboardEvent, MouseEvent } from "react";
-import styled from "styled-components";
+import React, { useState, KeyboardEvent, MouseEvent } from 'react';
+import styled from 'styled-components';
 // images
-import ExpandOpen from "@images/Expanders/ExpandOpen.png";
-import ExpandClosed from "@images/Expanders/ExpandClosed.png";
-import ExpandOpenFocus from "@images/Expanders/ExpandOpenFocus.png";
-import ExpandClosedFocus from "@images/Expanders/ExpandClosedFocus.png";
-import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
+import ExpandOpen from '@images/Expanders/ExpandOpen.png';
+import ExpandClosed from '@images/Expanders/ExpandClosed.png';
+import ExpandOpenFocus from '@images/Expanders/ExpandOpenFocus.png';
+import ExpandClosedFocus from '@images/Expanders/ExpandClosedFocus.png';
+import { HTMLUtils } from '@/UserInterface/Foundation/Utils/HTMLUtils';
 
 interface ExpandProps {
   readonly expanded?: boolean;
@@ -29,12 +29,15 @@ const Expand = styled.div<ExpandProps>`
     background-repeat: no-repeat, no-repeat;
   }
 `;
-export function ExpandButton(props: {
+
+interface ExpandButtonProps {
   expandable: boolean;
   expanded?: boolean;
   onExpand: (e: any) => void;
   onCollapse: (e: any) => void;
-}) {
+}
+
+export const ExpandButton = (props: ExpandButtonProps) => {
   const [expanded, setExpanded] = useState(props.expanded || true);
 
   const onEvent = (e: MouseEvent<HTMLDivElement>) => {
@@ -65,4 +68,4 @@ export function ExpandButton(props: {
     );
   }
   return <div className="expand-btn" />;
-}
+};

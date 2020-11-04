@@ -8,8 +8,7 @@
  */
 export type WellId = number;
 
-export interface IWellMeta 
-{
+export interface IWellMeta {
   active_indicator: string;
   basin_name: string;
   country_name: string;
@@ -32,8 +31,7 @@ export interface IWellMeta
   y_coordinate: string;
 }
 
-export interface IWell 
-{
+export interface IWell {
   externalId: string;
   name: string;
   parentId: number;

@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 import { Base3DView } from "@/Core/Views/Base3DView";
@@ -18,13 +18,12 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 
-export abstract class BaseThreeView extends Base3DView
-{
+export abstract class BaseThreeView extends Base3DView {
   public static readonly noPicking = "noPicking";
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   protected get scene(): THREE.Scene { return this.renderTarget.scene; }
 
@@ -34,48 +33,44 @@ export abstract class BaseThreeView extends Base3DView
 
   protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
     this.invalidateTarget();
   }
 
-  protected /*override*/ onShowCore(): void
-  {
+  protected /* override */ onShowCore(): void {
     super.onShowCore();
     this.invalidateTarget();
   }
 
-  protected /*override*/ onHideCore(): void
-  {
+  protected /* override */ onHideCore(): void {
     super.onHideCore();
     this.invalidateTarget();
   }
 
-  //==================================================
+  //= =================================================
   // VIRTUAL METHODS
-  //==================================================
+  //= =================================================
 
-  public /*virtual*/ shouldPick(): boolean { return true; }
+  public /* virtual */ shouldPick(): boolean { return true; }
 
-  public /*virtual*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void { }
+  public /* virtual */ onShowInfo(_viewInfo: ViewInfo, _intersection: THREE.Intersection): void { }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  protected invalidateTarget(): void
-  {
+  protected invalidateTarget(): void {
     const target = this.renderTarget;
     if (!target)
       return;

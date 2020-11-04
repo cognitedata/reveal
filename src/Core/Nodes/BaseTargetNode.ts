@@ -11,81 +11,82 @@ import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
 import { Colors } from "@/Core/Primitives/Colors";
 import { Util } from "@/Core/Primitives/Util";
 
-export abstract class BaseTargetNode extends BaseNode implements ITarget
-{
-  //==================================================
+export abstract class BaseTargetNode extends BaseNode implements ITarget {
+  //= =================================================
   // STATIC FIELDS
-  //==================================================
+  //= =================================================
 
   static className = "BaseTargetNode";
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   protected constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // INSTANCE FIELDS
-  //==================================================
+  //= =================================================
 
   private _viewsShownHere: ViewList = new ViewList();
+
   public isLightBackground = false;
 
-  //==================================================
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   public get viewsShownHere(): ViewList { return this._viewsShownHere; }
+
   public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
+
   public get fgColor(): Color { return this.isLightBackground ? Colors.black : Colors.white; }
+
   public get bgColor(): Color { return this.getColor(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Identifiable
-  //==================================================
+  //= =================================================
 
-  public /*override*/ get className(): string { return BaseTargetNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === BaseTargetNode.className || super.isA(className); }
+  public /* override */ get className(): string { return BaseTargetNode.className; }
 
-  //==================================================
+  public /* override */ isA(className: string): boolean { return className === BaseTargetNode.className || super.isA(className); }
+
+  //= =================================================
   // OVERRIDES of BaseNode
-  //==================================================
+  //= =================================================
 
-  public /*override*/ getColor(): Color { return this.isLightBackground ? Colors.white : Colors.black; }
-  public /*override*/ get typeName(): string { return "Target"; }
-  public /*override*/ canBeActive(): boolean { return true; }
+  public /* override */ getColor(): Color { return this.isLightBackground ? Colors.white : Colors.black; }
 
-  public /*override*/ getDebugString(): string
-  {
+  public /* override */ get typeName(): string { return "Target"; }
+
+  public /* override */ canBeActive(): boolean { return true; }
+
+  public /* override */ getDebugString(): string {
     let result = super.getDebugString();
     if (this.viewsShownHere.count > 0)
       result += Util.cocatinate("viewsShownHere", this.viewsShownHere.count);
     return result;
   }
 
-  protected /*override*/ removeInternalData(): void
-  {
+  protected /* override */ removeInternalData(): void {
     this.removeAllViewsShownHere();
     super.removeInternalData();
   }
 
-  //==================================================
+  //= =================================================
   // IMPLEMENTATION of Target
-  //==================================================
+  //= =================================================
 
-  public canShowView(node: BaseVisualNode): boolean
-  {
+  public canShowView(node: BaseVisualNode): boolean {
     return ViewFactory.instance.canCreate(node, this.className);
   }
 
-  public hasView(node: BaseVisualNode): boolean
-  {
+  public hasView(node: BaseVisualNode): boolean {
     return node.views.getViewByTarget(this) != null;
   }
 
-  public hasVisibleView(node: BaseVisualNode): boolean
-  {
+  public hasVisibleView(node: BaseVisualNode): boolean {
     const view = node.views.getViewByTarget(this);
     if (!view)
       return false;
@@ -93,11 +94,9 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     return view.isVisible;
   }
 
-  public showView(node: BaseVisualNode): boolean
-  {
+  public showView(node: BaseVisualNode): boolean {
     let view = node.views.getViewByTarget(this);
-    if (!view)
-    {
+    if (!view) {
       view = this.createViewCore(node);
       if (!view)
         return false;
@@ -105,17 +104,9 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
       view.attach(node, this);
       node.views.add(view);
       this._viewsShownHere.add(view);
-      //view.isVisible = true;
+      // view.isVisible = true;
       view.initialize();
-    }
-    // else if (view.stayAliveIfInvisible)
-    // {
-    //   if (view.isVisible)
-    //     return false;
-    //   else
-    //     view.isVisible = true;
-    // }
-    else
+    } else
       return false;
 
     view.onShow();
@@ -123,8 +114,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     return true;
   }
 
-  public hideView(node: BaseVisualNode): boolean
-  {
+  public hideView(node: BaseVisualNode): boolean {
     const view = node.views.getViewByTarget(this);
     if (!view)
       return false;
@@ -134,8 +124,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     return true;
   }
 
-  public removeViewShownHere(view: BaseView): void
-  {
+  public removeViewShownHere(view: BaseView): void {
     // if (!view.stayAliveIfInvisible || !view.isVisible)
     // {
     //   view.onHide();
@@ -149,28 +138,24 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     view.detach();
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS
-  //==================================================
+  //= =================================================
 
-  public getBgColor(hasAxis: boolean): Color
-  {
+  public getBgColor(hasAxis: boolean): Color {
     if (!hasAxis)
       return this.bgColor;
     return this.isLightBackground ? Colors.lightGrey : Colors.darkGrey;
   }
 
-  private createViewCore(node: BaseVisualNode)
-  {
+  private createViewCore(node: BaseVisualNode) {
     return ViewFactory.instance.create(node, this.className);
   }
 
-  public removeAllViewsShownHere(): void
-  {
-    for (const view of this.viewsShownHere.list)
-    {
+  public removeAllViewsShownHere(): void {
+    for (const view of this.viewsShownHere.list) {
       view.onHide();
-      //view.isVisible = false;
+      // view.isVisible = false;
       view.dispose();
       const node = view.getNode();
       if (node instanceof BaseVisualNode)
@@ -180,10 +165,8 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     this._viewsShownHere.clear();
   }
 
-  public hasViewOfNodeType<T extends BaseNode>(classType: Class<T>): boolean
-  {
-    for (const view of this.viewsShownHere.list)
-    {
+  public hasViewOfNodeType<T extends BaseNode>(classType: Class<T>): boolean {
+    for (const view of this.viewsShownHere.list) {
       const node = view.getNode();
       if (!node)
         continue;
@@ -197,10 +180,8 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     return false;
   }
 
-  public getViewByNode(node: BaseNode): BaseView | null
-  {
-    for (const view of this.viewsShownHere.list)
-    {
+  public getViewByNode(node: BaseNode): BaseView | null {
+    for (const view of this.viewsShownHere.list) {
       const otherNode = view.getNode();
       if (!otherNode)
         continue;

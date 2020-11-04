@@ -1,0 +1,100 @@
+import { Meta, Story, ArgsTable } from '@storybook/addon-docs/blocks';
+import {
+  AuthWrapper,
+  NodeVisualizerComponent,
+  NodeVisualizerExplorer,
+  NodeVisualizerToolbar
+} from './node-visualizer.helper';
+import { Explorer, Toolbar } from './components';
+
+<Meta title="Node-visualizer/Use-cases" />
+
+# Node Visualizer
+
+`<NodeVisualizer />` is a component for 3D model node visualization.
+
+## Basic usage
+
+To use component you should:
+- login to npm via `yarn login`
+- add library to your project
+- import component, redux reduce and store
+- init root module to provide it for `NodeVisualizer` component
+
+Simple init code snippet might look something like:
+
+```typescript tsx
+import {
+  NodeVisualizer,
+  NodeVisualizerReducer,
+  NodeVisualizerMiddleware,
+  SyntheticSubSurfaceModule,
+  ThreeModule,
+  Modules,
+} from "@cognite/node-visualizer";
+import { applyMiddleware, combineReducers, compose, createStore } from "redux";
+import { Provider } from "react-redux";
+
+// Create redux store
+const store = createStore(
+  combineReducers({ ...NodeVisualizerReducer }),
+  applyMiddleware(...NodeVisualizerMiddleware)
+);
+
+// init three module
+const modules = Modules.instance;
+
+modules.clearModules();
+modules.add(new ThreeModule());
+
+// API_URL, API_KEY and FILE_ID come from env variables in this case
+const syntheticModule = new SyntheticSubSurfaceModule();
+syntheticModule.addSeismicCube(
+  new CogniteSeismicClient({
+    api_url: process.env.API_URL || 'https://api.cognitedata.com',
+    api_key: process.env.API_KEY,
+  }),
+  process.env.FILE_ID
+);
+modules.add(syntheticModule);
+modules.install();
+
+const root = modules.createRoot();
+
+function App() {
+  return (
+    <div className="App">
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
+      </Provider>
+    </div>
+  );
+}
+```
+
+So, the result can be something like example below except the way, how you provide api credentials (key, url, file id).
+Example below uses form to define **API_URL**, **API_KEY** and **FILE_ID**.
+
+<Story name="Basic">
+  <AuthWrapper />
+</Story>
+
+### Properties:
+<ArgsTable of={NodeVisualizerComponent} />
+
+## Custom toolbar and explorer
+
+To customize node tree and toolbar appearance `explorer` and `toolbar` props can be specified
+
+<Story name="Custom explorer and toolbar">
+  <AuthWrapper explorer={Explorer} toolbar={Toolbar} />
+</Story>
+
+In case above node tree explorer component receive props:
+<ArgsTable of={NodeVisualizerExplorer} />
+
+And props for custom toolbar:
+<ArgsTable of={NodeVisualizerToolbar} />
+
+
+

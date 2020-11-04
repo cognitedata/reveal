@@ -1,15 +1,13 @@
 import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
 
 // TitleBar interface
-export interface TitleBarState
-{
+export interface TitleBarState {
   name: string;
   icon: { src?: string; description?: string; color?: string };
   toolBar: ToolBarType;
 }
 
-export interface ISettingsPropertyState
-{
+export interface ISettingsPropertyState {
   name: string,
   displayName: string,
   type: string,
@@ -24,8 +22,7 @@ export interface ISettingsPropertyState
 }
 
 // Settings component state interface
-export interface ISettingsState
-{
+export interface ISettingsState {
   currentNodeId: string;
   titleBar: TitleBarState;
   expandedSections: {[sectionName: string]: boolean};

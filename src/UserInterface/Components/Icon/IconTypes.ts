@@ -1,15 +1,15 @@
 // Icon types
-export const IconTypes = {
-  ACTIONS: "Actions",
-  ARROWS: "Arrows",
-  CHECKBOXES: "Checkboxes",
-  EXPANDERS: "Expanders",
-  COMMANDS: "Commands",
-  NODES: "Nodes",
-  OVERLAYS: "Overlays",
-  PLAYER: "Player",
-  POINTS: "Points",
-  POINT_SYMBOL: "PointSymbol",
-  SHOW: "Show",
-  STATES: "States",
+export enum IconTypes {
+  Actions = "Actions",
+  Arrows = "Arrows",
+  Checkboxes = "Checkboxes",
+  Expanders = "Expanders",
+  Commands = "Commands",
+  Nodes = "Nodes",
+  Overlays = "Overlays",
+  Player = "Player",
+  Points = "Points",
+  PointSymbol = "PointSymbol",
+  Show = "Show",
+  States = "States",
 };

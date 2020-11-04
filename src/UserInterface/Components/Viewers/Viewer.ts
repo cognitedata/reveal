@@ -2,8 +2,7 @@ import { Toolbar } from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
 import { IToolbarGroups } from "@/Core/Interfaces/IToolbarGroups";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
-export class Viewer
-{
+export class Viewer {
 
   // Name of the viewer
   private name: string;
@@ -17,16 +16,14 @@ export class Viewer
   // Holds a reference to view toolbar
   private toolbarCommands: IToolbarGroups = {};
 
-  constructor(name: string, ref: any)
-  {
+  constructor(name: string, ref: any) {
     this.name = name;
     this.htmlElement = ref;
   }
 
   public setTarget(target: BaseRenderTargetNode) { this.target = target; }
 
-  public setToolbarCommands(toolbar: Toolbar)
-  {
+  public setToolbarCommands(toolbar: Toolbar) {
     this.toolbarCommands = toolbar.getCommands();
   }
 

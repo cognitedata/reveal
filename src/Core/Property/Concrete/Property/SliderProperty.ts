@@ -3,14 +3,12 @@ import { IPropertyParams } from "@/Core/Property/Base/IPropertyParams";
 
 // It goes from 0 to 1
 
-export class SliderProperty extends ValueProperty<number>
-{
-  //==================================================
+export class SliderProperty extends ValueProperty<number> {
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
-  public constructor(params: IPropertyParams<number>)
-  {
+  public constructor(params: IPropertyParams<number>) {
     super(params);
   }
 }

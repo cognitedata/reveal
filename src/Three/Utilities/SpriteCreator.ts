@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 import * as Color from "color";
@@ -18,14 +18,12 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { Canvas } from "@/Three/Utilities/Canvas";
 
-export class SpriteCreator
-{
-  //==================================================
-  // STATIC METHODS: 
-  //==================================================
+export class SpriteCreator {
+  //= =================================================
+  // STATIC METHODS:
+  //= =================================================
 
-  public static createByPositionAndDirection(text: string, position: Vector3, tickDirection: Vector3, worldHeight: number, color: Color): THREE.Sprite | null
-  {
+  public static createByPositionAndDirection(text: string, position: Vector3, tickDirection: Vector3, worldHeight: number, color: Color): THREE.Sprite | null {
     const label = SpriteCreator.create(text, worldHeight, color);
     if (!label)
       return null;
@@ -37,8 +35,7 @@ export class SpriteCreator
     return label;
   }
 
-  public static createByPositionAndAlignment(text: string, position: Vector3, alignment: number, worldHeight: number, color: Color): THREE.Sprite | null
-  {
+  public static createByPositionAndAlignment(text: string, position: Vector3, alignment: number, worldHeight: number, color: Color): THREE.Sprite | null {
     const sprite = SpriteCreator.create(text, worldHeight, color);
     if (!sprite)
       return null;
@@ -48,16 +45,14 @@ export class SpriteCreator
     return sprite;
   }
 
-  public static create(text: string, worldHeight: number, color: Color): THREE.Sprite | null
-  {
+  public static create(text: string, worldHeight: number, color: Color): THREE.Sprite | null {
     const canvas = SpriteCreator.createCanvasWithText(text, color);
     if (!canvas)
       return null;
     return SpriteCreator.createSprite(canvas, worldHeight);
   }
 
-  public static createSprite(canvas: HTMLCanvasElement, worldHeight: number): THREE.Sprite
-  {
+  public static createSprite(canvas: HTMLCanvasElement, worldHeight: number): THREE.Sprite {
     const texture = SpriteCreator.createTexture(canvas);
     const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(spriteMaterial);
@@ -65,8 +60,7 @@ export class SpriteCreator
     return sprite;
   }
 
-  public static createTexture(canvas: HTMLCanvasElement): THREE.Texture
-  {
+  public static createTexture(canvas: HTMLCanvasElement): THREE.Texture {
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter; // Don't change this, https://stackoverflow.com/questions/55175351/remove-texture-has-been-resized-console-logs-in-three-js
     texture.magFilter = THREE.NearestFilter;
@@ -78,8 +72,7 @@ export class SpriteCreator
     return texture;
   }
 
-  public static createCanvasWithText(text: string, color: Color): HTMLCanvasElement | null
-  {
+  public static createCanvasWithText(text: string, color: Color): HTMLCanvasElement | null {
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = 2;
     const fontSize = 40;
@@ -106,8 +99,8 @@ export class SpriteCreator
     context.textBaseline = "middle";
     context.textAlign = "center";
 
-    //context.fillStyle = 'red';
-    //context.fillRect(0, 0, width, height);
+    // context.fillStyle = 'red';
+    // context.fillRect(0, 0, width, height);
 
     // scale to fit but don't stretch
     context.translate(width / 2, height / 2);
@@ -116,16 +109,15 @@ export class SpriteCreator
     return canvas;
   }
 
-  //==================================================
+  //= =================================================
   // STATIC METHODS: Helpers
-  //==================================================
+  //= =================================================
 
-  private static align(sprite: THREE.Sprite, alignment: number): void
-  {
+  private static align(sprite: THREE.Sprite, alignment: number): void {
     //     alignment
     //   6     7     8
     //   3     4     5
-    //   0     1     2 
+    //   0     1     2
 
     // If alignment == 0:
     //    Text Here
@@ -135,8 +127,7 @@ export class SpriteCreator
     //            + <--- Point
     //   Text Here
 
-    switch (alignment)
-    {
+    switch (alignment) {
       case 0:
       case 3:
       case 6:
@@ -149,8 +140,7 @@ export class SpriteCreator
         sprite.position.x += sprite.scale.x / 2;
         break;
     }
-    switch (alignment)
-    {
+    switch (alignment) {
       case 0:
       case 1:
       case 2:

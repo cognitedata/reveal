@@ -1,23 +1,23 @@
-import "./virtual-tree.scss";
-import React, { KeyboardEvent } from "react";
-import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
-import { List as VirtualList } from "react-virtualized/dist/es/List";
-import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
-import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
-import { TreeItemButton } from "@/UserInterface/Components/VirtualTree/TreeItemControl";
-import { ChromaIcon } from "@/UserInterface/Components/ChromaIcon/ChromaIcon";
-import { ExpandButton } from "@/UserInterface/Components/VirtualTree/ExpandButton";
-import { VirtualTreeProps } from "@/UserInterface/Components/VirtualTree/VirtualTreeProps";
-import { ITreeNode } from "@/UserInterface/Components/VirtualTree//ITreeNode";
+import './virtual-tree.scss';
+import React, { KeyboardEvent } from 'react';
+import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
+import { List as VirtualList } from 'react-virtualized/dist/es/List';
+import { readCssVariablePixelNumber } from '@/UserInterface/Foundation/Utils/cssUtils';
+import { HTMLUtils } from '@/UserInterface/Foundation/Utils/HTMLUtils';
+import { TreeItemButton } from '@/UserInterface/Components/VirtualTree/TreeItemControl';
+import { ChromaIcon } from '@/UserInterface/Components/ChromaIcon/ChromaIcon';
+import { ExpandButton } from '@/UserInterface/Components/VirtualTree/ExpandButton';
+import { VirtualTreeProps } from '@/UserInterface/Components/VirtualTree/VirtualTreeProps';
+import { ITreeNode } from '@/UserInterface/Components/VirtualTree//ITreeNode';
 
 const DEFAULT_ROW_HEIGHT = 22;
 
-export function VirtualTree(props: VirtualTreeProps) {
+export const VirtualTree = (props: VirtualTreeProps) => {
   const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck } = props;
 
   const TREE_ITEM_HEIGHT =
-    readCssVariablePixelNumber("--v-tree-item-height") +
-    readCssVariablePixelNumber("--v-tree-item-bottom-margin");
+    readCssVariablePixelNumber('--v-tree-item-height') +
+    readCssVariablePixelNumber('--v-tree-item-bottom-margin');
 
   const data = props.data || [];
   const singleRowHeight =
@@ -103,13 +103,13 @@ export function VirtualTree(props: VirtualTreeProps) {
               tabIndex={0}
               role="button"
               aria-label="select tree item"
-              className={`tree-item-lbl${item.selected ? " selected" : ""}`}
+              className={`tree-item-lbl${item.selected ? ' selected' : ''}`}
               onClick={onNodeSelect}
               onKeyUp={onNodeLabelEnter}
               style={{
-                fontWeight: bold ? "bold" : "normal",
-                fontStyle: italic ? "italic" : "normal",
-                color: color ? color.hex() : "black",
+                fontWeight: bold ? 'bold' : 'normal',
+                fontStyle: italic ? 'italic' : 'normal',
+                color: color ? color.hex() : 'black',
               }}
             >
               {itemText}
@@ -179,4 +179,4 @@ export function VirtualTree(props: VirtualTreeProps) {
       </AutoSizer>
     </div>
   );
-}
+};

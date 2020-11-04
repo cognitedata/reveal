@@ -1,15 +1,15 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
-// in October 2019. It is suited for flexible and customizable visualization of
-// multiple dataset in multiple viewers.
+//= ====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
+// in October 2019. It is suited for flexible and customizable visualization of
+// multiple dataset in multiple viewers.
 //
-// It is a C# to typescript port from the Modern Model architecture,
-// based on the experience when building Petrel.
+// It is a C# to typescript port from the Modern Model architecture,
+// based on the experience when building Petrel.
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//= ====================================================================================
 
 import * as THREE from "three";
 
@@ -29,52 +29,44 @@ import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { Changes } from "@/Core/Views/Changes";
 import { Colors } from "@/Core/Primitives/Colors";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 
-const SolidName = "Solid";
-const ContoursName = "Contour";
+const solidName = "Solid";
+const contoursName = "Contour";
 
-export class SurfaceThreeView extends BaseGroupThreeView
-{
-  //==================================================
+export class SurfaceThreeView extends BaseGroupThreeView {
+  //= =================================================
   // INSTANCE PROPERTIES
-  //==================================================
+  //= =================================================
 
   protected get node(): SurfaceNode { return super.getNode() as SurfaceNode; }
 
   protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
 
-  //==================================================
+  //= =================================================
   // CONSTRUCTOR
-  //==================================================
+  //= =================================================
 
   public constructor() { super(); }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
-    if (args.isChanged(Changes.nodeColorMap))
-    {
+    if (args.isChanged(Changes.nodeColorMap)) {
       const parent = this.object3D;
       if (!parent)
         return;
 
       this.touch();
     }
-    if (args.isChanged(Changes.renderStyle))
-    {
-      if (this._object3D)
-      {
+    if (args.isChanged(Changes.renderStyle)) {
+      if (this._object3D) {
         const { style } = this;
-        if (args.isNameChanged(Changes.renderStyle, style.solidShininess.name, style.solidOpacity.name))
-        {
-          const mesh = this._object3D.getObjectByName(SolidName) as THREE.Mesh;
-          if (mesh)
-          {
+        if (args.isNameChanged(Changes.renderStyle, style.solidShininess.name, style.solidOpacity.name)) {
+          const mesh = this._object3D.getObjectByName(solidName) as THREE.Mesh;
+          if (mesh) {
             SurfaceThreeView.setMaterial(mesh.material as THREE.MeshPhongMaterial, style, this.renderTarget.is2D);
             this.invalidateTarget();
             return;
@@ -85,18 +77,17 @@ export class SurfaceThreeView extends BaseGroupThreeView
     }
   }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of Base3DView
-  //==================================================
+  //= =================================================
 
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined { return this.node.boundingBox; }
+  public /* override */ calculateBoundingBoxCore(): Range3 | undefined { return this.node.boundingBox; }
 
-  //==================================================
+  //= =================================================
   // OVERRIDES of BaseGroupThreeView
-  //==================================================
+  //= =================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /* override */ createObject3DCore(): THREE.Object3D | null {
     const { node } = this;
     const grid = node.surface;
     if (!grid)
@@ -119,8 +110,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     return parent;
   }
 
-  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
-  {
+  public /* override */ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void {
     const { node } = this;
     viewInfo.addPickedNode(node);
 
@@ -139,12 +129,11 @@ export class SurfaceThreeView extends BaseGroupThreeView
     viewInfo.addValue("Cell", cell.toString());
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS:
-  //==================================================
+  //= =================================================
 
-  private createSolid(): THREE.Object3D | null
-  {
+  private createSolid(): THREE.Object3D | null {
     const { style } = this;
     if (!style.solidColorType.use)
       return null;
@@ -167,34 +156,29 @@ export class SurfaceThreeView extends BaseGroupThreeView
     SurfaceThreeView.setMaterial(material, style, this.renderTarget.is2D);
 
     let texture: THREE.DataTexture | null = null;
-    if (style.solidColorType.value === ColorType.ColorMap)
-    {
+    if (style.solidColorType.value === ColorType.ColorMap) {
       material.color = ThreeConverter.toThreeColor(Colors.white);
       if (!style.solidContour.use)
         texture = TextureKit.create1D(ColorMaps.get(node.colorMap));
       else
         texture = TextureKit.create1DContours(ColorMaps.get(node.colorMap), grid.boundingBox.z, style.increment.value, style.solidContour.value);
-    }
-    else if (style.solidContour.use)
-    {
+    } else if (style.solidContour.use) {
       material.color = ThreeConverter.toThreeColor(Colors.white);
       texture = TextureKit.create1DContours(ColorMaps.get(node.colorMap), grid.boundingBox.z, style.increment.value, style.solidContour.value, color);
-    }
-    else
+    } else
       material.color = ThreeConverter.toThreeColor(color);
 
-    //const texture = material.map as THREE.DataTexture;
+    // const texture = material.map as THREE.DataTexture;
     if (texture)
       texture.anisotropy = 4;
     material.map = texture;
 
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.name = SolidName;
+    mesh.name = solidName;
     return mesh;
   }
 
-  private createContours(): THREE.Object3D | null
-  {
+  private createContours(): THREE.Object3D | null {
     const { style } = this;
     if (!style.contourColorType.use)
       return null;
@@ -216,16 +200,15 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
     const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: 1 });
     const contours = new THREE.LineSegments(geometry, material);
-    contours.name = ContoursName;
+    contours.name = contoursName;
     return contours;
   }
 
-  //==================================================
+  //= =================================================
   // INSTANCE METHODS: Shader experiments
-  //==================================================
+  //= =================================================
 
-  private static setMaterial(material: THREE.MeshPhongMaterial | null, style: SurfaceRenderStyle | null, is2D: boolean)
-  {
+  private static setMaterial(material: THREE.MeshPhongMaterial | null, style: SurfaceRenderStyle | null, is2D: boolean) {
     if (!material || !style)
       return;
 
@@ -238,12 +221,12 @@ export class SurfaceThreeView extends BaseGroupThreeView
   }
 }
 
-//==================================================
+//= =================================================
 // INSTANCE METHODS: Shader experiments
-//==================================================
+//= =================================================
 
-function vertexShader(): string
-{
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function vertexShader(): string {
   return `
     varying vec3 vUv;
 

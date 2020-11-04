@@ -1,18 +1,20 @@
-import React from "react";
-import { SelectableInput } from "@/UserInterface/Components/SelectableInput/SelectableInput";
-import { ToolbarToolTip } from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
-import { GenericSelect } from "@/UserInterface/Components/GenericSelect/GenericSelect";
+import React from 'react';
+import { SelectableInput } from '@/UserInterface/Components/SelectableInput/SelectableInput';
+import { ToolbarToolTip } from '@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
+import { GenericSelect } from '@/UserInterface/Components/GenericSelect/GenericSelect';
 
-export function ToolBarSelect(props: {
+interface ToolBarSelectProps {
   options?: string[];
   currentValue?: string;
   onChange?: (value: string) => void;
   tooltip?: {
     text: string;
-    placement?: "bottom" | "right-start";
+    placement?: 'bottom' | 'right-start';
   };
   iconSize?: { width: number; height: number };
-}) {
+}
+
+export const ToolBarSelect = (props: ToolBarSelectProps) => {
   const { options, currentValue, onChange, tooltip, iconSize } = props;
   const groupStyle = iconSize
     ? { width: iconSize.width, height: iconSize.height }
@@ -40,4 +42,4 @@ export function ToolBarSelect(props: {
       {dropDown()}
     </ToolbarToolTip>
   );
-}
+};
