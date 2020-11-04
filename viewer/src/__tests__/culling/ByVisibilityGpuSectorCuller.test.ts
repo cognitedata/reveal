@@ -11,7 +11,7 @@ import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
 
 import { generateSectorTree } from '../testutils/createSectorMetadata';
 import { createCadModelMetadata } from '../testutils/createCadModelMetadata';
-import { CadModelSectorBudget } from '@/datamodels/cad/CadModelBudget';
+import { CadModelSectorBudget } from '@/datamodels/cad/CadModelSectorBudget';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
@@ -124,7 +124,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   test('determineSectors limits sectors by draw calls', () => {
     // Arrange
-    const determineSectorCost = (sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
+    const determineSectorCost = (_sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
       switch (lod) {
         case LevelOfDetail.Detailed:
           return { downloadSize: 0, drawCalls: 5 };
