@@ -114,6 +114,8 @@ export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vecto
  * Represents a measurement of how much geometry can be loaded.
  */
 export type CadModelBudget = {
+  // TODO 2020-11-04 larsmoa: Merge this type with CadModelSectorBudget.
+
   /**
    * Sectors within this distance from the camera will always be loaded in high details.
    */
