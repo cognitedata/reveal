@@ -7,23 +7,6 @@ export type onResourceSelectedParams = {
   timeseriesId?: number;
 };
 
-export const Wrapper = styled.div`
-  width: 100%;
-  flex: 1;
-  padding: 24px;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: ${Colors['greyscale-grey1'].hex()};
-
-  dl,
-  dt {
-    background: ${Colors['greyscale-grey1'].hex()};
-    border-color: ${Colors['greyscale-grey4'].hex()};
-  }
-`;
-
 export const SpacedRow = styled.div`
   display: flex;
   align-items: stretch;

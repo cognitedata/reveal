@@ -7,16 +7,14 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import { Button, Input } from '@cognite/cogs.js';
-import { FilePreview } from 'lib/containers/Files';
-import { AssetPreview } from 'lib/containers/Assets';
-import { SequencePreview } from 'lib/containers/Sequences';
-import { TimeseriesPreview } from 'lib/containers/Timeseries';
-import { EventPreview } from 'lib/containers/Events';
-import { SearchResults } from 'lib/containers/SearchResults';
+import { SearchResultFilters } from 'lib/components/Search/Filters';
+import {
+  SearchResult,
+  Wrapper as SearchResultWrapper,
+} from 'lib/components/Search/SearchResult';
 import { RenderResourceActionsFunction } from 'lib/types/Types';
 import {
   ResourceActionsContext,
-  ResourcePreviewProvider,
   useQuery,
   useResourcesState,
   useResourceMode,
@@ -52,6 +50,15 @@ const Overlay = styled.div<{ visible: boolean }>`
   background-color: ${props =>
     props.visible ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0,0,0,0)'};
   transition: 0.3s all;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  overflow: hidden;
 `;
 
 const CloseButton = styled(Button)`
@@ -155,65 +162,6 @@ export const SelectionSidebarContent = ({
     };
   }, [remove]);
 
-  let content = null;
-
-  if (selectedItem) {
-    let preview = null;
-    switch (selectedItem.type) {
-      case 'asset': {
-        preview = <AssetPreview assetId={selectedItem.id} />;
-        break;
-      }
-      case 'timeSeries': {
-        preview = <TimeseriesPreview timeseriesId={selectedItem.id} />;
-        break;
-      }
-      case 'sequence': {
-        preview = <SequencePreview sequenceId={selectedItem.id} />;
-        break;
-      }
-      case 'event': {
-        preview = <EventPreview eventId={selectedItem.id} />;
-        break;
-      }
-      case 'file': {
-        preview = <FilePreview fileId={selectedItem.id} />;
-        break;
-      }
-    }
-    content = (
-      <ResourcePreviewProvider>
-        <Button
-          variant="ghost"
-          icon="ArrowLeft"
-          onClick={() => setSelectedItem(undefined)}
-          style={{ alignSelf: 'flex-start' }}
-        >
-          Back to search
-        </Button>
-        {preview}
-      </ResourcePreviewProvider>
-    );
-  } else {
-    content = (
-      <>
-        <Input
-          icon="Search"
-          fullWidth
-          size="large"
-          iconPlacement="left"
-          placeholder="Search..."
-          onChange={ev => setQuery(ev.target.value)}
-          value={query}
-        />
-        <SearchResults
-          currentResourceType={activeKey}
-          setCurrentResourceType={setActiveKey}
-        />
-      </>
-    );
-  }
-
   return (
     <>
       <Drawer visible={visible}>
@@ -225,7 +173,21 @@ export const SelectionSidebarContent = ({
               onClick={() => onClose(false)}
             />
             {children}
-            {content}
+            <Wrapper>
+              <SearchResultFilters currentResourceType={activeKey} />
+              <SearchResultWrapper>
+                <Input
+                  icon="Search"
+                  fullWidth
+                  size="large"
+                  iconPlacement="left"
+                  placeholder="Search..."
+                  onChange={ev => setQuery(ev.target.value)}
+                  value={query}
+                />
+                <SearchResult query={query} type={activeKey} />
+              </SearchResultWrapper>
+            </Wrapper>
 
             {mode !== 'none' && (
               <>

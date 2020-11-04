@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { select } from '@storybook/addon-knobs';
 import { ResourceType } from 'lib/types';
-import { SearchResultFilters } from './SearchResultFilters';
+import { SearchResultFilters } from '.';
 
 export default {
   title: 'Search Results/SearchResultFilters',

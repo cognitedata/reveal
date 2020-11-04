@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { SequencePreview } from 'lib/containers/Sequences';
+import ResourceTitleRow from 'app/components/ResourceTitleRow';
 
 export const SequencePage = () => {
   const { sequenceId } = useParams<{
@@ -21,8 +22,17 @@ export const SequencePage = () => {
     hidePreview();
   }, [sequenceIdNumber, hidePreview]);
 
-  if (!validId) {
+  if (!validId || !sequenceIdNumber) {
     return null;
   }
-  return <SequencePreview sequenceId={sequenceIdNumber!} />;
+  return (
+    <>
+      <ResourceTitleRow
+        id={sequenceIdNumber}
+        type="sequence"
+        icon="GridFilled"
+      />
+      <SequencePreview sequenceId={sequenceIdNumber!} />
+    </>
+  );
 };

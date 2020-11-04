@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { EventSearchRequest, EventFilter, CogniteEvent } from '@cognite/sdk';
 import { useResourcePreview, ResourceSelectionContext } from 'lib/context';
-import { SearchResultTable } from 'lib/containers/SearchResults';
+import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 
 export const buildEventsFilterQuery = (
   filter: EventFilter,

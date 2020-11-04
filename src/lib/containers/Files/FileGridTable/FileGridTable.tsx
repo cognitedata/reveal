@@ -4,7 +4,7 @@ import { useSelectionCheckbox } from 'lib/hooks/useSelection';
 import styled, { css } from 'styled-components';
 import { useResourcesState } from 'lib/context';
 import { Loader, TimeDisplay } from 'lib/components';
-import { useResourceResults } from 'lib/containers/SearchResults/SearchResultTable/hooks';
+import { useResourceResults } from 'lib/components/Search/SearchPageTable/hooks';
 import { Body, Colors, DocumentIcon } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { FixedSizeGrid as Grid } from 'react-window';

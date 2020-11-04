@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Icon } from '@cognite/cogs.js';
+import { Row, Col, Space } from 'antd';
 import {
   Asset,
   Timeseries,
@@ -10,11 +10,9 @@ import {
 import {
   Loader,
   ErrorFeedback,
-  Wrapper,
   SpacedRow,
   Tabs,
   CdfCount,
-  Splitter,
 } from 'lib/components';
 import { useResourcePreview } from 'lib/context';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -23,9 +21,9 @@ import {
   AssetBreadcrumb,
   AssetTreeTable,
 } from 'lib/containers/Assets';
-import { SearchResultTable } from 'lib/containers/SearchResults';
 import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
+import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -78,17 +76,14 @@ export const AssetPreview = ({
     return <ErrorFeedback error={error} />;
   }
 
+  if (!asset) {
+    return <ErrorFeedback error="Asset not found" />;
+  }
+
   return (
-    <Wrapper>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-        }}
-      >
-        <span style={{ marginRight: '12px' }}>LOCATION:</span>
+    <>
+      <Space align="center">
+        <p>LOCATION:</p>
         <AssetBreadcrumb
           assetId={assetId}
           onBreadcrumbClick={newAsset =>
@@ -97,12 +92,9 @@ export const AssetPreview = ({
             })
           }
         />
-      </div>
-      <h1>
-        <Icon type="DataStudio" /> {asset?.name}
-      </h1>
-      <Splitter>
-        <div>
+      </Space>
+      <Row gutter={16}>
+        <Col span={18}>
           <SpacedRow>{extraActions}</SpacedRow>
           <Tabs tab={tab} onTabChange={onTabChange}>
             <Tabs.Pane title="Asset details" key="details">
@@ -201,9 +193,11 @@ export const AssetPreview = ({
               />
             </Tabs.Pane>
           </Tabs>
-        </div>
-        <ResourceDetailsSidebar relations={relationships} />
-      </Splitter>
-    </Wrapper>
+        </Col>
+        <Col span={6}>
+          <ResourceDetailsSidebar relations={relationships} />
+        </Col>
+      </Row>
+    </>
   );
 };

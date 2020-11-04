@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { FilesSearchFilter, FileFilterProps, FileInfo } from '@cognite/sdk';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 import { FileFilterGridTable } from 'lib/containers/Files';
-import { SearchResultTable } from 'lib/containers/SearchResults';
+import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { FileToolbar } from './FileToolbar';
 
 export const buildFilesFilterQuery = (

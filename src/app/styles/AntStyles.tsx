@@ -54,6 +54,7 @@ import selectStyle from 'antd/es/select/style/index.less';
 // import skeletonStyle from 'antd/es/skeleton/style/index.less';
 // import sliderStyle from 'antd/es/slider/style/index.less';
 import spinStyle from 'antd/es/spin/style/index.less';
+import spaceStyle from 'antd/es/space/style/index.less';
 // import statisticStyle from 'antd/es/statistic/style/index.less';
 // import stepsStyle from 'antd/es/steps/style/index.less';
 // import styleStyle from 'antd/es/style/index.less/style/index.less';
@@ -100,6 +101,7 @@ const styles = [
   resultStyle,
   selectStyle,
   spinStyle,
+  spaceStyle,
   tableStyle,
   tabsStyle,
   tooltipStyle,

@@ -1,159 +1,25 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
-import { Button } from '@cognite/cogs.js';
-import { RenderResourceActionsFunction } from 'lib/types/Types';
-import styled from 'styled-components';
-import { useFlag } from '@cognite/react-feature-flags';
-import ResourceActionsContext from 'lib/context/ResourceActionsContext';
 import { FilePage } from 'app/containers/FilePage';
-import { useHistory } from 'react-router';
-import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
-import { ResourceItem } from 'lib/types';
 import { ResourcePreviewProvider } from 'lib/context/ResourcePreviewContext';
 import { ResourceSelectorProvider } from 'lib/context/ResourceSelectorContext';
-import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
 import { AssetPage } from 'app/containers/AssetPage';
 import { SequencePage } from 'app/containers/SequencePage';
 import { TimeseriesPage } from 'app/containers/TimeseriesPage';
 import { EventPage } from 'app/containers/EventPage';
 import { SearchResultsPage } from 'app/containers/SearchResultsPage';
-import { createLink } from '@cognite/cdf-utilities';
-import { ExplorationNavbar } from './ExplorationNavbar';
-import CollectionsDropdown from './CollectionsDropdown';
+import styled from 'styled-components';
 
-const Wrapper = styled.div`
-  flex: 1;
+const AppWrapper = styled.div`
+  margin-left: 16px;
+  margin-right: 16px;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const AddToCollectionButton = styled(Button)`
-  margin-top: 8px;
-`;
-
-const ResourceActionsWrapper = styled.div`
-  flex-direction: column;
-  align-items: flex-start;
 `;
 
 export const Explorer = () => {
-  const history = useHistory();
-  const { add, remove } = useContext(ResourceActionsContext);
-  const { setOnSelectListener, setResourcesState } = useContext(
-    ResourceSelectionContext
-  );
-  const [cart, setCart] = useState<ResourceItem[]>([]);
-
-  const { pathname } = history.location;
-
-  const showCollections = useFlag('COLLECTIONS_allowlist');
-
-  const renderResourceActions: RenderResourceActionsFunction = useCallback(
-    resourceItem => {
-      const viewButton = () => {
-        let resourceName = '';
-        let path = '';
-        if (resourceItem) {
-          switch (resourceItem.type) {
-            case 'asset': {
-              resourceName = 'Asset';
-              path = `asset/${resourceItem.id}`;
-              break;
-            }
-            case 'timeSeries': {
-              resourceName = 'Time series';
-              path = `timeSeries/${resourceItem.id}`;
-              break;
-            }
-            case 'file': {
-              resourceName = 'File';
-              path = `file/${resourceItem.id}`;
-              break;
-            }
-            case 'sequence': {
-              resourceName = 'Sequence';
-              path = `sequence/${resourceItem.id}`;
-              break;
-            }
-            case 'event': {
-              resourceName = 'Event';
-              path = `event/${resourceItem.id}`;
-              break;
-            }
-          }
-          if (!pathname.includes(path)) {
-            return (
-              <ResourceActionsWrapper>
-                <Button
-                  type="primary"
-                  key="view"
-                  onClick={() => {
-                    window.dispatchEvent(new Event(CLOSE_DROPDOWN_EVENT));
-                    history.push(createLink(`/explore/${path}`));
-                  }}
-                  icon="ArrowRight"
-                >
-                  View {resourceName.toLowerCase()}
-                </Button>
-                {showCollections && (
-                  <CollectionsDropdown
-                    type={resourceItem.type}
-                    items={[{ id: Number(resourceItem.id) }]}
-                    button={
-                      <AddToCollectionButton
-                        icon="ChevronDownCompact"
-                        iconPlacement="right"
-                      >
-                        Add to collection
-                      </AddToCollectionButton>
-                    }
-                  />
-                )}
-              </ResourceActionsWrapper>
-            );
-          }
-        }
-        return null;
-      };
-
-      return [viewButton()];
-    },
-    [history, pathname, showCollections]
-  );
-
-  useEffect(() => {
-    add('explore', renderResourceActions);
-  }, [add, renderResourceActions]);
-
-  useEffect(() => {
-    return () => {
-      remove('explore');
-    };
-  }, [remove]);
-
-  useEffect(() => {
-    setOnSelectListener(() => (item: ResourceItem) => {
-      const index = cart.findIndex(
-        el => el.type === item.type && el.id === item.id
-      );
-      if (index > -1) {
-        setCart(cart.slice(0, index).concat(cart.slice(index + 1)));
-      } else {
-        setCart(cart.concat([item]));
-      }
-    });
-  }, [setOnSelectListener, cart]);
-
-  useEffect(() => {
-    setResourcesState(cart.map(el => ({ ...el, state: 'selected' })));
-  }, [setResourcesState, cart]);
-
   const match = useRouteMatch();
-
   return (
-    <Wrapper>
-      <ExplorationNavbar cart={cart} setCart={setCart} />
+    <AppWrapper>
       <ResourceSelectorProvider>
         <ResourcePreviewProvider>
           <Switch>
@@ -181,6 +47,6 @@ export const Explorer = () => {
           </Switch>
         </ResourcePreviewProvider>
       </ResourceSelectorProvider>
-    </Wrapper>
+    </AppWrapper>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Icon, Title } from '@cognite/cogs.js';
+import { Row, Col } from 'antd';
+import { Title } from '@cognite/cogs.js';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 import {
   DetailsItem,
@@ -8,8 +9,6 @@ import {
   SpacedRow,
   Tabs,
   TimeDisplay,
-  Wrapper,
-  Splitter,
 } from 'lib/components';
 import { SequenceDetailsAbstract } from 'lib/containers/Sequences';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -81,32 +80,32 @@ export const SequencePreview = ({
   }
 
   return (
-    <Wrapper>
-      <h1>
-        <Icon type="GridFilled" />
-        {sequence?.name}
-      </h1>
+    <>
       <SpacedRow>{extraActions}</SpacedRow>
 
-      <Splitter>
-        <Tabs tab={currentTab} onTabChange={setTab}>
-          <Tabs.Pane title="Details" key="details">
-            <SequenceDetails sequence={sequence} />
-          </Tabs.Pane>
-          <Tabs.Pane title="Columns " key="columns">
-            {formatSequenceColumns((sequence && sequence.columns) ?? {}).map(
-              el => (
-                <DetailsItem
-                  key={el.column}
-                  name={el.column}
-                  value={el.value}
-                />
-              )
-            )}
-          </Tabs.Pane>
-        </Tabs>
-        <ResourceDetailsSidebar relations={relationships} />
-      </Splitter>
-    </Wrapper>
+      <Row gutter={16}>
+        <Col span={18}>
+          <Tabs tab={currentTab} onTabChange={setTab}>
+            <Tabs.Pane title="Details" key="details">
+              <SequenceDetails sequence={sequence} />
+            </Tabs.Pane>
+            <Tabs.Pane title="Columns " key="columns">
+              {formatSequenceColumns((sequence && sequence.columns) ?? {}).map(
+                el => (
+                  <DetailsItem
+                    key={el.column}
+                    name={el.column}
+                    value={el.value}
+                  />
+                )
+              )}
+            </Tabs.Pane>
+          </Tabs>
+        </Col>
+        <Col span={6}>
+          <ResourceDetailsSidebar relations={relationships} />
+        </Col>
+      </Row>
+    </>
   );
 };

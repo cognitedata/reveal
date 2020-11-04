@@ -4,7 +4,7 @@ import {
   TimeseriesFilter,
   Timeseries,
 } from '@cognite/sdk';
-import { SearchResultTable } from 'lib/containers/SearchResults';
+import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 
 export const buildTimeseriesFilterQuery = (

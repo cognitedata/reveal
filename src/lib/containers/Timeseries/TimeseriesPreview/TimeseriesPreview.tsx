@@ -1,14 +1,8 @@
 import React from 'react';
-import { Icon } from '@cognite/cogs.js';
+import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
-import {
-  Loader,
-  ErrorFeedback,
-  Wrapper,
-  DetailsItem,
-  Splitter,
-} from 'lib/components';
+import { DetailsItem, ErrorFeedback, Loader } from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { formatMetadata } from 'lib/utils';
 import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
@@ -41,15 +35,11 @@ export const TimeseriesPreview = ({
   }
 
   return (
-    <Wrapper>
-      <h1>
-        <Icon type="Timeseries" />
-        {timeseries ? timeseries.name : 'Loading...'}
-      </h1>
+    <>
       {extraActions}
       {timeseries && (
-        <Splitter>
-          <div>
+        <Row gutter={16}>
+          <Col span={18}>
             <TimeseriesChart
               timeseriesId={timeseries.id}
               height={500}
@@ -60,13 +50,15 @@ export const TimeseriesPreview = ({
                 <DetailsItem key={el.key} name={el.key} value={el.value} />
               )
             )}
-          </div>
-          <ResourceDetailsSidebar
-            assetId={timeseries.assetId}
-            relations={relationships}
-          />
-        </Splitter>
+          </Col>
+          <Col span={6}>
+            <ResourceDetailsSidebar
+              assetId={timeseries.assetId}
+              relations={relationships}
+            />
+          </Col>
+        </Row>
       )}
-    </Wrapper>
+    </>
   );
 };

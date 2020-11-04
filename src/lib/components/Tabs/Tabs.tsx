@@ -78,8 +78,8 @@ const HeaderWrapper = styled.div`
 
 const TabHeader = styled.div<{ selected?: boolean }>(
   props => css`
-    margin-left: 16px;
-    margin-right: 16px;
+    margin-right: 32px;
+
     padding-top: 10px;
     padding-bottom: 10px;
     cursor: pointer;

@@ -3,7 +3,7 @@ import { Button } from '@cognite/cogs.js';
 import { AssetSearchFilter, AssetFilterProps, Asset } from '@cognite/sdk';
 import { SpacedRow, ButtonGroup } from 'lib/components';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
-import { SearchResultTable } from 'lib/containers/SearchResults';
+import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { AssetTreeTable } from 'lib/containers/Assets';
 
 export const buildAssetsFilterQuery = (

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { ResourceType } from 'lib/types';
+import { Colors } from '@cognite/cogs.js';
 import {
   Asset,
   Timeseries,
@@ -22,14 +23,13 @@ import {
 import { SdkResourceType, useList } from '@cognite/sdk-react-query-hooks';
 import { SubtreeFilter } from 'lib/containers/Assets';
 import { EventSubTypeFilter, EventTypeFilter } from 'lib/containers/Events';
-import {
-  MetadataFilter,
-  DataSetFilter,
-  LabelFilter,
-  SourceFilter,
-  ExternalIDPrefixFilter,
-  ByAssetFilter,
-} from './Filters';
+
+import { SourceFilter } from './SourceFilter/SourceFilter';
+import { LabelFilter } from './LabelFilter/LabelFilter';
+import { MetadataFilter } from './MetadataFilter/MetadataFilter';
+import { DataSetFilter } from './DataSetFilter/DataSetFilter';
+import { ExternalIDPrefixFilter } from './ExternalIDPrefixFilter/ExternalIDPrefixFilter';
+import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 
 type FilterRenderFn<T> = (items: T[]) => React.ReactNode;
 
@@ -179,6 +179,17 @@ export const SearchResultFilters = ({
     timeseriesFilter,
   } = useResourceFilters();
 
+  const FilterWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    margin-top: 16px;
+    padding-right: 16px;
+    border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+    overflow-x: visible;
+    overflow-y: auto;
+  `;
+
   const [type, filter] = useMemo<[SdkResourceType, any]>(() => {
     switch (currentResourceType) {
       case 'file':
@@ -204,7 +215,7 @@ export const SearchResultFilters = ({
   const { data: items = [] } = useList(type, { filter, limit: 1000 });
 
   return (
-    <>
+    <FilterWrapper>
       {(() => {
         switch (currentResourceType) {
           case 'asset': {
@@ -245,7 +256,7 @@ export const SearchResultFilters = ({
         }
         return [];
       })()}
-    </>
+    </FilterWrapper>
   );
 };
 

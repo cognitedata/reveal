@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Wrapper } from './utils';
-import { DataSetFilter } from '../containers/SearchResults/Filters';
+import { DataSetFilter } from '../components/Search/Filters';
 import { AssetSearchResults } from '../containers/Assets/AssetSearchResults/AssetSearchResults';
 import { ResourceSelectionContext } from '../context';
 

@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { EventPreview } from 'lib/containers/Events';
+import ResourceTitleRow from 'app/components/ResourceTitleRow';
+import { renderTitle } from 'lib/utils/EventsUtils';
 
 export const EventPage = () => {
   const { eventId } = useParams<{
@@ -17,5 +19,15 @@ export const EventPage = () => {
     return <>Invalid event id: {eventId}</>;
   }
 
-  return <EventPreview eventId={eventIdNumber} />;
+  return (
+    <>
+      <ResourceTitleRow
+        id={eventIdNumber}
+        type="event"
+        icon="Events"
+        getTitle={renderTitle}
+      />
+      <EventPreview eventId={eventIdNumber} />
+    </>
+  );
 };

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Icon, Title } from '@cognite/cogs.js';
+import { Row, Col } from 'antd';
+import { Title } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 import {
@@ -8,10 +9,7 @@ import {
   Loader,
   SpacedRow,
   TimeDisplay,
-  Wrapper,
-  Splitter,
 } from 'lib/components';
-import { renderTitle } from 'lib/utils/EventsUtils';
 import { EventDetailsAbstract } from 'lib/containers/Events';
 import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
@@ -65,16 +63,16 @@ export const EventPreview = ({
   }
 
   return (
-    <Wrapper>
-      <h1>
-        <Icon type="Events" />
-        {renderTitle(event)}
-      </h1>
+    <>
       <SpacedRow>{extraActions}</SpacedRow>
-      <Splitter>
-        <EventDetails event={event} />
-        <ResourceDetailsSidebar relations={relationships} />
-      </Splitter>
-    </Wrapper>
+      <Row gutter={16}>
+        <Col span={18}>
+          <EventDetails event={event} />
+        </Col>
+        <Col span={6}>
+          <ResourceDetailsSidebar relations={relationships} />
+        </Col>
+      </Row>
+    </>
   );
 };

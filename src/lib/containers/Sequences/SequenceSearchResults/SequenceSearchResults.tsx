@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { SequenceSearchFilter, SequenceFilter, Sequence } from '@cognite/sdk';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
-import { SearchResultTable } from 'lib/containers/SearchResults';
+import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 
 export const buildSequencesFilterQuery = (
   filter: SequenceFilter['filter'],

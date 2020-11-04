@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { select } from '@storybook/addon-knobs';
 import { ResourceType } from 'lib/types';
-import { SearchResults } from './SearchResults';
+import { SearchResult } from './SearchResult';
 
 export default {
   title: 'Search Results/SearchResults',
-  component: SearchResults,
+  component: SearchResult,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
@@ -22,7 +22,7 @@ export const Example = () => {
     setCurrentResourceType(selected);
   }, [selected]);
   return (
-    <SearchResults
+    <SearchResult
       currentResourceType={currentResourceType}
       setCurrentResourceType={type => {
         action('setCurrentResourceType')(type);

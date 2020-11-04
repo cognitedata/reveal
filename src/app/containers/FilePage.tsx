@@ -4,6 +4,7 @@ import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { FilePreview } from 'lib/containers/Files/FilePreview';
 import { trackUsage } from 'app/utils/Metrics';
+import ResourceTitleRow from 'app/components/ResourceTitleRow';
 
 export const FilePage = () => {
   const { fileId } = useParams<{
@@ -42,5 +43,10 @@ export const FilePage = () => {
     return null;
   }
 
-  return <FilePreview fileId={fileIdNumber} contextualization />;
+  return (
+    <>
+      <ResourceTitleRow id={fileIdNumber} type="file" icon="Document" />
+      <FilePreview fileId={fileIdNumber} contextualization />;
+    </>
+  );
 };

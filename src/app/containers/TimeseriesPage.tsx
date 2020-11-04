@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { TimeseriesPreview } from 'lib';
+import ResourceTitleRow from 'app/components/ResourceTitleRow';
 
 export const TimeseriesPage = () => {
   const { timeseriesId } = useParams<{
@@ -22,5 +23,14 @@ export const TimeseriesPage = () => {
   ) {
     return <>Invalid time series id {timeseriesId}</>;
   }
-  return <TimeseriesPreview timeseriesId={timeseriesIdNumber} />;
+  return (
+    <>
+      <ResourceTitleRow
+        id={timeseriesIdNumber}
+        type="timeSeries"
+        icon="Timeseries"
+      />
+      <TimeseriesPreview timeseriesId={timeseriesIdNumber} />
+    </>
+  );
 };
