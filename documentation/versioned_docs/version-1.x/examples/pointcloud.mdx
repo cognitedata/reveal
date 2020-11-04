@@ -1,0 +1,119 @@
+---
+id: pointcloud
+title: Pointcloud models
+description: Usage of pointcloud models with Cognite3DViewer
+---
+
+`@cognite/reveal` supports point clouds through a third-party library, [`potree-core`](https://github.com/tentone/potree-core). The viewer
+supports loading both point clouds and CAD models at the same time. Point clouds can be generated from various sources including
+[laser scans](https://en.wikipedia.org/wiki/Laser_scanning) and [photogrammetry models](https://en.wikipedia.org/wiki/Photogrammetry).
+Loading point clouds is done with identical code to when [loading CAD models](./cad-basic) - Reveal will determine that the model
+is a point cloud model and act accordingly.
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+<DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
+
+```jsx
+import { CogniteClient } from '@cognite/sdk';
+import { Cognite3DViewer } from '@cognite/reveal';
+
+const client = new CogniteClient({
+  appId: 'cognite.reveal.docs.Cognite3DViewer',
+});
+
+// to view models from CDF authentication is required
+client.loginWithOAuth({ project: 'publicdata' });
+
+// some div in your html page for Cognite3DViewer to insert a canvas
+const domElement = document.getElementById('canvas-wrapper');
+
+async function main() {
+  const viewer = new Cognite3DViewer({ sdk: client, domElement });
+
+  // load a model and add it on 3d scene
+  // https://console.cognitedata.com/publicdata/3d-models/4715379429968321/revisions/5688854005909501
+  const model = await viewer.addModel({
+    modelId: 4715379429968321,
+    revisionId: 5688854005909501,
+  });
+  viewer.loadCameraFromModel(model);
+
+  // call viewer.dispose() when you don't need the viewer anymore
+}
+main();
+```
+
+## Point size
+
+You can use `pointSize` property to set the size of each rendered point in a point cloud model.
+
+```js runnable
+model.pointSize = 10;
+```
+
+## Point budget
+
+The point budget limits the number of points loaded and rendered at any given time,
+which helps to adapt performance requirements to the capabilities of different hardware.
+Recommended values are between 500.000 and 10.000.000.
+
+```js runnable
+model.pointBudget = 500000;
+```
+
+## Point shape
+
+You can set the point shape of each rendered point in the point cloud. Values are defined by `PotreePointShape` enum.
+
+```js runnable
+// import { PotreePointShape } from '@cognite/reveal';
+model.pointShape = PotreePointShape.Square;
+```
+
+## Point color type
+
+You can specify in which way points should be colored. Values are defined by `PotreePointColorType` enum.
+
+```js runnable
+// import { PotreePointColorType } from '@cognite/reveal'
+model.pointColorType = PotreePointColorType.Depth;
+```
+
+Other useful coloring schemes are `Rgb` (color) , `Classification` (color by point class) and `Intensity` 
+(strength of the backscattered signal in a laser scan).
+
+## Classification filtering
+
+Some point clouds have classification information associated with each point.  This can
+be used for coloring or to filter the point cloud.
+
+:::note
+The demonstration model doesn't have classification data so the examples below are not
+runnable.
+:::
+
+To list classes available in a point cloud model, use `CognitePointCloudModel.getClasses`:
+
+```js
+const classes = model.getClasses();
+for (const pointClass of classes) {
+  console.log(pointClass); // Prints a numeric class code
+}
+```
+
+It's also possible to check if a model has a given class by using `CognitePointCloudModel.hasClass`. 
+A list of well-known point class codes are defined in `WellKnownAsprsPointClassCodes`. These definitions
+by the [ASPRS LAS 1.4 specifications](http://www.asprs.org/wp-content/uploads/2019/03/LAS_1_4_r14.pdf).
+
+To filter away certain classes, use `CognitePointCloudModel.setClassVisible`:
+
+```js
+model.setClassVisible(WellKnownAsprsPointClassCodes.Ground, false);
+```
+
+To check if a class currently is visible, use `isClassVisible`:
+
+```js
+const visible = model.isClassVisible(WellKnownAsprsPointClassCodes.Ground);
+```
