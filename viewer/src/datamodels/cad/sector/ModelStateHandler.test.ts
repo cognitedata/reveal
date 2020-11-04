@@ -41,10 +41,10 @@ function mockWantedSectors(id: number) {
     path: '0/',
     depth: 0,
     bounds: new Box3([]),
+    estimatedDrawCallCount: 0,
     indexFile: {
       fileName: `sector_${id}.i3d`,
       peripheralFiles: [],
-      estimatedDrawCallCount: 0,
       downloadSize: 0
     },
     facesFile: {

@@ -24,16 +24,16 @@ export type CadModelSectorBudget = {
   readonly maximumNumberOfDrawCalls: number;
 };
 
-export const defaultCadModelSectorBudget = isMobileOrTablet()
+export const defaultCadModelSectorBudget: CadModelSectorBudget = isMobileOrTablet()
   ? // Mobile/tablet
     {
-      highDetailProximityThreshold: 5 * 1000,
+      highDetailProximityThreshold: 5,
       geometryDownloadSizeBytes: 20 * 1024 * 1024,
       maximumNumberOfDrawCalls: 700
     }
   : // Desktop
     {
-      highDetailProximityThreshold: 10 * 1000,
+      highDetailProximityThreshold: 10,
       geometryDownloadSizeBytes: 35 * 1024 * 1024,
       maximumNumberOfDrawCalls: 2000
     };

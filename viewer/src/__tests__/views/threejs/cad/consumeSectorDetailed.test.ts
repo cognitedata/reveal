@@ -21,10 +21,10 @@ describe('consumeSectorDetailed', () => {
     path: '0/1/2/',
     bounds: new Box3([vec3.fromValues(1, 2, 3), vec3.fromValues(3, 4, 5)]),
     children: [],
+    estimatedDrawCallCount: 10,
     indexFile: {
       fileName: 'sector_1.i3d',
       peripheralFiles: [],
-      estimatedDrawCallCount: 10,
       downloadSize: 1000
     },
     facesFile: {

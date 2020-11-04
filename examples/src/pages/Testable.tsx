@@ -175,6 +175,10 @@ export function Testable() {
 
         revealManager.clippingPlanes = boxClipper.clippingPlanes;
         revealManager.clipIntersection = boxClipper.intersection;
+      } else if (test === 'scaled_model') {
+        const matrix = model.getModelTransformation();
+        const newMatrix = matrix.scale(new THREE.Vector3(5, 5, 5));
+        model.setModelTransformation(newMatrix);
       }
 
       const controls = new CameraControls(camera, renderer.domElement);

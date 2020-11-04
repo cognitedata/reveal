@@ -1,5 +1,4 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
-#pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: determineMatrixOverride = require('../../base/determineMatrixOverride.glsl')
 
 uniform mat4 inverseModelMatrix;
@@ -99,12 +98,12 @@ void main() {
 
     mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
 
-    float radiusB = length(mul3(modelToTransformOffset, (a_localXAxis * a_radiusB)));
-    float radiusA = length(mul3(modelToTransformOffset, (a_localXAxis * a_radiusA)));
+    float radiusB = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusB, 0.0)).xyz);
+    float radiusA = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusA, 0.0)).xyz);
 
     // We pack radii as w-components of v_centerB
     v_centerB.xyz = mul3(modelViewMatrix, centerB);
-    v_centerB.w = radiusB; //displaceScalar(centerB, radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.w = radiusB;
 
     v_V.xyz = -cross(v_U.xyz, v_W.xyz);
     v_V.w = surfacePoint.y;

@@ -21,7 +21,8 @@ import {
   GeometryFilter,
   Intersection,
   CameraChangeDelegate,
-  PointerEventDelegate
+  PointerEventDelegate,
+  CadModelBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -119,6 +120,28 @@ export class Cognite3DViewer {
       new THREE.Vector3()
     )
   };
+
+  /**
+   * Gets the current budget for downloading geometry for CAD models. Note that this
+   * budget is shared between all added CAD models and not a per-model budget.
+   * @version New in 1.2.0
+   */
+  public get cadBudget(): CadModelBudget {
+    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // type. This should map 1:1 with type in RevealManager
+    return this._revealManager.cadBudget;
+  }
+
+  /**
+   * Sets the current budget for downloading geometry for CAD models. Note that this
+   * budget is shared between all added CAD models and not a per-model budget.
+   * @version New in 1.2.0
+   */
+  public set cadBudget(budget: CadModelBudget) {
+    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // type. This should map 1:1 with type in RevealManager
+    this._revealManager.cadBudget = budget;
+  }
 
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
@@ -1156,7 +1179,7 @@ export class Cognite3DViewer {
     // This is also used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    this.controls.minDistance = Math.max(diagonal * 0.02, 0.1 * near);
+    this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
   }
 
   /** @private */
