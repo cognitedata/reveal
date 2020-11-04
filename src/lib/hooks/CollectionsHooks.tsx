@@ -1,7 +1,7 @@
 import sdk from 'sdk-singleton';
 import { useMutation, useQuery, useQueryCache } from 'react-query';
 import { ResourceType } from 'lib/types';
-import { getEnv } from '../utils/URLUtils';
+import { getProject, getEnv } from '../utils/URLUtils';
 
 export type CollectionOperationType = 'retrieve' | 'list';
 
@@ -35,74 +35,74 @@ export type CollectionUpdateSpec = {
   };
 };
 
-const BASE_URL = 'https://cdf-hub-api.greenfield.cognite.ai/'; // 'http://localhost:8001/'; //
+const USE_LOCALHOST = false; // Change if running the cdf-hub-api locally
+
+const getBaseUrl = () => {
+  const project = getProject();
+  const env = getEnv();
+  let apiHost;
+  if (USE_LOCALHOST) {
+    apiHost = 'http://localhost:8001';
+  } else {
+    apiHost = `https://cdf-hub-api.${env || 'europe-west1-1'}.cognite.ai`;
+  }
+  const baseUrl = `${apiHost}/v1/projects/${project}/collections`;
+  return baseUrl;
+};
 
 const listCollections = async () => {
   const { items } = (
-    await sdk.post<{ items: Collection[] }>(
-      `${BASE_URL}v1/projects/${sdk.project}/collections/list`,
-      { withCredentials: true }
-    )
+    await sdk.post<{ items: Collection[] }>(`${getBaseUrl()}/list`, {
+      withCredentials: true,
+    })
   ).data;
   return items;
 };
 
 const retrieveCollections = async (ids: string[]) => {
   const { items } = (
-    await sdk.post<{ items: Collection[] }>(
-      `${BASE_URL}v1/projects/${sdk.project}/collections/byids`,
-      {
-        data: {
-          items: ids.map(id => ({ id })),
-        },
-        withCredentials: true,
-      }
-    )
+    await sdk.post<{ items: Collection[] }>(`${getBaseUrl()}/byids`, {
+      data: {
+        items: ids.map(id => ({ id })),
+      },
+      withCredentials: true,
+    })
   ).data;
   return items;
 };
 
 const deleteCollections = async (ids: string[]) => {
   const { items } = (
-    await sdk.post<{ items: Collection[] }>(
-      `${BASE_URL}v1/projects/${sdk.project}/collections/delete`,
-      {
-        data: {
-          items: ids.map(id => ({ id })),
-        },
-        withCredentials: true,
-      }
-    )
+    await sdk.post<{ items: Collection[] }>(`${getBaseUrl()}/delete`, {
+      data: {
+        items: ids.map(id => ({ id })),
+      },
+      withCredentials: true,
+    })
   ).data;
   return items;
 };
 
 const createCollections = async (items: CollectionSpec[]) => {
   const { items: collections } = (
-    await sdk.post<{ items: Collection[] }>(
-      `${BASE_URL}v1/projects/${sdk.project}/collections`,
-      {
-        data: {
-          items,
-        },
-        withCredentials: true,
-      }
-    )
+    await sdk.post<{ items: Collection[] }>(`${getBaseUrl()}`, {
+      data: {
+        items,
+      },
+      withCredentials: true,
+    })
   ).data;
   return collections;
 };
 
 const updateCollections = async (items: CollectionUpdateSpec[]) => {
   const { items: collections } = (
-    await sdk.post<{ items: Collection[] }>(
-      `${BASE_URL}v1/projects/${sdk.project}/collections/update`,
-      {
-        data: {
-          items,
-        },
-        withCredentials: true,
-      }
-    )
+    await sdk.post<{ items: Collection[] }>(`${getBaseUrl()}/update`, {
+      data: {
+        items,
+      },
+      withCredentials: true,
+    })
   ).data;
   return collections;
 };
@@ -170,7 +170,6 @@ export const useCollections = () => {
         cached.setQueryData(`/collections/${collection.id}`, collection);
       });
     },
-    enabled: getEnv() === 'greenfield',
   });
 };
 
