@@ -6,7 +6,7 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata, WantedSector } from '../types';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { CadLoadingHints } from '../../CadLoadingHints';
-import { CadModelSectorBudget } from '../../CadModelBudget';
+import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
