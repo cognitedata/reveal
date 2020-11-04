@@ -1174,7 +1174,7 @@ export class Cognite3DViewer {
     // This is also used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    this.controls.minDistance = Math.max(diagonal * 0.02, 0.1 * near);
+    this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
   }
 
   /** @private */
