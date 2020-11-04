@@ -2,7 +2,7 @@
 id: migration-guide
 title: Migrating from @cognite/3d-viewer
 hide_title: true
-description: This page describes the differences between Reveal viewer and @cognite/3d-viewer, which is an older version of Reveal with similar functionality. 
+description: This page describes the differences between Reveal viewer and @cognite/3d-viewer, which is an older version of Reveal with similar functionality.
 ---
 
 # Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
@@ -11,6 +11,7 @@ description: This page describes the differences between Reveal viewer and @cogn
 
 - `@cognite/3d-viewer` downloads all geometry when a model is loaded. This causes higher initial loading time, but potentially increases the performance once the data has been loaded. It also limits the size of the models that can be loaded. The new version, `@cognite/reveal`, is based on "streaming geometry" which downloads necessary geometry within a budget as the camera moved. This enables support for very complex 3D models and reduces the initial loading time.
 - `@cognite/3d-viewer` supports styling 3D nodes by node ID. In `@cognite/reveal` the recommended approach is to use tree indices instead. See [Styling nodes](#styling-nodes) for more information. For an introduction to the differences between these concepts, see [Concepts](./concepts.md). The new component supports [mapping between the two identifiers](#accessing-node-information-and-mapping-between-node-ids-and-tree-indices) when necessary.
+- `@cognite/3d-viewer` supports photogrammetry models through textures while `@cognite/reveal` supports photogrammetry through point clouds. This is due to the heavy processing load textures places on processing.
 - `@cognite/reveal` supports styling a 3D node and all it's children in one operation. In `@cognite/3d-viewer` it's necessary to iterate over all children and manually apply the same change to all nodes.
 - `@cognite/reveal` supports point cloud models. This is not supported in `@cognite/3d-viewer`.
 - `@cognite/reveal` requires new output file formats. See [Preparing models](#preparing-models-for-use) below for details.
@@ -56,16 +57,17 @@ Notice that all functions are async, and the action that you pass is not applied
 A single model can have millions of nodes. That's why the iteration functions call the passed action step by step.
 You can see it in action in our [node visiting example](./examples/node-visiting.mdx) where colors are applied gradually to nodes.
 
-- `Cognite3DModel.iterateNodes(action: (nodeId, treeIndex) => void): Promise<boolean>` has been replaced by `iterateNodesByTreeIndex(action: (treeIndex) => void): Promise<void>`. Returns promise which resolves once iteration has done. 
+- `Cognite3DModel.iterateNodes(action: (nodeId, treeIndex) => void): Promise<boolean>` has been replaced by `iterateNodesByTreeIndex(action: (treeIndex) => void): Promise<void>`. Returns promise which resolves once iteration has done.
 - `Cognite3DModel.iterateSubtree(nodeId, action: (nodeId, treeIndex) => void, treeIndex?, subtreeSize?)` has been replaced by `iterateSubtreeByTreeIndex(treeIndex, action: (treeIndex) => void): Promise<number>`. Returns promise which resolves once iteration has done.
 
 ## Accessing node information and mapping between node IDs and tree indices
 
-Reveal supports accessing information about 3D nodes through the [Cognite SDK](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html). However, the SDK identifies nodes by node ID, not tree index. It might be necessary to map between the two concepts. The following functions provide such functionality: 
+Reveal supports accessing information about 3D nodes through the [Cognite SDK](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html). However, the SDK identifies nodes by node ID, not tree index. It might be necessary to map between the two concepts. The following functions provide such functionality:
+
 - `async Cognite3DModel.mapNodeIdToTreeIndex(nodeId)`
 - `async Cognite3DModel.mapNodeIdsToTreeIndices(nodeIds)`
 - `async Cognite3DModel.mapTreeIndexToNodeId(treeIndex)`
-- `async Cognite3DModel.mapTreeIndicesToNodeIds(treeIndices)` 
+- `async Cognite3DModel.mapTreeIndicesToNodeIds(treeIndices)`
 
 Note that the operation requires communication with CDF servers and should be kept at a minimum. It's recommended to use the functions that accepts a list of nodes to map whenever possible. Batching requests is recommended to achieve the best performance.
 
@@ -85,7 +87,7 @@ The API for accessing node information has not changed `@cognite/3d-viewer`, but
 
 In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed 
 in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to 
-determine `nodeId` use `async Cognite3DModel.mapNodeId(nodeId)`).
+determine `nodeId` use `async Cognite3DModel.mapTreeIndexToNodeId(treeIndex)`).
 
 ## Other differences
 
@@ -94,20 +96,29 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - `@cognite/3d-viewer` supports local caching to reduce the time to load previously opened 3D models. Currently, this is not supported by `@cognite/reveal`, but the need for such functionality is reduced by adding streaming capabilities.
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
-- The `onComplete`-callback when loading models using `Cognite3DViewer.addModel`, `Cognite3DViewer.addCadModel` or `Cognite3DViewer.addPointCloudModel` is not supported since models are streamed on demand, and will never complete. To monitor loading activity, use the `onLoading`-callback provided as an option when constructing `Cognite3DViewer`.
+- Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function 
+  no longer accepts an `onProgress` parameter. Because of this the `onComplete` option in `Cognite3DViewer.addModel` has 
+  been deprecated. To monitor loading activity, use the `onLoading`-callback provided as an option when constructing `Cognite3DViewer`.
+- `Cognite3DViewer.getCamera()` can now be used to access the `THREE.Camera` of the viewer. Note that this camera shouldn't be
+  modified.
+- `Cognite3DViewer.addModel` no longer supports options `localPath`, `orthographicCamera` and `onComplete`. Point clouds currently
+  don't support `geometryFilter`.
 - Textures are not supported by `@cognite/reveal`. Models can be loaded, but textures are not applied to the geometry.
 
 ## Preparing models
 
 `@cognite/reveal` requires new output file formats which means that 3D models that have been converted before June 2020 might need reconversion. To determine if a model needs reconversion, the [listModelRevisionOutputs API endpoint](https://docs.cognite.com/api/v1/#operation/list3dModelOutputs) can be used with URL parameter `format=reveal-directory`. This can be done using the SDK, e.g.:
+
 ```jsx
 // Switch these with your project/model identifier
 const project = 'publicdata';
 const modelId = 4715379429968321;
-const revisionId = 5688854005909501; 
+const revisionId = 5688854005909501;
 
 // Prepare a SDK client and authenticate
-const sdk = new CogniteClient({ appId: 'cognite.reveal.docs.IsModelCompatible' });
+const sdk = new CogniteClient({
+  appId: 'cognite.reveal.docs.IsModelCompatible',
+});
 sdk.loginWithOAuth({ project });
 await sdk.authenticate();
 
@@ -135,7 +146,9 @@ Or by using `curl` (requires a [Cognite API key or access token](https://docs.co
   ]
 }
 ```
+
 where `PROJECT`, `MODELID`, `REVISIONID` and `APIKEY` must be set in the environment variables. If the model isn't compatible the response will be an empty list, i.e.
+
 ```bash
 {
   "items": []
@@ -150,10 +163,10 @@ Another alternative is to use the experimental 'reprocess' endpoint which genera
 
 **`TypeError: e.applyMatrix4 is not a function`**
 
-If you experience  `TypeError: e.applyMatrix4 is not a function` after migrating from 
-`@cognite/3d-viewer` to `@cognite/reveal`, the problem is usually caused by missing or 
+If you experience `TypeError: e.applyMatrix4 is not a function` after migrating from
+`@cognite/3d-viewer` to `@cognite/reveal`, the problem is usually caused by missing or
 outdated ThreeJS.
 
-To fix this issue, install or update ThreeJS using the 
-[`three`-package](https://www.npmjs.com/package/three). This should match the version 
+To fix this issue, install or update ThreeJS using the
+[`three`-package](https://www.npmjs.com/package/three). This should match the version
 used by `@cognite/reveal`.

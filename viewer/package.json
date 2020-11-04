@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "repository": {
@@ -27,7 +27,7 @@
     "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-1.x",
     "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
-    "bump:commit": "cross-var git commit -am \"chore(viewer): bump version $npm_package_version\"",
+    "bump:commit": "git add -A && cross-var git commit -m \"chore(viewer): bump version $npm_package_version\"",
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
     "bump:push": "git push -u origin head && git push --tags",
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive"
