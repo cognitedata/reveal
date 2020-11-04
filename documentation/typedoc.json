@@ -1,7 +1,7 @@
 {
   "excludeExternals": true,
   "externalPattern": ["../viewer/src/__tests__/**"],
-  "exclude": ["**/*+(index|.spec|.test).ts"],
+  "exclude": ["**/*+(.spec|.test).ts"],
   "excludePrivate": true,
   "excludeProtected": true,
   "stripInternal": true,

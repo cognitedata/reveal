@@ -14,7 +14,7 @@
     "build": "yarn run apiref && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "apiref": "yarn run apiref:generate && yarn run apiref:concat",
-    "apiref:generate": "typedoc --inputFiles ../viewer/src/public/migration --listInvalidSymbolLinks",
+    "apiref:generate": "typedoc --inputFiles ../viewer/src/index.ts --listInvalidSymbolLinks",
     "apiref:concat": "concat-md ./generated --startTitleLevelAt 1 --decrease-title-levels --dir-name-as-title > \"./docs/API Reference.md\"",
     "replace-1.x": "yarn apiref && rimraf versioned_sidebars versioned_docs versions.json && yarn docusaurus docs:version 1.x"
   },
