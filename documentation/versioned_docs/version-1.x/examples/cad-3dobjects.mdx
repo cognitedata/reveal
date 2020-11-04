@@ -7,11 +7,26 @@ description: Extend the scene with custom ThreeJS objects.
 import { DemoWrapper } from '@site/src/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-Sometimes it's useful to add custom content to the 3D scene to model data Reveal doesn't support or to customize the 3D environment. Reveal supports this by using the `Cognite3DViewer.addObject3D`-function which accepts [ThreeJS](https://threejs.org/) objects.
+Sometimes it's useful to add custom content to the 3D scene to model data Reveal doesn't 
+support or to customize the 3D environment. Reveal supports this by using the 
+`Cognite3DViewer.addObject3D`-function which accepts [ThreeJS](https://threejs.org/) objects. 
 
-:::tip
-Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you need lights this needs to be added to the viewer scene.
+:::note
+There are a few restrictions to the 3D content that is to be combined with Reveal models:
+- Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you 
+need lights this needs to be added to the viewer scene.
+- Geometry is expected to use "default depth testing", meaning 
+[`THREE.Material.depthTest`](https://threejs.org/docs/#api/en/materials/Material.depthTest) must be `true`,
+[`THREE.Material.depthWrite`](https://threejs.org/docs/#api/en/materials/Material.depthWrite) must  `true` and
+[`THREE.Material.depthFunc`](https://threejs.org/docs/#api/en/materials/Material.depthFunc) must be `LessEqualDepth`.
+You might experience unexpected results if you are using materials where this doesn't hold.
+- Transparency is not fully supported. Transparent objects will not blend correctly with Reveal models.
 :::
+
+<!-- :::tip
+Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you 
+need lights this needs to be added to the viewer scene.
+::: -->
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
@@ -40,17 +55,20 @@ viewer.on('click', (event) => {
 
 ## Add environment
 
-To make a model feel more natural it might be useful to add an environment. The following example adds sky and a sea effect for the example oil rig.
+To make a model feel more natural it might be useful to add an environment. The following 
+example adds sky and a sea effect for the example oil rig.
 
 <img
   src={useBaseUrl('/img/cad-skyandocean.png')}
   alt="Oil rig with sky and ocean"
 />
 
-Below you'll find [an interactive example](#interactive-example), but first lets walk through the different parts.
+Below you'll find [an interactive example](#interactive-example), but first lets walk through
+the different parts.
 See the bottom of this page for an interactive example.
 
-First, let's encapsulate the model in a large sky-textured sphere to create an illusion of skies. The sphere map is available from [Free HDR - EXR SKIES-blog](http://freepanorama.blogspot.com/).
+First, let's encapsulate the model in a large sky-textured sphere to create an illusion of
+skies. The sphere map is available from [Free HDR - EXR SKIES-blog](http://freepanorama.blogspot.com/).
 
 ```js
 const modelCenterAtSeaLevel = model
@@ -71,9 +89,12 @@ skyBox.position.copy(modelCenterAtSeaLevel);
 viewer.addObject3D(skyBox);
 ```
 
-This looks a bit better, but the oil rig appears to be floating mid-air at this point. Lets add an ocean. A plane is rendered at the sea level and an ocean effect is applied to the plane. The example builds upon [the ocean example from ThreeJS](https://threejs.org/examples/?q=ocea#webgl_shaders_ocean).
+This looks a bit better, but the oil rig appears to be floating mid-air at this point. Lets 
+add an ocean. A plane is rendered at the sea level and an ocean effect is applied to the plane. 
+The example builds upon [the ocean example from ThreeJS](https://threejs.org/examples/?q=ocea#webgl_shaders_ocean).
 
-Note that since the ocean has moving waves we want to render the model continuously and not only when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.forceRerender()`.
+Note that since the ocean has moving waves we want to render the model continuously and not only 
+when camera changes or data is loaded. We do this by repeatedly calling `Cognite3DViewer.forceRerender()`.
 
 ```js
 import { Water } from 'three/examples/jsm/objects/Water';
