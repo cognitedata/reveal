@@ -109,3 +109,24 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
  * @see {@link Cognite3DViewer.on}.
  */
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+
+/**
+ * Represents a measurement of how much geometry can be loaded.
+ */
+export type CadModelBudget = {
+  /**
+   * Sectors within this distance from the camera will always be loaded in high details.
+   */
+  readonly highDetailProximityThreshold: number;
+
+  /**
+   * Number of bytes of the geometry that must be downloaded.
+   */
+  readonly geometryDownloadSizeBytes: number;
+
+  /**
+   * Estimated maximum number of WebGL draw calls to download geometry for. Draw calls
+   * are very important for the framerate.
+   */
+  readonly maximumNumberOfDrawCalls: number;
+};

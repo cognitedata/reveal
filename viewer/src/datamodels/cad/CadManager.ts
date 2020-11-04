@@ -16,6 +16,7 @@ import { SectorQuads } from './rendering/types';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '@/utilities';
+import { CadModelSectorBudget } from './CadModelSectorBudget';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;
@@ -30,6 +31,14 @@ export class CadManager<TModelIdentifier> {
 
   get materialManager() {
     return this._materialManager;
+  }
+
+  get budget(): CadModelSectorBudget {
+    return this._cadModelUpdateHandler.budget;
+  }
+
+  set budget(budget: CadModelSectorBudget) {
+    this._cadModelUpdateHandler.budget = budget;
   }
 
   constructor(

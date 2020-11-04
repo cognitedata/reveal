@@ -20,6 +20,7 @@ import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderMana
 import { SupportedModelTypes } from '@/datamodels/base';
 import { LoadingState } from '@/utilities';
 import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
+import { CadModelSectorBudget } from '@/datamodels/cad/CadModelSectorBudget';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -100,6 +101,14 @@ export class RevealManager<TModelIdentifier> {
 
       this._updateSubject.next();
     }
+  }
+
+  public get cadBudget(): CadModelSectorBudget {
+    return this._cadManager.budget;
+  }
+
+  public set cadBudget(budget: CadModelSectorBudget) {
+    this._cadManager.budget = budget;
   }
 
   public get renderMode(): RenderMode {
