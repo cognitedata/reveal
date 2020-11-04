@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { render } from 'utils/test';
 import ITable from './ITable';
 import { mockResponse } from '../../utils/mockResponse';
@@ -33,10 +33,59 @@ describe('<ITable/>', () => {
     const body = screen.getAllByRole('row');
     const firsRowContent = body[1].textContent;
     expect(firsRowContent).toContain('Azure Integration');
-    fireEvent.click(nameHeader);
+    fireEvent.click(nameHeader); // to filter acending
+    fireEvent.click(nameHeader); // to filter decending
     const body2 = screen.getAllByRole('row');
     const firstRowContentAfterClick = body2[1].textContent;
     expect(firstRowContentAfterClick).not.toContain('Azure Integration');
     expect(firsRowContent).not.toEqual(firstRowContentAfterClick);
+  });
+
+  test('render and interact with filter', async () => {
+    render(<ITable data={mockResponse} columns={cols} />);
+    const searchInput = screen.getByPlaceholderText(/records/i);
+
+    // should filter the sap integration
+    fireEvent.change(searchInput, { target: { value: 'sap' } });
+    await waitFor(() => {
+      const resultRows = screen.getAllByRole('row');
+      expect(resultRows.length).toEqual(2);
+      // row[0] is the header
+      expect(resultRows[1].textContent?.toLowerCase().includes('sap')).toEqual(
+        true
+      );
+    });
+
+    // clear search should show all rows
+    fireEvent.change(searchInput, { target: { value: '' } });
+    await waitFor(() => {
+      const resultRows = screen.getAllByRole('row');
+      expect(resultRows.length).toEqual(5);
+    });
+
+    // should filter based name column
+    const searchString = 'birger';
+    fireEvent.change(searchInput, { target: { value: searchString } });
+    await waitFor(() => {
+      const resultRows = screen.getAllByRole('row');
+      expect(resultRows.length).toEqual(2);
+      // row[0] is the header
+      expect(
+        resultRows[1].textContent?.toLowerCase().includes(searchString)
+      ).toEqual(true);
+    });
+
+    // should filter from created by col
+    const searchJacek = 'jacek';
+    fireEvent.change(searchInput, { target: { value: searchJacek } });
+    await waitFor(() => {
+      const resultRows = screen.getAllByRole('row');
+      expect(resultRows.length).toEqual(4);
+      // row[0] is the header
+      // created by displays only initials but the the search looks in the name of the users.
+      expect(resultRows[1].textContent?.toLowerCase().includes('j')).toEqual(
+        true
+      );
+    });
   });
 });

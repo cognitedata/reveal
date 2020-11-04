@@ -1,9 +1,11 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
+import { Column } from 'react-table';
 import { mockResponse } from '../../utils/mockResponse';
 import ITable from '../table/ITable';
 import { getIntegrationTableCol } from '../table/IntegrationTableCol';
+import { Integration } from '../../model/Integration';
 
 const Wrapper = styled.div`
   .cogs-table {
@@ -51,7 +53,10 @@ type Props = OwnProps;
 const IntegrationsTable: FunctionComponent<Props> = () => {
   return (
     <Wrapper>
-      <ITable data={mockResponse} columns={getIntegrationTableCol()} />
+      <ITable
+        data={mockResponse}
+        columns={getIntegrationTableCol() as Column<Integration>[]}
+      />
     </Wrapper>
   );
 };

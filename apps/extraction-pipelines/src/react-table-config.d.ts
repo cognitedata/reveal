@@ -4,6 +4,10 @@ import {
   UseRowSelectOptions,
   UseRowSelectRowProps,
   UseRowSelectState,
+  UseGlobalFiltersColumnOptions,
+  UseGlobalFiltersInstanceProps,
+  UseGlobalFiltersOptions,
+  UseGlobalFiltersState,
   UseSortByColumnOptions,
   UseSortByColumnProps,
   UseSortByHooks,
@@ -17,6 +21,7 @@ declare module 'react-table' {
 
   export interface TableOptions<D extends Record<string, unknown>>
     extends UseRowSelectOptions<D>,
+      UseGlobalFiltersOptions<D>,
       UseSortByOptions<D> {}
 
   export interface Hooks<
@@ -27,16 +32,19 @@ declare module 'react-table' {
   export interface TableInstance<
     D extends Record<string, unknown> = Record<string, unknown>
   > extends UseRowSelectInstanceProps<D>,
+      UseGlobalFiltersInstanceProps<D>,
       UseSortByInstanceProps<D> {}
 
   export interface TableState<
     D extends Record<string, unknown> = Record<string, unknown>
   > extends UseRowSelectState<D>,
+      UseGlobalFiltersState<D>,
       UseSortByState<D> {}
 
   export interface ColumnInterface<
     D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseSortByColumnOptions<D> {}
+  > extends UseGlobalFiltersColumnOptions<D>,
+      UseSortByColumnOptions<D> {}
 
   export interface ColumnInstance<
     D extends Record<string, unknown> = Record<string, unknown>

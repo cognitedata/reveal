@@ -11,11 +11,14 @@ import {
   HeaderGroup,
   Row,
   ColumnInstance,
+  useGlobalFilter,
   Column,
 } from 'react-table';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { matchSorter } from 'match-sorter';
 import IntegrationsRadio from './IntegrationsRadio';
+import IntegrationTableSearch from './IntegrationTableSearch';
 
 const SortingIcon = styled((props) => <Icon {...props} />)`
   margin-left: 0.25rem;
@@ -43,32 +46,63 @@ const selectReducer = (
 
 interface ITableProps<T extends object> {
   data: T[];
-  columns: ReadonlyArray<Column<T>>;
+  columns: Column<T>[];
 }
+function fuzzyTextFilterFn<T extends { values: any }>(
+  rows: ReadonlyArray<T>,
+  id: string,
+  filterValue: any
+) {
+  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+}
+fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 
 function ITable<T extends { id: ReactText }>({
   data,
   columns,
 }: ITableProps<T>) {
+  const filterTypes = React.useMemo(
+    () => ({
+      fuzzyText: fuzzyTextFilterFn,
+      text: (rows: { values: any }[], id: string, filterValue: any) => {
+        return rows.filter((row) => {
+          const rowValue = row.values[id];
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true;
+        });
+      },
+    }),
+    []
+  );
+
   const dataSource = useMemo(() => {
     return data;
   }, [data]);
   const headerCols = useMemo(() => {
     return columns;
   }, [columns]);
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
+    state,
+    setGlobalFilter,
+    preGlobalFilteredRows,
   } = useTable(
     {
       columns: headerCols,
       data: dataSource,
       autoResetSelectedRows: false,
       stateReducer: selectReducer,
+      filterTypes,
     } as TableOptions<T>,
+    useGlobalFilter,
     useSortBy,
     useRowSelect,
     (hooks: Hooks<T>) => {
@@ -92,9 +126,13 @@ function ITable<T extends { id: ReactText }>({
       ]);
     }
   );
-
   return (
     <>
+      <IntegrationTableSearch
+        globalFilter={state.globalFilter}
+        preGlobalFilteredRows={preGlobalFilteredRows}
+        setGlobalFilter={setGlobalFilter}
+      />
       <table {...getTableProps()} className="cogs-table integrations-table">
         <thead>
           {headerGroups.map((headerGroup: HeaderGroup<T>) => (

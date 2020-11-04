@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column } from 'react-table';
+import { Cell, CellProps } from 'react-table';
 import { Integration } from '../../model/Integration';
 import OwnedBy from '../integrations/cols/OwnedBy';
 import Authors from '../integrations/cols/Authors';
@@ -8,47 +8,61 @@ import LastRun from '../integrations/cols/LastRun';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableOptions from '../menu/IntegrationsTableOptions';
 
-export const getIntegrationTableCol = (): ReadonlyArray<
-  Column<Integration>
-> => {
+export const getIntegrationTableCol = () => {
   return [
     {
+      id: 'name',
       Header: 'Name',
-      accessor: (integration: Integration, rowIndex: number) => {
-        return <Name name={integration.name} rowIndex={rowIndex} />;
+      accessor: 'name',
+      Cell: ({ row }: CellProps<Integration>) => {
+        return <Name name={row.values.name} rowIndex={row.index} />;
       },
       sortType: 'basic',
     },
     {
+      id: 'lastUpdatedTime',
       Header: 'Last run',
-      accessor: (integration: Integration) => (
-        <LastRun
-          lastUpdatedTime={integration.lastUpdatedTime}
-          numberOfDays={1}
-          unitOfTime="days"
-        />
-      ),
+      accessor: 'lastUpdatedTime',
+      Cell: ({ row }: Cell<Integration>) => {
+        return (
+          <LastRun
+            lastUpdatedTime={row.values.lastUpdatedTime}
+            numberOfDays={1}
+            unitOfTime="days"
+          />
+        );
+      },
       disableSortBy: true,
     },
     {
+      id: 'schedule',
       Header: 'Schedule',
-      accessor: (integration: Integration) => (
-        <Schedule schedule={integration.schedule} />
-      ),
+      accessor: 'schedule',
+      Cell: ({ row }: Cell<Integration>) => {
+        return <Schedule schedule={row.values.schedule} />;
+      },
       disableSortBy: true,
     },
     {
+      id: 'owner',
       Header: 'Owner',
-      accessor: (integration: Integration) => {
-        return <OwnedBy owner={integration.owner} />;
+      accessor: (row: Integration) => {
+        return row.owner.name;
+      },
+      Cell: ({ row }: Cell<Integration>) => {
+        return <OwnedBy owner={row.original.owner} />;
       },
     },
     {
+      id: 'authors',
       Header: 'Created by',
-      accessor: (integration: Integration) => (
-        <Authors authors={integration.authors} />
-      ),
+      accessor: (row: Integration) => {
+        return row.authors.map((aut) => aut.name).join();
+      },
       disableSortBy: true,
+      Cell: ({ row }: Cell<Integration>) => {
+        return <Authors authors={row.original.authors} />;
+      },
     },
     {
       id: 'options',
