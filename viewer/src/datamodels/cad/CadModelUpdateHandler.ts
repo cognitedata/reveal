@@ -32,7 +32,7 @@ import { SectorQuads } from './rendering/types';
 import { emissionLastMillis, LoadingState } from '@/utilities';
 import { CadModelMetadata } from '.';
 import { loadingEnabled, handleDetermineSectorsInput } from './sector/rxSectorUtilities';
-import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelBudget';
+import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
 import { DetermineSectorsInput } from './sector/culling/types';
 
 export class CadModelUpdateHandler {

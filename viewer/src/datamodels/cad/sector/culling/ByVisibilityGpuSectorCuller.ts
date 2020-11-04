@@ -24,7 +24,7 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
 import { toThreeVector3 } from '@/utilities';
-import { CadModelSectorBudget } from '../../CadModelBudget';
+import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 
 /**
  * Options for creating GpuBasedSectorCuller.
