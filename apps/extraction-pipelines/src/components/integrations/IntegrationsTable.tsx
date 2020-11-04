@@ -14,6 +14,12 @@ const Wrapper = styled.div`
         border-bottom: ${Colors['greyscale-grey3'].hex()};
         th {
           background-color: white;
+          &:last-child {
+            width: 3rem;
+          }
+          &:first-child {
+            width: 3rem;
+          }
         }
       }
     }

@@ -9,18 +9,11 @@ describe('<ITable/>', () => {
   const cols = getIntegrationTableCol();
   test('Render without errors', () => {
     render(<ITable data={mockResponse} columns={cols} />);
-    cols.forEach(({ Header }) => {
+    const colsWithHeaders = cols.filter((col) => col.Header);
+    colsWithHeaders.forEach(({ Header }) => {
       const header = screen.getByText(Header);
       expect(header).toBeInTheDocument();
     });
-    // const lastRunHeader = screen.getByText(/Last run/i);
-    // const ownerHeader = screen.getByText(/owner/i);
-    // const scheduleHeader = screen.getByText(/Schedule/i);
-    // const createdByHeader = screen.getByText(/Created by/i);
-    // expect(lastRunHeader).toBeInTheDocument();
-    // expect(ownerHeader).toBeInTheDocument();
-    // expect(scheduleHeader).toBeInTheDocument();
-    // expect(createdByHeader).toBeInTheDocument();
   });
 
   test('render and interact with row selection', () => {

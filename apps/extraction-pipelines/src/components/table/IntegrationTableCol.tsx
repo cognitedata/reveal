@@ -6,6 +6,7 @@ import Authors from '../integrations/cols/Authors';
 import Name from '../integrations/cols/Name';
 import LastRun from '../integrations/cols/LastRun';
 import Schedule from '../integrations/cols/Schedule';
+import IntegrationsTableOptions from '../menu/IntegrationsTableOptions';
 
 export const getIntegrationTableCol = (): ReadonlyArray<
   Column<Integration>
@@ -47,6 +48,14 @@ export const getIntegrationTableCol = (): ReadonlyArray<
       accessor: (integration: Integration) => (
         <Authors authors={integration.authors} />
       ),
+      disableSortBy: true,
+    },
+    {
+      id: 'options',
+      accessor: (integration: Integration) => (
+        <IntegrationsTableOptions integration={integration} />
+      ),
+      width: 50,
       disableSortBy: true,
     },
   ];
