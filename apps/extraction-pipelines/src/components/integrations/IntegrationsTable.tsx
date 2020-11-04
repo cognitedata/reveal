@@ -25,17 +25,17 @@ const Wrapper = styled.div`
     }
     tbody {
       tr {
-        &:hover {
-          background-color: ${Colors['midblue-7'].hex()};
-        }
         &:nth-child(2n) {
           background-color: white;
           &:hover {
-            background-color: ${Colors['midblue-7'].hex()};
+            background-color: ${Colors['greyscale-grey2'].hex()};
           }
         }
         &.row-active {
           background-color: ${Colors['midblue-7'].hex()};
+          &:hover {
+            background-color: ${Colors['greyscale-grey2'].hex()};
+          }
         }
         td {
           padding: 0.75rem;
