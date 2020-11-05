@@ -8,12 +8,6 @@ import { SectorQuads } from '../datamodels/cad/rendering/types';
 import { SectorCuller } from '../internal';
 import { LoadingState } from '../utilities';
 
-// we use these types in public API so they should be reexported here
-// to appear in the api reference docs
-export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
-export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
-export * from '../datamodels/base/SupportedModelTypes';
-
 /**
  * @property logMetrics Might be used to disable usage statistics.
  * @property nodeAppearanceProvider Style node by tree-index.
@@ -48,3 +42,13 @@ export type SectorNodeIdToTreeIndexMapLoadedListener = (event: SectorNodeIdToTre
  * Handler for events about data being loaded.
  */
 export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
+
+export * from '../datamodels/pointcloud/types';
+export * from './migration/types';
+
+export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
+export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
+
+export { SupportedModelTypes } from '../datamodels/base';
+export { CadModelMetadata } from '../datamodels/cad/CadModelMetadata';
+export { NodeAppearanceProvider } from '../datamodels/cad/NodeAppearance';
