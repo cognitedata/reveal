@@ -13883,10 +13883,10 @@ react-popper@^1.3.7:
     typed-styles "^0.0.7"
     warning "^4.0.2"
 
-react-query-devtools@^2.6.2:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.6.2.tgz#25b50ceec7aeda84acb55e1d27390f85324adb75"
-  integrity sha512-CHQXfJ1baS5hjgCfiRzGWWdBhXT2BqLC7TZghYXmrar5QWfhDqazTwzBjDMLv258945z7ImdK9A3zknA/OWoBg==
+react-query-devtools@^2.6.3:
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.6.3.tgz#f7c982839d4b0001cee4d5ddfa826493c2f6341f"
+  integrity sha512-pSvWq5Q8zgIP7QbF0+4BerCHLaLn5HPzce7sIXYqz4XEizcYJHkJtcrAwn6bUkCu5JmAt1Y7fViQtZwOIG2SYA==
   dependencies:
     match-sorter "^4.1.0"
 
