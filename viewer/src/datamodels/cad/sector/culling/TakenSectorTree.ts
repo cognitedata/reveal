@@ -12,7 +12,7 @@ import {
   addSectorCost
 } from './types';
 import { CadModelMetadata } from '../../CadModelMetadata';
-import { traverseUpwards, traverseDepthFirst } from '@/utilities/objectTraversal';
+import { traverseUpwards, traverseDepthFirst } from '../../../../utilities/objectTraversal';
 
 export class TakenSectorTree {
   get totalCost(): SectorCost {

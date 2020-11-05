@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { vec3 } from 'gl-matrix';
-import { toThreeJsBox3, toThreeVector3, Box3 } from '@/utilities';
+import { toThreeJsBox3, toThreeVector3, Box3 } from '../../../utilities';
 
 describe('toThreeVector3', () => {
   test('modifies provided out parameter', () => {

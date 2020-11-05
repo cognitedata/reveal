@@ -4,7 +4,7 @@
 import * as Potree from '@cognite/potree-core';
 import { Observable, interval } from 'rxjs';
 import { map, share, distinctUntilChanged, startWith } from 'rxjs/operators';
-import { LoadingState } from '@/utilities';
+import { LoadingState } from '../../utilities';
 
 export class PotreeLoadHandler {
   private static getLoadingState(): LoadingState {

@@ -37,14 +37,14 @@ import {
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
+import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
-import { createOffsetsArray, LoadingState } from '@/utilities';
-import { trackError } from '@/utilities/metrics';
-import { BinaryFileProvider } from '@/utilities/networking/types';
+import { createOffsetsArray, LoadingState } from '../../../utilities';
+import { trackError } from '../../../utilities/metrics';
+import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { Group } from 'three';
-import { RxTaskTracker } from '@/utilities/RxTaskTracker';
+import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {

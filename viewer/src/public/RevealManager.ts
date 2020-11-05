@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 
-import { CadManager } from '@/datamodels/cad/CadManager';
-import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
+import { CadManager } from '../datamodels/cad/CadManager';
+import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
 import {
   SectorNodeIdToTreeIndexMapLoadedListener,
   SectorNodeIdToTreeIndexMapLoadedEvent,
@@ -13,14 +13,14 @@ import {
 } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, share, filter, observeOn, subscribeOn, tap, auditTime } from 'rxjs/operators';
-import { trackError, trackLoadModel, trackCameraNavigation } from '@/utilities/metrics';
-import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
-import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
-import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
-import { SupportedModelTypes } from '@/datamodels/base';
-import { LoadingState } from '@/utilities';
-import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
-import { CadModelSectorBudget } from '@/datamodels/cad/CadModelSectorBudget';
+import { trackError, trackLoadModel, trackCameraNavigation } from '../utilities/metrics';
+import { NodeAppearanceProvider, CadNode } from '../datamodels/cad';
+import { RenderMode } from '../datamodels/cad/rendering/RenderMode';
+import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
+import { SupportedModelTypes } from '../datamodels/base';
+import { LoadingState } from '../utilities';
+import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
+import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 
 /* eslint-disable jsdoc/require-jsdoc */
 

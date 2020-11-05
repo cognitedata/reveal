@@ -4,7 +4,7 @@
 
 import nock from 'nock';
 import { CogniteInternalId, CogniteClient } from '@cognite/sdk';
-import { CogniteClientNodeIdAndTreeIndexMapper } from '@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
+import { CogniteClientNodeIdAndTreeIndexMapper } from '../../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
 function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
   return treeIndex + 1337;

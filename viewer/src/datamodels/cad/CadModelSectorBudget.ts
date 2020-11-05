@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { isMobileOrTablet } from '@/utilities';
+import { isMobileOrTablet } from '../../utilities';
 
 /**
  * Represents a measurement of how much geometry can be loaded.

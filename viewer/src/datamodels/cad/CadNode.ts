@@ -16,7 +16,7 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { MaterialManager } from './MaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
-import { toThreeVector3, toThreeJsBox3, NumericRange } from '@/utilities';
+import { toThreeVector3, toThreeJsBox3, NumericRange } from '../../utilities';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

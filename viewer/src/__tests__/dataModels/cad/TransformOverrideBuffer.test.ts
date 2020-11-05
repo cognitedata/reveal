@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 import * as THREE from 'three';
-import { TransformOverrideBuffer } from '@/datamodels/cad/rendering/TransformOverrideBuffer';
+import { TransformOverrideBuffer } from '../../../datamodels/cad/rendering/TransformOverrideBuffer';
 
 describe('TransformOverrideBuffer', () => {
   const onGenerateNewTextureCb: (texture: THREE.DataTexture) => void = jest.fn();
