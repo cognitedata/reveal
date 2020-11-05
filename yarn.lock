@@ -1397,6 +1397,14 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
+"@cognite/cdf-sdk-singleton@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-sdk-singleton/-/cdf-sdk-singleton-0.6.1.tgz#c5286184aaab4b60576ea91bc96593350c4caada"
+  integrity sha512-ktlOtCBJGo4mrzpA67HrKy1IN+OJ33V9Vn1/gQo804FuunfbWvRCXb61pMDw3IBjRJjgJMqIKWXr8mwM5mTldA==
+  dependencies:
+    "@cognite/sdk" "^3.0.0"
+    cognite-sdk-v3 "npm:@cognite/sdk@^3.0.0"
+
 "@cognite/cdf-ui-cli@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-ui-cli/-/cdf-ui-cli-0.1.0.tgz#fe015f9674dcc3ddf2f3cf40f3c28b29447d2d39"
@@ -1407,12 +1415,12 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.7.3.tgz#47e03976d2d93a5f487576fb51bfd8475f097344"
-  integrity sha512-jfc3lJi6KeMj5U2v4k+UBTPgGy+ubbHGn2agr0aUdvntMaVwzMyhX+dW3jZwoVC0b9VqXXaSflYm/GXIxGfmgw==
+"@cognite/cdf-utilities@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.8.0.tgz#1b2ec2976c744e20898909ca5da18ed2b04259ec"
+  integrity sha512-FQT7cjFlATh3sWmhwcYbH2jFWfoX6FfPI4i5wpiUii2Q/7azOhSPSQ8pfU33R3va/RF4tkSfHt/osCRtfl55KQ==
   dependencies:
-    query-string "^6.13.4"
+    query-string "^6.13.6"
 
 "@cognite/cogs.js@^1.21.3":
   version "1.21.3"
@@ -1566,7 +1574,7 @@
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^2.23.1"
 
-"@cognite/sdk@^3.1.1":
+"@cognite/sdk@^3.0.0", "@cognite/sdk@^3.1.1", "cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.1.1.tgz#3a0e259dbdaaa88f7225cc2f9f2530034674040d"
   integrity sha512-L5UXQNa8tPk/s0UG6vAGqoYajv8219z4zYPyBQWHrhPXoXMEJdLxy4l6YG3f9UnCRTWDqWUrtlYni4T4sX/Xlg==
@@ -14240,7 +14248,7 @@ qs@~6.5.2:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
-query-string@*, query-string@^6.13.4, query-string@^6.13.6:
+query-string@*, query-string@^6.13.6:
   version "6.13.6"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.13.6.tgz#e5ac7c74f2a5da43fbca0b883b4f0bafba439966"
   integrity sha512-/WWZ7d9na6s2wMEGdVCVgKWE9Rt7nYyNIf7k8xmHXcesPMlEzicWo3lbYwHyA4wBktI2KrXxxZeACLbE84hvSQ==

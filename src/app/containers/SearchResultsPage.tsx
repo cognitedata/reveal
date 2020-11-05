@@ -186,11 +186,7 @@ export const SearchResultsPage = () => {
 
   const setCurrentResourceType = (newResourceType: ResourceType) => {
     const { query } = queryString.parse(history.location.search);
-    if (typeof query === 'string') {
-      history.push(createLink(`/explore/${newResourceType}?query=${query}`));
-    } else {
-      history.push(createLink(`/explore/${newResourceType}`));
-    }
+    history.push(createLink(`/explore/${newResourceType}`, { query }));
   };
 
   const { resourceType = 'asset' } = useParams<{

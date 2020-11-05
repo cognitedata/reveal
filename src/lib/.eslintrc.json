@@ -6,7 +6,7 @@
       "error",
       {
         "paths": ["app"],
-        "patterns": ["app/*", "@cognite/cdf-*", "@cognite/metrics"]
+        "patterns": ["app/*", "@cognite/cdf-*", "!@cognite/cdf-utilities", "@cognite/metrics"]
       }
     ]
   }

@@ -2,7 +2,7 @@ import { ExternalId } from '@cognite/sdk/dist/src';
 import { RelationsTable } from 'lib/containers/Relationships/RelationsTable';
 import { ResourceType, ResourceItem } from 'lib/types';
 import React from 'react';
-import { createLink } from 'lib/utils/URLUtils';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const ResourceDetailsSidebar = ({
   assetId,

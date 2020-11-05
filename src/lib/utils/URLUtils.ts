@@ -15,13 +15,6 @@ export const getEnv = () => {
   return undefined;
 };
 
-export const createLink = (path: string): string => {
-  const project = getProject() || '';
-  const env = getEnv() || '';
-  const envString = env ? `?env=${env}` : '';
-  return `/${project}${path}${envString}`;
-};
-
 export const checkUrl = (env: string) => window.location.hostname.includes(env);
 export const isDevelopment = () => checkUrl('dev') || checkUrl('localhost');
 export const isStaging = () => checkUrl('staging') || checkUrl('pr');
