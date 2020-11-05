@@ -24,6 +24,7 @@ export const EventTable = ({
     Table.Columns.subtype,
     Table.Columns.description,
     Table.Columns.externalId,
+    Table.Columns.relationships,
     Table.Columns.lastUpdatedTime,
     Table.Columns.createdTime,
     ...(mode !== 'none'

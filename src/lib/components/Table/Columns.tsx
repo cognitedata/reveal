@@ -2,6 +2,8 @@ import React from 'react';
 import { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
 import { TimeDisplay } from 'lib/components';
+import { RelationshipCell } from 'lib/containers/Relationships/RelationshipCell';
+import { ResourceItem } from 'lib/types';
 
 export const ResourceTableColumns = {
   name: {
@@ -95,5 +97,14 @@ export const ResourceTableColumns = {
     width: 80,
     align: Column.Alignment.CENTER,
     frozen: Column.FrozenDirection.RIGHT,
+  },
+  relationships: {
+    key: 'relationships',
+    title: 'Relationships',
+    dataKey: 'externalId',
+    width: 300,
+    cellRenderer: ({ rowData: resource }: { rowData: ResourceItem }) => {
+      return <RelationshipCell resourceExternalId={resource.externalId} />;
+    },
   },
 };

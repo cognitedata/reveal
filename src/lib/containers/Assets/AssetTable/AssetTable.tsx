@@ -59,6 +59,7 @@ export const AssetTable = ({
     Table.Columns.name,
     Table.Columns.externalId,
     Table.Columns.description,
+    Table.Columns.relationships,
     {
       ...Table.Columns.root,
       cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {

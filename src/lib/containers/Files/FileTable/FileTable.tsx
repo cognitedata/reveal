@@ -33,6 +33,7 @@ export const FileTable = ({
         </Body>
       ),
     },
+    Table.Columns.relationships,
     Table.Columns.lastUpdatedTime,
     Table.Columns.createdTime,
     ...(mode !== 'none'

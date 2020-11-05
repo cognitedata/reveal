@@ -23,6 +23,7 @@ export const SequenceTable = ({
     Table.Columns.name,
     Table.Columns.externalId,
     Table.Columns.columns,
+    Table.Columns.relationships,
     Table.Columns.lastUpdatedTime,
     Table.Columns.createdTime,
     ...(mode !== 'none'

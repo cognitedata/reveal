@@ -25,6 +25,7 @@ export const TimeseriesTable = ({
     Table.Columns.name,
     Table.Columns.externalId,
     Table.Columns.unit,
+    Table.Columns.relationships,
     Table.Columns.lastUpdatedTime,
     Table.Columns.createdTime,
     {

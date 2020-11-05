@@ -18,8 +18,11 @@ export type Relationship = {
 
 export const useRelationships = (
   resourceExternalId?: string
-): { data: (ExternalId & { type: ResourceType })[] } => {
-  const { data: sourceRelationships = [] } = useList<Relationship>(
+): { data: (ExternalId & { type: ResourceType })[]; isFetching: boolean } => {
+  const {
+    data: sourceRelationships = [],
+    isFetching: isFetchingSource,
+  } = useList<Relationship>(
     // @ts-ignore
     'relationships',
     {
@@ -28,13 +31,16 @@ export const useRelationships = (
     { enabled: !!resourceExternalId }
   );
 
-  const { data: targetRelationships = [] } = useList<Relationship>(
+  const {
+    data: targetRelationships = [],
+    isFetching: isFetchingTarget,
+  } = useList<Relationship>(
     // @ts-ignore
     'relationships',
     {
       filter: { targetExternalIds: [resourceExternalId] },
     },
-    { enabled: !!resourceExternalId }
+    { enabled: !!resourceExternalId, staleTime: Infinity }
   );
 
   return {
@@ -48,6 +54,7 @@ export const useRelationships = (
         type: item.sourceType,
       })),
     ],
+    isFetching: isFetchingSource && isFetchingTarget,
   };
 };
 
