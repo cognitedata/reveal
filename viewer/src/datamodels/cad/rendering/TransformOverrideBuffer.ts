@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { packFloatInto } from '@/utilities/packFloatToVec4';
-import { determinePowerOfTwoDimensions } from '@/utilities/determinePowerOfTwoDimensions';
+import { packFloatInto } from '../../../utilities/packFloatToVec4';
+import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
 
 export class TransformOverrideBuffer {
   private static readonly MIN_NUMBER_OF_TREE_INDICES = 16;

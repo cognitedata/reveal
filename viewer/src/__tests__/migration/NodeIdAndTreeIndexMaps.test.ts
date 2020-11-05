@@ -3,12 +3,12 @@
  */
 
 import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
-import { NodeIdAndTreeIndexMaps } from '@/public/migration/NodeIdAndTreeIndexMaps';
+import { NodeIdAndTreeIndexMaps } from '../../public/migration/NodeIdAndTreeIndexMaps';
 
 import { sleep } from '../wait';
-import { CogniteClientNodeIdAndTreeIndexMapper } from '@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
+import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
-jest.mock('@/utilities/networking/CogniteClientNodeIdAndTreeIndexMapper');
+jest.mock('../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper');
 
 function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
   return treeIndex + 1337;

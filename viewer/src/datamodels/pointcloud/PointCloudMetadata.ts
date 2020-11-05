@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { CameraConfiguration } from '@/utilities';
+import { CameraConfiguration } from '../../utilities';
 
 export interface PointCloudMetadata {
   blobUrl: string;

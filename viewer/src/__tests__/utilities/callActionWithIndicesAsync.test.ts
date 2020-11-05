@@ -1,7 +1,7 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { callActionWithIndicesAsync } from '@/utilities/callActionWithIndicesAsync';
+import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 
 describe('test callActionWithIndicesAsync', () => {
   it('calls an action with specified indices range', async () => {

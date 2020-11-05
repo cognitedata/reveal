@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { WorkerPool } from '@/utilities/workers/WorkerPool';
+import { WorkerPool } from '../../../utilities/workers/WorkerPool';
 import { ParseSectorResult, ParseCtmResult, RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { SectorQuads } from '../rendering/types';
 

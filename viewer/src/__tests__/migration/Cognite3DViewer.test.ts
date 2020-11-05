@@ -6,10 +6,10 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
 
-import { Cognite3DViewer } from '@/public/migration/Cognite3DViewer';
+import { Cognite3DViewer } from '../../public/migration/Cognite3DViewer';
 
 import nock from 'nock';
-import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
+import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
 
 const sceneJson = require('./scene.json');
 
@@ -25,6 +25,12 @@ describe('Cognite3DViewer', () => {
   beforeAll(() => {
     jest.useFakeTimers();
     nock.disableNetConnect();
+
+    nock('https://api-js.mixpanel.com')
+      .persist(true)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
+      .get(/.*/)
+      .reply(200);
 
     nock('https://api-js.mixpanel.com')
       .persist(true)

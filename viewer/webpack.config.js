@@ -31,10 +31,7 @@ module.exports = env => {
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false,
-      alias: {
-        '@': resolve('src')
-      }
+      symlinks: false
     },
     module: {
       rules: [

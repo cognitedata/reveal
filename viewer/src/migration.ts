@@ -13,4 +13,4 @@ export {
   Intersection,
   CameraConfiguration
 } from './public/migration/types';
-export { SupportedModelTypes } from '@/datamodels/base/SupportedModelTypes';
+export { SupportedModelTypes } from './datamodels/base/SupportedModelTypes';

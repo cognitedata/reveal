@@ -8,7 +8,7 @@ import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeLoadHandler } from './PotreeLoadHandler';
 import { Observable } from 'rxjs';
-import { LoadingState } from '@/utilities';
+import { LoadingState } from '../../utilities';
 import { PointCloudNode } from './PointCloudNode';
 
 export class PointCloudManager<TModelIdentifier> {
