@@ -1,10 +1,11 @@
 import React, { useContext, useState, useMemo } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { AssetSearchFilter, AssetFilterProps, Asset } from '@cognite/sdk';
-import { SpacedRow, ButtonGroup } from 'lib/components';
+import { ButtonGroup } from 'lib/components';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { AssetTreeTable } from 'lib/containers/Assets';
+import { SearchResultToolbar } from 'lib/containers';
 
 export const buildAssetsFilterQuery = (
   filter: AssetFilterProps,
@@ -53,7 +54,12 @@ export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
 
   return (
     <>
-      <SpacedRow>
+      <SearchResultToolbar
+        api={query.length > 0 ? 'search' : 'list'}
+        type="assets"
+        filter={assetFilter}
+        query={query}
+      >
         <ButtonGroup currentKey={currentView} onButtonClicked={setCurrentView}>
           <Button icon="Tree" key="tree">
             Tree View
@@ -62,7 +68,7 @@ export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
             List View
           </Button>
         </ButtonGroup>
-      </SpacedRow>
+      </SearchResultToolbar>
       {content}
     </>
   );

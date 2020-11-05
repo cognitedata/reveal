@@ -2,6 +2,7 @@ import React from 'react';
 import { ResourceType } from 'lib/types';
 import { Tabs } from 'lib/components';
 import { ResourceIcons } from 'lib/components/ResourceIcons/ResourceIcons';
+import styled from 'styled-components';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
@@ -12,8 +13,8 @@ const resourceTypeMap: Record<ResourceType, string> = {
 };
 const defaultResourceTypes: ResourceType[] = [
   'asset',
-  'file',
   'timeSeries',
+  'file',
   'event',
   'sequence',
 ];
@@ -40,10 +41,10 @@ export const ResourceTypeTabs = ({
           <Tabs.Pane
             key={type}
             title={
-              <div>
+              <TabContainer>
                 <ResourceIcons style={{ marginRight: 12 }} type={type} />
                 {resourceTypeMap[type]}
-              </div>
+              </TabContainer>
             }
           />
         );
@@ -51,3 +52,8 @@ export const ResourceTypeTabs = ({
     </Tabs>
   );
 };
+
+const TabContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;

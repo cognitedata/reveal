@@ -6,15 +6,15 @@ import styled from 'styled-components';
 const getResourceIcon = (resourceType: ResourceType) => {
   switch (resourceType) {
     case 'asset':
-      return <Icon type="DataStudio" />;
+      return <Icon type="ResourceAssets" />;
     case 'event':
-      return <Icon type="Events" />;
+      return <Icon type="ResourceEvents" />;
     case 'timeSeries':
-      return <Icon type="Timeseries" />;
+      return <Icon type="ResourceTimeseries" />;
     case 'sequence':
-      return <Icon type="Duplicate" />;
+      return <Icon type="ResourceSequences" />;
     case 'file':
-      return <Icon type="Document" />;
+      return <Icon type="ResourceDocuments" />;
     default:
       return <></>;
   }

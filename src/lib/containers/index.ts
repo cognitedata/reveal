@@ -4,3 +4,4 @@ export * from './Files';
 export * from './ResourceSidebar';
 export * from './Sequences';
 export * from './Timeseries';
+export * from './SearchResults';

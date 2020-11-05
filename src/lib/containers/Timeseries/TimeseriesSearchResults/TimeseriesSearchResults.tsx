@@ -6,6 +6,7 @@ import {
 } from '@cognite/sdk';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
+import { SearchResultToolbar } from 'lib/containers/SearchResults';
 
 export const buildTimeseriesFilterQuery = (
   filter: TimeseriesFilter,
@@ -27,13 +28,21 @@ export const TimeseriesSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <SearchResultTable<Timeseries>
-      api="timeseries"
-      filter={timeseriesFilter}
-      query={query}
-      onRowClick={ts =>
-        openPreview({ item: { id: ts.id, type: 'timeSeries' } })
-      }
-    />
+    <>
+      <SearchResultToolbar
+        api={query.length > 0 ? 'search' : 'list'}
+        type="timeseries"
+        filter={timeseriesFilter}
+        query={query}
+      />
+      <SearchResultTable<Timeseries>
+        api="timeseries"
+        filter={timeseriesFilter}
+        query={query}
+        onRowClick={ts =>
+          openPreview({ item: { id: ts.id, type: 'timeSeries' } })
+        }
+      />
+    </>
   );
 };

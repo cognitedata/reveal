@@ -38,7 +38,7 @@ export function ResultCount({
       if (listDone && Number.isFinite(list?.count)) {
         return (
           <>
-            {formatNumber(list?.count!)} {label}
+            {formatNumber(list?.count!)} {type} {label}
           </>
         );
       }
@@ -48,7 +48,7 @@ export function ResultCount({
       if (searchDone && Number.isFinite(search?.length)) {
         return (
           <>
-            {formatNumber(search?.length!)} {label}
+            {formatNumber(search?.length!)} {type} {label}
           </>
         );
       }

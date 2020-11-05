@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
-import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
-import { usePermissions } from 'lib/hooks/CustomHooks';
-import { ButtonGroup, SpacedRow } from 'lib/components';
-import { useResourceEditable } from 'lib/context';
-import { FileUploaderModal } from 'lib/containers/Files';
 import { FileInfo } from '@cognite/sdk';
+import { ButtonGroup } from 'lib/components';
+import { SearchResultToolbar, FileUploaderModal } from 'lib/containers';
+import { useResourceEditable } from 'lib/context';
+import { usePermissions } from 'lib/hooks/CustomHooks';
+import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
+import React, { useState } from 'react';
 
 export const FileToolbar = ({
   onFileClicked,
   onViewChange,
   currentView = 'list',
+  query,
+  filter,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
   onViewChange?: (view: string) => void;
   currentView?: string;
+  query: string;
+  filter?: any;
 }) => {
   const inEditMode = useResourceEditable();
   const hasEditPermissions = usePermissions('filesAcl', 'WRITE');
@@ -23,16 +27,12 @@ export const FileToolbar = ({
 
   return (
     <>
-      <SpacedRow>
-        <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
-          <ButtonGroup.Button key="list" icon="List">
-            List View
-          </ButtonGroup.Button>
-          <ButtonGroup.Button key="grid" icon="Grid">
-            Grid View
-          </ButtonGroup.Button>
-        </ButtonGroup>
-        <div className="spacer" />
+      <SearchResultToolbar
+        api={query?.length > 0 ? 'search' : 'list'}
+        type="files"
+        filter={filter}
+        query={query}
+      >
         {inEditMode && (
           <Button
             onClick={() => setModalVisible(true)}
@@ -42,7 +42,15 @@ export const FileToolbar = ({
             Upload new file
           </Button>
         )}
-      </SpacedRow>
+        <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
+          <ButtonGroup.Button key="list" icon="List">
+            List View
+          </ButtonGroup.Button>
+          <ButtonGroup.Button key="grid" icon="Grid">
+            Grid View
+          </ButtonGroup.Button>
+        </ButtonGroup>
+      </SearchResultToolbar>
       <FileUploaderModal
         visible={modalVisible}
         onFileSelected={file => {

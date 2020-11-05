@@ -28,6 +28,8 @@ export const FileSearchResults = ({ query = '' }: { query?: string }) => {
   return (
     <>
       <FileToolbar
+        query={query}
+        filter={fileFilter}
         onFileClicked={file => {
           openPreview({ item: { id: file.id, type: 'file' } });
           return true;

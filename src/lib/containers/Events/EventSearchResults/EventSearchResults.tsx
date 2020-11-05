@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { EventSearchRequest, EventFilter, CogniteEvent } from '@cognite/sdk';
 import { useResourcePreview, ResourceSelectionContext } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
+import { SearchResultToolbar } from 'lib/containers/SearchResults';
 
 export const buildEventsFilterQuery = (
   filter: EventFilter,
@@ -23,13 +24,21 @@ export const EventSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <SearchResultTable<CogniteEvent>
-      api="events"
-      filter={eventFilter}
-      query={query}
-      onRowClick={event =>
-        openPreview({ item: { id: event.id, type: 'event' } })
-      }
-    />
+    <>
+      <SearchResultToolbar
+        api={query.length > 0 ? 'search' : 'list'}
+        type="events"
+        filter={eventFilter}
+        query={query}
+      />
+      <SearchResultTable<CogniteEvent>
+        api="events"
+        filter={eventFilter}
+        query={query}
+        onRowClick={event =>
+          openPreview({ item: { id: event.id, type: 'event' } })
+        }
+      />
+    </>
   );
 };

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { SequenceSearchFilter, SequenceFilter, Sequence } from '@cognite/sdk';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
+import { SearchResultToolbar } from 'lib/containers/SearchResults';
 
 export const buildSequencesFilterQuery = (
   filter: SequenceFilter['filter'],
@@ -23,13 +24,21 @@ export const SequenceSearchResults = ({ query = '' }: { query?: string }) => {
   const { openPreview } = useResourcePreview();
 
   return (
-    <SearchResultTable<Sequence>
-      api="sequences"
-      filter={sequenceFilter}
-      query={query}
-      onRowClick={sequence =>
-        openPreview({ item: { id: sequence.id, type: 'sequence' } })
-      }
-    />
+    <>
+      <SearchResultToolbar
+        api={query.length > 0 ? 'search' : 'list'}
+        type="sequences"
+        filter={sequenceFilter}
+        query={query}
+      />
+      <SearchResultTable<Sequence>
+        api="sequences"
+        filter={sequenceFilter}
+        query={query}
+        onRowClick={sequence =>
+          openPreview({ item: { id: sequence.id, type: 'sequence' } })
+        }
+      />
+    </>
   );
 };
