@@ -3,6 +3,7 @@
     border-radius: 50%;
     width: 32px;
     height: 32px;
+    box-sizing: border-box;
 }
 .reveal-viewer-spinner {
     margin: 10px;
