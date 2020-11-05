@@ -2,15 +2,15 @@
  * Copyright 2020 Cognite AS
  */
 
-import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '@/utilities/networking/types';
-import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
+import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../utilities/networking/types';
+import { CdfModelDataClient } from '../utilities/networking/CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
-import { createCadManager } from '@/datamodels/cad/createCadManager';
-import { createPointCloudManager } from '@/datamodels/pointcloud/createPointCloudManager';
+import { createCadManager } from '../datamodels/cad/createCadManager';
+import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
-import { LocalModelDataClient } from '@/utilities/networking/LocalModelDataClient';
+import { LocalModelDataClient } from '../utilities/networking/LocalModelDataClient';
 import { RevealOptions } from './types';
-import { initMetrics } from '@/utilities/metrics';
+import { initMetrics } from '../utilities/metrics';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.

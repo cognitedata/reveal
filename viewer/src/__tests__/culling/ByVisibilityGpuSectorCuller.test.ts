@@ -3,15 +3,15 @@
  */
 import * as THREE from 'three';
 
-import { DetermineSectorsInput, SectorCost } from '@/datamodels/cad/sector/culling/types';
-import { MaterialManager } from '@/datamodels/cad/MaterialManager';
-import { OrderSectorsByVisibilityCoverage } from '@/datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
-import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
-import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
+import { DetermineSectorsInput, SectorCost } from '../../datamodels/cad/sector/culling/types';
+import { MaterialManager } from '../../datamodels/cad/MaterialManager';
+import { OrderSectorsByVisibilityCoverage } from '../../datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../internal';
+import { SectorMetadata, CadNode, CadModelMetadata } from '../../experimental';
 
 import { generateSectorTree } from '../testutils/createSectorMetadata';
 import { createCadModelMetadata } from '../testutils/createCadModelMetadata';
-import { CadModelSectorBudget } from '@/datamodels/cad/CadModelSectorBudget';
+import { CadModelSectorBudget } from '../../datamodels/cad/CadModelSectorBudget';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 

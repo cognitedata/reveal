@@ -5,11 +5,11 @@
 import { of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
-import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
-import { WorkerPool } from '@/utilities/workers/WorkerPool';
-import { SectorQuads } from '@/datamodels/cad/rendering/types';
+import { CadSectorParser } from '../../../datamodels/cad/sector/CadSectorParser';
+import { WorkerPool } from '../../../utilities/workers/WorkerPool';
+import { SectorQuads } from '../../../datamodels/cad/rendering/types';
 
-jest.mock('@/utilities/workers/WorkerPool');
+jest.mock('../../../utilities/workers/WorkerPool');
 
 describe('CadSectorParser', () => {
   const workerPool: WorkerPool = new WorkerPool();

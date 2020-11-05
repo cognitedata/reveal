@@ -3,10 +3,10 @@
  */
 
 import nock from 'nock';
-import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
+import { CdfModelDataClient } from '../../../utilities/networking/CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
-import { Model3DOutputList } from '@/utilities/networking/Model3DOutputList';
-import { File3dFormat } from '@/utilities';
+import { Model3DOutputList } from '../../../utilities/networking/Model3DOutputList';
+import { File3dFormat } from '../../../utilities';
 
 describe('CdfModelDataClient', () => {
   const appId = 'reveal-CdfModelDataClient-test';

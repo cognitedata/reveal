@@ -29,7 +29,7 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector, SectorGeometry } from './sector/types';
 import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
-import { emissionLastMillis, LoadingState } from '@/utilities';
+import { emissionLastMillis, LoadingState } from '../../utilities';
 import { CadModelMetadata } from '.';
 import { loadingEnabled, handleDetermineSectorsInput } from './sector/rxSectorUtilities';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';

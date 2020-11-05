@@ -6,8 +6,8 @@ import { vec3 } from 'gl-matrix';
 
 import { SectorMetadata, SectorMetadataFacesFileSection, SectorScene } from '../sector/types';
 import { SectorSceneImpl } from '../sector/SectorScene';
-import { Box3 } from '@/utilities';
-import { traverseUpwards } from '@/utilities/objectTraversal';
+import { Box3 } from '../../../utilities';
+import { traverseUpwards } from '../../../utilities/objectTraversal';
 
 export interface CadSectorMetadataV8 {
   readonly id: number;

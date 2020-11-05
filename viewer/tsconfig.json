@@ -22,12 +22,8 @@
     "lib": [
         "dom",
         "esnext"
-    ],
-
-    "baseUrl": "./src/",
-    "paths": {
-      "@/*": ["*"]
-    }
+    ]
+    // do not add path aliases. They'll end up in generated declaration files.
   },
   // include is also used for eslint to understand which files should be linted
   "include": ["*.js", "*.ts", "src/**/*", ".eslintrc.js", "script", "src/@types", "src/utilities/disposeAttributeArrayOnUpload.ts"],

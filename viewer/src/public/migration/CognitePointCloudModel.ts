@@ -7,7 +7,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
 import { PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from '../..';
-import { PointCloudNode } from '@/datamodels/pointcloud/PointCloudNode';
+import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';
 
 /**
  * Represents a point clouds model loaded from CDF.
