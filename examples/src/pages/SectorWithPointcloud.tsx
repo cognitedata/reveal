@@ -164,10 +164,7 @@ export function SectorWithPointcloud() {
       }
       scene.add(model);
 
-      let pointCloud: [
-        reveal.internal.PotreeGroupWrapper,
-        reveal.internal.PotreeNodeWrapper
-      ];
+      let pointCloud
       if (pointCloudModelRevision) {
         pointCloud = await revealManager.addModel(
           'pointcloud',
@@ -181,7 +178,13 @@ export function SectorWithPointcloud() {
         );
       }
 
-      const [pointCloudGroup, pointCloudNode] = pointCloud;
+      // fixme: something wrong with the types here.
+      //    Why THREE.Group can be destructured like that?
+      //    example is broken here. It fails at runtime.
+      const [pointCloudGroup, pointCloudNode] = pointCloud as unknown as [
+        reveal.internal.PotreeGroupWrapper,
+        reveal.internal.PotreeNodeWrapper
+      ];
       scene.add(pointCloudGroup);
 
       const cadModelOffsetRoot = new THREE.Group();

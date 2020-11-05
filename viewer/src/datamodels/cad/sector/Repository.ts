@@ -5,7 +5,7 @@
 import { OperatorFunction, Observable } from 'rxjs';
 import { ConsumedSector, WantedSector, SectorGeometry } from './types';
 import { SectorQuads } from '../rendering/types';
-import { LoadingState } from '@/utilities';
+import { LoadingState } from '../../../utilities';
 
 // TODO move
 export type SectorId = number;

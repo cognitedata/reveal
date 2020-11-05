@@ -5,7 +5,7 @@
 import { ModelStateHandler } from './ModelStateHandler';
 import { WantedSector, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
-import { Box3 } from '@/utilities';
+import { Box3 } from '../../../utilities';
 
 describe('ModelStateHandler', () => {
   // TODO: 10-08-2020 j-bjorne: Consider changing WantedSector and ConsumedSector metadata field. Annoying to mock.

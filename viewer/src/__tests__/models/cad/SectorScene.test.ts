@@ -5,10 +5,10 @@
 import * as THREE from 'three';
 import { vec3 } from 'gl-matrix';
 
-import { SectorMetadata } from '@/datamodels/cad';
-import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
-import { traverseDepthFirst } from '@/utilities/objectTraversal';
-import { Box3 } from '@/utilities';
+import { SectorMetadata } from '../../../datamodels/cad';
+import { SectorSceneImpl } from '../../../datamodels/cad/sector/SectorScene';
+import { traverseDepthFirst } from '../../../utilities/objectTraversal';
+import { Box3 } from '../../../utilities';
 
 import { createSectorMetadata } from '../../testutils/createSectorMetadata';
 

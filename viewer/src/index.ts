@@ -9,7 +9,7 @@ export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export { Intersection } from './public/migration/types';
 export * from './public/migration/Cognite3DViewer';
 export * from './public/migration/types';
-export { SupportedModelTypes } from '@/datamodels/base/SupportedModelTypes';
+export { SupportedModelTypes } from './datamodels/base/SupportedModelTypes';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { BoundingBoxClipper } from './utilities';
 export * from './revealEnv';

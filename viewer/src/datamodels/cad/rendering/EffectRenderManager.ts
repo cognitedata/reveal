@@ -6,9 +6,9 @@ import { MaterialManager } from '../MaterialManager';
 import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
 import { edgeDetectionShaders, fxaaShaders } from './shaders';
-import { CogniteColors } from '@/utilities';
+import { CogniteColors } from '../../../utilities';
 import { CadNode } from '..';
-import { Cognite3DModel } from '@/migration';
+import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 
 export class EffectRenderManager {

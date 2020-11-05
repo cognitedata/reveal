@@ -1,7 +1,7 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { isTheSameDomain } from '@/utilities/networking/isTheSameDomain';
+import { isTheSameDomain } from '../../../utilities/networking/isTheSameDomain';
 
 describe('isTheSameDomain fn tests', () => {
   const baseOrigin = 'https://foo.bar';

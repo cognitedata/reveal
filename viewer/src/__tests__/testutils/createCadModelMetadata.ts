@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, CadModelMetadata } from '@/datamodels/cad';
-import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
+import { SectorMetadata, CadModelMetadata } from '../../datamodels/cad';
+import { SectorSceneImpl } from '../../datamodels/cad/sector/SectorScene';
 
 let modelIdRunningNumber = 0;
 

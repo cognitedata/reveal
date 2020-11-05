@@ -8,11 +8,11 @@ import * as THREE from 'three';
 import { RenderMode } from '../RenderMode';
 import { CadNode } from '../../CadNode';
 
-const vertexShaderAntialias = glsl(require('@/glsl/post-processing/fxaa.vert').default);
-const fragmentShaderAntialias = glsl(require('@/glsl/post-processing/fxaa.frag').default);
-const passThroughVertexShader = glsl(require('@/glsl/post-processing/passthrough.vert').default);
-const ssaoShader = glsl(require('@/glsl/post-processing/ssao.frag').default);
-const ssaoFinalShader = glsl(require('@/glsl/post-processing/ssao-final.frag').default);
+const vertexShaderAntialias = glsl(require('../../../../glsl/post-processing/fxaa.vert').default);
+const fragmentShaderAntialias = glsl(require('../../../../glsl/post-processing/fxaa.frag').default);
+const passThroughVertexShader = glsl(require('../../../../glsl/post-processing/passthrough.vert').default);
+const ssaoShader = glsl(require('../../../../glsl/post-processing/ssao.frag').default);
+const ssaoFinalShader = glsl(require('../../../../glsl/post-processing/ssao-final.frag').default);
 
 interface Uniforms {
   [uniform: string]: THREE.IUniform;

@@ -6,8 +6,8 @@ import * as Potree from '@cognite/potree-core';
 import * as THREE from 'three';
 
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
-import { fromThreeJsBox3 } from '@/utilities';
-import { Box3 } from '@/utilities/Box3';
+import { fromThreeJsBox3 } from '../../utilities';
+import { Box3 } from '../../utilities/Box3';
 import { vec3 } from 'gl-matrix';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };

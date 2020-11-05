@@ -14,12 +14,10 @@ import {
 } from './primitiveGeometries';
 import { Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
-import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
+import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 
 export function* createPrimitives(sector: SectorGeometry, materials: Materials) {
   const primitives = sector.primitives;
-
- 
 
   if (hasAny(primitives.boxCollection)) {
     yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box);

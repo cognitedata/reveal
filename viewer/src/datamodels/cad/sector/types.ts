@@ -6,7 +6,7 @@ import { vec3 } from 'gl-matrix';
 
 import { LevelOfDetail } from './LevelOfDetail';
 import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
-import { Box3 } from '@/utilities';
+import { Box3 } from '../../../utilities';
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@cognite/reveal-parser-worker';
 
 /**
