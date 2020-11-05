@@ -18,6 +18,7 @@ import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { matchSorter } from 'match-sorter';
 import IntegrationsRadio from './IntegrationsRadio';
+import { Integration } from '../../model/Integration';
 import IntegrationTableSearch from './IntegrationTableSearch';
 
 const SortingIcon = styled((props) => <Icon {...props} />)`
@@ -111,10 +112,11 @@ function ITable<T extends { id: ReactText }>({
           id: 'selection',
           Header: () => <div />,
           disableSortBy: true,
-          Cell: ({ row }: Cell<T>) => {
+          Cell: ({ row }: Cell<Integration>) => {
             return (
               <div>
                 <IntegrationsRadio
+                  integration={row.original}
                   inputId={`radio-row-${row.id}`}
                   {...row.getToggleRowSelectedProps()}
                 />
@@ -126,6 +128,7 @@ function ITable<T extends { id: ReactText }>({
       ]);
     }
   );
+
   return (
     <>
       <IntegrationTableSearch

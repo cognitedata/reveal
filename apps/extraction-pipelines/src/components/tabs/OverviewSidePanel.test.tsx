@@ -1,12 +1,23 @@
 import React from 'react';
-import { render } from 'utils/test';
 import { screen } from '@testing-library/react';
 import OverviewSidePanel from './OverviewSidePanel';
+import { renderWithSelectedIntegrationContext } from '../../utils/test/render';
+import { mockResponse } from '../../utils/mockResponse';
 
 describe('OverviewSidePanel', () => {
-  test('Render with out fail', () => {
-    render(<OverviewSidePanel />);
-    const heading = screen.getByRole('heading');
+  test('Render nothing when integration is not set', () => {
+    renderWithSelectedIntegrationContext(<OverviewSidePanel />, {});
+    const heading = screen.queryByRole('heading');
+    expect(heading).not.toBeInTheDocument();
+  });
+
+  test('Render heading when integration is selected', () => {
+    const mockIntegration = mockResponse[0];
+    renderWithSelectedIntegrationContext(<OverviewSidePanel />, {
+      initIntegration: mockIntegration,
+    });
+    const heading = screen.queryByRole('heading');
     expect(heading).toBeInTheDocument();
+    expect(heading?.textContent).toEqual(mockIntegration.name);
   });
 });

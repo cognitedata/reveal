@@ -1,14 +1,18 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { render } from 'utils/test';
 import ITable from './ITable';
 import { mockResponse } from '../../utils/mockResponse';
 import { getIntegrationTableCol } from './IntegrationTableCol';
+import { renderWithSelectedIntegrationContext } from '../../utils/test/render';
 
 describe('<ITable/>', () => {
   const cols = getIntegrationTableCol();
+  const mockIntegration = mockResponse[0];
   test('Render without errors', () => {
-    render(<ITable data={mockResponse} columns={cols} />);
+    renderWithSelectedIntegrationContext(
+      <ITable data={mockResponse} columns={cols} />,
+      { initIntegration: mockIntegration }
+    );
     const colsWithHeaders = cols.filter((col) => col.Header);
     colsWithHeaders.forEach(({ Header }) => {
       const header = screen.getByText(Header);
@@ -17,7 +21,10 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with row selection', () => {
-    render(<ITable data={mockResponse} columns={cols} />);
+    renderWithSelectedIntegrationContext(
+      <ITable data={mockResponse} columns={cols} />,
+      { initIntegration: mockIntegration }
+    );
     const sapLabel = screen.getByLabelText(mockResponse[1].name);
     fireEvent.click(sapLabel);
     expect((sapLabel as HTMLInputElement).checked).toEqual(true);
@@ -28,7 +35,10 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with sort on header: Name', () => {
-    render(<ITable data={mockResponse} columns={cols} />);
+    renderWithSelectedIntegrationContext(
+      <ITable data={mockResponse} columns={cols} />,
+      { initIntegration: mockIntegration }
+    );
     const nameHeader = screen.getByText(/name/i);
     const body = screen.getAllByRole('row');
     const firsRowContent = body[1].textContent;
@@ -42,7 +52,10 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with filter', async () => {
-    render(<ITable data={mockResponse} columns={cols} />);
+    renderWithSelectedIntegrationContext(
+      <ITable data={mockResponse} columns={cols} />,
+      { initIntegration: mockIntegration }
+    );
     const searchInput = screen.getByPlaceholderText(/records/i);
 
     // should filter the sap integration

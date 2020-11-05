@@ -6,7 +6,7 @@ import { render } from '../../utils/test';
 describe('OverviewTab', () => {
   test('Render with out fail', () => {
     render(<OverviewTab />);
-    const sidePanelHeading = screen.getByRole('heading');
+    const sidePanelHeading = screen.getByRole('table');
     expect(sidePanelHeading).toBeInTheDocument();
   });
 });

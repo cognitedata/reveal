@@ -66,9 +66,9 @@ export const getIntegrationTableCol = () => {
     },
     {
       id: 'options',
-      accessor: (integration: Integration) => (
-        <IntegrationsTableOptions integration={integration} />
-      ),
+      Cell: ({ row }: Cell<Integration>) => {
+        return <IntegrationsTableOptions integration={row.original} />;
+      },
       width: 50,
       disableSortBy: true,
     },

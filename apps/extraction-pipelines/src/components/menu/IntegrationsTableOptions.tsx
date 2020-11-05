@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Colors, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Integration } from '../../model/Integration';
 
@@ -8,17 +8,27 @@ const TableOptionDropdown = styled((props) => (
 ))`
   .tippy-content {
     padding: 0;
+    .cogs-menu-item {
+      color: ${Colors.black.hex()};
+    }
   }
 `;
 const OptionMenuBtn = styled((props) => (
   <Button {...props}>{props.children}</Button>
 ))`
   background-color: transparent;
+  color: ${Colors.black.hex()};
   :hover {
     background-color: transparent;
     box-shadow: none;
   }
+  .cogs-icon {
+    svg {
+      width: inherit;
+    }
+  }
 `;
+
 interface OwnProps {
   integration: Integration;
 }

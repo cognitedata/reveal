@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'utils/utils';
+import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
 
 export default (
   ui: React.ReactElement,
@@ -11,4 +12,17 @@ export default (
   const component = <div className={styleScope}>{ui}</div>;
 
   return render(component, options);
+};
+
+export const renderWithSelectedIntegrationContext = (
+  ui: React.ReactNode,
+  // @ts-ignore
+  { initIntegration, ...renderOptions }
+) => {
+  return render(
+    <SelectedIntegrationProvider initIntegration={initIntegration}>
+      {ui}
+    </SelectedIntegrationProvider>,
+    renderOptions
+  );
 };

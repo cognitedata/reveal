@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
+import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
 import OverviewSidePanel from './OverviewSidePanel';
 import IntegrationsTable from '../integrations/IntegrationsTable';
 
@@ -17,12 +18,14 @@ type Props = OwnProps;
 const OverviewTab: FunctionComponent<Props> = () => {
   return (
     <>
-      <TableWrapper>
-        <IntegrationsTable />
-      </TableWrapper>
-      <IntegrationsWrapper>
-        <OverviewSidePanel />
-      </IntegrationsWrapper>
+      <SelectedIntegrationProvider>
+        <TableWrapper>
+          <IntegrationsTable />
+        </TableWrapper>
+        <IntegrationsWrapper>
+          <OverviewSidePanel />
+        </IntegrationsWrapper>
+      </SelectedIntegrationProvider>
     </>
   );
 };

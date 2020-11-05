@@ -8,6 +8,6 @@ describe('<Home />', () => {
     render(<Home />);
     const headings = screen.getAllByRole('heading');
     expect(headings[0].textContent).toEqual('Integrations');
-    expect(headings.length).toEqual(2);
+    expect(headings.length).toEqual(1);
   });
 });
