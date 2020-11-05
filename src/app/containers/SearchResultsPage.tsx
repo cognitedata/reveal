@@ -5,11 +5,13 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
+import { Row, Col, Divider } from 'antd';
 import queryString from 'query-string';
 import {
   ResourceType,
   ResourceItem,
   RenderResourceActionsFunction,
+  convertResourceType,
 } from 'lib/types';
 import { useHistory, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
@@ -27,11 +29,11 @@ import ResourceSelectionContext, {
   useResourceFilter,
   useQuery,
   useSelectedResource,
-  useResourceTypes,
 } from 'lib/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
 import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
+import { ResultCount } from 'lib/components';
 import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { useCollectionFeature } from 'app/utils/featureFlags';
 
@@ -51,7 +53,6 @@ function SearchPage({
   currentResourceType: ResourceType;
   setCurrentResourceType: (newResourceType: ResourceType) => void;
 }) {
-  const resourceTypes = useResourceTypes();
   const [query] = useQuery();
   const [debouncedQuery] = useDebounce(query, 100);
 
@@ -76,10 +77,11 @@ function SearchPage({
     setResourcesState(cart.map(el => ({ ...el, state: 'selected' })));
   }, [setResourcesState, cart]);
 
+  const filter = useResourceFilter(currentResourceType);
+
   return (
     <ResourcePreviewProvider>
       <ResourceTypeTabs
-        resourceTypes={resourceTypes}
         currentResourceType={currentResourceType}
         setCurrentResourceType={setCurrentResourceType}
       />
@@ -87,6 +89,17 @@ function SearchPage({
         <SearchResultFilters currentResourceType={currentResourceType} />
         <SearchResultWrapper>
           <ExplorationNavBar cart={cart} setCart={setCart} />
+          <Divider />
+          <Row gutter={[0, 16]}>
+            <Col>
+              <ResultCount
+                api={query.length > 0 ? 'search' : 'list'}
+                type={convertResourceType(currentResourceType)}
+                filter={filter}
+                query={query}
+              />
+            </Col>
+          </Row>
           <SearchResult query={debouncedQuery} type={currentResourceType} />
         </SearchResultWrapper>
       </Wrapper>

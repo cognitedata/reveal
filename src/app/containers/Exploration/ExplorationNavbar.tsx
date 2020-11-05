@@ -9,9 +9,8 @@ import { ExplorationSearchBar } from './ExplorationSearchBar';
 const Navbar = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 18px 26px 12px 0;
+  margin-top: 18px;
   background: #fff;
-  border-bottom: 2px solid ${Colors['greyscale-grey2'].hex()};
 `;
 
 const CartDropdown = styled(Dropdown)`

@@ -9,6 +9,7 @@ export * from './CdfCount/CdfCount';
 export * from './LatestDatapoint/LatestDatapoint';
 export * from './ListItem/ListItem';
 export * from './Loader/Loader';
+export * from './ResultCount/ResultCount';
 export * from './Select/Select';
 export * from './Tabs/Tabs';
 export * from './Table/Table';

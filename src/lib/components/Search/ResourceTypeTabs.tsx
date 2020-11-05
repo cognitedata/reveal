@@ -1,7 +1,6 @@
 import React from 'react';
-import { ResourceType, convertResourceType } from 'lib/types';
-import { Tabs, CdfCount } from 'lib/components';
-import { useResourceFilters } from 'lib/context';
+import { ResourceType } from 'lib/types';
+import { Tabs } from 'lib/components';
 import { ResourceIcons } from 'lib/components/ResourceIcons/ResourceIcons';
 
 const resourceTypeMap: Record<ResourceType, string> = {
@@ -11,6 +10,13 @@ const resourceTypeMap: Record<ResourceType, string> = {
   timeSeries: 'Time series',
   sequence: 'Sequences',
 };
+const defaultResourceTypes: ResourceType[] = [
+  'asset',
+  'file',
+  'timeSeries',
+  'event',
+  'sequence',
+];
 
 type Props = {
   resourceTypes?: ResourceType[];
@@ -21,24 +27,8 @@ type Props = {
 export const ResourceTypeTabs = ({
   currentResourceType,
   setCurrentResourceType,
-  resourceTypes = Object.keys(resourceTypeMap) as ResourceType[],
+  resourceTypes = defaultResourceTypes,
 }: Props) => {
-  const {
-    assetFilter,
-    timeseriesFilter,
-    fileFilter,
-    sequenceFilter,
-    eventFilter,
-  } = useResourceFilters();
-
-  const filtersMap: { [key in ResourceType]: any } = {
-    asset: assetFilter,
-    timeSeries: timeseriesFilter,
-    file: fileFilter,
-    sequence: sequenceFilter,
-    event: eventFilter,
-  };
-
   return (
     <Tabs
       tab={currentResourceType}
@@ -46,15 +36,13 @@ export const ResourceTypeTabs = ({
     >
       {resourceTypes.map(key => {
         const type = key as ResourceType;
-        const sdkType = convertResourceType(type);
         return (
           <Tabs.Pane
             key={type}
             title={
               <div>
                 <ResourceIcons style={{ marginRight: 12 }} type={type} />
-                {resourceTypeMap[type]}{' '}
-                <CdfCount type={sdkType} filter={filtersMap[type]} />
+                {resourceTypeMap[type]}
               </div>
             }
           />
