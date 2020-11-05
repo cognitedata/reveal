@@ -110,6 +110,9 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
  */
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
+export * from './NotSupportedInMigrationWrapperError';
+export { CogniteModelBase } from './CogniteModelBase';
+
 /**
  * Represents a measurement of how much geometry can be loaded.
  */
