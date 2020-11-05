@@ -176,7 +176,7 @@ export class Cognite3DViewer {
     this.controls.dollyFactor = 0.992;
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
-      this._lastCameraChangedTimestamp = performance.now();
+      this._lastCameraChangedTimestamp = Date.now();
       this.eventListeners.cameraChange.forEach(f => {
         f(position.clone(), target.clone());
       });
@@ -1056,17 +1056,21 @@ export class Cognite3DViewer {
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
-        this._lastFrameTimestamp = performance.now();
+        this._lastFrameTimestamp = Date.now();
       }
     }
   }
 
+  /**
+   * Checks if rendering should be suspended because we are loading data and camera isn't moving.
+   */
   private shouldSuspendRendering(): boolean {
+    const maxReducedFrameRate = 5.0;
     // Reduce framerate when we are not moving the camera to give more time for loading and other operations
-    const now = performance.now();
+    const now = Date.now();
     const cameraChangedSinceLastFrame = this._lastFrameTimestamp < this._lastCameraChangedTimestamp;
     const lastFrameDt = now - this._lastFrameTimestamp;
-    const suspend = this._isLoading && !cameraChangedSinceLastFrame && lastFrameDt < 1000 / 5.0;
+    const suspend = this._isLoading && !cameraChangedSinceLastFrame && lastFrameDt < 1000 / maxReducedFrameRate;
     return suspend;
   }
 
