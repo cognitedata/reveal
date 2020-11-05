@@ -1434,10 +1434,10 @@
     react-modal "^3.11.2"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^1.29.1":
-  version "1.29.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.29.1.tgz#fde58882e147e4926f0c75d7ee589dec1536c5c2"
-  integrity sha512-r+hxXhTdSe8QggMWrLOvpfKAJy7LlfQWpXDH92UG6ewtOV0dxv70RX1t3OMAODvL9I71xueEIp9fUxNOHM/6Bg==
+"@cognite/cogs.js@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.0.0.tgz#08e44e6feef9375fc40b8dd0490917e22f6e0050"
+  integrity sha512-hmnZZip0sikkgmCK0QOKcxfPWpF6R0kzCvH2XL9Od4Cbav6brpB0HMaNKSklaVSCtPD+fqQa4XkgAe/qb+aN4A==
   dependencies:
     "@tippyjs/react" "4.0.2"
     color "^3.1.2"
@@ -1448,6 +1448,7 @@
     rc-tabs "^11.6.2"
     react-modal "^3.11.2"
     react-select "^3.1.0"
+    react-table "^7.6.0"
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
@@ -15596,6 +15597,11 @@ react-syntax-highlighter@^12.2.1:
     lowlight "1.12.1"
     prismjs "^1.8.4"
     refractor "^2.4.1"
+
+react-table@^7.6.0:
+  version "7.6.1"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.6.1.tgz#33ad2bfc58de619678694c5452597544f4864266"
+  integrity sha512-XQyvombPoFbNiDHWAXdxbN78kFpsT1/aJuRSupFfBhO3FJtEVIIq2xbV1NvLzrd1YwfCYRm07ln5OHlfz0SXBg==
 
 react-test-renderer@^16.0.0-0:
   version "16.13.1"

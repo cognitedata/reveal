@@ -1,6 +1,6 @@
 import React from 'react';
 import '@cognite/cogs.js/dist/cogs.css';
-import '@cognite/cogs.js/dist/antd.css';
+import 'antd/dist/antd.css';
 import 'rc-collapse/assets/index.css';
 import { Container, sdkMock } from '../docs/stub';
 import { DataExplorationProvider } from '../context';

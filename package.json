@@ -9,7 +9,7 @@
     "@babel/runtime": "^7.12.1",
     "@cognite/annotations": "^0.4.0",
     "@cognite/cdf-utilities": "^0.8.0",
-    "@cognite/cogs.js": "^1.29.1",
+    "@cognite/cogs.js": "^2.0.0",
     "@cognite/gcs-browser-upload": "^1.0.5",
     "@cognite/griff-react": "~0.4.2",
     "@cognite/metrics": "^0.1.7",
