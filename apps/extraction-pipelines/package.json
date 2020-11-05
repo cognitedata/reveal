@@ -34,7 +34,7 @@
     "i18next-locize-backend": "^4.1.8",
     "i18next-pseudo": "^2.2.0",
     "match-sorter": "^5.0.0",
-    "query-string": "^6.13.6",
+    "query-string": "^6.13.7",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-i18next": "^11.7.3",
