@@ -1,52 +1,35 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Input } from '@cognite/cogs.js';
+import React, { useState, useEffect } from 'react';
+import { Input } from 'antd';
 import { useQuery } from 'lib/context/ResourceSelectionContext';
-
-const SearchWrapper = styled.div`
-  z-index: 3;
-  width: auto;
-  flex: 1;
-  position: relative;
-`;
-
-const SearchBar = styled(Input)`
-  width: 340px;
-  display: flex;
-  transition: 0.3s all;
-
-  .addons-input-wrapper,
-  .input-wrapper,
-  input {
-    width: 100%;
-  }
-
-  &&& input:hover,
-  &&& input:focus {
-    box-shadow: none;
-  }
-`;
+import { debounce } from 'lodash';
 
 export const ExplorationSearchBar = () => {
-  const [query, setQuery] = useQuery();
+  const [urlQuery, setUrlQuery] = useQuery();
+  const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
+  const [localQuery, setLocalQuery] = useState(urlQuery);
+
+  useEffect(() => {
+    if (localQuery !== urlQuery) {
+      debouncedSetUrlQuery(localQuery);
+    }
+    return () => debouncedSetUrlQuery.cancel();
+  }, [debouncedSetUrlQuery, localQuery, urlQuery]);
+
+  useEffect(() => {
+    if (localQuery !== urlQuery) {
+      setLocalQuery(urlQuery);
+    }
+    // Disabeling react-hooks/exhaustive-deps because this should /not/ be
+    // triggered when localQuery changes.
+    // eslint-disable-next-line
+  }, [urlQuery, setLocalQuery]);
 
   return (
-    <>
-      <SearchWrapper>
-        <SearchBar
-          variant="noBorder"
-          icon="Search"
-          containerStyle={{
-            flex: 1,
-            width: '100%',
-          }}
-          style={{ width: '100%' }}
-          iconPlacement="left"
-          placeholder="Search for a file or asset..."
-          onChange={ev => setQuery(ev.target.value)}
-          value={query}
-        />
-      </SearchWrapper>
-    </>
+    <Input.Search
+      style={{ width: '100%' }}
+      placeholder="Search for a file or asset..."
+      onChange={ev => setLocalQuery(ev.target.value)}
+      value={localQuery}
+    />
   );
 };
