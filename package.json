@@ -1,6 +1,6 @@
 {
-  "name": "@cognite/react-demo-app",
-  "version": "0.1.2",
+  "name": "@cognite/cognite-charts",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",

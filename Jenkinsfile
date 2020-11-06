@@ -2,90 +2,42 @@
 
 // This is your FAS staging app id. Staging deployments are protected by Cognite
 // IAP, meaning they're only accessible to Cogniters.
-static final String STAGING_APP_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "fas-demo"
-      : ""
+static final String STAGING_APP_ID = 'charts-dev'
 
 // This is your FAS production app id.
 // At this time, there is no production build for the demo app.
-static final String PRODUCTION_APP_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "fas-demo-prod"
-      : ""
+static final String PRODUCTION_APP_ID = 'charts'
 
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
-static final String APPLICATION_REPO_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "fas-demo"
-      : ""
+static final String APPLICATION_REPO_ID = 'charts'
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "react-demo-app"
-      : ""
+static final String SENTRY_PROJECT_NAME = 'charts'
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
 // https://docs.sentry.io/error-reporting/quickstart/?platform=browser
 //
 // If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732"
-      : ""
+static final String SENTRY_DSN = ''
 
 // Specify your locize.io project ID. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
 // See https://cog.link/i18n for more information.
 //
 // Note: You'll probably want to set this in scripts/start.sh too
-static final String LOCIZE_PROJECT_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "1ee63b21-27c7-44ad-891f-4bd9af378b72"
-      : ""
+static final String LOCIZE_PROJECT_ID = ''
 
 // Specify your Mixpanel project token. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
 // Remember: if you can't measure it, you can't improve it!
-static final String MIXPANEL_TOKEN =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "1cc1cdc82fb93ec9a20a690216de41e4"
-      : ""
+static final String MIXPANEL_TOKEN = ''
 
 // Specify your projects alerting slack channel here. If you do not have one of these, please
 // consider creating one for your projects alerts
-static final String SLACK_CHANNEL =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "frontend-firehose"
-      : ""
+static final String SLACK_CHANNEL = 'cognite-charts'
 
 // This determines how this app is versioned. See https://cog.link/releases for
 // more information. The options available here are:
@@ -102,7 +54,7 @@ static final String SLACK_CHANNEL =
 //    which are named release-[NNN].
 //
 // No other options are supported at this time.
-static final String VERSIONING_STRATEGY = "single-branch"
+static final String VERSIONING_STRATEGY = "multi-branch"
 
 // == End of customization. Everything below here is common. == \\
 
@@ -152,7 +104,7 @@ def pods = { body ->
         //  3. Get that PR approved, applied, and merged
         //
         // If you don't want codecoverage, then you can just remove this.
-        codecov.pod {
+        // codecov.pod {
           testcafe.pod() {
             properties([
               buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
@@ -176,7 +128,7 @@ def pods = { body ->
               body()
             }
           }
-        }
+        // } Code cov
       }
     }
   }
@@ -282,15 +234,15 @@ pods {
             //      passing end-to-end tests.
             // As such, we can skip end-to-end tests on release branches. As
             // a side-effect, this will make hotfixes hit production faster!
-            // shouldExecute: !isRelease,
+            shouldExecute: !isRelease,
 
             //
             // single-branch mode:
             //
-            shouldExecute: true,
+            // shouldExecute: true,
 
-            buildCommand: 'yarn testcafe:build',
-            runCommand: 'yarn testcafe:start'
+            // buildCommand: 'yarn testcafe:build',
+            // runCommand: 'yarn testcafe:start'
           )
         },
       ],
