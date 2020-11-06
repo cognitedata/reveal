@@ -1,13 +1,30 @@
 import styled from 'styled-components/macro';
 
 export const Header = styled.header`
-  background-color: #282c34;
-  min-height: 10vh;
+  background: var(--cogs-greyscale-grey1);
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  padding: 20px;
+  justify-content: space-between;
+  hgroup {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px;
+    h1,
+    h4 {
+      padding: 0;
+      margin: 0;
+      text-align: left;
+    }
+    h4 {
+      color: var(--cogs-greyscale-grey5);
+    }
+  }
+  .actions {
+    display: flex;
+    margin-right: 24px;
+    .cogs-btn {
+      margin-left: 8px;
+    }
+  }
 `;
