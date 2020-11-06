@@ -1,0 +1,99 @@
+{
+  "name": "@cognite/react-demo-app",
+  "version": "0.1.2",
+  "private": true,
+  "scripts": {
+    "start": "./scripts/start.sh",
+    "build": "./scripts/build.sh",
+    "test": "./scripts/test.sh",
+    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
+    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",
+    "eslint:changed": "eslint --config .eslintrc.production.js",
+    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "storybook": "start-storybook -p 6006",
+    "testcafe:run": "BASE_URL=http://localhost:11111 testcafe 'chromium:headless --no-sandbox' 'testcafe/desktop' --stop-on-first-fail",
+    "testcafe:run-live": "BASE_URL=http://localhost:11111 testcafe 'chrome' 'testcafe/desktop' --live",
+    "testcafe:start": "./scripts/testcafe-serve-run.sh",
+    "testcafe:start-live": "./scripts/testcafe-start.sh",
+    "testcafe:build": "./scripts/testcafe-build.sh",
+    "testcafe:serve": "serve -s build -l 11111"
+  },
+  "dependencies": {
+    "@cognite/cogs.js": "^1.17.1",
+    "@cognite/metrics": "^0.1.2",
+    "@cognite/react-container": "0.1.0",
+    "@cognite/react-i18n": "0.1.2",
+    "@sentry/browser": "^5.27.3",
+    "lodash": "^4.17.19",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-i18next": "^11.7.3",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.0",
+    "redux": "^4.0.5",
+    "styled-components": "^5.2.1"
+  },
+  "devDependencies": {
+    "@cognite/eslint-config": "^1.6.0",
+    "@cognite/eslint-plugin": "^1.3.0",
+    "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "@storybook/addon-docs": "^6.0.28",
+    "@storybook/addon-knobs": "^6.0.28",
+    "@storybook/addon-viewport": "^6.0.28",
+    "@storybook/preset-create-react-app": "^3.1.4",
+    "@storybook/react": "^6.0.28",
+    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/react": "^11.1.1",
+    "@testing-library/testcafe": "^4.2.3",
+    "@types/jest": "^26.0.15",
+    "@types/lodash": "^4.14.165",
+    "@types/node": "^14.14.6",
+    "@types/react": "^16.9.55",
+    "@types/react-dom": "^16.9.9",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/sinon": "^9.0.8",
+    "@types/styled-components": "^5.1.4",
+    "babel-loader": "^8.1.0",
+    "concurrently": "^5.3.0",
+    "eslint": "^7.12.1",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-lodash": "^7.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-testcafe": "^0.2.1",
+    "eslint-plugin-testing-library": "^3.10.0",
+    "husky": "^4.3.0",
+    "jest-environment-jsdom-sixteen": "^1.0.3",
+    "jest-junit": "^12.0.0",
+    "kill-port": "^1.6.1",
+    "prettier": "^2.1.2",
+    "pretty-quick": "^3.1.0",
+    "serve": "^11.3.2",
+    "sinon": "^9.2.1",
+    "testcafe": "^1.9.4",
+    "typescript": "^4.0.5"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
