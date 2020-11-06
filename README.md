@@ -164,7 +164,7 @@ Now, if published successfully, **merge the pull request**.
 1. Write the changes that new version brings. Get inspired by done tasks from your spring board. 
 Also, you can check what's committed from the previous tag with that command:
     ```bash
-    git log --pretty=format:"%s <%an> – %h" v1.0.0...HEAD
+    git log --pretty=format:"%s <%an> – %h" @cognite/reveal@1.2.0...HEAD
     ```
    Use the following template:
    ```md
