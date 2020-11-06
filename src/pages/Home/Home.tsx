@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, TopBar, Menu, Avatar, toast } from '@cognite/cogs.js';
 import logoSvg from 'assets/logo.svg';
 
+import sidecar from 'utils/sidecar';
 import { Header } from './elements';
 import { Container } from '../elements';
 
@@ -50,9 +51,7 @@ const Home = () => {
                     <Menu.Item>Menu item 2</Menu.Item>
                     <Menu.Item>Menu item 3</Menu.Item>
                     <Menu.Item
-                      onClick={() =>
-                        window.open('https://www.cognite.com/en/policy')
-                      }
+                      onClick={() => window.open(sidecar.privacyPolicyUrl)}
                     >
                       Privacy policy
                     </Menu.Item>

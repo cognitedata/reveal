@@ -9,6 +9,7 @@ type Sidecar = {
   cdfApiBaseUrl: string;
   docsSiteBaseUrl: string;
   nomaApiBaseUrl: string;
+  privacyPolicyUrl: string;
 };
 
 const sidecar = merge(
@@ -21,6 +22,7 @@ const sidecar = merge(
     cdfApiBaseUrl: 'https://api.cognitedata.com',
     docsSiteBaseUrl: 'https://docs.cognite.com',
     nomaApiBaseUrl: 'https://noma.development.cognite.ai',
+    privacyPolicyUrl: 'https://www.cognite.com/en/policy',
   },
   /* eslint-disable @typescript-eslint/no-explicit-any */
   // eslint-disable-next-line no-underscore-dangle
