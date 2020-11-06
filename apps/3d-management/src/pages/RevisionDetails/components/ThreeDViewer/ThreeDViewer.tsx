@@ -4,7 +4,6 @@ import {
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  SupportedModelTypes,
   CogniteModelBase,
 } from '@cognite/reveal';
 
@@ -76,7 +75,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
 
       try {
         if (viewer instanceof Cognite3DViewer) {
-          const modelType: SupportedModelTypes = await viewer.determineModelType(
+          const modelType = await viewer.determineModelType(
             modelId,
             revisionId
           );
