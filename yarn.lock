@@ -1434,10 +1434,10 @@
     react-modal "^3.11.2"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.0.0.tgz#08e44e6feef9375fc40b8dd0490917e22f6e0050"
-  integrity sha512-hmnZZip0sikkgmCK0QOKcxfPWpF6R0kzCvH2XL9Od4Cbav6brpB0HMaNKSklaVSCtPD+fqQa4XkgAe/qb+aN4A==
+"@cognite/cogs.js@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.0.1.tgz#ab595d5a583f15fb2b48201df602efcb892e6bf7"
+  integrity sha512-1dEpPZUb4ykwG9eImk2R1svWrNorficg3/NjcrL7qGU9Ibh2iTnODFT4DghdqvempwkWB+kbauzICOSxnr7low==
   dependencies:
     "@tippyjs/react" "4.0.2"
     color "^3.1.2"

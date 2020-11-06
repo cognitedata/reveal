@@ -3,27 +3,38 @@ import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ResourceType } from 'lib/types';
 
-const IconWithBackground = styled(Icon)`
+const IconBackground = styled.div`
   padding: 8px;
   background-color: #edf0ff;
   color: #4255bb;
   border-radius: 4px;
+  height: 32px;
 `;
 
 const AssetIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconWithBackground type="ResourceAssets" style={style} />
+  <IconBackground style={style}>
+    <Icon type="ResourceAssets" />
+  </IconBackground>
 );
 const TimeseriesIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconWithBackground type="ResourceTimeseries" style={style} />
+  <IconBackground style={style}>
+    <Icon type="ResourceTimeseries" />
+  </IconBackground>
 );
 const FileIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconWithBackground type="ResourceDocuments" style={style} />
+  <IconBackground style={style}>
+    <Icon type="ResourceDocuments" />
+  </IconBackground>
 );
 const SequenceIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconWithBackground type="ResourceSequences" style={style} />
+  <IconBackground style={style}>
+    <Icon type="ResourceSequences" />
+  </IconBackground>
 );
 const EventIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconWithBackground type="ResourceEvents" style={style} />
+  <IconBackground style={style}>
+    <Icon type="ResourceEvents" />
+  </IconBackground>
 );
 export const ResourceIcons = ({
   type,
