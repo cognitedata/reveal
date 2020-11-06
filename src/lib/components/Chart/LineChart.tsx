@@ -33,10 +33,11 @@ const tooltipStyles = {
 const formatDate = timeFormat("%b %d, '%y");
 
 // accessors
-const getDate = (d: DatapointAggregate) => new Date(d.timestamp);
-const getDataPointValue = (d: DatapointAggregate) => d.average;
-const getDataPointMaxValue = (d: DatapointAggregate) => d.max;
-const getDataPointMinValue = (d: DatapointAggregate) => d.min;
+const getDate = (d?: DatapointAggregate) =>
+  d ? new Date(d.timestamp) : new Date(0);
+const getDataPointValue = (d?: DatapointAggregate) => (d ? d.average : 0);
+const getDataPointMaxValue = (d?: DatapointAggregate) => (d ? d.max : 0);
+const getDataPointMinValue = (d?: DatapointAggregate) => (d ? d.min : 0);
 const bisectDate = bisector<DatapointAggregate, Date>(
   d => new Date(d.timestamp)
 ).left;

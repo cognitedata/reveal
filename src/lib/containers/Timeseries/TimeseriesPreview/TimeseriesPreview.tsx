@@ -38,7 +38,7 @@ export const TimeseriesPreview = ({
     <>
       {extraActions}
       {timeseries && (
-        <Row gutter={16}>
+        <Row>
           <Col span={18}>
             <TimeseriesChart
               timeseriesId={timeseries.id}

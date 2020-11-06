@@ -141,7 +141,8 @@ export const ResourcePreviewProvider = ({
 };
 
 const ChildrenWrapper = styled.div`
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 `;
 
 export default ResourcePreviewContext;

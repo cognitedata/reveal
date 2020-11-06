@@ -19,20 +19,6 @@ body {
   }
 }
 
-button.ant-btn {
-  display: inline-flex;
-  align-items: center;
-}
-button.ant-btn > span {
-  align-self: center;
-  margin: 0 auto;
-}
-button.ant-btn i.anticon {
-  line-height: unset;
-  display: flex;
-  margin-bottom: 2px;
-}
-
 h1,
 h2,
 h3 {

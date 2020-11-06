@@ -83,7 +83,7 @@ export const SequencePreview = ({
     <>
       <SpacedRow>{extraActions}</SpacedRow>
 
-      <Row gutter={16}>
+      <Row>
         <Col span={18}>
           <Tabs tab={currentTab} onTabChange={setTab}>
             <Tabs.Pane title="Details" key="details">

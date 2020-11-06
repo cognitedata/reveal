@@ -17,7 +17,7 @@ export const ResourceDetailsSidebar = ({
   };
 
   return (
-    <div>
+    <div style={{ marginLeft: 16 }}>
       <RelationsTable
         assetId={assetId}
         relations={relations}

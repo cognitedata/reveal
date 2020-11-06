@@ -65,7 +65,7 @@ export const EventPreview = ({
   return (
     <>
       <SpacedRow>{extraActions}</SpacedRow>
-      <Row gutter={16}>
+      <Row>
         <Col span={18}>
           <EventDetails event={event} />
         </Col>

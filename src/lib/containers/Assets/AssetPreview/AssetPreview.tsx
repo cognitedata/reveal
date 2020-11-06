@@ -81,19 +81,24 @@ export const AssetPreview = ({
   }
 
   return (
-    <>
-      <Space align="center">
-        <p>LOCATION:</p>
-        <AssetBreadcrumb
-          assetId={assetId}
-          onBreadcrumbClick={newAsset =>
-            openPreview({
-              item: { id: newAsset.id, type: 'asset' },
-            })
-          }
-        />
-      </Space>
-      <Row gutter={16}>
+    <div style={{ flexGrow: 1 }}>
+      <Row>
+        <Col span={24}>
+          <Space align="center">
+            <p>LOCATION:</p>
+            <AssetBreadcrumb
+              assetId={assetId}
+              onBreadcrumbClick={newAsset =>
+                openPreview({
+                  item: { id: newAsset.id, type: 'asset' },
+                })
+              }
+            />
+          </Space>
+        </Col>
+      </Row>
+
+      <Row style={{ height: 'calc(100% - 82px)' }}>
         <Col span={18}>
           <SpacedRow>{extraActions}</SpacedRow>
           <Tabs tab={tab} onTabChange={onTabChange}>
@@ -198,6 +203,6 @@ export const AssetPreview = ({
           <ResourceDetailsSidebar relations={relationships} />
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
