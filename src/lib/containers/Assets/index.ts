@@ -6,4 +6,5 @@ export * from './AssetSearchResults/AssetSearchResults';
 export * from './AssetTable/AssetTable';
 export * from './AssetTreeTable/AssetTreeTable';
 export * from './AssetFilters';
-export * from './Base';
+export * from './AssetBreadcrumb/AssetBreadcrumb';
+export * from './AssetSelect/AssetSelect';

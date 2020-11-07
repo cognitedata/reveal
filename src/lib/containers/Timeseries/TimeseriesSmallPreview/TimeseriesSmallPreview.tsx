@@ -1,22 +1,31 @@
 import React, { useMemo } from 'react';
 import { Timeseries } from '@cognite/sdk';
-import { ErrorFeedback, Loader } from 'lib/components';
+import { Title, Body, Colors } from '@cognite/cogs.js';
+import {
+  ErrorFeedback,
+  Loader,
+  InfoGrid,
+  InfoCell,
+  LatestDatapoint,
+  DetailsItem,
+  SpacedRow,
+} from 'lib/components';
 import { useResourceActionsContext } from 'lib/context';
 import { useSelectionButton } from 'lib/hooks/useSelection';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { TimeseriesDetailsAbstract } from 'lib/containers/Timeseries';
+import { TimeseriesChart } from 'lib/containers/Timeseries';
+import { SmallPreviewProps } from 'lib/CommonProps';
+import { ResourceIcons } from '../../../components/ResourceIcons/ResourceIcons';
 
 export const TimeseriesSmallPreview = ({
   timeseriesId,
   actions: propActions,
   extras,
   children,
+  statusText,
 }: {
   timeseriesId: number;
-  actions?: React.ReactNode[];
-  extras?: React.ReactNode[];
-  children?: React.ReactNode;
-}) => {
+} & SmallPreviewProps) => {
   const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
     'timeseries',
     { id: timeseriesId }
@@ -53,13 +62,79 @@ export const TimeseriesSmallPreview = ({
   }
 
   return (
-    <TimeseriesDetailsAbstract
-      key={timeseries.id}
-      timeSeries={timeseries}
-      extras={extras}
-      actions={actions}
-    >
+    <InfoGrid className="timeseries-info-grid" noBorders>
+      {statusText && (
+        <InfoCell
+          noBorders
+          containerStyles={{
+            display: 'flex',
+            alignItems: 'center',
+            color: Colors['greyscale-grey6'].hex(),
+          }}
+        >
+          <Body
+            level={2}
+            strong
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+            }}
+          >
+            {statusText}
+          </Body>
+        </InfoCell>
+      )}
+      {extras && (
+        <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
+          {extras}
+        </div>
+      )}
+      {timeseries.name && (
+        <InfoCell noBorders noPadding>
+          <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
+            <ResourceIcons.Timeseries />
+            <span
+              style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
+              {timeseries.name}
+            </span>
+          </Title>
+        </InfoCell>
+      )}
+
+      {actions && (
+        <InfoCell noBorders>
+          <SpacedRow>{actions}</SpacedRow>
+        </InfoCell>
+      )}
+
+      <LatestDatapoint timeSeries={timeseries} />
+      <InfoCell
+        noPadding
+        noBorders
+        containerStyles={{
+          overflow: 'visible',
+        }}
+      >
+        <TimeseriesChart
+          timeseriesId={timeseries.id}
+          height={150}
+          numberOfPoints={300}
+          showContextGraph={false}
+          timeOptions={['1H', '1D', '1W', '1M', '1Y']}
+          defaultOption="1Y"
+        />
+      </InfoCell>
+
+      <InfoCell noPadding noBorders>
+        <Title level={5}>Details</Title>
+      </InfoCell>
+
+      <InfoGrid noBorders>
+        <DetailsItem name="Description" value={timeseries.description} />
+        <DetailsItem name="Unit" value={timeseries.unit} />
+      </InfoGrid>
       {children}
-    </TimeseriesDetailsAbstract>
+    </InfoGrid>
   );
 };

@@ -1,22 +1,30 @@
 import React, { useMemo } from 'react';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
-import { ErrorFeedback, Loader } from 'lib/components';
-import { EventDetailsAbstract } from 'lib/containers/Events';
+import {
+  ErrorFeedback,
+  Loader,
+  InfoGrid,
+  InfoCell,
+  SpacedRow,
+} from 'lib/components';
+import { Title, Body, Colors } from '@cognite/cogs.js';
 import { useResourceActionsContext } from 'lib/context';
 import { useSelectionButton } from 'lib/hooks/useSelection';
+import { renderTitle } from 'lib/utils/EventsUtils';
+import { ResourceIcons } from 'lib/components/ResourceIcons/ResourceIcons';
+import { EventDetails } from 'lib/containers/Events';
+import { SmallPreviewProps } from 'lib/CommonProps';
 
 export const EventSmallPreview = ({
   eventId,
   actions: propActions,
   extras,
   children,
+  statusText,
 }: {
   eventId: number;
-  actions?: React.ReactNode[];
-  extras?: React.ReactNode[];
-  children?: React.ReactNode;
-}) => {
+} & SmallPreviewProps) => {
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
     type: 'event',
@@ -52,13 +60,55 @@ export const EventSmallPreview = ({
   }
 
   return (
-    <EventDetailsAbstract
-      key={event.id}
-      event={event}
-      extras={extras}
-      actions={actions}
+    <InfoGrid
+      className="event-info-grid"
+      noBorders
+      style={{ flexDirection: 'column' }}
     >
+      {statusText && (
+        <InfoCell
+          noBorders
+          containerStyles={{
+            display: 'flex',
+            alignItems: 'center',
+            color: Colors['greyscale-grey6'].hex(),
+          }}
+        >
+          <Body
+            level={2}
+            strong
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+            }}
+          >
+            {statusText}
+          </Body>
+        </InfoCell>
+      )}
+      {extras && (
+        <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
+          {extras}
+        </div>
+      )}
+      <InfoCell noBorders noPadding>
+        <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
+          <ResourceIcons.Event />
+          <span
+            style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}
+          >
+            {renderTitle(event)}
+          </span>
+        </Title>
+      </InfoCell>
+
+      {actions && (
+        <InfoCell noBorders>
+          <SpacedRow>{actions}</SpacedRow>
+        </InfoCell>
+      )}
+      <EventDetails event={event} />
       {children}
-    </EventDetailsAbstract>
+    </InfoGrid>
   );
 };

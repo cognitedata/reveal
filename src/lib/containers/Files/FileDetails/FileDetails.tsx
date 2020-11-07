@@ -1,8 +1,8 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { InfoGrid, DetailsItem, TimeDisplay } from 'lib/components';
+import { DetailsItem, TimeDisplay, InfoGrid } from 'lib/components';
 
-export const FileInfoGrid = ({ file }: { file: FileInfo }) => {
+export const FileDetails = ({ file }: { file: FileInfo }) => {
   return (
     <InfoGrid noBorders>
       <DetailsItem name="ID" value={file.id} />

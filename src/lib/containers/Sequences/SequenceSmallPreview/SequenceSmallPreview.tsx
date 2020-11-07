@@ -1,22 +1,29 @@
 import React, { useMemo } from 'react';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Sequence } from '@cognite/sdk';
-import { ErrorFeedback, Loader } from 'lib/components';
+import {
+  ErrorFeedback,
+  Loader,
+  InfoGrid,
+  InfoCell,
+  SpacedRow,
+  ResourceIcons,
+} from 'lib/components';
 import { useResourceActionsContext } from 'lib/context';
 import { useSelectionButton } from 'lib/hooks/useSelection';
-import { SequenceDetailsAbstract } from 'lib/containers/Sequences';
+import { Title, Body, Colors } from '@cognite/cogs.js';
+import { SmallPreviewProps } from 'lib/CommonProps';
+import { SequenceDetails } from 'lib/containers/Sequences';
 
 export const SequenceSmallPreview = ({
   sequenceId,
   actions: propActions,
   extras,
   children,
+  statusText,
 }: {
   sequenceId: number;
-  actions?: React.ReactNode[];
-  extras?: React.ReactNode[];
-  children?: React.ReactNode;
-}) => {
+} & SmallPreviewProps) => {
   const { data: sequences = [], isFetched, error } = useCdfItems<Sequence>(
     'sequences',
     [{ id: sequenceId }]
@@ -55,13 +62,57 @@ export const SequenceSmallPreview = ({
   }
 
   return (
-    <SequenceDetailsAbstract
-      key={sequence.id}
-      sequence={sequence}
-      extras={extras}
-      actions={actions}
+    <InfoGrid
+      className="sequence-info-grid"
+      noBorders
+      style={{ flexDirection: 'column' }}
     >
+      {statusText && (
+        <InfoCell
+          noBorders
+          containerStyles={{
+            display: 'flex',
+            alignItems: 'center',
+            color: Colors['greyscale-grey6'].hex(),
+          }}
+        >
+          <Body
+            level={2}
+            strong
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+            }}
+          >
+            {statusText}
+          </Body>
+        </InfoCell>
+      )}
+      {extras && (
+        <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
+          {extras}
+        </div>
+      )}
+      {sequence.name && (
+        <InfoCell noBorders noPadding>
+          <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
+            <ResourceIcons.Sequence />
+            <span
+              style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
+              {sequence.name}
+            </span>
+          </Title>
+        </InfoCell>
+      )}
+
+      {actions && (
+        <InfoCell noBorders>
+          <SpacedRow>{actions}</SpacedRow>
+        </InfoCell>
+      )}
+      <SequenceDetails sequence={sequence} />
       {children}
-    </SequenceDetailsAbstract>
+    </InfoGrid>
   );
 };

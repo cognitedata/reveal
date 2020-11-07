@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Row, Col } from 'antd';
-import { Title } from '@cognite/cogs.js';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 import {
   DetailsItem,
@@ -8,12 +7,11 @@ import {
   Loader,
   SpacedRow,
   Tabs,
-  TimeDisplay,
 } from 'lib/components';
-import { SequenceDetailsAbstract } from 'lib/containers/Sequences';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
+import { SequenceDetails } from 'lib/containers/Sequences';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(
@@ -28,28 +26,6 @@ const formatSequenceColumns = (columns: SequenceColumn[]) =>
       ]),
     [] as { column: string; value: string }[]
   );
-
-const SequenceDetails = ({ sequence }: { sequence: Sequence }) => (
-  <div>
-    <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-      Details
-    </Title>
-    <DetailsItem name="Description" value={sequence.description} />
-    <DetailsItem
-      name="Created at"
-      value={<TimeDisplay value={sequence.createdTime} />}
-    />
-    <DetailsItem
-      name="Updated at"
-      value={<TimeDisplay value={sequence.lastUpdatedTime} />}
-    />
-    <DetailsItem name="External ID" value={sequence.externalId} />
-    <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-      Metadata
-    </Title>
-    <SequenceDetailsAbstract.SequenceInfoGrid sequence={sequence} showAll />
-  </div>
-);
 
 export const SequencePreview = ({
   sequenceId,
@@ -87,7 +63,7 @@ export const SequencePreview = ({
         <Col span={18}>
           <Tabs tab={currentTab} onTabChange={setTab}>
             <Tabs.Pane title="Details" key="details">
-              <SequenceDetails sequence={sequence} />
+              <SequenceDetails sequence={sequence} showAll />
             </Tabs.Pane>
             <Tabs.Pane title="Columns " key="columns">
               {formatSequenceColumns((sequence && sequence.columns) ?? {}).map(

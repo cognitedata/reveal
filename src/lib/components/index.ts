@@ -15,3 +15,4 @@ export * from './Tabs/Tabs';
 export * from './Table/Table';
 export * from './TimeDisplay/TimeDisplay';
 export * from './ErrorFeedback/ErrorFeedback';
+export * from './ResourceIcons/ResourceIcons';

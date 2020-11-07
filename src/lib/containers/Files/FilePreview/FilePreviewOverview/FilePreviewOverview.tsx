@@ -24,8 +24,8 @@ import { useViewerQuery } from '@cognite/react-picture-annotation';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { getIdParam } from 'lib/utils';
 import { DetailsItem, InfoGrid } from 'lib/components';
-import { FileDetailsAbstract } from 'lib/containers/Files';
 import { useResourcePreview } from 'lib/context';
+import { FileDetails } from 'lib/containers/Files';
 import {
   AssetItem,
   EventItem,
@@ -452,7 +452,7 @@ export const FilePreviewOverview = ({
   const renderFileDetails = () => {
     return (
       <>
-        <FileDetailsAbstract.FileInfoGrid file={file} />
+        <FileDetails file={file} />
         {file && file!.metadata && (
           <InfoGrid noBorders>
             {Object.keys(file!.metadata).map(key => (
