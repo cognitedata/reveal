@@ -156,6 +156,7 @@ export const SearchResultsPage = () => {
         if (showCollections) {
           return (
             <CollectionsDropdown
+              key="collections"
               type={resourceItem.type}
               items={[{ id: Number(resourceItem.id) }]}
               button={

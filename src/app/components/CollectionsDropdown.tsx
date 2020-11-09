@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Icon, Dropdown, Menu, Overline, Colors } from '@cognite/cogs.js';
+import { Icon, Dropdown, Menu, Colors } from '@cognite/cogs.js';
 import {
   useCollections,
   Collection,
+  useCreateCollections,
   useUpdateCollections,
+  CollectionSpec,
 } from 'lib/hooks/CollectionsHooks';
 import { ResourceType } from 'lib/types';
+import CreateCollectionForm from 'app/components/CreateCollectionForm';
 
 const CollectionsDropdown = ({
   type,
@@ -17,7 +20,9 @@ const CollectionsDropdown = ({
   items: { id: number }[];
   button: React.ReactElement;
 }) => {
+  const [formOpen, setFormOpen] = useState(false);
   const { data: collections } = useCollections();
+  const [createCollections] = useCreateCollections();
   const [updateCollections] = useUpdateCollections();
 
   const resourceCollections = (collections || []).filter(
@@ -54,43 +59,62 @@ const CollectionsDropdown = ({
     ]);
   };
 
+  const handleCreateCollection = async (
+    collection: Omit<CollectionSpec, 'type'>
+  ) => {
+    const newCollection: CollectionSpec = { ...collection, type };
+    const [createdCollection] = await createCollections([newCollection]);
+    addToCollection(createdCollection, items);
+  };
+
   const collectionContainsItems = (collection: Collection) =>
     items.every(item =>
       collection.operationBody.items?.some((el: any) => el.id === item.id)
     );
 
   return (
-    <Dropdown
-      content={
-        <Menu>
-          <Menu.Header>
-            <Overline level={2}>COLLECTIONS</Overline>
-          </Menu.Header>
-          {resourceCollections.length === 0 && (
-            <NoCollectionsMessage>
-              You have no collections for this resource type
-            </NoCollectionsMessage>
-          )}
-          {resourceCollections.map(collection => {
-            const containsItems = collectionContainsItems(collection);
-            return (
-              <Menu.Item
-                key={collection.id}
-                disabled={containsItems}
-                onClick={() => addToCollection(collection, items)}
-              >
-                <CollectionItem>
-                  {collection.name}
-                  {containsItems && <CheckIcon type="Check" />}
-                </CollectionItem>
+    <>
+      <Dropdown
+        content={
+          <Menu>
+            <Menu.Header>{type} Collections</Menu.Header>
+            {resourceCollections.length === 0 && (
+              <NoCollectionsMessage>
+                You have no collections for this resource type
+              </NoCollectionsMessage>
+            )}
+            {resourceCollections.map(collection => {
+              const containsItems = collectionContainsItems(collection);
+              return (
+                <Menu.Item
+                  key={collection.id}
+                  disabled={containsItems}
+                  onClick={() => addToCollection(collection, items)}
+                >
+                  <CollectionItem>
+                    {collection.name}
+                    {containsItems && <CheckIcon type="Check" />}
+                  </CollectionItem>
+                </Menu.Item>
+              );
+            })}
+            {formOpen ? (
+              <CreateCollectionForm
+                onClose={() => setFormOpen(false)}
+                onCreate={handleCreateCollection}
+              />
+            ) : (
+              <Menu.Item onClick={() => setFormOpen(true)}>
+                <Icon type="Plus" />
+                New collection
               </Menu.Item>
-            );
-          })}
-        </Menu>
-      }
-    >
-      {button}
-    </Dropdown>
+            )}
+          </Menu>
+        }
+      >
+        {button}
+      </Dropdown>
+    </>
   );
 };
 
