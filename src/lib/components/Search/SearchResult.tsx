@@ -6,25 +6,28 @@ import { AssetSearchResults } from 'lib/containers/Assets';
 import { FileSearchResults } from 'lib/containers/Files';
 import { TimeseriesSearchResults } from 'lib/containers/Timeseries';
 import { EventSearchResults } from 'lib/containers/Events';
+import { SelectableItemsProps } from '../../CommonProps';
 
 export function SearchResult({
   type,
   query,
+  ...commonProps
 }: {
   type: ResourceType;
   query: string;
-}) {
+  activeIds?: number[];
+} & SelectableItemsProps) {
   switch (type) {
     case 'asset':
-      return <AssetSearchResults query={query} />;
+      return <AssetSearchResults query={query} {...commonProps} />;
     case 'file':
-      return <FileSearchResults query={query} />;
+      return <FileSearchResults query={query} {...commonProps} />;
     case 'sequence':
-      return <SequenceSearchResults query={query} />;
+      return <SequenceSearchResults query={query} {...commonProps} />;
     case 'timeSeries':
-      return <TimeseriesSearchResults query={query} />;
+      return <TimeseriesSearchResults query={query} {...commonProps} />;
     case 'event':
-      return <EventSearchResults query={query} />;
+      return <EventSearchResults query={query} {...commonProps} />;
     default:
       return null;
   }

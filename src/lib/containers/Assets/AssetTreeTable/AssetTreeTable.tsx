@@ -1,35 +1,32 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
 import styled from 'styled-components';
-import { useSelectionCheckbox } from 'lib/hooks/useSelection';
 import { usePrevious } from 'lib/hooks/CustomHooks';
 import { Loader, Table } from 'lib/components';
-import { useResourceMode, useResourcesState } from 'lib/context';
+import { SelectableItemsProps } from 'lib/CommonProps';
 import { useLoadListTree, useLoadSearchTree } from './hooks';
 
 const PAGE_SIZE = 50;
-
-const ActionCell = ({ asset }: { asset: Asset }) => {
-  const getButton = useSelectionCheckbox();
-  return getButton({ id: asset.id, type: 'asset' });
-};
 
 export const AssetTreeTable = ({
   filter = {},
   query,
   onAssetClicked,
+  activeIds = [],
+  isSelected,
   startFromRoot = false,
+  ...selectionProps
 }: {
   filter: any;
   query?: string;
+  activeIds?: number[];
   onAssetClicked: (item: Asset) => void;
   startFromRoot?: boolean;
-}) => {
+} & SelectableItemsProps) => {
   const [listExpandedRowKeys, setListExpandedRowKeys] = useState<number[]>([]);
   const [searchExpandedRowKeys, setSearchExpandedRowKeys] = useState<number[]>(
     []
   );
-  const { mode } = useResourceMode();
 
   const searchEnabled = !!query && query.length > 0;
 
@@ -53,16 +50,6 @@ export const AssetTreeTable = ({
       },
       width: 300,
     },
-    ...(mode !== 'none'
-      ? [
-          {
-            ...Table.Columns.select,
-            cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-              return <ActionCell asset={asset} />;
-            },
-          },
-        ]
-      : []),
   ];
 
   const [searchCount, setSearchCount] = useState(PAGE_SIZE);
@@ -71,9 +58,6 @@ export const AssetTreeTable = ({
     setSearchCount(PAGE_SIZE);
   }, [query]);
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-
-  const { resourcesState } = useResourcesState();
-  const currentItems = resourcesState.filter(el => el.state === 'active');
 
   const onItemSelected = (file: Asset) => {
     onAssetClicked(file);
@@ -146,6 +130,27 @@ export const AssetTreeTable = ({
     return oldListItems;
   }, [searchEnabled, searchFiles, listFetched, listItems, oldListItems]);
 
+  const selectedIds = useMemo(() => {
+    const mergeChildren = (
+      prev: number[],
+      asset: { loading?: boolean; id: number; children?: any[] }
+    ): number[] => {
+      if (asset.loading) {
+        return prev;
+      }
+      if (!asset.children) {
+        return prev.concat([asset.id]);
+      }
+      return asset.children
+        .reduce((iter: number[], child) => mergeChildren(iter, child), prev)
+        .concat([asset.id]);
+    };
+    const ids = [...(assets || [])].reduce(mergeChildren, []);
+    return ids.filter(id => {
+      return isSelected({ type: 'asset', id });
+    });
+  }, [assets, isSelected]);
+
   useEffect(() => {
     if (searchEnabled) {
       refetch();
@@ -162,11 +167,12 @@ export const AssetTreeTable = ({
       }}
       query={query}
       previewingIds={previewId ? [previewId] : undefined}
-      activeIds={currentItems.map(el => el.id)}
+      activeIds={activeIds}
       columns={columns}
       fixed
       expandColumnKey="name"
       data={assets}
+      selectedIds={selectedIds}
       expandedRowKeys={
         searchEnabled ? searchExpandedRowKeys : listExpandedRowKeys
       }
@@ -195,6 +201,10 @@ export const AssetTreeTable = ({
         }
         return cells;
       }}
+      selectionMode={selectionProps.selectionMode}
+      onRowSelected={item =>
+        selectionProps.onSelect({ type: 'asset', id: item.id })
+      }
     />
   );
 };

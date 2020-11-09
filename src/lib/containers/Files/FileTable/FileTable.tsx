@@ -2,13 +2,6 @@ import React from 'react';
 import { FileInfo as File, FileInfo } from '@cognite/sdk';
 import { TimeDisplay, TableProps, Table } from 'lib/components';
 import { Body } from '@cognite/cogs.js';
-import { useSelectionCheckbox } from 'lib/hooks/useSelection';
-import { useResourceMode } from 'lib/context';
-
-const ActionCell = ({ file }: { file: File }) => {
-  const getButton = useSelectionCheckbox();
-  return getButton({ id: file.id, type: 'file' });
-};
 
 export const FileTable = ({
   items,
@@ -18,8 +11,6 @@ export const FileTable = ({
   items: File[];
   onItemClicked: (file: File) => void;
 } & TableProps<File>) => {
-  const { mode } = useResourceMode();
-
   const columns = [
     Table.Columns.name,
     Table.Columns.mimeType,
@@ -36,16 +27,6 @@ export const FileTable = ({
     Table.Columns.relationships,
     Table.Columns.lastUpdatedTime,
     Table.Columns.createdTime,
-    ...(mode !== 'none'
-      ? [
-          {
-            ...Table.Columns.select,
-            cellRenderer: ({ rowData: file }: { rowData: File }) => {
-              return <ActionCell file={file} />;
-            },
-          },
-        ]
-      : []),
   ];
 
   return (
@@ -53,7 +34,6 @@ export const FileTable = ({
       data={items}
       columns={columns}
       onRowClick={onItemClicked}
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     />
   );

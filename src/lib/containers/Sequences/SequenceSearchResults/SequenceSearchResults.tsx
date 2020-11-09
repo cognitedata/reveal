@@ -3,6 +3,7 @@ import { SequenceSearchFilter, SequenceFilter, Sequence } from '@cognite/sdk';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
+import { SelectableItemsProps } from 'lib/CommonProps';
 
 export const buildSequencesFilterQuery = (
   filter: SequenceFilter['filter'],
@@ -19,7 +20,10 @@ export const buildSequencesFilterQuery = (
   };
 };
 
-export const SequenceSearchResults = ({ query = '' }: { query?: string }) => {
+export const SequenceSearchResults = ({
+  query = '',
+  ...selectionProps
+}: { query?: string } & SelectableItemsProps) => {
   const { sequenceFilter } = useContext(ResourceSelectionContext);
   const { openPreview } = useResourcePreview();
 
@@ -38,6 +42,7 @@ export const SequenceSearchResults = ({ query = '' }: { query?: string }) => {
         onRowClick={sequence =>
           openPreview({ item: { id: sequence.id, type: 'sequence' } })
         }
+        {...selectionProps}
       />
     </>
   );

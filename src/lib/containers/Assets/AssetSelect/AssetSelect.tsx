@@ -86,7 +86,6 @@ export const AssetSelect = ({
           width: '100%',
         }),
       }}
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...extraProps}
       isLoading={isLoading || isRootLoading}
       value={

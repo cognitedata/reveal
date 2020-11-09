@@ -1,4 +1,3 @@
-export * from './AssetPreview/AssetPreview';
 export * from './AssetSmallPreview/AssetSmallPreview';
 export * from './AssetSearchResults/AssetSearchResults';
 export * from './AssetDetails/AssetDetails';

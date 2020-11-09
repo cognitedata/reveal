@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { FileInfo } from '@cognite/sdk';
@@ -27,6 +26,7 @@ import {
   ObjectDetectionEntity,
   useFindSimilarJobId,
 } from 'lib/hooks/objectDetection';
+import { SelectableItemProps } from 'lib/CommonProps';
 import { FileOverviewPanel } from './FileOverviewPanel';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
@@ -34,7 +34,7 @@ import { useAnnotations } from '../hooks';
 type Props = {
   fileId: number;
   contextualization?: boolean;
-};
+} & Partial<SelectableItemProps>;
 
 const convertAnnotation = (jobId: number, fileId: number) => (
   el: ObjectDetectionEntity
@@ -54,7 +54,13 @@ const convertAnnotation = (jobId: number, fileId: number) => (
   },
 });
 
-const FilePreview = ({ fileId, contextualization = false }: Props) => {
+const FilePreview = ({
+  fileId,
+  contextualization = false,
+  selectionMode = 'none',
+  onSelect = () => {},
+  isSelected = false,
+}: Props) => {
   const [creatable, setCreatable] = useState(false);
 
   const [pendingAnnotations, setPendingAnnotations] = useState<
@@ -120,10 +126,10 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
           annotations={allAnnotations}
           hideDownload
           hideSearch
-          renderAnnotation={(annotation, isSelected) => {
+          renderAnnotation={(annotation, isAnnotationSelected) => {
             const iAnnotation = convertCogniteAnnotationToIAnnotation(
               annotation,
-              isSelected
+              isAnnotationSelected
             );
             if (annotation.metadata && annotation.metadata.color) {
               iAnnotation.mark.strokeColor = annotation.metadata.color;
@@ -155,6 +161,9 @@ const FilePreview = ({ fileId, contextualization = false }: Props) => {
           creatable={creatable}
           setCreatable={setCreatable}
           contextualization={contextualization}
+          selectionMode={selectionMode}
+          onSelect={onSelect}
+          isSelected={isSelected}
         />
         {content()}
       </Splitter>

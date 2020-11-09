@@ -10,13 +10,19 @@ import {
 } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';
 
+export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
 export type ResourceItemState = ResourceItem & {
   state: 'disabled' | 'active' | 'selected';
 };
+export type OnSelectListener = (items: ResourceItem) => void;
 
 export type ResourceSelectionObserver = {
+  mode: ResourceSelectionMode;
+  setMode: (newMode: ResourceSelectionMode) => void;
   allowEdit: boolean;
   setAllowEdit: (newMode: boolean) => void;
+  resourcesState: ResourceItemState[];
+  setResourcesState: React.Dispatch<React.SetStateAction<ResourceItemState[]>>;
   resourceTypes: ResourceType[];
   setResourceTypes: (newTypes: ResourceType[]) => void;
   assetFilter: AssetFilterProps;
@@ -31,17 +37,28 @@ export type ResourceSelectionObserver = {
   setSequenceFilter: React.Dispatch<
     React.SetStateAction<SequenceFilter['filter']>
   >;
+  onSelect: OnSelectListener;
+  setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
   queryKey: string;
+  selectedResource: ResourceItem | undefined;
+  setSelectedResource: React.Dispatch<
+    React.SetStateAction<ResourceItem | undefined>
+  >;
 };
 
-export const ResourceSelectionContext = React.createContext(
-  {} as ResourceSelectionObserver
-);
+export const ResourceSelectionContext = React.createContext({
+  resourcesState: [] as ResourceItemState[],
+} as ResourceSelectionObserver);
 ResourceSelectionContext.displayName = 'ResourceSelectionContext';
 
 export const useResourceTypes = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.resourceTypes;
+};
+
+export const useResourceMode = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return { mode: observer.mode, setMode: observer.setMode };
 };
 
 export const useResourceEditable = () => {
@@ -64,6 +81,24 @@ export const useQuery: () => [string, (q: string) => void] = () => {
       }),
     });
   return [query, setQuery];
+};
+
+export const useSelectResource = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return observer.onSelect;
+};
+
+export const useSetOnSelectResource = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return observer.setOnSelectListener;
+};
+
+export const useResourcesState = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return {
+    resourcesState: observer.resourcesState,
+    setResourcesState: observer.setResourcesState,
+  };
 };
 
 export const useResourceFilter = (type: ResourceType) => {
@@ -100,11 +135,25 @@ export const useResourceFilters = () => {
   };
 };
 
+export const useSelectedResource = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return {
+    selectedResource: observer.selectedResource,
+    setSelectedResource: observer.setSelectedResource,
+  };
+};
+
+const defaultOnSelect = () => {};
+
 export type ResourceSelectionProps = {
   /**
    * Allow users to have access to editing/creating utilities
    */
   allowEdit?: boolean;
+  /**
+   * Mode of the selection journey, defaults to 'none'
+   */
+  mode?: ResourceSelectionMode;
   /**
    * Allowed resource types, default is all resources
    */
@@ -130,6 +179,15 @@ export type ResourceSelectionProps = {
    */
   sequenceFilter?: SequenceFilter['filter'];
   /**
+   * Resources' states (disabled, selected, active etc.)
+   */
+  resourcesState?: ResourceItemState[];
+  /**
+   * The callback when a resource is selected
+   */
+  onSelect?: OnSelectListener;
+
+  /**
    * The search param where the currrent query is stored. Default value is 'query'.
    */
   queryKey?: string;
@@ -137,18 +195,32 @@ export type ResourceSelectionProps = {
   children?: React.ReactNode;
 };
 
+const defaultMode = 'none';
+
 export const ResourceSelectionProvider = ({
   allowEdit: propsAllowEdit,
+  mode: initialMode,
   resourceTypes: initialResourceTypes,
   assetFilter: initialAssetFilter,
   timeseriesFilter: initialTimeseriesFilter,
   fileFilter: initialFileFilter,
   eventFilter: initialEventFilter,
   sequenceFilter: initialSequenceFilter,
+  resourcesState: initialResourcesState,
+  onSelect: initialOnSelect,
   queryKey = 'query',
   children,
 }: ResourceSelectionProps) => {
   const [allowEdit, setAllowEdit] = useState<boolean>(propsAllowEdit || false);
+  const [mode, setMode] = useState<ResourceSelectionMode>(
+    initialMode || defaultMode
+  );
+  const [onSelect, setOnSelectListener] = useState<OnSelectListener>(
+    () => initialOnSelect || defaultOnSelect
+  );
+  const [resourcesState, setResourcesState] = useState<ResourceItemState[]>(
+    initialResourcesState || []
+  );
   const [resourceTypes, setResourceTypes] = useState<ResourceType[]>(
     initialResourceTypes || ['asset', 'file', 'event', 'sequence', 'timeSeries']
   );
@@ -167,6 +239,13 @@ export const ResourceSelectionProvider = ({
   const [sequenceFilter, setSequenceFilter] = useState<
     SequenceFilter['filter']
   >(initialSequenceFilter || {});
+  const [selectedResource, setSelectedResource] = useState<ResourceItem>();
+
+  useEffect(() => {
+    if (initialResourcesState) {
+      setResourcesState(initialResourcesState);
+    }
+  }, [initialResourcesState]);
 
   useEffect(() => {
     if (initialResourceTypes) {
@@ -174,11 +253,25 @@ export const ResourceSelectionProvider = ({
     }
   }, [initialResourceTypes]);
 
+  useEffect(() => {
+    if (initialMode) {
+      setMode(initialMode);
+    }
+  }, [initialMode]);
+
+  useEffect(() => {
+    if (initialOnSelect) {
+      setOnSelectListener(() => initialOnSelect);
+    }
+  }, [initialOnSelect]);
+
   return (
     <ResourceSelectionContext.Provider
       value={{
         allowEdit,
         setAllowEdit,
+        mode,
+        setMode,
         resourceTypes,
         setResourceTypes,
         assetFilter,
@@ -191,7 +284,13 @@ export const ResourceSelectionProvider = ({
         setEventFilter,
         sequenceFilter,
         setSequenceFilter,
+        resourcesState,
+        setResourcesState,
+        onSelect,
+        setOnSelectListener,
         queryKey,
+        selectedResource,
+        setSelectedResource,
       }}
     >
       {children}

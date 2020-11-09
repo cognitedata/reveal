@@ -22,7 +22,8 @@ import ResourceSelectionContext, {
   useResourceFilter,
   useQuery,
   useSelectedResource,
-} from 'lib/context/ResourceSelectionContext';
+  useResourceMode,
+} from 'app/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
 import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
@@ -52,22 +53,35 @@ function SearchPage() {
   const { setOnSelectListener, setResourcesState } = useContext(
     ResourceSelectionContext
   );
-  useEffect(() => {
-    setOnSelectListener(() => (item: ResourceItem) => {
-      const index = cart.findIndex(
+
+  const onSelectListener = useCallback((item: ResourceItem) => {
+    setCart(currentCart => {
+      const index = currentCart.findIndex(
         el => el.type === item.type && el.id === item.id
       );
       if (index > -1) {
-        setCart(cart.slice(0, index).concat(cart.slice(index + 1)));
-      } else {
-        setCart(cart.concat([item]));
+        return currentCart.slice(0, index).concat(currentCart.slice(index + 1));
       }
+      return currentCart.concat([item]);
     });
-  }, [setOnSelectListener, cart]);
+  }, []);
+
+  const isSelected = useCallback(
+    (item: ResourceItem) => {
+      return cart.some(el => el.type === item.type && el.id === item.id);
+    },
+    [cart]
+  );
+
+  useEffect(() => {
+    setOnSelectListener(() => onSelectListener);
+  }, [setOnSelectListener, onSelectListener]);
 
   useEffect(() => {
     setResourcesState(cart.map(el => ({ ...el, state: 'selected' })));
   }, [setResourcesState, cart]);
+
+  const { mode } = useResourceMode();
 
   return (
     <ResourcePreviewProvider>
@@ -87,7 +101,13 @@ function SearchPage() {
             cart={cart}
             setCart={setCart}
           />
-          <SearchResult query={debouncedQuery} type={currentResourceType} />
+          <SearchResult
+            query={debouncedQuery}
+            type={currentResourceType}
+            selectionMode={mode}
+            onSelect={onSelectListener}
+            isSelected={isSelected}
+          />
         </SearchResultWrapper>
       </Wrapper>
     </ResourcePreviewProvider>

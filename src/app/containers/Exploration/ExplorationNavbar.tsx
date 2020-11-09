@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Row, Col, Button, Dropdown, Space } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { ShoppingCartPreview } from 'app/containers/Exploration/ShoppingCart';
-import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
+import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { ResourceItem } from 'lib/types';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
 import FilterToggleButton from './FilterToggleButton';

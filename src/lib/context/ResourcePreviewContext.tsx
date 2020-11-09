@@ -4,7 +4,6 @@ import { Splitter } from 'lib/components';
 import { ResourcePreviewSidebar } from 'lib/containers/ResourceSidebar';
 import styled from 'styled-components';
 import { SIDEBAR_RESIZE_EVENT } from 'lib/utils/WindowEvents';
-import { useSelectedResource } from 'lib/context/ResourceSelectionContext';
 
 export type ResourcePreviewProps = {
   /**
@@ -71,8 +70,6 @@ export const ResourcePreviewProvider = ({
   const [onClose, setOnCloseCallback] = useState<() => void>(() => () => {});
   const [item, setItem] = useState<ResourceItem | undefined>(undefined);
 
-  const { setSelectedResource } = useSelectedResource();
-
   const openPreview = useCallback(
     (previewDetails: ResourcePreviewProps = {}) => {
       const {
@@ -92,9 +89,8 @@ export const ResourcePreviewProvider = ({
       setClosable(newClosable);
       setOnCloseCallback(() => newOnClose);
       setIsOpen(true);
-      setSelectedResource(newItem);
     },
-    [setSelectedResource]
+    []
   );
 
   const hidePreview = useCallback(() => {
@@ -126,7 +122,6 @@ export const ResourcePreviewProvider = ({
             closable={closable}
             onClose={() => {
               setIsOpen(false);
-              setSelectedResource(undefined);
               onClose();
               setTimeout(
                 () => window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT)),

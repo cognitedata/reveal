@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FileInfo as File, FileFilterProps } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'lib/hooks/useSelection';
 import styled, { css } from 'styled-components';
-import { useResourcesState } from 'lib/context';
 import { Loader, TimeDisplay } from 'lib/components';
 import { useResourceResults } from 'lib/components/Search/SearchPageTable/hooks';
 import { Body, Colors, DocumentIcon } from '@cognite/cogs.js';
@@ -12,6 +11,7 @@ import AutoResizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { useFileIcon } from 'lib/hooks/sdk';
 import { isFileOfType } from 'lib/utils/FileUtils';
+import { SelectableItemProps, SelectableItemsProps } from 'lib/CommonProps';
 
 const Cell = ({
   file,
@@ -20,6 +20,9 @@ const Cell = ({
   onClick,
   isActive,
   isPreviewing,
+  selectionMode,
+  onSelect,
+  isSelected,
 }: {
   file: File;
   query: string;
@@ -27,7 +30,7 @@ const Cell = ({
   isPreviewing: boolean;
   style: React.CSSProperties;
   onClick?: () => void;
-}) => {
+} & SelectableItemProps) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
   const { data, isError } = useFileIcon(file);
   const isPreviewable = isFileOfType(file, [
@@ -52,7 +55,6 @@ const Cell = ({
       });
     };
   }, [data]);
-  const getButton = useSelectionCheckbox();
 
   const image = useMemo(() => {
     if (isPreviewable) {
@@ -91,7 +93,7 @@ const Cell = ({
         </span>
       </Body>
       <div className="selection">
-        {getButton({ id: file.id, type: 'file' })}
+        {useSelectionCheckbox(selectionMode, file.id, isSelected, onSelect)}
       </div>
     </PreviewCell>
   );
@@ -111,6 +113,9 @@ export const FileGridTable = ({
   activeIds = [],
   isFetching = false,
   canFetchMore = false,
+  selectionMode,
+  onSelect,
+  isSelected,
 }: {
   query?: string;
   items?: File[];
@@ -121,7 +126,7 @@ export const FileGridTable = ({
   onEndReached?: () => void;
   isFetching?: boolean;
   canFetchMore?: boolean;
-}) => {
+} & SelectableItemsProps) => {
   // const { mode } = useResourceMode();
   if (!items || items.length === 0) {
     return <Body>No Results</Body>;
@@ -200,6 +205,9 @@ export const FileGridTable = ({
                       file={file}
                       query={query}
                       onClick={() => onItemClicked(file)}
+                      selectionMode={selectionMode}
+                      onSelect={() => onSelect({ type: 'file', id: file.id })}
+                      isSelected={isSelected({ type: 'file', id: file.id })}
                     />
                   );
                 }
@@ -217,15 +225,17 @@ export const FileFilterGridTable = ({
   query,
   filter = {},
   onRowClick,
+  selectionMode,
+  onSelect,
+  isSelected,
+  activeIds = [],
 }: {
   query?: string;
   filter?: FileFilterProps;
   onRowClick: (file: File) => void;
-}) => {
+  activeIds?: number[];
+} & SelectableItemsProps) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-
-  const { resourcesState } = useResourcesState();
-  const currentItems = resourcesState.filter(el => el.state === 'active');
 
   const onItemSelected = (file: File) => {
     onRowClick(file);
@@ -245,7 +255,6 @@ export const FileFilterGridTable = ({
   }
 
   const previewIds = previewId ? [previewId] : undefined;
-  const activeIds = currentItems.map(el => el.id);
 
   return (
     <FileGridTable
@@ -261,6 +270,9 @@ export const FileFilterGridTable = ({
       }}
       isFetching={isFetching}
       canFetchMore={canFetchMore}
+      selectionMode={selectionMode}
+      onSelect={onSelect}
+      isSelected={isSelected}
     />
   );
 };

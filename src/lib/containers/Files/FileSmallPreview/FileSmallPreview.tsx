@@ -17,7 +17,6 @@ import {
 } from 'lib/components';
 import { isFilePreviewable } from 'lib/utils/FileUtils';
 import { useResourceActionsContext } from 'lib/context';
-import { useSelectionButton } from 'lib/hooks/useSelection';
 import { getIdParam } from 'lib/utils';
 import { SmallPreviewProps } from 'lib/CommonProps';
 import { FileDetails } from 'lib/containers/Files';
@@ -34,10 +33,6 @@ export const FileSmallPreview = ({
 } & SmallPreviewProps) => {
   const sdk = useSDK();
   const renderResourceActions = useResourceActionsContext();
-  const selectionButton = useSelectionButton()({
-    type: 'file',
-    id: fileId,
-  });
 
   const { data: file, isFetched, error } = useCdfItem<FileInfo>('files', {
     id: fileId,
@@ -57,7 +52,7 @@ export const FileSmallPreview = ({
     .filter(Boolean) as (number | string)[];
 
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [selectionButton];
+    const items: React.ReactNode[] = [];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -66,7 +61,7 @@ export const FileSmallPreview = ({
       })
     );
     return items;
-  }, [selectionButton, renderResourceActions, fileId, propActions]);
+  }, [renderResourceActions, fileId, propActions]);
 
   const { data: files } = useCdfItems<FileInfo>(
     'files',

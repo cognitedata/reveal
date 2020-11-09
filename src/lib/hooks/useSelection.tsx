@@ -1,13 +1,18 @@
-import React, { useContext } from 'react';
-import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
+import React from 'react';
 import { ResourceItem } from 'lib/types';
 import { Button, Checkbox, Colors } from '@cognite/cogs.js';
 
-export const useSelectionButton = () => {
-  const { mode, onSelect, resourcesState } = useContext(
-    ResourceSelectionContext
-  );
-  return (item: ResourceItem, small = false) => {
+export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
+export type OnResourceSelectedCallback = () => void;
+
+export const useSelectionButton = (
+  mode: ResourceSelectionMode,
+  item: ResourceItem,
+  isSelected: boolean,
+  onSelect: OnResourceSelectedCallback,
+  small = false
+) => {
+  return () => {
     let resourceName = 'Resource';
     switch (item.type) {
       case 'asset': {
@@ -31,38 +36,33 @@ export const useSelectionButton = () => {
         break;
       }
     }
-    const isInCart = resourcesState.some(
-      el =>
-        el.type === item.type && el.id === item.id && el.state === 'selected'
-    );
-
     if (mode === 'multiple') {
       return (
         <Button
-          key="select-button"
-          type={isInCart ? 'secondary' : 'primary'}
-          icon={isInCart ? 'Minus' : 'Plus'}
+          key={`${item.id}-select-button`}
+          type={isSelected ? 'secondary' : 'primary'}
+          icon={isSelected ? 'Minus' : 'Plus'}
           size={small ? 'small' : 'default'}
           onClick={() => {
-            onSelect(item);
+            onSelect();
           }}
         >
-          {isInCart ? 'Un-Select' : 'Select'}
+          {isSelected ? 'Un-Select' : 'Select'}
         </Button>
       );
     }
     if (mode === 'single') {
       return (
         <Button
-          key="select-button"
+          key={`${item.id}-select-button`}
           type="primary"
           onClick={() => {
-            onSelect(item);
+            onSelect();
           }}
           size={small ? 'small' : 'default'}
           icon="Plus"
         >
-          {isInCart ? 'Current Selection' : `Select ${resourceName}`}
+          {isSelected ? 'Current Selection' : `Select ${resourceName}`}
         </Button>
       );
     }
@@ -70,45 +70,41 @@ export const useSelectionButton = () => {
   };
 };
 
-export const useSelectionCheckbox = () => {
-  const { mode, onSelect, resourcesState } = useContext(
-    ResourceSelectionContext
-  );
-  return (item: ResourceItem) => {
-    if (mode === 'none') {
-      return null;
-    }
-    const isInCart = resourcesState.some(
-      el =>
-        el.type === item.type && el.id === item.id && el.state === 'selected'
-    );
-    if (mode === 'single') {
-      return (
-        <Button
-          key="select-button"
-          onClick={e => {
-            e.stopPropagation();
-            onSelect(item);
-          }}
-          style={{
-            background: isInCart
-              ? Colors['midblue-7'].hex()
-              : Colors['greyscale-grey2'].hex(),
-          }}
-          icon="Check"
-        />
-      );
-    }
+export const useSelectionCheckbox = (
+  mode: ResourceSelectionMode,
+  id: string | number,
+  isSelected: boolean,
+  onSelect: OnResourceSelectedCallback
+): JSX.Element => {
+  if (mode === 'none') {
+    return <></>;
+  }
+  if (mode === 'single') {
     return (
-      <Checkbox
-        key="select-button"
-        value={isInCart}
-        onClick={e => e.stopPropagation()}
-        onChange={() => {
-          onSelect(item);
+      <Button
+        key={`${id}-select-button`}
+        onClick={e => {
+          e.stopPropagation();
+          onSelect();
         }}
-        name={`${item.type}-${item.id}`}
+        style={{
+          background: isSelected
+            ? Colors['midblue-7'].hex()
+            : Colors['greyscale-grey2'].hex(),
+        }}
+        icon="Check"
       />
     );
-  };
+  }
+  return (
+    <Checkbox
+      key={`${id}-select-button`}
+      value={isSelected}
+      onClick={e => e.stopPropagation()}
+      onChange={() => {
+        onSelect();
+      }}
+      name={`${id}`}
+    />
+  );
 };

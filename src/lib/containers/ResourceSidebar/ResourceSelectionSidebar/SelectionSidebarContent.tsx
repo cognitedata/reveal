@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useCallback,
-  useEffect,
-  useMemo,
-} from 'react';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Input } from '@cognite/cogs.js';
 import { SearchResultFilters } from 'lib/components/Search/Filters';
@@ -16,12 +10,11 @@ import { RenderResourceActionsFunction } from 'lib/types/Types';
 import {
   ResourceActionsContext,
   useQuery,
-  useResourcesState,
-  useResourceMode,
   useResourceTypes,
 } from 'lib/context';
 import { ResourceItem, ResourceType } from 'lib/types';
 import { Divider, SpacedRow } from 'lib/components';
+import { SelectableItemsProps } from 'lib/CommonProps';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
@@ -69,15 +62,16 @@ export const SelectionSidebarContent = ({
   visible = false,
   onClose,
   children,
+  selectionMode,
+  onSelect,
+  isSelected,
 }: {
   onClose: (confirmed: boolean) => void;
   visible?: boolean;
   children?: React.ReactNode;
-}) => {
+} & SelectableItemsProps) => {
   const [query, setQuery] = useQuery();
   const { add, remove } = useContext(ResourceActionsContext);
-  const { mode } = useResourceMode();
-  const { resourcesState } = useResourcesState();
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
   );
@@ -89,11 +83,6 @@ export const SelectionSidebarContent = ({
       setActiveKey(resourceTypes[0]);
     }
   }, [activeKey, resourceTypes]);
-
-  const selectResourcesCount = useMemo(
-    () => resourcesState.filter(el => el.state === 'selected').length,
-    [resourcesState]
-  );
 
   useEffect(() => {
     setSelectedItem(undefined);
@@ -185,18 +174,24 @@ export const SelectionSidebarContent = ({
                   onChange={ev => setQuery(ev.target.value)}
                   value={query}
                 />
-                <SearchResult query={query} type={activeKey} />
+                <SearchResult
+                  query={query}
+                  type={activeKey}
+                  selectionMode={selectionMode}
+                  onSelect={onSelect}
+                  isSelected={isSelected}
+                />
               </SearchResultWrapper>
             </Wrapper>
 
-            {mode !== 'none' && (
+            {selectionMode !== 'none' && (
               <>
                 <Divider.Horizontal />
                 <SpacedRow>
                   <Button onClick={() => onClose(false)}>Cancel</Button>
                   <div className="spacer" />
                   <Button type="primary" onClick={() => onClose(true)}>
-                    Select {selectResourcesCount} Resources
+                    Select Resources
                   </Button>
                 </SpacedRow>
               </>

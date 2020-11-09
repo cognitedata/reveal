@@ -10,7 +10,6 @@ import {
   ResourceIcons,
 } from 'lib/components';
 import { useResourceActionsContext } from 'lib/context';
-import { useSelectionButton } from 'lib/hooks/useSelection';
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import { SmallPreviewProps } from 'lib/CommonProps';
 import { SequenceDetails } from 'lib/containers/Sequences';
@@ -32,13 +31,9 @@ export const SequenceSmallPreview = ({
   const sequence = isFetched && sequences[0];
 
   const renderResourceActions = useResourceActionsContext();
-  const selectionButton = useSelectionButton()({
-    type: 'sequence',
-    id: sequenceId,
-  });
 
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [selectionButton];
+    const items: React.ReactNode[] = [];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -47,7 +42,7 @@ export const SequenceSmallPreview = ({
       })
     );
     return items;
-  }, [selectionButton, renderResourceActions, sequenceId, propActions]);
+  }, [renderResourceActions, sequenceId, propActions]);
 
   if (!isFetched) {
     return <Loader />;

@@ -132,7 +132,6 @@ export const TimeseriesChart = ({
                   el => !!el.average && !!el.min && !!el.max
                 )}
                 domain={presetZoom}
-                // eslint-disable-next-line react/jsx-props-no-spreading
                 {...otherProps}
               />
             );

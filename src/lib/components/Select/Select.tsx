@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import ReactSelectCreatable from 'react-select/creatable';
 import ReactSelect, { Props, OptionTypeBase } from 'react-select';

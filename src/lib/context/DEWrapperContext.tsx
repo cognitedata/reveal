@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useState, useCallback } from 'react';
 import { ModalProps, Modal } from '@cognite/cogs.js';
 

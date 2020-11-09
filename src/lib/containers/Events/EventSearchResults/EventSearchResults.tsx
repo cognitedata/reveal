@@ -3,6 +3,7 @@ import { EventSearchRequest, EventFilter, CogniteEvent } from '@cognite/sdk';
 import { useResourcePreview, ResourceSelectionContext } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
+import { SelectableItemsProps } from 'lib/CommonProps';
 
 export const buildEventsFilterQuery = (
   filter: EventFilter,
@@ -19,7 +20,10 @@ export const buildEventsFilterQuery = (
   };
 };
 
-export const EventSearchResults = ({ query = '' }: { query?: string }) => {
+export const EventSearchResults = ({
+  query = '',
+  ...selectionProps
+}: { query?: string } & SelectableItemsProps) => {
   const { eventFilter } = useContext(ResourceSelectionContext);
   const { openPreview } = useResourcePreview();
 
@@ -38,6 +42,7 @@ export const EventSearchResults = ({ query = '' }: { query?: string }) => {
         onRowClick={event =>
           openPreview({ item: { id: event.id, type: 'event' } })
         }
+        {...selectionProps}
       />
     </>
   );

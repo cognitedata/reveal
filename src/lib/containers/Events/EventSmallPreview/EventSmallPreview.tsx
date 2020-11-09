@@ -10,7 +10,6 @@ import {
 } from 'lib/components';
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import { useResourceActionsContext } from 'lib/context';
-import { useSelectionButton } from 'lib/hooks/useSelection';
 import { renderTitle } from 'lib/utils/EventsUtils';
 import { ResourceIcons } from 'lib/components/ResourceIcons/ResourceIcons';
 import { EventDetails } from 'lib/containers/Events';
@@ -26,17 +25,13 @@ export const EventSmallPreview = ({
   eventId: number;
 } & SmallPreviewProps) => {
   const renderResourceActions = useResourceActionsContext();
-  const selectionButton = useSelectionButton()({
-    type: 'event',
-    id: eventId,
-  });
 
   const { data: event, isFetched, error } = useCdfItem<CogniteEvent>('events', {
     id: eventId,
   });
 
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [selectionButton];
+    const items: React.ReactNode[] = [];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -45,7 +40,7 @@ export const EventSmallPreview = ({
       })
     );
     return items;
-  }, [selectionButton, renderResourceActions, eventId, propActions]);
+  }, [renderResourceActions, eventId, propActions]);
 
   if (!isFetched) {
     return <Loader />;

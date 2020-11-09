@@ -1,33 +1,63 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
-import { EventPreview } from 'lib/containers/Events';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
+import { EventDetails } from 'lib/containers/Events';
 import { renderTitle } from 'lib/utils/EventsUtils';
+import { Row, Col } from 'antd';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { CogniteEvent } from '@cognite/sdk';
+import { ErrorFeedback, Loader } from 'lib/components';
+import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
+import { useRelationships } from 'lib/hooks/RelationshipHooks';
 
 export const EventPage = () => {
-  const { eventId } = useParams<{
-    eventId: string | undefined;
+  const { eventId: eventIdString } = useParams<{
+    eventId: string;
   }>();
-  const eventIdNumber = eventId ? parseInt(eventId, 10) : undefined;
+  const eventId = parseInt(eventIdString, 10);
 
   useEffect(() => {
-    trackUsage('Exploration.Event', { eventId: eventIdNumber });
-  }, [eventIdNumber]);
+    trackUsage('Exploration.Event', { eventId });
+  }, [eventId]);
+  const { data: event, error, isFetched } = useCdfItem<CogniteEvent>('events', {
+    id: eventId,
+  });
 
-  if (!eventId || !eventIdNumber || !Number.isFinite(eventIdNumber)) {
+  const { data: relationships } = useRelationships(event?.externalId);
+
+  if (!eventId || !Number.isFinite(eventId)) {
     return <>Invalid event id: {eventId}</>;
+  }
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!event) {
+    return <>Event {eventId} not found!</>;
   }
 
   return (
     <>
       <ResourceTitleRow
-        id={eventIdNumber}
+        id={eventId}
         type="event"
         icon="Events"
         getTitle={renderTitle}
       />
-      <EventPreview eventId={eventIdNumber} />
+      <Row>
+        <Col span={18}>
+          <EventDetails event={event} showAll />
+        </Col>
+        <Col span={6}>
+          <ResourceDetailsSidebar relations={relationships} />
+        </Col>
+      </Row>
     </>
   );
 };

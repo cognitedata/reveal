@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
+import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { FilePreview } from 'lib/containers/Files/FilePreview';
 import { trackUsage } from 'app/utils/Metrics';

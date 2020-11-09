@@ -1,15 +1,8 @@
 import React from 'react';
 import { Timeseries } from '@cognite/sdk';
-import { useSelectionCheckbox } from 'lib/hooks/useSelection';
-import { useResourceMode } from 'lib/context';
 import { Table, TableProps } from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { Body } from '@cognite/cogs.js';
-
-const ActionCell = ({ timeseries }: { timeseries: Timeseries }) => {
-  const getButton = useSelectionCheckbox();
-  return getButton({ id: timeseries.id, type: 'timeSeries' });
-};
 
 export const TimeseriesTable = ({
   items,
@@ -19,8 +12,6 @@ export const TimeseriesTable = ({
   items: Timeseries[];
   onItemClicked: (sequence: Timeseries) => void;
 } & TableProps<Timeseries>) => {
-  const { mode } = useResourceMode();
-
   const columns = [
     Table.Columns.name,
     Table.Columns.externalId,
@@ -51,20 +42,6 @@ export const TimeseriesTable = ({
         );
       },
     },
-    ...(mode !== 'none'
-      ? [
-          {
-            ...Table.Columns.select,
-            cellRenderer: ({
-              rowData: timeseries,
-            }: {
-              rowData: Timeseries;
-            }) => {
-              return <ActionCell timeseries={timeseries} />;
-            },
-          },
-        ]
-      : []),
   ];
 
   return (
@@ -73,7 +50,6 @@ export const TimeseriesTable = ({
       columns={columns}
       onRowClick={onItemClicked}
       rowHeight={100}
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     />
   );

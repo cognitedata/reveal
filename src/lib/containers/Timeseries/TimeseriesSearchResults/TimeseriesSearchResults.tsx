@@ -7,6 +7,7 @@ import {
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
+import { SelectableItemsProps } from 'lib/CommonProps';
 
 export const buildTimeseriesFilterQuery = (
   filter: TimeseriesFilter,
@@ -23,7 +24,10 @@ export const buildTimeseriesFilterQuery = (
   };
 };
 
-export const TimeseriesSearchResults = ({ query = '' }: { query?: string }) => {
+export const TimeseriesSearchResults = ({
+  query = '',
+  ...selectionProps
+}: { query?: string } & SelectableItemsProps) => {
   const { timeseriesFilter } = useContext(ResourceSelectionContext);
   const { openPreview } = useResourcePreview();
 
@@ -42,6 +46,7 @@ export const TimeseriesSearchResults = ({ query = '' }: { query?: string }) => {
         onRowClick={ts =>
           openPreview({ item: { id: ts.id, type: 'timeSeries' } })
         }
+        {...selectionProps}
       />
     </>
   );

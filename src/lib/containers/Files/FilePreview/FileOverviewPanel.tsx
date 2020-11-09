@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
 import { Button, Dropdown, Menu, Icon } from '@cognite/cogs.js';
 import {
@@ -19,6 +18,7 @@ import { FileInfo } from '@cognite/sdk';
 import { useMutation, useQueryCache } from 'react-query';
 import { useJob, useFindObjectsJobId } from 'lib/hooks/objectDetection';
 import { isModelRunning } from 'lib/types';
+import { SelectableItemProps } from 'lib/CommonProps';
 import DetectObjectsMenuItem from './DetectObjectsMenuItem';
 import { FilePreviewOverview } from './FilePreviewOverview/FilePreviewOverview';
 
@@ -29,7 +29,7 @@ type Props = {
   contextualization: boolean;
   creatable: boolean;
   setCreatable: (creatable: boolean) => void;
-};
+} & SelectableItemProps;
 
 export const FileOverviewPanel = ({
   fileId,
@@ -38,6 +38,9 @@ export const FileOverviewPanel = ({
   creatable,
   setCreatable,
   contextualization,
+  selectionMode,
+  onSelect,
+  isSelected,
 }: Props) => {
   const queryCache = useQueryCache();
   const download = useDownloadPDF();
@@ -67,7 +70,12 @@ export const FileOverviewPanel = ({
 
   const { openPreview } = useResourcePreview();
   const renderResourceActions = useResourceActionsContext();
-  const selectionButton = useSelectionButton();
+  const selectionButton = useSelectionButton(
+    selectionMode,
+    { id: fileId, type: 'file' },
+    isSelected,
+    onSelect
+  );
 
   const jobId = useFindObjectsJobId(fileId);
   const { data: job } = useJob(jobId);
@@ -225,7 +233,7 @@ export const FileOverviewPanel = ({
           onPageChange={setPage}
           extras={
             <SpacedRow>
-              {selectionButton({ id: file.id, type: 'file' })}
+              {selectionButton}
               {renderResourceActions({ id: file.id, type: 'file' })}
               {renderMenuButton()}
             </SpacedRow>

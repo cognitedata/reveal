@@ -6,6 +6,7 @@ import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { AssetTreeTable } from 'lib/containers/Assets';
 import { SearchResultToolbar } from 'lib/containers';
+import { SelectableItemsProps } from 'lib/CommonProps';
 
 export const buildAssetsFilterQuery = (
   filter: AssetFilterProps,
@@ -22,7 +23,10 @@ export const buildAssetsFilterQuery = (
   };
 };
 
-export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
+export const AssetSearchResults = ({
+  query = '',
+  ...selectionProps
+}: { query?: string } & SelectableItemsProps) => {
   const { assetFilter } = useContext(ResourceSelectionContext);
   const { openPreview } = useResourcePreview();
   const [currentView, setCurrentView] = useState<string>('tree');
@@ -37,6 +41,7 @@ export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
           onRowClick={asset =>
             openPreview({ item: { id: asset.id, type: 'asset' } })
           }
+          {...selectionProps}
         />
       );
     }
@@ -48,9 +53,10 @@ export const AssetSearchResults = ({ query = '' }: { query?: string }) => {
         onAssetClicked={asset =>
           openPreview({ item: { id: asset.id, type: 'asset' } })
         }
+        {...selectionProps}
       />
     );
-  }, [currentView, assetFilter, openPreview, query]);
+  }, [currentView, assetFilter, openPreview, query, selectionProps]);
 
   return (
     <>

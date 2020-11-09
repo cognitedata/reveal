@@ -4,6 +4,7 @@ import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
 import { FileFilterGridTable } from 'lib/containers/Files';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { FileToolbar } from './FileToolbar';
+import { SelectableItemsProps } from '../../../CommonProps';
 
 export const buildFilesFilterQuery = (
   filter: FileFilterProps,
@@ -20,7 +21,10 @@ export const buildFilesFilterQuery = (
   };
 };
 
-export const FileSearchResults = ({ query = '' }: { query?: string }) => {
+export const FileSearchResults = ({
+  query = '',
+  ...selectableProps
+}: { query?: string } & SelectableItemsProps) => {
   const [currentView, setCurrentView] = useState<string>('list');
   const { fileFilter } = useContext(ResourceSelectionContext);
   const { openPreview } = useResourcePreview();
@@ -44,6 +48,7 @@ export const FileSearchResults = ({ query = '' }: { query?: string }) => {
           onRowClick={file =>
             openPreview({ item: { id: file.id, type: 'file' } })
           }
+          {...selectableProps}
         />
       ) : (
         <SearchResultTable<FileInfo>
@@ -54,6 +59,7 @@ export const FileSearchResults = ({ query = '' }: { query?: string }) => {
             openPreview({ item: { id: file.id, type: 'file' } });
             return true;
           }}
+          {...selectableProps}
         />
       )}
     </>

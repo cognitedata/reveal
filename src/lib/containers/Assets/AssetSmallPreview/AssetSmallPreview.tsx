@@ -17,7 +17,6 @@ import {
   ResourceIcons,
 } from 'lib/components';
 import { useResourceActionsContext } from 'lib/context';
-import { useSelectionButton } from 'lib/hooks/useSelection';
 import { TimeseriesSmallPreview } from 'lib/containers/Timeseries';
 import { AssetBreadcrumb } from 'lib/containers/Assets';
 import { FileSmallPreview } from 'lib/containers/Files';
@@ -91,10 +90,8 @@ export const AssetSmallPreview = ({
     { enabled: isFetched }
   );
 
-  const selectionButton = useSelectionButton()({ type: 'asset', id: assetId });
-
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [selectionButton];
+    const items: React.ReactNode[] = [];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -103,7 +100,7 @@ export const AssetSmallPreview = ({
       })
     );
     return items;
-  }, [renderResourceActions, selectionButton, assetId, propActions]);
+  }, [renderResourceActions, assetId, propActions]);
 
   if (!isFetched) {
     return <Loader />;

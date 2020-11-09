@@ -96,7 +96,7 @@ export const ResourceTableColumns = {
     title: 'Select',
     width: 80,
     align: Column.Alignment.CENTER,
-    frozen: Column.FrozenDirection.RIGHT,
+    frozen: Column.FrozenDirection.LEFT,
   },
   relationships: {
     key: 'relationships',

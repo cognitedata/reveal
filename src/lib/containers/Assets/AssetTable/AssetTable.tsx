@@ -1,14 +1,8 @@
 import React from 'react';
 import { Asset } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
-import { useResourceMode, TableProps, Table } from 'lib';
-import { useSelectionCheckbox } from 'lib/hooks/useSelection';
+import { TableProps, Table } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-
-const ActionCell = ({ asset }: { asset: Asset }) => {
-  const getButton = useSelectionCheckbox();
-  return getButton({ id: asset.id, type: 'asset' });
-};
 
 const ParentCell = ({
   rootId,
@@ -53,8 +47,6 @@ export const AssetTable = ({
   onItemClicked,
   ...props
 }: AssetTableProps) => {
-  const { mode } = useResourceMode();
-
   const columns = [
     Table.Columns.name,
     Table.Columns.externalId,
@@ -68,16 +60,6 @@ export const AssetTable = ({
         );
       },
     },
-    ...(mode !== 'none'
-      ? [
-          {
-            ...Table.Columns.select,
-            cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-              return <ActionCell asset={asset} />;
-            },
-          },
-        ]
-      : []),
   ];
 
   return (
@@ -85,7 +67,6 @@ export const AssetTable = ({
       data={items}
       columns={columns}
       onRowClick={onItemClicked}
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     />
   );

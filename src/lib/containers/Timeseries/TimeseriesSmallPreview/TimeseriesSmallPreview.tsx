@@ -9,13 +9,12 @@ import {
   LatestDatapoint,
   DetailsItem,
   SpacedRow,
+  ResourceIcons,
 } from 'lib/components';
 import { useResourceActionsContext } from 'lib/context';
-import { useSelectionButton } from 'lib/hooks/useSelection';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { SmallPreviewProps } from 'lib/CommonProps';
-import { ResourceIcons } from '../../../components/ResourceIcons/ResourceIcons';
 
 export const TimeseriesSmallPreview = ({
   timeseriesId,
@@ -32,13 +31,9 @@ export const TimeseriesSmallPreview = ({
   );
 
   const renderResourceActions = useResourceActionsContext();
-  const selectionButton = useSelectionButton()({
-    type: 'timeSeries',
-    id: timeseriesId,
-  });
 
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [selectionButton];
+    const items: React.ReactNode[] = [];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -47,7 +42,7 @@ export const TimeseriesSmallPreview = ({
       })
     );
     return items;
-  }, [selectionButton, renderResourceActions, timeseriesId, propActions]);
+  }, [renderResourceActions, timeseriesId, propActions]);
 
   if (!isFetched) {
     return <Loader />;

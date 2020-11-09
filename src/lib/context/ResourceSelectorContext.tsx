@@ -1,17 +1,17 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useState, useCallback } from 'react';
 import { ResourceSelectionSidebar } from 'lib/containers/ResourceSidebar';
 import { ResourceItem } from 'lib/types';
+import { SelectableItemsProps } from 'lib/CommonProps';
 import {
   ResourceSelectionProps,
   ResourceItemState,
-  OnSelectListener,
 } from './ResourceSelectionContext';
 
 export type OpenSelectorProps = ResourceSelectionProps & {
   /** Callback for when the selector is closed */
   onClose?: (confirmed: boolean, results?: ResourceItem[]) => void;
-};
+  initialItemState?: ResourceItemState[];
+} & Omit<SelectableItemsProps, 'isSelected'>;
 
 export type ResourceSelector = {
   openResourceSelector: (props?: OpenSelectorProps) => void;
@@ -31,41 +31,47 @@ export const ResourceSelectorProvider = ({
   children: React.ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [props, setProps] = useState<ResourceSelectionProps>({});
+  const [props, setProps] = useState<
+    ResourceSelectionProps & Omit<SelectableItemsProps, 'isSelected'>
+  >({
+    selectionMode: 'single',
+    onSelect: () => {},
+  });
   const [resourceItemState, setResourceItemState] = useState<
     ResourceItemState[]
   >([]);
   const [onClose, setOnCloseCallback] = useState<
     (confirmed: boolean, results?: ResourceItem[]) => void
   >(() => () => {});
-  const [onSelect, setOnSelectListener] = useState<OnSelectListener>(
-    () => () => {}
-  );
+  const [onSelect, setOnSelectListener] = useState<
+    SelectableItemsProps['onSelect']
+  >(() => () => {});
 
   const openResourceSelector = useCallback(
     (
       {
         onClose: propsOnClose = () => {},
         onSelect: propsOnSelect = () => {},
-        resourcesState: propsResourceItemState = [],
-        mode = 'single',
+        selectionMode = 'single',
+        initialItemState = [],
         ...selectionProps
       }: OpenSelectorProps = {
         onClose: () => {},
         onSelect: () => {},
-        resourcesState: [],
-        mode: 'single',
+        selectionMode: 'single',
+        initialItemState: [],
       }
     ) => {
       setProps({
         allowEdit: false,
-        mode,
+        selectionMode,
+        onSelect,
         ...selectionProps,
       });
       setOnCloseCallback(() => propsOnClose);
       setOnSelectListener(() => (item: ResourceItem) => {
         propsOnSelect(item);
-        if (mode === 'single') {
+        if (selectionMode === 'single') {
           setIsOpen(false);
           setResourceItemState(value => {
             propsOnClose(
@@ -86,10 +92,10 @@ export const ResourceSelectorProvider = ({
           });
         }
       });
-      setResourceItemState(propsResourceItemState);
+      setResourceItemState(initialItemState);
       setIsOpen(true);
     },
-    []
+    [onSelect]
   );
 
   const hideResourceSelector = useCallback(() => {
@@ -115,8 +121,17 @@ export const ResourceSelectorProvider = ({
         }}
         visible={isOpen}
         {...props}
+        // eslint-disable-next-line react/prop-types
+        selectionMode={props.selectionMode || 'single'}
+        isSelected={item =>
+          resourceItemState.some(
+            el =>
+              el.state === 'selected' &&
+              el.id === item.id &&
+              el.type === item.type
+          )
+        }
         onSelect={onSelect}
-        resourcesState={resourceItemState}
       />
     </ResourceSelectorContext.Provider>
   );

@@ -218,6 +218,7 @@ const AnnotationPreviewSidebar = ({
 
   const onLinkResource = useCallback(() => {
     openResourceSelector({
+      selectionMode: 'single',
       onSelect: item => {
         setSelectedAnnotation({
           ...selectedAnnotation!,
@@ -226,7 +227,7 @@ const AnnotationPreviewSidebar = ({
           resourceId: item.id,
         });
       },
-      resourcesState: selectedAnnotation
+      initialItemState: selectedAnnotation
         ? [
             {
               type: selectedAnnotation.resourceType,
