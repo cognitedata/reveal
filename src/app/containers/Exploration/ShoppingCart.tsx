@@ -103,7 +103,7 @@ export const ShoppingCartPreview = ({
   );
 
   return (
-    <div style={{ width: 300, position: 'relative' }}>
+    <div style={{ width: 300, position: 'relative', backgroundColor: '#fff' }}>
       {cart.length === 0 ? (
         <EmptyCart>
           <img src={EmptyCartImage} alt="Empty cart" />

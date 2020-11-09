@@ -5,13 +5,8 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
-import queryString from 'query-string';
-import {
-  ResourceType,
-  ResourceItem,
-  RenderResourceActionsFunction,
-} from 'lib/types';
-import { useHistory, useParams } from 'react-router-dom';
+import { ResourceItem, RenderResourceActionsFunction } from 'lib/types';
+import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 import { ResourcePreviewProvider, ResourceActionsContext } from 'lib/context';
@@ -33,6 +28,7 @@ import styled from 'styled-components';
 import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
 import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { useCollectionFeature } from 'app/utils/featureFlags';
+import { useCurrentResourceType } from './hooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -43,13 +39,12 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-function SearchPage({
-  currentResourceType,
-  setCurrentResourceType,
-}: {
-  currentResourceType: ResourceType;
-  setCurrentResourceType: (newResourceType: ResourceType) => void;
-}) {
+function SearchPage() {
+  const [
+    currentResourceType,
+    setCurrentResourceType,
+  ] = useCurrentResourceType();
+  const [showFilter, setShowFilter] = useState(false);
   const [query] = useQuery();
   const [debouncedQuery] = useDebounce(query, 100);
 
@@ -80,10 +75,18 @@ function SearchPage({
         currentResourceType={currentResourceType}
         setCurrentResourceType={setCurrentResourceType}
       />
+
       <Wrapper>
-        <SearchResultFilters currentResourceType={currentResourceType} />
+        <SearchResultFilters
+          visible={showFilter}
+          currentResourceType={currentResourceType}
+        />
         <SearchResultWrapper>
-          <ExplorationNavBar cart={cart} setCart={setCart} />
+          <ExplorationNavBar
+            toggleFilter={() => setShowFilter(!showFilter)}
+            cart={cart}
+            setCart={setCart}
+          />
           <SearchResult query={debouncedQuery} type={currentResourceType} />
         </SearchResultWrapper>
       </Wrapper>
@@ -181,14 +184,7 @@ export const SearchResultsPage = () => {
     };
   }, [remove]);
 
-  const setCurrentResourceType = (newResourceType: ResourceType) => {
-    const { query } = queryString.parse(history.location.search);
-    history.push(createLink(`/explore/${newResourceType}`, { query }));
-  };
-
-  const { resourceType = 'asset' } = useParams<{
-    resourceType: ResourceType;
-  }>();
+  const [resourceType] = useCurrentResourceType();
 
   const [query] = useQuery();
   const filter = useResourceFilter(resourceType);
@@ -226,10 +222,5 @@ export const SearchResultsPage = () => {
     return () => timer.current?.stop();
   }, [selectedResource]);
 
-  return (
-    <SearchPage
-      setCurrentResourceType={setCurrentResourceType}
-      currentResourceType={resourceType}
-    />
-  );
+  return <SearchPage />;
 };

@@ -1,37 +1,22 @@
-import React, { useRef, useContext } from 'react';
-import { Button, Colors, Dropdown } from '@cognite/cogs.js';
+import React, { useContext } from 'react';
+import { Row, Col, Button, Dropdown, Space } from 'antd';
+import { Icon } from '@cognite/cogs.js';
 import { ShoppingCartPreview } from 'app/containers/Exploration/ShoppingCart';
-import styled from 'styled-components';
 import ResourceSelectionContext from 'lib/context/ResourceSelectionContext';
 import { ResourceItem } from 'lib/types';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
-
-const Navbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-top: 18px;
-  background: #fff;
-`;
-
-const CartDropdown = styled(Dropdown)`
-  background: #fff;
-  color: #000;
-  box-shadow: 0px 0px 8px ${Colors['greyscale-grey3'].hex()};
-  padding: 8px;
-  .tippy-arrow {
-    color: #fff;
-  }
-`;
+import FilterToggleButton from './FilterToggleButton';
 
 export const ExplorationNavbar = ({
   cart,
   setCart,
+  toggleFilter,
 }: {
   cart: ResourceItem[];
   setCart: (cart: ResourceItem[]) => void;
+  toggleFilter: () => void;
 }) => {
   const { mode, setMode } = useContext(ResourceSelectionContext);
-  const navbarRef = useRef<HTMLDivElement>(null);
   const cartCount = cart.length;
 
   let selectionContent: React.ReactNode = null;
@@ -39,7 +24,11 @@ export const ExplorationNavbar = ({
   switch (mode) {
     case 'none': {
       selectionContent = (
-        <Button icon="Plus" onClick={() => setMode('multiple')}>
+        <Button
+          size="large"
+          icon={<Icon type="Plus" />}
+          onClick={() => setMode('multiple')}
+        >
           Start selection
         </Button>
       );
@@ -47,36 +36,35 @@ export const ExplorationNavbar = ({
     }
     default: {
       selectionContent = (
-        <>
-          <CartDropdown
-            content={<ShoppingCartPreview cart={cart} setCart={setCart} />}
-            placement="bottom-end"
+        <Space size="small">
+          <Dropdown
+            trigger={['click']}
+            overlay={<ShoppingCartPreview cart={cart} setCart={setCart} />}
           >
-            <Button
-              icon="Down"
-              iconPlacement="right"
-              style={{ height: '100%' }}
-            >
+            <Button icon={<Icon type="Down" />} size="large">
               {`Selection (${cartCount})`}
             </Button>
-          </CartDropdown>
+          </Dropdown>
           <Button
-            style={{ marginLeft: 8 }}
+            size="large"
             onClick={() => setMode('none')}
-            icon="Close"
+            icon={<Icon type="Close" />}
           />
-        </>
+        </Space>
       );
     }
   }
 
   return (
-    <Navbar ref={navbarRef}>
-      <ExplorationSearchBar />
-      <div style={{ zIndex: 2, marginLeft: 24, display: 'flex' }}>
-        {selectionContent}
-      </div>
-    </Navbar>
+    <Row align="middle" style={{ marginTop: 16 }}>
+      <Col flex="none">
+        <FilterToggleButton toggleOpen={toggleFilter} />
+      </Col>
+      <Col flex="auto" style={{ margin: '0 16px' }}>
+        <ExplorationSearchBar />
+      </Col>
+      <Col flex="none">{selectionContent}</Col>
+    </Row>
   );
 };
 export default ExplorationNavbar;

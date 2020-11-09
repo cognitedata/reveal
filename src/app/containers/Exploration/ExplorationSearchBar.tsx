@@ -26,6 +26,7 @@ export const ExplorationSearchBar = () => {
 
   return (
     <Input.Search
+      size="large"
       style={{ width: '100%' }}
       placeholder="Search for a file or asset..."
       onChange={ev => setLocalQuery(ev.target.value)}

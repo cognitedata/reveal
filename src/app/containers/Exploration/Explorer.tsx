@@ -7,8 +7,8 @@ import { AssetPage } from 'app/containers/AssetPage';
 import { SequencePage } from 'app/containers/SequencePage';
 import { TimeseriesPage } from 'app/containers/TimeseriesPage';
 import { EventPage } from 'app/containers/EventPage';
-import { SearchResultsPage } from 'app/containers/SearchResultsPage';
 import styled from 'styled-components';
+import { SearchResultsPage } from './SearchResultsPage';
 
 const AppWrapper = styled.div`
   margin-left: 16px;

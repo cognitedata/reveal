@@ -24,3 +24,9 @@ h2,
 h3 {
   font-weight: bold;
 }
+
+
+/* Cogs / Ant interop */
+.ant-btn-icon-only .cogs-icon {
+  margin: 0 auto;
+}

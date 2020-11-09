@@ -174,7 +174,7 @@ export const SelectionSidebarContent = ({
             />
             {children}
             <Wrapper>
-              <SearchResultFilters currentResourceType={activeKey} />
+              <SearchResultFilters visible currentResourceType={activeKey} />
               <SearchResultWrapper>
                 <Input
                   icon="Search"

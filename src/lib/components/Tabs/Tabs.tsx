@@ -71,6 +71,8 @@ const HeaderWrapper = styled.div`
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   display: flex;
   align-items: stretch;
+  padding-top: 10px;
+  zindex: 1;
   && > *:nth-child(0) {
     margin-left: 0px;
   }
@@ -79,12 +81,9 @@ const HeaderWrapper = styled.div`
 const TabHeader = styled.div<{ selected?: boolean }>(
   props => css`
     margin-right: 32px;
-
-    padding-top: 10px;
-    padding-bottom: 10px;
     cursor: pointer;
     transition: 0.3s all;
-
+    padding-bottom: 10px;
     border-bottom: 3px solid
       ${props.selected ? Colors.midblue.hex() : 'rgba(0,0,0,0)'};
   `

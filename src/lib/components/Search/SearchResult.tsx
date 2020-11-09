@@ -31,11 +31,10 @@ export function SearchResult({
 }
 
 export const Wrapper = styled.div`
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   overflow: auto;
   overflow: hidden;
   height: 100%;
-  padding-left: 16px;
 `;
