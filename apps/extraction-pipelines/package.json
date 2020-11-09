@@ -42,7 +42,7 @@
     "react-router": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-table": "^7.6.1",
-    "single-spa-react": "^3.1.0",
+    "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
     "systemjs-webpack-interop": "^2.1.2"
   },
