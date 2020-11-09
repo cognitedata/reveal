@@ -1,62 +1,95 @@
-import React, { useState, useMemo } from 'react';
-import { Button, A, Body } from '@cognite/cogs.js';
-import { useTranslation, Trans } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Button, TopBar, Menu, Avatar, toast } from '@cognite/cogs.js';
+import logoSvg from 'assets/logo.svg';
 
+import sidecar from 'utils/sidecar';
 import { Header } from './elements';
 import { Container } from '../elements';
 
 const Home = () => {
   const [crashing, setCrashing] = useState(false);
 
-  const { t } = useTranslation('Home');
-
-  const clickHandler = () => {
+  const onCrash = () => {
     setCrashing(true);
     if (!crashing) {
       throw new Error('Synthetic error');
     }
   };
 
-  // Show how the t function can be used. Note that it is automatically bound
-  // to the 'Home' namespace (unlike the Trans component).
-  const buttonText = useMemo(() => {
-    if (crashing) {
-      return t('crashing_button', { defaultValue: 'Crashing &hellip;' });
-    }
-    return t('crashMe_button', { defaultValue: 'Crash me!' });
-  }, [t, crashing]);
-
   return (
     <Container>
-      <Header data-test-id="header">
-        <p>
-          <Trans i18nKey="Home:versionInfo_paragraph" t={t}>
-            This is v{process.env.REACT_APP_VERSION_NAME || '0.0.0'}
-          </Trans>
-        </p>
-        <A
-          isExternal
-          href="https://cog.link/fas"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Trans i18nKey="Home:learnMore_link" t={t}>
-            Learn about how this is hosted
-          </Trans>
-        </A>
+      <TopBar>
+        <TopBar.Left>
+          <TopBar.Logo
+            title="Cognite Charts"
+            logo={
+              <img
+                src={logoSvg}
+                alt="Cognite Charts Logo"
+                style={{ margin: '0 12px 0 16px' }}
+              />
+            }
+          />
+          <TopBar.Navigation links={[]} />
+        </TopBar.Left>
+        <TopBar.Right>
+          <TopBar.Actions
+            actions={[
+              {
+                key: 'crash',
+                icon: 'ErrorStroked',
+                onClick: onCrash,
+                name: 'Crash the app',
+              },
+              {
+                key: 'help',
+                icon: 'Help',
+                name: 'Help',
+                menu: (
+                  <Menu>
+                    <Menu.Item>Menu item 1</Menu.Item>
+                    <Menu.Item>Menu item 2</Menu.Item>
+                    <Menu.Item>Menu item 3</Menu.Item>
+                    <Menu.Item
+                      onClick={() => window.open(sidecar.privacyPolicyUrl)}
+                    >
+                      Privacy policy
+                    </Menu.Item>
+                    <Menu.Footer>
+                      v. {process.env.REACT_APP_VERSION_NAME || 'local'}
+                    </Menu.Footer>
+                  </Menu>
+                ),
+              },
+              { key: 'avatar', component: <Avatar text="Anon User" /> },
+            ]}
+          />
+        </TopBar.Right>
+      </TopBar>
+
+      <Header>
+        <hgroup>
+          <h1>11-ESDV-90020 Chart</h1>
+          <h4>by Anon User</h4>
+        </hgroup>
+        <section className="actions">
+          <Button
+            icon="Checkmark"
+            type="primary"
+            onClick={() => {
+              toast.success('Successfully saved nothing!');
+            }}
+          >
+            Save
+          </Button>
+          <Button icon="Share" variant="ghost">
+            Share
+          </Button>
+          <Button icon="Download" variant="ghost">
+            Export
+          </Button>
+        </section>
       </Header>
-      <Body>
-        <Link to="/info">What are sidecars?</Link>
-      </Body>
-      <Button
-        disabled={crashing}
-        type="danger"
-        onClick={clickHandler}
-        style={{ marginTop: 8 }}
-      >
-        {buttonText}
-      </Button>
     </Container>
   );
 };

@@ -4,6 +4,7 @@ import { Switch, Redirect, Route } from 'react-router-dom';
 
 import { Container } from '@cognite/react-container';
 
+import { ToastContainer } from '@cognite/cogs.js';
 import Info from 'pages/Info';
 import Home from 'pages/Home';
 
@@ -15,6 +16,7 @@ const App = () => {
   return (
     <>
       <GlobalStyles />
+      <ToastContainer />
       <Container appName="demo-app">
         <Switch>
           <Route path="/home" render={() => <Home />} />

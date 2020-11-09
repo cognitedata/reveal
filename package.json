@@ -1,6 +1,6 @@
 {
-  "name": "@cognite/react-demo-app",
-  "version": "0.1.2",
+  "name": "@cognite/cognite-charts",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -19,7 +19,7 @@
     "testcafe:serve": "serve -s build -l 11111"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^1.17.1",
+    "@cognite/cogs.js": "^2.0.1",
     "@cognite/metrics": "^0.1.2",
     "@cognite/react-container": "0.1.0",
     "@cognite/react-i18n": "0.1.2",

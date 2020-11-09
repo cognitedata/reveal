@@ -6,6 +6,6 @@ import { Base } from './Home.stories';
 describe('<Home />', () => {
   test('renders learn react link', async () => {
     render(<Base />);
-    expect(await screen.findByText(/learn about/i)).toBeInTheDocument();
+    expect(await screen.findByText(/11-ESDV-90020 Chart/i)).toBeInTheDocument();
   });
 });
