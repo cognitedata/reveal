@@ -61,7 +61,7 @@
     "@testing-library/react": "^11.1.0",
     "@types/jest": "^26.0.15",
     "@types/match-sorter": "^5.0.0",
-    "@types/node": "^14.14.6",
+    "@types/node": "^14.14.7",
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
     "@types/react-table": "^7.0.25",
