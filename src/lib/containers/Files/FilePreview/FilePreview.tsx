@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { FileInfo } from '@cognite/sdk';
+import * as pdfjs from 'pdfjs-dist';
 import {
   CogniteFileViewer,
   ProposedCogniteAnnotation,
@@ -30,6 +31,8 @@ import { SelectableItemProps } from 'lib/CommonProps';
 import { FileOverviewPanel } from './FileOverviewPanel';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//dev.fusion.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 
 type Props = {
   fileId: number;
@@ -129,7 +132,8 @@ const FilePreview = ({
           renderAnnotation={(annotation, isAnnotationSelected) => {
             const iAnnotation = convertCogniteAnnotationToIAnnotation(
               annotation,
-              isAnnotationSelected
+              isAnnotationSelected,
+              false
             );
             if (annotation.metadata && annotation.metadata.color) {
               iAnnotation.mark.strokeColor = annotation.metadata.color;

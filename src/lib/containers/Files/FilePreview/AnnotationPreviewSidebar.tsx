@@ -18,7 +18,7 @@ import { Modal, notification } from 'antd';
 import {
   CogniteAnnotation,
   convertAnnotationsToEvents,
-  deleteAnnotations as deleteAnnotationApi,
+  hardDeleteAnnotations,
 } from '@cognite/annotations';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import styled from 'styled-components';
@@ -153,7 +153,8 @@ const AnnotationPreviewSidebar = ({
   );
 
   const [deleteAnnotations] = useMutation(
-    (annotations: CogniteAnnotation[]) => deleteAnnotationApi(sdk, annotations),
+    (annotations: CogniteAnnotation[]) =>
+      hardDeleteAnnotations(sdk, annotations),
     {
       onSuccess,
     }

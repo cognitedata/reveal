@@ -11,7 +11,10 @@ import { useResourceActionsContext } from 'lib/context/ResourceActionsContext';
 import { useSelectionButton } from 'lib/hooks/useSelection';
 import { Modal, notification } from 'antd';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
-import { CogniteAnnotation, hardDeleteAnnotations } from '@cognite/annotations';
+import {
+  CogniteAnnotation,
+  hardDeleteAnnotationsForFile,
+} from '@cognite/annotations';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
 import { FileInfo } from '@cognite/sdk';
@@ -51,7 +54,7 @@ export const FileOverviewPanel = ({
   const [deleteAnnotations] = useMutation(
     () => {
       if (file) {
-        return hardDeleteAnnotations(sdk, file);
+        return hardDeleteAnnotationsForFile(sdk, file);
       }
       return Promise.reject(new Error('file not ready'));
     },
