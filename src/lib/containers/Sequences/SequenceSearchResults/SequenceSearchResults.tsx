@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { SequenceSearchFilter, SequenceFilter, Sequence } from '@cognite/sdk';
-import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
+import { useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
 import { SelectableItemsProps } from 'lib/CommonProps';
@@ -22,9 +22,12 @@ export const buildSequencesFilterQuery = (
 
 export const SequenceSearchResults = ({
   query = '',
+  filter,
   ...selectionProps
-}: { query?: string } & SelectableItemsProps) => {
-  const { sequenceFilter } = useContext(ResourceSelectionContext);
+}: {
+  query?: string;
+  filter: Required<SequenceFilter>['filter'];
+} & SelectableItemsProps) => {
   const { openPreview } = useResourcePreview();
 
   return (
@@ -32,12 +35,12 @@ export const SequenceSearchResults = ({
       <SearchResultToolbar
         api={query.length > 0 ? 'search' : 'list'}
         type="sequences"
-        filter={sequenceFilter}
+        filter={filter}
         query={query}
       />
       <SearchResultTable<Sequence>
         api="sequences"
-        filter={sequenceFilter}
+        filter={filter}
         query={query}
         onRowClick={sequence =>
           openPreview({ item: { id: sequence.id, type: 'sequence' } })

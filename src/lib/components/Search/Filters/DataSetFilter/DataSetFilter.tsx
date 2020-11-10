@@ -1,9 +1,8 @@
-import React, { useCallback, useContext } from 'react';
+import React from 'react';
 import { Title, Tooltip } from '@cognite/cogs.js';
-import { DataSet } from '@cognite/sdk';
+import { DataSet, IdEither } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'lib/components';
-import { ResourceSelectionContext, useResourceFilter } from 'lib/context';
 import { ResourceType, convertResourceType } from 'lib/types';
 import { useRelevantDatasets, DataSetWCount } from 'lib/hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
@@ -11,71 +10,26 @@ import { usePermissions } from 'lib/hooks/CustomHooks';
 
 export const DataSetFilter = ({
   resourceType,
+  value,
+  setValue,
 }: {
   resourceType: ResourceType;
+  value: IdEither[] | undefined;
+  setValue: (newValue: IdEither[] | undefined) => void;
 }) => {
   const hasPermissions = usePermissions('datasetsAcl', 'READ');
-  const filter = useResourceFilter(resourceType);
-  const currentDataSetIds = filter?.dataSetIds || [];
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
-    currentDataSetIds,
-    { enabled: currentDataSetIds && currentDataSetIds.length > 0 }
+    value || [],
+    {
+      enabled: value && value.length > 0,
+    }
   );
-
-  const {
-    setSequenceFilter,
-    setAssetFilter,
-    setFileFilter,
-    setEventFilter,
-    setTimeseriesFilter,
-  } = useContext(ResourceSelectionContext);
-
-  const setDataSetFilter = useCallback(
-    (ids?: number[]) => {
-      const newFilters =
-        ids && ids.length > 0 ? ids.map(id => ({ id })) : undefined;
-      switch (resourceType) {
-        case 'asset':
-          setAssetFilter(currentFilter => ({
-            ...currentFilter,
-            dataSetIds: newFilters,
-          }));
-          break;
-        case 'timeSeries':
-          setTimeseriesFilter(currentFilter => ({
-            ...currentFilter,
-            dataSetIds: newFilters,
-          }));
-          break;
-        case 'event':
-          setEventFilter(currentFilter => ({
-            ...currentFilter,
-            dataSetIds: newFilters,
-          }));
-          break;
-        case 'file':
-          setFileFilter(currentFilter => ({
-            ...currentFilter,
-            dataSetIds: newFilters,
-          }));
-          break;
-        case 'sequence':
-          setSequenceFilter(currentFilter => ({
-            ...currentFilter,
-            dataSetIds: newFilters,
-          }));
-      }
-    },
-    [
-      resourceType,
-      setAssetFilter,
-      setTimeseriesFilter,
-      setEventFilter,
-      setFileFilter,
-      setSequenceFilter,
-    ]
-  );
+  const setDataSetFilter = (ids?: number[]) => {
+    const newFilters =
+      ids && ids.length > 0 ? ids.map(id => ({ id })) : undefined;
+    setValue(newFilters);
+  };
 
   const validDatasets = useRelevantDatasets(convertResourceType(resourceType));
   const formatOption = (dataset: DataSetWCount) => {
@@ -100,10 +54,10 @@ export const DataSetFilter = ({
         <Select
           options={validDatasets?.map(formatOption)}
           isDisabled={!hasPermissions}
-          onChange={value => {
+          onChange={newValue => {
             setDataSetFilter(
-              value
-                ? (value as OptionsType<OptionTypeBase>).map(el => el.value)
+              newValue
+                ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
                 : undefined
             );
           }}

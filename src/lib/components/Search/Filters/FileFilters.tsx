@@ -1,33 +1,113 @@
 import React from 'react';
-
-import {
-  DirectoryPrefixFilter,
-  MimeTypeFilter,
-  UploadedFilter,
-} from 'lib/containers/Files';
-import { useResourceFilter } from 'lib/context';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { SourceFilter } from './SourceFilter/SourceFilter';
+import { FileFilterProps, InternalId } from '@cognite/sdk';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { ExternalIDPrefixFilter } from './ExternalIDPrefixFilter/ExternalIDPrefixFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
+import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+import { BooleanFilter } from './BooleanFilter/BooleanFilter';
+import { StringFilter } from './StringFilter/StringFilter';
 
-export default function FileFilters() {
-  const filter = useResourceFilter('file');
+export const FileFilters = ({
+  filter,
+  setFilter,
+}: {
+  filter: FileFilterProps;
+  setFilter: (newFilter: FileFilterProps) => void;
+}) => {
   const { data: items = [] } = useList('files', { filter, limit: 1000 });
   return (
     <div>
-      <LabelFilter resourceType="file" />
-      <DataSetFilter resourceType="file" />
-      <MimeTypeFilter items={items} />
-      <ByAssetFilter resourceType="file" />
-      <UploadedFilter />
-      <ExternalIDPrefixFilter resourceType="file" />
-      <DirectoryPrefixFilter />
-      <SourceFilter resourceType="file" items={items} />
-      <MetadataFilter resourceType="file" items={items} />
+      <LabelFilter
+        resourceType="file"
+        value={((filter as any).labels || { containsAny: [] }).containsAny}
+        setValue={newFilters =>
+          setFilter({
+            ...filter,
+            labels: newFilters ? { containsAny: newFilters } : undefined,
+          })
+        }
+      />
+      <DataSetFilter
+        resourceType="file"
+        value={filter.dataSetIds}
+        setValue={newIds =>
+          setFilter({
+            ...filter,
+            dataSetIds: newIds,
+          })
+        }
+      />
+      <AggregatedFilter
+        items={items}
+        aggregator="mimeType"
+        title="Mime type"
+        value={filter.mimeType}
+        setValue={newValue => setFilter({ ...filter, mimeType: newValue })}
+      />
+      <ByAssetFilter
+        value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+        setValue={newValue =>
+          setFilter({
+            ...filter,
+            assetSubtreeIds: newValue?.map(id => ({ id })),
+          })
+        }
+      />
+      <BooleanFilter
+        title="Is uploaded"
+        value={filter.uploaded}
+        setValue={newValue =>
+          setFilter({
+            ...filter,
+            uploaded: newValue,
+          })
+        }
+      />
+      <StringFilter
+        title="External ID"
+        value={filter.externalIdPrefix}
+        setValue={newExternalId =>
+          setFilter({
+            ...filter,
+            externalIdPrefix: newExternalId,
+          })
+        }
+      />
+      <StringFilter
+        title="Directory prefix"
+        value={(filter as any).directoryPrefix}
+        setValue={newPrefix =>
+          setFilter({
+            ...filter,
+            // @ts-ignore
+            directoryPrefix: newPrefix,
+          })
+        }
+      />
+      <AggregatedFilter
+        title="Source"
+        items={items}
+        aggregator="source"
+        value={filter.source}
+        setValue={newSource =>
+          setFilter({
+            ...filter,
+            source: newSource,
+          })
+        }
+      />
+      <MetadataFilter
+        items={items}
+        value={filter.metadata}
+        setValue={newMetadata =>
+          setFilter({
+            ...filter,
+            metadata: newMetadata,
+          })
+        }
+      />
     </div>
   );
-}
+};

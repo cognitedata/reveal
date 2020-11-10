@@ -1,20 +1,23 @@
 import React, { useState, useContext, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Input } from '@cognite/cogs.js';
-import { SearchResultFilters } from 'lib/components/Search/Filters';
-import {
-  SearchResult,
-  Wrapper as SearchResultWrapper,
-} from 'lib/components/Search/SearchResult';
 import { RenderResourceActionsFunction } from 'lib/types/Types';
-import {
-  ResourceActionsContext,
-  useQuery,
-  useResourceTypes,
-} from 'lib/context';
+import { ResourceActionsContext, useQuery } from 'lib/context';
 import { ResourceItem, ResourceType } from 'lib/types';
 import { Divider, SpacedRow } from 'lib/components';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import { SearchFilters, SearchResults, ResourceTypeTabs } from 'lib';
+
+import {
+  InitialResourceFilterProps,
+  SelectableItemsProps,
+} from 'lib/CommonProps';
+import {
+  AssetFilterProps,
+  TimeseriesFilter,
+  FileFilterProps,
+  EventFilter,
+  SequenceFilter,
+} from '@cognite/sdk';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
@@ -59,23 +62,45 @@ const CloseButton = styled(Button)`
 `;
 
 export const SelectionSidebarContent = ({
+  resourceTypes = ['asset', 'timeSeries', 'file', 'event', 'sequence'],
   visible = false,
   onClose,
   children,
   selectionMode,
   onSelect,
   isSelected,
+  initialAssetFilter,
+  initialTimeseriesFilter,
+  initialFileFilter,
+  initialEventFilter,
+  initialSequenceFilter,
 }: {
+  resourceTypes?: ResourceType[];
   onClose: (confirmed: boolean) => void;
   visible?: boolean;
   children?: React.ReactNode;
-} & SelectableItemsProps) => {
+} & SelectableItemsProps &
+  InitialResourceFilterProps) => {
+  const [assetFilter, setAssetFilter] = useState<AssetFilterProps>(
+    initialAssetFilter || {}
+  );
+  const [timeseriesFilter, setTimeseriesFilter] = useState<TimeseriesFilter>(
+    initialTimeseriesFilter || {}
+  );
+  const [fileFilter, setFileFilter] = useState<FileFilterProps>(
+    initialFileFilter || {}
+  );
+  const [eventFilter, setEventFilter] = useState<EventFilter>(
+    initialEventFilter || {}
+  );
+  const [sequenceFilter, setSequenceFilter] = useState<
+    Required<SequenceFilter>['filter']
+  >(initialSequenceFilter || {});
   const [query, setQuery] = useQuery();
   const { add, remove } = useContext(ResourceActionsContext);
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
   );
-  const resourceTypes = useResourceTypes();
   const [activeKey, setActiveKey] = useState<ResourceType>(resourceTypes[0]);
 
   useEffect(() => {
@@ -163,7 +188,23 @@ export const SelectionSidebarContent = ({
             />
             {children}
             <Wrapper>
-              <SearchResultFilters visible currentResourceType={activeKey} />
+              <ResourceTypeTabs
+                currentResourceType={activeKey}
+                setCurrentResourceType={setActiveKey}
+              />
+              <SearchFilters
+                assetFilter={assetFilter}
+                setAssetFilter={setAssetFilter}
+                timeseriesFilter={timeseriesFilter}
+                setTimeseriesFilter={setTimeseriesFilter}
+                sequenceFilter={sequenceFilter}
+                setSequenceFilter={setSequenceFilter}
+                eventFilter={eventFilter}
+                setEventFilter={setEventFilter}
+                fileFilter={fileFilter}
+                setFileFilter={setFileFilter}
+                resourceType={activeKey}
+              />
               <SearchResultWrapper>
                 <Input
                   icon="Search"
@@ -174,12 +215,17 @@ export const SelectionSidebarContent = ({
                   onChange={ev => setQuery(ev.target.value)}
                   value={query}
                 />
-                <SearchResult
-                  query={query}
-                  type={activeKey}
+                <SearchResults
                   selectionMode={selectionMode}
                   onSelect={onSelect}
                   isSelected={isSelected}
+                  assetFilter={assetFilter}
+                  timeseriesFilter={timeseriesFilter}
+                  sequenceFilter={sequenceFilter}
+                  eventFilter={eventFilter}
+                  fileFilter={fileFilter}
+                  resourceType={activeKey}
+                  query={query}
                 />
               </SearchResultWrapper>
             </Wrapper>
@@ -203,3 +249,12 @@ export const SelectionSidebarContent = ({
     </>
   );
 };
+
+const SearchResultWrapper = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  overflow: hidden;
+  height: 100%;
+`;

@@ -1,7 +1,11 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { ResourceSelectionSidebar } from 'lib/containers/ResourceSidebar';
 import { ResourceItem } from 'lib/types';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import {
+  InitialResourceFilterProps,
+  SelectableItemsProps,
+} from 'lib/CommonProps';
+
 import {
   ResourceSelectionProps,
   ResourceItemState,
@@ -11,7 +15,8 @@ export type OpenSelectorProps = ResourceSelectionProps & {
   /** Callback for when the selector is closed */
   onClose?: (confirmed: boolean, results?: ResourceItem[]) => void;
   initialItemState?: ResourceItemState[];
-} & Omit<SelectableItemsProps, 'isSelected'>;
+} & Omit<SelectableItemsProps, 'isSelected'> &
+  InitialResourceFilterProps;
 
 export type ResourceSelector = {
   openResourceSelector: (props?: OpenSelectorProps) => void;

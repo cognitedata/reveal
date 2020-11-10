@@ -33,9 +33,9 @@ export type ResourceSelectionObserver = {
   setFileFilter: React.Dispatch<React.SetStateAction<FileFilterProps>>;
   eventFilter: EventFilter;
   setEventFilter: React.Dispatch<React.SetStateAction<EventFilter>>;
-  sequenceFilter: SequenceFilter['filter'];
+  sequenceFilter: Required<SequenceFilter>['filter'];
   setSequenceFilter: React.Dispatch<
-    React.SetStateAction<SequenceFilter['filter']>
+    React.SetStateAction<Required<SequenceFilter>['filter']>
   >;
   onSelect: OnSelectListener;
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
@@ -177,7 +177,7 @@ export type ResourceSelectionProps = {
   /**
    * The initial sequence filter
    */
-  sequenceFilter?: SequenceFilter['filter'];
+  sequenceFilter?: Required<SequenceFilter>['filter'];
   /**
    * Resources' states (disabled, selected, active etc.)
    */
@@ -237,7 +237,7 @@ export const ResourceSelectionProvider = ({
     initialEventFilter || {}
   );
   const [sequenceFilter, setSequenceFilter] = useState<
-    SequenceFilter['filter']
+    Required<SequenceFilter>['filter']
   >(initialSequenceFilter || {});
   const [selectedResource, setSelectedResource] = useState<ResourceItem>();
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Badge, Button } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { useResourceFilter } from 'lib';
 import { isEmpty } from 'lodash';
+import { useResourceFilter } from 'app/context/ResourceSelectionContext';
 import { useCurrentResourceType } from './hooks';
 
 export default function FilterToggleButton({

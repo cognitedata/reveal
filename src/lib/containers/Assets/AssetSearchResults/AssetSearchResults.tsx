@@ -1,8 +1,8 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { AssetSearchFilter, AssetFilterProps, Asset } from '@cognite/sdk';
 import { ButtonGroup } from 'lib/components';
-import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
+import { useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { AssetTreeTable } from 'lib/containers/Assets';
 import { SearchResultToolbar } from 'lib/containers';
@@ -25,9 +25,9 @@ export const buildAssetsFilterQuery = (
 
 export const AssetSearchResults = ({
   query = '',
+  filter,
   ...selectionProps
-}: { query?: string } & SelectableItemsProps) => {
-  const { assetFilter } = useContext(ResourceSelectionContext);
+}: { query?: string; filter: AssetFilterProps } & SelectableItemsProps) => {
   const { openPreview } = useResourcePreview();
   const [currentView, setCurrentView] = useState<string>('tree');
 
@@ -36,7 +36,7 @@ export const AssetSearchResults = ({
       return (
         <SearchResultTable<Asset>
           api="assets"
-          filter={assetFilter}
+          filter={filter}
           query={query}
           onRowClick={asset =>
             openPreview({ item: { id: asset.id, type: 'asset' } })
@@ -47,8 +47,8 @@ export const AssetSearchResults = ({
     }
     return (
       <AssetTreeTable
-        filter={assetFilter}
-        startFromRoot={!assetFilter.assetSubtreeIds}
+        filter={filter}
+        startFromRoot={!filter.assetSubtreeIds}
         query={query}
         onAssetClicked={asset =>
           openPreview({ item: { id: asset.id, type: 'asset' } })
@@ -56,14 +56,14 @@ export const AssetSearchResults = ({
         {...selectionProps}
       />
     );
-  }, [currentView, assetFilter, openPreview, query, selectionProps]);
+  }, [currentView, filter, openPreview, query, selectionProps]);
 
   return (
     <>
       <SearchResultToolbar
         api={query.length > 0 ? 'search' : 'list'}
         type="assets"
-        filter={assetFilter}
+        filter={filter}
         query={query}
       >
         <ButtonGroup currentKey={currentView} onButtonClicked={setCurrentView}>

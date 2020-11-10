@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { FilesSearchFilter, FileFilterProps, FileInfo } from '@cognite/sdk';
-import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
+import { useResourcePreview } from 'lib/context';
 import { FileFilterGridTable } from 'lib/containers/Files';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { FileToolbar } from './FileToolbar';
@@ -23,17 +23,17 @@ export const buildFilesFilterQuery = (
 
 export const FileSearchResults = ({
   query = '',
+  filter,
   ...selectableProps
-}: { query?: string } & SelectableItemsProps) => {
+}: { query?: string; filter: FileFilterProps } & SelectableItemsProps) => {
   const [currentView, setCurrentView] = useState<string>('list');
-  const { fileFilter } = useContext(ResourceSelectionContext);
   const { openPreview } = useResourcePreview();
 
   return (
     <>
       <FileToolbar
         query={query}
-        filter={fileFilter}
+        filter={filter}
         onFileClicked={file => {
           openPreview({ item: { id: file.id, type: 'file' } });
           return true;
@@ -43,7 +43,7 @@ export const FileSearchResults = ({
       />
       {currentView === 'grid' ? (
         <FileFilterGridTable
-          filter={fileFilter}
+          filter={filter}
           query={query}
           onRowClick={file =>
             openPreview({ item: { id: file.id, type: 'file' } })
@@ -53,7 +53,7 @@ export const FileSearchResults = ({
       ) : (
         <SearchResultTable<FileInfo>
           api="files"
-          filter={fileFilter}
+          filter={filter}
           query={query}
           onRowClick={file => {
             openPreview({ item: { id: file.id, type: 'file' } });

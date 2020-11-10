@@ -4,6 +4,5 @@ export * from './AssetDetails/AssetDetails';
 export * from './AssetSearchResults/AssetSearchResults';
 export * from './AssetTable/AssetTable';
 export * from './AssetTreeTable/AssetTreeTable';
-export * from './AssetFilters';
 export * from './AssetBreadcrumb/AssetBreadcrumb';
 export * from './AssetSelect/AssetSelect';

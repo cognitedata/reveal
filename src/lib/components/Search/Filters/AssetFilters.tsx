@@ -1,24 +1,86 @@
 import React from 'react';
-import { SubtreeFilter } from 'lib/containers/Assets';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useResourceFilter } from 'lib/context';
-import { SourceFilter } from './SourceFilter/SourceFilter';
+import { AssetFilterProps, InternalId } from '@cognite/sdk';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { ExternalIDPrefixFilter } from './ExternalIDPrefixFilter/ExternalIDPrefixFilter';
+import { StringFilter } from './StringFilter/StringFilter';
+import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
+import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 
-export default function AssetFilters() {
-  const filter = useResourceFilter('asset');
+// TODO(CDFUX-000) allow customization of ordering of filters via props
+export const AssetFilters = ({
+  filter,
+  setFilter,
+}: {
+  filter: AssetFilterProps;
+  setFilter: (newFilter: AssetFilterProps) => void;
+}) => {
   const { data: items = [] } = useList('assets', { filter, limit: 1000 });
   return (
     <div>
-      <LabelFilter resourceType="asset" />
-      <DataSetFilter resourceType="asset" />
-      <SourceFilter resourceType="asset" items={items} />
-      <ExternalIDPrefixFilter resourceType="asset" />
-      <SubtreeFilter />
-      <MetadataFilter resourceType="asset" items={items} />
+      <LabelFilter
+        resourceType="asset"
+        value={((filter as any).labels || { containsAny: [] }).containsAny}
+        setValue={newFilters =>
+          setFilter({
+            ...filter,
+            labels: newFilters ? { containsAny: newFilters } : undefined,
+          })
+        }
+      />
+      <DataSetFilter
+        resourceType="asset"
+        value={filter.dataSetIds}
+        setValue={newIds =>
+          setFilter({
+            ...filter,
+            dataSetIds: newIds,
+          })
+        }
+      />
+      <AggregatedFilter
+        title="Source"
+        items={items}
+        aggregator="source"
+        value={filter.source}
+        setValue={newSource =>
+          setFilter({
+            ...filter,
+            source: newSource,
+          })
+        }
+      />
+      <StringFilter
+        title="External ID"
+        value={filter.externalIdPrefix}
+        setValue={newExternalId =>
+          setFilter({
+            ...filter,
+            externalIdPrefix: newExternalId,
+          })
+        }
+      />
+      <ByAssetFilter
+        title="Parent"
+        value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+        setValue={newAssetIds =>
+          setFilter({
+            ...filter,
+            assetSubtreeIds: newAssetIds?.map(id => ({ id })),
+          })
+        }
+      />
+      <MetadataFilter
+        items={items}
+        value={filter.metadata}
+        setValue={newMetadata =>
+          setFilter({
+            ...filter,
+            metadata: newMetadata,
+          })
+        }
+      />
     </div>
   );
-}
+};

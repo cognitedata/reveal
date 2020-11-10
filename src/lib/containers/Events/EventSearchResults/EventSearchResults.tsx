@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { EventSearchRequest, EventFilter, CogniteEvent } from '@cognite/sdk';
-import { useResourcePreview, ResourceSelectionContext } from 'lib/context';
+import { useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
 import { SelectableItemsProps } from 'lib/CommonProps';
@@ -22,9 +22,9 @@ export const buildEventsFilterQuery = (
 
 export const EventSearchResults = ({
   query = '',
+  filter,
   ...selectionProps
-}: { query?: string } & SelectableItemsProps) => {
-  const { eventFilter } = useContext(ResourceSelectionContext);
+}: { query?: string; filter: EventFilter } & SelectableItemsProps) => {
   const { openPreview } = useResourcePreview();
 
   return (
@@ -32,12 +32,12 @@ export const EventSearchResults = ({
       <SearchResultToolbar
         api={query.length > 0 ? 'search' : 'list'}
         type="events"
-        filter={eventFilter}
+        filter={filter}
         query={query}
       />
       <SearchResultTable<CogniteEvent>
         api="events"
-        filter={eventFilter}
+        filter={filter}
         query={query}
         onRowClick={event =>
           openPreview({ item: { id: event.id, type: 'event' } })

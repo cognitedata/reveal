@@ -1,15 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
+import { AssetFilterProps } from '@cognite/sdk';
 import { Wrapper } from './utils';
 import { DataSetFilter } from '../components/Search/Filters';
 import { AssetSearchResults } from '../containers/Assets/AssetSearchResults/AssetSearchResults';
-import { ResourceSelectionContext } from '../context';
 
 export const QueryBuilder = () => {
-  const { assetFilter } = useContext(ResourceSelectionContext);
+  const [assetFilter, setAssetFilter] = useState<AssetFilterProps>({});
   return (
     <div style={{ height: 400 }}>
       <code>{JSON.stringify(assetFilter, null, 2)}</code>
-      <DataSetFilter resourceType="asset" />
+      <DataSetFilter
+        resourceType="asset"
+        value={assetFilter.dataSetIds}
+        setValue={value =>
+          setAssetFilter({ ...assetFilter, dataSetIds: value })
+        }
+      />
       <AssetSearchResults />
     </div>
   );

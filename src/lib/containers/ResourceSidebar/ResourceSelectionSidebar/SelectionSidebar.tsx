@@ -4,7 +4,10 @@ import {
   ResourceSelectionProps,
 } from 'lib/context/ResourceSelectionContext';
 import { ResourceActionsProvider } from 'lib/context/ResourceActionsContext';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import {
+  InitialResourceFilterProps,
+  SelectableItemsProps,
+} from 'lib/CommonProps';
 import { SelectionSidebarContent } from './SelectionSidebarContent';
 
 // TODO(CDFUX-0) add story for these
@@ -18,7 +21,8 @@ export const ResourceSelectionSidebar = ({
   visible: boolean;
   onClose: (confirmed: boolean) => void;
 } & ResourceSelectionProps &
-  SelectableItemsProps) => {
+  SelectableItemsProps &
+  InitialResourceFilterProps) => {
   return (
     <ResourceActionsProvider>
       <ResourceSelectionProvider

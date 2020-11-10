@@ -1,26 +1,87 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useResourceFilter } from 'lib/context';
-
-import { EventSubTypeFilter, EventTypeFilter } from 'lib/containers/Events';
-import { SourceFilter } from './SourceFilter/SourceFilter';
+import { EventFilter, InternalId } from '@cognite/sdk';
+import { StringFilter } from './StringFilter/StringFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { ExternalIDPrefixFilter } from './ExternalIDPrefixFilter/ExternalIDPrefixFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
+import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 
-export default function EventFilters() {
-  const filter = useResourceFilter('event');
+export const EventFilters = ({
+  filter,
+  setFilter,
+}: {
+  filter: EventFilter;
+  setFilter: (newFilter: EventFilter) => void;
+}) => {
   const { data: items = [] } = useList('events', { filter, limit: 1000 });
   return (
     <div>
-      <DataSetFilter resourceType="event" />
-      <EventTypeFilter items={items} />
-      <EventSubTypeFilter items={items} />
-      <ByAssetFilter resourceType="event" />
-      <ExternalIDPrefixFilter resourceType="event" />
-      <SourceFilter resourceType="event" items={items} />
-      <MetadataFilter resourceType="event" items={items} />
+      <DataSetFilter
+        resourceType="event"
+        value={filter.dataSetIds}
+        setValue={newIds =>
+          setFilter({
+            ...filter,
+            dataSetIds: newIds,
+          })
+        }
+      />
+      <AggregatedFilter
+        items={items}
+        aggregator="type"
+        title="Type"
+        value={filter.type}
+        setValue={newValue => setFilter({ ...filter, type: newValue })}
+      />
+      <AggregatedFilter
+        items={items}
+        aggregator="subtype"
+        title="Sub-type"
+        value={filter.subtype}
+        setValue={newValue => setFilter({ ...filter, subtype: newValue })}
+      />
+      <ByAssetFilter
+        value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+        setValue={newValue =>
+          setFilter({
+            ...filter,
+            assetSubtreeIds: newValue?.map(id => ({ id })),
+          })
+        }
+      />
+      <StringFilter
+        title="External ID"
+        value={filter.externalIdPrefix}
+        setValue={newExternalId =>
+          setFilter({
+            ...filter,
+            externalIdPrefix: newExternalId,
+          })
+        }
+      />
+      <AggregatedFilter
+        title="Source"
+        items={items}
+        aggregator="source"
+        value={filter.source}
+        setValue={newSource =>
+          setFilter({
+            ...filter,
+            source: newSource,
+          })
+        }
+      />
+      <MetadataFilter
+        items={items}
+        value={filter.metadata}
+        setValue={newMetadata =>
+          setFilter({
+            ...filter,
+            metadata: newMetadata,
+          })
+        }
+      />
     </div>
   );
-}
+};

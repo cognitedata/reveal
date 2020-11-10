@@ -10,12 +10,7 @@ import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 import { ResourcePreviewProvider, ResourceActionsContext } from 'lib/context';
-import { SearchResultFilters } from 'lib/components/Search/Filters';
-import {
-  SearchResult,
-  Wrapper as SearchResultWrapper,
-} from 'lib/components/Search/SearchResult';
-import { ResourceTypeTabs } from 'lib/components/Search/ResourceTypeTabs';
+import { ResourceTypeTabs, SearchResults, SearchFilters } from 'lib';
 import ExplorationNavBar from 'app/containers/Exploration/ExplorationNavbar';
 import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
@@ -82,6 +77,18 @@ function SearchPage() {
   }, [setResourcesState, cart]);
 
   const { mode } = useResourceMode();
+  const {
+    assetFilter,
+    setAssetFilter,
+    timeseriesFilter,
+    setTimeseriesFilter,
+    sequenceFilter,
+    setSequenceFilter,
+    eventFilter,
+    setEventFilter,
+    fileFilter,
+    setFileFilter,
+  } = useContext(ResourceSelectionContext);
 
   return (
     <ResourcePreviewProvider>
@@ -91,9 +98,19 @@ function SearchPage() {
       />
 
       <Wrapper>
-        <SearchResultFilters
+        <SearchFilters
+          assetFilter={assetFilter}
+          setAssetFilter={setAssetFilter}
+          timeseriesFilter={timeseriesFilter}
+          setTimeseriesFilter={setTimeseriesFilter}
+          sequenceFilter={sequenceFilter}
+          setSequenceFilter={setSequenceFilter}
+          eventFilter={eventFilter}
+          setEventFilter={setEventFilter}
+          fileFilter={fileFilter}
+          setFileFilter={setFileFilter}
+          resourceType={currentResourceType}
           visible={showFilter}
-          currentResourceType={currentResourceType}
         />
         <SearchResultWrapper>
           <ExplorationNavBar
@@ -101,12 +118,17 @@ function SearchPage() {
             cart={cart}
             setCart={setCart}
           />
-          <SearchResult
-            query={debouncedQuery}
-            type={currentResourceType}
+          <SearchResults
             selectionMode={mode}
             onSelect={onSelectListener}
             isSelected={isSelected}
+            assetFilter={assetFilter}
+            timeseriesFilter={timeseriesFilter}
+            sequenceFilter={sequenceFilter}
+            eventFilter={eventFilter}
+            fileFilter={fileFilter}
+            resourceType={currentResourceType}
+            query={debouncedQuery}
           />
         </SearchResultWrapper>
       </Wrapper>
@@ -245,3 +267,12 @@ export const SearchResultsPage = () => {
 
   return <SearchPage />;
 };
+
+const SearchResultWrapper = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  overflow: hidden;
+  height: 100%;
+`;

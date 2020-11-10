@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   TimeseriesSearchFilter,
   TimeseriesFilter,
   Timeseries,
 } from '@cognite/sdk';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
-import { ResourceSelectionContext, useResourcePreview } from 'lib/context';
+import { useResourcePreview } from 'lib/context';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
 import { SelectableItemsProps } from 'lib/CommonProps';
 
@@ -26,9 +26,12 @@ export const buildTimeseriesFilterQuery = (
 
 export const TimeseriesSearchResults = ({
   query = '',
+  filter,
   ...selectionProps
-}: { query?: string } & SelectableItemsProps) => {
-  const { timeseriesFilter } = useContext(ResourceSelectionContext);
+}: {
+  query?: string;
+  filter: TimeseriesFilter;
+} & SelectableItemsProps) => {
   const { openPreview } = useResourcePreview();
 
   return (
@@ -36,12 +39,12 @@ export const TimeseriesSearchResults = ({
       <SearchResultToolbar
         api={query.length > 0 ? 'search' : 'list'}
         type="timeseries"
-        filter={timeseriesFilter}
+        filter={filter}
         query={query}
       />
       <SearchResultTable<Timeseries>
         api="timeseries"
-        filter={timeseriesFilter}
+        filter={filter}
         query={query}
         onRowClick={ts =>
           openPreview({ item: { id: ts.id, type: 'timeSeries' } })

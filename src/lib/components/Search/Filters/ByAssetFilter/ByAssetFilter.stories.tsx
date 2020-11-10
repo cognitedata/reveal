@@ -1,18 +1,18 @@
-import React from 'react';
-import { select } from '@storybook/addon-knobs';
-import { ResourceType } from 'lib/types';
+import React, { useState } from 'react';
+import { text } from '@storybook/addon-knobs';
 import { ByAssetFilter } from './ByAssetFilter';
 
 export default {
-  title: 'Search Results/Filters/General/ByAssetFilter',
+  title: 'Search Results/Filters/ByAssetFilter',
   component: ByAssetFilter,
 };
-export const Example = () => (
-  <ByAssetFilter
-    resourceType={select<ResourceType>(
-      'api',
-      ['asset', 'timeSeries', 'sequence', 'file', 'event'],
-      'asset'
-    )}
-  />
-);
+export const Example = () => {
+  const [value, setValue] = useState<number[] | undefined>(undefined);
+  return (
+    <ByAssetFilter
+      title={text('title', 'Asset')}
+      value={value}
+      setValue={setValue}
+    />
+  );
+};

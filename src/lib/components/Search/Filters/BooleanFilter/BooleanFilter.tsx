@@ -1,34 +1,34 @@
-import React, { useCallback, useContext, useMemo } from 'react';
-import { ResourceSelectionContext } from 'lib/context';
+import React from 'react';
 import { Title } from '@cognite/cogs.js';
 import { ButtonGroup } from 'lib/components';
 
-export const UploadedFilter = () => {
-  const { fileFilter, setFileFilter } = useContext(ResourceSelectionContext);
-  const currentChecked = useMemo(() => {
-    if (fileFilter?.uploaded === undefined) {
+export const BooleanFilter = ({
+  title,
+  value,
+  setValue,
+}: {
+  title: string;
+  value: boolean | undefined;
+  setValue: (newValue: boolean | undefined) => void;
+}) => {
+  const currentChecked = (() => {
+    if (value === undefined) {
       return 'unset';
     }
-    if (fileFilter?.uploaded) {
+    if (value) {
       return 'true';
     }
     return 'false';
-  }, [fileFilter]);
+  })();
 
-  const setUploaded = useCallback(
-    (value?: boolean) => {
-      setFileFilter(currentFilter => ({
-        ...currentFilter,
-        uploaded: value,
-      }));
-    },
-    [setFileFilter]
-  );
+  const setUploaded = (newValue?: boolean) => {
+    setValue(newValue);
+  };
 
   return (
     <>
       <Title level={4} style={{ marginBottom: 12 }} className="title">
-        Uploaded
+        {title}
       </Title>
       <ButtonGroup
         style={{ width: '100%' }}

@@ -1,21 +1,13 @@
-import React from 'react';
-import { select } from '@storybook/addon-knobs';
-import { ResourceType } from 'lib/types';
+import React, { useState } from 'react';
 import { assets } from 'stubs/assets';
 import { MetadataFilter } from './MetadataFilter';
 
 export default {
-  title: 'Search Results/Filters/General/MetadataFilter',
+  title: 'Search Results/Filters/MetadataFilter',
   component: MetadataFilter,
 };
 
-export const Example = () => (
-  <MetadataFilter
-    items={assets}
-    resourceType={select<ResourceType>(
-      'api',
-      ['asset', 'timeSeries', 'sequence', 'file', 'event'],
-      'asset'
-    )}
-  />
-);
+export const Example = () => {
+  const [value, setValue] = useState<any | undefined>(undefined);
+  return <MetadataFilter items={assets} value={value} setValue={setValue} />;
+};

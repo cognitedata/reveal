@@ -1,25 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { select } from '@storybook/addon-knobs';
-import { ResourceType } from 'lib/types';
-import { SearchResultFilters } from '.';
+import {
+  EventFilter,
+  AssetFilterProps,
+  TimeseriesFilter,
+  FileFilterProps,
+  SequenceFilter,
+} from '@cognite/sdk';
+import {
+  AssetFilters,
+  TimeseriesFilters,
+  FileFilters,
+  SequenceFilters,
+  EventFilters,
+} from '.';
 
 export default {
-  title: 'Search Results/SearchResultFilters',
-  component: SearchResultFilters,
+  title: 'Search Results/ResourceFilters',
+  component: AssetFilters,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <SearchResultFilters
-      currentResourceType={select<ResourceType>(
-        'api',
-        ['asset', 'timeSeries', 'sequence', 'file', 'event'],
-        'asset'
-      )}
-    />
-  );
+export const Asset = () => {
+  const [filter, setFilter] = useState<AssetFilterProps>({});
+  return <AssetFilters filter={filter} setFilter={setFilter} />;
+};
+export const Timeseries = () => {
+  const [filter, setFilter] = useState<TimeseriesFilter>({});
+  return <TimeseriesFilters filter={filter} setFilter={setFilter} />;
+};
+export const File = () => {
+  const [filter, setFilter] = useState<FileFilterProps>({});
+  return <FileFilters filter={filter} setFilter={setFilter} />;
+};
+export const Sequence = () => {
+  const [filter, setFilter] = useState<Required<SequenceFilter>['filter']>({});
+  return <SequenceFilters filter={filter} setFilter={setFilter} />;
+};
+export const Event = () => {
+  const [filter, setFilter] = useState<EventFilter>({});
+  return <EventFilters filter={filter} setFilter={setFilter} />;
 };
 
 const Container = styled.div`
