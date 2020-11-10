@@ -14,14 +14,14 @@ static final String APPLICATION_REPO_ID = 'charts'
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME = 'charts'
+static final String SENTRY_PROJECT_NAME = 'cognite-charts'
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
 // https://docs.sentry.io/error-reporting/quickstart/?platform=browser
 //
 // If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN = ''
+static final String SENTRY_DSN = 'https://b35f7e3635d34e44bd24a354dfc4f13a@o124058.ingest.sentry.io/5509609'
 
 // Specify your locize.io project ID. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
