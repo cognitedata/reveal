@@ -248,38 +248,46 @@ pods {
       workers: 3,
     )
 
-    if (isPullRequest) {
-      stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
-        dir('preview') {
-          fas.publish(
-            previewSubdomain: 'charts'
+    print "test"
+    
+    stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
+      print "pr"
+      if (!isPullRequest) {
+        print "Not a PR, no need to preview"
+        return
+      }
+      dir('preview') {
+        fas.publish(
+          previewSubdomain: 'charts'
+        )
+      }
+    }
+
+    stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
+      if (!isStaging) {
+        print "Not pushing to staging, no need to preview"
+        return
+      }
+      dir('staging') {
+        fas.publish()
+
+      }
+
+      // in 'single-branch' mode we always publish 'staging' and 'master' builds
+      // from the main branch, but we only need to notify about one of them.
+      // so it is ok to skip this message in that case
+      //
+      // note: the actual deployment of each is determined by versionSpec in FAS
+      if (VERSIONING_STRATEGY != "single-branch") {
+        dir('main') {
+          slack.send(
+            channel: SLACK_CHANNEL,
+              message: "Deployment of ${env.BRANCH_NAME} complete!"
           )
         }
       }
     }
-
-    if (isStaging && STAGING_APP_ID) {
-      stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
-        dir('staging') {
-          fas.publish()
-
-        }
-
-        // in 'single-branch' mode we always publish 'staging' and 'master' builds
-        // from the main branch, but we only need to notify about one of them.
-        // so it is ok to skip this message in that case
-        //
-        // note: the actual deployment of each is determined by versionSpec in FAS
-        if (VERSIONING_STRATEGY != "single-branch") {
-          dir('main') {
-            slack.send(
-              channel: SLACK_CHANNEL,
-                message: "Deployment of ${env.BRANCH_NAME} complete!"
-            )
-          }
-        }
-      }
-    }
+    
 
     if (isProduction && PRODUCTION_APP_ID) {
       stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
