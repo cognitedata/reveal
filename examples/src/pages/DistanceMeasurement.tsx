@@ -179,14 +179,14 @@ export function DistanceMeasurement() {
         ) {
           return;
         }
-        const coords = getNormalizedCoords(event, renderer.domElement);
+        const normalizedCoords = getNormalizedCoords(event, renderer.domElement);
 
         // Pick in Reveal
         const revealPickResult = (() => {
           const intersections = intersectCadNodes([model], {
             renderer,
             camera,
-            coords,
+            normalizedCoords,
           });
           return intersections[0];
         })();

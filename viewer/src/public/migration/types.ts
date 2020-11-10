@@ -6,6 +6,7 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
 import { Cognite3DModel } from './Cognite3DModel';
+import { CognitePointCloudModel } from './CognitePointCloudModel';
 
 /**
  * @module @cognite/reveal
@@ -81,15 +82,27 @@ export interface AddModelOptions {
   onComplete?: () => void;
 }
 
+export type CadIntersection = {
+  type: 'cad';
+  model: Cognite3DModel;
+  point: THREE.Vector3;
+  treeIndex: number;
+  distanceToCamera: number;
+};
+
+export type PointCloudIntersection = {
+  type: 'pointcloud';
+  model: CognitePointCloudModel;
+  point: THREE.Vector3;
+  pointIndex: number;
+  distanceToCamera: number;
+};
+
 /**
  * Represents the result from {@link Cognite3DViewer.getIntersectionFromPixel}.
  * @module @cognite/reveal
  */
-export interface Intersection {
-  model: Cognite3DModel;
-  treeIndex: number;
-  point: THREE.Vector3;
-}
+export type Intersection = CadIntersection | PointCloudIntersection;
 
 /**
  * @module @cognite/reveal

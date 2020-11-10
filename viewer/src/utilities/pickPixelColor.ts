@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 export interface PickingInput {
-  coords: {
+  normalizedCoords: {
     x: number;
     y: number;
   };
@@ -21,15 +21,15 @@ const storage = {
 
 export function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
   const { renderTarget, pixelBuffer } = storage;
-  const { scene, camera, coords, renderer } = input;
+  const { scene, camera, normalizedCoords, renderer } = input;
 
   const pickCamera = camera.clone();
 
   pickCamera.setViewOffset(
     renderer.domElement.clientWidth,
     renderer.domElement.clientHeight,
-    ((coords.x + 1.0) / 2.0) * renderer.domElement.clientWidth,
-    ((1.0 - coords.y) / 2.0) * renderer.domElement.clientHeight,
+    ((normalizedCoords.x + 1.0) / 2.0) * renderer.domElement.clientWidth,
+    ((1.0 - normalizedCoords.y) / 2.0) * renderer.domElement.clientHeight,
     1,
     1
   );

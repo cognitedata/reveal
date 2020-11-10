@@ -38,7 +38,10 @@ import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
-import { SupportedModelTypes } from '../../datamodels/base';
+import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
+import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
+
+import { CadIntersection, PointCloudIntersection } from '../..';
 
 /**
  * @example
@@ -893,33 +896,60 @@ export class Cognite3DViewer {
    */
   getIntersectionFromPixel(offsetX: number, offsetY: number): null | Intersection {
     const cadModels = this.getModels('cad');
-    const nodes = cadModels.map(x => x.cadNode);
+    const pointCloudModels = this.getModels('pointcloud');
+    const cadNodes = cadModels.map(x => x.cadNode);
+    const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
     const coords = {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
-    const results = intersectCadNodes(nodes, {
-      coords,
+    const input: IntersectInput = {
+      normalizedCoords: coords,
       camera: this.camera,
       renderer: this.renderer
-    });
+    };
+    const cadResults = intersectCadNodes(cadNodes, input);
+    const pointCloudResults = intersectPointClouds(pointCloudNodes, input);
+    console.log(pointCloudResults);
 
-    if (results.length > 0) {
-      const result = results[0]; // Nearest intersection
-      for (const model of cadModels) {
-        if (model.cadNode === result.cadNode) {
-          const intersection: Intersection = {
+    const intersections: Intersection[] = [];
+    if (pointCloudResults.length > 0) {
+      const result = pointCloudResults[0];
+      for (const model of pointCloudModels) {
+        if (model.pointCloudNode === result.pointCloudNode) {
+          const intersection: PointCloudIntersection = {
+            type: 'pointcloud',
             model,
-            treeIndex: result.treeIndex,
-            point: result.point
+            point: result.point,
+            pointIndex: result.pointIndex,
+            distanceToCamera: result.distance
           };
-          return intersection;
+          intersections.push(intersection);
+          break;
         }
       }
     }
 
-    return null;
+    if (cadResults.length > 0) {
+      const result = cadResults[0]; // Nearest intersection
+      for (const model of cadModels) {
+        if (model.cadNode === result.cadNode) {
+          const intersection: CadIntersection = {
+            type: 'cad',
+            model,
+            treeIndex: result.treeIndex,
+            point: result.point,
+            distanceToCamera: result.distance
+          };
+          intersections.push(intersection);
+        }
+      }
+    }
+
+    intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
+    console.log(intersections);
+    return intersections.length > 0 ? intersections[0] : null;
   }
 
   /**
