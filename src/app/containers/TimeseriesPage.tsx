@@ -12,8 +12,8 @@ import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
 
 export const TimeseriesPage = () => {
-  const { timeseriesId: timeseriesIdString } = useParams<{
-    timeseriesId: string;
+  const { id: timeseriesIdString } = useParams<{
+    id: string;
   }>();
   const timeseriesId = parseInt(timeseriesIdString, 10);
 
@@ -27,6 +27,10 @@ export const TimeseriesPage = () => {
   );
 
   const { data: relationships } = useRelationships(timeseries?.externalId);
+
+  if (!timeseriesIdString) {
+    return null;
+  }
 
   if (!timeseriesId || !Number.isFinite(timeseriesId)) {
     return <>Invalid time series id {timeseriesId}</>;

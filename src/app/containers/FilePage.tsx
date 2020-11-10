@@ -7,10 +7,10 @@ import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 
 export const FilePage = () => {
-  const { fileId } = useParams<{
-    fileId: string | undefined;
+  const { id } = useParams<{
+    id: string | undefined;
   }>();
-  const fileIdNumber = fileId ? parseInt(fileId, 10) : undefined;
+  const fileIdNumber = id ? parseInt(id, 10) : undefined;
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
@@ -34,12 +34,7 @@ export const FilePage = () => {
     hidePreview();
   }, [fileIdNumber, hidePreview]);
 
-  if (
-    !fileId ||
-    fileId.length === 0 ||
-    !fileIdNumber ||
-    Number.isNaN(fileIdNumber)
-  ) {
+  if (!id || id.length === 0 || !fileIdNumber || Number.isNaN(fileIdNumber)) {
     return null;
   }
 

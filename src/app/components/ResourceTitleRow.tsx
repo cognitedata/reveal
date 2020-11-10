@@ -1,7 +1,6 @@
 import React from 'react';
 import { Row, Col, Space } from 'antd';
 import { Icon, AllIconTypes, Button } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
 import { ResourceType, convertResourceType } from 'lib';
 import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -25,15 +24,12 @@ export default function ResourceTileRow({
       id,
     }
   );
-  const history = useHistory();
+
   const showCollections = useCollectionFeature();
   return (
     <Row align="middle" justify="space-between">
       <Col>
         <Space size="large" align="center">
-          <Button onClick={() => history.goBack()}>
-            <Icon type="ArrowLeft" />
-          </Button>
           <Icon type={isFetched ? icon : 'Loading'} />
           <h1>{getTitle(data) || id}</h1>
         </Space>

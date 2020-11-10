@@ -12,8 +12,8 @@ import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
 
 export const SequencePage = () => {
-  const { sequenceId: sequenceIdString } = useParams<{
-    sequenceId: string;
+  const { id: sequenceIdString } = useParams<{
+    id: string;
   }>();
   const sequenceId = parseInt(sequenceIdString, 10);
 
@@ -34,6 +34,10 @@ export const SequencePage = () => {
   const { data: relationships } = useRelationships(sequence?.externalId);
 
   const [currentTab, setTab] = useState('details');
+
+  if (!sequenceIdString) {
+    return null;
+  }
 
   if (!isFetched) {
     return <Loader />;

@@ -1,8 +1,15 @@
 // @ts-nocheck
 import { ids } from 'cogs-variables';
 import React, { useEffect } from 'react';
-import { ConfigProvider, Modal, Tooltip, notification, Dropdown } from 'antd';
-import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import {
+  ConfigProvider,
+  Modal,
+  Tooltip,
+  notification,
+  Dropdown,
+  Spin,
+} from 'antd';
+import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
@@ -137,6 +144,8 @@ Dropdown.defaultProp = {
   getPopupContainer: () =>
     document.getElementsByClassName(ids.styleScope).item(0)!,
 };
+
+Spin.setDefaultIndicator(<Icon type="Loading" />);
 
 export default function AntStyles(props: { children: React.Node }) {
   useEffect(() => {

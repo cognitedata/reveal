@@ -26,6 +26,7 @@ import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { ResourceItem } from 'lib/types';
+import { useCurrentResourceId } from './Exploration/hooks';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -36,8 +37,8 @@ export type AssetPreviewTabType =
   | 'children';
 
 export const AssetPage = () => {
-  const { assetId: assetIdString } = useParams<{
-    assetId: string;
+  const { id: assetIdString } = useParams<{
+    id: string;
   }>();
   const assetId = parseInt(assetIdString, 10);
 
@@ -67,6 +68,8 @@ export const AssetPage = () => {
       ),
   };
 
+  const openAsset = useCurrentResourceId()[1];
+
   const { data: asset, isFetched, error } = useCdfItem<Asset>(
     'assets',
     { id: assetId },
@@ -87,6 +90,10 @@ export const AssetPage = () => {
       hidePreview();
     };
   }, [hidePreview, assetId]);
+
+  if (!assetIdString) {
+    return null;
+  }
 
   if (!isFetched) {
     return <Loader />;
@@ -110,11 +117,7 @@ export const AssetPage = () => {
               <p>LOCATION:</p>
               <AssetBreadcrumb
                 assetId={assetId}
-                onBreadcrumbClick={newAsset =>
-                  openPreview({
-                    item: { id: newAsset.id, type: 'asset' },
-                  })
-                }
+                onBreadcrumbClick={newAsset => openAsset(newAsset.id)}
               />
             </Space>
           </Col>

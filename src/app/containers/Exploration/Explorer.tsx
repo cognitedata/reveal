@@ -9,6 +9,7 @@ import { TimeseriesPage } from 'app/containers/TimeseriesPage';
 import { EventPage } from 'app/containers/EventPage';
 import styled from 'styled-components';
 import { SearchResultsPage } from './SearchResultsPage';
+import SearchRedirect from './SearchRedirect';
 
 const AppWrapper = styled.div`
   margin-left: 16px;
@@ -17,31 +18,20 @@ const AppWrapper = styled.div`
 `;
 
 export const Explorer = () => {
-  const match = useRouteMatch();
+  const { path } = useRouteMatch();
   return (
     <AppWrapper>
       <ResourceSelectorProvider>
         <ResourcePreviewProvider>
           <Switch>
-            <Route path={`${match.path}/file/:fileId`} component={FilePage} />
+            <Route path={`${path}/file/:id`} component={FilePage} />
+            <Route path={`${path}/asset/:id`} component={AssetPage} />
+            <Route path={`${path}/sequence/:id`} component={SequencePage} />
+            <Route path={`${path}/timeseries/:id`} component={TimeseriesPage} />
+            <Route path={`${path}/event/:id`} component={EventPage} />
+            <Route exact path={`${path}/`} component={SearchRedirect} />
             <Route
-              path={`${match.path}/asset/:assetId`}
-              component={AssetPage}
-            />
-            <Route
-              path={`${match.path}/sequence/:sequenceId`}
-              component={SequencePage}
-            />
-            <Route
-              path={`${match.path}/timeseries/:timeseriesId`}
-              component={TimeseriesPage}
-            />
-            <Route
-              path={`${match.path}/event/:eventId`}
-              component={EventPage}
-            />
-            <Route
-              path={`${match.path}/:resourceType?`}
+              path={`${path}/search/:resourceType?/:id?`}
               component={SearchResultsPage}
             />
           </Switch>

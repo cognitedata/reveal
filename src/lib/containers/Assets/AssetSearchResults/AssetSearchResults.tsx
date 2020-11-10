@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { AssetSearchFilter, AssetFilterProps, Asset } from '@cognite/sdk';
 import { ButtonGroup } from 'lib/components';
-import { useResourcePreview } from 'lib/context';
 import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { AssetTreeTable } from 'lib/containers/Assets';
 import { SearchResultToolbar } from 'lib/containers';
@@ -26,9 +25,13 @@ export const buildAssetsFilterQuery = (
 export const AssetSearchResults = ({
   query = '',
   filter,
+  openPreview = () => {},
   ...selectionProps
-}: { query?: string; filter: AssetFilterProps } & SelectableItemsProps) => {
-  const { openPreview } = useResourcePreview();
+}: {
+  query?: string;
+  filter: AssetFilterProps;
+  openPreview?: (id: number) => void;
+} & SelectableItemsProps) => {
   const [currentView, setCurrentView] = useState<string>('tree');
 
   const content = useMemo(() => {
@@ -38,10 +41,10 @@ export const AssetSearchResults = ({
           api="assets"
           filter={filter}
           query={query}
-          onRowClick={asset =>
-            openPreview({ item: { id: asset.id, type: 'asset' } })
-          }
           {...selectionProps}
+          onRowClick={asset => {
+            openPreview(asset.id);
+          }}
         />
       );
     }
@@ -50,9 +53,7 @@ export const AssetSearchResults = ({
         filter={filter}
         startFromRoot={!filter.assetSubtreeIds}
         query={query}
-        onAssetClicked={asset =>
-          openPreview({ item: { id: asset.id, type: 'asset' } })
-        }
+        onAssetClicked={asset => openPreview(asset.id)}
         {...selectionProps}
       />
     );

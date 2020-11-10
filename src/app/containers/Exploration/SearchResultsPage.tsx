@@ -5,26 +5,25 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
-import { ResourceItem, RenderResourceActionsFunction } from 'lib/types';
-import { useHistory } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
-import { Button } from '@cognite/cogs.js';
-import { ResourcePreviewProvider, ResourceActionsContext } from 'lib/context';
-import { ResourceTypeTabs, SearchResults, SearchFilters } from 'lib';
+import { Colors } from '@cognite/cogs.js';
+
+import { ResourceItem, convertResourceType } from 'lib/types';
+import { ResourcePreviewProvider } from 'lib/context';
+import { SearchFilters } from 'lib/containers/SearchResults/SearchFilters';
+import { SearchResultList } from 'app/components/SearchResultList/';
+import { ResourceTypeTabs } from 'lib/components/Search/ResourceTypeTabs';
 import ExplorationNavBar from 'app/containers/Exploration/ExplorationNavbar';
 import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
   useQuery,
   useSelectedResource,
-  useResourceMode,
 } from 'app/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
-import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
-import CollectionsDropdown from 'app/components/CollectionsDropdown';
-import { useCollectionFeature } from 'app/utils/featureFlags';
-import { useCurrentResourceType } from './hooks';
+import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
+import { useCurrentResourceType, useCurrentResourceId } from './hooks';
+import RedirectToFirstId from './RedirectToFirstId';
 
 const Wrapper = styled.div`
   display: flex;
@@ -40,9 +39,11 @@ function SearchPage() {
     currentResourceType,
     setCurrentResourceType,
   ] = useCurrentResourceType();
+  const [currentId, openPreview] = useCurrentResourceId();
   const [showFilter, setShowFilter] = useState(false);
   const [query] = useQuery();
   const [debouncedQuery] = useDebounce(query, 100);
+  const filter = useResourceFilter(currentResourceType);
 
   const [cart, setCart] = useState<ResourceItem[]>([]);
   const { setOnSelectListener, setResourcesState } = useContext(
@@ -61,13 +62,6 @@ function SearchPage() {
     });
   }, []);
 
-  const isSelected = useCallback(
-    (item: ResourceItem) => {
-      return cart.some(el => el.type === item.type && el.id === item.id);
-    },
-    [cart]
-  );
-
   useEffect(() => {
     setOnSelectListener(() => onSelectListener);
   }, [setOnSelectListener, onSelectListener]);
@@ -76,7 +70,6 @@ function SearchPage() {
     setResourcesState(cart.map(el => ({ ...el, state: 'selected' })));
   }, [setResourcesState, cart]);
 
-  const { mode } = useResourceMode();
   const {
     assetFilter,
     setAssetFilter,
@@ -98,6 +91,7 @@ function SearchPage() {
       />
 
       <Wrapper>
+        <RedirectToFirstId />
         <SearchFilters
           assetFilter={assetFilter}
           setAssetFilter={setAssetFilter}
@@ -112,121 +106,37 @@ function SearchPage() {
           resourceType={currentResourceType}
           visible={showFilter}
         />
-        <SearchResultWrapper>
-          <ExplorationNavBar
-            toggleFilter={() => setShowFilter(!showFilter)}
-            cart={cart}
-            setCart={setCart}
-          />
-          <SearchResults
-            selectionMode={mode}
-            onSelect={onSelectListener}
-            isSelected={isSelected}
-            assetFilter={assetFilter}
-            timeseriesFilter={timeseriesFilter}
-            sequenceFilter={sequenceFilter}
-            eventFilter={eventFilter}
-            fileFilter={fileFilter}
-            resourceType={currentResourceType}
-            query={debouncedQuery}
-          />
-        </SearchResultWrapper>
+        <div style={{ width: '30%', minWidth: 333 }}>
+          <ExplorationNavBar toggleFilter={() => setShowFilter(!showFilter)} />
+          <SearchResultWrapper
+            style={{
+              height: 'calc(100% - 73px)',
+              marginRight: 16,
+              paddingRight: 16,
+              borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+            }}
+          >
+            <SearchResultList
+              query={debouncedQuery}
+              api={convertResourceType(currentResourceType)}
+              filter={filter}
+              onRowClick={id => openPreview(id)}
+              currentId={currentId}
+            />
+          </SearchResultWrapper>
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <SearchResultWrapper>
+            <ResourcePreview type={currentResourceType} />
+          </SearchResultWrapper>
+        </div>
       </Wrapper>
     </ResourcePreviewProvider>
   );
 }
 
 export const SearchResultsPage = () => {
-  const history = useHistory();
-  const showCollections = useCollectionFeature();
-
-  const { pathname } = history.location;
-  const { add, remove } = useContext(ResourceActionsContext);
-  const renderResourceActions: RenderResourceActionsFunction = useCallback(
-    resourceItem => {
-      const viewButton = () => {
-        let resourceName = '';
-        let path = '';
-        if (resourceItem) {
-          switch (resourceItem.type) {
-            case 'asset': {
-              resourceName = 'Asset';
-              path = `asset/${resourceItem.id}`;
-              break;
-            }
-            case 'timeSeries': {
-              resourceName = 'Time series';
-              path = `timeseries/${resourceItem.id}`;
-              break;
-            }
-            case 'file': {
-              resourceName = 'File';
-              path = `file/${resourceItem.id}`;
-              break;
-            }
-            case 'sequence': {
-              resourceName = 'Sequence';
-              path = `sequence/${resourceItem.id}`;
-              break;
-            }
-            case 'event': {
-              resourceName = 'Event';
-              path = `event/${resourceItem.id}`;
-              break;
-            }
-          }
-          if (!pathname.includes(path)) {
-            return (
-              <Button
-                type="primary"
-                key="view"
-                onClick={() => {
-                  window.dispatchEvent(new Event(CLOSE_DROPDOWN_EVENT));
-                  history.push(createLink(`/explore/${path}`));
-                }}
-                icon="ArrowRight"
-              >
-                View {resourceName.toLowerCase()}
-              </Button>
-            );
-          }
-        }
-        return null;
-      };
-
-      const collectionButton = () => {
-        if (showCollections) {
-          return (
-            <CollectionsDropdown
-              key="collections"
-              type={resourceItem.type}
-              items={[{ id: Number(resourceItem.id) }]}
-              button={
-                <Button icon="ChevronDownCompact" iconPlacement="right">
-                  Add to collection
-                </Button>
-              }
-            />
-          );
-        }
-        return null;
-      };
-
-      return [viewButton(), collectionButton()];
-    },
-    [history, pathname, showCollections]
-  );
-
-  useEffect(() => {
-    add('explore', renderResourceActions);
-  }, [add, renderResourceActions]);
-
-  useEffect(() => {
-    return () => {
-      remove('explore');
-    };
-  }, [remove]);
-
   const [resourceType] = useCurrentResourceType();
 
   const [query] = useQuery();
@@ -273,6 +183,5 @@ const SearchResultWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: auto;
-  overflow: hidden;
   height: 100%;
 `;

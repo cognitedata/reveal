@@ -12,8 +12,8 @@ import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
 
 export const EventPage = () => {
-  const { eventId: eventIdString } = useParams<{
-    eventId: string;
+  const { id: eventIdString } = useParams<{
+    id: string;
   }>();
   const eventId = parseInt(eventIdString, 10);
 
@@ -25,6 +25,10 @@ export const EventPage = () => {
   });
 
   const { data: relationships } = useRelationships(event?.externalId);
+
+  if (!eventIdString) {
+    return null;
+  }
 
   if (!eventId || !Number.isFinite(eventId)) {
     return <>Invalid event id: {eventId}</>;
