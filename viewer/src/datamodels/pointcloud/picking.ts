@@ -8,10 +8,25 @@ import { IntersectInput } from '../base';
 import { PointCloudNode } from './PointCloudNode';
 
 export interface IntersectPointCloudNodeResult {
+  /**
+   * Distance from camera to intersected point.
+   */
   distance: number;
+  /**
+   * Coordinate of the intersected point.
+   */
   point: THREE.Vector3;
+  /**
+   * Point index in the point cloud of the intersected point.
+   */
   pointIndex: number;
+  /**
+   * Point cloud node defining what model the point is a part of.
+   */
   pointCloudNode: PointCloudNode;
+  /**
+   * The geometry object that was intersected.
+   */
   object: THREE.Object3D;
 }
 

@@ -83,18 +83,48 @@ export interface AddModelOptions {
 }
 
 export type CadIntersection = {
+  /**
+   * The intersection type.
+   */
   type: 'cad';
+  /**
+   * The model that was intersected.
+   */
   model: Cognite3DModel;
+  /**
+   * Coordinate of the intersection.
+   */
   point: THREE.Vector3;
+  /**
+   * Tree index of the intersected 3D node.
+   */
   treeIndex: number;
+  /**
+   * Distance from the camera to the intersection.
+   */
   distanceToCamera: number;
 };
 
 export type PointCloudIntersection = {
+  /**
+   * The intersection type.
+   */
   type: 'pointcloud';
+  /**
+   * The model that was intersected.
+   */
   model: CognitePointCloudModel;
+  /**
+   * Tree index of the intersected 3D node.
+   */
   point: THREE.Vector3;
+  /**
+   * The index of the point that was intersected.
+   */
   pointIndex: number;
+  /**
+   * Distance from the camera to the intersection.
+   */
   distanceToCamera: number;
 };
 

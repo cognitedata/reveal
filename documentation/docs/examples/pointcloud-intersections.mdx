@@ -1,0 +1,33 @@
+---
+id: pointcloud-intersections
+title: Intersections in point clouds
+description: Detecting intersections from clicked positions in point cloud models
+---
+
+While point clouds doesn't have a concept of nodes, applications can detect clicked points. Just like with 
+CAD models, `Cognite3DViewer.getIntersectionFromPixel` is used to determine world position and point from 
+a mouse click.
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+<DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
+
+## Example
+
+The following example detects intersections at clicked positions and marks the intersected positions
+using a red sphere.
+
+```js runnable
+viewer.on('click', event => {
+  const intersection = viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+    console.log(intersection);
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), 
+      new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' }));
+    sphere.position.copy(intersection.point);
+    viewer.addObject3D(sphere);
+  };
+});
+```
