@@ -136,7 +136,7 @@ def pods = { body ->
 
 pods {
   final boolean isStaging = env.BRANCH_NAME == 'staging'
-  final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
+  final boolean isProduction = env.BRANCH_NAME.startsWith('release-')
   final boolean isPullRequest = !!env.CHANGE_ID
 
   app.safeRun(
