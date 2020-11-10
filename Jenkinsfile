@@ -138,7 +138,9 @@ pods {
   final boolean isStaging = env.BRANCH_NAME == 'staging'
   final boolean isProduction = env.BRANCH_NAME.startsWith('release-')
   final boolean isPullRequest = !!env.CHANGE_ID
-
+  print(isPullRequest)
+  print(env)
+  print(env.CHANGE_ID)
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
     logErrors: isStaging || isProduction
