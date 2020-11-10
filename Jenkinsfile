@@ -10,7 +10,7 @@ static final String PRODUCTION_APP_ID = 'charts'
 
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
-static final String APPLICATION_REPO_ID = 'charts'
+static final String APPLICATION_REPO_ID = 'cognite-charts'
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
