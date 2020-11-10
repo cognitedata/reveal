@@ -135,12 +135,9 @@ def pods = { body ->
 }
 
 pods {
-  static final Map<String, Boolean> version = versioning.getEnv(
-    versioningStrategy: VERSIONING_STRATEGY
-  )
-  final boolean isStaging = version.isStaging
-  final boolean isProduction = version.isProduction
-  final boolean isPullRequest = version.isPullRequest
+  final boolean isStaging = env.BRANCH_NAME == 'staging'
+  final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
+  final boolean isPullRequest = !!env.CHANGE_ID
 
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
