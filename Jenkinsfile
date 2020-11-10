@@ -253,7 +253,7 @@ pods {
       stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
         dir('preview') {
           fas.publish(
-            previewSubdomain: 'react-demo'
+            previewSubdomain: 'charts'
           )
         }
       }
