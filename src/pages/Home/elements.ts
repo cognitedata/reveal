@@ -1,17 +1,18 @@
 import styled from 'styled-components/macro';
 
-export const Container = styled.div`
-  text-align: center;
+export const OverviewContainer = styled.div`
+  padding: 24px 48px;
+
+`;
+export const QuickAccessContainer = styled.div`
+  margin-bottom: 48px;
 `;
 
-export const Header = styled.header`
-  background-color: #282c34;
-  min-height: 10vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  padding: 20px;
+export const PinnedContainer = styled.div`
+  & > h6 {
+    border-bottom: 1px solid var(--cogs-greyscale-grey4);
+    padding-bottom: 8px;
+  }
 `;
+
+export const AllDashboardsContainer = styled.div``;
