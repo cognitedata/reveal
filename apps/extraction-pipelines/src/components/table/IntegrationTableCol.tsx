@@ -7,6 +7,7 @@ import Name from '../integrations/cols/Name';
 import LastRun from '../integrations/cols/LastRun';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableOptions from '../menu/IntegrationsTableOptions';
+import DataSetId from '../integrations/cols/DataSetId';
 
 export const getIntegrationTableCol = () => {
   return [
@@ -40,6 +41,15 @@ export const getIntegrationTableCol = () => {
       accessor: 'schedule',
       Cell: ({ row }: Cell<Integration>) => {
         return <Schedule schedule={row.values.schedule} />;
+      },
+      disableSortBy: true,
+    },
+    {
+      id: 'dataSetId',
+      Header: 'Destination data sets',
+      accessor: 'dataSetId',
+      Cell: ({ row }: Cell<Integration>) => {
+        return <DataSetId dataSetId={row.values.dataSetId} />;
       },
       disableSortBy: true,
     },

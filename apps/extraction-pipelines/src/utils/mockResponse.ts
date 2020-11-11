@@ -39,7 +39,7 @@ export const mockResponse: Integration[] = [
     externalId: 'dataIntegration0002',
     name: 'SAP Integration',
     description: 'Dummy integration to SAP',
-    dataSetId: 'DataSetExternalId11',
+    dataSetId: '959884795848289',
     schedule: '0 0 12 1/1 * ? *',
     // schedule: '0 2 * * 1', // 02:00 every monday
     owner: {

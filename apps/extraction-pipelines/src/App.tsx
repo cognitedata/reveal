@@ -11,11 +11,11 @@ import { AppEnvProvider } from 'hooks/useAppEnv';
 import theme from './styles/theme';
 import AntStyles from './styles/AntStyles';
 import rootStyles from './styles/index.css';
-import { getCdfEnvFromUrl, projectName } from './utils/config';
+import { projectName } from './utils/config';
 
 const App = () => {
   const project = projectName();
-  const cdfEnv = getCdfEnvFromUrl();
+  const cdfEnv = window.location.origin;
 
   useEffect(() => {
     cogsStyles.use();
