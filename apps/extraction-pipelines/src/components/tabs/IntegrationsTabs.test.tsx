@@ -12,7 +12,10 @@ describe('IntegrationsTabs', () => {
     const learningAndResourcesTab = screen.getByText('Learning and resources');
     expect(learningAndResourcesTab).toBeInTheDocument();
 
+    const extractorDownloadsTab = screen.getByText('Extractor downloads');
+    expect(extractorDownloadsTab).toBeInTheDocument();
+
     const tabs = screen.getAllByRole('tab');
-    expect(tabs.length).toEqual(2);
+    expect(tabs.length).toEqual(3);
   });
 });
