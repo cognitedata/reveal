@@ -40,19 +40,18 @@ const IntegrationsTableOptions: FunctionComponent<Props> = ({
 }: Props) => {
   const MenuContent = (
     <Menu>
-      <Menu.Header>{integration.name}</Menu.Header>
+      <Menu.Header>Actions</Menu.Header>
       <Menu.Item key="0">View integration details</Menu.Item>
       <Menu.Item key="1">Update integration</Menu.Item>
       <Menu.Item key="2">View data stream and source</Menu.Item>
-      <Menu.Item key="3">Create new dataset</Menu.Item>
       <Menu.Item key="4">Download configuration</Menu.Item>
     </Menu>
   );
   return (
     <>
       <TableOptionDropdown content={MenuContent}>
-        <OptionMenuBtn aria-label={`Options menu for ${integration.name}`}>
-          <Icon type="HorizontalEllipsis" />
+        <OptionMenuBtn aria-label={`Actions for ${integration.name}`}>
+          <Icon type="VerticalEllipsis" />
         </OptionMenuBtn>
       </TableOptionDropdown>
     </>

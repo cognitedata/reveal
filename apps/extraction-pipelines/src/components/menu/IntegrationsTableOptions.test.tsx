@@ -5,12 +5,13 @@ import IntegrationsTableOptions from './IntegrationsTableOptions';
 import { mockResponse } from '../../utils/mockResponse';
 
 describe('IntegrationsTableOptions', () => {
+  const actionsMenuLabel = /Actions for/i;
   const integration = mockResponse[0];
   test('should render options', () => {
     render(<IntegrationsTableOptions integration={integration} />);
-    const menuBtn = screen.getByLabelText(/Options menu/i);
+    const menuBtn = screen.getByLabelText(actionsMenuLabel);
     fireEvent.click(menuBtn);
-    const menuHeading = screen.getByText(integration.name);
+    const menuHeading = screen.getByText(/actions/i);
     expect(menuHeading).toBeInTheDocument();
   });
 
@@ -28,10 +29,6 @@ describe('IntegrationsTableOptions', () => {
       expected: 'View data stream and source',
     },
     {
-      desc: 'Render menu item Create new dataset',
-      expected: 'Create new dataset',
-    },
-    {
       desc: 'Render menu item Download configuration',
       expected: 'Download configuration',
     },
@@ -39,7 +36,7 @@ describe('IntegrationsTableOptions', () => {
   cases.forEach(({ desc, expected }) => {
     test(`${desc}`, () => {
       render(<IntegrationsTableOptions integration={integration} />);
-      const menuBtn = screen.getByLabelText(/Options menu/i);
+      const menuBtn = screen.getByLabelText(actionsMenuLabel);
       fireEvent.click(menuBtn);
       const menuItem = screen.getByText(expected);
       expect(menuItem).toBeInTheDocument();

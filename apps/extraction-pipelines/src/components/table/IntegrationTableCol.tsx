@@ -21,7 +21,7 @@ export const getIntegrationTableCol = () => {
     },
     {
       id: 'lastUpdatedTime',
-      Header: 'Last run',
+      Header: 'Time of last data point',
       accessor: 'lastUpdatedTime',
       Cell: ({ row }: Cell<Integration>) => {
         return (
@@ -66,6 +66,7 @@ export const getIntegrationTableCol = () => {
     },
     {
       id: 'options',
+      Header: 'Actions',
       Cell: ({ row }: Cell<Integration>) => {
         return <IntegrationsTableOptions integration={row.original} />;
       },
