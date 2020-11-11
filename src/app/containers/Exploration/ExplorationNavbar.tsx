@@ -12,16 +12,15 @@ import {
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
-import FilterToggleButton from './FilterToggleButton';
 
 export const ExplorationNavbar = ({
   // cart,
   // setCart,
-  toggleFilter,
+  beforeSearchInput,
 }: {
   // cart: ResourceItem[];
   // setCart: (cart: ResourceItem[]) => void;
-  toggleFilter: () => void;
+  beforeSearchInput?: React.ReactElement;
 }) => {
   // const { mode, setMode } = useContext(ResourceSelectionContext);
   // const cartCount = cart.length;
@@ -64,21 +63,29 @@ export const ExplorationNavbar = ({
   // }
 
   return (
-    <SearchInputContainer>
-      <Row align="middle">
-        <Col flex="none">
-          <FilterToggleButton toggleOpen={toggleFilter} />
-        </Col>
-        <Col flex="auto" style={{ margin: '0 16px' }}>
-          <ExplorationSearchBar />
-        </Col>
-      </Row>
+    <SearchInputContainer align="middle">
+      {beforeSearchInput && <Col flex="none">{beforeSearchInput}</Col>}
+      <Col
+        flex="auto"
+        style={
+          beforeSearchInput
+            ? {
+                margin: '0 16px',
+                paddingLeft: 16,
+                borderLeft: `1px solid ${lightGrey}`,
+              }
+            : undefined
+        }
+      >
+        <ExplorationSearchBar />
+      </Col>
     </SearchInputContainer>
   );
 };
 
-const SearchInputContainer = styled.div`
+const SearchInputContainer = styled(Row)`
   border-right: 1px solid ${lightGrey};
+  border-bottom: 1px solid ${lightGrey};
   margin-right: 16px;
   padding-top: 16px;
   padding-bottom: 16px;

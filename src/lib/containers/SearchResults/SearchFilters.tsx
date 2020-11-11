@@ -1,4 +1,6 @@
 import React from 'react';
+import { Icon } from '@cognite/cogs.js';
+import { Row, Col, Button } from 'antd';
 import { ResourceType } from 'lib/types';
 import { ResourceFilterProps, SetResourceFilterProps } from 'lib/CommonProps';
 import {
@@ -9,11 +11,13 @@ import {
   TimeseriesFilters,
 } from 'lib';
 import { lightGrey } from 'lib/utils/Colors';
+import styled from 'styled-components';
 
 const TRANSITION_TIME = 300;
 
 export const SearchFilters = ({
   visible = true,
+  closeFilters = () => {},
   resourceType,
   assetFilter,
   setAssetFilter,
@@ -25,9 +29,11 @@ export const SearchFilters = ({
   setEventFilter,
   fileFilter,
   setFileFilter,
-}: { resourceType: ResourceType; visible?: boolean } & Required<
-  ResourceFilterProps
-> &
+}: {
+  resourceType: ResourceType;
+  visible?: boolean;
+  closeFilters?: () => void;
+} & Required<ResourceFilterProps> &
   SetResourceFilterProps) => {
   const Filters = () => {
     switch (resourceType) {
@@ -56,6 +62,7 @@ export const SearchFilters = ({
           />
         );
       }
+
       default: {
         return null;
       }
@@ -77,7 +84,32 @@ export const SearchFilters = ({
         transition: `visibility 0s linear ${TRANSITION_TIME}ms, width ${TRANSITION_TIME}ms ease, padding-right ${TRANSITION_TIME}ms ease, margin-right ${TRANSITION_TIME}ms ease`,
       }}
     >
-      {visible && Filters()}
+      {visible && (
+        <>
+          <HeaderRow align="middle" justify="center">
+            <IconCol flex="none">
+              <Icon type="Filter" />
+            </IconCol>
+            <Col flex="auto">Filters</Col>
+            <Col flex="none">
+              <Button onClick={closeFilters}>Hide filters</Button>
+            </Col>
+          </HeaderRow>
+          <Filters />
+        </>
+      )}
     </div>
   );
 };
+
+const IconCol = styled(Col)`
+  margin-right: 16px;
+  padding-right: 16px;
+  border-right: 1px solid ${lightGrey};
+`;
+
+const HeaderRow = styled(Row)`
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid ${lightGrey};
+`;

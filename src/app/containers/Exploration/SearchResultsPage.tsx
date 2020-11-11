@@ -5,7 +5,6 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
-
 import { ResourceItem, convertResourceType } from 'lib/types';
 import { ResourcePreviewProvider } from 'lib/context';
 import { SearchFilters } from 'lib/containers/SearchResults/SearchFilters';
@@ -23,6 +22,7 @@ import styled from 'styled-components';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
 import { lightGrey } from 'lib/utils/Colors';
 import { useCurrentResourceType, useCurrentResourceId } from './hooks';
+import FilterToggleButton from './FilterToggleButton';
 import RedirectToFirstId from './RedirectToFirstId';
 
 const Wrapper = styled.div`
@@ -104,10 +104,19 @@ function SearchPage() {
           fileFilter={fileFilter}
           setFileFilter={setFileFilter}
           resourceType={currentResourceType}
+          closeFilters={() => setShowFilter(false)}
           visible={showFilter}
         />
         <div style={{ width: '30%', minWidth: 333 }}>
-          <ExplorationNavBar toggleFilter={() => setShowFilter(!showFilter)} />
+          <ExplorationNavBar
+            beforeSearchInput={
+              !showFilter ? (
+                <FilterToggleButton
+                  toggleOpen={() => setShowFilter(!showFilter)}
+                />
+              ) : undefined
+            }
+          />
           <SearchResultWrapper
             style={{
               height: 'calc(100% - 73px)',
