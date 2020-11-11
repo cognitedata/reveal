@@ -178,3 +178,17 @@ export type CadModelBudget = {
    */
   readonly maximumNumberOfDrawCalls: number;
 };
+
+/**
+ * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
+ * @version new in 1.3.0
+ */
+export interface IntersectionFromPixelOptions {
+  /**
+   * Threshold (in meters) for how close a point must be an intersection
+   * ray for it to be considered an intersection for point clouds. Defaults
+   * to 0.01.
+   * @version new in 1.3.0
+   */
+  pointIntersectionThreshold?: number;
+}

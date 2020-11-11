@@ -33,11 +33,15 @@ export interface IntersectPointCloudNodeResult {
 const normalized = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 
-export function intersectPointClouds(nodes: PointCloudNode[], input: IntersectInput): IntersectPointCloudNodeResult[] {
+export function intersectPointClouds(
+  nodes: PointCloudNode[],
+  input: IntersectInput,
+  threshold: number = 0.05 // 5 cm
+): IntersectPointCloudNodeResult[] {
   const { normalizedCoords, camera } = input;
   normalized.set(normalizedCoords.x, normalizedCoords.y);
   raycaster.setFromCamera(normalizedCoords, camera);
-  raycaster.params.Points = { threshold: 0.01 }; // 1 cm
+  raycaster.params.Points = { threshold };
 
   const intersections = raycaster.intersectObjects(nodes, true);
   return intersections.map(x => {
