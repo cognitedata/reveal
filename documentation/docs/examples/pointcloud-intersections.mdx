@@ -23,7 +23,6 @@ viewer.on('click', event => {
     event.offsetX, event.offsetY
   );
   if (intersection) {
-    console.log(intersection);
     const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), 
       new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' }));
     sphere.position.copy(intersection.point);
