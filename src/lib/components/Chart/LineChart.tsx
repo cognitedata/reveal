@@ -17,6 +17,7 @@ import { AxisRight, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
 import { Threshold } from '@visx/threshold';
 import { Body, Colors, Overline } from '@cognite/cogs.js';
+import { lightGrey } from 'lib/utils/Colors';
 
 const pointColor = Colors['midblue-3'].hex();
 const primaryColor = Colors['midblue-4'].hex();
@@ -144,7 +145,7 @@ export const LineChart = ({
             height={innerHeight}
             numTicks={numColumnTicks}
             strokeDasharray="1,3"
-            stroke={Colors['greyscale-grey3'].hex()}
+            stroke={lightGrey}
             strokeWidth="1.3"
           />
         )}
@@ -154,7 +155,7 @@ export const LineChart = ({
             width={innerWidth}
             height={innerHeight}
             numTicks={numRowTicks}
-            stroke={Colors['greyscale-grey3'].hex()}
+            stroke={lightGrey}
             strokeWidth="1.3"
           />
         )}
@@ -169,7 +170,7 @@ export const LineChart = ({
             top={innerHeight}
             scale={dateScale}
             numTicks={numColumnTicks}
-            tickStroke={Colors['greyscale-grey3'].hex()}
+            tickStroke={lightGrey}
             strokeWidth={0}
             tickLabelProps={() => ({
               fontFamily: 'Inter',
@@ -184,7 +185,7 @@ export const LineChart = ({
             scale={valuesScale}
             left={innerWidth}
             numTicks={numRowTicks}
-            tickStroke={Colors['greyscale-grey3'].hex()}
+            tickStroke={lightGrey}
             strokeWidth={0}
             tickLabelProps={() => ({
               fontFamily: 'Inter',

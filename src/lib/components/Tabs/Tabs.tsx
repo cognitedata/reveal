@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
+import { lightGrey } from 'lib/utils/Colors';
 
 export type TabsPane<T = string> = {
   children: React.ReactElement<TabPaneProps>[];
@@ -68,7 +69,7 @@ const TabPane: React.FC<TabPaneProps> = ({ children }: TabPaneProps) => {
 Tabs.Pane = TabPane;
 
 const HeaderWrapper = styled.div`
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 1px solid ${lightGrey};
   display: flex;
   align-items: stretch;
   padding-top: 10px;

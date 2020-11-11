@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, ButtonProps, Colors } from '@cognite/cogs.js';
+import { Button, ButtonProps } from '@cognite/cogs.js';
+import { lightGrey } from 'lib/utils/Colors';
 import styled, { css } from 'styled-components';
 
 export type ButtonGroupProps = {
@@ -55,9 +56,7 @@ const ButtonGroupWrapper = styled.div<WrapperProps>(
     width: auto;
     border-radius: 6px;
     padding: 4px;
-    background: ${props.$variant === 'default'
-      ? Colors['greyscale-grey3'].hex()
-      : 'transparent'};
+    background: ${props.$variant === 'default' ? lightGrey : 'transparent'};
 
     .cogs-btn.cogs-btn-ghost.cogs-btn-primary {
       background: #fff;

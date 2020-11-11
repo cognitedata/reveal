@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { lightGrey } from 'lib/utils/Colors';
 
 export type onResourceSelectedParams = {
   assetId?: number;
@@ -29,7 +29,7 @@ const HorizontalDivider = styled.div`
   height: 2px;
   margin-top: 8px;
   margin-bottom: 8px;
-  background: ${Colors['greyscale-grey3'].hex()};
+  background: ${lightGrey};
   display: inline-table;
 `;
 
@@ -38,7 +38,7 @@ const VerticalDivider = styled.div`
   height: 2px;
   margin-left: 8px;
   margin-right: 8px;
-  background: ${Colors['greyscale-grey3'].hex()};
+  background: ${lightGrey};
   display: inline-table;
 `;
 

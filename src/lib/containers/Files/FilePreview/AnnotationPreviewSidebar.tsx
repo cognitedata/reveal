@@ -5,7 +5,6 @@ import {
   Title,
   Body,
   Overline,
-  Colors,
   Collapse,
 } from '@cognite/cogs.js';
 import {
@@ -38,6 +37,7 @@ import {
   useFindObjectsJobId,
 } from 'lib/hooks/objectDetection';
 import { isModelRunning } from 'lib/types';
+import { lightGrey } from 'lib/utils/Colors';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 
@@ -367,7 +367,7 @@ const AnnotationPreviewSidebar = ({
 const PreviewImage = styled.img`
   max-height: 200px;
   padding: 12px;
-  background: ${Colors['greyscale-grey3'].hex()};
+  background: ${lightGrey};
   width: auto;
   object-fit: contain;
   display: block;

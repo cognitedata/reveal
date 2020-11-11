@@ -3,6 +3,7 @@ import { message } from 'antd';
 import { Select, SpacedRow } from 'lib/components';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
+import { lightGrey } from 'lib/utils/Colors';
 
 const LOCKSVG = (
   <svg
@@ -71,7 +72,7 @@ const Tag = styled.div<TagProps>(
     ${!props.isLocked &&
     css`
       &&:hover {
-        box-shadow: 0px 4px 4px ${Colors['greyscale-grey3'].hex()};
+        box-shadow: 0px 4px 4px ${lightGrey};
       }
       &&:hover .delete {
         opacity: 1;

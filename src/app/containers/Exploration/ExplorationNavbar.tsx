@@ -1,7 +1,6 @@
 // Stuff related to selections/shopping cart is commented out for the moment while waiting for
 // design input
 import React from 'react';
-import { Colors } from '@cognite/cogs.js';
 import {
   Row,
   Col, // Button, Dropdown, Space
@@ -11,6 +10,7 @@ import {
 // import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 // import { ResourceItem } from 'lib/types';
 import styled from 'styled-components';
+import { lightGrey } from 'lib/utils/Colors';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
 import FilterToggleButton from './FilterToggleButton';
 
@@ -78,7 +78,7 @@ export const ExplorationNavbar = ({
 };
 
 const SearchInputContainer = styled.div`
-  border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-right: 1px solid ${lightGrey};
   margin-right: 16px;
   padding-top: 16px;
   padding-bottom: 16px;

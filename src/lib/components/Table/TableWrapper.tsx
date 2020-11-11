@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
+import { lightGrey } from 'lib/utils/Colors';
 
 export const TableWrapperInner = styled.div`
   .BaseTable {
@@ -291,13 +292,13 @@ export const TableWrapper = styled(TableWrapperInner)`
   overflow-y: hidden;
   .row {
     transition: 0.3s all;
-    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-bottom: 1px solid ${lightGrey};
   }
   .BaseTable__header-cell {
     background: ${Colors['greyscale-grey2'].hex()};
   }
   .BaseTable__header-row {
-    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-bottom: 1px solid ${lightGrey};
   }
   .row:not(.previewing):hover,
   .BaseTable__row--hovered:not(.previewing) {

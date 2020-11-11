@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Button, Title, Icon, Colors, Body } from '@cognite/cogs.js';
+import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import { Loader, SpacedRow } from 'lib/components';
@@ -8,6 +8,7 @@ import { renderTitle } from 'lib/utils/EventsUtils';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { IdEither } from '@cognite/sdk';
 import { convertResourceType } from 'lib/types';
+import { lightGrey } from 'lib/utils/Colors';
 
 const getId = (
   annotation?: ProposedCogniteAnnotation | CogniteAnnotation
@@ -173,7 +174,7 @@ const Wrapper = styled.div`
 const PreviewImage = styled.img`
   max-height: 200px;
   padding: 12px;
-  background: ${Colors['greyscale-grey3'].hex()};
+  background: ${lightGrey};
   width: auto;
   object-fit: contain;
 `;

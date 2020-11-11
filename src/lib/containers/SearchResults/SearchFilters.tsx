@@ -8,7 +8,7 @@ import {
   SequenceFilters,
   TimeseriesFilters,
 } from 'lib';
-import { Colors } from '@cognite/cogs.js';
+import { lightGrey } from 'lib/utils/Colors';
 
 const TRANSITION_TIME = 300;
 
@@ -72,7 +72,7 @@ export const SearchFilters = ({
         marginLeft: 1,
         paddingRight: visible ? 16 : 0,
         marginRight: visible ? 16 : 0,
-        borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+        borderRight: `1px solid ${lightGrey}`,
         visibility: visible ? 'visible' : 'hidden',
         transition: `visibility 0s linear ${TRANSITION_TIME}ms, width ${TRANSITION_TIME}ms ease, padding-right ${TRANSITION_TIME}ms ease, margin-right ${TRANSITION_TIME}ms ease`,
       }}

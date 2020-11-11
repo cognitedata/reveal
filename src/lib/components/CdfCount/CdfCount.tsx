@@ -1,7 +1,8 @@
 import React from 'react';
 import { useAggregate, SdkResourceType } from '@cognite/sdk-react-query-hooks';
-import { Badge, Colors } from '@cognite/cogs.js';
+import { Badge } from '@cognite/cogs.js';
 import { formatNumber } from 'lib/utils/numbers';
+import { lightGrey } from 'lib/utils/Colors';
 
 type Props = {
   type: SdkResourceType;
@@ -14,12 +15,7 @@ export const CdfCount = ({ type, filter }: Props) => {
     return null;
   }
   if (isFetched && data && Number.isFinite(data?.count) && data?.count > 0) {
-    return (
-      <Badge
-        text={formatNumber(data?.count)}
-        background={Colors['greyscale-grey3'].hex()}
-      />
-    );
+    return <Badge text={formatNumber(data?.count)} background={lightGrey} />;
   }
   return null;
 };

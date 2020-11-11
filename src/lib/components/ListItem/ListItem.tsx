@@ -1,6 +1,7 @@
 import styled, { CSSProperties, css } from 'styled-components';
 import { Colors, Title } from '@cognite/cogs.js';
 import React from 'react';
+import { lightGrey } from 'lib/utils/Colors';
 
 type WrapperProps = {
   selected?: boolean;
@@ -79,9 +80,7 @@ export const ListItemWrapper = styled.div<WrapperProps>(
     padding: 8px 16px;
     cursor: pointer;
     transition: 0.3s all;
-    border-bottom: ${props.bordered
-      ? `1px solid ${Colors['greyscale-grey3'].hex()}`
-      : 'inherit'};
+    border-bottom: ${props.bordered ? `1px solid ${lightGrey}` : 'inherit'};
 
     p {
       margin-bottom: 0px;

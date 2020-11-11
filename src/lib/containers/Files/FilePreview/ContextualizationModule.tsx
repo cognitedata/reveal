@@ -5,8 +5,9 @@ import {
 } from '@cognite/react-picture-annotation';
 import { AnnotationBoundingBox, CogniteAnnotation } from '@cognite/annotations';
 import { InfoGrid, InfoCell, Divider } from 'lib/components';
-import { Title, Body, Colors } from '@cognite/cogs.js';
+import { Title, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { lightGrey } from 'lib/utils/Colors';
 
 export const ContextualizationData = ({
   selectedAnnotation,
@@ -67,7 +68,7 @@ export const ContextualizationData = ({
 const PreviewImage = styled.img`
   max-height: 100px;
   padding: 12px;
-  background: ${Colors['greyscale-grey3'].hex()};
+  background: ${lightGrey};
   width: auto;
   object-fit: contain;
   display: block;

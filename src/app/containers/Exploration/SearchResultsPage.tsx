@@ -5,7 +5,6 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
-import { Colors } from '@cognite/cogs.js';
 
 import { ResourceItem, convertResourceType } from 'lib/types';
 import { ResourcePreviewProvider } from 'lib/context';
@@ -22,6 +21,7 @@ import ResourceSelectionContext, {
 import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
+import { lightGrey } from 'lib/utils/Colors';
 import { useCurrentResourceType, useCurrentResourceId } from './hooks';
 import RedirectToFirstId from './RedirectToFirstId';
 
@@ -113,7 +113,7 @@ function SearchPage() {
               height: 'calc(100% - 73px)',
               marginRight: 16,
               paddingRight: 16,
-              borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+              borderRight: `1px solid ${lightGrey}`,
             }}
           >
             <SearchResultList

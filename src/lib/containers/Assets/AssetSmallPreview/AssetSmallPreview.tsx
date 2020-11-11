@@ -21,6 +21,7 @@ import { TimeseriesSmallPreview } from 'lib/containers/Timeseries';
 import { AssetBreadcrumb } from 'lib/containers/Assets';
 import { FileSmallPreview } from 'lib/containers/Files';
 import { SmallPreviewProps } from 'lib/CommonProps';
+import { lightGrey } from 'lib/utils/Colors';
 
 const LIST_ITEM_HEIGHT = 42;
 
@@ -46,7 +47,7 @@ const RowItem = ({
           style={{
             display: 'flex',
             height: 32,
-            borderBottom: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+            borderBottom: `1px solid ${lightGrey}`,
           }}
         >
           <span>{title}</span>
