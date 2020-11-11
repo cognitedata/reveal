@@ -2,20 +2,19 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Title } from '@cognite/cogs.js';
 import Suitebar from 'components/suitebar/Suitebar';
-import { SuiteTile, DashboardTile } from 'components/tiles';
+import { SmallTile, Tile } from 'components/tiles';
 import { colors } from 'contants/suiteColors';
 import {
   OverviewContainer,
-  AllDashboardsContainer,
-  PinnedContainer,
-  QuickAccessContainer,
+  SmallTilesContainer,
+  TilesContainer,
 } from './elements';
 
 const Home = () => {
   const { t } = useTranslation('Home');
 
   // Temporary sample
-  const QuiteAccessSuites = [
+  const Items = [
     {
       title: t('Inspections') as string,
       color: colors[Math.floor(Math.random() * colors.length)],
@@ -48,22 +47,27 @@ const Home = () => {
 
   return (
     <>
-      <Suitebar />
+      <Suitebar buttonText="New suite" />
       <OverviewContainer>
-        <QuickAccessContainer>
+        <SmallTilesContainer>
           <Title level={6}>Quick Access</Title>
 
-          {QuiteAccessSuites.map((item) => {
-            return <SuiteTile title={item.title} color={item.color} />;
+          {Items.map((item) => {
+            return <SmallTile title={item.title} color={item.color} />;
           })}
-        </QuickAccessContainer>
-        <PinnedContainer>
+        </SmallTilesContainer>
+        <TilesContainer>
           <Title level={6}>Pinned</Title>
-          {QuiteAccessSuites.map((item) => {
-            return <DashboardTile title={item.title} color={item.color} />;
+          {Items.map((item) => {
+            return <Tile title={item.title} color={item.color} />;
           })}
-        </PinnedContainer>
-        <AllDashboardsContainer></AllDashboardsContainer>
+        </TilesContainer>
+        <TilesContainer>
+          <Title level={6}>All suites</Title>
+          {Items.map((item) => {
+            return <Tile title={item.title} color={item.color} />;
+          })}
+        </TilesContainer>
       </OverviewContainer>
     </>
   );

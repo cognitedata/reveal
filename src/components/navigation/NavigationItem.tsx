@@ -16,7 +16,7 @@ const NavigationItem: React.FC<Props> = ({ color, title, disabled }: Props) => {
       <Body level={2} as={SuiteTitle}>
         {title}
       </Body>
-      <SuiteTitle disabled={disabled}></SuiteTitle>
+      <SuiteTitle disabled={disabled} />
     </NavigationItemContainer>
   );
 };

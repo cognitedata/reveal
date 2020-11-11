@@ -12,15 +12,15 @@ const App = () => {
     <>
       <GlobalStyles />
       <I18nContainer>
-        <PageLayout>
-          <Router>
+        <Router>
+          <PageLayout>
             <Switch>
               <Route path="/">
                 <Home />
               </Route>
             </Switch>
-          </Router>
-        </PageLayout>
+          </PageLayout>
+        </Router>
       </I18nContainer>
     </>
   );

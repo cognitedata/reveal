@@ -1,15 +1,25 @@
 import styled from 'styled-components/macro';
 import layers from '_helpers/zindex';
 
-export const SidebarContainer = styled.div`
+export const AppHeaderCotainer = styled.div`
+  position: sticky;
+  top: 0;
+  background-color: var(--cogs-white);
+  z-index: ${layers.APP_HEADER};
+`;
+
+export const SidebarContainer = styled.div<{
+  open?: boolean;
+}>`
   position: fixed;
   height: 100%;
   width: 258px;
-  box-shadow: 0px 5px 16px rgba(0, 0, 0, 0.04),
-    0px 10px 24px rgba(0, 0, 0, 0.07), 0px 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--cogs-z-12);
   padding: 16px 24px;
   z-index: ${layers.LEFT_SIDEBAR};
   background: var(--cogs-white);
+  transform: ${({ open }) => (open ? 'translateX(0)' : 'translateX(-100%)')};
+  transition: transform 0.3s ease-in-out;
 `;
 
 export const ActionContainer = styled.div`
@@ -33,7 +43,7 @@ export const NavigationItemContainer = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color:  var(--cogs-midblue-8);
+    background-color: var(--cogs-midblue-8);
     border-radius: 4px;
   }
 `;

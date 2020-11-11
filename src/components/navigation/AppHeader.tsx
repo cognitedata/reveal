@@ -1,5 +1,6 @@
 import React from 'react';
 import { Avatar, TopBar, Menu, Graphic } from '@cognite/cogs.js';
+import { AppHeaderCotainer } from './elements';
 
 interface Props {
   handleClick: () => void;
@@ -7,7 +8,7 @@ interface Props {
 
 const AppHeader: React.FC<Props> = ({ handleClick }: Props) => {
   return (
-    <>
+    <AppHeaderCotainer data-testid="app-header">
       <TopBar>
         <TopBar.Left>
           <TopBar.Action icon="Hamburger" onClick={handleClick} />
@@ -51,7 +52,7 @@ const AppHeader: React.FC<Props> = ({ handleClick }: Props) => {
           />
         </TopBar.Right>
       </TopBar>
-    </>
+    </AppHeaderCotainer>
   );
 };
 

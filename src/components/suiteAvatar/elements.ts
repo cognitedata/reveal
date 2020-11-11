@@ -8,10 +8,10 @@ export const SuiteAvatarContainer = styled.div<{
   padding-top: 6px;
   padding-bottom: 6px;
   border-radius: 4px;
-  background-color: ${(props) =>
-    props.disabled ? 'var(--cogs-greyscale-grey3)' : props.color};
-  color: ${(props) =>
-    props.disabled ? 'var(--cogs-greyscale-grey6)' : 'var(--cogs-black)'};
+  background-color: ${({ disabled, color }) =>
+    disabled ? 'var(--cogs-greyscale-grey3)' : color};
+  color: ${({ disabled }) =>
+    disabled ? 'var(--cogs-greyscale-grey6)' : 'var(--cogs-black)'};
 `;
 
 export const Default = styled.div`

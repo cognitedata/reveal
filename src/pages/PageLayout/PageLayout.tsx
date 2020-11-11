@@ -18,7 +18,7 @@ const PageLayout: React.FC<Props> = ({ children }: Props) => {
       <AppHeader handleClick={handleClick} />
       <div>
         <LeftSidebar isOpen={isOpen} />
-        <Content>{children}</Content>
+        <Content data-testid="page-content">{children}</Content>
       </div>
     </>
   );

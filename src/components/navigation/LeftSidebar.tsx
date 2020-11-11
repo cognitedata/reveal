@@ -81,34 +81,32 @@ const LeftSidebar: React.FC<Props> = ({ isOpen }: Props) => {
   ];
   return (
     <>
-      {isOpen && (
-        <SidebarContainer>
-          <Input
-            variant="noBorder"
-            placeholder="Search for suites"
-            icon="Search"
+      <SidebarContainer open={isOpen}>
+        <Input
+          variant="noBorder"
+          placeholder="Search for suites"
+          icon="Search"
+          iconPlacement="left"
+          fullWidth
+        />
+        <ActionContainer>
+          <Overline level={2}>All Suites</Overline>
+          <Button
+            type="secondary"
+            variant="ghost"
+            icon="Plus"
             iconPlacement="left"
-            fullWidth
-          />
-          <ActionContainer>
-            <Overline level={2}>ALL SUITES</Overline>
-            <Button
-              type="secondary"
-              variant="ghost"
-              icon="Plus"
-              iconPlacement="left"
-            >
-              {t('New')}
-            </Button>
-          </ActionContainer>
-          <AvailableSuitesContainer>
-            {TopNavigation.map((item) => renderNavigationItem(item))}
-          </AvailableSuitesContainer>
-          <UnAvailableSuitesContainer>
-            {BottomNavigation.map((item) => renderNavigationItem(item, true))}
-          </UnAvailableSuitesContainer>
-        </SidebarContainer>
-      )}
+          >
+            {t('New')}
+          </Button>
+        </ActionContainer>
+        <AvailableSuitesContainer>
+          {TopNavigation.map((item) => renderNavigationItem(item))}
+        </AvailableSuitesContainer>
+        <UnAvailableSuitesContainer>
+          {BottomNavigation.map((item) => renderNavigationItem(item, true))}
+        </UnAvailableSuitesContainer>
+      </SidebarContainer>
     </>
   );
 };

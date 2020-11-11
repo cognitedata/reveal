@@ -1,8 +1,13 @@
 import React from 'react';
-import { Button, Title, Modal } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import { SuitbarContainer } from './elements';
 
-const Suitebar: React.FC = () => {
+interface Props {
+  backNavigation?: React.ReactNode;
+  buttonText: string;
+}
+
+const Suitebar: React.FC<Props> = ({ buttonText }: Props) => {
   return (
     <SuitbarContainer>
       <Title level={5}>Executive overview</Title>
@@ -12,7 +17,7 @@ const Suitebar: React.FC = () => {
         icon="Plus"
         iconPlacement="left"
       >
-        New suite
+        {buttonText}
       </Button>
     </SuitbarContainer>
   );
