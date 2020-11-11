@@ -187,7 +187,7 @@ export interface IntersectionFromPixelOptions {
   /**
    * Threshold (in meters) for how close a point must be an intersection
    * ray for it to be considered an intersection for point clouds. Defaults
-   * to 0.01.
+   * to 0.05.
    * @version new in 1.3.0
    */
   pointIntersectionThreshold?: number;
