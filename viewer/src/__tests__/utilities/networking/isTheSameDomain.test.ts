@@ -16,6 +16,19 @@ describe('isTheSameDomain fn tests', () => {
     expect(isTheSameDomain('/relative7/foo/', baseOrigin)).toBeTrue();
   });
 
+  it('works fine for any protocol of base origin', () => {
+    const domainName = 'foo.bar';
+    const protocols = ['http://', '//', 'https://', 'ws://', 'WHATEVER://', 'file://'];
+    const baseOrigins = protocols.map(p => p + domainName);
+
+    baseOrigins.forEach(baseUrl => {
+      expect(isTheSameDomain(`https://${domainName}/bar.js`, baseUrl)).toBeTrue();
+    });
+    baseOrigins.forEach(baseUrl => {
+      expect(isTheSameDomain('https://anotherdomain.com/bar.js', baseUrl)).toBeFalse();
+    });
+  });
+
   it('recognizes the same domains if protocol is omitted', () => {
     expect(isTheSameDomain(baseOrigin.replace('https://', ''), baseOrigin)).toBeTrue();
   });
