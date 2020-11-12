@@ -14,13 +14,13 @@ const SidePanelHeading = styled((props) => (
   font-size: 1.5rem;
   position: relative;
   &::after {
-      content: "";
-      border-left: 0.875rem solid transparent;
-      border-right: 0.875rem solid transparent;
-      border-top: 0.875rem solid ${Colors['midblue-7'].hex()};
-      position: absolute;
-      bottom: -0.875rem;
-      left: 1.12rem;
+    content: '';
+    border-left: 0.875rem solid transparent;
+    border-right: 0.875rem solid transparent;
+    border-top: 0.875rem solid ${Colors['midblue-7'].hex()};
+    position: absolute;
+    bottom: -0.875rem;
+    left: 1.12rem;
   }
 `;
 
@@ -34,7 +34,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
   }
   return (
     <>
-      <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>      
+      <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
       <StyledTabs>
         <StyledTabPane tab="Monitoring" key="monitoring">
           Monitoring
