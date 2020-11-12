@@ -115,3 +115,7 @@ export const mockResponse: Integration[] = [
     id: 825964439209157,
   },
 ];
+
+export const mockError = {
+  error: { code: 400, message: 'Multiple authentication headers present' },
+};
