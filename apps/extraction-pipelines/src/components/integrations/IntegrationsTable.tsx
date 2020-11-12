@@ -6,6 +6,11 @@ import ITable from '../table/ITable';
 import { getIntegrationTableCol } from '../table/IntegrationTableCol';
 import { Integration } from '../../model/Integration';
 import { useIntegrations } from '../../hooks/useIntegrations';
+import { useDataSets } from '../../hooks/useDataSets';
+import {
+  mapDataSetToIntegration,
+  mapUniqueDataSetIds,
+} from '../../utils/dataSetUtils';
 import { ErrorFeedback } from '../error/ErrorFeedback';
 
 const Wrapper = styled.div`
@@ -52,24 +57,34 @@ interface OwnProps {}
 
 type Props = OwnProps;
 const IntegrationsTable: FunctionComponent<Props> = () => {
-  const { data, isLoading, error } = useIntegrations();
-  if (isLoading) {
+  const {
+    data,
+    isLoading: isLoadingIntegrations,
+    error: errorIntegrations,
+  } = useIntegrations();
+  const dataSetIds = mapUniqueDataSetIds(data);
+  const { isLoading, data: dataSets } = useDataSets(dataSetIds);
+  let tableData = data ?? [];
+
+  if (isLoading || isLoadingIntegrations) {
     return <Loader />;
   }
-  if (error) {
-    return <ErrorFeedback error={error} />;
+
+  if (errorIntegrations) {
+    return <ErrorFeedback error={errorIntegrations} />;
   }
-  if (data) {
-    return (
-      <Wrapper>
-        <ITable
-          data={data}
-          columns={getIntegrationTableCol() as Column<Integration>[]}
-        />
-      </Wrapper>
-    );
+
+  if (dataSets) {
+    tableData = mapDataSetToIntegration(data, dataSets);
   }
-  return <></>;
+  return (
+    <Wrapper>
+      <ITable
+        data={tableData}
+        columns={getIntegrationTableCol() as Column<Integration>[]}
+      />
+    </Wrapper>
+  );
 };
 
 export default IntegrationsTable;

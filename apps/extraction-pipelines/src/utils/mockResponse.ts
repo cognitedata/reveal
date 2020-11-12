@@ -7,7 +7,7 @@ export const mockResponse: Integration[] = [
     externalId: 'dataIntegration0001',
     name: 'Azure Integration',
     description: 'Dummy integration to Azure',
-    dataSetId: 'DataSetExternalId10',
+    dataSetId: '1398950266713987',
     schedule: '0 0 9 1/1 * ? *',
     // schedule: '0 0 9 * *', //00:00 on day-of-month 9
     owner: {
@@ -39,7 +39,7 @@ export const mockResponse: Integration[] = [
     externalId: 'dataIntegration0002',
     name: 'SAP Integration',
     description: 'Dummy integration to SAP',
-    dataSetId: '959884795848289',
+    dataSetId: '1469810437954362',
     schedule: '0 0 12 1/1 * ? *',
     // schedule: '0 2 * * 1', // 02:00 every monday
     owner: {
@@ -67,7 +67,7 @@ export const mockResponse: Integration[] = [
     externalId: 'dataIntegration0003',
     name: 'PI AF integration',
     description: 'Dummy PI AF integration',
-    dataSetId: 'DataSetExternalId12',
+    dataSetId: '1640958057260772',
     schedule: 'On Trigger',
     owner: {
       email: 'katrine.tjolsen@cognite.com',
@@ -94,7 +94,7 @@ export const mockResponse: Integration[] = [
     externalId: 'dataIntegration0004',
     name: 'PI Time Series',
     description: 'Dummy PI time series',
-    dataSetId: 'DataSetExternalId13',
+    dataSetId: '1469810437954362',
     owner: {
       email: 'Birger.Urdahl@itera.no',
       name: 'Birger Urdahl',
@@ -113,6 +113,30 @@ export const mockResponse: Integration[] = [
       sourceSystem: 'PI',
     },
     id: 825964439209157,
+  },
+];
+
+export const mockDataSetResponse = () => [
+  {
+    id: parseInt(mockResponse[0].dataSetId, 10),
+    name: 'My data set 1',
+    createdTime: new Date(2020, 10, 10),
+    writeProtected: true,
+    lastUpdatedTime: new Date(2020, 11, 1),
+  },
+  {
+    id: parseInt(mockResponse[1].dataSetId, 10),
+    name: 'This other data set',
+    createdTime: new Date(2020, 11, 1),
+    writeProtected: true,
+    lastUpdatedTime: new Date(2020, 11, 1),
+  },
+  {
+    id: parseInt(mockResponse[2].dataSetId, 10),
+    name: 'Third data set',
+    createdTime: new Date(2020, 11, 1),
+    writeProtected: true,
+    lastUpdatedTime: new Date(2020, 11, 1),
   },
 ];
 
