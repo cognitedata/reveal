@@ -16,12 +16,16 @@ const DataSetLink = styled((props) => <a {...props}>{props.children}</a>)`
   }
 `;
 interface OwnProps {
+  dataSetName: string;
   dataSetId: string;
 }
 
 type Props = OwnProps;
 
-const DataSetId: FunctionComponent<Props> = ({ dataSetId }: Props) => {
+const DataSet: FunctionComponent<Props> = ({
+  dataSetId,
+  dataSetName,
+}: Props) => {
   const { cdfEnv, project } = useAppEnv();
   return (
     <>
@@ -32,7 +36,7 @@ const DataSetId: FunctionComponent<Props> = ({ dataSetId }: Props) => {
               href={`${cdfEnv}/${project}/data-sets/data-set/${dataSetId}`}
               target="_blank"
             >
-              {dataSetId}
+              {dataSetName}
             </DataSetLink>
             <InteractiveCopy text={dataSetId} />
           </DatasetTooltip>
@@ -42,4 +46,4 @@ const DataSetId: FunctionComponent<Props> = ({ dataSetId }: Props) => {
   );
 };
 
-export default DataSetId;
+export default DataSet;

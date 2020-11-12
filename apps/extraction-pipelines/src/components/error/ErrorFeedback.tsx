@@ -1,8 +1,8 @@
 import React from 'react';
-import { SdkError } from '../../model/SdkError';
+import { SDKError } from '../../model/SDKErrors';
 
 type Props = {
-  error: SdkError;
+  error: SDKError;
 };
 export function ErrorFeedback({ error }: Props) {
   return (
