@@ -35,5 +35,6 @@ module.exports = {
       'error',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
+    'react/prop-types': ['off'],
   },
 };

@@ -6,7 +6,7 @@ import { configureI18n } from '@cognite/react-i18n';
 import config from 'utils/config';
 import { Metrics } from '@cognite/metrics';
 
-import App from './App';
+import AppRoot from './AppRoot/App';
 import * as serviceWorker from './serviceWorker';
 
 import '@cognite/cogs.js/dist/cogs.css';
@@ -33,7 +33,7 @@ if (process.env.REACT_APP_MIXPANEL_TOKEN) {
   });
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<AppRoot />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
