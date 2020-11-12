@@ -1,7 +1,9 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'utils/utils';
+import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
+import { AppEnvProvider } from '../../hooks/useAppEnv';
 
 export default (
   ui: React.ReactElement,
@@ -25,4 +27,18 @@ export const renderWithSelectedIntegrationContext = (
     </SelectedIntegrationProvider>,
     renderOptions
   );
+};
+export const renderWithReactQueryCacheProvider = (
+  queryCache: QueryCache,
+  project: string,
+  cdfEnv: string
+) => {
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <AppEnvProvider cdfEnv={cdfEnv} project={project}>
+        {children}
+      </AppEnvProvider>
+    </ReactQueryCacheProvider>
+  );
+  return wrapper;
 };

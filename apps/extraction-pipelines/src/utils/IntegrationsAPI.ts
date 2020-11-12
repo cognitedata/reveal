@@ -1,7 +1,9 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { Integration } from '../model/Integration';
+import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
 
 const getBaseUrl = (project: string): string => {
-  return `https://api.cognite.com/api/playground/projects/${project}/integrations`;
+  return `https://greenfield.cognitedata.com/api/playground/projects/${project}/integrations`;
 };
 
 const get = async <D>(route: string, project: string) => {
@@ -10,7 +12,9 @@ const get = async <D>(route: string, project: string) => {
   });
 };
 
-export const getIntegrations = async <D>(project: string): Promise<D> => {
-  const response = await get<D>('/', project);
-  return response.data;
+export const getIntegrations = async (
+  project: string
+): Promise<Integration[]> => {
+  const response = await get<IntegrationAPIResponse>('/', project);
+  return response.data.items;
 };

@@ -1,11 +1,12 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Loader } from '@cognite/cogs.js';
 import { Column } from 'react-table';
-import { mockResponse } from '../../utils/mockResponse';
 import ITable from '../table/ITable';
 import { getIntegrationTableCol } from '../table/IntegrationTableCol';
 import { Integration } from '../../model/Integration';
+import { useIntegrations } from '../../hooks/useIntegrations';
+import { ErrorFeedback } from '../error/ErrorFeedback';
 
 const Wrapper = styled.div`
   .cogs-table {
@@ -51,14 +52,24 @@ interface OwnProps {}
 
 type Props = OwnProps;
 const IntegrationsTable: FunctionComponent<Props> = () => {
-  return (
-    <Wrapper>
-      <ITable
-        data={mockResponse}
-        columns={getIntegrationTableCol() as Column<Integration>[]}
-      />
-    </Wrapper>
-  );
+  const { data, isLoading, error } = useIntegrations();
+  if (isLoading) {
+    return <Loader />;
+  }
+  if (error) {
+    return <ErrorFeedback error={error} />;
+  }
+  if (data) {
+    return (
+      <Wrapper>
+        <ITable
+          data={data}
+          columns={getIntegrationTableCol() as Column<Integration>[]}
+        />
+      </Wrapper>
+    );
+  }
+  return <></>;
 };
 
 export default IntegrationsTable;

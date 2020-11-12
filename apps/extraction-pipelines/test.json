@@ -1,0 +1,22 @@
+[
+  {
+    "externalId": "dataIntegration0001",
+    "name": "Azure Integration",
+    "description": "Dummy integration to Azure",
+    "dataSetId": "DataSetExternalId10",
+    "schedule": "0 0 9 1/1 * ? *",
+    "owner": {
+      "email": "duncan.silvey@cognite.com",
+      "name": "Duncan Silvey"
+    },
+    "authors": [
+      {
+        "email": "Katinka.Odner@itera.no",
+        "name": "Katinka Odner"
+      }
+    ],
+    "metadata": {
+      "sourceSystem": "Azure"
+    }
+  }
+]
