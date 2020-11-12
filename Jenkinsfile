@@ -154,16 +154,18 @@ pods {
         }
       },
 
-      // TODO disabled temporary since not used yet
-      // 'Storybook': {
-      //   dir('storybook') {
-      //     stageWithNotify('Storybook', CONTEXTS.storybook) {
-      //       previewServer.deployStorybook(
-      //         shouldExecute: isPullRequest
-      //       )
-      //     }
-      //   }
-      // },
+      'Storybook': {
+        dir('storybook') {
+          stageWithNotify('Storybook', CONTEXTS.storybook) {
+            when {
+              expression { false }  // TODO disabled temporary since not used yet
+            }
+            previewServer.deployStorybook(
+              shouldExecute: isPullRequest
+            )
+          }
+        }
+      },
 
       'Preview': {
         dir('preview') {
@@ -202,21 +204,23 @@ pods {
         }
       },
 
-      // TODO disabled temporary since not used yet
-      // 'E2e': {
-      //   stageWithNotify('Execute e2e tests', CONTEXTS.e2eTests) {
-      //     dir('testcafe') {
-      //       container('fas') {
-      //         sh('yarn testcafe:build')
-      //       }
-      //       container('testcafe') {
-      //         testcafe.runTests(
-      //           runCommand: 'yarn testcafe:start'
-      //         )
-      //       }
-      //     }
-      //   }
-      // },
+      'E2e': {
+        stageWithNotify('Execute e2e tests', CONTEXTS.e2eTests) {
+          when {
+            expression { false }  // TODO disabled temporary since not used yet
+          }
+          dir('testcafe') {
+            container('fas') {
+              sh('yarn testcafe:build')
+            }
+            container('testcafe') {
+              testcafe.runTests(
+                runCommand: 'yarn testcafe:start'
+              )
+            }
+          }
+        }
+      },
     ],
     workers: 3,
   )
