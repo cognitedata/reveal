@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Button } from 'antd';
+import { List } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import {
   FileInfo,
@@ -56,15 +56,17 @@ const SearchResult = <T extends ResourceType>({
             key={item.id}
             style={
               item.id === currentId
-                ? { backgroundColor: Colors['greyscale-grey1'].hex() }
-                : undefined
+                ? {
+                    backgroundColor: Colors['greyscale-grey1'].hex(),
+                    cursor: 'pointer',
+                  }
+                : { cursor: 'pointer' }
             }
+            onClick={() => onRowClick(item.id)}
           >
             <div>
               <div>
-                <Button type="link" onClick={() => onRowClick(item.id)}>
-                  {getTitle(item)}
-                </Button>
+                <h4>{getTitle(item)}</h4>
               </div>
               <div>
                 <p>{getDescription(item)}</p>
