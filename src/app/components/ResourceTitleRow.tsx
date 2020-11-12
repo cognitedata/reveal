@@ -1,10 +1,11 @@
 import React from 'react';
 import { Row, Col, Space } from 'antd';
-import { Icon, AllIconTypes, Button } from '@cognite/cogs.js';
+import { Icon, AllIconTypes } from '@cognite/cogs.js';
 import { ResourceType, convertResourceType } from 'lib';
-import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { useCollectionFeature } from 'app/utils/featureFlags';
+import styled from 'styled-components';
+import { lightGrey } from 'lib/utils/Colors';
+import TitleRowActions from './TitleRowActions';
 
 type Props = {
   icon: AllIconTypes;
@@ -25,28 +26,26 @@ export default function ResourceTileRow({
     }
   );
 
-  const showCollections = useCollectionFeature();
   return (
-    <Row align="middle" justify="space-between">
-      <Col>
+    <TitleRow align="middle" justify="space-between">
+      <Col flex="auto">
         <Space size="large" align="center">
           <Icon type={isFetched ? icon : 'Loading'} />
           <h1>{getTitle(data) || id}</h1>
         </Space>
       </Col>
-      {showCollections && (
-        <Col>
-          <CollectionsDropdown
-            type={type}
-            items={[{ id }]}
-            button={
-              <Button icon="ChevronDownCompact" iconPlacement="right">
-                Add to collection
-              </Button>
-            }
-          />
-        </Col>
-      )}
-    </Row>
+      <Col flex="none">
+        <TitleRowActions type={type} id={id} />
+      </Col>
+    </TitleRow>
   );
 }
+
+const TitleRow = styled(Row)`
+  h1 {
+    margin: 0;
+  }
+  margin: 16px 0;
+  border-bottom: 1px solid ${lightGrey};
+  padding-bottom: 16px;
+`;
