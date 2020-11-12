@@ -11,8 +11,8 @@
  */
 export function isTheSameDomain(url1: string, url2: string = location.origin) {
   const isRelative = (url: string) => {
-    if (url.startsWith('https://') || url.startsWith('http://') || url.startsWith('//')) {
-      return false;
+    if (url.match(/^.*\/\//)) {
+      return false; // starts with protocol - means absolute url, e.g. https://foo.bar/baz
     }
     return true;
   };
@@ -26,8 +26,13 @@ export function isTheSameDomain(url1: string, url2: string = location.origin) {
   }
 
   try {
-    const constructedURLs = [new URL(url1), new URL(url2)];
-    return constructedURLs[0].origin === constructedURLs[1].origin;
+    // url that starts with '//' considered invalid for URL constructor
+    // but browsers usually work just fine with them when it comes to links
+    // and we just need to compare origins here anyway
+    const urls = [url1, url2].map(url => (url.startsWith('//') ? 'https:' + url : url));
+
+    const constructedURLs = urls.map(url => new URL(url));
+    return constructedURLs[0].host === constructedURLs[1].host;
   } catch (e) {
     console.error(`can not create URLs for ${url1} and ${url2}`, e);
     return false;
