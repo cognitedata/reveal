@@ -4,8 +4,8 @@ import { screen } from '@testing-library/react';
 import { Base } from './Home.stories';
 
 describe('<Home />', () => {
-  test('renders learn react link', async () => {
+  test('renders Suitebar', async () => {
     render(<Base />);
-    expect(await screen.findByText(/learn about/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Executive overview/i)).toBeInTheDocument();
   });
 });

@@ -1308,6 +1308,11 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.7.0"
 
+"@cognite/z-index@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/z-index/-/z-index-0.1.0.tgz#7665935035859a906e6edda5e743158007cad7d3"
+  integrity sha512-WAE12qvyQmBpUacrnFdgYcq6Wn359FzVpgVzxMj9roA+cJTlnYdueMcfksBZRCX5HuNRksnOfRk8SrRFd9yeUw==
+
 "@commitlint/execute-rule@^11.0.0":
   version "11.0.0"
   resolved "https://registry.yarnpkg.com/@commitlint/execute-rule/-/execute-rule-11.0.0.tgz#3ed60ab7a33019e58d90e2d891b75d7df77b4b4d"
