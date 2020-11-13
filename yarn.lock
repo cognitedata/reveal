@@ -1537,10 +1537,10 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.5.0.tgz#275fb80319a3f7643e3e4527df28aaa24abcbde7"
-  integrity sha512-JbtBNEP7cc85LlmcWLjBbxebidNyLgi75u7ADag9BKrMyrZw9ai4NYklMH8CZOTI/5A6L4Dqzg83/xlvyCxB6w==
+"@cognite/react-picture-annotation@^1.6.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.7.0.tgz#c6836e8e5c73f039a706527d10b2334ebc20da0c"
+  integrity sha512-J2Ae9orzi9gLPNz7o8h94XDviJ/EVacAGI9yL0vParncfsLHCIafgESbTg9QlyF0NdeAui3NRiugMvHFse1zwQ==
   dependencies:
     "@cognite/annotations" "^1.0.3"
     "@cognite/cogs.js" "^2.0.3"
@@ -1549,6 +1549,8 @@
     parse-color "^1.0.0"
     pdf-lib "^1.11.2"
     pdfjs-dist "2.6.347"
+    react-archer "^2.0.2"
+    react-draggable "^4.4.3"
     react-is "^17.0.1"
     reselect "^4.0.0"
     styled-components "^5.2.0"
@@ -15335,6 +15337,14 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
+react-archer@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-archer/-/react-archer-2.0.2.tgz#aa7f36769d12d1610707b52e287ed57aa93f2436"
+  integrity sha512-olKb+sdqsES0KO2MQ17ziMnk+KoYUXKzpLhtyMcEjbSiLxDzDZpNYPlkFGmogEyRxvxWdvwVxlrQyWf/XDs/Aw==
+  dependencies:
+    react-fast-compare "^2.0.4"
+    resize-observer-polyfill "1.5.0"
+
 react-base-table@^1.12.0:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/react-base-table/-/react-base-table-1.12.0.tgz#3fc39f1cc7d1a4b349572e1d2b283626987d5dcc"
@@ -15469,7 +15479,7 @@ react-dom@^16.14.0, react-dom@^16.8.3:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
-react-draggable@^4.0.3:
+react-draggable@^4.0.3, react-draggable@^4.4.3:
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.3.tgz#0727f2cae5813e36b0e4962bf11b2f9ef2b406f3"
   integrity sha512-jV4TE59MBuWm7gb6Ns3Q1mxX8Azffb7oTtDtBgFkxRvhDp38YAARmRplrj0+XGkhOJB5XziArX+4HUUABtyZ0w==
@@ -15494,6 +15504,11 @@ react-error-overlay@^6.0.7:
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.7.tgz#1dcfb459ab671d53f660a991513cb2f0a0553108"
   integrity sha512-TAv1KJFh3RhqxNvhzxj6LeT5NWklP6rDr2a0jaTfsZ5wSZWHOGeqQyejUp3xxLfPt2UpyJEcVQB/zyPcmonNFA==
+
+react-fast-compare@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
+  integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
 react-fast-compare@^3.0.1:
   version "3.2.0"
@@ -16255,6 +16270,11 @@ reselect@*, reselect@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.0.0.tgz#f2529830e5d3d0e021408b246a206ef4ea4437f7"
   integrity sha512-qUgANli03jjAyGlnbYVAV5vvnOmJnODyABz51RdBN7M4WaVu8mecZWgyQNkG8Yqe3KRGRt0l4K4B3XVEULC4CA==
+
+resize-observer-polyfill@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.0.tgz#660ff1d9712a2382baa2cad450a4716209f9ca69"
+  integrity sha512-M2AelyJDVR/oLnToJLtuDJRBBWUGUvvGigj1411hXhAdyFWqMaqHp7TixW3FpiLuVaikIcR1QL+zqoJoZlOgpg==
 
 resize-observer-polyfill@1.5.1, resize-observer-polyfill@^1.5.0, resize-observer-polyfill@^1.5.1:
   version "1.5.1"

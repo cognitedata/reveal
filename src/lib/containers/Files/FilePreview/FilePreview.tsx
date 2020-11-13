@@ -32,7 +32,7 @@ import { FileOverviewPanel } from './FileOverviewPanel';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//dev.fusion.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 
 type Props = {
   fileId: number;
