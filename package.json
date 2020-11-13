@@ -58,7 +58,7 @@
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.5",
-    "single-spa": "^5.8.0",
+    "single-spa": "^5.8.2",
     "single-spa-react": "^3.1.0",
     "styled-components": "^5.2.1",
     "systemjs-webpack-interop": "^2.1.1",
