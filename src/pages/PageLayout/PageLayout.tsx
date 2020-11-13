@@ -1,25 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AppHeader from 'components/navigation/AppHeader';
 import LeftSidebar from 'components/navigation/LeftSidebar';
-import { Content } from './elements';
+import { useClickAwayListener } from 'hooks/useClickAwayListener';
+import { Content, Navigation } from './elements';
 
 interface Props {
   children: React.ReactNode;
 }
 
 const PageLayout: React.FC<Props> = ({ children }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const {
+    ref,
+    isComponentVisible,
+    setIsComponentVisible,
+  } = useClickAwayListener(false);
+
   const handleClick = () => {
-    setIsOpen(() => !isOpen);
+    setIsComponentVisible(() => !isComponentVisible);
   };
 
   return (
     <>
-      <AppHeader handleClick={handleClick} />
-      <div>
-        <LeftSidebar isOpen={isOpen} />
-        <Content data-testid="page-content">{children}</Content>
-      </div>
+      <Navigation ref={ref}>
+        <AppHeader data-testid="app-header" handleClick={handleClick} />
+        <LeftSidebar isOpen={isComponentVisible} />
+      </Navigation>
+      <Content data-testid="page-content">{children}</Content>
     </>
   );
 };

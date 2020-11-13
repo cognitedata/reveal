@@ -1,19 +1,12 @@
 import styled from 'styled-components/macro';
 import layers from '_helpers/zindex';
 
-export const AppHeaderCotainer = styled.div`
-  position: sticky;
-  top: 0;
-  background-color: var(--cogs-white);
-  z-index: ${layers.APP_HEADER};
-`;
-
 export const SidebarContainer = styled.div<{
   open?: boolean;
 }>`
   position: fixed;
   height: 100%;
-  width: 258px;
+  width: 298px;
   box-shadow: var(--cogs-z-12);
   padding: 16px 24px;
   z-index: ${layers.LEFT_SIDEBAR};

@@ -7,7 +7,7 @@ interface Props {
   title?: string;
   disabled?: boolean;
   size?: AvatarSize;
-  color: string;
+  color?: string;
 }
 
 // Replace any with proper type
