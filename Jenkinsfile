@@ -95,16 +95,7 @@ def pods = { body ->
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
       ) {
-        // This enables codecov for the repo. If this fails to start, then
-        // do the following:
-        //  1. Obtain a token by going to:
-        //     https://codecov.io/gh/cognitedata/YOUR-REPO-HERE
-        //  2. Create a PR similar to:
-        //     https://github.com/cognitedata/terraform/pull/1923
-        //  3. Get that PR approved, applied, and merged
-        //
-        // If you don't want codecoverage, then you can just remove this.
-        // codecov.pod {
+        codecov.pod {
           testcafe.pod() {
             properties([
               buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
@@ -128,19 +119,16 @@ def pods = { body ->
               body()
             }
           }
-        // } Code cov
+        } 
       }
     }
   }
 }
 
 pods {
-  final boolean isStaging = env.BRANCH_NAME == 'staging'
+  final boolean isStaging = env.BRANCH_NAME == 'master'
   final boolean isProduction = env.BRANCH_NAME.startsWith('release-')
   final boolean isPullRequest = !!env.CHANGE_ID
-  print(isPullRequest)
-  print(env)
-  print(env.CHANGE_ID)
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
     logErrors: isStaging || isProduction
@@ -219,39 +207,19 @@ pods {
           }
         },
 
+        // TBA
         // 'E2e': {
         //   testcafe.runE2EStage(
-        //     //
-        //     // multi-branch mode:
-        //     //
-        //     // We don't need to run end-to-end tests against release because
-        //     // we're in one of two states:
-        //     //   1. Cutting a new release
-        //     //      In this state, staging has e2e already passing.
-        //     //   2. Cherry-picking in a hotfix
-        //     //      In this state, the PR couldn't have been merged without
-        //     //      passing end-to-end tests.
-        //     // As such, we can skip end-to-end tests on release branches. As
-        //     // a side-effect, this will make hotfixes hit production faster!
         //     shouldExecute: !isRelease,
-
-        //     //
-        //     // single-branch mode:
-        //     //
-        //     // shouldExecute: true,
-
-        //     // buildCommand: 'yarn testcafe:build',
-        //     // runCommand: 'yarn testcafe:start'
+        //     buildCommand: 'yarn testcafe:build',
+        //     runCommand: 'yarn testcafe:start'
         //   )
         // },
       ],
       workers: 3,
     )
 
-    print "test"
-
     stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
-      print "pr"
       if (!isPullRequest) {
         print "Not a PR, no need to preview"
         return
