@@ -7,6 +7,7 @@ import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { ResourceType } from 'lib';
 import { createLink } from '@cognite/cdf-utilities';
 import DownloadButton from './DownloadButton';
+import CopyIdsButton from './CopyIdsButton';
 
 type Props = {
   id: number;
@@ -19,7 +20,6 @@ export default function TitleRowActions({ type, id }: Props) {
   return (
     <Space>
       <DownloadButton id={id} type={type} />
-      <Button type="ghost" disabled icon={<Icon type="DataTable" />} />
       {showCollections && (
         <CollectionsDropdown
           type={type}
@@ -27,7 +27,7 @@ export default function TitleRowActions({ type, id }: Props) {
           button={<Button type="ghost" icon={<Icon type="Folder" />} />}
         />
       )}
-      <Button type="ghost" disabled icon={<Icon type="Copy" />} />
+      <CopyIdsButton id={id} type={type} />
       <Link to={createLink(`/explore/${type}/${id}`)}>
         <Button type="ghost" icon={<Icon type="Expand" />} />
       </Link>
