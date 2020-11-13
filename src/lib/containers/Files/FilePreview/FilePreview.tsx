@@ -57,7 +57,102 @@ const convertAnnotation = (jobId: number, fileId: number) => (
   },
 });
 
-const FilePreview = ({
+type FilePreviewProps = {
+  fileId: number;
+  creatable: boolean;
+  contextualization: boolean;
+};
+export const FilePreview = ({
+  fileId,
+  creatable,
+  contextualization,
+}: FilePreviewProps) => {
+  const [pendingAnnotations, setPendingAnnotations] = useState<
+    ProposedCogniteAnnotation[]
+  >([]);
+  const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
+    id: fileId,
+  });
+  const canPreviewFile = file && isFilePreviewable(file);
+
+  const findSimilarJobId = useFindSimilarJobId(fileId);
+  const { data: similarData } = useJob(findSimilarJobId);
+  const { annotations: findSimilarItems } = similarData || {};
+  const findSimilarAnnotations =
+    findSimilarJobId && findSimilarItems
+      ? findSimilarItems.map(convertAnnotation(findSimilarJobId, fileId))
+      : [];
+
+  const findObjectsJobId = useFindObjectsJobId(fileId);
+  const { data: objectData } = useJob(findObjectsJobId);
+  const { annotations: findObjectsItems } = objectData || {};
+  const findObjectsAnnotations =
+    findObjectsJobId && findObjectsItems
+      ? findObjectsItems.map(convertAnnotation(findObjectsJobId, fileId))
+      : [];
+
+  const persistedAnnotations = useAnnotations(fileId);
+  const allAnnotations = [
+    ...persistedAnnotations,
+    ...pendingAnnotations,
+    ...findSimilarAnnotations,
+    ...findObjectsAnnotations,
+  ].filter(removeSimilarAnnotations);
+
+  if (!fileFetched) {
+    return <Loader />;
+  }
+
+  if (!canPreviewFile) {
+    return (
+      <CenteredPlaceholder>
+        <h1>No Preview For File</h1>
+        <p>Please search for a File to start viewing.</p>
+      </CenteredPlaceholder>
+    );
+  }
+
+  return (
+    <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      <CogniteFileViewer.FileViewer
+        file={file}
+        creatable={creatable}
+        annotations={allAnnotations}
+        hideDownload
+        hideSearch
+        renderAnnotation={(annotation, isAnnotationSelected) => {
+          const iAnnotation = convertCogniteAnnotationToIAnnotation(
+            annotation,
+            isAnnotationSelected,
+            false
+          );
+          if (annotation.metadata && annotation.metadata.color) {
+            iAnnotation.mark.strokeColor = annotation.metadata.color;
+          }
+          return iAnnotation;
+        }}
+        editCallbacks={{
+          onCreate: (item: PendingCogniteAnnotation) => {
+            const newItem = { ...item, id: uuid() };
+            setPendingAnnotations([newItem]);
+            return false;
+          },
+          onUpdate: () => {
+            return false;
+          },
+        }}
+      />
+      <AnnotationPreviewSidebar
+        fileId={fileId}
+        pendingAnnotations={pendingAnnotations}
+        setPendingAnnotations={setPendingAnnotations}
+        contextualization={contextualization}
+      />
+    </div>
+  );
+};
+
+const FilePreviewPage = ({
   fileId,
   contextualization = false,
   selectionMode = 'none',
@@ -74,87 +169,6 @@ const FilePreview = ({
     setPendingAnnotations([]);
   }, [fileId]);
 
-  const findObjectsJobId = useFindObjectsJobId(fileId);
-  const { data: objectData } = useJob(findObjectsJobId);
-  const { annotations: findObjectsItems } = objectData || {};
-  const findObjectsAnnotations =
-    findObjectsJobId && findObjectsItems
-      ? findObjectsItems.map(convertAnnotation(findObjectsJobId, fileId))
-      : [];
-
-  const findSimilarJobId = useFindSimilarJobId(fileId);
-  const { data: similarData } = useJob(findSimilarJobId);
-  const { annotations: findSimilarItems } = similarData || {};
-  const findSimilarAnnotations =
-    findSimilarJobId && findSimilarItems
-      ? findSimilarItems.map(convertAnnotation(findSimilarJobId, fileId))
-      : [];
-
-  const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>(
-    'files',
-    { id: fileId! },
-    {
-      enabled: !!fileId,
-    }
-  );
-
-  const persistedAnnotations = useAnnotations(fileId);
-  const allAnnotations = [
-    ...persistedAnnotations,
-    ...pendingAnnotations,
-    ...findSimilarAnnotations,
-    ...findObjectsAnnotations,
-  ].filter(removeSimilarAnnotations);
-
-  const canPreviewFile = file && isFilePreviewable(file);
-
-  const content = () => {
-    if (!fileFetched) {
-      return <Loader />;
-    }
-
-    if (!canPreviewFile) {
-      return (
-        <CenteredPlaceholder>
-          <h1>No Preview For File</h1>
-          <p>Please search for a File to start viewing.</p>
-        </CenteredPlaceholder>
-      );
-    }
-    return (
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        <CogniteFileViewer.FileViewer
-          file={file}
-          creatable={creatable}
-          annotations={allAnnotations}
-          hideDownload
-          hideSearch
-          renderAnnotation={(annotation, isAnnotationSelected) => {
-            const iAnnotation = convertCogniteAnnotationToIAnnotation(
-              annotation,
-              isAnnotationSelected,
-              false
-            );
-            if (annotation.metadata && annotation.metadata.color) {
-              iAnnotation.mark.strokeColor = annotation.metadata.color;
-            }
-            return iAnnotation;
-          }}
-          editCallbacks={{
-            onCreate: (item: PendingCogniteAnnotation) => {
-              const newItem = { ...item, id: uuid() };
-              setPendingAnnotations([newItem]);
-              return false;
-            },
-            onUpdate: () => {
-              return false;
-            },
-          }}
-        />
-      </div>
-    );
-  };
-
   return (
     <>
       <Splitter primaryIndex={1}>
@@ -169,14 +183,12 @@ const FilePreview = ({
           onSelect={onSelect}
           isSelected={isSelected}
         />
-        {content()}
+        <FilePreview
+          fileId={fileId}
+          creatable={creatable}
+          contextualization={contextualization}
+        />
       </Splitter>
-      <AnnotationPreviewSidebar
-        fileId={fileId}
-        pendingAnnotations={pendingAnnotations}
-        setPendingAnnotations={setPendingAnnotations}
-        contextualization={contextualization}
-      />
     </>
   );
 };
@@ -193,9 +205,9 @@ const WrappedFilePreview = (props: Props) => {
   const sdk = useSDK();
   return (
     <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
-      <FilePreview {...props} />
+      <FilePreviewPage {...props} />
     </CogniteFileViewer.Provider>
   );
 };
 
-export { WrappedFilePreview as FilePreview };
+export { WrappedFilePreview as FilePreviewPage };

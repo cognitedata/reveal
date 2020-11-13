@@ -120,6 +120,10 @@ const AnnotationPreviewSidebar = ({
 
   const isEditingMode = isPendingAnnotation || editing;
 
+  useEffect(() => {
+    hidePreview();
+  }, [fileId, hidePreview]);
+
   const onSuccess = () => {
     const invalidate = () =>
       queryCache.invalidateQueries(['cdf', 'events', 'list']);
