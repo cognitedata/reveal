@@ -9,9 +9,9 @@
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --env=jest-environment-jsdom-fourteen",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
+    "eslint": "yarn eslint:changed \"src/**/*.{js,ts,tsx}\"",
     "eslint:changed": "eslint --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "prettier": "prettier --config .prettierrc -l \"src/**/*.{js,ts,tsx}\" || (echo \nThese files are not formatted correctly && false)",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {

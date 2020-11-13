@@ -1,38 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { Tabs } from 'antd';
-import styled from 'styled-components';
 import OverviewTab from './OverviewTab';
 import ExtractorDownloadsTab from './ExtractorDownloadsTab';
-
-const { TabPane } = Tabs;
-
-const StyledTabs = styled((props) => <Tabs {...props} />)`
-  height: 100%;
-  .ant-tabs-nav {
-    padding: 0 1rem;
-    margin-bottom: 0;
-  }
-  .ant-tabs-tabpane {
-    display: grid;
-    grid-template-columns: auto 25rem;
-  }
-  .ant-tabs-tab {
-    &.ant-tabs-tab-active {
-      .ant-tabs-tab-btn {
-        color: black;
-      }
-    }
-    .ant-tabs-tab-btn {
-      font-weight: 600;
-    }
-  }
-  .ant-tabs-content {
-    height: 100%;
-  }
-`;
-const StyledTabPane = styled((props) => (
-  <TabPane {...props}>{props.children}</TabPane>
-))``;
+import { StyledTabs, StyledTabPane } from './TabsStyle';
 
 interface OwnProps {}
 
