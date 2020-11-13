@@ -27,6 +27,6 @@ h3 {
 
 
 /* Cogs / Ant interop */
-.ant-btn-icon-only .cogs-icon {
-  margin: 0 auto;
+.ant-btn .cogs-icon {
+  margin-top: 5px;
 }

@@ -51,9 +51,11 @@ function MetadataDownload({ id, type }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Button type="ghost" disabled={downloading}>
-        <Icon type={downloading ? 'Loading' : 'Download'} />
-      </Button>
+      <Button
+        type="ghost"
+        disabled={downloading}
+        icon={<Icon type={downloading ? 'Loading' : 'Download'} />}
+      />
     </Dropdown>
   );
 }
@@ -140,9 +142,11 @@ function TimeseriesDownloadButton({ id, type }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Button type="ghost" disabled={downloading}>
-        <Icon type={downloading ? 'Loading' : 'Download'} />
-      </Button>
+      <Button
+        type="ghost"
+        disabled={downloading}
+        icon={<Icon type={downloading ? 'Loading' : 'Download'} />}
+      />
     </Dropdown>
   );
 }

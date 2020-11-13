@@ -19,25 +19,17 @@ export default function TitleRowActions({ type, id }: Props) {
   return (
     <Space>
       <DownloadButton id={id} type={type} />
-      <Button type="ghost" disabled>
-        <Icon type="DataTable" />
-      </Button>
+      <Button type="ghost" disabled icon={<Icon type="DataTable" />} />
       {showCollections && (
         <CollectionsDropdown
           type={type}
           items={[{ id }]}
-          button={
-            <Button type="ghost">
-              <Icon type="Folder" />
-            </Button>
-          }
+          button={<Button type="ghost" icon={<Icon type="Folder" />} />}
         />
       )}
-      <Button type="ghost" disabled>
-        <Icon type="Copy" />
-      </Button>
+      <Button type="ghost" disabled icon={<Icon type="Copy" />} />
       <Link to={createLink(`/explore/${type}/${id}`)}>
-        <Button type="ghost">View</Button>
+        <Button type="ghost" icon={<Icon type="Expand" />} />
       </Link>
     </Space>
   );
