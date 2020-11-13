@@ -1,4 +1,8 @@
-import { useList, useCdfItems } from '@cognite/sdk-react-query-hooks';
+import {
+  useList,
+  useCdfItems,
+  useAggregate,
+} from '@cognite/sdk-react-query-hooks';
 import {
   ExternalId,
   Timeseries,
@@ -7,7 +11,8 @@ import {
   Sequence,
   FileInfo as File,
 } from '@cognite/sdk/dist/src';
-import { ResourceType } from 'lib/types';
+import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
+import { formatNumber } from 'lib/utils/numbers';
 
 export type Relationship = {
   targetType: ResourceType;
@@ -17,7 +22,8 @@ export type Relationship = {
 };
 
 export const useRelationships = (
-  resourceExternalId?: string
+  resourceExternalId?: string,
+  types?: ResourceType[]
 ): { data: (ExternalId & { type: ResourceType })[]; isFetching: boolean } => {
   const {
     data: sourceRelationships = [],
@@ -26,9 +32,9 @@ export const useRelationships = (
     // @ts-ignore
     'relationships',
     {
-      filter: { sourceExternalIds: [resourceExternalId] },
+      filter: { sourceExternalIds: [resourceExternalId], targetTypes: types },
     },
-    { enabled: !!resourceExternalId }
+    { enabled: !!resourceExternalId, staleTime: 60 * 1000 }
   );
 
   const {
@@ -38,9 +44,9 @@ export const useRelationships = (
     // @ts-ignore
     'relationships',
     {
-      filter: { targetExternalIds: [resourceExternalId] },
+      filter: { targetExternalIds: [resourceExternalId], sourceTypes: types },
     },
-    { enabled: !!resourceExternalId, staleTime: Infinity }
+    { enabled: !!resourceExternalId, staleTime: 60 * 1000 }
   );
 
   return {
@@ -59,7 +65,7 @@ export const useRelationships = (
 };
 
 export const useRelatedResources = (
-  relations: (ExternalId & { type: ResourceType })[]
+  relations: (ExternalId & { type: ResourceType })[] | []
 ): {
   data: {
     asset: Asset[];
@@ -73,21 +79,21 @@ export const useRelatedResources = (
     .filter(el => el.type === 'asset')
     .map(({ externalId }) => ({ externalId }));
   const { data: assets = [] } = useCdfItems<Asset>('assets', assetIds, {
-    enabled: relations && assetIds?.length > 0,
+    enabled: relations.length > 0 && assetIds?.length > 0,
   });
 
   const eventIds = relations
     .filter(el => el.type === 'event')
     .map(({ externalId }) => ({ externalId }));
   const { data: events = [] } = useCdfItems<CogniteEvent>('events', eventIds, {
-    enabled: relations && eventIds?.length > 0,
+    enabled: relations.length > 0 && eventIds?.length > 0,
   });
 
   const fileIds = relations
     .filter(el => el.type === 'file')
     .map(({ externalId }) => ({ externalId }));
   const { data: files = [] } = useCdfItems<File>('files', fileIds, {
-    enabled: relations && fileIds?.length > 0,
+    enabled: relations.length > 0 && fileIds?.length > 0,
   });
 
   const sequenceIds = relations
@@ -97,7 +103,7 @@ export const useRelatedResources = (
     'sequences',
     sequenceIds,
     {
-      enabled: relations && sequenceIds?.length > 0,
+      enabled: relations.length > 0 && sequenceIds?.length > 0,
     }
   );
 
@@ -108,7 +114,7 @@ export const useRelatedResources = (
     'timeseries',
     timeseriesIds,
     {
-      enabled: relations && timeseriesIds?.length > 0,
+      enabled: relations.length > 0 && timeseriesIds?.length > 0,
     }
   );
 
@@ -119,6 +125,55 @@ export const useRelatedResources = (
       file: files,
       sequence: sequences,
       timeSeries: timeseries,
+    },
+  };
+};
+
+export const useRelatedResourceCount = (
+  resource: ResourceItem,
+  type: ResourceType
+): { count: string } => {
+  const isAsset = resource.type === 'asset';
+
+  const { data, isFetched } = useAggregate(
+    convertResourceType(type),
+    { assetSubtreeIds: [{ id: resource.id }] },
+    { enabled: isAsset && !!resource.id }
+  );
+
+  const {
+    data: relationships,
+    isFetching: isFetchingRelationships,
+  } = useRelationships(resource.externalId, [type]);
+
+  let count: string = '0';
+  if (isAsset && isFetched && data && !isFetchingRelationships) {
+    count = formatNumber(data?.count + relationships.length);
+  }
+
+  if (!isFetchingRelationships && relationships?.length > 0) {
+    count = formatNumber(relationships.length);
+  }
+
+  return { count };
+};
+
+export const useRelatedResourceCounts = (
+  resource: ResourceItem
+): { counts: { [key in ResourceType]: string } } => {
+  const { count: asset } = useRelatedResourceCount(resource, 'asset');
+  const { count: event } = useRelatedResourceCount(resource, 'event');
+  const { count: file } = useRelatedResourceCount(resource, 'file');
+  const { count: sequence } = useRelatedResourceCount(resource, 'sequence');
+  const { count: timeSeries } = useRelatedResourceCount(resource, 'timeSeries');
+
+  return {
+    counts: {
+      asset,
+      event,
+      file,
+      sequence,
+      timeSeries,
     },
   };
 };

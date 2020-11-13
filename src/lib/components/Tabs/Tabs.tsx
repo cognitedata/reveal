@@ -35,17 +35,23 @@ export const Tabs = <T extends string>({
           const item = (children.find(
             tab => tab.key === key
           )! as unknown) as React.ReactElement<TabPaneProps>;
+          const { disabled, title } = item.props;
 
           return (
             <TabHeader
               selected={key === currentTab}
-              onClick={() => {
-                setTab(key);
-                onTabChange(key);
-              }}
+              disabled={disabled}
+              onClick={
+                disabled
+                  ? () => {}
+                  : () => {
+                      setTab(key);
+                      onTabChange(key);
+                    }
+              }
               key={key}
             >
-              {item.props.title}
+              {title}
             </TabHeader>
           );
         })}
@@ -60,6 +66,7 @@ export type TabPaneProps = {
   children?: React.ReactNode;
   key: string;
   title: React.ReactNode;
+  disabled?: boolean;
 };
 
 const TabPane: React.FC<TabPaneProps> = ({ children }: TabPaneProps) => {
@@ -79,10 +86,10 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-const TabHeader = styled.div<{ selected?: boolean }>(
+const TabHeader = styled.div<{ selected?: boolean; disabled?: boolean }>(
   props => css`
     margin-right: 32px;
-    cursor: pointer;
+    cursor: ${props.disabled ? 'not-allowed' : 'pointer'};
     transition: 0.3s all;
     padding-bottom: 10px;
     border-bottom: 3px solid
