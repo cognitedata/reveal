@@ -23,7 +23,7 @@
     "@cognite/gearbox": "^2.1.0",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-feature-flags": "^0.0.1",
-    "@cognite/reveal": "1.2.1",
+    "@cognite/reveal": "1.2.2",
     "@cognite/z-index": "^0.1.0",
     "@google-cloud/storage": "^5.5.0",
     "@rescripts/cli": "^0.0.14",
