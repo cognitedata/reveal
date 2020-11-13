@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
 
 export default {
@@ -6,5 +7,9 @@ export default {
 };
 
 export const Base = () => {
-  return <Home />;
+  return (
+    <MemoryRouter>
+      <Home />
+    </MemoryRouter>
+  );
 };
