@@ -7,14 +7,14 @@ import { ResourceType, ResourceItem } from 'lib/types';
 import React from 'react';
 import styled from 'styled-components';
 
-export const RelationsTable = ({
+export const RelationshipList = ({
   assetId,
   relations,
-  getResourcePath,
+  onClick,
 }: {
-  assetId: number | undefined;
+  assetId?: number;
   relations: (ExternalId & { type: ResourceType })[];
-  getResourcePath: (item: ResourceItem) => string;
+  onClick: (item: ResourceItem) => void;
 }) => {
   const {
     data: { asset, event, file, timeSeries, sequence },
@@ -44,7 +44,7 @@ export const RelationsTable = ({
         <RelationItem
           type="asset"
           title={linkedAsset.name}
-          path={getResourcePath({ type: 'asset', id: linkedAsset.id })}
+          onClick={() => onClick({ type: 'asset', id: linkedAsset.id })}
         />
       )}
 
@@ -53,7 +53,7 @@ export const RelationsTable = ({
           type="asset"
           title={item.name}
           key={item.id}
-          path={getResourcePath({ type: 'asset', id: item.id })}
+          onClick={() => onClick({ type: 'asset', id: item.id })}
         />
       ))}
 
@@ -62,7 +62,7 @@ export const RelationsTable = ({
           type="event"
           title={item.id}
           key={item.id}
-          path={getResourcePath({ type: 'event', id: item.id })}
+          onClick={() => onClick({ type: 'event', id: item.id })}
         />
       ))}
 
@@ -71,7 +71,7 @@ export const RelationsTable = ({
           type="file"
           title={item.name}
           key={item.id}
-          path={getResourcePath({ type: 'file', id: item.id })}
+          onClick={() => onClick({ type: 'file', id: item.id })}
         />
       ))}
 
@@ -80,7 +80,7 @@ export const RelationsTable = ({
           type="timeSeries"
           title={item.name}
           key={item.id}
-          path={getResourcePath({ type: 'timeSeries', id: item.id })}
+          onClick={() => onClick({ type: 'timeSeries', id: item.id })}
         />
       ))}
 
@@ -89,7 +89,7 @@ export const RelationsTable = ({
           type="sequence"
           title={item.name}
           key={item.id}
-          path={getResourcePath({ type: 'sequence', id: item.id })}
+          onClick={() => onClick({ type: 'sequence', id: item.id })}
         />
       ))}
 

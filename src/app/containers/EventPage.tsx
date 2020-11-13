@@ -8,10 +8,13 @@ import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 import { ErrorFeedback, Loader } from 'lib/components';
-import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
+import { useHistory } from 'react-router';
+import { createLink } from '@cognite/cdf-utilities';
+import { RelationshipList } from 'lib';
 
 export const EventPage = () => {
+  const history = useHistory();
   const { id: eventIdString } = useParams<{
     id: string;
   }>();
@@ -59,7 +62,12 @@ export const EventPage = () => {
           <EventDetails event={event} showAll />
         </Col>
         <Col span={6}>
-          <ResourceDetailsSidebar relations={relationships} />
+          <RelationshipList
+            relations={relationships}
+            onClick={item =>
+              history.push(createLink(`/explore/${item.type}/${item.id}`))
+            }
+          />
         </Col>
       </Row>
     </>

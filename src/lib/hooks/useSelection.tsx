@@ -12,62 +12,60 @@ export const useSelectionButton = (
   onSelect: OnResourceSelectedCallback,
   small = false
 ) => {
-  return () => {
-    let resourceName = 'Resource';
-    switch (item.type) {
-      case 'asset': {
-        resourceName = 'Asset';
-        break;
-      }
-      case 'event': {
-        resourceName = 'Event';
-        break;
-      }
-      case 'sequence': {
-        resourceName = 'Sequence';
-        break;
-      }
-      case 'file': {
-        resourceName = 'File';
-        break;
-      }
-      case 'timeSeries': {
-        resourceName = 'Time series';
-        break;
-      }
+  let resourceName = 'Resource';
+  switch (item.type) {
+    case 'asset': {
+      resourceName = 'Asset';
+      break;
     }
-    if (mode === 'multiple') {
-      return (
-        <Button
-          key={`${item.id}-select-button`}
-          type={isSelected ? 'secondary' : 'primary'}
-          icon={isSelected ? 'Minus' : 'Plus'}
-          size={small ? 'small' : 'default'}
-          onClick={() => {
-            onSelect();
-          }}
-        >
-          {isSelected ? 'Un-Select' : 'Select'}
-        </Button>
-      );
+    case 'event': {
+      resourceName = 'Event';
+      break;
     }
-    if (mode === 'single') {
-      return (
-        <Button
-          key={`${item.id}-select-button`}
-          type="primary"
-          onClick={() => {
-            onSelect();
-          }}
-          size={small ? 'small' : 'default'}
-          icon="Plus"
-        >
-          {isSelected ? 'Current Selection' : `Select ${resourceName}`}
-        </Button>
-      );
+    case 'sequence': {
+      resourceName = 'Sequence';
+      break;
     }
-    return null;
-  };
+    case 'file': {
+      resourceName = 'File';
+      break;
+    }
+    case 'timeSeries': {
+      resourceName = 'Time series';
+      break;
+    }
+  }
+  if (mode === 'multiple') {
+    return (
+      <Button
+        key={`${item.id}-select-button`}
+        type={isSelected ? 'secondary' : 'primary'}
+        icon={isSelected ? 'Minus' : 'Plus'}
+        size={small ? 'small' : 'default'}
+        onClick={() => {
+          onSelect();
+        }}
+      >
+        {isSelected ? 'Un-Select' : 'Select'}
+      </Button>
+    );
+  }
+  if (mode === 'single') {
+    return (
+      <Button
+        key={`${item.id}-select-button`}
+        type="primary"
+        onClick={() => {
+          onSelect();
+        }}
+        size={small ? 'small' : 'default'}
+        icon="Plus"
+      >
+        {isSelected ? 'Current Selection' : `Select ${resourceName}`}
+      </Button>
+    );
+  }
+  return null;
 };
 
 export const useSelectionCheckbox = (

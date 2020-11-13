@@ -3,14 +3,7 @@ import { FileInfo as File, FileInfo } from '@cognite/sdk';
 import { TimeDisplay, TableProps, Table } from 'lib/components';
 import { Body } from '@cognite/cogs.js';
 
-export const FileTable = ({
-  items,
-  onItemClicked,
-  ...props
-}: {
-  items: File[];
-  onItemClicked: (file: File) => void;
-} & TableProps<File>) => {
+export const FileTable = (props: TableProps<File>) => {
   const columns = [
     Table.Columns.name,
     Table.Columns.mimeType,
@@ -29,12 +22,5 @@ export const FileTable = ({
     Table.Columns.createdTime,
   ];
 
-  return (
-    <Table<FileInfo>
-      data={items}
-      columns={columns}
-      onRowClick={onItemClicked}
-      {...props}
-    />
-  );
+  return <Table<FileInfo> columns={columns} {...props} />;
 };

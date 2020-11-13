@@ -8,6 +8,7 @@ import { TimeseriesSmallPreview } from 'lib/containers/Timeseries';
 import { EventSmallPreview } from 'lib/containers/Events';
 import { Loader } from 'lib/components';
 import { ResourceItem } from 'lib/types';
+import { SelectableItemProps } from 'lib/CommonProps';
 
 type Props = {
   item?: ResourceItem;
@@ -16,8 +17,8 @@ type Props = {
   header?: React.ReactNode;
   footer?: React.ReactNode;
   content?: React.ReactNode;
-  onClose: () => void;
-};
+  onClose?: () => void;
+} & Partial<SelectableItemProps>;
 
 export const ResourcePreviewSidebar = ({
   item,
@@ -39,29 +40,37 @@ export const ResourcePreviewSidebar = ({
   header,
   footer,
   content: propContent,
-  onClose,
+  onClose = () => {},
+  selectionMode = 'none',
+  onSelect = () => {},
+  isSelected = false,
 }: Props) => {
+  const commonProps = { selectionMode, onSelect, isSelected };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {
       case 'asset': {
-        content = <AssetSmallPreview assetId={item.id} />;
+        content = <AssetSmallPreview assetId={item.id} {...commonProps} />;
         break;
       }
       case 'file': {
-        content = <FileSmallPreview fileId={item.id} />;
+        content = <FileSmallPreview fileId={item.id} {...commonProps} />;
         break;
       }
       case 'sequence': {
-        content = <SequenceSmallPreview sequenceId={item.id} />;
+        content = (
+          <SequenceSmallPreview sequenceId={item.id} {...commonProps} />
+        );
         break;
       }
       case 'timeSeries': {
-        content = <TimeseriesSmallPreview timeseriesId={item.id} />;
+        content = (
+          <TimeseriesSmallPreview timeseriesId={item.id} {...commonProps} />
+        );
         break;
       }
       case 'event': {
-        content = <EventSmallPreview eventId={item.id} />;
+        content = <EventSmallPreview eventId={item.id} {...commonProps} />;
         break;
       }
     }

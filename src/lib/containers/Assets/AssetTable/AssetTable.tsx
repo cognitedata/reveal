@@ -6,10 +6,10 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 const ParentCell = ({
   rootId,
-  onItemClicked,
+  onRowClick,
 }: {
   rootId: number;
-  onItemClicked: (asset: Asset) => void;
+  onRowClick: (asset: Asset) => void;
 }) => {
   const { data: rootAsset, isFetched } = useCdfItem<Asset>(
     'assets',
@@ -28,7 +28,7 @@ const ParentCell = ({
       onClick={e => {
         e.stopPropagation();
         if (rootAsset) {
-          onItemClicked(rootAsset);
+          onRowClick(rootAsset);
         }
       }}
     >
@@ -37,37 +37,22 @@ const ParentCell = ({
   );
 };
 
-export type AssetTableProps = {
-  items: Asset[];
-  onItemClicked: (asset: Asset) => void;
-} & TableProps<Asset>;
+export type AssetTableProps = TableProps<Asset>;
 
-export const AssetTable = ({
-  items,
-  onItemClicked,
-  ...props
-}: AssetTableProps) => {
+export const AssetTable = (props: AssetTableProps) => {
+  const { onRowClick = () => {} } = props;
   const columns = [
     Table.Columns.name,
-    Table.Columns.externalId,
     Table.Columns.description,
+    Table.Columns.externalId,
     Table.Columns.relationships,
     {
       ...Table.Columns.root,
       cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-        return (
-          <ParentCell rootId={asset.rootId} onItemClicked={onItemClicked} />
-        );
+        return <ParentCell rootId={asset.rootId} onRowClick={onRowClick} />;
       },
     },
   ];
 
-  return (
-    <Table<Asset>
-      data={items}
-      columns={columns}
-      onRowClick={onItemClicked}
-      {...props}
-    />
-  );
+  return <Table<Asset> columns={columns} {...props} />;
 };

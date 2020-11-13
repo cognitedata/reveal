@@ -1,20 +1,16 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { ResourceSelectionSidebar } from 'lib/containers/ResourceSidebar';
-import { ResourceItem } from 'lib/types';
+import { ResourceItem, ResourceItemState } from 'lib/types';
 import {
   InitialResourceFilterProps,
   SelectableItemsProps,
 } from 'lib/CommonProps';
 
-import {
-  ResourceSelectionProps,
-  ResourceItemState,
-} from './ResourceSelectionContext';
-
-export type OpenSelectorProps = ResourceSelectionProps & {
+export type OpenSelectorProps = {
   /** Callback for when the selector is closed */
   onClose?: (confirmed: boolean, results?: ResourceItem[]) => void;
   initialItemState?: ResourceItemState[];
+  header?: React.ReactNode;
 } & Omit<SelectableItemsProps, 'isSelected'> &
   InitialResourceFilterProps;
 
@@ -36,9 +32,7 @@ export const ResourceSelectorProvider = ({
   children: React.ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [props, setProps] = useState<
-    ResourceSelectionProps & Omit<SelectableItemsProps, 'isSelected'>
-  >({
+  const [props, setProps] = useState<Omit<SelectableItemsProps, 'isSelected'>>({
     selectionMode: 'single',
     onSelect: () => {},
   });
@@ -68,7 +62,6 @@ export const ResourceSelectorProvider = ({
       }
     ) => {
       setProps({
-        allowEdit: false,
         selectionMode,
         onSelect,
         ...selectionProps,

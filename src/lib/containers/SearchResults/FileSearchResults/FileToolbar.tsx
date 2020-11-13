@@ -2,7 +2,6 @@ import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { ButtonGroup } from 'lib/components';
 import { SearchResultToolbar, FileUploaderModal } from 'lib/containers';
-import { useResourceEditable } from 'lib/context';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
 import React, { useState } from 'react';
@@ -13,14 +12,15 @@ export const FileToolbar = ({
   currentView = 'list',
   query,
   filter,
+  allowEdit = false,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
   onViewChange?: (view: string) => void;
   currentView?: string;
   query: string;
   filter?: any;
+  allowEdit?: boolean;
 }) => {
-  const inEditMode = useResourceEditable();
   const hasEditPermissions = usePermissions('filesAcl', 'WRITE');
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,7 +33,7 @@ export const FileToolbar = ({
         filter={filter}
         query={query}
       >
-        {inEditMode && (
+        {allowEdit && (
           <Button
             onClick={() => setModalVisible(true)}
             icon="Upload"

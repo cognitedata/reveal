@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Row, Col } from 'antd';
@@ -8,10 +8,12 @@ import { Timeseries } from '@cognite/sdk';
 import { DetailsItem, ErrorFeedback, Loader } from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { formatMetadata } from 'lib/utils';
-import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
+import { RelationshipList } from 'lib';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const TimeseriesPage = () => {
+  const history = useHistory();
   const { id: timeseriesIdString } = useParams<{
     id: string;
   }>();
@@ -65,9 +67,12 @@ export const TimeseriesPage = () => {
             )}
           </Col>
           <Col span={6}>
-            <ResourceDetailsSidebar
+            <RelationshipList
               assetId={timeseries.assetId}
               relations={relationships}
+              onClick={item =>
+                history.push(createLink(`/explore/${item.type}/${item.id}`))
+              }
             />
           </Col>
         </Row>

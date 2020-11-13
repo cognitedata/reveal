@@ -1,51 +1,37 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from '@cognite/cogs.js';
-import { AssetSearchFilter, AssetFilterProps, Asset } from '@cognite/sdk';
+import { AssetFilterProps, Asset } from '@cognite/sdk';
 import { ButtonGroup } from 'lib/components';
-import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { AssetTreeTable } from 'lib/containers/Assets';
-import { SearchResultToolbar } from 'lib/containers';
+import { AssetTable, SearchResultToolbar } from 'lib/containers';
 import { SelectableItemsProps } from 'lib/CommonProps';
-
-export const buildAssetsFilterQuery = (
-  filter: AssetFilterProps,
-  query: string | undefined
-): AssetSearchFilter => {
-  return {
-    ...(query &&
-      query.length > 0 && {
-        search: {
-          query,
-        },
-      }),
-    filter,
-  };
-};
+import { SearchResultLoader } from 'lib';
 
 export const AssetSearchResults = ({
   query = '',
   filter,
-  openPreview = () => {},
+  onClick,
   ...selectionProps
 }: {
   query?: string;
   filter: AssetFilterProps;
-  openPreview?: (id: number) => void;
+  onClick: (item: Asset) => void;
 } & SelectableItemsProps) => {
   const [currentView, setCurrentView] = useState<string>('tree');
 
   const content = useMemo(() => {
     if (currentView === 'list') {
       return (
-        <SearchResultTable<Asset>
-          api="assets"
+        <SearchResultLoader<Asset>
+          type="asset"
           filter={filter}
           query={query}
           {...selectionProps}
-          onRowClick={asset => {
-            openPreview(asset.id);
-          }}
-        />
+        >
+          {props => (
+            <AssetTable onRowClick={asset => onClick(asset)} {...props} />
+          )}
+        </SearchResultLoader>
       );
     }
     return (
@@ -53,11 +39,11 @@ export const AssetSearchResults = ({
         filter={filter}
         startFromRoot={!filter.assetSubtreeIds}
         query={query}
-        onAssetClicked={asset => openPreview(asset.id)}
+        onAssetClicked={asset => onClick(asset)}
         {...selectionProps}
       />
     );
-  }, [currentView, filter, openPreview, query, selectionProps]);
+  }, [currentView, filter, onClick, query, selectionProps]);
 
   return (
     <>

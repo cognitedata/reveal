@@ -1,7 +1,6 @@
 import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks';
 import { DataExplorationProvider } from '../context';
 import { QueryBuilder } from './QueryBuilder.stories.tsx';
-import { ResourceSelectionPropsFunctions } from './stub.tsx';
 
 <Meta
   title="Search Results/Get Started"
@@ -13,18 +12,6 @@ import { ResourceSelectionPropsFunctions } from './stub.tsx';
 />
 
 # Using `Search Result` components
-
-Once your app has been wrapped around
-
-```js
-<DataExplorationProvider sdk={sdk}>...</DataExplorationProvider>
-```
-
-Automatically, you will have access to the full context of `ResourceSelectionContext`.
-
-<ArgsTable of={ResourceSelectionPropsFunctions} />
-
-You can access and interact with any of these via provided hooks or `useContext(ResourceSelectionContext)`. Some of the use cases are presented below:
 
 ## Use Case 1 - Accomplish "Query Building"
 

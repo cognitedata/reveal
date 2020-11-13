@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Timeseries } from '@cognite/sdk';
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import {
@@ -11,38 +11,35 @@ import {
   SpacedRow,
   ResourceIcons,
 } from 'lib/components';
-import { useResourceActionsContext } from 'lib/context';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
-import { SmallPreviewProps } from 'lib/CommonProps';
+import { SmallPreviewProps, SelectableItemProps } from 'lib/CommonProps';
+import { useSelectionButton } from 'lib/hooks/useSelection';
 
 export const TimeseriesSmallPreview = ({
   timeseriesId,
-  actions: propActions,
+  actions,
   extras,
   children,
   statusText,
+  selectionMode = 'none',
+  isSelected = false,
+  onSelect = () => {},
 }: {
   timeseriesId: number;
-} & SmallPreviewProps) => {
+} & SmallPreviewProps &
+  Partial<SelectableItemProps>) => {
   const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
     'timeseries',
     { id: timeseriesId }
   );
 
-  const renderResourceActions = useResourceActionsContext();
-
-  const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
-    items.push(...(propActions || []));
-    items.push(
-      ...renderResourceActions({
-        id: timeseriesId,
-        type: 'timeSeries',
-      })
-    );
-    return items;
-  }, [renderResourceActions, timeseriesId, propActions]);
+  const selectionButton = useSelectionButton(
+    selectionMode,
+    { type: 'timeSeries', id: timeseriesId },
+    isSelected,
+    onSelect
+  );
 
   if (!isFetched) {
     return <Loader />;
@@ -97,11 +94,12 @@ export const TimeseriesSmallPreview = ({
         </InfoCell>
       )}
 
-      {actions && (
-        <InfoCell noBorders>
-          <SpacedRow>{actions}</SpacedRow>
-        </InfoCell>
-      )}
+      <InfoCell noBorders>
+        <SpacedRow>
+          {selectionButton}
+          {actions}
+        </SpacedRow>
+      </InfoCell>
 
       <LatestDatapoint timeSeries={timeseries} />
       <InfoCell

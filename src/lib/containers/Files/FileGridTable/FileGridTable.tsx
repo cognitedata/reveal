@@ -3,7 +3,7 @@ import { FileInfo as File, FileFilterProps } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'lib/hooks/useSelection';
 import styled, { css } from 'styled-components';
 import { Loader, TimeDisplay } from 'lib/components';
-import { useResourceResults } from 'lib/components/Search/SearchPageTable/hooks';
+import { useResourceResults } from 'lib';
 import { Body, Colors, DocumentIcon } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { FixedSizeGrid as Grid } from 'react-window';

@@ -9,9 +9,8 @@ import {
   Sequence,
 } from '@cognite/sdk';
 import { Icon, Colors } from '@cognite/cogs.js';
-
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
-import { useResourceResults } from 'lib/components/Search/SearchPageTable/hooks';
+import { useResourceResults } from 'lib';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 

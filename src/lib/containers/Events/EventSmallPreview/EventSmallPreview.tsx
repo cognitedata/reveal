@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 import {
@@ -9,38 +9,35 @@ import {
   SpacedRow,
 } from 'lib/components';
 import { Title, Body, Colors } from '@cognite/cogs.js';
-import { useResourceActionsContext } from 'lib/context';
 import { renderTitle } from 'lib/utils/EventsUtils';
 import { ResourceIcons } from 'lib/components/ResourceIcons/ResourceIcons';
 import { EventDetails } from 'lib/containers/Events';
-import { SmallPreviewProps } from 'lib/CommonProps';
+import { SmallPreviewProps, SelectableItemProps } from 'lib/CommonProps';
+import { useSelectionButton } from 'lib/hooks/useSelection';
 
 export const EventSmallPreview = ({
   eventId,
-  actions: propActions,
+  actions,
   extras,
   children,
   statusText,
+  selectionMode = 'none',
+  isSelected = false,
+  onSelect = () => {},
 }: {
   eventId: number;
-} & SmallPreviewProps) => {
-  const renderResourceActions = useResourceActionsContext();
-
+} & SmallPreviewProps &
+  Partial<SelectableItemProps>) => {
   const { data: event, isFetched, error } = useCdfItem<CogniteEvent>('events', {
     id: eventId,
   });
 
-  const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
-    items.push(...(propActions || []));
-    items.push(
-      ...renderResourceActions({
-        id: eventId,
-        type: 'event',
-      })
-    );
-    return items;
-  }, [renderResourceActions, eventId, propActions]);
+  const selectionButton = useSelectionButton(
+    selectionMode,
+    { type: 'event', id: eventId },
+    isSelected,
+    onSelect
+  );
 
   if (!isFetched) {
     return <Loader />;
@@ -97,11 +94,12 @@ export const EventSmallPreview = ({
         </Title>
       </InfoCell>
 
-      {actions && (
-        <InfoCell noBorders>
-          <SpacedRow>{actions}</SpacedRow>
-        </InfoCell>
-      )}
+      <InfoCell noBorders>
+        <SpacedRow>
+          {selectionButton}
+          {actions}
+        </SpacedRow>
+      </InfoCell>
       <EventDetails event={event} />
       {children}
     </InfoGrid>

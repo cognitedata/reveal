@@ -4,16 +4,10 @@ import { Table, TableProps } from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { Body } from '@cognite/cogs.js';
 
-export const TimeseriesTable = ({
-  items,
-  onItemClicked,
-  ...props
-}: {
-  items: Timeseries[];
-  onItemClicked: (sequence: Timeseries) => void;
-} & TableProps<Timeseries>) => {
+export const TimeseriesTable = (props: TableProps<Timeseries>) => {
   const columns = [
     Table.Columns.name,
+    Table.Columns.description,
     Table.Columns.externalId,
     Table.Columns.unit,
     Table.Columns.relationships,
@@ -44,13 +38,5 @@ export const TimeseriesTable = ({
     },
   ];
 
-  return (
-    <Table<Timeseries>
-      data={items}
-      columns={columns}
-      onRowClick={onItemClicked}
-      rowHeight={100}
-      {...props}
-    />
-  );
+  return <Table<Timeseries> columns={columns} rowHeight={100} {...props} />;
 };

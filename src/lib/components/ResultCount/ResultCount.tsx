@@ -19,7 +19,7 @@ export function ResultCount({
   type,
   filter,
   query,
-  label = 'found',
+  label = 'results',
 }: ResultProps) {
   const { data: search, isFetched: searchDone } = useSearch(
     type,
@@ -38,7 +38,7 @@ export function ResultCount({
       if (listDone && Number.isFinite(list?.count)) {
         return (
           <>
-            {formatNumber(list?.count!)} {type} {label}
+            {formatNumber(list?.count!)} {label}
           </>
         );
       }
@@ -48,7 +48,7 @@ export function ResultCount({
       if (searchDone && Number.isFinite(search?.length)) {
         return (
           <>
-            {formatNumber(search?.length!)} {type} {label}
+            {formatNumber(search?.length!)} {label}
           </>
         );
       }

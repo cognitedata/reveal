@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Sequence } from '@cognite/sdk';
 import {
@@ -9,20 +9,24 @@ import {
   SpacedRow,
   ResourceIcons,
 } from 'lib/components';
-import { useResourceActionsContext } from 'lib/context';
 import { Title, Body, Colors } from '@cognite/cogs.js';
-import { SmallPreviewProps } from 'lib/CommonProps';
+import { SmallPreviewProps, SelectableItemProps } from 'lib/CommonProps';
 import { SequenceDetails } from 'lib/containers/Sequences';
+import { useSelectionButton } from 'lib/hooks/useSelection';
 
 export const SequenceSmallPreview = ({
   sequenceId,
-  actions: propActions,
+  actions,
   extras,
   children,
   statusText,
+  selectionMode = 'none',
+  isSelected = false,
+  onSelect = () => {},
 }: {
   sequenceId: number;
-} & SmallPreviewProps) => {
+} & SmallPreviewProps &
+  Partial<SelectableItemProps>) => {
   const { data: sequences = [], isFetched, error } = useCdfItems<Sequence>(
     'sequences',
     [{ id: sequenceId }]
@@ -30,19 +34,12 @@ export const SequenceSmallPreview = ({
 
   const sequence = isFetched && sequences[0];
 
-  const renderResourceActions = useResourceActionsContext();
-
-  const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
-    items.push(...(propActions || []));
-    items.push(
-      ...renderResourceActions({
-        id: sequenceId,
-        type: 'sequence',
-      })
-    );
-    return items;
-  }, [renderResourceActions, sequenceId, propActions]);
+  const selectionButton = useSelectionButton(
+    selectionMode,
+    { type: 'sequence', id: sequenceId },
+    isSelected,
+    onSelect
+  );
 
   if (!isFetched) {
     return <Loader />;
@@ -101,11 +98,12 @@ export const SequenceSmallPreview = ({
         </InfoCell>
       )}
 
-      {actions && (
-        <InfoCell noBorders>
-          <SpacedRow>{actions}</SpacedRow>
-        </InfoCell>
-      )}
+      <InfoCell noBorders>
+        <SpacedRow>
+          {selectionButton}
+          {actions}
+        </SpacedRow>
+      </InfoCell>
       <SequenceDetails sequence={sequence} />
       {children}
     </InfoGrid>

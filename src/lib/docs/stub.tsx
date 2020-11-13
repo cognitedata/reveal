@@ -10,7 +10,6 @@ import {
   ResourcePreviewProps,
   OpenSelectorProps,
   ResourceSelector,
-  ResourceSelectionObserver,
 } from '../context';
 
 export const ResourcePreviewContextFunctions = (_: ResourcePreviewObserver) =>
@@ -22,9 +21,6 @@ export const ResourceSelectorContextFunctions = (_: ResourceSelector) => null;
 export const ResourceSelectorPropsFunctions: React.FC<OpenSelectorProps> = (
   _: OpenSelectorProps
 ) => null;
-
-export const ResourceSelectionPropsFunctions = (_: ResourceSelectionObserver) =>
-  null;
 
 export const sdkMock = {
   get: async (query: string) => {

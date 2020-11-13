@@ -2,16 +2,10 @@ import React from 'react';
 import { Sequence } from '@cognite/sdk';
 import { Table, TableProps } from 'lib/components';
 
-export const SequenceTable = ({
-  items,
-  onItemClicked,
-  ...props
-}: {
-  items: Sequence[];
-  onItemClicked: (sequence: Sequence) => void;
-} & TableProps<Sequence>) => {
+export const SequenceTable = (props: TableProps<Sequence>) => {
   const columns = [
     Table.Columns.name,
+    Table.Columns.description,
     Table.Columns.externalId,
     Table.Columns.columns,
     Table.Columns.relationships,
@@ -19,12 +13,5 @@ export const SequenceTable = ({
     Table.Columns.createdTime,
   ];
 
-  return (
-    <Table<Sequence>
-      data={items}
-      columns={columns}
-      onRowClick={onItemClicked}
-      {...props}
-    />
-  );
+  return <Table<Sequence> columns={columns} {...props} />;
 };

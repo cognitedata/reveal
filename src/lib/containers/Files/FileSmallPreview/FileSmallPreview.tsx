@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { FileInfo, Asset } from '@cognite/sdk';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
@@ -16,28 +16,37 @@ import {
   ResourceIcons,
 } from 'lib/components';
 import { isFilePreviewable } from 'lib/utils/FileUtils';
-import { useResourceActionsContext } from 'lib/context';
 import { getIdParam } from 'lib/utils';
-import { SmallPreviewProps } from 'lib/CommonProps';
+import { SmallPreviewProps, SelectableItemProps } from 'lib/CommonProps';
 import { FileDetails } from 'lib/containers/Files';
+import { useSelectionButton } from 'lib/hooks/useSelection';
 import { useAnnotations } from '../hooks';
 
 export const FileSmallPreview = ({
   fileId,
-  actions: propActions,
+  actions,
   extras,
   children,
   statusText,
+  selectionMode = 'none',
+  isSelected = false,
+  onSelect = () => {},
 }: {
   fileId: number;
-} & SmallPreviewProps) => {
+} & SmallPreviewProps &
+  Partial<SelectableItemProps>) => {
   const sdk = useSDK();
-  const renderResourceActions = useResourceActionsContext();
 
   const { data: file, isFetched, error } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
 
+  const selectionButton = useSelectionButton(
+    selectionMode,
+    { type: 'file', id: fileId },
+    isSelected,
+    onSelect
+  );
   const annotations = useAnnotations(fileId);
 
   const fileIds = annotations
@@ -50,18 +59,6 @@ export const FileSmallPreview = ({
       a.resourceType === 'asset' ? a.resourceExternalId || a.resourceId : false
     )
     .filter(Boolean) as (number | string)[];
-
-  const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
-    items.push(...(propActions || []));
-    items.push(
-      ...renderResourceActions({
-        id: fileId,
-        type: 'file',
-      })
-    );
-    return items;
-  }, [renderResourceActions, fileId, propActions]);
 
   const { data: files } = useCdfItems<FileInfo>(
     'files',
@@ -128,11 +125,12 @@ export const FileSmallPreview = ({
         </InfoCell>
       )}
 
-      {actions && (
-        <InfoCell noBorders>
-          <SpacedRow>{actions}</SpacedRow>
-        </InfoCell>
-      )}
+      <InfoCell noBorders>
+        <SpacedRow>
+          {selectionButton}
+          {actions}
+        </SpacedRow>
+      </InfoCell>
 
       {hasPreview && (
         <InfoCell noBorders>

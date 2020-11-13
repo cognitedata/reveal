@@ -8,10 +8,13 @@ import { Row, Col } from 'antd';
 import { Sequence } from '@cognite/sdk';
 import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
+import { RelationshipList } from 'lib';
+import { useHistory } from 'react-router';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const SequencePage = () => {
+  const history = useHistory();
   const { id: sequenceIdString } = useParams<{
     id: string;
   }>();
@@ -66,7 +69,13 @@ export const SequencePage = () => {
           </Tabs>
         </Col>
         <Col span={6}>
-          <ResourceDetailsSidebar relations={relationships} />
+          <RelationshipList
+            assetId={sequence.assetId}
+            relations={relationships}
+            onClick={item =>
+              history.push(createLink(`/explore/${item.type}/${item.id}`))
+            }
+          />
         </Col>
       </Row>
     </>

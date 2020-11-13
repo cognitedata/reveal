@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Timeseries, Asset, FileInfo } from '@cognite/sdk';
 import {
   useCdfItem,
@@ -16,11 +16,12 @@ import {
   SpacedRow,
   ResourceIcons,
 } from 'lib/components';
-import { useResourceActionsContext } from 'lib/context';
 import { TimeseriesSmallPreview } from 'lib/containers/Timeseries';
 import { AssetBreadcrumb } from 'lib/containers/Assets';
 import { FileSmallPreview } from 'lib/containers/Files';
-import { SmallPreviewProps } from 'lib/CommonProps';
+import { SelectableItemProps, SmallPreviewProps } from 'lib/CommonProps';
+import { useSelectionButton } from 'lib/hooks/useSelection';
+
 import { lightGrey } from 'lib/utils/Colors';
 
 const LIST_ITEM_HEIGHT = 42;
@@ -59,18 +60,27 @@ const RowItem = ({
 );
 export const AssetSmallPreview = ({
   assetId,
-  actions: propActions,
+  actions,
   extras,
   children,
   statusText,
+  selectionMode = 'none',
+  isSelected = false,
+  onSelect = () => {},
 }: {
   assetId: number;
-} & SmallPreviewProps) => {
+} & SmallPreviewProps &
+  Partial<SelectableItemProps>) => {
   const [selected, setSelected] = useState<
     { type: SdkResourceType; id: number } | undefined
   >(undefined);
 
-  const renderResourceActions = useResourceActionsContext();
+  const selectionButton = useSelectionButton(
+    selectionMode,
+    { type: 'asset', id: assetId },
+    isSelected,
+    onSelect
+  );
 
   const { data: asset, isFetched } = useCdfItem<Asset>(
     'assets',
@@ -90,18 +100,6 @@ export const AssetSmallPreview = ({
     { filter: { assetSubtreeIds: [{ id: assetId }] }, limit: 100 },
     { enabled: isFetched }
   );
-
-  const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
-    items.push(...(propActions || []));
-    items.push(
-      ...renderResourceActions({
-        id: assetId,
-        type: 'asset',
-      })
-    );
-    return items;
-  }, [renderResourceActions, assetId, propActions]);
 
   if (!isFetched) {
     return <Loader />;
@@ -176,11 +174,12 @@ export const AssetSmallPreview = ({
         </InfoCell>
       )}
 
-      {actions && (
-        <InfoCell noBorders>
-          <SpacedRow>{actions}</SpacedRow>
-        </InfoCell>
-      )}
+      <InfoCell noBorders>
+        <SpacedRow>
+          {selectionButton}
+          {actions}
+        </SpacedRow>
+      </InfoCell>
 
       <InfoCell noBorders noPadding>
         <p>LOCATION</p>

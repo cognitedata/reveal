@@ -15,15 +15,20 @@ const ActionCell = <T extends { id: AllowedId }>({
   selectionMode,
   onItemSelected,
   isSelected,
+  isHovered,
 }: {
   item: T;
   selectionMode: ResourceSelectionMode;
   onItemSelected: (item: T) => void;
   isSelected: boolean;
+  isHovered: boolean;
 }) => {
   const button = useSelectionCheckbox(selectionMode, item.id, isSelected, () =>
     onItemSelected(item)
   );
+  if (!isHovered && !isSelected) {
+    return null;
+  }
   return button;
 };
 
@@ -73,13 +78,14 @@ export const Table = <T extends { id: AllowedId }>({
   ...props
 }: TableProps<T>) => {
   const renderSelectButton = useCallback(
-    (item: T, isSelected: boolean) => {
+    (item: T, isSelected: boolean, isHovered: boolean) => {
       return (
         <ActionCell
           item={item}
           selectionMode={selectionMode}
           onItemSelected={onRowSelected}
           isSelected={isSelected}
+          isHovered={isHovered}
         />
       );
     },
@@ -129,15 +135,17 @@ export const Table = <T extends { id: AllowedId }>({
                       cellRenderer: ({
                         rowData: item,
                         column: { selectedIds: ids },
-                      }: {
-                        rowData: T;
-                        column: { selectedIds: number[] };
-                      }) =>
-                        renderSelectButton(
+                        container: {
+                          state: { hoveredRowKey },
+                        },
+                      }) => {
+                        return renderSelectButton(
                           item,
-                          ids.some(el => item.id === el)
-                        ),
-                    },
+                          (ids as number[]).some(el => item.id === el),
+                          hoveredRowKey === item.id
+                        );
+                      },
+                    } as ColumnShape<T>,
                   ]
                 : []),
               ...columns.map((el: ColumnShape<T>) => ({

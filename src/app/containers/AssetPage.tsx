@@ -22,9 +22,15 @@ import {
 import { Loader, ErrorFeedback, Tabs, CdfCount } from 'lib/components';
 import { useResourcePreview } from 'lib/context';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { ResourceDetailsSidebar } from 'lib/containers/ResoureDetails';
+import {
+  RelationshipList,
+  SearchResultLoader,
+  TimeseriesTable,
+  FileTable,
+  SequenceTable,
+  EventTable,
+} from 'lib';
 import { useRelationships } from 'lib/hooks/RelationshipHooks';
-import { SearchResultTable } from 'lib/components/Search/SearchPageTable';
 import { ResourceItem } from 'lib/types';
 import { useCurrentResourceId } from './Exploration/hooks';
 
@@ -147,18 +153,24 @@ export const AssetPage = () => {
                 }
                 key="timeseries"
               >
-                <SearchResultTable<Timeseries>
-                  api="timeseries"
-                  onRowClick={ts => {
-                    if (ts) {
-                      openPreview({
-                        item: { id: ts.id, type: 'timeSeries' },
-                      });
-                    }
-                  }}
+                <SearchResultLoader<Timeseries>
+                  type="timeSeries"
                   filter={filter}
                   {...selectionProps}
-                />
+                >
+                  {props => (
+                    <TimeseriesTable
+                      {...props}
+                      onRowClick={ts => {
+                        if (ts) {
+                          openPreview({
+                            item: { id: ts.id, type: 'timeSeries' },
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                </SearchResultLoader>
               </Tabs.Pane>
               <Tabs.Pane
                 title={
@@ -168,18 +180,24 @@ export const AssetPage = () => {
                 }
                 key="files"
               >
-                <SearchResultTable<FileInfo>
-                  api="files"
-                  onRowClick={file => {
-                    if (file) {
-                      openPreview({
-                        item: { id: file.id, type: 'file' },
-                      });
-                    }
-                  }}
+                <SearchResultLoader<FileInfo>
+                  type="file"
                   filter={filter}
                   {...selectionProps}
-                />
+                >
+                  {props => (
+                    <FileTable
+                      {...props}
+                      onRowClick={file => {
+                        if (file) {
+                          openPreview({
+                            item: { id: file.id, type: 'file' },
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                </SearchResultLoader>
               </Tabs.Pane>
               <Tabs.Pane
                 title={
@@ -190,18 +208,24 @@ export const AssetPage = () => {
                 }
                 key="sequences"
               >
-                <SearchResultTable<Sequence>
-                  api="sequences"
-                  onRowClick={sequence => {
-                    if (sequence) {
-                      openPreview({
-                        item: { id: sequence.id, type: 'sequence' },
-                      });
-                    }
-                  }}
+                <SearchResultLoader<Sequence>
+                  type="sequence"
                   filter={filter}
                   {...selectionProps}
-                />
+                >
+                  {props => (
+                    <SequenceTable
+                      {...props}
+                      onRowClick={sequence => {
+                        if (sequence) {
+                          openPreview({
+                            item: { id: sequence.id, type: 'sequence' },
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                </SearchResultLoader>
               </Tabs.Pane>
               <Tabs.Pane
                 title={
@@ -211,18 +235,24 @@ export const AssetPage = () => {
                 }
                 key="events"
               >
-                <SearchResultTable<CogniteEvent>
-                  api="events"
-                  onRowClick={event => {
-                    if (event) {
-                      openPreview({
-                        item: { id: event.id, type: 'event' },
-                      });
-                    }
-                  }}
+                <SearchResultLoader<CogniteEvent>
+                  type="event"
                   filter={filter}
                   {...selectionProps}
-                />
+                >
+                  {props => (
+                    <EventTable
+                      {...props}
+                      onRowClick={event => {
+                        if (event) {
+                          openPreview({
+                            item: { id: event.id, type: 'event' },
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                </SearchResultLoader>
               </Tabs.Pane>
               <Tabs.Pane title="Children" key="children">
                 <AssetTreeTable
@@ -238,7 +268,12 @@ export const AssetPage = () => {
             </Tabs>
           </Col>
           <Col span={6}>
-            <ResourceDetailsSidebar relations={relationships} />
+            <RelationshipList
+              relations={relationships}
+              onClick={item =>
+                history.push(createLink(`/explore/${item.type}/${item.id}`))
+              }
+            />
           </Col>
         </Row>
       </div>

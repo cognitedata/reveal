@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from 'antd';
-import { useQuery } from 'lib/context/ResourceSelectionContext';
+import { useQuery } from 'app/context/ResourceSelectionContext';
 import { debounce } from 'lodash';
 
 export const ExplorationSearchBar = () => {

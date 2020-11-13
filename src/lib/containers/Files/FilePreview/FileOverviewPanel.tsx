@@ -7,7 +7,6 @@ import {
 } from '@cognite/react-picture-annotation';
 import { SpacedRow, Loader } from 'lib/components';
 import styled from 'styled-components';
-import { useResourceActionsContext } from 'lib/context/ResourceActionsContext';
 import { useSelectionButton } from 'lib/hooks/useSelection';
 import { Modal, notification } from 'antd';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
@@ -72,7 +71,6 @@ export const FileOverviewPanel = ({
   const { page, setPage, annotations } = useContext(CogniteFileViewer.Context);
 
   const { openPreview } = useResourcePreview();
-  const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton(
     selectionMode,
     { id: fileId, type: 'file' },
@@ -237,7 +235,6 @@ export const FileOverviewPanel = ({
           extras={
             <SpacedRow>
               {selectionButton}
-              {renderResourceActions({ id: file.id, type: 'file' })}
               {renderMenuButton()}
             </SpacedRow>
           }

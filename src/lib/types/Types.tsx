@@ -39,6 +39,10 @@ export type ResourceItem = {
   type: ResourceType;
 };
 
+export type ResourceItemState = ResourceItem & {
+  state: 'disabled' | 'active' | 'selected';
+};
+
 export type RenderResourceActionsFunction = (
   item: ResourceItem
 ) => React.ReactNode[];

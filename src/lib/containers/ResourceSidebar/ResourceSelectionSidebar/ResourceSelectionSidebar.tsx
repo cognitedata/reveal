@@ -1,9 +1,7 @@
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Input } from '@cognite/cogs.js';
-import { RenderResourceActionsFunction } from 'lib/types/Types';
-import { ResourceActionsContext, useQuery } from 'lib/context';
-import { ResourceItem, ResourceType } from 'lib/types';
+import { ResourceType, ResourceItem } from 'lib/types';
 import { Divider, SpacedRow } from 'lib/components';
 import { SearchFilters, SearchResults, ResourceTypeTabs } from 'lib';
 
@@ -18,6 +16,7 @@ import {
   EventFilter,
   SequenceFilter,
 } from '@cognite/sdk';
+import { ResourcePreviewSidebar } from 'lib/containers';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
@@ -61,11 +60,12 @@ const CloseButton = styled(Button)`
   align-self: flex-end;
 `;
 
-export const SelectionSidebarContent = ({
+export const ResourceSelectionSidebar = ({
   resourceTypes = ['asset', 'timeSeries', 'file', 'event', 'sequence'],
   visible = false,
   onClose,
   children,
+  header,
   selectionMode,
   onSelect,
   isSelected,
@@ -78,6 +78,7 @@ export const SelectionSidebarContent = ({
   resourceTypes?: ResourceType[];
   onClose: (confirmed: boolean) => void;
   visible?: boolean;
+  header?: React.ReactNode;
   children?: React.ReactNode;
 } & SelectableItemsProps &
   InitialResourceFilterProps) => {
@@ -96,12 +97,11 @@ export const SelectionSidebarContent = ({
   const [sequenceFilter, setSequenceFilter] = useState<
     Required<SequenceFilter>['filter']
   >(initialSequenceFilter || {});
-  const [query, setQuery] = useQuery();
-  const { add, remove } = useContext(ResourceActionsContext);
-  const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
+  const [query, setQuery] = useState<string>('');
+  const [activeKey, setActiveKey] = useState<ResourceType>(resourceTypes[0]);
+  const [previewItem, setPreviewItem] = useState<ResourceItem | undefined>(
     undefined
   );
-  const [activeKey, setActiveKey] = useState<ResourceType>(resourceTypes[0]);
 
   useEffect(() => {
     if (!resourceTypes.includes(activeKey)) {
@@ -110,71 +110,8 @@ export const SelectionSidebarContent = ({
   }, [activeKey, resourceTypes]);
 
   useEffect(() => {
-    setSelectedItem(undefined);
-  }, [visible, activeKey]);
-
-  const renderResourceActions: RenderResourceActionsFunction = useCallback(
-    resourceItem => {
-      let resourceName = 'Resource';
-      const resourceType = resourceItem?.type;
-      switch (resourceItem?.type) {
-        case 'file': {
-          resourceName = 'File';
-          break;
-        }
-        case 'asset': {
-          resourceName = 'Asset';
-          break;
-        }
-        case 'timeSeries': {
-          resourceName = 'Time series';
-          break;
-        }
-        case 'sequence': {
-          resourceName = 'Sequence';
-          break;
-        }
-        case 'event': {
-          resourceName = 'Event';
-          break;
-        }
-      }
-      const viewButton = () => {
-        if (
-          resourceType &&
-          selectedItem?.id !== resourceItem.id &&
-          selectedItem?.type !== resourceItem.type
-        ) {
-          return (
-            <Button
-              type="secondary"
-              key="view"
-              onClick={() => {
-                setSelectedItem(resourceItem);
-              }}
-              icon="ArrowRight"
-            >
-              View {resourceName.toLowerCase()}
-            </Button>
-          );
-        }
-        return null;
-      };
-
-      return [viewButton()];
-    },
-    [selectedItem]
-  );
-
-  useEffect(() => {
-    add('cart', renderResourceActions);
-  }, [add, renderResourceActions]);
-
-  useEffect(() => {
-    return () => {
-      remove('cart');
-    };
-  }, [remove]);
+    setPreviewItem(undefined);
+  }, [activeKey]);
 
   return (
     <>
@@ -186,12 +123,12 @@ export const SelectionSidebarContent = ({
               variant="ghost"
               onClick={() => onClose(false)}
             />
-            {children}
+            {header}
+            <ResourceTypeTabs
+              currentResourceType={activeKey}
+              setCurrentResourceType={setActiveKey}
+            />
             <Wrapper>
-              <ResourceTypeTabs
-                currentResourceType={activeKey}
-                setCurrentResourceType={setActiveKey}
-              />
               <SearchFilters
                 assetFilter={assetFilter}
                 setAssetFilter={setAssetFilter}
@@ -204,6 +141,7 @@ export const SelectionSidebarContent = ({
                 fileFilter={fileFilter}
                 setFileFilter={setFileFilter}
                 resourceType={activeKey}
+                allowHide={false}
               />
               <SearchResultWrapper>
                 <Input
@@ -226,9 +164,22 @@ export const SelectionSidebarContent = ({
                   fileFilter={fileFilter}
                   resourceType={activeKey}
                   query={query}
+                  onClick={item => setPreviewItem(item)}
                 />
               </SearchResultWrapper>
+              {previewItem && (
+                <div style={{ width: 360, flex: 1 }}>
+                  <ResourcePreviewSidebar
+                    item={previewItem}
+                    closable={false}
+                    selectionMode={selectionMode}
+                    onSelect={() => onSelect(previewItem)}
+                    isSelected={isSelected(previewItem)}
+                  />
+                </div>
+              )}
             </Wrapper>
+            {children}
 
             {selectionMode !== 'none' && (
               <>

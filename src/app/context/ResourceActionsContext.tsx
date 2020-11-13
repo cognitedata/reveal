@@ -15,7 +15,7 @@ const ResourceActionsContext = React.createContext(
   {} as ResourceActionsObserver
 );
 
-export const useResourceActionsContext = () => {
+export const useResourceActions = () => {
   const observer = useContext(ResourceActionsContext);
   return observer.run;
 };

@@ -1,1 +1,1 @@
-export * from './SelectionSidebar';
+export * from './ResourceSelectionSidebar';

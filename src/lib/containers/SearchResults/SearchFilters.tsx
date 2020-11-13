@@ -17,6 +17,7 @@ const TRANSITION_TIME = 300;
 
 export const SearchFilters = ({
   visible = true,
+  allowHide = true,
   closeFilters = () => {},
   resourceType,
   assetFilter,
@@ -32,6 +33,7 @@ export const SearchFilters = ({
 }: {
   resourceType: ResourceType;
   visible?: boolean;
+  allowHide?: boolean;
   closeFilters?: () => void;
 } & Required<ResourceFilterProps> &
   SetResourceFilterProps) => {
@@ -91,9 +93,11 @@ export const SearchFilters = ({
               <Icon type="Filter" />
             </IconCol>
             <Col flex="auto">Filters</Col>
-            <Col flex="none">
-              <Button onClick={closeFilters}>Hide filters</Button>
-            </Col>
+            {allowHide && (
+              <Col flex="none">
+                <Button onClick={closeFilters}>Hide filters</Button>
+              </Col>
+            )}
           </HeaderRow>
           <Filters />
         </>

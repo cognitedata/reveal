@@ -5,17 +5,20 @@ import React, {
   useContext,
   useCallback,
 } from 'react';
-import { ResourceItem, convertResourceType } from 'lib/types';
-import { ResourcePreviewProvider } from 'lib/context';
-import { SearchFilters } from 'lib/containers/SearchResults/SearchFilters';
-import { SearchResultList } from 'app/components/SearchResultList/';
-import { ResourceTypeTabs } from 'lib/components/Search/ResourceTypeTabs';
+import {
+  ResourceItem,
+  ResourcePreviewProvider,
+  SearchFilters,
+  ResourceTypeTabs,
+  SearchResults,
+} from 'lib';
 import ExplorationNavBar from 'app/containers/Exploration/ExplorationNavbar';
 import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
   useQuery,
   useSelectedResource,
+  useResourceEditable,
 } from 'app/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
@@ -39,16 +42,29 @@ function SearchPage() {
     currentResourceType,
     setCurrentResourceType,
   ] = useCurrentResourceType();
-  const [currentId, openPreview] = useCurrentResourceId();
+  const [activeId, openPreview] = useCurrentResourceId();
   const [showFilter, setShowFilter] = useState(false);
   const [query] = useQuery();
   const [debouncedQuery] = useDebounce(query, 100);
-  const filter = useResourceFilter(currentResourceType);
+
+  const editable = useResourceEditable();
 
   const [cart, setCart] = useState<ResourceItem[]>([]);
-  const { setOnSelectListener, setResourcesState } = useContext(
-    ResourceSelectionContext
-  );
+  const {
+    setOnSelectListener,
+    setResourcesState,
+    assetFilter,
+    setAssetFilter,
+    timeseriesFilter,
+    setTimeseriesFilter,
+    sequenceFilter,
+    setSequenceFilter,
+    eventFilter,
+    setEventFilter,
+    fileFilter,
+    setFileFilter,
+    mode,
+  } = useContext(ResourceSelectionContext);
 
   const onSelectListener = useCallback((item: ResourceItem) => {
     setCart(currentCart => {
@@ -70,26 +86,18 @@ function SearchPage() {
     setResourcesState(cart.map(el => ({ ...el, state: 'selected' })));
   }, [setResourcesState, cart]);
 
-  const {
-    assetFilter,
-    setAssetFilter,
-    timeseriesFilter,
-    setTimeseriesFilter,
-    sequenceFilter,
-    setSequenceFilter,
-    eventFilter,
-    setEventFilter,
-    fileFilter,
-    setFileFilter,
-  } = useContext(ResourceSelectionContext);
-
+  const isSelected = useCallback(
+    (item: ResourceItem) => {
+      return cart.some(el => el.id === item.id && el.type === item.type);
+    },
+    [cart]
+  );
   return (
     <ResourcePreviewProvider>
       <ResourceTypeTabs
         currentResourceType={currentResourceType}
         setCurrentResourceType={setCurrentResourceType}
       />
-
       <Wrapper>
         <RedirectToFirstId />
         <SearchFilters
@@ -107,7 +115,7 @@ function SearchPage() {
           closeFilters={() => setShowFilter(false)}
           visible={showFilter}
         />
-        <div style={{ width: '30%', minWidth: 333 }}>
+        <div style={{ width: 440 }}>
           <ExplorationNavBar
             beforeSearchInput={
               !showFilter ? (
@@ -119,18 +127,25 @@ function SearchPage() {
           />
           <SearchResultWrapper
             style={{
-              height: 'calc(100% - 73px)',
               marginRight: 16,
               paddingRight: 16,
               borderRight: `1px solid ${lightGrey}`,
             }}
           >
-            <SearchResultList
+            <SearchResults
               query={debouncedQuery}
-              api={convertResourceType(currentResourceType)}
-              filter={filter}
-              onRowClick={id => openPreview(id)}
-              currentId={currentId}
+              assetFilter={assetFilter}
+              timeseriesFilter={timeseriesFilter}
+              sequenceFilter={sequenceFilter}
+              eventFilter={eventFilter}
+              fileFilter={fileFilter}
+              resourceType={currentResourceType}
+              allowEdit={editable}
+              onClick={item => openPreview(item.id)}
+              onSelect={onSelectListener}
+              selectionMode={mode}
+              isSelected={isSelected}
+              activeIds={activeId ? [activeId] : []}
             />
           </SearchResultWrapper>
         </div>

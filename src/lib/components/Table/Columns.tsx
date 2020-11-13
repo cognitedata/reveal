@@ -10,8 +10,7 @@ export const ResourceTableColumns = {
     key: 'name',
     title: 'Name',
     dataKey: 'name',
-    width: 300,
-    frozen: Column.FrozenDirection.LEFT,
+    width: 200,
   },
   root: {
     key: 'root',
@@ -23,7 +22,6 @@ export const ResourceTableColumns = {
     title: 'Type',
     dataKey: 'type',
     width: 200,
-    frozen: Column.FrozenDirection.LEFT,
   },
   subtype: {
     key: 'subtype',
@@ -35,7 +33,7 @@ export const ResourceTableColumns = {
     key: 'description',
     title: 'Description',
     dataKey: 'description',
-    width: 400,
+    width: 200,
   },
   externalId: {
     key: 'externalId',
@@ -93,8 +91,8 @@ export const ResourceTableColumns = {
   },
   select: {
     key: 'action',
-    title: 'Select',
-    width: 80,
+    title: '',
+    width: 40,
     align: Column.Alignment.CENTER,
     frozen: Column.FrozenDirection.LEFT,
   },

@@ -22,7 +22,7 @@ import {
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import styled from 'styled-components';
 import { useResourceSelector } from 'lib/context/ResourceSelectorContext';
-import { ResourceItemState } from 'lib/context/ResourceSelectionContext';
+import { ResourceItemState, isModelRunning } from 'lib/types';
 import { useCreate } from 'lib/hooks/sdk';
 import { useQueryCache, useMutation } from 'react-query';
 import { sleep } from 'lib/utils';
@@ -36,7 +36,6 @@ import {
   useDeleteFindObjectsJob,
   useFindObjectsJobId,
 } from 'lib/hooks/objectDetection';
-import { isModelRunning } from 'lib/types';
 import { lightGrey } from 'lib/utils/Colors';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
@@ -237,7 +236,7 @@ const AnnotationPreviewSidebar = ({
             } as ResourceItemState,
           ]
         : undefined,
-      children: annotationPreview && (
+      header: annotationPreview && (
         <Collapse defaultActiveKey={[]}>
           <Collapse.Panel key="preview" header="Annotation Preview">
             <PreviewImage src={annotationPreview} alt="preview" />

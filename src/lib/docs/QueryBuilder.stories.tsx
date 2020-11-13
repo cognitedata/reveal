@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { AssetFilterProps } from '@cognite/sdk';
+import { action } from '@storybook/addon-actions';
 import { Wrapper } from './utils';
 import { DataSetFilter } from '../components/Search/Filters';
-import { AssetSearchResults } from '../containers/Assets/AssetSearchResults/AssetSearchResults';
+import { AssetSearchResults } from '../containers/Assets';
 
 export const QueryBuilder = () => {
   const [assetFilter, setAssetFilter] = useState<AssetFilterProps>({});
@@ -16,7 +17,12 @@ export const QueryBuilder = () => {
           setAssetFilter({ ...assetFilter, dataSetIds: value })
         }
       />
-      <AssetSearchResults />
+      <AssetSearchResults
+        filter={assetFilter}
+        isSelected={() => false}
+        onSelect={action('onSelect')}
+        selectionMode="single"
+      />
     </div>
   );
 };

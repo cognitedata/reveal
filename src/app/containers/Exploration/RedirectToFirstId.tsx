@@ -4,8 +4,7 @@ import {
   useResourceFilter,
   useQuery,
 } from 'app/context/ResourceSelectionContext';
-import { useResourceResults } from 'lib/components/Search/SearchPageTable/hooks';
-import { convertResourceType } from 'lib';
+import { useResourceResults, convertResourceType } from 'lib';
 import { useCurrentResourceId, useCurrentResourceType } from './hooks';
 
 export default function RedirectToFirstId() {
