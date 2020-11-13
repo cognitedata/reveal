@@ -10,18 +10,18 @@ static final String PRODUCTION_APP_ID = 'charts'
 
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
-static final String APPLICATION_REPO_ID = 'charts'
+static final String APPLICATION_REPO_ID = 'cognite-charts'
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME = 'charts'
+static final String SENTRY_PROJECT_NAME = 'cognite-charts'
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
 // https://docs.sentry.io/error-reporting/quickstart/?platform=browser
 //
 // If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN = ''
+static final String SENTRY_DSN = 'https://b35f7e3635d34e44bd24a354dfc4f13a@o124058.ingest.sentry.io/5509609'
 
 // Specify your locize.io project ID. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
@@ -135,13 +135,12 @@ def pods = { body ->
 }
 
 pods {
-  static final Map<String, Boolean> version = versioning.getEnv(
-    versioningStrategy: VERSIONING_STRATEGY
-  )
-  final boolean isStaging = version.isStaging
-  final boolean isProduction = version.isProduction
-  final boolean isPullRequest = version.isPullRequest
-
+  final boolean isStaging = env.BRANCH_NAME == 'staging'
+  final boolean isProduction = env.BRANCH_NAME.startsWith('release-')
+  final boolean isPullRequest = !!env.CHANGE_ID
+  print(isPullRequest)
+  print(env)
+  print(env.CHANGE_ID)
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
     logErrors: isStaging || isProduction
@@ -220,67 +219,75 @@ pods {
           }
         },
 
-        'E2e': {
-          testcafe.runE2EStage(
-            //
-            // multi-branch mode:
-            //
-            // We don't need to run end-to-end tests against release because
-            // we're in one of two states:
-            //   1. Cutting a new release
-            //      In this state, staging has e2e already passing.
-            //   2. Cherry-picking in a hotfix
-            //      In this state, the PR couldn't have been merged without
-            //      passing end-to-end tests.
-            // As such, we can skip end-to-end tests on release branches. As
-            // a side-effect, this will make hotfixes hit production faster!
-            shouldExecute: !isRelease,
+        // 'E2e': {
+        //   testcafe.runE2EStage(
+        //     //
+        //     // multi-branch mode:
+        //     //
+        //     // We don't need to run end-to-end tests against release because
+        //     // we're in one of two states:
+        //     //   1. Cutting a new release
+        //     //      In this state, staging has e2e already passing.
+        //     //   2. Cherry-picking in a hotfix
+        //     //      In this state, the PR couldn't have been merged without
+        //     //      passing end-to-end tests.
+        //     // As such, we can skip end-to-end tests on release branches. As
+        //     // a side-effect, this will make hotfixes hit production faster!
+        //     shouldExecute: !isRelease,
 
-            //
-            // single-branch mode:
-            //
-            // shouldExecute: true,
+        //     //
+        //     // single-branch mode:
+        //     //
+        //     // shouldExecute: true,
 
-            // buildCommand: 'yarn testcafe:build',
-            // runCommand: 'yarn testcafe:start'
-          )
-        },
+        //     // buildCommand: 'yarn testcafe:build',
+        //     // runCommand: 'yarn testcafe:start'
+        //   )
+        // },
       ],
       workers: 3,
     )
 
-    if (isPullRequest) {
-      stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
-        dir('preview') {
-          fas.publish(
-            previewSubdomain: 'react-demo'
+    print "test"
+
+    stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
+      print "pr"
+      if (!isPullRequest) {
+        print "Not a PR, no need to preview"
+        return
+      }
+      dir('preview') {
+        fas.publish(
+          previewSubdomain: 'charts'
+        )
+      }
+    }
+
+    stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
+      if (!isStaging) {
+        print "Not pushing to staging, no need to preview"
+        return
+      }
+      dir('staging') {
+        fas.publish()
+
+      }
+
+      // in 'single-branch' mode we always publish 'staging' and 'master' builds
+      // from the main branch, but we only need to notify about one of them.
+      // so it is ok to skip this message in that case
+      //
+      // note: the actual deployment of each is determined by versionSpec in FAS
+      if (VERSIONING_STRATEGY != "single-branch") {
+        dir('main') {
+          slack.send(
+            channel: SLACK_CHANNEL,
+              message: "Deployment of ${env.BRANCH_NAME} complete!"
           )
         }
       }
     }
-
-    if (isStaging && STAGING_APP_ID) {
-      stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
-        dir('staging') {
-          fas.publish()
-
-        }
-
-        // in 'single-branch' mode we always publish 'staging' and 'master' builds
-        // from the main branch, but we only need to notify about one of them.
-        // so it is ok to skip this message in that case
-        //
-        // note: the actual deployment of each is determined by versionSpec in FAS
-        if (VERSIONING_STRATEGY != "single-branch") {
-          dir('main') {
-            slack.send(
-              channel: SLACK_CHANNEL,
-                message: "Deployment of ${env.BRANCH_NAME} complete!"
-            )
-          }
-        }
-      }
-    }
+    
 
     if (isProduction && PRODUCTION_APP_ID) {
       stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
