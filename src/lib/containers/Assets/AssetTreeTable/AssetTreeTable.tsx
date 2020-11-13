@@ -34,8 +34,8 @@ export const AssetTreeTable = ({
 
   const columns = [
     Table.Columns.name,
-    Table.Columns.externalId,
     Table.Columns.description,
+    Table.Columns.externalId,
     {
       key: 'childCount',
       title: searchEnabled ? 'Results under asset' : 'Direct children',
