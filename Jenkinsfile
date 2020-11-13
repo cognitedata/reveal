@@ -95,8 +95,7 @@ def pods = { body ->
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
       ) {
-        // https://github.com/cognitedata/terraform/pull/2460
-        // codecov.pod {
+        codecov.pod {
           testcafe.pod() {
             properties([
               buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
@@ -120,7 +119,7 @@ def pods = { body ->
               body()
             }
           }
-        // } Code cov
+        } 
       }
     }
   }
