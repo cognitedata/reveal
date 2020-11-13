@@ -111,63 +111,66 @@ pods {
         }
     }
 
-    parallel(
-      'Lint': {
-        container('fas') {
-          stageWithNotify('Lint') {
-            sh("yarn ci")
+    threadPool(
+      tasks: [
+        'Lint': {
+          container('fas') {
+            stageWithNotify('Lint') {
+              sh("yarn ci")
+            }
           }
-        }
-      },
-      'Test': {
-        container('fas') {
-          stageWithNotify('Unit tests') {
-            sh("./bin/ci-run-unittest.sh test")
+        },
+        'Test': {
+          container('fas') {
+            stageWithNotify('Unit tests') {
+              sh("./bin/ci-run-unittest.sh test")
+            }
           }
-        }
-      },
-      'Preview': {
-        if(!isPullRequest) {
-          print "No PR previews for release builds"
-          return;
-        }
-        stageWithNotify('Build and deploy PR') {
-          previewServer(
-            buildCommand: 'yarn build:preview',
-            prefix: 'pr',
-            buildFolder: 'build',
-            commentPrefix: PR_COMMENT_MARKER
-          )
-        }
-      },
-      'Storybook': {
-        if(!isPullRequest) {
-          print "No PR previews for release builds"
-          return;
-        }
-        stageWithNotify('Build and deploy Storybook') {
-          previewServer(
-            buildCommand: 'yarn build-storybook',
-            prefix: 'storybook',
-            buildFolder: 'storybook-static',
-            commentPrefix: STORYBOOK_COMMENT_MARKER
-          )
-        }
-      },
-      'Build': {
-         if(isPullRequest) {
-          print "No builds for prs"
-          return;
-        }
-        stageWithNotify('Build for FAS') {
-            fas.build(
-            appId: APP_ID,
-            repo: APPLICATION_REPO_ID,
-            buildCommand: 'yarn build',
-            shouldPublishSourceMap: false
+        },
+        'Preview': {
+          if(!isPullRequest) {
+            print "No PR previews for release builds"
+            return;
+          }
+          stageWithNotify('Build and deploy PR') {
+            previewServer(
+              buildCommand: 'yarn build:preview',
+              prefix: 'pr',
+              buildFolder: 'build',
+              commentPrefix: PR_COMMENT_MARKER
             )
-        }  
-      }
+          }
+        },
+        'Storybook': {
+          if(!isPullRequest) {
+            print "No PR previews for release builds"
+            return;
+          }
+          stageWithNotify('Build and deploy Storybook') {
+            previewServer(
+              buildCommand: 'yarn build-storybook',
+              prefix: 'storybook',
+              buildFolder: 'storybook-static',
+              commentPrefix: STORYBOOK_COMMENT_MARKER
+            )
+          }
+        },
+        'Build': {
+          if(isPullRequest) {
+            print "No builds for prs"
+            return;
+          }
+          stageWithNotify('Build for FAS') {
+              fas.build(
+              appId: APP_ID,
+              repo: APPLICATION_REPO_ID,
+              buildCommand: 'yarn build',
+              shouldPublishSourceMap: false
+              )
+          }  
+        }
+      ],
+      workers: 2,
     )
 
     if (!isRelease) {
