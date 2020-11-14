@@ -9,9 +9,9 @@
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --env=jest-environment-jsdom-fourteen",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
+    "eslint": "yarn eslint:changed \"src/**/*.{js,ts,tsx}\"",
     "eslint:changed": "eslint --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "prettier": "prettier --config .prettierrc -l \"src/**/*.{js,ts,tsx}\" || (echo \nThese files are not formatted correctly && false)",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
@@ -23,7 +23,7 @@
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^1.0.0",
     "@google-cloud/storage": "^5.5.0",
-    "@sentry/browser": "^5.27.3",
+    "@sentry/browser": "^5.27.4",
     "antd": "4.7.3",
     "commander": "^5.1.0",
     "cross-env": "^7.0.2",
@@ -42,7 +42,7 @@
     "react-query": "^2.26.2",
     "react-router": "^5.2.0",
     "react-scripts": "3.4.3",
-    "react-table": "^7.6.1",
+    "react-table": "^7.6.2",
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
     "systemjs-webpack-interop": "^2.1.2"
@@ -58,7 +58,7 @@
     "@rescripts/utilities": "^0.0.7",
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.0.28",
-    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.1.0",
     "@testing-library/react-hooks": "^3.4.2",
     "@types/jest": "^26.0.15",
