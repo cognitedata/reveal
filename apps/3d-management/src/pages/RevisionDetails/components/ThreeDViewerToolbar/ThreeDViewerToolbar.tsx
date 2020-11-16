@@ -22,6 +22,8 @@ import {
 import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ThreeDViewerToolbar/ToolbarTreeView';
 import { isOldViewer } from 'src/utils';
 import MessageType from 'src/AntdMessage';
+import { useFlag } from '@cognite/react-feature-flags';
+import { isDevelopment } from '@cognite/cdf-utilities';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -71,8 +73,13 @@ type DispatchProps = {
 type Props = OwnProps & DispatchProps;
 
 function ThreeDViewerToolbar(props: Props) {
-  (window as any).model = props.model;
-  (window as any).viewer = props.viewer;
+  React.useEffect(() => {
+    (window as any).model = props.model;
+    (window as any).viewer = props.viewer;
+  }, [props.model, props.viewer]);
+
+  const treeViewIsHiddenByFeatureFlag =
+    useFlag('3DM_tree_view_hidden') && !isDevelopment();
 
   const onRotationChange = (rotationMatrix: THREE.Matrix4) => {
     if ('setModelTransformation' in props.model) {
@@ -186,6 +193,7 @@ function ThreeDViewerToolbar(props: Props) {
   };
 
   const showTreeView =
+    !treeViewIsHiddenByFeatureFlag &&
     !(props.model instanceof CognitePointCloudModel) &&
     !isOldViewer(props.viewer);
 

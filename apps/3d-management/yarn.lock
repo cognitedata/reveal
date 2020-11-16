@@ -1428,10 +1428,10 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/react-feature-flags@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-0.0.1.tgz#67452b7e6213ea3ab2dd87e7b0feadf1bc07eb55"
-  integrity sha512-pWAKzxdQKls77acnQcNH/m22QWnxJz0fnIFVk+vj2x1tEUqYH7woXO+MqDeDa07ZU2IE/2ebD5r8ZSCkH7lFHg==
+"@cognite/react-feature-flags@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-0.0.2.tgz#186cf1b7908408033e9116b190e088ad67164e4f"
+  integrity sha512-kpjbyaHpAINM3Sf1ZHUytSci99571eHEAIfFmqMmTeSYLWWg7hkGDy/WLOtbKkM7oDy5iNGy11FWoIMhhz/Mnw==
   dependencies:
     unleash-proxy-client "^1.0.1"
 

@@ -10,20 +10,21 @@ import { Routes } from 'src/Routes';
 import { setupUserTracking } from 'src/utils/userTracking';
 import { Loader } from '@cognite/cogs.js';
 import { createBrowserHistory } from 'history';
-import { APP_TITLE } from 'src/utils';
+import { APP_TITLE, projectName } from 'src/utils';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import ErrorBoundary from './components/ErrorBoundary';
 
 setupUserTracking();
-
 export const App = () => {
   const history = createBrowserHistory();
   const store = configureStore(history, {});
+  const subAppName = 'cdf-3d-management';
 
   return (
     <ErrorBoundary>
       <GlobalStyles>
         <AuthWrapper
-          subAppName="cdf-3d-management"
+          subAppName={subAppName}
           showLoader
           includeGroups
           loadingScreen={<Loader />}
@@ -31,10 +32,16 @@ export const App = () => {
           <Provider store={store}>
             <ThemeProvider theme={theme}>
               <ConnectedRouter history={history}>
-                <SubAppWrapper>
-                  <PageTitle title={APP_TITLE} />
-                  <Routes />
-                </SubAppWrapper>
+                <FlagProvider
+                  appName={subAppName}
+                  apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                  projectName={projectName}
+                >
+                  <SubAppWrapper>
+                    <PageTitle title={APP_TITLE} />
+                    <Routes />
+                  </SubAppWrapper>
+                </FlagProvider>
               </ConnectedRouter>
             </ThemeProvider>
           </Provider>
