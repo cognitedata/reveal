@@ -1,7 +1,7 @@
 import React from 'react';
 import { Cell, CellProps } from 'react-table';
 import { Integration } from '../../model/Integration';
-import OwnedBy from '../integrations/cols/OwnedBy';
+import UserDetails from '../integrations/cols/UserDetails';
 import Authors from '../integrations/cols/Authors';
 import Name from '../integrations/cols/Name';
 import LastRun from '../integrations/cols/LastRun';
@@ -9,11 +9,20 @@ import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableOptions from '../menu/IntegrationsTableOptions';
 import DataSet from '../integrations/cols/DataSet';
 
+export enum TableHeadings {
+  NAME = 'Name',
+  LAST_UPDATED = 'Time of last data point',
+  DATA_SET = 'Destination data sets',
+  SCHEDULE = 'Schedule',
+  OWNER = 'Owner',
+  CREATED_BY = 'Created by',
+}
+
 export const getIntegrationTableCol = () => {
   return [
     {
       id: 'name',
-      Header: 'Name',
+      Header: TableHeadings.NAME,
       accessor: 'name',
       Cell: ({ row }: CellProps<Integration>) => {
         return <Name name={row.values.name} rowIndex={row.index} />;
@@ -22,7 +31,7 @@ export const getIntegrationTableCol = () => {
     },
     {
       id: 'lastUpdatedTime',
-      Header: 'Time of last data point',
+      Header: TableHeadings.LAST_UPDATED,
       accessor: 'lastUpdatedTime',
       Cell: ({ row }: Cell<Integration>) => {
         return (
@@ -37,7 +46,7 @@ export const getIntegrationTableCol = () => {
     },
     {
       id: 'schedule',
-      Header: 'Schedule',
+      Header: TableHeadings.SCHEDULE,
       accessor: 'schedule',
       Cell: ({ row }: Cell<Integration>) => {
         return <Schedule schedule={row.values.schedule} />;
@@ -46,7 +55,7 @@ export const getIntegrationTableCol = () => {
     },
     {
       id: 'dataSetId',
-      Header: 'Destination data sets',
+      Header: TableHeadings.DATA_SET,
       accessor: 'dataSetId',
       Cell: ({ row }: Cell<Integration>) => {
         const id = row.original.dataSet?.name ?? row.original.dataSetId;
@@ -58,17 +67,17 @@ export const getIntegrationTableCol = () => {
     },
     {
       id: 'owner',
-      Header: 'Owner',
+      Header: TableHeadings.OWNER,
       accessor: (row: Integration) => {
         return row.owner.name;
       },
       Cell: ({ row }: Cell<Integration>) => {
-        return <OwnedBy owner={row.original.owner} />;
+        return <UserDetails user={row.original.owner} />;
       },
     },
     {
       id: 'authors',
-      Header: 'Created by',
+      Header: TableHeadings.CREATED_BY,
       accessor: (row: Integration) => {
         return row.authors.map((aut) => aut.name).join();
       },

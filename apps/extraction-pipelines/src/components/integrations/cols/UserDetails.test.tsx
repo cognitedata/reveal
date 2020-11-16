@@ -1,12 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import OwnedBy from './OwnedBy';
+import UserDetails from './UserDetails';
 import { User } from '../../../model/User';
 
-describe('<OwnedBy />', () => {
+describe('<UserDetails />', () => {
   const cases = [
     {
-      desc: 'Render owner name when defined',
+      desc: 'Render user name when defined',
       value: { name: 'Test Person', email: 'test@test.com' },
       expected: /Test Person/i,
     },
@@ -18,7 +18,7 @@ describe('<OwnedBy />', () => {
   ];
   cases.forEach(({ desc, value, expected }) => {
     test(`${desc}`, () => {
-      render(<OwnedBy owner={value} />);
+      render(<UserDetails user={value} />);
       expect(screen.getByText(expected)).toBeInTheDocument();
     });
   });
