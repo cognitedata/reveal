@@ -22,7 +22,7 @@ const SpinWrapper = styled.div`
 type Props = {
   text?: string;
   className?: string;
-  styles?: CSSProperties;
+  style?: CSSProperties;
 };
 
 function Spinner({ text, ...rest }: Props) {

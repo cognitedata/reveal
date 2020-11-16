@@ -1,25 +1,24 @@
 import React from 'react';
 import { Metrics } from '@cognite/metrics';
-import PropTypes from 'prop-types';
 import { createStructuredSelector, createSelector } from 'reselect';
 import { Button } from '@cognite/cogs.js';
 import Card from 'antd/lib/card';
 import Modal from 'antd/lib/modal';
 import Input from 'antd/lib/input';
-import * as Sentry from '@sentry/browser';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { projectName, userHasCapabilities, getContainer } from 'src/utils';
 import { createLink } from '@cognite/cdf-utilities';
-import { userPropType } from 'src/utils/PropTypes';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
 import Spinner from 'src/components/Spinner';
 
 import * as RevisionActions from 'src/store/modules/Revision';
 import Thumbnail from 'src/components/Thumbnail';
 import * as FileActions from 'src/store/modules/File';
+import { RouteComponentProps } from 'react-router';
+import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import RevisionsTable from '../RevisionsTable';
 import FileUploader from '../FileUploader';
 
@@ -47,50 +46,53 @@ const ButtonRow = styled.div`
   }
 `;
 
-const propTypes = {
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-  fetchRevisions: PropTypes.func.isRequired,
-  fetchUrlForUpload: PropTypes.func.isRequired,
-  createNewRevision: PropTypes.func.isRequired,
-  deleteExistingModel: PropTypes.func.isRequired,
-  changeModelName: PropTypes.func.isRequired,
-  fileToUpload: PropTypes.shape({
-    data: PropTypes.shape({
-      uploadURL: PropTypes.string,
-      fileId: PropTypes.number,
-    }).isRequired,
-  }).isRequired,
-  revisions: PropTypes.shape({
-    data: PropTypes.shape({
-      modelMap: PropTypes.arrayOf(PropTypes.number),
-      loaded: PropTypes.arrayOf(PropTypes.number),
-      items: PropTypes.arrayOf(
-        PropTypes.shape({
-          items: PropTypes.array.isRequired,
-        })
-      ),
-    }).isRequired,
-    errorHandler: PropTypes.shape({
-      response: PropTypes.shape({
-        message: PropTypes.string.isRequired,
-      }),
-    }),
-  }).isRequired,
-  model: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-  }).isRequired,
-  user: userPropType.isRequired,
+type Props = RouteComponentProps & {
+  history: History;
+  fetchRevisions: Function;
+  fetchUrlForUpload: Function;
+  createNewRevision: Function;
+  deleteExistingModel: Function;
+  changeModelName: Function;
+  fileToUpload: {
+    data: {
+      uploadURL: string;
+      fileId: number;
+    };
+  };
+  revisions: {
+    data: {
+      modelMap: Array<number>;
+      loaded: Array<number>;
+      items: Array<{
+        items: Array<any>;
+      }>;
+    };
+    errorHandler: {
+      response: {
+        message: string;
+      };
+    };
+  };
+  model: {
+    id: number;
+    name: string;
+  };
+  user: AuthenticatedUserWithGroups;
 };
 
-class AllRevisions extends React.PureComponent {
+type State = {
+  uploadModalVisible: boolean;
+  deletionModalVisible: boolean;
+  renameModalVisible: boolean;
+  newName: string;
+};
+
+class AllRevisions extends React.PureComponent<Props, State> {
   metrics = Metrics.create('3D');
 
   constructor(props) {
     super(props);
-    // eslint-disable-next-line react/state-in-constructor
+
     this.state = {
       uploadModalVisible: false,
       deletionModalVisible: false,
@@ -243,6 +245,7 @@ class AllRevisions extends React.PureComponent {
           </PermissioningHintWrapper>
         </ButtonRow>
 
+        {/* @ts-ignore */}
         <Card style={{ align: 'center', width: '100%' }}>
           <Thumbnail
             modelId={this.props.model.id}
@@ -276,15 +279,6 @@ class AllRevisions extends React.PureComponent {
           getContainer={getContainer}
         >
           <FileUploader
-            uploadData={async (fileName, fileType) => {
-              this.props
-                .fetchUrlForUpload({
-                  fileName,
-                  fileType,
-                })
-                .then(() => this.props.fileToUpload.data)
-                .catch((err) => Sentry.captureException(err));
-            }}
             onUploadSuccess={async (fileId) => {
               await this.props.createNewRevision({
                 fileId,
@@ -332,20 +326,19 @@ class AllRevisions extends React.PureComponent {
   }
 }
 
-AllRevisions.propTypes = propTypes;
-
 const mapStateToProps = createStructuredSelector({
   revisions: createSelector(
-    (state) => state.revisions,
+    (state: any) => state.revisions,
     (revisionState) => revisionState
   ),
   fileToUpload: createSelector(
-    (state) => state.files,
+    (state: any) => state.files,
     (filesState) => filesState
   ),
 });
 
 function mapDispatchToProps(dispatch) {
+  // @ts-ignore
   return bindActionCreators({ ...RevisionActions, ...FileActions }, dispatch);
 }
 

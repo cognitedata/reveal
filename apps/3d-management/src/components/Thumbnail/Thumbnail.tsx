@@ -1,9 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { CSSProperties } from 'react';
 import { bindActionCreators } from 'redux';
 import { createStructuredSelector, createSelector } from 'reselect';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import Spinner from 'src/components/Spinner';
 import { Tooltip, Icon } from '@cognite/cogs.js';
@@ -17,14 +15,45 @@ const ThumbnailHint = styled.div`
   line-height: 16px;
 `;
 
-export class Thumbnail extends React.Component {
+type WithFileId = {
+  fileId: number;
+  modelId: never;
+};
+
+type WithModelId = {
+  fileId: never;
+  modelId: number;
+};
+
+type Props = (WithFileId | WithModelId) & {
+  revisions: {
+    items: Array<{
+      items: Array<any>;
+    }>;
+    modelMap: Array<number>;
+  };
+  downloadThumbnail: Function;
+  fetchRevisions: Function;
+  width?: string;
+  style?: CSSProperties;
+};
+
+type State = {
+  imageSrc?: string;
+  loading: boolean;
+};
+
+export class Thumbnail extends React.Component<Props, State> {
+  mounted = false;
+
   constructor(props) {
     super(props);
-    // eslint-disable-next-line react/state-in-constructor
+
     this.state = {
       imageSrc: undefined,
       loading: true,
     };
+
     this.mounted = false;
   }
 
@@ -109,77 +138,24 @@ export class Thumbnail extends React.Component {
   }
 }
 
-const requiredPropsCheck = (props, propName, componentName) => {
-  if (!props.fileId && !props.modelId) {
-    return new Error(
-      `One of 'fileId' or 'modelId' is required by '${componentName}' component.`
-    );
-  }
-
-  if (props.fileId) {
-    PropTypes.checkPropTypes(
-      { fileId: PropTypes.number },
-      { fileId: props.fileId },
-      'prop',
-      componentName
-    );
-  }
-
-  if (props.modelId) {
-    PropTypes.checkPropTypes(
-      { modelId: PropTypes.number },
-      { modelId: props.modelId },
-      'prop',
-      componentName
-    );
-  }
-
-  return null;
-};
-
-Thumbnail.propTypes = {
-  revisions: PropTypes.shape({
-    items: PropTypes.arrayOf(
-      PropTypes.shape({
-        items: PropTypes.array.isRequired,
-      })
-    ),
-    modelMap: PropTypes.arrayOf(PropTypes.number).isRequired,
-  }).isRequired,
-  downloadThumbnail: PropTypes.func.isRequired,
-  fileId: requiredPropsCheck,
-  modelId: requiredPropsCheck,
-  fetchRevisions: PropTypes.func.isRequired,
-  width: PropTypes.string,
-  style: PropTypes.shape(),
-};
-
-Thumbnail.defaultProps = {
-  fileId: null,
-  modelId: null,
-  style: null,
-  width: null,
-};
-
 const mapStateToProps = createStructuredSelector({
   thumbnails: createSelector(
-    (state) => state.files.thumbnails,
+    (state: any) => state.files.thumbnails,
     (revisionState) => revisionState
   ),
   revisions: createSelector(
-    (state) => state.revisions.data,
+    (state: any) => state.revisions.data,
     (revisionState) => revisionState
   ),
   auth: createSelector(
-    (state) => state.auth,
+    (state: any) => state.auth,
     (authState) => authState
   ),
 });
 
 function mapDispatchToProps(dispatch) {
+  // @ts-ignore
   return bindActionCreators({ ...FileActions, ...RevisionActions }, dispatch);
 }
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(Thumbnail)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(Thumbnail);

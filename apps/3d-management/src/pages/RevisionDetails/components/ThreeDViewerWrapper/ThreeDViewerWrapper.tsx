@@ -4,7 +4,7 @@ import Icon from 'antd/lib/icon';
 import zIndex from 'src/utils/zIndex';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { LazyWrapper } from 'src/components/LazyWrapper';
-import Thumbnail from 'src/components/Thumbnail/index';
+import Thumbnail from 'src/components/Thumbnail';
 
 import { isModelFormatDeprecated } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/isModelFormatDeprecated';
 import { DeprecatedModelMessage } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/DeprecatedModelMessage';

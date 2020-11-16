@@ -136,9 +136,7 @@ class RevisionsTable extends React.Component {
             <TableOperations>
               <Button onClick={this.clearAll}>Clear Sorting and Filters</Button>
               {this.props.refresh ? (
-                <Button type="green" onClick={this.props.refresh}>
-                  Refresh
-                </Button>
+                <Button onClick={this.props.refresh}>Refresh</Button>
               ) : null}
             </TableOperations>
           )}

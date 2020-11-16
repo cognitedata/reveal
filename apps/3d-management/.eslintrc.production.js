@@ -35,5 +35,8 @@ module.exports = {
       'error',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
+
+    'no-unused-expressions': ['off'],
+    '@typescript-eslint/no-unused-expressions': ['error'],
   },
 };

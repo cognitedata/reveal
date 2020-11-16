@@ -1,6 +1,5 @@
 import React from 'react';
 import { Metrics } from '@cognite/metrics';
-import PropTypes from 'prop-types';
 import Table from 'antd/lib/table';
 import { Button } from '@cognite/cogs.js';
 import Icon from 'antd/lib/icon';
@@ -66,8 +65,26 @@ const SearchDiv = styled.div`
   }
 `;
 
-class ModelsTable extends React.Component {
+type Props = {
+  models: Array<{ id: number }>;
+  app: {
+    selectedModels: Array<number>;
+    modelTableState: {
+      pagination: any;
+      filters: any;
+      sorter: any;
+      sortedInfo: any;
+    };
+  };
+  expandedRowRender: (...args: any) => any;
+  setModelTableState: (...args: any) => any;
+  setSelectedModels: (...args: any) => any;
+  refresh: (...args: any) => any;
+};
+
+class ModelsTable extends React.Component<Props> {
   metrics = Metrics.create('3D.Models');
+  searchInput: Input | null = null;
 
   get columns() {
     const {
@@ -84,7 +101,6 @@ class ModelsTable extends React.Component {
         width: 30,
         render: (val) => (
           <Popover
-            width="500px"
             title={val.name}
             trigger="click"
             content={
@@ -154,7 +170,7 @@ class ModelsTable extends React.Component {
         onFilterDropdownVisibleChange: (visible) => {
           if (visible) {
             setTimeout(() => {
-              this.searchInput.focus();
+              this.searchInput?.focus();
             });
           }
         },
@@ -223,9 +239,7 @@ class ModelsTable extends React.Component {
             <TableOperations>
               <Button onClick={this.clearAll}>Clear Sorting</Button>
               {this.props.refresh ? (
-                <Button type="green" onClick={this.props.refresh}>
-                  Refresh
-                </Button>
+                <Button onClick={this.props.refresh}>Refresh</Button>
               ) : null}
             </TableOperations>
           )}
@@ -234,28 +248,6 @@ class ModelsTable extends React.Component {
     );
   }
 }
-
-ModelsTable.propTypes = {
-  models: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number }))
-    .isRequired,
-  app: PropTypes.shape({
-    selectedModels: PropTypes.arrayOf(PropTypes.number),
-    modelTableState: PropTypes.shape({
-      pagination: PropTypes.shape(),
-      filters: PropTypes.shape(),
-      sorter: PropTypes.shape(),
-      sortedInfo: PropTypes.shape(),
-    }).isRequired,
-  }).isRequired,
-  expandedRowRender: PropTypes.func.isRequired,
-  setModelTableState: PropTypes.func.isRequired,
-  setSelectedModels: PropTypes.func.isRequired,
-  refresh: PropTypes.func,
-};
-
-ModelsTable.defaultProps = {
-  refresh: null,
-};
 
 const mapStateToProps = (state) => ({
   app: state.app,

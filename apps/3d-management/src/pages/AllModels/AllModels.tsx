@@ -1,6 +1,5 @@
 import React from 'react';
 import { Metrics } from '@cognite/metrics';
-import PropTypes from 'prop-types';
 import { createStructuredSelector, createSelector } from 'reselect';
 import { Button } from '@cognite/cogs.js';
 import Modal from 'antd/lib/modal';
@@ -17,7 +16,6 @@ import NewHeader from 'src/components/NewHeader';
 import { userHasCapabilities, getContainer, APP_TITLE } from 'src/utils';
 
 import Spinner from 'src/components/Spinner';
-import { userPropType } from 'src/utils/PropTypes';
 
 import FileUploader from 'src/pages/AllModels/components/FileUploader';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
@@ -26,6 +24,8 @@ import AllRevisions from 'src/pages/AllModels/components/AllRevisions';
 import ModelsTable from 'src/pages/AllModels/components/ModelsTable';
 import * as RevisionActions from 'src/store/modules/Revision';
 import * as ModelActions from 'src/store/modules/Model';
+import { v3 } from '@cognite/cdf-sdk-singleton';
+import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 
 const { Step } = Steps;
 
@@ -59,44 +59,51 @@ const ButtonRow = styled.div`
   }
 `;
 
-const propTypes = {
-  clearRevisions: PropTypes.func.isRequired,
-  fetchModels: PropTypes.func.isRequired,
-  createNewModel: PropTypes.func.isRequired,
-  fetchUrlForUpload: PropTypes.func.isRequired,
-  createNewRevision: PropTypes.func.isRequired,
-  models: PropTypes.shape({
-    data: PropTypes.shape({
-      items: PropTypes.array,
-    }),
-  }),
-  fileToUpload: PropTypes.shape({
-    data: PropTypes.shape({
-      uploadURL: PropTypes.string,
-      fileId: PropTypes.number,
-    }).isRequired,
-  }).isRequired,
-  user: userPropType.isRequired,
-  clearLocalModels: PropTypes.func.isRequired,
+type Props = {
+  clearRevisions: Function;
+  fetchModels: Function;
+  createNewModel: Function;
+  fetchUrlForUpload: Function;
+  createNewRevision: Function;
+  models?: {
+    data: {
+      items: Array<any>;
+    };
+  };
+  fileToUpload: {
+    data: {
+      uploadURL: string;
+      fileId: number;
+    };
+  };
+  user: AuthenticatedUserWithGroups;
+  clearLocalModels: Function;
 };
 
-const defaultProps = {
-  models: { items: undefined },
+type State = {
+  modalVisible: boolean;
+  nameVal: string;
+  currentUploadStep: number;
+  newModel?: v3.Model3D;
 };
 
-const defaultState = {
+const defaultState: State = {
   modalVisible: false,
   nameVal: '',
   currentUploadStep: 0,
   newModel: undefined,
 };
 
-class AllModels extends React.Component {
+class AllModels extends React.Component<Props, State> {
+  // fixme doesn't make any sense?
+  static defaultProps = {
+    models: { items: undefined },
+  };
+
   metrics = Metrics.create('3D');
 
   constructor(props) {
     super(props);
-    // eslint-disable-next-line react/state-in-constructor
     this.state = {
       ...defaultState,
     };
@@ -155,19 +162,20 @@ class AllModels extends React.Component {
 
     if (response.payload && response.payload[0]) {
       this.setState({
-        newModel: response.payload[0],
+        newModel: response.payload[0] as v3.Model3D,
       });
     }
   };
 
-  input = (key, ev) => {
+  input = (key: keyof State, ev: any) => {
+    // @ts-ignore
     this.setState({
       [key]: ev.target.value,
     });
   };
 
   render() {
-    const { items: models } = this.props.models.data;
+    const { items: models } = this.props.models?.data || {};
     const showAddModelButton = userHasCapabilities(this.props.user, [
       { acl: 'threedAcl', actions: ['CREATE'] },
       { acl: 'filesAcl', actions: ['WRITE'] },
@@ -211,21 +219,14 @@ class AllModels extends React.Component {
         content: (
           <FileUploader
             beforeUploadStart={async () => {
+              // fixme: then doesnt make sense
               await this.createModel().then(() => this.state.newModel);
               this.metrics.track('Models.Add');
             }}
-            uploadData={(fileName, fileType) =>
-              this.props
-                .fetchUrlForUpload({
-                  fileName,
-                  fileType,
-                })
-                .then(() => this.props.fileToUpload.data)
-            }
             onUploadSuccess={async (fileId) => {
               await this.props.createNewRevision({
                 fileId,
-                modelId: this.state.newModel.id,
+                modelId: this.state.newModel!.id,
               });
 
               this.metrics.track('Revisions.New');
@@ -305,20 +306,18 @@ class AllModels extends React.Component {
 
 const mapStateToProps = createStructuredSelector({
   models: createSelector(
-    (state) => state.models,
+    (state: any) => state.models,
     (modelState) => modelState
   ),
   fileToUpload: createSelector(
-    (state) => state.files,
+    (state: any) => state.files,
     (filesState) => filesState
   ),
 });
 
-AllModels.defaultProps = defaultProps;
-AllModels.propTypes = propTypes;
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
+    // @ts-ignore
     { ...ModelActions, ...RevisionActions, ...FileActions },
     dispatch
   );

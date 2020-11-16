@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Upload from 'antd/lib/upload';
 import Icon from 'antd/lib/icon';
 import { Button } from '@cognite/cogs.js';
@@ -8,9 +7,10 @@ import message from 'antd/lib/message';
 import UploadGCS from 'gcs-browser-upload';
 import mime from 'mime-types';
 import styled from 'styled-components';
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
 import { fireErrorNotification } from 'src/utils/notifications';
-import { getContainer } from 'src/utils';
+import { DEFAULT_MARGIN, getContainer } from 'src/utils';
+import noop from 'lodash/noop';
 
 const { Dragger } = Upload;
 const { confirm } = Modal;
@@ -32,25 +32,39 @@ const ButtonRow = styled.div`
   }
 `;
 
-const STATUS = Object.freeze({
-  WAITING: 1,
-  READY: 2,
-  STARTED: 3,
-  PAUSED: 4,
-});
+enum STATUS {
+  WAITING = 1,
+  READY = 2,
+  STARTED = 3,
+  PAUSED = 4,
+}
 
 const defaultState = {
   uploadStatus: STATUS.WAITING,
   fileList: undefined,
-  currentUpload: undefined,
 };
 
-class FileUploader extends React.Component {
+type Props = typeof FileUploader.defaultProps;
+
+type State = {
+  uploadStatus: STATUS;
+  fileList?: Array<any>;
+  supportedExtensions: Array<string>;
+};
+
+class FileUploader extends React.Component<Props, State> {
+  static defaultProps = {
+    onUploadSuccess: noop,
+    onUploadFailure: noop,
+    onCancel: noop,
+    beforeUploadStart: noop,
+  };
+
+  currentUpload: UploadGCS | null = null;
+
   constructor(props) {
     super(props);
-    this.currentUpload = null;
     this.fetchSupportedExtensions();
-    // eslint-disable-next-line react/state-in-constructor
     this.state = {
       ...defaultState,
       supportedExtensions: [],
@@ -88,11 +102,11 @@ class FileUploader extends React.Component {
   };
 
   fetchSupportedExtensions = async () => {
-    const supportedExtensions = [];
+    const supportedExtensions: Array<string> = [];
 
     // This end point is hidden and not in the SDK.
-    const response = await sdk.get(
-      `api/v1/projects/${sdk.project}/3d/supportedfileformats`
+    const response = await v3Client.get(
+      `api/v1/projects/${v3Client.project}/3d/supportedfileformats`
     );
     response.data.items.forEach((fileFormat) => {
       fileFormat.extensions.forEach((extension) => {
@@ -116,12 +130,13 @@ class FileUploader extends React.Component {
     }
 
     message.info('Starting Upload...');
+    const file = this.state.fileList![0];
 
-    const { uploadUrl, id } = await sdk.files.upload({
-      name: this.state.fileList[0].name,
-      mimeType: this.getMIMEType(this.state.fileList[0].name),
+    const { uploadUrl, id } = (await v3Client.files.upload({
+      name: file.name,
+      mimeType: this.getMIMEType(file.name),
       source: '3d-models',
-    });
+    })) as v3.FileUploadResponse;
 
     if (!uploadUrl || !id) {
       this.props.onUploadFailure();
@@ -131,7 +146,7 @@ class FileUploader extends React.Component {
     const chunkMultiple = Math.min(
       Math.max(
         2, // 0.5MB min chunks
-        Math.ceil((this.state.fileList[0].size / 20) * 262144) // will divide into 20 segments
+        Math.ceil((file.size / 20) * 262144) // will divide into 20 segments
       ),
       200 // 50 MB max
     );
@@ -139,24 +154,21 @@ class FileUploader extends React.Component {
     this.currentUpload = new UploadGCS({
       id: 'file',
       url: uploadUrl,
-      file: this.state.fileList[0],
+      file,
       chunkSize: 262144 * chunkMultiple,
       onChunkUpload: (info) => {
-        if (this.state.fileList[0].status !== 'uploading') {
-          this.state.fileList[0].status = 'uploading';
+        if (file.status !== 'uploading') {
+          file.status = 'uploading';
         }
-        this.state.fileList[0].response = info;
-        this.state.fileList[0].percent =
-          (info.uploadedBytes / info.totalBytes) * 100;
-
-        this.setState((prevState) => ({ fileList: [prevState.fileList[0]] }));
+        file.response = info;
+        file.percent = (info.uploadedBytes / info.totalBytes) * 100;
       },
     });
 
     this.setState({ uploadStatus: STATUS.STARTED });
 
     try {
-      await this.currentUpload.start();
+      await this.currentUpload!.start();
     } catch (e) {
       // catch CORS errors
     }
@@ -184,38 +196,16 @@ class FileUploader extends React.Component {
           this.currentUpload.meta.reset();
           this.setState(defaultState);
         },
-        onCancel() {
-          this.props.onCancel();
-        },
         getContainer,
       });
     } else {
+      // modal closed
       if (this.currentUpload) {
         this.currentUpload.cancel();
         this.currentUpload.meta.reset();
       }
       this.props.onCancel();
       this.setState(defaultState);
-    }
-  };
-
-  pauseUpload = () => {
-    if (this.state.uploadStatus === STATUS.STARTED) {
-      this.currentUpload.pause();
-
-      this.setState({
-        uploadStatus: STATUS.PAUSED,
-      });
-    }
-  };
-
-  unpauseUpload = () => {
-    if (this.state.uploadStatus === STATUS.PAUSED) {
-      this.currentUpload.unpause();
-
-      this.setState({
-        uploadStatus: STATUS.STARTED,
-      });
     }
   };
 
@@ -284,7 +274,6 @@ class FileUploader extends React.Component {
         <Dragger
           name="file"
           multiple={false}
-          onCancel={this.stopUpload}
           onRemove={this.removeFile}
           beforeUpload={this.setupFilesBeforeUpload}
           fileList={this.state.fileList}
@@ -297,7 +286,9 @@ class FileUploader extends React.Component {
             you click the Upload button.
           </p>
         </Dragger>
-        <div>{`Supported file formats: ${this.state.supportedExtensions.join()}.`}</div>
+        <div
+          style={{ marginTop: DEFAULT_MARGIN }}
+        >{`Supported file formats: ${this.state.supportedExtensions.join()}.`}</div>
         <ButtonRow>
           <Button onClick={this.stopUpload}>Cancel</Button>
           {uploaderButton}
@@ -306,19 +297,5 @@ class FileUploader extends React.Component {
     );
   }
 }
-
-FileUploader.propTypes = {
-  onUploadSuccess: PropTypes.func,
-  onUploadFailure: PropTypes.func,
-  onCancel: PropTypes.func,
-  beforeUploadStart: PropTypes.func,
-};
-
-FileUploader.defaultProps = {
-  onUploadSuccess: () => {},
-  onUploadFailure: () => {},
-  onCancel: () => {},
-  beforeUploadStart: () => true,
-};
 
 export default FileUploader;

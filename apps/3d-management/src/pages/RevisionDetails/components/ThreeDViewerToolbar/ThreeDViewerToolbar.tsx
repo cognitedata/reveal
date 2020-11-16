@@ -20,7 +20,7 @@ import {
   Legacy3DViewer,
 } from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ThreeDViewerToolbar/ToolbarTreeView';
-import { isOldViewer } from 'src/utils';
+import { DEFAULT_MARGIN, isOldViewer } from 'src/utils';
 import MessageType from 'src/AntdMessage';
 import { useFlag } from '@cognite/react-feature-flags';
 import { isDevelopment } from '@cognite/cdf-utilities';
@@ -31,7 +31,6 @@ import { ClassPicker } from './ClassPicker';
 
 const CONTAINER_PADDING = 8;
 const CONTAINER_WIDTH = 400;
-const DEFAULT_MARGIN = 16;
 const SCROLLBAR_WIDTH = 2;
 
 const ToolbarContainer = styled.div`
