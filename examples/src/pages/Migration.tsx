@@ -214,13 +214,30 @@ export function Migration() {
         console.log('2D coordinates', event);
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          const { treeIndex, point, model } = intersection;
-          console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-          // highlight the object
-          model.deselectAllNodes();
-          model.selectNodeByTreeIndex(treeIndex);
-          const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-          viewer.fitCameraToBoundingBox(boundingBox, 1000);
+          console.log(intersection);
+          switch (intersection.type) {
+            case 'cad':
+            {
+              const { treeIndex, point, model } = intersection;
+              console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+              // highlight the object
+              model.deselectAllNodes();
+              model.selectNodeByTreeIndex(treeIndex);
+              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+              viewer.fitCameraToBoundingBox(boundingBox, 1000);
+            }
+            break;
+
+            case 'pointcloud':
+            {
+              const { pointIndex, point } = intersection;
+              console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
+              const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+              sphere.position.copy(point);
+              viewer.addObject3D(sphere);
+            }
+            break;
+          }
         }
       });
 
