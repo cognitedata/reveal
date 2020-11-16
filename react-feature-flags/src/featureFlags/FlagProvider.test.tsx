@@ -39,4 +39,42 @@ describe('FeatureToggle', () => {
 
     expect(screen.getByText('enabled')).toBeDefined();
   });
+
+  it('Should have remoteAddress and userId in the context', () => {
+    render(
+      <FlagProvider
+        remoteAddress="fusion.cognite.com"
+        appName="not used"
+        apiToken="not used"
+        projectName="daitya"
+      >
+        <ToggledDiv />
+      </FlagProvider>
+    );
+    expect(clientMock.updateContext).toHaveBeenCalledWith({
+      userId: 'daitya',
+      remoteAddress: 'fusion.cognite.com',
+    });
+  });
+
+  it('Should not have remoteAddress in the context', () => {
+    render(
+      <FlagProvider appName="not used" apiToken="not used" projectName="daitya">
+        <ToggledDiv />
+      </FlagProvider>
+    );
+    expect(clientMock.updateContext).toHaveBeenCalledWith({
+      userId: 'daitya',
+    });
+  });
+
+  it('Should not start the client if projectName is undefined', () => {
+    render(
+      <FlagProvider appName="not used" apiToken="not used">
+        <ToggledDiv />
+      </FlagProvider>
+    );
+    expect(clientMock.start).not.toHaveBeenCalled();
+    expect(clientMock.updateContext).not.toHaveBeenCalled();
+  });
 });

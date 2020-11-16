@@ -10,6 +10,7 @@ type Props = {
   appName: string;
   apiToken: string;
   projectName?: string;
+  remoteAddress?: string;
   proxyUrl?: string;
   refreshInterval?: number;
   children: ReactNode;
@@ -22,6 +23,7 @@ export const FlagProvider = ({
   proxyUrl = DEFAULT_UNLEASH_PROXY_URL,
   refreshInterval /* This is defaulted to 30 sec by the unleash-proxy-client */,
   projectName,
+  remoteAddress,
 }: Props) => {
   const client = useRef<UnleashClient>(
     new UnleashClient({
@@ -34,13 +36,16 @@ export const FlagProvider = ({
 
   useEffect(() => {
     if (projectName) {
-      const context = {
+      const context: { [id: string]: string } = {
         /*
          * For simplicity and unsupported strategies in the unleash proxy,
          * we use project as userId to enable a default rollout strategy
          */
         userId: projectName,
       };
+      if (remoteAddress) {
+        context.remoteAddress = remoteAddress;
+      }
       client.current.updateContext(context);
       client.current.start();
     }
@@ -48,7 +53,7 @@ export const FlagProvider = ({
     return () => {
       client.current.stop();
     };
-  }, [projectName]);
+  }, [projectName, remoteAddress]);
 
   if (!client.current) return null;
 
