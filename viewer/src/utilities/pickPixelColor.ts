@@ -12,6 +12,7 @@ export interface PickingInput {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
+  domElement: HTMLElement;
 }
 
 const storage = {
@@ -21,15 +22,15 @@ const storage = {
 
 export function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
   const { renderTarget, pixelBuffer } = storage;
-  const { scene, camera, normalizedCoords, renderer } = input;
+  const { scene, camera, normalizedCoords, renderer, domElement } = input;
 
   const pickCamera = camera.clone();
 
   pickCamera.setViewOffset(
     renderer.domElement.clientWidth,
     renderer.domElement.clientHeight,
-    ((normalizedCoords.x + 1.0) / 2.0) * renderer.domElement.clientWidth,
-    ((1.0 - normalizedCoords.y) / 2.0) * renderer.domElement.clientHeight,
+    ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
+    ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight,
     1,
     1
   );

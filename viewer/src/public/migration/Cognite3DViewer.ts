@@ -920,14 +920,15 @@ export class Cognite3DViewer {
     const cadNodes = cadModels.map(x => x.cadNode);
     const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
-    const coords = {
+    const normalizedCoords = {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
     const input: IntersectInput = {
-      normalizedCoords: coords,
+      normalizedCoords,
       camera: this.camera,
-      renderer: this.renderer
+      renderer: this.renderer,
+      domElement: this.renderer.domElement
     };
     const cadResults = intersectCadNodes(cadNodes, input);
     const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);

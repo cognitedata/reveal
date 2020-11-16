@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { CadNode } from './CadNode';
 import { pickPixelColor, PickingInput } from '../../utilities/pickPixelColor';
 import { RenderMode } from './rendering/RenderMode';
-import { IntersectInput } from '../base';
+import { IntersectInput } from '../base/types';
 
 export interface TreeIndexPickingInput extends PickingInput {
   cadNode: CadNode;
@@ -36,7 +36,7 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectInput): I
 }
 
 export function intersectCadNode(cadNode: CadNode, input: IntersectInput): IntersectCadNodesResult | undefined {
-  const { camera, normalizedCoords, renderer } = input;
+  const { camera, normalizedCoords, renderer, domElement } = input;
   const pickingScene = new THREE.Scene();
   // TODO consider case where parent does not exist
   // TODO add warning if parent has transforms
@@ -47,6 +47,7 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectInput): Inter
       normalizedCoords,
       camera,
       renderer,
+      domElement,
       scene: pickingScene,
       cadNode
     };

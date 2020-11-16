@@ -144,6 +144,7 @@ export function Picking() {
         const revealPickResult = (() => {
           const intersections = reveal.intersectCadNodes([model], {
             renderer,
+            domElement: renderer.domElement,
             camera,
             normalizedCoords,
           });
