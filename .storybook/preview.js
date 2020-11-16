@@ -1,18 +1,9 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-
+import { addDecorator } from '@storybook/react';
+import appProvidersDecorator from './appProvidersDecorator';
 import { configureI18n, I18nContainer } from '@cognite/react-i18n';
-import GlobalStyles from 'global-styles';
+
+import '@cognite/cogs.js/dist/cogs.css';
 
 configureI18n();
 
-export const decorators = [
-  (Story) => (
-    <I18nContainer>
-      <BrowserRouter>
-        <GlobalStyles />
-        <Story />
-      </BrowserRouter>
-    </I18nContainer>
-  ),
-];
+addDecorator(appProvidersDecorator);

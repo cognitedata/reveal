@@ -12,7 +12,8 @@ module.exports = {
       'error',
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
     ],
-
+    'no-param-reassign': ['error', { props: false }],
+    'react/require-default-props': ['off'],
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],
     'class-methods-use-this': ['off'],

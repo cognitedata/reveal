@@ -10,3 +10,5 @@ export REACT_APP_MIXPANEL_DEBUG="${REACT_APP_MIXPANEL_DEBUG:-false}"
 export HTTPS=${HTTPS:-true}
 
 react-scripts start
+
+$SHELL
