@@ -36,7 +36,7 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-const IntegrationsTableOptions: FunctionComponent<Props> = ({
+const IntegrationsTableActions: FunctionComponent<Props> = ({
   integration,
 }: Props) => {
   const [integrationDetailVisible, setIntegrationDetailVisible] = useState(
@@ -58,9 +58,6 @@ const IntegrationsTableOptions: FunctionComponent<Props> = ({
             <Menu.Item key="0" onClick={openIntegrationDetails}>
               View integration details
             </Menu.Item>
-            <Menu.Item key="1">Update integration</Menu.Item>
-            <Menu.Item key="2">View data stream and source</Menu.Item>
-            <Menu.Item key="3">Download configuration</Menu.Item>
           </Menu>
         }
       >
@@ -77,4 +74,4 @@ const IntegrationsTableOptions: FunctionComponent<Props> = ({
   );
 };
 
-export default IntegrationsTableOptions;
+export default IntegrationsTableActions;

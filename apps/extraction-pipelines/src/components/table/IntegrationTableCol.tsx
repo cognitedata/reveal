@@ -6,7 +6,7 @@ import Authors from '../integrations/cols/Authors';
 import Name from '../integrations/cols/Name';
 import LastRun from '../integrations/cols/LastRun';
 import Schedule from '../integrations/cols/Schedule';
-import IntegrationsTableOptions from '../menu/IntegrationsTableOptions';
+import IntegrationsTableActions from '../menu/IntegrationsTableActions';
 import DataSet from '../integrations/cols/DataSet';
 
 export enum TableHeadings {
@@ -90,7 +90,7 @@ export const getIntegrationTableCol = () => {
       id: 'options',
       Header: 'Actions',
       Cell: ({ row }: Cell<Integration>) => {
-        return <IntegrationsTableOptions integration={row.original} />;
+        return <IntegrationsTableActions integration={row.original} />;
       },
       width: 50,
       disableSortBy: true,
