@@ -28,7 +28,7 @@
     "@google-cloud/storage": "^5.5.0",
     "@rescripts/cli": "^0.0.14",
     "@rescripts/utilities": "^0.0.7",
-    "@sentry/browser": "^5.27.3",
+    "@sentry/browser": "^5.27.4",
     "antd": "3.24.0",
     "antd-v4": "npm:antd@4.7.2",
     "commander": "^5.1.0",
