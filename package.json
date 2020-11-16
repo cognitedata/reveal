@@ -28,7 +28,7 @@
     "@cognite/sdk": "^3.1.1",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.27.4",
-    "jwt-decode": "^3.1.1",
+    "jwt-decode": "^3.1.2",
     "lodash": "^4.17.19",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
