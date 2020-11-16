@@ -92,7 +92,7 @@ export function ClassPicker(props: Props) {
   return (
     <Select
       mode="multiple"
-      style={{ width: 250, minHeight: 32, maxHeight: 32 }}
+      style={{ width: '100%', minHeight: 32, maxHeight: 32 }}
       value={selectedValues}
       maxTagCount={0}
       maxTagPlaceholder={

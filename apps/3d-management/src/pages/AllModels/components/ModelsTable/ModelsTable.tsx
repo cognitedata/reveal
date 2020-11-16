@@ -19,7 +19,7 @@ import Thumbnail from 'src/components/Thumbnail';
 
 import { setSelectedModels, setModelTableState } from 'src/store/modules/App';
 import { v3 } from '@cognite/cdf-sdk-singleton';
-import { DEFAULT_MARGIN } from 'src/utils';
+import { DEFAULT_MARGIN_V } from 'src/utils';
 
 const NestedTable = styled(Table)`
   && td:last-child {
@@ -182,7 +182,7 @@ class ModelsTable extends React.Component<Props> {
           title="Search by model name"
           variant="titleAsPlaceholder"
           style={{ maxWidth: 300 }}
-          containerStyle={{ marginBottom: DEFAULT_MARGIN }}
+          containerStyle={{ marginBottom: DEFAULT_MARGIN_V }}
         />
         <NestedTable
           rowKey={(i) => i.id}

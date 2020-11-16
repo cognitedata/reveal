@@ -21,7 +21,7 @@ export function ColorTypePicker({ onChange }: Props) {
     <div title="Point color type">
       <Select
         defaultValue={PotreePointColorType.Rgb}
-        style={{ width: 120 }}
+        style={{ width: 140 }}
         onChange={onChange}
       >
         {(Object.values(PotreePointColorType) as Array<PotreePointColorType>)

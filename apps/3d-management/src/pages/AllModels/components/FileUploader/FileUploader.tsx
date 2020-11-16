@@ -9,7 +9,7 @@ import mime from 'mime-types';
 import styled from 'styled-components';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
 import { fireErrorNotification } from 'src/utils/notifications';
-import { DEFAULT_MARGIN, getContainer } from 'src/utils';
+import { DEFAULT_MARGIN_V, getContainer } from 'src/utils';
 import noop from 'lodash/noop';
 
 const { Dragger } = Upload;
@@ -287,7 +287,7 @@ class FileUploader extends React.Component<Props, State> {
           </p>
         </Dragger>
         <div
-          style={{ marginTop: DEFAULT_MARGIN }}
+          style={{ marginTop: DEFAULT_MARGIN_V }}
         >{`Supported file formats: ${this.state.supportedExtensions.join()}.`}</div>
         <ButtonRow>
           <Button onClick={this.stopUpload}>Cancel</Button>

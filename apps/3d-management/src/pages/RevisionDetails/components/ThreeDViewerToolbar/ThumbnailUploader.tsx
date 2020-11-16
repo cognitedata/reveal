@@ -85,7 +85,6 @@ export function ThumbnailUploader(props: Props) {
   return (
     <>
       <Button
-        shape="round"
         icon="Camera"
         title="Take a screenshot for the thumbnail"
         onClick={takeScreenshot}
