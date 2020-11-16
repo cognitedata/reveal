@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Metrics } from '@cognite/metrics';
-import Table from 'antd/lib/table';
-import { Button } from '@cognite/cogs.js';
+import Table, {
+  SorterResult,
+  TableCurrentDataSource,
+  PaginationConfig,
+} from 'antd/lib/table';
+import { Button, Input } from '@cognite/cogs.js';
 import Icon from 'antd/lib/icon';
 import Popover from 'antd/lib/popover';
-import Input from 'antd/lib/input';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
@@ -15,6 +18,8 @@ import { TableOperations } from 'src/pages/AllModels/components/TableOperations'
 import Thumbnail from 'src/components/Thumbnail';
 
 import { setSelectedModels, setModelTableState } from 'src/store/modules/App';
+import { v3 } from '@cognite/cdf-sdk-singleton';
+import { DEFAULT_MARGIN } from 'src/utils';
 
 const NestedTable = styled(Table)`
   && td:last-child {
@@ -50,30 +55,17 @@ const NestedTable = styled(Table)`
   }
 `;
 
-const SearchDiv = styled.div`
-  padding: 8px;
-  border-radius: 6px;
-  background: #fff;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+type ModelsTableFilters = { modelNameFilter: string };
 
-  button {
-    margin-top: 5px;
-  }
-
-  button:not(:last-child) {
-    margin-right: 5px;
-  }
-`;
-
-type Props = {
-  models: Array<{ id: number }>;
+type Props<T = any> = {
+  models: Array<v3.Model3D>;
   app: {
     selectedModels: Array<number>;
     modelTableState: {
-      pagination: any;
-      filters: any;
-      sorter: any;
-      sortedInfo: any;
+      pagination: PaginationConfig;
+      filters: ModelsTableFilters;
+      sorter: SorterResult<T>;
+      sortedInfo: TableCurrentDataSource<T>;
     };
   };
   expandedRowRender: (...args: any) => any;
@@ -84,16 +76,20 @@ type Props = {
 
 class ModelsTable extends React.Component<Props> {
   metrics = Metrics.create('3D.Models');
-  searchInput: Input | null = null;
+
+  get tableDataSource() {
+    const searchStr = this.props.app.modelTableState.filters.modelNameFilter.toLowerCase();
+    return this.props.models.filter((m) =>
+      m.name.toLowerCase().includes(searchStr)
+    );
+  }
+
+  get modelNameFilter() {
+    return this.props.app.modelTableState.filters.modelNameFilter;
+  }
 
   get columns() {
-    const {
-      app: {
-        modelTableState: { sorter, filters },
-      },
-    } = this.props;
-
-    const sortObj = sorter || {};
+    const sortObj = this.props.app.modelTableState.sorter || {};
     return [
       {
         title: '',
@@ -129,51 +125,8 @@ class ModelsTable extends React.Component<Props> {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        filteredValue: filters.name,
         sorter: (a, b) => a.name.length - b.name.length,
         sortOrder: sortObj.columnKey === 'name' && sortObj.order,
-        filterDropdown: ({
-          setSelectedKeys,
-          selectedKeys,
-          confirm,
-          clearFilters,
-        }) => (
-          <SearchDiv>
-            <Input
-              ref={(ele) => {
-                this.searchInput = ele;
-              }}
-              placeholder="Model name"
-              value={selectedKeys[0]}
-              onChange={(e) =>
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-              }
-              onPressEnter={this.handleSearch(selectedKeys, confirm)}
-            />
-            <Button
-              type="primary"
-              onClick={this.handleSearch(selectedKeys, confirm)}
-            >
-              Search
-            </Button>
-            <Button onClick={this.handleReset(clearFilters)}>Reset</Button>
-          </SearchDiv>
-        ),
-        filterIcon: (filtered) => (
-          <Icon
-            type="search"
-            style={{ color: filtered ? '#108ee9' : '#aaa' }}
-          />
-        ),
-        onFilter: (value, record) =>
-          record.name.toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownVisibleChange: (visible) => {
-          if (visible) {
-            setTimeout(() => {
-              this.searchInput?.focus();
-            });
-          }
-        },
       },
       {
         title: 'Date Created',
@@ -186,8 +139,10 @@ class ModelsTable extends React.Component<Props> {
     ];
   }
 
-  handleSearch = (selectedKeys, confirm) => () => {
-    confirm();
+  setModelNameFilter = (e: ChangeEvent<HTMLInputElement>) => {
+    this.props.setModelTableState({
+      filters: { modelNameFilter: e.target?.value || '' },
+    });
   };
 
   handleReset = (clearFilters) => () => {
@@ -205,21 +160,34 @@ class ModelsTable extends React.Component<Props> {
     this.metrics.track('Expand', { id: record.id });
   };
 
-  handleChange = (pagination, filters, sorter) => {
-    this.props.setModelTableState({ pagination, filters, sorter });
+  handleChange = (pagination, _filters, sorter) => {
+    this.props.setModelTableState({
+      pagination,
+      sorter,
+    });
   };
 
-  clearAll = () => {
+  clearSorting = () => {
     this.props.setModelTableState({ sorter: undefined });
   };
 
   render() {
     return (
       <>
+        <Input
+          value={this.modelNameFilter}
+          onChange={this.setModelNameFilter}
+          icon="Search"
+          iconPlacement="right"
+          title="Search by model name"
+          variant="titleAsPlaceholder"
+          style={{ maxWidth: 300 }}
+          containerStyle={{ marginBottom: DEFAULT_MARGIN }}
+        />
         <NestedTable
           rowKey={(i) => i.id}
           columns={this.columns}
-          dataSource={this.props.models}
+          dataSource={this.tableDataSource}
           onChange={this.handleChange}
           expandedRowRender={this.props.expandedRowRender}
           expandedRowKeys={this.props.app.selectedModels}
@@ -237,7 +205,7 @@ class ModelsTable extends React.Component<Props> {
           }}
           footer={() => (
             <TableOperations>
-              <Button onClick={this.clearAll}>Clear Sorting</Button>
+              <Button onClick={this.clearSorting}>Clear Sorting</Button>
               {this.props.refresh ? (
                 <Button onClick={this.props.refresh}>Refresh</Button>
               ) : null}

@@ -65,11 +65,7 @@ type Props = {
   createNewModel: Function;
   fetchUrlForUpload: Function;
   createNewRevision: Function;
-  models?: {
-    data: {
-      items: Array<any>;
-    };
-  };
+  models?: { isLoading: boolean; data: { items: Array<v3.Model3D> } };
   fileToUpload: {
     data: {
       uploadURL: string;

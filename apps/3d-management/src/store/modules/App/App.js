@@ -15,7 +15,10 @@ const selectedModels = (state = [], action) => {
   }
 };
 
-const modelTableState = (state = { filters: {} }, action) => {
+const modelTableState = (
+  state = { filters: { modelNameFilter: '' } },
+  action
+) => {
   switch (action.type) {
     case SET_MODEL_TABLE_STATE:
       return { ...state, ...action.payload };
