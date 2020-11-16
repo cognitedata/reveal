@@ -3,7 +3,7 @@ import { Colors, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
 import SidePanelTable from './SidePanelTable';
-import { StyledTabs, StyledTabPane } from './TabsStyle';
+import { StyledSidePanelTabs, StyledTabPane } from './TabsStyle';
 
 const SidePanelHeading = styled((props) => (
   <Title {...props}>{props.children}</Title>
@@ -36,14 +36,14 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
   return (
     <>
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
-      <StyledTabs>
+      <StyledSidePanelTabs>
         <StyledTabPane tab="Monitoring" key="monitoring">
           <SidePanelTable />
         </StyledTabPane>
         <StyledTabPane tab="Contacts" key="contacts">
           Contacts
         </StyledTabPane>
-      </StyledTabs>
+      </StyledSidePanelTabs>
     </>
   );
 };

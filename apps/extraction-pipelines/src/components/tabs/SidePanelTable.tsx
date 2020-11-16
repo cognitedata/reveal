@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { Badge } from '@cognite/cogs.js';
+import moment from 'moment';
 import {
   useTable,
   useFilters,
@@ -10,27 +12,55 @@ import {
   Cell,
   Row,
 } from 'react-table';
+import { SortingIcon } from './TabsStyle';
 import Wrapper from '../../styles/TablesStyle';
 
-interface ITableProps<T extends object> {
-  data: T[];
-  columns: Column<T>[];
+interface ITableProps {
+  data: {
+    timestamp: number;
+    status: string;
+    statusSeen: string;
+  }[];
+  columns: Column[];
 }
 
 const makeData = [
   {
-    timestamp: 1604920298134,
-    status: 'Failed',
-    statusSeen: 'Not seen',
+    timestamp: 1605420298134,
+    status: 'Failure',
+    statusSeen: 'Seen',
   },
-  { timestamp: 1604918198134, status: 'Failed', statusSeen: 'Seen' },
-  { timestamp: 1604918198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1604918198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1604918198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1604923198134, status: 'Success', statusSeen: 'Seen' },
+  { timestamp: 1605318198134, status: '', statusSeen: 'Seen' },
+  { timestamp: 1604918198134, status: 'Failure', statusSeen: 'Seen' },
+  { timestamp: 1604218198134, status: 'Success', statusSeen: 'Seen' },
+  { timestamp: 1603918198134, status: 'Success', statusSeen: 'Seen' },
+  { timestamp: 1602923198134, status: 'Success', statusSeen: 'Seen' },
 ];
 
-const Table = ({ columns, data }: any) => {
+const showSorterIndicator = (sCol: HeaderGroup) => {
+  if (!sCol.disableSortBy) {
+    if (sCol.isSorted) {
+      if (sCol.isSortedDesc) {
+        return <SortingIcon type="SortDown" />;
+      }
+      return <SortingIcon type="SortUp" />;
+    }
+    return <SortingIcon type="OrderDesc" />;
+  }
+  return '';
+};
+
+const statusBadge = (status: string) => {
+  if (status === 'Success' || status === 'Seen') {
+    return <Badge text="OK" size={13} background="#2ACF58" />;
+  }
+  if (status === 'Failure') {
+    return <Badge text="FAIL" size={13} background="#DB0657" />;
+  }
+  return '';
+};
+
+const Table = ({ columns, data }: ITableProps) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -53,14 +83,17 @@ const Table = ({ columns, data }: any) => {
       <thead>
         {headerGroups.map((headerGroup: HeaderGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column: HeaderGroup) => (
-              <th {...column.getHeaderProps()}>
-                {column.render('Header')}
-                <div>
-                  {column.disableSortBy ? column.render('Filter') : null}
-                </div>
-              </th>
-            ))}
+            {headerGroup.headers.map((col: HeaderGroup) => {
+              return (
+                <th
+                  {...col.getHeaderProps(col.getSortByToggleProps())}
+                  className={`${col.id}-col`}
+                >
+                  {col.render('Header')}
+                  {showSorterIndicator(col)}
+                </th>
+              );
+            })}
           </tr>
         ))}
       </thead>
@@ -75,7 +108,14 @@ const Table = ({ columns, data }: any) => {
               }`}
             >
               {row.cells.map((cell: Cell) => {
-                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                return (
+                  <td
+                    {...cell.getCellProps()}
+                    className={`${cell.column.id}-col`}
+                  >
+                    {cell.render('Cell')}
+                  </td>
+                );
               })}
             </tr>
           );
@@ -85,22 +125,34 @@ const Table = ({ columns, data }: any) => {
   );
 };
 
-const SidePanelTable: any = () => {
-  const data = React.useMemo(() => makeData, []);
+const SidePanelTable = () => {
+  const data = useMemo(() => makeData, []);
 
-  const columns: any = React.useMemo(
+  const columns = useMemo(
     () => [
       {
-        Header: 'Time stamp',
+        Header: 'Seen',
         accessor: 'timestamp',
+        sortType: 'basic',
+        Cell: (cell: Cell) => {
+          return moment(cell.value).fromNow();
+        },
       },
       {
-        Header: 'Status run',
+        Header: 'Last run',
         accessor: 'status',
+        disableSortBy: true,
+        Cell: (cell: Cell) => {
+          return statusBadge(cell.value);
+        },
       },
       {
-        Header: 'Heartbeat',
+        Header: 'Last seen',
         accessor: 'statusSeen',
+        disableSortBy: true,
+        Cell: (cell: Cell) => {
+          return statusBadge(cell.value);
+        },
       },
     ],
     []

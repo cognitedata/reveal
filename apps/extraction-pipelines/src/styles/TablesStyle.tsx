@@ -10,6 +10,7 @@ const Wrapper = styled.div`
         border-bottom: ${Colors['greyscale-grey3'].hex()};
         th {
           background-color: white;
+          white-space: nowrap;
           &:last-child {
             width: 3rem;
           }
@@ -36,6 +37,16 @@ const Wrapper = styled.div`
         td {
           padding: 0.75rem;
         }
+      }
+    }
+    th:first-child.timestamp-col {
+      width: 11rem;
+    }
+    .status-col,
+    .statusSeen-col {
+      text-align: center;
+      .cogs-badge span {
+        color: #fff;
       }
     }
   }

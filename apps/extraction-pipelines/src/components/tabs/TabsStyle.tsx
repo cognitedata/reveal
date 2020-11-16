@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Tabs } from 'antd';
+import { Colors, Icon } from '@cognite/cogs.js';
 
 const { TabPane } = Tabs;
 
@@ -28,8 +29,24 @@ const StyledTabs = styled((props) => <Tabs {...props} />)`
     height: 100%;
   }
 `;
+
+const StyledSidePanelTabs = styled(StyledTabs)`
+  .ant-tabs-tabpane {
+    grid-template-columns: auto;
+    padding: 0 1.25rem 0 1.375rem;
+  }
+`;
+
 const StyledTabPane = styled((props) => (
   <TabPane {...props}>{props.children}</TabPane>
 ))``;
 
-export { StyledTabs, StyledTabPane };
+const SortingIcon = styled((props) => <Icon {...props} />)`
+  margin-left: 0.25rem;
+  vertical-align: middle;
+  path {
+    fill: ${Colors['greyscale-grey6'].hex()};
+  }
+`;
+
+export { StyledTabs, StyledSidePanelTabs, StyledTabPane, SortingIcon };
