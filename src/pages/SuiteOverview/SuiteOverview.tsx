@@ -12,6 +12,24 @@ const SuiteOverview: React.FC = () => {
 
   const Items = [
     {
+      id: 'grafana-1',
+      boardType: 'Grafana Dashboard',
+      title: 'Humidity',
+      embedTag: `<iframe src="https://grafana-krm.cognite.ai/d-solo/2ThOJpDGk/hpu-dashboard?orgId=2&from=1604909959865&to=1605514759865&theme=light&panelId=2" width="300" height="184" frameborder="0"></iframe>`,
+    },
+    {
+      id: 'grafana-2',
+      boardType: 'Grafana Dashboard',
+      title: 'Reservoir Temperature',
+      embedTag: `<iframe src="https://grafana-krm.cognite.ai/d-solo/2ThOJpDGk/hpu-dashboard?orgId=2&from=1604909959865&to=1605514759865&theme=light&panelId=4" width="450" height="200" frameborder="0"></iframe>`,
+    },
+    {
+      id: 'grafana-3',
+      boardType: 'Grafana Dashboard',
+      title: 'Conductivity Rate of Change',
+      embedTag: `<iframe src="https://grafana-krm.cognite.ai/d-solo/2ThOJpDGk/hpu-dashboard?orgId=2&from=1604909959865&to=1605514759865&theme=light&panelId=6" width="450" height="200" frameborder="0"></iframe>`,
+    },
+    {
       id: '1',
       boardType: 'Grafana Dashboard',
       title: 'Critical system health',
@@ -64,16 +82,17 @@ const SuiteOverview: React.FC = () => {
       <OverviewContainer>
         <TilesContainer>
           <Title level={6}>All dashboards</Title>
-          {Items.map((item) => {
-            return (
-              <Tile
-                key={item.id}
-                view="board"
-                title={item.title}
-                description={item.boardType}
-              />
-            );
-          })}
+          {Items.map((item) => (
+            // eslint-disable-next-line
+            // TODO pass item
+            <Tile
+              key={item.id}
+              view="board"
+              title={item.title}
+              description={item.boardType}
+              embedTag={item.embedTag}
+            />
+          ))}
         </TilesContainer>
         <div>I am inside suite {id}</div>
       </OverviewContainer>
