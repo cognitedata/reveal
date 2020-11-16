@@ -21,6 +21,7 @@ import {
 } from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ThreeDViewerToolbar/ToolbarTreeView';
 import { isOldViewer } from 'src/utils';
+import MessageType from 'src/AntdMessage';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -112,7 +113,9 @@ function ThreeDViewerToolbar(props: Props) {
   const onEditRotationDone = async (rotation: v3.Tuple3<number>) => {
     const [rotationX, rotationY, rotationZ] = rotation;
     if (rotationX || rotationY || rotationZ) {
-      const progressMessage = message.loading('Uploading model rotation...');
+      const progressMessage = message.loading(
+        'Uploading model rotation...'
+      ) as MessageType;
       const rotationEuler = new THREE.Euler();
       let tmpMatrix: THREE.Matrix4;
       if ('getModelTransformation' in props.model) {
@@ -140,14 +143,10 @@ function ThreeDViewerToolbar(props: Props) {
           rotation: rotationEuler.toArray().slice(0, 3),
         });
 
-        // @ts-ignore then requires catch - bad types
-        // eslint-disable-next-line
         progressMessage.then(() =>
           message.success('Model rotation is updated.')
         );
       } catch (e) {
-        // @ts-ignore then requires catch - bad types
-        // eslint-disable-next-line
         progressMessage.then(() => {
           message.error("Couldn't update model initial location");
         });

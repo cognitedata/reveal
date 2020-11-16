@@ -28,7 +28,7 @@ export const userHasCapabilities = (
   user: AuthenticatedUserWithGroups,
   acls: Array<AccessPermission>
 ) => {
-  // mn: use capabilities format that can use sdk types e.g. CogniteCapability
+  // fixme: use capabilities format that can use sdk types e.g. CogniteCapability
   const copy = [...acls];
   copy.forEach((acl) => {
     user.groups.forEach((group) => {

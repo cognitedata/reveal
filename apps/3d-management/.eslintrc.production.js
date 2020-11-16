@@ -8,7 +8,7 @@ module.exports = {
   plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
   rules: {
     '@cognite/no-unissued-todos': [
-      'error',
+      'off',
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
     ],
 
@@ -24,6 +24,7 @@ module.exports = {
     'jest/no-test-callback': ['off'],
     'jest/no-export': ['off'],
 
+    'lodash/prefer-lodash-typecheck': ['off'],
     'lodash/prefer-lodash-method': ['off'],
     'lodash/prop-shorthand': ['off'],
     'lodash/prefer-constant': ['off'],

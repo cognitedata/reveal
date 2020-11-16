@@ -1,6 +1,6 @@
 import { createLayers } from '@cognite/z-index';
 
-// mn: check used z indices
+// fixme: check used z indices
 const LAYERS = [
   'MAXIMUM',
 

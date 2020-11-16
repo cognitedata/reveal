@@ -5,6 +5,7 @@ import message from 'antd/lib/message';
 import { v3Client as sdk, v3 } from '@cognite/cdf-sdk-singleton';
 import { base64ToBlob } from 'src/utils/base64ToBlob';
 import { fireErrorNotification } from 'src/utils/notifications';
+import MessageType from 'src/AntdMessage';
 
 type Props = {
   onUploadDone: () => void;
@@ -53,7 +54,9 @@ export function ThumbnailUploader(props: Props) {
         source: '3d-models',
       })) as v3.FileUploadResponse;
 
-      const progressMessage = message.loading('Uploading Screenshot...');
+      const progressMessage = message.loading(
+        'Uploading Screenshot...'
+      ) as MessageType;
 
       await fetch(response.uploadUrl, {
         method: 'PUT',
@@ -66,8 +69,6 @@ export function ThumbnailUploader(props: Props) {
       const { modelId, revisionId } = props;
       await sdk.revisions3D.updateThumbnail(modelId, revisionId, response.id);
 
-      // @ts-ignore then requires catch - bad types
-      // eslint-disable-next-line
       progressMessage.then(() =>
         message.success('Thumbnail Upload Successful')
       );

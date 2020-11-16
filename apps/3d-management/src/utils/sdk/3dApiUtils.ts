@@ -1,11 +1,18 @@
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
 
+export interface RevisionLog3D {
+  timestamp: number;
+  severity: 3 | 5 | 7;
+  type: string;
+  info: string;
+}
+
 export async function isReprocessingRequired(modelId: number) {
   const url = `${v3Client.getBaseUrl()}/api/playground/projects/${
     v3Client.project
   }/3d/v2/outputs`;
 
-  // mn: use SDK methods for that?
+  // fixme: create SDK methods
   const response = await v3Client.post(url, {
     data: {
       models: [{ id: modelId }],

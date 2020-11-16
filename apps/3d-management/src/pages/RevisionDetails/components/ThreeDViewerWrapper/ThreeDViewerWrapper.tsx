@@ -6,6 +6,8 @@ import { v3 } from '@cognite/cdf-sdk-singleton';
 import { LazyWrapper } from 'src/components/LazyWrapper';
 import Thumbnail from 'src/components/Thumbnail/index';
 
+import { isModelFormatDeprecated } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/isModelFormatDeprecated';
+import { DeprecatedModelMessage } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/DeprecatedModelMessage';
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 
 const ThumbnailJS: any = Thumbnail;
@@ -45,14 +47,15 @@ const MultiLayeredContainer = styled.div<{ errorState?: boolean }>`
   margin: auto;
   min-height: 200px;
   min-width: 200px;
+  background-color: #b8b8b8;
   width: ${(props) => (props.errorState ? '200px' : 'inherit')};
 `;
 
 type Props = {
-  modelId: string;
+  modelId: number;
   revision: v3.Revision3D;
-  useOldViewer?: boolean;
-  revisionLogs: { type: string }[];
+  canBeViewed: boolean;
+  useOldViewer: boolean;
 };
 
 const ThreeDViewer = (props: ThreeDViewerProps) =>
@@ -62,7 +65,6 @@ const MemoizedThreeDViewer = React.memo(
   (props: ThreeDViewerProps) => <ThreeDViewer {...props} />,
   function areEqual(prevProps, nextProps) {
     if (
-      prevProps.ViewerConstructor === nextProps.ViewerConstructor &&
       prevProps.modelId === nextProps.modelId &&
       prevProps.revision.id === nextProps.revision.id
     ) {
@@ -89,15 +91,30 @@ export default function ThreeDViewerWrapper(props: Props) {
     | typeof import('@cognite/3d-viewer').Cognite3DViewer
     | typeof import('@cognite/reveal').Cognite3DViewer
   >();
+  const [isDeprecated, setIsDeprecated] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     (async () => {
-      const module = await getViewerModule(props.useOldViewer);
-      setViewerConstructor(() => module.Cognite3DViewer);
+      const [module, isDeprecatedFormat] = await Promise.all([
+        getViewerModule(props.useOldViewer),
+        isModelFormatDeprecated(props.modelId, props.revision.id),
+      ]);
+
+      if (isMounted) {
+        setViewerConstructor(() => module.Cognite3DViewer);
+        setIsDeprecated(isDeprecatedFormat);
+      }
     })();
-  }, [props.useOldViewer]);
+    return () => {
+      isMounted = false;
+    };
+  }, [props.useOldViewer, props.modelId, props.revision.id]);
 
   if (isViewerOpened && ViewerConstructor) {
+    if (isDeprecated) {
+      return <DeprecatedModelMessage />;
+    }
     return (
       <MemoizedThreeDViewer
         modelId={props.modelId}
@@ -106,22 +123,12 @@ export default function ThreeDViewerWrapper(props: Props) {
       />
     );
   }
-  if (!props.revisionLogs) return null;
 
-  const canBeViewed =
-    props.revision.status === 'Done' ||
-    props.revisionLogs.find(
-      (log) => log.type === 'reveal-optimizer/Success'
-    ) !== undefined;
-
-  if (!canBeViewed) {
+  if (!props.canBeViewed) {
     return (
       <div style={{ textAlign: 'center', bottom: '0px', flex: 1 }}>
         <ErrorText>{ERROR_TEXT[props.revision.status]}</ErrorText>
-        <MultiLayeredContainer
-          errorState
-          style={{ backgroundColor: '#b8b8b8' }}
-        >
+        <MultiLayeredContainer errorState>
           <CenteredIcon
             type="close-circle"
             theme="filled"
@@ -134,7 +141,7 @@ export default function ThreeDViewerWrapper(props: Props) {
 
   return (
     <MultiLayeredContainer
-      style={{ cursor: 'pointer', backgroundColor: '#b8b8b8' }}
+      style={{ cursor: 'pointer' }}
       onClick={() => setIsViewerOpened(true)}
     >
       <div style={{ display: 'flex' }}>

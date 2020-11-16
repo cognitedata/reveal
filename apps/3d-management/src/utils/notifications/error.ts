@@ -5,7 +5,7 @@ import { getContainer } from 'src/utils';
 import { isDevelopment } from '@cognite/cdf-utilities';
 
 interface ErrorNotificationProps {
-  message: string;
+  message?: string;
   description?: string;
   error?: ErrorResponse; // Not always the case...
   duration?: number;
@@ -28,17 +28,22 @@ const generateErrorMessage = (errorCode: number): string => {
   }
 };
 
-export const fireErrorNotification = ({
-  message = '3D Models',
-  description,
-  duration = 6,
-  error,
-}: ErrorNotificationProps): void => {
+export const fireErrorNotification = (
+  args: ErrorNotificationProps | string
+): void => {
+  const {
+    message = '3D Models',
+    description = '',
+    duration = 6,
+    error = undefined,
+  } = typeof args === 'string' ? { message: args } : args;
+
   let errorDescription = '';
   if (error && !isDevelopment()) {
     Sentry.captureException(error);
     errorDescription = generateErrorMessage(error.status);
   }
+
   notification.error({
     message,
     description: description || errorDescription,

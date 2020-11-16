@@ -29,7 +29,7 @@ const CanvasContainer = styled.div`
 
 export default function ThreeDViewer(props: ThreeDViewerProps) {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<Error>();
   const [model, setModel] = useState<
     Cognite3DModel | CognitePointCloudModel | Legacy3DModel
   >();
@@ -134,7 +134,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
   }, [viewer, modelId, revisionId]);
 
   if (error) {
-    throw new Error(error);
+    throw error;
   }
   return (
     <div style={{ position: 'relative' }}>

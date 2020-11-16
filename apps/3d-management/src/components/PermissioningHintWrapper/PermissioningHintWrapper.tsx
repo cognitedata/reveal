@@ -1,16 +1,13 @@
-import React, { ReactChild, ReactChildren, ReactNode } from 'react';
+import React, { PropsWithChildren } from 'react';
 import Tooltip from 'antd/lib/tooltip';
 import { getContainer } from 'src/utils';
 
 export default ({
   children,
   hasPermission = false,
-}: {
-  children: ReactChild | ReactChildren;
-  hasPermission?: boolean;
-}): ReactNode => {
+}: PropsWithChildren<{ hasPermission?: boolean }>) => {
   if (hasPermission) {
-    return children;
+    return <>{children}</>;
   }
   return (
     <Tooltip

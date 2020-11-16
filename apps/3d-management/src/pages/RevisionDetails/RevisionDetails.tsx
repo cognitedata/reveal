@@ -1,6 +1,5 @@
 import React from 'react';
 import { Metrics } from '@cognite/metrics';
-import PropTypes from 'prop-types';
 import { createStructuredSelector, createSelector } from 'reselect';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -20,7 +19,6 @@ import {
   APP_TITLE,
 } from 'src/utils';
 import { createLink } from '@cognite/cdf-utilities';
-import { userPropType } from 'src/utils/PropTypes';
 import { Card, Icon, Timeline } from 'antd';
 import Tooltip from 'antd/lib/tooltip';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
@@ -36,8 +34,15 @@ import * as ModelActions from 'src/store/modules/Model';
 import * as RevisionActions from 'src/store/modules/Revision';
 import {
   isReprocessingRequired,
-  requestReprocessing,
-} from 'src/utils/3dApiUtils';
+  RevisionLog3D,
+} from 'src/utils/sdk/3dApiUtils';
+import { v3 } from '@cognite/cdf-sdk-singleton';
+import { RouteComponentProps } from 'react-router-dom';
+import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
+
+import { ReprocessingModal } from 'src/pages/RevisionDetails/components/ReprocessingModal';
+import isEqual from 'lodash/isEqual';
+import { History } from 'history';
 import ThreeDViewerWrapper from './components/ThreeDViewerWrapper';
 
 export const PUBLISH_STATUS_HINT = `
@@ -56,7 +61,7 @@ const ButtonRow = styled.div`
   .left-button {
     align-self: start;
     margin-right: 12px;
-    margin-left: 0px;
+    margin-left: 0;
   }
   .right-button {
     align-self: end;
@@ -101,60 +106,62 @@ const LogRow = styled.div`
   }
 `;
 
-const propTypes = {
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-  fetchModels: PropTypes.func.isRequired,
-  fetchRevisionById: PropTypes.func.isRequired,
-  updateRevision: PropTypes.func.isRequired,
-  deleteRevision: PropTypes.func.isRequired,
-  fetchRevisionLogs: PropTypes.func.isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      modelId: PropTypes.string.isRequired,
-      revisionId: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
-  revisions: PropTypes.shape({
-    isLoading: PropTypes.bool.isRequired,
-    data: PropTypes.shape({
-      extended: PropTypes.shape().isRequired,
-      modelMap: PropTypes.arrayOf(PropTypes.number),
-      items: PropTypes.arrayOf(
-        PropTypes.shape({
-          items: PropTypes.array.isRequired,
-        })
-      ),
-    }),
-  }).isRequired,
-  revisionLogs: PropTypes.shape({}).isRequired,
-  models: PropTypes.shape({
-    data: PropTypes.shape({
-      items: PropTypes.array,
-    }),
-  }).isRequired,
-  user: userPropType.isRequired,
+type Props = RouteComponentProps<{
+  modelId: string;
+  revisionId: string;
+}> & {
+  history: History;
+  fetchModels: Function;
+  fetchRevisionById: Function;
+  updateRevision: Function;
+  deleteRevision: Function;
+  fetchRevisionLogs: Function;
+  revisions: {
+    isLoading: boolean;
+    data: {
+      extended: object; // ??? check if used and remove if not
+      modelMap: number[];
+      items: Array<{
+        items: Array<v3.Revision3D>;
+      }>;
+    };
+  };
+  revisionLogs: Record<number, Array<RevisionLog3D> | undefined>;
+  models: {
+    data: {
+      items: any; // fixme check types
+    };
+  };
+  user: AuthenticatedUserWithGroups;
 };
 
-class RevisionDetails extends React.Component {
+type State = {
+  showLogs: boolean;
+  deletionModalVisible: boolean;
+  reprocessingRequired: boolean;
+  reprocessingModalVisible: boolean;
+  error: null | Error | v3.HttpError;
+};
+
+class RevisionDetails extends React.Component<Props, State> {
   metrics = Metrics.create('3D.Revisions');
 
   mounted = false;
 
-  state = {
-    showLogs: false,
-    deletionModalVisible: false,
-    reprocessingButtonVisible: false,
-    reprocessingModalVisible: false,
-    error: null,
-  };
-
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
-    if (this.revision === null) {
+
+    this.state = {
+      showLogs: false,
+      deletionModalVisible: false,
+      reprocessingRequired: false,
+      reprocessingModalVisible: false,
+      error: null,
+    };
+
+    if (!this.revision) {
       this.refresh();
-    } else if (!this.revision.logs) {
+    } else {
       const { modelId, revisionId } = props.match.params;
       this.props.fetchRevisionLogs({
         modelId: Number(modelId),
@@ -166,18 +173,16 @@ class RevisionDetails extends React.Component {
   async componentDidMount() {
     this.mounted = true;
 
-    const reprocessingButtonVisible = await isReprocessingRequired(
-      this.props.match.params.revisionId
-    );
+    const reprocessingRequired = await isReprocessingRequired(this.revisionId);
     if (this.mounted) {
-      this.setState({ reprocessingButtonVisible });
+      this.setState({ reprocessingRequired });
     }
   }
 
   componentDidUpdate(prevProps) {
     if (
-      this.props.match.params !== prevProps.match.params &&
-      this.revision === null
+      !isEqual(this.props.match.params, prevProps.match.params) &&
+      !this.revision
     ) {
       this.refresh();
     }
@@ -187,7 +192,7 @@ class RevisionDetails extends React.Component {
     this.mounted = false;
   }
 
-  get revision() {
+  get revision(): v3.Revision3D | null {
     const { revisionId, modelId } = this.props.match.params;
     const { items: revisions, modelMap } = this.props.revisions.data;
     const idx = modelMap.indexOf(Number(modelId));
@@ -198,22 +203,24 @@ class RevisionDetails extends React.Component {
     return revisions[idx].items.filter((el) => el.id === Number(revisionId))[0];
   }
 
-  get revisionId() {
-    const { revisionId } = this.props.match.params;
-    return revisionId;
+  get revisionId(): number {
+    return Number(this.props.match.params.revisionId);
+  }
+
+  get modelId(): number {
+    return Number(this.props.match.params.modelId);
   }
 
   refresh = async () => {
-    const { modelId, revisionId } = this.props.match.params;
     try {
       await this.props.fetchRevisionById({
-        modelId: Number(modelId),
-        revisionId: Number(revisionId),
+        modelId: this.modelId,
+        revisionId: this.revisionId,
       });
       await this.props.fetchModels();
       await this.props.fetchRevisionLogs({
-        modelId: Number(modelId),
-        revisionId: Number(revisionId),
+        modelId: this.modelId,
+        revisionId: this.revisionId,
       });
     } catch (error) {
       this.setState({ error });
@@ -221,6 +228,10 @@ class RevisionDetails extends React.Component {
   };
 
   switchRevisionPublication = async () => {
+    if (!this.revision) {
+      return;
+    }
+
     const { modelId, revisionId } = this.props.match.params;
 
     const originalPublication = this.revision.published;
@@ -277,29 +288,9 @@ class RevisionDetails extends React.Component {
     });
   };
 
-  requestReprocessing = async () => {
-    const progressMessage = message.loading('Requesting reprocessing...');
-    this.dismissReprocessingModal();
-    const { modelId, revisionId } = this.props.match.params;
-    try {
-      await requestReprocessing({
-        project: projectName,
-        modelId,
-        revisionId,
-      });
-      // eslint-disable-next-line
-      progressMessage.then(() =>
-        message.success('Reprocessing request is sent.')
-      );
-      this.refresh();
-      this.setState({ reprocessingButtonVisible: false });
-    } catch (e) {
-      // eslint-disable-next-line
-      progressMessage.then(() => {
-        message.error("Can't send request for reprocessing.");
-        Sentry.captureException(e);
-      });
-    }
+  onReprocessingRequestSent = () => {
+    this.refresh();
+    this.setState({ reprocessingRequired: false });
   };
 
   dismissReprocessingModal = () => {
@@ -331,17 +322,17 @@ class RevisionDetails extends React.Component {
     // make sure they are uniq and visible
     const visibleLogs = {};
     const isInternalUser =
-      this.props.user.username.indexOf('@cognite.com') !== -1;
+      this.props.user.username?.indexOf('@cognite.com') !== -1;
     Object.keys(organizedLogs).forEach((process) => {
       if (isInternalUser) {
         visibleLogs[process] = uniqBy(
           organizedLogs[process],
-          (el) => el.type + this.formatDate(el.timestamp)
+          (el: any) => el.type + this.formatDate(el.timestamp)
         );
       } else {
         visibleLogs[EXTERNAL_LOG_NAME[process] || process] = uniqBy(
           organizedLogs[process],
-          (el) => el.type + this.formatDate(el.timestamp)
+          (el: any) => el.type + this.formatDate(el.timestamp)
         );
       }
     });
@@ -372,7 +363,7 @@ class RevisionDetails extends React.Component {
 
   render() {
     if (this.state.error) {
-      if (this.state.error.status === 404) {
+      if ('status' in this.state.error && this.state.error.status === 404) {
         return <NotFound />;
       }
       throw this.state.error;
@@ -385,10 +376,9 @@ class RevisionDetails extends React.Component {
       { acl: 'threedAcl', actions: ['DELETE'] },
     ]);
 
-    const { revision } = this;
     const { isLoading } = this.props.revisions;
 
-    if (!revision || isLoading || !this.props.models.data.items) {
+    if (!this.revision || isLoading || !this.props.models.data.items) {
       return <Spinner />;
     }
 
@@ -397,6 +387,17 @@ class RevisionDetails extends React.Component {
     const model = items.find((el) => el.id === Number(modelId));
 
     const { showLogs } = this.state;
+
+    const canBeViewed =
+      this.revision.status === 'Done' ||
+      Boolean(
+        this.props.revisionLogs[this.revisionId]?.find(
+          (log) => log.type === 'reveal-optimizer/Success'
+        )
+      );
+
+    const isReprocessingButtonVisible =
+      this.state.reprocessingRequired && canBeViewed;
 
     return (
       <>
@@ -412,7 +413,7 @@ class RevisionDetails extends React.Component {
               title: `Model: ${model.name}`,
             },
             {
-              title: `Revision: ${dayjs(revision.createdTime).format(
+              title: `Revision: ${dayjs(this.revision.createdTime).format(
                 'MMM D, YYYY h:mm A'
               )}`,
             },
@@ -433,7 +434,7 @@ class RevisionDetails extends React.Component {
               <b>Date Created: </b>
             </Col>
             <Col span={18}>
-              {dayjs(revision.createdTime).format('MMM D, YYYY h:mm A')}
+              {dayjs(this.revision.createdTime).format('MMM D, YYYY h:mm A')}
             </Col>
           </Row>
           <Row type="flex" justify="start">
@@ -441,11 +442,11 @@ class RevisionDetails extends React.Component {
               <b>Processing Status: </b>
             </Col>
             <Col span={18}>
-              <Status status={revision.status} />
+              <Status status={this.revision.status} />
               <ViewLogsButton
                 size="small"
                 type="secondary"
-                icon={showLogs ? 'up-circle' : 'down-circle'}
+                icon={showLogs ? 'Up' : 'Down'}
                 onClick={() => this.setState({ showLogs: !showLogs })}
               >
                 View Logs
@@ -464,7 +465,7 @@ class RevisionDetails extends React.Component {
               </Tooltip>
             </Col>
             <Col span={18}>
-              {revision.published ? 'Published' : 'Unpublished'}
+              {this.revision.published ? 'Published' : 'Unpublished'}
             </Col>
           </Row>
 
@@ -493,30 +494,30 @@ class RevisionDetails extends React.Component {
                 Delete Revision
               </Button>
             </PermissioningHintWrapper>
-            {/* {this.state.reprocessingButtonVisible && ( */}
-            {/*   <PermissioningHintWrapper hasPermission={hasUpdateCapabilities}> */}
-            {/*     <Button */}
-            {/*       type="primary" */}
-            {/*       variant="outline" */}
-            {/*       className="left-button" */}
-            {/*       disabled={!hasUpdateCapabilities} */}
-            {/*       onClick={this.showReprocessingModal} */}
-            {/*       title="Update model format to use the latest 3d-viewer features" */}
-            {/*     > */}
-            {/*       Reprocess */}
-            {/*     </Button> */}
-            {/*   </PermissioningHintWrapper> */}
-            {/* )} */}
+            {isReprocessingButtonVisible && (
+              <PermissioningHintWrapper hasPermission={hasUpdateCapabilities}>
+                <Button
+                  type="primary"
+                  variant="outline"
+                  className="left-button"
+                  disabled={!hasUpdateCapabilities}
+                  onClick={this.showReprocessingModal}
+                  title="Update model format to use the latest 3d-viewer features"
+                >
+                  Reprocess
+                </Button>
+              </PermissioningHintWrapper>
+            )}
           </ButtonRow>
         </StyledCard>
 
         <ErrorBoundary>
           <div style={{ textAlign: 'center', bottom: '0px', flex: 1 }}>
             <ThreeDViewerWrapper
-              modelId={this.props.match.params.modelId}
+              modelId={this.modelId}
               revision={this.revision}
-              useOldViewer={this.state.reprocessingButtonVisible}
-              revisionLogs={this.props.revisionLogs[this.revisionId]}
+              useOldViewer={this.state.reprocessingRequired}
+              canBeViewed={canBeViewed}
             />
           </div>
         </ErrorBoundary>
@@ -533,45 +534,36 @@ class RevisionDetails extends React.Component {
           undone.
         </Modal>
 
-        <Modal
-          title="Reprocess the model"
+        <ReprocessingModal
           visible={this.state.reprocessingModalVisible}
-          onOk={this.requestReprocessing}
-          onCancel={this.dismissReprocessingModal}
+          modelId={this.modelId}
+          revision={this.revision}
           width="750px"
-          okText="Reprocess"
-          getContainer={getContainer}
-        >
-          <p>This model doesn&apos;t use the latest 3d format.</p>
-          <p>
-            We recommend you always use the latest 3d format to ensure all the
-            latest features of 3d-viewer are available. You can click the
-            &quot;Reprocess&quot; button below to update the model.
-          </p>
-        </Modal>
+          onSuccess={this.onReprocessingRequestSent}
+          onClose={this.dismissReprocessingModal}
+        />
       </>
     );
   }
 }
 
-RevisionDetails.propTypes = propTypes;
-
 const mapStateToProps = createStructuredSelector({
   revisions: createSelector(
-    (state) => state.revisions,
+    (state: any) => state.revisions,
     (revisionState) => revisionState
   ),
   revisionLogs: createSelector(
-    (state) => state.revisions,
+    (state: any) => state.revisions,
     (revisionState) => revisionState.data.logs
   ),
   models: createSelector(
-    (state) => state.models,
+    (state: any) => state.models,
     (modelState) => modelState
   ),
 });
 
 function mapDispatchToProps(dispatch) {
+  // @ts-ignore 😭 untyped redux hits hard
   return bindActionCreators({ ...ModelActions, ...RevisionActions }, dispatch);
 }
 
