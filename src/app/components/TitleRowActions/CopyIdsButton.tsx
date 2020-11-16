@@ -4,10 +4,10 @@ import { Icon } from '@cognite/cogs.js';
 import { ResourceType, convertResourceType } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useEnv, useTenant } from 'lib/hooks/CustomHooks';
+import { ResourceItem } from 'lib/types';
 
 type Props = {
-  id: number;
-  type: ResourceType;
+  item: ResourceItem;
 };
 
 const oData = (
@@ -18,7 +18,7 @@ const oData = (
 ) => {
   const baseUrl = `https://${
     env || 'api'
-  }.cognitedata.com/odata/v1/projects/${tenant}/`;
+  }.cognitedata.com/odata/v1/projects/${tenant}`;
 
   switch (type) {
     case 'asset':
@@ -36,7 +36,7 @@ const oData = (
   }
 };
 
-export default function ({ type, id }: Props) {
+export default function ({ item: { type, id } }: Props) {
   const env = useEnv();
   const tenant = useTenant();
 

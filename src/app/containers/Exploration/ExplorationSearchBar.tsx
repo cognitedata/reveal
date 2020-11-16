@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input } from 'antd';
+import { Input } from '@cognite/cogs.js';
 import { useQuery } from 'app/context/ResourceSelectionContext';
 import { debounce } from 'lodash';
 
@@ -25,10 +25,18 @@ export const ExplorationSearchBar = () => {
   }, [urlQuery, setLocalQuery]);
 
   return (
-    <Input.Search
+    <Input
       size="large"
-      style={{ width: '100%' }}
-      placeholder="Search for a file or asset..."
+      variant="noBorder"
+      fullWidth
+      style={{
+        background: 'transparent',
+        border: 'none',
+        outline: 'none',
+        boxShadow: 'none',
+      }}
+      icon="Search"
+      placeholder="Search..."
       onChange={ev => setLocalQuery(ev.target.value)}
       value={localQuery}
     />

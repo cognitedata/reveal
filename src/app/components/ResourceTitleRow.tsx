@@ -1,23 +1,23 @@
 import React from 'react';
 import { Row, Col, Space } from 'antd';
 import { Icon, AllIconTypes } from '@cognite/cogs.js';
-import { ResourceType, convertResourceType } from 'lib';
+import { convertResourceType } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
-import TitleRowActions from './TitleRowActions';
+import { TitleRowActions } from './TitleRowActions';
+import { TitleRowActionsProps } from './TitleRowActions/TitleRowActions';
 
 type Props = {
   icon: AllIconTypes;
-  type: ResourceType;
-  id: number;
   getTitle?: (_: any) => string | undefined;
-};
+} & TitleRowActionsProps;
+
 export default function ResourceTileRow({
   icon,
-  type,
-  id,
+  item: { type, id },
   getTitle = (i: any) => i?.name,
+  actions,
 }: Props) {
   const { data, isFetched } = useCdfItem<{ name?: string }>(
     convertResourceType(type),
@@ -35,7 +35,7 @@ export default function ResourceTileRow({
         </Space>
       </Col>
       <Col flex="none">
-        <TitleRowActions type={type} id={id} />
+        <TitleRowActions item={{ type, id }} actions={actions} />
       </Col>
     </TitleRow>
   );

@@ -13,7 +13,6 @@ export const SpacedRow = styled.div`
 
   & > * {
     margin-right: 6px;
-    margin-bottom: 6px;
     display: inline-flex;
   }
   .spacer {

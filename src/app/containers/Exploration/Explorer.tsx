@@ -1,12 +1,12 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
-import { FilePage } from 'app/containers/FilePage';
+import { FilePage } from 'app/containers/File/FilePage';
 import { ResourcePreviewProvider } from 'lib/context/ResourcePreviewContext';
 import { ResourceSelectorProvider } from 'lib/context/ResourceSelectorContext';
-import { AssetPage } from 'app/containers/AssetPage';
-import { SequencePage } from 'app/containers/SequencePage';
-import { TimeseriesPage } from 'app/containers/TimeseriesPage';
-import { EventPage } from 'app/containers/EventPage';
+import { AssetPage } from 'app/containers/Asset/AssetPage';
+import { SequencePage } from 'app/containers/Sequence/SequencePage';
+import { TimeseriesPage } from 'app/containers/Timeseries/TimeseriesPage';
+import { EventPage } from 'app/containers/Event/EventPage';
 import styled from 'styled-components';
 import { SearchResultsPage } from './SearchResultsPage';
 import SearchRedirect from './SearchRedirect';

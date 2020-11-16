@@ -39,16 +39,12 @@ export const FileToolbar = ({
             icon="Upload"
             disabled={!hasEditPermissions}
           >
-            Upload new file
+            Upload
           </Button>
         )}
         <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
-          <ButtonGroup.Button key="list" icon="List">
-            List View
-          </ButtonGroup.Button>
-          <ButtonGroup.Button key="grid" icon="Grid">
-            Grid View
-          </ButtonGroup.Button>
+          <ButtonGroup.Button key="list" icon="List" />
+          <ButtonGroup.Button key="grid" icon="Grid" />
         </ButtonGroup>
       </SearchResultToolbar>
       <FileUploaderModal

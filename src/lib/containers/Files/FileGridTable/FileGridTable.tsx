@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FileInfo as File, FileFilterProps } from '@cognite/sdk';
+import { FileInfo as File } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'lib/hooks/useSelection';
 import styled, { css } from 'styled-components';
 import { Loader, TimeDisplay } from 'lib/components';
-import { useResourceResults } from 'lib';
 import { Body, Colors, DocumentIcon } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { FixedSizeGrid as Grid } from 'react-window';
@@ -12,6 +11,7 @@ import InfiniteLoader from 'react-window-infinite-loader';
 import { useFileIcon } from 'lib/hooks/sdk';
 import { isFileOfType } from 'lib/utils/FileUtils';
 import { SelectableItemProps, SelectableItemsProps } from 'lib/CommonProps';
+import { AllowedId } from 'lib/components/Table/Table';
 
 const Cell = ({
   file,
@@ -102,12 +102,13 @@ const Cell = ({
 type RowData = { id: number; files: File[] };
 
 const LOOKAHEAD = 2;
+const GRID_MIN_WIDTH = 300;
 
 export const FileGridTable = ({
   query = '',
-  items,
+  data,
   onItemClicked,
-  columnCount = 4,
+  columnCount: propsColumnCount,
   onEndReached = () => {},
   previewIds = [],
   activeIds = [],
@@ -118,41 +119,44 @@ export const FileGridTable = ({
   isSelected,
 }: {
   query?: string;
-  items?: File[];
+  data?: File[];
   onItemClicked: (file: File) => void;
   columnCount?: number;
-  previewIds?: number[];
-  activeIds?: number[];
+  previewIds?: AllowedId[];
+  activeIds?: AllowedId[];
   onEndReached?: () => void;
   isFetching?: boolean;
   canFetchMore?: boolean;
 } & SelectableItemsProps) => {
-  // const { mode } = useResourceMode();
-  if (!items || items.length === 0) {
+  const [currentWidth, setCurrentWidth] = useState<number>(window.innerWidth);
+  if (!data || data.length === 0) {
     return <Body>No Results</Body>;
   }
 
+  const columnCount =
+    propsColumnCount || Math.floor(currentWidth / GRID_MIN_WIDTH);
+
   const splicedItems: RowData[] = [];
 
-  for (let i = 0, j = items.length; i < j; i += columnCount) {
+  for (let i = 0, j = data.length; i < j; i += columnCount) {
     splicedItems.push({
-      id: items[i].id,
-      files: items.slice(i, i + columnCount),
+      id: data[i].id,
+      files: data.slice(i, i + columnCount),
     });
   }
 
-  const rowCount = Math.ceil(items.length / columnCount);
-  const isItemLoaded = (index: number) => canFetchMore && index > items.length;
+  const rowCount = Math.ceil(data.length / columnCount);
+  const isItemLoaded = (index: number) => canFetchMore && index > data.length;
 
   return (
-    <AutoResizer>
+    <AutoResizer onResize={size => setCurrentWidth(size.width)}>
       {({ width, height }) => (
         <InfiniteLoader
           isItemLoaded={isItemLoaded}
-          itemCount={items.length}
+          itemCount={data.length}
           loadMoreItems={async (_, endIndex) => {
             if (
-              endIndex >= items.length - columnCount * LOOKAHEAD &&
+              endIndex >= data.length - columnCount * LOOKAHEAD &&
               !isFetching &&
               canFetchMore
             ) {
@@ -195,7 +199,7 @@ export const FileGridTable = ({
               }
             >
               {({ columnIndex, rowIndex, style }) => {
-                const file = items[columnIndex + rowIndex * columnCount];
+                const file = data[columnIndex + rowIndex * columnCount];
                 if (file) {
                   return (
                     <Cell
@@ -218,62 +222,6 @@ export const FileGridTable = ({
         </InfiniteLoader>
       )}
     </AutoResizer>
-  );
-};
-
-export const FileFilterGridTable = ({
-  query,
-  filter = {},
-  onRowClick,
-  selectionMode,
-  onSelect,
-  isSelected,
-  activeIds = [],
-}: {
-  query?: string;
-  filter?: FileFilterProps;
-  onRowClick: (file: File) => void;
-  activeIds?: number[];
-} & SelectableItemsProps) => {
-  const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-
-  const onItemSelected = (file: File) => {
-    onRowClick(file);
-    setPreviewId(file.id);
-  };
-  const {
-    canFetchMore,
-    isFetchingMore,
-    fetchMore,
-    isFetched,
-    isFetching,
-    items,
-  } = useResourceResults<File>('files', query, filter);
-
-  if (!isFetched) {
-    return <Loader />;
-  }
-
-  const previewIds = previewId ? [previewId] : undefined;
-
-  return (
-    <FileGridTable
-      query={query}
-      previewIds={previewIds}
-      activeIds={activeIds}
-      items={items}
-      onItemClicked={item => onItemSelected(item)}
-      onEndReached={() => {
-        if (canFetchMore && !isFetchingMore) {
-          fetchMore();
-        }
-      }}
-      isFetching={isFetching}
-      canFetchMore={canFetchMore}
-      selectionMode={selectionMode}
-      onSelect={onSelect}
-      isSelected={isSelected}
-    />
   );
 };
 

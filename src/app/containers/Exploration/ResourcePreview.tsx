@@ -1,26 +1,40 @@
 import React from 'react';
-import { ResourceType } from 'lib';
-import { AssetPage } from 'app/containers/AssetPage';
-import { FilePage } from 'app/containers/FilePage';
-import { SequencePage } from 'app/containers/SequencePage';
-import { TimeseriesPage } from 'app/containers/TimeseriesPage';
-import { EventPage } from 'app/containers/EventPage';
+import { AssetPreview } from 'app/containers/Asset/AssetPreview';
+import { FilePreview } from 'app/containers/File/FilePreview';
+import { SequencePreview } from 'app/containers/Sequence/SequencePreview';
+import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
+import { EventPreview } from 'app/containers/Event/EventPreview';
+import { ResourceItem } from 'lib/types';
+import { TitleRowActionsProps } from 'app/components/TitleRowActions';
+import { Button } from '@cognite/cogs.js';
 
 type Props = {
-  type: ResourceType;
+  item: ResourceItem;
+  onCloseClicked: () => void;
 };
-export default function ResourcePreview({ type }: Props) {
+export default function ResourcePreview({
+  item: { type, id },
+  onCloseClicked,
+}: Props) {
+  const actions: TitleRowActionsProps['actions'] = [
+    'FileEdit',
+    'Download',
+    'Collections',
+    'Copy',
+    'Open',
+    () => <Button icon="Close" onClick={onCloseClicked} />,
+  ];
   switch (type) {
     case 'asset':
-      return <AssetPage />;
+      return <AssetPreview assetId={id} actions={actions} />;
     case 'file':
-      return <FilePage />;
+      return <FilePreview fileId={id} actions={actions} />;
     case 'sequence':
-      return <SequencePage />;
+      return <SequencePreview sequenceId={id} actions={actions} />;
     case 'timeSeries':
-      return <TimeseriesPage />;
+      return <TimeseriesPreview timeseriesId={id} actions={actions} />;
     case 'event':
-      return <EventPage />;
+      return <EventPreview eventId={id} actions={actions} />;
     default:
       return <>{null}</>;
   }

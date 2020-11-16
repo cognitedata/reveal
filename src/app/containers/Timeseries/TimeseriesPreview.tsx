@@ -1,10 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  useParams,
-  useHistory,
-  useRouteMatch,
-  useLocation,
-} from 'react-router-dom';
+import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Row, Col } from 'antd';
@@ -15,6 +10,7 @@ import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { formatMetadata } from 'lib/utils';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { createLink } from '@cognite/cdf-utilities';
+import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -24,12 +20,14 @@ export type TimeseriesPreviewTabType =
   | 'sequences'
   | 'events';
 
-export const TimeseriesPage = () => {
+export const TimeseriesPreview = ({
+  timeseriesId,
+  actions,
+}: {
+  timeseriesId: number;
+  actions?: TitleRowActionsProps['actions'];
+}) => {
   const history = useHistory();
-  const { id: timeseriesIdString } = useParams<{
-    id: string;
-  }>();
-  const timeseriesId = parseInt(timeseriesIdString, 10);
 
   useEffect(() => {
     trackUsage('Exploration.Timeseries', { timeseriesId });
@@ -45,10 +43,6 @@ export const TimeseriesPage = () => {
   const activeTab = location.pathname
     .replace(match.url, '')
     .slice(1) as TimeseriesPreviewTabType;
-
-  if (!timeseriesIdString) {
-    return null;
-  }
 
   if (!timeseriesId || !Number.isFinite(timeseriesId)) {
     return <>Invalid time series id {timeseriesId}</>;
@@ -67,7 +61,11 @@ export const TimeseriesPage = () => {
 
   return (
     <>
-      <ResourceTitleRow id={timeseriesId} type="timeSeries" icon="Timeseries" />
+      <ResourceTitleRow
+        item={{ id: timeseriesId, type: 'timeSeries' }}
+        icon="Timeseries"
+        actions={actions}
+      />
       {timeseries && (
         <Row>
           <Col span={24}>

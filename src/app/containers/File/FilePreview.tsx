@@ -1,8 +1,7 @@
 import React, { useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
-import { FilePreview } from 'lib/containers/Files/FilePreview';
+import { FilePreview as CogniteFilePreview } from 'lib/containers/Files/FilePreview';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Tabs } from 'lib/components';
@@ -13,58 +12,54 @@ import { FileInfo } from '@cognite/sdk/dist/src';
 import { FileDetails } from 'lib';
 import RelatedResources from 'app/components/Files/RelatedResources';
 import RelatedResourceCount from 'app/components/Files/RelatedResourceCount';
+import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
-export const FilePage = () => {
+export const FilePreview = ({
+  fileId,
+  actions,
+}: {
+  fileId: number;
+  actions?: TitleRowActionsProps['actions'];
+}) => {
   const sdk = useSDK();
-  const { id } = useParams<{
-    id: string | undefined;
-  }>();
-  const fileIdNumber = id ? parseInt(id, 10) : undefined;
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
   const { hidePreview } = useResourcePreview();
   const isActive = resourcesState.some(
-    el => el.state === 'active' && el.id === fileIdNumber && el.type === 'file'
+    el => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
 
   useEffect(() => {
-    if (fileIdNumber && !isActive) {
+    if (fileId && !isActive) {
       setResourcesState(
         resourcesState
           .filter(el => el.state !== 'active')
-          .concat([{ id: fileIdNumber, type: 'file', state: 'active' }])
+          .concat([{ id: fileId, type: 'file', state: 'active' }])
       );
     }
-  }, [isActive, resourcesState, fileIdNumber, setResourcesState]);
+  }, [isActive, resourcesState, fileId, setResourcesState]);
 
   useEffect(() => {
-    trackUsage('Exploration.File', { fileId: fileIdNumber });
+    trackUsage('Exploration.File', { fileId });
     hidePreview();
-  }, [fileIdNumber, hidePreview]);
+  }, [fileId, hidePreview]);
 
-  const invalidId =
-    !id || id.length === 0 || !fileIdNumber || Number.isNaN(fileIdNumber);
-
-  const { data: fileInfo } = useCdfItem<FileInfo>(
-    'files',
-    { id: fileIdNumber! },
-    { enabled: !invalidId }
-  );
-
-  if (invalidId) {
-    return null;
-  }
+  const { data: fileInfo } = useCdfItem<FileInfo>('files', { id: fileId! });
 
   return (
     <>
-      <ResourceTitleRow id={fileIdNumber!} type="file" icon="Document" />
+      <ResourceTitleRow
+        item={{ id: fileId!, type: 'file' }}
+        icon="Document"
+        actions={actions}
+      />
       <Tabs tab="preview">
         <Tabs.Pane title="Preview" key="preview">
           <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
             <div style={{ display: 'flex', flex: 1 }}>
-              <FilePreview
-                fileId={fileIdNumber!}
+              <CogniteFilePreview
+                fileId={fileId!}
                 creatable={false}
                 contextualization={false}
               />
@@ -78,72 +73,60 @@ export const FilePage = () => {
           title={
             <>
               Assets{' '}
-              <RelatedResourceCount
-                fileId={fileIdNumber!}
-                resourceType="asset"
-              />
+              <RelatedResourceCount fileId={fileId!} resourceType="asset" />
             </>
           }
           key="assets"
         >
-          <RelatedResources fileId={fileIdNumber!} resourceType="asset" />
+          <RelatedResources fileId={fileId!} resourceType="asset" />
         </Tabs.Pane>
 
         <Tabs.Pane
           title={
             <>
               Files{' '}
-              <RelatedResourceCount
-                fileId={fileIdNumber!}
-                resourceType="file"
-              />
+              <RelatedResourceCount fileId={fileId!} resourceType="file" />
             </>
           }
           key="files"
         >
-          <RelatedResources fileId={fileIdNumber!} resourceType="file" />
+          <RelatedResources fileId={fileId!} resourceType="file" />
         </Tabs.Pane>
         <Tabs.Pane
           title={
             <>
               Time series{' '}
               <RelatedResourceCount
-                fileId={fileIdNumber!}
+                fileId={fileId!}
                 resourceType="timeSeries"
               />
             </>
           }
           key="timeseries"
         >
-          <RelatedResources fileId={fileIdNumber!} resourceType="timeSeries" />
+          <RelatedResources fileId={fileId!} resourceType="timeSeries" />
         </Tabs.Pane>
         <Tabs.Pane
           title={
             <>
               Events{' '}
-              <RelatedResourceCount
-                fileId={fileIdNumber!}
-                resourceType="event"
-              />
+              <RelatedResourceCount fileId={fileId!} resourceType="event" />
             </>
           }
           key="events"
         >
-          <RelatedResources fileId={fileIdNumber!} resourceType="event" />
+          <RelatedResources fileId={fileId!} resourceType="event" />
         </Tabs.Pane>
         <Tabs.Pane
           title={
             <>
               Sequences{' '}
-              <RelatedResourceCount
-                fileId={fileIdNumber!}
-                resourceType="sequence"
-              />
+              <RelatedResourceCount fileId={fileId!} resourceType="sequence" />
             </>
           }
           key="sequences"
         >
-          <RelatedResources fileId={fileIdNumber!} resourceType="sequence" />
+          <RelatedResources fileId={fileId!} resourceType="sequence" />
         </Tabs.Pane>
       </Tabs>
     </>

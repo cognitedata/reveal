@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useRouteMatch, useLocation } from 'react-router-dom';
+import { useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { SequenceColumns, SequenceDetails } from 'lib/containers/Sequences';
@@ -11,6 +11,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs } from 'app/containers/ResourceDetails';
+import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type SequencePreviewType =
   | 'details'
@@ -21,12 +22,14 @@ export type SequencePreviewType =
   | 'sequences'
   | 'events';
 
-export const SequencePage = () => {
+export const SequencePreview = ({
+  sequenceId,
+  actions,
+}: {
+  sequenceId: number;
+  actions?: TitleRowActionsProps['actions'];
+}) => {
   const history = useHistory();
-  const { id: sequenceIdString } = useParams<{
-    id: string;
-  }>();
-  const sequenceId = parseInt(sequenceIdString, 10);
 
   const { hidePreview } = useResourcePreview();
   useEffect(() => {
@@ -48,10 +51,6 @@ export const SequencePage = () => {
     .replace(match.url, '')
     .slice(1) as SequencePreviewType;
 
-  if (!sequenceIdString) {
-    return null;
-  }
-
   if (!isFetched) {
     return <Loader />;
   }
@@ -66,7 +65,11 @@ export const SequencePage = () => {
 
   return (
     <>
-      <ResourceTitleRow id={sequenceId} type="sequence" icon="GridFilled" />
+      <ResourceTitleRow
+        item={{ id: sequenceId, type: 'sequence' }}
+        icon="GridFilled"
+        actions={actions}
+      />
       <Row>
         <Col span={24}>
           <ResourceDetailsTabs

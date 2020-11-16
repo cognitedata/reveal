@@ -17,10 +17,12 @@ export const ExplorationNavbar = ({
   // cart,
   // setCart,
   beforeSearchInput,
+  afterSearchInput,
 }: {
   // cart: ResourceItem[];
   // setCart: (cart: ResourceItem[]) => void;
   beforeSearchInput?: React.ReactElement;
+  afterSearchInput?: React.ReactElement;
 }) => {
   // const { mode, setMode } = useContext(ResourceSelectionContext);
   // const cartCount = cart.length;
@@ -65,20 +67,10 @@ export const ExplorationNavbar = ({
   return (
     <SearchInputContainer align="middle">
       {beforeSearchInput && <Col flex="none">{beforeSearchInput}</Col>}
-      <Col
-        flex="auto"
-        style={
-          beforeSearchInput
-            ? {
-                margin: '0 16px',
-                paddingLeft: 16,
-                borderLeft: `1px solid ${lightGrey}`,
-              }
-            : undefined
-        }
-      >
+      <Col flex="auto">
         <ExplorationSearchBar />
       </Col>
+      {afterSearchInput && <Col flex="none">{afterSearchInput}</Col>}
     </SearchInputContainer>
   );
 };

@@ -26,7 +26,6 @@ import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
 import { lightGrey } from 'lib/utils/Colors';
 import { useCurrentResourceType, useCurrentResourceId } from './hooks';
 import FilterToggleButton from './FilterToggleButton';
-import RedirectToFirstId from './RedirectToFirstId';
 
 const Wrapper = styled.div`
   display: flex;
@@ -99,7 +98,6 @@ function SearchPage() {
         setCurrentResourceType={setCurrentResourceType}
       />
       <Wrapper>
-        <RedirectToFirstId />
         <SearchFilters
           assetFilter={assetFilter}
           setAssetFilter={setAssetFilter}
@@ -115,7 +113,12 @@ function SearchPage() {
           closeFilters={() => setShowFilter(false)}
           visible={showFilter}
         />
-        <div style={{ width: 440 }}>
+        <div
+          style={{
+            width: activeId ? 440 : 'unset',
+            flex: activeId ? 'unset' : 1,
+          }}
+        >
           <ExplorationNavBar
             beforeSearchInput={
               !showFilter ? (
@@ -150,10 +153,20 @@ function SearchPage() {
           </SearchResultWrapper>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <SearchResultWrapper>
-            <ResourcePreview type={currentResourceType} />
-          </SearchResultWrapper>
+        <div
+          style={{
+            width: activeId ? 'unset' : 0,
+            flex: activeId ? 1 : 'unset',
+          }}
+        >
+          {activeId && (
+            <SearchResultWrapper>
+              <ResourcePreview
+                item={{ id: activeId, type: currentResourceType }}
+                onCloseClicked={() => openPreview(undefined)}
+              />
+            </SearchResultWrapper>
+          )}
         </div>
       </Wrapper>
     </ResourcePreviewProvider>

@@ -1,1 +1,1 @@
-export { default } from './TitleRowActions';
+export * from './TitleRowActions';

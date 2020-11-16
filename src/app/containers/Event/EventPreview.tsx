@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useRouteMatch, useLocation } from 'react-router-dom';
+import { useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { EventDetails } from 'lib/containers/Events';
@@ -11,6 +11,7 @@ import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
+import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type EventPreviewTabType =
   | 'details'
@@ -20,12 +21,14 @@ export type EventPreviewTabType =
   | 'sequences'
   | 'events';
 
-export const EventPage = () => {
+export const EventPreview = ({
+  eventId,
+  actions,
+}: {
+  eventId: number;
+  actions?: TitleRowActionsProps['actions'];
+}) => {
   const history = useHistory();
-  const { id: eventIdString } = useParams<{
-    id: string;
-  }>();
-  const eventId = parseInt(eventIdString, 10);
 
   useEffect(() => {
     trackUsage('Exploration.Event', { eventId });
@@ -39,10 +42,6 @@ export const EventPage = () => {
   const activeTab = location.pathname
     .replace(match.url, '')
     .slice(1) as EventPreviewTabType;
-
-  if (!eventIdString) {
-    return null;
-  }
 
   if (!eventId || !Number.isFinite(eventId)) {
     return <>Invalid event id: {eventId}</>;
@@ -63,10 +62,10 @@ export const EventPage = () => {
   return (
     <>
       <ResourceTitleRow
-        id={eventId}
-        type="event"
+        item={{ id: eventId, type: 'event' }}
         icon="Events"
         getTitle={renderTitle}
+        actions={actions}
       />
       <Row>
         <Col span={24}>

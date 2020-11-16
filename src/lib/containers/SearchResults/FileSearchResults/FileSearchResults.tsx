@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/sdk';
-import { FileFilterGridTable, FileTable } from 'lib/containers/Files';
+import { FileGridTable, FileTable } from 'lib/containers/Files';
 import { SelectableItemsProps } from 'lib/CommonProps';
 import { SearchResultLoader } from 'lib';
 import { FileToolbar } from './FileToolbar';
@@ -32,21 +32,23 @@ export const FileSearchResults = ({
         onViewChange={setCurrentView}
         allowEdit={allowEdit}
       />
-      {currentView === 'grid' ? (
-        <FileFilterGridTable
-          filter={filter}
-          query={query}
-          onRowClick={file => onClick(file)}
-          {...selectionProps}
-        />
-      ) : (
-        <SearchResultLoader<FileInfo>
-          type="file"
-          filter={filter}
-          query={query}
-          {...selectionProps}
-        >
-          {props => (
+      <SearchResultLoader<FileInfo>
+        type="file"
+        filter={filter}
+        query={query}
+        {...selectionProps}
+      >
+        {props =>
+          currentView === 'grid' ? (
+            <div style={{ flex: 1 }}>
+              <FileGridTable
+                {...props}
+                onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
+                onItemClicked={file => onClick(file)}
+                {...selectionProps}
+              />
+            </div>
+          ) : (
             <FileTable
               {...props}
               onRowClick={file => {
@@ -54,9 +56,9 @@ export const FileSearchResults = ({
                 return true;
               }}
             />
-          )}
-        </SearchResultLoader>
-      )}
+          )
+        }
+      </SearchResultLoader>
     </>
   );
 };

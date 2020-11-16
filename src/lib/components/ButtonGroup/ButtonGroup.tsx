@@ -63,7 +63,6 @@ const ButtonGroupWrapper = styled.div<WrapperProps>(
     }
 
     && > * {
-      flex: 1;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;

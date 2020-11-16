@@ -10,16 +10,15 @@ import {
 } from 'lib/hooks/CollectionsHooks';
 import { ResourceType } from 'lib/types';
 import CreateCollectionForm from 'app/components/CreateCollectionForm';
+import { useCollectionFeature } from 'app/utils/featureFlags';
 
-const CollectionsDropdown = ({
-  type,
-  items,
-  button,
-}: {
+type Props = {
   type: ResourceType;
   items: { id: number }[];
   button: React.ReactElement;
-}) => {
+};
+
+const CollectionsDropdown = ({ type, items, button }: Props) => {
   const [formOpen, setFormOpen] = useState(false);
   const { data: collections } = useCollections();
   const [createCollections] = useCreateCollections();
@@ -135,4 +134,10 @@ const CheckIcon = styled(Icon)`
   margin-left: 8px;
 `;
 
-export default CollectionsDropdown;
+export default (props: Props): React.ReactNode => {
+  const showCollections = useCollectionFeature();
+  if (showCollections) {
+    return CollectionsDropdown(props);
+  }
+  return null;
+};

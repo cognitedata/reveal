@@ -3,17 +3,17 @@ import { Button, Dropdown, Menu, Space } from 'antd';
 import { MenuItemProps } from 'antd/es/menu/MenuItem';
 import { FileInfo } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
-import { ResourceType, convertResourceType } from 'lib';
+import { convertResourceType } from 'lib';
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
+import { ResourceItem } from 'lib/types';
 
 type Props = {
-  id: number;
-  type: ResourceType;
+  item: ResourceItem;
 };
 
-function MetadataDownload({ id, type }: Props) {
+function MetadataDownload({ item: { id, type } }: Props) {
   const [downloading, setDownloading] = useState(false);
   const { data: metadata, isFetched } = useCdfItem(
     convertResourceType(type),
@@ -62,12 +62,11 @@ function MetadataDownload({ id, type }: Props) {
   );
 }
 
-interface Foo extends MenuItemProps {
-  fileId: number;
-}
-function FileDownloadMenuItem(props: Foo) {
+function FileDownloadMenuItem({
+  item: { id },
+  ...props
+}: Props & MenuItemProps) {
   const sdk = useSDK();
-  const { fileId: id } = props;
   const { data: fileInfo } = useCdfItem<FileInfo>('files', { id });
   const { data: fileLink, isFetched, isError } = useQuery(
     [...baseCacheKey('files'), 'downloadLink', id],
@@ -111,7 +110,8 @@ function FileDownloadMenuItem(props: Foo) {
   );
 }
 
-function FileDownloadButton({ id }: { id: number }) {
+function FileDownloadButton({ item }: Props) {
+  const { id } = item;
   const [downloading, setDownloading] = useState(false);
   const { data: metadata, isFetched } = useCdfItem<FileInfo>(
     'files',
@@ -148,7 +148,7 @@ function FileDownloadButton({ id }: { id: number }) {
       >
         Download metadata
       </Menu.Item>
-      <FileDownloadMenuItem fileId={id} />
+      <FileDownloadMenuItem item={item} />
       <Menu.Item disabled>Download including annotations</Menu.Item>
     </Menu>
   );
@@ -164,7 +164,7 @@ function FileDownloadButton({ id }: { id: number }) {
   );
 }
 
-function TimeseriesDownloadButton({ id, type }: Props) {
+function TimeseriesDownloadButton({ item: { id, type } }: Props) {
   const sdk = useSDK();
   const [includeDatapoints, setIncludeDatpoints] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -255,13 +255,13 @@ function TimeseriesDownloadButton({ id, type }: Props) {
   );
 }
 
-export default function DownloadButton(props: Props) {
-  switch (props.type) {
+export default function DownloadButton({ item }: Props) {
+  switch (item.type) {
     case 'file':
-      return <FileDownloadButton id={props.id} />;
+      return <FileDownloadButton item={item} />;
     case 'timeSeries':
-      return <TimeseriesDownloadButton {...props} />;
+      return <TimeseriesDownloadButton item={item} />;
     default:
-      return <MetadataDownload {...props} />;
+      return <MetadataDownload item={item} />;
   }
 }

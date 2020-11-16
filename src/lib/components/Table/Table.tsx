@@ -53,7 +53,7 @@ const HighlightCell = ({ text, query }: { text?: string; query?: string }) => {
   );
 };
 
-type AllowedId = number | string;
+export type AllowedId = number | string;
 export type TableProps<T> = Partial<BaseTableProps<T>> & {
   previewingIds?: AllowedId[];
   activeIds?: AllowedId[];

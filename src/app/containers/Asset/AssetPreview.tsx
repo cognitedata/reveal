@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useLocation, useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
@@ -10,7 +10,8 @@ import { Asset } from '@cognite/sdk';
 import { Loader, ErrorFeedback, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useCurrentResourceId } from './Exploration/hooks';
+import { useCurrentResourceId } from 'app/containers/Exploration/hooks';
+import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -19,12 +20,13 @@ export type AssetPreviewTabType =
   | 'sequences'
   | 'events';
 
-export const AssetPage = () => {
-  const { id: assetIdString } = useParams<{
-    id: string;
-  }>();
-  const assetId = parseInt(assetIdString, 10);
-
+export const AssetPreview = ({
+  assetId,
+  actions,
+}: {
+  assetId: number;
+  actions?: TitleRowActionsProps['actions'];
+}) => {
   useEffect(() => {
     trackUsage('Exploration.Asset', { assetId });
   }, [assetId]);
@@ -46,10 +48,6 @@ export const AssetPage = () => {
     }
   );
 
-  if (!assetIdString) {
-    return null;
-  }
-
   if (!isFetched) {
     return <Loader />;
   }
@@ -64,7 +62,11 @@ export const AssetPage = () => {
 
   return (
     <>
-      <ResourceTitleRow id={assetId} type="asset" icon="DataStudio" />
+      <ResourceTitleRow
+        item={{ id: assetId, type: 'asset' }}
+        icon="DataStudio"
+        actions={actions}
+      />
       <div style={{ flexGrow: 1 }}>
         <Row>
           <Col span={24}>

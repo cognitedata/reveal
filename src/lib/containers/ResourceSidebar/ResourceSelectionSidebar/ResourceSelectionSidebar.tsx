@@ -4,7 +4,6 @@ import { Button, Input } from '@cognite/cogs.js';
 import { ResourceType, ResourceItem } from 'lib/types';
 import { Divider, SpacedRow } from 'lib/components';
 import { SearchFilters, SearchResults, ResourceTypeTabs } from 'lib';
-
 import {
   InitialResourceFilterProps,
   SelectableItemsProps,
