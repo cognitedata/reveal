@@ -7,18 +7,10 @@ import * as THREE from 'three';
 import { CadNode } from './CadNode';
 import { pickPixelColor, PickingInput } from '../../utilities/pickPixelColor';
 import { RenderMode } from './rendering/RenderMode';
+import { IntersectInput } from '../base';
 
 export interface TreeIndexPickingInput extends PickingInput {
   cadNode: CadNode;
-}
-
-export interface IntersectCadNodesInput {
-  coords: {
-    x: number;
-    y: number;
-  };
-  camera: THREE.PerspectiveCamera;
-  renderer: THREE.WebGLRenderer;
 }
 
 export interface IntersectCadNodesResult {
@@ -32,7 +24,7 @@ export interface IntersectCadNodesResult {
 const clearColor = new THREE.Color('black');
 const clearAlpha = 0.0;
 
-export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesInput): IntersectCadNodesResult[] {
+export function intersectCadNodes(cadNodes: CadNode[], input: IntersectInput): IntersectCadNodesResult[] {
   const results: IntersectCadNodesResult[] = [];
   for (const cadNode of cadNodes) {
     const result = intersectCadNode(cadNode, input);
@@ -43,8 +35,8 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
   return results.sort((l, r) => l.distance - r.distance);
 }
 
-export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput): IntersectCadNodesResult | undefined {
-  const { camera, coords, renderer } = input;
+export function intersectCadNode(cadNode: CadNode, input: IntersectInput): IntersectCadNodesResult | undefined {
+  const { camera, normalizedCoords, renderer } = input;
   const pickingScene = new THREE.Scene();
   // TODO consider case where parent does not exist
   // TODO add warning if parent has transforms
@@ -52,7 +44,7 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput
   pickingScene.add(cadNode);
   try {
     const pickInput = {
-      coords,
+      normalizedCoords,
       camera,
       renderer,
       scene: pickingScene,
@@ -135,10 +127,10 @@ function pickDepth(input: TreeIndexPickingInput): number {
 const projInv = new THREE.Matrix4();
 
 function getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3 {
-  const { camera, coords } = input;
+  const { camera, normalizedCoords } = input;
   const position = new THREE.Vector3();
   projInv.getInverse(camera.projectionMatrix);
-  position.set(coords.x, coords.y, 0.5).applyMatrix4(projInv);
+  position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(projInv);
 
   position.multiplyScalar(viewZ / position.z);
   position.applyMatrix4(camera.matrixWorld);

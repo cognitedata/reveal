@@ -23,8 +23,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   public readonly revisionId: number;
   /**
    * The revisionId of the specific model revision in Cognite Data Fusion.
+   * @internal
    */
-  private readonly pointCloudNode: PointCloudNode;
+  readonly pointCloudNode: PointCloudNode;
 
   /**
    * @param modelId
