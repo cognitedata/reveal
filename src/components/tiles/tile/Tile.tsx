@@ -11,13 +11,34 @@ import {
   TileOverline,
 } from 'components/tiles/element';
 
+const TilePreviewHeight = '184';
+const TilePreviewWidth = '300';
+
 interface Props {
   title: string;
   description?: string;
   color?: string;
   avatar?: boolean;
   view?: 'suite' | 'board';
+  embedTag?: string;
 }
+// eslint-disable-next-line
+// TODO manipulate DOM to change iframe width & height
+const adjustIframeTagSize = (tag: string = ''): string =>
+  tag
+    .replace(/(height=["|']?)(\d*)/, `$1${TilePreviewHeight}`)
+    .replace(/(width=["|']?)(\d*)/, `$1${TilePreviewWidth}`);
+
+const renderIframe = (tag: string): JSX.Element | null => {
+  if (!tag) {
+    return null;
+  }
+  const elem = (
+    // eslint-disable-next-line react/no-danger
+    <div dangerouslySetInnerHTML={{ __html: adjustIframeTagSize(tag) }} />
+  );
+  return elem;
+};
 
 export const Tile: React.FC<Props> = ({
   title,
@@ -25,6 +46,7 @@ export const Tile: React.FC<Props> = ({
   color,
   avatar = false,
   view = 'suite',
+  embedTag,
 }: Props) => {
   const {
     ref,
@@ -68,7 +90,7 @@ export const Tile: React.FC<Props> = ({
           </ActionsContainer>
         </div>
       </TileHeader>
-      <TilePreview isBoard={isBoard} />
+      {embedTag ? renderIframe(embedTag) : <TilePreview isBoard={isBoard} />}
     </TileContainer>
   );
 };
