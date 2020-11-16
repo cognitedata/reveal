@@ -49,16 +49,9 @@ const SuiteOverview: React.FC = () => {
           {dashboards?.map((dashboard) => (
             // eslint-disable-next-line
             // TODO pass item
-            <Tile
-              key={dashboard.key}
-              view="board"
-              title={dashboard.title}
-              description={dashboard.type}
-              embedTag={dashboard.embedTag}
-            />
+            <Tile key={dashboard.key} view="board" dataItem={dashboard} />
           ))}
         </TilesContainer>
-        <div>I am inside suite {id}</div>
       </OverviewContainer>
     </>
   );

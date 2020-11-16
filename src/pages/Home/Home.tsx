@@ -21,7 +21,7 @@ const Home = () => {
 
   return (
     <>
-      <Suitebar headerText="Executive overview" />{' '}
+      <Suitebar headerText="Executive overview" />
       <OverviewContainer>
         <SmallTilesContainer>
           <Title level={6}>Quick Access</Title>
@@ -38,7 +38,7 @@ const Home = () => {
           {suites?.map((suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
-                <Tile title={suite.title} color={suite.color} avatar />
+                <Tile dataItem={suite} avatar />
               </Link>
             );
           })}
@@ -48,7 +48,7 @@ const Home = () => {
           {suites?.map((suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
-                <Tile title={suite.title} color={suite.color} avatar />
+                <Tile dataItem={suite} avatar />
               </Link>
             );
           })}

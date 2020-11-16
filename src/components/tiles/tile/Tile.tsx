@@ -14,13 +14,11 @@ import {
 const TilePreviewHeight = '184';
 const TilePreviewWidth = '300';
 
+// create dataItem interface
 interface Props {
-  title: string;
-  description?: string;
-  color?: string;
+  dataItem: any;
   avatar?: boolean;
   view?: 'suite' | 'board';
-  embedTag?: string;
 }
 // eslint-disable-next-line
 // TODO manipulate DOM to change iframe width & height
@@ -41,12 +39,9 @@ const renderIframe = (tag: string): JSX.Element | null => {
 };
 
 export const Tile: React.FC<Props> = ({
-  title,
-  description,
-  color,
+  dataItem,
   avatar = false,
   view = 'suite',
-  embedTag,
 }: Props) => {
   const {
     ref,
@@ -64,12 +59,14 @@ export const Tile: React.FC<Props> = ({
   return (
     <TileContainer>
       <TileHeader isBoard={isBoard}>
-        {avatar && <SuiteAvatar title={title} color={color} />}
+        {avatar && (
+          <SuiteAvatar title={dataItem.title} color={dataItem.color} />
+        )}
         <TileDescription>
           <TileOverline isBoard={isBoard}>
-            <Overline level={3}>{description}</Overline>
+            <Overline level={3}>{dataItem.type}</Overline>
           </TileOverline>
-          <Title level={6}>{title}</Title>
+          <Title level={6}>{dataItem.title}</Title>
         </TileDescription>
         <div ref={ref}>
           <Button
@@ -90,7 +87,11 @@ export const Tile: React.FC<Props> = ({
           </ActionsContainer>
         </div>
       </TileHeader>
-      {embedTag ? renderIframe(embedTag) : <TilePreview isBoard={isBoard} />}
+      {dataItem.embedTag ? (
+        renderIframe(dataItem.embedTag)
+      ) : (
+        <TilePreview isBoard={isBoard} />
+      )}
     </TileContainer>
   );
 };

@@ -1,5 +1,5 @@
 import { CdfClient } from 'utils';
-import { SUITES_TABLE_NAME } from 'contants';
+import { SUITES_TABLE_NAME } from 'constants/cdf';
 import { RootDispatcher } from 'store/types';
 import { SuiteRow, Suite } from './types';
 import * as actions from './actions';

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Button, Icon, Input, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
-import { colors } from 'contants/suiteColors';
+import { colors } from 'constants/suiteColors';
 import NavigationItem from './NavigationItem';
 import {
   ActionContainer,
