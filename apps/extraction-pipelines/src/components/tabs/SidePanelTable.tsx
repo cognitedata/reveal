@@ -26,7 +26,7 @@ interface ITableProps {
 
 const makeData = [
   {
-    timestamp: 1605420298134,
+    timestamp: 1605475298134,
     status: 'Failure',
     statusSeen: 'Seen',
   },
@@ -34,7 +34,7 @@ const makeData = [
   { timestamp: 1604918198134, status: 'Failure', statusSeen: 'Seen' },
   { timestamp: 1604218198134, status: 'Success', statusSeen: 'Seen' },
   { timestamp: 1603918198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1602923198134, status: 'Success', statusSeen: 'Seen' },
+  { timestamp: 1600923198134, status: 'Success', statusSeen: 'Seen' },
 ];
 
 const showSorterIndicator = (sCol: HeaderGroup) => {
@@ -135,7 +135,8 @@ const SidePanelTable = () => {
         accessor: 'timestamp',
         sortType: 'basic',
         Cell: (cell: Cell) => {
-          return moment(cell.value).fromNow();
+          const date = moment(cell.value);
+          return `${date.fromNow()} ${date.format('HH:mm')}`;
         },
       },
       {
