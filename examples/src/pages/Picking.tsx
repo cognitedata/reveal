@@ -130,7 +130,7 @@ export function Picking() {
 
       const pick = (event: MouseEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
-        const coords = {
+        const normalizedCoords = {
           x:
             ((event.clientX - rect.left) / renderer.domElement.clientWidth) *
             2 -
@@ -145,7 +145,7 @@ export function Picking() {
           const intersections = reveal.intersectCadNodes([model], {
             renderer,
             camera,
-            coords,
+            normalizedCoords,
           });
           if (intersections.length === 0) {
             return;
@@ -159,7 +159,7 @@ export function Picking() {
 
         // Pick other objects
         const otherPickResult = (() => {
-          raycaster.setFromCamera(coords, camera);
+          raycaster.setFromCamera(normalizedCoords, camera);
           const intersections = raycaster.intersectObjects([boxMesh]);
           if (intersections.length === 0) {
             return;

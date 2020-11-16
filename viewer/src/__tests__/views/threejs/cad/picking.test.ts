@@ -6,6 +6,7 @@ import * as THREE from 'three';
 
 import { intersectCadNodes } from '../../../../datamodels/cad/picking';
 import { CadNode } from '../../../../datamodels/cad/CadNode';
+import { IntersectInput } from '../../../../datamodels/base';
 
 describe('intersectCadNodes', () => {
   const camera = new THREE.PerspectiveCamera();
@@ -19,8 +20,8 @@ describe('intersectCadNodes', () => {
     render: jest.fn(),
     readRenderTargetPixels: jest.fn()
   } as any;
-  const input = {
-    coords: {
+  const input: IntersectInput = {
+    normalizedCoords: {
       x: 0.5,
       y: 0.5
     },
