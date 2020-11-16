@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Avatar, Tooltip } from '@cognite/cogs.js';
 import { User } from '../../../model/User';
 
-const OwnedByAvatar = styled((props) => <Avatar {...props} />)`
+const UserDetailsAvatar = styled((props) => <Avatar {...props} />)`
   margin-right: 0.5rem;
 `;
 const Wrapper = styled.div`
@@ -14,21 +14,21 @@ const Wrapper = styled.div`
 `;
 
 interface OwnProps {
-  owner: User;
+  user: User;
 }
 
 type Props = OwnProps;
 
-const OwnedBy: FunctionComponent<Props> = ({ owner }: Props) => {
-  const display = owner.name ? owner.name : owner.email;
+const UserDetails: FunctionComponent<Props> = ({ user }: Props) => {
+  const display = user.name ? user.name : user.email;
   return (
     <Wrapper>
-      <Tooltip placement="bottom" content={owner.email}>
+      <Tooltip placement="bottom" content={user.email}>
         <>
-          <OwnedByAvatar
+          <UserDetailsAvatar
             text={display}
-            key={`avatar-${owner.email}`}
-            aria-label={`Avatar for ${owner.name}`}
+            key={`avatar-${user.email}`}
+            aria-label={`Avatar for ${user.name}`}
           />
           {display}
         </>
@@ -37,4 +37,4 @@ const OwnedBy: FunctionComponent<Props> = ({ owner }: Props) => {
   );
 };
 
-export default OwnedBy;
+export default UserDetails;

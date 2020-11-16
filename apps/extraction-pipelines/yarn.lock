@@ -1298,10 +1298,10 @@
   dependencies:
     query-string "^6.13.4"
 
-"@cognite/cogs.js@^1.30.0":
-  version "1.32.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.32.0.tgz#6e6b7052116a636bb7df5e324b8fd44757e2f891"
-  integrity sha512-24YJ9J8dXmTjt/9idGcVyIkolp1TM7bQsBxK7PjCMHj7oD2GILGgfQlURLzq7nmrtO2iHVMrGrKMYhVQIIJ5NQ==
+"@cognite/cogs.js@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.1.1.tgz#e0cf639106c39db40ab40b1172865dea3262ee05"
+  integrity sha512-KZQknNAhXZQHw98dxWmbubjAZhjRWrTZClbLsK6i/irWXrReyxvoDrGil+um31ZZ7i0rSviw1fmtE2PGL159og==
   dependencies:
     "@tippyjs/react" "4.0.2"
     color "^3.1.2"
@@ -2768,6 +2768,13 @@
   version "16.9.9"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.9.tgz#d2d0a6f720a0206369ccbefff752ba37b9583136"
   integrity sha512-jE16FNWO3Logq/Lf+yvEAjKzhpST/Eac8EMd1i4dgZdMczfgqC8EjpxwNgEe3SExHYLliabXDh9DEhhqnlXJhg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-modal@^3.10.6":
+  version "3.10.6"
+  resolved "https://registry.yarnpkg.com/@types/react-modal/-/react-modal-3.10.6.tgz#76717220f32bc72769190692147814a540053c7e"
+  integrity sha512-XpshhwVYir1TRZ2HS5EfmNotJjB8UEC2IkT3omNtiQzROOXSzVLz5xsjwEpACP8U+PctkpfZepX+WT5oDf0a9g==
   dependencies:
     "@types/react" "*"
 

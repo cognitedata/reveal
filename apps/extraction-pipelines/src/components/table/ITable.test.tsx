@@ -73,7 +73,7 @@ describe('<ITable/>', () => {
     fireEvent.change(searchInput, { target: { value: '' } });
     await waitFor(() => {
       const resultRows = screen.getAllByRole('row');
-      expect(resultRows.length).toEqual(5);
+      expect(resultRows.length).toEqual(mockResponse.length + 1);
     });
 
     // should filter based name column

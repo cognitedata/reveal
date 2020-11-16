@@ -42,4 +42,14 @@ describe('IntegrationsTableOptions', () => {
       expect(menuItem).toBeInTheDocument();
     });
   });
+
+  test('Render integration details modal on click "View integration detail" action', () => {
+    render(<IntegrationsTableOptions integration={integration} />);
+    const menuBtn = screen.getByLabelText(actionsMenuLabel);
+    fireEvent.click(menuBtn);
+    const viewIntegrationDetailsAction = screen.getByText(cases[0].expected);
+    fireEvent.click(viewIntegrationDetailsAction);
+    const modal = screen.getByTestId('view-integration-details-modal');
+    expect(modal).toBeInTheDocument();
+  });
 });
