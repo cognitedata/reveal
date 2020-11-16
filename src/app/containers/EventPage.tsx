@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { EventDetails } from 'lib/containers/Events';
@@ -7,11 +7,18 @@ import { renderTitle } from 'lib/utils/EventsUtils';
 import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
-import { ErrorFeedback, Loader } from 'lib/components';
-import { useRelationships } from 'lib/hooks/RelationshipHooks';
+import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
-import { RelationshipList } from 'lib';
+import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
+
+export type EventPreviewTabType =
+  | 'details'
+  | 'assets'
+  | 'timeseries'
+  | 'files'
+  | 'sequences'
+  | 'events';
 
 export const EventPage = () => {
   const history = useHistory();
@@ -27,7 +34,11 @@ export const EventPage = () => {
     id: eventId,
   });
 
-  const { data: relationships } = useRelationships(event?.externalId);
+  const match = useRouteMatch();
+  const location = useLocation();
+  const activeTab = location.pathname
+    .replace(match.url, '')
+    .slice(1) as EventPreviewTabType;
 
   if (!eventIdString) {
     return null;
@@ -58,15 +69,26 @@ export const EventPage = () => {
         getTitle={renderTitle}
       />
       <Row>
-        <Col span={18}>
-          <EventDetails event={event} showAll />
-        </Col>
-        <Col span={6}>
-          <RelationshipList
-            relations={relationships}
-            onClick={item =>
-              history.push(createLink(`/explore/${item.type}/${item.id}`))
+        <Col span={24}>
+          <ResourceDetailsTabs
+            parentResource={{
+              type: 'event',
+              id: event.id,
+              externalId: event.externalId,
+            }}
+            tab={activeTab}
+            onTabChange={newTab =>
+              history.push(
+                createLink(
+                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                )
+              )
             }
+            additionalTabs={[
+              <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+                <EventDetails event={event} showAll />
+              </Tabs.Pane>,
+            ]}
           />
         </Col>
       </Row>

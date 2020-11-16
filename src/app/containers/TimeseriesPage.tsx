@@ -1,16 +1,28 @@
 import React, { useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import {
+  useParams,
+  useHistory,
+  useRouteMatch,
+  useLocation,
+} from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
-import { DetailsItem, ErrorFeedback, Loader } from 'lib/components';
+import { DetailsItem, ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { formatMetadata } from 'lib/utils';
-import { useRelationships } from 'lib/hooks/RelationshipHooks';
-import { RelationshipList } from 'lib';
+import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { createLink } from '@cognite/cdf-utilities';
+
+export type TimeseriesPreviewTabType =
+  | 'details'
+  | 'assets'
+  | 'timeseries'
+  | 'files'
+  | 'sequences'
+  | 'events';
 
 export const TimeseriesPage = () => {
   const history = useHistory();
@@ -28,7 +40,11 @@ export const TimeseriesPage = () => {
     { id: timeseriesId }
   );
 
-  const { data: relationships } = useRelationships(timeseries?.externalId);
+  const match = useRouteMatch();
+  const location = useLocation();
+  const activeTab = location.pathname
+    .replace(match.url, '')
+    .slice(1) as TimeseriesPreviewTabType;
 
   if (!timeseriesIdString) {
     return null;
@@ -54,25 +70,36 @@ export const TimeseriesPage = () => {
       <ResourceTitleRow id={timeseriesId} type="timeSeries" icon="Timeseries" />
       {timeseries && (
         <Row>
-          <Col span={18}>
+          <Col span={24}>
             <TimeseriesChart
               timeseriesId={timeseries.id}
               height={500}
               defaultOption="2Y"
             />
-            {formatMetadata((timeseries && timeseries.metadata) ?? {}).map(
-              el => (
-                <DetailsItem key={el.key} name={el.key} value={el.value} />
-              )
-            )}
-          </Col>
-          <Col span={6}>
-            <RelationshipList
-              assetId={timeseries.assetId}
-              relations={relationships}
-              onClick={item =>
-                history.push(createLink(`/explore/${item.type}/${item.id}`))
+            <ResourceDetailsTabs
+              parentResource={{
+                type: 'timeSeries',
+                id: timeseries.id,
+                externalId: timeseries.externalId,
+              }}
+              tab={activeTab}
+              onTabChange={newTab =>
+                history.push(
+                  createLink(
+                    `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                  )
+                )
               }
+              additionalTabs={[
+                <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+                  {' '}
+                  {formatMetadata(
+                    (timeseries && timeseries.metadata) ?? {}
+                  ).map(el => (
+                    <DetailsItem key={el.key} name={el.key} value={el.value} />
+                  ))}
+                </Tabs.Pane>,
+              ]}
             />
           </Col>
         </Row>

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { SequenceColumns, SequenceDetails } from 'lib/containers/Sequences';
@@ -8,10 +8,18 @@ import { Row, Col } from 'antd';
 import { Sequence } from '@cognite/sdk';
 import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { useRelationships } from 'lib/hooks/RelationshipHooks';
-import { RelationshipList } from 'lib';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
+import { ResourceDetailsTabs } from 'app/containers/ResourceDetails';
+
+export type SequencePreviewType =
+  | 'details'
+  | 'columns'
+  | 'assets'
+  | 'timeseries'
+  | 'files'
+  | 'sequences'
+  | 'events';
 
 export const SequencePage = () => {
   const history = useHistory();
@@ -34,9 +42,11 @@ export const SequencePage = () => {
     { id: sequenceId }
   );
 
-  const { data: relationships } = useRelationships(sequence?.externalId);
-
-  const [currentTab, setTab] = useState('details');
+  const match = useRouteMatch();
+  const location = useLocation();
+  const activeTab = location.pathname
+    .replace(match.url, '')
+    .slice(1) as SequencePreviewType;
 
   if (!sequenceIdString) {
     return null;
@@ -58,23 +68,29 @@ export const SequencePage = () => {
     <>
       <ResourceTitleRow id={sequenceId} type="sequence" icon="GridFilled" />
       <Row>
-        <Col span={18}>
-          <Tabs tab={currentTab} onTabChange={setTab}>
-            <Tabs.Pane title="Details" key="details">
-              <SequenceDetails sequence={sequence} showAll />
-            </Tabs.Pane>
-            <Tabs.Pane title="Columns " key="columns">
-              <SequenceColumns sequence={sequence} />
-            </Tabs.Pane>
-          </Tabs>
-        </Col>
-        <Col span={6}>
-          <RelationshipList
-            assetId={sequence.assetId}
-            relations={relationships}
-            onClick={item =>
-              history.push(createLink(`/explore/${item.type}/${item.id}`))
+        <Col span={24}>
+          <ResourceDetailsTabs
+            parentResource={{
+              type: 'sequence',
+              id: sequence.id,
+              externalId: sequence.externalId,
+            }}
+            tab={activeTab}
+            onTabChange={newTab =>
+              history.push(
+                createLink(
+                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                )
+              )
             }
+            additionalTabs={[
+              <Tabs.Pane title="Details" key="details">
+                <SequenceDetails sequence={sequence} showAll />
+              </Tabs.Pane>,
+              <Tabs.Pane title="Columns " key="columns">
+                <SequenceColumns sequence={sequence} />
+              </Tabs.Pane>,
+            ]}
           />
         </Col>
       </Row>

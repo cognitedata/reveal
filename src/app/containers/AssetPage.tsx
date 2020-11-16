@@ -17,8 +17,7 @@ export type AssetPreviewTabType =
   | 'timeseries'
   | 'files'
   | 'sequences'
-  | 'events'
-  | 'children';
+  | 'events';
 
 export const AssetPage = () => {
   const { id: assetIdString } = useParams<{
