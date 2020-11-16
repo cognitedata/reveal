@@ -143,3 +143,16 @@ export const mockDataSetResponse = () => [
 export const mockError = {
   error: { code: 400, message: 'Multiple authentication headers present' },
 };
+
+export const mockDataRunsResponse = [
+  {
+    timestamp: 1605575298134,
+    status: 'Failure',
+    statusSeen: 'Seen',
+  },
+  { timestamp: 1605418198134, status: '', statusSeen: 'Seen' },
+  { timestamp: 1604918198134, status: 'Failure', statusSeen: 'Seen' },
+  { timestamp: 1604218198134, status: 'Success', statusSeen: 'Seen' },
+  { timestamp: 1603918198134, status: 'Success', statusSeen: 'Seen' },
+  { timestamp: 1600923198134, status: 'Success', statusSeen: 'Seen' },
+];

@@ -14,6 +14,7 @@ import {
 } from 'react-table';
 import { SortingIcon } from './TabsStyle';
 import Wrapper from '../../styles/TablesStyle';
+import { mockDataRunsResponse } from '../../utils/mockResponse';
 
 interface ITableProps {
   data: {
@@ -23,19 +24,6 @@ interface ITableProps {
   }[];
   columns: Column[];
 }
-
-const makeData = [
-  {
-    timestamp: 1605475298134,
-    status: 'Failure',
-    statusSeen: 'Seen',
-  },
-  { timestamp: 1605318198134, status: '', statusSeen: 'Seen' },
-  { timestamp: 1604918198134, status: 'Failure', statusSeen: 'Seen' },
-  { timestamp: 1604218198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1603918198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1600923198134, status: 'Success', statusSeen: 'Seen' },
-];
 
 const showSorterIndicator = (sCol: HeaderGroup) => {
   if (!sCol.disableSortBy) {
@@ -58,6 +46,20 @@ const statusBadge = (status: string) => {
     return <Badge text="FAIL" size={13} background="#DB0657" />;
   }
   return '';
+};
+
+const timeFromNow = (time: number) => {
+  const date = moment(time);
+  const isToday = date.valueOf() > moment().startOf('day').valueOf();
+  const isYesterday =
+    date.valueOf() > moment().subtract(1, 'days').startOf('day').valueOf();
+  if (isToday) {
+    return `Today ${date.format('HH:mm')}`;
+  }
+  if (isYesterday) {
+    return `Yesterday ${date.format('HH:mm')}`;
+  }
+  return `${date.fromNow()} ${date.format('HH:mm')}`;
 };
 
 const Table = ({ columns, data }: ITableProps) => {
@@ -126,7 +128,7 @@ const Table = ({ columns, data }: ITableProps) => {
 };
 
 const SidePanelTable = () => {
-  const data = useMemo(() => makeData, []);
+  const data = useMemo(() => mockDataRunsResponse, []);
 
   const columns = useMemo(
     () => [
@@ -135,8 +137,7 @@ const SidePanelTable = () => {
         accessor: 'timestamp',
         sortType: 'basic',
         Cell: (cell: Cell) => {
-          const date = moment(cell.value);
-          return `${date.fromNow()} ${date.format('HH:mm')}`;
+          return timeFromNow(cell.value);
         },
       },
       {
