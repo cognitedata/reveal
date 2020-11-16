@@ -14,6 +14,33 @@ import { useResourceResults } from 'lib';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
+export const SearchResultListItem = <T extends ResourceType>({
+  item,
+  getTitle,
+  getDescription,
+  onRowClick,
+  style,
+}: {
+  item: T;
+  getTitle: (i: T) => string;
+  getDescription: (i: T) => string;
+  onRowClick: (id: number) => void;
+  style?: any;
+}) => {
+  return (
+    <List.Item key={item.id} onClick={() => onRowClick(item.id)} style={style}>
+      <div>
+        <div>
+          <h4>{getTitle(item)}</h4>
+        </div>
+        <div>
+          <p>{getDescription(item)}</p>
+        </div>
+      </div>
+    </List.Item>
+  );
+};
+
 const SearchResult = <T extends ResourceType>({
   api,
   query,
@@ -51,8 +78,11 @@ const SearchResult = <T extends ResourceType>({
         loading={!isFetched}
         dataSource={items}
         renderItem={item => (
-          <List.Item
-            key={item.id}
+          <SearchResultListItem
+            item={item}
+            getTitle={getTitle}
+            getDescription={getDescription}
+            onRowClick={onRowClick}
             style={
               item.id === currentId
                 ? {
@@ -61,17 +91,7 @@ const SearchResult = <T extends ResourceType>({
                   }
                 : { cursor: 'pointer' }
             }
-            onClick={() => onRowClick(item.id)}
-          >
-            <div>
-              <div>
-                <h4>{getTitle(item)}</h4>
-              </div>
-              <div>
-                <p>{getDescription(item)}</p>
-              </div>
-            </div>
-          </List.Item>
+          />
         )}
       >
         {isFetchingMore && (

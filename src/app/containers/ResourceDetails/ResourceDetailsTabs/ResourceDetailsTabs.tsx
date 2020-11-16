@@ -7,10 +7,11 @@ import {
   useRelationships,
   useRelatedResourceCounts,
 } from 'lib/hooks/RelationshipHooks';
-import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { Badge } from '@cognite/cogs.js';
 import { lightGrey } from 'lib/utils/Colors';
 import { RelationshipTable, Resource } from 'lib/containers/Relationships';
+import { useHistory } from 'react-router-dom';
+import { createLink } from '@cognite/cdf-utilities';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem;
@@ -35,7 +36,7 @@ const RelationshipTabContent = ({
   resource: ResourceItem;
   type: ResourceType;
 }) => {
-  const { openPreview } = useResourcePreview();
+  const history = useHistory();
 
   const { data: linkedResources } = useList(
     convertResourceType(type),
@@ -52,8 +53,8 @@ const RelationshipTabContent = ({
       type={type}
       relationships={relationships}
       linkedResources={linkedResources as Resource[]}
-      onItemClicked={(item: Resource) => {
-        openPreview({ item: { id: item.id, type } });
+      onItemClicked={(id: number) => {
+        history.push(createLink(`/explore/${type}/${id}`));
       }}
     />
   );

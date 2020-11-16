@@ -9,20 +9,43 @@ import {
 } from '@cognite/sdk/dist/src/types';
 import { ResourceType } from 'lib/types';
 import { useRelatedResources } from 'lib/hooks/RelationshipHooks';
-import {
-  AssetTable,
-  FileTable,
-  TimeseriesTable,
-  EventTable,
-  SequenceTable,
-} from 'lib/containers';
+import { FileTable, TimeseriesTable } from 'lib/containers';
+import { List } from 'antd';
+import { SearchResultListItem } from 'lib/containers/SearchResults/SearchResultList';
 
 export type Resource = Asset | CogniteEvent | FileInfo | Timeseries | Sequence;
 export type RelationshipTableProps = {
   type: ResourceType;
   relationships?: (ExternalId & { type: ResourceType })[] | [];
   linkedResources?: Resource[];
-  onItemClicked: (item: Resource) => void;
+  onItemClicked: (id: number) => void;
+};
+
+export const RelatedResourceList = <T extends Resource>({
+  items,
+  getTitle,
+  getDescription,
+  onRowClick,
+}: {
+  items: T[];
+  getTitle: (i: T) => string;
+  getDescription: (i: T) => string;
+  onRowClick: (id: number) => void;
+}) => {
+  return (
+    <List
+      dataSource={items}
+      renderItem={item => (
+        <SearchResultListItem<T>
+          item={item}
+          getTitle={getTitle}
+          getDescription={getDescription}
+          onRowClick={onRowClick}
+          style={{ cursor: 'pointer' }}
+        />
+      )}
+    />
+  );
 };
 
 export const RelationshipTable = ({
@@ -36,18 +59,22 @@ export const RelationshipTable = ({
   switch (type) {
     case 'asset':
       return (
-        <AssetTable
-          data={[...linkedResources, ...relatedResources.asset] as Asset[]}
-          onItemClicked={onItemClicked}
+        <RelatedResourceList<Asset>
+          items={[...linkedResources, ...relatedResources.asset] as Asset[]}
+          getTitle={i => i.name}
+          getDescription={i => i.description || ''}
+          onRowClick={onItemClicked}
         />
       );
     case 'event':
       return (
-        <EventTable
-          data={
+        <RelatedResourceList<CogniteEvent>
+          items={
             [...linkedResources, ...relatedResources.event] as CogniteEvent[]
           }
-          onItemClicked={onItemClicked}
+          getTitle={i => `${i.type} - ${i.subtype}`}
+          getDescription={i => i.description || ''}
+          onRowClick={onItemClicked}
         />
       );
     case 'file':
@@ -59,11 +86,13 @@ export const RelationshipTable = ({
       );
     case 'sequence':
       return (
-        <SequenceTable
-          data={
+        <RelatedResourceList<Sequence>
+          items={
             [...linkedResources, ...relatedResources.sequence] as Sequence[]
           }
-          onItemClicked={onItemClicked}
+          getTitle={i => i.name || `${i.id}`}
+          getDescription={i => i.description || ''}
+          onRowClick={onItemClicked}
         />
       );
 
