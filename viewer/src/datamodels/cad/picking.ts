@@ -163,14 +163,7 @@ function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha
     x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
     y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight
   };
-  pickCamera.setViewOffset(
-    renderer.domElement.clientWidth,
-    renderer.domElement.clientHeight,
-    absoluteCoords.x,
-    absoluteCoords.y,
-    1,
-    1
-  );
+  pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
 
   const currentClearColor = renderer.getClearColor().clone();
   const currentClearAlpha = renderer.getClearAlpha();
