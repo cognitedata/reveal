@@ -58,15 +58,15 @@ describe('<ITable/>', () => {
     );
     const searchInput = screen.getByPlaceholderText(/records/i);
 
+    const searchName = {
+      string: 'sap',
+      regexp: /sap/i,
+    };
     // should filter the sap integration
-    fireEvent.change(searchInput, { target: { value: 'sap' } });
+    fireEvent.change(searchInput, { target: { value: searchName.string } });
     await waitFor(() => {
-      const resultRows = screen.getAllByRole('row');
-      expect(resultRows.length).toEqual(2);
-      // row[0] is the header
-      expect(resultRows[1].textContent?.toLowerCase().includes('sap')).toEqual(
-        true
-      );
+      const resultRows = screen.getAllByLabelText(searchName.regexp);
+      expect(resultRows.length).toEqual(2); // label on name col + label on action button (same row)
     });
 
     // clear search should show all rows
@@ -77,28 +77,32 @@ describe('<ITable/>', () => {
     });
 
     // should filter based name column
-    const searchString = 'birger';
-    fireEvent.change(searchInput, { target: { value: searchString } });
+    const search = {
+      string: 'birger',
+      regexp: /birger/i,
+    };
+    fireEvent.change(searchInput, { target: { value: search.string } });
     await waitFor(() => {
-      const resultRows = screen.getAllByRole('row');
-      expect(resultRows.length).toEqual(2);
-      // row[0] is the header
-      expect(
-        resultRows[1].textContent?.toLowerCase().includes(searchString)
-      ).toEqual(true);
+      const b = screen.getAllByLabelText(search.regexp);
+      expect(b.length).toEqual(1);
+    });
+
+    // headers
+    const headings = getIntegrationTableCol().map((col) => col.Header);
+    headings.forEach((heading) => {
+      const colHeading = screen.getByText(heading);
+      expect(colHeading.textContent).toEqual(heading);
     });
 
     // should filter from created by col
-    const searchJacek = 'jacek';
-    fireEvent.change(searchInput, { target: { value: searchJacek } });
+    const searchJacek = {
+      string: 'jacek',
+      regexp: /jacek/i,
+    };
+    fireEvent.change(searchInput, { target: { value: searchJacek.string } });
     await waitFor(() => {
-      const resultRows = screen.getAllByRole('row');
-      expect(resultRows.length).toEqual(4);
-      // row[0] is the header
-      // created by displays only initials but the the search looks in the name of the users.
-      expect(resultRows[1].textContent?.toLowerCase().includes('j')).toEqual(
-        true
-      );
+      const resultRows = screen.getAllByLabelText(searchJacek.regexp);
+      expect(resultRows.length).toEqual(3);
     });
   });
 
