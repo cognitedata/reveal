@@ -1,0 +1,45 @@
+---
+id: pointcloud-intersections
+title: Intersections in point clouds
+description: Detecting intersections from clicked positions in point cloud models
+---
+
+While point clouds doesn't have a concept of nodes, applications can detect clicked points. Just like with 
+CAD models, `Cognite3DViewer.getIntersectionFromPixel` is used to determine world position and point from 
+a mouse click.
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+<DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
+
+## Detecting clicked positions
+
+The following example detects intersections at clicked positions and marks the intersected positions
+using a red sphere.
+
+```js runnable
+viewer.on('click', event => {
+  const intersection = viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), 
+      new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' }));
+    sphere.position.copy(intersection.point);
+    viewer.addObject3D(sphere);
+  };
+});
+```
+
+## Controlling the intersection threshold
+
+By default, points within 5 cm of an intersection ray is considered to be intersecting. For point clouds of large
+physical assets this is usually a good value, but for point clouds with large extends (e.g. geographical point clouds)
+this threshold might be too small.
+
+The intersection threshold can be changed using the `pointIntersectionThreshold` option of `getIntersectionFromPixel`:
+
+```js
+const options = { pointIntersectionThreshold: 1.0 /* 1 m */ };
+const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY, options);
+```
