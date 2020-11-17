@@ -27,17 +27,19 @@ import {
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
-
-import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
+import { RevealManager } from '../RevealManager';
+import { createCdfRevealManager } from '../createRevealManager';
+import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+
+import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
-import { RevealManager } from '../RevealManager';
-import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
-import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { clickOrTouchEventOffset } from '../../utilities/events';
+
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
@@ -1265,12 +1267,12 @@ export class Cognite3DViewer {
     let validClick = false;
 
     const onHoverCallback = debounce((e: MouseEvent) => {
-      this.eventListeners.hover.forEach(fn => fn(mouseEventOffset(e, canvas)));
+      this.eventListeners.hover.forEach(fn => fn(clickOrTouchEventOffset(e, canvas)));
     }, 100);
 
     const onMove = (e: MouseEvent | TouchEvent) => {
-      const { offsetX, offsetY } = mouseEventOffset(e, canvas);
-      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = mouseEventOffset(e, canvas);
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
+      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = clickOrTouchEventOffset(e, canvas);
 
       // check for Manhattan distance greater than maxMoveDistance pixels
       if (
@@ -1287,7 +1289,7 @@ export class Cognite3DViewer {
       if (pointerDown && validClick && clickDuration < maxClickDuration) {
         // trigger events
         this.eventListeners.click.forEach(func => {
-          func(mouseEventOffset(e, canvas));
+          func(clickOrTouchEventOffset(e, canvas));
         });
       }
       pointerDown = false;
@@ -1349,17 +1351,6 @@ function createCanvasWrapper(): HTMLElement {
   domElement.style.width = '100%';
   domElement.style.height = '100%';
   return domElement;
-}
-
-function mouseEventOffset(ev: MouseEvent | TouchEvent, target: HTMLElement) {
-  target = target || ev.currentTarget || ev.srcElement;
-  const cx = 'clientX' in ev ? ev.clientX : 0;
-  const cy = 'clientY' in ev ? ev.clientY : 0;
-  const rect = target.getBoundingClientRect();
-  return {
-    offsetX: cx - rect.left,
-    offsetY: cy - rect.top
-  };
 }
 
 function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {

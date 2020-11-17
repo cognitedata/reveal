@@ -5,9 +5,19 @@
 import * as THREE from 'three';
 
 import { CadNode } from './CadNode';
-import { pickPixelColor, PickingInput } from '../../utilities/pickPixelColor';
 import { RenderMode } from './rendering/RenderMode';
 import { IntersectInput } from '../base/types';
+
+export interface PickingInput {
+  normalizedCoords: {
+    x: number;
+    y: number;
+  };
+  scene: THREE.Scene;
+  camera: THREE.PerspectiveCamera;
+  renderer: THREE.WebGLRenderer;
+  domElement: HTMLElement;
+}
 
 export interface TreeIndexPickingInput extends PickingInput {
   cadNode: CadNode;
@@ -136,4 +146,48 @@ function getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3
   position.multiplyScalar(viewZ / position.z);
   position.applyMatrix4(camera.matrixWorld);
   return position;
+}
+
+const pickPixelColorStorage = {
+  renderTarget: new THREE.WebGLRenderTarget(1, 1),
+  pixelBuffer: new Uint8Array(4)
+};
+
+function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
+  const { renderTarget, pixelBuffer } = pickPixelColorStorage;
+  const { scene, camera, normalizedCoords, renderer, domElement } = input;
+
+  // Prepare camera that only renders the single pixel we are interested in
+  const pickCamera = camera.clone();
+  const absoluteCoords = {
+    x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
+    y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight
+  };
+  pickCamera.setViewOffset(
+    renderer.domElement.clientWidth,
+    renderer.domElement.clientHeight,
+    absoluteCoords.x,
+    absoluteCoords.y,
+    1,
+    1
+  );
+
+  const currentClearColor = renderer.getClearColor().clone();
+  const currentClearAlpha = renderer.getClearAlpha();
+  const currentRenderTarget = renderer.getRenderTarget();
+
+  try {
+    const { width, height } = renderer.getSize(new THREE.Vector2());
+    renderTarget.setSize(width, height);
+    renderer.setRenderTarget(renderTarget);
+    renderer.setClearColor(clearColor, clearAlpha);
+    renderer.clearColor();
+    renderer.render(scene, pickCamera);
+
+    renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
+  } finally {
+    renderer.setRenderTarget(currentRenderTarget);
+    renderer.setClearColor(currentClearColor, currentClearAlpha);
+  }
+  return pixelBuffer;
 }
