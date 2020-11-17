@@ -12,11 +12,11 @@ import {
   Row,
 } from 'react-table';
 import StatusMarker from '../integrations/cols/StatusMarker';
-import { SortingIcon } from './TabsStyle';
 import Wrapper from '../../styles/StyledTable';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import StatusFilterDropdown from '../table/StatusFilterDropdown';
+import SorterIndicator from '../table/SorterIndicator';
 
 interface ITableProps {
   data: {
@@ -31,19 +31,6 @@ interface ICell {
   row: Row;
   cell: Cell;
 }
-
-const showSorterIndicator = (sCol: HeaderGroup) => {
-  if (!sCol.disableSortBy) {
-    if (sCol.isSorted) {
-      if (sCol.isSortedDesc) {
-        return <SortingIcon type="SortDown" />;
-      }
-      return <SortingIcon type="SortUp" />;
-    }
-    return <SortingIcon type="OrderDesc" />;
-  }
-  return '';
-};
 
 const Table = ({ columns, data }: ITableProps) => {
   const {
@@ -75,7 +62,7 @@ const Table = ({ columns, data }: ITableProps) => {
                   className={`${col.id}-col`}
                 >
                   {col.disableFilters && col.render('Header')}
-                  {col.canSort && showSorterIndicator(col)}
+                  {col.canSort && <SorterIndicator sCol={col} />}
                   {!col.disableFilters && col.render('Filter')}
                 </th>
               );
