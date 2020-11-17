@@ -2,7 +2,7 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryCache } from 'react-query';
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { mockError, mockResponse } from '../../utils/mockResponse';
+import { mockError, getMockResponse } from '../../utils/mockResponse';
 import {
   renderWithReactQueryCacheProvider,
   renderWithSelectedIntegrationContext,
@@ -14,7 +14,7 @@ describe('IntegrationsTable', () => {
   const cdfEnv = 'greenfield';
 
   test('Render table with out fail', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: mockResponse } });
+    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
     const queryCache = new QueryCache();
     const wrapper = renderWithReactQueryCacheProvider(
       queryCache,

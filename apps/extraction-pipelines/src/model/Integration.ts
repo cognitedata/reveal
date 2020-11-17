@@ -15,4 +15,7 @@ export interface Integration {
   id: number;
   owner: User;
   authors: User[];
+  lastSuccess?: number;
+  lastFailure?: number;
+  lastSeen?: number;
 }

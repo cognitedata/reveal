@@ -13,6 +13,7 @@ import {
   ColumnInstance,
   useGlobalFilter,
   Column,
+  useFilters,
 } from 'react-table';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -103,6 +104,7 @@ function ITable<T extends { id: ReactText }>({
       stateReducer: selectReducer,
       filterTypes,
     } as TableOptions<T>,
+    useFilters,
     useGlobalFilter,
     useSortBy,
     useRowSelect,
@@ -111,7 +113,6 @@ function ITable<T extends { id: ReactText }>({
         {
           id: 'selection',
           Header: () => <div />,
-          disableSortBy: true,
           Cell: ({ row }: Cell<Integration>) => {
             return (
               <div>
@@ -123,6 +124,8 @@ function ITable<T extends { id: ReactText }>({
               </div>
             );
           },
+          disableSortBy: true,
+          disableFilters: true,
         },
         ...allColumns,
       ]);
@@ -155,8 +158,9 @@ function ITable<T extends { id: ReactText }>({
                 };
                 return (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {col.render('Header')}
-                    {showSorterIndicator(col)}
+                    {!col.canFilter && col.render('Header')}
+                    {!col.canFilter && showSorterIndicator(col)}
+                    {!col.disableFilters ? col.render('Filter') : null}
                   </th>
                 );
               })}

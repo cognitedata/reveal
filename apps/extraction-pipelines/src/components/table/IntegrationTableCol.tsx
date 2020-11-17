@@ -1,17 +1,21 @@
 import React from 'react';
 import { Cell, CellProps } from 'react-table';
+import { calculateStatus } from 'utils/integrationUtils';
 import { Integration } from '../../model/Integration';
 import UserDetails from '../integrations/cols/UserDetails';
 import Authors from '../integrations/cols/Authors';
 import Name from '../integrations/cols/Name';
-import LastRun from '../integrations/cols/LastRun';
+import LatestRun from '../integrations/cols/LatestRun';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableActions from '../menu/IntegrationsTableActions';
 import DataSet from '../integrations/cols/DataSet';
+import StatusMarker from '../integrations/cols/StatusMarker';
+import StatusFilterDropdown from './StatusFilterDropdown';
 
 export enum TableHeadings {
   NAME = 'Name',
-  LAST_UPDATED = 'Time of last data point',
+  STATUS = 'Status',
+  LATEST_RUN = 'Latest run',
   DATA_SET = 'Destination data sets',
   SCHEDULE = 'Schedule',
   OWNER = 'Owner',
@@ -28,21 +32,35 @@ export const getIntegrationTableCol = () => {
         return <Name name={row.values.name} rowIndex={row.index} />;
       },
       sortType: 'basic',
+      disableFilters: true,
     },
     {
-      id: 'lastUpdatedTime',
-      Header: TableHeadings.LAST_UPDATED,
-      accessor: 'lastUpdatedTime',
-      Cell: ({ row }: Cell<Integration>) => {
-        return (
-          <LastRun
-            lastUpdatedTime={row.values.lastUpdatedTime}
-            numberOfDays={1}
-            unitOfTime="days"
-          />
-        );
+      id: 'status',
+      Header: TableHeadings.STATUS,
+      accessor: ({ lastSuccess, lastFailure }: Integration) => {
+        const status = calculateStatus({ lastSuccess, lastFailure });
+        return status.status;
+      },
+      Cell: ({ row }: CellProps<Integration>) => {
+        return <StatusMarker status={row.values.status} />;
       },
       disableSortBy: true,
+      Filter: StatusFilterDropdown,
+      filter: 'includes',
+      disableFilters: false,
+    },
+    {
+      id: 'latestRun',
+      Header: TableHeadings.LATEST_RUN,
+      accessor: ({ lastSuccess, lastFailure }: Integration) => {
+        const status = calculateStatus({ lastSuccess, lastFailure });
+        return status;
+      },
+      Cell: ({ row }: Cell<Integration>) => {
+        return <LatestRun latestRunTime={row.values.latestRun.time} />;
+      },
+      disableSortBy: true,
+      disableFilters: true,
     },
     {
       id: 'schedule',
@@ -52,6 +70,7 @@ export const getIntegrationTableCol = () => {
         return <Schedule schedule={row.values.schedule} />;
       },
       disableSortBy: true,
+      disableFilters: true,
     },
     {
       id: 'dataSetId',
@@ -64,6 +83,7 @@ export const getIntegrationTableCol = () => {
         );
       },
       disableSortBy: true,
+      disableFilters: true,
     },
     {
       id: 'owner',
@@ -74,6 +94,7 @@ export const getIntegrationTableCol = () => {
       Cell: ({ row }: Cell<Integration>) => {
         return <UserDetails user={row.original.owner} />;
       },
+      disableFilters: true,
     },
     {
       id: 'authors',
@@ -81,10 +102,11 @@ export const getIntegrationTableCol = () => {
       accessor: (row: Integration) => {
         return row.authors.map((aut) => aut.name).join();
       },
-      disableSortBy: true,
       Cell: ({ row }: Cell<Integration>) => {
         return <Authors authors={row.original.authors} />;
       },
+      disableSortBy: true,
+      disableFilters: true,
     },
     {
       id: 'options',
@@ -94,6 +116,7 @@ export const getIntegrationTableCol = () => {
       },
       width: 50,
       disableSortBy: true,
+      disableFilters: true,
     },
   ];
 };

@@ -3,6 +3,10 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import UserDetails from 'components/integrations/cols/UserDetails';
 import DataSet from 'components/integrations/cols/DataSet';
+import moment from 'moment';
+import StatusMarker from 'components/integrations/cols/StatusMarker';
+import LatestRun from 'components/integrations/cols/LatestRun';
+import { calculateStatus } from 'utils/integrationUtils';
 import { Integration } from '../../model/Integration';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import ListMetaData from './ListMetaData';
@@ -45,6 +49,11 @@ interface OwnProps {
 type Props = OwnProps;
 
 const Details: FunctionComponent<Props> = ({ integration }: Props) => {
+  const latest = {
+    lastSuccess: integration?.lastSuccess,
+    lastFailure: integration?.lastFailure,
+  };
+  const status = calculateStatus(latest);
   return (
     <StyledUl data-testid="view-integration-details-modal">
       <li key="details-name">
@@ -64,11 +73,16 @@ const Details: FunctionComponent<Props> = ({ integration }: Props) => {
       </li>
       <li key="details-created-time">
         <Detail strong>Created Time: </Detail>
-        <TimeDisplay value={integration.createdTime} relative withTooltip />
+        <TimeDisplay
+          value={moment(integration.createdTime).toDate()}
+          relative
+          withTooltip
+        />
       </li>
       <li key="details-last-updated-time">
-        <Detail strong>{TableHeadings.LAST_UPDATED}: </Detail>
-        <TimeDisplay value={integration.lastUpdatedTime} relative withTooltip />
+        <Detail strong>{TableHeadings.LATEST_RUN}: </Detail>
+        <StatusMarker status={status.status} />
+        <LatestRun latestRunTime={status.time} />
       </li>
       <li key="details-schedule">
         <Detail strong>{TableHeadings.SCHEDULE}: </Detail>
