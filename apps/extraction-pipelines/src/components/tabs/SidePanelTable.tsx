@@ -13,7 +13,7 @@ import {
   Row,
 } from 'react-table';
 import { SortingIcon } from './TabsStyle';
-import Wrapper from '../../styles/TablesStyle';
+import Wrapper from '../../styles/StyledTable';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
 
 interface ITableProps {
@@ -79,10 +79,10 @@ const Table = ({ columns, data }: ITableProps) => {
       columns,
       data,
     },
-    useFilters, // useFilters!
-    useGlobalFilter, // useGlobalFilter!
+    useFilters,
+    useGlobalFilter,
     useSortBy,
-    useExpanded // Use the useExpanded plugin hook
+    useExpanded
   );
 
   return (

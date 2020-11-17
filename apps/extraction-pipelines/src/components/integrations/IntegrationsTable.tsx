@@ -11,7 +11,7 @@ import {
   mapUniqueDataSetIds,
 } from '../../utils/dataSetUtils';
 import { ErrorFeedback } from '../error/ErrorFeedback';
-import Wrapper from '../../styles/TablesStyle';
+import Wrapper from '../../styles/StyledTable';
 
 interface OwnProps {}
 
