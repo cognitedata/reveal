@@ -26,7 +26,7 @@
     "@sentry/browser": "^5.27.4",
     "antd": "4.7.3",
     "commander": "^5.1.0",
-    "cronstrue": "^1.104.0",
+    "cronstrue": "^1.105.0",
     "cross-env": "^7.0.2",
     "fs-extra": "^9.0.1",
     "i18next": "^19.8.3",
