@@ -9,9 +9,10 @@ import {
 } from '@cognite/sdk/dist/src/types';
 import { ResourceType } from 'lib/types';
 import { useRelatedResources } from 'lib/hooks/RelationshipHooks';
-import { FileTable, TimeseriesTable } from 'lib/containers';
+import { FileTable } from 'lib/containers';
 import { List } from 'antd';
 import { SearchResultListItem } from 'lib/containers/SearchResults/SearchResultList';
+import { TimeseriesSparklineCard } from 'lib/containers/Timeseries';
 
 export type Resource = Asset | CogniteEvent | FileInfo | Timeseries | Sequence;
 export type RelationshipTableProps = {
@@ -98,11 +99,20 @@ export const RelationshipTable = ({
 
     case 'timeSeries':
       return (
-        <TimeseriesTable
-          data={
+        <List
+          grid={{ gutter: 16, column: 3 }}
+          style={{ padding: '10px' }}
+          dataSource={
             [...linkedResources, ...relatedResources.timeSeries] as Timeseries[]
           }
-          onItemClicked={onItemClicked}
+          renderItem={item => (
+            <List.Item>
+              <TimeseriesSparklineCard
+                timeseries={item}
+                onItemClicked={onItemClicked}
+              />
+            </List.Item>
+          )}
         />
       );
     default:

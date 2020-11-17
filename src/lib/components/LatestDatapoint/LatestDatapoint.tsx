@@ -5,8 +5,12 @@ import { useSDK } from '@cognite/sdk-provider';
 
 interface LatestDatapointProps {
   timeSeries: Timeseries;
+  valueOnly?: boolean;
 }
-export const LatestDatapoint = ({ timeSeries }: LatestDatapointProps) => {
+export const LatestDatapoint = ({
+  timeSeries,
+  valueOnly = false,
+}: LatestDatapointProps) => {
   const sdk = useSDK();
   const [latestDatapoint, setLatestDatapoint] = useState<
     DoubleDatapoint | StringDatapoint | undefined
@@ -29,6 +33,14 @@ export const LatestDatapoint = ({ timeSeries }: LatestDatapointProps) => {
   useEffect(() => {
     fetchLatestDatapoint(timeSeries.id);
   }, [timeSeries.id, fetchLatestDatapoint]);
+
+  if (valueOnly) {
+    return (
+      <>
+        {latestDatapoint?.value ?? 'Unavailable'} {timeSeries.unit}
+      </>
+    );
+  }
 
   return (
     <InfoCell title="Last reading" noBorders>
