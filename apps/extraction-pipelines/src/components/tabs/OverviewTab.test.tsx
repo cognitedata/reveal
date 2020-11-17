@@ -4,7 +4,7 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryCache } from 'react-query';
 import OverviewTab from './OverviewTab';
 import { render } from '../../utils/test';
-import { mockResponse } from '../../utils/mockResponse';
+import { getMockResponse } from '../../utils/mockResponse';
 import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
 
 describe('OverviewTab', () => {
@@ -12,7 +12,7 @@ describe('OverviewTab', () => {
   const cdfEnv = 'greenfield';
 
   test('Render with out fail', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: mockResponse } });
+    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
     const queryCache = new QueryCache();
     const wrapper = renderWithReactQueryCacheProvider(
       queryCache,

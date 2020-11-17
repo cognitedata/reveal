@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import OverviewSidePanel from './OverviewSidePanel';
 import { renderWithSelectedIntegrationContext } from '../../utils/test/render';
-import { mockResponse } from '../../utils/mockResponse';
+import { getMockResponse } from '../../utils/mockResponse';
 
 describe('OverviewSidePanel', () => {
   test('Render nothing when integration is not set', () => {
@@ -12,7 +12,7 @@ describe('OverviewSidePanel', () => {
   });
 
   test('Render heading when integration is selected', () => {
-    const mockIntegration = mockResponse[0];
+    const mockIntegration = getMockResponse()[0];
     renderWithSelectedIntegrationContext(<OverviewSidePanel />, {
       initIntegration: mockIntegration,
     });

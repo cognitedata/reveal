@@ -1,22 +1,25 @@
 import { render, screen } from '@testing-library/react';
 import moment from 'moment';
 import React from 'react';
-import LastRun from './LastRun';
+import LatestRun from './LatestRun';
 
-describe('<LastRun/>', () => {
+describe('<LatestRun/>', () => {
   const cases = [
     {
       desc: 'Render time since last run',
-      value: 1603459877000, // 23.10.2020
+      value: moment(1603459877000), // 23.10.2020
       expected: moment(1603459877000).fromNow(),
     },
   ];
   cases.forEach(({ desc, value, expected }) => {
     test(`${desc}`, () => {
-      render(
-        <LastRun lastUpdatedTime={value} unitOfTime="days" numberOfDays={1} />
-      );
+      render(<LatestRun latestRunTime={value} />);
       expect(screen.getByText(expected)).toBeInTheDocument();
     });
+  });
+
+  test('Render nothing when value is null', () => {
+    const { container } = render(<LatestRun latestRunTime={null} />);
+    expect(container.firstChild).toEqual(null);
   });
 });
