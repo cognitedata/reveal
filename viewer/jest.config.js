@@ -20,7 +20,7 @@ module.exports = {
   globals: {
     __webpack_public_path__: '',
     'ts-jest': {
-      tsConfig: 'tsconfig.test.json'
+      tsconfig: 'tsconfig.test.json'
     }
   },
   coverageDirectory: '../coverage',
