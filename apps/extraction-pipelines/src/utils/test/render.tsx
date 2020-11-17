@@ -31,11 +31,12 @@ export const renderWithSelectedIntegrationContext = (
 export const renderWithReactQueryCacheProvider = (
   queryCache: QueryCache,
   project: string,
-  cdfEnv: string
+  cdfEnv: string,
+  origin: string
 ) => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <ReactQueryCacheProvider queryCache={queryCache}>
-      <AppEnvProvider cdfEnv={cdfEnv} project={project}>
+      <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
         {children}
       </AppEnvProvider>
     </ReactQueryCacheProvider>

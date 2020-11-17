@@ -28,3 +28,21 @@ export const mapDataSetToIntegration = (
       })
     : [];
 };
+
+interface GetDataSetLinkProps {
+  origin: string | undefined;
+  project: string | null;
+  dataSetId: string;
+  cdfEnv: string | undefined;
+}
+
+export const getDataSetsLink = ({
+  origin,
+  project,
+  cdfEnv,
+  dataSetId,
+}: GetDataSetLinkProps) => {
+  return `${origin}/${project}/data-sets/data-set/${dataSetId}${
+    cdfEnv ? `?env=${cdfEnv}` : ''
+  }`;
+};

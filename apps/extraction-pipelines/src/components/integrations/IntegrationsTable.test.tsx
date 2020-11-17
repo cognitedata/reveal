@@ -11,6 +11,7 @@ import IntegrationsTable from './IntegrationsTable';
 
 describe('IntegrationsTable', () => {
   const project = 'itera-int-green';
+  const origin = 'dev';
   const cdfEnv = 'greenfield';
 
   test('Render table with out fail', async () => {
@@ -19,6 +20,7 @@ describe('IntegrationsTable', () => {
     const wrapper = renderWithReactQueryCacheProvider(
       queryCache,
       project,
+      origin,
       cdfEnv
     );
     renderWithSelectedIntegrationContext(<IntegrationsTable />, {
@@ -36,6 +38,7 @@ describe('IntegrationsTable', () => {
     const queryCache = new QueryCache();
     const wrapper = renderWithReactQueryCacheProvider(
       queryCache,
+      origin,
       project,
       cdfEnv
     );

@@ -2,21 +2,24 @@ import React, { PropsWithChildren, useContext } from 'react';
 
 interface ContextProps {
   project: string | null;
+  origin: string | undefined;
   cdfEnv: string | undefined;
 }
 
 const AppEnvContext = React.createContext<ContextProps>({
   project: null,
   cdfEnv: undefined,
+  origin: undefined,
 });
 
 const AppEnvProvider = ({
   project,
   cdfEnv,
+  origin,
   children,
 }: PropsWithChildren<ContextProps>) => {
   return (
-    <AppEnvContext.Provider value={{ project, cdfEnv }}>
+    <AppEnvContext.Provider value={{ project, cdfEnv, origin }}>
       {children}
     </AppEnvContext.Provider>
   );

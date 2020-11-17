@@ -1,5 +1,9 @@
 import { DataSet } from '@cognite/sdk';
-import { mapDataSetToIntegration, mapUniqueDataSetIds } from './dataSetUtils';
+import {
+  getDataSetsLink,
+  mapDataSetToIntegration,
+  mapUniqueDataSetIds,
+} from './dataSetUtils';
 import { mockDataSetResponse, getMockResponse } from './mockResponse';
 
 describe('Data set util', () => {
@@ -25,6 +29,29 @@ describe('Data set util', () => {
     expect(result.length).toEqual(getMockResponse().length);
     result.forEach((res) => {
       expect(res.dataSet).toBeUndefined();
+    });
+  });
+
+  const origin = 'dev';
+  const project = 'itera-int-green';
+  const dataSetId = '123123123';
+  const getDataSetCases = [
+    {
+      desc: 'Creat link with env when cdfEnv is defined',
+      value: { origin, project, dataSetId, cdfEnv: 'greenfield' },
+      expected:
+        'dev/itera-int-green/data-sets/data-set/123123123?env=greenfield',
+    },
+    {
+      desc: 'Creat link with out env when cdfEnv is not defined',
+      value: { origin, project, dataSetId },
+      expected: 'dev/itera-int-green/data-sets/data-set/123123123',
+    },
+  ];
+  getDataSetCases.forEach(({ desc, value, expected }) => {
+    test(`${desc}`, () => {
+      const res = getDataSetsLink(value);
+      expect(res).toEqual(expected);
     });
   });
 });
