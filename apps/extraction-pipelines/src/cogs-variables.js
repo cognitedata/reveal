@@ -17,4 +17,7 @@ module.exports = {
   ids: {
     styleScope: 'integrations-ui-style-scope',
   },
+  badge: {
+    size: 13,
+  },
 };

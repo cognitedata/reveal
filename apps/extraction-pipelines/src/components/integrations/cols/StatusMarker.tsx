@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Badge, Tooltip } from '@cognite/cogs.js';
 import { Status } from '../../../model/Status';
+import { badge } from '../../../cogs-variables';
 
 interface OwnProps {
   status: Status;
@@ -19,6 +20,7 @@ const StatusMarker: FunctionComponent<Props> = ({
         <Tooltip content={`Status for latest run: ${status}`}>
           <Badge
             text={status}
+            size={badge.size}
             background="success"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
@@ -30,6 +32,7 @@ const StatusMarker: FunctionComponent<Props> = ({
         <Tooltip content={`Status for latest run: ${status}`}>
           <Badge
             text={status}
+            size={badge.size}
             background="danger"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
@@ -41,6 +44,7 @@ const StatusMarker: FunctionComponent<Props> = ({
         <Tooltip content={`Status for latest run: ${status}`}>
           <Badge
             text={status}
+            size={badge.size}
             background="greyscale-grey2"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
@@ -52,6 +56,7 @@ const StatusMarker: FunctionComponent<Props> = ({
         <Tooltip content="No runs yet">
           <Badge
             text={status}
+            size={badge.size}
             background="greyscale-grey4"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
