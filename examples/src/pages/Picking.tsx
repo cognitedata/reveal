@@ -23,6 +23,30 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
   return sphere;
 }
 
+function mouseEventOffset(ev: MouseEvent | TouchEvent, target: HTMLElement) {
+  target = target || ev.currentTarget || ev.srcElement;
+  const rect = target.getBoundingClientRect();
+
+  if (ev instanceof MouseEvent) {
+    return {
+      offsetX: ev.clientX - rect.left,
+      offsetY: ev.clientY - rect.top
+    };  
+  } else if (ev.changedTouches.length > 0) {
+    const touch = ev.changedTouches[0];
+    return {
+      offsetX: touch.clientX - rect.left,
+      offsetY: touch.clientY - rect.top
+    };  
+  }
+
+  // Invalid event
+  return {
+    offsetX: -1,
+    offsetY: -1
+  };
+}
+
 export function Picking() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -128,15 +152,15 @@ export function Picking() {
       animationLoopHandler.start();
       revealManager.update(camera);
 
-      const pick = (event: MouseEvent) => {
-        const rect = renderer.domElement.getBoundingClientRect();
+      const pick = (event: MouseEvent | TouchEvent) => {
+        const { offsetX, offsetY } = mouseEventOffset(event, renderer.domElement);
         const normalizedCoords = {
           x:
-            ((event.clientX - rect.left) / renderer.domElement.clientWidth) *
+          offsetX / renderer.domElement.clientWidth *
             2 -
             1,
           y:
-            ((event.clientY - rect.top) / renderer.domElement.clientHeight) *
+          offsetY / renderer.domElement.clientHeight *
             -2 +
             1,
         };
@@ -144,6 +168,7 @@ export function Picking() {
         const revealPickResult = (() => {
           const intersections = reveal.intersectCadNodes([model], {
             renderer,
+            domElement: renderer.domElement,
             camera,
             normalizedCoords,
           });
@@ -217,6 +242,7 @@ export function Picking() {
         }
       };
       renderer.domElement.addEventListener('mousedown', pick);
+      renderer.domElement.addEventListener('touchstart', pick);
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;

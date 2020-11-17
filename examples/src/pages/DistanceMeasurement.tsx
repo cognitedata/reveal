@@ -185,6 +185,7 @@ export function DistanceMeasurement() {
         const revealPickResult = (() => {
           const intersections = intersectCadNodes([model], {
             renderer,
+            domElement: renderer.domElement,
             camera,
             normalizedCoords,
           });
