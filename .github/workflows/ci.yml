@@ -35,7 +35,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
-        export DISPLAY=:99.0
+        echo "DISPLAY=:99.0" >> $GITHUB_ENV
 
     - name: Run coverage tests
       working-directory: viewer
@@ -74,7 +74,7 @@ jobs:
     - name: Build examples
       working-directory: examples
       run: |
-        export NODE_OPTIONS=--max-old-space-size=8192
+        echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
         yarn build
 
     - name: Increase number of inotify watches
