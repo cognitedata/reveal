@@ -63,9 +63,6 @@ const Wrapper = styled.div`
     .status-col,
     .statusSeen-col {
       text-align: center;
-      .cogs-badge span {
-        color: #fff;
-      }
     }
   }
 `;

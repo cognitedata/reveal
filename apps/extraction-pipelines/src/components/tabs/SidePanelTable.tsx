@@ -16,6 +16,7 @@ import { SortingIcon } from './TabsStyle';
 import Wrapper from '../../styles/StyledTable';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
+import StatusFilterDropdown from '../table/StatusFilterDropdown';
 
 interface ITableProps {
   data: {
@@ -73,8 +74,9 @@ const Table = ({ columns, data }: ITableProps) => {
                   {...col.getHeaderProps(col.getSortByToggleProps())}
                   className={`${col.id}-col`}
                 >
-                  {col.render('Header')}
-                  {showSorterIndicator(col)}
+                  {col.disableFilters && col.render('Header')}
+                  {col.canSort && showSorterIndicator(col)}
+                  {!col.disableFilters && col.render('Filter')}
                 </th>
               );
             })}
@@ -125,19 +127,22 @@ const SidePanelTable = () => {
         Cell: (cell: Cell) => {
           return <TimeDisplay value={cell.value} relative withTooltip />;
         },
+        disableFilters: true,
       },
       {
         Header: 'Last run',
         accessor: 'status',
-        disableSortBy: true,
         Cell: (cell: Cell) => {
           return <StatusMarker status={cell.value} />;
         },
+        disableSortBy: true,
+        Filter: StatusFilterDropdown,
+        filter: 'includes',
+        disableFilters: false,
       },
       {
         Header: 'Last seen',
         accessor: 'statusSeen',
-        disableSortBy: true,
         Cell: ({ row, cell }: ICell) =>
           row.canExpand ? (
             <span
@@ -153,6 +158,10 @@ const SidePanelTable = () => {
           ) : (
             <StatusMarker status={cell.value} />
           ),
+        disableSortBy: true,
+        Filter: StatusFilterDropdown,
+        filter: 'includes',
+        disableFilters: false,
       },
     ],
     []
