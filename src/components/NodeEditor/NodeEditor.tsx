@@ -38,7 +38,6 @@ type WorkflowEditorProps = {
 };
 
 const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
-  console.log(workflowId);
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<Node>();
   const [runProgress, setRunProgress] = useState<NodeProgress>({});
@@ -110,7 +109,6 @@ const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
         },
       })
     );
-    console.log('FINAL RESULT:', finalResult);
   };
 
   if (!workflowId) {

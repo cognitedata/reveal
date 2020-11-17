@@ -28,7 +28,6 @@ export const runWorkflow = async (
   const runnableNodes = workflow.nodes.map((node) =>
     convertStoredNodeToNode(node, nodeOptions)
   );
-  console.log(workflow.nodes, runnableNodes);
   // Right now we support a single output node.
   // In the future we could update this to support more
   const outputNode = runnableNodes.find(

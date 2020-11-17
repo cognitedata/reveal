@@ -73,7 +73,7 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 };
 
 export const saveExistingWorkflow = (workflow: Workflow): AppThunk => async (
-  dispatch,
+  _,
   getState
 ) => {
   const { tenant } = getState().environment;
