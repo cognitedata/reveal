@@ -13,7 +13,9 @@ const StyledTabs = styled((props) => <Tabs {...props} />)`
   }
   .ant-tabs-tabpane {
     display: grid;
-    grid-template-columns: auto 25rem;
+    grid-template-columns: ${(props) =>
+      props.sidePanelTabs ? 'auto' : 'auto 25rem'};
+    padding: ${(props) => (props.sidePanelTabs ? '0 1.25rem 0 1.375rem' : '0')};
   }
   .ant-tabs-tab {
     padding: 0.625rem 1rem;
@@ -29,15 +31,8 @@ const StyledTabs = styled((props) => <Tabs {...props} />)`
   }
 `;
 
-const StyledSidePanelTabs = styled(StyledTabs)`
-  .ant-tabs-tabpane {
-    grid-template-columns: auto;
-    padding: 0 1.25rem 0 1.375rem;
-  }
-`;
-
 const StyledTabPane = styled((props) => (
   <TabPane {...props}>{props.children}</TabPane>
 ))``;
 
-export { StyledTabs, StyledSidePanelTabs, StyledTabPane };
+export { StyledTabs, StyledTabPane };
