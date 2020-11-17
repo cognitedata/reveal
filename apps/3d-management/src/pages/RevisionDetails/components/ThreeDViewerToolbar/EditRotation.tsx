@@ -142,11 +142,9 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   const forceRerender = () => {
-    if (props.viewer instanceof Cognite3DViewer) {
-      props.viewer.forceRerender();
-    } else {
-      props.viewer.fitCameraToModel(props.model as any, 0);
+    props.viewer.fitCameraToModel(props.model as any, 0);
 
+    if (!(props.viewer instanceof Cognite3DViewer)) {
       // force render hacks are required to render model correctly, otherwise some parts might not be rendered after rotation
       // @ts-ignore
       // eslint-disable-next-line
@@ -181,6 +179,9 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
 
   const onSaveClicked = async () => {
     const [rotationX, rotationY, rotationZ] = rotationDelta;
+
+    props.onClose();
+
     if (rotationX || rotationY || rotationZ) {
       const progressMessage = message.loading(
         'Uploading model rotation...'
@@ -220,9 +221,6 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
         Sentry.captureException(e);
       }
     }
-
-    setRotationDelta([0, 0, 0]);
-    props.onClose();
   };
 
   return (
