@@ -54,6 +54,11 @@ const EXTERNAL_LOG_NAME = {
   'reveal-optimizer': 'Web-Optimizer',
 };
 
+const PageWithFixedWidth = styled.div<{ width: number }>`
+  min-width: ${(props) => props.width}px;
+  width: 100%;
+`;
+
 const ButtonRow = styled.div`
   display: flex;
   margin-top: 20px;
@@ -400,7 +405,7 @@ class RevisionDetails extends React.Component<Props, State> {
       this.state.reprocessingRequired && canBeViewed;
 
     return (
-      <>
+      <PageWithFixedWidth width={900}>
         <NewHeader
           title={`${APP_TITLE} / ${model.name}`}
           breadcrumbs={[
@@ -542,7 +547,7 @@ class RevisionDetails extends React.Component<Props, State> {
           onSuccess={this.onReprocessingRequestSent}
           onClose={this.dismissReprocessingModal}
         />
-      </>
+      </PageWithFixedWidth>
     );
   }
 }

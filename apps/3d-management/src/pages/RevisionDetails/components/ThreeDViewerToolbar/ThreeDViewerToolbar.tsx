@@ -10,7 +10,6 @@ import { v3 } from '@cognite/cdf-sdk-singleton';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import zIndex from 'src/utils/zIndex';
 import * as FileActions from 'src/store/modules/File/index';
 import * as RevisionActions from 'src/store/modules/Revision/index';
 import {
@@ -21,6 +20,7 @@ import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ThreeDView
 import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'src/utils';
 import { useFlag } from '@cognite/react-feature-flags';
 import { isDevelopment } from '@cognite/cdf-utilities';
+import { Button } from '@cognite/cogs.js';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -30,26 +30,22 @@ const CONTAINER_PADDING = 8;
 const CONTAINER_WIDTH = 400;
 const SCROLLBAR_WIDTH = 2;
 
-const ToolbarContainer = styled.div`
-  position: absolute;
-  padding: ${CONTAINER_PADDING}px;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: ${CONTAINER_WIDTH}px;
-  display: flex;
-  flex-direction: column;
-  z-index: ${zIndex.DEFAULT};
-  background-color: #fff;
-  border: 1px solid var(--cogs-greyscale-grey3);
-  overflow: hidden;
-`;
-
 const MenuSection = styled.div`
   &:not(:first-child) {
     margin-top: ${DEFAULT_MARGIN_V}px;
   }
   width: fit-content;
+`;
+
+const ToolbarStyled = styled.div`
+  height: 100%;
+  width: ${CONTAINER_WIDTH}px;
+  display: flex;
+  flex-direction: column;
+  padding: ${CONTAINER_PADDING}px;
+  background-color: #fff;
+  border: 1px solid var(--cogs-greyscale-grey3);
+  overflow: hidden;
 `;
 
 type RevisionUpdatePayload = {
@@ -118,45 +114,49 @@ function ThreeDViewerToolbar(props: Props) {
     !isOldViewer(props.viewer);
 
   return (
-    <ToolbarContainer>
-      <div>
-        <MenuSection>
-          <ThumbnailUploader
-            onUploadDone={updateInitialLocation}
-            getScreenshot={(w, h) => props.viewer.getScreenshot(w, h)}
-            modelId={props.model.modelId}
-            revisionId={props.model.revisionId}
+    <ToolbarStyled>
+      <MenuSection>
+        <ThumbnailUploader
+          onUploadDone={updateInitialLocation}
+          getScreenshot={(w, h) => props.viewer.getScreenshot(w, h)}
+          modelId={props.model.modelId}
+          revisionId={props.model.revisionId}
+        />
+
+        <Button
+          style={{ marginLeft: DEFAULT_MARGIN_H }}
+          icon="Scan"
+          onClick={() => props.viewer.fitCameraToModel(props.model as any, 400)}
+        >
+          Camera to model
+        </Button>
+      </MenuSection>
+
+      <MenuSection>
+        <EditRotation
+          saveModelRotation={(rotation) => updateInitialLocation({ rotation })}
+          viewer={props.viewer}
+          model={props.model}
+          revision={props.revision}
+        />
+      </MenuSection>
+
+      {props.model instanceof CognitePointCloudModel && (
+        <MenuSection style={{ display: 'flex', width: '100%' }}>
+          <ColorTypePicker
+            onChange={(colorType: PotreePointColorType) => {
+              if (props.model instanceof CognitePointCloudModel) {
+                // eslint-disable-next-line no-param-reassign
+                props.model.pointColorType = colorType;
+              }
+            }}
           />
+
+          <div style={{ marginLeft: DEFAULT_MARGIN_H, flexGrow: 1 }}>
+            <ClassPicker model={props.model} />
+          </div>
         </MenuSection>
-
-        <MenuSection>
-          <EditRotation
-            saveModelRotation={(rotation) =>
-              updateInitialLocation({ rotation })
-            }
-            viewer={props.viewer}
-            model={props.model}
-            revision={props.revision}
-          />
-        </MenuSection>
-
-        {props.model instanceof CognitePointCloudModel && (
-          <MenuSection style={{ display: 'flex', width: '100%' }}>
-            <ColorTypePicker
-              onChange={(colorType: PotreePointColorType) => {
-                if (props.model instanceof CognitePointCloudModel) {
-                  // eslint-disable-next-line no-param-reassign
-                  props.model.pointColorType = colorType;
-                }
-              }}
-            />
-
-            <div style={{ marginLeft: DEFAULT_MARGIN_H, flexGrow: 1 }}>
-              <ClassPicker model={props.model} />
-            </div>
-          </MenuSection>
-        )}
-      </div>
+      )}
 
       {showTreeView && (
         <>
@@ -176,7 +176,7 @@ function ThreeDViewerToolbar(props: Props) {
           />
         </>
       )}
-    </ToolbarContainer>
+    </ToolbarStyled>
   );
 }
 

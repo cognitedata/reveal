@@ -17,10 +17,20 @@ import { Legacy3DModel, Legacy3DViewer } from './legacyViewerTypes';
 revealEnv.publicPath =
   'https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.0.0-beta-1/';
 
-const CanvasContainer = styled.div`
+const ThreeDViewerStyled = styled.div`
+  position: relative;
+  display: flex;
   height: calc(
     100vh - var(--cdf-ui-navigation-height) - 40px
   ); /* sidebar height and top-bot paddings subtracted */
+`;
+
+const ToolbarContainer = styled.div`
+  align-self: stretch;
+`;
+
+const CanvasContainer = styled.div`
+  flex-grow: 1;
   canvas {
     height: 100%;
     width: 100%;
@@ -137,15 +147,18 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
     throw error;
   }
   return (
-    <div style={{ position: 'relative' }}>
-      {viewer && model && (
-        <ThreeDViewerToolbar
-          viewer={viewer}
-          model={model}
-          revision={props.revision}
-        />
-      )}
+    <ThreeDViewerStyled>
       <CanvasContainer ref={canvasWrapperRef} />
-    </div>
+
+      {viewer && model && (
+        <ToolbarContainer>
+          <ThreeDViewerToolbar
+            viewer={viewer}
+            model={model}
+            revision={props.revision}
+          />
+        </ToolbarContainer>
+      )}
+    </ThreeDViewerStyled>
   );
 }
