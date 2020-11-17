@@ -6,27 +6,22 @@ import * as THREE from 'three';
 
 import { intersectCadNodes } from '../../../../datamodels/cad/picking';
 import { CadNode } from '../../../../datamodels/cad/CadNode';
-import { IntersectInput } from '../../../../datamodels/base';
+import { IntersectInput } from '../../../../datamodels/base/types';
 
 describe('intersectCadNodes', () => {
   const camera = new THREE.PerspectiveCamera();
-  const renderer: THREE.WebGLRenderer = {
-    domElement: document.createElement('canvas'),
-    setClearColor: jest.fn(),
-    getClearColor: () => new THREE.Color(),
-    getClearAlpha: () => 1.0,
-    clearColor: jest.fn(),
-    setRenderTarget: jest.fn(),
-    render: jest.fn(),
-    readRenderTargetPixels: jest.fn()
-  } as any;
+
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ context });
+
   const input: IntersectInput = {
     normalizedCoords: {
       x: 0.5,
       y: 0.5
     },
     renderer,
-    camera
+    camera,
+    domElement: document.createElement('canvas')
   };
   const cadNode: CadNode = new THREE.Object3D() as any;
 

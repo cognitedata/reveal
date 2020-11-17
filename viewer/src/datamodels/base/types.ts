@@ -11,4 +11,5 @@ export interface IntersectInput {
   };
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
+  domElement: HTMLElement;
 }
