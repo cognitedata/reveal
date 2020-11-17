@@ -180,16 +180,16 @@ export const mockError = {
 export const mockDataRunsResponse = [
   {
     timestamp: 1605575298134,
-    status: 'Failure',
-    statusSeen: 'Seen',
+    status: 'FAIL',
+    statusSeen: 'OK',
     subRows: [
-      { timestamp: 1605555298134, status: 'Failure', statusSeen: 'Seen' },
-      { timestamp: 1605535298134, status: 'Success', statusSeen: 'Seen' },
+      { timestamp: 1605555298134, status: 'FAIL', statusSeen: 'OK' },
+      { timestamp: 1605535298134, status: 'OK', statusSeen: 'OK' },
     ],
   },
-  { timestamp: 1605418198134, status: '', statusSeen: 'Seen' },
-  { timestamp: 1604918198134, status: 'Failure', statusSeen: 'Seen' },
-  { timestamp: 1604218198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1603918198134, status: 'Success', statusSeen: 'Seen' },
-  { timestamp: 1600923198134, status: 'Success', statusSeen: 'Seen' },
+  { timestamp: 1605418198134, status: '', statusSeen: 'OK' },
+  { timestamp: 1604918198134, status: 'FAIL', statusSeen: 'OK' },
+  { timestamp: 1604218198134, status: 'OK', statusSeen: 'OK' },
+  { timestamp: 1603918198134, status: 'OK', statusSeen: 'OK' },
+  { timestamp: 1600923198134, status: 'OK', statusSeen: 'OK' },
 ];

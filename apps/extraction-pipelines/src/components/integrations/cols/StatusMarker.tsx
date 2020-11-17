@@ -59,14 +59,7 @@ const StatusMarker: FunctionComponent<Props> = ({
         </Tooltip>
       );
     default:
-      return (
-        <Badge
-          text="default"
-          background="pink"
-          aria-label="Failed"
-          data-testid={`status-marker-${dataTestId}`}
-        />
-      );
+      return <></>;
   }
 };
 StatusMarker.defaultProps = {

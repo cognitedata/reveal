@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Badge, Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import moment from 'moment';
 import {
   useTable,
@@ -12,6 +12,7 @@ import {
   Cell,
   Row,
 } from 'react-table';
+import StatusMarker from '../integrations/cols/StatusMarker';
 import { SortingIcon } from './TabsStyle';
 import Wrapper from '../../styles/StyledTable';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
@@ -39,16 +40,6 @@ const showSorterIndicator = (sCol: HeaderGroup) => {
       return <SortingIcon type="SortUp" />;
     }
     return <SortingIcon type="OrderDesc" />;
-  }
-  return '';
-};
-
-const statusBadge = (status: string) => {
-  if (status === 'Success' || status === 'Seen') {
-    return <Badge text="OK" size={13} background="#2ACF58" />;
-  }
-  if (status === 'Failure') {
-    return <Badge text="FAIL" size={13} background="#DB0657" />;
   }
   return '';
 };
@@ -154,7 +145,7 @@ const SidePanelTable = () => {
         accessor: 'status',
         disableSortBy: true,
         Cell: (cell: Cell) => {
-          return statusBadge(cell.value);
+          return <StatusMarker status={cell.value} />;
         },
       },
       {
@@ -170,11 +161,11 @@ const SidePanelTable = () => {
                 },
               })}
             >
-              {statusBadge(cell.value)}
+              <StatusMarker status={cell.value} />
               {row.isExpanded ? <Icon type="Down" /> : <Icon type="Right" />}
             </span>
           ) : (
-            statusBadge(cell.value)
+            <StatusMarker status={cell.value} />
           ),
       },
     ],
