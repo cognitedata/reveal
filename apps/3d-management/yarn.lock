@@ -1242,7 +1242,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.12.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
   integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
@@ -1393,10 +1393,10 @@
   optionalDependencies:
     typescript "^3.6"
 
-"@cognite/gearbox@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/gearbox/-/gearbox-2.1.0.tgz#dee8bc16cc2dac6cfa0b0675664061e060d97d06"
-  integrity sha512-0ODdeFFy0Ib1qU4g/kcYZNFBGG7okRPbQ5K84uDNLf7IqiYk7ooZPTGfJq0WEt23hfepKDgU6hpH7ULAIPi32g==
+"@cognite/gearbox@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/gearbox/-/gearbox-2.2.0.tgz#35de30591e085cfb8a835a297342bd3ab22777e2"
+  integrity sha512-hJ04A9tj1mTD7Kp9OZmJnWE16au4SwAjjKeKqJnd/vKTkt20v/Z1KIcBkLg9dS/LA/fLLx4FWKOkRPdTOOpuiQ==
   dependencies:
     "@types/dompurify" "^2.0.2"
     d3 "^5.14.2"
