@@ -37,6 +37,24 @@ const Wrapper = styled.div`
         td {
           padding: 0.75rem;
         }
+        &.parent-row {
+          .timestamp-col {
+            font-weight: bold;
+          }
+          .statusSeen-col {
+            position: relative;
+            .cogs-icon {
+              position: absolute;
+              right: 0;
+              top: 0.9375rem;
+            }
+          }
+        }
+        &.child-row {
+          .timestamp-col {
+            padding-left: 1.5rem;
+          }
+        }
       }
     }
     th:first-child.timestamp-col {

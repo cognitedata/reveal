@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Badge } from '@cognite/cogs.js';
+import { Badge, Icon } from '@cognite/cogs.js';
 import moment from 'moment';
 import {
   useTable,
@@ -23,6 +23,11 @@ interface ITableProps {
     statusSeen: string;
   }[];
   columns: Column[];
+}
+
+interface ICell {
+  row: Row;
+  cell: Cell;
 }
 
 const showSorterIndicator = (sCol: HeaderGroup) => {
@@ -102,12 +107,16 @@ const Table = ({ columns, data }: ITableProps) => {
       <tbody {...getTableBodyProps()}>
         {rows.map((row: Row) => {
           prepareRow(row);
+          const isParentRow =
+            (row?.subRows?.length && row?.subRows?.length > 0) ?? false;
+          const isChildRow = row.depth === 1;
           return (
             <tr
               {...row.getRowProps()}
               className={`cogs-table-row integrations-table-row ${
                 row.isSelected ? 'row-active' : ''
-              }`}
+              } ${isParentRow ? 'parent-row' : ''}
+              ${isChildRow ? 'child-row' : ''}`}
             >
               {row.cells.map((cell: Cell) => {
                 return (
@@ -152,9 +161,21 @@ const SidePanelTable = () => {
         Header: 'Last seen',
         accessor: 'statusSeen',
         disableSortBy: true,
-        Cell: (cell: Cell) => {
-          return statusBadge(cell.value);
-        },
+        Cell: ({ row, cell }: ICell) =>
+          row.canExpand ? (
+            <span
+              {...row.getToggleRowExpandedProps({
+                style: {
+                  paddingLeft: `${row.depth * 2}rem`,
+                },
+              })}
+            >
+              {statusBadge(cell.value)}
+              {row.isExpanded ? <Icon type="Down" /> : <Icon type="Right" />}
+            </span>
+          ) : (
+            statusBadge(cell.value)
+          ),
       },
     ],
     []

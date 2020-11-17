@@ -14,6 +14,8 @@ import {
   UseSortByInstanceProps,
   UseSortByOptions,
   UseSortByState,
+  UseGroupByRowProps,
+  UseExpandedRowProps,
 } from 'react-table';
 
 declare module 'react-table' {
@@ -52,5 +54,7 @@ declare module 'react-table' {
 
   export interface Row<
     D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseRowSelectRowProps<D> {}
+  > extends UseRowSelectRowProps<D>,
+      UseGroupByRowProps<D>,
+      UseExpandedRowProps<D> {}
 }

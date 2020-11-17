@@ -149,6 +149,10 @@ export const mockDataRunsResponse = [
     timestamp: 1605575298134,
     status: 'Failure',
     statusSeen: 'Seen',
+    subRows: [
+      { timestamp: 1605555298134, status: 'Failure', statusSeen: 'Seen' },
+      { timestamp: 1605535298134, status: 'Success', statusSeen: 'Seen' },
+    ],
   },
   { timestamp: 1605418198134, status: '', statusSeen: 'Seen' },
   { timestamp: 1604918198134, status: 'Failure', statusSeen: 'Seen' },
