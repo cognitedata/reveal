@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@cognite/cogs.js": "^2.0.1",
-    "@cognite/connect": "file:.yalc/@cognite/connect",
+    "@cognite/connect": "^0.0.5",
     "@cognite/metrics": "^0.1.2",
     "@cognite/react-container": "0.1.0",
     "@cognite/react-errors": "^0.0.4",
