@@ -20,7 +20,6 @@
     "@cognite/cdf-sdk-singleton": "^0.6.1",
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "1.30.3",
-    "@cognite/gearbox": "^2.2.0",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-feature-flags": "^0.0.2",
     "@cognite/reveal": "1.2.2",

@@ -1,13 +1,13 @@
 import * as Sentry from '@sentry/browser';
 import notification from 'antd/lib/notification';
-import { ErrorResponse } from '@cognite/gearbox';
 import { getContainer } from 'src/utils';
 import { isDevelopment } from '@cognite/cdf-utilities';
+import { v3 } from '@cognite/cdf-sdk-singleton';
 
 interface ErrorNotificationProps {
   message?: string;
   description?: string;
-  error?: ErrorResponse; // Not always the case...
+  error?: v3.HttpError; // Not always the case...
   duration?: number;
 }
 
@@ -39,7 +39,7 @@ export const fireErrorNotification = (
   } = typeof args === 'string' ? { message: args } : args;
 
   let errorDescription = '';
-  if (error && !isDevelopment()) {
+  if (error && !isDevelopment() && 'status' in error) {
     Sentry.captureException(error);
     errorDescription = generateErrorMessage(error.status);
   }

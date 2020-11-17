@@ -52,6 +52,8 @@ type State = {
   supportedExtensions: Array<string>;
 };
 
+// fixme[D3M-23] - currently it requires Modal wrapper and it causes different handling of modal closing
+//  here is the cancel button, but Modal still can be closed by clicking outside of it and it isn't handled
 class FileUploader extends React.Component<Props, State> {
   static defaultProps = {
     onUploadSuccess: noop,
@@ -183,7 +185,7 @@ class FileUploader extends React.Component<Props, State> {
     this.setState(defaultState);
   };
 
-  stopUpload = () => {
+  onCancelClicked = () => {
     if (
       this.state.uploadStatus === STATUS.PAUSED ||
       this.state.uploadStatus === STATUS.STARTED
@@ -290,7 +292,7 @@ class FileUploader extends React.Component<Props, State> {
           style={{ marginTop: DEFAULT_MARGIN_V }}
         >{`Supported file formats: ${this.state.supportedExtensions.join()}.`}</div>
         <ButtonRow>
-          <Button onClick={this.stopUpload}>Cancel</Button>
+          <Button onClick={this.onCancelClicked}>Cancel</Button>
           {uploaderButton}
         </ButtonRow>
       </div>

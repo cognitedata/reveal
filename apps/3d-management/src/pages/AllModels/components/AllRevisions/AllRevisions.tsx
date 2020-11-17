@@ -292,6 +292,7 @@ class AllRevisions extends React.PureComponent<Props, State> {
             onUploadFailure={() => {
               this.hideUploadModal();
             }}
+            onCancel={this.hideUploadModal}
           />
         </Modal>
         <Modal
