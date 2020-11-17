@@ -28,3 +28,18 @@ export const Header = styled.header`
     }
   }
 `;
+
+export const TopPaneWrapper = styled.div`
+  flex: 1 1 0%;
+  /* left side shouldn't have scrollbars at all */
+  overflow: hidden;
+  height: 100%;
+`;
+
+export const BottomPaneWrapper = styled.div`
+  /* overflow: auto; */
+  width: 100%;
+  height: 100%;
+  background: rgb(255, 255, 255);
+  border-left: 1px solid var(--cogs-greyscale-grey4);
+`;

@@ -2,6 +2,7 @@ import {
   createSlice,
   PayloadAction,
   createEntityAdapter,
+  Update,
 } from '@reduxjs/toolkit';
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
@@ -28,6 +29,10 @@ const chartSlice = createSlice({
     failedLoadingAllCharts: (state, action: PayloadAction<string>) => {
       state.status.status = 'FAILED';
       state.status.error = action.payload;
+    },
+
+    storedNewWorkflow: (state, action: PayloadAction<Update<Chart>>) => {
+      chartAdapter.updateOne(state, action.payload);
     },
   },
 });

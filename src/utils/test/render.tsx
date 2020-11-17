@@ -1,5 +1,4 @@
 import React, { JSXElementConstructor } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 // Here is where our custom render is being defined, so we don't need this check
 /* eslint-disable-next-line @cognite/rtl-use-custom-render-function */
 import { render as renderImpl } from '@testing-library/react';
@@ -29,8 +28,6 @@ const render = <Props, T extends StoryConfiguration>(
     renderRedux,
     story ? story.redux : undefined
   );
-
-  console.log('redux', redux);
 
   const renderResult = renderImpl(
     <AppProviders tenant="" initialState={redux}>
