@@ -19,8 +19,8 @@ jobs:
    
       - name: Initialize variables
         run: |
-          export PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "::set-env name=PR_NUMBER::$PR_NUMBER"
+          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
       - name: Build Reveal
         working-directory: reveal/viewer
