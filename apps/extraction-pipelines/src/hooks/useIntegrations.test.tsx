@@ -8,6 +8,7 @@ import { mockError, mockResponse } from '../utils/mockResponse';
 
 describe('useIntgrations', () => {
   const project = 'itera-int-green';
+  const origin = 'dev';
   const cdfEnv = 'greenfield';
 
   test('Returns integrations on success', async () => {
@@ -17,6 +18,7 @@ describe('useIntgrations', () => {
     await act(async () => {
       const wrapper = renderWithReactQueryCacheProvider(
         queryCache,
+        origin,
         project,
         cdfEnv
       );
@@ -36,6 +38,7 @@ describe('useIntgrations', () => {
       const wrapper = renderWithReactQueryCacheProvider(
         queryCache,
         project,
+        origin,
         cdfEnv
       );
       const { result } = renderHook(() => useIntegrations(), { wrapper });

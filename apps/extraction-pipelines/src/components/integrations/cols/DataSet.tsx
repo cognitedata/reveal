@@ -3,6 +3,7 @@ import { Colors, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import InteractiveCopy from 'components/InteractiveCopy';
 import { useAppEnv } from '../../../hooks/useAppEnv';
+import { getDataSetsLink } from '../../../utils/dataSetUtils';
 
 const DatasetTooltip = styled.div`
   display: flex;
@@ -26,14 +27,14 @@ const DataSet: FunctionComponent<Props> = ({
   dataSetId,
   dataSetName,
 }: Props) => {
-  const { cdfEnv, project } = useAppEnv();
+  const { cdfEnv, project, origin } = useAppEnv();
   return (
     <>
       <Tooltip content={dataSetId}>
         <>
           <DatasetTooltip>
             <DataSetLink
-              href={`${cdfEnv}/${project}/data-sets/data-set/${dataSetId}`}
+              href={getDataSetsLink({ origin, project, cdfEnv, dataSetId })}
               target="_blank"
             >
               {dataSetName}

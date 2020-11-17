@@ -2,8 +2,7 @@ import React from 'react';
 import { Cell, CellProps } from 'react-table';
 import { calculateStatus } from 'utils/integrationUtils';
 import { Integration } from '../../model/Integration';
-import UserDetails from '../integrations/cols/UserDetails';
-import Authors from '../integrations/cols/Authors';
+import UserGroup from '../integrations/cols/UserGroup';
 import Name from '../integrations/cols/Name';
 import LatestRun from '../integrations/cols/LatestRun';
 import Schedule from '../integrations/cols/Schedule';
@@ -18,6 +17,7 @@ export enum TableHeadings {
   LATEST_RUN = 'Latest run',
   DATA_SET = 'Destination data sets',
   SCHEDULE = 'Schedule',
+  CONTACTS = 'Contacts',
   OWNER = 'Owner',
   CREATED_BY = 'Created by',
 }
@@ -86,24 +86,14 @@ export const getIntegrationTableCol = () => {
       disableFilters: true,
     },
     {
-      id: 'owner',
-      Header: TableHeadings.OWNER,
+      id: 'contacts',
+      Header: TableHeadings.CONTACTS,
       accessor: (row: Integration) => {
-        return row.owner.name;
+        return `${row.owner.name},${row.authors.map((aut) => aut.name).join()}`;
       },
       Cell: ({ row }: Cell<Integration>) => {
-        return <UserDetails user={row.original.owner} />;
-      },
-      disableFilters: true,
-    },
-    {
-      id: 'authors',
-      Header: TableHeadings.CREATED_BY,
-      accessor: (row: Integration) => {
-        return row.authors.map((aut) => aut.name).join();
-      },
-      Cell: ({ row }: Cell<Integration>) => {
-        return <Authors authors={row.original.authors} />;
+        const contacts = [row.original.owner, ...row.original.authors];
+        return <UserGroup users={contacts} />;
       },
       disableSortBy: true,
       disableFilters: true,

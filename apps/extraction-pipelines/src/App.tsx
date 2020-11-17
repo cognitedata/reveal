@@ -11,11 +11,12 @@ import { AppEnvProvider } from 'hooks/useAppEnv';
 import theme from './styles/theme';
 import AntStyles from './styles/AntStyles';
 import rootStyles from './styles/index.css';
-import { projectName } from './utils/config';
+import { getCdfEnvFromUrl, projectName } from './utils/config';
 
 const App = () => {
   const project = projectName();
-  const cdfEnv = window.location.origin;
+  const { origin } = window.location;
+  const cdfEnv = getCdfEnvFromUrl();
 
   useEffect(() => {
     cogsStyles.use();
@@ -48,7 +49,7 @@ const App = () => {
             subAppName="cdf-integrations-ui"
           >
             <ThemeProvider theme={theme}>
-              <AppEnvProvider cdfEnv={cdfEnv} project={project}>
+              <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
                 <Home />
               </AppEnvProvider>
             </ThemeProvider>

@@ -158,9 +158,9 @@ function ITable<T extends { id: ReactText }>({
                 };
                 return (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {!col.canFilter && col.render('Header')}
-                    {!col.canFilter && showSorterIndicator(col)}
-                    {!col.disableFilters ? col.render('Filter') : null}
+                    {col.disableFilters && col.render('Header')}
+                    {col.canSort && showSorterIndicator(col)}
+                    {!col.disableFilters && col.render('Filter')}
                   </th>
                 );
               })}

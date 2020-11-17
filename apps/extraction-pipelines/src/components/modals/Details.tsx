@@ -7,6 +7,7 @@ import moment from 'moment';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import LatestRun from 'components/integrations/cols/LatestRun';
 import { calculateStatus } from 'utils/integrationUtils';
+import Schedule from 'components/integrations/cols/Schedule';
 import { Integration } from '../../model/Integration';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import ListMetaData from './ListMetaData';
@@ -23,7 +24,7 @@ const StyledUl = styled.ul`
     &:last-child {
       border-bottom: none;
     }
-    &.details-data-set {
+    &.flex {
       display: flex;
     }
     ul {
@@ -84,11 +85,11 @@ const Details: FunctionComponent<Props> = ({ integration }: Props) => {
         <StatusMarker status={status.status} />
         <LatestRun latestRunTime={status.time} />
       </li>
-      <li key="details-schedule">
+      <li key="details-schedule" className="flex">
         <Detail strong>{TableHeadings.SCHEDULE}: </Detail>
-        {integration.schedule}
+        <Schedule schedule={integration.schedule} />
       </li>
-      <li key="details-dataSetId" className="details-data-set">
+      <li key="details-dataSetId" className="flex">
         <Detail strong>{TableHeadings.DATA_SET}: </Detail>
         <DataSet
           dataSetId={integration.dataSetId}

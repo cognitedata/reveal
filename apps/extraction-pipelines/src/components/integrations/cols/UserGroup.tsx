@@ -4,27 +4,27 @@ import { User } from '../../../model/User';
 import AvatarGroup from '../../Avatar/AvatarGroup';
 
 interface OwnProps {
-  authors: User[];
+  users: User[];
 }
 
 type Props = OwnProps;
 
-const Authors: FunctionComponent<Props> = ({ authors }: Props) => {
+const UserGroup: FunctionComponent<Props> = ({ users }: Props) => {
   return (
     <AvatarGroup>
-      {authors.map((author) => {
-        const display = author.name ? author.name : author.email;
+      {users.map((user) => {
+        const display = user.name ? user.name : user.email;
         return (
           <Tooltip
             placement="bottom"
-            content={author.email}
+            content={user.email}
             key={`tooltip-${display}`}
           >
             <>
               <Avatar
                 text={display}
-                key={`avatar-${author.email}`}
-                aria-label={`Avatar for ${author.name}`}
+                key={`avatar-${user.email}`}
+                aria-label={`Avatar for ${user.name}`}
               />
             </>
           </Tooltip>
@@ -34,4 +34,4 @@ const Authors: FunctionComponent<Props> = ({ authors }: Props) => {
   );
 };
 
-export default Authors;
+export default UserGroup;

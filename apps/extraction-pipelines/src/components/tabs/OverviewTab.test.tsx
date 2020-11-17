@@ -9,6 +9,7 @@ import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
 
 describe('OverviewTab', () => {
   const project = 'itera-int-green';
+  const origin = 'dev';
   const cdfEnv = 'greenfield';
 
   test('Render with out fail', async () => {
@@ -16,6 +17,7 @@ describe('OverviewTab', () => {
     const queryCache = new QueryCache();
     const wrapper = renderWithReactQueryCacheProvider(
       queryCache,
+      origin,
       project,
       cdfEnv
     );
