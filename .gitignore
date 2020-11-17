@@ -29,3 +29,7 @@ yarn-error.log*
 
 storybook-static/
 junit.xml
+
+# a better yarn link
+.yalc
+yalc.lock

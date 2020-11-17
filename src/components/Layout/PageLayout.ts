@@ -5,4 +5,14 @@ export default styled.div`
   width: 100vw;
   display: flex;
   flex-direction: column;
+
+  main,
+  #chart-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  #chart-view {
+    height: 100%;
+  }
 `;

@@ -18,6 +18,14 @@ export class ChartService {
     const snapshot = await this.firebaseCollection.get();
     return snapshot.docs.map((doc) => doc.data()) as Chart[];
   }
+
+  async setWorkflowsOnChart(
+    chartId: string,
+    workflowIds: string[]
+  ): Promise<boolean> {
+    await this.firebaseCollection.doc(chartId).update({ workflowIds });
+    return true;
+  }
 }
 
 export default ChartService;
