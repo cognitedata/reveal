@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { Icon } from '@cognite/cogs.js';
-import moment from 'moment';
 import {
   useTable,
   useFilters,
@@ -16,6 +15,7 @@ import StatusMarker from '../integrations/cols/StatusMarker';
 import { SortingIcon } from './TabsStyle';
 import Wrapper from '../../styles/StyledTable';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
+import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 
 interface ITableProps {
   data: {
@@ -42,20 +42,6 @@ const showSorterIndicator = (sCol: HeaderGroup) => {
     return <SortingIcon type="OrderDesc" />;
   }
   return '';
-};
-
-const timeFromNow = (time: number) => {
-  const date = moment(time);
-  const isToday = date.valueOf() > moment().startOf('day').valueOf();
-  const isYesterday =
-    date.valueOf() > moment().subtract(1, 'days').startOf('day').valueOf();
-  if (isToday) {
-    return `Today ${date.format('HH:mm')}`;
-  }
-  if (isYesterday) {
-    return `Yesterday ${date.format('HH:mm')}`;
-  }
-  return `${date.fromNow()} ${date.format('HH:mm')}`;
 };
 
 const Table = ({ columns, data }: ITableProps) => {
@@ -137,7 +123,7 @@ const SidePanelTable = () => {
         accessor: 'timestamp',
         sortType: 'basic',
         Cell: (cell: Cell) => {
-          return timeFromNow(cell.value);
+          return <TimeDisplay value={cell.value} relative withTooltip />;
         },
       },
       {
