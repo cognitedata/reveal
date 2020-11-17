@@ -6146,6 +6146,11 @@ create-react-context@0.3.0, create-react-context@^0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
+cronstrue@^1.104.0:
+  version "1.104.0"
+  resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-1.104.0.tgz#23f5df243597ccffc229333137fb63c8d1cb2e65"
+  integrity sha512-x8HHGZAXUhUgb/TPIlBoMLw6MRU5rq7CipfRaSEQj8GMeBp94q7wQvKjxvOzlQiQzO8KT+NCHi1ljASlYIBhpw==
+
 cross-env@^7.0.2:
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-7.0.2.tgz#bd5ed31339a93a3418ac4f3ca9ca3403082ae5f9"

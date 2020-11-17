@@ -1,4 +1,16 @@
+import { Tooltip } from '@cognite/cogs.js';
 import React, { FunctionComponent } from 'react';
+import styled from 'styled-components';
+import { parseCron } from '../../../utils/cronUtils';
+import InteractiveCopy from '../../InteractiveCopy';
+
+const FlexWrapper = styled.span`
+  display: flex;
+  align-items: center;
+  span {
+    margin-left: 0.5rem;
+  }
+`;
 
 interface OwnProps {
   schedule?: string;
@@ -13,7 +25,15 @@ const Schedule: FunctionComponent<Props> = ({ schedule }: Props) => {
     case 'On Trigger':
       return <>{schedule}</>;
     default:
-      return <>{schedule}</>;
+      return (
+        <>
+          <Tooltip content={schedule}>
+            <FlexWrapper>
+              {parseCron(schedule)} <InteractiveCopy text={schedule} />
+            </FlexWrapper>
+          </Tooltip>
+        </>
+      );
   }
 };
 

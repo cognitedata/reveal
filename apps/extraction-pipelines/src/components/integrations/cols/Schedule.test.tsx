@@ -17,7 +17,7 @@ describe('<Schedule/>', () => {
     {
       desc: 'Render chron expression when defined',
       value: '0 0 9 1/1 * ? *',
-      expected: '0 0 9 1/1 * ? *',
+      expected: 'At 09:00 AM',
     },
   ];
   cases.forEach(({ desc, value, expected }) => {
