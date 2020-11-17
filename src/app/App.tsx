@@ -63,6 +63,7 @@ export default () => {
                   apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
                   appName="data-exploration"
                   projectName={tenant}
+                  remoteAddress={window.location.hostname}
                 >
                   <Router history={history}>
                     <Switch>

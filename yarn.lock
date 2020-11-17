@@ -1530,10 +1530,10 @@
     mixpanel-browser "^2.35.0"
     react "^16.13.1"
 
-"@cognite/react-feature-flags@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-0.0.1.tgz#67452b7e6213ea3ab2dd87e7b0feadf1bc07eb55"
-  integrity sha512-pWAKzxdQKls77acnQcNH/m22QWnxJz0fnIFVk+vj2x1tEUqYH7woXO+MqDeDa07ZU2IE/2ebD5r8ZSCkH7lFHg==
+"@cognite/react-feature-flags@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-0.1.0.tgz#55c4251bb63964b7fa7c4c92a68e67b769ab1006"
+  integrity sha512-RUjJUpfGClgnb42FqFegM6k8WIVAOjs80U1xiEvf0pfPQ0Q000Cksu00jXNhwc2M4KWruhHomSvvTgv7w6szIw==
   dependencies:
     unleash-proxy-client "^1.0.1"
 
