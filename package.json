@@ -21,7 +21,7 @@
     "@types/lodash": "^4.14.165",
     "antd": "^4.8.1",
     "date-fns": "^2.16.1",
-    "i18next": "^19.8.3",
+    "i18next": "^19.8.4",
     "i18next-chained-backend": "^2.0.1",
     "i18next-http-backend": "^1.0.21",
     "i18next-localstorage-backend": "^3.1.2",
