@@ -3,6 +3,7 @@ import DummyTimeSeries, {
   NodeEffectId as DummyTimeSeriesEffectId,
 } from './DummyTimeSeries';
 import UnitConversion, {
+  ConfigPanel as UnitConversionConfigPanel,
   NodeEffect as UnitConversionEffect,
   NodeEffectId as UnitConversionEffectId,
 } from './UnitConversion';
@@ -21,6 +22,7 @@ export default [
     node: UnitConversion,
     effect: UnitConversionEffect,
     effectId: UnitConversionEffectId,
+    configPanel: UnitConversionConfigPanel,
   },
   {
     name: 'Dummy Time Series',

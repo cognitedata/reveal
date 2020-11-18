@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import { chartSelectors } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -10,6 +10,9 @@ import {
   fetchWorkflowsForChart,
   createNewWorkflow,
 } from 'reducers/workflows/api';
+import { runWorkflow } from 'reducers/workflows/utils';
+import workflowSlice, { WorkflowRunStatus } from 'reducers/workflows';
+import { NodeProgress } from '@cognite/connect';
 import { Header, TopPaneWrapper, BottomPaneWrapper } from './elements';
 
 type ChartViewProps = {
@@ -23,16 +26,64 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
   );
+  const [workflowsRan, setWorkflowsRan] = useState(false);
   const workflows = useSelector((state) =>
     chart?.workflowIds?.map((id) => state.workflows.entities[id])
   )?.filter(Boolean);
 
+  const runWorkflows = async () => {
+    (workflows || []).forEach(async (flow) => {
+      if (!flow) {
+        return;
+      }
+      let progressTracker = {};
+      const nextLatestRun = await runWorkflow(
+        flow,
+        (nextProgress: NodeProgress) => {
+          progressTracker = { ...progressTracker, ...nextProgress };
+          dispatch(
+            workflowSlice.actions.updateWorkflow({
+              id: flow.id,
+              changes: {
+                latestRun: {
+                  status: 'RUNNING',
+                  nodeProgress: progressTracker,
+                  timestamp: Date.now(),
+                },
+              },
+            })
+          );
+        }
+      );
+
+      dispatch(
+        workflowSlice.actions.updateWorkflow({
+          id: flow.id,
+          changes: {
+            latestRun: {
+              ...nextLatestRun,
+              status: 'SUCCESS',
+              nodeProgress: progressTracker,
+            },
+          },
+        })
+      );
+    });
+  };
+
   useEffect(() => {
     if (chart?.workflowIds) {
       dispatch(fetchWorkflowsForChart(chart?.workflowIds));
-      // Run the existing workflows here
     }
   }, []);
+
+  useEffect(() => {
+    if ((workflows || []).length > 0 && !workflowsRan) {
+      setWorkflowsRan(true);
+      // Run the existing workflows here
+      runWorkflows();
+    }
+  }, [workflows]);
 
   const onNewWorkflow = () => {
     if (chart) {
@@ -46,6 +97,19 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       name: workflow?.name,
       data: workflow?.latestRun?.results,
     }));
+
+  const renderStatusIcon = (status?: WorkflowRunStatus) => {
+    switch (status) {
+      case 'RUNNING':
+        return <Icon type="Loading" />;
+      case 'SUCCESS':
+        return <Icon type="Check" />;
+      case 'FAILED':
+        return <Icon type="Close" />;
+      default:
+        return null;
+    }
+  };
 
   if (!chart) {
     return (
@@ -89,30 +153,36 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                 justifyContent: 'center',
               }}
             >
-              Chart would go here.
+              <div>Chart would go here.</div>
               {dataFromWorkflows && (
                 <div>
                   Data from workflow: {JSON.stringify(dataFromWorkflows)}
                 </div>
               )}
-              <Dropdown
-                content={
-                  <Menu>
-                    {chart.workflowIds?.map((id) => (
-                      <Menu.Item
-                        key={id}
-                        onClick={() => setActiveWorkflowId(id)}
-                      >
-                        {id}
-                      </Menu.Item>
-                    ))}
-                    <Menu.Divider />
-                    <Menu.Item onClick={onNewWorkflow}>Create new</Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button>{activeWorkflowId || 'Select a workflow'}</Button>
-              </Dropdown>
+              <div>
+                <Dropdown
+                  content={
+                    <Menu>
+                      {(workflows || []).map(
+                        (flow) =>
+                          flow && (
+                            <Menu.Item
+                              key={flow.id}
+                              onClick={() => setActiveWorkflowId(flow.id)}
+                            >
+                              {flow.name || 'noname'}{' '}
+                              {renderStatusIcon(flow.latestRun?.status)}
+                            </Menu.Item>
+                          )
+                      )}
+                      <Menu.Divider />
+                      <Menu.Item onClick={onNewWorkflow}>Create new</Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <Button>{activeWorkflowId || 'Select a workflow'}</Button>
+                </Dropdown>
+              </div>
             </div>
           </TopPaneWrapper>
           <BottomPaneWrapper className="table">

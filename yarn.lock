@@ -998,7 +998,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^2.0.1":
+"@cognite/cogs.js@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.2.1.tgz#eaa571de05dadf935cabdfe5560977aef1ce3481"
   dependencies:

@@ -19,7 +19,7 @@
     "testcafe:serve": "serve -s build -l 11111"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^2.0.1",
+    "@cognite/cogs.js": "^2.2.1",
     "@cognite/connect": "^0.0.5",
     "@cognite/metrics": "^0.1.2",
     "@cognite/react-container": "0.1.0",

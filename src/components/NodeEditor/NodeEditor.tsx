@@ -22,6 +22,7 @@ import { saveExistingWorkflow } from 'reducers/workflows/api';
 import { runWorkflow } from 'reducers/workflows/utils';
 import { pinTypes, isWorkflowRunnable } from './utils';
 import defaultNodeOptions from '../../reducers/workflows/Nodes';
+import ConfigPanel from './ConfigPanel';
 
 const WorkflowContainer = styled.div`
   width: 100%;
@@ -39,8 +40,7 @@ type WorkflowEditorProps = {
 
 const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
   const dispatch = useDispatch();
-  const [activeNode, setActiveNode] = useState<Node>();
-  const [runProgress, setRunProgress] = useState<NodeProgress>({});
+  const [activeNode, setActiveNode] = useState<StorableNode>();
 
   const workflow = useSelector((state) =>
     workflowSelectors.selectById(state, workflowId || '')
@@ -71,10 +71,38 @@ const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
 
   const onUpdateNode = (nextNode: Node) => {
     setNodes(nodes.map((node) => (node.id === nextNode.id ? nextNode : node)));
+    // Our nodes have been updated - clear out the statuses for our last run
+    if (workflow?.latestRun) {
+      dispatch(
+        workflowSlice.actions.updateWorkflow({
+          id: workflow.id,
+          changes: {
+            latestRun: {
+              ...workflow.latestRun,
+              nodeProgress: undefined,
+            },
+          },
+        })
+      );
+    }
   };
 
   const onNewNode = (newNode: Node) => {
     setNodes([...nodes, newNode]);
+  };
+
+  const onRemoveNode = (node: Node) => {
+    const newConnections = { ...connections };
+    Object.values(newConnections).forEach((conn) => {
+      if (
+        conn.inputPin.nodeId === node.id ||
+        conn.outputPin.nodeId === node.id
+      ) {
+        delete newConnections[conn.id];
+      }
+    });
+    setNodes([...nodes].filter((n) => n.id !== node.id));
+    setConnections(newConnections);
   };
 
   const onSave = async () => {
@@ -87,19 +115,28 @@ const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
     if (!workflow) {
       return;
     }
-    setRunProgress({});
+    let progressTracker = {};
     const finalResult = await runWorkflow(
       workflow,
       (nextProgress: NodeProgress) => {
-        setRunProgress((prev: NodeProgress) => ({
-          ...prev,
-          ...nextProgress,
-        }));
+        progressTracker = { ...progressTracker, ...nextProgress };
+        dispatch(
+          workflowSlice.actions.updateWorkflow({
+            id: workflow.id,
+            changes: {
+              latestRun: {
+                status: 'RUNNING',
+                nodeProgress: progressTracker,
+                timestamp: Date.now(),
+              },
+            },
+          })
+        );
       }
     );
     const latestRun: LatestWorkflowRun = {
       ...finalResult,
-      nodeProgress: runProgress,
+      nodeProgress: progressTracker,
     };
     dispatch(
       workflowSlice.actions.updateWorkflow({
@@ -155,7 +192,7 @@ const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
           {nodes.map((node) => (
             <SourceNode
               node={{ ...node, selected: node.id === activeNode?.id }}
-              status={runProgress?.[node.id]}
+              status={workflow.latestRun?.nodeProgress?.[node.id]}
               onUpdate={onUpdateNode}
               onClick={(clickedNode: Node) => {
                 setActiveNode(clickedNode);
@@ -164,6 +201,18 @@ const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
           ))}
         </NodeContainer>
       </ControllerProvider>
+
+      {activeNode && (
+        <ConfigPanel
+          node={activeNode}
+          onSave={onUpdateNode}
+          onClose={() => setActiveNode(undefined)}
+          onRemove={() => {
+            onRemoveNode(activeNode);
+            setActiveNode(undefined);
+          }}
+        />
+      )}
 
       <Button
         type="primary"
