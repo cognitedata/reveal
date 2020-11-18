@@ -1,6 +1,6 @@
 import { StorableNode } from '../types';
 
-export default {
+export const node = {
   title: 'Output Series',
   subtitle: 'FUNCTION',
   color: '#4A67FB',

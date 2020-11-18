@@ -1,31 +1,24 @@
-import DummyTimeSeries, {
-  NodeEffect as DummyTimeSeriesEffect,
-  NodeEffectId as DummyTimeSeriesEffectId,
-} from './DummyTimeSeries';
-import UnitConversion, {
-  ConfigPanel as UnitConversionConfigPanel,
-  NodeEffect as UnitConversionEffect,
-  NodeEffectId as UnitConversionEffectId,
-} from './UnitConversion';
-import OutputSeries from './OutputSeries';
+import * as DummyTimeSeries from './DummyTimeSeries';
+import * as UnitConversion from './UnitConversion';
+import * as OutputSeries from './OutputSeries';
+import * as CDFDatapoints from './CDFDataPoints';
 import { NodeOption } from '../types';
 
 export default [
   {
     name: 'Dummy Time Series',
-    node: DummyTimeSeries,
-    effect: DummyTimeSeriesEffect,
-    effectId: DummyTimeSeriesEffectId,
+    ...DummyTimeSeries,
   },
   {
     name: 'UnitConversion',
-    node: UnitConversion,
-    effect: UnitConversionEffect,
-    effectId: UnitConversionEffectId,
-    configPanel: UnitConversionConfigPanel,
+    ...UnitConversion,
   },
   {
-    name: 'Dummy Time Series',
-    node: OutputSeries,
+    name: 'Output Timeseries',
+    ...OutputSeries,
+  },
+  {
+    name: 'CDF Datapoints',
+    ...CDFDatapoints,
   },
 ] as NodeOption[];

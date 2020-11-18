@@ -1,6 +1,6 @@
 import { StorableNode } from '../types';
 
-export const NodeEffect = async (functionData: any) => {
+export const effect = async (functionData: any) => {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
   return {
@@ -8,9 +8,9 @@ export const NodeEffect = async (functionData: any) => {
   };
 };
 
-export const NodeEffectId = 'DUMMY_TIME_SERIES';
+export const effectId = 'DUMMY_TIME_SERIES';
 
-export default {
+export const node = {
   title: 'Dummy time series',
   icon: 'LineChart',
   subtitle: 'TimeSeries',
@@ -22,7 +22,7 @@ export default {
       type: 'TIMESERIES',
     },
   ],
-  functionEffectReference: NodeEffectId,
+  functionEffectReference: effectId,
   functionData: {
     dummyData: [
       {

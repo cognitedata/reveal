@@ -1,5 +1,5 @@
 import { Button, Input } from '@cognite/cogs.js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StorableNode } from 'reducers/workflows';
 import defaultNodeOptions from 'reducers/workflows/Nodes';
 import styled from 'styled-components/macro';
@@ -57,6 +57,12 @@ type ConfigPanelProps = {
 
 const ConfigPanel = ({ node, onRemove, onSave, onClose }: ConfigPanelProps) => {
   const [workingNode, setWorkingNode] = useState(node);
+
+  useEffect(() => {
+    if (node.id !== workingNode.id) {
+      setWorkingNode(node);
+    }
+  }, [node]);
   const [isDirty, setDirty] = useState(false);
   const NodeSpecificConfigPanel = defaultNodeOptions.find(
     (opt) => opt.effectId === node?.functionEffectReference
