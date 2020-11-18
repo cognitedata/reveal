@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
-import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
-import { DetailsItem, ErrorFeedback, Loader, Tabs } from 'lib/components';
+import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
-import { formatMetadata } from 'lib/utils';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { createLink } from '@cognite/cdf-utilities';
+import Details from 'lib/components/Timeseries/Details';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type TimeseriesPreviewTabType =
@@ -39,8 +39,7 @@ export const TimeseriesPreview = ({
   );
 
   const match = useRouteMatch();
-  const location = useLocation();
-  const activeTab = location.pathname
+  const activeTab = history.location.pathname
     .replace(match.url, '')
     .slice(1) as TimeseriesPreviewTabType;
 
@@ -60,48 +59,49 @@ export const TimeseriesPreview = ({
   }
 
   return (
-    <>
+    <div style={{ overflow: 'hidden' }}>
       <ResourceTitleRow
         item={{ id: timeseriesId, type: 'timeSeries' }}
         icon="Timeseries"
         actions={actions}
       />
       {timeseries && (
-        <Row>
-          <Col span={24}>
-            <TimeseriesChart
-              timeseriesId={timeseries.id}
-              height={500}
-              defaultOption="2Y"
-            />
-            <ResourceDetailsTabs
-              parentResource={{
-                type: 'timeSeries',
-                id: timeseries.id,
-                externalId: timeseries.externalId,
-              }}
-              tab={activeTab}
-              onTabChange={newTab =>
-                history.push(
-                  createLink(
-                    `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+        <>
+          <Row>
+            <Col span={24}>
+              <TimeseriesChart
+                timeseriesId={timeseries.id}
+                height={500}
+                defaultOption="2Y"
+              />
+            </Col>
+          </Row>
+          <Row style={{ height: 'calc(100% - 635px)', overflow: 'auto' }}>
+            <Col span={24}>
+              <ResourceDetailsTabs
+                parentResource={{
+                  type: 'timeSeries',
+                  id: timeseries.id,
+                  externalId: timeseries.externalId,
+                }}
+                tab={activeTab}
+                onTabChange={newTab =>
+                  history.push(
+                    createLink(
+                      `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                    )
                   )
-                )
-              }
-              additionalTabs={[
-                <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                  {' '}
-                  {formatMetadata(
-                    (timeseries && timeseries.metadata) ?? {}
-                  ).map(el => (
-                    <DetailsItem key={el.key} name={el.key} value={el.value} />
-                  ))}
-                </Tabs.Pane>,
-              ]}
-            />
-          </Col>
-        </Row>
+                }
+                additionalTabs={[
+                  <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+                    <Details id={timeseriesId} />
+                  </Tabs.Pane>,
+                ]}
+              />
+            </Col>
+          </Row>
+        </>
       )}
-    </>
+    </div>
   );
 };
