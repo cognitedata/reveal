@@ -7,11 +7,6 @@ import { StyledDropdown } from 'styles/StyledDropdown';
 import { Status } from '../../model/Status';
 import { badge } from '../../cogs-variables';
 
-const StyledFilterWrapper = styled.span`
-  position: absolute;
-  top: 1.1875rem;
-`;
-
 const StyledButton = styled((props) => (
   <Button {...props}>{props.children}</Button>
 ))`
@@ -37,11 +32,12 @@ interface StatusFilterDropdownProps<D extends object> {
     filterValue: string;
     setFilter: (filter: string | undefined) => void;
     preFilteredRows: Array<Row<D>>;
+    Header: string;
   };
 }
 
 function StatusFilterDropdown<D extends object>({
-  column: { filterValue, setFilter },
+  column: { filterValue, setFilter, Header },
 }: StatusFilterDropdownProps<D>) {
   const onClickFail = () => {
     setFilter(Status.FAIL);
@@ -91,13 +87,14 @@ function StatusFilterDropdown<D extends object>({
   );
 
   return (
-    <StyledFilterWrapper>
+    <>
       <StyledDropdown content={MenuContent}>
         <StyledButton unstyled>
+          {Header}
           <Icon type="CaretDown" />
         </StyledButton>
       </StyledDropdown>
-    </StyledFilterWrapper>
+    </>
   );
 }
 export default StatusFilterDropdown;

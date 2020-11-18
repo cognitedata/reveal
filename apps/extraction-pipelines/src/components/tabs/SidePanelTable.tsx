@@ -55,7 +55,7 @@ const Table = ({ columns, data }: TableProps) => {
                   {...col.getHeaderProps(col.getSortByToggleProps())}
                   className={`${col.id}-col`}
                 >
-                  {col.render('Header')}
+                  {col.disableFilters && col.render('Header')}
                   {col.canSort && <SorterIndicator sCol={col} />}
                   {!col.disableFilters && col.render('Filter')}
                 </th>
