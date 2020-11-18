@@ -8,6 +8,7 @@ import LatestRun from '../integrations/cols/LatestRun';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableActions from '../menu/IntegrationsTableActions';
 import DataSet from '../integrations/cols/DataSet';
+import LastSeen from '../integrations/cols/LastSeen';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 
@@ -17,6 +18,7 @@ export enum TableHeadings {
   LATEST_RUN = 'Latest run',
   DATA_SET = 'Destination data sets',
   SCHEDULE = 'Schedule',
+  LAST_SEEN = 'Last seen',
   CONTACTS = 'Contacts',
   OWNER = 'Owner',
   CREATED_BY = 'Created by',
@@ -68,6 +70,16 @@ export const getIntegrationTableCol = () => {
       accessor: 'schedule',
       Cell: ({ row }: Cell<Integration>) => {
         return <Schedule schedule={row.values.schedule} />;
+      },
+      disableSortBy: true,
+      disableFilters: true,
+    },
+    {
+      id: 'lastSeen',
+      Header: TableHeadings.LAST_SEEN,
+      accessor: 'lastSeen',
+      Cell: ({ row }: Cell<Integration>) => {
+        return <LastSeen lastSeen={row.values.lastSeen} />;
       },
       disableSortBy: true,
       disableFilters: true,
