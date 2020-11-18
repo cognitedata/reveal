@@ -2713,10 +2713,10 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@^14.14.7":
-  version "14.14.7"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.7.tgz#8ea1e8f8eae2430cf440564b98c6dfce1ec5945d"
-  integrity sha512-Zw1vhUSQZYw+7u5dAwNbIA9TuTotpzY/OF7sJM9FqPOF3SPjKnxrjoTktXDZgUjybf4cWVBP7O8wvKdSaGHweg==
+"@types/node@*", "@types/node@^14.14.8":
+  version "14.14.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.8.tgz#2127bd81949a95c8b7d3240f3254352d72563aec"
+  integrity sha512-z/5Yd59dCKI5kbxauAJgw6dLPzW+TNOItNE00PkpzNwUIEwdj/Lsqwq94H5DdYBX7C13aRA0CY32BK76+neEUA==
 
 "@types/npmlog@^4.1.2":
   version "4.1.2"
@@ -6146,10 +6146,10 @@ create-react-context@0.3.0, create-react-context@^0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
-cronstrue@^1.104.0:
-  version "1.104.0"
-  resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-1.104.0.tgz#23f5df243597ccffc229333137fb63c8d1cb2e65"
-  integrity sha512-x8HHGZAXUhUgb/TPIlBoMLw6MRU5rq7CipfRaSEQj8GMeBp94q7wQvKjxvOzlQiQzO8KT+NCHi1ljASlYIBhpw==
+cronstrue@^1.105.0:
+  version "1.105.0"
+  resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-1.105.0.tgz#57f89468c261d7fa56c69057f42c84eba3a37837"
+  integrity sha512-Bv8GHi5uJvxtq/9T7lgBwum7UVKMfR+LSPHZXiezP0E5gnODPVRQBAkCwijCIaWEepqmRcxTAxrUFB0UQK2wdw==
 
 cross-env@^7.0.2:
   version "7.0.2"
