@@ -14,7 +14,6 @@ export const effect = async (funcData: FunctionData) => {
   const datapoints = await sdk.datapoints.retrieve({
     items: [{ externalId: funcData.timeSeriesExternalId }],
   });
-  console.log(datapoints[0].datapoints);
   return {
     datapoints: datapoints[0].datapoints,
   };
@@ -92,7 +91,7 @@ export const node = {
     {
       id: 'datapoints',
       title: 'Datapoints',
-      type: 'DATAPOINTS',
+      type: 'TIMESERIES',
     },
   ],
   functionEffectReference: effectId,

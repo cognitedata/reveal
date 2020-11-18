@@ -96,3 +96,40 @@ export const saveExistingWorkflow = (workflow: Workflow): AppThunk => async (
     toast.error('Failed to save workflow');
   }
 };
+
+export const deleteWorkflow = (
+  chart: Chart,
+  oldWorkflow: Workflow
+): AppThunk => async (dispatch, getState) => {
+  const { tenant } = getState().environment;
+
+  if (!tenant) {
+    // Must have tenant set
+    return;
+  }
+
+  try {
+    // Delete the workflow from the chart also
+    const nextWorkflowIds = (chart.workflowIds || []).filter(
+      (flowId) => flowId !== oldWorkflow.id
+    );
+    const chartService = new ChartService(tenant);
+    chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
+
+    // Then delete the workflow
+    const workflowService = new WorkflowService(tenant);
+    await workflowService.deleteWorkflow(oldWorkflow);
+
+    // And save this all to redux
+    dispatch(workflowSlice.actions.deleteWorkflow(oldWorkflow));
+    dispatch(
+      chartSlice.actions.storedNewWorkflow({
+        id: chart.id,
+        changes: { workflowIds: nextWorkflowIds },
+      })
+    );
+    toast.success('Workflow saved!');
+  } catch (e) {
+    toast.error('Failed to delete workflow');
+  }
+};

@@ -27,6 +27,10 @@ export class WorkflowService {
   async saveWorkflow(workflow: Workflow): Promise<any> {
     return this.firebaseCollection.doc(workflow.id).set(workflow);
   }
+
+  async deleteWorkflow(workflow: Workflow): Promise<any> {
+    return this.firebaseCollection.doc(workflow.id).delete();
+  }
 }
 
 export default WorkflowService;

@@ -45,6 +45,10 @@ const workflowSlice = createSlice({
       state.status.error = action.payload;
     },
 
+    deleteWorkflow: (state, action: PayloadAction<Workflow>) => {
+      workflowAdapter.removeOne(state, action.payload.id);
+    },
+
     // Editing workflow
     updateWorkflow: (state, action: PayloadAction<Update<Workflow>>) => {
       workflowAdapter.updateOne(state, action.payload);

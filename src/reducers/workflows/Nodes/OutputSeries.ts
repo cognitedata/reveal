@@ -1,15 +1,15 @@
 import { StorableNode } from '../types';
 
 export const node = {
-  title: 'Output Series',
-  subtitle: 'FUNCTION',
+  title: 'New Time Series',
+  subtitle: 'TIMESERIES',
   color: '#4A67FB',
   icon: 'Icon',
   outputPins: [],
   inputPins: [
     {
-      id: 'input-timeseries',
-      title: 'Time series',
+      id: 'datapoints',
+      title: 'Data points',
       types: ['TIMESERIES'],
     },
   ],

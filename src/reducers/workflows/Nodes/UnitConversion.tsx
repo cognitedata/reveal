@@ -11,7 +11,6 @@ type DataPoint = {
 };
 
 export const effect = async (funcData: FunctionData, a: DataPoint[]) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
   return {
     result: a.map((x) => ({
       ...x,
