@@ -123,6 +123,28 @@ export const useResourceFilter = (type: ResourceType) => {
       throw new Error('Unknown sdk type');
   }
 };
+export const useSetResourceFilter = (type: ResourceType) => {
+  const observer = useContext(ResourceSelectionContext);
+  switch (type) {
+    case 'asset': {
+      return observer.setAssetFilter;
+    }
+    case 'event': {
+      return observer.setEventFilter;
+    }
+    case 'file': {
+      return observer.setFileFilter;
+    }
+    case 'sequence': {
+      return observer.setSequenceFilter;
+    }
+    case 'timeSeries': {
+      return observer.setTimeseriesFilter;
+    }
+    default:
+      throw new Error('Unknown sdk type');
+  }
+};
 
 export const useResourceFilters = () => {
   const observer = useContext(ResourceSelectionContext);

@@ -12,7 +12,6 @@ import {
   ResourceTypeTabs,
   SearchResults,
 } from 'lib';
-import ExplorationNavBar from 'app/containers/Exploration/ExplorationNavbar';
 import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
@@ -24,8 +23,11 @@ import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
 import { lightGrey } from 'lib/utils/Colors';
+import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
+import { Row, Col } from 'antd';
 import { useCurrentResourceType, useCurrentResourceId } from './hooks';
 import FilterToggleButton from './FilterToggleButton';
+import { LabelsQuickSelect } from './LabelsQuickSelect';
 
 const Wrapper = styled.div`
   display: flex;
@@ -119,22 +121,20 @@ function SearchPage() {
             flex: activeId ? 'unset' : 1,
           }}
         >
-          <ExplorationNavBar
-            beforeSearchInput={
-              !showFilter ? (
-                <FilterToggleButton
-                  toggleOpen={() => setShowFilter(!showFilter)}
-                />
-              ) : undefined
-            }
-          />
-          <SearchResultWrapper
-            style={{
-              marginRight: 16,
-              paddingRight: 16,
-              borderRight: `1px solid ${lightGrey}`,
-            }}
-          >
+          <SearchInputContainer align="middle">
+            {!showFilter ? (
+              <FilterToggleButton
+                toggleOpen={() => setShowFilter(!showFilter)}
+              />
+            ) : undefined}
+            <Col flex="auto">
+              <ExplorationSearchBar />
+            </Col>
+          </SearchInputContainer>
+          <div style={{ marginTop: 8 }}>
+            <LabelsQuickSelect />
+          </div>
+          <SearchResultWrapper>
             <SearchResults
               query={debouncedQuery}
               assetFilter={assetFilter}
@@ -221,4 +221,15 @@ const SearchResultWrapper = styled.div`
   flex-direction: column;
   overflow: auto;
   height: 100%;
+`;
+
+const SearchInputContainer = styled(Row)`
+  border-right: 1px solid ${lightGrey};
+  border-bottom: 1px solid ${lightGrey};
+  margin-right: 16;
+  padding-right: 16;
+  border-right: 1px solid ${lightGrey};
+  margin-right: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 `;
