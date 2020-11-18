@@ -1,13 +1,11 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, ReactText } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import { HeaderGroup } from 'react-table';
 import styled from 'styled-components';
 
-interface OwnProps {
-  sCol: HeaderGroup;
+interface OwnProps<T extends object> {
+  sCol: HeaderGroup<T>;
 }
-
-type Props = OwnProps;
 
 const SortingIcon = styled((props) => <Icon {...props} />)`
   margin-left: 0.25rem;
@@ -17,7 +15,7 @@ const SortingIcon = styled((props) => <Icon {...props} />)`
   }
 `;
 
-const SorterIndicator: FunctionComponent<Props> = ({ sCol }: Props) => {
+const SorterIndicator = <T extends object>({ sCol }: OwnProps<T>) => {
   if (!sCol.disableSortBy) {
     if (sCol.isSorted) {
       if (sCol.isSortedDesc) {
