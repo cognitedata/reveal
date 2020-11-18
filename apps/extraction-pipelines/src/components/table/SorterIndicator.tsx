@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
+import { HeaderGroup } from 'react-table';
 import styled from 'styled-components';
 
 interface OwnProps {
-  sCol: any;
+  sCol: HeaderGroup;
 }
 
 type Props = OwnProps;
