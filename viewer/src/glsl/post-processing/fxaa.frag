@@ -14,6 +14,7 @@ varying vec2 v_rgbSW;
 varying vec2 v_rgbSE;
 varying vec2 v_rgbM;
 
+uniform vec2 inverseResolution;
 uniform vec2 resolution;
 uniform sampler2D tDiffuse;
 
@@ -27,12 +28,13 @@ uniform sampler2D tDiffuse;
     #define FXAA_SPAN_MAX     8.0
 #endif
 
-vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
+vec4 fxaa(sampler2D tex, vec2 fragCoord,
+    vec2 resolution, vec2 inverseResolution,
     vec2 v_rgbNW, vec2 v_rgbNE,
     vec2 v_rgbSW, vec2 v_rgbSE,
     vec2 v_rgbM) {
   vec4 color;
-  mediump vec2 inverseVP = vec2(1.0 / resolution.x, 1.0 / resolution.y);
+
   vec3 rgbNW = texture2D(tex, v_rgbNW).xyz;
   vec3 rgbNE = texture2D(tex, v_rgbNE).xyz;
   vec3 rgbSW = texture2D(tex, v_rgbSW).xyz;
@@ -58,14 +60,14 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
   float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);
   dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),
       max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),
-      dir * rcpDirMin)) * inverseVP;
+      dir * rcpDirMin)) * inverseResolution;
 
   vec4 rgbA = 0.5 * (
-    texture2D(tex, fragCoord * inverseVP + dir * (1.0 / 3.0 - 0.5)) +
-    texture2D(tex, fragCoord * inverseVP + dir * (2.0 / 3.0 - 0.5)));
+    texture2D(tex, inverseResolution * (fragCoord + dir * (1.0 / 3.0 - 0.5))) +
+    texture2D(tex, inverseResolution * (fragCoord + dir * (2.0 / 3.0 - 0.5))));
   vec4 rgbB = rgbA * 0.5 + 0.25 * (
-    texture2D(tex, fragCoord * inverseVP + dir * -0.5) +
-    texture2D(tex, fragCoord * inverseVP + dir * 0.5));
+    texture2D(tex, inverseResolution * (fragCoord + dir * -0.5)) +
+    texture2D(tex, inverseResolution * (fragCoord + dir * 0.5)));
 
   float lumaB = dot(rgbB.rgb, luma);
   if ((lumaB < lumaMin) || (lumaB > lumaMax)) {
@@ -78,5 +80,7 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
 
 void main() {
   vec2 fragCoord = vUv * resolution;
-  gl_FragColor = fxaa(tDiffuse, fragCoord, resolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
+  gl_FragColor = fxaa(tDiffuse, fragCoord, 
+    resolution, inverseResolution, 
+    v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
 }
