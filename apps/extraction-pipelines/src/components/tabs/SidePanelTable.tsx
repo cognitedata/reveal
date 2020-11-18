@@ -23,7 +23,6 @@ import {
   IntegrationProps,
   RunAPIProps,
   RunsProps,
-  RunProps,
 } from '../../model/Runs';
 
 const Table = ({ columns, data }: TableProps) => {
@@ -99,7 +98,7 @@ const mapRuns = (response: RunsAPIResponse) => {
   const result: RunsProps[] = [];
   response.items.forEach((item: IntegrationProps) => {
     item.statuses.forEach((status: RunAPIProps) => {
-      const run: RunProps = {
+      const run: RunsProps = {
         timestamp: status.timestamp,
         status: '',
         statusSeen: 'OK',

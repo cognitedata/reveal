@@ -42,5 +42,4 @@ export interface RunProps {
   timestamp: number;
   status: string;
   statusSeen: string;
-  subRows: any;
 }
