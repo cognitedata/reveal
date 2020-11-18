@@ -137,7 +137,7 @@ function ITable<T extends { id: ReactText }>({
               {headerGroup.headers.map((col: HeaderGroup<T>) => {
                 return (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {col.disableFilters && col.render('Header')}
+                    {col.render('Header')}
                     {col.canSort && <SorterIndicator sCol={col} />}
                     {!col.disableFilters && col.render('Filter')}
                   </th>

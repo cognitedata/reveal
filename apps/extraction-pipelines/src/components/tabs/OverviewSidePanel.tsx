@@ -36,7 +36,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
   return (
     <>
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
-      <StyledTabs sidePanelTabs>
+      <StyledTabs sidepaneltabs="true">
         <StyledTabPane tab="Monitoring" key="monitoring">
           <SidePanelTable />
         </StyledTabPane>

@@ -177,19 +177,47 @@ export const mockError = {
   error: { code: 400, message: 'Multiple authentication headers present' },
 };
 
-export const mockDataRunsResponse = [
-  {
-    timestamp: 1605575298134,
-    status: 'FAIL',
-    statusSeen: 'OK',
-    subRows: [
-      { timestamp: 1605555298134, status: 'FAIL', statusSeen: 'OK' },
-      { timestamp: 1605535298134, status: 'OK', statusSeen: 'OK' },
-    ],
-  },
-  { timestamp: 1605418198134, status: '', statusSeen: 'OK' },
-  { timestamp: 1604918198134, status: 'FAIL', statusSeen: 'OK' },
-  { timestamp: 1604218198134, status: 'OK', statusSeen: 'OK' },
-  { timestamp: 1603918198134, status: 'OK', statusSeen: 'OK' },
-  { timestamp: 1600923198134, status: 'OK', statusSeen: 'OK' },
-];
+export const mockDataRunsResponse = {
+  items: [
+    {
+      createdTime: 1584065700000,
+      lastUpdatedTime: 1584137100000,
+      externalId: 'dataIntegration0001',
+      statuses: [
+        {
+          timestamp: 1605575298134,
+          status: 'failure',
+        },
+        {
+          timestamp: 1605555298134,
+          status: 'seen',
+        },
+        {
+          timestamp: 1605535298134,
+          status: 'seen',
+        },
+        {
+          timestamp: 1605418198134,
+          status: 'success',
+        },
+        {
+          timestamp: 1604918198134,
+          status: 'success',
+        },
+        {
+          timestamp: 1604218198134,
+          status: 'success',
+        },
+        {
+          timestamp: 1603918198134,
+          status: 'failure',
+        },
+        {
+          timestamp: 1600923198134,
+          status: 'success',
+        },
+      ],
+      id: 1,
+    },
+  ],
+};

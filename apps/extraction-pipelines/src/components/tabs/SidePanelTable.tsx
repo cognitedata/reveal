@@ -61,7 +61,7 @@ const Table = ({ columns, data }: ITableProps) => {
                   {...col.getHeaderProps(col.getSortByToggleProps())}
                   className={`${col.id}-col`}
                 >
-                  {col.disableFilters && col.render('Header')}
+                  {col.render('Header')}
                   {col.canSort && <SorterIndicator sCol={col} />}
                   {!col.disableFilters && col.render('Filter')}
                 </th>
@@ -73,8 +73,7 @@ const Table = ({ columns, data }: ITableProps) => {
       <tbody {...getTableBodyProps()}>
         {rows.map((row: Row) => {
           prepareRow(row);
-          const isParentRow =
-            (row?.subRows?.length && row?.subRows?.length > 0) ?? false;
+          const isParentRow = row.subRows.length > 0;
           const isChildRow = row.depth === 1;
           return (
             <tr
@@ -102,8 +101,39 @@ const Table = ({ columns, data }: ITableProps) => {
   );
 };
 
+const mapRuns = (response: any) => {
+  const result: any = [];
+  response.items.forEach((item: any) => {
+    item.statuses.forEach((status: any) => {
+      const run = {
+        timestamp: status.timestamp,
+        status: '',
+        statusSeen: 'OK',
+        subRows: [],
+      };
+      let indexParentRun;
+
+      switch (status.status) {
+        case 'success':
+          run.status = 'OK';
+          result.push(run);
+          break;
+        case 'failure':
+          run.status = 'FAIL';
+          result.push(run);
+          break;
+        case 'seen':
+          indexParentRun = result.length - 1;
+          result[indexParentRun].subRows.push(run);
+          break;
+      }
+    });
+  });
+  return result;
+};
+
 const SidePanelTable = () => {
-  const data = useMemo(() => mockDataRunsResponse, []);
+  const data = useMemo(() => mapRuns(mockDataRunsResponse), []);
 
   const columns = useMemo(
     () => [

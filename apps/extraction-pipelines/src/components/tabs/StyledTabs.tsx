@@ -14,8 +14,8 @@ const StyledTabs = styled((props) => <Tabs {...props} />)`
   .ant-tabs-tabpane {
     display: grid;
     grid-template-columns: ${(props) =>
-      props.sidePanelTabs ? 'auto' : 'auto 25rem'};
-    padding: ${(props) => (props.sidePanelTabs ? '0 1.25rem 0 1.375rem' : '0')};
+      props.sidepaneltabs ? 'auto' : 'auto 25rem'};
+    padding: ${(props) => (props.sidepaneltabs ? '0 1.25rem 0 1.375rem' : '0')};
   }
   .ant-tabs-tab {
     padding: 0.625rem 1rem;
