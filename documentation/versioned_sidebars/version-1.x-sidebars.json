@@ -64,6 +64,10 @@
         {
           "type": "doc",
           "id": "version-1.x/examples/pointcloud"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/pointcloud-intersections"
         }
       ]
     },
