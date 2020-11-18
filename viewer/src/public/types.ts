@@ -8,8 +8,10 @@ import { SectorQuads } from '../datamodels/cad/rendering/types';
 import { SectorCuller } from '../internal';
 import { LoadingState } from '../utilities';
 
-// we use these types in public API so they should be reexported here
-// to appear in the api reference docs
+/**
+ * We use these types in public API so they should be reexported here
+ * to appear in the api reference docs.
+ */
 export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
 export * from '../datamodels/base/SupportedModelTypes';

@@ -35,6 +35,9 @@ export interface Cognite3DViewerOptions {
   /** Send anonymous usage statistics. */
   logMetrics?: boolean;
 
+  /** Enable WebGL 2.0 */
+  enableWebGLTwo?: boolean;
+
   /** @deprecated And ignored. */
   highlightColor?: THREE.Color;
 

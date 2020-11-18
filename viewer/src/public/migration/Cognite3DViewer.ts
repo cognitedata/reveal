@@ -150,7 +150,18 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    this.renderer = options.renderer || new THREE.WebGLRenderer();
+    if (options.enableWebGLTwo && !options.renderer) {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('webgl2');
+      if (context) {
+        this.renderer = new THREE.WebGLRenderer({ canvas, context });
+      } else {
+        throw new Error('WebGL 2.0 is not supported on this browser');
+      }
+    } else {
+      this.renderer = options.renderer || new THREE.WebGLRenderer();
+    }
+
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
