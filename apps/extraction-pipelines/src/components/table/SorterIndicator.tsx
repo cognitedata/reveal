@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactText } from 'react';
+import React from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import { HeaderGroup } from 'react-table';
 import styled from 'styled-components';

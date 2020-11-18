@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { StyledDropdown } from 'styles/StyledDropdown';
 import { Status } from '../../model/Status';
-import { badge } from '../../cogs-variables';
 
 const StyledButton = styled((props) => (
   <Button {...props}>{props.children}</Button>
@@ -76,7 +75,6 @@ function StatusFilterDropdown<D extends object>({
         data-testid="status-menu-all"
       >
         <Badge
-          size={badge.size}
           text="ALL"
           background="white"
           aria-label="All"
