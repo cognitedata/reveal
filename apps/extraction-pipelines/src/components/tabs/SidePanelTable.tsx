@@ -7,7 +7,6 @@ import {
   useSortBy,
   useExpanded,
   HeaderGroup,
-  Column,
   Cell,
   Row,
 } from 'react-table';
@@ -17,22 +16,17 @@ import { mockDataRunsResponse } from '../../utils/mockResponse';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import StatusFilterDropdown from '../table/StatusFilterDropdown';
 import SorterIndicator from '../table/SorterIndicator';
+import {
+  TableProps,
+  CellProps,
+  RunsAPIResponse,
+  IntegrationProps,
+  RunAPIProps,
+  RunsProps,
+  RunProps,
+} from '../../model/Runs';
 
-interface ITableProps {
-  data: {
-    timestamp: number;
-    status: string;
-    statusSeen: string;
-  }[];
-  columns: Column[];
-}
-
-interface ICell {
-  row: Row;
-  cell: Cell;
-}
-
-const Table = ({ columns, data }: ITableProps) => {
+const Table = ({ columns, data }: TableProps) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -101,11 +95,11 @@ const Table = ({ columns, data }: ITableProps) => {
   );
 };
 
-const mapRuns = (response: any) => {
-  const result: any = [];
-  response.items.forEach((item: any) => {
-    item.statuses.forEach((status: any) => {
-      const run = {
+const mapRuns = (response: RunsAPIResponse) => {
+  const result: RunsProps[] = [];
+  response.items.forEach((item: IntegrationProps) => {
+    item.statuses.forEach((status: RunAPIProps) => {
+      const run: RunProps = {
         timestamp: status.timestamp,
         status: '',
         statusSeen: 'OK',
@@ -160,7 +154,7 @@ const SidePanelTable = () => {
       {
         Header: 'Last seen',
         accessor: 'statusSeen',
-        Cell: ({ row, cell }: ICell) =>
+        Cell: ({ row, cell }: CellProps) =>
           row.canExpand ? (
             <span
               {...row.getToggleRowExpandedProps({
