@@ -33,7 +33,7 @@ export const getMonitoringTableCol = () => {
       },
       disableSortBy: true,
       Filter: StatusFilterDropdown,
-      filter: 'includes',
+      filter: 'exactText',
       disableFilters: false,
     },
     {

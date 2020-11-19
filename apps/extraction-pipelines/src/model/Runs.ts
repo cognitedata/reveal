@@ -23,6 +23,6 @@ export interface RunRow extends Run {
 
 export interface Run {
   timestamp: number;
-  status: Status | null;
-  statusSeen: string;
+  status: Status | undefined;
+  statusSeen: Status;
 }

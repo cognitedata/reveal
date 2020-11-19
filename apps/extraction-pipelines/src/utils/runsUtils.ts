@@ -7,8 +7,8 @@ const mapRuns = (response: RunsAPIResponse) => {
     item.statuses.forEach((status: StatusRow) => {
       const run: RunRow = {
         timestamp: status.timestamp,
-        status: null,
-        statusSeen: 'OK',
+        status: undefined,
+        statusSeen: Status.OK,
         subRows: [],
       };
       let indexParentRun;
