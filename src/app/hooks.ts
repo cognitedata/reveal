@@ -1,8 +1,18 @@
 import memoize from 'lodash/memoize';
+import uniqueBy from 'lodash/uniqBy';
 import qs from 'query-string';
 import { useParams, useHistory } from 'react-router-dom';
 import { ResourceType } from 'lib';
 import { createLink } from '@cognite/cdf-utilities';
+import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
+import { useCdfItem, useList } from '@cognite/sdk-react-query-hooks';
+import { CogniteEvent } from '@cognite/sdk/dist/src';
+import { useMemo } from 'react';
+import {
+  annotationInteralIdFilter,
+  annotationExternalIdFilter,
+} from './utils/filters';
+
 import { SEARCH_KEY } from './utils/contants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
@@ -106,4 +116,41 @@ export const useCurrentResourceId = (): [
     }
   };
   return [idNumber, setCurrentResourceId];
+};
+
+export const useAnnotations = (fileId: number, resourceType?: ResourceType) => {
+  const { data: file = {} } = useCdfItem<{ externalId?: string }>('files', {
+    id: fileId,
+  });
+
+  const byInternalId = useList<CogniteEvent>('events', {
+    filter: annotationInteralIdFilter(fileId, resourceType),
+  });
+
+  const byExternalId = useList<CogniteEvent>(
+    'events',
+    {
+      filter: annotationExternalIdFilter(file.externalId!, resourceType),
+    },
+    { enabled: !!file.externalId }
+  );
+
+  const annotations = useMemo(
+    () =>
+      uniqueBy(
+        [...(byExternalId.data || []), ...(byInternalId.data || [])].filter(
+          ({ metadata = {} }) => metadata[`${PREFIX}_status`] !== 'deleted'
+        ),
+        'metadata.CDF_ANNOTATION_box'
+      ),
+    [byInternalId.data, byExternalId.data]
+  );
+
+  return {
+    data: annotations,
+    isFetched:
+      byInternalId.isFetched && (byExternalId.isFetched || !file.externalId),
+    isError: byInternalId.isError || byExternalId.isError,
+    isFetching: byInternalId.isFetching || byExternalId.isFetching,
+  };
 };

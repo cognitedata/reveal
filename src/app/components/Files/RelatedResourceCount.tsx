@@ -1,35 +1,32 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ResourceType } from 'lib';
-import { IdEither, CogniteEvent } from '@cognite/sdk/dist/src';
-import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
-import { annotationFilter } from 'app/utils/filters';
+import { useAnnotations } from 'app/hooks';
 
 type Props = {
   fileId: number;
-  resourceType: ResourceType;
+  resourceType?: ResourceType;
 };
 export default function RelatedResourceCount({ fileId, resourceType }: Props) {
-  const { data: annotations = [] } = useList<CogniteEvent>('events', {
-    filter: annotationFilter(fileId, resourceType),
-  });
+  const { data: annotations } = useAnnotations(fileId, resourceType);
 
-  const ids = annotations
-    .map(({ metadata = {} }) => {
-      if (metadata[`${PREFIX}resource_external_id`]) {
-        return {
-          externalId: metadata[`${PREFIX}resource_external_id`],
-        };
-      }
-      if (metadata[`${PREFIX}resource_id`]) {
-        return { id: parseInt(metadata[`${PREFIX}resource_id`], 10) };
-      }
-      return undefined;
-    })
-    .filter(Boolean) as IdEither[];
+  const ids = useMemo(
+    () =>
+      new Set(
+        annotations
+          .map(
+            ({ metadata = {} }) =>
+              metadata[`${PREFIX}resource_external_id`] ||
+              metadata[`${PREFIX}resource_id`]
+          )
+          .filter(Boolean)
+      ),
+    [annotations]
+  );
 
-  if (ids.length > 0) {
-    return <>({ids.length})</>;
+  if (ids.size > 0) {
+    return <>({ids.size})</>;
   }
   return null;
 }

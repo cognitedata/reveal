@@ -1,5 +1,7 @@
-import React from 'react';
-import { Loader } from '@cognite/cogs.js';
+import React, { useMemo } from 'react';
+import uniqBy from 'lodash/uniqBy';
+import { Loader } from 'lib/components';
+import { Alert } from 'antd';
 import {
   ResourceType,
   convertResourceType,
@@ -9,13 +11,14 @@ import {
   EventTable,
   SequenceTable,
 } from 'lib';
-import { useList, useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { CogniteEvent, IdEither } from '@cognite/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { createLink } from '@cognite/cdf-utilities';
 import { useHistory } from 'react-router-dom';
 
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
-import { annotationFilter } from 'app/utils/filters';
+
+import { useAnnotations } from 'app/hooks';
+import { IdEither } from '@cognite/sdk';
 
 type Props = {
   fileId: number;
@@ -23,36 +26,49 @@ type Props = {
 };
 export default function RelatedResources({ fileId, resourceType }: Props) {
   const history = useHistory();
-  const { data: annotations = [], isFetched: annotationsFetched } = useList<
-    CogniteEvent
-  >('events', {
-    filter: annotationFilter(fileId, resourceType),
-  });
-
-  const ids = annotations
-    .map(({ metadata = {} }) => {
-      if (metadata[`${PREFIX}resource_external_id`]) {
-        return {
-          externalId: metadata[`${PREFIX}resource_external_id`],
-        };
-      }
-      if (metadata[`${PREFIX}resource_id`]) {
-        return { id: parseInt(metadata[`${PREFIX}resource_id`], 10) };
-      }
-      return undefined;
-    })
-    .filter(Boolean) as IdEither[];
-
-  const itemsEnabled = ids && ids.length > 0;
-  const { data: items = [], isFetched: itemsFetched } = useCdfItems(
-    convertResourceType(resourceType),
-    ids,
-    {
-      enabled: itemsEnabled,
-    }
+  const { data: annotations, isFetched, isError } = useAnnotations(
+    fileId,
+    resourceType
   );
 
-  if (!annotationsFetched || (!itemsFetched && itemsEnabled)) {
+  const ids = useMemo(
+    () =>
+      uniqBy(
+        annotations.map(({ metadata = {} }) => {
+          if (metadata[`${PREFIX}resource_external_id`]) {
+            return {
+              externalId: metadata[`${PREFIX}resource_external_id`],
+            };
+          }
+          if (metadata[`${PREFIX}resource_id`]) {
+            return { id: parseInt(metadata[`${PREFIX}resource_id`], 10) };
+          }
+          return undefined;
+        }),
+        (
+          i:
+            | { id: number; externalId: undefined }
+            | { id: undefined; externalId: string }
+            | undefined
+        ) => i?.externalId || i?.id
+      ).filter(Boolean) as IdEither[],
+    [annotations]
+  );
+
+  const itemsEnabled = ids && ids.length > 0;
+  const {
+    data: items = [],
+    isFetched: itemsFetched,
+    isError: itemsError,
+  } = useCdfItems(convertResourceType(resourceType), ids, {
+    enabled: itemsEnabled,
+  });
+
+  if (isError || itemsError) {
+    return <Alert type="warning" message="nope" />;
+  }
+
+  if (!isFetched || (!itemsFetched && itemsEnabled)) {
     return <Loader />;
   }
 
@@ -60,9 +76,9 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
     case 'asset': {
       return (
         <AssetTable
-          items={items}
-          onItemClicked={(a: { id: number }) =>
-            history.push(createLink(`/explore/asset/${a.id}`))
+          data={items}
+          onRowClick={({ id }) =>
+            history.push(createLink(`/explore/asset/${id}`))
           }
         />
       );
@@ -70,9 +86,9 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
     case 'file': {
       return (
         <FileTable
-          items={items}
-          onItemClicked={(a: { id: number }) =>
-            history.push(createLink(`/explore/file/${a.id}`))
+          data={items}
+          onRowClick={({ id }) =>
+            history.push(createLink(`/explore/file/${id}`))
           }
         />
       );
@@ -80,9 +96,9 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
     case 'timeSeries': {
       return (
         <TimeseriesTable
-          items={items}
-          onItemClicked={(a: { id: number }) =>
-            history.push(createLink(`/explore/timeseries/${a.id}`))
+          data={items}
+          onRowClick={({ id }) =>
+            history.push(createLink(`/explore/timeseries/${id}`))
           }
         />
       );
@@ -90,9 +106,9 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
     case 'event': {
       return (
         <EventTable
-          items={items}
-          onItemClicked={(a: { id: number }) =>
-            history.push(createLink(`/explore/event/${a.id}`))
+          data={items}
+          onRowClick={({ id }) =>
+            history.push(createLink(`/explore/event/${id}`))
           }
         />
       );
@@ -100,9 +116,9 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
     case 'sequence': {
       return (
         <SequenceTable
-          items={items}
-          onItemClicked={(a: { id: number }) =>
-            history.push(createLink(`/explore/sequence/${a.id}`))
+          data={items}
+          onRowClick={({ id }) =>
+            history.push(createLink(`/explore/sequence/${id}`))
           }
         />
       );

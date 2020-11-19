@@ -1,18 +1,28 @@
 import {
-  CURRENT_VERSION,
   ANNOTATION_METADATA_PREFIX as PREFIX,
-  ANNOTATION_EVENT_TYPE,
+  getIdFilter,
+  getExternalIdFilter,
 } from '@cognite/annotations';
 import { ResourceType } from 'lib';
 
-export const annotationFilter = (
+export const annotationInteralIdFilter = (
   fileId: number,
-  resourceType: ResourceType
-) => ({
-  type: ANNOTATION_EVENT_TYPE,
-  metadata: {
-    [`${PREFIX}file_id`]: fileId,
-    [`${PREFIX}version`]: CURRENT_VERSION,
-    [`${PREFIX}resource_type`]: resourceType,
-  },
-});
+  resourceType?: ResourceType
+) => {
+  const filter = getIdFilter(fileId);
+  if (resourceType) {
+    filter.metadata[`${PREFIX}resource_type`] = resourceType;
+  }
+  return filter;
+};
+
+export const annotationExternalIdFilter = (
+  id: string,
+  resourceType?: ResourceType
+) => {
+  const filter = getExternalIdFilter(id);
+  if (resourceType) {
+    filter.metadata[`${PREFIX}resource_type`] = resourceType;
+  }
+  return filter;
+};
