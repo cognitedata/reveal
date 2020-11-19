@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import OverviewTab from './OverviewTab';
 import ExtractorDownloadsTab from './ExtractorDownloadsTab';
-import { StyledTabs, StyledTabPane } from './TabsStyle';
+import { StyledTabs, StyledTabPane } from './StyledTabs';
 
 interface OwnProps {}
 

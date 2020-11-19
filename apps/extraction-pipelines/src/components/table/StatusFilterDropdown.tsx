@@ -31,11 +31,12 @@ interface StatusFilterDropdownProps<D extends object> {
     filterValue: string;
     setFilter: (filter: string | undefined) => void;
     preFilteredRows: Array<Row<D>>;
+    Header: string;
   };
 }
 
 function StatusFilterDropdown<D extends object>({
-  column: { filterValue, setFilter },
+  column: { filterValue, setFilter, Header },
 }: StatusFilterDropdownProps<D>) {
   const onClickFail = () => {
     setFilter(Status.FAIL);
@@ -87,7 +88,7 @@ function StatusFilterDropdown<D extends object>({
     <>
       <StyledDropdown content={MenuContent}>
         <StyledButton unstyled>
-          Status
+          {Header}
           <Icon type="CaretDown" />
         </StyledButton>
       </StyledDropdown>
