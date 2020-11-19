@@ -11,7 +11,7 @@ import {
   Row,
 } from 'react-table';
 import StatusMarker from '../integrations/cols/StatusMarker';
-import Wrapper from '../../styles/StyledTable';
+import StyledTable from '../../styles/StyledTable';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import StatusFilterDropdown from '../table/StatusFilterDropdown';
@@ -141,9 +141,9 @@ const MonitoringTable = () => {
   );
 
   return (
-    <Wrapper>
+    <StyledTable>
       <Table columns={columns} data={data} />
-    </Wrapper>
+    </StyledTable>
   );
 };
 

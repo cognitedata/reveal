@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 
-const Wrapper = styled.div`
+const StyledTable = styled.div`
   .cogs-table {
     border-spacing: 0;
     border-collapse: collapse;
@@ -67,4 +67,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default Wrapper;
+export default StyledTable;

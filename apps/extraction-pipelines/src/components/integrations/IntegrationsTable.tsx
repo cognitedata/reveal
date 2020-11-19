@@ -11,7 +11,7 @@ import {
   mapUniqueDataSetIds,
 } from '../../utils/dataSetUtils';
 import { ErrorFeedback } from '../error/ErrorFeedback';
-import Wrapper from '../../styles/StyledTable';
+import StyledTable from '../../styles/StyledTable';
 
 interface OwnProps {}
 
@@ -38,12 +38,12 @@ const IntegrationsTable: FunctionComponent<Props> = () => {
     tableData = mapDataSetToIntegration(data, dataSets);
   }
   return (
-    <Wrapper>
+    <StyledTable>
       <ITable
         data={tableData}
         columns={getIntegrationTableCol() as Column<Integration>[]}
       />
-    </Wrapper>
+    </StyledTable>
   );
 };
 
