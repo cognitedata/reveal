@@ -2,7 +2,10 @@ import React, { useEffect } from 'react';
 import { useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
-import { SequenceColumns, SequenceDetails } from 'lib/containers/Sequences';
+import {
+  SequenceDetails,
+  SequencePreview as SequenceTabPreview,
+} from 'lib/containers/Sequences';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Row, Col } from 'antd';
 import { Sequence } from '@cognite/sdk';
@@ -69,7 +72,7 @@ export const SequencePreview = ({
         item={{ id: sequenceId, type: 'sequence' }}
         actions={actions}
       />
-      <Row style={{ marginLeft: 16 }}>
+      <Row style={{ marginLeft: 16, height: 'calc(100% - 82px)' }}>
         <Col span={24}>
           <ResourceDetailsTabs
             parentResource={{
@@ -86,11 +89,11 @@ export const SequencePreview = ({
               )
             }
             additionalTabs={[
+              <Tabs.Pane title="Preview" key="preview">
+                <SequenceTabPreview sequence={sequence} />
+              </Tabs.Pane>,
               <Tabs.Pane title="Details" key="details">
                 <SequenceDetails sequence={sequence} showAll />
-              </Tabs.Pane>,
-              <Tabs.Pane title="Columns " key="columns">
-                <SequenceColumns sequence={sequence} />
               </Tabs.Pane>,
             ]}
           />

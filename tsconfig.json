@@ -12,8 +12,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["es2015", "dom"],

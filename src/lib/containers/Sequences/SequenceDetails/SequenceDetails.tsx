@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Sequence } from '@cognite/sdk';
-import { InfoGrid, DetailsItem, TimeDisplay } from 'lib/components';
+
 import { Button, Title } from '@cognite/cogs.js';
+import { DetailsItem, InfoGrid, TimeDisplay } from 'lib';
 
 export const SequenceDetails = ({
   sequence,
@@ -13,6 +14,7 @@ export const SequenceDetails = ({
   const [displayedAmount, setDisplayedAmount] = useState(
     showAll ? Object.keys(sequence.metadata || {}).length : 5
   );
+
   return (
     <>
       <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
