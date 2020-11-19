@@ -2594,7 +2594,7 @@
     "@svgr/plugin-svgo" "^5.4.0"
     loader-utils "^2.0.0"
 
-"@testing-library/dom@^7.2.2", "@testing-library/dom@^7.27.1":
+"@testing-library/dom@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.27.1.tgz#b760182513357e4448a8461f9565d733a88d71d0"
   integrity sha512-AF56RoeUU8bO4DOvLyMI44H3O1LVKZQi2D/m5fNDr+iR4drfOFikTr26hT6IY7YG+l8g69FXsHERa+uThaYYQg==
@@ -2630,12 +2630,12 @@
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^7.27.1"
 
-"@testing-library/testcafe@^4.2.3":
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/@testing-library/testcafe/-/testcafe-4.2.3.tgz#a46b8aea2b5eb8cbebaca5f8461a6f70296143b1"
-  integrity sha512-g1qRX5KQ2+TG/p63kRaoAZ9LTGqt8Qv1dJbOmySjax8Ik2ml1tU4hxu8PVay05LTLJgR59F0pX3sfIOHg5Hi6g==
+"@testing-library/testcafe@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/testcafe/-/testcafe-4.3.0.tgz#b212136d6955dfc0345ca55d90deab76043d5969"
+  integrity sha512-RNoO2I7iEJNhjp8Q80E32x5qSpSzn7RExMmV1cbKv4P6QLRXNPfBMLcwLx2hqUJtw4F+rqK/sS/MTfD/3fBY7g==
   dependencies:
-    "@testing-library/dom" "^7.2.2"
+    "@testing-library/dom" "^7.27.1"
 
 "@tippyjs/react@4.0.2":
   version "4.0.2"
