@@ -10,13 +10,10 @@ const ChartList = () => {
   const dispatch = useDispatch();
   const allCharts = useSelector(chartSelectors.selectAll);
   const loadingStatus = useSelector((state) => state.charts.status);
-  const firebaseReady = useSelector((state) => state.environment.firebaseReady);
 
   useEffect(() => {
-    if (firebaseReady) {
-      dispatch(fetchAllCharts());
-    }
-  }, [firebaseReady]);
+    dispatch(fetchAllCharts());
+  }, []);
 
   const renderList = () => {
     return allCharts.map((chart) => (
@@ -29,7 +26,7 @@ const ChartList = () => {
   return (
     <div id="chart-list" style={{ padding: 16 }}>
       Hello to all your charts!
-      {loadingStatus.status === 'LOADING' && <Icon type="Loading" />}
+      <div>{loadingStatus.status === 'LOADING' && <Icon type="Loading" />}</div>
       <div>{renderList()}</div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { toast } from '@cognite/cogs.js';
 import { nanoid } from '@reduxjs/toolkit';
 import chartSlice, { Chart } from 'reducers/charts';
+import { selectTenant, selectUser } from 'reducers/environment';
 import ChartService from 'services/ChartService';
 import WorkflowService from 'services/WorkflowService';
 import { AppThunk } from 'store';
@@ -34,10 +35,12 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
   dispatch,
   getState
 ) => {
-  const { tenant } = getState().environment;
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
 
-  if (!tenant) {
-    // Must have tenant set
+  if (!tenant || !user) {
+    // Must have tenant and user set
     return;
   }
 
@@ -58,8 +61,8 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 
     // Attach this workflow to the current chart
     const nextWorkflowIds = [...(chart.workflowIds || []), newWorkflow.id];
-    const chartService = new ChartService(tenant);
-    chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
+    const chartService = new ChartService(tenant, user);
+    await chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
     dispatch(workflowSlice.actions.storedNewWorkflow(newWorkflow));
     dispatch(
       chartSlice.actions.storedNewWorkflow({

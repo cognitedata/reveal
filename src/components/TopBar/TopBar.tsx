@@ -6,10 +6,18 @@ import logoSvg from 'assets/logo.svg';
 import useSelector from 'hooks/useSelector';
 import { selectUser } from 'reducers/environment';
 import { useHistory } from 'react-router-dom';
+import useDispatch from 'hooks/useDispatch';
+import searchSlice from 'reducers/search/slice';
 
 const TopBarWrapper = () => {
   const user = useSelector(selectUser);
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const handleClickSearch = () => {
+    dispatch(searchSlice.actions.showSearch());
+  };
+
   return (
     <TopBar>
       <TopBar.Left>
@@ -24,6 +32,16 @@ const TopBarWrapper = () => {
               />
             </Button>
           }
+        />
+        <TopBar.Action
+          icon="Search"
+          text="Search"
+          onClick={() => handleClickSearch()}
+        />
+        <TopBar.Action
+          icon="ChartMergedView"
+          text="New chart"
+          onClick={() => alert('create new chart')}
         />
         <TopBar.Navigation links={[]} />
       </TopBar.Left>

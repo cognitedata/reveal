@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import { chartSelectors } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -10,6 +10,7 @@ import {
   fetchWorkflowsForChart,
   createNewWorkflow,
 } from 'reducers/workflows/api';
+import useEnsureData from 'hooks/useEnsureData';
 import { Header, TopPaneWrapper, BottomPaneWrapper } from './elements';
 
 type ChartViewProps = {
@@ -17,6 +18,7 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
+  const hasData = useEnsureData();
   const dispatch = useDispatch();
   const [activeWorkflowId, setActiveWorkflowId] = useState<string>();
   const { chartId = propsChartId } = useParams<{ chartId: string }>();
@@ -32,7 +34,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       dispatch(fetchWorkflowsForChart(chart?.workflowIds));
       // Run the existing workflows here
     }
-  }, []);
+  }, [chart?.id]);
 
   const onNewWorkflow = () => {
     if (chart) {
@@ -46,6 +48,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       name: workflow?.name,
       data: workflow?.latestRun?.results,
     }));
+
+  if (!hasData) {
+    return <Icon type="Loading" />;
+  }
 
   if (!chart) {
     return (
