@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { Colors, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
-import SidePanelTable from './SidePanelTable';
+import MonitoringTable from './MonitoringTable';
 import { StyledTabs, StyledTabPane } from './StyledTabs';
 
 const SidePanelHeading = styled((props) => (
@@ -38,7 +38,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
       <StyledTabs sidepaneltabs="true">
         <StyledTabPane tab="Monitoring" key="monitoring">
-          <SidePanelTable />
+          <MonitoringTable />
         </StyledTabPane>
         <StyledTabPane tab="Contacts" key="contacts">
           Contacts

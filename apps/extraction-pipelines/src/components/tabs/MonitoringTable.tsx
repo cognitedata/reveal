@@ -125,7 +125,7 @@ const mapRuns = (response: RunsAPIResponse) => {
   return result;
 };
 
-const SidePanelTable = () => {
+const MonitoringTable = () => {
   const data = useMemo(() => mapRuns(mockDataRunsResponse), []);
 
   const columns = useMemo(
@@ -184,4 +184,4 @@ const SidePanelTable = () => {
   );
 };
 
-export default SidePanelTable;
+export default MonitoringTable;
