@@ -16,14 +16,8 @@ import { mockDataRunsResponse } from '../../utils/mockResponse';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import StatusFilterDropdown from '../table/StatusFilterDropdown';
 import SorterIndicator from '../table/SorterIndicator';
-import {
-  TableProps,
-  CellProps,
-  RunsAPIResponse,
-  IntegrationProps,
-  RunAPIProps,
-  RunsProps,
-} from '../../model/Runs';
+import { TableProps, CellProps } from '../../model/Runs';
+import mapRuns from '../../utils/runsUtils';
 
 const Table = ({ columns, data }: TableProps) => {
   const {
@@ -92,37 +86,6 @@ const Table = ({ columns, data }: TableProps) => {
       </tbody>
     </table>
   );
-};
-
-const mapRuns = (response: RunsAPIResponse) => {
-  const result: RunsProps[] = [];
-  response.items.forEach((item: IntegrationProps) => {
-    item.statuses.forEach((status: RunAPIProps) => {
-      const run: RunsProps = {
-        timestamp: status.timestamp,
-        status: '',
-        statusSeen: 'OK',
-        subRows: [],
-      };
-      let indexParentRun;
-
-      switch (status.status) {
-        case 'success':
-          run.status = 'OK';
-          result.push(run);
-          break;
-        case 'failure':
-          run.status = 'FAIL';
-          result.push(run);
-          break;
-        case 'seen':
-          indexParentRun = result.length - 1;
-          result[indexParentRun].subRows.push(run);
-          break;
-      }
-    });
-  });
-  return result;
 };
 
 const MonitoringTable = () => {
