@@ -1,12 +1,13 @@
-import { RunsAPIResponse, RunResponse, Status, RunRow } from '../model/Runs';
+import { RunsAPIResponse, RunResponse, StatusRow, RunRow } from '../model/Runs';
+import { Status } from '../model/Status';
 
 const mapRuns = (response: RunsAPIResponse) => {
   const result: RunRow[] = [];
   response.items.forEach((item: RunResponse) => {
-    item.statuses.forEach((status: Status) => {
+    item.statuses.forEach((status: StatusRow) => {
       const run: RunRow = {
         timestamp: status.timestamp,
-        status: '',
+        status: null,
         statusSeen: 'OK',
         subRows: [],
       };
@@ -14,11 +15,11 @@ const mapRuns = (response: RunsAPIResponse) => {
 
       switch (status.status) {
         case 'success':
-          run.status = 'OK';
+          run.status = Status.OK;
           result.push(run);
           break;
         case 'failure':
-          run.status = 'FAIL';
+          run.status = Status.FAIL;
           result.push(run);
           break;
         case 'seen':

@@ -1,3 +1,5 @@
+import { Status } from '../model/Status';
+
 export interface RunsAPIResponse {
   items: RunResponse[];
 }
@@ -6,11 +8,11 @@ export interface RunResponse {
   createdTime: number;
   lastUpdatedTime: number;
   externalId: string;
-  statuses: Status[];
+  statuses: StatusRow[];
   id: number;
 }
 
-export interface Status {
+export interface StatusRow {
   timestamp: number;
   status: string;
 }
@@ -21,6 +23,6 @@ export interface RunRow extends Run {
 
 export interface Run {
   timestamp: number;
-  status: string;
+  status: Status | null;
   statusSeen: string;
 }
