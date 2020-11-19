@@ -84,13 +84,11 @@ export const FilePreview = ({
                 <Body level={3}>You have entered editing mode.</Body>
               </Banner>
             )}
-            <div style={{ display: 'flex', flex: 1 }}>
-              <CogniteFilePreview
-                fileId={fileId!}
-                creatable={editMode}
-                contextualization={writeAccess}
-              />
-            </div>
+            <CogniteFilePreview
+              fileId={fileId!}
+              creatable={editMode}
+              contextualization={writeAccess}
+            />
           </Tabs.Pane>
           <Tabs.Pane title="File details" key="info">
             {fileInfo && <FileDetails file={fileInfo} />}

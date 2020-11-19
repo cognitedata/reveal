@@ -1,12 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import {
-  Button,
-  Icon,
-  Title,
-  Body,
-  Overline,
-  Collapse,
-} from '@cognite/cogs.js';
+import { Button, Title, Body, Overline, Collapse } from '@cognite/cogs.js';
 import {
   useSelectedAnnotation,
   ProposedCogniteAnnotation,
@@ -56,6 +49,7 @@ const FindSimilarButton = ({
   const [findSimilarObjects] = useFindObjects();
   return (
     <Button
+      variant="outline"
       loading={running}
       icon="Search"
       onClick={() => {
@@ -269,18 +263,19 @@ const AnnotationPreviewSidebar = ({
       {contextualization && (
         <InfoCell noBorders>
           <SpacedRow>
-            <Button onClick={() => onDeleteAnnotation(annotation)}>
-              <Icon type="Delete" />
-              Delete
-            </Button>
             <Button
+              icon="Edit"
+              variant="outline"
               onClick={() => {
                 setEditing(true);
               }}
-            >
-              <Icon type="Edit" />
-              Edit
-            </Button>
+            />
+            <Button
+              variant="outline"
+              type="danger"
+              icon="Delete"
+              onClick={() => onDeleteAnnotation(annotation)}
+            />
             <FindSimilarButton
               selectedAnnotation={selectedAnnotation}
               fileId={fileId}
@@ -316,7 +311,7 @@ const AnnotationPreviewSidebar = ({
             type,
           }
         }
-        header={<Header annotation={selectedAnnotation} />}
+        header={!isEditingMode && <Header annotation={selectedAnnotation} />}
         footer={
           <ContextualizationData
             selectedAnnotation={selectedAnnotation}

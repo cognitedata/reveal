@@ -66,6 +66,11 @@ export const FilePreview = ({
   useEffect(() => {
     setPendingAnnotations([]);
   }, [fileId]);
+  useEffect(() => {
+    if (!creatable) {
+      setPendingAnnotations([]);
+    }
+  }, [creatable]);
 
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
     id: fileId,
@@ -110,7 +115,7 @@ export const FilePreview = ({
   }
 
   return (
-    <>
+    <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         <CogniteFileViewer.FileViewer
           file={file}
@@ -146,7 +151,7 @@ export const FilePreview = ({
         setPendingAnnotations={setPendingAnnotations}
         contextualization={contextualization}
       />
-    </>
+    </div>
   );
 };
 
