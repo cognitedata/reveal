@@ -2,6 +2,7 @@ import * as DummyTimeSeries from './DummyTimeSeries';
 import * as UnitConversion from './UnitConversion';
 import * as OutputSeries from './OutputSeries';
 import * as CDFDatapoints from './CDFDataPoints';
+import * as CogniteFunction from './CogniteFunction';
 import { NodeOption } from '../types';
 
 export default [
@@ -20,5 +21,9 @@ export default [
   {
     name: 'CDF Datapoints',
     ...CDFDatapoints,
+  },
+  {
+    name: 'CDF Function',
+    ...CogniteFunction,
   },
 ] as NodeOption[];
