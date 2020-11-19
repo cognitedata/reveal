@@ -70,7 +70,7 @@
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@rescripts/rescript-use-babel-config": "^0.0.10",
     "@storybook/preset-create-react-app": "^3.1.5",
-    "@storybook/react": "^6.1.0",
+    "@storybook/react": "^6.1.1",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.1",
     "@types/enzyme": "^3.10.7",
