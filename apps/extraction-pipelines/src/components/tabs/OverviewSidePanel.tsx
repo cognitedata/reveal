@@ -3,6 +3,7 @@ import { Colors, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
 import { StyledTabs, StyledTabPane } from './TabsStyle';
+import ContactInformation from '../ContactInformation/ContactInformation';
 
 const SidePanelHeading = styled((props) => (
   <Title {...props}>{props.children}</Title>
@@ -39,8 +40,8 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
         <StyledTabPane tab="Monitoring" key="monitoring">
           Monitoring
         </StyledTabPane>
-        <StyledTabPane tab="Contacts" key="contacts">
-          Contacts
+        <StyledTabPane tab="Contact information" key="contacts">
+          <ContactInformation />
         </StyledTabPane>
       </StyledTabs>
     </>
