@@ -1,0 +1,42 @@
+---
+id: combine-maps
+title: Combine 3D models with maps
+description: Reveal 3D models can be combined with simple 2D maps.
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Often it's useful to use 3D models together with traditional maps or satellite imagery. Since Reveal supports
+adding custom 3D objects these can be combined in the viewer.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Simple map overlay using a textured rectangle
+
+The simplest way to add a map in Reveal is by simply adding a rectangle to the scene and texturing it with a
+map image. This gives a static map with a fixed resolution, but is easy to set up.
+
+```jsx runnable
+// Defined outside this example
+const textureUrl = urls.,kvaernerVerdalUrl;
+
+const modelBbox = model.getModelBoundingBox();
+const modelCenter = modelBbox.getCenter(new THREE.Vector3());
+
+const mapTexture = new THREE.TextureLoader().load(
+    textureUrl,
+    (texture) => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    }
+  );
+// 1300x1300 meters rectangle
+const rectangle = new THREE.PlaneBufferGeometry(1300, 1300);
+const mapMaterial = new THREE.MeshBasicMaterial({ map: mapTexture });
+const map = new THREE.Mesh(rectangle, mapMaterial);
+map.rotation.set(-Math.PI / 2.0, 0.0, 0.0);
+// Note! Positioning is fake and only serves example purposes
+map.position.set(380, -75, 50);
+window.map = map;
+viewer.addObject3D(map);
+```
