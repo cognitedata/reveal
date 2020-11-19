@@ -1,13 +1,17 @@
 import React from 'react';
-import { Button, Dropdown, Menu, Tooltip } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Tooltip } from 'antd';
+import { Button } from '@cognite/cogs.js';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 import { ResourceItem } from 'lib/types';
 
 export const EditFileButton = ({
   item: { id, type },
+  onClick,
+  isActive,
 }: {
   item: ResourceItem;
+  onClick: () => void;
+  isActive: boolean;
 }) => {
   const filesAcl = usePermissions('filesAcl', 'WRITE');
   const eventsAcl = usePermissions('eventsAcl', 'WRITE');
@@ -16,20 +20,6 @@ export const EditFileButton = ({
   if (type !== 'file') {
     return null;
   }
-
-  const menu = (
-    <Menu>
-      <Menu.Item disabled>
-        <Icon type="Plus" /> Add new tags
-      </Menu.Item>
-      <Menu.Item disabled>
-        <Icon type="ThreeD" /> Detect objects
-      </Menu.Item>
-      <Menu.Item disabled>
-        <Icon type="Close" /> Clear tags
-      </Menu.Item>
-    </Menu>
-  );
 
   if (!writeAccess) {
     const errors = [];
@@ -52,14 +42,17 @@ export const EditFileButton = ({
           </>
         }
       >
-        <Button type="ghost" icon={<Icon type="Edit" />} disabled />
+        <Button variant="outline" icon="Edit" disabled />
       </Tooltip>
     );
   }
+  if (isActive) {
+    return (
+      <Button type="primary" icon="Edit" key={id} onClick={onClick}>
+        Done Editing
+      </Button>
+    );
+  }
 
-  return (
-    <Dropdown overlay={menu} key={id}>
-      <Button type="ghost" icon={<Icon type="Edit" />} />
-    </Dropdown>
-  );
+  return <Button variant="outline" icon="Edit" key={id} onClick={onClick} />;
 };

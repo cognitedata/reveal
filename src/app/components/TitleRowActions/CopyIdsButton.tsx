@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Menu, Dropdown, notification } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Menu, Dropdown, notification } from 'antd';
+import { Button } from '@cognite/cogs.js';
 import { ResourceType, convertResourceType } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useEnv, useTenant } from 'lib/hooks/CustomHooks';
@@ -79,7 +79,7 @@ export default function ({ item: { type, id } }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Button type="ghost" icon={<Icon type="Copy" />} />
+      <Button variant="outline" icon="Copy" />
     </Dropdown>
   );
 }

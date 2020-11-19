@@ -7,7 +7,7 @@ import {
   ProposedCogniteAnnotation,
   convertCogniteAnnotationToIAnnotation,
 } from '@cognite/react-picture-annotation';
-import { Splitter, Loader } from 'lib/components';
+import { Loader } from 'lib/components';
 import styled from 'styled-components';
 import { isFilePreviewable } from 'lib/utils/FileUtils';
 import {
@@ -16,7 +16,6 @@ import {
   AnnotationStatus,
 } from '@cognite/annotations';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { useSDK } from '@cognite/sdk-provider';
 import {
   PNID_ANNOTATION_TYPE,
   removeSimilarAnnotations,
@@ -27,17 +26,10 @@ import {
   ObjectDetectionEntity,
   useFindSimilarJobId,
 } from 'lib/hooks/objectDetection';
-import { SelectableItemProps } from 'lib/CommonProps';
-import { FileOverviewPanel } from './FileOverviewPanel';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
-
-type Props = {
-  fileId: number;
-  contextualization?: boolean;
-} & Partial<SelectableItemProps>;
 
 const convertAnnotation = (jobId: number, fileId: number) => (
   el: ObjectDetectionEntity
@@ -70,6 +62,11 @@ export const FilePreview = ({
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ProposedCogniteAnnotation[]
   >([]);
+
+  useEffect(() => {
+    setPendingAnnotations([]);
+  }, [fileId]);
+
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
@@ -113,85 +110,46 @@ export const FilePreview = ({
   }
 
   return (
-    <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-      <CogniteFileViewer.FileViewer
-        file={file}
-        creatable={creatable}
-        annotations={allAnnotations}
-        hideDownload
-        hideSearch
-        renderAnnotation={(annotation, isAnnotationSelected) => {
-          const iAnnotation = convertCogniteAnnotationToIAnnotation(
-            annotation,
-            isAnnotationSelected,
-            false
-          );
-          if (annotation.metadata && annotation.metadata.color) {
-            iAnnotation.mark.strokeColor = annotation.metadata.color;
-          }
-          return iAnnotation;
-        }}
-        editCallbacks={{
-          onCreate: (item: PendingCogniteAnnotation) => {
-            const newItem = { ...item, id: uuid() };
-            setPendingAnnotations([newItem]);
-            return false;
-          },
-          onUpdate: () => {
-            return false;
-          },
-        }}
-      />
+    <>
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        <CogniteFileViewer.FileViewer
+          file={file}
+          creatable={creatable}
+          annotations={allAnnotations}
+          hideDownload
+          hideSearch
+          renderAnnotation={(annotation, isAnnotationSelected) => {
+            const iAnnotation = convertCogniteAnnotationToIAnnotation(
+              annotation,
+              isAnnotationSelected,
+              false
+            );
+            if (annotation.metadata && annotation.metadata.color) {
+              iAnnotation.mark.strokeColor = annotation.metadata.color;
+            }
+            return iAnnotation;
+          }}
+          editCallbacks={{
+            onCreate: (item: PendingCogniteAnnotation) => {
+              const newItem = { ...item, id: uuid() };
+              setPendingAnnotations([newItem]);
+              return false;
+            },
+            onUpdate: () => {
+              return false;
+            },
+          }}
+        />
+      </div>
       <AnnotationPreviewSidebar
         fileId={fileId}
-        pendingAnnotations={pendingAnnotations}
         setPendingAnnotations={setPendingAnnotations}
         contextualization={contextualization}
       />
-    </div>
-  );
-};
-
-const FilePreviewPage = ({
-  fileId,
-  contextualization = false,
-  selectionMode = 'none',
-  onSelect = () => {},
-  isSelected = false,
-}: Props) => {
-  const [creatable, setCreatable] = useState(false);
-
-  const [pendingAnnotations, setPendingAnnotations] = useState<
-    ProposedCogniteAnnotation[]
-  >([]);
-
-  useEffect(() => {
-    setPendingAnnotations([]);
-  }, [fileId]);
-
-  return (
-    <>
-      <Splitter primaryIndex={1}>
-        <FileOverviewPanel
-          fileId={fileId}
-          pendingAnnotations={pendingAnnotations}
-          setPendingAnnotations={setPendingAnnotations}
-          creatable={creatable}
-          setCreatable={setCreatable}
-          contextualization={contextualization}
-          selectionMode={selectionMode}
-          onSelect={onSelect}
-          isSelected={isSelected}
-        />
-        <FilePreview
-          fileId={fileId}
-          creatable={creatable}
-          contextualization={contextualization}
-        />
-      </Splitter>
     </>
   );
 };
+
 const CenteredPlaceholder = styled.div`
   justify-content: center;
   display: flex;
@@ -200,14 +158,3 @@ const CenteredPlaceholder = styled.div`
   margin: 0 auto;
   text-align: center;
 `;
-
-const WrappedFilePreview = (props: Props) => {
-  const sdk = useSDK();
-  return (
-    <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
-      <FilePreviewPage {...props} />
-    </CogniteFileViewer.Provider>
-  );
-};
-
-export { WrappedFilePreview as FilePreviewPage };

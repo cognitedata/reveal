@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Menu, Space } from 'antd';
+import { Dropdown, Menu, Space } from 'antd';
 import { MenuItemProps } from 'antd/es/menu/MenuItem';
 import { FileInfo } from '@cognite/sdk';
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Button } from '@cognite/cogs.js';
 import { convertResourceType } from 'lib';
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
@@ -54,9 +54,9 @@ function MetadataDownload({ item: { id, type } }: Props) {
   return (
     <Dropdown overlay={menu} trigger={['click']}>
       <Button
-        type="ghost"
+        variant="outline"
         disabled={downloading}
-        icon={<Icon type={downloading ? 'Loading' : 'Download'} />}
+        icon={downloading ? 'Loading' : 'Download'}
       />
     </Dropdown>
   );
@@ -156,8 +156,8 @@ function FileDownloadButton({ item }: Props) {
   return (
     <Dropdown overlay={menu} trigger={['click']}>
       <Button
-        type="ghost"
-        icon={<Icon type={downloading ? 'Loading' : 'Download'} />}
+        variant="outline"
+        icon={downloading ? 'Loading' : 'Download'}
         disabled={downloading}
       />
     </Dropdown>
@@ -247,9 +247,9 @@ function TimeseriesDownloadButton({ item: { id, type } }: Props) {
   return (
     <Dropdown overlay={menu} trigger={['click']}>
       <Button
-        type="ghost"
+        variant="outline"
         disabled={downloading}
-        icon={<Icon type={downloading ? 'Loading' : 'Download'} />}
+        icon={downloading ? 'Loading' : 'Download'}
       />
     </Dropdown>
   );

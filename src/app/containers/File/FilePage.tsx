@@ -21,7 +21,7 @@ export const FilePage = () => {
   return (
     <FilePreview
       fileId={fileId!}
-      actions={['FileEdit', 'Download', 'Collections', 'Copy']}
+      actions={['Download', 'Collections', 'Copy']}
     />
   );
 };

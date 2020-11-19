@@ -17,7 +17,6 @@ export default function ResourcePreview({
   onCloseClicked,
 }: Props) {
   const actions: TitleRowActionsProps['actions'] = [
-    'FileEdit',
     'Download',
     'Collections',
     'Copy',

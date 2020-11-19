@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { FilePreview as CogniteFilePreview } from 'lib/containers/Files/FilePreview';
@@ -13,6 +13,11 @@ import { FileDetails } from 'lib';
 import RelatedResources from 'app/components/Files/RelatedResources';
 import RelatedResourceCount from 'app/components/Files/RelatedResourceCount';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
+import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
+import { usePermissions } from 'lib/hooks/CustomHooks';
+import styled from 'styled-components';
+import { Colors, Body } from '@cognite/cogs.js';
+import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
 
 export const FilePreview = ({
   fileId,
@@ -22,6 +27,7 @@ export const FilePreview = ({
   actions?: TitleRowActionsProps['actions'];
 }) => {
   const sdk = useSDK();
+  const [editMode, setEditMode] = useState<boolean>(false);
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
@@ -29,6 +35,9 @@ export const FilePreview = ({
   const isActive = resourcesState.some(
     el => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
+  const filesAcl = usePermissions('filesAcl', 'WRITE');
+  const eventsAcl = usePermissions('eventsAcl', 'WRITE');
+  const writeAccess = filesAcl && eventsAcl;
 
   useEffect(() => {
     if (fileId && !isActive) {
@@ -49,86 +58,121 @@ export const FilePreview = ({
 
   return (
     <>
-      <ResourceTitleRow
-        item={{ id: fileId!, type: 'file' }}
-        icon="Document"
-        actions={actions}
-      />
-      <Tabs tab="preview">
-        <Tabs.Pane title="Preview" key="preview">
-          <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
+      <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
+        <ResourceTitleRow
+          item={{ id: fileId!, type: 'file' }}
+          icon="Document"
+          actions={[
+            () => (
+              <EditFileButton
+                item={{ type: 'file', id: fileId! }}
+                isActive={editMode}
+                onClick={() => {
+                  setEditMode(mode => !mode);
+                }}
+              />
+            ),
+            () => (
+              <ContextualizationButton item={{ type: 'file', id: fileId! }} />
+            ),
+            ...actions,
+          ]}
+        />
+        <Tabs tab="preview">
+          <Tabs.Pane title="Preview" key="preview">
+            {editMode && (
+              <Banner>
+                <Body level={3}>You have entered editing mode.</Body>
+              </Banner>
+            )}
             <div style={{ display: 'flex', flex: 1 }}>
               <CogniteFilePreview
                 fileId={fileId!}
-                creatable={false}
-                contextualization={false}
+                creatable={editMode}
+                contextualization={writeAccess}
               />
             </div>
-          </CogniteFileViewer.Provider>
-        </Tabs.Pane>
-        <Tabs.Pane title="File details" key="info">
-          {fileInfo && <FileDetails file={fileInfo} />}
-        </Tabs.Pane>
-        <Tabs.Pane
-          title={
-            <>
-              Assets{' '}
-              <RelatedResourceCount fileId={fileId!} resourceType="asset" />
-            </>
-          }
-          key="assets"
-        >
-          <RelatedResources fileId={fileId!} resourceType="asset" />
-        </Tabs.Pane>
+          </Tabs.Pane>
+          <Tabs.Pane title="File details" key="info">
+            {fileInfo && <FileDetails file={fileInfo} />}
+          </Tabs.Pane>
+          <Tabs.Pane
+            title={
+              <>
+                Assets{' '}
+                <RelatedResourceCount fileId={fileId!} resourceType="asset" />
+              </>
+            }
+            key="assets"
+          >
+            <RelatedResources fileId={fileId!} resourceType="asset" />
+          </Tabs.Pane>
 
-        <Tabs.Pane
-          title={
-            <>
-              Files{' '}
-              <RelatedResourceCount fileId={fileId!} resourceType="file" />
-            </>
-          }
-          key="files"
-        >
-          <RelatedResources fileId={fileId!} resourceType="file" />
-        </Tabs.Pane>
-        <Tabs.Pane
-          title={
-            <>
-              Time series{' '}
-              <RelatedResourceCount
-                fileId={fileId!}
-                resourceType="timeSeries"
-              />
-            </>
-          }
-          key="timeseries"
-        >
-          <RelatedResources fileId={fileId!} resourceType="timeSeries" />
-        </Tabs.Pane>
-        <Tabs.Pane
-          title={
-            <>
-              Events{' '}
-              <RelatedResourceCount fileId={fileId!} resourceType="event" />
-            </>
-          }
-          key="events"
-        >
-          <RelatedResources fileId={fileId!} resourceType="event" />
-        </Tabs.Pane>
-        <Tabs.Pane
-          title={
-            <>
-              Sequences{' '}
-              <RelatedResourceCount fileId={fileId!} resourceType="sequence" />
-            </>
-          }
-          key="sequences"
-        >
-          <RelatedResources fileId={fileId!} resourceType="sequence" />
-        </Tabs.Pane>
-      </Tabs>
+          <Tabs.Pane
+            title={
+              <>
+                Files{' '}
+                <RelatedResourceCount fileId={fileId!} resourceType="file" />
+              </>
+            }
+            key="files"
+          >
+            <RelatedResources fileId={fileId!} resourceType="file" />
+          </Tabs.Pane>
+          <Tabs.Pane
+            title={
+              <>
+                Time series{' '}
+                <RelatedResourceCount
+                  fileId={fileId!}
+                  resourceType="timeSeries"
+                />
+              </>
+            }
+            key="timeseries"
+          >
+            <RelatedResources fileId={fileId!} resourceType="timeSeries" />
+          </Tabs.Pane>
+          <Tabs.Pane
+            title={
+              <>
+                Events{' '}
+                <RelatedResourceCount fileId={fileId!} resourceType="event" />
+              </>
+            }
+            key="events"
+          >
+            <RelatedResources fileId={fileId!} resourceType="event" />
+          </Tabs.Pane>
+          <Tabs.Pane
+            title={
+              <>
+                Sequences{' '}
+                <RelatedResourceCount
+                  fileId={fileId!}
+                  resourceType="sequence"
+                />
+              </>
+            }
+            key="sequences"
+          >
+            <RelatedResources fileId={fileId!} resourceType="sequence" />
+          </Tabs.Pane>
+        </Tabs>
+      </CogniteFileViewer.Provider>
     </>
   );
 };
+
+const Banner = styled.div`
+  padding: 16px;
+  background: ${Colors['midblue-6'].hex()};
+  color: ${Colors.midblue.hex()};
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .cogs-body-3 {
+    color: ${Colors.midblue.hex()};
+  }
+`;

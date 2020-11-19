@@ -1,30 +1,23 @@
 import React from 'react';
-import { Space, Button } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Space } from 'antd';
+import { Button } from '@cognite/cogs.js';
 import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { ResourceItem } from 'lib/types';
 import DownloadButton from './DownloadButton';
 import CopyIdsButton from './CopyIdsButton';
-import { EditFileButton } from './EditFileButton';
 import { MaximizeButton } from './MaximizeButton';
 
-export type TitleRowActions =
-  | 'FileEdit'
-  | 'Download'
-  | 'Collections'
-  | 'Copy'
-  | 'Open';
+export type TitleRowActions = 'Download' | 'Collections' | 'Copy' | 'Open';
 
 const TitleRowItem: {
   [key in TitleRowActions]: (props: { item: ResourceItem }) => React.ReactNode;
 } = {
-  FileEdit: EditFileButton,
   Download: DownloadButton,
   Collections: ({ item }) =>
     CollectionsDropdown({
       items: [{ id: item.id }],
       type: item.type,
-      button: <Button type="ghost" icon={<Icon type="Folder" />} />,
+      button: <Button variant="outline" icon="Folder" />,
     }),
   Copy: CopyIdsButton,
   Open: MaximizeButton,
@@ -39,7 +32,7 @@ export type TitleRowActionsProps = {
 };
 
 export const TitleRowActions = ({
-  actions = ['FileEdit', 'Download', 'Collections', 'Copy', 'Open'],
+  actions = ['Download', 'Collections', 'Copy', 'Open'],
   item,
 }: TitleRowActionsProps) => {
   return (

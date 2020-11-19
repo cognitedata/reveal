@@ -7,6 +7,6 @@ import {
   // @ts-ignore
 } from '@cognite/cdf-sdk-singleton';
 
-export default v3Client as CogniteClient;
+export default (v3Client as unknown) as CogniteClient;
 
 export { getAuthState, loginAndAuthIfNeeded };
