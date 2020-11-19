@@ -3,7 +3,7 @@ import { Badge, Button } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { isEmpty } from 'lodash';
 import { useResourceFilter } from 'app/context/ResourceSelectionContext';
-import { useCurrentResourceType } from './hooks';
+import { useCurrentResourceType } from 'app/hooks';
 
 export default function FilterToggleButton({
   toggleOpen,

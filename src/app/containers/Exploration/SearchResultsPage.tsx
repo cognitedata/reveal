@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useContext,
-  useCallback,
-} from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import {
   ResourceItem,
   ResourcePreviewProvider,
@@ -12,10 +6,10 @@ import {
   ResourceTypeTabs,
   SearchResults,
 } from 'lib';
+import { Row, Col } from 'antd';
 import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
-  useQuery,
   useSelectedResource,
   useResourceEditable,
 } from 'app/context/ResourceSelectionContext';
@@ -23,9 +17,15 @@ import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
 import { lightGrey } from 'lib/utils/Colors';
+import {
+  useQueryString,
+  useQueryStringArray,
+  useCurrentResourceType,
+  useCurrentResourceId,
+} from 'app/hooks';
+import { SEARCH_KEY, CART_KEY } from 'app/utils/contants';
+import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
-import { Row, Col } from 'antd';
-import { useCurrentResourceType, useCurrentResourceId } from './hooks';
 import FilterToggleButton from './FilterToggleButton';
 import { LabelsQuickSelect } from './LabelsQuickSelect';
 
@@ -45,15 +45,17 @@ function SearchPage() {
   ] = useCurrentResourceType();
   const [activeId, openPreview] = useCurrentResourceId();
   const [showFilter, setShowFilter] = useState(false);
-  const [query] = useQuery();
+  const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
 
   const editable = useResourceEditable();
 
-  const [cart, setCart] = useState<ResourceItem[]>([]);
+  const [rawCart, setCart] = useQueryStringArray(CART_KEY, false);
+  const cart = rawCart
+    .map(s => parseInt(s, 10))
+    .filter(n => Number.isFinite(n));
+
   const {
-    setOnSelectListener,
-    setResourcesState,
     assetFilter,
     setAssetFilter,
     timeseriesFilter,
@@ -67,32 +69,17 @@ function SearchPage() {
     mode,
   } = useContext(ResourceSelectionContext);
 
-  const onSelectListener = useCallback((item: ResourceItem) => {
-    setCart(currentCart => {
-      const index = currentCart.findIndex(
-        el => el.type === item.type && el.id === item.id
-      );
-      if (index > -1) {
-        return currentCart.slice(0, index).concat(currentCart.slice(index + 1));
-      }
-      return currentCart.concat([item]);
-    });
-  }, []);
+  const onSelect = (item: ResourceItem) => {
+    const newCart = cart.includes(item.id)
+      ? cart.filter(id => id !== item.id)
+      : cart.concat([item.id]);
+    setCart(newCart);
+  };
 
-  useEffect(() => {
-    setOnSelectListener(() => onSelectListener);
-  }, [setOnSelectListener, onSelectListener]);
+  const active = !!activeId || cart.length > 0;
 
-  useEffect(() => {
-    setResourcesState(cart.map(el => ({ ...el, state: 'selected' })));
-  }, [setResourcesState, cart]);
+  const isSelected = (item: ResourceItem) => cart.includes(item.id);
 
-  const isSelected = useCallback(
-    (item: ResourceItem) => {
-      return cart.some(el => el.id === item.id && el.type === item.type);
-    },
-    [cart]
-  );
   return (
     <ResourcePreviewProvider>
       <ResourceTypeTabs
@@ -117,24 +104,35 @@ function SearchPage() {
         />
         <div
           style={{
-            width: activeId ? 440 : 'unset',
-            flex: activeId ? 'unset' : 1,
+            width: active ? 440 : 'unset',
+            flex: active ? 'unset' : 1,
+            borderRight: active ? `1px solid ${lightGrey}` : 'unset',
           }}
         >
           <SearchInputContainer align="middle">
             {!showFilter ? (
-              <FilterToggleButton
-                toggleOpen={() => setShowFilter(!showFilter)}
-              />
+              <Col flex="none">
+                <FilterToggleButton
+                  toggleOpen={() => setShowFilter(!showFilter)}
+                />
+              </Col>
             ) : undefined}
             <Col flex="auto">
               <ExplorationSearchBar />
             </Col>
           </SearchInputContainer>
-          <div style={{ marginTop: 8 }}>
-            <LabelsQuickSelect />
-          </div>
-          <SearchResultWrapper>
+          <Row style={{ marginTop: 8 }}>
+            <Col flex="auto">
+              <LabelsQuickSelect />
+            </Col>
+          </Row>
+
+          <SearchResultWrapper
+            style={{
+              paddingRight: active ? 8 : 0,
+              paddingLeft: showFilter ? 8 : 0,
+            }}
+          >
             <SearchResults
               query={debouncedQuery}
               assetFilter={assetFilter}
@@ -145,7 +143,7 @@ function SearchPage() {
               resourceType={currentResourceType}
               allowEdit={editable}
               onClick={item => openPreview(item.id)}
-              onSelect={onSelectListener}
+              onSelect={onSelect}
               selectionMode={mode}
               isSelected={isSelected}
               activeIds={activeId ? [activeId] : []}
@@ -155,11 +153,17 @@ function SearchPage() {
 
         <div
           style={{
-            width: activeId ? 'unset' : 0,
-            flex: activeId ? 1 : 'unset',
+            width: active ? 'unset' : 0,
+            flex: active ? 1 : 'unset',
           }}
         >
-          {activeId && (
+          {cart.length > 0 && (
+            <SelectedResults
+              ids={cart.map(id => ({ id }))}
+              resourceType={currentResourceType}
+            />
+          )}
+          {activeId && cart.length === 0 && (
             <SearchResultWrapper>
               <ResourcePreview
                 item={{ id: activeId, type: currentResourceType }}
@@ -176,7 +180,7 @@ function SearchPage() {
 export const SearchResultsPage = () => {
   const [resourceType] = useCurrentResourceType();
 
-  const [query] = useQuery();
+  const [query] = useQueryString(SEARCH_KEY);
   const filter = useResourceFilter(resourceType);
   const { selectedResource } = useSelectedResource();
 
@@ -224,12 +228,7 @@ const SearchResultWrapper = styled.div`
 `;
 
 const SearchInputContainer = styled(Row)`
-  border-right: 1px solid ${lightGrey};
   border-bottom: 1px solid ${lightGrey};
-  margin-right: 16;
-  padding-right: 16;
-  border-right: 1px solid ${lightGrey};
-  margin-right: 16px;
-  padding-top: 16px;
+  padding-top: 20px;
   padding-bottom: 16px;
 `;

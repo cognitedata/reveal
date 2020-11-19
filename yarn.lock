@@ -1394,12 +1394,12 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.8.0.tgz#1b2ec2976c744e20898909ca5da18ed2b04259ec"
-  integrity sha512-FQT7cjFlATh3sWmhwcYbH2jFWfoX6FfPI4i5wpiUii2Q/7azOhSPSQ8pfU33R3va/RF4tkSfHt/osCRtfl55KQ==
+"@cognite/cdf-utilities@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.9.0.tgz#3fd9160fd5ace2dbe166790293855bf65fcf9f70"
+  integrity sha512-Uo08D2G2kQJ6qwyn4l25fwn3Xv8wGvmaODz8xpZ76Y5k5gbP9BujQw2mdPmlbuKb8ffoxBeH1zsdw3TuQgyNZg==
   dependencies:
-    query-string "^6.13.6"
+    query-string "^6.13.7"
 
 "@cognite/cogs.js@^2.0.3":
   version "2.0.3"
@@ -13851,7 +13851,7 @@ qs@~6.5.2:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
-query-string@*, query-string@^6.13.6, query-string@^6.13.7:
+query-string@*, query-string@^6.13.7:
   version "6.13.7"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.13.7.tgz#af53802ff6ed56f3345f92d40a056f93681026ee"
   integrity sha512-CsGs8ZYb39zu0WLkeOhe0NMePqgYdAuCqxOYKDR5LVCytDZYMGx3Bb+xypvQvPHVPijRXB0HZNFllCzHRe4gEA==

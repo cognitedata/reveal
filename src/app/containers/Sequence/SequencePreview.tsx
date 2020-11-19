@@ -67,10 +67,9 @@ export const SequencePreview = ({
     <>
       <ResourceTitleRow
         item={{ id: sequenceId, type: 'sequence' }}
-        icon="GridFilled"
         actions={actions}
       />
-      <Row>
+      <Row style={{ marginLeft: 16 }}>
         <Col span={24}>
           <ResourceDetailsTabs
             parentResource={{

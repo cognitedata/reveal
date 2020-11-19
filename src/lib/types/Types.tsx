@@ -1,4 +1,5 @@
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
+import { AllIconTypes } from '@cognite/cogs.js';
 
 export type ResourceType =
   | 'asset'
@@ -30,6 +31,46 @@ export function convertResourceType(t: ResourceType): SdkResourceType {
     default: {
       throw new Error(`Unknown ResourceType: ${t}`);
     }
+  }
+}
+
+export function getTitle(t: ResourceType, plural: boolean = true): string {
+  switch (t) {
+    case 'asset': {
+      return plural ? 'Assets' : 'Asset';
+    }
+    case 'timeSeries': {
+      return 'Time series';
+    }
+    case 'sequence': {
+      return plural ? 'Sequences' : 'Sequence';
+    }
+    case 'file': {
+      return plural ? 'Files' : 'File';
+    }
+    case 'event': {
+      return plural ? 'Events' : 'Event';
+    }
+    default: {
+      throw new Error(`Unknown ResourceType: ${t}`);
+    }
+  }
+}
+
+export function getIcon(type: ResourceType): AllIconTypes {
+  switch (type) {
+    case 'asset':
+      return 'ResourceAssets';
+    case 'event':
+      return 'ResourceEvents';
+    case 'file':
+      return 'ResourceDocuments';
+    case 'sequence':
+      return 'ResourceSequences';
+    case 'timeSeries':
+      return 'ResourceTimeseries';
+    default:
+      throw new Error('We forgot about a resource type :(');
   }
 }
 

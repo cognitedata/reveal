@@ -7,7 +7,7 @@ import { useList } from '@cognite/sdk-react-query-hooks';
 import { LabelDefinition } from '@cognite/sdk';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 import { Button } from '@cognite/cogs.js';
-import { useCurrentResourceType } from 'app/containers/Exploration/hooks';
+import { useCurrentResourceType } from 'app/hooks';
 import uniqBy from 'lodash/uniqBy';
 import { SpacedRow } from 'lib';
 

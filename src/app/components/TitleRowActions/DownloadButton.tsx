@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Space } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { MenuItemProps } from 'antd/es/menu/MenuItem';
 import { FileInfo } from '@cognite/sdk';
-import { Icon, Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { convertResourceType } from 'lib';
+import FileDownloadAnchor from 'lib/components/FileDownloadAnchor';
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
@@ -66,46 +67,9 @@ function FileDownloadMenuItem({
   item: { id },
   ...props
 }: Props & MenuItemProps) {
-  const sdk = useSDK();
-  const { data: fileInfo } = useCdfItem<FileInfo>('files', { id });
-  const { data: fileLink, isFetched, isError } = useQuery(
-    [...baseCacheKey('files'), 'downloadLink', id],
-    () => sdk.files.getDownloadUrls([{ id }]).then(r => r[0]),
-    // The retrieved URL becomes invalid after 30 seconds
-    { refetchInterval: 25000 }
-  );
-
-  if (!isFetched) {
-    return (
-      <Menu.Item disabled>
-        <Space align="center" size="small">
-          <Icon type="Loading" /> <em>Finding download link</em>
-        </Space>
-      </Menu.Item>
-    );
-  }
-
-  if (isError || !fileLink?.downloadUrl) {
-    return (
-      <Menu.Item disabled>
-        <Space align="center" size="small">
-          <Icon type="ErrorStroked" />
-          <em>Could not find download link</em>
-        </Space>
-      </Menu.Item>
-    );
-  }
-
   return (
     <Menu.Item {...props}>
-      <a
-        download={fileInfo?.name}
-        target="_blank"
-        rel="noopener noreferrer"
-        href={fileLink!.downloadUrl}
-      >
-        Download original file
-      </a>
+      <FileDownloadAnchor text={<>Download original file</>} id={{ id }} />
     </Menu.Item>
   );
 }
@@ -180,7 +144,10 @@ function TimeseriesDownloadButton({ item: { id, type } }: Props) {
   const limit = 100000;
   const { data: datapoints = [], isFetched: dataPointsFetched } = useQuery(
     [...baseCacheKey(api), 'datapoints', id, limit],
-    () => sdk.datapoints.retrieve({ items: [{ id }], limit }),
+    () =>
+      sdk.datapoints
+        .retrieve({ items: [{ id }], limit })
+        .then(r => r[0].datapoints || []),
     { enabled: downloading && includeDatapoints }
   );
 

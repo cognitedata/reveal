@@ -63,11 +63,10 @@ export const EventPreview = ({
     <>
       <ResourceTitleRow
         item={{ id: eventId, type: 'event' }}
-        icon="Events"
         getTitle={renderTitle}
         actions={actions}
       />
-      <Row>
+      <Row style={{ marginLeft: 16 }}>
         <Col span={24}>
           <ResourceDetailsTabs
             parentResource={{

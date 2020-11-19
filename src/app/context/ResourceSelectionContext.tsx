@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react';
-import queryString from 'query-string';
 import { ResourceItem, ResourceType } from 'lib/types';
 import {
   AssetFilterProps,
@@ -8,7 +7,6 @@ import {
   EventFilter,
   SequenceFilter,
 } from '@cognite/sdk';
-import { useHistory } from 'react-router-dom';
 
 export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
 export type ResourceItemState = ResourceItem & {
@@ -39,7 +37,6 @@ export type ResourceSelectionObserver = {
   >;
   onSelect: OnSelectListener;
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
-  queryKey: string;
   selectedResource: ResourceItem | undefined;
   setSelectedResource: React.Dispatch<
     React.SetStateAction<ResourceItem | undefined>
@@ -64,23 +61,6 @@ export const useResourceMode = () => {
 export const useResourceEditable = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.allowEdit;
-};
-
-export const useQuery: () => [string, (q: string) => void] = () => {
-  const history = useHistory();
-  const key = useContext(ResourceSelectionContext).queryKey;
-  const search = queryString.parse(history?.location?.search);
-  const query = (search[key] || '') as string;
-
-  const setQuery = (q?: string) =>
-    history.push({
-      pathname: history?.location?.pathname,
-      search: queryString.stringify({
-        ...search,
-        [key]: q || undefined,
-      }),
-    });
-  return [query, setQuery];
 };
 
 export const useSelectResource = () => {
@@ -209,11 +189,6 @@ export type ResourceSelectionProps = {
    */
   onSelect?: OnSelectListener;
 
-  /**
-   * The search param where the currrent query is stored. Default value is 'query'.
-   */
-  queryKey?: string;
-
   children?: React.ReactNode;
 };
 
@@ -230,7 +205,6 @@ export const ResourceSelectionProvider = ({
   sequenceFilter: initialSequenceFilter,
   resourcesState: initialResourcesState,
   onSelect: initialOnSelect,
-  queryKey = 'query',
   children,
 }: ResourceSelectionProps) => {
   const [allowEdit, setAllowEdit] = useState<boolean>(propsAllowEdit || false);
@@ -310,7 +284,6 @@ export const ResourceSelectionProvider = ({
         setResourcesState,
         onSelect,
         setOnSelectListener,
-        queryKey,
         selectedResource,
         setSelectedResource,
       }}

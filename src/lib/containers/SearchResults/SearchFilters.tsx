@@ -13,7 +13,7 @@ import {
 import { lightGrey } from 'lib/utils/Colors';
 import styled from 'styled-components';
 
-const TRANSITION_TIME = 300;
+const TRANSITION_TIME = 200;
 
 export const SearchFilters = ({
   visible = true,
@@ -77,13 +77,10 @@ export const SearchFilters = ({
         flex: '0 1 auto',
         flexDirection: 'column',
         width: visible ? 260 : 0,
-        marginTop: 16,
         marginLeft: 1,
-        paddingRight: visible ? 16 : 0,
-        marginRight: visible ? 16 : 0,
         borderRight: `1px solid ${lightGrey}`,
         visibility: visible ? 'visible' : 'hidden',
-        transition: `visibility 0s linear ${TRANSITION_TIME}ms, width ${TRANSITION_TIME}ms ease, padding-right ${TRANSITION_TIME}ms ease, margin-right ${TRANSITION_TIME}ms ease`,
+        transition: `visibility 0s linear ${TRANSITION_TIME}ms, width ${TRANSITION_TIME}ms ease`,
       }}
     >
       {visible && (
@@ -99,7 +96,11 @@ export const SearchFilters = ({
               </Col>
             )}
           </HeaderRow>
-          <Filters />
+          <Row style={{ marginRight: 16 }}>
+            <Col flex="auto">
+              <Filters />
+            </Col>
+          </Row>
         </>
       )}
     </div>
@@ -113,7 +114,9 @@ const IconCol = styled(Col)`
 `;
 
 const HeaderRow = styled(Row)`
-  padding-bottom: 16px;
+  padding-right: 16px;
+  padding-bottom: 20px;
+  margin-top: 24px;
   margin-bottom: 16px;
   border-bottom: 1px solid ${lightGrey};
 `;

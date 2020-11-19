@@ -61,7 +61,6 @@ export const FilePreview = ({
       <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
         <ResourceTitleRow
           item={{ id: fileId!, type: 'file' }}
-          icon="Document"
           actions={[
             () => (
               <EditFileButton

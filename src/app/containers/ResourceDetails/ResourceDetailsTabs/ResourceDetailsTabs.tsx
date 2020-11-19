@@ -1,7 +1,12 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Tabs, TabPaneProps } from 'lib/components';
-import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
+import {
+  ResourceType,
+  ResourceItem,
+  convertResourceType,
+  getTitle,
+} from 'lib/types';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import {
   useRelationships,
@@ -22,12 +27,12 @@ type ResouceDetailsTabsProps = {
   onTabChange: (tab: string) => void;
 };
 
-const defaultRelationshipTabs: { key: ResourceType; title: string }[] = [
-  { key: 'asset', title: 'Assets' },
-  { key: 'file', title: 'Files' },
-  { key: 'timeSeries', title: 'Time series' },
-  { key: 'event', title: 'Events' },
-  { key: 'sequence', title: 'Sequences' },
+const defaultRelationshipTabs: ResourceType[] = [
+  'asset',
+  'file',
+  'timeSeries',
+  'event',
+  'sequence',
 ];
 
 const RelationshipTabContent = ({
@@ -84,14 +89,14 @@ export const ResourceDetailsTabs = ({
   const { counts } = useRelatedResourceCounts(parentResource);
 
   const relationshipTabs = defaultRelationshipTabs
-    .filter(type => !excludedTypes.includes(type.key))
-    .map(({ key, title }) => (
+    .filter(type => !excludedTypes.includes(type))
+    .map(key => (
       <Tabs.Pane
         disabled={counts[key] === '0'}
         key={key}
         title={
           <>
-            <TabTitle>{title}</TabTitle>
+            <TabTitle>{getTitle(key)}</TabTitle>
             <Badge text={counts[key]} background={lightGrey} />
           </>
         }

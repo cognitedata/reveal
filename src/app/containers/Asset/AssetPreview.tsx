@@ -9,12 +9,12 @@ import {
   AssetTreeTable,
 } from 'lib/containers/Assets';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Space } from 'antd';
+import { Space, Row, Col } from 'antd';
 import { Asset } from '@cognite/sdk';
 import { Loader, ErrorFeedback, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useCurrentResourceId } from 'app/containers/Exploration/hooks';
+import { useCurrentResourceId } from 'app/hooks';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { ResourceItem } from 'lib/types';
@@ -82,47 +82,55 @@ export const AssetPreview = ({
     <>
       <ResourceTitleRow
         item={{ id: assetId, type: 'asset' }}
-        icon="DataStudio"
         actions={actions}
       />
-      <Space align="center">
-        <p>LOCATION:</p>
-        <AssetBreadcrumb
-          assetId={assetId}
-          onBreadcrumbClick={newAsset => openAsset(newAsset.id)}
-        />
-      </Space>
-
-      <ResourceDetailsTabs
-        parentResource={{
-          type: 'asset',
-          id: asset.id,
-          externalId: asset.externalId,
-        }}
-        tab={activeTab}
-        onTabChange={newTab =>
-          history.push(
-            createLink(
-              `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-            )
-          )
-        }
-        excludedTypes={['asset']}
-        additionalTabs={[
-          <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-            <AssetDetails id={assetId} />
-          </Tabs.Pane>,
-          <Tabs.Pane title={<TabTitle>Children</TabTitle>} key="children">
-            <AssetTreeTable
-              filter={{ parentIds: [asset.id] }}
-              onAssetClicked={newAsset => openAsset(newAsset.id)}
-              selectionMode={mode}
-              onSelect={onSelect}
-              isSelected={isSelected}
+      <div style={{ flexGrow: 1 }}>
+        <Row style={{ marginLeft: 16 }}>
+          <Col span={24}>
+            <Space align="center">
+              <p>LOCATION:</p>
+              <AssetBreadcrumb
+                assetId={assetId}
+                onBreadcrumbClick={newAsset => openAsset(newAsset.id)}
+              />
+            </Space>
+          </Col>
+        </Row>
+        <Row style={{ height: 'calc(100% - 82px)', marginLeft: 16 }}>
+          <Col span={24}>
+            <ResourceDetailsTabs
+              parentResource={{
+                type: 'asset',
+                id: asset.id,
+                externalId: asset.externalId,
+              }}
+              tab={activeTab}
+              onTabChange={newTab =>
+                history.push(
+                  createLink(
+                    `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                  )
+                )
+              }
+              excludedTypes={['asset']}
+              additionalTabs={[
+                <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+                  <AssetDetails id={assetId} />
+                </Tabs.Pane>,
+                <Tabs.Pane title={<TabTitle>Children</TabTitle>} key="children">
+                  <AssetTreeTable
+                    filter={{ parentIds: [asset.id] }}
+                    onAssetClicked={newAsset => openAsset(newAsset.id)}
+                    selectionMode={mode}
+                    onSelect={onSelect}
+                    isSelected={isSelected}
+                  />
+                </Tabs.Pane>,
+              ]}
             />
-          </Tabs.Pane>,
-        ]}
-      />
+          </Col>
+        </Row>
+      </div>
     </>
   );
 };

@@ -62,12 +62,11 @@ export const TimeseriesPreview = ({
     <div style={{ overflow: 'hidden' }}>
       <ResourceTitleRow
         item={{ id: timeseriesId, type: 'timeSeries' }}
-        icon="Timeseries"
         actions={actions}
       />
       {timeseries && (
         <>
-          <Row>
+          <Row style={{ marginLeft: 16 }}>
             <Col span={24}>
               <TimeseriesChart
                 timeseriesId={timeseries.id}
@@ -76,7 +75,13 @@ export const TimeseriesPreview = ({
               />
             </Col>
           </Row>
-          <Row style={{ height: 'calc(100% - 635px)', overflow: 'auto' }}>
+          <Row
+            style={{
+              height: 'calc(100% - 635px)',
+              overflow: 'auto',
+              marginLeft: 16,
+            }}
+          >
             <Col span={24}>
               <ResourceDetailsTabs
                 parentResource={{

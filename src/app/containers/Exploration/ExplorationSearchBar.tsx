@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '@cognite/cogs.js';
-import { useQuery } from 'app/context/ResourceSelectionContext';
 import { debounce } from 'lodash';
+import { useQueryString } from 'app/hooks';
+import { SEARCH_KEY } from 'app/utils/contants';
 
 export const ExplorationSearchBar = () => {
-  const [urlQuery, setUrlQuery] = useQuery();
+  const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
   const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
   const [localQuery, setLocalQuery] = useState(urlQuery);
 
