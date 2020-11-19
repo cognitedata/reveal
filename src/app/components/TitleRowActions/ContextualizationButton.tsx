@@ -41,7 +41,7 @@ export const ContextualizationButton = ({
 
   const menu = (
     <Menu>
-      <Menu.Item disabled={running} onClick={start}>
+      <Menu.Item onClick={start}>
         <Space>
           <DetectJobIcon jobId={jobId} />
           <span>{jobId ? runningLabel : 'Detect objects'}</span>
@@ -77,8 +77,8 @@ export const ContextualizationButton = ({
   }
 
   return (
-    <Dropdown overlay={menu} key={id}>
-      <Button variant="outline" icon="LightBulb" />
+    <Dropdown overlay={menu} trigger={['click']} key={id}>
+      <Button variant="outline" icon={running ? 'Loading' : 'LightBulb'} />
     </Dropdown>
   );
 };
