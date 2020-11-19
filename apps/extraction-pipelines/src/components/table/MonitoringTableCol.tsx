@@ -4,7 +4,7 @@ import { Icon } from '@cognite/cogs.js';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
-import { CellProps } from '../../model/Runs';
+import { Run } from '../../model/Runs';
 
 enum TableHeadings {
   SEEN = 'Seen',
@@ -18,16 +18,18 @@ export const getMonitoringTableCol = () => {
       Header: TableHeadings.SEEN,
       accessor: 'timestamp',
       sortType: 'basic',
-      Cell: (cell: Cell) => {
-        return <TimeDisplay value={cell.value} relative withTooltip />;
+      Cell: ({ row }: Cell<Run>) => {
+        return (
+          <TimeDisplay value={row.values.timestamp} relative withTooltip />
+        );
       },
       disableFilters: true,
     },
     {
       Header: TableHeadings.LAST_RUN,
       accessor: 'status',
-      Cell: (cell: Cell) => {
-        return <StatusMarker status={cell.value} />;
+      Cell: ({ row }: Cell<Run>) => {
+        return <StatusMarker status={row.values.status} />;
       },
       disableSortBy: true,
       Filter: StatusFilterDropdown,
@@ -37,7 +39,7 @@ export const getMonitoringTableCol = () => {
     {
       Header: TableHeadings.LAST_SEEN,
       accessor: 'statusSeen',
-      Cell: ({ row, cell }: CellProps) =>
+      Cell: ({ row }: Cell<Run>) =>
         row.canExpand ? (
           <span
             {...row.getToggleRowExpandedProps({
@@ -46,11 +48,11 @@ export const getMonitoringTableCol = () => {
               },
             })}
           >
-            <StatusMarker status={cell.value} />
+            <StatusMarker status={row.values.statusSeen} />
             {row.isExpanded ? <Icon type="Down" /> : <Icon type="Right" />}
           </span>
         ) : (
-          <StatusMarker status={cell.value} />
+          <StatusMarker status={row.values.statusSeen} />
         ),
       disableSortBy: true,
       Filter: StatusFilterDropdown,

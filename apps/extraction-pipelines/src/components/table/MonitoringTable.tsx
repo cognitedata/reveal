@@ -8,17 +8,23 @@ import {
   HeaderGroup,
   Cell,
   Row,
+  Column,
 } from 'react-table';
 import SorterIndicator from '../table/SorterIndicator';
-import { TableProps } from '../../model/Runs';
+import { Run } from '../../model/Runs';
+
+export interface TableProps {
+  data: Run[];
+  columns: Column[];
+}
 
 const MonitoringTable = ({ columns, data }: TableProps) => {
   const dataSource = useMemo(() => {
     return data;
-  }, []);
+  }, [data]);
   const headerCols = useMemo(() => {
     return columns;
-  }, []);
+  }, [columns]);
 
   const {
     getTableProps,

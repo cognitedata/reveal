@@ -1,15 +1,10 @@
-import {
-  RunsAPIResponse,
-  IntegrationProps,
-  RunAPIProps,
-  RunsProps,
-} from '../model/Runs';
+import { RunsAPIResponse, RunResponse, Status, RunRow } from '../model/Runs';
 
 const mapRuns = (response: RunsAPIResponse) => {
-  const result: RunsProps[] = [];
-  response.items.forEach((item: IntegrationProps) => {
-    item.statuses.forEach((status: RunAPIProps) => {
-      const run: RunsProps = {
+  const result: RunRow[] = [];
+  response.items.forEach((item: RunResponse) => {
+    item.statuses.forEach((status: Status) => {
+      const run: RunRow = {
         timestamp: status.timestamp,
         status: '',
         statusSeen: 'OK',

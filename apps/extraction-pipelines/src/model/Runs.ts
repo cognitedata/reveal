@@ -1,44 +1,25 @@
-import { Column, Cell, Row } from 'react-table';
-
-export interface TableProps {
-  data: {
-    timestamp: number;
-    status: string;
-    statusSeen: string;
-  }[];
-  columns: Column[];
-}
-
-export interface CellProps {
-  row: Row;
-  cell: Cell;
-}
-
 export interface RunsAPIResponse {
-  items: IntegrationProps[];
+  items: RunResponse[];
 }
 
-export interface IntegrationProps {
+export interface RunResponse {
   createdTime: number;
   lastUpdatedTime: number;
   externalId: string;
-  statuses: RunAPIProps[];
+  statuses: Status[];
   id: number;
 }
 
-export interface RunAPIProps {
+export interface Status {
   timestamp: number;
   status: string;
 }
 
-export interface RunsProps {
-  timestamp: number;
-  status: string;
-  statusSeen: string;
-  subRows: RunProps[];
+export interface RunRow extends Run {
+  subRows: Run[];
 }
 
-export interface RunProps {
+export interface Run {
   timestamp: number;
   status: string;
   statusSeen: string;
