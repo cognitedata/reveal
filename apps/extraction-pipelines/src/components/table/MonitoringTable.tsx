@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Icon } from '@cognite/cogs.js';
 import {
   useTable,
   useFilters,
@@ -10,16 +9,17 @@ import {
   Cell,
   Row,
 } from 'react-table';
-import StatusMarker from '../integrations/cols/StatusMarker';
-import StyledTable from '../../styles/StyledTable';
-import { mockDataRunsResponse } from '../../utils/mockResponse';
-import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
-import StatusFilterDropdown from '../table/StatusFilterDropdown';
 import SorterIndicator from '../table/SorterIndicator';
-import { TableProps, CellProps } from '../../model/Runs';
-import mapRuns from '../../utils/runsUtils';
+import { TableProps } from '../../model/Runs';
 
-const Table = ({ columns, data }: TableProps) => {
+const MonitoringTable = ({ columns, data }: TableProps) => {
+  const dataSource = useMemo(() => {
+    return data;
+  }, []);
+  const headerCols = useMemo(() => {
+    return columns;
+  }, []);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -28,8 +28,8 @@ const Table = ({ columns, data }: TableProps) => {
     prepareRow,
   } = useTable(
     {
-      columns,
-      data,
+      columns: headerCols,
+      data: dataSource,
     },
     useFilters,
     useGlobalFilter,
@@ -85,65 +85,6 @@ const Table = ({ columns, data }: TableProps) => {
         })}
       </tbody>
     </table>
-  );
-};
-
-const MonitoringTable = () => {
-  const data = useMemo(() => mapRuns(mockDataRunsResponse), []);
-
-  const columns = useMemo(
-    () => [
-      {
-        Header: 'Seen',
-        accessor: 'timestamp',
-        sortType: 'basic',
-        Cell: (cell: Cell) => {
-          return <TimeDisplay value={cell.value} relative withTooltip />;
-        },
-        disableFilters: true,
-      },
-      {
-        Header: 'Last run',
-        accessor: 'status',
-        Cell: (cell: Cell) => {
-          return <StatusMarker status={cell.value} />;
-        },
-        disableSortBy: true,
-        Filter: StatusFilterDropdown,
-        filter: 'includes',
-        disableFilters: false,
-      },
-      {
-        Header: 'Last seen',
-        accessor: 'statusSeen',
-        Cell: ({ row, cell }: CellProps) =>
-          row.canExpand ? (
-            <span
-              {...row.getToggleRowExpandedProps({
-                style: {
-                  paddingLeft: `${row.depth * 2}rem`,
-                },
-              })}
-            >
-              <StatusMarker status={cell.value} />
-              {row.isExpanded ? <Icon type="Down" /> : <Icon type="Right" />}
-            </span>
-          ) : (
-            <StatusMarker status={cell.value} />
-          ),
-        disableSortBy: true,
-        Filter: StatusFilterDropdown,
-        filter: 'includes',
-        disableFilters: false,
-      },
-    ],
-    []
-  );
-
-  return (
-    <StyledTable>
-      <Table columns={columns} data={data} />
-    </StyledTable>
   );
 };
 
