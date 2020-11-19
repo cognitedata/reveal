@@ -54,7 +54,7 @@ export default () => {
           <AuthWrapper
             showLoader
             includeGroups
-            loadingScreen={<Loader />}
+            loadingScreen={<Loader darkMode={false} />}
             subAppName="data-exploration"
           >
             <SDKProvider sdk={sdk}>
