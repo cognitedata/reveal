@@ -7,12 +7,14 @@ import { SequenceTable } from 'lib/containers/Sequences';
 
 export const SequenceSearchResults = ({
   query = '',
-  filter,
+  filter = {},
+  items,
   onClick,
   ...selectionProps
 }: {
   query?: string;
-  filter: Required<SequenceFilter>['filter'];
+  filter?: Required<SequenceFilter>['filter'];
+  items?: Sequence[];
   onClick: (item: Sequence) => void;
 } & SelectableItemsProps) => {
   return (
@@ -22,6 +24,7 @@ export const SequenceSearchResults = ({
         type="sequences"
         filter={filter}
         query={query}
+        count={items ? items.length : undefined}
       />
       <SearchResultLoader<Sequence>
         type="sequence"
@@ -32,6 +35,7 @@ export const SequenceSearchResults = ({
         {props => (
           <SequenceTable
             {...props}
+            data={items || props.data}
             onRowClick={sequence => onClick(sequence)}
           />
         )}

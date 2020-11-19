@@ -10,6 +10,7 @@ type ResultProps = {
   api: 'list' | 'search';
   type: SdkResourceType;
   filter?: any;
+  count?: number;
   query?: string;
   label?: string;
 };
@@ -19,6 +20,7 @@ export function ResultCount({
   type,
   filter,
   query,
+  count,
   label = 'results',
 }: ResultProps) {
   const { data: search, isFetched: searchDone } = useSearch(
@@ -26,12 +28,20 @@ export function ResultCount({
     query!,
     { limit: 1000 },
     {
-      enabled: api === 'search' && query && query.length > 0,
+      enabled: api === 'search' && query && query.length > 0 && !count,
     }
   );
   const { data: list, isFetched: listDone } = useAggregate(type, filter, {
-    enabled: api === 'list',
+    enabled: api === 'list' && !count,
   });
+
+  if (count) {
+    return (
+      <>
+        {formatNumber(count)} {label}
+      </>
+    );
+  }
 
   switch (api) {
     case 'list': {

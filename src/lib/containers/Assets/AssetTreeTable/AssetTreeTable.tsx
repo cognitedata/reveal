@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Asset } from '@cognite/sdk';
+import { Asset, AssetFilterProps } from '@cognite/sdk';
 import styled from 'styled-components';
 import { usePrevious } from 'lib/hooks/CustomHooks';
 import { Loader, Table } from 'lib/components';
@@ -17,7 +17,7 @@ export const AssetTreeTable = ({
   startFromRoot = false,
   ...selectionProps
 }: {
-  filter: any;
+  filter: AssetFilterProps;
   query?: string;
   activeIds?: number[];
   onAssetClicked: (item: Asset) => void;

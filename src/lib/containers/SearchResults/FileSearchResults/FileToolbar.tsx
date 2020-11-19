@@ -12,12 +12,14 @@ export const FileToolbar = ({
   currentView = 'list',
   query,
   filter,
+  count,
   allowEdit = false,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
   onViewChange?: (view: string) => void;
   currentView?: string;
   query: string;
+  count?: number;
   filter?: any;
   allowEdit?: boolean;
 }) => {
@@ -32,6 +34,7 @@ export const FileToolbar = ({
         type="files"
         filter={filter}
         query={query}
+        count={count}
       >
         {allowEdit && (
           <Button

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Tabs, TabPaneProps } from 'lib/components';
 import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
@@ -12,6 +12,7 @@ import { lightGrey } from 'lib/utils/Colors';
 import { RelationshipTable, Resource } from 'lib/containers/Relationships';
 import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
+import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem;
@@ -47,6 +48,16 @@ const RelationshipTabContent = ({
   );
 
   const { data: relationships } = useRelationships(resource.externalId, [type]);
+  const { mode, onSelect, resourcesState } = useContext(
+    ResourceSelectionContext
+  );
+
+  const isSelected = (item: ResourceItem) => {
+    return resourcesState.some(
+      el =>
+        el.state === 'selected' && el.id === item.id && el.type === item.type
+    );
+  };
 
   return (
     <RelationshipTable
@@ -56,6 +67,9 @@ const RelationshipTabContent = ({
       onItemClicked={(id: number) => {
         history.push(createLink(`/explore/${type}/${id}`));
       }}
+      selectionMode={mode}
+      onSelect={onSelect}
+      isSelected={isSelected}
     />
   );
 };

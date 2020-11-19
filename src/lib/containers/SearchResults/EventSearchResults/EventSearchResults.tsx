@@ -7,12 +7,14 @@ import { EventTable } from 'lib/containers/Events';
 
 export const EventSearchResults = ({
   query = '',
-  filter,
+  filter = {},
   onClick,
+  items,
   ...selectionProps
 }: {
   query?: string;
-  filter: EventFilter;
+  filter?: EventFilter;
+  items?: CogniteEvent[];
   onClick: (item: CogniteEvent) => void;
 } & SelectableItemsProps) => {
   return (
@@ -22,6 +24,7 @@ export const EventSearchResults = ({
         type="events"
         filter={filter}
         query={query}
+        count={items ? items.length : undefined}
       />
       <SearchResultLoader<CogniteEvent>
         type="event"
@@ -30,7 +33,11 @@ export const EventSearchResults = ({
         {...selectionProps}
       >
         {props => (
-          <EventTable {...props} onRowClick={event => onClick(event)} />
+          <EventTable
+            {...props}
+            data={items || props.data}
+            onRowClick={event => onClick(event)}
+          />
         )}
       </SearchResultLoader>
     </>

@@ -4,15 +4,13 @@ import { Timeseries } from '@cognite/sdk/dist/src';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import styled from 'styled-components';
 import { Body, Tooltip, Icon } from '@cognite/cogs.js';
-import { LatestDatapoint } from 'lib/components';
+import { GridCellProps, LatestDatapoint } from 'lib/components';
 
 export const TimeseriesSparklineCard = ({
-  timeseries,
-  onItemClicked,
-}: {
-  timeseries: Timeseries;
-  onItemClicked: (id: number) => void;
-}) => {
+  item,
+  onClick,
+  style,
+}: GridCellProps<Timeseries>) => {
   const copy = async (s: string) => {
     if (s.length > 0) {
       await navigator.clipboard.writeText(`${s}`);
@@ -26,51 +24,57 @@ export const TimeseriesSparklineCard = ({
 
   const menu = (
     <Menu>
-      <Menu.Item onClick={() => copy(`${timeseries.id}`)}>Copy ID</Menu.Item>
+      <Menu.Item onClick={() => copy(`${item.id}`)}>Copy ID</Menu.Item>
       <Menu.Item disabled>Add to collection</Menu.Item>
     </Menu>
   );
 
   return (
-    <Card style={{ backgroundColor: 'white' }}>
-      <CardHeader>
-        <Dropdown overlay={menu}>
-          <Button
-            type="text"
-            icon={<Icon type="MoreOverflowEllipsisHorizontal" />}
-          />
-        </Dropdown>
-      </CardHeader>
-      <TimeseriesChart
-        height={200}
-        timeseriesId={timeseries.id}
-        numberOfPoints={100}
-        showAxis="none"
-        timeOptions={['1Y']}
-        showContextGraph={false}
-        showPoints={false}
-        enableTooltip={false}
-        showGridLine="none"
-      />
-      <Title>
-        <Tooltip
-          interactive
-          disabled={!timeseries.name}
-          content={timeseries.name}
-        >
-          <TimeseriesText
-            level={1}
-            strong
-            style={{ cursor: 'pointer' }}
-            onClick={() => onItemClicked(timeseries.id)}
-          >
-            {timeseries.name}
-          </TimeseriesText>
-        </Tooltip>
-        <TimeseriesText level={2}>{timeseries.unit}</TimeseriesText>
-      </Title>
-      <LatestDatapoint timeSeries={timeseries} valueOnly />
-    </Card>
+    <div style={{ ...style, padding: 12 }}>
+      <Card
+        style={{
+          backgroundColor: 'white',
+          height: '100%',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <CardHeader>
+          <Dropdown overlay={menu}>
+            <Button
+              type="text"
+              icon={<Icon type="MoreOverflowEllipsisHorizontal" />}
+            />
+          </Dropdown>
+        </CardHeader>
+        <TimeseriesChart
+          height={200}
+          timeseriesId={item.id}
+          numberOfPoints={100}
+          showAxis="none"
+          timeOptions={['1Y']}
+          showContextGraph={false}
+          showPoints={false}
+          enableTooltip={false}
+          showGridLine="none"
+        />
+        <Title>
+          <Tooltip interactive disabled={!item.name} content={item.name}>
+            <TimeseriesText
+              level={1}
+              strong
+              style={{ cursor: 'pointer' }}
+              onClick={onClick}
+            >
+              {item.name}
+            </TimeseriesText>
+          </Tooltip>
+          <TimeseriesText level={2}>{item.unit}</TimeseriesText>
+        </Title>
+        <LatestDatapoint timeSeries={item} valueOnly />
+      </Card>
+    </div>
   );
 };
 

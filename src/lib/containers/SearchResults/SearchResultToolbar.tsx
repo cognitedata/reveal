@@ -9,16 +9,24 @@ export const SearchResultToolbar = ({
   filter,
   query,
   children,
+  count,
 }: {
   api: 'list' | 'search';
   type: SdkResourceType;
   filter?: any;
   query?: string;
   children?: React.ReactNode;
+  count?: number;
 }) => {
   return (
     <ToolbarRow>
-      <ResultCount type={type} filter={filter} api={api} query={query} />
+      <ResultCount
+        type={type}
+        filter={filter}
+        api={api}
+        query={query}
+        count={count}
+      />
       <div className="spacer" />
       {children}
     </ToolbarRow>

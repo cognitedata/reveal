@@ -1,24 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useLocation, useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
-import { AssetDetails, AssetBreadcrumb } from 'lib/containers/Assets';
+import {
+  AssetDetails,
+  AssetBreadcrumb,
+  AssetTreeTable,
+} from 'lib/containers/Assets';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Row, Col, Space } from 'antd';
+import { Space } from 'antd';
 import { Asset } from '@cognite/sdk';
 import { Loader, ErrorFeedback, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useCurrentResourceId } from 'app/containers/Exploration/hooks';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
+import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
+import { ResourceItem } from 'lib/types';
 
 export type AssetPreviewTabType =
   | 'details'
   | 'timeseries'
   | 'files'
   | 'sequences'
-  | 'events';
+  | 'events'
+  | 'children';
 
 export const AssetPreview = ({
   assetId,
@@ -37,6 +44,17 @@ export const AssetPreview = ({
   const activeTab = location.pathname
     .replace(match.url, '')
     .slice(1) as AssetPreviewTabType;
+
+  const { mode, onSelect, resourcesState } = useContext(
+    ResourceSelectionContext
+  );
+
+  const isSelected = (item: ResourceItem) => {
+    return resourcesState.some(
+      el =>
+        el.state === 'selected' && el.id === item.id && el.type === item.type
+    );
+  };
 
   const openAsset = useCurrentResourceId()[1];
 
@@ -67,45 +85,44 @@ export const AssetPreview = ({
         icon="DataStudio"
         actions={actions}
       />
-      <div style={{ flexGrow: 1 }}>
-        <Row>
-          <Col span={24}>
-            <Space align="center">
-              <p>LOCATION:</p>
-              <AssetBreadcrumb
-                assetId={assetId}
-                onBreadcrumbClick={newAsset => openAsset(newAsset.id)}
-              />
-            </Space>
-          </Col>
-        </Row>
+      <Space align="center">
+        <p>LOCATION:</p>
+        <AssetBreadcrumb
+          assetId={assetId}
+          onBreadcrumbClick={newAsset => openAsset(newAsset.id)}
+        />
+      </Space>
 
-        <Row style={{ height: 'calc(100% - 82px)' }}>
-          <Col span={24}>
-            <ResourceDetailsTabs
-              parentResource={{
-                type: 'asset',
-                id: asset.id,
-                externalId: asset.externalId,
-              }}
-              tab={activeTab}
-              onTabChange={newTab =>
-                history.push(
-                  createLink(
-                    `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-                  )
-                )
-              }
-              excludedTypes={['asset']}
-              additionalTabs={[
-                <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                  <AssetDetails id={assetId} />
-                </Tabs.Pane>,
-              ]}
+      <ResourceDetailsTabs
+        parentResource={{
+          type: 'asset',
+          id: asset.id,
+          externalId: asset.externalId,
+        }}
+        tab={activeTab}
+        onTabChange={newTab =>
+          history.push(
+            createLink(
+              `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+            )
+          )
+        }
+        excludedTypes={['asset']}
+        additionalTabs={[
+          <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+            <AssetDetails id={assetId} />
+          </Tabs.Pane>,
+          <Tabs.Pane title={<TabTitle>Children</TabTitle>} key="children">
+            <AssetTreeTable
+              filter={{ parentIds: [asset.id] }}
+              onAssetClicked={newAsset => openAsset(newAsset.id)}
+              selectionMode={mode}
+              onSelect={onSelect}
+              isSelected={isSelected}
             />
-          </Col>
-        </Row>
-      </div>
+          </Tabs.Pane>,
+        ]}
+      />
     </>
   );
 };

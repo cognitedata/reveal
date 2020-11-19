@@ -2,24 +2,24 @@ import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { files } from 'stubs/files';
-import { FileGridTable } from './FileGridTable';
+import { FileGridPreview } from './FileGridPreview';
 
 export default {
-  title: 'Files/FileGridTable',
-  component: FileGridTable,
+  title: 'Files/FileGridPreview',
+  component: FileGridPreview,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
 export const Example = () => {
   return (
-    <FileGridTable items={files} onItemClicked={action('onItemClicked')} />
+    <FileGridPreview items={files} onItemClicked={action('onItemClicked')} />
   );
 };
 export const ExampleSingleSelect = () => {
   return (
-    <FileGridTable
+    <FileGridPreview
       selectionMode="single"
-      items={files}
+      item={files[0]}
       onItemClicked={action('onItemClicked')}
     />
   );

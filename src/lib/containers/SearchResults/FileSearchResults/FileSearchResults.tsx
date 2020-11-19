@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/sdk';
-import { FileGridTable, FileTable } from 'lib/containers/Files';
+import { FileGridPreview, FileTable } from 'lib/containers/Files';
 import { SelectableItemsProps } from 'lib/CommonProps';
 import { SearchResultLoader } from 'lib';
+import { GridTable } from 'lib/components';
 import { FileToolbar } from './FileToolbar';
 
 export const FileSearchResults = ({
   query = '',
-  filter,
+  filter = {},
+  items,
   allowEdit = false,
   onClick,
   ...selectionProps
 }: {
   query?: string;
-  filter: FileFilterProps;
+  items?: FileInfo[];
+  filter?: FileFilterProps;
   allowEdit?: boolean;
   onClick: (item: FileInfo) => void;
 } & SelectableItemsProps) => {
@@ -31,6 +34,7 @@ export const FileSearchResults = ({
         currentView={currentView}
         onViewChange={setCurrentView}
         allowEdit={allowEdit}
+        count={items ? items.length : undefined}
       />
       <SearchResultLoader<FileInfo>
         type="file"
@@ -41,21 +45,26 @@ export const FileSearchResults = ({
         {props =>
           currentView === 'grid' ? (
             <div style={{ flex: 1 }}>
-              <FileGridTable
+              <GridTable
                 {...props}
+                data={items || props.data}
                 onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
                 onItemClicked={file => onClick(file)}
                 {...selectionProps}
+                renderCell={cellProps => <FileGridPreview {...cellProps} />}
               />
             </div>
           ) : (
-            <FileTable
-              {...props}
-              onRowClick={file => {
-                onClick(file);
-                return true;
-              }}
-            />
+            <div style={{ flex: 1 }}>
+              <FileTable
+                {...props}
+                data={items || props.data}
+                onRowClick={file => {
+                  onClick(file);
+                  return true;
+                }}
+              />
+            </div>
           )
         }
       </SearchResultLoader>

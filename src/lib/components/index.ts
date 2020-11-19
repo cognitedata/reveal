@@ -17,3 +17,4 @@ export * from './Table/Table';
 export * from './TimeDisplay/TimeDisplay';
 export * from './ErrorFeedback/ErrorFeedback';
 export * from './ResourceIcons/ResourceIcons';
+export * from './GridTable/GridTable';
