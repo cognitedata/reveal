@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown, Menu, Tooltip } from 'antd';
+import { Dropdown, Menu, Tooltip, Space } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 import { ResourceItem, isModelRunning } from 'lib/types';
@@ -42,8 +42,10 @@ export const ContextualizationButton = ({
   const menu = (
     <Menu>
       <Menu.Item disabled={running} onClick={start}>
-        <DetectJobIcon jobId={jobId} />
-        <span>{jobId ? runningLabel : 'Detect objects'}</span>
+        <Space>
+          <DetectJobIcon jobId={jobId} />
+          <span>{jobId ? runningLabel : 'Detect objects'}</span>
+        </Space>
       </Menu.Item>
     </Menu>
   );
