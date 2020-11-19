@@ -15,20 +15,11 @@ import {
   Column,
   useFilters,
 } from 'react-table';
-import { Colors, Icon } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { matchSorter } from 'match-sorter';
 import IntegrationsRadio from './IntegrationsRadio';
 import { Integration } from '../../model/Integration';
 import IntegrationTableSearch from './IntegrationTableSearch';
-
-const SortingIcon = styled((props) => <Icon {...props} />)`
-  margin-left: 0.25rem;
-  vertical-align: middle;
-  path {
-    fill: ${Colors['greyscale-grey6'].hex()};
-  }
-`;
+import SorterIndicator from '../table/SorterIndicator';
 
 const selectReducer = (
   newState: TableState,
@@ -144,22 +135,10 @@ function ITable<T extends { id: ReactText }>({
           {headerGroups.map((headerGroup: HeaderGroup<T>) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((col: HeaderGroup<T>) => {
-                const showSorterIndicator = (sCol: HeaderGroup<T>) => {
-                  if (!sCol.disableSortBy) {
-                    if (sCol.isSorted) {
-                      if (sCol.isSortedDesc) {
-                        return <SortingIcon type="SortDown" />;
-                      }
-                      return <SortingIcon type="SortUp" />;
-                    }
-                    return <SortingIcon type="OrderDesc" />;
-                  }
-                  return '';
-                };
                 return (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
                     {col.disableFilters && col.render('Header')}
-                    {col.canSort && showSorterIndicator(col)}
+                    {col.canSort && <SorterIndicator sCol={col} />}
                     {!col.disableFilters && col.render('Filter')}
                   </th>
                 );
