@@ -12,11 +12,6 @@ import searchSlice from 'reducers/search/slice';
 const TopBarWrapper = () => {
   const user = useSelector(selectUser);
   const history = useHistory();
-  const dispatch = useDispatch();
-
-  const handleClickSearch = () => {
-    dispatch(searchSlice.actions.showSearch());
-  };
 
   return (
     <TopBar>
@@ -32,11 +27,6 @@ const TopBarWrapper = () => {
               />
             </Button>
           }
-        />
-        <TopBar.Action
-          icon="Search"
-          text="Search"
-          onClick={() => handleClickSearch()}
         />
         <TopBar.Action
           icon="ChartMergedView"

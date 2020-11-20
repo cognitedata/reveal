@@ -1,12 +1,15 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Drawer, Icon, Input } from '@cognite/cogs.js';
-import { selectSearchVisibility } from 'reducers/search/selectors';
+import {
+  selectActiveChartId,
+  selectSearchVisibility,
+} from 'reducers/search/selectors';
 import useSelector from 'hooks/useSelector';
 import useDispatch from 'hooks/useDispatch';
 import searchSlice from 'reducers/search/slice';
 import styled from 'styled-components/macro';
 import { Timeseries } from '@cognite/sdk';
-import { useParams } from 'react-router-dom';
+import chartsSlice from 'reducers/charts';
 import useTimeSeriesSearch from './useTimeSeriesSearch';
 
 const SEARCH_RESULT_LIMIT = 20;
@@ -36,7 +39,7 @@ const SearchResult = styled.div`
   }
 
   &:hover {
-    background: lightgreen;
+    background: var(--cogs-greyscale-grey2);
 
     & > :last-child {
       visibility: visible;
@@ -67,8 +70,8 @@ const SearchResultActions = styled.span`
 const Search = () => {
   const dispatch = useDispatch();
   const isVisible = useSelector(selectSearchVisibility);
+  const activeChartId = useSelector(selectActiveChartId);
   const [searchInputValue, setSearchInputValue] = useState('');
-  const params = useParams();
 
   const handleCancel = () => {
     dispatch(searchSlice.actions.hideSearch());
@@ -92,8 +95,12 @@ const Search = () => {
   };
 
   const handleTimeSeriesClick = (timeseries: Timeseries) => {
-    console.log(timeseries);
-    console.log(params);
+    dispatch(
+      chartsSlice.actions.addTimeSeries({
+        id: activeChartId,
+        timeSeriesId: String(timeseries.externalId),
+      })
+    );
   };
 
   const resultElements = timeseriesSearchResults.map((timeseries) => {

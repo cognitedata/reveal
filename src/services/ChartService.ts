@@ -18,9 +18,7 @@ export class ChartService {
   }
 
   async getCharts(): Promise<Chart[]> {
-    const snapshot = await this.firebaseCollection
-      .where('user', '==', this.user)
-      .get();
+    const snapshot = await this.firebaseCollection.get();
     return snapshot.docs.map((doc) => doc.data()) as Chart[];
   }
 

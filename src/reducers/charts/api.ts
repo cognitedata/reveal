@@ -47,6 +47,7 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
   const id = nanoid();
   const newChart: Chart = {
     id,
+    user,
     name: `chart-${id}`,
     timeSeriesIds: [],
     workflowIds: [],

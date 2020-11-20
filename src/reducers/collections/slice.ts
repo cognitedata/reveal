@@ -18,8 +18,15 @@ const collectionsSlice = createSlice({
   initialState: collectionAdapter.getInitialState({
     status: { status: 'IDLE' } as LoadingStatus,
     initialized: false,
+    isVisible: false,
   }),
   reducers: {
+    showCollections: (state) => {
+      state.isVisible = true;
+    },
+    hideCollections: (state) => {
+      state.isVisible = false;
+    },
     // Loading collection
     startLoadingAllCollections: (state) => {
       state.status.status = 'LOADING';

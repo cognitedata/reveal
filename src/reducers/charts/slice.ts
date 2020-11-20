@@ -4,6 +4,7 @@ import {
   createEntityAdapter,
   Update,
 } from '@reduxjs/toolkit';
+import uniq from 'lodash/uniq';
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
 import { ValueOf } from 'typings/utils';
@@ -43,6 +44,20 @@ const chartsSlice = createSlice({
     // Editing chart (add/remove sources, etc)
     updateChart: (state, action: PayloadAction<Update<Chart>>) => {
       chartAdapter.updateOne(state, action.payload);
+    },
+
+    addTimeSeries: (
+      state,
+      action: PayloadAction<{ id: string; timeSeriesId: string }>
+    ) => {
+      const { id, timeSeriesId } = action.payload;
+      const chart = chartAdapter.getSelectors().selectById(state, id);
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          timeSeriesIds: uniq([...(chart?.timeSeriesIds || []), timeSeriesId]),
+        },
+      });
     },
 
     // Making new chart

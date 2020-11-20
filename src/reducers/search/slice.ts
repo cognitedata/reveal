@@ -1,10 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ValueOf } from 'typings/utils';
 
 const searchSlice = createSlice({
-  name: 'collections',
+  name: 'search',
   initialState: {
     isVisible: false,
+    activeChartId: '',
   },
   reducers: {
     showSearch: (state) => {
@@ -12,6 +13,9 @@ const searchSlice = createSlice({
     },
     hideSearch: (state) => {
       state.isVisible = false;
+    },
+    setActiveChartId: (state, action: PayloadAction<string>) => {
+      state.activeChartId = action.payload;
     },
   },
 });

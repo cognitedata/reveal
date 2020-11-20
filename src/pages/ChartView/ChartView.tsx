@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
+import { Button, Icon, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import { chartSelectors } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -11,7 +11,28 @@ import {
   createNewWorkflow,
 } from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
-import { Header, TopPaneWrapper, BottomPaneWrapper } from './elements';
+import searchSlice from 'reducers/search';
+import collectionsSlice from 'reducers/collections';
+import { saveExistingChart } from 'reducers/charts/api';
+import ChartComponent from 'components/Chart';
+import {
+  Header,
+  TopPaneWrapper,
+  BottomPaneWrapper,
+  ChartViewContainer,
+  ToolbarWrapper,
+  ContentWrapper,
+  ToolbarItem,
+  ToolbarIcon,
+  ChartContainer,
+  SourceListWrapper,
+  SourcesTitle,
+  SourceList,
+  SourceButtonContainer,
+  SourceItem,
+  SourceCircle,
+  ChartWrapper,
+} from './elements';
 
 type ChartViewProps = {
   chartId?: string;
@@ -25,14 +46,17 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
   );
-  const workflows = useSelector((state) =>
-    chart?.workflowIds?.map((id) => state.workflows.entities[id])
-  )?.filter(Boolean);
 
   useEffect(() => {
     if (chart?.workflowIds) {
       dispatch(fetchWorkflowsForChart(chart?.workflowIds));
       // Run the existing workflows here
+    }
+  }, [chart?.id]);
+
+  useEffect(() => {
+    if (chart) {
+      dispatch(searchSlice.actions.setActiveChartId(chart.id));
     }
   }, [chart?.id]);
 
@@ -42,12 +66,24 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
-  const dataFromWorkflows = workflows
-    ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
-    .map((workflow) => ({
-      name: workflow?.name,
-      data: workflow?.latestRun?.results,
-    }));
+  const handleClickSearch = () => {
+    dispatch(searchSlice.actions.showSearch());
+  };
+
+  const handleClickCollections = () => {
+    dispatch(collectionsSlice.actions.showCollections());
+  };
+
+  const handleClickSave = async () => {
+    if (chart) {
+      try {
+        await dispatch(saveExistingChart(chart));
+        toast.success('Successfully saved nothing!');
+      } catch (e) {
+        toast.error('Unable to save - try again!');
+      }
+    }
+  };
 
   if (!hasData) {
     return <Icon type="Loading" />;
@@ -59,74 +95,94 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     );
   }
 
+  const timeseriesItems = chart.timeSeriesIds?.map((timeseriesId) => {
+    return (
+      <SourceItem>
+        <SourceCircle />
+        {timeseriesId}
+      </SourceItem>
+    );
+  });
+
+  const workflowItems = chart.workflowIds?.map((workflowId) => {
+    return (
+      <SourceItem onClick={() => setActiveWorkflowId(workflowId)}>
+        <SourceCircle />
+        {workflowId}
+      </SourceItem>
+    );
+  });
+
   return (
-    <div id="chart-view">
-      <Header>
-        <hgroup>
-          <h1>{chart?.name}</h1>
-          <h4>by Anon User</h4>
-        </hgroup>
-        <section className="actions">
-          <Button
-            icon="Checkmark"
-            type="primary"
-            onClick={() => {
-              toast.success('Successfully saved nothing!');
-            }}
-          >
-            Save
-          </Button>
-          <Button icon="Share" variant="ghost">
-            Share
-          </Button>
-          <Button icon="Download" variant="ghost">
-            Export
-          </Button>
-        </section>
-      </Header>
-      <div style={{ height: '100%' }}>
-        <SplitPaneLayout>
-          <TopPaneWrapper className="chart">
-            <div
-              style={{
-                display: 'flex',
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+    <ChartViewContainer id="chart-view">
+      <ContentWrapper>
+        <Header>
+          <hgroup>
+            <h1>{chart?.name}</h1>
+            <h4>by {chart?.user}</h4>
+          </hgroup>
+          <section className="actions">
+            <Button
+              icon="Checkmark"
+              type="primary"
+              onClick={() => handleClickSave()}
             >
-              Chart would go here.
-              {dataFromWorkflows && (
-                <div>
-                  Data from workflow: {JSON.stringify(dataFromWorkflows)}
-                </div>
-              )}
-              <Dropdown
-                content={
-                  <Menu>
-                    {chart.workflowIds?.map((id) => (
-                      <Menu.Item
-                        key={id}
-                        onClick={() => setActiveWorkflowId(id)}
-                      >
-                        {id}
-                      </Menu.Item>
-                    ))}
-                    <Menu.Divider />
-                    <Menu.Item onClick={onNewWorkflow}>Create new</Menu.Item>
-                  </Menu>
-                }
+              Save
+            </Button>
+            <Button icon="Share" variant="ghost">
+              Share
+            </Button>
+            <Button icon="Download" variant="ghost">
+              Export
+            </Button>
+          </section>
+        </Header>
+        <ChartContainer>
+          <ToolbarWrapper>
+            <ToolbarItem onClick={() => handleClickSearch()}>
+              <ToolbarIcon type="Search" />
+            </ToolbarItem>
+            <ToolbarItem onClick={() => handleClickCollections()}>
+              <ToolbarIcon type="Folder" />
+            </ToolbarItem>
+          </ToolbarWrapper>
+          <SourceListWrapper>
+            <SourcesTitle>Time Series</SourcesTitle>
+            <SourceList>{timeseriesItems}</SourceList>
+            <SourceButtonContainer>
+              <Button
+                onClick={() => handleClickSearch()}
+                icon="Plus"
+                iconPlacement="right"
               >
-                <Button>{activeWorkflowId || 'Select a workflow'}</Button>
-              </Dropdown>
-            </div>
-          </TopPaneWrapper>
-          <BottomPaneWrapper className="table">
-            <NodeEditor workflowId={activeWorkflowId} />
-          </BottomPaneWrapper>
-        </SplitPaneLayout>
-      </div>
-    </div>
+                Add
+              </Button>
+            </SourceButtonContainer>
+            <SourcesTitle>Workflows</SourcesTitle>
+            <SourceList>{workflowItems}</SourceList>
+            <SourceButtonContainer>
+              <Button
+                onClick={() => onNewWorkflow()}
+                icon="Plus"
+                iconPlacement="right"
+              >
+                Create
+              </Button>
+            </SourceButtonContainer>
+          </SourceListWrapper>
+          <SplitPaneLayout>
+            <TopPaneWrapper className="chart">
+              <ChartWrapper>
+                <ChartComponent chart={chart} />
+              </ChartWrapper>
+            </TopPaneWrapper>
+            <BottomPaneWrapper className="table">
+              <NodeEditor workflowId={activeWorkflowId} />
+            </BottomPaneWrapper>
+          </SplitPaneLayout>
+        </ChartContainer>
+      </ContentWrapper>
+    </ChartViewContainer>
   );
 };
 
