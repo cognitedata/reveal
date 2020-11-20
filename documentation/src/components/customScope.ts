@@ -13,6 +13,7 @@ export const customScope: Record<string, any> = {
   // you can't simply call useBaseUrl here because it's a react hook...
   urls: {
     skyUrl: '/img/sky007.jpg',
+    kvaernerVerdalUrl: '/reveal-docs/img/kvaerner-verdal.jpg'
   },
   PotreePointShape: reveal.PotreePointShape,
   PotreePointColorType: reveal.PotreePointColorType,
