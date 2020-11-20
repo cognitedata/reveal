@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'antd';
 import { AssetPreview } from 'app/containers/Asset/AssetPreview';
 import { FilePreview } from 'app/containers/File/FilePreview';
 import { SequencePreview } from 'app/containers/Sequence/SequencePreview';
@@ -7,7 +6,7 @@ import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
 import { EventPreview } from 'app/containers/Event/EventPreview';
 import { ResourceItem } from 'lib/types';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
-import { Icon } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 
 type Props = {
   item: ResourceItem;
@@ -21,13 +20,7 @@ export default function ResourcePreview({
     'Download',
     'Collections',
     'Copy',
-    () => (
-      <Button
-        type="ghost"
-        icon={<Icon type="Close" />}
-        onClick={onCloseClicked}
-      />
-    ),
+    () => <Button variant="outline" icon="Close" onClick={onCloseClicked} />,
   ];
   switch (type) {
     case 'asset':
