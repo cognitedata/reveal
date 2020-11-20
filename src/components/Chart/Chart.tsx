@@ -67,6 +67,17 @@ const ChartComponent = ({ chart }: ChartProps) => {
             datapoint.value,
           ]),
         })),
+      ...(dataFromWorkflows || []).map(({ data = {}, name }: any) => {
+        return {
+          type: 'line',
+          name,
+          data: ((data['input-timeseries'] ||
+            []) as DoubleDatapoint[]).map((datapoint) => [
+            datapoint.timestamp,
+            datapoint.value,
+          ]),
+        };
+      }),
     ],
   };
 
