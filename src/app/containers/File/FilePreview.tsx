@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
-import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import { FilePreview as CogniteFilePreview } from 'lib/containers/Files/FilePreview';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
@@ -31,7 +30,6 @@ export const FilePreview = ({
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
-  const { hidePreview } = useResourcePreview();
   const isActive = resourcesState.some(
     el => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
@@ -51,8 +49,8 @@ export const FilePreview = ({
 
   useEffect(() => {
     trackUsage('Exploration.File', { fileId });
-    hidePreview();
-  }, [fileId, hidePreview]);
+    setEditMode(false);
+  }, [fileId]);
 
   const { data: fileInfo } = useCdfItem<FileInfo>('files', { id: fileId! });
 
