@@ -5,9 +5,8 @@ import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { ResourceItem } from 'lib/types';
 import DownloadButton from './DownloadButton';
 import CopyIdsButton from './CopyIdsButton';
-import { MaximizeButton } from './MaximizeButton';
 
-export type TitleRowActions = 'Download' | 'Collections' | 'Copy' | 'Open';
+export type TitleRowActions = 'Download' | 'Collections' | 'Copy';
 
 const TitleRowItem: {
   [key in TitleRowActions]: (props: { item: ResourceItem }) => React.ReactNode;
@@ -20,7 +19,6 @@ const TitleRowItem: {
       button: <Button variant="outline" icon="Folder" />,
     }),
   Copy: CopyIdsButton,
-  Open: MaximizeButton,
 };
 
 export type TitleRowActionsProps = {
@@ -32,7 +30,7 @@ export type TitleRowActionsProps = {
 };
 
 export const TitleRowActions = ({
-  actions = ['Download', 'Collections', 'Copy', 'Open'],
+  actions = ['Download', 'Collections', 'Copy'],
   item,
 }: TitleRowActionsProps) => {
   return (

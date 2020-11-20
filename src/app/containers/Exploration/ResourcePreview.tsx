@@ -21,7 +21,6 @@ export default function ResourcePreview({
     'Download',
     'Collections',
     'Copy',
-    'Open',
     () => (
       <Button
         type="ghost"
