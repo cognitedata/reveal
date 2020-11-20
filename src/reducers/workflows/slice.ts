@@ -7,7 +7,7 @@ import {
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
 import { ValueOf } from 'typings/utils';
-import { Workflow } from './types';
+import { StorableNode, Workflow } from './types';
 
 const workflowAdapter = createEntityAdapter<Workflow>({
   selectId: (workflow) => workflow.id,
@@ -48,6 +48,30 @@ const workflowSlice = createSlice({
     // Editing workflow
     updateWorkflow: (state, action: PayloadAction<Update<Workflow>>) => {
       workflowAdapter.updateOne(state, action.payload);
+    },
+    updateNode: (
+      state,
+      action: PayloadAction<{
+        workflowId: string;
+        nodeUpdate: Update<StorableNode>;
+      }>
+    ) => {
+      const { workflowId, nodeUpdate } = action.payload;
+      workflowAdapter.updateOne(state, {
+        id: workflowId,
+        changes: {
+          ...state.entities[workflowId],
+          nodes: state.entities[workflowId]?.nodes.map((node) => {
+            if (node.id === nodeUpdate.id) {
+              return {
+                ...node,
+                ...nodeUpdate.changes,
+              };
+            }
+            return node;
+          }),
+        },
+      });
     },
   },
 });

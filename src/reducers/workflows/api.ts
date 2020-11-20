@@ -89,7 +89,11 @@ export const saveExistingWorkflow = (workflow: Workflow): AppThunk => async (
   try {
     // Create the workflow
     const workflowService = new WorkflowService(tenant);
-    workflowService.saveWorkflow(workflow);
+
+    // Make sure we don't store the latest run details
+    const workflowToSave = { ...workflow };
+    delete workflowToSave.latestRun; // Firestore HATES undefined values, so lets remove it entirely.
+    workflowService.saveWorkflow(workflowToSave);
     toast.success('Workflow saved!');
   } catch (e) {
     toast.error('Failed to save workflow');

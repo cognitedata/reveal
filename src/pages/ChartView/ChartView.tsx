@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Icon, toast } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import { chartSelectors } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -33,6 +33,9 @@ import {
   SourceCircle,
   ChartWrapper,
 } from './elements';
+import { runWorkflow } from 'reducers/workflows/utils';
+import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
+import { NodeProgress } from '@cognite/connect';
 
 type ChartViewProps = {
   chartId?: string;
@@ -46,11 +49,62 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
   );
+  const [workflowsRan, setWorkflowsRan] = useState(false);
+  
+  const workflows = useSelector((state) =>
+    chart?.workflowIds?.map((id) => state.workflows.entities[id])
+  )?.filter(Boolean) as Workflow[];
+
+  const dataFromWorkflows = workflows
+    ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
+    .map((workflow) => ({
+      name: workflow?.name,
+      data: workflow?.latestRun?.results,
+    }));
+
+  const runWorkflows = async () => {
+    (workflows || []).forEach(async (flow) => {
+      if (!flow) {
+        return;
+      }
+      let progressTracker = {};
+      const nextLatestRun = await runWorkflow(
+        flow,
+        (nextProgress: NodeProgress) => {
+          progressTracker = { ...progressTracker, ...nextProgress };
+          dispatch(
+            workflowSlice.actions.updateWorkflow({
+              id: flow.id,
+              changes: {
+                latestRun: {
+                  status: 'RUNNING',
+                  nodeProgress: progressTracker,
+                  timestamp: Date.now(),
+                },
+              },
+            })
+          );
+        }
+      );
+
+      dispatch(
+        workflowSlice.actions.updateWorkflow({
+          id: flow.id,
+          changes: {
+            latestRun: {
+              ...nextLatestRun,
+              status: 'SUCCESS',
+              nodeProgress: progressTracker,
+            },
+          },
+        })
+      );
+    });
+  };
 
   useEffect(() => {
     if (chart?.workflowIds) {
       dispatch(fetchWorkflowsForChart(chart?.workflowIds));
-      // Run the existing workflows here
     }
   }, [chart?.id]);
 
@@ -59,6 +113,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       dispatch(searchSlice.actions.setActiveChartId(chart.id));
     }
   }, [chart?.id]);
+
+  useEffect(() => {
+    if ((workflows || []).length > 0 && !workflowsRan) {
+      setWorkflowsRan(true);
+      // Run the existing workflows here
+      runWorkflows();
+    }
+  }, [workflows]);
 
   const onNewWorkflow = () => {
     if (chart) {
@@ -89,6 +151,19 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     return <Icon type="Loading" />;
   }
 
+  const renderStatusIcon = (status?: WorkflowRunStatus) => {
+    switch (status) {
+      case 'RUNNING':
+        return <Icon type="Loading" />;
+      case 'SUCCESS':
+        return <Icon type="Check" />;
+      case 'FAILED':
+        return <Icon type="Close" />;
+      default:
+        return null;
+    }
+  };
+
   if (!chart) {
     return (
       <div>This chart does not seem to exist. You might not have access</div>
@@ -104,14 +179,17 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     );
   });
 
-  const workflowItems = chart.workflowIds?.map((workflowId) => {
+  const workflowItems = workflows?.map((flow) => {
     return (
-      <SourceItem onClick={() => setActiveWorkflowId(workflowId)}>
+      <SourceItem onClick={() => setActiveWorkflowId(flow.id)}>
         <SourceCircle />
-        {workflowId}
+        {flow.name || 'noname'}
+        {renderStatusIcon(flow.latestRun?.status)}
       </SourceItem>
     );
   });
+
+  console.log({ data: JSON.stringify(dataFromWorkflows) })
 
   return (
     <ChartViewContainer id="chart-view">

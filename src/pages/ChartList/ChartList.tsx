@@ -17,9 +17,11 @@ const ChartList = () => {
 
   const renderList = () => {
     return allCharts.map((chart) => (
-      <Link to={`/${chart.id}`} key={chart.id}>
-        {chart.name}
-      </Link>
+      <div>
+        <Link to={`/${chart.id}`} key={chart.id}>
+          {chart.name}
+        </Link>
+      </div>
     ));
   };
 
