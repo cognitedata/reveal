@@ -15,6 +15,9 @@ import searchSlice from 'reducers/search';
 import collectionsSlice from 'reducers/collections';
 import { saveExistingChart } from 'reducers/charts/api';
 import ChartComponent from 'components/Chart';
+import { runWorkflow } from 'reducers/workflows/utils';
+import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
+import { NodeProgress } from '@cognite/connect';
 import {
   Header,
   TopPaneWrapper,
@@ -33,9 +36,6 @@ import {
   SourceCircle,
   ChartWrapper,
 } from './elements';
-import { runWorkflow } from 'reducers/workflows/utils';
-import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
-import { NodeProgress } from '@cognite/connect';
 
 type ChartViewProps = {
   chartId?: string;
@@ -50,17 +50,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     chartSelectors.selectById(state, String(chartId))
   );
   const [workflowsRan, setWorkflowsRan] = useState(false);
-  
+
   const workflows = useSelector((state) =>
     chart?.workflowIds?.map((id) => state.workflows.entities[id])
   )?.filter(Boolean) as Workflow[];
-
-  const dataFromWorkflows = workflows
-    ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
-    .map((workflow) => ({
-      name: workflow?.name,
-      data: workflow?.latestRun?.results,
-    }));
 
   const runWorkflows = async () => {
     (workflows || []).forEach(async (flow) => {
@@ -184,12 +177,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       <SourceItem onClick={() => setActiveWorkflowId(flow.id)}>
         <SourceCircle />
         {flow.name || 'noname'}
-        {renderStatusIcon(flow.latestRun?.status)}
+        <div style={{ marginRight: 10 }}>
+          {renderStatusIcon(flow.latestRun?.status)}
+        </div>
       </SourceItem>
     );
   });
-
-  console.log({ data: JSON.stringify(dataFromWorkflows) })
 
   return (
     <ChartViewContainer id="chart-view">
