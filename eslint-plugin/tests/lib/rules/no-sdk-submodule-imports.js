@@ -14,6 +14,7 @@ ruleTester.run('no-sdk-submodule-imports', rule, {
     { code: "import { TimeSeriesClass as TimeSeries } from '@cognite/sdk';" },
     { code: "import { useMetrics } from '@cognite/metrics';" },
     { code: "import { Button } from 'antd';" },
+    { code: "import { useCdfItem } from '@cognite/sdk-react-query-hooks';" },
   ],
   invalid: [
     {

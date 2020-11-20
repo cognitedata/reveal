@@ -23,10 +23,7 @@ module.exports = {
         if (type !== 'Literal') {
           return;
         }
-        if (!value.startsWith('@cognite/sdk')) {
-          return;
-        }
-        if (value !== '@cognite/sdk') {
+        if (value.startsWith('@cognite/sdk/')) {
           context.report({
             node,
             messageId: 'no-sdk-submodule-imports',
