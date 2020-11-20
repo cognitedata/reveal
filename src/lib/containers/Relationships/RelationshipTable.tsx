@@ -6,7 +6,7 @@ import {
   Asset,
   CogniteEvent,
   FileInfo,
-} from '@cognite/sdk/dist/src/types';
+} from '@cognite/sdk';
 import { ResourceType } from 'lib/types';
 import { useRelatedResources } from 'lib/hooks/RelationshipHooks';
 import { AssetTable } from 'lib/containers';

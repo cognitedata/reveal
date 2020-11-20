@@ -33,7 +33,6 @@
       }
     ],
     "@cognite/no-number-z-index": "off",
-    "@cognite/no-sdk-submodule-imports": "off",
     "react/jsx-props-no-spreading": 0
   }
 }

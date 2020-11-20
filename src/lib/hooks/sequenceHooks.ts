@@ -5,8 +5,9 @@ import {
   IdEither,
   SequenceColumn,
   SequenceItem,
-} from '@cognite/sdk/dist/src';
-import { SequenceRow } from '@cognite/sdk/dist/src/api/sequences/sequenceRow';
+} from '@cognite/sdk';
+// eslint-disable-next-line
+import { SequenceRow } from '@cognite/sdk/dist/src/api/sequences/sequenceRow'; //
 import { pickOptionalId } from 'lib/utils/idUtils';
 
 import { InfiniteQueryConfig, useInfiniteQuery } from 'react-query';

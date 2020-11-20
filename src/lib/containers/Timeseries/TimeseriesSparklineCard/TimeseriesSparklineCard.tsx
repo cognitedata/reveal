@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Button, Dropdown, Menu, notification } from 'antd';
-import { Timeseries } from '@cognite/sdk/dist/src';
+import { Timeseries } from '@cognite/sdk';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import styled from 'styled-components';
 import { Body, Tooltip, Icon } from '@cognite/cogs.js';

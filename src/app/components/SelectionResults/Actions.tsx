@@ -3,7 +3,7 @@ import { Button, Space } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import CollectionsDropdown from 'app/components/CollectionsDropdown';
 import { ResourceType } from 'lib/types';
-import { InternalId } from '@cognite/sdk/dist/src';
+import { InternalId } from '@cognite/sdk';
 import DownloadButton from './DownloadButton';
 import CopyIdsButton from './CopyIdsButton';
 import DeselectButton from './DeselectButton';

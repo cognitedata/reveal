@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Space } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { InternalId } from '@cognite/sdk/dist/src';
+import { InternalId } from '@cognite/sdk';
 import { ResourceType, getIcon, getTitle } from 'lib';
 import { TitleRow } from '../ResourceTitleRow';
 import { Actions } from './Actions';

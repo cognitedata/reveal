@@ -1455,10 +1455,10 @@
     "@typescript-eslint/parser" "^2.29.0"
     typescript "^3.8.3"
 
-"@cognite/eslint-plugin@^1.3.8":
-  version "1.3.8"
-  resolved "https://registry.yarnpkg.com/@cognite/eslint-plugin/-/eslint-plugin-1.3.8.tgz#8f350873c02b3cccee477f9dea1a4333b6b6e191"
-  integrity sha512-DqbNcSiHWa82syIxSgHHikGM9gA6peC59TGvqKaEiOa+yMM6Q2jwSNdIsT+PpWGp6IeOwUqlCgG4OQc8NqUqww==
+"@cognite/eslint-plugin@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@cognite/eslint-plugin/-/eslint-plugin-1.4.0.tgz#df6cfdb38017cb92bad9e1f08a3c2ba88c54fe88"
+  integrity sha512-1CFhsi2LlXK3sYLUsOd2ZXJMXJJ5i7u6YKfsq13Gx/aJVQsiAnuYv/TFzPQJKvvPkkN2bJYnnkIavaI3sHs9JA==
   dependencies:
     lodash "^4.17.15"
     randexp "^0.5.3"

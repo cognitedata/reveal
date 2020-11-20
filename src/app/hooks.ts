@@ -6,7 +6,7 @@ import { ResourceType } from 'lib';
 import { createLink } from '@cognite/cdf-utilities';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { useCdfItem, useList } from '@cognite/sdk-react-query-hooks';
-import { CogniteEvent } from '@cognite/sdk/dist/src';
+import { CogniteEvent } from '@cognite/sdk';
 import { useMemo } from 'react';
 import {
   annotationInteralIdFilter,

@@ -10,7 +10,7 @@ import {
   CogniteEvent,
   Sequence,
   FileInfo as File,
-} from '@cognite/sdk/dist/src';
+} from '@cognite/sdk';
 import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
 import { formatNumber } from 'lib/utils/numbers';
 

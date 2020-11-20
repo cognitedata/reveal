@@ -8,7 +8,7 @@ import { Tabs } from 'lib/components';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { FileInfo } from '@cognite/sdk/dist/src';
+import { FileInfo } from '@cognite/sdk';
 import { FileDetails } from 'lib';
 import RelatedResources from 'app/components/Files/RelatedResources';
 import RelatedResourceCount from 'app/components/Files/RelatedResourceCount';
