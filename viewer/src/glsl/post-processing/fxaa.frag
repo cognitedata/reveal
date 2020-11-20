@@ -16,6 +16,7 @@ varying vec2 v_rgbM;
 
 uniform vec2 resolution;
 uniform sampler2D tDiffuse;
+uniform sampler2D tDepth;
 
 #ifndef FXAA_REDUCE_MIN
     #define FXAA_REDUCE_MIN   (1.0/ 128.0)
@@ -79,4 +80,5 @@ vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
 void main() {
   vec2 fragCoord = vUv * resolution;
   gl_FragColor = fxaa(tDiffuse, fragCoord, resolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
+  gl_FragDepth = texture2D(tDepth, vUv).r;
 }

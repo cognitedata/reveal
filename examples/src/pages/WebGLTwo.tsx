@@ -36,8 +36,10 @@ export function WebGLTwo() {
       client.loginWithOAuth({ project });
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
-        styleNode(treeIndex: number) {
-          return reveal.DefaultNodeAppearance.NoOverrides;
+        styleNode(treeIndex) {
+          if(treeIndex % 2 === 0)
+            return reveal.DefaultNodeAppearance.Outlined;
+          return reveal.DefaultNodeAppearance.Highlighted;
         }
       };
 
@@ -58,12 +60,17 @@ export function WebGLTwo() {
       revealManager.on('loadingStateChanged', setLoadingState);
 
       scene.add(model);
-      const context = canvas.current.getContext( 'webgl2')!;
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvas.current,
-        context: context
-      });
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas.current });
+
+      const h = 512; // frustum height
+      const aspect = window.innerWidth / window.innerHeight;
+			const orthoCamera = new THREE.OrthographicCamera( - h * aspect / 2, h * aspect / 2, h / 2, - h / 2, 1, 1000 );
+      orthoCamera.position.set( 0, 0, 128 );
+      orthoCamera.up.set( 0, 0, 1 ); // In our data, z is up
+      orthoCamera.matrixAutoUpdate = false;
+      
+      const volScene = new THREE.Scene();
 
       var volconfig = { clim1: 0, clim2: 1, renderstyle: 'iso', isothreshold: 0.15, colormap: 'viridis' };
 			const gui = new dat.GUI();
@@ -118,7 +125,7 @@ export function WebGLTwo() {
           geometry.translate( volume.xLength / 2 - 0.5, volume.yLength / 2 - 0.5, volume.zLength / 2 - 0.5 );
   
           const mesh = new THREE.Mesh( geometry, material );
-          scene.add( mesh );
+          volScene.add( mesh );
   
           render();
   
@@ -127,6 +134,8 @@ export function WebGLTwo() {
 
       renderer.setClearColor('#444');
       renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.autoClearColor = false;
+      renderer.autoClearDepth = false;
 
       const { position, target, near, far } = model.suggestCameraConfig();
       const camera = new THREE.PerspectiveCamera(75, 2, near, far);
@@ -163,7 +172,10 @@ export function WebGLTwo() {
       (window as any).renderer = renderer;
 
       function render() {
+        orthoCamera.matrixWorld = camera.matrixWorld;
+        renderer.clear();
         revealManager.render(renderer, camera, scene);
+        renderer.render(volScene, orthoCamera);
         revealManager.resetRedraw();
       }
 

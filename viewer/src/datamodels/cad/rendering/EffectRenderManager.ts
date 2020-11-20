@@ -85,7 +85,10 @@ export class EffectRenderManager {
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false, depthBuffer: false });
+    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._compositionTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._compositionTarget.depthTexture.format = THREE.DepthFormat;
+    this._compositionTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._combineEdgeDetectionMaterial = new THREE.ShaderMaterial({
       vertexShader: edgeDetectionShaders.vertex,
@@ -102,19 +105,16 @@ export class EffectRenderManager {
         tOutlineColors: { value: outlineColorTexture },
         cameraNear: { value: 0.1 },
         cameraFar: { value: 10000 }
-      },
-      depthTest: false,
-      depthWrite: false
+      }
     });
     this._fxaaMaterial = new THREE.ShaderMaterial({
       uniforms: {
         tDiffuse: { value: this._compositionTarget.texture },
+        tDepth: { value: this._compositionTarget.depthTexture },
         resolution: { value: new THREE.Vector2() }
       },
       vertexShader: fxaaShaders.vertex,
-      fragmentShader: fxaaShaders.fragment,
-      depthTest: false,
-      depthWrite: false
+      fragmentShader: fxaaShaders.fragment
     });
 
     this.setupCompositionScene();
@@ -178,7 +178,7 @@ export class EffectRenderManager {
 
       // Anti-aliased version to screen
       renderer.autoClear = original.autoClear;
-      this.renderAntiAliasToCanvas(renderer);
+      this.renderAntiAliasToTarget(renderer, original.renderTarget);
     } finally {
       // Restore state
       renderer.autoClear = original.autoClear;
@@ -330,8 +330,8 @@ export class EffectRenderManager {
     renderer.render(this._compositionScene, this._orthographicCamera);
   }
 
-  private renderAntiAliasToCanvas(renderer: THREE.WebGLRenderer) {
-    renderer.setRenderTarget(null);
+  private renderAntiAliasToTarget(renderer: THREE.WebGLRenderer, target: THREE.RenderTarget | null) {
+    renderer.setRenderTarget(target);
     renderer.render(this._fxaaScene, this._orthographicCamera);
   }
 
