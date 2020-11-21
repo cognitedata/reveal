@@ -10,6 +10,9 @@ import { CogniteColors } from '../../../utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
+import { AntiAliasingMode, defaultRevealRenderOptions, RevealRenderOptions } from '../../..';
+
+const canvasTarget = null;
 
 export class EffectRenderManager {
   private readonly _materialManager: MaterialManager;
@@ -22,6 +25,7 @@ export class EffectRenderManager {
   // Simple scene with a single triangle with UVs [0,1] in both directions
   // used for applying FXAA to the final result
   private readonly _fxaaScene: THREE.Scene;
+  private readonly _antiAliasingMode: AntiAliasingMode;
 
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
@@ -51,9 +55,15 @@ export class EffectRenderManager {
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly outlineTexelSize = 2;
 
-  constructor(materialManager: MaterialManager) {
+  constructor(materialManager: MaterialManager, options: RevealRenderOptions) {
+    const {
+      multiSampleCountHint = defaultRevealRenderOptions.multiSampleCountHint,
+      antiAliasing = defaultRevealRenderOptions.antiAliasing
+    } = options;
+
     this._materialManager = materialManager;
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    this._antiAliasingMode = antiAliasing;
 
     this._cadScene = new THREE.Scene();
     this._normalScene = new THREE.Scene();
@@ -65,22 +75,22 @@ export class EffectRenderManager {
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
-    this._inFrontRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._inFrontRenderedCadModelTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
     this._inFrontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._inFrontRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._inFrontRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._normalRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._normalRenderedCadModelTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
     this._normalRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._normalRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._normalRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._ghostObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._ghostObjectRenderTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
     this._ghostObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._ghostObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._ghostObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._customObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._customObjectRenderTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
     this._customObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
@@ -174,12 +184,23 @@ export class EffectRenderManager {
       }
       this.renderCustomObjects(renderer, scene, camera);
 
-      // Composite view
-      this.renderComposition(renderer, camera);
+      switch (this._antiAliasingMode) {
+        case AntiAliasingMode.FXAA:
+          // Composite view
+          this.renderComposition(renderer, camera, this._compositionTarget);
+          // Anti-aliased version to screen
+          renderer.autoClear = original.autoClear;
+          this.renderAntiAlias(renderer, null);
+          break;
 
-      // Anti-aliased version to screen
-      renderer.autoClear = original.autoClear;
-      this.renderAntiAliasToCanvas(renderer);
+        case AntiAliasingMode.NoAA:
+          renderer.autoClear = original.autoClear;
+          this.renderComposition(renderer, camera, canvasTarget);
+          break;
+
+        default:
+          throw new Error(`Unsupported anti-aliasing mode: ${this._antiAliasingMode}`);
+      }
     } finally {
       // Restore state
       renderer.autoClear = original.autoClear;
@@ -325,16 +346,20 @@ export class EffectRenderManager {
     return renderSize;
   }
 
-  private renderComposition(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+  private renderComposition(
+    renderer: THREE.WebGLRenderer,
+    camera: THREE.PerspectiveCamera,
+    target: THREE.WebGLRenderTarget | null
+  ) {
     this._combineEdgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
     this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
-    renderer.setRenderTarget(this._compositionTarget);
+    renderer.setRenderTarget(target);
     renderer.render(this._compositionScene, this._orthographicCamera);
   }
 
-  private renderAntiAliasToCanvas(renderer: THREE.WebGLRenderer) {
-    renderer.setRenderTarget(null);
+  private renderAntiAlias(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
+    renderer.setRenderTarget(target);
     renderer.render(this._fxaaScene, this._orthographicCamera);
   }
 
@@ -394,6 +419,18 @@ export class EffectRenderManager {
       }
     }
   }
+}
+
+function createRenderTarget(
+  multiSampleCountHint: number,
+  options?: THREE.WebGLRenderTargetOptions
+): THREE.WebGLRenderTarget {
+  if (multiSampleCountHint > 1) {
+    const rt = new THREE.WebGLMultisampleRenderTarget(0, 0, options);
+    rt.samples = multiSampleCountHint;
+    return rt;
+  }
+  return new THREE.WebGLRenderTarget(0, 0, options);
 }
 
 function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: number, color: THREE.Color) {

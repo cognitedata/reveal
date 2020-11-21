@@ -31,7 +31,7 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
@@ -43,7 +43,13 @@ import { clickOrTouchEventOffset } from '../../utilities/events';
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
-import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection } from '../..';
+import {
+  AntiAliasingMode,
+  CadIntersection,
+  IntersectionFromPixelOptions,
+  PointCloudIntersection,
+  RevealOptions
+} from '../..';
 
 /**
  * @example
@@ -185,8 +191,7 @@ export class Cognite3DViewer {
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
 
-    const revealOptions: RevealOptions = { internal: {} };
-    revealOptions.internal = { sectorCuller: options._sectorCuller };
+    const revealOptions = createRevealManagerOptions(options);
 
     this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
     this.startPointerEventListeners();
@@ -1379,4 +1384,25 @@ function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): T
   outBuffer[6].set(max.x, min.y, max.z);
   outBuffer[7].set(min.x, max.y, max.z);
   return outBuffer;
+}
+
+function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
+  const revealOptions: RevealOptions = { internal: {} };
+  revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
+  revealOptions.renderOptions = {
+    antiAliasing: determineAntialiasingMode(viewerOptions.rendererAntiAliasing),
+    multiSampleCountHint: viewerOptions.rendererMultiSampleCount
+  };
+  return revealOptions;
+}
+
+function determineAntialiasingMode(mode: 'fxaa' | 'disabled' | undefined): AntiAliasingMode | undefined {
+  switch (mode) {
+    case 'fxaa':
+      return AntiAliasingMode.FXAA;
+    case 'disabled':
+      return AntiAliasingMode.NoAA;
+    default:
+      return undefined;
+  }
 }

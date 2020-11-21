@@ -21,6 +21,7 @@ import { SupportedModelTypes } from '../datamodels/base';
 import { LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
+import { RevealRenderOptions } from '..';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -44,15 +45,14 @@ export class RevealManager<TModelIdentifier> {
 
   private readonly _updateSubject: Subject<void>;
 
-  /**
-   * @param cadManager
-   * @param pointCloudManager
-   * @internal
-   */
-  constructor(cadManager: CadManager<TModelIdentifier>, pointCloudManager: PointCloudManager<TModelIdentifier>) {
+  constructor(
+    cadManager: CadManager<TModelIdentifier>,
+    pointCloudManager: PointCloudManager<TModelIdentifier>,
+    renderOptions: RevealRenderOptions
+  ) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
-    this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager);
+    this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager, renderOptions);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
     this._updateSubject = new Subject();
     this._updateSubject

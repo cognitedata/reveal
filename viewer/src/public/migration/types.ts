@@ -51,6 +51,16 @@ export interface Cognite3DViewerOptions {
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 
+  /**
+   * Overrides the default anti-aliasing mode.
+   */
+  rendererAntiAliasing?: 'fxaa' | 'disabled';
+  /**
+   * When provided, Reveal will use multi-sampling to reduce aliasing effects when WebGL 2 is
+   * available. Ignored if using WebGL 1. Defaults to 1.
+   */
+  rendererMultiSampleCount?: number;
+
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 

@@ -9,6 +9,40 @@ import { SectorCuller } from '../internal';
 import { LoadingState } from '../utilities';
 
 /**
+ * Anti-aliasing modes supported by Reveal.
+ */
+export enum AntiAliasingMode {
+  /**
+   * No anti-aliasing (0).
+   */
+  NoAA = 0,
+  /**
+   * Fast-approximate anti-aliasing (FXAA) (1).
+   */
+  FXAA = 1
+}
+
+export type RevealRenderOptions = {
+  /**
+   *
+   */
+  antiAliasing?: AntiAliasingMode;
+  /**
+   * When provided, Reveal will use multi-sampling to reduce aliasing effects when WebGL 2 is
+   * available. Ignored if using WebGL 1.
+   */
+  multiSampleCountHint?: number;
+};
+
+/**
+ * Defaults for {@ref RevealRenderOptions}.
+ */
+export const defaultRevealRenderOptions: Required<RevealRenderOptions> = {
+  antiAliasing: AntiAliasingMode.FXAA,
+  multiSampleCountHint: 1
+};
+
+/**
  * @property logMetrics Might be used to disable usage statistics.
  * @property nodeAppearanceProvider Style node by tree-index.
  * @property internal Internals are for internal usage only (like unit-testing).
@@ -16,6 +50,7 @@ import { LoadingState } from '../utilities';
 export type RevealOptions = {
   logMetrics?: boolean;
   nodeAppearanceProvider?: NodeAppearanceProvider;
+  renderOptions?: RevealRenderOptions;
   internal?: {
     parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
     sectorCuller?: SectorCuller;

@@ -11,6 +11,7 @@ import { RevealManager } from './RevealManager';
 import { LocalModelDataClient } from '../utilities/networking/LocalModelDataClient';
 import { RevealOptions } from './types';
 import { initMetrics } from '../utilities/metrics';
+import { RevealRenderOptions } from '..';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -53,7 +54,9 @@ export function createRevealManager<T>(
     methodName: 'createRevealManager',
     constructorOptions: revealOptions
   });
+
   const cadManager = createCadManager(client, revealOptions);
   const pointCloudManager = createPointCloudManager(client);
-  return new RevealManager(cadManager, pointCloudManager);
+  const renderOptions: RevealRenderOptions = revealOptions.renderOptions || {};
+  return new RevealManager(cadManager, pointCloudManager, renderOptions);
 }
