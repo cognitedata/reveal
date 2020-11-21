@@ -1,31 +1,70 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js';
+import { Title, Colors, Avatar } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-const StyledH3 = styled((props) => (
-  <Title {...props}>{props.children}</Title>
-))``;
+const StyledContactsList = styled.div`
+  border-bottom: 1px solid #e8e8e8;
+`;
 
-const PersonName = styled.span``;
-const PersonEmail = styled.span``;
+const StyledContactCard = styled.div`
+  display: flex;
+  margin-bottom: 1.9375rem;
+  .cogs-avatar {
+    font-size: 1.375rem;
+    font-weight: normal;
+  }
+`;
+
+const H3 = styled((props) => <Title {...props}>{props.children}</Title>)`
+  color: ${Colors['greyscale-grey9'].hex()};
+  font-size: 0.875rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 0.9375rem;
+`;
+
+const InfoList = styled.div`
+  width: 18.75rem;
+`;
+
+const Name = styled.p`
+  color: ${Colors['greyscale-grey9'].hex()};
+  font-size: 0.875rem;
+  margin: 0;
+`;
+const Email = styled.a`
+  color: ${Colors['midblue-3'].hex()};
+  margin: 0;
+`;
+
+const avatarSize = 50;
 
 const ContactCard = ({ name, email }: any) => {
+  const mailtoLink = `mailto:${email}`;
   return (
-    <>
-      <PersonName>{name}</PersonName>
-      <PersonEmail>{email}</PersonEmail>
-    </>
+    <StyledContactCard>
+      <InfoList>
+        <Name>{name}</Name>
+        <Email href={mailtoLink}>{email}</Email>
+      </InfoList>
+      <Avatar
+        text={name}
+        key={`avatar-${email}`}
+        aria-label={`Avatar for ${name}`}
+        size={avatarSize}
+      />
+    </StyledContactCard>
   );
 };
 
 const ContactsList = ({ title, contacts }: any) => {
   return (
-    <>
-      <StyledH3 level={3}>{title}</StyledH3>
+    <StyledContactsList>
+      <H3 level={3}>{title}</H3>
       {contacts.map(({ name, email }: any) => (
         <ContactCard name={name} email={email} />
       ))}
-    </>
+    </StyledContactsList>
   );
 };
 
