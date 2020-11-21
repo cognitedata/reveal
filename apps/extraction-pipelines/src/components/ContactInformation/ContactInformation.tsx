@@ -1,20 +1,17 @@
 import React from 'react';
 import ContactsList from './ContactsList';
-
-const mockData = {
-  owner: [{ name: 'Peter Burg', email: 'peter.burg@cognite.com' }],
-  createdBy: [
-    { name: 'Anna Smith', email: 'anna.smith@cognite.com' },
-    { name: 'Brian Jones', email: 'brian.jones@cognite.com' },
-    { name: 'Bjorn Hansen', email: 'bjorn.hansen@cognite.com' },
-  ],
-};
+import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
 
 const ContactInformation = () => {
+  const { integration } = useSelectedIntegration();
+  if (!integration) {
+    return <></>;
+  }
+  const owner = [integration.owner];
   return (
     <div>
-      <ContactsList title="Owner" contacts={mockData.owner} />
-      <ContactsList title="Created by" contacts={mockData.createdBy} />
+      <ContactsList title="Owner" contacts={owner} />
+      <ContactsList title="Created by" contacts={integration.authors} />
     </div>
   );
 };

@@ -62,7 +62,7 @@ const ContactsList = ({ title, contacts }: any) => {
     <StyledContactsList>
       <H3 level={3}>{title}</H3>
       {contacts.map(({ name, email }: any) => (
-        <ContactCard name={name} email={email} />
+        <ContactCard key={email} name={name} email={email} />
       ))}
     </StyledContactsList>
   );
