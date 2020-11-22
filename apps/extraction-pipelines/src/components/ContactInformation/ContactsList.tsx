@@ -1,6 +1,12 @@
 import React from 'react';
 import { Title, Colors, Avatar } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { User } from '../../model/User';
+
+interface ContactsListProps {
+  title: string;
+  contacts: User[];
+}
 
 const StyledContactsList = styled.div`
   border-bottom: 1px solid #e8e8e8;
@@ -39,7 +45,7 @@ const Email = styled.a`
 
 const avatarSize = 50;
 
-const ContactCard = ({ name, email }: any) => {
+const ContactCard = ({ name, email }: User) => {
   const mailtoLink = `mailto:${email}`;
   return (
     <StyledContactCard>
@@ -57,11 +63,11 @@ const ContactCard = ({ name, email }: any) => {
   );
 };
 
-const ContactsList = ({ title, contacts }: any) => {
+const ContactsList = ({ title, contacts }: ContactsListProps) => {
   return (
     <StyledContactsList>
       <H3 level={3}>{title}</H3>
-      {contacts.map(({ name, email }: any) => (
+      {contacts.map(({ name, email }) => (
         <ContactCard key={email} name={name} email={email} />
       ))}
     </StyledContactsList>
