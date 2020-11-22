@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { RenderOptions } from '../../../..';
 
 import { MaterialManager } from '../../../../datamodels/cad/MaterialManager';
 import { EffectRenderManager } from '../../../../datamodels/cad/rendering/EffectRenderManager';
@@ -14,19 +15,20 @@ describe('EffectRenderManager', () => {
   const renderer = new THREE.WebGLRenderer({ context });
   const camera = new THREE.PerspectiveCamera();
   const scene = new THREE.Scene();
+  const options: RenderOptions = {};
 
   test('construct', () => {
-    expect(() => new EffectRenderManager(materialManager)).not.toThrow();
+    expect(() => new EffectRenderManager(materialManager, options)).not.toThrow();
   });
 
-  test('addPostRenderEffects reset settings after completed', () => {
+  test('render() resets settings after completed', () => {
     // Arrange
     const target = new THREE.WebGLRenderTarget(64, 64);
     renderer.setRenderTarget(target);
     renderer.setClearAlpha(0.77);
     materialManager.setRenderMode(RenderMode.PackColorAndNormal);
 
-    const effectManager = new EffectRenderManager(materialManager);
+    const effectManager = new EffectRenderManager(materialManager, options);
 
     // Act
     effectManager.render(renderer, camera, scene);

@@ -21,7 +21,7 @@ import { SupportedModelTypes } from '../datamodels/base';
 import { LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
-import { RevealRenderOptions } from '..';
+import { RenderOptions } from '..';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -48,7 +48,7 @@ export class RevealManager<TModelIdentifier> {
   constructor(
     cadManager: CadManager<TModelIdentifier>,
     pointCloudManager: PointCloudManager<TModelIdentifier>,
-    renderOptions: RevealRenderOptions
+    renderOptions: RenderOptions
   ) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;

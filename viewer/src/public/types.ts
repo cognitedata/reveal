@@ -22,9 +22,12 @@ export enum AntiAliasingMode {
   FXAA = 1
 }
 
-export type RevealRenderOptions = {
+/**
+ * Options and hints for how the Reveal viewer applies rendering effects.
+ */
+export type RenderOptions = {
   /**
-   *
+   * Anti-aliasing mode used to avoid aliasing effects in the rendered view.
    */
   antiAliasing?: AntiAliasingMode;
   /**
@@ -37,7 +40,7 @@ export type RevealRenderOptions = {
 /**
  * Defaults for {@ref RevealRenderOptions}.
  */
-export const defaultRevealRenderOptions: Required<RevealRenderOptions> = {
+export const defaultRenderOptions: Required<RenderOptions> = {
   antiAliasing: AntiAliasingMode.FXAA,
   multiSampleCountHint: 1
 };
@@ -50,7 +53,7 @@ export const defaultRevealRenderOptions: Required<RevealRenderOptions> = {
 export type RevealOptions = {
   logMetrics?: boolean;
   nodeAppearanceProvider?: NodeAppearanceProvider;
-  renderOptions?: RevealRenderOptions;
+  renderOptions?: RenderOptions;
   internal?: {
     parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
     sectorCuller?: SectorCuller;

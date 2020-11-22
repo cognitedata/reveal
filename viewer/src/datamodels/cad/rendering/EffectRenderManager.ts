@@ -10,7 +10,7 @@ import { CogniteColors } from '../../../utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
-import { AntiAliasingMode, defaultRevealRenderOptions, RevealRenderOptions } from '../../..';
+import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../../..';
 
 const canvasTarget = null;
 
@@ -55,10 +55,10 @@ export class EffectRenderManager {
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly outlineTexelSize = 2;
 
-  constructor(materialManager: MaterialManager, options: RevealRenderOptions) {
+  constructor(materialManager: MaterialManager, options: RenderOptions) {
     const {
-      multiSampleCountHint = defaultRevealRenderOptions.multiSampleCountHint,
-      antiAliasing = defaultRevealRenderOptions.antiAliasing
+      multiSampleCountHint = defaultRenderOptions.multiSampleCountHint,
+      antiAliasing = defaultRenderOptions.antiAliasing
     } = options;
 
     this._materialManager = materialManager;
