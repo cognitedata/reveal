@@ -9,7 +9,7 @@ interface ContactsListProps {
 }
 
 const StyledContactsList = styled.div`
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
 `;
 
 const StyledContactCard = styled.div`
