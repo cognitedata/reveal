@@ -4,6 +4,7 @@ import { Button, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
+import { AddDashboardModal } from 'components/modals';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import {
   getDashboarsdBySuite,
@@ -42,7 +43,10 @@ const SuiteOverview: React.FC = () => {
   };
   return (
     <>
-      <Suitebar leftCustomHeader={<Header />} />
+      <Suitebar
+        leftCustomHeader={<Header />}
+        actionButton={<AddDashboardModal buttonText="Add dashboard" />}
+      />
       <OverviewContainer>
         <TilesContainer>
           <Title level={6}>All dashboards</Title>

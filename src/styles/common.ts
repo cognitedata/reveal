@@ -11,3 +11,7 @@ export const TilesContainer = styled.div`
 export const OverviewContainer = styled.div`
   padding: 24px 48px;
 `;
+
+export const Flex = styled.div`
+  display: flex;
+`;

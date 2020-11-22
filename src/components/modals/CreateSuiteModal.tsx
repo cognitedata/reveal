@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Input, Modal, Title } from '@cognite/cogs.js';
+import { Button, Input, Title, Select } from '@cognite/cogs.js';
 import { suites } from 'mocks/suites';
-import { FooterContainer, SuiteContainer } from './elements';
+import Modal from './Modal';
+import { SuiteContainer, SelectLabel, SelectContainer } from './elements';
 
 interface Props {
-  isOpen: boolean;
-  handleClose: () => void;
+  buttonText: string;
 }
 
 const dashboard: any = { key: '', type: '', title: '', url: '', embedTag: '' };
@@ -22,13 +22,20 @@ const suite: any = {
   lastUpdatedTime: 1604509799577,
 };
 
-export const CreateSuiteModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-}: Props) => {
+export const CreateSuiteModal: React.FC<Props> = ({ buttonText }: Props) => {
   const { ...updateSuite } = suite;
   const [newSuite, setNewSuite] = useState(updateSuite);
   const history = useHistory();
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
+  const handleCLoseModal = () => {
+    setIsOpen(false);
+  };
 
   const handleSubmit = () => {
     suites.items.push(newSuite);
@@ -54,61 +61,76 @@ export const CreateSuiteModal: React.FC<Props> = ({
   };
 
   const footer = (
-    <FooterContainer>
-      <Button variant="ghost" onClick={handleClose}>
+    <>
+      <Button variant="ghost" onClick={handleCLoseModal}>
         Cancel
       </Button>
       <Button type="secondary">Manage Access</Button>
       <Button type="primary" onClick={handleSubmit}>
         Save
       </Button>
-    </FooterContainer>
+    </>
   );
 
   return (
-    <Modal
-      visible={isOpen}
-      onCancel={handleClose}
-      title="Create a new suite"
-      footer={footer}
-    >
-      <SuiteContainer>
-        <Input
-          title="Title"
-          name="title"
-          variant="noBorder"
-          placeholder="Name of suite"
-          onChange={handleSuiteChange}
-          fullWidth
-        />
-        <Input
-          title="Description"
-          name="description"
-          variant="noBorder"
-          placeholder="Description that clearly explains the purpose of the suite"
-          onChange={handleSuiteChange}
-          fullWidth
-        />
-        <Title level={4}>Add boards</Title>
-        <Input
-          title="Title"
-          name="title"
-          variant="noBorder"
-          placeholder="Title"
-          onChange={handleDashboardChange}
-          fullWidth
-        />
-        {/* <Select theme="grey" title="Select type" placeholder="Select type" /> */}
-        {/* <Input title="URL" variant="noBorder" placeholder="URL" fullWidth /> */}
-        <Input
-          title="Iframe snapshot"
-          name="embedTag"
-          variant="noBorder"
-          placeholder="Tag"
-          onChange={handleDashboardChange}
-          fullWidth
-        />
-      </SuiteContainer>
-    </Modal>
+    <>
+      <Button
+        variant="outline"
+        type="secondary"
+        icon="Plus"
+        iconPlacement="left"
+        onClick={handleOpenModal}
+      >
+        {buttonText}
+      </Button>
+      <Modal
+        visible={isOpen}
+        onCancel={handleCLoseModal}
+        headerText="Create a new suite"
+        footer={footer}
+        width={536}
+      >
+        <SuiteContainer>
+          <Input
+            title="Title"
+            name="title"
+            variant="noBorder"
+            placeholder="Name of suite"
+            onChange={handleSuiteChange}
+            fullWidth
+          />
+          <Input
+            title="Description"
+            name="description"
+            variant="noBorder"
+            placeholder="Description that clearly explains the purpose of the suite"
+            onChange={handleSuiteChange}
+            fullWidth
+          />
+          <Title level={4}>Add boards</Title>
+          <Input
+            title="Title"
+            name="title"
+            variant="noBorder"
+            placeholder="Title"
+            onChange={handleDashboardChange}
+            fullWidth
+          />
+          <SelectContainer>
+            <SelectLabel>Select type</SelectLabel>
+            <Select theme="grey" placeholder="Select type" />
+          </SelectContainer>
+          <Input title="URL" variant="noBorder" placeholder="URL" fullWidth />
+          <Input
+            title="Iframe snapshot"
+            name="embedTag"
+            variant="noBorder"
+            placeholder="Tag"
+            onChange={handleDashboardChange}
+            fullWidth
+          />
+        </SuiteContainer>
+      </Modal>
+    </>
   );
 };

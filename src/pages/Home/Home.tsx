@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Title } from '@cognite/cogs.js';
 import Suitebar from 'components/suitebar/Suitebar';
 import { SmallTile, Tile } from 'components/tiles';
+import { CreateSuiteModal } from 'components/modals';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
@@ -21,7 +22,10 @@ const Home = () => {
 
   return (
     <>
-      <Suitebar headerText="Executive overview" />
+      <Suitebar
+        headerText="Executive overview"
+        actionButton={<CreateSuiteModal buttonText="New suite" />}
+      />
       <OverviewContainer>
         <SmallTilesContainer>
           <Title level={6}>Quick Access</Title>
