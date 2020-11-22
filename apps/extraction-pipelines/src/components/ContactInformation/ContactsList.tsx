@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Colors, Avatar } from '@cognite/cogs.js';
+import { Title, Colors, Avatar, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { User } from '../../model/User';
 
@@ -53,12 +53,9 @@ const ContactCard = ({ name, email }: User) => {
         <Name>{name}</Name>
         <Email href={mailtoLink}>{email}</Email>
       </InfoList>
-      <Avatar
-        text={name}
-        key={`avatar-${email}`}
-        aria-label={`Avatar for ${name}`}
-        size={avatarSize}
-      />
+      <Tooltip placement="bottom" content={email}>
+        <Avatar text={name} size={avatarSize} />
+      </Tooltip>
     </StyledContactCard>
   );
 };
