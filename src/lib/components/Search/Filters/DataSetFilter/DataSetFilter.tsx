@@ -17,7 +17,7 @@ export const DataSetFilter = ({
   value: IdEither[] | undefined;
   setValue: (newValue: IdEither[] | undefined) => void;
 }) => {
-  const hasPermissions = usePermissions('datasetsAcl', 'READ');
+  const { data: hasPermissions } = usePermissions('datasetsAcl', 'READ');
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
     value || [],

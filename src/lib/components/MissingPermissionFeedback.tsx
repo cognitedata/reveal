@@ -14,8 +14,8 @@ export default function MissingPermissionFeedback(props: Props) {
   const { key, type } = props;
   const { tenant } = useParams<{ tenant: string }>();
 
-  const groupPermission = usePermissions('groupAcl');
-  const hasPermission = usePermissions(key, type);
+  const { data: groupPermission } = usePermissions('groupAcl');
+  const { data: hasPermission } = usePermissions(key, type);
 
   useEffect(() => {
     if (!groupPermission) {

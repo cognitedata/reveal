@@ -33,8 +33,8 @@ export const FilePreview = ({
   const isActive = resourcesState.some(
     el => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
-  const filesAcl = usePermissions('filesAcl', 'WRITE');
-  const eventsAcl = usePermissions('eventsAcl', 'WRITE');
+  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   useEffect(() => {

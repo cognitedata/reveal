@@ -23,7 +23,7 @@ export const FileToolbar = ({
   filter?: any;
   allowEdit?: boolean;
 }) => {
-  const hasEditPermissions = usePermissions('filesAcl', 'WRITE');
+  const { data: hasEditPermissions } = usePermissions('filesAcl', 'WRITE');
 
   const [modalVisible, setModalVisible] = useState(false);
 

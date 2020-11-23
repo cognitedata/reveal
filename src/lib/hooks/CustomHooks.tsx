@@ -72,15 +72,18 @@ const getGroups = async (sdk: CogniteClient) => {
   );
 };
 
-export const usePermissions = (key: string, type?: string): boolean => {
+export const usePermissions = (key: string, type?: string) => {
   const sdk = useSDK();
-  const { data: groups = {} } = useQuery(['groups'], () => getGroups(sdk), {
+  const request = useQuery(['groups'], () => getGroups(sdk), {
     staleTime: 10000,
   });
+  const groups = request.data || {};
 
-  return (
-    groups.groupsAcl &&
-    groups[key] &&
-    (type ? groups[key].includes(type) : true)
-  );
+  return {
+    ...request,
+    data:
+      groups.groupsAcl &&
+      groups[key] &&
+      (type ? groups[key].includes(type) : true),
+  };
 };

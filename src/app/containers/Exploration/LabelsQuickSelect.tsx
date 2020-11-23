@@ -16,7 +16,7 @@ export const LabelsQuickSelect = () => {
   const filter = useResourceFilter(currentResourceType);
   const setFilter = useSetResourceFilter(currentResourceType);
 
-  const hasPermission = usePermissions('labelsAcl', 'READ');
+  const { data: hasPermission } = usePermissions('labelsAcl', 'READ');
   const { data: labels = [] } = useList<LabelDefinition>(
     'labels',
     { filter: {} },

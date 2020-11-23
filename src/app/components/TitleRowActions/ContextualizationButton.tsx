@@ -15,8 +15,8 @@ export const ContextualizationButton = ({
 }: {
   item: ResourceItem;
 }) => {
-  const filesAcl = usePermissions('filesAcl', 'WRITE');
-  const eventsAcl = usePermissions('eventsAcl', 'WRITE');
+  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   const cancel = useDeleteFindObjectsJob();

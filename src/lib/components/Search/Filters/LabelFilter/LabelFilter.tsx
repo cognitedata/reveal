@@ -16,7 +16,7 @@ export const LabelFilter = ({
   value: { externalId: string }[] | undefined;
   setValue: (newValue: { externalId: string }[] | undefined) => void;
 }) => {
-  const hasPermission = usePermissions('labelsAcl', 'READ');
+  const { data: hasPermission } = usePermissions('labelsAcl', 'READ');
   const allowLabels = resourceType === 'asset' || resourceType === 'file';
   const { data: labels = [] } = useList<LabelDefinition>(
     'labels',

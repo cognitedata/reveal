@@ -13,8 +13,8 @@ export const EditFileButton = ({
   onClick: () => void;
   isActive: boolean;
 }) => {
-  const filesAcl = usePermissions('filesAcl', 'WRITE');
-  const eventsAcl = usePermissions('eventsAcl', 'WRITE');
+  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   if (type !== 'file') {
