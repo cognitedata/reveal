@@ -13,7 +13,7 @@ import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
-import { ResourceDetailsTabs } from 'app/containers/ResourceDetails';
+import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type SequencePreviewType =
@@ -89,11 +89,19 @@ export const SequencePreview = ({
               )
             }
             additionalTabs={[
-              <Tabs.Pane title="Preview" key="preview">
+              <Tabs.Pane title={<TabTitle>Preview</TabTitle>} key="preview">
                 <SequenceTabPreview sequence={sequence} />
               </Tabs.Pane>,
-              <Tabs.Pane title="Details" key="details">
-                <SequenceDetails sequence={sequence} showAll />
+              <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+                <SequenceDetails
+                  sequence={sequence}
+                  datasetLink={
+                    sequence?.dataSetId
+                      ? createLink(`/data-sets/data-set/${sequence?.dataSetId}`)
+                      : undefined
+                  }
+                  showAll
+                />
               </Tabs.Pane>,
             ]}
           />

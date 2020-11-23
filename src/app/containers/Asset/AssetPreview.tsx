@@ -115,7 +115,14 @@ export const AssetPreview = ({
               excludedTypes={['asset']}
               additionalTabs={[
                 <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                  <AssetDetails id={assetId} />
+                  <AssetDetails
+                    asset={asset}
+                    datasetLink={
+                      asset?.dataSetId
+                        ? createLink(`/data-sets/data-set/${asset?.dataSetId}`)
+                        : undefined
+                    }
+                  />
                 </Tabs.Pane>,
                 <Tabs.Pane title={<TabTitle>Children</TabTitle>} key="children">
                   <AssetTreeTable

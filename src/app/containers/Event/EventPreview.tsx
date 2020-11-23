@@ -84,7 +84,15 @@ export const EventPreview = ({
             }
             additionalTabs={[
               <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                <EventDetails event={event} showAll />
+                <EventDetails
+                  event={event}
+                  datasetLink={
+                    event?.dataSetId
+                      ? createLink(`/data-sets/data-set/${event?.dataSetId}`)
+                      : undefined
+                  }
+                  showAll
+                />
               </Tabs.Pane>,
             ]}
           />

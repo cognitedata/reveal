@@ -1,37 +1,71 @@
 import React, { useState } from 'react';
-import { Sequence } from '@cognite/sdk';
-
+import { Sequence, DataSet } from '@cognite/sdk';
 import { Button, Title } from '@cognite/cogs.js';
-import { DetailsItem, InfoGrid, TimeDisplay } from 'lib';
+import {
+  DetailsItem,
+  InfoGrid,
+  TimeDisplay,
+  DetailsTabGrid,
+  DetailsTabItem,
+} from 'lib';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export const SequenceDetails = ({
   sequence,
+  datasetLink,
   showAll = false,
 }: {
   sequence: Sequence;
+  datasetLink?: string;
   showAll?: boolean;
 }) => {
   const [displayedAmount, setDisplayedAmount] = useState(
     showAll ? Object.keys(sequence.metadata || {}).length : 5
   );
 
+  const { data: dataset } = useCdfItem<DataSet>(
+    'datasets',
+    { id: sequence?.dataSetId || 0 },
+    { enabled: !!sequence && !!sequence?.dataSetId }
+  );
+
   return (
     <>
-      <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-        Details
-      </Title>
-      <InfoGrid noBorders style={{ flex: 1, overflow: 'auto' }}>
-        <DetailsItem name="Description" value={sequence.description} />
-        <DetailsItem
+      <DetailsTabGrid>
+        <DetailsTabItem name="Description" value={sequence.description} />
+        <DetailsTabItem
+          name="External ID"
+          value={sequence?.externalId}
+          copyable
+        />
+        <DetailsTabItem name="ID" value={sequence.id} copyable />
+        <DetailsTabItem
+          name="Data set"
+          value={dataset?.name}
+          link={datasetLink}
+        />
+        <DetailsTabItem
           name="Created at"
-          value={<TimeDisplay value={sequence.createdTime} />}
+          value={
+            sequence ? (
+              <TimeDisplay value={sequence.createdTime} />
+            ) : (
+              'Loading...'
+            )
+          }
         />
-        <DetailsItem
+        <DetailsTabItem
           name="Updated at"
-          value={<TimeDisplay value={sequence.lastUpdatedTime} />}
+          value={
+            sequence ? (
+              <TimeDisplay value={sequence.lastUpdatedTime} />
+            ) : (
+              'Loading...'
+            )
+          }
         />
-        <DetailsItem name="External ID" value={sequence.externalId} />
-      </InfoGrid>
+      </DetailsTabGrid>
+
       <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
         Metadata
       </Title>

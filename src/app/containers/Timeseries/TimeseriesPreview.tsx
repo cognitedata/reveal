@@ -9,7 +9,7 @@ import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { createLink } from '@cognite/cdf-utilities';
-import Details from 'lib/components/Timeseries/Details';
+import TimeseriesDetails from 'lib/containers/Timeseries/TimeseriesDetails/TimeseriesDetails';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type TimeseriesPreviewTabType =
@@ -99,7 +99,16 @@ export const TimeseriesPreview = ({
                 }
                 additionalTabs={[
                   <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                    <Details id={timeseriesId} />
+                    <TimeseriesDetails
+                      timeseries={timeseries}
+                      datasetLink={
+                        timeseries?.dataSetId
+                          ? createLink(
+                              `/data-sets/data-set/${timeseries?.dataSetId}`
+                            )
+                          : undefined
+                      }
+                    />
                   </Tabs.Pane>,
                 ]}
               />

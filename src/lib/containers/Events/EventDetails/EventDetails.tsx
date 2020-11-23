@@ -1,36 +1,58 @@
 import React, { useState } from 'react';
-import { CogniteEvent } from '@cognite/sdk';
-import { InfoGrid, DetailsItem, TimeDisplay } from 'lib/components';
+import { CogniteEvent, DataSet } from '@cognite/sdk';
+import {
+  InfoGrid,
+  DetailsItem,
+  TimeDisplay,
+  DetailsTabGrid,
+  DetailsTabItem,
+} from 'lib/components';
 import { Button, Title } from '@cognite/cogs.js';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export const EventDetails = ({
   event,
+  datasetLink,
   showAll = false,
 }: {
   event: CogniteEvent;
+  datasetLink?: string;
   showAll?: boolean;
 }) => {
   const [displayedAmount, setDisplayedAmount] = useState(
     showAll ? Object.keys(event.metadata || {}).length : 5
   );
+
+  const { data: dataset } = useCdfItem<DataSet>(
+    'datasets',
+    { id: event?.dataSetId || 0 },
+    { enabled: !!event && !!event?.dataSetId }
+  );
+
   return (
     <>
-      <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
-        Details
-      </Title>
-      <InfoGrid noBorders style={{ flex: 1, overflow: 'auto' }}>
-        <DetailsItem name="ID" value={event.id} />
-        <DetailsItem name="Description" value={event.description} />
-        <DetailsItem
+      <DetailsTabGrid>
+        <DetailsTabItem name="Description" value={event.description} />
+        <DetailsTabItem name="External ID" value={event.externalId} copyable />
+        <DetailsTabItem name="ID" value={event.id} copyable />
+        <DetailsTabItem
+          name="Data set"
+          value={dataset?.name}
+          link={datasetLink}
+        />
+        <DetailsTabItem
           name="Created at"
-          value={<TimeDisplay value={event.createdTime} />}
+          value={
+            event ? <TimeDisplay value={event.createdTime} /> : 'Loading...'
+          }
         />
-        <DetailsItem
+        <DetailsTabItem
           name="Updated at"
-          value={<TimeDisplay value={event.lastUpdatedTime} />}
+          value={
+            event ? <TimeDisplay value={event.lastUpdatedTime} /> : 'Loading...'
+          }
         />
-        <DetailsItem name="External ID" value={event.externalId} />
-      </InfoGrid>
+      </DetailsTabGrid>
       <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
         Metadata
       </Title>

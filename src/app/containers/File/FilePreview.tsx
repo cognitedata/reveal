@@ -17,6 +17,7 @@ import { usePermissions } from 'lib/hooks/CustomHooks';
 import styled from 'styled-components';
 import { Colors, Body } from '@cognite/cogs.js';
 import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const FilePreview = ({
   fileId,
@@ -89,7 +90,16 @@ export const FilePreview = ({
             />
           </Tabs.Pane>
           <Tabs.Pane title="File details" key="info">
-            {fileInfo && <FileDetails file={fileInfo} />}
+            {fileInfo && (
+              <FileDetails
+                file={fileInfo}
+                datasetLink={
+                  fileInfo?.dataSetId
+                    ? createLink(`/data-sets/data-set/${fileInfo?.dataSetId}`)
+                    : undefined
+                }
+              />
+            )}
           </Tabs.Pane>
           <Tabs.Pane
             title={
