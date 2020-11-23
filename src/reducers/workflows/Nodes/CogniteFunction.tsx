@@ -87,16 +87,6 @@ export const effect = async (funcData: FunctionData, ...rest: any[]) => {
       funcData[configurations[i].field]
     );
   }
-  console.log(inputPins, configurations);
-  console.log(functionCallData);
-  // Convert inputPin and config data into cognite function input
-  // Correctly set outputs in Multiplier function
-  // Use that correct output data
-
-  // Fix whats wrong with the PRs right now
-  // CLEAN CLEAN CLEAN
-
-  // const inputFromPins = rest.map()
 
   const functionCall = await sdk.post<{ id: number }>(
     `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${cogniteFunction.id}/call`,
@@ -133,7 +123,7 @@ export const effect = async (funcData: FunctionData, ...rest: any[]) => {
     }),
     {}
   );
-  console.log(output);
+
   return output;
 };
 
@@ -165,7 +155,7 @@ export const configPanel = ({
       const fileBlob = await sdk.get(file[0].downloadUrl, {
         responseType: 'arraybuffer',
       });
-      console.log('blob', fileBlob);
+
       const loadedZip = await JSZip.loadAsync(fileBlob.data);
       const fileData = await loadedZip
         .file('cognite-charts-config.json')
@@ -187,7 +177,6 @@ export const configPanel = ({
           title: output.name,
           type: output.type,
         }));
-        console.log(inputPins, outputPins);
 
         onUpdateNode({
           inputPins,

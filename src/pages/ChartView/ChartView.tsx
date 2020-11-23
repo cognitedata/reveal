@@ -163,7 +163,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               <div>Chart would go here.</div>
               {dataFromWorkflows && (
                 <div>
-                  {console.log('d', dataFromWorkflows)}
                   Data from workflow:{' '}
                   {dataFromWorkflows.map((data) => (
                     <div>
