@@ -1,6 +1,4 @@
-import { Suite } from 'store/suits/types';
-
-export const getMockSuites = (): Suite[] => [
+export const getMockResponse = () => [
   {
     key: 'row-3',
     columns: {
