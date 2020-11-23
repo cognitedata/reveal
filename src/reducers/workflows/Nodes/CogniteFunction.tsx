@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Icon, Select } from '@cognite/cogs.js';
+import { Icon, Input, Select } from '@cognite/cogs.js';
 import sdk from 'services/CogniteSDK';
 import JSZip from 'jszip';
 import useSelector from 'hooks/useSelector';
-import { StorableNode } from '../types';
+import { ConfigPanelComponentProps, StorableNode } from '../types';
 
 type FunctionData = {
   [key: string]: any;
   cogniteFunction?: CogniteFunction;
+  externalData: {
+    input: {
+      field: string;
+      pin: boolean;
+    }[];
+    output: {
+      id: string;
+    }[];
+  };
 };
 
-type SelectedDetail = {
-  input: {
-    name: string;
-    type: string;
-    field: string;
-    pin: boolean;
-  }[];
-  output: {
-    name: string;
-    type: string;
-    field?: string;
-  }[];
-};
+type ConfigPanelEditables = {
+  name: string;
+  type: string;
+  field: string;
+  pin: boolean;
+}[];
 
 type CogniteFunction = {
   id: number;
@@ -32,42 +34,133 @@ type CogniteFunction = {
   description: string;
 };
 
-export const effect = async (funcData: FunctionData) => {
+const waitOnFunctionComplete = (
+  tenant: string,
+  funcId: number,
+  callId: number
+): Promise<string> => {
+  const startTime = Date.now();
+  return new Promise((resolve) => {
+    sdk
+      .get<{ status: string }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${funcId}/calls/${callId}`
+      )
+      .then((result) => {
+        if (result.data.status === 'Running') {
+          if (Date.now() - startTime >= 1000 * 60 * 2) {
+            // If it takes longer than 60 seconds, time out.
+            resolve('Timeout');
+          }
+          // Wait 1 second before checking the status again
+          new Promise((resolveWaiter) => setTimeout(resolveWaiter, 1000)).then(
+            () => {
+              waitOnFunctionComplete(tenant, funcId, callId).then(resolve);
+            }
+          );
+        } else if (result.data.status === 'Failed') {
+          resolve('Failed');
+        } else {
+          resolve('Success');
+        }
+      });
+  });
+};
+
+export const effect = async (funcData: FunctionData, ...rest: any[]) => {
   if (!funcData.cogniteFunction) {
     throw new Error('No external id given in config');
   }
-  const datapoints = await sdk.datapoints.retrieve({
-    items: [{ externalId: 'a' }],
-  });
-  return {
-    datapoints: datapoints[0].datapoints,
-  };
+  if (!funcData.tenant) {
+    throw new Error('Did not get a tenant');
+  }
+
+  const { tenant, cogniteFunction, externalData } = funcData;
+
+  const functionCallData: Record<string, any> = {};
+  const inputPins = externalData.input.filter((input) => input.pin);
+  const configurations = externalData.input.filter((input) => !input.pin);
+  for (let i = 0; i < inputPins.length; i++) {
+    functionCallData[inputPins[i].field] = rest[i];
+  }
+  for (let i = 0; i < configurations.length; i++) {
+    functionCallData[configurations[i].field] = Number(
+      funcData[configurations[i].field]
+    );
+  }
+  console.log(inputPins, configurations);
+  console.log(functionCallData);
+  // Convert inputPin and config data into cognite function input
+  // Correctly set outputs in Multiplier function
+  // Use that correct output data
+
+  // Fix whats wrong with the PRs right now
+  // CLEAN CLEAN CLEAN
+
+  // const inputFromPins = rest.map()
+
+  const functionCall = await sdk.post<{ id: number }>(
+    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${cogniteFunction.id}/call`,
+    {
+      data: {
+        data: functionCallData,
+      },
+    }
+  );
+
+  const status = await waitOnFunctionComplete(
+    tenant,
+    cogniteFunction.id,
+    functionCall.data.id
+  );
+  if (status === 'Failed') {
+    throw new Error(
+      'Cognite function failed. Check the logs in fusion to find out why'
+    );
+  }
+
+  if (status === 'Timeout') {
+    throw new Error('Cognite function timed out. Took longer than 2 minutes');
+  }
+
+  const funcResult = await sdk.get<{ response: Record<string, any> }>(
+    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${cogniteFunction.id}/calls/${functionCall.data.id}/response`
+  );
+
+  const output = Object.keys(funcResult.data.response).reduce(
+    (acc, key) => ({
+      ...acc,
+      [`out-${key}`]: funcResult.data.response[key],
+    }),
+    {}
+  );
+  console.log(output);
+  return output;
 };
 
 export const effectId = 'COGNITE_FUNCTION';
 
 export const configPanel = ({
-  data,
-  onUpdate,
-}: {
-  data: FunctionData;
-  onUpdate: (nextData: FunctionData) => void;
-}) => {
+  node,
+  onUpdateNode,
+}: ConfigPanelComponentProps) => {
   const tenant = useSelector((state) => state.environment.tenant);
   const [isLoading, setLoading] = useState(false);
   const [availableFunctions, setAvailableFunctions] = useState<
     CogniteFunction[]
   >([]);
-  const [selectedFunctionDetail, setSelectedFunctionDetail] = useState<
-    SelectedDetail
+  const [configPanelEditables, setConfigPanelEditables] = useState<
+    ConfigPanelEditables
   >();
+
+  const { functionData } = node;
+
   useEffect(() => {
     const getDetails = async () => {
       // Get the download link for the file
       const file = await sdk.files.getDownloadUrls([
-        { id: data.cogniteFunction?.fileId || 0 },
+        { id: functionData.cogniteFunction?.fileId || 0 },
       ]);
-      console.log('file', file);
+
       // Download, unzip and get the config file (if it exists)
       const fileBlob = await sdk.get(file[0].downloadUrl, {
         responseType: 'arraybuffer',
@@ -78,14 +171,45 @@ export const configPanel = ({
         .file('cognite-charts-config.json')
         ?.async('text');
 
-      console.log(fileData);
+      // Get the pins and add them to the node
+      if (fileData) {
+        const parsedData = JSON.parse(fileData);
+        const inputPins = (parsedData?.input || [])
+          .filter((input: any) => input.pin)
+          .map((input: any) => ({
+            id: input.field,
+            title: input.name,
+            types: [input.type],
+          }));
 
-      setSelectedFunctionDetail(JSON.parse(fileData || ''));
+        const outputPins = (parsedData?.output || []).map((output: any) => ({
+          id: `out-${output.field}`,
+          title: output.name,
+          type: output.type,
+        }));
+        console.log(inputPins, outputPins);
+
+        onUpdateNode({
+          inputPins,
+          outputPins,
+          functionData: {
+            ...node.functionData,
+            externalData: parsedData,
+            tenant,
+          },
+        });
+
+        const configurables = (parsedData?.input || []).filter(
+          (input: any) => !input.pin
+        );
+
+        setConfigPanelEditables(configurables);
+      }
     };
-    if (data.cogniteFunction) {
+    if (functionData.cogniteFunction) {
       getDetails();
     }
-  }, [data]);
+  }, [functionData.cogniteFunction]);
 
   useEffect(() => {
     setLoading(true);
@@ -94,7 +218,11 @@ export const configPanel = ({
         `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
       )
       .then((result) => {
-        setAvailableFunctions(result.data.items);
+        setAvailableFunctions(
+          result.data.items.filter((func) =>
+            func.description.includes('[CHARTS]')
+          )
+        );
         setLoading(false);
       });
   }, []);
@@ -109,10 +237,10 @@ export const configPanel = ({
       <Select
         theme="dark"
         defaultValue={
-          data.cogniteFunction
+          functionData.cogniteFunction
             ? {
-                value: data.cogniteFunction?.id,
-                label: data.cogniteFunction?.name,
+                value: functionData.cogniteFunction?.id,
+                label: functionData.cogniteFunction?.name,
               }
             : undefined
         }
@@ -121,12 +249,14 @@ export const configPanel = ({
             (x) => x.id === nextValue.value
           );
           if (nextFunc) {
-            onUpdate({
-              ...data,
-              cogniteFunction: nextFunc,
+            onUpdateNode({
+              functionData: {
+                ...functionData,
+
+                cogniteFunction: nextFunc,
+              },
             });
           }
-          // Additional input/ouput pins in function data??
         }}
         options={availableFunctions.map((func) => ({
           value: func.id,
@@ -134,7 +264,25 @@ export const configPanel = ({
         }))}
       />
 
-      {selectedFunctionDetail && JSON.stringify(selectedFunctionDetail)}
+      {configPanelEditables &&
+        configPanelEditables.map((editable) => (
+          <div style={{ marginTop: 8 }}>
+            <h4>{editable.name}</h4>
+
+            <Input
+              id={editable.field}
+              value={functionData[editable.field] || ''}
+              onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
+                onUpdateNode({
+                  functionData: {
+                    ...node.functionData,
+                    [editable.field]: newValue.target.value,
+                  },
+                });
+              }}
+            />
+          </div>
+        ))}
     </div>
   );
 };

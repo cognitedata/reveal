@@ -11,6 +11,11 @@ export const pinTypes: Record<PinTypeIdentifier, PinType> = {
     title: 'Time series',
     color: '#FF8746',
   },
+  DATAPOINTS: {
+    id: 'DATAPOINTS',
+    title: 'Datapoints',
+    color: '#FF8746',
+  },
   CONSTANT: {
     id: 'CONSTANT',
     title: 'CONSTANT',

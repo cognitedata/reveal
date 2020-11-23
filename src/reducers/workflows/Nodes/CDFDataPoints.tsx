@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
 import sdk from 'services/CogniteSDK';
-import { StorableNode } from '../types';
+import { StorableNode, ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
   timeSeriesExternalId: string;
@@ -22,23 +22,20 @@ export const effect = async (funcData: FunctionData) => {
 export const effectId = 'DATAPOINTS';
 
 export const configPanel = ({
-  data,
-  onUpdate,
-}: {
-  data: FunctionData;
-  onUpdate: (nextData: FunctionData) => void;
-}) => {
+  node,
+  onUpdateNode,
+}: ConfigPanelComponentProps) => {
   const [inputValue, setInputValue] = useState<string>('');
-
+  const { functionData } = node;
   useEffect(() => {
-    if (data.timeSeriesExternalId) {
+    if (functionData.timeSeriesExternalId) {
       sdk.timeseries
-        .retrieve([{ externalId: data.timeSeriesExternalId }])
+        .retrieve([{ externalId: functionData.timeSeriesExternalId }])
         .then((timeseries) => {
           setInputValue(timeseries[0]?.name || '');
         });
     }
-  }, [data.timeSeriesExternalId]);
+  }, [functionData.timeSeriesExternalId]);
 
   const loadOptions = (
     input: string,
@@ -62,7 +59,7 @@ export const configPanel = ({
         );
       });
   };
-  console.log(inputValue);
+
   return (
     <div>
       <h4>CDF Timeseries</h4>
@@ -71,11 +68,13 @@ export const configPanel = ({
         theme="dark"
         loadOptions={loadOptions}
         onChange={(nextValue: { value: string; label: string }) => {
-          onUpdate({
-            timeSeriesExternalId: nextValue.value,
+          onUpdateNode({
+            functionData: {
+              timeSeriesExternalId: nextValue.value,
+            },
           });
         }}
-        value={{ value: data.timeSeriesExternalId, label: inputValue }}
+        value={{ value: functionData.timeSeriesExternalId, label: inputValue }}
       />
     </div>
   );

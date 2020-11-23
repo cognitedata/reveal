@@ -56,7 +56,7 @@ type ConfigPanelProps = {
 };
 
 const ConfigPanel = ({ node, onRemove, onSave, onClose }: ConfigPanelProps) => {
-  const [workingNode, setWorkingNode] = useState(node);
+  const [workingNode, setWorkingNode] = useState<StorableNode>(node);
 
   useEffect(() => {
     if (node.id !== workingNode.id) {
@@ -90,12 +90,12 @@ const ConfigPanel = ({ node, onRemove, onSave, onClose }: ConfigPanelProps) => {
       {NodeSpecificConfigPanel && (
         <div className="config-panel">
           {React.createElement(NodeSpecificConfigPanel, {
-            data: workingNode.functionData,
-            onUpdate: (nextFunctionData) => {
+            node: workingNode,
+            onUpdateNode: (nextNode: StorableNode) => {
               setDirty(true);
               setWorkingNode({
                 ...workingNode,
-                functionData: nextFunctionData,
+                ...nextNode,
               });
             },
           })}
