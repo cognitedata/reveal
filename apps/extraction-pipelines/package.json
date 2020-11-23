@@ -23,7 +23,7 @@
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^1.0.0",
     "@google-cloud/storage": "^5.5.0",
-    "@sentry/browser": "^5.27.5",
+    "@sentry/browser": "^5.27.6",
     "antd": "4.7.3",
     "commander": "^5.1.0",
     "cronstrue": "^1.105.0",
