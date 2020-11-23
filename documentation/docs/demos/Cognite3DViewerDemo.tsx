@@ -32,8 +32,7 @@ export default function Cognite3DViewerDemo({
     const viewer = new Cognite3DViewer({
       sdk: client,
       domElement: canvasWrapperRef.current,
-      rendererAntiAliasing: 'fxaa',
-      rendererMultiSampleCount: 2
+      antiAliasingHint: 'msaa4+fxaa'
     });
 
     async function addModel(options: AddModelOptions) {

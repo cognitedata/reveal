@@ -1426,6 +1426,6 @@ function determineAntiAliasingMode(
       return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 16 };
     default:
       // Ensures there is a compile error if a case is missing
-      assertNever(mode);
+      assertNever(mode, `Unsupported anti-aliasing mode: ${mode}`);
   }
 }
