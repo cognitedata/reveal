@@ -1391,6 +1391,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   const revealOptions: RevealOptions = { internal: {} };
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
+
   revealOptions.renderOptions = {
     antiAliasing,
     multiSampleCountHint: multiSampleCount
