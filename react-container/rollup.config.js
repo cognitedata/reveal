@@ -18,6 +18,7 @@ export default {
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    'lodash/noop',
   ],
   plugins: [
     typescript({

@@ -1,4 +1,4 @@
-import { storage as localStorageCache } from './index';
+import { storage as localStorageCache } from '../index';
 
 describe('localStorage', () => {
   it('Should be able to get item from storage under correct keys', () => {

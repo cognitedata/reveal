@@ -28,3 +28,8 @@ export interface DecodedIdToken {
   // eslint-disable-next-line camelcase
   project_name: string;
 }
+
+// need to type this API_KEY part properly
+export type AuthHeaders =
+  | { Authorization: string }
+  | { [API_KEY: string]: string };

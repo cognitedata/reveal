@@ -15,5 +15,9 @@ export const isProduction = isEnvironment('production');
 export const isStaging = (hostname?: string) =>
   safeHostname(hostname).includes('staging.') || ENV === 'staging';
 
-export const isStagingOrLocalhost = (hostname?: string) =>
-  safeHostname(hostname).includes('localhost') || isStaging(hostname);
+export const isLocalhost = (hostname?: string) =>
+  safeHostname(hostname).includes('localhost');
+
+export const isStagingOrLocalhost = (hostname?: string) => {
+  return isLocalhost(hostname) || isStaging(hostname);
+};
