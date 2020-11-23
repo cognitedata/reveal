@@ -5,12 +5,13 @@
 import { MaterialManager } from '../MaterialManager';
 import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
-import { edgeDetectionShaders, fxaaShaders } from './shaders';
+
 import { CogniteColors } from '../../../utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../../..';
+import { edgeDetectionShaders, fxaaShaders } from './shaders';
 
 const canvasTarget = null;
 
@@ -25,7 +26,6 @@ export class EffectRenderManager {
   // Simple scene with a single triangle with UVs [0,1] in both directions
   // used for applying FXAA to the final result
   private readonly _fxaaScene: THREE.Scene;
-  private readonly _antiAliasingMode: AntiAliasingMode;
 
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
@@ -43,27 +43,35 @@ export class EffectRenderManager {
   // Used to build _infrontScene during render()
   private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
 
-  private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
-  private readonly _fxaaMaterial: THREE.ShaderMaterial;
+  private _isInitialized: boolean = false;
+  private readonly _renderOptions: RenderOptions;
 
-  private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
-  private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
-  private readonly _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private readonly _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private readonly _compositionTarget: THREE.WebGLRenderTarget;
+  private _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
+  private _fxaaMaterial: THREE.ShaderMaterial;
+
+  private _customObjectRenderTarget: THREE.WebGLRenderTarget;
+  private _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
+  private _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private _compositionTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly outlineTexelSize = 2;
 
-  constructor(materialManager: MaterialManager, options: RenderOptions) {
-    const {
-      multiSampleCountHint = defaultRenderOptions.multiSampleCountHint,
-      antiAliasing = defaultRenderOptions.antiAliasing
-    } = options;
+  private get antiAliasingMode(): AntiAliasingMode {
+    const { antiAliasing = defaultRenderOptions.antiAliasing } = this._renderOptions;
+    return antiAliasing;
+  }
 
+  private get multiSampleCountHint(): number {
+    const { multiSampleCountHint = defaultRenderOptions.multiSampleCountHint } = this._renderOptions;
+    return multiSampleCountHint;
+  }
+
+  constructor(materialManager: MaterialManager, options: RenderOptions) {
+    this._renderOptions = options;
     this._materialManager = materialManager;
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    this._antiAliasingMode = antiAliasing;
 
     this._cadScene = new THREE.Scene();
     this._normalScene = new THREE.Scene();
@@ -73,24 +81,42 @@ export class EffectRenderManager {
     this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
+    // Initialize dummy targets and materials untill properly initialized
+    this._customObjectRenderTarget = this._ghostObjectRenderTarget = this._normalRenderedCadModelTarget = this._inFrontRenderedCadModelTarget = this._compositionTarget = new THREE.WebGLRenderTarget(
+      0,
+      0
+    );
+    this._combineEdgeDetectionMaterial = this._fxaaMaterial = new THREE.ShaderMaterial({});
+  }
+
+  private ensureInitialized(renderer: THREE.WebGLRenderer) {
+    if (this._isInitialized) {
+      return;
+    }
+
+    const isWebGL2 = renderer.capabilities.isWebGL2;
     const outlineColorTexture = this.createOutlineColorTexture();
 
-    this._inFrontRenderedCadModelTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
+    this._inFrontRenderedCadModelTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, {
+      stencilBuffer: false
+    });
     this._inFrontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._inFrontRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._inFrontRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._normalRenderedCadModelTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
+    this._normalRenderedCadModelTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, {
+      stencilBuffer: false
+    });
     this._normalRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._normalRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
     this._normalRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._ghostObjectRenderTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
+    this._ghostObjectRenderTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, { stencilBuffer: false });
     this._ghostObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._ghostObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._ghostObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._customObjectRenderTarget = createRenderTarget(multiSampleCountHint, { stencilBuffer: false });
+    this._customObjectRenderTarget = createRenderTarget(isWebGL2, this.multiSampleCountHint, { stencilBuffer: false });
     this._customObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
@@ -130,9 +156,13 @@ export class EffectRenderManager {
 
     this.setupCompositionScene();
     this.setupFxaaScene();
+
+    this._isInitialized = true;
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+    this.ensureInitialized(renderer);
+
     const original = {
       autoClear: renderer.autoClear,
       clearAlpha: renderer.getClearAlpha(),
@@ -184,7 +214,7 @@ export class EffectRenderManager {
       }
       this.renderCustomObjects(renderer, scene, camera);
 
-      switch (this._antiAliasingMode) {
+      switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
           // Composite view
           this.renderComposition(renderer, camera, this._compositionTarget);
@@ -199,7 +229,7 @@ export class EffectRenderManager {
           break;
 
         default:
-          throw new Error(`Unsupported anti-aliasing mode: ${this._antiAliasingMode}`);
+          throw new Error(`Unsupported anti-aliasing mode: ${this.antiAliasingMode}`);
       }
     } finally {
       // Restore state
@@ -422,10 +452,11 @@ export class EffectRenderManager {
 }
 
 function createRenderTarget(
+  isWebGL2: boolean,
   multiSampleCountHint: number,
   options?: THREE.WebGLRenderTargetOptions
 ): THREE.WebGLRenderTarget {
-  if (multiSampleCountHint > 1) {
+  if (isWebGL2 && multiSampleCountHint > 1) {
     const rt = new THREE.WebGLMultisampleRenderTarget(0, 0, options);
     rt.samples = multiSampleCountHint;
     return rt;
