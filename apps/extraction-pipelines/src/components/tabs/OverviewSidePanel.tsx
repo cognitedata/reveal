@@ -34,7 +34,6 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
   if (!integration) {
     return <></>;
   }
-  const owner = [integration.owner];
   return (
     <>
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
@@ -43,7 +42,10 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
           <Monitoring />
         </StyledTabPane>
         <StyledTabPane tab="Contact information" key="contacts">
-          <ContactInformation owner={owner} authors={integration.authors} />
+          <ContactInformation
+            owner={[integration.owner]}
+            authors={integration.authors}
+          />
         </StyledTabPane>
       </StyledTabs>
     </>
