@@ -3,9 +3,11 @@ import { TenantContext } from 'providers/TenantProvider';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
 import { authenticate } from 'store/auth/thunks';
+import { fetchSuits } from 'store/suites/thunks';
 import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
 import { Loader } from '@cognite/cogs.js';
+import { getSuitesTableState } from 'store/suites/selectors';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -13,13 +15,20 @@ const Authentication = (): JSX.Element => {
   const client = useContext(CdfClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const { authenticating, authenticated } = useSelector(getAuthState);
+  const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
+    getSuitesTableState
+  );
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
 
   useEffect(() => {
-    if (!authenticateDispatched && !authenticated && !authenticating) {
-      dispatch(authenticate(tenant, client));
+    const auth = async () => {
+      await dispatch(authenticate(tenant, client));
+      await dispatch(fetchSuits(client));
       setAuthenticateDispatched(true);
+    };
+    if (!authenticateDispatched && !authenticated && !authenticating) {
+      auth();
     }
   }, [
     client,
@@ -28,6 +37,8 @@ const Authentication = (): JSX.Element => {
     authenticating,
     authenticateDispatched,
     dispatch,
+    suitesLoading,
+    suitesLoaded,
   ]);
 
   return <>{authenticated ? <Routes /> : <Loader />}</>;

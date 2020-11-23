@@ -1,15 +1,12 @@
 import { Store } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AuthRootAction, AuthState } from './auth/types';
-import {
-  AppConfigurationRootAction,
-  AppConfigurationState,
-} from './configuration/types';
+import { SuitesTableRootAction, SuitesTableState } from './suites/types';
 
-export type StoreAction = AppConfigurationRootAction | AuthRootAction;
+export type StoreAction = SuitesTableRootAction | AuthRootAction;
 
 export type StoreState = {
-  appConfiguration: AppConfigurationState;
+  suitesTable: SuitesTableState;
   auth: AuthState;
 };
 

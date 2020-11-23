@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
-import { ConfigurationReducer } from './configuration/reducer';
+import { SuitesReducer } from './suites/reducer';
 import { AuthReducer } from './auth/reducer';
 
 const rootReducer = combineReducers({
-  appConfiguration: ConfigurationReducer,
+  suitesTable: SuitesReducer,
   auth: AuthReducer,
 });
 

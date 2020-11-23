@@ -1,6 +1,6 @@
 import React from 'react';
+import { TENANT } from 'contants';
 import AppProviders from './AppProviders';
-import { TENANT } from '../constants';
 import Authentication from './Authentication';
 
 const AppRoot = (): JSX.Element => (
