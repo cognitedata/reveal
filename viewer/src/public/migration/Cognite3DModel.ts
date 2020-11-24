@@ -10,11 +10,9 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, NumericRange } from '../../utilities';
 import { CadRenderHints, CadNode } from '../../experimental';
-import { CadLoadingHints } from '../../datamodels/cad/CadLoadingHints';
-import { CadModelMetadata } from '../../datamodels/cad/CadModelMetadata';
-import { NodeAppearanceProvider, DefaultNodeAppearance } from '../../datamodels/cad/NodeAppearance';
 import { trackError } from '../../utilities/metrics';
-import { SupportedModelTypes } from '../types';
+import { DefaultNodeAppearance } from '../../datamodels/cad/NodeAppearance';
+import { SupportedModelTypes, CadLoadingHints, CadModelMetadata, NodeAppearanceProvider } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeStyleUpdater } from './NodeStyleUpdater';
@@ -489,7 +487,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
       this.nodeColors.set(i, color);
     }
-    this.updateNodeStyle(new NumericRange(0, this.cadModel.scene.maxTreeIndex));
+    this.updateNodeStyle(new NumericRange(0, this.cadModel.scene.maxTreeIndex + 1));
   }
 
   /**
@@ -690,7 +688,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
       this.ghostedNodes.add(i);
     }
-    this.updateNodeStyle(new NumericRange(0, this.cadModel.scene.maxTreeIndex));
+    this.updateNodeStyle(new NumericRange(0, this.cadModel.scene.maxTreeIndex + 1));
   }
 
   /**
@@ -764,7 +762,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
-    const treeIndices = new NumericRange(0, this.cadModel.scene.maxTreeIndex);
+    const treeIndices = new NumericRange(0, this.cadModel.scene.maxTreeIndex + 1);
     treeIndices.forEach(idx => this.hiddenNodes.add(idx));
     this.updateNodeStyle(treeIndices);
   }

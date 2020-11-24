@@ -27,18 +27,23 @@ import {
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
-
-import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
+import { RevealManager } from '../RevealManager';
+import { createCdfRevealManager } from '../createRevealManager';
+import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+
+import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
-import { RevealManager } from '../RevealManager';
-import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
-import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
-import { SupportedModelTypes } from '../../datamodels/base';
+import { clickOrTouchEventOffset } from '../../utilities/events';
+
+import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
+import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
+
+import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection } from '../..';
 
 /**
  * @example
@@ -883,50 +888,96 @@ export class Cognite3DViewer {
    * Raycasting model(s) for finding where the ray intersects with the model.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
+   * @param options Options to control the behaviour of the intersection operation. Optional (new in 1.3.0).
    * @returns If there was an intersection then return the intersection object - otherwise it returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
-   * @example
+   
+   * @example For CAD model
    * ```js
    * const offsetX = 50 // pixels from the left
    * const offsetY = 100 // pixels from the top
    * const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
    * if (intersection) // it was a hit
    *   console.log(
-   *     'You hit model ', intersection.model,
-   *     ' at the node with id ', intersection.nodeId,
-   *     ' at this exact point ', intersection.point
+   *   'You hit model ', intersection.model,
+   *   ' at the node with tree index ', intersection.treeIndex,
+   *   ' at this exact point ', intersection.point
    *   );
    * ```
+   * 
+   * @example For point cloud
+   * ```js
+   * const offsetX = 50 // pixels from the left
+   * const offsetY = 100 // pixels from the top
+   * const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+   * if (intersection) // it was a hit
+   *   console.log(
+   *   'You hit model ', intersection.model,
+   *   ' at the point index ', intersection.pointIndex,
+   *   ' at this exact point ', intersection.point
+   *   );   
+   * ```
+   * @version The options parameter was added in version 1.3.0
    */
-  getIntersectionFromPixel(offsetX: number, offsetY: number): null | Intersection {
+  getIntersectionFromPixel(
+    offsetX: number,
+    offsetY: number,
+    options?: IntersectionFromPixelOptions
+  ): null | Intersection {
     const cadModels = this.getModels('cad');
-    const nodes = cadModels.map(x => x.cadNode);
+    const pointCloudModels = this.getModels('pointcloud');
+    const cadNodes = cadModels.map(x => x.cadNode);
+    const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
-    const coords = {
+    const normalizedCoords = {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
-    const results = intersectCadNodes(nodes, {
-      coords,
+    const input: IntersectInput = {
+      normalizedCoords,
       camera: this.camera,
-      renderer: this.renderer
-    });
+      renderer: this.renderer,
+      domElement: this.renderer.domElement
+    };
+    const cadResults = intersectCadNodes(cadNodes, input);
+    const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
 
-    if (results.length > 0) {
-      const result = results[0]; // Nearest intersection
-      for (const model of cadModels) {
-        if (model.cadNode === result.cadNode) {
-          const intersection: Intersection = {
+    const intersections: Intersection[] = [];
+    if (pointCloudResults.length > 0) {
+      const result = pointCloudResults[0]; // Nearest intersection
+      for (const model of pointCloudModels) {
+        if (model.pointCloudNode === result.pointCloudNode) {
+          const intersection: PointCloudIntersection = {
+            type: 'pointcloud',
             model,
-            treeIndex: result.treeIndex,
-            point: result.point
+            point: result.point,
+            pointIndex: result.pointIndex,
+            distanceToCamera: result.distance
           };
-          return intersection;
+          intersections.push(intersection);
+          break;
         }
       }
     }
 
-    return null;
+    if (cadResults.length > 0) {
+      const result = cadResults[0]; // Nearest intersection
+      for (const model of cadModels) {
+        if (model.cadNode === result.cadNode) {
+          const intersection: CadIntersection = {
+            type: 'cad',
+            model,
+            treeIndex: result.treeIndex,
+            point: result.point,
+            distanceToCamera: result.distance
+          };
+          intersections.push(intersection);
+        }
+      }
+    }
+
+    intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
+    return intersections.length > 0 ? intersections[0] : null;
   }
 
   /**
@@ -1223,12 +1274,12 @@ export class Cognite3DViewer {
     let validClick = false;
 
     const onHoverCallback = debounce((e: MouseEvent) => {
-      this.eventListeners.hover.forEach(fn => fn(mouseEventOffset(e, canvas)));
+      this.eventListeners.hover.forEach(fn => fn(clickOrTouchEventOffset(e, canvas)));
     }, 100);
 
     const onMove = (e: MouseEvent | TouchEvent) => {
-      const { offsetX, offsetY } = mouseEventOffset(e, canvas);
-      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = mouseEventOffset(e, canvas);
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
+      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = clickOrTouchEventOffset(e, canvas);
 
       // check for Manhattan distance greater than maxMoveDistance pixels
       if (
@@ -1245,7 +1296,7 @@ export class Cognite3DViewer {
       if (pointerDown && validClick && clickDuration < maxClickDuration) {
         // trigger events
         this.eventListeners.click.forEach(func => {
-          func(mouseEventOffset(e, canvas));
+          func(clickOrTouchEventOffset(e, canvas));
         });
       }
       pointerDown = false;
@@ -1307,17 +1358,6 @@ function createCanvasWrapper(): HTMLElement {
   domElement.style.width = '100%';
   domElement.style.height = '100%';
   return domElement;
-}
-
-function mouseEventOffset(ev: MouseEvent | TouchEvent, target: HTMLElement) {
-  target = target || ev.currentTarget || ev.srcElement;
-  const cx = 'clientX' in ev ? ev.clientX : 0;
-  const cy = 'clientY' in ev ? ev.clientY : 0;
-  const rect = target.getBoundingClientRect();
-  return {
-    offsetX: cx - rect.left,
-    offsetY: cy - rect.top
-  };
 }
 
 function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {

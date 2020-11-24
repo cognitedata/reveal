@@ -110,16 +110,19 @@ export class EffectRenderManager {
         tOutlineColors: { value: outlineColorTexture },
         cameraNear: { value: 0.1 },
         cameraFar: { value: 10000 }
-      }
+      },
+      extensions: { fragDepth: true }
     });
     this._fxaaMaterial = new THREE.ShaderMaterial({
       uniforms: {
         tDiffuse: { value: this._compositionTarget.texture },
         tDepth: { value: this._compositionTarget.depthTexture },
-        resolution: { value: new THREE.Vector2() }
+        resolution: { value: new THREE.Vector2() },
+        inverseResolution: { value: new THREE.Vector2() }
       },
       vertexShader: fxaaShaders.vertex,
-      fragmentShader: fxaaShaders.fragment
+      fragmentShader: fxaaShaders.fragment,
+      extensions: { fragDepth: true }
     });
 
     this.setupCompositionScene();
@@ -320,6 +323,8 @@ export class EffectRenderManager {
       this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._compositionTarget.setSize(renderSize.x, renderSize.y);
+
+      // Update GLSL uniforms related to resolution
       this._combineEdgeDetectionMaterial.setValues({
         uniforms: {
           ...this._combineEdgeDetectionMaterial.uniforms,
@@ -332,7 +337,8 @@ export class EffectRenderManager {
       this._fxaaMaterial.setValues({
         uniforms: {
           ...this._fxaaMaterial.uniforms,
-          resolution: { value: renderSize }
+          resolution: { value: renderSize },
+          inverseResolution: { value: new THREE.Vector2(1.0 / renderSize.x, 1.0 / renderSize.y) }
         }
       });
     }

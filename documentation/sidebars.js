@@ -33,6 +33,7 @@ module.exports = {
         'examples/cad-preview',
         'examples/clipping',
         'examples/pointcloud',
+        'examples/pointcloud-intersections',
       ],
     },
     {

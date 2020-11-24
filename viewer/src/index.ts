@@ -2,18 +2,20 @@
  * Copyright 2020 Cognite AS
  */
 
-export { CogniteModelBase } from './public/migration/CogniteModelBase';
-export { Cognite3DModel } from './public/migration/Cognite3DModel';
-export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
-export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
-export { Intersection } from './public/migration/types';
+// entry point for everything that is available as non-experimental (@cognite/reveal)
+// all types that we use in our public API must be reexported here
+// if you see a type in api-reference docs, then it's properly exported
+
 export * from './public/migration/Cognite3DViewer';
-export * from './public/migration/types';
-export { SupportedModelTypes } from './datamodels/base/SupportedModelTypes';
-export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
-export { BoundingBoxClipper } from './utilities';
 export * from './revealEnv';
-export * from './datamodels/pointcloud/types';
+export { BoundingBoxClipper } from './utilities';
+export { Cognite3DModel } from './public/migration/Cognite3DModel';
+export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
+export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
+
+// types
+
+export * from './public/types';
 
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';

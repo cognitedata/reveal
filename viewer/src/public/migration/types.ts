@@ -6,6 +6,7 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
 import { Cognite3DModel } from './Cognite3DModel';
+import { CognitePointCloudModel } from './CognitePointCloudModel';
 
 /**
  * @module @cognite/reveal
@@ -84,15 +85,57 @@ export interface AddModelOptions {
   onComplete?: () => void;
 }
 
+export type CadIntersection = {
+  /**
+   * The intersection type.
+   */
+  type: 'cad';
+  /**
+   * The model that was intersected.
+   */
+  model: Cognite3DModel;
+  /**
+   * Coordinate of the intersection.
+   */
+  point: THREE.Vector3;
+  /**
+   * Tree index of the intersected 3D node.
+   */
+  treeIndex: number;
+  /**
+   * Distance from the camera to the intersection.
+   */
+  distanceToCamera: number;
+};
+
+export type PointCloudIntersection = {
+  /**
+   * The intersection type.
+   */
+  type: 'pointcloud';
+  /**
+   * The model that was intersected.
+   */
+  model: CognitePointCloudModel;
+  /**
+   * Tree index of the intersected 3D node.
+   */
+  point: THREE.Vector3;
+  /**
+   * The index of the point that was intersected.
+   */
+  pointIndex: number;
+  /**
+   * Distance from the camera to the intersection.
+   */
+  distanceToCamera: number;
+};
+
 /**
  * Represents the result from {@link Cognite3DViewer.getIntersectionFromPixel}.
  * @module @cognite/reveal
  */
-export interface Intersection {
-  model: Cognite3DModel;
-  treeIndex: number;
-  point: THREE.Vector3;
-}
+export type Intersection = CadIntersection | PointCloudIntersection;
 
 /**
  * @module @cognite/reveal
@@ -112,6 +155,9 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
  * @see {@link Cognite3DViewer.on}.
  */
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+
+export * from './NotSupportedInMigrationWrapperError';
+export { CogniteModelBase } from './CogniteModelBase';
 
 /**
  * Represents a measurement of how much geometry can be loaded.
@@ -135,3 +181,17 @@ export type CadModelBudget = {
    */
   readonly maximumNumberOfDrawCalls: number;
 };
+
+/**
+ * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
+ * @version new in 1.3.0
+ */
+export interface IntersectionFromPixelOptions {
+  /**
+   * Threshold (in meters) for how close a point must be an intersection
+   * ray for it to be considered an intersection for point clouds. Defaults
+   * to 0.05.
+   * @version new in 1.3.0
+   */
+  pointIntersectionThreshold?: number;
+}
