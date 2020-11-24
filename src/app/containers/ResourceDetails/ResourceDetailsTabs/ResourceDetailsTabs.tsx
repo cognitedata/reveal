@@ -107,7 +107,7 @@ export const ResourceDetailsTabs = ({
           <>
             Related resources could not be looked up because you do not have
             access to the relationship feature. Add
-            &apos;relationshop:read&apos; to your service account in{' '}
+            &apos;relationships:read&apos; to your service account in{' '}
             <a href={createLink('/access-management')}>access management</a>.
           </>
         ),
