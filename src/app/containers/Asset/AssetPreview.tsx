@@ -8,6 +8,7 @@ import {
   AssetBreadcrumb,
   AssetTreeTable,
 } from 'lib/containers/Assets';
+import Metadata from 'lib/components/Details/Metadata';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Space, Row, Col } from 'antd';
 import { Asset } from '@cognite/sdk';
@@ -115,14 +116,8 @@ export const AssetPreview = ({
               excludedTypes={['asset']}
               additionalTabs={[
                 <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                  <AssetDetails
-                    asset={asset}
-                    datasetLink={
-                      asset?.dataSetId
-                        ? createLink(`/data-sets/data-set/${asset?.dataSetId}`)
-                        : undefined
-                    }
-                  />
+                  <AssetDetails asset={asset} />
+                  <Metadata metadata={asset.metadata} />
                 </Tabs.Pane>,
                 <Tabs.Pane title={<TabTitle>Children</TabTitle>} key="children">
                   <AssetTreeTable

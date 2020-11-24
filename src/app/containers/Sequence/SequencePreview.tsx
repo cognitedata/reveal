@@ -6,6 +6,7 @@ import {
   SequenceDetails,
   SequencePreview as SequenceTabPreview,
 } from 'lib/containers/Sequences';
+import Metadata from 'lib/components/Details/Metadata';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Row, Col } from 'antd';
 import { Sequence } from '@cognite/sdk';
@@ -93,15 +94,8 @@ export const SequencePreview = ({
                 <SequenceTabPreview sequence={sequence} />
               </Tabs.Pane>,
               <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                <SequenceDetails
-                  sequence={sequence}
-                  datasetLink={
-                    sequence?.dataSetId
-                      ? createLink(`/data-sets/data-set/${sequence?.dataSetId}`)
-                      : undefined
-                  }
-                  showAll
-                />
+                <SequenceDetails sequence={sequence} />
+                <Metadata metadata={sequence.metadata} />
               </Tabs.Pane>,
             ]}
           />

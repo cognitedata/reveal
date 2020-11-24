@@ -3,13 +3,14 @@ import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { FilePreview as CogniteFilePreview } from 'lib/containers/Files/FilePreview';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Tabs } from 'lib/components';
+import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { FileDetails } from 'lib';
 import RelatedResources from 'app/components/Files/RelatedResources';
+import Metadata from 'lib/components/Details/Metadata';
 import RelatedResourceCount from 'app/components/Files/RelatedResourceCount';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
@@ -17,7 +18,6 @@ import { usePermissions } from 'lib/hooks/CustomHooks';
 import styled from 'styled-components';
 import { Colors, Body } from '@cognite/cogs.js';
 import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
-import { createLink } from '@cognite/cdf-utilities';
 
 export const FilePreview = ({
   fileId,
@@ -53,7 +53,24 @@ export const FilePreview = ({
     setEditMode(false);
   }, [fileId]);
 
-  const { data: fileInfo } = useCdfItem<FileInfo>('files', { id: fileId! });
+  const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
+    'files',
+    {
+      id: fileId!,
+    }
+  );
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!fileInfo) {
+    return <>File {fileId} not found!</>;
+  }
 
   return (
     <>
@@ -90,16 +107,8 @@ export const FilePreview = ({
             />
           </Tabs.Pane>
           <Tabs.Pane title="File details" key="info">
-            {fileInfo && (
-              <FileDetails
-                file={fileInfo}
-                datasetLink={
-                  fileInfo?.dataSetId
-                    ? createLink(`/data-sets/data-set/${fileInfo?.dataSetId}`)
-                    : undefined
-                }
-              />
-            )}
+            <FileDetails file={fileInfo} />
+            <Metadata metadata={fileInfo.metadata} />
           </Tabs.Pane>
           <Tabs.Pane
             title={

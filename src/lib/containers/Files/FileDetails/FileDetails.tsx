@@ -1,37 +1,21 @@
 import React from 'react';
-import { FileInfo, DataSet } from '@cognite/sdk';
+import { FileInfo } from '@cognite/sdk';
 import {
   TimeDisplay,
   DetailsTabGrid,
   DetailsTabItem,
+  DataSetItem,
   Label,
 } from 'lib/components';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-export const FileDetails = ({
-  file,
-  datasetLink,
-}: {
-  file: FileInfo;
-  datasetLink?: string;
-}) => {
-  const { data: dataset } = useCdfItem<DataSet>(
-    'datasets',
-    { id: file?.dataSetId || 0 },
-    { enabled: !!file && !!file?.dataSetId }
-  );
-
+export const FileDetails = ({ file }: { file: FileInfo }) => {
   return (
     <DetailsTabGrid>
       <DetailsTabItem name="External ID" value={file.externalId} copyable />
       <DetailsTabItem name="ID" value={file.id} copyable />
       <DetailsTabItem name="Source" value={file.source} />
       <DetailsTabItem name="MIME type" value={file.mimeType} />
-      <DetailsTabItem
-        name="Data set"
-        value={dataset?.name}
-        link={datasetLink}
-      />
+      <DataSetItem id={file.id} type="file" />
       <DetailsTabItem
         name="Uploaded at"
         value={file ? <TimeDisplay value={file.uploadedTime} /> : 'Loading...'}

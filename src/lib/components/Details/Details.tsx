@@ -4,6 +4,10 @@ import styled from 'styled-components';
 import { Body, Colors, Icon } from '@cognite/cogs.js';
 import { List } from 'antd';
 import { Link } from 'react-router-dom';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { convertResourceType, ResourceType } from 'lib/types';
+import { DataSet } from '@cognite/sdk';
+import { createLink } from '@cognite/cdf-utilities';
 
 const { Text } = Typography;
 
@@ -64,8 +68,47 @@ export const DetailsTabItem = ({
   );
 };
 
+export const DataSetItem = ({
+  id,
+  type,
+}: {
+  id: number;
+  type: ResourceType;
+}) => {
+  const { data: item, isFetched } = useCdfItem<{ dataSetId?: number }>(
+    convertResourceType(type),
+    { id }
+  );
+  const { data: ds } = useCdfItem<DataSet>(
+    'datasets',
+    { id: item?.dataSetId! },
+    {
+      enabled: isFetched && Number.isFinite(item?.dataSetId),
+    }
+  );
+
+  if (isFetched && item) {
+    return (
+      <DetailsTabItem
+        name="Data set"
+        value={ds?.name || item?.dataSetId}
+        link={
+          item.dataSetId
+            ? createLink(`/data-sets/data-set/${item.dataSetId}`)
+            : undefined
+        }
+      />
+    );
+  }
+
+  return null;
+};
+
 const Name = styled(Body)`
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const Value = styled(Text)`

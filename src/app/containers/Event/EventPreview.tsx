@@ -8,6 +8,7 @@ import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 import { ErrorFeedback, Loader, Tabs } from 'lib/components';
+import Metadata from 'lib/components/Details/Metadata';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
@@ -84,15 +85,8 @@ export const EventPreview = ({
             }
             additionalTabs={[
               <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                <EventDetails
-                  event={event}
-                  datasetLink={
-                    event?.dataSetId
-                      ? createLink(`/data-sets/data-set/${event?.dataSetId}`)
-                      : undefined
-                  }
-                  showAll
-                />
+                <EventDetails event={event} />
+                <Metadata metadata={event.metadata} />
               </Tabs.Pane>,
             ]}
           />
