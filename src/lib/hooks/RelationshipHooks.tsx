@@ -2,17 +2,23 @@ import {
   useList,
   useCdfItems,
   useAggregate,
+  useInfiniteList,
 } from '@cognite/sdk-react-query-hooks';
+import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
+import { formatNumber } from 'lib/utils/numbers';
+import { useMemo } from 'react';
 import {
   ExternalId,
-  Timeseries,
   Asset,
   CogniteEvent,
   Sequence,
-  FileInfo as File,
+  Timeseries,
+  FileInfo,
 } from '@cognite/sdk';
-import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
-import { formatNumber } from 'lib/utils/numbers';
+
+const PAGE_SIZE = 20;
+
+type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
 export type Relationship = {
   targetType: ResourceType;
@@ -64,69 +70,97 @@ export const useRelationships = (
   };
 };
 
-export const useRelatedResources = (
-  relations: (ExternalId & { type: ResourceType })[] | []
-): {
-  data: {
-    asset: Asset[];
-    event: CogniteEvent[];
-    file: File[];
-    sequence: Sequence[];
-    timeSeries: Timeseries[];
-  };
-} => {
-  const assetIds = relations
-    .filter(el => el.type === 'asset')
-    .map(({ externalId }) => ({ externalId }));
-  const { data: assets = [] } = useCdfItems<Asset>('assets', assetIds, {
-    enabled: relations.length > 0 && assetIds?.length > 0,
-  });
+export const useInfiniteRelationshipsList = <T extends Resource>(
+  resourceExternalId?: string,
+  type?: ResourceType,
+  enabled: boolean = true
+) => {
+  const fetchEnabled = enabled && !!resourceExternalId;
 
-  const eventIds = relations
-    .filter(el => el.type === 'event')
-    .map(({ externalId }) => ({ externalId }));
-  const { data: events = [] } = useCdfItems<CogniteEvent>('events', eventIds, {
-    enabled: relations.length > 0 && eventIds?.length > 0,
-  });
-
-  const fileIds = relations
-    .filter(el => el.type === 'file')
-    .map(({ externalId }) => ({ externalId }));
-  const { data: files = [] } = useCdfItems<File>('files', fileIds, {
-    enabled: relations.length > 0 && fileIds?.length > 0,
-  });
-
-  const sequenceIds = relations
-    .filter(el => el.type === 'sequence')
-    .map(({ externalId }) => ({ externalId }));
-  const { data: sequences = [] } = useCdfItems<Sequence>(
-    'sequences',
-    sequenceIds,
+  const { data: sourceData = [], ...sourceParams } = useInfiniteList<
+    Relationship
+  >(
+    // @ts-ignore
+    'relationships',
+    PAGE_SIZE,
+    { sourceExternalIds: [resourceExternalId], targetTypes: [type] },
+    { enabled: fetchEnabled, staleTime: 60 * 1000 }
+  );
+  const sourceItems = useMemo(
+    () =>
+      sourceData?.reduce(
+        (accl, t) =>
+          accl.concat(
+            t.items.map(({ targetExternalId: externalId }) => ({ externalId }))
+          ),
+        [] as ExternalId[]
+      ),
+    [sourceData]
+  );
+  const { data: sourceResources = [] } = useCdfItems<T>(
+    convertResourceType(type!),
+    sourceItems,
     {
-      enabled: relations.length > 0 && sequenceIds?.length > 0,
+      enabled: sourceItems.length > 0,
     }
   );
 
-  const timeseriesIds = relations
-    .filter(el => el.type === 'timeSeries')
-    .map(({ externalId }) => ({ externalId }));
-  const { data: timeseries = [] } = useCdfItems<Timeseries>(
-    'timeseries',
-    timeseriesIds,
+  const fetchTarget = !!sourceParams && !sourceParams.canFetchMore;
+
+  const { data: targetData = [], ...targetParams } = useInfiniteList<
+    Relationship
+  >(
+    // @ts-ignore
+    'relationships',
+    PAGE_SIZE,
+    { targetExternalIds: [resourceExternalId], sourceTypes: [type] },
     {
-      enabled: relations.length > 0 && timeseriesIds?.length > 0,
+      enabled: fetchEnabled && fetchTarget,
+      staleTime: 60 * 1000,
     }
   );
+  const targetItems = useMemo(
+    () =>
+      targetData?.reduce(
+        (accl, t) =>
+          accl.concat(
+            t.items.map(({ sourceExternalId: externalId }) => ({ externalId }))
+          ),
+        [] as ExternalId[]
+      ),
+    [targetData]
+  );
+  const { data: targetResources = [] } = useCdfItems<T>(
+    convertResourceType(type!),
+    targetItems,
+    {
+      enabled: targetItems.length > 0,
+    }
+  );
+
+  const rest = sourceParams.canFetchMore ? sourceParams : targetParams;
 
   return {
-    data: {
-      asset: assets,
-      event: events,
-      file: files,
-      sequence: sequences,
-      timeSeries: timeseries,
-    },
+    items: [...sourceResources, ...targetResources] as T[],
+    ...rest,
   };
+};
+
+export const useRelationshipCount = (
+  resource: ResourceItem,
+  type: ResourceType
+): number => {
+  const {
+    data: relationships,
+    isFetching: isFetchingRelationships,
+  } = useRelationships(resource.externalId, [type]);
+
+  let count = 0;
+  if (!isFetchingRelationships && relationships?.length > 0) {
+    count = relationships.length;
+  }
+
+  return count;
 };
 
 export const useRelatedResourceCount = (
@@ -138,7 +172,7 @@ export const useRelatedResourceCount = (
   const { data, isFetched } = useAggregate(
     convertResourceType(type),
     { assetSubtreeIds: [{ id: resource.id }] },
-    { enabled: isAsset && !!resource.id }
+    { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
   );
 
   const {
@@ -149,9 +183,7 @@ export const useRelatedResourceCount = (
   let count: string = '0';
   if (isAsset && isFetched && data && !isFetchingRelationships) {
     count = formatNumber(data?.count + relationships.length);
-  }
-
-  if (!isFetchingRelationships && relationships?.length > 0) {
+  } else if (!isFetchingRelationships && relationships?.length > 0) {
     count = formatNumber(relationships.length);
   }
 

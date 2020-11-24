@@ -1,23 +1,14 @@
 import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { Tabs, TabPaneProps } from 'lib/components';
-import {
-  ResourceType,
-  ResourceItem,
-  convertResourceType,
-  getTitle,
-} from 'lib/types';
-import { useList } from '@cognite/sdk-react-query-hooks';
-import {
-  useRelationships,
-  useRelatedResourceCounts,
-} from 'lib/hooks/RelationshipHooks';
+import { ResourceType, ResourceItem, getTitle } from 'lib/types';
+import { useRelatedResourceCounts } from 'lib/hooks/RelationshipHooks';
 import { Badge } from '@cognite/cogs.js';
 import { lightGrey } from 'lib/utils/Colors';
-import { RelationshipTable, Resource } from 'lib/containers/Relationships';
 import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
+import { RelatedResources } from 'app/containers/ResourceDetails';
 import { notification } from 'antd';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 
@@ -37,7 +28,7 @@ const defaultRelationshipTabs: ResourceType[] = [
   'sequence',
 ];
 
-const RelationshipTabContent = ({
+const ResourceDetailTabContent = ({
   resource,
   type,
 }: {
@@ -46,15 +37,6 @@ const RelationshipTabContent = ({
 }) => {
   const history = useHistory();
 
-  const { data: linkedResources } = useList(
-    convertResourceType(type),
-    {
-      filter: { assetSubtreeIds: [{ id: resource.id }] },
-    },
-    { enabled: resource.type === 'asset' && !!resource.id }
-  );
-
-  const { data: relationships } = useRelationships(resource.externalId, [type]);
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
   );
@@ -67,10 +49,11 @@ const RelationshipTabContent = ({
   };
 
   return (
-    <RelationshipTable
+    <RelatedResources
       type={type}
-      relationships={relationships}
-      linkedResources={linkedResources as Resource[]}
+      parentResource={resource}
+      relationships={[]}
+      linkedResources={[]}
       onItemClicked={(id: number) => {
         history.push(createLink(`/explore/${type}/${id}`));
       }}
@@ -107,7 +90,7 @@ export const ResourceDetailsTabs = ({
           </>
         }
       >
-        <RelationshipTabContent
+        <ResourceDetailTabContent
           resource={parentResource}
           type={key as ResourceType}
         />

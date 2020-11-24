@@ -7,8 +7,7 @@ import {
   CogniteEvent,
   FileInfo,
 } from '@cognite/sdk';
-import { ResourceType } from 'lib/types';
-import { useRelatedResources } from 'lib/hooks/RelationshipHooks';
+import { ResourceType, ResourceItem } from 'lib/types';
 import { AssetTable } from 'lib/containers';
 import {
   FileSearchResults,
@@ -17,10 +16,13 @@ import {
   SequenceSearchResults,
 } from 'lib/containers/SearchResults';
 import { SelectableItemsProps } from 'lib/CommonProps';
+import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
+import { useRelationshipCount } from 'lib/hooks/RelationshipHooks';
 
 export type Resource = Asset | CogniteEvent | FileInfo | Timeseries | Sequence;
 export type RelationshipTableProps = {
   type: ResourceType;
+  parentResource: ResourceItem;
   relationships?: (ExternalId & { type: ResourceType })[] | [];
   linkedResources?: Resource[];
   onItemClicked: (id: number) => void;
@@ -28,28 +30,34 @@ export type RelationshipTableProps = {
 
 export const RelationshipTable = ({
   type,
-  relationships = [],
-  linkedResources = [],
+  parentResource,
   onItemClicked,
   ...selectionMode
 }: RelationshipTableProps & SelectableItemsProps) => {
-  const { data: relatedResources } = useRelatedResources(relationships);
+  const count = useRelationshipCount(parentResource, type);
 
   switch (type) {
     case 'asset':
       return (
-        <AssetTable
-          items={[...linkedResources, ...relatedResources.asset] as Asset[]}
-          onRowClick={el => onItemClicked(el.id)}
+        <ResultTableLoader<Asset>
+          mode="relatedResources"
+          type="asset"
+          relatedResourceType="relationship"
+          parentResource={parentResource}
           {...selectionMode}
-        />
+        >
+          {props => (
+            <AssetTable onRowClick={el => onItemClicked(el.id)} {...props} />
+          )}
+        </ResultTableLoader>
       );
     case 'event':
       return (
         <EventSearchResults
-          items={
-            [...linkedResources, ...relatedResources.event] as CogniteEvent[]
-          }
+          showRelatedResources
+          relatedResourceType="relationship"
+          parentResource={parentResource}
+          count={count}
           onClick={el => onItemClicked(el.id)}
           {...selectionMode}
         />
@@ -57,18 +65,22 @@ export const RelationshipTable = ({
     case 'file':
       return (
         <FileSearchResults
-          items={[...linkedResources, ...relatedResources.file] as FileInfo[]}
+          showRelatedResources
+          relatedResourceType="relationship"
+          parentResource={parentResource}
           onClick={el => onItemClicked(el.id)}
+          count={count}
           {...selectionMode}
         />
       );
     case 'sequence':
       return (
         <SequenceSearchResults
-          items={
-            [...linkedResources, ...relatedResources.sequence] as Sequence[]
-          }
+          showRelatedResources
+          relatedResourceType="relationship"
+          parentResource={parentResource}
           onClick={el => onItemClicked(el.id)}
+          count={count}
           {...selectionMode}
         />
       );
@@ -76,9 +88,10 @@ export const RelationshipTable = ({
     case 'timeSeries':
       return (
         <TimeseriesSearchResults
-          items={
-            [...linkedResources, ...relatedResources.timeSeries] as Timeseries[]
-          }
+          showRelatedResources
+          relatedResourceType="relationship"
+          parentResource={parentResource}
+          count={count}
           onClick={el => onItemClicked(el.id)}
           initialView="grid"
           {...selectionMode}

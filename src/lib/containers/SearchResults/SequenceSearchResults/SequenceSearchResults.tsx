@@ -2,19 +2,27 @@ import React from 'react';
 import { SequenceFilter, Sequence } from '@cognite/sdk';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
 import { SelectableItemsProps } from 'lib/CommonProps';
-import { SearchResultLoader } from 'lib';
+import { ResourceItem } from 'lib';
 import { SequenceTable } from 'lib/containers/Sequences';
+import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
+import { RelatedResourceType } from 'lib/hooks/RelatedResourcesHooks';
 
 export const SequenceSearchResults = ({
   query = '',
   filter = {},
-  items,
+  showRelatedResources = false,
+  relatedResourceType,
+  parentResource,
+  count,
   onClick,
   ...selectionProps
 }: {
   query?: string;
   filter?: Required<SequenceFilter>['filter'];
-  items?: Sequence[];
+  showRelatedResources?: boolean;
+  relatedResourceType?: RelatedResourceType;
+  parentResource?: ResourceItem;
+  count?: number;
   onClick: (item: Sequence) => void;
 } & SelectableItemsProps) => {
   return (
@@ -24,22 +32,24 @@ export const SequenceSearchResults = ({
         type="sequences"
         filter={filter}
         query={query}
-        count={items ? items.length : undefined}
+        count={count}
       />
-      <SearchResultLoader<Sequence>
+      <ResultTableLoader<Sequence>
+        mode={showRelatedResources ? 'relatedResources' : 'search'}
         type="sequence"
         filter={filter}
         query={query}
+        parentResource={parentResource}
+        relatedResourceType={relatedResourceType}
         {...selectionProps}
       >
         {props => (
           <SequenceTable
             {...props}
-            data={items || props.data}
             onRowClick={sequence => onClick(sequence)}
           />
         )}
-      </SearchResultLoader>
+      </ResultTableLoader>
     </>
   );
 };

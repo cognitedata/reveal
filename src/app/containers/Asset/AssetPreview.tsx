@@ -97,7 +97,7 @@ export const AssetPreview = ({
           </Col>
         </Row>
         <Row style={{ height: 'calc(100% - 82px)', marginLeft: 16 }}>
-          <Col span={24}>
+          <Col span={24} style={{ display: 'flex', flexDirection: 'column' }}>
             <ResourceDetailsTabs
               parentResource={{
                 type: 'asset',

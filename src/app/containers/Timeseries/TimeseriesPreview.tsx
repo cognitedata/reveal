@@ -59,7 +59,7 @@ export const TimeseriesPreview = ({
   }
 
   return (
-    <div style={{ overflow: 'hidden' }}>
+    <div style={{ overflow: 'hidden', height: '100%' }}>
       <ResourceTitleRow
         item={{ id: timeseriesId, type: 'timeSeries' }}
         actions={actions}
@@ -82,7 +82,7 @@ export const TimeseriesPreview = ({
               marginLeft: 16,
             }}
           >
-            <Col span={24}>
+            <Col span={24} style={{ display: 'flex', flexDirection: 'column' }}>
               <ResourceDetailsTabs
                 parentResource={{
                   type: 'timeSeries',

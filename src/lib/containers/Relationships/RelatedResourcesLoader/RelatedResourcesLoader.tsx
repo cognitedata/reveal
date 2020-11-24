@@ -1,4 +1,8 @@
 import React, { useMemo } from 'react';
+import { Icon } from '@cognite/cogs.js';
+import { Loader, SpacedRow, TableProps } from 'lib/components';
+import { SelectableItemsProps } from 'lib/CommonProps';
+import { ResourceType, ResourceItem } from 'lib/types';
 import {
   FileInfo,
   Asset,
@@ -6,24 +10,23 @@ import {
   Timeseries,
   Sequence,
 } from '@cognite/sdk';
-import { Icon } from '@cognite/cogs.js';
-import { Loader, SpacedRow, TableProps } from 'lib/components';
-import { SelectableItemsProps } from 'lib/CommonProps';
-import { convertResourceType, ResourceType } from 'lib';
-import { useResourceResults } from './hooks';
+import {
+  RelatedResourceType,
+  useRelatedResourceResults,
+} from 'lib/hooks/RelatedResourcesHooks';
 
-type RealResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
+type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
-export type SearchResultLoaderProps = {
+export type RelatedResourcesLoaderProps = {
+  relatedResourceType: RelatedResourceType;
   type: ResourceType;
-  query?: string;
-  filter?: any;
+  parentResource: ResourceItem;
 };
 
-export const SearchResultLoader = <T extends RealResourceType>({
+export const RelatedResourcesLoader = <T extends Resource>({
+  relatedResourceType,
   type,
-  query,
-  filter = {},
+  parentResource,
   isSelected = () => false,
   children,
   selectionMode = 'none',
@@ -31,8 +34,7 @@ export const SearchResultLoader = <T extends RealResourceType>({
 }: {
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SelectableItemsProps> &
-  SearchResultLoaderProps) => {
-  const api = convertResourceType(type);
+  RelatedResourcesLoaderProps) => {
   const {
     canFetchMore,
     isFetchingMore,
@@ -40,7 +42,7 @@ export const SearchResultLoader = <T extends RealResourceType>({
     isFetched,
     isFetching,
     items,
-  } = useResourceResults(api, query, filter);
+  } = useRelatedResourceResults<T>(relatedResourceType, type, parentResource);
 
   const selectedIds = useMemo(() => {
     return (items || [])
@@ -57,7 +59,6 @@ export const SearchResultLoader = <T extends RealResourceType>({
   return (
     <>
       {children({
-        query,
         onEndReached: () => {
           if (canFetchMore && !isFetchingMore) {
             fetchMore();

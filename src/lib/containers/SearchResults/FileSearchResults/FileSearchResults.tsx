@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/sdk';
 import { FileGridPreview, FileTable } from 'lib/containers/Files';
 import { SelectableItemsProps } from 'lib/CommonProps';
-import { SearchResultLoader } from 'lib';
 import { GridTable } from 'lib/components';
+import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
+import { RelatedResourceType } from 'lib/hooks/RelatedResourcesHooks';
+import { ResourceItem } from 'lib/types';
 import { FileToolbar } from './FileToolbar';
 
 export const FileSearchResults = ({
   query = '',
   filter = {},
-  items,
+  showRelatedResources = false,
+  relatedResourceType,
+  parentResource,
+  count,
   allowEdit = false,
   onClick,
   ...selectionProps
@@ -17,6 +22,10 @@ export const FileSearchResults = ({
   query?: string;
   items?: FileInfo[];
   filter?: FileFilterProps;
+  showRelatedResources?: boolean;
+  relatedResourceType?: RelatedResourceType;
+  parentResource?: ResourceItem;
+  count?: number;
   allowEdit?: boolean;
   onClick: (item: FileInfo) => void;
 } & SelectableItemsProps) => {
@@ -34,12 +43,15 @@ export const FileSearchResults = ({
         currentView={currentView}
         onViewChange={setCurrentView}
         allowEdit={allowEdit}
-        count={items ? items.length : undefined}
+        count={count}
       />
-      <SearchResultLoader<FileInfo>
+      <ResultTableLoader<FileInfo>
         type="file"
+        mode={showRelatedResources ? 'relatedResources' : 'search'}
         filter={filter}
         query={query}
+        parentResource={parentResource}
+        relatedResourceType={relatedResourceType}
         {...selectionProps}
       >
         {props =>
@@ -47,7 +59,6 @@ export const FileSearchResults = ({
             <div style={{ flex: 1 }}>
               <GridTable
                 {...props}
-                data={items || props.data}
                 onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
                 onItemClicked={file => onClick(file)}
                 {...selectionProps}
@@ -58,7 +69,6 @@ export const FileSearchResults = ({
             <div style={{ flex: 1 }}>
               <FileTable
                 {...props}
-                data={items || props.data}
                 onRowClick={file => {
                   onClick(file);
                   return true;
@@ -67,7 +77,7 @@ export const FileSearchResults = ({
             </div>
           )
         }
-      </SearchResultLoader>
+      </ResultTableLoader>
     </>
   );
 };
