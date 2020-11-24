@@ -2,11 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Avatar, TopBar, Menu, Graphic } from '@cognite/cogs.js';
 
-interface Props {
-  handleClick: () => void;
-}
-
-const AppHeader: React.FC<Props> = ({ handleClick }: Props) => {
+const AppHeader: React.FC = () => {
   const history = useHistory();
 
   const handleLogoClick = () => {
@@ -16,7 +12,6 @@ const AppHeader: React.FC<Props> = ({ handleClick }: Props) => {
   return (
     <TopBar>
       <TopBar.Left>
-        <TopBar.Action icon="Hamburger" onClick={handleClick} />
         <TopBar.Logo
           title="Digital Cockpit"
           onLogoClick={handleLogoClick}

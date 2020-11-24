@@ -21,7 +21,7 @@ const Home = () => {
 
   return (
     <>
-      <Suitebar buttonText="New suite" />
+      <Suitebar headerText="Executive overview" />{' '}
       <OverviewContainer>
         <SmallTilesContainer>
           <Title level={6}>Quick Access</Title>

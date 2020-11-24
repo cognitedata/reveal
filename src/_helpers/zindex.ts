@@ -5,7 +5,6 @@ const LAYERS = [
   //
   // things closer to here are shown on TOP (ie: have high z-index)
   //
-  'APP_HEADER',
   'LEFT_SIDEBAR',
   'TILE_ACTIONS_MENU',
   //

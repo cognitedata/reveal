@@ -1,15 +1,19 @@
 import styled from 'styled-components/macro';
-import layers from '_helpers/zindex';
 
-export const Navigation = styled.div`
-  position: sticky;
-  top: 0;
-  background-color: var(--cogs-white);
-  z-index: ${layers.APP_HEADER};
+export const Container = styled.div`
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+`;
+
+export const Main = styled.div`
+  display: flex;
+  height: 100%;
+  overflow: auto;
+  background-color: var(--cogs-greyscale-grey2);
 `;
 
 export const Content = styled.div`
-  height: 100%;
-  min-height: 100vh;
-  background-color: var(--cogs-greyscale-grey2);
+  width: 100%;
+  overflow: auto;
 `;
