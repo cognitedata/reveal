@@ -20,4 +20,19 @@ describe('OverviewSidePanel', () => {
     expect(heading).toBeInTheDocument();
     expect(heading?.textContent).toEqual(mockIntegration.name);
   });
+
+  test('Render tabs with out fail', () => {
+    const mockIntegration = getMockResponse()[0];
+    renderWithSelectedIntegrationContext(<OverviewSidePanel />, {
+      initIntegration: mockIntegration,
+    });
+    const monitoringTab = screen.getByText('Monitoring');
+    expect(monitoringTab).toBeInTheDocument();
+
+    const contactInformationTab = screen.getByText('Contact information');
+    expect(contactInformationTab).toBeInTheDocument();
+
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs.length).toEqual(2);
+  });
 });
