@@ -1524,12 +1524,13 @@
     typescript "^4.0.3"
     uuid "^8.3.0"
 
-"@cognite/sdk-core@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.2.tgz#fab634f9661d76e49288eb121f9706bf5a37e478"
-  integrity sha512-0M5n+tmJc9B6oVzrGGOE16eAWwzq4a2eTBJzU0QTLajHOx3sTsDsuAKvQ7nE9ucaN+MqXuO5vERSjLMlOWkJQQ==
+"@cognite/sdk-core@^1.0.2", "@cognite/sdk-core@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.3.tgz#203e504947a0d481656c34d1d71a0caebd2bcb12"
+  integrity sha512-cQdYX4u2hwJt/0MZvN+Z1V495r3yDdxPn60JYfsxBwWWsDSrFAAx+eH4z0QL7EaE1xcOOLK6ayOV1Qa8zzbhAA==
   dependencies:
     cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
@@ -1549,20 +1550,12 @@
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^2.23.1"
 
-"@cognite/sdk@^3.0.0", "cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.1.1.tgz#3a0e259dbdaaa88f7225cc2f9f2530034674040d"
-  integrity sha512-L5UXQNa8tPk/s0UG6vAGqoYajv8219z4zYPyBQWHrhPXoXMEJdLxy4l6YG3f9UnCRTWDqWUrtlYni4T4sX/Xlg==
+"@cognite/sdk@^3.0.0", "@cognite/sdk@^3.2.0", "@cognite/sdk@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.2.1.tgz#42e2b9e425ec9e36dedf3ed6b6dce0e801c8b563"
+  integrity sha512-xYPwOAfhB6Ygy/2ao5+lYAEFHZn1JzlgxYnghAQjMd26Cqak2MGD1j8HhLntJe/vrHe31wZ/8dpnANeA/CGjGA==
   dependencies:
-    "@cognite/sdk-core" "^1.0.2"
-    lodash "^4.17.11"
-
-"@cognite/sdk@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.2.0.tgz#68a1ae38893f9eb3a3bc2b81bca2f6486ccede02"
-  integrity sha512-V6SrkKmN2LogCIZ3SopQLcGrA00kmH0SEs5/ltZW5QHEdbuzAe6a+B1wLaCz6sDduI5IabhthKuoSnyydRTM3Q==
-  dependencies:
-    "@cognite/sdk-core" "^1.0.2"
+    "@cognite/sdk-core" "^1.0.3"
     lodash "^4.17.11"
 
 "@csstools/convert-colors@^1.4.0":
@@ -6251,6 +6244,14 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
+"cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.1.1.tgz#3a0e259dbdaaa88f7225cc2f9f2530034674040d"
+  integrity sha512-L5UXQNa8tPk/s0UG6vAGqoYajv8219z4zYPyBQWHrhPXoXMEJdLxy4l6YG3f9UnCRTWDqWUrtlYni4T4sX/Xlg==
+  dependencies:
+    "@cognite/sdk-core" "^1.0.2"
+    lodash "^4.17.11"
+
 collapse-white-space@^1.0.0, collapse-white-space@^1.0.2:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/collapse-white-space/-/collapse-white-space-1.0.6.tgz#e63629c0016665792060dbbeb79c42239d2c5287"
@@ -9948,6 +9949,11 @@ is-buffer@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.4.tgz#3e572f23c8411a5cfd9557c849e3665e0b290623"
   integrity sha512-Kq1rokWXOPXWuaMAqZiJW4XxsmD9zGx9q4aePabbn3qCRGedtH7Cm+zV8WETitMfu1wdh+Rvd6w5egwSngUX2A==
+
+is-buffer@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.5.tgz#ebc252e400d22ff8d77fa09888821a24a658c191"
+  integrity sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==
 
 is-callable@^1.1.4, is-callable@^1.1.5, is-callable@^1.2.0:
   version "1.2.0"
