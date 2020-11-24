@@ -35,8 +35,8 @@ export interface Cognite3DViewerOptions {
   /** Send anonymous usage statistics. */
   logMetrics?: boolean;
 
-  /** Enable WebGL 2.0 */
-  enableWebGLTwo?: boolean;
+  /** Render to target instead of canvas. */
+  renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
 
   /** @deprecated And ignored. */
   highlightColor?: THREE.Color;

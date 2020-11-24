@@ -51,6 +51,7 @@ import { SupportedModelTypes } from '../../datamodels/base';
  * @module @cognite/reveal
  */
 export class Cognite3DViewer {
+  renderTarget: THREE.WebGLRenderTarget | undefined;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -150,17 +151,7 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    if (options.enableWebGLTwo && !options.renderer) {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('webgl2');
-      if (context) {
-        this.renderer = new THREE.WebGLRenderer({ canvas, context });
-      } else {
-        throw new Error('WebGL 2.0 is not supported on this browser');
-      }
-    } else {
-      this.renderer = options.renderer || new THREE.WebGLRenderer();
-    }
+    this.renderer = options.renderer || new THREE.WebGLRenderer();
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -196,6 +187,11 @@ export class Cognite3DViewer {
 
     this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
     this.startPointerEventListeners();
+
+    this._revealManager.setRenderTarget(
+      options.renderTargetOptions?.target ?? null,
+      options.renderTargetOptions?.autoSetSize
+    );
 
     this._subscription.add(
       fromEventPattern<LoadingState>(

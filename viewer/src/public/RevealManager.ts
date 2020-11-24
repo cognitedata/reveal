@@ -181,6 +181,10 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.render(renderer, camera, scene);
   }
 
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize?: boolean) {
+    this._effectRenderManager.setRenderTarget(target, autoSetTargetSize);
+  }
+
   public addModel(
     type: 'cad',
     modelIdentifier: TModelIdentifier,
