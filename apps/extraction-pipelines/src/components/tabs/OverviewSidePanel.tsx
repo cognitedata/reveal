@@ -3,7 +3,14 @@ import { Colors, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
 import Monitoring from './Monitoring';
+import ContactInformation from '../ContactInformation/ContactInformation';
 import { StyledTabs, StyledTabPane } from './StyledTabs';
+
+const StyledOverviewSidePanel = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
 
 const SidePanelHeading = styled((props) => (
   <Title {...props}>{props.children}</Title>
@@ -34,17 +41,20 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
     return <></>;
   }
   return (
-    <>
+    <StyledOverviewSidePanel>
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
       <StyledTabs sidepaneltabs="true">
         <StyledTabPane tab="Monitoring" key="monitoring">
           <Monitoring />
         </StyledTabPane>
-        <StyledTabPane tab="Contacts" key="contacts">
-          Contacts
+        <StyledTabPane tab="Contact information" key="contacts">
+          <ContactInformation
+            owner={[integration.owner]}
+            authors={integration.authors}
+          />
         </StyledTabPane>
       </StyledTabs>
-    </>
+    </StyledOverviewSidePanel>
   );
 };
 
