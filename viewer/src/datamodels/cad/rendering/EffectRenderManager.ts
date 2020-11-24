@@ -133,6 +133,7 @@ export class EffectRenderManager {
     const original = {
       autoClear: renderer.autoClear,
       clearAlpha: renderer.getClearAlpha(),
+      renderTarget: renderer.getRenderTarget(),
       renderMode: this._materialManager.getRenderMode()
     };
     this.updateRenderSize(renderer);
@@ -190,7 +191,7 @@ export class EffectRenderManager {
       // Restore state
       renderer.autoClear = original.autoClear;
       renderer.setClearAlpha(original.clearAlpha);
-      renderer.setRenderTarget(this.renderTarget);
+      renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
 
       this._rootSectorNodeBuffer.forEach(p => {
