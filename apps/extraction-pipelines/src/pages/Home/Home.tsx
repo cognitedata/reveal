@@ -27,7 +27,6 @@ const Home = () => {
 
 const Wrapper = styled.div`
   flex: 1;
-  height: 100%;
   display: flex;
   flex-direction: column;
   background-color: #fff;
