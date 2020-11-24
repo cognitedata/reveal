@@ -6,6 +6,8 @@ const { TabPane } = Tabs;
 
 const StyledTabs = styled((props) => <Tabs {...props} />)`
   height: 100%;
+  padding-right: ${(props) => (props.sidepaneltabs ? '0.75rem' : '0')};
+  margin-bottom: ${(props) => (props.sidepaneltabs ? '1rem' : '0')};
 
   .ant-tabs-nav {
     padding: 0 1rem 0 1.3125rem;
@@ -28,11 +30,14 @@ const StyledTabs = styled((props) => <Tabs {...props} />)`
   }
   .ant-tabs-content {
     height: 100%;
+    overflow-y: ${(props) => (props.sidepaneltabs ? 'auto' : 'hidden')};
   }
 `;
 
 const StyledTabPane = styled((props) => (
   <TabPane {...props}>{props.children}</TabPane>
-))``;
+))`
+  grid-template-rows: 100%;
+`;
 
 export { StyledTabs, StyledTabPane };

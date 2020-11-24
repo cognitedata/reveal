@@ -6,6 +6,12 @@ import Monitoring from './Monitoring';
 import ContactInformation from '../ContactInformation/ContactInformation';
 import { StyledTabs, StyledTabPane } from './StyledTabs';
 
+const StyledOverviewSidePanel = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
 const SidePanelHeading = styled((props) => (
   <Title {...props}>{props.children}</Title>
 ))`
@@ -35,7 +41,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
     return <></>;
   }
   return (
-    <>
+    <StyledOverviewSidePanel>
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
       <StyledTabs sidepaneltabs="true">
         <StyledTabPane tab="Monitoring" key="monitoring">
@@ -48,7 +54,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
           />
         </StyledTabPane>
       </StyledTabs>
-    </>
+    </StyledOverviewSidePanel>
   );
 };
 
