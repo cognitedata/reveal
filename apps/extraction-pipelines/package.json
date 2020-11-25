@@ -67,7 +67,7 @@
     "@types/match-sorter": "^5.0.0",
     "@types/node": "^14.14.9",
     "@types/react": "^16.14.0",
-    "@types/react-dom": "^16.9.9",
+    "@types/react-dom": "^17.0.0",
     "@types/react-modal": "^3.10.6",
     "@types/react-table": "^7.0.25",
     "@types/single-spa-react": "^2.12.0",
