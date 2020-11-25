@@ -56,7 +56,6 @@ import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection }
  * @module @cognite/reveal
  */
 export class Cognite3DViewer {
-  renderTarget: THREE.WebGLRenderTarget | undefined;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
