@@ -9,9 +9,10 @@ import useDispatch from 'hooks/useDispatch';
 import {
   fetchWorkflowsForChart,
   createNewWorkflow,
+  deleteWorkflow,
 } from 'reducers/workflows/api';
 import { runWorkflow } from 'reducers/workflows/utils';
-import workflowSlice, { WorkflowRunStatus } from 'reducers/workflows';
+import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
 import { NodeProgress } from '@cognite/connect';
 import { Header, TopPaneWrapper, BottomPaneWrapper } from './elements';
 
@@ -91,6 +92,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  const onDeleteWorkflow = (workflow: Workflow) => {
+    if (chart) {
+      dispatch(deleteWorkflow(chart, workflow));
+    }
+  };
+
   const dataFromWorkflows = workflows
     ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
     .map((workflow) => ({
@@ -156,7 +163,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               <div>Chart would go here.</div>
               {dataFromWorkflows && (
                 <div>
-                  Data from workflow: {JSON.stringify(dataFromWorkflows)}
+                  Data from workflow:{' '}
+                  {dataFromWorkflows.map((data) => (
+                    <div>
+                      {data.name}: {data.data?.datapoints?.length} datapoints
+                    </div>
+                  ))}
                 </div>
               )}
               <div>
@@ -170,8 +182,20 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                               key={flow.id}
                               onClick={() => setActiveWorkflowId(flow.id)}
                             >
-                              {flow.name || 'noname'}{' '}
+                              {activeWorkflowId === flow.id ? '!' : ''}
                               {renderStatusIcon(flow.latestRun?.status)}
+                              {flow.name || 'noname'}{' '}
+                              <Button
+                                unstyled
+                                icon="Delete"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDeleteWorkflow(flow);
+                                  if (activeWorkflowId === flow.id) {
+                                    setActiveWorkflowId(undefined);
+                                  }
+                                }}
+                              />
                             </Menu.Item>
                           )
                       )}

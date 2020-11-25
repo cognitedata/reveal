@@ -10,8 +10,7 @@ type DataPoint = {
   value: number;
 };
 
-export const NodeEffect = async (funcData: FunctionData, a: DataPoint[]) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+export const effect = async (funcData: FunctionData, a: DataPoint[]) => {
   return {
     result: a.map((x) => ({
       ...x,
@@ -20,9 +19,9 @@ export const NodeEffect = async (funcData: FunctionData, a: DataPoint[]) => {
   };
 };
 
-export const NodeEffectId = 'UNIT_CONVERSION';
+export const effectId = 'UNIT_CONVERSION';
 
-export const ConfigPanel = ({
+export const configPanel = ({
   data,
   onUpdate,
 }: {
@@ -48,7 +47,7 @@ export const ConfigPanel = ({
   );
 };
 
-export default {
+export const node = {
   title: 'A to B',
   subtitle: 'CONVERSION',
   color: '#FC2574',
@@ -60,7 +59,7 @@ export default {
       type: 'TIMESERIES',
     },
   ],
-  functionEffectReference: NodeEffectId,
+  functionEffectReference: effectId,
   inputPins: [
     {
       id: 'input-A',
