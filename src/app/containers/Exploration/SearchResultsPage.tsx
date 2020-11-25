@@ -121,7 +121,7 @@ function SearchPage() {
               <ExplorationSearchBar />
             </Col>
           </SearchInputContainer>
-          <Row style={{ marginTop: 8 }}>
+          <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
             <Col flex="auto">
               <LabelsQuickSelect />
             </Col>
