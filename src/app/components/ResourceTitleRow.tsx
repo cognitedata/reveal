@@ -33,7 +33,7 @@ export default function ResourceTileRow({
     <TitleRow align="middle" justify="space-between">
       <Col flex="auto" style={{ alignItems: 'center' }}>
         <CustomSpace size="large" align="center">
-          <Icon type={isFetched ? getIcon(type) : 'Loading'} />
+          {!inSearch && <Icon type={isFetched ? getIcon(type) : 'Loading'} />}
           {inSearch ? (
             <Link to={createLink(`/explore/${type}/${id}`)}>
               <ClickableName>
