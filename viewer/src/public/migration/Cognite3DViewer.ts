@@ -156,6 +156,7 @@ export class Cognite3DViewer {
     }
 
     this.renderer = options.renderer || new THREE.WebGLRenderer();
+
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -190,6 +191,11 @@ export class Cognite3DViewer {
 
     this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
     this.startPointerEventListeners();
+
+    this._revealManager.setRenderTarget(
+      options.renderTargetOptions?.target || null,
+      options.renderTargetOptions?.autoSetSize
+    );
 
     this._subscription.add(
       fromEventPattern<LoadingState>(

@@ -6,6 +6,7 @@
  *
  */
 
+varying vec2 v_uv;
 varying vec2 v_fragCoord;
 varying vec2 v_rgbNW;
 varying vec2 v_rgbNE;
@@ -16,6 +17,7 @@ varying vec2 v_rgbM;
 uniform vec2 inverseResolution;
 uniform vec2 resolution;
 uniform sampler2D tDiffuse;
+uniform sampler2D tDepth;
 
 #ifndef FXAA_REDUCE_MIN
     #define FXAA_REDUCE_MIN   (1.0/ 128.0)
@@ -82,4 +84,7 @@ void main() {
   gl_FragColor = fxaa(tDiffuse, v_fragCoord, 
     resolution, inverseResolution, 
     v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
+#if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)
+  gl_FragDepthEXT = texture2D(tDepth, v_uv).r;
+#endif
 }
