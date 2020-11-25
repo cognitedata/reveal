@@ -6,7 +6,7 @@
  *
  */
 
-varying vec2 vUv;
+varying vec2 v_uv;
 varying vec2 v_fragCoord;
 varying vec2 v_rgbNW;
 varying vec2 v_rgbNE;
