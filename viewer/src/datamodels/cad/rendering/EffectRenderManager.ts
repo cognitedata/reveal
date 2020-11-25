@@ -52,7 +52,7 @@ export class EffectRenderManager {
   private readonly outlineTexelSize = 2;
 
   private renderTarget: THREE.WebGLRenderTarget | null;
-  private autoSetTargetSize: boolean | undefined;
+  private autoSetTargetSize: boolean = false;
 
   constructor(materialManager: MaterialManager) {
     this._materialManager = materialManager;
@@ -201,7 +201,7 @@ export class EffectRenderManager {
     }
   }
 
-  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize?: boolean) {
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
     this.autoSetTargetSize = autoSetTargetSize;
     this.renderTarget = target;
   }
@@ -308,7 +308,7 @@ export class EffectRenderManager {
 
     if (
       this.renderTarget &&
-      (this.autoSetTargetSize ?? true) &&
+      this.autoSetTargetSize &&
       renderSize.x !== this.renderTarget.width &&
       renderSize.y !== this.renderTarget.height
     ) {
@@ -355,7 +355,7 @@ export class EffectRenderManager {
   }
 
   private renderAntiAliasToTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
-    renderer.setRenderTarget(target ?? null);
+    renderer.setRenderTarget(target);
     renderer.render(this._fxaaScene, this._orthographicCamera);
   }
 

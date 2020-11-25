@@ -188,13 +188,12 @@ export function Testable() {
         position.y = -5;
         position.z = -26;
 
-        const renderTarget = new THREE.WebGLRenderTarget(0, 0);
+        const renderTarget = new THREE.WebGLRenderTarget(300, 300);
         renderTarget.depthTexture = new THREE.DepthTexture(0, 0);
         renderTarget.depthTexture.format = THREE.DepthFormat;
         renderTarget.depthTexture.type = THREE.UnsignedIntType;
         
-        revealManager.setRenderTarget(renderTarget, true);
-
+        revealManager.setRenderTarget(renderTarget);
 
         const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
           
