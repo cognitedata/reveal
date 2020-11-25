@@ -16,6 +16,7 @@ import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { Testable } from './pages/Testable';
+import { WebGLTwo } from './pages/WebGLTwo';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -120,6 +121,11 @@ export const routes: Array<ExampleRoute> = [
     path: '/walkable-path',
     menuTitle: 'Walkable Path',
     component: <WalkablePath />,
+  },
+  {
+    path: '/webgltwo',
+    menuTitle: 'WebGL 2.0',
+    component: <WebGLTwo />,
   },
   {
     path: '/testable',
