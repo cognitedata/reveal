@@ -3,7 +3,7 @@ import { Row, Col, Space } from 'antd';
 import { Link } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
-import { convertResourceType, getIcon } from 'lib';
+import { convertResourceType, ResourceIcons } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
@@ -33,7 +33,12 @@ export default function ResourceTileRow({
     <TitleRow align="middle" justify="space-between">
       <Col flex="auto" style={{ alignItems: 'center' }}>
         <CustomSpace size="large" align="center">
-          {!inSearch && <Icon type={isFetched ? getIcon(type) : 'Loading'} />}
+          {!inSearch &&
+            (isFetched ? (
+              <ResourceIcons type={type} />
+            ) : (
+              <Icon type="Loading" />
+            ))}
           {inSearch ? (
             <Link to={createLink(`/explore/${type}/${id}`)}>
               <ClickableName>
