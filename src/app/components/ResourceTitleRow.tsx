@@ -31,8 +31,8 @@ export default function ResourceTileRow({
 
   return (
     <TitleRow align="middle" justify="space-between">
-      <Col flex="auto">
-        <Space size="large" align="center">
+      <Col flex="auto" style={{ alignItems: 'center' }}>
+        <CustomSpace size="large" align="center">
           <Icon type={isFetched ? getIcon(type) : 'Loading'} />
           {inSearch ? (
             <Link to={createLink(`/explore/${type}/${id}`)}>
@@ -44,7 +44,7 @@ export default function ResourceTileRow({
           ) : (
             <h1>{getTitle(data) || id}</h1>
           )}
-        </Space>
+        </CustomSpace>
       </Col>
       <Col flex="none">
         <TitleRowActions item={{ type, id }} actions={actions} />
@@ -52,6 +52,13 @@ export default function ResourceTileRow({
     </TitleRow>
   );
 }
+
+const CustomSpace = styled(Space)`
+  .ant-space-item {
+    display: flex;
+    align-items: center;
+  }
+`;
 
 export const TitleRow = styled(Row)`
   h1 {
