@@ -36,7 +36,10 @@ export interface Cognite3DViewerOptions {
   /** Send anonymous usage statistics. */
   logMetrics?: boolean;
 
-  /** Render to target instead of canvas. */
+  /** 
+   * Render to offscreen buffer instead of canvas.
+   * @version new in 1.3.0
+   */
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
 
   /** @deprecated And ignored. */
