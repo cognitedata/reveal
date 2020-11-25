@@ -29,7 +29,11 @@ export const AggregatedFilter = <T,>({
 
   return (
     <>
-      <Title level={4} style={{ marginBottom: 12 }} className="title">
+      <Title
+        level={4}
+        style={{ marginBottom: 5, marginTop: 10 }}
+        className="title"
+      >
         {title}
       </Title>
       <Select

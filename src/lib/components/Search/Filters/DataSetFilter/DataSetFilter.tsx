@@ -48,7 +48,11 @@ export const DataSetFilter = ({
       content="You do not have access to data sets, please make sure you have datasetsAcl:READ"
     >
       <>
-        <Title level={4} style={{ marginBottom: 12 }} className="title">
+        <Title
+          level={4}
+          style={{ marginBottom: 5, marginTop: 10 }}
+          className="title"
+        >
           Data set
         </Title>
         <Select

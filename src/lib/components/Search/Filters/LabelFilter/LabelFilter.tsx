@@ -46,7 +46,11 @@ export const LabelFilter = ({
       content="You do not have access to labels, please make sure you have labelsAcl:READ"
     >
       <>
-        <Title level={4} style={{ marginBottom: 12 }} className="title">
+        <Title
+          level={4}
+          style={{ marginBottom: 5, marginTop: 10 }}
+          className="title"
+        >
           Labels
         </Title>
         <Select
