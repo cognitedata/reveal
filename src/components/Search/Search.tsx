@@ -98,7 +98,7 @@ const Search = () => {
     dispatch(
       chartsSlice.actions.addTimeSeries({
         id: activeChartId,
-        timeSeriesId: String(timeseries.externalId),
+        timeSeries: timeseries,
       })
     );
   };

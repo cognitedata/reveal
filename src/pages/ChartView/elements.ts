@@ -28,6 +28,10 @@ export const Header = styled.header`
       margin-left: 8px;
     }
   }
+  .daterange {
+    display: flex;
+    justify-self: flex-start;
+  }
 `;
 
 export const TopPaneWrapper = styled.div`
@@ -104,9 +108,10 @@ export const SourceList = styled.div`
 export const SourceCircle = styled.span`
   height: 20px;
   width: 20px;
-  background-color: lightgreen;
+  background-color: ${(props) => props.color || 'lightgreen'};
   margin: 20px;
   border-radius: 50%;
+  flex-shrink: 0;
 `;
 
 export const SourceItem = styled.div`

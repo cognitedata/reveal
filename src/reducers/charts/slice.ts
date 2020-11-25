@@ -1,3 +1,4 @@
+import { Timeseries } from '@cognite/sdk';
 import {
   createSlice,
   PayloadAction,
@@ -8,11 +9,14 @@ import uniq from 'lodash/uniq';
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
 import { ValueOf } from 'typings/utils';
-import { Chart } from './types';
+import { createColorGetter } from 'utils/colors';
+import { Chart, ChartTimeSeries } from './types';
 
 const chartAdapter = createEntityAdapter<Chart>({
   selectId: (chart) => chart.id,
 });
+
+const getChartColor = createColorGetter();
 
 const chartsSlice = createSlice({
   name: 'charts',
@@ -48,14 +52,36 @@ const chartsSlice = createSlice({
 
     addTimeSeries: (
       state,
-      action: PayloadAction<{ id: string; timeSeriesId: string }>
+      action: PayloadAction<{ id: string; timeSeries: Timeseries }>
     ) => {
-      const { id, timeSeriesId } = action.payload;
+      const { id, timeSeries } = action.payload;
       const chart = chartAdapter.getSelectors().selectById(state, id);
       chartAdapter.updateOne(state, {
         id,
         changes: {
-          timeSeriesIds: uniq([...(chart?.timeSeriesIds || []), timeSeriesId]),
+          timeSeriesCollection: [
+            ...(chart?.timeSeriesCollection || []),
+            {
+              id: timeSeries.externalId,
+              color: getChartColor(),
+              enabled: true,
+            } as ChartTimeSeries,
+          ],
+        },
+      });
+    },
+
+    changeDateRange: (
+      state,
+      action: PayloadAction<{ id: string; dateFrom?: Date; dateTo?: Date }>
+    ) => {
+      const { id, dateFrom, dateTo } = action.payload;
+      const chart = chartAdapter.getSelectors().selectById(state, id);
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
+          dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
         },
       });
     },

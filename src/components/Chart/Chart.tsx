@@ -7,8 +7,12 @@ import client from 'services/CogniteSDK';
 import { Datapoints, DoubleDatapoint } from '@cognite/sdk';
 
 const defaultOptions = {
+  time: {
+    useUTC: false,
+  },
   chart: {
     margin: [30, 20, 65, 70],
+    zoomType: 'xy',
   },
   title: {
     text: undefined,
@@ -29,19 +33,21 @@ const ChartComponent = ({ chart }: ChartProps) => {
 
   useEffect(() => {
     async function performQuery() {
-      if (!chart?.timeSeriesIds?.length) {
+      if (!chart?.timeSeriesCollection?.length) {
         return;
       }
 
       const result = (await client.datapoints.retrieve({
-        items: chart.timeSeriesIds.map((id) => ({ externalId: id })),
+        items: chart.timeSeriesCollection.map(({ id }) => ({ externalId: id })),
+        start: new Date(chart.dateFrom),
+        end: new Date(chart.dateTo),
       })) as Datapoints[];
 
       setTimeSeriesDataPoints(result);
     }
 
     performQuery();
-  }, [chart?.timeSeriesIds]);
+  }, [chart?.timeSeriesCollection, chart?.dateFrom, chart?.dateTo]);
 
   const workflows = useSelector((state) =>
     chart?.workflowIds?.map((id) => state.workflows.entities[id])
@@ -62,24 +68,30 @@ const ChartComponent = ({ chart }: ChartProps) => {
         .map((ts) => ({
           type: 'line',
           name: ts.externalId,
-          data: (ts.datapoints as DoubleDatapoint[]).map((datapoint) => [
-            datapoint.timestamp,
-            datapoint.value,
-          ]),
+          color: chart?.timeSeriesCollection?.find(
+            ({ id }) => id === ts.externalId
+          )?.color,
+          data: (ts.datapoints as DoubleDatapoint[]).map((datapoint) => ({
+            x: new Date(datapoint.timestamp),
+            y: datapoint.value,
+          })),
         })),
       ...(dataFromWorkflows || []).map(({ data = {}, name }: any) => {
         return {
           type: 'line',
           name,
-          data: ((data['input-timeseries'] ||
-            []) as DoubleDatapoint[]).map((datapoint) => [
-            datapoint.timestamp,
-            datapoint.value,
-          ]),
+          data: ((data['input-timeseries'] || []) as DoubleDatapoint[]).map(
+            (datapoint) => ({
+              x: new Date(datapoint.timestamp),
+              y: datapoint.value,
+            })
+          ),
         };
       }),
     ],
   };
+
+  console.log(options);
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };

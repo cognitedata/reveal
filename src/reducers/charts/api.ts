@@ -49,8 +49,10 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
     id,
     user,
     name: `chart-${id}`,
-    timeSeriesIds: [],
+    timeSeriesCollection: [],
     workflowIds: [],
+    dateFrom: new Date().toJSON(),
+    dateTo: new Date().toJSON(),
   };
 
   dispatch(chartsSlice.actions.startStoringNewChart());

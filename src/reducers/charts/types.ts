@@ -2,6 +2,14 @@ export type Chart = {
   id: string;
   name: string;
   user: string;
-  timeSeriesIds?: string[];
+  timeSeriesCollection?: ChartTimeSeries[];
   workflowIds?: string[];
+  dateFrom: string;
+  dateTo: string;
+};
+
+export type ChartTimeSeries = {
+  id: string;
+  color: string;
+  enabled: boolean;
 };
