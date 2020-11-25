@@ -10,6 +10,7 @@ const StyledTable = styled.div`
         border-bottom: ${Colors['greyscale-grey3'].hex()};
         th {
           background-color: white;
+          padding: 1rem 0.4375rem;
           white-space: nowrap;
           &:last-child {
             width: 3rem;
@@ -36,11 +37,11 @@ const StyledTable = styled.div`
         }
         td {
           padding: 0.75rem;
-        }
-        &.parent-row {
-          .timestamp-col {
+          &.timestamp-col {
             font-weight: bold;
           }
+        }
+        &.parent-row {
           .statusSeen-col {
             position: relative;
             .cogs-icon {
@@ -52,6 +53,8 @@ const StyledTable = styled.div`
         }
         &.child-row {
           .timestamp-col {
+            font-style: italic;
+            font-weight: normal;
             padding-left: 1.5rem;
           }
         }

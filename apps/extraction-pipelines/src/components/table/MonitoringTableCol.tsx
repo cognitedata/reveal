@@ -7,15 +7,15 @@ import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import { Run } from '../../model/Runs';
 
 enum TableHeadings {
-  SEEN = 'Seen',
-  LAST_RUN = 'Last run',
-  LAST_SEEN = 'Last seen',
+  TIMESTAMP = 'Timestamp',
+  STATUS_RUN = 'Status run',
+  STATUS_SEEN = 'Status seen',
 }
 
 export const getMonitoringTableCol = () => {
   return [
     {
-      Header: TableHeadings.SEEN,
+      Header: TableHeadings.TIMESTAMP,
       accessor: 'timestamp',
       sortType: 'basic',
       Cell: ({ row }: Cell<Run>) => {
@@ -26,7 +26,7 @@ export const getMonitoringTableCol = () => {
       disableFilters: true,
     },
     {
-      Header: TableHeadings.LAST_RUN,
+      Header: TableHeadings.STATUS_RUN,
       accessor: 'status',
       Cell: ({ row }: Cell<Run>) => {
         return <StatusMarker status={row.values.status} />;
@@ -37,7 +37,7 @@ export const getMonitoringTableCol = () => {
       disableFilters: false,
     },
     {
-      Header: TableHeadings.LAST_SEEN,
+      Header: TableHeadings.STATUS_SEEN,
       accessor: 'statusSeen',
       Cell: ({ row }: Cell<Run>) =>
         row.canExpand ? (
