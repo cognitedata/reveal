@@ -3,6 +3,7 @@ import {
   useCdfItems,
   useAggregate,
   useInfiniteList,
+  useCdfItem,
 } from '@cognite/sdk-react-query-hooks';
 import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
 import { formatNumber } from 'lib/utils/numbers';
@@ -18,7 +19,7 @@ import {
 
 const PAGE_SIZE = 20;
 
-type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
+export type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
 export type Relationship = {
   targetType: ResourceType;
@@ -171,6 +172,7 @@ export const useRelatedResourceCount = (
   type: ResourceType
 ) => {
   const isAsset = resource.type === 'asset';
+  const isAssetTab = type === 'asset';
 
   const {
     data: linkedResourceCount,
@@ -186,9 +188,26 @@ export const useRelatedResourceCount = (
     isFetched: isRelationshipFetched,
   } = useRelationships(resource.externalId, type);
 
-  const isFetched = isLinkedResourceFetched && isRelationshipFetched;
+  const { data: item, isFetched: isResourceFetched } = useCdfItem(
+    convertResourceType(resource.type),
+    { id: resource.id },
+    { enabled: isAssetTab }
+  );
+
+  const isFetched =
+    isLinkedResourceFetched && isRelationshipFetched && isResourceFetched;
 
   let count = relationships.length;
+
+  let assetIdCount = 0;
+  if (isAssetTab && item) {
+    if ((item as any).assetId) {
+      assetIdCount = 1;
+    } else if ((item as any).assetIds) {
+      assetIdCount = (item as any).assetIds.length;
+    }
+  }
+  count += assetIdCount;
 
   if (isAsset && linkedResourceCount) {
     count += linkedResourceCount?.count;
@@ -197,6 +216,7 @@ export const useRelatedResourceCount = (
   return {
     count: formatNumber(count),
     relationshipCount: relationships.length,
+    assetIdCount,
     linkedResourceCount: linkedResourceCount?.count,
     isFetched,
   };

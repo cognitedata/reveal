@@ -1,11 +1,14 @@
-import { useInfiniteRelationshipsList } from 'lib/hooks/RelationshipHooks';
+import {
+  useInfiniteRelationshipsList,
+  Resource,
+} from 'lib/hooks/RelationshipHooks';
 import { ResourceType, ResourceItem } from 'lib/types';
-import { Resource } from 'lib';
 
 export type RelatedResourceType =
   | 'linkedResource'
   | 'relationship'
-  | 'annotation';
+  | 'annotation'
+  | 'assetId';
 
 export const useRelatedResourceResults = <T extends Resource>(
   relatedResourceType: RelatedResourceType,

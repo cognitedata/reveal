@@ -67,31 +67,33 @@ export const EventPreview = ({
         getTitle={renderTitle}
         actions={actions}
       />
-      <Row style={{ marginLeft: 16 }}>
-        <Col span={24}>
-          <ResourceDetailsTabs
-            parentResource={{
-              type: 'event',
-              id: event.id,
-              externalId: event.externalId,
-            }}
-            tab={activeTab}
-            onTabChange={newTab =>
-              history.push(
-                createLink(
-                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+      <div style={{ flexGrow: 1 }}>
+        <Row style={{ marginLeft: 16, height: 'calc(100% - 215px)' }}>
+          <Col span={24}>
+            <ResourceDetailsTabs
+              parentResource={{
+                type: 'event',
+                id: event.id,
+                externalId: event.externalId,
+              }}
+              tab={activeTab}
+              onTabChange={newTab =>
+                history.push(
+                  createLink(
+                    `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                  )
                 )
-              )
-            }
-            additionalTabs={[
-              <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                <EventDetails event={event} />
-                <Metadata metadata={event.metadata} />
-              </Tabs.Pane>,
-            ]}
-          />
-        </Col>
-      </Row>
+              }
+              additionalTabs={[
+                <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+                  <EventDetails event={event} />
+                  <Metadata metadata={event.metadata} />
+                </Tabs.Pane>,
+              ]}
+            />
+          </Col>
+        </Row>
+      </div>
     </>
   );
 };

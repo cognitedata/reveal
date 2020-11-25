@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Timeseries,
-  Sequence,
-  Asset,
-  CogniteEvent,
-  FileInfo,
-} from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 import { ResourceType, ResourceItem } from 'lib/types';
 import { AssetTable } from 'lib/containers';
 import {
@@ -16,8 +10,6 @@ import {
 } from 'lib/containers/SearchResults';
 import { SelectableItemsProps } from 'lib/CommonProps';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
-
-export type Resource = Asset | CogniteEvent | FileInfo | Timeseries | Sequence;
 
 export const LinkedResourceTable = ({
   type,

@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Timeseries,
-  Sequence,
-  Asset,
-  CogniteEvent,
-  FileInfo,
-} from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 import { ResourceType, ResourceItem } from 'lib/types';
 import { AssetTable } from 'lib/containers';
 import {
@@ -18,7 +12,6 @@ import { SelectableItemsProps } from 'lib/CommonProps';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
 import { useRelationshipCount } from 'lib/hooks/RelationshipHooks';
 
-export type Resource = Asset | CogniteEvent | FileInfo | Timeseries | Sequence;
 export type RelationshipTableProps = {
   type: ResourceType;
   parentResource: ResourceItem;

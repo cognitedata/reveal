@@ -4,12 +4,12 @@ import {
   RelationshipTableProps,
   SelectableItemsProps,
   convertResourceType,
-  Loader,
+  AssetIdTable,
 } from 'lib';
 import { Select } from '@cognite/cogs.js';
 import { RelatedResourceType } from 'lib/hooks/RelatedResourcesHooks';
 import styled from 'styled-components';
-import { LinkedResourceTable } from 'lib/containers/Relationships/LinkedResourceTable';
+import { LinkedResourceTable } from 'lib/containers/Relationships';
 import { useRelatedResourceCount } from 'lib/hooks/RelationshipHooks';
 
 type TypeOption = {
@@ -28,6 +28,7 @@ export const RelatedResources = ({
   const {
     relationshipCount,
     linkedResourceCount,
+    assetIdCount,
     isFetched,
   } = useRelatedResourceCount(parentResource, type);
 
@@ -40,6 +41,14 @@ export const RelatedResources = ({
       },
     ];
 
+    if (type === 'asset') {
+      types.push({
+        label: `Asset ID (${assetIdCount})`,
+        value: 'assetId',
+        count: assetIdCount,
+      });
+    }
+
     if (parentResource.type === 'asset') {
       types.push({
         label: `Linked ${convertResourceType(type)} (${linkedResourceCount})`,
@@ -49,7 +58,13 @@ export const RelatedResources = ({
     }
 
     return types;
-  }, [parentResource, type, relationshipCount, linkedResourceCount]);
+  }, [
+    parentResource,
+    type,
+    relationshipCount,
+    assetIdCount,
+    linkedResourceCount,
+  ]);
 
   useEffect(
     () =>
@@ -58,10 +73,6 @@ export const RelatedResources = ({
       ),
     [isFetched, relatedResourceTypes]
   );
-
-  if (!isFetched) {
-    return <Loader />;
-  }
 
   return (
     <>
@@ -91,6 +102,10 @@ export const RelatedResources = ({
           type={type}
           {...props}
         />
+      )}
+
+      {selectedType?.value === 'assetId' && (
+        <AssetIdTable resource={parentResource} {...props} />
       )}
     </>
   );
