@@ -16,31 +16,27 @@ import {
 } from 'lib/containers/SearchResults';
 import { SelectableItemsProps } from 'lib/CommonProps';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
-import { useRelationshipCount } from 'lib/hooks/RelationshipHooks';
 
 export type Resource = Asset | CogniteEvent | FileInfo | Timeseries | Sequence;
-export type RelationshipTableProps = {
-  type: ResourceType;
-  parentResource: ResourceItem;
-  onItemClicked: (id: number) => void;
-};
 
-export const RelationshipTable = ({
+export const LinkedResourceTable = ({
   type,
   parentResource,
   onItemClicked,
   ...selectionMode
-}: RelationshipTableProps & SelectableItemsProps) => {
-  const { data: count } = useRelationshipCount(parentResource, type);
-
+}: {
+  type: ResourceType;
+  parentResource: ResourceItem;
+  onItemClicked: (id: number) => void;
+} & SelectableItemsProps) => {
+  const filter = { assetSubtreeIds: [{ id: parentResource.id }] };
   switch (type) {
     case 'asset':
       return (
         <ResultTableLoader<Asset>
-          mode="relatedResources"
+          mode="search"
           type="asset"
-          relatedResourceType="relationship"
-          parentResource={parentResource}
+          filter={filter}
           {...selectionMode}
         >
           {props => (
@@ -51,10 +47,7 @@ export const RelationshipTable = ({
     case 'event':
       return (
         <EventSearchResults
-          showRelatedResources
-          relatedResourceType="relationship"
-          parentResource={parentResource}
-          count={count}
+          filter={filter}
           onClick={el => onItemClicked(el.id)}
           {...selectionMode}
         />
@@ -62,22 +55,16 @@ export const RelationshipTable = ({
     case 'file':
       return (
         <FileSearchResults
-          showRelatedResources
-          relatedResourceType="relationship"
-          parentResource={parentResource}
+          filter={filter}
           onClick={el => onItemClicked(el.id)}
-          count={count}
           {...selectionMode}
         />
       );
     case 'sequence':
       return (
         <SequenceSearchResults
-          showRelatedResources
-          relatedResourceType="relationship"
-          parentResource={parentResource}
+          filter={filter}
           onClick={el => onItemClicked(el.id)}
-          count={count}
           {...selectionMode}
         />
       );
@@ -85,10 +72,7 @@ export const RelationshipTable = ({
     case 'timeSeries':
       return (
         <TimeseriesSearchResults
-          showRelatedResources
-          relatedResourceType="relationship"
-          parentResource={parentResource}
-          count={count}
+          filter={filter}
           onClick={el => onItemClicked(el.id)}
           initialView="grid"
           {...selectionMode}

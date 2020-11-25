@@ -8,9 +8,9 @@ import { lightGrey } from 'lib/utils/Colors';
 import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
-import { RelatedResources } from 'app/containers/ResourceDetails';
 import { notification } from 'antd';
 import { usePermissions } from 'lib/hooks/CustomHooks';
+import { RelatedResources } from 'app/containers/ResourceDetails/RelatedResources/RelatedResources';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem;
@@ -52,8 +52,6 @@ const ResourceDetailTabContent = ({
     <RelatedResources
       type={type}
       parentResource={resource}
-      relationships={[]}
-      linkedResources={[]}
       onItemClicked={(id: number) => {
         history.push(createLink(`/explore/${type}/${id}`));
       }}

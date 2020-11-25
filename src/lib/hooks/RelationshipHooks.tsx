@@ -27,46 +27,49 @@ export type Relationship = {
   sourceExternalId: string;
 };
 
-export const useRelationships = (
-  resourceExternalId?: string,
-  types?: ResourceType[]
-): { data: (ExternalId & { type: ResourceType })[]; isFetching: boolean } => {
-  const {
-    data: sourceRelationships = [],
-    isFetching: isFetchingSource,
-  } = useList<Relationship>(
+export const useRelationships = (externalId?: string, type?: ResourceType) => {
+  const sourceRelationships = useList<Relationship>(
     // @ts-ignore
     'relationships',
     {
-      filter: { sourceExternalIds: [resourceExternalId], targetTypes: types },
+      filter: {
+        sourceExternalIds: [externalId],
+        targetTypes: type ? [type] : undefined,
+      },
     },
-    { enabled: !!resourceExternalId, staleTime: 60 * 1000 }
+    { enabled: !!externalId, staleTime: 60 * 1000 }
   );
 
-  const {
-    data: targetRelationships = [],
-    isFetching: isFetchingTarget,
-  } = useList<Relationship>(
+  const targetRelationships = useList<Relationship>(
     // @ts-ignore
     'relationships',
     {
-      filter: { targetExternalIds: [resourceExternalId], sourceTypes: types },
+      filter: {
+        targetExternalIds: [externalId],
+        sourceTypes: type ? [type] : undefined,
+      },
     },
-    { enabled: !!resourceExternalId, staleTime: 60 * 1000 }
+    { enabled: !!externalId, staleTime: 60 * 1000 }
   );
 
-  return {
-    data: [
-      ...sourceRelationships.map(item => ({
-        externalId: item.targetExternalId,
-        type: item.targetType,
-      })),
-      ...targetRelationships.map(item => ({
+  const data = (sourceRelationships.data || [])
+    .map(item => ({
+      externalId: item.targetExternalId,
+      type: item.targetType,
+    }))
+    .concat(
+      (targetRelationships.data || []).map(item => ({
         externalId: item.sourceExternalId,
         type: item.sourceType,
-      })),
-    ],
-    isFetching: isFetchingSource && isFetchingTarget,
+      }))
+    );
+
+  return {
+    data,
+    isFetching:
+      sourceRelationships.isFetching || targetRelationships.isFetching,
+    isFetched: sourceRelationships.isFetched && targetRelationships.isFetched,
+    isError: sourceRelationships.isError || targetRelationships.isError,
   };
 };
 
@@ -149,45 +152,54 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
 export const useRelationshipCount = (
   resource: ResourceItem,
   type: ResourceType
-): number => {
-  const {
-    data: relationships,
-    isFetching: isFetchingRelationships,
-  } = useRelationships(resource.externalId, [type]);
+) => {
+  const { data: relationships, isFetched, ...rest } = useRelationships(
+    resource.externalId,
+    type
+  );
 
   let count = 0;
-  if (!isFetchingRelationships && relationships?.length > 0) {
+  if (isFetched && relationships?.length > 0) {
     count = relationships.length;
   }
 
-  return count;
+  return { data: count, isFetched, ...rest };
 };
 
 export const useRelatedResourceCount = (
   resource: ResourceItem,
   type: ResourceType
-): { count: string } => {
+) => {
   const isAsset = resource.type === 'asset';
 
-  const { data, isFetched } = useAggregate(
+  const {
+    data: linkedResourceCount,
+    isFetched: isLinkedResourceFetched,
+  } = useAggregate(
     convertResourceType(type),
     { assetSubtreeIds: [{ id: resource.id }] },
     { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
   );
 
   const {
-    data: relationships,
-    isFetching: isFetchingRelationships,
-  } = useRelationships(resource.externalId, [type]);
+    data: relationships = [],
+    isFetched: isRelationshipFetched,
+  } = useRelationships(resource.externalId, type);
 
-  let count: string = '0';
-  if (isAsset && isFetched && data && !isFetchingRelationships) {
-    count = formatNumber(data?.count + relationships.length);
-  } else if (!isFetchingRelationships && relationships?.length > 0) {
-    count = formatNumber(relationships.length);
+  const isFetched = isLinkedResourceFetched && isRelationshipFetched;
+
+  let count = relationships.length;
+
+  if (isAsset && linkedResourceCount) {
+    count += linkedResourceCount?.count;
   }
 
-  return { count };
+  return {
+    count: formatNumber(count),
+    relationshipCount: relationships.length,
+    linkedResourceCount: linkedResourceCount?.count,
+    isFetched,
+  };
 };
 
 export const useRelatedResourceCounts = (

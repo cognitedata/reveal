@@ -35,7 +35,7 @@ export function ResultCount({
     enabled: api === 'list' && !count,
   });
 
-  if (count) {
+  if (count !== undefined) {
     return (
       <>
         {formatNumber(count)} {label}

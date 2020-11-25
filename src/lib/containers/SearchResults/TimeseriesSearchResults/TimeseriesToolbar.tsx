@@ -19,7 +19,7 @@ export const TimeseriesToolbar = ({
     <>
       <SearchResultToolbar
         api={query?.length > 0 ? 'search' : 'list'}
-        type="files"
+        type="timeseries"
         filter={filter}
         count={count}
         query={query}
