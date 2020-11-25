@@ -193,7 +193,7 @@ export class Cognite3DViewer {
     this.startPointerEventListeners();
 
     this._revealManager.setRenderTarget(
-      options.renderTargetOptions?.target ?? null,
+      options.renderTargetOptions?.target || null,
       options.renderTargetOptions?.autoSetSize
     );
 
