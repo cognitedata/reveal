@@ -24,7 +24,7 @@ void main() {
   v_rgbSW = (v_fragCoord + vec2(-1.0, 1.0)) * inverseResolution;
   v_rgbSE = (v_fragCoord + vec2(1.0, 1.0)) * inverseResolution;
   v_rgbM = vec2(v_fragCoord * inverseResolution);
-  vUv = uv;
+  v_uv = uv;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
