@@ -3,9 +3,7 @@ import {
   useResourceFilter,
   useSetResourceFilter,
 } from 'app/context/ResourceSelectionContext';
-import { useList } from '@cognite/sdk-react-query-hooks';
 import { LabelDefinition } from '@cognite/sdk';
-import { usePermissions } from 'lib/hooks/CustomHooks';
 import { Button } from '@cognite/cogs.js';
 import { useCurrentResourceType } from 'app/hooks';
 import uniqBy from 'lodash/uniqBy';
@@ -16,15 +14,14 @@ export const LabelsQuickSelect = () => {
   const filter = useResourceFilter(currentResourceType);
   const setFilter = useSetResourceFilter(currentResourceType);
 
-  const { data: hasPermission } = usePermissions('labelsAcl', 'READ');
-  const { data: labels = [] } = useList<LabelDefinition>(
-    'labels',
-    { filter: {} },
+  const labels: LabelDefinition[] = [
     {
-      enabled: hasPermission,
+      externalId: 'Engineering Diagram',
+      createdTime: new Date(),
+      name: 'Engineering Diagram',
     },
-    true
-  );
+    { externalId: 'PNID', createdTime: new Date(), name: 'PNID' },
+  ];
 
   // @ts-ignore
   const value = ((filter as any).labels || { containsAny: [] }).containsAny;
