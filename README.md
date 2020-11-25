@@ -1,53 +1,55 @@
-# React Demo App
+# Cognite Charts
 
-This repository shows how to bootstrap a [React]-based application at Cognite.
-It demonstrates best practices, such as:
+Code for `charts.cogniteapp.com` and related domains.
 
-- Lint setup to use
-- Jenkinsfile steps
-- TypeScript usage
-- Storybook usage
-- Testcafe
-- Folder / component layout
-- Authentication workflow
+## Workflows
 
-## Deploying the app
+Workflows are made up of several nodes. Each node contains its own function.
 
-Please see the [deployment guide] for more information how to actually get this app into production.
-(It should be pretty easy!)
+### Cognite Functions in Workflows
 
-## Template repo
+One of the nodes we have made is for Cognite Function support. This is a guide on how to setup your functions to work with workflows.
 
-This repo is configured as a template, so it's easy to get started.
-Simply go to the [create repo page] and select "cognitedata/react-demo-app" as a template.
+Requirements:
 
-## Some quick things to remember after cloning this
+- Your node must contain the substring `[CHARTS]`.
+- Within the .zip file for your function, there must be a file called `cognite-charts-config.json`.
 
-- Update the `.github/CODEOWNERS` files to list your teams email.
-- Modify the tokens and names in the `Jenkinsfile`
-- Customise this `README.md` file!
+The config file contains the details on the expected inputs and outputs of your function.
+The file should look something like this:
 
-### Run e2e tests with testcafe
-
-End-to-end tests are written and run using the [Testcafe](https://github.com/DevExpress/testcafe) testing framework. They are stored in `/testcafe`.
-
-To run testcafe tests locally, first start the app on port 11111
-
-```sh
-yarn testcafe:start-live
+```json
+{
+  "input": [
+    {
+      "name": "Datapoints",
+      "type": "DATAPOINTS",
+      "field": "datapoints",
+      "pin": true
+    },
+    {
+      "name": "Multiplier",
+      "type": "NUMBER",
+      "field": "multiplier",
+      "pin": false
+    }
+  ],
+  "output": [
+    {
+      "name": "Datapoints",
+      "type": "DATAPOINTS",
+      "field": "datapoints"
+    }
+  ]
+}
 ```
 
-In order to run tests in the browser and keep the browser window open to watch and auto re-run on test file changes, run in a separate tab the following command:
+An example of a function using the above config can look like this:
 
-```sh
-yarn testcafe:run-live
+```python
+def handle(data):
+    m = data["multiplier"]
+    return { "datapoints": [{"value": d["value"] * m, "timestamp": d["timestamp"]} for d in data["datapoints"]] }
 ```
 
-## Help
-
-If you have any questions, please join us in [#frontend] and ask away!
-
-[react]: https://reactjs.org/
-[deployment guide]: https://cognitedata.atlassian.net/wiki/spaces/FAS/pages/1003225162/How+to+deploy+on+Frontend+App+Server+FAS
-[#frontend]: https://cognitedata.slack.com/archives/C6KNJCEEA
-[create repo page]: https://github.com/organizations/cognitedata/repositories/new
+Note that the field property in the config files match the expected data object and output object.

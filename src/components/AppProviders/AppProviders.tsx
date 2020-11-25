@@ -6,6 +6,7 @@ import { PartialRootState } from 'store/types';
 import { ErrorBoundary, reportException } from '@cognite/react-errors';
 import { I18nContainer } from '@cognite/react-i18n';
 import { LoopDetector } from '@cognite/react-loop-detector';
+import { ToastContainer } from '@cognite/cogs.js';
 
 type Props = {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ const AppProviders = ({ tenant, children, initialState = {} }: Props) => {
       <ReduxProvider store={store}>
         <I18nContainer>
           <ErrorBoundary instanceId="charts">
+            <ToastContainer />
             <BrowserRouter basename={`/${tenant}`}>{children}</BrowserRouter>
           </ErrorBoundary>
         </I18nContainer>

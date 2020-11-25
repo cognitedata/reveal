@@ -13,6 +13,7 @@ import useDispatch from 'hooks/useDispatch';
 import {
   fetchWorkflowsForChart,
   createNewWorkflow,
+  deleteWorkflow,
 } from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
@@ -165,6 +166,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     );
   };
 
+  const onDeleteWorkflow = (workflow: Workflow) => {
+    if (chart) {
+      dispatch(deleteWorkflow(chart, workflow));
+    }
+  };
+
   const renderStatusIcon = (status?: WorkflowRunStatus) => {
     switch (status) {
       case 'RUNNING':
@@ -190,6 +197,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         <SourceItem>
           <SourceCircle color={color} />
           {id}
+          <Icon type="VerticalEllipsis" />
         </SourceItem>
       );
     }
@@ -206,6 +214,41 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       </SourceItem>
     );
   });
+
+  const workflowMenu = (
+    <Dropdown
+      content={
+        <Menu>
+          {(workflows || []).map(
+            (flow) =>
+              flow && (
+                <Menu.Item
+                  key={flow.id}
+                  onClick={() => setActiveWorkflowId(flow.id)}
+                >
+                  {activeWorkflowId === flow.id ? '!' : ''}
+                  {renderStatusIcon(flow.latestRun?.status)}
+                  {flow.name || 'noname'}{' '}
+                  <Button
+                    unstyled
+                    icon="Delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteWorkflow(flow);
+                      if (activeWorkflowId === flow.id) {
+                        setActiveWorkflowId(undefined);
+                      }
+                    }}
+                  />
+                </Menu.Item>
+              )
+          )}
+          <Menu.Divider />
+          <Menu.Item onClick={onNewWorkflow}>Create new</Menu.Item>
+        </Menu>
+      }
+    />
+  );
 
   return (
     <ChartViewContainer id="chart-view">

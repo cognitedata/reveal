@@ -1,10 +1,12 @@
 import { Node, Connection, NodeProgress } from '@cognite/connect';
 import { FunctionComponent } from 'react';
 
-type ConfigPanelComponent = FunctionComponent<{
-  data: object;
-  onUpdate: (nextData: object) => void;
-}>;
+export type ConfigPanelComponentProps = {
+  node: StorableNode;
+  onUpdateNode: (nextNode: StorableNode) => void;
+};
+
+export type ConfigPanelComponent = FunctionComponent<ConfigPanelComponentProps>;
 
 export type NodeOption = {
   name: string; // Outward name when selecting the node
