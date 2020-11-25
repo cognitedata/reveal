@@ -20,7 +20,12 @@ export const LabelsQuickSelect = () => {
       createdTime: new Date(),
       name: 'Engineering Diagram',
     },
-    { externalId: 'PNID', createdTime: new Date(), name: 'PNID' },
+    { externalId: 'P&ID', createdTime: new Date(), name: 'P&ID' },
+    {
+      externalId: 'Manual',
+      createdTime: new Date(),
+      name: 'Manual',
+    },
   ];
 
   // @ts-ignore
