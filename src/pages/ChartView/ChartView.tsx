@@ -157,6 +157,15 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     );
   };
 
+  const handleToggleTimeSeries = (timeSeriesId: string) => {
+    dispatch(
+      chartsSlice.actions.toggleTimeSeries({
+        id: chart?.id || '',
+        timeSeriesId,
+      })
+    );
+  };
+
   if (!hasData) {
     return <Icon type="Loading" />;
   }
@@ -203,12 +212,16 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   }
 
   const timeseriesItems = chart.timeSeriesCollection?.map(
-    ({ id, color }: ChartTimeSeries) => {
+    ({ id, color, enabled }: ChartTimeSeries) => {
       return (
         <SourceItem key={id}>
-          <SourceCircle color={color} />
+          <SourceCircle
+            onClick={() => handleToggleTimeSeries(id)}
+            color={color}
+            fade={!enabled}
+          />
           <SourceName title={id}>{id}</SourceName>
-          <SourceMenu>
+          <SourceMenu onClick={(e) => e.stopPropagation()}>
             <Dropdown
               content={
                 <Menu>
@@ -240,7 +253,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           {renderStatusIcon(flow.latestRun?.status)}
         </div>
         <SourceName>{flow.name || 'noname'}</SourceName>
-        <SourceMenu>
+        <SourceMenu onClick={(e) => e.stopPropagation()}>
           <Dropdown
             content={
               <Menu>

@@ -112,6 +112,7 @@ export const SourceCircle = styled.span`
   margin: 20px;
   border-radius: 50%;
   flex-shrink: 0;
+  opacity: ${(props: { fade?: boolean }) => (props.fade ? '0.2' : '1')};
 `;
 
 export const SourceItem = styled.div`
@@ -126,6 +127,10 @@ export const SourceItem = styled.div`
 
   &:hover {
     background-color: var(--cogs-greyscale-grey1);
+
+    & > :last-child {
+      visibility: visible;
+    }
   }
 `;
 
@@ -149,6 +154,7 @@ export const SourceMenu = styled.div`
   width: 30px;
   background-color: white;
   border-left: 1px solid var(--cogs-greyscale-grey2);
+  visibility: hidden;
 
   &:hover {
     background-color: var(--cogs-greyscale-grey1);

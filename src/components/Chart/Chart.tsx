@@ -20,6 +20,9 @@ const defaultOptions = {
   xAxis: {
     type: 'datetime',
   },
+  legend: {
+    enabled: false,
+  },
 };
 
 type ChartProps = {
@@ -33,13 +36,17 @@ const ChartComponent = ({ chart }: ChartProps) => {
 
   useEffect(() => {
     async function performQuery() {
-      if (!chart?.timeSeriesCollection?.length) {
+      const enabledTimeSeries = (chart?.timeSeriesCollection || []).filter(
+        ({ enabled }) => enabled
+      );
+
+      if (!chart || !enabledTimeSeries.length) {
         setTimeSeriesDataPoints([]);
         return;
       }
 
       const result = (await client.datapoints.retrieve({
-        items: chart.timeSeriesCollection.map(({ id }) => ({ externalId: id })),
+        items: enabledTimeSeries.map(({ id }) => ({ externalId: id })),
         start: new Date(chart.dateFrom),
         end: new Date(chart.dateTo),
       })) as Datapoints[];
@@ -91,8 +98,6 @@ const ChartComponent = ({ chart }: ChartProps) => {
       }),
     ],
   };
-
-  console.log(options);
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };

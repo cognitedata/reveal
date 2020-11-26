@@ -5,7 +5,6 @@ import {
   createEntityAdapter,
   Update,
 } from '@reduxjs/toolkit';
-import uniq from 'lodash/uniq';
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
 import { ValueOf } from 'typings/utils';
@@ -16,7 +15,7 @@ const chartAdapter = createEntityAdapter<Chart>({
   selectId: (chart) => chart.id,
 });
 
-const getChartColor = createColorGetter();
+export const getChartColor = createColorGetter();
 
 const chartsSlice = createSlice({
   name: 'charts',
@@ -67,6 +66,24 @@ const chartsSlice = createSlice({
               enabled: true,
             } as ChartTimeSeries,
           ],
+        },
+      });
+    },
+
+    toggleTimeSeries: (
+      state,
+      action: PayloadAction<{ id: string; timeSeriesId: string }>
+    ) => {
+      const { id, timeSeriesId } = action.payload;
+      const chart = chartAdapter.getSelectors().selectById(state, id);
+      const timeSeries = chart?.timeSeriesCollection?.find(
+        (entry) => entry.id === timeSeriesId
+      )!;
+      timeSeries.enabled = !timeSeries?.enabled;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
         },
       });
     },
