@@ -188,12 +188,16 @@ function SearchPage() {
               <ExplorationSearchBar />
             </Col>
           </SearchInputContainer>
-          <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
-            <Col flex="auto">
-              <LabelsQuickSelect />
-            </Col>
-          </Row>
-
+          {['file', 'asset'].includes(currentResourceType) ? (
+            <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
+              <Col flex="auto">
+                <LabelsQuickSelect
+                  key={currentResourceType}
+                  type={currentResourceType as 'file' | 'asset'}
+                />
+              </Col>
+            </Row>
+          ) : undefined}
           <SearchResultWrapper
             style={{
               paddingRight: active ? 8 : 0,

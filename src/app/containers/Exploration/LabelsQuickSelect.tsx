@@ -3,77 +3,58 @@ import {
   useResourceFilter,
   useSetResourceFilter,
 } from 'app/context/ResourceSelectionContext';
-import { LabelDefinition } from '@cognite/sdk';
+import {
+  FileFilterProps,
+  AssetFilterProps,
+  LabelContainsAnyFilter,
+} from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
-import { useCurrentResourceType } from 'app/hooks';
-import uniqBy from 'lodash/uniqBy';
 import { SpacedRow } from 'lib';
 
-export const LabelsQuickSelect = () => {
-  const [currentResourceType] = useCurrentResourceType();
-  const filter = useResourceFilter(currentResourceType);
-  const setFilter = useSetResourceFilter(currentResourceType);
+export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
+  const filter = useResourceFilter(type) as FileFilterProps | AssetFilterProps;
+  const setFilter = useSetResourceFilter(type);
 
-  const labels: LabelDefinition[] = [
-    {
-      externalId: 'Engineering Diagram',
-      createdTime: new Date(),
-      name: 'Engineering Diagram',
-    },
-    { externalId: 'P&ID', createdTime: new Date(), name: 'P&ID' },
-    {
-      externalId: 'Manual',
-      createdTime: new Date(),
-      name: 'Manual',
-    },
-  ];
-
-  // @ts-ignore
-  const value = ((filter as any).labels || { containsAny: [] }).containsAny;
-
-  const currentLabels = ((value as { externalId: string }[]) || [])
-    .map(({ externalId }) => labels.find(el => el.externalId === externalId))
-    .filter(el => !!el) as LabelDefinition[];
-
-  const setLabel = (ids?: string[]) => {
-    const newFilters =
-      ids && ids.length > 0
-        ? ids.map(externalId => ({ externalId }))
-        : undefined;
-    setFilter((prevFilter: any) => ({
-      ...prevFilter,
-      labels: newFilters ? { containsAny: newFilters } : undefined,
-    }));
+  const preselectedLabels: { [k: string]: string[] } = {
+    file: ['Engineering Diagram', 'P&ID', 'Manual'],
   };
-  if (currentResourceType !== 'asset' && currentResourceType !== 'file') {
+  const labels = preselectedLabels[type];
+
+  if (!labels || labels.length === 0) {
     return null;
   }
 
+  const appliedLabelFilters =
+    (filter.labels as LabelContainsAnyFilter)?.containsAny.map(
+      l => l.externalId
+    ) || [];
+
+  const setLabel = (label: string) => {
+    const newFilters = appliedLabelFilters.includes(label)
+      ? appliedLabelFilters.filter(l => l !== label)
+      : [...appliedLabelFilters, label];
+    setFilter((prevFilter: FileFilterProps | AssetFilterProps) => ({
+      ...prevFilter,
+      labels:
+        newFilters.length > 0
+          ? { containsAny: newFilters.map(l => ({ externalId: l })) }
+          : undefined,
+    }));
+  };
+
   return (
     <SpacedRow>
-      {uniqBy(currentLabels.concat(labels), el => el.externalId).map(label => {
-        const items = currentLabels.filter(
-          el => el.externalId !== label.externalId
-        );
-        const isActive = items.length !== currentLabels.length;
-        return (
-          <Button
-            key={label.externalId}
-            size="small"
-            type="primary"
-            variant={isActive ? 'default' : 'outline'}
-            onClick={() => {
-              if (isActive) {
-                setLabel(items.map(el => el.externalId));
-              } else {
-                setLabel([...items, label].map(el => el.externalId));
-              }
-            }}
-          >
-            {label.name}
-          </Button>
-        );
-      })}
+      {labels.map(label => (
+        <Button
+          key={label}
+          size="small"
+          type="primary"
+          variant={appliedLabelFilters.includes(label) ? 'default' : 'outline'}
+          onClick={() => setLabel(label)}
+        >
+          {label}
+        </Button>
+      ))}
     </SpacedRow>
   );
 };
