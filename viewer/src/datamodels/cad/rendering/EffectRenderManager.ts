@@ -58,6 +58,9 @@ export class EffectRenderManager {
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly outlineTexelSize = 2;
 
+  private renderTarget: THREE.WebGLRenderTarget | null;
+  private autoSetTargetSize: boolean = false;
+
   private get antiAliasingMode(): AntiAliasingMode {
     const { antiAliasing = defaultRenderOptions.antiAliasing } = this._renderOptions;
     return antiAliasing;
@@ -72,6 +75,8 @@ export class EffectRenderManager {
     this._renderOptions = options;
     this._materialManager = materialManager;
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    this.renderTarget = null;
 
     this._cadScene = new THREE.Scene();
     this._normalScene = new THREE.Scene();
@@ -121,7 +126,10 @@ export class EffectRenderManager {
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false, depthBuffer: false });
+    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._compositionTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._compositionTarget.depthTexture.format = THREE.DepthFormat;
+    this._compositionTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._combineEdgeDetectionMaterial = new THREE.ShaderMaterial({
       vertexShader: edgeDetectionShaders.vertex,
@@ -139,19 +147,18 @@ export class EffectRenderManager {
         cameraNear: { value: 0.1 },
         cameraFar: { value: 10000 }
       },
-      depthTest: false,
-      depthWrite: false
+      extensions: { fragDepth: true }
     });
     this._fxaaMaterial = new THREE.ShaderMaterial({
       uniforms: {
         tDiffuse: { value: this._compositionTarget.texture },
+        tDepth: { value: this._compositionTarget.depthTexture },
         resolution: { value: new THREE.Vector2() },
         inverseResolution: { value: new THREE.Vector2() }
       },
       vertexShader: fxaaShaders.vertex,
       fragmentShader: fxaaShaders.fragment,
-      depthTest: false,
-      depthWrite: false
+      extensions: { fragDepth: true }
     });
 
     this.setupCompositionScene();
@@ -220,7 +227,7 @@ export class EffectRenderManager {
           this.renderComposition(renderer, camera, this._compositionTarget);
           // Anti-aliased version to screen
           renderer.autoClear = original.autoClear;
-          this.renderAntiAlias(renderer, null);
+          this.renderAntiAlias(renderer, this.renderTarget);
           break;
 
         case AntiAliasingMode.NoAA:
@@ -243,6 +250,11 @@ export class EffectRenderManager {
       });
       this._rootSectorNodeBuffer.clear();
     }
+  }
+
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
+    this.autoSetTargetSize = autoSetTargetSize;
+    this.renderTarget = target;
   }
 
   private clearTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
@@ -344,6 +356,15 @@ export class EffectRenderManager {
   private updateRenderSize(renderer: THREE.WebGLRenderer) {
     const renderSize = new THREE.Vector2();
     renderer.getSize(renderSize);
+
+    if (
+      this.renderTarget &&
+      this.autoSetTargetSize &&
+      renderSize.x !== this.renderTarget.width &&
+      renderSize.y !== this.renderTarget.height
+    ) {
+      this.renderTarget.setSize(renderSize.x, renderSize.y);
+    }
 
     if (
       renderSize.x !== this._normalRenderedCadModelTarget.width ||

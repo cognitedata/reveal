@@ -181,6 +181,15 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.render(renderer, camera, scene);
   }
 
+  /**
+   * Overrides the default rendering target.
+   * @param target New rendering target.
+   * @param autoSetTargetSize Auto size target to fit canvas.
+   */
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
+    this._effectRenderManager.setRenderTarget(target, autoSetTargetSize);
+  }
+
   public addModel(
     type: 'cad',
     modelIdentifier: TModelIdentifier,
