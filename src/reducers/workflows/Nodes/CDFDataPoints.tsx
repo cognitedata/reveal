@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
 import sdk from 'services/CogniteSDK';
+import { Chart } from 'reducers/charts';
 import { StorableNode, ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
   timeSeriesExternalId: string;
+  context: {
+    chart: Chart;
+  };
 };
 
 export const effect = async (funcData: FunctionData) => {
@@ -13,6 +17,8 @@ export const effect = async (funcData: FunctionData) => {
   }
   const datapoints = await sdk.datapoints.retrieve({
     items: [{ externalId: funcData.timeSeriesExternalId }],
+    start: new Date(funcData.context.chart.dateFrom || new Date()),
+    end: new Date(funcData.context.chart.dateTo || new Date()),
   });
   return {
     datapoints: datapoints[0].datapoints,
@@ -27,6 +33,7 @@ export const configPanel = ({
 }: ConfigPanelComponentProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const { functionData } = node;
+
   useEffect(() => {
     if (functionData.timeSeriesExternalId) {
       sdk.timeseries

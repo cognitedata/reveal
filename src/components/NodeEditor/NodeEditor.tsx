@@ -20,6 +20,7 @@ import workflowSlice, {
 import useDispatch from 'hooks/useDispatch';
 import { saveExistingWorkflow } from 'reducers/workflows/api';
 import { runWorkflow } from 'reducers/workflows/utils';
+import { chartSelectors } from 'reducers/charts';
 import { pinTypes, isWorkflowRunnable } from './utils';
 import defaultNodeOptions from '../../reducers/workflows/Nodes';
 import ConfigPanel from './ConfigPanel';
@@ -36,9 +37,10 @@ const WorkflowContainer = styled.div`
 
 type WorkflowEditorProps = {
   workflowId?: string;
+  chartId?: string;
 };
 
-const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
+const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<StorableNode>();
 
@@ -46,6 +48,11 @@ const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
     workflowSelectors.selectById(state, workflowId || '')
   );
   const { nodes = [], connections = [] } = workflow || {};
+
+  const chart = useSelector((state) =>
+    chartSelectors.selectById(state, chartId || '')
+  )!;
+  const context = { chart };
 
   const setConnections = (nextConnections: Record<string, Connection>) => {
     if (workflowId) {
@@ -132,7 +139,8 @@ const WorkflowEditor = ({ workflowId }: WorkflowEditorProps) => {
             },
           })
         );
-      }
+      },
+      context
     );
     const latestRun: LatestWorkflowRun = {
       ...finalResult,

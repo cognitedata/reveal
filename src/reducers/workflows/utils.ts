@@ -21,12 +21,16 @@ export const convertStoredNodeToNode = (
 
 export const runWorkflow = async (
   workflow: Workflow,
-  onProgressUpdate: (nextProgress: Partial<NodeProgress>) => void
+  onProgressUpdate: (nextProgress: Partial<NodeProgress>) => void,
+  context: { [key: string]: any }
 ): Promise<LatestWorkflowRun> => {
   // In order to run our stored workflow, we need to go into each node
   // and replace its `functionEffectType` with its actual `functionEffect`.
   const runnableNodes = workflow.nodes.map((node) =>
-    convertStoredNodeToNode(node, nodeOptions)
+    convertStoredNodeToNode(
+      { ...node, functionData: { ...node.functionData, context } },
+      nodeOptions
+    )
   );
   // Right now we support a single output node.
   // In the future we could update this to support more

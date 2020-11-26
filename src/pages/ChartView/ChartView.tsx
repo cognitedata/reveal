@@ -57,6 +57,8 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
   );
+  const context = { chart };
+
   const [workflowsRan, setWorkflowsRan] = useState(false);
 
   const workflows = useSelector((state) =>
@@ -85,7 +87,8 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               },
             })
           );
-        }
+        },
+        context
       );
 
       dispatch(
@@ -371,7 +374,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">
-              <NodeEditor workflowId={activeWorkflowId} />
+              <NodeEditor workflowId={activeWorkflowId} chartId={chartId} />
             </BottomPaneWrapper>
           </SplitPaneLayout>
         </ChartContainer>

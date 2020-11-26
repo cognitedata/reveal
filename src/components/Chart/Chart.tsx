@@ -88,7 +88,7 @@ const ChartComponent = ({ chart }: ChartProps) => {
         return {
           type: 'line',
           name,
-          data: ((data['input-timeseries'] || []) as DoubleDatapoint[]).map(
+          data: ((data.datapoints || []) as DoubleDatapoint[]).map(
             (datapoint) => ({
               x: new Date(datapoint.timestamp),
               y: datapoint.value,
