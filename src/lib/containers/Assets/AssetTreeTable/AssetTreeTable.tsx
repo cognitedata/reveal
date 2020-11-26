@@ -34,8 +34,14 @@ export const AssetTreeTable = ({
 
   const previousListExpandedRowKeys = usePrevious(listExpandedRowKeys);
 
+  const expandCount = searchEnabled
+    ? searchExpandedRowKeys.length
+    : listExpandedRowKeys.length;
   const columns = [
-    Table.Columns.name,
+    {
+      ...Table.Columns.name,
+      width: expandCount > 0 ? 500 : Table.Columns.name.width,
+    },
     Table.Columns.description,
     Table.Columns.externalId,
     {
