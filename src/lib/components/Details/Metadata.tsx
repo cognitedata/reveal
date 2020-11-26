@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Input } from 'antd';
+import styled from 'styled-components';
 import { DetailsTabGrid, DetailsTabItem } from './Details';
 
 export default function Metadata({
@@ -27,12 +28,14 @@ export default function Metadata({
   }
   return (
     <>
-      <h3>Metadata</h3>
-      <Input.Search
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        placeholder="Filter metadata"
-      />
+      <MetadataHeader>
+        <h3>Metadata</h3>
+        <Input.Search
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Filter metadata"
+        />
+      </MetadataHeader>
       <DetailsTabGrid>
         {filteredMetadata.map(([key, value]) => (
           <DetailsTabItem name={key} key={key} value={value} />
@@ -41,3 +44,7 @@ export default function Metadata({
     </>
   );
 }
+
+const MetadataHeader = styled.div`
+  padding: 0 16px;
+`;

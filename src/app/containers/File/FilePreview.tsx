@@ -118,7 +118,6 @@ export const FilePreview = ({
           }}
         >
           <ResourceDetailsTabs
-            style={{ paddingLeft: 16 }}
             parentResource={{
               type: 'file',
               id: fileId,

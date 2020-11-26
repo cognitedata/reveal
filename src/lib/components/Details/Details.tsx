@@ -17,7 +17,7 @@ export const DetailsTabGrid = ({
   children: React.ReactNode[];
 }) => {
   return (
-    <div style={{ padding: '20px 10px' }}>
+    <GridContainer>
       <List
         grid={{
           gutter: 16,
@@ -31,7 +31,7 @@ export const DetailsTabGrid = ({
         dataSource={children}
         renderItem={item => <List.Item>{item}</List.Item>}
       />
-    </div>
+    </GridContainer>
   );
 };
 
@@ -103,6 +103,10 @@ export const DataSetItem = ({
 
   return null;
 };
+
+const GridContainer = styled.div`
+  padding: 20px 16px;
+`;
 
 const Name = styled(Body)`
   font-size: 14px;

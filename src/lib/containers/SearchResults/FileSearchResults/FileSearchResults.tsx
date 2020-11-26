@@ -56,25 +56,21 @@ export const FileSearchResults = ({
       >
         {props =>
           currentView === 'grid' ? (
-            <div style={{ flex: 1 }}>
-              <GridTable
-                {...props}
-                onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
-                onItemClicked={file => onClick(file)}
-                {...selectionProps}
-                renderCell={cellProps => <FileGridPreview {...cellProps} />}
-              />
-            </div>
+            <GridTable
+              {...props}
+              onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
+              onItemClicked={file => onClick(file)}
+              {...selectionProps}
+              renderCell={cellProps => <FileGridPreview {...cellProps} />}
+            />
           ) : (
-            <div style={{ flex: 1 }}>
-              <FileTable
-                {...props}
-                onRowClick={file => {
-                  onClick(file);
-                  return true;
-                }}
-              />
-            </div>
+            <FileTable
+              {...props}
+              onRowClick={file => {
+                onClick(file);
+                return true;
+              }}
+            />
           )
         }
       </ResultTableLoader>

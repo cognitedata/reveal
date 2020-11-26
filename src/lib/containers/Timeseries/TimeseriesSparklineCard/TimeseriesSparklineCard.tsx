@@ -28,7 +28,6 @@ export const TimeseriesSparklineCard = ({
   const menu = (
     <Menu>
       <Menu.Item onClick={() => copy(`${item.id}`)}>Copy ID</Menu.Item>
-      <Menu.Item disabled>Add to collection</Menu.Item>
     </Menu>
   );
 

@@ -88,7 +88,7 @@ export const RelatedResources = ({
   );
 
   return (
-    <>
+    <RelatedResourcesContainer>
       <FilterWrapper>
         <h4 style={{ marginBottom: 0 }}>Filter by:</h4>
         <SelectWrapper>
@@ -129,7 +129,7 @@ export const RelatedResources = ({
           {...props}
         />
       )}
-    </>
+    </RelatedResourcesContainer>
   );
 };
 
@@ -143,6 +143,11 @@ const selectStyles = {
     cursor: 'pointer',
   }),
 };
+
+const RelatedResourcesContainer = styled.div`
+  padding-left: 16px;
+  height: 100%;
+`;
 
 const FilterWrapper = styled.div`
   display: flex;

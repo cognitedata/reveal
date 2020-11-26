@@ -79,6 +79,7 @@ const BreadcrumbList = styled.ul`
   list-style-type: none;
   display: flex;
   padding: 0;
+  margin-left: 16px;
 `;
 
 export function AssetBreadcrumb({

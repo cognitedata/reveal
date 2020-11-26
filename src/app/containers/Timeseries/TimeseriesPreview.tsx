@@ -84,7 +84,6 @@ export const TimeseriesPreview = ({
             />
           </div>
           <ResourceDetailsTabs
-            style={{ paddingLeft: 16 }}
             parentResource={{
               type: 'timeSeries',
               id: timeseries.id,

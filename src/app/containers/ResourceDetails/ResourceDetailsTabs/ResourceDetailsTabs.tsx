@@ -69,7 +69,7 @@ export const ResourceDetailsTabs = ({
   additionalTabs = [],
   excludedTypes = [],
   onTabChange,
-  style,
+  style = { paddingLeft: '16px' },
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
   const {

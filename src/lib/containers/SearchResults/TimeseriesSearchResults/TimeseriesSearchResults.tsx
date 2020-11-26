@@ -75,35 +75,31 @@ export const TimeseriesSearchResults = ({
       >
         {props =>
           currentView === 'grid' ? (
-            <div style={{ flexGrow: 1 }}>
-              <GridTable<Timeseries>
-                {...props}
-                cellHeight={360}
-                minCellWidth={500}
-                onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
-                onItemClicked={timeseries => onClick(timeseries)}
-                {...selectionProps}
-                renderCell={cellProps => (
-                  <TimeseriesSparklineCard
-                    {...cellProps}
-                    dateRange={dateRange || stateDateRange}
-                    onDateRangeChange={onDateRangeChange || stateSetDateRange}
-                  />
-                )}
-              />
-            </div>
+            <GridTable<Timeseries>
+              {...props}
+              cellHeight={360}
+              minCellWidth={500}
+              onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
+              onItemClicked={timeseries => onClick(timeseries)}
+              {...selectionProps}
+              renderCell={cellProps => (
+                <TimeseriesSparklineCard
+                  {...cellProps}
+                  dateRange={dateRange || stateDateRange}
+                  onDateRangeChange={onDateRangeChange || stateSetDateRange}
+                />
+              )}
+            />
           ) : (
-            <div style={{ flex: 1 }}>
-              <TimeseriesTable
-                {...props}
-                onRowClick={file => {
-                  onClick(file);
-                  return true;
-                }}
-                dateRange={dateRange || stateDateRange}
-                onDateRangeChange={onDateRangeChange || stateSetDateRange}
-              />
-            </div>
+            <TimeseriesTable
+              {...props}
+              onRowClick={file => {
+                onClick(file);
+                return true;
+              }}
+              dateRange={dateRange || stateDateRange}
+              onDateRangeChange={onDateRangeChange || stateSetDateRange}
+            />
           )
         }
       </ResultTableLoader>

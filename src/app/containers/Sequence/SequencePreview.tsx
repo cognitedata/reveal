@@ -8,7 +8,6 @@ import {
 } from 'lib/containers/Sequences';
 import Metadata from 'lib/components/Details/Metadata';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Row, Col } from 'antd';
 import { Sequence } from '@cognite/sdk';
 import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -73,34 +72,34 @@ export const SequencePreview = ({
         item={{ id: sequenceId, type: 'sequence' }}
         actions={actions}
       />
-      <Row style={{ marginLeft: 16, height: 'calc(100% - 82px)' }}>
-        <Col span={24}>
-          <ResourceDetailsTabs
-            parentResource={{
-              type: 'sequence',
-              id: sequence.id,
-              externalId: sequence.externalId,
-            }}
-            tab={activeTab}
-            onTabChange={newTab =>
-              history.push(
-                createLink(
-                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-                )
-              )
-            }
-            additionalTabs={[
-              <Tabs.Pane title={<TabTitle>Preview</TabTitle>} key="preview">
-                <SequenceTabPreview sequence={sequence} />
-              </Tabs.Pane>,
-              <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                <SequenceDetails sequence={sequence} />
-                <Metadata metadata={sequence.metadata} />
-              </Tabs.Pane>,
-            ]}
-          />
-        </Col>
-      </Row>
+      <ResourceDetailsTabs
+        parentResource={{
+          type: 'sequence',
+          id: sequence.id,
+          externalId: sequence.externalId,
+        }}
+        tab={activeTab}
+        onTabChange={newTab =>
+          history.push(
+            createLink(
+              `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+            )
+          )
+        }
+        additionalTabs={[
+          <Tabs.Pane
+            title={<TabTitle>Preview</TabTitle>}
+            style={{ padding: '20px 16px' }}
+            key="preview"
+          >
+            <SequenceTabPreview sequence={sequence} />
+          </Tabs.Pane>,
+          <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+            <SequenceDetails sequence={sequence} />
+            <Metadata metadata={sequence.metadata} />
+          </Tabs.Pane>,
+        ]}
+      />
     </>
   );
 };

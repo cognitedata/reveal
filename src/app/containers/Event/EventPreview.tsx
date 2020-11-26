@@ -67,7 +67,6 @@ export const EventPreview = ({
         actions={actions}
       />
       <ResourceDetailsTabs
-        style={{ paddingLeft: 16 }}
         parentResource={{
           type: 'event',
           id: event.id,
