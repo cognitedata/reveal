@@ -11,6 +11,7 @@ import { RelatedResourceType } from 'lib/hooks/RelatedResourcesHooks';
 import styled from 'styled-components';
 import { LinkedResourceTable } from 'lib/containers/Relationships';
 import { useRelatedResourceCount } from 'lib/hooks/RelationshipHooks';
+import AnnotationTable from 'lib/containers/Relationships/AnnotationTable';
 
 type TypeOption = {
   label: string;
@@ -29,6 +30,7 @@ export const RelatedResources = ({
     relationshipCount,
     linkedResourceCount,
     assetIdCount,
+    annotationCount,
     isFetched,
   } = useRelatedResourceCount(parentResource, type);
 
@@ -57,6 +59,14 @@ export const RelatedResources = ({
       });
     }
 
+    if (parentResource.type === 'file') {
+      types.push({
+        label: `Annotations (${annotationCount})`,
+        value: 'annotation',
+        count: annotationCount,
+      });
+    }
+
     return types;
   }, [
     parentResource,
@@ -64,6 +74,7 @@ export const RelatedResources = ({
     relationshipCount,
     assetIdCount,
     linkedResourceCount,
+    annotationCount,
   ]);
 
   useEffect(
@@ -71,7 +82,9 @@ export const RelatedResources = ({
       setSelectedType(
         relatedResourceTypes.find(t => t.count > 0) || relatedResourceTypes[0]
       ),
-    [isFetched, relatedResourceTypes]
+    // Should NOT set state when relatedResourceTypes changes!
+    // eslint-disable-next-line
+    [isFetched]
   );
 
   return (
@@ -83,6 +96,7 @@ export const RelatedResources = ({
             value={selectedType}
             onChange={setSelectedType}
             options={relatedResourceTypes}
+            styles={selectStyles}
             closeMenuOnSelect
           />
         </SelectWrapper>
@@ -107,8 +121,27 @@ export const RelatedResources = ({
       {selectedType?.value === 'assetId' && (
         <AssetIdTable resource={parentResource} {...props} />
       )}
+
+      {selectedType?.value === 'annotation' && (
+        <AnnotationTable
+          fileId={parentResource.id}
+          resourceType={type}
+          {...props}
+        />
+      )}
     </>
   );
+};
+
+const selectStyles = {
+  option: (styles: any) => ({
+    ...styles,
+    cursor: 'pointer',
+  }),
+  control: (styles: any) => ({
+    ...styles,
+    cursor: 'pointer',
+  }),
 };
 
 const FilterWrapper = styled.div`

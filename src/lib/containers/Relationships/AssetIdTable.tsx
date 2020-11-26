@@ -7,9 +7,11 @@ import { SelectableItemsProps } from 'lib/CommonProps';
 
 export const AssetIdTable = ({
   resource,
+  onItemClicked,
   ...props
 }: {
   resource: ResourceItem;
+  onItemClicked: (id: number) => void;
 } & SelectableItemsProps) => {
   const { data: item, isFetched: isItemFetched } = useCdfItem(
     convertResourceType(resource.type),
@@ -26,5 +28,11 @@ export const AssetIdTable = ({
     { enabled: isItemFetched && assetIds }
   );
 
-  return <AssetTable data={assets} {...props} />;
+  return (
+    <AssetTable
+      data={assets}
+      onRowClick={el => onItemClicked(el.id)}
+      {...props}
+    />
+  );
 };

@@ -16,6 +16,12 @@ import {
   Timeseries,
   FileInfo,
 } from '@cognite/sdk';
+import {
+  annotationInteralIdFilter,
+  annotationExternalIdFilter,
+} from 'lib/utils/filters';
+import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
+import uniqueBy from 'lodash/uniqBy';
 
 const PAGE_SIZE = 20;
 
@@ -150,6 +156,49 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   };
 };
 
+export const useAnnotations = (
+  fileId: number,
+  resourceType?: ResourceType,
+  enabled = true
+) => {
+  const { data: file = {} } = useCdfItem<{ externalId?: string }>(
+    'files',
+    { id: fileId },
+    { enabled }
+  );
+
+  const byInternalId = useList<CogniteEvent>('events', {
+    filter: annotationInteralIdFilter(fileId, resourceType),
+  });
+
+  const byExternalId = useList<CogniteEvent>(
+    'events',
+    {
+      filter: annotationExternalIdFilter(file.externalId!, resourceType),
+    },
+    { enabled: !!file.externalId }
+  );
+
+  const annotations = useMemo(
+    () =>
+      uniqueBy(
+        [...(byExternalId.data || []), ...(byInternalId.data || [])].filter(
+          ({ metadata = {} }) => metadata[`${PREFIX}_status`] !== 'deleted'
+        ),
+        'metadata.CDF_ANNOTATION_box'
+      ),
+    [byInternalId.data, byExternalId.data]
+  );
+
+  return {
+    data: annotations,
+    isFetched:
+      byInternalId.isFetched && (byExternalId.isFetched || !file.externalId),
+    isError: byInternalId.isError || byExternalId.isError,
+    isFetching: byInternalId.isFetching || byExternalId.isFetching,
+  };
+};
+
 export const useRelationshipCount = (
   resource: ResourceItem,
   type: ResourceType
@@ -167,11 +216,44 @@ export const useRelationshipCount = (
   return { data: count, isFetched, ...rest };
 };
 
+export const useAnnotationCount = (
+  fileId: number,
+  resourceType: ResourceType,
+  enabled = true
+) => {
+  const { data: annotations, ...rest } = useAnnotations(
+    fileId,
+    resourceType,
+    enabled
+  );
+
+  const ids = useMemo(
+    () =>
+      new Set(
+        annotations
+          .map(
+            ({ metadata = {} }) =>
+              metadata[`${PREFIX}resource_external_id`] ||
+              metadata[`${PREFIX}resource_id`]
+          )
+          .filter(Boolean)
+      ),
+    [annotations]
+  );
+
+  let count = 0;
+  if (ids.size > 0) {
+    count = ids.size;
+  }
+  return { data: count, ...rest };
+};
+
 export const useRelatedResourceCount = (
   resource: ResourceItem,
   type: ResourceType
 ) => {
   const isAsset = resource.type === 'asset';
+  const isFile = resource.type === 'file';
   const isAssetTab = type === 'asset';
 
   const {
@@ -194,8 +276,16 @@ export const useRelatedResourceCount = (
     { enabled: isAssetTab }
   );
 
+  const {
+    data: annotationCount,
+    isFetched: isAnnotationFetched,
+  } = useAnnotationCount(resource.id, type, isFile);
+
   const isFetched =
-    isLinkedResourceFetched && isRelationshipFetched && isResourceFetched;
+    isLinkedResourceFetched &&
+    isRelationshipFetched &&
+    isResourceFetched &&
+    isAnnotationFetched;
 
   let count = relationships.length;
 
@@ -213,11 +303,16 @@ export const useRelatedResourceCount = (
     count += linkedResourceCount?.count;
   }
 
+  if (isFile && annotationCount) {
+    count += annotationCount;
+  }
+
   return {
     count: formatNumber(count),
     relationshipCount: relationships.length,
     assetIdCount,
     linkedResourceCount: linkedResourceCount?.count,
+    annotationCount,
     isFetched,
   };
 };

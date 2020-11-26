@@ -10,22 +10,24 @@ import {
   TimeseriesTable,
   EventTable,
   SequenceTable,
+  SelectableItemsProps,
 } from 'lib';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { createLink } from '@cognite/cdf-utilities';
-import { useHistory } from 'react-router-dom';
-
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
-
-import { useAnnotations } from 'app/hooks';
 import { IdEither } from '@cognite/sdk';
+import { useAnnotations } from 'lib/hooks/RelationshipHooks';
 
 type Props = {
   fileId: number;
   resourceType: ResourceType;
+  onItemClicked: (id: number) => void;
 };
-export default function RelatedResources({ fileId, resourceType }: Props) {
-  const history = useHistory();
+export default function AnnotationTable({
+  fileId,
+  resourceType,
+  onItemClicked,
+  ...props
+}: Props & SelectableItemsProps) {
   const { data: annotations, isFetched, isError } = useAnnotations(
     fileId,
     resourceType
@@ -77,9 +79,8 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
       return (
         <AssetTable
           data={items}
-          onRowClick={({ id }) =>
-            history.push(createLink(`/explore/asset/${id}`))
-          }
+          onRowClick={el => onItemClicked(el.id)}
+          {...props}
         />
       );
     }
@@ -87,9 +88,8 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
       return (
         <FileTable
           data={items}
-          onRowClick={({ id }) =>
-            history.push(createLink(`/explore/file/${id}`))
-          }
+          onRowClick={el => onItemClicked(el.id)}
+          {...props}
         />
       );
     }
@@ -97,9 +97,8 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
       return (
         <TimeseriesTable
           data={items}
-          onRowClick={({ id }) =>
-            history.push(createLink(`/explore/timeseries/${id}`))
-          }
+          onRowClick={el => onItemClicked(el.id)}
+          {...props}
         />
       );
     }
@@ -107,9 +106,8 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
       return (
         <EventTable
           data={items}
-          onRowClick={({ id }) =>
-            history.push(createLink(`/explore/event/${id}`))
-          }
+          onRowClick={el => onItemClicked(el.id)}
+          {...props}
         />
       );
     }
@@ -117,9 +115,8 @@ export default function RelatedResources({ fileId, resourceType }: Props) {
       return (
         <SequenceTable
           data={items}
-          onRowClick={({ id }) =>
-            history.push(createLink(`/explore/sequence/${id}`))
-          }
+          onRowClick={el => onItemClicked(el.id)}
+          {...props}
         />
       );
     }

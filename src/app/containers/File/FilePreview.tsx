@@ -9,15 +9,25 @@ import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { FileDetails } from 'lib';
-import RelatedResources from 'app/components/Files/RelatedResources';
 import Metadata from 'lib/components/Details/Metadata';
-import RelatedResourceCount from 'app/components/Files/RelatedResourceCount';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 import styled from 'styled-components';
 import { Colors, Body } from '@cognite/cogs.js';
 import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
+import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
+import { useRouteMatch, useLocation, useHistory } from 'react-router-dom';
+import { createLink } from '@cognite/cdf-utilities';
+
+export type FilePreviewTabType =
+  | 'preview'
+  | 'details'
+  | 'timeseries'
+  | 'files'
+  | 'sequences'
+  | 'events'
+  | 'assets';
 
 export const FilePreview = ({
   fileId,
@@ -37,6 +47,13 @@ export const FilePreview = ({
   const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
   const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
+
+  const match = useRouteMatch();
+  const location = useLocation();
+  const history = useHistory();
+  const activeTab = location.pathname
+    .replace(match.url, '')
+    .slice(1) as FilePreviewTabType;
 
   useEffect(() => {
     if (fileId && !isActive) {
@@ -93,91 +110,56 @@ export const FilePreview = ({
             ...actions,
           ]}
         />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <Tabs tab="preview" style={{ paddingLeft: 16 }}>
-            <Tabs.Pane
-              title="Preview"
-              key="preview"
-              style={{ display: 'flex' }}
-            >
-              {editMode && (
-                <Banner>
-                  <Body level={3}>You have entered editing mode.</Body>
-                </Banner>
-              )}
-              <CogniteFilePreview
-                fileId={fileId!}
-                creatable={editMode}
-                contextualization={writeAccess}
-              />
-            </Tabs.Pane>
-            <Tabs.Pane title="File details" key="info">
-              <FileDetails file={fileInfo} />
-              <Metadata metadata={fileInfo.metadata} />
-            </Tabs.Pane>
-            <Tabs.Pane
-              title={
-                <>
-                  Assets{' '}
-                  <RelatedResourceCount fileId={fileId!} resourceType="asset" />
-                </>
-              }
-              key="assets"
-            >
-              <RelatedResources fileId={fileId!} resourceType="asset" />
-            </Tabs.Pane>
-
-            <Tabs.Pane
-              title={
-                <>
-                  Files{' '}
-                  <RelatedResourceCount fileId={fileId!} resourceType="file" />
-                </>
-              }
-              key="files"
-            >
-              <RelatedResources fileId={fileId!} resourceType="file" />
-            </Tabs.Pane>
-            <Tabs.Pane
-              title={
-                <>
-                  Time series{' '}
-                  <RelatedResourceCount
+        <div
+          style={{
+            flex: '1',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <ResourceDetailsTabs
+            style={{ paddingLeft: 16 }}
+            parentResource={{
+              type: 'file',
+              id: fileId,
+              externalId: fileInfo.externalId,
+            }}
+            tab={activeTab}
+            onTabChange={newTab =>
+              history.push(
+                createLink(
+                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                )
+              )
+            }
+            additionalTabs={[
+              <Tabs.Pane title={<TabTitle>Preview</TabTitle>} key="preview">
+                {editMode && (
+                  <Banner>
+                    <Body level={3}>You have entered editing mode.</Body>
+                  </Banner>
+                )}
+                <div
+                  style={{
+                    flex: '1',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                  }}
+                >
+                  <CogniteFilePreview
                     fileId={fileId!}
-                    resourceType="timeSeries"
+                    creatable={editMode}
+                    contextualization={writeAccess}
                   />
-                </>
-              }
-              key="timeseries"
-            >
-              <RelatedResources fileId={fileId!} resourceType="timeSeries" />
-            </Tabs.Pane>
-            <Tabs.Pane
-              title={
-                <>
-                  Events{' '}
-                  <RelatedResourceCount fileId={fileId!} resourceType="event" />
-                </>
-              }
-              key="events"
-            >
-              <RelatedResources fileId={fileId!} resourceType="event" />
-            </Tabs.Pane>
-            <Tabs.Pane
-              title={
-                <>
-                  Sequences{' '}
-                  <RelatedResourceCount
-                    fileId={fileId!}
-                    resourceType="sequence"
-                  />
-                </>
-              }
-              key="sequences"
-            >
-              <RelatedResources fileId={fileId!} resourceType="sequence" />
-            </Tabs.Pane>
-          </Tabs>
+                </div>
+              </Tabs.Pane>,
+              <Tabs.Pane title={<TabTitle>File details</TabTitle>} key="info">
+                <FileDetails file={fileInfo} />
+                <Metadata metadata={fileInfo.metadata} />
+              </Tabs.Pane>,
+            ]}
+          />
         </div>
       </CogniteFileViewer.Provider>
     </>

@@ -41,6 +41,7 @@ export const RelatedResourcesLoader = <T extends Resource>({
     isFetchingMore,
     fetchMore,
     isFetched,
+    isIdle,
     isFetching,
     items,
   } = useRelatedResourceResults<T>(relatedResourceType, type, parentResource);
@@ -53,7 +54,7 @@ export const RelatedResourcesLoader = <T extends Resource>({
       .map(el => el.id);
   }, [items, isSelected, type]);
 
-  if (!isFetched) {
+  if (!isFetched && !isIdle) {
     return <Loader />;
   }
 
