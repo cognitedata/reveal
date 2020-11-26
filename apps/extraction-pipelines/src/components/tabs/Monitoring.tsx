@@ -4,20 +4,20 @@ import mapRuns from '../../utils/runsUtils';
 import { getMonitoringTableCol } from '../table/MonitoringTableCol';
 import MonitoringTable from '../table/MonitoringTable';
 import { useRuns } from '../../hooks/useRuns';
+import { ErrorFeedback } from '../error/ErrorFeedback';
 
 export interface MonitoringProps {
   externalId: string;
 }
 
 const Monitoring = ({ externalId }: MonitoringProps) => {
-  const { data } = useRuns(externalId);
+  const { data, error: errorRuns } = useRuns(externalId);
 
-  if (!data) {
-    return <></>;
+  if (errorRuns) {
+    return <ErrorFeedback error={errorRuns} />;
   }
 
-  const tableData = mapRuns(data);
-
+  const tableData = mapRuns(data ?? []);
   const columns = getMonitoringTableCol();
 
   return (
