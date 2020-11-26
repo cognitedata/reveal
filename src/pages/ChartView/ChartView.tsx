@@ -205,7 +205,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const timeseriesItems = chart.timeSeriesCollection?.map(
     ({ id, color }: ChartTimeSeries) => {
       return (
-        <SourceItem>
+        <SourceItem key={id}>
           <SourceCircle color={color} />
           <SourceName title={id}>{id}</SourceName>
           <SourceMenu>
@@ -234,50 +234,39 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   const workflowItems = workflows?.map((flow) => {
     return (
-      <SourceItem onClick={() => setActiveWorkflowId(flow.id)}>
+      <SourceItem key={flow.id} onClick={() => setActiveWorkflowId(flow.id)}>
         <SourceCircle />
-        {flow.name || 'noname'}
         <div style={{ marginRight: 10 }}>
           {renderStatusIcon(flow.latestRun?.status)}
         </div>
+        <SourceName>{flow.name || 'noname'}</SourceName>
+        <SourceMenu>
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Header>
+                  <span style={{ wordBreak: 'break-word' }}>{flow.name}</span>
+                </Menu.Header>
+                <Menu.Item
+                  onClick={() => {
+                    onDeleteWorkflow(flow);
+                    if (activeWorkflowId === flow.id) {
+                      setActiveWorkflowId(undefined);
+                    }
+                  }}
+                  appendIcon="Delete"
+                >
+                  <span>Remove</span>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Icon type="VerticalEllipsis" />
+          </Dropdown>
+        </SourceMenu>
       </SourceItem>
     );
   });
-
-  const workflowMenu = (
-    <Dropdown
-      content={
-        <Menu>
-          {(workflows || []).map(
-            (flow) =>
-              flow && (
-                <Menu.Item
-                  key={flow.id}
-                  onClick={() => setActiveWorkflowId(flow.id)}
-                >
-                  {activeWorkflowId === flow.id ? '!' : ''}
-                  {renderStatusIcon(flow.latestRun?.status)}
-                  {flow.name || 'noname'}{' '}
-                  <Button
-                    unstyled
-                    icon="Delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteWorkflow(flow);
-                      if (activeWorkflowId === flow.id) {
-                        setActiveWorkflowId(undefined);
-                      }
-                    }}
-                  />
-                </Menu.Item>
-              )
-          )}
-          <Menu.Divider />
-          <Menu.Item onClick={onNewWorkflow}>Create new</Menu.Item>
-        </Menu>
-      }
-    />
-  );
 
   return (
     <ChartViewContainer id="chart-view">
