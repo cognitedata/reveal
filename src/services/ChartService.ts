@@ -6,10 +6,7 @@ export class ChartService {
     firebase.firestore.DocumentData
   >;
 
-  private readonly user: string;
-
   constructor(tenant: string, user: string) {
-    this.user = user;
     this.firebaseCollection = firebase
       .firestore()
       .collection('tenants')
