@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
-import chartsSlice, {
-  Chart,
-  chartSelectors,
-  ChartTimeSeries,
-} from 'reducers/charts';
+import chartsSlice, { chartSelectors, ChartTimeSeries } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
