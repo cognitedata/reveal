@@ -31,7 +31,7 @@ export const FileToolbar = ({
     <>
       <SearchResultToolbar
         api={query?.length > 0 ? 'search' : 'list'}
-        type="files"
+        type="file"
         filter={filter}
         query={query}
         count={count}

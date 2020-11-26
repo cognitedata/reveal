@@ -49,7 +49,7 @@ export const AssetSearchResults = ({
     <>
       <SearchResultToolbar
         api={query.length > 0 ? 'search' : 'list'}
-        type="assets"
+        type="asset"
         filter={filter}
         query={query}
       >

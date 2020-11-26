@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { ResultCount, SpacedRow } from 'lib';
+import { ResourceType } from 'lib/types';
 
 export const SearchResultToolbar = ({
   api,
@@ -12,7 +12,7 @@ export const SearchResultToolbar = ({
   count,
 }: {
   api: 'list' | 'search';
-  type: SdkResourceType;
+  type: ResourceType;
   filter?: any;
   query?: string;
   children?: React.ReactNode;

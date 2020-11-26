@@ -29,7 +29,7 @@ export const SequenceSearchResults = ({
     <>
       <SearchResultToolbar
         api={query.length > 0 ? 'search' : 'list'}
-        type="sequences"
+        type="sequence"
         filter={filter}
         query={query}
         count={count}

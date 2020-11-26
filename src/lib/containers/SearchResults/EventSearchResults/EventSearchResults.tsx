@@ -29,7 +29,7 @@ export const EventSearchResults = ({
     <>
       <SearchResultToolbar
         api={query.length > 0 ? 'search' : 'list'}
-        type="events"
+        type="event"
         filter={filter}
         query={query}
         count={count}

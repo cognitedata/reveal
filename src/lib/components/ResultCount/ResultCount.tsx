@@ -1,15 +1,12 @@
 import React from 'react';
-import {
-  SdkResourceType,
-  useSearch,
-  useAggregate,
-} from '@cognite/sdk-react-query-hooks';
+import { useSearch, useAggregate } from '@cognite/sdk-react-query-hooks';
 import { formatNumber } from 'lib/utils/numbers';
 import { Body } from '@cognite/cogs.js';
+import { getTitle, ResourceType, convertResourceType } from 'lib/types';
 
 type ResultProps = {
   api: 'list' | 'search';
-  type: SdkResourceType;
+  type: ResourceType;
   filter?: any;
   count?: number;
   query?: string;
@@ -22,24 +19,26 @@ export function ResultCount({
   filter,
   query,
   count,
-  label = 'results',
+  label,
 }: ResultProps) {
+  const sdkType = convertResourceType(type);
   const { data: search, isFetched: searchDone } = useSearch(
-    type,
+    sdkType,
     query!,
     { limit: 1000 },
     {
       enabled: api === 'search' && query && query.length > 0 && !count,
     }
   );
-  const { data: list, isFetched: listDone } = useAggregate(type, filter, {
+  const { data: list, isFetched: listDone } = useAggregate(sdkType, filter, {
     enabled: api === 'list' && !count,
   });
 
   if (count !== undefined) {
     return (
       <Body level={4}>
-        {formatNumber(count)} {label}
+        {formatNumber(count)}{' '}
+        {label || getTitle(type, count !== 1).toLowerCase()}
       </Body>
     );
   }
@@ -49,7 +48,8 @@ export function ResultCount({
       if (listDone && Number.isFinite(list?.count)) {
         return (
           <Body level={4}>
-            {formatNumber(list?.count!)} {label}
+            {formatNumber(list?.count!)}{' '}
+            {label || getTitle(type, count !== 1).toLowerCase()}
           </Body>
         );
       }
@@ -59,7 +59,8 @@ export function ResultCount({
       if (searchDone && Number.isFinite(search?.length)) {
         return (
           <Body level={4}>
-            {formatNumber(search?.length!)} {label}
+            {formatNumber(search?.length!)}{' '}
+            {label || getTitle(type, count !== 1).toLowerCase()}
           </Body>
         );
       }
