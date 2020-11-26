@@ -15,6 +15,56 @@ import styled from 'styled-components';
 
 const TRANSITION_TIME = 200;
 
+type FilterProps = Required<ResourceFilterProps> &
+  SetResourceFilterProps & {
+    resourceType: ResourceType;
+  };
+const Filters = ({
+  resourceType,
+  assetFilter,
+  setAssetFilter,
+  timeseriesFilter,
+  setTimeseriesFilter,
+  sequenceFilter,
+  setSequenceFilter,
+  eventFilter,
+  setEventFilter,
+  fileFilter,
+  setFileFilter,
+}: FilterProps) => {
+  switch (resourceType) {
+    case 'asset': {
+      return <AssetFilters filter={assetFilter} setFilter={setAssetFilter} />;
+    }
+    case 'event': {
+      return <EventFilters filter={eventFilter} setFilter={setEventFilter} />;
+    }
+    case 'timeSeries': {
+      return (
+        <TimeseriesFilters
+          filter={timeseriesFilter}
+          setFilter={setTimeseriesFilter}
+        />
+      );
+    }
+    case 'file': {
+      return <FileFilters filter={fileFilter} setFilter={setFileFilter} />;
+    }
+    case 'sequence': {
+      return (
+        <SequenceFilters
+          filter={sequenceFilter}
+          setFilter={setSequenceFilter}
+        />
+      );
+    }
+
+    default: {
+      return null;
+    }
+  }
+};
+
 export const SearchFilters = ({
   visible = true,
   allowHide = true,
@@ -37,39 +87,6 @@ export const SearchFilters = ({
   closeFilters?: () => void;
 } & Required<ResourceFilterProps> &
   SetResourceFilterProps) => {
-  const Filters = () => {
-    switch (resourceType) {
-      case 'asset': {
-        return <AssetFilters filter={assetFilter} setFilter={setAssetFilter} />;
-      }
-      case 'event': {
-        return <EventFilters filter={eventFilter} setFilter={setEventFilter} />;
-      }
-      case 'timeSeries': {
-        return (
-          <TimeseriesFilters
-            filter={timeseriesFilter}
-            setFilter={setTimeseriesFilter}
-          />
-        );
-      }
-      case 'file': {
-        return <FileFilters filter={fileFilter} setFilter={setFileFilter} />;
-      }
-      case 'sequence': {
-        return (
-          <SequenceFilters
-            filter={sequenceFilter}
-            setFilter={setSequenceFilter}
-          />
-        );
-      }
-
-      default: {
-        return null;
-      }
-    }
-  };
   return (
     <div
       style={{
@@ -98,7 +115,19 @@ export const SearchFilters = ({
           </HeaderRow>
           <Row style={{ marginRight: 16 }}>
             <Col flex="auto">
-              <Filters />
+              <Filters
+                resourceType={resourceType}
+                assetFilter={assetFilter}
+                setAssetFilter={setAssetFilter}
+                timeseriesFilter={timeseriesFilter}
+                setTimeseriesFilter={setTimeseriesFilter}
+                sequenceFilter={sequenceFilter}
+                setSequenceFilter={setSequenceFilter}
+                eventFilter={eventFilter}
+                setEventFilter={setEventFilter}
+                fileFilter={fileFilter}
+                setFileFilter={setFileFilter}
+              />
             </Col>
           </Row>
         </>
