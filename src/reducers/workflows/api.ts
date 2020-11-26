@@ -133,7 +133,7 @@ export const deleteWorkflow = (
         changes: { workflowIds: nextWorkflowIds },
       })
     );
-    toast.success('Workflow saved!');
+    toast.success('Workflow deleted!');
   } catch (e) {
     toast.error('Failed to delete workflow');
   }
