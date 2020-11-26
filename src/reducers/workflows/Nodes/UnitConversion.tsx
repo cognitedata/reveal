@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Input } from '@cognite/cogs.js';
-import { StorableNode } from '../types';
+import { ConfigPanelComponentProps, StorableNode } from '../types';
 
 type FunctionData = {
   multiplier: number;
@@ -22,13 +22,12 @@ export const effect = async (funcData: FunctionData, a: DataPoint[]) => {
 export const effectId = 'UNIT_CONVERSION';
 
 export const configPanel = ({
-  data,
-  onUpdate,
-}: {
-  data: FunctionData;
-  onUpdate: (nextData: FunctionData) => void;
-}) => {
-  const [multiplier, setMulitplier] = useState<string>(String(data.multiplier));
+  node,
+  onUpdateNode,
+}: ConfigPanelComponentProps) => {
+  const [multiplier, setMultiplier] = useState<string>(
+    String(node.functionData.multiplier)
+  );
 
   return (
     <div>
@@ -37,9 +36,14 @@ export const configPanel = ({
         id="multiplier"
         value={multiplier}
         onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
-          setMulitplier(newValue.target.value);
+          setMultiplier(newValue.target.value);
           if (!Number.isNaN(Number(newValue.target.value))) {
-            onUpdate({ ...data, multiplier: Number(newValue.target.value) });
+            onUpdateNode({
+              functionData: {
+                ...node.functionData,
+                multiplier: Number(newValue.target.value),
+              },
+            });
           }
         }}
       />
