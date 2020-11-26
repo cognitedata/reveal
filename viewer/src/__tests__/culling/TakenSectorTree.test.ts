@@ -8,9 +8,7 @@ import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '../../data
 import { TakenSectorTree } from '../../datamodels/cad/sector/culling/TakenSectorTree';
 import { LevelOfDetail, traverseDepthFirst } from '../../internal';
 import { SectorMetadata, CadModelMetadata } from '../../experimental';
-
-type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
-type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+import { Mutable, PropType } from '../types';
 
 describe('TakenSectorTree', () => {
   const model: CadModelMetadata = {} as any;
