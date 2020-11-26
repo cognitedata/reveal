@@ -34,6 +34,7 @@ const ChartComponent = ({ chart }: ChartProps) => {
   useEffect(() => {
     async function performQuery() {
       if (!chart?.timeSeriesCollection?.length) {
+        setTimeSeriesDataPoints([]);
         return;
       }
 

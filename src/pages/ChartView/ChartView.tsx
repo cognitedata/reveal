@@ -41,6 +41,8 @@ import {
   SourceItem,
   SourceCircle,
   ChartWrapper,
+  SourceMenu,
+  SourceName,
 } from './elements';
 
 type ChartViewProps = {
@@ -146,6 +148,15 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  const handleRemoveTimeSeries = (timeSeriesId: string) => {
+    dispatch(
+      chartsSlice.actions.removeTimeSeries({
+        id: chart?.id || '',
+        timeSeriesId,
+      })
+    );
+  };
+
   if (!hasData) {
     return <Icon type="Loading" />;
   }
@@ -196,8 +207,26 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       return (
         <SourceItem>
           <SourceCircle color={color} />
-          {id}
-          <Icon type="VerticalEllipsis" />
+          <SourceName title={id}>{id}</SourceName>
+          <SourceMenu>
+            <Dropdown
+              content={
+                <Menu>
+                  <Menu.Header>
+                    <span style={{ wordBreak: 'break-word' }}>{id}</span>
+                  </Menu.Header>
+                  <Menu.Item
+                    onClick={() => handleRemoveTimeSeries(id)}
+                    appendIcon="Delete"
+                  >
+                    <span>Remove</span>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <Icon type="VerticalEllipsis" />
+            </Dropdown>
+          </SourceMenu>
         </SourceItem>
       );
     }

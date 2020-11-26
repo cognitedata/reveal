@@ -71,6 +71,22 @@ const chartsSlice = createSlice({
       });
     },
 
+    removeTimeSeries: (
+      state,
+      action: PayloadAction<{ id: string; timeSeriesId: string }>
+    ) => {
+      const { id, timeSeriesId } = action.payload;
+      const chart = chartAdapter.getSelectors().selectById(state, id);
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          timeSeriesCollection: chart?.timeSeriesCollection?.filter(
+            (timeSeries) => timeSeries.id !== timeSeriesId
+          ),
+        },
+      });
+    },
+
     changeDateRange: (
       state,
       action: PayloadAction<{ id: string; dateFrom?: Date; dateTo?: Date }>

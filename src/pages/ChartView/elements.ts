@@ -115,10 +115,12 @@ export const SourceCircle = styled.span`
 `;
 
 export const SourceItem = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   height: 50px;
+  text-overflow: ellipsis;
   border-bottom: 1px solid var(--cogs-greyscale-grey2);
   cursor: pointer;
 
@@ -127,12 +129,38 @@ export const SourceItem = styled.div`
   }
 `;
 
+export const SourceName = styled.span`
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
 export const SourceButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 10px;
   margin-bottom: 30px;
+`;
+
+export const SourceMenu = styled.div`
+  position: absolute;
+  right: 0px;
+  height: 100%;
+  width: 30px;
+  background-color: white;
+  border-left: 1px solid var(--cogs-greyscale-grey2);
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey1);
+  }
+
+  & > span {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export const ChartWrapper = styled.div`
