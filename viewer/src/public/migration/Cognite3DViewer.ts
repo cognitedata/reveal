@@ -31,10 +31,10 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
+import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
@@ -43,7 +43,14 @@ import { clickOrTouchEventOffset } from '../../utilities/events';
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
-import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection } from '../..';
+import {
+  AntiAliasingMode,
+  CadIntersection,
+  IntersectionFromPixelOptions,
+  PointCloudIntersection,
+  RevealOptions
+} from '../..';
+import { PropType } from '../../__tests__/types';
 
 /**
  * @example
@@ -186,8 +193,7 @@ export class Cognite3DViewer {
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
 
-    const revealOptions: RevealOptions = { internal: {} };
-    revealOptions.internal = { sectorCuller: options._sectorCuller };
+    const revealOptions = createRevealManagerOptions(options);
 
     this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
     this.startPointerEventListeners();
@@ -1385,4 +1391,48 @@ function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): T
   outBuffer[6].set(max.x, min.y, max.z);
   outBuffer[7].set(min.x, max.y, max.z);
   return outBuffer;
+}
+
+function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
+  const revealOptions: RevealOptions = { internal: {} };
+  revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
+  const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
+
+  revealOptions.renderOptions = {
+    antiAliasing,
+    multiSampleCountHint: multiSampleCount
+  };
+  return revealOptions;
+}
+
+function determineAntiAliasingMode(
+  mode: PropType<Cognite3DViewerOptions, 'antiAliasingHint'>
+): { antiAliasing: AntiAliasingMode; multiSampleCount: number } {
+  mode = mode || 'fxaa';
+
+  switch (mode) {
+    case 'disabled':
+      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 1 };
+    case 'fxaa':
+      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 1 };
+    case 'msaa2':
+      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 2 };
+    case 'msaa4':
+      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 4 };
+    case 'msaa8':
+      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 8 };
+    case 'msaa16':
+      return { antiAliasing: AntiAliasingMode.NoAA, multiSampleCount: 16 };
+    case 'msaa2+fxaa':
+      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 2 };
+    case 'msaa4+fxaa':
+      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 4 };
+    case 'msaa8+fxaa':
+      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 8 };
+    case 'msaa16+fxaa':
+      return { antiAliasing: AntiAliasingMode.FXAA, multiSampleCount: 16 };
+    default:
+      // Ensures there is a compile error if a case is missing
+      assertNever(mode, `Unsupported anti-aliasing mode: ${mode}`);
+  }
 }

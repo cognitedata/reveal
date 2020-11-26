@@ -57,6 +57,36 @@ export interface Cognite3DViewerOptions {
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 
+  /**
+   * Hints Reveal to use a given anti-aliasing technique.
+   *
+   * Fast approximate anti-aliasing (FXAA) is a fast technique that will remove some, but not all aliasing effects. See
+   * https://en.wikipedia.org/wiki/Fast_approximate_anti-aliasing.
+   *
+   * Multi-sampling anti-aliasinbg (MSAA) is a technique for taking multiple samples per pixel to avoid aliasing effects.
+   * This mode requires WebGL 2. See https://www.khronos.org/opengl/wiki/Multisampling.
+   *
+   * The combined modes will apply both MSAA and FXAA anti-aliasing and yields the best visual result.
+   *
+   * When using the MSAA modes combined with FXAA Reveal will fall back to FXAA on WebGL 1. There is no fallback for the
+   * "plain" MSAA modes on WebGL 1.
+   *
+   * Currently the default mode is FXAA, but this is subject to change.
+   *
+   * @version new in 1.3.0
+   */
+  antiAliasingHint?:
+    | 'disabled'
+    | 'fxaa'
+    | 'msaa2+fxaa'
+    | 'msaa4+fxaa'
+    | 'msaa8+fxaa'
+    | 'msaa16+fxaa'
+    | 'msaa2'
+    | 'msaa4'
+    | 'msaa8'
+    | 'msaa16';
+
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 
