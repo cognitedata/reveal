@@ -1,6 +1,6 @@
 import React from 'react';
-import { ButtonGroup } from 'lib/components';
-import { SearchResultToolbar } from 'lib/containers';
+import { ButtonGroup } from 'lib';
+import { SearchResultToolbar } from '../SearchResultToolbar';
 
 export const TimeseriesToolbar = ({
   onViewChange,

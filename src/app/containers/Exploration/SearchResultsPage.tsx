@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import {
   ResourceItem,
-  ResourcePreviewProvider,
   SearchFilters,
   ResourceTypeTabs,
-  SearchResults,
+  AssetSearchResults,
+  FileSearchResults,
+  SequenceSearchResults,
+  TimeseriesSearchResults,
+  EventSearchResults,
 } from 'lib';
 import { Row, Col } from 'antd';
 import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
@@ -26,6 +29,7 @@ import {
 import { SEARCH_KEY, CART_KEY } from 'app/utils/contants';
 import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
+import { useDateRange } from 'app/context/DateRangeContext';
 import FilterToggleButton from './FilterToggleButton';
 import { LabelsQuickSelect } from './LabelsQuickSelect';
 
@@ -80,8 +84,69 @@ function SearchPage() {
 
   const isSelected = (item: ResourceItem) => cart.includes(item.id);
 
+  const [dateRange, setDateRange] = useDateRange();
+
+  const SearchResults = () => {
+    const commonProps = {
+      query: debouncedQuery,
+      onSelect,
+      selectionMode: mode,
+      isSelected,
+      activeIds: activeId ? [activeId] : [],
+      disableScroll: !!activeId,
+      dateRange,
+      onDateRangeChange: setDateRange,
+    };
+    switch (currentResourceType) {
+      case 'asset':
+        return (
+          <AssetSearchResults
+            onClick={item => openPreview(item.id)}
+            filter={assetFilter}
+            {...commonProps}
+          />
+        );
+      case 'file':
+        return (
+          <FileSearchResults
+            filter={fileFilter}
+            allowEdit={editable}
+            onClick={item => openPreview(item.id)}
+            {...commonProps}
+          />
+        );
+      case 'sequence':
+        return (
+          <SequenceSearchResults
+            onClick={item => openPreview(item.id)}
+            filter={sequenceFilter}
+            {...commonProps}
+          />
+        );
+      case 'timeSeries':
+        return (
+          <TimeseriesSearchResults
+            onClick={item => openPreview(item.id)}
+            filter={timeseriesFilter}
+            showDatePicker={!activeId}
+            {...commonProps}
+          />
+        );
+      case 'event':
+        return (
+          <EventSearchResults
+            onClick={item => openPreview(item.id)}
+            filter={eventFilter}
+            {...commonProps}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <ResourcePreviewProvider>
+    <>
       <ResourceTypeTabs
         currentResourceType={currentResourceType}
         setCurrentResourceType={setCurrentResourceType}
@@ -107,6 +172,8 @@ function SearchPage() {
             width: active ? 440 : 'unset',
             flex: active ? 'unset' : 1,
             borderRight: active ? `1px solid ${lightGrey}` : 'unset',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <SearchInputContainer align="middle">
@@ -133,21 +200,7 @@ function SearchPage() {
               paddingLeft: showFilter ? 8 : 0,
             }}
           >
-            <SearchResults
-              query={debouncedQuery}
-              assetFilter={assetFilter}
-              timeseriesFilter={timeseriesFilter}
-              sequenceFilter={sequenceFilter}
-              eventFilter={eventFilter}
-              fileFilter={fileFilter}
-              resourceType={currentResourceType}
-              allowEdit={editable}
-              onClick={item => openPreview(item.id)}
-              onSelect={onSelect}
-              selectionMode={mode}
-              isSelected={isSelected}
-              activeIds={activeId ? [activeId] : []}
-            />
+            {SearchResults()}
           </SearchResultWrapper>
         </div>
 
@@ -173,7 +226,7 @@ function SearchPage() {
           )}
         </div>
       </Wrapper>
-    </ResourcePreviewProvider>
+    </>
   );
 }
 

@@ -5,6 +5,7 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
+import { DateFilter } from './DateFilter/DateFilter';
 
 export const SequenceFilters = ({
   filter,
@@ -52,6 +53,26 @@ export const SequenceFilters = ({
           setFilter({
             ...filter,
             metadata: newMetadata,
+          })
+        }
+      />
+      <DateFilter
+        title="Created Time"
+        value={filter.createdTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            createdTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="Updated Time"
+        value={filter.lastUpdatedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            lastUpdatedTime: newDate || undefined,
           })
         }
       />

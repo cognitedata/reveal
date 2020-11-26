@@ -14,6 +14,7 @@ import RootApp from 'app/containers/App';
 import AntStyles from 'app/styles/AntStyles';
 import { Loader } from '@cognite/cogs.js';
 import collapseStyle from 'rc-collapse/assets/index.css';
+import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 import theme from './styles/theme';
 import { setupSentry } from './utils/SetupSentry';
 import rootStyles from './styles/index.css';
@@ -39,11 +40,13 @@ export default () => {
     cogsStyles.use();
     rootStyles.use();
     collapseStyle.use();
+    datePickerStyle.use();
     setupSentry();
     return () => {
       cogsStyles.unuse();
       rootStyles.unuse();
       collapseStyle.unuse();
+      datePickerStyle.unuse();
     };
   }, []);
 

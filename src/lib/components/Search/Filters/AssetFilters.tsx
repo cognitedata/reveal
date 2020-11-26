@@ -7,6 +7,7 @@ import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+import { DateFilter } from './DateFilter/DateFilter';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFilters = ({
@@ -78,6 +79,26 @@ export const AssetFilters = ({
           setFilter({
             ...filter,
             metadata: newMetadata,
+          })
+        }
+      />
+      <DateFilter
+        title="Created Time"
+        value={filter.createdTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            createdTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="Updated Time"
+        value={filter.lastUpdatedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            lastUpdatedTime: newDate || undefined,
           })
         }
       />

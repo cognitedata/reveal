@@ -10,6 +10,7 @@ import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
+import { DateFilter } from './DateFilter/DateFilter';
 
 export const TimeseriesFilters = ({
   filter,
@@ -77,7 +78,6 @@ export const TimeseriesFilters = ({
           })
         }
       />
-
       <MetadataFilter
         items={items}
         value={filter.metadata}
@@ -85,6 +85,26 @@ export const TimeseriesFilters = ({
           setFilter({
             ...filter,
             metadata: newMetadata,
+          })
+        }
+      />
+      <DateFilter
+        title="Created Time"
+        value={filter.createdTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            createdTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="Updated Time"
+        value={filter.lastUpdatedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            lastUpdatedTime: newDate || undefined,
           })
         }
       />

@@ -4,7 +4,6 @@ import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { EventDetails } from 'lib/containers/Events';
 import { renderTitle } from 'lib/utils/EventsUtils';
-import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 import { ErrorFeedback, Loader, Tabs } from 'lib/components';
@@ -67,33 +66,28 @@ export const EventPreview = ({
         getTitle={renderTitle}
         actions={actions}
       />
-      <div style={{ flexGrow: 1 }}>
-        <Row style={{ marginLeft: 16, height: 'calc(100% - 215px)' }}>
-          <Col span={24}>
-            <ResourceDetailsTabs
-              parentResource={{
-                type: 'event',
-                id: event.id,
-                externalId: event.externalId,
-              }}
-              tab={activeTab}
-              onTabChange={newTab =>
-                history.push(
-                  createLink(
-                    `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-                  )
-                )
-              }
-              additionalTabs={[
-                <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                  <EventDetails event={event} />
-                  <Metadata metadata={event.metadata} />
-                </Tabs.Pane>,
-              ]}
-            />
-          </Col>
-        </Row>
-      </div>
+      <ResourceDetailsTabs
+        style={{ paddingLeft: 16 }}
+        parentResource={{
+          type: 'event',
+          id: event.id,
+          externalId: event.externalId,
+        }}
+        tab={activeTab}
+        onTabChange={newTab =>
+          history.push(
+            createLink(
+              `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+            )
+          )
+        }
+        additionalTabs={[
+          <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+            <EventDetails event={event} />
+            <Metadata metadata={event.metadata} />
+          </Tabs.Pane>,
+        ]}
+      />
     </>
   );
 };

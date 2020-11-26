@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { AreaClosed, Line, Bar } from '@visx/shape';
+import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
 import { GridRows, GridColumns } from '@visx/grid';
 import { scaleTime, scaleLinear } from '@visx/scale';
 import {
@@ -25,20 +25,23 @@ const primaryColor2 = Colors['midblue-6'].hex();
 const areaColor = Colors['midblue-5'].hex();
 const tooltipStyles = {
   ...defaultStyles,
-  background: primaryColor2,
+  background: 'white',
   border: 'none',
   color: 'white',
 };
 
 // util
-const formatDate = timeFormat("%b %d, '%y");
+const formatDate = timeFormat('%b %d %Y, %H:%m');
 
 // accessors
 const getDate = (d?: DatapointAggregate) =>
   d ? new Date(d.timestamp) : new Date(0);
-const getDataPointValue = (d?: DatapointAggregate) => (d ? d.average : 0);
-const getDataPointMaxValue = (d?: DatapointAggregate) => (d ? d.max : 0);
-const getDataPointMinValue = (d?: DatapointAggregate) => (d ? d.min : 0);
+const getDataPointValue = (d?: DatapointAggregate) =>
+  d ? d.average : undefined;
+const getDataPointMaxValue = (d?: DatapointAggregate) =>
+  d ? d.max : undefined;
+const getDataPointMinValue = (d?: DatapointAggregate) =>
+  d ? d.min : undefined;
 const bisectDate = bisector<DatapointAggregate, Date>(
   d => new Date(d.timestamp)
 ).left;
@@ -46,11 +49,14 @@ const bisectDate = bisector<DatapointAggregate, Date>(
 export type LineChartProps = {
   width: number;
   height: number;
+  minRowTicks?: number;
   domain?: [Date, Date];
   showGridLine?: 'both' | 'horizontal' | 'vertical' | 'none';
   showAxis?: 'both' | 'horizontal' | 'vertical' | 'none';
   enableTooltip?: boolean;
   showPoints?: boolean;
+  enableArea?: boolean;
+  enableMinMaxArea?: boolean;
   values: DatapointAggregate[];
   margin?: { top: number; right: number; bottom: number; left: number };
 };
@@ -62,8 +68,11 @@ export const LineChart = ({
   domain,
   showGridLine = 'horizontal',
   showAxis = 'both',
+  enableArea = false,
+  enableMinMaxArea = true,
   enableTooltip = true,
   showPoints = true,
+  minRowTicks = 5,
   margin = { top: 0, right: 40, bottom: 40, left: 0 },
 }: LineChartProps) => {
   const {
@@ -86,18 +95,19 @@ export const LineChart = ({
       }),
     [innerWidth, values, domain]
   );
-  const valuesScale = useMemo(
-    () =>
-      scaleLinear({
-        range: [innerHeight, 0],
-        domain: [
-          (min(values, getDataPointMinValue) || 0) - innerHeight / 3,
-          (max(values, getDataPointMaxValue) || 0) + innerHeight / 3,
-        ],
-        nice: true,
-      }),
-    [innerHeight, values]
-  );
+  const valuesScale = useMemo(() => {
+    const minValues = values
+      .map(getDataPointMinValue)
+      .filter(el => !!el) as number[];
+    const maxValues = values
+      .map(getDataPointMaxValue)
+      .filter(el => !!el) as number[];
+    return scaleLinear({
+      range: [innerHeight, 0],
+      domain: [min(minValues) || 0, max(maxValues) || 1],
+      nice: true,
+    });
+  }, [innerHeight, values]);
 
   // tooltip handler
   const handleTooltip = useCallback(
@@ -129,7 +139,7 @@ export const LineChart = ({
     [margin.left, values, showTooltip, valuesScale, dateScale]
   );
 
-  const numRowTicks = Math.max(5, Math.floor(height / 30));
+  const numRowTicks = Math.max(minRowTicks, Math.floor(height / 30));
   const numColumnTicks = Math.max(5, Math.floor(width / 100));
   const getXWithScale = (d: DatapointAggregate) => {
     return dateScale(getDate(d));
@@ -200,41 +210,72 @@ export const LineChart = ({
       </>
     );
   };
+  const renderableValues = values.filter(el => {
+    const data = getDataPointValue(el);
+    if (data) {
+      return !!valuesScale(data);
+    }
+    return false;
+  });
 
-  const renderLine = () => {
+  const renderArea = () => {
+    if (!enableArea) {
+      return <></>;
+    }
     return (
       <AreaClosed<DatapointAggregate>
-        data={values}
+        data={renderableValues}
         width={innerWidth}
         height={innerHeight}
-        x={d => getXWithScale(d) ?? 0}
-        y={d => {
-          const data = getDataPointValue(d);
-          const value = data ? valuesScale(data) : undefined;
-          return value || 0;
+        x={d => getXWithScale(d)!}
+        y1={d => {
+          return valuesScale(getDataPointValue(d)!)!;
         }}
+        y0={0}
         yScale={valuesScale}
-        strokeWidth={1}
+        strokeWidth={0}
         stroke="url(#area-gradient)"
-        fill="transparent"
+        fill="url(#area-gradient)"
+      />
+    );
+  };
+  const renderLine = () => {
+    return (
+      <LinePath<DatapointAggregate>
+        data={renderableValues}
+        width={innerWidth}
+        height={innerHeight}
+        x={d => getXWithScale(d)!}
+        y={d => {
+          return valuesScale(getDataPointValue(d)!)!;
+        }}
+        strokeWidth={2}
+        stroke={primaryColor}
       />
     );
   };
   const renderThreshold = () => {
+    if (!enableMinMaxArea) {
+      return <></>;
+    }
+    const renderableMinMaxValues = values.filter(el => {
+      const minVal = getDataPointMinValue(el);
+      const maxVal = getDataPointMaxValue(el);
+      if (!!minVal && !!maxVal) {
+        return !!valuesScale(minVal) && !!valuesScale(maxVal);
+      }
+      return false;
+    });
     return (
       <Threshold<DatapointAggregate>
         id={`${Math.random()}`}
-        data={values}
-        x={d => getXWithScale(d) ?? 0}
+        data={renderableMinMaxValues}
+        x={d => getXWithScale(d)!}
         y0={d => {
-          const data = getDataPointMinValue(d);
-          const value = data ? valuesScale(data) : undefined;
-          return value || 0;
+          return valuesScale(getDataPointMinValue(d)!)!;
         }}
         y1={d => {
-          const data = getDataPointMaxValue(d);
-          const value = data ? valuesScale(data) : undefined;
-          return value || 0;
+          return valuesScale(getDataPointMaxValue(d)!)!;
         }}
         clipAboveTo={0}
         clipBelowTo={innerHeight}
@@ -273,7 +314,7 @@ export const LineChart = ({
     );
   };
 
-  const renderTooltip = () => {
+  const renderTooltipLine = () => {
     if (!enableTooltip) {
       return <></>;
     }
@@ -321,38 +362,46 @@ export const LineChart = ({
             />
           </g>
         )}
-        {tooltipData && (
-          <div>
-            <TooltipWithBounds
-              key={Math.random()}
-              top={tooltipTop - 90}
-              left={tooltipLeft + 12}
-              style={tooltipStyles}
-            >
-              <>
-                <Overline level={3}>Value</Overline>
-                <Body level={3}>{getDataPointValue(tooltipData)}</Body>
-                <Overline level={3}>Max</Overline>
-                <Body level={3}>{getDataPointMaxValue(tooltipData)}</Body>
-                <Overline level={3}>Min</Overline>
-                <Body level={3}>{getDataPointMinValue(tooltipData)}</Body>
-              </>
-            </TooltipWithBounds>
-            <Tooltip
-              top={innerHeight + margin.top - 14}
-              left={tooltipLeft}
-              style={{
-                ...defaultStyles,
-                minWidth: 72,
-                textAlign: 'center',
-                transform: 'translateX(-50%)',
-              }}
-            >
-              {formatDate(getDate(tooltipData))}
-            </Tooltip>
-          </div>
-        )}
       </>
+    );
+  };
+
+  const renderTooltipContent = () => {
+    if (!enableTooltip) {
+      return <></>;
+    }
+    return (
+      tooltipData && (
+        <div>
+          <TooltipWithBounds
+            key={Math.random()}
+            top={tooltipTop - 90}
+            left={tooltipLeft + 12}
+            style={tooltipStyles}
+          >
+            <>
+              <Overline level={3}>Value</Overline>
+              <Body level={3}>{getDataPointValue(tooltipData)}</Body>
+              <Overline level={3}>Max</Overline>
+              <Body level={3}>{getDataPointMaxValue(tooltipData)}</Body>
+              <Overline level={3}>Min</Overline>
+              <Body level={3}>{getDataPointMinValue(tooltipData)}</Body>
+            </>
+          </TooltipWithBounds>
+          <Tooltip
+            top={innerHeight + margin.top - 14}
+            left={tooltipLeft}
+            style={{
+              ...defaultStyles,
+              minWidth: 72,
+              textAlign: 'center',
+              transform: 'translateX(-50%)',
+            }}
+          >
+            {formatDate(getDate(tooltipData))}
+          </Tooltip>
+        </div>
+      )
     );
   };
   return (
@@ -364,7 +413,13 @@ export const LineChart = ({
           overflow: 'visible',
         }}
       >
-        <Group left={margin.left} top={margin.top}>
+        <Group
+          left={margin.left}
+          top={margin.top}
+          style={{
+            transform: 'translate(10px, 10px)',
+          }}
+        >
           <LinearGradient
             id="area-gradient"
             from={primaryColor}
@@ -373,12 +428,14 @@ export const LineChart = ({
           />
           {renderGrid()}
           {renderAxis()}
+          {renderArea()}
           {renderLine()}
           {renderThreshold()}
           {renderPoints()}
-          {renderTooltip()}
+          {renderTooltipLine()}
         </Group>
       </svg>
+      {renderTooltipContent()}
     </div>
   );
 };

@@ -47,9 +47,15 @@ export const BooleanFilter = ({
           }
         }}
       >
-        <ButtonGroup.Button key="unset">All</ButtonGroup.Button>
-        <ButtonGroup.Button key="true">True</ButtonGroup.Button>
-        <ButtonGroup.Button key="false">False</ButtonGroup.Button>
+        <ButtonGroup.Button key="unset" style={{ flex: 1 }}>
+          All
+        </ButtonGroup.Button>
+        <ButtonGroup.Button key="true" style={{ flex: 1 }}>
+          True
+        </ButtonGroup.Button>
+        <ButtonGroup.Button key="false" style={{ flex: 1 }}>
+          False
+        </ButtonGroup.Button>
       </ButtonGroup>
     </>
   );

@@ -31,6 +31,7 @@ export const RelatedResourcesLoader = <T extends Resource>({
   children,
   selectionMode = 'none',
   onSelect = () => {},
+  ...props
 }: {
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SelectableItemsProps> &
@@ -59,6 +60,7 @@ export const RelatedResourcesLoader = <T extends Resource>({
   return (
     <>
       {children({
+        ...props,
         onEndReached: () => {
           if (canFetchMore && !isFetchingMore) {
             fetchMore();

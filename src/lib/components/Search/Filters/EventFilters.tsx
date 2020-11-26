@@ -6,6 +6,7 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+import { DateFilter } from './DateFilter/DateFilter';
 
 export const EventFilters = ({
   filter,
@@ -40,6 +41,29 @@ export const EventFilters = ({
         title="Sub-type"
         value={filter.subtype}
         setValue={newValue => setFilter({ ...filter, subtype: newValue })}
+      />
+      <DateFilter
+        title="Start Time"
+        value={filter.startTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            startTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="End Time"
+        enableNull
+        value={
+          filter.endTime && 'isNull' in filter.endTime ? null : filter.endTime
+        }
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            endTime: newDate === null ? { isNull: true } : newDate || undefined,
+          })
+        }
       />
       <ByAssetFilter
         value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
@@ -79,6 +103,26 @@ export const EventFilters = ({
           setFilter({
             ...filter,
             metadata: newMetadata,
+          })
+        }
+      />
+      <DateFilter
+        title="Created Time"
+        value={filter.createdTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            createdTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="Updated Time"
+        value={filter.lastUpdatedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            lastUpdatedTime: newDate || undefined,
           })
         }
       />

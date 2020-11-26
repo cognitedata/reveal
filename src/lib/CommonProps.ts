@@ -50,3 +50,8 @@ export type SetResourceFilterProps = {
   setEventFilter: (newFilter: EventFilter) => void;
   setSequenceFilter: (newFilter: Required<SequenceFilter>['filter']) => void;
 };
+
+export type DateRangeProps = {
+  dateRange?: [Date, Date];
+  onDateRangeChange?: (newRange: [Date, Date]) => void;
+};

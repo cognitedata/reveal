@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
-import { LineChart, LineChartProps, ButtonGroup, Loader } from 'lib/components';
+import {
+  LineChart,
+  LineChartProps,
+  ButtonGroup,
+  Loader,
+  RangePicker,
+  SpacedRow,
+} from 'lib/components';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import moment from 'moment';
+import { DateRangeProps } from 'lib/CommonProps';
 
 export type TIME_OPTION_KEY =
   | '10Y'
@@ -18,23 +26,89 @@ export type TIME_OPTION_KEY =
   | '1H'
   | '15M';
 
-const TIME_SELECT: {
+export const TIME_SELECT: {
   [key in TIME_OPTION_KEY]: {
     label: string;
-    getStartTime: () => moment.Moment;
+    getTime: () => [Date, Date];
   };
 } = {
-  '10Y': { label: '10Y', getStartTime: () => moment().subtract(10, 'years') },
-  '5Y': { label: '5Y', getStartTime: () => moment().subtract(5, 'years') },
-  '2Y': { label: '2Y', getStartTime: () => moment().subtract(2, 'years') },
-  '1Y': { label: '1Y', getStartTime: () => moment().subtract(1, 'years') },
-  '1M': { label: '1M', getStartTime: () => moment().subtract(1, 'months') },
-  '1W': { label: '1W', getStartTime: () => moment().subtract(7, 'days') },
-  '1D': { label: '1D', getStartTime: () => moment().subtract(1, 'days') },
-  '12H': { label: '12H', getStartTime: () => moment().subtract(12, 'hours') },
-  '6H': { label: '6H', getStartTime: () => moment().subtract(6, 'hours') },
-  '1H': { label: '1H', getStartTime: () => moment().subtract(1, 'hours') },
-  '15M': { label: '15M', getStartTime: () => moment().subtract(15, 'minutes') },
+  '10Y': {
+    label: '10Y',
+    getTime: () => [
+      moment().subtract(10, 'years').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '5Y': {
+    label: '5Y',
+    getTime: () => [
+      moment().subtract(5, 'years').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '2Y': {
+    label: '2Y',
+    getTime: () => [
+      moment().subtract(2, 'years').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '1Y': {
+    label: '1Y',
+    getTime: () => [
+      moment().subtract(1, 'years').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '1M': {
+    label: '1M',
+    getTime: () => [
+      moment().subtract(1, 'months').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '1W': {
+    label: '1W',
+    getTime: () => [
+      moment().subtract(7, 'days').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '1D': {
+    label: '1D',
+    getTime: () => [
+      moment().subtract(1, 'days').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '12H': {
+    label: '12H',
+    getTime: () => [
+      moment().subtract(12, 'hours').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '6H': {
+    label: '6H',
+    getTime: () => [
+      moment().subtract(6, 'hours').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '1H': {
+    label: '1H',
+    getTime: () => [
+      moment().subtract(1, 'hours').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
+  '15M': {
+    label: '15M',
+    getTime: () => [
+      moment().subtract(15, 'minutes').startOf('seconds').toDate(),
+      moment().startOf('seconds').toDate(),
+    ],
+  },
 };
 
 export type TimeseriesChartProps = {
@@ -45,10 +119,18 @@ export type TimeseriesChartProps = {
   timeOptions?: TIME_OPTION_KEY[];
   defaultOption?: TIME_OPTION_KEY;
   cacheToDate?: boolean;
+  showCustomRangePicker?: boolean;
 } & Omit<
   LineChartProps,
-  'values' | 'focusedValues' | 'zoom' | 'scaleType' | 'onZoomChanged' | 'width'
->;
+  | 'values'
+  | 'focusedValues'
+  | 'zoom'
+  | 'scaleType'
+  | 'onZoomChanged'
+  | 'width'
+  | 'height'
+> &
+  DateRangeProps;
 
 export const TimeseriesChart = ({
   timeseriesId,
@@ -57,33 +139,40 @@ export const TimeseriesChart = ({
   timeOptions = ['15M', '1H', '6H', '12H', '1D', '1M', '1Y', '2Y', '5Y', '10Y'],
   defaultOption,
   cacheToDate = true,
+  showCustomRangePicker = false,
+  dateRange,
+  onDateRangeChange,
   ...otherProps
 }: TimeseriesChartProps) => {
   const sdk = useSDK();
-  const [timePeriod, setTimePeriod] = useState<TIME_OPTION_KEY>(
-    defaultOption || timeOptions[0]
+  const [timePeriod, setTimePeriod] = useState<TIME_OPTION_KEY | 'custom'>(
+    defaultOption || (dateRange ? 'custom' : timeOptions[0])
   );
 
-  const [presetZoom, setPresetZoomDomain] = useState<[Date, Date]>([
-    TIME_SELECT[timePeriod]
-      .getStartTime()
-      .startOf(cacheToDate ? 'day' : 'ms')
-      .toDate(),
-    moment()
-      .startOf(cacheToDate ? 'day' : 'ms')
-      .toDate(),
-  ]);
+  const [presetZoom, setPresetZoomDomain] = useState<[Date, Date]>(
+    dateRange ||
+      TIME_SELECT[
+        timePeriod !== 'custom' ? timePeriod : timeOptions[0]
+      ].getTime()
+  );
 
   useEffect(() => {
-    setPresetZoomDomain([
-      TIME_SELECT[timePeriod]
-        .getStartTime()
-        .startOf(cacheToDate ? 'day' : 'ms')
-        .toDate(),
-      moment()
-        .startOf(cacheToDate ? 'day' : 'ms')
-        .toDate(),
-    ]);
+    if (dateRange) {
+      setPresetZoomDomain(dateRange);
+      setTimePeriod('custom');
+    }
+  }, [dateRange]);
+
+  useEffect(() => {
+    if (timePeriod === 'custom' && onDateRangeChange) {
+      onDateRangeChange(presetZoom);
+    }
+  }, [onDateRangeChange, presetZoom, timePeriod]);
+
+  useEffect(() => {
+    if (timePeriod !== 'custom') {
+      setPresetZoomDomain(TIME_SELECT[timePeriod].getTime());
+    }
   }, [timePeriod, cacheToDate]);
   const { data: overallData, isLoading } = useQuery(
     [
@@ -138,8 +227,9 @@ export const TimeseriesChart = ({
           }}
         </AutoSizer>
       </div>
-      {timeOptions.length > 1 && (
-        <div>
+
+      <SpacedRow>
+        {timeOptions.length > 1 && (
           <ButtonGroup
             variant="ghost"
             currentKey={timePeriod}
@@ -151,8 +241,21 @@ export const TimeseriesChart = ({
               </ButtonGroup.Button>
             ))}
           </ButtonGroup>
-        </div>
-      )}
+        )}
+        {showCustomRangePicker && (
+          <RangePicker
+            buttonProps={{
+              type: timePeriod === 'custom' ? 'primary' : 'secondary',
+              variant: 'outline',
+            }}
+            initialRange={presetZoom}
+            onRangeChanged={range => {
+              setTimePeriod('custom');
+              setPresetZoomDomain(range);
+            }}
+          />
+        )}
+      </SpacedRow>
     </>
   );
 };

@@ -21,7 +21,7 @@ export const ButtonGroup = ({
   const tabs = children.map(el => el.key) as string[];
 
   const [currentKey, setKey] = useState<typeof tabs[number]>(
-    children[0].key as string
+    propsCurrentKey || (children[0].key as string)
   );
 
   useEffect(() => {

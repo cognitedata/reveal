@@ -5,6 +5,7 @@ import {
   useAggregate,
 } from '@cognite/sdk-react-query-hooks';
 import { formatNumber } from 'lib/utils/numbers';
+import { Body } from '@cognite/cogs.js';
 
 type ResultProps = {
   api: 'list' | 'search';
@@ -37,9 +38,9 @@ export function ResultCount({
 
   if (count !== undefined) {
     return (
-      <>
+      <Body level={4}>
         {formatNumber(count)} {label}
-      </>
+      </Body>
     );
   }
 
@@ -47,9 +48,9 @@ export function ResultCount({
     case 'list': {
       if (listDone && Number.isFinite(list?.count)) {
         return (
-          <>
+          <Body level={4}>
             {formatNumber(list?.count!)} {label}
-          </>
+          </Body>
         );
       }
       return null;
@@ -57,9 +58,9 @@ export function ResultCount({
     case 'search': {
       if (searchDone && Number.isFinite(search?.length)) {
         return (
-          <>
+          <Body level={4}>
             {formatNumber(search?.length!)} {label}
-          </>
+          </Body>
         );
       }
       return null;

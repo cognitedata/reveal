@@ -5,12 +5,15 @@ import { TimeseriesChart } from 'lib/containers/Timeseries';
 import styled from 'styled-components';
 import { Body, Tooltip, Icon } from '@cognite/cogs.js';
 import { GridCellProps, LatestDatapoint } from 'lib/components';
+import { DateRangeProps } from 'lib/CommonProps';
 
 export const TimeseriesSparklineCard = ({
   item,
   onClick,
   style,
-}: GridCellProps<Timeseries>) => {
+  dateRange,
+  onDateRangeChange,
+}: GridCellProps<Timeseries> & DateRangeProps) => {
   const copy = async (s: string) => {
     if (s.length > 0) {
       await navigator.clipboard.writeText(`${s}`);
@@ -51,13 +54,15 @@ export const TimeseriesSparklineCard = ({
         <TimeseriesChart
           height={200}
           timeseriesId={item.id}
-          numberOfPoints={100}
-          showAxis="none"
-          timeOptions={['1Y']}
+          numberOfPoints={500}
+          showAxis="both"
+          timeOptions={[]}
           showContextGraph={false}
           showPoints={false}
-          enableTooltip={false}
+          enableTooltip
           showGridLine="none"
+          dateRange={dateRange}
+          onDateRangeChange={onDateRangeChange}
         />
         <Title>
           <Tooltip interactive disabled={!item.name} content={item.name}>

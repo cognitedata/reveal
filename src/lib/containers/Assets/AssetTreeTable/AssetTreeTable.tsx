@@ -14,6 +14,7 @@ export const AssetTreeTable = ({
   onAssetClicked,
   activeIds = [],
   isSelected,
+  disableScroll,
   startFromRoot = false,
   ...selectionProps
 }: {
@@ -22,6 +23,7 @@ export const AssetTreeTable = ({
   activeIds?: number[];
   onAssetClicked: (item: Asset) => void;
   startFromRoot?: boolean;
+  disableScroll?: boolean;
 } & SelectableItemsProps) => {
   const [listExpandedRowKeys, setListExpandedRowKeys] = useState<number[]>([]);
   const [searchExpandedRowKeys, setSearchExpandedRowKeys] = useState<number[]>(
@@ -201,6 +203,7 @@ export const AssetTreeTable = ({
         }
         return cells;
       }}
+      disableScroll={disableScroll}
       selectionMode={selectionProps.selectionMode}
       onRowSelected={item =>
         selectionProps.onSelect({ type: 'asset', id: item.id })

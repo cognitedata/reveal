@@ -18,6 +18,7 @@ type ResouceDetailsTabsProps = {
   additionalTabs?: React.ReactElement<TabPaneProps>[];
   excludedTypes?: ResourceType[];
   onTabChange: (tab: string) => void;
+  style?: React.CSSProperties;
 };
 
 const defaultRelationshipTabs: ResourceType[] = [
@@ -68,6 +69,7 @@ export const ResourceDetailsTabs = ({
   additionalTabs = [],
   excludedTypes = [],
   onTabChange,
+  style,
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
   const {
@@ -115,7 +117,7 @@ export const ResourceDetailsTabs = ({
   }, [permissionFetched, relationshipPermission]);
 
   return (
-    <Tabs tab={tab} onTabChange={onTabChange}>
+    <Tabs tab={tab} onTabChange={onTabChange} style={style}>
       {tabs}
     </Tabs>
   );

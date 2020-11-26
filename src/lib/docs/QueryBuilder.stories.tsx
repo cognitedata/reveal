@@ -3,7 +3,7 @@ import { AssetFilterProps } from '@cognite/sdk';
 import { action } from '@storybook/addon-actions';
 import { Wrapper } from './utils';
 import { DataSetFilter } from '../components/Search/Filters';
-import { AssetSearchResults } from '../containers/Assets';
+import { AssetSearchResults } from '../containers/SearchResults';
 
 export const QueryBuilder = () => {
   const [assetFilter, setAssetFilter] = useState<AssetFilterProps>({});

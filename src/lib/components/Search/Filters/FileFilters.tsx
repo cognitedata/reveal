@@ -8,6 +8,7 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { StringFilter } from './StringFilter/StringFilter';
+import { DateFilter } from './DateFilter/DateFilter';
 
 export const FileFilters = ({
   filter,
@@ -65,6 +66,16 @@ export const FileFilters = ({
           })
         }
       />
+      <DateFilter
+        title="Uploaded Time"
+        value={filter.uploadedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            uploadedTime: newDate || undefined,
+          })
+        }
+      />
       <StringFilter
         title="External ID"
         value={filter.externalIdPrefix}
@@ -105,6 +116,46 @@ export const FileFilters = ({
           setFilter({
             ...filter,
             metadata: newMetadata,
+          })
+        }
+      />
+      <DateFilter
+        title="Created Time"
+        value={filter.createdTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            createdTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="Updated Time"
+        value={filter.lastUpdatedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            lastUpdatedTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="Source Created Time"
+        value={filter.sourceCreatedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            sourceCreatedTime: newDate || undefined,
+          })
+        }
+      />
+      <DateFilter
+        title="Source Modified Time"
+        value={filter.sourceModifiedTime}
+        setValue={newDate =>
+          setFilter({
+            ...filter,
+            sourceModifiedTime: newDate || undefined,
           })
         }
       />

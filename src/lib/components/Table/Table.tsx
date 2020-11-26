@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, { BaseTableProps, ColumnShape } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
@@ -63,6 +63,7 @@ export type TableProps<T> = Partial<BaseTableProps<T>> & {
   onRowClick?: (item: T, event?: React.SyntheticEvent<Element, Event>) => void;
   selectionMode?: ResourceSelectionMode;
   onRowSelected?: (item: T) => void;
+  disableScroll?: boolean;
 };
 
 export const Table = <T extends { id: AllowedId }>({
@@ -72,11 +73,13 @@ export const Table = <T extends { id: AllowedId }>({
   columns = [],
   query,
   onRowClick,
+  disableScroll = false,
   selectedIds = [],
   selectionMode = 'none',
   onRowSelected = () => {},
   ...props
 }: TableProps<T>) => {
+  const ref = useRef<ReactBaseTable<T>>();
   const renderSelectButton = useCallback(
     (item: T, isSelected: boolean, isHovered: boolean) => {
       return (
@@ -91,11 +94,19 @@ export const Table = <T extends { id: AllowedId }>({
     },
     [selectionMode, onRowSelected]
   );
+
+  useEffect(() => {
+    if (disableScroll && ref && ref.current) {
+      ref.current.scrollToLeft(0);
+    }
+  }, [ref, disableScroll]);
   return (
-    <TableWrapper>
+    <TableWrapper disableScroll={disableScroll}>
       <AutoSizer>
         {({ width, height }) => (
           <ReactBaseTable<T>
+            // @ts-ignore
+            ref={ref}
             width={width}
             height={height}
             rowClassName={({ rowData }: { rowData: T }) => {
@@ -151,11 +162,11 @@ export const Table = <T extends { id: AllowedId }>({
               ...columns.map((el: ColumnShape<T>) => ({
                 headerRenderer,
                 resizable: true,
-                cellProps: { ...el.cellProps, query },
                 cellRenderer: ({ cellData }: { cellData: string }) => (
                   <HighlightCell text={cellData} query={query} />
                 ),
                 ...el,
+                cellProps: { ...el.cellProps, query },
               })),
             ]}
           />

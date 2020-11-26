@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { TimeseriesFilter, Timeseries } from '@cognite/sdk';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import { SelectableItemsProps, DateRangeProps } from 'lib/CommonProps';
 import { ResourceItem } from 'lib';
 import {
   TimeseriesTable,
   TimeseriesSparklineCard,
 } from 'lib/containers/Timeseries';
-import { GridTable } from 'lib/components';
+import { GridTable, SpacedRow, RangePicker } from 'lib/components';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
 import { RelatedResourceType } from 'lib/hooks/RelatedResourcesHooks';
+import { TIME_SELECT } from 'lib/containers';
+import { Body } from '@cognite/cogs.js';
 import { TimeseriesToolbar } from './TimeseriesToolbar';
 
 export const TimeseriesSearchResults = ({
@@ -17,9 +19,12 @@ export const TimeseriesSearchResults = ({
   onClick,
   initialView = 'list',
   showRelatedResources = false,
+  showDatePicker = true,
   relatedResourceType,
   parentResource,
   count,
+  dateRange,
+  onDateRangeChange,
   ...selectionProps
 }: {
   query?: string;
@@ -29,10 +34,14 @@ export const TimeseriesSearchResults = ({
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
   count?: number;
+  showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
-} & SelectableItemsProps) => {
+} & SelectableItemsProps &
+  DateRangeProps) => {
+  const [stateDateRange, stateSetDateRange] = useState<[Date, Date]>(
+    TIME_SELECT['1Y'].getTime()
+  );
   const [currentView, setCurrentView] = useState<string>(initialView);
-
   return (
     <>
       <TimeseriesToolbar
@@ -42,6 +51,19 @@ export const TimeseriesSearchResults = ({
         onViewChange={setCurrentView}
         count={count}
       />
+      {showDatePicker && (
+        <SpacedRow style={{ marginBottom: 8 }}>
+          <Body level={4} style={{ alignSelf: 'center' }}>
+            Showing graph data from
+          </Body>
+          {onDateRangeChange && (
+            <RangePicker
+              initialRange={dateRange || stateDateRange}
+              onRangeChanged={onDateRangeChange || stateSetDateRange}
+            />
+          )}
+        </SpacedRow>
+      )}
       <ResultTableLoader<Timeseries>
         mode={showRelatedResources ? 'relatedResources' : 'search'}
         type="timeSeries"
@@ -62,7 +84,11 @@ export const TimeseriesSearchResults = ({
                 onItemClicked={timeseries => onClick(timeseries)}
                 {...selectionProps}
                 renderCell={cellProps => (
-                  <TimeseriesSparklineCard {...cellProps} />
+                  <TimeseriesSparklineCard
+                    {...cellProps}
+                    dateRange={dateRange || stateDateRange}
+                    onDateRangeChange={onDateRangeChange || stateSetDateRange}
+                  />
                 )}
               />
             </div>
@@ -74,6 +100,8 @@ export const TimeseriesSearchResults = ({
                   onClick(file);
                   return true;
                 }}
+                dateRange={dateRange || stateDateRange}
+                onDateRangeChange={onDateRangeChange || stateSetDateRange}
               />
             </div>
           )

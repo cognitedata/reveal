@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Row, Col } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
 import { ErrorFeedback, Loader, Tabs } from 'lib/components';
@@ -12,6 +11,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import TimeseriesDetails from 'lib/containers/Timeseries/TimeseriesDetails/TimeseriesDetails';
 import Metadata from 'lib/components/Details/Metadata';
 import { TitleRowActionsProps } from 'app/components/TitleRowActions';
+import { useDateRange } from 'app/context/DateRangeContext';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -29,6 +29,7 @@ export const TimeseriesPreview = ({
   actions?: TitleRowActionsProps['actions'];
 }) => {
   const history = useHistory();
+  const [dateRange, setDateRange] = useDateRange();
 
   useEffect(() => {
     trackUsage('Exploration.Timeseries', { timeseriesId });
@@ -60,55 +61,52 @@ export const TimeseriesPreview = ({
   }
 
   return (
-    <div style={{ overflow: 'hidden', height: '100%' }}>
+    <>
       <ResourceTitleRow
         item={{ id: timeseriesId, type: 'timeSeries' }}
         actions={actions}
       />
       {timeseries && (
         <>
-          <Row style={{ marginLeft: 16 }}>
-            <Col span={24}>
-              <TimeseriesChart
-                timeseriesId={timeseries.id}
-                height={500}
-                defaultOption="2Y"
-              />
-            </Col>
-          </Row>
-          <Row
+          <div
             style={{
-              height: 'calc(100% - 635px)',
-              overflow: 'auto',
-              marginLeft: 16,
+              height: '40%',
+              maxHeight: 400,
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            <Col span={24} style={{ display: 'flex', flexDirection: 'column' }}>
-              <ResourceDetailsTabs
-                parentResource={{
-                  type: 'timeSeries',
-                  id: timeseries.id,
-                  externalId: timeseries.externalId,
-                }}
-                tab={activeTab}
-                onTabChange={newTab =>
-                  history.push(
-                    createLink(
-                      `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
-                    )
-                  )
-                }
-                additionalTabs={[
-                  <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
-                    <TimeseriesDetails timeseries={timeseries} />
-                    <Metadata metadata={timeseries.metadata} />
-                  </Tabs.Pane>,
-                ]}
-              />
-            </Col>
-          </Row>
+            <TimeseriesChart
+              timeseriesId={timeseries.id}
+              showCustomRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+            />
+          </div>
+          <ResourceDetailsTabs
+            style={{ paddingLeft: 16 }}
+            parentResource={{
+              type: 'timeSeries',
+              id: timeseries.id,
+              externalId: timeseries.externalId,
+            }}
+            tab={activeTab}
+            onTabChange={newTab =>
+              history.push(
+                createLink(
+                  `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
+                )
+              )
+            }
+            additionalTabs={[
+              <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
+                <TimeseriesDetails timeseries={timeseries} />
+                <Metadata metadata={timeseries.metadata} />
+              </Tabs.Pane>,
+            ]}
+          />
         </>
       )}
-    </div>
+    </>
   );
 };

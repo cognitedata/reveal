@@ -2,6 +2,7 @@ import React from 'react';
 import '@cognite/cogs.js/dist/cogs.css';
 import 'antd/dist/antd.css';
 import 'rc-collapse/assets/index.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Container, sdkMock } from '../docs/stub';
 import { DataExplorationProvider } from '../context';
 import { Router } from 'react-router-dom';

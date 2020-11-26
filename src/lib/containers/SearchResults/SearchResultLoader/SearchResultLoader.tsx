@@ -28,6 +28,7 @@ export const SearchResultLoader = <T extends RealResourceType>({
   children,
   selectionMode = 'none',
   onSelect = () => {},
+  ...props
 }: {
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SelectableItemsProps> &
@@ -57,6 +58,7 @@ export const SearchResultLoader = <T extends RealResourceType>({
   return (
     <>
       {children({
+        ...props,
         query,
         onEndReached: () => {
           if (canFetchMore && !isFetchingMore) {

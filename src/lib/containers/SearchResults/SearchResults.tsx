@@ -1,6 +1,10 @@
 import React from 'react';
 import { ResourceType, ResourceItem } from 'lib/types';
-import { ResourceFilterProps, SelectableItemsProps } from 'lib/CommonProps';
+import {
+  ResourceFilterProps,
+  SelectableItemsProps,
+  DateRangeProps,
+} from 'lib/CommonProps';
 import { FileSearchResults } from './FileSearchResults/FileSearchResults';
 import { EventSearchResults } from './EventSearchResults/EventSearchResults';
 import { AssetSearchResults } from './AssetSearchResults/AssetSearchResults';
@@ -24,7 +28,8 @@ export const SearchResults = ({
   activeIds?: number[];
   onClick: (item: ResourceItem) => void;
 } & Required<ResourceFilterProps> &
-  SelectableItemsProps) => {
+  SelectableItemsProps &
+  DateRangeProps) => {
   switch (resourceType) {
     case 'asset':
       return (

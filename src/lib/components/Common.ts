@@ -19,7 +19,7 @@ export const SpacedRow = styled.div`
     flex: 1;
   }
   & > *:nth-last-child(1) {
-    margin-left: 0px;
+    margin-right: 0px;
   }
 `;
 

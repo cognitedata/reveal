@@ -6,6 +6,7 @@ import { ResourceActionsProvider } from 'app/context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'app/context/ResourceSelectionContext';
 import { FileContextualizationContextProvider } from 'lib/context/FileContextualization';
 import { useUserStatus } from 'lib/hooks/CustomHooks';
+import { DateRangeProvider } from 'app/context/DateRangeContext';
 
 const Spinner = () => <Loader />;
 
@@ -26,31 +27,33 @@ export default function App() {
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
-            <Switch>
-              <Redirect
-                from="/:url*(/+)"
-                to={{
-                  pathname: pathname.slice(0, -1),
-                  search,
-                  hash,
-                }}
-              />
-              <Route
-                key="/:tenant/explore"
-                path="/:tenant/explore"
-                component={useMemo(
-                  () =>
-                    React.lazy(
-                      () =>
-                        import(
-                          'app/containers/Exploration'
-                          /* webpackChunkName: "pnid_exploration" */
-                        )
-                    ),
-                  []
-                )}
-              />
-            </Switch>
+            <DateRangeProvider>
+              <Switch>
+                <Redirect
+                  from="/:url*(/+)"
+                  to={{
+                    pathname: pathname.slice(0, -1),
+                    search,
+                    hash,
+                  }}
+                />
+                <Route
+                  key="/:tenant/explore"
+                  path="/:tenant/explore"
+                  component={useMemo(
+                    () =>
+                      React.lazy(
+                        () =>
+                          import(
+                            'app/containers/Exploration'
+                            /* webpackChunkName: "pnid_exploration" */
+                          )
+                      ),
+                    []
+                  )}
+                />
+              </Switch>
+            </DateRangeProvider>
           </ResourceActionsProvider>
         </ResourceSelectionProvider>
       </FileContextualizationContextProvider>

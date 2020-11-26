@@ -6,6 +6,7 @@ import { lightGrey } from 'lib/utils/Colors';
 export type TabsPane<T = string> = {
   children: React.ReactElement<TabPaneProps>[];
   tab?: T;
+  style?: React.CSSProperties;
   onTabChange?: (key: T) => void;
 };
 
@@ -13,6 +14,7 @@ export const Tabs = <T extends string>({
   children,
   tab: propsTab,
   onTabChange = () => {},
+  style,
 }: TabsPane<T>) => {
   const tabs = children.map(el => el.key) as T[];
 
@@ -28,7 +30,7 @@ export const Tabs = <T extends string>({
 
   return (
     <>
-      <HeaderWrapper>
+      <HeaderWrapper style={style}>
         {tabs.map(el => {
           const key = el as typeof tabs[number];
 
@@ -67,10 +69,11 @@ export type TabPaneProps = {
   key: string;
   title: React.ReactNode;
   disabled?: boolean;
+  style?: React.CSSProperties;
 };
 
-const TabPane: React.FC<TabPaneProps> = ({ children }: TabPaneProps) => {
-  return <>{children}</>;
+const TabPane: React.FC<TabPaneProps> = ({ children, style }: TabPaneProps) => {
+  return <div style={{ flex: 1, overflow: 'auto', ...style }}>{children}</div>;
 };
 
 Tabs.Pane = TabPane;
@@ -80,7 +83,7 @@ const HeaderWrapper = styled.div`
   display: flex;
   align-items: stretch;
   padding-top: 10px;
-  zindex: 1;
+  z-index: 1;
   && > *:nth-child(0) {
     margin-left: 0px;
   }

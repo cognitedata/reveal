@@ -93,86 +93,92 @@ export const FilePreview = ({
             ...actions,
           ]}
         />
-        <Tabs tab="preview">
-          <Tabs.Pane title="Preview" key="preview">
-            {editMode && (
-              <Banner>
-                <Body level={3}>You have entered editing mode.</Body>
-              </Banner>
-            )}
-            <CogniteFilePreview
-              fileId={fileId!}
-              creatable={editMode}
-              contextualization={writeAccess}
-            />
-          </Tabs.Pane>
-          <Tabs.Pane title="File details" key="info">
-            <FileDetails file={fileInfo} />
-            <Metadata metadata={fileInfo.metadata} />
-          </Tabs.Pane>
-          <Tabs.Pane
-            title={
-              <>
-                Assets{' '}
-                <RelatedResourceCount fileId={fileId!} resourceType="asset" />
-              </>
-            }
-            key="assets"
-          >
-            <RelatedResources fileId={fileId!} resourceType="asset" />
-          </Tabs.Pane>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Tabs tab="preview" style={{ paddingLeft: 16 }}>
+            <Tabs.Pane
+              title="Preview"
+              key="preview"
+              style={{ display: 'flex' }}
+            >
+              {editMode && (
+                <Banner>
+                  <Body level={3}>You have entered editing mode.</Body>
+                </Banner>
+              )}
+              <CogniteFilePreview
+                fileId={fileId!}
+                creatable={editMode}
+                contextualization={writeAccess}
+              />
+            </Tabs.Pane>
+            <Tabs.Pane title="File details" key="info">
+              <FileDetails file={fileInfo} />
+              <Metadata metadata={fileInfo.metadata} />
+            </Tabs.Pane>
+            <Tabs.Pane
+              title={
+                <>
+                  Assets{' '}
+                  <RelatedResourceCount fileId={fileId!} resourceType="asset" />
+                </>
+              }
+              key="assets"
+            >
+              <RelatedResources fileId={fileId!} resourceType="asset" />
+            </Tabs.Pane>
 
-          <Tabs.Pane
-            title={
-              <>
-                Files{' '}
-                <RelatedResourceCount fileId={fileId!} resourceType="file" />
-              </>
-            }
-            key="files"
-          >
-            <RelatedResources fileId={fileId!} resourceType="file" />
-          </Tabs.Pane>
-          <Tabs.Pane
-            title={
-              <>
-                Time series{' '}
-                <RelatedResourceCount
-                  fileId={fileId!}
-                  resourceType="timeSeries"
-                />
-              </>
-            }
-            key="timeseries"
-          >
-            <RelatedResources fileId={fileId!} resourceType="timeSeries" />
-          </Tabs.Pane>
-          <Tabs.Pane
-            title={
-              <>
-                Events{' '}
-                <RelatedResourceCount fileId={fileId!} resourceType="event" />
-              </>
-            }
-            key="events"
-          >
-            <RelatedResources fileId={fileId!} resourceType="event" />
-          </Tabs.Pane>
-          <Tabs.Pane
-            title={
-              <>
-                Sequences{' '}
-                <RelatedResourceCount
-                  fileId={fileId!}
-                  resourceType="sequence"
-                />
-              </>
-            }
-            key="sequences"
-          >
-            <RelatedResources fileId={fileId!} resourceType="sequence" />
-          </Tabs.Pane>
-        </Tabs>
+            <Tabs.Pane
+              title={
+                <>
+                  Files{' '}
+                  <RelatedResourceCount fileId={fileId!} resourceType="file" />
+                </>
+              }
+              key="files"
+            >
+              <RelatedResources fileId={fileId!} resourceType="file" />
+            </Tabs.Pane>
+            <Tabs.Pane
+              title={
+                <>
+                  Time series{' '}
+                  <RelatedResourceCount
+                    fileId={fileId!}
+                    resourceType="timeSeries"
+                  />
+                </>
+              }
+              key="timeseries"
+            >
+              <RelatedResources fileId={fileId!} resourceType="timeSeries" />
+            </Tabs.Pane>
+            <Tabs.Pane
+              title={
+                <>
+                  Events{' '}
+                  <RelatedResourceCount fileId={fileId!} resourceType="event" />
+                </>
+              }
+              key="events"
+            >
+              <RelatedResources fileId={fileId!} resourceType="event" />
+            </Tabs.Pane>
+            <Tabs.Pane
+              title={
+                <>
+                  Sequences{' '}
+                  <RelatedResourceCount
+                    fileId={fileId!}
+                    resourceType="sequence"
+                  />
+                </>
+              }
+              key="sequences"
+            >
+              <RelatedResources fileId={fileId!} resourceType="sequence" />
+            </Tabs.Pane>
+          </Tabs>
+        </div>
       </CogniteFileViewer.Provider>
     </>
   );

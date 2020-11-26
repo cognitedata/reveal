@@ -7,6 +7,7 @@ export * from './FilterForm/FilterForm';
 export * from './Splitter/Splitter';
 export * from './ButtonGroup/ButtonGroup';
 export * from './CdfCount/CdfCount';
+export * from './DatePicker';
 export * from './LatestDatapoint/LatestDatapoint';
 export * from './ListItem/ListItem';
 export * from './Loader/Loader';
