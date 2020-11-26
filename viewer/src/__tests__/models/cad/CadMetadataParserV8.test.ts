@@ -12,8 +12,7 @@ import { Box3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 
 import { vec3 } from 'gl-matrix';
-
-type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+import { Mutable } from '../../types';
 
 describe('parseCadMetadataV8', () => {
   test('Metadata without sectors, throws', () => {

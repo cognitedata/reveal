@@ -25,7 +25,8 @@ export function Migration() {
     let viewer: Cognite3DViewer;
 
     async function main() {
-      const urlParams = new URL(window.location.href).searchParams;
+      const url = new URL(window.location.href);
+      const urlParams = url.searchParams;
       const project = urlParams.get('project');
       if (!project) {
         throw new Error('Must provide "project"as URL parameter');
@@ -72,7 +73,8 @@ export function Migration() {
         sdk: client,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
-        logMetrics: false
+        logMetrics: false,
+        antiAliasingHint: (urlParams.get('antialias') || undefined) as any
       });
       (window as any).viewer = viewer;
 
@@ -105,6 +107,7 @@ export function Migration() {
         modelId: 0,
         revisionId: 0,
         showSectorBoundingBoxes: false,
+        antiAliasing: urlParams.get('antialias')
       };
       function applySettingsToModels() {
         cadModels.forEach((m) => {
@@ -130,6 +133,14 @@ export function Migration() {
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
+      gui.add(guiState, 'antiAliasing', 
+        [
+          'disabled','fxaa','msaa4','msaa8','msaa16',
+          'msaa4+fxaa','msaa8+fxaa','msaa16+fxaa'
+        ]).name('Anti-alias').onFinishChange(v => {
+          urlParams.set('antialias', v);
+          window.location.href = url.toString();
+      });
 
       const slicing = gui.addFolder('Slicing');
       
