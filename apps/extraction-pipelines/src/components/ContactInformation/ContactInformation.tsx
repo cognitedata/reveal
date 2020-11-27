@@ -12,7 +12,7 @@ const ContactInformation = ({ owner, authors }: ContactInformationProps) => {
   return (
     <div>
       <ContactsList title={TableHeadings.OWNER} contacts={owner} />
-      <ContactsList title={TableHeadings.CREATED_BY} contacts={authors} />
+      <ContactsList title={TableHeadings.CONTACTS} contacts={authors} />
     </div>
   );
 };
