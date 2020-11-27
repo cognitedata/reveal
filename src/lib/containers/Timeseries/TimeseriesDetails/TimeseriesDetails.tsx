@@ -5,6 +5,7 @@ import {
   DetailsTabItem,
   TimeDisplay,
   DataSetItem,
+  AssetsItem,
 } from 'lib/components';
 
 export default function TimeseriesDetails({
@@ -23,6 +24,11 @@ export default function TimeseriesDetails({
       />
       <DetailsTabItem name="ID" value={timeseries.id} copyable />
       <DataSetItem id={timeseries.id} type="timeSeries" />
+      <AssetsItem
+        assetIds={timeseries.assetId ? [timeseries.assetId] : undefined}
+        linkId={timeseries.id}
+        type="timeSeries"
+      />
       <DetailsTabItem
         name="Created at"
         value={

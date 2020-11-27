@@ -5,6 +5,7 @@ import {
   DetailsTabGrid,
   DetailsTabItem,
   DataSetItem,
+  AssetsItem,
   Label,
 } from 'lib/components';
 
@@ -16,6 +17,7 @@ export const FileDetails = ({ file }: { file: FileInfo }) => {
       <DetailsTabItem name="Source" value={file.source} />
       <DetailsTabItem name="MIME type" value={file.mimeType} />
       <DataSetItem id={file.id} type="file" />
+      <AssetsItem assetIds={file.assetIds} linkId={file.id} type="file" />
       <DetailsTabItem
         name="Uploaded at"
         value={file ? <TimeDisplay value={file.uploadedTime} /> : 'Loading...'}

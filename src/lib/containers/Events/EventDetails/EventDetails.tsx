@@ -5,6 +5,7 @@ import {
   DetailsTabGrid,
   DetailsTabItem,
   DataSetItem,
+  AssetsItem,
 } from 'lib/components';
 
 export const EventDetails = ({ event }: { event: CogniteEvent }) => {
@@ -14,6 +15,7 @@ export const EventDetails = ({ event }: { event: CogniteEvent }) => {
       <DetailsTabItem name="External ID" value={event.externalId} copyable />
       <DetailsTabItem name="ID" value={event.id} copyable />
       <DataSetItem id={event.id} type="event" />
+      <AssetsItem assetIds={event.assetIds} linkId={event.id} type="event" />
       <DetailsTabItem
         name="Created at"
         value={event ? <TimeDisplay value={event.createdTime} /> : 'Loading...'}

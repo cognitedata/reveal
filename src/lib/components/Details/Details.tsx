@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from 'antd/lib/typography';
 import styled from 'styled-components';
-import { Body, Colors, Icon } from '@cognite/cogs.js';
+import { Body, Colors } from '@cognite/cogs.js';
 import { List } from 'antd';
 import { Link } from 'react-router-dom';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -46,24 +46,16 @@ export const DetailsTabItem = ({
   copyable?: boolean;
   link?: string;
 }) => {
-  const tabValue = value || <em>Not set</em>;
-
   return (
     <div>
       <Name>{name}</Name>
-      <Value copyable={!!value && copyable ? { tooltips: false } : false}>
-        {link ? (
-          <Link to={link} target="_blank">
-            {tabValue}
-            <Icon
-              type="ArrowForward"
-              style={{ marginLeft: '5px', verticalAlign: 'middle' }}
-            />
-          </Link>
-        ) : (
-          tabValue
-        )}
-      </Value>
+      {value ? (
+        <Value copyable={!!value && copyable ? { tooltips: false } : false}>
+          {link ? <Link to={link}>{value}</Link> : value}
+        </Value>
+      ) : (
+        <em>Not set</em>
+      )}
     </div>
   );
 };
@@ -104,6 +96,54 @@ export const DataSetItem = ({
   return null;
 };
 
+export const AssetsItem = ({
+  assetIds,
+  linkId,
+  type,
+}: {
+  assetIds: number[] | undefined;
+  linkId: number;
+  type: ResourceType;
+}) => {
+  if (assetIds) {
+    if (assetIds.length === 1) {
+      return <AssetItem id={assetIds[0]} />;
+    }
+    const assetsLink = createLink(
+      window.location.pathname.includes('/search')
+        ? `/explore/search/${type}/${linkId}/asset`
+        : `/explore/${type}/${linkId}/asset`
+    );
+    const assetsLinkText = `${assetIds.length} assets`;
+    return (
+      <DetailsTabItem
+        name="Linked asset(s)"
+        value={assetsLinkText}
+        link={assetsLink}
+      />
+    );
+  }
+  return <DetailsTabItem name="Linked asset(s)" />;
+};
+
+export const AssetItem = ({ id }: { id: number }) => {
+  const { data: item, isFetched } = useCdfItem<{ name?: string }>('assets', {
+    id,
+  });
+
+  if (isFetched && item) {
+    return (
+      <DetailsTabItem
+        name="Linked asset(s)"
+        value={item.name}
+        link={createLink(`/explore/asset/${id}`)}
+      />
+    );
+  }
+
+  return null;
+};
+
 const GridContainer = styled.div`
   padding: 20px 16px;
 `;
@@ -118,6 +158,7 @@ const Name = styled(Body)`
 const Value = styled(Text)`
   font-size: 16px;
 `;
+
 export const Label = styled.span`
   background-color: ${Colors['greyscale-grey3'].hex()};
   padding: 5px;
