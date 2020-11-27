@@ -56,7 +56,7 @@ export const ResourceTableColumns = {
     key: 'unit',
     title: 'Unit',
     dataKey: 'unit',
-    width: 200,
+    width: 100,
   },
   columns: {
     key: 'columns',

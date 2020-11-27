@@ -22,6 +22,7 @@ import {
 } from 'lib/utils/filters';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import uniqueBy from 'lodash/uniqBy';
+import { usePermissions } from './CustomHooks';
 
 const PAGE_SIZE = 20;
 
@@ -35,6 +36,12 @@ export type Relationship = {
 };
 
 export const useRelationships = (externalId?: string, type?: ResourceType) => {
+  const {
+    data: hasRelationshipRead,
+    isFetched: permissionFetched,
+  } = usePermissions('relationshipsAcl', 'READ');
+  const enabled = permissionFetched && hasRelationshipRead && !!externalId;
+
   const sourceRelationships = useList<Relationship>(
     // @ts-ignore
     'relationships',
@@ -44,7 +51,7 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
         targetTypes: type ? [type] : undefined,
       },
     },
-    { enabled: !!externalId, staleTime: 60 * 1000 }
+    { enabled, staleTime: 60 * 1000 }
   );
 
   const targetRelationships = useList<Relationship>(
@@ -56,7 +63,7 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
         sourceTypes: type ? [type] : undefined,
       },
     },
-    { enabled: !!externalId, staleTime: 60 * 1000 }
+    { enabled, staleTime: 60 * 1000 }
   );
 
   const data = (sourceRelationships.data || [])

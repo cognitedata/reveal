@@ -12,51 +12,52 @@ export const TimeseriesTable = ({
 }: TableProps<Timeseries> & DateRangeProps) => {
   const startTime = dateRange[0];
   const endTime = dateRange[1];
+  const sparkLineColumn = {
+    title: 'Data',
+    key: 'data',
+    width: 400,
+    startTime: startTime.valueOf(),
+    endTime: endTime.valueOf(),
+    cellRenderer: ({
+      rowData: timeseries,
+      column: { startTime: start, endTime: end },
+    }: {
+      rowData: Timeseries;
+      column: {
+        startTime: number;
+        endTime: number;
+      };
+    }) => {
+      if (timeseries.isString) {
+        return <Body level={2}>N/A for string time series</Body>;
+      }
+      return (
+        <TimeseriesChart
+          height={100}
+          timeseriesId={timeseries.id}
+          numberOfPoints={100}
+          showAxis="none"
+          timeOptions={[]}
+          showContextGraph={false}
+          showPoints={false}
+          enableTooltip={false}
+          showGridLine="none"
+          minRowTicks={2}
+          dateRange={[new Date(start), new Date(end)]}
+          onDateRangeChange={() => {}}
+        />
+      );
+    },
+  };
   const columns = [
     Table.Columns.name,
     Table.Columns.description,
     Table.Columns.externalId,
     Table.Columns.unit,
+    sparkLineColumn,
     Table.Columns.relationships,
     Table.Columns.lastUpdatedTime,
     Table.Columns.createdTime,
-    {
-      title: 'Data',
-      key: 'data',
-      width: 400,
-      startTime: startTime.valueOf(),
-      endTime: endTime.valueOf(),
-      cellRenderer: ({
-        rowData: timeseries,
-        column: { startTime: start, endTime: end },
-      }: {
-        rowData: Timeseries;
-        column: {
-          startTime: number;
-          endTime: number;
-        };
-      }) => {
-        if (timeseries.isString) {
-          return <Body level={2}>N/A for string time series</Body>;
-        }
-        return (
-          <TimeseriesChart
-            height={100}
-            timeseriesId={timeseries.id}
-            numberOfPoints={100}
-            showAxis="none"
-            timeOptions={[]}
-            showContextGraph={false}
-            showPoints={false}
-            enableTooltip={false}
-            showGridLine="none"
-            minRowTicks={2}
-            dateRange={[new Date(start), new Date(end)]}
-            onDateRangeChange={() => {}}
-          />
-        );
-      },
-    },
   ];
 
   return (

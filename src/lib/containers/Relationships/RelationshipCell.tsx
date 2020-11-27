@@ -13,7 +13,7 @@ export const RelationshipCell = ({
 }: {
   resourceExternalId?: string;
 }) => {
-  const { data: relationships, isFetching } = useRelationships(
+  const { data: relationships, isFetching, isFetched } = useRelationships(
     resourceExternalId
   );
 
@@ -25,7 +25,7 @@ export const RelationshipCell = ({
     {} as RelatedResourceTypes
   );
 
-  if (isFetching) {
+  if (isFetching && !isFetched) {
     return <Loader />;
   }
 
