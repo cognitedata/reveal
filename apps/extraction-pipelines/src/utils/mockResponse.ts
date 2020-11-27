@@ -180,7 +180,7 @@ export const mockError = {
 export const mockDataRunsResponse = [
   {
     createdTime: 1605575298134,
-    status: 'Failure',
+    status: 'failure',
     externalId: 'dataIntegration000-1',
   },
   {
@@ -195,27 +195,27 @@ export const mockDataRunsResponse = [
   },
   {
     createdTime: 1605418198134,
-    status: 'Success',
+    status: 'success',
     externalId: 'dataIntegration000-1',
   },
   {
     createdTime: 1604918198134,
-    status: 'Success',
+    status: 'success',
     externalId: 'dataIntegration000-1',
   },
   {
     createdTime: 1604218198134,
-    status: 'Success',
+    status: 'success',
     externalId: 'dataIntegration000-1',
   },
   {
     createdTime: 1603918198134,
-    status: 'Failure',
+    status: 'failure',
     externalId: 'dataIntegration000-1',
   },
   {
     createdTime: 1600923198134,
-    status: 'Success',
+    status: 'success',
     externalId: 'dataIntegration000-1',
   },
 ];

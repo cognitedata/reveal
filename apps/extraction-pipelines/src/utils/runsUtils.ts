@@ -13,11 +13,11 @@ const mapRuns = (response: StatusRow[]) => {
     let indexParentRun;
 
     switch (status.status) {
-      case 'Success':
+      case 'success':
         run.status = Status.OK;
         result.push(run);
         break;
-      case 'Failure':
+      case 'failure':
         run.status = Status.FAIL;
         result.push(run);
         break;
