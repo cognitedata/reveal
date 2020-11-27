@@ -55,3 +55,11 @@ export type DateRangeProps = {
   dateRange?: [Date, Date];
   onDateRangeChange?: (newRange: [Date, Date]) => void;
 };
+
+export type AllowedTableStateId = number | string;
+
+export type TableStateProps = {
+  activeIds?: AllowedTableStateId[];
+  selectedIds?: AllowedTableStateId[];
+  disabledIds?: AllowedTableStateId[];
+};

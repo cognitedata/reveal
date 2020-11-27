@@ -1,7 +1,11 @@
 import React from 'react';
 import { EventFilter, CogniteEvent } from '@cognite/sdk';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import {
+  SelectableItemsProps,
+  TableStateProps,
+  DateRangeProps,
+} from 'lib/CommonProps';
 import { ResourceItem } from 'lib';
 import { EventTable } from 'lib/containers/Events';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
@@ -15,7 +19,7 @@ export const EventSearchResults = ({
   relatedResourceType,
   parentResource,
   count,
-  ...selectionProps
+  ...extraProps
 }: {
   query?: string;
   filter?: EventFilter;
@@ -24,7 +28,9 @@ export const EventSearchResults = ({
   parentResource?: ResourceItem;
   count?: number;
   onClick: (item: CogniteEvent) => void;
-} & SelectableItemsProps) => {
+} & SelectableItemsProps &
+  TableStateProps &
+  DateRangeProps) => {
   return (
     <>
       <SearchResultToolbar
@@ -41,7 +47,7 @@ export const EventSearchResults = ({
         query={query}
         parentResource={parentResource}
         relatedResourceType={relatedResourceType}
-        {...selectionProps}
+        {...extraProps}
       >
         {props => (
           <EventTable {...props} onRowClick={event => onClick(event)} />

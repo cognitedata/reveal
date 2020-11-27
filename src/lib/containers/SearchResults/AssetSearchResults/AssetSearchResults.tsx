@@ -4,19 +4,25 @@ import { AssetFilterProps, Asset } from '@cognite/sdk';
 import { ButtonGroup } from 'lib/components';
 import { AssetTreeTable } from 'lib/containers/Assets';
 import { AssetTable, SearchResultToolbar } from 'lib/containers';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import {
+  SelectableItemsProps,
+  DateRangeProps,
+  TableStateProps,
+} from 'lib/CommonProps';
 import { SearchResultLoader } from 'lib';
 
 export const AssetSearchResults = ({
   query = '',
   filter,
   onClick,
-  ...selectionProps
+  ...extraProps
 }: {
   query?: string;
   filter: AssetFilterProps;
   onClick: (item: Asset) => void;
-} & SelectableItemsProps) => {
+} & SelectableItemsProps &
+  TableStateProps &
+  DateRangeProps) => {
   const [currentView, setCurrentView] = useState<string>('tree');
 
   const content = useMemo(() => {
@@ -26,7 +32,7 @@ export const AssetSearchResults = ({
           type="asset"
           filter={filter}
           query={query}
-          {...selectionProps}
+          {...extraProps}
         >
           {props => (
             <AssetTable onRowClick={asset => onClick(asset)} {...props} />
@@ -40,10 +46,10 @@ export const AssetSearchResults = ({
         startFromRoot={!filter.assetSubtreeIds}
         query={query}
         onAssetClicked={asset => onClick(asset)}
-        {...selectionProps}
+        {...extraProps}
       />
     );
-  }, [currentView, filter, onClick, query, selectionProps]);
+  }, [currentView, filter, onClick, query, extraProps]);
 
   return (
     <>

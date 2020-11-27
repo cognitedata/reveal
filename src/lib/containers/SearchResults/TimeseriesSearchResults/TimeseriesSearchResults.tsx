@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { TimeseriesFilter, Timeseries } from '@cognite/sdk';
-import { SelectableItemsProps, DateRangeProps } from 'lib/CommonProps';
+import {
+  SelectableItemsProps,
+  DateRangeProps,
+  TableStateProps,
+} from 'lib/CommonProps';
 import { ResourceItem } from 'lib';
 import {
   TimeseriesTable,
@@ -25,7 +29,7 @@ export const TimeseriesSearchResults = ({
   count,
   dateRange,
   onDateRangeChange,
-  ...selectionProps
+  ...extraProps
 }: {
   query?: string;
   initialView?: string;
@@ -37,7 +41,8 @@ export const TimeseriesSearchResults = ({
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
 } & SelectableItemsProps &
-  DateRangeProps) => {
+  DateRangeProps &
+  TableStateProps) => {
   const [stateDateRange, stateSetDateRange] = useState<[Date, Date]>(
     TIME_SELECT['1Y'].getTime()
   );
@@ -71,7 +76,7 @@ export const TimeseriesSearchResults = ({
         query={query}
         parentResource={parentResource}
         relatedResourceType={relatedResourceType}
-        {...selectionProps}
+        {...extraProps}
       >
         {props =>
           currentView === 'grid' ? (
@@ -81,7 +86,7 @@ export const TimeseriesSearchResults = ({
               minCellWidth={500}
               onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
               onItemClicked={timeseries => onClick(timeseries)}
-              {...selectionProps}
+              {...extraProps}
               renderCell={cellProps => (
                 <TimeseriesSparklineCard
                   {...cellProps}

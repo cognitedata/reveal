@@ -101,7 +101,9 @@ function SearchPage() {
       case 'asset':
         return (
           <AssetSearchResults
-            onClick={item => openPreview(item.id)}
+            onClick={item =>
+              openPreview(item.id !== activeId ? item.id : undefined)
+            }
             filter={assetFilter}
             {...commonProps}
           />
@@ -111,14 +113,18 @@ function SearchPage() {
           <FileSearchResults
             filter={fileFilter}
             allowEdit={editable}
-            onClick={item => openPreview(item.id)}
+            onClick={item =>
+              openPreview(item.id !== activeId ? item.id : undefined)
+            }
             {...commonProps}
           />
         );
       case 'sequence':
         return (
           <SequenceSearchResults
-            onClick={item => openPreview(item.id)}
+            onClick={item =>
+              openPreview(item.id !== activeId ? item.id : undefined)
+            }
             filter={sequenceFilter}
             {...commonProps}
           />
@@ -126,7 +132,9 @@ function SearchPage() {
       case 'timeSeries':
         return (
           <TimeseriesSearchResults
-            onClick={item => openPreview(item.id)}
+            onClick={item =>
+              openPreview(item.id !== activeId ? item.id : undefined)
+            }
             filter={timeseriesFilter}
             showDatePicker={!activeId}
             {...commonProps}
@@ -135,7 +143,9 @@ function SearchPage() {
       case 'event':
         return (
           <EventSearchResults
-            onClick={item => openPreview(item.id)}
+            onClick={item =>
+              openPreview(item.id !== activeId ? item.id : undefined)
+            }
             filter={eventFilter}
             {...commonProps}
           />
@@ -214,19 +224,19 @@ function SearchPage() {
             flex: active ? 1 : 'unset',
           }}
         >
-          {cart.length > 0 && (
-            <SelectedResults
-              ids={cart.map(id => ({ id }))}
-              resourceType={currentResourceType}
-            />
-          )}
-          {activeId && cart.length === 0 && (
+          {activeId && (
             <SearchResultWrapper>
               <ResourcePreview
                 item={{ id: activeId, type: currentResourceType }}
                 onCloseClicked={() => openPreview(undefined)}
               />
             </SearchResultWrapper>
+          )}
+          {!activeId && cart.length > 0 && (
+            <SelectedResults
+              ids={cart.map(id => ({ id }))}
+              resourceType={currentResourceType}
+            />
           )}
         </div>
       </Wrapper>

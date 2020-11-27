@@ -1,7 +1,11 @@
 import React from 'react';
 import { SequenceFilter, Sequence } from '@cognite/sdk';
 import { SearchResultToolbar } from 'lib/containers/SearchResults';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import {
+  SelectableItemsProps,
+  TableStateProps,
+  DateRangeProps,
+} from 'lib/CommonProps';
 import { ResourceItem } from 'lib';
 import { SequenceTable } from 'lib/containers/Sequences';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
@@ -15,7 +19,7 @@ export const SequenceSearchResults = ({
   parentResource,
   count,
   onClick,
-  ...selectionProps
+  ...extraProps
 }: {
   query?: string;
   filter?: Required<SequenceFilter>['filter'];
@@ -24,7 +28,9 @@ export const SequenceSearchResults = ({
   parentResource?: ResourceItem;
   count?: number;
   onClick: (item: Sequence) => void;
-} & SelectableItemsProps) => {
+} & SelectableItemsProps &
+  TableStateProps &
+  DateRangeProps) => {
   return (
     <>
       <SearchResultToolbar
@@ -41,7 +47,7 @@ export const SequenceSearchResults = ({
         query={query}
         parentResource={parentResource}
         relatedResourceType={relatedResourceType}
-        {...selectionProps}
+        {...extraProps}
       >
         {props => (
           <SequenceTable

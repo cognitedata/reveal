@@ -50,8 +50,8 @@ export const TimeseriesTable = ({
     },
   };
   const columns = [
-    Table.Columns.name,
-    Table.Columns.description,
+    { ...Table.Columns.name, lines: 3 },
+    { ...Table.Columns.description, lines: 3 },
     Table.Columns.externalId,
     Table.Columns.unit,
     sparkLineColumn,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sequence } from '@cognite/sdk';
-import { AllowedId, Table } from 'lib/components';
+import { AllowedTableStateId, Table } from 'lib';
 
 export type SequenceDataTableProps = {
   sequence: Sequence;
@@ -25,7 +25,7 @@ export const SequenceDataTable = (props: SequenceDataTableProps) => {
   const { rows, ...restProps } = props;
 
   return (
-    <Table<any & { id: AllowedId }>
+    <Table<any & { id: AllowedTableStateId }>
       columns={tableColumns}
       data={rows}
       {...restProps}

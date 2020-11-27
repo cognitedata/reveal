@@ -3,8 +3,7 @@ import { Body } from '@cognite/cogs.js';
 import { FixedSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 import AutoResizer from 'react-virtualized-auto-sizer';
 import InfiniteLoader from 'react-window-infinite-loader';
-import { SelectableItemsProps } from 'lib/CommonProps';
-import { AllowedId } from 'lib/components/Table/Table';
+import { SelectableItemsProps, AllowedTableStateId } from 'lib/CommonProps';
 import { Loader } from 'lib/components';
 
 export type GridCellProps<T> = {
@@ -16,13 +15,13 @@ export type GridCellProps<T> = {
   onClick?: () => void;
 } & SelectableItemsProps;
 
-type RowData<T> = { id: AllowedId; items: T[] };
+type RowData<T> = { id: AllowedTableStateId; items: T[] };
 
 const LOOKAHEAD = 2;
 const GRID_MIN_WIDTH = 300;
 const GRID_HEIGHT = 400;
 
-export const GridTable = <T extends { id: AllowedId }>({
+export const GridTable = <T extends { id: AllowedTableStateId }>({
   query = '',
   data,
   cellHeight = GRID_HEIGHT,
@@ -45,8 +44,8 @@ export const GridTable = <T extends { id: AllowedId }>({
   data?: T[];
   onItemClicked: (item: T) => void;
   columnCount?: number;
-  previewIds?: AllowedId[];
-  activeIds?: AllowedId[];
+  previewIds?: AllowedTableStateId[];
+  activeIds?: AllowedTableStateId[];
   onEndReached?: () => void;
   isFetching?: boolean;
   canFetchMore?: boolean;

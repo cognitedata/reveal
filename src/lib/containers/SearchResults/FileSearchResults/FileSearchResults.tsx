@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/sdk';
 import { FileGridPreview, FileTable } from 'lib/containers/Files';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import {
+  SelectableItemsProps,
+  TableStateProps,
+  DateRangeProps,
+} from 'lib/CommonProps';
 import { GridTable } from 'lib/components';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
 import { RelatedResourceType } from 'lib/hooks/RelatedResourcesHooks';
@@ -17,7 +21,7 @@ export const FileSearchResults = ({
   count,
   allowEdit = false,
   onClick,
-  ...selectionProps
+  ...extraProps
 }: {
   query?: string;
   items?: FileInfo[];
@@ -28,7 +32,9 @@ export const FileSearchResults = ({
   count?: number;
   allowEdit?: boolean;
   onClick: (item: FileInfo) => void;
-} & SelectableItemsProps) => {
+} & SelectableItemsProps &
+  TableStateProps &
+  DateRangeProps) => {
   const [currentView, setCurrentView] = useState<string>('list');
 
   return (
@@ -52,7 +58,7 @@ export const FileSearchResults = ({
         query={query}
         parentResource={parentResource}
         relatedResourceType={relatedResourceType}
-        {...selectionProps}
+        {...extraProps}
       >
         {props =>
           currentView === 'grid' ? (
@@ -60,7 +66,7 @@ export const FileSearchResults = ({
               {...props}
               onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
               onItemClicked={file => onClick(file)}
-              {...selectionProps}
+              {...extraProps}
               renderCell={cellProps => <FileGridPreview {...cellProps} />}
             />
           ) : (

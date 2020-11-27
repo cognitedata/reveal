@@ -8,7 +8,11 @@ import {
 } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
 import { Loader, SpacedRow, TableProps } from 'lib/components';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import {
+  SelectableItemsProps,
+  TableStateProps,
+  DateRangeProps,
+} from 'lib/CommonProps';
 import { convertResourceType, ResourceType } from 'lib';
 import { useResourceResults } from './hooks';
 
@@ -30,9 +34,13 @@ export const SearchResultLoader = <T extends RealResourceType>({
   onSelect = () => {},
   ...props
 }: {
-  children: (tableProps: TableProps<T>) => React.ReactNode;
+  children: (
+    tableProps: TableProps<T> & TableStateProps & DateRangeProps
+  ) => React.ReactNode;
 } & Partial<SelectableItemsProps> &
-  SearchResultLoaderProps) => {
+  SearchResultLoaderProps &
+  TableStateProps &
+  DateRangeProps) => {
   const api = convertResourceType(type);
   const {
     canFetchMore,

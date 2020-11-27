@@ -308,11 +308,11 @@ export const TableWrapper = styled(TableWrapperInner)(
     .clickable {
       cursor: pointer;
     }
-    .active {
-      background: ${Colors['greyscale-grey1'].hex()};
+    &&& .BaseTable__row.active {
+      background: ${Colors['midblue-6'].hex()};
     }
-    .previewing:not(.active) {
-      background: ${Colors['midblue-7'].hex()};
+    &&& .BaseTable__row.selected:not(.active) {
+      background: ${Colors['midblue-8'].hex()};
     }
 
     ${props.disableScroll &&

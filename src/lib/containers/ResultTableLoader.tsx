@@ -1,5 +1,5 @@
 import React from 'react';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import { SelectableItemsProps, TableStateProps } from 'lib/CommonProps';
 import { TableProps } from 'lib/components';
 import {
   FileInfo,
@@ -28,7 +28,8 @@ export const ResultTableLoader = <T extends Resource>({
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SearchResultLoaderProps> &
   Partial<RelatedResourcesLoaderProps> &
-  Partial<SelectableItemsProps>) => {
+  Partial<SelectableItemsProps> &
+  TableStateProps) => {
   if (mode === 'search') {
     return (
       <SearchResultLoader {...(props as SearchResultLoaderProps)}>

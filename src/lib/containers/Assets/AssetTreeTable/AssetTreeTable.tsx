@@ -3,7 +3,7 @@ import { Asset, AssetFilterProps } from '@cognite/sdk';
 import styled from 'styled-components';
 import { usePrevious } from 'lib/hooks/CustomHooks';
 import { Loader, Table } from 'lib/components';
-import { SelectableItemsProps } from 'lib/CommonProps';
+import { SelectableItemsProps, TableStateProps } from 'lib/CommonProps';
 import { useLoadListTree, useLoadSearchTree } from './hooks';
 
 const PAGE_SIZE = 50;
@@ -20,11 +20,11 @@ export const AssetTreeTable = ({
 }: {
   filter: AssetFilterProps;
   query?: string;
-  activeIds?: number[];
   onAssetClicked: (item: Asset) => void;
   startFromRoot?: boolean;
   disableScroll?: boolean;
-} & SelectableItemsProps) => {
+} & SelectableItemsProps &
+  TableStateProps) => {
   const [listExpandedRowKeys, setListExpandedRowKeys] = useState<number[]>([]);
   const [searchExpandedRowKeys, setSearchExpandedRowKeys] = useState<number[]>(
     []

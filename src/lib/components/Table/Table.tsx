@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, { BaseTableProps, ColumnShape } from 'react-base-table';
-import { Body } from '@cognite/cogs.js';
+import { Body, Tooltip } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import {
   ResourceSelectionMode,
   useSelectionCheckbox,
 } from 'lib/hooks/useSelection';
+import { TableStateProps, AllowedTableStateId } from 'lib/CommonProps';
+import styled, { css } from 'styled-components';
 import { TableWrapper } from './TableWrapper';
 import { ResourceTableColumns } from './Columns';
 
-const ActionCell = <T extends { id: AllowedId }>({
+const ActionCell = <T extends { id: AllowedTableStateId }>({
   item,
   selectionMode,
   onItemSelected,
@@ -42,39 +44,43 @@ const headerRenderer = ({
   </Body>
 );
 
-const HighlightCell = ({ text, query }: { text?: string; query?: string }) => {
+const HighlightCell = ({
+  text,
+  query,
+  lines = 2,
+}: {
+  text?: string;
+  query?: string;
+  lines?: number;
+}) => {
   return (
-    <Body level={2} strong>
-      <Highlighter
-        searchWords={(query || '').split(' ')}
-        textToHighlight={text || ''}
-      />
-    </Body>
+    <EllipsisText level={2} strong lines={lines}>
+      <Tooltip content={text} placement="top-start" arrow={false} interactive>
+        <Highlighter
+          searchWords={(query || '').split(' ')}
+          textToHighlight={text || ''}
+        />
+      </Tooltip>
+    </EllipsisText>
   );
 };
 
-export type AllowedId = number | string;
 export type TableProps<T> = Partial<BaseTableProps<T>> & {
-  previewingIds?: AllowedId[];
-  activeIds?: AllowedId[];
-  disabledIds?: AllowedId[];
-  selectedIds?: AllowedId[];
   query?: string;
   onRowClick?: (item: T, event?: React.SyntheticEvent<Element, Event>) => void;
   selectionMode?: ResourceSelectionMode;
   onRowSelected?: (item: T) => void;
   disableScroll?: boolean;
-};
+} & TableStateProps;
 
-export const Table = <T extends { id: AllowedId }>({
-  previewingIds,
+export const Table = <T extends { id: AllowedTableStateId }>({
   activeIds,
   disabledIds,
+  selectedIds = [],
   columns = [],
   query,
   onRowClick,
   disableScroll = false,
-  selectedIds = [],
   selectionMode = 'none',
   onRowSelected = () => {},
   ...props
@@ -111,11 +117,8 @@ export const Table = <T extends { id: AllowedId }>({
             height={height}
             rowClassName={({ rowData }: { rowData: T }) => {
               const extraClasses: string[] = [];
-              if (
-                previewingIds &&
-                previewingIds.some(el => el === rowData.id)
-              ) {
-                extraClasses.push('previewing');
+              if (selectedIds && selectedIds.some(el => el === rowData.id)) {
+                extraClasses.push('selected');
               }
               if (activeIds && activeIds.some(el => el === rowData.id)) {
                 extraClasses.push('active');
@@ -163,7 +166,11 @@ export const Table = <T extends { id: AllowedId }>({
                 headerRenderer,
                 resizable: true,
                 cellRenderer: ({ cellData }: { cellData: string }) => (
-                  <HighlightCell text={cellData} query={query} />
+                  <HighlightCell
+                    text={cellData}
+                    query={query}
+                    lines={el.lines}
+                  />
                 ),
                 ...el,
                 cellProps: { ...el.cellProps, query },
@@ -178,3 +185,15 @@ export const Table = <T extends { id: AllowedId }>({
 
 Table.HighlightCell = HighlightCell;
 Table.Columns = ResourceTableColumns;
+
+export const EllipsisText = styled(Body)(
+  ({ lines = 1 }: { lines?: number }) => css`
+    display: block; /* Fallback for non-webkit */
+    display: -webkit-box;
+    -webkit-line-clamp: ${lines};
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+  `
+);
