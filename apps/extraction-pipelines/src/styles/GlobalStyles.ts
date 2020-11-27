@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { Colors } from '@cognite/cogs.js';
 import theme from './theme';
 
 const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
@@ -40,6 +41,13 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .ant-select-dropdown-menu {
     margin-top: 0;
   }
+
+  .cogs-avatar {
+    background: ${Colors['greyscale-grey4'].hex()} !important;
+    color: ${Colors['greyscale-grey7'].hex()} !important;
+    font-weight: normal !important;
+  }
+
 `;
 
 export default GlobalStyle;
