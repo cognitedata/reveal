@@ -27,7 +27,7 @@
     "@cognite/react-i18n": "0.1.2",
     "@cognite/react-loop-detector": "^0.0.1",
     "@cognite/sdk": "^3.2.1",
-    "@reduxjs/toolkit": "^1.4.0",
+    "@reduxjs/toolkit": "^1.5.0",
     "@sentry/browser": "^5.27.6",
     "firebase": "^8.1.1",
     "jszip": "^3.5.0",
