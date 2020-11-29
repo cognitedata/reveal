@@ -44,6 +44,7 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   .cogs-avatar {
     background: ${Colors['greyscale-grey4'].hex()} !important;
+    border: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
     color: ${Colors['greyscale-grey7'].hex()} !important;
     font-weight: normal !important;
   }
