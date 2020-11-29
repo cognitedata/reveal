@@ -1,8 +1,11 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Button, Colors, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import IntegrationDetails from 'components/modals/IntegrationDetails';
+import { useQueryCache } from 'react-query';
 import { Integration } from '../../model/Integration';
+import { useAppEnv } from '../../hooks/useAppEnv';
+import { useIntegrationById } from '../../hooks/useIntegration';
 
 const TableOptionDropdown = styled((props) => (
   <Dropdown {...props}>{props.children}</Dropdown>
@@ -30,6 +33,10 @@ const OptionMenuBtn = styled((props) => (
   }
 `;
 
+export enum IntegrationAction {
+  VIEW_EDIT_DETAILS = 'View/edit integration',
+}
+
 interface OwnProps {
   integration: Integration;
 }
@@ -42,10 +49,22 @@ const IntegrationsTableActions: FunctionComponent<Props> = ({
   const [integrationDetailVisible, setIntegrationDetailVisible] = useState(
     false
   );
+  const queryCache = useQueryCache();
+  const { project } = useAppEnv();
+
+  const { data: singleIntegration } = useIntegrationById(integration.id);
+  const [display, setDisplay] = useState(integration);
+  useEffect(() => {
+    if (singleIntegration) {
+      setDisplay(singleIntegration);
+    }
+  }, [singleIntegration]);
+
   const openIntegrationDetails = () => {
     setIntegrationDetailVisible(true);
   };
   const onIntegrationDetailsCancel = () => {
+    queryCache.invalidateQueries(['integrations', project]);
     setIntegrationDetailVisible(false);
   };
 
@@ -56,19 +75,19 @@ const IntegrationsTableActions: FunctionComponent<Props> = ({
           <Menu>
             <Menu.Header>Actions</Menu.Header>
             <Menu.Item key="0" onClick={openIntegrationDetails}>
-              View integration details
+              {IntegrationAction.VIEW_EDIT_DETAILS}
             </Menu.Item>
           </Menu>
         }
       >
-        <OptionMenuBtn aria-label={`Actions for ${integration.name}`}>
+        <OptionMenuBtn aria-label={`Actions for ${display.name}`}>
           <Icon type="VerticalEllipsis" />
         </OptionMenuBtn>
       </TableOptionDropdown>
       <IntegrationDetails
         onCancel={onIntegrationDetailsCancel}
         visible={integrationDetailVisible}
-        integration={integration}
+        integration={display}
       />
     </>
   );

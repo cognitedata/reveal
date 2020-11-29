@@ -36,7 +36,7 @@ const InteractiveCopy = ({
     <Tooltip
       interactive
       content={
-        <div style={{ padding: '5px 9px' }}>
+        <div style={{ padding: '0.3125rem 0.5625rem' }}>
           {hasCopied ? 'Copied!' : 'Copy'}
         </div>
       }

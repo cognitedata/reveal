@@ -1,124 +1,183 @@
-import { Colors, Detail } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import UserDetails from 'components/integrations/cols/UserDetails';
-import DataSet from 'components/integrations/cols/DataSet';
-import moment from 'moment';
-import StatusMarker from 'components/integrations/cols/StatusMarker';
-import LatestRun from 'components/integrations/cols/LatestRun';
-import { calculateStatus } from 'utils/integrationUtils';
-import Schedule from 'components/integrations/cols/Schedule';
+import { saveIntegration } from 'utils/integrationUtils';
+import DetailsTable from 'components/table/details/DetailsTable';
+import { useUpdateIntegration } from 'hooks/useUpdateIntegration';
+import { useUpdateContacts } from 'hooks/useUpdateContacts';
 import { Integration } from '../../model/Integration';
-import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
-import ListMetaData from './ListMetaData';
 import { TableHeadings } from '../table/IntegrationTableCol';
+import {
+  DetailsCol,
+  detailsCols,
+  IntegrationFieldValue,
+} from '../table/details/DetailsCols';
+import { useAppEnv } from '../../hooks/useAppEnv';
+import ContactsTable from '../table/details/ContactTable';
+import {
+  contactTableCols,
+  ContactsTableCol,
+} from '../table/details/ContactTableCols';
+import { useContacts } from '../../hooks/details/useContacts';
+import {
+  createNewAuthor,
+  createUpdateAuthorObj,
+  filterAuthors,
+  saveContacts,
+} from '../../utils/contactsUtils';
+import {
+  Change,
+  RemoveChange,
+} from '../../hooks/details/useDetailsGlobalChanges';
+import { useIntegrationDetails } from '../../hooks/details/useIntegrationDetails';
+import { useSaveAuthors } from '../../hooks/details/useSaveAuthors';
 
-const StyledUl = styled.ul`
-  margin: 1rem 0;
-  padding: 0;
-  list-style: none;
-  li {
-    padding: 0.7rem 0;
-    border-bottom: 1px solid ${Colors['greyscale-grey2'].hex()};
-    list-style: none;
-    &:last-child {
-      border-bottom: none;
-    }
-    &.flex {
-      display: flex;
-    }
-    ul {
-      margin-top: 0.5rem;
-      li {
-        border: none;
-      }
-    }
-  }
-  .details-user {
-    padding-left: 0;
-    display: flex;
-    li {
-      margin-right: 1rem;
-      border: none;
-    }
-  }
+const WrapperContacts = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 3rem;
+`;
+const StyledAddButton = styled((props) => (
+  <Button {...props}>{props.children}</Button>
+))`
+  align-self: flex-end;
+  margin: 1rem;
 `;
 interface OwnProps {
   integration: Integration;
+  addChange: (change: Change) => void;
+  removeChange: (change: RemoveChange) => void;
 }
 
 type Props = OwnProps;
 
-const Details: FunctionComponent<Props> = ({ integration }: Props) => {
-  const latest = {
-    lastSuccess: integration?.lastSuccess,
-    lastFailure: integration?.lastFailure,
+const Details: FunctionComponent<Props> = ({
+  integration,
+  addChange: addGlobalChange,
+  removeChange: removeGlobalChange,
+}: Props) => {
+  const { project } = useAppEnv();
+  const {
+    detailsState,
+    undoUpdateDetails,
+    updateDetails,
+  } = useIntegrationDetails(integration);
+  const [mutate] = useUpdateIntegration();
+  const saveIntegrationDetails = saveIntegration(mutate, integration.id);
+
+  const {
+    addContact,
+    removeContact: deleteContact,
+    undoEditContact,
+    editContact,
+    contacts,
+  } = useContacts(integration);
+  const [mutateContacts] = useUpdateContacts();
+  const [mutateAuthors] = useSaveAuthors();
+
+  const saveContactInfo = saveContacts(mutateContacts, integration.id);
+
+  const onClickAddContact = () => {
+    const rowIndex = integration.authors.length + 1;
+    addContact(
+      createNewAuthor({
+        indexInOriginal: rowIndex,
+        authors: integration.authors,
+      })
+    );
   };
-  const status = calculateStatus(latest);
+
+  const saveChangesToContacts = async (
+    rowIndex: number,
+    details: ContactsTableCol
+  ) => {
+    removeGlobalChange({ rowIndex, tableName: 'contacts' });
+    if (project) {
+      await saveContactInfo(project, details);
+    }
+  };
+
+  const removeContact = async (rowIndex: number) => {
+    removeGlobalChange({ rowIndex, tableName: 'contacts' });
+    if (project) {
+      const authors = filterAuthors(contacts, rowIndex);
+
+      await mutateAuthors({
+        project,
+        items: createUpdateAuthorObj({
+          id: integration.id,
+          authors,
+        }),
+        id: integration.id,
+      }).then(() => {
+        deleteContact(rowIndex);
+      });
+    }
+  };
+
+  const updateContacts = (
+    rowIndex: number,
+    columnId: string,
+    value: IntegrationFieldValue
+  ) => {
+    addGlobalChange({ rowIndex, tableName: 'contacts', value });
+    editContact(rowIndex, columnId, value);
+  };
+
+  const undoChangeContacts = (rowIndex: number) => {
+    removeGlobalChange({ rowIndex, tableName: 'contacts' });
+    undoEditContact(rowIndex);
+  };
+
+  const saveChange = async (rowIndex: number, details: DetailsCol) => {
+    removeGlobalChange({ rowIndex, tableName: 'details' });
+    if (project) {
+      await saveIntegrationDetails(project, details);
+    }
+  };
+
+  const undoChange = (rowIndex: number) => {
+    removeGlobalChange({ rowIndex, tableName: 'details' });
+    undoUpdateDetails(rowIndex);
+  };
+
+  const updateData = (
+    rowIndex: number,
+    columnId: string,
+    value: IntegrationFieldValue
+  ) => {
+    addGlobalChange({ rowIndex, tableName: 'details', value });
+    updateDetails(rowIndex, columnId, value);
+  };
+
   return (
-    <StyledUl data-testid="view-integration-details-modal">
-      <li key="details-name">
-        <Detail strong>{TableHeadings.NAME}: </Detail>
-        {integration.name}
-      </li>
-      <li key="details-id">
-        <Detail strong>Id: </Detail> {integration.id}
-      </li>
-      <li key="details-external-id">
-        <Detail strong>External Id: </Detail>
-        {integration.externalId}
-      </li>
-      <li key="details-description">
-        <Detail strong>Description: </Detail>
-        {integration.description}
-      </li>
-      <li key="details-created-time">
-        <Detail strong>Created Time: </Detail>
-        <TimeDisplay
-          value={moment(integration.createdTime).toDate()}
-          relative
-          withTooltip
+    <>
+      <DetailsTable
+        data={detailsState}
+        columns={detailsCols}
+        updateData={updateData}
+        undoChange={undoChange}
+        saveChange={saveChange}
+      />
+      <WrapperContacts>
+        <Title level={4}>{TableHeadings.CONTACTS}</Title>
+        <ContactsTable
+          data={contacts}
+          updateData={updateContacts}
+          undoChange={undoChangeContacts}
+          saveChange={saveChangesToContacts}
+          removeContact={removeContact}
+          columns={contactTableCols}
         />
-      </li>
-      <li key="details-last-updated-time">
-        <Detail strong>{TableHeadings.LATEST_RUN}: </Detail>
-        <StatusMarker status={status.status} />
-        <LatestRun latestRunTime={status.time} />
-      </li>
-      <li key="details-schedule" className="flex">
-        <Detail strong>{TableHeadings.SCHEDULE}: </Detail>
-        <Schedule schedule={integration.schedule} />
-      </li>
-      <li key="details-dataSetId" className="flex">
-        <Detail strong>{TableHeadings.DATA_SET}: </Detail>
-        <DataSet
-          dataSetId={integration.dataSetId}
-          dataSetName={integration.dataSet?.name ?? integration.dataSetId}
-        />
-      </li>
-      {integration.metadata && (
-        <li key="details-metadata">
-          <Detail strong>Meta Data: </Detail>
-          <ListMetaData object={integration.metadata} />
-        </li>
-      )}
-      <li key="details-owned-by">
-        <Detail strong>{TableHeadings.OWNER}: </Detail>
-        <UserDetails user={integration.owner} />
-      </li>
-      <li key="details-created-by">
-        <Detail strong>{TableHeadings.CREATED_BY}: </Detail>
-        <ul className="details-user">
-          {integration.authors.map((author) => {
-            return (
-              <li key={`details-created-by-${author.email}`}>
-                <UserDetails user={author} />
-              </li>
-            );
-          })}
-        </ul>
-      </li>
-    </StyledUl>
+        <StyledAddButton
+          variant="outline"
+          onClick={onClickAddContact}
+          data-testid="add-contact-btn"
+        >
+          Add
+        </StyledAddButton>
+      </WrapperContacts>
+    </>
   );
 };
 

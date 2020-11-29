@@ -11,6 +11,7 @@ import DataSet from '../integrations/cols/DataSet';
 import LastSeen from '../integrations/cols/LastSeen';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
+import { User } from '../../model/User';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -23,6 +24,20 @@ export enum TableHeadings {
   OWNER = 'Owner',
   CREATED_BY = 'Created by',
 }
+
+export const createSearchStringForContacts = (
+  owner: User,
+  authors?: User[]
+) => {
+  return `${owner.name},${
+    authors ? authors.map((aut) => aut.name).join() : ''
+  }`;
+};
+
+export const createListOfContacts = (owner: User, authors?: User[]) => {
+  const auth = authors ?? [];
+  return [owner, ...auth];
+};
 
 export const getIntegrationTableCol = () => {
   return [
@@ -101,10 +116,13 @@ export const getIntegrationTableCol = () => {
       id: 'contacts',
       Header: TableHeadings.CONTACTS,
       accessor: (row: Integration) => {
-        return `${row.owner.name},${row.authors.map((aut) => aut.name).join()}`;
+        return createSearchStringForContacts(row.owner, row.authors);
       },
       Cell: ({ row }: Cell<Integration>) => {
-        const contacts = [row.original.owner, ...row.original.authors];
+        const contacts = createListOfContacts(
+          row.original.owner,
+          row.original.authors
+        );
         return <UserGroup users={contacts} />;
       },
       disableSortBy: true,
