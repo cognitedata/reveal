@@ -13,7 +13,6 @@ import {
 } from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
-import collectionsSlice from 'reducers/collections';
 import { saveExistingChart } from 'reducers/charts/api';
 import ChartComponent from 'components/Chart';
 import { runWorkflow } from 'reducers/workflows/utils';
@@ -130,10 +129,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   const handleClickSearch = () => {
     dispatch(searchSlice.actions.showSearch());
-  };
-
-  const handleClickCollections = () => {
-    dispatch(collectionsSlice.actions.showCollections());
   };
 
   const handleClickSave = async () => {
@@ -334,9 +329,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <ToolbarWrapper>
             <ToolbarItem onClick={() => handleClickSearch()}>
               <ToolbarIcon type="Search" />
-            </ToolbarItem>
-            <ToolbarItem onClick={() => handleClickCollections()}>
-              <ToolbarIcon type="Folder" />
             </ToolbarItem>
           </ToolbarWrapper>
           <SourceListWrapper>
