@@ -2,7 +2,18 @@ import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
 import { getMockResponse } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
-import IntegrationDetails from './IntegrationDetails';
+import IntegrationDetails, {
+  CLOSE_CONFIRM_CONTENT,
+} from './IntegrationDetails';
+import {
+  clickId,
+  clickText,
+  DETAILS_ELEMENTS,
+  DETAILS_TEST_IDS,
+  existsText,
+  notExistsText,
+  typeInput,
+} from '../../utils/test/utilsFn';
 
 describe('Integration Details', () => {
   beforeEach(() => {
@@ -54,7 +65,7 @@ describe('Integration Details', () => {
     expect(warningDescription).toBeInTheDocument();
 
     // check that the bottom warning shows
-    const bottomWarning = screen.getByText(/Unsaved information/i);
+    const bottomWarning = screen.getByText(DETAILS_ELEMENTS.UNSAVED);
     expect(bottomWarning).toBeInTheDocument();
 
     // // change value in input
@@ -76,19 +87,21 @@ describe('Integration Details', () => {
     expect(newValueForRow).toBeInTheDocument();
 
     // warning should still be visible when one input is in edit
-    const bottomWarningStill = screen.getByText(/Unsaved information/i);
+    const bottomWarningStill = screen.getByText(DETAILS_ELEMENTS.UNSAVED);
     expect(bottomWarningStill).toBeInTheDocument();
 
     // cancel input to remove
     const cancel = screen.getAllByText('Cancel');
     fireEvent.click(cancel[0]);
-    const bottomWarningNotVisible = screen.queryByText(/Unsaved information/i);
+    const bottomWarningNotVisible = screen.queryByText(
+      DETAILS_ELEMENTS.UNSAVED
+    );
     expect(bottomWarningNotVisible).toBeInTheDocument();
     fireEvent.click(cancel[1]);
     expect(bottomWarningNotVisible).not.toBeInTheDocument();
   });
 
-  test('Add contact', () => {
+  test('Add contact', async () => {
     const integration = getMockResponse()[0];
     const cancelMock = jest.fn();
     render(
@@ -100,5 +113,41 @@ describe('Integration Details', () => {
     );
     const addBtn = screen.getByText('Add');
     fireEvent.click(addBtn);
+  });
+
+  test('Unsaved changes dialog - footer', () => {
+    const integration = getMockResponse()[0];
+    const cancelMock = jest.fn();
+    render(
+      <IntegrationDetails
+        integration={integration}
+        visible
+        onCancel={cancelMock}
+      />
+    );
+    const row = 1;
+    clickId(`edit-contact-btn-${row}`);
+    typeInput(`authors-email-${row}`, 'test@test.no');
+    const bottomWarning = screen.getByText(DETAILS_ELEMENTS.UNSAVED);
+    expect(bottomWarning).toBeInTheDocument();
+    // click close
+    clickId(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
+    // dialog displayed
+    existsText(CLOSE_CONFIRM_CONTENT);
+    // click cancel
+    const cancelBtns = screen.getAllByText('Cancel');
+    fireEvent.click(cancelBtns[1]);
+    // dialog removed
+    notExistsText(CLOSE_CONFIRM_CONTENT);
+
+    // click close
+    clickId(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
+    // dialog displayed
+    existsText(CLOSE_CONFIRM_CONTENT);
+
+    // click confirm
+    clickText('Confirm');
+    // dialog removed
+    notExistsText(CLOSE_CONFIRM_CONTENT);
   });
 });

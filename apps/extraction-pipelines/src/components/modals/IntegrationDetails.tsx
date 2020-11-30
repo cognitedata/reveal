@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Integration } from '../../model/Integration';
 import Details from './Details';
@@ -24,12 +24,22 @@ interface OwnProps {
 
 type Props = OwnProps;
 
+export const CLOSE_CONFIRM_CONTENT: Readonly<string> =
+  'Are you sure you want to close without saving?';
 const IntegrationDetails: FunctionComponent<Props> = ({
   visible,
   onCancel,
   integration,
 }: Props) => {
   const { changes, addChange, removeChange } = useDetailsGlobalChanges();
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
+  useEffect(() => {
+    setShowConfirmBox(changes.length > 0);
+  }, [changes]);
+
+  const onCancelClick = () => {
+    onCancel();
+  };
 
   return (
     <>
@@ -38,15 +48,19 @@ const IntegrationDetails: FunctionComponent<Props> = ({
           <IntegrationModalHeading
             heading={integration.name}
             externalId={integration.externalId}
-            onCancel={onCancel}
+            onCancel={onCancelClick}
+            popConfirmContent={CLOSE_CONFIRM_CONTENT}
+            showConfirmBox={showConfirmBox}
           />
         }
         visible={visible}
         footer={
           <FooterWithWarning
-            onPrimaryClick={onCancel}
+            onPrimaryClick={onCancelClick}
             error={changes.length > 0 ? 'Unsaved information' : undefined}
             primaryText="Close"
+            popConfirmContent={CLOSE_CONFIRM_CONTENT}
+            showConfirmBox={showConfirmBox}
           />
         }
         width={872}

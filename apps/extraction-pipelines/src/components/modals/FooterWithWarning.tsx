@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import ClosePopconfirm from '../buttons/ClosePopconfirm';
 
 const ErrorMessage = styled.div`
   display: flex;
@@ -39,18 +40,29 @@ const StyledIcon = styled((props) => <Icon {...props} />)`
   }
 `;
 interface OwnProps {
+  primaryText: string;
+  showConfirmBox: boolean;
+  // eslint-disable-next-line react/require-default-props
+  popConfirmContent?: string;
+  // eslint-disable-next-line react/require-default-props
+  cancelText?: string;
+  // eslint-disable-next-line react/require-default-props
+  okText?: string;
   // eslint-disable-next-line react/require-default-props
   error?: string;
   // eslint-disable-next-line react/require-default-props
   onPrimaryClick?: (update: boolean) => void;
-  primaryText: string;
 }
 
 type Props = OwnProps;
 
 const FooterWithWarning: FunctionComponent<Props> = ({
   primaryText,
+  popConfirmContent = 'Are you sure?',
+  cancelText = 'Cancel',
+  okText = 'Confirm',
   onPrimaryClick,
+  showConfirmBox,
   error,
 }: Props) => {
   const onClick = () => {
@@ -58,6 +70,7 @@ const FooterWithWarning: FunctionComponent<Props> = ({
       onPrimaryClick(true);
     }
   };
+
   return (
     <Wrapper>
       <ForStyling />
@@ -71,9 +84,15 @@ const FooterWithWarning: FunctionComponent<Props> = ({
           {error}
         </ErrorMessage>
       )}
-      <Button type="primary" onClick={onClick}>
-        {primaryText}
-      </Button>
+      <ClosePopconfirm
+        showConfirmBox={showConfirmBox}
+        primaryText={primaryText}
+        cancelText={cancelText}
+        okText={okText}
+        onClick={onClick}
+        popConfirmContent={popConfirmContent}
+        testId="footer-modal-close-btn"
+      />
     </Wrapper>
   );
 };
