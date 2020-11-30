@@ -23,6 +23,8 @@ import { SelectableItemProps, SmallPreviewProps } from 'lib/CommonProps';
 import { useSelectionButton } from 'lib/hooks/useSelection';
 
 import { lightGrey } from 'lib/utils/Colors';
+import { createLink } from '@cognite/cdf-utilities';
+import { Link } from 'react-router-dom';
 
 const LIST_ITEM_HEIGHT = 42;
 
@@ -163,13 +165,26 @@ export const AssetSmallPreview = ({
       )}
       {asset.name && (
         <InfoCell noPadding noBorders>
-          <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
+          <Title
+            level={5}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             <ResourceIcons.Asset />
-            <span
-              style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}
-            >
-              {asset.name}
-            </span>
+            <Link to={createLink(`/explore/asset/${assetId}`)}>
+              <span
+                style={{
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  margin: '0 5px',
+                }}
+              >
+                {asset.name}→
+              </span>
+            </Link>
           </Title>
         </InfoCell>
       )}
