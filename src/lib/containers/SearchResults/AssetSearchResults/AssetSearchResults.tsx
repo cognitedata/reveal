@@ -60,8 +60,8 @@ export const AssetSearchResults = ({
         query={query}
       >
         <ButtonGroup currentKey={currentView} onButtonClicked={setCurrentView}>
-          <Button icon="Tree" key="tree" />
-          <Button icon="List" key="list" />
+          <Button icon="Tree" key="tree" title="Asset hierarchy" />
+          <Button icon="List" key="list" title="List" />
         </ButtonGroup>
       </SearchResultToolbar>
       {content}

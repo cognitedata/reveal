@@ -25,8 +25,8 @@ export const TimeseriesToolbar = ({
         query={query}
       >
         <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
-          <ButtonGroup.Button key="list" icon="List" />
-          <ButtonGroup.Button key="grid" icon="Grid" />
+          <ButtonGroup.Button key="list" icon="List" title="List" />
+          <ButtonGroup.Button key="grid" icon="Grid" title="Grid" />
         </ButtonGroup>
       </SearchResultToolbar>
     </>

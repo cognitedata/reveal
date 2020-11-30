@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, ButtonProps } from '@cognite/cogs.js';
 import { lightGrey } from 'lib/utils/Colors';
 import styled, { css } from 'styled-components';
+import { Tooltip } from 'antd';
 
 export type ButtonGroupProps = {
   children: React.ReactElement<ButtonProps>[];
@@ -35,15 +36,20 @@ export const ButtonGroup = ({
       {tabs.map((el, i) => {
         const key = el as typeof tabs[number];
 
-        return React.cloneElement(children[i], {
-          variant: 'ghost',
-          type: key === currentKey ? 'primary' : 'secondary',
-          onClick: () => {
-            setKey(key);
-            onButtonClicked(key);
-          },
-          key,
-        } as ButtonProps);
+        return (
+          <Tooltip title={children[i].props.title}>
+            {React.cloneElement(children[i], {
+              variant: 'ghost',
+              type: key === currentKey ? 'primary' : 'secondary',
+              onClick: () => {
+                setKey(key);
+                onButtonClicked(key);
+              },
+              key,
+              title: 'BEGGGG',
+            } as ButtonProps)}
+          </Tooltip>
+        );
       })}
     </ButtonGroupWrapper>
   );
