@@ -3,7 +3,7 @@ import { Card, Button, Dropdown, Menu, notification } from 'antd';
 import { Timeseries } from '@cognite/sdk';
 import { TimeseriesChart } from 'lib/containers/Timeseries';
 import styled from 'styled-components';
-import { Body, Tooltip, Icon } from '@cognite/cogs.js';
+import { Body, Tooltip, Icon, Colors } from '@cognite/cogs.js';
 import { GridCellProps, LatestDatapoint } from 'lib/components';
 import { DateRangeProps } from 'lib/CommonProps';
 
@@ -65,14 +65,9 @@ export const TimeseriesSparklineCard = ({
         />
         <Title>
           <Tooltip interactive disabled={!item.name} content={item.name}>
-            <TimeseriesText
-              level={1}
-              strong
-              style={{ cursor: 'pointer' }}
-              onClick={onClick}
-            >
+            <TimeseriesName level={1} strong onClick={onClick}>
               {item.name}
-            </TimeseriesText>
+            </TimeseriesName>
           </Tooltip>
           <TimeseriesText level={2}>{item.unit}</TimeseriesText>
         </Title>
@@ -98,4 +93,12 @@ const TimeseriesText = styled(Body)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const TimeseriesName = styled(TimeseriesText)`
+  cursor: pointer;
+  color: ${Colors['midblue-3'].hex()};
+  &:hover {
+    text-decoration: underline;
+  }
 `;
