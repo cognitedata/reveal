@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Menu, Overline, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import { useClickAwayListener } from 'hooks/useClickAwayListener';
+import { DeleteModal } from 'components/modals';
 import {
   ActionsContainer,
   TileHeader,
@@ -10,14 +11,17 @@ import {
   TileDescription,
   TileOverline,
 } from 'components/tiles/element';
+import { SuiteRowDelete } from 'store/suites/types';
 
 const TilePreviewHeight = '184';
 const TilePreviewWidth = '300';
 
-// create dataItem interface
 interface Props {
-  dataItem: any;
   avatar?: boolean;
+  color?: string;
+  dataItem: any;
+  handleDelete?: (key: SuiteRowDelete[]) => void;
+  handleEdit?: (key: SuiteRowDelete[]) => void;
   view?: 'suite' | 'board';
 }
 // eslint-disable-next-line
@@ -39,10 +43,13 @@ const renderIframe = (tag: string): JSX.Element | null => {
 };
 
 export const Tile: React.FC<Props> = ({
-  dataItem,
   avatar = false,
+  color,
+  dataItem,
   view = 'suite',
 }: Props) => {
+  const [isOpenModal, setOpenModal] = useState(false);
+
   const {
     ref,
     isComponentVisible,
@@ -55,43 +62,59 @@ export const Tile: React.FC<Props> = ({
     event.preventDefault();
     setIsComponentVisible(() => !isComponentVisible);
   };
+
+  const openDeleteModal = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+    setOpenModal(true);
+  };
+
   const isBoard = view === 'board';
   return (
-    <TileContainer>
-      <TileHeader isBoard={isBoard}>
-        {avatar && (
-          <SuiteAvatar title={dataItem.title} color={dataItem.color} />
+    <>
+      <TileContainer>
+        <TileHeader isBoard={isBoard} color={color}>
+          {avatar && (
+            <SuiteAvatar title={dataItem.title} color={dataItem.color} />
+          )}
+          <TileDescription>
+            <TileOverline isBoard={isBoard}>
+              <Overline level={3}>{dataItem.type}</Overline>
+            </TileOverline>
+            <Title level={6}>{dataItem.title}</Title>
+          </TileDescription>
+          <div ref={ref}>
+            <Button
+              variant="ghost"
+              icon="MoreOverflowEllipsisHorizontal"
+              onClick={handleMenuOpen}
+            />
+            <ActionsContainer>
+              {isComponentVisible && (
+                <Menu>
+                  <Menu.Item>Remove pin</Menu.Item>
+                  <Menu.Item>Edit suite</Menu.Item>
+                  <Menu.Item>
+                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+                    <div role="button" tabIndex={0} onClick={openDeleteModal}>
+                      Delete suite
+                    </div>
+                  </Menu.Item>
+                  <Menu.Item>Manage access</Menu.Item>
+                  <Menu.Item>Share</Menu.Item>
+                </Menu>
+              )}
+            </ActionsContainer>
+          </div>
+        </TileHeader>
+        {dataItem.embedTag ? (
+          renderIframe(dataItem.embedTag)
+        ) : (
+          <TilePreview isBoard={isBoard} />
         )}
-        <TileDescription>
-          <TileOverline isBoard={isBoard}>
-            <Overline level={3}>{dataItem.type}</Overline>
-          </TileOverline>
-          <Title level={6}>{dataItem.title}</Title>
-        </TileDescription>
-        <div ref={ref}>
-          <Button
-            variant="ghost"
-            icon="MoreOverflowEllipsisHorizontal"
-            onClick={handleMenuOpen}
-          />
-          <ActionsContainer>
-            {isComponentVisible && (
-              <Menu>
-                <Menu.Item>Remove pin</Menu.Item>
-                <Menu.Item>Edit suite</Menu.Item>
-                <Menu.Item>Delete suite</Menu.Item>
-                <Menu.Item>Manage access</Menu.Item>
-                <Menu.Item>Content</Menu.Item>
-              </Menu>
-            )}
-          </ActionsContainer>
-        </div>
-      </TileHeader>
-      {dataItem.embedTag ? (
-        renderIframe(dataItem.embedTag)
-      ) : (
-        <TilePreview isBoard={isBoard} />
-      )}
-    </TileContainer>
+        {isOpenModal && <DeleteModal dataItem={dataItem} />}
+      </TileContainer>
+    </>
   );
 };

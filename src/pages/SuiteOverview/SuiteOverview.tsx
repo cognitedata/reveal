@@ -1,6 +1,6 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Button, Loader, Title } from '@cognite/cogs.js';
+import { useHistory, useParams } from 'react-router-dom';
+import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
@@ -11,11 +11,13 @@ import {
   getSuitesTableState,
 } from 'store/suites/selectors';
 import { useSelector } from 'react-redux';
-import { Suite } from 'store/suites/types';
-import { StyledTitle } from './elements';
+import { Dashboard, Suite } from 'store/suites/types';
+import { StyledTitle, NoDashboardsContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const history = useHistory();
+
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
   );
@@ -25,15 +27,20 @@ const SuiteOverview: React.FC = () => {
   if (!suitesLoaded) {
     return null;
   }
+
   if (suitesLoading) {
     return <Loader />;
   }
-  const { title, dashboards } = suite || {};
+
+  if (!suite) {
+    history.push('/');
+  }
+  const { title, color, dashboards } = suite || {};
 
   const Header = () => {
     return (
       <>
-        <SuiteAvatar color="#C8F4E7" title="Product Optimization" />
+        <SuiteAvatar color={color} title={title} />
         <Title as={StyledTitle} level={5}>
           {title}
         </Title>
@@ -49,12 +56,26 @@ const SuiteOverview: React.FC = () => {
       />
       <OverviewContainer>
         <TilesContainer>
-          <Title level={6}>All dashboards</Title>
-          {dashboards?.map((dashboard) => (
-            // eslint-disable-next-line
-            // TODO pass item
-            <Tile key={dashboard.key} view="board" dataItem={dashboard} />
-          ))}
+          {!dashboards?.length ? (
+            <NoDashboardsContainer>
+              <Graphic type="DataKits" />
+              <Title level={5}>No dasboards added to suite yet</Title>
+            </NoDashboardsContainer>
+          ) : (
+            <>
+              <Title level={6}>All dashboards</Title>
+              {dashboards?.map((dashboard: Dashboard) => (
+                <a
+                  key={dashboard.key}
+                  href={dashboard.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Tile dataItem={dashboard} color={color} view="board" />
+                </a>
+              ))}
+            </>
+          )}
         </TilesContainer>
       </OverviewContainer>
     </>

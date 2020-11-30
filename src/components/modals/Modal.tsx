@@ -86,9 +86,11 @@ const CustomModal: React.FC<Props> = ({
         <ModalHeaderUnderline />
         <ModalContent>{children}</ModalContent>
         {hasFooter && (
-          <FooterContainer>
-            {(footer && footer) || FooterDefault}
-          </FooterContainer>
+          <>
+            {(footer && footer) || (
+              <FooterContainer>{FooterDefault}</FooterContainer>
+            )}
+          </>
         )}
       </Modal>
     </div>

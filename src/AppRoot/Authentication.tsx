@@ -3,7 +3,7 @@ import { TenantContext } from 'providers/TenantProvider';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
 import { authenticate } from 'store/auth/thunks';
-import { fetchSuits } from 'store/suites/thunks';
+import { fetchSuites } from 'store/suites/thunks';
 import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
 import { Loader } from '@cognite/cogs.js';
@@ -24,7 +24,7 @@ const Authentication = (): JSX.Element => {
   useEffect(() => {
     const auth = async () => {
       await dispatch(authenticate(tenant, client));
-      await dispatch(fetchSuits(client));
+      await dispatch(fetchSuites(client));
       setAuthenticateDispatched(true);
     };
     if (!authenticateDispatched && !authenticated && !authenticating) {

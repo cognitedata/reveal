@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
+import { SpaceBetween } from 'styles/common';
 
-export const SuiteContainer = styled.div`
+export const ModalContainer = styled.div`
   & .cogs-input-container,
   & .cogs-title-4 {
     margin-bottom: 16px;
@@ -20,12 +21,13 @@ export const ModalHeaderUnderline = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  padding: 24px 0 36px;
+  padding: 24px 0 0;
 `;
 
 export const FooterContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+  margin-top: 36px;
   & .cogs-btn {
     margin-left: 16px;
   }
@@ -38,4 +40,19 @@ export const SelectLabel = styled.p`
 
 export const SelectContainer = styled.div`
   margin-bottom: 16px;
+`;
+
+export const MultiStepModalFooter = styled(SpaceBetween)`
+  margin-top: 48px;
+  & div > .cogs-btn {
+    margin-left: 16px;
+  }
+`;
+
+export const DeleteModalFooter = styled(SpaceBetween)`
+  margin-top: 24px;
+`;
+
+export const ManageAccessModalFooter = styled(SpaceBetween)`
+  margin-top: 24px;
 `;

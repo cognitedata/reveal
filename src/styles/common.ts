@@ -15,3 +15,7 @@ export const OverviewContainer = styled.div`
 export const Flex = styled.div`
   display: flex;
 `;
+
+export const SpaceBetween = styled(Flex)`
+  justify-content: space-between;
+`;

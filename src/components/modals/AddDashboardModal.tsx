@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Select } from '@cognite/cogs.js';
 import Modal from './Modal';
-import { SuiteContainer, SelectLabel, SelectContainer } from './elements';
+import { ModalContainer, SelectLabel, SelectContainer } from './elements';
 
 interface Props {
   buttonText: string;
@@ -46,8 +46,9 @@ export const AddDashboardModal: React.FC<Props> = ({ buttonText }: Props) => {
         footer={footer}
         width={536}
       >
-        <SuiteContainer>
+        <ModalContainer>
           <Input
+            autoComplete="off"
             title="Title"
             name="title"
             variant="noBorder"
@@ -58,15 +59,22 @@ export const AddDashboardModal: React.FC<Props> = ({ buttonText }: Props) => {
             <SelectLabel>Select type</SelectLabel>
             <Select theme="grey" placeholder="Select type" />
           </SelectContainer>
-          <Input title="URL" variant="noBorder" placeholder="URL" fullWidth />
           <Input
+            autoComplete="off"
+            title="URL"
+            variant="noBorder"
+            placeholder="URL"
+            fullWidth
+          />
+          <Input
+            autoComplete="off"
             title="Iframe snapshot"
             name="embedTag"
             variant="noBorder"
             placeholder="Tag"
             fullWidth
           />
-        </SuiteContainer>
+        </ModalContainer>
       </Modal>
     </>
   );

@@ -40,12 +40,12 @@ export const TileOverline = styled.div<{ isBoard?: boolean }>`
   }
 `;
 
-export const TileHeader = styled.div<{ isBoard?: boolean }>`
+export const TileHeader = styled.div<{ isBoard?: boolean; color?: string }>`
   padding: 12px;
   display: flex;
   align-items: center;
-  background-color: ${({ isBoard }) =>
-    isBoard ? 'var(--cogs-midblue-7)' : 'var(--cogs-white)'};
+  background-color: ${({ isBoard, color }) =>
+    isBoard ? `${color}` : 'var(--cogs-white)'};
 
   & > :last-child {
     margin-left: auto;
