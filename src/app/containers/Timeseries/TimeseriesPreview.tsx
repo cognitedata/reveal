@@ -10,7 +10,6 @@ import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { createLink } from '@cognite/cdf-utilities';
 import TimeseriesDetails from 'lib/containers/Timeseries/TimeseriesDetails/TimeseriesDetails';
 import Metadata from 'lib/components/Details/Metadata';
-import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 import { useDateRange } from 'app/context/DateRangeContext';
 
 export type TimeseriesPreviewTabType =
@@ -26,7 +25,7 @@ export const TimeseriesPreview = ({
   actions,
 }: {
   timeseriesId: number;
-  actions?: TitleRowActionsProps['actions'];
+  actions?: React.ReactNode;
 }) => {
   const history = useHistory();
   const [dateRange, setDateRange] = useDateRange();
@@ -64,7 +63,7 @@ export const TimeseriesPreview = ({
     <>
       <ResourceTitleRow
         item={{ id: timeseriesId, type: 'timeSeries' }}
-        actions={actions}
+        afterDefaultActions={actions}
       />
       {timeseries && (
         <>

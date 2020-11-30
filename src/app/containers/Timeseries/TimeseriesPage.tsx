@@ -12,10 +12,5 @@ export const TimeseriesPage = () => {
     return null;
   }
 
-  return (
-    <TimeseriesPreview
-      timeseriesId={timeseriesId}
-      actions={['Download', 'Collections', 'Copy']}
-    />
-  );
+  return <TimeseriesPreview timeseriesId={timeseriesId} />;
 };

@@ -12,10 +12,5 @@ export const SequencePage = () => {
     return null;
   }
 
-  return (
-    <SequencePreview
-      sequenceId={sequenceId}
-      actions={['Download', 'Collections', 'Copy']}
-    />
-  );
+  return <SequencePreview sequenceId={sequenceId} />;
 };

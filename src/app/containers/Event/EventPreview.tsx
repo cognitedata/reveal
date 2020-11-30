@@ -11,7 +11,6 @@ import Metadata from 'lib/components/Details/Metadata';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type EventPreviewTabType =
   | 'details'
@@ -26,7 +25,7 @@ export const EventPreview = ({
   actions,
 }: {
   eventId: number;
-  actions?: TitleRowActionsProps['actions'];
+  actions?: React.ReactNode;
 }) => {
   const history = useHistory();
 
@@ -64,7 +63,7 @@ export const EventPreview = ({
       <ResourceTitleRow
         item={{ id: eventId, type: 'event' }}
         getTitle={renderTitle}
-        actions={actions}
+        afterDefaultActions={actions}
       />
       <ResourceDetailsTabs
         parentResource={{

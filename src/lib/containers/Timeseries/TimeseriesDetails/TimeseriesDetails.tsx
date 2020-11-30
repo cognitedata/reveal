@@ -15,14 +15,15 @@ export default function TimeseriesDetails({
 }) {
   return (
     <DetailsTabGrid>
+      <DetailsTabItem name="Name" value={timeseries.name} copyable />
       <DetailsTabItem name="Description" value={timeseries.description} />
       <DetailsTabItem name="Unit" value={timeseries.unit} />
+      <DetailsTabItem name="ID" value={timeseries.id} copyable />
       <DetailsTabItem
         name="External ID"
         value={timeseries.externalId}
         copyable
       />
-      <DetailsTabItem name="ID" value={timeseries.id} copyable />
       <DataSetItem id={timeseries.id} type="timeSeries" />
       <AssetsItem
         assetIds={timeseries.assetId ? [timeseries.assetId] : undefined}

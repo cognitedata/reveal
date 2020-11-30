@@ -12,8 +12,9 @@ import {
 export const FileDetails = ({ file }: { file: FileInfo }) => {
   return (
     <DetailsTabGrid>
-      <DetailsTabItem name="External ID" value={file.externalId} copyable />
+      <DetailsTabItem name="Name" value={file.name} copyable />
       <DetailsTabItem name="ID" value={file.id} copyable />
+      <DetailsTabItem name="External ID" value={file.externalId} copyable />
       <DetailsTabItem name="Source" value={file.source} />
       <DetailsTabItem name="MIME type" value={file.mimeType} />
       <DataSetItem id={file.id} type="file" />

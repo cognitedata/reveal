@@ -1,9 +1,9 @@
 import React from 'react';
-import { Col, Space } from 'antd';
+import { Space } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { InternalId } from '@cognite/sdk';
 import { ResourceType, getIcon, getTitle } from 'lib';
-import { TitleRow } from '../ResourceTitleRow';
+import { TitleRowWrapper } from '../ResourceTitleRow';
 import { Actions } from './Actions';
 
 type Props = {
@@ -15,8 +15,14 @@ export default function SelectedResourcesTitleRow({
   resourceType,
 }: Props) {
   return (
-    <TitleRow>
-      <Col flex="auto">
+    <TitleRowWrapper>
+      <div
+        style={{
+          display: 'inline-block',
+          overflow: 'hidden',
+          width: 'calc(100% - 650px)',
+        }}
+      >
         <Space size="large" align="center">
           <Icon type={getIcon(resourceType)} />
           <h1>
@@ -24,10 +30,16 @@ export default function SelectedResourcesTitleRow({
             {getTitle(resourceType, ids.length !== 1).toLowerCase()} selected
           </h1>
         </Space>
-      </Col>
-      <Col flex="none">
+      </div>
+      <div
+        style={{
+          display: 'inline-block',
+          overflow: 'hidden',
+          width: 650,
+        }}
+      >
         <Actions ids={ids} resourceType={resourceType} />
-      </Col>
-    </TitleRow>
+      </div>
+    </TitleRowWrapper>
   );
 }

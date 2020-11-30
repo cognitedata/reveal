@@ -42,7 +42,9 @@ export const EditFileButton = ({
           </>
         }
       >
-        <Button variant="outline" icon="Edit" disabled />
+        <Button variant="outline" icon="Edit" disabled>
+          Edit
+        </Button>
       </Tooltip>
     );
   }
@@ -54,5 +56,9 @@ export const EditFileButton = ({
     );
   }
 
-  return <Button variant="outline" icon="Edit" key={id} onClick={onClick} />;
+  return (
+    <Button variant="outline" icon="Edit" key={id} onClick={onClick}>
+      Edit
+    </Button>
+  );
 };

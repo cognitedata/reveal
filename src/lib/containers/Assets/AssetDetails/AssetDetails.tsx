@@ -15,9 +15,10 @@ type Props = {
 export const AssetDetails = ({ asset }: Props) => {
   return (
     <DetailsTabGrid>
-      <DetailsTabItem name="Description" value={asset?.description} />
-      <DetailsTabItem name="External ID" value={asset?.externalId} copyable />
-      <DetailsTabItem name="ID" value={asset?.id} copyable />
+      <DetailsTabItem name="Name" value={asset.name} copyable />
+      <DetailsTabItem name="Description" value={asset.description} />
+      <DetailsTabItem name="ID" value={asset.id} copyable />
+      <DetailsTabItem name="External ID" value={asset.externalId} copyable />
       <DataSetItem id={asset.id} type="asset" />
       <DetailsTabItem
         name="Created at"
@@ -32,8 +33,8 @@ export const AssetDetails = ({ asset }: Props) => {
       <DetailsTabItem
         name="Labels"
         value={
-          asset?.labels
-            ? asset?.labels.map(label => <Label>{label.externalId}</Label>)
+          asset.labels
+            ? asset.labels.map(label => <Label>{label.externalId}</Label>)
             : undefined
         }
       />

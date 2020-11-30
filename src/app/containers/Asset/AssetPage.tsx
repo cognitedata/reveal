@@ -13,10 +13,5 @@ export const AssetPage = () => {
     return null;
   }
 
-  return (
-    <AssetPreview
-      assetId={assetId}
-      actions={['Download', 'Collections', 'Copy']}
-    />
-  );
+  return <AssetPreview assetId={assetId} />;
 };

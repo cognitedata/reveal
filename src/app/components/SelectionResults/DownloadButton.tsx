@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Menu } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Dropdown, Menu } from 'antd';
+import { Button } from '@cognite/cogs.js';
 import { baseCacheKey, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
@@ -52,10 +52,12 @@ function MetadataDownload({ ids, resourceType }: Props) {
   return (
     <Dropdown overlay={menu} trigger={['click']}>
       <Button
-        type="ghost"
+        variant="outline"
         disabled={downloading}
-        icon={<Icon type={downloading ? 'Loading' : 'Download'} />}
-      />
+        icon={downloading ? 'Loading' : 'Download'}
+      >
+        Download
+      </Button>
     </Dropdown>
   );
 }
@@ -153,10 +155,12 @@ function TimeseriesDownloadButton({ ids }: Pick<Props, 'ids'>) {
   return (
     <Dropdown overlay={menu} trigger={['click']}>
       <Button
-        type="ghost"
+        variant="outline"
         disabled={downloading}
-        icon={<Icon type={downloading ? 'Loading' : 'Download'} />}
-      />
+        icon={downloading ? 'Loading' : 'Download'}
+      >
+        Download
+      </Button>
     </Dropdown>
   );
 }

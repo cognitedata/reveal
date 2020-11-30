@@ -1,24 +1,29 @@
 import React from 'react';
-import { Row, Col, Space } from 'antd';
-import { Link } from 'react-router-dom';
+
+import { Link, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
-import { convertResourceType, ResourceIcons } from 'lib';
+import { convertResourceType, ResourceItem, getIcon } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
 import { trackUsage } from 'app/utils/Metrics';
 import { TitleRowActions } from './TitleRowActions';
-import { TitleRowActionsProps } from './TitleRowActions/TitleRowActions';
 
 type Props = {
+  item: ResourceItem;
   getTitle?: (_: any) => string | undefined;
-} & TitleRowActionsProps;
+  beforeDefaultActions?: React.ReactNode;
+  afterDefaultActions?: React.ReactNode;
+  actionWidth?: number;
+};
 
-export default function ResourceTileRow({
+export default function ResourceTitleRow({
   item: { type, id },
   getTitle = (i: any) => i?.name,
-  actions,
+  beforeDefaultActions,
+  afterDefaultActions,
+  actionWidth = 665,
 }: Props) {
   const { data, isFetched } = useCdfItem<{ name?: string }>(
     convertResourceType(type),
@@ -26,73 +31,67 @@ export default function ResourceTileRow({
       id,
     }
   );
+  const location = useLocation();
+  const inSearch = location.pathname.includes('/search');
 
-  // The resource name should only be a link from resource preview
-  const inSearch = window.location.pathname.includes('/search');
-
+  const name = (
+    <NameHeader>
+      {!inSearch && <Icon type={isFetched ? getIcon(type) : 'Loading'} />}{' '}
+      {getTitle(data) || id}
+      {inSearch && '→'}
+    </NameHeader>
+  );
   return (
-    <TitleRow align="middle" justify="space-between">
-      <Col flex="auto" style={{ alignItems: 'center' }}>
-        <CustomSpace size="large" align="center">
-          {!inSearch &&
-            (isFetched ? (
-              <ResourceIcons type={type} />
-            ) : (
-              <Icon type="Loading" />
-            ))}
-          {inSearch ? (
-            <Link
-              to={createLink(`/explore/${type}/${id}`)}
-              onClick={() => trackUsage('Exploration.FullPage', { type, id })}
-            >
-              <ClickableName>
-                <NameHeader>{getTitle(data) || id}</NameHeader>
-                <LinkIcon type="ArrowForward" />
-              </ClickableName>
-            </Link>
-          ) : (
-            <h1>{getTitle(data) || id}</h1>
-          )}
-        </CustomSpace>
-      </Col>
-      <Col flex="none">
-        <TitleRowActions item={{ type, id }} actions={actions} />
-      </Col>
-    </TitleRow>
+    <TitleRowWrapper>
+      <div
+        style={{
+          display: 'inline-block',
+          overflow: 'hidden',
+          width: `calc(100% - ${actionWidth}px)`,
+        }}
+      >
+        {inSearch ? (
+          <Link
+            style={{ color: 'var(--cogs-primary)' }}
+            to={createLink(`/explore/${type}/${id}`)}
+            onClick={() => trackUsage('Exploration.FullPage', { type, id })}
+          >
+            {name}{' '}
+          </Link>
+        ) : (
+          name
+        )}
+      </div>
+      <div
+        style={{
+          display: 'inline-block',
+          overflow: 'hidden',
+          width: actionWidth,
+        }}
+      >
+        <TitleRowActions
+          item={{ type, id }}
+          beforeDefaultActions={beforeDefaultActions}
+          afterDefaultActions={afterDefaultActions}
+        />
+      </div>
+    </TitleRowWrapper>
   );
 }
 
-const CustomSpace = styled(Space)`
-  .ant-space-item {
-    display: flex;
-    align-items: center;
-  }
-`;
-
-export const TitleRow = styled(Row)`
+export const TitleRowWrapper = styled.div`
   h1 {
     margin: 0;
   }
   margin: 16px 0px;
   padding-left: 16px;
   border-bottom: 1px solid ${lightGrey};
-  padding-bottom: 16px;
-`;
-
-const ClickableName = styled.div`
-  display: flex;
-  align-items: center;
-  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-  &:hover {
-    text-decoration: underline;
-  }
+  padding-bottom: 10px;
 `;
 
 const NameHeader = styled.h1`
-  color: var(--cogs-primary);
-`;
-
-const LinkIcon = styled(Icon)`
-  margin-left: 8px;
-  color: var(--cogs-primary);
+  color: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;

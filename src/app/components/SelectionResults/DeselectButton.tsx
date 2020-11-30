@@ -6,8 +6,8 @@ import { CART_KEY } from 'app/utils/contants';
 export default function DeselectButton() {
   const setCart = useQueryStringArray(CART_KEY)[1];
   return (
-    <Button variant="outline" onClick={() => setCart([])} icon="Close">
-      Clear Selection
+    <Button variant="outline" onClick={() => setCart([])}>
+      Clear selection
     </Button>
   );
 }

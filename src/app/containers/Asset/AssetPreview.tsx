@@ -16,7 +16,6 @@ import { Loader, ErrorFeedback, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useCurrentResourceId } from 'app/hooks';
-import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { ResourceItem } from 'lib/types';
 
@@ -33,7 +32,7 @@ export const AssetPreview = ({
   actions,
 }: {
   assetId: number;
-  actions?: TitleRowActionsProps['actions'];
+  actions?: React.ReactNode;
 }) => {
   useEffect(() => {
     trackUsage('Exploration.Preview.Asset', { assetId });
@@ -83,7 +82,7 @@ export const AssetPreview = ({
     <>
       <ResourceTitleRow
         item={{ id: assetId, type: 'asset' }}
-        actions={actions}
+        afterDefaultActions={actions}
       />
       <Space align="center" style={{ marginLeft: '16px' }}>
         <p>LOCATION:</p>

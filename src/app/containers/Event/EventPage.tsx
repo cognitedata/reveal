@@ -12,10 +12,5 @@ export const EventPage = () => {
     return null;
   }
 
-  return (
-    <EventPreview
-      eventId={eventId}
-      actions={['Download', 'Collections', 'Copy']}
-    />
-  );
+  return <EventPreview eventId={eventId} />;
 };

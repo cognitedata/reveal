@@ -19,11 +19,16 @@ type Props = {
   button: React.ReactElement;
 };
 
-const CollectionsDropdown = ({ type, items, button }: Props) => {
+export default function CollectionsDropdown({ type, items, button }: Props) {
+  const showCollections = useCollectionFeature();
   const [formOpen, setFormOpen] = useState(false);
   const { data: collections } = useCollections();
   const [createCollections] = useCreateCollections();
   const [updateCollections] = useUpdateCollections();
+
+  if (!showCollections) {
+    return null;
+  }
 
   const resourceCollections = (collections || []).filter(
     collection => collection.type === type
@@ -121,7 +126,7 @@ const CollectionsDropdown = ({ type, items, button }: Props) => {
       </Dropdown>
     </>
   );
-};
+}
 
 const CollectionItem = styled.div`
   justify-content: space-between;
@@ -139,11 +144,3 @@ const CheckIcon = styled(Icon)`
   color: ${Colors.success.hex()};
   margin-left: 8px;
 `;
-
-export default (props: Props): React.ReactNode => {
-  const showCollections = useCollectionFeature();
-  if (showCollections) {
-    return CollectionsDropdown(props);
-  }
-  return null;
-};

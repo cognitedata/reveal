@@ -11,9 +11,11 @@ import {
 export const EventDetails = ({ event }: { event: CogniteEvent }) => {
   return (
     <DetailsTabGrid>
+      <DetailsTabItem name="Type" value={event.type} copyable />
+      <DetailsTabItem name="Sub type" value={event.subtype} copyable />
       <DetailsTabItem name="Description" value={event.description} />
-      <DetailsTabItem name="External ID" value={event.externalId} copyable />
       <DetailsTabItem name="ID" value={event.id} copyable />
+      <DetailsTabItem name="External ID" value={event.externalId} copyable />
       <DataSetItem id={event.id} type="event" />
       <AssetsItem assetIds={event.assetIds} linkId={event.id} type="event" />
       <DetailsTabItem

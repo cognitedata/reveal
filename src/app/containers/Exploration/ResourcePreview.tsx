@@ -5,7 +5,6 @@ import { SequencePreview } from 'app/containers/Sequence/SequencePreview';
 import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
 import { EventPreview } from 'app/containers/Event/EventPreview';
 import { ResourceItem } from 'lib/types';
-import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 import { Button } from '@cognite/cogs.js';
 
 type Props = {
@@ -16,23 +15,24 @@ export default function ResourcePreview({
   item: { type, id },
   onCloseClicked,
 }: Props) {
-  const actions: TitleRowActionsProps['actions'] = [
-    'Download',
-    'Collections',
-    'Copy',
-    () => <Button variant="outline" icon="Close" onClick={onCloseClicked} />,
-  ];
+  const closePreviewButton = (
+    <Button variant="outline" icon="Close" onClick={onCloseClicked}>
+      Close preview
+    </Button>
+  );
   switch (type) {
     case 'asset':
-      return <AssetPreview assetId={id} actions={actions} />;
+      return <AssetPreview assetId={id} actions={closePreviewButton} />;
     case 'file':
-      return <FilePreview fileId={id} actions={actions} />;
+      return <FilePreview fileId={id} actions={closePreviewButton} />;
     case 'sequence':
-      return <SequencePreview sequenceId={id} actions={actions} />;
+      return <SequencePreview sequenceId={id} actions={closePreviewButton} />;
     case 'timeSeries':
-      return <TimeseriesPreview timeseriesId={id} actions={actions} />;
+      return (
+        <TimeseriesPreview timeseriesId={id} actions={closePreviewButton} />
+      );
     case 'event':
-      return <EventPreview eventId={id} actions={actions} />;
+      return <EventPreview eventId={id} actions={closePreviewButton} />;
     default:
       return <>{null}</>;
   }

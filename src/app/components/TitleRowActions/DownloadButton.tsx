@@ -61,7 +61,9 @@ function MetadataDownload({ item: { id, type } }: Props) {
         variant="outline"
         disabled={downloading}
         icon={downloading ? 'Loading' : 'Download'}
-      />
+      >
+        Download
+      </Button>
     </Dropdown>
   );
 }
@@ -130,8 +132,11 @@ function FileDownloadButton({ item }: Props) {
       <Button
         variant="outline"
         icon={downloading ? 'Loading' : 'Download'}
+        title="Download"
         disabled={downloading}
-      />
+      >
+        Download
+      </Button>
     </Dropdown>
   );
 }
@@ -227,7 +232,9 @@ function TimeseriesDownloadButton({ item: { id, type } }: Props) {
         variant="outline"
         disabled={downloading}
         icon={downloading ? 'Loading' : 'Download'}
-      />
+      >
+        Download
+      </Button>
     </Dropdown>
   );
 }

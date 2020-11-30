@@ -14,7 +14,6 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 
 export type SequencePreviewType =
   | 'details'
@@ -30,7 +29,7 @@ export const SequencePreview = ({
   actions,
 }: {
   sequenceId: number;
-  actions?: TitleRowActionsProps['actions'];
+  actions?: React.ReactNode;
 }) => {
   const history = useHistory();
 
@@ -70,7 +69,7 @@ export const SequencePreview = ({
     <>
       <ResourceTitleRow
         item={{ id: sequenceId, type: 'sequence' }}
-        actions={actions}
+        afterDefaultActions={actions}
       />
       <ResourceDetailsTabs
         parentResource={{

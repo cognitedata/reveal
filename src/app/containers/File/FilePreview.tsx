@@ -10,7 +10,6 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { FileDetails } from 'lib';
 import Metadata from 'lib/components/Details/Metadata';
-import { TitleRowActionsProps } from 'app/components/TitleRowActions';
 import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
 import { usePermissions } from 'lib/hooks/CustomHooks';
 import styled from 'styled-components';
@@ -34,7 +33,7 @@ export const FilePreview = ({
   actions,
 }: {
   fileId: number;
-  actions?: TitleRowActionsProps['actions'];
+  actions?: React.ReactNode;
 }) => {
   const sdk = useSDK();
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -93,9 +92,10 @@ export const FilePreview = ({
     <>
       <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
         <ResourceTitleRow
+          actionWidth={920}
           item={{ id: fileId!, type: 'file' }}
-          actions={[
-            () => (
+          beforeDefaultActions={
+            <>
               <EditFileButton
                 item={{ type: 'file', id: fileId! }}
                 isActive={editMode}
@@ -103,12 +103,11 @@ export const FilePreview = ({
                   setEditMode(mode => !mode);
                 }}
               />
-            ),
-            () => (
+
               <ContextualizationButton item={{ type: 'file', id: fileId! }} />
-            ),
-            ...actions,
-          ]}
+            </>
+          }
+          afterDefaultActions={actions}
         />
         <div
           style={{
