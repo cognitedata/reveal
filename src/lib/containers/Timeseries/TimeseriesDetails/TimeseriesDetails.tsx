@@ -24,13 +24,20 @@ export default function TimeseriesDetails({
         value={timeseries.externalId}
         copyable
       />
+      <DetailsTabItem
+        name="Is String"
+        value={timeseries.isString ? 'True' : 'False'}
+      />
+      <DetailsTabItem
+        name="Is Step"
+        value={timeseries.isStep ? 'True' : 'False'}
+      />
       <DataSetItem id={timeseries.id} type="timeSeries" />
       <AssetsItem
         assetIds={timeseries.assetId ? [timeseries.assetId] : undefined}
         linkId={timeseries.id}
         type="timeSeries"
       />
-      <DetailsTabItem name="Is Step" value={`${timeseries.isStep}`} />
       <DetailsTabItem
         name="Created at"
         value={

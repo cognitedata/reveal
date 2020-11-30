@@ -104,7 +104,6 @@ export const PivotRangePicker = ({
         <ReactDatePicker
           renderCustomHeader={renderCustomHeader()}
           selected={date}
-          maxDate={new Date()}
           onChange={newDate => onChange({ date: newDate as Date })}
           inline
           disabledKeyboardNavigation

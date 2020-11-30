@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
-import moment from 'moment';
 import ReactDatePicker from 'react-datepicker';
 import { SpacedRow } from 'lib/components';
 import { Button, Overline, Icon } from '@cognite/cogs.js';
@@ -87,7 +86,6 @@ export const CalendarPicker = ({
         dateFormat="yyyy-MM-dd hh:mm:ss"
         disabledKeyboardNavigation
         minDate={editingDateMode === 'end' ? startDate : undefined}
-        maxDate={moment().toDate()}
         inline
       />
       <SpacedRow>
