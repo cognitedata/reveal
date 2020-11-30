@@ -79,9 +79,9 @@ const ChartComponent = ({ chart }: ChartProps) => {
       ...(chart?.workflowCollection || []),
     ]
       .filter(({ enabled }) => enabled)
-      .map(({ id, color }: ChartTimeSeries | ChartWorkflow) => ({
+      .map(({ color }: ChartTimeSeries | ChartWorkflow) => ({
         title: {
-          text: false ? undefined : 'Unit',
+          text: 'Unit',
           style: {
             color,
           },
@@ -131,8 +131,6 @@ const ChartComponent = ({ chart }: ChartProps) => {
       yAxis: seriesIndex,
     })),
   };
-
-  console.log({ options });
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };
