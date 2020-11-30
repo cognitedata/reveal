@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { SupportedModelTypes } from '../types';
+import { PotreePointSizeType, SupportedModelTypes } from '../types';
 import { CameraConfiguration } from './types';
 import { PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from '../..';
 import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';
@@ -157,6 +157,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Determines how points currently are colored.
+   * @default PotreePointColorType.Rgb
    */
   get pointColorType(): PotreePointColorType {
     return this.pointCloudNode.pointColorType;
@@ -164,7 +165,6 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Specifies how points are colored.
-   * @default PotreePointColorType.Rgb
    * @example
    * ```js
    * model.pointColorType = PotreePointColorType.Rgb
@@ -176,6 +176,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Returns the size of each rendered point in the point cloud.
+   * @default `1`
    * @version New in 1.1.0
    */
   get pointSize(): number {
@@ -184,11 +185,28 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Sets the size of each rendered point in the point cloud.
-   * @default `1`
+   * Notice that you need to set pointSizeType to `PotreePointSizeType.Fixed` to make it work.
    * @version New in 1.1.0
    */
   set pointSize(size: number) {
     this.pointCloudNode.pointSize = size;
+  }
+
+  /**
+   * Returns the value that represents if point sizes are calculated automatically or fixed value is used.
+   * @default `PotreePointSizeType.Adaptive`
+   * @version New in 1.2.4
+   */
+  get pointSizeType(): PotreePointSizeType {
+    return this.pointCloudNode.pointSizeType;
+  }
+
+  /**
+   * Set if point sizes calculated automatically or fixed value is used.
+   * @version New in 1.2.4
+   */
+  set pointSizeType(type: PotreePointSizeType) {
+    this.pointCloudNode.pointSizeType = type;
   }
 
   /**
