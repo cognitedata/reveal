@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { parseCron } from '../../../utils/cronUtils';
 import InteractiveCopy from '../../InteractiveCopy';
 
-const FlexWrapper = styled.span`
+export const InteractiveCopyWrapper = styled.span`
   display: flex;
   align-items: center;
   span {
@@ -26,13 +26,11 @@ const Schedule: FunctionComponent<Props> = ({ schedule }: Props) => {
       return <>{schedule}</>;
     default:
       return (
-        <>
-          <Tooltip content={schedule}>
-            <FlexWrapper>
-              {parseCron(schedule)} <InteractiveCopy text={schedule} />
-            </FlexWrapper>
-          </Tooltip>
-        </>
+        <Tooltip content={schedule}>
+          <InteractiveCopyWrapper>
+            {parseCron(schedule)} <InteractiveCopy text={schedule} />
+          </InteractiveCopyWrapper>
+        </Tooltip>
       );
   }
 };

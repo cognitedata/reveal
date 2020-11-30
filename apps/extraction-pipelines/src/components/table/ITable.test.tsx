@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import ITable from './ITable';
 import { getMockResponse } from '../../utils/mockResponse';
 import { getIntegrationTableCol } from './IntegrationTableCol';
@@ -8,6 +9,12 @@ import { renderWithSelectedIntegrationContext } from '../../utils/test/render';
 describe('<ITable/>', () => {
   const cols = getIntegrationTableCol();
   const mockIntegration = getMockResponse()[0];
+  beforeEach(() => {
+    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
+  });
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
   test('Render without errors', () => {
     renderWithSelectedIntegrationContext(
       <ITable data={getMockResponse()} columns={cols} />,

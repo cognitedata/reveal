@@ -1,7 +1,16 @@
 import React, { useMemo } from 'react';
 import { Column, TableOptions, useExpanded, useTable } from 'react-table';
 import { EditStyleTable, StyledTable } from 'styles/StyledTable';
+import styled from 'styled-components';
 import { DetailsCol, IntegrationFieldValue } from './DetailsCols';
+
+const DetailsTD = styled((props) => <td {...props}>{props.children}</td>)`
+  span {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+`;
 
 export interface EditableHelpers {
   updateData: (
@@ -62,12 +71,12 @@ const DetailsTable = <T extends object>({
               >
                 {row.cells.map((cell) => {
                   return (
-                    <td
+                    <DetailsTD
                       {...cell.getCellProps()}
                       className={`${cell.column.id}`}
                     >
                       {cell.render('Cell')}
-                    </td>
+                    </DetailsTD>
                   );
                 })}
               </tr>

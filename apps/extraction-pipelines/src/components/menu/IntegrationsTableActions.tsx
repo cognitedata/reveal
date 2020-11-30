@@ -56,7 +56,9 @@ const IntegrationsTableActions: FunctionComponent<Props> = ({
   const [display, setDisplay] = useState(integration);
   useEffect(() => {
     if (singleIntegration) {
-      setDisplay(singleIntegration);
+      setDisplay((old) => {
+        return { ...old, ...singleIntegration };
+      });
     }
   }, [singleIntegration]);
 

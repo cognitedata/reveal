@@ -10,7 +10,7 @@ const StyledTextArea = styled.textarea`
 `;
 
 interface OwnProps {
-  value: string;
+  value: string | number;
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onBlur: () => void;
   isChanged: boolean;

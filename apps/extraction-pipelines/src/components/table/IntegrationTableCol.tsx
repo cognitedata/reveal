@@ -4,11 +4,10 @@ import { calculateStatus } from 'utils/integrationUtils';
 import { Integration } from '../../model/Integration';
 import UserGroup from '../integrations/cols/UserGroup';
 import Name from '../integrations/cols/Name';
-import LatestRun from '../integrations/cols/LatestRun';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableActions from '../menu/IntegrationsTableActions';
 import DataSet from '../integrations/cols/DataSet';
-import LastSeen from '../integrations/cols/LastSeen';
+import DisplayEpocTime from '../integrations/cols/DisplayEpocTime';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { User } from '../../model/User';
@@ -17,7 +16,7 @@ export enum TableHeadings {
   NAME = 'Name',
   STATUS = 'Status',
   LATEST_RUN = 'Latest run',
-  DATA_SET = 'Destination data sets',
+  DATA_SET = 'Destination data set',
   SCHEDULE = 'Schedule',
   LAST_SEEN = 'Last seen',
   CONTACTS = 'Contacts',
@@ -74,7 +73,7 @@ export const getIntegrationTableCol = () => {
         return status;
       },
       Cell: ({ row }: Cell<Integration>) => {
-        return <LatestRun latestRunTime={row.values.latestRun.time} />;
+        return <DisplayEpocTime time={row.values.latestRun.time} />;
       },
       disableSortBy: true,
       disableFilters: true,
@@ -94,7 +93,7 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.LAST_SEEN,
       accessor: 'lastSeen',
       Cell: ({ row }: Cell<Integration>) => {
-        return <LastSeen lastSeen={row.values.lastSeen} />;
+        return <DisplayEpocTime time={row.values.lastSeen} />;
       },
       disableSortBy: true,
       disableFilters: true,

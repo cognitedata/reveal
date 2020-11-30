@@ -4,7 +4,7 @@ import { DivFlex } from '../../styles/flex/StyledFlex';
 import { InputWarningIcon } from './InputWarningIcon';
 
 interface OwnProps {
-  value: string;
+  value: string | number;
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onBlur: () => void;
   isChanged: boolean;

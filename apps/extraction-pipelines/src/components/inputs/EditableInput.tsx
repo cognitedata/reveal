@@ -12,7 +12,7 @@ import TextAreaWithWarning from './TextAreaWithWarning';
 type ColumnType = DetailsCol | ContactsTableCol;
 
 interface EditableCellProps<T extends ColumnType> {
-  value: any;
+  value: string | number;
   row: Row<T>;
   column: Column<T>;
   updateData: (

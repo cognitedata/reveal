@@ -12,8 +12,7 @@ import { useDetailsGlobalChanges } from '../../hooks/details/useDetailsGlobalCha
 const ContentTitle = styled((props) => (
   <HeadingWithUnderline {...props}>{props.children}</HeadingWithUnderline>
 ))`
-  margin-top: 3rem;
-  margin-bottom: 2rem;
+  margin: 1.5rem 0;
   font-size: 1.5rem;
 `;
 
