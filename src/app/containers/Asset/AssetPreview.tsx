@@ -109,7 +109,6 @@ export const AssetPreview = ({
             tab: newTab,
           });
         }}
-        excludedTypes={['asset']}
         additionalTabs={[
           <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
             <AssetDetails asset={asset} />
