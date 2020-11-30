@@ -14,7 +14,7 @@
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-feature-flags": "^0.1.0",
     "@cognite/react-picture-annotation": "^1.8.0",
-    "@cognite/sdk": "^3.2.1",
+    "@cognite/sdk": "^3.3.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^2.0.1",
     "@sentry/browser": "^5.27.6",

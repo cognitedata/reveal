@@ -1550,10 +1550,10 @@
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^2.23.1"
 
-"@cognite/sdk@^3.0.0", "@cognite/sdk@^3.2.0", "@cognite/sdk@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.2.1.tgz#42e2b9e425ec9e36dedf3ed6b6dce0e801c8b563"
-  integrity sha512-xYPwOAfhB6Ygy/2ao5+lYAEFHZn1JzlgxYnghAQjMd26Cqak2MGD1j8HhLntJe/vrHe31wZ/8dpnANeA/CGjGA==
+"@cognite/sdk@^3.0.0", "@cognite/sdk@^3.2.0", "@cognite/sdk@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.0.tgz#49f766f63931f8716a997c2af5eb45f0cb3849b2"
+  integrity sha512-p/7xN96IS8t9+nBm3nzW+68z9yEaIm5lKJgx3IWi61nidajE2OAVBYFZjjuvCAlR/OCz/8xIBFndlZjP7JCIjw==
   dependencies:
     "@cognite/sdk-core" "^1.0.3"
     lodash "^4.17.11"
