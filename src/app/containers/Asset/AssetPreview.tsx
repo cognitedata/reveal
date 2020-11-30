@@ -36,7 +36,7 @@ export const AssetPreview = ({
   actions?: TitleRowActionsProps['actions'];
 }) => {
   useEffect(() => {
-    trackUsage('Exploration.Asset', { assetId });
+    trackUsage('Exploration.Preview.Asset', { assetId });
   }, [assetId]);
 
   const match = useRouteMatch();
@@ -99,13 +99,17 @@ export const AssetPreview = ({
           externalId: asset.externalId,
         }}
         tab={activeTab}
-        onTabChange={newTab =>
+        onTabChange={newTab => {
           history.push(
             createLink(
               `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
             )
-          )
-        }
+          );
+          trackUsage('Exploration.Details.TabChange', {
+            type: 'asset',
+            tab: newTab,
+          });
+        }}
         excludedTypes={['asset']}
         additionalTabs={[
           <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">

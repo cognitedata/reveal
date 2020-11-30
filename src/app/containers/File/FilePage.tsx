@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from 'app/utils/Metrics';
 import { FilePreview } from './FilePreview';
 
 export const FilePage = () => {
@@ -9,10 +8,6 @@ export const FilePage = () => {
   }>();
   const fileId = id ? parseInt(id, 10) : undefined;
   const invalidId = !fileId || Number.isNaN(fileId);
-
-  useEffect(() => {
-    trackUsage('Exploration.FilePage', { fileId });
-  }, [fileId]);
 
   if (invalidId) {
     return null;

@@ -7,6 +7,7 @@ import { convertResourceType, ResourceIcons } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
+import { trackUsage } from 'app/utils/Metrics';
 import { TitleRowActions } from './TitleRowActions';
 import { TitleRowActionsProps } from './TitleRowActions/TitleRowActions';
 
@@ -40,7 +41,10 @@ export default function ResourceTileRow({
               <Icon type="Loading" />
             ))}
           {inSearch ? (
-            <Link to={createLink(`/explore/${type}/${id}`)}>
+            <Link
+              to={createLink(`/explore/${type}/${id}`)}
+              onClick={() => trackUsage('Exploration.FullPage', { type, id })}
+            >
               <ClickableName>
                 <NameHeader>{getTitle(data) || id}</NameHeader>
                 <LinkIcon type="ArrowForward" />

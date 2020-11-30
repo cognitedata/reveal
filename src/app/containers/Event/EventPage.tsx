@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from 'app/utils/Metrics';
 import { EventPreview } from './EventPreview';
 
 export const EventPage = () => {
@@ -8,10 +7,6 @@ export const EventPage = () => {
     id: string;
   }>();
   const eventId = parseInt(eventIdString, 10);
-
-  useEffect(() => {
-    trackUsage('Exploration.EventPage', { eventId });
-  }, [eventId]);
 
   if (!eventIdString) {
     return null;

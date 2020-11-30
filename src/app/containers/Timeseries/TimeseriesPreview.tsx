@@ -32,7 +32,7 @@ export const TimeseriesPreview = ({
   const [dateRange, setDateRange] = useDateRange();
 
   useEffect(() => {
-    trackUsage('Exploration.Timeseries', { timeseriesId });
+    trackUsage('Exploration.Preview.Timeseries', { timeseriesId });
   }, [timeseriesId]);
 
   const { data: timeseries, isFetched, error } = useCdfItem<Timeseries>(
@@ -90,13 +90,17 @@ export const TimeseriesPreview = ({
               externalId: timeseries.externalId,
             }}
             tab={activeTab}
-            onTabChange={newTab =>
+            onTabChange={newTab => {
               history.push(
                 createLink(
                   `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
                 )
-              )
-            }
+              );
+              trackUsage('Exploration.Details.TabChange', {
+                type: 'timeseries',
+                tab: newTab,
+              });
+            }}
             additionalTabs={[
               <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
                 <TimeseriesDetails timeseries={timeseries} />

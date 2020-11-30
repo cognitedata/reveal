@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   ResourceItem,
   SearchFilters,
@@ -10,10 +10,9 @@ import {
   EventSearchResults,
 } from 'lib';
 import { Row, Col } from 'antd';
-import { trackUsage, Timer, trackTimedUsage } from 'app/utils/Metrics';
+import { trackUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
-  useSelectedResource,
   useResourceEditable,
 } from 'app/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce/lib';
@@ -249,39 +248,20 @@ export const SearchResultsPage = () => {
 
   const [query] = useQueryString(SEARCH_KEY);
   const filter = useResourceFilter(resourceType);
-  const { selectedResource } = useSelectedResource();
 
   useEffect(() => {
-    trackUsage('Exploration.ResourceType', { resourceType });
+    trackUsage('Exploration.TabChange', { tab: resourceType });
   }, [resourceType]);
 
   useEffect(() => {
-    trackUsage('Exploration.Filter', { resourceType, filter });
+    trackUsage('Exploration.Filter', { tab: resourceType, filter });
   }, [resourceType, filter]);
 
   useEffect(() => {
     if (query) {
-      trackUsage('Exploration.Query', { query });
+      trackUsage('Exploration.Search', { tab: resourceType, query });
     }
-  }, [query]);
-
-  const timer = useRef<Timer>();
-
-  useEffect(() => {
-    if (selectedResource) {
-      trackUsage('Exploration.PreviewResource', selectedResource);
-      if (timer.current) {
-        timer.current.stop({
-          type: selectedResource.type,
-          id: selectedResource.id,
-        });
-      }
-    } else {
-      timer.current = trackTimedUsage('Exploration.SearchTime');
-    }
-
-    return () => timer.current?.stop();
-  }, [selectedResource]);
+  }, [resourceType, query]);
 
   return <SearchPage />;
 };

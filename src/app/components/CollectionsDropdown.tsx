@@ -11,6 +11,7 @@ import {
 import { ResourceType } from 'lib/types';
 import CreateCollectionForm from 'app/components/CreateCollectionForm';
 import { useCollectionFeature } from 'app/utils/featureFlags';
+import { trackUsage } from 'app/utils/Metrics';
 
 type Props = {
   type: ResourceType;
@@ -56,6 +57,11 @@ const CollectionsDropdown = ({ type, items, button }: Props) => {
         },
       },
     ]);
+
+    trackUsage('Exploration.Action.AddToCollection', {
+      type: collection.type,
+      items: currentItems.length,
+    });
   };
 
   const handleCreateCollection = async (

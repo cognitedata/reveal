@@ -31,7 +31,7 @@ export const EventPreview = ({
   const history = useHistory();
 
   useEffect(() => {
-    trackUsage('Exploration.Event', { eventId });
+    trackUsage('Exploration.Preview.Event', { eventId });
   }, [eventId]);
   const { data: event, error, isFetched } = useCdfItem<CogniteEvent>('events', {
     id: eventId,
@@ -73,13 +73,17 @@ export const EventPreview = ({
           externalId: event.externalId,
         }}
         tab={activeTab}
-        onTabChange={newTab =>
+        onTabChange={newTab => {
           history.push(
             createLink(
               `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
             )
-          )
-        }
+          );
+          trackUsage('Exploration.Details.TabChange', {
+            type: 'event',
+            tab: newTab,
+          });
+        }}
         additionalTabs={[
           <Tabs.Pane title={<TabTitle>Details</TabTitle>} key="details">
             <EventDetails event={event} />

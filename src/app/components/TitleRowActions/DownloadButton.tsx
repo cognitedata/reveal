@@ -9,6 +9,7 @@ import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 import { ResourceItem } from 'lib/types';
+import { trackUsage } from 'app/utils/Metrics';
 
 type Props = {
   item: ResourceItem;
@@ -32,6 +33,8 @@ function MetadataDownload({ item: { id, type } }: Props) {
       dlAnchorElem.setAttribute('href', dataStr);
       dlAnchorElem.setAttribute('download', `${type}-${id}.json`);
       dlAnchorElem.click();
+
+      trackUsage('Exploration.Action.Download.Metadata', { type, id });
       setDownloading(false);
     }
   }, [downloading, id, type, metadata, isFetched]);
@@ -93,6 +96,11 @@ function FileDownloadButton({ item }: Props) {
       dlAnchorElem.setAttribute('href', dataStr);
       dlAnchorElem.setAttribute('download', `file-${id}.json`);
       dlAnchorElem.click();
+
+      trackUsage('Exploration.Action.Download.File', {
+        id,
+        mimeType: metadata?.mimeType,
+      });
       setDownloading(false);
     }
   }, [downloading, id, metadata, isFetched]);
@@ -173,6 +181,8 @@ function TimeseriesDownloadButton({ item: { id, type } }: Props) {
       dlAnchorElem.setAttribute('href', dataStr);
       dlAnchorElem.setAttribute('download', `${type}-${id}.json`);
       dlAnchorElem.click();
+
+      trackUsage('Exploration.Action.Download.Timeseries', { id });
       setDownloading(false);
     }
   }, [

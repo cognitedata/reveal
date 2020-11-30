@@ -36,7 +36,7 @@ export const SequencePreview = ({
 
   const { hidePreview } = useResourcePreview();
   useEffect(() => {
-    trackUsage('Exploration.Sequence', { sequenceId });
+    trackUsage('Exploration.Preview.Sequence', { sequenceId });
   }, [sequenceId]);
 
   useEffect(() => {
@@ -79,13 +79,17 @@ export const SequencePreview = ({
           externalId: sequence.externalId,
         }}
         tab={activeTab}
-        onTabChange={newTab =>
+        onTabChange={newTab => {
           history.push(
             createLink(
               `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
             )
-          )
-        }
+          );
+          trackUsage('Exploration.Details.TabChange', {
+            type: 'sequence',
+            tab: newTab,
+          });
+        }}
         additionalTabs={[
           <Tabs.Pane
             title={<TabTitle>Preview</TabTitle>}

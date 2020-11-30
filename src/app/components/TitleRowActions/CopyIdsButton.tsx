@@ -5,6 +5,7 @@ import { ResourceType, convertResourceType } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useEnv, useTenant } from 'lib/hooks/CustomHooks';
 import { ResourceItem } from 'lib/types';
+import { trackUsage } from 'app/utils/Metrics';
 
 type Props = {
   item: ResourceItem;
@@ -45,9 +46,13 @@ export default function ({ item: { type, id } }: Props) {
     { id }
   );
 
-  const copy = async (s: string) => {
+  const copy = async (
+    s: string,
+    copyType: 'InternalID' | 'ExternalID' | 'oData'
+  ) => {
     if (s.length > 0) {
       await navigator.clipboard.writeText(`${s}`);
+      trackUsage('Exploration.Action.Copy', { copyType });
       notification.info({
         key: 'clipboard',
         message: 'Clipboard updated',
@@ -58,18 +63,18 @@ export default function ({ item: { type, id } }: Props) {
 
   const menu = (
     <Menu>
-      <Menu.Item onClick={() => copy(`${id}`)} key="copyId">
+      <Menu.Item onClick={() => copy(`${id}`, 'InternalID')} key="copyId">
         Copy id
       </Menu.Item>
       <Menu.Item
-        onClick={() => copy(`${data.externalId}`)}
+        onClick={() => copy(`${data.externalId}`, 'ExternalID')}
         key="copyExternalId"
         disabled={!data.externalId}
       >
         Copy external id
       </Menu.Item>
       <Menu.Item
-        onClick={() => copy(oData(id, type, tenant, env))}
+        onClick={() => copy(oData(id, type, tenant, env), 'oData')}
         key="copyoData"
       >
         Copy oData query (PowerBI)

@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from 'app/utils/Metrics';
 import { AssetPreview } from './AssetPreview';
 
 export const AssetPage = () => {
@@ -9,10 +8,6 @@ export const AssetPage = () => {
   }>();
 
   const assetId = parseInt(assetIdString, 10);
-
-  useEffect(() => {
-    trackUsage('Exploration.AssetPage', { assetId });
-  }, [assetId]);
 
   if (!assetIdString) {
     return null;

@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from 'app/utils/Metrics';
 import { SequencePreview } from './SequencePreview';
 
 export const SequencePage = () => {
@@ -8,10 +7,6 @@ export const SequencePage = () => {
     id: string;
   }>();
   const sequenceId = parseInt(sequenceIdString, 10);
-
-  useEffect(() => {
-    trackUsage('Exploration.SequencePage', { sequenceId });
-  }, [sequenceId]);
 
   if (!sequenceIdString) {
     return null;

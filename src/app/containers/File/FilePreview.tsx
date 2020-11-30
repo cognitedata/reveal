@@ -66,7 +66,7 @@ export const FilePreview = ({
   }, [isActive, resourcesState, fileId, setResourcesState]);
 
   useEffect(() => {
-    trackUsage('Exploration.File', { fileId });
+    trackUsage('Exploration.Preview.File', { fileId });
     setEditMode(false);
   }, [fileId]);
 
@@ -124,13 +124,17 @@ export const FilePreview = ({
               externalId: fileInfo.externalId,
             }}
             tab={activeTab}
-            onTabChange={newTab =>
+            onTabChange={newTab => {
               history.push(
                 createLink(
                   `${match.url.substr(match.url.indexOf('/', 1))}/${newTab}`
                 )
-              )
-            }
+              );
+              trackUsage('Exploration.Details.TabChange', {
+                type: 'file',
+                tab: newTab,
+              });
+            }}
             additionalTabs={[
               <Tabs.Pane title={<TabTitle>Preview</TabTitle>} key="preview">
                 {editMode && (

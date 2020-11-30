@@ -10,6 +10,7 @@ import {
 } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import { SpacedRow } from 'lib';
+import { trackUsage } from 'app/utils/Metrics';
 
 export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
   const filter = useResourceFilter(type) as FileFilterProps | AssetFilterProps;
@@ -40,6 +41,7 @@ export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
           ? { containsAny: newFilters.map(l => ({ externalId: l })) }
           : undefined,
     }));
+    trackUsage('Exploration.Filter.PredefinedLabel', { label });
   };
 
   return (
