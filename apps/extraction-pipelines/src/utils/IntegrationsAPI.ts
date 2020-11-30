@@ -2,9 +2,6 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { Integration } from '../model/Integration';
 import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
-<<<<<<< HEAD
-import get from './baseURL';
-=======
 import {
   createUpdateContacts,
   CreateUpdateContactsObjArgs,
@@ -24,7 +21,6 @@ const get = async <D>(route: string, project: string) => {
     withCredentials: true,
   });
 };
->>>>>>> master
 
 export const getIntegrations = async (
   _: string,

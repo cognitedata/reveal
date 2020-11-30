@@ -31,11 +31,8 @@ export const StyledTable = styled.div`
       tr {
         border-bottom: ${Colors['greyscale-grey3'].hex()};
         th {
-<<<<<<< HEAD
           background-color: white;
           padding: 1rem 0.4375rem;
-=======
->>>>>>> master
           white-space: nowrap;
           &:last-child {
             width: 3rem;
@@ -50,14 +47,11 @@ export const StyledTable = styled.div`
       tr {
         td {
           padding: 0.75rem;
-<<<<<<< HEAD
           &.timestamp-col {
-=======
           border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
         }
         &.parent-row {
           .timestamp-col {
->>>>>>> master
             font-weight: bold;
           }
         }
