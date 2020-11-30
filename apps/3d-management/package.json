@@ -59,7 +59,7 @@
     "reselect": "^4.0.0",
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
-    "systemjs-webpack-interop": "^2.1.2",
+    "systemjs-webpack-interop": "^2.3.0",
     "three": "0.122.0"
   },
   "devDependencies": {

@@ -17087,10 +17087,10 @@ symbol.prototype.description@^1.0.0:
     es-abstract "^1.17.0-next.1"
     has-symbols "^1.0.1"
 
-systemjs-webpack-interop@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/systemjs-webpack-interop/-/systemjs-webpack-interop-2.1.2.tgz#b575afa4bf3b62c5cb7b49d4ef69eaf7064aacdc"
-  integrity sha512-ddoBSbZUfMxKoaS/JqCv4EHrildEfHrmwYF8R/Co/NqDxdvT6uYIrdHwBvY4PuYk+p9/BwQEtN5M5Aw2IHZdHQ==
+systemjs-webpack-interop@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/systemjs-webpack-interop/-/systemjs-webpack-interop-2.3.0.tgz#7f5adacba4fb4020a4c431d62d6dad249effdc56"
+  integrity sha512-jt69PS4CTFmL5uv52ZOHLJ7l487m6YYpdssE1nhvZXYrRBQPnVrf90bnlB+LDiOybTUadIS7uNBgQ4rCvsrAqg==
 
 table@^5.2.3:
   version "5.4.6"
