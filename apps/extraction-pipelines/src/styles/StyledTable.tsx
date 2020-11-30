@@ -48,38 +48,39 @@ export const StyledTable = styled.div`
         td {
           padding: 0.75rem;
           &.timestamp-col {
-          border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-        }
-        &.parent-row {
-          .timestamp-col {
-            font-weight: bold;
+            border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
           }
-        }
-        &.parent-row {
-          .statusSeen-col {
-            position: relative;
-            .cogs-icon {
-              position: absolute;
-              right: 0;
-              top: 0.9375rem;
+          &.parent-row {
+            .timestamp-col {
+              font-weight: bold;
+            }
+          }
+          &.parent-row {
+            .statusSeen-col {
+              position: relative;
+              .cogs-icon {
+                position: absolute;
+                right: 0;
+                top: 0.9375rem;
+              }
+            }
+          }
+          &.child-row {
+            .timestamp-col {
+              font-style: italic;
+              font-weight: normal;
+              padding-left: 1.5rem;
             }
           }
         }
-        &.child-row {
-          .timestamp-col {
-            font-style: italic;
-            font-weight: normal;
-            padding-left: 1.5rem;
-          }
-        }
       }
-    }
-    th:first-child.timestamp-col {
-      width: 11rem;
-    }
-    .status-col,
-    .statusSeen-col {
-      text-align: center;
+      th:first-child.timestamp-col {
+        width: 11rem;
+      }
+      .status-col,
+      .statusSeen-col {
+        text-align: center;
+      }
     }
   }
 `;

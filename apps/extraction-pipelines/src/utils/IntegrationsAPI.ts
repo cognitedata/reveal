@@ -26,7 +26,7 @@ export const getIntegrations = async (
   _: string,
   project: string
 ): Promise<Integration[]> => {
-  const response = await get<IntegrationAPIResponse>('/integrations', project);
+  const response = await get<IntegrationAPIResponse>('/', project);
   return response.data.items;
 };
 
