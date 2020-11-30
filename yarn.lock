@@ -3895,17 +3895,17 @@
     "@typescript-eslint/types" "4.1.1"
     eslint-visitor-keys "^2.0.0"
 
-"@visx/axis@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.1.0.tgz#6a73420fafb0f8b15f5f179f4d894efb20e43c17"
-  integrity sha512-GN/nk4QgCXqNzrowstQYNEVV/eDWBB1/TWnNavHflyMt/5Ja+R77sOZ2moVetVhTxQIlsocf5GhyyLUFmgH9EQ==
+"@visx/axis@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.2.0.tgz#2f6aea2a171975b5f324120b0ef6294e4320f719"
+  integrity sha512-G0KOFCSJJHC+N6G89gp+9WMUtr0D0PMD7oH3+ST9NlAVf8QYvvTT6Yo72/UXE93UQ+eiTI+d/1TlEBetV5BlhQ==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
     "@visx/group" "1.0.0"
     "@visx/point" "1.0.0"
     "@visx/scale" "1.1.0"
-    "@visx/shape" "1.1.0"
+    "@visx/shape" "1.2.0"
     "@visx/text" "1.1.0"
     classnames "^2.2.5"
     prop-types "^15.6.0"
@@ -4010,25 +4010,6 @@
     d3-interpolate "^1.4.0"
     d3-scale "^3.0.1"
     d3-time "^1.1.0"
-
-"@visx/shape@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@visx/shape/-/shape-1.1.0.tgz#a0fdcf21a84f6cf6799aa21e24abca8afdd3e282"
-  integrity sha512-3tf+m0R2fAecz+eGgG4NMIl+LVEKm51CrM+AxSJEOrRiTe4syERgRXxOGa04BHDo75S66coBN+416L38GHri4g==
-  dependencies:
-    "@types/classnames" "^2.2.9"
-    "@types/d3-path" "^1.0.8"
-    "@types/d3-shape" "^1.3.1"
-    "@types/lodash" "^4.14.146"
-    "@types/react" "*"
-    "@visx/curve" "1.0.0"
-    "@visx/group" "1.0.0"
-    "@visx/scale" "1.1.0"
-    classnames "^2.2.5"
-    d3-path "^1.0.5"
-    d3-shape "^1.2.0"
-    lodash "^4.17.15"
-    prop-types "^15.5.10"
 
 "@visx/shape@1.2.0", "@visx/shape@^1.1.0":
   version "1.2.0"
