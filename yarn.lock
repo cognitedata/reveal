@@ -1086,9 +1086,9 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.2.1.tgz#42e2b9e425ec9e36dedf3ed6b6dce0e801c8b563"
+"@cognite/sdk@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.0.tgz#49f766f63931f8716a997c2af5eb45f0cb3849b2"
   dependencies:
     "@cognite/sdk-core" "^1.0.3"
     lodash "^4.17.11"
