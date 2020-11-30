@@ -8,5 +8,7 @@ export const useRuns = (
   externalId: string
 ): QueryResult<StatusRow[], SDKError> => {
   const { project } = useAppEnv();
-  return useQuery<StatusRow[], SDKError>([project, externalId], getRuns);
+  return useQuery<StatusRow[], SDKError>([project, externalId], getRuns, {
+    retry: false,
+  });
 };
