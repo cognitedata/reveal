@@ -101,38 +101,42 @@ export const RelatedResources = ({
           />
         </SelectWrapper>
       </FilterWrapper>
+      <TableOffsetHeightWrapper>
+        {selectedType?.value === 'relationship' && (
+          <RelationshipTable
+            parentResource={parentResource}
+            type={type}
+            {...props}
+          />
+        )}
 
-      {selectedType?.value === 'relationship' && (
-        <RelationshipTable
-          parentResource={parentResource}
-          type={type}
-          {...props}
-        />
-      )}
+        {selectedType?.value === 'linkedResource' && (
+          <LinkedResourceTable
+            parentResource={parentResource}
+            type={type}
+            {...props}
+          />
+        )}
 
-      {selectedType?.value === 'linkedResource' && (
-        <LinkedResourceTable
-          parentResource={parentResource}
-          type={type}
-          {...props}
-        />
-      )}
+        {selectedType?.value === 'assetId' && (
+          <AssetIdTable resource={parentResource} {...props} />
+        )}
 
-      {selectedType?.value === 'assetId' && (
-        <AssetIdTable resource={parentResource} {...props} />
-      )}
-
-      {selectedType?.value === 'annotation' && (
-        <AnnotationTable
-          fileId={parentResource.id}
-          resourceType={type}
-          {...props}
-        />
-      )}
+        {selectedType?.value === 'annotation' && (
+          <AnnotationTable
+            fileId={parentResource.id}
+            resourceType={type}
+            {...props}
+          />
+        )}
+      </TableOffsetHeightWrapper>
     </RelatedResourcesContainer>
   );
 };
 
+const TableOffsetHeightWrapper = styled.div`
+  height: calc(100% - 170px);
+`;
 const selectStyles = {
   option: (styles: any) => ({
     ...styles,
