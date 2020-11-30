@@ -45,7 +45,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
       <StyledTabs sidepaneltabs="true">
         <StyledTabPane tab="Monitoring" key="monitoring">
-          <Monitoring />
+          <Monitoring externalId={integration.externalId} />
         </StyledTabPane>
         <StyledTabPane tab="Contact information" key="contacts">
           <ContactInformation

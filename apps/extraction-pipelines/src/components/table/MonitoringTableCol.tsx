@@ -6,16 +6,16 @@ import StatusFilterDropdown from './StatusFilterDropdown';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import { Run } from '../../model/Runs';
 
-enum TableHeadings {
-  SEEN = 'Seen',
-  LAST_RUN = 'Last run',
-  LAST_SEEN = 'Last seen',
+enum MonitoringTableHeadings {
+  TIMESTAMP = 'Timestamp',
+  STATUS_RUN = 'Status run',
+  STATUS_SEEN = 'Status seen',
 }
 
 export const getMonitoringTableCol = () => {
   return [
     {
-      Header: TableHeadings.SEEN,
+      Header: MonitoringTableHeadings.TIMESTAMP,
       accessor: 'timestamp',
       sortType: 'basic',
       Cell: ({ row }: Cell<Run>) => {
@@ -26,7 +26,7 @@ export const getMonitoringTableCol = () => {
       disableFilters: true,
     },
     {
-      Header: TableHeadings.LAST_RUN,
+      Header: MonitoringTableHeadings.STATUS_RUN,
       accessor: 'status',
       Cell: ({ row }: Cell<Run>) => {
         return <StatusMarker status={row.values.status} />;
@@ -37,23 +37,24 @@ export const getMonitoringTableCol = () => {
       disableFilters: false,
     },
     {
-      Header: TableHeadings.LAST_SEEN,
+      Header: MonitoringTableHeadings.STATUS_SEEN,
       accessor: 'statusSeen',
-      Cell: ({ row }: Cell<Run>) =>
-        row.canExpand ? (
-          <span
-            {...row.getToggleRowExpandedProps({
-              style: {
-                paddingLeft: `${row.depth * 2}rem`,
-              },
-            })}
-          >
+      Cell: ({ row }: Cell<Run>) => {
+        let expandIcon = <></>;
+        if (row.canExpand) {
+          expandIcon = row.isExpanded ? (
+            <Icon type="Down" />
+          ) : (
+            <Icon type="Right" />
+          );
+        }
+        return (
+          <>
             <StatusMarker status={row.values.statusSeen} />
-            {row.isExpanded ? <Icon type="Down" /> : <Icon type="Right" />}
-          </span>
-        ) : (
-          <StatusMarker status={row.values.statusSeen} />
-        ),
+            {expandIcon}
+          </>
+        );
+      },
       disableSortBy: true,
       Filter: StatusFilterDropdown,
       filter: 'includes',

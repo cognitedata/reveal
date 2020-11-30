@@ -36,6 +36,8 @@ export const StyledTable = styled.div`
       tr {
         border-bottom: ${Colors['greyscale-grey3'].hex()};
         th {
+          background-color: white;
+          padding: 1rem 0.4375rem;
           white-space: nowrap;
           &:last-child {
             width: 3rem;
@@ -48,14 +50,7 @@ export const StyledTable = styled.div`
     }
     tbody {
       tr {
-        td {
-          padding: 0.75rem;
-          border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-        }
         &.parent-row {
-          .timestamp-col {
-            font-weight: bold;
-          }
           .statusSeen-col {
             position: relative;
             .cogs-icon {
@@ -67,17 +62,30 @@ export const StyledTable = styled.div`
         }
         &.child-row {
           .timestamp-col {
+            font-style: italic;
+            font-weight: normal;
             padding-left: 1.5rem;
           }
         }
+        td {
+          padding: 0.75rem;
+          &.timestamp-col {
+            border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+          }
+          &.parent-row {
+            .timestamp-col {
+              font-weight: bold;
+            }
+          }
+        }
       }
-    }
-    th:first-child.timestamp-col {
-      width: 11rem;
-    }
-    .status-col,
-    .statusSeen-col {
-      text-align: center;
+      th:first-child.timestamp-col {
+        width: 11rem;
+      }
+      .status-col,
+      .statusSeen-col {
+        text-align: center;
+      }
     }
   }
 `;
