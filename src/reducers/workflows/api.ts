@@ -61,7 +61,7 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 
     // Attach this workflow to the current chart
     const nextWorkflowIds = [...(chart.workflowIds || []), newWorkflow.id];
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
     dispatch(workflowSlice.actions.storedNewWorkflow(newWorkflow));
     dispatch(
@@ -118,7 +118,7 @@ export const deleteWorkflow = (
     const nextWorkflowIds = (chart.workflowIds || []).filter(
       (flowId) => flowId !== oldWorkflow.id
     );
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
 
     // Then delete the workflow

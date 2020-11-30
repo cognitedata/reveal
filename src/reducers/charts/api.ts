@@ -25,7 +25,7 @@ export const fetchAllCharts = (): AppThunk => async (dispatch, getState) => {
   dispatch(chartsSlice.actions.startLoadingAllCharts());
 
   try {
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     const allCharts = await chartService.getCharts();
 
     dispatch(chartsSlice.actions.finishedLoadingAllCharts(allCharts));
@@ -59,7 +59,7 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
 
   try {
     // Create the chart
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.saveChart(newChart);
 
     dispatch(chartsSlice.actions.storedNewChart(newChart));
@@ -83,7 +83,7 @@ export const saveExistingChart = (chart: Chart): AppThunk => async (
 
   try {
     // Create the workflow
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     chartService.saveChart(chart);
     toast.success('Chart saved!');
   } catch (e) {
