@@ -26,7 +26,7 @@
     "@visx/axis": "^1.1.0",
     "@visx/event": "^1.0.0",
     "@visx/gradient": "^1.0.0",
-    "@visx/grid": "^1.1.0",
+    "@visx/grid": "^1.2.0",
     "@visx/group": "^1.0.0",
     "@visx/mock-data": "^1.0.0",
     "@visx/responsive": "^1.1.0",
