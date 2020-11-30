@@ -45,6 +45,23 @@ export const StyledTable = styled.div`
     }
     tbody {
       tr {
+        &.parent-row {
+          .statusSeen-col {
+            position: relative;
+            .cogs-icon {
+              position: absolute;
+              right: 0;
+              top: 0.9375rem;
+            }
+          }
+        }
+        &.child-row {
+          .timestamp-col {
+            font-style: italic;
+            font-weight: normal;
+            padding-left: 1.5rem;
+          }
+        }
         td {
           padding: 0.75rem;
           &.timestamp-col {
@@ -53,23 +70,6 @@ export const StyledTable = styled.div`
           &.parent-row {
             .timestamp-col {
               font-weight: bold;
-            }
-          }
-          &.parent-row {
-            .statusSeen-col {
-              position: relative;
-              .cogs-icon {
-                position: absolute;
-                right: 0;
-                top: 0.9375rem;
-              }
-            }
-          }
-          &.child-row {
-            .timestamp-col {
-              font-style: italic;
-              font-weight: normal;
-              padding-left: 1.5rem;
             }
           }
         }

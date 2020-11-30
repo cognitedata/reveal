@@ -71,6 +71,7 @@ const MonitoringTable = ({ columns, data }: TableProps) => {
           return (
             <tr
               {...row.getRowProps()}
+              {...row.getToggleRowExpandedProps()}
               className={`cogs-table-row integrations-table-row ${
                 row.isSelected ? 'row-active' : ''
               } ${isParentRow ? 'parent-row' : ''}

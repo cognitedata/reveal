@@ -39,21 +39,22 @@ export const getMonitoringTableCol = () => {
     {
       Header: MonitoringTableHeadings.STATUS_SEEN,
       accessor: 'statusSeen',
-      Cell: ({ row }: Cell<Run>) =>
-        row.canExpand ? (
-          <span
-            {...row.getToggleRowExpandedProps({
-              style: {
-                paddingLeft: `${row.depth * 2}rem`,
-              },
-            })}
-          >
+      Cell: ({ row }: Cell<Run>) => {
+        let expandIcon = <></>;
+        if (row.canExpand) {
+          expandIcon = row.isExpanded ? (
+            <Icon type="Down" />
+          ) : (
+            <Icon type="Right" />
+          );
+        }
+        return (
+          <>
             <StatusMarker status={row.values.statusSeen} />
-            {row.isExpanded ? <Icon type="Down" /> : <Icon type="Right" />}
-          </span>
-        ) : (
-          <StatusMarker status={row.values.statusSeen} />
-        ),
+            {expandIcon}
+          </>
+        );
+      },
       disableSortBy: true,
       Filter: StatusFilterDropdown,
       filter: 'includes',
