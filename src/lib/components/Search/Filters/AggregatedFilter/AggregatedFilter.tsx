@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import { Select } from 'lib/components';
 
 export const AggregatedFilter = <T,>({
@@ -29,13 +29,13 @@ export const AggregatedFilter = <T,>({
 
   return (
     <>
-      <Title
+      <Body
         level={4}
         style={{ marginBottom: 5, marginTop: 10 }}
         className="title"
       >
         {title}
-      </Title>
+      </Body>
       <Select
         creatable
         value={value ? { value, label: value } : undefined}

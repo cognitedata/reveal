@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Tooltip } from '@cognite/cogs.js';
+import { Body, Tooltip } from '@cognite/cogs.js';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'lib/components';
@@ -48,13 +48,13 @@ export const DataSetFilter = ({
       content="You do not have access to data sets, please make sure you have datasetsAcl:READ"
     >
       <>
-        <Title
+        <Body
           level={4}
           style={{ marginBottom: 5, marginTop: 10 }}
           className="title"
         >
           Data set
-        </Title>
+        </Body>
         <Select
           options={validDatasets?.map(formatOption)}
           isDisabled={!hasPermissions}

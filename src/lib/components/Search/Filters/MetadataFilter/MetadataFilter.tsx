@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import { FilterForm } from 'lib/components';
 
 export const MetadataFilter = <
@@ -36,13 +36,13 @@ export const MetadataFilter = <
 
   return (
     <>
-      <Title
+      <Body
         level={4}
         style={{ marginBottom: 5, marginTop: 10 }}
         className="title"
       >
         Metadata filters
-      </Title>
+      </Body>
       <FilterForm metadata={metadata} filters={value} setFilters={setFilter} />
     </>
   );

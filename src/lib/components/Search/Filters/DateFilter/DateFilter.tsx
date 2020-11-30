@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Title, Select } from '@cognite/cogs.js';
+import { Body, Select } from '@cognite/cogs.js';
 import { DatePicker } from 'lib';
 import { TIME_SELECT } from 'lib/containers';
 import { RangePicker } from 'lib/components';
@@ -56,13 +56,13 @@ export const DateFilter = ({
 
   return (
     <>
-      <Title
+      <Body
         level={4}
         style={{ marginBottom: 5, marginTop: 10 }}
         className="title"
       >
         {title}
-      </Title>
+      </Body>
       <Select
         value={options.find(el => el.value === period)!}
         options={options}

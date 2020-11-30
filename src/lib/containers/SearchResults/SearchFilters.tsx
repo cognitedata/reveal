@@ -113,23 +113,23 @@ export const SearchFilters = ({
               </Col>
             )}
           </HeaderRow>
-          <Row style={{ marginRight: 16 }}>
-            <Col flex="auto">
-              <Filters
-                resourceType={resourceType}
-                assetFilter={assetFilter}
-                setAssetFilter={setAssetFilter}
-                timeseriesFilter={timeseriesFilter}
-                setTimeseriesFilter={setTimeseriesFilter}
-                sequenceFilter={sequenceFilter}
-                setSequenceFilter={setSequenceFilter}
-                eventFilter={eventFilter}
-                setEventFilter={setEventFilter}
-                fileFilter={fileFilter}
-                setFileFilter={setFileFilter}
-              />
-            </Col>
-          </Row>
+          <div
+            style={{ paddingRight: 16, paddingBottom: 16, overflow: 'auto' }}
+          >
+            <Filters
+              resourceType={resourceType}
+              assetFilter={assetFilter}
+              setAssetFilter={setAssetFilter}
+              timeseriesFilter={timeseriesFilter}
+              setTimeseriesFilter={setTimeseriesFilter}
+              sequenceFilter={sequenceFilter}
+              setSequenceFilter={setSequenceFilter}
+              eventFilter={eventFilter}
+              setEventFilter={setEventFilter}
+              fileFilter={fileFilter}
+              setFileFilter={setFileFilter}
+            />
+          </div>
         </>
       )}
     </div>

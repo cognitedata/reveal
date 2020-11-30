@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Input } from '@cognite/cogs.js';
+import { Body, Input } from '@cognite/cogs.js';
 
 export const StringFilter = ({
   value,
@@ -18,13 +18,13 @@ export const StringFilter = ({
 
   return (
     <>
-      <Title
+      <Body
         level={4}
         style={{ marginBottom: 5, marginTop: 10 }}
         className="title"
       >
         {title}
-      </Title>
+      </Body>
       <Input
         variant="noBorder"
         style={{ width: '100%' }}

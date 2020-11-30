@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import { ButtonGroup } from 'lib/components';
 
 export const BooleanFilter = ({
@@ -27,13 +27,13 @@ export const BooleanFilter = ({
 
   return (
     <>
-      <Title
+      <Body
         level={4}
         style={{ marginBottom: 5, marginTop: 10 }}
         className="title"
       >
         {title}
-      </Title>
+      </Body>
       <ButtonGroup
         style={{ width: '100%' }}
         currentKey={currentChecked}
