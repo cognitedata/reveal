@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import useSelector from 'hooks/useSelector';
-import { Chart } from 'reducers/charts';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts';
 import client from 'services/CogniteSDK';
 import { Datapoints, DoubleDatapoint } from '@cognite/sdk';
 
@@ -11,7 +11,6 @@ const defaultOptions = {
     useUTC: false,
   },
   chart: {
-    margin: [30, 20, 65, 70],
     zoomType: 'xy',
   },
   title: {
@@ -21,7 +20,8 @@ const defaultOptions = {
     type: 'datetime',
   },
   legend: {
-    enabled: false,
+    enabled: true,
+    verticalAlign: 'top',
   },
 };
 
@@ -63,16 +63,40 @@ const ChartComponent = ({ chart }: ChartProps) => {
       .map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean);
 
-  const dataFromWorkflows = enabledWorkflows
-    ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
-    .map((workflow) => ({
-      id: workflow?.id,
-      name: workflow?.name,
-      data: workflow?.latestRun?.results,
-    }));
+  const dataFromWorkflows =
+    enabledWorkflows
+      ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
+      .map((workflow) => ({
+        id: workflow?.id,
+        name: workflow?.name,
+        data: workflow?.latestRun?.results,
+      })) || [];
 
   const options = {
     ...defaultOptions,
+    yAxis: [
+      ...(chart?.timeSeriesCollection || []),
+      ...(chart?.workflowCollection || []),
+    ]
+      .filter(({ enabled }) => enabled)
+      .map(({ id, color }: ChartTimeSeries | ChartWorkflow) => ({
+        title: {
+          text: false ? undefined : 'Unit',
+          style: {
+            color,
+          },
+        },
+        lineColor: color,
+        lineWidth: 1,
+        tickColor: color,
+        tickWidth: 1,
+        labels: {
+          style: {
+            color,
+          },
+        },
+        opposite: true,
+      })),
     series: [
       ...timeSeriesDataPoints
         .filter((ts) => !ts.isString)
@@ -87,7 +111,7 @@ const ChartComponent = ({ chart }: ChartProps) => {
             y: datapoint.value,
           })),
         })),
-      ...(dataFromWorkflows || []).map(({ data = {}, name, id }: any) => {
+      ...dataFromWorkflows.map(({ data = {}, name, id }: any) => {
         return {
           type: 'line',
           name,
@@ -102,8 +126,13 @@ const ChartComponent = ({ chart }: ChartProps) => {
           ),
         };
       }),
-    ],
+    ].map((series, seriesIndex) => ({
+      ...series,
+      yAxis: seriesIndex,
+    })),
   };
+
+  console.log({ options });
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };
