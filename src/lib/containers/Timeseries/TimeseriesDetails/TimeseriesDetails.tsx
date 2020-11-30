@@ -30,6 +30,7 @@ export default function TimeseriesDetails({
         linkId={timeseries.id}
         type="timeSeries"
       />
+      <DetailsTabItem name="Is Step" value={`${timeseries.isStep}`} />
       <DetailsTabItem
         name="Created at"
         value={
