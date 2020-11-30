@@ -1,12 +1,14 @@
 import React from 'react';
-import { Button, Icon, Title } from '@cognite/cogs.js';
+import { Colors, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import ClosePopconfirm from 'components/buttons/ClosePopconfirm';
 import InteractiveCopy from '../InteractiveCopy';
 import { IntegrationAction } from '../menu/IntegrationsTableActions';
 import { DetailFieldNames } from '../../utils/integrationUtils';
 
 const StyledHeader = styled.header`
   display: flex;
+  justify-content: space-between;
   .details-id {
     font-size: 0.875rem;
     display: flex;
@@ -15,6 +17,15 @@ const StyledHeader = styled.header`
 
     span {
       margin-left: 0.3rem;
+    }
+  }
+  button {
+    background: ${Colors.white.hex()};
+    color: ${Colors.black.hex()};
+    border: none;
+    &:hover {
+      outline: none;
+      box-shadow: none;
     }
   }
 `;
@@ -34,13 +45,18 @@ interface IntegrationModalHeadingProps {
   heading: string;
   externalId: string;
   onCancel: () => void;
+  showConfirmBox: boolean;
+  // eslint-disable-next-line react/require-default-props
+  popConfirmContent?: string;
   // eslint-disable-next-line react/require-default-props
   closeIcon?: React.ReactNode;
 }
 const IntegrationModalHeading = ({
   heading,
   externalId,
+  showConfirmBox,
   onCancel,
+  popConfirmContent,
   closeIcon = <Icon type="Close" />,
 }: IntegrationModalHeadingProps) => {
   return (
@@ -53,17 +69,13 @@ const IntegrationModalHeading = ({
         {DetailFieldNames.EXTERNAL_ID}: {externalId}{' '}
         <InteractiveCopy text={`${externalId}`} />
       </span>
-      {closeIcon && (
-        <Button
-          key="modal-close"
-          unstyled
-          className="cogs-modal-close"
-          onClick={onCancel}
-          aria-label="Close dialog"
-        >
-          {closeIcon}
-        </Button>
-      )}
+      <ClosePopconfirm
+        showConfirmBox={showConfirmBox}
+        onClick={onCancel}
+        primaryText={closeIcon}
+        popConfirmContent={popConfirmContent}
+        testId="header-modal-close-btn"
+      />
     </StyledHeader>
   );
 };
