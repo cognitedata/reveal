@@ -4062,15 +4062,15 @@
     prop-types "^15.7.2"
     reduce-css-calc "^1.3.0"
 
-"@visx/threshold@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-1.1.0.tgz#ec001c5309fc3260c48bb0057dd9b675dd6af44a"
-  integrity sha512-iRycn+lTPtcLFjk+T/MOCylNk0DKqQ0BwlCux1Fs4g0X3PzHtHsO9JALNdVYreQjMaLbbvdm81Ej2t9Hp/1utA==
+"@visx/threshold@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-1.2.0.tgz#9ca6d925473c0a60390336181ddd8c5943a5e511"
+  integrity sha512-NCx7QbCbU+tIe1J+S5r64CfTXCFW4VfujmcCpdx1D7Rgwq4jUTAZkLwpBB+GsY+PH0srf4xLjnp3gpNtwmCEGg==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
     "@visx/clip-path" "1.0.0"
-    "@visx/shape" "1.1.0"
+    "@visx/shape" "1.2.0"
     classnames "^2.2.5"
     prop-types "^15.5.10"
 
