@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Loader } from '@cognite/cogs.js';
 import { Column } from 'react-table';
+import styled from 'styled-components';
 import ITable from '../table/ITable';
 import { getIntegrationTableCol } from '../table/IntegrationTableCol';
 import { Integration } from '../../model/Integration';
@@ -12,6 +13,22 @@ import {
 } from '../../utils/dataSetUtils';
 import { ErrorFeedback } from '../error/ErrorFeedback';
 import StyledTable from '../../styles/StyledTable';
+
+const StyledIntegrationsTable = styled((props) => (
+  <StyledTable {...props}>{props.children}</StyledTable>
+))`
+  table {
+    thead,
+    tbody {
+      display: block;
+    }
+    tbody {
+      overflow: auto;
+      height: auto;
+      max-height: 68vh;
+    }
+  }
+`;
 
 interface OwnProps {}
 
@@ -38,12 +55,12 @@ const IntegrationsTable: FunctionComponent<Props> = () => {
     tableData = mapDataSetToIntegration(data, dataSets);
   }
   return (
-    <StyledTable>
+    <StyledIntegrationsTable>
       <ITable
         data={tableData}
         columns={getIntegrationTableCol() as Column<Integration>[]}
       />
-    </StyledTable>
+    </StyledIntegrationsTable>
   );
 };
 
