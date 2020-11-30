@@ -1,3 +1,4 @@
+import { DataSet } from '@cognite/sdk';
 import { Integration } from '../model/Integration';
 
 export const mockDataSetResponse = () => [
@@ -27,12 +28,16 @@ export const mockDataSetResponse = () => [
 const mockResponseV2 = {
   items: [
     {
-      createdTime: 1584065700000,
+      createdTime: 1606722614,
       lastUpdatedTime: 1584137100000,
       externalId: 'dataIntegration0001',
       name: 'Azure Integration',
       description: 'Dummy integration to Azure',
       dataSetId: '1398950266713987',
+      dataSet: {
+        name: 'Test data set',
+        id: 1398950266713987,
+      } as DataSet,
       lastSuccess: 1584066700000,
       lastFailure: 1584065700000,
       lastSeen: 1584064700000,

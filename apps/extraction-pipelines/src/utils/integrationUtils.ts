@@ -7,12 +7,16 @@ import {
   StatusObj,
 } from '../model/Status';
 import { Integration } from '../model/Integration';
-import { DetailsCol } from '../components/table/details/DetailsCols';
+import {
+  createDataSetCol,
+  createLatestRunCol,
+  createMetadataCols,
+  DetailsCol,
+} from '../components/table/details/DetailsCols';
 import { IntegrationUpdateSpec } from './IntegrationsAPI';
 import { SDKError } from '../model/SDKErrors';
 import { UseUpdateIntegrationVariables } from '../hooks/useUpdateIntegration';
 import { TableHeadings } from '../components/table/IntegrationTableCol';
-import { DATE_FORMAT } from '../components/TimeDisplay/TimeDisplay';
 
 const mapToMoment = ({
   lastFailure,
@@ -78,6 +82,7 @@ export const mapIntegration = (integration: Integration): DetailsCol[] => {
     lastFailure: integration?.lastFailure,
   };
   const status = calculateStatus(latest);
+
   return [
     {
       label: TableHeadings.NAME,
@@ -111,18 +116,7 @@ export const mapIntegration = (integration: Integration): DetailsCol[] => {
       value: status.status,
       isEditable: false,
     },
-    {
-      label: TableHeadings.LATEST_RUN,
-      accessor: 'latestRun',
-      value: status.time?.format(DATE_FORMAT),
-      isEditable: false,
-    },
-    {
-      label: TableHeadings.LAST_SEEN,
-      accessor: 'latestRun',
-      value: integration.lastSeen,
-      isEditable: false,
-    },
+    createLatestRunCol(integration),
     {
       label: TableHeadings.SCHEDULE,
       accessor: 'schedule',
@@ -130,11 +124,13 @@ export const mapIntegration = (integration: Integration): DetailsCol[] => {
       isEditable: false,
     },
     {
-      label: TableHeadings.DATA_SET,
-      accessor: 'dataSetId',
-      value: integration.dataSetId,
+      label: TableHeadings.LAST_SEEN,
+      accessor: 'lastSeen',
+      value: integration.lastSeen,
       isEditable: false,
     },
+    createDataSetCol(integration),
+    ...createMetadataCols(integration.metadata),
   ];
 };
 

@@ -5,6 +5,11 @@ import React from 'react';
 export const EditStyleTable = styled.table`
   tbody {
     tr {
+      &:first-child {
+        td {
+          border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+        }
+      }
       td {
         height: 3.5rem;
         &:first-child {

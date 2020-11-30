@@ -5,8 +5,15 @@ import EditableCell from 'components/inputs/EditableInput';
 import styled from 'styled-components';
 import { Integration } from '../../../model/Integration';
 import { EditableHelpers } from './DetailsTable';
-import { DetailFieldNames } from '../../../utils/integrationUtils';
+import {
+  calculateStatus,
+  DetailFieldNames,
+} from '../../../utils/integrationUtils';
 import { TableHeadings } from '../IntegrationTableCol';
+import DetailsValueView from './DetailsValueView';
+import { MetaData } from '../../../model/MetaData';
+import { uppercaseFirstWord } from '../../../utils/primitivesUtils';
+import { Status } from '../../../model/Status';
 
 const StyledButtonGroup = styled.div`
   display: flex;
@@ -18,9 +25,12 @@ const StyledButtonGroup = styled.div`
 `;
 export type DetailsInputType = 'text' | 'textarea';
 export type IntegrationFieldName = keyof Integration | 'status' | 'latestRun';
-export type IntegrationFieldValue = Integration[keyof Integration] | null;
+export type IntegrationFieldValue =
+  | Integration[keyof Integration]
+  | moment.Moment
+  | null;
 export interface DetailsCol {
-  label: DetailFieldNames | TableHeadings;
+  label: DetailFieldNames | TableHeadings | string;
   accessor: IntegrationFieldName;
   value: IntegrationFieldValue;
   isEditable: boolean;
@@ -37,8 +47,7 @@ export const detailsCols: Column<DetailsCol>[] = [
   {
     id: 'value',
     accessor: 'value',
-    Cell: (props: Cell<DetailsCol> & EditableHelpers) => {
-      const { row, column, updateData } = props;
+    Cell: ({ row, column, updateData }: Cell<DetailsCol> & EditableHelpers) => {
       return (
         <>
           {row.isExpanded ? (
@@ -50,7 +59,10 @@ export const detailsCols: Column<DetailsCol>[] = [
               inputType={row.original.inputType}
             />
           ) : (
-            row.values.value
+            <DetailsValueView
+              fieldValue={row.original.value}
+              fieldName={row.original.accessor}
+            />
           )}
         </>
       );
@@ -102,3 +114,45 @@ export const detailsCols: Column<DetailsCol>[] = [
     },
   },
 ];
+
+export const createMetadataCols = (metadata: MetaData): DetailsCol[] => {
+  return Object.entries(metadata).map(([k, v]) => {
+    return {
+      label: uppercaseFirstWord(k),
+      accessor: 'metadata',
+      value: v,
+      isEditable: false,
+    };
+  });
+};
+export const createDataSetCol = (integrationInfo: Integration): DetailsCol => {
+  if (integrationInfo.dataSet) {
+    return {
+      label: TableHeadings.DATA_SET,
+      accessor: 'dataSet',
+      value: integrationInfo.dataSet,
+      isEditable: false,
+    };
+  }
+  return {
+    label: TableHeadings.DATA_SET,
+    accessor: 'dataSetId',
+    value: integrationInfo.dataSetId,
+    isEditable: false,
+  };
+};
+
+export const createLatestRunCol = (int: Integration): DetailsCol => {
+  const { status: latestStatus } = calculateStatus({
+    lastSuccess: int.lastSuccess,
+    lastFailure: int.lastFailure,
+  });
+  const latestRun =
+    latestStatus === Status.FAIL ? int.lastFailure : int.lastSuccess;
+  return {
+    label: TableHeadings.LATEST_RUN,
+    accessor: 'latestRun',
+    value: latestRun,
+    isEditable: false,
+  };
+};

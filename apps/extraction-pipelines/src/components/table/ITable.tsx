@@ -130,42 +130,44 @@ function ITable<T extends { id: ReactText }>({
         preGlobalFilteredRows={preGlobalFilteredRows}
         setGlobalFilter={setGlobalFilter}
       />
-      <table {...getTableProps()} className="cogs-table integrations-table">
-        <thead>
-          {headerGroups.map((headerGroup: HeaderGroup<T>) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((col: HeaderGroup<T>) => {
-                return (
-                  <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {col.disableFilters && col.render('Header')}
-                    {col.canSort && <SorterIndicator sCol={col} />}
-                    {!col.disableFilters && col.render('Filter')}
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row: Row<T>) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                className={`cogs-table-row integrations-table-row ${
-                  row.isSelected ? 'row-active' : ''
-                }`}
-              >
-                {row.cells.map((cell: Cell<T>) => {
+      <div className="tableFixHead">
+        <table {...getTableProps()} className="cogs-table integrations-table">
+          <thead>
+            {headerGroups.map((headerGroup: HeaderGroup<T>) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((col: HeaderGroup<T>) => {
                   return (
-                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    <th {...col.getHeaderProps(col.getSortByToggleProps())}>
+                      {col.disableFilters && col.render('Header')}
+                      {col.canSort && <SorterIndicator sCol={col} />}
+                      {!col.disableFilters && col.render('Filter')}
+                    </th>
                   );
                 })}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row: Row<T>) => {
+              prepareRow(row);
+              return (
+                <tr
+                  {...row.getRowProps()}
+                  className={`cogs-table-row integrations-table-row ${
+                    row.isSelected ? 'row-active' : ''
+                  }`}
+                >
+                  {row.cells.map((cell: Cell<T>) => {
+                    return (
+                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

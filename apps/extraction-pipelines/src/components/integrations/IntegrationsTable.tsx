@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from 'react';
-import { Loader } from '@cognite/cogs.js';
+import { Colors, Loader } from '@cognite/cogs.js';
 import { Column } from 'react-table';
 import styled from 'styled-components';
+import Layers from 'utils/zindex';
 import ITable from '../table/ITable';
 import { getIntegrationTableCol } from '../table/IntegrationTableCol';
 import { Integration } from '../../model/Integration';
@@ -17,15 +18,29 @@ import StyledTable from '../../styles/StyledTable';
 const StyledIntegrationsTable = styled((props) => (
   <StyledTable {...props}>{props.children}</StyledTable>
 ))`
-  table {
-    thead,
-    tbody {
-      display: block;
+  .cogs-input-container {
+    margin-bottom: 1rem;
+  }
+  .tableFixHead {
+    overflow-y: auto;
+    height: 68vh;
+    thead {
+      th {
+        position: sticky;
+        top: 0;
+      }
     }
-    tbody {
-      overflow: auto;
-      height: auto;
-      max-height: 68vh;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    th,
+    td {
+      padding: 0.5rem 1rem;
+    }
+    th {
+      background: ${Colors.white.hex()};
+      z-index: ${Layers.MINIMUM};
     }
   }
 `;

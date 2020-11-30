@@ -41,7 +41,7 @@ const InteractiveCopy = ({
         </div>
       }
     >
-      <IconWrapper onClick={() => onCopy()}>
+      <IconWrapper onClick={() => onCopy()} data-testid="interactive-copy">
         {hasCopied ? <Icons.Check /> : <Icons.Copy />}
       </IconWrapper>
     </Tooltip>
