@@ -1,58 +1,24 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { Button, Title } from '@cognite/cogs.js';
-import {
-  SuitbarContainer,
-  MainContent,
-  StyledTitle,
-  StyledButton,
-} from './elements';
+import { Title } from '@cognite/cogs.js';
+import { SuitbarContainer, MainContent } from './elements';
 
 interface Props {
   leftCustomHeader?: React.ReactNode;
-  buttonText: string;
-  backNavigation?: boolean;
+  headerText?: string;
+  actionButton?: React.ReactNode;
 }
 
 const Suitebar: React.FC<Props> = ({
-  buttonText,
   leftCustomHeader,
-  backNavigation,
+  headerText,
+  actionButton,
 }: Props) => {
-  const history = useHistory();
-
-  const goBack = () => {
-    return history.goBack();
-  };
   return (
     <SuitbarContainer>
-      {backNavigation && (
-        <StyledButton>
-          <Button
-            type="secondary"
-            icon="ArrowBack"
-            iconPlacement="left"
-            onClick={goBack}
-          >
-            Back
-          </Button>
-        </StyledButton>
-      )}
       <MainContent>
         {leftCustomHeader}
-        {!leftCustomHeader && (
-          <Title as={StyledTitle} level={5}>
-            Executive overview
-          </Title>
-        )}
-        <Button
-          variant="outline"
-          type="secondary"
-          icon="Plus"
-          iconPlacement="left"
-        >
-          {buttonText}
-        </Button>
+        {!leftCustomHeader && <Title level={5}>{headerText}</Title>}
+        <div>{actionButton}</div>
       </MainContent>
     </SuitbarContainer>
   );

@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { Button, Input, Overline } from '@cognite/cogs.js';
+import { Button, Icon, Input, Overline } from '@cognite/cogs.js';
+import { useSelector } from 'react-redux';
+import { getSuitesTableState } from 'store/suites/selectors';
 import { colors } from 'contants/suiteColors';
 import NavigationItem from './NavigationItem';
 import {
   ActionContainer,
   AvailableSuitesContainer,
+  CollapseButton,
   SidebarContainer,
   UnAvailableSuitesContainer,
 } from './elements';
@@ -14,16 +17,12 @@ import {
 interface NavigationItem {
   title: string;
   color: string;
-  id: string;
-}
-
-interface Props {
-  isOpen: boolean;
+  key: string;
 }
 
 const renderNavigationItem = (item: NavigationItem, disabled?: boolean) => {
   return (
-    <NavLink to={`/suites/${item.id}`} key={item.id}>
+    <NavLink to={`/suites/${item.key}`} key={item.key}>
       <NavigationItem
         title={item.title}
         key={item.title}
@@ -35,93 +34,68 @@ const renderNavigationItem = (item: NavigationItem, disabled?: boolean) => {
   );
 };
 
-const LeftSidebar: React.FC<Props> = ({ isOpen }: Props) => {
+const LeftSidebar: React.FC = () => {
   const { t } = useTranslation('Home');
+  const { suites } = useSelector(getSuitesTableState);
+  const sideBarState = JSON.parse(
+    localStorage.getItem('sideBarState') || 'true'
+  );
+  const [isOpen, setOpen] = useState(sideBarState);
 
-  // Temporary sample
-  const TopNavigation = [
-    {
-      id: '-ML7mCrzPkT1OA-a9IZa',
-      title: t('Inspections') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      id: '-ML7mCrzPkT1OA-a9IZb',
-      title: t('Maintenance Planner') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      id: '-ML7mCrzPkT1OA-a9IZc',
-      title: t('Product Optimization') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      id: '-ML7mCrzPkT1OA-a9IZd',
-      title: t('Asset Data Insight') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      id: '-ML7mCrzPkT1OA-a9IZe',
-      title: t('Subsurface') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      id: '-ML7mCrzPkT1OA-a9IZf',
-      title: t('Operations') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      id: '-ML7mCrzPkT1OA-a9IZg',
-      title: t('HSE & ERM') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-  ];
+  useEffect(() => {
+    localStorage.setItem('sideBarState', JSON.stringify(isOpen));
+  }, [isOpen]);
+
+  const handleHideSidebar = () => {
+    setOpen(() => !isOpen);
+  };
+
   const BottomNavigation = [
     {
-      id: '-ML7mCrzPkT1OA-a9IZh',
+      key: '-ML7mCrzPkT1OA-a9IZh',
       title: t('Inspections') as string,
       color: colors[Math.floor(Math.random() * colors.length)],
     },
     {
-      id: '-ML7mCrzPkT1OA-a9IZi',
+      key: '-ML7mCrzPkT1OA-a9IZi',
       title: t('Maintenance Planner') as string,
       color: colors[Math.floor(Math.random() * colors.length)],
     },
     {
-      id: '-ML7mCrzPkT1OA-a9IZj',
+      key: '-ML7mCrzPkT1OA-a9IZj',
       title: t('Product Optimization') as string,
       color: colors[Math.floor(Math.random() * colors.length)],
     },
   ];
+
   return (
-    <>
-      <SidebarContainer open={isOpen}>
-        <Input
-          variant="noBorder"
-          placeholder="Search for suites"
-          icon="Search"
+    <SidebarContainer open={isOpen}>
+      <CollapseButton open={isOpen} onClick={handleHideSidebar}>
+        <Icon type={isOpen ? 'LargeLeft' : 'LargeRight'} />
+      </CollapseButton>
+      <Input
+        variant="noBorder"
+        placeholder="Search for suites"
+        icon="Search"
+        iconPlacement="left"
+        fullWidth
+      />
+      <ActionContainer>
+        <Overline level={2}>All Suites</Overline>
+        <Button
+          type="secondary"
+          variant="ghost"
+          icon="Plus"
           iconPlacement="left"
-          fullWidth
         />
-        <ActionContainer>
-          <Overline level={2}>All Suites</Overline>
-          <Button
-            type="secondary"
-            variant="ghost"
-            icon="Plus"
-            iconPlacement="left"
-          >
-            {t('New')}
-          </Button>
-        </ActionContainer>
-        <AvailableSuitesContainer>
-          {TopNavigation.map((item) => renderNavigationItem(item))}
-        </AvailableSuitesContainer>
-        <UnAvailableSuitesContainer>
-          {BottomNavigation.map((item) => renderNavigationItem(item, true))}
-        </UnAvailableSuitesContainer>
-      </SidebarContainer>
-    </>
+      </ActionContainer>
+      <AvailableSuitesContainer>
+        {suites?.map((suite: NavigationItem) => renderNavigationItem(suite))}
+      </AvailableSuitesContainer>
+      <UnAvailableSuitesContainer>
+        {BottomNavigation.map((item) => renderNavigationItem(item, true))}
+      </UnAvailableSuitesContainer>
+    </SidebarContainer>
   );
 };
 

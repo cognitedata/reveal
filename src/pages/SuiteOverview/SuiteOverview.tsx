@@ -42,11 +42,7 @@ const SuiteOverview: React.FC = () => {
   };
   return (
     <>
-      <Suitebar
-        buttonText="Add dashboard"
-        leftCustomHeader={<Header />}
-        backNavigation
-      />
+      <Suitebar leftCustomHeader={<Header />} />
       <OverviewContainer>
         <TilesContainer>
           <Title level={6}>All dashboards</Title>
