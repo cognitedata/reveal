@@ -1,5 +1,6 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { DataSet, IdEither } from '@cognite/sdk';
+import { get, getBaseUrl } from './baseURL';
 import { Integration } from '../model/Integration';
 import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
 import {
@@ -11,16 +12,6 @@ import {
   CreateUpdateIntegrationObjArgs,
 } from './integrationUtils';
 import { IntegrationFieldValue } from '../components/table/details/DetailsCols';
-
-const getBaseUrl = (project: string): string => {
-  return `https://greenfield.cognitedata.com/api/playground/projects/${project}/integrations`;
-};
-
-const get = async <D>(route: string, project: string) => {
-  return sdkv3.get<D>(`${getBaseUrl(project)}${route}`, {
-    withCredentials: true,
-  });
-};
 
 export const getIntegrations = async (
   _: string,

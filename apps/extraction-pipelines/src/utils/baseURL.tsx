@@ -1,7 +1,7 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
 const getBaseUrl = (project: string): string => {
-  return `https://greenfield.cognitedata.com/api/playground/projects/${project}`;
+  return `https://greenfield.cognitedata.com/api/playground/projects/${project}/integrations`;
 };
 
 const get = async <D extends object>(
@@ -14,4 +14,4 @@ const get = async <D extends object>(
   });
 };
 
-export default get;
+export { get, getBaseUrl };

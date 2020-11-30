@@ -1,4 +1,4 @@
-import get from './baseURL';
+import { get } from './baseURL';
 import { RunsAPIResponse, StatusRow } from '../model/Runs';
 
 export const getRuns = async (
@@ -6,7 +6,7 @@ export const getRuns = async (
   externalId: string
 ): Promise<StatusRow[]> => {
   const response = await get<RunsAPIResponse>(
-    `/integrations/runs`,
+    `/runs`,
     project,
     `?externalId=${externalId}`
   );
