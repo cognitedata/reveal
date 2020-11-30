@@ -35,7 +35,7 @@ export function useQueryString(
   const search = qs.parse(history?.location?.search, opts);
   const item = (search[key] || '') as string;
 
-  return [item, getSetItems(key, push, history)];
+  return [decodeURIComponent(item), getSetItems(key, push, history)];
 }
 
 const emptyArray = [] as string[];
