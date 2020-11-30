@@ -17,7 +17,7 @@ const ChartList = () => {
 
   const renderList = () => {
     return allCharts.map((chart) => (
-      <div>
+      <div key={chart.id}>
         <Link to={`/${chart.id}`} key={chart.id}>
           {chart.name}
         </Link>

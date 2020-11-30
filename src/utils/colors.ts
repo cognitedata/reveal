@@ -40,3 +40,5 @@ export function createColorGetter() {
     return getColor(count);
   };
 }
+
+export const getEntryColor = createColorGetter();

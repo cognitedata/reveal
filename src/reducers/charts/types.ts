@@ -3,12 +3,18 @@ export type Chart = {
   name: string;
   user: string;
   timeSeriesCollection?: ChartTimeSeries[];
-  workflowIds?: string[];
+  workflowIds?: ChartWorkflow[];
   dateFrom: string;
   dateTo: string;
 };
 
 export type ChartTimeSeries = {
+  id: string;
+  color: string;
+  enabled: boolean;
+};
+
+export type ChartWorkflow = {
   id: string;
   color: string;
   enabled: boolean;

@@ -8,14 +8,12 @@ import {
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
 import { ValueOf } from 'typings/utils';
-import { createColorGetter } from 'utils/colors';
+import { getEntryColor } from 'utils/colors';
 import { Chart, ChartTimeSeries } from './types';
 
 const chartAdapter = createEntityAdapter<Chart>({
   selectId: (chart) => chart.id,
 });
-
-export const getChartColor = createColorGetter();
 
 const chartsSlice = createSlice({
   name: 'charts',
@@ -62,7 +60,7 @@ const chartsSlice = createSlice({
             ...(chart?.timeSeriesCollection || []),
             {
               id: timeSeries.externalId,
-              color: getChartColor(),
+              color: getEntryColor(),
               enabled: true,
             } as ChartTimeSeries,
           ],
@@ -80,6 +78,24 @@ const chartsSlice = createSlice({
         (entry) => entry.id === timeSeriesId
       )!;
       timeSeries.enabled = !timeSeries?.enabled;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
+    toggleWorkflow: (
+      state,
+      action: PayloadAction<{ id: string; workflowId: string }>
+    ) => {
+      const { id, workflowId } = action.payload;
+      const chart = chartAdapter.getSelectors().selectById(state, id);
+      const workflowEntry = chart?.workflowIds?.find(
+        (entry) => entry.id === workflowId
+      )!;
+      workflowEntry.enabled = !workflowEntry?.enabled;
       chartAdapter.updateOne(state, {
         id,
         changes: {

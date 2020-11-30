@@ -1,10 +1,11 @@
 import { toast } from '@cognite/cogs.js';
 import { nanoid } from '@reduxjs/toolkit';
-import chartSlice, { Chart } from 'reducers/charts';
+import chartSlice, { Chart, ChartWorkflow } from 'reducers/charts';
 import { selectTenant, selectUser } from 'reducers/environment';
 import ChartService from 'services/ChartService';
 import WorkflowService from 'services/WorkflowService';
 import { AppThunk } from 'store';
+import { getEntryColor } from 'utils/colors';
 import workflowSlice from './slice';
 import { Workflow } from './types';
 
@@ -60,7 +61,15 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
     workflowService.saveWorkflow(newWorkflow);
 
     // Attach this workflow to the current chart
-    const nextWorkflowIds = [...(chart.workflowIds || []), newWorkflow.id];
+    const nextWorkflowIds = [
+      ...(chart.workflowIds || []),
+      {
+        id: newWorkflow.id,
+        color: getEntryColor(),
+        enabled: true,
+      } as ChartWorkflow,
+    ];
+
     const chartService = new ChartService(tenant);
     await chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
     dispatch(workflowSlice.actions.storedNewWorkflow(newWorkflow));
@@ -116,7 +125,7 @@ export const deleteWorkflow = (
   try {
     // Delete the workflow from the chart also
     const nextWorkflowIds = (chart.workflowIds || []).filter(
-      (flowId) => flowId !== oldWorkflow.id
+      ({ id }) => id !== oldWorkflow.id
     );
     const chartService = new ChartService(tenant);
     chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);

@@ -57,7 +57,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const [workflowsRan, setWorkflowsRan] = useState(false);
 
   const workflows = useSelector((state) =>
-    chart?.workflowIds?.map((id) => state.workflows.entities[id])
+    chart?.workflowIds?.map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean) as Workflow[];
 
   const runWorkflows = async () => {
@@ -103,7 +103,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   useEffect(() => {
     if (chart?.workflowIds) {
-      dispatch(fetchWorkflowsForChart(chart?.workflowIds));
+      dispatch(fetchWorkflowsForChart(chart?.workflowIds.map(({ id }) => id)));
     }
   }, [chart?.id]);
 
@@ -156,6 +156,15 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       chartsSlice.actions.toggleTimeSeries({
         id: chart?.id || '',
         timeSeriesId,
+      })
+    );
+  };
+
+  const handleToggleWorkflow = (workflowId: string) => {
+    dispatch(
+      chartsSlice.actions.toggleWorkflow({
+        id: chart?.id || '',
+        workflowId,
       })
     );
   };
@@ -240,9 +249,15 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   );
 
   const workflowItems = workflows?.map((flow) => {
+    const flowEntry = chart?.workflowIds?.find(({ id }) => id === flow.id);
+
     return (
       <SourceItem key={flow.id} onClick={() => setActiveWorkflowId(flow.id)}>
-        <SourceCircle />
+        <SourceCircle
+          onClick={() => handleToggleWorkflow(flow.id)}
+          color={flowEntry?.color}
+          fade={!flowEntry?.enabled}
+        />
         <div style={{ marginRight: 10 }}>
           {renderStatusIcon(flow.latestRun?.status)}
         </div>
