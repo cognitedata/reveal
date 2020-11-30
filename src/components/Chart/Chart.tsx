@@ -57,13 +57,13 @@ const ChartComponent = ({ chart }: ChartProps) => {
     performQuery();
   }, [chart?.timeSeriesCollection, chart?.dateFrom, chart?.dateTo]);
 
-  const workflows = useSelector((state) =>
+  const enabledWorkflows = useSelector((state) =>
     chart?.workflowIds
       ?.filter((flow) => flow?.enabled)
       .map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean);
 
-  const dataFromWorkflows = workflows
+  const dataFromWorkflows = enabledWorkflows
     ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
     .map((workflow) => ({
       id: workflow?.id,
