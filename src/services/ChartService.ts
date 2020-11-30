@@ -25,9 +25,9 @@ export class ChartService {
 
   async setWorkflowsOnChart(
     chartId: string,
-    workflowIds: ChartWorkflow[]
+    workflowCollection: ChartWorkflow[]
   ): Promise<boolean> {
-    await this.firebaseCollection.doc(chartId).update({ workflowIds });
+    await this.firebaseCollection.doc(chartId).update({ workflowCollection });
     return true;
   }
 }

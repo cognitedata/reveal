@@ -58,7 +58,7 @@ const ChartComponent = ({ chart }: ChartProps) => {
   }, [chart?.timeSeriesCollection, chart?.dateFrom, chart?.dateTo]);
 
   const enabledWorkflows = useSelector((state) =>
-    chart?.workflowIds
+    chart?.workflowCollection
       ?.filter((flow) => flow?.enabled)
       .map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean);
@@ -91,8 +91,9 @@ const ChartComponent = ({ chart }: ChartProps) => {
         return {
           type: 'line',
           name,
-          color: chart?.workflowIds?.find((flowEntry) => id === flowEntry.id)
-            ?.color,
+          color: chart?.workflowCollection?.find(
+            (flowEntry) => id === flowEntry.id
+          )?.color,
           data: ((data.datapoints || []) as DoubleDatapoint[]).map(
             (datapoint) => ({
               x: new Date(datapoint.timestamp),

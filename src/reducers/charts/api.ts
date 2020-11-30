@@ -15,9 +15,8 @@ export const fetchAllCharts = (): AppThunk => async (dispatch, getState) => {
   }
 
   const tenant = selectTenant(state);
-  const { email: user } = selectUser(state);
 
-  if (!tenant || !user) {
+  if (!tenant) {
     // Must have tenant set
     return;
   }
@@ -50,7 +49,7 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
     user,
     name: `chart-${id}`,
     timeSeriesCollection: [],
-    workflowIds: [],
+    workflowCollection: [],
     dateFrom: new Date().toJSON(),
     dateTo: new Date().toJSON(),
   };
@@ -74,10 +73,9 @@ export const saveExistingChart = (chart: Chart): AppThunk => async (
 ) => {
   const state = getState();
   const tenant = selectTenant(state);
-  const { email: user } = selectUser(state);
 
-  if (!tenant || !user) {
-    // Must have tenant and user set
+  if (!tenant) {
+    // Must have tenant set
     return;
   }
 

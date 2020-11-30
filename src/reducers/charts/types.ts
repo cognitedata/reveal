@@ -3,7 +3,7 @@ export type Chart = {
   name: string;
   user: string;
   timeSeriesCollection?: ChartTimeSeries[];
-  workflowIds?: ChartWorkflow[];
+  workflowCollection?: ChartWorkflow[];
   dateFrom: string;
   dateTo: string;
 };

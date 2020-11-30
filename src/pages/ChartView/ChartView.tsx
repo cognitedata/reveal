@@ -57,7 +57,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const [workflowsRan, setWorkflowsRan] = useState(false);
 
   const workflows = useSelector((state) =>
-    chart?.workflowIds?.map(({ id }) => state.workflows.entities[id])
+    chart?.workflowCollection?.map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean) as Workflow[];
 
   const runWorkflows = async () => {
@@ -102,8 +102,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   };
 
   useEffect(() => {
-    if (chart?.workflowIds) {
-      dispatch(fetchWorkflowsForChart(chart?.workflowIds.map(({ id }) => id)));
+    if (chart?.workflowCollection) {
+      dispatch(
+        fetchWorkflowsForChart(chart?.workflowCollection.map(({ id }) => id))
+      );
     }
   }, [chart?.id]);
 
@@ -249,7 +251,9 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   );
 
   const workflowItems = workflows?.map((flow) => {
-    const flowEntry = chart?.workflowIds?.find(({ id }) => id === flow.id);
+    const flowEntry = chart?.workflowCollection?.find(
+      ({ id }) => id === flow.id
+    );
 
     return (
       <SourceItem key={flow.id} onClick={() => setActiveWorkflowId(flow.id)}>

@@ -1,7 +1,7 @@
 import { toast } from '@cognite/cogs.js';
 import { nanoid } from '@reduxjs/toolkit';
 import chartSlice, { Chart, ChartWorkflow } from 'reducers/charts';
-import { selectTenant, selectUser } from 'reducers/environment';
+import { selectTenant } from 'reducers/environment';
 import ChartService from 'services/ChartService';
 import WorkflowService from 'services/WorkflowService';
 import { AppThunk } from 'store';
@@ -38,9 +38,8 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 ) => {
   const state = getState();
   const tenant = selectTenant(state);
-  const { email: user } = selectUser(state);
 
-  if (!tenant || !user) {
+  if (!tenant) {
     // Must have tenant and user set
     return;
   }
@@ -62,7 +61,7 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 
     // Attach this workflow to the current chart
     const nextWorkflowIds = [
-      ...(chart.workflowIds || []),
+      ...(chart.workflowCollection || []),
       {
         id: newWorkflow.id,
         color: getEntryColor(),
@@ -76,7 +75,7 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
     dispatch(
       chartSlice.actions.storedNewWorkflow({
         id: chart.id,
-        changes: { workflowIds: nextWorkflowIds },
+        changes: { workflowCollection: nextWorkflowIds },
       })
     );
   } catch (e) {
@@ -115,16 +114,15 @@ export const deleteWorkflow = (
 ): AppThunk => async (dispatch, getState) => {
   const state = getState();
   const tenant = selectTenant(state);
-  const { email: user } = selectUser(state);
 
-  if (!tenant || !user) {
+  if (!tenant) {
     // Must have tenant set
     return;
   }
 
   try {
     // Delete the workflow from the chart also
-    const nextWorkflowIds = (chart.workflowIds || []).filter(
+    const nextWorkflowIds = (chart.workflowCollection || []).filter(
       ({ id }) => id !== oldWorkflow.id
     );
     const chartService = new ChartService(tenant);
@@ -139,7 +137,7 @@ export const deleteWorkflow = (
     dispatch(
       chartSlice.actions.storedNewWorkflow({
         id: chart.id,
-        changes: { workflowIds: nextWorkflowIds },
+        changes: { workflowCollection: nextWorkflowIds },
       })
     );
     toast.success('Workflow deleted!');

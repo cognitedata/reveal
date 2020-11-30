@@ -92,7 +92,7 @@ const chartsSlice = createSlice({
     ) => {
       const { id, workflowId } = action.payload;
       const chart = chartAdapter.getSelectors().selectById(state, id);
-      const workflowEntry = chart?.workflowIds?.find(
+      const workflowEntry = chart?.workflowCollection?.find(
         (entry) => entry.id === workflowId
       )!;
       workflowEntry.enabled = !workflowEntry?.enabled;
