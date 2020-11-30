@@ -5,6 +5,9 @@ import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
 import { AppEnvProvider } from '../../hooks/useAppEnv';
 
+export const PROJECT_ITERA_INT_GREEN: Readonly<string> = 'itera-int-green';
+export const ORIGIN_DEV: Readonly<string> = 'dev';
+export const CDF_ENV_GREENFIELD: Readonly<string> = 'greenfield';
 export default (
   ui: React.ReactElement,
   options?: Omit<RenderOptions, 'queries'>

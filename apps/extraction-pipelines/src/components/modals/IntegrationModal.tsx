@@ -1,18 +1,33 @@
 import { Button } from '@cognite/cogs.js';
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import ReactModal, { OnAfterOpenCallbackOptions } from 'react-modal';
+import styled from 'styled-components';
 
-interface OwnProps {
-  contentLabel?: string;
-  visible: boolean;
-  afterOpenModal?: (obj?: OnAfterOpenCallbackOptions) => void;
-  width?: number;
-  title?: string | React.ReactNode;
+const StyledReactModal = styled((props) => (
+  <ReactModal {...props}>{props.children}</ReactModal>
+))`
+  .cogs-modal-content {
+    height: 40rem;
+    overflow: auto;
+  }
+  .cogs-modal-footer {
+    justify-content: normal;
+  }
+`;
+interface ShowFooter {
   okText?: string;
   onOk?: () => void;
   cancelText?: string;
   onCancel?: () => void;
+  footer?: React.ReactNode;
+}
+interface OwnProps extends ShowFooter {
+  contentLabel?: string;
+  visible: boolean;
   appElement: HTMLElement | {};
+  afterOpenModal?: (obj?: OnAfterOpenCallbackOptions) => void;
+  width?: number;
+  title?: string | React.ReactNode;
 }
 
 type Props = OwnProps;
@@ -28,9 +43,32 @@ const IntegrationModal: FunctionComponent<Props> = ({
   cancelText = 'Cancel',
   onCancel,
   appElement,
+  footer,
 }: PropsWithChildren<Props>) => {
+  const showFooter = ({
+    footer: displayFooter,
+    onCancel: onCancelLocal,
+    cancelText: cancel,
+    onOk: onOkLocal,
+    okText: ok,
+  }: ShowFooter) => {
+    if (displayFooter) {
+      return <>{displayFooter}</>;
+    }
+    return (
+      <>
+        {onCancelLocal && <Button onClick={onCancelLocal}>{cancel}</Button>}
+        {onOk && (
+          <Button type="primary" onClick={onOkLocal}>
+            {ok}
+          </Button>
+        )}
+      </>
+    );
+  };
+
   return (
-    <ReactModal
+    <StyledReactModal
       isOpen={!!visible}
       onAfterOpen={afterOpenModal}
       onRequestClose={onCancel}
@@ -55,14 +93,9 @@ const IntegrationModal: FunctionComponent<Props> = ({
         key="modal-footer"
         className="cogs-modal-footer cogs-modal-footer-buttons"
       >
-        {onCancel && <Button onClick={onCancel}>{cancelText}</Button>}
-        {onOk && (
-          <Button type="primary" onClick={onOk}>
-            {okText}
-          </Button>
-        )}
+        {showFooter({ footer, onCancel, onOk, cancelText, okText })}
       </div>
-    </ReactModal>
+    </StyledReactModal>
   );
 };
 

@@ -1,4 +1,9 @@
 import {
+  UseExpandedHooks,
+  UseExpandedInstanceProps,
+  UseExpandedOptions,
+  UseExpandedRowProps,
+  UseExpandedState,
   UseRowSelectHooks,
   UseRowSelectInstanceProps,
   UseRowSelectOptions,
@@ -20,33 +25,36 @@ import {
   UseSortByOptions,
   UseSortByState,
   UseGroupByRowProps,
-  UseExpandedRowProps,
 } from 'react-table';
 
 declare module 'react-table' {
   // take this file as-is, or comment out the sections that don't apply to your plugin configuration
 
   export interface TableOptions<D extends Record<string, unknown>>
-    extends UseRowSelectOptions<D>,
+    extends UseExpandedOptions<D>,
+      UseRowSelectOptions<D>,
       UseFiltersOptions<D>,
       UseGlobalFiltersOptions<D>,
       UseSortByOptions<D> {}
 
   export interface Hooks<
     D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseRowSelectHooks<D>,
+  > extends UseExpandedHooks<D>,
+      UseRowSelectHooks<D>,
       UseSortByHooks<D> {}
 
   export interface TableInstance<
     D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseRowSelectInstanceProps<D>,
+  > extends UseExpandedInstanceProps<D>,
+      UseRowSelectInstanceProps<D>,
       UseFiltersInstanceProps<D>,
       UseGlobalFiltersInstanceProps<D>,
       UseSortByInstanceProps<D> {}
 
   export interface TableState<
     D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseRowSelectState<D>,
+  > extends UseExpandedState<D>,
+      UseRowSelectState<D>,
       UseFiltersState<D>,
       UseGlobalFiltersState<D>,
       UseSortByState<D> {}

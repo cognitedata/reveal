@@ -5,21 +5,22 @@ import { QueryCache } from 'react-query';
 import OverviewTab from './OverviewTab';
 import { render } from '../../utils/test';
 import { getMockResponse } from '../../utils/mockResponse';
-import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+  renderWithReactQueryCacheProvider,
+} from '../../utils/test/render';
 
 describe('OverviewTab', () => {
-  const project = 'itera-int-green';
-  const origin = 'dev';
-  const cdfEnv = 'greenfield';
-
   test('Render with out fail', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
     const queryCache = new QueryCache();
     const wrapper = renderWithReactQueryCacheProvider(
       queryCache,
-      origin,
-      project,
-      cdfEnv
+      ORIGIN_DEV,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD
     );
     render(<OverviewTab />, { wrapper });
     await waitFor(() => {

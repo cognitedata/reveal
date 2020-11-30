@@ -13,6 +13,7 @@ jest.mock('@cognite/cdf-sdk-singleton', () => {
 });
 
 sdkv3.get = jest.fn();
+sdkv3.post = jest.fn();
 // @ts-ignore
 sdkv3.datasets = {
   retrieve: jest.fn(),

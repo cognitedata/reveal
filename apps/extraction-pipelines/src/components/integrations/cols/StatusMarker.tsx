@@ -50,12 +50,12 @@ const StatusMarker: FunctionComponent<Props> = ({
     case Status.NOT_ACTIVATED:
       return (
         <Tooltip content="No runs yet">
-          <Badge
-            text={status}
-            background="greyscale-grey4"
+          <i
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
-          />
+          >
+            {status}
+          </i>
         </Tooltip>
       );
     default:
