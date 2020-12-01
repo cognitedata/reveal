@@ -5,10 +5,14 @@ import Details from './Details';
 import { getMockResponse } from '../../utils/mockResponse';
 import { ContactBtnTestIds } from '../table/details/ContactTableCols';
 import {
-  clickId,
-  existsInput,
-  notExistsInput,
-  typeInput,
+  addBtnTestId,
+  clickById,
+  existsContact,
+  existsById,
+  inputEmailTestId,
+  inputNameTestId,
+  notExistsById,
+  typeInInput,
 } from '../../utils/test/utilsFn';
 
 describe('Details', () => {
@@ -169,29 +173,17 @@ describe('Details', () => {
   });
 });
 
-const inputNameTestId = 'authors-name-';
-const inputEmailTestId = 'authors-email-';
-const addBtnTestId = 'add-contact-btn';
-
-const existsContact = (name: string, email: string) => {
-  const nameText = screen.getByText(name);
-  const emailText = screen.getByText(email);
-  expect(nameText).toBeInTheDocument();
-  expect(emailText).toBeInTheDocument();
-};
-
 const removeContact = (newRow: number) => {
-  clickId(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
-  notExistsInput(`${inputNameTestId}${newRow}`);
-  notExistsInput(`${inputEmailTestId}${newRow}`);
+  clickById(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
+  notExistsById(`${inputNameTestId}${newRow}`);
+  notExistsById(`${inputEmailTestId}${newRow}`);
 };
 
 const addNewContact = (newRow: number, name: string, email: string) => {
-  clickId(addBtnTestId);
-  clickId(`${ContactBtnTestIds.EDIT_BTN}${newRow}`);
-  existsInput(`${inputNameTestId}${newRow}`);
-  existsInput(`${inputEmailTestId}${newRow}`);
-  typeInput(`${inputNameTestId}${newRow}`, name);
-  typeInput(`${inputEmailTestId}${newRow}`, email);
-  clickId(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
+  clickById(addBtnTestId);
+  existsById(`${inputNameTestId}${newRow}`);
+  existsById(`${inputEmailTestId}${newRow}`);
+  typeInInput(`${inputNameTestId}${newRow}`, name);
+  typeInInput(`${inputEmailTestId}${newRow}`, email);
+  clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
 };

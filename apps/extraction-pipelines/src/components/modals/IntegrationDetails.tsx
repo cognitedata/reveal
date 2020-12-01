@@ -26,6 +26,7 @@ type Props = OwnProps;
 
 export const CLOSE_CONFIRM_CONTENT: Readonly<string> =
   'Are you sure you want to close without saving?';
+export const UNSAVED_INFO_TEXT = 'Unsaved information';
 const IntegrationDetails: FunctionComponent<Props> = ({
   visible,
   onCancel,
@@ -57,7 +58,7 @@ const IntegrationDetails: FunctionComponent<Props> = ({
         footer={
           <FooterWithWarning
             onPrimaryClick={onCancelClick}
-            error={changes.length > 0 ? 'Unsaved information' : undefined}
+            error={changes.length > 0 ? UNSAVED_INFO_TEXT : undefined}
             primaryText="Close"
             popConfirmContent={CLOSE_CONFIRM_CONTENT}
             showConfirmBox={showConfirmBox}

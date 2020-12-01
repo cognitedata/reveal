@@ -33,6 +33,7 @@ export const useContacts = (integration: Integration) => {
         if (index === rowIndex) {
           return {
             ...old[rowIndex],
+            isNewContact: false, // contact is not new when edit
             [columnId]: value,
           };
         }

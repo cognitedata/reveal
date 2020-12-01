@@ -1,4 +1,4 @@
-import { Cell, Column } from 'react-table';
+import { Cell, Column, Row } from 'react-table';
 import React from 'react';
 import { Button, Detail } from '@cognite/cogs.js';
 import EditableCell from 'components/inputs/EditableInput';
@@ -33,6 +33,15 @@ export interface ContactsTableCol {
   isNewContact: boolean;
   inputType?: DetailsInputType;
 }
+
+export function showEditRemove(row: Row<ContactsTableCol>): boolean {
+  return row.original.isEditable && !row.isExpanded;
+}
+
+export function showCancelSave(row: Row<ContactsTableCol>): boolean {
+  return row.original.isEditable && row.isExpanded;
+}
+
 export const contactTableCols: Column<ContactsTableCol>[] = [
   {
     id: 'label',
@@ -99,6 +108,9 @@ export const contactTableCols: Column<ContactsTableCol>[] = [
       saveChange,
       removeContact,
     }: Cell<ContactsTableCol> & EditableHelpersContacts) => {
+      if (row.original.isNewContact) {
+        row.toggleRowExpanded(true);
+      }
       const onSave = () => {
         saveChange(row.index, row.original);
         row.toggleRowExpanded(false); // maybe wait with this until changes is api success
@@ -111,10 +123,7 @@ export const contactTableCols: Column<ContactsTableCol>[] = [
       const onClickRemove = () => {
         removeContact(row.index, row.original);
       };
-      if (row.original.isEditable && !row.isExpanded) {
-        // eslint-disable-next-line
-        // todo alias expand?
-
+      if (showEditRemove(row)) {
         return (
           <StyledButtonGroup>
             {row.original.isDeletable && (
@@ -140,7 +149,7 @@ export const contactTableCols: Column<ContactsTableCol>[] = [
           </StyledButtonGroup>
         );
       }
-      if (row.original.isEditable && row.isExpanded) {
+      if (showCancelSave(row)) {
         return (
           <CancelSaveBtns
             onCancel={onCancel}
