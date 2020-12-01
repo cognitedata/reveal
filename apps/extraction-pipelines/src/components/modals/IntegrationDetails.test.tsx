@@ -4,16 +4,23 @@ import { getMockResponse } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import IntegrationDetails, {
   CLOSE_CONFIRM_CONTENT,
+  UNSAVED_INFO_TEXT,
 } from './IntegrationDetails';
 import {
-  clickId,
-  clickText,
+  clickById,
+  existsContact,
+  existsById,
+  existsByText,
+  inputEmailTestId,
+  inputNameTestId,
+  notExistsById,
+  notExistsText,
+  typeInInput,
   DETAILS_ELEMENTS,
   DETAILS_TEST_IDS,
-  existsText,
-  notExistsText,
-  typeInput,
+  clickText,
 } from '../../utils/test/utilsFn';
+import { ContactBtnTestIds } from '../table/details/ContactTableCols';
 
 describe('Integration Details', () => {
   beforeEach(() => {
@@ -101,7 +108,7 @@ describe('Integration Details', () => {
     expect(bottomWarningNotVisible).not.toBeInTheDocument();
   });
 
-  test('Add contact', async () => {
+  test('Add contact', () => {
     const integration = getMockResponse()[0];
     const cancelMock = jest.fn();
     render(
@@ -111,8 +118,25 @@ describe('Integration Details', () => {
         onCancel={cancelMock}
       />
     );
+    const row = integration.authors.length + 1;
     const addBtn = screen.getByText('Add');
     fireEvent.click(addBtn);
+    existsById(`${inputEmailTestId}${row}`);
+    existsById(`${inputNameTestId}${row}`);
+    const newName = 'Test test';
+    typeInInput(`${inputNameTestId}${row}`, newName);
+    const newEmail = 'test@test.no';
+    typeInInput(`${inputEmailTestId}${row}`, newEmail);
+    clickById(`${ContactBtnTestIds.CANCEL_BTN}${row}`);
+    notExistsById(`${inputEmailTestId}${row}`);
+    notExistsById(`${inputNameTestId}${row}`);
+    clickById(`${ContactBtnTestIds.EDIT_BTN}${row}`);
+    typeInInput(`${inputNameTestId}${row}`, newName);
+    typeInInput(`${inputEmailTestId}${row}`, newEmail);
+    existsByText(UNSAVED_INFO_TEXT);
+    clickById(`${ContactBtnTestIds.SAVE_BTN}${row}`);
+    existsContact(newName, newEmail);
+    notExistsText(UNSAVED_INFO_TEXT);
   });
 
   test('Unsaved changes dialog - footer', () => {
@@ -126,27 +150,28 @@ describe('Integration Details', () => {
       />
     );
     const row = 1;
-    clickId(`edit-contact-btn-${row}`);
-    typeInput(`authors-email-${row}`, 'test@test.no');
+    clickById(`edit-contact-btn-${row}`);
+    typeInInput(`authors-email-${row}`, 'test@test.no');
     const bottomWarning = screen.getByText(DETAILS_ELEMENTS.UNSAVED);
     expect(bottomWarning).toBeInTheDocument();
     // click close
-    clickId(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
+    clickById(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
     // dialog displayed
-    existsText(CLOSE_CONFIRM_CONTENT);
+    existsByText(CLOSE_CONFIRM_CONTENT);
     // click cancel
     const cancelBtns = screen.getAllByText('Cancel');
-    fireEvent.click(cancelBtns[1]);
+    fireEvent.click(cancelBtns[0]);
     // dialog removed
     notExistsText(CLOSE_CONFIRM_CONTENT);
 
     // click close
-    clickId(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
+    clickById(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
     // dialog displayed
-    existsText(CLOSE_CONFIRM_CONTENT);
+    existsByText(CLOSE_CONFIRM_CONTENT);
 
     // click confirm
     clickText('Confirm');
+
     // dialog removed
     notExistsText(CLOSE_CONFIRM_CONTENT);
   });
