@@ -3,7 +3,7 @@ import { Input } from '@cognite/cogs.js';
 import { ConfigPanelComponentProps, StorableNode } from '../types';
 
 type FunctionData = {
-  multiplier: number;
+  constant: number;
 };
 
 type DataPoint = {
@@ -14,34 +14,34 @@ export const effect = async (funcData: FunctionData, a: DataPoint[]) => {
   return {
     result: a.map((x) => ({
       ...x,
-      value: x.value * funcData.multiplier,
+      value: x.value + funcData.constant,
     })),
   };
 };
 
-export const effectId = 'UNIT_CONVERSION';
+export const effectId = 'ADD_CONSTANT';
 
 export const configPanel = ({
   node,
   onUpdateNode,
 }: ConfigPanelComponentProps) => {
-  const [multiplier, setMultiplier] = useState<string>(
-    String(node.functionData.multiplier)
+  const [constant, setConstant] = useState<string>(
+    String(node.functionData.constant)
   );
 
   return (
     <div>
-      <h4>Multiplier</h4>
+      <h4>Constant</h4>
       <Input
-        id="multiplier"
-        value={multiplier}
+        id="constant"
+        value={constant}
         onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
-          setMultiplier(newValue.target.value);
+          setConstant(newValue.target.value);
           if (!Number.isNaN(Number(newValue.target.value))) {
             onUpdateNode({
               functionData: {
                 ...node.functionData,
-                multiplier: Number(newValue.target.value),
+                constant: Number(newValue.target.value),
               },
             });
           }
@@ -52,8 +52,8 @@ export const configPanel = ({
 };
 
 export const node = {
-  title: 'A to B',
-  subtitle: 'CONVERSION',
+  title: 'CONSTANT',
+  subtitle: 'Add constant',
   color: '#FC2574',
   icon: 'Function',
   outputPins: [
@@ -73,6 +73,6 @@ export const node = {
     },
   ],
   functionData: {
-    multiplier: 2,
+    constant: 100,
   },
 } as StorableNode;

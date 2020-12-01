@@ -1,3 +1,4 @@
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const Header = styled.header`
@@ -27,6 +28,10 @@ export const Header = styled.header`
       margin-left: 8px;
     }
   }
+  .daterange {
+    display: flex;
+    justify-self: flex-start;
+  }
 `;
 
 export const TopPaneWrapper = styled.div`
@@ -41,5 +46,142 @@ export const BottomPaneWrapper = styled.div`
   width: 100%;
   height: 100%;
   background: rgb(255, 255, 255);
-  border-left: 1px solid var(--cogs-greyscale-grey4);
+`;
+
+export const ChartViewContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+export const ToolbarWrapper = styled.div`
+  min-width: 56px;
+  width: 56px;
+  border-right: 1px solid var(--cogs-greyscale-grey4);
+  background-color: var(--cogs-greyscale-grey1);
+`;
+
+export const ToolbarItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey3);
+  }
+`;
+
+export const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-height: 100%;
+`;
+
+export const ToolbarIcon = styled(Icon)`
+  width: 20px;
+`;
+
+export const ChartContainer = styled.div`
+  display: flex;
+  height: 100%;
+`;
+
+export const SourceListWrapper = styled.div`
+  max-height: 100%;
+  width: 300px;
+  border-right: 1px solid var(--cogs-greyscale-grey4);
+`;
+
+export const SourcesTitle = styled.h2`
+  text-align: center;
+  margin: 15px;
+`;
+
+export const SourceList = styled.div`
+  & > :first-child {
+    border-top: 1px solid var(--cogs-greyscale-grey2);
+  }
+`;
+
+export const SourceCircle = styled.span`
+  height: 20px;
+  width: 20px;
+  background-color: ${(props) => props.color || 'lightgreen'};
+  margin: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: ${(props: { fade?: boolean }) => (props.fade ? '0.2' : '1')};
+`;
+
+export const SourceItem = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 50px;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid var(--cogs-greyscale-grey2);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey1);
+
+    & > :last-child {
+      visibility: visible;
+    }
+  }
+`;
+
+export const SourceName = styled.span`
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
+export const SourceButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+`;
+
+export const SourceMenu = styled.div`
+  position: absolute;
+  right: 0px;
+  height: 100%;
+  width: 30px;
+  background-color: white;
+  border-left: 1px solid var(--cogs-greyscale-grey2);
+  visibility: hidden;
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey1);
+  }
+
+  & > span {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+export const ChartWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+
+  > div {
+    height: 100%;
+    width: 100%;
+
+    > .highcharts-container {
+      height: 100%;
+      width: 100%;
+    }
+  }
 `;

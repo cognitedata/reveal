@@ -10,6 +10,7 @@ import App from 'components/App';
 import * as serviceWorker from './serviceWorker';
 
 import '@cognite/cogs.js/dist/cogs.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 configureI18n();
 

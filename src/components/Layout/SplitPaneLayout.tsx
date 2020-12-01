@@ -62,6 +62,7 @@ const SplitPaneLayout = ({
     defaultSize={defaultSize}
     onDragFinished={() => {
       document.dispatchEvent(new Event('panelResize'));
+      window.dispatchEvent(new Event('resize'));
     }}
   >
     {children}

@@ -1,9 +1,11 @@
 import { toast } from '@cognite/cogs.js';
 import { nanoid } from '@reduxjs/toolkit';
-import chartSlice, { Chart } from 'reducers/charts';
+import chartSlice, { Chart, ChartWorkflow } from 'reducers/charts';
+import { selectTenant } from 'reducers/environment';
 import ChartService from 'services/ChartService';
 import WorkflowService from 'services/WorkflowService';
 import { AppThunk } from 'store';
+import { getEntryColor } from 'utils/colors';
 import workflowSlice from './slice';
 import { Workflow } from './types';
 
@@ -34,10 +36,11 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
   dispatch,
   getState
 ) => {
-  const { tenant } = getState().environment;
+  const state = getState();
+  const tenant = selectTenant(state);
 
   if (!tenant) {
-    // Must have tenant set
+    // Must have tenant and user set
     return;
   }
 
@@ -57,14 +60,22 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
     workflowService.saveWorkflow(newWorkflow);
 
     // Attach this workflow to the current chart
-    const nextWorkflowIds = [...(chart.workflowIds || []), newWorkflow.id];
+    const nextWorkflowIds = [
+      ...(chart.workflowCollection || []),
+      {
+        id: newWorkflow.id,
+        color: getEntryColor(),
+        enabled: true,
+      } as ChartWorkflow,
+    ];
+
     const chartService = new ChartService(tenant);
-    chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
+    await chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
     dispatch(workflowSlice.actions.storedNewWorkflow(newWorkflow));
     dispatch(
       chartSlice.actions.storedNewWorkflow({
         id: chart.id,
-        changes: { workflowIds: nextWorkflowIds },
+        changes: { workflowCollection: nextWorkflowIds },
       })
     );
   } catch (e) {
@@ -101,7 +112,8 @@ export const deleteWorkflow = (
   chart: Chart,
   oldWorkflow: Workflow
 ): AppThunk => async (dispatch, getState) => {
-  const { tenant } = getState().environment;
+  const state = getState();
+  const tenant = selectTenant(state);
 
   if (!tenant) {
     // Must have tenant set
@@ -110,8 +122,8 @@ export const deleteWorkflow = (
 
   try {
     // Delete the workflow from the chart also
-    const nextWorkflowIds = (chart.workflowIds || []).filter(
-      (flowId) => flowId !== oldWorkflow.id
+    const nextWorkflowIds = (chart.workflowCollection || []).filter(
+      ({ id }) => id !== oldWorkflow.id
     );
     const chartService = new ChartService(tenant);
     chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
@@ -125,10 +137,10 @@ export const deleteWorkflow = (
     dispatch(
       chartSlice.actions.storedNewWorkflow({
         id: chart.id,
-        changes: { workflowIds: nextWorkflowIds },
+        changes: { workflowCollection: nextWorkflowIds },
       })
     );
-    toast.success('Workflow saved!');
+    toast.success('Workflow deleted!');
   } catch (e) {
     toast.error('Failed to delete workflow');
   }

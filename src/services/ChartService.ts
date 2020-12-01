@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import { Chart } from 'reducers/charts';
+import { Chart, ChartWorkflow } from 'reducers/charts';
 
 export class ChartService {
   private readonly firebaseCollection: firebase.firestore.CollectionReference<
@@ -19,11 +19,15 @@ export class ChartService {
     return snapshot.docs.map((doc) => doc.data()) as Chart[];
   }
 
+  async saveChart(chart: Chart): Promise<void> {
+    return this.firebaseCollection.doc(chart.id).set(chart);
+  }
+
   async setWorkflowsOnChart(
     chartId: string,
-    workflowIds: string[]
+    workflowCollection: ChartWorkflow[]
   ): Promise<boolean> {
-    await this.firebaseCollection.doc(chartId).update({ workflowIds });
+    await this.firebaseCollection.doc(chartId).update({ workflowCollection });
     return true;
   }
 }

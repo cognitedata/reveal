@@ -24,7 +24,7 @@ export class WorkflowService {
    * Creates a workflow, or saves that workflow if the ID exists already
    * @param newWorkflow New or existing workflow
    */
-  async saveWorkflow(workflow: Workflow): Promise<any> {
+  async saveWorkflow(workflow: Workflow): Promise<void> {
     return this.firebaseCollection.doc(workflow.id).set(workflow);
   }
 
