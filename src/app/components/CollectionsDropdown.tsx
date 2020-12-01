@@ -75,6 +75,11 @@ export default function CollectionsDropdown({ type, items, button }: Props) {
     const newCollection: CollectionSpec = { ...collection, type };
     const [createdCollection] = await createCollections([newCollection]);
     addToCollection(createdCollection, items);
+
+    trackUsage('Exploration.Action.CreateCollection', {
+      type: createdCollection.type,
+      items: createdCollection.operationBody.items.length,
+    });
   };
 
   const collectionContainsItems = (collection: Collection) =>
