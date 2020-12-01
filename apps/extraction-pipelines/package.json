@@ -65,7 +65,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.1.0",
     "@testing-library/react-hooks": "^3.4.2",
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.16",
     "@types/match-sorter": "^5.0.0",
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
