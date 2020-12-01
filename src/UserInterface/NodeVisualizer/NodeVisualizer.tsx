@@ -121,7 +121,7 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
           }
         }}
       >
-        <LeftPanel explorer={renderExplorer} />
+        <LeftPanel explorer={renderExplorer} custom={!!explorer} />
         <RightPanel viewer3D={viewerElementCallback} toolbar={renderToolbar} />
       </SplitPane>
     </div>

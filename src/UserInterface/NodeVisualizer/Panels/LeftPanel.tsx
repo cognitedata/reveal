@@ -11,6 +11,8 @@ import {
 import { ExplorerNodeUtils } from '@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils';
 import { onSelectedNodeChange } from '@/UserInterface/Redux/reducers/SettingsReducer';
 import { State } from '@/UserInterface/Redux/State/State';
+import { ConnectedSettingsPanel } from '@/UserInterface/NodeVisualizer/Settings/ConnectedSettingsPanel';
+import SplitPane from 'react-split-pane';
 
 function mapDispatchToExplorerPanel(dispatch: Dispatch) {
   return {
@@ -44,10 +46,11 @@ function mapStateToExplorerPanel(state: State) {
 
 interface LeftPanelProps {
   explorer: React.ComponentType<ExplorerPropType>;
+  custom?: boolean;
 }
 
 // Renders Explorer
-export const LeftPanel = ({ explorer }: LeftPanelProps) => {
+export const LeftPanel = ({ explorer, custom }: LeftPanelProps) => {
   const Explorer = useMemo(
     () =>
       connect(mapStateToExplorerPanel, mapDispatchToExplorerPanel)(explorer),
@@ -56,7 +59,14 @@ export const LeftPanel = ({ explorer }: LeftPanelProps) => {
 
   return (
     <div className="left-panel">
-      <Explorer />
+      {custom ? (
+        <Explorer />
+      ) : (
+        <SplitPane split="horizontal" defaultSize="50%" primary="second">
+          <Explorer />
+          <ConnectedSettingsPanel />
+        </SplitPane>
+      )}
     </div>
   );
 };
