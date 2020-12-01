@@ -28,7 +28,7 @@
     "@cognite/react-loop-detector": "^0.0.1",
     "@cognite/sdk": "^3.3.0",
     "@reduxjs/toolkit": "^1.5.0",
-    "@sentry/browser": "^5.27.6",
+    "@sentry/browser": "^5.28.0",
     "firebase": "^8.1.1",
     "jszip": "^3.5.0",
     "lodash": "^4.17.19",
