@@ -115,7 +115,7 @@ interface NodeVisualizerWrapperProps extends AuthWrapperProps {
   fileId: string;
 }
 
-const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
+export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
   apiKey,
   apiUrl,
   fileId,
@@ -127,16 +127,19 @@ const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
   modules.add(new ThreeModule());
 
   const syntheticModule = new SyntheticSubSurfaceModule();
-  syntheticModule.addSeismicCube(
-    new CogniteSeismicClient({
-      api_url: apiUrl || '',
-      api_key: apiKey || '',
-      debug: true,
-    }),
-    fileId || ''
-  );
-  modules.add(syntheticModule);
 
+  if (apiKey && fileId) {
+    syntheticModule.addSeismicCube(
+      new CogniteSeismicClient({
+        api_url: apiUrl || '',
+        api_key: apiKey || '',
+        debug: true,
+      }),
+      fileId || ''
+    );
+  }
+
+  modules.add(syntheticModule);
   modules.install();
 
   const root = modules.createRoot();

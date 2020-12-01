@@ -35,6 +35,7 @@ yarn-error.log*
 .vs/reveal-architecture/v16/.suo
 
 src/UserInterface/styles/css
+src/App
 
 .env
 debug.log

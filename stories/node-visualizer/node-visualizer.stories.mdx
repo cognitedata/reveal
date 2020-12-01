@@ -3,7 +3,8 @@ import {
   AuthWrapper,
   NodeVisualizerComponent,
   NodeVisualizerExplorer,
-  NodeVisualizerToolbar
+  NodeVisualizerToolbar,
+  NodeVisualizerWrapper
 } from './node-visualizer.helper';
 import { Explorer, Toolbar } from './components';
 
@@ -95,6 +96,12 @@ In case above node tree explorer component receive props:
 
 And props for custom toolbar:
 <ArgsTable of={NodeVisualizerToolbar} />
+
+## Synthetic data usage
+
+<Story name="Synthetic data usage">
+  <NodeVisualizerWrapper />
+</Story>
 
 
 
