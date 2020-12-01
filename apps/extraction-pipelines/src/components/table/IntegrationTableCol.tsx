@@ -7,10 +7,10 @@ import Name from '../integrations/cols/Name';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableActions from '../menu/IntegrationsTableActions';
 import DataSet from '../integrations/cols/DataSet';
-import DisplayEpocTime from '../integrations/cols/DisplayEpocTime';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { User } from '../../model/User';
+import RelativeTimeWithTooltip from '../integrations/cols/RelativeTimeWithTooltip';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -70,10 +70,12 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.LATEST_RUN,
       accessor: ({ lastSuccess, lastFailure }: Integration) => {
         const status = calculateStatus({ lastSuccess, lastFailure });
-        return status;
+        return status.time;
       },
       Cell: ({ row }: Cell<Integration>) => {
-        return <DisplayEpocTime time={row.values.latestRun.time} />;
+        return (
+          <RelativeTimeWithTooltip time={row.values.latestRun as number} />
+        );
       },
       disableSortBy: true,
       disableFilters: true,
@@ -93,7 +95,7 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.LAST_SEEN,
       accessor: 'lastSeen',
       Cell: ({ row }: Cell<Integration>) => {
-        return <DisplayEpocTime time={row.values.lastSeen} />;
+        return <RelativeTimeWithTooltip time={row.values.lastSeen as number} />;
       },
       disableSortBy: true,
       disableFilters: true,

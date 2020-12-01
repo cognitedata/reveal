@@ -1,11 +1,6 @@
 import moment from 'moment';
 import { MutateFunction } from 'react-query';
-import {
-  LastStatuses,
-  LatestStatusesDateTime,
-  Status,
-  StatusObj,
-} from '../model/Status';
+import { LastStatuses, Status, StatusObj } from '../model/Status';
 import { Integration } from '../model/Integration';
 import {
   createDataSetCol,
@@ -18,53 +13,46 @@ import { SDKError } from '../model/SDKErrors';
 import { UseUpdateIntegrationVariables } from '../hooks/useUpdateIntegration';
 import { TableHeadings } from '../components/table/IntegrationTableCol';
 
-const mapToMoment = ({
+export const calculateStatus = (status: LastStatuses): StatusObj => {
+  return calculate(status);
+};
+export const calculate = ({
   lastFailure,
   lastSuccess,
-}: LastStatuses): Pick<
-  LatestStatusesDateTime,
-  'successDateTime' | 'failDateTime'
-> => {
-  return {
-    successDateTime: lastSuccess === 0 ? null : moment(lastSuccess),
-    failDateTime: lastFailure === 0 ? null : moment(lastFailure),
-  };
-};
-export const calculateStatus = (status: LastStatuses): StatusObj => {
-  return calculate(mapToMoment(status));
-};
-
-export const calculate = ({
-  successDateTime,
-  failDateTime,
-}: LatestStatusesDateTime): StatusObj => {
+}: LastStatuses): StatusObj => {
   if (
-    (!!successDateTime && failDateTime === null) ||
-    (!!successDateTime && successDateTime.isAfter(failDateTime))
+    (lastSuccess && lastSuccess > 0 && lastFailure === 0) ||
+    (lastSuccess && moment(lastSuccess).isAfter(moment(lastFailure)))
   ) {
     return {
       status: Status.OK,
-      time: successDateTime,
+      time: lastSuccess,
     };
   }
   if (
-    (!!failDateTime && successDateTime === null) ||
-    (!!failDateTime && failDateTime.isAfter(successDateTime))
+    (lastFailure && lastFailure > 0 && lastSuccess === 0) ||
+    (lastFailure &&
+      lastSuccess &&
+      moment(lastFailure).isAfter(moment(lastSuccess)))
   ) {
     return {
       status: Status.FAIL,
-      time: failDateTime,
+      time: lastFailure,
     };
   }
-  if (failDateTime && successDateTime && failDateTime.isSame(successDateTime)) {
+  if (
+    lastFailure &&
+    lastSuccess &&
+    moment(lastFailure).isSame(moment(lastSuccess))
+  ) {
     return {
       status: Status.FAIL,
-      time: failDateTime,
+      time: lastFailure,
     };
   }
   return {
     status: Status.NOT_ACTIVATED,
-    time: null,
+    time: 0,
   };
 };
 

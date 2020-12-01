@@ -4,8 +4,8 @@ import { User } from './User';
 
 export interface Integration {
   name: string;
-  createdTime: number;
-  lastUpdatedTime: number;
+  createdTime: number; // milliseconds
+  lastUpdatedTime: number; // milliseconds
   schedule?: string;
   dataSetId: string;
   dataSet?: DataSet;
@@ -15,7 +15,7 @@ export interface Integration {
   id: number;
   owner: User;
   authors: User[];
-  lastSuccess?: number;
-  lastFailure?: number;
-  lastSeen?: number;
+  lastSuccess?: number; // milliseconds
+  lastFailure?: number; // milliseconds
+  lastSeen?: number; // milliseconds
 }
