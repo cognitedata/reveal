@@ -7,7 +7,7 @@ import Monitoring from '../tabs/Monitoring';
 describe('Monitoring', () => {
   const externalId = 'dataIntegration000-1';
   test('Render table with out fail', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
+    sdkv3.get.mockResolvedValue({ data: getMockResponse() });
     render(<Monitoring externalId={externalId} />);
     await waitFor(() => {
       const sidePanelHeading = screen.getByRole('table');
