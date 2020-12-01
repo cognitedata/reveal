@@ -34,9 +34,9 @@ const defaultFormValue = {
 
 export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
   const [formValue, setFormValue] = useState({ ...defaultFormValue });
-  const [apiKey, setApiKey] = useState('');
-  const [apiUrl, setApiUrl] = useState('');
-  const [fileId, setFileId] = useState('');
+  const [apiKey, setApiKey] = useState(process.env.API_KEY || '');
+  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '');
+  const [fileId, setFileId] = useState(process.env.FILE_ID || '');
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -57,7 +57,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
   };
 
   return (
-    <div>
+    <>
       {apiKey && fileId && apiUrl ? (
         <NodeVisualizerWrapper
           apiKey={apiKey}
@@ -105,7 +105,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
           </StyledRow>
         </form>
       )}
-    </div>
+    </>
   );
 };
 
@@ -145,7 +145,7 @@ export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
   const root = modules.createRoot();
 
   return (
-    <div style={{ width: '1000px', height: '600px' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <Provider store={store}>
         <NodeVisualizer root={root} {...nodeVisualizerProps} />
       </Provider>

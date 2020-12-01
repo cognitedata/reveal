@@ -81,6 +81,7 @@ const useStyles = makeStyles(() => ({
     margin: '0.025rem',
     padding: '0.2rem 0.2rem',
     cursor: 'pointer',
+    boxSizing: 'content-box',
     '&:hover': {
       backgroundColor: 'lightblue',
       borderColor: 'lightblue',
@@ -250,7 +251,7 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
         <Box className={classes.toolbarContainer}>
           <Box className={`handle ${classes.dragHandle}`}>
             <Box className={classes.dragHandleIcon}>
-              <DragIndicatorIcon color="secondary" />
+              <DragIndicatorIcon style={{ color: '#d5d5d5' }} />
             </Box>
           </Box>
           {addToolbars()}

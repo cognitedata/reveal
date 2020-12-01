@@ -35,7 +35,7 @@ const CommonSelectInput = withStyles((theme: Theme) => ({
     borderRadius: 0,
     position: 'relative',
     fontSize: theme.typography.button.fontSize,
-    color: theme.palette.primary.contrastText,
+    color: '#000',
     backgroundColor: theme.palette.background.paper,
     borderColor: theme.palette.primary.contrastText,
     transition: theme.transitions.create(['border-color']),
