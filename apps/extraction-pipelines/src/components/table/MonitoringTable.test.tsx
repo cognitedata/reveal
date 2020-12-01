@@ -7,7 +7,7 @@ import mapRuns from '../../utils/runsUtils';
 
 describe('<MonitoringTable/>', () => {
   const columns = getMonitoringTableCol();
-  const tableData = mapRuns(mockDataRunsResponse ?? []);
+  const tableData = mapRuns(mockDataRunsResponse.items);
   test('Render without errors', () => {
     render(<MonitoringTable data={tableData} columns={columns} />);
     const colsWithHeaders = columns.filter((col) => col.Header);

@@ -8,12 +8,12 @@ describe('useRuns', () => {
   const externalId = 'dataIntegration000-1';
 
   test('Returns runs on success', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: mockDataRunsResponse } });
+    sdkv3.get.mockResolvedValue({ data: mockDataRunsResponse });
 
     await act(async () => {
       const { result } = renderHook(() => useRuns(externalId));
       await waitFor(() => {
-        expect(result.current.data).toEqual(mockDataRunsResponse);
+        expect(result.current.data).toEqual(mockDataRunsResponse.items);
       });
     });
   });

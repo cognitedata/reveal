@@ -1,14 +1,18 @@
 import { get } from './baseURL';
-import { RunsAPIResponse, StatusRow } from '../model/Runs';
+import { RunsAPIResponse, RunResponse } from '../model/Runs';
+import { mockDataRunsResponse } from '../utils/mockResponse';
 
 export const getRuns = async (
   project: string,
   externalId: string
-): Promise<StatusRow[]> => {
-  const response = await get<RunsAPIResponse>(
+): Promise<RunResponse[]> => {
+  /* const response = await get<RunsAPIResponse>(
     `/runs`,
     project,
     `?externalId=${externalId}`
-  );
+  ); */
+  const response = {
+    data: mockDataRunsResponse,
+  };
   return response.data.items;
 };

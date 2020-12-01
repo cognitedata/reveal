@@ -182,45 +182,46 @@ export const mockError = {
   error: { code: 400, message: 'Multiple authentication headers present' },
 };
 
-export const mockDataRunsResponse = [
-  {
-    createdTime: 1605575298134,
-    status: 'failure',
-    externalId: 'dataIntegration000-1',
-  },
-  {
-    createdTime: 1605555298134,
-    status: 'seen',
-    externalId: 'dataIntegration000-1',
-  },
-  {
-    createdTime: 1605535298134,
-    status: 'seen',
-    externalId: 'dataIntegration000-1',
-  },
-  {
-    createdTime: 1605418198134,
-    status: 'success',
-    externalId: 'dataIntegration000-1',
-  },
-  {
-    createdTime: 1604918198134,
-    status: 'success',
-    externalId: 'dataIntegration000-1',
-  },
-  {
-    createdTime: 1604218198134,
-    status: 'success',
-    externalId: 'dataIntegration000-1',
-  },
-  {
-    createdTime: 1603918198134,
-    status: 'failure',
-    externalId: 'dataIntegration000-1',
-  },
-  {
-    createdTime: 1600923198134,
-    status: 'success',
-    externalId: 'dataIntegration000-1',
-  },
-];
+export const mockDataRunsResponse = {
+  items: [
+    {
+      createdTime: 1584065700000,
+      lastUpdatedTime: 1584137100000,
+      externalId: 'dataIntegration0001',
+      statuses: [
+        {
+          createdTime: 1605575298134,
+          status: 'failure',
+        },
+        {
+          createdTime: 1605555298134,
+          status: 'seen',
+        },
+        {
+          createdTime: 1605535298134,
+          status: 'seen',
+        },
+        {
+          createdTime: 1605418198134,
+          status: 'success',
+        },
+        {
+          createdTime: 1604918198134,
+          status: 'success',
+        },
+        {
+          createdTime: 1604218198134,
+          status: 'success',
+        },
+        {
+          createdTime: 1603918198134,
+          status: 'failure',
+        },
+        {
+          createdTime: 1600923198134,
+          status: 'success',
+        },
+      ],
+    },
+  ],
+};

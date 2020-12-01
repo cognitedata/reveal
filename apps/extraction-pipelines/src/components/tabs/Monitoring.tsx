@@ -17,7 +17,7 @@ const Monitoring = ({ externalId }: MonitoringProps) => {
     return <ErrorFeedback error={errorRuns} />;
   }
 
-  const tableData = mapRuns(data ?? []);
+  const tableData = mapRuns(data);
   const columns = getMonitoringTableCol();
 
   return (
