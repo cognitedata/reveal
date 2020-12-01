@@ -7,10 +7,10 @@ import Name from '../integrations/cols/Name';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableActions from '../menu/IntegrationsTableActions';
 import DataSet from '../integrations/cols/DataSet';
-import DisplayEpocTime from '../integrations/cols/DisplayEpocTime';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { User } from '../../model/User';
+import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -73,7 +73,9 @@ export const getIntegrationTableCol = () => {
         return status;
       },
       Cell: ({ row }: Cell<Integration>) => {
-        return <DisplayEpocTime time={row.values.latestRun.time} />;
+        return (
+          <TimeDisplay value={row.values.latestRun.time} relative withTooltip />
+        );
       },
       disableSortBy: true,
       disableFilters: true,
@@ -93,7 +95,7 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.LAST_SEEN,
       accessor: 'lastSeen',
       Cell: ({ row }: Cell<Integration>) => {
-        return <DisplayEpocTime time={row.values.lastSeen} />;
+        return <TimeDisplay value={row.values.lastSeen} relative withTooltip />;
       },
       disableSortBy: true,
       disableFilters: true,
