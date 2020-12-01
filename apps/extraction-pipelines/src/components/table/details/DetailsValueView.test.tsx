@@ -43,7 +43,7 @@ describe('<DetailsValueView />', () => {
           fieldName={data.name}
         />
       );
-      const view = screen.getByText(moment.unix(data.value).fromNow());
+      const view = screen.getByText(moment(data.value).fromNow());
       expect(view).toBeInTheDocument();
     });
   });

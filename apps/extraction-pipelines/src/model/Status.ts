@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { Integration } from './Integration';
 
 export enum Status {
@@ -9,10 +8,6 @@ export enum Status {
 }
 export interface StatusObj {
   status: Status;
-  time: moment.Moment | null;
+  time: number;
 }
 export type LastStatuses = Pick<Integration, 'lastSuccess' | 'lastFailure'>;
-export interface LatestStatusesDateTime {
-  successDateTime: moment.Moment | null;
-  failDateTime: moment.Moment | null;
-}

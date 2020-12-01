@@ -10,7 +10,7 @@ import DataSet from '../integrations/cols/DataSet';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { User } from '../../model/User';
-import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
+import RelativeTimeWithTooltip from '../integrations/cols/RelativeTimeWithTooltip';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -70,11 +70,11 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.LATEST_RUN,
       accessor: ({ lastSuccess, lastFailure }: Integration) => {
         const status = calculateStatus({ lastSuccess, lastFailure });
-        return status;
+        return status.time;
       },
       Cell: ({ row }: Cell<Integration>) => {
         return (
-          <TimeDisplay value={row.values.latestRun.time} relative withTooltip />
+          <RelativeTimeWithTooltip time={row.values.latestRun as number} />
         );
       },
       disableSortBy: true,
@@ -95,7 +95,7 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.LAST_SEEN,
       accessor: 'lastSeen',
       Cell: ({ row }: Cell<Integration>) => {
-        return <TimeDisplay value={row.values.lastSeen} relative withTooltip />;
+        return <RelativeTimeWithTooltip time={row.values.lastSeen as number} />;
       },
       disableSortBy: true,
       disableFilters: true,
