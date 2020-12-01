@@ -23,7 +23,7 @@ const StyledIntegrationsTable = styled((props) => (
   }
   .tableFixHead {
     overflow-y: auto;
-    height: 68vh;
+    height: calc(100vh - 16.375rem);
     thead {
       th {
         position: sticky;
