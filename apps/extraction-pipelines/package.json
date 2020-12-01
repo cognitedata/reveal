@@ -29,7 +29,7 @@
     "antd": "4.7.3",
     "commander": "^5.1.0",
     "cronstrue": "^1.105.0",
-    "cross-env": "^7.0.2",
+    "cross-env": "^7.0.3",
     "fs-extra": "^9.0.1",
     "i18next": "^19.8.4",
     "i18next-chained-backend": "^2.0.1",
