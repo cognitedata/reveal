@@ -7,6 +7,7 @@ import IntegrationsTable from '../integrations/IntegrationsTable';
 
 const IntegrationsWrapper = styled.div`
   border-left: 0.0625rem solid #e8e8e8;
+  height: calc(100vh - 9.5625rem);
 `;
 const TableWrapper = styled.div`
   margin: 1rem;

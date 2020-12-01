@@ -50,6 +50,9 @@ export const StyledTable = styled.div`
     }
     tbody {
       tr {
+        .timestamp-col {
+          font-weight: bold;
+        }
         &.parent-row {
           .statusSeen-col {
             position: relative;
@@ -71,11 +74,6 @@ export const StyledTable = styled.div`
           padding: 0.75rem;
           &.timestamp-col {
             border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-          }
-          &.parent-row {
-            .timestamp-col {
-              font-weight: bold;
-            }
           }
         }
       }
