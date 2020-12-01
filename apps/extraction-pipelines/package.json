@@ -8,6 +8,7 @@
     "generate-preview-artifacts": "cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-integrations-ui -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --env=jest-environment-jsdom-fourteen",
+    "test:coverage": "CI=true npm test -- --env=jest-environment-jsdom-fourteen --coverage",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
     "eslint": "yarn eslint:changed \"src/**/*.{js,ts,tsx}\"",
     "eslint:changed": "eslint --config .eslintrc.production.js",

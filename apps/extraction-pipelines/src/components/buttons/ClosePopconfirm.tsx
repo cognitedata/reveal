@@ -18,8 +18,8 @@ interface ClosePopconfirmProps {
 
 const ClosePopconfirm = ({
   onClick,
-  cancelText,
-  okText,
+  cancelText = 'Cancel',
+  okText = 'Confirm',
   popConfirmContent,
   primaryText,
   showConfirmBox,

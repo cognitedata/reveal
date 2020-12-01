@@ -48,12 +48,12 @@ const mockResponseV2 = {
       },
       authors: [
         {
-          email: 'Katinka.Odner@itera.no',
-          name: 'Katinka Odner',
-        },
-        {
           email: 'Jacek.Fijalkowski@itera.no',
           name: 'Jacek Fijalkowski',
+        },
+        {
+          email: 'Katinka.Odner@itera.no',
+          name: 'Katinka Odner',
         },
       ],
       metadata: {
@@ -108,12 +108,12 @@ const mockResponseV2 = {
       },
       authors: [
         {
-          email: 'hakon.tromborg@cognite.com',
-          name: 'Håkon Trømborg',
-        },
-        {
           email: 'Jacek.Fijalkowski@itera.no',
           name: 'Jacek Fijalkowski',
+        },
+        {
+          email: 'hakon.tromborg@cognite.com',
+          name: 'Håkon Trømborg',
         },
       ],
       metadata: {
@@ -137,12 +137,12 @@ const mockResponseV2 = {
       },
       authors: [
         {
-          email: 'lisa.halvorsen@item.no',
-          name: 'Lisa Halvorsen',
-        },
-        {
           email: 'Jacek.Fijalkowski@itera.no',
           name: 'Jacek Fijalkowski',
+        },
+        {
+          email: 'lisa.halvorsen@item.no',
+          name: 'Lisa Halvorsen',
         },
       ],
       metadata: {
