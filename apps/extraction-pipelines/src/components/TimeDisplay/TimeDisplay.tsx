@@ -5,15 +5,12 @@ import moment from 'moment';
 export const DATE_FORMAT: Readonly<string> = 'YYYY-MM-DD hh:mm';
 interface TimeDisplayProps {
   value: number | Date;
-  // eslint-disable-next-line react/require-default-props
-  isEpoc?: boolean;
   relative?: boolean;
   withTooltip?: boolean;
 }
 
 export const TimeDisplay = ({
   value,
-  isEpoc = false,
   relative,
   withTooltip,
 }: TimeDisplayProps) => {
@@ -21,12 +18,8 @@ export const TimeDisplay = ({
     return null;
   }
 
-  const absoluteTime = isEpoc
-    ? moment.unix(value as number).format(DATE_FORMAT)
-    : moment(value).format(DATE_FORMAT);
-  const relativeTime = isEpoc
-    ? moment.unix(value as number).fromNow()
-    : moment(value).fromNow();
+  const absoluteTime = moment(value).format(DATE_FORMAT);
+  const relativeTime = moment(value).fromNow();
 
   let displayTime = absoluteTime;
   let tooltipTime = relativeTime;

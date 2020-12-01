@@ -7,16 +7,16 @@ describe('Integration utils', () => {
     {
       desc: 'Should return OK when last succsess is the most recent - ',
       statuses: {
-        successDateTime: moment(),
-        failDateTime: moment().subtract(2, 'minutes'),
+        lastSuccess: moment().valueOf(),
+        lastFailure: moment().subtract(2, 'minutes').valueOf(),
       },
       expected: Status.OK,
     },
     {
       desc: 'Should return OK when last succsess is the most recent - days',
       statuses: {
-        successDateTime: moment(),
-        failDateTime: moment().subtract(2, 'days'),
+        lastSuccess: moment().valueOf(),
+        lastFailure: moment().subtract(2, 'days').valueOf(),
       },
       expected: Status.OK,
     },
@@ -24,8 +24,8 @@ describe('Integration utils', () => {
       desc:
         'Should return OK when last succsess is the most recent - milliseconds',
       statuses: {
-        successDateTime: moment(),
-        failDateTime: moment().subtract(2, 'milliseconds'),
+        lastSuccess: moment().valueOf(),
+        lastFailure: moment().subtract(2, 'milliseconds').valueOf(),
       },
       expected: Status.OK,
     },
@@ -33,8 +33,8 @@ describe('Integration utils', () => {
       desc:
         'Should return FAIL when the timestamp for success and fail is the same ',
       statuses: {
-        successDateTime: moment('2020-11-16 12:00:00'),
-        failDateTime: moment('2020-11-16 12:00:00'),
+        lastSuccess: moment('2020-11-16 12:00:00').valueOf(),
+        lastFailure: moment('2020-11-16 12:00:00').valueOf(),
       },
       expected: Status.FAIL,
     },
@@ -49,8 +49,8 @@ describe('Integration utils', () => {
 
   test('Should return failure when last failure is the most recent', () => {
     const statuses = {
-      successDateTime: moment().subtract(2, 'days'),
-      failDateTime: moment(),
+      lastSuccess: moment().subtract(2, 'days').valueOf(),
+      lastFailure: moment().valueOf(),
     };
     const res = calculate(statuses);
     expect(res.status).toEqual(Status.FAIL);
