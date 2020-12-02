@@ -1,6 +1,5 @@
 import React from 'react';
 import { Body } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
 import { AssetSelect } from 'lib/containers/Assets';
 
 export const ByAssetFilter = ({
@@ -12,8 +11,8 @@ export const ByAssetFilter = ({
   setValue: (newValue: number[] | undefined) => void;
   title?: string;
 }) => {
-  const setFilterByAsset = (assets: Asset[] | undefined) => {
-    setValue(assets ? assets.map(el => el.id) : undefined);
+  const setFilterByAsset = (assetIds?: number[]) => {
+    setValue(assetIds);
   };
 
   return (

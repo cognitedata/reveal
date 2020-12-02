@@ -9,8 +9,10 @@ import { useDebounce } from 'use-debounce/lib';
 import { Select } from 'lib/components';
 import { Props, OptionTypeBase } from 'react-select';
 
+type AssetInfo = { value: number; name: string };
+
 export type AssetSelectProps = Props<OptionTypeBase> & {
-  onAssetSelected?: (assets?: Asset[]) => void;
+  onAssetSelected?: (assetIds?: number[]) => void;
   selectedAssetIds?: number[];
   rootOnly?: boolean;
 };
@@ -105,21 +107,10 @@ export const AssetSelect = ({
           if (selected.length === 0) {
             onAssetSelected(undefined);
           } else {
-            onAssetSelected(
-              selected.map(
-                (el: { value: number }) =>
-                  (data || [])
-                    .concat(rootData || [])
-                    .find(item => item.id === el.value)!
-              )
-            );
+            onAssetSelected(selected.map(({ value }: AssetInfo) => value));
           }
         } else {
-          onAssetSelected([
-            (data || [])
-              .concat(rootData || [])
-              .find(el => el.id === (selected as { value: number }).value)!,
-          ]);
+          onAssetSelected(selected.map(({ value }: AssetInfo) => value));
         }
       }}
     />
