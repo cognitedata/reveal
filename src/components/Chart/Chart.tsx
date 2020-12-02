@@ -4,7 +4,12 @@ import HighchartsReact from 'highcharts-react-official';
 import useSelector from 'hooks/useSelector';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts';
 import client from 'services/CogniteSDK';
-import { Datapoints, DoubleDatapoint } from '@cognite/sdk';
+import {
+  DatapointAggregate,
+  DatapointAggregates,
+  Datapoints,
+  DoubleDatapoint,
+} from '@cognite/sdk';
 
 const defaultOptions = {
   time: {
@@ -31,7 +36,7 @@ type ChartProps = {
 
 const ChartComponent = ({ chart }: ChartProps) => {
   const [timeSeriesDataPoints, setTimeSeriesDataPoints] = useState<
-    Datapoints[]
+    (Datapoints | DatapointAggregates)[]
   >([]);
 
   useEffect(() => {
@@ -45,11 +50,14 @@ const ChartComponent = ({ chart }: ChartProps) => {
         return;
       }
 
-      const result = (await client.datapoints.retrieve({
+      const result = await client.datapoints.retrieve({
         items: enabledTimeSeries.map(({ id }) => ({ externalId: id })),
         start: new Date(chart.dateFrom),
         end: new Date(chart.dateTo),
-      })) as Datapoints[];
+        granularity: '1d',
+        aggregates: ['average'],
+        limit: 1000,
+      });
 
       setTimeSeriesDataPoints(result);
     }
@@ -70,7 +78,8 @@ const ChartComponent = ({ chart }: ChartProps) => {
         id: workflow?.id,
         name: workflow?.name,
         data: workflow?.latestRun?.results,
-      })) || [];
+      }))
+      .filter(({ data }) => data) || [];
 
   const options = {
     ...defaultOptions,
@@ -106,24 +115,50 @@ const ChartComponent = ({ chart }: ChartProps) => {
           color: chart?.timeSeriesCollection?.find(
             ({ id }) => id === ts.externalId
           )?.color,
-          data: (ts.datapoints as DoubleDatapoint[]).map((datapoint) => ({
-            x: new Date(datapoint.timestamp),
-            y: datapoint.value,
-          })),
+          data: (ts.datapoints as (Datapoints | DatapointAggregate)[]).map(
+            (datapoint) => ({
+              ...('timestamp' in datapoint
+                ? {
+                    x: datapoint.timestamp,
+                  }
+                : {}),
+              ...('value' in datapoint
+                ? {
+                    y: (datapoint as DoubleDatapoint).value,
+                  }
+                : {}),
+              ...('average' in datapoint
+                ? {
+                    y: datapoint.average,
+                  }
+                : {}),
+            })
+          ),
         })),
-      ...dataFromWorkflows.map(({ data = {}, name, id }: any) => {
+      ...dataFromWorkflows.map(({ data = {}, name, id }) => {
         return {
           type: 'line',
           name,
           color: chart?.workflowCollection?.find(
-            (flowEntry) => id === flowEntry.id
+            (workflow) => id === workflow.id
           )?.color,
-          data: ((data.datapoints || []) as DoubleDatapoint[]).map(
-            (datapoint) => ({
-              x: new Date(datapoint.timestamp),
-              y: datapoint.value,
-            })
-          ),
+          data: data.datapoints.map((datapoint: any) => ({
+            ...('timestamp' in datapoint
+              ? {
+                  x: datapoint.timestamp,
+                }
+              : {}),
+            ...('value' in datapoint
+              ? {
+                  y: (datapoint as DoubleDatapoint).value,
+                }
+              : {}),
+            ...('average' in datapoint
+              ? {
+                  y: datapoint.average,
+                }
+              : {}),
+          })),
         };
       }),
     ].map((series, seriesIndex) => ({
@@ -131,6 +166,8 @@ const ChartComponent = ({ chart }: ChartProps) => {
       yAxis: seriesIndex,
     })),
   };
+
+  console.log({ options });
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };

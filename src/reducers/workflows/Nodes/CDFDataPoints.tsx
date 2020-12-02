@@ -19,6 +19,9 @@ export const effect = async (funcData: FunctionData) => {
     items: [{ externalId: funcData.timeSeriesExternalId }],
     start: new Date(funcData.context.chart.dateFrom || new Date()),
     end: new Date(funcData.context.chart.dateTo || new Date()),
+    granularity: '1d',
+    aggregates: ['average'],
+    limit: 1000,
   });
   return {
     datapoints: datapoints[0].datapoints,
