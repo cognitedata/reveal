@@ -145,4 +145,15 @@ export interface Rule {
   render: (record: any) => React.ReactFragment;
 }
 
+export interface ErrorDistributionObject {
+  name: string;
+  total_errors: number;
+}
+
+export interface TranslationStatisticsObject {
+  timestamp: number;
+  total_objects: number;
+  successful: number;
+}
+
 export const UNIX_TIMESTAMP_FACTOR = 1000;

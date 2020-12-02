@@ -29,7 +29,7 @@ const EmptyTableMessage = ({ isLoading, text }: Props) => {
     </NoData>
   );
   return (
-    <Container>
+    <Container className="empty-message">
       {isLoading ? (
         <LoadingBox
           text="Loading..."

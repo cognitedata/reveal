@@ -10,6 +10,14 @@ import {
 } from '../typings/interfaces';
 import sdk from '../utils/cognitesdk';
 
+import {
+  mockDataErrorsPsToOw,
+  mockDataErrorsOwToPs,
+  mockDataTranslationsStatsDaily,
+  mockDataTranslationsStatsHourly,
+  mockDataTranslationsStatsMonthly,
+} from './mockData';
+
 export type QueryParameters = {
   [property: string]: number | string | boolean | object | undefined;
 };
@@ -43,7 +51,6 @@ class Api {
   private async get(url: string, parameters?: QueryParameters): Promise<any> {
     const status = await sdk.login.status();
     if (!status) {
-      console.error('Not logged into sdk');
       return [
         {
           error: true,
@@ -75,7 +82,6 @@ class Api {
   private async post(url: string, data: any): Promise<any> {
     const status = await sdk.login.status();
     if (!status) {
-      console.error('Not logged into sdk');
       return [
         {
           error: true,
@@ -164,7 +170,10 @@ class Api {
     get: async (): Promise<string[]> => {
       return this.get(`${this.baseURL}/sources`);
     },
-    getHeartbeats: async (source: string, after: number): Promise<number[]> => {
+    getHeartbeats: async (
+      source: string,
+      after: number
+    ): Promise<GenericResponseObject[]> => {
       const queryParameters = { after };
       return this.get(
         `${this.baseURL}/sources/${source}/heartbeats`,
@@ -181,6 +190,33 @@ class Api {
       return this.get(
         `${this.baseURL}/sources/${source}/projects/${projectExternalId}/tree`
       );
+    },
+    getErrorDistribution: async (
+      source: string,
+      after: number
+    ): Promise<GenericResponseObject[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const queryParameters = { after };
+      // return this.get(`${this.baseURL}/sources/${source}/errors`, queryParameters);
+      if (source === 'Studio') {
+        return mockDataErrorsPsToOw;
+      }
+      return mockDataErrorsOwToPs;
+    },
+    getTranslationStatistics: async (
+      source: string,
+      timeRange: string
+    ): Promise<GenericResponseObject[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const queryParameters = { timeRange };
+      // return this.get(`${this.baseURL}/sources/${source}/statistics`, queryParameters);
+      if (timeRange === 'month') {
+        return mockDataTranslationsStatsMonthly();
+      }
+      if (timeRange === 'day') {
+        return mockDataTranslationsStatsDaily();
+      }
+      return mockDataTranslationsStatsHourly();
     },
   };
 
