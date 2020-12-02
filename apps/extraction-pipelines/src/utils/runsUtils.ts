@@ -23,8 +23,15 @@ const mapRuns = (response: RunResponse[] = []) => {
           result.push(run);
           break;
         case 'seen':
-          indexParentRun = result.length - 1;
-          result[indexParentRun].subRows.push(run);
+          if (
+            result.length === 0 ||
+            (result.length === 1 && !result[0].status)
+          ) {
+            result.push(run);
+          } else {
+            indexParentRun = result.length - 1;
+            result[indexParentRun].subRows.push(run);
+          }
           break;
       }
     });
