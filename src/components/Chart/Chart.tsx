@@ -167,8 +167,6 @@ const ChartComponent = ({ chart }: ChartProps) => {
     })),
   };
 
-  console.log({ options });
-
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };
 
