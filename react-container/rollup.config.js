@@ -19,6 +19,7 @@ export default {
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
     'lodash/noop',
+    'history',
   ],
   plugins: [
     typescript({

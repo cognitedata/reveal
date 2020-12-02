@@ -1,4 +1,4 @@
-import { KEY_LAST_TENANT, storage } from '../utils/localStorage';
+import { KEY_LAST_TENANT, storage } from './localStorage';
 
 /**
  * Parse tenancy information from the URL -- the entire URL (host & path) if
@@ -30,6 +30,10 @@ export const sanitizeTenant = (tenant: string): string =>
 
 export const getLastTenant = (): string => {
   return storage.getRootString<string, string>(KEY_LAST_TENANT, '') || '';
+};
+
+export const setLastTenant = (tenant: string) => {
+  return storage.setRootItem(KEY_LAST_TENANT, tenant);
 };
 
 export const getTenantInfo = (location?: Location) => {

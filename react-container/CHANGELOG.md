@@ -1,3 +1,12 @@
+## 0.3.0 Nov 23 2020
+
+### Changes
+
+- Starting to test new auth container, this adds some new stuff, like:
+  - CdfAuthContainer
+  - useLoginToCdf
+  - getCogniteSDKClient
+
 ## 0.2.0 Nov 23 2020
 
 ### Breaking changes:

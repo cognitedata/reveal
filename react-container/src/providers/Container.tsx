@@ -5,8 +5,8 @@ import { Store } from 'redux';
 import { I18nContainer } from '@cognite/react-i18n';
 import { ErrorBoundary } from '@cognite/react-errors';
 
-import { createBrowserHistory, getTenantInfo } from '../internal';
-import { storage } from '../utils';
+import { createBrowserHistory } from '../internal';
+import { storage, getTenantInfo } from '../utils';
 import { ConditionalReduxProvider } from './ConditionalReduxProvider';
 
 interface Props {

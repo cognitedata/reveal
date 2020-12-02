@@ -1,8 +1,8 @@
 import { Metrics } from '@cognite/metrics';
 import jwtDecode from 'jwt-decode';
 
+import { AuthResult, DecodedIdToken, isOAuthAuthResult } from 'auth/types';
 import { storage } from './localStorage';
-import { AuthResult, DecodedIdToken, isOAuthAuthResult } from '../auth/types';
 
 const AUTH_RESULT_STORAGE_KEY = 'authResult';
 // if token is valid for less than 5 more minutes we might just discard it
