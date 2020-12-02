@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
-import { convertResourceType, ResourceItem, getIcon } from 'lib';
+import { convertResourceType, ResourceItem, ResourceIcons } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
@@ -35,11 +35,18 @@ export default function ResourceTitleRow({
   const inSearch = location.pathname.includes('/search');
 
   const name = (
-    <NameHeader>
-      {!inSearch && <Icon type={isFetched ? getIcon(type) : 'Loading'} />}{' '}
-      {getTitle(data) || id}
-      {inSearch && '→'}
-    </NameHeader>
+    <NameWrapper>
+      {!inSearch &&
+        (isFetched ? (
+          <ResourceIcons type={type} style={{ marginRight: '10px' }} />
+        ) : (
+          <Icon type="Loading" />
+        ))}
+      <NameHeader>
+        {getTitle(data) || id}
+        {inSearch && '→'}
+      </NameHeader>
+    </NameWrapper>
   );
   return (
     <TitleRowWrapper>
@@ -48,6 +55,7 @@ export default function ResourceTitleRow({
           display: 'inline-block',
           overflow: 'hidden',
           width: `calc(100% - ${actionWidth}px)`,
+          verticalAlign: 'bottom',
         }}
       >
         {inSearch ? (
@@ -87,6 +95,11 @@ export const TitleRowWrapper = styled.div`
   padding-left: 16px;
   border-bottom: 1px solid ${lightGrey};
   padding-bottom: 10px;
+`;
+
+const NameWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const NameHeader = styled.h1`
