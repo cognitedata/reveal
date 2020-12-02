@@ -94,7 +94,7 @@
     "jest-environment-jsdom-fourteen": "^1.0.1",
     "less": "^3.12.2",
     "less-loader": "^7.1.0",
-    "postcss-prefixwrap": "^1.19.0",
+    "postcss-prefixwrap": "^1.20.0",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "react-query-devtools": "^2.6.3",
