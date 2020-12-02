@@ -35,7 +35,7 @@
     "highcharts-react-official": "^3.0.0",
     "jszip": "^3.5.0",
     "lodash": "^4.17.19",
-    "mixpanel-browser": "^2.39.0",
+    "mixpanel-browser": "^2.40.0",
     "react": "^17.0.1",
     "react-datepicker": "^3.3.0",
     "react-dom": "^17.0.1",
