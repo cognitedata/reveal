@@ -43,7 +43,7 @@ const FindSimilarButton = ({
   selectedAnnotation?: CogniteAnnotation | ProposedCogniteAnnotation;
 }) => {
   const jobId = useFindSimilarJobId(fileId);
-  const { data } = useJob(jobId);
+  const { data } = useJob(jobId, 'findsimilar');
   const running = !!jobId && isModelRunning(data?.status);
 
   const [findSimilarObjects] = useFindObjects();
@@ -84,8 +84,8 @@ const AnnotationPreviewSidebar = ({
   const cancelFindSimilar = useDeleteFindSimilarJob();
   const findObjectsJobId = useFindObjectsJobId(fileId);
   const findSimilarJobId = useFindSimilarJobId(fileId);
-  const { data: findObjectsJob } = useJob(findObjectsJobId);
-  const { data: findSimilarJob } = useJob(findSimilarJobId);
+  const { data: findObjectsJob } = useJob(findObjectsJobId, 'findobjects');
+  const { data: findSimilarJob } = useJob(findSimilarJobId, 'findsimilar');
 
   const queryCache = useQueryCache();
   const [editing, setEditing] = useState<boolean>(false);

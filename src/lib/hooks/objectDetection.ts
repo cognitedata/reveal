@@ -37,7 +37,10 @@ export const useFindSimilarJobId = (fileId: number): number | undefined => {
   return undefined;
 };
 
-export const useJob = (jobId?: number) => {
+export const useJob = (
+  jobId?: number,
+  type?: 'findsimilar' | 'findobjects'
+) => {
   const sdk = useSDK();
   const [refetchInterval, setRefetchInterval] = useState<
     Record<number, number>
@@ -53,7 +56,7 @@ export const useJob = (jobId?: number) => {
       }
       return sdk
         .get(
-          `/api/playground/projects/${sdk.project}/context/pnidobjects/${jobId}`
+          `/api/playground/projects/${sdk.project}/context/pnidobjects/${type}/${jobId}`
         )
         .then(r => {
           return {
@@ -67,7 +70,7 @@ export const useJob = (jobId?: number) => {
         });
     },
     {
-      enabled: !!jobId,
+      enabled: !!jobId && !!type,
       staleTime: Infinity,
       refetchInterval: (!!jobId && refetchInterval[jobId]) || false,
     }

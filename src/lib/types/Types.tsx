@@ -102,8 +102,8 @@ export const isModelRunning = (s?: ModelStatus) => {
     case 'Scheduled':
     case 'Queued':
     case 'Running':
-    case undefined:
       return true;
+    case undefined:
     default:
       return false;
   }

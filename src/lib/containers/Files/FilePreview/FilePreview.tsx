@@ -78,7 +78,7 @@ export const FilePreview = ({
   const canPreviewFile = file && isFilePreviewable(file);
 
   const findSimilarJobId = useFindSimilarJobId(fileId);
-  const { data: similarData } = useJob(findSimilarJobId);
+  const { data: similarData } = useJob(findSimilarJobId, 'findsimilar');
   const { annotations: findSimilarItems } = similarData || {};
   const findSimilarAnnotations =
     findSimilarJobId && findSimilarItems
@@ -86,7 +86,7 @@ export const FilePreview = ({
       : [];
 
   const findObjectsJobId = useFindObjectsJobId(fileId);
-  const { data: objectData } = useJob(findObjectsJobId);
+  const { data: objectData } = useJob(findObjectsJobId, 'findobjects');
   const { annotations: findObjectsItems } = objectData || {};
   const findObjectsAnnotations =
     findObjectsJobId && findObjectsItems

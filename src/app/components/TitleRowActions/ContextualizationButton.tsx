@@ -23,9 +23,47 @@ export const ContextualizationButton = ({
   const jobId = useFindObjectsJobId(id);
   const [findObjects] = useFindObjects();
 
-  const { data: job } = useJob(jobId);
-  const running = !!jobId && isModelRunning(job?.status);
-  const runningLabel = running ? 'Cancel' : 'Remove detected objects';
+  const { data: job, isError } = useJob(jobId, 'findobjects');
+
+  const running = !isError && !!jobId && isModelRunning(job?.status);
+  const label = (() => {
+    const failMsg = 'Process failed, click to clear';
+    if (isError) {
+      return failMsg;
+    }
+    switch (job?.status) {
+      case 'Completed': {
+        return 'Remove detected objects';
+      }
+      case 'Failed': {
+        return failMsg;
+      }
+      case 'New':
+      case 'Running':
+      case 'Queued':
+        return 'Object detection running';
+      case undefined:
+      default: {
+        return 'Detect objects';
+      }
+    }
+  })();
+  const icon = (() => {
+    if (isError) {
+      return 'Beware';
+    }
+    if (running) {
+      return 'Loading';
+    }
+    switch (job?.status) {
+      case 'Completed':
+        return 'Close';
+      case 'Failed':
+        return 'Beware';
+      default:
+        return 'ThreeD';
+    }
+  })();
 
   const start = async () => {
     if (jobId) {
@@ -43,8 +81,8 @@ export const ContextualizationButton = ({
     <Menu>
       <Menu.Item onClick={start}>
         <Space>
-          <DetectJobIcon jobId={jobId} />
-          <span>{jobId ? runningLabel : 'Detect objects'}</span>
+          <Icon type={icon} />
+          <span>{label}</span>
         </Space>
       </Menu.Item>
     </Menu>
@@ -80,25 +118,9 @@ export const ContextualizationButton = ({
 
   return (
     <Dropdown overlay={menu} trigger={['click']} key={id}>
-      <Button variant="outline" icon={running ? 'Loading' : 'LightBulb'}>
+      <Button variant="outline" icon={icon}>
         Contextualize
       </Button>
     </Dropdown>
   );
-};
-
-const DetectJobIcon = ({ jobId }: { jobId?: number }) => {
-  const { data: job } = useJob(jobId);
-  const running = !!jobId && isModelRunning(job?.status);
-  if (running) {
-    return <Icon type="Loading" />;
-  }
-  switch (job?.status) {
-    case 'Completed':
-      return <Icon type="Close" />;
-    case 'Failed':
-      return <Icon type="Beware" />;
-    default:
-      return <Icon type="ThreeD" />;
-  }
 };
