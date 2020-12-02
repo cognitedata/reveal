@@ -52,7 +52,7 @@ const chartsSlice = createSlice({
       action: PayloadAction<{ id: string; timeSeries: Timeseries }>
     ) => {
       const { id, timeSeries } = action.payload;
-      const chart = chartAdapter.getSelectors().selectById(state, id);
+      const chart = state.entities[id];
       chartAdapter.updateOne(state, {
         id,
         changes: {
@@ -73,7 +73,7 @@ const chartsSlice = createSlice({
       action: PayloadAction<{ id: string; timeSeriesId: string }>
     ) => {
       const { id, timeSeriesId } = action.payload;
-      const chart = chartAdapter.getSelectors().selectById(state, id);
+      const chart = state.entities[id];
       const timeSeries = chart?.timeSeriesCollection?.find(
         (entry) => entry.id === timeSeriesId
       )!;
@@ -91,7 +91,7 @@ const chartsSlice = createSlice({
       action: PayloadAction<{ id: string; workflowId: string }>
     ) => {
       const { id, workflowId } = action.payload;
-      const chart = chartAdapter.getSelectors().selectById(state, id);
+      const chart = state.entities[id];
       const workflowEntry = chart?.workflowCollection?.find(
         (entry) => entry.id === workflowId
       )!;
@@ -109,7 +109,7 @@ const chartsSlice = createSlice({
       action: PayloadAction<{ id: string; timeSeriesId: string }>
     ) => {
       const { id, timeSeriesId } = action.payload;
-      const chart = chartAdapter.getSelectors().selectById(state, id);
+      const chart = state.entities[id];
       chartAdapter.updateOne(state, {
         id,
         changes: {
@@ -125,7 +125,7 @@ const chartsSlice = createSlice({
       action: PayloadAction<{ id: string; dateFrom?: Date; dateTo?: Date }>
     ) => {
       const { id, dateFrom, dateTo } = action.payload;
-      const chart = chartAdapter.getSelectors().selectById(state, id);
+      const chart = state.entities[id];
       chartAdapter.updateOne(state, {
         id,
         changes: {
