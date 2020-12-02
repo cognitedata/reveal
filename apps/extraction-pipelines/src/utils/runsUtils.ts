@@ -1,31 +1,33 @@
-import { StatusRow, RunRow } from '../model/Runs';
+import { RunResponse, StatusRow, RunRow } from '../model/Runs';
 import { Status } from '../model/Status';
 
-const mapRuns = (response: StatusRow[]) => {
+const mapRuns = (response: RunResponse[] = []) => {
   const result: RunRow[] = [];
-  response.forEach((status: StatusRow) => {
-    const run: RunRow = {
-      timestamp: status.createdTime,
-      status: undefined,
-      statusSeen: Status.OK,
-      subRows: [],
-    };
-    let indexParentRun;
+  response.forEach((item: RunResponse) => {
+    item.statuses.forEach((status: StatusRow) => {
+      const run: RunRow = {
+        timestamp: status.createdTime,
+        status: undefined,
+        statusSeen: Status.OK,
+        subRows: [],
+      };
+      let indexParentRun;
 
-    switch (status.status) {
-      case 'success':
-        run.status = Status.OK;
-        result.push(run);
-        break;
-      case 'failure':
-        run.status = Status.FAIL;
-        result.push(run);
-        break;
-      case 'seen':
-        indexParentRun = result.length - 1;
-        result[indexParentRun].subRows.push(run);
-        break;
-    }
+      switch (status.status) {
+        case 'success':
+          run.status = Status.OK;
+          result.push(run);
+          break;
+        case 'failure':
+          run.status = Status.FAIL;
+          result.push(run);
+          break;
+        case 'seen':
+          indexParentRun = result.length - 1;
+          result[indexParentRun].subRows.push(run);
+          break;
+      }
+    });
   });
   return result;
 };

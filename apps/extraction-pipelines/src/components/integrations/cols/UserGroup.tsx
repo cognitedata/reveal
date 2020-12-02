@@ -21,7 +21,7 @@ const blueAvatarTooltip = (users: User[], avatarsLimit: number) => {
   return (
     <StyledBlueAvatarTooltip>
       {hiddenAvatars.map((value) => {
-        return <p>{value.email}</p>;
+        return <p key={value.email}>{value.email}</p>;
       })}
     </StyledBlueAvatarTooltip>
   );
