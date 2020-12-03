@@ -1,7 +1,11 @@
 import { Button, Title } from '@cognite/cogs.js';
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { saveIntegration } from 'utils/integrationUtils';
+import {
+  DetailFieldNames,
+  mapMetadata,
+  saveIntegration,
+} from 'utils/integrationUtils';
 import DetailsTable from 'components/table/details/DetailsTable';
 import { useUpdateIntegration } from 'hooks/useUpdateIntegration';
 import { useUpdateContacts } from 'hooks/useUpdateContacts';
@@ -76,6 +80,8 @@ const Details: FunctionComponent<Props> = ({
   const [mutateAuthors] = useSaveAuthors();
 
   const saveContactInfo = saveContacts(mutateContacts, integration.id);
+
+  const metaData = mapMetadata(integration);
 
   const onClickAddContact = () => {
     const rowIndex = integration.authors.length + 1;
@@ -159,6 +165,16 @@ const Details: FunctionComponent<Props> = ({
         undoChange={undoChange}
         saveChange={saveChange}
       />
+      <WrapperContacts>
+        <Title level={4}>{DetailFieldNames.META_DATA}</Title>
+        <DetailsTable
+          data={metaData}
+          columns={detailsCols}
+          updateData={updateData}
+          undoChange={undoChange}
+          saveChange={saveChange}
+        />
+      </WrapperContacts>
       <WrapperContacts>
         <Title level={4}>{TableHeadings.CONTACTS}</Title>
         <ContactsTable

@@ -29,7 +29,7 @@ describe('Details', () => {
     );
     // table exist
     const table = screen.getAllByRole('table');
-    expect(table.length).toEqual(2); // details and contacts
+    expect(table.length).toEqual(3); // details, metadata and contacts
 
     // click first edit btn
     const firstEditBtn = screen.getAllByText('Edit')[0];
