@@ -7,22 +7,33 @@ const {
   REACT_APP_VERSION_SHA: versionSha = 'development',
 } = process.env;
 
-declare global {
-  interface Window {
-    __cogniteSidecar: any;
-  }
-}
+export type BaseSidecar = {
+  applicationId: string;
+  appsApiBaseUrl: string;
+  cdfApiBaseUrl: string;
+  docsSiteBaseUrl: string;
+  freshchatChannel: string;
+  freshchatToken: string;
+  mixpanel: string;
+  intercom: string;
+  infieldCacheApiBaseUrl: string;
+};
+
+export const getSidecar = <T extends BaseSidecar>(): T => {
+  // eslint-disable-next-line no-underscore-dangle
+  return ((window as any).__cogniteSidecar as T) || {};
+};
 
 export const getAppName = (): string => {
-  return window.__cogniteSidecar.applicationId;
+  return getSidecar().applicationId;
 };
 
 export const getAppsApiBaseUrl = (): string => {
-  return window.__cogniteSidecar.appsApiBaseUrl;
+  return getSidecar().appsApiBaseUrl;
 };
 
 export const getCdfApiBaseUrl = (): string => {
-  return window.__cogniteSidecar.cdfApiBaseUrl;
+  return getSidecar().cdfApiBaseUrl;
 };
 
 export const getEnvironment = (hostname = window.location.hostname): string => {
