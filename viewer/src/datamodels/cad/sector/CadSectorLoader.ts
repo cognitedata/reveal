@@ -20,7 +20,7 @@ import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorSimple, consumeSectorDetailed } from './sectorUtilities';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { from, Observable, Subject, zip } from 'rxjs';
-import { filter, flatMap, map, reduce, share, takeWhile } from 'rxjs/operators';
+import { concatMap, filter, map, reduce, share, takeWhile } from 'rxjs/operators';
 
 class OperationCanceledError extends Error {
   constructor() {
@@ -142,11 +142,10 @@ export class CadSectorLoader {
     }
 
     const timeSinceUpdate = Date.now() - this._lastLoadTriggerTimestamp;
-    const timeToNextUpdate = Math.max(0, 250 - timeSinceUpdate);
+    const timeToNextUpdate = Math.max(0, CadSectorLoader.UpdateAuditTime - timeSinceUpdate);
     const updateCb = this.update.bind(this);
     this._pendingLoadOperationId = window.setTimeout(async () => {
       await this.cameraAtRestBarrier();
-      console.log('---------- UPDATE -----------------');
       updateCb();
     }, timeToNextUpdate);
   }
@@ -167,7 +166,6 @@ export class CadSectorLoader {
       cadModelsMetadata: this._models
         .filter(x => !x.loadingHints || !x.loadingHints.suspendLoading)
         .map(x => x.cadModelMetadata),
-      loadingHints: {}, // TODO 2020-11-27 larsmoa: Add loadingHints
       cameraInMotion: false, // TODO 2020-11-27 larsmoa: Add cameraInMotion
       budget: this._budget
     };
@@ -318,9 +316,11 @@ class CadDetailedSectorLoader {
     const ctmFiles$ = from(file.peripheralFiles).pipe(filter(f => f.toLowerCase().endsWith('.ctm')));
     const ctms$ = ctmFiles$.pipe(
       takeWhile(() => !cancellationSource.isCanceled()),
-      flatMap(ctmFile => downloadWithRetry(this._fileProvider, sector.blobUrl, ctmFile)),
+      map(ctmFile => downloadWithRetry(this._fileProvider, sector.blobUrl, ctmFile)),
+      concatMap(p => p),
       takeWhile(() => !cancellationSource.isCanceled()),
-      flatMap(buffer => this._parser.parseCTM(new Uint8Array(buffer)))
+      map(buffer => this._parser.parseCTM(new Uint8Array(buffer))),
+      concatMap(p => p)
     );
     const ctmMap$ = zip(ctmFiles$, ctms$).pipe(
       map(v => ({ ctmFile: v[0], ctm: v[1] })),

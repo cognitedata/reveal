@@ -17,7 +17,6 @@ import {
   share,
   startWith,
   auditTime,
-  filter,
   map,
   mergeMap,
   distinctUntilChanged,
@@ -31,7 +30,7 @@ import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
 import { emissionLastMillis, LoadingState } from '../../utilities';
 import { CadModelMetadata } from '.';
-import { loadingEnabled, handleDetermineSectorsInput } from './sector/rxSectorUtilities';
+import { handleDetermineSectorsInput } from './sector/rxSectorUtilities';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
 import { DetermineSectorsInput } from './sector/culling/types';
 
@@ -82,7 +81,6 @@ export class CadModelUpdateHandler {
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
       auditTime(250), // Take the last value every 250ms // TODO 07-08-2020 j-bjorne: look into throttle
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
-      filter(loadingEnabled), // should we load?
       handleDetermineSectorsInput(sectorRepository, sectorCuller),
       finalize(() => {
         this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.

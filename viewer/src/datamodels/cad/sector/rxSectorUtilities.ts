@@ -37,10 +37,6 @@ export function handleDetermineSectorsInput(
   });
 }
 
-export function loadingEnabled({ cadModelsMetadata, loadingHints }: DetermineSectorsInput) {
-  return cadModelsMetadata.length > 0 && loadingHints.suspendLoading !== true;
-}
-
 export interface ModelState {
   [id: number]: LevelOfDetail;
 }
