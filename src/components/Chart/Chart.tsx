@@ -10,6 +10,7 @@ import {
   Datapoints,
   DoubleDatapoint,
 } from '@cognite/sdk';
+import { calculateGranularity } from 'utils/timeseries';
 
 const defaultOptions = {
   time: {
@@ -50,13 +51,21 @@ const ChartComponent = ({ chart }: ChartProps) => {
         return;
       }
 
+      const pointsPerSeries = 1000;
+
       const result = await client.datapoints.retrieve({
         items: enabledTimeSeries.map(({ id }) => ({ externalId: id })),
         start: new Date(chart.dateFrom),
         end: new Date(chart.dateTo),
-        granularity: '1d',
+        granularity: calculateGranularity(
+          [
+            new Date(chart.dateFrom).getTime(),
+            new Date(chart.dateTo).getTime(),
+          ],
+          pointsPerSeries
+        ),
         aggregates: ['average'],
-        limit: 1000,
+        limit: pointsPerSeries,
       });
 
       setTimeSeriesDataPoints(result);
