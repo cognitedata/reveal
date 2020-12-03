@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useQueryCache } from 'react-query';
 import { Integration } from '../../model/Integration';
 import Details from './Details';
 import IntegrationModal from './IntegrationModal';
@@ -8,6 +9,8 @@ import { HeadingWithUnderline } from '../../styles/StyledHeadings';
 import FooterWithWarning from './FooterWithWarning';
 import IntegrationModalHeading from './IntegrationModalHeading';
 import { useDetailsGlobalChanges } from '../../hooks/details/useDetailsGlobalChanges';
+import { useAppEnv } from '../../hooks/useAppEnv';
+import { useIntegrationById } from '../../hooks/useIntegration';
 
 const ContentTitle = styled((props) => (
   <HeadingWithUnderline {...props}>{props.children}</HeadingWithUnderline>
@@ -32,6 +35,19 @@ const IntegrationDetails: FunctionComponent<Props> = ({
   onCancel,
   integration,
 }: Props) => {
+  const queryCache = useQueryCache();
+  const { project } = useAppEnv();
+
+  const { data: singleIntegration } = useIntegrationById(integration.id);
+  const [display, setDisplay] = useState(integration);
+  useEffect(() => {
+    if (singleIntegration) {
+      setDisplay((old) => {
+        return { ...old, ...singleIntegration };
+      });
+    }
+  }, [singleIntegration]);
+
   const { changes, addChange, removeChange } = useDetailsGlobalChanges();
   const [showConfirmBox, setShowConfirmBox] = useState(false);
   useEffect(() => {
@@ -39,6 +55,7 @@ const IntegrationDetails: FunctionComponent<Props> = ({
   }, [changes]);
 
   const onCancelClick = () => {
+    queryCache.invalidateQueries(['integrations', project]);
     onCancel();
   };
 
@@ -47,8 +64,8 @@ const IntegrationDetails: FunctionComponent<Props> = ({
       <IntegrationModal
         title={
           <IntegrationModalHeading
-            heading={integration.name}
-            externalId={integration.externalId}
+            heading={display.name}
+            externalId={display.externalId}
             onCancel={onCancelClick}
             popConfirmContent={CLOSE_CONFIRM_CONTENT}
             showConfirmBox={showConfirmBox}
@@ -71,7 +88,7 @@ const IntegrationDetails: FunctionComponent<Props> = ({
           Integration details
         </ContentTitle>
         <Details
-          integration={integration}
+          integration={display}
           addChange={addChange}
           removeChange={removeChange}
         />

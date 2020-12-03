@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 export const DETAILS_ELEMENTS = {
   UNSAVED: /Unsaved information/i,
@@ -28,15 +28,11 @@ export const typeInInput = (testId: string, text: string) => {
 
 export const existsByText = async (text: string) => {
   const displayText = screen.getByText(text);
-  await waitFor(() => {
-    expect(displayText).toBeInTheDocument();
-  });
+  expect(displayText).toBeInTheDocument();
 };
 export const notExistsText = async (text: string) => {
   const displayText = screen.queryByText(text);
-  await waitFor(() => {
-    expect(displayText).not.toBeInTheDocument();
-  });
+  expect(displayText).not.toBeInTheDocument();
 };
 export const existsById = (testId: string) => {
   const input = screen.getByTestId(testId);
@@ -53,8 +49,6 @@ export const clickById = (testId: string) => {
 };
 
 export const clickText = async (text: string) => {
-  await waitFor(() => {
-    const btn = screen.getByText(text);
-    fireEvent.click(btn);
-  });
+  const btn = screen.getByText(text);
+  fireEvent.click(btn);
 };

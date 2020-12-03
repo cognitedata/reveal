@@ -3,10 +3,7 @@ import { DataSet, IdEither } from '@cognite/sdk';
 import { get, getBaseUrl } from './baseURL';
 import { Integration } from '../model/Integration';
 import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
-import {
-  createUpdateContacts,
-  CreateUpdateContactsObjArgs,
-} from './contactsUtils';
+
 import {
   createUpdateIntegrationObj,
   CreateUpdateIntegrationObjArgs,
@@ -40,26 +37,6 @@ export interface IntegrationUpdateSpec {
   id: string;
   update: Update;
 }
-
-export const updateContacts = async (
-  project: string,
-  { data, id }: CreateUpdateContactsObjArgs
-): Promise<Integration> => {
-  const items = createUpdateContacts({
-    data,
-    id,
-  });
-  const response = await sdkv3.post<IntegrationAPIResponse>(
-    `${getBaseUrl(project)}/update`,
-    {
-      data: {
-        items,
-      },
-      withCredentials: true,
-    }
-  );
-  return response.data.items[0];
-};
 
 export const saveUpdate = async (
   project: string,

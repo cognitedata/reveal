@@ -8,7 +8,6 @@ import {
 } from 'utils/integrationUtils';
 import DetailsTable from 'components/table/details/DetailsTable';
 import { useUpdateIntegration } from 'hooks/useUpdateIntegration';
-import { useUpdateContacts } from 'hooks/useUpdateContacts';
 import { Integration } from '../../model/Integration';
 import { TableHeadings } from '../table/IntegrationTableCol';
 import {
@@ -26,15 +25,15 @@ import { useContacts } from '../../hooks/details/useContacts';
 import {
   createNewAuthor,
   createUpdateAuthorObj,
+  createUpdateObj,
   filterAuthors,
-  saveContacts,
 } from '../../utils/contactsUtils';
 import {
   Change,
   RemoveChange,
 } from '../../hooks/details/useDetailsGlobalChanges';
 import { useIntegrationDetails } from '../../hooks/details/useIntegrationDetails';
-import { useSaveAuthors } from '../../hooks/details/useSaveAuthors';
+import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 
 const WrapperContacts = styled.div`
   display: flex;
@@ -76,10 +75,7 @@ const Details: FunctionComponent<Props> = ({
     editContact,
     contacts,
   } = useContacts(integration);
-  const [mutateContacts] = useUpdateContacts();
-  const [mutateAuthors] = useSaveAuthors();
-
-  const saveContactInfo = saveContacts(mutateContacts, integration.id);
+  const [mutateContacts] = useDetailsUpdate();
 
   const metaData = mapMetadata(integration);
 
@@ -99,7 +95,12 @@ const Details: FunctionComponent<Props> = ({
   ) => {
     removeGlobalChange({ rowIndex, tableName: 'contacts' });
     if (project) {
-      await saveContactInfo(project, details);
+      const items = createUpdateObj(details, contacts, integration.id);
+      await mutateContacts({
+        project,
+        items,
+        id: integration.id,
+      });
     }
   };
 
@@ -108,7 +109,7 @@ const Details: FunctionComponent<Props> = ({
     if (project) {
       const authors = filterAuthors(contacts, rowIndex);
 
-      await mutateAuthors({
+      await mutateContacts({
         project,
         items: createUpdateAuthorObj({
           id: integration.id,

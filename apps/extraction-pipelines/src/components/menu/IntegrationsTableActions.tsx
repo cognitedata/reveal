@@ -1,11 +1,8 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Button, Colors, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import IntegrationDetails from 'components/modals/IntegrationDetails';
-import { useQueryCache } from 'react-query';
 import { Integration } from '../../model/Integration';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { useIntegrationById } from '../../hooks/useIntegration';
 
 const TableOptionDropdown = styled((props) => (
   <Dropdown {...props}>{props.children}</Dropdown>
@@ -49,24 +46,11 @@ const IntegrationsTableActions: FunctionComponent<Props> = ({
   const [integrationDetailVisible, setIntegrationDetailVisible] = useState(
     false
   );
-  const queryCache = useQueryCache();
-  const { project } = useAppEnv();
-
-  const { data: singleIntegration } = useIntegrationById(integration.id);
-  const [display, setDisplay] = useState(integration);
-  useEffect(() => {
-    if (singleIntegration) {
-      setDisplay((old) => {
-        return { ...old, ...singleIntegration };
-      });
-    }
-  }, [singleIntegration]);
 
   const openIntegrationDetails = () => {
     setIntegrationDetailVisible(true);
   };
   const onIntegrationDetailsCancel = () => {
-    queryCache.invalidateQueries(['integrations', project]);
     setIntegrationDetailVisible(false);
   };
 
@@ -82,14 +66,14 @@ const IntegrationsTableActions: FunctionComponent<Props> = ({
           </Menu>
         }
       >
-        <OptionMenuBtn aria-label={`Actions for ${display.name}`}>
+        <OptionMenuBtn aria-label={`Actions for ${integration.name}`}>
           <Icon type="VerticalEllipsis" />
         </OptionMenuBtn>
       </TableOptionDropdown>
       <IntegrationDetails
         onCancel={onIntegrationDetailsCancel}
         visible={integrationDetailVisible}
-        integration={display}
+        integration={integration}
       />
     </>
   );
