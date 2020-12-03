@@ -5,7 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
-import { CogniteClient } from '@cognite/sdk';
+import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
   AddModelOptions,
@@ -66,6 +66,7 @@ export function Migration() {
       const client = new CogniteClient({ appId: 'cognite.reveal.example' });
       client.loginWithOAuth({ project });
       await client.authenticate();
+
 
       const progress = (itemsDownloaded: number, itemsRequested: number) => console.log('onDownload', itemsDownloaded, itemsRequested);
       // Prepare viewer
@@ -217,6 +218,16 @@ export function Migration() {
       if (modelIdStr && revisionIdStr) {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
+
+        // console.log('ASSET MAPPINGS BEGIN');
+        // const request = client.revisions3D.list3DNodes(modelId, revisionId, { limit: 1000 });
+        // const nodeIds: number[] = [];
+        // await request.autoPagingEach(x => {
+        //   nodeIds.push(x.id);
+        // });
+        // console.log(`NodeIDs: ${nodeIds.length}`);
+        // console.log(JSON.stringify(nodeIds));
+        
         await addModel({ modelId, revisionId });
       }
 

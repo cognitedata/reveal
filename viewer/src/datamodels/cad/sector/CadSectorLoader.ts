@@ -1,0 +1,552 @@
+/*!
+ * Copyright 2020 Cognite AS
+ */
+
+import * as THREE from 'three';
+
+import { ParseCtmResult, ParseSectorResult, SectorQuads } from '@cognite/reveal-parser-worker';
+
+import { CadNode } from '..';
+import { CadModelBudget } from '../../..';
+import { SectorCuller } from '../../../internal';
+import { assertNever, createOffsetsArray, LoadingState } from '../../../utilities';
+import { BinaryFileProvider } from '../../../utilities/networking/types';
+import { defaultCadModelSectorBudget } from '../CadModelSectorBudget';
+import { MaterialManager } from '../MaterialManager';
+import { InstancedMesh, InstancedMeshFile, TriangleMesh } from '../rendering/types';
+import { CadSectorParser } from './CadSectorParser';
+import { DetermineSectorsInput } from './culling/types';
+import { LevelOfDetail } from './LevelOfDetail';
+import { consumeSectorSimple, consumeSectorDetailed } from './sectorUtilities';
+import { WantedSector, SectorGeometry, ConsumedSector } from './types';
+import { from, Observable, Subject, zip } from 'rxjs';
+import { filter, flatMap, map, reduce, share, takeWhile } from 'rxjs/operators';
+
+class OperationCanceledError extends Error {
+  constructor() {
+    super('Operation was canceled');
+  }
+}
+
+interface CancellationSource {
+  throwIfCanceled(): void;
+  isCanceled(): boolean;
+}
+
+export class CadSectorLoader {
+  /**
+   * How long a camera must be stationary before it's considered "at rest".
+   */
+  private static readonly CameraInRestThreshold = 250;
+  /**
+   * How often we allow updating the sectors to load.
+   */
+  private static readonly UpdateAuditTime = 250;
+
+  private readonly _sectorCuller: SectorCuller;
+  private readonly _fileProvider: BinaryFileProvider;
+  private readonly _modelDataParser: CadSectorParser;
+  private readonly _materialManager: MaterialManager;
+
+  private readonly _simpleSectorLoader: CadSimpleSectorLoader;
+  private readonly _detailedSectorLoader: CadDetailedSectorLoader;
+
+  private readonly _consumedSubject = new Subject<ConsumedSector>();
+  private readonly _consumedObservable = this._consumedSubject.pipe(share());
+  private readonly _loadingStateSubject = new Subject<LoadingState>();
+  private readonly _loadingStateObservable = this._loadingStateSubject.pipe(share());
+  private readonly _parsedDataSubject = new Subject<{
+    blobUrl: string;
+    lod: string;
+    data: SectorGeometry | SectorQuads;
+  }>();
+  private readonly _parsedDataObserable = this._parsedDataSubject.pipe(share());
+
+  private _budget: CadModelBudget = defaultCadModelSectorBudget;
+  private _camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
+  private _clippingPlanes: THREE.Plane[] = [];
+  private _clipIntersection: boolean = false;
+  private _models: CadNode[] = [];
+
+  private _lastLoadTriggerTimestamp = 0;
+  private _lastCameraTimestamp = 0;
+  private _pendingLoadOperationId: number | undefined = undefined;
+
+  private _pendingOperations = new Set<string>();
+
+  constructor(
+    sectorCuller: SectorCuller,
+    fileProvider: BinaryFileProvider,
+    modelDataParser: CadSectorParser,
+    materialManager: MaterialManager
+  ) {
+    this._sectorCuller = sectorCuller;
+    this._fileProvider = fileProvider;
+    this._modelDataParser = modelDataParser;
+    this._materialManager = materialManager;
+
+    this._simpleSectorLoader = new CadSimpleSectorLoader(
+      this._fileProvider,
+      this._modelDataParser,
+      this._materialManager
+    );
+    this._detailedSectorLoader = new CadDetailedSectorLoader(
+      this._fileProvider,
+      this._modelDataParser,
+      this._materialManager
+    );
+  }
+
+  consumedSectorObservable(): Observable<ConsumedSector> {
+    return this._consumedObservable;
+  }
+
+  loadingStateObservable(): Observable<LoadingState> {
+    return this._loadingStateObservable;
+  }
+
+  parsedDataObservable(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
+    return this._parsedDataObserable;
+  }
+
+  addModel(model: CadNode): void {
+    this._models.push(model);
+    this.triggerUpdate();
+  }
+
+  updateBudget(budget: CadModelBudget): void {
+    this._budget = budget;
+    this.triggerUpdate();
+  }
+
+  updateCamera(camera: THREE.PerspectiveCamera): void {
+    this._camera = camera;
+    this._lastCameraTimestamp = Date.now();
+    this.triggerUpdate();
+  }
+
+  updateClippingPlanes(planes: THREE.Plane[]): void {
+    this._clippingPlanes = planes;
+    this.triggerUpdate();
+  }
+
+  updateClipIntersection(clipIntersection: boolean): void {
+    this._clipIntersection = clipIntersection;
+    this.triggerUpdate();
+  }
+
+  private triggerUpdate() {
+    if (this._pendingLoadOperationId) {
+      // No need to trigger a new update - already scheduled
+      return;
+    }
+
+    const timeSinceUpdate = Date.now() - this._lastLoadTriggerTimestamp;
+    const timeToNextUpdate = Math.max(0, 250 - timeSinceUpdate);
+    const updateCb = this.update.bind(this);
+    this._pendingLoadOperationId = window.setTimeout(async () => {
+      await this.cameraAtRestBarrier();
+      console.log('---------- UPDATE -----------------');
+      updateCb();
+    }, timeToNextUpdate);
+  }
+
+  private update(): void {
+    this._pendingLoadOperationId = undefined;
+
+    const input = this.createDetermineSectorsInput();
+    const wantedSectors = this._sectorCuller.determineSectors(input);
+    this.consumeSectors(wantedSectors);
+  }
+
+  private createDetermineSectorsInput(): DetermineSectorsInput {
+    const input: DetermineSectorsInput = {
+      camera: this._camera,
+      clippingPlanes: this._clippingPlanes,
+      clipIntersection: this._clipIntersection,
+      cadModelsMetadata: this._models
+        .filter(x => !x.loadingHints || !x.loadingHints.suspendLoading)
+        .map(x => x.cadModelMetadata),
+      loadingHints: {}, // TODO 2020-11-27 larsmoa: Add loadingHints
+      cameraInMotion: false, // TODO 2020-11-27 larsmoa: Add cameraInMotion
+      budget: this._budget
+    };
+    return input;
+  }
+
+  private async consumeSector(sector: WantedSector, loadingState: LoadingState): Promise<void> {
+    const operationId = createKey(sector);
+
+    // Create a cancellation source that will cancel operations when they
+    // are no longer in the "pending operations" set.
+    const cancellationSource: CancellationSource = {
+      isCanceled: () => {
+        return !this._pendingOperations.has(operationId);
+      },
+      throwIfCanceled: () => {
+        if (cancellationSource.isCanceled()) {
+          throw new OperationCanceledError();
+        }
+      }
+    };
+
+    // Schedule an operation to perform the update (i.e. load or discard)
+    try {
+      switch (sector.levelOfDetail) {
+        case LevelOfDetail.Simple: {
+          const group = await this._simpleSectorLoader.load(sector, cancellationSource);
+          cancellationSource.throwIfCanceled();
+          await this.updateScene(sector, LevelOfDetail.Simple, group);
+          loadingState.itemsLoaded++;
+          this._loadingStateSubject.next(loadingState);
+          break;
+        }
+
+        case LevelOfDetail.Detailed: {
+          const group = await this._detailedSectorLoader.load(sector, cancellationSource);
+          cancellationSource.throwIfCanceled();
+          await this.updateScene(sector, LevelOfDetail.Detailed, group);
+          loadingState.itemsLoaded++;
+          this._loadingStateSubject.next(loadingState);
+          break;
+        }
+
+        case LevelOfDetail.Discarded:
+          cancellationSource.throwIfCanceled();
+          await this.updateScene(sector, LevelOfDetail.Discarded, undefined);
+          break;
+
+        default:
+          assertNever(sector.levelOfDetail);
+      }
+    } catch (error) {
+      // Ignore if operations was canceled
+      if (!(error instanceof OperationCanceledError)) {
+        throw error;
+      }
+      console.log(operationId);
+    } finally {
+      this._pendingOperations.delete(operationId);
+    }
+  }
+
+  private updateOperations(sectors: WantedSector[]): WantedSector[] {
+    const validOperations = new Set<string>(sectors.map(createKey));
+
+    // Determine sectors we will need to start loading before we update list of operations
+    const changedSectors = sectors.filter(x => !this._pendingOperations.has(createKey(x)));
+
+    // Update operations
+    this._pendingOperations = new Set<string>(validOperations);
+
+    return changedSectors;
+  }
+
+  private async consumeSectors(sectors: WantedSector[]): Promise<void> {
+    const changedSectors = this.updateOperations(sectors);
+    console.log(`Changed`, changedSectors);
+    console.log(`Pending`, this._pendingOperations);
+    const loadingState: LoadingState = {
+      isLoading: true,
+      itemsLoaded: 0,
+      itemsRequested: changedSectors.reduce((count, x) => {
+        if (x.levelOfDetail !== LevelOfDetail.Discarded) {
+          return count + 1;
+        }
+        return count;
+      }, 0)
+    };
+    this._loadingStateSubject.next(loadingState);
+
+    const operations = changedSectors.map(sector => this.consumeSector(sector, loadingState));
+    await Promise.all(operations);
+
+    loadingState.itemsLoaded = loadingState.itemsRequested;
+    loadingState.isLoading = false;
+    this._loadingStateSubject.next(loadingState);
+  }
+
+  private async updateScene(
+    sector: WantedSector,
+    lod: LevelOfDetail,
+    geometry: THREE.Group | undefined
+  ): Promise<void> {
+    const consumedSector: ConsumedSector = {
+      blobUrl: sector.blobUrl,
+      metadata: sector.metadata,
+      levelOfDetail: lod,
+      group: geometry
+    };
+    this._consumedSubject.next(consumedSector);
+  }
+
+  private get isCameraInRest(): boolean {
+    return Date.now() - this._lastCameraTimestamp > CadSectorLoader.CameraInRestThreshold;
+  }
+
+  private async cameraAtRestBarrier(): Promise<void> {
+    await new Promise<void>(resolve => {
+      const handle = setInterval(() => {
+        if (this.isCameraInRest) {
+          resolve();
+          clearInterval(handle);
+        }
+      });
+    });
+  }
+}
+
+class CadDetailedSectorLoader {
+  private readonly _fileProvider: BinaryFileProvider;
+  private readonly _parser: CadSectorParser;
+  private readonly _materialManager: MaterialManager;
+
+  constructor(fileProvider: BinaryFileProvider, parser: CadSectorParser, materialManager: MaterialManager) {
+    this._fileProvider = fileProvider;
+    this._parser = parser;
+    this._materialManager = materialManager;
+  }
+
+  async load(sector: WantedSector, cancellationSource: CancellationSource): Promise<THREE.Group> {
+    const file = sector.metadata.indexFile;
+    const materials = this._materialManager.getModelMaterials(sector.blobUrl);
+    if (!materials) {
+      throw new Error(`Could not find materials for model ${sector.blobUrl}`);
+    }
+
+    // Prefetch CTM
+    const ctmFiles$ = from(file.peripheralFiles).pipe(filter(f => f.toLowerCase().endsWith('.ctm')));
+    const ctms$ = ctmFiles$.pipe(
+      takeWhile(() => !cancellationSource.isCanceled()),
+      flatMap(ctmFile => downloadWithRetry(this._fileProvider, sector.blobUrl, ctmFile)),
+      takeWhile(() => !cancellationSource.isCanceled()),
+      flatMap(buffer => this._parser.parseCTM(new Uint8Array(buffer)))
+    );
+    const ctmMap$ = zip(ctmFiles$, ctms$).pipe(
+      map(v => ({ ctmFile: v[0], ctm: v[1] })),
+      reduce((map, v) => {
+        map.set(v.ctmFile, v.ctm);
+        return map;
+      }, new Map<string, ParseCtmResult>())
+    );
+    cancellationSource.throwIfCanceled();
+    const ctmMap = await ctmMap$.toPromise();
+    // TODO 2020-11-29 larsmoa: Implement caching of CTM
+
+    // I3D
+    cancellationSource.throwIfCanceled();
+    const i3dBuffer = await downloadWithRetry(this._fileProvider, sector.blobUrl, file.fileName);
+    cancellationSource.throwIfCanceled();
+    const parsedI3D = await this._parser.parseI3D(new Uint8Array(i3dBuffer));
+
+    // Stich together
+    cancellationSource.throwIfCanceled();
+    const geometry = await this.finalizeDetailed(parsedI3D, ctmMap);
+
+    // Create ThreeJS group
+    cancellationSource.throwIfCanceled();
+    const group = consumeSectorDetailed(geometry, sector.metadata, materials);
+    return group;
+  }
+
+  private async finalizeDetailed(
+    i3dFile: ParseSectorResult,
+    ctmFiles: Map<string, ParseCtmResult>
+  ): Promise<SectorGeometry> {
+    const { instanceMeshes, triangleMeshes } = i3dFile;
+
+    const finalTriangleMeshes = await (async () => {
+      const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
+
+      const meshesGroupedByFile = this.groupMeshesByNumber(fileIds);
+
+      const finalMeshes = [];
+      // Merge meshes by file
+      // TODO do this in Rust instead
+      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+        const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
+        const offsets = createOffsetsArray(fileTriangleCounts);
+        // Load CTM (geometry)
+        const fileName = `mesh_${fileId}.ctm`;
+        const { indices, vertices, normals } = ctmFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
+
+        const sharedColors = new Uint8Array(3 * indices.length);
+        const sharedTreeIndices = new Float32Array(indices.length);
+
+        for (let i = 0; i < meshIndices.length; i++) {
+          const meshIdx = meshIndices[i];
+          const treeIndex = treeIndices[meshIdx];
+          const triOffset = offsets[i];
+          const triCount = fileTriangleCounts[i];
+          const [r, g, b] = [colors[4 * meshIdx + 0], colors[4 * meshIdx + 1], colors[4 * meshIdx + 2]];
+          for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
+            for (let j = 0; j < 3; j++) {
+              const vIdx = indices[3 * triIdx + j];
+
+              sharedTreeIndices[vIdx] = treeIndex;
+
+              sharedColors[3 * vIdx] = r;
+              sharedColors[3 * vIdx + 1] = g;
+              sharedColors[3 * vIdx + 2] = b;
+            }
+          }
+        }
+
+        const mesh: TriangleMesh = {
+          colors: sharedColors,
+          fileId,
+          treeIndices: sharedTreeIndices,
+          indices,
+          vertices,
+          normals
+        };
+        finalMeshes.push(mesh);
+        // Splits processing up in multiple chunks to avoid a long running task in the micro queue
+        await yieldProcessing();
+      }
+      return finalMeshes;
+    })();
+
+    const finalInstanceMeshes = await (async () => {
+      const { fileIds, colors, treeIndices, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
+      const meshesGroupedByFile = this.groupMeshesByNumber(fileIds);
+
+      const finalMeshes: InstancedMeshFile[] = [];
+      // Merge meshes by file
+      // TODO do this in Rust instead
+      // TODO de-duplicate this with the merged meshes above
+      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+        const fileName = `mesh_${fileId}.ctm`;
+        const ctm = ctmFiles.get(fileName)!;
+
+        const indices = ctm.indices;
+        const vertices = ctm.vertices;
+        const normals = ctm.normals;
+        const instancedMeshes: InstancedMesh[] = [];
+
+        const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
+        const fileTriangleCounts = new Float64Array(meshIndices.map(i => triangleCounts[i]));
+        const fileMeshesGroupedByOffsets = this.groupMeshesByNumber(fileTriangleOffsets);
+
+        for (const [triangleOffset, fileMeshIndices] of fileMeshesGroupedByOffsets) {
+          // NOTE the triangle counts should be the same for all meshes with the same offset,
+          // hence we can look up only fileMeshIndices[0] instead of enumerating here
+          const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
+          const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
+          const treeIndicesBuffer = new Float32Array(fileMeshIndices.length);
+          const colorBuffer = new Uint8Array(4 * fileMeshIndices.length);
+          for (let i = 0; i < fileMeshIndices.length; i++) {
+            const meshIdx = meshIndices[fileMeshIndices[i]];
+            const treeIndex = treeIndices[meshIdx];
+            const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
+            instanceMatrixBuffer.set(instanceMatrix, i * 16);
+            treeIndicesBuffer[i] = treeIndex;
+            const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
+            colorBuffer.set(color, i * 4);
+          }
+          instancedMeshes.push({
+            triangleCount,
+            triangleOffset,
+            instanceMatrices: instanceMatrixBuffer,
+            colors: colorBuffer,
+            treeIndices: treeIndicesBuffer
+          });
+        }
+
+        const mesh: InstancedMeshFile = {
+          fileId,
+          indices,
+          vertices,
+          normals,
+          instances: instancedMeshes
+        };
+        finalMeshes.push(mesh);
+        // Splits processing up in multiple chunks to avoid a long running task in the micro queue
+        await yieldProcessing();
+      }
+
+      return finalMeshes;
+    })();
+
+    const sector: SectorGeometry = {
+      treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
+      nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
+      primitives: i3dFile.primitives,
+      instanceMeshes: finalInstanceMeshes,
+      triangleMeshes: finalTriangleMeshes
+    };
+
+    return sector;
+  }
+
+  private groupMeshesByNumber(fileIds: Float64Array) {
+    const meshesGroupedByFile = new Map<number, number[]>();
+    for (let i = 0; i < fileIds.length; ++i) {
+      const fileId = fileIds[i];
+      const oldValue = meshesGroupedByFile.get(fileId);
+      if (oldValue) {
+        meshesGroupedByFile.set(fileId, [...oldValue, i]);
+      } else {
+        meshesGroupedByFile.set(fileId, [i]);
+      }
+    }
+    return meshesGroupedByFile;
+  }
+}
+
+class CadSimpleSectorLoader {
+  private readonly _fileProvider: BinaryFileProvider;
+  private readonly _parser: CadSectorParser;
+  private readonly _materialManager: MaterialManager;
+
+  constructor(fileProvider: BinaryFileProvider, parser: CadSectorParser, materialManager: MaterialManager) {
+    this._fileProvider = fileProvider;
+    this._parser = parser;
+    this._materialManager = materialManager;
+  }
+
+  public async load(sector: WantedSector, cancellationSource: CancellationSource): Promise<THREE.Group> {
+    const file = sector.metadata.facesFile;
+    if (!file.fileName) {
+      throw new Error(`Sector '${sector.metadata.path} does not have simple geometry`);
+    }
+    const materials = this._materialManager.getModelMaterials(sector.blobUrl);
+    if (!materials) {
+      throw new Error(`Could not find materials for model ${sector.blobUrl}`);
+    }
+
+    const buffer = await downloadWithRetry(this._fileProvider, sector.blobUrl, file.fileName!);
+    cancellationSource.throwIfCanceled();
+    const parsed = await this._parser.parseF3D(new Uint8Array(buffer));
+    cancellationSource.throwIfCanceled();
+    const geometryGroup = consumeSectorSimple(parsed, materials);
+    return geometryGroup;
+  }
+}
+
+async function downloadWithRetry(
+  fileProvider: BinaryFileProvider,
+  baseUrl: string,
+  filename: string,
+  attempts: number = 3
+): Promise<ArrayBuffer> {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      return await fileProvider.getBinaryFile(baseUrl, filename);
+    } catch (e) {
+      if (i === attempts) {
+        throw e;
+      }
+    }
+  }
+  // Should never occur as it's guranteed that the above will either return or throw
+  throw new Error('downloadWithRetry is broken - fix code');
+}
+
+async function yieldProcessing(): Promise<void> {
+  await new Promise<void>(resolve => setImmediate(resolve));
+}
+
+function createKey(sector: WantedSector): string {
+  return `${sector.blobUrl}/${sector.metadata.id}:${sector.levelOfDetail}`;
+}
