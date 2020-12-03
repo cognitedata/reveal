@@ -65,7 +65,6 @@ export const StyledTable = styled.div`
         }
         &.seen-status-row {
           .timestamp-col {
-            font-style: italic;
             font-weight: normal;
             padding-left: 1.5rem;
           }
