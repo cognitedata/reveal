@@ -11,8 +11,7 @@ const mapRuns = (response: RunResponse[] = []) => {
         statusSeen: Status.OK,
         subRows: [],
       };
-      let indexParentRun;
-
+      const index = result.length;
       switch (status.status) {
         case 'success':
           run.status = Status.OK;
@@ -23,14 +22,10 @@ const mapRuns = (response: RunResponse[] = []) => {
           result.push(run);
           break;
         case 'seen':
-          if (
-            result.length === 0 ||
-            (result.length === 1 && !result[0].status)
-          ) {
+          if (index === 0 || !result[index - 1].status) {
             result.push(run);
           } else {
-            indexParentRun = result.length - 1;
-            result[indexParentRun].subRows.push(run);
+            result[index - 1].subRows.push(run);
           }
           break;
       }
