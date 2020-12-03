@@ -5,7 +5,7 @@
 import { DetermineSectorsInput } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
-import { OperatorFunction, empty, from, Observable, asyncScheduler } from 'rxjs';
+import { OperatorFunction, from, Observable, asyncScheduler } from 'rxjs';
 import { ConsumedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
@@ -18,10 +18,6 @@ export function handleDetermineSectorsInput(
   return publish((source$: Observable<DetermineSectorsInput>) => {
     const modelStateHandler = new ModelStateHandler();
     const updateSector = (input: DetermineSectorsInput) => {
-      const { cameraInMotion } = input;
-      if (cameraInMotion) {
-        return empty();
-      }
       return from(sectorCuller.determineSectors(input)).pipe(
         subscribeOn(asyncScheduler),
         filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),

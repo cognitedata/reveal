@@ -12,7 +12,6 @@ export interface DetermineSectorsInput {
   clippingPlanes: THREE.Plane[];
   clipIntersection: boolean;
   cadModelsMetadata: CadModelMetadata[];
-  cameraInMotion: boolean;
   budget: CadModelSectorBudget;
 }
 

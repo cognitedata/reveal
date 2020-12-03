@@ -166,7 +166,6 @@ export class CadSectorLoader {
       cadModelsMetadata: this._models
         .filter(x => !x.loadingHints || !x.loadingHints.suspendLoading)
         .map(x => x.cadModelMetadata),
-      cameraInMotion: false, // TODO 2020-11-27 larsmoa: Add cameraInMotion
       budget: this._budget
     };
     return input;
@@ -222,7 +221,6 @@ export class CadSectorLoader {
       if (!(error instanceof OperationCanceledError)) {
         throw error;
       }
-      console.log(operationId);
     } finally {
       this._pendingOperations.delete(operationId);
     }
@@ -242,8 +240,6 @@ export class CadSectorLoader {
 
   private async consumeSectors(sectors: WantedSector[]): Promise<void> {
     const changedSectors = this.updateOperations(sectors);
-    console.log(`Changed`, changedSectors);
-    console.log(`Pending`, this._pendingOperations);
     const loadingState: LoadingState = {
       isLoading: true,
       itemsLoaded: 0,
@@ -278,14 +274,20 @@ export class CadSectorLoader {
     this._consumedSubject.next(consumedSector);
   }
 
-  private get isCameraInRest(): boolean {
+  private get isCameraAtRest(): boolean {
     return Date.now() - this._lastCameraTimestamp > CadSectorLoader.CameraInRestThreshold;
   }
 
-  private async cameraAtRestBarrier(): Promise<void> {
-    await new Promise<void>(resolve => {
+  /**
+   * Creates a promise that resolves immediatly when the camera is at rest.
+   */
+  private cameraAtRestBarrier(): Promise<void> {
+    if (this.isCameraAtRest) {
+      return Promise.resolve();
+    }
+    return new Promise<void>(resolve => {
       const handle = setInterval(() => {
-        if (this.isCameraInRest) {
+        if (this.isCameraAtRest) {
           resolve();
           clearInterval(handle);
         }
@@ -317,6 +319,7 @@ class CadDetailedSectorLoader {
     const ctms$ = ctmFiles$.pipe(
       takeWhile(() => !cancellationSource.isCanceled()),
       map(ctmFile => downloadWithRetry(this._fileProvider, sector.blobUrl, ctmFile)),
+      // Note! concatMap() is used to maintain ordering of files to make zip work below
       concatMap(p => p),
       takeWhile(() => !cancellationSource.isCanceled()),
       map(buffer => this._parser.parseCTM(new Uint8Array(buffer))),
