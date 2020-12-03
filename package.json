@@ -28,7 +28,7 @@
     "@cognite/react-loop-detector": "^0.0.1",
     "@cognite/sdk": "^3.3.0",
     "@reduxjs/toolkit": "^1.5.0",
-    "@types/react-datepicker": "^3.1.1",
+    "@types/react-datepicker": "^3.1.2",
     "@sentry/browser": "^5.28.0",
     "firebase": "^8.1.1",
     "highcharts": "^8.2.2",
