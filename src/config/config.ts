@@ -42,7 +42,8 @@ export const getEnvironment = (hostname = window.location.hostname): string => {
 
   if (
     hostname === 'staging.charts.cogniteapp.com' ||
-    hostname.match(/\.preview\.cogniteapp\.com$/)
+    hostname.includes('.preview.cogniteapp.com') ||
+    hostname.includes('.pr.charts.cogniteapp.com')
   ) {
     return 'DEVELOPMENT';
   }
