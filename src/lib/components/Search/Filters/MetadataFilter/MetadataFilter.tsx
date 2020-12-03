@@ -1,6 +1,14 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { Body, Button } from '@cognite/cogs.js';
 import { FilterForm } from 'lib/components';
+
+const FilterHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  align-items: center;
+`;
 
 export const MetadataFilter = <
   T extends { metadata?: { [key: string]: string } }
@@ -34,15 +42,28 @@ export const MetadataFilter = <
     setValue(newFilters);
   };
 
+  const clearFilters = () => {
+    setValue({});
+  };
+
+  const showClearFiltersButton = Object.keys(value || {}).length > 0;
+
   return (
     <>
-      <Body
-        level={4}
-        style={{ marginBottom: 5, marginTop: 10 }}
-        className="title"
-      >
-        Metadata filters
-      </Body>
+      <FilterHeader>
+        <Body
+          level={4}
+          style={{ marginBottom: 10, marginTop: 10 }}
+          className="title"
+        >
+          Metadata
+        </Body>
+        {showClearFiltersButton && (
+          <Button type="secondary" variant="ghost" onClick={clearFilters}>
+            Clear all
+          </Button>
+        )}
+      </FilterHeader>
       <FilterForm metadata={metadata} filters={value} setFilters={setFilter} />
     </>
   );

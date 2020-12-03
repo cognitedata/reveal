@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { message } from 'antd';
 import { Select, SpacedRow } from 'lib/components';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
-import { lightGrey } from 'lib/utils/Colors';
 
 const LOCKSVG = (
   <svg
@@ -25,11 +23,14 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   background: #fff;
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-  }
 `;
+
+const Tags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 8px;
+`;
+
 type TagProps = { isLocked: boolean };
 const Tag = styled.div<TagProps>(
   props => css`
@@ -37,7 +38,8 @@ const Tag = styled.div<TagProps>(
     align-items: center;
     background: ${Colors['midblue-6'].hex()};
     padding: 8px 16px;
-    color: #000;
+    color: ${Colors['midblue-2'].hex()};
+    font-weight: 600;
     border-radius: 30px;
     cursor: ${props.isLocked ? 'unset' : 'pointer'};
     margin-right: 8px;
@@ -53,15 +55,13 @@ const Tag = styled.div<TagProps>(
 
     .delete {
       margin-right: 6px;
+      margin-left: 12px;
       display: flex;
-      opacity: 1;
+      opacity: 0.5;
       transition: 0.3s all;
+      color: ${Colors.danger.hex()};
       height: 16px;
       width: 16px;
-    }
-    .delete {
-      opacity: 0.1;
-      margin-left: 12px;
     }
 
     span {
@@ -71,18 +71,18 @@ const Tag = styled.div<TagProps>(
     }
     ${!props.isLocked &&
     css`
-      &&:hover {
-        box-shadow: 0px 4px 4px ${lightGrey};
-      }
-      &&:hover .delete {
+      .delete:hover {
         opacity: 1;
       }
     `}
   `
 );
+
 const FilterItemWrapper = styled.div`
-  display: flex;
   margin-bottom: 12px;
+  .key {
+    margin-bottom: 16px;
+  }
   .key,
   .value {
     display: flex;
@@ -99,6 +99,10 @@ const FilterItemWrapper = styled.div`
       margin-left: 4px;
     }
   }
+`;
+
+const ButtonGroupWrapper = styled(SpacedRow)`
+  margin: 0 4px 8px auto;
 `;
 
 const FilterItem = ({
@@ -118,16 +122,13 @@ const FilterItem = ({
     [key: string]: string[];
   };
   setFilter: (selectedKey: string, selectedValue: string) => void;
-  onCancel: (shouldDelete: boolean) => void;
+  onCancel?: (shouldDelete: boolean) => void;
   initialKey?: string;
   initialValue?: string;
 }) => {
-  const [selectedKey, setSelectedKey] = useState<string | undefined>(
-    initialKey
-  );
-  const [selectedValue, setSelectedValue] = useState<string | undefined>(
-    initialValue
-  );
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
+
   useEffect(() => {
     if (initialKey) {
       setSelectedKey(initialKey);
@@ -143,7 +144,6 @@ const FilterItem = ({
     selectedKey &&
     selectedValue &&
     (selectedKey !== initialKey || selectedValue !== initialValue);
-  const hasInitialValue = initialKey || initialValue;
   return (
     <>
       <FilterItemWrapper>
@@ -157,28 +157,26 @@ const FilterItem = ({
             styles={{
               menu: style => ({
                 ...style,
-                width: 'auto',
+                width: '100%',
                 maxWidth: '320px',
               }),
             }}
             placeholder="Key"
             disabled={!!initialKey}
             value={
-              selectedKey
-                ? { label: selectedKey, value: selectedKey }
-                : undefined
+              selectedKey ? { label: selectedKey, value: selectedKey } : null
             }
             onChange={item => {
               if (item === undefined) {
-                setSelectedKey(undefined);
+                setSelectedKey(null);
               } else {
                 setSelectedKey(
                   (item as {
                     value: string;
-                  }).value
+                  })?.value
                 );
               }
-              setSelectedValue(undefined);
+              setSelectedValue(null);
             }}
             options={Object.keys(categories)
               .sort((a, b) => {
@@ -212,7 +210,7 @@ const FilterItem = ({
             styles={{
               menu: style => ({
                 ...style,
-                width: 'auto',
+                width: '100%',
                 maxWidth: '320px',
               }),
             }}
@@ -221,46 +219,48 @@ const FilterItem = ({
             value={
               selectedValue
                 ? { label: selectedValue, value: selectedValue }
-                : undefined
+                : null
             }
             onChange={item => {
               if (item === undefined) {
-                setSelectedValue(undefined);
+                setSelectedValue(null);
               } else {
-                setSelectedValue((item as { value: string }).value);
+                setSelectedValue((item as { value: string })?.value);
               }
             }}
             options={
               selectedKey
-                ? metadata[selectedKey].map(el => ({ label: el, value: el }))
+                ? metadata[selectedKey]?.map(el => ({ label: el, value: el }))
                 : []
             }
           />
         </div>
       </FilterItemWrapper>
-      <SpacedRow>
-        <Button
-          type="primary"
-          icon={initialKey && initialValue ? 'Edit' : 'Plus'}
-          disabled={!allowEdit}
-          onClick={() => {
-            if (allowEdit) {
-              setFilter(selectedKey!, selectedValue!);
-            } else {
-              message.error('You must choose a key and a value');
-            }
-          }}
-        />
-        <Button icon="Close" onClick={() => onCancel(false)} />
-        {hasInitialValue && (
+      {allowEdit && (
+        <ButtonGroupWrapper>
           <Button
-            onClick={() => onCancel(true)}
-            type="danger"
-            icon="Delete"
-            disabled={!hasInitialValue}
-          />
-        )}
-      </SpacedRow>
+            onClick={() => {
+              if (onCancel) {
+                onCancel(false);
+              }
+              setSelectedKey(null);
+              setSelectedValue(null);
+            }}
+          >
+            Clear
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setFilter(selectedKey!, selectedValue!);
+              setSelectedKey(null);
+              setSelectedValue(null);
+            }}
+          >
+            Apply
+          </Button>
+        </ButtonGroupWrapper>
+      )}
     </>
   );
 };
@@ -283,12 +283,12 @@ export const FilterTag = ({
       {isLocked && LOCKSVG}
       <Tooltip interactive content={`${filter}: ${value}`}>
         <span>
-          <strong>{filter}</strong>: {value}
+          {filter}: {value}
         </span>
       </Tooltip>
       {!isLocked && onDeleteClicked && (
         <Icon
-          type="Delete"
+          type="Close"
           className="delete"
           onClick={ev => {
             ev.stopPropagation();
@@ -322,7 +322,6 @@ export const FilterForm = ({
   setFilters = () => {},
 }: FilterFormProps) => {
   const [editingKeys, setEditingKeys] = useState<string[]>([]);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
 
   const allKeys = new Set<string>();
   Object.keys(metadataCategory).forEach(el => allKeys.add(el));
@@ -337,29 +336,6 @@ export const FilterForm = ({
   }, {} as { [key: string]: string[] });
   return (
     <Wrapper>
-      <div className="tags">
-        {Object.keys(filters).map(el => {
-          const isLocked = lockedFilters.some(filter => filter === el);
-          return (
-            <FilterTag
-              key={el}
-              isLocked={isLocked}
-              filter={el}
-              value={filters[el]}
-              onClick={() => {
-                if (!isLocked) {
-                  setEditingKeys(Array.from(new Set(editingKeys).add(el)));
-                }
-              }}
-              onDeleteClicked={() => {
-                const newFilter = { ...filters };
-                delete newFilter[el];
-                setFilters(newFilter);
-              }}
-            />
-          );
-        })}
-      </div>
       {Object.keys(filters)
         .filter(el => editingKeys.includes(el))
         .map(key => (
@@ -384,24 +360,33 @@ export const FilterForm = ({
             }}
           />
         ))}
-      {isAdding && (
-        <FilterItem
-          key="add"
-          metadata={metadata}
-          categories={categories}
-          lockedFilters={lockedFilters}
-          setFilter={(newKey, newValue) => {
-            setFilters({ ...filters, [newKey]: newValue });
-            setIsAdding(false);
-          }}
-          onCancel={() => {
-            setIsAdding(false);
-          }}
-        />
-      )}
-      <Button disabled={isAdding} onClick={() => setIsAdding(true)} icon="Plus">
-        Add new metadata filter
-      </Button>
+      <FilterItem
+        key="add"
+        metadata={metadata}
+        categories={categories}
+        lockedFilters={lockedFilters}
+        setFilter={(newKey, newValue) => {
+          setFilters({ ...filters, [newKey]: newValue });
+        }}
+      />
+      <Tags>
+        {Object.keys(filters).map(el => {
+          const isLocked = lockedFilters.some(filter => filter === el);
+          return (
+            <FilterTag
+              key={el}
+              isLocked={isLocked}
+              filter={el}
+              value={filters[el]}
+              onDeleteClicked={() => {
+                const newFilter = { ...filters };
+                delete newFilter[el];
+                setFilters(newFilter);
+              }}
+            />
+          );
+        })}
+      </Tags>
     </Wrapper>
   );
 };

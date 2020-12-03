@@ -37,7 +37,7 @@ export const ButtonGroup = ({
         const key = el as typeof tabs[number];
 
         return (
-          <Tooltip title={children[i].props.title}>
+          <Tooltip key={key} title={children[i].props.title}>
             {React.cloneElement(children[i], {
               variant: 'ghost',
               type: key === currentKey ? 'primary' : 'secondary',
