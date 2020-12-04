@@ -32,7 +32,6 @@ describe('CadSectorLoader', () => {
   test('updateCamera(), updateLoadingHints() and updateClipPlanes() triggers SectorCuller.determineSectors()', async () => {
     const loader = new CadSectorLoader(mockCuller, mockFileProvider, modelDataParser, materialManager);
 
-    // updateHandler.consumedSectorObservable().subscribe();
     loader.addModel(cadModel);
 
     loader.updateCamera(new THREE.PerspectiveCamera());

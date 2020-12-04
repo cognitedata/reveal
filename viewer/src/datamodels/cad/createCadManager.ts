@@ -35,11 +35,8 @@ export function createCadManager<T>(client: ModelDataClient<T>, options: RevealO
   const materialManager = new MaterialManager();
   const cadModelFactory = new CadModelFactory(materialManager);
   const modelDataParser = new CadSectorParser();
-  // const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
-  // const cachedSectorRepository = new CachedRepository(client, modelDataParser, modelDataTransformer);
   const { internal } = options;
   const sectorCuller = internal && internal.sectorCuller ? internal.sectorCuller : new ByVisibilityGpuSectorCuller();
-  // const cadModelUpdateHandler = new CadModelUpdateHandler(cachedSectorRepository, sectorCuller);
   return new CadManager(
     materialManager,
     cadModelMetadataRepository,

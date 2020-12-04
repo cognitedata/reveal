@@ -27,7 +27,6 @@ export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
   private readonly _cadModelFactory: CadModelFactory;
-  // private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
   private readonly _cadModelMap: Map<string, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
@@ -77,13 +76,11 @@ export class CadManager<TModelIdentifier> {
     culler: SectorCuller,
     fileProvider: BinaryFileProvider,
     parser: CadSectorParser
-    // cadModelUpdateHandler: CadModelUpdateHandler
   ) {
     this._loader = new CadSectorLoader(culler, fileProvider, parser, materialManger);
     this._materialManager = materialManger;
     this._cadModelMetadataRepository = cadModelMetadataRepository;
     this._cadModelFactory = cadModelFactory;
-    // this._cadModelUpdateHandler = cadModelUpdateHandler;
     this._subscription.add(
       this._loader.consumedSectorObservable().subscribe(
         sector => {
@@ -124,8 +121,8 @@ export class CadManager<TModelIdentifier> {
   }
 
   dispose() {
-    // this._cadModelUpdateHandler.dispose();
-    // this._subscription.unsubscribe();
+    this._loader.dispose();
+    this._subscription.unsubscribe();
   }
 
   requestRedraw(): void {
@@ -137,7 +134,6 @@ export class CadManager<TModelIdentifier> {
   }
 
   updateCamera(camera: THREE.PerspectiveCamera) {
-    // this._cadModelUpdateHandler.updateCamera(camera);
     this._loader.updateCamera(camera);
     this._needsRedraw = true;
   }
@@ -149,7 +145,6 @@ export class CadManager<TModelIdentifier> {
   set clipIntersection(clipIntersection: boolean) {
     this._materialManager.clipIntersection = clipIntersection;
     this._loader.updateClipIntersection(clipIntersection);
-    // this._cadModelUpdateHandler.clipIntersection = clipIntersection;
     this._needsRedraw = true;
   }
 
@@ -161,7 +156,6 @@ export class CadManager<TModelIdentifier> {
     });
     this._cadModelMap.set(metadata.blobUrl, model);
     this._loader.addModel(model);
-    // this._cadModelUpdateHandler.updateModels(model);
     return model;
   }
 
