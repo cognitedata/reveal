@@ -72,6 +72,9 @@ export class CadSectorLoader {
   private _lastCameraTimestamp = 0;
   private _pendingLoadOperationId: number | undefined = undefined;
 
+  // Total number of operations in this batch to keep track of progress
+  private _operationCountInBatch = 0;
+  // Identifiers of currently pending ongoing load operations
   private _pendingOperations = new Set<string>();
 
   constructor(
@@ -95,6 +98,13 @@ export class CadSectorLoader {
       this._modelDataParser,
       this._materialManager
     );
+  }
+
+  dispose() {
+    this._consumedSubject.complete();
+    this._loadingStateSubject.complete();
+    this._parsedDataSubject.complete();
+    this._sectorCuller.dispose();
   }
 
   consumedSectorObservable(): Observable<ConsumedSector> {
@@ -146,16 +156,16 @@ export class CadSectorLoader {
     const updateCb = this.update.bind(this);
     this._pendingLoadOperationId = window.setTimeout(async () => {
       await this.cameraAtRestBarrier();
-      updateCb();
+      await updateCb();
     }, timeToNextUpdate);
   }
 
-  private update(): void {
+  private async update(): Promise<void> {
     this._pendingLoadOperationId = undefined;
 
     const input = this.createDetermineSectorsInput();
     const wantedSectors = this._sectorCuller.determineSectors(input);
-    this.consumeSectors(wantedSectors);
+    await this.consumeSectors(wantedSectors);
   }
 
   private createDetermineSectorsInput(): DetermineSectorsInput {
@@ -171,7 +181,7 @@ export class CadSectorLoader {
     return input;
   }
 
-  private async consumeSector(sector: WantedSector, loadingState: LoadingState): Promise<void> {
+  private async consumeSector(sector: WantedSector): Promise<void> {
     const operationId = createKey(sector);
 
     // Create a cancellation source that will cancel operations when they
@@ -194,8 +204,6 @@ export class CadSectorLoader {
           const group = await this._simpleSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
           await this.updateScene(sector, LevelOfDetail.Simple, group);
-          loadingState.itemsLoaded++;
-          this._loadingStateSubject.next(loadingState);
           break;
         }
 
@@ -203,8 +211,6 @@ export class CadSectorLoader {
           const group = await this._detailedSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
           await this.updateScene(sector, LevelOfDetail.Detailed, group);
-          loadingState.itemsLoaded++;
-          this._loadingStateSubject.next(loadingState);
           break;
         }
 
@@ -222,8 +228,23 @@ export class CadSectorLoader {
         throw error;
       }
     } finally {
-      this._pendingOperations.delete(operationId);
+      this.markOperationDone(operationId);
     }
+  }
+
+  private markOperationDone(operationId: string): void {
+    if (this._pendingOperations.delete(operationId)) {
+      this.reportLoadingState();
+    }
+  }
+
+  private reportLoadingState() {
+    const isLoading = this._pendingOperations.size > 0;
+    this._loadingStateSubject.next({
+      isLoading,
+      itemsLoaded: this._operationCountInBatch - this._pendingOperations.size,
+      itemsRequested: this._operationCountInBatch
+    });
   }
 
   private updateOperations(sectors: WantedSector[]): WantedSector[] {
@@ -234,30 +255,19 @@ export class CadSectorLoader {
 
     // Update operations
     this._pendingOperations = new Set<string>(validOperations);
+    this._operationCountInBatch = this._pendingOperations.size;
 
     return changedSectors;
   }
 
   private async consumeSectors(sectors: WantedSector[]): Promise<void> {
     const changedSectors = this.updateOperations(sectors);
-    const loadingState: LoadingState = {
-      isLoading: true,
-      itemsLoaded: 0,
-      itemsRequested: changedSectors.reduce((count, x) => {
-        if (x.levelOfDetail !== LevelOfDetail.Discarded) {
-          return count + 1;
-        }
-        return count;
-      }, 0)
-    };
-    this._loadingStateSubject.next(loadingState);
+    this.reportLoadingState();
 
-    const operations = changedSectors.map(sector => this.consumeSector(sector, loadingState));
+    const operations = changedSectors.map(sector => this.consumeSector(sector));
     await Promise.all(operations);
 
-    loadingState.itemsLoaded = loadingState.itemsRequested;
-    loadingState.isLoading = false;
-    this._loadingStateSubject.next(loadingState);
+    this.reportLoadingState();
   }
 
   private async updateScene(
@@ -291,7 +301,7 @@ export class CadSectorLoader {
           resolve();
           clearInterval(handle);
         }
-      });
+      }, 50);
     });
   }
 }
