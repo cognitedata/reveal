@@ -55,6 +55,7 @@ export class CadSectorLoader {
   private readonly _consumedObservable = this._consumedSubject.pipe(share());
   private readonly _loadingStateUpdateTriggerSubject = new Subject<void>();
   private readonly _loadingStateObservable: Observable<LoadingState>;
+  // TODO 2020-12-05 larsmoa: _parsedDataSubject is not triggered for incoming data!
   private readonly _parsedDataSubject = new Subject<{
     blobUrl: string;
     lod: string;
