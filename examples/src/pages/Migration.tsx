@@ -5,7 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
-import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
   AddModelOptions,
