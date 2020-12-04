@@ -1492,10 +1492,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@google-cloud/common@^3.3.0":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-3.4.1.tgz#a1920d73c38437923b4b134e245c392d36c442e9"
-  integrity sha512-e5z0CwsM0RXky+PnyPtQ3QK46ksqm+kE7kX8pm8X+ddBwZJipHchKeazMM5fLlGCS+AALalzXb+uYmH72TRnpQ==
+"@google-cloud/common@^3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-3.5.0.tgz#0959e769e8075a06eb0823cc567eef00fd0c2d02"
+  integrity sha512-10d7ZAvKhq47L271AqvHEd8KzJqGU45TY+rwM2Z3JHuB070FeTi7oJJd7elfrnKaEvaktw3hH2wKnRWxk/3oWQ==
   dependencies:
     "@google-cloud/projectify" "^2.0.0"
     "@google-cloud/promisify" "^2.0.0"
@@ -1525,12 +1525,12 @@
   resolved "https://registry.yarnpkg.com/@google-cloud/promisify/-/promisify-2.0.3.tgz#f934b5cdc939e3c7039ff62b9caaf59a9d89e3a8"
   integrity sha512-d4VSA86eL/AFTe5xtyZX+ePUjE8dIFu2T8zmdeNBSa5/kNgXPCx/o/wbFNHAGLJdGnk1vddRuMESD9HbOC8irw==
 
-"@google-cloud/storage@^5.3.0", "@google-cloud/storage@^5.5.1":
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-5.5.1.tgz#43726a80dfff2fccaa0036aa9866c2c8c5a2e976"
-  integrity sha512-onvuuLOnP102W6GBZkLgGKGjAz3GBkSeexo9uW/HL/mB3LABw7+bS79ifAhBZduVKJkqTmPmdXI7okf/ZTJz0w==
+"@google-cloud/storage@^5.3.0", "@google-cloud/storage@^5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-5.6.0.tgz#bc6925c7970c375212a4da21c123298fc9665dec"
+  integrity sha512-nLcym8IuCzy1O7tNTXNFuMHfX900sTM3kSTqbKe7oFSoKUiaIM+FHuuuDimMMlieY6StA1xYNPRFFHz57Nv8YQ==
   dependencies:
-    "@google-cloud/common" "^3.3.0"
+    "@google-cloud/common" "^3.5.0"
     "@google-cloud/paginator" "^3.0.0"
     "@google-cloud/promisify" "^2.0.0"
     arrify "^2.0.0"
@@ -7372,10 +7372,10 @@ eslint-plugin-lodash@^7.1.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-lodash/-/eslint-plugin-lodash-7.1.0.tgz#5ad9bf1240a01c6c3f94e956213e2d6422af3192"
   integrity sha512-BRkEI/+ZjmeDCM1DfzR+NVwYkC/+ChJhaOSm3Xm7rer/fs89TKU6AMtkQiDdqQel1wZ4IJM+B6hlep9xwVKaMQ==
 
-eslint-plugin-prettier@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.1.4.tgz#168ab43154e2ea57db992a2cd097c828171f75c2"
-  integrity sha512-jZDa8z76klRqo+TdGDTFJSavwbnWK2ZpqGKNZ+VvweMW516pDUMmQ2koXvxEE4JhzNvTv+radye/bWGBmA6jmg==
+eslint-plugin-prettier@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.2.0.tgz#af391b2226fa0e15c96f36c733f6e9035dbd952c"
+  integrity sha512-kOUSJnFjAUFKwVxuzy6sA5yyMx6+o9ino4gCdShzBNx4eyFRudWRYKCFolKjoM40PEiuU6Cn7wBLfq3WsGg7qg==
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
@@ -12708,10 +12708,10 @@ postcss-place@^4.0.1:
     postcss "^7.0.2"
     postcss-values-parser "^2.0.0"
 
-postcss-prefixwrap@^1.19.0:
-  version "1.19.0"
-  resolved "https://registry.yarnpkg.com/postcss-prefixwrap/-/postcss-prefixwrap-1.19.0.tgz#4362cbb0014861d6690591cb52b77919031c59e3"
-  integrity sha512-q2syz5boQFKOaNgGwem2RLuzLP5ZZk5UANqzoXf+HzOYLg63mWG6YxmueNavLWFujtOzw2erW/036i6IjIIERw==
+postcss-prefixwrap@^1.20.0:
+  version "1.20.0"
+  resolved "https://registry.yarnpkg.com/postcss-prefixwrap/-/postcss-prefixwrap-1.20.0.tgz#f10b387ff6336b438be83b8e2c9f78352585dbe7"
+  integrity sha512-JkeaFKBYAMlPx0qop2brcE4oCQP1bq1E2kjMq7YjEW7L9k7LM2KZF4oD+2EVqwwyruSAj4sK/TrlEIg26IhU+Q==
 
 postcss-preset-env@6.7.0:
   version "6.7.0"

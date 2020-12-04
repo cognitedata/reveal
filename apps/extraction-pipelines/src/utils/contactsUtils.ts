@@ -1,24 +1,15 @@
-import { MutateFunction } from 'react-query';
 import { Integration } from '../model/Integration';
-import { ContactsTableCol } from '../components/table/details/ContactTableCols';
+import {
+  ContactAccessor,
+  ContactsTableCol,
+} from '../components/table/details/ContactTableCols';
 import { User } from '../model/User';
 import { IntegrationUpdateSpec } from './IntegrationsAPI';
-import { CreateUpdateObjArgs, DetailFieldNames } from './integrationUtils';
-import { SDKError } from '../model/SDKErrors';
-import { UseUpdateContactsVariables } from '../hooks/useUpdateContacts';
+import { DetailFieldNames } from './integrationUtils';
 
 export interface CreateUpdateContactsObjArgs extends Pick<Integration, 'id'> {
   data: ContactsTableCol;
 }
-
-export const saveContacts = (
-  mutate: MutateFunction<Integration, SDKError, UseUpdateContactsVariables>,
-  id: Integration['id']
-) => {
-  return async function save(project: string, dataSource: ContactsTableCol) {
-    await mutate({ data: dataSource, id, project });
-  };
-};
 
 export const mapContacts = (integration: Integration): ContactsTableCol[] => {
   const authors: ContactsTableCol[] = integration.authors.map(
@@ -55,19 +46,42 @@ export const mapContacts = (integration: Integration): ContactsTableCol[] => {
 };
 
 export const filterAuthors = (
-  contacts: ContactsTableCol[],
+  contactCols: ContactsTableCol[],
   rowIndex: number
 ) => {
-  return contacts
-    .filter((c, index) => {
-      return index !== rowIndex;
-    })
-    .filter((c) => {
-      return c.accessor !== 'owner';
-    })
-    .map((contact) => {
-      return { name: contact.name, email: contact.email };
+  const removed = contactCols.filter((_, index) => {
+    return index !== rowIndex;
+  });
+  return getContactByAccessor(removed, 'authors');
+};
+
+const getContactByAccessor = (
+  contactCols: ContactsTableCol[],
+  accessor: ContactAccessor
+) => {
+  return contactCols
+    .filter((c) => c.accessor === accessor)
+    .map((author) => {
+      return { name: author.name, email: author.email };
     });
+};
+
+export const createUpdateObj = (
+  details: ContactsTableCol,
+  contacts: ContactsTableCol[],
+  integrationId: number
+): IntegrationUpdateSpec[] => {
+  const contactInfo = getContactByAccessor(contacts, details.accessor);
+  if (details.accessor === 'owner') {
+    return createUpdateOwnerObj({
+      id: integrationId,
+      owner: contactInfo[0],
+    });
+  }
+  return createUpdateAuthorObj({
+    id: integrationId,
+    authors: contactInfo,
+  });
 };
 
 interface CreateNewContact extends Pick<ContactsTableCol, 'indexInOriginal'> {
@@ -92,6 +106,21 @@ export const createNewAuthor = ({
   };
 };
 
+const createUpdateOwnerObj = ({
+  id,
+  owner,
+}: {
+  id: number;
+  owner: User;
+}): IntegrationUpdateSpec[] => {
+  return [
+    {
+      id: `${id}`,
+      update: { owner: { set: owner } },
+    },
+  ];
+};
+
 export const createUpdateAuthorObj = ({
   id,
   authors,
@@ -105,41 +134,4 @@ export const createUpdateAuthorObj = ({
       update: { authors: { set: authors } },
     },
   ];
-};
-
-export const createUpdateContacts = ({
-  id,
-  data,
-}: CreateUpdateObjArgs<ContactsTableCol>): IntegrationUpdateSpec[] => {
-  if (data.accessor === 'authors') {
-    const updatedContacts: User[] = updateAuthorsLogic(data);
-
-    const update = [
-      {
-        id: `${id}`,
-        update: { [data.accessor]: { set: updatedContacts } },
-      },
-    ];
-    return update;
-  }
-  return [
-    {
-      id: `${id}`,
-      update: {
-        [data.accessor]: { set: { name: data.name, email: data.email } },
-      },
-    },
-  ];
-};
-
-export const updateAuthorsLogic = (data: ContactsTableCol): User[] => {
-  if (data.isNewContact) {
-    return [...data.original, { name: data.name, email: data.email }];
-  }
-  return data.original.map((user, index) => {
-    if (index === data.indexInOriginal) {
-      return { name: data.name, email: data.email };
-    }
-    return user;
-  });
 };

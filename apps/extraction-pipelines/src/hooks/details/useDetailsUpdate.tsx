@@ -3,7 +3,7 @@ import { Integration } from '../../model/Integration';
 import { SDKError } from '../../model/SDKErrors';
 import { IntegrationUpdateSpec, saveUpdate } from '../../utils/IntegrationsAPI';
 
-export const useSaveAuthors = () => {
+export const useDetailsUpdate = () => {
   const queryCache = useQueryCache();
   return useMutation<
     Integration,

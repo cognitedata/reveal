@@ -1,5 +1,7 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { QueryCache } from 'react-query';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { getMockResponse } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import IntegrationDetails, {
@@ -21,11 +23,142 @@ import {
   clickText,
 } from '../../utils/test/utilsFn';
 import { ContactBtnTestIds } from '../table/details/ContactTableCols';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+  renderWithReactQueryCacheProvider,
+} from '../../utils/test/render';
 
 describe('Integration Details', () => {
+  let queryCache = null;
+  let wrapper = null;
   beforeEach(() => {
     jest.resetAllMocks();
+    queryCache = new QueryCache();
+    wrapper = renderWithReactQueryCacheProvider(
+      queryCache,
+      PROJECT_ITERA_INT_GREEN,
+      ORIGIN_DEV,
+      CDF_ENV_GREENFIELD
+    );
   });
+  afterEach(() => {
+    queryCache = null;
+    wrapper = null;
+  });
+
+  test('Should call to get updated integration information when contact is saved', async () => {
+    const integration = getMockResponse()[0];
+    const integrationsResponse = getMockResponse()[1];
+    sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
+    sdkv3.get.mockResolvedValue({ data: { items: [integrationsResponse] } });
+    const cancelMock = jest.fn();
+
+    render(
+      <IntegrationDetails
+        integration={integration}
+        visible
+        onCancel={cancelMock}
+      />,
+      { wrapper }
+    );
+    expect(sdkv3.get).toHaveBeenCalledTimes(1); // the initial call
+
+    // click first edit btn
+    const editRow = 0;
+    const firstEditBtn = screen.getAllByText('Edit')[editRow];
+    fireEvent.click(firstEditBtn);
+    const nameInput = screen.getByDisplayValue(integration.name); // assuming name is editable
+
+    // change value in input
+    const newValue = 'Something unique';
+    fireEvent.change(nameInput, { target: { value: newValue } });
+    fireEvent.blur(nameInput);
+
+    // click save. new value saved. just display value
+    const saveBtn = screen.getByText('Save');
+    fireEvent.click(saveBtn);
+
+    await waitFor(() => {
+      const newValueForRow = screen.getByText(newValue);
+      expect(newValueForRow).toBeInTheDocument();
+    });
+    expect(sdkv3.get).toHaveBeenCalledTimes(2);
+  });
+
+  test('Should call to get updated integration information when contact is removed', async () => {
+    const integration = getMockResponse()[0];
+    const integrationsResponse = getMockResponse()[1];
+    sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
+    sdkv3.get.mockResolvedValue({ data: { items: [integrationsResponse] } });
+    const cancelMock = jest.fn();
+
+    render(
+      <IntegrationDetails
+        integration={integration}
+        visible
+        onCancel={cancelMock}
+      />,
+      { wrapper }
+    );
+    expect(sdkv3.get).toHaveBeenCalledTimes(1); // the initial call
+
+    // click remove
+    const removeRow = 0;
+    const contactToRemove = integration.authors[removeRow];
+    const removeBtn = screen.getAllByText('Remove')[removeRow];
+    const contactToRemoveEmail = screen.getByText(contactToRemove.email);
+    expect(contactToRemoveEmail).toBeInTheDocument();
+
+    fireEvent.click(removeBtn);
+
+    await waitFor(() => {
+      const removed = screen.queryByText(contactToRemove.email);
+      expect(removed).not.toBeInTheDocument();
+    });
+    expect(sdkv3.get).toHaveBeenCalledTimes(2);
+  });
+
+  test('Unsaved changes dialog - footer', async () => {
+    const integration = getMockResponse()[0];
+    const cancelMock = jest.fn();
+
+    render(
+      <IntegrationDetails
+        integration={integration}
+        visible
+        onCancel={cancelMock}
+      />,
+      { wrapper }
+    );
+    const row = 1;
+    clickById(`edit-contact-btn-${row}`);
+    typeInInput(`authors-email-${row}`, 'test@test.no');
+    const bottomWarning = screen.getByText(DETAILS_ELEMENTS.UNSAVED);
+    expect(bottomWarning).toBeInTheDocument();
+    // click close
+    clickById(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
+    // dialog displayed
+    existsByText(CLOSE_CONFIRM_CONTENT);
+    // click cancel
+    const cancelBtns = screen.getAllByText('Cancel');
+    fireEvent.click(cancelBtns[0]);
+    // dialog removed
+    notExistsText(CLOSE_CONFIRM_CONTENT);
+
+    // click close
+    clickById(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
+    // dialog displayed
+    existsByText(CLOSE_CONFIRM_CONTENT);
+
+    // click confirm
+    clickText('Confirm');
+
+    // dialog removed
+    notExistsText(CLOSE_CONFIRM_CONTENT);
+  });
+
   test('Warning in the footer', () => {
     const integration = getMockResponse()[0];
     const cancelMock = jest.fn();
@@ -34,7 +167,8 @@ describe('Integration Details', () => {
         integration={integration}
         visible
         onCancel={cancelMock}
-      />
+      />,
+      { wrapper }
     );
     const editBtns = screen.getAllByText('Edit');
 
@@ -108,15 +242,17 @@ describe('Integration Details', () => {
     expect(bottomWarningNotVisible).not.toBeInTheDocument();
   });
 
-  test('Add contact', () => {
+  test('Add contact', async () => {
     const integration = getMockResponse()[0];
     const cancelMock = jest.fn();
+
     render(
       <IntegrationDetails
         integration={integration}
         visible
         onCancel={cancelMock}
-      />
+      />,
+      { wrapper }
     );
     const row = integration.authors.length + 1;
     const addBtn = screen.getByText('Add');
@@ -137,42 +273,5 @@ describe('Integration Details', () => {
     clickById(`${ContactBtnTestIds.SAVE_BTN}${row}`);
     existsContact(newName, newEmail);
     notExistsText(UNSAVED_INFO_TEXT);
-  });
-
-  test('Unsaved changes dialog - footer', () => {
-    const integration = getMockResponse()[0];
-    const cancelMock = jest.fn();
-    render(
-      <IntegrationDetails
-        integration={integration}
-        visible
-        onCancel={cancelMock}
-      />
-    );
-    const row = 1;
-    clickById(`edit-contact-btn-${row}`);
-    typeInInput(`authors-email-${row}`, 'test@test.no');
-    const bottomWarning = screen.getByText(DETAILS_ELEMENTS.UNSAVED);
-    expect(bottomWarning).toBeInTheDocument();
-    // click close
-    clickById(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
-    // dialog displayed
-    existsByText(CLOSE_CONFIRM_CONTENT);
-    // click cancel
-    const cancelBtns = screen.getAllByText('Cancel');
-    fireEvent.click(cancelBtns[0]);
-    // dialog removed
-    notExistsText(CLOSE_CONFIRM_CONTENT);
-
-    // click close
-    clickById(DETAILS_TEST_IDS.FOOTER_CLOSE_MODAL);
-    // dialog displayed
-    existsByText(CLOSE_CONFIRM_CONTENT);
-
-    // click confirm
-    clickText('Confirm');
-
-    // dialog removed
-    notExistsText(CLOSE_CONFIRM_CONTENT);
   });
 });

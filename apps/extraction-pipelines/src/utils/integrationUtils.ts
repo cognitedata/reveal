@@ -60,10 +60,11 @@ export enum DetailFieldNames {
   EXTERNAL_ID = 'External id',
   DESCRIPTION = 'Description',
   CREATED_TIME = 'Created time',
-  META_DATA = 'Meta data',
+  META_DATA = 'Metadata',
   CONTACT = 'Contact',
   OWNER = 'Owner',
 }
+
 export const mapIntegration = (integration: Integration): DetailsCol[] => {
   const latest = {
     lastSuccess: integration?.lastSuccess,
@@ -118,8 +119,10 @@ export const mapIntegration = (integration: Integration): DetailsCol[] => {
       isEditable: false,
     },
     createDataSetCol(integration),
-    ...createMetadataCols(integration.metadata),
   ];
+};
+export const mapMetadata = (integration: Integration): DetailsCol[] => {
+  return [...createMetadataCols(integration.metadata)];
 };
 
 export interface CreateUpdateIntegrationObjArgs
