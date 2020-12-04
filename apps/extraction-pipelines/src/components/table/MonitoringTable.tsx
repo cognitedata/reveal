@@ -67,7 +67,7 @@ const MonitoringTable = ({ columns, data }: TableProps) => {
         {rows.map((row: Row) => {
           prepareRow(row);
           const isParentRow = row.subRows.length > 0;
-          const isChildRow = row.depth === 1;
+          const isSeenStatusRow = !row.values.status;
           return (
             <tr
               {...row.getRowProps()}
@@ -75,7 +75,7 @@ const MonitoringTable = ({ columns, data }: TableProps) => {
               className={`cogs-table-row integrations-table-row ${
                 row.isSelected ? 'row-active' : ''
               } ${isParentRow ? 'parent-row' : ''}
-              ${isChildRow ? 'child-row' : ''}`}
+              ${isSeenStatusRow ? 'seen-status-row' : ''}`}
             >
               {row.cells.map((cell: Cell) => {
                 return (
