@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { from, Observable, Subject, zip } from 'rxjs';
-import { concatMap, filter, map, reduce, share, takeWhile, throttleTime } from 'rxjs/operators';
+import { concatMap, debounceTime, filter, map, reduce, share, takeWhile } from 'rxjs/operators';
 
 import { ParseCtmResult, ParseSectorResult, SectorQuads } from '@cognite/reveal-parser-worker';
 
@@ -100,7 +100,7 @@ export class CadSectorLoader {
     );
 
     this._loadingStateObservable = this._loadingStateUpdateTriggerSubject.pipe(
-      throttleTime(10),
+      debounceTime(10),
       map(() => {
         const pendingCount = this.countPendingOperations();
         const state: LoadingState = {
