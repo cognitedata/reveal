@@ -13,10 +13,15 @@ describe('OverviewSidePanel', () => {
     const strongMessage = screen.getByText('Please select an integration');
     expect(strongMessage).toBeInTheDocument();
 
-    const message = screen.getByText(
-      'Helpful text, contact persons or basic monitoring.'
+    const firstParagraph = screen.getByText(
+      'In the sidepanel you will see basic monitoring and and contact information to persons connected to the integration.'
     );
-    expect(message).toBeInTheDocument();
+    expect(firstParagraph).toBeInTheDocument();
+
+    const secondParagraph = screen.getByText(
+      'You can also search for an integration by entering name, destination data set or contact person here.'
+    );
+    expect(secondParagraph).toBeInTheDocument();
   });
 
   test('Render heading when integration is selected', () => {
