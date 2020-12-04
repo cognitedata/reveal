@@ -15,6 +15,17 @@ describe('<MonitoringTable/>', () => {
       const header = screen.getByText(Header);
       expect(header).toBeInTheDocument();
     });
+
+    const allRows = screen.getAllByRole('row');
+    expect(allRows.length).toEqual(7);
+  });
+
+  test('Check expand functionality', () => {
+    render(<MonitoringTable data={tableData} columns={columns} />);
+    const firsRowContent = screen.getAllByRole('row')[1];
+    fireEvent.click(firsRowContent);
+    const allRows = screen.getAllByRole('row');
+    expect(allRows.length).toEqual(9);
   });
 
   test('render and interact with filter on status', () => {
