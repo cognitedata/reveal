@@ -16,7 +16,7 @@
   "dependencies": {
     "@cognite/cogs.js": "^1.17.1",
     "@cognite/metrics": "^0.0.32",
-    "@cognite/sdk": "^3.2.0",
+    "@cognite/sdk": "^3.3.0",
     "@sentry/browser": "^5.27.3",
     "@types/lodash": "^4.14.165",
     "antd": "^4.8.1",

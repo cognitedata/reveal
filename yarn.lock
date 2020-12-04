@@ -1225,22 +1225,23 @@
   dependencies:
     mixpanel-browser "^2.35.0"
 
-"@cognite/sdk-core@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.2.tgz#fab634f9661d76e49288eb121f9706bf5a37e478"
-  integrity sha512-0M5n+tmJc9B6oVzrGGOE16eAWwzq4a2eTBJzU0QTLajHOx3sTsDsuAKvQ7nE9ucaN+MqXuO5vERSjLMlOWkJQQ==
+"@cognite/sdk-core@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.3.tgz#203e504947a0d481656c34d1d71a0caebd2bcb12"
+  integrity sha512-cQdYX4u2hwJt/0MZvN+Z1V495r3yDdxPn60JYfsxBwWWsDSrFAAx+eH4z0QL7EaE1xcOOLK6ayOV1Qa8zzbhAA==
   dependencies:
     cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.2.0.tgz#68a1ae38893f9eb3a3bc2b81bca2f6486ccede02"
-  integrity sha512-V6SrkKmN2LogCIZ3SopQLcGrA00kmH0SEs5/ltZW5QHEdbuzAe6a+B1wLaCz6sDduI5IabhthKuoSnyydRTM3Q==
+"@cognite/sdk@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.0.tgz#49f766f63931f8716a997c2af5eb45f0cb3849b2"
+  integrity sha512-p/7xN96IS8t9+nBm3nzW+68z9yEaIm5lKJgx3IWi61nidajE2OAVBYFZjjuvCAlR/OCz/8xIBFndlZjP7JCIjw==
   dependencies:
-    "@cognite/sdk-core" "^1.0.2"
+    "@cognite/sdk-core" "^1.0.3"
     lodash "^4.17.11"
 
 "@csstools/convert-colors@^1.4.0":
@@ -7817,6 +7818,11 @@ is-buffer@^1.0.2, is-buffer@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+
+is-buffer@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.5.tgz#ebc252e400d22ff8d77fa09888821a24a658c191"
+  integrity sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==
 
 is-callable@^1.1.4, is-callable@^1.2.0:
   version "1.2.0"
