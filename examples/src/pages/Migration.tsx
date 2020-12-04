@@ -218,16 +218,6 @@ export function Migration() {
       if (modelIdStr && revisionIdStr) {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
-
-        // console.log('ASSET MAPPINGS BEGIN');
-        // const request = client.revisions3D.list3DNodes(modelId, revisionId, { limit: 1000 });
-        // const nodeIds: number[] = [];
-        // await request.autoPagingEach(x => {
-        //   nodeIds.push(x.id);
-        // });
-        // console.log(`NodeIDs: ${nodeIds.length}`);
-        // console.log(JSON.stringify(nodeIds));
-        
         await addModel({ modelId, revisionId });
       }
 
