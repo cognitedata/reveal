@@ -3,6 +3,8 @@
  */
 
 import * as THREE from 'three';
+import { from, Observable, Subject, zip } from 'rxjs';
+import { concatMap, filter, map, reduce, share, takeWhile, throttleTime } from 'rxjs/operators';
 
 import { ParseCtmResult, ParseSectorResult, SectorQuads } from '@cognite/reveal-parser-worker';
 
@@ -19,8 +21,6 @@ import { DetermineSectorsInput } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorSimple, consumeSectorDetailed } from './sectorUtilities';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
-import { from, Observable, Subject, zip } from 'rxjs';
-import { concatMap, filter, map, reduce, share, takeWhile } from 'rxjs/operators';
 
 class OperationCanceledError extends Error {
   constructor() {
@@ -53,8 +53,8 @@ export class CadSectorLoader {
 
   private readonly _consumedSubject = new Subject<ConsumedSector>();
   private readonly _consumedObservable = this._consumedSubject.pipe(share());
-  private readonly _loadingStateSubject = new Subject<LoadingState>();
-  private readonly _loadingStateObservable = this._loadingStateSubject.pipe(share());
+  private readonly _loadingStateUpdateTriggerSubject = new Subject<void>();
+  private readonly _loadingStateObservable: Observable<LoadingState>;
   private readonly _parsedDataSubject = new Subject<{
     blobUrl: string;
     lod: string;
@@ -75,7 +75,7 @@ export class CadSectorLoader {
   // Total number of operations in this batch to keep track of progress
   private _operationCountInBatch = 0;
   // Identifiers of currently pending ongoing load operations
-  private _pendingOperations = new Set<string>();
+  private _pendingOperations = new Map<string, WantedSector>();
 
   constructor(
     sectorCuller: SectorCuller,
@@ -98,11 +98,25 @@ export class CadSectorLoader {
       this._modelDataParser,
       this._materialManager
     );
+
+    this._loadingStateObservable = this._loadingStateUpdateTriggerSubject.pipe(
+      throttleTime(10),
+      map(() => {
+        const pendingCount = this.countPendingOperations();
+        const state: LoadingState = {
+          isLoading: pendingCount > 0,
+          itemsLoaded: this._operationCountInBatch - pendingCount,
+          itemsRequested: this._operationCountInBatch
+        };
+        return state;
+      }),
+      share()
+    );
   }
 
   dispose() {
     this._consumedSubject.complete();
-    this._loadingStateSubject.complete();
+    this._loadingStateUpdateTriggerSubject.complete();
     this._parsedDataSubject.complete();
     this._sectorCuller.dispose();
   }
@@ -239,23 +253,28 @@ export class CadSectorLoader {
   }
 
   private reportLoadingState() {
-    const isLoading = this._pendingOperations.size > 0;
-    this._loadingStateSubject.next({
-      isLoading,
-      itemsLoaded: this._operationCountInBatch - this._pendingOperations.size,
-      itemsRequested: this._operationCountInBatch
+    this._loadingStateUpdateTriggerSubject.next();
+  }
+
+  private countPendingOperations(): number {
+    let count = 0;
+    this._pendingOperations.forEach(x => {
+      if (x.levelOfDetail !== LevelOfDetail.Discarded) {
+        count++;
+      }
     });
+    return count;
   }
 
   private updateOperations(sectors: WantedSector[]): WantedSector[] {
-    const validOperations = new Set<string>(sectors.map(createKey));
+    const validOperations = new Map<string, WantedSector>(sectors.map(x => [createKey(x), x]));
 
     // Determine sectors we will need to start loading before we update list of operations
     const changedSectors = sectors.filter(x => !this._pendingOperations.has(createKey(x)));
 
     // Update operations
-    this._pendingOperations = new Set<string>(validOperations);
-    this._operationCountInBatch = this._pendingOperations.size;
+    this._pendingOperations = validOperations;
+    this._operationCountInBatch = this.countPendingOperations();
 
     return changedSectors;
   }
