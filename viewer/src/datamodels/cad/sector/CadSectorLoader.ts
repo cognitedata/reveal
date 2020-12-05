@@ -21,6 +21,7 @@ import { DetermineSectorsInput } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorSimple, consumeSectorDetailed } from './sectorUtilities';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
+import { MostFrequentlyUsedCache } from '../../../utilities/cache/MostFrequentlyUsedCache';
 
 class OperationCanceledError extends Error {
   constructor() {
@@ -197,7 +198,7 @@ export class CadSectorLoader {
   }
 
   private async consumeSector(sector: WantedSector): Promise<void> {
-    const operationId = createKey(sector);
+    const operationId = createSectorKey(sector);
 
     // Create a cancellation source that will cancel operations when they
     // are no longer in the "pending operations" set.
@@ -268,10 +269,10 @@ export class CadSectorLoader {
   }
 
   private updateOperations(sectors: WantedSector[]): WantedSector[] {
-    const validOperations = new Map<string, WantedSector>(sectors.map(x => [createKey(x), x]));
+    const validOperations = new Map<string, WantedSector>(sectors.map(x => [createSectorKey(x), x]));
 
     // Determine sectors we will need to start loading before we update list of operations
-    const changedSectors = sectors.filter(x => !this._pendingOperations.has(createKey(x)));
+    const changedSectors = sectors.filter(x => !this._pendingOperations.has(createSectorKey(x)));
 
     // Update operations
     this._pendingOperations = validOperations;
@@ -330,6 +331,7 @@ class CadDetailedSectorLoader {
   private readonly _fileProvider: BinaryFileProvider;
   private readonly _parser: CadSectorParser;
   private readonly _materialManager: MaterialManager;
+  private readonly _ctmCache = new MostFrequentlyUsedCache<string, Promise<ParseCtmResult>>(5);
 
   constructor(fileProvider: BinaryFileProvider, parser: CadSectorParser, materialManager: MaterialManager) {
     this._fileProvider = fileProvider;
@@ -348,11 +350,8 @@ class CadDetailedSectorLoader {
     const ctmFiles$ = from(file.peripheralFiles).pipe(filter(f => f.toLowerCase().endsWith('.ctm')));
     const ctms$ = ctmFiles$.pipe(
       takeWhile(() => !cancellationSource.isCanceled()),
-      map(ctmFile => downloadWithRetry(this._fileProvider, sector.blobUrl, ctmFile)),
+      map(ctmFile => this.retrieveCTM(sector.blobUrl, ctmFile)),
       // Note! concatMap() is used to maintain ordering of files to make zip work below
-      concatMap(p => p),
-      takeWhile(() => !cancellationSource.isCanceled()),
-      map(buffer => this._parser.parseCTM(new Uint8Array(buffer))),
       concatMap(p => p)
     );
     const ctmMap$ = zip(ctmFiles$, ctms$).pipe(
@@ -380,6 +379,25 @@ class CadDetailedSectorLoader {
     cancellationSource.throwIfCanceled();
     const group = consumeSectorDetailed(geometry, sector.metadata, materials);
     return group;
+  }
+
+  private retrieveCTM(baseUrl: string, filename: string): Promise<ParseCtmResult> {
+    const key = createCtmKey(baseUrl, filename);
+    const cachedCtm = this._ctmCache.get(key);
+    if (cachedCtm !== undefined) {
+      return cachedCtm;
+    }
+    // Not cached, retrieve
+    const parser = this._parser;
+    const fileProvider = this._fileProvider;
+    async function retrieve(): Promise<ParseCtmResult> {
+      const buffer = await downloadWithRetry(fileProvider, baseUrl, filename);
+      const parsed = await parser.parseCTM(new Uint8Array(buffer));
+      return parsed;
+    }
+    const promise = retrieve();
+    this._ctmCache.set(key, promise);
+    return promise;
   }
 
   private async finalizeDetailed(
@@ -580,6 +598,10 @@ async function yieldProcessing(): Promise<void> {
   await new Promise<void>(resolve => setImmediate(resolve));
 }
 
-function createKey(sector: WantedSector): string {
+function createSectorKey(sector: WantedSector): string {
   return `${sector.blobUrl}/${sector.metadata.id}:${sector.levelOfDetail}`;
+}
+
+function createCtmKey(baseUrl: string, filename: string) {
+  return `${baseUrl}/${filename}`;
 }
