@@ -217,15 +217,19 @@ export class CadSectorLoader {
     try {
       switch (sector.levelOfDetail) {
         case LevelOfDetail.Simple: {
+          await this.cameraAtRestBarrier();
           const group = await this._simpleSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
+          await this.cameraAtRestBarrier();
           await this.updateScene(sector, LevelOfDetail.Simple, group);
           break;
         }
 
         case LevelOfDetail.Detailed: {
+          await this.cameraAtRestBarrier();
           const group = await this._detailedSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
+          await this.cameraAtRestBarrier();
           await this.updateScene(sector, LevelOfDetail.Detailed, group);
           break;
         }
@@ -350,7 +354,7 @@ class CadDetailedSectorLoader {
     const ctmFiles$ = from(file.peripheralFiles).pipe(filter(f => f.toLowerCase().endsWith('.ctm')));
     const ctms$ = ctmFiles$.pipe(
       takeWhile(() => !cancellationSource.isCanceled()),
-      map(ctmFile => this.retrieveCTM(sector.blobUrl, ctmFile)),
+      map(ctmFile => this.retrieveCTM(sector.blobUrl, ctmFile, cancellationSource)),
       // Note! concatMap() is used to maintain ordering of files to make zip work below
       concatMap(p => p)
     );
@@ -381,17 +385,24 @@ class CadDetailedSectorLoader {
     return group;
   }
 
-  private retrieveCTM(baseUrl: string, filename: string): Promise<ParseCtmResult> {
+  private retrieveCTM(
+    baseUrl: string,
+    filename: string,
+    cancellationSource: CancellationSource
+  ): Promise<ParseCtmResult> {
     const key = createCtmKey(baseUrl, filename);
     const cachedCtm = this._ctmCache.get(key);
     if (cachedCtm !== undefined) {
       return cachedCtm;
     }
+
     // Not cached, retrieve
     const parser = this._parser;
     const fileProvider = this._fileProvider;
     async function retrieve(): Promise<ParseCtmResult> {
+      cancellationSource.throwIfCanceled();
       const buffer = await downloadWithRetry(fileProvider, baseUrl, filename);
+      cancellationSource.throwIfCanceled();
       const parsed = await parser.parseCTM(new Uint8Array(buffer));
       return parsed;
     }
