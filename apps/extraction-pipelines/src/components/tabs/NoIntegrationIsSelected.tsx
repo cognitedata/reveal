@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React from 'react';
 import { Graphic, Detail, A, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
@@ -19,13 +19,6 @@ const StyledNoIntegrationIsSelected = styled.div`
 `;
 
 const NoIntegrationIsSelected = () => {
-  const setFocusToSearchIntegrationsInput = (event: MouseEvent) => {
-    const refInput = document.getElementById('search-integrations');
-    if (refInput) {
-      refInput.focus();
-    }
-    event.preventDefault();
-  };
   return (
     <StyledNoIntegrationIsSelected>
       <Graphic type="RuleMonitoring" style={{ width: '100%' }} />
@@ -36,16 +29,7 @@ const NoIntegrationIsSelected = () => {
       </Detail>
       <Detail>
         You can also search for an integration by entering name, destination
-        data set or contact person{' '}
-        <A
-          href=""
-          onClick={(e) => {
-            setFocusToSearchIntegrationsInput(e);
-          }}
-        >
-          here
-        </A>
-        .
+        data set or contact person <A href="#search-integrations">here</A>.
       </Detail>
     </StyledNoIntegrationIsSelected>
   );
