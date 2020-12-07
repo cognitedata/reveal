@@ -19,12 +19,10 @@ const StyledNoIntegrationIsSelected = styled.div`
 `;
 
 const NoIntegrationIsSelected = () => {
-  const setFocusToSearchIntegrations = (event: MouseEvent) => {
-    const refSearchIntegrationsInput = document.getElementById(
-      'search-integrations'
-    );
-    if (refSearchIntegrationsInput) {
-      refSearchIntegrationsInput.focus();
+  const setFocusToSearchIntegrationsInput = (event: MouseEvent) => {
+    const refInput = document.getElementById('search-integrations');
+    if (refInput) {
+      refInput.focus();
     }
     event.preventDefault();
   };
@@ -42,7 +40,7 @@ const NoIntegrationIsSelected = () => {
         <A
           href=""
           onClick={(e) => {
-            setFocusToSearchIntegrations(e);
+            setFocusToSearchIntegrationsInput(e);
           }}
         >
           here
