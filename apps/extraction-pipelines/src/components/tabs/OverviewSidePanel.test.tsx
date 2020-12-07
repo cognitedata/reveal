@@ -19,7 +19,7 @@ describe('OverviewSidePanel', () => {
     expect(firstParagraph).toBeInTheDocument();
 
     const secondParagraph = screen.getByText(
-      'You can also search for an integration by entering name, destination data set or contact person here.'
+      /You can also search for an integration by entering name, destination data set or contact person/i
     );
     expect(secondParagraph).toBeInTheDocument();
   });
