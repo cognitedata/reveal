@@ -49,7 +49,7 @@
     "react-table": "^7.6.2",
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
-    "systemjs-webpack-interop": "^2.3.0"
+    "systemjs-webpack-interop": "^2.3.1"
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
