@@ -28,8 +28,9 @@ const NoIntegrationIsSelected = () => {
         information to persons connected to the integration.
       </Detail>
       <Detail>
-        You can also search for an integration by entering name, destination
-        data set or contact person <A href="#search-integrations">here</A>.
+        You can also{' '}
+        <A href="#search-integrations">search for an integration</A> by entering
+        name, destination data set or contact person.
       </Detail>
     </StyledNoIntegrationIsSelected>
   );
