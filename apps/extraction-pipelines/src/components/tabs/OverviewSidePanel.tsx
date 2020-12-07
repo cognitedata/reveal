@@ -3,6 +3,7 @@ import { Colors, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
 import Monitoring from './Monitoring';
+import NoIntegrationIsSelected from './NoIntegrationIsSelected';
 import ContactInformation from '../ContactInformation/ContactInformation';
 import { StyledTabs, StyledTabPane } from './StyledTabs';
 
@@ -38,7 +39,7 @@ type Props = OwnProps;
 const OverviewSidePanel: FunctionComponent<Props> = () => {
   const { integration } = useSelectedIntegration();
   if (!integration) {
-    return <></>;
+    return <NoIntegrationIsSelected />;
   }
   return (
     <StyledOverviewSidePanel>

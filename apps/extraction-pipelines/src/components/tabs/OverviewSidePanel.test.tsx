@@ -9,6 +9,14 @@ describe('OverviewSidePanel', () => {
     renderWithSelectedIntegrationContext(<OverviewSidePanel />, {});
     const heading = screen.queryByRole('heading');
     expect(heading).not.toBeInTheDocument();
+
+    const strongMessage = screen.getByText('Please select an integration');
+    expect(strongMessage).toBeInTheDocument();
+
+    const firstParagraph = screen.getByText(
+      'In the sidepanel you will see basic monitoring and and contact information to persons connected to the integration.'
+    );
+    expect(firstParagraph).toBeInTheDocument();
   });
 
   test('Render heading when integration is selected', () => {

@@ -34,6 +34,7 @@ function IntegrationTableSearch<D extends object>({
           }}
           placeholder={`${count} records...`}
           data-testid="search-integrations"
+          id="search-integrations"
         />
       </Tooltip>
     </span>
