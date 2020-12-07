@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { from, Observable, Subject, zip } from 'rxjs';
-import { concatMap, debounceTime, filter, map, reduce, share, takeWhile } from 'rxjs/operators';
+import { asapScheduler, asyncScheduler, from, Observable, Subject, zip } from 'rxjs';
+import { concatMap, debounceTime, filter, map, observeOn, reduce, share, subscribeOn, takeWhile } from 'rxjs/operators';
 
 import { ParseCtmResult, ParseSectorResult, SectorQuads } from '@cognite/reveal-parser-worker';
 
@@ -53,7 +53,7 @@ export class CadSectorLoader {
   private readonly _detailedSectorLoader: CadDetailedSectorLoader;
 
   private readonly _consumedSubject = new Subject<ConsumedSector>();
-  private readonly _consumedObservable = this._consumedSubject.pipe(share());
+  private readonly _consumedObservable = this._consumedSubject.pipe(observeOn(asyncScheduler), share());
   private readonly _loadingStateUpdateTriggerSubject = new Subject<void>();
   private readonly _loadingStateObservable: Observable<LoadingState>;
   // TODO 2020-12-05 larsmoa: _parsedDataSubject is not triggered for incoming data!
@@ -62,7 +62,7 @@ export class CadSectorLoader {
     lod: string;
     data: SectorGeometry | SectorQuads;
   }>();
-  private readonly _parsedDataObserable = this._parsedDataSubject.pipe(share());
+  private readonly _parsedDataObserable = this._parsedDataSubject.pipe(observeOn(asyncScheduler), share());
 
   private _budget: CadModelBudget = defaultCadModelSectorBudget;
   private _camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
@@ -102,7 +102,8 @@ export class CadSectorLoader {
     );
 
     this._loadingStateObservable = this._loadingStateUpdateTriggerSubject.pipe(
-      debounceTime(10),
+      debounceTime(100),
+      subscribeOn(asyncScheduler),
       map(() => {
         const pendingCount = this.countPendingOperations();
         const state: LoadingState = {
@@ -167,6 +168,7 @@ export class CadSectorLoader {
       return;
     }
 
+    console.log('schedule loading');
     const timeSinceUpdate = Date.now() - this._lastLoadTriggerTimestamp;
     const timeToNextUpdate = Math.max(0, CadSectorLoader.UpdateAuditTime - timeSinceUpdate);
     const updateCb = this.update.bind(this);
@@ -221,7 +223,7 @@ export class CadSectorLoader {
           const group = await this._simpleSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
           await this.cameraAtRestBarrier();
-          await this.updateScene(sector, LevelOfDetail.Simple, group);
+          this.updateScene(sector, LevelOfDetail.Simple, group);
           break;
         }
 
@@ -230,13 +232,13 @@ export class CadSectorLoader {
           const group = await this._detailedSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
           await this.cameraAtRestBarrier();
-          await this.updateScene(sector, LevelOfDetail.Detailed, group);
+          this.updateScene(sector, LevelOfDetail.Detailed, group);
           break;
         }
 
         case LevelOfDetail.Discarded:
           cancellationSource.throwIfCanceled();
-          await this.updateScene(sector, LevelOfDetail.Discarded, undefined);
+          this.updateScene(sector, LevelOfDetail.Discarded, undefined);
           break;
 
         default:
@@ -295,11 +297,7 @@ export class CadSectorLoader {
     this.reportLoadingState();
   }
 
-  private async updateScene(
-    sector: WantedSector,
-    lod: LevelOfDetail,
-    geometry: THREE.Group | undefined
-  ): Promise<void> {
+  private updateScene(sector: WantedSector, lod: LevelOfDetail, geometry: THREE.Group | undefined): void {
     const consumedSector: ConsumedSector = {
       blobUrl: sector.blobUrl,
       metadata: sector.metadata,
@@ -353,6 +351,7 @@ class CadDetailedSectorLoader {
     // Prefetch CTM
     const ctmFiles$ = from(file.peripheralFiles).pipe(filter(f => f.toLowerCase().endsWith('.ctm')));
     const ctms$ = ctmFiles$.pipe(
+      subscribeOn(asapScheduler),
       takeWhile(() => !cancellationSource.isCanceled()),
       map(ctmFile => this.retrieveCTM(sector.blobUrl, ctmFile, cancellationSource)),
       // Note! concatMap() is used to maintain ordering of files to make zip work below
@@ -367,7 +366,6 @@ class CadDetailedSectorLoader {
     );
     cancellationSource.throwIfCanceled();
     const ctmMap = await ctmMap$.toPromise();
-    // TODO 2020-11-29 larsmoa: Implement caching of CTM
 
     // I3D
     cancellationSource.throwIfCanceled();
