@@ -9,12 +9,17 @@ const createBaseConfig = (env) => {
     mode: development ? "development" : "production",
     target: "webworker",
     entry: {
-      "reveal.parser.worker": "./reveal.parser.worker.ts",
+      "reveal.parser.worker": "./index.ts",
     },
     output: {
-      filename: "[name].js",
-      sourceMapFilename: "[name].map",
-      libraryTarget: "umd",
+      filename: '[name].js',
+      path: path.resolve(__dirname, 'dist'),
+      sourceMapFilename: '[name].map',
+      libraryTarget: 'umd'
+    },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
+      symlinks: false
     },
     module: {
       rules: [
