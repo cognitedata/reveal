@@ -1,5 +1,5 @@
 const path = require("path");
-const { publicPath, workerCDNPath, cdnDistFolderPath, getEnvArg } = require("./buildUtils");
+const { publicPath, getWorkerCDNPath, cdnDistFolderPath, getEnvArg } = require("./buildUtils");
 const logger = require("webpack-log")("parser-worker");
 
 const createBaseConfig = (env) => {
@@ -13,7 +13,6 @@ const createBaseConfig = (env) => {
     },
     output: {
       filename: '[name].js',
-      path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
       libraryTarget: 'umd'
     },
@@ -47,6 +46,7 @@ const createLocalBuildConfig = (env) => {
 
 const createCdnConfig = (env) => {
   const cdnConfig = createBaseConfig(env);
+  const workerCDNPath = getWorkerCDNPath();
 
   cdnConfig.output.path = path.join(__dirname, cdnDistFolderPath);
   cdnConfig.output.publicPath = workerCDNPath;
