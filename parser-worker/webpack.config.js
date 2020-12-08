@@ -13,7 +13,6 @@ const createBaseConfig = (env) => {
     },
     output: {
       filename: '[name].js',
-      path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
       libraryTarget: 'umd'
     },
