@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import useSelector from 'hooks/useSelector';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts';
+import { Chart } from 'reducers/charts';
 import client from 'services/CogniteSDK';
 import {
   DatapointAggregate,
@@ -80,98 +80,78 @@ const ChartComponent = ({ chart }: ChartProps) => {
       .map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean);
 
-  const dataFromWorkflows =
-    enabledWorkflows
-      ?.filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
-      .map((workflow) => ({
-        id: workflow?.id,
-        name: workflow?.name,
-        data: workflow?.latestRun?.results,
-      }))
-      .filter(({ data }) => data) || [];
-
-  const options = {
-    ...defaultOptions,
-    yAxis: [
-      ...(chart?.timeSeriesCollection || []),
-      ...(chart?.workflowCollection || []),
-    ]
-      .filter(({ enabled }) => enabled)
-      .map(({ color }: ChartTimeSeries | ChartWorkflow) => ({
-        title: {
-          text: 'Unit',
-          style: {
-            color,
-          },
-        },
-        lineColor: color,
-        lineWidth: 1,
-        tickColor: color,
-        tickWidth: 1,
-        labels: {
-          style: {
-            color,
-          },
-        },
-        opposite: true,
-      })),
-    series: [
+  const seriesData =
+    [
       ...timeSeriesDataPoints
         .filter((ts) => !ts.isString)
         .map((ts) => ({
-          type: 'line',
+          id: ts.externalId,
           name: ts.externalId,
           color: chart?.timeSeriesCollection?.find(
             ({ id }) => id === ts.externalId
           )?.color,
-          data: (ts.datapoints as (Datapoints | DatapointAggregate)[]).map(
-            (datapoint) => ({
-              ...('timestamp' in datapoint
-                ? {
-                    x: datapoint.timestamp,
-                  }
-                : {}),
-              ...('value' in datapoint
-                ? {
-                    y: (datapoint as DoubleDatapoint).value,
-                  }
-                : {}),
-              ...('average' in datapoint
-                ? {
-                    y: datapoint.average,
-                  }
-                : {}),
-            })
-          ),
+          unit: ts.unit,
+          datapoints: ts.datapoints,
         })),
-      ...dataFromWorkflows.map(({ data = {}, name, id }) => {
-        return {
-          type: 'line',
-          name,
+      ...(enabledWorkflows || [])
+        .filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
+        .map((workflow) => ({
+          id: workflow?.id,
+          name: workflow?.name,
           color: chart?.workflowCollection?.find(
-            (workflow) => id === workflow.id
+            (chartWorkflow) => workflow?.id === chartWorkflow.id
           )?.color,
-          data: data.datapoints.map((datapoint: any) => ({
-            ...('timestamp' in datapoint
-              ? {
-                  x: datapoint.timestamp,
-                }
-              : {}),
-            ...('value' in datapoint
-              ? {
-                  y: (datapoint as DoubleDatapoint).value,
-                }
-              : {}),
-            ...('average' in datapoint
-              ? {
-                  y: datapoint.average,
-                }
-              : {}),
-          })),
-        };
-      }),
-    ].map((series, seriesIndex) => ({
-      ...series,
+          unit: workflow?.latestRun?.results?.unit,
+          datapoints: workflow?.latestRun?.results?.datapoints as (
+            | Datapoints
+            | DatapointAggregate
+          )[],
+        })),
+    ].filter(({ datapoints }) => datapoints?.length) || [];
+
+  const options = {
+    ...defaultOptions,
+    yAxis: seriesData.map(({ color, unit }) => ({
+      title: {
+        text: unit || 'Unknown',
+        style: {
+          color,
+        },
+      },
+      lineColor: color,
+      lineWidth: 1,
+      tickColor: color,
+      tickWidth: 1,
+      labels: {
+        style: {
+          color,
+        },
+      },
+      opposite: true,
+    })),
+    series: seriesData.map(({ name, color, datapoints }, seriesIndex) => ({
+      type: 'line',
+      name,
+      color,
+      data: (datapoints as (Datapoints | DatapointAggregate)[]).map(
+        (datapoint) => ({
+          ...('timestamp' in datapoint
+            ? {
+                x: datapoint.timestamp,
+              }
+            : {}),
+          ...('value' in datapoint
+            ? {
+                y: (datapoint as DoubleDatapoint).value,
+              }
+            : {}),
+          ...('average' in datapoint
+            ? {
+                y: datapoint.average,
+              }
+            : {}),
+        })
+      ),
       yAxis: seriesIndex,
     })),
   };
