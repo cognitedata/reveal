@@ -1,3 +1,4 @@
+const semver = require('semver')
 const workerPackageJSON = require("./package.json");
 const cdnDistFolderPath = "/dist/cdn/";
 
@@ -23,12 +24,9 @@ function getEnvArg(env, name, defaultValue) {
   return typeof env[name] === "string" ? env[name].trim() : env[name];
 }
 
-const workerCDNPath =
-  "https://cdn.jsdelivr.net/npm/" +
-  workerPackageJSON.name +
-  "@" +
-  workerPackageJSON.version +
-  `${cdnDistFolderPath}`;
+function getWorkerCDNPath({ name, version } = workerPackageJSON) {
+  return `https://cdn.jsdelivr.net/npm/${name}@${version}${cdnDistFolderPath}`;
+}
 
 // overriding of that one is useful only when you're attaching your local reveal build
 // to some project that uses reveal. For local usage you'll need to:
@@ -43,4 +41,4 @@ if (publicPath && !publicPath.endsWith("/")) {
   publicPath += "/";
 }
 
-module.exports = { publicPath, workerCDNPath, cdnDistFolderPath, getEnvArg };
+module.exports = { publicPath, getWorkerCDNPath, cdnDistFolderPath, getEnvArg };
