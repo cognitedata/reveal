@@ -1,4 +1,3 @@
-const semver = require('semver')
 const workerPackageJSON = require("./package.json");
 const cdnDistFolderPath = "/dist/cdn/";
 
