@@ -6,22 +6,23 @@ import * as THREE from 'three';
 import { asapScheduler, asyncScheduler, from, Observable, Subject, zip } from 'rxjs';
 import { concatMap, debounceTime, filter, map, observeOn, reduce, share, subscribeOn, takeWhile } from 'rxjs/operators';
 
-import { ParseCtmResult, ParseSectorResult, SectorQuads } from '@cognite/reveal-parser-worker';
+import { RevealParserWorker } from '@cognite/reveal-parser-worker';
 
 import { CadNode } from '..';
 import { CadModelBudget } from '../../..';
 import { SectorCuller } from '../../../internal';
-import { assertNever, createOffsetsArray, LoadingState } from '../../../utilities';
+import { assertNever, LoadingState } from '../../../utilities';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { defaultCadModelSectorBudget } from '../CadModelSectorBudget';
 import { MaterialManager } from '../MaterialManager';
-import { InstancedMesh, InstancedMeshFile, TriangleMesh } from '../rendering/types';
+import { ParseCtmResult, ParseSectorResult, SectorGeometry, SectorQuads } from '../rendering/types';
 import { CadSectorParser } from './CadSectorParser';
 import { DetermineSectorsInput } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorSimple, consumeSectorDetailed } from './sectorUtilities';
-import { WantedSector, SectorGeometry, ConsumedSector } from './types';
+import { WantedSector, ConsumedSector } from './types';
 import { MostFrequentlyUsedCache } from '../../../utilities/cache/MostFrequentlyUsedCache';
+import { WorkerPool } from '../../../utilities/workers/WorkerPool';
 
 class OperationCanceledError extends Error {
   constructor() {
@@ -102,8 +103,8 @@ export class CadSectorLoader {
     );
 
     this._loadingStateObservable = this._loadingStateUpdateTriggerSubject.pipe(
-      debounceTime(100),
       subscribeOn(asyncScheduler),
+      debounceTime(100),
       map(() => {
         const pendingCount = this.countPendingOperations();
         const state: LoadingState = {
@@ -168,7 +169,6 @@ export class CadSectorLoader {
       return;
     }
 
-    console.log('schedule loading');
     const timeSinceUpdate = Date.now() - this._lastLoadTriggerTimestamp;
     const timeToNextUpdate = Math.max(0, CadSectorLoader.UpdateAuditTime - timeSinceUpdate);
     const updateCb = this.update.bind(this);
@@ -217,21 +217,18 @@ export class CadSectorLoader {
 
     // Schedule an operation to perform the update (i.e. load or discard)
     try {
+      cancellationSource.throwIfCanceled();
       switch (sector.levelOfDetail) {
         case LevelOfDetail.Simple: {
-          await this.cameraAtRestBarrier();
           const group = await this._simpleSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
-          await this.cameraAtRestBarrier();
           this.updateScene(sector, LevelOfDetail.Simple, group);
           break;
         }
 
         case LevelOfDetail.Detailed: {
-          await this.cameraAtRestBarrier();
           const group = await this._detailedSectorLoader.load(sector, cancellationSource);
           cancellationSource.throwIfCanceled();
-          await this.cameraAtRestBarrier();
           this.updateScene(sector, LevelOfDetail.Detailed, group);
           break;
         }
@@ -330,6 +327,7 @@ export class CadSectorLoader {
 }
 
 class CadDetailedSectorLoader {
+  private readonly _workerPool: WorkerPool;
   private readonly _fileProvider: BinaryFileProvider;
   private readonly _parser: CadSectorParser;
   private readonly _materialManager: MaterialManager;
@@ -339,6 +337,8 @@ class CadDetailedSectorLoader {
     this._fileProvider = fileProvider;
     this._parser = parser;
     this._materialManager = materialManager;
+
+    this._workerPool = WorkerPool.defaultPool;
   }
 
   async load(sector: WantedSector, cancellationSource: CancellationSource): Promise<THREE.Group> {
@@ -413,144 +413,21 @@ class CadDetailedSectorLoader {
     i3dFile: ParseSectorResult,
     ctmFiles: Map<string, ParseCtmResult>
   ): Promise<SectorGeometry> {
-    const { instanceMeshes, triangleMeshes } = i3dFile;
-
-    const finalTriangleMeshes = await (async () => {
-      const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
-
-      const meshesGroupedByFile = this.groupMeshesByNumber(fileIds);
-
-      const finalMeshes = [];
-      // Merge meshes by file
-      // TODO do this in Rust instead
-      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-        const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
-        const offsets = createOffsetsArray(fileTriangleCounts);
-        // Load CTM (geometry)
-        const fileName = `mesh_${fileId}.ctm`;
-        const { indices, vertices, normals } = ctmFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
-
-        const sharedColors = new Uint8Array(3 * indices.length);
-        const sharedTreeIndices = new Float32Array(indices.length);
-
-        for (let i = 0; i < meshIndices.length; i++) {
-          const meshIdx = meshIndices[i];
-          const treeIndex = treeIndices[meshIdx];
-          const triOffset = offsets[i];
-          const triCount = fileTriangleCounts[i];
-          const [r, g, b] = [colors[4 * meshIdx + 0], colors[4 * meshIdx + 1], colors[4 * meshIdx + 2]];
-          for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
-            for (let j = 0; j < 3; j++) {
-              const vIdx = indices[3 * triIdx + j];
-
-              sharedTreeIndices[vIdx] = treeIndex;
-
-              sharedColors[3 * vIdx] = r;
-              sharedColors[3 * vIdx + 1] = g;
-              sharedColors[3 * vIdx + 2] = b;
-            }
-          }
-        }
-
-        const mesh: TriangleMesh = {
-          colors: sharedColors,
-          fileId,
-          treeIndices: sharedTreeIndices,
-          indices,
-          vertices,
-          normals
-        };
-        finalMeshes.push(mesh);
-        // Splits processing up in multiple chunks to avoid a long running task in the micro queue
-        await yieldProcessing();
-      }
-      return finalMeshes;
-    })();
-
-    const finalInstanceMeshes = await (async () => {
-      const { fileIds, colors, treeIndices, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
-      const meshesGroupedByFile = this.groupMeshesByNumber(fileIds);
-
-      const finalMeshes: InstancedMeshFile[] = [];
-      // Merge meshes by file
-      // TODO do this in Rust instead
-      // TODO de-duplicate this with the merged meshes above
-      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-        const fileName = `mesh_${fileId}.ctm`;
-        const ctm = ctmFiles.get(fileName)!;
-
-        const indices = ctm.indices;
-        const vertices = ctm.vertices;
-        const normals = ctm.normals;
-        const instancedMeshes: InstancedMesh[] = [];
-
-        const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
-        const fileTriangleCounts = new Float64Array(meshIndices.map(i => triangleCounts[i]));
-        const fileMeshesGroupedByOffsets = this.groupMeshesByNumber(fileTriangleOffsets);
-
-        for (const [triangleOffset, fileMeshIndices] of fileMeshesGroupedByOffsets) {
-          // NOTE the triangle counts should be the same for all meshes with the same offset,
-          // hence we can look up only fileMeshIndices[0] instead of enumerating here
-          const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
-          const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
-          const treeIndicesBuffer = new Float32Array(fileMeshIndices.length);
-          const colorBuffer = new Uint8Array(4 * fileMeshIndices.length);
-          for (let i = 0; i < fileMeshIndices.length; i++) {
-            const meshIdx = meshIndices[fileMeshIndices[i]];
-            const treeIndex = treeIndices[meshIdx];
-            const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
-            instanceMatrixBuffer.set(instanceMatrix, i * 16);
-            treeIndicesBuffer[i] = treeIndex;
-            const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
-            colorBuffer.set(color, i * 4);
-          }
-          instancedMeshes.push({
-            triangleCount,
-            triangleOffset,
-            instanceMatrices: instanceMatrixBuffer,
-            colors: colorBuffer,
-            treeIndices: treeIndicesBuffer
-          });
-        }
-
-        const mesh: InstancedMeshFile = {
-          fileId,
-          indices,
-          vertices,
-          normals,
-          instances: instancedMeshes
-        };
-        finalMeshes.push(mesh);
-        // Splits processing up in multiple chunks to avoid a long running task in the micro queue
-        await yieldProcessing();
-      }
-
-      return finalMeshes;
-    })();
-
-    const sector: SectorGeometry = {
-      treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
-      nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
-      primitives: i3dFile.primitives,
-      instanceMeshes: finalInstanceMeshes,
-      triangleMeshes: finalTriangleMeshes
-    };
-
-    return sector;
-  }
-
-  private groupMeshesByNumber(fileIds: Float64Array) {
-    const meshesGroupedByFile = new Map<number, number[]>();
-    for (let i = 0; i < fileIds.length; ++i) {
-      const fileId = fileIds[i];
-      const oldValue = meshesGroupedByFile.get(fileId);
-      if (oldValue) {
-        meshesGroupedByFile.set(fileId, [...oldValue, i]);
-      } else {
-        meshesGroupedByFile.set(fileId, [i]);
-      }
-    }
-    return meshesGroupedByFile;
+    const operationId = Array.from(ctmFiles.keys()).join(',');
+    performance.mark(`finalizeDetail-${operationId}-start`);
+    return this._workerPool
+      .postWorkToAvailable<SectorGeometry>(async (worker: RevealParserWorker) =>
+        worker.createDetailedGeometry(i3dFile, ctmFiles)
+      )
+      .then(x => {
+        performance.mark(`finalizeDetail-${operationId}-end`);
+        performance.measure(
+          `finalizeDetail-${operationId}`,
+          `finalizeDetail-${operationId}-start`,
+          `finalizeDetail-${operationId}-end`
+        );
+        return x;
+      });
   }
 }
 
