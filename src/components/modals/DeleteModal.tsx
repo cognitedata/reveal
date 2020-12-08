@@ -48,10 +48,13 @@ export const DeleteModal: React.FC<Props> = ({
         headerText="Delete this suite?"
         footer={footer}
         width={400}
+        underlineColor="#db0657"
       >
         <ModalContainer>
           <Title level={5}>Delete &quot;{dataItem.title}&quot;?</Title>
-          <Body level={1}>It will be deleted pemanently</Body>
+          <Body level={1}>
+            The suite and all its configured boards will be deleted permanently
+          </Body>
         </ModalContainer>
       </Modal>
     </>

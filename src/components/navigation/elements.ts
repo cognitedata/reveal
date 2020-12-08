@@ -49,10 +49,12 @@ export const SuiteTitle = styled.span`
   margin-left: 8px;
 `;
 
-export const NavigationItemContainer = styled.div`
+export const NavigationItemContainer = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   padding: 4px;
+  background-color: ${({ selected }) =>
+    selected ? 'var(--cogs-midblue-8)' : 'var(--cogs-white)'};
 
   &:hover {
     cursor: pointer;

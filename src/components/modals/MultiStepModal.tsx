@@ -160,6 +160,7 @@ export const MultiStepModal: React.FC<Props> = ({
           {step === 'boards' && (
             <AddBoard
               handleOnChange={handleBoardChange}
+              handleCloseModal={handleCloseModal}
               handleBoardTypeChange={handleBoardTypeChange}
               boardType={boardType}
               handleSubmit={handleSubmit}

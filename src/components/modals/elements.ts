@@ -15,20 +15,20 @@ export const ModalCloseButton = styled.div`
   right: 24px;
 `;
 
-export const ModalHeaderUnderline = styled.div`
+export const ModalHeaderUnderline = styled.div<{ underlineColor?: string }>`
   height: 4px;
   width: 38px;
-  background-color: var(--cogs-midblue-5);
+  background-color: ${({ underlineColor }) => underlineColor};
 `;
 
 export const ModalContent = styled.div`
-  padding: 24px 0 0;
+  padding: 36px 0 0;
 `;
 
 export const FooterContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 36px;
+  margin-top: 48px;
   & .cogs-btn {
     margin-left: 16px;
   }
@@ -72,28 +72,29 @@ export const BoardsContainer = styled.div`
   }
 `;
 
-export const AddedBoardItem = styled.div`
+export const AddedBoardItem = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   padding: 8px 14px;
-
+  background-color: ${({ selected }) =>
+    selected ? 'var(--cogs-midblue-8)' : 'transparent'};
+  border-radius: 4px;
   &:hover {
     cursor: pointer;
     background-color: var(--cogs-greyscale-grey2);
-    border-radius: 4px;
+    & > :last-child {
+      color: var(--cogs-greyscale-grey6);
+    }
   }
   & > :last-child {
     margin-left: auto;
+    color: transparent;
   }
 `;
 
 export const StyledCheckIcon = styled(Icon)`
   margin-right: 12px;
   color: var(--cogs-midblue-3);
-`;
-
-export const StyledDeleteIcon = styled(Icon)`
-  color: var(--cogs-greyscale-grey6);
 `;
 
 export const FormContainer = styled.div`

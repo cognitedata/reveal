@@ -7,11 +7,17 @@ interface Props {
   title: string;
   disabled?: boolean;
   color: string;
+  selected?: boolean;
 }
 
-const NavigationItem: React.FC<Props> = ({ color, title, disabled }: Props) => {
+const NavigationItem: React.FC<Props> = ({
+  color,
+  title,
+  disabled,
+  selected,
+}: Props) => {
   return (
-    <NavigationItemContainer>
+    <NavigationItemContainer selected={selected}>
       <SuiteAvatar color={color} title={title} disabled={disabled} />
       <Body level={2} as={SuiteTitle}>
         {title}

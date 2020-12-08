@@ -35,6 +35,7 @@ interface Props {
   onOk?: () => any;
   cancelText?: string;
   visible?: boolean;
+  underlineColor?: string;
 }
 
 const CloseIconDefault = <Icon type="LargeClose" />;
@@ -51,6 +52,7 @@ const CustomModal: React.FC<Props> = ({
   onOk = noop,
   cancelText = 'Cancel',
   visible,
+  underlineColor = '#A4B2FC',
 }: Props) => {
   const FooterDefault = (
     <>
@@ -83,7 +85,7 @@ const CustomModal: React.FC<Props> = ({
             </Button>
           </ModalCloseButton>
         )}
-        <ModalHeaderUnderline />
+        <ModalHeaderUnderline underlineColor={underlineColor} />
         <ModalContent>{children}</ModalContent>
         {hasFooter && (
           <>

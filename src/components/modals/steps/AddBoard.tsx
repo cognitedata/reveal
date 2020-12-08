@@ -1,5 +1,14 @@
 import React from 'react';
-import { A, Button, Body, Input, Select, Title, Micro } from '@cognite/cogs.js';
+import {
+  A,
+  Button,
+  Icon,
+  Body,
+  Input,
+  Select,
+  Title,
+  Micro,
+} from '@cognite/cogs.js';
 import {
   SelectLabel,
   SelectContainer,
@@ -7,7 +16,6 @@ import {
   BoardsContainer,
   AddedBoardItem,
   StyledCheckIcon,
-  StyledDeleteIcon,
 } from 'components/modals/elements';
 import { Flex, SpaceBetween } from 'styles/common';
 import { Board } from 'store/suites/types';
@@ -17,6 +25,7 @@ interface Props {
   handleBoardTypeChange: any;
   handleSubmit: () => void;
   addNewBoard: () => void;
+  handleCloseModal: any;
   boards: any;
   boardValues: any;
   boardType: any;
@@ -37,6 +46,7 @@ export const AddBoard: React.FC<Props> = ({
   handleBoardTypeChange,
   handleSubmit,
   addNewBoard,
+  handleCloseModal,
   boards,
   boardValues,
   boardType,
@@ -102,14 +112,14 @@ export const AddBoard: React.FC<Props> = ({
                   setNewBoard(board);
                 }}
                 key={board.key}
+                selected={boardValues?.key === board.key}
               >
                 <StyledCheckIcon type="Check" />
                 <Body level={4}>{board.title}</Body>
-                <StyledDeleteIcon type="Trash" />
+                <Icon type="Trash" />
               </AddedBoardItem>
             );
           })}
-
           <Micro>
             Giving the user information something like Make sure groups are
             set-up in Azure AD, see our{' '}
@@ -120,7 +130,9 @@ export const AddBoard: React.FC<Props> = ({
         </BoardsContainer>
       </Flex>
       <SpaceBetween>
-        <Button variant="ghost">Cancel</Button>
+        <Button variant="ghost" onClick={handleCloseModal}>
+          Cancel
+        </Button>
         <Button type="primary" onClick={handleSubmit}>
           {buttonNames[mode].save}
         </Button>
