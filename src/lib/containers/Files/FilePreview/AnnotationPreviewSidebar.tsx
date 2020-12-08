@@ -1,7 +1,14 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { Button, Title, Body, Overline, Collapse } from '@cognite/cogs.js';
 import {
-  useSelectedAnnotation,
+  Button,
+  Title,
+  Body,
+  Overline,
+  Collapse,
+  Pagination,
+} from '@cognite/cogs.js';
+import {
+  useSelectedAnnotations,
   ProposedCogniteAnnotation,
   useExtractFromCanvas,
 } from '@cognite/react-picture-annotation';
@@ -14,7 +21,12 @@ import {
 } from '@cognite/annotations';
 import styled from 'styled-components';
 import { useResourceSelector } from 'lib/context/ResourceSelectorContext';
-import { ResourceItemState, isModelRunning, ResourceType } from 'lib/types';
+import {
+  ResourceItemState,
+  isModelRunning,
+  ResourceType,
+  ResourceItem,
+} from 'lib/types';
 import { useCreate } from 'lib/hooks/sdk';
 import { useQueryCache, useMutation } from 'react-query';
 import { sleep } from 'lib/utils';
@@ -70,6 +82,7 @@ const FindSimilarButton = ({
 type Props = {
   fileId: number;
   contextualization: boolean;
+  onItemClicked?: (item: ResourceItem) => void;
   setPendingAnnotations: React.Dispatch<
     React.SetStateAction<ProposedCogniteAnnotation[]>
   >;
@@ -79,6 +92,7 @@ const AnnotationPreviewSidebar = ({
   fileId,
   setPendingAnnotations,
   contextualization,
+  onItemClicked,
 }: Props) => {
   const cancelFindObjects = useDeleteFindObjectsJob();
   const cancelFindSimilar = useDeleteFindSimilarJob();
@@ -89,8 +103,14 @@ const AnnotationPreviewSidebar = ({
 
   const queryCache = useQueryCache();
   const [editing, setEditing] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const { selectedAnnotation, setSelectedAnnotation } = useSelectedAnnotation();
+  const {
+    selectedAnnotations,
+    setSelectedAnnotations,
+  } = useSelectedAnnotations();
+
+  const selectedAnnotation = selectedAnnotations[currentIndex];
 
   const extractFromCanvas = useExtractFromCanvas();
 
@@ -105,6 +125,10 @@ const AnnotationPreviewSidebar = ({
   useEffect(() => {
     setEditing(false);
   }, [selectedAnnotationId]);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [selectedAnnotations.length]);
 
   let annotationPreview: string | undefined;
   if (selectedAnnotation && extractFromCanvas) {
@@ -204,7 +228,7 @@ const AnnotationPreviewSidebar = ({
         ),
         onOk: async () => {
           deleteAnnotations([annotation as CogniteAnnotation]);
-          setSelectedAnnotation(undefined);
+          setSelectedAnnotations([]);
         },
         onCancel: () => {},
       });
@@ -215,12 +239,14 @@ const AnnotationPreviewSidebar = ({
     openResourceSelector({
       selectionMode: 'single',
       onSelect: item => {
-        setSelectedAnnotation({
-          ...selectedAnnotation!,
-          resourceType: item.type,
-          resourceExternalId: item.externalId,
-          resourceId: item.id,
-        });
+        setSelectedAnnotations([
+          {
+            ...selectedAnnotation!,
+            resourceType: item.type,
+            resourceExternalId: item.externalId,
+            resourceId: item.id,
+          },
+        ]);
       },
       initialItemState: selectedAnnotation
         ? [
@@ -243,49 +269,56 @@ const AnnotationPreviewSidebar = ({
     openResourceSelector,
     selectedAnnotation,
     annotationPreview,
-    setSelectedAnnotation,
+    setSelectedAnnotations,
   ]);
 
   const Header = ({
     annotation,
   }: {
     annotation: CogniteAnnotation | ProposedCogniteAnnotation;
-  }) => (
-    <InfoGrid noBorders>
-      <InfoCell noBorders>
-        <Overline level={2}>LABEL</Overline>
-        <Title level={5}>{annotation.label}</Title>
-        <Overline level={2} style={{ marginTop: 8 }}>
-          DESCRIPTION
-        </Overline>
-        <Body level={2}>{annotation.description || 'N/A'}</Body>
-      </InfoCell>
-      {contextualization && (
-        <InfoCell noBorders>
-          <SpacedRow>
-            <Button
-              icon="Edit"
-              variant="outline"
-              onClick={() => {
-                setEditing(true);
-              }}
-            />
-            <Button
-              variant="outline"
-              type="danger"
-              icon="Delete"
-              onClick={() => onDeleteAnnotation(annotation)}
-            />
-            <FindSimilarButton
-              selectedAnnotation={selectedAnnotation}
-              fileId={fileId}
-            />
-          </SpacedRow>
-        </InfoCell>
-      )}
-      <Divider.Horizontal />
-    </InfoGrid>
-  );
+  }) => {
+    if (!isEditingMode) {
+      return (
+        <>
+          <InfoGrid noBorders>
+            <InfoCell noBorders>
+              <Overline level={2}>LABEL</Overline>
+              <Title level={5}>{annotation.label}</Title>
+              <Overline level={2} style={{ marginTop: 8 }}>
+                DESCRIPTION
+              </Overline>
+              <Body level={2}>{annotation.description || 'N/A'}</Body>
+            </InfoCell>
+            {contextualization && (
+              <InfoCell noBorders>
+                <SpacedRow>
+                  <Button
+                    icon="Edit"
+                    variant="outline"
+                    onClick={() => {
+                      setEditing(true);
+                    }}
+                  />
+                  <Button
+                    variant="outline"
+                    type="danger"
+                    icon="Delete"
+                    onClick={() => onDeleteAnnotation(annotation)}
+                  />
+                  <FindSimilarButton
+                    selectedAnnotation={selectedAnnotation}
+                    fileId={fileId}
+                  />
+                </SpacedRow>
+              </InfoCell>
+            )}
+            <Divider.Horizontal />
+          </InfoGrid>
+        </>
+      );
+    }
+    return <></>;
+  };
 
   const type = selectedAnnotation?.resourceType as ResourceType;
   const apiType = type ? convertResourceType(type) : 'assets';
@@ -304,6 +337,18 @@ const AnnotationPreviewSidebar = ({
   }
   return (
     <div style={{ width: 360, borderLeft: `2px solid ${lightGrey}` }}>
+      {selectedAnnotations.length > 1 && (
+        <Pagination
+          total={selectedAnnotations.length}
+          pageSize={1}
+          showPrevNextJumpers={false}
+          showQuickJumper={false}
+          defaultCurrent={currentIndex}
+          onChange={i => {
+            setCurrentIndex(i - 1);
+          }}
+        />
+      )}
       <ResourcePreviewSidebar
         item={
           item && {
@@ -311,7 +356,24 @@ const AnnotationPreviewSidebar = ({
             type,
           }
         }
-        header={!isEditingMode && <Header annotation={selectedAnnotation} />}
+        actions={
+          onItemClicked &&
+          item && [
+            <Button
+              icon="ArrowRight"
+              iconPlacement="right"
+              onClick={() =>
+                onItemClicked({
+                  id: item.id,
+                  type,
+                })
+              }
+            >
+              View {type}
+            </Button>,
+          ]
+        }
+        header={<Header annotation={selectedAnnotation} />}
         footer={
           <ContextualizationData
             selectedAnnotation={selectedAnnotation}
@@ -322,7 +384,9 @@ const AnnotationPreviewSidebar = ({
           isEditingMode ? (
             <CreateAnnotationForm
               annotation={selectedAnnotation}
-              updateAnnotation={setSelectedAnnotation}
+              updateAnnotation={annotation =>
+                setSelectedAnnotations([annotation])
+              }
               onLinkResource={onLinkResource}
               onDelete={() => {
                 onDeleteAnnotation(selectedAnnotation);
@@ -333,7 +397,7 @@ const AnnotationPreviewSidebar = ({
                 }
                 setEditing(false);
                 if (isPendingAnnotation) {
-                  setSelectedAnnotation(undefined);
+                  setSelectedAnnotations([]);
                 }
               }}
               previewImageSrc={annotationPreview}
@@ -348,7 +412,7 @@ const AnnotationPreviewSidebar = ({
             </CreateAnnotationForm>
           ) : undefined
         }
-        onClose={() => setSelectedAnnotation(undefined)}
+        onClose={() => setSelectedAnnotations([])}
       />
     </div>
   );

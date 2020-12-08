@@ -153,6 +153,11 @@ export const FilePreview = ({
                     fileId={fileId!}
                     creatable={editMode}
                     contextualization={writeAccess}
+                    onItemClicked={item =>
+                      history.push(
+                        createLink(`/explore/${item.type}/${item.id}`)
+                      )
+                    }
                   />
                 </div>
               </Tabs.Pane>,

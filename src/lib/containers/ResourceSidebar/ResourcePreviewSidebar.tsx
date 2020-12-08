@@ -17,6 +17,7 @@ type Props = {
   header?: React.ReactNode;
   footer?: React.ReactNode;
   content?: React.ReactNode;
+  actions?: React.ReactNode[];
   onClose?: () => void;
 } & Partial<SelectableItemProps>;
 
@@ -38,6 +39,7 @@ export const ResourcePreviewSidebar = ({
     </div>
   ),
   header,
+  actions,
   footer,
   content: propContent,
   onClose = () => {},
@@ -45,7 +47,7 @@ export const ResourcePreviewSidebar = ({
   onSelect = () => {},
   isSelected = false,
 }: Props) => {
-  const commonProps = { selectionMode, onSelect, isSelected };
+  const commonProps = { selectionMode, onSelect, isSelected, actions };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {

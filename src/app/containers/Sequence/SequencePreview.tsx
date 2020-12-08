@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
-import { useResourcePreview } from 'lib/context/ResourcePreviewContext';
 import {
   SequenceDetails,
   SequencePreview as SequenceTabPreview,
@@ -33,14 +32,9 @@ export const SequencePreview = ({
 }) => {
   const history = useHistory();
 
-  const { hidePreview } = useResourcePreview();
   useEffect(() => {
     trackUsage('Exploration.Preview.Sequence', { sequenceId });
   }, [sequenceId]);
-
-  useEffect(() => {
-    hidePreview();
-  }, [sequenceId, hidePreview]);
 
   const { data: sequence, isFetched, error } = useCdfItem<Sequence>(
     'sequences',
