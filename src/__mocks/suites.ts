@@ -4,7 +4,7 @@ export const getMockResponse = () => [
     columns: {
       title: 'Operations',
       color: '#FFE1D1',
-      dashboards: [
+      boards: [
         {
           key: 'row-3-grafana-1',
           type: 'grafana',
@@ -31,7 +31,7 @@ export const getMockResponse = () => [
         'dc-team-developers',
       ],
       color: '#F4DAF8',
-      dashboards: [
+      boards: [
         {
           key: 'grafana-1',
           type: 'grafana',
@@ -70,7 +70,7 @@ export const getMockResponse = () => [
     columns: {
       title: 'Asset Performance & Integrity',
       color: '#D3F7FB',
-      dashboards: [
+      boards: [
         {
           key: 'powerbi-1',
           type: 'powerbi',

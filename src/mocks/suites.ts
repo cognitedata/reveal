@@ -5,7 +5,7 @@ export const suites = {
       columns: {
         title: 'Production Optimization',
         color: '#F4DAF8',
-        dashboards: [
+        boards: [
           {
             key: 'grafana-1',
             type: 'grafana',
@@ -33,7 +33,7 @@ export const suites = {
       columns: {
         title: 'Asset Performance & Integrity',
         color: '#D3F7FB',
-        dashboards: [
+        boards: [
           {
             key: 'grafana-2',
             type: 'grafana',
@@ -48,7 +48,7 @@ export const suites = {
       columns: {
         title: 'Operations',
         color: '#FFE1D1',
-        dashboards: [
+        boards: [
           {
             key: 'grafana-3',
             type: 'grafana',

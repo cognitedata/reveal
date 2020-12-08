@@ -16,11 +16,11 @@ export enum SuitesTableActionTypes {
 
 export type SuitesTableRootAction = ActionType<typeof actions>;
 
-export type DashboardType = 'grafana' | 'powerbi' | 'plotly' | 'other';
+export type BoardType = 'grafana' | 'powerbi' | 'plotly' | 'other';
 
-export type Dashboard = {
+export type Board = {
   key: string;
-  type: DashboardType;
+  type: BoardType;
   title: string;
   url: string;
   visibleTo?: string[];
@@ -32,7 +32,7 @@ export type Suite = {
   title: string;
   description: string;
   visibleTo: string[];
-  dashboards: Dashboard[];
+  boards: Board[];
   color: string;
   lastUpdatedTime: Date;
 };

@@ -4,11 +4,7 @@ import { Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
-import {
-  AddDashboardModal,
-  DeleteModal,
-  MultiStepModal,
-} from 'components/modals';
+import { AddBoardModal, DeleteModal, MultiStepModal } from 'components/modals';
 import MeatballsMenu from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import {
@@ -16,8 +12,8 @@ import {
   getSuitesTableState,
 } from 'store/suites/selectors';
 import { useSelector } from 'react-redux';
-import { Dashboard, Suite } from 'store/suites/types';
-import { StyledTitle, NoDashboardsContainer } from './elements';
+import { Board, Suite } from 'store/suites/types';
+import { StyledTitle, NoBoardsContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +42,7 @@ const SuiteOverview: React.FC = () => {
     setActiveModal('');
   };
 
-  const { title, color, dashboards } = suite || {};
+  const { title, color, boards } = suite || {};
 
   const Header = () => {
     return (
@@ -73,23 +69,23 @@ const SuiteOverview: React.FC = () => {
     <>
       <Suitebar
         leftCustomHeader={<Header />}
-        actionButton={<AddDashboardModal buttonText="Add dashboard" />}
+        actionButton={<AddBoardModal buttonText="Add board" />}
       />
       <OverviewContainer>
         <TilesContainer>
-          {!dashboards?.length ? (
-            <NoDashboardsContainer>
+          {!boards?.length ? (
+            <NoBoardsContainer>
               <Graphic type="DataKits" />
               <Title level={5}>No dasboards added to suite yet</Title>
-            </NoDashboardsContainer>
+            </NoBoardsContainer>
           ) : (
             <>
-              <Title level={6}>All dashboards</Title>
-              {dashboards?.map((dashboard: Dashboard) => (
+              <Title level={6}>All boards</Title>
+              {boards?.map((board: Board) => (
                 <Tile
-                  key={dashboard.key}
-                  linkTo={dashboard.url}
-                  dataItem={dashboard}
+                  key={board.key}
+                  linkTo={board.url}
+                  dataItem={board}
                   color={color}
                   view="board"
                 />

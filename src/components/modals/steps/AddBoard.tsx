@@ -10,7 +10,7 @@ import {
   StyledDeleteIcon,
 } from 'components/modals/elements';
 import { Flex, SpaceBetween } from 'styles/common';
-import { Dashboard } from 'store/suites/types';
+import { Board } from 'store/suites/types';
 
 interface Props {
   handleOnChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -95,7 +95,7 @@ export const AddBoard: React.FC<Props> = ({
         </FormContainer>
         <BoardsContainer>
           <Title level={4}>Added boards</Title>
-          {boards?.map((board: Dashboard) => {
+          {boards?.map((board: Board) => {
             return (
               <AddedBoardItem
                 onClick={() => {

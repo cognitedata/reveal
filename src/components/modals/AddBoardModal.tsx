@@ -7,7 +7,7 @@ interface Props {
   buttonText: string;
 }
 
-export const AddDashboardModal: React.FC<Props> = ({ buttonText }: Props) => {
+export const AddBoardModal: React.FC<Props> = ({ buttonText }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {

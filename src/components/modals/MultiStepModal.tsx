@@ -44,7 +44,7 @@ export const MultiStepModal: React.FC<Props> = ({
   mode,
   handleCloseModal,
 }: Props) => {
-  const dashboard: any = dataItem?.dashboards[0] || {
+  const board: any = dataItem?.boards[0] || {
     key: key(),
     type: '',
     title: '',
@@ -58,16 +58,16 @@ export const MultiStepModal: React.FC<Props> = ({
     title: '',
     description: '',
     color: '#F4DAF8',
-    dashboards: [],
+    boards: [],
   };
 
   const client = useContext(CdfClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const [newSuite, setNewSuite] = useState(suite);
-  const [newBoard, setNewBoard] = useState(dashboard);
+  const [newBoard, setNewBoard] = useState(board);
   const [modalHeader, setModalHeader] = useState<string>('');
   const [step, setStep] = useState<Step>('suite');
-  const [boardType, setBoardType] = useState(dashboard.type);
+  const [boardType, setBoardType] = useState(board.type);
   const [modalWidth, setModalWidth] = useState<number>(536);
   const history = useHistory();
 
@@ -96,18 +96,18 @@ export const MultiStepModal: React.FC<Props> = ({
     if (mode === 'create') {
       setNewSuite((prevState: any) => ({
         ...prevState,
-        dashboards: newSuite.dashboards.concat(newBoard),
+        boards: newSuite.boards.concat(newBoard),
       }));
-      setNewBoard(dashboard);
+      setNewBoard(board);
     } else {
-      const boardIndex = newSuite.dashboards.findIndex(
+      const boardIndex = newSuite.boards.findIndex(
         (element) => element.key === newBoard.key
       );
-      const boardsCopy = [...newSuite.dashboards];
+      const boardsCopy = [...newSuite.boards];
       boardsCopy[boardIndex] = { ...boardsCopy[boardIndex], ...newBoard };
       setNewSuite((prevState: any) => ({
         ...prevState,
-        dashboards: boardsCopy,
+        boards: boardsCopy,
       }));
     }
   };
@@ -125,9 +125,7 @@ export const MultiStepModal: React.FC<Props> = ({
     }));
   };
 
-  const handleDashboardChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
     setNewBoard((prevState: any) => ({
       ...prevState,
@@ -161,12 +159,12 @@ export const MultiStepModal: React.FC<Props> = ({
           )}
           {step === 'boards' && (
             <AddBoard
-              handleOnChange={handleDashboardChange}
+              handleOnChange={handleBoardChange}
               handleBoardTypeChange={handleBoardTypeChange}
               boardType={boardType}
               handleSubmit={handleSubmit}
               addNewBoard={addNewBoard}
-              boards={newSuite?.dashboards}
+              boards={newSuite?.boards}
               boardValues={newBoard}
               setNewBoard={setNewBoard}
               buttonNames={stepModalSettings.boards.buttonNames}
