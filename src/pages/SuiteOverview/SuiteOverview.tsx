@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
+import { Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
-import { AddDashboardModal } from 'components/modals';
+import {
+  AddDashboardModal,
+  DeleteModal,
+  MultiStepModal,
+} from 'components/modals';
+import MeatballsMenu from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import {
   getDashboarsdBySuite,
@@ -17,6 +22,7 @@ import { StyledTitle, NoDashboardsContainer } from './elements';
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
+  const [activeModal, setActiveModal] = useState<string>('');
 
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
@@ -35,6 +41,11 @@ const SuiteOverview: React.FC = () => {
   if (!suite) {
     history.push('/');
   }
+
+  const closeModal = () => {
+    setActiveModal('');
+  };
+
   const { title, color, dashboards } = suite || {};
 
   const Header = () => {
@@ -44,7 +55,17 @@ const SuiteOverview: React.FC = () => {
         <Title as={StyledTitle} level={5}>
           {title}
         </Title>
-        <Button variant="ghost" icon="MoreOverflowEllipsisHorizontal" />
+        <MeatballsMenu openModal={setActiveModal} />
+        {activeModal === 'delete' && (
+          <DeleteModal handleCloseModal={closeModal} dataItem={suite} />
+        )}
+        {activeModal === 'edit' && (
+          <MultiStepModal
+            handleCloseModal={closeModal}
+            mode="edit"
+            dataItem={suite}
+          />
+        )}
       </>
     );
   };
@@ -65,14 +86,13 @@ const SuiteOverview: React.FC = () => {
             <>
               <Title level={6}>All dashboards</Title>
               {dashboards?.map((dashboard: Dashboard) => (
-                <a
+                <Tile
                   key={dashboard.key}
-                  href={dashboard.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Tile dataItem={dashboard} color={color} view="board" />
-                </a>
+                  linkTo={dashboard.url}
+                  dataItem={dashboard}
+                  color={color}
+                  view="board"
+                />
               ))}
             </>
           )}

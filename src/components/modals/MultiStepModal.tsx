@@ -4,136 +4,175 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
-import { Button } from '@cognite/cogs.js';
+import { Suite } from 'store/suites/types';
 import Modal from './Modal';
-import { CreateSuite, AddBoard, ManageAccess } from './steps';
+import { CreateSuite, AddBoard } from './steps';
 import { ModalContainer } from './elements';
 
+type Step = 'suite' | 'boards';
+type Mode = 'edit' | 'create';
+
 interface Props {
-  buttonText: string;
+  dataItem?: any;
+  mode: Mode;
+  handleCloseModal: any;
 }
 
-const key = `_${Math.random().toString(36).substr(2, 9)}`;
-const dashboard: any = { key: '', type: '', title: '', url: '', embedTag: '' };
+const stepModalSettings = {
+  suite: {
+    header: { create: 'Create a new suite', edit: 'Edit suite' },
+    buttonNames: {
+      create: { save: 'Create', goToBoards: 'Add boards' },
+      edit: { save: 'Save', goToBoards: 'Edit boards' },
+    },
+    width: 536,
+  },
+  boards: {
+    header: { create: 'Add board to suite', edit: 'Edit board' },
+    buttonNames: {
+      create: { save: 'Create', board: 'Add board' },
+      edit: { save: 'Save', board: 'Update board' },
+    },
+    width: 904,
+  },
+};
 
-const suite: any = {
-  key,
-  columns: {
+const key = () => `_${Math.random().toString(36).substr(2, 9)}`;
+
+export const MultiStepModal: React.FC<Props> = ({
+  dataItem,
+  mode,
+  handleCloseModal,
+}: Props) => {
+  const dashboard: any = dataItem?.dashboards[0] || {
+    key: key(),
+    type: '',
+    title: '',
+    url: '',
+    embedTag: '',
+    visibleTo: [],
+  };
+
+  const suite: Suite = dataItem || {
+    key: key(),
     title: '',
     description: '',
     color: '#F4DAF8',
     dashboards: [],
-  },
-};
-export const MultiStepModal: React.FC<Props> = ({ buttonText }: Props) => {
+  };
+
   const client = useContext(CdfClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const [newSuite, setNewSuite] = useState(suite);
-  const [modalHeader, setModalHeader] = useState<string>('Create a new suite');
-  const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState(0);
+  const [newBoard, setNewBoard] = useState(dashboard);
+  const [modalHeader, setModalHeader] = useState<string>('');
+  const [step, setStep] = useState<Step>('suite');
+  const [boardType, setBoardType] = useState(dashboard.type);
+  const [modalWidth, setModalWidth] = useState<number>(536);
   const history = useHistory();
 
   useEffect(() => {
-    const headers = [
-      'Create a new suite',
-      'Add board to suite',
-      'Manage access to suite',
-    ];
-    setModalHeader(headers[step]);
-  }, [step]);
+    const { header, width } = stepModalSettings[step];
+    setModalHeader(header[mode]);
+    setModalWidth(width);
+  }, [step, mode]);
+
+  useEffect(() => {
+    setNewBoard((prevState: any) => ({
+      ...prevState,
+      type: boardType?.value,
+    }));
+  }, [boardType]);
 
   const nextStep = () => {
-    setStep(step + 1);
+    setStep('boards');
   };
 
-  const prevStep = () => {
-    setStep(step - 1);
+  const handleClose = () => {
+    handleCloseModal();
   };
 
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
-
-  const handleCLoseModal = () => {
-    setIsOpen(false);
+  const addNewBoard = () => {
+    if (mode === 'create') {
+      setNewSuite((prevState: any) => ({
+        ...prevState,
+        dashboards: newSuite.dashboards.concat(newBoard),
+      }));
+      setNewBoard(dashboard);
+    } else {
+      const boardIndex = newSuite.dashboards.findIndex(
+        (element) => element.key === newBoard.key
+      );
+      const boardsCopy = [...newSuite.dashboards];
+      boardsCopy[boardIndex] = { ...boardsCopy[boardIndex], ...newBoard };
+      setNewSuite((prevState: any) => ({
+        ...prevState,
+        dashboards: boardsCopy,
+      }));
+    }
   };
 
   const handleSubmit = async () => {
-    await dispatch(insertSuite(client, [newSuite]));
+    await dispatch(insertSuite(client, newSuite));
     history.push(`/suites/${newSuite.key}`);
   };
 
   const handleSuiteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    suite.columns[event.target.name] = event.target.value;
-    setNewSuite(suite);
+    const { value, name } = event.target;
+    setNewSuite((prevState: any) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleDashboardChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    dashboard[event.target.name] = event.target.value;
-    setNewSuite((prevState: any) => ({
+    const { value, name } = event.target;
+    setNewBoard((prevState: any) => ({
       ...prevState,
-      columns: {
-        ...prevState.columns,
-        dashboards: suite.columns.dashboards.concat(dashboard),
-      },
+      [name]: value,
     }));
   };
 
+  const handleBoardTypeChange = (selectedOption: any) => {
+    setBoardType(selectedOption);
+  };
   return (
     <>
-      <Button
-        variant="outline"
-        type="secondary"
-        icon="Plus"
-        iconPlacement="left"
-        onClick={handleOpenModal}
-      >
-        {buttonText}
-      </Button>
       <Modal
-        visible={isOpen}
-        onCancel={handleCLoseModal}
+        visible
+        onCancel={handleClose}
         headerText={modalHeader}
-        width={536}
+        width={modalWidth}
         hasFooter={false}
       >
         <ModalContainer>
-          <>
-            {(() => {
-              switch (step) {
-                case 0:
-                  return (
-                    <CreateSuite
-                      handleOnChange={handleSuiteChange}
-                      handleCloseModal={handleCLoseModal}
-                      handleSubmit={handleSubmit}
-                      handleStepNext={nextStep}
-                    />
-                  );
-                case 1:
-                  return (
-                    <AddBoard
-                      handleOnChange={handleDashboardChange}
-                      handleSubmit={handleSubmit}
-                      handleStepNext={nextStep}
-                      handleStepBack={prevStep}
-                    />
-                  );
-                case 2:
-                  return (
-                    <ManageAccess
-                      handleSubmit={handleSubmit}
-                      handleStepBack={prevStep}
-                    />
-                  );
-                default:
-                  return console.log('Multistep modal');
-              }
-            })()}
-          </>
+          {step === 'suite' && (
+            <CreateSuite
+              handleOnChange={handleSuiteChange}
+              handleCloseModal={handleCloseModal}
+              handleSubmit={handleSubmit}
+              handleStepNext={nextStep}
+              suiteValues={newSuite}
+              buttonNames={stepModalSettings.suite.buttonNames}
+              mode={mode}
+            />
+          )}
+          {step === 'boards' && (
+            <AddBoard
+              handleOnChange={handleDashboardChange}
+              handleBoardTypeChange={handleBoardTypeChange}
+              boardType={boardType}
+              handleSubmit={handleSubmit}
+              addNewBoard={addNewBoard}
+              boards={newSuite?.dashboards}
+              boardValues={newBoard}
+              setNewBoard={setNewBoard}
+              buttonNames={stepModalSettings.boards.buttonNames}
+              mode={mode}
+            />
+          )}
         </ModalContainer>
       </Modal>
     </>

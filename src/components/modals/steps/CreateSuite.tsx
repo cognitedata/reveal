@@ -4,9 +4,12 @@ import { MultiStepModalFooter } from 'components/modals/elements';
 
 interface Props {
   handleOnChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleCloseModal: () => void;
+  handleCloseModal: any;
   handleSubmit: () => void;
   handleStepNext: () => void;
+  suiteValues: any;
+  buttonNames: any;
+  mode: any;
 }
 
 export const CreateSuite: React.FC<Props> = ({
@@ -14,6 +17,9 @@ export const CreateSuite: React.FC<Props> = ({
   handleCloseModal,
   handleSubmit,
   handleStepNext,
+  suiteValues,
+  buttonNames,
+  mode,
 }: Props) => {
   return (
     <>
@@ -21,6 +27,7 @@ export const CreateSuite: React.FC<Props> = ({
         autoComplete="off"
         title="Title"
         name="title"
+        value={suiteValues.title}
         variant="noBorder"
         placeholder="Name of suite"
         onChange={handleOnChange}
@@ -30,6 +37,7 @@ export const CreateSuite: React.FC<Props> = ({
         autoComplete="off"
         title="Description"
         name="description"
+        value={suiteValues.description}
         variant="noBorder"
         placeholder="Description that clearly explains the purpose of the suite"
         onChange={handleOnChange}
@@ -41,10 +49,10 @@ export const CreateSuite: React.FC<Props> = ({
         </Button>
         <div>
           <Button type="secondary" onClick={handleStepNext}>
-            Next
+            {buttonNames[mode].goToBoards}
           </Button>
           <Button type="primary" onClick={handleSubmit}>
-            Create
+            {buttonNames[mode].save}
           </Button>
         </div>
       </MultiStepModalFooter>

@@ -30,6 +30,7 @@ export type Dashboard = {
 export type Suite = {
   key: string;
   title: string;
+  description: string;
   visibleTo: string[];
   dashboards: Dashboard[];
   color: string;

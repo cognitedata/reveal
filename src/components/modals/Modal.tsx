@@ -31,7 +31,7 @@ interface Props {
   footer?: React.ReactNode;
   hasFooter?: boolean;
   okText?: string;
-  onCancel?: () => any;
+  onCancel?: () => void;
   onOk?: () => any;
   cancelText?: string;
   visible?: boolean;

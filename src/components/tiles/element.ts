@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro';
-import layers from '_helpers/zindex';
 
 const TileBasic = styled.div`
   display: inline-flex;
@@ -56,12 +55,4 @@ export const TilePreview = styled.div<{ isBoard?: boolean }>`
   height: 184px;
   background-color: ${({ isBoard }) =>
     isBoard ? 'var(--cogs-white)' : 'var(--cogs-greyscale-grey3)'};
-`;
-
-export const ActionsContainer = styled.div`
-  position: absolute;
-  left: 256px;
-  top: 50px;
-  color: var(--cogs-text-color);
-  z-index: ${layers.TILE_ACTIONS_MENU};
 `;

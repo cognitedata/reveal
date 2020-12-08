@@ -16,13 +16,13 @@ export const fetchSuites = (client: CdfClient) => async (
   }
 };
 
-export const insertSuite = (
-  client: CdfClient,
-  suite: SuiteRowInsert[]
-) => async (dispatch: RootDispatcher) => {
+export const insertSuite = (client: CdfClient, suite: Suite) => async (
+  dispatch: RootDispatcher
+) => {
   dispatch(actions.insertSuiteTableRow());
   try {
-    await client.insertTableRow(SUITES_TABLE_NAME, suite);
+    const suiteRow = fromSuiteToRow(suite);
+    await client.insertTableRow(SUITES_TABLE_NAME, suiteRow);
     dispatch(actions.insertedSuiteTableRow());
     dispatch(fetchSuites(client));
   } catch (e) {
@@ -56,4 +56,9 @@ function getSuitesFromRows(rows: SuiteRow[]): Suite[] {
         ...row.columns,
       } as Suite)
   );
+}
+
+function fromSuiteToRow(suite: Suite) {
+  const { key, ...rest } = suite;
+  return [{ key, columns: rest }] as SuiteRowInsert[];
 }

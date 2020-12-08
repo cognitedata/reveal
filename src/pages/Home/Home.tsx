@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Loader, Title } from '@cognite/cogs.js';
+import { Loader, Title, Button } from '@cognite/cogs.js';
 import Suitebar from 'components/suitebar/Suitebar';
 import { SmallTile, Tile } from 'components/tiles';
 import { MultiStepModal } from 'components/modals';
@@ -14,6 +14,7 @@ import { SmallTilesContainer } from './elements';
 const Home = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation('Home');
+  const [activeModal, setActiveModal] = useState<string>('');
 
   const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
     getSuitesTableState
@@ -27,11 +28,25 @@ const Home = () => {
     return <Loader />;
   }
 
+  const closeModal = () => {
+    setActiveModal('');
+  };
+
   return (
     <>
       <Suitebar
         headerText="Executive overview"
-        actionButton={<MultiStepModal buttonText="New suite" />}
+        actionButton={
+          <Button
+            variant="outline"
+            type="secondary"
+            icon="Plus"
+            iconPlacement="left"
+            onClick={() => setActiveModal('create')}
+          >
+            New suite
+          </Button>
+        }
       />
       <OverviewContainer>
         <SmallTilesContainer>
@@ -48,9 +63,12 @@ const Home = () => {
           <Title level={6}>Pinned</Title>
           {suites?.map((suite: Suite) => {
             return (
-              <Link to={`/suites/${suite.key}`} key={suite.key}>
-                <Tile dataItem={suite} avatar />
-              </Link>
+              <Tile
+                key={suite.key}
+                linkTo={`/suites/${suite.key}`}
+                dataItem={suite}
+                avatar
+              />
             );
           })}
         </TilesContainer>
@@ -58,13 +76,19 @@ const Home = () => {
           <Title level={6}>All suites</Title>
           {suites?.map((suite: Suite) => {
             return (
-              <Link to={`/suites/${suite.key}`} key={suite.key}>
-                <Tile dataItem={suite} avatar />
-              </Link>
+              <Tile
+                key={suite.key}
+                linkTo={`/suites/${suite.key}`}
+                dataItem={suite}
+                avatar
+              />
             );
           })}
         </TilesContainer>
       </OverviewContainer>
+      {activeModal === 'create' && (
+        <MultiStepModal handleCloseModal={closeModal} mode="create" />
+      )}
     </>
   );
 };
