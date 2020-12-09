@@ -30,6 +30,7 @@ module.exports = {
         'examples/clipping',
         'examples/pointcloud',
         'examples/pointcloud-intersections',
+        'examples/antialiasing',
       ],
     },
     {
