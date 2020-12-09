@@ -1,3 +1,8 @@
+#![allow(unused_imports)]
+#[cfg(test)]
+#[macro_use]
+extern crate approx;
+
 use std::io::{self, BufRead, BufReader, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
