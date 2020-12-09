@@ -4,9 +4,7 @@ import styled from 'styled-components';
 import { usePrevious } from 'lib/hooks/CustomHooks';
 import { Loader, Table } from 'lib/components';
 import { SelectableItemsProps, TableStateProps } from 'lib/CommonProps';
-import { useLoadListTree, useLoadSearchTree } from './hooks';
-
-const PAGE_SIZE = 50;
+import { useRootTree, useSearchTree } from './hooks';
 
 export const AssetTreeTable = ({
   filter = {},
@@ -15,28 +13,32 @@ export const AssetTreeTable = ({
   activeIds = [],
   isSelected,
   disableScroll,
-  startFromRoot = false,
   ...selectionProps
 }: {
   filter: AssetFilterProps;
   query?: string;
   onAssetClicked: (item: Asset) => void;
-  startFromRoot?: boolean;
   disableScroll?: boolean;
 } & SelectableItemsProps &
   TableStateProps) => {
-  const [listExpandedRowKeys, setListExpandedRowKeys] = useState<number[]>([]);
-  const [searchExpandedRowKeys, setSearchExpandedRowKeys] = useState<number[]>(
-    []
-  );
+  const [previewId, setPreviewId] = useState<number | undefined>(undefined);
+  const onItemSelected = (asset: Asset) => {
+    onAssetClicked(asset);
+    setPreviewId(asset.id);
+  };
 
-  const searchEnabled = !!query && query.length > 0;
+  // search* variables in this component refers to both /search with and without filter and /list
+  // with a filter. rootOnly is just for /list without filter.
+  const [rootExpandedKeys, setRootExpandedKeys] = useState<number[]>([]);
+  const [searchExpandedKeys, setSearchExpandedKeys] = useState<number[]>([]);
+  const startFromRoot =
+    (!query || query === '') &&
+    Object.values(filter).filter(Boolean).length === 0;
 
-  const previousListExpandedRowKeys = usePrevious(listExpandedRowKeys);
+  const expandCount = startFromRoot
+    ? rootExpandedKeys.length
+    : searchExpandedKeys.length;
 
-  const expandCount = searchEnabled
-    ? searchExpandedRowKeys.length
-    : listExpandedRowKeys.length;
   const columns = [
     {
       ...Table.Columns.name,
@@ -46,7 +48,7 @@ export const AssetTreeTable = ({
     Table.Columns.externalId,
     {
       key: 'childCount',
-      title: searchEnabled ? 'Results under asset' : 'Direct children',
+      title: startFromRoot ? 'Direct children' : 'Results under asset',
       cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
         return (
           <span>
@@ -60,83 +62,75 @@ export const AssetTreeTable = ({
     },
   ];
 
-  const [searchCount, setSearchCount] = useState(PAGE_SIZE);
-
-  useEffect(() => {
-    setSearchCount(PAGE_SIZE);
-  }, [query]);
-  const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-
-  const onItemSelected = (file: Asset) => {
-    onAssetClicked(file);
-    setPreviewId(file.id);
-  };
-
-  const { data: listItems, isFetched: listFetched } = useLoadListTree(
-    startFromRoot ? { ...filter, root: true } : filter,
-    listExpandedRowKeys
+  const previousRootExpandedKeys = usePrevious(rootExpandedKeys);
+  const { data: rootItems, isFetched: rootFetched } = useRootTree(
+    rootExpandedKeys,
+    {
+      enabled: startFromRoot,
+    }
   );
-  const { data: oldListItems } = useLoadListTree(
-    startFromRoot ? { ...filter, root: true } : filter,
-    previousListExpandedRowKeys
-  );
-
-  const {
-    data: searchFiles,
-    isFetched: searchFetched,
-    refetch,
-  } = useLoadSearchTree(query || '', filter, {
-    enabled: searchEnabled,
+  const { data: oldRootItems } = useRootTree(previousRootExpandedKeys, {
+    enabled: startFromRoot,
   });
 
-  const items = useMemo(() => {
-    const reducer = (
-      prev: number[],
-      el: Asset & { children?: Asset[] }
-    ): number[] => {
-      if (el.children) {
-        const childrenIds = (el.children || []).reduce(reducer, prev);
-        return childrenIds.concat([el.id]);
-      }
-      return prev;
-    };
-    return searchFiles && searchFiles.reduce(reducer, [] as number[]);
-  }, [searchFiles]);
+  const { data: searchItems, isFetched: searchFetched } = useSearchTree(
+    filter,
+    query,
+    {
+      enabled: !startFromRoot,
+    }
+  );
 
-  if (items && items !== searchExpandedRowKeys) {
-    setSearchExpandedRowKeys(items);
-  }
+  useEffect(() => {
+    if (searchItems) {
+      const reducer = (
+        prev: number[],
+        el: Asset & { children?: Asset[] }
+      ): number[] => {
+        if (el.children) {
+          const childrenIds = (el.children || []).reduce(reducer, prev);
+          return childrenIds.concat([el.id]);
+        }
+        return prev;
+      };
+      const expandedSearchKeys = searchItems.reduce(reducer, [] as number[]);
+      setSearchExpandedKeys(expandedSearchKeys);
+    } else {
+      setSearchExpandedKeys([] as number[]);
+    }
+  }, [searchItems, setSearchExpandedKeys]);
 
-  const isLoading = searchEnabled ? !searchFetched : !listFetched;
+  const isLoading = startFromRoot ? !rootFetched : !searchFetched;
 
   const assets = useMemo(() => {
-    if (searchEnabled) {
-      const count = (
-        asset: Asset & {
-          children?: Asset[] | undefined;
-        }
-      ): number => {
-        if (asset.children) {
-          const childCount = asset.children.reduce(
-            (prev, el) => prev + count(el),
-            0
-          );
-          asset.aggregates = { childCount };
-          return childCount;
-        }
-        return 1;
-      };
+    if (startFromRoot) {
+      if (rootFetched) {
+        return rootItems;
+      }
+      return oldRootItems;
+    }
 
-      return (searchFiles || []).map((el: Asset) => ({
-        ...el,
-        aggregates: { childCount: count(el) },
-      }));
-    }
-    if (listFetched) {
-      return listItems;
-    }
-    return oldListItems;
-  }, [searchEnabled, searchFiles, listFetched, listItems, oldListItems]);
+    const count = (
+      asset: Asset & {
+        children?: Asset[] | undefined;
+      }
+    ): number => {
+      if (asset.children) {
+        const childCount = asset.children.reduce(
+          (prev, el) => prev + count(el),
+          0
+        );
+        asset.aggregates = { childCount };
+        return childCount;
+      }
+      return 1;
+    };
+
+    return (searchItems || []).map((el: Asset) => ({
+      ...el,
+      aggregates: { childCount: count(el) },
+    }));
+  }, [startFromRoot, searchItems, rootFetched, rootItems, oldRootItems]);
 
   const selectedIds = useMemo(() => {
     const mergeChildren = (
@@ -159,12 +153,6 @@ export const AssetTreeTable = ({
     });
   }, [assets, isSelected]);
 
-  useEffect(() => {
-    if (searchEnabled) {
-      refetch();
-    }
-  }, [searchCount, searchEnabled, refetch]);
-
   return (
     <Table<Asset>
       rowEventHandlers={{
@@ -181,14 +169,12 @@ export const AssetTreeTable = ({
       expandColumnKey="name"
       data={assets}
       selectedIds={selectedIds}
-      expandedRowKeys={
-        searchEnabled ? searchExpandedRowKeys : listExpandedRowKeys
-      }
+      expandedRowKeys={startFromRoot ? rootExpandedKeys : searchExpandedKeys}
       onExpandedRowsChange={ids => {
-        if (searchEnabled) {
-          setSearchExpandedRowKeys(ids as number[]);
+        if (startFromRoot) {
+          setRootExpandedKeys(ids as number[]);
         } else {
-          setListExpandedRowKeys(ids as number[]);
+          setSearchExpandedKeys(ids as number[]);
         }
       }}
       emptyRenderer={() => {

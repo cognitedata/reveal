@@ -1,4 +1,4 @@
-import { AssetFilterProps, Asset, InternalId } from '@cognite/sdk';
+import { AssetFilterProps, Asset } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   useSearch,
@@ -9,102 +9,127 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { QueryKey, useQueryCache, useQuery, QueryConfig } from 'react-query';
 
-export const useLoadSearchTree = (
-  query: string,
+export const useSearchTree = (
   filter: AssetFilterProps,
+  query?: string,
   config?: QueryConfig<Asset[]>
 ) => {
   const sdk = useSDK();
   const cache = useQueryCache();
+  const enableSearch = !!query;
 
-  const searchResult = useSearch<Asset>(
+  const {
+    data: searchData = [],
+    isFetched: searchFeched,
+    isFetching: searchFetching,
+    error: searchError,
+    isError: searchIsError,
+  } = useSearch<Asset>(
     'assets',
-    query,
+    query as string,
     {
       limit: 1000,
       filter: Object.keys(filter || {}).length > 0 ? filter : undefined,
     },
-    config
+    { ...config, enabled: enableSearch && config?.enabled !== false }
   );
 
-  const treeResult = useQuery<(Asset & { children?: Asset[] })[]>(
-    ['asset-list-tree', searchResult.isFetched, filter, query],
-    async () => {
-      if (searchResult.data) {
-        const rootAssets: number[] = [];
-        const assetsMap: {
-          [key in number]: Asset;
-        } = {};
-        const assetsChildrenMap: {
-          [key in number]: number[];
-        } = {};
-
-        const parentIds = new Set<number>();
-
-        const processItems = (el: Asset) => {
-          assetsMap[el.id] = el;
-          if (el.parentId) {
-            if (!assetsChildrenMap[el.parentId]) {
-              assetsChildrenMap[el.parentId] = [];
-            }
-            if (!assetsChildrenMap[el.parentId].includes(el.id)) {
-              assetsChildrenMap[el.parentId].push(el.id);
-            }
-            if (!assetsMap[el.parentId]) {
-              parentIds.add(el.parentId);
-            }
-          } else if (!rootAssets.some(id => id === el.id)) {
-            rootAssets.push(el.id);
-          }
-        };
-
-        searchResult.data.forEach(processItems);
-
-        while (parentIds.size !== 0) {
-          const parentIdsList = [...parentIds].map(id => ({ id }));
-          // eslint-disable-next-line no-await-in-loop
-          const items = await cache.fetchQuery(
-            retrieveItemsKey('assets', parentIdsList),
-            () => sdk.assets.retrieve(parentIdsList),
-            {
-              staleTime: 60 * 1000,
-            }
-          );
-
-          parentIds.clear();
-
-          items.forEach(processItems);
-        }
-
-        return constructTree(rootAssets, assetsChildrenMap, assetsMap);
-      }
-      return [];
+  const {
+    data: listData = [],
+    isFetched: listFeched,
+    isFetching: listFetching,
+    error: listError,
+    isError: listIsError,
+  } = useList<Asset>(
+    'assets',
+    {
+      limit: 1000,
+      filter: Object.keys(filter || {}).length > 0 ? filter : undefined,
     },
-    config
+    { ...config, enabled: !enableSearch && config?.enabled !== false }
+  );
+
+  const data = enableSearch ? searchData : listData;
+  const isFetched = enableSearch ? searchFeched : listFeched;
+  const isFetching = enableSearch ? searchFetching : listFetching;
+  const error = enableSearch ? searchError : listError;
+  const isError = enableSearch ? searchIsError : listIsError;
+
+  const enabled = isFetched;
+
+  const fetchAndBuildTree = async () => {
+    const rootAssets: number[] = [];
+    const assetsMap: {
+      [key in number]: Asset;
+    } = {};
+    const assetsChildrenMap: {
+      [key in number]: number[];
+    } = {};
+
+    const parentIds = new Set<number>();
+
+    const processItems = (el: Asset) => {
+      assetsMap[el.id] = el;
+      if (el.parentId) {
+        if (!assetsChildrenMap[el.parentId]) {
+          assetsChildrenMap[el.parentId] = [];
+        }
+        if (!assetsChildrenMap[el.parentId].includes(el.id)) {
+          assetsChildrenMap[el.parentId].push(el.id);
+        }
+        if (!assetsMap[el.parentId]) {
+          parentIds.add(el.parentId);
+        }
+      } else if (!rootAssets.some(id => id === el.id)) {
+        rootAssets.push(el.id);
+      }
+    };
+    data.forEach(processItems);
+
+    while (parentIds.size !== 0) {
+      const parentIdsList = [...parentIds].map(id => ({ id }));
+      // eslint-disable-next-line no-await-in-loop
+      const items = await cache.fetchQuery(
+        retrieveItemsKey('assets', parentIdsList),
+        () => sdk.assets.retrieve(parentIdsList),
+        {
+          staleTime: 60 * 1000,
+        }
+      );
+
+      parentIds.clear();
+
+      items.forEach(processItems);
+    }
+    return constructTree(rootAssets, assetsChildrenMap, assetsMap);
+  };
+  const treeResult = useQuery<(Asset & { children?: Asset[] })[]>(
+    ['asset-search-tree', query, filter],
+    fetchAndBuildTree,
+    { enabled }
   );
 
   return {
     ...treeResult,
-    isFetching: treeResult.isFetching || searchResult.isFetching,
-    isFetched: treeResult.isFetched && searchResult.isFetched,
-    isError: treeResult.isError || searchResult.isError,
-    error: treeResult.error || searchResult.error,
+    isFetching: treeResult.isFetching || isFetching,
+    isFetched: treeResult.isFetched && isFetched,
+    isError: treeResult.isError || isError,
+    error: treeResult.error || error,
   };
 };
 
-export const useLoadListTree = (
-  filter: AssetFilterProps,
+export const useRootTree = (
   openIds: number[] = [],
   config?: QueryConfig<Asset[]>
 ) => {
   const sdk = useSDK();
   const cache = useQueryCache();
 
-  const { data: listResult } = useList<Asset>(
+  const { data: rootAssets = [] } = useList<Asset>(
     'assets',
     {
       limit: 1000,
-      filter,
+      filter: { root: true },
       aggregatedProperties: ['childCount'],
     },
     {
@@ -114,79 +139,76 @@ export const useLoadListTree = (
   );
 
   return useQuery<(Asset & { children?: Asset[] })[]>(
-    ['asset-list-tree', (listResult || []).map(e => e.id), openIds],
-    async (_: QueryKey, _2: number[], ids: number[]) => {
-      if (listResult) {
-        const rootAssets: number[] = filter.assetSubtreeIds
-          ? filter.assetSubtreeIds.map(el => (el as InternalId).id)
-          : listResult.map(el => el.id);
-        const assetsChildrenMap: {
-          [key in number]: number[];
-        } = {};
-        const assetsMap = listResult.reduce(
-          (prev, el) => {
-            prev[el.id] = {
+    ['asset-list-tree', openIds],
+    async (_: QueryKey, ids: number[]) => {
+      const rootAssetIds: number[] = rootAssets.map(el => el.id);
+      const assetsChildrenMap: {
+        [key in number]: number[];
+      } = {};
+
+      const assetsMap = rootAssets.reduce(
+        (prev, el) => {
+          prev[el.id] = {
+            ...el,
+            children:
+              el.aggregates &&
+              el.aggregates.childCount &&
+              el.aggregates.childCount > 0
+                ? ([{ loading: true }] as (Asset & { loading?: boolean })[])
+                : undefined,
+          };
+          return prev;
+        },
+        {} as {
+          [key in number]: Asset & {
+            children?: (Asset | { loading?: boolean })[];
+          };
+        }
+      );
+
+      await Promise.all(
+        ids.map(async id => {
+          const countFilter = {
+            limit: 1000,
+            filter: {
+              parentIds: [id],
+            },
+            aggregatedProperties: ['childCount'],
+          } as AssetFilterProps;
+          const items = await cache.fetchQuery<Asset[]>(
+            listKey('assets', countFilter),
+            () => listApi(sdk, 'assets', countFilter),
+            {
+              staleTime: Infinity,
+            }
+          );
+
+          items.forEach(el => {
+            const item = {
               ...el,
               children:
                 el.aggregates &&
                 el.aggregates.childCount &&
                 el.aggregates.childCount > 0
-                  ? ([{ loading: true }] as (Asset & { loading?: boolean })[])
+                  ? (assetsMap[el.id] && assetsMap[el.id].children) ||
+                    ([{ loading: true }] as (Asset & { loading?: boolean })[])
                   : undefined,
             };
-            return prev;
-          },
-          {} as {
-            [key in number]: Asset & {
-              children?: (Asset | { loading?: boolean })[];
-            };
-          }
-        );
-
-        await Promise.all(
-          ids.map(async id => {
-            const countFilter = {
-              limit: 1000,
-              filter: {
-                parentIds: [id],
-              },
-              aggregatedProperties: ['childCount'],
-            } as AssetFilterProps;
-            const items = await cache.fetchQuery<Asset[]>(
-              listKey('assets', countFilter),
-              () => listApi(sdk, 'assets', countFilter),
-              {
-                staleTime: Infinity,
+            assetsMap[el.id] = item;
+            if (el.parentId) {
+              if (!assetsChildrenMap[el.parentId]) {
+                assetsChildrenMap[el.parentId] = [];
               }
-            );
+              assetsChildrenMap[el.parentId].push(el.id);
+            }
+            return item;
+          });
+        })
+      );
 
-            items.forEach(el => {
-              const item = {
-                ...el,
-                children:
-                  el.aggregates &&
-                  el.aggregates.childCount &&
-                  el.aggregates.childCount > 0
-                    ? (assetsMap[el.id] && assetsMap[el.id].children) ||
-                      ([{ loading: true }] as (Asset & { loading?: boolean })[])
-                    : undefined,
-              };
-              assetsMap[el.id] = item;
-              if (el.parentId) {
-                if (!assetsChildrenMap[el.parentId]) {
-                  assetsChildrenMap[el.parentId] = [];
-                }
-                assetsChildrenMap[el.parentId].push(el.id);
-              }
-              return item;
-            });
-          })
-        );
-
-        return constructTree(rootAssets, assetsChildrenMap, assetsMap);
-      }
-      return [];
-    }
+      return constructTree(rootAssetIds, assetsChildrenMap, assetsMap);
+    },
+    { enabled: rootAssets.length > 0 }
   );
 };
 

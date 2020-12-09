@@ -43,7 +43,6 @@ export const AssetSearchResults = ({
     return (
       <AssetTreeTable
         filter={filter}
-        startFromRoot={!filter.assetSubtreeIds}
         query={query}
         onAssetClicked={asset => onClick(asset)}
         {...extraProps}
