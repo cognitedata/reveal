@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { ParsedPrimitives } from '../../../datamodels/cad/rendering/types';
+import { ParsedPrimitives, SectorGeometry } from '../../../datamodels/cad/rendering/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {

@@ -53,13 +53,15 @@ describe('CadSectorLoader', () => {
     jest.clearAllMocks();
   });
 
-  test('dipose() closes subscriptions and disposes culler', () => {
+  test('dipose() closes subscriptions and disposes culler', async () => {
     const loader = new CadSectorLoader(mockCuller, mockFileProvider, modelDataParser, materialManager);
     const consumedSectorSubscription = loader.consumedSectorObservable().subscribe();
     const loadingStateSubscription = loader.loadingStateObservable().subscribe();
     const parsedDataSubscription = loader.parsedDataObservable().subscribe();
     loader.dispose();
     expect(mockCuller.dispose).toBeCalledTimes(1);
+    jest.runAllTimers();
+    jest.runAllTicks();
     expect(consumedSectorSubscription.closed).toBeTrue();
     expect(loadingStateSubscription.closed).toBeTrue();
     expect(parsedDataSubscription.closed).toBeTrue();
