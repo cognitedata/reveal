@@ -1,0 +1,9 @@
+{
+  "extends": "../../../../tsconfig.json",
+  "compilerOptions": {
+    "target": "es5",
+    "baseUrl": "src",
+    "outDir": "./build",
+    "moduleResolution": "node"
+  }
+}
