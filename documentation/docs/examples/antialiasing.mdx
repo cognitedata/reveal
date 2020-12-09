@@ -29,7 +29,11 @@ This mode works on both WebGL 1 and WebGL 2. If WebGL 2 isn't supported, FXAA is
 
 
 ```jsx
-const viewer = new Cognite3DViewer({ sdk: client, antiAliasingHint: 'msaa4+fxaa' });
+const viewer = new Cognite3DViewer(
+  { 
+    sdk: client, 
+    antiAliasingHint: 'msaa4+fxaa' 
+  });
 ```
 
 Modes currently supported are `'disabled'`, `'fxaa'`, `'msaa2+fxaa'`, `'msaa4+fxaa'`, `'msaa8+fxaa'`, `'msaa16+fxaa'`,
