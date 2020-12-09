@@ -77,6 +77,11 @@ You can simply use `yarn local-cdn` it does:
 * build viewer with publicPath pointing on 'local-cdn' 
 * run the examples server.
 
+You will also need to link `@cognite/reveal-parser-worker` to the local version in order to get proper type declarations:
+
+* From `parser-worker/`: `yarn link`
+* From `viewer/`: `yarn link @cognite/reveal-parser-worker`
+
 Notice that it builds the viewer with the same
 public path, so you don't have to override `revealEnv` in examples. If you do some changes for the viewer at the same time,
 you might want to run viewer build separately. For the viewer either build it with the same `PUBLIC_PATH` env variable, or

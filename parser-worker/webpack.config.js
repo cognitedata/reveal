@@ -1,5 +1,5 @@
 const path = require("path");
-const { publicPath, workerCDNPath, cdnDistFolderPath, getEnvArg } = require("./buildUtils");
+const { publicPath, getWorkerCDNPath, cdnDistFolderPath, getEnvArg } = require("./buildUtils");
 const logger = require("webpack-log")("parser-worker");
 
 const createBaseConfig = (env) => {
@@ -9,12 +9,16 @@ const createBaseConfig = (env) => {
     mode: development ? "development" : "production",
     target: "webworker",
     entry: {
-      "reveal.parser.worker": "./reveal.parser.worker.ts",
+      "reveal.parser.worker": "./index.ts",
     },
     output: {
-      filename: "[name].js",
-      sourceMapFilename: "[name].map",
-      libraryTarget: "umd",
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+      libraryTarget: 'umd'
+    },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
+      symlinks: false
     },
     module: {
       rules: [
@@ -42,6 +46,7 @@ const createLocalBuildConfig = (env) => {
 
 const createCdnConfig = (env) => {
   const cdnConfig = createBaseConfig(env);
+  const workerCDNPath = getWorkerCDNPath();
 
   cdnConfig.output.path = path.join(__dirname, cdnDistFolderPath);
   cdnConfig.output.publicPath = workerCDNPath;
