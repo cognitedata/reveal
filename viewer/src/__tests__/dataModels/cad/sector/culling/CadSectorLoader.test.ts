@@ -60,8 +60,7 @@ describe('CadSectorLoader', () => {
     const parsedDataSubscription = loader.parsedDataObservable().subscribe();
     loader.dispose();
     expect(mockCuller.dispose).toBeCalledTimes(1);
-    jest.runAllTimers();
-    jest.runAllTicks();
+    jest.advanceTimersToNextTimer();
     expect(consumedSectorSubscription.closed).toBeTrue();
     expect(loadingStateSubscription.closed).toBeTrue();
     expect(parsedDataSubscription.closed).toBeTrue();
