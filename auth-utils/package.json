@@ -1,13 +1,13 @@
 {
   "name": "@cognite/auth-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The auth layer of all cognite react apps",
   "source": "src/index.ts",
   "main": "dist/auth-js.js",
   "umd:main": "dist/auth-js.umd.js",
   "module": "dist/auth-js.m.js",
   "esmodule": "dist/auth-js.modern.js",
-  "types": "dist/auth-js.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
