@@ -8,7 +8,8 @@ import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
 import { Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
-import Routes from './Routes';import { ApiClientContext } from 'providers/ApiClientProvider';
+import Routes from './Routes';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 
 const Authentication = (): JSX.Element => {
   const tenant = useContext(TenantContext);
@@ -25,7 +26,9 @@ const Authentication = (): JSX.Element => {
   useEffect(() => {
     const auth = async () => {
       await dispatch(authenticate(tenant, client, apiClient));
-      await dispatch(fetchSuites(apiClient));
+      // TODO uncomment to use apiClient when get middleware running on a remote server
+      // await dispatch(fetchSuites(apiClient));
+      await dispatch(fetchSuites(client));
       setAuthenticateDispatched(true);
     };
     if (!authenticateDispatched && !authenticated && !authenticating) {
