@@ -8,11 +8,12 @@ import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
 import { Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
-import Routes from './Routes';
+import Routes from './Routes';import { ApiClientContext } from 'providers/ApiClientProvider';
 
 const Authentication = (): JSX.Element => {
   const tenant = useContext(TenantContext);
   const client = useContext(CdfClientContext);
+  const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const { authenticating, authenticated } = useSelector(getAuthState);
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
@@ -23,8 +24,8 @@ const Authentication = (): JSX.Element => {
 
   useEffect(() => {
     const auth = async () => {
-      await dispatch(authenticate(tenant, client));
-      await dispatch(fetchSuites(client));
+      await dispatch(authenticate(tenant, client, apiClient));
+      await dispatch(fetchSuites(apiClient));
       setAuthenticateDispatched(true);
     };
     if (!authenticateDispatched && !authenticated && !authenticating) {
@@ -32,6 +33,7 @@ const Authentication = (): JSX.Element => {
     }
   }, [
     client,
+    apiClient,
     tenant,
     authenticated,
     authenticating,

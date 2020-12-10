@@ -8,6 +8,7 @@ import { Suite } from 'store/suites/types';
 import Modal from './Modal';
 import { CreateSuite, AddBoard } from './steps';
 import { ModalContainer } from './elements';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 
 type Step = 'suite' | 'boards';
 type Mode = 'edit' | 'create';
@@ -62,6 +63,7 @@ export const MultiStepModal: React.FC<Props> = ({
   };
 
   const client = useContext(CdfClientContext);
+  const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const [newSuite, setNewSuite] = useState(suite);
   const [newBoard, setNewBoard] = useState(board);
@@ -113,7 +115,7 @@ export const MultiStepModal: React.FC<Props> = ({
   };
 
   const handleSubmit = async () => {
-    await dispatch(insertSuite(client, newSuite));
+    await dispatch(insertSuite(client, apiClient, newSuite));
     history.push(`/suites/${newSuite.key}`);
   };
 

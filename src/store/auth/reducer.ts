@@ -4,7 +4,6 @@ import { AuthActionTypes, AuthState, AuthRootAction } from './types';
 const initialState: AuthState = {
   authenticating: false,
   authenticated: false,
-  accessToken: '',
 };
 
 export const AuthReducer = createReducer(initialState)
@@ -18,6 +17,5 @@ export const AuthReducer = createReducer(initialState)
       ...state,
       authenticating: false,
       authenticated: true,
-      accessToken: action.payload,
     })
   );

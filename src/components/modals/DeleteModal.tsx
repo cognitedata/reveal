@@ -7,6 +7,7 @@ import { deleteSuite } from 'store/suites/thunks';
 import { Button, Body, Title } from '@cognite/cogs.js';
 import Modal from './Modal';
 import { ModalContainer, DeleteModalFooter } from './elements';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 
 interface Props {
   dataItem: any;
@@ -19,10 +20,11 @@ export const DeleteModal: React.FC<Props> = ({
 }: Props) => {
   const history = useHistory();
   const client = useContext(CdfClientContext);
+  const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
 
   const handleDeleteSuite = async () => {
-    await dispatch(deleteSuite(client, [{ key: dataItem.key }]));
+    await dispatch(deleteSuite(client, apiClient, [{ key: dataItem.key }]));
     history.push('/');
   };
 

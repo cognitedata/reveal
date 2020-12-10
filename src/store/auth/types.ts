@@ -11,5 +11,4 @@ export type AuthRootAction = ActionType<typeof actions>;
 export interface AuthState {
   authenticating: boolean;
   authenticated: boolean;
-  accessToken: string;
 }
