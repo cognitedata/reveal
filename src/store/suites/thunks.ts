@@ -4,7 +4,7 @@ import { RootDispatcher } from 'store/types';
 import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
 import * as actions from './actions';
 
-// TODO uncomment to use apiClient when get middleware running on a remote server
+// TODO(DTC-194) uncomment to use apiClient when get middleware running on a remote server
 
 export const fetchSuites = (
   client: CdfClient /* apiClient: ApiClient */

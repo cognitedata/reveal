@@ -5,9 +5,9 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { RootDispatcher } from 'store/types';
 import { deleteSuite } from 'store/suites/thunks';
 import { Button, Body, Title } from '@cognite/cogs.js';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from './Modal';
 import { ModalContainer, DeleteModalFooter } from './elements';
-import { ApiClientContext } from 'providers/ApiClientProvider';
 
 interface Props {
   dataItem: any;

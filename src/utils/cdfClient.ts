@@ -24,7 +24,7 @@ export class CdfClient {
     return this.cogniteClient.groups.list();
   }
 
-  // TODO to be removed after middleware deployed to staging
+  // TODO(DTC-194) to be removed after middleware deployed to staging
   getTableRows(tableName: string) {
     return this.cogniteClient.raw.listRows(this.dbName, tableName);
   }

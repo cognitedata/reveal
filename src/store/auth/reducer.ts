@@ -1,5 +1,5 @@
 import { createReducer } from 'typesafe-actions';
-import { AuthActionTypes, AuthState, AuthRootAction } from './types';
+import { AuthActionTypes, AuthState } from './types';
 
 const initialState: AuthState = {
   authenticating: false,
@@ -11,11 +11,8 @@ export const AuthReducer = createReducer(initialState)
     ...state,
     authenticating: true,
   }))
-  .handleAction(
-    AuthActionTypes.AUTH_SUCCESS,
-    (state: AuthState, action: AuthRootAction) => ({
-      ...state,
-      authenticating: false,
-      authenticated: true,
-    })
-  );
+  .handleAction(AuthActionTypes.AUTH_SUCCESS, (state: AuthState) => ({
+    ...state,
+    authenticating: false,
+    authenticated: true,
+  }));

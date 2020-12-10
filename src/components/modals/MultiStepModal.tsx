@@ -5,10 +5,10 @@ import { useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { Suite } from 'store/suites/types';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from './Modal';
 import { CreateSuite, AddBoard } from './steps';
 import { ModalContainer } from './elements';
-import { ApiClientContext } from 'providers/ApiClientProvider';
 
 type Step = 'suite' | 'boards';
 type Mode = 'edit' | 'create';
