@@ -6,7 +6,7 @@ import { MultiStepModal } from '../multiStepModal/MultiStepModal';
 
 const board: Board = {
   key: key(),
-  type: 'other',
+  type: null,
   title: '',
   url: '',
   embedTag: '',

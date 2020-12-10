@@ -5,6 +5,7 @@ import { Button, Icon, Input, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { colors } from 'constants/suiteColors';
+import { TS_FIX_ME } from 'types/core';
 import NavigationItem from './NavigationItem';
 import {
   ActionContainer,
@@ -23,7 +24,7 @@ interface NavigationItem {
 const renderNavigationItem = (
   item: NavigationItem,
   disabled?: boolean,
-  location?: any
+  location?: TS_FIX_ME
 ) => {
   return (
     <NavLink to={`/suites/${item.key}`} key={item.key}>

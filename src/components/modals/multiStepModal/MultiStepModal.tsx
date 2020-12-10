@@ -35,15 +35,7 @@ export const MultiStepModal: React.FC<Props> = ({
   const client = useContext(CdfClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const [step, setStep] = useState<Step>('suite');
-  // const [boardType, setBoardType] = useState(board.type);
   const history = useHistory();
-
-  // useEffect(() => {
-  //   setNewBoard((prevState: any) => ({
-  //     ...prevState,
-  //     type: boardType?.value,
-  //   }));
-  // }, [boardType]);
 
   const nextStep = () => {
     setStep('boards');
@@ -61,7 +53,7 @@ export const MultiStepModal: React.FC<Props> = ({
 
   const handleSuiteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
-    setSuite((prevState: any) => ({
+    setSuite((prevState: Suite) => ({
       ...prevState,
       [name]: value,
     }));
@@ -69,15 +61,18 @@ export const MultiStepModal: React.FC<Props> = ({
 
   const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
-    setBoard((prevState: any) => ({
+    setBoard((prevState: Board) => ({
       ...prevState,
       [name]: value,
     }));
   };
 
-  // const handleBoardTypeChange = (selectedOption: any) => {
-  //   setBoardType(selectedOption);
-  // };
+  const handleBoardTypeChange = (selectedOption: TS_FIX_ME) => {
+    setBoard((prevState: Board) => ({
+      ...prevState,
+      type: selectedOption.value,
+    }));
+  };
 
   const Footer = () => {
     return (
@@ -113,8 +108,7 @@ export const MultiStepModal: React.FC<Props> = ({
         {step === 'boards' && (
           <BoardStep
             handleOnChange={handleBoardChange}
-            // handleBoardTypeChange={handleBoardTypeChange}
-            // boardType={boardType}
+            handleBoardTypeChange={handleBoardTypeChange}
             actionButton={
               <Button type="secondary" onClick={boardAction}>
                 {modalSettings.buttons.boards.board}

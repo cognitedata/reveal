@@ -11,6 +11,7 @@ import {
   TileOverline,
 } from 'components/tiles/element';
 import { SuiteRowDelete } from 'store/suites/types';
+import { TS_FIX_ME } from 'types/core';
 
 const TilePreviewHeight = '184';
 const TilePreviewWidth = '300';
@@ -18,7 +19,7 @@ const TilePreviewWidth = '300';
 interface Props {
   avatar?: boolean;
   color?: string;
-  dataItem: any;
+  dataItem: TS_FIX_ME;
   handleDelete?: (key: SuiteRowDelete[]) => void;
   handleEdit?: (key: SuiteRowDelete[]) => void;
   view?: 'suite' | 'board';

@@ -19,7 +19,7 @@ export type BoardType = 'grafana' | 'powerbi' | 'plotly' | 'other';
 
 export type Board = {
   key: string;
-  type: BoardType;
+  type: BoardType | null;
   title: string;
   url: string;
   visibleTo?: string[];

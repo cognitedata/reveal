@@ -10,15 +10,15 @@ import {
 } from 'components/modals/elements';
 import { Flex } from 'styles/common';
 import { Board } from 'store/suites/types';
+import { TS_FIX_ME } from 'types/core';
 
 interface Props {
   handleOnChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  // handleBoardTypeChange: any;
+  handleBoardTypeChange: TS_FIX_ME;
   actionButton: React.ReactElement;
-  boards: any;
-  boardValues: any;
-  // boardType: any;
-  setNewBoard: any;
+  boards: Board[];
+  boardValues: Board;
+  setNewBoard: TS_FIX_ME;
 }
 
 const options = [
@@ -30,13 +30,14 @@ const options = [
 
 export const BoardStep: React.FC<Props> = ({
   handleOnChange,
-  // handleBoardTypeChange,
+  handleBoardTypeChange,
   actionButton,
   boards,
   boardValues,
-  // boardType,
   setNewBoard,
 }: Props) => {
+  const boardTypeValue =
+    options.find((option) => option.value === boardValues.type) || null;
   return (
     <>
       <Flex>
@@ -51,17 +52,18 @@ export const BoardStep: React.FC<Props> = ({
             onChange={handleOnChange}
             fullWidth
           />
-          {/* <SelectContainer>
+          <SelectContainer>
             <SelectLabel>Select type</SelectLabel>
             <Select
               theme="grey"
               placeholder="Select type"
               name="type"
-              value={options.find((o) => o.value === boardType)}
+              value={boardTypeValue}
               onChange={handleBoardTypeChange}
               options={options}
+              closeMenuOnSelect
             />
-          </SelectContainer> */}
+          </SelectContainer>
           <Input
             autoComplete="off"
             title="URL"
