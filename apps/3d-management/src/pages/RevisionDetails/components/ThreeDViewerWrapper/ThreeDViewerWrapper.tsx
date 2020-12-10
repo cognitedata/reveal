@@ -10,8 +10,6 @@ import { isModelFormatDeprecated } from 'src/pages/RevisionDetails/components/Th
 import { DeprecatedModelMessage } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/DeprecatedModelMessage';
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 
-const ThumbnailJS: any = Thumbnail;
-
 const ERROR_TEXT: Record<v3.Revision3DStatus, string> = {
   Queued: 'Model is waiting to be processed...',
   Processing: 'Model is still being processed...',
@@ -145,7 +143,7 @@ export default function ThreeDViewerWrapper(props: Props) {
       onClick={() => setIsViewerOpened(true)}
     >
       <div style={{ display: 'flex' }}>
-        <ThumbnailJS
+        <Thumbnail
           {...(props.revision.thumbnailThreedFileId
             ? { fileId: Number(props.revision.thumbnailThreedFileId) }
             : { modelId: Number(props.modelId) })}

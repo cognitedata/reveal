@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
 import { fireErrorNotification } from 'src/utils/notifications';
 import { DEFAULT_MARGIN_V, getContainer } from 'src/utils';
-import noop from 'lodash/noop';
 
 const { Dragger } = Upload;
 const { confirm } = Modal;
@@ -44,7 +43,12 @@ const defaultState = {
   fileList: undefined,
 };
 
-type Props = typeof FileUploader.defaultProps;
+type Props = {
+  onUploadSuccess: (fileId: number) => void;
+  onUploadFailure: () => void;
+  onCancel: () => void;
+  beforeUploadStart?: () => Promise<void>;
+};
 
 type State = {
   uploadStatus: STATUS;
@@ -55,13 +59,6 @@ type State = {
 // fixme[D3M-23] - currently it requires Modal wrapper and it causes different handling of modal closing
 //  here is the cancel button, but Modal still can be closed by clicking outside of it and it isn't handled
 class FileUploader extends React.Component<Props, State> {
-  static defaultProps = {
-    onUploadSuccess: noop,
-    onUploadFailure: noop,
-    onCancel: noop,
-    beforeUploadStart: noop,
-  };
-
   currentUpload: UploadGCS | null = null;
 
   constructor(props) {
@@ -124,11 +121,13 @@ class FileUploader extends React.Component<Props, State> {
       return;
     }
 
-    try {
-      await this.props.beforeUploadStart();
-    } catch (e) {
-      this.props.onUploadFailure();
-      return;
+    if (this.props.beforeUploadStart) {
+      try {
+        await this.props.beforeUploadStart();
+      } catch (e) {
+        this.props.onUploadFailure();
+        return;
+      }
     }
 
     message.info('Starting Upload...');
@@ -177,9 +176,7 @@ class FileUploader extends React.Component<Props, State> {
 
     this.props.onUploadSuccess(id);
 
-    message.success(
-      'Upload complete, starting processing job to render 3d model!'
-    );
+    message.info('Upload complete, starting processing job to render 3d model');
 
     this.currentUpload.meta.reset(); // clears the locally stored metadata
     this.setState(defaultState);

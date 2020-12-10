@@ -1,12 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Metrics } from '@cognite/metrics';
-import Table, {
-  SorterResult,
-  TableCurrentDataSource,
-  PaginationConfig,
-} from 'antd/lib/table';
+import Table from 'antd/lib/table';
 import { Button, Input } from '@cognite/cogs.js';
-import Icon from 'antd/lib/icon';
 import Popover from 'antd/lib/popover';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
@@ -20,6 +15,8 @@ import Thumbnail from 'src/components/Thumbnail';
 import { setSelectedModels, setModelTableState } from 'src/store/modules/App';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { DEFAULT_MARGIN_V } from 'src/utils';
+import { AppState } from 'src/store/modules/App/types';
+import { ThumbnailPreviewIcon } from 'src/components/ThumbnailPreviewIcon';
 
 const NestedTable = styled(Table)`
   && td:last-child {
@@ -55,19 +52,9 @@ const NestedTable = styled(Table)`
   }
 `;
 
-type ModelsTableFilters = { modelNameFilter: string };
-
 type Props<T = any> = {
   models: Array<v3.Model3D>;
-  app: {
-    selectedModels: Array<number>;
-    modelTableState: {
-      pagination: PaginationConfig;
-      filters: ModelsTableFilters;
-      sorter: SorterResult<T>;
-      sortedInfo: TableCurrentDataSource<T>;
-    };
-  };
+  app: AppState;
   expandedRowRender: (...args: any) => any;
   setModelTableState: (...args: any) => any;
   setSelectedModels: (...args: any) => any;
@@ -89,12 +76,13 @@ class ModelsTable extends React.Component<Props> {
   }
 
   get columns() {
-    const sortObj = this.props.app.modelTableState.sorter || {};
+    const sortObj = this.props.app.modelTableState.sorter;
     return [
       {
         title: '',
         key: 'thumbnails',
         width: 30,
+        className: 'lh-0',
         render: (val) => (
           <Popover
             title={val.name}
@@ -112,12 +100,7 @@ class ModelsTable extends React.Component<Props> {
               </div>
             }
           >
-            <Icon
-              type="eye"
-              theme="outlined"
-              onClick={(e) => e.stopPropagation()}
-              style={{ cursor: 'pointer' }}
-            />
+            <ThumbnailPreviewIcon onClick={(e) => e.stopPropagation()} />
           </Popover>
         ),
       },
@@ -126,7 +109,7 @@ class ModelsTable extends React.Component<Props> {
         dataIndex: 'name',
         key: 'name',
         sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortObj.columnKey === 'name' && sortObj.order,
+        sortOrder: sortObj?.columnKey === 'name' && sortObj?.order,
       },
       {
         title: 'Date Created',
@@ -134,7 +117,7 @@ class ModelsTable extends React.Component<Props> {
         key: 'createdTime',
         render: (val) => dayjs(val).format('MMM D, YYYY h:mm A'),
         sorter: (a, b) => a.createdTime - b.createdTime,
-        sortOrder: sortObj.columnKey === 'createdTime' && sortObj.order,
+        sortOrder: sortObj?.columnKey === 'createdTime' && sortObj?.order,
       },
     ];
   }
@@ -206,9 +189,7 @@ class ModelsTable extends React.Component<Props> {
           footer={() => (
             <TableOperations>
               <Button onClick={this.clearSorting}>Clear Sorting</Button>
-              {this.props.refresh ? (
-                <Button onClick={this.props.refresh}>Refresh</Button>
-              ) : null}
+              <Button onClick={this.props.refresh}>Refresh</Button>
             </TableOperations>
           )}
         />

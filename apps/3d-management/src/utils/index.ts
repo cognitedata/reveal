@@ -5,11 +5,12 @@ import { styleScope } from './styleScope';
 import { AccessPermission } from './types';
 
 export { default as zIndex } from './zIndex';
+
 export * from './styles';
-
 export * from './notifications';
-
 export * from './revealUtils';
+export * from './queryKeys';
+export * from './sdk/3dApiUtils';
 
 export { styleScope } from './styleScope';
 

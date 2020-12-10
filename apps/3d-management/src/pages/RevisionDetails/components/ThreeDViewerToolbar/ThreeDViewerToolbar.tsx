@@ -7,11 +7,7 @@ import {
 import React from 'react';
 import * as THREE from 'three';
 import { v3 } from '@cognite/cdf-sdk-singleton';
-import { bindActionCreators, Dispatch } from 'redux';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
-import * as FileActions from 'src/store/modules/File/index';
-import * as RevisionActions from 'src/store/modules/Revision/index';
 import {
   Legacy3DModel,
   Legacy3DViewer,
@@ -21,6 +17,7 @@ import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'src/utils';
 import { useFlag } from '@cognite/react-feature-flags';
 import { isDevelopment } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
+import { useUpdateRevisionMutation } from 'src/hooks/revisions';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -56,24 +53,20 @@ type RevisionUpdatePayload = {
   camera?: v3.RevisionCameraProperties;
 };
 
-// consider context for that
-type OwnProps = {
+type Props = {
+  // consider context for viewer/model
   viewer: Cognite3DViewer | Legacy3DViewer;
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
   revision: v3.Revision3D;
 };
 
-type DispatchProps = {
-  updateRevision: (payload: RevisionUpdatePayload) => Promise<void>;
-};
-
-type Props = OwnProps & DispatchProps;
-
-function ThreeDViewerToolbar(props: Props) {
+export default function ThreeDViewerToolbar(props: Props) {
   React.useEffect(() => {
     (window as any).model = props.model;
     (window as any).viewer = props.viewer;
   }, [props.model, props.viewer]);
+
+  const [updateRevisionMutation] = useUpdateRevisionMutation();
 
   const treeViewIsHiddenByFeatureFlag =
     useFlag('3DM_tree_view_hidden') && !isDevelopment();
@@ -97,14 +90,14 @@ function ThreeDViewerToolbar(props: Props) {
       target.applyMatrix4(inverseModelMatrix);
     }
 
-    await props.updateRevision({
+    await updateRevisionMutation({
       modelId: props.model.modelId,
       revisionId: props.model.revisionId,
       camera: {
         position: position.toArray(),
         target: target.toArray(),
       },
-      ...otherUpdates,
+      ...(otherUpdates as any), // fixme: bad types in sdk for rotation - should be Tuple everywhere
     });
   };
 
@@ -179,12 +172,3 @@ function ThreeDViewerToolbar(props: Props) {
     </ToolbarStyled>
   );
 }
-
-function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
-  return bindActionCreators<any, any>(
-    { ...FileActions, ...RevisionActions },
-    dispatch
-  );
-}
-
-export default connect(null, mapDispatchToProps)(ThreeDViewerToolbar);

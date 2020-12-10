@@ -12,6 +12,8 @@ import { Loader } from '@cognite/cogs.js';
 import { createBrowserHistory } from 'history';
 import { APP_TITLE, projectName } from 'src/utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import { ReactQueryDevtools } from 'react-query-devtools';
+import { QueryCache, ReactQueryCacheProvider } from 'react-query';
 import ErrorBoundary from './components/ErrorBoundary';
 
 setupUserTracking();
@@ -19,6 +21,7 @@ export const App = () => {
   const history = createBrowserHistory();
   const store = configureStore(history, {});
   const subAppName = 'cdf-3d-management';
+  const queryCache = new QueryCache();
 
   return (
     <ErrorBoundary>
@@ -39,7 +42,10 @@ export const App = () => {
                 >
                   <SubAppWrapper>
                     <PageTitle title={APP_TITLE} />
-                    <Routes />
+                    <ReactQueryCacheProvider queryCache={queryCache}>
+                      <ReactQueryDevtools initialIsOpen={false} />
+                      <Routes />
+                    </ReactQueryCacheProvider>
                   </SubAppWrapper>
                 </FlagProvider>
               </ConnectedRouter>

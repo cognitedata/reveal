@@ -70,11 +70,9 @@ export function EditRotation(props: Props) {
 function EditRotationOpened(props: Props & { onClose: () => void }) {
   const [rotationAxis, setRotationAxis] = useState<RotationAxis>('x');
   const [initialRotation, setInitialRotation] = useState<THREE.Matrix4>();
-  const [rotationDelta, setRotationDelta] = useState<v3.Tuple3<number>>([
-    0,
-    0,
-    0,
-  ]);
+  const [rotationAnglePiMultiplier, setRotationAnglePiMultiplier] = useState<
+    v3.Tuple3<number>
+  >([0, 0, 0]);
 
   useEffect(() => {
     setInitialRotation(
@@ -84,7 +82,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     );
   }, [props.model]);
 
-  const hasChanges = rotationDelta.some((r) => r);
+  const hasChanges = rotationAnglePiMultiplier.some((r) => r);
 
   const onRotateClicked = (clockwise: boolean) => {
     const newRot = [0, 0, 0];
@@ -104,8 +102,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   const changeModelRotation = (newRotationDelta: v3.Tuple3<number>) => {
-    setRotationDelta(
-      rotationDelta.map((rot, index) => {
+    setRotationAnglePiMultiplier(
+      rotationAnglePiMultiplier.map((rot, index) => {
         const result = rot + newRotationDelta[index];
         // reset value when full rotation circle is done
         return result === 2 || result === -2 ? 0 : result;
@@ -173,12 +171,12 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
 
     forceRerender();
 
-    setRotationDelta([0, 0, 0]);
+    setRotationAnglePiMultiplier([0, 0, 0]);
     props.onClose();
   };
 
   const onSaveClicked = async () => {
-    const [rotationX, rotationY, rotationZ] = rotationDelta;
+    const [rotationX, rotationY, rotationZ] = rotationAnglePiMultiplier;
 
     props.onClose();
 
