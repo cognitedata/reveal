@@ -28,7 +28,7 @@
     "@sentry/browser": "^5.29.0",
     "antd": "4.7.3",
     "commander": "^5.1.0",
-    "cronstrue": "^1.105.0",
+    "cronstrue": "^1.106.0",
     "cross-env": "^7.0.3",
     "fs-extra": "^9.0.1",
     "i18next": "^19.8.4",
@@ -49,7 +49,7 @@
     "react-table": "^7.6.2",
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
-    "systemjs-webpack-interop": "^2.3.0"
+    "systemjs-webpack-interop": "^2.3.1"
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
@@ -64,8 +64,8 @@
     "@storybook/react": "^6.1.10",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.1.0",
-    "@testing-library/react-hooks": "^3.6.0",
-    "@types/jest": "^26.0.16",
+    "@testing-library/react-hooks": "^3.7.0",
+    "@types/jest": "^26.0.17",
     "@types/match-sorter": "^5.0.0",
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
