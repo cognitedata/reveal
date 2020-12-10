@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  A,
-  Button,
-  Icon,
-  Body,
-  Input,
-  Select,
-  Title,
-  Micro,
-} from '@cognite/cogs.js';
+import { A, Icon, Body, Input, Select, Title, Micro } from '@cognite/cogs.js';
 import {
   SelectLabel,
   SelectContainer,
@@ -17,20 +8,16 @@ import {
   AddedBoardItem,
   StyledCheckIcon,
 } from 'components/modals/elements';
-import { Flex, SpaceBetween } from 'styles/common';
+import { Flex } from 'styles/common';
 import { Board } from 'store/suites/types';
 
 interface Props {
   handleOnChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleBoardTypeChange: any;
-  handleSubmit: () => void;
-  addNewBoard: () => void;
-  handleCloseModal: any;
+  // handleBoardTypeChange: any;
+  actionButton: React.ReactElement;
   boards: any;
   boardValues: any;
-  boardType: any;
-  buttonNames: any;
-  mode: any;
+  // boardType: any;
   setNewBoard: any;
 }
 
@@ -41,17 +28,13 @@ const options = [
   { value: 'other', label: 'Other' },
 ];
 
-export const AddBoard: React.FC<Props> = ({
+export const BoardStep: React.FC<Props> = ({
   handleOnChange,
-  handleBoardTypeChange,
-  handleSubmit,
-  addNewBoard,
-  handleCloseModal,
+  // handleBoardTypeChange,
+  actionButton,
   boards,
   boardValues,
-  boardType,
-  buttonNames,
-  mode,
+  // boardType,
   setNewBoard,
 }: Props) => {
   return (
@@ -68,7 +51,7 @@ export const AddBoard: React.FC<Props> = ({
             onChange={handleOnChange}
             fullWidth
           />
-          <SelectContainer>
+          {/* <SelectContainer>
             <SelectLabel>Select type</SelectLabel>
             <Select
               theme="grey"
@@ -78,7 +61,7 @@ export const AddBoard: React.FC<Props> = ({
               onChange={handleBoardTypeChange}
               options={options}
             />
-          </SelectContainer>
+          </SelectContainer> */}
           <Input
             autoComplete="off"
             title="URL"
@@ -99,9 +82,7 @@ export const AddBoard: React.FC<Props> = ({
             onChange={handleOnChange}
             fullWidth
           />
-          <Button type="secondary" onClick={addNewBoard}>
-            {buttonNames[mode].board}
-          </Button>
+          {actionButton}
         </FormContainer>
         <BoardsContainer>
           <Title level={4}>Added boards</Title>
@@ -129,14 +110,6 @@ export const AddBoard: React.FC<Props> = ({
           </Micro>
         </BoardsContainer>
       </Flex>
-      <SpaceBetween>
-        <Button variant="ghost" onClick={handleCloseModal}>
-          Cancel
-        </Button>
-        <Button type="primary" onClick={handleSubmit}>
-          {buttonNames[mode].save}
-        </Button>
-      </SpaceBetween>
     </>
   );
 };

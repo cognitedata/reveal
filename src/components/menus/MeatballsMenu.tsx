@@ -2,12 +2,17 @@
 import React from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
 import { useClickAwayListener } from 'hooks/useClickAwayListener';
+import { useDispatch } from 'react-redux';
+import { modalOpen } from 'store/modals/actions';
+import { ModalType } from 'store/modals/types';
+import { TS_FIX_ME } from 'types/core';
 import { ActionsContainer, MenuContainer } from './elements';
 
 interface Props {
-  openModal: (value: string) => void;
+  dataItem: TS_FIX_ME;
 }
-const MeatballsMenu: React.FC<Props> = ({ openModal }: Props) => {
+const MeatballsMenu: React.FC<Props> = ({ dataItem }) => {
+  const dispatch = useDispatch();
   const {
     ref,
     isComponentVisible,
@@ -16,6 +21,10 @@ const MeatballsMenu: React.FC<Props> = ({ openModal }: Props) => {
 
   const handleMenuOpen = () => {
     setIsComponentVisible(() => !isComponentVisible);
+  };
+
+  const handleOpenModal = (modalType: ModalType, modalProps: TS_FIX_ME) => {
+    dispatch(modalOpen({ modalType, modalProps }));
   };
 
   return (
@@ -30,7 +39,11 @@ const MeatballsMenu: React.FC<Props> = ({ openModal }: Props) => {
           <Menu>
             <Menu.Item>Remove pin</Menu.Item>
             <Menu.Item>
-              <div role="button" tabIndex={0} onClick={() => openModal('edit')}>
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleOpenModal('EditSuite', { dataItem })}
+              >
                 Edit suite
               </div>
             </Menu.Item>
@@ -38,7 +51,7 @@ const MeatballsMenu: React.FC<Props> = ({ openModal }: Props) => {
               <div
                 role="button"
                 tabIndex={0}
-                onClick={() => openModal('delete')}
+                onClick={() => handleOpenModal('Delete', { dataItem })}
               >
                 Delete suite
               </div>

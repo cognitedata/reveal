@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Button, Input, Select } from '@cognite/cogs.js';
-import Modal from './Modal';
-import { ModalContainer, SelectLabel, SelectContainer } from './elements';
+import Modal from '../simpleModal/Modal';
+import { ModalContainer, SelectLabel, SelectContainer } from '../elements';
 
 interface Props {
   buttonText: string;
 }
 
-export const AddBoardModal: React.FC<Props> = ({ buttonText }: Props) => {
+const AddBoardModal: React.FC<Props> = ({ buttonText }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -44,6 +44,7 @@ export const AddBoardModal: React.FC<Props> = ({ buttonText }: Props) => {
         onCancel={handleCLoseModal}
         headerText="Add board to suite"
         footer={footer}
+        // to variable
         width={536}
       >
         <ModalContainer>
@@ -79,3 +80,5 @@ export const AddBoardModal: React.FC<Props> = ({ buttonText }: Props) => {
     </>
   );
 };
+
+export default AddBoardModal;

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
-import { AddBoardModal, DeleteModal, MultiStepModal } from 'components/modals';
 import MeatballsMenu from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import {
@@ -18,7 +17,6 @@ import { StyledTitle, NoBoardsContainer } from './elements';
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
-  const [activeModal, setActiveModal] = useState<string>('');
 
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
@@ -38,10 +36,6 @@ const SuiteOverview: React.FC = () => {
     history.push('/');
   }
 
-  const closeModal = () => {
-    setActiveModal('');
-  };
-
   const { title, color, boards } = suite || {};
 
   const Header = () => {
@@ -51,17 +45,7 @@ const SuiteOverview: React.FC = () => {
         <Title as={StyledTitle} level={5}>
           {title}
         </Title>
-        <MeatballsMenu openModal={setActiveModal} />
-        {activeModal === 'delete' && (
-          <DeleteModal handleCloseModal={closeModal} dataItem={suite} />
-        )}
-        {activeModal === 'edit' && (
-          <MultiStepModal
-            handleCloseModal={closeModal}
-            mode="edit"
-            dataItem={suite}
-          />
-        )}
+        <MeatballsMenu dataItem={suite} />
       </>
     );
   };
@@ -69,7 +53,7 @@ const SuiteOverview: React.FC = () => {
     <>
       <Suitebar
         leftCustomHeader={<Header />}
-        actionButton={<AddBoardModal buttonText="Add board" />}
+        // actionButton={<AddBoardModal buttonText="Add board" />}
       />
       <OverviewContainer>
         <TilesContainer>

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Overline, Title } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import SuiteAvatar from 'components/suiteAvatar';
-import { DeleteModal, MultiStepModal } from 'components/modals';
 import MeatballsMenu from 'components/menus';
 import {
   TileHeader,
@@ -50,12 +49,7 @@ export const Tile: React.FC<Props> = ({
   view = 'suite',
   linkTo,
 }: Props) => {
-  const [activeModal, setActiveModal] = useState<string>('');
   const history = useHistory();
-
-  const closeModal = () => {
-    setActiveModal('');
-  };
 
   const goToSuite = () => {
     history.push(linkTo);
@@ -79,7 +73,7 @@ export const Tile: React.FC<Props> = ({
             </TileOverline>
             <Title level={6}>{dataItem.title}</Title>
           </TileDescription>
-          <MeatballsMenu openModal={setActiveModal} />
+          <MeatballsMenu dataItem={dataItem} />
         </TileHeader>
         <TilePreview
           isBoard={isBoard}
@@ -87,16 +81,6 @@ export const Tile: React.FC<Props> = ({
         >
           {dataItem.embedTag && renderIframe(dataItem.embedTag)}
         </TilePreview>
-        {activeModal === 'delete' && (
-          <DeleteModal handleCloseModal={closeModal} dataItem={dataItem} />
-        )}
-        {activeModal === 'edit' && (
-          <MultiStepModal
-            handleCloseModal={closeModal}
-            mode="edit"
-            dataItem={dataItem}
-          />
-        )}
       </TileContainer>
     </>
   );

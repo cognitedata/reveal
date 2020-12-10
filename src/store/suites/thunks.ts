@@ -21,15 +21,15 @@ export const fetchSuites = (
 
 export const insertSuite = (
   client: CdfClient,
-  apiClient: ApiClient,
+  // apiClient: ApiClient,
   suite: Suite
 ) => async (dispatch: RootDispatcher) => {
   dispatch(actions.insertSuiteTableRow());
   try {
     const suiteRow = fromSuiteToRow(suite);
     await client.insertTableRow(SUITES_TABLE_NAME, suiteRow);
-    dispatch(actions.insertedSuiteTableRow());
     // dispatch(fetchSuites(apiClient));
+    dispatch(actions.suiteTableRequestSuccess());
     dispatch(fetchSuites(client));
   } catch (e) {
     dispatch(actions.insertSuiteTableRowError(e));
@@ -44,8 +44,8 @@ export const deleteSuite = (
   try {
     dispatch(actions.deleteSuiteTableRow());
     await client.deleteTableRow(SUITES_TABLE_NAME, key);
-    dispatch(actions.deletedSuiteTableRow());
     // dispatch(fetchSuites(apiClient));
+    dispatch(actions.suiteTableRequestSuccess());
     dispatch(fetchSuites(client));
   } catch (e) {
     dispatch(actions.deleteSuiteTableRowError(e));

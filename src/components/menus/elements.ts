@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import layers from '_helpers/zindex';
 
 export const MenuContainer = styled.div`
-  display flex;
+  display: flex;
   position: relative;
 `;
 export const ActionsContainer = styled.div`

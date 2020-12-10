@@ -7,7 +7,7 @@ import {
   ModalHeaderUnderline,
   ModalContent,
   FooterContainer,
-} from './elements';
+} from '../elements';
 
 Modal.setAppElement('#root');
 
@@ -88,11 +88,7 @@ const CustomModal: React.FC<Props> = ({
         <ModalHeaderUnderline underlineColor={underlineColor} />
         <ModalContent>{children}</ModalContent>
         {hasFooter && (
-          <>
-            {(footer && footer) || (
-              <FooterContainer>{FooterDefault}</FooterContainer>
-            )}
-          </>
+          <>{footer || <FooterContainer>{FooterDefault}</FooterContainer>}</>
         )}
       </Modal>
     </div>

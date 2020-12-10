@@ -4,33 +4,35 @@ import { useHistory } from 'react-router-dom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { RootDispatcher } from 'store/types';
 import { deleteSuite } from 'store/suites/thunks';
+import { modalClose } from 'store/modals/actions';
 import { Button, Body, Title } from '@cognite/cogs.js';
 import { ApiClientContext } from 'providers/ApiClientProvider';
-import Modal from './Modal';
-import { ModalContainer, DeleteModalFooter } from './elements';
+import Modal from 'components/modals/simpleModal/Modal';
+import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 
 interface Props {
   dataItem: any;
-  handleCloseModal: any;
 }
 
-export const DeleteModal: React.FC<Props> = ({
-  dataItem,
-  handleCloseModal,
-}: Props) => {
+const DeleteModal: React.FC<Props> = ({ dataItem }: Props) => {
   const history = useHistory();
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
 
+  const handleClose = () => {
+    dispatch(modalClose());
+  };
+
   const handleDeleteSuite = async () => {
     await dispatch(deleteSuite(client, apiClient, [{ key: dataItem.key }]));
+    handleClose();
     history.push('/');
   };
 
   const footer = (
     <DeleteModalFooter>
-      <Button onClick={handleCloseModal}>Keep Suite</Button>
+      <Button onClick={handleClose}>Keep Suite</Button>
       <Button
         type="danger"
         icon="Trash"
@@ -46,7 +48,7 @@ export const DeleteModal: React.FC<Props> = ({
     <>
       <Modal
         visible
-        onCancel={handleCloseModal}
+        onCancel={handleClose}
         headerText="Delete this suite?"
         footer={footer}
         width={400}
@@ -62,3 +64,5 @@ export const DeleteModal: React.FC<Props> = ({
     </>
   );
 };
+
+export default DeleteModal;

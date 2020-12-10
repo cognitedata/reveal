@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Loader, Title, Button } from '@cognite/cogs.js';
 import Suitebar from 'components/suitebar/Suitebar';
 import { SmallTile, Tile } from 'components/tiles';
-import { MultiStepModal } from 'components/modals';
 import { TilesContainer, OverviewContainer } from 'styles/common';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Suite } from 'store/suites/types';
 import { getSuitesTableState } from 'store/suites/selectors';
+import { modalOpen } from 'store/modals/actions';
+import { ModalType } from 'store/modals/types';
 import { SmallTilesContainer } from './elements';
 
 const Home = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation('Home');
-  const [activeModal, setActiveModal] = useState<string>('');
-
+  const dispatch = useDispatch();
   const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
     getSuitesTableState
   );
@@ -28,8 +28,8 @@ const Home = () => {
     return <Loader />;
   }
 
-  const closeModal = () => {
-    setActiveModal('');
+  const handleOpenModal = (modalType: ModalType) => {
+    dispatch(modalOpen({ modalType }));
   };
 
   return (
@@ -42,7 +42,7 @@ const Home = () => {
             type="secondary"
             icon="Plus"
             iconPlacement="left"
-            onClick={() => setActiveModal('create')}
+            onClick={() => handleOpenModal('CreateSuite')}
           >
             New suite
           </Button>
@@ -86,9 +86,6 @@ const Home = () => {
           })}
         </TilesContainer>
       </OverviewContainer>
-      {activeModal === 'create' && (
-        <MultiStepModal handleCloseModal={closeModal} mode="create" />
-      )}
     </>
   );
 };

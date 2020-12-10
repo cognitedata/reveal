@@ -14,6 +14,15 @@ const initialState: SuitesTableState = {
 
 export const SuitesReducer = createReducer(initialState)
   .handleAction(
+    SuitesTableActionTypes.SUITES_TABLE_REQUEST_SUCCESS,
+    (state: SuitesTableState) => ({
+      ...state,
+      loading: false,
+      error: '',
+      loaded: true,
+    })
+  )
+  .handleAction(
     SuitesTableActionTypes.SUITES_TABLE_LOAD,
     (state: SuitesTableState) => ({ ...state, loading: true, error: '' })
   )
@@ -40,15 +49,6 @@ export const SuitesReducer = createReducer(initialState)
     (state: SuitesTableState) => ({ ...state, loading: true, error: '' })
   )
   .handleAction(
-    SuitesTableActionTypes.SUITES_TABLE_ROW_INSERTED,
-    (state: SuitesTableState) => ({
-      ...state,
-      loading: false,
-      error: '',
-      loaded: true,
-    })
-  )
-  .handleAction(
     SuitesTableActionTypes.SUITES_TABLE_ROW_INSERT_ERROR,
     (state: SuitesTableState, action: SuitesTableRootAction) => ({
       ...state,
@@ -62,15 +62,6 @@ export const SuitesReducer = createReducer(initialState)
       ...state,
       loading: true,
       error: '',
-    })
-  )
-  .handleAction(
-    SuitesTableActionTypes.SUITES_TABLE_ROW_DELETED,
-    (state: SuitesTableState) => ({
-      ...state,
-      loading: false,
-      error: '',
-      loaded: true,
     })
   )
   .handleAction(

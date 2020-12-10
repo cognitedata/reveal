@@ -1,3 +1,1 @@
-export * from './MultiStepModal';
-export * from './AddBoardModal';
-export * from './DeleteModal';
+export { default } from './ModalManager';

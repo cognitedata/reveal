@@ -3,14 +3,13 @@ import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 
 export enum SuitesTableActionTypes {
+  SUITES_TABLE_REQUEST_SUCCESS = 'suitesTable/REQUEST_SUCCESS',
   SUITES_TABLE_LOAD = 'suitesTable/LOAD',
   SUITES_TABLE_LOADED = 'suitesTable/LOADED',
   SUITES_TABLE_LOAD_ERROR = 'suitesTable/ERROR',
   SUITES_TABLE_ROW_INSERT = 'suitesTable/INSERT',
-  SUITES_TABLE_ROW_INSERTED = 'suitesTable/INSERTED',
   SUITES_TABLE_ROW_INSERT_ERROR = 'suitesTable/INSERT_ERROR',
   SUITES_TABLE_ROW_DELETE = 'suitesTable/DELETE',
-  SUITES_TABLE_ROW_DELETED = 'suitesTable/DELETED',
   SUITES_TABLE_ROW_DELETE_ERROR = 'suitesTable/DELETE_ERROR',
 }
 
@@ -31,10 +30,9 @@ export type Suite = {
   key: string;
   title: string;
   description: string;
-  visibleTo: string[];
   boards: Board[];
   color: string;
-  lastUpdatedTime: Date;
+  lastUpdatedTime?: Date;
 };
 
 export interface SuiteRow extends RawDBRow {}
