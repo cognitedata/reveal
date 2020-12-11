@@ -42,6 +42,10 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     margin-top: 0;
   }
 
+  .integrations-ui-style-scope div:first-child {
+    overflow: hidden;
+  }
+
   .cogs-avatar {
     background: ${Colors['greyscale-grey4'].hex()} !important;
     border: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
