@@ -9,6 +9,7 @@ To use this library user must be a member of cognite NPM organization.
 
 - login to npm and follow steps : `yarn login`
 - install library : `yarn add @cognite/node-visualizer`
+- install peer-dependencies: `yarn add @cognite/cogs.js @reduxjs/toolkit react-redux redux styled-components`
 - Import React component and reducer and store enhancers:
 
 ```javascript
@@ -62,64 +63,6 @@ function App() {
   );
 }
 ```
-
-## Customizing Appearance
-
-Limited number of CSS Custom Properties are available to customize the appearance of Application.
-If the css properties are not set, default values will be used.
-
-| Css Custom Property Name                          |
-| ------------------------------------------------- |
-| --node-viz-background                       |
-| --node-viz-tree-background                  |
-| --node-viz-tree-color                       |
-| --node-viz-tab-background                   |
-| --node-viz-tab-select-background            |
-| --node-viz-tab-select-color                 |
-| --node-viz-title-bar-background             |
-| --node-viz-title-bar-color                  |
-| --node-viz-expansion-header-background      |
-| --node-viz-expansion-header-color           |
-| --node-viz-expansion-detail-background      |
-| --node-viz-expansion-detail-color           |
-| --node-viz-toolbar-icon-selected-background |
-| --node-viz-toolbar-icon-hover-background    |
-| --node-viz-select-input-background          |
-| --node-viz-select-input-option-color        |
-| --node-viz-slider-input-background          |
-| --node-viz-default-font-size                |
-| --node-viz-icon-size                        |
-| --node-viz-readonly-input-color             |
-| --node-viz-secondary-header-font-size       |
-
-refer [default theme section](https://github.com/cognitedata/node-visualization/blob/master/src/UserInterface/styles/scss/index.scss) for fallback values.
-
-Furthermore override Material Default Theme
-
-example:
-```typescript jsx
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: grey[300],
-    },
-    secondary: {
-      main: grey[50],
-    },
-  },
-  typography: {
-      fontSize: 12,
-      body1: {
-        fontSize: 12,
-      },
-  },
-});
-
-<ThemeProvider theme={theme}>
-   <NodeVisualizer root={root} />
-</ThemeProvider>
-```
-Further more custom appearance variables are available in [Appearance.ts](https://github.com/cognitedata/node-visualizer/blob/master/src/Core/States/Appearance.ts)
 
 ## For Contributors
 
