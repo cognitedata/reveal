@@ -42,7 +42,7 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     margin-top: 0;
   }
 
-  .integrations-ui-style-scope div:first-child {
+  .integrations-ui-style-scope > div {
     overflow: hidden;
   }
 
