@@ -1,7 +1,6 @@
 import { QueryCache } from 'react-query';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { waitFor } from '@testing-library/react';
 import { useIntegrations } from './useIntegrations';
 import {
   CDF_ENV_GREENFIELD,
@@ -23,7 +22,9 @@ describe('useIntgrations', () => {
         PROJECT_ITERA_INT_GREEN,
         CDF_ENV_GREENFIELD
       );
-      const { result } = renderHook(() => useIntegrations(), { wrapper });
+      const { result, waitFor } = renderHook(() => useIntegrations(), {
+        wrapper,
+      });
       await waitFor(() => {
         expect(result.current.data).toEqual(getMockResponse());
       });
@@ -31,6 +32,7 @@ describe('useIntgrations', () => {
   });
 
   test('Returns error on fail', async () => {
+    jest.setTimeout(10000);
     const rejectValue = mockError;
     sdkv3.get.mockRejectedValue(rejectValue);
     const queryCache = new QueryCache();
@@ -42,7 +44,9 @@ describe('useIntgrations', () => {
         ORIGIN_DEV,
         CDF_ENV_GREENFIELD
       );
-      const { result } = renderHook(() => useIntegrations(), { wrapper });
+      const { result, waitFor } = renderHook(() => useIntegrations(), {
+        wrapper,
+      });
       await waitFor(() => {
         expect(result.current.error).toEqual(rejectValue);
       });
