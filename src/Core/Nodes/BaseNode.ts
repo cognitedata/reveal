@@ -78,6 +78,8 @@ export abstract class BaseNode extends Identifiable {
 
   private _renderStyles: BaseRenderStyle[] = [];
 
+  private _isLoading: boolean = false;
+
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
@@ -103,6 +105,10 @@ export abstract class BaseNode extends Identifiable {
   public get isInitialized(): boolean { return this._isInitialized; }
 
   public get activeTarget(): ITarget | null { return this.activeTargetIdAccessor as ITarget; }
+
+  public get isLoading(): boolean { return this._isLoading; }
+
+  public set isLoading(value: boolean) { this._isLoading = value; }
 
   // This is the text shown in the tree control
   public get displayName(): string {
@@ -702,6 +708,8 @@ export abstract class BaseNode extends Identifiable {
   public notifyColorChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColor)); }
 
   public notifyColorMapChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColorMap)); }
+
+  public notifyLoadedData(): void { this.notify(new NodeEventArgs(Changes.loaded)) }
 
   public notify(args: NodeEventArgs): void {
     VirtualUserInterface.updateNode(this, args);

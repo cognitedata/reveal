@@ -88,6 +88,26 @@ export const explorerSlice = createSlice({
         };
       }
     },
+    onNodeIsLoadingChange: {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, isLoading: boolean}>): IExplorerState  {
+        const {isLoading, nodeId} = action.payload;
+        const nodeState = state.nodes.byId[nodeId];
+
+        if (nodeState) {
+          nodeState.isLoading = isLoading;
+        }
+
+        return state;
+      },
+      prepare(node: BaseNode): { payload: { nodeId: string, isLoading: boolean} } {
+        return {
+          payload: {
+            nodeId: node.uniqueId.toString(),
+            isLoading: node.isLoading,
+          }
+        }
+      }
+    },
     onExpandStateChange: {
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, expandState: boolean }>): IExplorerState {
         const uniqueId = action.payload.nodeId;
@@ -181,7 +201,7 @@ export const explorerSlice = createSlice({
 
 export const {
   generateNodeTree, onSelectedTabChange, onCheckboxStateChange, onExpandStateChange,
-  onActiveStateChange, onNodeColorChange, onNodeNameChange, onNodeIconChange
+  onActiveStateChange, onNodeColorChange, onNodeNameChange, onNodeIconChange, onNodeIsLoadingChange
 } = explorerSlice.actions;
 export const explorerReducer = explorerSlice.reducer;
 
@@ -266,6 +286,7 @@ function generateNodeState(node: BaseNode, parentId: string | null, typeName: st
       italic: node.isLabelInItalic(),
       bold: node.isLabelInBold(),
       color: node.getLabelColor()
-    }
+    },
+    isLoading: node.isLoading,
   };
 }

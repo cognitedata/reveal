@@ -3,12 +3,14 @@ import { Input, Button, Row } from '@cognite/cogs.js';
 import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
 import {
   SyntheticSubSurfaceModule,
+  SubSurfaceModule,
   ThreeModule,
   Modules,
   NodeVisualizer,
 } from '@cognite/node-visualizer';
 import { Provider } from 'react-redux';
 import styled from 'styled-components';
+import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js';
 import {
   NodeVisualizerProps,
   ExplorerPropType,
@@ -27,33 +29,97 @@ interface AuthWrapperProps {
 }
 
 const defaultFormValue = {
-  apiKey: '',
-  fileId: '',
-  apiUrl: 'https://api.cognitedata.com',
+  apiKey: process.env.API_KEY || '',
+  fileId: process.env.FILE_ID || '',
+  apiUrl: process.env.API_URL || 'https://api.cognitedata.com',
+  project: process.env.PROJECT || '',
+  externalId: 'synthetic_horizon',
 };
 
-export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
-  const [formValue, setFormValue] = useState({ ...defaultFormValue });
-  const [apiKey, setApiKey] = useState(process.env.API_KEY || '');
-  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '');
-  const [fileId, setFileId] = useState(process.env.FILE_ID || '');
+const defaultFormFields: FormField[] = [
+  {
+    name: 'apiKey',
+    type: 'password',
+    placeholder: 'Api key',
+  },
+  {
+    name: 'fileId',
+    type: 'text',
+    placeholder: 'File ID',
+  },
+  {
+    name: 'apiUrl',
+    type: 'text',
+    placeholder: 'Api URL',
+  },
+];
 
+interface AuthFormValue {
+  [key: string]: string;
+}
+
+interface FormField {
+  name: string;
+  placeholder?: string;
+  type?: 'text' | 'password' | 'email';
+}
+
+interface AuthFormProps {
+  fields: FormField[];
+  onFormSubmit?: (data: AuthFormValue) => void;
+}
+
+const AuthForm: React.FC<AuthFormProps> = ({ onFormSubmit, fields }) => {
+  const [formValue, setFormValue] = useState<AuthFormValue>({
+    ...defaultFormValue,
+  });
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
     setFormValue({ ...formValue, [name]: value });
   };
-
-  const onFormSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
+  const onSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { apiKey: key, apiUrl: url, fileId: id } = formValue;
+    if (onFormSubmit) {
+      onFormSubmit({ ...formValue });
+    }
+  };
 
+  return (
+    <form name="basic" onSubmit={onSubmit}>
+      {fields.map(({ name, placeholder, type }) => (
+        <StyledRow key={name}>
+          <Input
+            name={name}
+            variant="default"
+            placeholder={placeholder || ''}
+            type={type || 'text'}
+            size="default"
+            onChange={onInputChange}
+            value={formValue[name]}
+          />
+        </StyledRow>
+      ))}
+      <StyledRow>
+        <Button type="primary" htmlType="submit" block>
+          Submit
+        </Button>
+      </StyledRow>
+    </form>
+  );
+};
+
+export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
+  const [apiKey, setApiKey] = useState('');
+  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '');
+  const [fileId, setFileId] = useState(process.env.FILE_ID || '');
+
+  const onFormSubmit = (values) => {
+    const { apiKey: key, apiUrl: url, fileId: id } = values;
     setApiKey(key);
     setApiUrl(url);
     setFileId(id);
-
-    setFormValue({ ...defaultFormValue });
   };
 
   return (
@@ -66,44 +132,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = (props) => {
           {...props}
         />
       ) : (
-        <form name="basic" onSubmit={onFormSubmit}>
-          <StyledRow>
-            <Input
-              name="apiKey"
-              variant="default"
-              placeholder="Api key"
-              size="default"
-              onChange={onInputChange}
-              value={formValue.apiKey}
-              type="password"
-            />
-          </StyledRow>
-          <StyledRow>
-            <Input
-              name="fileId"
-              variant="default"
-              placeholder="File ID"
-              size="default"
-              onChange={onInputChange}
-              value={formValue.fileId}
-            />
-          </StyledRow>
-          <StyledRow>
-            <Input
-              name="apiUrl"
-              variant="default"
-              placeholder="Api URL"
-              size="default"
-              onChange={onInputChange}
-              value={formValue.apiUrl}
-            />
-          </StyledRow>
-          <StyledRow>
-            <Button type="primary" htmlType="submit" block>
-              Submit
-            </Button>
-          </StyledRow>
-        </form>
+        <AuthForm onFormSubmit={onFormSubmit} fields={defaultFormFields} />
       )}
     </>
   );
@@ -150,6 +179,100 @@ export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
         <NodeVisualizer root={root} {...nodeVisualizerProps} />
       </Provider>
     </div>
+  );
+};
+
+interface HorizonNodeVisualizerProps extends AuthWrapperProps {
+  apiKey: string;
+  apiUrl: string;
+  project: string;
+  externalId: string;
+}
+
+export const HorizonNodeVisualizer: React.FC<HorizonNodeVisualizerProps> = ({
+  apiKey,
+  apiUrl,
+  project,
+  externalId = 'synthetic_horizon',
+}) => {
+  const modules = Modules.instance;
+
+  modules.clearModules();
+  modules.add(new ThreeModule());
+
+  const subSurfaceModule = new SubSurfaceModule();
+  const client = CogniteGeospatialClient({
+    project: process.env.PROJECT || project || '',
+    api_key: process.env.API_KEY || apiKey || '',
+    api_url: process.env.API_URL || apiUrl || '',
+  });
+  subSurfaceModule.addHorizonData(client, [externalId]);
+  modules.add(subSurfaceModule);
+
+  modules.install();
+
+  const root = modules.createRoot();
+
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
+      </Provider>
+    </div>
+  );
+};
+
+const horizonsFormFields: FormField[] = [
+  {
+    name: 'apiKey',
+    type: 'password',
+    placeholder: 'Api key',
+  },
+  {
+    name: 'apiUrl',
+    type: 'text',
+    placeholder: 'Api URL',
+  },
+  {
+    name: 'project',
+    type: 'text',
+    placeholder: 'Project (Tenant)',
+  },
+  {
+    name: 'externalId',
+    type: 'text',
+    placeholder: 'externalId to be shown for',
+  },
+];
+
+export const AuthWrapperHorizons: React.FC<AuthWrapperProps> = (props) => {
+  const [apiKey, setApiKey] = useState(process.env.API_KEY || '');
+  const [apiUrl, setApiUrl] = useState(process.env.API_URL || '');
+  const [project, setProject] = useState(process.env.project || '');
+  const [externalId, setExternalId] = useState('synthetic_horizon');
+
+  const onFormSubmit = (values) => {
+    const { apiKey: key, apiUrl: url, project: prj, externalId: eid } = values;
+    setApiKey(key);
+    setApiUrl(url);
+    setProject(prj);
+    setExternalId(eid);
+  };
+
+  return (
+    <>
+      {apiKey && project && apiUrl ? (
+        <HorizonNodeVisualizer
+          apiKey={apiKey}
+          apiUrl={apiUrl}
+          project={project}
+          externalId={externalId}
+          {...props}
+        />
+      ) : (
+        <AuthForm onFormSubmit={onFormSubmit} fields={horizonsFormFields} />
+      )}
+    </>
   );
 };
 

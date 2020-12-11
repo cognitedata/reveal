@@ -31,6 +31,8 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from "@/Core/Primitives/Ma";
 import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 import { SubSurfaceModule } from "@/Solutions/BP/SubSurfaceModule";
+import { PointsNode } from "@/SubSurface/Basics/PointsNode";
+import { Points } from "@/Core/Geometry/Points";
 
 export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   //= =================================================
@@ -45,6 +47,7 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
     super.loadData(root);
     SyntheticSubSurfaceModule.addWells(root);
     SyntheticSubSurfaceModule.addSurfaces(root);
+    SyntheticSubSurfaceModule.addHorizonPoints(root);
   }
 
   // todo: why do we keep this?
@@ -56,6 +59,32 @@ export class SyntheticSubSurfaceModule extends SubSurfaceModule {
   // todo: why do we keep this?
   public /* override */ startAnimate(root: BaseRootNode): void {
     setInterval(() => SyntheticSubSurfaceModule.animate(root), 200);
+  }
+
+  private static addHorizonPoints(root: BaseRootNode): void {
+    if (!(root instanceof SubSurfaceRootNode))
+      return;
+
+    const horizonPoints: Vector3[] = [];
+    const shift = Range3.newTest.clone();
+    const space = 15;
+
+    for (let i = 0; i < 100; i++) {
+      for (let j = 0; j < 100; j++) {
+        const z = Random.getGaussian() * 10;
+        horizonPoints.push(new Vector3(i * space + shift.x.min, j * space + shift.y.min, z * space));
+      }
+    }
+
+    const tree = root.getOthersByForce();
+    const folder = new FolderNode();
+    const node = new PointsNode();
+    const points = new Points();
+
+    points.list = horizonPoints;
+    node.points = points;
+    folder.addChild(node);
+    tree.addChild(folder);
   }
 
   //= =================================================

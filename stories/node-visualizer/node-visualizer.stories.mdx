@@ -4,7 +4,8 @@ import {
   NodeVisualizerComponent,
   NodeVisualizerExplorer,
   NodeVisualizerToolbar,
-  NodeVisualizerWrapper
+  NodeVisualizerWrapper,
+  AuthWrapperHorizons,
 } from './node-visualizer.helper';
 import { Explorer, Toolbar } from './components';
 
@@ -103,5 +104,22 @@ And props for custom toolbar:
   <NodeVisualizerWrapper />
 </Story>
 
+## Initialize horizon points
+
+<Story name="Horizons">
+  <AuthWrapperHorizons />
+</Story>
+
+To provide data about horizons you should use `SubSurfaceModule`:
+```typescript
+const subSurfaceModule = new SubSurfaceModule();
+const client = CogniteGeospatialClient({
+  project: 'project_name',
+  api_key: 'api_key',
+  api_url: 'api_url',
+});
+
+module.addHorizonData(client, ['horizon_external_id']);
+```
 
 

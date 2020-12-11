@@ -33,6 +33,10 @@ export abstract class Shape {
     return this._boundingBox;
   }
 
+  public set boundingBox(boundingBox) {
+    this._boundingBox = boundingBox.clone();
+  }
+
   //= =================================================
   // VIRTUAL METHODS:
   //= =================================================

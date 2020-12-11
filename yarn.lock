@@ -1108,6 +1108,14 @@
   optionalDependencies:
     typescript "^3.6"
 
+"@cognite/geospatial-sdk-js@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@cognite/geospatial-sdk-js/-/geospatial-sdk-js-0.0.6.tgz#6c56724bad88d7ed68beb6dc0ae7302d9950ae39"
+  integrity sha512-pypksu6CeAzky2LnPVrCH/swYllcuw9HPTQtBvd9sJibknpQwL/V7C6USEBhgnGYjU7SlxDxr9iURwl/F0/H+g==
+  dependencies:
+    "@types/geojson" "^7946.0.7"
+    axios "^0.19.2"
+
 "@cognite/potree-core@1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.0.6.tgz#e3f61ba05303a634fef4a725169a13ca2cfee027"
@@ -1121,7 +1129,7 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/seismic-sdk-js@^0.1.6":
+"@cognite/seismic-sdk-js@0.1.10":
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/@cognite/seismic-sdk-js/-/seismic-sdk-js-0.1.10.tgz#e23503693a60e63b468e25537c00b1d0e1178b82"
   integrity sha512-tCXXOwkNp4CivxX/8xb+5WfP98H1q6WS5JlcCqIPnd1QjCCl1Yk/keU8yLBLa+Rb2SmcFgG3Ab5uvp67Y7IOWg==
@@ -2437,6 +2445,11 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.45.tgz#e9387572998e5ecdac221950dab3e8c3b16af884"
   integrity sha512-jnqIUKDUqJbDIUxm0Uj7bnlMnRm1T/eZ9N+AVMqhPgzrba2GhGG5o/jCTwmdPK709nEZsGoMzXEDUjcXHa3W0g==
 
+"@types/geojson@^7946.0.7":
+  version "7946.0.7"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.7.tgz#c8fa532b60a0042219cdf173ca21a975ef0666ad"
+  integrity sha512-wE2v81i4C4Ol09RtsWFAqg3BUitWbHSpSlIo+bNdsCJijO9sjme+zm+73ZMCa/qMC8UEERxzGbvmr1cffo2SiQ==
+
 "@types/glob-base@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@types/glob-base/-/glob-base-0.3.0.tgz#a581d688347e10e50dd7c17d6f2880a10354319d"
@@ -3676,6 +3689,13 @@ axe-core@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.0.2.tgz#c7cf7378378a51fcd272d3c09668002a4990b1cb"
   integrity sha512-arU1h31OGFu+LPrOLGZ7nB45v940NMDMEJeNmbutu57P+UFDVnkZg3e+J1I2HJRZ9hT7gO8J91dn/PMrAiKakA==
+
+axios@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+  dependencies:
+    follow-redirects "1.5.10"
 
 axobject-query@^2.2.0:
   version "2.2.0"
@@ -5349,6 +5369,13 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.9:
   dependencies:
     ms "2.0.0"
 
+debug@=3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
+  dependencies:
+    ms "2.0.0"
+
 debug@^3.0.0, debug@^3.1.1, debug@^3.2.5:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
@@ -6741,6 +6768,13 @@ focus-visible@^5.1.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/focus-visible/-/focus-visible-5.2.0.tgz#3a9e41fccf587bd25dcc2ef045508284f0a4d6b3"
   integrity sha512-Rwix9pBtC1Nuy5wysTmKy+UjbDJpIfg8eHjw0rjZ1mX4GNLz1Bmd16uDpI3Gk1i70Fgcs8Csg2lPm8HULFg9DQ==
+
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
+  dependencies:
+    debug "=3.1.0"
 
 follow-redirects@^1.0.0:
   version "1.13.0"

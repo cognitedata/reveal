@@ -30,7 +30,7 @@ export abstract class DataNode extends BaseVisualNode {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  protected constructor() { super(); }
 
   //= =================================================
   // INSTANCE FIELDS

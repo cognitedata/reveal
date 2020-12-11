@@ -3,14 +3,14 @@ import { Changes } from "@/Core/Views/Changes";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { onSelectedNodeChange, onSettingsReset } from "@/UserInterface/Redux/reducers/SettingsReducer";
-import
-{
+import {
   onCheckboxStateChange,
   onExpandStateChange,
   onActiveStateChange,
   onNodeColorChange,
   onNodeNameChange,
-  onNodeIconChange
+  onNodeIconChange,
+  onNodeIsLoadingChange
 } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 
 export class NotificationsToActionsAdaptor {
@@ -40,5 +40,7 @@ export class NotificationsToActionsAdaptor {
       this.dispatcher(onNodeIconChange(sender));
     if (args.isChanged(Changes.resetStyle))
       this.dispatcher(onSettingsReset(sender));
+    if (args.isChanged(Changes.loaded))
+      this.dispatcher(onNodeIsLoadingChange(sender))
   }
 }

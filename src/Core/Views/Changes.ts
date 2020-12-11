@@ -27,6 +27,8 @@ export class Changes {
 
   public static readonly selected: symbol = Symbol("selected");
 
+  public static readonly loaded: symbol = Symbol('loaded');
+
   // Fields changed
   public static readonly nodeName: symbol = Symbol("nodeName");
 

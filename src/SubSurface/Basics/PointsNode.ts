@@ -21,6 +21,7 @@ import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
 import Icon from "@images/Nodes/PointsNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
+import {ColorMaps} from "@/Core/Primitives/ColorMaps";
 
 export class PointsNode extends DataNode {
   //= =================================================
@@ -33,7 +34,10 @@ export class PointsNode extends DataNode {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+    this.colorMap = ColorMaps.rainbowName;
+  }
 
   //= =================================================
   // INSTANCE PROPERTIES

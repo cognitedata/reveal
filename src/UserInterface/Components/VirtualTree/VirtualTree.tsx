@@ -112,7 +112,7 @@ export const VirtualTree = (props: VirtualTreeProps) => {
                 color: color ? color.hex() : 'black',
               }}
             >
-              {itemText}
+              {item.isLoading ? '(Loading...)' : null} {itemText}
             </span>
           </div>
         </div>

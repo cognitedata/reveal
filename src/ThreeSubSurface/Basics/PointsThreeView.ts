@@ -25,6 +25,9 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
+import {ColorMaps} from "@/Core/Primitives/ColorMaps";
+import {ColorMap} from "@/Core/Primitives/ColorMap";
+import {Changes} from "@/Core/Views/Changes";
 
 export class PointsThreeView extends BaseGroupThreeView {
   //= =================================================
@@ -47,6 +50,13 @@ export class PointsThreeView extends BaseGroupThreeView {
 
   protected /* override */ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
+    if (args.isChanged(Changes.nodeColorMap)) {
+      const parent = this.object3D;
+      if (!parent)
+        return;
+
+      this.touch();
+    }
   }
 
   //= =================================================
@@ -81,7 +91,9 @@ export class PointsThreeView extends BaseGroupThreeView {
     const geometry = PointsThreeView.createBufferGeometry(points, this.transformer);
     const material = new THREE.PointsMaterial({ color: ThreeConverter.toThreeColor(color), size: style.size, sizeAttenuation: true });
     if (style.colorType === ColorType.ColorMap) {
-      geometry.setAttribute("color", PointsThreeView.createColorsAttribute(points));
+      const colorMap = ColorMaps.get(node.colorMap);
+      const colorAttribute = new THREE.Uint8BufferAttribute(PointsThreeView.createColors(points, colorMap), 3, true);
+      geometry.setAttribute('color', colorAttribute);
       material.vertexColors = true;
     }
     return new THREE.Points(geometry, material);
@@ -115,7 +127,7 @@ export class PointsThreeView extends BaseGroupThreeView {
     return positions;
   }
 
-  private static createColors(points: Points): Uint8Array {
+  private static createColors(points: Points, colorMap: ColorMap | null = null): Uint8Array {
     const { zRange } = points;
     let index = 0;
 
@@ -123,7 +135,9 @@ export class PointsThreeView extends BaseGroupThreeView {
     for (let i = 0; i < points.length; i++) {
       const { z } = points.list[i];
       const fraction = zRange.getFraction(z);
-      const color = Color.hsv(fraction * 360, 255, 200);
+      const color = colorMap
+        ? colorMap.getColor(fraction)
+        : Color.hsv(fraction * 360, 255, 200);
 
       colors[index++] = color.red();
       colors[index++] = color.green();

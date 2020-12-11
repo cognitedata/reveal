@@ -26,4 +26,5 @@ export interface ITreeNode {
     color: Color;
   };
   children: ITreeNode[];
+  isLoading: boolean;
 }
