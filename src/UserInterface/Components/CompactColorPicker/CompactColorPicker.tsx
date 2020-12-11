@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ColorResult, CompactPicker } from 'react-color';
 import Color from 'color';
-import './CompactColorPicker.module.scss';
+import styled from 'styled-components';
+import { applicationDefaultFontSize } from '@/UserInterface/styles/styled.props';
 
 interface CompactColorPickerProps {
   value: string;
@@ -18,30 +19,14 @@ export const CompactColorPicker = (props: CompactColorPickerProps) => {
   };
 
   return (
-    <div className="color-picker-container">
-      <div
-        className="color-display"
-        role="button"
-        aria-label="color"
-        tabIndex={0}
-        onClick={() => setVisibility(!visible)}
-      >
-        <span className="color-box" style={{ backgroundColor: color }} />
-        <span className="color-name">{color}</span>
-      </div>
+    <ColorPickerWrapper>
+      <ColorDisplay onClick={() => setVisibility(!visible)}>
+        <ColorBox color={color} />
+        <ColorName>{color}</ColorName>
+      </ColorDisplay>
       {visible && (
-        <div
-          className="color-picker"
-          role="dialog"
-          aria-label="color picker dialog"
-        >
-          <div
-            className="color-picker-cover"
-            role="button"
-            aria-label="close color picker"
-            tabIndex={-1}
-            onClick={handleClose}
-          />
+        <ColorPicker>
+          <ColorPickerCover onClick={handleClose} />
           <CompactPicker
             color={color}
             onChangeComplete={(reactColor: ColorResult) => {
@@ -55,8 +40,47 @@ export const CompactColorPicker = (props: CompactColorPickerProps) => {
               );
             }}
           />
-        </div>
+        </ColorPicker>
       )}
-    </div>
+    </ColorPickerWrapper>
   );
 };
+
+const ColorPickerWrapper = styled.div`
+  width: 100%;
+  position: relative;
+`;
+
+const ColorDisplay = styled.div`
+  height: 1.3rem;
+  border-radius: 4px;
+  border: 1px solid #94949f;
+  font-size: ${applicationDefaultFontSize};
+  padding: 18px 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  box-sizing: border-box;
+`;
+
+const ColorBox = styled.span`
+  width: 14px;
+  height: 14px;
+  border: 1px #c4c4c4 solid;
+  background-color: ${(props) => props.color};
+`;
+const ColorName = styled.span`
+  margin-left: 0.1rem;
+`;
+const ColorPicker = styled.div`
+  position: fixed;
+  z-index: 999;
+`;
+const ColorPickerCover = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+`;

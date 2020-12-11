@@ -1,4 +1,3 @@
-import './virtual-tree.scss';
 import React, { KeyboardEvent } from 'react';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { List as VirtualList } from 'react-virtualized/dist/es/List';
@@ -9,6 +8,7 @@ import { ChromaIcon } from '@/UserInterface/Components/ChromaIcon/ChromaIcon';
 import { ExpandButton } from '@/UserInterface/Components/VirtualTree/ExpandButton';
 import { VirtualTreeProps } from '@/UserInterface/Components/VirtualTree/VirtualTreeProps';
 import { ITreeNode } from '@/UserInterface/Components/VirtualTree//ITreeNode';
+import styled from 'styled-components';
 
 const DEFAULT_ROW_HEIGHT = 22;
 
@@ -63,26 +63,26 @@ export const VirtualTree = (props: VirtualTreeProps) => {
       };
 
       children.unshift(
-        <div className="tree-item center" key="label" role="row">
-          <div className="tree-item-comp" role="cell">
+        <TreeItem key={item.uniqueId}>
+          <TreeItemComp>
             <ExpandButton
               expandable={item.children.length > 0}
               expanded={item.expanded}
               onExpand={onExpand}
               onCollapse={onExpand}
             />
-          </div>
+          </TreeItemComp>
           {item.icon && (
-            <div className="tree-item-comp" role="cell">
+            <TreeItemComp>
               <ChromaIcon
                 src={item.icon.path}
                 alt={item.icon.description}
                 color={item.icon.color?.hex()}
                 size={props.iconSize}
               />
-            </div>
+            </TreeItemComp>
           )}
-          <div className="tree-item-comp" role="cell">
+          <TreeItemComp>
             <TreeItemButton
               visible={item.checkVisible}
               id={keyPrefix}
@@ -97,25 +97,24 @@ export const VirtualTree = (props: VirtualTreeProps) => {
                 onToggleNodeCheck(item.uniqueId, !item.checked)
               }
             />
-          </div>
-          <div className="tree-item-comp tree-item-lbl-container">
+          </TreeItemComp>
+          <TreeItemLabelContainer selected={!!item.selected}>
             <span
               tabIndex={0}
               role="button"
-              aria-label="select tree item"
-              className={`tree-item-lbl${item.selected ? ' selected' : ''}`}
               onClick={onNodeSelect}
               onKeyUp={onNodeLabelEnter}
               style={{
                 fontWeight: bold ? 'bold' : 'normal',
                 fontStyle: italic ? 'italic' : 'normal',
                 color: color ? color.hex() : 'black',
+                outline: 'none',
               }}
             >
               {item.isLoading ? '(Loading...)' : null} {itemText}
             </span>
-          </div>
-        </div>
+          </TreeItemLabelContainer>
+        </TreeItem>
       );
     }
 
@@ -161,7 +160,7 @@ export const VirtualTree = (props: VirtualTreeProps) => {
   };
 
   return (
-    <div className="virtual-tree-container" role="tree">
+    <VirtualTreeContainer>
       <AutoSizer>
         {(params) => {
           return (
@@ -177,6 +176,50 @@ export const VirtualTree = (props: VirtualTreeProps) => {
           );
         }}
       </AutoSizer>
-    </div>
+    </VirtualTreeContainer>
   );
 };
+
+const VirtualTreeContainer = styled.div`
+  flex: 1;
+  padding: 10px;
+
+  ul {
+    margin: 0;
+    padding: 0 0 0 10px;
+    list-style: none;
+  }
+`;
+
+const TreeItem = styled.div`
+  height: 20px;
+  display: flex;
+  margin-bottom: 2px;
+  white-space: pre;
+  user-select: none;
+  box-sizing: border-box;
+  width: 100%;
+`;
+
+const TreeItemComp = styled.div`
+  height: 20px;
+  width: 1.25em;
+  display: flex;
+  align-items: center;
+`;
+
+const TreeItemLabelContainer = styled.div`
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.3em;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.75em;
+  outline: none;
+  padding-left: 5px;
+
+  background: ${(props: { selected: boolean }) =>
+    props.selected ? '#e8e8e8' : 'none'};
+`;

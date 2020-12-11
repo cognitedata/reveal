@@ -1,10 +1,7 @@
 import React from 'react';
-import { Icon } from '@/UserInterface/Components/Icon/Icon';
 import { ExplorerTabsPropType } from '@/UserInterface/Components/Explorer/ExplorerTypes';
-import {
-  StyledTabs,
-  StyledTab,
-} from '@/UserInterface/Components/Tabs/StyledTabs';
+import styled from 'styled-components';
+import { TabPane as Tab, Tabs } from '@cognite/cogs.js';
 
 // Renders Explorer Tabs
 export const ExplorerTabs = (props: ExplorerTabsPropType) => {
@@ -12,31 +9,19 @@ export const ExplorerTabs = (props: ExplorerTabsPropType) => {
   if (!tabs) {
     return null;
   }
-  const handleChange = (event: React.ChangeEvent<{}>, tabIndex: number) => {
-    onTabChange(tabIndex);
+  const handleChange = (activeKey: string) => {
+    onTabChange(Number(activeKey));
   };
 
   return (
-    <div className="explorer-tabs">
-      <StyledTabs
-        value={selectedTabIndex}
-        indicatorColor="primary"
-        textColor="primary"
-        onChange={handleChange}
-      >
-        {tabs.map((tab) => (
-          <StyledTab
-            tabIndex={0}
-            key={`node-type-${tab.type}`}
-            label={
-              <div className="explorer-tab">
-                <Icon src={tab.icon} />
-                <span>{tab.name}</span>
-              </div>
-            }
-          />
-        ))}
-      </StyledTabs>
-    </div>
+    <StyledTabs activeKey={selectedTabIndex.toString()} onChange={handleChange}>
+      {tabs.map((tab, index) => (
+        <Tab key={index.toString()} tab={<span>{tab.name}</span>} />
+      ))}
+    </StyledTabs>
   );
 };
+
+export const StyledTabs = styled(Tabs)`
+  min-height: 30px;
+`;

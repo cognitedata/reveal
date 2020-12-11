@@ -1,17 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
-import './ChromaIcon.module.scss';
 import { setCssVariable } from '@/UserInterface/Foundation/Utils/cssUtils';
+import { iconSize } from '@/UserInterface/styles/styled.props';
 
 export interface ImageProps {
   readonly background?: string;
   readonly picture?: string;
 }
 const ImageContainer = styled.div<ImageProps>`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: ${(props) => props.background};
   mask-image: ${(props) => (props.picture ? `url(${props.picture})` : 'none')};
-  -webkit-mask-image: ${(props) =>
-    props.picture ? `url(${props.picture})` : 'none'};
+  background-size: ${iconSize} ${iconSize};
+  mask-size: ${iconSize} ${iconSize};
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-mode: alpha;
 `;
 
 const BlendImage = styled.img<ImageProps>`
@@ -36,20 +44,19 @@ export const ChromaIcon = (props: ChromaIconProps) => {
     `linear-gradient(to right,${props.color} 0%,${props.color} 100%);`;
 
   return (
-    <div className="chroma-icon-container">
+    <IconContainer>
       <ImageContainer
-        className="chroma-icon chroma-icon-image-container center"
         background={background}
         picture={props.src}
         aria-label={props.alt}
       >
-        <BlendImage
-          className="chroma-icon-image"
-          src={props.src}
-          alt={props.alt}
-          background={background}
-        />
+        <BlendImage src={props.src} alt={props.alt} background={background} />
       </ImageContainer>
-    </div>
+    </IconContainer>
   );
 };
+
+const IconContainer = styled.div`
+  width: ${iconSize};
+  height: ${iconSize};
+`;

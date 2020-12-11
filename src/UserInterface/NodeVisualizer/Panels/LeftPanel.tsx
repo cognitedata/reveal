@@ -13,6 +13,8 @@ import { onSelectedNodeChange } from '@/UserInterface/Redux/reducers/SettingsRed
 import { State } from '@/UserInterface/Redux/State/State';
 import { ConnectedSettingsPanel } from '@/UserInterface/NodeVisualizer/Settings/ConnectedSettingsPanel';
 import SplitPane from 'react-split-pane';
+import styled from 'styled-components';
+import { panelBackground } from '@/UserInterface/styles/styled.props';
 
 function mapDispatchToExplorerPanel(dispatch: Dispatch) {
   return {
@@ -58,7 +60,7 @@ export const LeftPanel = ({ explorer, custom }: LeftPanelProps) => {
   );
 
   return (
-    <div className="left-panel">
+    <LeftPanelContainer>
       {custom ? (
         <Explorer />
       ) : (
@@ -67,6 +69,14 @@ export const LeftPanel = ({ explorer, custom }: LeftPanelProps) => {
           <ConnectedSettingsPanel />
         </SplitPane>
       )}
-    </div>
+    </LeftPanelContainer>
   );
 };
+
+const LeftPanelContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--node-viz-background, ${panelBackground});
+`;

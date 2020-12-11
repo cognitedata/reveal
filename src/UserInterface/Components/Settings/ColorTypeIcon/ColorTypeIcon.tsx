@@ -1,6 +1,5 @@
 import React from 'react';
 import { ChromaIcon } from '@/UserInterface/Components/ChromaIcon/ChromaIcon';
-import { Box } from '@material-ui/core';
 import { ICommonSelectExtraOptionData } from '@/UserInterface/Components/Settings/Types';
 
 export const ColorTypeIcon = (props: {
@@ -13,14 +12,14 @@ export const ColorTypeIcon = (props: {
 
   if (colorTypeIconData && colorTypeIconData.icon) {
     return (
-      <Box paddingLeft={1}>
+      <div>
         <ChromaIcon
           src={colorTypeIconData.icon}
           color={colorTypeIconData.color}
           alt="color type icon"
           size={16}
         />
-      </Box>
+      </div>
     );
   }
   return null;

@@ -1,21 +1,8 @@
 import React from 'react';
-import './ToolbarToolTip.module.scss';
-import { Theme, withStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
+import { Tooltip } from '@cognite/cogs.js';
 import { getIcon } from '@/UserInterface/Components/Icon/IconSelector';
-import { Typography } from '@material-ui/core';
-import { Appearance } from '@/Core/States/Appearance';
 import { IconTypes } from '@/UserInterface/Components/Icon/IconTypes';
-
-// Custom tooltip with white background
-const CustomToolTip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: 'rgba(0, 0, 0, 0.87)',
-    boxShadow: theme.shadows[1],
-    fontSize: theme.typography.fontSize,
-  },
-}))(Tooltip);
+import styled from 'styled-components';
 
 interface ToolbarToolTipProps {
   type?: IconTypes;
@@ -40,51 +27,53 @@ export const ToolbarToolTip: React.FC<ToolbarToolTipProps> = (
     ? { width: iconSize.width, height: iconSize.height }
     : {};
 
-  const image = imgSrc ? <img src={imgSrc} style={style} alt={name} /> : null;
+  const image = imgSrc ? (
+    <TooltipImage src={imgSrc} style={style} alt={name} />
+  ) : null;
 
-  return (
-    <div className="icon">
-      {tooltip ? (
-        <CustomToolTip
-          title={
-            <div className="image-tooltip">
-              {image}
-              <div className="tooltip">
-                {tooltip.text.split('\n').map((line, index) => {
-                  if (index === 0) {
-                    return (
-                      <Typography
-                        key={`Tip-line-${line}`}
-                        variant="subtitle1"
-                        component="div"
-                        className="head"
-                      >
-                        {line}
-                      </Typography>
-                    );
-                  }
-                  return (
-                    <Typography
-                      variant="body1"
-                      key={`Tip-line-${line}`}
-                      component="span"
-                    >
-                      {line}
-                    </Typography>
-                  );
-                })}
-              </div>
-            </div>
-          }
-          placement={tooltip.placement}
-          enterDelay={Appearance.tooltipDisplayDelay}
-          enterNextDelay={Appearance.tooltipDisplayDelay}
-        >
-          {props.children}
-        </CustomToolTip>
-      ) : (
-        props.children
-      )}
-    </div>
+  return tooltip && tooltip.text ? (
+    <Tooltip
+      placement={tooltip.placement || 'auto'}
+      content={
+        <ImageTooltip>
+          {image}
+          <TooltipWrapper>
+            {tooltip.text
+              .split('\n')
+              .map((line, index) =>
+                !index ? (
+                  <TooltipTitle key={`line-${line}`}>{line}</TooltipTitle>
+                ) : (
+                  <small key={`line-${line}`}>{line}</small>
+                )
+              )}
+          </TooltipWrapper>
+        </ImageTooltip>
+      }
+    >
+      {props.children}
+    </Tooltip>
+  ) : (
+    props.children
   );
 };
+
+const ImageTooltip = styled.div`
+  display: flex;
+  align-items: flex-start;
+`;
+const TooltipImage = styled.img`
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-right: 0.5rem;
+`;
+const TooltipWrapper = styled.div`
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+`;
+const TooltipTitle = styled.p`
+  margin: 0;
+`;

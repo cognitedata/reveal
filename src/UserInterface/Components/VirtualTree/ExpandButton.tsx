@@ -19,14 +19,37 @@ const Expand = styled.div<ExpandProps>`
   background-repeat: no-repeat, no-repeat;
   background-size: 0.7em 0.7em;
   .expand-btn:hover & {
-    background-image: url(${(props /* eslint-disable indent */) =>
-      props.expanded ? ExpandOpenFocus : ExpandClosedFocus});
-    background-repeat: no-repeat, no-repeat;
   }
   .expand-btn:focus & {
     background-image: url(${(props /* eslint-disable indent */) =>
       props.expanded ? ExpandOpenFocus : ExpandClosedFocus});
     background-repeat: no-repeat, no-repeat;
+  }
+`;
+const ExpandButtonWrapper = styled.div`
+  width: 0.8rem;
+  height: 0.8rem;
+  line-height: 0.8rem;
+  color: #a6a6a6;
+  font-size: 0.7rem;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const ExpandButtonWrapperHoverable = styled(ExpandButtonWrapper)`
+  :hover {
+    background-image: url(${(props: { expanded: boolean }) =>
+      props.expanded ? ExpandOpenFocus : ExpandClosedFocus});
+    background-repeat: no-repeat, no-repeat;
+    background-position: center;
+  }
+
+  :focus {
+    background-image: url(${(props) =>
+      props.expanded ? ExpandOpenFocus : ExpandClosedFocus});
+    background-repeat: no-repeat, no-repeat;
+    background-position: center;
   }
 `;
 
@@ -55,17 +78,14 @@ export const ExpandButton = (props: ExpandButtonProps) => {
 
   if (props.expandable) {
     return (
-      <div
-        role="button"
-        aria-label="expand row group"
-        className="expand-btn clickable center"
+      <ExpandButtonWrapperHoverable
+        expanded={props.expanded!}
         onClick={onEvent}
         onKeyUp={onEnter}
-        tabIndex={0}
       >
         <Expand expanded={props.expanded} />
-      </div>
+      </ExpandButtonWrapperHoverable>
     );
   }
-  return <div className="expand-btn" />;
+  return <ExpandButtonWrapper />;
 };

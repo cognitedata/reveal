@@ -1,6 +1,5 @@
 import React from 'react';
 import Color from 'color';
-import './SettingsElement.module.scss';
 import {
   ISettingsElement,
   ISettingsElementProps,
@@ -8,26 +7,21 @@ import {
 import { ElementTypes } from '@/UserInterface/Components/Settings/ElementTypes';
 import { CompactColorPicker } from '@/UserInterface/Components/CompactColorPicker/CompactColorPicker';
 import { Icon } from '@/UserInterface/Components/Icon/Icon';
-import { GenericSelect } from '@/UserInterface/Components/GenericSelect/GenericSelect';
 import { CommonSelectBase } from '@/UserInterface/Components/GenericSelect/CommonSelectBase/CommonSelectBase';
-import { ColorMapIcon } from '@/UserInterface/Components/Settings/ColorMapIcon/ColorMapIcon';
-import { ColorTypeIcon } from '@/UserInterface/Components/Settings/ColorTypeIcon/ColorTypeIcon';
 import { ToolbarToolTip } from '@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip';
+import { Checkbox, Input } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 /**
  * Responsible for rendering dynamic inputs
  * @param props
  */
+
 export const SettingsElement = (props: ISettingsElementProps) => {
-  const {
-    config,
-    onPropertyValueChange: onChange,
-    sectionId,
-    onPropertyUseChange,
-  } = props;
+  const { config, onPropertyValueChange: onChange, sectionId } = props;
 
   const labelElement = config.name ? (
-    <label htmlFor={`chBox-${sectionId}`}>{`${config.name}`}</label>
+    <StyledLabel htmlFor={`chBox-${sectionId}`}>{`${config.name}`}</StyledLabel>
   ) : null;
 
   // Generate keys for mapped components
@@ -41,10 +35,6 @@ export const SettingsElement = (props: ISettingsElementProps) => {
     return { key };
   };
 
-  const handleCheckboxChange = (id: string, e: any) => {
-    onPropertyUseChange(id, e.target.checked);
-  };
-
   // Renders input elements dynamically
   const renderInputElement = (elmConfig: ISettingsElement): any => {
     const {
@@ -55,7 +45,6 @@ export const SettingsElement = (props: ISettingsElementProps) => {
       name,
       value,
       options,
-      extraOptionsData,
     } = elmConfig;
 
     const disabled = elmConfig.isReadOnly || !elmConfig.useProperty;
@@ -66,29 +55,29 @@ export const SettingsElement = (props: ISettingsElementProps) => {
       case ElementTypes.Number:
       case ElementTypes.String:
         element = (
-          <input
+          <Input
+            fullWidth
             type={type === ElementTypes.Number ? 'number' : 'text'}
             disabled={disabled}
-            {...keyExtractor(null, type, name)}
+            name={name}
             onChange={(event) => onChange(id, event.target.value)}
             value={value}
-            className={disabled ? 'textInput readOnlyInput' : 'textInput'}
+            style={{ padding: '0 5px' }}
           />
         );
         break;
       case ElementTypes.Boolean:
         element = (
-          <input
-            type="checkbox"
-            className="checkbox"
+          <Checkbox
+            name={name}
             disabled={disabled}
-            {...keyExtractor(null, type, name)}
-            onChange={(event) => onChange(id, event.target.checked)}
-            checked={value}
+            onChange={(event) => onChange(id, event)}
+            value={value}
           />
         );
         break;
       case ElementTypes.Color:
+        // todo: should be styled properly
         element = (
           <CompactColorPicker
             value={value instanceof Color ? value.hex() : ''}
@@ -104,7 +93,6 @@ export const SettingsElement = (props: ISettingsElementProps) => {
             disabled={disabled}
             value={value}
             onChange={(event) => onChange(id, event.target.value)}
-            className="slider"
             min="0"
             step="0.02"
             max="1"
@@ -113,47 +101,23 @@ export const SettingsElement = (props: ISettingsElementProps) => {
         break;
       case ElementTypes.Select:
       case ElementTypes.ColorMap:
-      case ElementTypes.ColorType:
-        {
-          const getIconNode = (elementType: string) => {
-            if (elementType === ElementTypes.ColorMap) {
-              return <CommonSelectBase iconNode={<ColorMapIcon />} />;
-            }
-            if (elementType === ElementTypes.ColorType) {
-              return <CommonSelectBase iconNode={<ColorTypeIcon />} />;
-            }
-            return undefined;
-          };
-          element = (
-            <div
-              className="common-select"
-              key={keyExtractor(null, type, name).key}
-            >
-              <GenericSelect
-                options={options}
-                value={value}
-                disabled={disabled}
-                onChange={(e) => {
-                  onChange(id, e);
-                }}
-                extraOptionsData={extraOptionsData}
-                node={getIconNode(type)}
-              />
-            </div>
-          );
-        }
-        break;
-      case ElementTypes.ImageButton:
+      case ElementTypes.ColorType: {
+        const selectValue = options?.find((el) => el.value === value);
         element = (
-          <div
-            {...keyExtractor(null, type, name)}
-            className={`input-icon ${
-              icon?.selected ? 'input-icon-selected' : ''
-            }`}
-          >
-            <Icon type={icon?.type} name={icon?.name} />
-          </div>
+          <CommonSelectBase
+            key={keyExtractor(null, type, name).key}
+            options={options}
+            value={selectValue}
+            disabled={disabled}
+            onChange={(e) => {
+              onChange(id, e.value);
+            }}
+          />
         );
+        break;
+      }
+      case ElementTypes.ImageButton:
+        element = <Icon type={icon?.type} name={icon?.name} />;
         break;
       case ElementTypes.Group:
         element = subElements?.map((elm) => renderInputElement(elm));
@@ -163,37 +127,50 @@ export const SettingsElement = (props: ISettingsElementProps) => {
     }
 
     return (
-      <ToolbarToolTip
-        key={elmConfig.id}
-        name={elmConfig.name}
-        tooltip={
-          elmConfig.toolTip ? { text: `\n${elmConfig.toolTip}` } : undefined
-        }
-      >
-        {element}
-      </ToolbarToolTip>
+      <InputFieldWrapper>
+        <ToolbarToolTip
+          key={elmConfig.id}
+          name={elmConfig.name}
+          tooltip={
+            elmConfig.toolTip ? { text: `\n${elmConfig.toolTip}` } : undefined
+          }
+        >
+          {element}
+        </ToolbarToolTip>
+      </InputFieldWrapper>
     );
   };
 
-  const displayCheckbox = !config.isReadOnly && config.isOptional;
-
   return (
-    <section className="form-field">
-      <div>{labelElement}</div>
-      <div className={`input-wrap ${displayCheckbox ? 'optional' : ''}`}>
-        {displayCheckbox && (
-          <div>
-            <input
-              type="checkbox"
-              className="checkbox"
-              checked={config.useProperty}
-              onChange={(e) => handleCheckboxChange(config.id, e)}
-            />
-          </div>
-        )}
-
-        <div className="element">{renderInputElement(config)}</div>
-      </div>
-    </section>
+    <StyledSection>
+      {labelElement}
+      {renderInputElement(config)}
+    </StyledSection>
   );
 };
+
+const StyledSection = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+`;
+
+const StyledLabel = styled.label`
+  flex: 1;
+  margin-right: 5px;
+`;
+const InputFieldWrapper = styled.div`
+  flex: 3;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+
+  > span {
+    width: 100%;
+  }
+
+  .cogs-select {
+    width: 100%;
+  }
+`;

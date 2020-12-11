@@ -6,7 +6,6 @@ import {
 } from '@/UserInterface/Components/Settings/Types';
 import { ExpansionView } from '@/UserInterface/Components/ExpansionView/ExpansionView';
 import { SettingsElement } from '@/UserInterface/Components/Settings/SettingsElement/SettingsElement';
-import './SettingsSection.module.scss';
 
 export const SettingsSection = (props: ISettingsSectionProps) => {
   const {
@@ -28,7 +27,7 @@ export const SettingsSection = (props: ISettingsSectionProps) => {
     >
       <>
         {elements && (
-          <div className="settings-section-element-container">
+          <div>
             {elements.map(
               (element: ISettingsElement) =>
                 element && (
@@ -44,7 +43,7 @@ export const SettingsSection = (props: ISettingsSectionProps) => {
           </div>
         )}
         {subSections && subSections.length ? (
-          <div className="sub-section-container additional-padding">
+          <div>
             {subSections.map((subSection: ISettingsSection) => (
               <SettingsSection
                 key={`${subSection.id}-sub-section`}

@@ -1,8 +1,8 @@
-import '@/UserInterface/Components/Explorer/Explorer.module.scss';
 import React from 'react';
 import { ExplorerPropType } from '@/UserInterface/Components/Explorer/ExplorerTypes';
 import { ExplorerTabs } from '@/UserInterface/Components/Explorer/ExplorerTabs';
 import { VirtualTree } from '@/UserInterface/Components/VirtualTree/VirtualTree';
+import styled from 'styled-components';
 
 // Renders Tree Controller
 export const Explorer = (props: ExplorerPropType) => {
@@ -22,18 +22,25 @@ export const Explorer = (props: ExplorerPropType) => {
   };
 
   return (
-    <div className="explorer">
+    <ExplorerWrapper>
+      <ExplorerTabs
+        tabs={props.tabs}
+        selectedTabIndex={props.selectedTabIndex}
+        onTabChange={props.onTabChange}
+      />
       <VirtualTree
         data={props.data}
         onToggleNodeSelect={handleToggleNodeSelect}
         onToggleNodeExpand={handleToggleNodeExpand}
         onToggleNodeCheck={handleToggleVisible}
       />
-      <ExplorerTabs
-        tabs={props.tabs}
-        selectedTabIndex={props.selectedTabIndex}
-        onTabChange={props.onTabChange}
-      />
-    </div>
+    </ExplorerWrapper>
   );
 };
+
+const ExplorerWrapper = styled.div`
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+`;

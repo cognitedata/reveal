@@ -3,9 +3,19 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const noop = require('lodash/noop');
+const pkg = require('./package.json');
 
 function resolve(dir) {
   return path.resolve(__dirname, dir);
+}
+
+function externalPackages(peerDependencies) {
+  const packages = {};
+  Object.keys(peerDependencies).forEach((key) => (packages[key] = key));
+
+  return packages;
 }
 
 module.exports = (env) => ({
@@ -83,6 +93,12 @@ module.exports = (env) => ({
     minimize: env.debug === 'false',
   },
   plugins: [
+    env.profile
+      ? new BundleAnalyzerPlugin({
+          analyzerMode: 'disabled',
+          generateStatsFile: true,
+        })
+      : noop,
     new MiniCssExtractPlugin({ filename: 'node-visualizer.css' }),
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new CopyPlugin({
@@ -96,25 +112,5 @@ module.exports = (env) => ({
     }),
     new Dotenv(),
   ],
-  externals: [
-    {
-      react: {
-        root: 'React',
-        commonjs2: 'react',
-        commonjs: 'react',
-        amd: 'react',
-        umd: 'react',
-      },
-      'react-dom': {
-        root: 'ReactDOM',
-        commonjs2: 'react-dom',
-        commonjs: 'react-dom',
-        amd: 'react-dom',
-        umd: 'react-dom',
-      },
-      redux: 'redux',
-      'react-redux': 'react-redux',
-      'styled-components': 'styled-components',
-    },
-  ],
+  externals: [{ ...externalPackages(pkg.peerDependencies) }],
 });

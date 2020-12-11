@@ -1,106 +1,47 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-import { makeStyles } from '@material-ui/core/styles';
-import InputBase from '@material-ui/core/InputBase';
+import React, { useEffect, useState } from 'react';
 import { HTMLUtils } from '@/UserInterface/Foundation/Utils/HTMLUtils';
-import withStyles from '@material-ui/core/styles/withStyles';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { NumericUtils } from '@/UserInterface/Foundation/Utils/numericUtils';
+import {
+  Dropdown,
+  Input,
+  Menu,
+  Button,
+  Icon,
+  ButtonProps,
+} from '@cognite/cogs.js';
+import styled from 'styled-components';
 
-const DEFAULT_OPTION_HEIGHT = 40;
-const DEFAULT_MAX_OPTIONS = 5;
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-  },
-  grid: {
-    width: '100%',
-    height: '100%',
-  },
-  gridItem: {
-    width: '100%',
-    height: '100%',
-  },
-  paper: {
-    display: 'flex',
-    width: '100%',
-    height: '100%',
-    boxSizing: 'border-box',
-    border: 0,
-    borderRadius: 0,
-  },
-  inputAdornment: {
-    height: '100%',
-    width: '2ch',
-    marginInlineStart: 0,
-  },
-  selectButton: {
-    color: theme.palette.action.active,
-    backgroundColor: theme.palette.background.paper,
-    margin: 0,
-    padding: 0,
-    minWidth: '2ch',
-    height: '100%',
-    borderRadius: 0,
-    '&:hover': {
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.primary.dark,
-    },
-  },
-  menu: (props: { optionHeight: number; maxOptions: number }) => ({
-    height: props.optionHeight * props.maxOptions,
-    overflowX: 'hidden',
-    overflowY: 'scroll',
-  }),
-  menuItem: (props: { optionHeight: number; maxOptions: number }) => ({
-    height: props.optionHeight,
-    width: '8ch',
-    fontSize: theme.typography.fontSize,
-    paddingLeft: '2ch',
-    paddingRight: '2ch',
-  }),
-}));
-
-const Input = withStyles(() => ({
-  root: {
-    flex: 'auto',
-    width: '50%',
-    height: '100%',
-  },
-  input: {
-    textAlign: 'center',
-  },
-}))(InputBase);
-
-interface SelectableInputProps {
-  options?: { label: string; value: string }[];
-  value?: string;
-  onChange?: (value: string) => void;
-  optionHeight?: number;
-  maxOptions?: number;
+interface SelectableOption {
+  label: string;
+  value: string;
 }
 
+interface SelectableInputProps {
+  options?: SelectableOption[];
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+const dropdownOffset = 40;
+
+const renderMenu = (optionsList: SelectableOption[] = [], handleItemClick) => {
+  return (
+    <Menu>
+      {optionsList.map((option) => (
+        <Menu.Item
+          key={option.value}
+          onClick={() => handleItemClick(option.value)}
+        >
+          {option.label}
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
+};
+
 export const SelectableInput = (props: SelectableInputProps) => {
-  const { options, value, onChange, optionHeight, maxOptions } = props;
+  const { options, value, onChange } = props;
   const [displayValue, setDisplayValue] = useState(props.value);
-  const classes = useStyles({
-    optionHeight: optionHeight || DEFAULT_OPTION_HEIGHT,
-    maxOptions: maxOptions || DEFAULT_MAX_OPTIONS,
-  });
   const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
-  const selectedIndex = NumericUtils.findIndexOfValueInOptions(options, value);
 
   useEffect(() => {
     const selectedMenuItem = document.getElementById(`item-id-${value}`);
@@ -134,12 +75,7 @@ export const SelectableInput = (props: SelectableInputProps) => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event): void => {
-    // @ts-ignore
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
+  const handleClose = (): void => {
     setOpen(false);
   };
 
@@ -152,93 +88,44 @@ export const SelectableInput = (props: SelectableInputProps) => {
   };
 
   return (
-    <div className={classes.root}>
-      <Grid
-        container
-        direction="column"
-        alignItems="center"
-        className={classes.grid}
+    <SelectWrapper>
+      <StyledInput>
+        <Input
+          size="small"
+          value={displayValue}
+          onChange={handleValueChange}
+          onKeyUp={handleKeyPress}
+        />
+      </StyledInput>
+      <Dropdown
+        visible={open}
+        content={renderMenu(options, handleMenuItemClick)}
+        onClickOutside={handleClose}
+        offset={[-dropdownOffset, 0]}
       >
-        <Grid item xs={12} className={classes.gridItem}>
-          <Paper
-            variant="outlined"
-            className={classes.paper}
-            color="primary"
-            ref={anchorRef}
-            aria-label="split button"
-          >
-            <Input
-              id="standard-number"
-              fullWidth
-              inputProps={{ 'aria-label': 'Z-Scale' }}
-              value={displayValue}
-              onChange={handleValueChange}
-              onKeyUp={handleKeyPress}
-              endAdornment={
-                <InputAdornment
-                  position="end"
-                  className={classes.inputAdornment}
-                >
-                  <Button
-                    className={classes.selectButton}
-                    color="primary"
-                    size="small"
-                    aria-controls={open ? 'split-button-menu' : undefined}
-                    aria-expanded={open ? 'true' : undefined}
-                    aria-label="select merge strategy"
-                    aria-haspopup="menu"
-                    onClick={handleToggle}
-                  >
-                    <ArrowDropDownIcon />
-                  </Button>
-                </InputAdornment>
-              }
-            />
-          </Paper>
-          <Popper
-            open={open}
-            anchorEl={anchorRef.current}
-            role={undefined}
-            modifiers={{
-              preventOverflow: {
-                enabled: true,
-                boundariesElement: 'window',
-              },
-            }}
-            transition
-            disablePortal
-          >
-            {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                style={{
-                  transformOrigin:
-                    placement === 'bottom' ? 'center top' : 'center bottom',
-                }}
-              >
-                <Paper>
-                  <ClickAwayListener onClickAway={handleClose}>
-                    <MenuList id="split-button-menu" className={classes.menu}>
-                      {options?.map((option, index) => (
-                        <MenuItem
-                          className={classes.menuItem}
-                          key={option.value}
-                          id={`item-id-${option.label}`}
-                          selected={index === selectedIndex}
-                          onClick={() => handleMenuItemClick(option.value)}
-                        >
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-        </Grid>
-      </Grid>
-    </div>
+        <StyledButton size="small" onClick={handleToggle}>
+          <Icon type="CaretDown" />
+        </StyledButton>
+      </Dropdown>
+    </SelectWrapper>
   );
 };
+
+const SelectWrapper = styled.div`
+  display: flex;
+`;
+const StyledInput = styled.div`
+  input {
+    border-radius: 0;
+    border: 0;
+    padding: 0 5px;
+    width: 100%;
+    min-width: ${dropdownOffset}px;
+  }
+`;
+const StyledButton = styled(Button)`
+  border-radius: 0;
+  padding: 0 5px;
+  width: 20px;
+  height: ${(props: ButtonProps) => (props.size === 'small' ? '24px' : '')};
+`;

@@ -69,6 +69,7 @@
     "@cognite/no-unissued-todos": "off",
 
     "@cognite/no-number-z-index-inline-styling": "off",
+    "@cognite/no-number-z-index": "off",
     "@cognite/require-t-function": "error"
   }
 }

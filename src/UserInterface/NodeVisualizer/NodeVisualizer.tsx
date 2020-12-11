@@ -1,4 +1,5 @@
-import '@/UserInterface/styles/scss/index.scss';
+import '@/UserInterface/styles/scss/react-split-pane.scss';
+
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SplitPane from 'react-split-pane';
@@ -22,6 +23,7 @@ import {
   VisualizerToolbar,
   VisualizerToolbarProps,
 } from '@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
+import styled from 'styled-components';
 
 export interface NodeVisualizerProps {
   /**
@@ -109,7 +111,7 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
   );
 
   return (
-    <div className="node-viz-container">
+    <NodeVisualizerContainer>
       <SplitPane
         split="vertical"
         minSize={common.isFullscreen ? 0 : Appearance.leftPanelDefaultSize}
@@ -124,6 +126,18 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
         <LeftPanel explorer={renderExplorer} custom={!!explorer} />
         <RightPanel viewer3D={viewerElementCallback} toolbar={renderToolbar} />
       </SplitPane>
-    </div>
+    </NodeVisualizerContainer>
   );
 };
+
+const NodeVisualizerContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden;
+
+  div {
+    outline: none;
+  }
+`;

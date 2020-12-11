@@ -3,6 +3,7 @@ import { SettingPanelProps } from '@/UserInterface/Components/Settings/Types';
 import { SettingsSection } from '@/UserInterface/Components/Settings/SettingsSection/SettingsSection';
 import { PanelTitleBar } from '@/UserInterface/Components/PanelTitleBar/PanelTitleBar';
 import { NodeUtils } from '@/UserInterface/utils/NodeUtils';
+import styled from 'styled-components';
 
 //= =================================================
 // Main Settings Panel Component
@@ -34,13 +35,12 @@ export const SettingsPanel = (props: SettingPanelProps) => {
   };
 
   return (
-    <div className="settings-container">
+    <SettingsPanelWrapper>
       {id ? (
         <>
           {titleBar && (
             <PanelTitleBar
               sectionId="-1"
-              className="settings-title-bar"
               title={titleBar.name}
               icon={titleBar.icon}
               toolBar={titleBar.toolBar}
@@ -49,23 +49,25 @@ export const SettingsPanel = (props: SettingPanelProps) => {
           {sections.map((section) => {
             section.isExpanded = expandedSections[section.id];
             return (
-              <div
-                key={`${section.name}-section`}
-                className="settings-section-container"
-              >
-                {section.elements.length > 0 && (
-                  <SettingsSection
-                    section={section}
-                    onExpand={onSectionExpand}
-                    onPropertyValueChange={handleValueChange}
-                    onPropertyUseChange={handleUsePropertyChange}
-                  />
-                )}
-              </div>
+              section.elements.length > 0 && (
+                <SettingsSection
+                  key={`${section.name}-section`}
+                  section={section}
+                  onExpand={onSectionExpand}
+                  onPropertyValueChange={handleValueChange}
+                  onPropertyUseChange={handleUsePropertyChange}
+                />
+              )
             );
           })}
         </>
       ) : null}
-    </div>
+    </SettingsPanelWrapper>
   );
 };
+
+const SettingsPanelWrapper = styled.div`
+  width: 100%;
+  overflow: auto;
+  padding: 0 10px;
+`;

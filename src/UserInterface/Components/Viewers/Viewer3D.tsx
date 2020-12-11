@@ -3,6 +3,8 @@ import {
   ToolbarConfig,
   VisualizerToolbarProps,
 } from '@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar';
+import styled from 'styled-components';
+import { statusBarHeight } from '@/UserInterface/styles/styled.props';
 
 interface Viewer3DProps {
   viewer3D: React.RefCallback<HTMLElement>;
@@ -32,14 +34,30 @@ export const Viewer3D = (props: Viewer3DProps) => {
   } = props;
 
   return (
-    <div className="visualizer">
+    <VisualizerWrapper>
       <Toolbar
         visualizerId="3D"
         config={toolbarConfig}
         onToolbarButtonClick={onToolbarButtonClick}
         onToolbarSelectionChange={onToolbarSelectionChange}
       />
-      <div ref={viewer3D} id="visualizer-3d" className="visualizer-3d" />
-    </div>
+      <Visualizer3D ref={viewer3D} id="visualizer-3d" />
+    </VisualizerWrapper>
   );
 };
+
+const VisualizerWrapper = styled.div`
+  width: 100%;
+  height: calc(100% - ${statusBarHeight});
+`;
+
+const Visualizer3D = styled.div`
+  height: 100%;
+  width: 100%;
+  position: relative;
+
+  canvas {
+    width: 100%;
+    height: 100%;
+  }
+`;

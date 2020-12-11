@@ -87,7 +87,7 @@ export interface ICommonSelectProps {
   id?: string;
   options?: ISelectOption[];
   extraOptionsData?: ICommonSelectExtraOptionData[];
-  value?: string;
+  value?: ISelectOption | string;
   onChange?: (val: string) => void;
   disabled?: boolean;
 }

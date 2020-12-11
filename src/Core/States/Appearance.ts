@@ -25,7 +25,7 @@ export class Appearance {
   // Toolbar
   static toolbarIconSize = 26; // Toolbar icon size  in pixel
 
-  static toolbarSelectWidth = 85; // Toolbar Select Width in pixel
+  static toolbarSelectWidth = 91; // Toolbar Select Width in pixel
 
   static toolbarCommandsPerLine = 19; // Commands per line in toolbar
 

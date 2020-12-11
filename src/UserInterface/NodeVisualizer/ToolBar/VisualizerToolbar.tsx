@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import Draggable from 'react-draggable';
 import { Appearance } from '@/Core/States/Appearance';
 import { Icon } from '@/UserInterface/Components/Icon/Icon';
-import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import { ToolBarSelect } from '@/UserInterface/Components/ToolBarSelect/ToolBarSelect';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Icon as CogsIcon } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 export interface IToolbarButton {
   icon: string;
@@ -35,77 +33,6 @@ export type ToolbarSelectChangeHandler = (
   index: number,
   value: string
 ) => void;
-
-const useStyles = makeStyles(() => ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  root: (props: {
-    toolbarIconSize: number;
-    toolbarSelectWidth: number;
-    dragging: boolean;
-    horizontal: boolean;
-  }) => ({}),
-  toolbarWrapper: {
-    position: 'absolute',
-    'z-index': '10',
-  },
-  toolbarContainer: (props: { horizontal: boolean }) => ({
-    display: 'flex',
-    position: 'relative',
-    padding: '0 0 0 25px',
-    flexDirection: props.horizontal ? 'row' : 'column',
-  }),
-  dragHandle: (props: { dragging: boolean }) => ({
-    position: 'absolute',
-    left: '0.6rem',
-    top: '0.5rem',
-    cursor: props.dragging ? 'move' : 'pointer',
-  }),
-  dragHandleIcon: {
-    width: '1.2rem',
-    height: '1.7rem',
-  },
-  toolbarGroup: (props: { horizontal: boolean }) => ({
-    display: 'inline-grid',
-    gridTemplateRows: props.horizontal ? 'auto auto' : 'auto',
-    gridTemplateColumns: props.horizontal ? 'auto' : 'auto auto',
-    gridAutoFlow: props.horizontal ? 'column' : 'row',
-    margin: '0.25rem',
-    border: '0.01rem solid black',
-    backgroundColor: 'rgba(223, 223, 223, 0.6)',
-    borderRadius: '0.2rem',
-  }),
-  toolbarIcon: (props: { toolbarIconSize: number }) => ({
-    height: props.toolbarIconSize,
-    width: props.toolbarIconSize,
-    transition: 'background-color 0.3s',
-    margin: '0.025rem',
-    padding: '0.2rem 0.2rem',
-    cursor: 'pointer',
-    boxSizing: 'content-box',
-    '&:hover': {
-      backgroundColor: 'lightblue',
-      borderColor: 'lightblue',
-    },
-  }),
-  toolbarIconSelected: {
-    backgroundColor: 'lightblue !important',
-  },
-  toolbarDropdown: (props: {
-    toolbarIconSize: number;
-    toolbarSelectWidth: number;
-  }) => ({
-    height: props.toolbarIconSize,
-    width: props.toolbarSelectWidth,
-    transition: 'background-color 0.3s',
-    margin: '0.025rem',
-    padding: '0.2rem 0.2rem',
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: 'lightblue',
-      borderColor: 'lightblue',
-    },
-  }),
-}));
 
 export interface VisualizerToolbarProps {
   /**
@@ -139,20 +66,11 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
 
   const groupIds: string[] = config ? Object.keys(config) : [];
 
-  const { toolbarIconSize, toolbarSelectWidth } = Appearance;
-
   // Toolbar orientation
   const [horizontal, setHorizontal] = useState(true);
 
   // Whether dragging is happening
   const [dragging, setDragging] = useState(false);
-
-  const classes = useStyles({
-    toolbarIconSize,
-    toolbarSelectWidth,
-    dragging,
-    horizontal,
-  });
 
   // Calls when handle is clicked
   const onToolbarHandleButtonClick = () => {
@@ -175,10 +93,9 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
 
   const addButton = (groupId, index, command) => {
     return (
-      <Grid
-        className={`${classes.toolbarIcon} ${
-          command.isChecked ? classes.toolbarIconSelected : ''
-        }`}
+      <ToolbarIcon
+        size={Appearance.toolbarIconSize}
+        selected={command.isChecked}
         onClick={() => onToolbarButtonClick(visualizerId, groupId, index)}
         key={`visualizer-toolbar-icon-${index}`}
       >
@@ -195,32 +112,28 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
             }}
           />
         )}
-      </Grid>
+      </ToolbarIcon>
     );
   };
 
   const addDropdown = (groupId, index, command) => {
     return (
-      <Grid
-        className={classes.toolbarDropdown}
-        key={`visualizer-toolbar-icon-${index}`}
-      >
-        <ToolBarSelect
-          currentValue={command.value}
-          onChange={(value) =>
-            onToolbarSelectionChange(visualizerId, groupId, index, value)
-          }
-          options={command.dropdownOptions}
-          tooltip={{
-            text: command.tooltip,
-            placement: 'right-start',
-          }}
-          iconSize={{
-            width: Appearance.toolbarSelectWidth,
-            height: Appearance.toolbarIconSize,
-          }}
-        />
-      </Grid>
+      <ToolBarSelect
+        key={`toolbar-select-${index}`}
+        currentValue={command.value}
+        onChange={(value) =>
+          onToolbarSelectionChange(visualizerId, groupId, index, value)
+        }
+        options={command.dropdownOptions}
+        tooltip={{
+          text: command.tooltip,
+          placement: 'right-start',
+        }}
+        iconSize={{
+          width: Appearance.toolbarSelectWidth,
+          height: Appearance.toolbarIconSize,
+        }}
+      />
     );
   };
 
@@ -238,25 +151,83 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
   const addToolbars = () => {
     return groupIds?.map((id) => {
       return (
-        <Grid className={classes.toolbarGroup} key={`tool-group-${id}`}>
+        <ToolbarGroup horizontal={horizontal} key={`tool-group-${id}`}>
           {addToolbarButtons(id)}
-        </Grid>
+        </ToolbarGroup>
       );
     });
   };
 
   return (
     <Draggable bounds="parent" handle=".handle" onDrag={onDrag} onStop={onStop}>
-      <Box className={classes.toolbarWrapper}>
-        <Box className={classes.toolbarContainer}>
-          <Box className={`handle ${classes.dragHandle}`}>
-            <Box className={classes.dragHandleIcon}>
-              <DragIndicatorIcon style={{ color: '#d5d5d5' }} />
-            </Box>
-          </Box>
+      <ToolbarWrapper>
+        <ToolbarContainer horizontal={horizontal}>
+          <DragHandle dragging={dragging}>
+            <DragHandleIcon className="handle">
+              <CogsIcon type="DragHandle" />
+            </DragHandleIcon>
+          </DragHandle>
           {addToolbars()}
-        </Box>
-      </Box>
+        </ToolbarContainer>
+      </ToolbarWrapper>
     </Draggable>
   );
 };
+
+interface IsHorizontalProps {
+  horizontal?: boolean;
+}
+interface IsDruggingProps {
+  dragging?: boolean;
+}
+interface ToolbarIconProps {
+  size: number;
+  selected?: boolean;
+}
+
+const ToolbarWrapper = styled.div`
+  position: absolute;
+  z-index: 10;
+`;
+const DragHandleIcon = styled.div`
+  width: 1.2rem;
+  height: 1.7rem;
+`;
+const ToolbarContainer = styled.div<IsHorizontalProps>`
+  display: flex;
+  position: relative;
+  padding: 0 0 0 25px;
+  flex-direction: ${({ horizontal }) => (horizontal ? 'row' : 'column')};
+`;
+const DragHandle = styled.div<IsDruggingProps>`
+  position: absolute;
+  left: 0.6rem;
+  top: 0.5rem;
+  cursor: ${({ dragging }) => (dragging ? 'move' : 'pointer')};
+`;
+const ToolbarGroup = styled.div<IsHorizontalProps>`
+  display: inline-grid;
+  grid-template-rows: ${({ horizontal }) =>
+    horizontal ? 'auto auto' : 'auto'};
+  grid-template-columns: ${({ horizontal }) =>
+    horizontal ? 'auto auto' : 'auto'};
+  grid-auto-flow: ${({ horizontal }) => (horizontal ? 'column' : 'row')};
+  margin: 0.25rem;
+  border: 0.01rem solid black;
+  background-color: rgba(223, 223, 223, 0.6);
+  border-radius: 0.2rem;
+`;
+const ToolbarIcon = styled.div<ToolbarIconProps>`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  transition: background-color 0.3s;
+  margin: 0.025rem;
+  padding: 0.2rem 0.2rem;
+  cursor: pointer;
+  background-color: ${({ selected }) =>
+    selected ? 'lightblue' : 'transparent'};
+  &:hover {
+    background-color: lightblue;
+    border-color: lightblue;
+  }
+`;
