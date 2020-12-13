@@ -13,7 +13,7 @@
     "@cognite/gcs-browser-upload": "^1.0.5",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-feature-flags": "^0.1.0",
-    "@cognite/react-picture-annotation": "^1.10.2",
+    "@cognite/react-picture-annotation": "^1.10.3",
     "@cognite/sdk": "^3.3.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^2.0.1",

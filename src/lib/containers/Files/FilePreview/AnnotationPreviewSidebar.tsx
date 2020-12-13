@@ -44,6 +44,8 @@ import { lightGrey } from 'lib/utils/Colors';
 import { ResourcePreviewSidebar } from 'lib/containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { convertResourceType } from 'lib';
+import { useFlag } from '@cognite/react-feature-flags';
+import { SIDEBAR_RESIZE_EVENT } from 'lib/utils/WindowEvents';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 
@@ -124,10 +126,12 @@ const AnnotationPreviewSidebar = ({
 
   useEffect(() => {
     setEditing(false);
+    window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
   }, [selectedAnnotationId]);
 
   useEffect(() => {
     setCurrentIndex(0);
+    window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
   }, [selectedAnnotations.length]);
 
   let annotationPreview: string | undefined;
@@ -277,6 +281,36 @@ const AnnotationPreviewSidebar = ({
   }: {
     annotation: CogniteAnnotation | ProposedCogniteAnnotation;
   }) => {
+    const { metadata } = annotation;
+
+    const isBPEnabled = useFlag('BP_FILE_EXPERIMENT', {
+      fallback: false,
+      forceRerender: true,
+    });
+    // TODO(CDFUX-000): BP Specific!
+    const extraDetails: React.ReactNode[] = [];
+    if (isBPEnabled) {
+      if (metadata && metadata.BP_PROJECT) {
+        extraDetails.push(
+          <>
+            <Overline level={2} style={{ marginTop: 8 }}>
+              PROJECT
+            </Overline>
+            <Body level={2}>{metadata.BP_PROJECT}</Body>
+          </>
+        );
+      }
+      if (metadata && metadata.BP_SHOULD_NOTIFY) {
+        extraDetails.push(
+          <>
+            <Overline level={2} style={{ marginTop: 8 }}>
+              INFO
+            </Overline>
+            <Body level={2}>{metadata.BP_SHOULD_NOTIFY}</Body>
+          </>
+        );
+      }
+    }
     if (!isEditingMode) {
       return (
         <>
@@ -288,6 +322,7 @@ const AnnotationPreviewSidebar = ({
                 DESCRIPTION
               </Overline>
               <Body level={2}>{annotation.description || 'N/A'}</Body>
+              {extraDetails}
             </InfoCell>
             {contextualization && (
               <InfoCell noBorders>

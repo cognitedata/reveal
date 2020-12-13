@@ -5,6 +5,7 @@ import {
   getExternalIdFilter,
   convertEventsToAnnotations,
 } from '@cognite/annotations';
+import uniqBy from 'lodash/uniqBy';
 
 export const useAnnotations = (fileId: number) => {
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
@@ -27,5 +28,7 @@ export const useAnnotations = (fileId: number) => {
     { enabled: fileFetched && file && !!file?.externalId }
   );
 
-  return convertEventsToAnnotations([...eventsById, ...eventsByExternalId]);
+  return convertEventsToAnnotations(
+    uniqBy([...eventsById, ...eventsByExternalId], el => el.id)
+  );
 };

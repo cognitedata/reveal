@@ -28,6 +28,8 @@ import {
   useFindSimilarJobId,
 } from 'lib/hooks/objectDetection';
 import { ResourceItem } from 'lib/types/Types';
+import { Colors } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
 
@@ -66,6 +68,11 @@ export const FilePreview = ({
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ProposedCogniteAnnotation[]
   >([]);
+
+  const isBPEnabled = useFlag('BP_FILE_EXPERIMENT', {
+    fallback: false,
+    forceRerender: true,
+  });
 
   useEffect(() => {
     setPendingAnnotations([]);
@@ -137,6 +144,20 @@ export const FilePreview = ({
             if (annotation.metadata && annotation.metadata.color) {
               iAnnotation.mark.strokeColor = annotation.metadata.color;
             }
+            // TODO(CDFUX-000): BP Specific!
+            if (
+              annotation.metadata &&
+              annotation.metadata.BP_SHOULD_NOTIFY &&
+              isBPEnabled
+            ) {
+              iAnnotation.mark.draw = (canvas, x, y) => {
+                canvas.save();
+                canvas.translate(x, y);
+                drawWarning(canvas);
+                canvas.restore();
+                return true;
+              };
+            }
             // iAnnotation.mark.draw = (canvas, x, y) => {
             //   if (annotation.resourceType) {
             //     canvas.save();
@@ -187,6 +208,24 @@ const CenteredPlaceholder = styled.div`
   margin: 0 auto;
   text-align: center;
 `;
+
+const drawWarning = (canvas: CanvasRenderingContext2D) => {
+  canvas.save();
+  canvas.translate(-20, 0);
+  canvas.beginPath();
+  canvas.fillStyle = Colors.warning.hex();
+  canvas.arc(8, 8, 8, 0, 2 * Math.PI);
+  canvas.fill();
+  canvas.closePath();
+  canvas.fillStyle = '#fff';
+  canvas.fill(new Path2D('M9 9H7L7 4L9 4L9 9Z'));
+  canvas.fill(
+    new Path2D(
+      'M9 11C9 11.5523 8.55228 12 8 12C7.44772 12 7 11.5523 7 11C7 10.4477 7.44772 10 8 10C8.55228 10 9 10.4477 9 11Z'
+    )
+  );
+  canvas.restore();
+};
 
 export const drawIcon = (
   canvas: CanvasRenderingContext2D,
