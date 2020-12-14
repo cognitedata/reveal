@@ -653,8 +653,8 @@ export class WellTrajectoryView extends BaseGroupThreeView {
 
     viewInfo.addValue("Well", wellNode.displayName);
     viewInfo.addValue("Trajectory", trajectoryNode.displayName);
-    viewInfo.addValue("Md", `${md.toFixed(2)} m / ${(md * Units.Feet).toFixed(2)} ft`);
-    viewInfo.addValue("Tvd", `${tvd.toFixed(2)} m / ${(tvd * Units.Feet).toFixed(2)} ft`);
+    viewInfo.addValue("Md", `${md.toFixed(2)} m / ${Units.convertMeterToFeet(md).toFixed(2)} ft`);
+    viewInfo.addValue("Tvd", `${tvd.toFixed(2)} m / ${Units.convertMeterToFeet(tvd).toFixed(2)} ft`);
     return md;
   }
 }

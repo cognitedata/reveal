@@ -6,4 +6,12 @@ export class Units {
 
     return comparator === "ft" || comparator === "feet";
   }
+
+  public static convertMeterToFeet(value: number): number {
+    return value / Units.Feet
+  }
+
+  public static convertFeetToMeter(value: number): number {
+    return value * Units.Feet
+  }
 }

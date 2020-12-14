@@ -28,7 +28,8 @@
     "predeploy": "cd standalone && npm install && npm run build",
     "deploy": "gh-pages -d standalone/build",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
