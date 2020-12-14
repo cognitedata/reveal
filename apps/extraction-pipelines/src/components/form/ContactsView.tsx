@@ -88,7 +88,7 @@ const ContactsView: FunctionComponent<Props> = () => {
   const methods = useForm<ContactsForm>({
     resolver: yupResolver(authorsSchema),
     defaultValues: {
-      authors: integration?.authors,
+      authors: integration?.authors ?? [],
     },
   });
   const { control } = methods;

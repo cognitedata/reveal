@@ -158,7 +158,7 @@ const ContactView: FunctionComponent<Props> = ({
             className={`cogs-input full-width ${
               errors.authors?.[index]?.name ? 'has-error' : ''
             }`}
-            defaultValue={integration?.authors[index].name}
+            defaultValue={integration?.authors[index]?.name}
           />
           {isDirtyName && (
             <InputWarningIcon
@@ -174,7 +174,7 @@ const ContactView: FunctionComponent<Props> = ({
           />
         </InputWarningError>
       ) : (
-        <AlignedSpan>{integration?.authors[index].name}</AlignedSpan>
+        <AlignedSpan>{integration?.authors[index]?.name}</AlignedSpan>
       )}
       {isEdit ? (
         <InputWarningError>
@@ -187,7 +187,7 @@ const ContactView: FunctionComponent<Props> = ({
             className={`cogs-input full-width ${
               errors.authors?.[index]?.email ? 'has-error' : ''
             }`}
-            defaultValue={integration?.authors[index].email}
+            defaultValue={integration?.authors[index]?.email}
           />
           {isDirtyEmail && (
             <InputWarningIcon
@@ -203,7 +203,7 @@ const ContactView: FunctionComponent<Props> = ({
           />
         </InputWarningError>
       ) : (
-        <AlignedSpan>{integration?.authors[index].email}</AlignedSpan>
+        <AlignedSpan>{integration?.authors[index]?.email}</AlignedSpan>
       )}
       {isEdit ? (
         <>
