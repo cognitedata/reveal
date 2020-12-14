@@ -44,6 +44,7 @@ const AddBoardModal: React.FC<Props> = ({ buttonText }: Props) => {
         onCancel={handleCLoseModal}
         headerText="Add board to suite"
         footer={footer}
+        // TODO(dtc-191)
         // to variable
         width={536}
       >

@@ -53,6 +53,7 @@ const SuiteOverview: React.FC = () => {
     <>
       <Suitebar
         leftCustomHeader={<Header />}
+        // TODO(dtc-191)
         // actionButton={<AddBoardModal buttonText="Add board" />}
       />
       <OverviewContainer>
