@@ -1,4 +1,9 @@
-import { CogniteClient, ClientOptions } from '@cognite/sdk';
+import {
+  CogniteClient,
+  ClientOptions,
+  RawDBRowInsert,
+  RawDBRowKey,
+} from '@cognite/sdk';
 
 type dcClientOptions = {
   dbName: string;
@@ -19,8 +24,17 @@ export class CdfClient {
     return this.cogniteClient.groups.list();
   }
 
+  // TODO(DTC-194) to be removed after middleware deployed to staging
   getTableRows(tableName: string) {
     return this.cogniteClient.raw.listRows(this.dbName, tableName);
+  }
+
+  insertTableRow(tableName: string, items: RawDBRowInsert[]) {
+    return this.cogniteClient.raw.insertRows(this.dbName, tableName, items);
+  }
+
+  deleteTableRow(tableName: string, items: RawDBRowKey[]) {
+    return this.cogniteClient.raw.deleteRows(this.dbName, tableName, items);
   }
 }
 

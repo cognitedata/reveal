@@ -1312,10 +1312,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^1.17.1":
-  version "1.32.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.32.0.tgz#6e6b7052116a636bb7df5e324b8fd44757e2f891"
-  integrity sha512-24YJ9J8dXmTjt/9idGcVyIkolp1TM7bQsBxK7PjCMHj7oD2GILGgfQlURLzq7nmrtO2iHVMrGrKMYhVQIIJ5NQ==
+"@cognite/cogs.js@^2.7.2":
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.7.2.tgz#b08ba25f9c39e18fdae630227a4c85e77e2bd82b"
+  integrity sha512-4uoFvqaxJ4kp5pB1saSHNQDWvf6/wQ+9MOlkChpG003A3F10wpl+U9T7KhKkDMjuSy29Um9+7GWUtHvvBPU7gQ==
   dependencies:
     "@tippyjs/react" "4.0.2"
     color "^3.1.2"
@@ -3302,6 +3302,13 @@
   version "16.9.9"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.9.tgz#d2d0a6f720a0206369ccbefff752ba37b9583136"
   integrity sha512-jE16FNWO3Logq/Lf+yvEAjKzhpST/Eac8EMd1i4dgZdMczfgqC8EjpxwNgEe3SExHYLliabXDh9DEhhqnlXJhg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-modal@^3.10.6":
+  version "3.10.6"
+  resolved "https://registry.yarnpkg.com/@types/react-modal/-/react-modal-3.10.6.tgz#76717220f32bc72769190692147814a540053c7e"
+  integrity sha512-XpshhwVYir1TRZ2HS5EfmNotJjB8UEC2IkT3omNtiQzROOXSzVLz5xsjwEpACP8U+PctkpfZepX+WT5oDf0a9g==
   dependencies:
     "@types/react" "*"
 
@@ -14957,6 +14964,16 @@ react-modal@^3.11.2:
   version "3.11.2"
   resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.11.2.tgz#bad911976d4add31aa30dba8a41d11e21c4ac8a4"
   integrity sha512-o8gvvCOFaG1T7W6JUvsYjRjMVToLZgLIsi5kdhFIQCtHxDkA47LznX62j+l6YQkpXDbvQegsDyxe/+JJsFQN7w==
+  dependencies:
+    exenv "^1.2.0"
+    prop-types "^15.5.10"
+    react-lifecycles-compat "^3.0.0"
+    warning "^4.0.3"
+
+react-modal@^3.12.1:
+  version "3.12.1"
+  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.12.1.tgz#38c33f70d81c33d02ff1ed115530443a3dc2afd3"
+  integrity sha512-WGuXn7Fq31PbFJwtWmOk+jFtGC7E9tJVbFX0lts8ZoS5EPi9+WWylUJWLKKVm3H4GlQ7ZxY7R6tLlbSIBQ5oZA==
   dependencies:
     exenv "^1.2.0"
     prop-types "^15.5.10"

@@ -1,26 +1,29 @@
 import React from 'react';
-import { Button, Menu, Overline, Title } from '@cognite/cogs.js';
+import { Detail, Overline, Title } from '@cognite/cogs.js';
+import { useHistory } from 'react-router-dom';
 import SuiteAvatar from 'components/suiteAvatar';
-import { useClickAwayListener } from 'hooks/useClickAwayListener';
+import MeatballsMenu from 'components/menus';
 import {
-  ActionsContainer,
   TileHeader,
   TileContainer,
   TilePreview,
   TileDescription,
   TileOverline,
 } from 'components/tiles/element';
+import { SuiteRowDelete } from 'store/suites/types';
+import { TS_FIX_ME } from 'types/core';
 
 const TilePreviewHeight = '184';
 const TilePreviewWidth = '300';
 
 interface Props {
-  title: string;
-  description?: string;
-  color?: string;
   avatar?: boolean;
+  color?: string;
+  dataItem: TS_FIX_ME;
+  handleDelete?: (key: SuiteRowDelete[]) => void;
+  handleEdit?: (key: SuiteRowDelete[]) => void;
   view?: 'suite' | 'board';
-  embedTag?: string;
+  linkTo: string;
 }
 // eslint-disable-next-line
 // TODO manipulate DOM to change iframe width & height
@@ -41,56 +44,46 @@ const renderIframe = (tag: string): JSX.Element | null => {
 };
 
 export const Tile: React.FC<Props> = ({
-  title,
-  description,
-  color,
   avatar = false,
+  color,
+  dataItem,
   view = 'suite',
-  embedTag,
+  linkTo,
 }: Props) => {
-  const {
-    ref,
-    isComponentVisible,
-    setIsComponentVisible,
-  } = useClickAwayListener(false);
+  const history = useHistory();
 
-  const handleMenuOpen = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    event.preventDefault();
-    setIsComponentVisible(() => !isComponentVisible);
+  const goToSuite = () => {
+    history.push(linkTo);
   };
+
+  const goToBoard = () => {
+    window.open(linkTo, '_blank');
+  };
+
   const isBoard = view === 'board';
   return (
-    <TileContainer>
-      <TileHeader isBoard={isBoard}>
-        {avatar && <SuiteAvatar title={title} color={color} />}
-        <TileDescription>
-          <TileOverline isBoard={isBoard}>
-            <Overline level={3}>{description}</Overline>
-          </TileOverline>
-          <Title level={6}>{title}</Title>
-        </TileDescription>
-        <div ref={ref}>
-          <Button
-            variant="ghost"
-            icon="MoreOverflowEllipsisHorizontal"
-            onClick={handleMenuOpen}
-          />
-          <ActionsContainer>
-            {isComponentVisible && (
-              <Menu>
-                <Menu.Item>Remove pin</Menu.Item>
-                <Menu.Item>Edit suite</Menu.Item>
-                <Menu.Item>Delete suite</Menu.Item>
-                <Menu.Item>Manage access</Menu.Item>
-                <Menu.Item>Content</Menu.Item>
-              </Menu>
-            )}
-          </ActionsContainer>
-        </div>
-      </TileHeader>
-      {embedTag ? renderIframe(embedTag) : <TilePreview isBoard={isBoard} />}
-    </TileContainer>
+    <>
+      <TileContainer {...(isBoard && { onClick: goToBoard })}>
+        <TileHeader isBoard={isBoard} color={color}>
+          {avatar && (
+            <SuiteAvatar title={dataItem.title} color={dataItem.color} />
+          )}
+          <TileDescription>
+            <TileOverline isBoard={isBoard}>
+              <Overline level={3}>{dataItem?.type}</Overline>
+            </TileOverline>
+            <Title level={6}>{dataItem.title}</Title>
+          </TileDescription>
+          <MeatballsMenu dataItem={dataItem} />
+        </TileHeader>
+        {dataItem.embedTag ? (
+          renderIframe(dataItem.embedTag)
+        ) : (
+          <TilePreview {...(!isBoard && { onClick: goToSuite })}>
+            <Detail>{dataItem.description}</Detail>
+          </TilePreview>
+        )}
+      </TileContainer>
+    </>
   );
 };

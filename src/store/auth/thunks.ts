@@ -1,10 +1,14 @@
-import { CdfClient } from 'utils';
+import { ApiClient, CdfClient } from 'utils';
 import { REDIRECT } from '@cognite/sdk';
 import { RootDispatcher } from 'store/types';
 import jwtDecode from 'jwt-decode';
 import * as actions from './actions';
 
-export function authenticate(tenant: string, client: CdfClient) {
+export function authenticate(
+  tenant: string,
+  client: CdfClient,
+  apiClient: ApiClient
+) {
   return async (dispatch: RootDispatcher) => {
     let email: string;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -14,7 +18,8 @@ export function authenticate(tenant: string, client: CdfClient) {
       project: tenant,
       onAuthenticate: REDIRECT,
       onTokens: ({ idToken, accessToken }) => {
-        dispatch(actions.authSuccess(accessToken));
+        apiClient.keepToken(accessToken);
+        dispatch(actions.authSuccess());
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { unique_name: uniqueName, groups: userGroups } = jwtDecode(

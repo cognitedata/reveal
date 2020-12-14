@@ -1,5 +1,5 @@
 import React from 'react';
-import { TENANT } from 'contants';
+import { TENANT } from 'constants/cdf';
 import AppProviders from './AppProviders';
 import Authentication from './Authentication';
 

@@ -1,20 +1,23 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Button, Loader, Title } from '@cognite/cogs.js';
+import { useHistory, useParams } from 'react-router-dom';
+import { Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
+import MeatballsMenu from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import {
   getDashboarsdBySuite,
   getSuitesTableState,
 } from 'store/suites/selectors';
 import { useSelector } from 'react-redux';
-import { Suite } from 'store/suites/types';
-import { StyledTitle } from './elements';
+import { Board, Suite } from 'store/suites/types';
+import { StyledTitle, NoBoardsContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const history = useHistory();
+
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
   );
@@ -24,41 +27,57 @@ const SuiteOverview: React.FC = () => {
   if (!suitesLoaded) {
     return null;
   }
+
   if (suitesLoading) {
     return <Loader />;
   }
-  const { title, dashboards } = suite || {};
+
+  if (!suite) {
+    history.push('/');
+  }
+
+  const { title, color, boards } = suite || {};
 
   const Header = () => {
     return (
       <>
-        <SuiteAvatar color="#C8F4E7" title="Product Optimization" />
+        <SuiteAvatar color={color} title={title} />
         <Title as={StyledTitle} level={5}>
           {title}
         </Title>
-        <Button variant="ghost" icon="MoreOverflowEllipsisHorizontal" />
+        <MeatballsMenu dataItem={suite} />
       </>
     );
   };
   return (
     <>
-      <Suitebar leftCustomHeader={<Header />} />
+      <Suitebar
+        leftCustomHeader={<Header />}
+        // TODO(dtc-191)
+        // actionButton={<AddBoardModal buttonText="Add board" />}
+      />
       <OverviewContainer>
         <TilesContainer>
-          <Title level={6}>All dashboards</Title>
-          {dashboards?.map((dashboard) => (
-            // eslint-disable-next-line
-            // TODO pass item
-            <Tile
-              key={dashboard.key}
-              view="board"
-              title={dashboard.title}
-              description={dashboard.type}
-              embedTag={dashboard.embedTag}
-            />
-          ))}
+          {!boards?.length ? (
+            <NoBoardsContainer>
+              <Graphic type="DataKits" />
+              <Title level={5}>No dasboards added to suite yet</Title>
+            </NoBoardsContainer>
+          ) : (
+            <>
+              <Title level={6}>All boards</Title>
+              {boards?.map((board: Board) => (
+                <Tile
+                  key={board.key}
+                  linkTo={board.url}
+                  dataItem={board}
+                  color={color}
+                  view="board"
+                />
+              ))}
+            </>
+          )}
         </TilesContainer>
-        <div>I am inside suite {id}</div>
       </OverviewContainer>
     </>
   );

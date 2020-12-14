@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro';
-import layers from '_helpers/zindex';
 
 const TileBasic = styled.div`
   display: inline-flex;
@@ -40,28 +39,21 @@ export const TileOverline = styled.div<{ isBoard?: boolean }>`
   }
 `;
 
-export const TileHeader = styled.div<{ isBoard?: boolean }>`
+export const TileHeader = styled.div<{ isBoard?: boolean; color?: string }>`
   padding: 12px;
   display: flex;
   align-items: center;
-  background-color: ${({ isBoard }) =>
-    isBoard ? 'var(--cogs-midblue-7)' : 'var(--cogs-white)'};
-
+  background-color: ${({ isBoard, color }) =>
+    isBoard ? `${color}` : 'var(--cogs-white)'};
+  border-bottom: ${({ isBoard }) =>
+    isBoard ? 'none' : '1px solid var(--cogs-greyscale-grey4)'};
   & > :last-child {
     margin-left: auto;
   }
 `;
 
-export const TilePreview = styled.div<{ isBoard?: boolean }>`
+export const TilePreview = styled.div`
   height: 184px;
-  background-color: ${({ isBoard }) =>
-    isBoard ? 'var(--cogs-white)' : 'var(--cogs-greyscale-grey3)'};
-`;
-
-export const ActionsContainer = styled.div`
-  position: absolute;
-  left: 256px;
-  top: 50px;
-  color: var(--cogs-text-color);
-  z-index: ${layers.TILE_ACTIONS_MENU};
+  background-color: var(--cogs-white);
+  padding: 48px 12px;
 `;

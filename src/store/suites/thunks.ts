@@ -1,14 +1,17 @@
-import { CdfClient } from 'utils';
-import { SUITES_TABLE_NAME } from 'contants';
+import { CdfClient, ApiClient } from 'utils';
+import { SUITES_TABLE_NAME } from 'constants/cdf';
 import { RootDispatcher } from 'store/types';
-import { SuiteRow, Suite } from './types';
+import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
 import * as actions from './actions';
 
-export const fetchSuits = (client: CdfClient) => async (
-  dispatch: RootDispatcher
-) => {
+// TODO(DTC-194) uncomment to use apiClient when get middleware running on a remote server
+
+export const fetchSuites = (
+  client: CdfClient /* apiClient: ApiClient */
+) => async (dispatch: RootDispatcher) => {
   dispatch(actions.loadSuitesTable());
   try {
+    // const suites: Suite[] = await getSuites(apiClient);
     const suites: Suite[] = await getSuites(client);
     dispatch(actions.loadedSuitesTable(suites as Suite[]));
   } catch (e) {
@@ -16,8 +19,42 @@ export const fetchSuits = (client: CdfClient) => async (
   }
 };
 
-async function getSuites(client: CdfClient) {
-  const { items: rows } = await client.getTableRows(SUITES_TABLE_NAME);
+export const insertSuite = (
+  client: CdfClient,
+  // apiClient: ApiClient,
+  suite: Suite
+) => async (dispatch: RootDispatcher) => {
+  dispatch(actions.insertSuiteTableRow());
+  try {
+    const suiteRow = fromSuiteToRow(suite);
+    await client.insertTableRow(SUITES_TABLE_NAME, suiteRow);
+    // dispatch(fetchSuites(apiClient));
+    dispatch(actions.suiteTableRequestSuccess());
+    dispatch(fetchSuites(client));
+  } catch (e) {
+    dispatch(actions.insertSuiteTableRowError(e));
+  }
+};
+
+export const deleteSuite = (
+  client: CdfClient,
+  apiClient: ApiClient,
+  key: SuiteRowDelete[]
+) => async (dispatch: RootDispatcher) => {
+  try {
+    dispatch(actions.deleteSuiteTableRow());
+    await client.deleteTableRow(SUITES_TABLE_NAME, key);
+    // dispatch(fetchSuites(apiClient));
+    dispatch(actions.suiteTableRequestSuccess());
+    dispatch(fetchSuites(client));
+  } catch (e) {
+    dispatch(actions.deleteSuiteTableRowError(e));
+  }
+};
+
+async function getSuites(client: CdfClient /* apiClient: ApiClient */) {
+  // const { items: rows } = await apiClient.getSuitesRows();
+  const { items: rows } = await client.getTableRows('suites');
   return getSuitesFromRows(rows);
 }
 
@@ -30,4 +67,9 @@ function getSuitesFromRows(rows: SuiteRow[]): Suite[] {
         ...row.columns,
       } as Suite)
   );
+}
+
+function fromSuiteToRow(suite: Suite) {
+  const { key, ...rest } = suite;
+  return [{ key, columns: rest }] as SuiteRowInsert[];
 }
