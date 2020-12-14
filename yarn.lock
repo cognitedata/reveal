@@ -1312,10 +1312,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^1.17.1":
-  version "1.32.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.32.0.tgz#6e6b7052116a636bb7df5e324b8fd44757e2f891"
-  integrity sha512-24YJ9J8dXmTjt/9idGcVyIkolp1TM7bQsBxK7PjCMHj7oD2GILGgfQlURLzq7nmrtO2iHVMrGrKMYhVQIIJ5NQ==
+"@cognite/cogs.js@^2.7.2":
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.7.2.tgz#b08ba25f9c39e18fdae630227a4c85e77e2bd82b"
+  integrity sha512-4uoFvqaxJ4kp5pB1saSHNQDWvf6/wQ+9MOlkChpG003A3F10wpl+U9T7KhKkDMjuSy29Um9+7GWUtHvvBPU7gQ==
   dependencies:
     "@tippyjs/react" "4.0.2"
     color "^3.1.2"
