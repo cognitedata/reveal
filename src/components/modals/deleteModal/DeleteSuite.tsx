@@ -15,7 +15,7 @@ interface Props {
   dataItem: TS_FIX_ME;
 }
 
-const DeleteModal: React.FC<Props> = ({ dataItem }: Props) => {
+const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
   const history = useHistory();
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
@@ -66,4 +66,4 @@ const DeleteModal: React.FC<Props> = ({ dataItem }: Props) => {
   );
 };
 
-export default DeleteModal;
+export default DeleteSuite;

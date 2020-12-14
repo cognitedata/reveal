@@ -1,2 +1,2 @@
-export * from './BoardStep';
-export * from './SuiteStep';
+export * from './BoardForm';
+export * from './SuiteForm';

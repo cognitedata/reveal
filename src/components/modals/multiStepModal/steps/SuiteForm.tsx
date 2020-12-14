@@ -7,7 +7,7 @@ interface Props {
   suiteValues: Suite;
 }
 
-export const SuiteStep: React.FC<Props> = ({
+export const SuiteForm: React.FC<Props> = ({
   handleOnChange,
   suiteValues,
 }: Props) => {

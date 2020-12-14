@@ -1,4 +1,3 @@
-import { TS_FIX_ME } from 'types/core';
 import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 
@@ -10,7 +9,8 @@ export enum ModalActionTypes {
 export type ModalRootAction = ActionType<typeof actions>;
 
 export type ModalType =
-  | 'Delete'
+  | 'DeleteSuite'
+  | 'DeleteBoard'
   | 'EditSuite'
   | 'CreateSuite'
   | 'AddBoard'
@@ -18,7 +18,7 @@ export type ModalType =
 
 export type Modal = {
   modalType: ModalType;
-  modalProps?: TS_FIX_ME;
+  modalProps?: any;
 };
 
 export interface ModalState {

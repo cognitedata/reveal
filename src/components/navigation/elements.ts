@@ -35,12 +35,8 @@ export const CollapseButton = styled.div<{ open: boolean }>`
   }
 `;
 
-export const ActionContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 22px;
-  margin-bottom: 10px;
+export const TitleContainer = styled.div`
+  margin-bottom: 16px;
 `;
 
 export const SuiteTitle = styled.span`

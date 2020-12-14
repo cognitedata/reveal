@@ -14,12 +14,10 @@ import { Board } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 
 interface Props {
-  handleOnChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleBoardTypeChange: TS_FIX_ME;
   actionButton: React.ReactElement;
   boards: Board[];
   boardValues: Board;
-  setNewBoard: TS_FIX_ME;
+  setBoard: TS_FIX_ME;
   deleteBoard: (event: React.MouseEvent, key: string) => void;
 }
 
@@ -31,15 +29,28 @@ const options = [
   { value: 'other', label: 'Other' },
 ];
 
-export const BoardStep: React.FC<Props> = ({
-  handleOnChange,
-  handleBoardTypeChange,
+export const BoardForm: React.FC<Props> = ({
   actionButton,
   boards,
   boardValues,
-  setNewBoard,
+  setBoard,
   deleteBoard,
 }: Props) => {
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = event.target;
+    setBoard((prevState: Board) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleBoardTypeChange = (selectedOption: TS_FIX_ME) => {
+    setBoard((prevState: Board) => ({
+      ...prevState,
+      type: selectedOption.value,
+    }));
+  };
+
   const boardTypeValue = () =>
     options.find((option) => isEqual(option.value, boardValues.type)) || null;
   return (
@@ -95,7 +106,7 @@ export const BoardStep: React.FC<Props> = ({
           {boards?.map((board: Board) => {
             return (
               <AddedBoardItem
-                onClick={() => setNewBoard(board)}
+                onClick={() => setBoard(board)}
                 key={board.key}
                 selected={boardValues?.key === board.key}
               >

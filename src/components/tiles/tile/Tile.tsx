@@ -1,8 +1,6 @@
 import React from 'react';
 import { Detail, Overline, Title } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
 import SuiteAvatar from 'components/suiteAvatar';
-import MeatballsMenu from 'components/menus';
 import {
   TileHeader,
   TileContainer,
@@ -20,10 +18,10 @@ interface Props {
   avatar?: boolean;
   color?: string;
   dataItem: TS_FIX_ME;
+  menu: React.ReactElement;
   handleDelete?: (key: SuiteRowDelete[]) => void;
   handleEdit?: (key: SuiteRowDelete[]) => void;
   view?: 'suite' | 'board';
-  linkTo: string;
 }
 // eslint-disable-next-line
 // TODO manipulate DOM to change iframe width & height
@@ -47,23 +45,13 @@ export const Tile: React.FC<Props> = ({
   avatar = false,
   color,
   dataItem,
+  menu,
   view = 'suite',
-  linkTo,
 }: Props) => {
-  const history = useHistory();
-
-  const goToSuite = () => {
-    history.push(linkTo);
-  };
-
-  const goToBoard = () => {
-    window.open(linkTo, '_blank');
-  };
-
   const isBoard = view === 'board';
   return (
     <>
-      <TileContainer {...(isBoard && { onClick: goToBoard })}>
+      <TileContainer>
         <TileHeader isBoard={isBoard} color={color}>
           {avatar && (
             <SuiteAvatar title={dataItem.title} color={dataItem.color} />
@@ -74,12 +62,12 @@ export const Tile: React.FC<Props> = ({
             </TileOverline>
             <Title level={6}>{dataItem.title}</Title>
           </TileDescription>
-          <MeatballsMenu dataItem={dataItem} />
+          {menu}
         </TileHeader>
         {dataItem.embedTag ? (
           renderIframe(dataItem.embedTag)
         ) : (
-          <TilePreview {...(!isBoard && { onClick: goToSuite })}>
+          <TilePreview>
             <Detail>{dataItem.description}</Detail>
           </TilePreview>
         )}
