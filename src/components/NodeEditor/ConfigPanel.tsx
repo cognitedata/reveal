@@ -53,9 +53,16 @@ type ConfigPanelProps = {
   onRemove: (oldNode: StorableNode) => void;
   onSave: (nextNode: StorableNode) => void;
   onClose: () => void;
+  context: any;
 };
 
-const ConfigPanel = ({ node, onRemove, onSave, onClose }: ConfigPanelProps) => {
+const ConfigPanel = ({
+  node,
+  onRemove,
+  onSave,
+  onClose,
+  context,
+}: ConfigPanelProps) => {
   const [workingNode, setWorkingNode] = useState<StorableNode>(node);
 
   useEffect(() => {
@@ -98,6 +105,7 @@ const ConfigPanel = ({ node, onRemove, onSave, onClose }: ConfigPanelProps) => {
                 ...nextNode,
               });
             },
+            context,
           })}
         </div>
       )}

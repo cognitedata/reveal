@@ -10,12 +10,15 @@ export type Chart = {
 
 export type ChartTimeSeries = {
   id: string;
+  name: string;
   color: string;
   enabled: boolean;
+  unit?: string;
 };
 
 export type ChartWorkflow = {
   id: string;
+  name: string;
   color: string;
   enabled: boolean;
 };

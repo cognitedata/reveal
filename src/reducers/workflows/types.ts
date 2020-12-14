@@ -4,6 +4,7 @@ import { FunctionComponent } from 'react';
 export type ConfigPanelComponentProps = {
   node: StorableNode;
   onUpdateNode: (nextNode: StorableNode) => void;
+  context: any;
 };
 
 export type ConfigPanelComponent = FunctionComponent<ConfigPanelComponentProps>;

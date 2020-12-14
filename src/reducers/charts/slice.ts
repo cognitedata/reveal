@@ -60,6 +60,8 @@ const chartsSlice = createSlice({
             ...(chart?.timeSeriesCollection || []),
             {
               id: timeSeries.externalId,
+              name: timeSeries.externalId,
+              unit: timeSeries.unit,
               color: getEntryColor(),
               enabled: true,
             } as ChartTimeSeries,
@@ -116,6 +118,46 @@ const chartsSlice = createSlice({
           timeSeriesCollection: chart?.timeSeriesCollection?.filter(
             (timeSeries) => timeSeries.id !== timeSeriesId
           ),
+        },
+      });
+    },
+
+    renameTimeSeries: (
+      state,
+      action: PayloadAction<{ id: string; timeSeriesId: string; name: string }>
+    ) => {
+      const { id, timeSeriesId, name } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          timeSeriesCollection: chart?.timeSeriesCollection?.map(
+            (timeSeries) => {
+              return {
+                ...timeSeries,
+                name: timeSeries.id === timeSeriesId ? name : timeSeries.name,
+              };
+            }
+          ),
+        },
+      });
+    },
+
+    renameWorkflow: (
+      state,
+      action: PayloadAction<{ id: string; workflowId: string; name: string }>
+    ) => {
+      const { id, workflowId, name } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            return {
+              ...workflow,
+              name: workflow.id === workflowId ? name : workflow.name,
+            };
+          }),
         },
       });
     },

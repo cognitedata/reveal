@@ -1,3 +1,5 @@
+/* eslint-disable no-alert */
+
 import React, { useEffect, useState } from 'react';
 import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
@@ -10,6 +12,7 @@ import {
   fetchWorkflowsForChart,
   createNewWorkflow,
   deleteWorkflow,
+  createWorkflowFromTimeSeries,
 } from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
@@ -35,6 +38,7 @@ import {
   SourceButtonContainer,
   SourceItem,
   SourceCircle,
+  SourceSquare,
   ChartWrapper,
   SourceMenu,
   SourceName,
@@ -184,6 +188,26 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     );
   };
 
+  const handleRenameTimeSeries = (timeSeriesId: string) => {
+    dispatch(
+      chartsSlice.actions.renameTimeSeries({
+        id: chart?.id || '',
+        timeSeriesId,
+        name: prompt('Provide new name for time series') || 'unnamed',
+      })
+    );
+  };
+
+  const handleRenameWorkflow = (workflowId: string) => {
+    dispatch(
+      chartsSlice.actions.renameWorkflow({
+        id: chart?.id || '',
+        workflowId,
+        name: prompt('Provide new name for workflow') || 'unnamed',
+      })
+    );
+  };
+
   if (!hasData) {
     return <Icon type="Loading" />;
   }
@@ -210,6 +234,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  const handleConvertToWorkflow = (id: string) => {
+    if (chart) {
+      dispatch(createWorkflowFromTimeSeries(chart, id));
+    }
+  };
+
   const renderStatusIcon = (status?: WorkflowRunStatus) => {
     switch (status) {
       case 'RUNNING':
@@ -230,7 +260,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   }
 
   const timeseriesItems = chart.timeSeriesCollection?.map(
-    ({ id, color, enabled }: ChartTimeSeries) => {
+    ({ id, name, color, enabled, unit }: ChartTimeSeries) => {
       return (
         <SourceItem key={id}>
           <SourceCircle
@@ -238,7 +268,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             color={color}
             fade={!enabled}
           />
-          <SourceName title={id}>{id}</SourceName>
+          <SourceName title={name}>{name || 'noname'}</SourceName>
           <SourceMenu onClick={(e) => e.stopPropagation()}>
             <Dropdown
               content={
@@ -246,11 +276,35 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                   <Menu.Header>
                     <span style={{ wordBreak: 'break-word' }}>{id}</span>
                   </Menu.Header>
+                  <Menu.Submenu
+                    content={
+                      <Menu>
+                        <Menu.Header>Select unit</Menu.Header>
+                        <Menu.Item>PSI</Menu.Item>
+                        <Menu.Item>bar</Menu.Item>
+                        <Menu.Item>Pa</Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <span>Unit: {unit}</span>
+                  </Menu.Submenu>
+                  <Menu.Item
+                    onClick={() => handleRenameTimeSeries(id)}
+                    appendIcon="Edit"
+                  >
+                    <span>Rename</span>
+                  </Menu.Item>
                   <Menu.Item
                     onClick={() => handleRemoveTimeSeries(id)}
                     appendIcon="Delete"
                   >
                     <span>Remove</span>
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={() => handleConvertToWorkflow(id)}
+                    appendIcon="Timeseries"
+                  >
+                    <span>Convert to workflow</span>
                   </Menu.Item>
                 </Menu>
               }
@@ -270,7 +324,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
     return (
       <SourceItem key={flow.id} onClick={() => setActiveWorkflowId(flow.id)}>
-        <SourceCircle
+        <SourceSquare
           onClick={() => handleToggleWorkflow(flow.id)}
           color={flowEntry?.color}
           fade={!flowEntry?.enabled}
@@ -278,14 +332,22 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         <div style={{ marginRight: 10 }}>
           {renderStatusIcon(flow.latestRun?.status)}
         </div>
-        <SourceName>{flow.name || 'noname'}</SourceName>
+        <SourceName>{flowEntry?.name || 'noname'}</SourceName>
         <SourceMenu onClick={(e) => e.stopPropagation()}>
           <Dropdown
             content={
               <Menu>
                 <Menu.Header>
-                  <span style={{ wordBreak: 'break-word' }}>{flow.name}</span>
+                  <span style={{ wordBreak: 'break-word' }}>
+                    {flowEntry?.name}
+                  </span>
                 </Menu.Header>
+                <Menu.Item
+                  onClick={() => handleRenameWorkflow(flow.id)}
+                  appendIcon="Edit"
+                >
+                  <span>Rename</span>
+                </Menu.Item>
                 <Menu.Item
                   onClick={() => {
                     onDeleteWorkflow(flow);
@@ -375,25 +437,17 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           </ToolbarWrapper>
           <SourceListWrapper>
             <SourcesTitle>Time Series</SourcesTitle>
-            <SourceList>{timeseriesItems}</SourceList>
-            <SourceButtonContainer>
-              <Button
-                onClick={() => handleClickSearch()}
-                icon="Plus"
-                iconPlacement="right"
-              >
-                Add
-              </Button>
-            </SourceButtonContainer>
-            <SourcesTitle>Workflows</SourcesTitle>
-            <SourceList>{workflowItems}</SourceList>
+            <SourceList>
+              {timeseriesItems}
+              {workflowItems}
+            </SourceList>
             <SourceButtonContainer>
               <Button
                 onClick={() => onNewWorkflow()}
                 icon="Plus"
                 iconPlacement="right"
               >
-                Create
+                Create workflow
               </Button>
             </SourceButtonContainer>
           </SourceListWrapper>

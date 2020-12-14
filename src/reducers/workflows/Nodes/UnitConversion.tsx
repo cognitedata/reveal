@@ -5,22 +5,26 @@ import { ConfigPanelComponentProps, StorableNode } from '../types';
 
 type FunctionData = {
   multiplier: number;
+  node: any;
 };
 
 export const effect = async (
   funcData: FunctionData,
-  a: (DoubleDatapoint | DatapointAggregate)[]
+  a: { datapoints: (DoubleDatapoint | DatapointAggregate)[]; unit: string }
 ) => {
   return {
-    result: a.map((x) => ({
-      ...x,
-      ...('average' in x
-        ? {
-            average: x.average! * funcData.multiplier,
-          }
-        : {}),
-      ...('value' in x ? { value: x.value * funcData.multiplier } : {}),
-    })),
+    result: {
+      datapoints: a.datapoints.map((x) => ({
+        ...x,
+        ...('average' in x
+          ? {
+              average: x.average! * funcData.multiplier,
+            }
+          : {}),
+        ...('value' in x ? { value: x.value * funcData.multiplier } : {}),
+      })),
+      unit: funcData.node.title,
+    },
   };
 };
 

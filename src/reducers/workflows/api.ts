@@ -9,6 +9,9 @@ import { getEntryColor } from 'utils/colors';
 import workflowSlice from './slice';
 import { Workflow } from './types';
 
+import { node as WorkspaceTimeSeriesNode } from './Nodes/WorkspaceTimeSeries';
+import { node as OutputSeriesNode } from './Nodes/OutputSeries';
+
 export const fetchWorkflowsForChart = (
   workflowIds: string[]
 ): AppThunk => async (dispatch, getState) => {
@@ -64,6 +67,96 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
       ...(chart.workflowCollection || []),
       {
         id: newWorkflow.id,
+        name: newWorkflow.name,
+        color: getEntryColor(),
+        enabled: true,
+      } as ChartWorkflow,
+    ];
+
+    const chartService = new ChartService(tenant);
+    await chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
+    dispatch(workflowSlice.actions.storedNewWorkflow(newWorkflow));
+    dispatch(
+      chartSlice.actions.storedNewWorkflow({
+        id: chart.id,
+        changes: { workflowCollection: nextWorkflowIds },
+      })
+    );
+  } catch (e) {
+    dispatch(workflowSlice.actions.failedStoringNewWorkflow(e));
+  }
+};
+
+export const createWorkflowFromTimeSeries = (
+  chart: Chart,
+  timeSeriesId: string
+): AppThunk => async (dispatch, getState) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const chartTimeSeries = chart.timeSeriesCollection?.find(
+    ({ id }) => timeSeriesId === id
+  );
+
+  if (!tenant) {
+    // Must have tenant and user set
+    return;
+  }
+
+  const workflowId = nanoid();
+  const inputNodeId = `${WorkspaceTimeSeriesNode.subtitle}-${nanoid()}`;
+  const outputNodeId = `${OutputSeriesNode.subtitle}-${nanoid()}`;
+  const connectionId = nanoid();
+
+  const newWorkflow: Workflow = {
+    id: workflowId,
+    name: `${chartTimeSeries?.name} (workflow)`,
+    nodes: [
+      {
+        id: inputNodeId,
+        ...WorkspaceTimeSeriesNode,
+        title: chartTimeSeries?.name,
+        subtitle: `DATAPOINTS (${chartTimeSeries?.id})`,
+        functionData: {
+          timeSeriesExternalId: timeSeriesId,
+        },
+        x: 50,
+        y: 50,
+      },
+      {
+        id: outputNodeId,
+        ...OutputSeriesNode,
+        x: 800,
+        y: 70,
+      },
+    ],
+    connections: {
+      [connectionId]: {
+        id: connectionId,
+        inputPin: {
+          nodeId: outputNodeId,
+          pinId: OutputSeriesNode.inputPins[0].id,
+        },
+        outputPin: {
+          nodeId: inputNodeId,
+          pinId: WorkspaceTimeSeriesNode.outputPins[0].id,
+        },
+      },
+    },
+  };
+
+  dispatch(workflowSlice.actions.startStoringNewWorkflow());
+
+  try {
+    // Create the workflow
+    const workflowService = new WorkflowService(tenant);
+    workflowService.saveWorkflow(newWorkflow);
+
+    // Attach this workflow to the current chart
+    const nextWorkflowIds = [
+      ...(chart.workflowCollection || []),
+      {
+        id: newWorkflow.id,
+        name: newWorkflow.name,
         color: getEntryColor(),
         enabled: true,
       } as ChartWorkflow,

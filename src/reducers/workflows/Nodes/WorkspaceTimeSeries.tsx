@@ -46,65 +46,57 @@ export const effectId = 'DATAPOINTS';
 export const configPanel = ({
   node,
   onUpdateNode,
+  context,
 }: ConfigPanelComponentProps) => {
-  const [inputValue, setInputValue] = useState<string>('');
   const { functionData } = node;
 
-  useEffect(() => {
-    if (functionData.timeSeriesExternalId) {
-      sdk.timeseries
-        .retrieve([{ externalId: functionData.timeSeriesExternalId }])
-        .then((timeseries) => {
-          setInputValue(timeseries[0]?.name || '');
-        });
-    }
-  }, [functionData.timeSeriesExternalId]);
+  const workspaceTimeSeries =
+    (context.chart as Chart).timeSeriesCollection || [];
+
+  const selectedWorkspaceTimeSeriesLabel =
+    workspaceTimeSeries.find(
+      ({ id }) => id === functionData.timeSeriesExternalId
+    )?.name || '';
 
   const loadOptions = (
     input: string,
     callback: (options: { value?: string; label?: string }[]) => void
   ) => {
-    sdk.timeseries
-      .search({
-        filter: {
-          isString: false,
-        },
-        search: {
-          query: input,
-        },
-      })
-      .then((results) => {
-        callback(
-          results.map((result) => ({
-            value: result.externalId,
-            label: result.name,
-          }))
-        );
-      });
+    callback(
+      workspaceTimeSeries.map((result) => ({
+        value: result.id,
+        label: result.name,
+      }))
+    );
   };
 
   return (
     <div>
-      <h4>CDF Timeseries</h4>
+      <h4>Workspace Time Series</h4>
       <AutoComplete
         mode="async"
         theme="dark"
         loadOptions={loadOptions}
         onChange={(nextValue: { value: string; label: string }) => {
           onUpdateNode({
+            title: nextValue.label,
+            subtitle: `DATAPOINTS (${nextValue.value})`,
             functionData: {
               timeSeriesExternalId: nextValue.value,
             },
           });
         }}
-        value={{ value: functionData.timeSeriesExternalId, label: inputValue }}
+        value={{
+          value: functionData.timeSeriesExternalId,
+          label: selectedWorkspaceTimeSeriesLabel,
+        }}
       />
     </div>
   );
 };
 
 export const node = {
-  title: 'CDF Datapoints',
+  title: 'Workspace Time Series',
   subtitle: 'DATAPOINTS',
   color: '#FC2574',
   icon: 'Function',

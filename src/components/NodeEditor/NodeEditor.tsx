@@ -114,6 +114,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
 
   const onSave = async () => {
     if (workflow) {
+      console.log({ workflow });
       dispatch(saveExistingWorkflow(workflow));
     }
   };
@@ -219,6 +220,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
             onRemoveNode(activeNode);
             setActiveNode(undefined);
           }}
+          context={context}
         />
       )}
 

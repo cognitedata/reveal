@@ -29,6 +29,9 @@ const defaultOptions = {
     enabled: true,
     verticalAlign: 'top',
   },
+  tooltip: {
+    split: true,
+  },
 };
 
 type ChartProps = {
@@ -86,7 +89,9 @@ const ChartComponent = ({ chart }: ChartProps) => {
         .filter((ts) => !ts.isString)
         .map((ts) => ({
           id: ts.externalId,
-          name: ts.externalId,
+          name: chart?.timeSeriesCollection?.find(
+            ({ id }) => id === ts.externalId
+          )?.name,
           color: chart?.timeSeriesCollection?.find(
             ({ id }) => id === ts.externalId
           )?.color,
@@ -97,12 +102,14 @@ const ChartComponent = ({ chart }: ChartProps) => {
         .filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
         .map((workflow) => ({
           id: workflow?.id,
-          name: workflow?.name,
+          name: chart?.workflowCollection?.find(
+            (chartWorkflow) => workflow?.id === chartWorkflow.id
+          )?.name,
           color: chart?.workflowCollection?.find(
             (chartWorkflow) => workflow?.id === chartWorkflow.id
           )?.color,
-          unit: workflow?.latestRun?.results?.unit,
-          datapoints: workflow?.latestRun?.results?.datapoints as (
+          unit: workflow?.latestRun?.results?.datapoints.unit,
+          datapoints: workflow?.latestRun?.results?.datapoints.datapoints as (
             | Datapoints
             | DatapointAggregate
           )[],
