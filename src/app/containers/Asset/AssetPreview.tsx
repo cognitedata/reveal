@@ -3,14 +3,9 @@ import { useRouteMatch } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useLocation, useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
-import {
-  AssetDetails,
-  AssetBreadcrumb,
-  AssetTreeTable,
-} from 'lib/containers/Assets';
+import { AssetDetails, AssetTreeTable } from 'lib/containers/Assets';
 import Metadata from 'lib/components/Details/Metadata';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Space } from 'antd';
 import { Asset } from '@cognite/sdk';
 import { Loader, ErrorFeedback, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -84,13 +79,6 @@ export const AssetPreview = ({
         item={{ id: assetId, type: 'asset' }}
         afterDefaultActions={actions}
       />
-      <Space align="center" style={{ marginLeft: '16px' }}>
-        <p>LOCATION:</p>
-        <AssetBreadcrumb
-          assetId={assetId}
-          onBreadcrumbClick={newAsset => openAsset(newAsset.id)}
-        />
-      </Space>
       <ResourceDetailsTabs
         parentResource={{
           type: 'asset',

@@ -17,7 +17,6 @@ import {
   ResourceIcons,
 } from 'lib/components';
 import { TimeseriesSmallPreview } from 'lib/containers/Timeseries';
-import { AssetBreadcrumb } from 'lib/containers/Assets';
 import { FileSmallPreview } from 'lib/containers/Files';
 import { SelectableItemProps, SmallPreviewProps } from 'lib/CommonProps';
 import { useSelectionButton } from 'lib/hooks/useSelection';
@@ -194,11 +193,6 @@ export const AssetSmallPreview = ({
           {selectionButton}
           {actions}
         </SpacedRow>
-      </InfoCell>
-
-      <InfoCell noBorders noPadding>
-        <p>LOCATION</p>
-        <AssetBreadcrumb assetId={asset.id} />
       </InfoCell>
 
       <InfoCell noBorders>
