@@ -3,6 +3,8 @@ import { Graphic, Detail, A, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 const StyledNoIntegrationIsSelected = styled.div`
+  height: calc(100vh - 10.5rem);
+  overflow-y: auto;
   padding: 6rem 5rem 0;
   .cogs-detail {
     color: ${Colors['greyscale-grey6'].hex()};
