@@ -32,7 +32,6 @@ const App = () => {
   const queryCache = new QueryCache({
     defaultConfig: {
       queries: {
-        retry: false,
         staleTime: 10 * 60 * 1000, // Pretty long
       },
     },
