@@ -17,6 +17,7 @@ const DataSetLink = styled((props) => <a {...props}>{props.children}</a>)`
   }
 `;
 interface OwnProps {
+  id: string;
   dataSetName: string;
   dataSetId: string;
 }
@@ -26,6 +27,7 @@ type Props = OwnProps;
 const DataSet: FunctionComponent<Props> = ({
   dataSetId,
   dataSetName,
+  ...rest
 }: Props) => {
   const { cdfEnv, project, origin } = useAppEnv();
   return (
@@ -36,6 +38,7 @@ const DataSet: FunctionComponent<Props> = ({
             <DataSetLink
               href={getDataSetsLink({ origin, project, cdfEnv, dataSetId })}
               target="_blank"
+              {...rest}
             >
               {dataSetName}
             </DataSetLink>

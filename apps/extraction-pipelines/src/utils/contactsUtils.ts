@@ -6,6 +6,10 @@ import {
 import { User } from '../model/User';
 import { IntegrationUpdateSpec } from './IntegrationsAPI';
 import { DetailFieldNames } from './integrationUtils';
+import {
+  IntegrationFieldName,
+  IntegrationFieldValue,
+} from '../components/table/details/DetailsCols';
 
 export interface CreateUpdateContactsObjArgs extends Pick<Integration, 'id'> {
   data: ContactsTableCol;
@@ -67,20 +71,24 @@ const getContactByAccessor = (
 };
 
 export const createUpdateObj = (
+  // eslint-disable-next-line
+  // todo remove??
   details: ContactsTableCol,
   contacts: ContactsTableCol[],
   integrationId: number
 ): IntegrationUpdateSpec[] => {
   const contactInfo = getContactByAccessor(contacts, details.accessor);
   if (details.accessor === 'owner') {
-    return createUpdateOwnerObj({
+    return createUpdateSpec({
       id: integrationId,
-      owner: contactInfo[0],
+      fieldName: 'owner',
+      fieldValue: contactInfo[0],
     });
   }
-  return createUpdateAuthorObj({
+  return createUpdateSpec({
     id: integrationId,
-    authors: contactInfo,
+    fieldName: 'authors',
+    fieldValue: contactInfo,
   });
 };
 
@@ -106,32 +114,19 @@ export const createNewAuthor = ({
   };
 };
 
-const createUpdateOwnerObj = ({
+export const createUpdateSpec = ({
   id,
-  owner,
+  fieldName,
+  fieldValue,
 }: {
   id: number;
-  owner: User;
+  fieldName: IntegrationFieldName;
+  fieldValue: IntegrationFieldValue;
 }): IntegrationUpdateSpec[] => {
   return [
     {
       id: `${id}`,
-      update: { owner: { set: owner } },
-    },
-  ];
-};
-
-export const createUpdateAuthorObj = ({
-  id,
-  authors,
-}: {
-  id: number;
-  authors: User[];
-}): IntegrationUpdateSpec[] => {
-  return [
-    {
-      id: `${id}`,
-      update: { authors: { set: authors } },
+      update: { [fieldName]: { set: fieldValue } },
     },
   ];
 };

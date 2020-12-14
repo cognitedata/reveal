@@ -40,7 +40,7 @@ const UserGroup: FunctionComponent<Props> = ({ users }: Props) => {
             <Tooltip
               placement="bottom"
               content={user.email}
-              key={`tooltip-${display}`}
+              key={`tooltip-${user.name}-${user.email}`}
             >
               <Avatar
                 text={display}

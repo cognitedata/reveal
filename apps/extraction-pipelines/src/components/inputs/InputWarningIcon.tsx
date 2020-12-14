@@ -5,7 +5,7 @@ import React from 'react';
 export const InputWarningIcon = styled((props) => (
   <Icon {...props} type="Warning" />
 ))`
-  margin-left: 1rem;
+  margin-left: 0.5rem;
   width: 1.2rem;
   svg {
     g {

@@ -8,7 +8,7 @@ interface DivFlexProps {
     | 'flex-end'
     | 'flex-start'
     | 'space-around';
-  align?: 'flex-end' | 'flex-start' | 'center' | 'baseline';
+  align?: 'flex-end' | 'flex-start' | 'center' | 'baseline' | 'stretch';
 }
 
 export const DivFlex = styled.div`

@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Colors, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import IntegrationDetails from 'components/modals/IntegrationDetails';
 import { Integration } from '../../model/Integration';
+import DetailsModal from '../test/DetailsModal';
 
 const TableOptionDropdown = styled((props) => (
   <Dropdown {...props}>{props.children}</Dropdown>
@@ -70,7 +70,7 @@ const IntegrationsTableActions: FunctionComponent<Props> = ({
           <Icon type="VerticalEllipsis" />
         </OptionMenuBtn>
       </TableOptionDropdown>
-      <IntegrationDetails
+      <DetailsModal
         onCancel={onIntegrationDetailsCancel}
         visible={integrationDetailVisible}
         integration={integration}

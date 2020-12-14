@@ -13,12 +13,13 @@ export const InteractiveCopyWrapper = styled.span`
 `;
 
 interface OwnProps {
+  id: string;
   schedule?: string;
 }
 
 type Props = OwnProps;
 
-const Schedule: FunctionComponent<Props> = ({ schedule }: Props) => {
+const Schedule: FunctionComponent<Props> = ({ schedule, ...rest }: Props) => {
   switch (schedule) {
     case undefined:
       return <>Not defined</>;
@@ -27,7 +28,7 @@ const Schedule: FunctionComponent<Props> = ({ schedule }: Props) => {
     default:
       return (
         <Tooltip content={schedule}>
-          <InteractiveCopyWrapper>
+          <InteractiveCopyWrapper {...rest}>
             {parseCron(schedule)} <InteractiveCopy text={schedule} />
           </InteractiveCopyWrapper>
         </Tooltip>

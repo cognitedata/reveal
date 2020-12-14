@@ -12,6 +12,8 @@ export interface RemoveChange {
 }
 
 export const useDetailsGlobalChanges = () => {
+  // eslint-disable-next-line
+  //TODO remvoe
   const [changes, setChanges] = useState<Change[]>([]);
 
   const addChange = ({ rowIndex, tableName, value }: Change) => {

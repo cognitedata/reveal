@@ -24,8 +24,8 @@ import {
 import { useContacts } from '../../hooks/details/useContacts';
 import {
   createNewAuthor,
-  createUpdateAuthorObj,
   createUpdateObj,
+  createUpdateSpec,
   filterAuthors,
 } from '../../utils/contactsUtils';
 import {
@@ -111,9 +111,10 @@ const Details: FunctionComponent<Props> = ({
 
       await mutateContacts({
         project,
-        items: createUpdateAuthorObj({
+        items: createUpdateSpec({
           id: integration.id,
-          authors,
+          fieldName: 'authors',
+          fieldValue: authors,
         }),
         id: integration.id,
       }).then(() => {

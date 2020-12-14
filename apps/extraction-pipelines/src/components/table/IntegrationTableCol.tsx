@@ -58,7 +58,7 @@ export const getIntegrationTableCol = () => {
         return status.status;
       },
       Cell: ({ row }: CellProps<Integration>) => {
-        return <StatusMarker status={row.values.status} />;
+        return <StatusMarker id="status-marker" status={row.values.status} />;
       },
       disableSortBy: true,
       Filter: StatusFilterDropdown,
@@ -74,7 +74,10 @@ export const getIntegrationTableCol = () => {
       },
       Cell: ({ row }: Cell<Integration>) => {
         return (
-          <RelativeTimeWithTooltip time={row.values.latestRun as number} />
+          <RelativeTimeWithTooltip
+            id="latest-run"
+            time={row.values.latestRun as number}
+          />
         );
       },
       disableSortBy: true,
@@ -85,7 +88,7 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.SCHEDULE,
       accessor: 'schedule',
       Cell: ({ row }: Cell<Integration>) => {
-        return <Schedule schedule={row.values.schedule} />;
+        return <Schedule id="schedule" schedule={row.values.schedule} />;
       },
       disableSortBy: true,
       disableFilters: true,
@@ -95,7 +98,12 @@ export const getIntegrationTableCol = () => {
       Header: TableHeadings.LAST_SEEN,
       accessor: 'lastSeen',
       Cell: ({ row }: Cell<Integration>) => {
-        return <RelativeTimeWithTooltip time={row.values.lastSeen as number} />;
+        return (
+          <RelativeTimeWithTooltip
+            id="last-seen"
+            time={row.values.lastSeen as number}
+          />
+        );
       },
       disableSortBy: true,
       disableFilters: true,
@@ -107,7 +115,11 @@ export const getIntegrationTableCol = () => {
       Cell: ({ row }: Cell<Integration>) => {
         const id = row.original.dataSet?.name ?? row.original.dataSetId;
         return (
-          <DataSet dataSetId={row.original.dataSetId} dataSetName={`${id}`} />
+          <DataSet
+            id="data-set-id"
+            dataSetId={row.original.dataSetId}
+            dataSetName={`${id}`}
+          />
         );
       },
       disableSortBy: true,

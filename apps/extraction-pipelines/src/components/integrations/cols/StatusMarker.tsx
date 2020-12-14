@@ -3,6 +3,8 @@ import { Badge, Tooltip } from '@cognite/cogs.js';
 import { Status } from '../../../model/Status';
 
 interface OwnProps {
+  // eslint-disable-next-line
+  id?: string;
   status: Status;
   dataTestId?: string;
 }
@@ -12,6 +14,7 @@ type Props = OwnProps;
 const StatusMarker: FunctionComponent<Props> = ({
   status,
   dataTestId = '',
+  ...rest
 }: Props) => {
   switch (status) {
     case Status.OK:
@@ -22,6 +25,7 @@ const StatusMarker: FunctionComponent<Props> = ({
             background="success"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
+            {...rest}
           />
         </Tooltip>
       );
@@ -33,6 +37,7 @@ const StatusMarker: FunctionComponent<Props> = ({
             background="danger"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
+            {...rest}
           />
         </Tooltip>
       );
@@ -44,6 +49,7 @@ const StatusMarker: FunctionComponent<Props> = ({
             background="greyscale-grey2"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
+            {...rest}
           />
         </Tooltip>
       );
@@ -53,6 +59,7 @@ const StatusMarker: FunctionComponent<Props> = ({
           <i
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
+            {...rest}
           >
             {status}
           </i>

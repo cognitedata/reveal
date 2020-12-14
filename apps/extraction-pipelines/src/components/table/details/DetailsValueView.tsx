@@ -18,16 +18,19 @@ interface DetailsValueViewProps {
 const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
   switch (fieldName) {
     case 'createdTime':
-      return <RelativeTimeWithTooltip time={fieldValue as number} />;
+      return (
+        <RelativeTimeWithTooltip id={fieldName} time={fieldValue as number} />
+      );
     case 'schedule': {
       const val = (fieldValue as string) ?? undefined;
-      return <Schedule schedule={val} />;
+      return <Schedule id={fieldName} schedule={val} />;
     }
     case 'dataSetId': {
       return (
         <>
           {fieldValue && (
             <DataSetDisplay
+              id={fieldName}
               dataSetId={`${fieldValue}`}
               dataSetName={`${fieldValue}`}
             />
@@ -40,25 +43,33 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
       return (
         <>
           {fieldValue && (
-            <DataSetDisplay dataSetId={`${id}`} dataSetName={name ?? `${id}`} />
+            <DataSetDisplay
+              id={fieldName}
+              dataSetId={`${id}`}
+              dataSetName={name ?? `${id}`}
+            />
           )}
         </>
       );
     }
     case 'externalId':
       return (
-        <InteractiveCopyWrapper>
+        <InteractiveCopyWrapper id={fieldName}>
           {fieldValue} <InteractiveCopy text={`${fieldValue}`} />
         </InteractiveCopyWrapper>
       );
     case 'lastSeen': {
-      return <RelativeTimeWithTooltip time={fieldValue as number} />;
+      return (
+        <RelativeTimeWithTooltip id={fieldName} time={fieldValue as number} />
+      );
     }
     case 'status': {
-      return <StatusMarker status={fieldValue as Status} />;
+      return <StatusMarker id={fieldName} status={fieldValue as Status} />;
     }
     case 'latestRun': {
-      return <RelativeTimeWithTooltip time={fieldValue as number} />;
+      return (
+        <RelativeTimeWithTooltip id={fieldName} time={fieldValue as number} />
+      );
     }
     case 'name':
     case 'description':
@@ -68,9 +79,9 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
     case 'metadata':
     case 'owner':
     case 'authors':
-      return <>{fieldValue}</>;
+      return <span id={fieldName}>{fieldValue}</span>;
     default:
-      return <>{fieldValue}</>;
+      return <span id={fieldName}>{fieldValue}</span>;
   }
 };
 
