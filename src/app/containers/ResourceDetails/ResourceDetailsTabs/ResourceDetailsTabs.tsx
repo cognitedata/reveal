@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Tabs, TabPaneProps } from 'lib/components';
 import { ResourceType, ResourceItem, getTitle } from 'lib/types';
@@ -8,8 +8,6 @@ import { lightGrey } from 'lib/utils/Colors';
 import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
-import { notification } from 'antd';
-import { usePermissions } from 'lib/hooks/CustomHooks';
 import { RelatedResources } from 'app/containers/ResourceDetails/RelatedResources/RelatedResources';
 
 type ResouceDetailsTabsProps = {
@@ -72,16 +70,11 @@ export const ResourceDetailsTabs = ({
   style = { paddingLeft: '16px' },
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
-  const {
-    data: relationshipPermission,
-    isFetched: permissionFetched,
-  } = usePermissions('relationshipsAcl', 'READ');
 
   const relationshipTabs = defaultRelationshipTabs
     .filter(type => !excludedTypes.includes(type))
     .map(key => (
       <Tabs.Pane
-        disabled={counts[key] === '0'}
         key={key}
         title={
           <>
@@ -97,24 +90,6 @@ export const ResourceDetailsTabs = ({
       </Tabs.Pane>
     ));
   const tabs = [...additionalTabs, ...relationshipTabs];
-
-  useEffect(() => {
-    if (permissionFetched && !relationshipPermission) {
-      notification.warning({
-        key: 'relationshipsAcl',
-        message: 'Permissions missing',
-        description: (
-          <>
-            Related resources could not be looked up because you do not have
-            access to the relationship feature. Add
-            &apos;relationships:read&apos; to your service account in{' '}
-            <a href={createLink('/access-management')}>access management</a>.
-          </>
-        ),
-        duration: 60,
-      });
-    }
-  }, [permissionFetched, relationshipPermission]);
 
   return (
     <Tabs tab={tab} onTabChange={onTabChange} style={style}>

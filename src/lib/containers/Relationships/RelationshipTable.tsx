@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Alert } from 'antd';
 import { Asset } from '@cognite/sdk';
 import { ResourceType, ResourceItem } from 'lib/types';
 import { AssetTable } from 'lib/containers';
@@ -11,6 +13,8 @@ import {
 import { SelectableItemsProps } from 'lib/CommonProps';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
 import { useRelationshipCount } from 'lib/hooks/RelationshipHooks';
+import { usePermissions } from 'lib/hooks/CustomHooks';
+import { createLink } from '@cognite/cdf-utilities';
 
 export type RelationshipTableProps = {
   type: ResourceType;
@@ -25,6 +29,29 @@ export const RelationshipTable = ({
   ...selectionMode
 }: RelationshipTableProps & SelectableItemsProps) => {
   const { data: count } = useRelationshipCount(parentResource, type);
+
+  const {
+    data: relationshipPermission,
+    isFetched: permissionFetched,
+  } = usePermissions('relationshipsAcl', 'READ');
+
+  if (permissionFetched && !relationshipPermission) {
+    return (
+      <Alert
+        type="warning"
+        message="Permissions missing"
+        description={
+          <>
+            Related resources could not be looked up because you do not have
+            access to the relationship feature. Add
+            &apos;relationships:read&apos; to your service account in{' '}
+            <Link to={createLink('/access-management')}>access management</Link>
+            .
+          </>
+        }
+      />
+    );
+  }
 
   switch (type) {
     case 'asset':

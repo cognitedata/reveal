@@ -35,7 +35,7 @@ export const RelatedResources = ({
   } = useRelatedResourceCount(parentResource, type);
 
   const relatedResourceTypes = useMemo(() => {
-    const types: TypeOption[] = [
+    let types: TypeOption[] = [
       {
         label: `Relationships (${relationshipCount})`,
         value: 'relationship',
@@ -44,27 +44,36 @@ export const RelatedResources = ({
     ];
 
     if (type === 'asset') {
-      types.push({
-        label: `Asset ID (${assetIdCount})`,
-        value: 'assetId',
-        count: assetIdCount,
-      });
+      types = [
+        {
+          label: `Asset ID (${assetIdCount})`,
+          value: 'assetId',
+          count: assetIdCount,
+        },
+        ...types,
+      ];
     }
 
     if (parentResource.type === 'asset') {
-      types.push({
-        label: `Linked ${convertResourceType(type)} (${linkedResourceCount})`,
-        value: 'linkedResource',
-        count: linkedResourceCount || 0,
-      });
+      types = [
+        {
+          label: `Linked ${convertResourceType(type)} (${linkedResourceCount})`,
+          value: 'linkedResource',
+          count: linkedResourceCount || 0,
+        },
+        ...types,
+      ];
     }
 
     if (parentResource.type === 'file') {
-      types.push({
-        label: `Annotations (${annotationCount})`,
-        value: 'annotation',
-        count: annotationCount,
-      });
+      types = [
+        {
+          label: `Annotations (${annotationCount})`,
+          value: 'annotation',
+          count: annotationCount,
+        },
+        ...types,
+      ];
     }
 
     return types;
@@ -84,7 +93,7 @@ export const RelatedResources = ({
       ),
     // Should NOT set state when relatedResourceTypes changes!
     // eslint-disable-next-line
-    [isFetched]
+    [isFetched, linkedResourceCount]
   );
 
   return (
