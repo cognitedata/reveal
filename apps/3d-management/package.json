@@ -46,7 +46,7 @@
     "query-string": "^6.13.7",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "react-i18next": "^11.7.4",
+    "react-i18next": "^11.8.4",
     "react-iframe": "^1.8.0",
     "react-query": "^2.26.2",
     "react-redux": "^7.2.2",
