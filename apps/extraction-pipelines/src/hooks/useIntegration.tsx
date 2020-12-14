@@ -10,9 +10,6 @@ export const useIntegrationById = (
   const { project } = useAppEnv();
   return useQuery<Integration, SDKError>(
     ['integration', integrationId, project],
-    getIntegrationById,
-    {
-      retry: false,
-    }
+    getIntegrationById
   );
 };

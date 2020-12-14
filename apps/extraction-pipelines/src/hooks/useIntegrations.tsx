@@ -11,7 +11,6 @@ export const useIntegrations = (): QueryResult<Integration[], SDKError> => {
     ['integrations', project],
     getIntegrations,
     {
-      retry: false,
       onSuccess: (data) => {
         data.forEach((d) => {
           queryCache.setQueryData<Integration, SDKError>(
