@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Suite, Board } from 'store/suites/types';
 import { modalSettings } from 'components/modals/config';
 import { TS_FIX_ME } from 'types/core';
+import isEqual from 'lodash/isEqual';
+import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
 import { MultiStepModal } from '../multiStepModal/MultiStepModal';
 
 interface Props {
@@ -13,16 +16,17 @@ const EditSuiteModal: React.FC<Props> = ({ dataItem }: Props) => {
   const [newBoard, setNewBoard] = useState<Board>(dataItem?.boards[0]);
 
   const updateBoard = () => {
-    const boardIndex = newSuite.boards.findIndex(
-      (element: Board) => element.key === newBoard.key
+    const boardIndex = newSuite.boards.findIndex((element: Board) =>
+      isEqual(element.key, newBoard.key)
     );
-    const boardsCopy = [...newSuite.boards];
-    boardsCopy[boardIndex] = { ...boardsCopy[boardIndex], ...newBoard };
+    const boardsCopy = cloneDeep(newSuite.boards);
+    boardsCopy[boardIndex] = merge(boardsCopy[boardIndex], newBoard);
     setNewSuite((prevState: Suite) => ({
       ...prevState,
       boards: boardsCopy,
     }));
   };
+
   return (
     <MultiStepModal
       boardAction={updateBoard}

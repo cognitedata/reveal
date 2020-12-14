@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { Suite, Board } from 'store/suites/types';
+import isEqual from 'lodash/isEqual';
+import isUndefined from 'lodash/isUndefined';
 import { MultiStepModalFooter } from 'components/modals/elements';
 import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
@@ -74,6 +76,15 @@ export const MultiStepModal: React.FC<Props> = ({
     }));
   };
 
+  const deleteBoard = (event: React.MouseEvent, key: string) => {
+    event.stopPropagation();
+    setSuite((prevState: Suite) => ({
+      ...prevState,
+      boards: suite.boards.filter((item) => item.key !== key),
+    }));
+    setBoard(suite.boards[0]);
+  };
+
   const Footer = () => {
     return (
       <MultiStepModalFooter>
@@ -81,8 +92,12 @@ export const MultiStepModal: React.FC<Props> = ({
           Cancel
         </Button>
         <div>
-          {step === 'suite' && (
-            <Button type="secondary" onClick={nextStep}>
+          {isEqual(step, 'suite') && (
+            <Button
+              type="secondary"
+              onClick={nextStep}
+              disabled={isUndefined(board)}
+            >
               {modalSettings.buttons[step].goToBoards}
             </Button>
           )}
@@ -102,10 +117,10 @@ export const MultiStepModal: React.FC<Props> = ({
       footer={<Footer />}
     >
       <ModalContainer>
-        {step === 'suite' && (
+        {isEqual(step, 'suite') && (
           <SuiteStep handleOnChange={handleSuiteChange} suiteValues={suite} />
         )}
-        {step === 'boards' && (
+        {isEqual(step, 'boards') && (
           <BoardStep
             handleOnChange={handleBoardChange}
             handleBoardTypeChange={handleBoardTypeChange}
@@ -117,6 +132,7 @@ export const MultiStepModal: React.FC<Props> = ({
             boards={suite?.boards}
             boardValues={board}
             setNewBoard={setBoard}
+            deleteBoard={deleteBoard}
           />
         )}
       </ModalContainer>

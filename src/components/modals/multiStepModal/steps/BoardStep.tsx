@@ -1,5 +1,5 @@
 import React from 'react';
-import { A, Icon, Body, Input, Select, Title, Micro } from '@cognite/cogs.js';
+import { A, Body, Button, Input, Select, Title, Micro } from '@cognite/cogs.js';
 import {
   SelectLabel,
   SelectContainer,
@@ -8,6 +8,7 @@ import {
   AddedBoardItem,
   StyledCheckIcon,
 } from 'components/modals/elements';
+import isEqual from 'lodash/isEqual';
 import { Flex } from 'styles/common';
 import { Board } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
@@ -19,12 +20,14 @@ interface Props {
   boards: Board[];
   boardValues: Board;
   setNewBoard: TS_FIX_ME;
+  deleteBoard: (event: React.MouseEvent, key: string) => void;
 }
 
 const options = [
   { value: 'grafana', label: 'Grafana' },
   { value: 'powerbi', label: 'PowerBI' },
   { value: 'plotly', label: 'Plotly' },
+  { value: 'application', label: 'Application' },
   { value: 'other', label: 'Other' },
 ];
 
@@ -35,9 +38,10 @@ export const BoardStep: React.FC<Props> = ({
   boards,
   boardValues,
   setNewBoard,
+  deleteBoard,
 }: Props) => {
-  const boardTypeValue =
-    options.find((option) => option.value === boardValues.type) || null;
+  const boardTypeValue = () =>
+    options.find((option) => isEqual(option.value, boardValues.type)) || null;
   return (
     <>
       <Flex>
@@ -58,7 +62,7 @@ export const BoardStep: React.FC<Props> = ({
               theme="grey"
               placeholder="Select type"
               name="type"
-              value={boardTypeValue}
+              value={boardTypeValue()}
               onChange={handleBoardTypeChange}
               options={options}
               closeMenuOnSelect
@@ -91,15 +95,17 @@ export const BoardStep: React.FC<Props> = ({
           {boards?.map((board: Board) => {
             return (
               <AddedBoardItem
-                onClick={() => {
-                  setNewBoard(board);
-                }}
+                onClick={() => setNewBoard(board)}
                 key={board.key}
                 selected={boardValues?.key === board.key}
               >
                 <StyledCheckIcon type="Check" />
                 <Body level={4}>{board.title}</Body>
-                <Icon type="Trash" />
+                <Button
+                  unstyled
+                  onClick={(event) => deleteBoard(event, board.key)}
+                  icon="Trash"
+                />
               </AddedBoardItem>
             );
           })}

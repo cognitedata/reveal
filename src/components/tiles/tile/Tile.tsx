@@ -1,5 +1,5 @@
 import React from 'react';
-import { Overline, Title } from '@cognite/cogs.js';
+import { Detail, Overline, Title } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import SuiteAvatar from 'components/suiteAvatar';
 import MeatballsMenu from 'components/menus';
@@ -76,12 +76,13 @@ export const Tile: React.FC<Props> = ({
           </TileDescription>
           <MeatballsMenu dataItem={dataItem} />
         </TileHeader>
-        <TilePreview
-          isBoard={isBoard}
-          {...(!isBoard && { onClick: goToSuite })}
-        >
-          {dataItem.embedTag && renderIframe(dataItem.embedTag)}
-        </TilePreview>
+        {dataItem.embedTag ? (
+          renderIframe(dataItem.embedTag)
+        ) : (
+          <TilePreview {...(!isBoard && { onClick: goToSuite })}>
+            <Detail>{dataItem.description}</Detail>
+          </TilePreview>
+        )}
       </TileContainer>
     </>
   );

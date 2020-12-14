@@ -45,14 +45,15 @@ export const TileHeader = styled.div<{ isBoard?: boolean; color?: string }>`
   align-items: center;
   background-color: ${({ isBoard, color }) =>
     isBoard ? `${color}` : 'var(--cogs-white)'};
-
+  border-bottom: ${({ isBoard }) =>
+    isBoard ? 'none' : '1px solid var(--cogs-greyscale-grey4)'};
   & > :last-child {
     margin-left: auto;
   }
 `;
 
-export const TilePreview = styled.div<{ isBoard?: boolean }>`
+export const TilePreview = styled.div`
   height: 184px;
-  background-color: ${({ isBoard }) =>
-    isBoard ? 'var(--cogs-white)' : 'var(--cogs-greyscale-grey3)'};
+  background-color: var(--cogs-white);
+  padding: 48px 12px;
 `;

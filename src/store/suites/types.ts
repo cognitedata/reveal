@@ -15,7 +15,12 @@ export enum SuitesTableActionTypes {
 
 export type SuitesTableRootAction = ActionType<typeof actions>;
 
-export type BoardType = 'grafana' | 'powerbi' | 'plotly' | 'other';
+export type BoardType =
+  | 'grafana'
+  | 'powerbi'
+  | 'plotly'
+  | 'application'
+  | 'other';
 
 export type Board = {
   key: string;

@@ -75,7 +75,7 @@ export const BoardsContainer = styled.div`
 export const AddedBoardItem = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
-  padding: 8px 14px;
+  padding: 0 4px 0 14px;
   background-color: ${({ selected }) =>
     selected ? 'var(--cogs-midblue-8)' : 'transparent'};
   border-radius: 4px;
