@@ -4,12 +4,18 @@ import { ArrayField, useFormContext } from 'react-hook-form';
 import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from 'utils/contactsUtils';
 import styled from 'styled-components';
-import { DetailFieldNames } from '../../utils/integrationUtils';
-import { AlignedDetail, AlignedSpan, GridRowStyle } from './ContactsView';
+import {
+  AlignedDetail,
+  AlignedSpan,
+  ContactBtnTestIds,
+  GridRowStyle,
+} from './ContactsView';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import ValidationError from './ValidationError';
+import RemoveEditBtns from '../test/RemoveEditBtns';
+import { DetailFieldNames } from '../../model/Integration';
 
 export const InputWarningError = styled((props) => (
   <div {...props}>{props.children}</div>
@@ -158,6 +164,7 @@ const ContactView: FunctionComponent<Props> = ({
             className={`cogs-input full-width ${
               errors.authors?.[index]?.name ? 'has-error' : ''
             }`}
+            data-testid={`authors-name-${index}`}
             defaultValue={integration?.authors[index]?.name}
           />
           {isDirtyName && (
@@ -187,6 +194,7 @@ const ContactView: FunctionComponent<Props> = ({
             className={`cogs-input full-width ${
               errors.authors?.[index]?.email ? 'has-error' : ''
             }`}
+            data-testid={`authors-email-${index}`}
             defaultValue={integration?.authors[index]?.email}
           />
           {isDirtyEmail && (
@@ -212,6 +220,7 @@ const ContactView: FunctionComponent<Props> = ({
             className="edit-form-btn"
             onClick={onCancel}
             aria-controls="name email"
+            data-testid={`${ContactBtnTestIds.CANCEL_BTN}${index}`}
           >
             Cancel
           </Button>
@@ -220,31 +229,18 @@ const ContactView: FunctionComponent<Props> = ({
             type="primary"
             onClick={onSave}
             aria-controls="name email"
+            data-testid={`${ContactBtnTestIds.SAVE_BTN}${index}`}
           >
             Save
           </Button>
         </>
       ) : (
-        <>
-          <Button
-            variant="outline"
-            className="edit-form-btn"
-            onClick={onRemoveClick}
-          >
-            Remove
-          </Button>
-          <Button
-            onClick={onEditClick}
-            type="primary"
-            className="edit-form-btn btn-margin-right"
-            title="Toggle edit row"
-            aria-label="Edit btn should have label"
-            aria-expanded={isEdit}
-            aria-controls="name email"
-          >
-            Edit
-          </Button>
-        </>
+        <RemoveEditBtns
+          onRemoveClick={onRemoveClick}
+          onEditClick={onEditClick}
+          index={index}
+          isEdit={isEdit}
+        />
       )}
     </GridRowStyle>
   );

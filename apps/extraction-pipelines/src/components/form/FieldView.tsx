@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import DetailsValueView from '../table/details/DetailsValueView';
+import { TableHeadings } from '../table/IntegrationTableCol';
 import {
+  DetailFieldNames,
   IntegrationFieldName,
   IntegrationFieldValue,
-} from '../table/details/DetailsCols';
-import { TableHeadings } from '../table/IntegrationTableCol';
-import { DetailFieldNames } from '../../utils/integrationUtils';
+} from '../../model/Integration';
 
 export const FieldGrid = styled((props) => (
   <div {...props}>{props.children}</div>

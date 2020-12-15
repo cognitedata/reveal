@@ -12,6 +12,13 @@ import styled from 'styled-components';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import ContactView from './ContactView';
 
+export const ContactBtnTestIds = {
+  EDIT_BTN: 'edit-contact-btn-',
+  REMOVE_BTN: 'remove-contact-btn-',
+  CANCEL_BTN: 'cancel-contact-btn-',
+  SAVE_BTN: 'save-contact-btn-',
+};
+
 interface OwnProps {}
 
 type Props = OwnProps;
@@ -65,14 +72,21 @@ export const AlignedSpan = styled((props) => (
 ))`
   align-self: center;
 `;
+
+export const ContactsErrorMsg = {
+  NAME_REQUIRED: 'Contact name is required',
+  EMAIL_REQUIRED: 'Contact email is required',
+  EMAIL_INVALID: 'Contact email must be a valid email',
+};
+
 const authorsSchema = yup.object().shape({
   authors: yup.array().of(
     yup.object().shape({
-      name: yup.string().required('Contact name is required'),
+      name: yup.string().required(ContactsErrorMsg.NAME_REQUIRED),
       email: yup
         .string()
-        .required('Contact email is required')
-        .email('Contact email must be a valid email'),
+        .required(ContactsErrorMsg.EMAIL_REQUIRED)
+        .email(ContactsErrorMsg.EMAIL_INVALID),
     })
   ),
 });
@@ -115,7 +129,12 @@ const ContactsView: FunctionComponent<Props> = () => {
               />
             );
           })}
-          <Button className="add-btn" variant="outline" onClick={onClickAdd}>
+          <Button
+            className="add-btn"
+            variant="outline"
+            onClick={onClickAdd}
+            data-testid="add-contact-btn"
+          >
             Add
           </Button>
         </StyledForm>

@@ -19,3 +19,18 @@ export interface Integration {
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds
 }
+
+export type IntegrationFieldName = keyof Integration | 'status' | 'latestRun';
+export type IntegrationFieldValue =
+  | Integration[keyof Integration]
+  | moment.Moment
+  | null;
+
+export enum DetailFieldNames {
+  EXTERNAL_ID = 'External id',
+  DESCRIPTION = 'Description',
+  CREATED_TIME = 'Created time',
+  META_DATA = 'Metadata',
+  CONTACT = 'Contact',
+  OWNER = 'Owner',
+}

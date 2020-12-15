@@ -1,11 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import { Title } from '@cognite/cogs.js';
-import { DetailFieldNames } from '../../utils/integrationUtils';
 import { GridWithTopMargin } from './ContactsDetails';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { uppercaseFirstWord } from '../../utils/primitivesUtils';
 import { FieldGrid } from '../form/FieldView';
-import { Integration } from '../../model/Integration';
+import { DetailFieldNames, Integration } from '../../model/Integration';
 import { DetailsGrid } from './MainDetails';
 
 interface OwnProps {}

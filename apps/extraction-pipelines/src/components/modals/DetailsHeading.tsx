@@ -2,11 +2,10 @@ import React from 'react';
 import { Colors, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import ClosePopconfirm from 'components/buttons/ClosePopconfirm';
+import { DetailFieldNames } from 'model/Integration';
 import InteractiveCopy from '../InteractiveCopy';
 import { IntegrationAction } from '../menu/IntegrationsTableActions';
-import { DetailFieldNames } from '../../utils/integrationUtils';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { useDetailsGlobalChanges } from '../../hooks/details/useDetailsGlobalChanges';
 
 const StyledHeader = styled.header`
   display: flex;
@@ -50,15 +49,14 @@ interface IntegrationModalHeadingProps {
   // eslint-disable-next-line react/require-default-props
   closeIcon?: React.ReactNode;
 }
-const IntegrationModalHeading = ({
+const DetailsHeading = ({
   onCancel,
   popConfirmContent,
   closeIcon = <Icon type="Close" />,
 }: IntegrationModalHeadingProps) => {
   const {
-    state: { integration },
+    state: { integration, updates },
   } = useIntegration();
-  const { changes } = useDetailsGlobalChanges();
 
   return (
     <StyledHeader>
@@ -71,7 +69,7 @@ const IntegrationModalHeading = ({
         <InteractiveCopy text={`${integration?.externalId}`} />
       </span>
       <ClosePopconfirm
-        showConfirmBox={changes.length > 0}
+        showConfirmBox={updates.size > 0}
         onClick={onCancel}
         primaryText={closeIcon}
         popConfirmContent={popConfirmContent}
@@ -80,4 +78,4 @@ const IntegrationModalHeading = ({
     </StyledHeader>
   );
 };
-export default IntegrationModalHeading;
+export default DetailsHeading;

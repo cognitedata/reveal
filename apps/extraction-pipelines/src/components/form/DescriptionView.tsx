@@ -6,13 +6,13 @@ import styled from 'styled-components';
 import * as yup from 'yup';
 import { StyledForm } from './NameView';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { DetailFieldNames } from '../../utils/integrationUtils';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from '../../utils/contactsUtils';
 import ValidationError from './ValidationError';
 import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import { AlignedSpan } from './ContactsView';
+import { DetailFieldNames } from '../../model/Integration';
 
 const DescriptionStyledForm = styled((props) => (
   <StyledForm {...props}>{props.children}</StyledForm>
@@ -140,7 +140,7 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
           {isDirty && (
             <InputWarningIcon
               $color={Colors.warning.hex()}
-              data-testid="warning-icon-desciption"
+              data-testid="warning-icon-description"
               className="waring"
             />
           )}

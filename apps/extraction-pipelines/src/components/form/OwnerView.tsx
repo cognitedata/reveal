@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styled from 'styled-components';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { DetailFieldNames } from '../../utils/integrationUtils';
 import ValidationError from './ValidationError';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
@@ -13,6 +12,7 @@ import { createUpdateSpec } from '../../utils/contactsUtils';
 import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import { AlignedSpan, GridRowStyle } from './ContactsView';
 import { InputWarningError } from './ContactView';
+import { DetailFieldNames } from '../../model/Integration';
 
 interface OwnProps {}
 

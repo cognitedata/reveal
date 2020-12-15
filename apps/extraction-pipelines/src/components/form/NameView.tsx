@@ -11,7 +11,7 @@ import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 import ValidationError from './ValidationError';
 import { InputWarningIcon } from '../inputs/InputWarningIcon';
-import { AlignedSpan } from './ContactsView';
+import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
 import { InputWarningError } from './ContactView';
 
 interface OwnProps {}
@@ -98,7 +98,7 @@ const NameView: FunctionComponent<Props> = () => {
           {isDirtyName && (
             <InputWarningIcon
               $color={Colors.warning.hex()}
-              data-testid="warning-icon-desciption"
+              data-testid="warning-icon-name"
               className="waring"
             />
           )}
@@ -114,6 +114,7 @@ const NameView: FunctionComponent<Props> = () => {
             className="edit-form-btn"
             onClick={onCancel}
             aria-controls="name"
+            data-testid={`${ContactBtnTestIds.CANCEL_BTN}name`}
           >
             Cancel
           </Button>
@@ -122,6 +123,7 @@ const NameView: FunctionComponent<Props> = () => {
             type="primary"
             onClick={onSave}
             aria-controls="name"
+            data-testid={`${ContactBtnTestIds.SAVE_BTN}name`}
           >
             Save
           </Button>
@@ -137,6 +139,7 @@ const NameView: FunctionComponent<Props> = () => {
             aria-label="Edit btn should have label"
             aria-expanded={isEdit}
             aria-controls="name"
+            data-testid={`${ContactBtnTestIds.EDIT_BTN}name`}
           >
             Edit
           </Button>

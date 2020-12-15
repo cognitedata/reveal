@@ -1,14 +1,8 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { get, getBaseUrl } from './baseURL';
-import { Integration } from '../model/Integration';
+import { Integration, IntegrationFieldValue } from '../model/Integration';
 import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
-
-import {
-  createUpdateIntegrationObj,
-  CreateUpdateIntegrationObjArgs,
-} from './integrationUtils';
-import { IntegrationFieldValue } from '../components/table/details/DetailsCols';
 
 export const getIntegrations = async (
   _: string,
@@ -42,27 +36,6 @@ export const saveUpdate = async (
   project: string,
   items: IntegrationUpdateSpec[]
 ) => {
-  const response = await sdkv3.post<IntegrationAPIResponse>(
-    `${getBaseUrl(project)}/update`,
-    {
-      data: {
-        items,
-      },
-      withCredentials: true,
-    }
-  );
-  return response.data.items[0];
-};
-
-export const updateIntegration = async (
-  project: string,
-  { data, id }: CreateUpdateIntegrationObjArgs
-): Promise<Integration> => {
-  const items = createUpdateIntegrationObj({
-    data,
-    id,
-  });
-
   const response = await sdkv3.post<IntegrationAPIResponse>(
     `${getBaseUrl(project)}/update`,
     {

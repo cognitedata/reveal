@@ -3,11 +3,7 @@ import DetailsHeading from 'components/modals/DetailsHeading';
 import DetailsFooter from 'components/modals/DetailsFooter';
 import { useQueryCache } from 'react-query';
 import styled from 'styled-components';
-import Modal, { ModalContent, ProviderWrapper } from './Modal';
-import {
-  CLOSE_CONFIRM_CONTENT,
-  UNSAVED_INFO_TEXT,
-} from '../modals/IntegrationDetails';
+import Modal from './Modal';
 import { ids } from '../../cogs-variables';
 import { Integration } from '../../model/Integration';
 import { useAppEnv } from '../../hooks/useAppEnv';
@@ -15,6 +11,8 @@ import { HeadingWithUnderline } from '../../styles/StyledHeadings';
 import MetaData from './MetaData';
 import MainDetails from './MainDetails';
 import ContactsDetails from './ContactsDetails';
+import { IntegrationProvider } from '../../hooks/details/IntegrationContext';
+import { ModalContent } from './ModalContent';
 
 const ContentTitle = styled((props) => (
   <HeadingWithUnderline {...props}>{props.children}</HeadingWithUnderline>
@@ -22,6 +20,9 @@ const ContentTitle = styled((props) => (
   margin: 1.5rem 0;
   font-size: 1.5rem;
 `;
+export const CLOSE_CONFIRM_CONTENT: Readonly<string> =
+  'Are you sure you want to close without saving?';
+export const UNSAVED_INFO_TEXT = 'Unsaved information';
 
 interface OwnProps {
   visible: boolean;
@@ -50,7 +51,7 @@ const DetailsModal: FunctionComponent<Props> = ({
       width={872}
       appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
     >
-      <ProviderWrapper integration={integration}>
+      <IntegrationProvider initIntegration={integration}>
         <ModalContent
           title={
             <DetailsHeading
@@ -74,7 +75,7 @@ const DetailsModal: FunctionComponent<Props> = ({
           <MetaData />
           <ContactsDetails />
         </ModalContent>
-      </ProviderWrapper>
+      </IntegrationProvider>
     </Modal>
   );
 };

@@ -22,9 +22,9 @@ type Props = OwnProps;
 const Schedule: FunctionComponent<Props> = ({ schedule, ...rest }: Props) => {
   switch (schedule) {
     case undefined:
-      return <>Not defined</>;
+      return <span>Not defined</span>;
     case 'On Trigger':
-      return <>{schedule}</>;
+      return <span>{schedule}</span>;
     default:
       return (
         <Tooltip content={schedule}>

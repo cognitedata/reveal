@@ -1,10 +1,10 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import moment from 'moment';
+import { getMockResponse } from 'utils/mockResponse';
 import DetailsValueView from './DetailsValueView';
 import { render } from '../../../utils/test';
-import { mapIntegration } from '../../../utils/integrationUtils';
-import { getMockResponse } from '../../../utils/mockResponse';
+import { calculateStatus } from '../../../utils/integrationUtils';
 
 describe('<DetailsValueView />', () => {
   test('Display name for data set when data set exist', () => {
@@ -56,6 +56,7 @@ describe('<DetailsValueView />', () => {
     const view2 = screen.getByText('At 09:00 AM');
     expect(view2).toBeInTheDocument();
   });
+
   test('Display copy for externalId', () => {
     const data = createCases(0, 'externalId');
     render(<DetailsValueView fieldValue={data.value} fieldName={data.name} />);
@@ -65,10 +66,15 @@ describe('<DetailsValueView />', () => {
 });
 
 const createCases = (mockResNumber: number, fieldName: string) => {
-  const integrationCol = mapIntegration(getMockResponse()[mockResNumber]);
-
-  const cases = integrationCol.map((col) => {
-    return { value: col.value, name: col.accessor };
-  });
-  return cases.filter((c) => c.name === fieldName)[0];
+  const integration = getMockResponse()[mockResNumber];
+  const value = integration[`${fieldName}`];
+  if (fieldName === 'latestRun') {
+    const latest = {
+      lastSuccess: integration?.lastSuccess,
+      lastFailure: integration?.lastFailure,
+    };
+    const status = calculateStatus(latest);
+    return { value: status.time, name: fieldName };
+  }
+  return { value, name: fieldName };
 };

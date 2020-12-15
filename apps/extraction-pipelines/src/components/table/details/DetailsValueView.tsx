@@ -3,12 +3,15 @@ import Schedule, {
 } from 'components/integrations/cols/Schedule';
 import React from 'react';
 import { DataSet } from '@cognite/sdk';
-import { IntegrationFieldName, IntegrationFieldValue } from './DetailsCols';
 import StatusMarker from '../../integrations/cols/StatusMarker';
 import { Status } from '../../../model/Status';
 import InteractiveCopy from '../../InteractiveCopy';
 import DataSetDisplay from '../../integrations/cols/DataSet';
 import RelativeTimeWithTooltip from '../../integrations/cols/RelativeTimeWithTooltip';
+import {
+  IntegrationFieldName,
+  IntegrationFieldValue,
+} from '../../../model/Integration';
 
 interface DetailsValueViewProps {
   fieldValue: IntegrationFieldValue;
