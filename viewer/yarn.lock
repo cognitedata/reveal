@@ -792,6 +792,11 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.0.2.tgz#5bb52ee68d0f8efa9cc0099920e56be6cc4e37f3"
   integrity sha512-IkVfat549ggtkZUthUzEX49562eGikhSYeVGX97SkMFn+sTZrgRewXjQ4tPKFPCykZHkX1Zfd9OoELGqKU2jJA==
 
+"@types/skmeans@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@types/skmeans/-/skmeans-0.11.0.tgz#3beaf8786dc7fc84921abebe79a1bfb8b6a59115"
+  integrity sha512-600D56sPgbKHfNKsBl/umleMDihVKLEzCocfC4N7AHOgDoGIOX6Mef/ZZpPg6Yj+nhPLpeJfw/rriE3sAw+sew==
+
 "@types/source-list-map@*":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
@@ -8306,6 +8311,11 @@ sisteransi@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
+
+skmeans@^0.11.3:
+  version "0.11.3"
+  resolved "https://registry.yarnpkg.com/skmeans/-/skmeans-0.11.3.tgz#6d4dafb8058520a792c10bae9d9b953a6b6379f4"
+  integrity sha512-nccEnlSeOMNAYM9ETMSq+m15u8g0KRCIvH2an/ROTx4Igmci/j3oYHBPGdAeGjhR7knAVoIIQwr/wy2dN/eKQA==
 
 slash@^1.0.0:
   version "1.0.0"

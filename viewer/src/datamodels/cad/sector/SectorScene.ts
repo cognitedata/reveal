@@ -8,6 +8,7 @@ import { Box3 } from '../../../utilities/Box3';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { toThreeJsBox3 } from '../../../utilities/threeConverters';
 import { SectorMetadata, SectorScene } from './types';
+import skmeans from 'skmeans';
 
 export class SectorSceneImpl implements SectorScene {
   static createFromRootSector(version: number, maxTreeIndex: number, unit: string, root: SectorMetadata): SectorScene {
@@ -73,6 +74,41 @@ export class SectorSceneImpl implements SectorScene {
       return false;
     });
     return accepted;
+  }
+
+  getBoundsOfMostGeometry(): Box3 {
+    if (this.root.children.length === 0) {
+      return this.root.bounds;
+    }
+    // Determine all corners of the bboxes
+    const allBounds: Box3[] = [];
+    const centers: number[][] = [];
+    traverseDepthFirst(this.root, x => {
+      if (x.children.length === 0) {
+        centers.push([...x.bounds.center]);
+        allBounds.push(x.bounds);
+      }
+      return true;
+    });
+
+    // Cluster the corners into two groups and determine bounds of each cluster
+    const clusters = skmeans(centers, 2, 'kmpp');
+    const clusterCounts = [0, 0];
+    const clusterBounds = [new Box3([]), new Box3([])];
+    clusters.idxs.map(x => clusterCounts[x]++);
+    const biggestCluster = clusterCounts[0] >= clusterCounts[1] ? 0 : 1;
+    clusters.idxs.forEach((cluster, idx) => {
+      clusterCounts[cluster]++;
+      clusterBounds[cluster].extendByBox(allBounds[idx]);
+    });
+
+    if (clusterBounds[0].intersectsBox(clusterBounds[1])) {
+      // Overlapping clusters - assume it's because the model doesn't contain junk geometry
+      return Box3.mergeBoxes(clusterBounds);
+    } else {
+      // Create bounds of the biggest cluster - assume the smallest one is junk geometry
+      return clusterBounds[biggestCluster];
+    }
   }
 
   getSectorsIntersectingFrustum(

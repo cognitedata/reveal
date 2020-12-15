@@ -8,7 +8,7 @@ import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { toThreeJsBox3, NumericRange } from '../../utilities';
+import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
 import { CadRenderHints, CadNode } from '../../experimental';
 import { trackError } from '../../utilities/metrics';
 import { DefaultNodeAppearance } from '../../datamodels/cad/NodeAppearance';
@@ -203,20 +203,28 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Determines the full bounding box of the model.
    * @param outBbox Optional. Used to write result to.
+   * @param restrictToMostGeometry Optional. When true, returned bounds are restricted to
+   * where most of the geometry is located. This is useful for models that have junk geometry
+   * located far from the "main" model. Added in version 1.3.0.
    * @returns Model bounding box.
+   * @version `restrictToMostGeometry` added in 1.3.0
+   *
    * @example
    * ```js
    * const box = new THREE.Box3()
    * model.getModelBoundingBox(box);
    * // box now has the bounding box
-   *```
+   * ```
    * ```js
    * // the following code does the same
    * const box = model.getModelBoundingBox();
    * ```
    */
-  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    const bounds = this.cadModel.scene.root.bounds;
+  getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
+    const bounds: Box3 = restrictToMostGeometry
+      ? this.cadModel.scene.getBoundsOfMostGeometry()
+      : this.cadModel.scene.root.bounds;
+
     outBbox = outBbox || new THREE.Box3();
     toThreeJsBox3(outBbox, bounds);
     outBbox.applyMatrix4(this.cadModel.modelMatrix);
