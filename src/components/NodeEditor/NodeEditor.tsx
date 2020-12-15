@@ -114,7 +114,6 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
 
   const onSave = async () => {
     if (workflow) {
-      console.log({ workflow });
       dispatch(saveExistingWorkflow(workflow));
     }
   };
