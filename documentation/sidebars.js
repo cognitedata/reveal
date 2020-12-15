@@ -4,10 +4,6 @@ module.exports = {
       type: 'doc',
       id: 'overview',
     },
-    // {
-    //   type: 'doc',
-    //   id: 'getting-started',
-    // },
     {
       type: 'doc',
       id: 'installation',
@@ -34,6 +30,7 @@ module.exports = {
         'examples/clipping',
         'examples/pointcloud',
         'examples/pointcloud-intersections',
+        'examples/antialiasing',
       ],
     },
     {
