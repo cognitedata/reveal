@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
 import sdk from 'services/CogniteSDK';
 import { Chart } from 'reducers/charts';
@@ -59,7 +59,7 @@ export const configPanel = ({
     )?.name || '';
 
   const loadOptions = (
-    input: string,
+    _: string,
     callback: (options: { value?: string; label?: string }[]) => void
   ) => {
     callback(
