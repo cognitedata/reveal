@@ -3,10 +3,11 @@ update_configs:
   - package_manager: 'javascript'
     directory: '/'
     update_schedule: 'live'
-    automerged_updates:
-      - match:
-          dependency_type: 'all'
-          update_type: 'in_range'
+    # Temporarily disabled because we have the digital-cockpit-dev repo
+    # automerged_updates:
+    #   - match:
+    #       dependency_type: 'all'
+    #       update_type: 'in_range'
     commit_message:
       prefix: 'chore'
       include_scope: true
