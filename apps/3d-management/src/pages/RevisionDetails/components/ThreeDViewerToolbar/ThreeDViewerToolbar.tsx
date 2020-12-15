@@ -12,12 +12,15 @@ import {
   Legacy3DModel,
   Legacy3DViewer,
 } from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
-import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ThreeDViewerToolbar/ToolbarTreeView';
+import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
 import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'src/utils';
 import { useFlag } from '@cognite/react-feature-flags';
-import { isDevelopment } from '@cognite/cdf-utilities';
-import { Button } from '@cognite/cogs.js';
+import { isProduction } from '@cognite/cdf-utilities';
+import { Button, Switch } from '@cognite/cogs.js';
 import { useUpdateRevisionMutation } from 'src/hooks/revisions';
+import { toggleGhostMode } from 'src/store/modules/toolbar';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -61,6 +64,11 @@ type Props = {
 };
 
 export default function ThreeDViewerToolbar(props: Props) {
+  const ghostModeEnabled = useSelector(
+    (state: RootState) => state.toolbar.ghostModeEnabled
+  );
+  const dispatch = useDispatch();
+
   React.useEffect(() => {
     (window as any).model = props.model;
     (window as any).viewer = props.viewer;
@@ -69,7 +77,7 @@ export default function ThreeDViewerToolbar(props: Props) {
   const [updateRevisionMutation] = useUpdateRevisionMutation();
 
   const treeViewIsHiddenByFeatureFlag =
-    useFlag('3DM_tree_view_hidden') && !isDevelopment();
+    useFlag('3DM_tree_view_hidden') && isProduction();
 
   const updateInitialLocation = async (
     otherUpdates?: Partial<RevisionUpdatePayload>
@@ -153,6 +161,16 @@ export default function ThreeDViewerToolbar(props: Props) {
 
       {showTreeView && (
         <>
+          <MenuSection>
+            <Switch
+              name="ghostMode"
+              size="small"
+              onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
+              value={ghostModeEnabled}
+            >
+              Ghost mode
+            </Switch>
+          </MenuSection>
           <div
             style={{
               marginTop: DEFAULT_MARGIN_V,
@@ -166,6 +184,7 @@ export default function ThreeDViewerToolbar(props: Props) {
             }}
             width={CONTAINER_WIDTH - 2 * CONTAINER_PADDING - SCROLLBAR_WIDTH}
             model={props.model as Cognite3DModel}
+            viewer={props.viewer as Cognite3DViewer}
           />
         </>
       )}

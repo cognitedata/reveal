@@ -5,11 +5,17 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import ReduxThunk from 'redux-thunk';
 
 import AppReducer from 'src/store/modules/App';
+import toolbarReducer from 'src/store/modules/toolbar';
+import TreeViewReducer from './modules/TreeView';
+
+export * from './types';
 
 const createRootReducer = (browserHistory) =>
   combineReducers({
     router: connectRouter(browserHistory),
-    app: AppReducer,
+    app: AppReducer, // fixme: ridiculous naming - should be modelsTable or something
+    treeView: TreeViewReducer,
+    toolbar: toolbarReducer,
   });
 
 export default function configureStore(browserHistory, initialState = {}) {

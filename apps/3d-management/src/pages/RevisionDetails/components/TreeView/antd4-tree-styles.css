@@ -1,3 +1,15 @@
+/* custom fixes: */
+
+.ant-tree .ant-tree-switcher-leaf-line {
+  position: relative;
+}
+
+.ant-tree-list-holder {
+  overflow-x: hidden;
+}
+
+/* original antd styles: */
+
 .ant-tree-treenode-leaf-last .ant-tree-switcher-leaf-line::before {
   height: 14px !important;
 }

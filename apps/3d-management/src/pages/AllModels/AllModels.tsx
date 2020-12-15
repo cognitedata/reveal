@@ -199,7 +199,7 @@ export default function AllModels(props: Props) {
       />
 
       <ModelsTable
-        models={models}
+        models={models || []}
         expandedRowRender={expandedRowRender}
         refresh={modelsQuery.refetch}
       />

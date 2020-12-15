@@ -1,7 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import notification from 'antd/lib/notification';
 import { getContainer } from 'src/utils';
-import { isDevelopment } from '@cognite/cdf-utilities';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 
 interface ErrorNotificationProps {
@@ -28,6 +27,15 @@ const generateErrorMessage = (errorCode: number): string => {
   }
 };
 
+export const logToSentry = (error) => {
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.error(error);
+  } else {
+    Sentry.captureException(error);
+  }
+};
+
 export const fireErrorNotification = (
   args: ErrorNotificationProps | string
 ): void => {
@@ -39,10 +47,10 @@ export const fireErrorNotification = (
   } = typeof args === 'string' ? { message: args } : args;
 
   let errorDescription = '';
-  if (error && !isDevelopment() && 'status' in error) {
-    Sentry.captureException(error);
+  if (error && 'status' in error) {
     errorDescription = generateErrorMessage(error.status);
   }
+  logToSentry(error);
 
   notification.error({
     message,

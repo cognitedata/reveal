@@ -19,7 +19,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 setupUserTracking();
 export const App = () => {
   const history = createBrowserHistory();
-  const store = configureStore(history, {});
+  const store = configureStore(history);
   const subAppName = 'cdf-3d-management';
   const queryCache = new QueryCache();
 

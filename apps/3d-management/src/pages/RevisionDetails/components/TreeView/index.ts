@@ -1,1 +1,1 @@
-export { default } from './TreeView';
+export { default } from './NodesTreeView';
