@@ -237,6 +237,10 @@ export class RevealManager<TModelIdentifier> {
     }
   }
 
+  public removeModel(_type: 'cad', model: CadNode): void {
+    this._cadManager.removeModel(model);
+  }
+
   private notifySectorNodeIdToTreeIndexMapLoaded(blobUrl: string, nodeIdToTreeIndexMap: Map<number, number>): void {
     const event: SectorNodeIdToTreeIndexMapLoadedEvent = { blobUrl, nodeIdToTreeIndexMap };
     this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.forEach(listener => {
