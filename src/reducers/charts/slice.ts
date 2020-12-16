@@ -57,7 +57,6 @@ const chartsSlice = createSlice({
         id,
         changes: {
           timeSeriesCollection: [
-            ...(chart?.timeSeriesCollection || []),
             {
               id: timeSeries.externalId,
               name: timeSeries.externalId,
@@ -65,6 +64,7 @@ const chartsSlice = createSlice({
               color: getEntryColor(),
               enabled: true,
             } as ChartTimeSeries,
+            ...(chart?.timeSeriesCollection || []),
           ],
         },
       });

@@ -3,8 +3,6 @@ import styled from 'styled-components/macro';
 import SplitPane from 'react-split-pane';
 
 export const StyledSplitPane = styled(SplitPane)`
-  position: relative !important;
-  height: 100%;
   .Pane {
     max-width: 100vw;
     max-height: 100vh;

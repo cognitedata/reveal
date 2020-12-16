@@ -29,6 +29,7 @@ const WorkflowContainer = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  flex-grow: 9;
 
   .node-container {
     background: url(${workflowBackgroundSrc}) #404040;
@@ -157,11 +158,11 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
   };
 
   if (!workflowId) {
-    return <div>Select a workflow</div>;
+    return null;
   }
 
   if (!workflow) {
-    return <div>This workflow does not exist (maybe we need to load it?)</div>;
+    return null;
   }
 
   return (

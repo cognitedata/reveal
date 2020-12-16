@@ -1,5 +1,6 @@
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+import Layers from 'utils/z-index';
 
 export const Header = styled.header`
   background: var(--cogs-greyscale-grey1);
@@ -72,6 +73,33 @@ export const ToolbarItem = styled.div`
   }
 `;
 
+export const BottombarWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 56px;
+  border-top: 1px solid var(--cogs-greyscale-grey4);
+  background-color: var(--cogs-greyscale-grey1);
+  padding-left: 90px;
+`;
+
+export const BottombarItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  border-left: 1px solid var(--cogs-greyscale-grey4);
+  border-right: 1px solid var(--cogs-greyscale-grey4);
+  background-color: ${(props: { isActive: boolean }) =>
+    props.isActive ? 'var(--cogs-greyscale-grey3)' : 'none'};
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey3);
+  }
+`;
+
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -84,14 +112,18 @@ export const ToolbarIcon = styled(Icon)`
 `;
 
 export const ChartContainer = styled.div`
+  position: relative;
   display: flex;
   height: 100%;
 `;
 
 export const SourceListWrapper = styled.div`
+  flex-grow: 1;
   max-height: 100%;
   width: 300px;
+  min-width: 300px;
   border-right: 1px solid var(--cogs-greyscale-grey4);
+  overflow-y: scroll;
 `;
 
 export const SourcesTitle = styled.h2`
@@ -103,6 +135,44 @@ export const SourceList = styled.div`
   & > :first-child {
     border-top: 1px solid var(--cogs-greyscale-grey2);
   }
+`;
+
+export const SourceTableWrapper = styled.div`
+  flex-grow: 1;
+  max-height: 100%;
+  min-width: 350px;
+  border-right: 1px solid var(--cogs-greyscale-grey4);
+  overflow-y: scroll;
+`;
+
+export const SourceTable = styled.table`
+  border: 1px solid var(--cogs-greyscale-grey2);
+  border-collapse: collapse;
+  width: 100%;
+
+  td,
+  th {
+    border: 1px solid var(--cogs-greyscale-grey2);
+  }
+
+  th {
+    position: sticky;
+    top: 0px;
+    background-color: white;
+    z-index: ${Layers.MAXIMUM};
+    margin-bottom: -1px;
+    box-shadow: inset 0 1px 0 var(--cogs-greyscale-grey2),
+      inset 0 -2px 0 var(--cogs-greyscale-grey2);
+  }
+
+  tbody > tr:hover {
+    background: var(--cogs-greyscale-grey3);
+  }
+`;
+
+export const SourceRow = styled.tr`
+  background: ${(props: { isActive: boolean }) =>
+    props.isActive ? 'var(--cogs-greyscale-grey1)' : 'none'};
 `;
 
 export const SourceCircle = styled.span`
@@ -131,12 +201,12 @@ export const SourceItem = styled.div`
   justify-content: flex-start;
   height: 50px;
   text-overflow: ellipsis;
-  border-bottom: 1px solid var(--cogs-greyscale-grey2);
   cursor: pointer;
 
-  &:hover {
-    background-color: var(--cogs-greyscale-grey1);
+  opacity: ${(props: { isActive?: boolean; isDisabled?: boolean }) =>
+    props.isDisabled ? 0.35 : 1};
 
+  &:hover {
     & > :last-child {
       visibility: visible;
     }

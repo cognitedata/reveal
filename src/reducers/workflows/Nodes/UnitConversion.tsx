@@ -61,8 +61,8 @@ export const configPanel = ({
 };
 
 export const node = {
-  title: 'A to B',
-  subtitle: 'CONVERSION',
+  title: 'MULTIPLY',
+  subtitle: 'MULTIPLY WITH FACTOR',
   color: '#FC2574',
   icon: 'Function',
   outputPins: [

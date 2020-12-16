@@ -50,7 +50,7 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
   const id = nanoid();
   const newWorkflow: Workflow = {
     id,
-    name: `workflow-${id}`,
+    name: `New Calculation`,
     nodes: [],
     connections: [],
   };
@@ -64,13 +64,13 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 
     // Attach this workflow to the current chart
     const nextWorkflowIds = [
-      ...(chart.workflowCollection || []),
       {
         id: newWorkflow.id,
         name: newWorkflow.name,
         color: getEntryColor(),
         enabled: true,
       } as ChartWorkflow,
+      ...(chart.workflowCollection || []),
     ];
 
     const chartService = new ChartService(tenant);
@@ -153,13 +153,13 @@ export const createWorkflowFromTimeSeries = (
 
     // Attach this workflow to the current chart
     const nextWorkflowIds = [
-      ...(chart.workflowCollection || []),
       {
         id: newWorkflow.id,
         name: newWorkflow.name,
         color: getEntryColor(),
         enabled: true,
       } as ChartWorkflow,
+      ...(chart.workflowCollection || []),
     ];
 
     const chartService = new ChartService(tenant);

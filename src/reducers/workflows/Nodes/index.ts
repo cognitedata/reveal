@@ -17,11 +17,11 @@ export default [
     ...Difference,
   },
   {
-    name: 'UnitConversion',
+    name: 'Multiply',
     ...UnitConversion,
   },
   {
-    name: 'AddConstant',
+    name: 'Add Constant',
     ...AddConstant,
   },
   {
@@ -29,7 +29,7 @@ export default [
     ...OutputSeries,
   },
   {
-    name: 'CDF Datapoints',
+    name: 'CDF Time Series',
     ...CDFDatapoints,
   },
   {
