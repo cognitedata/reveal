@@ -743,7 +743,7 @@ export class Cognite3DViewer {
    * ```
    */
   fitCameraToModel(model: CogniteModelBase, duration?: number): void {
-    const bounds = model.getModelBoundingBox();
+    const bounds = model.getModelBoundingBox(new THREE.Box3(), true);
     this.fitCameraToBoundingBox(bounds, duration);
   }
 

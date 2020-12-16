@@ -78,6 +78,39 @@ describe('SectorSceneImpl', () => {
     // Assert
     expect(sectorIds(sectors)).toEqual([0, 1, 2]);
   });
+
+  test('getBoundsOfMostGeometry of simple scene returns full bounds', () => {
+    const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
+    const bounds = scene.getBoundsOfMostGeometry();
+    expect(bounds).toEqual(scene.root.bounds);
+  });
+
+  test('getBoundsOfMostGeometry of scene with junk geometry, returns filtered bounds', () => {
+    // Arrange
+    const root = createSectorMetadata([
+      0,
+      [
+        [1, [], new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(0.5, 1, 1)])],
+        [2, [], new Box3([vec3.fromValues(0.5, 0, 0), vec3.fromValues(1, 1, 1)])],
+        [3, [], new Box3([vec3.fromValues(1000.5, 1000, 1000), vec3.fromValues(1001, 1001, 1001)])]
+      ],
+      new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(1001, 1001, 1001)])
+    ]);
+    const sectorsById = new Map<number, SectorMetadata>();
+    traverseDepthFirst(root, x => {
+      sectorsById.set(x.id, x);
+      return true;
+    });
+
+    // Act
+    const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
+    const bounds = scene.getBoundsOfMostGeometry();
+
+    // Assert - sector 3 is excluded because it's so far way from the other geometry
+    expect(bounds).not.toEqual(scene.root.bounds);
+    expect(scene.root.bounds.containsPoint(bounds.min)).toBeTrue();
+    expect(scene.root.bounds.containsPoint(bounds.max)).toBeTrue();
+  });
 });
 
 function sectorIds(sectors: SectorMetadata[]): number[] {

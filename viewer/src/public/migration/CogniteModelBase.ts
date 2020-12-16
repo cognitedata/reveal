@@ -12,7 +12,7 @@ import { SupportedModelTypes } from '../../datamodels/base';
 export interface CogniteModelBase {
   readonly type: SupportedModelTypes;
   dispose(): void;
-  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3;
+  getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3;
   getCameraConfiguration(): CameraConfiguration | undefined;
   setModelTransformation(matrix: THREE.Matrix4): void;
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
