@@ -41,7 +41,7 @@ export class TakenSectorTree {
       };
       return true;
     });
-    if (sectorRoot.facesFile.fileName !== null) {
+    if (sectorRoot.facesFile.fileName) {
       this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
     }
   }
