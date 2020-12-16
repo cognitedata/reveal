@@ -50,8 +50,9 @@ jobs:
       uses: codecov/codecov-action@v1
 
     - name: Determine NPM package size
-      uses: preactjs/compressed-size-action@v2
+      uses: Arhia/action-check-compressed-size@v2
       with:
+        directory: viewer
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         build-script: build:prod
         pattern: "{**/dist/**/*}"
