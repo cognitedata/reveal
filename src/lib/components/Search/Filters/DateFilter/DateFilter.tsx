@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Body, Select } from '@cognite/cogs.js';
-import { DatePicker } from 'lib';
+import { Body } from '@cognite/cogs.js';
+import { DatePicker, Select } from 'lib';
 import { TIME_SELECT } from 'lib/containers';
 import { RangePicker } from 'lib/components';
 import { DateRange } from '@cognite/sdk';
@@ -67,7 +67,8 @@ export const DateFilter = ({
         value={options.find(el => el.value === period)!}
         options={options}
         isSearchable={false}
-        closeMenuOnSelect
+        isClearable={false}
+        blurInputOnSelect
         isMulti={false}
         onChange={(newValue: any) => {
           const newKey = (newValue as {

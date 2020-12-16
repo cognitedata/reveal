@@ -6,7 +6,7 @@ import { FilterForm } from 'lib/components';
 const FilterHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 16px;
+  margin-top: 10px;
   align-items: center;
 `;
 
@@ -51,11 +51,7 @@ export const MetadataFilter = <
   return (
     <>
       <FilterHeader>
-        <Body
-          level={4}
-          style={{ marginBottom: 10, marginTop: 10 }}
-          className="title"
-        >
+        <Body level={4} style={{ marginBottom: 5 }} className="title">
           Metadata
         </Body>
         {showClearFiltersButton && (

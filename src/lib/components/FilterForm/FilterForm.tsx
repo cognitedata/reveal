@@ -51,6 +51,7 @@ const Tag = styled.div<TagProps>(
 
     .cogs-icon {
       opacity: 0.1;
+      flex-shrink: 0;
     }
 
     .delete {

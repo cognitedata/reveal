@@ -114,7 +114,13 @@ export const SearchFilters = ({
             )}
           </HeaderRow>
           <div
-            style={{ paddingRight: 16, paddingBottom: 16, overflow: 'auto' }}
+            style={{
+              paddingLeft: 1,
+              paddingRight: 16,
+              paddingBottom: 16,
+              overflow: 'auto',
+              height: '100%',
+            }}
           >
             <Filters
               resourceType={resourceType}

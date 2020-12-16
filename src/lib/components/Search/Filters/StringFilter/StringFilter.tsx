@@ -26,8 +26,8 @@ export const StringFilter = ({
         {title}
       </Body>
       <Input
-        variant="noBorder"
-        style={{ width: '100%' }}
+        variant="default"
+        style={{ width: '100%', borderColor: '#cccccc' }}
         value={value}
         placeholder={placeholder}
         onChange={ev => setNewString(ev.target.value)}

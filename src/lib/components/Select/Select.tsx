@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactSelectCreatable from 'react-select/creatable';
-import ReactSelect, { Props, OptionTypeBase } from 'react-select';
-import { Colors } from '@cognite/cogs.js';
+import { Props, OptionTypeBase } from 'react-select';
+import {
+  Select as CogsSelect,
+  SelectProps as CogsSelectProps,
+} from '@cognite/cogs.js';
 
 export type SelectProps<OptionType> = Props<OptionType> & {
   creatable?: boolean;
@@ -15,6 +18,7 @@ export const Select = <
 }: SelectProps<OptionType>) => {
   const props: Props<OptionType> = {
     isClearable: true,
+    closeMenuOnSelect: true,
     ...extraProps,
     styles: {
       ...extraProps.styles,
@@ -23,22 +27,16 @@ export const Select = <
         ...(extraProps.styles &&
           extraProps.styles.control &&
           extraProps.styles.control(styles, styleProps)),
-        color: Colors['greyscale-grey8'].hex(),
-        backgroundColor: Colors['greyscale-grey2'].hex(),
-        fontWeight: 800,
-        border: 'none',
+        cursor: 'pointer',
+      }),
+      option: (styles, styleProps) => ({
+        ...styles,
+        ...(extraProps.styles &&
+          extraProps.styles.option &&
+          extraProps.styles.option(styles, styleProps)),
+        cursor: 'pointer',
       }),
     },
-    theme: theme => ({
-      ...theme,
-      borderRadius: 4,
-      colors: {
-        ...theme.colors,
-        primary25: Colors['greyscale-grey2'].hex(),
-        primary: Colors.midblue.hex(),
-        neutral: Colors['greyscale-grey2'].hex(),
-      },
-    }),
   };
 
   if (creatable) {
@@ -49,5 +47,5 @@ export const Select = <
       />
     );
   }
-  return <ReactSelect {...props} />;
+  return <CogsSelect {...(props as CogsSelectProps)} />;
 };
