@@ -37,6 +37,8 @@ const Wrapper = styled.div`
   }
 `;
 
+export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
+  'https://docs.cognite.com/cdf/integration/';
 const Home = () => {
   return (
     <>
@@ -50,7 +52,7 @@ const Home = () => {
             />
             <ExtractorDownloadsLink
               linkText="Learning and resources"
-              link={{ url: 'https://docs.cognite.com/cdf/integration/' }}
+              link={{ url: LEARNING_AND_RESOURCES_URL }}
             />
           </LinkWrapper>
           <OverviewTab />

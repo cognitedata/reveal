@@ -66,3 +66,22 @@ export const renderQueryCacheIntegration = (
   );
   return wrapper;
 };
+
+export const renderWithReQueryCacheSelectedIntegrationContext = (
+  queryCache: QueryCache,
+  project: string,
+  cdfEnv: string,
+  origin: string,
+  initIntegration?: Integration
+) => {
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
+        <SelectedIntegrationProvider initIntegration={initIntegration}>
+          {children}
+        </SelectedIntegrationProvider>
+      </AppEnvProvider>
+    </ReactQueryCacheProvider>
+  );
+  return wrapper;
+};

@@ -6,5 +6,7 @@ import { SDKDataSetsError } from '../model/SDKErrors';
 export const useDataSets = (
   dataSetIds: IdEither[]
 ): QueryResult<DataSet[], SDKDataSetsError> => {
-  return useQuery<DataSet[], SDKDataSetsError>([dataSetIds], getDataSets);
+  return useQuery<DataSet[], SDKDataSetsError>([dataSetIds], getDataSets, {
+    enabled: dataSetIds.length > 0,
+  });
 };

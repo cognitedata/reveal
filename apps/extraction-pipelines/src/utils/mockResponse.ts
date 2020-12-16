@@ -182,6 +182,14 @@ export const mockError = {
   error: { code: 400, message: 'Multiple authentication headers present' },
 };
 
+export const unauthorizedError = {
+  status: 403,
+  data: {
+    code: 403,
+    message: 'Not authorized for this operation',
+  },
+};
+
 export const mockDataRunsResponse = {
   items: [
     {
