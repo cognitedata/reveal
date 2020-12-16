@@ -139,6 +139,15 @@ export class CadSectorLoader {
     this.triggerUpdate();
   }
 
+  removeModel(model: CadNode): void {
+    const index = this._models.findIndex(m => m === model);
+    if (index === -1) {
+      throw new Error('Cannot remove model - not added');
+    }
+    this._models.splice(index, 1);
+    this.triggerUpdate();
+  }
+
   updateBudget(budget: CadModelBudget): void {
     this._budget = budget;
     this.triggerUpdate();
