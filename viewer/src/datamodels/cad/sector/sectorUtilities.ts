@@ -75,7 +75,8 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   };
 
   obj.onBeforeRender = () => {
-    materials.simple.uniforms.inverseModelMatrix.value.getInverse(obj.matrixWorld);
+    const inverseModelMatrix: THREE.Matrix4 = materials.simple.uniforms.inverseModelMatrix.value;
+    inverseModelMatrix.copy(obj.matrixWorld).invert();
   };
 
   setTreeIndeciesToUserData();
