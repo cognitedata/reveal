@@ -8,7 +8,8 @@ import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '../../data
 import { TakenSectorTree } from '../../datamodels/cad/sector/culling/TakenSectorTree';
 import { LevelOfDetail, traverseDepthFirst } from '../../internal';
 import { SectorMetadata, CadModelMetadata } from '../../experimental';
-import { Mutable, PropType } from '../types';
+import { Mutable } from '../types';
+import { SectorMetadataFacesFileSection } from '../../datamodels/cad/sector/types';
 
 describe('TakenSectorTree', () => {
   const model: CadModelMetadata = {} as any;
@@ -58,8 +59,7 @@ describe('TakenSectorTree', () => {
   test('Simple data is not added when sector has no f3d file', () => {
     // Arrange
     const root = generateSectorTree(3, 2);
-    // Apply trickery to ditch readonly
-    const mutableFacesFile: Mutable<PropType<SectorMetadata, 'facesFile'>> = root.children[0].facesFile;
+    const mutableFacesFile: Mutable<SectorMetadataFacesFileSection> = root.children[0].facesFile;
     mutableFacesFile.fileName = null;
     const tree = new TakenSectorTree(root, determineSectorCost);
 
@@ -70,6 +70,20 @@ describe('TakenSectorTree', () => {
     const wanted = tree.toWantedSectors(model);
     expectHasSectors(wanted, LevelOfDetail.Detailed, ['0/']);
     expectHasSectors(wanted, LevelOfDetail.Simple, ['0/1/']);
+  });
+
+  test('construct with model without F3D for root', () => {
+    // Arrange
+    const root = generateSectorTree(3, 2);
+    const mutableFacesFile: Mutable<SectorMetadataFacesFileSection> = root.facesFile;
+    mutableFacesFile.fileName = null;
+
+    // Act
+    const tree = new TakenSectorTree(root, determineSectorCost);
+
+    // Assert
+    const wanted = tree.toWantedSectors(model);
+    expect(wanted.find(x => x.metadata.path === '0/')?.levelOfDetail).toBe(LevelOfDetail.Discarded);
   });
 });
 
