@@ -65,7 +65,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
-  const isWorkspaceMode = workspaceMode === 'workspace';
   const isEditorMode = workspaceMode === 'editor';
 
   const workflows = useSelector((state) =>
