@@ -40,11 +40,13 @@ export class CadModelMetadataRepository<TModelIdentifier>
     const json = await this._modelMetadataProvider.getJsonFile(blobUrl, this._blobFileName);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
+    const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
 
     return {
       blobUrl,
       modelMatrix,
+      inverseModelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
