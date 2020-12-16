@@ -135,13 +135,10 @@ function pickDepth(input: TreeIndexPickingInput): number {
   return depth;
 }
 
-const projInv = new THREE.Matrix4();
-
 function getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3 {
   const { camera, normalizedCoords } = input;
   const position = new THREE.Vector3();
-  projInv.getInverse(camera.projectionMatrix);
-  position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(projInv);
+  position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(camera.projectionMatrixInverse);
 
   position.multiplyScalar(viewZ / position.z);
   position.applyMatrix4(camera.matrixWorld);

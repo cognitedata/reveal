@@ -17,10 +17,6 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeStyleUpdater } from './NodeStyleUpdater';
 
-const mapCoordinatesBuffers = {
-  inverseModelMatrix: new THREE.Matrix4()
-};
-
 /**
  * Represents a single 3D CAD model loaded from CDF.
  * @noInheritDoc
@@ -155,10 +151,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     // fixme: unused
     out = out !== undefined ? out : new THREE.Vector3();
-    const { inverseModelMatrix } = mapCoordinatesBuffers;
-    // TODO 2020-09-10 larsmoa: Avoid creating the inverse every time
-    inverseModelMatrix.getInverse(this.cadModel.modelMatrix);
-    p.applyMatrix4(inverseModelMatrix);
+    p.applyMatrix4(this.cadModel.inverseModelMatrix);
     return p;
   }
 
