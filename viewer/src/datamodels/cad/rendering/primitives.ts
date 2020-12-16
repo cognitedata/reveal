@@ -434,5 +434,6 @@ function updateMaterialInverseModelMatrix(
   material: THREE.ShaderMaterial | THREE.RawShaderMaterial,
   matrixWorld: THREE.Matrix4
 ) {
-  material.uniforms.inverseModelMatrix.value.getInverse(matrixWorld);
+  const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
+  inverseModelMatrix.copy(matrixWorld).invert();
 }
