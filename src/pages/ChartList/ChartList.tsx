@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { chartSelectors } from 'reducers/charts';
 import { fetchAllCharts } from 'reducers/charts/api';
+import thumb from 'assets/thumb.png';
 
 const ChartList = () => {
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ const ChartList = () => {
                 margin: 10,
                 border: '1px solid #ddd',
               }}
-              src="/thumb.png"
+              src={thumb}
               alt={chart.name}
             />
           </div>
