@@ -122,7 +122,11 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
-          })
+          }),
+        fitToModel: () => {
+          const model = cadModels[0] || pointCloudModels[0];
+          viewer.fitCameraToModel(model);
+        }
       };
 
       const settingsGui = gui.addFolder('settings');
@@ -133,6 +137,7 @@ export function Migration() {
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
+      gui.add(guiActions, 'fitToModel').name('Fit camera');
       gui.add(guiState, 'antiAliasing', 
         [
           'disabled','fxaa','msaa4','msaa8','msaa16',
