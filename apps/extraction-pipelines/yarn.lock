@@ -1353,6 +1353,17 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
+"@cognite/sdk-core@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.3.tgz#203e504947a0d481656c34d1d71a0caebd2bcb12"
+  integrity sha512-cQdYX4u2hwJt/0MZvN+Z1V495r3yDdxPn60JYfsxBwWWsDSrFAAx+eH4z0QL7EaE1xcOOLK6ayOV1Qa8zzbhAA==
+  dependencies:
+    cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
 "@cognite/sdk-provider@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-1.0.0.tgz#d5b55e6b1013351f24d5e97e86c6a62295d1f4b3"
@@ -1368,12 +1379,20 @@
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^2.23.1"
 
-"@cognite/sdk@^3.0.0", "@cognite/sdk@^3.1.1", "cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
+"@cognite/sdk@^3.0.0", "cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.1.1.tgz#3a0e259dbdaaa88f7225cc2f9f2530034674040d"
   integrity sha512-L5UXQNa8tPk/s0UG6vAGqoYajv8219z4zYPyBQWHrhPXoXMEJdLxy4l6YG3f9UnCRTWDqWUrtlYni4T4sX/Xlg==
   dependencies:
     "@cognite/sdk-core" "^1.0.2"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.1.tgz#5b38415547ccff1566da3da4676b4b085274f5a9"
+  integrity sha512-HL1x2lhh90yrWbP4BdDDArxXidlhIenh61d8fEQ1xplbUvXLMqYNvMnp1G2mz07jOERfcCl4XupZMjD7jSlR8Q==
+  dependencies:
+    "@cognite/sdk-core" "^1.0.3"
     lodash "^4.17.11"
 
 "@cognite/z-index@^0.1.0":
@@ -9425,6 +9444,11 @@ is-buffer@^1.0.2, is-buffer@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+
+is-buffer@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.5.tgz#ebc252e400d22ff8d77fa09888821a24a658c191"
+  integrity sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==
 
 is-callable@^1.1.4, is-callable@^1.2.2:
   version "1.2.2"
