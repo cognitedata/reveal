@@ -41,7 +41,9 @@ export class TakenSectorTree {
       };
       return true;
     });
-    this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
+    if (sectorRoot.facesFile.fileName) {
+      this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
+    }
   }
 
   determineWantedSectorCount(): number {
