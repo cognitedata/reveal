@@ -135,6 +135,7 @@ function createStubModel(blobUrl: string, scene: SectorScene, modelMatrix: THREE
   const cadModel: CadModelMetadata = {
     blobUrl,
     modelMatrix,
+    inverseModelMatrix: new THREE.Matrix4().copy(modelMatrix).invert(),
     scene
   };
   return cadModel;
