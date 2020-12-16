@@ -52,6 +52,7 @@ jobs:
     - name: Determine NPM package size
       uses: preactjs/compressed-size-action@v2
       with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
         build-script: build:prod
         pattern: "{**/dist/**/*}"
         minimum-change-threshold: 512
