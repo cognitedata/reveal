@@ -5,7 +5,7 @@
   "scripts": {
     "start": "cross-env BROWSER=none WDS_SOCKET_PORT=3015 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3015 rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
-    "generate-preview-artifacts": "cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-integrations-ui -o index.js -d ./build",
+    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-integrations-ui -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --env=jest-environment-jsdom-fourteen",
     "test:coverage": "CI=true npm test -- --env=jest-environment-jsdom-fourteen --coverage",
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
-    "@cognite/cdf-ui-cli": "^0.1.0",
+    "@cognite/cdf-ui-cli": "^1.0.0",
     "@cognite/eslint-config": "^1.6.1",
     "@cognite/eslint-plugin": "^1.3.8",
     "@hookform/devtools": "^2.2.1",
