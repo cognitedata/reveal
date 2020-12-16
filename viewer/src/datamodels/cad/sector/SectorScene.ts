@@ -80,31 +80,48 @@ export class SectorSceneImpl implements SectorScene {
     if (this.root.children.length === 0) {
       return this.root.bounds;
     }
+
     // Determine all corners of the bboxes
     const allBounds: Box3[] = [];
-    const centers: number[][] = [];
+    const corners: number[][] = [];
     traverseDepthFirst(this.root, x => {
       if (x.children.length === 0) {
-        centers.push([...x.bounds.center]);
-        allBounds.push(x.bounds);
+        corners.push([...x.bounds.min], [...x.bounds.max]);
+        allBounds.push(x.bounds, x.bounds);
       }
       return true;
     });
 
     // Cluster the corners into two groups and determine bounds of each cluster
-    const clusters = skmeans(centers, 2, 'kmpp');
-    const clusterCounts = [0, 0];
-    const clusterBounds = [new Box3([]), new Box3([])];
+    const clusters = skmeans(corners, 4, 'kmpp', 10);
+    const clusterCounts = new Array<number>(clusters.idxs.length).fill(0);
+    const clusterBounds = clusterCounts.map(_ => new Box3([]));
     clusters.idxs.map(x => clusterCounts[x]++);
-    const biggestCluster = clusterCounts[0] >= clusterCounts[1] ? 0 : 1;
+    const biggestCluster = clusterCounts.reduce(
+      (max, count, idx) => {
+        if (count > max.count) {
+          max.count = count;
+          max.idx = idx;
+        }
+        return max;
+      },
+      { count: 0, idx: -1 }
+    ).idx;
     clusters.idxs.forEach((cluster, idx) => {
       clusterCounts[cluster]++;
       clusterBounds[cluster].extendByBox(allBounds[idx]);
     });
+    debugger;
 
-    if (clusterBounds[0].intersectsBox(clusterBounds[1])) {
+    const intersectingBounds = clusterBounds.filter((x, idx) => {
+      if (idx !== biggestCluster && x.intersectsBox(clusterBounds[biggestCluster])) {
+        return true;
+      }
+      return false;
+    });
+    if (intersectingBounds.length > 0) {
       // Overlapping clusters - assume it's because the model doesn't contain junk geometry
-      return Box3.mergeBoxes(clusterBounds);
+      return Box3.mergeBoxes([clusterBounds[biggestCluster], ...intersectingBounds]);
     } else {
       // Create bounds of the biggest cluster - assume the smallest one is junk geometry
       return clusterBounds[biggestCluster];
