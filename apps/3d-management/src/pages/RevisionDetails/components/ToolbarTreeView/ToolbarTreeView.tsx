@@ -36,7 +36,7 @@ type Props = {
   model: Cognite3DModel;
   width: number;
   height: number;
-  style?: React.CSSProperties;
+
   viewer: Cognite3DViewer;
 };
 
@@ -135,10 +135,9 @@ function ToolbarTreeViewComponent(props: Props) {
   );
 }
 
-export function ToolbarTreeView({
-  style,
-  ...restProps
-}: Omit<Props, 'height'>) {
+type WrapperProps = { style?: React.CSSProperties } & Omit<Props, 'height'>;
+
+export function ToolbarTreeView({ style, ...restProps }: WrapperProps) {
   const treeViewContainer = useRef<HTMLDivElement>(null);
   const { height: treeViewHeight } = useResizeHandler(treeViewContainer);
 

@@ -6,9 +6,9 @@ const addLoaders = (config) => {
   const cssRegex = /\.css$/;
 
   //Matchers to find the array of rules and css-file loader
-  const loadersMatcher = (inQuestion) =>
-    inQuestion.rules &&
-    inQuestion.rules.find((rule) => Array.isArray(rule.oneOf));
+  const loadersMatcher = ({ rules }) =>
+    Array.isArray(rules) && rules.find((rule) => Array.isArray(rule.oneOf));
+
   const cssMatcher = (inQuestion) =>
     inQuestion.test && inQuestion.test.toString() === cssRegex.toString();
 

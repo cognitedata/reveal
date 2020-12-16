@@ -41,7 +41,6 @@ type Props = {
   saveModelRotation: (rotation: v3.Tuple3<number>) => void;
   viewer: Cognite3DViewer | Legacy3DViewer;
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
-  revision: v3.Revision3D;
 };
 
 export function EditRotation(props: Props) {

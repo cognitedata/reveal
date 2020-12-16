@@ -61,6 +61,7 @@ const ThreeDViewer = (props: ThreeDViewerProps) =>
 
 const MemoizedThreeDViewer = React.memo(
   (props: ThreeDViewerProps) => <ThreeDViewer {...props} />,
+  // eslint-disable-next-line prefer-arrow-callback
   function areEqual(prevProps, nextProps) {
     if (
       prevProps.modelId === nextProps.modelId &&

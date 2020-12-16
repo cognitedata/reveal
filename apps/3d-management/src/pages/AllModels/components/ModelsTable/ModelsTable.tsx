@@ -52,7 +52,7 @@ const NestedTable = styled(Table)`
   }
 `;
 
-type Props<T = any> = {
+type Props = {
   models: Array<v3.Model3D>;
   app: AppState;
   expandedRowRender: (...args: any) => any;

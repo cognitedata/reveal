@@ -60,7 +60,6 @@ type Props = {
   // consider context for viewer/model
   viewer: Cognite3DViewer | Legacy3DViewer;
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
-  revision: v3.Revision3D;
 };
 
 export default function ThreeDViewerToolbar(props: Props) {
@@ -138,7 +137,6 @@ export default function ThreeDViewerToolbar(props: Props) {
           saveModelRotation={(rotation) => updateInitialLocation({ rotation })}
           viewer={props.viewer}
           model={props.model}
-          revision={props.revision}
         />
       </MenuSection>
 

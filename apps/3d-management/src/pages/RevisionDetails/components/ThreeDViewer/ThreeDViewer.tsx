@@ -152,11 +152,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
 
       {viewer && model && (
         <ToolbarContainer>
-          <ThreeDViewerToolbar
-            viewer={viewer}
-            model={model}
-            revision={props.revision}
-          />
+          <ThreeDViewerToolbar viewer={viewer} model={model} />
         </ToolbarContainer>
       )}
     </ThreeDViewerStyled>

@@ -75,6 +75,7 @@ function ThumbnailWithModelId(props: { modelId: number } & CommonProps) {
 type Props = (WithFileId | WithModelId) & CommonProps;
 
 export default React.memo(
+  // eslint-disable-next-line prefer-arrow-callback
   function Thumbnail(props: Props) {
     const { fileId, modelId, ...restProps } = props;
     if (fileId) {

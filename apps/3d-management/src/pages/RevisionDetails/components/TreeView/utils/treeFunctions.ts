@@ -32,7 +32,7 @@ export function hasBranch<T extends DataNode>(
       return false;
     }
     nextChildren = foundNode.children;
-    i += 1;
+    i++;
   }
 
   return i === branchKeys.length;
