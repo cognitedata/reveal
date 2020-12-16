@@ -20,6 +20,7 @@ module.exports = {
     'jest/no-export': ['off'],
 
     'lodash/prefer-lodash-method': ['off'],
+    'lodash/prefer-includes': ['off'],
     'lodash/prop-shorthand': ['off'],
     'lodash/prefer-constant': ['off'],
     'lodash/prefer-is-nil': ['off'],

@@ -4,7 +4,7 @@
   window.__cogniteSidecar = {
     cdfApiBaseUrl: 'https://api.cognitedata.com',
     nomaApiBaseUrl: 'https://development.noma.cognite.ai',
-    appsApiBaseUrl: 'https://development.apps-api.cognite.ai',
+    appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
     docsSiteBaseUrl: 'https://docs.cognite.com',
     mixpanel: '',
     sentry: '',

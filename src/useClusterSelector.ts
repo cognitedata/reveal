@@ -62,12 +62,15 @@ const useClusterSelector = (appName: string) => {
 
   const checkClusterValidity = (tenant: string, cluster: string) => {
     setValidatingCluster(true);
+    const redirectUrl = `https://${getNewDomain(hostname, cluster)}`;
+    const optionalStaging =
+      redirectUrl.indexOf('staging') > -1 ? '.staging' : '';
     return axios
-      .get(`https://${cluster}.apps-api.cognite.ai/tenant`, {
+      .get(`https://apps-api${optionalStaging}.${cluster}.cognite.ai/tenant`, {
         params: {
           tenant,
           app: appName,
-          redirectUrl: `https://${getNewDomain(hostname, cluster)}`,
+          redirectUrl,
         },
       })
       .then(() => {
