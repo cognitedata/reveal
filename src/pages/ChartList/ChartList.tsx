@@ -17,9 +17,33 @@ const ChartList = () => {
 
   const renderList = () => {
     return allCharts.map((chart) => (
-      <div key={chart.id}>
+      <div
+        key={chart.id}
+        style={{
+          width: 'calc(25% - 40px)',
+          margin: '20px',
+          padding: 20,
+          border: '1px solid #ccc',
+          borderRadius: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Link to={`/${chart.id}`} key={chart.id}>
-          {chart.name}
+          <div style={{ width: '100%' }}>
+            <img
+              style={{
+                width: 'calc(100% - 20px)',
+                margin: 10,
+                border: '1px solid #ddd',
+              }}
+              src="/thumb.png"
+              alt={chart.name}
+            />
+          </div>
+          <h3 style={{ textAlign: 'center' }}>{chart.name}</h3>
         </Link>
       </div>
     ));
@@ -27,9 +51,10 @@ const ChartList = () => {
 
   return (
     <div id="chart-list" style={{ padding: 16 }}>
-      Hello to all your charts!
-      <div>{loadingStatus.status === 'LOADING' && <Icon type="Loading" />}</div>
-      <div>{renderList()}</div>
+      <div style={{ textAlign: 'center' }}>
+        {loadingStatus.status === 'LOADING' && <Icon type="Loading" />}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>{renderList()}</div>
     </div>
   );
 };
