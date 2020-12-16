@@ -58,6 +58,13 @@ export interface SectorScene {
   getSectorsIntersectingBox(b: Box3): SectorMetadata[];
 
   /**
+   * Returns bounds that contains "most geometry". This bounds is an
+   * attempt to remove junk geometry from the bounds to allow e.g. setting
+   * a good camera position.
+   */
+  getBoundsOfMostGeometry(): Box3;
+
+  /**
    * Gets the sectors intersecting the frustum provided from the projection and inverse
    * camera matrix. Note that this function expects matrices in the the coordinate system
    * of the metadata. See below how to convert ThreeJS camera matrices to the correct format.
