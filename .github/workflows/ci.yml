@@ -55,7 +55,7 @@ jobs:
         directory: viewer
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         build-script: build:prod
-        pattern: "{**/dist/**/*}"
+        pattern: "./dist/**/*"
         minimum-change-threshold: 100
 
   ci-examples:
