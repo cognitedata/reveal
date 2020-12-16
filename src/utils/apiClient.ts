@@ -1,15 +1,20 @@
 import { ClientOptions } from '@cognite/sdk';
+import sidecar from './sidecar';
 
-type dcClientOptions = {};
+type dcClientOptions = {
+  baseUrl: string;
+};
 
 type ApiClientOptions = ClientOptions & dcClientOptions;
 
 export class ApiClient {
   readonly appId: string;
+  private readonly baseUrl: string;
   private accessToken: string = '';
 
   constructor(options: ApiClientOptions) {
     this.appId = options.appId;
+    this.baseUrl = options.baseUrl;
   }
 
   keepToken(accessToken: string) {
@@ -17,7 +22,7 @@ export class ApiClient {
   }
 
   getSuitesRows() {
-    return fetch('http://localhost:8001/suites', {
+    return fetch(`${this.baseUrl}/suites`, {
       method: 'GET',
       headers: {
         Accept: 'applicatin/json',
@@ -31,6 +36,7 @@ export class ApiClient {
 
 const DEFAULT_CONFIG: ApiClientOptions = {
   appId: 'digital-cockpit',
+  baseUrl: sidecar.digitalCockpitApiBaseUrl,
 };
 
 export function createApiClient(options: ApiClientOptions = DEFAULT_CONFIG) {
