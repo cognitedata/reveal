@@ -49,6 +49,13 @@ jobs:
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
 
+    - name: Determine NPM package size
+      uses: preactjs/compressed-size-action@v2
+      with:
+        build-script: build:prod
+        pattern: "{**/dist/**/*}"
+        minimum-change-threshold: 512
+
   ci-examples:
     name: Examples
     runs-on: ubuntu-latest
