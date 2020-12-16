@@ -7,6 +7,8 @@ import { SequencePage } from 'app/containers/Sequence/SequencePage';
 import { TimeseriesPage } from 'app/containers/Timeseries/TimeseriesPage';
 import { EventPage } from 'app/containers/Event/EventPage';
 import styled from 'styled-components';
+import { ResourceTypeTabs } from 'lib/components/Search/ResourceTypeTabs';
+import { useCurrentResourceType } from 'app/hooks';
 import { SearchResultsPage } from './SearchResultsPage';
 import SearchRedirect from './SearchRedirect';
 
@@ -21,22 +23,32 @@ const AppWrapper = styled.div`
 
 export const Explorer = () => {
   const { path } = useRouteMatch();
+
+  const [resourceType, setResourceType] = useCurrentResourceType();
   return (
-    <AppWrapper>
-      <ResourceSelectorProvider>
-        <Switch>
-          <Route path={`${path}/file/:id`} component={FilePage} />
-          <Route path={`${path}/asset/:id`} component={AssetPage} />
-          <Route path={`${path}/sequence/:id`} component={SequencePage} />
-          <Route path={`${path}/timeseries/:id`} component={TimeseriesPage} />
-          <Route path={`${path}/event/:id`} component={EventPage} />
-          <Route exact path={`${path}/`} component={SearchRedirect} />
-          <Route
-            path={`${path}/search/:resourceType?/:id?`}
-            component={SearchResultsPage}
+    <>
+      <AppWrapper>
+        <div>
+          <ResourceTypeTabs
+            currentResourceType={resourceType}
+            setCurrentResourceType={setResourceType}
           />
-        </Switch>
-      </ResourceSelectorProvider>
-    </AppWrapper>
+        </div>
+        <ResourceSelectorProvider>
+          <Switch>
+            <Route path={`${path}/file/:id`} component={FilePage} />
+            <Route path={`${path}/asset/:id`} component={AssetPage} />
+            <Route path={`${path}/sequence/:id`} component={SequencePage} />
+            <Route path={`${path}/timeseries/:id`} component={TimeseriesPage} />
+            <Route path={`${path}/event/:id`} component={EventPage} />
+            <Route exact path={`${path}/`} component={SearchRedirect} />
+            <Route
+              path={`${path}/search/:resourceType?/:id?`}
+              component={SearchResultsPage}
+            />
+          </Switch>
+        </ResourceSelectorProvider>
+      </AppWrapper>
+    </>
   );
 };

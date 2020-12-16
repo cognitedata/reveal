@@ -8,6 +8,8 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
 import { trackUsage } from 'app/utils/Metrics';
+import { useQueryString } from 'app/hooks';
+import { SEARCH_KEY } from 'app/utils/contants';
 import { TitleRowActions } from './TitleRowActions';
 
 type Props = {
@@ -33,7 +35,7 @@ export default function ResourceTitleRow({
   );
   const location = useLocation();
   const inSearch = location.pathname.includes('/search');
-
+  const [query] = useQueryString(SEARCH_KEY);
   const name = (
     <NameWrapper>
       {!inSearch &&
@@ -61,7 +63,7 @@ export default function ResourceTitleRow({
         {inSearch ? (
           <Link
             style={{ color: 'var(--cogs-primary)' }}
-            to={createLink(`/explore/${type}/${id}`)}
+            to={createLink(`/explore/${type}/${id}`, { [SEARCH_KEY]: query })}
             onClick={() => trackUsage('Exploration.FullPage', { type, id })}
           >
             {name}{' '}
