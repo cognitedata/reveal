@@ -42,21 +42,22 @@ jobs:
       run: |
         xvfb-run yarn run coverage
 
-    - name: Build prod version
-      working-directory: viewer
-      run: yarn run build:prod
-
-    - name: Publish to codecov
-      uses: codecov/codecov-action@v1
-
-    - name: Determine NPM package size
+    - name: Build
+      # Note! We use this target to also determine the NPM size during build
       uses: Arhia/action-check-compressed-size@v0.7
       with:
         directory: viewer
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        build-script: "noop" # Note! build:prod is already built, so we do nothing here
+        build-script: "build:prod" # Note! build:prod is already built, so we do nothing here
         pattern: "./dist/**/*"
         minimum-change-threshold: 100
+
+#    - name: Build prod version
+#      working-directory: viewer
+#      run: yarn run build:prod
+
+    - name: Publish to codecov
+      uses: codecov/codecov-action@v1
 
   ci-examples:
     name: Examples
