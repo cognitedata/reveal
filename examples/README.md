@@ -41,7 +41,7 @@ Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.<br />
 This does not run the visual tests.
 
-### `yarn ci:nossl`
+### `yarn ci:e2e`
 
 Run the visual tests locally.
 

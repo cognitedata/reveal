@@ -1,23 +1,40 @@
 import { screenShotTest, TestCase } from './VisualTestUtils';
-const retry = require('jest-retries');
+import { Page } from 'puppeteer';
 
+const retry = require('jest-retries');
 
 // jest-circus must be installed for it to work
 jest.retryTimes(3);
 
 const test_presets = Object.values(TestCase);
 
-describe('Reveal visual tests', () => {
-  beforeEach(async () => {
-    await jestPuppeteer.resetBrowser()
-    await jestPuppeteer.resetPage()
-  })
+function setupConsoleListeners(page: Page) {
+  // commented out because of threejs deprecation nonsense that came outside of our codebase
+  // page.on('console', (msg) => {
+  //   for (let i = 0; i < msg.args().length; i++) {
+  //     console.log(`${i}: ${msg.args()[i]}`);
+  //   }
+  // });
 
+  page.on('pageerror', function (err) {
+    console.log('Page error: ' + err.toString());
+  });
+
+  page.on('error', function (err) {
+    console.log('Error: ' + err.toString());
+  });
+}
+
+describe('Reveal visual tests', () => {
   const retries = 3;
 
   test_presets.forEach(function (test) {
     retry(`matches the screenshot for ${test} preset`, retries, async () => {
-      await screenShotTest(test);
+      const page = await browser.newPage();
+
+      setupConsoleListeners(page);
+
+      await screenShotTest(page, test);
     });
   });
 });

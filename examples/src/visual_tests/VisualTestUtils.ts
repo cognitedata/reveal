@@ -1,3 +1,5 @@
+import { Page } from 'puppeteer'
+
 export enum TestCase {
   default = 'default',
   clipping = 'clipping',
@@ -9,8 +11,6 @@ export enum TestCase {
   scaled_model = 'scaled_model',
   user_render_target = 'user_render_target',
 }
-
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 async function getCIDiv() {
   let divs = await page.$$('div');
@@ -25,22 +25,22 @@ async function getCIDiv() {
   }
 
   if (loadingDiv == null) {
-    fail(
+    throw new Error(
       'Could not find a loading div. Is your test running against the correct URL?'
     );
   }
   return loadingDiv;
 }
 
-export async function gotoAndWaitForRender(url: string) {
+export async function gotoAndWaitForRender(page: Page, url: string) {
   await page.goto(url);
   let loadingDiv = await getCIDiv();
 
   while ((await loadingDiv.boundingBox()) != null) {
-    await delay(100);
+    await page.waitForTimeout(100);
   }
 
-  await delay(500);
+  await page.waitForTimeout(500);
 }
 
 export async function removeTestableText() {
@@ -49,12 +49,12 @@ export async function removeTestableText() {
   });
 }
 
-export async function screenShotTest(testCase: TestCase) {
+export async function screenShotTest(page: Page, testCase: TestCase) {
   const url =
-    `http://localhost:3000/testable` +
+    `https://localhost:3000/testable` +
     (testCase === 'default' ? '' : `?test=${testCase}`);
 
-  await gotoAndWaitForRender(url);
+  await gotoAndWaitForRender(page, url);
   await removeTestableText();
 
   const image = await page.screenshot({ fullPage: true });

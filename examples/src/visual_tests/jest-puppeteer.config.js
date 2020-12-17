@@ -1,5 +1,6 @@
 module.exports = {
   launch: {
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
+    headless: true
   }
 }
