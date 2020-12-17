@@ -468,6 +468,34 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Removes a model that was previously added using {@link Cognite3DViewer.addModel},
+   * {@link Cognite3DViewer.addCadModel} or {@link Cognite3DViewer.addPointCloudModel}
+   * .
+   * @param model
+   */
+  removeModel(model: Cognite3DModel | CognitePointCloudModel) {
+    switch (model.type) {
+      case 'cad':
+        const cadModel = model as Cognite3DModel;
+        const modelIdx = this.models.findIndex(x => x === model);
+        if (modelIdx === -1) {
+          throw new Error(`Model ${cadModel.cadNode.cadModelMetadata.blobUrl} is not added to viewer`);
+        }
+        this._revealManager.removeModel(model.type, cadModel.cadNode);
+        this.models.splice(modelIdx, 1);
+        this.scene.remove(cadModel);
+        this.renderController.redraw();
+        return;
+
+      case 'pointcloud':
+        throw new Error('Not implemented');
+
+      default:
+        assertNever(model.type, `Model type ${model.type} cannot be removed`);
+    }
+  }
+
+  /**
    * Use to determine of which type the model is.
    *
    * @param modelId The model's id.
