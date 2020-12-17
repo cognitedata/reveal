@@ -141,7 +141,7 @@ export class SeismicCube extends RegularGrid3 {
     xline.max += this.startCell.j;
 
     // console.log(`volume.get() inline: ${iline.min} / ${iline.max} xline: ${xline.min} / ${xline.max}`);
-    return this.client.volume.get(this, { iline, xline }, includeTraceHeader);
+    return this.client.volume.get({id: this.fileId}, { iline, xline }, includeTraceHeader);
   }
 
   public loadTrace(cell: Index2): Promise<SeismicSDK.Trace> | null {
@@ -150,7 +150,7 @@ export class SeismicCube extends RegularGrid3 {
 
     const inline = cell.i + this.startCell.i;
     const xline = cell.j + this.startCell.j;
-    return this.client.volume.getTrace(this, inline, xline);
+    return this.client.volume.getTrace({id: this.fileId}, inline, xline);
   }
 
   public calculateStatistics(): void {
@@ -193,7 +193,7 @@ export class SeismicCube extends RegularGrid3 {
   //= =================================================
 
   public static async loadCube(client: SeismicSDK.CogniteSeismicClient, fileId: string): Promise<SeismicCube | null> {
-    const lineRange = await client.file.getLineRange({ fileId });
+    const lineRange = await client.file.getLineRange({ id: fileId });
     if (!lineRange)
       throw Error("lineRange in undefined");
     if (!lineRange.inline)
@@ -221,10 +221,10 @@ export class SeismicCube extends RegularGrid3 {
     }
     // console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
     const promises = [
-      client.volume.getTrace({ fileId }, minCell.i, minCell.j),
-      client.volume.getTrace({ fileId }, maxCell.i, minCell.j),
-      client.volume.getTrace({ fileId }, maxCell.i, maxCell.j),
-      client.volume.getTrace({ fileId }, minCell.i, maxCell.j)
+      client.volume.getTrace({ id: fileId }, minCell.i, minCell.j),
+      client.volume.getTrace({ id: fileId }, maxCell.i, minCell.j),
+      client.volume.getTrace({ id: fileId }, maxCell.i, maxCell.j),
+      client.volume.getTrace({ id: fileId }, minCell.i, maxCell.j)
     ];
     const numCellsI = maxCell.i - minCell.i + 1;
     const numCellsJ = maxCell.j - minCell.j + 1;

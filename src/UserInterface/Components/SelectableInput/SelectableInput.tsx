@@ -128,4 +128,5 @@ const StyledButton = styled(Button)`
   padding: 0 5px;
   width: 20px;
   height: ${(props: ButtonProps) => (props.size === 'small' ? '24px' : '')};
+  max-height: 100%;
 `;

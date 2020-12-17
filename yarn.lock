@@ -1129,10 +1129,10 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/seismic-sdk-js@0.1.10":
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@cognite/seismic-sdk-js/-/seismic-sdk-js-0.1.10.tgz#e23503693a60e63b468e25537c00b1d0e1178b82"
-  integrity sha512-tCXXOwkNp4CivxX/8xb+5WfP98H1q6WS5JlcCqIPnd1QjCCl1Yk/keU8yLBLa+Rb2SmcFgG3Ab5uvp67Y7IOWg==
+"@cognite/seismic-sdk-js@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/seismic-sdk-js/-/seismic-sdk-js-0.2.1.tgz#530a41e145c0646d5cad6c5d03da5498115e1999"
+  integrity sha512-IP/OE/G6s5vGV2dChh1fW80Ssr58H7Hh91FpP4PoIu0siSazJopNKtLSwiqfV6mUzZmdN/89+hhkU9A5HwNYbQ==
   dependencies:
     "@grpc/proto-loader" "^0.1.0"
     async "^1.5.2"
