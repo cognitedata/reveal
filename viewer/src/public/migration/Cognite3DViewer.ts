@@ -474,21 +474,24 @@ export class Cognite3DViewer {
    * @param model
    */
   removeModel(model: Cognite3DModel | CognitePointCloudModel) {
+    const modelIdx = this.models.indexOf(model);
+    if (modelIdx === -1) {
+      throw new Error('Model is not added to viewer');
+    }
+    this.models.splice(modelIdx, 1);
+    this.scene.remove(model);
+    this.renderController.redraw();
+
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        const modelIdx = this.models.findIndex(x => x === model);
-        if (modelIdx === -1) {
-          throw new Error(`Model ${cadModel.cadNode.cadModelMetadata.blobUrl} is not added to viewer`);
-        }
         this._revealManager.removeModel(model.type, cadModel.cadNode);
-        this.models.splice(modelIdx, 1);
-        this.scene.remove(cadModel);
-        this.renderController.redraw();
         return;
 
       case 'pointcloud':
-        throw new Error('Not implemented');
+        const pcModel = model as CognitePointCloudModel;
+        this._revealManager.removeModel(model.type, pcModel.pointCloudNode);
+        return;
 
       default:
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
