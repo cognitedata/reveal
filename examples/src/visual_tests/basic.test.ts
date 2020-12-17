@@ -1,24 +1,23 @@
-import { screenShotTest } from "./VisualTestUtils";
+import { screenShotTest, TestCase } from './VisualTestUtils';
+const retry = require('jest-retries');
 
-const test_presets = [
-  "clipping",
-  "default_camera",
-  "highlight",
-  "rotate_cad_model",
-  "node_transform",
-  "ghost_mode",
-  "scaled_model",
-  "user_render_target"
-]
 
-describe('Testable', () => {
-  it('correctly renders primitives test scene', async () => {
-    await screenShotTest('http://localhost:3000/testable');
-  });
+// jest-circus must be installed for it to work
+jest.retryTimes(3);
+
+const test_presets = Object.values(TestCase);
+
+describe('Reveal visual tests', () => {
+  beforeEach(async () => {
+    await jestPuppeteer.resetBrowser()
+    await jestPuppeteer.resetPage()
+  })
+
+  const retries = 3;
 
   test_presets.forEach(function (test) {
-    it('matches the screenshot for test preset: ' + test, async () => {
-      await screenShotTest('http://localhost:3000/testable?test=' + test);
+    retry(`matches the screenshot for ${test} preset`, retries, async () => {
+      await screenShotTest(test);
     });
   });
 });
