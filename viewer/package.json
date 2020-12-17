@@ -31,7 +31,7 @@
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
     "bump:push": "git push -u origin head && git push --tags",
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
-    "_noop": "echo No action - this target is used by CI"
+    "noop": "echo No action - this target is used by CI"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
