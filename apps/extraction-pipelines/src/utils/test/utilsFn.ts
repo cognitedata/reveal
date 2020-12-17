@@ -57,10 +57,8 @@ export const existsById = (testId: string) => {
 };
 
 export const existsByIdAsync = async (testId: string) => {
-  await waitFor(() => {
-    const input = screen.getByTestId(testId);
-    expect(input).toBeInTheDocument();
-  });
+  const input = await screen.findByTestId(testId);
+  expect(input).toBeInTheDocument();
 };
 export const notExistsById = (testId: string) => {
   const input = screen.queryByTestId(testId);

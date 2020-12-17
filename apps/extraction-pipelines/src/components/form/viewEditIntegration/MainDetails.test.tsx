@@ -1,14 +1,14 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryCache } from 'react-query';
-import { getMockResponse } from '../../utils/mockResponse';
-import { render } from '../../utils/test';
+import { getMockResponse } from '../../../utils/mockResponse';
+import { render } from '../../../utils/test';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
   renderQueryCacheIntegration,
-} from '../../utils/test/render';
+} from '../../../utils/test/render';
 import MainDetails from './MainDetails';
 
 describe('<MainDetails/>', () => {

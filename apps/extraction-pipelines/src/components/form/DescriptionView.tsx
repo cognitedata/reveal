@@ -121,7 +121,7 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
   const count = watch('description')?.length ?? 0;
   return (
     <DescriptionStyledForm className={`detail-row ${isEdit && 'is-edit'}`}>
-      <Detail strong>{DetailFieldNames.DESCRIPTION}: </Detail>
+      <Detail strong>{DetailFieldNames.DESCRIPTION}</Detail>
       {isEdit ? (
         <GridTextArea>
           <StyledTextArea
@@ -154,7 +154,9 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
           </CountSpan>
         </GridTextArea>
       ) : (
-        <AlignedSpan>{integration?.description}</AlignedSpan>
+        <AlignedSpan data-testid="integration-description">
+          {integration?.description}
+        </AlignedSpan>
       )}
       {isEdit ? (
         <>

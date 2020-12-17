@@ -14,7 +14,7 @@ import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import ValidationError from './ValidationError';
-import RemoveEditBtns from '../test/RemoveEditBtns';
+import RemoveEditBtns from './viewEditIntegration/RemoveEditBtns';
 import { DetailFieldNames } from '../../model/Integration';
 
 export const InputWarningError = styled((props) => (
@@ -57,7 +57,7 @@ const ContactView: FunctionComponent<Props> = ({
   const { register, errors, trigger, getValues } = useFormContext();
   const { project } = useAppEnv();
   const [mutateContacts] = useDetailsUpdate();
-  const [isEdit, setIsEdit] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
   const isDirtyName = updates.has(`authors.name-${index}`);
   const isDirtyEmail = updates.has(`authors.email-${index}`);
   const isNew =
@@ -149,9 +149,8 @@ const ContactView: FunctionComponent<Props> = ({
       });
     }
   };
-
   return (
-    <GridRowStyle key={field.id} className="contact-row">
+    <GridRowStyle key={field?.id} className="contact-row">
       <AlignedDetail strong>{DetailFieldNames.CONTACT}</AlignedDetail>
       {isEdit ? (
         <InputWarningError>

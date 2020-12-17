@@ -3,7 +3,7 @@ import { Title } from '@cognite/cogs.js';
 import OwnerView from 'components/form/OwnerView';
 import styled from 'styled-components';
 import ContactsView from 'components/form/ContactsView';
-import { TableHeadings } from '../table/IntegrationTableCol';
+import { TableHeadings } from '../../table/IntegrationTableCol';
 
 export const Grid = styled((props) => <div {...props}>{props.children}</div>)`
   display: grid;

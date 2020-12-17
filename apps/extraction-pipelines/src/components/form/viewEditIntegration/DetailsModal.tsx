@@ -3,16 +3,16 @@ import DetailsHeading from 'components/modals/DetailsHeading';
 import DetailsFooter from 'components/modals/DetailsFooter';
 import { useQueryCache } from 'react-query';
 import styled from 'styled-components';
-import Modal from './Modal';
-import { ids } from '../../cogs-variables';
-import { Integration } from '../../model/Integration';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { HeadingWithUnderline } from '../../styles/StyledHeadings';
+import Modal from '../../modals/Modal';
+import { ids } from '../../../cogs-variables';
+import { Integration } from '../../../model/Integration';
+import { useAppEnv } from '../../../hooks/useAppEnv';
+import { HeadingWithUnderline } from '../../../styles/StyledHeadings';
 import MetaData from './MetaData';
 import MainDetails from './MainDetails';
 import ContactsDetails from './ContactsDetails';
-import { IntegrationProvider } from '../../hooks/details/IntegrationContext';
-import { ModalContent } from './ModalContent';
+import { IntegrationProvider } from '../../../hooks/details/IntegrationContext';
+import { ModalContent } from '../../modals/ModalContent';
 
 const ContentTitle = styled((props) => (
   <HeadingWithUnderline {...props}>{props.children}</HeadingWithUnderline>

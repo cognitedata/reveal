@@ -122,7 +122,7 @@ const ContactsView: FunctionComponent<Props> = () => {
           {fields.map((field, index) => {
             return (
               <ContactView
-                key={field.id}
+                key={field?.id ?? `noId${index}`}
                 index={index}
                 field={field}
                 remove={remove}

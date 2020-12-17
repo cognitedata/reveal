@@ -12,7 +12,7 @@ import {
   PROJECT_ITERA_INT_GREEN,
   renderQueryCacheIntegration,
 } from '../../utils/test/render';
-import DetailsModal from '../test/DetailsModal';
+import DetailsModal from './viewEditIntegration/DetailsModal';
 
 describe('<NameView />', () => {
   let queryCache: QueryCache;

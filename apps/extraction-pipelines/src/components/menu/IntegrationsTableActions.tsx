@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { Button, Colors, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Integration } from '../../model/Integration';
-import DetailsModal from '../test/DetailsModal';
+import DetailsModal from '../form/viewEditIntegration/DetailsModal';
 
 const TableOptionDropdown = styled((props) => (
   <Dropdown {...props}>{props.children}</Dropdown>

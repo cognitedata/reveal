@@ -1,14 +1,14 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { useIntegration } from '../../hooks/details/IntegrationContext';
-import NameView from '../form/NameView';
-import { calculateStatus } from '../../utils/integrationUtils';
-import DescriptionView from '../form/DescriptionView';
-import FieldView from '../form/FieldView';
-import { TableHeadings } from '../table/IntegrationTableCol';
+import { useIntegration } from '../../../hooks/details/IntegrationContext';
+import NameView from '../NameView';
+import { calculateStatus } from '../../../utils/integrationUtils';
+import DescriptionView from '../DescriptionView';
+import FieldView from '../FieldView';
+import { TableHeadings } from '../../table/IntegrationTableCol';
 import { Grid } from './ContactsDetails';
-import { DetailFieldNames } from '../../model/Integration';
+import { DetailFieldNames } from '../../../model/Integration';
 
 export const DetailsGrid = styled((props) => (
   <Grid {...props}>{props.children}</Grid>

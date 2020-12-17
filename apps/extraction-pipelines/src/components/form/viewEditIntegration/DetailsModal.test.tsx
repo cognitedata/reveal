@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
-import { getMockResponse } from '../../utils/mockResponse';
-import { render } from '../../utils/test';
+import { getMockResponse } from '../../../utils/mockResponse';
+import { render } from '../../../utils/test';
 import {
   clickById,
   existsByText,
@@ -17,12 +17,12 @@ import {
   clickByIdAsync,
   existsContactAsync,
   clickText,
-} from '../../utils/test/utilsFn';
+} from '../../../utils/test/utilsFn';
 import DetailsModal, {
   CLOSE_CONFIRM_CONTENT,
   UNSAVED_INFO_TEXT,
 } from './DetailsModal';
-import { ContactBtnTestIds } from '../form/ContactsView';
+import { ContactBtnTestIds } from '../ContactsView';
 
 describe('DetailsModal', () => {
   let wrapper = null;
