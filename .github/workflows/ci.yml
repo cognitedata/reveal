@@ -48,13 +48,9 @@ jobs:
       with:
         directory: viewer
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        build-script: "build:prod" # Note! build:prod is already built, so we do nothing here
+        build-script: "build:prod"
         pattern: "./dist/**/*"
         minimum-change-threshold: 100
-
-#    - name: Build prod version
-#      working-directory: viewer
-#      run: yarn run build:prod
 
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
