@@ -54,7 +54,7 @@ jobs:
       with:
         directory: viewer
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        build-script: noop # Note! build:prod is already built, so we do nothing here
+        build-script: "noop" # Note! build:prod is already built, so we do nothing here
         pattern: "./dist/**/*"
         minimum-change-threshold: 100
 
