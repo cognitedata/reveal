@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryCache } from 'react-query';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { getMockResponse } from '../../../utils/mockResponse';
 import { render } from '../../../utils/test';
 import {
@@ -19,6 +20,7 @@ describe('<MainDetails/>', () => {
 
   test('Two edits at the same time', async () => {
     const integration = getMockResponse()[0];
+    sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
     const wrapper = renderQueryCacheIntegration(
       queryCache,
       PROJECT_ITERA_INT_GREEN,

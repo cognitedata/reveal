@@ -3,7 +3,7 @@ import { Button, Colors } from '@cognite/cogs.js';
 import { ArrayField, useFormContext } from 'react-hook-form';
 import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from 'utils/contactsUtils';
-import styled from 'styled-components';
+import ErrorMessageDialog from 'components/buttons/ErrorMessageDialog';
 import {
   AlignedDetail,
   AlignedSpan,
@@ -14,29 +14,9 @@ import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import ValidationError from './ValidationError';
-import RemoveEditBtns from './viewEditIntegration/RemoveEditBtns';
 import { DetailFieldNames } from '../../model/Integration';
+import { InputWarningError } from '../inputs/InputWithWarning';
 
-export const InputWarningError = styled((props) => (
-  <div {...props}>{props.children}</div>
-))`
-  display: grid;
-  grid-template-columns: 1fr 2.5rem;
-  grid-template-rows: min-content 1rem;
-  align-self: flex-end;
-  grid-template-areas: 'input warning' 'error error';
-  input {
-    align-self: flex-end;
-  }
-  .cogs-icon-Warning {
-    grid-area: warning;
-    align-self: flex-end;
-    margin-bottom: 0.5rem;
-  }
-  .error-message {
-    grid-area: error;
-  }
-`;
 interface OwnProps {
   field: Partial<ArrayField<Record<string, any>, 'id'>>;
   index: number;
@@ -58,6 +38,7 @@ const ContactView: FunctionComponent<Props> = ({
   const { project } = useAppEnv();
   const [mutateContacts] = useDetailsUpdate();
   const [isEdit, setIsEdit] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
   const isDirtyName = updates.has(`authors.name-${index}`);
   const isDirtyEmail = updates.has(`authors.email-${index}`);
   const isNew =
@@ -84,21 +65,34 @@ const ContactView: FunctionComponent<Props> = ({
         fieldValue: authorsToSave,
         fieldName: 'authors',
       });
-      await mutateContacts({
-        project,
-        items,
-        id: integration.id,
-      });
-      dispatch({ type: 'UPDATE_AUTHOR', payload: { index, author: actual } }); // just send updated authors?
-      dispatch({
-        type: 'REMOVE_CHANGE',
-        payload: { index, name: 'authors.name' },
-      });
-      dispatch({
-        type: 'REMOVE_CHANGE',
-        payload: { index, name: 'authors.email' },
-      });
-      setIsEdit(false);
+
+      await mutateContacts(
+        {
+          project,
+          items,
+          id: integration.id,
+        },
+        {
+          onError: () => {
+            setErrorVisible(true);
+          },
+          onSuccess: () => {
+            dispatch({
+              type: 'UPDATE_AUTHOR',
+              payload: { index, author: actual },
+            });
+            dispatch({
+              type: 'REMOVE_CHANGE',
+              payload: { index, name: 'authors.name' },
+            });
+            dispatch({
+              type: 'REMOVE_CHANGE',
+              payload: { index, name: 'authors.email' },
+            });
+            setIsEdit(false);
+          },
+        }
+      );
     }
   }
 
@@ -126,13 +120,22 @@ const ContactView: FunctionComponent<Props> = ({
         fieldName: 'authors',
         fieldValue: authors,
       });
-      await mutateContacts({
-        project,
-        items,
-        id: integration.id,
-      });
-      dispatch({ type: 'REMOVE_AUTHOR', payload: { index } });
-      remove(index);
+      await mutateContacts(
+        {
+          project,
+          items,
+          id: integration.id,
+        },
+        {
+          onError: () => {
+            setErrorVisible(true);
+          },
+          onSuccess: () => {
+            dispatch({ type: 'REMOVE_AUTHOR', payload: { index } });
+            remove(index);
+          },
+        }
+      );
     }
   };
 
@@ -149,13 +152,27 @@ const ContactView: FunctionComponent<Props> = ({
       });
     }
   };
+
+  const handleClickError = () => {
+    setErrorVisible(false);
+    dispatch({
+      type: 'REMOVE_CHANGE',
+      payload: { index, name: 'authors.name' },
+    });
+    dispatch({
+      type: 'REMOVE_CHANGE',
+      payload: { index, name: 'authors.email' },
+    });
+    setIsEdit(false);
+  };
+
   return (
-    <GridRowStyle key={field?.id} className="contact-row">
+    <GridRowStyle key={field?.id} className="row-style-odd row-height-4">
       <AlignedDetail strong>{DetailFieldNames.CONTACT}</AlignedDetail>
       {isEdit ? (
         <InputWarningError>
           <input
-            key={field.id}
+            key={field?.id}
             onChange={handleChange}
             name={`authors[${index}].name`}
             placeholder="Enter name"
@@ -173,11 +190,7 @@ const ContactView: FunctionComponent<Props> = ({
               className="waring"
             />
           )}
-          <ValidationError
-            errors={errors}
-            name={`authors[${index}].name`}
-            className="error-message"
-          />
+          <ValidationError errors={errors} name={`authors[${index}].name`} />
         </InputWarningError>
       ) : (
         <AlignedSpan>{integration?.authors[index]?.name}</AlignedSpan>
@@ -203,11 +216,7 @@ const ContactView: FunctionComponent<Props> = ({
               className="waring"
             />
           )}
-          <ValidationError
-            errors={errors}
-            name={`authors[${index}].email`}
-            className="error-message"
-          />
+          <ValidationError errors={errors} name={`authors[${index}].email`} />
         </InputWarningError>
       ) : (
         <AlignedSpan>{integration?.authors[index]?.email}</AlignedSpan>
@@ -223,23 +232,42 @@ const ContactView: FunctionComponent<Props> = ({
           >
             Cancel
           </Button>
-          <Button
-            className="edit-form-btn btn-margin-right"
-            type="primary"
-            onClick={onSave}
-            aria-controls="name email"
-            data-testid={`${ContactBtnTestIds.SAVE_BTN}${index}`}
+          <ErrorMessageDialog
+            visible={errorVisible}
+            handleClickError={handleClickError}
           >
-            Save
-          </Button>
+            <Button
+              className="edit-form-btn btn-margin-right"
+              type="primary"
+              onClick={onSave}
+              aria-controls="name email"
+              data-testid={`${ContactBtnTestIds.SAVE_BTN}${index}`}
+            >
+              Save
+            </Button>
+          </ErrorMessageDialog>
         </>
       ) : (
-        <RemoveEditBtns
-          onRemoveClick={onRemoveClick}
-          onEditClick={onEditClick}
-          index={index}
-          isEdit={isEdit}
-        />
+        <>
+          <ErrorMessageDialog
+            visible={errorVisible}
+            handleClickError={handleClickError}
+          >
+            <Button onClick={onRemoveClick}>Remove</Button>
+          </ErrorMessageDialog>
+          <Button
+            onClick={onEditClick}
+            type="primary"
+            className="edit-form-btn btn-margin-right"
+            title="Toggle edit row"
+            aria-label="Edit btn should have label"
+            aria-expanded={isEdit}
+            aria-controls="name email"
+            data-testid={`${ContactBtnTestIds.EDIT_BTN}${index}`}
+          >
+            Edit
+          </Button>
+        </>
       )}
     </GridRowStyle>
   );

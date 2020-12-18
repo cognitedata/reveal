@@ -1,31 +1,26 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Button, Colors, Detail } from '@cognite/cogs.js';
+import { Button, Detail } from '@cognite/cogs.js';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styled from 'styled-components';
+import ErrorMessageDialog from 'components/buttons/ErrorMessageDialog';
 import { TableHeadings } from '../table/IntegrationTableCol';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { createUpdateSpec } from '../../utils/contactsUtils';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
-import ValidationError from './ValidationError';
-import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
-import { InputWarningError } from './ContactView';
+import { PaddedGridForm } from '../../styles/grid/StyledGrid';
+import InputWithWarning from '../inputs/InputWithWarning';
 
 interface OwnProps {}
 
 type Props = OwnProps;
 export const StyledForm = styled((props) => (
-  <form {...props}>{props.children}</form>
+  <PaddedGridForm {...props}>{props.children}</PaddedGridForm>
 ))`
-  display: grid;
   grid-template-columns: 8rem 3fr 5rem 4rem;
-  grid-gap: 0.4rem;
-  .btn-margin-right {
-    margin-right: 0.75rem;
-  }
 `;
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -38,6 +33,7 @@ const NameView: FunctionComponent<Props> = () => {
   const [isEdit, setIsEdit] = useState(false);
   const { project } = useAppEnv();
   const [mutateContacts] = useDetailsUpdate();
+  const [errorVisible, setErrorVisible] = useState(false);
 
   const { register, errors, trigger, getValues } = useForm({
     resolver: yupResolver(schema),
@@ -56,15 +52,23 @@ const NameView: FunctionComponent<Props> = () => {
         fieldValue: name,
         fieldName: 'name',
       });
-      await mutateContacts({
-        project,
-        items,
-        id: integration.id,
-      });
-
-      dispatch({ type: 'UPDATE_NAME', payload: { name } });
-      dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'name' } });
-      setIsEdit(false);
+      await mutateContacts(
+        {
+          project,
+          items,
+          id: integration.id,
+        },
+        {
+          onError: () => {
+            setErrorVisible(true);
+          },
+          onSuccess: () => {
+            dispatch({ type: 'UPDATE_NAME', payload: { name } });
+            dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'name' } });
+            setIsEdit(false);
+          },
+        }
+      );
     }
   };
 
@@ -80,30 +84,26 @@ const NameView: FunctionComponent<Props> = () => {
   const handleChange = (_: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: 'ADD_CHANGE', payload: { name: 'name' } });
   };
+
+  const handleClickError = () => {
+    setErrorVisible(false);
+    dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'name' } });
+    setIsEdit(false);
+  };
+
   return (
-    <StyledForm className="detail-row">
-      <Detail strong>{TableHeadings.NAME}: </Detail>
+    <StyledForm className="row-style-even row-height-4">
+      <Detail strong>{TableHeadings.NAME}</Detail>
       {isEdit ? (
-        <InputWarningError>
-          <input
-            type="text"
-            onChange={handleChange}
-            id="name"
-            name="name"
-            placeholder="Enter name of integration"
-            className={`cogs-input full-width ${errors.name && 'has-error'}`}
-            ref={register}
-            defaultValue={integration?.name}
-          />
-          {isDirtyName && (
-            <InputWarningIcon
-              $color={Colors.warning.hex()}
-              data-testid="warning-icon-name"
-              className="waring"
-            />
-          )}
-          <ValidationError errors={errors} name="name" />
-        </InputWarningError>
+        <InputWithWarning
+          name="name"
+          placeholder="Enter name of integration"
+          handleChange={handleChange}
+          register={register}
+          defaultValue={integration?.name}
+          errors={errors}
+          isDirty={isDirtyName}
+        />
       ) : (
         <AlignedSpan>{integration?.name}</AlignedSpan>
       )}
@@ -118,15 +118,20 @@ const NameView: FunctionComponent<Props> = () => {
           >
             Cancel
           </Button>
-          <Button
-            className="edit-form-btn btn-margin-right"
-            type="primary"
-            onClick={onSave}
-            aria-controls="name"
-            data-testid={`${ContactBtnTestIds.SAVE_BTN}name`}
+          <ErrorMessageDialog
+            visible={errorVisible}
+            handleClickError={handleClickError}
           >
-            Save
-          </Button>
+            <Button
+              className="edit-form-btn btn-margin-right"
+              type="primary"
+              onClick={onSave}
+              aria-controls="name"
+              data-testid={`${ContactBtnTestIds.SAVE_BTN}name`}
+            >
+              Save
+            </Button>
+          </ErrorMessageDialog>
         </>
       ) : (
         <>

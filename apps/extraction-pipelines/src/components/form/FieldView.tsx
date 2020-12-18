@@ -7,13 +7,12 @@ import {
   IntegrationFieldName,
   IntegrationFieldValue,
 } from '../../model/Integration';
+import { PaddedGridDiv } from '../../styles/grid/StyledGrid';
 
 export const FieldGrid = styled((props) => (
-  <div {...props}>{props.children}</div>
+  <PaddedGridDiv {...props}>{props.children}</PaddedGridDiv>
 ))`
-  display: grid;
   grid-template-columns: 8rem 5fr;
-  grid-column-gap: 0.4rem;
 `;
 interface OwnProps {
   label: TableHeadings | DetailFieldNames;
@@ -29,7 +28,7 @@ const FieldView: FunctionComponent<Props> = ({
   fieldValue,
 }: Props) => {
   return (
-    <FieldGrid className="field-view detail-row">
+    <FieldGrid className="field-view row-style-even row-height-4">
       <label htmlFor={fieldName}>{label}</label>
       <DetailsValueView fieldName={fieldName} fieldValue={fieldValue} />
     </FieldGrid>

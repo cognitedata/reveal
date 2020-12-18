@@ -3,7 +3,7 @@ import { QueryCache } from 'react-query';
 import { screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { act } from 'react-test-renderer';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { getMockResponse } from '../../utils/mockResponse';
+import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import {
   addBtnTestId,
@@ -24,6 +24,7 @@ import ContactsView, {
 } from './ContactsView';
 import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
+import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 
 function createIntegrationWithContacts(
   authors: User[] | undefined | null
@@ -36,7 +37,6 @@ describe('<ContactsView />', () => {
   let queryCache: QueryCache;
   const integration = getMockResponse()[0];
   beforeEach(() => {
-    sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
     queryCache = new QueryCache();
     const wrapper = renderQueryCacheIntegration(
       queryCache,
@@ -52,6 +52,32 @@ describe('<ContactsView />', () => {
   afterEach(() => {
     cleanup();
     jest.resetAllMocks();
+  });
+
+  test('Show error when server error', async () => {
+    sdkv3.post.mockRejectedValue(mockError);
+    const row = 0;
+    const editBtn = screen.getByTestId(`${ContactBtnTestIds.EDIT_BTN}${row}`);
+    fireEvent.click(editBtn);
+    const editContact = integration.authors[row];
+    act(() => {
+      const contactEmailInput = screen.getByDisplayValue(editContact.email);
+      fireEvent.change(contactEmailInput, {
+        target: { value: 'sdfsdf@test.no' },
+      });
+      fireEvent.blur(contactEmailInput);
+    });
+
+    const saveBtn = screen.getByTestId(`${ContactBtnTestIds.SAVE_BTN}${row}`);
+    act(() => {
+      fireEvent.click(saveBtn);
+    });
+    await waitFor(() => {
+      expect(screen.getByText(SERVER_ERROR_TITLE)).toBeInTheDocument();
+    });
+    const OKBtn = screen.getByText('OK');
+    fireEvent.click(OKBtn);
+    expect(screen.getByText(editContact.email)).toBeInTheDocument();
   });
 
   test('Invalid email validation and text change warning', async () => {
@@ -108,7 +134,6 @@ describe('<ContactsView />', () => {
       `${ContactBtnTestIds.SAVE_BTN}${newRow}`
     );
     fireEvent.click(save);
-    // clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
     await waitFor(() => {
       const nameRequired = screen.getByText(ContactsErrorMsg.NAME_REQUIRED);
       expect(nameRequired).toBeInTheDocument();

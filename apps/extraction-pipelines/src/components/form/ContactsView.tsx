@@ -11,6 +11,7 @@ import * as yup from 'yup';
 import styled from 'styled-components';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import ContactView from './ContactView';
+import { PaddedGridDiv } from '../../styles/grid/StyledGrid';
 
 export const ContactBtnTestIds = {
   EDIT_BTN: 'edit-contact-btn-',
@@ -27,8 +28,10 @@ export const StyledForm = styled((props) => (
 ))`
   display: grid;
   grid-template-columns: 1fr;
-  .contact-row {
+  .row-height-4 {
     min-height: 4rem;
+  }
+  .row-style-odd {
     &:hover {
       background-color: ${Colors['greyscale-grey3'].hex()};
     }
@@ -45,20 +48,21 @@ export const StyledForm = styled((props) => (
   }
 `;
 export const GridRowStyle = styled((props) => (
-  <div {...props}>{props.children}</div>
+  <PaddedGridDiv {...props}>{props.children}</PaddedGridDiv>
 ))`
-  display: grid;
   grid-template-columns: 8rem 2fr 2fr 5rem 4rem;
-  grid-gap: 0.4rem;
   height: 4rem;
-  .edit-form-btn {
+  align-items: center;
+  > * {
+    width: 100%;
+  }
+  span[aria-expanded] {
     align-self: center;
-  }
-  .cogs-detail {
-    padding: 0.75rem;
-  }
-  .btn-margin-right {
-    margin-right: 0.5rem;
+    display: flex;
+    justify-content: center;
+    button {
+      width: 100%;
+    }
   }
 `;
 

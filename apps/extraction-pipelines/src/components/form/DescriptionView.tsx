@@ -13,6 +13,7 @@ import ValidationError from './ValidationError';
 import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import { AlignedSpan } from './ContactsView';
 import { DetailFieldNames } from '../../model/Integration';
+import ErrorMessageDialog from '../buttons/ErrorMessageDialog';
 
 const DescriptionStyledForm = styled((props) => (
   <StyledForm {...props}>{props.children}</StyledForm>
@@ -65,10 +66,13 @@ const schema = yup.object().shape({
   description: yup
     .string()
     .required('Description is required')
-    .max(MAX_DESC_LENGTH, 'Description can only contain 500 characters'),
+    .max(
+      MAX_DESC_LENGTH,
+      `Description can only contain ${MAX_DESC_LENGTH} characters`
+    ),
 });
 
-const DescriptionView: FunctionComponent<Props> = (_) => {
+const DescriptionView: FunctionComponent<Props> = () => {
   const {
     state: { integration, updates },
     dispatch,
@@ -76,6 +80,7 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
   const [isEdit, setIsEdit] = useState(false);
   const { project } = useAppEnv();
   const [mutateContacts] = useDetailsUpdate();
+  const [errorVisible, setErrorVisible] = useState(false);
 
   const { register, errors, getValues, trigger, watch } = useForm({
     resolver: yupResolver(schema),
@@ -94,15 +99,26 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
         fieldValue: description,
         fieldName: 'description',
       });
-      await mutateContacts({
-        project,
-        items,
-        id: integration.id,
-      });
-
-      dispatch({ type: 'UPDATE_DESCRIPTION', payload: { description } });
-      dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'description' } });
-      setIsEdit(false);
+      await mutateContacts(
+        {
+          project,
+          items,
+          id: integration.id,
+        },
+        {
+          onError: () => {
+            setErrorVisible(true);
+          },
+          onSuccess: () => {
+            dispatch({ type: 'UPDATE_DESCRIPTION', payload: { description } });
+            dispatch({
+              type: 'REMOVE_CHANGE',
+              payload: { name: 'description' },
+            });
+            setIsEdit(false);
+          },
+        }
+      );
     }
   };
 
@@ -118,9 +134,18 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
   const handleChange = () => {
     dispatch({ type: 'ADD_CHANGE', payload: { name: 'description' } });
   };
+
+  const handleClickError = () => {
+    setErrorVisible(false);
+    dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'description' } });
+    setIsEdit(false);
+  };
+
   const count = watch('description')?.length ?? 0;
   return (
-    <DescriptionStyledForm className={`detail-row ${isEdit && 'is-edit'}`}>
+    <DescriptionStyledForm
+      className={`row-style-even ${isEdit && 'is-edit'} row-height-4`}
+    >
       <Detail strong>{DetailFieldNames.DESCRIPTION}</Detail>
       {isEdit ? (
         <GridTextArea>
@@ -144,11 +169,7 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
               className="waring"
             />
           )}
-          <ValidationError
-            errors={errors}
-            name="description"
-            className="error-message"
-          />
+          <ValidationError errors={errors} name="description" />
           <CountSpan className="count">
             {count}/{MAX_DESC_LENGTH}
           </CountSpan>
@@ -168,14 +189,19 @@ const DescriptionView: FunctionComponent<Props> = (_) => {
           >
             Cancel
           </Button>
-          <Button
-            className="edit-form-btn btn-margin-right"
-            type="primary"
-            onClick={onSave}
-            aria-controls="name"
+          <ErrorMessageDialog
+            visible={errorVisible}
+            handleClickError={handleClickError}
           >
-            Save
-          </Button>
+            <Button
+              className="edit-form-btn btn-margin-right"
+              type="primary"
+              onClick={onSave}
+              aria-controls="name"
+            >
+              Save
+            </Button>
+          </ErrorMessageDialog>
         </>
       ) : (
         <>

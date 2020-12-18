@@ -1,23 +1,200 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryCache } from 'react-query';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { getMockResponse } from '../../utils/mockResponse';
+import { act } from 'react-test-renderer';
+import { DetailFieldNames, Integration } from 'model/Integration';
+import { getMockResponse, mockError } from '../../utils/mockResponse';
+import { render } from '../../utils/test';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
   renderQueryCacheIntegration,
 } from '../../utils/test/render';
-import { render } from '../../utils/test';
 import DescriptionView from './DescriptionView';
-import { DetailFieldNames, Integration } from '../../model/Integration';
+import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
+import DetailsModal from './viewEditIntegration/DetailsModal';
 
 describe('<DescriptionView />', () => {
+  let queryCache: QueryCache;
+  beforeEach(() => {
+    queryCache = new QueryCache();
+  });
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test('Edit - change - cancel', () => {
+    const integration = getMockResponse()[0];
+    const wrapper = renderQueryCacheIntegration(
+      queryCache,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD,
+      ORIGIN_DEV,
+      integration
+    );
+    render(<DescriptionView />, { wrapper });
+
+    // click first edit btn
+    const firstEditBtn = screen.getAllByText('Edit')[0];
+    fireEvent.click(firstEditBtn);
+    const inputEdit = screen.getByDisplayValue(integration.description);
+    expect(inputEdit).toBeInTheDocument();
+
+    // change value in input
+    const newValue = 'New description for this integration';
+    fireEvent.change(inputEdit, { target: { value: newValue } });
+
+    // input should still be displayed
+    fireEvent.blur(inputEdit);
+    const newValueInput = screen.getByDisplayValue(newValue);
+    expect(newValueInput).toBeInTheDocument();
+    const saveBtn = screen.getByText('Save');
+    const cancelBtn = screen.getByText('Cancel');
+    expect(saveBtn).toBeInTheDocument();
+    expect(cancelBtn).toBeInTheDocument();
+
+    // click cancel. resets to original value. no input field
+    fireEvent.click(cancelBtn);
+    const noCancelBtn = screen.queryByText('Cancel');
+    expect(noCancelBtn).not.toBeInTheDocument();
+    const originalValue = screen.getByText(integration.description);
+    expect(originalValue).toBeInTheDocument();
+  });
+
+  test('Edit - change - save', async () => {
+    const integration = getMockResponse()[0];
+    sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
+    const wrapper = renderQueryCacheIntegration(
+      queryCache,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD,
+      ORIGIN_DEV,
+      integration
+    );
+    render(<DescriptionView />, { wrapper });
+
+    // click first edit btn
+    const editRow = 0;
+    const firstEditBtn = screen.getAllByText('Edit')[editRow];
+    fireEvent.click(firstEditBtn);
+    const nameInput = screen.getByDisplayValue(integration.description); // assuming name is editable
+    expect(nameInput).toBeInTheDocument();
+
+    // change value in input
+    const newValue = 'New description for this integration';
+    fireEvent.change(nameInput, { target: { value: newValue } });
+    fireEvent.blur(nameInput);
+    const newValueInput = screen.getByDisplayValue(newValue);
+    expect(newValueInput).toBeInTheDocument();
+    const warning = screen.getByTestId(`warning-icon-description`);
+    expect(warning).toBeInTheDocument();
+
+    // click save. new value saved. just display value
+    const saveBtn = screen.getByText('Save');
+    fireEvent.click(saveBtn);
+    await waitFor(() => {
+      const noSaveBtn = screen.queryByText('Save');
+      expect(noSaveBtn).not.toBeInTheDocument();
+    });
+    const newValueForRow = screen.getByText(newValue);
+    expect(newValueForRow).toBeInTheDocument();
+  });
+
+  test('Edit - change - save - error', async () => {
+    const integration = getMockResponse()[0];
+    sdkv3.post.mockRejectedValue(mockError);
+    const wrapper = renderQueryCacheIntegration(
+      queryCache,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD,
+      ORIGIN_DEV,
+      integration
+    );
+    render(<DescriptionView />, { wrapper });
+
+    // click first edit btn
+    const editRow = 0;
+    const firstEditBtn = screen.getAllByText('Edit')[editRow];
+    fireEvent.click(firstEditBtn);
+    const nameInput = screen.getByDisplayValue(integration.description); // assuming name is editable
+    expect(nameInput).toBeInTheDocument();
+
+    // change value in input
+    const newValue = 'New integration name something unique';
+    fireEvent.change(nameInput, { target: { value: newValue } });
+    fireEvent.blur(nameInput);
+    const newValueInput = screen.getByDisplayValue(newValue);
+    expect(newValueInput).toBeInTheDocument();
+    const warning = screen.getByTestId(`warning-icon-description`);
+    expect(warning).toBeInTheDocument();
+
+    // click save. new value saved. just display value
+    const saveBtn = screen.getByText('Save');
+    fireEvent.click(saveBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(SERVER_ERROR_TITLE)).toBeInTheDocument();
+    });
+    const OKBtn = screen.getByText('OK');
+    fireEvent.click(OKBtn);
+
+    await waitFor(() => {
+      const noSaveBtn = screen.queryByText('Save');
+      expect(noSaveBtn).not.toBeInTheDocument();
+    });
+    const oldValue = screen.getByText(integration.description);
+    expect(oldValue).toBeInTheDocument();
+  });
+
+  test('Should call to get updated integration information when contact is saved', async () => {
+    const integration = getMockResponse()[0];
+    const integrationsResponse = getMockResponse()[1];
+    sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
+    sdkv3.get.mockResolvedValue({ data: { items: [integrationsResponse] } });
+    const cancelMock = jest.fn();
+    const wrapper = renderQueryCacheIntegration(
+      queryCache,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD,
+      ORIGIN_DEV,
+      integration
+    );
+    act(() => {
+      render(
+        <DetailsModal
+          visible
+          onCancel={cancelMock}
+          integration={integration}
+        />,
+        { wrapper }
+      );
+    });
+
+    // click first edit btn
+    const editRow = 1;
+    const firstEditBtn = screen.getAllByText('Edit')[editRow];
+    fireEvent.click(firstEditBtn);
+    const nameInput = screen.getByDisplayValue(integration.description);
+
+    // change value in input
+    const newValue = 'Something unique';
+    fireEvent.change(nameInput, { target: { value: newValue } });
+    fireEvent.blur(nameInput);
+
+    // click save. new value saved. just display value
+    const saveBtn = screen.getByText('Save');
+    fireEvent.click(saveBtn);
+
+    await waitFor(() => {
+      expect(sdkv3.post).toHaveBeenCalledTimes(1);
+    });
+  });
+
   test('Should render and interact with description field', async () => {
     sdkv3.post.mockResolvedValue({ data: { items: [getMockResponse()[0]] } });
     const integration = getMockResponse()[0];
-    const queryCache = new QueryCache();
     const wrapper = renderQueryCacheIntegration(
       queryCache,
       PROJECT_ITERA_INT_GREEN,
@@ -48,7 +225,6 @@ describe('<DescriptionView />', () => {
       description: undefined,
     } as Integration;
 
-    const queryCache = new QueryCache();
     const wrapper = renderQueryCacheIntegration(
       queryCache,
       PROJECT_ITERA_INT_GREEN,
@@ -66,7 +242,6 @@ describe('<DescriptionView />', () => {
   test('Should render when there is no description field', () => {
     const integration = { name: 'This is the name' } as Integration;
 
-    const queryCache = new QueryCache();
     const wrapper = renderQueryCacheIntegration(
       queryCache,
       PROJECT_ITERA_INT_GREEN,

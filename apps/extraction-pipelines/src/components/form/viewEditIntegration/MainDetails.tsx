@@ -1,55 +1,19 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Grid } from 'styles/grid/StyledGrid';
 import { useIntegration } from '../../../hooks/details/IntegrationContext';
 import NameView from '../NameView';
 import { calculateStatus } from '../../../utils/integrationUtils';
 import DescriptionView from '../DescriptionView';
 import FieldView from '../FieldView';
 import { TableHeadings } from '../../table/IntegrationTableCol';
-import { Grid } from './ContactsDetails';
 import { DetailFieldNames } from '../../../model/Integration';
 
 export const DetailsGrid = styled((props) => (
   <Grid {...props}>{props.children}</Grid>
 ))`
-  grid-column-gap: 0.4rem;
-  .detail-row {
-    &:hover {
-      background-color: ${Colors['greyscale-grey3'].hex()};
-    }
-    &:nth-child(even) {
-      background-color: ${Colors['greyscale-grey2'].hex()};
-      &:hover {
-        background-color: ${Colors['greyscale-grey3'].hex()};
-      }
-    }
-    &:first-child {
-      border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-    }
-    border-bottom: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
-  }
-  form {
+  .row-height-4 {
     min-height: 4rem;
-    .cogs-detail,
-    button {
-      align-self: center;
-      padding: 0.75rem;
-    }
-    .cogs-detail {
-      padding: 0.75rem;
-    }
-  }
-  .field-view {
-    min-height: 4rem;
-    label {
-      padding: 0.75rem;
-    }
-    label,
-    span {
-      justify-self: flex-start;
-      align-self: center;
-    }
   }
 `;
 interface OwnProps {}

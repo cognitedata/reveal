@@ -2,10 +2,9 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryCache } from 'react-query';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { act } from 'react-test-renderer';
 import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
-import NameView from './NameView';
+import OwnerView from './OwnerView';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -13,9 +12,8 @@ import {
   renderQueryCacheIntegration,
 } from '../../utils/test/render';
 import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
-import DetailsModal from './viewEditIntegration/DetailsModal';
 
-describe('<NameView />', () => {
+describe('<OwnerView />', () => {
   let queryCache: QueryCache;
   beforeEach(() => {
     queryCache = new QueryCache();
@@ -33,16 +31,15 @@ describe('<NameView />', () => {
       ORIGIN_DEV,
       integration
     );
-    render(<NameView />, { wrapper });
+    render(<OwnerView />, { wrapper });
 
     // click first edit btn
     const firstEditBtn = screen.getAllByText('Edit')[0];
     fireEvent.click(firstEditBtn);
-    const inputEdit = screen.getByDisplayValue(integration.name); // assuming name is editable
-    expect(inputEdit).toBeInTheDocument();
+    const inputEdit = screen.getByDisplayValue(integration.owner.name); // assuming name is editable
 
     // change value in input
-    const newValue = 'New integration name something unique';
+    const newValue = 'New Name';
     fireEvent.change(inputEdit, { target: { value: newValue } });
 
     // input should still be displayed
@@ -58,11 +55,11 @@ describe('<NameView />', () => {
     fireEvent.click(cancelBtn);
     const noCancelBtn = screen.queryByText('Cancel');
     expect(noCancelBtn).not.toBeInTheDocument();
-    const originalValue = screen.getByText(integration.name);
+    const originalValue = screen.getByText(integration.owner.name);
     expect(originalValue).toBeInTheDocument();
   });
 
-  test('Edit - change - save', async () => {
+  test('Edit - change - validation - save', async () => {
     const integration = getMockResponse()[0];
     sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
     const wrapper = renderQueryCacheIntegration(
@@ -72,33 +69,38 @@ describe('<NameView />', () => {
       ORIGIN_DEV,
       integration
     );
-    render(<NameView />, { wrapper });
+    render(<OwnerView />, { wrapper });
 
     // click first edit btn
     const editRow = 0;
     const firstEditBtn = screen.getAllByText('Edit')[editRow];
     fireEvent.click(firstEditBtn);
-    const nameInput = screen.getByDisplayValue(integration.name); // assuming name is editable
+    const nameInput = screen.getByDisplayValue(integration.owner.name); // assuming name is editable
     expect(nameInput).toBeInTheDocument();
 
     // change value in input
-    const newValue = 'New integration name something unique';
+    const newValue = '';
     fireEvent.change(nameInput, { target: { value: newValue } });
     fireEvent.blur(nameInput);
-    const newValueInput = screen.getByDisplayValue(newValue);
-    expect(newValueInput).toBeInTheDocument();
-    const warning = screen.getByTestId(`warning-icon-name`);
-    expect(warning).toBeInTheDocument();
+    expect(screen.getByDisplayValue(newValue)).toBeInTheDocument();
+    expect(screen.getByTestId(`warning-icon-name`)).toBeInTheDocument();
 
     // click save. new value saved. just display value
     const saveBtn = screen.getByText('Save');
     fireEvent.click(saveBtn);
     await waitFor(() => {
-      const noSaveBtn = screen.queryByText('Save');
-      expect(noSaveBtn).not.toBeInTheDocument();
+      expect(screen.getByText(/is required/)).toBeInTheDocument();
     });
-    const newValueForRow = screen.getByText(newValue);
-    expect(newValueForRow).toBeInTheDocument();
+
+    const validValue = 'Test Name';
+    fireEvent.change(nameInput, { target: { value: validValue } });
+    fireEvent.blur(nameInput);
+    fireEvent.click(saveBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Save')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText(validValue)).toBeInTheDocument();
   });
 
   test('Edit - change - save - error', async () => {
@@ -111,83 +113,37 @@ describe('<NameView />', () => {
       ORIGIN_DEV,
       integration
     );
-    render(<NameView />, { wrapper });
+    render(<OwnerView />, { wrapper });
 
     // click first edit btn
     const editRow = 0;
     const firstEditBtn = screen.getAllByText('Edit')[editRow];
     fireEvent.click(firstEditBtn);
-    const nameInput = screen.getByDisplayValue(integration.name); // assuming name is editable
+    const nameInput = screen.getByDisplayValue(integration.owner.email); // assuming name is editable
     expect(nameInput).toBeInTheDocument();
 
     // change value in input
-    const newValue = 'New integration name something unique';
+    const newValue = 'test@test.no';
     fireEvent.change(nameInput, { target: { value: newValue } });
     fireEvent.blur(nameInput);
     const newValueInput = screen.getByDisplayValue(newValue);
     expect(newValueInput).toBeInTheDocument();
-    const warning = screen.getByTestId(`warning-icon-name`);
+    const warning = screen.getByTestId(`warning-icon-email`);
     expect(warning).toBeInTheDocument();
 
     // click save. new value saved. just display value
-    const saveBtn = screen.getByText('Save');
-    fireEvent.click(saveBtn);
+    fireEvent.click(screen.getByText('Save'));
 
     await waitFor(() => {
       expect(screen.getByText(SERVER_ERROR_TITLE)).toBeInTheDocument();
     });
-    const OKBtn = screen.getByText('OK');
-    fireEvent.click(OKBtn);
+    fireEvent.click(screen.getByText('OK'));
 
     await waitFor(() => {
       const noSaveBtn = screen.queryByText('Save');
       expect(noSaveBtn).not.toBeInTheDocument();
     });
-    const oldValue = screen.getByText(integration.name);
+    const oldValue = screen.getByText(integration.owner.email);
     expect(oldValue).toBeInTheDocument();
-  });
-
-  test('Should call to get updated integration information when contact is saved', async () => {
-    const integration = getMockResponse()[0];
-    const integrationsResponse = getMockResponse()[1];
-    sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
-    sdkv3.get.mockResolvedValue({ data: { items: [integrationsResponse] } });
-    const cancelMock = jest.fn();
-    const wrapper = renderQueryCacheIntegration(
-      queryCache,
-      PROJECT_ITERA_INT_GREEN,
-      CDF_ENV_GREENFIELD,
-      ORIGIN_DEV,
-      integration
-    );
-    act(() => {
-      render(
-        <DetailsModal
-          visible
-          onCancel={cancelMock}
-          integration={integration}
-        />,
-        { wrapper }
-      );
-    });
-
-    // click first edit btn
-    const editRow = 0;
-    const firstEditBtn = screen.getAllByText('Edit')[editRow];
-    fireEvent.click(firstEditBtn);
-    const nameInput = screen.getByDisplayValue(integration.name); // assuming name is editable
-
-    // change value in input
-    const newValue = 'Something unique';
-    fireEvent.change(nameInput, { target: { value: newValue } });
-    fireEvent.blur(nameInput);
-
-    // click save. new value saved. just display value
-    const saveBtn = screen.getByText('Save');
-    fireEvent.click(saveBtn);
-
-    await waitFor(() => {
-      expect(sdkv3.post).toHaveBeenCalledTimes(1);
-    });
   });
 });

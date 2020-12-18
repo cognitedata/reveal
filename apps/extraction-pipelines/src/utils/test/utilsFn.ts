@@ -89,10 +89,10 @@ export const clickText = async (text: string) => {
   fireEvent.click(btn);
 };
 
-export const removeContact = (newRow: number) => {
-  clickByIdAsync(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
-  notExistsByIdAsync(`${inputNameTestId}${newRow}`);
-  notExistsByIdAsync(`${inputEmailTestId}${newRow}`);
+export const removeContact = async (newRow: number) => {
+  await clickByIdAsync(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
+  await notExistsByIdAsync(`${inputNameTestId}${newRow}`);
+  await notExistsByIdAsync(`${inputEmailTestId}${newRow}`);
 };
 
 export const addNewContact = async (
@@ -100,10 +100,10 @@ export const addNewContact = async (
   name: string,
   email: string
 ) => {
-  clickById(addBtnTestId);
+  await clickById(addBtnTestId);
   await existsByIdAsync(`${inputNameTestId}${newRow}`);
   await existsByIdAsync(`${inputEmailTestId}${newRow}`);
   typeInInput(`${inputNameTestId}${newRow}`, name);
   typeInInput(`${inputEmailTestId}${newRow}`, email);
-  clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
+  await clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
 };

@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { Title } from '@cognite/cogs.js';
-import { GridWithTopMargin } from './ContactsDetails';
+import { GridWithTopMargin } from 'styles/grid/StyledGrid';
 import { useIntegration } from '../../../hooks/details/IntegrationContext';
 import { uppercaseFirstWord } from '../../../utils/primitivesUtils';
 import { FieldGrid } from '../FieldView';

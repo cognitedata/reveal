@@ -4,15 +4,14 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styled from 'styled-components';
+import InputWithWarning from 'components/inputs/InputWithWarning';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
-import ValidationError from './ValidationError';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from '../../utils/contactsUtils';
-import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import { AlignedSpan, GridRowStyle } from './ContactsView';
-import { InputWarningError } from './ContactView';
 import { DetailFieldNames } from '../../model/Integration';
+import ErrorMessageDialog from '../buttons/ErrorMessageDialog';
 
 interface OwnProps {}
 
@@ -51,6 +50,7 @@ const OwnerView: FunctionComponent<Props> = () => {
   const { project } = useAppEnv();
   const [mutateContacts] = useDetailsUpdate();
   const [isEdit, setIsEdit] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
 
   const {
     register,
@@ -77,15 +77,23 @@ const OwnerView: FunctionComponent<Props> = () => {
         fieldName: 'owner',
         fieldValue: owner,
       });
-      await mutateContacts({
-        project,
-        items,
-        id: integration.id,
-      });
-      dispatch({ type: 'UPDATE_OWNER', payload: { owner } });
-      dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'owner' } });
-
-      setIsEdit(false);
+      await mutateContacts(
+        {
+          project,
+          items,
+          id: integration.id,
+        },
+        {
+          onError: () => {
+            setErrorVisible(true);
+          },
+          onSuccess: () => {
+            dispatch({ type: 'UPDATE_OWNER', payload: { owner } });
+            dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'owner' } });
+            setIsEdit(false);
+          },
+        }
+      );
     }
   }
 
@@ -93,6 +101,11 @@ const OwnerView: FunctionComponent<Props> = () => {
     dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'owner' } });
     setIsEdit(false);
   }
+  const handleClickError = () => {
+    setErrorVisible(false);
+    dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'owner' } });
+    setIsEdit(false);
+  };
 
   const onEditClick = () => {
     setIsEdit(true);
@@ -103,58 +116,32 @@ const OwnerView: FunctionComponent<Props> = () => {
   };
   return (
     <>
-      <OwnerGridRowStyle className="contact-row">
+      <OwnerGridRowStyle className="row-style-odd">
         <AlignedDetail strong>{DetailFieldNames.OWNER}</AlignedDetail>
         {isEdit ? (
-          <InputWarningError>
-            <input
-              id="owner-name"
-              name="name"
-              type="text"
-              placeholder="Enter name"
-              onChange={handleChange}
-              className={`cogs-input full-width ${
-                errors.name ? 'has-error' : ''
-              }`}
-              ref={register}
-              defaultValue={integration?.owner.name}
-            />
-            {isDirtyName && (
-              <InputWarningIcon
-                $color={Colors.warning.hex()}
-                data-testid="warning-icon-owner-name"
-                className="waring"
-              />
-            )}
-            <ValidationError errors={errors} name="name" />
-          </InputWarningError>
+          <InputWithWarning
+            name="name"
+            placeholder="Enter name"
+            handleChange={handleChange}
+            register={register}
+            defaultValue={integration?.owner.name}
+            isDirty={isDirtyName}
+            errors={errors}
+          />
         ) : (
           <AlignedSpan>{integration?.owner.name}</AlignedSpan>
         )}
 
         {isEdit ? (
-          <InputWarningError>
-            <input
-              id="owner-email"
-              name="email"
-              type="text"
-              onChange={handleChange}
-              placeholder="Enter email address"
-              className={`cogs-input full-width ${
-                errors.email ? 'has-error' : ''
-              }`}
-              ref={register}
-              defaultValue={integration?.owner.email}
-            />
-            {isDirtyEmail && (
-              <InputWarningIcon
-                $color={Colors.warning.hex()}
-                data-testid="warning-icon-owner-email"
-                className="waring"
-              />
-            )}
-            <ValidationError errors={errors} name="email" />
-          </InputWarningError>
+          <InputWithWarning
+            name="email"
+            placeholder="Enter email address"
+            handleChange={handleChange}
+            register={register}
+            defaultValue={integration?.owner.email}
+            isDirty={isDirtyEmail}
+            errors={errors}
+          />
         ) : (
           <AlignedSpan>{integration?.owner.email}</AlignedSpan>
         )}
@@ -169,14 +156,19 @@ const OwnerView: FunctionComponent<Props> = () => {
             >
               Cancel
             </Button>
-            <Button
-              className="edit-form-btn btn-margin-right"
-              type="primary"
-              onClick={onSave}
-              aria-controls="name email"
+            <ErrorMessageDialog
+              visible={errorVisible}
+              handleClickError={handleClickError}
             >
-              Save
-            </Button>
+              <Button
+                className="edit-form-btn btn-margin-right"
+                type="primary"
+                onClick={onSave}
+                aria-controls="name email"
+              >
+                Save
+              </Button>
+            </ErrorMessageDialog>
           </>
         ) : (
           <>
