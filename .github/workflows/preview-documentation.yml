@@ -92,10 +92,11 @@ jobs:
           directory: reveal-docs-preview
           branch: master
           repository: cognitedata/reveal-docs-preview
+        continue-on-error: true
 
       - name: Retry deploy 🚀 - pull
         working-directory: reveal-docs-preview
-        if: steps.deploy.outcome=='failure'
+        if: failure()
         run: |
           git pull --commit
         
