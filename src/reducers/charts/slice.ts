@@ -60,10 +60,10 @@ const chartsSlice = createSlice({
             {
               id: timeSeries.externalId,
               name: timeSeries.externalId,
-              unit: timeSeries.unit,
+              unit: timeSeries.unit || '*',
               color: getEntryColor(),
               enabled: true,
-              description: timeSeries.description,
+              description: timeSeries.description || '-',
             } as ChartTimeSeries,
             ...(chart?.timeSeriesCollection || []),
           ],
