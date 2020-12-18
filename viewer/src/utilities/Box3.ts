@@ -15,6 +15,11 @@ export class Box3 {
     return vec3.subtract(vec3.create(), this.max, this.min);
   }
 
+  get diagonalLength(): number {
+    const size = this.size;
+    return Math.sqrt(size[0] * size[0] + size[1] * size[1] + size[2] * size[2]);
+  }
+
   static fromBounds(xMin: number, yMin: number, zMin: number, xMax: number, yMax: number, zMax: number): Box3 {
     return new Box3([vec3.fromValues(xMin, yMin, zMin), vec3.fromValues(xMax, yMax, zMax)]);
   }
@@ -25,6 +30,10 @@ export class Box3 {
     return new Box3([min, max]);
   }
 
+  static mergeBoxes(boxes: Box3[]) {
+    return new Box3(boxes.flatMap(x => [x.min, x.max]));
+  }
+
   public readonly min: vec3;
   public readonly max: vec3;
 
@@ -32,13 +41,22 @@ export class Box3 {
     this.min = vec3.fromValues(Infinity, Infinity, Infinity);
     this.max = vec3.fromValues(-Infinity, -Infinity, -Infinity);
     for (const p of points) {
-      this.min[0] = Math.min(p[0], this.min[0]);
-      this.min[1] = Math.min(p[1], this.min[1]);
-      this.min[2] = Math.min(p[2], this.min[2]);
-      this.max[0] = Math.max(p[0], this.max[0]);
-      this.max[1] = Math.max(p[1], this.max[1]);
-      this.max[2] = Math.max(p[2], this.max[2]);
+      this.extendByPoint(p);
     }
+  }
+
+  extendByPoint(p: vec3): void {
+    this.min[0] = Math.min(p[0], this.min[0]);
+    this.min[1] = Math.min(p[1], this.min[1]);
+    this.min[2] = Math.min(p[2], this.min[2]);
+    this.max[0] = Math.max(p[0], this.max[0]);
+    this.max[1] = Math.max(p[1], this.max[1]);
+    this.max[2] = Math.max(p[2], this.max[2]);
+  }
+
+  extendByBox(b: Box3): void {
+    this.extendByPoint(b.min);
+    this.extendByPoint(b.max);
   }
 
   createTransformed(matrix: mat4): Box3 {
