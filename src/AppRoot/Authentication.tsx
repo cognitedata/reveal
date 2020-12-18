@@ -4,8 +4,10 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
 import { authenticate } from 'store/auth/thunks';
 import { fetchSuites } from 'store/suites/thunks';
+import { fetchUserGroups } from 'store/groups/thunks';
 import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
+import { getGroupsState } from 'store/groups/selectors';
 import { Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
@@ -20,31 +22,36 @@ const Authentication = (): JSX.Element => {
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
   );
+  const { loading: groupsLoading, loaded: groupsLoaded } = useSelector(
+    getGroupsState
+  );
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
+
+  const loading = authenticating || suitesLoading || groupsLoading;
+  const ready = authenticated && suitesLoaded && groupsLoaded;
 
   useEffect(() => {
     const auth = async () => {
       await dispatch(authenticate(tenant, client, apiClient));
+      await dispatch(fetchUserGroups(client));
       await dispatch(fetchSuites(apiClient));
       setAuthenticateDispatched(true);
     };
-    if (!authenticateDispatched && !authenticated && !authenticating) {
+    if (!authenticateDispatched && !ready && !loading) {
       auth();
     }
   }, [
     client,
     apiClient,
     tenant,
-    authenticated,
-    authenticating,
     authenticateDispatched,
     dispatch,
-    suitesLoading,
-    suitesLoaded,
+    ready,
+    loading,
   ]);
 
-  return <>{authenticated ? <Routes /> : <Loader />}</>;
+  return <>{ready ? <Routes /> : <Loader />}</>;
 };
 
 export default Authentication;

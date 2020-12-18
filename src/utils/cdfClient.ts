@@ -24,6 +24,10 @@ export class CdfClient {
     return this.cogniteClient.groups.list();
   }
 
+  getAllUserGroups() {
+    return this.cogniteClient.groups.list({ all: true });
+  }
+
   insertTableRow(tableName: string, items: RawDBRowInsert[]) {
     return this.cogniteClient.raw.insertRows(this.dbName, tableName, items);
   }
