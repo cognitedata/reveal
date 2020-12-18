@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer'
+import { Page } from 'puppeteer';
 
 export enum TestCase {
   default = 'default',
@@ -12,38 +12,7 @@ export enum TestCase {
   user_render_target = 'user_render_target',
 }
 
-async function getCIDiv() {
-  let divs = await page.$$('div');
-  let loadingDiv = null;
-  for (let i = 0; i < divs.length; i++) {
-    let div = divs[i];
-    let text = await (await div.getProperty('innerText')).jsonValue();
-    if (text === 'Not ready...') {
-      // Y I K E S
-      loadingDiv = div;
-    }
-  }
-
-  if (loadingDiv == null) {
-    throw new Error(
-      'Could not find a loading div. Is your test running against the correct URL?'
-    );
-  }
-  return loadingDiv;
-}
-
-export async function gotoAndWaitForRender(page: Page, url: string) {
-  await page.goto(url);
-  let loadingDiv = await getCIDiv();
-
-  while ((await loadingDiv.boundingBox()) != null) {
-    await page.waitForTimeout(100);
-  }
-
-  await page.waitForTimeout(500);
-}
-
-export async function removeTestableText() {
+export async function removeTestableText(page: Page) {
   await page.evaluate(() => {
     (document.querySelectorAll('h1, a') || []).forEach((el) => el.remove());
   });
@@ -54,8 +23,13 @@ export async function screenShotTest(page: Page, testCase: TestCase) {
     `https://localhost:3000/testable` +
     (testCase === 'default' ? '' : `?test=${testCase}`);
 
-  await gotoAndWaitForRender(page, url);
-  await removeTestableText();
+  await page.goto(url, {
+    waitUntil: ['domcontentloaded'],
+  });
+
+  await page.waitForSelector('#ready');
+  await removeTestableText(page);
+  await page.waitForTimeout(500);
 
   const image = await page.screenshot({ fullPage: true });
   expect(image).toMatchImageSnapshot({

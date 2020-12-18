@@ -3,8 +3,9 @@ import { Page } from 'puppeteer';
 
 const retry = require('jest-retries');
 
-// jest-circus must be installed for it to work
-jest.retryTimes(3);
+const RETRIES = 3;
+
+jest.retryTimes(RETRIES);
 
 const test_presets = Object.values(TestCase);
 
@@ -26,15 +27,15 @@ function setupConsoleListeners(page: Page) {
 }
 
 describe('Reveal visual tests', () => {
-  const retries = 3;
-
   test_presets.forEach(function (test) {
-    retry(`matches the screenshot for ${test} preset`, retries, async () => {
+    retry(`matches the screenshot for ${test} preset`, RETRIES, async () => {
       const page = await browser.newPage();
 
       setupConsoleListeners(page);
 
       await screenShotTest(page, test);
+
+      await page.close();
     });
   });
 });

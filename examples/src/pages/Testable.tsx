@@ -8,7 +8,7 @@ import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import React, { useEffect, useRef, useState } from 'react';
-import { CanvasWrapper, Loader } from '../components/styled';
+import { CanvasWrapper } from '../components/styled';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
@@ -192,11 +192,11 @@ export function Testable() {
         renderTarget.depthTexture = new THREE.DepthTexture(0, 0);
         renderTarget.depthTexture.format = THREE.DepthFormat;
         renderTarget.depthTexture.type = THREE.UnsignedIntType;
-        
+
         revealManager.setRenderTarget(renderTarget);
 
         const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-          
+
         const geometry = new THREE.Geometry();
         geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
         geometry.vertices.push(new THREE.Vector3(3, -1, 0));
@@ -215,7 +215,7 @@ export function Testable() {
         const mesh2 = new THREE.Mesh(geometry, material2);
         mesh2.rotateY(Math.PI);
         mesh2.position.x = -1.0;
-        
+
         const testScene = new THREE.Scene();
         testScene.add(mesh);
         testScene.add(mesh2);
@@ -254,11 +254,11 @@ export function Testable() {
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
           revealManager.render(renderer, camera, scene);
-          
+
           onRendered.forEach(element => {
             element();
           });
-        
+
           revealManager.resetRedraw();
         }
 
@@ -280,12 +280,20 @@ export function Testable() {
       revealManager?.dispose();
     };
   }, []);
+
+  const readyForScreenshot = !loadingState.isLoading;
+  console.log('readyForScreenshot', loadingState);
+
   return (
-    <CanvasWrapper>
-      <Loader isLoading={loadingState.isLoading} style={{ position: 'absolute' }}>
-        Not ready...
-      </Loader>
-      <canvas ref={canvas} />
-    </CanvasWrapper>
+    <>
+      <CanvasWrapper>
+        <canvas ref={canvas} />
+      </CanvasWrapper>
+      {readyForScreenshot && (
+        <div id="ready" style={{ display: 'none' }}>
+          ready
+        </div>
+      )}
+    </>
   );
 }

@@ -8,5 +8,5 @@ module.exports = {
     globalSetup: "jest-environment-puppeteer/setup",
     globalTeardown: "jest-environment-puppeteer/teardown",
     testEnvironment: "jest-environment-puppeteer",
-    testTimeout: 10 * 1000
+    testTimeout: 30 * 1000
 };
