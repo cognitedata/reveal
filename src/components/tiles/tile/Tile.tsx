@@ -1,5 +1,5 @@
 import React from 'react';
-import { Detail, Overline, Title } from '@cognite/cogs.js';
+import { Detail, Overline, Tooltip } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import {
   TileHeader,
@@ -7,12 +7,13 @@ import {
   TilePreview,
   TileDescription,
   TileOverline,
-} from 'components/tiles/element';
+  StyledTitle,
+} from 'components/tiles/elements';
 import { SuiteRowDelete } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 
 const TilePreviewHeight = '184';
-const TilePreviewWidth = '300';
+const TilePreviewWidth = '298';
 
 interface Props {
   avatar?: boolean;
@@ -60,7 +61,9 @@ export const Tile: React.FC<Props> = ({
             <TileOverline isBoard={isBoard}>
               <Overline level={3}>{dataItem?.type}</Overline>
             </TileOverline>
-            <Title level={6}>{dataItem.title}</Title>
+            <Tooltip content={dataItem.title}>
+              <StyledTitle level={6}>{dataItem.title}</StyledTitle>
+            </Tooltip>
           </TileDescription>
           {menu}
         </TileHeader>

@@ -7,7 +7,6 @@ import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { Suite, Board } from 'store/suites/types';
 import isEqual from 'lodash/isEqual';
-import isUndefined from 'lodash/isUndefined';
 import { MultiStepModalFooter } from 'components/modals/elements';
 import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
@@ -61,11 +60,7 @@ export const MultiStepModal: React.FC<Props> = ({
         </Button>
         <div>
           {isEqual(step, 'suite') && (
-            <Button
-              type="secondary"
-              onClick={nextStep}
-              disabled={isUndefined(board)}
-            >
+            <Button type="secondary" onClick={nextStep}>
               {modalSettings.buttons[step].goToBoards}
             </Button>
           )}

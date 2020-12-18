@@ -26,8 +26,8 @@ const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
   };
 
   const handleDeleteSuite = async () => {
-    await dispatch(deleteSuite(client, apiClient, [{ key: dataItem.key }]));
     handleClose();
+    await dispatch(deleteSuite(client, apiClient, [{ key: dataItem.key }]));
     history.push('/');
   };
 

@@ -5,6 +5,6 @@ export const suiteEmpty: Suite = {
   key: key(),
   title: '',
   description: '',
-  color: '#F4DAF8',
+  color: '',
   boards: [],
 };

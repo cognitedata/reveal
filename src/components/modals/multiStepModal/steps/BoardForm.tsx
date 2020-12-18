@@ -1,24 +1,20 @@
 import React from 'react';
-import { A, Body, Button, Input, Select, Micro } from '@cognite/cogs.js';
+import { A, Button, Input, Micro, Tooltip } from '@cognite/cogs.js';
 import {
-  SelectLabel,
-  SelectContainer,
   FormContainer,
   BoardsContainer,
   AddedBoardItem,
   StyledCheckIcon,
   StyledTitle,
-  ActionButtons,
+  StyledBody,
 } from 'components/modals/elements';
-import { key } from '_helpers/generateKey';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
-import cloneDeep from 'lodash/cloneDeep';
-import merge from 'lodash/merge';
-import omit from 'lodash/omit';
 import { Flex } from 'styles/common';
 import { Board, Suite } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
+import ActionButtons from './ActionButtons';
+import BoardTypeSelector from './BoardTypeSelector';
 
 interface Props {
   suite: Suite;
@@ -27,34 +23,17 @@ interface Props {
   setBoard: TS_FIX_ME;
 }
 
-const options = [
-  { value: 'grafana', label: 'Grafana' },
-  { value: 'powerbi', label: 'PowerBI' },
-  { value: 'plotly', label: 'Plotly' },
-  { value: 'application', label: 'Application' },
-  { value: 'other', label: 'Other' },
-];
-
 export const BoardForm: React.FC<Props> = ({
   suite,
   board,
   setSuite,
   setBoard,
 }: Props) => {
-  const isBoardsEmpty = isEmpty(suite?.boards);
-
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
     setBoard((prevState: Board) => ({
       ...prevState,
       [name]: value,
-    }));
-  };
-
-  const handleBoardTypeChange = (selectedOption: TS_FIX_ME) => {
-    setBoard((prevState: Board) => ({
-      ...prevState,
-      type: selectedOption.value,
     }));
   };
 
@@ -71,38 +50,6 @@ export const BoardForm: React.FC<Props> = ({
       setBoard(updatedBoardList[0] || {});
     }
   };
-
-  const addNewBoard = () => {
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      boards: suite.boards.concat({ ...board, key: key() }),
-    }));
-    setBoard({});
-  };
-
-  const updateBoard = () => {
-    const boardIndex = suite.boards.findIndex((element: Board) =>
-      isEqual(element.key, board.key)
-    );
-    const boardsCopy = cloneDeep(suite.boards);
-    boardsCopy[boardIndex] = merge(boardsCopy[boardIndex], board);
-    setSuite((prevState: Suite) => {
-      return omit(
-        {
-          ...prevState,
-          boards: boardsCopy,
-        },
-        'lastUpdatedTime'
-      );
-    });
-  };
-
-  const clearForm = () => {
-    setBoard({});
-  };
-
-  const boardTypeValue = () =>
-    options.find((option) => isEqual(option.value, board.type)) || null;
   return (
     <>
       <Flex>
@@ -117,18 +64,7 @@ export const BoardForm: React.FC<Props> = ({
             onChange={handleOnChange}
             fullWidth
           />
-          <SelectContainer>
-            <SelectLabel>Select type</SelectLabel>
-            <Select
-              theme="grey"
-              placeholder="Select type"
-              name="type"
-              value={boardTypeValue() || null}
-              onChange={handleBoardTypeChange}
-              options={options}
-              closeMenuOnSelect
-            />
-          </SelectContainer>
+          <BoardTypeSelector board={board} setBoard={setBoard} />
           <Input
             autoComplete="off"
             title="URL"
@@ -149,25 +85,15 @@ export const BoardForm: React.FC<Props> = ({
             onChange={handleOnChange}
             fullWidth
           />
-          <ActionButtons>
-            {board.key && !isBoardsEmpty ? (
-              <>
-                <Button variant="ghost" onClick={clearForm}>
-                  Cancel
-                </Button>
-                <Button type="primary" onClick={updateBoard}>
-                  Update board
-                </Button>
-              </>
-            ) : (
-              <Button type="primary" onClick={addNewBoard}>
-                Add board
-              </Button>
-            )}
-          </ActionButtons>
+          <ActionButtons
+            board={board}
+            suite={suite}
+            setBoard={setBoard}
+            setSuite={setSuite}
+          />
         </FormContainer>
         <BoardsContainer>
-          <StyledTitle empty={isBoardsEmpty}>Added boards</StyledTitle>
+          <StyledTitle empty={isEmpty(suite?.boards)}>Added boards</StyledTitle>
           {suite?.boards?.map((boardItem: Board) => {
             return (
               <AddedBoardItem
@@ -176,7 +102,9 @@ export const BoardForm: React.FC<Props> = ({
                 selected={isEqual(boardItem.key, board?.key)}
               >
                 <StyledCheckIcon type="Check" />
-                <Body level={4}>{boardItem.title}</Body>
+                <Tooltip content={boardItem.title}>
+                  <StyledBody level={4}>{boardItem.title}</StyledBody>
+                </Tooltip>
                 <Button
                   unstyled
                   onClick={(event) => deleteBoard(event, boardItem.key)}
@@ -186,8 +114,8 @@ export const BoardForm: React.FC<Props> = ({
             );
           })}
           <Micro>
-            Giving the user information something like Make sure groups are
-            set-up in Azure AD, see our{' '}
+            To give access to the right groups, make sure groups are set-up
+            correctly in Azure AD, see our{' '}
             <A href="#" isExternal>
               documentation
             </A>
