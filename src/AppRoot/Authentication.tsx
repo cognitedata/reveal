@@ -19,26 +19,29 @@ const Authentication = (): JSX.Element => {
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const { authenticating, authenticated } = useSelector(getAuthState);
-  const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
-    getSuitesTableState
-  );
-  const { loading: groupsLoading, loaded: groupsLoaded } = useSelector(
-    getGroupsState
-  );
+  const {
+    loading: suitesLoading,
+    loaded: suitesLoaded,
+    error: suitesLoadError,
+  } = useSelector(getSuitesTableState);
+  const {
+    loading: groupsLoading,
+    loaded: groupsLoaded,
+    error: groupsLoadError,
+  } = useSelector(getGroupsState);
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
 
   const loading = authenticating || suitesLoading || groupsLoading;
-  const ready = authenticated && suitesLoaded && groupsLoaded;
+  const fetched = suitesLoaded && groupsLoaded;
+  const hasError = suitesLoadError || groupsLoadError;
 
   useEffect(() => {
     const auth = async () => {
       await dispatch(authenticate(tenant, client, apiClient));
-      await dispatch(fetchUserGroups(client));
-      await dispatch(fetchSuites(apiClient));
       setAuthenticateDispatched(true);
     };
-    if (!authenticateDispatched && !ready && !loading) {
+    if (!authenticateDispatched && !authenticating && !authenticated) {
       auth();
     }
   }, [
@@ -47,11 +50,29 @@ const Authentication = (): JSX.Element => {
     tenant,
     authenticateDispatched,
     dispatch,
-    ready,
-    loading,
+    authenticating,
+    authenticated,
   ]);
 
-  return <>{ready ? <Routes /> : <Loader />}</>;
+  useEffect(() => {
+    const fetch = async () => {
+      await dispatch(fetchUserGroups(client));
+      await dispatch(fetchSuites(apiClient));
+    };
+    if (authenticated && !fetched && !loading && !hasError) {
+      fetch();
+    }
+  }, [client, apiClient, dispatch, authenticated, fetched, loading, hasError]);
+
+  if (hasError) {
+    return (
+      <>
+        <body>Failed to fetch data from database</body>
+      </>
+    );
+  }
+
+  return <>{authenticated && fetched ? <Routes /> : <Loader />}</>;
 };
 
 export default Authentication;

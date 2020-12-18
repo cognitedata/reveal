@@ -14,6 +14,7 @@ describe('<Home />', () => {
   test('renders No suites loaded', async () => {
     const initialState = {
       suitesTable: [],
+      groups: [],
     };
     store = mockStore(initialState);
     render(
