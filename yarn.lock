@@ -1076,9 +1076,10 @@
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/react-loop-detector/-/react-loop-detector-0.0.1.tgz#e5bbdf26147e62ce8594f63adde09e33be63e1e5"
 
-"@cognite/sdk-core@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.3.tgz#203e504947a0d481656c34d1d71a0caebd2bcb12"
+"@cognite/sdk-core@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.4.tgz#f1a1cb8b677ddffa5d409d91f0ed64acff623426"
+  integrity sha512-WcCauuBr/K4yz/eO66QwXnw/iC8PCHxlmBZMNY95sJUhfZosK80jhBGKZew8vvT0VKNB7TPZ/3eUsqSpE0BmaQ==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1086,11 +1087,12 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.0.tgz#49f766f63931f8716a997c2af5eb45f0cb3849b2"
+"@cognite/sdk@^3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.2.tgz#757421933531ff42202f7ac8dc5af579a8347065"
+  integrity sha512-6jrHQR0PrABfX28TctF8V4Ns7lsJGTfKX0wHvJ9vwTwh1nq7lLcr9GsleSY1xvTEuDi4Oaupjyn7/53m64O2Ew==
   dependencies:
-    "@cognite/sdk-core" "^1.0.3"
+    "@cognite/sdk-core" "^1.0.4"
     lodash "^4.17.11"
 
 "@csstools/convert-colors@^1.4.0":
