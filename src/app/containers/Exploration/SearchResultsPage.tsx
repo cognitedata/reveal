@@ -7,6 +7,8 @@ import {
   SequenceSearchResults,
   TimeseriesSearchResults,
   EventSearchResults,
+  getTitle,
+  ResourceType,
 } from 'lib';
 import { Row, Col } from 'antd';
 import { trackUsage } from 'app/utils/Metrics';
@@ -28,6 +30,7 @@ import { SEARCH_KEY, CART_KEY } from 'app/utils/contants';
 import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
 import { useDateRange } from 'app/context/DateRangeContext';
+import { PageTitle } from '@cognite/cdf-utilities';
 import FilterToggleButton from './FilterToggleButton';
 import { LabelsQuickSelect } from './LabelsQuickSelect';
 
@@ -39,6 +42,10 @@ const Wrapper = styled.div`
   background: #fff;
   overflow: hidden;
 `;
+
+const getPageTitle = (query: string, resourceType: ResourceType): string => {
+  return `${query}${query ? ' in' : ''}  ${getTitle(resourceType, true)}`;
+};
 
 function SearchPage() {
   const [currentResourceType] = useCurrentResourceType();
@@ -254,7 +261,12 @@ export const SearchResultsPage = () => {
     }
   }, [resourceType, query]);
 
-  return <SearchPage />;
+  return (
+    <>
+      <PageTitle title={getPageTitle(query, resourceType)} />
+      <SearchPage />
+    </>
+  );
 };
 
 const SearchResultWrapper = styled.div`

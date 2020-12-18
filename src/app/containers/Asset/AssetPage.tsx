@@ -1,5 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { PageTitle } from '@cognite/cdf-utilities';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { Asset } from '@cognite/sdk';
 import { AssetPreview } from './AssetPreview';
 
 export const AssetPage = () => {
@@ -9,9 +12,22 @@ export const AssetPage = () => {
 
   const assetId = parseInt(assetIdString, 10);
 
+  const { data: asset } = useCdfItem<Asset>(
+    'assets',
+    { id: assetId },
+    {
+      enabled: !!assetId,
+    }
+  );
+
   if (!assetIdString) {
     return null;
   }
 
-  return <AssetPreview assetId={assetId} />;
+  return (
+    <>
+      <PageTitle title={asset?.name} />
+      <AssetPreview assetId={assetId} />
+    </>
+  );
 };
