@@ -63,6 +63,7 @@ const chartsSlice = createSlice({
               unit: timeSeries.unit,
               color: getEntryColor(),
               enabled: true,
+              description: timeSeries.description,
             } as ChartTimeSeries,
             ...(chart?.timeSeriesCollection || []),
           ],

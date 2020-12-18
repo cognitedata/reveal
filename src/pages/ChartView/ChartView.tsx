@@ -272,24 +272,28 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       </th>
       {!isEditorMode && (
         <>
-          <th style={{ width: 300 }}>
-            <SourceItem>
-              <SourceName>Source</SourceName>
-            </SourceItem>
-          </th>
           <th style={{ width: 100 }}>
             <SourceItem>
               <SourceName>Unit</SourceName>
             </SourceItem>
           </th>
-          <th> </th>
+          <th style={{ width: 300 }}>
+            <SourceItem>
+              <SourceName>Source</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Description</SourceName>
+            </SourceItem>
+          </th>
         </>
       )}
     </tr>
   );
 
   const timeseriesRows = chart.timeSeriesCollection?.map(
-    ({ id, name, color, enabled, unit }: ChartTimeSeries) => {
+    ({ id, name, color, enabled, unit, description }: ChartTimeSeries) => {
       const handleClick = !isEditorMode ? () => setActiveSourceItem(id) : noop;
 
       return (
@@ -316,18 +320,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                       <Menu.Header>
                         <span style={{ wordBreak: 'break-word' }}>{id}</span>
                       </Menu.Header>
-                      <Menu.Submenu
-                        content={
-                          <Menu>
-                            <Menu.Header>Select unit</Menu.Header>
-                            <Menu.Item>PSI</Menu.Item>
-                            <Menu.Item>bar</Menu.Item>
-                            <Menu.Item>Pa</Menu.Item>
-                          </Menu>
-                        }
-                      >
-                        <span>Unit: {unit}</span>
-                      </Menu.Submenu>
                       <Menu.Item
                         onClick={() => handleRenameTimeSeries(id)}
                         appendIcon="Edit"
@@ -344,7 +336,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                         onClick={() => handleConvertToWorkflow(id)}
                         appendIcon="Timeseries"
                       >
-                        <span>Convert to workflow</span>
+                        <span>Convert to calculation</span>
                       </Menu.Item>
                     </Menu>
                   }
@@ -357,16 +349,35 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           {!isEditorMode && (
             <>
               <td>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>
+                        <span style={{ wordBreak: 'break-word' }}>
+                          Select unit
+                        </span>
+                      </Menu.Header>
+                      <Menu.Item>PSI</Menu.Item>
+                      <Menu.Item>Bar</Menu.Item>
+                      <Menu.Item>Bar(g)</Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <SourceItem>
+                    <SourceName>{unit}</SourceName>
+                  </SourceItem>
+                </Dropdown>
+              </td>
+              <td>
                 <SourceItem>
                   <SourceName>{id}</SourceName>
                 </SourceItem>
               </td>
               <td>
                 <SourceItem>
-                  <SourceName>{unit}</SourceName>
+                  <SourceName>{description}</SourceName>
                 </SourceItem>
               </td>
-              <td />
             </>
           )}
         </SourceRow>
@@ -433,15 +444,19 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <>
             <td>
               <SourceItem>
+                <SourceName>*</SourceName>
+              </SourceItem>
+            </td>
+            <td>
+              <SourceItem>
                 <SourceName>Calculation</SourceName>
               </SourceItem>
             </td>
             <td>
               <SourceItem>
-                <SourceName>*</SourceName>
+                <SourceName>-</SourceName>
               </SourceItem>
             </td>
-            <td />
           </>
         )}
       </SourceRow>

@@ -14,6 +14,7 @@ export type ChartTimeSeries = {
   color: string;
   enabled: boolean;
   unit?: string;
+  description?: string;
 };
 
 export type ChartWorkflow = {
