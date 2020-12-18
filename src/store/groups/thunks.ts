@@ -16,6 +16,18 @@ export const fetchUserGroups = (client: CdfClient) => async (
   }
 };
 
+export const fetchAllUserGroups = (client: CdfClient) => async (
+  dispatch: RootDispatcher
+) => {
+  dispatch(actions.loadAllGroups());
+  try {
+    const groups: Group[] = await client.getAllUserGroups();
+    dispatch(actions.loadedAllGroups(groups));
+  } catch (e) {
+    dispatch(actions.loadGroupsError(e));
+  }
+};
+
 export const checkIsAdmin = (groups: Group[]): boolean => {
   return getGroupNames(groups).includes(ADMIN_GROUP_NAME);
 };

@@ -4,10 +4,10 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
 import { authenticate } from 'store/auth/thunks';
 import { fetchSuites } from 'store/suites/thunks';
-import { fetchUserGroups } from 'store/groups/thunks';
+import { fetchAllUserGroups, fetchUserGroups } from 'store/groups/thunks';
 import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
-import { getGroupsState } from 'store/groups/selectors';
+import { getGroupsState, isAdmin } from 'store/groups/selectors';
 import { Body, Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
@@ -31,9 +31,13 @@ const Authentication = (): JSX.Element => {
   } = useSelector(getGroupsState);
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
+  const [fetchAllGroupsDispatched, setFetchAllGroupsDispatched] = useState(
+    false
+  );
+  const [fetchDispatched, setFetchDispatched] = useState(false);
 
   const loading = authenticating || suitesLoading || groupsLoading;
-  const fetched = suitesLoaded && groupsLoaded;
+  const dataLoaded = suitesLoaded && groupsLoaded;
   const hasError = suitesLoadError || groupsLoadError;
 
   useEffect(() => {
@@ -56,13 +60,31 @@ const Authentication = (): JSX.Element => {
 
   useEffect(() => {
     const fetch = async () => {
+      setFetchDispatched(true);
       await dispatch(fetchUserGroups(client));
       await dispatch(fetchSuites(apiClient));
     };
-    if (authenticated && !fetched && !loading && !hasError) {
+    if (authenticated && !fetchDispatched && !loading && !hasError) {
       fetch();
     }
-  }, [client, apiClient, dispatch, authenticated, fetched, loading, hasError]);
+  }, [
+    client,
+    apiClient,
+    dispatch,
+    authenticated,
+    loading,
+    hasError,
+    fetchDispatched,
+  ]);
+
+  const admin = useSelector(isAdmin);
+
+  useEffect(() => {
+    if (admin && !fetchAllGroupsDispatched && !loading) {
+      dispatch(fetchAllUserGroups(client));
+      setFetchAllGroupsDispatched(true);
+    }
+  }, [client, dispatch, admin, fetchAllGroupsDispatched, loading]);
 
   if (hasError) {
     return (
@@ -72,7 +94,7 @@ const Authentication = (): JSX.Element => {
     );
   }
 
-  return <>{authenticated && fetched ? <Routes /> : <Loader />}</>;
+  return <>{authenticated && dataLoaded ? <Routes /> : <Loader />}</>;
 };
 
 export default Authentication;
