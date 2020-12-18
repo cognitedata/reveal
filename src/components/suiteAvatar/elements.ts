@@ -15,22 +15,22 @@ export const SuiteAvatarContainer = styled.div<{
 `;
 
 export const Default = styled.div`
-  width: 32px;
+  min-width: 32px;
   font-size: 13px;
   font-weight: 500;
   line-height: 20px;
 `;
 
 export const Medium = styled.div`
-  width: 36px;
+  min-width: 36px;
 `;
 
 export const Large = styled.div`
-  width: 48px;
+  min-width: 48px;
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
   padding-top: 14px;
   padding-bottom: 14px;
-  border-radius: 4px 0 0 4px;
+  border-radius: 0;
 `;

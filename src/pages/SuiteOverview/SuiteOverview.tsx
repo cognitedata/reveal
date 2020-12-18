@@ -1,28 +1,29 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Graphic, Loader, Title } from '@cognite/cogs.js';
+import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
-import MeatballsMenu from 'components/menus';
+import { BoardMenu, SuiteMenu } from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
-import {
-  getDashboarsdBySuite,
-  getSuitesTableState,
-} from 'store/suites/selectors';
-import { useSelector } from 'react-redux';
+import { getBoardsBySuite, getSuitesTableState } from 'store/suites/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatcher } from 'store/types';
+import { modalOpen } from 'store/modals/actions';
+import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
 import { StyledTitle, NoBoardsContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
+  const dispatch = useDispatch<RootDispatcher>();
 
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
   );
 
-  const suite: Suite = useSelector(getDashboarsdBySuite(id)) as Suite;
+  const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
 
   if (!suitesLoaded) {
     return null;
@@ -38,6 +39,10 @@ const SuiteOverview: React.FC = () => {
 
   const { title, color, boards } = suite || {};
 
+  const handleOpenModal = (modalType: ModalType, modalProps: any) => {
+    dispatch(modalOpen({ modalType, modalProps }));
+  };
+
   const Header = () => {
     return (
       <>
@@ -45,7 +50,7 @@ const SuiteOverview: React.FC = () => {
         <Title as={StyledTitle} level={5}>
           {title}
         </Title>
-        <MeatballsMenu dataItem={suite} />
+        <SuiteMenu dataItem={suite} />
       </>
     );
   };
@@ -53,8 +58,17 @@ const SuiteOverview: React.FC = () => {
     <>
       <Suitebar
         leftCustomHeader={<Header />}
-        // TODO(dtc-191)
-        // actionButton={<AddBoardModal buttonText="Add board" />}
+        actionButton={
+          <Button
+            variant="outline"
+            type="secondary"
+            icon="Plus"
+            iconPlacement="left"
+            onClick={() => handleOpenModal('AddBoard', { dataItem: suite })}
+          >
+            Add board
+          </Button>
+        }
       />
       <OverviewContainer>
         <TilesContainer>
@@ -67,13 +81,19 @@ const SuiteOverview: React.FC = () => {
             <>
               <Title level={6}>All boards</Title>
               {boards?.map((board: Board) => (
-                <Tile
+                <a
+                  href={board.url}
                   key={board.key}
-                  linkTo={board.url}
-                  dataItem={board}
-                  color={color}
-                  view="board"
-                />
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Tile
+                    dataItem={board}
+                    color={color}
+                    view="board"
+                    menu={<BoardMenu suite={suite} board={board} />}
+                  />
+                </a>
               ))}
             </>
           )}

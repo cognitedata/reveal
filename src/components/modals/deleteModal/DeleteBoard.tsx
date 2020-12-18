@@ -1,46 +1,49 @@
 import React, { useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 import { RootDispatcher } from 'store/types';
-import { deleteSuite } from 'store/suites/thunks';
+import { insertSuite } from 'store/suites/thunks';
 import { modalClose } from 'store/modals/actions';
 import { Button, Body, Title } from '@cognite/cogs.js';
-import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
-import { TS_FIX_ME } from 'types/core';
+import { Board, Suite } from 'store/suites/types';
 
 interface Props {
-  dataItem: TS_FIX_ME;
+  suite: Suite;
+  board: Board;
 }
 
-const DeleteModal: React.FC<Props> = ({ dataItem }: Props) => {
-  const history = useHistory();
+const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
 
-  const handleClose = () => {
+  const handleCloseModal = () => {
     dispatch(modalClose());
   };
 
   const handleDeleteSuite = async () => {
-    await dispatch(deleteSuite(client, apiClient, [{ key: dataItem.key }]));
-    handleClose();
-    history.push('/');
+    handleCloseModal();
+    await dispatch(
+      insertSuite(client, apiClient, {
+        ...suite,
+        boards: suite.boards.filter((item) => item.key !== board.key),
+      })
+    );
   };
 
   const footer = (
     <DeleteModalFooter>
-      <Button onClick={handleClose}>Keep Suite</Button>
+      <Button onClick={handleCloseModal}>Keep Board</Button>
       <Button
         type="danger"
         icon="Trash"
         iconPlacement="left"
         onClick={handleDeleteSuite}
       >
-        Delete Suite
+        Remove Board
       </Button>
     </DeleteModalFooter>
   );
@@ -49,21 +52,19 @@ const DeleteModal: React.FC<Props> = ({ dataItem }: Props) => {
     <>
       <Modal
         visible
-        onCancel={handleClose}
-        headerText="Delete this suite?"
+        onCancel={handleCloseModal}
+        headerText="Remove board?"
         footer={footer}
         width={400}
         underlineColor="#db0657"
       >
         <ModalContainer>
-          <Title level={5}>Delete &quot;{dataItem.title}&quot;?</Title>
-          <Body level={1}>
-            The suite and all its configured boards will be deleted permanently
-          </Body>
+          <Title level={5}>Remove &quot;{board.title}&quot;?</Title>
+          <Body level={1}>It will be removed permanently</Body>
         </ModalContainer>
       </Modal>
     </>
   );
 };
 
-export default DeleteModal;
+export default DeleteBoard;

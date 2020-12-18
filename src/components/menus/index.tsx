@@ -1,1 +1,2 @@
-export { default } from './MeatballsMenu';
+export * from './SuiteMenu';
+export * from './BoardMenu';

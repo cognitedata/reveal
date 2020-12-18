@@ -1,33 +1,41 @@
 import React from 'react';
 import { Input } from '@cognite/cogs.js';
 import { Suite } from 'store/suites/types';
+import { TS_FIX_ME } from 'types/core';
+import ColorSelector from './ColorSelector';
 
 interface Props {
-  handleOnChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  suiteValues: Suite;
+  suite: Suite;
+  setSuite: TS_FIX_ME;
 }
 
-export const SuiteStep: React.FC<Props> = ({
-  handleOnChange,
-  suiteValues,
-}: Props) => {
+export const SuiteForm: React.FC<Props> = ({ suite, setSuite }: Props) => {
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = event.target;
+    setSuite((prevState: Suite) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <Input
         autoComplete="off"
         title="Title"
         name="title"
-        value={suiteValues.title}
+        value={suite.title}
         variant="noBorder"
         placeholder="Name of suite"
         onChange={handleOnChange}
         fullWidth
       />
+      <ColorSelector suite={suite} setSuite={setSuite} />
       <Input
         autoComplete="off"
         title="Description"
         name="description"
-        value={suiteValues.description}
+        value={suite.description}
         variant="noBorder"
         placeholder="Description that clearly explains the purpose of the suite"
         onChange={handleOnChange}

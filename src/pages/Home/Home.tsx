@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { Loader, Title, Button } from '@cognite/cogs.js';
 import Suitebar from 'components/suitebar/Suitebar';
 import { SmallTile, Tile } from 'components/tiles';
+import { SuiteMenu } from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useSelector, useDispatch } from 'react-redux';
+import { RootDispatcher } from 'store/types';
 import { Suite } from 'store/suites/types';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { modalOpen } from 'store/modals/actions';
@@ -16,7 +18,7 @@ import { SmallTilesContainer } from './elements';
 const Home = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation('Home');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<RootDispatcher>();
   const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
     getSuitesTableState
   );
@@ -67,12 +69,14 @@ const Home = () => {
           <Title level={6}>Pinned</Title>
           {suites?.map((suite: Suite) => {
             return (
-              <Tile
-                key={suite.key}
-                linkTo={`/suites/${suite.key}`}
-                dataItem={suite}
-                avatar
-              />
+              <Link to={`/suites/${suite.key}`} key={suite.key}>
+                <Tile
+                  key={suite.key}
+                  dataItem={suite}
+                  menu={<SuiteMenu dataItem={suite} />}
+                  avatar
+                />
+              </Link>
             );
           })}
         </TilesContainer>
@@ -80,12 +84,14 @@ const Home = () => {
           <Title level={6}>All suites</Title>
           {suites?.map((suite: Suite) => {
             return (
-              <Tile
-                key={suite.key}
-                linkTo={`/suites/${suite.key}`}
-                dataItem={suite}
-                avatar
-              />
+              <Link to={`/suites/${suite.key}`} key={suite.key}>
+                <Tile
+                  key={suite.key}
+                  dataItem={suite}
+                  menu={<SuiteMenu dataItem={suite} />}
+                  avatar
+                />
+              </Link>
             );
           })}
         </TilesContainer>

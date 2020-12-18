@@ -41,6 +41,9 @@ export const SelectLabel = styled.p`
 
 export const SelectContainer = styled.div`
   margin-bottom: 16px;
+  & .cogs-select__single-value {
+    color: var(--cogs-black);
+  }
 `;
 
 export const MultiStepModalFooter = styled(SpaceBetween)`
@@ -97,13 +100,25 @@ export const StyledCheckIcon = styled(Icon)`
   color: var(--cogs-midblue-3);
 `;
 
+export const StyledTitle = styled.p<{ empty: boolean }>`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${({ empty }) =>
+    empty ? 'var(--cogs-greyscale-grey5)' : 'var(--cogs-greyscale-grey9)'};
+`;
+
 export const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 520px;
   padding-right: 36px;
   border-right: 1px solid var(--cogs-greyscale-grey5);
-  & > :last-child {
-    margin-left: auto;
-  }
 `;
+
+export const ActionButtonsContainer = styled.div`
+  display flex;
+  margin-left: auto;
+  & > .cogs-btn {
+    margin-left: 16px;
+  }
+  `;

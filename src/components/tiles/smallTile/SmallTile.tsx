@@ -1,7 +1,11 @@
 import React from 'react';
-import { Body, Title } from '@cognite/cogs.js';
+import { Body, Tooltip } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
-import { SmallTileContainer, TileDescription } from 'components/tiles/element';
+import {
+  SmallTileContainer,
+  TileDescription,
+  StyledTitle,
+} from 'components/tiles/element';
 
 interface Props {
   title: string;
@@ -13,7 +17,9 @@ export const SmallTile: React.FC<Props> = ({ title, color }: Props) => {
     <SmallTileContainer>
       <SuiteAvatar size="large" title={title} color={color} />
       <TileDescription>
-        <Title level={6}>{title}</Title>
+        <Tooltip content={title}>
+          <StyledTitle level={6}>{title}</StyledTitle>
+        </Tooltip>
         <Body level={3}>description</Body>
       </TileDescription>
     </SmallTileContainer>

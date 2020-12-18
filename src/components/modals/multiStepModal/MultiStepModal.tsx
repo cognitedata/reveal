@@ -7,12 +7,11 @@ import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { Suite, Board } from 'store/suites/types';
 import isEqual from 'lodash/isEqual';
-import isUndefined from 'lodash/isUndefined';
 import { MultiStepModalFooter } from 'components/modals/elements';
 import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
 import { ApiClientContext } from 'providers/ApiClientProvider';
-import { SuiteStep, BoardStep } from './steps';
+import { BoardForm, SuiteForm } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
 
@@ -21,7 +20,6 @@ type Step = 'suite' | 'boards';
 interface Props {
   suite: Suite;
   board: Board;
-  boardAction: () => void;
   setSuite: TS_FIX_ME;
   setBoard: TS_FIX_ME;
   modalSettings: TS_FIX_ME;
@@ -30,7 +28,6 @@ interface Props {
 export const MultiStepModal: React.FC<Props> = ({
   suite,
   board,
-  boardAction,
   setSuite,
   setBoard,
   modalSettings,
@@ -45,61 +42,25 @@ export const MultiStepModal: React.FC<Props> = ({
     setStep('boards');
   };
 
-  const handleClose = () => {
+  const handleCloseModal = () => {
     dispatch(modalClose());
   };
 
   const handleSubmit = async () => {
+    handleCloseModal();
     await dispatch(insertSuite(client, apiClient, suite));
-    handleClose();
     history.push(`/suites/${suite.key}`);
-  };
-
-  const handleSuiteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.target;
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.target;
-    setBoard((prevState: Board) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleBoardTypeChange = (selectedOption: TS_FIX_ME) => {
-    setBoard((prevState: Board) => ({
-      ...prevState,
-      type: selectedOption.value,
-    }));
-  };
-
-  const deleteBoard = (event: React.MouseEvent, key: string) => {
-    event.stopPropagation();
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      boards: suite.boards.filter((item) => item.key !== key),
-    }));
-    setBoard(suite.boards[0]);
   };
 
   const Footer = () => {
     return (
       <MultiStepModalFooter>
-        <Button variant="ghost" onClick={handleClose}>
+        <Button variant="ghost" onClick={handleCloseModal}>
           Cancel
         </Button>
         <div>
           {isEqual(step, 'suite') && (
-            <Button
-              type="secondary"
-              onClick={nextStep}
-              disabled={isUndefined(board)}
-            >
+            <Button type="secondary" onClick={nextStep}>
               {modalSettings.buttons[step].goToBoards}
             </Button>
           )}
@@ -113,28 +74,21 @@ export const MultiStepModal: React.FC<Props> = ({
   return (
     <Modal
       visible
-      onCancel={handleClose}
+      onCancel={handleCloseModal}
       headerText={modalSettings.header[step]}
       width={modalSettings.width[step]}
       footer={<Footer />}
     >
       <ModalContainer>
         {isEqual(step, 'suite') && (
-          <SuiteStep handleOnChange={handleSuiteChange} suiteValues={suite} />
+          <SuiteForm suite={suite} setSuite={setSuite} />
         )}
         {isEqual(step, 'boards') && (
-          <BoardStep
-            handleOnChange={handleBoardChange}
-            handleBoardTypeChange={handleBoardTypeChange}
-            actionButton={
-              <Button type="secondary" onClick={boardAction}>
-                {modalSettings.buttons.boards.board}
-              </Button>
-            }
-            boards={suite?.boards}
-            boardValues={board}
-            setNewBoard={setBoard}
-            deleteBoard={deleteBoard}
+          <BoardForm
+            suite={suite}
+            board={board}
+            setSuite={setSuite}
+            setBoard={setBoard}
           />
         )}
       </ModalContainer>
