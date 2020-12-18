@@ -26,9 +26,7 @@ const Authentication = (): JSX.Element => {
   useEffect(() => {
     const auth = async () => {
       await dispatch(authenticate(tenant, client, apiClient));
-      // TODO(DTC-194) uncomment to use apiClient when get middleware running on a remote server
-      // await dispatch(fetchSuites(apiClient));
-      await dispatch(fetchSuites(client));
+      await dispatch(fetchSuites(apiClient));
       setAuthenticateDispatched(true);
     };
     if (!authenticateDispatched && !authenticated && !authenticating) {

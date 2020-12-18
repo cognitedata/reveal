@@ -7,6 +7,7 @@ type Sidecar = {
   applicationName: string;
   appsApiBaseUrl: string;
   cdfApiBaseUrl: string;
+  digitalCockpitApiBaseUrl: string;
   docsSiteBaseUrl: string;
   nomaApiBaseUrl: string;
 };
@@ -16,9 +17,10 @@ const sidecar = merge(
   {
     __sidecarFormatVersion: 1,
     applicationId: 'fas-demo',
-    applicationName: 'React Demo (staging)',
+    applicationName: 'Digital Cockpit (dev)',
     appsApiBaseUrl: 'https://development.apps-api.cognite.ai',
     cdfApiBaseUrl: 'https://api.cognitedata.com',
+    digitalCockpitApiBaseUrl: 'https://digital-cockpit-api.staging.cognite.ai',
     docsSiteBaseUrl: 'https://docs.cognite.com',
     nomaApiBaseUrl: 'https://noma.development.cognite.ai',
   },

@@ -11,6 +11,7 @@ import isUndefined from 'lodash/isUndefined';
 import { MultiStepModalFooter } from 'components/modals/elements';
 import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 import { SuiteStep, BoardStep } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
@@ -35,6 +36,7 @@ export const MultiStepModal: React.FC<Props> = ({
   modalSettings,
 }: Props) => {
   const client = useContext(CdfClientContext);
+  const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const [step, setStep] = useState<Step>('suite');
   const history = useHistory();
@@ -48,7 +50,7 @@ export const MultiStepModal: React.FC<Props> = ({
   };
 
   const handleSubmit = async () => {
-    await dispatch(insertSuite(client, suite));
+    await dispatch(insertSuite(client, apiClient, suite));
     handleClose();
     history.push(`/suites/${suite.key}`);
   };

@@ -4,15 +4,12 @@ import { RootDispatcher } from 'store/types';
 import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
 import * as actions from './actions';
 
-// TODO(DTC-194) uncomment to use apiClient when get middleware running on a remote server
-
-export const fetchSuites = (
-  client: CdfClient /* apiClient: ApiClient */
-) => async (dispatch: RootDispatcher) => {
+export const fetchSuites = (apiClient: ApiClient) => async (
+  dispatch: RootDispatcher
+) => {
   dispatch(actions.loadSuitesTable());
   try {
-    // const suites: Suite[] = await getSuites(apiClient);
-    const suites: Suite[] = await getSuites(client);
+    const suites: Suite[] = await getSuites(apiClient);
     dispatch(actions.loadedSuitesTable(suites as Suite[]));
   } catch (e) {
     dispatch(actions.loadSuitesTableError(e));
@@ -21,16 +18,15 @@ export const fetchSuites = (
 
 export const insertSuite = (
   client: CdfClient,
-  // apiClient: ApiClient,
+  apiClient: ApiClient,
   suite: Suite
 ) => async (dispatch: RootDispatcher) => {
   dispatch(actions.insertSuiteTableRow());
   try {
     const suiteRow = fromSuiteToRow(suite);
     await client.insertTableRow(SUITES_TABLE_NAME, suiteRow);
-    // dispatch(fetchSuites(apiClient));
     dispatch(actions.suiteTableRequestSuccess());
-    dispatch(fetchSuites(client));
+    dispatch(fetchSuites(apiClient));
   } catch (e) {
     dispatch(actions.insertSuiteTableRowError(e));
   }
@@ -44,17 +40,15 @@ export const deleteSuite = (
   try {
     dispatch(actions.deleteSuiteTableRow());
     await client.deleteTableRow(SUITES_TABLE_NAME, key);
-    // dispatch(fetchSuites(apiClient));
     dispatch(actions.suiteTableRequestSuccess());
-    dispatch(fetchSuites(client));
+    dispatch(fetchSuites(apiClient));
   } catch (e) {
     dispatch(actions.deleteSuiteTableRowError(e));
   }
 };
 
-async function getSuites(client: CdfClient /* apiClient: ApiClient */) {
-  // const { items: rows } = await apiClient.getSuitesRows();
-  const { items: rows } = await client.getTableRows('suites');
+async function getSuites(apiClient: ApiClient) {
+  const { items: rows } = await apiClient.getSuitesRows();
   return getSuitesFromRows(rows);
 }
 
