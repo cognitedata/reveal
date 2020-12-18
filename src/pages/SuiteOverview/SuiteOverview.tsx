@@ -64,7 +64,7 @@ const SuiteOverview: React.FC = () => {
             type="secondary"
             icon="Plus"
             iconPlacement="left"
-            onClick={() => handleOpenModal('AddBoard', { suite })}
+            onClick={() => handleOpenModal('AddBoard', { dataItem: suite })}
           >
             Add board
           </Button>

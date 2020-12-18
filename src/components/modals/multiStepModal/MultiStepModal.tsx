@@ -21,7 +21,6 @@ type Step = 'suite' | 'boards';
 interface Props {
   suite: Suite;
   board: Board;
-  boardAction: () => void;
   setSuite: TS_FIX_ME;
   setBoard: TS_FIX_ME;
   modalSettings: TS_FIX_ME;
@@ -30,7 +29,6 @@ interface Props {
 export const MultiStepModal: React.FC<Props> = ({
   suite,
   board,
-  boardAction,
   setSuite,
   setBoard,
   modalSettings,
@@ -53,23 +51,6 @@ export const MultiStepModal: React.FC<Props> = ({
     handleCloseModal();
     await dispatch(insertSuite(client, apiClient, suite));
     history.push(`/suites/${suite.key}`);
-  };
-
-  const handleSuiteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.target;
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const deleteBoard = (event: React.MouseEvent, key: string) => {
-    event.stopPropagation();
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      boards: suite.boards.filter((item) => item.key !== key),
-    }));
-    setBoard(suite.boards[0]);
   };
 
   const Footer = () => {
@@ -105,19 +86,14 @@ export const MultiStepModal: React.FC<Props> = ({
     >
       <ModalContainer>
         {isEqual(step, 'suite') && (
-          <SuiteForm handleOnChange={handleSuiteChange} suiteValues={suite} />
+          <SuiteForm suite={suite} setSuite={setSuite} />
         )}
         {isEqual(step, 'boards') && (
           <BoardForm
-            actionButton={
-              <Button type="secondary" onClick={boardAction}>
-                {modalSettings.buttons.boards.board}
-              </Button>
-            }
-            boards={suite?.boards}
-            boardValues={board}
+            suite={suite}
+            board={board}
+            setSuite={setSuite}
             setBoard={setBoard}
-            deleteBoard={deleteBoard}
           />
         )}
       </ModalContainer>

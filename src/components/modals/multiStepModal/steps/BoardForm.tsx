@@ -1,5 +1,5 @@
 import React from 'react';
-import { A, Body, Button, Input, Select, Title, Micro } from '@cognite/cogs.js';
+import { A, Body, Button, Input, Select, Micro } from '@cognite/cogs.js';
 import {
   SelectLabel,
   SelectContainer,
@@ -7,18 +7,24 @@ import {
   BoardsContainer,
   AddedBoardItem,
   StyledCheckIcon,
+  StyledTitle,
+  ActionButtons,
 } from 'components/modals/elements';
+import { key } from '_helpers/generateKey';
 import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
+import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
+import omit from 'lodash/omit';
 import { Flex } from 'styles/common';
-import { Board } from 'store/suites/types';
+import { Board, Suite } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 
 interface Props {
-  actionButton: React.ReactElement;
-  boards: Board[];
-  boardValues: Board;
+  suite: Suite;
+  board: Board;
+  setSuite: TS_FIX_ME;
   setBoard: TS_FIX_ME;
-  deleteBoard: (event: React.MouseEvent, key: string) => void;
 }
 
 const options = [
@@ -30,12 +36,13 @@ const options = [
 ];
 
 export const BoardForm: React.FC<Props> = ({
-  actionButton,
-  boards,
-  boardValues,
+  suite,
+  board,
+  setSuite,
   setBoard,
-  deleteBoard,
 }: Props) => {
+  const isBoardsEmpty = isEmpty(suite?.boards);
+
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
     setBoard((prevState: Board) => ({
@@ -51,8 +58,51 @@ export const BoardForm: React.FC<Props> = ({
     }));
   };
 
+  const deleteBoard = (event: React.MouseEvent, boardKey: string) => {
+    event.stopPropagation();
+    const updatedBoardList = suite.boards.filter(
+      (item) => item.key !== boardKey
+    );
+    setSuite((prevState: Suite) => ({
+      ...prevState,
+      boards: updatedBoardList,
+    }));
+    if (board.key) {
+      setBoard(updatedBoardList[0] || {});
+    }
+  };
+
+  const addNewBoard = () => {
+    setSuite((prevState: Suite) => ({
+      ...prevState,
+      boards: suite.boards.concat({ ...board, key: key() }),
+    }));
+    setBoard({});
+  };
+
+  const updateBoard = () => {
+    const boardIndex = suite.boards.findIndex((element: Board) =>
+      isEqual(element.key, board.key)
+    );
+    const boardsCopy = cloneDeep(suite.boards);
+    boardsCopy[boardIndex] = merge(boardsCopy[boardIndex], board);
+    setSuite((prevState: Suite) => {
+      return omit(
+        {
+          ...prevState,
+          boards: boardsCopy,
+        },
+        'lastUpdatedTime'
+      );
+    });
+  };
+
+  const clearForm = () => {
+    setBoard({});
+  };
+
   const boardTypeValue = () =>
-    options.find((option) => isEqual(option.value, boardValues.type)) || null;
+    options.find((option) => isEqual(option.value, board.type)) || null;
   return (
     <>
       <Flex>
@@ -61,7 +111,7 @@ export const BoardForm: React.FC<Props> = ({
             autoComplete="off"
             title="Title"
             name="title"
-            value={boardValues.title}
+            value={board.title || ''}
             variant="noBorder"
             placeholder="Title"
             onChange={handleOnChange}
@@ -73,7 +123,7 @@ export const BoardForm: React.FC<Props> = ({
               theme="grey"
               placeholder="Select type"
               name="type"
-              value={boardTypeValue()}
+              value={boardTypeValue() || null}
               onChange={handleBoardTypeChange}
               options={options}
               closeMenuOnSelect
@@ -83,7 +133,7 @@ export const BoardForm: React.FC<Props> = ({
             autoComplete="off"
             title="URL"
             name="url"
-            value={boardValues.url}
+            value={board.url || ''}
             variant="noBorder"
             placeholder="URL"
             onChange={handleOnChange}
@@ -93,28 +143,43 @@ export const BoardForm: React.FC<Props> = ({
             autoComplete="off"
             title="Iframe snapshot"
             name="embedTag"
-            value={boardValues.embedTag}
+            value={board.embedTag || ''}
             variant="noBorder"
             placeholder="Tag"
             onChange={handleOnChange}
             fullWidth
           />
-          {actionButton}
+          <ActionButtons>
+            {board.key && !isBoardsEmpty ? (
+              <>
+                <Button variant="ghost" onClick={clearForm}>
+                  Cancel
+                </Button>
+                <Button type="primary" onClick={updateBoard}>
+                  Update board
+                </Button>
+              </>
+            ) : (
+              <Button type="primary" onClick={addNewBoard}>
+                Add board
+              </Button>
+            )}
+          </ActionButtons>
         </FormContainer>
         <BoardsContainer>
-          <Title level={4}>Added boards</Title>
-          {boards?.map((board: Board) => {
+          <StyledTitle empty={isBoardsEmpty}>Added boards</StyledTitle>
+          {suite?.boards?.map((boardItem: Board) => {
             return (
               <AddedBoardItem
-                onClick={() => setBoard(board)}
-                key={board.key}
-                selected={boardValues?.key === board.key}
+                onClick={() => setBoard(boardItem)}
+                key={boardItem.key}
+                selected={isEqual(boardItem.key, board?.key)}
               >
                 <StyledCheckIcon type="Check" />
-                <Body level={4}>{board.title}</Body>
+                <Body level={4}>{boardItem.title}</Body>
                 <Button
                   unstyled
-                  onClick={(event) => deleteBoard(event, board.key)}
+                  onClick={(event) => deleteBoard(event, boardItem.key)}
                   icon="Trash"
                 />
               </AddedBoardItem>

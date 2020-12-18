@@ -14,6 +14,7 @@ export type ModalType =
   | 'EditSuite'
   | 'CreateSuite'
   | 'AddBoard'
+  | 'EditBoard'
   | null;
 
 export type Modal = {

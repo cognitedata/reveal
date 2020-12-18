@@ -51,7 +51,10 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'AddBoard', { board })
+                  handleOpenModal(event, 'EditBoard', {
+                    boardItem: board,
+                    suiteItem: suite,
+                  })
                 }
               >
                 Edit board

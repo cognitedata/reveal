@@ -15,13 +15,14 @@ import { ModalContainer } from 'components/modals/elements';
 import { useFormState } from 'hooks/useFormState';
 
 interface Props {
-  dataItem: Suite;
+  suiteItem: Suite;
+  boardItem: Board;
 }
 
-const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
+const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
   const { suite, setSuite, board, setBoard } = useFormState(
-    {} as Board,
-    dataItem
+    boardItem,
+    suiteItem
   );
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
@@ -43,7 +44,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
       </Button>
 
       <Button type="primary" onClick={handleSubmit}>
-        {modalSettings.create.buttons.save}
+        {modalSettings.edit.buttons.save}
       </Button>
     </SpaceBetween>
   );
@@ -53,7 +54,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
       <Modal
         visible
         onCancel={handleCloseModal}
-        headerText="Add board to suite"
+        headerText="Edit board"
         footer={footer}
         width={modalSettings.create.width.boards}
       >
@@ -70,4 +71,4 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
   );
 };
 
-export default AddBoardModal;
+export default EditBoardModal;

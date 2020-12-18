@@ -53,7 +53,9 @@ export const TileHeader = styled.div<{ isBoard?: boolean; color?: string }>`
 `;
 
 export const TilePreview = styled.div`
+  display: flex;
+  align-items: center;
   height: 184px;
   background-color: var(--cogs-white);
-  padding: 48px 12px;
+  padding: 12px;
 `;
