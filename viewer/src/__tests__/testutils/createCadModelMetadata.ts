@@ -14,6 +14,7 @@ export function createCadModelMetadata(root: SectorMetadata): CadModelMetadata {
   const model: CadModelMetadata = {
     blobUrl: `testModel_${modelIdRunningNumber++}`,
     modelMatrix: new THREE.Matrix4().identity(),
+    inverseModelMatrix: new THREE.Matrix4().identity(),
     scene
   };
   return model;

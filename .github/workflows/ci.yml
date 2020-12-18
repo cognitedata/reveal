@@ -42,9 +42,15 @@ jobs:
       run: |
         xvfb-run yarn run coverage
 
-    - name: Build prod version
-      working-directory: viewer
-      run: yarn run build:prod
+    - name: Build
+      # Note! We use this target to also determine the NPM size during build
+      uses: Arhia/action-check-compressed-size@v0.7
+      with:
+        directory: viewer
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        build-script: "build:prod"
+        pattern: "./dist/**/*"
+        minimum-change-threshold: 100
 
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
@@ -81,8 +87,11 @@ jobs:
       run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 
     - name: Visual regression tests
-      working-directory: examples
-      run: 'yarn ci:nossl'
+      uses: nick-invision/retry@v2
+      with:
+        timeout_seconds: 120
+        max_attempts: 3
+        command: 'cd examples && yarn ci:nossl'
 
     - name: Check for failed visual test diffs
       if: failure()

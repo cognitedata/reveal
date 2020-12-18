@@ -38,6 +38,9 @@ export class EffectRenderManager {
   // of other objects. Populated during render().
   private readonly _inFrontScene: THREE.Scene;
 
+  // Special scene needed to properly clear WebGL2 render targets
+  private readonly _emptyScene: THREE.Scene;
+
   // Used to build _normalScene during render()
   private readonly _normalSceneBuilder: TemporarySceneBuilder;
   // Used to build _infrontScene during render()
@@ -54,6 +57,17 @@ export class EffectRenderManager {
   private _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private _compositionTarget: THREE.WebGLRenderTarget;
+
+  /**
+   * Holds state of how the last frame was rendered by `render()`. This is used to explicit clear
+   * WebGL2 render targets which might cause geometry to "get stuck" after e.g. removing models.
+   */
+  private _lastFrameSceneState = {
+    hasBackElements: true,
+    hasInFrontElements: true,
+    hasGhostElements: true,
+    hasCustomObjects: true
+  };
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
   private readonly outlineTexelSize = 2;
@@ -83,6 +97,7 @@ export class EffectRenderManager {
     this._inFrontScene = new THREE.Scene();
     this._compositionScene = new THREE.Scene();
     this._fxaaScene = new THREE.Scene();
+    this._emptyScene = new THREE.Scene();
     this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
@@ -200,11 +215,15 @@ export class EffectRenderManager {
       this.clearTarget(renderer, this._customObjectRenderTarget);
       // We use alpha to store special state for the next targets
       renderer.setClearAlpha(0.0);
-      this.clearTarget(renderer, this._inFrontRenderedCadModelTarget);
       this.clearTarget(renderer, this._normalRenderedCadModelTarget);
+      this.clearTarget(renderer, this._inFrontRenderedCadModelTarget);
       renderer.setClearAlpha(original.clearAlpha);
 
+      const lastFrameSceneState = { ...this._lastFrameSceneState };
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
+      const hasCustomObjects = scene.children.length > 0;
+      this._lastFrameSceneState = { hasBackElements, hasInFrontElements, hasGhostElements, hasCustomObjects };
+
       if (hasBackElements && !hasGhostElements) {
         this.renderNormalCadModelsFromBaseScene(renderer, camera);
       } else if (hasBackElements && hasGhostElements) {
@@ -219,7 +238,26 @@ export class EffectRenderManager {
         this.renderInFrontCadModels(renderer, camera);
         this._inFrontSceneBuilder.restoreOriginalScene();
       }
-      this.renderCustomObjects(renderer, scene, camera);
+      if (hasCustomObjects) {
+        this.renderCustomObjects(renderer, scene, camera);
+      }
+
+      if (renderer.capabilities.isWebGL2) {
+        // Due to how WebGL2 works and how ThreeJS applies changes from 'clear', we need to
+        // render something for the clear to have effect
+        if (!hasBackElements && lastFrameSceneState.hasBackElements) {
+          this.explicitFlushRender(renderer, camera, this._normalRenderedCadModelTarget);
+        }
+        if (!hasGhostElements && lastFrameSceneState.hasGhostElements) {
+          this.explicitFlushRender(renderer, camera, this._ghostObjectRenderTarget);
+        }
+        if (!hasInFrontElements && lastFrameSceneState.hasInFrontElements) {
+          this.explicitFlushRender(renderer, camera, this._inFrontRenderedCadModelTarget);
+        }
+        if (!hasCustomObjects && lastFrameSceneState.hasInFrontElements) {
+          this.explicitFlushRender(renderer, camera, this._customObjectRenderTarget);
+        }
+      }
 
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
@@ -259,7 +297,16 @@ export class EffectRenderManager {
 
   private clearTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
     renderer.setRenderTarget(target);
-    renderer.clear(true, true, false); // Clear color and depth
+    renderer.clear();
+  }
+
+  private explicitFlushRender(
+    renderer: THREE.WebGLRenderer,
+    camera: THREE.Camera,
+    target: THREE.WebGLRenderTarget | null
+  ) {
+    renderer.setRenderTarget(target);
+    renderer.render(this._emptyScene, camera);
   }
 
   private splitToScenes(): { hasBackElements: boolean; hasInFrontElements: boolean; hasGhostElements: boolean } {
@@ -345,10 +392,6 @@ export class EffectRenderManager {
   }
 
   private renderCustomObjects(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
-    if (scene.children.length === 0) {
-      return;
-    }
-
     renderer.setRenderTarget(this._customObjectRenderTarget);
     renderer.render(scene, camera);
   }
