@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import { Input } from '@cognite/cogs.js';
+import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 import { ConfigPanelComponentProps, StorableNode } from '../types';
 
 type FunctionData = {
   multiplier: number;
 };
 
-type DataPoint = {
-  value: number;
-};
-
-export const effect = async (funcData: FunctionData, a: DataPoint[]) => {
+export const effect = async (
+  funcData: FunctionData,
+  a: (DoubleDatapoint | DatapointAggregate)[]
+) => {
   return {
     result: a.map((x) => ({
       ...x,
-      value: x.value * funcData.multiplier,
+      ...('average' in x
+        ? {
+            average: x.average! * funcData.multiplier,
+          }
+        : {}),
+      ...('value' in x ? { value: x.value * funcData.multiplier } : {}),
     })),
   };
 };

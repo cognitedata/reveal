@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
 import sdk from 'services/CogniteSDK';
 import { Chart } from 'reducers/charts';
+import { calculateGranularity } from 'utils/timeseries';
 import { StorableNode, ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
@@ -15,10 +16,22 @@ export const effect = async (funcData: FunctionData) => {
   if (!funcData.timeSeriesExternalId) {
     throw new Error('No external id given in config');
   }
+
+  const pointsPerSeries = 1000;
+
   const datapoints = await sdk.datapoints.retrieve({
     items: [{ externalId: funcData.timeSeriesExternalId }],
     start: new Date(funcData.context.chart.dateFrom || new Date()),
     end: new Date(funcData.context.chart.dateTo || new Date()),
+    granularity: calculateGranularity(
+      [
+        new Date(funcData.context.chart.dateFrom).getTime(),
+        new Date(funcData.context.chart.dateTo).getTime(),
+      ],
+      pointsPerSeries
+    ),
+    aggregates: ['average'],
+    limit: 1000,
   });
   return {
     datapoints: datapoints[0].datapoints,

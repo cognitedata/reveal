@@ -48,6 +48,9 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const hasData = useEnsureData();
   const dispatch = useDispatch();
   const [activeWorkflowId, setActiveWorkflowId] = useState<string>();
+  const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(
+    false
+  );
   const { chartId = propsChartId } = useParams<{ chartId: string }>();
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
@@ -123,6 +126,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   }, [workflows]);
 
+  useEffect(() => {
+    if ((workflows || []).length > 0 && updateAutomatically) {
+      runWorkflows();
+    }
+  }, [chart?.dateFrom, chart?.dateTo, updateAutomatically]);
+
   const onNewWorkflow = () => {
     if (chart) {
       dispatch(createNewWorkflow(chart));
@@ -142,6 +151,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         toast.error('Unable to save - try again!');
       }
     }
+  };
+
+  const handleToggleAutomaticUpdates = async () => {
+    setUpdateAutomatically((val) => !val);
   };
 
   const handleRemoveTimeSeries = (timeSeriesId: string) => {
@@ -329,6 +342,16 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             </div>
           </section>
           <section className="actions">
+            <Button
+              icon={updateAutomatically ? 'Checkmark' : 'XCompact'}
+              type="secondary"
+              onClick={() => handleToggleAutomaticUpdates()}
+            >
+              Automatic Update
+            </Button>
+            <Button type="secondary" onClick={() => runWorkflows()}>
+              Run workflows
+            </Button>
             <Button
               icon="Checkmark"
               type="primary"
