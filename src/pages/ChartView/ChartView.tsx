@@ -54,9 +54,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const hasData = useEnsureData();
   const dispatch = useDispatch();
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
-  const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(
-    false
-  );
+  const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
   const { chartId = propsChartId } = useParams<{ chartId: string }>();
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
