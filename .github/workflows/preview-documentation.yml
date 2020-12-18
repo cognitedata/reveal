@@ -96,7 +96,7 @@ jobs:
 
       - name: Retry deploy 🚀 - pull
         working-directory: reveal-docs-preview
-        if: failure()
+        if: steps.deploy.outcome=='failure'
         run: |
           git pull --commit
         
