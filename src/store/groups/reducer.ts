@@ -41,6 +41,6 @@ export const GroupsReducer = createReducer(initialState)
     (state: GroupsState, action: UserGroupsootAction) => ({
       ...state,
       loading: false,
-      error: action.payload,
+      error: (action.payload as Error)?.message,
     })
   );

@@ -8,7 +8,7 @@ import { fetchUserGroups } from 'store/groups/thunks';
 import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
 import { getGroupsState } from 'store/groups/selectors';
-import { Loader } from '@cognite/cogs.js';
+import { Body, Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import Routes from './Routes';
@@ -67,7 +67,7 @@ const Authentication = (): JSX.Element => {
   if (hasError) {
     return (
       <>
-        <body>Failed to fetch data from database</body>
+        <Body>Failed to fetch data from database</Body>
       </>
     );
   }
