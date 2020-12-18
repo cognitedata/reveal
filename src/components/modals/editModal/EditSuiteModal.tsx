@@ -10,7 +10,7 @@ interface Props {
 
 const EditSuiteModal: React.FC<Props> = ({ dataItem }: Props) => {
   const { suite, setSuite, board, setBoard } = useFormState(
-    dataItem?.boards[0],
+    dataItem?.boards[0] || {},
     dataItem
   );
 

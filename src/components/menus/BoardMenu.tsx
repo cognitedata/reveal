@@ -32,6 +32,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     modalProps: any
   ) => {
     event.preventDefault();
+    setIsComponentVisible(() => !isComponentVisible);
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
@@ -45,7 +46,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
       <ActionsContainer>
         {isComponentVisible && (
           <Menu>
-            <Menu.Item>Remove pin</Menu.Item>
+            <Menu.Item>Unpin</Menu.Item>
             <Menu.Item>
               <div
                 role="button"
@@ -68,7 +69,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                   handleOpenModal(event, 'DeleteBoard', { board, suite })
                 }
               >
-                Delete board
+                Remove board
               </div>
             </Menu.Item>
             <Menu.Item>Share board</Menu.Item>

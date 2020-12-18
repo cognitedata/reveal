@@ -11,6 +11,7 @@ export const MainContent = styled.div`
   align-items: center;
   background-color: var(--cogs-white);
   padding: 10px 48px 10px 48px;
+  border-bottom: 1px solid var(--cogs-color-strokes-default);
   & > :last-child {
     margin-left: auto;
   }

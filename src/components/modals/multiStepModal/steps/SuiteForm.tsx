@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from '@cognite/cogs.js';
 import { Suite } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
+import ColorSelector from './ColorSelector';
 
 interface Props {
   suite: Suite;
@@ -29,6 +30,7 @@ export const SuiteForm: React.FC<Props> = ({ suite, setSuite }: Props) => {
         onChange={handleOnChange}
         fullWidth
       />
+      <ColorSelector suite={suite} setSuite={setSuite} />
       <Input
         autoComplete="off"
         title="Description"

@@ -31,6 +31,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
     modalProps: any
   ) => {
     event.preventDefault();
+    setIsComponentVisible(() => !isComponentVisible);
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
@@ -44,7 +45,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
       <ActionsContainer>
         {isComponentVisible && (
           <Menu>
-            <Menu.Item>Remove pin</Menu.Item>
+            <Menu.Item>Unpin</Menu.Item>
             <Menu.Item>
               <div
                 role="button"

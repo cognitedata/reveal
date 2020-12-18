@@ -4,7 +4,7 @@ import layers from '_helpers/zindex';
 export const SidebarContainer = styled.div<{ open: boolean }>`
   height: 100%;
   min-width: 298px;
-  box-shadow: var(--cogs-z-12);
+  border-right: 1px solid var(--cogs-color-strokes-default);
   padding: 16px 24px;
   z-index: ${layers.LEFT_SIDEBAR};
   background: var(--cogs-white);
@@ -24,8 +24,7 @@ export const CollapseButton = styled.div<{ open: boolean }>`
   top: 112px;
   border-radius: 20px;
   background: var(--cogs-white);
-  box-shadow: ${({ open }) => (open ? 'var(--cogs-z-2)' : 'none')};
-  ${({ open }) => !open && 'all: translateX(0px)'};
+  border-right: 1px solid var(--cogs-color-strokes-default);
   overflow: hidden;
   &:hover {
     ${({ open }) =>

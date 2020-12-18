@@ -25,7 +25,7 @@ const AppHeader: React.FC = () => {
       <TopBar.Right>
         <TopBar.Search
           width={418}
-          placeholder="Search for assets, timeseries, events and documents"
+          placeholder="Search for Suites, Dashboards and apps"
         />
         <TopBar.Actions
           actions={[

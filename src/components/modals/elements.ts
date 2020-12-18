@@ -41,6 +41,9 @@ export const SelectLabel = styled.p`
 
 export const SelectContainer = styled.div`
   margin-bottom: 16px;
+  & .cogs-select__single-value {
+    color: var(--cogs-black);
+  }
 `;
 
 export const MultiStepModalFooter = styled(SpaceBetween)`
@@ -112,7 +115,7 @@ export const FormContainer = styled.div`
   border-right: 1px solid var(--cogs-greyscale-grey5);
 `;
 
-export const ActionButtons = styled.div`
+export const ActionButtonsContainer = styled.div`
   display flex;
   margin-left: auto;
   & > .cogs-btn {

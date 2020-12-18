@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+import { Title } from '@cognite/cogs.js';
 
 const TileBasic = styled.div`
   display: inline-flex;
@@ -10,8 +11,8 @@ const TileBasic = styled.div`
 `;
 
 export const SmallTileContainer = styled(TileBasic)`
-  min-width: 208px;
-  border-radius: 4px;
+  width: 208px;
+  border-radius: 2px;
   border: 1px solid var(--cogs-greyscale-grey4);
   margin: 10px 10px 0 0;
 `;
@@ -20,8 +21,7 @@ export const TileContainer = styled(TileBasic)`
   position: relative;
   flex-direction: column;
   width: 300px;
-  border-radius: 2px;
-  box-shadow: var(--cogs-z-2);
+  border: 1px solid var(--cogs-greyscale-grey4);
   margin: 24px 48px 0 0;
 `;
 
@@ -30,6 +30,7 @@ export const TileDescription = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 4px 8px;
+  overflow: hidden;
 `;
 
 export const TileOverline = styled.div<{ isBoard?: boolean }>`
@@ -58,4 +59,10 @@ export const TilePreview = styled.div`
   height: 184px;
   background-color: var(--cogs-white);
   padding: 12px;
+`;
+
+export const StyledTitle = styled(Title)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
