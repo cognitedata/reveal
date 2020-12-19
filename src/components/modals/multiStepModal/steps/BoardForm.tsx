@@ -14,6 +14,7 @@ import { Board, Suite } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';
+import GroupsSelector from './GroupsSelector';
 
 interface Props {
   suite: Suite;
@@ -84,6 +85,7 @@ export const BoardForm: React.FC<Props> = ({
             onChange={handleOnChange}
             fullWidth
           />
+          <GroupsSelector board={board} setBoard={setBoard} />
           <ActionButtons
             board={board}
             suite={suite}
@@ -92,31 +94,37 @@ export const BoardForm: React.FC<Props> = ({
           />
         </FormContainer>
         <BoardsContainer>
-          <StyledTitle empty={isEmpty(suite?.boards)}>Added boards</StyledTitle>
-          {suite?.boards?.map((boardItem: Board) => {
-            return (
-              <AddedBoardItem
-                onClick={() => setBoard(boardItem)}
-                key={boardItem.key}
-                selected={isEqual(boardItem.key, board?.key)}
-              >
-                <StyledCheckIcon type="Check" />
-                <Body level={4}>{boardItem.title}</Body>
-                <Button
-                  unstyled
-                  onClick={(event) => deleteBoard(event, boardItem.key)}
-                  icon="Trash"
-                />
-              </AddedBoardItem>
-            );
-          })}
-          <Micro>
-            To give access to the right groups, make sure groups are set-up
-            correctly in Azure AD, see our{' '}
-            <A href="#" isExternal>
-              documentation
-            </A>
-          </Micro>
+          <div>
+            <StyledTitle empty={isEmpty(suite?.boards)}>
+              Added boards
+            </StyledTitle>
+            {suite?.boards?.map((boardItem: Board) => {
+              return (
+                <AddedBoardItem
+                  onClick={() => setBoard(boardItem)}
+                  key={boardItem.key}
+                  selected={isEqual(boardItem.key, board?.key)}
+                >
+                  <StyledCheckIcon type="Check" />
+                  <Body level={4}>{boardItem.title}</Body>
+                  <Button
+                    unstyled
+                    onClick={(event) => deleteBoard(event, boardItem.key)}
+                    icon="Trash"
+                  />
+                </AddedBoardItem>
+              );
+            })}
+          </div>
+          {!isEmpty(board.visibleTo) && (
+            <Micro>
+              To give access to the right groups, make sure groups are set-up
+              correctly in Azure AD, see our{' '}
+              <A href="#" isExternal>
+                documentation
+              </A>
+            </Micro>
+          )}
         </BoardsContainer>
       </Flex>
     </>

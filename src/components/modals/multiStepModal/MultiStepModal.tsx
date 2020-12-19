@@ -7,7 +7,7 @@ import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { Suite, Board } from 'store/suites/types';
 import isEqual from 'lodash/isEqual';
-import { MultiStepModalFooter } from 'components/modals/elements';
+import { ModalFooter } from 'components/modals/elements';
 import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
 import { ApiClientContext } from 'providers/ApiClientProvider';
@@ -54,7 +54,7 @@ export const MultiStepModal: React.FC<Props> = ({
 
   const Footer = () => {
     return (
-      <MultiStepModalFooter>
+      <ModalFooter>
         <Button variant="ghost" onClick={handleCloseModal}>
           Cancel
         </Button>
@@ -68,7 +68,7 @@ export const MultiStepModal: React.FC<Props> = ({
             {modalSettings.buttons.save}
           </Button>
         </div>
-      </MultiStepModalFooter>
+      </ModalFooter>
     );
   };
   return (

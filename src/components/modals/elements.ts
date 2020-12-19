@@ -46,7 +46,7 @@ export const SelectContainer = styled.div`
   }
 `;
 
-export const MultiStepModalFooter = styled(SpaceBetween)`
+export const ModalFooter = styled(SpaceBetween)`
   margin-top: 48px;
   & div > .cogs-btn {
     margin-left: 16px;
@@ -70,9 +70,7 @@ export const BoardsContainer = styled.div`
   padding-left: 40px;
   display: flex;
   flex-direction: column;
-  & > :last-child {
-    margin-top: auto;
-  }
+  justify-content: space-between;
 `;
 
 export const AddedBoardItem = styled.div<{ selected?: boolean }>`
