@@ -1,6 +1,6 @@
 import React from 'react';
-import { Icon } from '@cognite/cogs.js';
-import { Row, Col, Button } from 'antd';
+import { Icon, Button, Tooltip } from '@cognite/cogs.js';
+import { Row, Col } from 'antd';
 import { ResourceType } from 'lib/types';
 import { ResourceFilterProps, SetResourceFilterProps } from 'lib/CommonProps';
 import {
@@ -109,7 +109,13 @@ export const SearchFilters = ({
             <Col flex="auto">Filters</Col>
             {allowHide && (
               <Col flex="none">
-                <Button onClick={closeFilters}>Hide filters</Button>
+                <HideFiltersTooltip content="Hide">
+                  <Button
+                    icon="PanelLeft"
+                    variant="ghost"
+                    onClick={closeFilters}
+                  />
+                </HideFiltersTooltip>
               </Col>
             )}
           </HeaderRow>
@@ -154,4 +160,8 @@ const HeaderRow = styled(Row)`
   margin-top: 24px;
   margin-bottom: 16px;
   border-bottom: 1px solid ${lightGrey};
+`;
+
+const HideFiltersTooltip = styled(Tooltip)`
+  margin-bottom: 8px;
 `;
