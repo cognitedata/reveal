@@ -14,7 +14,7 @@ export enum TestCase {
 
 export async function screenShotTest(page: Page, testCase: TestCase) {
   const url =
-    `https://localhost:3000/testable` +
+    `http://localhost:3000/testable` +
     (testCase === 'default' ? '' : `?test=${testCase}`);
 
   await page.goto(url, {
