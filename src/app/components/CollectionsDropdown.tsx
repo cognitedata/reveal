@@ -120,8 +120,10 @@ export default function CollectionsDropdown({ type, items, button }: Props) {
               />
             ) : (
               <Menu.Item onClick={() => setFormOpen(true)}>
-                <Icon type="Plus" />
-                New collection
+                <NewCollection>
+                  <Icon type="Plus" />
+                  New collection
+                </NewCollection>
               </Menu.Item>
             )}
           </Menu>
@@ -138,10 +140,17 @@ const CollectionItem = styled.div`
   text-align: left;
   width: 100%;
   display: flex;
+  color: ${Colors['text-color-secondary'].hex()};
+`;
+
+const NewCollection = styled.div`
+  display: flex;
+  color: ${Colors['text-color-secondary'].hex()};
+  align-items: center;
 `;
 
 const NoCollectionsMessage = styled(Menu.Footer)`
-  color: black;
+  color: ${Colors['text-color-secondary'].hex()};
   text-align: center;
 `;
 
