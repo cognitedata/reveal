@@ -12,12 +12,6 @@ export enum TestCase {
   user_render_target = 'user_render_target',
 }
 
-export async function removeTestableText(page: Page) {
-  await page.evaluate(() => {
-    (document.querySelectorAll('h1, a') || []).forEach((el) => el.remove());
-  });
-}
-
 export async function screenShotTest(page: Page, testCase: TestCase) {
   const url =
     `https://localhost:3000/testable` +
@@ -28,10 +22,10 @@ export async function screenShotTest(page: Page, testCase: TestCase) {
   });
 
   await page.waitForSelector('#ready');
-  await removeTestableText(page);
   await page.waitForTimeout(500);
 
-  const image = await page.screenshot({ fullPage: true });
+  const canvas = await page.$('canvas')
+  const image = await canvas!.screenshot();
   expect(image).toMatchImageSnapshot({
     failureThreshold: 0.001, // 0.1% of all pixels may differ
     failureThresholdType: 'percent',
