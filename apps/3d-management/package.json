@@ -29,7 +29,7 @@
     "antd": "3.24.0",
     "antd-v4": "npm:antd@4.7.2",
     "connected-react-router": "^6.8.0",
-    "dayjs": "^1.9.6",
+    "dayjs": "^1.9.7",
     "gcs-browser-upload": "^1.0.2",
     "history": "^4.7.2",
     "lodash": "^4.17.20",
