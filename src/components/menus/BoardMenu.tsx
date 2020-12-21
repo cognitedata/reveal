@@ -2,7 +2,8 @@
 import React from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
 import { useClickAwayListener } from 'hooks/useClickAwayListener';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
@@ -20,6 +21,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     isComponentVisible,
     setIsComponentVisible,
   } = useClickAwayListener(false);
+  const admin = useSelector(isAdmin);
 
   const handleMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -47,31 +49,35 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
         {isComponentVisible && (
           <Menu>
             <Menu.Item>Unpin</Menu.Item>
-            <Menu.Item>
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={(event) =>
-                  handleOpenModal(event, 'EditBoard', {
-                    boardItem: board,
-                    suiteItem: suite,
-                  })
-                }
-              >
-                Edit board
-              </div>
-            </Menu.Item>
-            <Menu.Item>
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={(event) =>
-                  handleOpenModal(event, 'DeleteBoard', { board, suite })
-                }
-              >
-                Remove board
-              </div>
-            </Menu.Item>
+            {admin && (
+              <>
+                <Menu.Item>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={(event) =>
+                      handleOpenModal(event, 'EditBoard', {
+                        boardItem: board,
+                        suiteItem: suite,
+                      })
+                    }
+                  >
+                    Edit board
+                  </div>
+                </Menu.Item>
+                <Menu.Item>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={(event) =>
+                      handleOpenModal(event, 'DeleteBoard', { board, suite })
+                    }
+                  >
+                    Remove board
+                  </div>
+                </Menu.Item>
+              </>
+            )}
             <Menu.Item>Share board</Menu.Item>
           </Menu>
         )}

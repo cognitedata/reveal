@@ -1,4 +1,5 @@
 import React from 'react';
+import { acronym } from '_helpers/acronym';
 import { SuiteAvatarContainer, Default, Medium, Large } from './elements';
 
 export type AvatarSize = 'default' | 'medium' | 'large';
@@ -17,29 +18,17 @@ const sizeComponentMap: Record<AvatarSize, any> = {
   large: Large,
 };
 
-const exclude = ['&', 'and'];
-
 const SuiteAvatar: React.FC<Props> = ({
   title,
   disabled,
   color,
   size = 'default',
 }: Props) => {
-  const content =
-    (title &&
-      title
-        .trim()
-        .split(' ')
-        .filter((str) => str !== '' && !exclude.includes(str.toLowerCase()))
-        .map((str) => [...str][0].toUpperCase()) // Codepoint-aware first character
-        .slice(0, 2) // Limit the number of characters to include
-        .join('')) ||
-    '';
   const avatarSize = sizeComponentMap[size];
 
   return (
     <SuiteAvatarContainer as={avatarSize} color={color} disabled={disabled}>
-      {content}
+      {title && acronym(title)}
     </SuiteAvatarContainer>
   );
 };

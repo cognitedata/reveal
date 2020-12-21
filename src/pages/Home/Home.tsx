@@ -44,15 +44,17 @@ const Home = () => {
       <Suitebar
         headerText="Executive overview"
         actionButton={
-          <Button
-            variant="outline"
-            type="secondary"
-            icon="Plus"
-            iconPlacement="left"
-            onClick={() => handleOpenModal('CreateSuite')}
-          >
-            New suite
-          </Button>
+          admin && (
+            <Button
+              variant="outline"
+              type="secondary"
+              icon="Plus"
+              iconPlacement="left"
+              onClick={() => handleOpenModal('CreateSuite')}
+            >
+              New suite
+            </Button>
+          )
         }
       />
       <OverviewContainer>
