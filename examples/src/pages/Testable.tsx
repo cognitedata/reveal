@@ -94,7 +94,7 @@ export function Testable() {
       renderer.localClippingEnabled = true;
 
       let { position, target, near, far } = model.suggestCameraConfig();
-      let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, 2, near, far);;
+      let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, 2, near, far);
 
       // Test presets
       const url = new URL(window.location.href);
@@ -282,18 +282,13 @@ export function Testable() {
   }, []);
 
   const readyForScreenshot = !loadingState.isLoading;
-  console.log('readyForScreenshot', loadingState);
 
   return (
     <>
       <CanvasWrapper>
         <canvas ref={canvas} />
       </CanvasWrapper>
-      {readyForScreenshot && (
-        <div id="ready" style={{ display: 'none' }}>
-          ready
-        </div>
-      )}
+      {readyForScreenshot && <div id="ready">Ready</div>}
     </>
   );
 }

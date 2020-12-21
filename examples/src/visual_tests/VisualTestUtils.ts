@@ -22,7 +22,6 @@ export async function screenShotTest(page: Page, testCase: TestCase) {
   });
 
   await page.waitForSelector('#ready');
-  await page.waitForTimeout(500);
 
   const canvas = await page.$('canvas')
   const image = await canvas!.screenshot();
