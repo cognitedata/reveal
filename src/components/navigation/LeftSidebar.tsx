@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Button, Icon, Input, Overline } from '@cognite/cogs.js';
+import { Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { colors } from 'constants/suiteColors';
 import { TS_FIX_ME } from 'types/core';
 import NavigationItem from './NavigationItem';
 import {
-  ActionContainer,
+  TitleContainer,
   AvailableSuitesContainer,
   CollapseButton,
   SidebarContainer,
@@ -81,22 +81,9 @@ const LeftSidebar: React.FC = () => {
       <CollapseButton open={isOpen} onClick={handleHideSidebar}>
         <Icon type={isOpen ? 'LargeLeft' : 'LargeRight'} />
       </CollapseButton>
-      <Input
-        variant="noBorder"
-        placeholder="Search for suites"
-        icon="Search"
-        iconPlacement="left"
-        fullWidth
-      />
-      <ActionContainer>
-        <Overline level={2}>All Suites</Overline>
-        <Button
-          type="secondary"
-          variant="ghost"
-          icon="Plus"
-          iconPlacement="left"
-        />
-      </ActionContainer>
+      <TitleContainer>
+        <Overline level={2}>Suites</Overline>
+      </TitleContainer>
       <AvailableSuitesContainer>
         {suites?.map((suite: NavigationItem) =>
           renderNavigationItem(suite, false, location)

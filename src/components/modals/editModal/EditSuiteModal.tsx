@@ -1,14 +1,17 @@
 import React from 'react';
 import { modalSettings } from 'components/modals/config';
-import { suiteEmpty } from 'components/modals/utils';
+import { TS_FIX_ME } from 'types/core';
 import { useFormState } from 'hooks/useFormState';
-import { Board } from 'store/suites/types';
 import { MultiStepModal } from '../multiStepModal/MultiStepModal';
 
-const CreateSuiteModal: React.FC = () => {
+interface Props {
+  dataItem: TS_FIX_ME;
+}
+
+const EditSuiteModal: React.FC<Props> = ({ dataItem }: Props) => {
   const { suite, setSuite, board, setBoard } = useFormState(
-    {} as Board,
-    suiteEmpty
+    dataItem?.boards[0] || {},
+    dataItem
   );
 
   return (
@@ -17,9 +20,9 @@ const CreateSuiteModal: React.FC = () => {
       board={board}
       setSuite={setSuite}
       setBoard={setBoard}
-      modalSettings={modalSettings.create}
+      modalSettings={modalSettings.edit}
     />
   );
 };
 
-export default CreateSuiteModal;
+export default EditSuiteModal;

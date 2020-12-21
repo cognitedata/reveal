@@ -4,7 +4,7 @@ import { Suite, SuitesTableState } from './types';
 export const getSuitesTableState = (state: StoreState): SuitesTableState =>
   state.suitesTable;
 
-export const getDashboarsdBySuite = (key: string) => (
+export const getBoardsBySuite = (key: string) => (
   state: StoreState
 ): Suite | undefined =>
   state.suitesTable.suites?.find((suite) => suite.key === key);

@@ -1,17 +1,21 @@
 import React from 'react';
-import Delete from 'components/modals/deleteModal/DeleteModal';
+import DeleteSuite from 'components/modals/deleteModal/DeleteSuite';
+import DeleteBoard from 'components/modals/deleteModal/DeleteBoard';
 import CreateSuite from 'components/modals/createSuiteModal/CreateSuiteModal';
 import AddBoard from 'components/modals/addBoardModal/AddBoardModal';
-import EditSuite from 'components/modals/editSuiteMdal/EditSuiteModal';
+import EditSuite from 'components/modals/editModal/EditSuiteModal';
+import EditBoard from 'components/modals/editModal/EditBoardModal';
 import { useSelector } from 'react-redux';
 import { getModalState } from 'store/modals/selectors';
 import { TS_FIX_ME } from 'types/core';
 
 const modalComponentLookupTable: TS_FIX_ME = {
-  Delete,
+  DeleteSuite,
+  DeleteBoard,
   CreateSuite,
   AddBoard,
   EditSuite,
+  EditBoard,
 };
 
 const ModalManager: React.FC = () => {
