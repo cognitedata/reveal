@@ -22,6 +22,9 @@ const H3 = styled((props) => <Title {...props}>{props.children}</Title>)`
 `;
 
 const ContactsList = ({ title, contacts }: ContactsListProps) => {
+  if (!contacts) {
+    return <></>;
+  }
   return (
     <StyledContactsList>
       <H3 level={3}>{title}</H3>
