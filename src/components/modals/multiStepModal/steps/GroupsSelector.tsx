@@ -1,5 +1,9 @@
 import React from 'react';
+import { Group } from '@cognite/sdk';
 import { Select } from '@cognite/cogs.js';
+import includes from 'lodash/includes';
+import { useSelector } from 'react-redux';
+import { getGroupsState } from 'store/groups/selectors';
 import { SelectLabel, SelectContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
@@ -9,18 +13,20 @@ interface Props {
   setBoard: TS_FIX_ME;
 }
 
-const options = [
-  { value: 'dc-user', label: 'User' },
-  { value: 'dc-team-operations', label: 'Operations' },
-  {
-    value: 'dc-team-production-optimisation',
-    label: 'Production optimization',
-  },
-  { value: 'dc-team-management', label: 'Management' },
-  { value: 'dc-team-developers', label: 'Developers' },
-];
+const exclude = ['admin', 'default', 'dc-system-admin'];
 
 const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
+  const { allGroups } = useSelector(getGroupsState);
+
+  // TODO(dtc-215) try to filter on middleware side
+  const options = allGroups
+    ?.filter((group: Group) => {
+      return !includes(exclude, group.name);
+    })
+    .map((group: Group) => {
+      return { value: group.name, label: group.name };
+    });
+
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
     setBoard((prevState: Board) => ({
       ...prevState,
@@ -31,7 +37,7 @@ const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
   };
 
   const groupsValue =
-    options.filter((obj) => board?.visibleTo?.includes(obj.value)) || null;
+    options?.filter((obj) => board?.visibleTo?.includes(obj.value)) || null;
 
   return (
     <SelectContainer>
