@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "cross-env HTTPS=true react-app-rewired start",
-    "start:e2e": "cross-env PORT=3000 HTTPS=true BROWSER=none react-app-rewired start",
+    "start:e2e-server": "cross-env PORT=3000 HTTPS=true BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --testPathIgnorePatterns 'src/visual_tests'",
     "test:visual": "cross-env JEST_PUPPETEER_CONFIG=src/visual_tests/jest-puppeteer.config.js jest --runInBand --detectOpenHandles -c src/visual_tests/jest.config.js",
@@ -13,7 +13,7 @@
     "test:ghprcomment": "node src/visual_tests/GithubActionsPRComment.js",
     "snapshots:update": "yarn run ci:start-server 'test:visual:update'",
     "ci:e2e": "yarn run ci:start-server 'test:visual'",
-    "ci:start-server": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test 'start:e2e' https://localhost:3000",
+    "ci:start-server": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test 'start:e2e-server' https://localhost:3000",
     "eject": "react-scripts eject"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",

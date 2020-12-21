@@ -43,11 +43,23 @@ This does not run the visual tests.
 
 ### `yarn ci:e2e`
 
-Run the visual tests locally.
+Runs test server and visual tests.
 
 ### `yarn snapshots:update`
 
-Update failing visual test snapshots if deliberate changes are made.
+Runs test server and updates all test snapshots.
+
+### `yarn start:e2e-server`
+
+Only runs test server for visual tests.
+
+### `yarn test:visual`
+
+Only runs visual tests. Assumes you have e2e server running.
+
+### `yarn test:visual:update`
+
+Updates all visual tests snapshots. Assumes you have e2e server running.
 
 ### `yarn build`
 
