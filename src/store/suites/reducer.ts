@@ -41,7 +41,7 @@ export const SuitesReducer = createReducer(initialState)
     (state: SuitesTableState, action: SuitesTableRootAction) => ({
       ...state,
       loading: false,
-      error: action.payload,
+      error: (action.payload as Error)?.message,
     })
   )
   .handleAction(
@@ -53,7 +53,7 @@ export const SuitesReducer = createReducer(initialState)
     (state: SuitesTableState, action: SuitesTableRootAction) => ({
       ...state,
       loading: false,
-      error: action.payload,
+      error: (action.payload as Error)?.message,
     })
   )
   .handleAction(
@@ -69,6 +69,6 @@ export const SuitesReducer = createReducer(initialState)
     (state: SuitesTableState, action: SuitesTableRootAction) => ({
       ...state,
       loading: false,
-      error: action.payload,
+      error: (action.payload as Error)?.message,
     })
   );

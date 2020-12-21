@@ -10,6 +10,7 @@ import { Suite } from 'store/suites/types';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
+import { isAdmin } from 'store/groups/selectors';
 import { SmallTilesContainer } from './elements';
 
 const Home = () => {
@@ -19,6 +20,9 @@ const Home = () => {
   const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
     getSuitesTableState
   );
+  const admin = useSelector(isAdmin);
+  // eslint-disable-next-line no-console
+  console.log('isAdmin: %s', admin);
 
   if (!suitesLoaded || !suites?.length) {
     return <Title level={3}>No suites loaded</Title>;
