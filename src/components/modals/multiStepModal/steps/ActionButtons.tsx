@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { ActionButtonsContainer } from 'components/modals/elements';
-import { key } from '_helpers/generateKey';
+import { key } from 'utils/generateKey';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
@@ -35,6 +35,7 @@ const ActionButtons: React.FC<Props> = ({
     const boardIndex = suite.boards.findIndex((element: Board) =>
       isEqual(element.key, board.key)
     );
+    // TODO(dtc-215) Delegate data manipulation part to reducer
     const boardsCopy = cloneDeep(suite.boards);
     boardsCopy[boardIndex] = merge(boardsCopy[boardIndex], board);
     setSuite((prevState: Suite) => {

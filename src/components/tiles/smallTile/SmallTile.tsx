@@ -6,7 +6,7 @@ import {
   TileDescription,
   StyledTitle,
 } from 'components/tiles/elements';
-import { shortDateTime } from '_helpers/date';
+import { shortDateTime } from 'utils/date';
 import { Suite } from 'store/suites/types';
 
 interface Props {

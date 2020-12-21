@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import layers from '_helpers/zindex';
+import layers from 'utils/zindex';
 
 export const SidebarContainer = styled.div<{ open: boolean }>`
   height: 100%;

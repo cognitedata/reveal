@@ -1,5 +1,5 @@
 import React from 'react';
-import { acronym } from '_helpers/acronym';
+import { acronym } from 'utils/acronym';
 import { SuiteAvatarContainer, Default, Medium, Large } from './elements';
 
 export type AvatarSize = 'default' | 'medium' | 'large';

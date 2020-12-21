@@ -75,6 +75,11 @@ export const BoardsContainer = styled.div`
   }
 `;
 
+export const Boards = styled.div`
+  height: 268px;
+  overflow-y: scroll;
+`;
+
 export const AddedBoardItem = styled.div<{ selected?: boolean }>`
   display: flex;
   width: 320px;
