@@ -9,7 +9,7 @@ import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { Suite } from 'store/suites/types';
-import { getSuitesTableState } from 'store/suites/selectors';
+import { getLastVisited, getSuitesTableState } from 'store/suites/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { isAdmin } from 'store/groups/selectors';
@@ -26,6 +26,8 @@ const Home = () => {
   const admin = useSelector(isAdmin);
   // eslint-disable-next-line no-console
   console.log('isAdmin: %s', admin);
+
+  const lastVisited = useSelector(getLastVisited(itemsToDisplay));
 
   if (!suitesLoaded || !suites?.length) {
     return <Title level={3}>No suites loaded</Title>;
@@ -60,7 +62,7 @@ const Home = () => {
       <OverviewContainer>
         <SmallTilesContainer>
           <Title level={6}>Quick Access</Title>
-          {suites?.slice(0, itemsToDisplay).map((suite: Suite) => {
+          {lastVisited?.map((suite: Suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
                 <SmallTile dataItem={suite} />
