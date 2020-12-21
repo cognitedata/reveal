@@ -1,4 +1,4 @@
-import { key } from '_helpers/generateKey';
+import { key } from 'utils/generateKey';
 import { Suite } from 'store/suites/types';
 
 export const suiteEmpty: Suite = {

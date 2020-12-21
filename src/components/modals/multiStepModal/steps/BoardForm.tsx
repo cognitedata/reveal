@@ -1,11 +1,13 @@
 import React from 'react';
-import { A, Body, Button, Input, Micro } from '@cognite/cogs.js';
+import { A, Button, Input, Micro, Tooltip } from '@cognite/cogs.js';
 import {
   FormContainer,
   BoardsContainer,
   AddedBoardItem,
   StyledCheckIcon,
   StyledTitle,
+  StyledBody,
+  Boards,
 } from 'components/modals/elements';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
@@ -17,6 +19,7 @@ import BoardTypeSelector from './BoardTypeSelector';
 import GroupsSelector from './GroupsSelector';
 
 interface Props {
+  // TODO(dtc-215) use containers to avoid deep props nesting
   suite: Suite;
   board: Board;
   setSuite: TS_FIX_ME;
@@ -98,23 +101,27 @@ export const BoardForm: React.FC<Props> = ({
             <StyledTitle empty={isEmpty(suite?.boards)}>
               Added boards
             </StyledTitle>
-            {suite?.boards?.map((boardItem: Board) => {
-              return (
-                <AddedBoardItem
-                  onClick={() => setBoard(boardItem)}
-                  key={boardItem.key}
-                  selected={isEqual(boardItem.key, board?.key)}
-                >
-                  <StyledCheckIcon type="Check" />
-                  <Body level={4}>{boardItem.title}</Body>
-                  <Button
-                    unstyled
-                    onClick={(event) => deleteBoard(event, boardItem.key)}
-                    icon="Trash"
-                  />
-                </AddedBoardItem>
-              );
-            })}
+            <Boards>
+              {suite?.boards?.map((boardItem: Board) => {
+                return (
+                  <AddedBoardItem
+                    onClick={() => setBoard(boardItem)}
+                    key={boardItem.key}
+                    selected={isEqual(boardItem.key, board?.key)}
+                  >
+                    <StyledCheckIcon type="Check" />
+                    <Tooltip content={boardItem.title}>
+                      <StyledBody level={4}>{boardItem.title}</StyledBody>
+                    </Tooltip>
+                    <Button
+                      unstyled
+                      onClick={(event) => deleteBoard(event, boardItem.key)}
+                      icon="Trash"
+                    />
+                  </AddedBoardItem>
+                );
+              })}
+            </Boards>
           </div>
           {!isEmpty(board.visibleTo) && (
             <Micro>

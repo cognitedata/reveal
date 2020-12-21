@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from '@cognite/cogs.js';
 import { Suite } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
+import { Textarea } from 'components/modals/elements';
 import ColorSelector from './ColorSelector';
 
 interface Props {
@@ -10,7 +11,9 @@ interface Props {
 }
 
 export const SuiteForm: React.FC<Props> = ({ suite, setSuite }: Props) => {
-  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { value, name } = event.target;
     setSuite((prevState: Suite) => ({
       ...prevState,
@@ -31,15 +34,13 @@ export const SuiteForm: React.FC<Props> = ({ suite, setSuite }: Props) => {
         fullWidth
       />
       <ColorSelector suite={suite} setSuite={setSuite} />
-      <Input
+      <Textarea
         autoComplete="off"
         title="Description"
         name="description"
         value={suite.description}
-        variant="noBorder"
         placeholder="Description that clearly explains the purpose of the suite"
         onChange={handleOnChange}
-        fullWidth
       />
     </>
   );

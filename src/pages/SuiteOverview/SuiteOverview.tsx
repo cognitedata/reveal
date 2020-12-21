@@ -6,8 +6,9 @@ import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
 import { BoardMenu, SuiteMenu } from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
-import { getBoardsBySuite, getSuitesTableState } from 'store/suites/selectors';
 import { useDispatch, useSelector } from 'react-redux';
+import { getBoardsBySuite, getSuitesTableState } from 'store/suites/selectors';
+import { isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
@@ -18,6 +19,7 @@ const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const dispatch = useDispatch<RootDispatcher>();
+  const admin = useSelector(isAdmin);
 
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
@@ -59,15 +61,17 @@ const SuiteOverview: React.FC = () => {
       <Suitebar
         leftCustomHeader={<Header />}
         actionButton={
-          <Button
-            variant="outline"
-            type="secondary"
-            icon="Plus"
-            iconPlacement="left"
-            onClick={() => handleOpenModal('AddBoard', { dataItem: suite })}
-          >
-            Add board
-          </Button>
+          admin && (
+            <Button
+              variant="outline"
+              type="secondary"
+              icon="Plus"
+              iconPlacement="left"
+              onClick={() => handleOpenModal('AddBoard', { dataItem: suite })}
+            >
+              Add board
+            </Button>
+          )
         }
       />
       <OverviewContainer>

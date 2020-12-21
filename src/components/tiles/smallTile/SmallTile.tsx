@@ -5,22 +5,23 @@ import {
   SmallTileContainer,
   TileDescription,
   StyledTitle,
-} from 'components/tiles/element';
+} from 'components/tiles/elements';
+import { shortDateTime } from 'utils/date';
+import { Suite } from 'store/suites/types';
 
 interface Props {
-  title: string;
-  color: string;
+  dataItem: Suite;
 }
 
-export const SmallTile: React.FC<Props> = ({ title, color }: Props) => {
+export const SmallTile: React.FC<Props> = ({ dataItem }: Props) => {
   return (
     <SmallTileContainer>
-      <SuiteAvatar size="large" title={title} color={color} />
+      <SuiteAvatar size="large" title={dataItem.title} color={dataItem.color} />
       <TileDescription>
-        <Tooltip content={title}>
-          <StyledTitle level={6}>{title}</StyledTitle>
+        <Tooltip content={dataItem.title}>
+          <StyledTitle level={6}>{dataItem.title}</StyledTitle>
         </Tooltip>
-        <Body level={3}>description</Body>
+        <Body level={3}>Opened {shortDateTime(dataItem?.lastUpdatedTime)}</Body>
       </TileDescription>
     </SmallTileContainer>
   );

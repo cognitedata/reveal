@@ -36,7 +36,7 @@ const BoardTypeSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
         theme="grey"
         placeholder="Select type"
         name="type"
-        value={boardTypeValue || null}
+        value={boardTypeValue}
         onChange={handleOnChange}
         options={options}
         closeMenuOnSelect

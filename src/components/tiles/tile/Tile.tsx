@@ -8,7 +8,7 @@ import {
   TileDescription,
   TileOverline,
   StyledTitle,
-} from 'components/tiles/element';
+} from 'components/tiles/elements';
 import { SuiteRowDelete } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 

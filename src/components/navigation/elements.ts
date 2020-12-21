@@ -1,9 +1,10 @@
 import styled from 'styled-components/macro';
-import layers from '_helpers/zindex';
+import layers from 'utils/zindex';
 
 export const SidebarContainer = styled.div<{ open: boolean }>`
   height: 100%;
   min-width: 298px;
+  width: 298px;
   border-right: 1px solid var(--cogs-color-strokes-default);
   padding: 16px 24px;
   z-index: ${layers.LEFT_SIDEBAR};
@@ -42,6 +43,9 @@ export const SuiteTitle = styled.span`
   color: ${(props: { disabled?: boolean }) =>
     props.disabled ? 'var(--cogs-greyscale-grey6)' : 'var(--cogs-black)'};
   margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const NavigationItemContainer = styled.div<{ selected?: boolean }>`
@@ -55,6 +59,9 @@ export const NavigationItemContainer = styled.div<{ selected?: boolean }>`
     cursor: pointer;
     background-color: var(--cogs-midblue-8);
     border-radius: 4px;
+  }
+  & > span {
+    display: grid;
   }
 `;
 

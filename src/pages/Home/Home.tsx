@@ -18,6 +18,7 @@ import { SmallTilesContainer } from './elements';
 const Home = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation('Home');
+  const itemsToDisplay = 4;
   const dispatch = useDispatch<RootDispatcher>();
   const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
     getSuitesTableState
@@ -43,24 +44,26 @@ const Home = () => {
       <Suitebar
         headerText="Executive overview"
         actionButton={
-          <Button
-            variant="outline"
-            type="secondary"
-            icon="Plus"
-            iconPlacement="left"
-            onClick={() => handleOpenModal('CreateSuite')}
-          >
-            New suite
-          </Button>
+          admin && (
+            <Button
+              variant="outline"
+              type="secondary"
+              icon="Plus"
+              iconPlacement="left"
+              onClick={() => handleOpenModal('CreateSuite')}
+            >
+              New suite
+            </Button>
+          )
         }
       />
       <OverviewContainer>
         <SmallTilesContainer>
           <Title level={6}>Quick Access</Title>
-          {suites?.map((suite: Suite) => {
+          {suites?.slice(0, itemsToDisplay).map((suite: Suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
-                <SmallTile title={suite.title} color={suite.color} />
+                <SmallTile dataItem={suite} />
               </Link>
             );
           })}

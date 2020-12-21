@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
+import { Body, Tooltip } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar/SuiteAvatar';
 import { NavigationItemContainer, SuiteTitle } from './elements';
 
@@ -19,9 +19,11 @@ const NavigationItem: React.FC<Props> = ({
   return (
     <NavigationItemContainer selected={selected}>
       <SuiteAvatar color={color} title={title} disabled={disabled} />
-      <Body level={2} as={SuiteTitle}>
-        {title}
-      </Body>
+      <Tooltip content={title}>
+        <Body level={2} as={SuiteTitle}>
+          {title}
+        </Body>
+      </Tooltip>
       <SuiteTitle disabled={disabled} />
     </NavigationItemContainer>
   );
