@@ -22,15 +22,33 @@ export class ApiClient {
   }
 
   getSuitesRows() {
-    return fetch(`${this.baseUrl}/suites`, {
-      method: 'GET',
+    return this.makeRequest('/suites', 'GET');
+  }
+
+  /**
+   * Helper method avoiding boiler plate.
+   * @private
+   */
+  private async makeRequest<T extends object>(
+    url: string,
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+    body?: T
+  ) {
+    const response = await fetch(this.baseUrl + url, {
+      method,
       headers: {
-        Accept: 'applicatin/json',
-        'Content-Type': 'applicatin/json',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${this.accessToken}`,
         project: this.appId,
       },
-    }).then((res) => res.json());
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+    return response.ok
+      ? Promise.resolve(await response.json())
+      : // eslint-disable-next-line prefer-promise-reject-errors
+        Promise.reject((await response.json())?.error as Error);
   }
 }
 

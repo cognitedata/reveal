@@ -52,7 +52,7 @@ async function getSuites(apiClient: ApiClient) {
   return getSuitesFromRows(rows);
 }
 
-function getSuitesFromRows(rows: SuiteRow[]): Suite[] {
+function getSuitesFromRows(rows: SuiteRow[] = []): Suite[] {
   return rows.map(
     (row) =>
       ({
