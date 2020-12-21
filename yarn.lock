@@ -3299,6 +3299,13 @@
   dependencies:
     "@types/d3-time" "*"
 
+"@types/d3-scale@^3.2.1":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@types/d3-scale/-/d3-scale-3.2.2.tgz#5e28d0b1c599328aaec6094219f10a2570be6d74"
+  integrity sha512-qpQe8G02tzUwt9sdWX1h8A/W0Q1+N48wMnYXVOkrzeLUkCfvzJYV9Ee3aORCS4dN4ONRLFmMvaXdziQ29XGLjQ==
+  dependencies:
+    "@types/d3-time" "*"
+
 "@types/d3-shape@^1.3.1":
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@types/d3-shape/-/d3-shape-1.3.4.tgz#5a6d8c3026ba8e8a1a985bda8da40acfc9b7b079"
@@ -3451,17 +3458,7 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
-"@types/lodash@^4.14.146", "@types/lodash@^4.14.160":
-  version "4.14.162"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.162.tgz#65d78c397e0d883f44afbf1f7ba9867022411470"
-  integrity sha512-alvcho1kRUnnD1Gcl4J+hK0eencvzq9rmzvFPRmP5rPHx9VVsJj6bKLTATPVf9ktgv4ujzh7T+XWKp+jhuODig==
-
-"@types/lodash@^4.14.161":
-  version "4.14.161"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.161.tgz#a21ca0777dabc6e4f44f3d07f37b765f54188b18"
-  integrity sha512-EP6O3Jkr7bXvZZSZYlsgt5DIjiGr0dXP1/jVEwVLTFgg0d+3lWVQkRavYVQszV7dYUwvg0B8R0MBDpcmXg7XIA==
-
-"@types/lodash@^4.14.165":
+"@types/lodash@^4.14.146", "@types/lodash@^4.14.160", "@types/lodash@^4.14.161", "@types/lodash@^4.14.165":
   version "4.14.165"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.165.tgz#74d55d947452e2de0742bad65270433b63a8c30f"
   integrity sha512-tjSSOTHhI5mCHTy/OOXYIhi2Wt1qcbHmuXD1Ha7q70CgI/I71afO4XtLb/cVexki1oVYchpul/TOuu3Arcdxrg==
@@ -4014,7 +4011,7 @@
     prop-types "^15.6.1"
     resize-observer-polyfill "1.5.1"
 
-"@visx/scale@1.1.0", "@visx/scale@^1.1.0":
+"@visx/scale@1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@visx/scale/-/scale-1.1.0.tgz#5776efbd0fc07e5296732b7f20e711df30b615da"
   integrity sha512-6m11vrqDD5zPhJdS2KW8fEtdpne3zgJ2YVqnM9naibaUsdA7oLXh54zUlKEd+mzYWLRYuwA+urFPWBSA7kiEaw==
@@ -4026,7 +4023,19 @@
     d3-scale "^3.0.1"
     d3-time "^1.1.0"
 
-"@visx/shape@1.2.0", "@visx/shape@^1.1.0":
+"@visx/scale@1.3.0", "@visx/scale@^1.1.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@visx/scale/-/scale-1.3.0.tgz#6b48537d4ee29a4a565de5a85d39b7ca1f89b572"
+  integrity sha512-u7ksnRs4UE0Q0sydTCcK4SYX+X9deQoAQ9wc6tYUKBspzFeYejIP+NO4fRTtjLsKpYFXad34HKW7vErL7f8FZg==
+  dependencies:
+    "@types/d3-interpolate" "^1.3.1"
+    "@types/d3-scale" "^3.2.1"
+    "@types/d3-time" "^1.0.10"
+    d3-interpolate "^1.4.0"
+    d3-scale "^3.2.3"
+    d3-time "^1.1.0"
+
+"@visx/shape@1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@visx/shape/-/shape-1.2.0.tgz#6cc56bed38fed1e97b12b70a7df59f0861b8052d"
   integrity sha512-xVDdQ/y9GG6o3Csms592wxnufq/33FKQS9N4MJmiVvJ4St1aJcgKLKVf+tjyvMeA8yEr60wKEuvgg/XTAirx8Q==
@@ -4039,6 +4048,25 @@
     "@visx/curve" "1.0.0"
     "@visx/group" "1.0.0"
     "@visx/scale" "1.1.0"
+    classnames "^2.2.5"
+    d3-path "^1.0.5"
+    d3-shape "^1.2.0"
+    lodash "^4.17.15"
+    prop-types "^15.5.10"
+
+"@visx/shape@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@visx/shape/-/shape-1.3.0.tgz#fab11b683a4d3d648ce76da5372a8bd75031eae2"
+  integrity sha512-cysfz1VghSOlhYYR6n3hOKdm1xihmiZJjC5E43eZwnWQGjmqvdlwy+6Cxq4sn1wQwaxj6UD4QfLzxiPSlAQeqg==
+  dependencies:
+    "@types/classnames" "^2.2.9"
+    "@types/d3-path" "^1.0.8"
+    "@types/d3-shape" "^1.3.1"
+    "@types/lodash" "^4.14.146"
+    "@types/react" "*"
+    "@visx/curve" "1.0.0"
+    "@visx/group" "1.0.0"
+    "@visx/scale" "1.3.0"
     classnames "^2.2.5"
     d3-path "^1.0.5"
     d3-shape "^1.2.0"
@@ -7017,7 +7045,7 @@ d3-random@^1.0.3:
   resolved "https://registry.yarnpkg.com/d3-random/-/d3-random-1.1.2.tgz#2833be7c124360bf9e2d3fd4f33847cfe6cab291"
   integrity sha512-6AK5BNpIFqP+cx/sreKzNjWbwZQCSUatxq+pPRmFIQaWuoD+NrbVWw7YWpHiXpCQ/NanKdtGDuB+VQcZDaEmYQ==
 
-d3-scale@^3.0.1:
+d3-scale@^3.0.1, d3-scale@^3.2.3:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/d3-scale/-/d3-scale-3.2.3.tgz#be380f57f1f61d4ff2e6cbb65a40593a51649cfd"
   integrity sha512-8E37oWEmEzj57bHcnjPVOBS3n4jqakOeuv1EDdQSiSrYnMCBdMd3nc4HtKk7uia8DUHcY/CGuJ42xxgtEYrX0g==
