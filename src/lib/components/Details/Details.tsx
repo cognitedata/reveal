@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from 'antd/lib/typography';
 import styled from 'styled-components';
-import { Body, Colors } from '@cognite/cogs.js';
+import { Body, Colors, Icon } from '@cognite/cogs.js';
 import { List } from 'antd';
 import { Link } from 'react-router-dom';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -50,7 +50,13 @@ export const DetailsTabItem = ({
     <div>
       <Name>{name}</Name>
       {value ? (
-        <Value copyable={!!value && copyable ? { tooltips: false } : false}>
+        <Value
+          copyable={
+            !!value && copyable
+              ? { icon: <Icon type="Copy" />, tooltips: false }
+              : false
+          }
+        >
           {link ? <Link to={link}>{value}</Link> : value}
         </Value>
       ) : (
