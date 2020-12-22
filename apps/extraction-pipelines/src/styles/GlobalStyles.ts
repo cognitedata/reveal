@@ -46,6 +46,23 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     overflow: visible;
   }
 
+  .cogs-badge {
+    &.badge-success {
+      border: 0.125rem solid ${Colors.success.hex()} !important;
+      color: ${Colors['greyscale-grey9'].hex()} !important;
+      font-weight: bold;
+    }
+    &.badge-fail {
+      border: 0.125rem solid ${Colors.danger.hex()} !important;
+    }
+    span {
+      text-transform: lowercase !important;
+      &::first-letter {
+        text-transform: uppercase !important;
+      }
+    }
+  } 
+
   .cogs-avatar {
     background: ${Colors['greyscale-grey4'].hex()} !important;
     border: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
