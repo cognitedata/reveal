@@ -7,8 +7,7 @@
   window.__cogniteSidecar = {
     __sidecarFormatVersion: 0,
     applicationId: 'cognuit-dev',
-    cognuitApiBaseUrl:
-      'https://subsurface-console-cognitedata-development.cognite.ai',
+    cognuitApiBaseUrl: 'https://cognuit-cognitedata-development.cognite.ai',
     cognuitCdfProject: 'subsurface-test',
   };
 })();
