@@ -21,8 +21,9 @@ const StatusMarker: FunctionComponent<Props> = ({
       return (
         <Tooltip content={`Status for latest run: ${status}`}>
           <Badge
+            className="cogs-badge badge-success"
             text={status}
-            background="success"
+            background="transparent"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
             {...rest}
@@ -33,6 +34,7 @@ const StatusMarker: FunctionComponent<Props> = ({
       return (
         <Tooltip content={`Status for latest run: ${status}`}>
           <Badge
+            className="cogs-badge badge-fail"
             text={status}
             background="danger"
             aria-label={`Status ${status}`}
