@@ -1,3 +1,5 @@
+import type { Stub } from './types';
+
 const stub = {
   start: () => ({
     stop: () => undefined,
@@ -6,15 +8,15 @@ const stub = {
 };
 
 export const Metrics = {
-  create: () => stub,
-  stop: () => undefined,
-  init: () => undefined,
-  optOut: () => undefined,
-  optIn: () => undefined,
-  props: () => undefined,
-  hasOptedOut: () => false,
-  identify: () => undefined,
-  people: () => undefined,
+  create: (): Stub => stub,
+  stop: (): void => undefined,
+  init: (): void => undefined,
+  optOut: (): void => undefined,
+  optIn: (): void => undefined,
+  props: (): void => undefined,
+  hasOptedOut: (): boolean => false,
+  identify: (): void => undefined,
+  people: (): void => undefined,
 };
 
-export const useMetrics = () => stub;
+export const useMetrics = (): Stub => stub;

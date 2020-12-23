@@ -1,6 +1,11 @@
 module.exports = {
   extends: ['@cognite'],
   plugins: ['@cognite'],
+  parserOptions: {
+    sourceType: 'module',
+    tsconfigRootDir: __dirname,
+    project: './tsconfig.json',
+  },
   rules: {
     '@cognite/no-sdk-submodule-imports': 'error',
 
@@ -14,10 +19,6 @@ module.exports = {
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
 
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-    ],
     '@typescript-eslint/no-explicit-any': ['error'],
   },
 };
