@@ -22,7 +22,10 @@ const MetaData: FunctionComponent<Props> = () => {
     if (int.metadata) {
       return Object.entries(int.metadata).map(([k, v], index) => {
         return (
-          <FieldGrid className="field-view detail-row" key={`meta-${k}-${v}`}>
+          <FieldGrid
+            className="field-view detail-row row-style-even row-height-4"
+            key={`meta-${k}-${v}`}
+          >
             <label htmlFor={k} data-testid={`meta-label-${index}`}>
               {uppercaseFirstWord(k)}
             </label>

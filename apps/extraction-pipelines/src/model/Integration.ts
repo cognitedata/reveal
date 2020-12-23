@@ -2,6 +2,11 @@ import { DataSet } from '@cognite/sdk';
 import { MetaData } from './MetaData';
 import { User } from './User';
 
+export interface Raw {
+  dbName: string;
+  tableName: string;
+}
+
 export interface Integration {
   name: string;
   createdTime: number; // milliseconds
@@ -18,6 +23,7 @@ export interface Integration {
   lastSuccess?: number; // milliseconds
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds
+  rawTables?: Raw[];
 }
 
 export type IntegrationFieldName = keyof Integration | 'status' | 'latestRun';
@@ -30,6 +36,7 @@ export enum DetailFieldNames {
   EXTERNAL_ID = 'External id',
   DESCRIPTION = 'Description',
   CREATED_TIME = 'Created time',
+  RAW_TABLE = 'Raw tables',
   META_DATA = 'Metadata',
   CONTACT = 'Contact',
   OWNER = 'Owner',

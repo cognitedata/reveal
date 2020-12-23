@@ -11,7 +11,7 @@ type Props = OwnProps;
 
 const ContactsDetails: FunctionComponent<Props> = () => {
   return (
-    <GridWithTopMargin>
+    <GridWithTopMargin role="grid">
       <Title level={4}>{TableHeadings.CONTACTS}</Title>
       <OwnerView />
       <ContactsView />

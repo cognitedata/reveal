@@ -35,6 +35,9 @@ export const Grid = styled((props) => <div {...props}>{props.children}</div>)`
     }
     border-bottom: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
   }
+  .row-height-4 {
+    min-height: 4rem;
+  }
 `;
 
 export const GridWithTopMargin = styled((props) => (

@@ -34,6 +34,12 @@ const mockResponseV2 = {
       name: 'Azure Integration',
       description: 'Dummy integration to Azure',
       dataSetId: '1398950266713987',
+      rawTables: [
+        {
+          dbName: 'informatica',
+          tableName: 'oracle',
+        },
+      ],
       dataSet: {
         name: 'Test data set',
         id: 1398950266713987,
@@ -68,6 +74,12 @@ const mockResponseV2 = {
       name: 'SAP Integration',
       description: 'Dummy integration to SAP',
       dataSetId: '1469810437954362',
+      rawTables: [
+        {
+          dbName: 'informatica',
+          tableName: 'oracle',
+        },
+      ],
       lastSuccess: 1584064700001,
       lastFailure: 1584065700002,
       lastSeen: 1584066700003,
@@ -98,6 +110,12 @@ const mockResponseV2 = {
       name: 'PI AF integration',
       description: 'Dummy PI AF integration',
       dataSetId: '1469810437954369',
+      rawTables: [
+        {
+          dbName: 'informatica',
+          tableName: 'oracle',
+        },
+      ],
       lastSuccess: 1584064700012,
       lastFailure: 1584066700013,
       lastSeen: 1584065700011,
@@ -131,6 +149,12 @@ const mockResponseV2 = {
       lastFailure: 1584065800000,
       lastSeen: 1584066900000,
       dataSetId: '1469810437954362',
+      rawTables: [
+        {
+          dbName: 'informatica',
+          tableName: 'oracle',
+        },
+      ],
       owner: {
         email: 'Birger.Urdahl@itera.no',
         name: 'Birger Urdahl',
@@ -160,6 +184,12 @@ const mockResponseV2 = {
       lastFailure: 0,
       lastSeen: 0,
       dataSetId: '1469810437954362',
+      rawTables: [
+        {
+          dbName: 'informatica',
+          tableName: 'oracle',
+        },
+      ],
       owner: {
         email: 'test@test.no',
         name: 'Test Testsen',

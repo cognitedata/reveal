@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryCache } from 'react-query';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import moment from 'moment';
 import { getMockResponse } from '../../../utils/mockResponse';
 import { render } from '../../../utils/test';
 import {
@@ -11,11 +12,41 @@ import {
   renderQueryCacheIntegration,
 } from '../../../utils/test/render';
 import MainDetails from './MainDetails';
+import { parseCron } from '../../../utils/cronUtils';
 
 describe('<MainDetails/>', () => {
   let queryCache: QueryCache;
   beforeEach(() => {
     queryCache = new QueryCache();
+  });
+
+  test('Renders', () => {
+    const integration = getMockResponse()[0];
+    sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
+    const wrapper = renderQueryCacheIntegration(
+      queryCache,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD,
+      ORIGIN_DEV,
+      integration
+    );
+    render(<MainDetails />, { wrapper });
+    expect(screen.getByText(integration.name)).toBeInTheDocument();
+    expect(screen.getByText(integration.description)).toBeInTheDocument();
+    expect(screen.getByText(integration.externalId)).toBeInTheDocument();
+    expect(
+      screen.getByText(moment(integration.createdTime).fromNow())
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(parseCron(integration.schedule))
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(integration.rawTables[0].dbName)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(integration.rawTables[0].tableName)
+    ).toBeInTheDocument();
+    expect(screen.getByText(integration.dataSet.name)).toBeInTheDocument();
   });
 
   test('Two edits at the same time', async () => {

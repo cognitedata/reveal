@@ -31,7 +31,7 @@ const MainDetails: FunctionComponent<Props> = () => {
   const status = calculateStatus(latest);
 
   return (
-    <DetailsGrid>
+    <DetailsGrid role="grid">
       <NameView />
       <FieldView
         label={DetailFieldNames.EXTERNAL_ID}
@@ -68,6 +68,11 @@ const MainDetails: FunctionComponent<Props> = () => {
         label={TableHeadings.DATA_SET}
         fieldName={integration?.dataSet ? 'dataSet' : 'dataSetId'}
         fieldValue={integration?.dataSet ?? integration?.dataSetId}
+      />
+      <FieldView
+        label={DetailFieldNames.RAW_TABLE}
+        fieldName="rawTables"
+        fieldValue={integration?.rawTables}
       />
     </DetailsGrid>
   );

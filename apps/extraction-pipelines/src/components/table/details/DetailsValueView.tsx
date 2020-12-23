@@ -11,7 +11,9 @@ import RelativeTimeWithTooltip from '../../integrations/cols/RelativeTimeWithToo
 import {
   IntegrationFieldName,
   IntegrationFieldValue,
+  Raw,
 } from '../../../model/Integration';
+import RawTable from '../../integrations/cols/RawTable';
 
 interface DetailsValueViewProps {
   fieldValue: IntegrationFieldValue;
@@ -54,6 +56,9 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
           )}
         </>
       );
+    }
+    case 'rawTables': {
+      return <RawTable rawTables={fieldValue as Raw[]} />;
     }
     case 'externalId':
       return (
