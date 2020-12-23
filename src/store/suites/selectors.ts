@@ -1,4 +1,5 @@
 import { StoreState } from 'store/types';
+import { sortByLastUpdated } from 'utils/suites';
 import { Suite, SuitesTableState } from './types';
 
 export const getSuitesTableState = (state: StoreState): SuitesTableState =>
@@ -12,10 +13,7 @@ export const getBoardsBySuite = (key: string) => (
 export const getLastVisited = (itemsToDisplay: number = 6) => (
   state: StoreState
 ): Suite[] | undefined =>
-  (state.suitesTable?.suites || [])
-    .sort(
-      (x: Suite, y: Suite) =>
-        new Date(y?.lastUpdatedTime as Date).getTime() -
-        new Date(x?.lastUpdatedTime as Date).getTime()
-    )
-    .slice(0, itemsToDisplay);
+  sortByLastUpdated(state.suitesTable?.suites || [], 'desc').slice(
+    0,
+    itemsToDisplay
+  );

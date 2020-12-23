@@ -13,6 +13,7 @@ import { getLastVisited, getSuitesTableState } from 'store/suites/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { isAdmin } from 'store/groups/selectors';
+import { sortByLastUpdated } from 'utils/suites';
 import { SmallTilesContainer } from './elements';
 
 const Home = () => {
@@ -36,6 +37,8 @@ const Home = () => {
   if (suitesLoading) {
     return <Loader />;
   }
+
+  const sortedSuites = sortByLastUpdated(suites);
 
   const handleOpenModal = (modalType: ModalType) => {
     dispatch(modalOpen({ modalType }));
@@ -72,7 +75,8 @@ const Home = () => {
         </SmallTilesContainer>
         <TilesContainer>
           <Title level={6}>Pinned</Title>
-          {suites?.map((suite: Suite) => {
+          {/* TODO(DTC-179) Show pinned suites */}
+          {suites?.slice(0, 4).map((suite: Suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
                 <Tile
@@ -87,7 +91,7 @@ const Home = () => {
         </TilesContainer>
         <TilesContainer>
           <Title level={6}>All suites</Title>
-          {suites?.map((suite: Suite) => {
+          {sortedSuites?.map((suite: Suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
                 <Tile
