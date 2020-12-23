@@ -11,11 +11,14 @@ module.exports = {
       apiKey: 'd2f00b2aa78a3b4ca8877d9b764916d4',
       indexName: 'reveal-docs',
 
-      // Optional: when on 1.x search for 1.x only
+      // doesn't look like it works for 1.x and next. Looks like 'next' considered unversioned
+      // so next is excluded from the search below
       contextualSearch: true,
 
       // Optional: Algolia search parameters
-      searchParameters: {},
+      searchParameters: {
+        facetFilters: ["version:1.x"]
+      },
 
       //... other Algolia params https://autocomplete-experimental.netlify.app/docs/docsearchmodal/#reference
     },
