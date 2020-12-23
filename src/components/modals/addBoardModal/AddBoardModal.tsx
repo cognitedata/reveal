@@ -41,7 +41,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
         Cancel
       </Button>
       <Button type="primary" onClick={handleSubmit}>
-        {modalSettings.create.buttons.save}
+        {modalSettings.edit.buttons.save}
       </Button>
     </ModalFooter>
   );

@@ -4,7 +4,7 @@ import { Select } from '@cognite/cogs.js';
 import includes from 'lodash/includes';
 import { useSelector } from 'react-redux';
 import { getGroupsState } from 'store/groups/selectors';
-import { SelectLabel, SelectContainer } from 'components/modals/elements';
+import { CustomLabel, CustomInputContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 
@@ -40,8 +40,8 @@ const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
     options?.filter((obj) => board?.visibleTo?.includes(obj.value)) || null;
 
   return (
-    <SelectContainer>
-      <SelectLabel>Manage access to board</SelectLabel>
+    <CustomInputContainer>
+      <CustomLabel>Manage access to board</CustomLabel>
       <Select
         theme="grey"
         placeholder="Type to search for groups"
@@ -53,7 +53,7 @@ const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
         isMulti
         closeMenuOnSelect
       />
-    </SelectContainer>
+    </CustomInputContainer>
   );
 };
 

@@ -8,7 +8,7 @@ import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { TS_FIX_ME } from 'types/core';
-import { ActionsContainer, MenuContainer } from './elements';
+import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {
   dataItem: TS_FIX_ME;
@@ -51,7 +51,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
             {admin && (
               <>
                 <Menu.Item>
-                  <div
+                  <MenuItemContent
                     role="button"
                     tabIndex={0}
                     onClick={(event) =>
@@ -59,10 +59,10 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                     }
                   >
                     Edit suite
-                  </div>
+                  </MenuItemContent>
                 </Menu.Item>
                 <Menu.Item>
-                  <div
+                  <MenuItemContent
                     role="button"
                     tabIndex={0}
                     onClick={(event) =>
@@ -70,7 +70,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                     }
                   >
                     Delete suite
-                  </div>
+                  </MenuItemContent>
                 </Menu.Item>
               </>
             )}

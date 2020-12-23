@@ -12,3 +12,7 @@ export const ActionsContainer = styled.div`
   color: var(--cogs-text-color);
   z-index: ${layers.TILE_ACTIONS_MENU};
 `;
+export const MenuItemContent = styled.div`
+  width: inherit;
+  text-align: left;
+`;

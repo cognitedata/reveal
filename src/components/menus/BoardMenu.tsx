@@ -8,7 +8,7 @@ import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
-import { ActionsContainer, MenuContainer } from './elements';
+import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {
   board: Board;
@@ -53,7 +53,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
             {admin && (
               <>
                 <Menu.Item>
-                  <div
+                  <MenuItemContent
                     role="button"
                     tabIndex={0}
                     // TODO(dtc-215) avoid using callbacks with passed modal type and data
@@ -65,10 +65,10 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                     }
                   >
                     Edit board
-                  </div>
+                  </MenuItemContent>
                 </Menu.Item>
                 <Menu.Item>
-                  <div
+                  <MenuItemContent
                     role="button"
                     tabIndex={0}
                     onClick={(event) =>
@@ -76,7 +76,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                     }
                   >
                     Remove board
-                  </div>
+                  </MenuItemContent>
                 </Menu.Item>
               </>
             )}

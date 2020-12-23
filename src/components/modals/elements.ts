@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import { Icon, Body } from '@cognite/cogs.js';
+import { A, Icon, Body } from '@cognite/cogs.js';
 import { SpaceBetween } from 'styles/common';
 
 export const ModalContainer = styled.div`
@@ -34,15 +34,30 @@ export const FooterContainer = styled.div`
   }
 `;
 
-export const SelectLabel = styled.p`
+export const CustomLabel = styled.p`
+  display: flex;
+  align-items: center;
   font-size: 13px;
   margin: 0 0 4px;
+  & > span {
+    margin-right: 8px;
+  }
 `;
 
-export const SelectContainer = styled.div`
+export const CustomInputContainer = styled.div`
   margin-bottom: 16px;
   & .cogs-select__single-value {
     color: var(--cogs-black);
+  }
+`;
+
+export const CustomTooltipContainer = styled.div`
+  & > a {
+    color: var(--cogs-white);
+    text-decoration: underline;
+  }
+  & > a:hover {
+    color: var(--cogs-white);
   }
 `;
 
@@ -74,8 +89,8 @@ export const BoardsContainer = styled.div`
 `;
 
 export const Boards = styled.div`
-  height: 268px;
-  overflow-y: scroll;
+  max-height: 324px;
+  overflow-y: auto;
 `;
 
 export const AddedBoardItem = styled.div<{ selected?: boolean }>`
@@ -119,6 +134,13 @@ export const StyledBody = styled(Body)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+export const StyledLink = styled(A)`
+  text-decoration: underline;
+  & svg {
+    width: 8px;
+  }
 `;
 
 export const FormContainer = styled.div`

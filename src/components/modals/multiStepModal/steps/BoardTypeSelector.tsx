@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
-import { SelectLabel, SelectContainer } from 'components/modals/elements';
+import { CustomLabel, CustomInputContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 
@@ -30,8 +30,8 @@ const BoardTypeSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
     options.find((option) => isEqual(option.value, board.type)) || null;
 
   return (
-    <SelectContainer>
-      <SelectLabel>Select type</SelectLabel>
+    <CustomInputContainer>
+      <CustomLabel>Select type</CustomLabel>
       <Select
         theme="grey"
         placeholder="Select type"
@@ -41,7 +41,7 @@ const BoardTypeSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
         options={options}
         closeMenuOnSelect
       />
-    </SelectContainer>
+    </CustomInputContainer>
   );
 };
 
