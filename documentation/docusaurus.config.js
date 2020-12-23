@@ -7,6 +7,18 @@ module.exports = {
   organizationName: 'cognitedata',
   projectName: 'reveal',
   themeConfig: {
+    algolia: {
+      apiKey: 'd2f00b2aa78a3b4ca8877d9b764916d4',
+      indexName: 'reveal-docs',
+
+      // Optional: when on 1.x search for 1.x only
+      contextualSearch: true,
+
+      // Optional: Algolia search parameters
+      searchParameters: {},
+
+      //... other Algolia params https://autocomplete-experimental.netlify.app/docs/docsearchmodal/#reference
+    },
     prism: {
       // changes syntax highlighting theme
       theme: require('prism-react-renderer/themes/oceanicNext'),
