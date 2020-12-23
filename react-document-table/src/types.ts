@@ -1,3 +1,7 @@
+export interface Metadata {
+  [s: string]: string;
+}
+
 export interface Document {
   id: number;
   fileName: string;
@@ -8,10 +12,6 @@ export interface Document {
   assetIds?: number[];
   uploaded?: boolean;
   uploadedAt?: number;
-}
-
-export interface Metadata {
-  [s: string]: string;
 }
 
 export interface DocumentType {

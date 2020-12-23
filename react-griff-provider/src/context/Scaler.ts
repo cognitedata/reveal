@@ -9,8 +9,8 @@ export type Scaler = {
     changedDomainsById: AxisDomainsByItemId,
     callback: OnDomainsUpdated
   ) => void;
-  domainsByItemId: {};
-  subDomainsByItemId: {};
+  domainsByItemId: Record<string, unknown>;
+  subDomainsByItemId: Record<string, unknown>;
 };
 
 const ScalerContext = React.createContext<Scaler>({

@@ -17,7 +17,7 @@ describe('FeatureToggle', () => {
   );
 
   it('Should default to the defaulted value (false)', () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     sandbox.stub(client, 'isEnabled').returns(undefined);
     const { result } = renderHook(() => useFlag('test-flag'), {
@@ -27,7 +27,7 @@ describe('FeatureToggle', () => {
   });
 
   it('Should default to the defaulted value (true)', () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     sandbox.stub(client, 'isEnabled').returns(undefined);
     const { result } = renderHook(

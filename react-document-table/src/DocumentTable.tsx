@@ -1,5 +1,5 @@
-import Collapse, { CollapseProps } from 'antd/lib/collapse';
 import React from 'react';
+import Collapse, { CollapseProps } from 'antd/lib/collapse';
 import styled from 'styled-components';
 
 import { Document, JsonDocTypes, TextContainerProps } from './types';
@@ -11,6 +11,56 @@ import {
 } from './utils';
 
 const { Panel } = Collapse;
+
+const TableWrapper = styled.div`
+  width: 100%;
+  justify-content: center;
+  display: flex;
+`;
+
+const LinkContainer = styled.div`
+  display: flex;
+  margin: 10px 0;
+  white-space: nowrap;
+`;
+
+const CollapseContainer = styled(Collapse)`
+  width: 100%;
+`;
+
+const TextContainerTop = styled.div<TextContainerProps>`
+  width: 100%;
+  overflow: ${(props) => (props.scrollX ? '' : 'hidden')};
+  text-overflow: ${(props) => (props.scrollX ? '' : 'ellipsis')};
+`;
+
+const PanelWrapper = styled(Panel)`
+  text-align: left;
+
+  .ant-collapse-content-box {
+    overflow: auto;
+  }
+`;
+
+const PanelHeader = styled.div`
+  .count {
+    background: #e8e8e8;
+    display: inline-block;
+    text-align: center;
+    padding: 0 10px;
+    border-radius: 9999px;
+    margin-left: 12px;
+  }
+`;
+
+const LinkStyle = styled.a`
+  font-size: 1.125em;
+  margin-right: 10px;
+`;
+
+const NoDocuments = styled.div`
+  padding: 16px;
+`;
 
 export type DocumentRenderer = (
   document: Document,
@@ -178,53 +228,3 @@ export class DocumentTable extends React.PureComponent<
     );
   }
 }
-
-const TableWrapper = styled.div`
-  width: 100%;
-  justify-content: center;
-  display: flex;
-`;
-
-const LinkContainer = styled.div`
-  display: flex;
-  margin: 10px 0;
-  white-space: nowrap;
-`;
-
-const CollapseContainer = styled(Collapse)`
-  width: 100%;
-`;
-
-const TextContainerTop = styled.div<TextContainerProps>`
-  width: 100%;
-  overflow: ${(props) => (props.scrollX ? '' : 'hidden')};
-  text-overflow: ${(props) => (props.scrollX ? '' : 'ellipsis')};
-`;
-
-const PanelWrapper = styled(Panel)`
-  text-align: left;
-
-  .ant-collapse-content-box {
-    overflow: auto;
-  }
-`;
-
-const PanelHeader = styled.div`
-  .count {
-    background: #e8e8e8;
-    display: inline-block;
-    text-align: center;
-    padding: 0 10px;
-    border-radius: 9999px;
-    margin-left: 12px;
-  }
-`;
-
-const LinkStyle = styled.a`
-  font-size: 1.125em;
-  margin-right: 10px;
-`;
-
-const NoDocuments = styled.div`
-  padding: 16px;
-`;

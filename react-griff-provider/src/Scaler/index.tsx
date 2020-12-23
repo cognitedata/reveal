@@ -16,7 +16,7 @@ export interface State {
   subDomainsByItemId: AxisDomainsByItemId;
 }
 
-export type OnDomainsUpdated = Function;
+export type OnDomainsUpdated = (callback: AxisDomainsByItemId) => void;
 
 type DomainAxis = 'time' | 'x' | 'y';
 
@@ -123,7 +123,7 @@ export function getDerivedStateFromProps(
   const setUpdated = () => {
     updated = true;
   };
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const stateUpdates = series
     .concat(collections)

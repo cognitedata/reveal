@@ -20,6 +20,14 @@ const sortDocsByPriority = (a: string, b: string, priority: Priority) =>
   (priority[a] || Number.MAX_SAFE_INTEGER) -
   (priority[b] || Number.MAX_SAFE_INTEGER);
 
+const objKeysToLowerCase = (obj?: Metadata): Metadata =>
+  obj
+    ? Object.keys(obj).reduce((acc: Metadata, key) => {
+        acc[key.toLowerCase()] = obj[key];
+        return acc;
+      }, {})
+    : {};
+
 const getValueFromObject = (metadata?: Metadata, arr?: string[]): string => {
   if (!metadata || !arr) {
     return '';
@@ -32,14 +40,6 @@ const getValueFromObject = (metadata?: Metadata, arr?: string[]): string => {
     return acc;
   }, '');
 };
-
-const objKeysToLowerCase = (obj?: Metadata): Metadata =>
-  obj
-    ? Object.keys(obj).reduce((acc: Metadata, key) => {
-        acc[key.toLowerCase()] = obj[key];
-        return acc;
-      }, {})
-    : {};
 
 const getDocumentType = (
   metadata?: Metadata,

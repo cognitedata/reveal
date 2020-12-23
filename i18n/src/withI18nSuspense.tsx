@@ -6,6 +6,7 @@ type WithDisplayName = {
   displayName?: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function withI18nSuspense<T extends {}>(
   Component:
     | ((() => JSX.Element | null) & WithDisplayName)

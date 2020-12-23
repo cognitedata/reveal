@@ -55,7 +55,7 @@ describe('GetKeyAndDescription', () => {
 });
 
 describe('ListDocsInCategories', () => {
-  it('Should return an object with doctype as key for descriptions and arry of documents ', () => {
+  it('Should return an object with doctype as key for descriptions and array of documents', () => {
     const result = getDocumentsByCategory(docs);
     expect(result).toHaveProperty('XK');
     expect(result).toHaveProperty('XJ');
