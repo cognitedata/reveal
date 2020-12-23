@@ -1,13 +1,10 @@
 module.exports = {
   extends: ['airbnb', 'prettier', 'prettier/react', 'plugin:jest/recommended'],
   plugins: ['react', 'prettier', 'jest', 'react-hooks', 'import', '@cognite'],
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true,
-    },
+    tsconfigRootDir: __dirname,
+    project: './tsconfig.json',
   },
   env: {
     browser: true,
@@ -24,14 +21,7 @@ module.exports = {
       files: ['**/*.ts?(x)'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
-        ecmaVersion: 2018,
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
-
-        // typescript-eslint specific options
-        warnOnUnsupportedTypeScriptVersion: true,
+        project: '/tsconfig.json',
       },
       plugins: ['@typescript-eslint'],
       // If adding a typescript-eslint version of an existing ESLint rule,
@@ -55,24 +45,15 @@ module.exports = {
         '@typescript-eslint/no-array-constructor': 'warn',
         '@typescript-eslint/no-namespace': 'error',
         'no-use-before-define': 'off',
-        '@typescript-eslint/no-use-before-define': [
-          'warn',
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars-experimental': [
+          2,
           {
-            functions: false,
-            classes: false,
-            variables: false,
-            typedefs: false,
+            ignoredNamesRegex: '^_',
+            // ignoreArgsIfArgsAfterAreUsed: true, <--- for reference - allows for (event, variable: x)
           },
         ],
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': [
-          'error',
-          {
-            vars: 'all',
-            args: 'after-used',
-            ignoreRestSiblings: true,
-          },
-        ],
         'no-useless-constructor': 'off',
         '@typescript-eslint/no-useless-constructor': 'warn',
       },
