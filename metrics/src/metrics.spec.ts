@@ -1,5 +1,5 @@
 /* eslint-disable no-new */
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createSandbox } from 'sinon';
 import mixpanel from 'mixpanel-browser';
 
@@ -75,6 +75,7 @@ describe('Metrics', () => {
 
     Metrics.init({
       mixpanelToken: 'passedMixpanelToken',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       persistence: 'bad-value',
     });
@@ -104,6 +105,7 @@ describe('Metrics', () => {
 
   it('Should console.warn if constructor is used directly', () => {
     const spy = jest.spyOn(console, 'warn');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new Metrics('SimpleMetrics');
     expect(spy).toHaveBeenCalledWith(

@@ -4,13 +4,9 @@
 /* eslint-disable no-console */
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-import {
-  isAuthFlow,
-  retrieveAuthResult,
-  saveAuthResult,
-} from 'storage/storage';
-import { AuthResult } from 'storage/types';
 
+import { isAuthFlow, retrieveAuthResult, saveAuthResult } from '../storage';
+import { AuthResult } from '../storage';
 import config from '../config';
 
 const { cluster, oidc } = config;

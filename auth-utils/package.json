@@ -1,6 +1,6 @@
 {
   "name": "@cognite/auth-utils",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "The auth layer of all cognite react apps",
   "source": "src/index.ts",
   "main": "dist/auth-js.js",

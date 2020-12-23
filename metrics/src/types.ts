@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/interface-name-prefix */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Dict } from 'mixpanel-browser';
 
 export type Callback = () => void;
@@ -25,3 +25,8 @@ export type InitOptions = {
   metricsDebugger?: MetricsDebugger;
   persistence?: 'cookie' | 'localStorage';
 } & Properties;
+
+export type Stub = {
+  start: () => { stop: () => undefined };
+  track: () => undefined;
+};

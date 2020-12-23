@@ -65,7 +65,7 @@ class Metrics {
     metricsDebugger,
     persistence,
     ...properties
-  }: InitOptions) {
+  }: InitOptions): void {
     if (!mixpanelToken) {
       throw new Error('Missing mixpanelToken parameter');
     }
@@ -95,11 +95,11 @@ class Metrics {
     });
   }
 
-  public static optOut(options?: Partial<OutTrackingOptions>) {
+  public static optOut(options?: Partial<OutTrackingOptions>): void {
     mixpanel.opt_out_tracking(options);
   }
 
-  public static optIn(options?: Partial<InTrackingOptions>) {
+  public static optIn(options?: Partial<InTrackingOptions>): void {
     mixpanel.opt_in_tracking(options);
   }
 
@@ -107,7 +107,7 @@ class Metrics {
     return mixpanel.has_opted_out_tracking(options);
   }
 
-  public static props(properties: Properties) {
+  public static props(properties: Properties): void {
     Object.keys(properties)
       .filter((key) => key !== 'mixpanelToken' && key !== 'debug')
       .forEach((key) => {
@@ -137,15 +137,18 @@ class Metrics {
       });
   }
 
-  public static identify(uid: string) {
+  public static identify(uid: string): void {
     mixpanel.identify(uid);
   }
 
-  public static people(info: People) {
+  public static people(info: People): void {
     mixpanel.people.set(info);
   }
 
-  public static create(className: string, properties: Properties = {}) {
+  public static create(
+    className: string,
+    properties: Properties = {}
+  ): Metrics {
     return new Metrics(className, properties, false);
   }
 
@@ -153,7 +156,7 @@ class Metrics {
     possibleTimer: ITimer,
     properties: Properties = {},
     callback?: Callback
-  ) {
+  ): void {
     if (Metrics.DEBUGGER.isDebug || (possibleTimer && possibleTimer.stop)) {
       possibleTimer.stop(properties, callback);
     }
@@ -182,7 +185,11 @@ class Metrics {
     });
   }
 
-  public track(name: string, properties: Properties = {}, callback?: Callback) {
+  public track(
+    name: string,
+    properties: Properties = {},
+    callback?: Callback
+  ): void {
     const combined = { ...globalProperties, ...this.properties, ...properties };
     try {
       const event = `${this.className}.${name}`;

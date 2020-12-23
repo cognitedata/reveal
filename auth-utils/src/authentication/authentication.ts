@@ -1,4 +1,8 @@
 /* eslint-disable no-console */
+import { CogniteClient } from '@cognite/sdk';
+import axios from 'axios';
+import { Configuration } from '@azure/msal-browser';
+
 import {
   clearByNoProject,
   clearByProject,
@@ -6,19 +10,15 @@ import {
   isNoAuthFlow,
   retrieveAuthResult,
   saveAuthResult,
-} from 'storage';
-import { CogniteClient } from '@cognite/sdk';
-import { AuthFlow, AuthResult } from 'storage/types';
-import axios from 'axios';
-import AzureAD from 'aad/aad';
-import { Configuration } from '@azure/msal-browser';
-
+} from '../storage';
+import { AuthFlow, AuthResult } from '../storage';
+import AzureAD from '../aad/aad';
 import {
   getUserInfo,
   processSigninResponse,
   signInWithADFSRedirect,
   userInfoMapper,
-} from '../adfsModule/adfsModule';
+} from '../adfsModule';
 import config from '../config';
 
 const { cluster } = config;
