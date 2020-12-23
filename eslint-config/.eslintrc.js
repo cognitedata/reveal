@@ -18,10 +18,11 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.ts?(x)'],
+      files: ['**/*.ts?(x)', '**/*.js'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
-        project: '/tsconfig.json',
+        tsconfigRootDir: __dirname,
+        project: './tsconfig.json',
       },
       plugins: ['@typescript-eslint'],
       // If adding a typescript-eslint version of an existing ESLint rule,
