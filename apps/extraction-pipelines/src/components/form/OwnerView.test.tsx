@@ -145,5 +145,8 @@ describe('<OwnerView />', () => {
     });
     const oldValue = screen.getByText(integration.owner.email);
     expect(oldValue).toBeInTheDocument();
+    expect(oldValue.getAttribute('href')).toEqual(
+      `mailto:${integration.owner.email}`
+    );
   });
 });

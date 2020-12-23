@@ -16,6 +16,8 @@ import { InputWarningIcon } from '../inputs/InputWarningIcon';
 import ValidationError from './ValidationError';
 import { DetailFieldNames } from '../../model/Integration';
 import { InputWarningError } from '../inputs/InputWithWarning';
+import EmailLink from '../buttons/EmailLink';
+import { User } from '../../model/User';
 
 interface OwnProps {
   field: Partial<ArrayField<Record<string, any>, 'id'>>;
@@ -54,7 +56,7 @@ const ContactView: FunctionComponent<Props> = ({
       const aut = getValues();
       const actual = aut.authors[index];
       const authors = integration?.authors ?? [];
-      const authorsToSave = authors.map((author, idx) => {
+      const authorsToSave = authors.map((author: User, idx: number) => {
         if (idx === index) {
           return actual;
         }
@@ -219,7 +221,9 @@ const ContactView: FunctionComponent<Props> = ({
           <ValidationError errors={errors} name={`authors[${index}].email`} />
         </InputWarningError>
       ) : (
-        <AlignedSpan>{integration?.authors[index]?.email}</AlignedSpan>
+        <AlignedSpan>
+          <EmailLink email={integration?.authors[index]?.email} />
+        </AlignedSpan>
       )}
       {isEdit ? (
         <>

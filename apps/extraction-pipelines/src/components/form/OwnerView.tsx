@@ -12,6 +12,7 @@ import { createUpdateSpec } from '../../utils/contactsUtils';
 import { AlignedSpan, GridRowStyle } from './ContactsView';
 import { DetailFieldNames } from '../../model/Integration';
 import ErrorMessageDialog from '../buttons/ErrorMessageDialog';
+import EmailLink from '../buttons/EmailLink';
 
 interface OwnProps {}
 
@@ -143,7 +144,9 @@ const OwnerView: FunctionComponent<Props> = () => {
             errors={errors}
           />
         ) : (
-          <AlignedSpan>{integration?.owner.email}</AlignedSpan>
+          <AlignedSpan>
+            <EmailLink email={integration?.owner.email} />
+          </AlignedSpan>
         )}
 
         {isEdit ? (

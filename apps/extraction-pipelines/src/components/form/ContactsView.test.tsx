@@ -253,6 +253,26 @@ test('Should render 2 contacts when there are 2 authors', async () => {
   expect(renderedAuthors.length).toEqual(2);
 });
 
+test('Should render when there is only name', async () => {
+  const user = { name: 'test1 test' };
+  const modifiedIntegration = createIntegrationWithContacts([user]);
+  expect(modifiedIntegration.authors.length).toEqual(1);
+  const queryCache = new QueryCache();
+  const thisWrapper = renderQueryCacheIntegration(
+    queryCache,
+    PROJECT_ITERA_INT_GREEN,
+    CDF_ENV_GREENFIELD,
+    ORIGIN_DEV,
+    modifiedIntegration
+  );
+  act(() => {
+    render(<ContactsView />, { wrapper: thisWrapper });
+  });
+  const renderedAuthors = screen.queryAllByText('Contact');
+  expect(renderedAuthors.length).toEqual(1);
+  expect(screen.getByText(user.name)).toBeInTheDocument();
+});
+
 test('Should render when there is only email', async () => {
   const userEmail = 'test1@test.no';
   const author1Email = createIntegrationWithContacts([{ email: userEmail }]);
@@ -270,5 +290,7 @@ test('Should render when there is only email', async () => {
   });
   const renderedAuthors = screen.queryAllByText('Contact');
   expect(renderedAuthors.length).toEqual(1);
-  expect(screen.getByText(userEmail)).toBeInTheDocument();
+  const renderedEmail = screen.getByText(userEmail);
+  expect(renderedEmail).toBeInTheDocument();
+  expect(renderedEmail.getAttribute('href')).toEqual(`mailto:${userEmail}`);
 });

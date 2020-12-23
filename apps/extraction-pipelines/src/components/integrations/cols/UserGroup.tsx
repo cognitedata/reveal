@@ -3,6 +3,7 @@ import { Avatar, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { User } from '../../../model/User';
 import AvatarGroup from '../../Avatar/AvatarGroup';
+import AvatarWithTooltip from '../../Avatar/AvatarWithTooltip';
 
 export const StyledBlueAvatarTooltip = styled.div`
   p {
@@ -35,24 +36,16 @@ const UserGroup: FunctionComponent<Props> = ({ users }: Props) => {
       {users
         .filter((_, index) => avatarsLimit > index)
         .map((user) => {
-          const display = user.name ? user.name : user.email;
           return (
-            <Tooltip
-              placement="bottom"
-              content={user.email}
-              key={`tooltip-${user.name}-${user.email}`}
-            >
-              <Avatar
-                text={display}
-                key={`avatar-${user.email}`}
-                aria-label={`Avatar for ${user.name}`}
-              />
-            </Tooltip>
+            <AvatarWithTooltip
+              key={`avatar-${user.email}-${user.name}`}
+              user={user}
+            />
           );
         })}
       {showBlueAvatar ? (
         <Tooltip
-          placement="bottom"
+          placement="top"
           content={blueAvatarTooltip(users, avatarsLimit)}
           key="tooltip-blue-avatar"
         >

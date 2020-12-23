@@ -22,15 +22,26 @@ const H3 = styled((props) => <Title {...props}>{props.children}</Title>)`
 `;
 
 const ContactsList = ({ title, contacts }: ContactsListProps) => {
-  if (!contacts) {
-    return <></>;
-  }
+  const renderList = (titleText: string, users?: User[]) => {
+    if (!users || users.length === 0) {
+      return <i>{`No ${titleText.toLowerCase()} set`}</i>;
+    }
+    return (
+      <>
+        {users.map(({ name, email }) => (
+          <ContactCard
+            key={`contact-list-${email}-${name}`}
+            name={name}
+            email={email}
+          />
+        ))}
+      </>
+    );
+  };
   return (
     <StyledContactsList>
       <H3 level={3}>{title}</H3>
-      {contacts.map(({ name, email }) => (
-        <ContactCard key={email} name={name} email={email} />
-      ))}
+      {renderList(title, contacts)}
     </StyledContactsList>
   );
 };

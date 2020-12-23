@@ -1,7 +1,9 @@
 import React from 'react';
-import { Colors, Avatar, Tooltip } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import EmailLink from 'components/buttons/EmailLink';
 import { User } from '../../model/User';
+import AvatarWithTooltip from '../Avatar/AvatarWithTooltip';
 
 const StyledContactCard = styled.div`
   display: flex;
@@ -22,20 +24,15 @@ const Name = styled.p`
   font-size: 0.875rem;
   margin: 0;
 `;
-const Email = styled.a`
-  color: ${Colors['midblue-3'].hex()};
-  margin: 0;
-`;
-const ContactCard = ({ name, email }: User) => {
-  const mailtoLink = `mailto:${email}`;
+
+const ContactCard = (user: User) => {
+  const { name, email } = user;
   return (
     <StyledContactCard>
-      <Tooltip placement="bottom" content={email}>
-        <Avatar text={name} />
-      </Tooltip>
+      <AvatarWithTooltip user={user} />
       <InfoList>
         <Name>{name}</Name>
-        <Email href={mailtoLink}>{email}</Email>
+        <EmailLink email={email} />
       </InfoList>
     </StyledContactCard>
   );
