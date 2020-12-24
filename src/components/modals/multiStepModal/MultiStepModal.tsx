@@ -60,11 +60,11 @@ export const MultiStepModal: React.FC<Props> = ({
         </Button>
         <div>
           {isEqual(step, 'suite') && (
-            <Button type="secondary" onClick={nextStep}>
+            <Button type="primary" onClick={nextStep}>
               {modalSettings.buttons[step].goToBoards}
             </Button>
           )}
-          <Button type="primary" onClick={handleSubmit}>
+          <Button type="secondary" onClick={handleSubmit}>
             {modalSettings.buttons.save}
           </Button>
         </div>

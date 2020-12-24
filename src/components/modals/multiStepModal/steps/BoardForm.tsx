@@ -1,5 +1,5 @@
 import React from 'react';
-import { A, Button, Input, Micro, Tooltip } from '@cognite/cogs.js';
+import { A, Button, Icon, Input, Micro, Tooltip } from '@cognite/cogs.js';
 import {
   FormContainer,
   BoardsContainer,
@@ -8,6 +8,10 @@ import {
   StyledTitle,
   StyledBody,
   Boards,
+  CustomLabel,
+  CustomInputContainer,
+  CustomTooltipContainer,
+  StyledLink,
 } from 'components/modals/elements';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
@@ -25,6 +29,18 @@ interface Props {
   setSuite: TS_FIX_ME;
   setBoard: TS_FIX_ME;
 }
+
+const SnapshotTooltip = () => {
+  return (
+    <CustomTooltipContainer>
+      A snapshot is a preview of your data, you can learn more about snapshots{' '}
+      {/* TODO(dtc-215) provide with correct link */}
+      <A href="#" isExternal>
+        here
+      </A>
+    </CustomTooltipContainer>
+  );
+};
 
 export const BoardForm: React.FC<Props> = ({
   suite,
@@ -78,16 +94,23 @@ export const BoardForm: React.FC<Props> = ({
             onChange={handleOnChange}
             fullWidth
           />
-          <Input
-            autoComplete="off"
-            title="Iframe snapshot"
-            name="embedTag"
-            value={board.embedTag || ''}
-            variant="noBorder"
-            placeholder="Tag"
-            onChange={handleOnChange}
-            fullWidth
-          />
+          <CustomInputContainer>
+            <CustomLabel>
+              <span>Add snapshot for dashboard</span>
+              <Tooltip content={<SnapshotTooltip />} interactive>
+                <Icon type="Help" />
+              </Tooltip>
+            </CustomLabel>
+            <Input
+              autoComplete="off"
+              name="embedTag"
+              value={board.embedTag || ''}
+              variant="noBorder"
+              placeholder="Tag"
+              onChange={handleOnChange}
+              fullWidth
+            />
+          </CustomInputContainer>
           <GroupsSelector board={board} setBoard={setBoard} />
           <ActionButtons
             board={board}
@@ -127,9 +150,10 @@ export const BoardForm: React.FC<Props> = ({
             <Micro>
               To give access to the right groups, make sure groups are set-up
               correctly in Azure AD, see our{' '}
-              <A href="#" isExternal>
+              {/* TODO(dtc-215) provide with correct link */}
+              <StyledLink href="#" isExternal>
                 documentation
-              </A>
+              </StyledLink>
             </Micro>
           )}
         </BoardsContainer>

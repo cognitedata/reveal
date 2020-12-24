@@ -2,7 +2,7 @@
 import React from 'react';
 import { Select } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
-import { SelectLabel, SelectContainer } from 'components/modals/elements';
+import { CustomLabel, CustomInputContainer } from 'components/modals/elements';
 import { Suite } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 
@@ -65,8 +65,8 @@ const ColorSelector: React.FC<Props> = ({ suite, setSuite }: Props) => {
     options.find((option) => isEqual(option.value, suite.color)) || options[0];
 
   return (
-    <SelectContainer>
-      <SelectLabel>Select color</SelectLabel>
+    <CustomInputContainer>
+      <CustomLabel>Select color</CustomLabel>
       <Select
         theme="grey"
         placeholder="Select type"
@@ -78,7 +78,7 @@ const ColorSelector: React.FC<Props> = ({ suite, setSuite }: Props) => {
         maxMenuHeight={150}
         closeMenuOnSelect
       />
-    </SelectContainer>
+    </CustomInputContainer>
   );
 };
 
