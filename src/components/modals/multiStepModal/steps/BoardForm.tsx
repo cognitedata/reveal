@@ -34,6 +34,7 @@ const SnapshotTooltip = () => {
   return (
     <CustomTooltipContainer>
       A snapshot is a preview of your data, you can learn more about snapshots{' '}
+      {/* TODO(dtc-215) provide with correct link */}
       <A href="#" isExternal>
         here
       </A>
@@ -149,6 +150,7 @@ export const BoardForm: React.FC<Props> = ({
             <Micro>
               To give access to the right groups, make sure groups are set-up
               correctly in Azure AD, see our{' '}
+              {/* TODO(dtc-215) provide with correct link */}
               <StyledLink href="#" isExternal>
                 documentation
               </StyledLink>
