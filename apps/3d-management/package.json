@@ -92,7 +92,7 @@
     "sinon": "^9.2.1",
     "source-map-explorer": "^2.5.1",
     "style-loader": "^1.2.1",
-    "systemjs-webpack-interop": "^2.3.0",
+    "systemjs-webpack-interop": "^2.3.4",
     "typescript": "^4.1.2"
   },
   "eslintConfig": {
