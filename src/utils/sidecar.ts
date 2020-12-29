@@ -10,6 +10,7 @@ type Sidecar = {
   digitalCockpitApiBaseUrl: string;
   docsSiteBaseUrl: string;
   nomaApiBaseUrl: string;
+  intercom: string;
 };
 
 const sidecar = merge(
