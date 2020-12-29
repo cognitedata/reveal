@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Loader, Title, Button } from '@cognite/cogs.js';
@@ -9,11 +9,23 @@ import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { Suite } from 'store/suites/types';
-import { getLastVisited, getSuitesTableState } from 'store/suites/selectors';
+import {
+  getLastVisitedBoards,
+  getSuitesTableState,
+  getLastVisitedSuitesMock,
+} from 'store/suites/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { isAdmin } from 'store/groups/selectors';
 import { sortByLastUpdated } from 'utils/suites';
+import { getUserId } from 'store/auth/selectors';
+import { UserSpaceState } from 'store/userSpace/types';
+// TODO(DTC-222)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { fetchUserSpaceCdf, fetchUserSpace } from 'store/userSpace/thunks';
+import { getLastVisitedKeys, getUserSpace } from 'store/userSpace/selectors';
+import { CdfClientContext } from 'providers/CdfClientProvider';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 import { SmallTilesContainer } from './elements';
 
 const Home = () => {
@@ -28,15 +40,56 @@ const Home = () => {
   // eslint-disable-next-line no-console
   console.log('isAdmin: %s', admin);
 
-  const lastVisited = useSelector(getLastVisited(itemsToDisplay));
+  // TODO(DTC-222)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const apiClient = useContext(ApiClientContext);
+  const {
+    loaded: userSpaceLoaded,
+    loading: userSpaceLoading,
+    // TODO(DTC-167)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    error: userSpaceError,
+  }: UserSpaceState = useSelector(getUserSpace);
+  const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
+
+  const lastVisitedKeys = useSelector(getLastVisitedKeys) || [];
+  const lastVisitedBoards = useSelector(
+    getLastVisitedBoards(lastVisitedKeys, itemsToDisplay)
+  );
+  // TODO(DTC-167) replace lastVisitedSuites with lastVisitedBoards; handle userSpaceError
+  const lastVisitedSuites = useSelector(
+    getLastVisitedSuitesMock(itemsToDisplay)
+  );
+
+  // TODO(DTC-222) fetch userSpace from api client
+  const userId = useSelector(getUserId);
+  const client = useContext(CdfClientContext);
+  useEffect(() => {
+    if (!userSpaceLoaded && !userSpaceLoading && !userSpaceLoadDispatched) {
+      // dispatch(fetchUserSpace(apiClient))
+      dispatch(fetchUserSpaceCdf(client, userId));
+      setUserSpaceLoadDispatched(true);
+    }
+  }, [
+    dispatch,
+    /* apiClient, */ client,
+    userSpaceLoaded,
+    userSpaceLoading,
+    userSpaceLoadDispatched,
+    userId,
+  ]);
 
   if (!suitesLoaded || !suites?.length) {
     return <Title level={3}>No suites loaded</Title>;
   }
 
-  if (suitesLoading) {
+  if (suitesLoading || userSpaceLoading) {
     return <Loader />;
   }
+
+  // TODO(DTC-167)
+  // eslint-disable-next-line no-console
+  console.log('lastVisitedBoards', lastVisitedBoards);
 
   const sortedSuites = sortByLastUpdated(suites);
 
@@ -65,7 +118,8 @@ const Home = () => {
       <OverviewContainer>
         <SmallTilesContainer>
           <Title level={6}>Quick Access</Title>
-          {lastVisited?.map((suite: Suite) => {
+          {/* TODO(DTC-167) */}
+          {lastVisitedSuites?.map((suite: Suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
                 <SmallTile dataItem={suite} />

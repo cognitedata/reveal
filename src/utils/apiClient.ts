@@ -1,4 +1,6 @@
-import { ClientOptions } from '@cognite/sdk';
+import { ClientOptions, ListResponse } from '@cognite/sdk';
+import { LastVisited, UserSpacePayload } from 'store/userSpace/types';
+import { SuiteRow } from 'store/suites/types';
 import sidecar from './sidecar';
 
 type dcClientOptions = {
@@ -21,8 +23,19 @@ export class ApiClient {
     this.accessToken = accessToken;
   }
 
-  getSuitesRows() {
+  getSuitesRows(): Promise<ListResponse<SuiteRow[]>> {
     return this.makeRequest('/suites', 'GET');
+  }
+
+  // TODO(DTC-222)
+  getUserSpace(): Promise<UserSpacePayload> {
+    return this.makeRequest('/user-space', 'GET');
+  }
+  // TODO(DTC-222)
+  updateLastVisited(lastVisited: LastVisited[]) {
+    return this.makeRequest('/last-visited', 'POST', {
+      lastVisited,
+    });
   }
 
   /**
