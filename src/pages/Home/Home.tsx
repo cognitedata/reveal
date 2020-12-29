@@ -25,8 +25,6 @@ const Home = () => {
     getSuitesTableState
   );
   const admin = useSelector(isAdmin);
-  // eslint-disable-next-line no-console
-  console.log('isAdmin: %s', admin);
 
   const lastVisited = useSelector(getLastVisited(itemsToDisplay));
 
