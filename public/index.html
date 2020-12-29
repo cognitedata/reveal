@@ -28,6 +28,7 @@
     <title>Digital Cockpit</title>
     <script src="/sidecar.js"></script>
   </head>
+
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
@@ -41,5 +42,17 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <!-- Intercom -->
+    <script>
+      if ('%NODE_ENV%' !== 'development') {
+        var APP_ID = window.__cogniteSidecar?.intercom;
+
+        window.intercomSettings = {
+          app_id: APP_ID || 'ou1uyk2p', // TODO remove the id when it's possible to get intercom workspace id from sidecar config
+        };
+      }
+    </script>
+    <script defer src="%PUBLIC_URL%/intercom.js"></script>
   </body>
 </html>

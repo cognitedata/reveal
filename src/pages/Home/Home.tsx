@@ -37,8 +37,6 @@ const Home = () => {
     getSuitesTableState
   );
   const admin = useSelector(isAdmin);
-  // eslint-disable-next-line no-console
-  console.log('isAdmin: %s', admin);
 
   // TODO(DTC-222)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
