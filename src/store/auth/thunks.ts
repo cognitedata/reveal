@@ -17,6 +17,7 @@ export function authenticate(
       onAuthenticate: REDIRECT,
       onTokens: ({ idToken, accessToken }) => {
         apiClient.keepToken(accessToken);
+        // @ts-ignore
         const { unique_name: uniqueName } = jwtDecode(idToken);
         dispatch(actions.authSuccess(uniqueName));
         intercomBoot({ email: uniqueName });
