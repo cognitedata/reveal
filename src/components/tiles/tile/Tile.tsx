@@ -6,7 +6,6 @@ import {
   TileContainer,
   TilePreview,
   TileDescription,
-  TileOverline,
   StyledTitle,
 } from 'components/tiles/elements';
 import { SuiteRowDelete } from 'store/suites/types';
@@ -58,9 +57,7 @@ export const Tile: React.FC<Props> = ({
             <SuiteAvatar title={dataItem.title} color={dataItem.color} />
           )}
           <TileDescription>
-            <TileOverline isBoard={isBoard}>
-              <Overline level={3}>{dataItem?.type}</Overline>
-            </TileOverline>
+            <Overline level={3}>{dataItem?.type}</Overline>
             <Tooltip content={dataItem.title}>
               <StyledTitle level={6}>{dataItem.title}</StyledTitle>
             </Tooltip>

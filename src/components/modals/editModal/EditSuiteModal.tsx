@@ -1,7 +1,7 @@
 import React from 'react';
 import { modalSettings } from 'components/modals/config';
 import { TS_FIX_ME } from 'types/core';
-import { useFormState } from 'hooks/useFormState';
+import { useFormState } from 'hooks/useForm';
 import { MultiStepModal } from '../multiStepModal/MultiStepModal';
 
 interface Props {

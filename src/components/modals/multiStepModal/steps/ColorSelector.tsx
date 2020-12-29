@@ -2,8 +2,10 @@
 import React from 'react';
 import { Select } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
-import { CustomLabel, CustomInputContainer } from 'components/modals/elements';
+import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Suite } from 'store/suites/types';
+import { useForm } from 'hooks/useForm';
+import { suiteValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
 
 interface Props {
@@ -17,7 +19,7 @@ export const options = [
   { value: '#FFE1D1', label: 'Orange' },
   { value: '#FFF1CC', label: 'Yellow' },
   { value: '#C8F4E7', label: 'Green' },
-  { value: '#91EBF5', label: 'Light blue' },
+  { value: '#D3F7FB', label: 'Light blue' },
   { value: '#E8E8E8', label: 'Grey' },
 ];
 
@@ -54,10 +56,15 @@ const colourStyles = {
 };
 
 const ColorSelector: React.FC<Props> = ({ suite, setSuite }: Props) => {
+  const { setErrors, validateField } = useForm(suiteValidator);
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
     setSuite((prevState: Suite) => ({
       ...prevState,
       color: selectedOption.value,
+    }));
+    setErrors((prevState: Suite) => ({
+      ...prevState,
+      color: validateField('color', selectedOption.value),
     }));
   };
 
@@ -65,12 +72,12 @@ const ColorSelector: React.FC<Props> = ({ suite, setSuite }: Props) => {
     options.find((option) => isEqual(option.value, suite.color)) || options[0];
 
   return (
-    <CustomInputContainer>
+    <CustomSelectContainer>
       <CustomLabel>Select color</CustomLabel>
       <Select
         theme="grey"
-        placeholder="Select type"
-        name="type"
+        placeholder="Select color"
+        name="color"
         value={suiteColorValue}
         onChange={handleOnChange}
         options={options}
@@ -78,7 +85,7 @@ const ColorSelector: React.FC<Props> = ({ suite, setSuite }: Props) => {
         maxMenuHeight={150}
         closeMenuOnSelect
       />
-    </CustomInputContainer>
+    </CustomSelectContainer>
   );
 };
 

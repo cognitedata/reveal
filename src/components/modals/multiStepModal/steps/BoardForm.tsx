@@ -10,6 +10,7 @@ import {
   Boards,
   CustomLabel,
   CustomInputContainer,
+  SnapshotInputContainer,
   CustomTooltipContainer,
   StyledLink,
 } from 'components/modals/elements';
@@ -18,6 +19,8 @@ import isEmpty from 'lodash/isEmpty';
 import { Flex } from 'styles/common';
 import { Board, Suite } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
+import { useForm } from 'hooks/useForm';
+import { boardValidator } from 'validators';
 import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';
 import GroupsSelector from './GroupsSelector';
@@ -48,11 +51,17 @@ export const BoardForm: React.FC<Props> = ({
   setSuite,
   setBoard,
 }: Props) => {
+  const { errors, setErrors, validateField } = useForm(boardValidator);
+
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
     setBoard((prevState: Board) => ({
       ...prevState,
       [name]: value,
+    }));
+    setErrors((prevState: Suite) => ({
+      ...prevState,
+      [name]: validateField(name, value),
     }));
   };
 
@@ -73,28 +82,34 @@ export const BoardForm: React.FC<Props> = ({
     <>
       <Flex>
         <FormContainer>
-          <Input
-            autoComplete="off"
-            title="Title"
-            name="title"
-            value={board.title || ''}
-            variant="noBorder"
-            placeholder="Title"
-            onChange={handleOnChange}
-            fullWidth
-          />
-          <BoardTypeSelector board={board} setBoard={setBoard} />
-          <Input
-            autoComplete="off"
-            title="URL"
-            name="url"
-            value={board.url || ''}
-            variant="noBorder"
-            placeholder="URL"
-            onChange={handleOnChange}
-            fullWidth
-          />
           <CustomInputContainer>
+            <Input
+              autoComplete="off"
+              title="Title"
+              name="title"
+              error={errors?.title}
+              value={board.title || ''}
+              variant="noBorder"
+              placeholder="Title"
+              onChange={handleOnChange}
+              fullWidth
+            />
+          </CustomInputContainer>
+          <BoardTypeSelector board={board} setBoard={setBoard} />
+          <CustomInputContainer>
+            <Input
+              autoComplete="off"
+              title="URL"
+              name="url"
+              error={errors?.url}
+              value={board.url || ''}
+              variant="noBorder"
+              placeholder="URL"
+              onChange={handleOnChange}
+              fullWidth
+            />
+          </CustomInputContainer>
+          <SnapshotInputContainer>
             <CustomLabel>
               <span>Add snapshot for dashboard</span>
               <Tooltip content={<SnapshotTooltip />} interactive>
@@ -110,7 +125,7 @@ export const BoardForm: React.FC<Props> = ({
               onChange={handleOnChange}
               fullWidth
             />
-          </CustomInputContainer>
+          </SnapshotInputContainer>
           <GroupsSelector board={board} setBoard={setBoard} />
           <ActionButtons
             board={board}

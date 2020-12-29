@@ -2,6 +2,8 @@ import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { ActionButtonsContainer } from 'components/modals/elements';
 import { key } from 'utils/generateKey';
+import { useSelector } from 'react-redux';
+import { isErrorListEmpty } from 'store/forms/selectors';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
@@ -23,7 +25,12 @@ const ActionButtons: React.FC<Props> = ({
   setSuite,
   setBoard,
 }: Props) => {
+  const isValid =
+    !isEmpty(board.title) && !isEmpty(board.type) && !isEmpty(board.url);
+  const hasErrors = !useSelector(isErrorListEmpty) || !isValid;
+
   const addNewBoard = () => {
+    if (hasErrors) return;
     setSuite((prevState: Suite) => ({
       ...prevState,
       boards: suite.boards.concat({ ...board, key: key() }),
@@ -32,6 +39,7 @@ const ActionButtons: React.FC<Props> = ({
   };
 
   const updateBoard = () => {
+    if (hasErrors) return;
     const boardIndex = suite.boards.findIndex((element: Board) =>
       isEqual(element.key, board.key)
     );
@@ -59,12 +67,12 @@ const ActionButtons: React.FC<Props> = ({
           <Button variant="ghost" onClick={clearForm}>
             Cancel
           </Button>
-          <Button type="primary" onClick={updateBoard}>
+          <Button type="primary" onClick={updateBoard} disabled={hasErrors}>
             Update board
           </Button>
         </>
       ) : (
-        <Button type="primary" onClick={addNewBoard}>
+        <Button type="primary" onClick={addNewBoard} disabled={hasErrors}>
           Add board
         </Button>
       )}

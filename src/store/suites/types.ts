@@ -19,6 +19,7 @@ export type BoardType =
   | 'grafana'
   | 'powerbi'
   | 'plotly'
+  | 'spotfire'
   | 'application'
   | 'other';
 

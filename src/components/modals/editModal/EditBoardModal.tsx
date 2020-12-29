@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ApiClientContext } from 'providers/ApiClientProvider';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { isErrorListEmpty } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { Suite, Board } from 'store/suites/types';
@@ -11,7 +12,7 @@ import Modal from 'components/modals/simpleModal/Modal';
 import { BoardForm } from 'components/modals/multiStepModal/steps';
 import { modalSettings } from 'components/modals/config';
 import { ModalContainer, ModalFooter } from 'components/modals/elements';
-import { useFormState } from 'hooks/useFormState';
+import { useFormState } from 'hooks/useForm';
 
 interface Props {
   suiteItem: Suite;
@@ -26,12 +27,14 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
+  const hasErrors = !useSelector(isErrorListEmpty);
 
   const handleCloseModal = () => {
     dispatch(modalClose());
   };
 
   const handleSubmit = async () => {
+    if (hasErrors) return;
     handleCloseModal();
     await dispatch(insertSuite(client, apiClient, suite));
   };
