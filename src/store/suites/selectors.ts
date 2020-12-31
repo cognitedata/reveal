@@ -26,7 +26,6 @@ export const getLastVisitedBoards = (
   if (!keys?.length) {
     return boards;
   }
-  // eslint-disable-next-line no-unused-expressions
   state.suitesTable?.suites?.forEach((suite: Suite) => {
     const filtered = suite.boards?.filter((board) => keys.includes(board.key));
     if (filtered?.length) {

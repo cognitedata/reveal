@@ -78,12 +78,14 @@ async function fetchAndExtract(
   try {
     const { columns } = await cdfClient.getTableRow('lastVisited', userId);
     const { lastVisited: lastVisitedItems } = columns;
-    const sortedList = lastVisitedItems?.sort(
+    lastVisitedItems?.sort(
       (a: LastVisited, b: LastVisited) =>
         ((b.lastVisitedTime as any) as number) -
         ((a.lastVisitedTime as any) as number)
     );
-    return Promise.resolve({ lastVisited: sortedList } as UserSpacePayload);
+    return Promise.resolve({
+      lastVisited: lastVisitedItems,
+    } as UserSpacePayload);
   } catch (e) {
     return Promise.reject(e);
   }

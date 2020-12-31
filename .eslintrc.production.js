@@ -36,5 +36,6 @@ module.exports = {
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
     'react/prop-types': ['off'],
+    'no-unused-expressions': ['off'],
   },
 };

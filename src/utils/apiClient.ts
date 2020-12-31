@@ -29,11 +29,11 @@ export class ApiClient {
 
   // TODO(DTC-222)
   getUserSpace(): Promise<UserSpacePayload> {
-    return this.makeRequest('/user-space', 'GET');
+    return this.makeRequest('/userSpace', 'GET');
   }
   // TODO(DTC-222)
   updateLastVisited(lastVisited: LastVisited[]) {
-    return this.makeRequest('/last-visited', 'POST', {
+    return this.makeRequest('/lastVisited', 'POST', {
       lastVisited,
     });
   }
