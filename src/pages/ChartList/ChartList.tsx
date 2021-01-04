@@ -11,6 +11,7 @@ const ChartList = () => {
   const dispatch = useDispatch();
   const allCharts = useSelector(chartSelectors.selectAll);
   const loadingStatus = useSelector((state) => state.charts.status);
+  const error = useSelector((state) => state.charts.status.error);
 
   useEffect(() => {
     dispatch(fetchAllCharts());
@@ -50,12 +51,24 @@ const ChartList = () => {
     ));
   };
 
+  const renderError = () => {
+    return (
+      <div>
+        <p>Could not load charts</p>
+        <pre>{error?.message}</pre>
+        <pre>{error?.stack}</pre>
+      </div>
+    );
+  };
+
   return (
     <div id="chart-list" style={{ padding: 16 }}>
       <div style={{ textAlign: 'center' }}>
         {loadingStatus.status === 'LOADING' && <Icon type="Loading" />}
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>{renderList()}</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {error ? renderError() : renderList()}
+      </div>
     </div>
   );
 };

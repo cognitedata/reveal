@@ -69,6 +69,8 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     chart?.workflowCollection?.map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean) as Workflow[];
 
+  const error = useSelector((state) => state.charts.status.error);
+
   const runWorkflows = async () => {
     (workflows || []).forEach(async (flow) => {
       if (!flow) {
@@ -254,6 +256,16 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         return null;
     }
   };
+
+  if (error) {
+    return (
+      <div>
+        <p>Could not load chart</p>
+        <pre>{error?.message}</pre>
+        <pre>{error?.stack}</pre>
+      </div>
+    );
+  }
 
   if (!chart) {
     return (
