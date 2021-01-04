@@ -27,7 +27,7 @@ const workflowSlice = createSlice({
       state.status.status = 'SUCCESS';
       workflowAdapter.addMany(state, action.payload);
     },
-    failedLoadingWorkflows: (state, action: PayloadAction<string>) => {
+    failedLoadingWorkflows: (state, action: PayloadAction<Error>) => {
       state.status.status = 'FAILED';
       state.status.error = action.payload;
     },
@@ -40,7 +40,7 @@ const workflowSlice = createSlice({
       state.status.status = 'SUCCESS';
       workflowAdapter.addOne(state, action.payload);
     },
-    failedStoringNewWorkflow: (state, action: PayloadAction<string>) => {
+    failedStoringNewWorkflow: (state, action: PayloadAction<Error>) => {
       state.status.status = 'FAILED';
       state.status.error = action.payload;
     },

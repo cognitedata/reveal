@@ -31,7 +31,7 @@ const chartsSlice = createSlice({
       state.initialized = true;
       chartAdapter.setAll(state, action.payload);
     },
-    failedLoadingAllCharts: (state, action: PayloadAction<string>) => {
+    failedLoadingAllCharts: (state, action: PayloadAction<Error>) => {
       state.status.status = 'FAILED';
       state.initialized = true;
       state.status.error = action.payload;
@@ -186,7 +186,7 @@ const chartsSlice = createSlice({
       state.status.status = 'SUCCESS';
       chartAdapter.addOne(state, action.payload);
     },
-    failedStoringNewChart: (state, action: PayloadAction<string>) => {
+    failedStoringNewChart: (state, action: PayloadAction<Error>) => {
       state.status.status = 'FAILED';
       state.status.error = action.payload;
     },
