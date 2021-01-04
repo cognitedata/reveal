@@ -6,7 +6,11 @@ export class ChartService {
     firebase.firestore.DocumentData
   >;
 
-  constructor(tenant: string) {
+  private readonly user: string;
+
+  constructor(tenant: string, user: string) {
+    this.user = user;
+
     this.firebaseCollection = firebase
       .firestore()
       .collection('tenants')
@@ -15,12 +19,18 @@ export class ChartService {
   }
 
   async getCharts(): Promise<Chart[]> {
-    const snapshot = await this.firebaseCollection.get();
+    const snapshot = await this.firebaseCollection
+      .where('user', '==', this.user)
+      .get();
     return snapshot.docs.map((doc) => doc.data()) as Chart[];
   }
 
   async saveChart(chart: Chart): Promise<void> {
     return this.firebaseCollection.doc(chart.id).set(chart);
+  }
+
+  async deleteChart(chart: Chart): Promise<void> {
+    this.firebaseCollection.doc(chart.id).delete();
   }
 
   async setWorkflowsOnChart(

@@ -28,7 +28,7 @@ export const runWorkflow = async (
   // and replace its `functionEffectType` with its actual `functionEffect`.
   const runnableNodes = workflow.nodes.map((node) =>
     convertStoredNodeToNode(
-      { ...node, functionData: { ...node.functionData, context } },
+      { ...node, functionData: { ...node.functionData, context, node } },
       nodeOptions
     )
   );

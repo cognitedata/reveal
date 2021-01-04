@@ -11,6 +11,7 @@ import {
   DoubleDatapoint,
 } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
+import { convertUnits, units } from 'utils/units';
 
 const defaultOptions = {
   time: {
@@ -28,6 +29,9 @@ const defaultOptions = {
   legend: {
     enabled: true,
     verticalAlign: 'top',
+  },
+  tooltip: {
+    split: true,
   },
 };
 
@@ -68,7 +72,26 @@ const ChartComponent = ({ chart }: ChartProps) => {
         limit: pointsPerSeries,
       });
 
-      setTimeSeriesDataPoints(result);
+      const convertedResult = await Promise.all(
+        (result as (Datapoints | DatapointAggregates)[]).map(
+          async (ts: Datapoints | DatapointAggregates) => {
+            return {
+              ...ts,
+              datapoints: await convertUnits(
+                ts.datapoints,
+                chart?.timeSeriesCollection
+                  ?.find(({ id }) => id === ts.externalId)
+                  ?.unit?.toLowerCase(),
+                chart?.timeSeriesCollection
+                  ?.find(({ id }) => id === ts.externalId)
+                  ?.preferredUnit?.toLowerCase()
+              ),
+            } as typeof ts;
+          }
+        )
+      );
+
+      setTimeSeriesDataPoints(convertedResult);
     }
 
     performQuery();
@@ -86,23 +109,33 @@ const ChartComponent = ({ chart }: ChartProps) => {
         .filter((ts) => !ts.isString)
         .map((ts) => ({
           id: ts.externalId,
-          name: ts.externalId,
+          name: chart?.timeSeriesCollection?.find(
+            ({ id }) => id === ts.externalId
+          )?.name,
           color: chart?.timeSeriesCollection?.find(
             ({ id }) => id === ts.externalId
           )?.color,
-          unit: ts.unit,
+          unit: units.find(
+            (unitOption) =>
+              unitOption.value ===
+              chart?.timeSeriesCollection?.find(
+                ({ id }) => id === ts.externalId
+              )?.preferredUnit
+          )?.label,
           datapoints: ts.datapoints,
         })),
       ...(enabledWorkflows || [])
         .filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
         .map((workflow) => ({
           id: workflow?.id,
-          name: workflow?.name,
+          name: chart?.workflowCollection?.find(
+            (chartWorkflow) => workflow?.id === chartWorkflow.id
+          )?.name,
           color: chart?.workflowCollection?.find(
             (chartWorkflow) => workflow?.id === chartWorkflow.id
           )?.color,
-          unit: workflow?.latestRun?.results?.unit,
-          datapoints: workflow?.latestRun?.results?.datapoints as (
+          unit: workflow?.latestRun?.results?.datapoints.unit,
+          datapoints: workflow?.latestRun?.results?.datapoints.datapoints as (
             | Datapoints
             | DatapointAggregate
           )[],

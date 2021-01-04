@@ -1,13 +1,16 @@
 import { toast } from '@cognite/cogs.js';
 import { nanoid } from '@reduxjs/toolkit';
 import chartSlice, { Chart, ChartWorkflow } from 'reducers/charts';
-import { selectTenant } from 'reducers/environment';
+import { selectTenant, selectUser } from 'reducers/environment';
 import ChartService from 'services/ChartService';
 import WorkflowService from 'services/WorkflowService';
 import { AppThunk } from 'store';
 import { getEntryColor } from 'utils/colors';
 import workflowSlice from './slice';
 import { Workflow } from './types';
+
+import { node as WorkspaceTimeSeriesNode } from './Nodes/WorkspaceTimeSeries';
+import { node as OutputSeriesNode } from './Nodes/OutputSeries';
 
 export const fetchWorkflowsForChart = (
   workflowIds: string[]
@@ -38,8 +41,9 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 ) => {
   const state = getState();
   const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
 
-  if (!tenant) {
+  if (!tenant || !user) {
     // Must have tenant and user set
     return;
   }
@@ -47,7 +51,7 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
   const id = nanoid();
   const newWorkflow: Workflow = {
     id,
-    name: `workflow-${id}`,
+    name: `New Calculation`,
     nodes: [],
     connections: [],
   };
@@ -61,15 +65,107 @@ export const createNewWorkflow = (chart: Chart): AppThunk => async (
 
     // Attach this workflow to the current chart
     const nextWorkflowIds = [
-      ...(chart.workflowCollection || []),
       {
         id: newWorkflow.id,
+        name: newWorkflow.name,
         color: getEntryColor(),
         enabled: true,
       } as ChartWorkflow,
+      ...(chart.workflowCollection || []),
     ];
 
-    const chartService = new ChartService(tenant);
+    const chartService = new ChartService(tenant, user);
+    await chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
+    dispatch(workflowSlice.actions.storedNewWorkflow(newWorkflow));
+    dispatch(
+      chartSlice.actions.storedNewWorkflow({
+        id: chart.id,
+        changes: { workflowCollection: nextWorkflowIds },
+      })
+    );
+  } catch (e) {
+    dispatch(workflowSlice.actions.failedStoringNewWorkflow(e));
+  }
+};
+
+export const createWorkflowFromTimeSeries = (
+  chart: Chart,
+  timeSeriesId: string
+): AppThunk => async (dispatch, getState) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  const chartTimeSeries = chart.timeSeriesCollection?.find(
+    ({ id }) => timeSeriesId === id
+  );
+
+  if (!tenant || !user) {
+    // Must have tenant and user set
+    return;
+  }
+
+  const workflowId = nanoid();
+  const inputNodeId = `${WorkspaceTimeSeriesNode.subtitle}-${nanoid()}`;
+  const outputNodeId = `${OutputSeriesNode.subtitle}-${nanoid()}`;
+  const connectionId = nanoid();
+
+  const newWorkflow: Workflow = {
+    id: workflowId,
+    name: `${chartTimeSeries?.name} (workflow)`,
+    nodes: [
+      {
+        id: inputNodeId,
+        ...WorkspaceTimeSeriesNode,
+        title: chartTimeSeries?.name,
+        subtitle: `DATAPOINTS (${chartTimeSeries?.id})`,
+        functionData: {
+          timeSeriesExternalId: timeSeriesId,
+        },
+        x: 50,
+        y: 50,
+      },
+      {
+        id: outputNodeId,
+        ...OutputSeriesNode,
+        x: 800,
+        y: 70,
+      },
+    ],
+    connections: {
+      [connectionId]: {
+        id: connectionId,
+        inputPin: {
+          nodeId: outputNodeId,
+          pinId: OutputSeriesNode.inputPins[0].id,
+        },
+        outputPin: {
+          nodeId: inputNodeId,
+          pinId: WorkspaceTimeSeriesNode.outputPins[0].id,
+        },
+      },
+    },
+  };
+
+  dispatch(workflowSlice.actions.startStoringNewWorkflow());
+
+  try {
+    // Create the workflow
+    const workflowService = new WorkflowService(tenant);
+    workflowService.saveWorkflow(newWorkflow);
+
+    // Attach this workflow to the current chart
+    const nextWorkflowIds = [
+      {
+        id: newWorkflow.id,
+        name: newWorkflow.name,
+        color: getEntryColor(),
+        enabled: true,
+      } as ChartWorkflow,
+      ...(chart.workflowCollection || []),
+    ];
+
+    const chartService = new ChartService(tenant, user);
     await chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
     dispatch(workflowSlice.actions.storedNewWorkflow(newWorkflow));
     dispatch(
@@ -87,7 +183,8 @@ export const saveExistingWorkflow = (workflow: Workflow): AppThunk => async (
   _,
   getState
 ) => {
-  const { tenant } = getState().environment;
+  const state = getState();
+  const tenant = selectTenant(state);
 
   if (!tenant) {
     // Must have tenant set
@@ -114,8 +211,9 @@ export const deleteWorkflow = (
 ): AppThunk => async (dispatch, getState) => {
   const state = getState();
   const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
 
-  if (!tenant) {
+  if (!tenant || !user) {
     // Must have tenant set
     return;
   }
@@ -125,7 +223,7 @@ export const deleteWorkflow = (
     const nextWorkflowIds = (chart.workflowCollection || []).filter(
       ({ id }) => id !== oldWorkflow.id
     );
-    const chartService = new ChartService(tenant);
+    const chartService = new ChartService(tenant, user);
     chartService.setWorkflowsOnChart(chart.id, nextWorkflowIds);
 
     // Then delete the workflow

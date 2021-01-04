@@ -1,22 +1,27 @@
-import * as DummyTimeSeries from './DummyTimeSeries';
 import * as UnitConversion from './UnitConversion';
 import * as AddConstant from './AddConstant';
 import * as OutputSeries from './OutputSeries';
 import * as CDFDatapoints from './CDFDataPoints';
 import * as CogniteFunction from './CogniteFunction';
+import * as Difference from './Difference';
+import * as WorkspaceTimeSeries from './WorkspaceTimeSeries';
 import { NodeOption } from '../types';
 
 export default [
   {
-    name: 'Dummy Time Series',
-    ...DummyTimeSeries,
+    name: 'Workspace Time Series',
+    ...WorkspaceTimeSeries,
   },
   {
-    name: 'UnitConversion',
+    name: 'Difference',
+    ...Difference,
+  },
+  {
+    name: 'Multiply',
     ...UnitConversion,
   },
   {
-    name: 'AddConstant',
+    name: 'Add Constant',
     ...AddConstant,
   },
   {
@@ -24,7 +29,7 @@ export default [
     ...OutputSeries,
   },
   {
-    name: 'CDF Datapoints',
+    name: 'CDF Time Series',
     ...CDFDatapoints,
   },
   {

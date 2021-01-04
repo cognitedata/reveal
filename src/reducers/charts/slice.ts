@@ -31,7 +31,7 @@ const chartsSlice = createSlice({
       state.initialized = true;
       chartAdapter.setAll(state, action.payload);
     },
-    failedLoadingAllCharts: (state, action: PayloadAction<string>) => {
+    failedLoadingAllCharts: (state, action: PayloadAction<Error>) => {
       state.status.status = 'FAILED';
       state.initialized = true;
       state.status.error = action.payload;
@@ -47,6 +47,55 @@ const chartsSlice = createSlice({
       chartAdapter.updateOne(state, action.payload);
     },
 
+    // Editing chart (add/remove sources, etc)
+    removeChart: (state, action: PayloadAction<Chart>) => {
+      chartAdapter.removeOne(state, action.payload.id);
+    },
+
+    setInputUnit: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        timeSeriesId: string;
+        unit?: string;
+      }>
+    ) => {
+      const { id, timeSeriesId } = action.payload;
+      const chart = state.entities[id];
+      const timeSeries = chart?.timeSeriesCollection?.find(
+        (entry) => entry.id === timeSeriesId
+      )!;
+      timeSeries.unit = action.payload.unit;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
+    setOutputUnit: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        timeSeriesId: string;
+        unit?: string;
+      }>
+    ) => {
+      const { id, timeSeriesId } = action.payload;
+      const chart = state.entities[id];
+      const timeSeries = chart?.timeSeriesCollection?.find(
+        (entry) => entry.id === timeSeriesId
+      )!;
+      timeSeries.preferredUnit = action.payload.unit;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
     addTimeSeries: (
       state,
       action: PayloadAction<{ id: string; timeSeries: Timeseries }>
@@ -57,12 +106,17 @@ const chartsSlice = createSlice({
         id,
         changes: {
           timeSeriesCollection: [
-            ...(chart?.timeSeriesCollection || []),
             {
               id: timeSeries.externalId,
+              name: timeSeries.externalId,
+              unit: timeSeries.unit || '*',
+              originalUnit: timeSeries.unit || '*',
+              preferredUnit: timeSeries.unit || '*',
               color: getEntryColor(),
               enabled: true,
+              description: timeSeries.description || '-',
             } as ChartTimeSeries,
+            ...(chart?.timeSeriesCollection || []),
           ],
         },
       });
@@ -120,6 +174,46 @@ const chartsSlice = createSlice({
       });
     },
 
+    renameTimeSeries: (
+      state,
+      action: PayloadAction<{ id: string; timeSeriesId: string; name: string }>
+    ) => {
+      const { id, timeSeriesId, name } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          timeSeriesCollection: chart?.timeSeriesCollection?.map(
+            (timeSeries) => {
+              return {
+                ...timeSeries,
+                name: timeSeries.id === timeSeriesId ? name : timeSeries.name,
+              };
+            }
+          ),
+        },
+      });
+    },
+
+    renameWorkflow: (
+      state,
+      action: PayloadAction<{ id: string; workflowId: string; name: string }>
+    ) => {
+      const { id, workflowId, name } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            return {
+              ...workflow,
+              name: workflow.id === workflowId ? name : workflow.name,
+            };
+          }),
+        },
+      });
+    },
+
     changeDateRange: (
       state,
       action: PayloadAction<{ id: string; dateFrom?: Date; dateTo?: Date }>
@@ -143,7 +237,7 @@ const chartsSlice = createSlice({
       state.status.status = 'SUCCESS';
       chartAdapter.addOne(state, action.payload);
     },
-    failedStoringNewChart: (state, action: PayloadAction<string>) => {
+    failedStoringNewChart: (state, action: PayloadAction<Error>) => {
       state.status.status = 'FAILED';
       state.status.error = action.payload;
     },

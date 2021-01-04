@@ -1,3 +1,5 @@
+/* eslint-disable no-alert */
+
 import React, { useEffect, useState } from 'react';
 import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
@@ -10,15 +12,18 @@ import {
   fetchWorkflowsForChart,
   createNewWorkflow,
   deleteWorkflow,
+  createWorkflowFromTimeSeries,
 } from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
-import { saveExistingChart } from 'reducers/charts/api';
+import { renameChart, saveExistingChart } from 'reducers/charts/api';
 import ChartComponent from 'components/Chart';
 import { runWorkflow } from 'reducers/workflows/utils';
 import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
 import { NodeProgress } from '@cognite/connect';
 import DatePicker from 'react-datepicker';
+import noop from 'lodash/noop';
+import { units } from 'utils/units';
 import {
   Header,
   TopPaneWrapper,
@@ -27,17 +32,20 @@ import {
   ToolbarWrapper,
   ContentWrapper,
   ToolbarItem,
+  BottombarWrapper,
+  BottombarItem,
   ToolbarIcon,
   ChartContainer,
-  SourceListWrapper,
-  SourcesTitle,
-  SourceList,
-  SourceButtonContainer,
   SourceItem,
   SourceCircle,
+  SourceSquare,
   ChartWrapper,
   SourceMenu,
   SourceName,
+  SourceTableWrapper,
+  SourceTable,
+  SourceRow,
+  ChartTitle,
 } from './elements';
 
 type ChartViewProps = {
@@ -47,10 +55,8 @@ type ChartViewProps = {
 const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const hasData = useEnsureData();
   const dispatch = useDispatch();
-  const [activeWorkflowId, setActiveWorkflowId] = useState<string>();
-  const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(
-    false
-  );
+  const [activeSourceItem, setActiveSourceItem] = useState<string>();
+  const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
   const { chartId = propsChartId } = useParams<{ chartId: string }>();
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
@@ -58,10 +64,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const context = { chart };
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
+  const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
+  const isEditorMode = workspaceMode === 'editor';
 
   const workflows = useSelector((state) =>
     chart?.workflowCollection?.map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean) as Workflow[];
+
+  const error = useSelector((state) => state.charts.status.error);
 
   const runWorkflows = async () => {
     (workflows || []).forEach(async (flow) => {
@@ -132,7 +142,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   }, [chart?.dateFrom, chart?.dateTo, updateAutomatically]);
 
-  const onNewWorkflow = () => {
+  const handleClickNewWorkflow = () => {
     if (chart) {
       dispatch(createNewWorkflow(chart));
     }
@@ -184,6 +194,26 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     );
   };
 
+  const handleRenameTimeSeries = (timeSeriesId: string) => {
+    dispatch(
+      chartsSlice.actions.renameTimeSeries({
+        id: chart?.id || '',
+        timeSeriesId,
+        name: prompt('Provide new name for time series') || 'unnamed',
+      })
+    );
+  };
+
+  const handleRenameWorkflow = (workflowId: string) => {
+    dispatch(
+      chartsSlice.actions.renameWorkflow({
+        id: chart?.id || '',
+        workflowId,
+        name: prompt('Provide new name for workflow') || 'unnamed',
+      })
+    );
+  };
+
   if (!hasData) {
     return <Icon type="Loading" />;
   }
@@ -210,6 +240,34 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  const handleConvertToWorkflow = (id: string) => {
+    if (chart) {
+      dispatch(createWorkflowFromTimeSeries(chart, id));
+    }
+  };
+
+  const handleRenameChart = () => {
+    if (chart) {
+      dispatch(renameChart(chart));
+    }
+  };
+
+  const handleSetInputUnit = (timeSeriesId: string, unit?: string) => {
+    if (chart) {
+      dispatch(
+        chartsSlice.actions.setInputUnit({ id: chart.id, timeSeriesId, unit })
+      );
+    }
+  };
+
+  const handleSetOutputUnit = (timeSeriesId: string, unit?: string) => {
+    if (chart) {
+      dispatch(
+        chartsSlice.actions.setOutputUnit({ id: chart.id, timeSeriesId, unit })
+      );
+    }
+  };
+
   const renderStatusIcon = (status?: WorkflowRunStatus) => {
     switch (status) {
       case 'RUNNING':
@@ -223,87 +281,310 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  if (error) {
+    return (
+      <div>
+        <p>Could not load chart</p>
+        <pre>{error?.message}</pre>
+        <pre>{error?.stack}</pre>
+      </div>
+    );
+  }
+
   if (!chart) {
     return (
       <div>This chart does not seem to exist. You might not have access</div>
     );
   }
 
-  const timeseriesItems = chart.timeSeriesCollection?.map(
-    ({ id, color, enabled }: ChartTimeSeries) => {
-      return (
-        <SourceItem key={id}>
-          <SourceCircle
-            onClick={() => handleToggleTimeSeries(id)}
-            color={color}
-            fade={!enabled}
-          />
-          <SourceName title={id}>{id}</SourceName>
-          <SourceMenu onClick={(e) => e.stopPropagation()}>
-            <Dropdown
-              content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>{id}</span>
-                  </Menu.Header>
-                  <Menu.Item
-                    onClick={() => handleRemoveTimeSeries(id)}
-                    appendIcon="Delete"
-                  >
-                    <span>Remove</span>
-                  </Menu.Item>
-                </Menu>
-              }
-            >
-              <Icon type="VerticalEllipsis" />
-            </Dropdown>
-          </SourceMenu>
+  const sourceTableHeaderRow = (
+    <tr>
+      <th style={{ width: 350 }}>
+        <SourceItem>
+          <SourceName>Name</SourceName>
         </SourceItem>
+      </th>
+      {!isEditorMode && (
+        <>
+          <th style={{ width: 110 }}>
+            <SourceItem>
+              <SourceName>Unit (input)</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 110 }}>
+            <SourceItem>
+              <SourceName>Unit (output)</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 300 }}>
+            <SourceItem>
+              <SourceName>Source</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Description</SourceName>
+            </SourceItem>
+          </th>
+        </>
+      )}
+    </tr>
+  );
+
+  const timeseriesRows = chart.timeSeriesCollection?.map(
+    ({
+      id,
+      name,
+      color,
+      enabled,
+      originalUnit,
+      unit,
+      preferredUnit,
+      description,
+    }: ChartTimeSeries) => {
+      const handleClick = !isEditorMode ? () => setActiveSourceItem(id) : noop;
+
+      const inputUnitOption = units.find(
+        (unitOption) => unitOption.value === unit?.toLowerCase()
+      );
+
+      const preferredUnitOption = units.find(
+        (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+      );
+
+      const unitConversionOptions = preferredUnitOption?.conversions?.map(
+        (conversion) =>
+          units.find((unitOption) => unitOption.value === conversion)
+      );
+
+      return (
+        <SourceRow onClick={handleClick} isActive={activeSourceItem === id}>
+          <td>
+            <SourceItem
+              isActive={activeSourceItem === id}
+              isDisabled={workspaceMode === 'editor'}
+              key={id}
+            >
+              <SourceCircle
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleToggleTimeSeries(id);
+                }}
+                color={color}
+                fade={!enabled}
+              />
+              <SourceName title={name}>{name || 'noname'}</SourceName>
+              <SourceMenu onClick={(e) => e.stopPropagation()}>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>
+                        <span style={{ wordBreak: 'break-word' }}>{id}</span>
+                      </Menu.Header>
+                      <Menu.Submenu
+                        content={
+                          <Menu>
+                            <Menu.Submenu
+                              content={
+                                <Menu>
+                                  <Menu.Item>Gaps</Menu.Item>
+                                  <Menu.Item>Freshness</Menu.Item>
+                                  <Menu.Item>Drift Detector</Menu.Item>
+                                </Menu>
+                              }
+                            >
+                              <span>Data Quality</span>
+                            </Menu.Submenu>
+                            <Menu.Item>Min / Max</Menu.Item>
+                            <Menu.Item>Limit</Menu.Item>
+                          </Menu>
+                        }
+                      >
+                        <span>Tools</span>
+                      </Menu.Submenu>
+                      <Menu.Item
+                        onClick={() => handleRenameTimeSeries(id)}
+                        appendIcon="Edit"
+                      >
+                        <span>Rename</span>
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => handleRemoveTimeSeries(id)}
+                        appendIcon="Delete"
+                      >
+                        <span>Remove</span>
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => handleConvertToWorkflow(id)}
+                        appendIcon="Timeseries"
+                      >
+                        <span>Convert to calculation</span>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <Icon type="VerticalEllipsis" />
+                </Dropdown>
+              </SourceMenu>
+            </SourceItem>
+          </td>
+          {!isEditorMode && (
+            <>
+              <td>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>
+                        <span style={{ wordBreak: 'break-word' }}>
+                          Select input unit (override)
+                        </span>
+                      </Menu.Header>
+                      {units.map((unitOption) => (
+                        <Menu.Item
+                          onClick={() =>
+                            handleSetInputUnit(id, unitOption.value)
+                          }
+                        >
+                          {unitOption.label}
+
+                          {unit?.toLowerCase() === unitOption.value &&
+                            ' (selected)'}
+                          {originalUnit?.toLowerCase() === unitOption.value &&
+                            ' (original)'}
+                        </Menu.Item>
+                      ))}
+                    </Menu>
+                  }
+                >
+                  <SourceItem>
+                    <SourceName>
+                      {inputUnitOption?.label}
+                      {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
+                        ' *'}
+                    </SourceName>
+                  </SourceItem>
+                </Dropdown>
+              </td>
+              <td>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>
+                        <span style={{ wordBreak: 'break-word' }}>
+                          Select preferred unit
+                        </span>
+                      </Menu.Header>
+                      {unitConversionOptions?.map((unitOption) => (
+                        <Menu.Item
+                          onClick={() =>
+                            handleSetOutputUnit(id, unitOption?.value)
+                          }
+                        >
+                          {unitOption?.label}{' '}
+                          {originalUnit?.toLowerCase() === unitOption?.value &&
+                            ' (selected)'}
+                        </Menu.Item>
+                      ))}
+                    </Menu>
+                  }
+                >
+                  <SourceItem>
+                    <SourceName>{preferredUnitOption?.label}</SourceName>
+                  </SourceItem>
+                </Dropdown>
+              </td>
+              <td>
+                <SourceItem>
+                  <SourceName>{id}</SourceName>
+                </SourceItem>
+              </td>
+              <td>
+                <SourceItem>
+                  <SourceName>{description}</SourceName>
+                </SourceItem>
+              </td>
+            </>
+          )}
+        </SourceRow>
       );
     }
   );
 
-  const workflowItems = workflows?.map((flow) => {
+  const workflowRows = workflows?.map((flow) => {
     const flowEntry = chart?.workflowCollection?.find(
       ({ id }) => id === flow.id
     );
 
     return (
-      <SourceItem key={flow.id} onClick={() => setActiveWorkflowId(flow.id)}>
-        <SourceCircle
-          onClick={() => handleToggleWorkflow(flow.id)}
-          color={flowEntry?.color}
-          fade={!flowEntry?.enabled}
-        />
-        <div style={{ marginRight: 10 }}>
-          {renderStatusIcon(flow.latestRun?.status)}
-        </div>
-        <SourceName>{flow.name || 'noname'}</SourceName>
-        <SourceMenu onClick={(e) => e.stopPropagation()}>
-          <Dropdown
-            content={
-              <Menu>
-                <Menu.Header>
-                  <span style={{ wordBreak: 'break-word' }}>{flow.name}</span>
-                </Menu.Header>
-                <Menu.Item
-                  onClick={() => {
-                    onDeleteWorkflow(flow);
-                    if (activeWorkflowId === flow.id) {
-                      setActiveWorkflowId(undefined);
-                    }
-                  }}
-                  appendIcon="Delete"
-                >
-                  <span>Remove</span>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Icon type="VerticalEllipsis" />
-          </Dropdown>
-        </SourceMenu>
-      </SourceItem>
+      <SourceRow
+        onClick={() => setActiveSourceItem(flow.id)}
+        isActive={activeSourceItem === flow.id}
+      >
+        <td>
+          <SourceItem key={flow.id}>
+            <SourceSquare
+              onClick={() => handleToggleWorkflow(flow.id)}
+              color={flowEntry?.color}
+              fade={!flowEntry?.enabled}
+            />
+            <div style={{ marginRight: 10 }}>
+              {renderStatusIcon(flow.latestRun?.status)}
+            </div>
+            <SourceName>{flowEntry?.name || 'noname'}</SourceName>
+            <SourceMenu onClick={(e) => e.stopPropagation()}>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Header>
+                      <span style={{ wordBreak: 'break-word' }}>
+                        {flowEntry?.name}
+                      </span>
+                    </Menu.Header>
+                    <Menu.Item
+                      onClick={() => handleRenameWorkflow(flow.id)}
+                      appendIcon="Edit"
+                    >
+                      <span>Rename</span>
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => {
+                        onDeleteWorkflow(flow);
+                        if (activeSourceItem === flow.id) {
+                          setActiveSourceItem(undefined);
+                        }
+                      }}
+                      appendIcon="Delete"
+                    >
+                      <span>Remove</span>
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Icon type="VerticalEllipsis" />
+              </Dropdown>
+            </SourceMenu>
+          </SourceItem>
+        </td>
+        {!isEditorMode && (
+          <>
+            <td>
+              <SourceItem>
+                <SourceName>*</SourceName>
+              </SourceItem>
+            </td>
+            <td>
+              <SourceItem>
+                <SourceName>Calculation</SourceName>
+              </SourceItem>
+            </td>
+            <td>
+              <SourceItem>
+                <SourceName>-</SourceName>
+              </SourceItem>
+            </td>
+          </>
+        )}
+      </SourceRow>
     );
   });
 
@@ -312,7 +593,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       <ContentWrapper>
         <Header>
           <hgroup>
-            <h1>{chart?.name}</h1>
+            <ChartTitle onClick={() => handleRenameChart()}>
+              {chart?.name}{' '}
+              <span>
+                <Icon type="Edit" />
+              </span>
+            </ChartTitle>
             <h4>by {chart?.user}</h4>
           </hgroup>
           <section className="daterange">
@@ -368,35 +654,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           </section>
         </Header>
         <ChartContainer>
-          <ToolbarWrapper>
-            <ToolbarItem onClick={() => handleClickSearch()}>
-              <ToolbarIcon type="Search" />
-            </ToolbarItem>
-          </ToolbarWrapper>
-          <SourceListWrapper>
-            <SourcesTitle>Time Series</SourcesTitle>
-            <SourceList>{timeseriesItems}</SourceList>
-            <SourceButtonContainer>
-              <Button
-                onClick={() => handleClickSearch()}
-                icon="Plus"
-                iconPlacement="right"
-              >
-                Add
-              </Button>
-            </SourceButtonContainer>
-            <SourcesTitle>Workflows</SourcesTitle>
-            <SourceList>{workflowItems}</SourceList>
-            <SourceButtonContainer>
-              <Button
-                onClick={() => onNewWorkflow()}
-                icon="Plus"
-                iconPlacement="right"
-              >
-                Create
-              </Button>
-            </SourceButtonContainer>
-          </SourceListWrapper>
           <SplitPaneLayout>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
@@ -404,10 +661,52 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">
-              <NodeEditor workflowId={activeWorkflowId} chartId={chartId} />
+              <div style={{ display: 'flex', height: '100%' }}>
+                <ToolbarWrapper>
+                  <ToolbarItem onClick={() => handleClickSearch()}>
+                    <ToolbarIcon
+                      title="Search for and add time series"
+                      type="Search"
+                    />
+                  </ToolbarItem>
+                  <ToolbarItem onClick={() => handleClickNewWorkflow()}>
+                    <ToolbarIcon title="Create new calculation" type="Plus" />
+                  </ToolbarItem>
+                </ToolbarWrapper>
+                <SourceTableWrapper>
+                  <SourceTable>
+                    <thead>{sourceTableHeaderRow}</thead>
+                    <tbody>
+                      {timeseriesRows}
+                      {workflowRows}
+                    </tbody>
+                  </SourceTable>
+                </SourceTableWrapper>
+                {workspaceMode === 'editor' && (
+                  <NodeEditor workflowId={activeSourceItem} chartId={chartId} />
+                )}
+              </div>
             </BottomPaneWrapper>
           </SplitPaneLayout>
         </ChartContainer>
+        <BottombarWrapper>
+          <BottombarItem
+            isActive={workspaceMode === 'workspace'}
+            onClick={() => setWorkspaceMode('workspace')}
+          >
+            <ToolbarIcon type="Timeseries" />
+            <span style={{ paddingLeft: 10, paddingRight: 10 }}>Workspace</span>
+          </BottombarItem>
+          <BottombarItem
+            isActive={workspaceMode === 'editor'}
+            onClick={() => setWorkspaceMode('editor')}
+          >
+            <ToolbarIcon type="Edit" />
+            <span style={{ paddingLeft: 10, paddingRight: 10 }}>
+              Node Editor
+            </span>
+          </BottombarItem>
+        </BottombarWrapper>
       </ContentWrapper>
     </ChartViewContainer>
   );
