@@ -3,8 +3,7 @@
  */
 
 import { NodeAppearanceProvider } from '../datamodels/cad';
-import { SectorGeometry } from '../datamodels/cad/sector/types';
-import { SectorQuads } from '../datamodels/cad/rendering/types';
+import { SectorGeometry, SectorQuads } from '../datamodels/cad/rendering/types';
 import { SectorCuller } from '../internal';
 import { LoadingState } from '../utilities';
 

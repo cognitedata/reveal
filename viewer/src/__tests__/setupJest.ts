@@ -29,3 +29,7 @@ const consoleWarn = console.warn.bind(console);
     consoleWarn(message, ...optionalParams);
   }
 };
+
+process.on('unhandledRejection', err => {
+  fail(err);
+});

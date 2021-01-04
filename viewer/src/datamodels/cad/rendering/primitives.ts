@@ -3,7 +3,6 @@
  */
 
 import * as THREE from 'three';
-import { SectorGeometry } from '../sector/types';
 import {
   boxGeometry,
   quadGeometry,
@@ -13,8 +12,8 @@ import {
   nutGeometry
 } from './primitiveGeometries';
 import { Materials } from './materials';
-import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
+import { ParsePrimitiveAttribute, SectorGeometry } from './types';
 
 export function* createPrimitives(sector: SectorGeometry, materials: Materials) {
   const primitives = sector.primitives;

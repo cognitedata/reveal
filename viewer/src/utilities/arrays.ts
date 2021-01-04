@@ -11,9 +11,14 @@ export function createOffsets(array: Float64Array): Float64Array {
 }
 
 export function createOffsetsArray(array: number[]): number[] {
+  if (array.length === 0) {
+    return [];
+  }
+
   const offsets = new Array<number>(array.length);
-  array.forEach((_, idx) => {
-    offsets[idx] = idx > 0 ? offsets[idx - 1] + array[idx - 1] : 0;
-  });
+  offsets[0] = 0;
+  for (let i = 1; i < array.length; i++) {
+    offsets[i] = offsets[i - 1] + array[i - 1];
+  }
   return offsets;
 }

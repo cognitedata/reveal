@@ -3,29 +3,33 @@
  */
 
 import * as THREE from 'three';
+import { Observable, Subscription } from 'rxjs';
+
 import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { discardSector } from './sector/sectorUtilities';
-import { Subscription, Observable } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
-import { trackError } from '../../utilities/metrics';
-import { SectorGeometry } from './sector/types';
-import { SectorQuads } from './rendering/types';
+import { SectorGeometry, SectorQuads } from './rendering/types';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '../../utilities';
-import { CadModelSectorBudget } from './CadModelSectorBudget';
+import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
+import { CadSectorLoader } from './sector/CadSectorLoader';
+import { SectorCuller } from './sector/culling/SectorCuller';
+import { BinaryFileProvider } from '../../utilities/networking/types';
+import { CadSectorParser } from './sector/CadSectorParser';
+import { discardSector } from './sector/sectorUtilities';
+import { trackError } from '../../utilities/metrics';
 
 export class CadManager<TModelIdentifier> {
+  private readonly _loader: CadSectorLoader;
   private readonly _materialManager: MaterialManager;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
   private readonly _cadModelFactory: CadModelFactory;
-  private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
   private readonly _cadModelMap: Map<string, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
+  private _budget: CadModelSectorBudget = defaultCadModelSectorBudget;
 
   private _needsRedraw: boolean = false;
 
@@ -34,25 +38,50 @@ export class CadManager<TModelIdentifier> {
   }
 
   get budget(): CadModelSectorBudget {
-    return this._cadModelUpdateHandler.budget;
+    return this._budget;
   }
 
   set budget(budget: CadModelSectorBudget) {
-    this._cadModelUpdateHandler.budget = budget;
+    this._budget = budget;
+    this._loader.updateBudget(budget);
+  }
+
+  get needsRedraw(): boolean {
+    return this._needsRedraw;
+  }
+
+  get renderMode(): RenderMode {
+    return this._materialManager.getRenderMode();
+  }
+
+  set renderMode(renderMode: RenderMode) {
+    this._materialManager.setRenderMode(renderMode);
+  }
+
+  get clippingPlanes(): THREE.Plane[] {
+    return this._materialManager.clippingPlanes;
+  }
+
+  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._materialManager.clippingPlanes = clippingPlanes;
+    this._loader.updateClippingPlanes(clippingPlanes);
+    this.requestRedraw();
   }
 
   constructor(
     materialManger: MaterialManager,
     cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
     cadModelFactory: CadModelFactory,
-    cadModelUpdateHandler: CadModelUpdateHandler
+    culler: SectorCuller,
+    fileProvider: BinaryFileProvider,
+    parser: CadSectorParser
   ) {
+    this._loader = new CadSectorLoader(culler, fileProvider, parser, materialManger);
     this._materialManager = materialManger;
     this._cadModelMetadataRepository = cadModelMetadataRepository;
     this._cadModelFactory = cadModelFactory;
-    this._cadModelUpdateHandler = cadModelUpdateHandler;
     this._subscription.add(
-      this._cadModelUpdateHandler.consumedSectorObservable().subscribe(
+      this._loader.consumedSectorObservable().subscribe(
         sector => {
           const cadModel = this._cadModelMap.get(sector.blobUrl);
           if (!cadModel) {
@@ -91,7 +120,7 @@ export class CadManager<TModelIdentifier> {
   }
 
   dispose() {
-    this._cadModelUpdateHandler.dispose();
+    this._loader.dispose();
     this._subscription.unsubscribe();
   }
 
@@ -103,22 +132,8 @@ export class CadManager<TModelIdentifier> {
     this._needsRedraw = false;
   }
 
-  get needsRedraw(): boolean {
-    return this._needsRedraw;
-  }
-
   updateCamera(camera: THREE.PerspectiveCamera) {
-    this._cadModelUpdateHandler.updateCamera(camera);
-    this._needsRedraw = true;
-  }
-
-  get clippingPlanes(): THREE.Plane[] {
-    return this._materialManager.clippingPlanes;
-  }
-
-  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
-    this._materialManager.clippingPlanes = clippingPlanes;
-    this._cadModelUpdateHandler.clippingPlanes = clippingPlanes;
+    this._loader.updateCamera(camera);
     this._needsRedraw = true;
   }
 
@@ -128,16 +143,8 @@ export class CadManager<TModelIdentifier> {
 
   set clipIntersection(clipIntersection: boolean) {
     this._materialManager.clipIntersection = clipIntersection;
-    this._cadModelUpdateHandler.clipIntersection = clipIntersection;
+    this._loader.updateClipIntersection(clipIntersection);
     this._needsRedraw = true;
-  }
-
-  get renderMode(): RenderMode {
-    return this._materialManager.getRenderMode();
-  }
-
-  set renderMode(renderMode: RenderMode) {
-    this._materialManager.setRenderMode(renderMode);
   }
 
   async addModel(modelIdentifier: TModelIdentifier, nodeAppearanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
@@ -147,15 +154,15 @@ export class CadManager<TModelIdentifier> {
       this._needsRedraw = true;
     });
     this._cadModelMap.set(metadata.blobUrl, model);
-    this._cadModelUpdateHandler.updateModels(model);
+    this._loader.addModel(model);
     return model;
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
-    return this._cadModelUpdateHandler.getLoadingStateObserver();
+    return this._loader.loadingStateObservable();
   }
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
-    return this._cadModelUpdateHandler.getParsedData();
+    return this._loader.parsedDataObservable();
   }
 }

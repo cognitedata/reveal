@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
+import { RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { WorkerPool } from '../../../utilities/workers/WorkerPool';
-import { ParseSectorResult, ParseCtmResult, RevealParserWorker } from '@cognite/reveal-parser-worker';
-import { SectorQuads } from '../rendering/types';
+import { ParseCtmResult, ParseSectorResult, SectorQuads } from '../rendering/types';
 
 export class CadSectorParser {
   private readonly workerPool: WorkerPool;
