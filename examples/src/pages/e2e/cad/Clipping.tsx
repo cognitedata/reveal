@@ -4,14 +4,13 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import {getParamsFromURL} from '../../../utils/example-helpers';
-import {CogniteClient} from '@cognite/sdk';
+import { getParamsFromURL } from '../../../utils/example-helpers';
 import * as reveal from '@cognite/reveal/experimental';
-import React, {useEffect, useRef, useState} from 'react';
-import {CanvasWrapper} from '../../../components/styled';
-import {BoundingBoxClipper} from '@cognite/reveal';
-import {AnimationLoopHandler} from '../../../utils/AnimationLoopHandler';
-import {resizeRendererToDisplaySize} from '../../../utils/sceneHelpers';
+import React, { useEffect, useRef, useState } from 'react';
+import { CanvasWrapper } from '../../../components/styled';
+import { BoundingBoxClipper } from '@cognite/reveal';
+import { AnimationLoopHandler } from '../../../utils/AnimationLoopHandler';
+import { resizeRendererToDisplaySize } from '../../../utils/sceneHelpers';
 
 CameraControls.install({ THREE });
 
@@ -33,12 +32,10 @@ export function ClippingTestPage() {
       if (!canvas.current) {
         return;
       }
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
-        project: 'publicdata',
+      const { modelUrl } = getParamsFromURL({
+        project: 'test',
         modelUrl: 'primitives',
       });
-      const client = new CogniteClient({ appId: 'reveal.example.testable' });
-      client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
 
@@ -57,28 +54,12 @@ export function ClippingTestPage() {
         },
       };
 
-      let model: reveal.CadNode;
-      if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, {
-          logMetrics: false,
-        });
-        model = await revealManager.addModel(
-          'cad',
-          modelRevision,
-          nodeAppearanceProvider
-        );
-      } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager({ logMetrics: false });
-        model = await revealManager.addModel(
-          'cad',
-          modelUrl,
-          nodeAppearanceProvider
-        );
-      } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
-      }
+      revealManager = reveal.createLocalRevealManager({ logMetrics: false });
+      let model = await revealManager.addModel(
+        'cad',
+        modelUrl,
+        nodeAppearanceProvider
+      );
 
       let skipFirstLoadingState = true;
       revealManager.on('loadingStateChanged', (loadingState) => {
