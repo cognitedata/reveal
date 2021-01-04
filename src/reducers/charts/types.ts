@@ -14,6 +14,8 @@ export type ChartTimeSeries = {
   color: string;
   enabled: boolean;
   unit?: string;
+  originalUnit?: string;
+  preferredUnit?: string;
   description?: string;
 };
 

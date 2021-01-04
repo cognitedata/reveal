@@ -11,6 +11,7 @@ import {
   DoubleDatapoint,
 } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
+import { convertUnits, units } from 'utils/units';
 
 const defaultOptions = {
   time: {
@@ -71,7 +72,26 @@ const ChartComponent = ({ chart }: ChartProps) => {
         limit: pointsPerSeries,
       });
 
-      setTimeSeriesDataPoints(result);
+      const convertedResult = await Promise.all(
+        (result as (Datapoints | DatapointAggregates)[]).map(
+          async (ts: Datapoints | DatapointAggregates) => {
+            return {
+              ...ts,
+              datapoints: await convertUnits(
+                ts.datapoints,
+                chart?.timeSeriesCollection
+                  ?.find(({ id }) => id === ts.externalId)
+                  ?.unit?.toLowerCase(),
+                chart?.timeSeriesCollection
+                  ?.find(({ id }) => id === ts.externalId)
+                  ?.preferredUnit?.toLowerCase()
+              ),
+            } as typeof ts;
+          }
+        )
+      );
+
+      setTimeSeriesDataPoints(convertedResult);
     }
 
     performQuery();
@@ -95,7 +115,13 @@ const ChartComponent = ({ chart }: ChartProps) => {
           color: chart?.timeSeriesCollection?.find(
             ({ id }) => id === ts.externalId
           )?.color,
-          unit: ts.unit,
+          unit: units.find(
+            (unitOption) =>
+              unitOption.value ===
+              chart?.timeSeriesCollection?.find(
+                ({ id }) => id === ts.externalId
+              )?.preferredUnit
+          )?.label,
           datapoints: ts.datapoints,
         })),
       ...(enabledWorkflows || [])

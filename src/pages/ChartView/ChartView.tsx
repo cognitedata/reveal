@@ -23,6 +23,7 @@ import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
 import { NodeProgress } from '@cognite/connect';
 import DatePicker from 'react-datepicker';
 import noop from 'lodash/noop';
+import { units } from 'utils/units';
 import {
   Header,
   TopPaneWrapper,
@@ -251,6 +252,22 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  const handleSetInputUnit = (timeSeriesId: string, unit?: string) => {
+    if (chart) {
+      dispatch(
+        chartsSlice.actions.setInputUnit({ id: chart.id, timeSeriesId, unit })
+      );
+    }
+  };
+
+  const handleSetOutputUnit = (timeSeriesId: string, unit?: string) => {
+    if (chart) {
+      dispatch(
+        chartsSlice.actions.setOutputUnit({ id: chart.id, timeSeriesId, unit })
+      );
+    }
+  };
+
   const renderStatusIcon = (status?: WorkflowRunStatus) => {
     switch (status) {
       case 'RUNNING':
@@ -315,8 +332,30 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   );
 
   const timeseriesRows = chart.timeSeriesCollection?.map(
-    ({ id, name, color, enabled, unit, description }: ChartTimeSeries) => {
+    ({
+      id,
+      name,
+      color,
+      enabled,
+      originalUnit,
+      unit,
+      preferredUnit,
+      description,
+    }: ChartTimeSeries) => {
       const handleClick = !isEditorMode ? () => setActiveSourceItem(id) : noop;
+
+      const inputUnitOption = units.find(
+        (unitOption) => unitOption.value === unit?.toLowerCase()
+      );
+
+      const preferredUnitOption = units.find(
+        (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+      );
+
+      const unitConversionOptions = preferredUnitOption?.conversions?.map(
+        (conversion) =>
+          units.find((unitOption) => unitOption.value === conversion)
+      );
 
       return (
         <SourceRow onClick={handleClick} isActive={activeSourceItem === id}>
@@ -400,14 +439,29 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           Select input unit (override)
                         </span>
                       </Menu.Header>
-                      <Menu.Item>PSI</Menu.Item>
-                      <Menu.Item>Bar</Menu.Item>
-                      <Menu.Item>Bar(g)</Menu.Item>
+                      {units.map((unitOption) => (
+                        <Menu.Item
+                          onClick={() =>
+                            handleSetInputUnit(id, unitOption.value)
+                          }
+                        >
+                          {unitOption.label}
+
+                          {unit?.toLowerCase() === unitOption.value &&
+                            ' (selected)'}
+                          {originalUnit?.toLowerCase() === unitOption.value &&
+                            ' (original)'}
+                        </Menu.Item>
+                      ))}
                     </Menu>
                   }
                 >
                   <SourceItem>
-                    <SourceName>{unit}</SourceName>
+                    <SourceName>
+                      {inputUnitOption?.label}
+                      {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
+                        ' *'}
+                    </SourceName>
                   </SourceItem>
                 </Dropdown>
               </td>
@@ -420,14 +474,22 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           Select preferred unit
                         </span>
                       </Menu.Header>
-                      <Menu.Item>PSI</Menu.Item>
-                      <Menu.Item>Bar</Menu.Item>
-                      <Menu.Item>Bar(g)</Menu.Item>
+                      {unitConversionOptions?.map((unitOption) => (
+                        <Menu.Item
+                          onClick={() =>
+                            handleSetOutputUnit(id, unitOption?.value)
+                          }
+                        >
+                          {unitOption?.label}{' '}
+                          {originalUnit?.toLowerCase() === unitOption?.value &&
+                            ' (selected)'}
+                        </Menu.Item>
+                      ))}
                     </Menu>
                   }
                 >
                   <SourceItem>
-                    <SourceName>{unit}</SourceName>
+                    <SourceName>{preferredUnitOption?.label}</SourceName>
                   </SourceItem>
                 </Dropdown>
               </td>

@@ -52,6 +52,50 @@ const chartsSlice = createSlice({
       chartAdapter.removeOne(state, action.payload.id);
     },
 
+    setInputUnit: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        timeSeriesId: string;
+        unit?: string;
+      }>
+    ) => {
+      const { id, timeSeriesId } = action.payload;
+      const chart = state.entities[id];
+      const timeSeries = chart?.timeSeriesCollection?.find(
+        (entry) => entry.id === timeSeriesId
+      )!;
+      timeSeries.unit = action.payload.unit;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
+    setOutputUnit: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        timeSeriesId: string;
+        unit?: string;
+      }>
+    ) => {
+      const { id, timeSeriesId } = action.payload;
+      const chart = state.entities[id];
+      const timeSeries = chart?.timeSeriesCollection?.find(
+        (entry) => entry.id === timeSeriesId
+      )!;
+      timeSeries.preferredUnit = action.payload.unit;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
     addTimeSeries: (
       state,
       action: PayloadAction<{ id: string; timeSeries: Timeseries }>
@@ -66,6 +110,8 @@ const chartsSlice = createSlice({
               id: timeSeries.externalId,
               name: timeSeries.externalId,
               unit: timeSeries.unit || '*',
+              originalUnit: timeSeries.unit || '*',
+              preferredUnit: timeSeries.unit || '*',
               color: getEntryColor(),
               enabled: true,
               description: timeSeries.description || '-',
