@@ -1,6 +1,8 @@
 import React from 'react';
 import { Cell, CellProps } from 'react-table';
 import { calculateStatus } from 'utils/integrationUtils';
+import styled from 'styled-components';
+import { Button } from '@cognite/cogs.js';
 import { Integration } from '../../model/Integration';
 import UserGroup from '../integrations/cols/UserGroup';
 import Name from '../integrations/cols/Name';
@@ -11,6 +13,8 @@ import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { User } from '../../model/User';
 import RelativeTimeWithTooltip from '../integrations/cols/RelativeTimeWithTooltip';
+import MessageIcon from '../message/MessageIcon';
+import { Status } from '../../model/Status';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -22,6 +26,30 @@ export enum TableHeadings {
   CONTACTS = 'Contacts',
   OWNER = 'Owner',
   CREATED_BY = 'Created by',
+}
+
+const StyledStatusButton = styled((props) => (
+  <Button {...props}>{props.children}</Button>
+))`
+  background-color: transparent;
+  border: none !important;
+  font: inherit;
+  padding: 0;
+  white-space: nowrap;
+  :focus {
+    background-color: transparent;
+  }
+  :hover {
+    background-color: transparent;
+    box-shadow: none;
+  }
+  span {
+    cursor: pointer !important;
+  }
+`;
+
+interface OpenFailMessageFunc {
+  (row: Integration): void;
 }
 
 export const createSearchStringForContacts = (
@@ -37,8 +65,9 @@ export const createListOfContacts = (owner: User, authors?: User[]) => {
   const auth = authors ?? [];
   return [owner, ...auth];
 };
-
-export const getIntegrationTableCol = () => {
+export const getIntegrationTableCol = (
+  openFailMessage: OpenFailMessageFunc
+) => {
   return [
     {
       id: 'name',
@@ -58,7 +87,18 @@ export const getIntegrationTableCol = () => {
         return status.status;
       },
       Cell: ({ row }: CellProps<Integration>) => {
-        return <StatusMarker id="status-marker" status={row.values.status} />;
+        return row.values.status === Status.FAIL ? (
+          <StyledStatusButton
+            onClick={() => {
+              openFailMessage(row.original);
+            }}
+          >
+            <StatusMarker id="status-marker" status={row.values.status} />
+            <MessageIcon status={row.values.status} />
+          </StyledStatusButton>
+        ) : (
+          <StatusMarker id="status-marker" status={row.values.status} />
+        );
       },
       disableSortBy: true,
       Filter: StatusFilterDropdown,
