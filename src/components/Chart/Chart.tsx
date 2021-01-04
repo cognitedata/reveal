@@ -118,9 +118,9 @@ const ChartComponent = ({ chart }: ChartProps) => {
           unit: units.find(
             (unitOption) =>
               unitOption.value ===
-              chart?.timeSeriesCollection?.find(
-                ({ id }) => id === ts.externalId
-              )?.preferredUnit
+              chart?.timeSeriesCollection
+                ?.find(({ id }) => id === ts.externalId)
+                ?.preferredUnit?.toLowerCase()
           )?.label,
           datapoints: ts.datapoints,
         })),
