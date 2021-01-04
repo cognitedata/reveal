@@ -96,7 +96,7 @@ jobs:
 
       - name: Retry deploy 🚀 - pull
         working-directory: reveal-docs-preview
-        if: steps.deploy.outcome=='failure'
+        # if: steps.deploy.outcome=='failure'
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
