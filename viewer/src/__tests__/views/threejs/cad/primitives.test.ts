@@ -2,13 +2,12 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorGeometry } from '../../../../datamodels/cad/sector/types';
 import { createPrimitives } from '../../../../datamodels/cad/rendering/primitives';
 import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials, Materials } from '../../../../datamodels/cad/rendering/materials';
-import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { InstancedBufferGeometry, LOD, Mesh } from 'three';
 import { RenderMode } from '../../../../datamodels/cad/rendering/RenderMode';
+import { ParsePrimitiveAttribute, SectorGeometry } from '../../../../datamodels/cad/rendering/types';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const map = new Map<string, ParsePrimitiveAttribute>();
