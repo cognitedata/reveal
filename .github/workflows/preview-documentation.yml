@@ -98,7 +98,9 @@ jobs:
         working-directory: reveal-docs-preview
         if: steps.deploy.outcome=='failure'
         run: |
-          git pull --commit
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git pull https://git:${{ secrets.ACCESS_TOKEN }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff-only
         
       - name: Retry deploy 🚀 - push
         id: deploy2
