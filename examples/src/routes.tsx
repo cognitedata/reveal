@@ -15,7 +15,7 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
-import { Testable } from './pages/Testable';
+import { Testable } from './pages/e2e/Testable';
 import { WebGLTwo } from './pages/WebGLTwo';
 
 // if you want to test your latest changes in workers or rust files
@@ -46,7 +46,11 @@ const cad2RevisionId = getEnv('REACT_APP_CAD_2_REVISION_ID');
 const pointCloudId = getEnv('REACT_APP_POINTCLOUD_ID');
 const pointCloudRevisionId = getEnv('REACT_APP_POINTCLOUD_REVISION_ID');
 
-export const routes: Array<ExampleRoute> = [
+function menuTitleAz(a: ExampleRoute, b: ExampleRoute): number {
+  return a.menuTitle < b.menuTitle ? -1 : a.menuTitle === b.menuTitle ? 0 : 1;
+}
+
+export const exampleRoutes: Array<ExampleRoute> = [
   {
     path: '/simple',
     menuTitle: 'Simple',
@@ -127,11 +131,12 @@ export const routes: Array<ExampleRoute> = [
     menuTitle: 'WebGL 2.0',
     component: <WebGLTwo />,
   },
+].sort(menuTitleAz);
+
+export const testRoutes: Array<ExampleRoute> = [
   {
     path: '/testable',
     menuTitle: 'Automatically testable in CI',
     component: <Testable />,
   },
-].sort((a, b) =>
-  a.menuTitle < b.menuTitle ? -1 : a.menuTitle === b.menuTitle ? 0 : 1
-);
+].sort(menuTitleAz);

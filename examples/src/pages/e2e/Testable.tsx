@@ -4,14 +4,14 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { getParamsFromURL } from '../../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import React, { useEffect, useRef, useState } from 'react';
-import { CanvasWrapper } from '../components/styled';
+import { CanvasWrapper } from '../../components/styled';
 import { BoundingBoxClipper } from '@cognite/reveal';
-import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
-import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
+import { AnimationLoopHandler } from '../../utils/AnimationLoopHandler';
+import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 
 CameraControls.install({ THREE });
 

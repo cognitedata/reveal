@@ -4,31 +4,52 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { routes } from './routes';
+import {exampleRoutes, testRoutes} from './routes';
 import { Container } from './components/styled';
+import styled from "styled-components";
+
+
+const PageContainer = styled.div`
+  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px 0;
+  background: rgb(255, 255, 255);
+  padding: 15px;
+  border-radius: 4px;
+  min-height: 95vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+`
 
 export default function App() {
+  const MainMenuPage = () => <Route path="/">
+    <h1 style={{ margin: 0 }}>Select an example:</h1>
+    <nav>
+      <ul style={{ paddingLeft: '20px' }}>
+        {exampleRoutes.map((page) => (
+          <li key={page.path}>
+            <Link to={page.path}>{page.menuTitle}</Link>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Snapshot tests pages</h2>
+
+      <ul style={{ marginTop: '16px', paddingLeft: '20px' }}>
+        {testRoutes.map((page) => (
+          <li key={page.path}>
+            <Link to={page.path}>{page.menuTitle}</Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </Route>
+
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      <div
-        style={{
-          padding: '5px',
-        }}
-      >
-        <div
-          style={{
-            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 5px 0px',
-            background: 'rgb(255, 255, 255)',
-            padding: '15px',
-            borderRadius: '4px',
-            minHeight: '95vh',
-            display: 'flex',
-            flexDirection: 'column',
-            overflowX: 'auto',
-          }}
-        >
+      <div style={{ padding: '5px' }}>
+        <PageContainer>
           <Switch>
-            {routes.map((page) => (
+            {exampleRoutes.concat(testRoutes).map((page) => (
               <Route
                 key={page.path}
                 path={
@@ -44,20 +65,10 @@ export default function App() {
                 </Container>
               </Route>
             ))}
-            <Route key="/" path="/">
-              <h1 style={{ margin: 0 }}>Select an example:</h1>
-              <nav>
-                <ul style={{ paddingLeft: '20px' }}>
-                  {routes.map((page) => (
-                    <li key={page.path}>
-                      <Link to={page.path}>{page.menuTitle}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </Route>
+
+            <MainMenuPage key="/" />
           </Switch>
-        </div>
+        </PageContainer>
       </div>
     </Router>
   );
