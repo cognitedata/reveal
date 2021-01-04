@@ -289,9 +289,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       </th>
       {!isEditorMode && (
         <>
-          <th style={{ width: 100 }}>
+          <th style={{ width: 110 }}>
             <SourceItem>
-              <SourceName>Unit</SourceName>
+              <SourceName>Unit (input)</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 110 }}>
+            <SourceItem>
+              <SourceName>Unit (output)</SourceName>
             </SourceItem>
           </th>
           <th style={{ width: 300 }}>
@@ -392,7 +397,27 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                     <Menu>
                       <Menu.Header>
                         <span style={{ wordBreak: 'break-word' }}>
-                          Select unit
+                          Select input unit (override)
+                        </span>
+                      </Menu.Header>
+                      <Menu.Item>PSI</Menu.Item>
+                      <Menu.Item>Bar</Menu.Item>
+                      <Menu.Item>Bar(g)</Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <SourceItem>
+                    <SourceName>{unit}</SourceName>
+                  </SourceItem>
+                </Dropdown>
+              </td>
+              <td>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>
+                        <span style={{ wordBreak: 'break-word' }}>
+                          Select preferred unit
                         </span>
                       </Menu.Header>
                       <Menu.Item>PSI</Menu.Item>
