@@ -1,3 +1,5 @@
+export const cadTestBasePath = '/test/cad/'
+
 export enum TestCase {
   default = 'default',
   clipping = 'clipping',

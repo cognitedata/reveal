@@ -1,4 +1,4 @@
-import { TestCase } from './TestCase';
+import { cadTestBasePath, TestCase } from './testUtils';
 
 const retry = require('jest-retries');
 
@@ -8,9 +8,7 @@ jest.retryTimes(RETRIES);
 
 async function screenShotTest(testCase: TestCase) {
   const page = await browser.newPage();
-  const url =
-    `http://localhost:3000/testable` +
-    (testCase === 'default' ? '' : `?test=${testCase}`);
+  const url = `http://localhost:3000` + cadTestBasePath + testCase;
 
   await page.goto(url, {
     waitUntil: ['domcontentloaded'],

@@ -17,6 +17,7 @@ import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { Testable } from './pages/e2e/Testable';
 import { WebGLTwo } from './pages/WebGLTwo';
+import {cadTestBasePath, TestCase} from './visual_tests/testUtils';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -133,10 +134,22 @@ export const exampleRoutes: Array<ExampleRoute> = [
   },
 ].sort(menuTitleAz);
 
-export const testRoutes: Array<ExampleRoute> = [
-  {
-    path: '/testable',
-    menuTitle: 'Automatically testable in CI',
-    component: <Testable />,
-  },
-].sort(menuTitleAz);
+const testPages: Record<TestCase, JSX.Element> = {
+  [TestCase.default]: <Testable />,
+  [TestCase.clipping]: <Testable />,
+  [TestCase.default_camera]: <Testable />,
+  [TestCase.highlight]: <Testable />,
+  [TestCase.rotate_cad_model]: <Testable />,
+  [TestCase.node_transform]: <Testable />,
+  [TestCase.ghost_mode]: <Testable />,
+  [TestCase.scaled_model]: <Testable />,
+  [TestCase.user_render_target]: <Testable />,
+};
+
+export const testRoutes: Array<ExampleRoute> = Object.values(TestCase).map(
+  (test) => ({
+    path: cadTestBasePath + test,
+    menuTitle: test,
+    component: testPages[test],
+  })
+);
