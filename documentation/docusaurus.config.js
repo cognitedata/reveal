@@ -7,6 +7,21 @@ module.exports = {
   organizationName: 'cognitedata',
   projectName: 'reveal',
   themeConfig: {
+    algolia: {
+      apiKey: 'd2f00b2aa78a3b4ca8877d9b764916d4',
+      indexName: 'reveal-docs',
+
+      // doesn't look like it works for 1.x and next. Looks like 'next' considered unversioned
+      // so next is excluded from the search below
+      contextualSearch: true,
+
+      // Optional: Algolia search parameters
+      searchParameters: {
+        facetFilters: ["version:1.x"]
+      },
+
+      //... other Algolia params https://autocomplete-experimental.netlify.app/docs/docsearchmodal/#reference
+    },
     prism: {
       // changes syntax highlighting theme
       theme: require('prism-react-renderer/themes/oceanicNext'),
