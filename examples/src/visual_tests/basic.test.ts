@@ -28,6 +28,8 @@ async function screenShotTest(testCase: TestCase) {
   await page.close();
 }
 
+console.log(`Run tests with ${RETRIES} retries`)
+
 describe('Reveal visual tests', () => {
   beforeEach(async () => {
     await jestPuppeteer.resetBrowser();

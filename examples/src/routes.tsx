@@ -15,9 +15,18 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
-import { Testable } from './pages/e2e/Testable';
 import { WebGLTwo } from './pages/WebGLTwo';
-import {cadTestBasePath, TestCase} from './visual_tests/testUtils';
+
+import { cadTestBasePath, TestCase } from './visual_tests/testUtils';
+import { DefaultCadTestPage } from './pages/e2e/cad/Default';
+import { ClippingTestPage } from './pages/e2e/cad/Clipping';
+import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCamera';
+import { HighlightTestPage } from './pages/e2e/cad/Highlight';
+import { RotationTestPage } from './pages/e2e/cad/Rotation';
+import { NodeTransformTestPage } from './pages/e2e/cad/NodeTransform';
+import { GhostModeTestPage } from './pages/e2e/cad/GhostMode';
+import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModel';
+import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTarget';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -135,15 +144,15 @@ export const exampleRoutes: Array<ExampleRoute> = [
 ].sort(menuTitleAz);
 
 const testPages: Record<TestCase, JSX.Element> = {
-  [TestCase.default]: <Testable />,
-  [TestCase.clipping]: <Testable />,
-  [TestCase.default_camera]: <Testable />,
-  [TestCase.highlight]: <Testable />,
-  [TestCase.rotate_cad_model]: <Testable />,
-  [TestCase.node_transform]: <Testable />,
-  [TestCase.ghost_mode]: <Testable />,
-  [TestCase.scaled_model]: <Testable />,
-  [TestCase.user_render_target]: <Testable />,
+  [TestCase.default]: <DefaultCadTestPage />,
+  [TestCase.clipping]: <ClippingTestPage />,
+  [TestCase.default_camera]: <DefaultCameraTestPage />,
+  [TestCase.highlight]: <HighlightTestPage />,
+  [TestCase.rotate_cad_model]: <RotationTestPage />,
+  [TestCase.node_transform]: <NodeTransformTestPage />,
+  [TestCase.ghost_mode]: <GhostModeTestPage />,
+  [TestCase.scaled_model]: <ScaledModelTestPage />,
+  [TestCase.user_render_target]: <UserRenderTargetTestPage />,
 };
 
 export const testRoutes: Array<ExampleRoute> = Object.values(TestCase).map(
