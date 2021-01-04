@@ -3,6 +3,7 @@ import {
   ClientOptions,
   RawDBRowInsert,
   RawDBRowKey,
+  RawDBRow,
 } from '@cognite/sdk';
 
 type dcClientOptions = {
@@ -34,6 +35,11 @@ export class CdfClient {
 
   deleteTableRow(tableName: string, items: RawDBRowKey[]) {
     return this.cogniteClient.raw.deleteRows(this.dbName, tableName, items);
+  }
+
+  // TODO(DTC-222) temporary to fetch userSpace from cdf
+  async getTableRow(tableName: string, key: string): Promise<RawDBRow> {
+    return this.cogniteClient.raw.retrieveRow(this.dbName, tableName, key);
   }
 }
 
