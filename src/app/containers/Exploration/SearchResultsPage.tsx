@@ -7,6 +7,7 @@ import {
   SequenceSearchResults,
   TimeseriesSearchResults,
   EventSearchResults,
+  ResourceTypeTabs,
   getTitle,
   ResourceType,
 } from 'lib';
@@ -48,7 +49,10 @@ const getPageTitle = (query: string, resourceType: ResourceType): string => {
 };
 
 function SearchPage() {
-  const [currentResourceType] = useCurrentResourceType();
+  const [
+    currentResourceType,
+    setCurrentResourceType,
+  ] = useCurrentResourceType();
 
   const [activeId, openPreview] = useCurrentResourceId();
   const [showFilter, setShowFilter] = useState(false);
@@ -159,85 +163,91 @@ function SearchPage() {
   };
 
   return (
-    <Wrapper>
-      <SearchFilters
-        assetFilter={assetFilter}
-        setAssetFilter={setAssetFilter}
-        timeseriesFilter={timeseriesFilter}
-        setTimeseriesFilter={setTimeseriesFilter}
-        sequenceFilter={sequenceFilter}
-        setSequenceFilter={setSequenceFilter}
-        eventFilter={eventFilter}
-        setEventFilter={setEventFilter}
-        fileFilter={fileFilter}
-        setFileFilter={setFileFilter}
-        resourceType={currentResourceType}
-        closeFilters={() => setShowFilter(false)}
-        visible={showFilter}
+    <>
+      <ResourceTypeTabs
+        currentResourceType={currentResourceType}
+        setCurrentResourceType={setCurrentResourceType}
       />
-      <div
-        style={{
-          width: active ? 440 : 'unset',
-          flex: active ? 'unset' : 1,
-          borderRight: active ? `1px solid ${lightGrey}` : 'unset',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <SearchInputContainer align="middle">
-          {!showFilter ? (
-            <Col flex="none">
-              <FilterToggleButton
-                toggleOpen={() => setShowFilter(!showFilter)}
-              />
-            </Col>
-          ) : undefined}
-          <Col flex="auto">
-            <ExplorationSearchBar />
-          </Col>
-        </SearchInputContainer>
-        {['file', 'asset'].includes(currentResourceType) ? (
-          <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
-            <Col flex="auto">
-              <LabelsQuickSelect
-                key={currentResourceType}
-                type={currentResourceType as 'file' | 'asset'}
-              />
-            </Col>
-          </Row>
-        ) : undefined}
-        <SearchResultWrapper
+      <Wrapper>
+        <SearchFilters
+          assetFilter={assetFilter}
+          setAssetFilter={setAssetFilter}
+          timeseriesFilter={timeseriesFilter}
+          setTimeseriesFilter={setTimeseriesFilter}
+          sequenceFilter={sequenceFilter}
+          setSequenceFilter={setSequenceFilter}
+          eventFilter={eventFilter}
+          setEventFilter={setEventFilter}
+          fileFilter={fileFilter}
+          setFileFilter={setFileFilter}
+          resourceType={currentResourceType}
+          closeFilters={() => setShowFilter(false)}
+          visible={showFilter}
+        />
+        <div
           style={{
-            paddingRight: active ? 8 : 0,
-            paddingLeft: showFilter ? 8 : 0,
+            width: active ? 440 : 'unset',
+            flex: active ? 'unset' : 1,
+            borderRight: active ? `1px solid ${lightGrey}` : 'unset',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          {SearchResults()}
-        </SearchResultWrapper>
-      </div>
-
-      <div
-        style={{
-          width: active ? 'unset' : 0,
-          flex: active ? 1 : 'unset',
-        }}
-      >
-        {activeId && (
-          <SearchResultWrapper>
-            <ResourcePreview
-              item={{ id: activeId, type: currentResourceType }}
-              onCloseClicked={() => openPreview(undefined)}
-            />
+          <SearchInputContainer align="middle">
+            {!showFilter ? (
+              <Col flex="none">
+                <FilterToggleButton
+                  toggleOpen={() => setShowFilter(!showFilter)}
+                />
+              </Col>
+            ) : undefined}
+            <Col flex="auto">
+              <ExplorationSearchBar />
+            </Col>
+          </SearchInputContainer>
+          {['file', 'asset'].includes(currentResourceType) ? (
+            <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
+              <Col flex="auto">
+                <LabelsQuickSelect
+                  key={currentResourceType}
+                  type={currentResourceType as 'file' | 'asset'}
+                />
+              </Col>
+            </Row>
+          ) : undefined}
+          <SearchResultWrapper
+            style={{
+              paddingRight: active ? 8 : 0,
+              paddingLeft: showFilter ? 8 : 0,
+            }}
+          >
+            {SearchResults()}
           </SearchResultWrapper>
-        )}
-        {!activeId && cart.length > 0 && (
-          <SelectedResults
-            ids={cart.map(id => ({ id }))}
-            resourceType={currentResourceType}
-          />
-        )}
-      </div>
-    </Wrapper>
+        </div>
+
+        <div
+          style={{
+            width: active ? 'unset' : 0,
+            flex: active ? 1 : 'unset',
+          }}
+        >
+          {activeId && (
+            <SearchResultWrapper>
+              <ResourcePreview
+                item={{ id: activeId, type: currentResourceType }}
+                onCloseClicked={() => openPreview(undefined)}
+              />
+            </SearchResultWrapper>
+          )}
+          {!activeId && cart.length > 0 && (
+            <SelectedResults
+              ids={cart.map(id => ({ id }))}
+              resourceType={currentResourceType}
+            />
+          )}
+        </div>
+      </Wrapper>
+    </>
   );
 }
 
