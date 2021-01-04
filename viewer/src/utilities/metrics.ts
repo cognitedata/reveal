@@ -14,7 +14,6 @@ type EventProps = {
     | 'createRevealManager'
     | 'Cognite3DViewer'
     | 'CadManager'
-    | 'CachedRepository'
     | 'Cognite3DModel'
     | 'sectorUtilities';
   methodName: string;
