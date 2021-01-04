@@ -1,26 +1,26 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 
 export const units = [
-  { label: 'PSI', value: 'psi', conversions: ['psi', 'bar', 'barg'] },
-  { label: 'Bar', value: 'bar', conversions: ['psi', 'bar', 'barg'] },
-  { label: 'Bar(g)', value: 'barg', conversions: ['psi', 'bar', 'barg'] },
+  { label: 'PSI', value: 'psi', conversions: ['psi', 'bar', 'pa'] },
+  { label: 'Bar', value: 'bar', conversions: ['psi', 'bar', 'pa'] },
+  { label: 'Pascal', value: 'pa', conversions: ['psi', 'bar', 'pa'] },
 ];
 
 const conversions: any = {
   psi: {
     psi: (val: number): number => val,
-    bar: (val: number): number => val * 2,
-    barg: (val: number): number => val * 4,
+    bar: (val: number): number => val * 0.0689475729,
+    pa: (val: number): number => val * 6894.76,
   },
   bar: {
-    psi: (val: number): number => val / 2,
-    bar: (val: number): number => val * 2,
-    barg: (val: number): number => val,
+    psi: (val: number): number => val / 0.0689475729,
+    bar: (val: number): number => val,
+    pa: (val: number): number => val * 100000,
   },
-  barg: {
-    psi: (val: number): number => val / 4,
-    bar: (val: number): number => val / 2,
-    barg: (val: number): number => val,
+  pa: {
+    psi: (val: number): number => val / 0.0689475729,
+    bar: (val: number): number => val / 100000,
+    pa: (val: number): number => val,
   },
 };
 
