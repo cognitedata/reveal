@@ -115,7 +115,10 @@ export class TakenSectorTree {
   }
 
   private setSectorLod(sectorId: number, lod: LevelOfDetail) {
-    assert(lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile.fileName !== null);
+    assert(
+      lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile.fileName !== null,
+      `Sector ${sectorId} was requested as simple, but doesn't have quad geometry`
+    );
     this.sectors[sectorId].lod = lod;
     reduceSectorCost(this._totalCost, this.sectors[sectorId].cost);
     this.sectors[sectorId].cost = this.determineSectorCost(this.sectors[sectorId].sector, lod);
