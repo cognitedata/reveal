@@ -16,7 +16,7 @@ import {
 } from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
-import { saveExistingChart } from 'reducers/charts/api';
+import { renameChart, saveExistingChart } from 'reducers/charts/api';
 import ChartComponent from 'components/Chart';
 import { runWorkflow } from 'reducers/workflows/utils';
 import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
@@ -44,6 +44,7 @@ import {
   SourceTableWrapper,
   SourceTable,
   SourceRow,
+  ChartTitle,
 } from './elements';
 
 type ChartViewProps = {
@@ -241,6 +242,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const handleConvertToWorkflow = (id: string) => {
     if (chart) {
       dispatch(createWorkflowFromTimeSeries(chart, id));
+    }
+  };
+
+  const handleRenameChart = () => {
+    if (chart) {
+      dispatch(renameChart(chart));
     }
   };
 
@@ -499,7 +506,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       <ContentWrapper>
         <Header>
           <hgroup>
-            <h1>{chart?.name}</h1>
+            <ChartTitle onClick={() => handleRenameChart()}>
+              {chart?.name}{' '}
+              <span>
+                <Icon type="Edit" />
+              </span>
+            </ChartTitle>
             <h4>by {chart?.user}</h4>
           </hgroup>
           <section className="daterange">

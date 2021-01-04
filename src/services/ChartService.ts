@@ -29,6 +29,10 @@ export class ChartService {
     return this.firebaseCollection.doc(chart.id).set(chart);
   }
 
+  async deleteChart(chart: Chart): Promise<void> {
+    this.firebaseCollection.doc(chart.id).delete();
+  }
+
   async setWorkflowsOnChart(
     chartId: string,
     workflowCollection: ChartWorkflow[]

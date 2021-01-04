@@ -91,3 +91,61 @@ export const saveExistingChart = (chart: Chart): AppThunk => async (
     toast.error('Failed to save chart');
   }
 };
+
+export const renameChart = (chart: Chart): AppThunk => async (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  if (!tenant || !user) {
+    // Must have tenant set
+    return;
+  }
+
+  try {
+    const updatedChart = {
+      ...chart,
+      name: prompt('Rename chart', chart.name) || chart.name,
+    } as Chart;
+
+    dispatch(
+      chartsSlice.actions.updateChart({
+        id: chart.id,
+        changes: updatedChart,
+      })
+    );
+    // Create the workflow
+    const chartService = new ChartService(tenant, user);
+    chartService.saveChart(updatedChart);
+    toast.success('Chart renamed!');
+  } catch (e) {
+    toast.error('Failed to rename chart');
+  }
+};
+
+export const deleteChart = (chart: Chart): AppThunk => async (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  if (!tenant || !user) {
+    // Must have tenant set
+    return;
+  }
+
+  try {
+    dispatch(chartsSlice.actions.removeChart(chart));
+    // Create the workflow
+    const chartService = new ChartService(tenant, user);
+    chartService.deleteChart(chart);
+    toast.success('Chart deleted!');
+  } catch (e) {
+    toast.error('Failed to delete chart');
+  }
+};

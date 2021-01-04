@@ -267,3 +267,15 @@ export const ChartWrapper = styled.div`
     }
   }
 `;
+
+export const ChartTitle = styled.h1`
+  cursor: pointer;
+
+  & > span {
+    visibility: hidden;
+  }
+
+  &:hover > span {
+    visibility: visible;
+  }
+`;

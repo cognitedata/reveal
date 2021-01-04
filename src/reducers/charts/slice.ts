@@ -47,6 +47,11 @@ const chartsSlice = createSlice({
       chartAdapter.updateOne(state, action.payload);
     },
 
+    // Editing chart (add/remove sources, etc)
+    removeChart: (state, action: PayloadAction<Chart>) => {
+      chartAdapter.removeOne(state, action.payload.id);
+    },
+
     addTimeSeries: (
       state,
       action: PayloadAction<{ id: string; timeSeries: Timeseries }>

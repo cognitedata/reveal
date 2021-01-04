@@ -1,10 +1,10 @@
-import { Icon } from '@cognite/cogs.js';
+import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import useDispatch from 'hooks/useDispatch';
 import useSelector from 'hooks/useSelector';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { chartSelectors } from 'reducers/charts';
-import { fetchAllCharts } from 'reducers/charts/api';
+import { Chart, chartSelectors } from 'reducers/charts';
+import { fetchAllCharts, renameChart, deleteChart } from 'reducers/charts/api';
 import thumb from 'assets/thumb.png';
 
 const ChartList = () => {
@@ -17,6 +17,14 @@ const ChartList = () => {
     dispatch(fetchAllCharts());
   }, []);
 
+  const handleRenameChart = (chart: Chart) => {
+    dispatch(renameChart(chart));
+  };
+
+  const handleDeleteChart = (chart: Chart) => {
+    dispatch(deleteChart(chart));
+  };
+
   const renderList = () => {
     return allCharts.map((chart) => (
       <div
@@ -25,14 +33,57 @@ const ChartList = () => {
           width: 'calc(25% - 40px)',
           margin: '20px',
           padding: 20,
+          paddingTop: 80,
           border: '1px solid #ccc',
           borderRadius: 10,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: 50,
+            backgroundColor: '#ccc',
+            borderBottom: '1px solid #ccc',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Header>
+                  <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
+                </Menu.Header>
+                <Menu.Item
+                  onClick={() => handleRenameChart(chart)}
+                  appendIcon="Edit"
+                >
+                  <span>Rename workspace</span>
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => handleDeleteChart(chart)}
+                  appendIcon="Delete"
+                >
+                  <span>Delete workspace</span>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <div style={{ display: 'flex', padding: 10 }}>
+              <Icon type="VerticalEllipsis" />
+            </div>
+          </Dropdown>
+        </div>
         <Link to={`/${chart.id}`} key={chart.id}>
           <div style={{ width: '100%' }}>
             <img
