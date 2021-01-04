@@ -34,6 +34,8 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
     "@cognite/cogs.js": "^1.10.0",
+    "@cognite/react-i18n": "^0.1.2",
+    "@sentry/browser": "^5.19.2",
     "@cognite/metrics": "^1.0.0",
     "@storybook/addon-actions": "^5.3.19",
     "@storybook/addon-links": "^5.3.19",
@@ -58,6 +60,7 @@
   "peerDependencies": {
     "@cognite/cogs.js": "^1.10.0",
     "@cognite/metrics": "^1.0.0",
+    "@cognite/react-i18n": "^0.1.2",
     "@sentry/browser": "^5.19.2",
     "i18next": "^19.6.0",
     "react": "^16.13.1",
