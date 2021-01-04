@@ -9,7 +9,7 @@ import useDispatch from 'hooks/useDispatch';
 import searchSlice from 'reducers/search/slice';
 import styled from 'styled-components/macro';
 import { Timeseries } from '@cognite/sdk';
-import chartsSlice from 'reducers/charts';
+import { addTimeSeriesToChart } from 'reducers/charts/api';
 import useTimeSeriesSearch from './useTimeSeriesSearch';
 
 const SEARCH_RESULT_LIMIT = 20;
@@ -94,13 +94,8 @@ const Search = () => {
     timeseriesSearch({ search: { query: value }, limit: SEARCH_RESULT_LIMIT });
   };
 
-  const handleTimeSeriesClick = (timeseries: Timeseries) => {
-    dispatch(
-      chartsSlice.actions.addTimeSeries({
-        id: activeChartId,
-        timeSeries: timeseries,
-      })
-    );
+  const handleTimeSeriesClick = async (timeseries: Timeseries) => {
+    dispatch(addTimeSeriesToChart(activeChartId, timeseries));
   };
 
   const resultElements = timeseriesSearchResults.map((timeseries) => {

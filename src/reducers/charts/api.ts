@@ -1,11 +1,12 @@
 /* eslint-disable no-alert */
 
 import { toast } from '@cognite/cogs.js';
+import { Timeseries } from '@cognite/sdk';
 import { nanoid } from '@reduxjs/toolkit';
 import { selectTenant, selectUser } from 'reducers/environment';
 import ChartService from 'services/ChartService';
 import { AppThunk } from 'store';
-import chartsSlice from './slice';
+import chartsSlice, { chartSelectors } from './slice';
 import { Chart } from './types';
 
 export const fetchAllCharts = (): AppThunk => async (dispatch, getState) => {
@@ -85,7 +86,7 @@ export const saveExistingChart = (chart: Chart): AppThunk => async (
   try {
     // Create the workflow
     const chartService = new ChartService(tenant, user);
-    chartService.saveChart(chart);
+    await chartService.saveChart(chart);
     toast.success('Chart saved!');
   } catch (e) {
     toast.error('Failed to save chart');
@@ -119,10 +120,40 @@ export const renameChart = (chart: Chart): AppThunk => async (
     );
     // Create the workflow
     const chartService = new ChartService(tenant, user);
-    chartService.saveChart(updatedChart);
+    await chartService.saveChart(updatedChart);
     toast.success('Chart renamed!');
   } catch (e) {
     toast.error('Failed to rename chart');
+  }
+};
+
+export const addTimeSeriesToChart = (
+  id: string,
+  timeSeries: Timeseries
+): AppThunk => async (dispatch, getState) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  if (!tenant || !user) {
+    // Must have tenant set
+    return;
+  }
+
+  try {
+    dispatch(
+      chartsSlice.actions.addTimeSeries({
+        id,
+        timeSeries,
+      })
+    );
+
+    const chart = chartSelectors.selectById(getState(), id);
+    const chartService = new ChartService(tenant, user);
+    await chartService.saveChart(chart!);
+    toast.success('Added time series!');
+  } catch (e) {
+    toast.error('Failed to add time series');
   }
 };
 
@@ -143,7 +174,7 @@ export const deleteChart = (chart: Chart): AppThunk => async (
     dispatch(chartsSlice.actions.removeChart(chart));
     // Create the workflow
     const chartService = new ChartService(tenant, user);
-    chartService.deleteChart(chart);
+    await chartService.deleteChart(chart);
     toast.success('Chart deleted!');
   } catch (e) {
     toast.error('Failed to delete chart');
