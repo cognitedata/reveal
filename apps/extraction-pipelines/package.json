@@ -46,7 +46,7 @@
     "react-hook-form": "^6.12.2",
     "react-i18next": "^11.8.0",
     "react-modal": "^3.12.1",
-    "react-query": "^3.5.10",
+    "react-query": "^3.5.11",
     "react-router": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-table": "^7.6.2",
