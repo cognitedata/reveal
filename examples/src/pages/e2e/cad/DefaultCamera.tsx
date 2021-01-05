@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 import React from 'react';
-import {Viewer} from "../Viewer";
-
+import { Viewer } from '../Viewer';
 
 export function DefaultCameraTestPage() {
-  return <Viewer modifyCamera={() => new THREE.PerspectiveCamera()}/>
+  const newEnv = { camera: new THREE.PerspectiveCamera() }
+  return <Viewer modifyThings={() => newEnv} />;
 }
