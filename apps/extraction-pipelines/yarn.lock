@@ -1353,10 +1353,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.3.tgz#203e504947a0d481656c34d1d71a0caebd2bcb12"
-  integrity sha512-cQdYX4u2hwJt/0MZvN+Z1V495r3yDdxPn60JYfsxBwWWsDSrFAAx+eH4z0QL7EaE1xcOOLK6ayOV1Qa8zzbhAA==
+"@cognite/sdk-core@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.4.tgz#f1a1cb8b677ddffa5d409d91f0ed64acff623426"
+  integrity sha512-WcCauuBr/K4yz/eO66QwXnw/iC8PCHxlmBZMNY95sJUhfZosK80jhBGKZew8vvT0VKNB7TPZ/3eUsqSpE0BmaQ==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1387,12 +1387,12 @@
     "@cognite/sdk-core" "^1.0.2"
     lodash "^4.17.11"
 
-"@cognite/sdk@^3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.1.tgz#5b38415547ccff1566da3da4676b4b085274f5a9"
-  integrity sha512-HL1x2lhh90yrWbP4BdDDArxXidlhIenh61d8fEQ1xplbUvXLMqYNvMnp1G2mz07jOERfcCl4XupZMjD7jSlR8Q==
+"@cognite/sdk@^3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.2.tgz#757421933531ff42202f7ac8dc5af579a8347065"
+  integrity sha512-6jrHQR0PrABfX28TctF8V4Ns7lsJGTfKX0wHvJ9vwTwh1nq7lLcr9GsleSY1xvTEuDi4Oaupjyn7/53m64O2Ew==
   dependencies:
-    "@cognite/sdk-core" "^1.0.3"
+    "@cognite/sdk-core" "^1.0.4"
     lodash "^4.17.11"
 
 "@cognite/z-index@^0.1.0":
