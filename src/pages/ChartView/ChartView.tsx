@@ -357,6 +357,24 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           units.find((unitOption) => unitOption.value === conversion)
       );
 
+      const unitOverrideMenuItems = units.map((unitOption) => (
+        <Menu.Item onClick={() => handleSetInputUnit(id, unitOption.value)}>
+          {unitOption.label}
+          {unit?.toLowerCase() === unitOption.value && ' (selected)'}
+          {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
+        </Menu.Item>
+      ));
+
+      const unitConversionMenuItems = unitConversionOptions?.map(
+        (unitOption) => (
+          <Menu.Item onClick={() => handleSetOutputUnit(id, unitOption?.value)}>
+            {unitOption?.label}{' '}
+            {preferredUnit?.toLowerCase() === unitOption?.value &&
+              ' (selected)'}
+          </Menu.Item>
+        )
+      );
+
       return (
         <SourceRow onClick={handleClick} isActive={activeSourceItem === id}>
           <td>
@@ -439,20 +457,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           Select input unit (override)
                         </span>
                       </Menu.Header>
-                      {units.map((unitOption) => (
-                        <Menu.Item
-                          onClick={() =>
-                            handleSetInputUnit(id, unitOption.value)
-                          }
-                        >
-                          {unitOption.label}
-
-                          {unit?.toLowerCase() === unitOption.value &&
-                            ' (selected)'}
-                          {originalUnit?.toLowerCase() === unitOption.value &&
-                            ' (original)'}
-                        </Menu.Item>
-                      ))}
+                      {unitOverrideMenuItems}
                     </Menu>
                   }
                 >
@@ -474,17 +479,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           Select preferred unit
                         </span>
                       </Menu.Header>
-                      {unitConversionOptions?.map((unitOption) => (
-                        <Menu.Item
-                          onClick={() =>
-                            handleSetOutputUnit(id, unitOption?.value)
-                          }
-                        >
-                          {unitOption?.label}{' '}
-                          {preferredUnit?.toLowerCase() === unitOption?.value &&
-                            ' (selected)'}
-                        </Menu.Item>
-                      ))}
+                      {unitConversionMenuItems}
                     </Menu>
                   }
                 >
