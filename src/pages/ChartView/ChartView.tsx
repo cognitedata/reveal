@@ -481,7 +481,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           }
                         >
                           {unitOption?.label}{' '}
-                          {originalUnit?.toLowerCase() === unitOption?.value &&
+                          {preferredUnit?.toLowerCase() === unitOption?.value &&
                             ' (selected)'}
                         </Menu.Item>
                       ))}
