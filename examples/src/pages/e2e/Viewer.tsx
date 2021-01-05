@@ -7,18 +7,30 @@ import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/experimental';
 
-type Things = {
+// fixme: export type from reveal
+interface SuggestedCameraConfig {
+  position: THREE.Vector3;
+  target: THREE.Vector3;
+  near: number;
+  far: number;
+}
+
+type TestEnv = {
   camera: THREE.PerspectiveCamera;
-  revealManger: reveal.RevealManager<unknown>;
+  revealManager: reveal.RevealManager<unknown>;
   scene: THREE.Scene;
+  renderer: THREE.WebGLRenderer;
+  cameraConfig: SuggestedCameraConfig;
+  model: reveal.CadNode;
 };
 
+type TestEnvModified = Partial<Omit<TestEnv, 'cameraConfig'> & {
+  cameraConfig: Partial<SuggestedCameraConfig>;
+  postRender?: () => void
+}>;
+
 type Props = {
-  modifyThings?: (things: {
-    camera: THREE.PerspectiveCamera;
-    revealManager: reveal.RevealManager<unknown>;
-    scene: THREE.Scene;
-  }) => Partial<Things> | void;
+  modifyTestEnv?: (env: TestEnv) => TestEnvModified | void;
   nodeAppearanceProvider?: reveal.NodeAppearanceProvider;
 };
 
@@ -56,11 +68,6 @@ export function Viewer(props: Props) {
       };
 
       revealManager = reveal.createLocalRevealManager({ logMetrics: false });
-      let model = await revealManager.addModel(
-        'cad',
-        modelUrl,
-        props.nodeAppearanceProvider || defaultNodeAppearanceProvider
-      );
 
       let skipFirstLoadingState = true;
       revealManager.on('loadingStateChanged', (loadingState) => {
@@ -73,40 +80,52 @@ export function Viewer(props: Props) {
           setLoadingState(loadingState);
         }
       });
-
+      let model = await revealManager.addModel(
+        'cad',
+        modelUrl,
+        props.nodeAppearanceProvider || defaultNodeAppearanceProvider
+      );
       scene.add(model);
 
-      const renderer = new THREE.WebGLRenderer({
+      let renderer = new THREE.WebGLRenderer({
         canvas: canvas.current,
       });
       renderer.setClearColor('#444');
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      let { position, target, near, far } = model.suggestCameraConfig();
+      let cameraConfig = model.suggestCameraConfig();
       let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
         75,
         2,
-        near,
-        far
+        cameraConfig.near,
+        cameraConfig.far
       );
 
-      if (props.modifyThings) {
-        const things =
-          props.modifyThings({ camera, revealManager, scene }) || {};
-        camera = things.camera || camera;
-        revealManager = things.revealManger || revealManager;
-        scene = things.scene || scene;
+      let testEnv: TestEnvModified = {}
+
+      if (props.modifyTestEnv) {
+        let defaultTestEnv: TestEnv = { camera, cameraConfig, model, renderer, revealManager, scene };
+        testEnv = props.modifyTestEnv(defaultTestEnv) || testEnv;
+
+        camera = testEnv.camera || camera;
+        cameraConfig = {
+          ...cameraConfig,
+          ...testEnv.cameraConfig,
+        };
+        renderer = testEnv.renderer || renderer;
+        revealManager = testEnv.revealManager || revealManager;
+        scene = testEnv.scene || scene;
       }
 
       const controls = new CameraControls(camera, renderer.domElement);
       controls.setLookAt(
-        position.x,
-        position.y,
-        position.z,
-        target.x,
-        target.y,
-        target.z
+        cameraConfig.position.x,
+        cameraConfig.position.y,
+        cameraConfig.position.z,
+        cameraConfig.target.x,
+        cameraConfig.target.y,
+        cameraConfig.target.z
       );
       controls.update(0.0);
 
@@ -125,9 +144,9 @@ export function Viewer(props: Props) {
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
           revealManager.render(renderer, camera, scene);
 
-          // onRendered.forEach((element) => {
-          //   element();
-          // });
+          if (testEnv.postRender) {
+            testEnv.postRender();
+          }
 
           revealManager.resetRedraw();
         }
@@ -140,6 +159,7 @@ export function Viewer(props: Props) {
       w.camera = camera;
       w.controls = controls;
       w.renderer = renderer;
+      w.revealManager = revealManager;
     }
 
     main();
