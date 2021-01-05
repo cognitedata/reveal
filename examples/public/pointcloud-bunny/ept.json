@@ -1,0 +1,71 @@
+{
+  "bounds": [
+    -0.09399804199999999,
+    0.040002458,
+    -0.070667541999999986,
+    0.047326042,
+    0.181326542,
+    0.070656542
+  ],
+  "boundsConforming": [
+    -0.093857,
+    0.041025,
+    -0.053612,
+    0.047185,
+    0.180304,
+    0.053601
+  ],
+  "dataType": "binary",
+  "hierarchyType": "json",
+  "points": 565,
+  "schema": [
+    {
+      "name": "X",
+      "type": "signed",
+      "size": 4,
+      "scale": 0.001,
+      "offset": -0.037829
+    },
+    {
+      "name": "Y",
+      "type": "signed",
+      "size": 4,
+      "scale": 0.001,
+      "offset": 0.12794
+    },
+    {
+      "name": "Z",
+      "type": "signed",
+      "size": 4,
+      "scale": 0.001,
+      "offset": 0.004474
+    },
+    {
+      "name": "Red",
+      "type": "unsigned",
+      "size": 1
+    },
+    {
+      "name": "Green",
+      "type": "unsigned",
+      "size": 1
+    },
+    {
+      "name": "Blue",
+      "type": "unsigned",
+      "size": 1
+    },
+    {
+      "name": "Intensity",
+      "type": "unsigned",
+      "size": 1
+    },
+    {
+      "name": "Classification",
+      "type": "unsigned",
+      "size": 1
+    }
+  ],
+  "span": 512,
+  "srs": {}
+}
