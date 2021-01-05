@@ -15,7 +15,7 @@ import { ThreeDViewerProps } from './ThreeDViewer.d';
 import { Legacy3DModel, Legacy3DViewer } from './legacyViewerTypes';
 
 revealEnv.publicPath =
-  'https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.0.0-beta-1/';
+  'https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.1.0/';
 
 const ThreeDViewerStyled = styled.div`
   position: relative;
