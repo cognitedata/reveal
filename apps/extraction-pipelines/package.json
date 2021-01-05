@@ -29,7 +29,7 @@
     "@hookform/resolvers": "^1.1.2",
     "@sentry/browser": "^5.29.1",
     "antd": "4.7.3",
-    "commander": "^5.1.0",
+    "commander": "^6.2.1",
     "cronstrue": "^1.106.0",
     "cross-env": "^7.0.3",
     "fs-extra": "^9.0.1",
