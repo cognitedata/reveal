@@ -65,4 +65,29 @@ describe('CadSectorLoader', () => {
     expect(loadingStateSubscription.closed).toBeTrue();
     expect(parsedDataSubscription.closed).toBeTrue();
   });
+
+  test('removeModel throws for not added model', () => {
+    const loader = new CadSectorLoader(mockCuller, mockFileProvider, modelDataParser, materialManager);
+    expect(() => loader.removeModel(cadModel)).toThrowError();
+  });
+
+  test('removeModel stops loading sectors for model', async () => {
+    // Arrange
+    const determineSectorsSpy = jest.spyOn(mockCuller, 'determineSectors');
+    const loader = new CadSectorLoader(mockCuller, mockFileProvider, modelDataParser, materialManager);
+
+    // Act
+    loader.addModel(cadModel);
+    loader.removeModel(cadModel);
+    jest.advanceTimersByTime(1000);
+    await Promise.resolve(); // Wait for all promises to finish
+
+    // Assert
+    const calledWithRemovedModel = determineSectorsSpy.mock.calls.some(
+      x => x[0].cadModelsMetadata.find(y => y === cadModel.cadModelMetadata) !== undefined
+    );
+    expect(mockCuller.determineSectors).toBeCalledTimes(1);
+    expect(calledWithRemovedModel).toBeFalse();
+    jest.clearAllMocks();
+  });
 });
