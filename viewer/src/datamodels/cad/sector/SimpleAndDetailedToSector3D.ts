@@ -8,11 +8,11 @@ import { OperatorFunction, Observable, asapScheduler, scheduled } from 'rxjs';
 import { filter, map, mergeAll, publish } from 'rxjs/operators';
 
 import { MaterialManager } from '../MaterialManager';
-import { SectorQuads } from '../rendering/types';
+import { SectorGeometry, SectorQuads } from '../rendering/types';
 
-import { SectorGeometry, ParsedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
+import { ParsedSector } from './types';
 
 export class SimpleAndDetailedToSector3D {
   private readonly materialManager: MaterialManager;
