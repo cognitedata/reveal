@@ -104,6 +104,7 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - `Cognite3DViewer.addModel` no longer supports options `localPath`, `orthographicCamera` and `onComplete`. Point clouds currently
   don't support `geometryFilter`.
 - Textures are not supported by `@cognite/reveal`. Models can be loaded, but textures are not applied to the geometry.
+- `@cognite/reveal` supports several [anti-alias techniques](https://en.wikipedia.org/wiki/Spatial_anti-aliasing) which might improve visual quality at some performance cost. To use these new modes, see the `antiAliasingHint`-option provided in the `Cognite3dViewer`-constructor.
 
 ## Preparing models
 
