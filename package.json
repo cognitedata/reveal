@@ -17,7 +17,7 @@
     "@cognite/sdk": "^3.3.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^2.0.1",
-    "@sentry/browser": "^5.29.0",
+    "@sentry/browser": "^5.29.2",
     "@types/d3-array": "^2.8.0",
     "@types/d3-time-format": "^3.0.0",
     "@types/react-datepicker": "^3.1.2",
