@@ -27,6 +27,7 @@ import { NodeTransformTestPage } from './pages/e2e/cad/NodeTransform';
 import { GhostModeTestPage } from './pages/e2e/cad/GhostMode';
 import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModel';
 import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTarget';
+import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -153,6 +154,8 @@ const testPages: Record<TestCase, JSX.Element> = {
   [TestCase.ghost_mode]: <GhostModeTestPage />,
   [TestCase.scaled_model]: <ScaledModelTestPage />,
   [TestCase.user_render_target]: <UserRenderTargetTestPage />,
+
+  [TestCase.point_cloud]: <DefaultPointCloudTestPage />,
 };
 
 export const testRoutes: Array<ExampleRoute> = Object.values(TestCase).map(

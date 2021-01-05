@@ -1,4 +1,5 @@
 export const cadTestBasePath = '/test/cad/'
+export const pointcloudTestBasePath = '/test/pointcloud/'
 
 export enum TestCase {
   default = 'default',
@@ -10,4 +11,5 @@ export enum TestCase {
   ghost_mode = 'ghost_mode',
   scaled_model = 'scaled_model',
   user_render_target = 'user_render_target',
+  point_cloud = 'point_cloud'
 }
