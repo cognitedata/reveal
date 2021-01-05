@@ -32,7 +32,7 @@ const NameView: FunctionComponent<Props> = () => {
   } = useIntegration();
   const [isEdit, setIsEdit] = useState(false);
   const { project } = useAppEnv();
-  const [mutateContacts] = useDetailsUpdate();
+  const { mutate } = useDetailsUpdate();
   const [errorVisible, setErrorVisible] = useState(false);
 
   const { register, errors, trigger, getValues } = useForm({
@@ -52,7 +52,7 @@ const NameView: FunctionComponent<Props> = () => {
         fieldValue: name,
         fieldName: 'name',
       });
-      await mutateContacts(
+      await mutate(
         {
           project,
           items,

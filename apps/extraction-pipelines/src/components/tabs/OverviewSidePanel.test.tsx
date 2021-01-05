@@ -1,12 +1,16 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
+import { QueryClient } from 'react-query';
 import OverviewSidePanel from './OverviewSidePanel';
 import { renderWithSelectedIntegrationContext } from '../../utils/test/render';
 import { getMockResponse } from '../../utils/mockResponse';
 
 describe('OverviewSidePanel', () => {
   test('Render nothing when integration is not set', () => {
-    renderWithSelectedIntegrationContext(<OverviewSidePanel />, {});
+    renderWithSelectedIntegrationContext(<OverviewSidePanel />, {
+      initIntegration: undefined,
+      client: new QueryClient(),
+    });
     const heading = screen.queryByRole('heading');
     expect(heading).not.toBeInTheDocument();
 
@@ -23,6 +27,7 @@ describe('OverviewSidePanel', () => {
     const mockIntegration = getMockResponse()[0];
     renderWithSelectedIntegrationContext(<OverviewSidePanel />, {
       initIntegration: mockIntegration,
+      client: new QueryClient(),
     });
     const heading = screen.queryByRole('heading');
     expect(heading).toBeInTheDocument();
@@ -33,6 +38,7 @@ describe('OverviewSidePanel', () => {
     const mockIntegration = getMockResponse()[0];
     renderWithSelectedIntegrationContext(<OverviewSidePanel />, {
       initIntegration: mockIntegration,
+      client: new QueryClient(),
     });
     const monitoringTab = screen.getByText('Monitoring');
     expect(monitoringTab).toBeInTheDocument();

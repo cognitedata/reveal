@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from 'utils/test';
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import ExtractorDownloadsLink from './ExtractorDownloadsLink';
 import {
   CDF_ENV_GREENFIELD,
@@ -11,14 +11,18 @@ import {
 } from '../../utils/test/render';
 
 describe('ExtractorDownloadsTab', () => {
-  test('Render page and link with path', () => {
-    const queryCache = new QueryCache();
-    const wrapper = renderWithReactQueryCacheProvider(
-      queryCache,
+  let client: QueryClient;
+  let wrapper;
+  beforeEach(() => {
+    client = new QueryClient();
+    wrapper = renderWithReactQueryCacheProvider(
+      client,
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD,
       ORIGIN_DEV
     );
+  });
+  test('Render page and link with path', () => {
     render(
       <ExtractorDownloadsLink
         linkText="Download Extractors"
@@ -35,13 +39,6 @@ describe('ExtractorDownloadsTab', () => {
 
   test('Render page and link with url', () => {
     const url = 'https://docs.cognite.com/cdf/integration/';
-    const queryCache = new QueryCache();
-    const wrapper = renderWithReactQueryCacheProvider(
-      queryCache,
-      PROJECT_ITERA_INT_GREEN,
-      CDF_ENV_GREENFIELD,
-      ORIGIN_DEV
-    );
     render(
       <ExtractorDownloadsLink linkText="Download Extractors" link={{ url }} />,
       { wrapper }

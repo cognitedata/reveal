@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import DetailsHeading from 'components/modals/DetailsHeading';
 import DetailsFooter from 'components/modals/DetailsFooter';
-import { useQueryCache } from 'react-query';
+import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import Modal from '../../modals/Modal';
 import { ids } from '../../../cogs-variables';
@@ -37,11 +37,11 @@ const DetailsModal: FunctionComponent<Props> = ({
   onCancel,
   integration,
 }: Props) => {
-  const queryCache = useQueryCache();
+  const client = useQueryClient();
   const { project } = useAppEnv();
 
   const onCancelClick = () => {
-    queryCache.invalidateQueries(['integrations', project]);
+    client.invalidateQueries(['integrations', project]);
     onCancel();
   };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'utils/utils';
-import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
 import { AppEnvProvider } from '../../hooks/useAppEnv';
 import { IntegrationProvider } from '../../hooks/details/IntegrationContext';
@@ -24,64 +24,76 @@ export default (
 export const renderWithSelectedIntegrationContext = (
   ui: React.ReactNode,
   // @ts-ignore
-  { initIntegration, ...renderOptions }
+  { initIntegration, client, ...renderOptions }
 ) => {
   return render(
-    <SelectedIntegrationProvider initIntegration={initIntegration}>
-      {ui}
-    </SelectedIntegrationProvider>,
+    <QueryClientProvider client={client}>
+      <SelectedIntegrationProvider initIntegration={initIntegration}>
+        {ui}
+      </SelectedIntegrationProvider>
+    </QueryClientProvider>,
     renderOptions
   );
 };
 export const renderWithReactQueryCacheProvider = (
-  queryCache: QueryCache,
+  client: QueryClient,
   project: string,
   cdfEnv: string,
   origin: string
 ) => {
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <ReactQueryCacheProvider queryCache={queryCache}>
-      <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-        {children}
-      </AppEnvProvider>
-    </ReactQueryCacheProvider>
-  );
+  const wrapper = ({ children }: { children: React.ReactNode }) => {
+    return (
+      <QueryClientProvider client={client}>
+        <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
+          {children}
+        </AppEnvProvider>
+      </QueryClientProvider>
+    );
+  };
   return wrapper;
 };
+
 export const renderQueryCacheIntegration = (
-  queryCache: QueryCache,
+  client: QueryClient,
   project: string,
   cdfEnv: string,
   origin: string,
   integration: Integration
 ) => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
         <IntegrationProvider initIntegration={integration}>
           {children}
         </IntegrationProvider>
       </AppEnvProvider>
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
   return wrapper;
 };
 
 export const renderWithReQueryCacheSelectedIntegrationContext = (
-  queryCache: QueryCache,
+  client: QueryClient,
   project: string,
   cdfEnv: string,
   origin: string,
   initIntegration?: Integration
 ) => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
         <SelectedIntegrationProvider initIntegration={initIntegration}>
           {children}
         </SelectedIntegrationProvider>
       </AppEnvProvider>
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
+  );
+  return wrapper;
+};
+
+export const renderWithQueryClient = (client: QueryClient) => {
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={client}>{children}</QueryClientProvider>
   );
   return wrapper;
 };

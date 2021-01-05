@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import { act } from '@testing-library/react-hooks';
 import OverviewTab from './OverviewTab';
 import { render } from '../../utils/test';
@@ -17,9 +17,9 @@ import {
 describe('OverviewTab', () => {
   test('Render with out fail', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
-    const queryCache = new QueryCache();
+    const client = new QueryClient();
     const wrapper = renderWithReactQueryCacheProvider(
-      queryCache,
+      client,
       ORIGIN_DEV,
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD
@@ -33,12 +33,8 @@ describe('OverviewTab', () => {
 
   test('Should render no integrations message when no integrations', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: [] } });
-    const queryCache = new QueryCache({
-      defaultConfig: {
-        queries: {
-          retry: false,
-        },
-      },
+    const queryCache = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
     });
     await act(async () => {
       const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
@@ -55,12 +51,8 @@ describe('OverviewTab', () => {
 
   test('Render error on fail', async () => {
     sdkv3.get.mockRejectedValue(unauthorizedError);
-    const queryCache = new QueryCache({
-      defaultConfig: {
-        queries: {
-          retry: false,
-        },
-      },
+    const queryCache = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
     });
     await act(async () => {
       const wrapper = renderWithReQueryCacheSelectedIntegrationContext(

@@ -1,22 +1,24 @@
-import { QueryResult, useQuery, useQueryCache } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { getIntegrations } from '../utils/IntegrationsAPI';
 import { useAppEnv } from './useAppEnv';
 import { Integration } from '../model/Integration';
 import { SDKError } from '../model/SDKErrors';
 
-export const useIntegrations = (): QueryResult<Integration[], SDKError> => {
+export const useIntegrations = () => {
   const { project } = useAppEnv();
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   return useQuery<Integration[], SDKError>(
     ['integrations', project],
-    getIntegrations,
+    (ctx) => {
+      return getIntegrations(ctx.queryKey[1]);
+    },
     {
       onSuccess: (data) => {
         data.forEach((d) => {
-          queryCache.setQueryData<Integration, SDKError>(
+          queryClient.setQueryData<Integration>(
             ['integration', d.id, project],
             (old) => {
-              return { ...old, ...d } as Integration;
+              return { ...old, ...d };
             }
           );
         });

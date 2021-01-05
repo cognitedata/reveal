@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { getMockResponse } from '../../../utils/mockResponse';
@@ -15,22 +15,22 @@ import MainDetails from './MainDetails';
 import { parseCron } from '../../../utils/cronUtils';
 
 describe('<MainDetails/>', () => {
-  let queryCache: QueryCache;
+  let client: QueryClient;
+  const integration = getMockResponse()[0];
   beforeEach(() => {
-    queryCache = new QueryCache();
-  });
-
-  test('Renders', () => {
-    const integration = getMockResponse()[0];
-    sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
+    client = new QueryClient();
     const wrapper = renderQueryCacheIntegration(
-      queryCache,
+      client,
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD,
       ORIGIN_DEV,
       integration
     );
     render(<MainDetails />, { wrapper });
+  });
+
+  test('Renders', () => {
+    sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
     expect(screen.getByText(integration.name)).toBeInTheDocument();
     expect(screen.getByText(integration.description)).toBeInTheDocument();
     expect(screen.getByText(integration.externalId)).toBeInTheDocument();
@@ -50,16 +50,7 @@ describe('<MainDetails/>', () => {
   });
 
   test('Two edits at the same time', async () => {
-    const integration = getMockResponse()[0];
     sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
-    const wrapper = renderQueryCacheIntegration(
-      queryCache,
-      PROJECT_ITERA_INT_GREEN,
-      CDF_ENV_GREENFIELD,
-      ORIGIN_DEV,
-      integration
-    );
-    render(<MainDetails />, { wrapper });
 
     const editBtns = screen.getAllByText('Edit');
     expect(editBtns.length).toEqual(2); // name, description

@@ -2,13 +2,14 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { screen, render } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import React from 'react';
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import { mockError, getMockResponse } from '../../utils/mockResponse';
 import Monitoring from '../tabs/Monitoring';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
+  renderWithReactQueryCacheProvider,
   renderWithReQueryCacheSelectedIntegrationContext,
 } from '../../utils/test/render';
 
@@ -16,15 +17,21 @@ describe('Monitoring', () => {
   const externalId = 'dataIntegration000-1';
   test('Render table with out fail', async () => {
     sdkv3.get.mockResolvedValue({ data: getMockResponse() });
-    render(<Monitoring externalId={externalId} />);
+    const wrapper = renderWithReactQueryCacheProvider(
+      new QueryClient(),
+      PROJECT_ITERA_INT_GREEN,
+      ORIGIN_DEV,
+      CDF_ENV_GREENFIELD
+    );
+    render(<Monitoring externalId={externalId} />, { wrapper });
     const sidePanelHeading = screen.getByRole('table');
     expect(sidePanelHeading).toBeInTheDocument();
   });
 
   test('Render error on fail', async () => {
     sdkv3.get.mockRejectedValue(mockError);
-    const queryCache = new QueryCache({
-      defaultConfig: {
+    const client = new QueryClient({
+      defaultOptions: {
         queries: {
           retry: false,
         },
@@ -32,7 +39,7 @@ describe('Monitoring', () => {
     });
     await act(async () => {
       const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
-        queryCache,
+        client,
         ORIGIN_DEV,
         PROJECT_ITERA_INT_GREEN,
         CDF_ENV_GREENFIELD

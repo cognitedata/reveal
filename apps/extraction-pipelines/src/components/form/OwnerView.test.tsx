@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
@@ -14,23 +14,24 @@ import {
 import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 
 describe('<OwnerView />', () => {
-  let queryCache: QueryCache;
+  const integration = getMockResponse()[0];
+  let client: QueryClient;
+  let wrapper;
   beforeEach(() => {
-    queryCache = new QueryCache();
-  });
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
-  test('Edit - change - cancel', () => {
-    const integration = getMockResponse()[0];
-    const wrapper = renderQueryCacheIntegration(
-      queryCache,
+    client = new QueryClient();
+    wrapper = renderQueryCacheIntegration(
+      client,
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD,
       ORIGIN_DEV,
       integration
     );
+  });
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test('Edit - change - cancel', async () => {
     render(<OwnerView />, { wrapper });
 
     // click first edit btn
@@ -53,22 +54,18 @@ describe('<OwnerView />', () => {
 
     // click cancel. resets to original value. no input field
     fireEvent.click(cancelBtn);
-    const noCancelBtn = screen.queryByText('Cancel');
-    expect(noCancelBtn).not.toBeInTheDocument();
-    const originalValue = screen.getByText(integration.owner.name);
-    expect(originalValue).toBeInTheDocument();
+    await waitFor(() => {
+      const noCancelBtn = screen.queryByText('Cancel');
+      expect(noCancelBtn).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      const originalValue = screen.getByText(integration.owner.name);
+      expect(originalValue).toBeInTheDocument();
+    });
   });
 
   test('Edit - change - validation - save', async () => {
-    const integration = getMockResponse()[0];
     sdkv3.post.mockResolvedValue({ data: { items: [integration] } });
-    const wrapper = renderQueryCacheIntegration(
-      queryCache,
-      PROJECT_ITERA_INT_GREEN,
-      CDF_ENV_GREENFIELD,
-      ORIGIN_DEV,
-      integration
-    );
     render(<OwnerView />, { wrapper });
 
     // click first edit btn
@@ -104,15 +101,7 @@ describe('<OwnerView />', () => {
   });
 
   test('Edit - change - save - error', async () => {
-    const integration = getMockResponse()[0];
     sdkv3.post.mockRejectedValue(mockError);
-    const wrapper = renderQueryCacheIntegration(
-      queryCache,
-      PROJECT_ITERA_INT_GREEN,
-      CDF_ENV_GREENFIELD,
-      ORIGIN_DEV,
-      integration
-    );
     render(<OwnerView />, { wrapper });
 
     // click first edit btn

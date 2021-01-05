@@ -79,7 +79,7 @@ const DescriptionView: FunctionComponent<Props> = () => {
   } = useIntegration();
   const [isEdit, setIsEdit] = useState(false);
   const { project } = useAppEnv();
-  const [mutateContacts] = useDetailsUpdate();
+  const { mutate } = useDetailsUpdate();
   const [errorVisible, setErrorVisible] = useState(false);
 
   const { register, errors, getValues, trigger, watch } = useForm({
@@ -99,7 +99,7 @@ const DescriptionView: FunctionComponent<Props> = () => {
         fieldValue: description,
         fieldName: 'description',
       });
-      await mutateContacts(
+      await mutate(
         {
           project,
           items,

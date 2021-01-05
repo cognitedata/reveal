@@ -6,7 +6,7 @@ import { Loader } from '@cognite/cogs.js';
 import { ThemeProvider } from 'styled-components';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import collapseStyle from 'rc-collapse/assets/index.css';
-import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import theme from './styles/theme';
 import AntStyles from './styles/AntStyles';
@@ -29,8 +29,8 @@ const App = () => {
     };
   }, []);
 
-  const queryCache = new QueryCache({
-    defaultConfig: {
+  const queryClient = new QueryClient({
+    defaultOptions: {
       queries: {
         staleTime: 10 * 60 * 1000, // Pretty long
       },
@@ -38,7 +38,7 @@ const App = () => {
   });
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <AntStyles>
         <SubAppWrapper padding={false}>
           <AuthWrapper
@@ -56,7 +56,7 @@ const App = () => {
           </AuthWrapper>
         </SubAppWrapper>
       </AntStyles>
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 };
 

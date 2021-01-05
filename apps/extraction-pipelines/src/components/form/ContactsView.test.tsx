@@ -1,5 +1,5 @@
 import React from 'react';
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import { screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { act } from 'react-test-renderer';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
@@ -34,20 +34,18 @@ function createIntegrationWithContacts(
 }
 
 describe('<ContactsView />', () => {
-  let queryCache: QueryCache;
+  let client: QueryClient;
   const integration = getMockResponse()[0];
   beforeEach(() => {
-    queryCache = new QueryCache();
+    client = new QueryClient();
     const wrapper = renderQueryCacheIntegration(
-      queryCache,
+      client,
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD,
       ORIGIN_DEV,
       integration
     );
-    act(() => {
-      render(<ContactsView />, { wrapper });
-    });
+    render(<ContactsView />, { wrapper });
   });
   afterEach(() => {
     cleanup();
@@ -60,24 +58,22 @@ describe('<ContactsView />', () => {
     const editBtn = screen.getByTestId(`${ContactBtnTestIds.EDIT_BTN}${row}`);
     fireEvent.click(editBtn);
     const editContact = integration.authors[row];
-    act(() => {
-      const contactEmailInput = screen.getByDisplayValue(editContact.email);
-      fireEvent.change(contactEmailInput, {
-        target: { value: 'sdfsdf@test.no' },
-      });
-      fireEvent.blur(contactEmailInput);
+    const contactEmailInput = screen.getByDisplayValue(editContact.email);
+    fireEvent.change(contactEmailInput, {
+      target: { value: 'sdfsdf@test.no' },
     });
+    fireEvent.blur(contactEmailInput);
 
     const saveBtn = screen.getByTestId(`${ContactBtnTestIds.SAVE_BTN}${row}`);
-    act(() => {
-      fireEvent.click(saveBtn);
-    });
+    fireEvent.click(saveBtn);
     await waitFor(() => {
       expect(screen.getByText(SERVER_ERROR_TITLE)).toBeInTheDocument();
     });
     const OKBtn = screen.getByText('OK');
     fireEvent.click(OKBtn);
-    expect(screen.getByText(editContact.email)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(editContact.email)).toBeInTheDocument();
+    });
   });
 
   test('Invalid email validation and text change warning', async () => {
@@ -107,7 +103,7 @@ describe('<ContactsView />', () => {
     });
   });
 
-  test('add 3, remove first of new', async () => {
+  test('add 3, remove first of new', () => {
     const newRow = integration.authors.length + 1;
     addNewContact(newRow, 'Test Name', 'test@email.com');
     const contact2 = {
@@ -158,7 +154,7 @@ describe('<ContactsView />', () => {
     sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
     sdkv3.get.mockResolvedValue({ data: { items: [integrationsResponse] } });
     const wrapper = renderQueryCacheIntegration(
-      queryCache,
+      client,
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD,
       ORIGIN_DEV,
@@ -184,9 +180,9 @@ describe('<ContactsView />', () => {
 test('Should render when authors is empty array', async () => {
   const modifiedIntegration = createIntegrationWithContacts([]);
   expect(modifiedIntegration.authors.length).toEqual(0);
-  const queryCache = new QueryCache();
+  const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
-    queryCache,
+    client,
     PROJECT_ITERA_INT_GREEN,
     CDF_ENV_GREENFIELD,
     ORIGIN_DEV,
@@ -201,9 +197,9 @@ test('Should render when authors is empty array', async () => {
 test('Should render when authors is undefined', async () => {
   const modifiedIntegration = createIntegrationWithContacts(undefined);
   expect(modifiedIntegration.authors).toEqual(undefined);
-  const queryCache = new QueryCache();
+  const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
-    queryCache,
+    client,
     PROJECT_ITERA_INT_GREEN,
     CDF_ENV_GREENFIELD,
     ORIGIN_DEV,
@@ -218,9 +214,9 @@ test('Should render when authors is undefined', async () => {
 test('Should render when authors is null', async () => {
   const modifiedIntegration = createIntegrationWithContacts(null);
   expect(modifiedIntegration.authors).toEqual(null);
-  const queryCache = new QueryCache();
+  const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
-    queryCache,
+    client,
     PROJECT_ITERA_INT_GREEN,
     CDF_ENV_GREENFIELD,
     ORIGIN_DEV,
@@ -238,9 +234,9 @@ test('Should render 2 contacts when there are 2 authors', async () => {
     { name: 'foo', email: 'foo@test.no' },
   ]);
   expect(modifiedIntegration.authors.length).toEqual(2);
-  const queryCache = new QueryCache();
+  const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
-    queryCache,
+    client,
     PROJECT_ITERA_INT_GREEN,
     CDF_ENV_GREENFIELD,
     ORIGIN_DEV,
@@ -257,9 +253,9 @@ test('Should render when there is only name', async () => {
   const user = { name: 'test1 test' };
   const modifiedIntegration = createIntegrationWithContacts([user]);
   expect(modifiedIntegration.authors.length).toEqual(1);
-  const queryCache = new QueryCache();
+  const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
-    queryCache,
+    client,
     PROJECT_ITERA_INT_GREEN,
     CDF_ENV_GREENFIELD,
     ORIGIN_DEV,
@@ -277,9 +273,9 @@ test('Should render when there is only email', async () => {
   const userEmail = 'test1@test.no';
   const author1Email = createIntegrationWithContacts([{ email: userEmail }]);
   expect(author1Email.authors.length).toEqual(1);
-  const queryCache = new QueryCache();
+  const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
-    queryCache,
+    client,
     PROJECT_ITERA_INT_GREEN,
     CDF_ENV_GREENFIELD,
     ORIGIN_DEV,

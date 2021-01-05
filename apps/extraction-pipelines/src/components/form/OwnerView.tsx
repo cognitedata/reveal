@@ -49,7 +49,7 @@ const OwnerView: FunctionComponent<Props> = () => {
     dispatch,
   } = useIntegration();
   const { project } = useAppEnv();
-  const [mutateContacts] = useDetailsUpdate();
+  const { mutate } = useDetailsUpdate();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
 
@@ -78,7 +78,7 @@ const OwnerView: FunctionComponent<Props> = () => {
         fieldName: 'owner',
         fieldValue: owner,
       });
-      await mutateContacts(
+      await mutate(
         {
           project,
           items,

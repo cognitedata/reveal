@@ -1,6 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { QueryClient } from 'react-query';
 import ITable from './ITable';
 import { getMockResponse } from '../../utils/mockResponse';
 import { getIntegrationTableCol } from './IntegrationTableCol';
@@ -11,15 +12,15 @@ describe('<ITable/>', () => {
   const mockIntegration = getMockResponse()[0];
   beforeEach(() => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
+    renderWithSelectedIntegrationContext(
+      <ITable data={getMockResponse()} columns={cols} />,
+      { initIntegration: mockIntegration, client: new QueryClient() }
+    );
   });
   afterEach(() => {
     jest.resetAllMocks();
   });
   test('Render without errors', () => {
-    renderWithSelectedIntegrationContext(
-      <ITable data={getMockResponse()} columns={cols} />,
-      { initIntegration: mockIntegration }
-    );
     const colsWithHeaders = cols.filter((col) => col.Header);
     colsWithHeaders.forEach(({ Header }) => {
       const header = screen.getByText(Header);
@@ -28,10 +29,6 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with row selection', () => {
-    renderWithSelectedIntegrationContext(
-      <ITable data={getMockResponse()} columns={cols} />,
-      { initIntegration: mockIntegration }
-    );
     const sapLabel = screen.getByLabelText(getMockResponse()[1].name);
     fireEvent.click(sapLabel);
     expect((sapLabel as HTMLInputElement).checked).toEqual(true);
@@ -42,10 +39,6 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with sort on header: Name', () => {
-    renderWithSelectedIntegrationContext(
-      <ITable data={getMockResponse()} columns={cols} />,
-      { initIntegration: mockIntegration }
-    );
     const nameHeader = screen.getByText(/name/i);
     const body = screen.getAllByRole('row');
     const firsRowContent = body[1].textContent;
@@ -59,10 +52,6 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with global filter', async () => {
-    renderWithSelectedIntegrationContext(
-      <ITable data={getMockResponse()} columns={cols} />,
-      { initIntegration: mockIntegration }
-    );
     const searchInput = screen.getByPlaceholderText(/records/i);
 
     const searchName = {
@@ -114,10 +103,6 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with filter on status', () => {
-    renderWithSelectedIntegrationContext(
-      <ITable data={getMockResponse()} columns={cols} />,
-      { initIntegration: mockIntegration }
-    );
     const nameHeader = screen.getByText(/status/i);
     fireEvent.click(nameHeader); // open status menu
 

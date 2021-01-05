@@ -1,4 +1,4 @@
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { useIntegrations } from './useIntegrations';
@@ -13,11 +13,11 @@ import { mockError, getMockResponse } from '../utils/mockResponse';
 describe('useIntgrations', () => {
   test('Returns integrations on success', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
-    const queryCache = new QueryCache();
+    const client = new QueryClient();
 
     await act(async () => {
       const wrapper = renderWithReactQueryCacheProvider(
-        queryCache,
+        client,
         ORIGIN_DEV,
         PROJECT_ITERA_INT_GREEN,
         CDF_ENV_GREENFIELD
@@ -35,11 +35,11 @@ describe('useIntgrations', () => {
     jest.setTimeout(10000);
     const rejectValue = mockError;
     sdkv3.get.mockRejectedValue(rejectValue);
-    const queryCache = new QueryCache();
+    const client = new QueryClient();
 
     await act(async () => {
       const wrapper = renderWithReactQueryCacheProvider(
-        queryCache,
+        client,
         PROJECT_ITERA_INT_GREEN,
         ORIGIN_DEV,
         CDF_ENV_GREENFIELD

@@ -14,27 +14,17 @@ export const inputNameTestId = 'authors-name-';
 export const inputEmailTestId = 'authors-email-';
 export const addBtnTestId = 'add-contact-btn';
 
-export const existsContact = (name: string, email: string) => {
-  const nameText = screen.getByText(name);
-  const emailText = screen.getByText(email);
-  expect(nameText).toBeInTheDocument();
-  expect(emailText).toBeInTheDocument();
-};
-
 export const existsContactAsync = async (name: string, email: string) => {
   await waitFor(() => {
     const nameText = screen.getByText(name);
-    const emailText = screen.getByText(email);
     expect(nameText).toBeInTheDocument();
+  });
+  await waitFor(() => {
+    const emailText = screen.getByText(email);
     expect(emailText).toBeInTheDocument();
   });
 };
 
-export const typeInInput = (testId: string, text: string) => {
-  const input = screen.getByTestId(testId);
-  fireEvent.change(input, { target: { value: text } });
-  fireEvent.blur(input);
-};
 export const typeInInputAsync = async (testId: string, text: string) => {
   await waitFor(() => {
     const input = screen.getByTestId(testId);
@@ -44,21 +34,23 @@ export const typeInInputAsync = async (testId: string, text: string) => {
 };
 
 export const existsByText = async (text: string) => {
-  const displayText = screen.getByText(text);
-  expect(displayText).toBeInTheDocument();
+  await waitFor(() => {
+    const displayText = screen.getByText(text);
+    expect(displayText).toBeInTheDocument();
+  });
 };
 export const notExistsText = async (text: string) => {
-  const displayText = screen.queryByText(text);
-  expect(displayText).not.toBeInTheDocument();
-};
-export const existsById = (testId: string) => {
-  const input = screen.getByTestId(testId);
-  expect(input).toBeInTheDocument();
+  await waitFor(() => {
+    const displayText = screen.queryByText(text);
+    expect(displayText).not.toBeInTheDocument();
+  });
 };
 
 export const existsByIdAsync = async (testId: string) => {
-  const input = await screen.findByTestId(testId);
-  expect(input).toBeInTheDocument();
+  await waitFor(() => {
+    const input = screen.getByTestId(testId);
+    expect(input).toBeInTheDocument();
+  });
 };
 export const notExistsById = (testId: string) => {
   const input = screen.queryByTestId(testId);
@@ -85,8 +77,10 @@ export const clickByIdAsync = async (testId: string) => {
 };
 
 export const clickText = async (text: string) => {
-  const btn = screen.getByText(text);
-  fireEvent.click(btn);
+  await waitFor(() => {
+    const btn = screen.getByText(text);
+    fireEvent.click(btn);
+  });
 };
 
 export const removeContact = async (newRow: number) => {
@@ -100,10 +94,10 @@ export const addNewContact = async (
   name: string,
   email: string
 ) => {
-  await clickById(addBtnTestId);
+  await clickByIdAsync(addBtnTestId);
   await existsByIdAsync(`${inputNameTestId}${newRow}`);
   await existsByIdAsync(`${inputEmailTestId}${newRow}`);
-  typeInInput(`${inputNameTestId}${newRow}`, name);
-  typeInInput(`${inputEmailTestId}${newRow}`, email);
+  await typeInInputAsync(`${inputNameTestId}${newRow}`, name);
+  await typeInInputAsync(`${inputEmailTestId}${newRow}`, email);
   await clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
 };

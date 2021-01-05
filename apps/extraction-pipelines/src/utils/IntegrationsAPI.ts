@@ -5,7 +5,6 @@ import { Integration, IntegrationFieldValue } from '../model/Integration';
 import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
 
 export const getIntegrations = async (
-  _: string,
   project: string
 ): Promise<Integration[]> => {
   const response = await get<IntegrationAPIResponse>('/', project);
@@ -13,7 +12,6 @@ export const getIntegrations = async (
 };
 
 export const getIntegrationById = async (
-  _: string,
   integrationId: number,
   project: string
 ): Promise<Integration> => {

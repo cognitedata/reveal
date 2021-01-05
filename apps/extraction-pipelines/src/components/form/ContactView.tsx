@@ -38,7 +38,7 @@ const ContactView: FunctionComponent<Props> = ({
   } = useIntegration();
   const { register, errors, trigger, getValues } = useFormContext();
   const { project } = useAppEnv();
-  const [mutateContacts] = useDetailsUpdate();
+  const { mutate } = useDetailsUpdate();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const isDirtyName = updates.has(`authors.name-${index}`);
@@ -68,7 +68,7 @@ const ContactView: FunctionComponent<Props> = ({
         fieldName: 'authors',
       });
 
-      await mutateContacts(
+      await mutate(
         {
           project,
           items,
@@ -122,7 +122,7 @@ const ContactView: FunctionComponent<Props> = ({
         fieldName: 'authors',
         fieldValue: authors,
       });
-      await mutateContacts(
+      await mutate(
         {
           project,
           items,

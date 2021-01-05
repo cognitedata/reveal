@@ -1,4 +1,4 @@
-import { QueryCache } from 'react-query';
+import { QueryClient } from 'react-query';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import {
@@ -12,24 +12,32 @@ import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { IntegrationUpdateSpec } from '../../utils/IntegrationsAPI';
 
 describe('useDetailsUpdate', () => {
-  test('Returns integrations on success', async () => {
-    const integrationsResponse = getMockResponse()[1];
-    sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
-
-    const queryCache = new QueryCache();
-    queryCache.invalidateQueries = jest.fn();
-    queryCache.getQuery = jest.fn();
-
-    const wrapper = renderWithReactQueryCacheProvider(
-      queryCache,
+  let client: QueryClient;
+  let wrapper;
+  beforeEach(() => {
+    client = new QueryClient();
+    client.invalidateQueries = jest.fn();
+    client.getQueryCache().find = jest.fn();
+    wrapper = renderWithReactQueryCacheProvider(
+      client,
       ORIGIN_DEV,
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD
     );
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test('Returns integrations on success', async () => {
+    const integrationsResponse = getMockResponse()[1];
+    sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
+
     const { result } = renderHook(() => useDetailsUpdate(), {
       wrapper,
     });
-    const mutation = result.current[0];
+    const { mutateAsync } = result.current;
     const id = 1;
     const items: IntegrationUpdateSpec[] = [
       {
@@ -37,31 +45,21 @@ describe('useDetailsUpdate', () => {
         update: {},
       },
     ];
-    expect(queryCache.getQuery).toHaveBeenCalledTimes(0);
+    expect(client.getQueryCache().find).toHaveBeenCalledTimes(0);
     await act(() => {
-      return mutation({ project: PROJECT_ITERA_INT_GREEN, items, id });
+      return mutateAsync({ project: PROJECT_ITERA_INT_GREEN, items, id });
     });
-    expect(result.current[1].data.owner).toEqual(integrationsResponse.owner);
-    expect(queryCache.invalidateQueries).toHaveBeenCalledTimes(1);
+    expect(result.current.data.owner).toEqual(integrationsResponse.owner);
+    expect(client.invalidateQueries).toHaveBeenCalledTimes(1);
   });
 
   test('Returns error on fail', async () => {
     sdkv3.post.mockRejectedValue(mockError);
 
-    const queryCache = new QueryCache();
-    queryCache.invalidateQueries = jest.fn();
-    queryCache.getQuery = jest.fn();
-
-    const wrapper = renderWithReactQueryCacheProvider(
-      queryCache,
-      ORIGIN_DEV,
-      PROJECT_ITERA_INT_GREEN,
-      CDF_ENV_GREENFIELD
-    );
     const { result } = renderHook(() => useDetailsUpdate(), {
       wrapper,
     });
-    const mutation = result.current[0];
+    const { mutateAsync } = result.current;
     const id = 1;
     const items: IntegrationUpdateSpec[] = [
       {
@@ -69,13 +67,14 @@ describe('useDetailsUpdate', () => {
         update: {},
       },
     ];
-    expect(queryCache.getQuery).toHaveBeenCalledTimes(0);
-    await act(() => {
-      return mutation({ project: PROJECT_ITERA_INT_GREEN, items, id });
+    expect(client.getQueryCache().find).toHaveBeenCalledTimes(0);
+    await act(async () => {
+      await expect(
+        mutateAsync({ project: PROJECT_ITERA_INT_GREEN, items, id })
+      ).rejects.toEqual(mockError);
     });
-    const [_, response] = result.current;
-    expect(response.error).toEqual(mockError);
-    expect(response.data).toBeUndefined();
-    expect(queryCache.invalidateQueries).toHaveBeenCalledTimes(1);
+    expect(result.current.error).toEqual(mockError);
+    expect(result.current.data).toBeUndefined();
+    expect(client.invalidateQueries).toHaveBeenCalledTimes(1);
   });
 });
