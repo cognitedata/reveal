@@ -8,7 +8,7 @@
     "start:e2e-server": "cross-env PORT=3000 HTTPS=false BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --testPathIgnorePatterns 'src/visual_tests'",
-    "test:visual": "cross-env JEST_PUPPETEER_CONFIG=src/visual_tests/jest-puppeteer.config.js jest --runInBand --detectOpenHandles -c src/visual_tests/jest.config.js",
+    "test:visual": "cross-env JEST_PUPPETEER_CONFIG=src/visual_tests/jest-puppeteer.config.js jest -c src/visual_tests/jest.config.js",
     "test:visual:update": "yarn run test:visual --updateSnapshot",
     "test:ghprcomment": "node src/visual_tests/GithubActionsPRComment.js",
     "snapshots:update": "yarn run ci:start-server 'test:visual:update'",

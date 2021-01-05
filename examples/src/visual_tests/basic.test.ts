@@ -7,16 +7,16 @@ const RETRIES = parseInt(process.env.RETRIES!) || 3;
 jest.retryTimes(RETRIES);
 
 async function screenShotTest(testCase: TestCase) {
-  const page = await browser.newPage();
+  const testPage = await browser.newPage();
   const url = `http://localhost:3000` + cadTestBasePath + testCase;
 
-  await page.goto(url, {
+  await testPage.goto(url, {
     waitUntil: ['domcontentloaded'],
   });
 
-  await page.waitForSelector('#ready');
+  await testPage.waitForSelector('#ready');
 
-  const canvas = await page.$('canvas');
+  const canvas = await testPage.$('canvas');
   const image = await canvas!.screenshot();
 
   expect(image).toMatchImageSnapshot({
@@ -25,16 +25,12 @@ async function screenShotTest(testCase: TestCase) {
     customSnapshotIdentifier: testCase,
   });
 
-  await page.close();
+  await testPage.close();
 }
 
 console.log(`Run tests with ${RETRIES} retries`)
 
 describe('Reveal visual tests', () => {
-  beforeEach(async () => {
-    await jestPuppeteer.resetBrowser();
-  });
-
   Object.values(TestCase).forEach(function (test) {
     retry(`matches the screenshot for ${test} preset`, RETRIES, async () => {
       await screenShotTest(test);

@@ -2,7 +2,7 @@ module.exports = {
   launch: {
     ignoreHTTPSErrors: true,
     // https://peter.sh/experiments/chromium-command-line-switches/
-    args: ['--allow-insecure-localhost', '--window-size=800,600'],
+    args: ['--allow-insecure-localhost', '--window-size=800,600', '--no-sandbox'],
     headless: true,
     defaultViewport: {
       width: 800,
