@@ -52,4 +52,11 @@ export class PointCloudManager<TModelIdentifier> {
     node.setModelTransformation(metadata.modelMatrix);
     return node;
   }
+
+  removeModel(node: PointCloudNode): void {
+    if (!this._pointCloudGroupWrapper) {
+      this._pointCloudGroupWrapper = new PotreeGroupWrapper();
+    }
+    this._pointCloudGroupWrapper.removePointCloud(node.potreeNode);
+  }
 }

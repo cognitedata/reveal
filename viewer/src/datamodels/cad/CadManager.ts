@@ -32,6 +32,7 @@ export class CadManager<TModelIdentifier> {
   private _budget: CadModelSectorBudget = defaultCadModelSectorBudget;
 
   private _needsRedraw: boolean = false;
+  private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
 
   get materialManager() {
     return this._materialManager;
@@ -150,12 +151,19 @@ export class CadManager<TModelIdentifier> {
   async addModel(modelIdentifier: TModelIdentifier, nodeAppearanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
     const model = this._cadModelFactory.createModel(metadata, nodeAppearanceProvider);
-    model.addEventListener('update', () => {
-      this._needsRedraw = true;
-    });
+    model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._loader.addModel(model);
     return model;
+  }
+
+  removeModel(model: CadNode): void {
+    const metadata = model.cadModelMetadata;
+    if (!this._cadModelMap.delete(metadata.blobUrl)) {
+      throw new Error(`Could not remove model ${metadata.blobUrl} because it's not added`);
+    }
+    model.removeEventListener('update', this._markNeedsRedrawBound);
+    this._loader.removeModel(model);
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -164,5 +172,9 @@ export class CadManager<TModelIdentifier> {
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
     return this._loader.parsedDataObservable();
+  }
+
+  private markNeedsRedraw(): void {
+    this._needsRedraw = true;
   }
 }
