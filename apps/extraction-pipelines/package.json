@@ -62,7 +62,7 @@
     "@cognite/eslint-plugin": "^1.3.8",
     "@hookform/devtools": "^2.2.1",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
-    "@rescripts/cli": "^0.0.14",
+    "@rescripts/cli": "^0.0.15",
     "@rescripts/rescript-use-babel-config": "^0.0.10",
     "@rescripts/utilities": "^0.0.7",
     "@storybook/preset-create-react-app": "^3.1.5",
