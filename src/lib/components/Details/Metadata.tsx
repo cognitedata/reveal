@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Input } from 'antd';
+import { Input, Table } from 'antd';
 import styled from 'styled-components';
-import { DetailsTabGrid, DetailsTabItem } from './Details';
 
 export default function Metadata({
   metadata,
@@ -30,21 +29,51 @@ export default function Metadata({
     <>
       <MetadataHeader>
         <h3>Metadata</h3>
-        <Input.Search
+        <Input
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Filter metadata"
+          allowClear
         />
       </MetadataHeader>
-      <DetailsTabGrid>
-        {filteredMetadata.map(([key, value]) => (
-          <DetailsTabItem name={key} key={key} value={value} />
-        ))}
-      </DetailsTabGrid>
+      <MetadataTableContainer>
+        <Table
+          dataSource={filteredMetadata.map(item => ({
+            key: item[0],
+            value: item[1],
+          }))}
+          columns={[
+            {
+              title: 'Key',
+              dataIndex: 'key',
+              key: 'key',
+              width: '50%',
+            },
+            {
+              title: 'Value',
+              dataIndex: 'value',
+              key: 'value',
+              width: '50%',
+            },
+          ]}
+          pagination={false}
+          bordered
+          rowClassName="metadata-table-row"
+        />
+      </MetadataTableContainer>
     </>
   );
 }
 
 const MetadataHeader = styled.div`
   padding: 0 16px;
+  max-width: 300px;
+`;
+
+const MetadataTableContainer = styled.div`
+  margin: 8px 16px 0;
+  max-width: 900px;
+  .metadata-table-row {
+    background-color: var(--cogs-white);
+  }
 `;
