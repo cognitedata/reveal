@@ -5,11 +5,11 @@
 import * as THREE from 'three';
 import React from 'react';
 import { BoundingBoxClipper } from '@cognite/reveal';
-import {TestEnvCad, Viewer} from '../Viewer';
+import { TestEnvCad, TestViewer } from '../TestViewer';
 
 export function ClippingTestPage() {
   return (
-    <Viewer
+    <TestViewer
       modifyTestEnv={({ revealManager }: TestEnvCad) => {
         const params = {
           clipIntersection: true,

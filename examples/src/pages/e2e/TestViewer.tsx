@@ -38,7 +38,7 @@ export type TestEnvPointCloud = TestEnv & PointCloudModelEnv;
 type TestEnvModified<T> = Partial<Omit<T, 'cameraConfig'>> & {
   cameraConfig?: Partial<SuggestedCameraConfig>;
   postRender?: () => void;
-}
+};
 
 type PropsCad<T = TestEnvCad> = {
   // when `?` is used ts forces to mark env arg explicitly in tsx components (see e.g. Clipping).
@@ -51,7 +51,7 @@ type PropsCad<T = TestEnvCad> = {
 type PropsPointCloud<T = TestEnvPointCloud> = {
   modelType: 'pointcloud';
   nodeAppearanceProvider?: never;
-  modifyTestEnv?: (env: T) => TestEnvModified<T>  | void;
+  modifyTestEnv?: (env: T) => TestEnvModified<T> | void;
 };
 
 type Props = {
@@ -60,7 +60,7 @@ type Props = {
 
 CameraControls.install({ THREE });
 
-export function Viewer(props: Props) {
+export function TestViewer(props: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [loadingState, setLoadingState] = useState<
     reveal.utilities.LoadingState

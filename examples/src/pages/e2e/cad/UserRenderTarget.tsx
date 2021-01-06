@@ -4,11 +4,11 @@
 
 import * as THREE from 'three';
 import React from 'react';
-import {TestEnvCad, Viewer} from '../Viewer';
+import { TestEnvCad, TestViewer } from '../TestViewer';
 
 export function UserRenderTargetTestPage() {
   return (
-    <Viewer
+    <TestViewer
       modifyTestEnv={({ renderer, revealManager }: TestEnvCad) => {
         const renderTarget = new THREE.WebGLRenderTarget(300, 300);
         renderTarget.depthTexture = new THREE.DepthTexture(0, 0);

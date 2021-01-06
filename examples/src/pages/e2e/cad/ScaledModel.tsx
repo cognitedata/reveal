@@ -4,11 +4,11 @@
 
 import * as THREE from 'three';
 import React from 'react';
-import {TestEnvCad, Viewer} from '../Viewer';
+import { TestEnvCad, TestViewer } from '../TestViewer';
 
 export function ScaledModelTestPage() {
   return (
-    <Viewer
+    <TestViewer
       modifyTestEnv={({ model }: TestEnvCad) => {
         const matrix = model.getModelTransformation();
         const newMatrix = matrix.scale(new THREE.Vector3(5, 5, 5));

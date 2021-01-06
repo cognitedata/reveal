@@ -4,11 +4,11 @@
 
 import * as THREE from 'three';
 import React from 'react';
-import {TestEnvCad, Viewer} from '../Viewer';
+import { TestEnvCad, TestViewer } from '../TestViewer';
 
 export function RotationTestPage() {
   return (
-    <Viewer
+    <TestViewer
       modifyTestEnv={({ model }: TestEnvCad) => {
         const matrix = model.getModelTransformation();
         const newMatrix = new THREE.Matrix4().multiplyMatrices(

@@ -4,7 +4,7 @@
 
 import * as reveal from '@cognite/reveal/experimental';
 import React from 'react';
-import {TestEnvCad, Viewer} from '../Viewer';
+import { TestEnvCad, TestViewer } from '../TestViewer';
 import * as THREE from 'three';
 
 export function GhostModeTestPage() {
@@ -28,7 +28,7 @@ export function GhostModeTestPage() {
   };
 
   return (
-    <Viewer
+    <TestViewer
       nodeAppearanceProvider={getNodeAppearanceProvider()}
       modifyTestEnv={({ renderer }: TestEnvCad) => {
         renderer.setClearColor('magenta');

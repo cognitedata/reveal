@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/experimental';
 import React from 'react';
-import { Viewer } from '../Viewer';
+import { TestViewer } from '../TestViewer';
 
 export function NodeTransformTestPage() {
   const getNodeAppearanceProvider = () => {
@@ -30,5 +30,5 @@ export function NodeTransformTestPage() {
       },
     };
   };
-  return <Viewer nodeAppearanceProvider={getNodeAppearanceProvider()} />;
+  return <TestViewer nodeAppearanceProvider={getNodeAppearanceProvider()} />;
 }

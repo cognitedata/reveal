@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import { Viewer } from '../Viewer';
+import { TestViewer } from '../TestViewer';
 
 export function DefaultCadTestPage() {
-  return <Viewer />;
+  return <TestViewer />;
 }

@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import React from 'react';
-import { Viewer } from '../Viewer';
+import { TestViewer } from '../TestViewer';
 
 CameraControls.install({ THREE });
 
@@ -33,7 +33,7 @@ const camPos = camTarget.clone().addScaledVector(minToCenter, -1.5);
 
 export function DefaultPointCloudTestPage() {
   return (
-    <Viewer
+    <TestViewer
       modelName="pointcloud-bunny"
       modelType="pointcloud"
       modifyTestEnv={({ model, scene }) => {
