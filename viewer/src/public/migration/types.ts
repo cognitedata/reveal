@@ -36,7 +36,7 @@ export interface Cognite3DViewerOptions {
   /** Send anonymous usage statistics. */
   logMetrics?: boolean;
 
-  /** 
+  /**
    * Render to offscreen buffer instead of canvas.
    * @version new in 1.3.0
    */
@@ -188,6 +188,13 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
  * @see {@link Cognite3DViewer.on}.
  */
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+
+/**
+ * Delegate for rendering events.
+ * @module @cognite/reveal
+ * @see {@link @Cognite3DViewer.on}.
+ */
+export type SceneRenderedDelegate = (event: { frameNumber: number; renderTime: number }) => void;
 
 export * from './NotSupportedInMigrationWrapperError';
 export { CogniteModelBase } from './CogniteModelBase';

@@ -31,7 +31,7 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
@@ -95,7 +95,8 @@ export class Cognite3DViewer {
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
     click: new Array<PointerEventDelegate>(),
-    hover: new Array<PointerEventDelegate>()
+    hover: new Array<PointerEventDelegate>(),
+    sceneRendered: new Array<SceneRenderedDelegate>()
   };
   private readonly models: CogniteModelBase[] = [];
   private readonly extraObjects: THREE.Object3D[] = [];
@@ -290,13 +291,17 @@ export class Cognite3DViewer {
    * ```
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
   /**
    * Add event listener to the viewer.
    * Call {@link Cognite3DViewer.off} to remove an event listener.
    * @param event
    * @param callback
    */
-  on(event: 'click' | 'hover' | 'cameraChange', callback: PointerEventDelegate | CameraChangeDelegate): void {
+  on(
+    event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered',
+    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate
+  ): void {
     switch (event) {
       case 'click':
         this.eventListeners.click.push(callback as PointerEventDelegate);
@@ -310,8 +315,12 @@ export class Cognite3DViewer {
         this.eventListeners.cameraChange.push(callback as CameraChangeDelegate);
         break;
 
+      case 'sceneRendered':
+        this.eventListeners.sceneRendered.push(callback as SceneRenderedDelegate);
+        break;
+
       default:
-        throw new Error(`Unsupported event "${event}"`);
+        assertNever(event);
     }
   }
 
@@ -323,13 +332,14 @@ export class Cognite3DViewer {
    */
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
   /**
    * Remove event listener from the viewer.
    * Call {@link Cognite3DViewer.on} to add event listener.
    * @param event
    * @param callback
    */
-  off(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
+  off(event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered', callback: any): void {
     switch (event) {
       case 'click':
         this.eventListeners.click = this.eventListeners.click.filter(x => x !== callback);
@@ -343,8 +353,12 @@ export class Cognite3DViewer {
         this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
         break;
 
+      case 'sceneRendered':
+        this.eventListeners.sceneRendered = this.eventListeners.sceneRendered.filter(x => x !== callback);
+        break;
+
       default:
-        throw new Error(`Unsupported event "${event}"`);
+        assertNever(event);
     }
   }
 
@@ -1136,11 +1150,18 @@ export class Cognite3DViewer {
       this._revealManager.update(this.camera);
 
       if (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
+        const frameNumber = this.renderer.info.render.frame;
+        const start = Date.now();
         this.triggerUpdateCameraNearAndFar();
         this._revealManager.render(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
+        const renderTime = Date.now() - start;
+
+        this.eventListeners.sceneRendered.forEach(listener => {
+          listener({ frameNumber, renderTime });
+        });
       }
     }
   }
