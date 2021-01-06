@@ -2,11 +2,13 @@ import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { isErrorListEmpty } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { Suite, Board } from 'store/suites/types';
 import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
 import { ModalFooter } from 'components/modals/elements';
 import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
@@ -37,8 +39,11 @@ export const MultiStepModal: React.FC<Props> = ({
   const dispatch = useDispatch<RootDispatcher>();
   const [step, setStep] = useState<Step>('suite');
   const history = useHistory();
+  const isValid = !isEmpty(suite.title);
+  const hasErrors = !useSelector(isErrorListEmpty) && !isValid;
 
   const nextStep = () => {
+    if (hasErrors) return;
     setStep('boards');
   };
 
@@ -47,6 +52,7 @@ export const MultiStepModal: React.FC<Props> = ({
   };
 
   const handleSubmit = async () => {
+    if (hasErrors) return;
     handleCloseModal();
     await dispatch(insertSuite(client, apiClient, suite));
     history.push(`/suites/${suite.key}`);
@@ -60,7 +66,7 @@ export const MultiStepModal: React.FC<Props> = ({
         </Button>
         <div>
           {isEqual(step, 'suite') && (
-            <Button type="primary" onClick={nextStep}>
+            <Button type="primary" onClick={nextStep} disabled={hasErrors}>
               {modalSettings.buttons[step].goToBoards}
             </Button>
           )}

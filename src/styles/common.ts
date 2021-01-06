@@ -1,10 +1,11 @@
 import styled from 'styled-components/macro';
 
 export const TilesContainer = styled.div`
-  margin-bottom: 48px;
+  margin-bottom: 24px;
   & > h6 {
     border-bottom: 1px solid var(--cogs-greyscale-grey4);
     padding-bottom: 8px;
+    margin-bottom: 24px;
   }
 `;
 

@@ -14,7 +14,7 @@ export const SmallTileContainer = styled(TileBasic)`
   width: 208px;
   border-radius: 2px;
   border: 1px solid var(--cogs-greyscale-grey4);
-  margin: 10px 10px 0 0;
+  margin: 0 10px 10px 0;
 `;
 
 export const TileContainer = styled(TileBasic)`
@@ -22,7 +22,7 @@ export const TileContainer = styled(TileBasic)`
   flex-direction: column;
   width: 300px;
   border: 1px solid var(--cogs-greyscale-grey4);
-  margin: 24px 48px 0 0;
+  margin: 0 48px 24px 0;
 `;
 
 export const TileDescription = styled.div`
@@ -33,21 +33,13 @@ export const TileDescription = styled.div`
   overflow: hidden;
 `;
 
-export const TileOverline = styled.div<{ isBoard?: boolean }>`
-  & > .cogs-overline-3 {
-    color: ${({ isBoard }) =>
-      isBoard ? 'var(--cogs-midblue-3)' : 'var(--cogs-text-color)'};
-  }
-`;
-
 export const TileHeader = styled.div<{ isBoard?: boolean; color?: string }>`
-  padding: 12px;
+  padding: 8px 12px;
+  height: 56px;
   display: flex;
   align-items: center;
-  background-color: ${({ isBoard, color }) =>
-    isBoard ? `${color}` : 'var(--cogs-white)'};
-  border-bottom: ${({ isBoard }) =>
-    isBoard ? 'none' : '1px solid var(--cogs-greyscale-grey4)'};
+  border-bottom: ${({ isBoard, color }) =>
+    isBoard ? `2px solid ${color}` : '1px solid var(--cogs-greyscale-grey4)'};
   & > :last-child {
     margin-left: auto;
   }

@@ -26,7 +26,6 @@ import { fetchUserSpaceCdf, fetchUserSpace } from 'store/userSpace/thunks';
 import { getLastVisitedKeys, getUserSpace } from 'store/userSpace/selectors';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ApiClientContext } from 'providers/ApiClientProvider';
-import { SmallTilesContainer } from './elements';
 
 const Home = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -114,7 +113,7 @@ const Home = () => {
         }
       />
       <OverviewContainer>
-        <SmallTilesContainer>
+        <TilesContainer>
           <Title level={6}>Quick Access</Title>
           {/* TODO(DTC-167) */}
           {lastVisitedSuites?.map((suite: Suite) => {
@@ -124,7 +123,7 @@ const Home = () => {
               </Link>
             );
           })}
-        </SmallTilesContainer>
+        </TilesContainer>
         <TilesContainer>
           <Title level={6}>Pinned</Title>
           {/* TODO(DTC-179) Show pinned suites */}

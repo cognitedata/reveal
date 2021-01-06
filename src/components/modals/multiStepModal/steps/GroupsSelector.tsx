@@ -4,8 +4,10 @@ import { Select } from '@cognite/cogs.js';
 import includes from 'lodash/includes';
 import { useSelector } from 'react-redux';
 import { getGroupsState } from 'store/groups/selectors';
-import { CustomLabel, CustomInputContainer } from 'components/modals/elements';
+import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
+import { useForm } from 'hooks/useForm';
+import { boardValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
 
 interface Props {
@@ -16,6 +18,7 @@ interface Props {
 const exclude = ['admin', 'default', 'dc-system-admin'];
 
 const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
+  const { setErrors, validateField } = useForm(boardValidator);
   const { allGroups } = useSelector(getGroupsState);
 
   // TODO(dtc-215) try to filter on middleware side
@@ -34,18 +37,22 @@ const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
         ? selectedOption.map((option) => option.value)
         : [],
     }));
+    setErrors((prevState: Board) => ({
+      ...prevState,
+      visibleTo: validateField('visibleTo', selectedOption.value),
+    }));
   };
 
   const groupsValue =
     options?.filter((obj) => board?.visibleTo?.includes(obj.value)) || null;
 
   return (
-    <CustomInputContainer>
+    <CustomSelectContainer>
       <CustomLabel>Manage access to board</CustomLabel>
       <Select
         theme="grey"
         placeholder="Type to search for groups"
-        name="type"
+        name="visibleTo"
         value={groupsValue}
         onChange={handleOnChange}
         options={options}
@@ -53,7 +60,7 @@ const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
         isMulti
         closeMenuOnSelect
       />
-    </CustomInputContainer>
+    </CustomSelectContainer>
   );
 };
 

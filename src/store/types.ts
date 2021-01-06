@@ -5,13 +5,15 @@ import { SuitesTableRootAction, SuitesTableState } from './suites/types';
 import { ModalRootAction, ModalState } from './modals/types';
 import { GroupsState, UserGroupsootAction } from './groups/types';
 import { UserSpaceRootAction, UserSpaceState } from './userSpace/types';
+import { FormRootAction, FormState } from './forms/types';
 
 export type StoreAction =
   | SuitesTableRootAction
   | UserGroupsootAction
   | AuthRootAction
   | ModalRootAction
-  | UserSpaceRootAction;
+  | UserSpaceRootAction
+  | FormRootAction;
 
 export type StoreState = {
   suitesTable: SuitesTableState;
@@ -19,6 +21,7 @@ export type StoreState = {
   modal: ModalState;
   groups: GroupsState;
   userSpace: UserSpaceState;
+  form: FormState;
 };
 
 export type AppStore = Store<StoreState, StoreAction>;

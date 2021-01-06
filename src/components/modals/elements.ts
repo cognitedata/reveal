@@ -34,7 +34,7 @@ export const FooterContainer = styled.div`
   }
 `;
 
-export const CustomLabel = styled.p`
+export const CustomLabel = styled.div`
   display: flex;
   align-items: center;
   font-size: 13px;
@@ -45,9 +45,39 @@ export const CustomLabel = styled.p`
 `;
 
 export const CustomInputContainer = styled.div`
+  & > .has-error {
+    box-shadow: inset 0px -2px 0px 0px var(--cogs-danger);
+  }
+  & > .has-error:focus {
+    border: 1px solid var(--cogs-greyscale-grey2);
+  }
+  & .has-error:hover {
+    border-style: solid;
+    border-color: var(--cogs-danger);
+    border-width: 1px 1px 0 1px;
+  }
+  & .error-space {
+    color: var(--cogs-danger);
+  }
+`;
+
+export const CustomSelectContainer = styled.div<{ selectError?: boolean }>`
   margin-bottom: 16px;
   & .cogs-select__single-value {
     color: var(--cogs-black);
+  }
+  & .cogs-select {
+    ${({ selectError }) =>
+      selectError &&
+      'box-shadow: inset 0px -2px 0px 0px var(--cogs-danger); border-bottom: 2px solid var(--cogs-danger);'};
+  }
+  & .cogs-select:hover {
+    ${({ selectError }) => selectError && 'border-style: solid;'}
+    border-color: var(--cogs-danger);
+    ${({ selectError }) => selectError && 'border-width: 1px 1px 2px 1px;'};
+  }
+  & .error-space {
+    color: var(--cogs-danger);
   }
 `;
 
@@ -59,6 +89,10 @@ export const CustomTooltipContainer = styled.div`
   & > a:hover {
     color: var(--cogs-white);
   }
+`;
+
+export const SnapshotInputContainer = styled.div`
+  margin-bottom: 16px;
 `;
 
 export const ModalFooter = styled(SpaceBetween)`
@@ -179,5 +213,17 @@ export const Textarea = styled.textarea`
   &:hover {
     border: 1px solid var(--cogs-midblue-4);
     background: var(--cogs-greyscale-grey2);
+  }
+`;
+
+export const ValidationContainer = styled.div<{ exceedWarningLength: boolean }>`
+  display: flex;
+  & > .error-space {
+    font-size: 13px;
+  }
+  & > :last-child {
+    color: var(--cogs-greyscale-grey7);
+    margin-left: auto;
+    ${({ exceedWarningLength }) => exceedWarningLength && 'font-weight: 700;'};
   }
 `;

@@ -4,6 +4,7 @@ import { AuthReducer } from './auth/reducer';
 import { ModalReducer } from './modals/reducer';
 import { GroupsReducer } from './groups/reducer';
 import { UserSpaceReducer } from './userSpace/reducer';
+import { FormReducer } from './forms/reducer';
 
 const rootReducer = combineReducers({
   suitesTable: SuitesReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   modal: ModalReducer,
   groups: GroupsReducer,
   userSpace: UserSpaceReducer,
+  form: FormReducer,
 });
 
 export default rootReducer;
