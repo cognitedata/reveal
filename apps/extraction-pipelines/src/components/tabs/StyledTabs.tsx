@@ -1,36 +1,43 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Tabs } from 'antd';
-
-const { TabPane } = Tabs;
+import { Colors, TabPane, Tabs } from '@cognite/cogs.js';
 
 const StyledTabs = styled((props) => <Tabs {...props} />)`
   height: 100%;
-  padding-right: ${(props) => (props.sidepaneltabs ? '0.75rem' : '0')};
-  margin-bottom: ${(props) => (props.sidepaneltabs ? '1rem' : '0')};
 
-  .ant-tabs-nav {
-    padding: 0 1rem 0 1.3125rem;
+  .rc-tabs-nav {
+    padding: 0 1rem;
     margin-bottom: 0;
+    &::before {
+      position: absolute;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      border-bottom: 1px solid ${Colors['greyscale-grey2'].hex()};
+      content: '';
+    }
   }
-  .ant-tabs-tabpane {
+  .rc-tabs-tabpane {
     display: grid;
     grid-template-columns: ${(props) =>
       props.sidepaneltabs ? 'auto' : 'auto 25rem'};
-    padding: ${(props) => (props.sidepaneltabs ? '0 1.25rem 0 1.375rem' : '0')};
+    padding: 0 1rem;
   }
-  .ant-tabs-tab {
-    padding: 0.625rem 1rem;
-    margin: 0;
-    .ant-tabs-tab-btn {
-      color: #333;
+  .rc-tabs-tab {
+    .rc-tabs-tab-btn {
       font-weight: 600;
       line-height: 1.25rem;
+      &:hover {
+        background-color: ${Colors.white.hex()};
+      }
     }
   }
-  .ant-tabs-content {
+  .rc-tabs-content {
     height: 100%;
     overflow-y: ${(props) => (props.sidepaneltabs ? 'auto' : 'hidden')};
+  }
+  .rc-tabs-content-holder {
+    min-height: 0;
   }
 `;
 

@@ -9,7 +9,7 @@ import collapseStyle from 'rc-collapse/assets/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import theme from './styles/theme';
-import AntStyles from './styles/AntStyles';
+import AppScopeStyles from './styles/AppScopeStyles';
 import rootStyles from './styles/index.css';
 import { getCdfEnvFromUrl, projectName } from './utils/config';
 
@@ -39,7 +39,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AntStyles>
+      <AppScopeStyles>
         <SubAppWrapper padding={false}>
           <AuthWrapper
             showLoader
@@ -55,7 +55,7 @@ const App = () => {
             <GlobalStyles theme={theme} />
           </AuthWrapper>
         </SubAppWrapper>
-      </AntStyles>
+      </AppScopeStyles>
     </QueryClientProvider>
   );
 };
