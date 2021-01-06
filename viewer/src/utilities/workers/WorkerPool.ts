@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 import * as Comlink from 'comlink';
-import type { RevealParserWorker } from '@cognite/reveal-parser-worker';
+import { RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { revealEnv } from '../../revealEnv';
 import { isTheSameDomain } from '../networking/isTheSameDomain';
 
