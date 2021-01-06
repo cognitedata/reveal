@@ -18,15 +18,15 @@ import { WalkablePath } from './pages/WalkablePath';
 import { WebGLTwo } from './pages/WebGLTwo';
 
 import { cadTestBasePath, TestCase } from './visual_tests/testUtils';
-import { DefaultCadTestPage } from './pages/e2e/cad/Default';
-import { ClippingTestPage } from './pages/e2e/cad/Clipping';
-import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCamera';
-import { HighlightTestPage } from './pages/e2e/cad/Highlight';
-import { RotationTestPage } from './pages/e2e/cad/Rotation';
-import { NodeTransformTestPage } from './pages/e2e/cad/NodeTransform';
-import { GhostModeTestPage } from './pages/e2e/cad/GhostMode';
-import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModel';
-import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTarget';
+import { DefaultCadTestPage } from './pages/e2e/cad/DefaultCadTestPage';
+import { ClippingTestPage } from './pages/e2e/cad/ClippingTestPage';
+import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCameraTestPage';
+import { HighlightTestPage } from './pages/e2e/cad/HighlightTestPage';
+import { RotationTestPage } from './pages/e2e/cad/RotationTestPage';
+import { NodeTransformTestPage } from './pages/e2e/cad/NodeTransformTestPage';
+import { GhostModeTestPage } from './pages/e2e/cad/GhostModeTestPage';
+import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModelTestPage';
+import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTargetTestPage';
 import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
 
 // if you want to test your latest changes in workers or rust files

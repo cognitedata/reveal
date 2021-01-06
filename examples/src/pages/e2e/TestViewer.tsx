@@ -33,7 +33,7 @@ type TestEnvModified<T> = Partial<Omit<T, 'cameraConfig'>> & {
 };
 
 type PropsCad<T = TestEnvCad> = {
-  // when `?` is used ts forces to mark env arg explicitly in tsx components (see e.g. Clipping).
+  // when `?` is used TS forces to mark env arg explicitly in tsx components (see e.g. Clipping).
   // Otherwise it complains that arg is any (unless you pass modelType='cad').
   // TS doesn't infer correct type when prop is undefined here :(
   modelType?: 'cad';
