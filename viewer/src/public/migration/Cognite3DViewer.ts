@@ -291,6 +291,11 @@ export class Cognite3DViewer {
    * ```
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  /**
+   * Event that is triggered immediatly after the scene has been rendered.
+   * @param event Metadata about the rendering frame.
+   * @param callback Callback to trigger when the event occurs.
+   */
   on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
   /**
    * Add event listener to the viewer.
