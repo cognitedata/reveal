@@ -30,6 +30,10 @@ async function screenShotTest(testCase: TestCase) {
 
 console.log(`Run tests with ${RETRIES} retries`)
 
+/*
+ * To add a new test, start from adding a new entry to TestCase enum. TS errors will suggest missing parts.
+ * Basically you just need to add a new test page to src/pages/e2e/cad or pointcloud folder
+ */
 describe('Reveal visual tests', () => {
   Object.values(TestCase).forEach(function (test) {
     retry(`matches the screenshot for ${test} preset`, RETRIES, async () => {
