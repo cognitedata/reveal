@@ -59,5 +59,6 @@ const Visualizer3D = styled.div`
   canvas {
     width: 100%;
     height: 100%;
+    min-width: 100%;
   }
 `;

@@ -201,66 +201,33 @@ export class SeismicCube extends RegularGrid3 {
     if (!lineRange.xline)
       throw Error("lineRange.inline in undefined");
 
-    const minCell = Index2.newZero;
-    const maxCell = Index2.newZero;
-    {
-      const { min, max } = lineRange.inline;
-      if (min === undefined || max === undefined)
-        throw Error("lineRange.inline.max/max is undefined");
-
-      minCell.i = min.value;
-      maxCell.i = max.value;
-    }
-    {
-      const { min, max } = lineRange.xline;
-      if (min === undefined || max === undefined)
-        throw Error("lineRange.xline.max/max is undefined");
-
-      minCell.j = min.value;
-      maxCell.j = max.value;
-    }
-    // console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
-    const promises = [
-      client.volume.getTrace({ id: fileId }, minCell.i, minCell.j),
-      client.volume.getTrace({ id: fileId }, maxCell.i, minCell.j),
-      client.volume.getTrace({ id: fileId }, maxCell.i, maxCell.j),
-      client.volume.getTrace({ id: fileId }, minCell.i, maxCell.j)
-    ];
-    const numCellsI = maxCell.i - minCell.i + 1;
-    const numCellsJ = maxCell.j - minCell.j + 1;
+    const { inline, xline, traceSampleCount } = lineRange;
+    const numCellsI = inline.max.value - inline.min.value + 1;
+    const numCellsJ = xline.max.value - xline.min.value + 1;
 
     if (numCellsI <= 0)
       throw Error("numCellsI is 0");
     if (numCellsJ <= 0)
       throw Error("numCellsJ is 0");
 
-    const cornerPoints: Vector3[] = [];
-    const cornerCells: Index2[] = [];
+    let numCellsK = traceSampleCount ? traceSampleCount.value : 0;
+
+    const promises = [
+      client.volume.getTrace({ id: fileId }, inline.min.value, xline.min.value),
+      client.volume.getTrace({ id: fileId }, inline.max.value, xline.min.value),
+      client.volume.getTrace({ id: fileId }, inline.max.value, xline.max.value),
+      client.volume.getTrace({ id: fileId }, inline.min.value, xline.max.value)
+    ];
 
     const resultList = await Promise.allSettled(promises);
-    let numCellsK = 0;
     for (const result of resultList) {
       if (result.status !== "fulfilled")
         continue;
 
-      const trace = result.value;
-      numCellsK = Math.max(trace.traceList.length, numCellsK);
-
-      if (!trace.coordinate)
-        throw Error("trace.coordinate is undefined");
-      if (!trace.iline)
-        throw Error("trace.iline is undefined");
-      if (!trace.xline)
-        throw Error("trace.xline is undefined");
-
-      const { x, y } = trace.coordinate;
-      const corner = new Vector3(x, y);
-      cornerPoints.push(corner);
-
-      const cell = new Index2(trace.iline.value, trace.xline.value);
-      cell.substract(minCell);
-      cornerCells.push(cell);
+      numCellsK = Math.max(result.value.traceList.length, numCellsK);
     }
+
+    // commented out code is for proper origin calculation
     // if (numCellsK <= 0)
     //   throw Error("numCellsK is 0");
 
@@ -289,9 +256,17 @@ export class SeismicCube extends RegularGrid3 {
     // if (!corner0N)
     //   throw Error("Miss corner0N");
 
-    let cube: SeismicCube;
     const nodeSize = new Index3(numCellsI + 1, numCellsJ + 1, numCellsK + 1);
+    const range = Range3.newTest;
 
+    range.expandByFraction(0.3);
+
+    const origin = range.min;
+    const inc = new Vector3(5, 5, 4);
+    const rotationAngle = Ma.toRad(5);
+    const cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
+
+    // commented out code is for proper origin calculation
     // eslint-disable-next-line no-constant-condition
     // if (false)
     // {
@@ -316,19 +291,12 @@ export class SeismicCube extends RegularGrid3 {
     //   const rotationAngle = iAxis.angle;
     //   cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
     // }
-    // else
-    {
-      const range = Range3.newTest;
-      range.expandByFraction(0.3);
-      const origin = range.min;
-      const inc = new Vector3(5, 5, 4);
-      const rotationAngle = Ma.toRad(5);
-      cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
-    }
-    cube.startCell = minCell;
+
+    cube.startCell = new Index2(inline.min.value, xline.min.value);
     cube.client = client;
     cube.fileId = fileId;
     cube.calculateStatistics();
+
     return cube;
   }
 }
