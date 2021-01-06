@@ -5,8 +5,9 @@ import * as THREE from 'three';
 import { vec3 } from 'gl-matrix';
 
 import { LevelOfDetail } from './LevelOfDetail';
-import { SectorQuads, SectorGeometry, ParseCtmResult, ParseSectorResult } from '../rendering/types';
+import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
 import { Box3 } from '../../../utilities';
+import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@cognite/reveal-parser-worker';
 
 /**
  * Conversion factors from a given unit to meters.
@@ -138,4 +139,14 @@ export interface SectorMetadata {
 
   // TODO 2019-12-21 larsmoa: Make readonly
   parent?: SectorMetadata;
+}
+
+export interface SectorGeometry {
+  readonly nodeIdToTreeIndexMap: Map<number, number>;
+  readonly treeIndexToNodeIdMap: Map<number, number>;
+
+  readonly primitives: ParsedPrimitives;
+
+  readonly instanceMeshes: InstancedMeshFile[];
+  readonly triangleMeshes: TriangleMesh[];
 }
