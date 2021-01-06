@@ -46,15 +46,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.nodes.push(node);
   }
 
-  removePointCloud(node: PotreeNodeWrapper): void {
-    const index = this.nodes.indexOf(node);
-    if (index === -1) {
-      throw new Error('Point cloud is not added - cannot remove it');
-    }
-    this.potreeGroup.remove(node.octtree);
-    this.nodes.splice(index, 1);
-  }
-
   requestRedraw() {
     this._needsRedraw = true;
   }

@@ -6,12 +6,12 @@ import * as THREE from 'three';
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
-import { SectorMetadata, WantedSector, ConsumedSector } from './types';
+import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
 import { createPrimitives } from '../rendering/primitives';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createInstancedMeshes } from '../rendering/instancedMeshes';
-import { SectorGeometry, SectorQuads } from '../rendering/types';
+import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';

@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, SectorScene } from './sector/types';
-import { SectorGeometry, SectorQuads } from './rendering/types';
+import { SectorMetadata, SectorGeometry, SectorScene } from './sector/types';
+import { SectorQuads } from './rendering/types';
 import { CadRenderHints } from './rendering/CadRenderHints';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 import { NodeAppearanceProvider } from './NodeAppearance';

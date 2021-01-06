@@ -3,7 +3,7 @@
  */
 
 export enum LevelOfDetail {
-  Discarded = 0,
-  Simple = 1,
-  Detailed = 2
+  Discarded,
+  Simple,
+  Detailed
 }
