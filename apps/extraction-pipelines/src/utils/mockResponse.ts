@@ -74,6 +74,22 @@ const mockResponseV2 = {
       name: 'SAP Integration',
       description: 'Dummy integration to SAP',
       dataSetId: '1469810437954362',
+      dataSet: {
+        createdTime: new Date(1605349723208),
+        description: 'This is a test data set',
+        id: 6415110216649677,
+        lastUpdatedTime: new Date(1605349802859),
+        metadata: {
+          consoleAdditionalDocs: '[]',
+          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
+          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleMetaDataVersion: '3',
+          consoleOwners:
+            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+        },
+        name: 'AkerBP extractor test',
+        writeProtected: false,
+      },
       rawTables: [
         {
           dbName: 'informatica',
@@ -110,6 +126,22 @@ const mockResponseV2 = {
       name: 'PI AF integration',
       description: 'Dummy PI AF integration',
       dataSetId: '1469810437954369',
+      dataSet: {
+        createdTime: new Date(1605349723208),
+        description: 'This is a test data set',
+        id: 6415110216649677,
+        lastUpdatedTime: new Date(1605349802859),
+        metadata: {
+          consoleAdditionalDocs: '[]',
+          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
+          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleMetaDataVersion: '3',
+          consoleOwners:
+            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+        },
+        name: 'Lisas test data set',
+        writeProtected: false,
+      },
       rawTables: [
         {
           dbName: 'informatica',
@@ -149,6 +181,22 @@ const mockResponseV2 = {
       lastFailure: 1584065800000,
       lastSeen: 1584066900000,
       dataSetId: '1469810437954362',
+      dataSet: {
+        createdTime: new Date(1605349723208),
+        description: 'This is a test data set',
+        id: 6415110216649677,
+        lastUpdatedTime: new Date(1605349802859),
+        metadata: {
+          consoleAdditionalDocs: '[]',
+          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
+          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleMetaDataVersion: '3',
+          consoleOwners:
+            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+        },
+        name: 'Lisas test data set',
+        writeProtected: false,
+      },
       rawTables: [
         {
           dbName: 'informatica',
@@ -184,6 +232,22 @@ const mockResponseV2 = {
       lastFailure: 0,
       lastSeen: 0,
       dataSetId: '1469810437954362',
+      dataSet: {
+        createdTime: new Date(1605349723208),
+        description: 'This is a test data set',
+        id: 6415110216649677,
+        lastUpdatedTime: new Date(1605349802859),
+        metadata: {
+          consoleAdditionalDocs: '[]',
+          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
+          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleMetaDataVersion: '3',
+          consoleOwners:
+            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+        },
+        name: 'Lisas test data set',
+        writeProtected: false,
+      },
       rawTables: [
         {
           dbName: 'informatica',

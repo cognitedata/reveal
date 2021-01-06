@@ -100,6 +100,17 @@ describe('<ITable/>', () => {
       const resultRows = screen.getAllByLabelText(searchJacek.regexp);
       expect(resultRows.length).toEqual(3);
     });
+
+    // should filter from data sets by col
+    const searchDataSet = {
+      string: 'aker',
+      regexp: /aker/i,
+    };
+    fireEvent.change(searchInput, { target: { value: searchDataSet.string } });
+    await waitFor(() => {
+      const resultRows = screen.getAllByText(searchDataSet.regexp);
+      expect(resultRows.length).toEqual(1);
+    });
   });
 
   test('render and interact with filter on status', () => {

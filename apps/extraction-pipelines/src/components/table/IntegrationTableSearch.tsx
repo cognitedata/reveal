@@ -13,6 +13,7 @@ function IntegrationTableSearch<D extends object>({
   globalFilter,
   setGlobalFilter,
 }: GlobalSearchProps<D>) {
+  // console.log('preGlobalFilteredRows', preGlobalFilteredRows)
   const count = preGlobalFilteredRows.length;
   const [value, setValue] = React.useState(globalFilter);
   const onChange = useAsyncDebounce((val) => {

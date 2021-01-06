@@ -3,6 +3,7 @@ import { Cell, CellProps } from 'react-table';
 import { calculateStatus } from 'utils/integrationUtils';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
+import { DataSet as CogniteDataSet } from '@cognite/sdk';
 import { Integration } from '../../model/Integration';
 import UserGroup from '../integrations/cols/UserGroup';
 import Name from '../integrations/cols/Name';
@@ -60,7 +61,12 @@ export const createSearchStringForContacts = (
     authors ? authors.map((aut) => aut.name).join() : ''
   }`;
 };
-
+export const createSearchStringForDataSet = (
+  dataSetId: string,
+  dataSet?: CogniteDataSet
+) => {
+  return `${dataSetId} ${dataSet ? dataSet.name : ''}`;
+};
 export const createListOfContacts = (owner: User, authors?: User[]) => {
   const auth = authors ?? [];
   return [owner, ...auth];
@@ -151,7 +157,9 @@ export const getIntegrationTableCol = (
     {
       id: 'dataSetId',
       Header: TableHeadings.DATA_SET,
-      accessor: 'dataSetId',
+      accessor: (row: Integration) => {
+        return createSearchStringForDataSet(row.dataSetId, row.dataSet);
+      },
       Cell: ({ row }: Cell<Integration>) => {
         const id = row.original.dataSet?.name ?? row.original.dataSetId;
         return (

@@ -46,7 +46,9 @@ function fuzzyTextFilterFn<T extends { values: any }>(
   id: string,
   filterValue: any
 ) {
-  return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+  return matchSorter([...rows], filterValue, {
+    keys: [(row) => row.values[id]],
+  });
 }
 fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 
