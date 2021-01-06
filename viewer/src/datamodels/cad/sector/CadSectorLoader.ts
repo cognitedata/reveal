@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { asyncScheduler, Observable, Subject } from 'rxjs';
-import { debounceTime, filter, map, observeOn, share, subscribeOn } from 'rxjs/operators';
+import { debounceTime, map, observeOn, share, subscribeOn } from 'rxjs/operators';
 
 import { CadNode } from '..';
 import { CadModelBudget } from '../../..';
@@ -51,7 +51,7 @@ export class CadSectorLoader {
   private readonly _detailedSectorLoader: CadDetailedSectorLoader;
 
   private readonly _consumedSubject = new Subject<ConsumedSector>();
-  private readonly _consumedObservable: Observable<ConsumedSector>;
+  private readonly _consumedObservable = this._consumedSubject.pipe(observeOn(asyncScheduler), share());
   private readonly _loadingStateUpdateTriggerSubject = new Subject<void>();
   private readonly _loadingStateObservable: Observable<LoadingState>;
   // TODO 2020-12-05 larsmoa: _parsedDataSubject is not triggered for incoming data!
@@ -99,13 +99,6 @@ export class CadSectorLoader {
       this._materialManager
     );
 
-    this._consumedObservable = this._consumedSubject.pipe(
-      observeOn(asyncScheduler),
-      share(),
-      // Avoid reporting sectors from removed models (pending requests might still come in for a while)
-      filter(x => this._models.some(model => model.cadModelMetadata.blobUrl === x.blobUrl))
-    );
-
     this._loadingStateObservable = this._loadingStateUpdateTriggerSubject.pipe(
       subscribeOn(asyncScheduler),
       debounceTime(100),
@@ -143,15 +136,6 @@ export class CadSectorLoader {
 
   addModel(model: CadNode): void {
     this._models.push(model);
-    this.triggerUpdate();
-  }
-
-  removeModel(model: CadNode): void {
-    const index = this._models.findIndex(m => m === model);
-    if (index === -1) {
-      throw new Error('Cannot remove model - not added');
-    }
-    this._models.splice(index, 1);
     this.triggerUpdate();
   }
 

@@ -127,10 +127,6 @@ export function Migration() {
         fitToModel: () => {
           const model = cadModels[0] || pointCloudModels[0];
           viewer.fitCameraToModel(model);
-        },
-        removeModel: () => {
-          const model = cadModels[0] || pointCloudModels[0];
-          viewer.removeModel(model);
         }
       };
 
@@ -142,7 +138,6 @@ export function Migration() {
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
-      gui.add(guiActions, 'removeModel').name('Unload model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
       gui.add(guiState, 'antiAliasing', 
         [
