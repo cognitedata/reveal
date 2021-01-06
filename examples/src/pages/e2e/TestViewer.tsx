@@ -62,6 +62,44 @@ export function TestViewer(props: Props) {
     itemsRequested: 0,
   });
 
+  const setupLoadingStateHandler = (
+    revealManager: reveal.RevealManager<unknown>
+  ) => {
+    let skipFirstLoadingState = true;
+    revealManager.on('loadingStateChanged', (loadingState) => {
+      if (skipFirstLoadingState) {
+        skipFirstLoadingState = false;
+        if (loadingState.isLoading) {
+          setLoadingState(loadingState);
+        }
+      } else {
+        setLoadingState(loadingState);
+      }
+    });
+  };
+
+  const getCameraConfig = (
+    model: reveal.CadNode | reveal.internal.PointCloudNode
+  ): reveal.SuggestedCameraConfig => {
+    if ('suggestCameraConfig' in model) {
+      return model.suggestCameraConfig();
+    }
+
+    const near = 0.1;
+    const far = 10000;
+    const bbox: THREE.Box3 = model.getBoundingBox();
+    const target = bbox.getCenter(new THREE.Vector3());
+    const minToCenter = new THREE.Vector3().subVectors(target, bbox.min);
+    const position = target.clone().addScaledVector(minToCenter, -1.5);
+
+    return {
+      near,
+      far,
+      position,
+      target,
+    };
+  };
+
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     let revealManager: reveal.RevealManager<unknown>;
@@ -84,18 +122,7 @@ export function TestViewer(props: Props) {
       };
 
       revealManager = reveal.createLocalRevealManager({ logMetrics: false });
-
-      let skipFirstLoadingState = true;
-      revealManager.on('loadingStateChanged', (loadingState) => {
-        if (skipFirstLoadingState) {
-          skipFirstLoadingState = false;
-          if (loadingState.isLoading) {
-            setLoadingState(loadingState);
-          }
-        } else {
-          setLoadingState(loadingState);
-        }
-      });
+      setupLoadingStateHandler(revealManager);
 
       let model: reveal.internal.PointCloudNode | reveal.CadNode;
 
@@ -118,24 +145,8 @@ export function TestViewer(props: Props) {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      let cameraConfig: reveal.SuggestedCameraConfig;
-      if (model instanceof reveal.CadNode) {
-        cameraConfig = model.suggestCameraConfig();
-      } else {
-        const near = 0.1;
-        const far = 10000;
-        const bbox: THREE.Box3 = model.getBoundingBox();
-        const target = bbox.getCenter(new THREE.Vector3());
-        const minToCenter = new THREE.Vector3().subVectors(target, bbox.min);
-        const position = target.clone().addScaledVector(minToCenter, -1.5);
+      let cameraConfig = getCameraConfig(model);
 
-        cameraConfig = {
-          near,
-          far,
-          position,
-          target,
-        };
-      }
       let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
         75,
         2,
