@@ -68,6 +68,10 @@
         {
           "type": "doc",
           "id": "version-1.x/examples/pointcloud-intersections"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/antialiasing"
         }
       ]
     },
