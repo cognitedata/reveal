@@ -97,7 +97,7 @@ export type Actions =
 export type SelectedNode = {
   treeIndex: number;
   nodeId: number;
-  isLeaf?: boolean;
+  subtreeSize?: number;
 };
 
 export type TreeViewState = {

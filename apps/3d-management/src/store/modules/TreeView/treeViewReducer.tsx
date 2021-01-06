@@ -45,7 +45,7 @@ function getDefaultState(): TreeViewState {
     loading: false,
     treeData: [],
     checkedNodes: [0], // to avoid viewer be blocked by tree loading
-    expandedNodes: [],
+    expandedNodes: [0],
     selectedNodes: [],
     loadingCursors: [],
   };
@@ -67,8 +67,6 @@ export default function treeDataReducer(
       return {
         ...prevState,
         treeData: action.payload,
-        checkedNodes: [0], // root node
-        expandedNodes: [0],
         loading: false,
       };
     }

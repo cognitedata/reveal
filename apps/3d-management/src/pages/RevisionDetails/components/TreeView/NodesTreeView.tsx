@@ -76,7 +76,7 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
             (node) => ({
               treeIndex: node.key,
               nodeId: node.meta.id,
-              isLeaf: node.meta.subtreeSize <= 1,
+              subtreeSize: node.meta.subtreeSize,
             })
           ),
           info as EventTreeNodeSelected<TreeDataNode>

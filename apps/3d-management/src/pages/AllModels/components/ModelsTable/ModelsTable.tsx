@@ -65,7 +65,9 @@ class ModelsTable extends React.Component<Props> {
   metrics = Metrics.create('3D.Models');
 
   get tableDataSource() {
-    const searchStr = this.props.app.modelTableState.filters.modelNameFilter.toLowerCase();
+    const searchStr = this.props.app.modelTableState.filters.modelNameFilter
+      .toLowerCase()
+      .trim();
     return this.props.models.filter((m) =>
       m.name.toLowerCase().includes(searchStr)
     );

@@ -46,7 +46,7 @@ export function useSelectedNodesHighlights({
         model
           .mapTreeIndexToNodeId(treeIndex)
           .then((nodeId: number) => {
-            dispatch(selectNodes([{ treeIndex, nodeId, isLeaf: true }]));
+            dispatch(selectNodes([{ treeIndex, nodeId, subtreeSize: 1 }]));
             dispatch(
               expandNodeByTreeIndex({
                 modelId,
@@ -72,29 +72,33 @@ export function useSelectedNodesHighlights({
     [viewer, model, dispatch, treeViewRef]
   );
 
-  const highlightSelectedNodes = useCallback(() => {
-    model.deselectAllNodes();
-    selectedNodes.forEach(({ treeIndex, isLeaf }) => {
-      model.selectNodeByTreeIndex(treeIndex, !isLeaf);
-    });
-  }, [model, selectedNodes]);
-
-  const ghostSelectedNodes = useCallback(() => {
-    model.ghostAllNodes();
-    selectedNodes.forEach(({ treeIndex, isLeaf }) => {
-      model.unghostNodeByTreeIndex(treeIndex, !isLeaf);
-    });
-  }, [model, selectedNodes]);
-
   useEffect(() => {
+    let stylingFn: typeof model.selectNodeByTreeIndex;
+
     if (ghostModeEnabled) {
+      stylingFn = model.unghostNodeByTreeIndex.bind(model);
       model.deselectAllNodes();
-      ghostSelectedNodes();
+      model.ghostAllNodes();
     } else {
+      stylingFn = model.selectNodeByTreeIndex.bind(model);
       model.unghostAllNodes();
-      highlightSelectedNodes();
+      model.deselectAllNodes();
     }
-  }, [model, ghostModeEnabled, ghostSelectedNodes, highlightSelectedNodes]);
+
+    selectedNodes.forEach(({ treeIndex, subtreeSize }) => {
+      // for big subtrees there is performance hit instead of performance gain
+      // likely because stylingFn always creates promise
+      if (typeof subtreeSize === 'undefined' || subtreeSize > 100000) {
+        stylingFn(treeIndex, true);
+      } else if (subtreeSize <= 1) {
+        stylingFn(treeIndex, false);
+      } else {
+        for (let i = treeIndex; i < treeIndex + subtreeSize; i++) {
+          stylingFn(i, false);
+        }
+      }
+    });
+  }, [model, ghostModeEnabled, selectedNodes]);
 
   useEffect(() => {
     viewer.on('click', viewerNodeClickListener);
