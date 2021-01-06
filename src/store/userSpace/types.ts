@@ -14,7 +14,7 @@ export type UserSpaceRootAction = ActionType<typeof actions>;
 
 export type LastVisited = {
   key: string;
-  lastVisitedTime: Date;
+  lastVisitedTime: number;
 };
 
 export type UserSpacePayload = {

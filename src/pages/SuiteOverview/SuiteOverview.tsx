@@ -52,7 +52,7 @@ const SuiteOverview: React.FC = () => {
         <Title as={StyledTitle} level={5}>
           {title}
         </Title>
-        <SuiteMenu dataItem={suite} />
+        {admin && <SuiteMenu dataItem={suite} />}
       </>
     );
   };

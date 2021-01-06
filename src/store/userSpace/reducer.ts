@@ -38,4 +38,25 @@ export const UserSpaceReducer = createReducer(initialState)
       loading: false,
       error: (action.payload as Error)?.message,
     })
+  )
+  .handleAction(
+    UserSpaceActionTypes.USER_SPACE_UPDATE,
+    (state: UserSpaceState) => ({ ...state, loading: true, error: '' })
+  )
+  .handleAction(
+    UserSpaceActionTypes.USER_SPACE_REQUEST_SUCCESS,
+    (state: UserSpaceState) => ({
+      ...state,
+      loading: false,
+      error: '',
+      loaded: true,
+    })
+  )
+  .handleAction(
+    UserSpaceActionTypes.USER_SPACE_UPDATE_ERROR,
+    (state: UserSpaceState, action: UserSpaceRootAction) => ({
+      ...state,
+      loading: false,
+      error: (action.payload as Error)?.message,
+    })
   );

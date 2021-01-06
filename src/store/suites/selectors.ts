@@ -1,4 +1,5 @@
 import { StoreState } from 'store/types';
+import { LastVisited } from 'store/userSpace/types';
 import { sortByLastUpdated } from 'utils/suites';
 import { Board, Suite, SuitesTableState } from './types';
 
@@ -18,20 +19,39 @@ export const getLastVisitedSuitesMock = (itemsToDisplay: number = 6) => (
     itemsToDisplay
   );
 
+// totally changed logic, ask Max about moddleware response
 export const getLastVisitedBoards = (
-  keys: string[],
+  lastVisited: LastVisited[],
   itemsToDisplay: number = 6
 ) => (state: StoreState): Board[] => {
   const boards: Board[] = [];
+  const keys: string[] = lastVisited.map((item: LastVisited) => item.key);
   if (!keys?.length) {
     return boards;
   }
   state.suitesTable?.suites?.forEach((suite: Suite) => {
-    const filtered = suite.boards?.filter((board) => keys.includes(board.key));
+    const filtered = suite.boards
+      ?.filter((board) => keys.includes(board.key))
+      .map((board) => ({ ...board, color: suite.color }));
+
     if (filtered?.length) {
       boards.push(...filtered);
     }
   });
-  boards.splice(itemsToDisplay);
-  return boards;
+  const newList: Board[] = [];
+  boards.forEach((board) => {
+    lastVisited.forEach((item) => {
+      if (board.key === item.key) {
+        newList.push({ ...board, lastVisitedTime: item.lastVisitedTime });
+      }
+    });
+  });
+  newList
+    .sort(
+      (a: Board, b: Board) =>
+        ((b.lastVisitedTime as any) as number) -
+        ((a.lastVisitedTime as any) as number)
+    )
+    .splice(itemsToDisplay);
+  return newList;
 };

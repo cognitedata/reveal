@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro';
 import { Title } from '@cognite/cogs.js';
+import { SpaceBetween } from 'styles/common';
 
 const TileBasic = styled.div`
   display: inline-flex;
@@ -11,10 +12,9 @@ const TileBasic = styled.div`
 `;
 
 export const SmallTileContainer = styled(TileBasic)`
-  width: 208px;
+  width: 298px;
   border-radius: 2px;
   border: 1px solid var(--cogs-greyscale-grey4);
-  margin: 0 10px 10px 0;
 `;
 
 export const TileContainer = styled(TileBasic)`
@@ -33,16 +33,16 @@ export const TileDescription = styled.div`
   overflow: hidden;
 `;
 
-export const TileHeader = styled.div<{ isBoard?: boolean; color?: string }>`
+export const TileHeader = styled(SpaceBetween)<{
+  isBoard?: boolean;
+  color?: string;
+}>`
   padding: 8px 12px;
   height: 56px;
   display: flex;
   align-items: center;
   border-bottom: ${({ isBoard, color }) =>
     isBoard ? `2px solid ${color}` : '1px solid var(--cogs-greyscale-grey4)'};
-  & > :last-child {
-    margin-left: auto;
-  }
 `;
 
 export const TilePreview = styled.div`

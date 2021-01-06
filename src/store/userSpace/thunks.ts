@@ -78,6 +78,7 @@ async function fetchAndExtract(
   try {
     const { columns } = await cdfClient.getTableRow('lastVisited', userId);
     const { lastVisited: lastVisitedItems } = columns;
+    // do we really need to sort it here? it, ask Max about filtering in middleware
     lastVisitedItems?.sort(
       (a: LastVisited, b: LastVisited) =>
         ((b.lastVisitedTime as any) as number) -

@@ -10,6 +10,8 @@ import {
 } from 'components/tiles/elements';
 import { SuiteRowDelete } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
+import { useLastVisited } from 'hooks';
+import { Flex } from 'styles/common';
 
 const TilePreviewHeight = '184';
 const TilePreviewWidth = '298';
@@ -18,7 +20,7 @@ interface Props {
   avatar?: boolean;
   color?: string;
   dataItem: TS_FIX_ME;
-  menu: React.ReactElement;
+  menu?: React.ReactElement;
   handleDelete?: (key: SuiteRowDelete[]) => void;
   handleEdit?: (key: SuiteRowDelete[]) => void;
   view?: 'suite' | 'board';
@@ -49,19 +51,23 @@ export const Tile: React.FC<Props> = ({
   view = 'suite',
 }: Props) => {
   const isBoard = view === 'board';
+  const { setAsLastvisited } = useLastVisited(dataItem);
+
   return (
     <>
-      <TileContainer>
+      <TileContainer {...(isBoard && { onClick: setAsLastvisited })}>
         <TileHeader isBoard={isBoard} color={color}>
-          {avatar && (
-            <SuiteAvatar title={dataItem.title} color={dataItem.color} />
-          )}
-          <TileDescription>
-            <Overline level={3}>{dataItem?.type}</Overline>
-            <Tooltip content={dataItem.title}>
-              <StyledTitle level={6}>{dataItem.title}</StyledTitle>
-            </Tooltip>
-          </TileDescription>
+          <Flex>
+            {avatar && (
+              <SuiteAvatar title={dataItem.title} color={dataItem.color} />
+            )}
+            <TileDescription>
+              <Overline level={3}>{dataItem?.type}</Overline>
+              <Tooltip content={dataItem.title}>
+                <StyledTitle level={6}>{dataItem.title}</StyledTitle>
+              </Tooltip>
+            </TileDescription>
+          </Flex>
           {menu}
         </TileHeader>
         {dataItem.embedTag ? (
