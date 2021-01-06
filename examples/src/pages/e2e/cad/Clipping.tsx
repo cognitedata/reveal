@@ -5,12 +5,12 @@
 import * as THREE from 'three';
 import React from 'react';
 import { BoundingBoxClipper } from '@cognite/reveal';
-import { Viewer } from '../Viewer';
+import {TestEnvCad, Viewer} from '../Viewer';
 
 export function ClippingTestPage() {
   return (
     <Viewer
-      modifyTestEnv={(env) => {
+      modifyTestEnv={({ revealManager }: TestEnvCad) => {
         const params = {
           clipIntersection: true,
           width: 10,
@@ -38,8 +38,8 @@ export function ClippingTestPage() {
           params.clipIntersection
         );
 
-        env.revealManager.clippingPlanes = boxClipper.clippingPlanes;
-        env.revealManager.clipIntersection = boxClipper.intersection;
+        revealManager.clippingPlanes = boxClipper.clippingPlanes;
+        revealManager.clipIntersection = boxClipper.intersection;
 
         return {
           camera: new THREE.PerspectiveCamera(),

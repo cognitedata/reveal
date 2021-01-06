@@ -15,24 +15,48 @@ interface SuggestedCameraConfig {
   far: number;
 }
 
-type TestEnv = {
+type CadModelEnv = {
+  modelType: 'cad';
+  model: reveal.CadNode;
+};
+type PointCloudModelEnv = {
+  modelType: 'pointcloud';
+  model: reveal.internal.PointCloudNode;
+};
+
+export type TestEnv = {
   camera: THREE.PerspectiveCamera;
   revealManager: reveal.RevealManager<unknown>;
   scene: THREE.Scene;
   renderer: THREE.WebGLRenderer;
-  cameraConfig: SuggestedCameraConfig;
-  model: reveal.CadNode;
 };
 
-type TestEnvModified = Partial<Omit<TestEnv, 'cameraConfig'> & {
-  cameraConfig: Partial<SuggestedCameraConfig>;
-  postRender?: () => void
-}>;
+export type TestEnvCad = TestEnv & CadModelEnv;
+
+export type TestEnvPointCloud = TestEnv & PointCloudModelEnv;
+
+type TestEnvModified<T> = Partial<Omit<T, 'cameraConfig'>> & {
+  cameraConfig?: Partial<SuggestedCameraConfig>;
+  postRender?: () => void;
+}
+
+type PropsCad<T = TestEnvCad> = {
+  // when `?` is used ts forces to mark env arg explicitly in tsx components (see e.g. Clipping).
+  // Otherwise it complains that arg is any (unless you pass modelType='cad').
+  // TS doesn't infer correct type when prop is undefined here :(
+  modelType?: 'cad';
+  nodeAppearanceProvider?: reveal.NodeAppearanceProvider;
+  modifyTestEnv?: (env: T) => TestEnvModified<T> | void;
+};
+type PropsPointCloud<T = TestEnvPointCloud> = {
+  modelType: 'pointcloud';
+  nodeAppearanceProvider?: never;
+  modifyTestEnv?: (env: T) => TestEnvModified<T>  | void;
+};
 
 type Props = {
-  modifyTestEnv?: (env: TestEnv) => TestEnvModified | void;
-  nodeAppearanceProvider?: reveal.NodeAppearanceProvider;
-};
+  modelName?: string;
+} & (PropsCad | PropsPointCloud);
 
 CameraControls.install({ THREE });
 
@@ -56,7 +80,7 @@ export function Viewer(props: Props) {
       }
       const { modelUrl } = getParamsFromURL({
         project: 'test',
-        modelUrl: 'primitives',
+        modelUrl: props.modelName || 'primitives',
       });
 
       let scene = new THREE.Scene();
@@ -80,11 +104,19 @@ export function Viewer(props: Props) {
           setLoadingState(loadingState);
         }
       });
-      let model = await revealManager.addModel(
-        'cad',
-        modelUrl,
-        props.nodeAppearanceProvider || defaultNodeAppearanceProvider
-      );
+
+      let model: reveal.internal.PointCloudNode | reveal.CadNode;
+
+      if (props.modelType === 'pointcloud') {
+        model = await revealManager.addModel('pointcloud', modelUrl);
+      } else {
+        model = await revealManager.addModel(
+          'cad',
+          modelUrl,
+          props.nodeAppearanceProvider || defaultNodeAppearanceProvider
+        );
+      }
+
       scene.add(model);
 
       let renderer = new THREE.WebGLRenderer({
@@ -94,7 +126,24 @@ export function Viewer(props: Props) {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      let cameraConfig = model.suggestCameraConfig();
+      let cameraConfig: SuggestedCameraConfig;
+      if (model instanceof reveal.CadNode) {
+        cameraConfig = model.suggestCameraConfig();
+      } else {
+        const near = 0.1;
+        const far = 10000;
+        const bbox: THREE.Box3 = model.getBoundingBox();
+        const target = bbox.getCenter(new THREE.Vector3());
+        const minToCenter = new THREE.Vector3().subVectors(target, bbox.min);
+        const position = target.clone().addScaledVector(minToCenter, -1.5);
+
+        cameraConfig = {
+          near,
+          far,
+          position,
+          target,
+        };
+      }
       let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
         75,
         2,
@@ -102,10 +151,16 @@ export function Viewer(props: Props) {
         cameraConfig.far
       );
 
-      let testEnv: TestEnvModified = {}
+      let testEnv: TestEnvModified<TestEnvCad | TestEnvPointCloud> = {};
 
       if (props.modifyTestEnv) {
-        let defaultTestEnv: TestEnv = { camera, cameraConfig, model, renderer, revealManager, scene };
+        let defaultTestEnv: any = {
+          camera,
+          model,
+          renderer,
+          revealManager,
+          scene,
+        };
         testEnv = props.modifyTestEnv(defaultTestEnv) || testEnv;
 
         camera = testEnv.camera || camera;
