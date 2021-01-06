@@ -179,6 +179,8 @@ function createDetermineSectorInput(
     clippingPlanes: [],
     clipIntersection: false,
     cadModelsMetadata: Array.isArray(models) ? models : [models],
+    loadingHints: {},
+    cameraInMotion: false,
     budget: budget || {
       geometryDownloadSizeBytes: 20,
       highDetailProximityThreshold: 10,
