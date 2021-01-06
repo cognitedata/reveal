@@ -111,7 +111,6 @@ export class SectorSceneImpl implements SectorScene {
       clusterCounts[cluster]++;
       clusterBounds[cluster].extendByBox(allBounds[idx]);
     });
-    debugger;
 
     const intersectingBounds = clusterBounds.filter((x, idx) => {
       if (idx !== biggestCluster && x.intersectsBox(clusterBounds[biggestCluster])) {
