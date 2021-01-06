@@ -10,6 +10,7 @@ import { Cognite3DViewer } from '../../public/migration/Cognite3DViewer';
 
 import nock from 'nock';
 import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
+import { SceneRenderedDelegate } from '../../public/types';
 
 const sceneJson = require('./scene.json');
 
@@ -163,5 +164,34 @@ describe('Cognite3DViewer', () => {
 
     viewer.removeObject3D(obj);
     expect(scene.getObjectById(obj.id)).toBeFalsy();
+  });
+
+  test('sceneRendered triggers after rendering', () => {
+    // Setup a fake rendering loop
+    const requestAnimationFrameSpy: jest.SpyInstance<any, any> = jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation(cb => {
+        requestAnimationFrameCallback = cb;
+        return 1;
+      });
+    let requestAnimationFrameCallback: FrameRequestCallback | undefined;
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const onRendered: SceneRenderedDelegate = jest.fn();
+    if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
+
+    try {
+      viewer.on('sceneRendered', onRendered);
+      viewer.forceRerender();
+      requestAnimationFrameCallback(1000);
+      expect(onRendered).toBeCalledTimes(1);
+
+      jest.clearAllMocks();
+      viewer.off('sceneRendered', onRendered);
+      viewer.forceRerender();
+      requestAnimationFrameCallback(1000);
+      expect(onRendered).toBeCalledTimes(0);
+    } finally {
+      requestAnimationFrameSpy.mockRestore();
+    }
   });
 });
