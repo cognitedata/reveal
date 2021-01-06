@@ -291,10 +291,10 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/reveal-parser-worker@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.1.0.tgz#3297284a7c9a0087411a3e10eb03f2a24a0cfc30"
-  integrity sha512-N1PyFvAxESeU4nWOkZXuaLnusP/GFLC2fmEzcuKdmaRp13NzimmWeOelYOr3Dv0qVKTVcQQOnsAi3Nd35VIXwA==
+"@cognite/reveal-parser-worker@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.0.0.tgz#45956e6d217f745a8ec65ab3b3cdc8ae39a574d5"
+  integrity sha512-kHa5+jZUDtnZbUKJ9WNxNzaD3wHT/44TXILS7ZDvsALdTrMNBzQILEWlgaGRr8Z79B+ZU9fdWnE/6XLHppeWJg==
   dependencies:
     comlink "^4.3.0"
 
