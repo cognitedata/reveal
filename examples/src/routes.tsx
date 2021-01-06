@@ -17,7 +17,12 @@ import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { WebGLTwo } from './pages/WebGLTwo';
 
-import { cadTestBasePath, TestCase } from './visual_tests/testUtils';
+import {
+  cadTestBasePath,
+  pointcloudTestBasePath,
+  TestCaseCad,
+  TestCasePointCloud,
+} from './visual_tests/testUtils';
 import { DefaultCadTestPage } from './pages/e2e/cad/DefaultCadTestPage';
 import { ClippingTestPage } from './pages/e2e/cad/ClippingTestPage';
 import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCameraTestPage';
@@ -39,7 +44,7 @@ import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCl
 // revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 // revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 
-type ExampleRoute = {
+export type ExampleRoute = {
   path: string;
   menuTitle: string;
   component: ReactNode;
@@ -144,24 +149,34 @@ export const exampleRoutes: Array<ExampleRoute> = [
   },
 ].sort(menuTitleAz);
 
-const testPages: Record<TestCase, JSX.Element> = {
-  [TestCase.default]: <DefaultCadTestPage />,
-  [TestCase.clipping]: <ClippingTestPage />,
-  [TestCase.default_camera]: <DefaultCameraTestPage />,
-  [TestCase.highlight]: <HighlightTestPage />,
-  [TestCase.rotate_cad_model]: <RotationTestPage />,
-  [TestCase.node_transform]: <NodeTransformTestPage />,
-  [TestCase.ghost_mode]: <GhostModeTestPage />,
-  [TestCase.scaled_model]: <ScaledModelTestPage />,
-  [TestCase.user_render_target]: <UserRenderTargetTestPage />,
-
-  [TestCase.point_cloud]: <DefaultPointCloudTestPage />,
+const cadTestPages: Record<TestCaseCad, JSX.Element> = {
+  [TestCaseCad.default]: <DefaultCadTestPage />,
+  [TestCaseCad.clipping]: <ClippingTestPage />,
+  [TestCaseCad.defaultCamera]: <DefaultCameraTestPage />,
+  [TestCaseCad.highlight]: <HighlightTestPage />,
+  [TestCaseCad.rotateCadModel]: <RotationTestPage />,
+  [TestCaseCad.nodeTransform]: <NodeTransformTestPage />,
+  [TestCaseCad.ghostMode]: <GhostModeTestPage />,
+  [TestCaseCad.scaledModel]: <ScaledModelTestPage />,
+  [TestCaseCad.userRenderTarget]: <UserRenderTargetTestPage />,
 };
 
-export const testRoutes: Array<ExampleRoute> = Object.values(TestCase).map(
-  (test) => ({
-    path: cadTestBasePath + test,
-    menuTitle: test,
-    component: testPages[test],
-  })
-);
+const pointcloudTestPages: Record<TestCasePointCloud, JSX.Element> = {
+  [TestCasePointCloud.default]: <DefaultPointCloudTestPage />,
+};
+
+export const testRoutesCad: Array<ExampleRoute> = Object.values(
+  TestCaseCad
+).map((test: TestCaseCad) => ({
+  path: cadTestBasePath + test,
+  menuTitle: test,
+  component: cadTestPages[test],
+}));
+
+export const testRoutesPointCloud: Array<ExampleRoute> = Object.values(
+  TestCasePointCloud
+).map((test: TestCasePointCloud) => ({
+  path: pointcloudTestBasePath + test,
+  menuTitle: test,
+  component: pointcloudTestPages[test],
+}));

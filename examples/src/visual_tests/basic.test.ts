@@ -1,4 +1,9 @@
-import { cadTestBasePath, TestCase } from './testUtils';
+import {
+  cadTestBasePath,
+  pointcloudTestBasePath,
+  TestCaseCad,
+  TestCasePointCloud,
+} from './testUtils';
 
 const retry = require('jest-retries');
 
@@ -6,9 +11,8 @@ const RETRIES = parseInt(process.env.RETRIES!) || 3;
 
 jest.retryTimes(RETRIES);
 
-async function screenShotTest(testCase: TestCase) {
+async function screenShotTest(url: string, snapshotName: string) {
   const testPage = await browser.newPage();
-  const url = `http://localhost:3000` + cadTestBasePath + testCase;
 
   await testPage.goto(url, {
     waitUntil: ['domcontentloaded'],
@@ -22,22 +26,35 @@ async function screenShotTest(testCase: TestCase) {
   expect(image).toMatchImageSnapshot({
     failureThreshold: 0.001, // 0.1% of all pixels may differ
     failureThresholdType: 'percent',
-    customSnapshotIdentifier: testCase,
+    customSnapshotIdentifier: snapshotName,
   });
 
   await testPage.close();
 }
 
-console.log(`Run tests with ${RETRIES} retries`)
+console.log(`Run tests with ${RETRIES} retries`);
 
 /*
- * To add a new test, start from adding a new entry to TestCase enum. TS errors will suggest missing parts.
- * Basically you just need to add a new test page to src/pages/e2e/cad or pointcloud folder
+ * To add a new test, start from adding a new entry to TestCaseCad or TestCasePointCloud enum. TS errors will suggest missing parts.
+ * Basically, you just need to add a new test page to src/pages/e2e
+ * and create a new record in src/routes to map a component to its route
  */
 describe('Reveal visual tests', () => {
-  Object.values(TestCase).forEach(function (test) {
-    retry(`matches the screenshot for ${test} preset`, RETRIES, async () => {
-      await screenShotTest(test);
+  Object.values(TestCaseCad).forEach(function (test) {
+    const snapshotName = 'cad_' + test;
+    const url = `http://localhost:3000` + cadTestBasePath + test;
+
+    retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
+      await screenShotTest(url, snapshotName);
+    });
+  });
+
+  Object.values(TestCasePointCloud).forEach(function (test) {
+    const snapshotName = 'pc_' + test;
+    const url = `http://localhost:3000` + pointcloudTestBasePath + test;
+
+    retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
+      await screenShotTest(url, snapshotName);
     });
   });
 });
