@@ -7,14 +7,6 @@ import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/experimental';
 
-// fixme: export type from reveal
-interface SuggestedCameraConfig {
-  position: THREE.Vector3;
-  target: THREE.Vector3;
-  near: number;
-  far: number;
-}
-
 type CadModelEnv = {
   modelType: 'cad';
   model: reveal.CadNode;
@@ -36,7 +28,7 @@ export type TestEnvCad = TestEnv & CadModelEnv;
 export type TestEnvPointCloud = TestEnv & PointCloudModelEnv;
 
 type TestEnvModified<T> = Partial<Omit<T, 'cameraConfig'>> & {
-  cameraConfig?: Partial<SuggestedCameraConfig>;
+  cameraConfig?: Partial<reveal.SuggestedCameraConfig>;
   postRender?: () => void;
 };
 
@@ -126,7 +118,7 @@ export function TestViewer(props: Props) {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      let cameraConfig: SuggestedCameraConfig;
+      let cameraConfig: reveal.SuggestedCameraConfig;
       if (model instanceof reveal.CadNode) {
         cameraConfig = model.suggestCameraConfig();
       } else {

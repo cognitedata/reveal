@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadNode } from './CadNode';
+import { CadNode, SuggestedCameraConfig } from './CadNode';
 import { CadModelMetadata } from './CadModelMetadata';
 import { SectorMetadata } from './sector/types';
 import { SsaoEffect, SsaoPassType } from './rendering/post-processing/ssao';
@@ -16,5 +16,6 @@ export {
   CadModelMetadata,
   SectorMetadata,
   SsaoEffect,
-  SsaoPassType
+  SsaoPassType,
+  SuggestedCameraConfig
 };
