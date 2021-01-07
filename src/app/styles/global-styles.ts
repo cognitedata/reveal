@@ -1,7 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
+import { ids } from 'cogs-variables';
 import theme from './theme';
 
 const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
+  .${ids.styleScope} {
+    font-family: Inter,BlinkMacSystemFont,Arial,sans-serif;
+  }
+  
   .ant-input,
   .ant-tag {
     font-family: BlinkMacSystemFont,Arial,sans-serif;
