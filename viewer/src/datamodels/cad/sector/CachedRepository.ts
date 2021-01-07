@@ -110,7 +110,7 @@ export class CachedRepository implements Repository {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._taskTracker.getTaskTrackerObservable().pipe(
-      throttleTime(30, asyncScheduler, { trailing: true }), // Take 1 emission every 30ms
+      throttleTime(30, asyncScheduler, { leading: true, trailing: true }), // Take 1 emission every 30ms
       map(
         ({ taskCount, taskCompleted }) =>
           ({

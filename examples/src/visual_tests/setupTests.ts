@@ -1,4 +1,4 @@
-import "expect-puppeteer";
+// @ts-ignore isolated modules
 
 const { toMatchImageSnapshot } = require('jest-image-snapshot');
 
