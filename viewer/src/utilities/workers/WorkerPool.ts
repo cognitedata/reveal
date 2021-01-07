@@ -22,18 +22,15 @@ export class WorkerPool {
     return WorkerPool._defaultPool;
   }
 
-  private static async checkWorkerVersion(worker: RevealParserWorker) {
-    // eslint-disable-next-line no-console
-    console.log('the version is', await worker.version);
-  }
-
   private static _defaultPool: WorkerPool | undefined;
 
   private readonly workerList: PooledWorker[] = [];
 
   private workerObjUrl?: string;
 
-  constructor(numberOfWorkers = Math.max(2, Math.min(4, window.navigator.hardwareConcurrency || 2))) {
+  constructor() {
+    const numberOfWorkers = this.determineNumberOfWorkers();
+
     for (let i = 0; i < numberOfWorkers; i++) {
       const newWorker = {
         // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
@@ -45,7 +42,7 @@ export class WorkerPool {
       this.workerList.push(newWorker);
     }
 
-    WorkerPool.checkWorkerVersion(this.workerList[0].worker);
+    checkWorkerVersion(this.workerList[0].worker).catch(console.error);
 
     if (this.workerObjUrl) {
       URL.revokeObjectURL(this.workerObjUrl);
@@ -85,5 +82,37 @@ export class WorkerPool {
     const result = await work(targetWorker.worker);
     targetWorker.activeJobCount -= 1;
     return result;
+  }
+
+  // TODO j-bjorne 16-04-2020: Send in constructor instead
+  private determineNumberOfWorkers() {
+    // Use between 2-4 workers, depending on hardware
+    return Math.max(2, Math.min(4, window.navigator.hardwareConcurrency || 2));
+  }
+}
+
+export async function checkWorkerVersion(worker: RevealParserWorker) {
+  let actualWorkerVersion: string;
+  if ('getVersion' in worker) {
+    // @ts-ignore TS knows when there is no getVersion and forbids to check it (if 1.1.0 is installed)
+    actualWorkerVersion = await worker.getVersion();
+  } else {
+    actualWorkerVersion = '1.1.0'; // versions below 1.1.1 do not have getVersion method
+  }
+  const minWorkerVersion = process.env.WORKER_VERSION;
+
+  const [majorMin, minorMin, patchMin] = minWorkerVersion.split('.').map(i => parseInt(i, 10));
+  const [majorWorker, minorWorker, patchWorker] = actualWorkerVersion.split('.').map(i => parseInt(i, 10));
+
+  const errorMessage = `Update your local copy of @cognitre/reveal-parser-worker. Required version is ${minWorkerVersion}. Received ${actualWorkerVersion}.`;
+
+  if (majorMin !== majorWorker) {
+    throw new Error(errorMessage);
+  }
+  if (minorWorker < minorMin) {
+    throw new Error(errorMessage);
+  }
+  if (minorWorker === minorMin && patchWorker < patchMin) {
+    throw new Error(errorMessage);
   }
 }
