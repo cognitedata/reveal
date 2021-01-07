@@ -67,9 +67,10 @@ export function TestViewer(props: Props) {
   ) => {
     let skipFirstLoadingState = true;
     revealManager.on('loadingStateChanged', (loadingState) => {
+      // Ignore isLoading updates untill we see that we are starting to download data
       if (skipFirstLoadingState) {
-        skipFirstLoadingState = false;
         if (loadingState.isLoading) {
+          skipFirstLoadingState = false;
           setLoadingState(loadingState);
         }
       } else {
