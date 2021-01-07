@@ -70,7 +70,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/react-hooks": "^4.0.0",
-    "@types/jest": "^26.0.19",
+    "@types/jest": "^26.0.20",
     "@types/match-sorter": "^5.0.0",
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
