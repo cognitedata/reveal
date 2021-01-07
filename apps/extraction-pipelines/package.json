@@ -26,7 +26,7 @@
     "@cognite/z-index": "^0.1.0",
     "@google-cloud/storage": "^5.7.0",
     "@hookform/error-message": "^0.0.5",
-    "@hookform/resolvers": "^1.1.2",
+    "@hookform/resolvers": "^1.3.2",
     "@sentry/browser": "^5.29.1",
     "commander": "^6.2.1",
     "cronstrue": "^1.106.0",
@@ -70,7 +70,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.1.0",
     "@testing-library/react-hooks": "^3.7.0",
-    "@types/jest": "^26.0.17",
+    "@types/jest": "^26.0.19",
     "@types/match-sorter": "^5.0.0",
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
@@ -106,6 +106,11 @@
     "sinon": "^9.2.3",
     "style-loader": "^2.0.0",
     "typescript": "^4.1.3"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!@hookform)/"
+    ]
   },
   "eslintConfig": {
     "extends": "react-app"
