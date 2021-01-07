@@ -11,7 +11,7 @@ export { CadNode } from './datamodels/cad';
 export { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './datamodels/cad';
 // CAD
 
-export { CadModelMetadata, SsaoEffect, SsaoPassType } from './datamodels/cad/';
+export { CadModelMetadata, SsaoEffect, SsaoPassType, SuggestedCameraConfig } from './datamodels/cad/';
 export { SectorMetadata } from './datamodels/cad/sector/types';
 export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';

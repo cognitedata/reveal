@@ -15,8 +15,24 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
-import { Testable } from './pages/Testable';
 import { WebGLTwo } from './pages/WebGLTwo';
+
+import {
+  cadTestBasePath,
+  pointcloudTestBasePath,
+  TestCaseCad,
+  TestCasePointCloud,
+} from './visual_tests/testUtils';
+import { DefaultCadTestPage } from './pages/e2e/cad/DefaultCadTestPage';
+import { ClippingTestPage } from './pages/e2e/cad/ClippingTestPage';
+import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCameraTestPage';
+import { HighlightTestPage } from './pages/e2e/cad/HighlightTestPage';
+import { RotationTestPage } from './pages/e2e/cad/RotationTestPage';
+import { NodeTransformTestPage } from './pages/e2e/cad/NodeTransformTestPage';
+import { GhostModeTestPage } from './pages/e2e/cad/GhostModeTestPage';
+import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModelTestPage';
+import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTargetTestPage';
+import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -28,7 +44,7 @@ import { WebGLTwo } from './pages/WebGLTwo';
 // revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 // revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 
-type ExampleRoute = {
+export type ExampleRoute = {
   path: string;
   menuTitle: string;
   component: ReactNode;
@@ -46,7 +62,11 @@ const cad2RevisionId = getEnv('REACT_APP_CAD_2_REVISION_ID');
 const pointCloudId = getEnv('REACT_APP_POINTCLOUD_ID');
 const pointCloudRevisionId = getEnv('REACT_APP_POINTCLOUD_REVISION_ID');
 
-export const routes: Array<ExampleRoute> = [
+function menuTitleAz(a: ExampleRoute, b: ExampleRoute): number {
+  return a.menuTitle < b.menuTitle ? -1 : a.menuTitle === b.menuTitle ? 0 : 1;
+}
+
+export const exampleRoutes: Array<ExampleRoute> = [
   {
     path: '/simple',
     menuTitle: 'Simple',
@@ -127,11 +147,36 @@ export const routes: Array<ExampleRoute> = [
     menuTitle: 'WebGL 2.0',
     component: <WebGLTwo />,
   },
-  {
-    path: '/testable',
-    menuTitle: 'Automatically testable in CI',
-    component: <Testable />,
-  },
-].sort((a, b) =>
-  a.menuTitle < b.menuTitle ? -1 : a.menuTitle === b.menuTitle ? 0 : 1
-);
+].sort(menuTitleAz);
+
+const cadTestPages: Record<TestCaseCad, JSX.Element> = {
+  [TestCaseCad.default]: <DefaultCadTestPage />,
+  [TestCaseCad.clipping]: <ClippingTestPage />,
+  [TestCaseCad.defaultCamera]: <DefaultCameraTestPage />,
+  [TestCaseCad.highlight]: <HighlightTestPage />,
+  [TestCaseCad.rotateCadModel]: <RotationTestPage />,
+  [TestCaseCad.nodeTransform]: <NodeTransformTestPage />,
+  [TestCaseCad.ghostMode]: <GhostModeTestPage />,
+  [TestCaseCad.scaledModel]: <ScaledModelTestPage />,
+  [TestCaseCad.userRenderTarget]: <UserRenderTargetTestPage />,
+};
+
+const pointcloudTestPages: Record<TestCasePointCloud, JSX.Element> = {
+  [TestCasePointCloud.default]: <DefaultPointCloudTestPage />,
+};
+
+export const testRoutesCad: Array<ExampleRoute> = Object.values(
+  TestCaseCad
+).map((test: TestCaseCad) => ({
+  path: cadTestBasePath + test,
+  menuTitle: test,
+  component: cadTestPages[test],
+}));
+
+export const testRoutesPointCloud: Array<ExampleRoute> = Object.values(
+  TestCasePointCloud
+).map((test: TestCasePointCloud) => ({
+  path: pointcloudTestBasePath + test,
+  menuTitle: test,
+  component: pointcloudTestPages[test],
+}));
