@@ -8,6 +8,7 @@ import { ModelDataClient } from '../../../utilities/networking/types';
 import { SectorCuller } from '../../../internal';
 import { createRevealManager } from '../../../public/createRevealManager';
 import { RevealManager } from '../../../public/RevealManager';
+import { LoadingStateChangeListener } from '../../..';
 
 describe('RevealManager', () => {
   const mockClient: ModelDataClient<{ id: number }> = {
@@ -24,6 +25,14 @@ describe('RevealManager', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     manager = createRevealManager('test', mockClient, { internal: { sectorCuller } });
+  });
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   test('resetRedraw() resets needsRedraw', () => {
@@ -65,5 +74,16 @@ describe('RevealManager', () => {
   test('dispose() disposes culler', () => {
     manager.dispose();
     expect(sectorCuller.dispose).toBeCalled();
+  });
+
+  test('loadingStateChanged is not triggered if loading state doesnt change', () => {
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
+    const loadingStateChangedCb: LoadingStateChangeListener = jest.fn();
+    manager.on('loadingStateChanged', loadingStateChangedCb);
+
+    manager.update(camera);
+    jest.advanceTimersByTime(10000);
+
+    expect(loadingStateChangedCb).toBeCalledTimes(1);
   });
 });
