@@ -68,7 +68,7 @@
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.1.11",
     "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.2.2",
+    "@testing-library/react": "^11.2.3",
     "@testing-library/react-hooks": "^4.0.0",
     "@types/jest": "^26.0.20",
     "@types/match-sorter": "^5.0.0",
