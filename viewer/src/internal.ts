@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 // TODO move these types into potree-core as TypeScript definitions and remove them from here

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 // TODO 02-06-2020 j-bjorne: Make index file the source of import for other packages? Adding all relative sub exports to index.ts
