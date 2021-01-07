@@ -10,6 +10,6 @@ module.exports = {
       deviceScaleFactor: 2, // https://github.com/puppeteer/puppeteer/issues/571
       isMobile: false
     },
-    dumpio: false, // get console output
+    dumpio: true, // get console output
   },
 };
