@@ -81,11 +81,8 @@ jobs:
       run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 
     - name: Visual regression tests
-      uses: nick-invision/retry@v2
-      with:
-        timeout_seconds: 120
-        max_attempts: 3
-        command: 'cd examples && yarn ci:nossl'
+      working-directory: examples
+      run: 'yarn ci:e2e'
 
     - name: Check for failed visual test diffs
       if: failure()
