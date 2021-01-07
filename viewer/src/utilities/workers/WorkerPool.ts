@@ -22,15 +22,18 @@ export class WorkerPool {
     return WorkerPool._defaultPool;
   }
 
+  private static async checkWorkerVersion(worker: RevealParserWorker) {
+    // eslint-disable-next-line no-console
+    console.log('the version is', await worker.version);
+  }
+
   private static _defaultPool: WorkerPool | undefined;
 
   private readonly workerList: PooledWorker[] = [];
 
   private workerObjUrl?: string;
 
-  constructor() {
-    const numberOfWorkers = this.determineNumberOfWorkers();
-
+  constructor(numberOfWorkers = Math.max(2, Math.min(4, window.navigator.hardwareConcurrency || 2))) {
     for (let i = 0; i < numberOfWorkers; i++) {
       const newWorker = {
         // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
@@ -41,6 +44,8 @@ export class WorkerPool {
       };
       this.workerList.push(newWorker);
     }
+
+    WorkerPool.checkWorkerVersion(this.workerList[0].worker);
 
     if (this.workerObjUrl) {
       URL.revokeObjectURL(this.workerObjUrl);
@@ -80,11 +85,5 @@ export class WorkerPool {
     const result = await work(targetWorker.worker);
     targetWorker.activeJobCount -= 1;
     return result;
-  }
-
-  // TODO j-bjorne 16-04-2020: Send in constructor instead
-  private determineNumberOfWorkers() {
-    // Use between 2-4 workers, depending on hardware
-    return Math.max(2, Math.min(4, window.navigator.hardwareConcurrency || 2));
   }
 }

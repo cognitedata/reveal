@@ -4,11 +4,26 @@
 
 import { createDetailedGeometry } from "./createDetailedGeometry";
 import type * as rustTypes from "./pkg/reveal_rs_wrapper";
+
 const rustModule = import("./pkg/reveal_rs_wrapper");
 
-import { ParseCtmResult, ParsedPrimitives, ParsePrimitiveAttribute, ParseSectorResult, SectorGeometry, SectorQuads } from "./types";
+import {
+  ParseCtmResult,
+  ParsedPrimitives,
+  ParsePrimitiveAttribute,
+  ParseSectorResult,
+  SectorGeometry,
+  SectorQuads,
+} from "./types";
+
+declare const VERSION: string;
 
 export class RevealParserWorker {
+  // even primitive value must be awaited so it's easier to have it declared as an async fn
+  public async getVersion() {
+    return VERSION;
+  }
+
   public async parseSector(buffer: Uint8Array): Promise<ParseSectorResult> {
     const rust = await rustModule;
     const sectorData = rust.parse_and_convert_sector(buffer);
@@ -65,8 +80,10 @@ export class RevealParserWorker {
     return result;
   }
 
-  public async createDetailedGeometry(i3dFile: ParseSectorResult,
-    ctmFiles: Map<string, ParseCtmResult>): Promise<SectorGeometry> {
+  public async createDetailedGeometry(
+    i3dFile: ParseSectorResult,
+    ctmFiles: Map<string, ParseCtmResult>
+  ): Promise<SectorGeometry> {
     return createDetailedGeometry(i3dFile, ctmFiles);
   }
 
@@ -220,4 +237,3 @@ export class RevealParserWorker {
     return jsAttributes;
   }
 }
-
