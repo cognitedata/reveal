@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Input, Table } from 'antd';
+import { Checkbox } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export default function Metadata({
@@ -8,11 +9,15 @@ export default function Metadata({
   metadata?: { [k: string]: string };
 }) {
   const [query, setQuery] = useState('');
+  const [hideEmpty, setHideEmpty] = useState(false);
 
   const filteredMetadata = useMemo(
     () =>
       metadata
         ? Object.entries(metadata).filter(([key, value]) => {
+            if (hideEmpty && !value) {
+              return false;
+            }
             return (
               query.length === 0 ||
               key.toLowerCase().includes(query.toLowerCase()) ||
@@ -20,7 +25,7 @@ export default function Metadata({
             );
           })
         : [],
-    [metadata, query]
+    [metadata, query, hideEmpty]
   );
   if (!metadata || Object.keys(metadata).length === 0) {
     return null;
@@ -29,12 +34,22 @@ export default function Metadata({
     <>
       <MetadataHeader>
         <h3>Metadata</h3>
-        <Input
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Filter metadata"
-          allowClear
-        />
+        <FilterContainer>
+          <Input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Filter metadata"
+            allowClear
+            style={{ maxWidth: '300px', marginRight: '16px' }}
+          />
+          <Checkbox
+            name="hideEmpty"
+            value={hideEmpty}
+            onChange={(nextState: boolean) => setHideEmpty(nextState)}
+          >
+            Hide empty
+          </Checkbox>
+        </FilterContainer>
       </MetadataHeader>
       <MetadataTableContainer>
         <Table
@@ -67,7 +82,6 @@ export default function Metadata({
 
 const MetadataHeader = styled.div`
   padding: 0 16px;
-  max-width: 300px;
 `;
 
 const MetadataTableContainer = styled.div`
@@ -76,4 +90,9 @@ const MetadataTableContainer = styled.div`
   .metadata-table-row {
     background-color: var(--cogs-white);
   }
+`;
+
+const FilterContainer = styled.div`
+  display: flex;
+  margin-bottom: 16px;
 `;
