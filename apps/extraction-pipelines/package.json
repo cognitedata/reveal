@@ -69,7 +69,7 @@
     "@storybook/react": "^6.1.11",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
-    "@testing-library/react-hooks": "^3.7.0",
+    "@testing-library/react-hooks": "^4.0.0",
     "@types/jest": "^26.0.19",
     "@types/match-sorter": "^5.0.0",
     "@types/node": "^14.14.10",
