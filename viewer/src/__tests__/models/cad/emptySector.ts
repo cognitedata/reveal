@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
