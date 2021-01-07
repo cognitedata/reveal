@@ -1,7 +1,6 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
-
 import * as THREE from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
@@ -928,7 +927,7 @@ export class Cognite3DViewer {
    *   ' at this exact point ', intersection.point
    *   );
    * ```
-   * 
+   *
    * @example For point cloud
    * ```js
    * const offsetX = 50 // pixels from the left
@@ -939,7 +938,7 @@ export class Cognite3DViewer {
    *   'You hit model ', intersection.model,
    *   ' at the point index ', intersection.pointIndex,
    *   ' at this exact point ', intersection.point
-   *   );   
+   *   );
    * ```
    * @version The options parameter was added in version 1.3.0
    */
