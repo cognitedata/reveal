@@ -12,7 +12,7 @@ import {
   LoadingStateChangeListener
 } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
-import { map, share, filter, observeOn, subscribeOn, tap, auditTime } from 'rxjs/operators';
+import { map, share, filter, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { trackError, trackLoadModel, trackCameraNavigation } from '../utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '../datamodels/cad';
 import { RenderMode } from '../datamodels/cad/rendering/RenderMode';
@@ -266,7 +266,8 @@ export class RevealManager<TModelIdentifier> {
                 itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
                 itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested
               } as LoadingState)
-          )
+          ),
+          distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
           trackError(error, {
