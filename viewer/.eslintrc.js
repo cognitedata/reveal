@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 module.exports = {
@@ -42,7 +42,7 @@ module.exports = {
       'block',
       [
         {
-          pattern: '(Copyright \\d{4}|istanbul ignore)',
+          pattern: `(Copyright ${new Date().getFullYear()}|istanbul ignore)`,
           template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
         }
       ]
