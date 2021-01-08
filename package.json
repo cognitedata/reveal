@@ -34,7 +34,7 @@
     "query-string": "^6.13.6",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "react-i18next": "^11.7.3",
+    "react-i18next": "^11.8.5",
     "react-scripts": "3.4.3",
     "single-spa-react": "^3.1.0",
     "styled-components": "^5.2.0",
