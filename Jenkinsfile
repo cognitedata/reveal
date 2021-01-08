@@ -5,7 +5,7 @@ static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#datastudio-logs"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-context-ui-pnid'
-static final String APPLICATION_REPO_ID = 'cdf-context-ui-pnid'
+static final String APPLICATION_REPO_ID = 'context-ui-pnid'
 static final String NODE_VERSION = 'node:12'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String SENTRY_PROJECT_NAME = "watchtower"
