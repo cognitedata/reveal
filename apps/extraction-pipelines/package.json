@@ -78,7 +78,7 @@
     "@types/react-modal": "^3.10.6",
     "@types/react-table": "^7.0.26",
     "@types/single-spa-react": "^3.0.0",
-    "@types/sinon": "^9.0.9",
+    "@types/sinon": "^9.0.10",
     "@types/styled-components": "^5.1.7",
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.3.0",
