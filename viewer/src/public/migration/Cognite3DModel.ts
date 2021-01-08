@@ -538,6 +538,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Removes selection from the node by node ID.
    * @param nodeId
+   * @deprecated Use {@link Cognite3DModel.deselectNodeByTreeIndex}.
    */
   async deselectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
