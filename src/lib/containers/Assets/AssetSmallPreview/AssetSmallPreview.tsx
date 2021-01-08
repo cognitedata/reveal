@@ -22,8 +22,8 @@ import { SelectableItemProps, SmallPreviewProps } from 'lib/CommonProps';
 import { useSelectionButton } from 'lib/hooks/useSelection';
 
 import { lightGrey } from 'lib/utils/Colors';
-import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
+import { createLink } from 'lib/utils/URLUtils';
 
 const LIST_ITEM_HEIGHT = 42;
 

@@ -14,7 +14,7 @@ import { SelectableItemsProps } from 'lib/CommonProps';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
 import { useRelationshipCount } from 'lib/hooks/RelationshipHooks';
 import { usePermissions } from 'lib/hooks/CustomHooks';
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink } from 'lib/utils/URLUtils';
 
 export type RelationshipTableProps = {
   type: ResourceType;

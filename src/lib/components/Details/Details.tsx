@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { convertResourceType, ResourceType } from 'lib/types';
 import { DataSet } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink } from 'lib/utils/URLUtils';
 
 const { Text } = Typography;
 
