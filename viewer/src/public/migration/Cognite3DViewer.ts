@@ -1076,7 +1076,7 @@ export class Cognite3DViewer {
 
     const tmpTarget = new THREE.Vector3();
     const tmpPosition = new THREE.Vector3();
-    animation
+    const tween = animation
       .to(to, duration)
       .easing((x: number) => TWEEN.Easing.Circular.Out(x))
       .onUpdate(() => {
@@ -1099,6 +1099,7 @@ export class Cognite3DViewer {
         this.canvas.removeEventListener('pointerdown', stopTween);
       })
       .start(TWEEN.now());
+    tween.update(TWEEN.now());
   }
 
   /** @private */
