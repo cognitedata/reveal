@@ -47,6 +47,7 @@ const mockResponseV2 = {
       lastSuccess: 1584066700000,
       lastFailure: 1584065700000,
       lastSeen: 1584064700000,
+      lastMessage: 'This is a mock failed run error message',
       schedule: '0 0 9 1/1 * ? *',
       owner: {
         email: 'duncan.silvey@cognite.com',

@@ -23,6 +23,7 @@ export interface Integration {
   lastSuccess?: number; // milliseconds
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds
+  lastMessage?: string;
   rawTables?: Raw[];
 }
 

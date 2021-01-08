@@ -2,10 +2,11 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { getMockResponse } from '../../../utils/mockResponse';
 import { render } from '../../../utils/test';
-import FailMessageModal from './FailMessageModal';
+import FailMessageModal, { NO_ERROR_MESSAGE } from './FailMessageModal';
 
 describe('FailMessageModal', () => {
-  const integration = getMockResponse()[0];
+  const mockIntegration = getMockResponse()[0];
+  const cancelMock = jest.fn();
   beforeEach(() => {
     jest.resetAllMocks();
     const modalRoot = document.createElement('div');
@@ -14,25 +15,40 @@ describe('FailMessageModal', () => {
   });
 
   test('Check header of FailMessageModal', async () => {
-    const cancelMock = jest.fn();
-
     render(
       <FailMessageModal
         visible
         onCancel={cancelMock}
-        integration={integration}
+        integration={mockIntegration}
       />
     );
 
     const modalTitle = screen.getByText('Fail message');
     expect(modalTitle).toBeInTheDocument();
 
-    const integrationName = screen.getByText(getMockResponse()[0].name);
+    const integrationName = screen.getByText(mockIntegration.name);
     expect(integrationName).toBeInTheDocument();
 
     const externalId = screen.getByText(
-      new RegExp(getMockResponse()[0].externalId, 'i')
+      new RegExp(mockIntegration.externalId, 'i')
     );
     expect(externalId).toBeInTheDocument();
+
+    const failedRunErrorMessage = screen.getByText(
+      new RegExp(mockIntegration.lastMessage, 'i')
+    );
+    expect(failedRunErrorMessage).toBeInTheDocument();
+  });
+
+  test('Display fallback message if not message is set', async () => {
+    render(
+      <FailMessageModal
+        visible
+        onCancel={cancelMock}
+        integration={getMockResponse()[1]}
+      />
+    );
+    const fallbackMessage = screen.getByText(NO_ERROR_MESSAGE);
+    expect(fallbackMessage).toBeInTheDocument();
   });
 });

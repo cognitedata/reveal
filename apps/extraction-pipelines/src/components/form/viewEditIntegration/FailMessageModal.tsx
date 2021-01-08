@@ -38,6 +38,7 @@ interface OwnProps {
 
 type Props = OwnProps;
 
+export const NO_ERROR_MESSAGE: Readonly<string> = 'No error message set';
 const FailMessageModal: FunctionComponent<Props> = ({
   visible,
   onCancel,
@@ -81,8 +82,7 @@ const FailMessageModal: FunctionComponent<Props> = ({
             time={integration.lastFailure as number}
           />
           <StyledErrorText>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry, lorem Ipsum is simply dummy text.
+            {integration.lastMessage ?? <i>{NO_ERROR_MESSAGE}</i>}
           </StyledErrorText>
         </StyledContent>
       </ModalContent>
