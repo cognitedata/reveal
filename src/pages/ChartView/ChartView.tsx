@@ -352,7 +352,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
       );
 
-      const unitConversionOptions = preferredUnitOption?.conversions?.map(
+      const unitConversionOptions = inputUnitOption?.conversions?.map(
         (conversion) =>
           units.find((unitOption) => unitOption.value === conversion)
       );
