@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Modal, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import chartsSlice, { chartSelectors, ChartTimeSeries } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -24,6 +24,7 @@ import { NodeProgress } from '@cognite/connect';
 import DatePicker from 'react-datepicker';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
+import DataQualityReport from 'components/DataQualityReport';
 import {
   Header,
   TopPaneWrapper,
@@ -65,7 +66,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
+  const isWorkspaceMode = workspaceMode === 'workspace';
   const isEditorMode = workspaceMode === 'editor';
+  const isDataQualityMode = workspaceMode === 'report';
+
+  const [dataQualityReport, setDataQualityReport] = useState<{
+    timeSeriesId?: string;
+    reportType?: string;
+  }>({});
 
   const workflows = useSelector((state) =>
     chart?.workflowCollection?.map(({ id }) => state.workflows.entities[id])
@@ -268,6 +276,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  const handleOpenDataQualityReport = (timeSeriesId: string) => {
+    setDataQualityReport({ timeSeriesId, reportType: 'gaps' });
+  };
+
+  const handleCloseDataQualityReport = () => {
+    setDataQualityReport({});
+  };
+
   const renderStatusIcon = (status?: WorkflowRunStatus) => {
     switch (status) {
       case 'RUNNING':
@@ -304,7 +320,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <SourceName>Name</SourceName>
         </SourceItem>
       </th>
-      {!isEditorMode && (
+      {isWorkspaceMode && (
         <>
           <th style={{ width: 110 }}>
             <SourceItem>
@@ -324,6 +340,20 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <th>
             <SourceItem>
               <SourceName>Description</SourceName>
+            </SourceItem>
+          </th>
+        </>
+      )}
+      {isDataQualityMode && (
+        <>
+          <th style={{ width: 200 }}>
+            <SourceItem>
+              <SourceName>Data Quality Reports</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Warnings</SourceName>
             </SourceItem>
           </th>
         </>
@@ -446,7 +476,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               </SourceMenu>
             </SourceItem>
           </td>
-          {!isEditorMode && (
+          {isWorkspaceMode && (
             <>
               <td>
                 <Dropdown
@@ -496,6 +526,38 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               <td>
                 <SourceItem>
                   <SourceName>{description}</SourceName>
+                </SourceItem>
+              </td>
+            </>
+          )}
+          {isDataQualityMode && (
+            <>
+              <td>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>
+                        <span style={{ wordBreak: 'break-word' }}>
+                          Select data quality report
+                        </span>
+                      </Menu.Header>
+                      <Menu.Item
+                        onClick={() => handleOpenDataQualityReport(id)}
+                      >
+                        Gaps
+                      </Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <SourceItem style={{ justifyContent: 'space-between' }}>
+                    <SourceName>Reports</SourceName>
+                    <Icon style={{ marginRight: 10 }} type="CaretDown" />
+                  </SourceItem>
+                </Dropdown>
+              </td>
+              <td>
+                <SourceItem>
+                  <Icon type="TriangleWarning" />
                 </SourceItem>
               </td>
             </>
@@ -560,7 +622,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             </SourceMenu>
           </SourceItem>
         </td>
-        {!isEditorMode && (
+        {isWorkspaceMode && (
           <>
             <td>
               <SourceItem>
@@ -698,10 +760,23 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           >
             <ToolbarIcon type="Edit" />
             <span style={{ paddingLeft: 10, paddingRight: 10 }}>
-              Node Editor
+              Calculations
+            </span>
+          </BottombarItem>
+          <BottombarItem
+            isActive={workspaceMode === 'report'}
+            onClick={() => setWorkspaceMode('report')}
+          >
+            <ToolbarIcon type="BarChart" />
+            <span style={{ paddingLeft: 10, paddingRight: 10 }}>
+              Data Quality Report
             </span>
           </BottombarItem>
         </BottombarWrapper>
+        <DataQualityReport
+          handleClose={handleCloseDataQualityReport}
+          {...dataQualityReport}
+        />
       </ContentWrapper>
     </ChartViewContainer>
   );
