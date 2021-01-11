@@ -1,8 +1,9 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export function* groupMeshesByNumber(id: Float64Array): Generator<{ id: number; meshIndices: number[] }> {
-  const groupedByFileId = new Array<{ fileId: number; index: number }>(id.length);
+
+export function* groupMeshesByNumber(id: Float64Array): Generator<{ id: number; meshIndices: number[]; }> {
+  const groupedByFileId = new Array<{ fileId: number; index: number; }>(id.length);
   for (let i = 0; i < id.length; ++i) {
     groupedByFileId[i] = { fileId: id[i], index: i };
   }
@@ -20,7 +21,7 @@ export function* groupMeshesByNumber(id: Float64Array): Generator<{ id: number; 
   }
 }
 
-export function lastIndexOf<T>(
+function lastIndexOf<T>(
   sortedArray: T[],
   value: number,
   firstSearchIndex: number,

@@ -2,12 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { groupMeshesByNumber } from '../../../../datamodels/cad/sector/groupMeshesByNumber';
+import { groupMeshesByNumber } from "./groupMeshesByNumber";
 
 describe('groupMeshesByNumber', () => {
   test('empty input yields no result', () => {
     const result = groupMeshesByNumber(new Float64Array(0));
-    expect(result).toBeEmpty();
+    expect(Array.from(result)).toEqual([]);
   });
 
   test('single item returns one group', () => {

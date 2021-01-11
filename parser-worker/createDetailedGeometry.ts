@@ -1,7 +1,8 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
+import { groupMeshesByNumber } from "./groupMeshesByNumber";
 import { InstancedMesh, InstancedMeshFile, ParseCtmResult, ParseSectorResult, SectorGeometry, TriangleMesh } from "./types";
 
 export async function createDetailedGeometry(
@@ -13,12 +14,10 @@ export async function createDetailedGeometry(
   const finalTriangleMeshes = (() => {
     const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
 
-    const meshesGroupedByFile = groupMeshesByNumber(fileIds);
-
     const finalMeshes: TriangleMesh[] = [];
     // Merge meshes by file
     // TODO do this in Rust instead
-    for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+    for (const {id: fileId, meshIndices} of groupMeshesByNumber(fileIds)) {
       const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
       const offsets = createOffsetsArray(fileTriangleCounts);
       // Load CTM (geometry)
@@ -62,13 +61,12 @@ export async function createDetailedGeometry(
 
   const finalInstanceMeshes = (() => {
     const { fileIds, colors, treeIndices, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
-    const meshesGroupedByFile = groupMeshesByNumber(fileIds);
 
     const finalMeshes: InstancedMeshFile[] = [];
     // Merge meshes by file
     // TODO do this in Rust instead
     // TODO de-duplicate this with the merged meshes above
-    for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+    for (const {id: fileId, meshIndices } of groupMeshesByNumber(fileIds)) {
       const fileName = `mesh_${fileId}.ctm`;
       const ctm = ctmFiles.get(fileName)!;
 
@@ -79,9 +77,8 @@ export async function createDetailedGeometry(
 
       const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
       const fileTriangleCounts = new Float64Array(meshIndices.map(i => triangleCounts[i]));
-      const fileMeshesGroupedByOffsets = groupMeshesByNumber(fileTriangleOffsets);
 
-      for (const [triangleOffset, fileMeshIndices] of fileMeshesGroupedByOffsets) {
+      for (const { id : triangleOffset, meshIndices: fileMeshIndices} of groupMeshesByNumber(fileTriangleOffsets)) {
         // NOTE the triangle counts should be the same for all meshes with the same offset,
         // hence we can look up only fileMeshIndices[0] instead of enumerating here
         const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
@@ -129,20 +126,6 @@ export async function createDetailedGeometry(
   return sector;
 }
 
-function groupMeshesByNumber(fileIds: Float64Array) {
-  const meshesGroupedByFile = new Map<number, number[]>();
-  for (let i = 0; i < fileIds.length; ++i) {
-    const fileId = fileIds[i];
-    const oldValue = meshesGroupedByFile.get(fileId);
-    if (oldValue) {
-      meshesGroupedByFile.set(fileId, [...oldValue, i]);
-    } else {
-      meshesGroupedByFile.set(fileId, [i]);
-    }
-  }
-  return meshesGroupedByFile;
-}
-
 function createOffsetsArray(array: number[]): number[] {
   if (array.length === 0) {
     return [];
@@ -155,3 +138,4 @@ function createOffsetsArray(array: number[]): number[] {
   }
   return offsets;
 }
+

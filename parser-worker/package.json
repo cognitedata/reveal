@@ -28,7 +28,7 @@
     "local-cdn:viewer": "cd ../viewer && cross-var cross-env PUBLIC_PATH=https://localhost:$npm_package_conf_port/$npm_package_conf_folder/ yarn build",
     "local-cdn:start": "cd ../examples && cross-var cross-env PORT=$npm_package_conf_port yarn start",
     "local-cdn": "yarn local-cdn:build && yarn local-cdn:copy && yarn local-cdn:viewer && yarn local-cdn:start",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "prebump": "yarn version --no-git-tag-version && yarn",
     "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
     "bump:commit": "cross-var git commit -am \"chore(parser-worker): bump version $npm_package_version\"",
@@ -47,11 +47,14 @@
     "comlink": "^4.3.0"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.20",
     "cpy-cli": "^3.1.1",
     "cross-env": "^7.0.2",
     "cross-var": "^1.1.0",
+    "jest": "^26.6.3",
     "mkdirp": "^1.0.4",
     "rimraf": "^3.0.2",
+    "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.2",
     "typescript": "^4.0.2",
     "webpack": "^4.44.1",
