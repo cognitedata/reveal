@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Select, SpacedRow } from 'lib/components';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
+import { useMetadataValues } from 'lib/hooks/MetadataAggregateHooks';
+import { useFlag } from '@cognite/react-feature-flags';
 
 const LOCKSVG = (
   <svg
@@ -120,7 +122,10 @@ const FilterItem = ({
   };
   lockedFilters: string[];
   categories: {
-    [key: string]: string[];
+    [key: string]: {
+      value: string;
+      count?: number;
+    }[];
   };
   setFilter: (selectedKey: string, selectedValue: string) => void;
   onCancel?: (shouldDelete: boolean) => void;
@@ -141,10 +146,50 @@ const FilterItem = ({
     }
   }, [initialValue]);
 
+  const isMetadataAggregatesEnabled = useFlag('METADATA_AGGREGATES_allowlist');
+  const {
+    data: metadataValues = [],
+    isFetching,
+    isFetched,
+  } = useMetadataValues(selectedKey, {
+    enabled: !!selectedKey && isMetadataAggregatesEnabled,
+  });
+
   const allowEdit =
     selectedKey &&
     selectedValue &&
     (selectedKey !== initialKey || selectedValue !== initialValue);
+
+  const options = Object.keys(categories)
+    .sort((a, b) => {
+      if (a === 'undefined') {
+        return -1;
+      }
+      if (b === 'undefined') {
+        return 1;
+      }
+      return a.localeCompare(b);
+    })
+    .map(category => {
+      return {
+        label: category,
+        options: categories[category].map(el => ({
+          label: `${el.value} ${el.count ? `(${el.count})` : ''}`,
+          value: el.value,
+          disabled: lockedFilters.includes(el.value),
+        })),
+      };
+    });
+
+  const getMetadataValues = (key: string) => {
+    return isMetadataAggregatesEnabled && isFetched
+      ? metadataValues.map((el: any) => ({
+          label: `${el.value} (${el.count})`,
+          value: el.value,
+        }))
+      : metadata[key]?.map(el => ({ label: el, value: el }));
+  };
+
   return (
     <>
       <FilterItemWrapper>
@@ -179,26 +224,7 @@ const FilterItem = ({
               }
               setSelectedValue(null);
             }}
-            options={Object.keys(categories)
-              .sort((a, b) => {
-                if (a === 'undefined') {
-                  return -1;
-                }
-                if (b === 'undefined') {
-                  return 1;
-                }
-                return a.localeCompare(b);
-              })
-              .map(category => {
-                return {
-                  label: category,
-                  options: categories[category].map(el => ({
-                    label: el,
-                    value: el,
-                    disabled: lockedFilters.includes(el),
-                  })),
-                };
-              })}
+            options={options}
           />
         </div>
         <div className="value">
@@ -229,11 +255,8 @@ const FilterItem = ({
                 setSelectedValue((item as { value: string })?.value);
               }
             }}
-            options={
-              selectedKey
-                ? metadata[selectedKey]?.map(el => ({ label: el, value: el }))
-                : []
-            }
+            options={selectedKey ? getMetadataValues(selectedKey) : []}
+            isLoading={isFetching}
           />
         </div>
       </FilterItemWrapper>
@@ -305,6 +328,10 @@ export type FilterFormProps = {
   metadata: {
     [key: string]: string[];
   };
+  keys?: {
+    value: string;
+    count: number;
+  }[];
   filters?: {
     [key: string]: string;
   };
@@ -317,6 +344,7 @@ export type FilterFormProps = {
 
 export const FilterForm = ({
   metadata,
+  keys,
   metadataCategory = {},
   filters = {},
   lockedFilters = [],
@@ -324,17 +352,34 @@ export const FilterForm = ({
 }: FilterFormProps) => {
   const [editingKeys, setEditingKeys] = useState<string[]>([]);
 
-  const allKeys = new Set<string>();
-  Object.keys(metadataCategory).forEach(el => allKeys.add(el));
-  Object.keys(metadata).forEach(el => allKeys.add(el));
+  const allKeys = new Set<{
+    value: string;
+    count?: number;
+  }>();
 
-  const categories = [...allKeys].reduce((prev, el) => {
-    if (!prev[metadataCategory[el]]) {
-      prev[metadataCategory[el] || 'undefined'] = [] as string[];
+  if (keys && keys.length > 0) {
+    keys.forEach(el => allKeys.add(el));
+  } else {
+    Object.keys(metadataCategory).forEach(el => allKeys.add({ value: el }));
+    Object.keys(metadata).forEach(el => allKeys.add({ value: el }));
+  }
+
+  const categories = [...allKeys].reduce(
+    (prev, el) => {
+      if (!prev[metadataCategory[el.value]]) {
+        prev[metadataCategory[el.value] || 'undefined'] = [];
+      }
+      prev[metadataCategory[el.value] || 'undefined'].push(el);
+      return prev;
+    },
+    {} as {
+      [key: string]: {
+        value: string;
+        count?: number;
+      }[];
     }
-    prev[metadataCategory[el] || 'undefined'].push(el);
-    return prev;
-  }, {} as { [key: string]: string[] });
+  );
+
   return (
     <Wrapper>
       {Object.keys(filters)

@@ -1,6 +1,8 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { AssetFilterProps, InternalId } from '@cognite/sdk';
+import { useMetadataKeys } from 'lib/hooks/MetadataAggregateHooks';
+import { useFlag } from '@cognite/react-feature-flags';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
@@ -18,6 +20,12 @@ export const AssetFilters = ({
   setFilter: (newFilter: AssetFilterProps) => void;
 }) => {
   const { data: items = [] } = useList('assets', { filter, limit: 1000 });
+
+  const isMetadataAggregatesEnabled = useFlag('METADATA_AGGREGATES_allowlist');
+  const { data: metadataKeys = [] } = useMetadataKeys(filter, {
+    enabled: isMetadataAggregatesEnabled,
+  });
+
   return (
     <div>
       <LabelFilter
@@ -74,6 +82,7 @@ export const AssetFilters = ({
       />
       <MetadataFilter
         items={items}
+        keys={metadataKeys}
         value={filter.metadata}
         setValue={newMetadata =>
           setFilter({

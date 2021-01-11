@@ -14,29 +14,36 @@ export const MetadataFilter = <
   T extends { metadata?: { [key: string]: string } }
 >({
   items,
+  keys,
   value,
   setValue,
 }: {
   items: T[];
+  keys?: { value: string; count: number }[];
   value: { [key in string]: string } | undefined;
   setValue: (newValue: { [key in string]: string } | undefined) => void;
 }) => {
-  const tmpMetadata = items.reduce((prev, el) => {
-    Object.keys(el.metadata || {}).forEach(key => {
-      if (el.metadata![key].length !== 0) {
-        if (!prev[key]) {
-          prev[key] = new Set<string>();
-        }
-        prev[key].add(el.metadata![key]);
-      }
-    });
-    return prev;
-  }, {} as { [key: string]: Set<string> });
+  let metadata = {};
 
-  const metadata = Object.keys(tmpMetadata).reduce((prev, key) => {
-    prev[key] = [...tmpMetadata[key]];
-    return prev;
-  }, {} as { [key: string]: string[] });
+  // No need to extract metadata if keys are already supplied by the API
+  if (!keys || keys.length === 0) {
+    const tmpMetadata = items.reduce((prev, el) => {
+      Object.keys(el.metadata || {}).forEach(key => {
+        if (el.metadata![key].length !== 0) {
+          if (!prev[key]) {
+            prev[key] = new Set<string>();
+          }
+          prev[key].add(el.metadata![key]);
+        }
+      });
+      return prev;
+    }, {} as { [key: string]: Set<string> });
+
+    metadata = Object.keys(tmpMetadata).reduce((prev, key) => {
+      prev[key] = [...tmpMetadata[key]];
+      return prev;
+    }, {} as { [key: string]: string[] });
+  }
 
   const setFilter = (newFilters: { [key: string]: string }) => {
     setValue(newFilters);
@@ -60,7 +67,12 @@ export const MetadataFilter = <
           </Button>
         )}
       </FilterHeader>
-      <FilterForm metadata={metadata} filters={value} setFilters={setFilter} />
+      <FilterForm
+        metadata={metadata}
+        keys={keys}
+        filters={value}
+        setFilters={setFilter}
+      />
     </>
   );
 };
