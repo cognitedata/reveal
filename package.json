@@ -36,7 +36,7 @@
     "react-dom": "^16.14.0",
     "react-i18next": "^11.8.5",
     "react-scripts": "3.4.3",
-    "single-spa-react": "^3.1.0",
+    "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
     "systemjs-webpack-interop": "^2.1.2"
   },
