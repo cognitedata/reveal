@@ -65,7 +65,7 @@ const DataQualityReport = ({
             </Button>
           </div>
         }
-        title="Gap Analysis Report"
+        title={`Gap Analysis Report - ${timeSeriesId}`}
       >
         {isLoading ? (
           <div>Please wait&hellip;</div>
