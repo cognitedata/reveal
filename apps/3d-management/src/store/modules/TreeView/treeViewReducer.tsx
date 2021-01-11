@@ -16,6 +16,7 @@ import {
   InitialFetchError,
   InitialFetchOk,
   InitialFetch,
+  TreeIndex,
 } from 'src/store/modules/TreeView/types';
 import {
   addChildrenIntoTree,
@@ -328,6 +329,27 @@ export const expandNodeByTreeIndex = (() => {
             },
           ];
 
+          // prefetch instead of request it one after another in cycle below;
+          const wholeHierarchyCursors: Record<
+            TreeIndex,
+            Promise<CustomDataNode>
+          > = {};
+
+          for (let i = 1; i < nodes.length; i++) {
+            wholeHierarchyCursors[nodes[i - 1].treeIndex] = fetchTreeNodes({
+              modelId: payload.modelId,
+              revisionId: payload.revisionId,
+              parent: {
+                treeIndex: nodes[i - 1].treeIndex,
+                nodeId: nodes[i - 1].id,
+              },
+              params: {
+                depth: 1, // all we need is cursor
+                limit: 1,
+              },
+            }).then(([_, cursorOption]) => cursorOption);
+          }
+
           let parent = treeBranch[0] as TreeDataNode;
 
           // we don't check root since we always have it
@@ -343,34 +365,20 @@ export const expandNodeByTreeIndex = (() => {
               continue;
             }
 
-            // eslint-disable-next-line no-await-in-loop
-            const parentNodeAndChildrenCursorOption = await fetchTreeNodes({
-              modelId: payload.modelId,
-              revisionId: payload.revisionId,
-              parent: {
-                treeIndex: nodes[i - 1].treeIndex,
-                nodeId: nodes[i - 1].id,
-              },
-              params: {
-                depth: 1, // all we need is cursor
-                limit: 1,
-              },
-            });
-
             const newChildren: CustomDataNode[] = node3dToCustomDataNode([
               nodes[i],
             ]);
 
-            if (
-              !parentChildren.find((n) => 'cursor' in n) &&
-              parentNodeAndChildrenCursorOption[1]
-            ) {
+            if (!parentChildren.find((n) => 'cursor' in n)) {
               const currentSubtreeSize = (parentChildren as TreeDataNode[]).reduce(
                 (sum, child) => sum + child.meta.subtreeSize,
-                1 + nodes[i].subtreeSize // 1 is for parent
+                nodes[i].subtreeSize + 1 // +1 is for parent
               );
               if (parent.meta.subtreeSize > currentSubtreeSize) {
-                newChildren.push(parentNodeAndChildrenCursorOption[1]);
+                newChildren.push(
+                  // eslint-disable-next-line no-await-in-loop
+                  await wholeHierarchyCursors[nodes[i - 1].treeIndex]
+                );
               }
             }
 
