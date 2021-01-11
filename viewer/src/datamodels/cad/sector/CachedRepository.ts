@@ -45,6 +45,7 @@ import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { Group } from 'three';
 import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
+import { groupMeshesByNumber } from './groupMeshesByNumber';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {
@@ -461,51 +462,4 @@ export class CachedRepository implements Repository {
   private ctmFileCacheKey(request: { blobUrl: string; fileName: string }) {
     return '' + request.blobUrl + '.' + request.fileName;
   }
-}
-
-function* groupMeshesByNumber(id: Float64Array): Generator<{ id: number; meshIndices: number[] }> {
-  const groupedByFileId = new Array<{ fileId: number; index: number }>(id.length);
-  for (let i = 0; i < id.length; ++i) {
-    groupedByFileId[i] = { fileId: id[i], index: i };
-  }
-  groupedByFileId.sort((a, b) => a.fileId - b.fileId);
-
-  let i = 0;
-  while (i < groupedByFileId.length) {
-    const fileId = groupedByFileId[i].fileId;
-    // Determine sequence of occurences with same fileId
-    const last = findFirstGreaterThan(groupedByFileId, fileId, i + 1, x => x.fileId);
-
-    yield { id: fileId, meshIndices: groupedByFileId.slice(i, last).map(x => x.index) };
-    // Skip to next group
-    i = last;
-  }
-}
-
-function findFirstGreaterThan<T>(
-  sortedArray: T[],
-  pivotValue: number,
-  searchFromIndex: number,
-  elementToNumber: (element: T) => number
-) {
-  let start = searchFromIndex;
-  let end = sortedArray.length - 1;
-
-  while (start <= end) {
-    const middle = Math.floor((start + end) / 2);
-    const elementValue = elementToNumber(sortedArray[middle]);
-
-    if (elementValue > pivotValue) {
-      // found value greater than 'pivot'
-      return middle;
-    } else if (elementValue <= pivotValue) {
-      // continue searching to the right
-      start = middle + 1;
-    } else {
-      // search searching to the left
-      end = middle - 1;
-    }
-  }
-
-  return sortedArray.length;
 }
