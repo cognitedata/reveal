@@ -26,7 +26,7 @@ describe('OverviewTab', () => {
     );
     render(<OverviewTab />, { wrapper });
     await waitFor(() => {
-      const sidePanelHeading = screen.getByRole('table');
+      const sidePanelHeading = screen.getByRole('grid');
       expect(sidePanelHeading).toBeInTheDocument();
     });
   });

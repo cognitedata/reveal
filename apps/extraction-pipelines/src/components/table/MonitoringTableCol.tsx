@@ -1,21 +1,29 @@
 import React from 'react';
-import { Cell } from 'react-table';
+import { Cell, Column, HeaderProps } from 'react-table';
 import { Icon } from '@cognite/cogs.js';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import { Run } from '../../model/Runs';
+import SorterIndicator from './SorterIndicator';
 
-enum MonitoringTableHeadings {
+export enum MonitoringTableHeadings {
   TIMESTAMP = 'Timestamp',
   STATUS_RUN = 'Status run',
   STATUS_SEEN = 'Status seen',
 }
 
-export const getMonitoringTableCol = () => {
+export const getMonitoringTableCol = (): Column<Run>[] => {
   return [
     {
-      Header: MonitoringTableHeadings.TIMESTAMP,
+      Header: ({ column }: HeaderProps<Run>) => {
+        return (
+          <SorterIndicator
+            name={MonitoringTableHeadings.TIMESTAMP}
+            column={column}
+          />
+        );
+      },
       accessor: 'timestamp',
       sortType: 'basic',
       Cell: ({ row }: Cell<Run>) => {

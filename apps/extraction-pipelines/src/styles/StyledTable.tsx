@@ -2,32 +2,6 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import React from 'react';
 
-export const EditStyleTable = styled.table`
-  tbody {
-    tr {
-      &:first-child {
-        td {
-          border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-        }
-      }
-      td {
-        height: 3.5rem;
-        &:first-child {
-          width: 18%;
-        }
-        &:last-child {
-          min-width: 12rem;
-          width: 22%;
-        }
-        &.name,
-        &.email {
-          width: 29%;
-        }
-      }
-    }
-  }
-`;
-
 export const StyledTable = styled.div`
   .cogs-table {
     border-spacing: 0;
@@ -37,7 +11,7 @@ export const StyledTable = styled.div`
         border-bottom: ${Colors['greyscale-grey3'].hex()};
         th {
           background-color: white;
-          padding: 1rem 0.4375rem;
+          padding: 1rem 0.75rem;
           white-space: nowrap;
           &:last-child {
             width: 3rem;

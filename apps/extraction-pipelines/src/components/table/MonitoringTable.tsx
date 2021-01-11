@@ -10,12 +10,11 @@ import {
   Row,
   Column,
 } from 'react-table';
-import SorterIndicator from '../table/SorterIndicator';
 import { Run } from '../../model/Runs';
 
 export interface TableProps {
   data: Run[];
-  columns: Column[];
+  columns: Column<Run>[];
 }
 
 const MonitoringTable = ({ columns, data }: TableProps) => {
@@ -44,18 +43,18 @@ const MonitoringTable = ({ columns, data }: TableProps) => {
   );
 
   return (
-    <table {...getTableProps()} className="cogs-table integrations-table">
+    <table {...getTableProps()} className="cogs-table">
       <thead>
-        {headerGroups.map((headerGroup: HeaderGroup) => (
+        {headerGroups.map((headerGroup: HeaderGroup<Run>) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((col: HeaderGroup) => {
+            {headerGroup.headers.map((col: HeaderGroup<Run>) => {
               return (
                 <th
+                  scope="col"
                   {...col.getHeaderProps(col.getSortByToggleProps())}
                   className={`${col.id}-col`}
                 >
                   {col.disableFilters && col.render('Header')}
-                  {col.canSort && <SorterIndicator sCol={col} />}
                   {!col.disableFilters && col.render('Filter')}
                 </th>
               );
@@ -64,7 +63,7 @@ const MonitoringTable = ({ columns, data }: TableProps) => {
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row: Row) => {
+        {rows.map((row: Row<Run>) => {
           prepareRow(row);
           const isParentRow = row.subRows.length > 0;
           const isSeenStatusRow = !row.values.status;
@@ -77,7 +76,7 @@ const MonitoringTable = ({ columns, data }: TableProps) => {
               } ${isParentRow ? 'parent-row' : ''}
               ${isSeenStatusRow ? 'seen-status-row' : ''}`}
             >
-              {row.cells.map((cell: Cell) => {
+              {row.cells.map((cell: Cell<Run>) => {
                 return (
                   <td
                     {...cell.getCellProps()}

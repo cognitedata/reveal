@@ -4,7 +4,7 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import ITable from './ITable';
 import { getMockResponse } from '../../utils/mockResponse';
-import { getIntegrationTableCol } from './IntegrationTableCol';
+import { getIntegrationTableCol, TableHeadings } from './IntegrationTableCol';
 import { renderWithSelectedIntegrationContext } from '../../utils/test/render';
 
 describe('<ITable/>', () => {
@@ -21,21 +21,27 @@ describe('<ITable/>', () => {
     jest.resetAllMocks();
   });
   test('Render without errors', () => {
-    const colsWithHeaders = cols.filter((col) => col.Header);
-    colsWithHeaders.forEach(({ Header }) => {
-      const header = screen.getByText(Header);
+    const colsWithHeaders = Object.entries(TableHeadings).map(([_, v]) => v);
+    colsWithHeaders.forEach((heading) => {
+      const header = screen.getByText(heading);
       expect(header).toBeInTheDocument();
     });
   });
 
   test('render and interact with row selection', () => {
-    const sapLabel = screen.getByLabelText(getMockResponse()[1].name);
+    const sapLabel = screen.getByText(getMockResponse()[1].name);
     fireEvent.click(sapLabel);
-    expect((sapLabel as HTMLInputElement).checked).toEqual(true);
-    const azureLabel = screen.getByLabelText(getMockResponse()[0].name);
+    expect(
+      (sapLabel as HTMLButtonElement).getAttribute('aria-selected')
+    ).toEqual('true');
+    const azureLabel = screen.getByText(getMockResponse()[0].name);
     fireEvent.click(azureLabel);
-    expect((azureLabel as HTMLInputElement).checked).toEqual(true);
-    expect((sapLabel as HTMLInputElement).checked).toEqual(false);
+    expect(
+      (azureLabel as HTMLButtonElement).getAttribute('aria-selected')
+    ).toEqual('true');
+    expect(
+      (sapLabel as HTMLButtonElement).getAttribute('aria-selected')
+    ).toEqual('false');
   });
 
   test('render and interact with sort on header: Name', () => {
@@ -61,8 +67,8 @@ describe('<ITable/>', () => {
     // should filter the sap integration
     fireEvent.change(searchInput, { target: { value: searchName.string } });
     await waitFor(() => {
-      const resultRows = screen.getAllByLabelText(searchName.regexp);
-      expect(resultRows.length).toEqual(2); // label on name col + label on action button (same row)
+      const resultRows = screen.getAllByText(searchName.regexp);
+      expect(resultRows.length).toEqual(1);
     });
 
     // clear search should show all rows
@@ -81,13 +87,6 @@ describe('<ITable/>', () => {
     await waitFor(() => {
       const b = screen.getAllByLabelText(search.regexp);
       expect(b.length).toEqual(1);
-    });
-
-    // headers
-    const headings = getIntegrationTableCol().map((col) => col.Header);
-    headings.forEach((heading) => {
-      const colHeading = screen.getByText(heading);
-      expect(colHeading.textContent).toEqual(heading);
     });
 
     // should filter from created by col

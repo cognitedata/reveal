@@ -1,19 +1,12 @@
 import React from 'react';
 import { Row } from 'react-table';
-import { Badge, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
+import { Badge, Colors, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { StyledDropdown } from 'styles/StyledDropdown';
 import { Status } from '../../model/Status';
+import { NoStyleBtn } from '../../styles/StyledButton';
 
-const StyledButton = styled((props) => (
-  <Button {...props}>{props.children}</Button>
-))`
-  display: flex;
-  &:hover {
-    display: flex;
-  }
-`;
 const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
   .cogs-menu-item {
     .cogs-icon-Checkmark {
@@ -85,14 +78,11 @@ function StatusFilterDropdown<D extends object>({
   );
 
   return (
-    <>
-      <StyledDropdown content={MenuContent}>
-        <StyledButton unstyled>
-          {Header}
-          <Icon type="CaretDown" />
-        </StyledButton>
-      </StyledDropdown>
-    </>
+    <StyledDropdown content={MenuContent}>
+      <NoStyleBtn icon="CaretDown" iconPlacement="right">
+        {Header}
+      </NoStyleBtn>
+    </StyledDropdown>
   );
 }
 export default StatusFilterDropdown;

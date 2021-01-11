@@ -42,7 +42,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
     return <NoIntegrationIsSelected />;
   }
   return (
-    <StyledOverviewSidePanel>
+    <StyledOverviewSidePanel id={`side-panel-${integration.externalId}`}>
       <SidePanelHeading level={2}>{integration.name}</SidePanelHeading>
       <StyledTabs sidepaneltabs="true">
         <StyledTabPane tab="Monitoring" key="monitoring">

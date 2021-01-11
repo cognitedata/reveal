@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Colors } from '@cognite/cogs.js';
-import { Column } from 'react-table';
 import styled from 'styled-components';
 import Layers from 'utils/zindex';
 import { Integration } from '../../model/Integration';
@@ -62,9 +61,7 @@ const IntegrationsTable: FunctionComponent<Props> = ({
     <StyledIntegrationsTable>
       <ITable
         data={tableData}
-        columns={
-          getIntegrationTableCol(openFailMessage) as Column<Integration>[]
-        }
+        columns={getIntegrationTableCol(openFailMessage)}
       />
       <FailMessageModal
         onCancel={closeFailMessage}

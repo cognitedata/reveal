@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cell, CellProps } from 'react-table';
+import { Cell, CellProps, Column, HeaderProps } from 'react-table';
 import { calculateStatus } from 'utils/integrationUtils';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
@@ -14,6 +14,7 @@ import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { User } from '../../model/User';
 import RelativeTimeWithTooltip from '../integrations/cols/RelativeTimeWithTooltip';
+import SorterIndicator from './SorterIndicator';
 import MessageIcon from '../message/MessageIcon';
 import { Status } from '../../model/Status';
 
@@ -25,8 +26,6 @@ export enum TableHeadings {
   SCHEDULE = 'Schedule',
   LAST_SEEN = 'Last seen',
   CONTACTS = 'Contacts',
-  OWNER = 'Owner',
-  CREATED_BY = 'Created by',
 }
 
 const StyledStatusButton = styled((props) => (
@@ -73,14 +72,22 @@ export const createListOfContacts = (owner: User, authors?: User[]) => {
 };
 export const getIntegrationTableCol = (
   openFailMessage: OpenFailMessageFunc
-) => {
+): Column<Integration>[] => {
   return [
     {
       id: 'name',
-      Header: TableHeadings.NAME,
+      Header: ({ column }: HeaderProps<Integration>) => {
+        return <SorterIndicator name={TableHeadings.NAME} column={column} />;
+      },
       accessor: 'name',
       Cell: ({ row }: CellProps<Integration>) => {
-        return <Name name={row.values.name} rowIndex={row.index} />;
+        return (
+          <Name
+            name={row.values.name}
+            selected={row.isSelected}
+            controls={`side-panel-${row.original.externalId}`}
+          />
+        );
       },
       sortType: 'basic',
       disableFilters: true,

@@ -3,23 +3,20 @@ import {
   useTable,
   useSortBy,
   useRowSelect,
-  Hooks,
   Cell,
   TableOptions,
   TableState,
   ActionType,
   HeaderGroup,
   Row,
-  ColumnInstance,
   useGlobalFilter,
   Column,
   useFilters,
 } from 'react-table';
 import { matchSorter } from 'match-sorter';
-import IntegrationsRadio from './IntegrationsRadio';
-import { Integration } from '../../model/Integration';
 import IntegrationTableSearch from './IntegrationTableSearch';
-import SorterIndicator from '../table/SorterIndicator';
+import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
+import { useAppEnv } from '../../hooks/useAppEnv';
 
 const selectReducer = (
   newState: TableState,
@@ -56,6 +53,9 @@ function ITable<T extends { id: ReactText }>({
   data,
   columns,
 }: ITableProps<T>) {
+  const { setIntegration } = useSelectedIntegration();
+  const { project } = useAppEnv();
+
   const filterTypes = React.useMemo(
     () => ({
       fuzzyText: fuzzyTextFilterFn,
@@ -100,29 +100,7 @@ function ITable<T extends { id: ReactText }>({
     useFilters,
     useGlobalFilter,
     useSortBy,
-    useRowSelect,
-    (hooks: Hooks<T>) => {
-      hooks.visibleColumns.push((allColumns: ColumnInstance<T>[]) => [
-        {
-          id: 'selection',
-          Header: () => <div />,
-          Cell: ({ row }: Cell<Integration>) => {
-            return (
-              <div>
-                <IntegrationsRadio
-                  integration={row.original}
-                  inputId={`radio-row-${row.id}`}
-                  {...row.getToggleRowSelectedProps()}
-                />
-              </div>
-            );
-          },
-          disableSortBy: true,
-          disableFilters: true,
-        },
-        ...allColumns,
-      ]);
-    }
+    useRowSelect
   );
 
   return (
@@ -133,15 +111,22 @@ function ITable<T extends { id: ReactText }>({
         setGlobalFilter={setGlobalFilter}
       />
       <div className="tableFixHead">
-        <table {...getTableProps()} className="cogs-table integrations-table">
+        <table
+          {...getTableProps()}
+          className="cogs-table integrations-table"
+          role="grid"
+          aria-label={`List of integration for the ${project} project`}
+        >
           <thead>
             {headerGroups.map((headerGroup: HeaderGroup<T>) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((col: HeaderGroup<T>) => {
                   return (
-                    <th {...col.getHeaderProps(col.getSortByToggleProps())}>
+                    <th
+                      scope="col"
+                      {...col.getHeaderProps(col.getSortByToggleProps())}
+                    >
                       {col.disableFilters && col.render('Header')}
-                      {col.canSort && <SorterIndicator sCol={col} />}
                       {!col.disableFilters && col.render('Filter')}
                     </th>
                   );
@@ -152,12 +137,18 @@ function ITable<T extends { id: ReactText }>({
           <tbody {...getTableBodyProps()}>
             {rows.map((row: Row<T>) => {
               prepareRow(row);
+              const handleClickOnRow = () => {
+                row.toggleRowSelected(true);
+                // @ts-ignore
+                setIntegration(row.original);
+              };
               return (
                 <tr
                   {...row.getRowProps()}
                   className={`cogs-table-row integrations-table-row ${
                     row.isSelected ? 'row-active' : ''
                   }`}
+                  onClick={handleClickOnRow}
                 >
                   {row.cells.map((cell: Cell<T>) => {
                     return (

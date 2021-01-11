@@ -20,25 +20,23 @@ function IntegrationTableSearch<D extends object>({
     setGlobalFilter(val || []);
   }, 200);
   return (
-    <span>
-      <Tooltip
-        content="Search will filter table based on search criteria. Search eg. integration name, name of users etc."
-        placement="top-start"
-      >
-        <Input
-          title="Search all integrations"
-          aria-describedby="tippy-1"
-          value={value || ''}
-          onChange={(e) => {
-            setValue(e.target.value);
-            onChange(e.target.value);
-          }}
-          placeholder={`${count} records...`}
-          data-testid="search-integrations"
-          id="search-integrations"
-        />
-      </Tooltip>
-    </span>
+    <Tooltip
+      content="Search will filter table based on search criteria. Search eg. integration name, name of users etc."
+      placement="top-start"
+    >
+      <Input
+        title="Search all integrations"
+        aria-describedby="tippy-1"
+        value={value || ''}
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange(e.target.value);
+        }}
+        placeholder={`${count} records...`}
+        data-testid="search-integrations"
+        id="search-integrations"
+      />
+    </Tooltip>
   );
 }
 export default IntegrationTableSearch;

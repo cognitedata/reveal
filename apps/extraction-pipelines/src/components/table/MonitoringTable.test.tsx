@@ -1,7 +1,10 @@
 import React from 'react';
 import { screen, fireEvent, render } from '@testing-library/react';
 import MonitoringTable from './MonitoringTable';
-import { getMonitoringTableCol } from '../table/MonitoringTableCol';
+import {
+  getMonitoringTableCol,
+  MonitoringTableHeadings,
+} from '../table/MonitoringTableCol';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
 import mapRuns from '../../utils/runsUtils';
 
@@ -10,9 +13,11 @@ describe('<MonitoringTable/>', () => {
   const tableData = mapRuns(mockDataRunsResponse.items);
   test('Render without errors', () => {
     render(<MonitoringTable data={tableData} columns={columns} />);
-    const colsWithHeaders = columns.filter((col) => col.Header);
-    colsWithHeaders.forEach(({ Header }) => {
-      const header = screen.getByText(Header);
+    const colsWithHeaders = Object.entries(MonitoringTableHeadings).map(
+      ([_, v]) => v
+    );
+    colsWithHeaders.forEach((h) => {
+      const header = screen.getByText(h);
       expect(header).toBeInTheDocument();
     });
 
