@@ -72,7 +72,7 @@
     "@testing-library/react-hooks": "^4.0.0",
     "@types/jest": "^26.0.20",
     "@types/match-sorter": "^5.0.0",
-    "@types/node": "^14.14.10",
+    "@types/node": "^14.14.20",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-modal": "^3.10.6",
