@@ -39,12 +39,7 @@ type ChangesActions =
       payload: Update;
     };
 
-type Updateable =
-  | 'authors.name'
-  | 'authors.email'
-  | 'owner'
-  | 'name'
-  | 'description';
+type Updateable = 'authors' | 'owner' | 'name' | 'description';
 
 type Update = { index?: number; name: Updateable };
 

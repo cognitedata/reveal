@@ -6,10 +6,14 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import {
-  addBtnTestId,
+  ADD_CONTACT_TEST_ID,
   addNewContact,
   clickById,
+  clickByIdAsync,
   existsContactAsync,
+  AUTHOR_EMAIL_TEST_ID,
+  AUTHOR_NAME_TEST_ID,
+  AUTHOR_NOTIFICATION_TEST_ID,
   removeContact,
 } from '../../utils/test/utilsFn';
 import {
@@ -25,6 +29,7 @@ import ContactsView, {
 import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
 import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
+import { EMAIL_NOTIFICATION_TOOLTIP } from '../../utils/constants';
 
 function createIntegrationWithContacts(
   authors: User[] | undefined | null
@@ -76,6 +81,36 @@ describe('<ContactsView />', () => {
     });
   });
 
+  test('Edit - interact with notification', async () => {
+    const row = 0;
+    const editBtn = screen.getByTestId(`${ContactBtnTestIds.EDIT_BTN}${row}`);
+    fireEvent.click(editBtn);
+    const sendNotificationCheckbox = screen.getAllByLabelText(
+      EMAIL_NOTIFICATION_TOOLTIP
+    )[0];
+    expect(
+      screen.queryByTestId(`warning-icon-authors-${row}`)
+    ).not.toBeInTheDocument();
+    expect(sendNotificationCheckbox.checked).toEqual(false);
+    fireEvent.click(sendNotificationCheckbox);
+    expect(sendNotificationCheckbox.checked).toEqual(true);
+    expect(
+      screen.getByTestId(`warning-icon-authors-${row}`)
+    ).toBeInTheDocument();
+
+    const cancelBtn = screen.getByTestId(`cancel-contact-btn-${row}`);
+    fireEvent.click(cancelBtn);
+    await waitFor(() => {
+      expect(sendNotificationCheckbox.checked).toEqual(false);
+    });
+    fireEvent.click(editBtn);
+    expect(
+      screen.queryByTestId(`warning-icon-authors${row}`)
+    ).not.toBeInTheDocument();
+    fireEvent.click(sendNotificationCheckbox);
+    expect(sendNotificationCheckbox.checked).toEqual(true);
+  });
+
   test('Invalid email validation and text change warning', async () => {
     const row = 0;
     const editBtn = screen.getByTestId(`${ContactBtnTestIds.EDIT_BTN}${row}`);
@@ -88,7 +123,7 @@ describe('<ContactsView />', () => {
     });
     await waitFor(() => {
       expect(
-        screen.getByTestId(`warning-icon-author-${row}-email`)
+        screen.getByTestId(`warning-icon-authors-${row}`)
       ).toBeInTheDocument();
     });
 
@@ -103,9 +138,24 @@ describe('<ContactsView />', () => {
     });
   });
 
+  test('add contact default values', async () => {
+    await clickByIdAsync(ADD_CONTACT_TEST_ID);
+    const newRow = integration.authors.length;
+    expect(
+      screen.getByTestId(`${AUTHOR_EMAIL_TEST_ID}${newRow}`).value
+    ).toEqual('');
+    expect(screen.getByTestId(`${AUTHOR_NAME_TEST_ID}${newRow}`).value).toEqual(
+      ''
+    );
+    expect(
+      screen.getByTestId(`${AUTHOR_NOTIFICATION_TEST_ID}${newRow}`).checked
+    ).toEqual(false);
+  });
+
   test('add 3, remove first of new', () => {
     const newRow = integration.authors.length + 1;
     addNewContact(newRow, 'Test Name', 'test@email.com');
+
     const contact2 = {
       name: 'foo bar',
       email: 'foo@bar.com',
@@ -125,7 +175,7 @@ describe('<ContactsView />', () => {
 
   test('Add, then save should show error', async () => {
     const newRow = integration.authors.length;
-    clickById(addBtnTestId);
+    clickById(ADD_CONTACT_TEST_ID);
     const save = await screen.findByTestId(
       `${ContactBtnTestIds.SAVE_BTN}${newRow}`
     );
@@ -140,7 +190,7 @@ describe('<ContactsView />', () => {
 
   test('Add, click edit', async () => {
     const newRow = integration.authors.length;
-    clickById(addBtnTestId);
+    clickById(ADD_CONTACT_TEST_ID);
     clickById(`${ContactBtnTestIds.EDIT_BTN}${newRow - 1}`);
     const editContact = integration.authors[newRow - 1];
     await waitFor(() => {

@@ -10,9 +10,11 @@ export const DETAILS_TEST_IDS = {
   CLOSE_CONFIRM_DIALOG: 'confirm-dialog',
 };
 
-export const inputNameTestId = 'authors-name-';
-export const inputEmailTestId = 'authors-email-';
-export const addBtnTestId = 'add-contact-btn';
+export const AUTHOR_NAME_TEST_ID: Readonly<string> = 'authors-name-';
+export const AUTHOR_EMAIL_TEST_ID: Readonly<string> = 'authors-email-';
+export const AUTHOR_NOTIFICATION_TEST_ID: Readonly<string> =
+  'authors-sendNotification-';
+export const ADD_CONTACT_TEST_ID: Readonly<string> = 'add-contact-btn';
 
 export const existsContactAsync = async (name: string, email: string) => {
   await waitFor(() => {
@@ -85,8 +87,8 @@ export const clickText = async (text: string) => {
 
 export const removeContact = async (newRow: number) => {
   await clickByIdAsync(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
-  await notExistsByIdAsync(`${inputNameTestId}${newRow}`);
-  await notExistsByIdAsync(`${inputEmailTestId}${newRow}`);
+  await notExistsByIdAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`);
+  await notExistsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
 };
 
 export const addNewContact = async (
@@ -94,10 +96,10 @@ export const addNewContact = async (
   name: string,
   email: string
 ) => {
-  await clickByIdAsync(addBtnTestId);
-  await existsByIdAsync(`${inputNameTestId}${newRow}`);
-  await existsByIdAsync(`${inputEmailTestId}${newRow}`);
-  await typeInInputAsync(`${inputNameTestId}${newRow}`, name);
-  await typeInInputAsync(`${inputEmailTestId}${newRow}`, email);
+  await clickByIdAsync(ADD_CONTACT_TEST_ID);
+  await existsByIdAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`);
+  await existsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
+  await typeInInputAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`, name);
+  await typeInInputAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`, email);
   await clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
 };

@@ -12,6 +12,7 @@ import {
   renderQueryCacheIntegration,
 } from '../../utils/test/render';
 import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
+import { EMAIL_NOTIFICATION_TOOLTIP } from '../../utils/constants';
 
 describe('<OwnerView />', () => {
   const integration = getMockResponse()[0];
@@ -37,9 +38,19 @@ describe('<OwnerView />', () => {
     // click first edit btn
     const firstEditBtn = screen.getAllByText('Edit')[0];
     fireEvent.click(firstEditBtn);
-    const inputEdit = screen.getByDisplayValue(integration.owner.name); // assuming name is editable
+
+    // change notification checkbox
+    const sendNotificationCheckbox = screen.getByLabelText(
+      EMAIL_NOTIFICATION_TOOLTIP
+    );
+    expect(screen.queryByTestId('warning-icon-owner')).not.toBeInTheDocument();
+    expect(sendNotificationCheckbox.checked).toEqual(false);
+    fireEvent.click(sendNotificationCheckbox);
+    expect(sendNotificationCheckbox.checked).toEqual(true);
+    expect(screen.getByTestId('warning-icon-owner')).toBeInTheDocument();
 
     // change value in input
+    const inputEdit = screen.getByDisplayValue(integration.owner.name); // assuming name is editable
     const newValue = 'New Name';
     fireEvent.change(inputEdit, { target: { value: newValue } });
 
@@ -61,6 +72,7 @@ describe('<OwnerView />', () => {
     await waitFor(() => {
       const originalValue = screen.getByText(integration.owner.name);
       expect(originalValue).toBeInTheDocument();
+      expect(sendNotificationCheckbox.checked).toEqual(false);
     });
   });
 
@@ -80,7 +92,7 @@ describe('<OwnerView />', () => {
     fireEvent.change(nameInput, { target: { value: newValue } });
     fireEvent.blur(nameInput);
     expect(screen.getByDisplayValue(newValue)).toBeInTheDocument();
-    expect(screen.getByTestId(`warning-icon-name`)).toBeInTheDocument();
+    expect(screen.getByTestId(`warning-icon-owner`)).toBeInTheDocument();
 
     // click save. new value saved. just display value
     const saveBtn = screen.getByText('Save');
@@ -117,7 +129,7 @@ describe('<OwnerView />', () => {
     fireEvent.blur(nameInput);
     const newValueInput = screen.getByDisplayValue(newValue);
     expect(newValueInput).toBeInTheDocument();
-    const warning = screen.getByTestId(`warning-icon-email`);
+    const warning = screen.getByTestId(`warning-icon-owner`);
     expect(warning).toBeInTheDocument();
 
     // click save. new value saved. just display value

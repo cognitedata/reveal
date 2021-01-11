@@ -2,11 +2,9 @@ import React, { FunctionComponent } from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { DeepMap, FieldError } from 'react-hook-form';
-import { Ref } from 'react-hook-form/dist/types/fields';
-import { InputWarningIcon } from './InputWarningIcon';
 import ValidationError from '../form/ValidationError';
-import { IntegrationFieldName } from '../../model/Integration';
-import { User } from '../../model/User';
+import { InputWithRefProps, InputWithRef } from './InputWithRef';
+import { InputWarningIcon } from '../icons/InputWarningIcon';
 
 export const InputWarningError = styled((props) => (
   <div {...props}>{props.children}</div>
@@ -21,22 +19,17 @@ export const InputWarningError = styled((props) => (
   }
   .cogs-icon-Warning {
     grid-area: warning;
-    align-self: flex-end;
-    margin-bottom: 0.5rem;
+    align-self: center;
+    justify-self: center;
   }
   .error-message {
     grid-area: error;
   }
 `;
 
-interface OwnProps {
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string;
-  defaultValue: string | undefined;
-  name: IntegrationFieldName | keyof User;
+interface OwnProps extends InputWithRefProps {
   isDirty: boolean;
   errors: DeepMap<Record<string, any>, FieldError>;
-  register: (ref: Ref | null) => void;
 }
 
 type Props = OwnProps;
@@ -44,23 +37,23 @@ type Props = OwnProps;
 const InputWithWarning: FunctionComponent<Props> = ({
   register,
   placeholder,
+  defaultValue,
+  handleChange,
   errors,
   isDirty,
-  defaultValue,
   name,
-  handleChange,
+  ...rest
 }: OwnProps) => {
   return (
     <InputWarningError>
-      <input
-        type="text"
-        onChange={handleChange}
-        id={name}
+      <InputWithRef
+        register={register}
+        handleChange={handleChange}
         name={name}
-        placeholder={placeholder}
-        className={`cogs-input full-width ${errors[name] && 'has-error'}`}
-        ref={register}
+        error={errors[name]}
         defaultValue={defaultValue}
+        placeholder={placeholder}
+        {...rest}
       />
       {isDirty && (
         <InputWarningIcon

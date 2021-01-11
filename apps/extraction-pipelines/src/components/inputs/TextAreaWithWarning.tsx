@@ -2,7 +2,7 @@ import React, { ChangeEvent, FunctionComponent } from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { DivFlex } from '../../styles/flex/StyledFlex';
-import { InputWarningIcon } from './InputWarningIcon';
+import { InputWarningIcon } from '../icons/InputWarningIcon';
 
 const StyledTextArea = styled.textarea`
   width: 100%;

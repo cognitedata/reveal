@@ -1,29 +1,30 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Button, Colors, Detail } from '@cognite/cogs.js';
+import { Button, Colors, Detail, Tooltip } from '@cognite/cogs.js';
 import { FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styled from 'styled-components';
-import InputWithWarning from 'components/inputs/InputWithWarning';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from '../../utils/contactsUtils';
-import { AlignedSpan, GridRowStyle } from './ContactsView';
+import { AlignedSpan } from './ContactsView';
 import { DetailFieldNames } from '../../model/Integration';
 import ErrorMessageDialog from '../buttons/ErrorMessageDialog';
 import EmailLink from '../buttons/EmailLink';
+import {
+  EMAIL_NOTIFICATION_TOOLTIP,
+  EMAIL_PLACEHOLDER,
+  NAME_PLACEHOLDER,
+} from '../../utils/constants';
+import { CheckboxWithRef } from '../inputs/CheckboxWithRef';
+import { InputWithError } from '../inputs/InputWithError';
+import { InputWarningIcon } from '../icons/InputWarningIcon';
+import { GridRowStyle } from '../../styles/grid/StyledGrid';
 
 interface OwnProps {}
 
 type Props = OwnProps;
-const OwnerGridRowStyle = styled((props) => (
-  <GridRowStyle {...props}>{props.children}</GridRowStyle>
-))`
-  &:hover {
-    background-color: ${Colors['greyscale-grey3'].hex()};
-  }
-`;
 
 export const AlignedDetail = styled((props) => (
   <Detail {...props}>{props.children}</Detail>
@@ -41,11 +42,12 @@ const schema = yup.object().shape({
 interface OwnerForm extends FieldValues {
   name: string;
   email: string;
+  sendNotification: boolean;
 }
 
 const OwnerView: FunctionComponent<Props> = () => {
   const {
-    state: { integration },
+    state: { integration, updates },
     dispatch,
   } = useIntegration();
   const { project } = useAppEnv();
@@ -53,21 +55,17 @@ const OwnerView: FunctionComponent<Props> = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
 
-  const {
-    register,
-    errors,
-    getValues,
-    trigger,
-    formState,
-  } = useForm<OwnerForm>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      name: integration?.owner.name,
-      email: integration?.owner.email,
-    },
-  });
-  const isDirtyName = !!formState.dirtyFields.name;
-  const isDirtyEmail = !!formState.dirtyFields.email;
+  const { register, errors, getValues, trigger, setValue } = useForm<OwnerForm>(
+    {
+      resolver: yupResolver(schema),
+      defaultValues: {
+        name: integration?.owner.name,
+        email: integration?.owner.email,
+        sendNotification: integration?.owner.sendNotification,
+      },
+    }
+  );
+  const isDirty = updates.has('owner-0');
   async function onSave() {
     const valid = await trigger();
 
@@ -100,6 +98,7 @@ const OwnerView: FunctionComponent<Props> = () => {
 
   function onCancel() {
     dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'owner' } });
+    setValue('sendNotification', integration?.owner.sendNotification);
     setIsEdit(false);
   }
   const handleClickError = () => {
@@ -115,40 +114,71 @@ const OwnerView: FunctionComponent<Props> = () => {
   const handleChange = () => {
     dispatch({ type: 'ADD_CHANGE', payload: { name: 'owner' } });
   };
+
   return (
     <>
-      <OwnerGridRowStyle className="row-style-odd">
-        <AlignedDetail strong>{DetailFieldNames.OWNER}</AlignedDetail>
+      <GridRowStyle className="row-style-odd">
+        <AlignedDetail id="role-owner" strong role="gridcell" aria-colindex={1}>
+          {DetailFieldNames.OWNER}
+        </AlignedDetail>
+        <Tooltip content={EMAIL_NOTIFICATION_TOOLTIP} disabled={isEdit}>
+          <CheckboxWithRef
+            name="sendNotification"
+            disabled={!isEdit}
+            handleChange={handleChange}
+            defaultChecked={integration?.owner.sendNotification}
+            register={register}
+            aria-label={EMAIL_NOTIFICATION_TOOLTIP}
+          />
+        </Tooltip>
         {isEdit ? (
-          <InputWithWarning
+          <InputWithError
             name="name"
-            placeholder="Enter name"
+            placeholder={NAME_PLACEHOLDER}
             handleChange={handleChange}
             register={register}
             defaultValue={integration?.owner.name}
-            isDirty={isDirtyName}
             errors={errors}
+            aria-labelledby="role-owner contacts-heading-name"
           />
         ) : (
-          <AlignedSpan>{integration?.owner.name}</AlignedSpan>
-        )}
-
-        {isEdit ? (
-          <InputWithWarning
-            name="email"
-            placeholder="Enter email address"
-            handleChange={handleChange}
-            register={register}
-            defaultValue={integration?.owner.email}
-            isDirty={isDirtyEmail}
-            errors={errors}
-          />
-        ) : (
-          <AlignedSpan>
-            <EmailLink email={integration?.owner.email} />
+          <AlignedSpan
+            role="gridcell"
+            aria-colindex={2}
+            aria-describedby="role-owner contacts-heading-name"
+          >
+            {integration?.owner.name}
           </AlignedSpan>
         )}
 
+        {isEdit ? (
+          <InputWithError
+            name="email"
+            placeholder={EMAIL_PLACEHOLDER}
+            handleChange={handleChange}
+            register={register}
+            defaultValue={integration?.owner.email}
+            errors={errors}
+            aria-labelledby="role-owner contacts-heading-email"
+          />
+        ) : (
+          <AlignedSpan
+            role="gridcell"
+            aria-colindex={3}
+            aria-describedby="role-owner contacts-heading-email"
+          >
+            <EmailLink email={integration?.owner.email} />
+          </AlignedSpan>
+        )}
+        {isDirty ? (
+          <InputWarningIcon
+            $color={Colors.warning.hex()}
+            data-testid="warning-icon-owner"
+            className="waring"
+          />
+        ) : (
+          <span />
+        )}
         {isEdit ? (
           <>
             <Button
@@ -189,7 +219,7 @@ const OwnerView: FunctionComponent<Props> = () => {
             </Button>
           </>
         )}
-      </OwnerGridRowStyle>
+      </GridRowStyle>
     </>
   );
 };

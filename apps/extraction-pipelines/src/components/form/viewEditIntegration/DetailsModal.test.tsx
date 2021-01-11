@@ -7,8 +7,8 @@ import { getMockResponse } from '../../../utils/mockResponse';
 import { render } from '../../../utils/test';
 import {
   clickById,
-  inputEmailTestId,
-  inputNameTestId,
+  AUTHOR_EMAIL_TEST_ID,
+  AUTHOR_NAME_TEST_ID,
   notExistsById,
   DETAILS_ELEMENTS,
   DETAILS_TEST_IDS,
@@ -92,18 +92,18 @@ describe('DetailsModal', () => {
     const row = integration.authors.length + 1;
     const addBtn = screen.getByText('Add');
     fireEvent.click(addBtn);
-    existsByIdAsync(`${inputEmailTestId}${row}`);
-    existsByIdAsync(`${inputNameTestId}${row}`);
+    existsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${row}`);
+    existsByIdAsync(`${AUTHOR_NAME_TEST_ID}${row}`);
     const newName = 'Test test';
-    typeInInputAsync(`${inputNameTestId}${row}`, newName);
+    typeInInputAsync(`${AUTHOR_NAME_TEST_ID}${row}`, newName);
     const newEmail = 'test@test.no';
-    typeInInputAsync(`${inputEmailTestId}${row}`, newEmail);
+    typeInInputAsync(`${AUTHOR_EMAIL_TEST_ID}${row}`, newEmail);
     clickByIdAsync(`${ContactBtnTestIds.CANCEL_BTN}${row}`);
-    notExistsById(`${inputEmailTestId}${row}`);
-    notExistsById(`${inputNameTestId}${row}`);
+    notExistsById(`${AUTHOR_EMAIL_TEST_ID}${row}`);
+    notExistsById(`${AUTHOR_NAME_TEST_ID}${row}`);
     clickByIdAsync(`${ContactBtnTestIds.EDIT_BTN}${row}`);
-    typeInInputAsync(`${inputNameTestId}${row}`, newName);
-    typeInInputAsync(`${inputEmailTestId}${row}`, newEmail);
+    typeInInputAsync(`${AUTHOR_NAME_TEST_ID}${row}`, newName);
+    typeInInputAsync(`${AUTHOR_EMAIL_TEST_ID}${row}`, newEmail);
     existsByText(UNSAVED_INFO_TEXT);
     clickByIdAsync(`${ContactBtnTestIds.SAVE_BTN}${row}`);
     existsContactAsync(newName, newEmail);

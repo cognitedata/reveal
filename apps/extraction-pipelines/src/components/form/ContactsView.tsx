@@ -11,7 +11,6 @@ import * as yup from 'yup';
 import styled from 'styled-components';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import ContactView from './ContactView';
-import { PaddedGridDiv } from '../../styles/grid/StyledGrid';
 
 export const ContactBtnTestIds = {
   EDIT_BTN: 'edit-contact-btn-',
@@ -47,24 +46,6 @@ export const StyledForm = styled((props) => (
     margin: 1rem 0.75rem;
   }
 `;
-export const GridRowStyle = styled((props) => (
-  <PaddedGridDiv {...props}>{props.children}</PaddedGridDiv>
-))`
-  grid-template-columns: 8rem 2fr 2fr 5rem 4rem;
-  height: 4rem;
-  align-items: center;
-  > * {
-    width: 100%;
-  }
-  span[aria-expanded] {
-    align-self: center;
-    display: flex;
-    justify-content: center;
-    button {
-      width: 100%;
-    }
-  }
-`;
 
 export const AlignedDetail = styled((props) => (
   <Detail {...props}>{props.children}</Detail>
@@ -98,6 +79,7 @@ const authorsSchema = yup.object().shape({
 interface ContactsForm extends FieldValues {
   name: string;
   email: string;
+  sendNotification: boolean;
 }
 
 const ContactsView: FunctionComponent<Props> = () => {
@@ -116,8 +98,11 @@ const ContactsView: FunctionComponent<Props> = () => {
   });
 
   const onClickAdd = () => {
-    dispatch({ type: 'ADD_AUTHOR', payload: { name: '', email: '' } });
-    append({ name: '', email: '' });
+    dispatch({
+      type: 'ADD_AUTHOR',
+      payload: { name: '', email: '', sendNotification: false },
+    });
+    append({ name: '', email: '', sendNotification: false });
   };
   return (
     <>

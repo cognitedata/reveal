@@ -10,7 +10,7 @@ import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from '../../utils/contactsUtils';
 import ValidationError from './ValidationError';
-import { InputWarningIcon } from '../inputs/InputWarningIcon';
+import { InputWarningIcon } from '../icons/InputWarningIcon';
 import { AlignedSpan } from './ContactsView';
 import { DetailFieldNames } from '../../model/Integration';
 import ErrorMessageDialog from '../buttons/ErrorMessageDialog';
