@@ -461,15 +461,25 @@ export class CachedRepository implements Repository {
   }
 
   private groupMeshesByNumber(fileIds: Float64Array) {
-    const meshesGroupedByFile = new Map<number, number[]>();
+    const groupedByFileId = new Array<{ fileId: number; index: number }>(fileIds.length);
     for (let i = 0; i < fileIds.length; ++i) {
-      const fileId = fileIds[i];
-      const oldValue = meshesGroupedByFile.get(fileId);
-      if (oldValue) {
-        meshesGroupedByFile.set(fileId, [...oldValue, i]);
-      } else {
-        meshesGroupedByFile.set(fileId, [i]);
-      }
+      groupedByFileId[i] = { fileId: fileIds[i], index: i };
+    }
+    groupedByFileId.sort((a, b) => a.fileId - b.fileId);
+
+    const meshesGroupedByFile = new Map<number, number[]>();
+    let i = 0;
+    while (i < groupedByFileId.length) {
+      const fileId = groupedByFileId[i].fileId;
+      // Determine sequence of occurences with same fileId
+      let last = i + 1;
+      for (; last < groupedByFileId.length && groupedByFileId[last].fileId === fileId; ++last);
+      meshesGroupedByFile.set(
+        fileId,
+        groupedByFileId.slice(i, last).map(x => x.index)
+      );
+      // Skip to next group
+      i = last;
     }
     return meshesGroupedByFile;
   }
