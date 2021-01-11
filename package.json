@@ -18,7 +18,7 @@
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "^1.18.0",
     "@cognite/metrics": "^0.1.7",
-    "@google-cloud/storage": "^5.7.1",
+    "@google-cloud/storage": "^5.7.2",
     "@rescripts/cli": "^0.0.14",
     "@rescripts/utilities": "^0.0.7",
     "@sentry/browser": "^5.26.0",
