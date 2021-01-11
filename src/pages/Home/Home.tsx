@@ -18,17 +18,9 @@ import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { isAdmin } from 'store/groups/selectors';
 import { sortByLastUpdated } from 'utils/suites';
-import { getUserId } from 'store/auth/selectors';
 import { UserSpaceState } from 'store/userSpace/types';
-// TODO(DTC-222)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { fetchUserSpaceCdf, fetchUserSpace } from 'store/userSpace/thunks';
-import {
-  getLastVisited,
-  // getLastVisitedKeys,
-  getUserSpace,
-} from 'store/userSpace/selectors';
-import { CdfClientContext } from 'providers/CdfClientProvider';
+import { fetchUserSpace } from 'store/userSpace/thunks';
+import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 
@@ -41,9 +33,6 @@ const Home = () => {
     getSuitesTableState
   );
   const admin = useSelector(isAdmin);
-
-  // TODO(DTC-222)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const apiClient = useContext(ApiClientContext);
   const {
     loaded: userSpaceLoaded,
@@ -58,27 +47,18 @@ const Home = () => {
   const lastVisitedBoards = useSelector(
     getLastVisitedBoards(lastVisited, itemsToDisplay)
   );
-  // TODO(DTC-167) replace lastVisitedSuites with lastVisitedBoards; handle userSpaceError
-  // const lastVisitedSuites = useSelector(
-  //   getLastVisitedSuitesMock(itemsToDisplay)
-  // );
 
-  // TODO(DTC-222) fetch userSpace from api client
-  const userId = useSelector(getUserId);
-  const client = useContext(CdfClientContext);
   useEffect(() => {
-    if (!userSpaceLoaded && !userSpaceLoading && !userSpaceLoadDispatched) {
-      // dispatch(fetchUserSpace(apiClient))
-      dispatch(fetchUserSpaceCdf(client, userId));
+    if (!userSpaceLoaded && !userSpaceLoadDispatched) {
+      dispatch(fetchUserSpace(apiClient));
       setUserSpaceLoadDispatched(true);
     }
   }, [
     dispatch,
-    /* apiClient, */ client,
+    apiClient,
     userSpaceLoaded,
     userSpaceLoading,
     userSpaceLoadDispatched,
-    userId,
   ]);
 
   if (!suitesLoaded || !suites?.length) {
@@ -88,10 +68,6 @@ const Home = () => {
   if (suitesLoading || userSpaceLoading) {
     return <Loader />;
   }
-
-  // TODO(DTC-167)
-  // eslint-disable-next-line no-console
-  console.log('lastVisitedBoards', lastVisitedBoards);
 
   const sortedSuites = sortByLastUpdated(suites);
 
@@ -120,7 +96,6 @@ const Home = () => {
         {lastVisitedBoards.length > 0 && (
           <TilesContainer>
             <Title level={6}>Quick Access</Title>
-            {/* TODO(DTC-167) */}
             <Glider hasArrows slidesToScroll={3} slidesToShow={4}>
               {lastVisitedBoards?.map((board: Board) => {
                 return (

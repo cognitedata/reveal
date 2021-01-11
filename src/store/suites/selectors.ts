@@ -19,7 +19,7 @@ export const getLastVisitedSuitesMock = (itemsToDisplay: number = 6) => (
     itemsToDisplay
   );
 
-// totally changed logic, ask Max about moddleware response
+// changed logic, discuss with Max
 export const getLastVisitedBoards = (
   lastVisited: LastVisited[],
   itemsToDisplay: number = 6

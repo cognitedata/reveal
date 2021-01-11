@@ -8,6 +8,7 @@ export const dateToFromNowDaily = (dateTime: number) => {
   return moment(dateTime).calendar(null, {
     lastDay: '[Yesterday] [at] hh:mm',
     sameDay: '[Today] [at] hh:mm',
+    lastWeek: TIME_AND_DATE_FORMAT,
     sameElse: TIME_AND_DATE_FORMAT,
   });
 };

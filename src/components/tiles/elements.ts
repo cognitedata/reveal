@@ -31,6 +31,9 @@ export const TileDescription = styled.div`
   justify-content: center;
   padding: 4px 8px;
   overflow: hidden;
+  & > span {
+    display: grid;
+  }
 `;
 
 export const TileHeader = styled(SpaceBetween)<{
