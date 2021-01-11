@@ -45,6 +45,7 @@ import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { Group } from 'three';
 import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
+import { groupMeshesByNumber } from './groupMeshesByNumber';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {
@@ -343,12 +344,9 @@ export class CachedRepository implements Repository {
     const finalTriangleMeshes = (() => {
       const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
 
-      const meshesGroupedByFile = this.groupMeshesByNumber(fileIds);
-
       const finalMeshes = [];
-      // Merge meshes by file
-      // TODO do this in Rust instead
-      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+
+      for (const { id: fileId, meshIndices } of groupMeshesByNumber(fileIds)) {
         const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
         const offsets = createOffsetsArray(fileTriangleCounts);
         // Load CTM (geometry)
@@ -392,13 +390,12 @@ export class CachedRepository implements Repository {
 
     const finalInstanceMeshes = (() => {
       const { fileIds, colors, treeIndices, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
-      const meshesGroupedByFile = this.groupMeshesByNumber(fileIds);
 
       const finalMeshes: InstancedMeshFile[] = [];
       // Merge meshes by file
       // TODO do this in Rust instead
       // TODO de-duplicate this with the merged meshes above
-      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+      for (const { id: fileId, meshIndices } of groupMeshesByNumber(fileIds)) {
         const fileName = `mesh_${fileId}.ctm`;
         const ctm = ctmFiles.get(fileName)!;
 
@@ -409,11 +406,9 @@ export class CachedRepository implements Repository {
 
         const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
         const fileTriangleCounts = new Float64Array(meshIndices.map(i => triangleCounts[i]));
-        const fileMeshesGroupedByOffsets = this.groupMeshesByNumber(fileTriangleOffsets);
 
-        for (const [triangleOffset, fileMeshIndices] of fileMeshesGroupedByOffsets) {
+        for (const { id: triangleOffset, meshIndices: fileMeshIndices } of groupMeshesByNumber(fileTriangleOffsets)) {
           // NOTE the triangle counts should be the same for all meshes with the same offset,
-          // hence we can look up only fileMeshIndices[0] instead of enumerating here
           const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
           const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
           const treeIndicesBuffer = new Float32Array(fileMeshIndices.length);
@@ -458,20 +453,6 @@ export class CachedRepository implements Repository {
     };
 
     return sector;
-  }
-
-  private groupMeshesByNumber(fileIds: Float64Array) {
-    const meshesGroupedByFile = new Map<number, number[]>();
-    for (let i = 0; i < fileIds.length; ++i) {
-      const fileId = fileIds[i];
-      const oldValue = meshesGroupedByFile.get(fileId);
-      if (oldValue) {
-        meshesGroupedByFile.set(fileId, [...oldValue, i]);
-      } else {
-        meshesGroupedByFile.set(fileId, [i]);
-      }
-    }
-    return meshesGroupedByFile;
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
