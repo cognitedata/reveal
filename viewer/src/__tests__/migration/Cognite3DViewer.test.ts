@@ -194,4 +194,19 @@ describe('Cognite3DViewer', () => {
       requestAnimationFrameSpy.mockRestore();
     }
   });
+
+  test('fitCameraToBoundingBox with zero duration updates camera immediatly', () => {
+    // Arrange
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const box = new THREE.Box3(new THREE.Vector3(-1000, -1000, -1000), new THREE.Vector3(-1001, -1001, -1001));
+    const originalCameraPosition = viewer.getCameraPosition();
+    const originalCameraTarget = viewer.getCameraTarget();
+
+    // Act
+    viewer.fitCameraToBoundingBox(box, 0);
+
+    // Assert
+    expect(viewer.getCameraPosition()).not.toEqual(originalCameraPosition);
+    expect(viewer.getCameraTarget()).not.toEqual(originalCameraTarget);
+  });
 });
