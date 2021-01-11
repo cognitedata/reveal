@@ -472,8 +472,7 @@ export class CachedRepository implements Repository {
     while (i < groupedByFileId.length) {
       const fileId = groupedByFileId[i].fileId;
       // Determine sequence of occurences with same fileId
-      let last = i + 1;
-      for (; last < groupedByFileId.length && groupedByFileId[last].fileId === fileId; ++last);
+      const last = findFirstGreaterThan(groupedByFileId, fileId, i + 1, x => x.fileId);
       meshesGroupedByFile.set(
         fileId,
         groupedByFileId.slice(i, last).map(x => x.index)
@@ -491,4 +490,32 @@ export class CachedRepository implements Repository {
   private ctmFileCacheKey(request: { blobUrl: string; fileName: string }) {
     return '' + request.blobUrl + '.' + request.fileName;
   }
+}
+
+function findFirstGreaterThan<T>(
+  sortedArray: T[],
+  pivotValue: number,
+  searchFromIndex: number,
+  elementToNumber: (element: T) => number
+) {
+  let start = searchFromIndex;
+  let end = sortedArray.length - 1;
+
+  while (start <= end) {
+    const middle = Math.floor((start + end) / 2);
+    const elementValue = elementToNumber(sortedArray[middle]);
+
+    if (elementValue > pivotValue) {
+      // found value greater than 'pivot'
+      return middle;
+    } else if (elementValue <= pivotValue) {
+      // continue searching to the right
+      start = middle + 1;
+    } else {
+      // search searching to the left
+      end = middle - 1;
+    }
+  }
+
+  return sortedArray.length;
 }
