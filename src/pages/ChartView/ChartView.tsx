@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Icon, Menu, Modal, toast } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import chartsSlice, { chartSelectors, ChartTimeSeries } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -544,7 +544,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                       <Menu.Item
                         onClick={() => handleOpenDataQualityReport(id)}
                       >
-                        Gaps
+                        Gap Analysis
                       </Menu.Item>
                     </Menu>
                   }

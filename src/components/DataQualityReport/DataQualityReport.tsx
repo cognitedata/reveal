@@ -1,6 +1,7 @@
 import { Button, Modal } from '@cognite/cogs.js';
 import noop from 'lodash/noop';
 import React, { useEffect, useState } from 'react';
+import gapChart from 'assets/gaps.png';
 
 type DataQualityReportProps = {
   timeSeriesId?: string;
@@ -9,9 +10,12 @@ type DataQualityReportProps = {
 };
 
 type GapReport = {
-  averageInterval: number;
-  meanInterval: number;
+  averageSamplingPeriod: number;
+  meanSamplingPeriod: number;
+  medianSamplingPeriod: number;
   standardDeviation: number;
+  min: number;
+  max: number;
 };
 
 const DataQualityReport = ({
@@ -31,9 +35,12 @@ const DataQualityReport = ({
       });
 
       const reportData = {
-        averageInterval: 1.2345343213435,
-        meanInterval: 1.345676756454,
-        standardDeviation: 0.675645342325,
+        averageSamplingPeriod: 1.02745657864329,
+        meanSamplingPeriod: 1.027567564534232,
+        medianSamplingPeriod: 1.027867564543234,
+        standardDeviation: 0.963245676764534,
+        min: 1.0,
+        max: 50.0,
       };
 
       setDataQualityReport(reportData);
@@ -64,18 +71,31 @@ const DataQualityReport = ({
           <div>Please wait&hellip;</div>
         ) : (
           <>
-            <h3>Key info:</h3>
             <p>
-              <strong>Average interval:</strong>{' '}
-              {dataQualityReport?.averageInterval}
+              <strong>Average sampling period:</strong>{' '}
+              {dataQualityReport?.averageSamplingPeriod}
             </p>
             <p>
-              <strong>Mean interval:</strong> {dataQualityReport?.meanInterval}
+              <strong>Mean sampling period:</strong>{' '}
+              {dataQualityReport?.meanSamplingPeriod}
+            </p>
+            <p>
+              <strong>Median sampling period:</strong>{' '}
+              {dataQualityReport?.medianSamplingPeriod}
             </p>
             <p>
               <strong>Standard deviation:</strong>{' '}
               {dataQualityReport?.standardDeviation}
             </p>
+            <p>
+              <strong>Minimum:</strong> {dataQualityReport?.min}
+            </p>
+            <p>
+              <strong>Maximum:</strong> {dataQualityReport?.max}
+            </p>
+            <div>
+              <img alt="gap chart" src={gapChart} style={{ width: '100%' }} />
+            </div>
           </>
         )}
       </Modal>
