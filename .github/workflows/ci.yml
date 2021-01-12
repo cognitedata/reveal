@@ -183,3 +183,8 @@ jobs:
         if: env.GIT_DIFF
         working-directory: parser-worker
         run: yarn build:prod
+
+      - name: Run parser-worker tests
+        if: env.GIT_DIFF
+        working-directory: parser-worker
+        run: yarn test
