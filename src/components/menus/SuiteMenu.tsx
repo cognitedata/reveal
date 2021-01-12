@@ -1,9 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
-import { useClickAwayListener } from 'hooks/useClickAwayListener';
-import { useDispatch, useSelector } from 'react-redux';
-import { isAdmin } from 'store/groups/selectors';
+import { useClickAwayListener } from 'hooks';
+import { useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
@@ -20,7 +19,6 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
     isComponentVisible,
     setIsComponentVisible,
   } = useClickAwayListener(false);
-  const admin = useSelector(isAdmin);
 
   const handleMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -47,34 +45,38 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
       <ActionsContainer>
         {isComponentVisible && (
           <Menu>
-            <Menu.Item>Unpin</Menu.Item>
-            {admin && (
-              <>
-                <Menu.Item>
-                  <MenuItemContent
-                    role="button"
-                    tabIndex={0}
-                    onClick={(event) =>
-                      handleOpenModal(event, 'EditSuite', { dataItem })
-                    }
-                  >
-                    Edit suite
-                  </MenuItemContent>
-                </Menu.Item>
-                <Menu.Item>
-                  <MenuItemContent
-                    role="button"
-                    tabIndex={0}
-                    onClick={(event) =>
-                      handleOpenModal(event, 'DeleteSuite', { dataItem })
-                    }
-                  >
-                    Delete suite
-                  </MenuItemContent>
-                </Menu.Item>
-              </>
-            )}
-            <Menu.Item>Share suite</Menu.Item>
+            <Menu.Item>
+              <MenuItemContent
+                role="button"
+                tabIndex={0}
+                onClick={(event) =>
+                  handleOpenModal(event, 'EditSuite', { dataItem })
+                }
+              >
+                Edit suite
+              </MenuItemContent>
+            </Menu.Item>
+            <Menu.Item>
+              <MenuItemContent
+                role="button"
+                tabIndex={0}
+                onClick={(event) =>
+                  handleOpenModal(event, 'DeleteSuite', { dataItem })
+                }
+              >
+                Delete suite
+              </MenuItemContent>
+            </Menu.Item>
+            <Menu.Item>
+              <MenuItemContent
+                role="button"
+                tabIndex={0}
+                // will be fixed when feature implemented
+                onClick={(event) => event.preventDefault()}
+              >
+                Share suite
+              </MenuItemContent>
+            </Menu.Item>
           </Menu>
         )}
       </ActionsContainer>

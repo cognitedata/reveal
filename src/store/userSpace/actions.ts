@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-import { UserSpaceActionTypes, UserSpacePayload } from './types';
+import { LastVisited, UserSpaceActionTypes, UserSpacePayload } from './types';
 
 export const loadUserSpace = createAction(
   UserSpaceActionTypes.USER_SPACE_LOAD
@@ -13,14 +13,14 @@ export const loadUserSpaceError = createAction(
   UserSpaceActionTypes.USER_SPACE_LOAD_ERROR
 )<Error>();
 
-export const userSpaceRequestSuccess = createAction(
-  UserSpaceActionTypes.USER_SPACE_REQUEST_SUCCESS
+export const lastVisitedUpdate = createAction(
+  UserSpaceActionTypes.LAST_VISITED_UPDATE
 )<void>();
 
-export const updateUserSpace = createAction(
-  UserSpaceActionTypes.USER_SPACE_UPDATE
-)<void>();
+export const lastVisitedUpdated = createAction(
+  UserSpaceActionTypes.LAST_VISITED_UPDATED
+)<LastVisited[]>();
 
-export const updateUserSpaceError = createAction(
-  UserSpaceActionTypes.USER_SPACE_UPDATE_ERROR
+export const lastVisitedUpdateError = createAction(
+  UserSpaceActionTypes.LAST_VISITED_UPDATE_ERROR
 )<Error>();

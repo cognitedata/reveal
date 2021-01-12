@@ -1,5 +1,6 @@
 import { StoreState } from 'store/types';
-import { sortByLastUpdated } from 'utils/suites';
+import { LastVisited } from 'store/userSpace/types';
+import { findLastVisitedTimeByKey } from 'utils/userSpace';
 import { Board, Suite, SuitesTableState } from './types';
 
 export const getSuitesTableState = (state: StoreState): SuitesTableState =>
@@ -10,28 +11,34 @@ export const getBoardsBySuite = (key: string) => (
 ): Suite | undefined =>
   state.suitesTable.suites?.find((suite) => suite.key === key);
 
-export const getLastVisitedSuitesMock = (itemsToDisplay: number = 6) => (
-  state: StoreState
-): Suite[] | undefined =>
-  sortByLastUpdated(state.suitesTable?.suites || [], 'desc').slice(
-    0,
-    itemsToDisplay
-  );
-
 export const getLastVisitedBoards = (
-  keys: string[],
+  lastVisited: LastVisited[],
   itemsToDisplay: number = 6
 ) => (state: StoreState): Board[] => {
   const boards: Board[] = [];
+  const keys: string[] = lastVisited.map((item: LastVisited) => item.key);
   if (!keys?.length) {
     return boards;
   }
   state.suitesTable?.suites?.forEach((suite: Suite) => {
-    const filtered = suite.boards?.filter((board) => keys.includes(board.key));
+    const filtered = suite.boards
+      ?.filter((board) => keys.includes(board.key))
+      .map((board) => ({
+        ...board,
+        color: suite.color,
+        lastVisitedTime: findLastVisitedTimeByKey(lastVisited, board.key),
+      }));
+
     if (filtered?.length) {
       boards.push(...filtered);
     }
   });
-  boards.splice(itemsToDisplay);
+  boards
+    .sort(
+      (a: Board, b: Board) =>
+        ((b.lastVisitedTime as any) as number) -
+        ((a.lastVisitedTime as any) as number)
+    )
+    .splice(itemsToDisplay);
   return boards;
 };
