@@ -21,7 +21,7 @@ export const updateLastVisited = (
   dispatch(actions.updateUserSpace());
   try {
     apiClient.updateLastVisited(lastVisited);
-    dispatch(fetchUserSpace(apiClient));
+    dispatch(actions.userSpaceUpdated(lastVisited as UserSpacePayload));
   } catch (e) {
     actions.updateUserSpaceError(e);
   }

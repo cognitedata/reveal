@@ -5,7 +5,7 @@ export enum UserSpaceActionTypes {
   USER_SPACE_LOAD = 'userSpace/LOAD',
   USER_SPACE_LOADED = 'userSpace/LOADED',
   USER_SPACE_LOAD_ERROR = 'userSpace/ERROR',
-  USER_SPACE_REQUEST_SUCCESS = 'userSpace/REQUEST_SUCCESS',
+  USER_SPACE_UPDATED = 'userSpace/UPDATED',
   USER_SPACE_UPDATE = 'userSpace/UPDATE',
   USER_SPACE_UPDATE_ERROR = 'userSpace/UPDATE_ERROR',
 }

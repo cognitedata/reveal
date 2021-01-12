@@ -13,9 +13,9 @@ export const loadUserSpaceError = createAction(
   UserSpaceActionTypes.USER_SPACE_LOAD_ERROR
 )<Error>();
 
-export const userSpaceRequestSuccess = createAction(
-  UserSpaceActionTypes.USER_SPACE_REQUEST_SUCCESS
-)<void>();
+export const userSpaceUpdated = createAction(
+  UserSpaceActionTypes.USER_SPACE_UPDATED
+)<UserSpacePayload>();
 
 export const updateUserSpace = createAction(
   UserSpaceActionTypes.USER_SPACE_UPDATE

@@ -44,12 +44,13 @@ export const UserSpaceReducer = createReducer(initialState)
     (state: UserSpaceState) => ({ ...state, loading: true, error: '' })
   )
   .handleAction(
-    UserSpaceActionTypes.USER_SPACE_REQUEST_SUCCESS,
-    (state: UserSpaceState) => ({
+    UserSpaceActionTypes.USER_SPACE_UPDATED,
+    (state: UserSpaceState, action: UserSpaceRootAction) => ({
       ...state,
       loading: false,
       error: '',
       loaded: true,
+      lastVisited: action.payload,
     })
   )
   .handleAction(
