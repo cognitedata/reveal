@@ -1,3 +1,4 @@
+import { Colors } from '@cognite/cogs.js';
 import React, { FC } from 'react';
 import { Ref } from 'react-hook-form/dist/types/fields';
 import styled from 'styled-components';
@@ -15,6 +16,18 @@ const CheckboxLabel = styled((props) => (
     position: static;
     white-space: nowrap;
     width: 1px;
+  }
+  &.cogs-checkbox {
+    &:hover {
+      input[type='checkbox']:checked {
+        &:disabled {
+          + .checkbox-ui {
+            background-color: ${Colors['greyscale-grey4'].hex()};
+            border: 0.125rem solid ${Colors['greyscale-grey5'].hex()};
+          }
+        }
+      }
+    }
   }
 `;
 
