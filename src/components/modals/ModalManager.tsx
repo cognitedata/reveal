@@ -5,6 +5,7 @@ import CreateSuite from 'components/modals/createSuiteModal/CreateSuiteModal';
 import AddBoard from 'components/modals/addBoardModal/AddBoardModal';
 import EditSuite from 'components/modals/editModal/EditSuiteModal';
 import EditBoard from 'components/modals/editModal/EditBoardModal';
+import ShareBoard from 'components/modals/shareBoardModal/ShareBoardModal';
 import { useSelector } from 'react-redux';
 import { getModalState } from 'store/modals/selectors';
 import { TS_FIX_ME } from 'types/core';
@@ -16,6 +17,7 @@ const modalComponentLookupTable: TS_FIX_ME = {
   AddBoard,
   EditSuite,
   EditBoard,
+  ShareBoard,
 };
 
 const ModalManager: React.FC = () => {

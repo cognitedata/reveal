@@ -227,3 +227,24 @@ export const ValidationContainer = styled.div<{ exceedWarningLength: boolean }>`
     ${({ exceedWarningLength }) => exceedWarningLength && 'font-weight: 700;'};
   }
 `;
+
+export const ShareURLInputContainer = styled.div`
+  display: flex;
+  padding-top: 8px;
+  & > .cogs-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: var(--cogs-greyscale-grey2);
+  }
+`;
+export const ShareURLInput = styled.input`
+  width: 100%;
+  background-color: var(--cogs-greyscale-grey2);
+  border: none;
+  border-radius: 4px 0 0 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  &:focus {
+    outline: none;
+  }
+`;
