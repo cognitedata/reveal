@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import * as THREE from 'three';
@@ -26,7 +26,14 @@ describe('CadSectorLoader', () => {
   const cadModelMetadata = createCadModelMetadata(generateSectorTree(5));
   const cadModel = new CadNode(cadModelMetadata, materialManager);
 
-  jest.useFakeTimers('modern');
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+  });
+
+  afterAll(async () => {
+    await new Promise(setImmediate);
+    jest.useRealTimers();
+  });
 
   // TODO: 24-07-2020 j-bjorne skipped until pipeline split from update handler.
   test('updateCamera(), updateLoadingHints() and updateClipPlanes() triggers SectorCuller.determineSectors()', async () => {

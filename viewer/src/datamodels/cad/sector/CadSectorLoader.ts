@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import * as THREE from 'three';
@@ -257,6 +257,7 @@ export class CadSectorLoader {
     } catch (error) {
       // Ignore if operations was canceled
       if (!(error instanceof OperationCanceledError)) {
+        console.log('heeehehheehe');
         throw error;
       }
     } finally {
