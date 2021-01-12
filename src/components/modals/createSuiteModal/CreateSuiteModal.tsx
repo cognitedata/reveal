@@ -1,7 +1,7 @@
 import React from 'react';
 import { modalSettings } from 'components/modals/config';
 import { suiteEmpty } from 'components/modals/utils';
-import { useFormState } from 'hooks/useForm';
+import { useFormState } from 'hooks';
 import { Board } from 'store/suites/types';
 import { MultiStepModal } from '../multiStepModal/MultiStepModal';
 

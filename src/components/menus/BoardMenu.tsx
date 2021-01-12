@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
-import { useClickAwayListener } from 'hooks/useClickAwayListener';
+import { useClickAwayListener } from 'hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
@@ -49,7 +49,6 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
       <ActionsContainer>
         {isComponentVisible && (
           <Menu>
-            <Menu.Item>Unpin</Menu.Item>
             {admin && (
               <>
                 <Menu.Item>
@@ -80,7 +79,16 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                 </Menu.Item>
               </>
             )}
-            <Menu.Item>Share board</Menu.Item>
+            <Menu.Item>
+              <MenuItemContent
+                role="button"
+                tabIndex={0}
+                // will be fixed when feature implemented
+                onClick={(event) => event.preventDefault()}
+              >
+                Share board
+              </MenuItemContent>
+            </Menu.Item>
           </Menu>
         )}
       </ActionsContainer>

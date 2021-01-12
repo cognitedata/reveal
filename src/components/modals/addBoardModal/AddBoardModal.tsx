@@ -12,7 +12,7 @@ import Modal from 'components/modals/simpleModal/Modal';
 import { BoardForm } from 'components/modals/multiStepModal/steps';
 import { modalSettings } from 'components/modals/config';
 import { ModalFooter, ModalContainer } from 'components/modals/elements';
-import { useFormState } from 'hooks/useForm';
+import { useFormState } from 'hooks';
 
 interface Props {
   dataItem: Suite;

@@ -9323,6 +9323,11 @@ github-slugger@^1.0.0:
   dependencies:
     emoji-regex ">=6.0.0 <=6.1.1"
 
+glider-js@1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/glider-js/-/glider-js-1.7.1.tgz#ffa4ae6775b0c005e2eeca72e586acd1f64774e9"
+  integrity sha512-kry/GVCmo/MFUtMTgZONTjXorcvzKskt4VklSQD8kVDJbVfT3arV4Xf7o/ZwMZkDhLKlWX9bpV30fsp7vLHuUA==
+
 glob-base@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/glob-base/-/glob-base-0.3.0.tgz#dbb164f6221b1c0b1ccf82aea328b497df0ea3c4"
@@ -14911,6 +14916,13 @@ react-fast-compare@^3.0.1, react-fast-compare@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
   integrity sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==
+
+react-glider@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-glider/-/react-glider-2.0.4.tgz#0bc4b1422b86d818f1e928ae47f8203265422a25"
+  integrity sha512-hqMTYYleIHmwKzMgf1VnkWH+kfck8bN77hnz/dO7xhP9Zxbs62+0kqmdxMYOtsr1lGGOdNwSlYgdBF7rAWMVYQ==
+  dependencies:
+    glider-js "1.7.1"
 
 react-helmet-async@^1.0.2:
   version "1.0.7"

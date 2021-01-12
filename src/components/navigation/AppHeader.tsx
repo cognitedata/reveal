@@ -47,7 +47,7 @@ const AppHeader: React.FC = () => {
           <Menu.Item>Getting Started</Menu.Item>
           <Menu.Item>FAQs</Menu.Item>
           <Menu.Divider />
-          <Menu.Footer>Start interactive guide</Menu.Footer>
+          <Menu.Footer>Introduction to Digital Cockpit</Menu.Footer>
         </Menu>
       ),
     },

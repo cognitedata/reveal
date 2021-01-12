@@ -7,6 +7,14 @@ export const TilesContainer = styled.div`
     padding-bottom: 8px;
     margin-bottom: 24px;
   }
+  & .glider-slide {
+    min-width: 298px;
+    margin-right: 48px;
+  }
+  & .glider-next,
+  & .glider-prev {
+    top: 15%;
+  }
 `;
 
 export const OverviewContainer = styled.div`

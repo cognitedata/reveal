@@ -38,4 +38,26 @@ export const UserSpaceReducer = createReducer(initialState)
       loading: false,
       error: (action.payload as Error)?.message,
     })
+  )
+  .handleAction(
+    UserSpaceActionTypes.LAST_VISITED_UPDATE,
+    (state: UserSpaceState) => ({ ...state, loading: true, error: '' })
+  )
+  .handleAction(
+    UserSpaceActionTypes.LAST_VISITED_UPDATED,
+    (state: UserSpaceState, action: UserSpaceRootAction) => ({
+      ...state,
+      loading: false,
+      error: '',
+      loaded: true,
+      lastVisited: action.payload,
+    })
+  )
+  .handleAction(
+    UserSpaceActionTypes.LAST_VISITED_UPDATE_ERROR,
+    (state: UserSpaceState, action: UserSpaceRootAction) => ({
+      ...state,
+      loading: false,
+      error: (action.payload as Error)?.message,
+    })
   );

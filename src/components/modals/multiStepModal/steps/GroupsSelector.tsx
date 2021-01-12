@@ -39,7 +39,7 @@ const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
     }));
     setErrors((prevState: Board) => ({
       ...prevState,
-      visibleTo: validateField('visibleTo', selectedOption.value),
+      visibleTo: validateField('visibleTo', ''),
     }));
   };
 

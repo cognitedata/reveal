@@ -11,8 +11,15 @@ export const ActionsContainer = styled.div`
   left: 24px;
   color: var(--cogs-text-color);
   z-index: ${layers.TILE_ACTIONS_MENU};
+  & .cogs-menu {
+    padding: 0;
+  }
+  & .cogs-menu-item {
+    padding: 0;
+  }
 `;
 export const MenuItemContent = styled.div`
   width: inherit;
+  padding: 8px;
   text-align: left;
 `;

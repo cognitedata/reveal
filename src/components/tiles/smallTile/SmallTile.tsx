@@ -6,22 +6,36 @@ import {
   TileDescription,
   StyledTitle,
 } from 'components/tiles/elements';
-import { shortDateTime } from 'utils/date';
-import { Suite } from 'store/suites/types';
+import { dateToFromNowDaily } from 'utils/date';
+import { Board } from 'store/suites/types';
+import { useLastVisited } from 'hooks';
 
 interface Props {
-  dataItem: Suite;
+  dataItem: Board;
 }
 
 export const SmallTile: React.FC<Props> = ({ dataItem }: Props) => {
+  const { setAsLastvisited } = useLastVisited(dataItem);
   return (
-    <SmallTileContainer>
-      <SuiteAvatar size="large" title={dataItem.title} color={dataItem.color} />
+    <SmallTileContainer onClick={setAsLastvisited}>
+      <SuiteAvatar
+        size="large"
+        title={dataItem.title}
+        color={dataItem.color}
+        logo={dataItem.type}
+      />
       <TileDescription>
         <Tooltip content={dataItem.title}>
           <StyledTitle level={6}>{dataItem.title}</StyledTitle>
         </Tooltip>
-        <Body level={3}>Opened {shortDateTime(dataItem?.lastUpdatedTime)}</Body>
+        <Body level={3}>
+          {dataItem?.lastVisitedTime && (
+            <>
+              <span>Opened </span>
+              {dateToFromNowDaily(dataItem?.lastVisitedTime)}
+            </>
+          )}
+        </Body>
       </TileDescription>
     </SmallTileContainer>
   );

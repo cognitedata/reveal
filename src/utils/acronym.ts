@@ -1,4 +1,4 @@
-const exclude = ['&', 'and'];
+const exclude = ['&', 'and', '-'];
 
 export const acronym = (title: string) =>
   title
