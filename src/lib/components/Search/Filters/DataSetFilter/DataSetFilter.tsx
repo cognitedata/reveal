@@ -5,8 +5,7 @@ import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'lib/components';
 import { ResourceType, convertResourceType } from 'lib/types';
 import { useRelevantDatasets, DataSetWCount } from 'lib/hooks/sdk';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { usePermissions } from 'lib/hooks/CustomHooks';
+import { useCdfItems, usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export const DataSetFilter = ({
   resourceType,

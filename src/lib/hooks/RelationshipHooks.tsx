@@ -4,6 +4,7 @@ import {
   useAggregate,
   useInfiniteList,
   useCdfItem,
+  usePermissions,
 } from '@cognite/sdk-react-query-hooks';
 import { ResourceType, ResourceItem, convertResourceType } from 'lib/types';
 import { formatNumber } from 'lib/utils/numbers';
@@ -22,7 +23,6 @@ import {
 } from 'lib/utils/filters';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import uniqueBy from 'lodash/uniqBy';
-import { usePermissions } from './CustomHooks';
 
 const PAGE_SIZE = 20;
 

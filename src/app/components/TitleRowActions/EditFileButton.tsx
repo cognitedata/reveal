@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
-import { usePermissions } from 'lib/hooks/CustomHooks';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from 'lib/types';
 
 export const EditFileButton = ({

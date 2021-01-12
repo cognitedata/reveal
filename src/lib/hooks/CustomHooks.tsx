@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { CogniteClient, SingleCogniteCapability } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 import queryString from 'query-string';
 
@@ -31,59 +30,4 @@ export const useEnv = (): string | undefined => {
 export const useUserStatus = () => {
   const sdk = useSDK();
   return useQuery(['login'], () => sdk.login.status());
-};
-
-const getGroups = async (sdk: CogniteClient) => {
-  const groups = await sdk.groups.list();
-  return groups.reduce(
-    (prev, current) => {
-      const a = {
-        ...prev,
-      };
-      // @ts-ignore
-      const { capabilities, permissions } = current;
-      if (permissions) {
-        a.assetsAcl = (a.assetsAcl || []).concat(permissions.accessTypes);
-        a.filesAcl = (a.filesAcl || []).concat(permissions.accessTypes);
-        a.timeSeriesAcl = (a.timeSeriesAcl || []).concat(
-          permissions.accessTypes
-        );
-      }
-      if (capabilities) {
-        capabilities.forEach((capability: SingleCogniteCapability) => {
-          Object.keys(capability).forEach(key => {
-            if (a[key]) {
-              // @ts-ignore
-              capability[key].actions.forEach(el => {
-                if (a[key].indexOf(el) === -1) {
-                  a[key].push(el);
-                }
-              });
-            } else {
-              // @ts-ignore
-              a[key] = capability[key].actions;
-            }
-          });
-        });
-      }
-      return a;
-    },
-    { groupsAcl: ['LIST'] } as { [key: string]: string[] }
-  );
-};
-
-export const usePermissions = (key: string, type?: string) => {
-  const sdk = useSDK();
-  const request = useQuery(['groups'], () => getGroups(sdk), {
-    staleTime: 10000,
-  });
-  const groups = request.data || {};
-
-  return {
-    ...request,
-    data:
-      groups.groupsAcl &&
-      groups[key] &&
-      (type ? groups[key].includes(type) : true),
-  };
 };

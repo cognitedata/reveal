@@ -3,7 +3,7 @@ import { notification } from 'antd';
 import { useParams } from 'react-router-dom';
 
 import { ids } from 'cogs-variables';
-import { usePermissions } from 'lib/hooks/CustomHooks';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 type Props = {
   key: string;

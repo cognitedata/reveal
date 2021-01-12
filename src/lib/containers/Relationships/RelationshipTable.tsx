@@ -13,7 +13,7 @@ import {
 import { SelectableItemsProps } from 'lib/CommonProps';
 import { ResultTableLoader } from 'lib/containers/ResultTableLoader';
 import { useRelationshipCount } from 'lib/hooks/RelationshipHooks';
-import { usePermissions } from 'lib/hooks/CustomHooks';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { createLink } from 'lib/utils/URLUtils';
 
 export type RelationshipTableProps = {

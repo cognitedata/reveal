@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dropdown, Menu, Tooltip, Space } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
-import { usePermissions } from 'lib/hooks/CustomHooks';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem, isModelRunning } from 'lib/types';
 import {
   useDeleteFindObjectsJob,

@@ -2,7 +2,7 @@ import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { ButtonGroup } from 'lib/components';
 import { SearchResultToolbar, FileUploaderModal } from 'lib/containers';
-import { usePermissions } from 'lib/hooks/CustomHooks';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CLOSE_DROPDOWN_EVENT } from 'lib/utils/WindowEvents';
 import React, { useState } from 'react';
 

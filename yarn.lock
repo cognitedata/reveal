@@ -1537,10 +1537,10 @@
   dependencies:
     react "^16.14.0"
 
-"@cognite/sdk-react-query-hooks@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-2.0.1.tgz#d9302938645c40c0aa66d0675bf51f99861a4141"
-  integrity sha512-efKoJN7Hn0+osgayOAjty6TCPQPydTRxz/6JzHnkVvfHcPW/08RXnaOVzMPGB+0tcmEpMvJ3lkB2FkSAGRhgLw==
+"@cognite/sdk-react-query-hooks@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-2.0.4.tgz#f2b6417bfafdf4b80be866dc2ce0ee51145de9b5"
+  integrity sha512-MOeCBUQFrqnUPvV/U1lZ6ti6b9M+skZjZ2fZrUuvlbhins1g5kahVFEDxR6mdRH2BwShS5lRZCBdK72AJpizVg==
   dependencies:
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^2.23.1"
