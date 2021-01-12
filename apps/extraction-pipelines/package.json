@@ -66,7 +66,7 @@
     "@rescripts/rescript-use-babel-config": "^0.0.10",
     "@rescripts/utilities": "^0.0.7",
     "@storybook/preset-create-react-app": "^3.1.5",
-    "@storybook/react": "^6.1.12",
+    "@storybook/react": "^6.1.14",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.3",
     "@testing-library/react-hooks": "^4.0.0",
