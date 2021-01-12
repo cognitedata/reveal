@@ -1,10 +1,10 @@
-import { assets } from 'stubs/assets';
-import { timeseries } from 'stubs/timeseries';
-import { sequences } from 'stubs/sequences';
-import { events } from 'stubs/events';
-import { files } from 'stubs/files';
+import { assets } from 'lib/stubs/assets';
+import { timeseries } from 'lib/stubs/timeseries';
+import { sequences } from 'lib/stubs/sequences';
+import { events } from 'lib/stubs/events';
+import { files } from 'lib/stubs/files';
 import styled from 'styled-components';
-import { datapoints } from 'stubs/timeseriesData';
+import { datapoints } from 'lib/stubs/timeseriesData';
 import {
   ResourcePreviewObserver,
   ResourcePreviewProps,

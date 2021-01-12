@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
-import { assets } from 'stubs/assets';
-import { files } from 'stubs/files';
+import { assets } from 'lib/stubs/assets';
+import { files } from 'lib/stubs/files';
 import { AssetTable, FileTable, Splitter } from '..';
 import { useResourcePreview, ResourcePreviewProvider } from '../context';
 import { Wrapper } from './utils';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { events } from 'stubs/events';
+import { events } from 'lib/stubs/events';
 import { EventDetails } from './EventDetails';
 
 export default {

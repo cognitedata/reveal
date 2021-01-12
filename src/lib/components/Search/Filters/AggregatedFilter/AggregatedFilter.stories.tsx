@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { text } from '@storybook/addon-knobs';
-import { assets } from 'stubs/assets';
+import { assets } from 'lib/stubs/assets';
 import { AggregatedFilter } from './AggregatedFilter';
 
 export default {

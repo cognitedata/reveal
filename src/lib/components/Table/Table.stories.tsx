@@ -1,6 +1,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { assets } from 'stubs/assets';
+import { assets } from 'lib/stubs/assets';
 import { Table } from './Table';
 import { ResourceTableColumns } from './Columns';
 

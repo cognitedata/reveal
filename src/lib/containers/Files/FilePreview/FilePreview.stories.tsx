@@ -1,7 +1,7 @@
 import React from 'react';
 import { DataExplorationProvider } from 'lib/context';
 import { boolean } from '@storybook/addon-knobs';
-import { files } from 'stubs/files';
+import { files } from 'lib/stubs/files';
 import { sdkMock } from 'lib/docs/stub';
 import { FilePreview } from './FilePreview';
 
@@ -31,7 +31,8 @@ const tempSdk = {
 };
 export const Example = () => (
   <FilePreview
-    fileId={1}
+    fileId={files[0].id}
     contextualization={boolean('contextualization', false)}
+    creatable={boolean('creatable', false)}
   />
 );

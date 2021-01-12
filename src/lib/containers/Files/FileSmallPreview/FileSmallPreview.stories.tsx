@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataExplorationProvider } from 'lib/context';
-import { files } from 'stubs/files';
+import { files } from 'lib/stubs/files';
 import { sdkMock } from 'lib/docs/stub';
 import { FileSmallPreview } from './FileSmallPreview';
 

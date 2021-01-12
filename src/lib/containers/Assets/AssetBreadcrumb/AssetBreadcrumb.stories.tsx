@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataExplorationProvider } from 'lib/context';
-import { assets } from 'stubs/assets';
+import { assets } from 'lib/stubs/assets';
 import { action } from '@storybook/addon-actions';
 import { AssetBreadcrumb } from './AssetBreadcrumb';
 

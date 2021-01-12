@@ -2,7 +2,7 @@ import { FileInfo } from '@cognite/sdk';
 
 export const files: FileInfo[] = [
   {
-    id: 717618390227695,
+    id: 1,
     externalId: 'SKA-AK-P-XB-2930-001.png',
     name: 'SKA-AK-P-XB-2930-001.png',
     mimeType: 'image/png',

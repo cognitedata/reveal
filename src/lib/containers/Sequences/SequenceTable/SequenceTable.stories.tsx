@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
-import { sequences } from 'stubs/sequences';
+import { sequences } from 'lib/stubs/sequences';
 import { SequenceTable } from './SequenceTable';
 
 export default {

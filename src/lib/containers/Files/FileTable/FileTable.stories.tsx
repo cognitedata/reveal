@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
-import { files } from 'stubs/files';
+import { files } from 'lib/stubs/files';
 import { FileTable } from './FileTable';
 
 export default {

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
-import { timeseries } from 'stubs/timeseries';
+import { timeseries } from 'lib/stubs/timeseries';
 import { TimeseriesTable } from './TimeseriesTable';
 
 export default {

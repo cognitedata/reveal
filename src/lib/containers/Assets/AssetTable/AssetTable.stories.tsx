@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
-import { assets } from 'stubs/assets';
+import { assets } from 'lib/stubs/assets';
 import { AssetTable } from './AssetTable';
 
 export default {

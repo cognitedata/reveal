@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { assets } from 'stubs/assets';
+import { assets } from 'lib/stubs/assets';
 import { MetadataFilter } from './MetadataFilter';
 
 export default {

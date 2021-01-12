@@ -1,5 +1,5 @@
 import React from 'react';
-import { timeseries } from 'stubs/timeseries';
+import { timeseries } from 'lib/stubs/timeseries';
 import { TimeseriesSmallPreview } from './TimeseriesSmallPreview';
 
 export default {

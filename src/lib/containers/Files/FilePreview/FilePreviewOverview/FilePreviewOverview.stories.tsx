@@ -4,7 +4,7 @@ import { number } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { CogniteClient } from '@cognite/sdk';
-import { files } from 'stubs/files';
+import { files } from 'lib/stubs/files';
 import { FilePreviewOverview } from './FilePreviewOverview';
 
 export default {

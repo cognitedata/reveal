@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { files } from 'stubs/files';
+import { text } from '@storybook/addon-knobs';
+import { files } from 'lib/stubs/files';
 import { FileGridPreview } from './FileGridPreview';
 
 export default {
@@ -12,7 +13,12 @@ export default {
 
 export const Example = () => {
   return (
-    <FileGridPreview items={files} onItemClicked={action('onItemClicked')} />
+    <FileGridPreview
+      item={files[0]}
+      onItemClicked={action('onItemClicked')}
+      isSelected={() => {}}
+      query={text('query', '')}
+    />
   );
 };
 export const ExampleSingleSelect = () => {
@@ -21,6 +27,8 @@ export const ExampleSingleSelect = () => {
       selectionMode="single"
       item={files[0]}
       onItemClicked={action('onItemClicked')}
+      isSelected={() => {}}
+      query={text('query', '')}
     />
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { sequences } from 'stubs/sequences';
+import { sequences } from 'lib/stubs/sequences';
 import { SequenceSmallPreview } from './SequenceSmallPreview';
 
 export default {

@@ -16,6 +16,7 @@ export const Example = () => {
       filter={{}}
       onAssetClicked={action('onAssetClicked')}
       query={text('query', '')}
+      isSelected={() => {}}
     />
   );
 };
@@ -26,6 +27,7 @@ export const ExampleSingleSelect = () => {
       filter={{}}
       onAssetClicked={action('onAssetClicked')}
       query={text('query', '')}
+      isSelected={() => {}}
     />
   );
 };
