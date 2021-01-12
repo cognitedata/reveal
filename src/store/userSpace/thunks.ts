@@ -18,11 +18,11 @@ export const updateLastVisited = (
   apiClient: ApiClient,
   lastVisited: LastVisited[]
 ) => async (dispatch: RootDispatcher) => {
-  dispatch(actions.updateUserSpace());
+  dispatch(actions.lastVisitedUpdate());
   try {
     apiClient.updateLastVisited(lastVisited);
-    dispatch(actions.userSpaceUpdated(lastVisited as UserSpacePayload));
+    dispatch(actions.lastVisitedUpdated(lastVisited));
   } catch (e) {
-    actions.updateUserSpaceError(e);
+    actions.lastVisitedUpdateError(e);
   }
 };

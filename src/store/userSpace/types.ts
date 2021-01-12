@@ -5,9 +5,9 @@ export enum UserSpaceActionTypes {
   USER_SPACE_LOAD = 'userSpace/LOAD',
   USER_SPACE_LOADED = 'userSpace/LOADED',
   USER_SPACE_LOAD_ERROR = 'userSpace/ERROR',
-  USER_SPACE_UPDATED = 'userSpace/UPDATED',
-  USER_SPACE_UPDATE = 'userSpace/UPDATE',
-  USER_SPACE_UPDATE_ERROR = 'userSpace/UPDATE_ERROR',
+  LAST_VISITED_UPDATE = 'userSpace/LAST_VISITED_UPDATE',
+  LAST_VISITED_UPDATED = 'userSpace/LAST_VISITED_UPDATED',
+  LAST_VISITED_UPDATE_ERROR = 'userSpace/LAST_VISITED_UPDATE_ERROR',
 }
 
 export type UserSpaceRootAction = ActionType<typeof actions>;
