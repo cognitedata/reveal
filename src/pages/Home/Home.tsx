@@ -49,7 +49,7 @@ const Home = () => {
   );
 
   useEffect(() => {
-    if (!userSpaceLoaded && !userSpaceLoadDispatched) {
+    if (!userSpaceLoaded && !userSpaceLoading && !userSpaceLoadDispatched) {
       dispatch(fetchUserSpace(apiClient));
       setUserSpaceLoadDispatched(true);
     }

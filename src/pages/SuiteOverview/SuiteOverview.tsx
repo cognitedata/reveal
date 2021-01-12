@@ -13,6 +13,8 @@ import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
+import { UserSpaceState } from 'store/userSpace/types';
+import { getUserSpace } from 'store/userSpace/selectors';
 import { StyledTitle, NoBoardsContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
@@ -24,6 +26,9 @@ const SuiteOverview: React.FC = () => {
   const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
     getSuitesTableState
   );
+  const { loading: userSpaceLoading }: UserSpaceState = useSelector(
+    getUserSpace
+  );
 
   const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
 
@@ -31,7 +36,7 @@ const SuiteOverview: React.FC = () => {
     return null;
   }
 
-  if (suitesLoading) {
+  if (suitesLoading || userSpaceLoading) {
     return <Loader />;
   }
 

@@ -67,14 +67,16 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                 Delete suite
               </MenuItemContent>
             </Menu.Item>
-            <MenuItemContent
-              role="button"
-              tabIndex={0}
-              // will be fixed when feature implemented
-              onClick={(event) => event.preventDefault()}
-            >
-              Share suite
-            </MenuItemContent>
+            <Menu.Item>
+              <MenuItemContent
+                role="button"
+                tabIndex={0}
+                // will be fixed when feature implemented
+                onClick={(event) => event.preventDefault()}
+              >
+                Share suite
+              </MenuItemContent>
+            </Menu.Item>
           </Menu>
         )}
       </ActionsContainer>
