@@ -10,7 +10,7 @@ const tempFolderPath = path.join(__dirname, './temp');
 program
   .version('0.0.1')
   .option(
-    '-b --bucket [cdf-hub-dev|cdf-hub-staging|cdf-hub-production]',
+    '-b --bucket [cdf-hub-dev|cdf-hub-staging`]', // |cdf-hub-production]',
     'Bucket name'
   )
   .option('-p --packageName <string>', 'Package name')
