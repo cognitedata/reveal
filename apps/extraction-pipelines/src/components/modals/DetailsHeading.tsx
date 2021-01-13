@@ -1,11 +1,11 @@
 import React from 'react';
 import { Icon } from '@cognite/cogs.js';
-import ClosePopconfirm from 'components/buttons/ClosePopconfirm';
 import { DetailFieldNames } from 'model/Integration';
 import InteractiveCopy from '../InteractiveCopy';
 import { IntegrationAction } from '../menu/IntegrationsTableActions';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { StyledHeader, StyledH2 } from '../../styles/StyledModal';
+import { ToggleableConfirmDialog } from '../buttons/ToggleableConfirmDialog';
 
 interface IntegrationModalHeadingProps {
   onCancel: () => void;
@@ -33,7 +33,7 @@ const DetailsHeading = ({
         {DetailFieldNames.EXTERNAL_ID}: {integration?.externalId}{' '}
         <InteractiveCopy text={`${integration?.externalId}`} />
       </span>
-      <ClosePopconfirm
+      <ToggleableConfirmDialog
         showConfirmBox={updates.size > 0}
         onClick={onCancel}
         primaryText={closeIcon}

@@ -14,7 +14,7 @@ import {
   AUTHOR_EMAIL_TEST_ID,
   AUTHOR_NAME_TEST_ID,
   AUTHOR_NOTIFICATION_TEST_ID,
-  removeContact,
+  notExistsByIdAsync,
 } from '../../utils/test/utilsFn';
 import {
   CDF_ENV_GREENFIELD,
@@ -29,7 +29,11 @@ import ContactsView, {
 import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
 import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
-import { EMAIL_NOTIFICATION_TOOLTIP } from '../../utils/constants';
+import {
+  CANCEL,
+  EMAIL_NOTIFICATION_TOOLTIP,
+  REMOVE,
+} from '../../utils/constants';
 
 function createIntegrationWithContacts(
   authors: User[] | undefined | null
@@ -41,6 +45,8 @@ function createIntegrationWithContacts(
 describe('<ContactsView />', () => {
   let client: QueryClient;
   const integration = getMockResponse()[0];
+
+  const DIALOG_TEXT_REGEX = new RegExp(/are you sure you want to remove/, 'i');
   beforeEach(() => {
     client = new QueryClient();
     const wrapper = renderQueryCacheIntegration(
@@ -152,25 +158,32 @@ describe('<ContactsView />', () => {
     ).toEqual(false);
   });
 
-  test('add 3, remove first of new', () => {
-    const newRow = integration.authors.length + 1;
-    addNewContact(newRow, 'Test Name', 'test@email.com');
+  test('add 3, remove first of new', async () => {
+    const newRow = integration.authors.length;
+    sdkv3.post.mockResolvedValue({ data: { items: [] } });
+    await addNewContact(newRow, 'Test Name', 'test@email.com');
 
     const contact2 = {
       name: 'foo bar',
       email: 'foo@bar.com',
     };
 
-    addNewContact(newRow + 1, contact2.name, contact2.email);
+    await addNewContact(newRow + 1, contact2.name, contact2.email);
     const contact3 = {
       name: 'no name',
       email: 'no@name.com',
     };
-    addNewContact(newRow + 2, contact3.name, contact3.email);
-    removeContact(newRow);
+    await addNewContact(newRow + 2, contact3.name, contact3.email);
 
-    existsContactAsync(contact2.name, contact2.email);
-    existsContactAsync(contact3.name, contact3.email);
+    await clickByIdAsync(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
+    const confirmRemove = screen.getAllByText('Remove')[newRow + 1];
+    fireEvent.click(confirmRemove);
+    await notExistsByIdAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`);
+    await notExistsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
+    // await removeContact(newRow);
+
+    await existsContactAsync(contact2.name, contact2.email);
+    await existsContactAsync(contact3.name, contact3.email);
   });
 
   test('Add, then save should show error', async () => {
@@ -199,6 +212,39 @@ describe('<ContactsView />', () => {
     });
   });
 
+  test('Remove dialog - interact with remove dialog', async () => {
+    sdkv3.post.mockResolvedValue({ data: { items: [] } });
+    const removeRow = 0;
+    const removeBtn = screen.getAllByText(REMOVE)[removeRow];
+    await waitFor(() => {
+      expect(screen.queryByText(DIALOG_TEXT_REGEX)).not.toBeInTheDocument();
+    });
+    act(() => {
+      fireEvent.click(removeBtn);
+    });
+    await waitFor(() => {
+      expect(screen.getByText(DIALOG_TEXT_REGEX)).toBeInTheDocument();
+    });
+
+    const cancel = screen.getByText(CANCEL);
+    expect(cancel).toBeInTheDocument();
+    act(() => {
+      fireEvent.click(cancel);
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText(DIALOG_TEXT_REGEX)).not.toBeVisible();
+    });
+
+    fireEvent.click(removeBtn);
+
+    const confirmRemove = screen.getAllByText(REMOVE)[removeRow + 1];
+    fireEvent.click(confirmRemove);
+    await waitFor(() => {
+      expect(screen.queryByText(DIALOG_TEXT_REGEX)).not.toBeInTheDocument();
+    });
+  });
+
   test('Should call to get updated integration information when contact is removed', async () => {
     const integrationsResponse = getMockResponse()[1];
     sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
@@ -216,10 +262,15 @@ describe('<ContactsView />', () => {
 
     // click remove
     const removeRow = 0;
-    const removeBtn = screen.getAllByText('Remove')[removeRow];
-    act(() => {
-      fireEvent.click(removeBtn);
+    const removeBtn = screen.getAllByText(REMOVE)[removeRow];
+    fireEvent.click(removeBtn);
+    expect(sdkv3.post).toHaveBeenCalledTimes(0);
+    await waitFor(() => {
+      expect(screen.getByText(DIALOG_TEXT_REGEX)).toBeInTheDocument();
     });
+
+    const confirmRemove = screen.getAllByText(REMOVE)[removeRow + 1];
+    fireEvent.click(confirmRemove);
 
     await waitFor(() => {
       expect(sdkv3.post).toHaveBeenCalledTimes(1);

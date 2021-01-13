@@ -87,6 +87,10 @@ export const clickText = async (text: string) => {
 
 export const removeContact = async (newRow: number) => {
   await clickByIdAsync(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
+
+  const confirmRemove = screen.getAllByText('Remove')[newRow + 1];
+  fireEvent.click(confirmRemove);
+
   await notExistsByIdAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`);
   await notExistsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
 };
@@ -101,5 +105,5 @@ export const addNewContact = async (
   await existsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
   await typeInInputAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`, name);
   await typeInInputAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`, email);
-  await clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
+  clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
 };

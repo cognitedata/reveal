@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import ClosePopconfirm from '../buttons/ClosePopconfirm';
+import { ToggleableConfirmDialog } from '../buttons/ToggleableConfirmDialog';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 
 const ErrorMessage = styled.div`
@@ -87,7 +87,7 @@ const DetailsFooter: FunctionComponent<Props> = ({
           {errorText}
         </ErrorMessage>
       )}
-      <ClosePopconfirm
+      <ToggleableConfirmDialog
         showConfirmBox={updates.size > 0}
         primaryText={primaryText}
         cancelText={cancelText}
@@ -95,6 +95,7 @@ const DetailsFooter: FunctionComponent<Props> = ({
         onClick={onClick}
         popConfirmContent={popConfirmContent}
         testId="footer-modal-close-btn"
+        type="primary"
       />
     </Wrapper>
   );

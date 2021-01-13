@@ -14,9 +14,13 @@ import { InputWarningError } from '../inputs/InputWithWarning';
 import EmailLink from '../buttons/EmailLink';
 import { User } from '../../model/User';
 import {
+  CANCEL,
+  EDIT,
   EMAIL_NOTIFICATION_TOOLTIP,
   EMAIL_PLACEHOLDER,
   NAME_PLACEHOLDER,
+  REMOVE,
+  SAVE,
 } from '../../utils/constants';
 import {
   AUTHOR_EMAIL_TEST_ID,
@@ -25,6 +29,7 @@ import {
 } from '../../utils/test/utilsFn';
 import { CheckboxWithRef } from '../inputs/CheckboxWithRef';
 import { GridRowStyle } from '../../styles/grid/StyledGrid';
+import { ConfirmDialogButton } from '../buttons/ConfirmDialogButton';
 
 interface OwnProps {
   field: Partial<ArrayField<Record<string, any>, 'id'>>;
@@ -33,6 +38,12 @@ interface OwnProps {
 }
 
 type Props = OwnProps;
+
+function confirmRemoveContact(contact?: string) {
+  return `Are you sure you want to remove ${
+    contact ? `${contact} as contact?` : 'contact?'
+  }`;
+}
 
 const ContactView: FunctionComponent<Props> = ({
   field,
@@ -247,7 +258,7 @@ const ContactView: FunctionComponent<Props> = ({
             aria-controls="name email"
             data-testid={`${ContactBtnTestIds.CANCEL_BTN}${index}`}
           >
-            Cancel
+            {CANCEL}
           </Button>
           <ErrorMessageDialog
             visible={errorVisible}
@@ -260,7 +271,7 @@ const ContactView: FunctionComponent<Props> = ({
               aria-controls="name email"
               data-testid={`${ContactBtnTestIds.SAVE_BTN}${index}`}
             >
-              Save
+              {SAVE}
             </Button>
           </ErrorMessageDialog>
         </>
@@ -270,7 +281,16 @@ const ContactView: FunctionComponent<Props> = ({
             visible={errorVisible}
             handleClickError={handleClickError}
           >
-            <Button onClick={onRemoveClick}>Remove</Button>
+            <ConfirmDialogButton
+              primaryText={REMOVE}
+              cancelText={CANCEL}
+              okText={REMOVE}
+              onClick={onRemoveClick}
+              popConfirmContent={confirmRemoveContact(
+                integration?.authors[index]?.name
+              )}
+              testId={`remove-contact-btn-${index}`}
+            />
           </ErrorMessageDialog>
           <Button
             onClick={onEditClick}
@@ -281,7 +301,7 @@ const ContactView: FunctionComponent<Props> = ({
             aria-controls="name email"
             data-testid={`${ContactBtnTestIds.EDIT_BTN}${index}`}
           >
-            Edit
+            {EDIT}
           </Button>
         </>
       )}
