@@ -20,7 +20,7 @@ export type ModalType =
 
 export type Modal = {
   modalType: ModalType;
-  // TODO(dtc-215)
+  // TODO(dtc-255)
   modalProps?: any;
 };
 

@@ -26,7 +26,7 @@ import BoardTypeSelector from './BoardTypeSelector';
 import GroupsSelector from './GroupsSelector';
 
 interface Props {
-  // TODO(dtc-215) use containers to avoid deep props nesting
+  // TODO(dtc-257) use containers to avoid deep props nesting
   suite: Suite;
   board: Board;
   setSuite: TS_FIX_ME;
@@ -37,7 +37,7 @@ const SnapshotTooltip = () => {
   return (
     <CustomTooltipContainer>
       A snapshot is a preview of your data, you can learn more about snapshots{' '}
-      {/* TODO(dtc-215) provide with correct link */}
+      {/* TODO(dtc-224) provide with correct link */}
       <A href="#" isExternal>
         here
       </A>
@@ -165,7 +165,7 @@ export const BoardForm: React.FC<Props> = ({
             <Micro>
               To give access to the right groups, make sure groups are set-up
               correctly in Azure AD, see our{' '}
-              {/* TODO(dtc-215) provide with correct link */}
+              {/* TODO(dtc-224) provide with correct link */}
               <StyledLink href="#" isExternal>
                 documentation
               </StyledLink>

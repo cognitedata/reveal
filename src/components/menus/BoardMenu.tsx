@@ -31,7 +31,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
   const handleOpenModal = (
     event: React.MouseEvent,
     modalType: ModalType,
-    // TODO(dtc-215) change type
+    // TODO(dtc-255) change type
     modalProps: any
   ) => {
     event.preventDefault();
@@ -55,7 +55,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                   <MenuItemContent
                     role="button"
                     tabIndex={0}
-                    // TODO(dtc-215) avoid using callbacks with passed modal type and data
+                    // TODO(dtc-256) avoid using callbacks with passed modal type and data
                     onClick={(event) =>
                       handleOpenModal(event, 'EditBoard', {
                         boardItem: board,

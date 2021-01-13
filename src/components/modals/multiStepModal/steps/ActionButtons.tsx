@@ -43,7 +43,7 @@ const ActionButtons: React.FC<Props> = ({
     const boardIndex = suite.boards.findIndex((element: Board) =>
       isEqual(element.key, board.key)
     );
-    // TODO(dtc-215) Delegate data manipulation part to reducer
+    // TODO(dtc-257) Delegate data manipulation part to reducer
     const boardsCopy = cloneDeep(suite.boards);
     boardsCopy[boardIndex] = merge(boardsCopy[boardIndex], board);
     setSuite((prevState: Suite) => {
