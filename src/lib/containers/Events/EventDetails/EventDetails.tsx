@@ -16,6 +16,14 @@ export const EventDetails = ({ event }: { event: CogniteEvent }) => {
       <DetailsTabItem name="Description" value={event.description} />
       <DetailsTabItem name="ID" value={event.id} copyable />
       <DetailsTabItem name="External ID" value={event.externalId} copyable />
+      <DetailsTabItem
+        name="Start time"
+        value={event ? <TimeDisplay value={event.startTime} /> : 'Loading...'}
+      />
+      <DetailsTabItem
+        name="End time"
+        value={event ? <TimeDisplay value={event.endTime} /> : 'Loading...'}
+      />
       <DataSetItem id={event.id} type="event" />
       <AssetsItem assetIds={event.assetIds} linkId={event.id} type="event" />
       <DetailsTabItem

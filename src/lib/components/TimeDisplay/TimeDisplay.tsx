@@ -14,7 +14,7 @@ export const TimeDisplay = ({
   withTooltip = false,
 }: TimeDisplayProps) => {
   if (value === undefined) {
-    return null;
+    return <em>Not set</em>;
   }
 
   const absoluteTime = moment(value).format('YYYY-MM-DD hh:mm');
