@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { Asset, AssetFilterProps } from '@cognite/sdk';
 import styled from 'styled-components';
 import { usePrevious } from 'lib/hooks/CustomHooks';
 import { Loader, Table } from 'lib/components';
 import { SelectableItemsProps, TableStateProps } from 'lib/CommonProps';
-import { useRootTree, useSearchTree } from './hooks';
+import { useRootTree, useSearchTree, useRootPath } from './hooks';
 
 export const AssetTreeTable = ({
   filter = {},
@@ -31,6 +32,8 @@ export const AssetTreeTable = ({
   // with a filter. rootOnly is just for /list without filter.
   const [rootExpandedKeys, setRootExpandedKeys] = useState<number[]>([]);
   const [searchExpandedKeys, setSearchExpandedKeys] = useState<number[]>([]);
+  const [usedRootPath, setUsedRootPath] = useState(false);
+
   const startFromRoot =
     (!query || query === '') &&
     Object.values(filter).filter(Boolean).length === 0;
@@ -80,6 +83,25 @@ export const AssetTreeTable = ({
       enabled: !startFromRoot,
     }
   );
+
+  const { id: assetIdString } = useParams<{
+    id: string;
+  }>();
+
+  const assetId = parseInt(assetIdString, 10);
+
+  const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId, {
+    enabled: !!assetIdString && !!assetId,
+  });
+
+  // When navigating back to to the preview, or refreshing
+  // with preview open, expand the tree to show the selected asset.
+  useEffect(() => {
+    if (rootPath && rootPathFetched && !usedRootPath) {
+      setRootExpandedKeys(rootPath!);
+      setUsedRootPath(true);
+    }
+  }, [rootPathFetched, usedRootPath, rootPath]);
 
   useEffect(() => {
     if (searchItems) {

@@ -4,6 +4,7 @@ import {
   useSearch,
   useList,
   retrieveItemsKey,
+  byIdKey,
   listKey,
   listApi,
 } from '@cognite/sdk-react-query-hooks';
@@ -36,7 +37,7 @@ export const useSearchTree = (
 
   const {
     data: listData = [],
-    isFetched: listFeched,
+    isFetched: listFetched,
     isFetching: listFetching,
     error: listError,
     isError: listIsError,
@@ -50,7 +51,7 @@ export const useSearchTree = (
   );
 
   const data = enableSearch ? searchData : listData;
-  const isFetched = enableSearch ? searchFeched : listFeched;
+  const isFetched = enableSearch ? searchFeched : listFetched;
   const isFetching = enableSearch ? searchFetching : listFetching;
   const error = enableSearch ? searchError : listError;
   const isError = enableSearch ? searchIsError : listIsError;
@@ -224,4 +225,37 @@ const constructTree = <T>(
       : // @ts-ignore
         resourceMap[id].children,
   }));
+};
+
+export const useRootPath = (assetId: any, config?: QueryConfig<number[]>) => {
+  const sdk = useSDK();
+  const cache = useQueryCache();
+  return useQuery(
+    ['asset-root-path', assetId],
+    async () => {
+      const pathToRoot: number[] = [];
+      let curAssetId = assetId;
+      try {
+        while (curAssetId) {
+          // eslint-disable-next-line no-await-in-loop
+          const asset = await cache.fetchQuery(
+            byIdKey('assets', curAssetId),
+            // eslint-disable-next-line no-loop-func
+            () => sdk.assets.retrieve([{ id: curAssetId }]),
+            {
+              staleTime: 60 * 1000,
+            }
+          );
+          if (asset[0].parentId) {
+            pathToRoot.push(asset[0].parentId);
+          }
+          curAssetId = asset[0].parentId;
+        }
+      } catch (error) {
+        throw new Error('Something went wrong while fetching assets.');
+      }
+      return pathToRoot;
+    },
+    { ...config }
+  );
 };
