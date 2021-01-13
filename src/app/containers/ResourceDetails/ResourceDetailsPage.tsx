@@ -6,13 +6,9 @@ import { EventPage } from 'app/containers/Event/EventPage';
 import { TimeseriesPage } from 'app/containers/Timeseries/TimeseriesPage';
 import { FilePage } from 'app/containers/File/FilePage';
 import { SequencePage } from 'app/containers/Sequence/SequencePage';
-import { ResourceTypeTabs } from 'lib';
 
 export const ResourceDetailsPage = () => {
-  const [
-    currentResourceType,
-    setCurrentResourceType,
-  ] = useCurrentResourceType();
+  const [currentResourceType] = useCurrentResourceType();
 
   const ResourcePage = () => {
     switch (currentResourceType) {
@@ -31,15 +27,7 @@ export const ResourceDetailsPage = () => {
     }
   };
 
-  return (
-    <>
-      <ResourceTypeTabs
-        currentResourceType={currentResourceType}
-        setCurrentResourceType={setCurrentResourceType}
-      />
-      <Wrapper>{ResourcePage()}</Wrapper>
-    </>
-  );
+  return <Wrapper>{ResourcePage()}</Wrapper>;
 };
 
 const Wrapper = styled.div`

@@ -109,18 +109,16 @@ export const ContextualizationButton = ({
           </>
         }
       >
-        <Button variant="outline" icon="LightBulb" disabled>
-          Contextualize
-        </Button>
+        <Button icon="LightBulb" disabled />
       </Tooltip>
     );
   }
 
   return (
     <Dropdown overlay={menu} trigger={['click']} key={id}>
-      <Button variant="outline" icon={icon}>
-        Contextualize
-      </Button>
+      <Tooltip title="Contextualize">
+        <Button icon={icon} />
+      </Tooltip>
     </Dropdown>
   );
 };

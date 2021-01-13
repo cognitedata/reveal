@@ -46,7 +46,6 @@ export const ButtonGroup = ({
                 onButtonClicked(key);
               },
               key,
-              title: 'BEGGGG',
             } as ButtonProps)}
           </Tooltip>
         );

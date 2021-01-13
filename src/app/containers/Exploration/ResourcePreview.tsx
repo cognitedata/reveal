@@ -6,6 +6,7 @@ import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
 import { EventPreview } from 'app/containers/Event/EventPreview';
 import { ResourceItem } from 'lib/types';
 import { Button } from '@cognite/cogs.js';
+import { Tooltip } from 'antd';
 
 type Props = {
   item: ResourceItem;
@@ -16,9 +17,9 @@ export default function ResourcePreview({
   onCloseClicked,
 }: Props) {
   const closePreviewButton = (
-    <Button variant="outline" icon="Close" onClick={onCloseClicked}>
-      Close preview
-    </Button>
+    <Tooltip title="Close preview">
+      <Button icon="Close" onClick={onCloseClicked} />
+    </Tooltip>
   );
   switch (type) {
     case 'asset':

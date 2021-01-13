@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Dropdown, notification } from 'antd';
+import { Menu, Dropdown, notification, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { ResourceType } from 'lib';
 import { useEnv, useTenant } from 'lib/hooks/CustomHooks';
@@ -80,9 +80,9 @@ export function PowerBIButton({ item: { type, id } }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Button variant="outline" icon="PowerBI">
-        PowerBI
-      </Button>
+      <Tooltip title="PowerBI">
+        <Button icon="PowerBI" />
+      </Tooltip>
     </Dropdown>
   );
 }
@@ -118,9 +118,9 @@ export function GrafanaButton({ item: { type, id } }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Button variant="outline" icon="LineChart">
-        Grafana
-      </Button>
+      <Tooltip title="Grafana">
+        <Button icon="LineChart" />
+      </Tooltip>
     </Dropdown>
   );
 }

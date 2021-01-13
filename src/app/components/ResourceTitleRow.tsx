@@ -1,15 +1,21 @@
 import React from 'react';
 
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import { Icon } from '@cognite/cogs.js';
-import { convertResourceType, ResourceItem, ResourceIcons } from 'lib';
+import { Icon, Button, Tooltip } from '@cognite/cogs.js';
+import {
+  getTitle as getResourceTypeTitle,
+  convertResourceType,
+  ResourceItem,
+  ResourceIcons,
+} from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
 import { trackUsage } from 'app/utils/Metrics';
 import { useQueryString } from 'app/hooks';
 import { SEARCH_KEY } from 'app/utils/contants';
+import { Divider, Space } from 'antd';
 import { TitleRowActions } from './TitleRowActions';
 
 type Props = {
@@ -18,6 +24,7 @@ type Props = {
   beforeDefaultActions?: React.ReactNode;
   afterDefaultActions?: React.ReactNode;
   actionWidth?: number;
+  backWidth?: number;
 };
 
 export default function ResourceTitleRow({
@@ -25,7 +32,8 @@ export default function ResourceTitleRow({
   getTitle = (i: any) => i?.name,
   beforeDefaultActions,
   afterDefaultActions,
-  actionWidth = 665,
+  actionWidth = 275,
+  backWidth = 70,
 }: Props) {
   const { data, isFetched } = useCdfItem<{ name?: string }>(
     convertResourceType(type),
@@ -33,9 +41,15 @@ export default function ResourceTitleRow({
       id,
     }
   );
+
+  const history = useHistory();
   const location = useLocation();
   const inSearch = location.pathname.includes('/search');
   const [query] = useQueryString(SEARCH_KEY);
+
+  const nameWidth = `calc(100% - ${
+    inSearch ? actionWidth : actionWidth + backWidth
+  }px)`;
   const name = (
     <NameWrapper>
       {!inSearch &&
@@ -50,13 +64,37 @@ export default function ResourceTitleRow({
       </NameHeader>
     </NameWrapper>
   );
+
   return (
     <TitleRowWrapper>
+      {!inSearch && (
+        <div
+          style={{
+            display: 'inline-block',
+            overflow: 'hidden',
+            width: backWidth,
+          }}
+        >
+          <Space>
+            <Tooltip
+              content={`All ${getResourceTypeTitle(type)?.toLowerCase()}`}
+            >
+              <Button
+                icon="ArrowBack"
+                onClick={() =>
+                  history.push(createLink(`/explore/search/${type}`))
+                }
+              />
+            </Tooltip>
+            <Divider type="vertical" style={{ height: '36px' }} />
+          </Space>
+        </div>
+      )}
       <div
         style={{
           display: 'inline-block',
           overflow: 'hidden',
-          width: `calc(100% - ${actionWidth}px)`,
+          width: nameWidth,
           verticalAlign: 'bottom',
         }}
       >

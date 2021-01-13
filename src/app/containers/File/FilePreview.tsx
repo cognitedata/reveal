@@ -91,7 +91,7 @@ export const FilePreview = ({
     <>
       <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
         <ResourceTitleRow
-          actionWidth={920}
+          actionWidth={350}
           item={{ id: fileId!, type: 'file' }}
           beforeDefaultActions={
             <>
