@@ -98,10 +98,10 @@ export const LineChart = ({
   const valuesScale = useMemo(() => {
     const minValues = values
       .map(getDataPointMinValue)
-      .filter(el => !!el) as number[];
+      .filter(el => el !== undefined) as number[];
     const maxValues = values
       .map(getDataPointMaxValue)
-      .filter(el => !!el) as number[];
+      .filter(el => el !== undefined) as number[];
     return scaleLinear({
       range: [innerHeight, 0],
       domain: [min(minValues) || 0, max(maxValues) || 1],
@@ -133,7 +133,7 @@ export const LineChart = ({
       showTooltip({
         tooltipData: d,
         tooltipLeft: translatedX,
-        tooltipTop: d && !!value ? valuesScale(value) : 0,
+        tooltipTop: d && value !== undefined ? valuesScale(value) : 0,
       });
     },
     [margin.left, values, showTooltip, valuesScale, dateScale]
@@ -212,8 +212,8 @@ export const LineChart = ({
   };
   const renderableValues = values.filter(el => {
     const data = getDataPointValue(el);
-    if (data) {
-      return !!valuesScale(data);
+    if (data !== undefined) {
+      return valuesScale(data) !== undefined;
     }
     return false;
   });
@@ -261,8 +261,10 @@ export const LineChart = ({
     const renderableMinMaxValues = values.filter(el => {
       const minVal = getDataPointMinValue(el);
       const maxVal = getDataPointMaxValue(el);
-      if (!!minVal && !!maxVal) {
-        return !!valuesScale(minVal) && !!valuesScale(maxVal);
+      if (minVal !== undefined && maxVal !== undefined) {
+        return (
+          valuesScale(minVal) !== undefined && valuesScale(maxVal) !== undefined
+        );
       }
       return false;
     });
@@ -299,7 +301,7 @@ export const LineChart = ({
       <Group>
         {values.map(d => {
           const value = getDataPointValue(d);
-          const cy = d && !!value ? valuesScale(value) : 0;
+          const cy = d && value !== undefined ? valuesScale(value) : 0;
           return (
             <circle
               key={d.timestamp.valueOf()}

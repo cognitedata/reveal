@@ -174,6 +174,7 @@ export const TimeseriesChart = ({
       setPresetZoomDomain(TIME_SELECT[timePeriod].getTime());
     }
   }, [timePeriod, cacheToDate]);
+
   const { data: overallData, isLoading } = useQuery(
     [
       'timeseries',
@@ -218,7 +219,7 @@ export const TimeseriesChart = ({
                 width={width}
                 height={height || innerHeight}
                 values={((overallData?.datapoints ?? []) as any[]).filter(
-                  el => !!el.average && !!el.min && !!el.max
+                  el => el.average !== undefined
                 )}
                 domain={presetZoom}
                 {...otherProps}
