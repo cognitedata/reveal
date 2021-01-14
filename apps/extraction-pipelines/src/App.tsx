@@ -8,6 +8,8 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AppEnvProvider } from 'hooks/useAppEnv';
+import { Route, Router, Switch } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import theme from './styles/theme';
 import AppScopeStyles from './styles/AppScopeStyles';
 import rootStyles from './styles/index.css';
@@ -17,6 +19,7 @@ const App = () => {
   const project = projectName();
   const { origin } = window.location;
   const cdfEnv = getCdfEnvFromUrl();
+  const history = createBrowserHistory();
 
   useEffect(() => {
     cogsStyles.use();
@@ -49,7 +52,11 @@ const App = () => {
           >
             <ThemeProvider theme={theme}>
               <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-                <Home />
+                <Router history={history}>
+                  <Switch>
+                    <Route path="/:tenant" component={Home} />
+                  </Switch>
+                </Router>
               </AppEnvProvider>
             </ThemeProvider>
             <GlobalStyles theme={theme} />

@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { CenterFullVH } from 'styles/StyledWrapper';
 import { A, Colors, Detail, Graphic, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { LEARNING_AND_RESOURCES_URL } from '../../pages/Home/Home';
+import { LEARNING_AND_RESOURCES_URL } from '../../pages/Integrations/Integrations';
 
 const NoIntegrationsWrapper = styled((props) => (
   <CenterFullVH {...props}>{props.children}</CenterFullVH>

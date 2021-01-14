@@ -1,15 +1,15 @@
 import { QueryClient } from 'react-query';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
+import { useDetailsUpdate } from './useDetailsUpdate';
+import { getMockResponse, mockError } from '../../utils/mockResponse';
+import { IntegrationUpdateSpec } from '../../utils/IntegrationsAPI';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-  renderWithReactQueryCacheProvider,
-} from '../../utils/test/render';
-import { useDetailsUpdate } from './useDetailsUpdate';
-import { getMockResponse, mockError } from '../../utils/mockResponse';
-import { IntegrationUpdateSpec } from '../../utils/IntegrationsAPI';
+} from '../../utils/baseURL';
 
 describe('useDetailsUpdate', () => {
   let client: QueryClient;

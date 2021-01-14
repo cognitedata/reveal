@@ -6,12 +6,14 @@ import { QueryClient } from 'react-query';
 import { mockError, getMockResponse } from '../../utils/mockResponse';
 import Monitoring from '../tabs/Monitoring';
 import {
-  CDF_ENV_GREENFIELD,
-  ORIGIN_DEV,
-  PROJECT_ITERA_INT_GREEN,
   renderWithReactQueryCacheProvider,
   renderWithReQueryCacheSelectedIntegrationContext,
 } from '../../utils/test/render';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '../../utils/baseURL';
 
 describe('Monitoring', () => {
   const externalId = 'dataIntegration000-1';

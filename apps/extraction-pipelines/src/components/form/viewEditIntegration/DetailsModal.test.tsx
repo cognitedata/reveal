@@ -26,12 +26,14 @@ import DetailsModal, {
 } from './DetailsModal';
 import { ContactBtnTestIds } from '../ContactsView';
 import {
-  CDF_ENV_GREENFIELD,
-  ORIGIN_DEV,
-  PROJECT_ITERA_INT_GREEN,
   renderQueryCacheIntegration,
   renderWithReactQueryCacheProvider,
 } from '../../../utils/test/render';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '../../../utils/baseURL';
 
 describe('DetailsModal', () => {
   let wrapper = null;

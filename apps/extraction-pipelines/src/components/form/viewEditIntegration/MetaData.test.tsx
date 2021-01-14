@@ -2,16 +2,16 @@ import { QueryClient } from 'react-query';
 import { act } from 'react-test-renderer';
 import { screen } from '@testing-library/react';
 import React from 'react';
-import {
-  CDF_ENV_GREENFIELD,
-  ORIGIN_DEV,
-  PROJECT_ITERA_INT_GREEN,
-  renderQueryCacheIntegration,
-} from '../../../utils/test/render';
+import { renderQueryCacheIntegration } from '../../../utils/test/render';
 import { render } from '../../../utils/test';
 import { getMockResponse } from '../../../utils/mockResponse';
 import { DetailFieldNames, Integration } from '../../../model/Integration';
 import MetaData from './MetaData';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '../../../utils/baseURL';
 
 function createIntegrationMetadata(
   metadata: object | undefined | null

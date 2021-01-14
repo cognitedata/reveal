@@ -3,12 +3,12 @@ import { screen } from '@testing-library/react';
 import { render } from 'utils/test';
 import { QueryClient } from 'react-query';
 import ExtractorDownloadsLink from './ExtractorDownloadsLink';
+import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-  renderWithReactQueryCacheProvider,
-} from '../../utils/test/render';
+} from '../../utils/baseURL';
 
 describe('ExtractorDownloadsTab', () => {
   let client: QueryClient;

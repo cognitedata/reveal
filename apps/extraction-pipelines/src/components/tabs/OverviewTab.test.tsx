@@ -7,12 +7,14 @@ import OverviewTab from './OverviewTab';
 import { render } from '../../utils/test';
 import { getMockResponse, unauthorizedError } from '../../utils/mockResponse';
 import {
-  CDF_ENV_GREENFIELD,
-  ORIGIN_DEV,
-  PROJECT_ITERA_INT_GREEN,
   renderWithReactQueryCacheProvider,
   renderWithReQueryCacheSelectedIntegrationContext,
 } from '../../utils/test/render';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '../../utils/baseURL';
 
 describe('OverviewTab', () => {
   test('Render with out fail', async () => {

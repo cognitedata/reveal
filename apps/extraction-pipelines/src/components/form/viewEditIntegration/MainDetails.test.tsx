@@ -5,14 +5,14 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { getMockResponse } from '../../../utils/mockResponse';
 import { render } from '../../../utils/test';
+import { renderQueryCacheIntegration } from '../../../utils/test/render';
+import MainDetails from './MainDetails';
+import { parseCron } from '../../../utils/cronUtils';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-  renderQueryCacheIntegration,
-} from '../../../utils/test/render';
-import MainDetails from './MainDetails';
-import { parseCron } from '../../../utils/cronUtils';
+} from '../../../utils/baseURL';
 
 describe('<MainDetails/>', () => {
   let client: QueryClient;

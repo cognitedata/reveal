@@ -7,12 +7,12 @@ import IntegrationsTableActions, {
   IntegrationAction,
 } from './IntegrationsTableActions';
 import { getMockResponse } from '../../utils/mockResponse';
+import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-  renderWithReactQueryCacheProvider,
-} from '../../utils/test/render';
+} from '../../utils/baseURL';
 
 describe('IntegrationsTableActions', () => {
   const actionsMenuLabel = /Actions for/i;

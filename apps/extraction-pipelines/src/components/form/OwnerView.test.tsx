@@ -5,13 +5,13 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import OwnerView from './OwnerView';
+import { renderQueryCacheIntegration } from '../../utils/test/render';
+import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-  renderQueryCacheIntegration,
-} from '../../utils/test/render';
-import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
+} from '../../utils/baseURL';
 import { EMAIL_NOTIFICATION_TOOLTIP } from '../../utils/constants';
 
 describe('<OwnerView />', () => {

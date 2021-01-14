@@ -16,12 +16,7 @@ import {
   AUTHOR_NOTIFICATION_TEST_ID,
   notExistsByIdAsync,
 } from '../../utils/test/utilsFn';
-import {
-  CDF_ENV_GREENFIELD,
-  ORIGIN_DEV,
-  PROJECT_ITERA_INT_GREEN,
-  renderQueryCacheIntegration,
-} from '../../utils/test/render';
+import { renderQueryCacheIntegration } from '../../utils/test/render';
 import ContactsView, {
   ContactBtnTestIds,
   ContactsErrorMsg,
@@ -29,6 +24,11 @@ import ContactsView, {
 import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
 import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '../../utils/baseURL';
 import {
   CANCEL,
   EMAIL_NOTIFICATION_TOOLTIP,

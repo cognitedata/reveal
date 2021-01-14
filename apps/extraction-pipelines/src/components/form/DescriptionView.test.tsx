@@ -5,14 +5,14 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { DetailFieldNames, Integration } from 'model/Integration';
 import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
+import { renderQueryCacheIntegration } from '../../utils/test/render';
+import DescriptionView from './DescriptionView';
+import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-  renderQueryCacheIntegration,
-} from '../../utils/test/render';
-import DescriptionView from './DescriptionView';
-import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
+} from '../../utils/baseURL';
 
 describe('<DescriptionView />', () => {
   const integration = getMockResponse()[0];
