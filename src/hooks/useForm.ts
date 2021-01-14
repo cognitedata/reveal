@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setHasError } from 'store/forms/actions';
+import {
+  setHasError,
+  setSuite,
+  setBoard,
+  clearSuite,
+  clearBoard,
+} from 'store/forms/actions';
 import { Suite, Board } from 'store/suites/types';
 import isFunction from 'lodash/isFunction';
 import isEqual from 'lodash/isEqual';
@@ -9,14 +15,25 @@ import values from 'lodash/values';
 import { TS_FIX_ME } from 'types/core';
 import { RootDispatcher } from 'store/types';
 
-export const useFormState = (initBoard: Board, initSuite: Suite) => {
-  const [board, setBoard] = useState<Board>(initBoard);
-  const [suite, setSuite] = useState<Suite>(initSuite);
+export const useFormState = () => {
+  const dispatch = useDispatch<RootDispatcher>();
+  const [initialStateDispatched, setInitialStateDispatched] = useState(false);
+
+  const initForm = (suite?: Suite, board?: Board) => {
+    if (!initialStateDispatched) {
+      if (suite) dispatch(setSuite(suite));
+      if (board) dispatch(setBoard(board));
+      setInitialStateDispatched(true);
+    }
+  };
+
+  const clearForm = () => {
+    dispatch(clearSuite());
+    dispatch(clearBoard());
+  };
   return {
-    suite,
-    setSuite,
-    board,
-    setBoard,
+    initForm,
+    clearForm,
   };
 };
 

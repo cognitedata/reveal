@@ -1,28 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { modalSettings } from 'components/modals/config';
-import { TS_FIX_ME } from 'types/core';
 import { useFormState } from 'hooks';
+import { Suite } from 'store/suites/types';
 import { MultiStepModal } from '../multiStepModal/MultiStepModal';
 
 interface Props {
-  dataItem: TS_FIX_ME;
+  dataItem: Suite;
 }
 
 const EditSuiteModal: React.FC<Props> = ({ dataItem }: Props) => {
-  const { suite, setSuite, board, setBoard } = useFormState(
-    dataItem?.boards[0] || {},
-    dataItem
-  );
+  const { initForm } = useFormState();
 
-  return (
-    <MultiStepModal
-      suite={suite}
-      board={board}
-      setSuite={setSuite}
-      setBoard={setBoard}
-      modalSettings={modalSettings.edit}
-    />
-  );
+  useEffect(() => {
+    initForm(dataItem, dataItem?.boards[0] || {});
+  }, [initForm, dataItem]);
+
+  return <MultiStepModal modalSettings={modalSettings.edit} />;
 };
 
 export default EditSuiteModal;

@@ -1,24 +1,24 @@
 import React from 'react';
 import { Input, Micro } from '@cognite/cogs.js';
 import { Suite } from 'store/suites/types';
-import { TS_FIX_ME } from 'types/core';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSuite } from 'store/forms/actions';
+import { suiteState } from 'store/forms/selectors';
 import {
   CustomInputContainer,
   CustomLabel,
   Textarea,
   ValidationContainer,
 } from 'components/modals/elements';
-import { useForm } from 'hooks/useForm';
+import { useForm } from 'hooks';
 import { suiteValidator } from 'validators';
+import { RootDispatcher } from 'store/types';
 import ColorSelector from './ColorSelector';
 
-interface Props {
-  suite: Suite;
-  setSuite: TS_FIX_ME;
-}
-
-export const SuiteForm: React.FC<Props> = ({ suite, setSuite }: Props) => {
+export const SuiteForm: React.FC = () => {
   const { errors, setErrors, validateField } = useForm(suiteValidator);
+  const suite = useSelector(suiteState);
+  const dispatch = useDispatch<RootDispatcher>();
   const maxDescriptionLength = 250;
   const warningLength = 200;
   const exceedMaxLength = suite.description.length >= maxDescriptionLength;
@@ -28,10 +28,12 @@ export const SuiteForm: React.FC<Props> = ({ suite, setSuite }: Props) => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { value, name } = event.target;
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    dispatch(
+      setSuite({
+        ...suite,
+        [name]: value,
+      })
+    );
     setErrors((prevState: Suite) => ({
       ...prevState,
       [name]: validateField(name, value),
@@ -53,7 +55,7 @@ export const SuiteForm: React.FC<Props> = ({ suite, setSuite }: Props) => {
           fullWidth
         />
       </CustomInputContainer>
-      <ColorSelector suite={suite} setSuite={setSuite} />
+      <ColorSelector />
       <CustomInputContainer>
         <CustomLabel>Description</CustomLabel>
         <Textarea
