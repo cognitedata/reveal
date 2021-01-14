@@ -46,7 +46,7 @@ export const ReprocessingModal = ({
               camera: revision.camera,
               fileId: revision.fileId,
               metadata: revision.metadata,
-              published: revision.published,
+              published: false, // api throws 400 if incomplete revision is published
 
               // @ts-ignore fixme D3M-19 - wrong types in sdk
               rotation: revision.rotation,
@@ -56,13 +56,9 @@ export const ReprocessingModal = ({
 
         progressMessage.then(() => {
           message.success('New revision is created!');
-
-          // that's super messy but there is some update issue with RevisionDetails.
-          // They need to be refactored into less cumbersome component.
           history.push(
             `/${projectName}/3d-models/${modelId}/revisions/${createdRevision.id}`
           );
-          setTimeout(() => window.location.reload(), 1000);
         });
 
         return;
@@ -116,10 +112,12 @@ export const ReprocessingModal = ({
 
       <p>
         If you continue, <b>a new model revision will be generated</b> from the
-        original source file. The current revision will remain unchanged. Note
-        that{' '}
+        original source file. The current revision will remain unchanged.
+      </p>
+      <p>
         <b>
-          asset mappings will not be automatically migrated to the new revision
+          The new revision won&apos;t be published automatically and asset
+          mappings will not be migrated to the new revision
         </b>
         .
       </p>
