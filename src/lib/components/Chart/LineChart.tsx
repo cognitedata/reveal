@@ -53,6 +53,7 @@ export type LineChartProps = {
   domain?: [Date, Date];
   showGridLine?: 'both' | 'horizontal' | 'vertical' | 'none';
   showAxis?: 'both' | 'horizontal' | 'vertical' | 'none';
+  showSmallerTicks?: boolean;
   enableTooltip?: boolean;
   showPoints?: boolean;
   enableArea?: boolean;
@@ -68,6 +69,7 @@ export const LineChart = ({
   domain,
   showGridLine = 'horizontal',
   showAxis = 'both',
+  showSmallerTicks = false,
   enableArea = false,
   enableMinMaxArea = true,
   enableTooltip = true,
@@ -184,10 +186,11 @@ export const LineChart = ({
             strokeWidth={0}
             tickLabelProps={() => ({
               fontFamily: 'Inter',
-              fontSize: 12,
+              fontSize: showSmallerTicks ? 10 : 12,
               fill: Colors['greyscale-grey6'].hex(),
               textAnchor: 'middle',
             })}
+            tickLength={showSmallerTicks ? 4 : 8}
           />
         )}
         {(showAxis === 'both' || showAxis === 'vertical') && (

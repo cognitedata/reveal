@@ -34,9 +34,10 @@ export const TimeseriesTable = ({
       return (
         <TimeseriesChart
           height={100}
+          showSmallerTicks
           timeseriesId={timeseries.id}
           numberOfPoints={100}
-          showAxis="none"
+          showAxis="horizontal"
           timeOptions={[]}
           showContextGraph={false}
           showPoints={false}
