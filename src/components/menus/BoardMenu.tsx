@@ -83,8 +83,9 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
               <MenuItemContent
                 role="button"
                 tabIndex={0}
-                // will be fixed when feature implemented
-                onClick={(event) => event.preventDefault()}
+                onClick={(event) =>
+                  handleOpenModal(event, 'ShareBoard', { board })
+                }
               >
                 Share board
               </MenuItemContent>
