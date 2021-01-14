@@ -158,7 +158,11 @@ export const configPanel = ({
 
       const loadedZip = await JSZip.loadAsync(fileBlob.data);
       const fileData = await loadedZip
-        .file('cognite-charts-config.json')
+        ?.file(
+          Object.keys(loadedZip.files).find((filename) =>
+            filename.includes('cognite-charts-config.json')
+          ) || ''
+        )
         ?.async('text');
 
       // Get the pins and add them to the node
@@ -195,7 +199,7 @@ export const configPanel = ({
         setConfigPanelEditables(configurables);
       }
     };
-    if (functionData.cogniteFunction) {
+    if (functionData?.cogniteFunction) {
       getDetails();
     }
   }, [functionData.cogniteFunction]);
@@ -239,9 +243,9 @@ export const configPanel = ({
           );
           if (nextFunc) {
             onUpdateNode({
+              title: nextFunc.name,
               functionData: {
                 ...functionData,
-
                 cogniteFunction: nextFunc,
               },
             });

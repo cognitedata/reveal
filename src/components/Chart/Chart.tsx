@@ -170,7 +170,7 @@ const ChartComponent = ({ chart }: ChartProps) => {
         (datapoint) => ({
           ...('timestamp' in datapoint
             ? {
-                x: datapoint.timestamp,
+                x: new Date(datapoint.timestamp),
               }
             : {}),
           ...('value' in datapoint
