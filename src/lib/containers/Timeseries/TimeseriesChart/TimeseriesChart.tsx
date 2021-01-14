@@ -9,6 +9,7 @@ import {
 } from 'lib/components';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
+import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import moment from 'moment';
 import { DateRangeProps } from 'lib/CommonProps';
@@ -177,11 +178,13 @@ export const TimeseriesChart = ({
 
   const { data: overallData, isLoading } = useQuery(
     [
-      'timeseries',
+      ...baseCacheKey('timeseries'),
+      'datapoints',
       timeseriesId,
-      'values',
-      presetZoom[0].toString(),
-      presetZoom[1].toString(),
+      {
+        start: presetZoom[0].getTime(),
+        end: presetZoom[1].getTime(),
+      },
     ],
     async () => {
       return (

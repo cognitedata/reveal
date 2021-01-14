@@ -1,5 +1,5 @@
 import sdk from 'sdk-singleton';
-import { useMutation, useQuery, useQueryCache } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ResourceType } from 'lib/types';
 import { getProject, getEnv } from '../utils/URLUtils';
 
@@ -108,14 +108,14 @@ const updateCollections = async (items: CollectionUpdateSpec[]) => {
 };
 
 export const useCreateCollections = () => {
-  const cached = useQueryCache();
+  const client = useQueryClient();
   return useMutation<Collection[], unknown, CollectionSpec[]>(
     (items: CollectionSpec[]) => createCollections(items),
     {
       onSuccess: data => {
-        cached.setQueryData(
+        client.setQueryData(
           `/collections`,
-          (cached.getQueryData<Collection[]>(`/collections`) || []).concat(data)
+          (client.getQueryData<Collection[]>(`/collections`) || []).concat(data)
         );
       },
     }
@@ -123,14 +123,14 @@ export const useCreateCollections = () => {
 };
 
 export const useDeleteCollections = () => {
-  const cached = useQueryCache();
+  const client = useQueryClient();
   return useMutation<Collection[], unknown, string[]>(
     (ids: string[]) => deleteCollections(ids),
     {
       onSuccess: (_, ids) => {
-        cached.setQueryData(
+        client.setQueryData(
           `/collections`,
-          (cached.getQueryData<Collection[]>(`/collections`) || []).filter(
+          (client.getQueryData<Collection[]>(`/collections`) || []).filter(
             el => !ids.includes(el.id)
           )
         );
@@ -139,17 +139,17 @@ export const useDeleteCollections = () => {
   );
 };
 export const useUpdateCollections = () => {
-  const cached = useQueryCache();
+  const client = useQueryClient();
   return useMutation<Collection[], unknown, CollectionUpdateSpec[]>(
     (items: CollectionUpdateSpec[]) => updateCollections(items),
     {
       onSuccess: items => {
         items.forEach(collection => {
-          cached.setQueryData(`/collections/${collection.id}`, collection);
+          client.setQueryData(`/collections/${collection.id}`, collection);
         });
-        cached.setQueryData(
+        client.setQueryData(
           `/collections`,
-          (cached.getQueryData<Collection[]>(`/collections`) || []).map(el => {
+          (client.getQueryData<Collection[]>(`/collections`) || []).map(el => {
             const item = items.find(it => it.id === el.id);
             if (item) {
               return item;
@@ -163,11 +163,11 @@ export const useUpdateCollections = () => {
 };
 
 export const useCollections = () => {
-  const cached = useQueryCache();
+  const client = useQueryClient();
   return useQuery<Collection[]>('/collections', listCollections, {
     onSuccess: data => {
       data.forEach(collection => {
-        cached.setQueryData(`/collections/${collection.id}`, collection);
+        client.setQueryData(`/collections/${collection.id}`, collection);
       });
     },
   });

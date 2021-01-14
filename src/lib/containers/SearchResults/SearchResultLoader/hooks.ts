@@ -27,15 +27,15 @@ export const useResourceResults = <T extends ResourceType>(
   const {
     data: listData,
     isFetched: listFetched,
-    canFetchMore: listCanFetchMore,
-    isFetchingMore: listIsFetchingMore,
-    fetchMore: listFetchMore,
+    hasNextPage: listCanFetchMore,
+    isFetchingNextPage: listIsFetchingMore,
+    fetchNextPage: listFetchMore,
     isFetching: isFetchingList,
   } = useInfiniteList<T>(api, PAGE_SIZE, filter, {
     enabled: !searchEnabled,
   });
   const listItems = useMemo(
-    () => listData?.reduce((accl, t) => accl.concat(t.items), [] as T[]),
+    () => listData?.pages?.reduce((accl, t) => accl.concat(t.items), [] as T[]),
     [listData]
   );
 
@@ -43,9 +43,9 @@ export const useResourceResults = <T extends ResourceType>(
     data: searchData,
     isFetched: searchFetched,
     isFetching: isSearching,
-    isFetchingMore: searchIsFetchingMore,
-    fetchMore: searchFetchMore,
-    canFetchMore: searchCanFetchMore,
+    isFetchingNextPage: searchIsFetchingMore,
+    fetchNextPage: searchFetchMore,
+    hasNextPage: searchCanFetchMore,
   } = useInfiniteSearch<T>(
     api,
     query!,
@@ -55,7 +55,7 @@ export const useResourceResults = <T extends ResourceType>(
       enabled: searchEnabled,
     }
   );
-  const searchItems = useMemo(() => flatten(searchData), [searchData]);
+  const searchItems = useMemo(() => flatten(searchData?.pages), [searchData]);
 
   const isFetched = searchEnabled ? searchFetched : listFetched;
   const isFetching = searchEnabled ? isSearching : isFetchingList;

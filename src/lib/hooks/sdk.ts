@@ -1,4 +1,4 @@
-import { QueryKey, useMutation, useQuery, useQueryCache } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   CogniteClient,
   DataSet,
@@ -96,36 +96,37 @@ export interface DataSetWCount extends DataSet {
 export const useRelevantDatasets = (
   type: SdkResourceType
 ): DataSetWCount[] | undefined => {
-  const cache = useQueryCache();
+  const client = useQueryClient();
   const sdk = useSDK();
   const {
     data,
     isFetching: dataSetsFetching,
     isFetched: dataSetsFetched,
-    fetchMore,
-    canFetchMore,
+    fetchNextPage,
+    hasNextPage,
   } = useInfiniteList<DataSet>('datasets', 1000);
 
-  if (canFetchMore && !dataSetsFetching) {
-    fetchMore();
+  if (hasNextPage && !dataSetsFetching) {
+    fetchNextPage();
   }
 
   const datasets =
-    data
+    data?.pages
       ?.reduce((accl, { items }) => accl.concat(items), [] as DataSet[])
       .sort((a, b) => a.id - b.id) || [];
+  const ids = datasets?.map(d => d.id);
 
   const { data: counts, isFetched: aggregateFetched } = useQuery<
     DataSetWCount[]
   >(
-    ['dataset-counts', type, datasets?.map(d => d.id)],
-    (_: QueryKey, t, dataSetIds: number[]) =>
+    ['dataset-counts', type, ids],
+    () =>
       Promise.all(
-        dataSetIds.map(async (id, index) => {
+        ids.map(async (id, index) => {
           const filter = { dataSetIds: [{ id }] };
-          const { count } = await cache.fetchQuery(
-            aggregateKey(t, filter),
-            () => aggregate(sdk, t, filter),
+          const { count } = await client.fetchQuery(
+            aggregateKey(type, filter),
+            () => aggregate(sdk, type, filter),
             {
               staleTime: 60 * 1000,
             }

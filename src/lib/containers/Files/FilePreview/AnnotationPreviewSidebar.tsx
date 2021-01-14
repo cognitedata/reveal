@@ -28,7 +28,7 @@ import {
   ResourceItem,
 } from 'lib/types';
 import { useCreate } from 'lib/hooks/sdk';
-import { useQueryCache, useMutation } from 'react-query';
+import { useQueryClient, useMutation } from 'react-query';
 import { sleep } from 'lib/utils';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange } from '@cognite/sdk';
@@ -60,7 +60,7 @@ const FindSimilarButton = ({
   const { data } = useJob(jobId, 'findsimilar');
   const running = !!jobId && isModelRunning(data?.status);
 
-  const [findSimilarObjects] = useFindObjects();
+  const { mutate: findSimilarObjects } = useFindObjects();
   return (
     <Button
       variant="outline"
@@ -103,7 +103,7 @@ const AnnotationPreviewSidebar = ({
   const { data: findObjectsJob } = useJob(findObjectsJobId, 'findobjects');
   const { data: findSimilarJob } = useJob(findSimilarJobId, 'findsimilar');
 
-  const queryCache = useQueryCache();
+  const client = useQueryClient();
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
@@ -144,7 +144,7 @@ const AnnotationPreviewSidebar = ({
 
   const onSuccess = () => {
     const invalidate = () =>
-      queryCache.invalidateQueries(['cdf', 'events', 'list']);
+      client.invalidateQueries(['cdf', 'events', 'list']);
     invalidate();
     // The sleep shouldn't be necessary, but await (POST /resource
     // {data}) && await(POST /resource/byids) might not return the
@@ -161,18 +161,18 @@ const AnnotationPreviewSidebar = ({
     });
   };
 
-  const [createEvent] = useCreate('events', {
+  const { mutate: createEvent } = useCreate('events', {
     onSuccess,
   });
   const sdk = useSDK();
-  const [updateEvent] = useMutation(
+  const { mutate: updateEvent } = useMutation(
     (updates: EventChange) => sdk.events.update([updates]),
     {
       onSuccess,
     }
   );
 
-  const [deleteAnnotations] = useMutation(
+  const { mutate: deleteAnnotations } = useMutation(
     (annotations: CogniteAnnotation[]) =>
       hardDeleteAnnotations(sdk, annotations),
     {

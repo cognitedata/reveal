@@ -1,10 +1,10 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { AssetFilterProps, AggregateResponse } from '@cognite/sdk';
 
 export const useMetadataKeys = (
   filter?: AssetFilterProps,
-  config?: QueryConfig<AggregateResponse[]>
+  config?: UseQueryOptions<AggregateResponse[]>
 ) => {
   const sdk = useSDK();
   const { data, ...rest } = useQuery(
@@ -24,7 +24,7 @@ export const useMetadataKeys = (
 
 export const useMetadataValues = (
   key: string | null,
-  config?: QueryConfig<AggregateResponse[]>
+  config?: UseQueryOptions<AggregateResponse[]>
 ) => {
   const sdk = useSDK();
   const { data, ...rest } = useQuery(

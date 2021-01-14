@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQueryCache } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { FileInfo } from '@cognite/sdk';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';
@@ -41,7 +41,7 @@ export const FileUploaderModal = ({
   visible = true,
 }: Props) => {
   const [fileList, setFileList] = useState<FileInfo[]>([]);
-  const cache = useQueryCache();
+  const client = useQueryClient();
 
   return (
     <Modal
@@ -54,8 +54,8 @@ export const FileUploaderModal = ({
         <FileUploader
           onUploadSuccess={file => {
             setFileList(list => [...list, file]);
-            cache.refetchQueries(listBaseCacheKey('files'));
-            cache.refetchQueries(searchBaseCacheKey('files'));
+            client.refetchQueries(listBaseCacheKey('files'));
+            client.refetchQueries(searchBaseCacheKey('files'));
           }}
           beforeUploadStart={() => {
             setFileList([]);

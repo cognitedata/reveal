@@ -8,15 +8,15 @@ import {
   listKey,
   listApi,
 } from '@cognite/sdk-react-query-hooks';
-import { QueryKey, useQueryCache, useQuery, QueryConfig } from 'react-query';
+import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
 
 export const useSearchTree = (
   filter: AssetFilterProps,
   query?: string,
-  config?: QueryConfig<Asset[]>
+  config?: UseQueryOptions<Asset[]>
 ) => {
   const sdk = useSDK();
-  const cache = useQueryCache();
+  const client = useQueryClient();
   const enableSearch = !!query;
 
   const {
@@ -90,7 +90,7 @@ export const useSearchTree = (
     while (parentIds.size !== 0) {
       const parentIdsList = [...parentIds].map(id => ({ id }));
       // eslint-disable-next-line no-await-in-loop
-      const items = await cache.fetchQuery(
+      const items = await client.fetchQuery(
         retrieveItemsKey('assets', parentIdsList),
         () => sdk.assets.retrieve(parentIdsList),
         {
@@ -121,10 +121,10 @@ export const useSearchTree = (
 
 export const useRootTree = (
   openIds: number[] = [],
-  config?: QueryConfig<Asset[]>
+  config?: UseQueryOptions<Asset[]>
 ) => {
   const sdk = useSDK();
-  const cache = useQueryCache();
+  const client = useQueryClient();
 
   const { data: rootAssets = [] } = useList<Asset>(
     'assets',
@@ -141,7 +141,7 @@ export const useRootTree = (
 
   return useQuery<(Asset & { children?: Asset[] })[]>(
     ['asset-list-tree', openIds],
-    async (_: QueryKey, ids: number[]) => {
+    async () => {
       const rootAssetIds: number[] = rootAssets.map(el => el.id);
       const assetsChildrenMap: {
         [key in number]: number[];
@@ -168,7 +168,7 @@ export const useRootTree = (
       );
 
       await Promise.all(
-        ids.map(async id => {
+        openIds.map(async id => {
           const countFilter = {
             limit: 1000,
             filter: {
@@ -176,7 +176,7 @@ export const useRootTree = (
             },
             aggregatedProperties: ['childCount'],
           } as AssetFilterProps;
-          const items = await cache.fetchQuery<Asset[]>(
+          const items = await client.fetchQuery<Asset[]>(
             listKey('assets', countFilter),
             () => listApi(sdk, 'assets', countFilter),
             {
@@ -227,9 +227,12 @@ const constructTree = <T>(
   }));
 };
 
-export const useRootPath = (assetId: any, config?: QueryConfig<number[]>) => {
+export const useRootPath = (
+  assetId: any,
+  config?: UseQueryOptions<number[]>
+) => {
   const sdk = useSDK();
-  const cache = useQueryCache();
+  const client = useQueryClient();
   return useQuery(
     ['asset-root-path', assetId],
     async () => {
@@ -238,7 +241,7 @@ export const useRootPath = (assetId: any, config?: QueryConfig<number[]>) => {
       try {
         while (curAssetId) {
           // eslint-disable-next-line no-await-in-loop
-          const asset = await cache.fetchQuery(
+          const asset = await client.fetchQuery(
             byIdKey('assets', curAssetId),
             // eslint-disable-next-line no-loop-func
             () => sdk.assets.retrieve([{ id: curAssetId }]),

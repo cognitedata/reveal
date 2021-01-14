@@ -17,7 +17,7 @@ export const useAnnotations = (fileId: number) => {
       limit: 1000,
       filter: getIdFilter(file?.id!),
     },
-    { enabled: fileFetched && file && file?.id }
+    { enabled: fileFetched && file ? !!file?.id : false }
   );
   const { data: eventsByExternalId = [] } = useList<CogniteEvent>(
     'events',

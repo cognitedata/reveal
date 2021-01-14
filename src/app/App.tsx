@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from 'styled-components';
-import { QueryCache, ReactQueryCacheProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query-devtools';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import GlobalStyle from 'app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk from 'sdk-singleton';
@@ -27,8 +27,8 @@ export default () => {
     throw new Error('tenant missing');
   }
 
-  const queryCache = new QueryCache({
-    defaultConfig: {
+  const queryClient = new QueryClient({
+    defaultOptions: {
       queries: {
         retry: false,
         staleTime: 10 * 60 * 1000, // Pretty long
@@ -51,7 +51,7 @@ export default () => {
   }, []);
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <AntStyles>
         <SubAppWrapper padding={false}>
           <AuthWrapper
@@ -81,6 +81,6 @@ export default () => {
         </SubAppWrapper>
       </AntStyles>
       <ReactQueryDevtools initialIsOpen={false} />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 };

@@ -21,7 +21,7 @@ export const ContextualizationButton = ({
 
   const cancel = useDeleteFindObjectsJob();
   const jobId = useFindObjectsJobId(id);
-  const [findObjects] = useFindObjects();
+  const { mutateAsync: findObjects } = useFindObjects();
 
   const { data: job, isError } = useJob(jobId, 'findobjects');
 

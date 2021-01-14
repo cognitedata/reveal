@@ -23,8 +23,8 @@ export default function CollectionsDropdown({ type, items, button }: Props) {
   const showCollections = useCollectionFeature();
   const [formOpen, setFormOpen] = useState(false);
   const { data: collections } = useCollections();
-  const [createCollections] = useCreateCollections();
-  const [updateCollections] = useUpdateCollections();
+  const { mutateAsync: createCollections } = useCreateCollections();
+  const { mutate: updateCollections } = useUpdateCollections();
 
   if (!showCollections) {
     return null;

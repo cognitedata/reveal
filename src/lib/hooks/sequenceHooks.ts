@@ -10,7 +10,7 @@ import {
 import { SequenceRow } from '@cognite/sdk/dist/src/api/sequences/sequenceRow'; //
 import { pickOptionalId } from 'lib/utils/idUtils';
 
-import { InfiniteQueryConfig, useInfiniteQuery } from 'react-query';
+import { UseInfiniteQueryOptions, useInfiniteQuery } from 'react-query';
 
 const post = <T>(sdk: CogniteClient, path: string, data: any) =>
   sdk
@@ -21,26 +21,26 @@ const post = <T>(sdk: CogniteClient, path: string, data: any) =>
 export const useInfiniteSequenceRows = (
   id?: IdEither,
   limit?: number,
-  config?: InfiniteQueryConfig<SequenceDataResponse>
+  config?: UseInfiniteQueryOptions<SequenceDataResponse>
 ) => {
   const realLimit = limit || 200;
   const sdk = useSDK();
 
   return useInfiniteQuery<SequenceDataResponse>(
     `sequence-rows-${pickOptionalId(id)}`,
-    async (_: string, nextCursor?: string) => {
+    async ({ pageParam }) => {
       const res = await post<SequenceDataResponse>(
         sdk,
         `/sequences/data/list`,
         {
           ...id,
           limit: realLimit,
-          cursor: nextCursor,
+          cursor: pageParam,
         }
       );
       return res;
     },
-    { getFetchMore: r => r?.nextCursor, ...config }
+    { getNextPageParam: (r: any) => r?.nextCursor, ...config }
   );
 };
 

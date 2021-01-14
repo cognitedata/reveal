@@ -13,9 +13,9 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
   const {
     data,
     isFetched,
-    fetchMore,
-    canFetchMore,
-    isFetchingMore,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useInfiniteSequenceRows(
     {
       id: sequence.id,
@@ -23,7 +23,7 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
     100
   );
 
-  /* 
+  /*
     The trick here is to add the latest paginated results to the bottom of the existing array.
     Next up for sequences is to make sure all values are displayed as string.
     There is an unknown here for whether this will work for all kinds of sequences.
@@ -31,7 +31,7 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
   */
   const listItems = useMemo(
     () =>
-      data?.reduce(
+      data?.pages?.reduce(
         (accl, t) =>
           accl.concat(
             t.rows.map(row => ({
@@ -56,8 +56,8 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
   }
 
   const handleOnEndReached = () => {
-    if (canFetchMore && !isFetchingMore) {
-      fetchMore();
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
   };
 

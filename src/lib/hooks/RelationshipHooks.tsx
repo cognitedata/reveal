@@ -40,7 +40,7 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
     data: hasRelationshipRead,
     isFetched: permissionFetched,
   } = usePermissions('relationshipsAcl', 'READ');
-  const enabled = permissionFetched && hasRelationshipRead && !!externalId;
+  const enabled = !!(permissionFetched && hasRelationshipRead && !!externalId);
 
   const sourceRelationships = useList<Relationship>(
     // @ts-ignore
@@ -94,9 +94,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
 ) => {
   const fetchEnabled = enabled && !!resourceExternalId;
 
-  const { data: sourceData = [], ...sourceParams } = useInfiniteList<
-    Relationship
-  >(
+  const { data: sourceData, ...sourceParams } = useInfiniteList<Relationship>(
     // @ts-ignore
     'relationships',
     PAGE_SIZE,
@@ -105,13 +103,13 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   );
   const sourceItems = useMemo(
     () =>
-      sourceData?.reduce(
+      sourceData?.pages?.reduce(
         (accl, t) =>
           accl.concat(
             t.items.map(({ targetExternalId: externalId }) => ({ externalId }))
           ),
         [] as ExternalId[]
-      ),
+      ) || ([] as ExternalId[]),
     [sourceData]
   );
   const { data: sourceResources = [] } = useCdfItems<T>(
@@ -122,11 +120,9 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     }
   );
 
-  const fetchTarget = !!sourceParams && !sourceParams.canFetchMore;
+  const fetchTarget = !!sourceParams && !sourceParams.hasNextPage;
 
-  const { data: targetData = [], ...targetParams } = useInfiniteList<
-    Relationship
-  >(
+  const { data: targetData, ...targetParams } = useInfiniteList<Relationship>(
     // @ts-ignore
     'relationships',
     PAGE_SIZE,
@@ -138,13 +134,13 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   );
   const targetItems = useMemo(
     () =>
-      targetData?.reduce(
+      targetData?.pages?.reduce(
         (accl, t) =>
           accl.concat(
             t.items.map(({ sourceExternalId: externalId }) => ({ externalId }))
           ),
         [] as ExternalId[]
-      ),
+      ) || ([] as ExternalId[]),
     [targetData]
   );
   const { data: targetResources = [] } = useCdfItems<T>(
@@ -155,7 +151,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     }
   );
 
-  const rest = sourceParams.canFetchMore ? sourceParams : targetParams;
+  const rest = sourceParams.hasNextPage ? sourceParams : targetParams;
 
   return {
     items: [...sourceResources, ...targetResources] as T[],

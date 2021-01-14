@@ -27,7 +27,7 @@ export function ResultCount({
     query!,
     { limit: 1000 },
     {
-      enabled: api === 'search' && query && query.length > 0 && !count,
+      enabled: api === 'search' && query ? query.length > 0 : false,
     }
   );
   const { data: list, isFetched: listDone } = useAggregate(sdkType, filter, {

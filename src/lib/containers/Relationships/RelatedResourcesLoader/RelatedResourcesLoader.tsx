@@ -37,9 +37,9 @@ export const RelatedResourcesLoader = <T extends Resource>({
 } & Partial<SelectableItemsProps> &
   RelatedResourcesLoaderProps) => {
   const {
-    canFetchMore,
-    isFetchingMore,
-    fetchMore,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
     isFetched,
     isIdle,
     isFetching,
@@ -63,8 +63,8 @@ export const RelatedResourcesLoader = <T extends Resource>({
       {children({
         ...props,
         onEndReached: () => {
-          if (canFetchMore && !isFetchingMore) {
-            fetchMore();
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
           }
         },
         footerHeight: isFetching ? 20 : 0,
