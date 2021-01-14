@@ -36,12 +36,13 @@ const formatDate = timeFormat('%b %d %Y, %H:%m');
 // accessors
 const getDate = (d?: DatapointAggregate) =>
   d ? new Date(d.timestamp) : new Date(0);
-const getDataPointValue = (d?: DatapointAggregate) =>
+const getDataPointAverage = (d?: DatapointAggregate) =>
   d ? d.average : undefined;
 const getDataPointMaxValue = (d?: DatapointAggregate) =>
   d ? d.max : undefined;
 const getDataPointMinValue = (d?: DatapointAggregate) =>
   d ? d.min : undefined;
+const getDataPointCount = (d?: DatapointAggregate) => (d ? d.count : undefined);
 const bisectDate = bisector<DatapointAggregate, Date>(
   d => new Date(d.timestamp)
 ).left;
@@ -131,7 +132,7 @@ export const LineChart = ({
             : d0;
       }
 
-      const value = getDataPointValue(d);
+      const value = getDataPointAverage(d);
       showTooltip({
         tooltipData: d,
         tooltipLeft: translatedX,
@@ -214,7 +215,7 @@ export const LineChart = ({
     );
   };
   const renderableValues = values.filter(el => {
-    const data = getDataPointValue(el);
+    const data = getDataPointAverage(el);
     if (data !== undefined) {
       return valuesScale(data) !== undefined;
     }
@@ -232,7 +233,7 @@ export const LineChart = ({
         height={innerHeight}
         x={d => getXWithScale(d)!}
         y1={d => {
-          return valuesScale(getDataPointValue(d)!)!;
+          return valuesScale(getDataPointAverage(d)!)!;
         }}
         y0={0}
         yScale={valuesScale}
@@ -250,7 +251,7 @@ export const LineChart = ({
         height={innerHeight}
         x={d => getXWithScale(d)!}
         y={d => {
-          return valuesScale(getDataPointValue(d)!)!;
+          return valuesScale(getDataPointAverage(d)!)!;
         }}
         strokeWidth={2}
         stroke={primaryColor}
@@ -303,7 +304,7 @@ export const LineChart = ({
     return (
       <Group>
         {values.map(d => {
-          const value = getDataPointValue(d);
+          const value = getDataPointAverage(d);
           const cy = d && value !== undefined ? valuesScale(value) : 0;
           return (
             <circle
@@ -385,12 +386,14 @@ export const LineChart = ({
             style={tooltipStyles}
           >
             <>
-              <Overline level={3}>Value</Overline>
-              <Body level={3}>{getDataPointValue(tooltipData)}</Body>
+              <Overline level={3}>Average</Overline>
+              <Body level={3}>{getDataPointAverage(tooltipData)}</Body>
               <Overline level={3}>Max</Overline>
               <Body level={3}>{getDataPointMaxValue(tooltipData)}</Body>
               <Overline level={3}>Min</Overline>
               <Body level={3}>{getDataPointMinValue(tooltipData)}</Body>
+              <Overline level={3}>Count</Overline>
+              <Body level={3}>{getDataPointCount(tooltipData)}</Body>
             </>
           </TooltipWithBounds>
           <Tooltip
