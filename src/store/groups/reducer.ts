@@ -12,7 +12,6 @@ const initialState: GroupsState = {
   loaded: false,
   error: '',
   groups: null,
-  allGroups: null,
   isAdmin: false,
 };
 
@@ -35,26 +34,6 @@ export const GroupsReducer = createReducer(initialState)
         error: '',
         groups: action.payload,
         isAdmin: checkIsAdmin(action.payload as Group[]),
-      };
-    }
-  )
-  .handleAction(
-    UserGroupsActionTypes.USER_ALL_GROUPS_LOAD,
-    (state: GroupsState) => ({
-      ...state,
-      loading: true,
-      error: '',
-    })
-  )
-  .handleAction(
-    UserGroupsActionTypes.USER_ALL_GROUPS_LOADED,
-    (state: GroupsState, action: UserGroupsootAction) => {
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: '',
-        allGroups: action.payload,
       };
     }
   )

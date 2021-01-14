@@ -1,28 +1,16 @@
-import { CdfClient } from 'utils';
+import { ApiClient } from 'utils';
 import { RootDispatcher } from 'store/types';
 import { Group } from '@cognite/sdk';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import * as actions from './actions';
 
-export const fetchUserGroups = (client: CdfClient) => async (
+export const fetchUserGroups = (apiClient: ApiClient) => async (
   dispatch: RootDispatcher
 ) => {
   dispatch(actions.loadGroups());
   try {
-    const groups: Group[] = await client.getUserGroups();
+    const groups: Group[] = await apiClient.getUserGroups();
     dispatch(actions.loadedGroups(groups));
-  } catch (e) {
-    dispatch(actions.loadGroupsError(e));
-  }
-};
-
-export const fetchAllUserGroups = (client: CdfClient) => async (
-  dispatch: RootDispatcher
-) => {
-  dispatch(actions.loadAllGroups());
-  try {
-    const groups: Group[] = await client.getAllUserGroups();
-    dispatch(actions.loadedAllGroups(groups));
   } catch (e) {
     dispatch(actions.loadGroupsError(e));
   }

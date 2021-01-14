@@ -1,4 +1,4 @@
-import { ClientOptions, ListResponse } from '@cognite/sdk';
+import { ClientOptions, Group, ListResponse } from '@cognite/sdk';
 import { LastVisited, UserSpacePayload } from 'store/userSpace/types';
 import { SuiteRow } from 'store/suites/types';
 import sidecar from './sidecar';
@@ -25,6 +25,10 @@ export class ApiClient {
 
   getSuitesRows(): Promise<ListResponse<SuiteRow[]>> {
     return this.makeRequest('/suites', 'GET');
+  }
+
+  getUserGroups(): Promise<Group[]> {
+    return this.makeRequest('/groups', 'GET');
   }
 
   getUserSpace(): Promise<UserSpacePayload> {
