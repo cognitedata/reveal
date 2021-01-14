@@ -82,7 +82,7 @@ export default function ResourceTitleRow({
               <Button
                 icon="ArrowBack"
                 onClick={() =>
-                  history.push(createLink(`/explore/search/${type}`))
+                  history.push(createLink(`/explore/search/${type}/${id}`))
                 }
               />
             </Tooltip>
