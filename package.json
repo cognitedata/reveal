@@ -78,7 +78,7 @@
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.10.1",
     "fetch-mock": "^9.11.0",
-    "git-cz": "^4.7.4",
+    "git-cz": "^4.7.6",
     "husky": "^4.3.5",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^12.0.0",
