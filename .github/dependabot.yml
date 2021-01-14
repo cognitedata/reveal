@@ -11,10 +11,6 @@ updates:
   labels:
   - auto-merge
   ignore:
-  - dependency-name: antd
-    versions:
-    - ">= 4.a"
-    - "< 5"
   - dependency-name: eslint
     versions:
     - ">= 7.a"

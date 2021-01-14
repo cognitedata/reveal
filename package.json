@@ -34,7 +34,7 @@
     "@visx/shape": "^1.3.0",
     "@visx/threshold": "^1.4.0",
     "@visx/tooltip": "^1.3.0",
-    "antd": "^4.7.3",
+    "antd": "^4.10.2",
     "copy-to-clipboard": "^3.3.1",
     "d3-array": "^2.9.1",
     "d3-time-format": "^3.0.0",
