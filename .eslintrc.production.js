@@ -10,7 +10,7 @@ module.exports = {
   rules: {
     '@cognite/no-unissued-todos': [
       'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
+      { issuePattern: '\\(((DTC)-[0-9]+)\\)' },
     ],
 
     'max-classes-per-file': ['off'],
@@ -35,5 +35,7 @@ module.exports = {
       'error',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
+    'react/prop-types': ['off'],
+    'no-unused-expressions': ['off'],
   },
 };

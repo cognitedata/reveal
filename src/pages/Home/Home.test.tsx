@@ -1,11 +1,29 @@
 import React from 'react';
 import { render } from 'utils/test';
 import { screen } from '@testing-library/react';
-import { Base } from './Home.stories';
+import { Provider } from 'react-redux';
+
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import Home from './Home';
+
+const middlewares = [thunk] as any[];
+const mockStore = configureStore(middlewares);
 
 describe('<Home />', () => {
-  test('renders learn react link', async () => {
-    render(<Base />);
-    expect(await screen.findByText(/learn about/i)).toBeInTheDocument();
+  let store;
+  test('renders No suites loaded', async () => {
+    const initialState = {
+      suitesTable: [],
+      groups: [],
+      userSpace: [],
+    };
+    store = mockStore(initialState);
+    render(
+      <Provider store={store}>
+        <Home />
+      </Provider>
+    );
+    expect(await screen.findByText(/No suites loaded/i)).toBeInTheDocument();
   });
 });
