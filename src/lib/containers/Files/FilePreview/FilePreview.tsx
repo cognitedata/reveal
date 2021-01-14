@@ -9,7 +9,10 @@ import {
 } from '@cognite/react-picture-annotation';
 import { Loader } from 'lib/components';
 import styled from 'styled-components';
-import { isFilePreviewable } from 'lib/utils/FileUtils';
+import {
+  isFilePreviewable,
+  readablePreviewableFileTypes,
+} from 'lib/utils/FileUtils';
 import {
   PendingCogniteAnnotation,
   CURRENT_VERSION,
@@ -121,8 +124,10 @@ export const FilePreview = ({
   if (!canPreviewFile) {
     return (
       <CenteredPlaceholder>
-        <h1>No Preview For File</h1>
-        <p>Please search for a File to start viewing.</p>
+        <h1>No preview for this type of file</h1>
+        <p>
+          File types that can be previewed are: {readablePreviewableFileTypes()}
+        </p>
       </CenteredPlaceholder>
     );
   }
