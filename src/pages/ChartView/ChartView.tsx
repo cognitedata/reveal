@@ -631,7 +631,26 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             </td>
             <td>
               <SourceItem>
-                <SourceName>Calculation</SourceName>
+                <SourceName>*</SourceName>
+              </SourceItem>
+            </td>
+            <td>
+              <SourceItem>
+                <SourceName>-</SourceName>
+              </SourceItem>
+            </td>
+            <td>
+              <SourceItem>
+                <SourceName>-</SourceName>
+              </SourceItem>
+            </td>
+          </>
+        )}
+        {isDataQualityMode && (
+          <>
+            <td>
+              <SourceItem>
+                <SourceName>-</SourceName>
               </SourceItem>
             </td>
             <td>
