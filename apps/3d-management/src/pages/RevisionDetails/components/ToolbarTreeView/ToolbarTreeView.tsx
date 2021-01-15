@@ -1,7 +1,7 @@
 import TreeView, {
   NodesTreeViewRefType,
 } from 'src/pages/RevisionDetails/components/TreeView/NodesTreeView';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   EventLoadChildren,
   TreeLoadMoreNode,
@@ -23,24 +23,29 @@ import {
 } from 'src/store/modules/TreeView';
 import Spinner from 'src/components/Spinner';
 import styled from 'styled-components';
-import { useResizeHandler } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useResizeHander';
-import { useSelectedNodesHighlights } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useSelectedNodesHighlights';
-import { useCheckedNodesVisibility } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useCheckedNodesVisibility';
+import { NodeInfoModal } from 'src/pages/RevisionDetails/components/ToolbarTreeView/NodeInfoModal';
+import { useResizeHandler } from './hooks/useResizeHander';
+import { useSelectedNodesHighlights } from './hooks/useSelectedNodesHighlights';
+import { useCheckedNodesVisibility } from './hooks/useCheckedNodesVisibility';
 
 const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   overflow-y: hidden;
 `;
 
-type Props = {
+type TreeViewWrapperProps = {
   model: Cognite3DModel;
   width: number;
   height: number;
 
+  onNodeInfoRequested: (treeIndex: number) => void;
+
   viewer: Cognite3DViewer;
 };
 
-function ToolbarTreeViewComponent(props: Props) {
+function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
   const treeViewRef = useRef<NodesTreeViewRefType>(null);
 
   const { modelId, revisionId } = props.model;
@@ -110,6 +115,10 @@ function ToolbarTreeViewComponent(props: Props) {
     dispatch(selectNodes(selectedKeys));
   };
 
+  const nodeInfoRequested = (treeIndex: number) => {
+    props.onNodeInfoRequested(treeIndex);
+  };
+
   if (state.loading) {
     return <Spinner />;
   }
@@ -129,21 +138,46 @@ function ToolbarTreeViewComponent(props: Props) {
       onCheck={nodeChecked}
       onExpand={nodeExpanded}
       onSelect={nodeSelected}
+      onNodeInfoRequest={nodeInfoRequested}
       height={props.height}
       width={props.width}
     />
   );
 }
 
-type WrapperProps = { style?: React.CSSProperties } & Omit<Props, 'height'>;
+type ToolbarTreeViewProps = { style?: React.CSSProperties } & Omit<
+  TreeViewWrapperProps,
+  'height' | 'onNodeInfoRequested'
+>;
 
-export function ToolbarTreeView({ style, ...restProps }: WrapperProps) {
+export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
   const treeViewContainer = useRef<HTMLDivElement>(null);
   const { height: treeViewHeight } = useResizeHandler(treeViewContainer);
 
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+  const [nodeInfoTreeIndex, setNodeInfoTreeIndex] = useState<
+    number | undefined
+  >(undefined);
+
   return (
-    <Container style={style} ref={treeViewContainer}>
-      <ToolbarTreeViewComponent {...restProps} height={treeViewHeight} />
+    <Container>
+      <Container style={style} ref={treeViewContainer}>
+        <ToolbarTreeViewComponent
+          {...restProps}
+          height={treeViewHeight}
+          onNodeInfoRequested={(treeIndex) => {
+            setNodeInfoTreeIndex(treeIndex);
+            setInfoModalOpen(true);
+          }}
+        />
+      </Container>
+      {/* Uncomment it later when multiselection will be here */}
+      {/* <SelectedNodeInfo style={{ marginTop: '4px' }} /> */}
+      <NodeInfoModal
+        treeIndex={nodeInfoTreeIndex}
+        onClose={() => setInfoModalOpen(false)}
+        visible={infoModalOpen}
+      />
     </Container>
   );
 }

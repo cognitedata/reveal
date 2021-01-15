@@ -3,6 +3,7 @@ import { useGlobalStyles } from '@cognite/cdf-utilities';
 import Tree from 'antd-v4/lib/tree';
 import { TreeProps } from 'antd-v4/lib/tree/Tree';
 import { SelectedNode } from 'src/store/modules/TreeView';
+import { INFO_BTN_CLASSNAME } from 'src/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
 import {
   CheckInfo,
   CustomDataNode,
@@ -20,6 +21,7 @@ type Props = Omit<TreeProps, 'onSelect' | 'onCheck' | 'onExpand' | 'loadData'> &
     width: number;
     height: number;
 
+    onNodeInfoRequest: (treeIndex: number) => void;
     onSelect: (
       selectedKeys: Array<SelectedNode>,
       info: EventTreeNodeSelected
@@ -56,13 +58,30 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
       onCheck,
       onExpand,
       loadChildren,
+      onNodeInfoRequest,
       ...restProps
     }: Props,
     forwardedRef
   ) => {
     useGlobalStyles([antd4Styles]);
 
-    const onNodeSelected = (
+    const isInfoIconClicked = (
+      info:
+        | EventTreeNodeSelected<CustomDataNode>
+        | EventTreeNodeSelected<TreeDataNode>
+    ) => {
+      return info.nativeEvent.composedPath().some((el) => {
+        // @ts-ignore EventTarget type declaration is very short
+        const classList = el && el.classList;
+        if (!classList) {
+          return false;
+        }
+
+        return classList.contains(INFO_BTN_CLASSNAME);
+      });
+    };
+
+    const onNodeClicked = (
       selectedKeys: Array<number | string>,
       info:
         | EventTreeNodeSelected<CustomDataNode>
@@ -70,6 +89,8 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
     ) => {
       if ('cursor' in info.node) {
         loadSiblings(info.node);
+      } else if (isInfoIconClicked(info)) {
+        onNodeInfoRequest(info.node.meta.treeIndex);
       } else {
         onSelect(
           (info as EventTreeNodeSelected<TreeDataNode>).selectedNodes.map(
@@ -98,7 +119,7 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
         showLine={{ showLeafIcon: false }}
         checkable
         loadData={loadChildren as any}
-        onSelect={onNodeSelected as any}
+        onSelect={onNodeClicked as any}
         onCheck={onCheck as any}
         onExpand={onExpand as any}
         height={height}

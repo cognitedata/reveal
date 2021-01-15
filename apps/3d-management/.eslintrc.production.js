@@ -30,6 +30,7 @@ module.exports = {
 
     'lodash/prefer-lodash-typecheck': ['off'],
     'lodash/prefer-lodash-method': ['off'],
+    'lodash/prefer-noop': ['off'],
     'lodash/prop-shorthand': ['off'],
     'lodash/prefer-constant': ['off'],
     'lodash/prefer-is-nil': ['off'],

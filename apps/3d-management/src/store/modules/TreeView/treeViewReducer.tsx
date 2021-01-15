@@ -434,7 +434,9 @@ export const expandNodeByTreeIndex = (() => {
 export const checkNodes = (payload: NodeChecked['payload']) => (dispatch) =>
   dispatch({ type: 'treeView/nodeChecked', payload });
 
-export const selectNodes = (payload: NodeSelected['payload']) => (dispatch) =>
+export const selectNodes = (payload: NodeSelected['payload']) => (
+  dispatch
+): ReduxThunk<NodeSelected> =>
   dispatch({ type: 'treeView/nodeSelected', payload });
 
 export const expandNodes = (payload: NodeExpanded['payload']) => (dispatch) =>

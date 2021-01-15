@@ -4,28 +4,29 @@ import {
   getEnvironment,
   isDevelopment,
   checkUrl,
+  isProduction,
 } from '@cognite/cdf-utilities';
 import { Metrics } from '@cognite/metrics';
 
-// const setupSupportChat = () => {
-//   // if we are on dev, we set the Intercom widget to a mock function
-//   if (isDevelopment()) {
-//     // @ts-ignore
-//     window.Intercom = () => {};
-//   }
-//   try {
-//     // @ts-ignore
-//     window.Intercom('boot', {
-//       app_id: 'ou1uyk2p',
-//       hide_default_launcher: true,
-//     });
-//   } catch (e) {
-//     // Intercom not available, but let's not crash
-//     if (isProduction()) {
-//       Sentry.captureException(e);
-//     }
-//   }
-// };
+const setupSupportChat = () => {
+  // if we are on dev, we set the Intercom widget to a mock function
+  if (isDevelopment()) {
+    // @ts-ignore
+    window.Intercom = () => {};
+  }
+  try {
+    // @ts-ignore
+    window.Intercom('boot', {
+      app_id: 'ou1uyk2p',
+      hide_default_launcher: true,
+    });
+  } catch (e) {
+    // Intercom not available, but let's not crash
+    if (isProduction()) {
+      Sentry.captureException(e);
+    }
+  }
+};
 
 const setupSentry = () => {
   if (!checkUrl('dev')) {
@@ -55,7 +56,7 @@ const setupMixpanel = () => {
 
 export const setupUserTracking = () => {
   setupMixpanel();
-  // setupSupportChat();
+  setupSupportChat();
   setupSentry();
 };
 
