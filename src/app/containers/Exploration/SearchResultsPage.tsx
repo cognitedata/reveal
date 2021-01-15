@@ -27,7 +27,7 @@ import {
   useCurrentResourceType,
   useCurrentResourceId,
 } from 'app/hooks';
-import { SEARCH_KEY, CART_KEY } from 'app/utils/contants';
+import { SEARCH_KEY, CART_KEY } from 'app/utils/constants';
 import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
 import { useDateRange } from 'app/context/DateRangeContext';

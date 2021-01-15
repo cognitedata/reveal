@@ -4,7 +4,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { ResourceType } from 'lib';
 import { createLink } from '@cognite/cdf-utilities';
 
-import { SEARCH_KEY } from './utils/contants';
+import { SEARCH_KEY } from './utils/constants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 

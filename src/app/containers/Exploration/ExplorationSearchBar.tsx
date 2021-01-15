@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Input } from '@cognite/cogs.js';
 import { debounce } from 'lodash';
 import { useQueryString } from 'app/hooks';
-import { SEARCH_KEY } from 'app/utils/contants';
+import { SEARCH_KEY } from 'app/utils/constants';
 
 export const ExplorationSearchBar = () => {
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);

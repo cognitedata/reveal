@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { useQueryStringArray } from 'app/hooks';
-import { CART_KEY } from 'app/utils/contants';
+import { CART_KEY } from 'app/utils/constants';
 
 export default function DeselectButton() {
   const setCart = useQueryStringArray(CART_KEY)[1];

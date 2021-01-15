@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
 import { trackUsage } from 'app/utils/Metrics';
 import { useQueryString } from 'app/hooks';
-import { SEARCH_KEY } from 'app/utils/contants';
+import { SEARCH_KEY } from 'app/utils/constants';
 import { Divider, Space } from 'antd';
 import { TitleRowActions } from './TitleRowActions';
 

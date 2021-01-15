@@ -6,45 +6,15 @@ import 'regenerator-runtime/runtime';
 
 configure({ adapter: new Adapter() });
 
+jest.mock('mixpanel-browser', () => {
+  return {
+    'data-exploration': {
+      add_group: jest.fn(),
+      identify: jest.fn(),
+    },
+  };
+});
 jest.mock('app/utils/Metrics');
 jest.mock('@cognite/cdf-utilities', () => ({
   createLink: jest.fn(),
 }));
-
-let consoleWrittenTo;
-
-let originalLog;
-let originalWarn;
-let originalError;
-
-beforeEach(() => {
-  consoleWrittenTo = false;
-  originalLog = global.console.log;
-  originalWarn = global.console.warn;
-  originalError = global.console.error;
-
-  jest.spyOn(global.console, 'log').mockImplementation((...args) => {
-    consoleWrittenTo = true;
-    originalLog(...args);
-  });
-  jest.spyOn(global.console, 'warn').mockImplementation((...args) => {
-    consoleWrittenTo = true;
-    originalWarn(...args);
-  });
-  jest.spyOn(global.console, 'error').mockImplementation((...args) => {
-    consoleWrittenTo = true;
-    originalError(...args);
-  });
-});
-
-afterEach(() => {
-  if (consoleWrittenTo) {
-    throw new Error(
-      'Console log, warnings and errors are not allowed when running tests. Mock them if you really need it.'
-    );
-  }
-
-  console.log = originalLog;
-  console.warn = originalWarn;
-  console.error = originalError;
-});
