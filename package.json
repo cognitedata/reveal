@@ -26,7 +26,7 @@
     "@cognite/react-i18n": "0.1.2",
     "@cognite/sdk": "^3.2.1",
     "@cognite/z-index": "^0.1.0",
-    "@sentry/browser": "^5.27.4",
+    "@sentry/browser": "^5.30.0",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.19",
     "moment": "^2.29.1",
