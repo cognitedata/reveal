@@ -59,6 +59,7 @@ const HighlightCell = ({
         <Highlighter
           searchWords={(query || '').split(' ')}
           textToHighlight={text || ''}
+          autoEscape
         />
       </Tooltip>
     </EllipsisText>
