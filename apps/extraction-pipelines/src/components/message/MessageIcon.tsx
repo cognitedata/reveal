@@ -1,24 +1,15 @@
 import React from 'react';
-import haveNewMessagesIcon from 'assets/have-new-messages-icon.svg';
-import styled from 'styled-components';
 import { Status } from '../../model/Status';
+import { FailedRunMessageIcon } from '../icons/FailedRunMessageIcon';
 
 interface OwnProps {
   status: Status;
 }
 
-type Props = OwnProps;
-
-const StyledMessageIcon = styled.img.attrs({
-  src: `${haveNewMessagesIcon}`,
-})`
-  margin-left: 0.625rem;
-`;
-
-const MessageIcon = ({ status }: Props) => {
+const MessageIcon = ({ status }: OwnProps) => {
   switch (status) {
     case Status.FAIL:
-      return <StyledMessageIcon />;
+      return <FailedRunMessageIcon />;
     default:
       return <></>;
   }
