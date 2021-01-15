@@ -31,7 +31,7 @@ const tooltipStyles = {
 };
 
 // util
-const formatDate = timeFormat('%b %d %Y, %H:%m');
+const formatDate = timeFormat('%b %d %Y, %H:%M');
 
 // accessors
 const getDate = (d?: DatapointAggregate) =>
@@ -112,7 +112,6 @@ export const LineChart = ({
     });
   }, [innerHeight, values]);
 
-  // tooltip handler
   const handleTooltip = useCallback(
     (
       event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>
@@ -131,7 +130,6 @@ export const LineChart = ({
             ? d1
             : d0;
       }
-
       const value = getDataPointAverage(d);
       showTooltip({
         tooltipData: d,
@@ -175,6 +173,7 @@ export const LineChart = ({
       </>
     );
   };
+
   const renderAxis = () => {
     return (
       <>
@@ -214,6 +213,7 @@ export const LineChart = ({
       </>
     );
   };
+
   const renderableValues = values.filter(el => {
     const data = getDataPointAverage(el);
     if (data !== undefined) {
@@ -243,6 +243,7 @@ export const LineChart = ({
       />
     );
   };
+
   const renderLine = () => {
     return (
       <LinePath<DatapointAggregate>
@@ -258,6 +259,7 @@ export const LineChart = ({
       />
     );
   };
+
   const renderThreshold = () => {
     if (!enableMinMaxArea) {
       return <></>;
@@ -412,6 +414,7 @@ export const LineChart = ({
       )
     );
   };
+
   return (
     <div>
       <svg
