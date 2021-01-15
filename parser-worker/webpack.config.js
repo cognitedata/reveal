@@ -7,6 +7,9 @@ const createBaseConfig = (env) => {
 
   return {
     mode: development ? "development" : "production",
+    experiments: {
+      syncWebAssembly: true,
+    },
     target: "webworker",
     entry: {
       "reveal.parser.worker": "./index.ts",
