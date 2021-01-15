@@ -162,12 +162,12 @@ pub trait ReadExt: io::Read {
         let packed_data_size_with_header = packed_data_size + LZMA_HEADER_SIZE;
 
         // TODO do not read the data first, just give a view to the input
-        let mut packed_data = vec![0 as u8; packed_data_size_with_header];
+        let mut packed_data = vec![0_u8; packed_data_size_with_header];
         self.read_exact(&mut packed_data)?;
 
         let mut cursor = io::Cursor::new(packed_data);
 
-        let mut decomp = vec![0 as u8; unpacked_size];
+        let mut decomp = vec![0_u8; unpacked_size];
         let mut writer = InterleavedWriter::new(&mut decomp, interleaved_byte_count);
         lzma_rs::lzma_decompress_with_options(
             &mut cursor,
@@ -208,7 +208,7 @@ pub trait ReadExt: io::Read {
     }
 
     fn read_magic_bytes(&mut self, magic_bytes: &[u8; 4]) -> Result<[u8; 4], Error> {
-        let mut bytes = [0 as u8; 4];
+        let mut bytes = [0_u8; 4];
         self.read_exact(&mut bytes)?;
         if magic_bytes == &bytes {
             Ok(bytes)
