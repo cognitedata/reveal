@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { ModelDataClient } from '../../../utilities/networking/types';
-import { SectorCuller } from '../../../internal';
+import { SectorCuller, WantedSector } from '../../../internal';
 import { createRevealManager } from '../../../public/createRevealManager';
 import { RevealManager } from '../../../public/RevealManager';
 import { LoadingStateChangeListener } from '../../..';
@@ -17,7 +17,10 @@ describe('RevealManager', () => {
     }
   } as any;
   const sectorCuller: SectorCuller = {
-    determineSectors: jest.fn(),
+    determineSectors: jest.fn(() => {
+      const sectors: WantedSector[] = [];
+      return sectors;
+    }),
     dispose: jest.fn()
   };
   let manager: RevealManager<{ id: number }>;
@@ -25,6 +28,10 @@ describe('RevealManager', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     manager = createRevealManager('test', mockClient, { internal: { sectorCuller } });
+  });
+
+  afterEach(() => {
+    manager.dispose();
   });
 
   beforeAll(() => {
@@ -76,7 +83,7 @@ describe('RevealManager', () => {
     expect(sectorCuller.dispose).toBeCalled();
   });
 
-  test('loadingStateChanged is not triggered if loading state doesnt change', () => {
+  test('loadingStateChanged is not triggered if loading state doesnt change', async () => {
     const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
     const loadingStateChangedCb: LoadingStateChangeListener = jest.fn();
     manager.on('loadingStateChanged', loadingStateChangedCb);
@@ -84,6 +91,6 @@ describe('RevealManager', () => {
     manager.update(camera);
     jest.advanceTimersByTime(10000);
 
-    expect(loadingStateChangedCb).toBeCalledTimes(1);
+    expect(loadingStateChangedCb).not.toBeCalled();
   });
 });
