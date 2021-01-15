@@ -170,22 +170,19 @@ trait ConvertToJsType<T> {
 
 impl ConvertToJsType<Float32Array> for Vec<f32> {
     fn convert(&self) -> Float32Array {
-        return Float32Array::from(&self[..])
+        return Float32Array::from(&self[..]);
     }
 }
 
 impl ConvertToJsType<Float64Array> for Vec<f64> {
     fn convert(&self) -> Float64Array {
-        return Float64Array::from(&self[..])
+        return Float64Array::from(&self[..]);
     }
 }
 
 impl ConvertToJsType<Float64Array> for Vec<u64> {
     fn convert(&self) -> Float64Array {
-        let data: Vec<f64> = self
-            .iter()
-            .map(|value| *value as f64)
-            .collect();
+        let data: Vec<f64> = self.iter().map(|value| *value as f64).collect();
 
         Float64Array::from(&data[..])
     }
@@ -197,7 +194,7 @@ impl ConvertToJsType<Uint8Array> for Vec<[u8; 4]> {
             .iter()
             .flat_map(|a| vec![a[0], a[1], a[2], a[3]])
             .collect();
-        return Uint8Array::from(&color_flat[..])
+        return Uint8Array::from(&color_flat[..]);
     }
 }
 
@@ -225,9 +222,9 @@ impl ConvertToJsType<Float32Array> for Vec<Matrix4> {
                 data_as_matrix4.len() * 16,
             )
         };
-    
+
         let data = data_as_f32.to_vec();
-    
+
         Float32Array::from(&data[..])
     }
 }
