@@ -86,7 +86,7 @@
     "pretty-quick": "^3.1.0",
     "redux-mock-store": "^1.5.4",
     "serve": "^11.3.2",
-    "sinon": "^9.2.1",
+    "sinon": "^9.2.3",
     "testcafe": "^1.9.4",
     "typescript": "^4.1.3"
   },
