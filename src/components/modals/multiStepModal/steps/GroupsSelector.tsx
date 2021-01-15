@@ -9,21 +9,21 @@ import { Board } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
+import { ADMIN_GROUP_NAME } from 'constants/cdf';
 
 interface Props {
   board: Board;
   setBoard: TS_FIX_ME;
 }
 
-const exclude = ['admin', 'default', 'dc-system-admin'];
+const exclude = [ADMIN_GROUP_NAME];
 
 const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
   const { setErrors, validateField } = useForm(boardValidator);
-  const { allGroups } = useSelector(getGroupsState);
+  const { groups } = useSelector(getGroupsState);
 
-  // TODO(dtc-215) try to filter on middleware side
-  const options = allGroups
-    ?.filter((group: Group) => {
+  const options = (groups || [])
+    .filter((group: Group) => {
       return !includes(exclude, group.name);
     })
     .map((group: Group) => {

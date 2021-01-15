@@ -10,14 +10,6 @@ export const loadedGroups = createAction(
   UserGroupsActionTypes.USER_GROUPS_LOADED
 )<Group[]>();
 
-export const loadAllGroups = createAction(
-  UserGroupsActionTypes.USER_ALL_GROUPS_LOAD
-)<void>();
-
-export const loadedAllGroups = createAction(
-  UserGroupsActionTypes.USER_ALL_GROUPS_LOADED
-)<Group[]>();
-
 export const loadGroupsError = createAction(
   UserGroupsActionTypes.USER_GROUPS_ERROR
 )<Error>();

@@ -4,10 +4,10 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
 import { authenticate } from 'store/auth/thunks';
 import { fetchSuites } from 'store/suites/thunks';
-import { fetchAllUserGroups, fetchUserGroups } from 'store/groups/thunks';
+import { fetchUserGroups } from 'store/groups/thunks';
 import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
-import { getGroupsState, isAdmin } from 'store/groups/selectors';
+import { getGroupsState } from 'store/groups/selectors';
 import { Body, Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
@@ -31,9 +31,6 @@ const Authentication = (): JSX.Element => {
   } = useSelector(getGroupsState);
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
-  const [fetchAllGroupsDispatched, setFetchAllGroupsDispatched] = useState(
-    false
-  );
   const [fetchDispatched, setFetchDispatched] = useState(false);
 
   const loading = authenticating || suitesLoading || groupsLoading;
@@ -61,7 +58,7 @@ const Authentication = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       setFetchDispatched(true);
-      await dispatch(fetchUserGroups(client));
+      await dispatch(fetchUserGroups(apiClient));
       await dispatch(fetchSuites(apiClient));
     };
     if (authenticated && !fetchDispatched && !loading && !hasError) {
@@ -76,15 +73,6 @@ const Authentication = (): JSX.Element => {
     hasError,
     fetchDispatched,
   ]);
-
-  const admin = useSelector(isAdmin);
-
-  useEffect(() => {
-    if (admin && !fetchAllGroupsDispatched && !loading) {
-      dispatch(fetchAllUserGroups(client));
-      setFetchAllGroupsDispatched(true);
-    }
-  }, [client, dispatch, admin, fetchAllGroupsDispatched, loading]);
 
   if (hasError) {
     return (
