@@ -156,7 +156,7 @@ macro_rules! triangle_mesh_types{
             impl $struct_name {
                 $(
                 pub fn $field_name(&self) -> $wasm_output_type {
-                    convert_to_js_type!(self, $field_name, $field_type, $wasm_output_type)
+                    ConvertToJsType::convert(&self.$field_name)
                 }
                 )*
             }
@@ -164,37 +164,46 @@ macro_rules! triangle_mesh_types{
     }
 }
 
-macro_rules! convert_to_js_type {
-    ($self:ident, $field_name:ident, Vec<f32>, Float32Array) => {{
-        Float32Array::from(&$self.$field_name[..])
-    }};
+trait ConvertToJsType<T> {
+    fn convert(&self) -> T;
+}
 
-    ($self:ident, $field_name:ident, Vec<u64>, Float64Array) => {{
-        let data: Vec<f64> = $self
-            .$field_name
+impl ConvertToJsType<Float32Array> for Vec<f32> {
+    fn convert(&self) -> Float32Array {
+        return Float32Array::from(&self[..])
+    }
+}
+
+impl ConvertToJsType<Float64Array> for Vec<f64> {
+    fn convert(&self) -> Float64Array {
+        return Float64Array::from(&self[..])
+    }
+}
+
+impl ConvertToJsType<Float64Array> for Vec<u64> {
+    fn convert(&self) -> Float64Array {
+        let data: Vec<f64> = self
             .iter()
             .map(|value| *value as f64)
             .collect();
 
         Float64Array::from(&data[..])
-    }};
+    }
+}
 
-    ($self:ident, $field_name:ident, Vec<f64>, Float64Array) => {{
-        Float64Array::from(&$self.$field_name[..])
-    }};
-
-    ($self:ident, $field_name:ident, Vec<[u8; 4]>, Uint8Array) => {{
-        let color_flat: Vec<u8> = $self
-            .$field_name
+impl ConvertToJsType<Uint8Array> for Vec<[u8; 4]> {
+    fn convert(&self) -> Uint8Array {
+        let color_flat: Vec<u8> = self
             .iter()
             .flat_map(|a| vec![a[0], a[1], a[2], a[3]])
             .collect();
+        return Uint8Array::from(&color_flat[..])
+    }
+}
 
-        Uint8Array::from(&color_flat[..])
-    }};
-
-    ($self:ident, $field_name:ident, Vec<Vector3>, Float32Array) => {{
-        let data_as_vector3 = &$self.$field_name;
+impl ConvertToJsType<Float32Array> for Vec<Vector3> {
+    fn convert(&self) -> Float32Array {
+        let data_as_vector3 = self;
         let data_as_f32 = unsafe {
             std::slice::from_raw_parts(
                 data_as_vector3.as_ptr() as *const f32,
@@ -204,21 +213,23 @@ macro_rules! convert_to_js_type {
         let data = data_as_f32.to_vec();
 
         Float32Array::from(&data[..])
-    }};
+    }
+}
 
-    ($self:ident, $field_name:ident, Vec<Matrix4>, Float32Array) => {{
-        let data_as_matrix4 = &$self.$field_name;
+impl ConvertToJsType<Float32Array> for Vec<Matrix4> {
+    fn convert(&self) -> Float32Array {
+        let data_as_matrix4 = self;
         let data_as_f32 = unsafe {
             std::slice::from_raw_parts(
                 data_as_matrix4.as_ptr() as *const f32,
                 data_as_matrix4.len() * 16,
             )
         };
-
+    
         let data = data_as_f32.to_vec();
-
+    
         Float32Array::from(&data[..])
-    }};
+    }
 }
 
 macro_rules! new_geometry_types {
