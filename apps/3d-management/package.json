@@ -24,7 +24,7 @@
     "@cognite/react-feature-flags": "^0.0.2",
     "@cognite/reveal": "1.3.1",
     "@cognite/z-index": "^0.1.0",
-    "@google-cloud/storage": "^5.5.0",
+    "@google-cloud/storage": "^5.7.2",
     "@sentry/browser": "^5.29.2",
     "antd": "3.24.0",
     "antd-v4": "npm:antd@4.7.2",
