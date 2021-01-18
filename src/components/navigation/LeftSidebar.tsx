@@ -4,7 +4,6 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
-import { colors } from 'constants/suiteColors';
 import { TS_FIX_ME } from 'types/core';
 import NavigationItem from './NavigationItem';
 import {
@@ -12,7 +11,6 @@ import {
   AvailableSuitesContainer,
   CollapseButton,
   SidebarContainer,
-  UnAvailableSuitesContainer,
 } from './elements';
 
 interface NavigationItem {
@@ -41,6 +39,7 @@ const renderNavigationItem = (
 };
 
 const LeftSidebar: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation('Home');
   const { suites } = useSelector(getSuitesTableState);
   const location = useLocation();
@@ -58,24 +57,6 @@ const LeftSidebar: React.FC = () => {
     setOpen(() => !isOpen);
   };
 
-  const BottomNavigation = [
-    {
-      key: '-ML7mCrzPkT1OA-a9IZh',
-      title: t('Inspections') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      key: '-ML7mCrzPkT1OA-a9IZi',
-      title: t('Maintenance Planner') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-    {
-      key: '-ML7mCrzPkT1OA-a9IZj',
-      title: t('Product Optimization') as string,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    },
-  ];
-
   return (
     <SidebarContainer open={isOpen}>
       <CollapseButton open={isOpen} onClick={handleHideSidebar}>
@@ -89,9 +70,6 @@ const LeftSidebar: React.FC = () => {
           renderNavigationItem(suite, false, location)
         )}
       </AvailableSuitesContainer>
-      <UnAvailableSuitesContainer>
-        {BottomNavigation.map((item) => renderNavigationItem(item, true))}
-      </UnAvailableSuitesContainer>
     </SidebarContainer>
   );
 };
