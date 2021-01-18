@@ -9,8 +9,7 @@ export enum FormActionTypes {
   ADD_BOARD = 'form/ADD_BOARD',
   UPDATE_BOARD = 'form/UPDATE_BOARD',
   DELETE_BOARD = 'form/DELETE_BOARD',
-  CLEAR_SUITE = 'form/CLEAR_SUITE',
-  CLEAR_BOARD = 'form/CLEAR_BOARD',
+  CLEAR_FORM = 'form/CLEAR_FORM',
 }
 
 export type FormRootAction = ActionType<typeof actions>;

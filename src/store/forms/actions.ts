@@ -16,6 +16,4 @@ export const updateBoard = createAction(FormActionTypes.UPDATE_BOARD)<void>();
 
 export const deleteBoard = createAction(FormActionTypes.DELETE_BOARD)<string>();
 
-export const clearSuite = createAction(FormActionTypes.CLEAR_SUITE)<void>();
-
-export const clearBoard = createAction(FormActionTypes.CLEAR_BOARD)<void>();
+export const clearForm = createAction(FormActionTypes.CLEAR_FORM)<void>();

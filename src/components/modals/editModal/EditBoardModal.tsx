@@ -40,7 +40,6 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
     if (hasErrors) return;
     handleCloseModal();
     await dispatch(insertSuite(client, apiClient, suite));
-    clearForm();
   };
 
   const footer = (

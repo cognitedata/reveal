@@ -4,8 +4,7 @@ import {
   setHasError,
   setSuite,
   setBoard,
-  clearSuite,
-  clearBoard,
+  clearForm as clearFormState,
 } from 'store/forms/actions';
 import { Suite, Board } from 'store/suites/types';
 import isFunction from 'lodash/isFunction';
@@ -28,8 +27,7 @@ export const useFormState = () => {
   };
 
   const clearForm = () => {
-    dispatch(clearSuite());
-    dispatch(clearBoard());
+    dispatch(clearFormState());
   };
   return {
     initForm,

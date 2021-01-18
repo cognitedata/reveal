@@ -49,7 +49,6 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
     handleCloseModal();
     await dispatch(insertSuite(client, apiClient, suite));
     history.push(`/suites/${suite.key}`);
-    clearForm();
   };
 
   const Footer = () => {
