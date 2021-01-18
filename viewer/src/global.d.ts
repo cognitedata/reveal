@@ -10,6 +10,7 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       VERSION: string;
+      WORKER_VERSION: string;
       MIXPANEL_TOKEN: string;
     }
   }
