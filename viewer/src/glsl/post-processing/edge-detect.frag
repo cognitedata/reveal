@@ -69,7 +69,7 @@ void main(void) {
 
   //edgeStrength = edgeStrength > 0.05 ? 1.0 : 0.0;
 
-  gl_FragColor = texture2D(baseTexture, vUv) * (1.0 - edgeStrength) + vec4(vec3(0.0) * edgeStrength, 1.0);
+  gl_FragColor = texture2D(baseTexture, vUv) * (1.0 - edgeStrength) + vec4(vec3(0.2) * edgeStrength, 1.0);
   //gl_FragColor = vec4(vec3(edgeStrength > 0.05 ? 1.0 : 0.0), 1.0);
   // float depth = readDepth(depthTexture, vUv);
   // gl_FragColor = vec4(vec3(1.0 - depth), 1.0);
