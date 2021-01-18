@@ -14,11 +14,21 @@ type Sidecar = {
 const sidecar = merge(
   {},
   {
+    // -- Bluefield -- (Azure)
+    // appsApiBaseUrl: 'https://apps-api.bluefield.cognite.ai',
+    // cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
+
+    // -- EW1 --
+    appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
+    cdfApiBaseUrl: 'https://api.cognitedata.com',
+
+    // -- Greenfield --
+    // appsApiBaseUrl: 'https://apps-api.greenfield.cognite.ai',
+    // cdfApiBaseUrl: 'https://greenfield.cognitedata.com',
+
     __sidecarFormatVersion: 1,
     applicationId: 'fas-demo',
     applicationName: 'React Demo (staging)',
-    appsApiBaseUrl: 'https://development.apps-api.cognite.ai',
-    cdfApiBaseUrl: 'https://api.cognitedata.com',
     docsSiteBaseUrl: 'https://docs.cognite.com',
     nomaApiBaseUrl: 'https://noma.development.cognite.ai',
   },

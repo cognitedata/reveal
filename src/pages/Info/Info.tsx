@@ -1,10 +1,9 @@
 import React from 'react';
-import { A, Body } from '@cognite/cogs.js';
+import { A, Body, Title } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
-import { Link } from 'react-router-dom';
 
 import sidecar from 'utils/sidecar';
-import { Container } from '../elements';
+import { Container, Code } from '../elements';
 
 const Info = () => {
   const { t } = useTranslation('Info');
@@ -13,9 +12,10 @@ const Info = () => {
 
   return (
     <Container>
+      <Title>What is the Sidecar?</Title>
       <Body>
         <Trans t={t} i18nKey="cdfBaseUrl_paragraph">
-          The CDF base URL for this cluster is <code>{baseURL}</code>
+          The CDF base URL for this cluster is <Code>{baseURL}</Code>
         </Trans>
       </Body>
       <Body>
@@ -31,10 +31,6 @@ const Info = () => {
           </A>
           !
         </Trans>
-      </Body>
-
-      <Body>
-        <Link to="/home">Take me back home</Link>
       </Body>
     </Container>
   );

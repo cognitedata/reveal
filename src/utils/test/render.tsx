@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { render, RenderOptions } from '@testing-library/react';
 import { I18nContainer } from '@cognite/react-i18n';
 
-export default (
+const testRenderer = (
   ui: React.ReactElement,
   options?: Omit<RenderOptions, 'queries'>
 ) => {
@@ -19,3 +19,5 @@ export default (
 
   return render(component, options);
 };
+
+export default testRenderer;

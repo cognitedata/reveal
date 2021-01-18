@@ -1,17 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
-import { configureI18n } from '@cognite/react-i18n';
+import { Metrics } from '@cognite/metrics';
+import '@cognite/cogs.js/dist/cogs.css';
 
 import config from 'utils/config';
-import { Metrics } from '@cognite/metrics';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
-import '@cognite/cogs.js/dist/cogs.css';
-
-configureI18n();
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({

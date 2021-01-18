@@ -142,6 +142,15 @@ def pods = { body ->
         sentryDsn: SENTRY_DSN,
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
+          envVars: [
+            envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
+            envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
+            secretEnvVar(
+              key: 'COGNITE_API_KEY',
+              secretName: 'react-demo-app-testing-publicdata',
+              secretKey: 'key', // key for publicdata tenant
+            )
+          ] 
       ) {
         // This enables codecov for the repo. If this fails to start, then
         // do the following:

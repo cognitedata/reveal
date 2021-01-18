@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Button, A, Body } from '@cognite/cogs.js';
+import { Button, A, Body, Graphic } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
-import { Link } from 'react-router-dom';
 
 import { Header } from './elements';
 import { Container } from '../elements';
@@ -9,7 +8,7 @@ import { Container } from '../elements';
 const Home = () => {
   const [crashing, setCrashing] = useState(false);
 
-  const { t } = useTranslation('Home');
+  const { t } = useTranslation(['Home', 'global']);
 
   const clickHandler = () => {
     setCrashing(true);
@@ -18,7 +17,7 @@ const Home = () => {
     }
   };
 
-  // Show how the t function can be used. Note that it is automatically bound
+  // Show how the 't' function can be used. Note that it is automatically bound
   // to the 'Home' namespace (unlike the Trans component).
   const buttonText = useMemo(() => {
     if (crashing) {
@@ -30,11 +29,14 @@ const Home = () => {
   return (
     <Container>
       <Header data-test-id="header">
+        <Graphic type="Cognite" />
         <p>
-          <Trans i18nKey="Home:versionInfo_paragraph" t={t}>
-            This is v{process.env.REACT_APP_VERSION_NAME || '0.0.0'}
+          <Trans i18nKey="Home:welcome_paragraph" t={t}>
+            Welcome to the Cognite React Demo App.
           </Trans>
         </p>
+      </Header>
+      <Body>
         <A
           isExternal
           href="https://cog.link/fas"
@@ -45,9 +47,6 @@ const Home = () => {
             Learn about how this is hosted
           </Trans>
         </A>
-      </Header>
-      <Body>
-        <Link to="/info">What are sidecars?</Link>
       </Body>
       <Button
         disabled={crashing}

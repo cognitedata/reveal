@@ -5,6 +5,4 @@ export default {
   title: 'Info',
 };
 
-export const Base = () => {
-  return <Info />;
-};
+export const Base = () => <Info />;
