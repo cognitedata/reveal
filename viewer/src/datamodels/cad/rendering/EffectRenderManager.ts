@@ -11,7 +11,7 @@ import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../../..';
-import { edgeDetectionShaders, fxaaShaders } from './shaders';
+import { outlineDetectionShaders, fxaaShaders, edgeDetectionShaders } from './shaders';
 
 const canvasTarget = null;
 
@@ -26,6 +26,10 @@ export class EffectRenderManager {
   // Simple scene with a single triangle with UVs [0,1] in both directions
   // used for applying FXAA to the final result
   private readonly _fxaaScene: THREE.Scene;
+
+  // Simple scene with a single triangle with UVs [0,1] in both directions
+  // used for applying edge detection to the final result
+  private readonly _edgeDetectionScene: THREE.Scene;
 
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
@@ -49,14 +53,16 @@ export class EffectRenderManager {
   private _isInitialized: boolean = false;
   private readonly _renderOptions: RenderOptions;
 
-  private _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
+  private _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
   private _fxaaMaterial: THREE.ShaderMaterial;
+  private _edgeDetectionMaterial: THREE.ShaderMaterial;
 
   private _customObjectRenderTarget: THREE.WebGLRenderTarget;
   private _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
   private _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private _compositionTarget: THREE.WebGLRenderTarget;
+  private _edgeDetectionTarget: THREE.WebGLRenderTarget;
 
   /**
    * Holds state of how the last frame was rendered by `render()`. This is used to explicit clear
@@ -96,17 +102,20 @@ export class EffectRenderManager {
     this._normalScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
     this._compositionScene = new THREE.Scene();
+    this._edgeDetectionScene = new THREE.Scene();
     this._fxaaScene = new THREE.Scene();
     this._emptyScene = new THREE.Scene();
     this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
     // Initialize dummy targets and materials untill properly initialized
-    this._customObjectRenderTarget = this._ghostObjectRenderTarget = this._normalRenderedCadModelTarget = this._inFrontRenderedCadModelTarget = this._compositionTarget = new THREE.WebGLRenderTarget(
+    this._customObjectRenderTarget = this._ghostObjectRenderTarget = this._normalRenderedCadModelTarget = this._inFrontRenderedCadModelTarget = this._compositionTarget = this._edgeDetectionTarget = new THREE.WebGLRenderTarget(
       0,
       0
     );
-    this._combineEdgeDetectionMaterial = this._fxaaMaterial = new THREE.ShaderMaterial({});
+    this._combineOutlineDetectionMaterial = new THREE.ShaderMaterial({});
+    this._fxaaMaterial = new THREE.ShaderMaterial({});
+    this._edgeDetectionMaterial = new THREE.ShaderMaterial({});
   }
 
   private ensureInitialized(renderer: THREE.WebGLRenderer) {
@@ -146,9 +155,14 @@ export class EffectRenderManager {
     this._compositionTarget.depthTexture.format = THREE.DepthFormat;
     this._compositionTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._combineEdgeDetectionMaterial = new THREE.ShaderMaterial({
-      vertexShader: edgeDetectionShaders.vertex,
-      fragmentShader: edgeDetectionShaders.fragment,
+    this._edgeDetectionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._edgeDetectionTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._edgeDetectionTarget.depthTexture.format = THREE.DepthFormat;
+    this._edgeDetectionTarget.depthTexture.type = THREE.UnsignedIntType;
+
+    this._combineOutlineDetectionMaterial = new THREE.ShaderMaterial({
+      vertexShader: outlineDetectionShaders.vertex,
+      fragmentShader: outlineDetectionShaders.fragment,
       uniforms: {
         tFront: { value: this._inFrontRenderedCadModelTarget.texture },
         tFrontDepth: { value: this._inFrontRenderedCadModelTarget.depthTexture },
@@ -164,9 +178,21 @@ export class EffectRenderManager {
       },
       extensions: { fragDepth: true }
     });
+
+    this._edgeDetectionMaterial = new THREE.ShaderMaterial({
+      vertexShader: edgeDetectionShaders.vertex,
+      fragmentShader: edgeDetectionShaders.fragment,
+      uniforms: {
+        baseTexture: { value: this._compositionTarget.texture },
+        depthTexture: { value: this._compositionTarget.depthTexture },
+        cameraNear: { value: 0.1 },
+        cameraFar: { value: 1 }
+      }
+    });
+
     this._fxaaMaterial = new THREE.ShaderMaterial({
       uniforms: {
-        tDiffuse: { value: this._compositionTarget.texture },
+        tDiffuse: { value: this._edgeDetectionTarget.texture },
         tDepth: { value: this._compositionTarget.depthTexture },
         resolution: { value: new THREE.Vector2() },
         inverseResolution: { value: new THREE.Vector2() }
@@ -177,6 +203,7 @@ export class EffectRenderManager {
     });
 
     this.setupCompositionScene();
+    this.setupEdgeDetectionScene();
     this.setupFxaaScene();
 
     this._isInitialized = true;
@@ -263,6 +290,10 @@ export class EffectRenderManager {
         case AntiAliasingMode.FXAA:
           // Composite view
           this.renderComposition(renderer, camera, this._compositionTarget);
+          //renderer.autoClear = original.autoClear;
+
+          this.renderEdgeDetection(renderer, camera, this._edgeDetectionTarget);
+
           // Anti-aliased version to screen
           renderer.autoClear = original.autoClear;
           this.renderAntiAlias(renderer, this.renderTarget);
@@ -418,14 +449,22 @@ export class EffectRenderManager {
       this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._compositionTarget.setSize(renderSize.x, renderSize.y);
+      this._edgeDetectionTarget.setSize(renderSize.x, renderSize.y);
 
       // Update GLSL uniforms related to resolution
-      this._combineEdgeDetectionMaterial.setValues({
+      this._combineOutlineDetectionMaterial.setValues({
         uniforms: {
-          ...this._combineEdgeDetectionMaterial.uniforms,
+          ...this._combineOutlineDetectionMaterial.uniforms,
           texelSize: {
             value: new THREE.Vector2(this.outlineTexelSize / renderSize.x, this.outlineTexelSize / renderSize.y)
           }
+        }
+      });
+
+      this._edgeDetectionMaterial.setValues({
+        uniforms: {
+          ...this._edgeDetectionMaterial.uniforms,
+          resolution: { value: new THREE.Vector2(renderSize.x, renderSize.y) }
         }
       });
 
@@ -445,11 +484,23 @@ export class EffectRenderManager {
     camera: THREE.PerspectiveCamera,
     target: THREE.WebGLRenderTarget | null
   ) {
-    this._combineEdgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
-    this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
+    this._combineOutlineDetectionMaterial.uniforms.cameraNear.value = camera.near;
+    this._combineOutlineDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
     renderer.setRenderTarget(target);
     renderer.render(this._compositionScene, this._orthographicCamera);
+  }
+
+  private renderEdgeDetection(
+    renderer: THREE.WebGLRenderer,
+    camera: THREE.PerspectiveCamera,
+    target: THREE.WebGLRenderTarget | null
+  ) {
+    this._edgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
+    this._edgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
+
+    renderer.setRenderTarget(target);
+    renderer.render(this._edgeDetectionScene, this._orthographicCamera);
   }
 
   private renderAntiAlias(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
@@ -471,22 +522,24 @@ export class EffectRenderManager {
   }
 
   private setupCompositionScene() {
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
-    geometry.vertices.push(new THREE.Vector3(3, -1, 0));
-    geometry.vertices.push(new THREE.Vector3(-1, 3, 0));
-
-    const face = new THREE.Face3(0, 1, 2);
-    geometry.faces.push(face);
-
-    geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
-
-    const mesh = new THREE.Mesh(geometry, this._combineEdgeDetectionMaterial);
-
+    const geometry = this.createRenderTriangle();
+    const mesh = new THREE.Mesh(geometry, this._combineOutlineDetectionMaterial);
     this._compositionScene.add(mesh);
   }
 
+  private setupEdgeDetectionScene() {
+    const geometry = this.createRenderTriangle();
+    const mesh = new THREE.Mesh(geometry, this._edgeDetectionMaterial);
+    this._edgeDetectionScene.add(mesh);
+  }
+
   private setupFxaaScene() {
+    const geometry = this.createRenderTriangle();
+    const mesh = new THREE.Mesh(geometry, this._fxaaMaterial);
+    this._fxaaScene.add(mesh);
+  }
+
+  private createRenderTriangle() {
     const geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
     geometry.vertices.push(new THREE.Vector3(3, -1, 0));
@@ -497,8 +550,7 @@ export class EffectRenderManager {
 
     geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
 
-    const mesh = new THREE.Mesh(geometry, this._fxaaMaterial);
-    this._fxaaScene.add(mesh);
+    return geometry;
   }
 
   private traverseForRootSectorNode(root: THREE.Object3D) {

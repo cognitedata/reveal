@@ -80,9 +80,14 @@ export const sectorShaders = {
   }
 };
 
+export const outlineDetectionShaders = {
+  fragment: glsl(require('../../../glsl/post-processing/outline-detect-combine.frag').default),
+  vertex: glsl(require('../../../glsl/post-processing/outline-detection.vert').default)
+};
+
 export const edgeDetectionShaders = {
-  fragment: glsl(require('../../../glsl/post-processing/edge-detect-combine.frag').default),
-  vertex: glsl(require('../../../glsl/post-processing/edge-detection.vert').default)
+  fragment: glsl(require('../../../glsl/post-processing/edge-detect.frag').default),
+  vertex: glsl(require('../../../glsl/post-processing/passthrough.vert').default)
 };
 
 /**
