@@ -1,4 +1,5 @@
 const path = require("path");
+const { DefinePlugin } = require("webpack");
 const { publicPath, getWorkerCDNPath, cdnDistFolderPath, getEnvArg } = require("./buildUtils");
 const logger = require("webpack-log")("parser-worker");
 
@@ -7,6 +8,9 @@ const createBaseConfig = (env) => {
 
   return {
     mode: development ? "development" : "production",
+    experiments: {
+      syncWebAssembly: true,
+    },
     target: "webworker",
     entry: {
       "reveal.parser.worker": "./index.ts",
@@ -29,6 +33,11 @@ const createBaseConfig = (env) => {
       ],
     },
     devtool: development ? "inline-source-map" : "source-map",
+    plugins: [
+      new DefinePlugin({
+        VERSION: JSON.stringify(require('./package.json').version)
+      })
+    ]
   };
 };
 
@@ -39,7 +48,7 @@ const createLocalBuildConfig = (env) => {
   localConfig.output.publicPath = publicPath;
 
   logger.info("Worker local build config:");
-  logger.info({ publicPath }); // don't print to much here since it mentioned in docs
+  logger.info({ publicPath }); // don't print too much here since it mentioned in docs
 
   return localConfig;
 };
