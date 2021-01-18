@@ -12,8 +12,11 @@ const { publicPath, getWorkerCDNPath, getEnvArg } = require('../parser-worker/bu
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
 
-function resolve(dir) {
-  return path.join(__dirname, dir);
+const parserWorkerVersion = packageJSON.dependencies['@cognite/reveal-parser-worker'];
+if (parserWorkerVersion.split('.').some(i => isNaN(parseInt(i, 10)))) {
+  throw new Error(
+    `Please specify strict version for @cognite/reveal-parser-worker in viewer/package.json. Got ${parserWorkerVersion}`
+  );
 }
 
 module.exports = env => {
@@ -89,6 +92,7 @@ module.exports = env => {
       new webpack.DefinePlugin({
         'process.env': JSON.stringify({
           VERSION: packageJSON.version,
+          WORKER_VERSION: parserWorkerVersion,
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD
         })
       })
