@@ -1370,10 +1370,10 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.7.0"
 
-"@cognite/sdk-core@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.3.tgz#203e504947a0d481656c34d1d71a0caebd2bcb12"
-  integrity sha512-cQdYX4u2hwJt/0MZvN+Z1V495r3yDdxPn60JYfsxBwWWsDSrFAAx+eH4z0QL7EaE1xcOOLK6ayOV1Qa8zzbhAA==
+"@cognite/sdk-core@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.4.tgz#f1a1cb8b677ddffa5d409d91f0ed64acff623426"
+  integrity sha512-WcCauuBr/K4yz/eO66QwXnw/iC8PCHxlmBZMNY95sJUhfZosK80jhBGKZew8vvT0VKNB7TPZ/3eUsqSpE0BmaQ==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1381,12 +1381,12 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.2.1.tgz#42e2b9e425ec9e36dedf3ed6b6dce0e801c8b563"
-  integrity sha512-xYPwOAfhB6Ygy/2ao5+lYAEFHZn1JzlgxYnghAQjMd26Cqak2MGD1j8HhLntJe/vrHe31wZ/8dpnANeA/CGjGA==
+"@cognite/sdk@^3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.2.tgz#757421933531ff42202f7ac8dc5af579a8347065"
+  integrity sha512-6jrHQR0PrABfX28TctF8V4Ns7lsJGTfKX0wHvJ9vwTwh1nq7lLcr9GsleSY1xvTEuDi4Oaupjyn7/53m64O2Ew==
   dependencies:
-    "@cognite/sdk-core" "^1.0.3"
+    "@cognite/sdk-core" "^1.0.4"
     lodash "^4.17.11"
 
 "@cognite/z-index@^0.1.0":
