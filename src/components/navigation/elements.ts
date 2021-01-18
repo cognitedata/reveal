@@ -69,11 +69,6 @@ export const AvailableSuitesContainer = styled.div`
   padding-bottom: 22px;
 `;
 
-export const UnAvailableSuitesContainer = styled.div`
-  border-top: 1px solid var(--cogs-greyscale-grey4);
-  padding-top: 22px;
-`;
-
 export const LogoWrapper = styled.div`
   & .logo-title {
     color: var(--cogs-black);
