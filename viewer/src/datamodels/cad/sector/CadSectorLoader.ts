@@ -257,7 +257,6 @@ export class CadSectorLoader {
     } catch (error) {
       // Ignore if operations was canceled
       if (!(error instanceof OperationCanceledError)) {
-        console.log('heeehehheehe');
         throw error;
       }
     } finally {
