@@ -178,7 +178,7 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
         let node_color = if has_color_on_each_cell {
             None
         } else {
-            let mut color = [0 as u8; 3];
+            let mut color = [0_u8; 3];
             input.read_exact(&mut color)?;
             Some(color)
         };
@@ -202,7 +202,7 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
             let multiple_faces = face_flags.intersects(FaceFlags::MULTIPLE);
             let repetitions = if multiple_faces { input.read_u8()? } else { 0 };
             let face_color = if has_color_on_each_cell {
-                let mut color = [0 as u8; 3];
+                let mut color = [0_u8; 3];
                 input.read_exact(&mut color)?;
                 Some(color)
             } else {

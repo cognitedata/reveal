@@ -93,13 +93,9 @@ pub fn convert_sector(sector: &crate::Sector) -> Sector {
             let x = i as f32 + 0.5;
             let y = j as f32 + 0.5;
             let z = k as f32 + 0.5;
-            let color = match node.color {
-                Some(x) => x,
-                None => match face.color {
-                    Some(y) => y,
-                    None => [255, 0, 255],
-                },
-            };
+            let color = node
+                .color
+                .unwrap_or_else(|| face.color.unwrap_or_else(|| [255, 0, 255]));
 
             let center = Vector3::new(
                 origin[0] + increment * x,
