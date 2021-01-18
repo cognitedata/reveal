@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Loader, Title, Button } from '@cognite/cogs.js';
+import { Loader, Title, Button, Icon } from '@cognite/cogs.js';
 import Glider from 'react-glider';
 import Suitebar from 'components/suitebar/Suitebar';
 import { SmallTile, Tile } from 'components/tiles';
@@ -96,19 +96,28 @@ const Home = () => {
         {lastVisitedBoards.length > 0 && (
           <TilesContainer>
             <Title level={6}>Quick Access</Title>
-            <Glider hasArrows slidesToScroll={3} slidesToShow={4}>
-              {lastVisitedBoards?.map((board: Board) => {
-                return (
-                  <a
-                    href={board.url}
-                    key={board.key}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <SmallTile dataItem={board} />
-                  </a>
-                );
-              })}
+            <Glider
+              hasArrows
+              slidesToScroll={2}
+              slidesToShow={3}
+              iconLeft={<Icon type="LargeLeft" />}
+              iconRight={<Icon type="LargeRight" />}
+              skipTrack
+            >
+              <div className="glider-track">
+                {lastVisitedBoards?.map((board: Board) => {
+                  return (
+                    <a
+                      key={board.key}
+                      href={board.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <SmallTile dataItem={board} />
+                    </a>
+                  );
+                })}
+              </div>
             </Glider>
           </TilesContainer>
         )}

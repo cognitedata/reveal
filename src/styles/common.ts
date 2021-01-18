@@ -13,7 +13,8 @@ export const TilesContainer = styled.div`
   }
   & .glider-next,
   & .glider-prev {
-    top: 15%;
+    top: 8%;
+    color: var(--cogs-black);
   }
 `;
 
