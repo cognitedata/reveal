@@ -77,11 +77,8 @@ const Revisions = ({ record, onDetailClick }: Props) => {
       };
     });
 
-  const getSingleObj = async (revision: DataTransferObject) => {
-    return api!.objects
-      .getSingleObject(revision.objectId)
-      .then((res) => res[0]);
-  };
+  const getSingleObj = async (revision: DataTransferObject) =>
+    api!.objects.getSingleObject(revision.objectId).then((res) => res[0]);
 
   useEffect(() => {
     const runEffect = async () => {

@@ -11,8 +11,8 @@ type Props = {
  * A container to wait for i18next to be initialized and configured. Note that
  * no user-visible strings should be above this component.
  */
-const I18nContainer = ({ children }: Props) => {
-  return <Suspense fallback={<SuspenseFallback />}>{children}</Suspense>;
-};
+const I18nContainer = ({ children }: Props) => (
+  <Suspense fallback={<SuspenseFallback />}>{children}</Suspense>
+);
 
 export default I18nContainer;

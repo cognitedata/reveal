@@ -24,14 +24,12 @@ const Heading = styled.p`
   margin-bottom: 0.25em;
 `;
 
-const ErrorMessage = ({ message, fullView = false }: Props) => {
-  return (
-    <Container fullView={fullView}>
-      <Graphic type="ChartData" />
-      <Heading>Error</Heading>
-      <p>{message}</p>
-    </Container>
-  );
-};
+const ErrorMessage = ({ message, fullView = false }: Props) => (
+  <Container fullView={fullView}>
+    <Graphic type="ChartData" />
+    <Heading>Error</Heading>
+    <p>{message}</p>
+  </Container>
+);
 
 export default ErrorMessage;

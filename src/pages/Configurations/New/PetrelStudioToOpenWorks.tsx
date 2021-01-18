@@ -64,9 +64,10 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     author: String(user),
     datatypes: [],
   });
-  const [configurationIsComplete, setConfigurationIsComplete] = useState<
-    boolean
-  >(false);
+  const [
+    configurationIsComplete,
+    setConfigurationIsComplete,
+  ] = useState<boolean>(false);
   const [sourceUIState, setSourceUIState] = useState<ConfigUIState>(
     ConfigUIState.INITIAL
   );
@@ -98,12 +99,10 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   const { Option } = Select;
 
   useEffect(() => {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        author: String(user),
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      author: String(user),
+    }));
   }, [user]);
 
   async function fetchRepositories(): Promise<GenericResponseObject[]> {
@@ -177,44 +176,36 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   }
 
   function updateSourceRepository(value: SelectValue) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        source: { ...prevState.source, external_id: value.toString() },
-        business_tags: [],
-        datatypes: [],
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      source: { ...prevState.source, external_id: value.toString() },
+      business_tags: [],
+      datatypes: [],
+    }));
     fetchBusinessTags(value.toString()).then((response) =>
       setAvailableTags(response)
     );
   }
 
   function updateTargetProject(value: SelectValue) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        target: { ...prevState.target, external_id: value.toString() },
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      target: { ...prevState.target, external_id: value.toString() },
+    }));
   }
 
   function updateBusinessTags(value: any) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        business_tags: value,
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      business_tags: value,
+    }));
   }
 
   function updateDataTypes(value: any) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        datatypes: value,
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      datatypes: value,
+    }));
   }
 
   useEffect(() => {

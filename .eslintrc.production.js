@@ -7,10 +7,9 @@ module.exports = {
   ],
   plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
   rules: {
-    '@cognite/require-t-function': 'off',
     '@cognite/no-unissued-todos': [
       'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
+      { issuePattern: '\\(((CG)-[0-9]+)\\)' },
     ],
 
     'max-classes-per-file': ['off'],
@@ -20,6 +19,7 @@ module.exports = {
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
+    'react/react-in-jsx-scope': ['off'],
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
@@ -30,10 +30,9 @@ module.exports = {
     'lodash/prefer-constant': ['off'],
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
-
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-    ],
+  },
+  parserOptions: {
+    tsconfigRootDir: __dirname,
+    project: './tsconfig.json',
   },
 };

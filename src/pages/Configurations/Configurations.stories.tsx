@@ -5,6 +5,4 @@ export default {
   title: 'Configurations',
 };
 
-export const Base = () => {
-  return <Configurations />;
-};
+export const Base = () => <Configurations />;

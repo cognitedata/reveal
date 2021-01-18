@@ -89,37 +89,35 @@ const TranslationStatistics = ({ dateRange }: Props) => {
   }
 
   const renderChart = (type: string, data: TranslationStatisticsObject[]) => {
-    const getFormattedData = () => {
-      return {
-        labels: data.map((item) => item.timestamp),
-        datasets: [
-          {
-            label: 'Total objects',
-            fill: true,
-            lineTension: 0.5,
-            backgroundColor: 'rgba(74, 103, 251, 0.03)',
-            borderColor: 'rgba(74, 103, 251, 1)',
-            pointBorderColor: 'rgba(255,255,255,1)',
-            pointBackgroundColor: 'rgba(74, 103, 251, 1)',
-            pointBorderWidth: 2,
-            pointRadius: 5,
-            data: data.map((item) => item.total_objects),
-          },
-          {
-            label: 'Successfully Translated',
-            fill: false,
-            lineTension: 0.5,
-            backgroundColor: 'rgb(164, 178, 252)',
-            borderColor: 'rgb(164, 178, 252)',
-            pointBorderColor: 'rgba(255,255,255,1)',
-            pointBackgroundColor: 'rgb(164, 178, 252)',
-            pointBorderWidth: 2,
-            pointRadius: 5,
-            data: data.map((item) => item.successful),
-          },
-        ],
-      };
-    };
+    const getFormattedData = () => ({
+      labels: data.map((item) => item.timestamp),
+      datasets: [
+        {
+          label: 'Total objects',
+          fill: true,
+          lineTension: 0.5,
+          backgroundColor: 'rgba(74, 103, 251, 0.03)',
+          borderColor: 'rgba(74, 103, 251, 1)',
+          pointBorderColor: 'rgba(255,255,255,1)',
+          pointBackgroundColor: 'rgba(74, 103, 251, 1)',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          data: data.map((item) => item.total_objects),
+        },
+        {
+          label: 'Successfully Translated',
+          fill: false,
+          lineTension: 0.5,
+          backgroundColor: 'rgb(164, 178, 252)',
+          borderColor: 'rgb(164, 178, 252)',
+          pointBorderColor: 'rgba(255,255,255,1)',
+          pointBackgroundColor: 'rgb(164, 178, 252)',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          data: data.map((item) => item.successful),
+        },
+      ],
+    });
 
     return (
       <ChartContainer key={type} xScroll={false}>

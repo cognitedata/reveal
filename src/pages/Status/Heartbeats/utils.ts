@@ -4,11 +4,12 @@ import {
   UNIX_TIMESTAMP_FACTOR,
 } from '../../../typings/interfaces';
 
-const getUniques = (all: string[]) => {
-  return all.reduce((unique: string[], item) => {
-    return unique.includes(item) ? unique : [...unique, item];
-  }, []);
-};
+const getUniques = (all: string[]) =>
+  all.reduce(
+    (unique: string[], item) =>
+      unique.includes(item) ? unique : [...unique, item],
+    []
+  );
 
 export const getMonthDates = (heartbeats: GenericResponseObject[]) => {
   const allDateBeats = heartbeats.map((beat) => {

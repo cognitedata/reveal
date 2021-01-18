@@ -109,9 +109,8 @@ class Api {
   }
 
   public datatransfers = {
-    get: async (filter: RESTTransfersFilter): Promise<any> => {
-      return this.post(`${this.baseURL}/datatransfers/filter`, filter);
-    },
+    get: async (filter: RESTTransfersFilter): Promise<any> =>
+      this.post(`${this.baseURL}/datatransfers/filter`, filter),
   };
 
   public datatypes = {
@@ -123,53 +122,42 @@ class Api {
   };
 
   public objects = {
-    get: async (): Promise<GenericResponseObject[]> => {
-      return this.get(`${this.baseURL}/objects`);
-    },
+    get: async (): Promise<GenericResponseObject[]> =>
+      this.get(`${this.baseURL}/objects`),
     getFiltered: async (
       options: RESTObjectsFilter
-    ): Promise<GenericResponseObject[]> => {
-      return this.post(`${this.baseURL}/objects/filter`, options);
-    },
+    ): Promise<GenericResponseObject[]> =>
+      this.post(`${this.baseURL}/objects/filter`, options),
     getSingleObject: async (
       objectId: number
-    ): Promise<GenericResponseObject[]> => {
-      return this.post(`${this.baseURL}/objects/byids`, [objectId]);
-    },
+    ): Promise<GenericResponseObject[]> =>
+      this.post(`${this.baseURL}/objects/byids`, [objectId]),
     getDatatransfersForRevision: async (
       objectId: number,
       revision: string
-    ): Promise<GenericResponseObject> => {
-      return this.get(
+    ): Promise<GenericResponseObject> =>
+      this.get(
         `${this.baseURL}/objects/${objectId}/revisions/${revision}/datatransfers`
-      );
-    },
+      ),
   };
 
   public packages = {
-    get: async (filter: RESTPackageFilter): Promise<any> => {
-      return this.get(`${this.baseURL}/packages`, filter);
-    },
+    get: async (filter: RESTPackageFilter): Promise<any> =>
+      this.get(`${this.baseURL}/packages`, filter),
   };
 
   public projects = {
-    get: async (source: Source | string): Promise<GenericResponseObject[]> => {
-      return this.get(`${this.baseURL}/sources/${source}/projects`);
-    },
+    get: async (source: Source | string): Promise<GenericResponseObject[]> =>
+      this.get(`${this.baseURL}/sources/${source}/projects`),
     getBusinessTags: async (
       source: Source,
       project: string
-    ): Promise<string[]> => {
-      return this.get(
-        `${this.baseURL}/sources/${source}/projects/${project}/tags`
-      );
-    },
+    ): Promise<string[]> =>
+      this.get(`${this.baseURL}/sources/${source}/projects/${project}/tags`),
   };
 
   public sources = {
-    get: async (): Promise<string[]> => {
-      return this.get(`${this.baseURL}/sources`);
-    },
+    get: async (): Promise<string[]> => this.get(`${this.baseURL}/sources`),
     getHeartbeats: async (
       source: string,
       after: number
@@ -180,17 +168,15 @@ class Api {
         queryParameters
       );
     },
-    getProjects: async (source: string): Promise<RESTProject[]> => {
-      return this.get(`${this.baseURL}/sources/${source}/projects`);
-    },
+    getProjects: async (source: string): Promise<RESTProject[]> =>
+      this.get(`${this.baseURL}/sources/${source}/projects`),
     getRepositoryTree: async (
       source: string,
       projectExternalId: string
-    ): Promise<any> => {
-      return this.get(
+    ): Promise<any> =>
+      this.get(
         `${this.baseURL}/sources/${source}/projects/${projectExternalId}/tree`
-      );
-    },
+      ),
     getErrorDistribution: async (
       source: string,
       after: number
@@ -221,17 +207,14 @@ class Api {
   };
 
   public configurations = {
-    get: async (): Promise<GenericResponseObject[]> => {
-      return this.get(`${this.baseURL}/configurations`);
-    },
-    create: async (data: any): Promise<GenericResponseObject> => {
-      return this.post(`${this.baseURL}/configurations`, data);
-    },
+    get: async (): Promise<GenericResponseObject[]> =>
+      this.get(`${this.baseURL}/configurations`),
+    create: async (data: any): Promise<GenericResponseObject> =>
+      this.post(`${this.baseURL}/configurations`, data),
     getFiltered: async (
       options: RESTConfigurationsFilter
-    ): Promise<GenericResponseObject[]> => {
-      return this.post(`${this.baseURL}/configurations/filter`, options);
-    },
+    ): Promise<GenericResponseObject[]> =>
+      this.post(`${this.baseURL}/configurations/filter`, options),
     startOrStopConfiguration: async (
       id: number,
       isActive: boolean
@@ -248,29 +231,25 @@ class Api {
     update: async (
       id: number,
       options: any
-    ): Promise<GenericResponseObject[] | GenericResponseObject> => {
-      return this.post(`${this.baseURL}/configurations/${id}/update`, options);
-    },
+    ): Promise<GenericResponseObject[] | GenericResponseObject> =>
+      this.post(`${this.baseURL}/configurations/${id}/update`, options),
   };
 
   public revisions = {
-    get: async (objectId: string): Promise<GenericResponseObject[]> => {
-      return this.get(`${this.baseURL}/objects/${objectId}/revisions`);
-    },
+    get: async (objectId: string): Promise<GenericResponseObject[]> =>
+      this.get(`${this.baseURL}/objects/${objectId}/revisions`),
     getSingleRevision: async (
       objectId: string,
       revisionId: string
-    ): Promise<GenericResponseObject[]> => {
-      return this.get(`
-      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}`);
-    },
+    ): Promise<GenericResponseObject[]> =>
+      this.get(`
+      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}`),
     getRevisionTranslations: async (
       objectId: string,
       revisionId: string
-    ): Promise<GenericResponseObject[]> => {
-      return this.get(`
-      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}/translations`);
-    },
+    ): Promise<GenericResponseObject[]> =>
+      this.get(`
+      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}/translations`),
   };
 }
 

@@ -14,23 +14,21 @@ export function stringToBoolean(input: string): boolean | undefined {
 
 export function curateConfigurationsData(data: GenericResponseObject[]) {
   if (data.length === 0) return data;
-  return data.map((item) => {
-    return {
-      ...item,
-      statusColor: item.status_active,
-      repoProject: `${item.source.external_id} / ${item.target.external_id}`,
-      actions: {
-        direction: item.source.source === 'Studio' ? 'psToOw' : 'owToPs',
-        statusActive: item.status_active,
-        id: item.id,
-        name: item.name,
-      },
-      conf_name: {
-        name: item.name,
-        id: item.id,
-      },
-    };
-  });
+  return data.map((item) => ({
+    ...item,
+    statusColor: item.status_active,
+    repoProject: `${item.source.external_id} / ${item.target.external_id}`,
+    actions: {
+      direction: item.source.source === 'Studio' ? 'psToOw' : 'owToPs',
+      statusActive: item.status_active,
+      id: item.id,
+      name: item.name,
+    },
+    conf_name: {
+      name: item.name,
+      id: item.id,
+    },
+  }));
 }
 
 export function generateConfigurationsColumnsFromData(
@@ -61,12 +59,10 @@ export function curateColumns(
   rules: any
 ) {
   if (columns) {
-    const tmp = columns.map((col) => {
-      return {
-        ...col,
-        title: getMappedColumnName(String(col.title)),
-      };
-    });
+    const tmp = columns.map((col) => ({
+      ...col,
+      title: getMappedColumnName(String(col.title)),
+    }));
     rules.map((rule: Rule) => {
       const index = columns.findIndex(
         (column: ColumnType<any>) => column.key === rule.key

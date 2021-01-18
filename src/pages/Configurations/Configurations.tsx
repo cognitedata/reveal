@@ -193,9 +193,9 @@ const Configurations = () => {
       );
       return false;
     }
-    api!.configurations.update(id, { name: newName }).then((response) => {
-      return !hasError(response);
-    });
+    api!.configurations
+      .update(id, { name: newName })
+      .then((response) => !hasError(response));
     return true;
   };
 

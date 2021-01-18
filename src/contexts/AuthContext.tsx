@@ -47,15 +47,13 @@ const AuthProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const getValue = () => {
-    return {
-      token,
-      user,
-      setUser,
-      authenticating,
-      setAuthenticating,
-    };
-  };
+  const getValue = () => ({
+    token,
+    user,
+    setUser,
+    authenticating,
+    setAuthenticating,
+  });
 
   return (
     <AuthContext.Provider value={getValue()}>{children}</AuthContext.Provider>

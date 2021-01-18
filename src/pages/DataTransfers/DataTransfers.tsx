@@ -121,9 +121,7 @@ function selectColumns(
           filters: config.filterableColumns.includes(key)
             ? createFiltersArrayForColumn(dataTransferObjects, key)
             : undefined,
-          onFilter: (value, record) => {
-            return record[key]?.includes(value);
-          },
+          onFilter: (value, record) => record[key]?.includes(value),
           width: key === 'status' ? 70 : undefined,
           render: (value) => {
             if (key === 'status') {
@@ -211,30 +209,28 @@ const SelectColumnsMenu = ({
   columnNames: string[];
   selectedColumnNames: string[];
   onChange: (e: CheckboxChangeEvent) => void;
-}) => {
-  return (
-    <Menu>
-      {columnNames.sort().map((name) => {
-        if (config.ignoreColumns.includes(name)) {
-          return null;
-        }
-        return (
-          <Menu.Item key={name}>
-            <Checkbox
-              name={name}
-              id={name}
-              onChange={onChange}
-              checked={selectedColumnNames.includes(name)}
-              disabled={config.mandatoryColumns.includes(name)}
-            >
-              {name === 'status_ok' ? 'Status' : getMappedColumnName(name)}
-            </Checkbox>
-          </Menu.Item>
-        );
-      })}
-    </Menu>
-  );
-};
+}) => (
+  <Menu>
+    {columnNames.sort().map((name) => {
+      if (config.ignoreColumns.includes(name)) {
+        return null;
+      }
+      return (
+        <Menu.Item key={name}>
+          <Checkbox
+            name={name}
+            id={name}
+            onChange={onChange}
+            checked={selectedColumnNames.includes(name)}
+            disabled={config.mandatoryColumns.includes(name)}
+          >
+            {name === 'status_ok' ? 'Status' : getMappedColumnName(name)}
+          </Checkbox>
+        </Menu.Item>
+      );
+    })}
+  </Menu>
+);
 
 function getAllValuesFromColumn(
   dataSet: DataTransferObject[],

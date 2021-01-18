@@ -24,18 +24,27 @@ if (process.env.REACT_APP_SENTRY_DSN) {
   });
 }
 
-ReactDOM.render(
+const ProvidedApp = () => (
   <I18nContainer>
-    <AuthProvider>
-      <ApiProvider>
-        <APIErrorProvider>
-          <App />
-        </APIErrorProvider>
-      </ApiProvider>
-    </AuthProvider>
-  </I18nContainer>,
-  document.getElementById('root')
+    <ApiProvider>
+      <APIErrorProvider>
+        <App />
+      </APIErrorProvider>
+    </ApiProvider>
+  </I18nContainer>
 );
+
+// <I18nContainer>
+// <AuthProvider>
+//   <ApiProvider>
+//     <APIErrorProvider>
+//       <App />
+//     </APIErrorProvider>
+//   </ApiProvider>
+// </AuthProvider>
+// </I18nContainer>,
+
+ReactDOM.render(<ProvidedApp />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
