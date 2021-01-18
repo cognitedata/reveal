@@ -7,7 +7,7 @@ import { getMockResponse } from '../../utils/mockResponse';
 describe('<ContactsList />', () => {
   const title = 'Contacts';
   test('Render contact list', () => {
-    const contacts = getMockResponse()[0].authors;
+    const { contacts } = getMockResponse()[0];
     render(<ContactsList title={title} contacts={contacts} />);
     contacts.forEach((contact) => {
       expect(screen.getByText(contact.name)).toBeInTheDocument();

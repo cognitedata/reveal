@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 import { Colors, Detail, Title } from '@cognite/cogs.js';
-import OwnerView from 'components/form/OwnerView';
 import ContactsView from 'components/form/ContactsView';
 import { GridRowStyle, GridWithTopMargin } from 'styles/grid/StyledGrid';
 import styled from 'styled-components';
@@ -53,7 +52,6 @@ const ContactsDetails: FunctionComponent<Props> = () => {
           E-mail
         </Detail>
       </ContactsGridHeading>
-      <OwnerView />
       <ContactsView />
     </GridWithTopMargin>
   );

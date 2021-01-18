@@ -85,8 +85,7 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
     case 'lastSuccess':
     case 'lastFailure':
     case 'metadata':
-    case 'owner':
-    case 'authors':
+    case 'contacts':
       return <span id={fieldName}>{fieldValue}</span>;
     default:
       return <span id={fieldName}>{fieldValue}</span>;

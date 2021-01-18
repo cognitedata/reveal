@@ -49,11 +49,7 @@ const mockResponseV2 = {
       lastSeen: 1584064700000,
       lastMessage: 'This is a mock failed run error message',
       schedule: '0 0 9 1/1 * ? *',
-      owner: {
-        email: 'duncan.silvey@cognite.com',
-        name: 'Duncan Silvey',
-      },
-      authors: [
+      contacts: [
         {
           email: 'Jacek.Fijalkowski@itera.no',
           name: 'Jacek Fijalkowski',
@@ -101,11 +97,7 @@ const mockResponseV2 = {
       lastFailure: 1584065700002,
       lastSeen: 1584066700003,
       schedule: '0 0 12 1/1 * ? *',
-      owner: {
-        email: 'Katinka.Odner@itera.no',
-        name: 'Katinka Odner',
-      },
-      authors: [
+      contacts: [
         {
           email: 'Christina.Lind@itera.no',
           name: 'Christina Lind',
@@ -153,11 +145,7 @@ const mockResponseV2 = {
       lastFailure: 1584066700013,
       lastSeen: 1584065700011,
       schedule: 'On Trigger',
-      owner: {
-        email: 'katrine.tjolsen@cognite.com',
-        name: 'Katrine Tjølsen',
-      },
-      authors: [
+      contacts: [
         {
           email: 'Jacek.Fijalkowski@itera.no',
           name: 'Jacek Fijalkowski',
@@ -204,11 +192,11 @@ const mockResponseV2 = {
           tableName: 'oracle',
         },
       ],
-      owner: {
-        email: 'Birger.Urdahl@itera.no',
-        name: 'Birger Urdahl',
-      },
-      authors: [
+      contacts: [
+        {
+          email: 'Birger.Urdahl@itera.no',
+          name: 'Birger Urdahl',
+        },
         {
           email: 'Jacek.Fijalkowski@itera.no',
           name: 'Jacek Fijalkowski',
@@ -255,11 +243,7 @@ const mockResponseV2 = {
           tableName: 'oracle',
         },
       ],
-      owner: {
-        email: 'test@test.no',
-        name: 'Test Testsen',
-      },
-      authors: [],
+      contacts: [],
       metadata: {
         sourceSystem: 'PI',
       },

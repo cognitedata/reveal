@@ -49,7 +49,7 @@ describe('useDetailsUpdate', () => {
     await act(() => {
       return mutateAsync({ project: PROJECT_ITERA_INT_GREEN, items, id });
     });
-    expect(result.current.data.owner).toEqual(integrationsResponse.owner);
+    expect(result.current.data.name).toEqual(integrationsResponse.name);
     expect(client.invalidateQueries).toHaveBeenCalledTimes(1);
   });
 

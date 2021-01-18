@@ -64,8 +64,8 @@ export const ContactsErrorMsg = {
   EMAIL_INVALID: 'Contact email must be a valid email',
 };
 
-const authorsSchema = yup.object().shape({
-  authors: yup.array().of(
+const contactsSchema = yup.object().shape({
+  contacts: yup.array().of(
     yup.object().shape({
       name: yup.string().required(ContactsErrorMsg.NAME_REQUIRED),
       email: yup
@@ -86,20 +86,20 @@ const ContactsView: FunctionComponent<Props> = () => {
   const { state, dispatch } = useIntegration();
   const { integration } = state;
   const methods = useForm<ContactsForm>({
-    resolver: yupResolver(authorsSchema),
+    resolver: yupResolver(contactsSchema),
     defaultValues: {
-      authors: integration?.authors ?? [],
+      contacts: integration?.contacts ?? [],
     },
   });
   const { control } = methods;
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'authors',
+    name: 'contacts',
   });
 
   const onClickAdd = () => {
     dispatch({
-      type: 'ADD_AUTHOR',
+      type: 'ADD_CONTACT',
       payload: { name: '', email: '', sendNotification: false },
     });
     append({ name: '', email: '', sendNotification: false });

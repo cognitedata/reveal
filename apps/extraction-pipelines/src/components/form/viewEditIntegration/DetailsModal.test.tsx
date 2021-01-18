@@ -7,8 +7,8 @@ import { getMockResponse } from '../../../utils/mockResponse';
 import { render } from '../../../utils/test';
 import {
   clickById,
-  AUTHOR_EMAIL_TEST_ID,
-  AUTHOR_NAME_TEST_ID,
+  CONTACT_EMAIL_TEST_ID,
+  CONTACT_NAME_TEST_ID,
   notExistsById,
   DETAILS_ELEMENTS,
   DETAILS_TEST_IDS,
@@ -68,7 +68,7 @@ describe('DetailsModal', () => {
   test('Unsaved changes dialog - footer', async () => {
     const row = 1;
     clickById(`${ContactBtnTestIds.EDIT_BTN}${row}`);
-    typeInInputAsync(`authors-email-${row}`, 'test@test.no');
+    typeInInputAsync(`contacts-email-${row}`, 'test@test.no');
     const bottomWarning = screen.getByText(DETAILS_ELEMENTS.UNSAVED);
     expect(bottomWarning).toBeInTheDocument();
     // click close
@@ -91,21 +91,21 @@ describe('DetailsModal', () => {
   });
 
   test('Add contact', async () => {
-    const row = integration.authors.length + 1;
+    const row = integration.contacts.length + 1;
     const addBtn = screen.getByText('Add');
     fireEvent.click(addBtn);
-    existsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${row}`);
-    existsByIdAsync(`${AUTHOR_NAME_TEST_ID}${row}`);
+    existsByIdAsync(`${CONTACT_EMAIL_TEST_ID}${row}`);
+    existsByIdAsync(`${CONTACT_NAME_TEST_ID}${row}`);
     const newName = 'Test test';
-    typeInInputAsync(`${AUTHOR_NAME_TEST_ID}${row}`, newName);
+    typeInInputAsync(`${CONTACT_NAME_TEST_ID}${row}`, newName);
     const newEmail = 'test@test.no';
-    typeInInputAsync(`${AUTHOR_EMAIL_TEST_ID}${row}`, newEmail);
+    typeInInputAsync(`${CONTACT_EMAIL_TEST_ID}${row}`, newEmail);
     clickByIdAsync(`${ContactBtnTestIds.CANCEL_BTN}${row}`);
-    notExistsById(`${AUTHOR_EMAIL_TEST_ID}${row}`);
-    notExistsById(`${AUTHOR_NAME_TEST_ID}${row}`);
+    notExistsById(`${CONTACT_EMAIL_TEST_ID}${row}`);
+    notExistsById(`${CONTACT_NAME_TEST_ID}${row}`);
     clickByIdAsync(`${ContactBtnTestIds.EDIT_BTN}${row}`);
-    typeInInputAsync(`${AUTHOR_NAME_TEST_ID}${row}`, newName);
-    typeInInputAsync(`${AUTHOR_EMAIL_TEST_ID}${row}`, newEmail);
+    typeInInputAsync(`${CONTACT_NAME_TEST_ID}${row}`, newName);
+    typeInInputAsync(`${CONTACT_EMAIL_TEST_ID}${row}`, newEmail);
     existsByText(UNSAVED_INFO_TEXT);
     clickByIdAsync(`${ContactBtnTestIds.SAVE_BTN}${row}`);
     existsContactAsync(newName, newEmail);

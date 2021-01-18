@@ -10,9 +10,9 @@ describe('contactsUtils', () => {
       fieldValue: 'This is the description',
     },
     {
-      desc: 'Authors',
+      desc: 'Contacts',
       id: 2,
-      fieldName: 'authors',
+      fieldName: 'contacts',
       fieldValue: [{ name: 'aaa', email: 'aaa@test.no' }],
     },
     {

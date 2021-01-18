@@ -49,10 +49,7 @@ const OverviewSidePanel: FunctionComponent<Props> = () => {
           <Monitoring externalId={integration.externalId} />
         </StyledTabPane>
         <StyledTabPane tab="Contact information" key="contacts">
-          <ContactInformation
-            owner={[integration.owner]}
-            authors={integration.authors}
-          />
+          <ContactInformation contacts={integration.contacts} />
         </StyledTabPane>
       </StyledTabs>
     </StyledOverviewSidePanel>

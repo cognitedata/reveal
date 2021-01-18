@@ -11,10 +11,10 @@ import {
   clickById,
   clickByIdAsync,
   existsContactAsync,
-  AUTHOR_EMAIL_TEST_ID,
-  AUTHOR_NAME_TEST_ID,
-  AUTHOR_NOTIFICATION_TEST_ID,
-  notExistsByIdAsync,
+  CONTACT_EMAIL_TEST_ID,
+  CONTACT_NAME_TEST_ID,
+  CONTACT_NOTIFICATION_TEST_ID,
+  removeContact,
 } from '../../utils/test/utilsFn';
 import { renderQueryCacheIntegration } from '../../utils/test/render';
 import ContactsView, {
@@ -36,10 +36,10 @@ import {
 } from '../../utils/constants';
 
 function createIntegrationWithContacts(
-  authors: User[] | undefined | null
+  contacts: User[] | undefined | null
 ): Integration {
   const int = getMockResponse()[0];
-  return { ...int, authors } as Integration;
+  return { ...int, contacts } as Integration;
 }
 
 describe('<ContactsView />', () => {
@@ -68,7 +68,7 @@ describe('<ContactsView />', () => {
     const row = 0;
     const editBtn = screen.getByTestId(`${ContactBtnTestIds.EDIT_BTN}${row}`);
     fireEvent.click(editBtn);
-    const editContact = integration.authors[row];
+    const editContact = integration.contacts[row];
     const contactEmailInput = screen.getByDisplayValue(editContact.email);
     fireEvent.change(contactEmailInput, {
       target: { value: 'sdfsdf@test.no' },
@@ -95,13 +95,13 @@ describe('<ContactsView />', () => {
       EMAIL_NOTIFICATION_TOOLTIP
     )[0];
     expect(
-      screen.queryByTestId(`warning-icon-authors-${row}`)
+      screen.queryByTestId(`warning-icon-contacts-${row}`)
     ).not.toBeInTheDocument();
     expect(sendNotificationCheckbox.checked).toEqual(false);
     fireEvent.click(sendNotificationCheckbox);
     expect(sendNotificationCheckbox.checked).toEqual(true);
     expect(
-      screen.getByTestId(`warning-icon-authors-${row}`)
+      screen.getByTestId(`warning-icon-contacts-${row}`)
     ).toBeInTheDocument();
 
     const cancelBtn = screen.getByTestId(`cancel-contact-btn-${row}`);
@@ -111,7 +111,7 @@ describe('<ContactsView />', () => {
     });
     fireEvent.click(editBtn);
     expect(
-      screen.queryByTestId(`warning-icon-authors${row}`)
+      screen.queryByTestId(`warning-icon-contacts${row}`)
     ).not.toBeInTheDocument();
     fireEvent.click(sendNotificationCheckbox);
     expect(sendNotificationCheckbox.checked).toEqual(true);
@@ -121,7 +121,7 @@ describe('<ContactsView />', () => {
     const row = 0;
     const editBtn = screen.getByTestId(`${ContactBtnTestIds.EDIT_BTN}${row}`);
     fireEvent.click(editBtn);
-    const editContact = integration.authors[row];
+    const editContact = integration.contacts[row];
     act(() => {
       const contactEmailInput = screen.getByDisplayValue(editContact.email);
       fireEvent.change(contactEmailInput, { target: { value: 'sdfsdf' } });
@@ -129,7 +129,7 @@ describe('<ContactsView />', () => {
     });
     await waitFor(() => {
       expect(
-        screen.getByTestId(`warning-icon-authors-${row}`)
+        screen.getByTestId(`warning-icon-contacts-${row}`)
       ).toBeInTheDocument();
     });
 
@@ -146,48 +146,42 @@ describe('<ContactsView />', () => {
 
   test('add contact default values', async () => {
     await clickByIdAsync(ADD_CONTACT_TEST_ID);
-    const newRow = integration.authors.length;
+    const newRow = integration.contacts.length;
     expect(
-      screen.getByTestId(`${AUTHOR_EMAIL_TEST_ID}${newRow}`).value
+      screen.getByTestId(`${CONTACT_EMAIL_TEST_ID}${newRow}`).value
     ).toEqual('');
-    expect(screen.getByTestId(`${AUTHOR_NAME_TEST_ID}${newRow}`).value).toEqual(
-      ''
-    );
     expect(
-      screen.getByTestId(`${AUTHOR_NOTIFICATION_TEST_ID}${newRow}`).checked
+      screen.getByTestId(`${CONTACT_NAME_TEST_ID}${newRow}`).value
+    ).toEqual('');
+    expect(
+      screen.getByTestId(`${CONTACT_NOTIFICATION_TEST_ID}${newRow}`).checked
     ).toEqual(false);
   });
 
-  test('add 3, remove first of new', async () => {
-    const newRow = integration.authors.length;
+  test('add 3, remove first of new', () => {
+    const newRow = integration.contacts.length + 1;
     sdkv3.post.mockResolvedValue({ data: { items: [] } });
-    await addNewContact(newRow, 'Test Name', 'test@email.com');
+    addNewContact(newRow, 'Test Name', 'test@email.com');
 
     const contact2 = {
       name: 'foo bar',
       email: 'foo@bar.com',
     };
 
-    await addNewContact(newRow + 1, contact2.name, contact2.email);
+    addNewContact(newRow + 1, contact2.name, contact2.email);
     const contact3 = {
       name: 'no name',
       email: 'no@name.com',
     };
-    await addNewContact(newRow + 2, contact3.name, contact3.email);
+    addNewContact(newRow + 2, contact3.name, contact3.email);
+    removeContact(newRow);
 
-    await clickByIdAsync(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
-    const confirmRemove = screen.getAllByText('Remove')[newRow + 1];
-    fireEvent.click(confirmRemove);
-    await notExistsByIdAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`);
-    await notExistsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
-    // await removeContact(newRow);
-
-    await existsContactAsync(contact2.name, contact2.email);
-    await existsContactAsync(contact3.name, contact3.email);
+    existsContactAsync(contact2.name, contact2.email);
+    existsContactAsync(contact3.name, contact3.email);
   });
 
   test('Add, then save should show error', async () => {
-    const newRow = integration.authors.length;
+    const newRow = integration.contacts.length;
     clickById(ADD_CONTACT_TEST_ID);
     const save = await screen.findByTestId(
       `${ContactBtnTestIds.SAVE_BTN}${newRow}`
@@ -202,10 +196,10 @@ describe('<ContactsView />', () => {
   });
 
   test('Add, click edit', async () => {
-    const newRow = integration.authors.length;
+    const newRow = integration.contacts.length;
     clickById(ADD_CONTACT_TEST_ID);
     clickById(`${ContactBtnTestIds.EDIT_BTN}${newRow - 1}`);
-    const editContact = integration.authors[newRow - 1];
+    const editContact = integration.contacts[newRow - 1];
     await waitFor(() => {
       const contactNameInput = screen.getByDisplayValue(editContact.name);
       expect(contactNameInput).toBeInTheDocument();
@@ -278,9 +272,9 @@ describe('<ContactsView />', () => {
   });
 });
 
-test('Should render when authors is empty array', async () => {
+test('Should render when contacts is empty array', async () => {
   const modifiedIntegration = createIntegrationWithContacts([]);
-  expect(modifiedIntegration.authors.length).toEqual(0);
+  expect(modifiedIntegration.contacts.length).toEqual(0);
   const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
     client,
@@ -292,12 +286,12 @@ test('Should render when authors is empty array', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedAuthors = screen.queryAllByText('Contact');
-  expect(renderedAuthors.length).toEqual(0);
+  const renderedContacts = screen.queryAllByText('Contact');
+  expect(renderedContacts.length).toEqual(0);
 });
-test('Should render when authors is undefined', async () => {
+test('Should render when contacts is undefined', async () => {
   const modifiedIntegration = createIntegrationWithContacts(undefined);
-  expect(modifiedIntegration.authors).toEqual(undefined);
+  expect(modifiedIntegration.contacts).toEqual(undefined);
   const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
     client,
@@ -309,12 +303,12 @@ test('Should render when authors is undefined', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedAuthors = screen.queryAllByText('Contact');
-  expect(renderedAuthors.length).toEqual(0);
+  const renderedContacts = screen.queryAllByText('Contact');
+  expect(renderedContacts.length).toEqual(0);
 });
-test('Should render when authors is null', async () => {
+test('Should render when contacts is null', async () => {
   const modifiedIntegration = createIntegrationWithContacts(null);
-  expect(modifiedIntegration.authors).toEqual(null);
+  expect(modifiedIntegration.contacts).toEqual(null);
   const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
     client,
@@ -326,15 +320,15 @@ test('Should render when authors is null', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedAuthors = screen.queryAllByText('Contact');
-  expect(renderedAuthors.length).toEqual(0);
+  const renderedContacts = screen.queryAllByText('Contact');
+  expect(renderedContacts.length).toEqual(0);
 });
-test('Should render 2 contacts when there are 2 authors', async () => {
+test('Should render 2 contacts when there are 2 contacts', async () => {
   const modifiedIntegration = createIntegrationWithContacts([
     { name: 'test1 test', email: 'test1@test.no' },
     { name: 'foo', email: 'foo@test.no' },
   ]);
-  expect(modifiedIntegration.authors.length).toEqual(2);
+  expect(modifiedIntegration.contacts.length).toEqual(2);
   const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
     client,
@@ -346,14 +340,14 @@ test('Should render 2 contacts when there are 2 authors', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedAuthors = screen.queryAllByText('Contact');
-  expect(renderedAuthors.length).toEqual(2);
+  const renderedContacts = screen.queryAllByText('Contact');
+  expect(renderedContacts.length).toEqual(2);
 });
 
 test('Should render when there is only name', async () => {
   const user = { name: 'test1 test' };
   const modifiedIntegration = createIntegrationWithContacts([user]);
-  expect(modifiedIntegration.authors.length).toEqual(1);
+  expect(modifiedIntegration.contacts.length).toEqual(1);
   const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
     client,
@@ -365,15 +359,15 @@ test('Should render when there is only name', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedAuthors = screen.queryAllByText('Contact');
-  expect(renderedAuthors.length).toEqual(1);
+  const renderedContacts = screen.queryAllByText('Contact');
+  expect(renderedContacts.length).toEqual(1);
   expect(screen.getByText(user.name)).toBeInTheDocument();
 });
 
 test('Should render when there is only email', async () => {
   const userEmail = 'test1@test.no';
   const author1Email = createIntegrationWithContacts([{ email: userEmail }]);
-  expect(author1Email.authors.length).toEqual(1);
+  expect(author1Email.contacts.length).toEqual(1);
   const client = new QueryClient();
   const thisWrapper = renderQueryCacheIntegration(
     client,
@@ -385,8 +379,8 @@ test('Should render when there is only email', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedAuthors = screen.queryAllByText('Contact');
-  expect(renderedAuthors.length).toEqual(1);
+  const renderedContacts = screen.queryAllByText('Contact');
+  expect(renderedContacts.length).toEqual(1);
   const renderedEmail = screen.getByText(userEmail);
   expect(renderedEmail).toBeInTheDocument();
   expect(renderedEmail.getAttribute('href')).toEqual(`mailto:${userEmail}`);

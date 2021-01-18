@@ -10,10 +10,10 @@ export const DETAILS_TEST_IDS = {
   CLOSE_CONFIRM_DIALOG: 'confirm-dialog',
 };
 
-export const AUTHOR_NAME_TEST_ID: Readonly<string> = 'authors-name-';
-export const AUTHOR_EMAIL_TEST_ID: Readonly<string> = 'authors-email-';
-export const AUTHOR_NOTIFICATION_TEST_ID: Readonly<string> =
-  'authors-sendNotification-';
+export const CONTACT_NAME_TEST_ID: Readonly<string> = 'contacts-name-';
+export const CONTACT_EMAIL_TEST_ID: Readonly<string> = 'contacts-email-';
+export const CONTACT_NOTIFICATION_TEST_ID: Readonly<string> =
+  'contacts-sendNotification-';
 export const ADD_CONTACT_TEST_ID: Readonly<string> = 'add-contact-btn';
 
 export const existsContactAsync = async (name: string, email: string) => {
@@ -87,12 +87,8 @@ export const clickText = async (text: string) => {
 
 export const removeContact = async (newRow: number) => {
   await clickByIdAsync(`${ContactBtnTestIds.REMOVE_BTN}${newRow}`);
-
-  const confirmRemove = screen.getAllByText('Remove')[newRow + 1];
-  fireEvent.click(confirmRemove);
-
-  await notExistsByIdAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`);
-  await notExistsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
+  await notExistsByIdAsync(`${CONTACT_NAME_TEST_ID}${newRow}`);
+  await notExistsByIdAsync(`${CONTACT_EMAIL_TEST_ID}${newRow}`);
 };
 
 export const addNewContact = async (
@@ -101,9 +97,9 @@ export const addNewContact = async (
   email: string
 ) => {
   await clickByIdAsync(ADD_CONTACT_TEST_ID);
-  await existsByIdAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`);
-  await existsByIdAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`);
-  await typeInInputAsync(`${AUTHOR_NAME_TEST_ID}${newRow}`, name);
-  await typeInInputAsync(`${AUTHOR_EMAIL_TEST_ID}${newRow}`, email);
+  await existsByIdAsync(`${CONTACT_NAME_TEST_ID}${newRow}`);
+  await existsByIdAsync(`${CONTACT_EMAIL_TEST_ID}${newRow}`);
+  await typeInInputAsync(`${CONTACT_NAME_TEST_ID}${newRow}`, name);
+  await typeInInputAsync(`${CONTACT_EMAIL_TEST_ID}${newRow}`, email);
   clickById(`${ContactBtnTestIds.SAVE_BTN}${newRow}`);
 };

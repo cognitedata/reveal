@@ -23,9 +23,9 @@ import {
   SAVE,
 } from '../../utils/constants';
 import {
-  AUTHOR_EMAIL_TEST_ID,
-  AUTHOR_NAME_TEST_ID,
-  AUTHOR_NOTIFICATION_TEST_ID,
+  CONTACT_EMAIL_TEST_ID,
+  CONTACT_NAME_TEST_ID,
+  CONTACT_NOTIFICATION_TEST_ID,
 } from '../../utils/test/utilsFn';
 import { CheckboxWithRef } from '../inputs/CheckboxWithRef';
 import { GridRowStyle } from '../../styles/grid/StyledGrid';
@@ -59,10 +59,10 @@ const ContactView: FunctionComponent<Props> = ({
   const { mutate } = useDetailsUpdate();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
-  const isDirty = updates.has(`authors-${index}`);
+  const isDirty = updates.has(`contacts-${index}`);
   const isNew =
-    integration?.authors[index]?.name === '' &&
-    integration?.authors[index]?.email === '';
+    integration?.contacts[index]?.name === '' &&
+    integration?.contacts[index]?.email === '';
   useEffect(() => {
     setIsEdit(isNew);
   }, [isNew]);
@@ -71,9 +71,9 @@ const ContactView: FunctionComponent<Props> = ({
     const valid = await trigger();
     if (valid && integration && project) {
       const aut = getValues();
-      const actual = aut.authors[index];
-      const authors = integration?.authors ?? [];
-      const authorsToSave = authors.map((author: User, idx: number) => {
+      const actual = aut.contacts[index];
+      const contacts = integration?.contacts ?? [];
+      const contactsToSave = contacts.map((author: User, idx: number) => {
         if (idx === index) {
           return actual;
         }
@@ -81,8 +81,8 @@ const ContactView: FunctionComponent<Props> = ({
       });
       const items = createUpdateSpec({
         id: integration.id,
-        fieldValue: authorsToSave,
-        fieldName: 'authors',
+        fieldValue: contactsToSave,
+        fieldName: 'contacts',
       });
 
       await mutate(
@@ -97,12 +97,12 @@ const ContactView: FunctionComponent<Props> = ({
           },
           onSuccess: () => {
             dispatch({
-              type: 'UPDATE_AUTHOR',
-              payload: { index, author: actual },
+              type: 'UPDATE_CONTACT',
+              payload: { index, contact: actual },
             });
             dispatch({
               type: 'REMOVE_CHANGE',
-              payload: { index, name: 'authors' },
+              payload: { index, name: 'contacts' },
             });
             setIsEdit(false);
           },
@@ -114,11 +114,11 @@ const ContactView: FunctionComponent<Props> = ({
   function onCancel() {
     dispatch({
       type: 'REMOVE_CHANGE',
-      payload: { index, name: 'authors' },
+      payload: { index, name: 'contacts' },
     });
     setValue(
-      `authors[${index}].sendNotification`,
-      integration?.authors[index]?.sendNotification
+      `contacts[${index}].sendNotification`,
+      integration?.contacts[index]?.sendNotification
     );
     setIsEdit(false);
   }
@@ -129,11 +129,11 @@ const ContactView: FunctionComponent<Props> = ({
 
   const onRemoveClick = async () => {
     if (project && integration) {
-      const authors = integration.authors.filter((_, idx) => idx !== index);
+      const contacts = integration.contacts.filter((_, idx) => idx !== index);
       const items = createUpdateSpec({
         id: integration.id,
-        fieldName: 'authors',
-        fieldValue: authors,
+        fieldName: 'contacts',
+        fieldValue: contacts,
       });
       await mutate(
         {
@@ -146,7 +146,7 @@ const ContactView: FunctionComponent<Props> = ({
             setErrorVisible(true);
           },
           onSuccess: () => {
-            dispatch({ type: 'REMOVE_AUTHOR', payload: { index } });
+            dispatch({ type: 'REMOVE_CONTACT', payload: { index } });
             remove(index);
           },
         }
@@ -157,7 +157,7 @@ const ContactView: FunctionComponent<Props> = ({
   const handleChange = (_: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: 'ADD_CHANGE',
-      payload: { index, name: 'authors' },
+      payload: { index, name: 'contacts' },
     });
   };
 
@@ -165,7 +165,7 @@ const ContactView: FunctionComponent<Props> = ({
     setErrorVisible(false);
     dispatch({
       type: 'REMOVE_CHANGE',
-      payload: { index, name: 'authors' },
+      payload: { index, name: 'contacts' },
     });
     setIsEdit(false);
   };
@@ -177,12 +177,12 @@ const ContactView: FunctionComponent<Props> = ({
       </AlignedDetail>
       <Tooltip content={EMAIL_NOTIFICATION_TOOLTIP} disabled={isEdit}>
         <CheckboxWithRef
-          name={`authors[${index}].sendNotification`}
+          name={`contacts[${index}].sendNotification`}
           disabled={!isEdit}
           handleChange={handleChange}
-          defaultChecked={integration?.authors[index]?.sendNotification}
+          defaultChecked={integration?.contacts[index]?.sendNotification}
           register={register}
-          data-testid={`${AUTHOR_NOTIFICATION_TEST_ID}${index}`}
+          data-testid={`${CONTACT_NOTIFICATION_TEST_ID}${index}`}
           aria-label={EMAIL_NOTIFICATION_TOOLTIP}
         />
       </Tooltip>
@@ -191,18 +191,18 @@ const ContactView: FunctionComponent<Props> = ({
           <input
             key={field?.id}
             onChange={handleChange}
-            name={`authors[${index}].name`}
+            name={`contacts[${index}].name`}
             placeholder={NAME_PLACEHOLDER}
             ref={register}
             className={`cogs-input full-width ${
-              errors.authors?.[index]?.name ? 'has-error' : ''
+              errors.contacts?.[index]?.name ? 'has-error' : ''
             }`}
-            data-testid={`${AUTHOR_NAME_TEST_ID}${index}`}
-            defaultValue={integration?.authors[index]?.name}
-            aria-invalid={errors.authors?.[index]?.name ? 'true' : 'false'}
+            data-testid={`${CONTACT_NAME_TEST_ID}${index}`}
+            defaultValue={integration?.contacts[index]?.name}
+            aria-invalid={errors.contacts?.[index]?.name ? 'true' : 'false'}
             aria-labelledby="contacts-heading-name"
           />
-          <ValidationError errors={errors} name={`authors[${index}].name`} />
+          <ValidationError errors={errors} name={`contacts[${index}].name`} />
         </InputWarningError>
       ) : (
         <AlignedSpan
@@ -210,7 +210,7 @@ const ContactView: FunctionComponent<Props> = ({
           aria-colindex={2}
           aria-describedby="contacts-heading-name"
         >
-          {integration?.authors[index]?.name}
+          {integration?.contacts[index]?.name}
         </AlignedSpan>
       )}
       {isEdit ? (
@@ -218,18 +218,18 @@ const ContactView: FunctionComponent<Props> = ({
           <input
             key={field.id}
             onChange={handleChange}
-            name={`authors[${index}].email`}
+            name={`contacts[${index}].email`}
             placeholder={EMAIL_PLACEHOLDER}
             ref={register}
             className={`cogs-input full-width ${
-              errors.authors?.[index]?.email ? 'has-error' : ''
+              errors.contacts?.[index]?.email ? 'has-error' : ''
             }`}
-            data-testid={`${AUTHOR_EMAIL_TEST_ID}${index}`}
-            defaultValue={integration?.authors[index]?.email}
-            aria-invalid={errors.authors?.[index]?.email ? 'true' : 'false'}
+            data-testid={`${CONTACT_EMAIL_TEST_ID}${index}`}
+            defaultValue={integration?.contacts[index]?.email}
+            aria-invalid={errors.contacts?.[index]?.email ? 'true' : 'false'}
             aria-labelledby="contacts-heading-email"
           />
-          <ValidationError errors={errors} name={`authors[${index}].email`} />
+          <ValidationError errors={errors} name={`contacts[${index}].email`} />
         </InputWarningError>
       ) : (
         <AlignedSpan
@@ -237,13 +237,13 @@ const ContactView: FunctionComponent<Props> = ({
           aria-colindex={3}
           aria-describedby="contacts-heading-email"
         >
-          <EmailLink email={integration?.authors[index]?.email} />
+          <EmailLink email={integration?.contacts[index]?.email} />
         </AlignedSpan>
       )}
       {isDirty ? (
         <InputWarningIcon
           $color={Colors.warning.hex()}
-          data-testid={`warning-icon-authors-${index}`}
+          data-testid={`warning-icon-contacts-${index}`}
           className="waring"
         />
       ) : (
@@ -287,7 +287,7 @@ const ContactView: FunctionComponent<Props> = ({
               okText={REMOVE}
               onClick={onRemoveClick}
               popConfirmContent={confirmRemoveContact(
-                integration?.authors[index]?.name
+                integration?.contacts[index]?.name
               )}
               testId={`remove-contact-btn-${index}`}
             />

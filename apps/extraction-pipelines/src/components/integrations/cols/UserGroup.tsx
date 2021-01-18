@@ -28,7 +28,7 @@ const blueAvatarTooltip = (users: User[], avatarsLimit: number) => {
   );
 };
 
-const UserGroup: FunctionComponent<Props> = ({ users }: Props) => {
+const UserGroup: FunctionComponent<Props> = ({ users = [] }: Props) => {
   const avatarsLimit = 2;
   const showBlueAvatar = users.length > avatarsLimit;
   return (

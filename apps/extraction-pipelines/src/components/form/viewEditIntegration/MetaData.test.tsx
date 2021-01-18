@@ -54,8 +54,8 @@ describe('MetaData', () => {
     act(() => {
       render(<MetaData />, { wrapper: thisWrapper });
     });
-    const renderedAuthors = screen.queryByText(DetailFieldNames.META_DATA);
-    expect(renderedAuthors).toBeInTheDocument();
+    const renderedMetadata = screen.queryByText(DetailFieldNames.META_DATA);
+    expect(renderedMetadata).toBeInTheDocument();
     expect(screen.queryByTestId('meta-label-0')).not.toBeInTheDocument();
   });
 
@@ -71,8 +71,8 @@ describe('MetaData', () => {
     act(() => {
       render(<MetaData />, { wrapper: thisWrapper });
     });
-    const renderedAuthors = screen.queryByText(DetailFieldNames.META_DATA);
-    expect(renderedAuthors).toBeInTheDocument();
+    const renderedMetadata = screen.queryByText(DetailFieldNames.META_DATA);
+    expect(renderedMetadata).toBeInTheDocument();
     expect(screen.queryByTestId('meta-label-0')).not.toBeInTheDocument();
     expect(screen.queryByText(/no metadata/i)).toBeInTheDocument();
   });
@@ -89,8 +89,8 @@ describe('MetaData', () => {
     act(() => {
       render(<MetaData />, { wrapper: thisWrapper });
     });
-    const renderedAuthors = screen.queryByText(DetailFieldNames.META_DATA);
-    expect(renderedAuthors).toBeInTheDocument();
+    const renderedMetadata = screen.queryByText(DetailFieldNames.META_DATA);
+    expect(renderedMetadata).toBeInTheDocument();
     expect(screen.queryByTestId('meta-label-0')).not.toBeInTheDocument();
     expect(screen.queryByText(/no metadata/i)).toBeInTheDocument();
   });

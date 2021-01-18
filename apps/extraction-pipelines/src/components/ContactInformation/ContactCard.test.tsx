@@ -6,7 +6,7 @@ import { getMockResponse } from '../../utils/mockResponse';
 
 describe('ContactCard', () => {
   test('Render ContactCard with name and email fields', () => {
-    const { name, email } = getMockResponse()[0].owner;
+    const { name, email } = getMockResponse()[0].contacts[0];
     render(<ContactCard name={name} email={email} />);
     const nameString = screen.getByText(name);
     expect(nameString).toBeInTheDocument();

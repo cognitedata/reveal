@@ -2,10 +2,6 @@ import React, { PropsWithChildren, useContext, useReducer } from 'react';
 import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
 
-type OwnerActions = {
-  type: 'UPDATE_OWNER';
-  payload: { owner: User };
-};
 type NameActions = {
   type: 'UPDATE_NAME';
   payload: Pick<Integration, 'name'>;
@@ -17,15 +13,15 @@ type DescriptionActions = {
 
 type IntegrationActions =
   | {
-      type: 'UPDATE_AUTHOR';
-      payload: { index: number; author: User };
+      type: 'UPDATE_CONTACT';
+      payload: { index: number; contact: User };
     }
   | {
-      type: 'REMOVE_AUTHOR';
+      type: 'REMOVE_CONTACT';
       payload: { index: number };
     }
   | {
-      type: 'ADD_AUTHOR';
+      type: 'ADD_CONTACT';
       payload: User;
     };
 
@@ -39,7 +35,7 @@ type ChangesActions =
       payload: Update;
     };
 
-type Updateable = 'authors' | 'owner' | 'name' | 'description';
+type Updateable = 'contacts' | 'name' | 'description';
 
 type Update = { index?: number; name: Updateable };
 
@@ -50,7 +46,6 @@ interface StateType {
 type ContextActions =
   | IntegrationActions
   | ChangesActions
-  | OwnerActions
   | NameActions
   | DescriptionActions;
 
@@ -86,22 +81,6 @@ function changeReducer(state: StateType, action: ChangesActions): StateType {
         `${action.payload.name}-${action.payload.index ?? 0}`
       );
       return { ...state, updates: state.updates };
-    }
-    default: {
-      return state;
-    }
-  }
-}
-function ownerReducer(state: StateType, action: OwnerActions): StateType {
-  switch (action.type) {
-    case 'UPDATE_OWNER': {
-      if (!state.integration) {
-        throw new Error('ownerReducer: No integration');
-      }
-      return {
-        ...state,
-        integration: { ...state.integration, owner: action.payload.owner },
-      };
     }
     default: {
       return state;
@@ -148,39 +127,39 @@ function descriptionReducer(
   }
 }
 
-const authorReducer = (state: StateType, action: IntegrationActions) => {
+const contactReducer = (state: StateType, action: IntegrationActions) => {
   if (!state.integration) {
-    throw new Error('authorReducer: No integration');
+    throw new Error('contactReducer: No integration');
   }
   switch (action.type) {
-    case 'UPDATE_AUTHOR': {
-      const aut = state.integration.authors.map((author, index) => {
+    case 'UPDATE_CONTACT': {
+      const aut = state.integration.contacts.map((contact, index) => {
         if (index === action.payload.index) {
-          return action.payload.author;
+          return action.payload.contact;
         }
-        return author;
+        return contact;
       });
       return {
         ...state,
-        integration: { ...state.integration, authors: aut },
+        integration: { ...state.integration, contacts: aut },
       };
     }
-    case 'REMOVE_AUTHOR': {
-      const updatedAuthors =
-        state.integration.authors.filter(
+    case 'REMOVE_CONTACT': {
+      const updatedContacts =
+        state.integration.contacts.filter(
           (_, i) => i !== action.payload.index
         ) ?? [];
       return {
         ...state,
-        integration: { ...state.integration, authors: updatedAuthors },
+        integration: { ...state.integration, contacts: updatedContacts },
       } as StateType;
     }
-    case 'ADD_AUTHOR': {
-      const existingAuthors = state.integration.authors ?? [];
-      const updatedAuthors = [...existingAuthors, { ...action.payload }];
+    case 'ADD_CONTACT': {
+      const existingContacts = state.integration.contacts ?? [];
+      const updatedContacts = [...existingContacts, { ...action.payload }];
       return {
         ...state,
-        integration: { ...state.integration, authors: updatedAuthors },
+        integration: { ...state.integration, contacts: updatedContacts },
       };
     }
     default: {
@@ -194,17 +173,14 @@ const integrationReducer = (
   action: ContextActions
 ): StateType => {
   switch (action.type) {
-    case 'UPDATE_AUTHOR':
-    case 'REMOVE_AUTHOR':
-    case 'ADD_AUTHOR': {
-      return authorReducer(state, action);
+    case 'UPDATE_CONTACT':
+    case 'REMOVE_CONTACT':
+    case 'ADD_CONTACT': {
+      return contactReducer(state, action);
     }
     case 'ADD_CHANGE':
     case 'REMOVE_CHANGE': {
       return changeReducer(state, action);
-    }
-    case 'UPDATE_OWNER': {
-      return ownerReducer(state, action);
     }
     case 'UPDATE_NAME': {
       return nameReducer(state, action);

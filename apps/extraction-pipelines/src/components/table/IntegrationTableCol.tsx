@@ -52,13 +52,8 @@ interface OpenFailMessageFunc {
   (row: Integration): void;
 }
 
-export const createSearchStringForContacts = (
-  owner: User,
-  authors?: User[]
-) => {
-  return `${owner.name},${
-    authors ? authors.map((aut) => aut.name).join() : ''
-  }`;
+export const createSearchStringForContacts = (contacts?: User[]) => {
+  return `${contacts?.length ? contacts.map((aut) => aut.name).join() : ''}`;
 };
 export const createSearchStringForDataSet = (
   dataSetId: string,
@@ -66,10 +61,7 @@ export const createSearchStringForDataSet = (
 ) => {
   return `${dataSetId} ${dataSet ? dataSet.name : ''}`;
 };
-export const createListOfContacts = (owner: User, authors?: User[]) => {
-  const auth = authors ?? [];
-  return [owner, ...auth];
-};
+
 export const getIntegrationTableCol = (
   openFailMessage: OpenFailMessageFunc
 ): Column<Integration>[] => {
@@ -184,13 +176,10 @@ export const getIntegrationTableCol = (
       id: 'contacts',
       Header: TableHeadings.CONTACTS,
       accessor: (row: Integration) => {
-        return createSearchStringForContacts(row.owner, row.authors);
+        return createSearchStringForContacts(row.contacts);
       },
       Cell: ({ row }: Cell<Integration>) => {
-        const contacts = createListOfContacts(
-          row.original.owner,
-          row.original.authors
-        );
+        const { contacts } = row.original;
         return <UserGroup users={contacts} />;
       },
       disableSortBy: true,

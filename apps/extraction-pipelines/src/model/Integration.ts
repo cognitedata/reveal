@@ -18,8 +18,7 @@ export interface Integration {
   description: string;
   metadata: MetaData;
   id: number;
-  owner: User;
-  authors: User[];
+  contacts: User[];
   lastSuccess?: number; // milliseconds
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds
@@ -40,5 +39,4 @@ export enum DetailFieldNames {
   RAW_TABLE = 'Raw tables',
   META_DATA = 'Metadata',
   CONTACT = 'Contact',
-  OWNER = 'Owner',
 }
