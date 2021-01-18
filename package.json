@@ -50,7 +50,7 @@
     "@storybook/addon-links": "^6.1.14",
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.1.14",
-    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.2",
     "@testing-library/testcafe": "^4.3.1",
     "@types/jest": "^26.0.19",
