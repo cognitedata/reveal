@@ -44,8 +44,8 @@ describe('DataProvider tests', () => {
 
     render(<App />);
 
-    const elm = await screen.findAllByText(/1-1/); // <div>1-1</div> <- we print series length for both data and scaler
+    const elm = await screen.findByText(/1-1/); // <div>1-1</div> <- we print series length for both data and scaler
 
-    expect(elm).toHaveLength(1);
+    expect(elm).toBeInTheDocument();
   });
 });

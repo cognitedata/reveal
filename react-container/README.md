@@ -1,4 +1,4 @@
-# @cognite/react-container
+# Cognite React Container
 
 ** _Your friendly opinionated Cognite React container._ **
 
@@ -14,23 +14,25 @@ Here we provide the nesessary foundation to start a fully working and authentica
 yarn add @cognite/react-container
 ```
 
-## Main container Usage (TODO)
+## Main container usage
 
 ```ts
 import { Container } from '@cognite/react-container';
 
-<Container>... my app now has all the fun stuff ...</Container>;
+<Container appName="demo-app">... my app now has all the fun stuff ...</Container>;
 ```
+
+This can be found in the demo app [here](https://github.com/cognitedata/react-demo-app/blob/master/src/App.tsx#L18)
 
 The fun stuff includes:
 
-- i18n container
-- Optional Redux provider
 - Error boundary
 - React router setup
-- CDF Authentication and token management
+- Authentication provider - This makes sure your app is always authenticated and provides an initiated Cognite SDK
+- i18n container
+- LocalStorage helpers
 
-## Other helpers (TODO)
+## Other helpers
 
 ### `getLoginToken`
 
@@ -40,7 +42,7 @@ The fun stuff includes:
 import { getLoginToken } from '@cognite/react-container';
 ```
 
-### `storage`
+### `storage` (Marked for refactoring to a separate package)
 
 > Helpers for accessing localstorage
 
@@ -50,7 +52,6 @@ import { storage } from '@cognite/react-container';
 
 ## Future features
 
-- [ ] Authentication container
+- [ ] Optional Redux provider (Not complete)
 - [ ] Global Store container
 - [ ] Lots of useful hooks
-- [ ] Cognite SDK helpers (singleton generator etc)

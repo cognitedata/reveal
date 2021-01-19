@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDirs": ["src"],
+    "baseUrl": "src",
+    "sourceMap": true,
+    "noImplicitReturns": true
+  }
+}

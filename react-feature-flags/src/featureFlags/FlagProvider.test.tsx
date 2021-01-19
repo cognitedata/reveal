@@ -30,14 +30,14 @@ describe('FeatureToggle', () => {
     clientMock.isEnabled.mockReturnValueOnce(false);
     render(RenderedComponent);
 
-    expect(screen.getByText('disabled')).toBeDefined();
+    expect(screen.getByText('disabled')).toBeInTheDocument();
   });
 
   it('Should be enabled', () => {
     clientMock.isEnabled.mockReturnValueOnce(true);
     render(RenderedComponent);
 
-    expect(screen.getByText('enabled')).toBeDefined();
+    expect(screen.getByText('enabled')).toBeInTheDocument();
   });
 
   it('Should have remoteAddress and userId in the context', () => {

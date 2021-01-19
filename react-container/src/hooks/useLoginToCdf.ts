@@ -24,7 +24,7 @@ export const useLoginToCdf = ({
   const [authResult, setAuthResult] = useState<AuthResult>();
   const client = getCogniteSDKClient();
 
-  const onTokens = async (tokens: AuthTokens | undefined) => {
+  const onTokens = async (tokens?: AuthTokens) => {
     try {
       const loginStatus = await client.login.status();
 
@@ -98,7 +98,7 @@ export const useLoginToCdf = ({
   };
 
   const onApiKeyTokens = () => {
-    onTokens(undefined);
+    onTokens();
   };
 
   const authenticateForProjectWithApiKey = (apiKey: string) => {

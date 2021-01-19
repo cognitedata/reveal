@@ -6,11 +6,10 @@ export const getCogniteSDKClient = () => client;
 
 export const configureCogniteSDKClient = (
   appId?: string,
-  cdfApiBaseUrl?: string,
   options?: {
     baseUrl?: string;
   }
-) => {
+): CogniteClient => {
   if (client) {
     return client;
   }
@@ -19,8 +18,6 @@ export const configureCogniteSDKClient = (
 
   if (options && options.baseUrl) {
     client.setBaseUrl(options.baseUrl);
-  } else if (cdfApiBaseUrl) {
-    client.setBaseUrl(cdfApiBaseUrl);
   }
 
   return client;

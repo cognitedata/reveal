@@ -1,3 +1,9 @@
+## 0.4.0 Dec 23 2020
+
+### Changes
+
+- Add AuthContainer
+
 ## 0.3.0 Nov 23 2020
 
 ### Changes

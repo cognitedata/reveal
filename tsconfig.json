@@ -1,17 +1,19 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "module": "es2015",
-    "target": "es5",
+    "alwaysStrict": true,
     "declaration": true,
     "declarationDir": "dist",
-    "outDir": "dist",
-    "strict": true,
-    "sourceMap": false,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
     "lib": ["es2015", "dom"],
-    "jsx": "react"
+    "module": "es2015",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "sourceMap": false,
+    "strictPropertyInitialization": true,
+    "target": "es5"
   }
 }

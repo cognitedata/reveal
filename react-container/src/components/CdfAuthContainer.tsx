@@ -26,5 +26,3 @@ export const CdfAuthContainer: React.FC<Props> = ({
 
   return <Loader darkMode={false} />;
 };
-
-export default CdfAuthContainer;

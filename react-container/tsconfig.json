@@ -6,7 +6,6 @@
     "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
     "strictPropertyInitialization": true,
-    "strict": true,
     "alwaysStrict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
