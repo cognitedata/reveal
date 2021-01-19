@@ -3,13 +3,11 @@ import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
 import config from 'utils/config';
 
+import '@cognite/cogs.js/dist/cogs.css';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
-import '@cognite/cogs.js/dist/cogs.css';
-import I18nContainer from './containers/I18nContainer';
 import { ApiProvider } from './contexts/ApiContext';
-import { AuthProvider } from './contexts/AuthContext';
 import { APIErrorProvider } from './contexts/APIErrorContext';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
@@ -25,24 +23,12 @@ if (process.env.REACT_APP_SENTRY_DSN) {
 }
 
 const ProvidedApp = () => (
-  <I18nContainer>
-    <ApiProvider>
-      <APIErrorProvider>
-        <App />
-      </APIErrorProvider>
-    </ApiProvider>
-  </I18nContainer>
+  <ApiProvider>
+    <APIErrorProvider>
+      <App />
+    </APIErrorProvider>
+  </ApiProvider>
 );
-
-// <I18nContainer>
-// <AuthProvider>
-//   <ApiProvider>
-//     <APIErrorProvider>
-//       <App />
-//     </APIErrorProvider>
-//   </ApiProvider>
-// </AuthProvider>
-// </I18nContainer>,
 
 ReactDOM.render(<ProvidedApp />, document.getElementById('root'));
 

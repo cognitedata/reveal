@@ -1,6 +1,9 @@
-import React, { useContext } from 'react';
+import * as React from 'react';
+import {
+  AuthContext,
+  AuthProvider as ContainerAuthProvider,
+} from '@cognite/react-container';
 import Api from '../services/Api';
-import AuthContext from './AuthContext';
 
 type Props = {
   children: any;
@@ -13,8 +16,12 @@ type Values = {
 const ApiContext = React.createContext<Values>({});
 
 const ApiProvider = ({ children }: Props) => {
-  const { token } = useContext(AuthContext);
-  const api = new Api(token);
+  const { client, authState } = React.useContext<AuthContext>(
+    ContainerAuthProvider
+  );
+  const { token } = authState || {};
+  const api = new Api(token || '', client);
+
   return <ApiContext.Provider value={{ api }}>{children}</ApiContext.Provider>;
 };
 

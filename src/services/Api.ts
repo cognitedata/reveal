@@ -1,4 +1,5 @@
 import { SIDECAR } from 'utils/sidecar';
+import { CogniteClient } from '@cognite/sdk';
 import {
   GenericResponseObject,
   RESTConfigurationsFilter,
@@ -8,7 +9,6 @@ import {
   RESTTransfersFilter,
   Source,
 } from '../typings/interfaces';
-import sdk from '../utils/cognitesdk';
 
 import {
   mockDataErrorsPsToOw,
@@ -37,19 +37,26 @@ class Api {
     Authorization: string;
   };
 
+  private sdk?: CogniteClient;
   private readonly baseURL: string;
 
-  constructor(token: string) {
+  constructor(token: string, sdk?: CogniteClient) {
     this.headers = {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
     this.baseURL = SIDECAR.cognuitApiBaseUrl;
+    if (sdk) {
+      this.sdk = sdk;
+    }
   }
 
   private async get(url: string, parameters?: QueryParameters): Promise<any> {
-    const status = await sdk.login.status();
+    if (!this.sdk) {
+      return [];
+    }
+    const status = await this.sdk.login.status();
     if (!status) {
       return [
         {
@@ -80,7 +87,10 @@ class Api {
   }
 
   private async post(url: string, data: any): Promise<any> {
-    const status = await sdk.login.status();
+    if (!this.sdk) {
+      return [];
+    }
+    const status = await this.sdk.login.status();
     if (!status) {
       return [
         {

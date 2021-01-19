@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
-import { Table } from 'antd';
+import {
+  AuthContext,
+  AuthProvider as ContainerAuthProvider,
+} from '@cognite/react-container';
 import { Badge, Colors, Icon, Tooltip } from '@cognite/cogs.js';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+
 import { ContentContainer } from 'elements';
 import ApiContext from 'contexts/ApiContext';
-import AuthContext from 'contexts/AuthContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
-import { ColumnsType } from 'antd/es/table';
 import {
   curateColumns,
   curateConfigurationsData,
@@ -43,7 +47,9 @@ type ActionsType = {
 
 const Configurations = () => {
   const { api } = useContext(ApiContext);
-  const { token } = useContext(AuthContext);
+  const { authState } = React.useContext<AuthContext>(ContainerAuthProvider);
+  const { token } = authState || {};
+
   const { error, addError, removeError } = useContext(APIErrorContext);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<GenericResponseObject[]>([]);
