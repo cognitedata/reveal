@@ -2,8 +2,11 @@ import React from 'react';
 import { Group } from '@cognite/sdk';
 import { Select } from '@cognite/cogs.js';
 import includes from 'lodash/includes';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getGroupsState } from 'store/groups/selectors';
+import { setBoard } from 'store/forms/actions';
+import { RootDispatcher } from 'store/types';
+import { boardState } from 'store/forms/selectors';
 import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
@@ -11,16 +14,13 @@ import { boardValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
 
-interface Props {
-  board: Board;
-  setBoard: TS_FIX_ME;
-}
-
 const exclude = [ADMIN_GROUP_NAME];
 
-const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
+const GroupsSelector: React.FC = () => {
+  const dispatch = useDispatch<RootDispatcher>();
   const { setErrors, validateField } = useForm(boardValidator);
   const { groups } = useSelector(getGroupsState);
+  const board = useSelector(boardState) as Board;
 
   const options = (groups || [])
     .filter((group: Group) => {
@@ -31,12 +31,14 @@ const GroupsSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
     });
 
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
-    setBoard((prevState: Board) => ({
-      ...prevState,
-      visibleTo: Array.isArray(selectedOption)
-        ? selectedOption.map((option) => option.value)
-        : [],
-    }));
+    dispatch(
+      setBoard({
+        ...board,
+        visibleTo: (selectedOption || []).map(
+          (option: TS_FIX_ME) => option.value
+        ),
+      })
+    );
     setErrors((prevState: Board) => ({
       ...prevState,
       visibleTo: validateField('visibleTo', ''),

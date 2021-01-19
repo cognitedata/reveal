@@ -1,16 +1,15 @@
 import React from 'react';
 import { Select } from '@cognite/cogs.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBoard } from 'store/forms/actions';
+import { boardState } from 'store/forms/selectors';
 import isEqual from 'lodash/isEqual';
 import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
-
-interface Props {
-  board: Board;
-  setBoard: TS_FIX_ME;
-}
+import { RootDispatcher } from 'store/types';
 
 const options = [
   { value: 'grafana', label: 'Grafana' },
@@ -21,13 +20,18 @@ const options = [
   { value: 'other', label: 'Other' },
 ];
 
-const BoardTypeSelector: React.FC<Props> = ({ board, setBoard }: Props) => {
+const BoardTypeSelector: React.FC = () => {
   const { validateField, setErrors, errors } = useForm(boardValidator);
+  const board = useSelector(boardState) as Board;
+  const dispatch = useDispatch<RootDispatcher>();
+
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
-    setBoard((prevState: Board) => ({
-      ...prevState,
-      type: selectedOption.value,
-    }));
+    dispatch(
+      setBoard({
+        ...board,
+        type: selectedOption.value,
+      })
+    );
     setErrors((prevState: Board) => ({
       ...prevState,
       type: validateField('type', selectedOption.value),

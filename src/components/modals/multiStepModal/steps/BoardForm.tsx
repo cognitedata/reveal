@@ -1,5 +1,8 @@
 import React from 'react';
 import { A, Button, Icon, Input, Micro, Tooltip } from '@cognite/cogs.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { suiteState, boardState } from 'store/forms/selectors';
+import { setBoard, deleteBoard } from 'store/forms/actions';
 import {
   FormContainer,
   BoardsContainer,
@@ -18,26 +21,18 @@ import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
 import { Flex } from 'styles/common';
 import { Board, Suite } from 'store/suites/types';
-import { TS_FIX_ME } from 'types/core';
 import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
+import { RootDispatcher } from 'store/types';
 import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';
 import GroupsSelector from './GroupsSelector';
-
-interface Props {
-  // TODO(dtc-215) use containers to avoid deep props nesting
-  suite: Suite;
-  board: Board;
-  setSuite: TS_FIX_ME;
-  setBoard: TS_FIX_ME;
-}
 
 const SnapshotTooltip = () => {
   return (
     <CustomTooltipContainer>
       A snapshot is a preview of your data, you can learn more about snapshots{' '}
-      {/* TODO(dtc-215) provide with correct link */}
+      {/* TODO(dtc-224) provide with correct link */}
       <A href="#" isExternal>
         here
       </A>
@@ -45,39 +40,36 @@ const SnapshotTooltip = () => {
   );
 };
 
-export const BoardForm: React.FC<Props> = ({
-  suite,
-  board,
-  setSuite,
-  setBoard,
-}: Props) => {
+export const BoardForm: React.FC = () => {
   const { errors, setErrors, validateField } = useForm(boardValidator);
+  const suite = useSelector(suiteState);
+  const board = useSelector(boardState) as Board;
+  const dispatch = useDispatch<RootDispatcher>();
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
-    setBoard((prevState: Board) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    dispatch(
+      setBoard({
+        ...board,
+        [name]: value,
+      })
+    );
+
     setErrors((prevState: Suite) => ({
       ...prevState,
       [name]: validateField(name, value),
     }));
   };
 
-  const deleteBoard = (event: React.MouseEvent, boardKey: string) => {
+  const deleteBoardFromList = (event: React.MouseEvent, boardKey: string) => {
     event.stopPropagation();
-    const updatedBoardList = suite.boards.filter(
-      (item) => item.key !== boardKey
-    );
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      boards: updatedBoardList,
-    }));
-    if (board.key) {
-      setBoard(updatedBoardList[0] || {});
-    }
+    dispatch(deleteBoard(boardKey));
   };
+
+  const openBoard = (boardItem: Board) => {
+    dispatch(setBoard(boardItem));
+  };
+
   return (
     <>
       <Flex>
@@ -95,7 +87,7 @@ export const BoardForm: React.FC<Props> = ({
               fullWidth
             />
           </CustomInputContainer>
-          <BoardTypeSelector board={board} setBoard={setBoard} />
+          <BoardTypeSelector />
           <CustomInputContainer>
             <Input
               autoComplete="off"
@@ -126,13 +118,8 @@ export const BoardForm: React.FC<Props> = ({
               fullWidth
             />
           </SnapshotInputContainer>
-          <GroupsSelector board={board} setBoard={setBoard} />
-          <ActionButtons
-            board={board}
-            suite={suite}
-            setBoard={setBoard}
-            setSuite={setSuite}
-          />
+          <GroupsSelector />
+          <ActionButtons />
         </FormContainer>
         <BoardsContainer>
           <div>
@@ -143,7 +130,7 @@ export const BoardForm: React.FC<Props> = ({
               {suite?.boards?.map((boardItem: Board) => {
                 return (
                   <AddedBoardItem
-                    onClick={() => setBoard(boardItem)}
+                    onClick={() => openBoard(boardItem)}
                     key={boardItem.key}
                     selected={isEqual(boardItem.key, board?.key)}
                   >
@@ -153,7 +140,9 @@ export const BoardForm: React.FC<Props> = ({
                     </Tooltip>
                     <Button
                       unstyled
-                      onClick={(event) => deleteBoard(event, boardItem.key)}
+                      onClick={(event) =>
+                        deleteBoardFromList(event, boardItem.key)
+                      }
                       icon="Trash"
                     />
                   </AddedBoardItem>
@@ -165,7 +154,7 @@ export const BoardForm: React.FC<Props> = ({
             <Micro>
               To give access to the right groups, make sure groups are set-up
               correctly in Azure AD, see our{' '}
-              {/* TODO(dtc-215) provide with correct link */}
+              {/* TODO(dtc-224) provide with correct link */}
               <StyledLink href="#" isExternal>
                 documentation
               </StyledLink>

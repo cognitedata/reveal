@@ -2,16 +2,15 @@
 import React from 'react';
 import { Select } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
+import { useDispatch, useSelector } from 'react-redux';
+import { suiteState } from 'store/forms/selectors';
+import { setSuite } from 'store/forms/actions';
 import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Suite } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { suiteValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
-
-interface Props {
-  suite: Suite;
-  setSuite: TS_FIX_ME;
-}
+import { RootDispatcher } from 'store/types';
 
 export const options = [
   { value: '#DBE1FE', label: 'Blue' },
@@ -55,13 +54,18 @@ const colourStyles = {
   }),
 };
 
-const ColorSelector: React.FC<Props> = ({ suite, setSuite }: Props) => {
+const ColorSelector: React.FC = () => {
   const { setErrors, validateField } = useForm(suiteValidator);
+  const suite = useSelector(suiteState);
+  const dispatch = useDispatch<RootDispatcher>();
+
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
-    setSuite((prevState: Suite) => ({
-      ...prevState,
-      color: selectedOption.value,
-    }));
+    dispatch(
+      setSuite({
+        ...suite,
+        color: selectedOption.value,
+      })
+    );
     setErrors((prevState: Suite) => ({
       ...prevState,
       color: validateField('color', selectedOption.value),
