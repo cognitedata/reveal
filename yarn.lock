@@ -1196,10 +1196,21 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@0.2.1-rc03", "@cognite/auth-utils@^0.2.1-rc03":
+"@cognite/auth-utils@0.2.1-rc03":
   version "0.2.1-rc03"
   resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.2.1-rc03.tgz#c67e2c63893e4eb55379cf10bd1863e38b81e15c"
   integrity sha512-kisXurfA8BLmfZen9Ww3165AS+lP2FPCX9DtoSVTxGstB6Kgf1bGazKcQHX2vv8jsiySCmPLwuaWaFJNb1SPqg==
+  dependencies:
+    "@azure/msal-browser" "^2.8.0"
+    "@cognite/sdk" "^3.3.0"
+    axios "^0.21.0"
+    jwt-decode "^3.1.2"
+    lodash "^4.17.20"
+
+"@cognite/auth-utils@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.2.1.tgz#edbafcfa2935ba78026d8f10cf46d7d035a7367d"
+  integrity sha512-hxosfaFUoUUY7PphT5GiXWcyCMmLZrsMRXPG5FPphnlb+aewzjxfcrUcocIxEHgyhDW9fkclL316ho7N02al6g==
   dependencies:
     "@azure/msal-browser" "^2.8.0"
     "@cognite/sdk" "^3.3.0"
@@ -1275,15 +1286,15 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-container@^0.5.0-rc7":
-  version "0.5.0-rc7"
-  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-0.5.0-rc7.tgz#58506d6e24fd00db396ed678035c0dfa8ab59173"
-  integrity sha512-cvyzwlVwYsBnzGIV9jzBQTFmyP8gJn2TAMeF+7i1Zr2Q9gwuv1kJcEXk2zrEwEkoU4bdoCz7vqqaj/pzD6/9Xw==
+"@cognite/react-container@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-0.5.0.tgz#d211f5c847374cc6c00a0b3497989be6c7c952a6"
+  integrity sha512-zaG3eEoa5vfhHfoh2UYQew1AyEApDBJGTWlPcM9hFpVyQu0e8SRj+qTF/GmBLZpkVDmJmoGjRAmtTg9AEcFIfA==
   dependencies:
     "@cognite/auth-utils" "0.2.1-rc03"
     "@cognite/react-errors" "^0.0.4"
     "@cognite/react-i18n" "^0.1.2"
-    "@cognite/react-tenant-selector" "0.3.0-rc03"
+    "@cognite/react-tenant-selector" "^0.3.0"
     jwt-decode "^3.0.0"
     react-redux "^7.2.2"
     react-router-dom "^5.2.0"
@@ -1308,28 +1319,16 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.7.0"
 
-"@cognite/react-tenant-selector@0.3.0-rc03":
-  version "0.3.0-rc03"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.3.0-rc03.tgz#670e1d72c4c1f1f041a68c0af1e9a53be9fb7713"
-  integrity sha512-NApEQRi6k6HtQLkp4nTU9AKdbYyU1J5HM3kuKYCGMC/e+RSrxf32fAktNYw1Bd5FbefIwvIetxBrB0G3Xtm1Zg==
+"@cognite/react-tenant-selector@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.3.0.tgz#65f552d09117e0af6ef23bf0725df2b102583551"
+  integrity sha512-NBVc5sApkVamMDx43I/vTmbZMiKOL921CyfHMyKEL3RLZ4gtlnW/Z/InFIty/0Sgpo9ElGc4QJDlzzWYMoPV7A==
   dependencies:
-    "@cognite/auth-utils" "^0.2.1-rc03"
+    "@cognite/auth-utils" "^0.2.1"
     "@cognite/cogs.js" "^2.4.0"
     "@cognite/metrics" "^1.0.0"
     "@cognite/sdk" "^3.3.0"
-    "@sentry/browser" "^5.15.4"
-    axios "^0.19.2"
-    i18next "^19.4.3"
-    i18next-chained-backend "^2.0.1"
-    i18next-http-backend "^1.0.6"
-    i18next-localstorage-backend "^3.1.1"
-    i18next-locize-backend "^4.0.3"
-    i18next-xhr-backend "^3.2.2"
-    lodash "^4.17.15"
-    react "^17.0.1"
-    react-dom "^17.0.1"
     react-helmet "^6.1.0"
-    react-i18next "^11.3.5"
     styled-components "^5.1.0"
 
 "@cognite/sdk-core@^1.0.4":
@@ -1800,7 +1799,7 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@sentry/browser@^5.15.4", "@sentry/browser@^5.27.3":
+"@sentry/browser@^5.27.3":
   version "5.30.0"
   resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-5.30.0.tgz#c28f49d551db3172080caef9f18791a7fd39e3b3"
   integrity sha512-rOb58ZNVJWh1VuMuBG1mL9r54nZqKeaIlwSlvzJfc89vyfd7n6tQ1UXMN383QBz/MS5H5z44Hy5eE+7pCrYAfw==
@@ -3615,13 +3614,6 @@ axe-core@^4.0.2:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.1.1.tgz#70a7855888e287f7add66002211a423937063eaf"
   integrity sha512-5Kgy8Cz6LPC9DJcNb3yjAXTu3XihQgEdnIg50c//zOC/MyLP0Clg+Y8Sh9ZjjnvBrDZU4DgXS9C3T9r4/scGZQ==
-
-axios@^0.19.2:
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
-  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
-  dependencies:
-    follow-redirects "1.5.10"
 
 axios@^0.21.0:
   version "0.21.1"
@@ -5589,13 +5581,6 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.9:
   dependencies:
     ms "2.0.0"
 
-debug@=3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
-  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
-  dependencies:
-    ms "2.0.0"
-
 debug@^3.0.0, debug@^3.1.1, debug@^3.2.5:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
@@ -7044,13 +7029,6 @@ focus-visible@^5.1.0:
   resolved "https://registry.yarnpkg.com/focus-visible/-/focus-visible-5.2.0.tgz#3a9e41fccf587bd25dcc2ef045508284f0a4d6b3"
   integrity sha512-Rwix9pBtC1Nuy5wysTmKy+UjbDJpIfg8eHjw0rjZ1mX4GNLz1Bmd16uDpI3Gk1i70Fgcs8Csg2lPm8HULFg9DQ==
 
-follow-redirects@1.5.10:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
-  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
-  dependencies:
-    debug "=3.1.0"
-
 follow-redirects@^1.0.0, follow-redirects@^1.10.0:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.1.tgz#5f69b813376cee4fd0474a3aba835df04ab763b7"
@@ -7865,7 +7843,7 @@ i18next-chained-backend@^2.0.1:
   dependencies:
     "@babel/runtime" "^7.4.5"
 
-i18next-http-backend@^1.0.21, i18next-http-backend@^1.0.6:
+i18next-http-backend@^1.0.21:
   version "1.0.22"
   resolved "https://registry.yarnpkg.com/i18next-http-backend/-/i18next-http-backend-1.0.22.tgz#30b639d08aac443eb58706bee48573198806b25b"
   integrity sha512-rJXovQirK4kLYD8zF4pRi1CwVGtL2WrHXndU89Ds20CimAc7InYjBHmcJFurWPZlz/zgThRNbMuSDP0GYOISMA==
@@ -7879,7 +7857,7 @@ i18next-localstorage-backend@^3.1.1, i18next-localstorage-backend@^3.1.2:
   dependencies:
     "@babel/runtime" "^7.4.5"
 
-i18next-locize-backend@^4.0.3, i18next-locize-backend@^4.1.1, i18next-locize-backend@^4.1.8:
+i18next-locize-backend@^4.1.1, i18next-locize-backend@^4.1.8:
   version "4.1.9"
   resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-4.1.9.tgz#0abd64caae6e240a4882e342ed83670ca808b078"
   integrity sha512-gqYehO2cLlhJczfLXCZptt55X3/iW7x0s9yipADyt8fFMmgJF4SvvAT7PNBxIf5fOnxhkETxO8eKdd02HDd8/A==
@@ -7900,7 +7878,7 @@ i18next-xhr-backend@^3.2.2:
   dependencies:
     "@babel/runtime" "^7.5.5"
 
-i18next@^19.1.0, i18next@^19.4.3, i18next@^19.6.3, i18next@^19.8.4:
+i18next@^19.1.0, i18next@^19.6.3, i18next@^19.8.4:
   version "19.8.4"
   resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.8.4.tgz#447718f2a26319b8debdbcc6fbc1a9761be7316b"
   integrity sha512-FfVPNWv+felJObeZ6DSXZkj9QM1Ivvh7NcFCgA8XPtJWHz0iXVa9BUy+QY8EPrCLE+vWgDfV/sc96BgXVo6HAA==
@@ -12457,7 +12435,7 @@ react-hotkeys@2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-i18next@^11.3.5, react-i18next@^11.7.0, react-i18next@^11.8.4:
+react-i18next@^11.7.0, react-i18next@^11.8.4:
   version "11.8.5"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.8.5.tgz#a093335822e36252cda6efc0f55facef6253643f"
   integrity sha512-2jY/8NkhNv2KWBnZuhHxTn13aMxAbvhiDUNskm+1xVVnrPId78l8fA7fCyVeO3XU1kptM0t4MtvxV1Nu08cjLw==
@@ -12570,7 +12548,7 @@ react-router@5.2.0:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-scripts@4.0.1:
+react-scripts@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-4.0.1.tgz#34974c0f4cfdf1655906c95df6a04d80db8b88f0"
   integrity sha512-NnniMSC/wjwhcJAyPJCWtxx6CWONqgvGgV9+QXj1bwoW/JI++YF1eEf3Upf/mQ9KmP57IBdjzWs1XvnPq7qMTQ==
