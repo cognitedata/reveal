@@ -6,15 +6,18 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
+    "clean": "rm -rf dist",
     "test": "jest",
-    "build": "microbundle --target=browser",
-    "watch": "yarn build --watch",
-    "lint": "yarn prettier",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
+    "test-watch": "jest --watch",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
     "lint:fix": "yarn prettier --write",
     "prettier": "prettier -l 'src/**/*'"
   },
@@ -24,8 +27,5 @@
   },
   "author": "",
   "license": "UNLICENSED",
-  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/z-index",
-  "devDependencies": {
-    "microbundle": "^0.12.2"
-  }
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/z-index"
 }

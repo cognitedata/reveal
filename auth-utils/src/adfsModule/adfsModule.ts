@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable camelcase */
 /* eslint-disable no-console */
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
 import { isAuthFlow, retrieveAuthResult, saveAuthResult } from '../storage';
-import { AuthResult } from '../storage';
+import type { AuthResult } from '../storage';
 import config from '../config';
 
 const { cluster, oidc } = config;
@@ -96,11 +95,11 @@ export const initAuth = () => {
   }
 };
 
-export const isSignedIn = () => {
-  return state && state.idToken && state.idToken.length > 0;
+export const isSignedIn = (): boolean => {
+  return !!(state && state.idToken && state.idToken.length > 0);
 };
 
-export const signInWithADFSRedirect = async () => {
+export const signInWithADFSRedirect = async (): Promise<void> => {
   try {
     const url = `${authConfig.authority}?client_id=${
       authConfig.client_id
@@ -144,6 +143,7 @@ export const listProjects = async () => {
     const projects = await listClusterProjects(state.accessToken, cluster);
     return projects;
   }
+  return [];
 };
 
 export const clearState = () => {
@@ -153,6 +153,7 @@ export const clearState = () => {
 export const getAccessToken = () => {
   return state && state.accessToken;
 };
+
 export const getIdToken = () => {
   return state && state.idToken;
 };

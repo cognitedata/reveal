@@ -1,5 +1,6 @@
 import { Map } from 'immutable';
 import { CogniteClient, DatapointsMultiQueryBase } from '@cognite/sdk';
+// eslint-disable-next-line @cognite/no-sdk-submodule-imports
 import { TimeSeries } from '@cognite/sdk/dist/src/resources/classes/timeSeries';
 
 import {
@@ -13,7 +14,7 @@ import {
   OnFetchTimeseries,
 } from './types';
 
-let cogniteClient: CogniteClient | undefined = undefined;
+let cogniteClient: CogniteClient | undefined;
 
 function isAggregateDatapoint(
   datapoint: Datapoint
@@ -67,16 +68,21 @@ export const yAccessor = (datapoint: Datapoint): number => {
   // We can get here if we ask for a stepInterpolation
   // and there's no points in the range [0, t1]
   // where the domain asked for is [t0, t1]
+  // eslint-disable-next-line no-console
   console.warn('No obvious y accessor for', datapoint);
   return 0;
 };
 
 export const y0Accessor = (data: Datapoint) =>
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - "min" is optional, but that's the point of this NaN check.
+  // eslint-disable-next-line no-restricted-globals
   isNaN(+data.min) ? yAccessor(data) : data.min;
 
 export const y1Accessor = (data: Datapoint) =>
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - "min" is optional, but that's the point of this NaN check.
+  // eslint-disable-next-line no-restricted-globals
   isNaN(+data.max) ? yAccessor(data) : data.max;
 
 const calculateGranularity = (domain: number[], pps: number) => {
@@ -221,7 +227,7 @@ export const createLoader = (opts: Options = {}) => async ({
   pointsPerSeries,
   oldSeries,
   reason,
-}: // TODO: Pull this type definition from Griff
+}: // -TODO: Pull this type definition from Griff
 {
   id: TimeseriesId;
   timeDomain: number[];
@@ -231,6 +237,7 @@ export const createLoader = (opts: Options = {}) => async ({
   xDomain: number[];
   xSubDomain: number[];
   pointsPerSeries: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   oldSeries: any;
   reason: string;
 }) => {
@@ -248,7 +255,7 @@ export const createLoader = (opts: Options = {}) => async ({
     ((externalId: string) => getSdk().timeseries.retrieve([{ externalId }]));
   const onFetchDatapoints =
     options.onFetchDatapoints ||
-    ((externalId: string, params: DatapointsMultiQueryBase) =>
+    ((_externalId: string, params: DatapointsMultiQueryBase) =>
       getSdk().datapoints.retrieve({
         items: [{ externalId: String(id) }],
         ...params,
@@ -306,8 +313,7 @@ export const createLoader = (opts: Options = {}) => async ({
   }
 
   return getTimeSeries(id, onFetchTimeseries)
-    .then((timeseries: TimeSeries) => {
-      const { isStep: step } = timeseries;
+    .then(({ isStep: step }: TimeSeries) => {
       return (
         getDataPoints({
           id,
@@ -394,7 +400,8 @@ export const createLoader = (opts: Options = {}) => async ({
                     ySubDomain,
                   };
                   // if only one datapoint
-                } else if (newSeries.data.length === 1) {
+                }
+                if (newSeries.data.length === 1) {
                   const datapoint = yAccessor(newSeries.data[0]);
                   return {
                     ...newSeries,
@@ -402,13 +409,12 @@ export const createLoader = (opts: Options = {}) => async ({
                     ySubDomain: [datapoint - 0.25, datapoint + 0.25],
                   };
                   // if no datapoints, leave the ySubDomain the same as before
-                } else {
-                  return {
-                    ...newSeries,
-                    data,
-                    ySubDomain: oldSeries.ySubDomain,
-                  };
                 }
+                return {
+                  ...newSeries,
+                  data,
+                  ySubDomain: oldSeries.ySubDomain,
+                };
               }
               return {
                 ...newSeries,

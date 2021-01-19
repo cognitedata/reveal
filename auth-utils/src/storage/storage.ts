@@ -2,9 +2,11 @@ import noop from 'lodash/noop';
 
 import { AuthFlow, AuthResult, AuthResults } from './types';
 
-const STORAGE_VERSION = 1;
-const getKey = () => `cognite__auth__v${STORAGE_VERSION}__storage`;
+const STORAGE_VERSION = 3;
+// export for testing:
+export const getKey = () => `cognite__auth__v${STORAGE_VERSION}__storage`;
 const NO_PROJECT_KEY = '__noproject__';
+
 /**
  * Define a no-op localStorage implementation to use as a fallback when
  * localStorage can't be used (eg, private browsing).
@@ -34,6 +36,7 @@ const saveToLocalStorage = <T>(key: string, payload: T) => {
   try {
     SAFE_LOCAL_STORAGE.setItem(key, JSON.stringify(payload));
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(e);
   }
 };
@@ -44,11 +47,17 @@ const getFromLocalStorage = <T>(key: string) => {
     if (!item) return undefined;
     return JSON.parse(item) as T;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(e);
   }
+
+  return undefined;
 };
 
-export const saveAuthResult = (authresult: AuthResult, optTenant?: string) => {
+export const saveAuthResult = (
+  authresult: AuthResult,
+  optTenant?: string
+): void => {
   const tenant = getTenant();
   const data = getFromLocalStorage<AuthResults>(getKey()) || {};
   saveToLocalStorage(getKey(), { ...data, [optTenant || tenant]: authresult });
@@ -60,21 +69,21 @@ export const retrieveAuthResult = (): AuthResult | undefined => {
   return data[tenant];
 };
 
-export const clearByProject = (project: string) => {
+export const clearByProject = (project: string): void => {
   const data = getFromLocalStorage<AuthResults>(getKey()) || {};
   delete data[project];
   saveToLocalStorage(getKey(), data);
 };
 
-export const clearByNoProject = () => {
+export const clearByNoProject = (): void => {
   const project = NO_PROJECT_KEY;
   clearByProject(project);
 };
 
-export const initialiseOnRedirectFlow = (authFlow: AuthFlow) => {
+export const initialiseOnRedirectFlow = (authFlow: AuthFlow): void => {
   const tenant = getTenant();
-  console.log(tenant);
   if (tenant !== NO_PROJECT_KEY) {
+    // eslint-disable-next-line no-console
     console.warn(
       'Trying to initialize redirect when already a project is selected'
     );
@@ -83,13 +92,11 @@ export const initialiseOnRedirectFlow = (authFlow: AuthFlow) => {
   saveAuthResult({ authFlow });
 };
 
-export const isAuthFlow = (authFlow: AuthFlow) => {
+export const isAuthFlow = (authFlow: AuthFlow): boolean => {
   const res = retrieveAuthResult();
-  return res && res.authFlow === authFlow;
+  return !!(res && res.authFlow === authFlow);
 };
 
-export const isNoAuthFlow = () => {
-  const res = retrieveAuthResult();
-  if (!res) return true;
-  return false;
+export const isNoAuthFlow = (): boolean => {
+  return !retrieveAuthResult();
 };

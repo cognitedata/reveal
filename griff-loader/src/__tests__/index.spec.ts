@@ -1,4 +1,4 @@
-import { mergeInsert, AccessorFunc } from 'index';
+import { mergeInsert, AccessorFunc } from '../index';
 
 import { Datapoint, StringDatapoint } from '../types';
 

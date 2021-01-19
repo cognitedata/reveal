@@ -1,0 +1,13 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+      "declaration": true,
+      "declarationDir": "dist",
+      "module": "es2015",
+      "target": "es5",
+      "baseUrl": "src",
+      "outDir": "dist",
+      "moduleResolution": "node"
+    }
+  }
+  

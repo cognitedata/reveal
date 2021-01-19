@@ -1,6 +1,6 @@
-/* eslint-disable no-console */
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import axios from 'axios';
+import isFunction from 'lodash/isFunction';
 import { Configuration } from '@azure/msal-browser';
 
 import {
@@ -11,7 +11,7 @@ import {
   retrieveAuthResult,
   saveAuthResult,
 } from '../storage';
-import { AuthFlow, AuthResult } from '../storage';
+import type { AuthFlow, AuthResult } from '../storage';
 import AzureAD from '../aad/aad';
 import {
   getUserInfo,
@@ -19,13 +19,22 @@ import {
   signInWithADFSRedirect,
   userInfoMapper,
 } from '../adfsModule';
-import config from '../config';
 
-const { cluster } = config;
-console.log('[CogniteAuth] cluster', cluster);
+const log = (message: string, data: unknown = '') => {
+  const ENV = process.env.REACT_APP_ENV || process.env.NODE_ENV;
+
+  const isEnvironment = (environement: string) => ENV === environement;
+
+  if (isEnvironment('development')) {
+    // eslint-disable-next-line no-console
+    console.log('[CogniteAuth]', message, data);
+  }
+};
 
 class CogniteAuth {
   state: {
+    error: boolean;
+    errorMessage?: string;
     initialized: boolean;
     initializing: boolean;
     authenticated: boolean;
@@ -37,6 +46,7 @@ class CogniteAuth {
     project?: string;
     authResult?: AuthResult;
   } = {
+    error: false,
     initialized: false,
     initializing: true,
     authenticated: false,
@@ -48,41 +58,71 @@ class CogniteAuth {
     [appName: string]: (authState: AuthenticatedUser) => void;
   } = {};
 
+  private cluster = '';
+
+  private msalConfig?: Configuration;
+
+  public initializingPromise?: Promise<void>;
+
+  public initializingComplete?: () => void;
+
+  public startInitializing = (): Promise<void> => {
+    this.initializingPromise = new Promise((resolve) => {
+      this.initializingComplete = () => {
+        this.state.initializing = false;
+        resolve();
+      };
+    });
+
+    return this.initializingPromise;
+  };
+
   constructor(
     private client: CogniteClient,
-    private msalConfig: Configuration,
-    private cluster?: string
+    private options: {
+      cluster: string;
+      msalConfig?: Configuration;
+    }
   ) {
-    if (!cluster) this.cluster = 'greenfield';
-    this.init(msalConfig);
+    this.cluster = this.options.cluster;
+    this.msalConfig = this.options.msalConfig;
+
+    this.startInitializing();
+
+    // if we just want Cognite Auth
+    // then msalConfig will not exist
+    if (this.msalConfig) {
+      this.init(this.msalConfig);
+    }
   }
 
   private async init(msalConfig: Configuration) {
-    console.log('[COGNITEAUTH]', 'init');
+    log('Init', { cluster: this.getCluster() });
     await this.initAuth(msalConfig);
     if (this.isSignedIn()) {
-      console.log('[COGNITEAUTH]', 'is Signed in');
+      log('is signed in');
       this.state.accessToken =
         this.state.authResult && this.state.authResult.accessToken;
       const projects = await this.listProjects();
       this.state.availableProjects = projects;
       this.state.authenticated = true;
       this.state.projectId = -1;
-      this.state.idToken =
-        this.state.authResult && this.state.authResult.idToken;
+      if (this.state.authResult) {
+        this.state.idToken = this.state.authResult.idToken;
+      }
       this.state.username = userInfoMapper(
         getUserInfo(this.state.idToken)
       ).username;
-      console.log('[COGNITEAUTH]', this.state.availableProjects);
+      log('Available Projects:', this.state.availableProjects);
       if (
         this.state.availableProjects &&
         this.state.availableProjects.length === 1
       ) {
-        console.log('[COGNITEAUTH]', 'Auto selecting project');
         const selectedProject = this.state.availableProjects[0];
+        log(`Auto selecting only project: ${selectedProject}`);
         this.state.project = selectedProject && selectedProject.urlName;
         if (this.state.project) {
-          console.log('[COGNITEAUTH]', 'saving the authresult');
+          log('Saving the authresult');
           const authRes = retrieveAuthResult();
           if (authRes && authRes.authFlow) {
             saveAuthResult(
@@ -96,6 +136,8 @@ class CogniteAuth {
             );
             clearByNoProject();
           }
+
+          // this is a fusion only thing i think:
           if (window.location.pathname === '/') {
             // redirect only if we are on the root path
             window.location.href = `/${
@@ -105,31 +147,34 @@ class CogniteAuth {
         }
       }
       this.publishAuthState();
-      this.state.initializing = false;
     } else if (
       isAuthFlow('ADFS') ||
       isAuthFlow('AZURE_AD_MULTI_TENANCY') ||
       isNoAuthFlow()
     ) {
       if (window.location.pathname !== '/') {
-        console.log(
-          '[CogniteAuth]',
-          'not signed in redirecting back to login page'
-        );
+        log('not signed in redirecting back to login page');
         // eslint-disable-next-line no-unused-expressions
         window.location.href = '/';
       }
-      console.log('[CogniteAuth] Not signed in, but on already on login page');
+      log('Not signed in, but on already on login page');
     } else {
-      console.log('[CogniteAuth]', 'is not signed in');
+      // Notes:
+      // this does not seem to check for an existing token in storage on load
+      // i am not sure why we don't do this here
+      //
+      log('is not signed in');
     }
-    this.state.initializing = false;
+
+    if (this.initializingComplete) {
+      this.initializingComplete();
+    }
   }
 
   private async initAuth(msalConfig: Configuration) {
     const authCache = retrieveAuthResult();
     if (authCache && isAuthFlow('ADFS')) {
-      console.log('Initialise ADFS');
+      log('Initialise ADFS');
       const authResult = processSigninResponse();
       this.cluster = 'sandfield';
       if (
@@ -139,36 +184,26 @@ class CogniteAuth {
       ) {
         this.state.authResult = authResult;
       }
-      return;
     } else if (authCache && isAuthFlow('AZURE_AD_MULTI_TENANCY')) {
-      console.log('Initialise AZURE_AD_MULTI_TENANCY');
+      log('Initialise AZURE_AD_MULTI_TENANCY', this.cluster);
       this.azureAdClient = new AzureAD(msalConfig, this.cluster);
+      log('Client setup');
       const account = await this.azureAdClient.loadAuthModule();
-      console.log('[COGNITEAUTH]', 'account', account);
+      log('Account:', account);
       if (!account) {
+        this.state.error = true;
         return;
       }
       const authResult = await this.azureAdClient.getProfileTokenRedirect();
-      console.log('[COGNITEAUTH]', 'authResult', authResult);
+      log('First authResult is back:', authResult);
       const cdfAccessToken = await this.azureAdClient.getCDFToken();
-      console.log('[COGNITEAUTH]', 'cdfAccessToken', cdfAccessToken);
       if (authResult) {
-        console.log(authResult);
         this.state.authResult = {
           authFlow: 'AZURE_AD_MULTI_TENANCY',
           accessToken: cdfAccessToken,
           idToken: authResult.idToken,
         };
-        return;
       }
-    }
-  }
-
-  private initialiseClient() {
-    if (isAuthFlow('ADFS')) {
-    } else if (isAuthFlow('AZURE_AD_MULTI_TENANCY')) {
-    } else {
-      console.error('Invalid oauth setup');
     }
   }
 
@@ -184,7 +219,7 @@ class CogniteAuth {
     };
   }
 
-  public selectProject(project: string) {
+  public selectProject(project: string): void {
     if (this.state.authResult) {
       saveAuthResult(this.state.authResult, project);
       clearByNoProject();
@@ -192,7 +227,7 @@ class CogniteAuth {
   }
 
   private publishAuthState() {
-    console.log('[CogniteAuth]', 'publishing authState', this.subscribers);
+    log('publishing authState', this.subscribers);
     Object.keys(this.subscribers).forEach((key) =>
       this.subscribers[key](this.getAuthState())
     );
@@ -206,17 +241,21 @@ class CogniteAuth {
     );
   }
 
-  private getAccessToken() {
+  public getAccessToken(): string | undefined {
     return this.state.authResult && this.state.authResult.accessToken;
   }
-  private getCluster() {
+
+  public getCluster(): string {
     return this.cluster || 'api';
   }
 
+  // this is called before we have selected a project to use
+  // that is why we are NOT using the cognite SDK client for this request(?)
   private async listProjects(): Promise<
     { urlName: string; cluster: string }[]
   > {
     try {
+      // --@todo: change this to use fetch.
       const res = await axios.get<{ items: { urlName: string }[] }>(
         `https://${this.getCluster()}.cognitedata.com/api/v1/projects`,
         {
@@ -232,16 +271,17 @@ class CogniteAuth {
     }
   }
 
-  public getClient() {
+  public getClient(): CogniteClient {
     return this.client;
   }
 
   public onAuthChanged(
     key: string,
     callback: (authenticatedUser: AuthenticatedUser) => void
-  ) {
+  ): () => void {
     this.subscribers[key] = callback;
-    if (this.state.authenticated) {
+
+    if (this.state.authenticated && !this.state.initializing) {
       callback(this.getAuthState());
     }
 
@@ -250,62 +290,95 @@ class CogniteAuth {
     };
   }
 
-  public async login(authFlow: AuthFlow, project?: string, cluster?: string) {
+  public async login(
+    authFlow: AuthFlow,
+    { project, cluster }: { project?: string; cluster: string } = {
+      project: '',
+      cluster: '',
+    }
+  ): Promise<void> {
     saveAuthResult({ authFlow }, project);
     if (authFlow === 'ADFS') {
       this.cluster = 'sandfield';
+      log('Starting ADFS for cluster:', this.getCluster());
       await signInWithADFSRedirect();
     }
     if (authFlow === 'AZURE_AD_MULTI_TENANCY') {
-      console.log('Not implemented yet');
-      this.cluster = cluster;
-      new AzureAD(this.msalConfig, this.cluster).login('loginRedirect');
+      if (cluster) {
+        this.cluster = cluster;
+      }
+      if (this.msalConfig) {
+        log(
+          'Starting AzureAD AZURE_AD_MULTI_TENANCY for cluster:',
+          this.getCluster()
+        );
+        new AzureAD(this.msalConfig, this.getCluster()).login('loginRedirect');
+      }
     }
 
     if (authFlow === 'COGNITE_AUTH') {
-      console.log('No special login except storing the given authFlow');
+      log('No special login except storing the given authFlow');
     }
   }
 
-  public logout() {
-    const project = this.state.project;
+  public logout(): void {
+    const { project } = this.state;
     if (project) {
       clearByProject(project);
     }
     window.location.href = '/';
   }
 
-  public async loginAndAuthIfNeeded(newTenant: string, env?: string) {
-    console.log('[CogniteAuth] loginAndAuthIfNeeded');
+  public async loginAndAuthIfNeeded(
+    newTenant: string,
+    cluster = ''
+  ): Promise<AuthenticatedUser> {
+    if (cluster) {
+      this.cluster = cluster;
+    }
+
+    log('loginAndAuthIfNeeded');
     if (!newTenant) {
       throw new Error('Supply tenant');
     }
     if (this.state.project && newTenant !== this.state.project) {
       // eslint-disable-next-line no-console
       console.warn(
-        'You are changing the tenant,this might have unseen consequences!'
+        'You are changing the tenant, this might have unseen consequences!'
       );
     }
 
-    this.client.setBaseUrl(`https://${env || 'api'}.cognitedata.com`);
+    this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
 
     if (isAuthFlow('COGNITE_AUTH')) {
-      console.log('[CogniteAuth] authflow COGNITE_AUTH');
+      log('authflow COGNITE_AUTH');
       this.state.project = newTenant;
       this.state.username = undefined;
 
       if (!this.state.initialized) {
-        this.client.loginWithOAuth({
+        this.getClient().loginWithOAuth({
           project: newTenant,
+          onTokens: (tokens) => {
+            log('COGNITE_AUTH tokens', tokens);
+            saveAuthResult(
+              {
+                authFlow: 'COGNITE_AUTH',
+                accessToken: tokens.accessToken,
+                idToken: tokens.idToken,
+                expTime: 0,
+              },
+              this.state.project
+            );
+          },
         });
         this.state.initialized = true;
       }
 
-      let status = await this.client.login.status();
+      let status = await this.getClient().login.status();
       if (!status || status.project !== newTenant) {
-        this.state.authenticated = await this.client.authenticate();
+        this.state.authenticated = await this.getClient().authenticate();
         if (this.state.authenticated) {
-          status = await this.client.login.status();
+          status = await this.getClient().login.status();
           if (status) {
             this.state.username = status.user;
             this.state.project = status.project;
@@ -319,28 +392,30 @@ class CogniteAuth {
         this.state.projectId = status && status.projectId;
       }
     } else if (isAuthFlow('ADFS')) {
-      console.log('[CogniteAuth] authflow ADFS');
+      log('authflow ADFS');
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      this.client.http.setBearerToken(this.state.accessToken);
+      this.getClient().http.setBearerToken(this.state.accessToken);
 
       if (!this.state.initialized && this.state.idToken) {
-        this.client.loginWithOAuth({
+        this.getClient().loginWithOAuth({
           project: newTenant,
           accessToken: this.state.accessToken,
-          onTokens: (tokens) => {
-            console.log(tokens);
-          },
+          // onTokens: (tokens) => {
+          //   log('tokens', tokens);
+          // },
           onAuthenticate: async (login) => {
-            await this.login('ADFS');
-            login.skip();
+            if (isFunction(login)) {
+              await login('ADFS');
+              login.skip();
+            }
           },
         });
         this.state.initialized = true;
-        const groups = await this.client.groups.list();
-        console.log('groups', groups);
-        const projectResponse = await this.client.projects.retrieve(newTenant);
+        const projectResponse = await this.getClient().projects.retrieve(
+          newTenant
+        );
 
         this.state.project = projectResponse.urlName;
         this.state.projectId = -1;
@@ -350,28 +425,33 @@ class CogniteAuth {
         this.publishAuthState();
       }
     } else if (isAuthFlow('AZURE_AD_MULTI_TENANCY')) {
-      console.log('[CogniteAuth] authflow AZURE_AD_MULTI_TENANCY');
+      log('authflow AZURE_AD_MULTI_TENANCY');
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      this.client.http.setBearerToken(this.state.accessToken);
+      this.getClient().http.setBearerToken(this.state.accessToken);
 
       if (!this.state.initialized && this.state.idToken) {
-        this.client.loginWithOAuth({
+        log('starting oauth login for sdk client');
+        this.getClient().loginWithOAuth({
           project: newTenant,
           accessToken: this.state.accessToken,
-          onTokens: (tokens) => {
-            console.log(tokens);
-          },
+          // onTokens: (tokens) => {
+          //   log('tokens', tokens);
+          // },
           onAuthenticate: async (login) => {
-            await this.login('AZURE_AD_MULTI_TENANCY', undefined, env);
-            login.skip();
+            if (isFunction(login)) {
+              await login('AZURE_AD_MULTI_TENANCY', {
+                cluster: this.getCluster(),
+              });
+              login.skip();
+            }
           },
         });
         this.state.initialized = true;
-        const groups = await this.client.groups.list();
-        console.log('groups', groups);
-        const projectResponse = await this.client.projects.retrieve(newTenant);
+        const projectResponse = await this.getClient().projects.retrieve(
+          newTenant
+        );
 
         this.state.project = projectResponse.urlName;
         this.state.projectId = -1;
@@ -379,10 +459,10 @@ class CogniteAuth {
           getUserInfo(this.state.idToken)
         ).username;
         this.publishAuthState();
+        log('oauth login complete');
       }
     } else {
-      console.log('[CogniteAuth] NO AUTHFLOW');
-      // eslint-disable-next-line no-unused-expressions
+      log('NO AUTHFLOW');
       window.location.href = '/';
     }
 

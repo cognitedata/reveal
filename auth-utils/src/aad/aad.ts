@@ -11,37 +11,37 @@ import {
   PopupRequest,
 } from '@azure/msal-browser';
 
+const log = (message: string, data: unknown = '') => {
+  const ENV = process.env.REACT_APP_ENV || process.env.NODE_ENV;
+
+  const isEnvironment = (environement: string) => ENV === environement;
+
+  if (isEnvironment('development')) {
+    // eslint-disable-next-line no-console
+    console.log('[CogniteAuth-AAD]', message, data);
+  }
+};
+
 class AzureAD {
   private myMSALObj: PublicClientApplication; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/classes/_src_app_publicclientapplication_.publicclientapplication.html
 
   private account!: AccountInfo; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-common/modules/_src_account_accountinfo_.html
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-common/modules/_src_account_accountinfo_.html
 
   private loginRedirectRequest!: RedirectRequest; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_redirectrequest_.html
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_redirectrequest_.html
-
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_redirectrequest_.html
 
   private loginRequest!: PopupRequest; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_popuprequest_.html
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_popuprequest_.html
-
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_popuprequest_.html
 
   private profileRedirectRequest!: RedirectRequest;
 
   private profileRequest!: PopupRequest;
 
   private silentProfileRequest!: SilentRequest; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_silentrequest_.html
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_silentrequest_.html
-
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_silentrequest_.html
 
   private silentCDFTokenRequest!: SilentRequest; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_silentrequest_.html
-  // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_silentrequest_.html
 
-  private userScopes = ['user.read'];
+  private userScopes = ['User.Read'];
 
-  constructor(private msalConfig: Configuration, private cluster?: string) {
+  constructor(private msalConfig: Configuration, private cluster: string) {
     this.msalConfig.cache = {
       cacheLocation: 'localStorage', // This configures where your cache will be stored
       storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
@@ -54,15 +54,19 @@ class AzureAD {
           }
           switch (level) {
             case LogLevel.Error:
+              // eslint-disable-next-line no-console
               console.error(message);
               return;
             case LogLevel.Info:
+              // eslint-disable-next-line no-console
               console.info(message);
               return;
             case LogLevel.Verbose:
+              // eslint-disable-next-line no-console
               console.debug(message);
               return;
             case LogLevel.Warning:
+              // eslint-disable-next-line no-console
               console.warn(message);
           }
         },
@@ -71,15 +75,15 @@ class AzureAD {
 
     this.myMSALObj = new PublicClientApplication(this.msalConfig);
     // this.account = undefined;
-    this.setRequestObjects();
+    this.setCluster(cluster);
   }
 
-  public setCluster(clusterName: string) {
+  private setCluster(clusterName: string): void {
     this.cluster = clusterName;
     this.setRequestObjects();
   }
 
-  public getCluster() {
+  public getCluster(): string {
     return this.cluster;
   }
 
@@ -113,16 +117,16 @@ class AzureAD {
 
     this.silentProfileRequest = {
       scopes: this.userScopes,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      //@ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       account: null,
       forceRefresh: true,
     };
 
     this.silentCDFTokenRequest = {
       scopes: this.getCDFScopes(),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      //@ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       account: null,
       forceRefresh: true,
     };
@@ -137,15 +141,15 @@ class AzureAD {
   getAccount(): AccountInfo | null {
     // need to call getAccount here?
     const currentAccounts = this.myMSALObj.getAllAccounts();
-    console.log('[CogniteAuth] currentAccounts', currentAccounts);
+    log('currentAccounts', currentAccounts);
     if (currentAccounts === null) {
-      console.log('No accounts detected');
+      log('No accounts detected');
       return null;
     }
 
     if (currentAccounts.length > 1) {
       // Add choose account code here
-      console.log(
+      log(
         'Multiple accounts detected, need to add choose account code.',
         currentAccounts
       );
@@ -160,7 +164,9 @@ class AzureAD {
   /**
    * Gets the token to read user profile data from MS Graph silently, or falls back to interactive redirect.
    */
-  async getProfileTokenRedirect() {
+  async getProfileTokenRedirect(): Promise<
+    void | AuthenticationResult | undefined
+  > {
     this.silentProfileRequest.account = this.account;
     return this.getTokenRedirect(
       this.silentProfileRequest,
@@ -173,15 +179,12 @@ class AzureAD {
    *
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirect-apis
    */
-  async loadAuthModule() {
+  async loadAuthModule(): Promise<AccountInfo | boolean> {
     try {
-      console.log('Checking if we are on a redirect', window.location.href);
+      log('Checking if we are on a redirect', window.location.href);
       const res = await this.myMSALObj.handleRedirectPromise();
       if (res) {
-        console.log(
-          'user is being redirected from azure. Selecting account',
-          res
-        );
+        log('user is being redirected from azure. Selecting account', res);
         const { account } = res;
         if (account) {
           this.account = account;
@@ -190,20 +193,19 @@ class AzureAD {
         return this.account;
       }
 
-      console.log('No authentication flow detected, attempt to find accounts');
+      log('No authentication flow detected, attempt to find accounts');
       const account = this.getAccount();
       if (account) {
-        console.log('Account found');
+        log('Account found');
         this.account = account;
         return this.account;
       }
-      console.log(
-        'The user is not logged in and is not coming from a redirect'
-      );
-      return undefined;
+      log('The user is not logged in and is not coming from a redirect');
+      return false;
     } catch (e) {
-      console.error(e);
-      return undefined;
+      // eslint-disable-next-line no-console
+      console.error('Error in loadAuthModule', e);
+      return false;
     }
   }
 
@@ -211,7 +213,7 @@ class AzureAD {
    * Handles the response from a popup or redirect. If response is null, will check if we have any accounts and attempt to sign in.
    * @param response
    */
-  handleResponse(response: AuthenticationResult) {
+  handleResponse(response: AuthenticationResult): AccountInfo | boolean {
     if (response !== null && response.account) {
       this.account = response.account;
     } else {
@@ -238,7 +240,8 @@ class AzureAD {
         .then((resp: AuthenticationResult) => {
           this.handleResponse(resp);
         })
-        .catch(console.error);
+        // eslint-disable-next-line no-console
+        .catch((error) => console.error(error));
     } else if (signInType === 'loginRedirect') {
       this.myMSALObj.loginRedirect(this.loginRedirectRequest);
     }
@@ -261,7 +264,7 @@ class AzureAD {
       const response: AuthenticationResult = await this.myMSALObj.acquireTokenSilent(
         this.silentCDFTokenRequest
       );
-      console.log('CDF-token request');
+      log('CDF-token request');
       return response.accessToken;
     }
     return undefined;
@@ -273,20 +276,21 @@ class AzureAD {
   private async getTokenRedirect(
     silentRequest: SilentRequest,
     interactiveRequest: RedirectRequest
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<AuthenticationResult | undefined | void> {
     try {
       const response = await this.myMSALObj.acquireTokenSilent(silentRequest);
-      console.log('getTokenRedirect', response);
+      log('getTokenRedirect', response);
       return response;
     } catch (e) {
-      console.log('silent token acquisition fails.');
+      log('silent token acquisition fails.');
       if (e instanceof InteractionRequiredAuthError) {
-        console.log('acquiring token using redirect');
+        log('acquiring token using redirect');
         return this.myMSALObj
           .acquireTokenRedirect(interactiveRequest)
           .catch(() => undefined);
       }
+
+      // eslint-disable-next-line no-console
       console.error(e);
       return undefined;
     }

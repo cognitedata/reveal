@@ -2,18 +2,22 @@
   "name": "@cognite/griff-loader",
   "version": "1.1.1",
   "description": "Griff loader towards the Cognite API",
-  "main": "dist/griff-loader.js",
-  "module": "dist/griff-loader.esm.js",
-  "browser": "dist/griff-loader.js",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist/ build/ ; microbundle build --target=browser",
-    "watch": "microbundle watch --target=browser",
+    "clean": "rm -rf dist",
     "test": "jest",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
     "test-watch": "jest --watch",
-    "lint": "yarn prettier",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
+    "lint:fix": "yarn prettier --write",
     "prettier": "prettier -l 'src/**/*'"
   },
   "repository": {
@@ -30,15 +34,15 @@
   ],
   "author": "Cognite AS",
   "license": "Apache-2.0",
-  "peerDependencies": {
-    "@cognite/sdk": "^2.2.2"
+  "dependencies": {
+    "tslib": "^1.10.0",
+    "immutable": "^4.0.0-rc.12"
   },
   "devDependencies": {
     "@cognite/sdk": "^2.2.2",
-    "@types/node": "^14.0.13",
-    "microbundle": "^0.12.2"
+    "@types/node": "^14.0.13"
   },
-  "dependencies": {
-    "immutable": "^4.0.0-rc.12"
+  "peerDependencies": {
+    "@cognite/sdk": "^2.2.2"
   }
 }

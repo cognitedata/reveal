@@ -1,28 +1,34 @@
+/* eslint-disable no-underscore-dangle */
 import {
   clearByProject,
   initialiseOnRedirectFlow,
   retrieveAuthResult,
   saveAuthResult,
+  getKey,
 } from './storage';
 import { AuthResult } from './types';
+
+const key = getKey();
 
 describe('Storage', () => {
   beforeEach(() => {
     localStorage.clear();
   });
+
   function mockLocation(pathname: string) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    //@ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     delete window.location;
     window.location = { pathname } as Location;
   }
+
   it('Make sure localstorage mock work', () => {
     localStorage.setItem('test', 'test');
-    expect(localStorage.__STORE__['test']).toBe('test');
+    expect(localStorage.__STORE__.test).toBe('test');
   });
 
   it('Store an auth result when accessing route directly', () => {
-    mockLocation('/daitya');
+    mockLocation('/test');
     const saveData: AuthResult = {
       authFlow: 'ADFS',
       accessToken: '123',
@@ -30,12 +36,10 @@ describe('Storage', () => {
       expTime: 0,
     };
     saveAuthResult(saveData);
-    const expectation = { daitya: saveData };
-    expect(localStorage.__STORE__['cognite__auth__v1__storage']).toBe(
-      JSON.stringify(expectation)
-    );
+    const expectation = { test: saveData };
+    expect(localStorage.__STORE__[key]).toBe(JSON.stringify(expectation));
 
-    expect(retrieveAuthResult()).toEqual(expectation.daitya);
+    expect(retrieveAuthResult()).toEqual(expectation.test);
   });
 
   it('Store an auth result on root', () => {
@@ -48,9 +52,7 @@ describe('Storage', () => {
     };
     saveAuthResult(saveData);
     const expectation = { __noproject__: saveData };
-    expect(localStorage.__STORE__['cognite__auth__v1__storage']).toBe(
-      JSON.stringify(expectation)
-    );
+    expect(localStorage.__STORE__[key]).toBe(JSON.stringify(expectation));
 
     expect(retrieveAuthResult()).toEqual(expectation.__noproject__);
   });
@@ -65,9 +67,7 @@ describe('Storage', () => {
     };
     saveAuthResult(saveData);
     const expectation = { __noproject__: saveData };
-    expect(localStorage.__STORE__['cognite__auth__v1__storage']).toBe(
-      JSON.stringify(expectation)
-    );
+    expect(localStorage.__STORE__[key]).toBe(JSON.stringify(expectation));
 
     expect(retrieveAuthResult()).toEqual(expectation.__noproject__);
   });
@@ -82,9 +82,7 @@ describe('Storage', () => {
     };
     saveAuthResult(saveData);
     const expectation = { someproject: saveData };
-    expect(localStorage.__STORE__['cognite__auth__v1__storage']).toBe(
-      JSON.stringify(expectation)
-    );
+    expect(localStorage.__STORE__[key]).toBe(JSON.stringify(expectation));
 
     clearByProject('someproject');
     expect(retrieveAuthResult()).toEqual(undefined);

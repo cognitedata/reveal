@@ -1,21 +1,22 @@
 {
   "name": "@cognite/auth-utils",
-  "version": "0.1.0",
+  "version": "0.2.1-rc03",
   "description": "The auth layer of all cognite react apps",
   "source": "src/index.ts",
-  "main": "dist/auth-js.js",
-  "umd:main": "dist/auth-js.umd.js",
-  "module": "dist/auth-js.m.js",
-  "esmodule": "dist/auth-js.modern.js",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
+    "clean": "rm -rf dist",
     "test": "jest",
-    "build": "microbundle --target=browser",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
     "watch": "yarn build --watch",
-    "lint": "yarn prettier",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
     "lint:fix": "yarn prettier --write",
     "prettier": "prettier -l 'src/**/*'"
   },
@@ -36,7 +37,6 @@
   "devDependencies": {
     "@babel/parser": "^7.9.4",
     "@types/lodash": "^4.14.165",
-    "jest-localstorage-mock": "^2.4.3",
-    "microbundle": "^0.12.2"
+    "jest-localstorage-mock": "^2.4.3"
   }
 }
