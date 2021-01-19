@@ -19,6 +19,10 @@ describe('IntegrationsTableActions', () => {
   const integration = getMockResponse()[0];
   let wrapper = null;
   beforeEach(() => {
+    const modalRoot = document.createElement('div');
+    modalRoot.setAttribute('class', 'integrations-ui-style-scope');
+    document.body.appendChild(modalRoot);
+
     sdkv3.get.mockResolvedValue({ data: getMockResponse()[0] });
     wrapper = renderWithReactQueryCacheProvider(
       new QueryClient(),

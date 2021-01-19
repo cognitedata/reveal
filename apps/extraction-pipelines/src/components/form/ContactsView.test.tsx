@@ -6,14 +6,10 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import {
-  ADD_CONTACT_TEST_ID,
   addNewContact,
   clickById,
   clickByIdAsync,
   existsContactAsync,
-  CONTACT_EMAIL_TEST_ID,
-  CONTACT_NAME_TEST_ID,
-  CONTACT_NOTIFICATION_TEST_ID,
   removeContact,
 } from '../../utils/test/utilsFn';
 import { renderQueryCacheIntegration } from '../../utils/test/render';
@@ -25,15 +21,19 @@ import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
 import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 import {
+  ADD_CONTACT_TEST_ID,
+  CONTACT_EMAIL_TEST_ID,
+  CONTACT_NAME_TEST_ID,
+  CONTACT_NOTIFICATION_TEST_ID,
+  EMAIL_NOTIFICATION_TOOLTIP,
+  CANCEL,
+  REMOVE,
+} from '../../utils/constants';
+import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '../../utils/baseURL';
-import {
-  CANCEL,
-  EMAIL_NOTIFICATION_TOOLTIP,
-  REMOVE,
-} from '../../utils/constants';
 
 function createIntegrationWithContacts(
   contacts: User[] | undefined | null
@@ -325,8 +325,8 @@ test('Should render when contacts is null', async () => {
 });
 test('Should render 2 contacts when there are 2 contacts', async () => {
   const modifiedIntegration = createIntegrationWithContacts([
-    { name: 'test1 test', email: 'test1@test.no' },
-    { name: 'foo', email: 'foo@test.no' },
+    { name: 'test1 test', email: 'test1@test.no', role: 'Contact' },
+    { name: 'foo', email: 'foo@test.no', role: 'Contact' },
   ]);
   expect(modifiedIntegration.contacts.length).toEqual(2);
   const client = new QueryClient();
@@ -359,8 +359,6 @@ test('Should render when there is only name', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedContacts = screen.queryAllByText('Contact');
-  expect(renderedContacts.length).toEqual(1);
   expect(screen.getByText(user.name)).toBeInTheDocument();
 });
 
@@ -379,8 +377,6 @@ test('Should render when there is only email', async () => {
   act(() => {
     render(<ContactsView />, { wrapper: thisWrapper });
   });
-  const renderedContacts = screen.queryAllByText('Contact');
-  expect(renderedContacts.length).toEqual(1);
   const renderedEmail = screen.getByText(userEmail);
   expect(renderedEmail).toBeInTheDocument();
   expect(renderedEmail.getAttribute('href')).toEqual(`mailto:${userEmail}`);

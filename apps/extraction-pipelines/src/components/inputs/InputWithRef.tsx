@@ -1,30 +1,28 @@
 import React, { FC } from 'react';
 import { Ref } from 'react-hook-form/dist/types/fields';
 import { DeepMap, FieldError } from 'react-hook-form';
-import { IntegrationFieldName } from '../../model/Integration';
-import { User } from '../../model/User';
 
 export interface InputWithRefProps {
-  name: IntegrationFieldName | keyof User;
+  name: string;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   register: (ref: Ref | null) => void;
   placeholder: string;
   defaultValue: string | undefined;
+  hasError?: boolean;
 }
 export interface InputWithRefError {
   error: DeepMap<Record<string, any>, FieldError>;
 }
-type InputProps = InputWithRefProps & InputWithRefError;
 
-export const InputWithRef: FC<InputProps> = ({
+export const InputWithRef: FC<InputWithRefProps> = ({
   handleChange,
   name,
   register,
   placeholder,
   defaultValue,
-  error,
+  hasError = false,
   ...rest
-}: InputProps) => {
+}: InputWithRefProps) => {
   return (
     <input
       type="text"
@@ -32,7 +30,7 @@ export const InputWithRef: FC<InputProps> = ({
       id={name}
       name={name}
       placeholder={placeholder}
-      className={`cogs-input full-width ${error && 'has-error'}`}
+      className={`cogs-input full-width ${hasError && 'has-error'}`}
       ref={register}
       defaultValue={defaultValue}
       {...rest}

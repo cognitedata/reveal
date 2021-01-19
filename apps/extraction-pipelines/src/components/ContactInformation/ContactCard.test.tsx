@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'utils/test';
 import { screen } from '@testing-library/react';
-import ContactCard from './ContactCard';
+import { ContactCard } from './ContactCard';
 import { getMockResponse } from '../../utils/mockResponse';
 
 describe('ContactCard', () => {

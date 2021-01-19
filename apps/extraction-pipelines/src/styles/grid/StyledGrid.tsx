@@ -61,7 +61,7 @@ export const GridWithTopMargin = styled((props) => (
 export const GridRowStyle = styled((props) => (
   <PaddedGridDiv {...props}>{props.children}</PaddedGridDiv>
 ))`
-  grid-template-columns: 5rem 5rem 2fr 2fr 1.5rem 5rem 4rem;
+  grid-template-columns: 7rem 5rem 1.5fr 2fr 5rem 4rem;
   height: 4rem;
   align-items: center;
   span[aria-expanded] {
@@ -74,5 +74,8 @@ export const GridRowStyle = styled((props) => (
   }
   &:hover {
     background-color: ${Colors['greyscale-grey3'].hex()};
+  }
+  .cogs-switch {
+    display: flex;
   }
 `;

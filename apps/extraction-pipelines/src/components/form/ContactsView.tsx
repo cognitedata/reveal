@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Colors, Detail } from '@cognite/cogs.js';
+import { Button, Colors } from '@cognite/cogs.js';
 import {
   FieldValues,
   FormProvider,
@@ -10,7 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styled from 'styled-components';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
-import ContactView from './ContactView';
+import { ContactView } from './ContactView';
 
 export const ContactBtnTestIds = {
   EDIT_BTN: 'edit-contact-btn-',
@@ -47,11 +47,6 @@ export const StyledForm = styled((props) => (
   }
 `;
 
-export const AlignedDetail = styled((props) => (
-  <Detail {...props}>{props.children}</Detail>
-))`
-  align-self: center;
-`;
 export const AlignedSpan = styled((props) => (
   <span {...props}>{props.children}</span>
 ))`
@@ -72,6 +67,7 @@ const contactsSchema = yup.object().shape({
         .string()
         .required(ContactsErrorMsg.EMAIL_REQUIRED)
         .email(ContactsErrorMsg.EMAIL_INVALID),
+      role: yup.string(),
     })
   ),
 });
@@ -79,6 +75,7 @@ const contactsSchema = yup.object().shape({
 interface ContactsForm extends FieldValues {
   name: string;
   email: string;
+  role: string;
   sendNotification: boolean;
 }
 
@@ -100,9 +97,9 @@ const ContactsView: FunctionComponent<Props> = () => {
   const onClickAdd = () => {
     dispatch({
       type: 'ADD_CONTACT',
-      payload: { name: '', email: '', sendNotification: false },
+      payload: { name: '', email: '', sendNotification: false, role: '' },
     });
-    append({ name: '', email: '', sendNotification: false });
+    append({ name: '', email: '', sendNotification: false, role: '' });
   };
   return (
     <>

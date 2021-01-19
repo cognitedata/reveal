@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import EmailLink from 'components/buttons/EmailLink';
 import { User } from '../../model/User';
 import AvatarWithTooltip from '../Avatar/AvatarWithTooltip';
+import { capitalizeWords } from '../../utils/primitivesUtils';
 
-const StyledContactCard = styled.div`
+const StyledContactCard = styled.section`
   display: flex;
   margin-bottom: 1.9375rem;
   span {
@@ -19,23 +20,23 @@ const InfoList = styled.div`
   width: 18.75rem;
 `;
 
-const Name = styled.p`
+const Name = styled.h4`
   color: ${Colors['greyscale-grey9'].hex()};
   font-size: 0.875rem;
   margin: 0;
 `;
+const Role = styled.div``;
 
-const ContactCard = (user: User) => {
-  const { name, email } = user;
+export const ContactCard = (user: User) => {
+  const { name, email, role } = user;
   return (
     <StyledContactCard>
       <AvatarWithTooltip user={user} />
       <InfoList>
         <Name>{name}</Name>
+        <Role>{role && capitalizeWords(role)}</Role>
         <EmailLink email={email} />
       </InfoList>
     </StyledContactCard>
   );
 };
-
-export default ContactCard;

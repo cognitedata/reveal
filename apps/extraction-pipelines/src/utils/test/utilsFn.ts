@@ -1,5 +1,10 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { ContactBtnTestIds } from '../../components/form/ContactsView';
+import {
+  ADD_CONTACT_TEST_ID,
+  CONTACT_EMAIL_TEST_ID,
+  CONTACT_NAME_TEST_ID,
+} from '../constants';
 
 export const DETAILS_ELEMENTS = {
   UNSAVED: /Unsaved information/i,
@@ -9,12 +14,6 @@ export const DETAILS_TEST_IDS = {
   FOOTER_CLOSE_MODAL: 'footer-modal-close-btn',
   CLOSE_CONFIRM_DIALOG: 'confirm-dialog',
 };
-
-export const CONTACT_NAME_TEST_ID: Readonly<string> = 'contacts-name-';
-export const CONTACT_EMAIL_TEST_ID: Readonly<string> = 'contacts-email-';
-export const CONTACT_NOTIFICATION_TEST_ID: Readonly<string> =
-  'contacts-sendNotification-';
-export const ADD_CONTACT_TEST_ID: Readonly<string> = 'add-contact-btn';
 
 export const existsContactAsync = async (name: string, email: string) => {
   await waitFor(() => {

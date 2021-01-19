@@ -1,7 +1,7 @@
 import React from 'react';
 import { Title, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import ContactCard from './ContactCard';
+import { ContactCard } from './ContactCard';
 import { User } from '../../model/User';
 
 interface ContactsListProps {
@@ -28,11 +28,10 @@ const ContactsList = ({ title, contacts }: ContactsListProps) => {
     }
     return (
       <>
-        {users.map(({ name, email }) => (
+        {users.map((user) => (
           <ContactCard
-            key={`contact-list-${email}-${name}`}
-            name={name}
-            email={email}
+            key={`contact-list-${user.email}-${user.name}`}
+            {...user}
           />
         ))}
       </>

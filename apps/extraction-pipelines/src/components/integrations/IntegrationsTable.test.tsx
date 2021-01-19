@@ -24,6 +24,10 @@ describe('IntegrationsTable', () => {
   });
 
   test('Open FailMessageModal', async () => {
+    const modalRoot = document.createElement('div');
+    modalRoot.setAttribute('class', 'integrations-ui-style-scope');
+    document.body.appendChild(modalRoot);
+
     const mockData = getMockResponse();
     sdkv3.get.mockResolvedValue({ data: { items: mockData } });
     const client = new QueryClient();

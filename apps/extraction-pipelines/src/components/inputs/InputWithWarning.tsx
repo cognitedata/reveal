@@ -50,7 +50,7 @@ const InputWithWarning: FunctionComponent<Props> = ({
         register={register}
         handleChange={handleChange}
         name={name}
-        error={errors[name]}
+        hasError={errors[name]}
         defaultValue={defaultValue}
         placeholder={placeholder}
         {...rest}
