@@ -36,12 +36,9 @@
   "devDependencies": {
     "@babel/parser": "^7.9.4",
     "@types/mixpanel-browser": "^2.35.0",
-    "@types/react": "^17.0.0",
-    "rollup": "^1.2.0",
-    "rollup-plugin-json": "^3.1.0",
-    "rollup-plugin-typescript2": "^0.19.2"
+    "@types/react": "^17.0.0"
   },
   "peerDependencies": {
-    "react": "^17.0.1"
+    "react": ">=16"
   }
 }
