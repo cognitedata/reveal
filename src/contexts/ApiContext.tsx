@@ -19,6 +19,7 @@ const ApiProvider = ({ children }: Props) => {
   const { client, authState } = React.useContext<AuthContext>(
     ContainerAuthProvider
   );
+  // @ts-ignore
   const { token } = authState || {};
   const api = new Api(token || '', client);
 

@@ -48,6 +48,7 @@ type ActionsType = {
 const Configurations = () => {
   const { api } = useContext(ApiContext);
   const { authState } = React.useContext<AuthContext>(ContainerAuthProvider);
+  // @ts-ignore
   const { token } = authState || {};
 
   const { error, addError, removeError } = useContext(APIErrorContext);
