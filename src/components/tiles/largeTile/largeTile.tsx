@@ -1,67 +1,22 @@
 import React from 'react';
-import styled from 'styled-components/macro';
-import { Overline, Title, Tooltip } from '@cognite/cogs.js';
-import { Flex, SpaceBetween } from 'styles/common';
-import uc2Background from 'images/uc2_test_944_531.jpg';
+import { Overline, Tooltip } from '@cognite/cogs.js';
+import { Flex } from 'styles/common';
+import {
+  TileHeader,
+  TileDescription,
+  LargeTileContainer,
+  LargeTilePreview,
+  StyledTitle,
+} from '../elements';
 
-const TileBasic = styled.div`
-  display: inline-flex;
-  cursor: pointer;
-  background-color: var(--cogs-white);
-  &:hover {
-    box-shadow: var(--cogs-z-4);
-  }
-`;
+interface Props {
+  color?: string;
+}
 
-export const SmallTileContainer = styled(TileBasic)`
-  width: 298px;
-  border-radius: 2px;
-  border: 1px solid var(--cogs-greyscale-grey4);
-`;
-
-export const TileContainer = styled(TileBasic)`
-  position: relative;
-  flex-direction: column;
-  width: 946px;
-  border: 1px solid var(--cogs-greyscale-grey4);
-  margin: 0 48px 24px 0;
-`;
-
-export const TileDescription = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 4px 8px;
-  overflow: hidden;
-  & > span {
-    display: grid;
-  }
-`;
-
-export const TileHeader = styled(SpaceBetween)`
-  padding: 8px 12px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-`;
-
-export const TilePreview = styled.div`
-  display: flex;
-  align-items: center;
-  height: 532px;
-  background-color: var(--cogs-white);
-`;
-
-export const StyledTitle = styled(Title)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-export const LargeTile: React.FC = () => {
+export const LargeTile: React.FC<Props> = ({ color }: Props) => {
   return (
-    <TileContainer>
-      <TileHeader>
+    <LargeTileContainer>
+      <TileHeader color={color} isBoard>
         <Flex>
           <TileDescription>
             <Overline level={3}>Infographics</Overline>
@@ -71,9 +26,15 @@ export const LargeTile: React.FC = () => {
           </TileDescription>
         </Flex>
       </TileHeader>
-      <TilePreview>
-        <img src={uc2Background} alt="uc2" />
-      </TilePreview>
-    </TileContainer>
+      <LargeTilePreview>
+        <iframe
+          src="https://grafana-noc-test.cognite.ai/d-solo/I4v5JABMz/valeriia-board?orgId=1&panelId=2&&kiosk"
+          width="944"
+          height="568"
+          frameBorder="0"
+          title="uc2"
+        />
+      </LargeTilePreview>
+    </LargeTileContainer>
   );
 };

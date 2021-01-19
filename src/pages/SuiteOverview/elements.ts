@@ -11,3 +11,8 @@ export const NoBoardsContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
+export const LargeTileContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;

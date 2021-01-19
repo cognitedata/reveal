@@ -4,7 +4,7 @@ import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
-import { LargeTile } from 'components/tiles/largeTile/largeTile';
+import { LargeTile } from 'components/tiles/largeTile/LargeTile';
 import { BoardMenu, SuiteMenu } from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,7 +16,7 @@ import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
 import { UserSpaceState } from 'store/userSpace/types';
 import { getUserSpace } from 'store/userSpace/selectors';
-import { StyledTitle, NoBoardsContainer } from './elements';
+import { StyledTitle, NoBoardsContainer, LargeTileContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -81,8 +81,19 @@ const SuiteOverview: React.FC = () => {
         }
       />
       <OverviewContainer>
+        <LargeTileContainer>
+          {/* Workround doublecheck how infigraphics is going to be loaded  */}
+          {suite.key === '_7seji8h46' && (
+            <a
+              href="https://grafana-noc-test.cognite.ai/d/I4v5JABMz/valeriia-board?orgId=1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <LargeTile color={color} />
+            </a>
+          )}
+        </LargeTileContainer>
         <TilesContainer>
-          {suite.key === '_7seji8h46' && <LargeTile />}
           {!boards?.length ? (
             <NoBoardsContainer>
               <Graphic type="DataKits" />

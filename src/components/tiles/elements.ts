@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
 import { Title } from '@cognite/cogs.js';
 import { SpaceBetween } from 'styles/common';
+import layers from 'utils/zindex';
 
 const TileBasic = styled.div`
   display: inline-flex;
@@ -44,8 +45,10 @@ export const TileHeader = styled(SpaceBetween)<{
   height: 56px;
   display: flex;
   align-items: center;
+  background-color: var(--cogs-white);
   border-bottom: ${({ isBoard, color }) =>
     isBoard ? `2px solid ${color}` : '1px solid var(--cogs-greyscale-grey4)'};
+  z-index: ${layers.TILE_HEADER};
 `;
 
 export const TilePreview = styled.div`
@@ -54,6 +57,24 @@ export const TilePreview = styled.div`
   height: 184px;
   background-color: var(--cogs-white);
   padding: 12px;
+`;
+
+export const LargeTileContainer = styled(TileBasic)`
+  position: relative;
+  flex-direction: column;
+  width: 948px;
+  border: 1px solid var(--cogs-greyscale-grey4);
+  margin-bottom: 24px;
+`;
+
+export const LargeTilePreview = styled.div`
+  display: flex;
+  align-items: center;
+  height: 531px;
+  background-color: var(--cogs-white);
+  & iframe {
+    margin-top: -36px;
+  }
 `;
 
 export const StyledTitle = styled(Title)`
