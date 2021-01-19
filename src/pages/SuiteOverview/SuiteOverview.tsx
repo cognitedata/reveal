@@ -4,6 +4,7 @@ import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile } from 'components/tiles';
+import { LargeTile } from 'components/tiles/largeTile/largeTile';
 import { BoardMenu, SuiteMenu } from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -81,6 +82,7 @@ const SuiteOverview: React.FC = () => {
       />
       <OverviewContainer>
         <TilesContainer>
+          {suite.key === '_7seji8h46' && <LargeTile />}
           {!boards?.length ? (
             <NoBoardsContainer>
               <Graphic type="DataKits" />
