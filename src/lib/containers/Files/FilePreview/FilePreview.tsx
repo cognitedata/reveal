@@ -89,6 +89,7 @@ export const FilePreview = ({
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
+  const isMimeTypeSet = file && file.mimeType;
   const canPreviewFile = file && isFilePreviewable(file);
 
   const findSimilarJobId = useFindSimilarJobId(fileId);
@@ -119,6 +120,18 @@ export const FilePreview = ({
 
   if (!fileFetched) {
     return <Loader />;
+  }
+
+  if (!isMimeTypeSet) {
+    return (
+      <CenteredPlaceholder>
+        <h1>No preview</h1>
+        <p>
+          Please set a MIME type first. <br />
+          File types that can be previewed are: {readablePreviewableFileTypes()}
+        </p>
+      </CenteredPlaceholder>
+    );
   }
 
   if (!canPreviewFile) {
