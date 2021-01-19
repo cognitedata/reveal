@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-tenant-selector",
-  "version": "0.3.0-rc03",
+  "version": "0.3.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -57,7 +57,7 @@
     "source-map-explorer": "^2.5.2"
   },
   "dependencies": {
-    "@cognite/auth-utils": "^0.2.1-rc03",
+    "@cognite/auth-utils": "^0.2.1",
     "@cognite/cogs.js": "^2.4.0",
     "@cognite/metrics": "^1.0.0",
     "@cognite/sdk": "^3.3.0",

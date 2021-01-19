@@ -10,8 +10,12 @@ export interface AuthContext {
   client?: CogniteClient;
   authState?: AuthenticatedUser;
 }
-const AuthProvider = React.createContext<AuthContext>({});
 
+// exporting so users can also directly do:
+//
+// const {...} = useContext(AuthProvider)
+//
+export const AuthProvider = React.createContext<AuthContext>({});
 export const AuthConsumer = AuthProvider.Consumer;
 export type EnabledModes = {
   cognite?: boolean;
