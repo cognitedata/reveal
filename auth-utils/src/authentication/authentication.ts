@@ -208,6 +208,7 @@ class CogniteAuth {
   }
 
   public getAuthState(): AuthenticatedUser {
+    const authRes = retrieveAuthResult();
     return {
       authenticated: this.state.authenticated,
       project: this.state.project,
@@ -215,6 +216,7 @@ class CogniteAuth {
       tenant: this.state.project,
       initialising: this.state.initializing,
       username: this.state.username,
+      token: authRes?.accessToken,
       availableProjects: this.state.availableProjects,
     };
   }
@@ -402,9 +404,6 @@ class CogniteAuth {
         this.getClient().loginWithOAuth({
           project: newTenant,
           accessToken: this.state.accessToken,
-          // onTokens: (tokens) => {
-          //   log('tokens', tokens);
-          // },
           onAuthenticate: async (login) => {
             if (isFunction(login)) {
               await login('ADFS');
@@ -436,9 +435,6 @@ class CogniteAuth {
         this.getClient().loginWithOAuth({
           project: newTenant,
           accessToken: this.state.accessToken,
-          // onTokens: (tokens) => {
-          //   log('tokens', tokens);
-          // },
           onAuthenticate: async (login) => {
             if (isFunction(login)) {
               await login('AZURE_AD_MULTI_TENANCY', {
@@ -474,12 +470,13 @@ export default CogniteAuth;
 
 export type AuthenticatedUser = {
   authenticated: boolean;
-  username?: string;
-  tenant?: string;
+  availableProjects?: AvailableProject[];
   initialising: boolean;
   project?: string;
   projectId?: number;
-  availableProjects?: AvailableProject[];
+  tenant?: string;
+  token?: string;
+  username?: string;
 };
 
 export type AvailableProject = { urlName: string };
