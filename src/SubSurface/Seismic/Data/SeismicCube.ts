@@ -87,10 +87,6 @@ export class SeismicCube extends RegularGrid3 {
     return result;
   }
 
-  public getRealValue(value: number) {
-    return value;
-  }
-
   //= =================================================
   // INSTANCE METHODS: Read trace
   //= =================================================
@@ -174,11 +170,10 @@ export class SeismicCube extends RegularGrid3 {
           continue;
 
         for (const trace of traces) {
-          for (let value of trace.traceList) {
+          for (const value of trace.traceList) {
             if (value === 0)
               continue;
 
-            value = this.getRealValue(value);
             statistics.add(value);
           }
         }
@@ -202,8 +197,8 @@ export class SeismicCube extends RegularGrid3 {
       throw Error("lineRange.inline in undefined");
 
     const { inline, xline, traceSampleCount } = lineRange;
-    const numCellsI = inline.max.value - inline.min.value + 1;
-    const numCellsJ = xline.max.value - xline.min.value + 1;
+    const numCellsI = inline.max.value - inline.min.value;
+    const numCellsJ = xline.max.value - xline.min.value;
 
     if (numCellsI <= 0)
       throw Error("numCellsI is 0");

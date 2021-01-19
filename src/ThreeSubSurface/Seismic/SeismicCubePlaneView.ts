@@ -374,8 +374,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView {
               uv[index--] = 0;
             }
           } else {
-            for (let value of trace.traceList) {
-              value = cube.getRealValue(value);
+            for (const value of trace.traceList) {
               const u = range.getTruncatedFraction(value);
               uv[index--] = u;
               uv[index--] = 0;
