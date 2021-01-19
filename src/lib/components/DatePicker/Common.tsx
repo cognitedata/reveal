@@ -94,6 +94,7 @@ export const DatePickerInput = ({
         dateFormat="yyyy-MM-dd HH:mm"
         onChange={value => onDateChange(value as Date)}
         selected={date}
+        showTimeInput
       />
     </ButtonWrapper>
   );
