@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { LinkedResourceTable } from 'lib/containers/Relationships';
 import { useRelatedResourceCount } from 'lib/hooks/RelationshipHooks';
 import AnnotationTable from 'lib/containers/Relationships/AnnotationTable';
+import { AnnotatedWithTable } from 'lib/containers/Relationships/AnnotatedWithTable';
 
 type TypeOption = {
   label: string;
@@ -31,6 +32,7 @@ export const RelatedResources = ({
     linkedResourceCount,
     assetIdCount,
     annotationCount,
+    annotatedWithCount,
     isFetched,
   } = useRelatedResourceCount(parentResource, type);
 
@@ -76,6 +78,17 @@ export const RelatedResources = ({
       ];
     }
 
+    if (type === 'file') {
+      types = [
+        {
+          label: `Appears in (${annotatedWithCount})`,
+          value: 'annotatedWith',
+          count: annotatedWithCount,
+        },
+        ...types,
+      ];
+    }
+
     return types;
   }, [
     parentResource,
@@ -84,6 +97,7 @@ export const RelatedResources = ({
     assetIdCount,
     linkedResourceCount,
     annotationCount,
+    annotatedWithCount,
   ]);
 
   useEffect(
@@ -137,6 +151,10 @@ export const RelatedResources = ({
             resourceType={type}
             {...props}
           />
+        )}
+
+        {selectedType?.value === 'annotatedWith' && (
+          <AnnotatedWithTable resource={parentResource} {...props} />
         )}
       </TableOffsetHeightWrapper>
     </RelatedResourcesContainer>

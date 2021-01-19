@@ -67,7 +67,7 @@ export default function AnnotationTable({
   });
 
   if (isError || itemsError) {
-    return <Alert type="warning" message="nope" />;
+    return <Alert type="warning" message="Error fetching annotations" />;
   }
 
   if (!isFetched || (!itemsFetched && itemsEnabled)) {

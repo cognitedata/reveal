@@ -8,7 +8,8 @@ export type RelatedResourceType =
   | 'linkedResource'
   | 'relationship'
   | 'annotation'
-  | 'assetId';
+  | 'assetId'
+  | 'annotatedWith';
 
 export const useRelatedResourceResults = <T extends Resource>(
   relatedResourceType: RelatedResourceType,
