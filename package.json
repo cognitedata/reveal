@@ -1,6 +1,6 @@
 {
   "name": "@cognite/node-visualizer",
-  "version": "1.1.1",
+  "version": "1.1.5",
   "description": "Spatial visualizer for Cognite",
   "main": "index.js",
   "module": "index.js",
