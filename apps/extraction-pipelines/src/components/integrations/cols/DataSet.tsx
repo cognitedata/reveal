@@ -18,12 +18,22 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-const DataSet: FunctionComponent<Props> = ({
+export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
+const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> = 'No data set registered';
+
+export const DataSet: FunctionComponent<Props> = ({
   dataSetId,
   dataSetName,
   ...rest
 }: Props) => {
   const { cdfEnv, project, origin } = useAppEnv();
+  if (!dataSetId) {
+    return (
+      <Tooltip content={NO_DATA_SET_ID_SET_TOOLTIP}>
+        <i>{NO_DATA_SET_ID_SET}</i>
+      </Tooltip>
+    );
+  }
   return (
     <Tooltip content={dataSetId}>
       <>
@@ -39,5 +49,3 @@ const DataSet: FunctionComponent<Props> = ({
     </Tooltip>
   );
 };
-
-export default DataSet;

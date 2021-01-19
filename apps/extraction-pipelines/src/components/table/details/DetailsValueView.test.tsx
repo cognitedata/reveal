@@ -5,6 +5,7 @@ import { getMockResponse } from 'utils/mockResponse';
 import DetailsValueView from './DetailsValueView';
 import { render } from '../../../utils/test';
 import { calculateStatus } from '../../../utils/integrationUtils';
+import { NO_DATA_SET_ID_SET } from '../../integrations/cols/DataSet';
 
 describe('<DetailsValueView />', () => {
   test('Display name for data set when data set exist', () => {
@@ -24,6 +25,14 @@ describe('<DetailsValueView />', () => {
     expect(view).toBeInTheDocument();
     const copy = screen.getByTestId('interactive-copy');
     expect(copy).toBeInTheDocument();
+  });
+
+  test('Display no data set when no data set is registered on integration', () => {
+    render(<DetailsValueView fieldValue="" fieldName="dataSetId" />);
+    const view = screen.getByText(NO_DATA_SET_ID_SET);
+    expect(view).toBeInTheDocument();
+    const copy = screen.queryByTestId('interactive-copy');
+    expect(copy).not.toBeInTheDocument();
   });
 
   const cases = [

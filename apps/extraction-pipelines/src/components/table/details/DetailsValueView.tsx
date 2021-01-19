@@ -6,7 +6,7 @@ import { DataSet } from '@cognite/sdk';
 import StatusMarker from '../../integrations/cols/StatusMarker';
 import { Status } from '../../../model/Status';
 import InteractiveCopy from '../../InteractiveCopy';
-import DataSetDisplay from '../../integrations/cols/DataSet';
+import { DataSet as DataSetDisplay } from '../../integrations/cols/DataSet';
 import RelativeTimeWithTooltip from '../../integrations/cols/RelativeTimeWithTooltip';
 import {
   IntegrationFieldName,
@@ -31,15 +31,10 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
       return <Schedule id={fieldName} schedule={val} />;
     }
     case 'dataSetId': {
+      const val = (fieldValue as string) ?? undefined;
       return (
         <>
-          {fieldValue && (
-            <DataSetDisplay
-              id={fieldName}
-              dataSetId={`${fieldValue}`}
-              dataSetName={`${fieldValue}`}
-            />
-          )}
+          <DataSetDisplay id={fieldName} dataSetId={val} dataSetName={val} />
         </>
       );
     }

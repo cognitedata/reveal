@@ -13,6 +13,9 @@ export const FieldGrid = styled((props) => (
   <PaddedGridDiv {...props}>{props.children}</PaddedGridDiv>
 ))`
   grid-template-columns: 8rem 5fr;
+  span {
+    width: fit-content;
+  }
 `;
 interface OwnProps {
   label: TableHeadings | DetailFieldNames;

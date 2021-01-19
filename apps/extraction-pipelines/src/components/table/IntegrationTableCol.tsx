@@ -9,7 +9,7 @@ import UserGroup from '../integrations/cols/UserGroup';
 import Name from '../integrations/cols/Name';
 import Schedule from '../integrations/cols/Schedule';
 import IntegrationsTableActions from '../menu/IntegrationsTableActions';
-import DataSet from '../integrations/cols/DataSet';
+import { DataSet } from '../integrations/cols/DataSet';
 import StatusMarker from '../integrations/cols/StatusMarker';
 import StatusFilterDropdown from './StatusFilterDropdown';
 import { User } from '../../model/User';
