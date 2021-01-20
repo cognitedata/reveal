@@ -46,6 +46,10 @@ const SuiteOverview: React.FC = () => {
 
   const { title, color, boards } = suite || {};
 
+  const infographicsBoards = boards?.filter(
+    (board) => board.type === 'infographics'
+  );
+
   const handleOpenModal = (modalType: ModalType, modalProps: any) => {
     dispatch(modalOpen({ modalType, modalProps }));
   };
@@ -80,26 +84,30 @@ const SuiteOverview: React.FC = () => {
         }
       />
       <OverviewContainer>
-        <LargeTileContainer>
-          {/* Workround doublecheck how infigraphics is going to be loaded  */}
-          {suite.key === '_7seji8h46' && (
-            <a
-              href="https://grafana-noc-test.cognite.ai/d/I4v5JABMz/valeriia-board?orgId=1"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <InfographicsTile color={color} />
-            </a>
-          )}
-        </LargeTileContainer>
-        <TilesContainer>
-          {!boards?.length ? (
-            <NoBoardsContainer>
-              <Graphic type="DataKits" />
-              <Title level={5}>No dasboards added to suite yet</Title>
-            </NoBoardsContainer>
-          ) : (
-            <>
+        {!boards?.length ? (
+          <NoBoardsContainer>
+            <Graphic type="DataKits" />
+            <Title level={5}>No dasboards added to suite yet</Title>
+          </NoBoardsContainer>
+        ) : (
+          <>
+            <LargeTileContainer>
+              {infographicsBoards?.map((board: Board) => (
+                <a
+                  href={board.url}
+                  key={board.key}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <InfographicsTile
+                    dataItem={board}
+                    color={color}
+                    menu={<BoardMenu suite={suite} board={board} />}
+                  />
+                </a>
+              ))}
+            </LargeTileContainer>
+            <TilesContainer>
               <Title level={6}>All boards</Title>
               {boards?.map((board: Board) => (
                 <a
@@ -116,9 +124,9 @@ const SuiteOverview: React.FC = () => {
                   />
                 </a>
               ))}
-            </>
-          )}
-        </TilesContainer>
+            </TilesContainer>
+          </>
+        )}
       </OverviewContainer>
     </>
   );

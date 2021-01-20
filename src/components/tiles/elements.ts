@@ -62,7 +62,7 @@ export const TilePreview = styled.div`
 export const LargeTileContainer = styled(TileBasic)`
   position: relative;
   flex-direction: column;
-  width: 948px;
+  width: 954px;
   border: 1px solid var(--cogs-greyscale-grey4);
   margin-bottom: 24px;
 `;
@@ -71,9 +71,10 @@ export const LargeTilePreview = styled.div`
   display: flex;
   align-items: center;
   height: 531px;
+  width: 952px;
   background-color: var(--cogs-white);
   & iframe {
-    margin-top: -36px;
+    margin-top: -22px;
   }
 `;
 
