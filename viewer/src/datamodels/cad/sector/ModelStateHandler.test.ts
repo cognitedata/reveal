@@ -11,8 +11,23 @@ describe('ModelStateHandler', () => {
   // TODO: 10-08-2020 j-bjorne: Consider changing WantedSector and ConsumedSector metadata field. Annoying to mock.
   const { simple, detailed, discarded } = mockWantedSectors(1);
 
-  test('hasStateChanged', () => {
+  test('addModel for already added model throws', () => {});
+  const modelStateHandler = new ModelStateHandler();
+  modelStateHandler.addModel('modelId');
+  expect(() => modelStateHandler.addModel('modelId')).toThrowError();
+
+  test('removeModel for model that isnt added throws', () => {
     const modelStateHandler = new ModelStateHandler();
+    expect(() => modelStateHandler.removeModel('modelId')).toThrowError();
+  });
+  test('hasStateChanged triggered for model that has not been added, throws', () => {
+    const modelStateHandler = new ModelStateHandler();
+    expect(() => modelStateHandler.removeModel('modelId')).toThrowError();
+  });
+
+  test('hasStateChanged for added model, updates sectors', () => {
+    const modelStateHandler = new ModelStateHandler();
+    modelStateHandler.addModel(simple.blobUrl);
     const consumedSimple: ConsumedSector = { ...simple, group: undefined };
 
     modelStateHandler.updateState(consumedSimple);
@@ -26,6 +41,7 @@ describe('ModelStateHandler', () => {
 
   test('updateState', () => {
     const modelStateHandler = new ModelStateHandler();
+    modelStateHandler.addModel(simple.blobUrl);
     const sectors = [simple, detailed, discarded];
     sectors.forEach(wantedSector => {
       const consumedSector = { ...wantedSector, group: undefined };
@@ -65,7 +81,7 @@ function mockWantedSectors(id: number) {
     children: []
   };
 
-  const blobUrl = '';
+  const blobUrl = 'modelIdentifer';
   return {
     simple: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Simple },
     detailed: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Detailed },
