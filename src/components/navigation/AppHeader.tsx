@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { isAdmin } from 'store/groups/selectors';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/NOC_logo.png';
+import { CustomLink } from 'styles/common';
 import { LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
@@ -44,7 +45,16 @@ const AppHeader: React.FC = () => {
       menu: (
         <Menu>
           <Menu.Header>Cognite documentation</Menu.Header>
-          <Menu.Item>Getting Started</Menu.Item>
+          <Menu.Item>
+            <CustomLink
+              // TODO(DTC-224) replace with stable link as soon as it is available
+              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Getting Started
+            </CustomLink>
+          </Menu.Item>
           <Menu.Item>FAQs</Menu.Item>
           <Menu.Divider />
           <Menu.Footer>Introduction to Digital Cockpit</Menu.Footer>
@@ -86,10 +96,6 @@ const AppHeader: React.FC = () => {
         </LogoWrapper>
       </TopBar.Left>
       <TopBar.Right>
-        <TopBar.Search
-          width={418}
-          placeholder="Search for Suites, Dashboards and apps"
-        />
         <TopBar.Actions actions={filteredActions} />
         <TopBar.Item>
           <a href="https://noc.qa/" target="_blank" rel="noopener noreferrer">

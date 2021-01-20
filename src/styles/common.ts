@@ -18,6 +18,14 @@ export const TilesContainer = styled.div`
   }
 `;
 
+export const CustomLink = styled.a`
+  color: var(--cogs-greyscale-grey10);
+  text-decoration: none;
+  &:hover {
+    color: var(--cogs-greyscale-grey10);
+  }
+`;
+
 export const OverviewContainer = styled.div`
   padding: 24px 48px;
 `;
