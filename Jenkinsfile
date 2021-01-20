@@ -5,20 +5,12 @@ static final String STAGING_APP_ID = "cognuit-dev"
 static final String PRODUCTION_APP_ID = "cognuit"
 static final String APPLICATION_REPO_ID = "cognuit"
 
-// Replace this with your app's ID on https://sentry.io/ -- if you do not have
-// one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-// static final String SENTRY_PROJECT_NAME = "cognuit"
-// The Sentry DSN is the URL used to report issues into Sentry. This can be
-// found on your Sentry's project page, or by going here:
-// https://docs.sentry.io/error-reporting/quickstart/?platform=browser
-//
-// If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN = ""
+static final String SENTRY_DSN = "https://19bbb6bf3192415b98a42ed236cf4321@o124058.ingest.sentry.io/5599787"
 
 // Specify your locize.io project ID. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
 // See https://cog.link/i18n for more information.
-static final String LOCIZE_PROJECT_ID = ""
+static final String LOCIZE_PROJECT_ID = "7533b714-9df3-48c3-9a04-1d9ee1a0fa3a"
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 
@@ -30,8 +22,8 @@ def pods = { body ->
       fas.pod(
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
-//        sentryDsn: SENTRY_DSN,
-//        locizeProjectId: LOCIZE_PROJECT_ID
+        sentryDsn: SENTRY_DSN,
+        locizeProjectId: LOCIZE_PROJECT_ID
       ) {
         properties([
           buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
