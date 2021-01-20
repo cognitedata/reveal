@@ -29,7 +29,7 @@
     "i18next-chained-backend": "^2.0.1",
     "i18next-http-backend": "^1.0.21",
     "i18next-localstorage-backend": "^3.1.2",
-    "i18next-locize-backend": "^4.1.8",
+    "i18next-locize-backend": "^4.1.9",
     "i18next-pseudo": "^2.2.0",
     "query-string": "^6.13.6",
     "react": "^16.14.0",
