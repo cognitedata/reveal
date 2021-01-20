@@ -20,7 +20,6 @@ type Props = {
   trailStrokeWidth?: number;
   trailStrokeColor?: string;
   trailSpaced?: boolean;
-  // speed?: number;
   maxWidth?: number;
   showPercentageText?: boolean;
 };
