@@ -54,19 +54,25 @@ class Api {
 
   private async get(url: string, parameters?: QueryParameters): Promise<any> {
     if (!this.sdk) {
-      return [];
-    }
-    const status = await this.sdk.login.status();
-    if (!status) {
       return [
         {
           error: true,
-          status: 401,
-          statusText:
-            'No user logged in. Refresh page to auto authenticate again',
+          status: 500,
+          statusText: 'SDK not provided',
         },
       ];
     }
+    // const status = await this.sdk.login.status();
+    // if (!status) {
+    //   return [
+    //     {
+    //       error: true,
+    //       status: 401,
+    //       statusText:
+    //         'No user logged in. Refresh page to auto authenticate again',
+    //     },
+    //   ];
+    // }
     const urlWithStringQuery: string = `${url}?${buildQueryString(
       parameters || {}
     )}`;
@@ -88,19 +94,25 @@ class Api {
 
   private async post(url: string, data: any): Promise<any> {
     if (!this.sdk) {
-      return [];
-    }
-    const status = await this.sdk.login.status();
-    if (!status) {
       return [
         {
           error: true,
-          status: 401,
-          statusText:
-            'No user logged in. Refresh page to auto authenticate again',
+          status: 500,
+          statusText: 'SDK not provided',
         },
       ];
     }
+    // const status = await this.sdk.login.status();
+    // if (!status) {
+    //   return [
+    //     {
+    //       error: true,
+    //       status: 401,
+    //       statusText:
+    //         'No user logged in. Refresh page to auto authenticate again',
+    //     },
+    //   ];
+    // }
     const response = await fetch(url, {
       method: 'POST',
       headers: this.headers,

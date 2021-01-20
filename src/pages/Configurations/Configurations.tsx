@@ -48,7 +48,6 @@ type ActionsType = {
 const Configurations = () => {
   const { api } = useContext(ApiContext);
   const { authState } = React.useContext<AuthContext>(ContainerAuthProvider);
-  // @ts-ignore
   const { token } = authState || {};
 
   const { error, addError, removeError } = useContext(APIErrorContext);
@@ -247,8 +246,7 @@ const Configurations = () => {
     if (token && token !== 'NO_TOKEN') {
       fetchConfigurations();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api]);
+  }, [token]);
 
   useEffect(() => {
     const rawColumns = generateConfigurationsColumnsFromData(data);

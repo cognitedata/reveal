@@ -21,7 +21,6 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import ApiContext from 'contexts/ApiContext';
-import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
@@ -304,7 +303,6 @@ const DataTransfers: React.FC = () => {
   const [filterByProjects, setFilterByProjects] = useState<boolean>(false);
 
   const { api } = useContext(ApiContext);
-  const { token } = useContext(AuthContext);
   const { addError } = useContext(APIErrorContext);
   const query = useQuery();
   const configurationNameFromUrl = query.get('configuration');
@@ -518,7 +516,6 @@ const DataTransfers: React.FC = () => {
       source: {},
       target: {},
     });
-    console.log(sourceObj);
     const selectedObject: DetailDataProps = {
       isLoading: true,
       id: sourceObj.id,
@@ -542,7 +539,6 @@ const DataTransfers: React.FC = () => {
       .getSingleObject(translation.revision.object_id)
       .then((response) => {
         if (response && response.length > 0 && !response[0].error) {
-          console.log(response);
           const item = response[0];
           selectedObject.target = {
             name: item.name,
@@ -606,10 +602,8 @@ const DataTransfers: React.FC = () => {
         });
     }
 
-    if (token && token !== 'NO_TOKEN') {
-      fetchConfigurations();
-      fetchSources();
-    }
+    fetchConfigurations();
+    fetchSources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
 
@@ -619,58 +613,34 @@ const DataTransfers: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-      setSelectedSourceProject(null);
-      setSelectedTarget(null);
-      setSelectedTargetProject(null);
-      fetchProjects();
-    }
+    clearData();
+    setSelectedSourceProject(null);
+    setSelectedTarget(null);
+    setSelectedTargetProject(null);
+    fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSource]);
 
   useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-      fetchDatatypes();
-      setSelectedTarget(null);
-      setSelectedTargetProject(null);
-    }
+    clearData();
+    fetchDatatypes();
+    setSelectedTarget(null);
+    setSelectedTargetProject(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSourceProject]);
 
   useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-      fetchProjects();
-      setSelectedTargetProject(null);
-    }
+    clearData();
+    fetchProjects();
+    setSelectedTargetProject(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTarget]);
 
   useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-      fetchProjects();
-    }
+    clearData();
+    fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTarget]);
-
-  useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-      fetchDataTransfers();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTargetProject]);
-
-  useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-      fetchDataTransfers();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDateRange]);
+  }, [selectedTarget, selectedTargetProject, selectedDateRange]);
 
   useEffect(() => {
     if (configurationNameFromUrl && configurations.length > 0) {
@@ -686,33 +656,27 @@ const DataTransfers: React.FC = () => {
   }, [configurations]);
 
   useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      if (selectedConfiguration) {
-        history.push(`${url}?configuration=${selectedConfiguration?.name}`);
-      } else {
-        history.push(url);
-      }
-      clearData();
-      fetchDataTransfers();
-      fetchDatatypes();
+    if (selectedConfiguration) {
+      history.push(`${url}?configuration=${selectedConfiguration?.name}`);
+    } else {
+      history.push(url);
     }
+    clearData();
+    fetchDataTransfers();
+    fetchDatatypes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConfiguration]);
 
   useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-      fetchDataTransfers();
-    }
+    clearData();
+    fetchDataTransfers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDatatype]);
 
   useEffect(() => {
     setSelectedConfiguration(null);
     setSelectedSource(null);
-    if (token && token !== 'NO_TOKEN') {
-      clearData();
-    }
+    clearData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterByProjects]);
 
