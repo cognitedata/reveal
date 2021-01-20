@@ -2,9 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-
-import { CadNode } from '../../../../datamodels/cad';
+import { CadModelMetadata, CadNode } from '../../../../datamodels/cad';
 import { MaterialManager } from '../../../../datamodels/cad/MaterialManager';
 import { CadSectorParser } from '../../../../datamodels/cad/sector/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '../../../../datamodels/cad/sector/SimpleAndDetailedToSector3D';
@@ -17,41 +15,33 @@ import { CadModelUpdateHandler } from '../../../../datamodels/cad/CadModelUpdate
 import { BinaryFileProvider } from '../../../../utilities/networking/types';
 
 describe('CadModelUpdateHandler', () => {
-  const modelSectorProvider: BinaryFileProvider = {
-    getBinaryFile: jest.fn()
-  };
-  const materialManager = new MaterialManager();
-  const modelDataParser = new CadSectorParser();
-  const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
-  const repository = new CachedRepository(modelSectorProvider, modelDataParser, modelDataTransformer);
-  const mockCuller: SectorCuller = {
-    determineSectors: jest.fn(),
-    dispose: jest.fn()
-  };
+  let repository: CachedRepository;
+  let mockCuller: SectorCuller;
+  let cadModelMetadata: CadModelMetadata;
+  let cadModel: CadNode;
 
-  const cadModelMetadata = createCadModelMetadata(generateSectorTree(5));
-  const cadModel = new CadNode(cadModelMetadata, materialManager);
+  beforeEach(() => {
+    jest.useFakeTimers();
+    global.process.env.WORKER_VERSION = '1.1.0';
 
-  jest.useFakeTimers();
+    const modelSectorProvider: BinaryFileProvider = {
+      getBinaryFile: jest.fn()
+    };
+    const materialManager = new MaterialManager();
+    const modelDataParser = new CadSectorParser();
+    const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
 
-  // TODO: 24-07-2020 j-bjorne skipped until pipeline split from update handler.
-  test.skip('updateCamera(), updateLoadingHints() and updateClipPlanes() triggers SectorCuller.determineSectors()', () => {
-    const updateHandler = new CadModelUpdateHandler(repository, mockCuller);
-    // TODO: 16-07-2020 j-bjorne reimplement tests when update handler has been separated from loading pipeline.
-    updateHandler.consumedSectorObservable().subscribe();
-    updateHandler.updateModels(cadModel);
-    updateHandler.updateCamera(new THREE.PerspectiveCamera());
-    jest.advanceTimersByTime(2000);
-    expect(mockCuller.determineSectors).toBeCalledTimes(1);
-    updateHandler.clippingPlanes = [new THREE.Plane()];
-    jest.advanceTimersByTime(1000);
-    expect(mockCuller.determineSectors).toBeCalledTimes(2);
-    updateHandler.clipIntersection = true;
-    jest.advanceTimersByTime(1000);
-    expect(mockCuller.determineSectors).toBeCalledTimes(3);
-    updateHandler.updateLoadingHints({});
-    jest.advanceTimersByTime(1000);
-    expect(mockCuller.determineSectors).toBeCalledTimes(4);
+    repository = new CachedRepository(modelSectorProvider, modelDataParser, modelDataTransformer);
+    mockCuller = {
+      determineSectors: jest.fn(),
+      dispose: jest.fn()
+    };
+    cadModelMetadata = createCadModelMetadata(generateSectorTree(5));
+    cadModel = new CadNode(cadModelMetadata, materialManager);
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   test('dipose() disposes culler', () => {
