@@ -131,8 +131,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         options && options.logCallback
           ? options.logCallback
           : // No logging
-            console.log,
-      //() => {},
+            () => {},
 
       coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
     };
