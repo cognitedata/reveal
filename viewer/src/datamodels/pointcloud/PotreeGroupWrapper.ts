@@ -3,7 +3,11 @@
  */
 
 import * as Potree from '@cognite/potree-core';
+
+import { combineLatest, interval, Observable, of, pipe, Subject } from 'rxjs';
+import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'rxjs/operators';
 import * as THREE from 'three';
+import { LoadingState } from '../../utilities';
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 
@@ -13,6 +17,8 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
   private _needsRedraw: boolean = true;
+  private readonly _forceLoadingSubject = new Subject();
+  private readonly _loadingObservable: Observable<LoadingState>;
 
   get needsRedraw(): boolean {
     return (
@@ -40,11 +46,18 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     onAfterRenderTrigger.frustumCulled = false;
     onAfterRenderTrigger.onAfterRender = () => this.resetNeedsRedraw();
     this.add(onAfterRenderTrigger);
+
+    this._loadingObservable = this.createLoadingStateObservable();
+  }
+
+  getLoadingStateObserver(): Observable<LoadingState> {
+    return this._loadingObservable;
   }
 
   addPointCloud(node: PotreeNodeWrapper): void {
     this.potreeGroup.add(node.octtree);
     this.nodes.push(node);
+    this._forceLoadingSubject.next();
   }
 
   requestRedraw() {
@@ -57,4 +70,46 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.numChildrenAfterLastRedraw = this.potreeGroup.children.length;
     this.nodes.forEach(n => n.resetNeedsRedraw());
   }
+
+  private createLoadingStateObservable(): Observable<LoadingState> {
+    const forceLoading$ = this._forceLoadingSubject.pipe(trueForDuration(1000));
+    return combineLatest([
+      interval(200).pipe(
+        map(getLoadingStateFromPotree),
+        distinctUntilChanged((x, y) => {
+          return (
+            x.isLoading === y.isLoading && x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested
+          );
+        })
+      ),
+      forceLoading$
+    ]).pipe(
+      map(x => {
+        const [loadingState, forceLoading] = x;
+        if (forceLoading && !loadingState.isLoading) {
+          return { isLoading: true, itemsLoaded: 0, itemsRequested: 1 };
+        }
+        return loadingState;
+      }),
+      distinctUntilChanged(),
+      share()
+    );
+  }
+}
+
+function trueForDuration(milliseconds: number) {
+  return pipe(
+    switchMap(() => {
+      return of(false).pipe(delay(milliseconds), startWith(true));
+    }),
+    distinctUntilChanged()
+  );
+}
+
+function getLoadingStateFromPotree(): LoadingState {
+  return {
+    isLoading: Potree.Global.numNodesLoading > 0,
+    itemsLoaded: 0,
+    itemsRequested: Potree.Global.numNodesLoading
+  };
 }
