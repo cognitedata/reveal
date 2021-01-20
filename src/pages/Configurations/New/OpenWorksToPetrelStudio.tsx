@@ -102,7 +102,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     DataTransferObject[]
   >([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [availableWPS, setAvailableWPS] = useState<DataTransferObject[]>([]);
+  const [availableWPS] = useState<DataTransferObject[]>([]);
   const [dataTypesLoading, setDataTypesLoading] = useState<boolean>(false);
   const [foldersLoading, setFoldersLoading] = useState<boolean>(false);
   const [
