@@ -178,7 +178,6 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     clipIntersection: boolean,
     budget: CadModelSectorBudget
   ): TakenSectorMap {
-    console.log(`Updating ${models.length} models`);
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
