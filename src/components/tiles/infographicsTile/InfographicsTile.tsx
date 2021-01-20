@@ -2,6 +2,7 @@ import React from 'react';
 import { Overline, Tooltip } from '@cognite/cogs.js';
 import { Flex } from 'styles/common';
 import { Board } from 'store/suites/types';
+import { renderIframe } from 'utils/iframe';
 import {
   TileHeader,
   TileDescription,
@@ -12,23 +13,6 @@ import {
 
 const TilePreviewHeight = '576';
 const TilePreviewWidth = '952';
-
-// Move to utils
-const adjustIframeTagSize = (tag: string = ''): string =>
-  tag
-    .replace(/(height=["|']?)(\d*)/, `$1${TilePreviewHeight}`)
-    .replace(/(width=["|']?)(\d*)/, `$1${TilePreviewWidth}`);
-
-const renderIframe = (tag: string): JSX.Element | null => {
-  if (!tag) {
-    return null;
-  }
-  const elem = (
-    // eslint-disable-next-line react/no-danger
-    <div dangerouslySetInnerHTML={{ __html: adjustIframeTagSize(tag) }} />
-  );
-  return elem;
-};
 
 interface Props {
   color?: string;
@@ -55,7 +39,8 @@ export const InfographicsTile: React.FC<Props> = ({
         {menu}
       </TileHeader>
       <LargeTilePreview>
-        {dataItem.embedTag && renderIframe(dataItem.embedTag)}
+        {dataItem.embedTag &&
+          renderIframe(dataItem.embedTag, TilePreviewHeight, TilePreviewWidth)}
       </LargeTilePreview>
     </LargeTileContainer>
   );

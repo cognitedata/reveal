@@ -64,18 +64,14 @@ export const LargeTileContainer = styled(TileBasic)`
   flex-direction: column;
   width: 954px;
   border: 1px solid var(--cogs-greyscale-grey4);
-  margin-bottom: 24px;
 `;
 
 export const LargeTilePreview = styled.div`
   display: flex;
   align-items: center;
-  height: 531px;
+  height: 576px;
   width: 952px;
   background-color: var(--cogs-white);
-  & iframe {
-    margin-top: -22px;
-  }
 `;
 
 export const StyledTitle = styled(Title)`

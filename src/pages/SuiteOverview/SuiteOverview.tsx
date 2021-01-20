@@ -15,7 +15,12 @@ import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
 import { UserSpaceState } from 'store/userSpace/types';
 import { getUserSpace } from 'store/userSpace/selectors';
-import { StyledTitle, NoBoardsContainer, LargeTileContainer } from './elements';
+import isEqual from 'lodash/isEqual';
+import {
+  StyledTitle,
+  NoBoardsContainer,
+  LargeTilesContainer,
+} from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -91,7 +96,7 @@ const SuiteOverview: React.FC = () => {
           </NoBoardsContainer>
         ) : (
           <>
-            <LargeTileContainer>
+            <LargeTilesContainer>
               {infographicsBoards?.map((board: Board) => (
                 <a
                   href={board.url}
@@ -106,23 +111,27 @@ const SuiteOverview: React.FC = () => {
                   />
                 </a>
               ))}
-            </LargeTileContainer>
+            </LargeTilesContainer>
             <TilesContainer>
               <Title level={6}>All boards</Title>
               {boards?.map((board: Board) => (
-                <a
-                  href={board.url}
-                  key={board.key}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Tile
-                    dataItem={board}
-                    color={color}
-                    view="board"
-                    menu={<BoardMenu suite={suite} board={board} />}
-                  />
-                </a>
+                <>
+                  {!isEqual(board.type, 'infographics') && (
+                    <a
+                      href={board.url}
+                      key={board.key}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Tile
+                        dataItem={board}
+                        color={color}
+                        view="board"
+                        menu={<BoardMenu suite={suite} board={board} />}
+                      />
+                    </a>
+                  )}
+                </>
               ))}
             </TilesContainer>
           </>
