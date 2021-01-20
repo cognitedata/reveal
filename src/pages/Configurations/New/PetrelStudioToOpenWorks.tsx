@@ -6,9 +6,9 @@ import {
   GenericResponseObject,
   Source,
 } from 'typings/interfaces';
+import { AuthProvider, AuthContext } from '@cognite/react-container';
 import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
-import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
@@ -49,7 +49,8 @@ enum ChangeType {
 }
 
 const PetrelStudioToOpenWorks = ({ name }: Props) => {
-  const { user } = useContext(AuthContext);
+  const { authState } = useContext<AuthContext>(AuthProvider);
+  const user = authState?.username;
   const [configuration, setConfiguration] = useState<Configuration>({
     name,
     source: {

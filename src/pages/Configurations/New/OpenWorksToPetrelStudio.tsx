@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Colors, Icon, Modal, Tooltip } from '@cognite/cogs.js';
+import { AuthProvider, AuthContext } from '@cognite/react-container';
 import { Checkbox, notification, Select } from 'antd';
 import {
   ConfigurationOWtoPS,
@@ -9,7 +10,6 @@ import {
 } from 'typings/interfaces';
 import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
-import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
@@ -58,7 +58,9 @@ const WELL_PLAN_SCENARIOS = 'Well Plan Scenarios';
 const ROOT_FOLDER = null;
 
 const OpenWorksToPetrelStudio = ({ name }: Props) => {
-  const { user } = useContext(AuthContext);
+  const { authState } = useContext<AuthContext>(AuthProvider);
+  const user = authState?.username;
+
   const [configuration, setConfiguration] = useState<ConfigurationOWtoPS>({
     name,
     source: {

@@ -3,7 +3,6 @@ import { Tabs } from 'antd';
 import { Line } from 'react-chartjs-2';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-import AuthContext from 'contexts/AuthContext';
 import {
   GenericResponseObject,
   TranslationStatisticsObject,
@@ -23,7 +22,6 @@ const TranslationStatistics = ({ dateRange }: Props) => {
   const [psData, setPsData] = useState<TranslationStatisticsObject[]>([]);
   const [owData, setOwData] = useState<TranslationStatisticsObject[]>([]);
   const { api } = useContext(ApiContext);
-  const { token } = useContext(AuthContext);
   const { addError } = useContext(APIErrorContext);
 
   const setData = useCallback(
@@ -61,28 +59,26 @@ const TranslationStatistics = ({ dateRange }: Props) => {
     if (dateRange === DATE_RANGE_VALUES.lastHour) {
       timeRange = 'hour';
     }
-    if (token && token !== 'NO_TOKEN') {
-      setIsLoading(true);
-      if (activeTabKey === 'psToOw') {
-        api!.sources
-          .getTranslationStatistics('Studio', timeRange)
-          .then((response: GenericResponseObject[]) => {
-            setData(response, 'ps');
-          });
-      } else {
-        api!.sources
-          .getTranslationStatistics('Openworks', timeRange)
-          .then((owResponse: GenericResponseObject[]) => {
-            setData(owResponse, 'ow');
-          });
-      }
+    setIsLoading(true);
+    if (activeTabKey === 'psToOw') {
+      api!.sources
+        .getTranslationStatistics('Studio', timeRange)
+        .then((response: GenericResponseObject[]) => {
+          setData(response, 'ps');
+        });
+    } else {
+      api!.sources
+        .getTranslationStatistics('Openworks', timeRange)
+        .then((owResponse: GenericResponseObject[]) => {
+          setData(owResponse, 'ow');
+        });
     }
-  }, [api, setData, token, activeTabKey, dateRange]);
+  }, [api, setData, activeTabKey, dateRange]);
 
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line
-  }, [activeTabKey, token, dateRange]);
+  }, [activeTabKey, dateRange]);
 
   function onTabChange(key: string) {
     setActiveTabKey(key);
