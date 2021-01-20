@@ -3,8 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
-import { Tile } from 'components/tiles';
-import { LargeTile } from 'components/tiles/largeTile/LargeTile';
+import { Tile, InfographicsTile } from 'components/tiles';
 import { BoardMenu, SuiteMenu } from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -89,7 +88,7 @@ const SuiteOverview: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <LargeTile color={color} />
+              <InfographicsTile color={color} />
             </a>
           )}
         </LargeTileContainer>

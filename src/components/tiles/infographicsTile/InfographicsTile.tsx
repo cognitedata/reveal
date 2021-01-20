@@ -13,7 +13,7 @@ interface Props {
   color?: string;
 }
 
-export const LargeTile: React.FC<Props> = ({ color }: Props) => {
+export const InfographicsTile: React.FC<Props> = ({ color }: Props) => {
   return (
     <LargeTileContainer>
       <TileHeader color={color} isBoard>
