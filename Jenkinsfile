@@ -5,6 +5,7 @@ static final String STAGING_APP_ID = "cognuit-dev"
 static final String PRODUCTION_APP_ID = "cognuit"
 static final String APPLICATION_REPO_ID = "cognuit"
 
+static final String SENTRY_PROJECT_NAME = "cognuit"
 static final String SENTRY_DSN = "https://19bbb6bf3192415b98a42ed236cf4321@o124058.ingest.sentry.io/5599787"
 
 // Specify your locize.io project ID. If you do not have one of these, please
