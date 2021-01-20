@@ -26,6 +26,12 @@
     "strictPropertyInitialization": true,
     "target": "es5"
   },
-  "include": ["src"],
+  "include": [
+    "**/src/**/*",
+    "**/.storybook/**/*",
+    "**/testcafe/**/*",
+    "./.eslintrc.production.js",
+    "./.eslintrc.js"
+  ],
   "exclude": ["node_modules", "build"]
 }

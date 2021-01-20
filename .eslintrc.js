@@ -8,9 +8,5 @@ module.exports = {
         ignoredNamesRegex: '^_',
       },
     ],
-
-    // hacks to get this working:
-    'no-shadow': 0,
-    'react/require-default-props': 0,
   },
 };

@@ -11,6 +11,9 @@ module.exports = {
       'error',
       { issuePattern: '\\(((CG)-[0-9]+)\\)' },
     ],
+    // hacks to get this working:
+    'no-shadow': 0,
+    'react/require-default-props': 0,
 
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],

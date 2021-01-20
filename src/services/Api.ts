@@ -203,8 +203,9 @@ class Api {
       source: string,
       after: number
     ): Promise<GenericResponseObject[]> => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const queryParameters = { after };
+      // eslint-disable-next-line no-console
+      console.log('Not used yet: queryParameters', queryParameters);
       // return this.get(`${this.baseURL}/sources/${source}/errors`, queryParameters);
       if (source === 'Studio') {
         return mockDataErrorsPsToOw;
@@ -212,11 +213,11 @@ class Api {
       return mockDataErrorsOwToPs;
     },
     getTranslationStatistics: async (
-      source: string,
+      _source: string,
       timeRange: string
     ): Promise<GenericResponseObject[]> => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const queryParameters = { timeRange };
+      // const queryParameters = { timeRange };
       // return this.get(`${this.baseURL}/sources/${source}/statistics`, queryParameters);
       if (timeRange === 'month') {
         return mockDataTranslationsStatsMonthly();

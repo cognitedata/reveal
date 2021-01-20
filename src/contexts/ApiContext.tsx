@@ -6,11 +6,11 @@ type Props = {
   children: any;
 };
 
-type Values = {
+export type APIContextValue = {
   api?: Api;
 };
 
-const ApiContext = React.createContext<Values>({});
+const ApiContext = React.createContext<APIContextValue>({});
 
 const ApiProvider = ({ children }: Props) => (
   <AuthConsumer>
