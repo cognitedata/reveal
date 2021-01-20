@@ -37,6 +37,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
 
     const onAfterRenderTrigger = new THREE.Mesh(new THREE.Geometry());
     onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
+    onAfterRenderTrigger.frustumCulled = false;
     onAfterRenderTrigger.onAfterRender = () => this.resetNeedsRedraw();
     this.add(onAfterRenderTrigger);
   }
@@ -51,6 +52,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   }
 
   private resetNeedsRedraw() {
+    this._needsRedraw = false;
     this.numNodesLoadingAfterLastRedraw = Potree.Global.numNodesLoading;
     this.numChildrenAfterLastRedraw = this.potreeGroup.children.length;
     this.nodes.forEach(n => n.resetNeedsRedraw());
