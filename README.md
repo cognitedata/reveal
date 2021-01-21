@@ -26,6 +26,7 @@ Simply go to the [create repo page] and select "cognitedata/react-demo-app" as a
 - Update the `.github/CODEOWNERS` files to list your teams email.
 - Modify the tokens and names in the `Jenkinsfile`
 - Customise this `README.md` file!
+- Reset the package.json version back to 0.0.1 and change the name to your apps.
 
 ### Run e2e tests with testcafe
 
