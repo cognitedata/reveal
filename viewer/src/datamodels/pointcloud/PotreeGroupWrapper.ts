@@ -34,7 +34,10 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   private numNodesLoadingAfterLastRedraw = 0;
   private numChildrenAfterLastRedraw = 0;
 
-  constructor() {
+  /**
+   * @param pollLoadingStatusInterval Controls how often the wrapper checks for loading status. Used for testing.
+   */
+  constructor(pollLoadingStatusInterval: number = 200) {
     super();
     this.potreeGroup = new Potree.Group();
     this.potreeGroup.name = 'Potree.Group';
@@ -47,7 +50,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     onAfterRenderTrigger.onAfterRender = () => this.resetNeedsRedraw();
     this.add(onAfterRenderTrigger);
 
-    this._loadingObservable = this.createLoadingStateObservable();
+    this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -71,10 +74,10 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.nodes.forEach(n => n.resetNeedsRedraw());
   }
 
-  private createLoadingStateObservable(): Observable<LoadingState> {
-    const forceLoading$ = this._forceLoadingSubject.pipe(trueForDuration(1000));
+  private createLoadingStateObservable(pollLoadingStatusInterval: number): Observable<LoadingState> {
+    const forceLoading$ = this._forceLoadingSubject.pipe(trueForDuration(pollLoadingStatusInterval * 5));
     return combineLatest([
-      interval(200).pipe(
+      interval(pollLoadingStatusInterval).pipe(
         map(getLoadingStateFromPotree),
         distinctUntilChanged((x, y) => {
           return (
@@ -91,6 +94,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
         }
         return loadingState;
       }),
+      startWith({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 }),
       distinctUntilChanged(),
       share()
     );
