@@ -91,7 +91,7 @@ export const BoardForm: React.FC = () => {
           <CustomInputContainer>
             <Input
               autoComplete="off"
-              title="URL"
+              title="Add link to board"
               name="url"
               error={errors?.url}
               value={board.url || ''}
@@ -103,7 +103,7 @@ export const BoardForm: React.FC = () => {
           </CustomInputContainer>
           <SnapshotInputContainer>
             <CustomLabel>
-              <span>Add snapshot for dashboard</span>
+              <span>Add embedded tag for board</span>
               <Tooltip content={<SnapshotTooltip />} interactive>
                 <Icon type="Help" />
               </Tooltip>
