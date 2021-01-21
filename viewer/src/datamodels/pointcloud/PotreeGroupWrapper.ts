@@ -17,12 +17,14 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
   private _needsRedraw: boolean = false;
+  private _lastDrawPointBuffersHash = -1;
   private readonly _forceLoadingSubject = new Subject();
   private readonly _loadingObservable: Observable<LoadingState>;
 
   get needsRedraw(): boolean {
     return (
       this._needsRedraw ||
+      this._lastDrawPointBuffersHash !== this.pointBuffersHash ||
       Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
       this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length ||
       this.nodes.some(n => n.needsRedraw)
@@ -47,10 +49,25 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     const onAfterRenderTrigger = new THREE.Mesh(new THREE.Geometry());
     onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
     onAfterRenderTrigger.frustumCulled = false;
-    onAfterRenderTrigger.onAfterRender = () => this.resetRedraw();
+    onAfterRenderTrigger.onAfterRender = () => {
+      this.resetRedraw();
+      // We only reset this when we actually redraw, not on resetRedraw. This is
+      // because there are times when this will onAfterRender is triggered
+      // just after buffers are uploaded but not visualized yet.
+      this._lastDrawPointBuffersHash = this.pointBuffersHash;
+    };
     this.add(onAfterRenderTrigger);
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
+  }
+
+  private get pointBuffersHash() {
+    const buffers: Map<THREE.BufferGeometry, any> = this.potreeGroup.buffers;
+    let pointHash = 0xbaadf00d;
+    for (const buffer of buffers.keys()) {
+      pointHash ^= buffer.id;
+    }
+    return pointHash;
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -61,6 +78,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.potreeGroup.add(node.octtree);
     this.nodes.push(node);
     this._forceLoadingSubject.next();
+    this.requestRedraw();
   }
 
   requestRedraw() {
