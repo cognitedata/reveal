@@ -12,9 +12,7 @@ import { SuiteRowDelete } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 import { useLastVisited } from 'hooks';
 import { Flex } from 'styles/common';
-
-const TilePreviewHeight = '184';
-const TilePreviewWidth = '298';
+import { renderIframe } from 'utils/iframe';
 
 interface Props {
   avatar?: boolean;
@@ -25,23 +23,6 @@ interface Props {
   handleEdit?: (key: SuiteRowDelete[]) => void;
   view?: 'suite' | 'board';
 }
-// eslint-disable-next-line
-// TODO manipulate DOM to change iframe width & height
-const adjustIframeTagSize = (tag: string = ''): string =>
-  tag
-    .replace(/(height=["|']?)(\d*)/, `$1${TilePreviewHeight}`)
-    .replace(/(width=["|']?)(\d*)/, `$1${TilePreviewWidth}`);
-
-const renderIframe = (tag: string): JSX.Element | null => {
-  if (!tag) {
-    return null;
-  }
-  const elem = (
-    // eslint-disable-next-line react/no-danger
-    <div dangerouslySetInnerHTML={{ __html: adjustIframeTagSize(tag) }} />
-  );
-  return elem;
-};
 
 export const Tile: React.FC<Props> = ({
   avatar = false,

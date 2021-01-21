@@ -11,3 +11,9 @@ export const NoBoardsContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
+export const LargeTilesContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+`;

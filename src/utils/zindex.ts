@@ -7,6 +7,7 @@ const LAYERS = [
   //
   'LEFT_SIDEBAR',
   'TILE_ACTIONS_MENU',
+  'TILE_HEADER',
   //
   // things closer to here are shown BELOW
   //

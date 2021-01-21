@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
-import { Tile } from 'components/tiles';
+import { Tile, InfographicsTile } from 'components/tiles';
 import { BoardMenu, SuiteMenu } from 'components/menus';
 import { TilesContainer, OverviewContainer } from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,7 +15,12 @@ import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
 import { UserSpaceState } from 'store/userSpace/types';
 import { getUserSpace } from 'store/userSpace/selectors';
-import { StyledTitle, NoBoardsContainer } from './elements';
+import isEqual from 'lodash/isEqual';
+import {
+  StyledTitle,
+  NoBoardsContainer,
+  LargeTilesContainer,
+} from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,6 +50,10 @@ const SuiteOverview: React.FC = () => {
   }
 
   const { title, color, boards } = suite || {};
+
+  const infographicsBoards = boards?.filter(
+    (board) => board.type === 'infographics'
+  );
 
   const handleOpenModal = (modalType: ModalType, modalProps: any) => {
     dispatch(modalOpen({ modalType, modalProps }));
@@ -80,33 +89,53 @@ const SuiteOverview: React.FC = () => {
         }
       />
       <OverviewContainer>
-        <TilesContainer>
-          {!boards?.length ? (
-            <NoBoardsContainer>
-              <Graphic type="DataKits" />
-              <Title level={5}>No dasboards added to suite yet</Title>
-            </NoBoardsContainer>
-          ) : (
-            <>
-              <Title level={6}>All boards</Title>
-              {boards?.map((board: Board) => (
+        {!boards?.length ? (
+          <NoBoardsContainer>
+            <Graphic type="DataKits" />
+            <Title level={5}>No dasboards added to suite yet</Title>
+          </NoBoardsContainer>
+        ) : (
+          <>
+            <LargeTilesContainer>
+              {infographicsBoards?.map((board: Board) => (
                 <a
                   href={board.url}
                   key={board.key}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Tile
+                  <InfographicsTile
                     dataItem={board}
                     color={color}
-                    view="board"
                     menu={<BoardMenu suite={suite} board={board} />}
                   />
                 </a>
               ))}
-            </>
-          )}
-        </TilesContainer>
+            </LargeTilesContainer>
+            <TilesContainer>
+              <Title level={6}>All boards</Title>
+              {boards?.map((board: Board) => (
+                <>
+                  {!isEqual(board.type, 'infographics') && (
+                    <a
+                      href={board.url}
+                      key={board.key}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Tile
+                        dataItem={board}
+                        color={color}
+                        view="board"
+                        menu={<BoardMenu suite={suite} board={board} />}
+                      />
+                    </a>
+                  )}
+                </>
+              ))}
+            </TilesContainer>
+          </>
+        )}
       </OverviewContainer>
     </>
   );
