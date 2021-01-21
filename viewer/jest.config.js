@@ -19,6 +19,7 @@ module.exports = {
   },
   globals: {
     __webpack_public_path__: '',
+    // process.env globals are in setupJest
     'ts-jest': {
       tsconfig: 'tsconfig.test.json'
     }
