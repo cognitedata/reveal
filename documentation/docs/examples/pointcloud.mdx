@@ -121,3 +121,11 @@ To check if a class currently is visible, use `isClassVisible`:
 ```js
 const visible = model.isClassVisible(WellKnownAsprsPointClassCodes.Ground);
 ```
+
+## Unloading models
+
+Point clouds (and CAD models) can be unloaded using `Cognite3DViewer.removeModel()`:
+
+```js runnable
+viewer.removeModel(model)
+```

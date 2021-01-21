@@ -5,7 +5,7 @@
 import { DetermineSectorsInput } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
-import { OperatorFunction, empty, from, Observable, asyncScheduler } from 'rxjs';
+import { OperatorFunction, from, Observable, asyncScheduler, EMPTY } from 'rxjs';
 import { ConsumedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
@@ -13,14 +13,14 @@ import { filter, switchMap, tap, publish, subscribeOn } from 'rxjs/operators';
 
 export function handleDetermineSectorsInput(
   sectorRepository: Repository,
-  sectorCuller: SectorCuller
+  sectorCuller: SectorCuller,
+  modelStateHandler: ModelStateHandler
 ): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
   return publish((source$: Observable<DetermineSectorsInput>) => {
-    const modelStateHandler = new ModelStateHandler();
     const updateSector = (input: DetermineSectorsInput) => {
       const { cameraInMotion } = input;
       if (cameraInMotion) {
-        return empty();
+        return EMPTY;
       }
       return from(sectorCuller.determineSectors(input)).pipe(
         subscribeOn(asyncScheduler),
