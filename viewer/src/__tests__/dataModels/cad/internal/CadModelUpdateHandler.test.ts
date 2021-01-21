@@ -22,7 +22,6 @@ describe('CadModelUpdateHandler', () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
-    global.process.env.WORKER_VERSION = '1.1.0';
 
     const modelSectorProvider: BinaryFileProvider = {
       getBinaryFile: jest.fn()
