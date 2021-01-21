@@ -59,15 +59,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.add(onAfterRenderTrigger);
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
-  }
-
-  private get pointBuffersHash() {
-    const buffers: Map<THREE.BufferGeometry, any> = this.potreeGroup.buffers;
-    let pointHash = 0xbaadf00d;
-    for (const buffer of buffers.keys()) {
-      pointHash ^= buffer.id;
-    }
-    return pointHash;
+    this._lastDrawPointBuffersHash = this.pointBuffersHash;
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -116,6 +108,15 @@ export class PotreeGroupWrapper extends THREE.Object3D {
       distinctUntilChanged(),
       share()
     );
+  }
+
+  private get pointBuffersHash() {
+    const buffers: Map<THREE.BufferGeometry, any> = this.potreeGroup.buffers;
+    let pointHash = 0xbaadf00d;
+    for (const buffer of buffers.keys()) {
+      pointHash ^= buffer.id;
+    }
+    return pointHash;
   }
 }
 
