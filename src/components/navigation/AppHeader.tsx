@@ -1,15 +1,43 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, TopBar, Menu, Graphic, Tooltip } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { isAdmin } from 'store/groups/selectors';
+import { CdfClient } from 'utils';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/NOC_logo.png';
 import { CustomLink } from 'styles/common';
+import { CdfClientContext } from 'providers/CdfClientProvider';
 import { LogoWrapper } from './elements';
+
+// not sure about method location, to utils?
+const logout = async (client: CdfClient) => {
+  const redirectUrl = `https://${window.location.host}/`;
+  try {
+    const logoutUrl = await client.cogniteClient.logout.getUrl({
+      redirectUrl,
+    });
+    if (logoutUrl) {
+      window.location.href = logoutUrl;
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('No logout URL');
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error);
+    window.location.pathname = redirectUrl as string;
+  }
+};
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
+  const client = useContext(CdfClientContext);
+
+  const onClick = async () => {
+    await logout(client);
+  };
+
   const actions = [
     {
       key: 'view',
@@ -66,9 +94,22 @@ const AppHeader: React.FC = () => {
       component: <Avatar text="Offshore Ops" />,
       menu: (
         <Menu>
-          <Menu.Item>Privacy policy</Menu.Item>
+          <Menu.Item>
+            <CustomLink
+              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Privacy policy
+            </CustomLink>
+          </Menu.Item>
           <Menu.Divider />
-          <Menu.Item>Log out</Menu.Item>
+          <Menu.Item>
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+            <div role="button" tabIndex={0} onClick={onClick}>
+              Log out
+            </div>
+          </Menu.Item>
         </Menu>
       ),
     },
