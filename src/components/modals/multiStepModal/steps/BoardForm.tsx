@@ -103,7 +103,7 @@ export const BoardForm: React.FC = () => {
           </CustomInputContainer>
           <SnapshotInputContainer>
             <CustomLabel>
-              <span>Add embedded tag for dashboard</span>
+              <span>Add embedded tag for board</span>
               <Tooltip content={<SnapshotTooltip />} interactive>
                 <Icon type="Help" />
               </Tooltip>
