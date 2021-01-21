@@ -59,7 +59,7 @@ class TakenSectorMap {
     });
     return totalCost;
   }
-  private readonly maps: Map<CadModelMetadata, TakenSectorTree> = new Map();
+  private readonly maps: Map<string, TakenSectorTree> = new Map();
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
@@ -68,7 +68,7 @@ class TakenSectorMap {
   }
 
   initializeScene(modelMetadata: CadModelMetadata) {
-    this.maps.set(modelMetadata, new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost));
+    this.maps.set(modelMetadata.blobUrl, new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost));
   }
 
   getWantedSectorCount(): number {
@@ -80,8 +80,11 @@ class TakenSectorMap {
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
-    const tree = this.maps.get(model);
-    assert(!!tree);
+    const tree = this.maps.get(model.blobUrl);
+    assert(
+      !!tree,
+      `Could not find sector tree for ${model.blobUrl} (have trees ${Array.from(this.maps.keys()).join(', ')})`
+    );
     tree!.markSectorDetailed(sectorId, priority);
   }
 

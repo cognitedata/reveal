@@ -35,6 +35,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Specify settings for rendering.
    */
+  // TODO 2021-01-19 larsmoa: Remove rendering hints per model
   set renderHints(hints: CadRenderHints) {
     this.cadNode.renderHints = hints;
   }
@@ -42,6 +43,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Get settings used for loading pipeline.
    */
+  // TODO 2021-01-19 larsmoa: Remove loading hints per model
   get loadingHints(): CadLoadingHints {
     return this.cadNode.loadingHints;
   }

@@ -18,7 +18,7 @@ import { NodeAppearanceProvider, CadNode } from '../datamodels/cad';
 import { RenderMode } from '../datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
 import { SupportedModelTypes } from '../datamodels/base';
-import { LoadingState } from '../utilities';
+import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 import { RenderOptions } from '..';
@@ -81,6 +81,7 @@ export class RevealManager<TModelIdentifier> {
 
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
+    this._pointCloudManager.resetRedraw();
   }
 
   get needsRedraw(): boolean {
@@ -234,6 +235,23 @@ export class RevealManager<TModelIdentifier> {
 
       default:
         throw new Error(`Model type '${type}' is not supported`);
+    }
+  }
+
+  public removeModel(type: 'cad', model: CadNode): void;
+  public removeModel(type: 'pointcloud', model: PointCloudNode): void;
+  public removeModel(type: 'cad' | 'pointcloud', model: CadNode | PointCloudNode): void {
+    switch (type) {
+      case 'cad':
+        this._cadManager.removeModel(model as CadNode);
+        break;
+
+      case 'pointcloud':
+        this._pointCloudManager.removeModel(model as PointCloudNode);
+        break;
+
+      default:
+        assertNever(type);
     }
   }
 

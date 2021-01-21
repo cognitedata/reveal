@@ -1,7 +1,6 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
 import * as THREE from 'three';
 
 import { ModelDataClient } from '../../../utilities/networking/types';

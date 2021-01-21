@@ -2024,9 +2024,9 @@
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
 "@types/lodash@^4.14.162":
-  version "4.14.167"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.167.tgz#ce7d78553e3c886d4ea643c37ec7edc20f16765e"
-  integrity sha512-w7tQPjARrvdeBkX/Rwg95S592JwxqOjmms3zWQ0XZgSyxSLdzWaYH3vErBhdVS/lRBX7F8aBYcYJYTr5TMGOzw==
+  version "4.14.168"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
+  integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
 
 "@types/minimatch@*":
   version "3.0.3"
@@ -8521,9 +8521,9 @@ mixin-object@^2.0.1:
     is-extendable "^0.1.1"
 
 mixpanel-browser@^2.39.0:
-  version "2.40.0"
-  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.40.0.tgz#4336d0ee4a51a2b51d3e8d1809204abe2a8a5436"
-  integrity sha512-lhBsxIP9FX3ZJlOICgCzkFjfOKZ4T1Z5MfW8duYbb1kq7Lc4jSuJF2kTiuDISubAiZhsUXUwrGNATjeGjoXJWw==
+  version "2.40.1"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.40.1.tgz#390cd4603af3856b99bc44ab1e199982588a0ebc"
+  integrity sha512-XtdFELX/h+8Ud0qOtoqRQQIzB6CjJJHfsUHAR5HlY33+YLe9JvEoRJq1hZK4dWLYHmzVu8nh0H/SZiibpOZmPg==
 
 mkdirp-classic@^0.5.2:
   version "0.5.3"
