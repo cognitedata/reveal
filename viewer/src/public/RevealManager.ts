@@ -81,6 +81,7 @@ export class RevealManager<TModelIdentifier> {
 
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
+    this._pointCloudManager.resetRedraw();
   }
 
   get needsRedraw(): boolean {
