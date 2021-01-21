@@ -3,14 +3,10 @@ import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
 import config from 'utils/config';
 
+import '@cognite/cogs.js/dist/cogs.css';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
-import '@cognite/cogs.js/dist/cogs.css';
-import I18nContainer from './containers/I18nContainer';
-import { ApiProvider } from './contexts/ApiContext';
-import { AuthProvider } from './contexts/AuthContext';
-import { APIErrorProvider } from './contexts/APIErrorContext';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
@@ -24,18 +20,7 @@ if (process.env.REACT_APP_SENTRY_DSN) {
   });
 }
 
-ReactDOM.render(
-  <I18nContainer>
-    <AuthProvider>
-      <ApiProvider>
-        <APIErrorProvider>
-          <App />
-        </APIErrorProvider>
-      </ApiProvider>
-    </AuthProvider>
-  </I18nContainer>,
-  document.getElementById('root')
-);
+ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Colors, Icon, Modal, Tooltip } from '@cognite/cogs.js';
+import { AuthProvider, AuthContext } from '@cognite/react-container';
 import { Checkbox, notification, Select } from 'antd';
 import {
   ConfigurationOWtoPS,
@@ -9,7 +10,6 @@ import {
 } from 'typings/interfaces';
 import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
-import AuthContext from 'contexts/AuthContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
@@ -58,7 +58,9 @@ const WELL_PLAN_SCENARIOS = 'Well Plan Scenarios';
 const ROOT_FOLDER = null;
 
 const OpenWorksToPetrelStudio = ({ name }: Props) => {
-  const { user } = useContext(AuthContext);
+  const { authState } = useContext<AuthContext>(AuthProvider);
+  const user = authState?.username;
+
   const [configuration, setConfiguration] = useState<ConfigurationOWtoPS>({
     name,
     source: {
@@ -78,9 +80,10 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
       folder: null,
     },
   });
-  const [configurationIsComplete, setConfigurationIsComplete] = useState<
-    boolean
-  >(false);
+  const [
+    configurationIsComplete,
+    setConfigurationIsComplete,
+  ] = useState<boolean>(false);
   const [sourceUIState, setSourceUIState] = useState<ConfigUIState>(
     ConfigUIState.INITIAL
   );
@@ -99,7 +102,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     DataTransferObject[]
   >([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [availableWPS, setAvailableWPS] = useState<DataTransferObject[]>([]);
+  const [availableWPS] = useState<DataTransferObject[]>([]);
   const [dataTypesLoading, setDataTypesLoading] = useState<boolean>(false);
   const [foldersLoading, setFoldersLoading] = useState<boolean>(false);
   const [
@@ -114,12 +117,10 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   const { Option } = Select;
 
   useEffect(() => {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        author: String(user),
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      author: String(user),
+    }));
   }, [user]);
 
   async function fetchRepositories(): Promise<GenericResponseObject[]> {
@@ -221,23 +222,19 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   }
 
   function updateSourceProject(value: SelectValue) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        source: { ...prevState.source, external_id: value.toString() },
-        well_plan: [],
-        targets: [],
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      source: { ...prevState.source, external_id: value.toString() },
+      well_plan: [],
+      targets: [],
+    }));
   }
 
   function updateTargetRepository(value: SelectValue) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        target: { ...prevState.target, external_id: value.toString() },
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      target: { ...prevState.target, external_id: value.toString() },
+    }));
   }
 
   function updateDestinationFolder(value: SelectValue | null) {
@@ -251,21 +248,17 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   }
 
   function updateWPS(value: any) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        well_plan: value,
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      well_plan: value,
+    }));
   }
 
   function updateTargets(value: any) {
-    setConfiguration((prevState) => {
-      return {
-        ...prevState,
-        targets: value,
-      };
-    });
+    setConfiguration((prevState) => ({
+      ...prevState,
+      targets: value,
+    }));
   }
 
   useEffect(() => {
@@ -395,15 +388,13 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                           undefined
                         }
                         onChange={(e) => {
-                          setConfiguration((prevState) => {
-                            return {
-                              ...prevState,
-                              ow_to_studio_config: {
-                                ...prevState.ow_to_studio_config,
-                                tag_name: e.target.checked ? name : undefined,
-                              },
-                            };
-                          });
+                          setConfiguration((prevState) => ({
+                            ...prevState,
+                            ow_to_studio_config: {
+                              ...prevState.ow_to_studio_config,
+                              tag_name: e.target.checked ? name : undefined,
+                            },
+                          }));
                         }}
                       >
                         Add configuration name as a metatag
@@ -616,15 +607,13 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                             null
                           }
                           onChange={(e) => {
-                            setConfiguration((prevState) => {
-                              return {
-                                ...prevState,
-                                ow_to_studio_config: {
-                                  ...prevState.ow_to_studio_config,
-                                  session_name: e.target.checked ? name : null,
-                                },
-                              };
-                            });
+                            setConfiguration((prevState) => ({
+                              ...prevState,
+                              ow_to_studio_config: {
+                                ...prevState.ow_to_studio_config,
+                                session_name: e.target.checked ? name : null,
+                              },
+                            }));
                           }}
                           disabled
                         >

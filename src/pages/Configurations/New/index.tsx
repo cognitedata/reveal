@@ -8,7 +8,7 @@ import OpenWorksToPetrelStudio from './OpenWorksToPetrelStudio';
 const New = () => {
   const query = useQuery();
   const name = query.get('name');
-  const { type } = useParams();
+  const { type } = useParams<{ type: SessionType }>();
 
   return (
     <>

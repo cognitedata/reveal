@@ -6,13 +6,11 @@ type Props = {
   children?: any;
 };
 
-const StatusCardHeader = ({ title, children }: Props) => {
-  return (
-    <Wrapper>
-      <h2>{title}</h2>
-      {children && <ChildrenContainer>{children}</ChildrenContainer>}
-    </Wrapper>
-  );
-};
+const StatusCardHeader = ({ title, children }: Props) => (
+  <Wrapper>
+    <h2>{title}</h2>
+    {children && <ChildrenContainer>{children}</ChildrenContainer>}
+  </Wrapper>
+);
 
 export default StatusCardHeader;

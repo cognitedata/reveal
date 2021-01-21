@@ -99,45 +99,43 @@ const ActionsContainer = styled(HeaderItem)`
   padding: 0 12px;
 `;
 
-const MainHeader = ({ user }: { user: string | null | undefined }) => {
-  return (
-    <Header>
-      <TitleContainer>
-        <div>
-          <NavLink to="">
-            <Logo />
-          </NavLink>
-        </div>
-        <div>
-          <h1>Discover</h1>
-          <h2>Cognuit</h2>
-        </div>
-      </TitleContainer>
-      <MenuContainer>
-        <nav>
-          <ul>
-            <li>
-              <MenuLink to="/configurations">Configurations</MenuLink>
-            </li>
-            <li>
-              <MenuLink to="/data-transfers">Data Transfers</MenuLink>
-            </li>
-            <li>
-              <MenuLink to="/status">Status</MenuLink>
-            </li>
-          </ul>
-        </nav>
-      </MenuContainer>
-      <AvatarContainer>
-        <Tooltip content={`Logged in: ${String(user)}`}>
-          <Avatar text={String(user)} />
-        </Tooltip>
-      </AvatarContainer>
-      <ActionsContainer>
-        <AppSwitcher />
-      </ActionsContainer>
-    </Header>
-  );
-};
+const MainHeader = ({ user }: { user: string | null | undefined }) => (
+  <Header>
+    <TitleContainer>
+      <div>
+        <NavLink to="">
+          <Logo />
+        </NavLink>
+      </div>
+      <div>
+        <h1>Discover</h1>
+        <h2>Cognuit</h2>
+      </div>
+    </TitleContainer>
+    <MenuContainer>
+      <nav>
+        <ul>
+          <li>
+            <MenuLink to="/configurations">Configurations</MenuLink>
+          </li>
+          <li>
+            <MenuLink to="/data-transfers">Data Transfers</MenuLink>
+          </li>
+          <li>
+            <MenuLink to="/status">Status</MenuLink>
+          </li>
+        </ul>
+      </nav>
+    </MenuContainer>
+    <AvatarContainer>
+      <Tooltip content={`Logged in: ${String(user)}`}>
+        <Avatar text={String(user)} />
+      </Tooltip>
+    </AvatarContainer>
+    <ActionsContainer>
+      <AppSwitcher />
+    </ActionsContainer>
+  </Header>
+);
 
 export default MainHeader;

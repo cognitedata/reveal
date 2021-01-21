@@ -38,18 +38,16 @@ type Props = {
   items: MenuItem[];
 };
 
-const Tabs = ({ items }: Props) => {
-  return (
-    <MainMenu>
-      <ul>
-        {items.map((item) => (
-          <li key={`tab${item.url}`}>
-            <MenuLink to={item.url}>{item.label}</MenuLink>
-          </li>
-        ))}
-      </ul>
-    </MainMenu>
-  );
-};
+const Tabs = ({ items }: Props) => (
+  <MainMenu>
+    <ul>
+      {items.map((item) => (
+        <li key={`tab${item.url}`}>
+          <MenuLink to={item.url}>{item.label}</MenuLink>
+        </li>
+      ))}
+    </ul>
+  </MainMenu>
+);
 
 export default Tabs;

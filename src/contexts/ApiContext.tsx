@@ -1,22 +1,28 @@
-import React, { useContext } from 'react';
+import * as React from 'react';
+import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import Api from '../services/Api';
-import AuthContext from './AuthContext';
 
 type Props = {
   children: any;
 };
 
-type Values = {
+export type APIContextValue = {
   api?: Api;
 };
 
-const ApiContext = React.createContext<Values>({});
+const ApiContext = React.createContext<APIContextValue>({});
 
-const ApiProvider = ({ children }: Props) => {
-  const { token } = useContext(AuthContext);
-  const api = new Api(token);
-  return <ApiContext.Provider value={{ api }}>{children}</ApiContext.Provider>;
-};
+const ApiProvider = ({ children }: Props) => (
+  <AuthConsumer>
+    {({ client, authState }: AuthContext) => {
+      const { token } = authState || {};
+      const api = new Api(token || '', client);
+      return (
+        <ApiContext.Provider value={{ api }}>{children}</ApiContext.Provider>
+      );
+    }}
+  </AuthConsumer>
+);
 
 export { ApiProvider };
 

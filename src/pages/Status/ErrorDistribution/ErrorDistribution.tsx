@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
+import { APIContextValue } from 'contexts/ApiContext';
 import ApiContext from '../../../contexts/ApiContext';
 import {
   ErrorDistributionObject,
@@ -16,7 +17,7 @@ const ErrorDistribution = ({ afterTimestamp }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [psData, setPsData] = useState<ErrorDistributionObject[]>([]);
   const [owData, setOwData] = useState<ErrorDistributionObject[]>([]);
-  const { api } = useContext(ApiContext);
+  const { api } = useContext<APIContextValue>(ApiContext);
 
   const psColors = ['#2B3A88', '#4A67FB', '#DBE1FE', '#A4B2FC'];
   const owColors = ['#FF6918', '#FF8746', '#FFE1D1', '#FFB38B'];

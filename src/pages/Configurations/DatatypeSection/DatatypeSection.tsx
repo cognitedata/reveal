@@ -30,18 +30,16 @@ const DatatypeSection = ({
       );
     }
   }, [filterValue, objects]);
-  const expandIcon = (isActive: boolean) => {
-    return (
-      <Icon
-        type="Down"
-        style={{
-          marginRight: 8,
-          transition: 'transform .2s',
-          transform: `rotate(${!isActive ? 0 : -180}deg)`,
-        }}
-      />
-    );
-  };
+  const expandIcon = (isActive: boolean) => (
+    <Icon
+      type="Down"
+      style={{
+        marginRight: 8,
+        transition: 'transform .2s',
+        transform: `rotate(${!isActive ? 0 : -180}deg)`,
+      }}
+    />
+  );
   return (
     <Container>
       <Header>

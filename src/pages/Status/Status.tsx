@@ -15,9 +15,10 @@ import TranslationStatistics from './TranslationStatistics';
 
 const Status = () => {
   const [dateRangeOpen, setDateRangeOpen] = useState<boolean>(false);
-  const [selectedDateRange, setSelectedDateRange] = useState<
-    DateRangeValueType
-  >(DATE_RANGE_VALUES.lastMonth);
+  const [
+    selectedDateRange,
+    setSelectedDateRange,
+  ] = useState<DateRangeValueType>(DATE_RANGE_VALUES.lastMonth);
   const [afterTimestamp, setAfterTimestamp] = useState<number>(
     getTimestampParamForDateRange(DATE_RANGE_VALUES.lastMonth)
   );

@@ -12,32 +12,30 @@ type StepType = {
   created_time: number;
 };
 
-const Step = ({ status, error_message, created_time }: StepType) => {
-  return (
-    <StepItem key={`${status}-${created_time}`}>
-      <StepIconCircle
-        bgColor={error_message ? Colors.danger.hex() : Colors.success.hex()}
-        txtColor={error_message ? Colors.danger.hex() : Colors.white.hex()}
-      >
-        <Icon
-          type={error_message ? 'WarningFilled' : 'Check'}
-          style={{ width: !error_message ? '65%' : 'auto' }}
-        />
-      </StepIconCircle>
-      <StepText>
-        {error_message ? (
-          <span>
-            {error_message}{' '}
-            <StepTime>
-              {format(new Date(created_time * UNIX_TIMESTAMP_FACTOR), 'Pp')}
-            </StepTime>
-          </span>
-        ) : (
-          <span>{status}</span>
-        )}
-      </StepText>
-    </StepItem>
-  );
-};
+const Step = ({ status, error_message, created_time }: StepType) => (
+  <StepItem key={`${status}-${created_time}`}>
+    <StepIconCircle
+      bgColor={error_message ? Colors.danger.hex() : Colors.success.hex()}
+      txtColor={error_message ? Colors.danger.hex() : Colors.white.hex()}
+    >
+      <Icon
+        type={error_message ? 'WarningFilled' : 'Check'}
+        style={{ width: !error_message ? '65%' : 'auto' }}
+      />
+    </StepIconCircle>
+    <StepText>
+      {error_message ? (
+        <span>
+          {error_message}{' '}
+          <StepTime>
+            {format(new Date(created_time * UNIX_TIMESTAMP_FACTOR), 'Pp')}
+          </StepTime>
+        </span>
+      ) : (
+        <span>{status}</span>
+      )}
+    </StepText>
+  </StepItem>
+);
 
 export default Step;

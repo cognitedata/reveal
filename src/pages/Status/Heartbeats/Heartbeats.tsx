@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Tabs } from 'antd';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-import AuthContext from 'contexts/AuthContext';
 import {
   GenericResponseObject,
   UNIX_TIMESTAMP_FACTOR,
@@ -34,7 +33,6 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
   const [psHeartbeats, setPsHeartbeats] = useState<GenericResponseObject[]>([]);
   const [owHeartbeats, setOwHeartbeats] = useState<GenericResponseObject[]>([]);
   const { api } = useContext(ApiContext);
-  const { token } = useContext(AuthContext);
   const { addError } = useContext(APIErrorContext);
 
   const setBeats = useCallback(
@@ -65,37 +63,35 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
   );
 
   const fetchBeats = useCallback(() => {
-    if (token && token !== 'NO_TOKEN') {
-      setIsLoading(true);
-      if (activeTabKey === 'psToOw') {
-        api!.sources
-          .getHeartbeats(
-            'Studio',
-            Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR)
-          )
-          .then((response: GenericResponseObject[]) => {
-            setBeats(response, 'ps');
-          });
-      } else {
-        api!.sources
-          .getHeartbeats(
-            'Openworks',
-            Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR)
-          )
-          .then((owResponse: GenericResponseObject[]) => {
-            setBeats(
-              owResponse.sort((a, b) => Number(a) - Number(b)),
-              'ow'
-            );
-          });
-      }
+    setIsLoading(true);
+    if (activeTabKey === 'psToOw') {
+      api!.sources
+        .getHeartbeats(
+          'Studio',
+          Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR)
+        )
+        .then((response: GenericResponseObject[]) => {
+          setBeats(response, 'ps');
+        });
+    } else {
+      api!.sources
+        .getHeartbeats(
+          'Openworks',
+          Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR)
+        )
+        .then((owResponse: GenericResponseObject[]) => {
+          setBeats(
+            owResponse.sort((a, b) => Number(a) - Number(b)),
+            'ow'
+          );
+        });
     }
-  }, [afterTimestamp, api, setBeats, token, activeTabKey]);
+  }, [afterTimestamp, api, setBeats, activeTabKey]);
 
   useEffect(() => {
     fetchBeats();
     // eslint-disable-next-line
-  }, [afterTimestamp, activeTabKey, token]);
+  }, [afterTimestamp, activeTabKey]);
 
   function handleTabChange(key: string) {
     setActiveTabKey(key);
