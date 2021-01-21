@@ -28,6 +28,7 @@ export class CadManager<TModelIdentifier> {
   private readonly _subscription: Subscription = new Subscription();
 
   private _needsRedraw: boolean = false;
+  private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
 
   get materialManager() {
     return this._materialManager;
@@ -56,7 +57,8 @@ export class CadManager<TModelIdentifier> {
         sector => {
           const cadModel = this._cadModelMap.get(sector.blobUrl);
           if (!cadModel) {
-            throw new Error(`Model ${sector.blobUrl} not found`);
+            // Model has been removed - results can come in for a period just after removal
+            return;
           }
           if (cadModel.renderHints.showSectorBoundingBoxes) {
             cadModel!.updateSectorBoundingBox(sector);
@@ -78,7 +80,7 @@ export class CadManager<TModelIdentifier> {
             sectorNode.add(sector.group);
           }
           sectorNode.group = sector.group;
-          this._needsRedraw = true;
+          this.markNeedsRedraw();
         },
         error => {
           trackError(error, {
@@ -142,13 +144,24 @@ export class CadManager<TModelIdentifier> {
 
   async addModel(modelIdentifier: TModelIdentifier, nodeAppearanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
+    if (this._cadModelMap.has(metadata.blobUrl)) {
+      throw new Error(`Model ${modelIdentifier} has already been added`);
+    }
+
     const model = this._cadModelFactory.createModel(metadata, nodeAppearanceProvider);
-    model.addEventListener('update', () => {
-      this._needsRedraw = true;
-    });
+    model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(metadata.blobUrl, model);
-    this._cadModelUpdateHandler.updateModels(model);
+    this._cadModelUpdateHandler.addModel(model);
     return model;
+  }
+
+  removeModel(model: CadNode): void {
+    const metadata = model.cadModelMetadata;
+    if (!this._cadModelMap.delete(metadata.blobUrl)) {
+      throw new Error(`Could not remove model ${metadata.blobUrl} because it's not added`);
+    }
+    model.removeEventListener('update', this._markNeedsRedrawBound);
+    this._cadModelUpdateHandler.removeModel(model);
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -157,5 +170,9 @@ export class CadManager<TModelIdentifier> {
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
     return this._cadModelUpdateHandler.getParsedData();
+  }
+
+  private markNeedsRedraw(): void {
+    this._needsRedraw = true;
   }
 }

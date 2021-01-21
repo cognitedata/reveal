@@ -18,7 +18,7 @@ describe('TakenSectorTree', () => {
   test('default tree contains root as simple', () => {
     const root = generateSectorTree(2);
     const tree = new TakenSectorTree(root, determineSectorCost);
-    const wanted = tree.toWantedSectors(model);
+    const wanted = tree.toWantedSectors(model.blobUrl);
     expectContainsSectorsWithLevelOfDetail(wanted, [0], []);
   });
 
@@ -34,7 +34,7 @@ describe('TakenSectorTree', () => {
     // Assert
     const expectedDetailed = ['0/', '0/0/'];
     const expectedSimple = ['0/1/', '0/0/0/', '0/0/1/'];
-    const wanted = tree.toWantedSectors(model);
+    const wanted = tree.toWantedSectors(model.blobUrl);
     expectHasSectors(wanted, LevelOfDetail.Detailed, expectedDetailed);
     expectHasSectors(wanted, LevelOfDetail.Simple, expectedSimple);
   });
@@ -51,7 +51,7 @@ describe('TakenSectorTree', () => {
     // Assert
     const expectedDetailed = ['0/', '0/0/', '0/0/0/', '0/1/', '0/1/0/'];
     const expectedSimple = ['0/0/0/0/', '0/0/0/1/', '0/1/0/0/', '0/1/0/1/', '0/1/1/'];
-    const wanted = tree.toWantedSectors(model);
+    const wanted = tree.toWantedSectors(model.blobUrl);
     expectHasSectors(wanted, LevelOfDetail.Detailed, expectedDetailed);
     expectHasSectors(wanted, LevelOfDetail.Simple, expectedSimple);
   });
@@ -67,7 +67,7 @@ describe('TakenSectorTree', () => {
     tree.markSectorDetailed(0, 1);
 
     // Assert
-    const wanted = tree.toWantedSectors(model);
+    const wanted = tree.toWantedSectors(model.blobUrl);
     expectHasSectors(wanted, LevelOfDetail.Detailed, ['0/']);
     expectHasSectors(wanted, LevelOfDetail.Simple, ['0/1/']);
   });
@@ -82,7 +82,7 @@ describe('TakenSectorTree', () => {
     const tree = new TakenSectorTree(root, determineSectorCost);
 
     // Assert
-    const wanted = tree.toWantedSectors(model);
+    const wanted = tree.toWantedSectors(model.blobUrl);
     expect(wanted.find(x => x.metadata.path === '0/')?.levelOfDetail).toBe(LevelOfDetail.Discarded);
   });
 });

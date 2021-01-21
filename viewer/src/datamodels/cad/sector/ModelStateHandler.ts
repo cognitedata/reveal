@@ -5,6 +5,7 @@
 import { SceneModelState } from './rxSectorUtilities';
 import { WantedSector, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
+import assert from 'assert';
 
 export class ModelStateHandler {
   private readonly _sceneModelState: SceneModelState;
@@ -26,10 +27,21 @@ export class ModelStateHandler {
     return true;
   }
 
+  addModel(modelBlobUrl: string) {
+    assert(this._sceneModelState[modelBlobUrl] === undefined, `Model ${modelBlobUrl} is already added`);
+    this._sceneModelState[modelBlobUrl] = {};
+  }
+
+  removeModel(modelBlobUrl: string) {
+    assert(this._sceneModelState[modelBlobUrl] !== undefined, `Model ${modelBlobUrl} is not added`);
+    delete this._sceneModelState[modelBlobUrl];
+  }
+
   updateState(consumedSector: ConsumedSector) {
-    if (this._sceneModelState[consumedSector.blobUrl] == undefined) {
-      this._sceneModelState[consumedSector.blobUrl] = {};
-    }
+    assert(
+      this._sceneModelState[consumedSector.blobUrl] !== undefined,
+      `Received sector from model ${consumedSector.blobUrl}, but the model is not added`
+    );
     const modelState = this._sceneModelState[consumedSector.blobUrl];
     if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
       delete modelState[consumedSector.metadata.id];

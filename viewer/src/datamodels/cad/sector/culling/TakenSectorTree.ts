@@ -11,7 +11,7 @@ import {
   reduceSectorCost,
   addSectorCost
 } from './types';
-import { CadModelMetadata } from '../../CadModelMetadata';
+
 import { traverseUpwards, traverseDepthFirst } from '../../../../utilities/objectTraversal';
 
 export class TakenSectorTree {
@@ -53,14 +53,14 @@ export class TakenSectorTree {
     }, 0);
   }
 
-  toWantedSectors(model: CadModelMetadata): PrioritizedWantedSector[] {
+  toWantedSectors(modelBlobUrl: string): PrioritizedWantedSector[] {
     return this.sectors
       .map(sector => {
         const wanted: PrioritizedWantedSector = {
           levelOfDetail: sector.lod,
           metadata: sector.sector,
           priority: sector.priority,
-          blobUrl: model.blobUrl
+          blobUrl: modelBlobUrl
         };
         return wanted;
       })
