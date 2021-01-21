@@ -16,7 +16,7 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  * basic functionality.
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
-  private _needsRedraw: boolean = true;
+  private _needsRedraw: boolean = false;
   private readonly _forceLoadingSubject = new Subject();
   private readonly _loadingObservable: Observable<LoadingState>;
 
@@ -47,7 +47,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     const onAfterRenderTrigger = new THREE.Mesh(new THREE.Geometry());
     onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
     onAfterRenderTrigger.frustumCulled = false;
-    onAfterRenderTrigger.onAfterRender = () => this.resetNeedsRedraw();
+    onAfterRenderTrigger.onAfterRender = () => this.resetRedraw();
     this.add(onAfterRenderTrigger);
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
@@ -67,11 +67,11 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this._needsRedraw = true;
   }
 
-  private resetNeedsRedraw() {
+  resetRedraw() {
     this._needsRedraw = false;
     this.numNodesLoadingAfterLastRedraw = Potree.Global.numNodesLoading;
     this.numChildrenAfterLastRedraw = this.potreeGroup.children.length;
-    this.nodes.forEach(n => n.resetNeedsRedraw());
+    this.nodes.forEach(n => n.resetRedraw());
   }
 
   private createLoadingStateObservable(pollLoadingStatusInterval: number): Observable<LoadingState> {

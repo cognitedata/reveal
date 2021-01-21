@@ -26,6 +26,10 @@ export class PointCloudManager<TModelIdentifier> {
     this._pointCloudGroupWrapper.requestRedraw();
   }
 
+  resetRedraw(): void {
+    this._pointCloudGroupWrapper.resetRedraw();
+  }
+
   get needsRedraw(): boolean {
     return this._pointCloudGroupWrapper.needsRedraw;
   }
