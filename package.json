@@ -31,7 +31,7 @@
     "i18next-localstorage-backend": "^3.1.2",
     "i18next-locize-backend": "^4.1.9",
     "i18next-pseudo": "^2.2.0",
-    "query-string": "^6.13.6",
+    "query-string": "^6.13.8",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-i18next": "^11.7.3",
