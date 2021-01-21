@@ -94,7 +94,7 @@ export class PotreeNodeWrapper {
     this.octtree.material.recomputeClassification();
   }
 
-  resetNeedsRedraw() {
+  resetRedraw() {
     this._needsRedraw = false;
   }
 }
