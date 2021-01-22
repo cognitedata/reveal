@@ -116,7 +116,7 @@ export function DistanceMeasurement() {
 
       addWASDHandling(controls);
 
-      const htmlOverlayHelper = new utilities.HtmlOverlayHelper();
+      const htmlOverlayHelper = new utilities.HtmlOverlayHelper(canvas.current);
 
 
       animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {

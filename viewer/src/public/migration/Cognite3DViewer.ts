@@ -33,7 +33,7 @@ import { createCdfRevealManager } from '../createRevealManager';
 import { SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
+import { assertNever, BoundingBoxClipper, File3dFormat, HtmlOverlayHelper, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
@@ -90,6 +90,7 @@ export class Cognite3DViewer {
   private readonly _updateCameraNearAndFarSubject: Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>;
   private readonly _subscription = new Subscription();
   private readonly _revealManager: RevealManager<CdfModelIdentifier>;
+  private readonly _htmlOverlays: HtmlOverlayHelper;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -173,6 +174,7 @@ export class Cognite3DViewer {
     this.domElement = options.domElement || createCanvasWrapper();
     this.domElement.appendChild(this.canvas);
     this.spinner = new Spinner(this.domElement);
+    this._htmlOverlays = new HtmlOverlayHelper(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -1042,6 +1044,23 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
   }
 
+  /**
+   * @param htmlElement
+   * @param position3D
+   */
+  attachHtmlOverlay(htmlElement: HTMLElement, position3D: THREE.Vector3): void {
+    this._htmlOverlays.addOverlayElement(htmlElement, position3D);
+    this._htmlOverlays.updatePositions(this.renderer, this.camera);
+  }
+
+  /**
+   * @param htmlElement
+   */
+  detachHtmlOverlay(htmlElement: HTMLElement): void {
+    this._htmlOverlays.removeOverlayElement(htmlElement);
+    this._htmlOverlays.updatePositions(this.renderer, this.camera);
+  }
+
   private getModels(type: 'cad'): Cognite3DModel[];
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
@@ -1167,6 +1186,7 @@ export class Cognite3DViewer {
         this.eventListeners.sceneRendered.forEach(listener => {
           listener({ frameNumber, renderTime });
         });
+        this._htmlOverlays.updatePositions(this.renderer, this.camera);
       }
     }
   }
