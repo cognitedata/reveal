@@ -1,3 +1,4 @@
+export * from './log';
 export * from './env';
 export * from './localStorage';
 export * from './getSDKClient';

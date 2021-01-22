@@ -4,7 +4,7 @@ import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 
 import { getClusterFromCdfApiBaseUrl } from 'utils/cluster';
-import { getSidecar } from '../utils';
+import { getSidecar, log } from '../utils';
 
 export interface AuthContext {
   client?: CogniteClient;
@@ -44,35 +44,17 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   const cluster = getClusterFromCdfApiBaseUrl(cdfApiBaseUrl);
 
   React.useEffect(() => {
-    let msalConfig;
-
-    if (AADClientID) {
-      msalConfig = {
-        auth: {
-          authority:
-            // 'https://login.microsoftonline.com/common',
-            // 'https://login.microsoftonline.com/organizations',
-            `https://login.microsoftonline.com/${AADTenantID}`,
-          clientId: AADClientID,
-          redirectUri: `${window.location.origin}`,
-        },
-      };
-    }
-
     const authClient = new CogniteAuth(sdkClient, {
-      msalConfig,
+      azureAdClientId: AADClientID,
+      azureAdTenantId: AADTenantID,
       cluster,
-      // cluster: getCluster(appsApiBaseUrl),
     });
+
+    log('[AuthContainer] Main Auth client:', [authClient], 1);
 
     if (authClient.initializingPromise) {
       authClient.initializingPromise.then(() => {
         authClient.loginAndAuthIfNeeded(tenant, cluster);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        // authClient.listProjects().then((result) => {
-        //   console.log('The client can see the following projects:', result);
-        // });
       });
     }
 
@@ -80,6 +62,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       applicationId,
       (authResponse: AuthenticatedUser) => {
         if (!authClient.state.initializing) {
+          log('[AuthContainer] setting AuthState', [], 1);
           setAuthState({
             client: authClient.getClient(),
             authState: authResponse,
@@ -93,20 +76,25 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     };
   }, []);
 
-  // console.log('[AuthContainer] State info:', { tenant, authState, sdkClient });
-  // console.log('[AuthContainer] Render gates:', {
-  //   authenticated: authState?.authState?.authenticated,
-  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //   // @ts-ignore
-  //   loggedin: sdkClient.hasBeenLoggedIn,
-  // });
+  const hasBeenLoggedIn = !!authState?.authState?.username;
 
-  if (
-    !authState?.authState?.authenticated ||
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    !authState.client.hasBeenLoggedIn
-  ) {
+  log(
+    '[AuthContainer] State info:',
+    [{ tenant, authState: authState?.authState, sdkClient }],
+    1
+  );
+  log(
+    '[AuthContainer] Render gates:',
+    [
+      {
+        authenticated: authState?.authState?.authenticated,
+        loggedin: hasBeenLoggedIn,
+      },
+    ],
+    1
+  );
+
+  if (!authState?.authState?.authenticated || !hasBeenLoggedIn) {
     return <Loader />;
   }
 

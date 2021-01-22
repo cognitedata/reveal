@@ -1,13 +1,13 @@
-import { log } from 'utils/log';
+import { retrieveAuthResult } from '@cognite/auth-utils';
 
+import { log } from '../utils/log';
 import { AuthHeaders } from './types';
-import { retrieveAccessToken } from '../utils/persistance';
 
 export const getAuthHeaders = (apiKeyHeader = 'api-key'): AuthHeaders => {
-  const token = retrieveAccessToken();
+  const authResult = retrieveAuthResult();
 
-  if (token) {
-    return { Authorization: `Bearer ${token}` };
+  if (authResult?.accessToken) {
+    return { Authorization: `Bearer ${authResult.accessToken}` };
   }
 
   const apiKey = process.env.REACT_APP_API_KEY || '';
