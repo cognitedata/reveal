@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Select, SpacedRow } from 'lib/components';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
-import { useMetadataValues } from 'lib/hooks/MetadataAggregateHooks';
-import { useFlag } from '@cognite/react-feature-flags';
+import { useAssetMetadataValues } from 'lib/hooks/MetadataAggregateHooks';
 
 const LOCKSVG = (
   <svg
@@ -116,6 +115,7 @@ const FilterItem = ({
   onCancel,
   initialKey,
   initialValue,
+  useAggregates = false,
 }: {
   metadata: {
     [key: string]: string[];
@@ -131,6 +131,7 @@ const FilterItem = ({
   onCancel?: (shouldDelete: boolean) => void;
   initialKey?: string;
   initialValue?: string;
+  useAggregates?: boolean;
 }) => {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
@@ -146,13 +147,12 @@ const FilterItem = ({
     }
   }, [initialValue]);
 
-  const isMetadataAggregatesEnabled = useFlag('METADATA_AGGREGATES_allowlist');
   const {
     data: metadataValues = [],
     isFetching,
     isFetched,
-  } = useMetadataValues(selectedKey, {
-    enabled: !!selectedKey && isMetadataAggregatesEnabled,
+  } = useAssetMetadataValues(selectedKey, {
+    enabled: useAggregates && !!selectedKey,
   });
 
   const allowEdit =
@@ -182,7 +182,7 @@ const FilterItem = ({
     });
 
   const getMetadataValues = (key: string) => {
-    return isMetadataAggregatesEnabled && isFetched
+    return useAggregates && isFetched
       ? metadataValues.map((el: any) => ({
           label: `${el.value} (${el.count})`,
           value: el.value,
@@ -340,6 +340,7 @@ export type FilterFormProps = {
   };
   lockedFilters?: string[];
   setFilters: (filter: { [key: string]: string }) => void;
+  useAggregates?: boolean;
 };
 
 export const FilterForm = ({
@@ -349,6 +350,7 @@ export const FilterForm = ({
   filters = {},
   lockedFilters = [],
   setFilters = () => {},
+  useAggregates = false,
 }: FilterFormProps) => {
   const [editingKeys, setEditingKeys] = useState<string[]>([]);
 
@@ -414,6 +416,7 @@ export const FilterForm = ({
         setFilter={(newKey, newValue) => {
           setFilters({ ...filters, [newKey]: newValue });
         }}
+        useAggregates={useAggregates}
       />
       <Tags>
         {Object.keys(filters).map(el => {

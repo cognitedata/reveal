@@ -17,16 +17,18 @@ export const MetadataFilter = <
   keys,
   value,
   setValue,
+  useAggregates = false,
 }: {
   items: T[];
   keys?: { value: string; count: number }[];
   value: { [key in string]: string } | undefined;
   setValue: (newValue: { [key in string]: string } | undefined) => void;
+  useAggregates?: boolean;
 }) => {
   let metadata = {};
 
   // No need to extract metadata if keys are already supplied by the API
-  if (!keys || keys.length === 0) {
+  if (!useAggregates) {
     const tmpMetadata = items.reduce((prev, el) => {
       Object.keys(el.metadata || {}).forEach(key => {
         if (el.metadata![key].length !== 0) {
@@ -72,6 +74,7 @@ export const MetadataFilter = <
         keys={keys}
         filters={value}
         setFilters={setFilter}
+        useAggregates={useAggregates}
       />
     </>
   );

@@ -2,7 +2,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { AssetFilterProps, AggregateResponse } from '@cognite/sdk';
 
-export const useMetadataKeys = (
+export const useAssetMetadataKeys = (
   filter?: AssetFilterProps,
   config?: UseQueryOptions<AggregateResponse[]>
 ) => {
@@ -22,7 +22,7 @@ export const useMetadataKeys = (
   return { data: data as any, ...rest };
 };
 
-export const useMetadataValues = (
+export const useAssetMetadataValues = (
   key: string | null,
   config?: UseQueryOptions<AggregateResponse[]>
 ) => {
