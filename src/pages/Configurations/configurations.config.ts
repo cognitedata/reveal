@@ -4,8 +4,10 @@ export default {
     'status_active',
     'conf_name',
     'last_updated',
+    'last_updated',
     'author',
     'repoProject',
+    'progress',
     'actions',
   ],
   nonSortableColumns: ['statusColor', 'actions'],
@@ -13,6 +15,10 @@ export default {
     {
       keyName: 'statusColor',
       value: '',
+    },
+    {
+      keyName: 'progress',
+      value: 'Progress',
     },
     {
       keyName: 'repoProject',

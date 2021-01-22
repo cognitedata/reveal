@@ -103,6 +103,10 @@ const Configurations = () => {
       render: (record: boolean) => (record ? 'Active' : 'Inactive'),
     },
     {
+      key: 'progress',
+      render: () => 'Hello!',
+    },
+    {
       key: 'statusColor',
       render: (record: boolean) => {
         const color = record
