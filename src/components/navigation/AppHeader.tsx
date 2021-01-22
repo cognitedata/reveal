@@ -3,38 +3,18 @@ import { Link } from 'react-router-dom';
 import { Avatar, Icon, TopBar, Menu, Graphic, Tooltip } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { isAdmin } from 'store/groups/selectors';
-import { CdfClient } from 'utils';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/NOC_logo.png';
 import { CustomLink } from 'styles/common';
 import { CdfClientContext } from 'providers/CdfClientProvider';
+import { logout } from 'utils/logout';
 import { LogoWrapper } from './elements';
-
-// not sure about method location, to utils?
-const logout = async (client: CdfClient) => {
-  const redirectUrl = `https://${window.location.host}/`;
-  try {
-    const logoutUrl = await client.cogniteClient.logout.getUrl({
-      redirectUrl,
-    });
-    if (logoutUrl) {
-      window.location.href = logoutUrl;
-    } else {
-      // eslint-disable-next-line no-console
-      console.log('No logout URL');
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error);
-    window.location.pathname = redirectUrl as string;
-  }
-};
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
   const client = useContext(CdfClientContext);
 
-  const onClick = async () => {
+  const performLogout = async () => {
     await logout(client);
   };
 
@@ -96,7 +76,7 @@ const AppHeader: React.FC = () => {
         <Menu>
           <Menu.Item>
             <CustomLink
-              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/"
+              href="https://www.cognite.com/en/policy"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -105,8 +85,12 @@ const AppHeader: React.FC = () => {
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item>
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
-            <div role="button" tabIndex={0} onClick={onClick}>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={performLogout}
+              onKeyPress={performLogout}
+            >
               Log out
             </div>
           </Menu.Item>
