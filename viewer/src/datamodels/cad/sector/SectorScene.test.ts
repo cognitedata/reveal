@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { vec3 } from 'gl-matrix';
 
 import { SectorMetadata } from '..';
-import { SectorSceneImpl } from '../sector/SectorScene';
+import { SectorSceneImpl } from './SectorScene';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { Box3 } from '../../../utilities';
 
