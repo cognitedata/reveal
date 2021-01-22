@@ -10,7 +10,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest'
   },
-  testRegex: '(/__tests__/.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
+  testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
   moduleDirectories: ['node_modules'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
@@ -25,8 +25,8 @@ module.exports = {
     }
   },
   coverageDirectory: '../coverage',
-  collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json'],
+  collectCoverageFrom: ['!src/__testutilities__/**/*.ts', '!**/.*.test.ts', '!**/*.d.ts', '!**/*.json'],
   automock: false,
-  setupFiles: ['./src/__tests__/setupJest.ts', 'jest-canvas-mock', 'core-js'],
+  setupFiles: ['./src/__testutilities__/setupJest.ts', 'jest-canvas-mock', 'core-js'],
   setupFilesAfterEnv: ['jest-extended']
 };
