@@ -6,6 +6,7 @@ import { isAdmin } from 'store/groups/selectors';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/NOC_logo.png';
 import { CustomLink } from 'styles/common';
+import { startIntercomTour } from 'utils/intercom';
 import { LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
@@ -57,7 +58,16 @@ const AppHeader: React.FC = () => {
           </Menu.Item>
           <Menu.Item>FAQs</Menu.Item>
           <Menu.Divider />
-          <Menu.Footer>Introduction to Digital Cockpit</Menu.Footer>
+          <Menu.Item>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={startIntercomTour}
+              onKeyDown={startIntercomTour}
+            >
+              Introduction to Digital Cockpit
+            </div>
+          </Menu.Item>
         </Menu>
       ),
     },

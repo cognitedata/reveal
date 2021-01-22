@@ -33,3 +33,10 @@ export function intercomUpdate(data: IntercomData = {}) {
     });
   }
 }
+
+export function startIntercomTour() {
+  const { intercomTourId } = sidecar;
+  if (config.env !== 'development' && window.Intercom) {
+    window.Intercom('startTour', intercomTourId);
+  }
+}
