@@ -31,6 +31,7 @@ import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
+import SeismicSDK from "@cognite/seismic-sdk-js";
 
 const solidName = "Solid";
 
@@ -286,7 +287,14 @@ export class SeismicCubePlaneView extends BaseGroupThreeView {
     this.touchBoundingBox();
   }
 
-  private updateTextureCoords(parent: THREE.Object3D, node: SeismicPlaneNode, surveyCube: RegularGrid3 | null, cube: SeismicCube | null, seismicCubeNode: SeismicCubeNode | null, inDragging = false): void {
+  private updateTextureCoords(
+    parent: THREE.Object3D,
+    node: SeismicPlaneNode,
+    surveyCube: RegularGrid3 | null,
+    cube: SeismicCube | null,
+    seismicCubeNode: SeismicCubeNode | null,
+    inDragging = false
+  ): void {
     if (!this.hasTarget)
       return; // This can happen when turning on or off
 
@@ -336,15 +344,10 @@ export class SeismicCubePlaneView extends BaseGroupThreeView {
 
     let minIndex = 0;
     const step = inDragging ? 100 : 100000;
-    const range = cube.valueRange;
-    if (!range)
-      return;
 
     (async () => {
-      const dummyFunc = async () => { };
-      await dummyFunc();
-
-      for (; ;) {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
         if (inDragging && timeStamp < this._timeStamp)
           break;
 
@@ -356,8 +359,20 @@ export class SeismicCubePlaneView extends BaseGroupThreeView {
         const maxIndex = Math.min(minIndex + step, cells.length - 1);
         const maxCell = cells[maxIndex];
 
-        // eslint-disable-next-line no-await-in-loop
-        const traces = await cube.loadTraces(minCell, maxCell);
+        node.setLoadingState(true);
+
+        let traces: SeismicSDK.Trace[] | null = null;
+
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          traces = await cube.loadTraces(minCell, maxCell);
+        } catch (e) {
+          node.setLoadingState(false);
+          node.setErrorLoadingState('Failed to load traces');
+
+          break;
+        }
+
         if (!traces)
           continue;
 
@@ -374,9 +389,12 @@ export class SeismicCubePlaneView extends BaseGroupThreeView {
               uv[index--] = 0;
             }
           } else {
+            const range = cube.valueRange;
+            if (!range)
+              return;
+
             for (const value of trace.traceList) {
-              const u = range.getTruncatedFraction(value);
-              uv[index--] = u;
+              uv[index--] = range.getTruncatedFraction(value);
               uv[index--] = 0;
             }
           }
@@ -388,7 +406,9 @@ export class SeismicCubePlaneView extends BaseGroupThreeView {
       if (seismicCubeNode)
         this.updateTextureMap(parent, seismicCubeNode);
 
+      node.setErrorLoadingState();
       this.renderTarget.renderFast();
+      node.setLoadingState(false);
     })();
   }
 

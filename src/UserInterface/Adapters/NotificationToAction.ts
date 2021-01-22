@@ -10,7 +10,8 @@ import {
   onNodeColorChange,
   onNodeNameChange,
   onNodeIconChange,
-  onNodeIsLoadingChange
+  onNodeIsLoadingChange,
+  onNodeIsLoadingErrorChange
 } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 
 export class NotificationsToActionsAdaptor {
@@ -42,5 +43,7 @@ export class NotificationsToActionsAdaptor {
       this.dispatcher(onSettingsReset(sender));
     if (args.isChanged(Changes.loaded))
       this.dispatcher(onNodeIsLoadingChange(sender))
+    if (args.isChanged(Changes.loadingError))
+      this.dispatcher(onNodeIsLoadingErrorChange(sender))
   }
 }

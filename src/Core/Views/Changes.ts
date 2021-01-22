@@ -29,6 +29,8 @@ export class Changes {
 
   public static readonly loaded: symbol = Symbol('loaded');
 
+  public static readonly loadingError: symbol = Symbol('loadingError');
+
   // Fields changed
   public static readonly nodeName: symbol = Symbol("nodeName");
 

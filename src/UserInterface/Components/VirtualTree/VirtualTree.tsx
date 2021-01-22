@@ -9,6 +9,7 @@ import { ExpandButton } from '@/UserInterface/Components/VirtualTree/ExpandButto
 import { VirtualTreeProps } from '@/UserInterface/Components/VirtualTree/VirtualTreeProps';
 import { ITreeNode } from '@/UserInterface/Components/VirtualTree//ITreeNode';
 import styled from 'styled-components';
+import { Icon } from '@cognite/cogs.js';
 
 const DEFAULT_ROW_HEIGHT = 22;
 
@@ -74,12 +75,18 @@ export const VirtualTree = (props: VirtualTreeProps) => {
           </TreeItemComp>
           {item.icon && (
             <TreeItemComp>
-              <ChromaIcon
-                src={item.icon.path}
-                alt={item.icon.description}
-                color={item.icon.color?.hex()}
-                size={props.iconSize}
-              />
+              {item.loadingError ? (
+                <ErrorIconLine title={item.loadingError}>
+                  <ErrorIcon type="ErrorFilled" />
+                </ErrorIconLine>
+              ) : (
+                <ChromaIcon
+                  src={item.icon.path}
+                  alt={item.icon.description}
+                  color={item.icon.color?.hex()}
+                  size={props.iconSize}
+                />
+              )}
             </TreeItemComp>
           )}
           <TreeItemComp>
@@ -222,4 +229,13 @@ const TreeItemLabelContainer = styled.div`
 
   background: ${(props: { selected: boolean }) =>
     props.selected ? '#e8e8e8' : 'none'};
+`;
+
+const ErrorIconLine = styled.span`
+  color: #ff0000;
+`;
+
+const ErrorIcon = styled(Icon)`
+  vertical-align: middle;
+  margin-right: 5px;
 `;

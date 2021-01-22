@@ -108,6 +108,26 @@ export const explorerSlice = createSlice({
         }
       }
     },
+    onNodeIsLoadingErrorChange: {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, loadingError: string | undefined}>): IExplorerState  {
+        const {loadingError, nodeId} = action.payload;
+        const nodeState = state.nodes.byId[nodeId];
+
+        if (nodeState) {
+          nodeState.loadingError = loadingError;
+        }
+
+        return state;
+      },
+      prepare(node: BaseNode): { payload: { nodeId: string, loadingError: string | undefined} } {
+        return {
+          payload: {
+            nodeId: node.uniqueId.toString(),
+            loadingError: node.loadingError,
+          }
+        }
+      }
+    },
     onExpandStateChange: {
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, expandState: boolean }>): IExplorerState {
         const uniqueId = action.payload.nodeId;
@@ -201,7 +221,8 @@ export const explorerSlice = createSlice({
 
 export const {
   generateNodeTree, onSelectedTabChange, onCheckboxStateChange, onExpandStateChange,
-  onActiveStateChange, onNodeColorChange, onNodeNameChange, onNodeIconChange, onNodeIsLoadingChange
+  onActiveStateChange, onNodeColorChange, onNodeNameChange, onNodeIconChange, onNodeIsLoadingChange,
+  onNodeIsLoadingErrorChange
 } = explorerSlice.actions;
 export const explorerReducer = explorerSlice.reducer;
 

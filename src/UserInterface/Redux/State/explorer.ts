@@ -38,4 +38,5 @@ export interface ITreeNodeState {
     color: Color
   }
   isLoading: boolean;
+  loadingError?: string;
 }

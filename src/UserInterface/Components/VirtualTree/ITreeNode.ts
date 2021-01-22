@@ -27,4 +27,5 @@ export interface ITreeNode {
   };
   children: ITreeNode[];
   isLoading: boolean;
+  loadingError?: string;
 }

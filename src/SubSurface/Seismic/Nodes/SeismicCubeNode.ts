@@ -100,13 +100,17 @@ export class SeismicCubeNode extends DataNode {
   // INSTANCE METHODS
   //= =================================================
 
-  public load(client: CogniteSeismicClient, fileId: string): void {
+  public async load(client: CogniteSeismicClient, fileId: string): Promise<void> {
     if (!client || Util.isEmpty(fileId)) {
       console.error("Cannot load Seismic Data!, Cognite client or file id is not available!");
       return;
     }
 
-    SeismicCube.loadCube(client, fileId).then(cube => {
+    this.setLoadingState(true);
+
+    try {
+      const cube = await SeismicCube.loadCube(client, fileId);
+
       if (!cube)
         return;
 
@@ -121,9 +125,11 @@ export class SeismicCubeNode extends DataNode {
           plane.notifyNameChanged();
         }
       }
-    }).catch(error => {
+    } catch(error) {
       this.seismicCube = null;
       console.error(`Can not load seismic cube.\nError message: ${error.message}`, error);
-    });
+    }
+
+    this.setLoadingState(false);
   }
 }

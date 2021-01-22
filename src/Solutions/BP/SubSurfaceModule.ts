@@ -63,10 +63,11 @@ export class SubSurfaceModule extends BaseModule {
         survey.name = 'Survey';
 
         const seismicCubeNode = new SeismicCubeNode();
+
         seismicCubeNode.colorMap = ColorMaps.seismicName;
         survey.addChild(seismicCubeNode);
         tree.addChild(survey);
-        seismicCubeNode.load(seismicFile[0], seismicFile[1]);
+        seismicCubeNode.load(...seismicFile);
       }
       this.seismicFiles.splice(0, this.seismicFiles.length);
     }

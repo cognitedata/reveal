@@ -149,7 +149,7 @@ export class SeismicCube extends RegularGrid3 {
     return this.client.volume.getTrace({id: this.fileId}, inline, xline);
   }
 
-  public calculateStatistics(): void {
+  public calculateStatistics(): Promise<void> {
     const iHalf = Math.round(this.cellSize.i / 2);
     const jHalf = Math.round(this.cellSize.j / 2);
     const iMax = this.cellSize.i - 1;
@@ -163,7 +163,7 @@ export class SeismicCube extends RegularGrid3 {
     maxCell = new Index2(iMax, jHalf);
     const promise2 = this.loadTraces(minCell, maxCell);
 
-    Promise.all([promise1, promise2]).then(multiTraces => {
+    return Promise.all([promise1, promise2]).then(multiTraces => {
       const statistics = new Statistics();
       for (const traces of multiTraces) {
         if (!traces)
@@ -290,7 +290,8 @@ export class SeismicCube extends RegularGrid3 {
     cube.startCell = new Index2(inline.min.value, xline.min.value);
     cube.client = client;
     cube.fileId = fileId;
-    cube.calculateStatistics();
+
+    await cube.calculateStatistics();
 
     return cube;
   }

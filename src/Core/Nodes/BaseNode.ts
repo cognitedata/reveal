@@ -80,6 +80,8 @@ export abstract class BaseNode extends Identifiable {
 
   private _isLoading: boolean = false;
 
+  private _loadingError?: string;
+
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
@@ -109,6 +111,14 @@ export abstract class BaseNode extends Identifiable {
   public get isLoading(): boolean { return this._isLoading; }
 
   public set isLoading(value: boolean) { this._isLoading = value; }
+
+  public get loadingError(): string | undefined {
+    return this._loadingError;
+  }
+
+  public set loadingError(error: string | undefined) {
+    this._loadingError = error;
+  }
 
   // This is the text shown in the tree control
   public get displayName(): string {
@@ -711,10 +721,26 @@ export abstract class BaseNode extends Identifiable {
 
   public notifyLoadedData(): void { this.notify(new NodeEventArgs(Changes.loaded)) }
 
+  public notifyLoadingError(): void { this.notify(new NodeEventArgs(Changes.loadingError)) }
+
   public notify(args: NodeEventArgs): void {
     VirtualUserInterface.updateNode(this, args);
     VirtualUserInterface.updateStatusPanel(JSON.stringify(args));
     this.notifyCore(args);
+  }
+
+  //= =================================================
+  // INSTANCE METHODS: Loading states management
+  //= =================================================
+
+  public setLoadingState(isLoading: boolean = true): void {
+    this.isLoading = isLoading;
+    this.notifyLoadedData();
+  }
+
+  public setErrorLoadingState(error?: string): void {
+    this.loadingError = error;
+    this.notifyLoadingError();
   }
 
   //= =================================================
