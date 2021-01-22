@@ -18,7 +18,7 @@ const P = styled.p`
   margin-bottom: 0;
 `;
 
-const Value = styled.div.attrs((props: ValueProps) => props)`
+const Value = styled.div<ValueProps>`
   height: 100%;
   background-color: ${(props) => props.color};
   width: ${(props) => props.percentage}%;
@@ -35,7 +35,7 @@ const emptyProgress = [
 const ToolTipContent = (props: { progress: ProgressType[]; total: number }) => (
   <>
     {props.progress.map(({ label, value }: ProgressType) => (
-      <div>
+      <div key={label}>
         {label}: {value}
       </div>
     ))}
@@ -61,8 +61,9 @@ const ProgressBar = (props: { progress?: ProgressType[]; total?: number }) => {
           {totalProgress} / {total}
         </P>
         <Bar>
-          {progress.map(({ value, color }: ProgressType) => (
+          {progress.map(({ value, label, color }: ProgressType) => (
             <Value
+              key={label}
               color={color}
               percentage={total ? Math.round((value / total) * 100) : 0}
             >
