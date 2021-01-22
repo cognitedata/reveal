@@ -135,12 +135,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
    * @param p     The CDF coordinate to transform.
    * @param out   Optional preallocated buffer for storing the result.
+   * @returns Transformed position.
    */
   mapFromCdfToModelCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     out = out !== undefined ? out : new THREE.Vector3();
     out.copy(p);
     p.applyMatrix4(this.cadModel.modelMatrix);
-    return p;
+    return out;
   }
 
   /**
@@ -149,12 +150,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
    * @param p       The ThreeJS coordinate to transform.
    * @param out     Optional preallocated buffer for storing the result.
+   * @returns Transformed position.
    */
   mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     // fixme: unused
     out = out !== undefined ? out : new THREE.Vector3();
     p.applyMatrix4(this.cadModel.inverseModelMatrix);
-    return p;
+    return out;
   }
 
   /**
