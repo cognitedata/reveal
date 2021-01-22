@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { packFloatInto } from '../../../utilities/packFloatToVec4';
+import { packFloatInto } from '../../../utilities/packFloat';
 import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
 
 export class TransformOverrideBuffer {
