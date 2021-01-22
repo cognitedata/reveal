@@ -49,7 +49,7 @@ import {
   PointCloudIntersection,
   RevealOptions
 } from '../..';
-import { PropType } from '../../__tests__/types';
+import { PropType } from '../../utilities/reflection';
 
 /**
  * @example
