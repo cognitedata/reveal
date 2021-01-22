@@ -60,12 +60,31 @@ revealEnv.publicPath = `/worker-custom-folder/`;
 const viewer = new Cognite3DViewer(/*...*/)
 ```
 
-### Option 2: host Web Worker and WebAssmbly files externally
+### Option 2: host Web Worker and WebAssembly files externally
 
 In case if there is no such `/public` or similar folder in your project, you're likely using a different service
 to host static assets. The domain of that service is probably whitelisted in Content Security Policy and can be used to host the necessary files.
 
 In that case, the only thing you can do is build the reveal-parser-worker from sources with correct `publicPath`.
+
+:::note
+
+**If you're developing a Cognite application,
+you likely can use our own whitelisted CDN where we already have
+[parser-worker](https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.1.0/reveal.parser.worker.js)
+uploaded.**
+
+In that case, skip to the [last step](#lastCDNstep) for this option and use
+
+```js
+import { revealEnv } from '@cognite/reveal'
+revealEnv.publicPath =
+    `https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.1.0/`
+```
+
+Parser-worker version can be different,
+see the latest versions on [npm page](https://www.npmjs.com/package/@cognite/reveal-parser-worker).
+:::
 
 Let's say your static server has that URL `https://static.server/`. And you can upload the files
 at some folder, so files should be available at `https://static.server/parser-worker/`
@@ -108,6 +127,9 @@ If you set the environment variable correctly, you should see it be printed to c
 ```
 
 5. Take the files from `./parser-worker/dist/local` and host them at the path you specified.
+
+<a aria-hidden="true" tabIndex="-1" className="anchor enhancedAnchor_node_modules-@docusaurus-theme-classic-lib-theme-Heading-" id="lastCDNstep"></a>
+
 6. In your project, specify `revealEnv.publicPath`
 
 ```js
