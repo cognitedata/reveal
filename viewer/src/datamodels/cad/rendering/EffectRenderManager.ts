@@ -161,7 +161,9 @@ export class EffectRenderManager {
         tGhostDepth: { value: this._ghostObjectRenderTarget.depthTexture },
         tOutlineColors: { value: outlineColorTexture },
         cameraNear: { value: 0.1 },
-        cameraFar: { value: 10000 }
+        cameraFar: { value: 10000 },
+        edgeStrengthMultiplier: { value: 2.5 },
+        edgeGrayScaleIntensity: { value: 0.1 }
       },
       extensions: { fragDepth: true }
     });
