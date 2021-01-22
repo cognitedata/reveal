@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Avatar, Icon, TopBar, Menu, Graphic, Tooltip } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { isAdmin } from 'store/groups/selectors';
+import { getUserId } from 'store/auth/selectors';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/NOC_logo.png';
 import { CustomLink } from 'styles/common';
@@ -10,6 +11,13 @@ import { LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
+  const email = useSelector(getUserId);
+
+  const handleOnSupportClick = () => {
+    if (window.Intercom) {
+      window.Intercom('show');
+    }
+  };
   const actions = [
     {
       key: 'view',
@@ -34,6 +42,7 @@ const AppHeader: React.FC = () => {
           <Icon type="Feedback" />
         </Tooltip>
       ),
+      onClick: handleOnSupportClick,
     },
     {
       key: 'help',
@@ -63,7 +72,7 @@ const AppHeader: React.FC = () => {
     },
     {
       key: 'user',
-      component: <Avatar text="Offshore Ops" />,
+      component: <Avatar text={email} />,
       menu: (
         <Menu>
           <Menu.Item>Privacy policy</Menu.Item>
