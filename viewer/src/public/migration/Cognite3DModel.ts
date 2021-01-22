@@ -155,7 +155,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     // fixme: unused
     out = out !== undefined ? out : new THREE.Vector3();
-    p.applyMatrix4(this.cadModel.inverseModelMatrix);
+    out.copy(p);
+    out.applyMatrix4(this.cadModel.inverseModelMatrix);
     return out;
   }
 
