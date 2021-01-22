@@ -1,6 +1,6 @@
 {
   "name": "@cognite/testing",
-  "version": "0.0.15",
+  "version": "0.1.0",
   "source": "src/index.ts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,6 +17,7 @@
     "prettier": "prettier -l 'src/**/*'"
   },
   "peerDependencies": {
+    "@storybook/addons": "^6.1.14",
     "sinon": "^9.0.0"
   }
 }
