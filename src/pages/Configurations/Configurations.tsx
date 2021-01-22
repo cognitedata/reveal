@@ -137,7 +137,6 @@ const Configurations = () => {
           });
         }
 
-        // If there is no data, we show a progress bar that runs from 0 to 0
         return <ProgressBar />;
       },
     },
