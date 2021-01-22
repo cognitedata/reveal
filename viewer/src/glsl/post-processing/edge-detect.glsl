@@ -29,10 +29,10 @@ float edgeDetectionFilter(sampler2D baseTexture, vec2 uv, vec2 resolution) {
 	vec3 neighbour;
 
 	/* fetch the 3x3 neighbourhood and use the RGB vector's length as intensity value */
-	for (float i=0.0; i<3.0; i++) {
-		for (float j=0.0; j<3.0; j++) {
-			neighbour = texture2D(baseTexture, uv + texel * vec2(i-1.0,j-1.0) ).rgb;
-			I[int(i)][int(j)] = length(neighbour);
+	for (int i=0; i<3; i++) {
+		for (int j=0; j<3; j++) {
+			neighbour = texture2D(baseTexture, uv + texel * vec2(float(i)-1.0,float(j)-1.0) ).rgb;
+			I[i][j] = length(neighbour);
 		}
 	}
 

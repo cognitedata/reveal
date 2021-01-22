@@ -13,8 +13,6 @@ import { RootSectorNode } from '../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../../..';
 import { outlineDetectionShaders, fxaaShaders } from './shaders';
 
-const canvasTarget = null;
-
 export class EffectRenderManager {
   private readonly _materialManager: MaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
@@ -275,7 +273,7 @@ export class EffectRenderManager {
 
         case AntiAliasingMode.NoAA:
           renderer.autoClear = original.autoClear;
-          this.renderComposition(renderer, camera, canvasTarget);
+          this.renderComposition(renderer, camera, this.renderTarget);
           break;
 
         default:
