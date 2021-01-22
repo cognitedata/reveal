@@ -24,6 +24,7 @@ import {
   UNIX_TIMESTAMP_FACTOR,
 } from 'typings/interfaces';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
+import ProgressBar, { ProgressType } from 'components/Molecules/ProgressBar';
 import APIErrorContext from '../../contexts/APIErrorContext';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
 import { ExpandRowIcon, StatusDot } from '../DataTransfers/elements';
@@ -104,7 +105,41 @@ const Configurations = () => {
     },
     {
       key: 'progress',
-      render: () => 'Hello!',
+      render: (props: any[]) => {
+        if (Object.values(props).length) {
+          return Object.values(props).map((progress) => {
+            const total: number = progress.total || 0;
+
+            const outdated: ProgressType = {
+              label: 'Outdated',
+              value: progress.outdated || 0,
+              color: Colors['midblue-5'].hex(),
+            };
+
+            const notUploaded: ProgressType = {
+              label: 'Not uploaded',
+              value: progress.not_uploaded || 0,
+              color: Colors['midblue-4'].hex(),
+            };
+
+            const succeeded: ProgressType = {
+              label: 'Succeeded',
+              value: progress.succeeded || 0,
+              color: Colors['midblue-3'].hex(),
+            };
+
+            return (
+              <ProgressBar
+                total={total}
+                progress={[outdated, notUploaded, succeeded]}
+              />
+            );
+          });
+        }
+
+        // If there is no data, we show a progress bar that runs from 0 to 0
+        return <ProgressBar />;
+      },
     },
     {
       key: 'statusColor',
