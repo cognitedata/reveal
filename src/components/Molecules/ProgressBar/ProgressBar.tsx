@@ -14,6 +14,10 @@ const Bar = styled.div`
   max-height: 6px;
 `;
 
+const P = styled.p`
+  margin-bottom: 0;
+`;
+
 const Value = styled.div.attrs((props: ValueProps) => props)`
   height: 100%;
   background-color: ${(props) => props.color};
@@ -35,7 +39,6 @@ const ToolTipContent = (props: { progress: ProgressType[]; total: number }) => (
         {label}: {value}
       </div>
     ))}
-
     <div>total: {props.total}</div>
   </>
 );
@@ -43,22 +46,31 @@ const ToolTipContent = (props: { progress: ProgressType[]; total: number }) => (
 const ProgressBar = (props: { progress?: ProgressType[]; total?: number }) => {
   const progress = props.progress || emptyProgress;
   const total = props.total || 0;
+  const totalProgress: number = progress.reduce((a, b) => ({
+    ...a,
+    value: a.value + b.value,
+  })).value;
 
   return (
     <Tooltip
       placement="bottom"
       content={<ToolTipContent progress={progress} total={total} />}
     >
-      <Bar>
-        {progress.map(({ value, color }: ProgressType) => (
-          <Value
-            color={color}
-            percentage={total ? Math.round((value / total) * 100) : 100}
-          >
-            <br />
-          </Value>
-        ))}
-      </Bar>
+      <>
+        <P>
+          {totalProgress} / {total}
+        </P>
+        <Bar>
+          {progress.map(({ value, color }: ProgressType) => (
+            <Value
+              color={color}
+              percentage={total ? Math.round((value / total) * 100) : 0}
+            >
+              <br />
+            </Value>
+          ))}
+        </Bar>
+      </>
     </Tooltip>
   );
 };
