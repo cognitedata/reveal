@@ -1,4 +1,4 @@
 import CogniteAuth, { AuthenticatedUser } from './authentication';
-import { AuthFlow } from './storage';
+import { AuthFlow, retrieveAuthResult } from './storage';
 
-export { CogniteAuth, AuthenticatedUser, AuthFlow };
+export { CogniteAuth, AuthenticatedUser, AuthFlow, retrieveAuthResult };

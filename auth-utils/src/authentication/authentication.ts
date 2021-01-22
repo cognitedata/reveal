@@ -48,7 +48,7 @@ class CogniteAuth {
   } = {
     error: false,
     initialized: false,
-    initializing: true,
+    initializing: false,
     authenticated: false,
   };
 
@@ -66,7 +66,9 @@ class CogniteAuth {
 
   public initializingComplete?: () => void;
 
-  public startInitializing = (): Promise<void> => {
+  public setupInitializing = (): Promise<void> => {
+    this.state.initializing = true;
+
     this.initializingPromise = new Promise((resolve) => {
       this.initializingComplete = () => {
         this.state.initializing = false;
@@ -81,24 +83,37 @@ class CogniteAuth {
     private client: CogniteClient,
     private options: {
       cluster: string;
-      msalConfig?: Configuration;
+      azureAdClientId?: string;
+      azureAdTenantId?: string;
     }
   ) {
     this.cluster = this.options.cluster;
-    this.msalConfig = this.options.msalConfig;
 
-    this.startInitializing();
+    this.setupInitializing();
 
-    // if we just want Cognite Auth
-    // then msalConfig will not exist
-    if (this.msalConfig) {
-      this.init(this.msalConfig);
+    if (options.azureAdClientId && options.azureAdTenantId) {
+      this.msalConfig = {
+        auth: {
+          authority:
+            // 'https://login.microsoftonline.com/common',
+            // 'https://login.microsoftonline.com/organizations',
+            `https://login.microsoftonline.com/${options.azureAdTenantId}`,
+          clientId: options.azureAdClientId,
+          redirectUri: `${window.location.origin}`,
+        },
+      };
     }
+
+    this.runInitialization();
   }
 
-  private async init(msalConfig: Configuration) {
+  private async runInitialization() {
     log('Init', { cluster: this.getCluster() });
-    await this.initAuth(msalConfig);
+
+    if (this.msalConfig) {
+      await this.initAuth(this.msalConfig);
+    }
+
     if (this.isSignedIn()) {
       log('is signed in');
       this.state.accessToken =
@@ -229,7 +244,7 @@ class CogniteAuth {
   }
 
   private publishAuthState() {
-    log('publishing authState', this.subscribers);
+    log('Publishing authState', this.subscribers);
     Object.keys(this.subscribers).forEach((key) =>
       this.subscribers[key](this.getAuthState())
     );
@@ -353,7 +368,7 @@ class CogniteAuth {
     this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
 
     if (isAuthFlow('COGNITE_AUTH')) {
-      log('authflow COGNITE_AUTH');
+      log('loginAndAuthIfNeeded - authflow COGNITE_AUTH');
       this.state.project = newTenant;
       this.state.username = undefined;
 
@@ -361,7 +376,7 @@ class CogniteAuth {
         this.getClient().loginWithOAuth({
           project: newTenant,
           onTokens: (tokens) => {
-            log('COGNITE_AUTH tokens', tokens);
+            log('loginAndAuthIfNeeded - tokens', tokens);
             saveAuthResult(
               {
                 authFlow: 'COGNITE_AUTH',
@@ -376,6 +391,7 @@ class CogniteAuth {
         this.state.initialized = true;
       }
 
+      // if status === null means you are not logged in
       let status = await this.getClient().login.status();
       if (!status || status.project !== newTenant) {
         this.state.authenticated = await this.getClient().authenticate();
@@ -394,7 +410,7 @@ class CogniteAuth {
         this.state.projectId = status && status.projectId;
       }
     } else if (isAuthFlow('ADFS')) {
-      log('authflow ADFS');
+      log('loginAndAuthIfNeeded - authflow ADFS');
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
