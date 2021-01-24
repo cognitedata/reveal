@@ -50,6 +50,7 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
+import { HtmlOverlayOptions } from '../../utilities/HtmlOverlayHelper';
 
 /**
  * @example
@@ -1047,9 +1048,10 @@ export class Cognite3DViewer {
   /**
    * @param htmlElement
    * @param position3D
+   * @param options
    */
-  attachHtmlOverlay(htmlElement: HTMLElement, position3D: THREE.Vector3): void {
-    this._htmlOverlays.addOverlayElement(htmlElement, position3D);
+  attachHtmlOverlay(htmlElement: HTMLElement, position3D: THREE.Vector3, options?: HtmlOverlayOptions): void {
+    this._htmlOverlays.addOverlayElement(htmlElement, position3D, options);
     this._htmlOverlays.updatePositions(this.renderer, this.camera);
   }
 
