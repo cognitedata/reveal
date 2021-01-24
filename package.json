@@ -20,7 +20,7 @@
     "@cognite/sdk": "^3.3.0",
     "@sentry/browser": "^5.27.3",
     "@types/lodash": "^4.14.165",
-    "antd": "^4.8.1",
+    "antd": "^4.11.1",
     "chart.js": "^2.9.4",
     "date-fns": "^2.16.1",
     "i18next": "^19.8.4",
