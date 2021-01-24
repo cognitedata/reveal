@@ -1,4 +1,5 @@
 #pragma glslify: floatBitsSubset = require('../math/floatBitsSubset.glsl')
+#pragma glslify: edgeDetectionFilter = require('../post-processing/edge-detect.glsl')
 
 #include <packing>
 
@@ -26,6 +27,11 @@ uniform sampler2D tOutlineColors;
 uniform float cameraNear;
 uniform float cameraFar;
 
+uniform vec2 resolution;
+
+uniform float edgeStrengthMultiplier;
+uniform float edgeGrayScaleIntensity;
+
 const float infinity = 1e20;
 
 float computeFloatEncodedOutlineIndex(float bitEncodedFloat){
@@ -39,6 +45,15 @@ vec4 computeNeighborOutlineIndices(sampler2D colorTexture){
   float outlineIndex3 = computeFloatEncodedOutlineIndex(texture2D(colorTexture, vUv3).a);
 
   return vec4(outlineIndex0, outlineIndex1, outlineIndex2, outlineIndex3);
+}
+
+vec4 computeNeighborAlphas(sampler2D colorTexture){
+  float alpha0 = texture2D(colorTexture, vUv0).a;
+  float alpha1 = texture2D(colorTexture, vUv1).a;
+  float alpha2 = texture2D(colorTexture, vUv2).a;
+  float alpha3 = texture2D(colorTexture, vUv3).a;
+
+  return vec4(alpha0, alpha1, alpha2, alpha3);
 }
 
 void main() {
@@ -100,11 +115,6 @@ void main() {
         return;
     }
   }
-  
-  if(customDepth < backDepth){
-    backDepth = customDepth;
-    backAlbedo = customAlbedo;
-  }
 
   if (texture2D(tBackDepth, vUv).x == 1.0 && 
       texture2D(tGhostDepth, vUv).x == 1.0 && 
@@ -112,8 +122,19 @@ void main() {
     discard;
   }
   
+  float edgeStrength = 0.0;
+  if(customDepth < backDepth){
+    backDepth = customDepth;
+    backAlbedo = customAlbedo;
+  } else {
+    if(!any(equal(computeNeighborAlphas(tBack), vec4(0.0)))){
+      edgeStrength = edgeDetectionFilter(tBack, vUv, resolution) * edgeStrengthMultiplier;
+    }
+  }
+  
   float s = (1.0 - step(backDepth, ghostDepth)) * clampedGhostAlbedo.a;
-  gl_FragColor = vec4(mix(backAlbedo.rgb, clampedGhostAlbedo.rgb, s), 1.0);
+  vec4 outAlbedo = vec4(mix(backAlbedo.rgb, clampedGhostAlbedo.rgb, s), 1.0);
+  gl_FragColor = outAlbedo * (1.0 - edgeStrength) + vec4(vec3(edgeGrayScaleIntensity) * edgeStrength, 1.0);
 #if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)  
   gl_FragDepthEXT = mix(backDepth, ghostDepth, s);
 #endif
