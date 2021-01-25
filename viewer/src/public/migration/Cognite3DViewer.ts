@@ -1216,7 +1216,7 @@ export class Cognite3DViewer {
         const renderTime = Date.now() - start;
 
         this.eventListeners.sceneRendered.forEach(listener => {
-          listener({ frameNumber, renderTime });
+          listener({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
         });
         this._htmlOverlays.updatePositions(this.renderer, this.camera);
       }

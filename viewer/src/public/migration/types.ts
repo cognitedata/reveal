@@ -194,7 +194,12 @@ export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vecto
  * @module @cognite/reveal
  * @see {@link @Cognite3DViewer.on}.
  */
-export type SceneRenderedDelegate = (event: { frameNumber: number; renderTime: number }) => void;
+export type SceneRenderedDelegate = (event: {
+  frameNumber: number;
+  renderTime: number;
+  renderer: THREE.WebGLRenderer;
+  camera: THREE.PerspectiveCamera;
+}) => void;
 
 export * from './NotSupportedInMigrationWrapperError';
 export { CogniteModelBase } from './CogniteModelBase';
