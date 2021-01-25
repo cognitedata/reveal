@@ -17,7 +17,7 @@ export const TimeDisplay = ({
     return <em>Not set</em>;
   }
 
-  const absoluteTime = moment(value).format('YYYY-MM-DD hh:mm');
+  const absoluteTime = moment(value).format('YYYY-MM-DD HH:mm');
   const relativeTime = moment(value).fromNow();
 
   let displayTime = absoluteTime;
