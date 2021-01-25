@@ -90,3 +90,4 @@ export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
 export { SupportedModelTypes } from '../datamodels/base';
 export { CadModelMetadata } from '../datamodels/cad/CadModelMetadata';
 export { NodeAppearanceProvider } from '../datamodels/cad/NodeAppearance';
+export { HtmlOverlayOptions } from '../utilities/HtmlOverlayHelper';
