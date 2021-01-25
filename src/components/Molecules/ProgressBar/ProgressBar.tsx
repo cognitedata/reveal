@@ -24,6 +24,11 @@ const Value = styled.div<ValueProps>`
   width: ${(props) => props.percentage}%;
 `;
 
+const TooltipValue = styled.div`
+  text-transform: capitalize;
+  line-height: 160%;
+`;
+
 const emptyProgress = [
   {
     label: 'Succeeded',
@@ -34,23 +39,23 @@ const emptyProgress = [
 
 const ToolTipContent = (props: ProgressBarProps) => (
   <>
-    {props.progress.map(({ label, value }: ProgressType) => (
-      <div key={`${label}_tooltip`}>
-        {label}: {value}
-      </div>
-    ))}
-    <div>total: {props.total}</div>
+    {props.progress.map(({ label, value }: ProgressType) =>
+      value ? (
+        <TooltipValue key={`${label}_tooltip`}>
+          {label}: {value}
+        </TooltipValue>
+      ) : null
+    )}
+    <TooltipValue>
+      <strong>total: {props.total}</strong>
+    </TooltipValue>
   </>
 );
 
 const ProgressBar = (props: Partial<ProgressBarProps>) => {
   const progress = props.progress || emptyProgress;
   const total = props.total || 0;
-
-  const totalProgress: number = progress.reduce(
-    (prev, cur) => prev + cur.value,
-    0
-  );
+  const totalProgress = props.totalProgress || 0;
 
   return (
     <Tooltip
