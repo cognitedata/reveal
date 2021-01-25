@@ -10,6 +10,7 @@ export interface ProgressType {
 }
 
 export interface ProgressBarProps {
+  totalProgress?: ProgressType[];
   progress: ProgressType[];
   total: number;
 }

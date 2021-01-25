@@ -46,12 +46,11 @@ const ToolTipContent = (props: ProgressBarProps) => (
 const ProgressBar = (props: Partial<ProgressBarProps>) => {
   const progress = props.progress || emptyProgress;
   const total = props.total || 0;
+
   const totalProgress: number = progress.reduce(
-    (a: ProgressType, b: ProgressType) => ({
-      ...a,
-      value: a.value + b.value,
-    })
-  ).value;
+    (prev, cur) => prev + cur.value,
+    0
+  );
 
   return (
     <Tooltip

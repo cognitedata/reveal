@@ -132,6 +132,7 @@ const Configurations = () => {
               <ProgressBar
                 total={total}
                 progress={[outdated, notUploaded, succeeded]}
+                totalProgress={progress.total}
               />
             );
           });
