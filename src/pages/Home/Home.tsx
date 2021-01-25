@@ -17,7 +17,6 @@ import {
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { isAdmin } from 'store/groups/selectors';
-import { sortByLastUpdated } from 'utils/suites';
 import { UserSpaceState } from 'store/userSpace/types';
 import { fetchUserSpace } from 'store/userSpace/thunks';
 import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
@@ -68,8 +67,6 @@ const Home = () => {
   if (suitesLoading || userSpaceLoading) {
     return <Loader />;
   }
-
-  const sortedSuites = sortByLastUpdated(suites);
 
   const handleOpenModal = (modalType: ModalType) => {
     dispatch(modalOpen({ modalType }));
@@ -123,7 +120,7 @@ const Home = () => {
         )}
         <TilesContainer>
           <Title level={6}>All suites</Title>
-          {sortedSuites?.map((suite: Suite) => {
+          {suites?.map((suite: Suite) => {
             return (
               <Link to={`/suites/${suite.key}`} key={suite.key}>
                 <Tile

@@ -3,8 +3,13 @@ import { LastVisited } from 'store/userSpace/types';
 import { findLastVisitedTimeByKey } from 'utils/userSpace';
 import { Board, Suite, SuitesTableState } from './types';
 
-export const getSuitesTableState = (state: StoreState): SuitesTableState =>
-  state.suitesTable;
+export const getSuitesTableState = (state: StoreState): SuitesTableState => {
+  const sortedSuites =
+    state.suitesTable?.suites?.sort(
+      (x: Suite, y: Suite) => x?.createdTime - y?.createdTime
+    ) || [];
+  return { ...state.suitesTable, suites: sortedSuites };
+};
 
 export const getBoardsBySuite = (key: string) => (
   state: StoreState
