@@ -96,6 +96,9 @@ function ITable<T extends { id: ReactText }>({
       autoResetSelectedRows: false,
       stateReducer: selectReducer,
       filterTypes,
+      initialState: {
+        hiddenColumns: ['externalId'],
+      },
     } as TableOptions<T>,
     useFilters,
     useGlobalFilter,
@@ -125,6 +128,7 @@ function ITable<T extends { id: ReactText }>({
                     <th
                       scope="col"
                       {...col.getHeaderProps(col.getSortByToggleProps())}
+                      className={`${col.id}-col`}
                     >
                       {col.disableFilters && col.render('Header')}
                       {!col.disableFilters && col.render('Filter')}
@@ -152,7 +156,12 @@ function ITable<T extends { id: ReactText }>({
                 >
                   {row.cells.map((cell: Cell<T>) => {
                     return (
-                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      <td
+                        {...cell.getCellProps()}
+                        className={`${cell.column.id}-cell`}
+                      >
+                        {cell.render('Cell')}
+                      </td>
                     );
                   })}
                 </tr>

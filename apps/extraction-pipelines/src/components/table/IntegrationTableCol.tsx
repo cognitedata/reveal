@@ -85,6 +85,13 @@ export const getIntegrationTableCol = (
       disableFilters: true,
     },
     {
+      id: 'externalId',
+      accessor: 'externalId',
+      Cell: <></>,
+      disableSortBy: true,
+      disableFilters: true,
+    },
+    {
       id: 'status',
       Header: TableHeadings.STATUS,
       accessor: ({ lastSuccess, lastFailure }: Integration) => {

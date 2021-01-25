@@ -110,6 +110,19 @@ describe('<ITable/>', () => {
       const resultRows = screen.getAllByText(searchDataSet.regexp);
       expect(resultRows.length).toEqual(1);
     });
+
+    // should filter from from external id
+    const searchExternalId = {
+      string: mockIntegration.externalId,
+      regexp: mockIntegration.name,
+    };
+    fireEvent.change(searchInput, {
+      target: { value: searchExternalId.string },
+    });
+    await waitFor(() => {
+      const resultRows = screen.getAllByText(searchExternalId.regexp);
+      expect(resultRows.length).toEqual(1);
+    });
   });
 
   test('render and interact with filter on status', () => {
