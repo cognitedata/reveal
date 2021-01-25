@@ -20,7 +20,7 @@
     "@cognite/sdk": "^3.3.0",
     "@sentry/browser": "^5.27.3",
     "@types/lodash": "^4.14.165",
-    "antd": "^4.8.1",
+    "antd": "^4.11.1",
     "chart.js": "^2.9.4",
     "date-fns": "^2.16.1",
     "i18next": "^19.8.4",
@@ -69,7 +69,7 @@
     "husky": "^4.3.5",
     "prettier": "^2.1.2",
     "pretty-quick": "^2.0.2",
-    "sinon": "^9.2.1",
+    "sinon": "^9.2.4",
     "typescript": "^4.1.2"
   },
   "browserslist": {

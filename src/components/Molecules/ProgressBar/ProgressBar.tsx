@@ -39,13 +39,11 @@ const emptyProgress = [
 
 const ToolTipContent = (props: ProgressBarProps) => (
   <>
-    {props.progress.map(({ label, value }: ProgressType) =>
-      value ? (
-        <TooltipValue key={`${label}_tooltip`}>
-          {label}: {value}
-        </TooltipValue>
-      ) : null
-    )}
+    {props.progress.map(({ label, value }: ProgressType) => (
+      <TooltipValue key={`${label}_tooltip`}>
+        {label}: {value}
+      </TooltipValue>
+    ))}
     <TooltipValue>
       <strong>total: {props.total}</strong>
     </TooltipValue>
