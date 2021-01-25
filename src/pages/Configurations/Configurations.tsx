@@ -24,6 +24,7 @@ import {
   UNIX_TIMESTAMP_FACTOR,
 } from 'typings/interfaces';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
+import ProgressBar, { ProgressType } from 'components/Molecules/ProgressBar';
 import APIErrorContext from '../../contexts/APIErrorContext';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
 import { ExpandRowIcon, StatusDot } from '../DataTransfers/elements';
@@ -101,6 +102,44 @@ const Configurations = () => {
     {
       key: 'status_active',
       render: (record: boolean) => (record ? 'Active' : 'Inactive'),
+    },
+    {
+      key: 'progress',
+      render: (props: any[]) => {
+        if (Object.values(props).length) {
+          return Object.values(props).map((progress) => {
+            const total: number = progress.total || 0;
+
+            const succeeded: ProgressType = {
+              label: 'Succeeded',
+              value: progress.succeeded || 0,
+              color: Colors['midblue-3'].hex(),
+            };
+
+            const outdated: ProgressType = {
+              label: 'Outdated',
+              value: progress.outdated || 0,
+              color: Colors.danger.hex(),
+            };
+
+            const notUploaded: ProgressType = {
+              label: 'Not uploaded',
+              value: progress.not_uploaded || 0,
+              color: Colors.danger.hex(),
+            };
+
+            return (
+              <ProgressBar
+                total={total}
+                progress={[succeeded, outdated, notUploaded]}
+                totalProgress={progress.succeeded}
+              />
+            );
+          });
+        }
+
+        return <ProgressBar />;
+      },
     },
     {
       key: 'statusColor',
