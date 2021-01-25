@@ -9,7 +9,9 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => <AssetSearchResults query={text('query', '')} />;
+export const Example = () => (
+  <AssetSearchResults query={text('query', '')} isSelected={() => {}} />
+);
 
 const Container = styled.div`
   height: 400px;
