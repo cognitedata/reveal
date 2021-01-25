@@ -42,7 +42,6 @@ function createOverlay() {
 
     /* Make it look nice */
     padding: 10px;
-    /* width: 200px; */
     minHeight: 50px;
     color: #fff;
     background: #232323da;
@@ -53,14 +52,15 @@ function createOverlay() {
 }
 
 // Attach overlay on click
+const overlays = viewer.createHtmlOverlayTool();
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
   const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
   if (intersection) {
     const el = createOverlay();
-    viewer.attachHtmlOverlay(el, intersection.point);
+    overlays.add(el, intersection.point);
     // Remove overlay after 5 seconds
-    setTimeout(() => viewer.detachHtmlOverlay(el), 5000);
+    setTimeout(() => overlays.remove(el), 5000);
   }
 });
 ```
@@ -85,8 +85,6 @@ function createOverlay() {
 
     /* Make it look nice */
     padding: 10px;
-    /* width: 200px; */
-    minHeight: 50px;
     color: #fff;
     background: #232323da;
     borderRadius: 0.25em;
@@ -95,6 +93,7 @@ function createOverlay() {
   return element;
 }
 
+const overlays = viewer.createHtmlOverlayTool();
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
   const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
@@ -104,10 +103,52 @@ viewer.on('click', event => {
       positionUpdatedCallback: (element, position2D, position3D, distanceToCamera) => {
         // Compute opacity based on distance to camera
         const opacity = 1.0 - (Math.min(Math.max(distanceToCamera, 10), 110) - 10) / 100.0;
-        element.style.opacity = `${opacity}`;
+        element.style.opacity = opacity;
       }
     };
-    viewer.attachHtmlOverlay(el, intersection.point, options);
+    overlays.add(el, intersection.point, options);
   }
 });
+```
+
+As shown above, overlays can be removed using `remove()`. It is also possible to remove all 
+overlays by disposing the tool:
+
+```js runnable
+function createOverlay() {
+  const element = document.createElement('div');
+  element.innerText = `!`;
+  element.style.cssText = `
+    position: absolute;
+    
+    /* Anchor to the center of the element and ignore events */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    touch-action: none;
+
+    /* Make it look nice */
+    padding: 10px;
+    minHeight: 50px;
+    color: #000000;
+    background: #f5a614;
+    borderRadius: 0.25em;
+    border: '#ffffff22 solid 2px;
+  `;
+  return element;
+}
+
+const overlays = viewer.createHtmlOverlayTool();
+const bounds = model.getModelBoundingBox();
+for (let i = 0; i < 100; i++) {
+  const s = [Math.random(), Math.random(), Math.random()];
+  const pos = new THREE.Vector3(
+      bounds.min.x + (bounds.max.x - bounds.min.x) * s[0],
+      bounds.min.y + (bounds.max.y - bounds.min.y) * s[1],
+      bounds.min.z + (bounds.max.z - bounds.min.z) * s[2]
+    );
+  overlays.add(createOverlay(), pos);
+}
+
+// Dispose all overlays after 10 seconds
+setTimeout(() => overlays.dispose(), 10000);
 ```

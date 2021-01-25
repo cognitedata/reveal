@@ -14,8 +14,11 @@ export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
 
 // types
-
 export * from './public/types';
+
+// Tools
+import * as tools from './public/migration/tools';
+export { tools };
 
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';

@@ -33,7 +33,7 @@ import { createCdfRevealManager } from '../createRevealManager';
 import { SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { assertNever, BoundingBoxClipper, File3dFormat, HtmlOverlayHelper, LoadingState } from '../../utilities';
+import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
@@ -50,7 +50,8 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
-import { HtmlOverlayOptions } from '../../utilities/HtmlOverlayHelper';
+import { Cognite3DViewerTool } from './tools/Cognite3DViewerTool';
+import { DisposedDelegate, HtmlOverlayTool } from './tools';
 
 /**
  * @example
@@ -91,7 +92,7 @@ export class Cognite3DViewer {
   private readonly _updateCameraNearAndFarSubject: Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>;
   private readonly _subscription = new Subscription();
   private readonly _revealManager: RevealManager<CdfModelIdentifier>;
-  private readonly _htmlOverlays: HtmlOverlayHelper;
+  private readonly _tools = new Map<Cognite3DViewerTool, DisposedDelegate>();
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -175,7 +176,6 @@ export class Cognite3DViewer {
     this.domElement = options.domElement || createCanvasWrapper();
     this.domElement.appendChild(this.canvas);
     this.spinner = new Spinner(this.domElement);
-    this._htmlOverlays = new HtmlOverlayHelper(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -1046,9 +1046,9 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Attach an HTML element to a 3D position and updates it's position/visibility as user
-   * moves the camera. This is useful to create HTML overlays to highlight information
-   * about key positions in the 3D model.
+   * Creates a tool for attaching HTML elements to a 3D position and updates it's
+   * position/visibility as user moves the camera. This is useful to create HTML
+   * overlays to highlight information about key positions in the 3D model.
    *
    * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
    * in most cases to have styles 'pointerEvents: none' and 'touchAction: none' to avoid
@@ -1069,28 +1069,56 @@ export class Cognite3DViewer {
    * el.style.color = 'red';
    * el.innerHtml = '<h1>Overlay</h1>';
    *
-   * viewer.attachHtmlElement(el, new THREE.Vector3(10, 10, 10));
+   * const overlayTool = viewer.createHtmlOverlays();
+   * overlayTool.attachHtmlElement(el, new THREE.Vector3(10, 10, 10));
+   * // ...
+   * overlayTool.removeHtmlElement(el);
+   * // or, to remove all attached elements:
+   * overlayTool.dispose();
    * ```
-   *
-   * @param htmlElement   HTML element to overlay. Must not be attached already and must have CSS style 'position: absolute'.
-   * @param position3D    3D position of the element.
-   * @param options       Options to modify the behaviour of the overlay.
-   * @throws              If element is already attached or is missing 'position: absolute CSS style.
    */
-  attachHtmlOverlay(htmlElement: HTMLElement, position3D: THREE.Vector3, options?: HtmlOverlayOptions): void {
-    this._htmlOverlays.addOverlayElement(htmlElement, position3D, options);
-    this._htmlOverlays.updatePositions(this.renderer, this.camera);
+  createHtmlOverlayTool(): HtmlOverlayTool {
+    const overlays = new HtmlOverlayTool(this.domElement, this.renderer, this.camera);
+    this.registerTool(overlays);
+    return overlays;
   }
 
   /**
-   * Detatches a HTML overlay, removing it from the DOM tree.
-   *
-   * @param htmlElement Previously attached element.
-   * @throws            If the element has not been attached.
+   * Registers a new tool. This makes the tool get updates from the viewer.
+   * The tool will be unregistered when it's diposed.
+   * @param tool Tool to register.
    */
-  detachHtmlOverlay(htmlElement: HTMLElement): void {
-    this._htmlOverlays.removeOverlayElement(htmlElement);
-    this._htmlOverlays.updatePositions(this.renderer, this.camera);
+  private registerTool(tool: Cognite3DViewerTool): void {
+    if (this._tools.has(tool)) {
+      throw new Error(`Tool ${tool} is already registered`);
+    }
+    const onDisposed: DisposedDelegate = () => this.unregisterTool(tool);
+    this._tools.set(tool, onDisposed);
+    tool.on('disposed', onDisposed);
+  }
+
+  /**
+   * Unregisters a previously registered tool for updates. Note! Tools
+   * are automatically unregistered when they are disposed so you will
+   * probably not need to call this function.
+   * @param tool A previously registered tool.
+   */
+  private unregisterTool(tool: Cognite3DViewerTool): void {
+    const onDisposed = this._tools.get(tool);
+    if (onDisposed === undefined) {
+      throw new Error(`Tool ${tool} is not registered`);
+    }
+    tool.off('disposed', onDisposed);
+    this._tools.delete(tool);
+  }
+
+  /**
+   * Notifies all registered tools that there has been rendered a frame.
+   */
+  private notifyToolsAboutRendering() {
+    for (const tool of this._tools.keys()) {
+      tool.notifyRendered();
+    }
   }
 
   private getModels(type: 'cad'): Cognite3DModel[];
@@ -1218,7 +1246,7 @@ export class Cognite3DViewer {
         this.eventListeners.sceneRendered.forEach(listener => {
           listener({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
         });
-        this._htmlOverlays.updatePositions(this.renderer, this.camera);
+        this.notifyToolsAboutRendering();
       }
     }
   }

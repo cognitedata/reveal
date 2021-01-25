@@ -3,7 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { worldToViewport } from './worldToViewport';
+import { worldToViewport } from '../../../utilities/worldToViewport';
+import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export type HtmlOverlayPositionUpdatedDelegate = (
   element: HTMLElement,
@@ -21,9 +22,16 @@ type HtmlOverlayElement = {
   options: HtmlOverlayOptions;
 };
 
-export class HtmlOverlayHelper {
+/**
+ * Manages overlays for {@see Cognite3DViewer}.
+ */
+export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _viewerDomElement: HTMLElement;
+  private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _camera: THREE.PerspectiveCamera;
+
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
+
   // Allocate variables needed for processing once to avoid allocations
   private readonly _preallocatedVariables = {
     camPos: new THREE.Vector3(),
@@ -34,11 +42,32 @@ export class HtmlOverlayHelper {
     position2D: new THREE.Vector2()
   };
 
-  constructor(viewerDomElement: HTMLElement) {
+  constructor(viewerDomElement: HTMLElement, renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    super();
     this._viewerDomElement = viewerDomElement;
+    this._renderer = renderer;
+    this._camera = camera;
   }
 
-  addOverlayElement(htmlElement: HTMLElement, position3D: THREE.Vector3, options: HtmlOverlayOptions = {}) {
+  /**
+   * @override
+   */
+  dispose(): void {
+    for (const element of this._htmlOverlays.keys()) {
+      this.remove(element);
+    }
+    super.dispose();
+  }
+
+  /**
+   * Registers a HTML overlay that will be updated on rendering.
+   *
+   * @param htmlElement
+   * @param position3D
+   * @param options
+   */
+  add(htmlElement: HTMLElement, position3D: THREE.Vector3, options: HtmlOverlayOptions = {}) {
+    this.ensureNotDisposed();
     if (htmlElement.style.position !== 'absolute') {
       throw new Error('htmlElement style must have a position of absolute');
     }
@@ -49,9 +78,16 @@ export class HtmlOverlayHelper {
     this._viewerDomElement.appendChild(htmlElement);
     const element: HtmlOverlayElement = { position3D, options };
     this._htmlOverlays.set(htmlElement, element);
+
+    this.notifyRendered(); // Force update
   }
 
-  removeOverlayElement(htmlElement: HTMLElement) {
+  /**
+   * Removes a overlay and removes it from the DOM.
+   * @param htmlElement
+   */
+  remove(htmlElement: HTMLElement) {
+    this.ensureNotDisposed();
     if (!this._viewerDomElement.contains(htmlElement) || !this._htmlOverlays.has(htmlElement)) {
       throw new Error(`Element is not attached to viewer`);
     }
@@ -59,11 +95,17 @@ export class HtmlOverlayHelper {
     this._htmlOverlays.delete(htmlElement);
   }
 
-  updatePositions(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+  /**
+   * Updates positions of all overlays.
+   */
+  notifyRendered(): void {
+    this.ensureNotDisposed();
     if (this._htmlOverlays.size === 0) {
       return;
     }
 
+    const camera = this._camera;
+    const renderer = this._renderer;
     const { camPos, camNormal, point, nearPlane, farPlane, position2D } = this._preallocatedVariables;
 
     // Determine near/far plane to cull based on distance. Note! We don't cull outside the "walls"
