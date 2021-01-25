@@ -77,7 +77,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-modal": "^3.10.6",
     "@types/react-router-dom": "^5.1.7",
-    "@types/react-table": "^7.0.26",
+    "@types/react-table": "^7.0.28",
     "@types/single-spa-react": "^3.0.1",
     "@types/sinon": "^9.0.10",
     "@types/styled-components": "^5.1.7",
