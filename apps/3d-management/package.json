@@ -77,7 +77,7 @@
     "@types/styled-components": "^5.1.7",
     "concurrently": "^5.3.0",
     "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.5",
+    "enzyme-adapter-react-16": "^1.15.6",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-lodash": "^7.1.0",
