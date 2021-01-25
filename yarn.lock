@@ -1485,10 +1485,10 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@^1.10.3":
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.10.3.tgz#bdc8759f918c19b7950505f039001b09f7a26f99"
-  integrity sha512-pzWCGDWNCTH4hu2oYVq+yWu+3Dz6SKwO/FbQin5Q/rJhJooG4yuxLhAc0LnDj4jeyVxaDcviFXghoWPHT3da9w==
+"@cognite/react-picture-annotation@^1.10.4":
+  version "1.10.4"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.10.4.tgz#803fe952afacd423c8dbd860b0d3dd9afbf5a75e"
+  integrity sha512-Db2T8nWTKyiGc5ieIqGdnHCZyCydaF5UTDJSYDHhYB6IoI39cXRZxeIXDsig53sveke+TK/V/EQsSPetFvObEg==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/cogs.js" "^2.4.2"
