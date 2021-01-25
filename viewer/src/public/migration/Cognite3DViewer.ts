@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
 import ComboControls from '@cognite/three-combo-controls';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, Node3D } from '@cognite/sdk';
 import { debounceTime, filter, map } from 'rxjs/operators';
 import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs';
 
@@ -1046,9 +1046,56 @@ export class Cognite3DViewer {
   }
 
   /**
+   *
    * @param htmlElement
-   * @param position3D
+   * @param model
+   * @param node
    * @param options
+   */
+  attachHtmlOverlayToNode(htmlElement: HTMLElement, model: Cognite3DModel, node: Node3D, options?: HtmlOverlayOptions) {
+    const bbox = node.boundingBox;
+    if (bbox === undefined) {
+      throw new Error(`Provided node doesn't have geometry and cannot be used as an overlay target`);
+    }
+
+    const min = new THREE.Vector3(...bbox.min);
+    const max = new THREE.Vector3(...bbox.max);
+    const transformedBbox = new THREE.Box3();
+    model.mapFromCdfToModelCoordinates(min, min);
+    model.mapFromCdfToModelCoordinates(max, max);
+    transformedBbox.set(min, max);
+
+    const center = transformedBbox.getCenter(new THREE.Vector3());
+    this.attachHtmlOverlay(htmlElement, center, options);
+  }
+
+  /**
+   * Attach an HTML element to a 3D position and updates it's position/visibility as user
+   * moves the camera. This is useful to create HTML overlays to highlight information
+   * about key positions in the 3D model.
+   *
+   * @example
+   * ```js
+   * const el = document.createElement('div');
+   * el.style.position = 'absolute'; // Required!
+   * // Anchor to center of element
+   * el.style.transform = 'translate(-50%, -50%)';
+   * // Avoid being target for events
+   * el.style.pointerEvents = 'none;
+   * el.style.touchAction = 'none';
+   *
+   * el.style.color = 'red';
+   * el.innerHtml = '<h1>Overlay</h1>';
+   *
+   * viewer.attachHtmlElement(el, new THREE.Vector3(10, 10, 10));
+   * ```
+   *
+   * @param htmlElement   HTML element to overlay. Must not be attached already
+   *                      and must have CSS style 'position: absolute'.
+   * @param position3D    3D position of the element.
+   * @param options       Options to modify the behaviour of the overlay.
+   * @throws              If element is already attached or is missing 'position: absolute'
+   *                      CSS style.
    */
   attachHtmlOverlay(htmlElement: HTMLElement, position3D: THREE.Vector3, options?: HtmlOverlayOptions): void {
     this._htmlOverlays.addOverlayElement(htmlElement, position3D, options);
@@ -1056,7 +1103,10 @@ export class Cognite3DViewer {
   }
 
   /**
-   * @param htmlElement
+   * Detatches a HTML overlay, removing it from the DOM tree.
+   *
+   * @param htmlElement Previously attached element.
+   * @throws            If the element has not been attached.
    */
   detachHtmlOverlay(htmlElement: HTMLElement): void {
     this._htmlOverlays.removeOverlayElement(htmlElement);
