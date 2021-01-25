@@ -1053,7 +1053,8 @@ export class Cognite3DViewer {
    * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
    * in most cases to have styles 'pointerEvents: none' and 'touchAction: none' to avoid
    * interfering with 3D navigation. Consider also applying 'transform: translate(-50%, -50%)'
-   * to anchor the center of the element rather than the top-left corner.
+   * to anchor the center of the element rather than the top-left corner. In some cases the
+   * `zIndex`-attribute is necessary for the element to appear on top of the viewer.
    *
    * @example
    * ```js
