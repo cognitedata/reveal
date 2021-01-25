@@ -1,6 +1,6 @@
 import { Colors, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { ProgressType, ValueProps } from '.';
+import { ValueProps, ProgressType, ProgressBarProps } from '.';
 
 const Bar = styled.div`
   width: 100%;
@@ -32,7 +32,7 @@ const emptyProgress = [
   },
 ];
 
-const ToolTipContent = (props: { progress: ProgressType[]; total: number }) => (
+const ToolTipContent = (props: ProgressBarProps) => (
   <>
     {props.progress.map(({ label, value }: ProgressType) => (
       <div key={`${label}_tooltip`}>
@@ -43,13 +43,15 @@ const ToolTipContent = (props: { progress: ProgressType[]; total: number }) => (
   </>
 );
 
-const ProgressBar = (props: { progress?: ProgressType[]; total?: number }) => {
+const ProgressBar = (props: Partial<ProgressBarProps>) => {
   const progress = props.progress || emptyProgress;
   const total = props.total || 0;
-  const totalProgress: number = progress.reduce((a, b) => ({
-    ...a,
-    value: a.value + b.value,
-  })).value;
+  const totalProgress: number = progress.reduce(
+    (a: ProgressType, b: ProgressType) => ({
+      ...a,
+      value: a.value + b.value,
+    })
+  ).value;
 
   return (
     <Tooltip
