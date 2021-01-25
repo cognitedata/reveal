@@ -35,7 +35,8 @@ export function intercomUpdate(data: IntercomData = {}) {
 }
 
 export function startIntercomTour() {
-  const { intercomTourId } = sidecar;
+  // TODO(DTC-291) replacece tour id with the one from sidecar
+  const intercomTourId = 199165;
   if (config.env !== 'development' && window.Intercom) {
     window.Intercom('startTour', intercomTourId);
   }
