@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Button } from '@cognite/cogs.js';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@cognite/react-i18n';
 
 import { FormState } from '../CardContainer/CardContainer';
 import { StyledClusterSelector } from './elements';

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-tenant-selector",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -60,6 +60,7 @@
     "@cognite/auth-utils": "^0.2.1",
     "@cognite/cogs.js": "^2.4.0",
     "@cognite/metrics": "^1.0.0",
+    "@cognite/react-i18n": "^0.2.2",
     "@cognite/sdk": "^3.3.0",
     "react-helmet": "^6.1.0",
     "styled-components": "^5.1.0"

@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { I18nContainer } from '@cognite/react-i18n';
 
 export default (
   ui: React.ReactElement,
@@ -8,7 +7,7 @@ export default (
 ) => {
   // This is where you can wrap your rendered UI component in redux stores,
   // providers, or anything else you might want.
-  const component = <I18nContainer>{ui}</I18nContainer>;
+  const component = <>{ui}</>;
 
   return render(component, options);
 };

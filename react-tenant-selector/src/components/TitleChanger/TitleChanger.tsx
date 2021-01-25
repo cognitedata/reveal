@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@cognite/react-i18n';
 
 import { getSidecar } from '../../utils';
 

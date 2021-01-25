@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from '@cognite/cogs.js';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@cognite/react-i18n';
 
 import { StyledLoginTip } from './elements';
 
