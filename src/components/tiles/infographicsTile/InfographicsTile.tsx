@@ -3,6 +3,7 @@ import { Overline, Tooltip } from '@cognite/cogs.js';
 import { Flex } from 'styles/common';
 import { Board } from 'store/suites/types';
 import { renderIframe } from 'utils/iframe';
+import { useLastVisited } from 'hooks';
 import {
   TileHeader,
   TileDescription,
@@ -25,8 +26,9 @@ export const InfographicsTile: React.FC<Props> = ({
   dataItem,
   menu,
 }: Props) => {
+  const { setAsLastvisited } = useLastVisited(dataItem);
   return (
-    <LargeTileContainer>
+    <LargeTileContainer onClick={setAsLastvisited}>
       <TileHeader color={color} isBoard>
         <Flex>
           <TileDescription>
