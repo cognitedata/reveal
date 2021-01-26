@@ -13,7 +13,7 @@ export { File3dFormat, CameraConfiguration, CogniteColors, LoadingState } from '
 export { LocalModelIdentifier, CdfModelIdentifier } from './networking/types';
 export { createOffsetsArray } from './arrays';
 export { Box3 } from './Box3';
-export { HtmlOverlayTool as HtmlOverlayHelper } from '../public/migration/tools/HtmlOverlayTool';
+export { HtmlOverlayTool as HtmlOverlayHelper } from '../tools/HtmlOverlayTool';
 export { worldToViewport } from './worldToViewport';
 export { toThreeVector3, toThreeJsBox3, fromThreeJsBox3 } from './threeConverters';
 export { BoundingBoxClipper } from './BoundingBoxClipper';

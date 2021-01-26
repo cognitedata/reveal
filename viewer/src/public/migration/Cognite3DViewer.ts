@@ -50,8 +50,8 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
-import { Cognite3DViewerTool } from './tools/Cognite3DViewerTool';
-import { DisposedDelegate, HtmlOverlayTool } from './tools';
+import { Cognite3DViewerTool, DisposedDelegate } from './Cognite3DViewerTool';
+import { HtmlOverlayTool } from '../../tools';
 
 /**
  * @example

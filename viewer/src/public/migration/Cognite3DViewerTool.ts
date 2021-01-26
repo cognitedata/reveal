@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DisposedDelegate } from './types';
+export type DisposedDelegate = () => void;
 
 /**
  * Interface for tools that attach to `Cognite3DViewer`.

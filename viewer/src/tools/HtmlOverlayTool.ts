@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { worldToViewport } from '../../../utilities/worldToViewport';
+import { worldToViewport } from '../utilities/worldToViewport';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export type HtmlOverlayPositionUpdatedDelegate = (

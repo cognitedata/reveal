@@ -2,9 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever } from '../../../utilities';
-import { Cognite3DViewerTool } from './Cognite3DViewerTool';
-import { DisposedDelegate } from './types';
+import { assertNever } from '../utilities/assertNever';
+import { Cognite3DViewerTool, DisposedDelegate } from '../public/migration/Cognite3DViewerTool';
 
 /**
  * Base class for tools attaching to a {@see Cognite3DViewer}.

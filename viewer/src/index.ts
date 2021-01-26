@@ -13,9 +13,6 @@ export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
 
-// Tools
-export * from './public/migration/tools';
-
 // types
 export * from './public/types';
 
