@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { A, Button, Icon, Input, Micro, Tooltip } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { suiteState, boardState } from 'store/forms/selectors';
-import { setBoard, deleteBoard } from 'store/forms/actions';
+import { deleteBoard } from 'store/forms/actions';
+import { setBoardState } from 'store/forms/thunks';
 import {
   FormContainer,
   BoardsContainer,
@@ -24,6 +25,9 @@ import { Board, Suite } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
 import { RootDispatcher } from 'store/types';
+import { CdfClientContext } from 'providers/CdfClientProvider';
+import { flushFilesQueue } from 'utils/files';
+import { FileUpload } from './FileUpload';
 import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';
 import GroupsSelector from './GroupsSelector';
@@ -40,16 +44,21 @@ const SnapshotTooltip = () => {
   );
 };
 
-export const BoardForm: React.FC = () => {
+type Props = {
+  filesUploadQueue: Map<string, File>;
+};
+
+export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
   const { errors, setErrors, validateField } = useForm(boardValidator);
   const suite = useSelector(suiteState);
   const board = useSelector(boardState) as Board;
   const dispatch = useDispatch<RootDispatcher>();
+  const client = useContext(CdfClientContext);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
     dispatch(
-      setBoard({
+      setBoardState(client, {
         ...board,
         [name]: value,
       })
@@ -67,7 +76,8 @@ export const BoardForm: React.FC = () => {
   };
 
   const openBoard = (boardItem: Board) => {
-    dispatch(setBoard(boardItem));
+    flushFilesQueue(filesUploadQueue);
+    dispatch(setBoardState(client, boardItem));
   };
 
   return (
@@ -111,6 +121,7 @@ export const BoardForm: React.FC = () => {
             <Input
               autoComplete="off"
               name="embedTag"
+              error={errors?.embedTag}
               value={board.embedTag || ''}
               variant="noBorder"
               placeholder="Tag"
@@ -118,8 +129,9 @@ export const BoardForm: React.FC = () => {
               fullWidth
             />
           </SnapshotInputContainer>
+          <FileUpload filesUploadQueue={filesUploadQueue} />
           <GroupsSelector />
-          <ActionButtons />
+          <ActionButtons filesUploadQueue={filesUploadQueue} />
         </FormContainer>
         <BoardsContainer>
           <div>

@@ -7,12 +7,22 @@ import {
   suiteState,
   boardState,
 } from 'store/forms/selectors';
-import { addBoard, setBoard, updateBoard } from 'store/forms/actions';
+import { addBoard, clearForm, updateBoard } from 'store/forms/actions';
 import isEmpty from 'lodash/isEmpty';
 import { Board } from 'store/suites/types';
 import { RootDispatcher } from 'store/types';
+import { key } from 'utils/forms';
+import {
+  deleteFileFromQueue,
+  flushFilesQueue,
+  replaceNewFileKey,
+} from 'utils/files';
 
-const ActionButtons: React.FC = () => {
+type Props = {
+  filesUploadQueue: Map<string, File>;
+};
+
+const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
   const suite = useSelector(suiteState);
   const board = useSelector(boardState) as Board;
   const isValid =
@@ -22,8 +32,12 @@ const ActionButtons: React.FC = () => {
 
   const addNewBoard = () => {
     if (hasErrors) return;
-    dispatch(addBoard());
-    dispatch(setBoard({}));
+
+    const newKey = key();
+    replaceNewFileKey(filesUploadQueue, newKey); // if uploaded a file => give it a key
+    dispatch(addBoard(newKey));
+
+    dispatch(clearForm());
   };
 
   const updateExistingBoard = () => {
@@ -31,14 +45,19 @@ const ActionButtons: React.FC = () => {
     dispatch(updateBoard());
   };
 
-  const clearForm = () => {
-    dispatch(setBoard({}));
+  const clear = () => {
+    if (board?.key) {
+      deleteFileFromQueue(filesUploadQueue, board.key);
+    } else {
+      flushFilesQueue(filesUploadQueue);
+    }
+    dispatch(clearForm());
   };
   return (
     <ActionButtonsContainer>
       {board.key && !isEmpty(suite?.boards) ? (
         <>
-          <Button variant="ghost" onClick={clearForm}>
+          <Button variant="ghost" onClick={clear}>
             Cancel
           </Button>
           <Button

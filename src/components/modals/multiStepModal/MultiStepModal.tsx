@@ -1,11 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
-import { isErrorListEmpty, suiteState } from 'store/forms/selectors';
+import { formState, isErrorListEmpty, suiteState } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
-import { insertSuite } from 'store/suites/thunks';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
 import { ModalFooter } from 'components/modals/elements';
@@ -13,6 +12,7 @@ import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useFormState } from 'hooks';
+import { saveForm } from 'store/forms/thunks';
 import { BoardForm, SuiteForm } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
@@ -33,6 +33,8 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const isValid = !isEmpty(suite.title);
   const hasErrors = !useSelector(isErrorListEmpty) && !isValid;
   const { clearForm } = useFormState();
+  const { saving: formSaving } = useSelector(formState);
+  const [filesUploadQueue] = useState(new Map());
 
   const nextStep = () => {
     if (hasErrors) return;
@@ -42,30 +44,49 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const handleCloseModal = () => {
     dispatch(modalClose());
     clearForm();
+    filesUploadQueue.clear();
   };
 
   const handleSubmit = async () => {
     if (hasErrors) return;
+
+    await dispatch(saveForm(client, apiClient, filesUploadQueue, suite));
+
     handleCloseModal();
-    await dispatch(insertSuite(client, apiClient, suite));
     history.push(`/suites/${suite.key}`);
   };
 
   const Footer = () => {
     return (
       <ModalFooter>
-        <Button variant="ghost" onClick={handleCloseModal}>
+        <Button
+          variant="ghost"
+          onClick={handleCloseModal}
+          disabled={formSaving}
+        >
           Cancel
         </Button>
         <div>
           {isEqual(step, 'suite') && (
-            <Button type="primary" onClick={nextStep} disabled={hasErrors}>
+            <Button
+              type="primary"
+              onClick={nextStep}
+              disabled={hasErrors || formSaving}
+            >
               {modalSettings.buttons[step].goToBoards}
             </Button>
           )}
-          <Button type="secondary" onClick={handleSubmit}>
-            {modalSettings.buttons.save}
-          </Button>
+          {formSaving ? (
+            <Icon type="Loading" />
+          ) : (
+            <Button
+              type="secondary"
+              onClick={handleSubmit}
+              disabled={formSaving}
+            >
+              {modalSettings.buttons.save}
+            </Button>
+          )}
         </div>
       </ModalFooter>
     );
@@ -80,7 +101,9 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
     >
       <ModalContainer>
         {isEqual(step, 'suite') && <SuiteForm />}
-        {isEqual(step, 'boards') && <BoardForm />}
+        {isEqual(step, 'boards') && (
+          <BoardForm filesUploadQueue={filesUploadQueue} />
+        )}
       </ModalContainer>
     </Modal>
   );

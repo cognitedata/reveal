@@ -12,7 +12,7 @@ const EditSuiteModal: React.FC<Props> = ({ dataItem }: Props) => {
   const { initForm } = useFormState();
 
   useEffect(() => {
-    initForm(dataItem, dataItem?.boards[0] || {});
+    initForm(dataItem);
   }, [initForm, dataItem]);
 
   return <MultiStepModal modalSettings={modalSettings.edit} />;

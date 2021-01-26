@@ -4,6 +4,7 @@ import omit from 'lodash/omit';
 import merge from 'lodash/merge';
 import { Board, Suite } from 'store/suites/types';
 import { now } from 'utils/date';
+import { FileUploadResult } from 'store/forms/types';
 
 export const key = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -42,4 +43,16 @@ export const deleteBoardFromSuite = (suite: Suite, boardKey: string) => {
     ...suite,
     boards: updatedBoardList,
   };
+};
+
+export const updateBoardWithFileId = (
+  suite: Suite,
+  fileUploadResult: FileUploadResult
+): Suite => {
+  const { boards } = suite;
+  const boardUpdated = boards.find(
+    (board) => board.key === fileUploadResult.boardKey
+  );
+  boardUpdated && (boardUpdated.imageFileId = fileUploadResult.fileExternalId);
+  return suite;
 };

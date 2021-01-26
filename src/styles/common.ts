@@ -45,3 +45,9 @@ export const NoItemsContainer = styled.div`
   justify-content: center;
   text-align: center;
 `;
+
+export const EllipsisText = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
