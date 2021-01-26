@@ -5,7 +5,11 @@ import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { Tile, InfographicsTile } from 'components/tiles';
 import { BoardMenu, SuiteMenu } from 'components/menus';
-import { TilesContainer, OverviewContainer } from 'styles/common';
+import {
+  TilesContainer,
+  OverviewContainer,
+  NoItemsContainer,
+} from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBoardsBySuite, getSuitesTableState } from 'store/suites/selectors';
 import { isAdmin } from 'store/groups/selectors';
@@ -16,11 +20,7 @@ import { Board, Suite } from 'store/suites/types';
 import { UserSpaceState } from 'store/userSpace/types';
 import { getUserSpace } from 'store/userSpace/selectors';
 import isEqual from 'lodash/isEqual';
-import {
-  StyledTitle,
-  NoBoardsContainer,
-  LargeTilesContainer,
-} from './elements';
+import { StyledTitle, LargeTilesContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,10 +90,10 @@ const SuiteOverview: React.FC = () => {
       />
       <OverviewContainer>
         {!boards?.length ? (
-          <NoBoardsContainer>
+          <NoItemsContainer>
             <Graphic type="DataKits" />
-            <Title level={5}>No dasboards added to suite yet</Title>
-          </NoBoardsContainer>
+            <Title level={5}>No boards added to suite yet</Title>
+          </NoItemsContainer>
         ) : (
           <>
             <LargeTilesContainer>
@@ -114,25 +114,27 @@ const SuiteOverview: React.FC = () => {
             </LargeTilesContainer>
             <TilesContainer>
               <Title level={6}>All boards</Title>
-              {boards?.map((board: Board) => (
-                <>
-                  {!isEqual(board.type, 'infographics') && (
-                    <a
-                      href={board.url}
-                      key={board.key}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Tile
-                        dataItem={board}
-                        color={color}
-                        view="board"
-                        menu={<BoardMenu suite={suite} board={board} />}
-                      />
-                    </a>
-                  )}
-                </>
-              ))}
+              {boards?.map((board: Board) => {
+                return (
+                  <>
+                    {!isEqual(board.type, 'infographics') && (
+                      <a
+                        href={board.url}
+                        key={board.key}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Tile
+                          dataItem={board}
+                          color={color}
+                          view="board"
+                          menu={<BoardMenu suite={suite} board={board} />}
+                        />
+                      </a>
+                    )}
+                  </>
+                );
+              })}
             </TilesContainer>
           </>
         )}

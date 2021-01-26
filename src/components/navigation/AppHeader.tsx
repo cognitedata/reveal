@@ -1,16 +1,17 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Avatar, Icon, TopBar, Menu, Graphic, Tooltip } from '@cognite/cogs.js';
+import { Avatar, Icon, TopBar, Menu, Tooltip } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { isAdmin } from 'store/groups/selectors';
 import { getUserId } from 'store/auth/selectors';
 import isEqual from 'lodash/isEqual';
-import customerLogo from 'images/NOC_logo.png';
+import customerLogo from 'images/dt_logo.png';
+import cogniteLogo from 'images/cognite_logo.png';
 import { CustomLink } from 'styles/common';
 import { startIntercomTour } from 'utils/intercom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { logout } from 'utils/logout';
-import { LogoWrapper } from './elements';
+import { CogniteLogo, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
@@ -128,28 +129,25 @@ const AppHeader: React.FC = () => {
         <LogoWrapper>
           <Link to="/">
             <TopBar.Logo
-              title="Digital Cockpit"
-              logo={
-                <Graphic
-                  type="Cognite"
-                  style={{ width: 32, margin: '6px 8px 0 12px' }}
-                />
-              }
+              logo={<img src={customerLogo} alt="Customer logo" />}
             />
           </Link>
         </LogoWrapper>
       </TopBar.Left>
       <TopBar.Right>
+        <CogniteLogo>
+          <TopBar.Item>
+            <a
+              href="https://www.cognite.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={cogniteLogo} alt="Cognite logo" />
+            </a>
+          </TopBar.Item>
+        </CogniteLogo>
+
         <TopBar.Actions actions={filteredActions} />
-        <TopBar.Item>
-          <a href="https://noc.qa/" target="_blank" rel="noopener noreferrer">
-            <img
-              style={{ padding: 16 }}
-              src={customerLogo}
-              alt="Customer logo"
-            />
-          </a>
-        </TopBar.Item>
       </TopBar.Right>
     </TopBar>
   );
