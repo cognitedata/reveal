@@ -26,7 +26,7 @@
     "@cognite/react-i18n": "0.1.2",
     "@cognite/sdk": "^3.3.2",
     "@cognite/z-index": "^0.1.0",
-    "@sentry/browser": "^6.0.0",
+    "@sentry/browser": "^6.0.2",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.19",
     "moment": "^2.29.1",
@@ -86,7 +86,7 @@
     "pretty-quick": "^3.1.0",
     "redux-mock-store": "^1.5.4",
     "serve": "^11.3.2",
-    "sinon": "^9.2.3",
+    "sinon": "^9.2.4",
     "testcafe": "^1.9.4",
     "typescript": "^4.1.3"
   },
