@@ -77,14 +77,14 @@ const AppHeader: React.FC = () => {
           <Menu.Item>FAQs</Menu.Item>
           <Menu.Divider />
           <Menu.Item>
-            <div
+            <CustomMenuItem
               role="button"
               tabIndex={0}
               onClick={startIntercomTour}
               onKeyDown={startIntercomTour}
             >
               Introduction to Digital Cockpit
-            </div>
+            </CustomMenuItem>
           </Menu.Item>
         </Menu>
       ),
