@@ -1,18 +1,18 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
-import { isErrorListEmpty, suiteState } from 'store/forms/selectors';
+import { formState, isErrorListEmpty, suiteState } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
-import { insertSuite } from 'store/suites/thunks';
 import { Suite, Board } from 'store/suites/types';
 import { modalClose } from 'store/modals/actions';
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import Modal from 'components/modals/simpleModal/Modal';
 import { BoardForm } from 'components/modals/multiStepModal/steps';
 import { modalSettings } from 'components/modals/config';
 import { ModalContainer, ModalFooter } from 'components/modals/elements';
 import { useFormState } from 'hooks';
+import { saveForm } from 'store/forms/thunks';
 
 interface Props {
   suiteItem: Suite;
@@ -26,30 +26,37 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
   const dispatch = useDispatch<RootDispatcher>();
   const suite = useSelector(suiteState);
   const hasErrors = !useSelector(isErrorListEmpty);
+  const { saving: formSaving } = useSelector(formState);
+  const [filesUploadQueue] = useState(new Map());
 
   useEffect(() => {
     initForm(suiteItem, boardItem);
   }, [initForm, boardItem, suiteItem]);
 
   const handleCloseModal = () => {
-    dispatch(modalClose());
     clearForm();
+    filesUploadQueue.clear();
+    dispatch(modalClose());
   };
 
   const handleSubmit = async () => {
     if (hasErrors) return;
+    await dispatch(saveForm(client, apiClient, filesUploadQueue, suite));
     handleCloseModal();
-    await dispatch(insertSuite(client, apiClient, suite));
   };
 
   const footer = (
     <ModalFooter>
-      <Button variant="ghost" onClick={handleCloseModal}>
+      <Button variant="ghost" onClick={handleCloseModal} disabled={formSaving}>
         Cancel
       </Button>
-      <Button type="primary" onClick={handleSubmit}>
-        {modalSettings.edit.buttons.save}
-      </Button>
+      {formSaving ? (
+        <Icon type="Loading" />
+      ) : (
+        <Button type="primary" onClick={handleSubmit}>
+          {modalSettings.edit.buttons.save}
+        </Button>
+      )}
     </ModalFooter>
   );
 
@@ -63,7 +70,7 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
         width={modalSettings.create.width.boards}
       >
         <ModalContainer>
-          <BoardForm />
+          <BoardForm filesUploadQueue={filesUploadQueue} />
         </ModalContainer>
       </Modal>
     </>

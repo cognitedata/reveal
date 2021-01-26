@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 import { A, Icon, Body } from '@cognite/cogs.js';
-import { SpaceBetween } from 'styles/common';
+import { EllipsisText, SpaceBetween } from 'styles/common';
 
 export const ModalContainer = styled.div`
   & .cogs-input-container,
@@ -247,4 +247,49 @@ export const ShareURLInput = styled.input`
   &:focus {
     outline: none;
   }
+`;
+
+type Props = {
+  hasError?: boolean;
+};
+
+export const UploadImageContainer = styled(CustomInputContainer)<Props>`
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+
+  white-space: nowrap;
+  flex-wrap: ${(props) => (props.hasError ? 'wrap' : 'nowrap')};
+  & .error-space {
+    padding-top: 5px;
+  }
+  & .break {
+    flex-basis: 100%;
+    height: 0;
+  }
+
+  & input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+  & input + label {
+    display: flex;
+    align-items: center;
+  }
+  & input:focus + label {
+    /* keyboard navigation */
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+  }
+  & input + label * {
+    pointer-events: none;
+  }
+`;
+
+export const UploadFileName = styled(EllipsisText)`
+  padding-left: 10px;
 `;

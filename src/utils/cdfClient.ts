@@ -3,6 +3,9 @@ import {
   ClientOptions,
   RawDBRowInsert,
   RawDBRowKey,
+  ExternalFileInfo,
+  IdEither,
+  CogniteExternalId,
 } from '@cognite/sdk';
 
 type dcClientOptions = {
@@ -26,6 +29,22 @@ export class CdfClient {
 
   deleteTableRow(tableName: string, items: RawDBRowKey[]) {
     return this.cogniteClient.raw.deleteRows(this.dbName, tableName, items);
+  }
+
+  uploadFile(fileInfo: ExternalFileInfo) {
+    return this.cogniteClient.files.upload(fileInfo, undefined, true);
+  }
+  retrieveFilesMetadata(externalIds: CogniteExternalId[]) {
+    return this.cogniteClient.files.retrieve(
+      externalIds.map((id) => ({ externalId: id })) as IdEither[]
+    );
+  }
+  getDownloadUrls(externalIds: CogniteExternalId[]) {
+    return this.cogniteClient.files.getDownloadUrls(
+      externalIds.map((externalId) => ({
+        externalId,
+      }))
+    );
   }
 }
 
