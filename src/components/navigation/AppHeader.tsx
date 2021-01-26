@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, TopBar, Menu, Graphic, Tooltip } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
@@ -7,6 +7,9 @@ import { getUserId } from 'store/auth/selectors';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/NOC_logo.png';
 import { CustomLink } from 'styles/common';
+import { startIntercomTour } from 'utils/intercom';
+import { CdfClientContext } from 'providers/CdfClientProvider';
+import { logout } from 'utils/logout';
 import { LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
@@ -18,6 +21,12 @@ const AppHeader: React.FC = () => {
       window.Intercom('show');
     }
   };
+  const client = useContext(CdfClientContext);
+
+  const performLogout = async () => {
+    await logout(client);
+  };
+
   const actions = [
     {
       key: 'view',
@@ -66,7 +75,16 @@ const AppHeader: React.FC = () => {
           </Menu.Item>
           <Menu.Item>FAQs</Menu.Item>
           <Menu.Divider />
-          <Menu.Footer>Introduction to Digital Cockpit</Menu.Footer>
+          <Menu.Item>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={startIntercomTour}
+              onKeyDown={startIntercomTour}
+            >
+              Introduction to Digital Cockpit
+            </div>
+          </Menu.Item>
         </Menu>
       ),
     },
@@ -75,9 +93,26 @@ const AppHeader: React.FC = () => {
       component: <Avatar text={email} />,
       menu: (
         <Menu>
-          <Menu.Item>Privacy policy</Menu.Item>
+          <Menu.Item>
+            <CustomLink
+              href="https://www.cognite.com/en/policy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Privacy policy
+            </CustomLink>
+          </Menu.Item>
           <Menu.Divider />
-          <Menu.Item>Log out</Menu.Item>
+          <Menu.Item>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={performLogout}
+              onKeyPress={performLogout}
+            >
+              Log out
+            </div>
+          </Menu.Item>
         </Menu>
       ),
     },
