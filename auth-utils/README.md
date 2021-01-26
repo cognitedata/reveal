@@ -27,17 +27,21 @@ Long term
 ## How to use
 
 1. Make an App in Azure by copying:
-  
-  1a - the module: https://github.com/cognitedata/terraform-cognite-modules/tree/master/aad-app-registrations/cognite-demo-app
-  1b - the app: https://github.com/cognitedata/terraform/tree/master/aad-app-registrations/react-demo/dev
+
+1a - the module: https://github.com/cognitedata/terraform-cognite-modules/tree/master/aad-app-registrations/cognite-demo-app
+1b - the app: https://github.com/cognitedata/terraform/tree/master/aad-app-registrations/react-demo/dev
 
 Note: in the future perhaps we can make a more generic module everyone can use.
 
-1. Manually set replyUrlsWithType:spa 
- 
+1. Manually set replyUrlsWithType:spa
+
 We cannot terraform this yet: https://github.com/terraform-providers/terraform-provider-azuread/issues/286
 
 To fix this you will have to become an owner of your tenant and make the changes on the '' page
+
+We need this because:
+
+- Only in 'SPA' mode do you get CORS headers for the token request
 
 3. After this is done, you need to go to this app and get your values:
 
@@ -72,6 +76,7 @@ Add a new group, via something like:
 POST https://{{cluster}}.cognitedata.com/api/v1/projects/{{project}}/groups
 
 BODY:
+
 ```
   {
     items: [
