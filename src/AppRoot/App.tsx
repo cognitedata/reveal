@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { DEFAULT_TENANT } from 'constants/cdf';
 import { usePossibleTenant } from 'hooks';
 import { validateTenant } from 'utils/tenant';
 import {
@@ -10,8 +9,7 @@ import Authentication from './Authentication';
 import AppProviders from './AppProviders';
 
 const AppRoot = (): JSX.Element => {
-  // TODO(DTC-162) remove default tenant
-  const tenant = usePossibleTenant() || DEFAULT_TENANT;
+  const tenant = usePossibleTenant();
 
   const history = useMemo(() => {
     return createBrowserHistory(tenant);
