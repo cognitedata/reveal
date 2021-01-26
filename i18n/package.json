@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-i18n",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
+    "t": "jest",
     "test": "yarn jest -c",
     "esCheck": "es-check es5 './dist/index.js'",
     "build": "yarn clean && rollup -c && yarn esCheck",

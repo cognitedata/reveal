@@ -30,6 +30,7 @@ type ConfigureI18nOptions = {
   };
   wait?: boolean;
   useSuspense?: boolean;
+  localStorageLanguageKey?: string;
 };
 
 const configureI18n = ({
@@ -38,6 +39,7 @@ const configureI18n = ({
   lng = REACT_APP_LANGUAGE,
   locize,
   env = REACT_APP_ENV || NODE_ENV,
+  localStorageLanguageKey = 'currentLanguage',
   ...rest
 }: ConfigureI18nOptions = {}) => {
   const { wait = env !== 'test', useSuspense = env === 'test' } = rest;
@@ -68,10 +70,23 @@ const configureI18n = ({
     }
   }
 
+  // -@TODO - refactor this out to 'storage' when we make it into
+  //  a generic frontend package
+  const getItem = (key: string) => {
+    const string = localStorage.getItem(key);
+    try {
+      return JSON.parse(string || '');
+    } catch (err) {
+      return string;
+    }
+  };
+
+  const language = lng || getItem(localStorageLanguageKey) || 'en';
+
   const initOptions: InitOptions = {
     debug,
     interpolation: { escapeValue: false },
-    lng: lng || 'en',
+    lng: language,
     fallbackLng: 'en',
     load: 'currentOnly',
     fallbackNS: ['global'],
