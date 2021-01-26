@@ -134,13 +134,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
    * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
    * @param p     The CDF coordinate to transform.
-   * @param out   Optional preallocated buffer for storing the result.
+   * @param out   Optional preallocated buffer for storing the result. May be `p`.
    * @returns Transformed position.
    */
   mapFromCdfToModelCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     out = out !== undefined ? out : new THREE.Vector3();
-    out.copy(p);
-    p.applyMatrix4(this.cadModel.modelMatrix);
+    if (out !== p) {
+      out.copy(p);
+    }
+    out.applyMatrix4(this.cadModel.modelMatrix);
     return out;
   }
 
@@ -149,12 +151,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * to coordinates in "CDF space". This is necessary because CDF has a right-handed
    * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
    * @param p       The ThreeJS coordinate to transform.
-   * @param out     Optional preallocated buffer for storing the result.
+   * @param out     Optional preallocated buffer for storing the result. May be `p`.
    * @returns Transformed position.
    */
   mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
     out = out !== undefined ? out : new THREE.Vector3();
-    out.copy(p);
+    if (out !== p) {
+      out.copy(p);
+    }
     out.applyMatrix4(this.cadModel.inverseModelMatrix);
     return out;
   }
