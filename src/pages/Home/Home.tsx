@@ -1,12 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Loader, Title, Button, Icon } from '@cognite/cogs.js';
+import { Loader, Title, Button, Icon, Graphic } from '@cognite/cogs.js';
 import Glider from 'react-glider';
 import Suitebar from 'components/suitebar/Suitebar';
 import { SmallTile, Tile } from 'components/tiles';
 import { SuiteMenu } from 'components/menus';
-import { TilesContainer, OverviewContainer } from 'styles/common';
+import {
+  TilesContainer,
+  OverviewContainer,
+  NoItemsContainer,
+} from 'styles/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { Suite, Board } from 'store/suites/types';
@@ -60,10 +64,6 @@ const Home = () => {
     userSpaceLoadDispatched,
   ]);
 
-  if (!suitesLoaded || !suites?.length) {
-    return <Title level={3}>No suites loaded</Title>;
-  }
-
   if (suitesLoading || userSpaceLoading) {
     return <Loader />;
   }
@@ -89,51 +89,60 @@ const Home = () => {
           )
         }
       />
-      <OverviewContainer>
-        {lastVisitedBoards.length > 0 && (
+      {!suitesLoaded || !suites?.length ? (
+        <NoItemsContainer>
+          <Graphic type="DataSets" />
+          <Title level={5}>
+            You don’t have any suites yet. Get started by clicking “New suite”.
+          </Title>
+        </NoItemsContainer>
+      ) : (
+        <OverviewContainer>
+          {lastVisitedBoards.length > 0 && (
+            <TilesContainer>
+              <Title level={6}>Quick Access</Title>
+              <Glider
+                hasArrows
+                slidesToScroll={2}
+                slidesToShow={3}
+                iconLeft={<Icon type="LargeLeft" />}
+                iconRight={<Icon type="LargeRight" />}
+                skipTrack
+              >
+                <div className="glider-track">
+                  {lastVisitedBoards?.map((board: Board) => {
+                    return (
+                      <a
+                        key={board.key}
+                        href={board.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <SmallTile dataItem={board} />
+                      </a>
+                    );
+                  })}
+                </div>
+              </Glider>
+            </TilesContainer>
+          )}
           <TilesContainer>
-            <Title level={6}>Quick Access</Title>
-            <Glider
-              hasArrows
-              slidesToScroll={2}
-              slidesToShow={3}
-              iconLeft={<Icon type="LargeLeft" />}
-              iconRight={<Icon type="LargeRight" />}
-              skipTrack
-            >
-              <div className="glider-track">
-                {lastVisitedBoards?.map((board: Board) => {
-                  return (
-                    <a
-                      key={board.key}
-                      href={board.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <SmallTile dataItem={board} />
-                    </a>
-                  );
-                })}
-              </div>
-            </Glider>
+            <Title level={6}>All suites</Title>
+            {suites?.map((suite: Suite) => {
+              return (
+                <Link to={`/suites/${suite.key}`} key={suite.key}>
+                  <Tile
+                    key={suite.key}
+                    dataItem={suite}
+                    {...(admin && { menu: <SuiteMenu dataItem={suite} /> })}
+                    avatar
+                  />
+                </Link>
+              );
+            })}
           </TilesContainer>
-        )}
-        <TilesContainer>
-          <Title level={6}>All suites</Title>
-          {suites?.map((suite: Suite) => {
-            return (
-              <Link to={`/suites/${suite.key}`} key={suite.key}>
-                <Tile
-                  key={suite.key}
-                  dataItem={suite}
-                  {...(admin && { menu: <SuiteMenu dataItem={suite} /> })}
-                  avatar
-                />
-              </Link>
-            );
-          })}
-        </TilesContainer>
-      </OverviewContainer>
+        </OverviewContainer>
+      )}
     </>
   );
 };

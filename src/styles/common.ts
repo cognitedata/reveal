@@ -37,3 +37,11 @@ export const Flex = styled.div`
 export const SpaceBetween = styled(Flex)`
   justify-content: space-between;
 `;
+
+export const NoItemsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
