@@ -11,7 +11,7 @@ float computeFragmentDepth(vec3 p, mat4 projectionMatrix) {
   return ((gl_DepthRange.diff * (projected_intersection_z / projected_intersection_w)) + gl_DepthRange.near + gl_DepthRange.far) * .5;
 }
 
-#ifdef GL_EXT_frag_depth
+#if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth) 
 
 float updateFragmentDepth(vec3 p,mat4 projectionMatrix) {
   gl_FragDepthEXT = computeFragmentDepth(p, projectionMatrix);
