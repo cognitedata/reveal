@@ -87,8 +87,13 @@ def pods = { body ->
 }
 
 pods { contexts ->
-  def isReleaseBranch = env.BRANCH_NAME == "master"
-  def isPullRequest = !!env.CHANGE_ID
+  static final Map<String, Boolean> version = versioning.getEnv(
+    versioningStrategy: "multi-branch"
+  )
+
+  final boolean isStaging = version.isStaging
+  final boolean isProduction = version.isProduction
+  final boolean isPullRequest = version.isPullRequest
 
   threadPool(
     tasks: [
@@ -178,12 +183,14 @@ pods { contexts ->
     workers: 2,
   )
 
-  if (isReleaseBranch) {
+  if (isStaging) {
     stageWithNotify('Publish staging', contexts.publishStaging) {
       dir('staging') {
         fas.publish()
       }
     }
+  }
+  if (isProduction) {
     stageWithNotify('Publish release', contexts.publishRelease) {
       dir('release') {
         fas.publish()

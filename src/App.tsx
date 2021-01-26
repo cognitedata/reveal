@@ -1,96 +1,39 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { getSidecar } from 'utils';
-import useTenantSelector from 'useTenantSelector';
-import useClusterSelector from 'useClusterSelector';
-import background from 'assets/background.jpg';
-import TenantSelectorBackground from 'TenantSelectorBackground';
-import I18nContainer from 'containers/I18nContainer';
-import Metrics from '@cognite/metrics';
-import GlobalStyles from 'global-styles';
-import CardContainer from 'CardContainer/CardContainer';
+import * as React from 'react';
+import * as Sentry from '@sentry/browser';
+import { TenantSelector } from '@cognite/react-tenant-selector';
 
-const { REACT_APP_MIXPANEL_TOKEN, REACT_APP_ENV, NODE_ENV } = process.env;
+import { withI18nSuspense } from '@cognite/react-i18n';
+import { Metrics } from '@cognite/metrics';
 
-const App = () => {
-  const { applicationId, backgroundImage, helpLink } = getSidecar();
-  const [authenticating, setAuthenticating] = useState(false);
+const {
+  REACT_APP_RELEASE_ID,
+  REACT_APP_SENTRY_DSN,
+  REACT_APP_MIXPANEL_TOKEN,
+  REACT_APP_ENV,
+  NODE_ENV,
+} = process.env;
 
-  useEffect(() => {
+export const App = () => {
+  React.useEffect(() => {
+    if (REACT_APP_SENTRY_DSN) {
+      Sentry.init({
+        dsn: REACT_APP_SENTRY_DSN,
+        // This is populated by the FAS build process. Change it if you want to
+        // source this information from somewhere else.
+        release: REACT_APP_RELEASE_ID,
+        // This is populated by react-scripts. However, this can be overridden by
+        // the app's build process if you wish.
+        environment: REACT_APP_ENV || NODE_ENV || 'development',
+      });
+    }
+
     Metrics.init({
       mixpanelToken: REACT_APP_MIXPANEL_TOKEN,
       environment: REACT_APP_ENV || NODE_ENV || 'development',
     });
   }, []);
 
-  const possibleTenant = window.location.pathname.replace(
-    /^\/([^/]*).*$/,
-    '$1'
-  );
-
-  const {
-    onTenantSelected,
-    checkTenantValidity,
-    validatingTenant,
-    redirecting,
-    initialTenant,
-  } = useTenantSelector(applicationId);
-
-  const {
-    onClusterSelected,
-    checkClusterValidity,
-    redirectingToCluster,
-    validatingCluster,
-  } = useClusterSelector(applicationId);
-
-  const isLoading =
-    redirecting ||
-    authenticating ||
-    validatingTenant ||
-    validatingCluster ||
-    redirectingToCluster ||
-    initialTenant === possibleTenant;
-
-  // TODO: Set a timeout here so that we detect if we're ever in this loading
-  // state for too long.
-
-  const performValidation = useCallback(
-    (tenant: string) => {
-      setAuthenticating(true);
-      return checkTenantValidity(tenant).finally(() => {
-        setAuthenticating(false);
-      });
-    },
-    [checkTenantValidity]
-  );
-
-  const performClusterValidation = useCallback(
-    (tenant: string, cluster: string) => {
-      setAuthenticating(true);
-      return checkClusterValidity(tenant, cluster).finally(() => {
-        setAuthenticating(false);
-      });
-    },
-    [checkClusterValidity]
-  );
-
-  return (
-    <>
-      <GlobalStyles />
-      <TenantSelectorBackground backgroundImage={backgroundImage || background}>
-        <I18nContainer>
-          <CardContainer
-            validateTenant={performValidation}
-            validateCluster={performClusterValidation}
-            handleSubmit={onTenantSelected}
-            handleClusterSubmit={onClusterSelected}
-            loading={isLoading}
-            initialTenant={initialTenant || ''}
-            helpLink={helpLink || ''}
-          />
-        </I18nContainer>
-      </TenantSelectorBackground>
-    </>
-  );
+  return <TenantSelector />;
 };
 
-export default App;
+export default withI18nSuspense(App);

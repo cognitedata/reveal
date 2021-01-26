@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react';
 import '@cognite/cogs.js/dist/cogs.css';
-import { addDecorator } from '@storybook/react';
 import Metrics from '@cognite/metrics';
 import './i18n';
 
@@ -11,5 +10,3 @@ Metrics.create = () => ({
   track: () => {},
   start: () => ({ stop: () => {} }),
 });
-
-addDecorator((story) => <Suspense fallback={null}>{story()}</Suspense>);
