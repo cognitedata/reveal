@@ -20,6 +20,7 @@ export function intercomBoot(data: IntercomData) {
     window.Intercom('boot', {
       ...data,
       appId,
+      hide_default_launcher: true,
     });
   }
 }
