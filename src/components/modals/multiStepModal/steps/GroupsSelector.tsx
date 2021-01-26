@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Group } from '@cognite/sdk';
 import { Select } from '@cognite/cogs.js';
 import includes from 'lodash/includes';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGroupsState } from 'store/groups/selectors';
-import { setBoard } from 'store/forms/actions';
+import { setBoardState } from 'store/forms/thunks';
 import { RootDispatcher } from 'store/types';
 import { boardState } from 'store/forms/selectors';
 import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
@@ -13,6 +13,7 @@ import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
+import { CdfClientContext } from 'providers/CdfClientProvider';
 
 const exclude = [ADMIN_GROUP_NAME];
 
@@ -21,6 +22,7 @@ const GroupsSelector: React.FC = () => {
   const { setErrors, validateField } = useForm(boardValidator);
   const { groups } = useSelector(getGroupsState);
   const board = useSelector(boardState) as Board;
+  const client = useContext(CdfClientContext);
 
   const options = (groups || [])
     .filter((group: Group) => {
@@ -32,7 +34,7 @@ const GroupsSelector: React.FC = () => {
 
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
     dispatch(
-      setBoard({
+      setBoardState(client, {
         ...board,
         visibleTo: (selectedOption || []).map(
           (option: TS_FIX_ME) => option.value

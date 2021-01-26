@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   setHasError,
   setSuite,
-  setBoard,
   clearForm as clearFormState,
 } from 'store/forms/actions';
 import { Suite, Board } from 'store/suites/types';
@@ -13,15 +12,20 @@ import isEmpty from 'lodash/isEmpty';
 import values from 'lodash/values';
 import { TS_FIX_ME } from 'types/core';
 import { RootDispatcher } from 'store/types';
+import { CdfClientContext } from 'providers/CdfClientProvider';
+import { setBoardState } from 'store/forms/thunks';
 
 export const useFormState = () => {
   const dispatch = useDispatch<RootDispatcher>();
+  const client = useContext(CdfClientContext);
   const [initialStateDispatched, setInitialStateDispatched] = useState(false);
 
   const initForm = (suite?: Suite, board?: Board) => {
     if (!initialStateDispatched) {
       if (suite) dispatch(setSuite(suite));
-      if (board) dispatch(setBoard(board));
+      if (board) {
+        dispatch(setBoardState(client, board));
+      }
       setInitialStateDispatched(true);
     }
   };
@@ -42,10 +46,10 @@ export const useForm = (validations?: TS_FIX_ME) => {
   useEffect(() => {
     dispatch(
       setHasError(
-        !isEmpty(errors) && values(errors).every((error) => isEqual(error, ''))
+        isEmpty(errors) || values(errors).every((error) => isEqual(error, ''))
       )
     );
-  }, [errors, dispatch, validations]);
+  }, [errors, dispatch]);
 
   const validateField = (name: string, value: string) => {
     const rules = validations[name];

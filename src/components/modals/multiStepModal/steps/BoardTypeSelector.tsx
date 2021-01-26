@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Select } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBoard } from 'store/forms/actions';
+import { setBoardState } from 'store/forms/thunks';
 import { boardState } from 'store/forms/selectors';
 import isEqual from 'lodash/isEqual';
 import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
@@ -10,6 +10,7 @@ import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
 import { TS_FIX_ME } from 'types/core';
 import { RootDispatcher } from 'store/types';
+import { CdfClientContext } from 'providers/CdfClientProvider';
 
 const options = [
   { value: 'grafana', label: 'Grafana' },
@@ -25,10 +26,11 @@ const BoardTypeSelector: React.FC = () => {
   const { validateField, setErrors, errors } = useForm(boardValidator);
   const board = useSelector(boardState) as Board;
   const dispatch = useDispatch<RootDispatcher>();
+  const client = useContext(CdfClientContext);
 
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
     dispatch(
-      setBoard({
+      setBoardState(client, {
         ...board,
         type: selectedOption.value,
       })

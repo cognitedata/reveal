@@ -8,6 +8,7 @@ import {
   TileDescription,
   StyledTitle,
 } from 'components/tiles/elements';
+import TilePreviewImage from 'components/tiles/tilePreviewImage/TilePreviewImage';
 import { SuiteRowDelete } from 'store/suites/types';
 import { TS_FIX_ME } from 'types/core';
 import { useLastVisited } from 'hooks';
@@ -34,6 +35,20 @@ export const Tile: React.FC<Props> = ({
   const isBoard = view === 'board';
   const { setAsLastvisited } = useLastVisited(dataItem);
 
+  const renderPreview = (item: TS_FIX_ME) => {
+    if (item.embedTag) {
+      return renderIframe(item.embedTag);
+    }
+    if (item.imageFileId) {
+      return <TilePreviewImage imageFileId={item.imageFileId} />;
+    }
+    return (
+      <TilePreview>
+        <Detail>{item.description}</Detail>
+      </TilePreview>
+    );
+  };
+
   return (
     <>
       <TileContainer {...(isBoard && { onClick: setAsLastvisited })}>
@@ -51,13 +66,7 @@ export const Tile: React.FC<Props> = ({
           </Flex>
           {menu}
         </TileHeader>
-        {dataItem.embedTag ? (
-          renderIframe(dataItem.embedTag)
-        ) : (
-          <TilePreview>
-            <Detail>{dataItem.description}</Detail>
-          </TilePreview>
-        )}
+        {renderPreview(dataItem)}
       </TileContainer>
     </>
   );

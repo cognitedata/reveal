@@ -22,6 +22,7 @@
     "commit": "git cz"
   },
   "dependencies": {
+    "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/metrics": "^0.1.2",
     "@cognite/react-i18n": "0.1.2",
     "@cognite/sdk": "^3.3.2",
