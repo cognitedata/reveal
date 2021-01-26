@@ -48,10 +48,7 @@ const IntegrationsTable: FunctionComponent<Props> = ({
 }: OwnProps) => {
   const [failMessageVisible, setFailMessageVisible] = useState(false);
 
-  const [integration, setIntegration] = useState(tableData[0]);
-
-  const openFailMessage = (row: Integration) => {
-    setIntegration(row);
+  const openFailMessage = () => {
     setFailMessageVisible(true);
   };
   const closeFailMessage = () => {
@@ -66,7 +63,6 @@ const IntegrationsTable: FunctionComponent<Props> = ({
       <FailMessageModal
         onCancel={closeFailMessage}
         visible={failMessageVisible}
-        integration={integration}
       />
     </StyledIntegrationsTable>
   );

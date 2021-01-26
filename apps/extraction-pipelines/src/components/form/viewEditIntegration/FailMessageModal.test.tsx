@@ -1,8 +1,9 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
+import { QueryClient } from 'react-query';
 import { getMockResponse } from '../../../utils/mockResponse';
-import { render } from '../../../utils/test';
 import FailMessageModal, { NO_ERROR_MESSAGE } from './FailMessageModal';
+import { renderWithSelectedIntegrationContext } from '../../../utils/test/render';
 
 describe('FailMessageModal', () => {
   const mockIntegration = getMockResponse()[0];
@@ -15,12 +16,9 @@ describe('FailMessageModal', () => {
   });
 
   test('Check header of FailMessageModal', async () => {
-    render(
-      <FailMessageModal
-        visible
-        onCancel={cancelMock}
-        integration={mockIntegration}
-      />
+    renderWithSelectedIntegrationContext(
+      <FailMessageModal visible onCancel={cancelMock} />,
+      { initIntegration: mockIntegration, client: new QueryClient() }
     );
 
     const modalTitle = screen.getByText('Fail message');
@@ -41,12 +39,9 @@ describe('FailMessageModal', () => {
   });
 
   test('Display fallback message if not message is set', async () => {
-    render(
-      <FailMessageModal
-        visible
-        onCancel={cancelMock}
-        integration={getMockResponse()[1]}
-      />
+    renderWithSelectedIntegrationContext(
+      <FailMessageModal visible onCancel={cancelMock} />,
+      { initIntegration: getMockResponse()[1], client: new QueryClient() }
     );
     const fallbackMessage = screen.getByText(NO_ERROR_MESSAGE);
     expect(fallbackMessage).toBeInTheDocument();

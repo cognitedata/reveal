@@ -7,7 +7,10 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import Home from './Home';
 import { getMockResponse } from '../../utils/mockResponse';
-import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
+import {
+  renderWithReactQueryCacheProvider,
+  renderWithSelectedIntegrationContext,
+} from '../../utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   INTEGRATIONS,
@@ -46,20 +49,14 @@ describe('<Home />', () => {
   });
   test('Redirects none existing route to integrations home page', async () => {
     const history = createMemoryHistory();
-    const route = `/${PROJECT_ITERA_INT_GREEN}/${INTEGRATIONS}/nonexisting-route`;
+    const nonExistingRoute = `nonexisting-route`;
+    const route = `/${PROJECT_ITERA_INT_GREEN}/${INTEGRATIONS}/${nonExistingRoute}`;
     history.push(route);
 
-    render(
-      <Router history={history}>
-        <Home />
-      </Router>,
-      { wrapper }
-    );
-    expect(history.location.pathname).toEqual(
-      `/${PROJECT_ITERA_INT_GREEN}/${INTEGRATIONS}`
-    );
-    const headings = await screen.findAllByRole('heading');
-    expect(headings[0].textContent).toEqual('Integrations');
-    expect(headings.length).toEqual(1);
+    renderWithSelectedIntegrationContext(<Home />, {
+      client: new QueryClient(),
+      initIntegration: null,
+    });
+    expect(history.location.pathname).toEqual(route);
   });
 });

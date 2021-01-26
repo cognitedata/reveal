@@ -1,51 +1,44 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { Colors } from '@cognite/cogs.js';
+import { useAppEnv } from '../../../hooks/useAppEnv';
+import { INTEGRATIONS } from '../../../utils/baseURL';
 
-const StyledButton = styled((props) => (
-  <Button {...props}>{props.children}</Button>
+export const StyledRouterLink = styled((props) => (
+  <Link {...props}>{props.children}</Link>
 ))`
-  text-align: left;
-  font-weight: normal;
-  padding: 0;
-  &.cogs-btn-secondary {
-    &.cogs-btn-ghost {
-      width: 10rem;
-      display: flex;
-      justify-content: flex-start;
-      background-color: inherit;
-      &:hover {
-        background-color: ${Colors['greyscale-grey2'].hex()};
-      }
-      &:focus {
-        background-color: ${Colors.white.hex()};
-      }
-    }
+  color: ${Colors.black.hex()};
+  margin-right: 0.5rem;
+  &:hover {
+    text-decoration: underline;
   }
 `;
-
 interface OwnProps {
   name: string;
+  integrationId: string;
   selected: boolean;
-  controls: string;
 }
 
 type Props = OwnProps;
 
 const Name: FunctionComponent<Props> = ({
   name,
+  integrationId,
   selected,
-  controls,
 }: Props) => {
+  const { cdfEnv, project } = useAppEnv();
   return (
-    <StyledButton
-      variant="ghost"
-      role="tab"
+    <StyledRouterLink
+      id={`integration-${name}`}
+      to={{
+        pathname: `/${project}/${INTEGRATIONS}/${integrationId}`,
+        search: cdfEnv ? `?env=${cdfEnv}` : '',
+      }}
       aria-selected={selected}
-      aria-controls={controls}
     >
       {name}
-    </StyledButton>
+    </StyledRouterLink>
   );
 };
 

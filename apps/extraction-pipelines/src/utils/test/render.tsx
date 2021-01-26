@@ -2,10 +2,13 @@ import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'utils/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
 import { AppEnvProvider } from '../../hooks/useAppEnv';
 import { IntegrationProvider } from '../../hooks/details/IntegrationContext';
 import { Integration } from '../../model/Integration';
+import { INTEGRATIONS } from '../baseURL';
 
 export default (
   ui: React.ReactElement,
@@ -21,13 +24,17 @@ export default (
 export const renderWithSelectedIntegrationContext = (
   ui: React.ReactNode,
   // @ts-ignore
-  { initIntegration, client, ...renderOptions }
+  { initIntegration, client, route = INTEGRATIONS, ...renderOptions }
 ) => {
+  const history = createMemoryHistory();
+  history.push(route);
   return render(
     <QueryClientProvider client={client}>
-      <SelectedIntegrationProvider initIntegration={initIntegration}>
-        {ui}
-      </SelectedIntegrationProvider>
+      <Router history={history}>
+        <SelectedIntegrationProvider initIntegration={initIntegration}>
+          {ui}
+        </SelectedIntegrationProvider>
+      </Router>
     </QueryClientProvider>,
     renderOptions
   );
@@ -74,14 +81,19 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
   project: string,
   cdfEnv: string,
   origin: string,
-  initIntegration?: Integration
+  initIntegration?: Integration,
+  route: string = INTEGRATIONS
 ) => {
+  const history = createMemoryHistory();
+  history.push(route);
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-        <SelectedIntegrationProvider initIntegration={initIntegration}>
-          {children}
-        </SelectedIntegrationProvider>
+        <Router history={history}>
+          <SelectedIntegrationProvider initIntegration={initIntegration}>
+            {children}
+          </SelectedIntegrationProvider>
+        </Router>
       </AppEnvProvider>
     </QueryClientProvider>
   );

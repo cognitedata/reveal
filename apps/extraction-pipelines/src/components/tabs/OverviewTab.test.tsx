@@ -6,10 +6,7 @@ import { act } from '@testing-library/react-hooks';
 import OverviewTab from './OverviewTab';
 import { render } from '../../utils/test';
 import { getMockResponse, unauthorizedError } from '../../utils/mockResponse';
-import {
-  renderWithReactQueryCacheProvider,
-  renderWithReQueryCacheSelectedIntegrationContext,
-} from '../../utils/test/render';
+import { renderWithReQueryCacheSelectedIntegrationContext } from '../../utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -20,7 +17,7 @@ describe('OverviewTab', () => {
   test('Render with out fail', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
     const client = new QueryClient();
-    const wrapper = renderWithReactQueryCacheProvider(
+    const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
       client,
       ORIGIN_DEV,
       PROJECT_ITERA_INT_GREEN,

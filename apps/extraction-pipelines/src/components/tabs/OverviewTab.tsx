@@ -1,8 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
 import { Colors, Loader } from '@cognite/cogs.js';
-import { WrapperMargin } from 'styles/StyledWrapper';
+import { MainSidePanelGrid } from 'styles/grid/StyledGrid';
 import OverviewSidePanel from './OverviewSidePanel';
 import IntegrationsTable from '../integrations/IntegrationsTable';
 import { useIntegrations } from '../../hooks/useIntegrations';
@@ -14,19 +13,6 @@ import { useDataSets } from '../../hooks/useDataSets';
 import { ErrorFeedback } from '../error/ErrorFeedback';
 import NoIntegrations from '../error/NoIntegrations';
 
-const IntegrationsWrapper = styled.div`
-  border-left: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-  height: calc(100vh - 9.5625rem);
-`;
-const StyledOverview = styled((props) => (
-  <div {...props}>{props.children}</div>
-))`
-  grid-area: main;
-  display: grid;
-  grid-template-columns: auto 25rem;
-  padding: 0;
-  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-`;
 const ErrorWrapper = styled.div`
   grid-area: main;
   display: grid;
@@ -79,16 +65,10 @@ const OverviewTab: FunctionComponent<Props> = () => {
     tableData = mapDataSetToIntegration(data, dataSets);
   }
   return (
-    <StyledOverview>
-      <SelectedIntegrationProvider>
-        <WrapperMargin>
-          <IntegrationsTable tableData={tableData} />
-        </WrapperMargin>
-        <IntegrationsWrapper>
-          <OverviewSidePanel />
-        </IntegrationsWrapper>
-      </SelectedIntegrationProvider>
-    </StyledOverview>
+    <MainSidePanelGrid>
+      <IntegrationsTable tableData={tableData} />
+      <OverviewSidePanel />
+    </MainSidePanelGrid>
   );
 };
 

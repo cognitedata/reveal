@@ -4,11 +4,11 @@ import { Colors, Button, Icon } from '@cognite/cogs.js';
 import { DetailFieldNames } from 'model/Integration';
 import Modal from '../../modals/Modal';
 import { ids } from '../../../cogs-variables';
-import { Integration } from '../../../model/Integration';
 import InteractiveCopy from '../../InteractiveCopy';
 import { ModalContent } from '../../modals/ModalContent';
 import RelativeTimeWithTooltip from '../../integrations/cols/RelativeTimeWithTooltip';
 import { StyledHeader, StyledH2 } from '../../../styles/StyledModal';
+import { useSelectedIntegration } from '../../../hooks/useSelectedIntegration';
 
 const StyledContent = styled.div`
   border: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
@@ -33,7 +33,6 @@ const StyledErrorText = styled.p`
 interface OwnProps {
   visible: boolean;
   onCancel: () => void;
-  integration: Integration;
 }
 
 type Props = OwnProps;
@@ -42,8 +41,8 @@ export const NO_ERROR_MESSAGE: Readonly<string> = 'No error message set';
 const FailMessageModal: FunctionComponent<Props> = ({
   visible,
   onCancel,
-  integration,
 }: Props) => {
+  const { integration } = useSelectedIntegration();
   return (
     <Modal
       visible={visible}
@@ -79,10 +78,10 @@ const FailMessageModal: FunctionComponent<Props> = ({
         <StyledContent>
           <RelativeTimeWithTooltip
             id="latest-run"
-            time={integration.lastFailure as number}
+            time={integration?.lastFailure as number}
           />
           <StyledErrorText>
-            {integration.lastMessage ?? <i>{NO_ERROR_MESSAGE}</i>}
+            {integration?.lastMessage ?? <i>{NO_ERROR_MESSAGE}</i>}
           </StyledErrorText>
         </StyledContent>
       </ModalContent>

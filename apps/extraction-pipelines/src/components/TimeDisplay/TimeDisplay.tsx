@@ -2,8 +2,9 @@ import React from 'react';
 import { Tooltip } from '@cognite/cogs.js';
 import moment from 'moment';
 
-export const DATE_FORMAT: Readonly<string> = 'YYYY-MM-DD hh:mm';
-interface TimeDisplayProps {
+export const DATE_FORMAT: Readonly<string> = 'YYYY-MM-DD';
+export const DATE_TIME_FORMAT: Readonly<string> = 'YYYY-MM-DD hh:mm';
+export interface TimeDisplayProps {
   value: number | Date;
   relative?: boolean;
   withTooltip?: boolean;
@@ -18,7 +19,7 @@ export const TimeDisplay = ({
     return null;
   }
 
-  const absoluteTime = moment(value).format(DATE_FORMAT);
+  const absoluteTime = moment(value).format(DATE_TIME_FORMAT);
   const relativeTime = moment(value).fromNow();
 
   let displayTime = absoluteTime;
@@ -37,7 +38,7 @@ export const TimeDisplay = ({
     );
   }
 
-  return <>{absoluteTime}</>;
+  return <>{displayTime}</>;
 };
 
 TimeDisplay.defaultProps = {

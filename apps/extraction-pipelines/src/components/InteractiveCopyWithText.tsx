@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { Tooltip, Icons, Colors } from '@cognite/cogs.js';
 
-interface InteractiveCopyProps {
-  text: string;
+interface InteractiveCopyWithTextProps {
+  textToCopy: string;
   // eslint-disable-next-line react/require-default-props
   onCopy?: () => void;
 }
 
-const InteractiveCopy = ({
-  text,
+const InteractiveCopyWithText: React.FC<
+  InteractiveCopyWithTextProps & React.HTMLAttributes<HTMLDivElement>
+> = ({
+  textToCopy,
   onCopy: onCopyCallback,
-}: InteractiveCopyProps) => {
+  children,
+  ...rest
+}: PropsWithChildren<InteractiveCopyWithTextProps>) => {
   const [hasCopied, setHasCopied] = useState(false);
 
   useEffect(() => {
@@ -24,7 +28,7 @@ const InteractiveCopy = ({
 
   const onCopy = () => {
     const el = document.createElement('textarea');
-    el.value = text;
+    el.value = textToCopy;
     document.body.appendChild(el);
     el.select();
     document.execCommand('copy');
@@ -37,11 +41,16 @@ const InteractiveCopy = ({
       interactive
       content={
         <div style={{ padding: '0.3125rem 0.5625rem' }}>
-          {hasCopied ? 'Copied!' : 'Copy'}
+          {hasCopied ? 'Copied!' : `Copy`}
         </div>
       }
     >
-      <IconWrapper onClick={() => onCopy()} data-testid="interactive-copy">
+      <IconWrapper
+        onClick={() => onCopy()}
+        data-testid="interactive-copy"
+        {...rest}
+      >
+        {children}
         {hasCopied ? <Icons.Check /> : <Icons.Copy />}
       </IconWrapper>
     </Tooltip>
@@ -52,8 +61,8 @@ const IconWrapper = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  padding: 0.5rem;
   svg {
+    margin-left: 0.5rem;
     height: 0.7rem;
     width: 0.7rem;
     path {
@@ -62,4 +71,4 @@ const IconWrapper = styled.div`
   }
 `;
 
-export default InteractiveCopy;
+export default InteractiveCopyWithText;

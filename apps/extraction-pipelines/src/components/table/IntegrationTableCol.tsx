@@ -76,8 +76,8 @@ export const getIntegrationTableCol = (
         return (
           <Name
             name={row.values.name}
+            integrationId={`${row.original.id}`}
             selected={row.isSelected}
-            controls={`side-panel-${row.original.externalId}`}
           />
         );
       },

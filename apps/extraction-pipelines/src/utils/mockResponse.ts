@@ -28,7 +28,7 @@ export const mockDataSetResponse = () => [
 const mockResponseV2 = {
   items: [
     {
-      createdTime: 1606722614,
+      createdTime: 1601589600000,
       lastUpdatedTime: 1584137100000,
       externalId: 'dataIntegration0001',
       name: 'Azure Integration',
@@ -46,7 +46,7 @@ const mockResponseV2 = {
       } as DataSet,
       lastSuccess: 1584066700000,
       lastFailure: 1584065700000,
-      lastSeen: 1584064700000,
+      lastSeen: 1604271600000,
       lastMessage: 'This is a mock failed run error message',
       schedule: '0 0 9 1/1 * ? *',
       contacts: [

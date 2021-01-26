@@ -79,3 +79,29 @@ export const GridRowStyle = styled((props) => (
     display: flex;
   }
 `;
+export const MainSidePanelGrid = styled((props) => (
+  <div {...props}>{props.children}</div>
+))`
+  grid-area: main;
+  display: grid;
+  grid-template-columns: auto 25rem;
+  padding: 0;
+  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+  > :first-child {
+    margin: 0 1rem;
+    padding: 1rem 0;
+  }
+  > :nth-child(2) {
+    border-left: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+    height: calc(100vh - 9.5625rem);
+  }
+`;
+
+export const SimpleGrid = styled.div`
+  display: grid;
+`;
+export const TwoColGrid = styled((props) => (
+  <SimpleGrid {...props}>{props.children}</SimpleGrid>
+))`
+  grid-template-columns: 8rem 1fr;
+`;

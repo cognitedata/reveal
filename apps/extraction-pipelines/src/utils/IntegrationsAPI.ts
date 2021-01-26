@@ -12,7 +12,7 @@ export const getIntegrations = async (
 };
 
 export const getIntegrationById = async (
-  integrationId: number,
+  integrationId: string,
   project: string
 ): Promise<Integration> => {
   const response = await get<Integration>(`/${integrationId}`, project);
