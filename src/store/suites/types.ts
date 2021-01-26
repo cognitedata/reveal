@@ -33,6 +33,7 @@ export type Board = {
   embedTag?: string;
   color?: string;
   lastVisitedTime?: number;
+  imageFileId: string;
 };
 
 export type Suite = {

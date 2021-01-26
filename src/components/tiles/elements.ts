@@ -52,9 +52,14 @@ export const TileHeader = styled(SpaceBetween)<{
 export const TilePreview = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 184px;
   background-color: var(--cogs-white);
   padding: 12px;
+  & img {
+    max-width: 100%;
+    max-height: 100%;
+  }
 `;
 
 export const LargeTileContainer = styled(TileBasic)`
