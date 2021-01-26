@@ -41,6 +41,7 @@ export type Suite = {
   description: string;
   boards: Board[];
   color: string;
+  createdTime: number;
   lastUpdatedTime?: Date;
 };
 

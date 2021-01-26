@@ -3,6 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import omit from 'lodash/omit';
 import merge from 'lodash/merge';
 import { Board, Suite } from 'store/suites/types';
+import { now } from 'utils/date';
 
 export const key = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -11,6 +12,7 @@ export const suiteEmpty = {
   title: '',
   description: '',
   color: '',
+  createdTime: now(),
   boards: [],
 };
 export const updatedBoardList: Board[] = [];
