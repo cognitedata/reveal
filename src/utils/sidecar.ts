@@ -11,6 +11,7 @@ type Sidecar = {
   docsSiteBaseUrl: string;
   nomaApiBaseUrl: string;
   intercom: string;
+  intercomTourId: string;
 };
 
 const sidecar = merge(
