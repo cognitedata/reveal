@@ -70,7 +70,15 @@ export const AvailableSuitesContainer = styled.div`
 `;
 
 export const LogoWrapper = styled.div`
-  & .logo-title {
-    color: var(--cogs-black);
+  & img {
+    padding-left: 36px;
+    padding-bottom: 8px;
+  }
+`;
+
+export const CogniteLogo = styled.div`
+  padding: 0 24px;
+  & .cogs-topbar--item {
+    border-left: 0;
   }
 `;
