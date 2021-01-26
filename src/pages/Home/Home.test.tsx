@@ -24,6 +24,10 @@ describe('<Home />', () => {
         <Home />
       </Provider>
     );
-    expect(await screen.findByText(/No suites loaded/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /You don’t have any suites yet. Get started by clicking “New suite”./i
+      )
+    ).toBeInTheDocument();
   });
 });
