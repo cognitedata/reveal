@@ -320,9 +320,15 @@ const Configurations = () => {
           <div className="expanded-item">
             <span className="expanded-item__label">Data types: </span>
             <span>
-              {record.datatypes.map((tag: string) => (
-                <Badge key={tag} text={tag} background="greyscale-grey3" />
-              ))}
+              {Object.entries(record.progress).map(
+                ([tag, progress]: [string, any]) => (
+                  <Badge
+                    key={tag}
+                    text={`${tag} (${progress?.total})`}
+                    background="greyscale-grey3"
+                  />
+                )
+              )}
             </span>
           </div>
         )}
