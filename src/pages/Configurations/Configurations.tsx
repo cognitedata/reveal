@@ -107,7 +107,7 @@ const Configurations = () => {
       key: 'progress',
       render: (props: any[]) => {
         if (Object.values(props).length) {
-          return Object.values(props).map((progress) => {
+          return Object.entries(props).map(([key, progress]) => {
             const total: number = progress.total || 0;
 
             const succeeded: ProgressType = {
@@ -130,6 +130,7 @@ const Configurations = () => {
 
             return (
               <ProgressBar
+                key={key}
                 total={total}
                 progress={[succeeded, outdated, notUploaded]}
                 totalProgress={progress.succeeded}
@@ -319,9 +320,12 @@ const Configurations = () => {
           <div className="expanded-item">
             <span className="expanded-item__label">Data types: </span>
             <span>
-              {record.datatypes.map((tag: string) => (
-                <Badge key={tag} text={tag} background="greyscale-grey3" />
-              ))}
+              {record.datatypes.map((tag: string) => {
+                console.log('RECORD', record);
+                return (
+                  <Badge key={tag} text={tag} background="greyscale-grey3" />
+                );
+              })}
             </span>
           </div>
         )}
