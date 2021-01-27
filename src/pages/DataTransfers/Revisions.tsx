@@ -4,6 +4,7 @@ import { apiStatuses } from 'utils/statuses';
 import { DataTransferObject, RevisionObject } from '../../typings/interfaces';
 import ApiContext from '../../contexts/ApiContext';
 import { SubTable, RevisionLabel, StatusDot } from './elements';
+import { getFormattedTimestampOrString } from './utils';
 
 type Props = {
   record: DataTransferObject;
@@ -28,7 +29,7 @@ const Revisions = ({ record, onDetailClick }: Props) => {
   const columns = [
     { title: 'Status', dataIndex: 'statusOk', key: 'statusOk' },
     { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Data type', dataIndex: 'datatype', key: 'datatype' },
+    { title: 'Last updated', dataIndex: 'last_updated', key: 'last_updated' },
     { title: 'Author', dataIndex: 'author', key: 'author' },
     { title: 'placeholder1', dataIndex: 'placeholder1', key: 'placeholder1' },
     { title: 'placeholder2', dataIndex: 'placeholder2', key: 'placeholder2' },
@@ -66,6 +67,17 @@ const Revisions = ({ record, onDetailClick }: Props) => {
           <div>
             <RevisionLabel>Revision</RevisionLabel>
             <div>{rev.revision}</div>
+          </div>
+        ),
+        last_updated: (
+          <div>
+            <RevisionLabel>Last changed</RevisionLabel>
+            <div>
+              {getFormattedTimestampOrString(
+                rev.translations[rev.translations.length - 1].revision
+                  .last_updated
+              )}
+            </div>
           </div>
         ),
         details: (
