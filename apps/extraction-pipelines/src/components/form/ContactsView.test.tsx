@@ -19,7 +19,6 @@ import ContactsView, {
 } from './ContactsView';
 import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
-import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 import {
   ADD_CONTACT_TEST_ID,
   CONTACT_EMAIL_TEST_ID,
@@ -28,6 +27,7 @@ import {
   EMAIL_NOTIFICATION_TOOLTIP,
   CANCEL,
   REMOVE,
+  SERVER_ERROR_TITLE,
 } from '../../utils/constants';
 import {
   CDF_ENV_GREENFIELD,

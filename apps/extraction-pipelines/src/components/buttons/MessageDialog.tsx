@@ -7,13 +7,14 @@ import React, {
 import { Button, Title, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ErrorIcon } from '../icons/ErrorIcon';
+import { CANCEL, OK } from '../../utils/constants';
 
-const ErrorDialog = styled.div`
+export const DialogStyle = styled.div`
   display: grid;
   grid-template-areas:
     'icon heading heading'
     'nothing content content'
-    'empty empty btn';
+    'empty cancel btn';
   column-gap: 0.75rem;
 
   .cogs-icon {
@@ -23,6 +24,9 @@ const ErrorDialog = styled.div`
   .cogs-btn {
     grid-area: btn;
     justify-self: flex-end;
+  }
+  #dialog-cancel-btn {
+    grid-area: cancel;
   }
   .cogs-title-4 {
     grid-area: heading;
@@ -40,20 +44,23 @@ const ErrorDialog = styled.div`
 interface OwnProps {
   visible: boolean;
   handleClickError: () => void;
-  title?: string;
+  title: string;
+  handleCancel?: () => void;
   contentText?: string;
+  cancelBtnText?: string;
+  confirmBtnText?: string;
 }
-export const SERVER_ERROR_TITLE: Readonly<string> =
-  'Your changes have not been saved';
-export const SERVER_ERROR_CONTENT: Readonly<string> =
-  'Please try again later, or contact you system administrator.';
+
 type Props = OwnProps;
 
-const ErrorMessageDialog: FunctionComponent<Props> = ({
+const MessageDialog: FunctionComponent<Props> = ({
   visible,
+  handleCancel,
   handleClickError,
-  title = SERVER_ERROR_TITLE,
-  contentText = SERVER_ERROR_CONTENT,
+  title,
+  contentText = '',
+  confirmBtnText = OK,
+  cancelBtnText = CANCEL,
   children,
 }: PropsWithChildren<Props>) => {
   const [showError, setShowError] = useState(false);
@@ -67,12 +74,19 @@ const ErrorMessageDialog: FunctionComponent<Props> = ({
     <Tooltip
       className="cogs-popconfirm z-4 save-btn"
       content={
-        <ErrorDialog>
+        <DialogStyle>
           <ErrorIcon />
           <Title level={4}>{title}</Title>
           <p className="content">{contentText}</p>
-          <Button onClick={handleClickError}>OK</Button>
-        </ErrorDialog>
+          {handleCancel && (
+            <Button id="dialog-cancel-btn" onClick={handleCancel}>
+              {cancelBtnText}
+            </Button>
+          )}
+          <Button type="primary" onClick={handleClickError}>
+            {confirmBtnText}
+          </Button>
+        </DialogStyle>
       }
       interactive
       visible={showError}
@@ -83,4 +97,4 @@ const ErrorMessageDialog: FunctionComponent<Props> = ({
   );
 };
 
-export default ErrorMessageDialog;
+export default MessageDialog;

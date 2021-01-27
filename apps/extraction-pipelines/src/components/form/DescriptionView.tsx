@@ -13,7 +13,11 @@ import ValidationError from './ValidationError';
 import { InputWarningIcon } from '../icons/InputWarningIcon';
 import { AlignedSpan } from './ContactsView';
 import { DetailFieldNames } from '../../model/Integration';
-import ErrorMessageDialog from '../buttons/ErrorMessageDialog';
+import MessageDialog from '../buttons/MessageDialog';
+import {
+  SERVER_ERROR_CONTENT,
+  SERVER_ERROR_TITLE,
+} from '../../utils/constants';
 
 const DescriptionStyledForm = styled((props) => (
   <StyledForm {...props}>{props.children}</StyledForm>
@@ -189,9 +193,11 @@ const DescriptionView: FunctionComponent<Props> = () => {
           >
             Cancel
           </Button>
-          <ErrorMessageDialog
+          <MessageDialog
             visible={errorVisible}
             handleClickError={handleClickError}
+            title={SERVER_ERROR_TITLE}
+            contentText={SERVER_ERROR_CONTENT}
           >
             <Button
               className="edit-form-btn btn-margin-right"
@@ -201,7 +207,7 @@ const DescriptionView: FunctionComponent<Props> = () => {
             >
               Save
             </Button>
-          </ErrorMessageDialog>
+          </MessageDialog>
         </>
       ) : (
         <>

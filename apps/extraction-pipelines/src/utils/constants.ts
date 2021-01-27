@@ -20,3 +20,9 @@ export const CANCEL: Readonly<string> = 'Cancel';
 export const CLOSE: Readonly<string> = 'Close';
 export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
+export const OK: Readonly<string> = 'OK';
+
+export const SERVER_ERROR_TITLE: Readonly<string> =
+  'Your changes have not been saved';
+export const SERVER_ERROR_CONTENT: Readonly<string> =
+  'Please try again later, or contact you system administrator.';

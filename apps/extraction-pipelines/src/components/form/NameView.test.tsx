@@ -6,12 +6,12 @@ import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import NameView from './NameView';
 import { renderQueryCacheIntegration } from '../../utils/test/render';
-import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '../../utils/baseURL';
+import { SERVER_ERROR_TITLE } from '../../utils/constants';
 
 describe('<NameView />', () => {
   const integration = getMockResponse()[0];

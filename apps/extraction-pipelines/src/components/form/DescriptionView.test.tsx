@@ -7,12 +7,12 @@ import { getMockResponse, mockError } from '../../utils/mockResponse';
 import { render } from '../../utils/test';
 import { renderQueryCacheIntegration } from '../../utils/test/render';
 import DescriptionView from './DescriptionView';
-import { SERVER_ERROR_TITLE } from '../buttons/ErrorMessageDialog';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '../../utils/baseURL';
+import { SERVER_ERROR_TITLE } from '../../utils/constants';
 
 describe('<DescriptionView />', () => {
   const integration = getMockResponse()[0];

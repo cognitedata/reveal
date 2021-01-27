@@ -3,7 +3,6 @@ import { Button, Tooltip } from '@cognite/cogs.js';
 import { ArrayField } from 'react-hook-form';
 import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from 'utils/contactsUtils';
-import ErrorMessageDialog from 'components/buttons/ErrorMessageDialog';
 import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { useAppEnv } from '../../hooks/useAppEnv';
@@ -13,11 +12,14 @@ import {
   CANCEL,
   EMAIL_NOTIFICATION_TOOLTIP,
   REMOVE,
+  SERVER_ERROR_CONTENT,
+  SERVER_ERROR_TITLE,
 } from '../../utils/constants';
 import { GridRowStyle } from '../../styles/grid/StyledGrid';
 import { SwitchWithRef } from '../inputs/SwitchRef';
 import { ContactEdit } from './ContactEdit';
 import { ConfirmDialogButton } from '../buttons/ConfirmDialogButton';
+import MessageDialog from '../buttons/MessageDialog';
 
 interface OwnProps {
   field: Partial<ArrayField<Record<string, any>, 'id'>>;
@@ -145,9 +147,11 @@ export const ContactView: FunctionComponent<Props> = ({
         >
           <EmailLink email={integration?.contacts[index]?.email} />
         </AlignedSpan>
-        <ErrorMessageDialog
+        <MessageDialog
           visible={errorVisible}
           handleClickError={handleClickError}
+          title={SERVER_ERROR_TITLE}
+          contentText={SERVER_ERROR_CONTENT}
         >
           <ConfirmDialogButton
             primaryText={REMOVE}
@@ -159,7 +163,7 @@ export const ContactView: FunctionComponent<Props> = ({
             )}
             testId={`remove-contact-btn-${index}`}
           />
-        </ErrorMessageDialog>
+        </MessageDialog>
         <Button
           onClick={onEditClick}
           type="primary"

@@ -15,11 +15,13 @@ import {
   NAME_PLACEHOLDER,
   ROLE_LABEL,
   ROLE_PLACEHOLDER,
+  SERVER_ERROR_CONTENT,
+  SERVER_ERROR_TITLE,
 } from '../../utils/constants';
 import { SwitchWithRef } from '../inputs/SwitchRef';
 import { InputWarningIcon } from '../icons/InputWarningIcon';
 import { ContactBtnTestIds } from './ContactsView';
-import ErrorMessageDialog from '../buttons/ErrorMessageDialog';
+import MessageDialog from '../buttons/MessageDialog';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
@@ -232,9 +234,11 @@ export const ContactEdit: FunctionComponent<ContactEditProps> = ({
       >
         Cancel
       </Button>
-      <ErrorMessageDialog
+      <MessageDialog
         visible={errorVisible}
         handleClickError={handleClickError}
+        title={SERVER_ERROR_TITLE}
+        contentText={SERVER_ERROR_CONTENT}
       >
         <Button
           className="edit-form-btn btn-margin-right"
@@ -245,7 +249,7 @@ export const ContactEdit: FunctionComponent<ContactEditProps> = ({
         >
           Save
         </Button>
-      </ErrorMessageDialog>
+      </MessageDialog>
     </EditWrapper>
   );
 };

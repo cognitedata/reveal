@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styled from 'styled-components';
-import ErrorMessageDialog from 'components/buttons/ErrorMessageDialog';
+import MessageDialog from 'components/buttons/MessageDialog';
 import { TableHeadings } from '../table/IntegrationTableCol';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { createUpdateSpec } from '../../utils/contactsUtils';
@@ -13,6 +13,10 @@ import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
 import { PaddedGridForm } from '../../styles/grid/StyledGrid';
 import InputWithWarning from '../inputs/InputWithWarning';
+import {
+  SERVER_ERROR_CONTENT,
+  SERVER_ERROR_TITLE,
+} from '../../utils/constants';
 
 interface OwnProps {}
 
@@ -118,9 +122,11 @@ const NameView: FunctionComponent<Props> = () => {
           >
             Cancel
           </Button>
-          <ErrorMessageDialog
+          <MessageDialog
             visible={errorVisible}
             handleClickError={handleClickError}
+            title={SERVER_ERROR_TITLE}
+            contentText={SERVER_ERROR_CONTENT}
           >
             <Button
               className="edit-form-btn btn-margin-right"
@@ -131,7 +137,7 @@ const NameView: FunctionComponent<Props> = () => {
             >
               Save
             </Button>
-          </ErrorMessageDialog>
+          </MessageDialog>
         </>
       ) : (
         <>
