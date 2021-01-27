@@ -1065,6 +1065,8 @@ export class Cognite3DViewer {
    * // Avoid being target for events
    * el.style.pointerEvents = 'none;
    * el.style.touchAction = 'none';
+   * // Render in front of other elements
+   * el.style.zIndex = 10;
    *
    * el.style.color = 'red';
    * el.innerHtml = '<h1>Overlay</h1>';
