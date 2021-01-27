@@ -55,7 +55,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
     handleCloseModal();
     history.push(`/suites/${suite.key}`);
   };
- 
+
   const Footer = () => (
     <ModalFooter>
       <Button variant="ghost" onClick={handleCloseModal} disabled={formSaving}>
