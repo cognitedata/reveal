@@ -96,11 +96,10 @@ export class MaterialManager {
   setRenderMode(mode: RenderMode) {
     this._renderMode = mode;
     const transparent = mode === RenderMode.Ghost;
-    const side = mode === RenderMode.Ghost ? THREE.DoubleSide : THREE.FrontSide;
     this.applyToAllMaterials(material => {
       material.uniforms.renderMode.value = mode;
       material.transparent = transparent;
-      material.side = side;
+      material.side = THREE.DoubleSide;
     });
   }
 
