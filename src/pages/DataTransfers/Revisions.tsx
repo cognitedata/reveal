@@ -4,7 +4,6 @@ import { apiStatuses } from 'utils/statuses';
 import { DataTransferObject, RevisionObject } from '../../typings/interfaces';
 import ApiContext from '../../contexts/ApiContext';
 import { SubTable, RevisionLabel, StatusDot } from './elements';
-import { getFormattedTimestampOrString } from './utils';
 
 type Props = {
   record: DataTransferObject;
@@ -66,7 +65,7 @@ const Revisions = ({ record, onDetailClick }: Props) => {
         name: (
           <div>
             <RevisionLabel>Revision</RevisionLabel>
-            <div>{getFormattedTimestampOrString(rev.revision)}</div>
+            <div>{rev.revision}</div>
           </div>
         ),
         details: (
