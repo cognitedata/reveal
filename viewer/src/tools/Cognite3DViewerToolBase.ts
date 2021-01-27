@@ -18,6 +18,7 @@ export abstract class Cognite3DViewerToolBase implements Cognite3DViewerTool {
    * called.
    * @param event
    * @param handler
+   * @internal
    */
   on(event: 'disposed', handler: DisposedDelegate) {
     switch (event) {
@@ -74,5 +75,8 @@ export abstract class Cognite3DViewerToolBase implements Cognite3DViewerTool {
     }
   }
 
+  /**
+   * @internal
+   */
   abstract notifyRendered(): void;
 }

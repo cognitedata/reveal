@@ -97,6 +97,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
   /**
    * Updates positions of all overlays.
+   * @internal
    */
   notifyRendered(): void {
     this.ensureNotDisposed();
