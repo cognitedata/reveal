@@ -56,41 +56,31 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
     history.push(`/suites/${suite.key}`);
   };
 
-  const Footer = () => {
-    return (
-      <ModalFooter>
-        <Button
-          variant="ghost"
-          onClick={handleCloseModal}
-          disabled={formSaving}
-        >
-          Cancel
-        </Button>
-        <div>
-          {isEqual(step, 'suite') && (
-            <Button
-              type="primary"
-              onClick={nextStep}
-              disabled={hasErrors || formSaving}
-            >
-              {modalSettings.buttons[step].goToBoards}
-            </Button>
-          )}
-          {formSaving ? (
-            <Icon type="Loading" />
-          ) : (
-            <Button
-              type="secondary"
-              onClick={handleSubmit}
-              disabled={formSaving}
-            >
-              {modalSettings.buttons.save}
-            </Button>
-          )}
-        </div>
-      </ModalFooter>
-    );
-  };
+  const Footer = () => (
+    <ModalFooter>
+      <Button variant="ghost" onClick={handleCloseModal} disabled={formSaving}>
+        Cancel
+      </Button>
+      <div>
+        {isEqual(step, 'suite') && (
+          <Button
+            type="primary"
+            onClick={nextStep}
+            disabled={hasErrors || formSaving}
+          >
+            {modalSettings.buttons[step].goToBoards}
+          </Button>
+        )}
+        {formSaving ? (
+          <Icon type="Loading" />
+        ) : (
+          <Button type="secondary" onClick={handleSubmit} disabled={formSaving}>
+            {modalSettings.buttons.save}
+          </Button>
+        )}
+      </div>
+    </ModalFooter>
+  );
   return (
     <Modal
       visible

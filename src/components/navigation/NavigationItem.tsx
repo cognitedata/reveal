@@ -15,18 +15,16 @@ const NavigationItem: React.FC<Props> = ({
   title,
   disabled,
   selected,
-}: Props) => {
-  return (
-    <NavigationItemContainer selected={selected}>
-      <SuiteAvatar color={color} title={title} disabled={disabled} />
-      <Tooltip content={title}>
-        <Body level={2} as={SuiteTitle}>
-          {title}
-        </Body>
-      </Tooltip>
-      <SuiteTitle disabled={disabled} />
-    </NavigationItemContainer>
-  );
-};
+}: Props) => (
+  <NavigationItemContainer selected={selected}>
+    <SuiteAvatar color={color} title={title} disabled={disabled} />
+    <Tooltip content={title}>
+      <Body level={2} as={SuiteTitle}>
+        {title}
+      </Body>
+    </Tooltip>
+    <SuiteTitle disabled={disabled} />
+  </NavigationItemContainer>
+);
 
 export default NavigationItem;

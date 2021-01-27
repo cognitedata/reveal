@@ -8,17 +8,15 @@ interface Props {
   children: React.ReactNode;
 }
 
-const PageLayout: React.FC<Props> = ({ children }: Props) => {
-  return (
-    <Container>
-      <AppHeader />
-      <Main>
-        <LeftSidebar />
-        <Content>{children}</Content>
-      </Main>
-      <ModalManager />
-    </Container>
-  );
-};
+const PageLayout: React.FC<Props> = ({ children }: Props) => (
+  <Container>
+    <AppHeader />
+    <Main>
+      <LeftSidebar />
+      <Content>{children}</Content>
+    </Main>
+    <ModalManager />
+  </Container>
+);
 
 export default PageLayout;

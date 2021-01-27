@@ -26,16 +26,14 @@ export const GroupsReducer = createReducer(initialState)
   )
   .handleAction(
     UserGroupsActionTypes.USER_GROUPS_LOADED,
-    (state: GroupsState, action: UserGroupsootAction) => {
-      return {
-        ...state,
-        loading: false,
-        loaded: true,
-        error: '',
-        groups: action.payload,
-        isAdmin: checkIsAdmin(action.payload as Group[]),
-      };
-    }
+    (state: GroupsState, action: UserGroupsootAction) => ({
+      ...state,
+      loading: false,
+      loaded: true,
+      error: '',
+      groups: action.payload,
+      isAdmin: checkIsAdmin(action.payload as Group[]),
+    })
   )
   .handleAction(
     UserGroupsActionTypes.USER_GROUPS_ERROR,

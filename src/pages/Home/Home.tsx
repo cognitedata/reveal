@@ -110,36 +110,32 @@ const Home = () => {
                 skipTrack
               >
                 <div className="glider-track">
-                  {lastVisitedBoards?.map((board: Board) => {
-                    return (
-                      <a
-                        key={board.key}
-                        href={board.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <SmallTile dataItem={board} />
-                      </a>
-                    );
-                  })}
+                  {lastVisitedBoards?.map((board: Board) => (
+                    <a
+                      key={board.key}
+                      href={board.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <SmallTile dataItem={board} />
+                    </a>
+                  ))}
                 </div>
               </Glider>
             </TilesContainer>
           )}
           <TilesContainer>
             <Title level={6}>All suites</Title>
-            {suites?.map((suite: Suite) => {
-              return (
-                <Link to={`/suites/${suite.key}`} key={suite.key}>
-                  <Tile
-                    key={suite.key}
-                    dataItem={suite}
-                    {...(admin && { menu: <SuiteMenu dataItem={suite} /> })}
-                    avatar
-                  />
-                </Link>
-              );
-            })}
+            {suites?.map((suite: Suite) => (
+              <Link to={`/suites/${suite.key}`} key={suite.key}>
+                <Tile
+                  key={suite.key}
+                  dataItem={suite}
+                  {...(admin && { menu: <SuiteMenu dataItem={suite} /> })}
+                  avatar
+                />
+              </Link>
+            ))}
           </TilesContainer>
         </OverviewContainer>
       )}

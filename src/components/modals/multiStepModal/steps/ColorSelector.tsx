@@ -38,14 +38,12 @@ const square = (color = '#ccc') => ({
 
 const colourStyles = {
   control: (styles: any) => ({ ...styles, backgroundColor: '#fff' }),
-  option: (styles: any, { data, isSelected }: any) => {
-    return {
-      ...styles,
-      backgroundColor: isSelected ? data.color : null,
-      color: '#000',
-      ...square(data.value),
-    };
-  },
+  option: (styles: any, { data, isSelected }: any) => ({
+    ...styles,
+    backgroundColor: isSelected ? data.color : null,
+    color: '#000',
+    ...square(data.value),
+  }),
   input: (styles: any) => ({ ...styles, ...square() }),
   placeholder: (styles: any) => ({ ...styles, ...square() }),
   singleValue: (styles: any, { data }: any) => ({

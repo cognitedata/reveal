@@ -23,20 +23,18 @@ const renderNavigationItem = (
   item: NavigationItem,
   disabled?: boolean,
   location?: TS_FIX_ME
-) => {
-  return (
-    <NavLink to={`/suites/${item.key}`} key={item.key}>
-      <NavigationItem
-        title={item.title}
-        key={item.key}
-        selected={location?.pathname?.startsWith(`/suites/${item.key}`)}
-        color={item.color}
-        data-testid={`NavigationItem-${item.title}`}
-        disabled={disabled}
-      />
-    </NavLink>
-  );
-};
+) => (
+  <NavLink to={`/suites/${item.key}`} key={item.key}>
+    <NavigationItem
+      title={item.title}
+      key={item.key}
+      selected={location?.pathname?.startsWith(`/suites/${item.key}`)}
+      color={item.color}
+      data-testid={`NavigationItem-${item.title}`}
+      disabled={disabled}
+    />
+  </NavLink>
+);
 
 const LeftSidebar: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

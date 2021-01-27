@@ -12,10 +12,8 @@ export interface CdfClientProviderProps {
 export const CdfClientProvider: FC<CdfClientProviderProps> = ({
   client,
   children,
-}) => {
-  return (
-    <CdfClientContext.Provider value={client}>
-      {children}
-    </CdfClientContext.Provider>
-  );
-};
+}) => (
+  <CdfClientContext.Provider value={client}>
+    {children}
+  </CdfClientContext.Provider>
+);

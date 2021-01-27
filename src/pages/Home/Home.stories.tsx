@@ -6,10 +6,8 @@ export default {
   title: 'Home',
 };
 
-export const Base = () => {
-  return (
-    <MemoryRouter>
-      <Home />
-    </MemoryRouter>
-  );
-};
+export const Base = () => (
+  <MemoryRouter>
+    <Home />
+  </MemoryRouter>
+);

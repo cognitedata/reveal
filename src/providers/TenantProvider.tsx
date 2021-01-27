@@ -10,8 +10,6 @@ export interface TenantProviderProps {
 export const TenantProvider: FC<TenantProviderProps> = ({
   tenant,
   children,
-}) => {
-  return (
-    <TenantContext.Provider value={tenant}>{children}</TenantContext.Provider>
-  );
-};
+}) => (
+  <TenantContext.Provider value={tenant}>{children}</TenantContext.Provider>
+);
