@@ -7,7 +7,7 @@ import { getUserId } from 'store/auth/selectors';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/dt_logo.png';
 import cogniteLogo from 'images/cognite_logo.png';
-import { CustomLink } from 'styles/common';
+import { CustomLink, CustomMenuItem } from 'styles/common';
 import { startIntercomTour } from 'utils/intercom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { logout } from 'utils/logout';
@@ -77,14 +77,14 @@ const AppHeader: React.FC = () => {
           <Menu.Item>FAQs</Menu.Item>
           <Menu.Divider />
           <Menu.Item>
-            <div
+            <CustomMenuItem
               role="button"
               tabIndex={0}
               onClick={startIntercomTour}
               onKeyDown={startIntercomTour}
             >
               Introduction to Digital Cockpit
-            </div>
+            </CustomMenuItem>
           </Menu.Item>
         </Menu>
       ),
@@ -105,14 +105,14 @@ const AppHeader: React.FC = () => {
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item>
-            <div
+            <CustomMenuItem
               role="button"
               tabIndex={0}
               onClick={performLogout}
               onKeyPress={performLogout}
             >
               Log out
-            </div>
+            </CustomMenuItem>
           </Menu.Item>
         </Menu>
       ),

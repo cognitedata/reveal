@@ -99,8 +99,8 @@ const SuiteOverview: React.FC = () => {
             <LargeTilesContainer>
               {infographicsBoards?.map((board: Board) => (
                 <a
-                  href={board.url}
                   key={board.key}
+                  href={board.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -116,11 +116,10 @@ const SuiteOverview: React.FC = () => {
               <Title level={6}>All boards</Title>
               {boards?.map((board: Board) => {
                 return (
-                  <>
+                  <React.Fragment key={board.key}>
                     {!isEqual(board.type, 'infographics') && (
                       <a
                         href={board.url}
-                        key={board.key}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -132,7 +131,7 @@ const SuiteOverview: React.FC = () => {
                         />
                       </a>
                     )}
-                  </>
+                  </React.Fragment>
                 );
               })}
             </TilesContainer>

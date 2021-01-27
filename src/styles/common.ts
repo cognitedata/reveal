@@ -19,11 +19,18 @@ export const TilesContainer = styled.div`
 `;
 
 export const CustomLink = styled.a`
+  width: inherit;
+  text-align: left;
   color: var(--cogs-greyscale-grey10);
   text-decoration: none;
   &:hover {
     color: var(--cogs-greyscale-grey10);
   }
+`;
+
+export const CustomMenuItem = styled.div`
+  width: inherit;
+  text-align: left;
 `;
 
 export const OverviewContainer = styled.div`
