@@ -47,7 +47,8 @@ export function uploadFiles(
 ) {
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.filesUpload());
-    filesUploadQueue.forEach(async (file, boardKey) => {
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const [boardKey, file] of filesUploadQueue.entries()) {
       const fileInfo = getExternalFileInfo(file as File, boardKey);
       const { externalId } = fileInfo;
       try {
@@ -61,7 +62,7 @@ export function uploadFiles(
       } catch (e) {
         dispatch(actions.fileUploadError({ boardKey, error: e?.message }));
       }
-    });
+    }
     dispatch(actions.filesUploaded());
   };
 }
