@@ -25,12 +25,8 @@ const GroupsSelector: React.FC = () => {
   const client = useContext(CdfClientContext);
 
   const options = (groups || [])
-    .filter((group: Group) => {
-      return !includes(exclude, group.name);
-    })
-    .map((group: Group) => {
-      return { value: group.name, label: group.name };
-    });
+    .filter((group: Group) => !includes(exclude, group.name))
+    .map((group: Group) => ({ value: group.name, label: group.name }));
 
   const handleOnChange = (selectedOption: TS_FIX_ME) => {
     dispatch(

@@ -12,10 +12,8 @@ export interface ApiClientProviderProps {
 export const ApiClientProvider: FC<ApiClientProviderProps> = ({
   apiClient,
   children,
-}) => {
-  return (
-    <ApiClientContext.Provider value={apiClient}>
-      {children}
-    </ApiClientContext.Provider>
-  );
-};
+}) => (
+  <ApiClientContext.Provider value={apiClient}>
+    {children}
+  </ApiClientContext.Provider>
+);

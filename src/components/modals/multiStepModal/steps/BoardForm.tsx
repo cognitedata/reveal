@@ -32,17 +32,15 @@ import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';
 import GroupsSelector from './GroupsSelector';
 
-const SnapshotTooltip = () => {
-  return (
-    <CustomTooltipContainer>
-      A snapshot is a preview of your data, you can learn more about snapshots{' '}
-      {/* TODO(dtc-224) provide with correct link */}
-      <A href="#" isExternal>
-        here
-      </A>
-    </CustomTooltipContainer>
-  );
-};
+const SnapshotTooltip = () => (
+  <CustomTooltipContainer>
+    A snapshot is a preview of your data, you can learn more about snapshots{' '}
+    {/* TODO(dtc-224) provide with correct link */}
+    <A href="#" isExternal>
+      here
+    </A>
+  </CustomTooltipContainer>
+);
 
 type Props = {
   filesUploadQueue: Map<string, File>;
@@ -139,27 +137,25 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
               Added boards
             </StyledTitle>
             <Boards>
-              {suite?.boards?.map((boardItem: Board) => {
-                return (
-                  <AddedBoardItem
-                    onClick={() => openBoard(boardItem)}
-                    key={boardItem.key}
-                    selected={isEqual(boardItem.key, board?.key)}
-                  >
-                    <StyledCheckIcon type="Check" />
-                    <Tooltip content={boardItem.title}>
-                      <StyledBody level={4}>{boardItem.title}</StyledBody>
-                    </Tooltip>
-                    <Button
-                      unstyled
-                      onClick={(event) =>
-                        deleteBoardFromList(event, boardItem.key)
-                      }
-                      icon="Trash"
-                    />
-                  </AddedBoardItem>
-                );
-              })}
+              {suite?.boards?.map((boardItem: Board) => (
+                <AddedBoardItem
+                  onClick={() => openBoard(boardItem)}
+                  key={boardItem.key}
+                  selected={isEqual(boardItem.key, board?.key)}
+                >
+                  <StyledCheckIcon type="Check" />
+                  <Tooltip content={boardItem.title}>
+                    <StyledBody level={4}>{boardItem.title}</StyledBody>
+                  </Tooltip>
+                  <Button
+                    unstyled
+                    onClick={(event) =>
+                      deleteBoardFromList(event, boardItem.key)
+                    }
+                    icon="Trash"
+                  />
+                </AddedBoardItem>
+              ))}
             </Boards>
           </div>
           {!isEmpty(board.visibleTo) && (
