@@ -11,7 +11,6 @@ module.exports = {
     '^.+\\.tsx?$': 'ts-jest'
   },
   testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
-  moduleDirectories: ['node_modules', '<rootDir>', '<rootDir>/src', '<rootDir>/src/tools'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
     '\\.(frag|vert)$': '<rootDir>/src/__mocks__/glslMocks.js',

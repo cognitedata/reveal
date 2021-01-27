@@ -21,7 +21,7 @@ There should be a limited number of HTML overlays as it can impact performance n
 
 Attaching HTML elements to 3D objects/positions requires the following operations:
 
-1. Create a HTML element and apply style `position: absolute` to the element. There also some other recommended 
+1. Create an HTML element and apply style `position: absolute` to the element. There also some other recommended 
    styles that should be applied (see below).
 2. Determine 3D world coordinate of the pivot point (e.g. using intersection when user clicks an object)
 3. Attach overlay using `Cognite3DViewer.attachHtmlOverlay`.
@@ -69,9 +69,9 @@ viewer.on('click', event => {
 });
 ```
 
-It's also possible apply styling based on the position of the 
+It's also possible to apply styling based on the position of the 
 overlay, e.g. to vary the opacity of the overlay based on distance 
-from the camera. To do this, provide a `options`-argument with a 
+from the camera. To do this, provide an `options`-argument with a 
 `positionUpdatedCallback` to `Cognite3DViewer.attachHtmlOverlay`. This
 callback is triggered every time the HTML overlay is updated.
 
