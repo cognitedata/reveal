@@ -1,39 +1,55 @@
-import * as UnitConversion from './UnitConversion';
-import * as AddConstant from './AddConstant';
+// import * as UnitConversion from './UnitConversion';
+// import * as AddConstant from './AddConstant';
+// import * as CDFDatapoints from './CDFDataPoints';
+// import * as CogniteFunction from './CogniteFunction';
+// import * as Difference from './Difference';
+// import * as WorkspaceTimeSeries from './WorkspaceTimeSeries';
+import * as DSPToolboxFunction from './DSPToolboxFunction';
+import * as TimeSeriesReference from './TimeSeriesReference';
+import * as Constant from './Constant';
 import * as OutputSeries from './OutputSeries';
-import * as CDFDatapoints from './CDFDataPoints';
-import * as CogniteFunction from './CogniteFunction';
-import * as Difference from './Difference';
-import * as WorkspaceTimeSeries from './WorkspaceTimeSeries';
 import { NodeOption } from '../types';
 
 export default [
   {
-    name: 'Workspace Time Series',
-    ...WorkspaceTimeSeries,
+    name: 'Time Series',
+    ...TimeSeriesReference,
   },
   {
-    name: 'Difference',
-    ...Difference,
+    name: 'Constant',
+    ...Constant,
   },
   {
-    name: 'Multiply',
-    ...UnitConversion,
-  },
-  {
-    name: 'Add Constant',
-    ...AddConstant,
+    name: 'Toolbox Function',
+    ...DSPToolboxFunction,
   },
   {
     name: 'Output Timeseries',
     ...OutputSeries,
   },
-  {
-    name: 'CDF Time Series',
-    ...CDFDatapoints,
-  },
-  {
-    name: 'CDF Function',
-    ...CogniteFunction,
-  },
+  // {
+  //   name: 'Workspace Time Series',
+  //   ...WorkspaceTimeSeries,
+  // },
+  // {
+  //   name: 'Difference',
+  //   ...Difference,
+  // },
+  // {
+  //   name: 'Multiply',
+  //   ...UnitConversion,
+  // },
+  // {
+  //   name: 'Add Constant',
+  //   ...AddConstant,
+  // },
+
+  // {
+  //   name: 'CDF Time Series',
+  //   ...CDFDatapoints,
+  // },
+  // {
+  //   name: 'CDF Function',
+  //   ...CogniteFunction,
+  // },
 ] as NodeOption[];

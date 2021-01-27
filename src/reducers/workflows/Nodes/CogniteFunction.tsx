@@ -165,9 +165,18 @@ export const configPanel = ({
         )
         ?.async('text');
 
-      // Get the pins and add them to the node
+      let parsedData;
+
       if (fileData) {
-        const parsedData = JSON.parse(fileData);
+        try {
+          parsedData = JSON.parse(fileData);
+        } catch (error) {
+          console.error(error); // eslint-disable-line
+        }
+      }
+
+      // Get the pins and add them to the node
+      if (parsedData) {
         const inputPins = (parsedData?.input || [])
           .filter((input: any) => input.pin)
           .map((input: any) => ({

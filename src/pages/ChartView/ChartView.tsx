@@ -18,13 +18,19 @@ import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
 import { renameChart, saveExistingChart } from 'reducers/charts/api';
 import ChartComponent from 'components/Chart';
-import { runWorkflow } from 'reducers/workflows/utils';
-import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
-import { NodeProgress } from '@cognite/connect';
+import workflowSlice, {
+  LatestWorkflowRun,
+  Workflow,
+  WorkflowRunStatus,
+} from 'reducers/workflows';
 import DatePicker from 'react-datepicker';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
 import DataQualityReport from 'components/DataQualityReport';
+import { getStepsFromWorkflow } from 'utils/transforms';
+import { calculateGranularity } from 'utils/timeseries';
+import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
+import sdk from 'services/CogniteSDK';
 import {
   Header,
   TopPaneWrapper,
@@ -53,6 +59,38 @@ type ChartViewProps = {
   chartId?: string;
 };
 
+const waitOnFunctionComplete = (
+  tenant: string,
+  funcId: number,
+  callId: number
+): Promise<string> => {
+  const startTime = Date.now();
+  return new Promise((resolve) => {
+    sdk
+      .get<{ status: string }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${funcId}/calls/${callId}`
+      )
+      .then((result) => {
+        if (result.data.status === 'Running') {
+          if (Date.now() - startTime >= 1000 * 60 * 2) {
+            // If it takes longer than 60 seconds, time out.
+            resolve('Timeout');
+          }
+          // Wait 1 second before checking the status again
+          new Promise((resolveWaiter) => setTimeout(resolveWaiter, 1000)).then(
+            () => {
+              waitOnFunctionComplete(tenant, funcId, callId).then(resolve);
+            }
+          );
+        } else if (result.data.status === 'Failed') {
+          resolve('Failed');
+        } else {
+          resolve('Success');
+        }
+      });
+  });
+};
+
 const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const hasData = useEnsureData();
   const dispatch = useDispatch();
@@ -62,7 +100,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
   );
-  const context = { chart };
+  const tenant = useSelector((state) => state.environment.tenant);
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
@@ -82,40 +120,121 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const error = useSelector((state) => state.charts.status.error);
 
   const runWorkflows = async () => {
+    console.log('Running all workflows');
+
+    if (!chart) {
+      return;
+    }
+
     (workflows || []).forEach(async (flow) => {
       if (!flow) {
         return;
       }
-      let progressTracker = {};
-      const nextLatestRun = await runWorkflow(
-        flow,
-        (nextProgress: NodeProgress) => {
-          progressTracker = { ...progressTracker, ...nextProgress };
-          dispatch(
-            workflowSlice.actions.updateWorkflow({
-              id: flow.id,
-              changes: {
-                latestRun: {
-                  status: 'RUNNING',
-                  nodeProgress: progressTracker,
-                  timestamp: Date.now(),
-                },
-              },
-            })
-          );
-        },
-        context
+
+      if (!tenant) {
+        return;
+      }
+
+      const steps = getStepsFromWorkflow(flow);
+      console.log('Running workflow');
+
+      const computation = {
+        steps,
+        start_time: new Date(chart.dateFrom).getTime(),
+        end_time: new Date(chart.dateTo).getTime(),
+        granularity: calculateGranularity(
+          [
+            new Date(chart.dateFrom).getTime(),
+            new Date(chart.dateTo).getTime(),
+          ],
+          1000
+        ),
+      };
+
+      console.log({ computation });
+
+      const functions = await sdk.get<{ items: CogniteFunction[] }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
       );
+
+      const simpleCalc = functions.data.items.find(
+        (func) => func.name === 'simple_calc-master'
+      );
+
+      if (!simpleCalc) {
+        return;
+      }
 
       dispatch(
         workflowSlice.actions.updateWorkflow({
           id: flow.id,
           changes: {
             latestRun: {
-              ...nextLatestRun,
-              status: 'SUCCESS',
-              nodeProgress: progressTracker,
+              timestamp: Date.now(),
+              status: 'RUNNING',
+              nodeProgress: flow.nodes.reduce((output, node) => {
+                return {
+                  ...output,
+                  [node.id]: { status: 'RUNNING' },
+                };
+              }, {}),
             },
+          },
+        })
+      );
+
+      const functionCall = await sdk.post<{ id: number }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/call`,
+        {
+          data: {
+            data: { computation_graph: computation },
+          },
+        }
+      );
+
+      const status = await waitOnFunctionComplete(
+        tenant,
+        simpleCalc.id,
+        functionCall.data.id
+      );
+
+      const functionResult = await sdk.get<{ response: Record<string, any> }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
+      );
+
+      console.log({
+        status,
+        result: functionResult.data,
+      });
+
+      const latestRun: LatestWorkflowRun = {
+        status: 'SUCCESS',
+        timestamp: Date.now(),
+        errors: [],
+        results: {
+          datapoints: {
+            unit: 'Unknown',
+            datapoints: functionResult.data.response.value.map(
+              (_: any, i: number) => ({
+                timestamp: functionResult.data.response.timestamp[i],
+                value: functionResult.data.response.value[i],
+              })
+            ),
+          },
+        },
+        nodeProgress: flow.nodes.reduce((output, node) => {
+          return {
+            ...output,
+            [node.id]: { status: 'DONE' },
+          };
+        }, {}),
+      };
+
+      dispatch(
+        workflowSlice.actions.updateWorkflow({
+          id: flow.id,
+          changes: {
+            latestRun,
           },
         })
       );
