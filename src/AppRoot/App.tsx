@@ -11,9 +11,7 @@ import AppProviders from './AppProviders';
 const AppRoot = (): JSX.Element => {
   const tenant = usePossibleTenant();
 
-  const history = useMemo(() => {
-    return createBrowserHistory(tenant);
-  }, [tenant]);
+  const history = useMemo(() => createBrowserHistory(tenant), [tenant]);
 
   const [tenantOk, setTenantOk] = useState(false);
 
@@ -38,10 +36,9 @@ const AppRoot = (): JSX.Element => {
   );
 };
 
-const createBrowserHistory = (possibleTenant: string): History => {
-  return createNewBrowserHistory({
+const createBrowserHistory = (possibleTenant: string): History =>
+  createNewBrowserHistory({
     basename: possibleTenant,
   });
-};
 
 export default AppRoot;

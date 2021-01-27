@@ -23,21 +23,19 @@ const AppProviders: React.FC<Props> = ({
   children,
   tenant,
   history,
-}: Props): JSX.Element => {
-  return (
-    <ReduxProvider store={store}>
-      <CdfClientProvider client={cdfClient}>
-        <ApiClientProvider apiClient={apiClient}>
-          <TenantProvider tenant={tenant}>
-            <I18nContainer>
-              <GlobalStyles />
-              <Router history={history}>{children}</Router>
-            </I18nContainer>
-          </TenantProvider>
-        </ApiClientProvider>
-      </CdfClientProvider>
-    </ReduxProvider>
-  );
-};
+}: Props): JSX.Element => (
+  <ReduxProvider store={store}>
+    <CdfClientProvider client={cdfClient}>
+      <ApiClientProvider apiClient={apiClient}>
+        <TenantProvider tenant={tenant}>
+          <I18nContainer>
+            <GlobalStyles />
+            <Router history={history}>{children}</Router>
+          </I18nContainer>
+        </TenantProvider>
+      </ApiClientProvider>
+    </CdfClientProvider>
+  </ReduxProvider>
+);
 
 export default AppProviders;

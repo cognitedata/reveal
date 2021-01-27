@@ -59,17 +59,15 @@ const SuiteOverview: React.FC = () => {
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
-  const Header = () => {
-    return (
-      <>
-        <SuiteAvatar color={color} title={title} />
-        <Title as={StyledTitle} level={5}>
-          {title}
-        </Title>
-        {admin && <SuiteMenu dataItem={suite} />}
-      </>
-    );
-  };
+  const Header = () => (
+    <>
+      <SuiteAvatar color={color} title={title} />
+      <Title as={StyledTitle} level={5}>
+        {title}
+      </Title>
+      {admin && <SuiteMenu dataItem={suite} />}
+    </>
+  );
   return (
     <>
       <Suitebar
@@ -114,26 +112,24 @@ const SuiteOverview: React.FC = () => {
             </LargeTilesContainer>
             <TilesContainer>
               <Title level={6}>All boards</Title>
-              {boards?.map((board: Board) => {
-                return (
-                  <React.Fragment key={board.key}>
-                    {!isEqual(board.type, 'infographics') && (
-                      <a
-                        href={board.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Tile
-                          dataItem={board}
-                          color={color}
-                          view="board"
-                          menu={<BoardMenu suite={suite} board={board} />}
-                        />
-                      </a>
-                    )}
-                  </React.Fragment>
-                );
-              })}
+              {boards?.map((board: Board) => (
+                <React.Fragment key={board.key}>
+                  {!isEqual(board.type, 'infographics') && (
+                    <a
+                      href={board.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Tile
+                        dataItem={board}
+                        color={color}
+                        view="board"
+                        menu={<BoardMenu suite={suite} board={board} />}
+                      />
+                    </a>
+                  )}
+                </React.Fragment>
+              ))}
             </TilesContainer>
           </>
         )}
