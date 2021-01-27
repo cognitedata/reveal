@@ -31,7 +31,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const history = useHistory();
   const suite = useSelector(suiteState);
   const isValid = !isEmpty(suite.title);
-  const hasErrors = !useSelector(isErrorListEmpty) && !isValid;
+  const hasErrors = !useSelector(isErrorListEmpty) || !isValid;
   const { clearForm } = useFormState();
   const { saving: formSaving } = useSelector(formState);
   const [filesUploadQueue] = useState(new Map());
@@ -82,7 +82,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
             <Button
               type="secondary"
               onClick={handleSubmit}
-              disabled={formSaving}
+              disabled={hasErrors || formSaving}
             >
               {modalSettings.buttons.save}
             </Button>
