@@ -1,7 +1,6 @@
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import omit from 'lodash/omit';
-import merge from 'lodash/merge';
 import { Board, Suite } from 'store/suites/types';
 import { now } from 'utils/date';
 import { FileUploadResult } from 'store/forms/types';
@@ -23,7 +22,7 @@ export const updateSuite = (suite: Suite, board: Board) => {
     isEqual(element.key, board.key)
   );
   const boardsCopy = cloneDeep(suite.boards);
-  boardsCopy[boardIndex] = merge(boardsCopy[boardIndex], board);
+  boardsCopy[boardIndex] = board;
   return omit(
     {
       ...suite,
