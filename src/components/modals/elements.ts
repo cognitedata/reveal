@@ -91,7 +91,7 @@ export const CustomTooltipContainer = styled.div`
   }
 `;
 
-export const SnapshotInputContainer = styled.div`
+export const SnapshotInputContainer = styled(CustomInputContainer)`
   margin-bottom: 16px;
 `;
 
