@@ -120,7 +120,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const error = useSelector((state) => state.charts.status.error);
 
   const runWorkflows = async () => {
-    console.log('Running all workflows');
+    // console.log('Running all workflows');
 
     if (!chart) {
       return;
@@ -136,7 +136,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       }
 
       const steps = getStepsFromWorkflow(flow);
-      console.log('Running workflow');
+      // console.log('Running workflow');
 
       const computation = {
         steps,
@@ -151,7 +151,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         ),
       };
 
-      console.log({ computation });
+      // console.log({ computation });
 
       const functions = await sdk.get<{ items: CogniteFunction[] }>(
         `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
@@ -192,20 +192,20 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         }
       );
 
-      const status = await waitOnFunctionComplete(
-        tenant,
-        simpleCalc.id,
-        functionCall.data.id
-      );
+      // const status = await waitOnFunctionComplete(
+      //   tenant,
+      //   simpleCalc.id,
+      //   functionCall.data.id
+      // );
 
       const functionResult = await sdk.get<{ response: Record<string, any> }>(
         `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
       );
 
-      console.log({
-        status,
-        result: functionResult.data,
-      });
+      // console.log({
+      //   status,
+      //   result: functionResult.data,
+      // });
 
       if (functionResult.data.response.error) {
         dispatch(

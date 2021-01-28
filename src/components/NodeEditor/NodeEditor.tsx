@@ -165,7 +165,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     }
 
     const steps = getStepsFromWorkflow(workflow);
-    console.log('Running workflow');
+    // console.log('Running workflow');
 
     const computation = {
       steps,
@@ -177,7 +177,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
       ),
     };
 
-    console.log({ computation });
+    // console.log({ computation });
 
     const functions = await sdk.get<{ items: CogniteFunction[] }>(
       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
@@ -218,20 +218,20 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
       }
     );
 
-    const status = await waitOnFunctionComplete(
-      tenant,
-      simpleCalc.id,
-      functionCall.data.id
-    );
+    // const status = await waitOnFunctionComplete(
+    //   tenant,
+    //   simpleCalc.id,
+    //   functionCall.data.id
+    // );
 
     const functionResult = await sdk.get<{ response: Record<string, any> }>(
       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
     );
 
-    console.log({
-      status,
-      result: functionResult.data,
-    });
+    // console.log({
+    //   status,
+    //   result: functionResult.data,
+    // });
 
     if (functionResult.data.response.error) {
       dispatch(
