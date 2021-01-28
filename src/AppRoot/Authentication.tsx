@@ -11,6 +11,7 @@ import { getGroupsState } from 'store/groups/selectors';
 import { Body, Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
+import { useIntercom } from 'react-use-intercom';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -18,7 +19,7 @@ const Authentication = (): JSX.Element => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
-  const { authenticating, authenticated } = useSelector(getAuthState);
+  const { authenticating, authenticated, userId } = useSelector(getAuthState);
   const {
     loading: suitesLoading,
     loaded: suitesLoaded,
@@ -29,6 +30,8 @@ const Authentication = (): JSX.Element => {
     loaded: groupsLoaded,
     error: groupsLoadError,
   } = useSelector(getGroupsState);
+
+  const { boot: bootIntercom } = useIntercom();
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
   const [fetchDispatched, setFetchDispatched] = useState(false);
@@ -62,6 +65,10 @@ const Authentication = (): JSX.Element => {
       await dispatch(fetchSuites(apiClient));
     };
     if (authenticated && !fetchDispatched && !loading && !hasError) {
+      bootIntercom({
+        email: userId,
+        customAttributes: { hide_default_launcher: true },
+      });
       fetch();
     }
   }, [
@@ -72,6 +79,8 @@ const Authentication = (): JSX.Element => {
     loading,
     hasError,
     fetchDispatched,
+    bootIntercom,
+    userId,
   ]);
 
   if (hasError) {

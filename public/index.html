@@ -39,17 +39,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-
-    <!-- Intercom -->
-    <script>
-      if ('%NODE_ENV%' !== 'development') {
-        var APP_ID = window.__cogniteSidecar?.intercom;
-
-        window.intercomSettings = {
-          app_id: APP_ID,
-        };
-      }
-    </script>
-    <script defer src="%PUBLIC_URL%/intercom.js"></script>
   </body>
 </html>

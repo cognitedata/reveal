@@ -2,13 +2,14 @@ import React from 'react';
 import { Router } from 'react-router-dom';
 import { createApiClient, createClient } from 'utils';
 import { TenantProvider } from 'providers/TenantProvider';
-import { I18nContainer } from '@cognite/react-i18n';
 import { CdfClientProvider } from 'providers/CdfClientProvider';
 import { ApiClientProvider } from 'providers/ApiClientProvider';
 import GlobalStyles from 'global-styles';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from 'store';
 import { History } from 'history';
+import sidecar from 'utils/sidecar';
+import { IntercomProvider } from 'react-use-intercom';
 
 type Props = {
   children?: React.ReactNode;
@@ -18,6 +19,7 @@ type Props = {
 
 const cdfClient = createClient();
 const apiClient = createApiClient();
+const { intercom: intercomId } = sidecar;
 
 const AppProviders: React.FC<Props> = ({
   children,
@@ -28,10 +30,10 @@ const AppProviders: React.FC<Props> = ({
     <CdfClientProvider client={cdfClient}>
       <ApiClientProvider apiClient={apiClient}>
         <TenantProvider tenant={tenant}>
-          <I18nContainer>
+          <IntercomProvider appId={intercomId}>
             <GlobalStyles />
             <Router history={history}>{children}</Router>
-          </I18nContainer>
+          </IntercomProvider>
         </TenantProvider>
       </ApiClientProvider>
     </CdfClientProvider>

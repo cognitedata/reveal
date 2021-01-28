@@ -8,24 +8,34 @@ import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/dt_logo.png';
 import cogniteLogo from 'images/cognite_logo.png';
 import { CustomLink, CustomMenuItem } from 'styles/common';
-import { startIntercomTour } from 'utils/intercom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { logout } from 'utils/logout';
+import sidecar from 'utils/sidecar';
+import { useIntercom } from 'react-use-intercom';
 import { CogniteLogo, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
   const email = useSelector(getUserId);
+  const { privacyPolicyUrl, intercomTourId } = sidecar;
+
+  const {
+    startTour,
+    show: showIntercomChat,
+    shutdown: shutdownIntercom,
+  } = useIntercom();
+
+  const startIntercomTour = () => {
+    startTour(intercomTourId);
+  };
 
   const handleOnSupportClick = () => {
-    if (window.Intercom) {
-      window.Intercom('show');
-    }
+    showIntercomChat();
   };
   const client = useContext(CdfClientContext);
 
   const performLogout = async () => {
-    await logout(client);
+    await logout(client, shutdownIntercom);
   };
 
   const actions = [
@@ -96,7 +106,7 @@ const AppHeader: React.FC = () => {
         <Menu>
           <Menu.Item>
             <CustomLink
-              href="https://www.cognite.com/en/policy"
+              href={privacyPolicyUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

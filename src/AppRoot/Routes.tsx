@@ -3,15 +3,16 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import Home from 'pages/Home';
 import PageLayout from 'pages/PageLayout';
 import SuiteOverview from 'pages/SuiteOverview';
-import { intercomUpdate } from 'utils/intercom';
+import { useIntercom } from 'react-use-intercom';
 
 const Routes = (): JSX.Element => {
   const history = useHistory();
+  const { update: updateIntercom } = useIntercom();
   useEffect(() => {
     history.listen(() => {
-      intercomUpdate();
+      updateIntercom();
     });
-  }, [history]);
+  }, [history, updateIntercom]);
   return (
     <PageLayout>
       <Switch>
