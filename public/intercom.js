@@ -20,10 +20,7 @@
       var s = d.createElement('script');
       s.type = 'text/javascript';
       s.async = true;
-      if (w.intercomSettings?.app_id) {
-        s.src =
-          'https://widget.intercom.io/widget/' + w.intercomSettings?.app_id;
-      }
+      s.src = 'https://widget.intercom.io/widget/ou1uyk2p';
       var x = d.getElementsByTagName('script')[0];
       x.parentNode.insertBefore(s, x);
     };
