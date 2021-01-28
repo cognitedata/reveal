@@ -5,7 +5,6 @@ import {
   ControllerProvider,
   Node,
   Connection,
-  NodeProgress,
   NodeContainer,
 } from '@cognite/connect';
 import { Menu, Input, Button } from '@cognite/cogs.js';
@@ -19,7 +18,6 @@ import workflowSlice, {
 } from 'reducers/workflows';
 import useDispatch from 'hooks/useDispatch';
 import { saveExistingWorkflow } from 'reducers/workflows/api';
-import { runWorkflow } from 'reducers/workflows/utils';
 import { chartSelectors } from 'reducers/charts';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
@@ -234,6 +232,28 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
       status,
       result: functionResult.data,
     });
+
+    if (functionResult.data.response.error) {
+      dispatch(
+        workflowSlice.actions.updateWorkflow({
+          id: workflow.id,
+          changes: {
+            latestRun: {
+              timestamp: Date.now(),
+              status: 'FAILED',
+              nodeProgress: workflow.nodes.reduce((output, node) => {
+                return {
+                  ...output,
+                  [node.id]: { status: 'FAILED' },
+                };
+              }, {}),
+            },
+          },
+        })
+      );
+
+      return;
+    }
 
     const latestRun: LatestWorkflowRun = {
       status: 'SUCCESS',

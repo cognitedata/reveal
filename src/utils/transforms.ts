@@ -7,6 +7,7 @@ export type DSPFunction = {
   op: string;
   n_inputs: number;
   n_outputs: number;
+  parameters: Record<string, string>;
   type_info: string[][];
 };
 
@@ -27,7 +28,7 @@ export type DSPFunctionConfig = {
 export function fromDspFunctionToConfig(
   dspFunction: DSPFunction
 ): DSPFunctionConfig {
-  const input = Array(dspFunction.n_inputs)
+  const pins = Array(dspFunction.n_inputs)
     .fill(0)
     .map((_, i) => {
       return {
@@ -40,6 +41,15 @@ export function fromDspFunctionToConfig(
       };
     });
 
+  const parameters = Object.keys(dspFunction.parameters).map((param) => {
+    return {
+      name: param,
+      field: param,
+      types: [getBlockTypeFromParameterType(dspFunction.parameters[param])],
+      pin: false,
+    };
+  });
+
   const output = [
     {
       name: 'Output',
@@ -49,9 +59,18 @@ export function fromDspFunctionToConfig(
   ];
 
   return {
-    input,
+    input: [...pins, ...parameters],
     output,
   };
+}
+
+export function getBlockTypeFromParameterType(parameterType: string): string {
+  switch (parameterType) {
+    case 'int':
+      return 'CONSTANT';
+    default:
+      return 'UNKNOWN';
+  }
 }
 
 export function getBlockTypeFromFunctionType(functionType: string): string {
@@ -104,24 +123,33 @@ export function getStepsFromWorkflow(workflow: Workflow) {
   const steps = workflow.nodes
     .filter((node) => node.functionEffectReference === 'TOOLBOX_FUNCTION')
     .map((node, i, allNodes) => {
-      const inputs = node.inputPins.map((inputPin: any) => {
-        const inputNodeConnection = Object.values(workflow.connections).find(
-          (conn) =>
-            conn.inputPin.nodeId === node.id &&
-            conn.inputPin.pinId === inputPin.id
-        );
+      const inputs = node.inputPins
+        .map((inputPin: any) => {
+          const inputNodeConnection = Object.values(workflow.connections).find(
+            (conn) =>
+              conn.inputPin.nodeId === node.id &&
+              conn.inputPin.pinId === inputPin.id
+          );
 
-        const inputNode = workflow.nodes.find(
-          (nd) => nd.id === inputNodeConnection.outputPin.nodeId
-        )!;
+          if (!inputNodeConnection) {
+            return undefined;
+          }
 
-        return getInputFromNode(inputNode, allNodes);
-      });
+          const inputNode = workflow.nodes.find(
+            (nd) => nd.id === inputNodeConnection.outputPin.nodeId
+          )!;
+
+          return getInputFromNode(inputNode, allNodes);
+        })
+        .filter(Boolean);
+
+      const { toolFunction, ...parameters } = node.functionData || {};
 
       return {
         step: i,
-        op: node.functionData.operation,
+        op: node.functionData.toolFunction.op,
         inputs,
+        ...(Object.keys(parameters).length ? { params: parameters } : {}),
       };
     });
 

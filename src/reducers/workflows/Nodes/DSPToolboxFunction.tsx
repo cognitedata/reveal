@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 import React, { useEffect, useState } from 'react';
 import { Icon, Input, Select } from '@cognite/cogs.js';
 import sdk from 'services/CogniteSDK';
@@ -7,24 +9,15 @@ import { ConfigPanelComponentProps, StorableNode } from '../types';
 
 type FunctionData = {
   [key: string]: any;
-  operation?: string;
-  externalData: {
-    input: {
-      field: string;
-      pin: boolean;
-    }[];
-    output: {
-      id: string;
-    }[];
-  };
+  toolFunction?: DSPFunction;
 };
 
-type ConfigPanelEditables = {
-  name: string;
-  type: string;
-  field: string;
-  pin: boolean;
-}[];
+// type ConfigPanelEditables = {
+//   name: string;
+//   type: string;
+//   field: string;
+//   pin: boolean;
+// }[];
 
 export type CogniteFunction = {
   id: number;
@@ -67,7 +60,7 @@ const waitOnFunctionComplete = (
 };
 
 export const effect = async (funcData: FunctionData, ...rest: any[]) => {
-  if (!funcData.operation) {
+  if (!funcData.toolFunction) {
     throw new Error('No external id given in config');
   }
   if (!funcData.tenant) {
@@ -88,9 +81,10 @@ export const configPanel = ({
   const [availableFunctions, setAvailableFunctions] = useState<DSPFunction[]>(
     []
   );
-  const [configPanelEditables, setConfigPanelEditables] = useState<
-    ConfigPanelEditables
-  >();
+
+  // const [configPanelEditables, setConfigPanelEditables] = useState<
+  //   ConfigPanelEditables
+  // >();
 
   const { functionData } = node;
 
@@ -147,93 +141,85 @@ export const configPanel = ({
     populateOptions();
   }, []);
 
-  if (isLoading) {
-    return <Icon type="Loading" />;
-  }
-
   return (
     <div>
-      <h4>CDF Function</h4>
-      <Select
-        theme="dark"
-        defaultValue={
-          functionData?.cogniteFunction
-            ? {
-                value: functionData.cogniteFunction?.id,
-                label: functionData.cogniteFunction?.name,
-              }
-            : undefined
-        }
-        onChange={(nextValue: { value: string }) => {
-          const nextFunc = availableFunctions.find(
-            (x) => x.op === nextValue.value
-          );
-          if (nextFunc) {
-            const inputPins = (fromDspFunctionToConfig(nextFunc).input || [])
-              .filter((input) => input.pin)
-              .map((input) => ({
-                id: input.field,
-                title: input.name,
-                types: input.types,
+      <h4>Tool Function</h4>
+      {isLoading ? (
+        <Icon type="Loading" />
+      ) : (
+        <Select
+          theme="dark"
+          defaultValue={
+            functionData?.toolFunction
+              ? {
+                  value: functionData?.toolFunction?.op,
+                  label: functionData?.toolFunction?.description,
+                }
+              : undefined
+          }
+          onChange={(nextValue: { value: string }) => {
+            const nextFunc = availableFunctions.find(
+              (x) => x.op === nextValue.value
+            );
+
+            if (nextFunc) {
+              const { type_info, ...storableNextFunc } = nextFunc;
+
+              const inputPins = (fromDspFunctionToConfig(nextFunc).input || [])
+                .filter((input) => input.pin)
+                .map((input) => ({
+                  id: input.field,
+                  title: input.name,
+                  types: input.types,
+                }));
+
+              const outputPins = (
+                fromDspFunctionToConfig(nextFunc).output || []
+              ).map((output) => ({
+                id: `out-${output.field}`,
+                title: output.name,
+                type: output.type,
               }));
 
-            const outputPins = (
-              fromDspFunctionToConfig(nextFunc).output || []
-            ).map((output) => ({
-              id: `out-${output.field}`,
-              title: output.name,
-              type: output.type,
-            }));
+              onUpdateNode({
+                inputPins,
+                outputPins,
+                title: nextFunc.description,
+                functionData: {
+                  ...functionData,
+                  toolFunction: storableNextFunc,
+                },
+              });
+            }
+          }}
+          options={availableFunctions.map((func) => ({
+            value: func.op,
+            label: func.description,
+          }))}
+        />
+      )}
 
-            onUpdateNode({
-              inputPins,
-              outputPins,
-              title: nextFunc.description,
-              functionData: {
-                ...functionData,
-                operation: nextFunc.op,
-              },
-            });
+      {Object.keys(functionData?.toolFunction?.parameters || {}).length &&
+        Object.keys(functionData?.toolFunction?.parameters).map((paramName) => {
+          return (
+            <div style={{ marginTop: 8 }}>
+              <h4>{paramName}</h4>
 
-            const configurables = (
-              fromDspFunctionToConfig(nextFunc).input || []
-            )
-              .map((input) => ({
-                name: input.name,
-                field: input.field,
-                pin: input.pin || false,
-                type: (input.types || [])[0],
-              }))
-              .filter((input) => !input.pin);
-
-            setConfigPanelEditables(configurables);
-          }
-        }}
-        options={availableFunctions.map((func) => ({
-          value: func.op,
-          label: func.description,
-        }))}
-      />
-
-      {configPanelEditables &&
-        configPanelEditables.map((editable) => (
-          <div style={{ marginTop: 8 }}>
-            <h4>{editable.name}</h4>
-
-            <Input
-              id={editable.field}
-              value={functionData[editable.field] || ''}
-              onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
-                onUpdateNode({
-                  functionData: {
-                    ...node.functionData,
-                    [editable.field]: newValue.target.value,
-                  },
-                });
-              }}
-            />
-          </div>
-        ))}
+              <Input
+                id={paramName}
+                value={functionData[paramName] || ''}
+                onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
+                  onUpdateNode({
+                    functionData: {
+                      ...node.functionData,
+                      [paramName]: Number(newValue.target.value),
+                    },
+                  });
+                }}
+              />
+            </div>
+          );
+        })}
     </div>
   );
 };
@@ -247,6 +233,6 @@ export const node = {
   outputPins: [],
   functionEffectReference: effectId,
   functionData: {
-    cogniteFunction: undefined,
+    toolFunction: undefined,
   },
 } as StorableNode;

@@ -207,6 +207,28 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         result: functionResult.data,
       });
 
+      if (functionResult.data.response.error) {
+        dispatch(
+          workflowSlice.actions.updateWorkflow({
+            id: flow.id,
+            changes: {
+              latestRun: {
+                timestamp: Date.now(),
+                status: 'FAILED',
+                nodeProgress: flow.nodes.reduce((output, node) => {
+                  return {
+                    ...output,
+                    [node.id]: { status: 'FAILED' },
+                  };
+                }, {}),
+              },
+            },
+          })
+        );
+
+        return;
+      }
+
       const latestRun: LatestWorkflowRun = {
         status: 'SUCCESS',
         timestamp: Date.now(),
