@@ -1,11 +1,15 @@
 import { CdfClient } from 'utils';
 
-export const logout = async (client: CdfClient) => {
+export const logout = async (
+  client: CdfClient,
+  shutdownIntercom: () => void
+) => {
   const redirectUrl = `https://${window.location.host}/`;
   try {
     const logoutUrl = await client.cogniteClient.logout.getUrl({
       redirectUrl,
     });
+    shutdownIntercom();
     if (logoutUrl) {
       window.location.href = logoutUrl;
     } else {

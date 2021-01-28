@@ -9,7 +9,7 @@ type Sidecar = {
   digitalCockpitApiBaseUrl: string;
   docsSiteBaseUrl: string;
   intercom: string;
-  intercomTourId: string;
+  intercomTourId: number;
   privacyPolicyUrl: string;
 };
 

@@ -8,16 +8,26 @@ import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/dt_logo.png';
 import cogniteLogo from 'images/cognite_logo.png';
 import { CustomLink, CustomMenuItem } from 'styles/common';
-import { showIntercomChat, startIntercomTour } from 'utils/intercom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { logout } from 'utils/logout';
 import sidecar from 'utils/sidecar';
 import { CogniteLogo, LogoWrapper } from './elements';
+import { useIntercom } from 'react-use-intercom';
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
   const email = useSelector(getUserId);
-  const { privacyPolicyUrl } = sidecar;
+  const { privacyPolicyUrl, intercomTourId } = sidecar;
+
+  const {
+    startTour,
+    show: showIntercomChat,
+    shutdown: shutdownIntercom,
+  } = useIntercom();
+
+  const startIntercomTour = () => {
+    startTour(intercomTourId);
+  };
 
   const handleOnSupportClick = () => {
     showIntercomChat();
@@ -25,7 +35,7 @@ const AppHeader: React.FC = () => {
   const client = useContext(CdfClientContext);
 
   const performLogout = async () => {
-    await logout(client);
+    await logout(client, shutdownIntercom);
   };
 
   const actions = [

@@ -2,7 +2,6 @@ import { ApiClient, CdfClient } from 'utils';
 import { REDIRECT } from '@cognite/sdk';
 import { RootDispatcher } from 'store/types';
 import jwtDecode from 'jwt-decode';
-import { intercomBoot } from 'utils/intercom';
 import * as actions from './actions';
 
 export function authenticate(
@@ -20,7 +19,6 @@ export function authenticate(
         // @ts-ignore
         const { unique_name: uniqueName } = jwtDecode(idToken);
         dispatch(actions.authSuccess(uniqueName));
-        intercomBoot({ email: uniqueName });
       },
     });
 
