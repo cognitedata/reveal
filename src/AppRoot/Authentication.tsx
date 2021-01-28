@@ -11,8 +11,8 @@ import { getGroupsState } from 'store/groups/selectors';
 import { Body, Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
-import Routes from './Routes';
 import { useIntercom } from 'react-use-intercom';
+import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
   const tenant = useContext(TenantContext);

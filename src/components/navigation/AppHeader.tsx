@@ -11,8 +11,8 @@ import { CustomLink, CustomMenuItem } from 'styles/common';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { logout } from 'utils/logout';
 import sidecar from 'utils/sidecar';
-import { CogniteLogo, LogoWrapper } from './elements';
 import { useIntercom } from 'react-use-intercom';
+import { CogniteLogo, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
