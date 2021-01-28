@@ -115,11 +115,7 @@ export const configPanel = ({
         }
       );
 
-      // const status = await waitOnFunctionComplete(
-      //   tenant,
-      //   getAllOps.id,
-      //   functionCall.data.id
-      // );
+      await waitOnFunctionComplete(tenant, getAllOps.id, functionCall.data.id);
 
       const functionResult = await sdk.get<{ response: Record<string, any> }>(
         `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/calls/${functionCall.data.id}/response`

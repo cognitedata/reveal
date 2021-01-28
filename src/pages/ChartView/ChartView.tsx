@@ -192,11 +192,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         }
       );
 
-      // const status = await waitOnFunctionComplete(
-      //   tenant,
-      //   simpleCalc.id,
-      //   functionCall.data.id
-      // );
+      await waitOnFunctionComplete(tenant, simpleCalc.id, functionCall.data.id);
 
       const functionResult = await sdk.get<{ response: Record<string, any> }>(
         `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
