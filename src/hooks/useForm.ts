@@ -60,7 +60,7 @@ export const useForm = (validations?: TS_FIX_ME) => {
         return rules.required.message || 'required field';
       }
     }
-    if (rules.pattern) {
+    if (rules.pattern && value) {
       if (!new RegExp(rules.pattern.value).exec(value)) {
         return rules.pattern.message || 'invalid field';
       }

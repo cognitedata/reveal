@@ -15,7 +15,7 @@ export const boardValidator = {
   },
   embedTag: {
     pattern: {
-      value: '(?:<iframe[^>]*)(?:(?:/>)|(?:>.*?</iframe>))?',
+      value: '(?:<iframe[^>]*)(?:(?:\\/>)|(?:>.*?<\\/iframe>))',
       message: 'Invalid iframe tag',
     },
   },
