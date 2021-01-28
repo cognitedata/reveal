@@ -59,7 +59,7 @@ const waitOnFunctionComplete = (
   });
 };
 
-export const effect = async (funcData: FunctionData, ...rest: any[]) => {
+export const effect = async (funcData: FunctionData) => {
   if (!funcData.toolFunction) {
     throw new Error('No external id given in config');
   }
