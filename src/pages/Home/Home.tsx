@@ -31,6 +31,7 @@ const Home = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation('Home');
   const itemsToDisplay = 6;
+  const glideItemWidth = 348;
   const dispatch = useDispatch<RootDispatcher>();
   const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
     getSuitesTableState
@@ -103,8 +104,9 @@ const Home = () => {
               <Title level={6}>Quick Access</Title>
               <Glider
                 hasArrows
-                slidesToScroll={2}
-                slidesToShow={3}
+                itemWidth={glideItemWidth}
+                exactWidth={glideItemWidth}
+                slidesToShow="auto"
                 iconLeft={<Icon type="LargeLeft" />}
                 iconRight={<Icon type="LargeRight" />}
                 skipTrack
