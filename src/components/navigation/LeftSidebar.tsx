@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
-import { TS_FIX_ME } from 'types/core';
+import { Suite } from 'store/suites/types';
 import NavigationItem from './NavigationItem';
 import {
   TitleContainer,
@@ -13,26 +13,9 @@ import {
   SidebarContainer,
 } from './elements';
 
-interface NavigationItem {
-  title: string;
-  color: string;
-  key: string;
-}
-
-const renderNavigationItem = (
-  item: NavigationItem,
-  disabled?: boolean,
-  location?: TS_FIX_ME
-) => (
+const renderNavigationItem = (item: Suite) => (
   <NavLink to={`/suites/${item.key}`} key={item.key}>
-    <NavigationItem
-      title={item.title}
-      key={item.key}
-      selected={location?.pathname?.startsWith(`/suites/${item.key}`)}
-      color={item.color}
-      data-testid={`NavigationItem-${item.title}`}
-      disabled={disabled}
-    />
+    <NavigationItem dataItem={item} />
   </NavLink>
 );
 
@@ -40,7 +23,6 @@ const LeftSidebar: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { t } = useTranslation('Home');
   const { suites } = useSelector(getSuitesTableState);
-  const location = useLocation();
 
   const sideBarState = JSON.parse(
     localStorage.getItem('sideBarState') || 'true'
@@ -64,9 +46,7 @@ const LeftSidebar: React.FC = () => {
         <Overline level={2}>Suites</Overline>
       </TitleContainer>
       <AvailableSuitesContainer>
-        {suites?.map((suite: NavigationItem) =>
-          renderNavigationItem(suite, false, location)
-        )}
+        {suites?.map((suite) => renderNavigationItem(suite))}
       </AvailableSuitesContainer>
     </SidebarContainer>
   );

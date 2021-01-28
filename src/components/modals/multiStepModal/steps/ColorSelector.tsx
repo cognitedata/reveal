@@ -9,7 +9,7 @@ import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Suite } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { suiteValidator } from 'validators';
-import { TS_FIX_ME } from 'types/core';
+import { OptionTypeBase } from 'types/core';
 import { RootDispatcher } from 'store/types';
 
 export const options = [
@@ -57,7 +57,7 @@ const ColorSelector: React.FC = () => {
   const suite = useSelector(suiteState);
   const dispatch = useDispatch<RootDispatcher>();
 
-  const handleOnChange = (selectedOption: TS_FIX_ME) => {
+  const handleOnChange = (selectedOption: OptionTypeBase) => {
     dispatch(
       setSuite({
         ...suite,

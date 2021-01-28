@@ -1,30 +1,29 @@
 import React from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
+import { useLocation } from 'react-router-dom';
 import SuiteAvatar from 'components/suiteAvatar/SuiteAvatar';
+import { Suite } from 'store/suites/types';
 import { NavigationItemContainer, SuiteTitle } from './elements';
 
 interface Props {
-  title: string;
-  disabled?: boolean;
-  color: string;
-  selected?: boolean;
+  dataItem: Suite;
 }
 
-const NavigationItem: React.FC<Props> = ({
-  color,
-  title,
-  disabled,
-  selected,
-}: Props) => (
-  <NavigationItemContainer selected={selected}>
-    <SuiteAvatar color={color} title={title} disabled={disabled} />
-    <Tooltip content={title}>
-      <Body level={2} as={SuiteTitle}>
-        {title}
-      </Body>
-    </Tooltip>
-    <SuiteTitle disabled={disabled} />
-  </NavigationItemContainer>
-);
+const NavigationItem: React.FC<Props> = ({ dataItem }: Props) => {
+  const location = useLocation();
+  return (
+    <NavigationItemContainer
+      selected={location?.pathname?.startsWith(`/suites/${dataItem.key}`)}
+    >
+      <SuiteAvatar color={dataItem.color} title={dataItem.title} />
+      <Tooltip content={dataItem.title}>
+        <Body level={2} as={SuiteTitle}>
+          {dataItem.title}
+        </Body>
+      </Tooltip>
+      <SuiteTitle />
+    </NavigationItemContainer>
+  );
+};
 
 export default NavigationItem;

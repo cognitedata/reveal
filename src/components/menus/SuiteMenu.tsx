@@ -6,11 +6,11 @@ import { useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
-import { TS_FIX_ME } from 'types/core';
+import { Suite } from 'store/suites/types';
 import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {
-  dataItem: TS_FIX_ME;
+  dataItem: Suite;
 }
 export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
   const dispatch = useDispatch<RootDispatcher>();
