@@ -42,3 +42,9 @@ export function startIntercomTour() {
     window.Intercom('startTour', intercomTourId);
   }
 }
+
+export function showIntercomChat() {
+  if (config.env !== 'development' && window.Intercom) {
+    window.Intercom('show');
+  }
+}
