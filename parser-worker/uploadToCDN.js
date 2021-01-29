@@ -53,7 +53,8 @@ function getRelativeFilesFromDirectory(directoryPath) {
     const storage = new Storage(storageArgs);
     const bucket = storage.bucket(bucketName);
     console.log(
-      `Uploading ${fileNames.length} files to ${bucketName}/${gcsPath} ...`
+      `Uploading ${fileNames.length} files to ${bucketName}/${gcsPath} ... \n`,
+      JSON.stringify(fileNames, null, 2)
     );
     const startMillis = Date.now();
 
