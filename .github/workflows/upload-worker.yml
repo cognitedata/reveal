@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci-parser-worker:
-    name: Parser worker
+  upload-parser-worker:
+    name: Upload parser worker
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
