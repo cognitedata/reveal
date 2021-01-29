@@ -52,5 +52,5 @@ jobs:
       - name: 🚀 Upload to cognite CDN
         working-directory: parser-worker
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.APPS_CDN_SERVICE_ACCOUNT_CREDENTIALS }}
+          APPS_CDN_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.APPS_CDN_SERVICE_ACCOUNT_CREDENTIALS }}
         run: yarn cdn-upload
