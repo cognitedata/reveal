@@ -21,7 +21,7 @@
     "build": "yarn clean && yarn run build:wasm && webpack --env development && yarn local-cdn:copy",
     "build:wasm": "wasm-pack build --release",
     "build:prod": "yarn clean && yarn build:wasm && webpack",
-    "build:prod:cdf": "cross-var cross-env PUBLIC_PATH=\"https://cdf-hub-bundles.cogniteapp.com/dependencies/$npm_package_name/$npm_package_version/\" yarn build:prod",
+    "cdn-upload": "node uploadToCDN.js",
     "clean": "rimraf -rf ./dist ./pkg",
     "local-cdn:build": "cross-var cross-env PUBLIC_PATH=https://localhost:$npm_package_conf_port/$npm_package_conf_folder/ yarn run build ",
     "local-cdn:copy": "cross-var rimraf -rf ../examples/public/$npm_package_conf_folder && cross-var cpy ./dist/local/* ../examples/public/$npm_package_conf_folder/",
@@ -47,10 +47,14 @@
     "comlink": "^4.3.0"
   },
   "devDependencies": {
+    "@google-cloud/storage": "^5.7.3",
+    "compressible": "^2.0.18",
     "cpy-cli": "^3.1.1",
     "cross-env": "^7.0.2",
     "cross-var": "^1.1.0",
+    "mime-types": "^2.1.28",
     "mkdirp": "^1.0.4",
+    "recursive-readdir": "^2.2.2",
     "rimraf": "^3.0.2",
     "ts-loader": "^8.0.14",
     "typescript": "^4.1.3",
