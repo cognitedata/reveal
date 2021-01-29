@@ -7,7 +7,7 @@ const logger = require('webpack-log')('reveal');
 const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
-const { publicPath, getWorkerCDNPath, getEnvArg } = require('../parser-worker/buildUtils');
+const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
@@ -22,7 +22,7 @@ if (parserWorkerVersion.split('.').some(i => isNaN(parseInt(i, 10)))) {
 module.exports = env => {
   const development = getEnvArg(env, 'development', false);
   const publicPathViewer =
-    publicPath || getWorkerCDNPath({ name: workerPackageJSON.name, version: workerPackageJSON.version });
+    publicPath || getWorkerCdnUrl({ name: workerPackageJSON.name, version: workerPackageJSON.version });
 
   logger.info('Viewer build config:');
   logger.info({ development, publicPathViewer });

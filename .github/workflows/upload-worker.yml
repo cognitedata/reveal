@@ -1,0 +1,56 @@
+on:
+  workflow_dispatch
+
+jobs:
+  ci-parser-worker:
+    name: Parser worker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rust
+        run: |
+          rustup component add clippy
+          rustup component add rustfmt
+
+      - name: Cache cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build
+        run: |
+          # fail on warnings, test all features
+          cargo fmt -- --check
+          # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
+          # and needs to be disabled
+          cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
+          cargo test --all --verbose
+
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+
+      - name: Install NPM dependencies
+        working-directory: parser-worker
+        run: yarn
+
+      - name: Build parser-worker
+        working-directory: parser-worker
+        run: yarn build:prod
+
+      - name: 🚀 Upload to cognite CDN
+        working-directory: parser-worker
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.APPS_CDN_SERVICE_ACCOUNT_CREDENTIALS }}
+        run: yarn cdn-upload
