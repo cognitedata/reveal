@@ -1,4 +1,7 @@
 on:
+  push:
+    branches:
+      - mn/test-gh-action
   workflow_dispatch
 
 jobs:
