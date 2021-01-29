@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns';
 import generatePicker from 'antd/es/date-picker/generatePicker';
 import 'antd/es/date-picker/style/index';
-import { Button, Dropdown, Icon, Input, Menu, Tooltip } from '@cognite/cogs.js';
+import { Button, Dropdown, Input, Menu, Tooltip } from '@cognite/cogs.js';
 import {
   DataTransferObject,
   GenericResponseObject,
@@ -16,7 +16,10 @@ import {
   FiltersWrapper,
   SecondaryFilters,
   StartContainer,
-  BackButton,
+  DropdownWrapper,
+  DropdownWithMargin,
+  DropdownButton,
+  DropdownSeparator,
 } from './elements';
 
 type Props = {
@@ -241,6 +244,15 @@ const Filters = ({
     return selectedRange.join(' - ');
   }
 
+  function resetFilters() {
+    setNameFilter('');
+    source.onSelectSource('');
+    target.onSelectTarget('');
+    configuration.onSelectConfiguration(null);
+    datatype.onSelectType('');
+    date.onSelectDate(null);
+  }
+
   const renderSecondaryFilters = () => {
     /* eslint-disable react/prop-types */
     if (
@@ -272,13 +284,13 @@ const Filters = ({
             >
               <>
                 <DropdownLabel>Datatype</DropdownLabel>
-                <Button
+                <DropdownButton
                   icon="Down"
                   iconPlacement="right"
                   onClick={() => setDatatypesOpen(!datatypesOpen)}
                 >
                   {datatype.selected || 'Select datatype'}
-                </Button>
+                </DropdownButton>
               </>
             </Dropdown>
           )}
@@ -300,7 +312,7 @@ const Filters = ({
                     }
                   >
                     <CalendarBtnWrapper active={date.selectedRange !== null}>
-                      <Button
+                      <DropdownButton
                         unstyled
                         icon="Calendar"
                         onClick={() => setDateOpen(!dateOpen)}
@@ -321,128 +333,126 @@ const Filters = ({
   return (
     <FiltersWrapper>
       <>
-        {configuration.configurations.length > 0 && !filterByProjects && (
+        {configuration.configurations.length > 0 && (
           <StartContainer>
-            <Dropdown
-              content={ConfigsContent}
-              visible={configOpen}
-              onClickOutside={() => setConfigOpen(false)}
-            >
-              <>
-                <Button
-                  type="secondary"
-                  icon="Down"
-                  iconPlacement="right"
-                  onClick={() => setConfigOpen(!configOpen)}
-                >
-                  {configuration.selected
-                    ? configuration.selected.name
-                    : 'Select configuration'}
-                </Button>
-              </>
-            </Dropdown>
-            <span>or</span>
-            <Button
-              type="secondary"
-              onClick={() => setFilterByProjects(true)}
-              icon="Right"
-              iconPlacement="right"
-            >
-              Filter by source and target projects
-            </Button>
-          </StartContainer>
-        )}
-        {filterByProjects && (
-          <>
-            <Tooltip content="Set configuration">
-              <BackButton
-                type="secondary"
-                variant="outline"
-                onClick={() => setFilterByProjects(false)}
-                aria-label="Set configuration"
-              >
-                <Icon type="Left" />
-              </BackButton>
-            </Tooltip>
-            {source.sources.length > 0 && (
+            <DropdownWrapper disabled={!!source.selected}>
               <Dropdown
-                content={SourcesContent}
-                visible={sourceOpen}
-                onClickOutside={() => setSourceOpen(false)}
+                content={ConfigsContent}
+                visible={configOpen}
+                onClickOutside={() => setConfigOpen(false)}
               >
                 <>
-                  <DropdownLabel>Source</DropdownLabel>
-                  <Button
+                  <DropdownLabel>Configuration</DropdownLabel>
+                  <DropdownButton
+                    type="secondary"
                     icon="Down"
                     iconPlacement="right"
-                    onClick={() => setSourceOpen(!sourceOpen)}
+                    onClick={() => setConfigOpen(!configOpen)}
                   >
-                    {source.selected || 'Select source'}
-                  </Button>
+                    {configuration.selected
+                      ? configuration.selected.name
+                      : 'Select'}
+                  </DropdownButton>
                 </>
               </Dropdown>
-            )}
-            {source.selected && source.projects.length > 0 && (
-              <Dropdown
-                content={SourceProjectsContent}
-                visible={sourceProjectOpen}
-                onClickOutside={() => setSourceProjectOpen(false)}
-              >
-                <>
-                  <DropdownLabel>Source project</DropdownLabel>
-                  <Button
-                    icon="Down"
-                    iconPlacement="right"
-                    onClick={() => setSourceProjectOpen(!sourceProjectOpen)}
-                  >
-                    {source.selectedProject
-                      ? source.selectedProject.external_id
-                      : 'Select project'}
-                  </Button>
-                </>
-              </Dropdown>
-            )}
-            {source.selected &&
-              source.selectedProject &&
-              target.targets.length > 0 && (
+            </DropdownWrapper>
+            <DropdownSeparator>or</DropdownSeparator>
+            <DropdownWrapper disabled={!!configuration.selected}>
+              {source.sources.length > 0 && (
                 <Dropdown
-                  content={TargetsContent}
-                  visible={targetOpen}
-                  onClickOutside={() => setTargetOpen(false)}
+                  content={SourcesContent}
+                  visible={sourceOpen}
+                  onClickOutside={() => setSourceOpen(false)}
                 >
                   <>
-                    <DropdownLabel>Target</DropdownLabel>
-                    <Button
+                    <DropdownLabel>Source</DropdownLabel>
+                    <DropdownButton
                       icon="Down"
                       iconPlacement="right"
-                      onClick={() => setTargetOpen(!targetOpen)}
+                      onClick={() => setSourceOpen(!sourceOpen)}
                     >
-                      {target.selected || 'Select target'}
-                    </Button>
+                      {source.selected || 'Select'}
+                    </DropdownButton>
                   </>
                 </Dropdown>
               )}
-            {target.selected && target.projects.length > 0 && (
-              <Dropdown
-                content={TargetProjectsContent}
-                visible={targetProjectOpen}
-                onClickOutside={() => setTargetProjectOpen(false)}
-              >
-                <>
-                  <DropdownLabel>Target project</DropdownLabel>
-                  <Button
-                    icon="Down"
-                    iconPlacement="right"
-                    onClick={() => setTargetProjectOpen(!targetProjectOpen)}
+              {source.selected && source.projects.length > 0 && (
+                <DropdownWithMargin>
+                  <Dropdown
+                    content={SourceProjectsContent}
+                    visible={sourceProjectOpen}
+                    onClickOutside={() => setSourceProjectOpen(false)}
                   >
-                    {target.selectedProject
-                      ? target.selectedProject.external_id
-                      : 'Select project'}
-                  </Button>
-                </>
-              </Dropdown>
-            )}
-          </>
+                    <>
+                      <DropdownLabel>Source project</DropdownLabel>
+                      <DropdownButton
+                        icon="Down"
+                        iconPlacement="right"
+                        onClick={() => setSourceProjectOpen(!sourceProjectOpen)}
+                      >
+                        {source.selectedProject
+                          ? source.selectedProject.external_id
+                          : 'Select project'}
+                      </DropdownButton>
+                    </>
+                  </Dropdown>
+                </DropdownWithMargin>
+              )}
+              {source.selected &&
+                source.selectedProject &&
+                target.targets.length > 0 && (
+                  <DropdownWithMargin>
+                    <Dropdown
+                      content={TargetsContent}
+                      visible={targetOpen}
+                      onClickOutside={() => setTargetOpen(false)}
+                    >
+                      <>
+                        <DropdownLabel>Target</DropdownLabel>
+                        <DropdownButton
+                          icon="Down"
+                          iconPlacement="right"
+                          onClick={() => setTargetOpen(!targetOpen)}
+                        >
+                          {target.selected || 'Select'}
+                        </DropdownButton>
+                      </>
+                    </Dropdown>
+                  </DropdownWithMargin>
+                )}
+              {target.selected && target.projects.length > 0 && (
+                <DropdownWithMargin>
+                  <Dropdown
+                    content={TargetProjectsContent}
+                    visible={targetProjectOpen}
+                    onClickOutside={() => setTargetProjectOpen(false)}
+                  >
+                    <>
+                      <DropdownLabel>Target project</DropdownLabel>
+                      <DropdownButton
+                        icon="Down"
+                        iconPlacement="right"
+                        onClick={() => setTargetProjectOpen(!targetProjectOpen)}
+                      >
+                        {target.selectedProject
+                          ? target.selectedProject.external_id
+                          : 'Select'}
+                      </DropdownButton>
+                    </>
+                  </Dropdown>
+                </DropdownWithMargin>
+              )}
+            </DropdownWrapper>
+
+            <Button
+              style={{ marginLeft: '16px' }}
+              variant="ghost"
+              type="danger"
+              onClick={resetFilters}
+            >
+              Reset
+            </Button>
+          </StartContainer>
         )}
         {renderSecondaryFilters()}
       </>

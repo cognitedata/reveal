@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Button, Icon } from '@cognite/cogs.js';
+import styled, { css } from 'styled-components';
+import { Icon, Button } from '@cognite/cogs.js';
 import { Table } from 'antd';
 
 export const TableActions = styled.div`
@@ -11,10 +11,6 @@ export const TableActions = styled.div`
 
   .cogs-menu-item {
     text-transform: capitalize;
-  }
-
-  .cogs-btn {
-    color: var(--cogs-black);
   }
 `;
 
@@ -32,18 +28,18 @@ export const FiltersWrapper = styled.div`
   > span {
     align-self: flex-end;
   }
+`;
 
-  .cogs-btn {
-    min-width: 150px;
-    height: 36px;
-    display: flex;
-    justify-content: space-between;
-  }
+export const DropdownButton = styled(Button)`
+  min-width: 150px;
+  height: 36px;
+  display: flex;
+  justify-content: space-between;
 `;
 
 export const StartContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 
   > span {
     margin: 0 1rem;
@@ -51,10 +47,25 @@ export const StartContainer = styled.div`
   }
 `;
 
-export const BackButton = styled(Button)`
-  align-self: flex-end;
-  min-width: 0 !important;
-  margin-right: 1rem;
+export const DropdownWithMargin = styled.div`
+  margin-left: 16px;
+`;
+
+export const DropdownWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  ${({ disabled }: { disabled: boolean }) =>
+    disabled &&
+    css`
+      opacity: 0.5;
+      pointer-events: none;
+    `}
+`;
+
+export const DropdownSeparator = styled.div`
+  line-height: 36px;
+  margin: 0 16px;
 `;
 
 export const SecondaryFilters = styled.div`
