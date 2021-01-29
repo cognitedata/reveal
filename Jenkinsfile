@@ -23,13 +23,6 @@ static final String SENTRY_PROJECT_NAME = "digital-cockpit"
 // If you omit this, then client errors WILL NOT BE REPORTED.
 static final String SENTRY_DSN = ""
 
-// Specify your locize.io project ID. If you do not have one of these, please
-// stop by #frontend to get a project created under the Cognite umbrella.
-// See https://cog.link/i18n for more information.
-//
-// Note: You'll probably want to set this in scripts/start.sh too
-static final String LOCIZE_PROJECT_ID = ""
-
 // Specify your Mixpanel project token. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
 // Remember: if you can't measure it, you can't improve it!
@@ -63,7 +56,6 @@ static final Map<String, String> CONTEXTS = [
   unitTests: "continuous-integration/jenkins/unit-tests",
   e2eTests: "continuous-integration/jenkins/e2e-tests",
   preview: "continuous-integration/jenkins/preview",
-  storybook: "continuous-integration/jenkins/storybook",
   buildStaging: "continuous-integration/jenkins/build-staging",
   publishStaging: "continuous-integration/jenkins/publish-staging",
   buildProduction: "continuous-integration/jenkins/build-production",
@@ -76,7 +68,6 @@ static final String[] DIRS = [
   'lint',
   'testcafe',
   'unit-tests',
-  'storybook',
   'preview',
   'staging',
   'production',
@@ -89,7 +80,6 @@ def pods = { body ->
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
         sentryDsn: SENTRY_DSN,
-        locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
       ) {
         testcafe.pod() {
@@ -153,17 +143,6 @@ pods {
           }
         }
       },
-
-      // TODO disabled temporary since not used yet
-      // 'Storybook': {
-      //   dir('storybook') {
-      //     stageWithNotify('Storybook', CONTEXTS.storybook) {
-      //       previewServer.deployStorybook(
-      //         shouldExecute: isPullRequest
-      //       )
-      //     }
-      //   }
-      // },
 
       'Preview': {
         dir('preview') {
