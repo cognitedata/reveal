@@ -7,10 +7,14 @@ import {
   AddModelOptions,
   Cognite3DViewer,
   SupportedModelTypes,
+  revealEnv
 } from '@cognite/reveal';
 
 import { CanvasWrapper } from '@site/src/components/styled';
 import { DemoProps } from '@site/src/components/DemoProps';
+
+// fixme: that's temporary until https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/ is available
+revealEnv.publicPath = 'https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.1.0/dist/cdn/';
 
 type OwnProps = {
   modelType?: SupportedModelTypes;
