@@ -31,6 +31,7 @@ module.exports = env => {
     mode: development ? 'development' : 'production',
     entry: {
       index: './src/index.ts',
+      tools: './src/tools/index.ts',
       experimental: './src/experimental.ts'
     },
     target: 'web',

@@ -33,6 +33,8 @@ There might be "any" number of attached HTML overlays in a viewer, but avoid too
 view.
 
 ```jsx runnable
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
 function createOverlay() {
   const element = document.createElement('div');
   element.innerText = `Overlay!`;
@@ -56,7 +58,7 @@ function createOverlay() {
 }
 
 // Attach overlay on click
-const overlays = viewer.createHtmlOverlayTool();
+const overlays = new HtmlOverlayTool(viewer);
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
   const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
@@ -76,6 +78,8 @@ from the camera. To do this, provide an `options`-argument with a
 callback is triggered every time the HTML overlay is updated.
 
 ```js runnable
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
 function createOverlay() {
   const element = document.createElement('div');
   element.innerText = `Overlay!`;
@@ -97,7 +101,7 @@ function createOverlay() {
   return element;
 }
 
-const overlays = viewer.createHtmlOverlayTool();
+const overlays = new HtmlOverlayTool(viewer);
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
   const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
@@ -106,7 +110,7 @@ viewer.on('click', event => {
     const options = {
       positionUpdatedCallback: (element, position2D, position3D, distanceToCamera) => {
         // Compute opacity based on distance to camera
-        const opacity = 1.0 - (Math.min(Math.max(distanceToCamera, 10), 110) - 10) / 100.0;
+        const opacity = 0.3 + 0.7 * (1.0 - (Math.min(Math.max(distanceToCamera, 10), 110) - 10) / 100.0);
         element.style.opacity = opacity;
       }
     };
@@ -119,6 +123,8 @@ As shown above, overlays can be removed using `remove()`. It is also possible to
 overlays by disposing the tool:
 
 ```js runnable
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
 function createOverlay() {
   const element = document.createElement('div');
   element.innerText = `!`;
@@ -141,7 +147,7 @@ function createOverlay() {
   return element;
 }
 
-const overlays = viewer.createHtmlOverlayTool();
+const overlays = new HtmlOverlayTool(viewer);
 const bounds = model.getModelBoundingBox();
 for (let i = 0; i < 100; i++) {
   const s = [Math.random(), Math.random(), Math.random()];
