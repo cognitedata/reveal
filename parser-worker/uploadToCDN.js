@@ -31,26 +31,9 @@ function getRelativeFilesFromDirectory(directoryPath) {
   console.log(`Using ${buildPath} as a build source ...`);
 
   return getRelativeFilesFromDirectory(buildPath).then((fileNames) => {
-    let storageArgs;
-    try {
-      storageArgs = {
-        credentials: JSON.parse(
-          process.env.APPS_CDN_SERVICE_ACCOUNT_CREDENTIALS
-        ),
-      };
-      console.log("credentials are json");
-    } catch (error) {
-      console.error(error);
-      console.log("try use it as a file");
-      let keyFilename = path.join(__dirname, ".keyFilename");
-      fs.writeFileSync(
-        keyFilename,
-        process.env.APPS_CDN_SERVICE_ACCOUNT_CREDENTIALS
-      );
-      storageArgs = { projectId: "reveal-parser-worker", keyFilename };
-    }
-
-    const storage = new Storage(storageArgs);
+    const storage = new Storage({
+      credentials: JSON.parse(process.env.APPS_CDN_SERVICE_ACCOUNT_CREDENTIALS),
+    });
     const bucket = storage.bucket(bucketName);
     console.log(
       `Uploading ${fileNames.length} files to ${bucketName}/${gcsPath} ... \n`,
