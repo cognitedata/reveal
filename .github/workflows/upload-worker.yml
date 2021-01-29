@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - mn/test-gh-action
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   ci-parser-worker:
