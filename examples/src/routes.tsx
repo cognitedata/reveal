@@ -39,10 +39,12 @@ import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCl
 // parser-worker has `yarn local-cdn` to set it up quickly
 // notice that experimental is separate entry point so it required to override env for it too
 
-// import { revealEnv } from '@cognite/reveal';
-// import { revealEnv as revealEnv2 } from '@cognite/reveal/experimental'
-// revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
-// revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
+import { revealEnv } from '@cognite/reveal';
+import { revealEnv as revealEnv2 } from '@cognite/reveal/experimental'
+
+// fixme: that's temporary until https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/ is available
+revealEnv.publicPath = 'https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.1.0/dist/cdn/';
+revealEnv2.publicPath = `https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.1.0/dist/cdn/`;
 
 export type ExampleRoute = {
   path: string;
