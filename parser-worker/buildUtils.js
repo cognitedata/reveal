@@ -1,5 +1,5 @@
 const workerPackageJSON = require("./package.json");
-const cdnDistFolderPath = "/dist/cdn/";
+const cdnBuildOutputPath = "/dist/cdn/";
 
 /*
  * Set args on the command line using
@@ -23,8 +23,16 @@ function getEnvArg(env, name, defaultValue) {
   return typeof env[name] === "string" ? env[name].trim() : env[name];
 }
 
-function getWorkerCDNPath({ name, version } = workerPackageJSON) {
-  return `https://cdn.jsdelivr.net/npm/${name}@${version}${cdnDistFolderPath}`;
+function getWorkerCDNFolderPath({ name, version } = workerPackageJSON) {
+  return `${name}/${version}/`;
+}
+
+function getWorkerCdnUrl({ name, version } = workerPackageJSON) {
+  // https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/
+  return `https://apps-cdn.cogniteapp.com/${getWorkerCDNFolderPath({
+    name,
+    version,
+  })}`;
 }
 
 // overriding of that one is useful only when you're attaching your local reveal build
@@ -40,4 +48,10 @@ if (publicPath && !publicPath.endsWith("/")) {
   publicPath += "/";
 }
 
-module.exports = { publicPath, getWorkerCDNPath, cdnDistFolderPath, getEnvArg };
+module.exports = {
+  publicPath,
+  getWorkerCDNFolderPath,
+  getWorkerCdnUrl,
+  cdnBuildOutputPath,
+  getEnvArg,
+};
