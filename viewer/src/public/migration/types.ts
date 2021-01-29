@@ -192,7 +192,7 @@ export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vecto
 /**
  * Delegate for rendering events.
  * @module @cognite/reveal
- * @see {@link @Cognite3DViewer.on}.
+ * @see {@link Cognite3DViewer.on}.
  */
 export type SceneRenderedDelegate = (event: {
   frameNumber: number;
