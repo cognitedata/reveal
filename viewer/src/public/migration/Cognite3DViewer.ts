@@ -50,8 +50,7 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
-import { Cognite3DViewerTool, DisposedDelegate } from './Cognite3DViewerTool';
-import { HtmlOverlayTool } from '../../tools';
+import { DisposedDelegate } from './Cognite3DViewerTool';
 
 /**
  * @example
@@ -82,9 +81,17 @@ export class Cognite3DViewer {
    * If not specified, the DOM element will be created automatically.
    * The DOM element cannot be changed after the viewer has been created.
    */
-  readonly domElement: HTMLElement;
+  get domElement(): HTMLElement {
+    return this._domElement;
+  }
 
-  private readonly renderer: THREE.WebGLRenderer;
+  /**
+   * Returns the renderer used to produce images from 3D geometry.
+   */
+  get renderer(): THREE.WebGLRenderer {
+    return this._renderer;
+  }
+
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
@@ -92,13 +99,15 @@ export class Cognite3DViewer {
   private readonly _updateCameraNearAndFarSubject: Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>;
   private readonly _subscription = new Subscription();
   private readonly _revealManager: RevealManager<CdfModelIdentifier>;
-  private readonly _tools = new Map<Cognite3DViewerTool, DisposedDelegate>();
+  private readonly _domElement: HTMLElement;
+  private readonly _renderer: THREE.WebGLRenderer;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
     click: new Array<PointerEventDelegate>(),
     hover: new Array<PointerEventDelegate>(),
-    sceneRendered: new Array<SceneRenderedDelegate>()
+    sceneRendered: new Array<SceneRenderedDelegate>(),
+    disposed: new Array<DisposedDelegate>()
   };
   private readonly models: CogniteModelBase[] = [];
   private readonly extraObjects: THREE.Object3D[] = [];
@@ -165,7 +174,7 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    this.renderer = options.renderer || new THREE.WebGLRenderer();
+    this._renderer = options.renderer || new THREE.WebGLRenderer();
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -173,8 +182,8 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
-    this.domElement = options.domElement || createCanvasWrapper();
-    this.domElement.appendChild(this.canvas);
+    this._domElement = options.domElement || createCanvasWrapper();
+    this._domElement.appendChild(this.canvas);
     this.spinner = new Spinner(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -277,6 +286,12 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Triggered when the viewer is disposed. Listeners should clean up any
+   * resources held and remove the reference to the viewer.
+   */
+  on(event: 'disposed', callback: DisposedDelegate): void;
+
+  /**
    * @example
    * ```js
    * const onClick = (event) => { console.log(event.offsetX, event.offsetY) };
@@ -306,8 +321,8 @@ export class Cognite3DViewer {
    * @param callback
    */
   on(
-    event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered',
-    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate
+    event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed',
+    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate | DisposedDelegate
   ): void {
     switch (event) {
       case 'click':
@@ -326,6 +341,10 @@ export class Cognite3DViewer {
         this.eventListeners.sceneRendered.push(callback as SceneRenderedDelegate);
         break;
 
+      case 'disposed':
+        this.eventListeners.disposed.push(callback as DisposedDelegate);
+        break;
+
       default:
         assertNever(event);
     }
@@ -340,13 +359,15 @@ export class Cognite3DViewer {
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+  off(event: 'disposed', callback: DisposedDelegate): void;
+
   /**
    * Remove event listener from the viewer.
    * Call {@link Cognite3DViewer.on} to add event listener.
    * @param event
    * @param callback
    */
-  off(event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered', callback: any): void {
+  off(event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed', callback: any): void {
     switch (event) {
       case 'click':
         this.eventListeners.click = this.eventListeners.click.filter(x => x !== callback);
@@ -362,6 +383,10 @@ export class Cognite3DViewer {
 
       case 'sceneRendered':
         this.eventListeners.sceneRendered = this.eventListeners.sceneRendered.filter(x => x !== callback);
+        break;
+
+      case 'disposed':
+        this.eventListeners.disposed = this.eventListeners.disposed.filter(x => x !== callback);
         break;
 
       default:
@@ -657,7 +682,7 @@ export class Cognite3DViewer {
    * @obvious
    * @returns The THREE.Camera used for rendering.
    */
-  getCamera(): THREE.Camera {
+  getCamera(): THREE.PerspectiveCamera {
     return this.camera;
   }
 
@@ -1045,84 +1070,6 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
   }
 
-  /**
-   * Creates a tool for attaching HTML elements to a 3D position and updates it's
-   * position/visibility as user moves the camera. This is useful to create HTML
-   * overlays to highlight information about key positions in the 3D model.
-   *
-   * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
-   * in most cases to have styles 'pointerEvents: none' and 'touchAction: none' to avoid
-   * interfering with 3D navigation. Consider also applying 'transform: translate(-50%, -50%)'
-   * to anchor the center of the element rather than the top-left corner. In some cases the
-   * `zIndex`-attribute is necessary for the element to appear on top of the viewer.
-   *
-   * @example
-   * ```js
-   * const el = document.createElement('div');
-   * el.style.position = 'absolute'; // Required!
-   * // Anchor to center of element
-   * el.style.transform = 'translate(-50%, -50%)';
-   * // Avoid being target for events
-   * el.style.pointerEvents = 'none;
-   * el.style.touchAction = 'none';
-   * // Render in front of other elements
-   * el.style.zIndex = 10;
-   *
-   * el.style.color = 'red';
-   * el.innerHtml = '<h1>Overlay</h1>';
-   *
-   * const overlayTool = viewer.createHtmlOverlays();
-   * overlayTool.attachHtmlElement(el, new THREE.Vector3(10, 10, 10));
-   * // ...
-   * overlayTool.removeHtmlElement(el);
-   * // or, to remove all attached elements:
-   * overlayTool.dispose();
-   * ```
-   */
-  createHtmlOverlayTool(): HtmlOverlayTool {
-    const overlays = new HtmlOverlayTool(this.domElement, this.renderer, this.camera);
-    this.registerTool(overlays);
-    return overlays;
-  }
-
-  /**
-   * Registers a new tool. This makes the tool get updates from the viewer.
-   * The tool will be unregistered when it's diposed.
-   * @param tool Tool to register.
-   */
-  private registerTool(tool: Cognite3DViewerTool): void {
-    if (this._tools.has(tool)) {
-      throw new Error(`Tool ${tool} is already registered`);
-    }
-    const onDisposed: DisposedDelegate = () => this.unregisterTool(tool);
-    this._tools.set(tool, onDisposed);
-    tool.on('disposed', onDisposed);
-  }
-
-  /**
-   * Unregisters a previously registered tool for updates. Note! Tools
-   * are automatically unregistered when they are disposed so you will
-   * probably not need to call this function.
-   * @param tool A previously registered tool.
-   */
-  private unregisterTool(tool: Cognite3DViewerTool): void {
-    const onDisposed = this._tools.get(tool);
-    if (onDisposed === undefined) {
-      throw new Error(`Tool ${tool} is not registered`);
-    }
-    tool.off('disposed', onDisposed);
-    this._tools.delete(tool);
-  }
-
-  /**
-   * Notifies all registered tools that there has been rendered a frame.
-   */
-  private notifyToolsAboutRendering() {
-    for (const tool of this._tools.keys()) {
-      tool.notifyRendered();
-    }
-  }
-
   private getModels(type: 'cad'): Cognite3DModel[];
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
@@ -1248,7 +1195,6 @@ export class Cognite3DViewer {
         this.eventListeners.sceneRendered.forEach(listener => {
           listener({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
         });
-        this.notifyToolsAboutRendering();
       }
     }
   }

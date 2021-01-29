@@ -2,21 +2,30 @@
  * Copyright 2021 Cognite AS
  */
 
-import { HtmlOverlayTool, HtmlOverlayOptions } from './HtmlOverlayTool';
 import * as THREE from 'three';
+
+import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
+import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+import { CogniteClient } from '@cognite/sdk';
+import { SectorCuller } from '../internal';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;
-  let renderer: THREE.WebGLRenderer;
+  let viewer: Cognite3DViewer;
   let camera: THREE.PerspectiveCamera;
+
+  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ context });
+  const _sectorCuller: SectorCuller = {
+    determineSectors: jest.fn(),
+    dispose: jest.fn()
+  };
 
   beforeEach(() => {
     canvasContainer = document.createElement('div');
-
-    renderer = {
-      domElement: document.createElement('canvas'),
-      getPixelRatio: () => 1
-    } as any;
+    canvasContainer.style.width = '640px';
+    canvasContainer.style.height = '480px';
 
     camera = new THREE.PerspectiveCamera();
     camera.position.set(0, 0, 0);
@@ -25,11 +34,14 @@ describe('HtmlOverlayTool', () => {
     camera.lookAt(new THREE.Vector3(0, 0, 1));
     camera.updateProjectionMatrix();
     camera.updateMatrix();
+
+    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer, _sectorCuller });
+    jest.spyOn(viewer, 'getCamera').mockReturnValue(camera);
   });
 
   test('add() only accepts absolute position', () => {
     // Arrange
-    const helper = new HtmlOverlayTool(canvasContainer, renderer, camera);
+    const helper = new HtmlOverlayTool(viewer);
     const htmlElement = document.createElement('div');
     htmlElement.className = 'overlay';
     htmlElement.style.position = 'relative';
@@ -39,18 +51,17 @@ describe('HtmlOverlayTool', () => {
     expect(() => helper.add(htmlElement, position)).toThrowError();
   });
 
-  test('notifyRendered() places overlays correctly', () => {
+  test('forceUpdate() places overlays correctly', () => {
     // Arrange
-    const helper = new HtmlOverlayTool(canvasContainer, renderer, camera);
+    const helper = new HtmlOverlayTool(viewer);
     const htmlElement = document.createElement('div');
     htmlElement.style.position = 'absolute';
     expect(htmlElement.style.top).toBeEmpty();
     expect(htmlElement.style.left).toBeEmpty();
     const position = new THREE.Vector3(0, 0, 0.5);
-    helper.add(htmlElement, position);
 
     // Act
-    helper.notifyRendered();
+    helper.add(htmlElement, position);
 
     // Assert
     expect(htmlElement.style.visibility).toBe('visible');
@@ -58,27 +69,26 @@ describe('HtmlOverlayTool', () => {
     expect(htmlElement.style.left).toBe(`${renderer.domElement.width / 2}px`);
   });
 
-  test('notifyRendered() hides overlay if behind camera or behind far plane', () => {
+  test('Hides overlay if behind camera or behind far plane', () => {
     // Arrange
-    const helper = new HtmlOverlayTool(canvasContainer, renderer, camera);
+    const helper = new HtmlOverlayTool(viewer);
     const behindCameraElement = document.createElement('div');
     behindCameraElement.style.position = 'absolute';
     const behindFarPlaneElement = document.createElement('div');
     behindFarPlaneElement.style.position = 'absolute';
-    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1));
-    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10));
 
     // Act
-    helper.notifyRendered();
+    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1));
+    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10));
 
     // Assert
     expect(behindCameraElement.style.visibility).toBe('hidden');
     expect(behindFarPlaneElement.style.visibility).toBe('hidden');
   });
 
-  test('notifyRendered() triggers position update callback', () => {
+  test('Triggers position update callback', () => {
     // Arrange
-    const helper = new HtmlOverlayTool(canvasContainer, renderer, camera);
+    const helper = new HtmlOverlayTool(viewer);
     const behindCameraElement = document.createElement('div');
     behindCameraElement.style.position = 'absolute';
     const behindFarPlaneElement = document.createElement('div');
@@ -86,12 +96,11 @@ describe('HtmlOverlayTool', () => {
     const withinNearAndFarPlaneElement = document.createElement('div');
     withinNearAndFarPlaneElement.style.position = 'absolute';
     const options: HtmlOverlayOptions = { positionUpdatedCallback: jest.fn() };
+
+    // Act
     helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), options);
     helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), options);
     helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), options);
-
-    // Act
-    helper.notifyRendered();
 
     // Assert
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
@@ -116,18 +125,19 @@ describe('HtmlOverlayTool', () => {
 
   test('dispose() removes all overlays', () => {
     // Arrange
-    const helper = new HtmlOverlayTool(canvasContainer, renderer, camera);
+    const initialNumberOfElements = canvasContainer.children.length;
+    const helper = new HtmlOverlayTool(viewer);
     for (let i = 0; i < 10; i++) {
       const element = document.createElement('div');
       element.style.position = 'absolute';
       helper.add(element, new THREE.Vector3(0, 0, 0));
     }
-    expect(canvasContainer.children.length).toBe(10);
+    expect(canvasContainer.children.length).toBe(initialNumberOfElements + 10);
 
     // Act
     helper.dispose();
 
     // Assert
-    expect(canvasContainer.children.length).toBe(0);
+    expect(canvasContainer.children.length).toBe(initialNumberOfElements);
   });
 });

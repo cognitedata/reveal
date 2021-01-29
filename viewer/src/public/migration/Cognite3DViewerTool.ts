@@ -12,6 +12,4 @@ export interface Cognite3DViewerTool {
   dispose(): void;
   on(event: 'disposed', handler: DisposedDelegate): void;
   off(event: 'disposed', handler: DisposedDelegate): void;
-
-  notifyRendered(): void;
 }

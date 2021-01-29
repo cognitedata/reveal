@@ -3,6 +3,9 @@
  */
 
 import * as THREE from 'three';
+import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+import { SceneRenderedDelegate } from '../public/types';
+
 import { worldToViewport } from '../utilities/worldToViewport';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
@@ -23,15 +26,50 @@ type HtmlOverlayElement = {
 };
 
 /**
- * Manages overlays for {@see Cognite3DViewer}.
+ *
+ */
+/**
+ * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a 
+ * 3D position and updates it's position/visibility as user moves the camera. This is 
+ * useful to create HTML overlays to highlight information about key positions in the 3D model.
+ *
+ * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
+ * in most cases to have styles 'pointerEvents: none' and 'touchAction: none' to avoid
+ * interfering with 3D navigation. Consider also applying 'transform: translate(-50%, -50%)'
+ * to anchor the center of the element rather than the top-left corner. In some cases the
+ * `zIndex`-attribute is necessary for the element to appear on top of the viewer.
+ *
+ * @example
+ * ```js
+ * const el = document.createElement('div');
+ * el.style.position = 'absolute'; // Required!
+ * // Anchor to center of element
+ * el.style.transform = 'translate(-50%, -50%)';
+ * // Avoid being target for events
+ * el.style.pointerEvents = 'none;
+ * el.style.touchAction = 'none';
+ * // Render in front of other elements
+ * el.style.zIndex = 10;
+ *
+ * el.style.color = 'red';
+ * el.innerHtml = '<h1>Overlay</h1>';
+ *
+ * const overlayTool = new HtmlOverlayTool(viewer);
+ * overlayTool.add(el, new THREE.Vector3(10, 10, 10));
+ * // ...
+ * overlayTool.remove(el);
+ * // or, to remove all attached elements
+ * overlayTool.clear();
+ 
+ * // detach the tool from the viewer
+ * overlayTool.dispose();
+ * ```
  */
 export class HtmlOverlayTool extends Cognite3DViewerToolBase {
-  private readonly _viewerDomElement: HTMLElement;
-  private readonly _renderer: THREE.WebGLRenderer;
-  private readonly _camera: THREE.PerspectiveCamera;
-
+  private readonly _viewer: Cognite3DViewer;
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
 
+  private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   // Allocate variables needed for processing once to avoid allocations
   private readonly _preallocatedVariables = {
     camPos: new THREE.Vector3(),
@@ -42,20 +80,33 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     position2D: new THREE.Vector2()
   };
 
-  constructor(viewerDomElement: HTMLElement, renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+  private get viewerDomElement(): HTMLElement {
+    return this._viewer.domElement;
+  }
+
+  private get viewerCamera(): THREE.PerspectiveCamera {
+    return this._viewer.getCamera();
+  }
+
+  private get viewerRenderer(): THREE.WebGLRenderer {
+    return this._viewer.renderer;
+  }
+
+  constructor(viewer: Cognite3DViewer) {
     super();
-    this._viewerDomElement = viewerDomElement;
-    this._renderer = renderer;
-    this._camera = camera;
+
+    this._onSceneRenderedHandler = this.onSceneRendered.bind(this);
+    this._viewer = viewer;
+    this._viewer.on('sceneRendered', this._onSceneRenderedHandler);
   }
 
   /**
+   * Removes all elements and detaches from the viewer.
    * @override
    */
   dispose(): void {
-    for (const element of this._htmlOverlays.keys()) {
-      this.remove(element);
-    }
+    this._viewer.off('sceneRendered', this._onSceneRenderedHandler);
+    this.clear();
     super.dispose();
   }
 
@@ -71,15 +122,16 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     if (htmlElement.style.position !== 'absolute') {
       throw new Error('htmlElement style must have a position of absolute');
     }
-    if (this._viewerDomElement.contains(htmlElement)) {
+
+    if (this.viewerDomElement.contains(htmlElement)) {
       throw new Error(`Element is already attached to viewer`);
     }
 
-    this._viewerDomElement.appendChild(htmlElement);
+    this.viewerDomElement.appendChild(htmlElement);
     const element: HtmlOverlayElement = { position3D, options };
     this._htmlOverlays.set(htmlElement, element);
 
-    this.notifyRendered(); // Force update
+    this.forceUpdate();
   }
 
   /**
@@ -88,25 +140,36 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    */
   remove(htmlElement: HTMLElement) {
     this.ensureNotDisposed();
-    if (!this._viewerDomElement.contains(htmlElement) || !this._htmlOverlays.has(htmlElement)) {
+    if (!this.viewerDomElement.contains(htmlElement) || !this._htmlOverlays.has(htmlElement)) {
       throw new Error(`Element is not attached to viewer`);
     }
-    this._viewerDomElement.removeChild(htmlElement);
+    this.viewerDomElement.removeChild(htmlElement);
     this._htmlOverlays.delete(htmlElement);
   }
 
   /**
-   * Updates positions of all overlays.
-   * @internal
+   * Removes all attached HTML overlay elements.
    */
-  notifyRendered(): void {
+  clear() {
+    const overlays = Array.from(this._htmlOverlays.keys());
+    for (const element of overlays) {
+      this.remove(element);
+    }
+  }
+
+  /**
+   * Updates positions of all overlays. This is automatically managed and there
+   * shouldn't be any reason to trigger this unless the attached elements are
+   * modified externally.
+   */
+  forceUpdate(): void {
     this.ensureNotDisposed();
     if (this._htmlOverlays.size === 0) {
       return;
     }
 
-    const camera = this._camera;
-    const renderer = this._renderer;
+    const camera = this.viewerCamera;
+    const renderer = this.viewerRenderer;
     const { camPos, camNormal, point, nearPlane, farPlane, position2D } = this._preallocatedVariables;
 
     // Determine near/far plane to cull based on distance. Note! We don't cull outside the "walls"
@@ -145,5 +208,9 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         positionUpdatedCallback(htmlElement, position2D, position3D, distanceToCamera);
       }
     });
+  }
+
+  private onSceneRendered(): void {
+    this.forceUpdate();
   }
 }

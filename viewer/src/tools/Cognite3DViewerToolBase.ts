@@ -74,9 +74,4 @@ export abstract class Cognite3DViewerToolBase implements Cognite3DViewerTool {
       throw new Error('The tool has been disposed');
     }
   }
-
-  /**
-   * @internal
-   */
-  abstract notifyRendered(): void;
 }
