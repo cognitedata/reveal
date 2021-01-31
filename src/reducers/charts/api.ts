@@ -1,5 +1,6 @@
 /* eslint-disable no-alert */
 
+import subDays from 'date-fns/subDays';
 import { toast } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { nanoid } from '@reduxjs/toolkit';
@@ -53,7 +54,7 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
     name: prompt('Name your chart', 'New Chart') || 'New Chart',
     timeSeriesCollection: [],
     workflowCollection: [],
-    dateFrom: new Date().toJSON(),
+    dateFrom: subDays(new Date(), 30).toJSON(),
     dateTo: new Date().toJSON(),
   };
 
