@@ -136,6 +136,10 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     const steps = getStepsFromWorkflow(workflow);
     // console.log('Running workflow');
 
+    if (!steps.length) {
+      return;
+    }
+
     const computation = {
       steps,
       start_time: new Date(chart.dateFrom).getTime(),

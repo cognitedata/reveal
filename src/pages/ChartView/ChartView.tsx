@@ -107,6 +107,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       const steps = getStepsFromWorkflow(flow);
       // console.log('Running workflow');
 
+      if (!steps.length) {
+        return;
+      }
+
       const computation = {
         steps,
         start_time: new Date(chart.dateFrom).getTime(),
