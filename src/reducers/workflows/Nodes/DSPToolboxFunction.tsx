@@ -151,27 +151,29 @@ export const configPanel = ({
         />
       )}
 
-      {Object.keys(functionData?.toolFunction?.parameters || {}).length &&
-        Object.keys(functionData?.toolFunction?.parameters).map((paramName) => {
-          return (
-            <div style={{ marginTop: 8 }}>
-              <h4>{paramName}</h4>
+      {functionData?.toolFunction?.parameters?.length &&
+        (functionData?.toolFunction?.parameters || []).map(
+          ({ param }: { param: string }) => {
+            return (
+              <div style={{ marginTop: 8 }}>
+                <h4>{param}</h4>
 
-              <Input
-                id={paramName}
-                value={functionData[paramName] || ''}
-                onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
-                  onUpdateNode({
-                    functionData: {
-                      ...node.functionData,
-                      [paramName]: Number(newValue.target.value),
-                    },
-                  });
-                }}
-              />
-            </div>
-          );
-        })}
+                <Input
+                  id={param}
+                  value={functionData[param] || ''}
+                  onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
+                    onUpdateNode({
+                      functionData: {
+                        ...node.functionData,
+                        [param]: Number(newValue.target.value),
+                      },
+                    });
+                  }}
+                />
+              </div>
+            );
+          }
+        )}
     </div>
   );
 };

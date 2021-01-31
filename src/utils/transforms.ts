@@ -7,7 +7,10 @@ export type DSPFunction = {
   op: string;
   n_inputs: number;
   n_outputs: number;
-  parameters: Record<string, string>;
+  parameters: {
+    param: string;
+    type: string;
+  }[];
   type_info: string[][];
 };
 
@@ -41,11 +44,11 @@ export function fromDspFunctionToConfig(
       };
     });
 
-  const parameters = Object.keys(dspFunction.parameters).map((param) => {
+  const parameters = dspFunction.parameters.map(({ param, type }) => {
     return {
       name: param,
       field: param,
-      types: [getBlockTypeFromParameterType(dspFunction.parameters[param])],
+      types: [getBlockTypeFromParameterType(type)],
       pin: false,
     };
   });
