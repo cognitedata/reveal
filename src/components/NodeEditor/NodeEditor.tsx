@@ -134,7 +134,10 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     }
 
     const steps = getStepsFromWorkflow(workflow);
-    // console.log('Running workflow');
+
+    /* eslint-disable no-console */
+    console.log('Running workflow');
+    /* eslint-enable no-console */
 
     if (!steps.length) {
       return;
@@ -150,7 +153,9 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
       ),
     };
 
-    // console.log({ computation });
+    /* eslint-disable no-console */
+    console.log({ computation });
+    /* eslint-enable no-console */
 
     const functions = await sdk.get<{ items: CogniteFunction[] }>(
       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
@@ -191,16 +196,22 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
       }
     );
 
-    await waitOnFunctionComplete(tenant, simpleCalc.id, functionCall.data.id);
+    const status = await waitOnFunctionComplete(
+      tenant,
+      simpleCalc.id,
+      functionCall.data.id
+    );
 
     const functionResult = await sdk.get<{ response: Record<string, any> }>(
       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
     );
 
-    // console.log({
-    //   status,
-    //   result: functionResult.data,
-    // });
+    /* eslint-disable no-console */
+    console.log({
+      status,
+      result: functionResult.data,
+    });
+    /* eslint-enable no-console */
 
     if (functionResult.data.response.error) {
       dispatch(

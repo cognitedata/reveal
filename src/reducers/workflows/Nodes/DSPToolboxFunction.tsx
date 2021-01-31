@@ -72,7 +72,11 @@ export const configPanel = ({
         }
       );
 
-      await waitOnFunctionComplete(tenant, getAllOps.id, functionCall.data.id);
+      const status = await waitOnFunctionComplete(
+        tenant,
+        getAllOps.id,
+        functionCall.data.id
+      );
 
       const functionResult = await sdk.get<{ response: Record<string, any> }>(
         `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/calls/${functionCall.data.id}/response`
@@ -81,10 +85,12 @@ export const configPanel = ({
       const availableOperations =
         functionResult.data.response.all_available_ops;
 
-      // console.log({
-      //   status,
-      //   availableOperations,
-      // });
+      /* eslint-disable no-console */
+      console.log({
+        status,
+        availableOperations,
+      });
+      /* eslint-enable no-console */
 
       setAvailableFunctions(availableOperations);
       setLoading(false);
