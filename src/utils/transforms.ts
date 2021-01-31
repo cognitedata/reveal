@@ -117,10 +117,51 @@ export function getInputFromNode(node: StorableNode, allNodes: StorableNode[]) {
 }
 
 export function getStepsFromWorkflow(workflow: Workflow) {
+  const outputNode = workflow.nodes.find(
+    (node) => !node.outputPins || node.outputPins.length === 0
+  );
+
+  if (!outputNode) {
+    return [];
+  }
+
+  const validNodes: StorableNode[] = [];
+
   /**
-   * TODO: Filter out nodes that aren't somehow connected to the output (disjoint)
+   * Resolve connected nodes from the output node (end) and backwards
    */
-  const steps = workflow.nodes
+  function resolveInputNodes(node: StorableNode) {
+    node.inputPins.forEach((inputPin: any) => {
+      const inputNodeConnections = Object.values(workflow.connections).filter(
+        (conn) =>
+          conn.inputPin.nodeId === node.id &&
+          conn.inputPin.pinId === inputPin.id
+      );
+
+      if (!inputNodeConnections.length) {
+        return;
+      }
+
+      const inputNodes = inputNodeConnections
+        .map((inputNodeConnection) => {
+          return workflow.nodes.find(
+            (nd) => nd.id === inputNodeConnection.outputPin.nodeId
+          )!;
+        })
+        .filter(Boolean);
+
+      if (!inputNodes.length) {
+        return;
+      }
+
+      inputNodes.forEach((inputNode) => validNodes.unshift(inputNode));
+      inputNodes.forEach(resolveInputNodes);
+    });
+  }
+
+  resolveInputNodes(outputNode!);
+
+  const steps = validNodes
     .filter((node) => node.functionEffectReference === 'TOOLBOX_FUNCTION')
     .map((node, i, allNodes) => {
       const inputs = node.inputPins

@@ -9,7 +9,7 @@ import { getEntryColor } from 'utils/colors';
 import workflowSlice from './slice';
 import { Workflow } from './types';
 
-import { node as WorkspaceTimeSeriesNode } from './Nodes/WorkspaceTimeSeries';
+import { node as TimeSeriesReferenceNode } from './Nodes/TimeSeriesReference';
 import { node as OutputSeriesNode } from './Nodes/OutputSeries';
 
 export const fetchWorkflowsForChart = (
@@ -106,7 +106,7 @@ export const createWorkflowFromTimeSeries = (
   }
 
   const workflowId = nanoid();
-  const inputNodeId = `${WorkspaceTimeSeriesNode.subtitle}-${nanoid()}`;
+  const inputNodeId = `${TimeSeriesReferenceNode.subtitle}-${nanoid()}`;
   const outputNodeId = `${OutputSeriesNode.subtitle}-${nanoid()}`;
   const connectionId = nanoid();
 
@@ -116,7 +116,7 @@ export const createWorkflowFromTimeSeries = (
     nodes: [
       {
         id: inputNodeId,
-        ...WorkspaceTimeSeriesNode,
+        ...TimeSeriesReferenceNode,
         title: chartTimeSeries?.name,
         subtitle: `DATAPOINTS (${chartTimeSeries?.id})`,
         functionData: {
@@ -141,7 +141,7 @@ export const createWorkflowFromTimeSeries = (
         },
         outputPin: {
           nodeId: inputNodeId,
-          pinId: WorkspaceTimeSeriesNode.outputPins[0].id,
+          pinId: TimeSeriesReferenceNode.outputPins[0].id,
         },
       },
     },
