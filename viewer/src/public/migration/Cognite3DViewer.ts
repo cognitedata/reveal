@@ -30,7 +30,7 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { DisposedDelegate, SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
@@ -50,7 +50,6 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
-import { DisposedDelegate } from '../../utilities/DisposedDelegate';
 
 /**
  * @example

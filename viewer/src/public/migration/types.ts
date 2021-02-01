@@ -190,6 +190,11 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 /**
+ * Delegate for disposal events.
+ */
+export type DisposedDelegate = () => void;
+
+/**
  * Delegate for rendering events.
  * @module @cognite/reveal
  * @see {@link Cognite3DViewer.on}.
