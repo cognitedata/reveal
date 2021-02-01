@@ -9,7 +9,7 @@ import { assertNever } from '../utilities/assertNever';
  * @internal
  */
 export abstract class Cognite3DViewerToolBase {
-  private readonly _disposedListeners = new Set<DisposedDelegate>();
+  private readonly _disposedListeners = new Set<() => void>();
   private _disposed = false;
 
   /**
@@ -19,7 +19,7 @@ export abstract class Cognite3DViewerToolBase {
    * @param handler
    * @internal
    */
-  on(event: 'disposed', handler: DisposedDelegate) {
+  on(event: 'disposed', handler: () => void) {
     switch (event) {
       case 'disposed':
         if (this._disposedListeners.has(handler)) {
@@ -38,7 +38,7 @@ export abstract class Cognite3DViewerToolBase {
    * @param event
    * @param handler
    */
-  off(event: 'disposed', handler: DisposedDelegate) {
+  off(event: 'disposed', handler: () => void) {
     switch (event) {
       case 'disposed':
         const wasRemoved = this._disposedListeners.delete(handler);

@@ -50,7 +50,7 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
-import { DisposedDelegate } from './Cognite3DViewerTool';
+import { DisposedDelegate } from '../../utilities/DisposedDelegate';
 
 /**
  * @example
