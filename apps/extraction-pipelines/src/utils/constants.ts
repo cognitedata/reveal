@@ -28,3 +28,10 @@ export const SERVER_ERROR_TITLE: Readonly<string> =
   'Your changes have not been saved';
 export const SERVER_ERROR_CONTENT: Readonly<string> =
   'Please try again later, or contact you system administrator.';
+export const NOTIFICATION_DIALOG_TITLE: Readonly<string> =
+  'One contact with email notification';
+export const NOTIFICATION_DIALOG_CONTENT: Readonly<string> =
+  'The integration must have at least one contact with email notification activated. This is in case of failures with the integration. If you would like to change contacts click edit to update.';
+
+export const REMOVE_DIALOG_TEXT_PART: Readonly<string> =
+  'Are you sure you want to remove';

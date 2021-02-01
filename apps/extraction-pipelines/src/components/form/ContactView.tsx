@@ -1,8 +1,9 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { ArrayField } from 'react-hook-form';
 import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 import { createUpdateSpec } from 'utils/contactsUtils';
+import { isValidContactListAfterRemove } from 'utils/validation/contactValidation';
 import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { useAppEnv } from '../../hooks/useAppEnv';
@@ -12,13 +13,16 @@ import {
   CANCEL,
   EMAIL_NOTIFICATION_TOOLTIP,
   REMOVE,
+  EDIT,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
+  NOTIFICATION_DIALOG_TITLE,
+  NOTIFICATION_DIALOG_CONTENT,
+  REMOVE_DIALOG_TEXT_PART,
 } from '../../utils/constants';
 import { GridRowStyle } from '../../styles/grid/StyledGrid';
 import { SwitchWithRef } from '../inputs/SwitchRef';
 import { ContactEdit } from './ContactEdit';
-import { ConfirmDialogButton } from '../buttons/ConfirmDialogButton';
 import MessageDialog from '../buttons/MessageDialog';
 
 interface OwnProps {
@@ -29,7 +33,7 @@ interface OwnProps {
 
 type Props = OwnProps;
 function confirmRemoveContact(contact?: string) {
-  return `Are you sure you want to remove ${
+  return `${REMOVE_DIALOG_TEXT_PART} ${
     contact ? `${contact} as contact?` : 'contact?'
   }`;
 }
@@ -47,6 +51,9 @@ export const ContactView: FunctionComponent<Props> = ({
   const { mutate } = useDetailsUpdate();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
+  const [showNotValidContacts, setShowNotValidContacts] = useState(false);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+
   const isNew =
     integration?.contacts[index]?.name === '' &&
     integration?.contacts[index]?.email === '';
@@ -101,6 +108,82 @@ export const ContactView: FunctionComponent<Props> = ({
     setIsEdit(false);
   };
 
+  const onClickRemove = () => {
+    if (!isValidContactListAfterRemove(integration, index)) {
+      setShowNotValidContacts(true);
+    } else {
+      setShowRemoveDialog(true);
+    }
+  };
+
+  const renderRemoveButton = () => {
+    if (showNotValidContacts) {
+      return (
+        <MessageDialog
+          visible={showNotValidContacts}
+          handleClickError={() => {
+            setShowNotValidContacts(false);
+          }}
+          title={NOTIFICATION_DIALOG_TITLE}
+          contentText={NOTIFICATION_DIALOG_CONTENT}
+        >
+          <Button
+            onClick={onClickRemove}
+            data-testid={`${ContactBtnTestIds.REMOVE_BTN}${index}`}
+          >
+            {REMOVE}
+          </Button>
+        </MessageDialog>
+      );
+    }
+    if (errorVisible) {
+      return (
+        <MessageDialog
+          visible={errorVisible}
+          handleClickError={handleClickError}
+          title={SERVER_ERROR_TITLE}
+          contentText={SERVER_ERROR_CONTENT}
+        >
+          <Button
+            onClick={onClickRemove}
+            data-testid={`${ContactBtnTestIds.REMOVE_BTN}${index}`}
+          >
+            {REMOVE}
+          </Button>
+        </MessageDialog>
+      );
+    }
+    if (showRemoveDialog) {
+      return (
+        <Popconfirm
+          visible={showRemoveDialog}
+          onConfirm={onRemoveClick}
+          content={confirmRemoveContact(integration?.contacts[index]?.name)}
+          onCancel={() => setShowRemoveDialog(false)}
+          cancelText={CANCEL}
+          okText={REMOVE}
+          placement="top"
+          icon="Warning"
+        >
+          <Button
+            onClick={onClickRemove}
+            data-testid={`${ContactBtnTestIds.REMOVE_BTN}${index}`}
+          >
+            {REMOVE}
+          </Button>
+        </Popconfirm>
+      );
+    }
+    return (
+      <Button
+        onClick={onClickRemove}
+        data-testid={`${ContactBtnTestIds.REMOVE_BTN}${index}`}
+      >
+        {REMOVE}
+      </Button>
+    );
+  };
+
   const renderView = (innerIsEdit: boolean) => {
     if (innerIsEdit) {
       return <></>;
@@ -147,23 +230,7 @@ export const ContactView: FunctionComponent<Props> = ({
         >
           <EmailLink email={integration?.contacts[index]?.email} />
         </AlignedSpan>
-        <MessageDialog
-          visible={errorVisible}
-          handleClickError={handleClickError}
-          title={SERVER_ERROR_TITLE}
-          contentText={SERVER_ERROR_CONTENT}
-        >
-          <ConfirmDialogButton
-            primaryText={REMOVE}
-            cancelText={CANCEL}
-            okText={REMOVE}
-            onClick={onRemoveClick}
-            popConfirmContent={confirmRemoveContact(
-              integration?.contacts[index]?.name
-            )}
-            testId={`remove-contact-btn-${index}`}
-          />
-        </MessageDialog>
+        {renderRemoveButton()}
         <Button
           onClick={onEditClick}
           type="primary"
@@ -173,7 +240,7 @@ export const ContactView: FunctionComponent<Props> = ({
           aria-controls="name email"
           data-testid={`${ContactBtnTestIds.EDIT_BTN}${index}`}
         >
-          Edit
+          {EDIT}
         </Button>
       </GridRowStyle>
     );

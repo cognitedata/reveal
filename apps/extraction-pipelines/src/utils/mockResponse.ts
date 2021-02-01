@@ -57,6 +57,7 @@ const mockResponseV2 = {
         {
           email: 'Katinka.Odner@itera.no',
           name: 'Katinka Odner',
+          sendNotification: true,
         },
       ],
       metadata: {
