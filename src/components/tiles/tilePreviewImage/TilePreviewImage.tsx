@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { TilePreview } from 'components/tiles/elements';
+import { ImgPreview } from 'components/tiles/elements';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { Icon } from '@cognite/cogs.js';
 
@@ -40,13 +40,13 @@ const TilePreviewImage: React.FC<Props> = ({ imageFileId }) => {
   ]);
 
   return (
-    <TilePreview>
+    <ImgPreview>
       {loading ? (
         <Icon type="Loading" />
       ) : (
         <img src={imgUrl} alt="Board preview" />
       )}
-    </TilePreview>
+    </ImgPreview>
   );
 };
 

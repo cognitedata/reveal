@@ -56,10 +56,6 @@ export const TilePreview = styled.div`
   height: 184px;
   background-color: var(--cogs-white);
   padding: 12px;
-  & img {
-    max-width: 100%;
-    max-height: 100%;
-  }
 `;
 
 export const LargeTileContainer = styled(TileBasic)`
@@ -75,10 +71,20 @@ export const LargeTilePreview = styled.div`
   height: 578px;
   width: 952px;
   background-color: var(--cogs-white);
+  justify-content: center;
 `;
 
 export const StyledTitle = styled(Title)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+export const ImgPreview = styled.div`
+  display: flex;
+  max-width: 100%;
+  max-height: 100%;
+  & img {
+    max-width: 100%;
+    max-height: 100%;
+  }
 `;
