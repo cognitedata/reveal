@@ -7,17 +7,24 @@ import {
   ThreeModule,
   Modules,
   NodeVisualizer,
+  NodeVisualizerProps,
+  ExplorerPropType,
+  VisualizerToolbarProps,
+  mapMetadataKeys,
+  MetadataKeyMapping,
+  WellboreMetadata,
 } from '@cognite/node-visualizer';
 import { Provider } from 'react-redux';
 import styled from 'styled-components';
 import { CogniteGeospatialClient } from '@cognite/geospatial-sdk-js';
-import {
-  NodeVisualizerProps,
-  ExplorerPropType,
-  VisualizerToolbarProps,
-} from '../../src';
 
 import { store } from './node-visualizer.store';
+import {
+  well,
+  mappedWellbore,
+  trajectory,
+  trajectoryData,
+} from '../../src/__tests__/Solutions/BP/subsurface.mock';
 
 const StyledRow = styled(Row)`
   margin-bottom: 5px;
@@ -285,3 +292,43 @@ export const NodeVisualizerExplorer: React.FC<ExplorerPropType> = (_) => <></>;
 export const NodeVisualizerToolbar: React.FC<VisualizerToolbarProps> = (_) => (
   <></>
 );
+
+export const NodeVisualiserWithWells = () => {
+  const mapping: MetadataKeyMapping<WellboreMetadata> = {
+    elevation_type: 'e_type',
+    elevation_value: 'e_value',
+    elevation_value_unit: 'e_value_unit',
+  };
+  const modules = Modules.instance;
+  modules.clearModules();
+  modules.add(new ThreeModule());
+
+  const subSurfaceModule = new SubSurfaceModule();
+
+  subSurfaceModule.addWellData(
+    {
+      wells: [well],
+      wellBores: [mappedWellbore],
+      trajectories: [trajectory],
+      trajectoryData: [trajectoryData],
+    },
+    {
+      wellbore: {
+        datasource: (wellboreData) => mapMetadataKeys(mapping, wellboreData),
+      },
+    }
+  );
+  modules.add(subSurfaceModule);
+
+  modules.install();
+
+  const root = modules.createRoot();
+
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
+      </Provider>
+    </div>
+  );
+};

@@ -1,19 +1,12 @@
 import { BaseModule } from '@/Core/Module/BaseModule';
 import { BaseRootNode } from '@/Core/Nodes/BaseRootNode';
 import { SubSurfaceRootNode } from '@/SubSurface/Trees/SubSurfaceRootNode';
-import { BPData } from '@/Solutions/BP/BPData';
+import { BPData, BPDataOptions, MetadataTransformationMap } from '@/Solutions/BP/BPData';
 import { WellNodesCreator } from '@/Solutions/BP/Creators/WellNodesCreator';
 import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
 import { SeismicCubeNode } from '@/SubSurface/Seismic/Nodes/SeismicCubeNode';
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
-import { IWell } from '@/SubSurface/Wells/Interfaces/IWell';
-import { IWellBore } from '@/SubSurface/Wells/Interfaces/IWellBore';
-import { ITrajectory } from '@/SubSurface/Wells/Interfaces/ITrajectory';
-import { ITrajectoryRows } from '@/SubSurface/Wells/Interfaces/ITrajectoryRows';
-import { IRiskEvent } from '@/SubSurface/Wells/Interfaces/IRisk';
-import { ILog } from '@/SubSurface/Wells/Interfaces/ILog';
-import { ICasing } from '@/SubSurface/Wells/Interfaces/ICasing';
 import { PointsNode } from '@/SubSurface/Basics/PointsNode';
 import { Points } from '@/Core/Geometry/Points';
 import { Vector3 } from '@/Core/Geometry/Vector3';
@@ -79,18 +72,8 @@ export class SubSurfaceModule extends BaseModule {
   // INSTANCE METHODS: Add data
   //= =================================================
 
-  public addWellData(data: {
-    wells: IWell[],
-    wellBores: IWellBore[],
-    trajectories: ITrajectory[],
-    trajectoryData?: ITrajectoryRows[]
-    ndsEvents?: IRiskEvent[],
-    nptEvents?: IRiskEvent[],
-    logs?: { [key: number]: ILog[] } | {},
-    casings?: ICasing[],
-  }) {
-    const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings } = data;
-    this.wellData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings);
+  public addWellData(data: BPDataOptions, transformations?: MetadataTransformationMap) {
+    this.wellData = new BPData(data, transformations);
   }
 
   public addSeismicCube(client: CogniteSeismicClient, fileId: string) {

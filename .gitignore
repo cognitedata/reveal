@@ -40,3 +40,4 @@ src/App
 .env
 debug.log
 src/App
+/storybook-static

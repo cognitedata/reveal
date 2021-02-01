@@ -2,11 +2,32 @@ import { Util } from "@/Core/Primitives/Util";
 import { IWell, WellId } from "@/SubSurface/Wells/Interfaces/IWell";
 import { ITrajectory, TrajectoryId } from "@/SubSurface/Wells/Interfaces/ITrajectory";
 import { ITrajectoryColumnIndices, ITrajectoryRows } from "@/SubSurface/Wells/Interfaces/ITrajectoryRows";
-import { IWellBore, WellBoreId } from "@/SubSurface/Wells/Interfaces/IWellBore";
+import { IWellBore, IWellBoreMeta, WellBoreId } from "@/SubSurface/Wells/Interfaces/IWellBore";
 import { IRiskEvent } from "@/SubSurface/Wells/Interfaces/IRisk";
 import { ILog } from "@/SubSurface/Wells/Interfaces/ILog";
 import { ICasing } from "@/SubSurface/Wells/Interfaces/ICasing";
+import { Metadata, validateMetadata } from "@/Solutions/BP/MetadataTransform";
 // Represent BP data
+
+export type DataTransform<T> = (data: Metadata) => T;
+export interface MetadataTransformation<T> {
+  [datasource: string]: DataTransform<T>
+}
+export interface MetadataTransformationMap {
+  wellbore?: MetadataTransformation<IWellBoreMeta>
+}
+
+export interface BPDataOptions {
+  wells: IWell[],
+  wellBores: IWellBore[],
+  trajectories: ITrajectory[],
+  trajectoryData?: ITrajectoryRows[],
+  ndsEvents?: IRiskEvent[],
+  nptEvents?: IRiskEvent[],
+  logs?: { [key: number]: ILog[] },
+  casings?: ICasing[]
+}
+
 export class BPData {
     private _wellMap = new Map<WellId, IWell>();
 
@@ -28,24 +49,27 @@ export class BPData {
 
     // Pass BP data coming from the BP application
     constructor(
-      wells: IWell[],
-      wellBores: IWellBore[],
-      trajectories: ITrajectory[],
-      trajectoryData?: ITrajectoryRows[],
-      ndsEvents?: IRiskEvent[],
-      nptEvents?: IRiskEvent[],
-      logs?: { [key: number]: ILog[] },
-      casing?: ICasing[]
+      {
+        wells,
+        wellBores,
+        trajectories,
+        trajectoryData,
+        ndsEvents,
+        nptEvents,
+        logs,
+        casings,
+      }: BPDataOptions,
+      { wellbore }: MetadataTransformationMap = {}
     ) {
       this.generateWellMap(wells);
-      this.generateBoreToWellMap(wellBores);
+      this.generateBoreToWellMap(wellBores, wellbore);
       this.generateTrajectoryMap(trajectories);
       this.generateTrajectoryDataColumnIndexes(trajectoryData);
       this.generateTrajectoryDataMap(trajectoryData);
       this.generateWellBoreRiskEventMap(this.wellBoreToNDSEventsMap, ndsEvents);
       this.generateWellBoreRiskEventMap(this.wellBoreToNPTEventsMap, nptEvents);
       this._wellBoreToLogsMap = logs;
-      this.generateWellBoreToCasingDataMap(casing);
+      this.generateWellBoreToCasingDataMap(casings);
     }
 
     //= =================================================
@@ -60,18 +84,49 @@ export class BPData {
       }
     }
 
-    private generateBoreToWellMap(wellBores: IWellBore[]) {
+    private generateBoreToWellMap(wellBores: IWellBore[], metadataTransform?: MetadataTransformation<IWellBoreMeta>) {
       for (const wellBore of wellBores) {
-        const valid = this.validateWellBore(wellBore);
+        const mappedWellBore = this.transformMetadata({
+          data: wellBore,
+          transformers: metadataTransform,
+          type: 'wellbore'
+        });
+        const valid = this.validateWellBore(mappedWellBore);
         if (valid) {
-          this._wellBoreToWellMap.set(wellBore.id, { wellId: wellBore.parentId, data: wellBore });
+          this._wellBoreToWellMap.set(wellBore.id, { wellId: wellBore.parentId, data: mappedWellBore });
         }
       }
     }
 
+    private transformMetadata<T extends Metadata, K extends { metadata: T }>(
+      {
+        data,
+        transformers,
+        type
+      }: {
+        data: K,
+        type: keyof MetadataTransformationMap
+        transformers?: MetadataTransformation<T>,
+      }): K {
+      const { metadata }  = data;
+      const isValid = validateMetadata(metadata, type);
+      let transformed = { ...metadata };
+      let hasBeenTransformed = false;
+
+      if (!isValid && transformers) {
+        hasBeenTransformed = Object.keys(transformers).some(key => {
+          transformed = transformers[key](metadata);
+
+          return validateMetadata(transformed, type)
+        });
+      }
+
+      return { ...data, metadata: hasBeenTransformed ? transformed : metadata };
+    }
+
     private generateTrajectoryMap(trajectories: ITrajectory[]) {
       if (!trajectories || !trajectories.length) {
-        // tslint:disable-next-line:no-console
+
         console.warn("trajectories are empty!");
         return;
       }
@@ -84,14 +139,14 @@ export class BPData {
 
     private generateTrajectoryDataColumnIndexes(trajectoryData?: ITrajectoryRows[]) {
       if (!trajectoryData || !trajectoryData.length) {
-        // tslint:disable-next-line:no-console
+
         console.warn("Trajectory Data are empty, Cannot create Column Indexes!");
         return;
       }
       const columnIndexes = this.trajectoryDataColumnIndexes;
       const { columns } = trajectoryData[0];
       if (!columns || !columns.length) {
-        // tslint:disable-next-line:no-console
+
         console.warn("First trajectory data item does not contain columns", trajectoryData);
         return;
       }
@@ -103,7 +158,7 @@ export class BPData {
 
     private generateTrajectoryDataMap(trajectoryData?: ITrajectoryRows[]) {
       if (!trajectoryData || !trajectoryData.length) {
-        // tslint:disable-next-line:no-console
+
         console.warn("Trajectory Data are empty");
         return;
       }
@@ -136,7 +191,7 @@ export class BPData {
 
     private generateWellBoreToCasingDataMap(casings?: ICasing[]) {
       if (!casings || !casings.length) {
-        // tslint:disable-next-line:no-console
+
         console.warn("casings are empty!");
         return;
       }
@@ -164,18 +219,18 @@ export class BPData {
         return true;
       }
 
-      // tslint:disable-next-line:no-console
       console.error("Well cannot have empty or invalid coordinates!", well);
       return false;
-
     }
 
     private validateWellBore(wellBore: IWellBore): boolean {
-      if (this.wellMap.has(wellBore.parentId)) {
+      if (
+        this.wellMap.has(wellBore.parentId) &&
+        validateMetadata(wellBore.metadata, 'wellbore')
+      ) {
         return true;
       }
 
-      // tslint:disable-next-line:no-console
       console.warn("Orphan WellBore, Parent Well not found!", wellBore);
       return false;
 
@@ -187,15 +242,13 @@ export class BPData {
         return true;
       }
 
-      // tslint:disable-next-line:no-console
+
       console.warn("Orphan Trajectory, Parent Well Bore not found!", trajectory);
       return false;
-
     }
 
     private validateTrajectoryData(trajectoryData: ITrajectoryRows): boolean {
       if (!trajectoryData.rows || !trajectoryData.rows.length) {
-        // tslint:disable-next-line:no-console
         console.warn("Trajectory Data Rows are empty", trajectoryData);
         return false;
       }
@@ -203,15 +256,12 @@ export class BPData {
         return true;
       }
 
-      // tslint:disable-next-line:no-console
       console.warn("Orphan Trajectory Data Item, Parent Trajectory not found!", trajectoryData);
       return false;
-
     }
 
     private validateRiskEvent(event: IRiskEvent, wellBoreIds: any[]): boolean {
       if (!wellBoreIds || !wellBoreIds.length) {
-        // tslint:disable-next-line:no-console
         console.warn("Risk Event Bore Id not found, AssetIds are empty!", event);
         return false;
       }
@@ -219,10 +269,8 @@ export class BPData {
         return true;
       }
 
-      // tslint:disable-next-line:no-console
       console.warn("Orphan Risk Event, Parent Bore not found!", event);
       return false;
-
     }
 
     private validateCasing(casing: ICasing): boolean {
@@ -231,10 +279,8 @@ export class BPData {
         return true;
       }
 
-      // tslint:disable-next-line:no-console
       console.warn("Orphan Casing, Parent Well Bore not found!", casing);
       return false;
-
     }
 
     //= =================================================

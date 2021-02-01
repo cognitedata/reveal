@@ -6,6 +6,7 @@ import {
   NodeVisualizerToolbar,
   NodeVisualizerWrapper,
   AuthWrapperHorizons,
+  NodeVisualiserWithWells,
 } from './node-visualizer.helper';
 import { Explorer, Toolbar } from './components';
 
@@ -120,6 +121,49 @@ const client = CogniteGeospatialClient({
 });
 
 module.addHorizonData(client, ['horizon_external_id']);
+```
+
+## Map wellbores metadata keys
+
+<Story name="Map wellbores metadata">
+  <NodeVisualiserWithWells />
+</Story>
+
+You can map wellbores metadata in case if it has different structure then `IWellBoreMeta`:
+```typescript
+import { mapMetadataKeys } from '@cognite/node-visualizer';
+import type { MetadataKeyMapping, WellboreMetadata, IWellBore } from '@cognite/node-visualizer';
+
+const mapping: MetadataKeyMapping<WellboreMetadata> = {
+  elevation_type: 'e_type',
+  elevation_value: 'some_value',
+  elevation_value_unit: 'some_another_value_unit',
+  bh_x_coordinate: 'x_coordinate',
+  bh_y_coordinate: 'y_coordinate',
+};
+const mappingFunction:  = (data: IWellBore) => mapMetadataKeys(mapping, data);
+const subSurfaceModule = new SubSurfaceModule();
+subSurfaceModule.addWellData({
+  well: [...wells],
+  wellbores: [...wellbores],
+  trajectories: [...trajectories]
+}, {
+  wellbore: {
+    key1: mappingFunction,
+    // key2: <another function to modify metadata>
+  }
+});
+```
+When you provide a second argument as `{ wellbore: { ... } }` it means,
+that module is going to use transform functions one by one in case of receiving wellbore with invalid
+metadata structure (some required keys from `WellboreMetadata` might be undefined). If it fails to
+transform metadata to have `WellboreMetadata` keys in place, that wellbore will not be added to the data structure.
+
+`mapMetadataKeys` is a function which can help with metadata mapping, but you feel free to
+provide any own function to handle this logic. Main requirement is to implement expected type:
+
+```typescript
+(data: Metadata) => IWellBoreMeta
 ```
 
 

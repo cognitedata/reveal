@@ -2,34 +2,15 @@
  * Created by phil on 5/12/20
  */
 
+import { Metadata, WellMetadata } from "@/Solutions/BP/MetadataTransform";
+
 /**
  * Overview
  * This is the interface for the Well object
  */
 export type WellId = number;
 
-export interface IWellMeta {
-  active_indicator: string;
-  basin_name: string;
-  country_name: string;
-  create_time: string;
-  create_user: string;
-  crs_epsg_orig: number | string;
-  crs_epsg_transform_orig: number | string;
-  current_crs_name: string;
-  current_operator: string;
-  on_off_shore: string;
-  operatorDiv: string;
-  spud_date: string;
-  state_name: string;
-  type: string;
-  water_depth: string;
-  water_depth_unit: string;
-  well_legal_name: string;
-  well_remark: string;
-  x_coordinate: string;
-  y_coordinate: string;
-}
+export interface IWellMeta extends WellMetadata, Metadata {}
 
 export interface IWell {
   externalId: string;
