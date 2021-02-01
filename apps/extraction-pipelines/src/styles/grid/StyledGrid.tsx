@@ -96,6 +96,15 @@ export const MainSidePanelGrid = styled((props) => (
     height: calc(100vh - 9.5625rem);
   }
 `;
+export const MainPanelGrid = styled((props) => (
+  <div {...props}>{props.children}</div>
+))`
+  grid-area: main;
+  display: grid;
+  grid-template-columns: auto;
+  padding: 1rem;
+  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+`;
 
 export const SimpleGrid = styled.div`
   display: grid;

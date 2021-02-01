@@ -16,13 +16,31 @@ const LazyIntegration = React.lazy(
       /* webpackChunkName: "pnid_integration" */
     )
 );
+const LazyCreateIntegration = React.lazy(
+  () =>
+    import(
+      '../pages/create/CreateIntegration'
+      /* webpackChunkName: "pnid_integration" */
+    )
+);
+
 interface IntegrationsRoute {
   name: string;
   path: string;
   exact: boolean;
   component: React.LazyExoticComponent<React.FunctionComponent>;
+  next?: string;
 }
 export type RouterParams = { id: string };
+export const INTEGRATION = `integration`;
+const createIntegrationRoutes = [
+  {
+    name: 'Create integration',
+    path: `/:tenant/${INTEGRATIONS}/create`,
+    exact: true,
+    component: LazyCreateIntegration,
+  },
+];
 export const routingConfig: IntegrationsRoute[] = [
   {
     name: 'Integrations',
@@ -30,13 +48,15 @@ export const routingConfig: IntegrationsRoute[] = [
     exact: true,
     component: LazyIntegrations,
   },
+  ...createIntegrationRoutes,
   {
     name: 'Integration',
-    path: `/:tenant/${INTEGRATIONS}/:id`,
-    exact: false,
+    path: `/:tenant/${INTEGRATIONS}/${INTEGRATION}/:id`,
+    exact: true,
     component: LazyIntegration,
   },
 ];
+
 export const routesForBreadCrums = () => {
   return routingConfig.map(({ path, name }) => {
     return { path, name };

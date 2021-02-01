@@ -23,11 +23,16 @@ export const SAVE: Readonly<string> = 'Save';
 
 export const NO_META_DATA: Readonly<string> = 'No metadata registered';
 export const OK: Readonly<string> = 'OK';
+export const NEXT: Readonly<string> = 'Next';
 
 export const SERVER_ERROR_TITLE: Readonly<string> =
   'Your changes have not been saved';
 export const SERVER_ERROR_CONTENT: Readonly<string> =
   'Please try again later, or contact you system administrator.';
+
+export const CREATE_INTEGRATION_HEADING: Readonly<string> =
+  'Create integration';
+export const WIZARD_HEADING: Readonly<string> = 'Create integration wizard';
 export const NOTIFICATION_DIALOG_TITLE: Readonly<string> =
   'One contact with email notification';
 export const NOTIFICATION_DIALOG_CONTENT: Readonly<string> =
