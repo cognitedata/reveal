@@ -2,7 +2,7 @@ import { Water } from 'three/examples/jsm/objects/Water';
 import { resetViewerEventHandlers } from '../viewerUtilities';
 import * as THREE from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
-import { HtmlOverlayTool } from '@cognite/reveal/tools';
+import { HtmlOverlayTool } from '@cognite/reveal';
 
 const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal');
 
