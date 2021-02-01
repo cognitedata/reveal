@@ -3,13 +3,12 @@
  */
 
 import { assertNever } from '../utilities/assertNever';
-import { Cognite3DViewerTool, DisposedDelegate } from '../public/migration/Cognite3DViewerTool';
 
 /**
  * Base class for tools attaching to a {@see Cognite3DViewer}.
  * @internal
  */
-export abstract class Cognite3DViewerToolBase implements Cognite3DViewerTool {
+export abstract class Cognite3DViewerToolBase {
   private readonly _disposedListeners = new Set<DisposedDelegate>();
   private _disposed = false;
 
