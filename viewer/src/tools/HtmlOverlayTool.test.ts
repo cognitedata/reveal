@@ -51,6 +51,17 @@ describe('HtmlOverlayTool', () => {
     expect(() => helper.add(htmlElement, position)).toThrowError();
   });
 
+  test('add() accepts position set to absolute through cssText', () => {
+    // Arrange
+    const helper = new HtmlOverlayTool(viewer);
+    const htmlElement = document.createElement('div');
+    htmlElement.style.cssText = 'position: absolute;';
+    const position = new THREE.Vector3();
+
+    // Act & Assert
+    expect(() => helper.add(htmlElement, position)).not.toThrow();
+  });
+
   test('forceUpdate() places overlays correctly', () => {
     // Arrange
     const helper = new HtmlOverlayTool(viewer);
