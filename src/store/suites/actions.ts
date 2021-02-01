@@ -1,3 +1,4 @@
+import { FileLink, IdEither } from '@cognite/sdk';
 import { createAction } from 'typesafe-actions';
 import { SuitesTableActionTypes, Suite } from './types';
 
@@ -31,4 +32,14 @@ export const deleteSuiteTableRow = createAction(
 
 export const deleteSuiteTableRowError = createAction(
   SuitesTableActionTypes.SUITES_TABLE_ROW_DELETE_ERROR
+)<Error>();
+
+export const fetchImgUrls = createAction(
+  SuitesTableActionTypes.FETCH_IMG_URLS
+)<void>();
+export const fetchedImgUrls = createAction(
+  SuitesTableActionTypes.FETCHED_IMG_URLS
+)<(FileLink & IdEither)[]>();
+export const fetchImgUrlsError = createAction(
+  SuitesTableActionTypes.FETCH_IMG_URLS_ERROR
 )<Error>();

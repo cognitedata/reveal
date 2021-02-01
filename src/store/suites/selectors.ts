@@ -1,7 +1,7 @@
 import { StoreState } from 'store/types';
 import { LastVisited } from 'store/userSpace/types';
 import { findLastVisitedTimeByKey } from 'utils/userSpace';
-import { Board, Suite, SuitesTableState } from './types';
+import { Board, ImgUrls, Suite, SuitesTableState } from './types';
 
 export const getSuitesTableState = (state: StoreState): SuitesTableState => {
   const sortedSuites =
@@ -47,3 +47,6 @@ export const getLastVisitedBoards = (
     .splice(itemsToDisplay);
   return boards;
 };
+
+export const getImgUrlsState = (state: StoreState): ImgUrls =>
+  state.suitesTable.imageUrls;
