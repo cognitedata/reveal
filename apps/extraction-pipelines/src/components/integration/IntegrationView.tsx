@@ -13,10 +13,10 @@ import { Status } from '../../model/Status';
 import { TableHeadings } from '../table/IntegrationTableCol';
 import { DetailFieldNames } from '../../model/Integration';
 import { AbsoluteRelativeTime } from '../TimeDisplay/AbsoluteRelativeTime';
-import { uppercaseFirstWord } from '../../utils/primitivesUtils';
 import { TwoColGrid } from '../../styles/grid/StyledGrid';
 import ContactsList from '../ContactInformation/ContactsList';
 import { RouterParams } from '../../routing/RoutingConfig';
+import { MetaData } from './MetaData';
 
 const Wrapper = styled.div`
   overflow-y: auto;
@@ -57,8 +57,6 @@ const DetailWrapper = styled.section`
     width: fit-content;
     display: flex;
     flex-direction: column;
-    .info-label {
-    }
     > span:nth-child(2) {
       font-weight: bold;
     }
@@ -248,19 +246,10 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
         <span className="info-field">
           <span className="info-label">Meta data: </span>
           <TwoColGrid className="grid-2-col">
-            {Object.entries(integration.metadata).map(([k, v], index) => {
-              return (
-                <React.Fragment key={`integration-detail-meta-${k}-${v}`}>
-                  <label
-                    htmlFor={k}
-                    data-testid={`integration-detail-meta-label-${index}`}
-                  >
-                    {uppercaseFirstWord(k)}
-                  </label>
-                  <span id={k}>{v}</span>
-                </React.Fragment>
-              );
-            })}
+            <MetaData
+              testId="integration-metadata-"
+              metadata={integration.metadata}
+            />
           </TwoColGrid>
         </span>
       </MetadataWrapper>

@@ -8,7 +8,7 @@ import { ids } from '../../../cogs-variables';
 import { Integration } from '../../../model/Integration';
 import { useAppEnv } from '../../../hooks/useAppEnv';
 import { HeadingWithUnderline } from '../../../styles/StyledHeadings';
-import MetaData from './MetaData';
+import { MetaDataGrid } from './MetaDataGrid';
 import MainDetails from './MainDetails';
 import ContactsDetails from './ContactsDetails';
 import { IntegrationProvider } from '../../../hooks/details/IntegrationContext';
@@ -72,7 +72,7 @@ const DetailsModal: FunctionComponent<Props> = ({
             Integration details
           </ContentTitle>
           <MainDetails />
-          <MetaData />
+          <MetaDataGrid />
           <ContactsDetails />
         </ModalContent>
       </IntegrationProvider>

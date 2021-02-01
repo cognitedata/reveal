@@ -20,6 +20,8 @@ export const CANCEL: Readonly<string> = 'Cancel';
 export const CLOSE: Readonly<string> = 'Close';
 export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
+
+export const NO_META_DATA: Readonly<string> = 'No metadata registered';
 export const OK: Readonly<string> = 'OK';
 
 export const SERVER_ERROR_TITLE: Readonly<string> =

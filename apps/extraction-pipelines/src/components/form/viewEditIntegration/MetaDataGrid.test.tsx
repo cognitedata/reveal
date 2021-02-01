@@ -6,7 +6,7 @@ import { renderQueryCacheIntegration } from '../../../utils/test/render';
 import { render } from '../../../utils/test';
 import { getMockResponse } from '../../../utils/mockResponse';
 import { DetailFieldNames, Integration } from '../../../model/Integration';
-import MetaData from './MetaData';
+import { MetaDataGrid } from './MetaDataGrid';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -36,7 +36,7 @@ describe('MetaData', () => {
       metaData
     );
     act(() => {
-      render(<MetaData />, { wrapper: thisWrapper });
+      render(<MetaDataGrid />, { wrapper: thisWrapper });
     });
     expect(screen.queryByText('Test')).toBeInTheDocument();
     expect(screen.queryByText(testValue)).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('MetaData', () => {
       metaData
     );
     act(() => {
-      render(<MetaData />, { wrapper: thisWrapper });
+      render(<MetaDataGrid />, { wrapper: thisWrapper });
     });
     const renderedMetadata = screen.queryByText(DetailFieldNames.META_DATA);
     expect(renderedMetadata).toBeInTheDocument();
@@ -69,7 +69,7 @@ describe('MetaData', () => {
       metaData
     );
     act(() => {
-      render(<MetaData />, { wrapper: thisWrapper });
+      render(<MetaDataGrid />, { wrapper: thisWrapper });
     });
     const renderedMetadata = screen.queryByText(DetailFieldNames.META_DATA);
     expect(renderedMetadata).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('MetaData', () => {
       metaData
     );
     act(() => {
-      render(<MetaData />, { wrapper: thisWrapper });
+      render(<MetaDataGrid />, { wrapper: thisWrapper });
     });
     const renderedMetadata = screen.queryByText(DetailFieldNames.META_DATA);
     expect(renderedMetadata).toBeInTheDocument();
