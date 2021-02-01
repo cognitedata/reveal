@@ -3321,10 +3321,10 @@
   resolved "https://registry.yarnpkg.com/@types/retry/-/retry-0.12.0.tgz#2b35eccfcee7d38cd72ad99232fbd58bffb3c84d"
   integrity sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==
 
-"@types/single-spa-react@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/single-spa-react/-/single-spa-react-3.0.0.tgz#4ef4b2f85b727143d5b858b007fde32a75dad4a1"
-  integrity sha512-eWef7F8Dp6AuXUFCia4JSP+/ngKZYyoSROzAnOMUNn8kE+bCU9Rfuek9D2FL+wDfAhwHzTEp23O0n7t/tkuYFA==
+"@types/single-spa-react@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/single-spa-react/-/single-spa-react-3.0.1.tgz#c5da7d1db373213d57c3497c7f6994145a929f86"
+  integrity sha512-fneozhJ0k0v3a4eGtQww0ks7ytUQLaUh43iV6x6oudA3YdKIIIgMPoVm9oC7ZInoe7H5/fozom0iFXy98XC+tg==
   dependencies:
     "@types/react" "*"
     "@types/react-dom" "*"
