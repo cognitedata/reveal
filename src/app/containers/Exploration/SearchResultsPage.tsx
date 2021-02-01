@@ -32,6 +32,7 @@ import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
 import { useDateRange } from 'app/context/DateRangeContext';
 import { PageTitle } from '@cognite/cdf-utilities';
+import EnsureNonEmptyResource from 'lib/components/EnsureNonEmptyResource';
 import FilterToggleButton from './FilterToggleButton';
 import { LabelsQuickSelect } from './LabelsQuickSelect';
 
@@ -193,36 +194,38 @@ function SearchPage() {
             flexDirection: 'column',
           }}
         >
-          <SearchInputContainer align="middle">
-            {!showFilter ? (
-              <Col flex="none">
-                <FilterToggleButton
-                  toggleOpen={() => setShowFilter(!showFilter)}
-                />
-              </Col>
-            ) : undefined}
-            <Col flex="auto">
-              <ExplorationSearchBar />
-            </Col>
-          </SearchInputContainer>
-          {['file', 'asset'].includes(currentResourceType) ? (
-            <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
+          <EnsureNonEmptyResource api={currentResourceType}>
+            <SearchInputContainer align="middle">
+              {!showFilter ? (
+                <Col flex="none">
+                  <FilterToggleButton
+                    toggleOpen={() => setShowFilter(!showFilter)}
+                  />
+                </Col>
+              ) : undefined}
               <Col flex="auto">
-                <LabelsQuickSelect
-                  key={currentResourceType}
-                  type={currentResourceType as 'file' | 'asset'}
-                />
+                <ExplorationSearchBar />
               </Col>
-            </Row>
-          ) : undefined}
-          <SearchResultWrapper
-            style={{
-              paddingRight: active ? 8 : 0,
-              paddingLeft: showFilter ? 8 : 0,
-            }}
-          >
-            {SearchResults()}
-          </SearchResultWrapper>
+            </SearchInputContainer>
+            {['file', 'asset'].includes(currentResourceType) ? (
+              <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
+                <Col flex="auto">
+                  <LabelsQuickSelect
+                    key={currentResourceType}
+                    type={currentResourceType as 'file' | 'asset'}
+                  />
+                </Col>
+              </Row>
+            ) : undefined}
+            <SearchResultWrapper
+              style={{
+                paddingRight: active ? 8 : 0,
+                paddingLeft: showFilter ? 8 : 0,
+              }}
+            >
+              {SearchResults()}
+            </SearchResultWrapper>
+          </EnsureNonEmptyResource>
         </div>
 
         <div
