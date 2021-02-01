@@ -16,23 +16,39 @@ interface OwnProps {
   id: string;
   schedule?: string;
 }
-
+enum SupportedScheduleStrings {
+  ON_TRIGGER = 'On Trigger',
+  STREAMED = 'Streamed',
+}
 type Props = OwnProps;
 
 const Schedule: FunctionComponent<Props> = ({ schedule, ...rest }: Props) => {
   switch (schedule) {
     case undefined:
       return <span>Not defined</span>;
-    case 'On Trigger':
+    case SupportedScheduleStrings.ON_TRIGGER:
+    case SupportedScheduleStrings.STREAMED:
       return <span>{schedule}</span>;
-    default:
+    default: {
+      let parsedExpression = schedule;
+      try {
+        parsedExpression = parseCron(schedule ?? '');
+      } catch (e) {
+        const errorMessage = `Schedule: "${schedule}" - ${e}`;
+        return (
+          <Tooltip content={errorMessage}>
+            <i>Not valid</i>
+          </Tooltip>
+        );
+      }
       return (
         <Tooltip content={schedule}>
           <InteractiveCopyWrapper {...rest}>
-            {parseCron(schedule)} <InteractiveCopy text={schedule} />
+            {parsedExpression} <InteractiveCopy text={schedule} />
           </InteractiveCopyWrapper>
         </Tooltip>
       );
+    }
   }
 };
 

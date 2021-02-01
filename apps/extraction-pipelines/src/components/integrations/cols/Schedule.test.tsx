@@ -10,6 +10,27 @@ describe('<Schedule/>', () => {
       expected: /On Trigger/i,
     },
     {
+      desc: 'Render Streamed when scheduled is Streamed',
+      value: 'Streamed',
+      expected: /Streamed/i,
+    },
+    {
+      desc:
+        'Render not valid when scheduled is not supported - YouCanNotWriteThis',
+      value: 'YouCanNotWriteThis',
+      expected: /not valid/i,
+    },
+    {
+      desc: 'Render not valid when scheduled is not supported - * *',
+      value: '* *',
+      expected: /not valid/i,
+    },
+    {
+      desc: 'Render not valid when scheduled is not supported - 2 0 0 * E',
+      value: '2 0 0 * E',
+      expected: /not valid/i,
+    },
+    {
       desc: 'Render Not defined when scheduled is undefined',
       value: undefined,
       expected: /Not defined/i,
