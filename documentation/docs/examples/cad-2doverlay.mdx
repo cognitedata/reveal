@@ -33,7 +33,7 @@ There might be "any" number of attached HTML overlays in a viewer, but avoid too
 view.
 
 ```jsx runnable
-// import { HtmlOverlayTool } from '@cognite/reveal';
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
 
 function createOverlay() {
   const element = document.createElement('div');
@@ -78,7 +78,7 @@ from the camera. To do this, provide an `options`-argument with a
 callback is triggered every time the HTML overlay is updated.
 
 ```js runnable
-// import { HtmlOverlayTool } from '@cognite/reveal';
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
 
 function createOverlay() {
   const element = document.createElement('div');
@@ -123,7 +123,7 @@ As shown above, overlays can be removed using `remove()`. It is also possible to
 overlays by disposing the tool:
 
 ```js runnable
-// import { HtmlOverlayTool } from '@cognite/reveal';
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
 
 function createOverlay() {
   const element = document.createElement('div');
