@@ -32,7 +32,7 @@ const createBaseConfig = (env) => {
         },
       ],
     },
-    devtool: development ? "inline-source-map" : "source-map",
+    devtool: development && "inline-source-map",
     plugins: [
       new DefinePlugin({
         VERSION: JSON.stringify(require('./package.json').version)
