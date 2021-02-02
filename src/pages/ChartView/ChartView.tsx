@@ -187,7 +187,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       });
       /* eslint-enable no-console */
 
-      if (functionResult.data.response.error) {
+      if (
+        !functionResult.data.response ||
+        functionResult.data?.response?.error
+      ) {
         dispatch(
           workflowSlice.actions.updateWorkflow({
             id: flow.id,

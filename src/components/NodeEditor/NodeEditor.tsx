@@ -213,7 +213,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     });
     /* eslint-enable no-console */
 
-    if (functionResult.data.response.error) {
+    if (!functionResult.data.response || functionResult.data?.response?.error) {
       dispatch(
         workflowSlice.actions.updateWorkflow({
           id: workflow.id,
