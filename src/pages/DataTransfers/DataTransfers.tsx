@@ -777,15 +777,12 @@ const DataTransfers: React.FC = () => {
         expandable={{
           expandedRowRender: renderExpandedRow,
           // eslint-disable-next-line react/prop-types
-          expandIcon: ({ expanded, onExpand, record }) =>
-            expanded ? (
-              <ExpandRowIcon type="Down" onClick={(e) => onExpand(record, e)} />
-            ) : (
-              <ExpandRowIcon
-                type="Right"
-                onClick={(e) => onExpand(record, e)}
-              />
-            ),
+          expandIcon: ({ expanded, onExpand, record }) => (
+            <ExpandRowIcon
+              type={expanded ? 'Down' : 'Right'}
+              onClick={(e) => onExpand(record, e)}
+            />
+          ),
         }}
         locale={{
           emptyText: getNoDataText(),
