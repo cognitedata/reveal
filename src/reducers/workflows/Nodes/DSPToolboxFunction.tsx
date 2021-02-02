@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Icon, Input, Select } from '@cognite/cogs.js';
 import sdk from 'services/CogniteSDK';
 import useSelector from 'hooks/useSelector';
-import { DSPFunction, fromDspFunctionToConfig } from 'utils/transforms';
+import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { ConfigPanelComponentProps, StorableNode } from '../types';
 
@@ -123,7 +123,7 @@ export const configPanel = ({
             if (nextFunc) {
               const { type_info, ...storableNextFunc } = nextFunc;
 
-              const inputPins = (fromDspFunctionToConfig(nextFunc).input || [])
+              const inputPins = (getConfigFromDspFunction(nextFunc).input || [])
                 .filter((input) => input.pin)
                 .map((input) => ({
                   id: input.field,
@@ -132,7 +132,7 @@ export const configPanel = ({
                 }));
 
               const outputPins = (
-                fromDspFunctionToConfig(nextFunc).output || []
+                getConfigFromDspFunction(nextFunc).output || []
               ).map((output) => ({
                 id: `out-${output.field}`,
                 title: output.name,
