@@ -9,8 +9,7 @@ import {
   StyledTitle,
 } from 'components/tiles/elements';
 import TilePreviewImage from 'components/tiles/tilePreviewImage/TilePreviewImage';
-import { SuiteRowDelete } from 'store/suites/types';
-import { TS_FIX_ME } from 'types/core';
+import { Board, Suite, SuiteRowDelete } from 'store/suites/types';
 import { useLastVisited } from 'hooks';
 import { Flex } from 'styles/common';
 import { renderIframe } from 'utils/iframe';
@@ -18,7 +17,7 @@ import { renderIframe } from 'utils/iframe';
 interface Props {
   avatar?: boolean;
   color?: string;
-  dataItem: TS_FIX_ME;
+  dataItem: Board | Suite;
   menu?: React.ReactElement;
   handleDelete?: (key: SuiteRowDelete[]) => void;
   handleEdit?: (key: SuiteRowDelete[]) => void;
@@ -35,16 +34,16 @@ export const Tile: React.FC<Props> = ({
   const isBoard = view === 'board';
   const { setAsLastvisited } = useLastVisited(dataItem);
 
-  const renderPreview = (item: TS_FIX_ME) => {
-    if (item.embedTag) {
-      return renderIframe(item.embedTag);
+  const renderPreview = (item: Board | Suite) => {
+    if ((item as Board).embedTag) {
+      return renderIframe((item as Board).embedTag as string);
     }
-    if (item.imageFileId) {
-      return <TilePreviewImage imageFileId={item.imageFileId} />;
+    if ((item as Board).imageFileId) {
+      return <TilePreviewImage imageFileId={(item as Board).imageFileId} />;
     }
     return (
       <TilePreview>
-        <Detail>{item.description}</Detail>
+        <Detail>{(item as Suite).description}</Detail>
       </TilePreview>
     );
   };
@@ -58,7 +57,7 @@ export const Tile: React.FC<Props> = ({
               <SuiteAvatar title={dataItem.title} color={dataItem.color} />
             )}
             <TileDescription>
-              <Overline level={3}>{dataItem?.type}</Overline>
+              <Overline level={3}>{(dataItem as Board)?.type}</Overline>
               <Tooltip content={dataItem.title}>
                 <StyledTitle level={6}>{dataItem.title}</StyledTitle>
               </Tooltip>

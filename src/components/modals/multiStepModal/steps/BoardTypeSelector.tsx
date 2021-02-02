@@ -8,7 +8,7 @@ import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
-import { TS_FIX_ME } from 'types/core';
+import { OptionTypeBase } from 'types/core';
 import { RootDispatcher } from 'store/types';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 
@@ -28,7 +28,7 @@ const BoardTypeSelector: React.FC = () => {
   const dispatch = useDispatch<RootDispatcher>();
   const client = useContext(CdfClientContext);
 
-  const handleOnChange = (selectedOption: TS_FIX_ME) => {
+  const handleOnChange = (selectedOption: OptionTypeBase) => {
     dispatch(
       setBoardState(client, {
         ...board,

@@ -8,9 +8,8 @@ import EditBoard from 'components/modals/editModal/EditBoardModal';
 import ShareBoard from 'components/modals/shareBoardModal/ShareBoardModal';
 import { useSelector } from 'react-redux';
 import { getModalState } from 'store/modals/selectors';
-import { TS_FIX_ME } from 'types/core';
 
-const modalComponentLookupTable: TS_FIX_ME = {
+const modalComponentLookupTable = {
   DeleteSuite,
   DeleteBoard,
   CreateSuite,

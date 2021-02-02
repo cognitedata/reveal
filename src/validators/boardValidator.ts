@@ -1,4 +1,6 @@
-export const boardValidator = {
+import { Validator } from './types';
+
+export const boardValidator: Validator = {
   title: {
     required: { message: 'Please, enter board title' },
   },

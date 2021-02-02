@@ -11,7 +11,7 @@ import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
-import { TS_FIX_ME } from 'types/core';
+import { OptionTypeBase } from 'types/core';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 
@@ -28,13 +28,11 @@ const GroupsSelector: React.FC = () => {
     .filter((group: Group) => !includes(exclude, group.name))
     .map((group: Group) => ({ value: group.name, label: group.name }));
 
-  const handleOnChange = (selectedOption: TS_FIX_ME) => {
+  const handleOnChange = (selectedOption: OptionTypeBase[]) => {
     dispatch(
       setBoardState(client, {
         ...board,
-        visibleTo: (selectedOption || []).map(
-          (option: TS_FIX_ME) => option.value
-        ),
+        visibleTo: (selectedOption || []).map((option) => option.value),
       })
     );
     setErrors((prevState: Board) => ({

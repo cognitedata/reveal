@@ -10,10 +10,10 @@ import isFunction from 'lodash/isFunction';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
 import values from 'lodash/values';
-import { TS_FIX_ME } from 'types/core';
 import { RootDispatcher } from 'store/types';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { setBoardState } from 'store/forms/thunks';
+import { Validator, ValidationRules } from 'validators';
 
 export const useFormState = () => {
   const dispatch = useDispatch<RootDispatcher>();
@@ -39,7 +39,7 @@ export const useFormState = () => {
   };
 };
 
-export const useForm = (validations?: TS_FIX_ME) => {
+export const useForm = (validations: Validator) => {
   const [errors, setErrors] = useState<any>({});
   const dispatch = useDispatch<RootDispatcher>();
 
@@ -52,7 +52,7 @@ export const useForm = (validations?: TS_FIX_ME) => {
   }, [errors, dispatch]);
 
   const validateField = (name: string, value: string) => {
-    const rules = validations[name];
+    const rules: ValidationRules = validations[name];
 
     if (!rules) return '';
     if (rules.required) {

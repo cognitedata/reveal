@@ -1,4 +1,6 @@
-export const suiteValidator = {
+import { Validator } from './types';
+
+export const suiteValidator: Validator = {
   title: {
     required: { message: 'Please, enter suite title' },
   },

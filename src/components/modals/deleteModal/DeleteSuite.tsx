@@ -9,10 +9,10 @@ import { Button, Body, Title } from '@cognite/cogs.js';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
-import { TS_FIX_ME } from 'types/core';
+import { Suite } from 'store/suites/types';
 
 interface Props {
-  dataItem: TS_FIX_ME;
+  dataItem: Suite;
 }
 
 const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
