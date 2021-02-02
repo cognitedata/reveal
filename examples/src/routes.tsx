@@ -4,7 +4,6 @@
 
 import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
-import { DistanceMeasurement } from './pages/DistanceMeasurement';
 import { SideBySide } from './pages/SideBySide';
 import { Clipping } from './pages/Clipping';
 import { Filtering } from './pages/Filtering';
@@ -77,11 +76,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
     path: '/clipping',
     menuTitle: 'Clipping planes',
     component: <Clipping />,
-  },
-  {
-    path: '/distance-measurement',
-    menuTitle: 'Distance Measurement',
-    component: <DistanceMeasurement />,
   },
   {
     path: '/filtering',
