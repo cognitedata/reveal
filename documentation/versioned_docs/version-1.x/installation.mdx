@@ -12,26 +12,37 @@ Reveal uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_W
 
 There are two different types of deployment scenarios:
 
-1. Projects where [CDN](https://en.wikipedia.org/wiki/Content_delivery_network) are available (no restrictive [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)-headers are set)
-2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-that forbids to fetch scripts from [jsdelivr.com](https://www.jsdelivr.com/).
+1. Projects where Cognite [CDN](https://en.wikipedia.org/wiki/Content_delivery_network)
+`apps-cdn.cognitedata.com` is available
+(no restrictive [`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)-headers are set, or apps-cdn is whitelisted)
 
-By default, Reveal will try to fetch its worker/WASM files from [jsdelivr.com](https://www.jsdelivr.com/).
-If there are no CSP in your project, Reveal should work out of the box without any additional steps.
+2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+that forbids to fetch scripts from `apps-cdn.cognitedata.com`.
+
+By default, Reveal will try to fetch its worker/WASM files from `apps-cdn.cognitedata.com`.
+If there are no CSP in your project that forbids that, Reveal should work out of the box without any additional steps.
 
 In case if you see an error like the following in your development console:
 
-> Refused to load the script 'https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.0.0/dist/cdn/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
+> Refused to load the script 'https://apps-cdn.cognitedata.com/@cognite/reveal-parser-worker@1.1.0/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
 
 See the steps below.
 
 ## Installation for projects with Content-Security-Policy
 
-What you'll need to do is host worker/wasm files somewhere that the browser will allow to download and run code from.
+What you'll need to do is to host worker/wasm files at some server from which your browser can download and run js code.
+
+Before going with any of the steps below, consider to just whitelist Cognite CDN in your Content-Security-Policy.
+All you need to do is to add into your CSP:
+* [script-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src) `apps-cdn.cognitedata.com`
+* [worker-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/worker-src) `blob:` (only the first option described below doesn't need `worker-src blob:`)
+
 
 Also, notice that because Safari browser [doesn't support](https://caniuse.com/#search=instantiateStreaming)
 `WebAssembly.InstantiateStreaming` yet, so it uses `WebAssembly.instantiate` which requires
-`unsafe-eval` to be presented in CSP.
+`script-src: unsafe-eval` to be presented in CSP. Evaluate security risks before adding `unsafe-eval` to your CSP.
+
+If whitelisting of `apps-cdn.cognitedata.com` is not an options for you, go with one of the steps below.
 
 <!-- check the anchor links if change this title -->
 ### Option 1: include Web Worker and WebAssembly files as static assets in your project
@@ -60,89 +71,18 @@ revealEnv.publicPath = `/reveal-worker/`;
 const viewer = new Cognite3DViewer(/*...*/)
 ```
 
-### Option 2: host Web Worker and WebAssembly files externally
+<!--- be careful with the indentation here --->
 
-In case if there is no such `/public` or similar folder in your project, you're likely using a different service
-to host static assets. The domain of that service is probably whitelisted in Content Security Policy and can be used to host the necessary files.
+  <details>
+    <summary>Other copying options</summary>
 
-In that case, the only thing you can do is build the reveal-parser-worker from sources with correct `publicPath`.
-
-:::note
-
-**If you're developing a Cognite application,
-you likely can use our own whitelisted CDN where we already have
-[parser-worker](https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.1.0/reveal.parser.worker.js)
-uploaded.**
-
-In that case, skip to the [latest step](#lastCDNstep) for this option and use
-
-```js
-import { revealEnv } from '@cognite/reveal'
-revealEnv.publicPath =
-    `https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.1.0/`
-```
-
-Parser-worker version can be different,
-see the latest versions on [npm page](https://www.npmjs.com/package/@cognite/reveal-parser-worker).
-:::
-
-Let's say your static server has that URL `https://static.server/`. And you can upload the files
-at some folder, so files should be available at `https://static.server/parser-worker/`
-
-So all you need to do is:
-
-1. Clone or download [@cognite/reveal](https://github.com/cognitedata/reveal).
-2. `cd ./reveal/parser-worker`
-3. Consult `parser-worker/README.md` and install the necessary build tools
-4. You will need to set `PUBLIC_PATH` env variable pointing to your static server,
-then run the build. You will see `publicPath` printed in console during the build
-
-<Tabs
-  groupId="operating-systems"
-  defaultValue="bash"
-  values={[
-    {label: 'Bash', value: 'bash'},
-    {label: 'Windows', value: 'win'},
-  ]
-}>
-<TabItem value="bash">
+  Below are few more convenient options for copying if you don't like having that command in your package.json:
 
 ```bash
-PUBLIC_PATH="https://static.server/parser-worker/" yarn build:prod
-```
-</TabItem>
-<TabItem value="win">
-
-```bash
-set PUBLIC_PATH="https://static.server/parser-worker/" && yarn build:prod
-```
-</TabItem>
-</Tabs>
-
-If you set the environment variable correctly, you should see it be printed to console during the build:
-
-```log
-> ⬡ <webpack-log>: Worker local build config:
-> ⬡ <webpack-log>:  { publicPath: 'https://static.server/parser-worker/' }
+  cp ./node_modules/@cognite/reveal-parser-worker/dist/local/* ./public/reveal-worker
 ```
 
-5. Take the files from `./parser-worker/dist/local` and host them at the path you specified.
-
-<a aria-hidden="true" tabIndex="-1" className="anchor enhancedAnchor_node_modules-@docusaurus-theme-classic-lib-theme-Heading-" id="lastCDNstep"></a>
-
-6. In your project, specify `revealEnv.publicPath`
-
-```js
-import { revealEnv, Cognite3DViewer } from '@cognite/reveal';
-revealEnv.publicPath = `https://my.static.server/parser-worker/`;
-
-// ... then use reveal normally ...
-const viewer = new Cognite3DViewer(/*...*/)
-```
-
-Reveal should now be working.
-
-### Option 3: Copy worker files locally in a create-react-app based project
+#### Option 1.1: Copy worker files locally in a create-react-app based project
 
 1. Install [react-app-rewired](https://github.com/timarney/react-app-rewired). It's required to slightly modify react-scripts from create-react-app without running `eject`
 
@@ -209,7 +149,7 @@ Reveal should now be working.
 
 Now all `*.worker.js` and `*.wasm` files from `@cognite/reveal` should be copied into your output folder when you run build.
 
-### Option 4: Copy worker files locally for non-create-react-app based projects
+#### Option 1.2: Copy worker files locally for non-create-react-app based projects
 
 Just make sure that you have `*.worker.js` and `*.wasm` files from `@cognite/reveal` in your output folder.
 
@@ -241,8 +181,68 @@ const revealSource = 'node_modules/@cognite/reveal';
 }
 ```
 
-It's the same idea as behind [Option 1](#option-1-include-web-worker-and-webassembly-files-as-static-assets-in-your-project)
-but you can use webpack to copy things for you instead of doing it manually or with scripts.
+  </details>
+
+### Option 2: host Web Worker and WebAssembly files externally
+
+In case if there is no such `/public` or similar folder in your project, you're likely using a different service
+to host static assets. The domain of that service is probably whitelisted in Content Security Policy and can be used to host the necessary files.
+
+In that case, the only thing you can do is to build the reveal-parser-worker from sources with correct `publicPath`.
+
+Let's say your static server has that URL `https://static.server/` and you can upload the files
+at some folder, e.g. `parser-worker` folder. So files should be available at `https://static.server/parser-worker/`
+
+Then all you need to do is:
+
+1. Clone or download [@cognite/reveal](https://github.com/cognitedata/reveal).
+2. `cd ./reveal/parser-worker`
+3. Consult `parser-worker/README.md` and install the necessary build tools
+4. You will need to set `PUBLIC_PATH` env variable that points at your static server.
+Run the build with that env variable. You will see the `publicPath` printed to console during the build.
+
+<Tabs
+  groupId="operating-systems"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'Windows', value: 'win'},
+  ]
+  }>
+  <TabItem value="bash">
+
+    ```bash
+    PUBLIC_PATH="https://static.server/parser-worker/" yarn build:prod
+    ```
+  </TabItem>
+  <TabItem value="win">
+
+    ```bash
+    set PUBLIC_PATH="https://static.server/parser-worker/" && yarn build:prod
+    ```
+  </TabItem>
+</Tabs>
+
+If you set the environment variable correctly, you should see it printed to console during the build:
+
+```log
+> ⬡ <webpack-log>: Worker local build config:
+> ⬡ <webpack-log>:  { publicPath: 'https://static.server/parser-worker/' }
+```
+
+5. Take the files from `./parser-worker/dist/local` and host them on your CDN at the path you specified – `https://static.server/parser-worker/`.
+
+6. In your project, specify `revealEnv.publicPath`
+
+```js
+import { revealEnv, Cognite3DViewer } from '@cognite/reveal';
+revealEnv.publicPath = `https://static.server/parser-worker/`;
+
+// ... then use reveal normally ...
+const viewer = new Cognite3DViewer(/*...*/)
+```
+
+Everything should work fine now.
 
 ### A note on Content-type header for .wasm files
 
