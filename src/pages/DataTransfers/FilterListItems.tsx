@@ -8,6 +8,7 @@ import { FilterListFiltersSource } from './types';
 type SourceType = {
   name?: string;
   id?: string;
+  // eslint-disable-next-line camelcase
   external_id?: string;
 };
 
@@ -21,13 +22,13 @@ export const FilterListItems = (
       <Menu.Item
         key={uniqueId()}
         onClick={() => {
-          console.log(source);
           onSelect(source);
           closeHandler();
         }}
       >
         {isObject(source)
-          ? source.name || source.external_id || source.id
+          ? // eslint-disable-next-line camelcase
+            source.name || source.external_id || source.id
           : source}
       </Menu.Item>
     ))}
