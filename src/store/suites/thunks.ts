@@ -47,6 +47,18 @@ export const deleteSuite = (
   }
 };
 
+export const fetchImageUrls = (client: CdfClient, ids: string[]) => async (
+  dispatch: RootDispatcher
+) => {
+  try {
+    dispatch(actions.fetchImgUrls());
+    const imgUrls = await client.getDownloadUrls(ids);
+    dispatch(actions.fetchedImgUrls(imgUrls));
+  } catch (e) {
+    dispatch(actions.fetchImgUrlsError(e));
+  }
+};
+
 async function getSuites(apiClient: ApiClient) {
   const { items: rows } = await apiClient.getSuitesRows();
   return getSuitesFromRows(rows);

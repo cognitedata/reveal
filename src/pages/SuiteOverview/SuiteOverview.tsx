@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
@@ -20,6 +20,8 @@ import { Board, Suite } from 'store/suites/types';
 import { UserSpaceState } from 'store/userSpace/types';
 import { getUserSpace } from 'store/userSpace/selectors';
 import isEqual from 'lodash/isEqual';
+import { CdfClientContext } from 'providers/CdfClientProvider';
+import { fetchImageUrls } from 'store/suites/thunks';
 import { StyledTitle, LargeTilesContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
@@ -27,15 +29,53 @@ const SuiteOverview: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch<RootDispatcher>();
   const admin = useSelector(isAdmin);
+  const client = useContext(CdfClientContext);
 
-  const { loading: suitesLoading, loaded: suitesLoaded } = useSelector(
-    getSuitesTableState
-  );
+  const {
+    loading: suitesLoading,
+    loaded: suitesLoaded,
+    imageUrls: { loading: imgUrlsLoading },
+  } = useSelector(getSuitesTableState);
   const { loading: userSpaceLoading }: UserSpaceState = useSelector(
     getUserSpace
   );
+  const [fetchImgUrlsDispatched, setFetchImgUrlsDispatched] = useState(false);
 
   const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
+
+  const { title, color, boards } = suite || {};
+
+  const imageFileIds: string[] =
+    boards
+      ?.filter((board) => board.imageFileId)
+      .map((board) => board.imageFileId) || [];
+
+  const infographicsBoards = boards?.filter(
+    (board) => board.type === 'infographics'
+  );
+
+  useEffect(() => {
+    const unsubscribe = history.listen(() => {
+      setFetchImgUrlsDispatched(false);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [history, setFetchImgUrlsDispatched]);
+
+  useEffect(() => {
+    const fetchImgUrls = async (ids: string[]) => {
+      await dispatch(fetchImageUrls(client, ids));
+    };
+    if (imageFileIds?.length && !imgUrlsLoading && !fetchImgUrlsDispatched) {
+      setFetchImgUrlsDispatched(true);
+      fetchImgUrls(imageFileIds);
+    }
+  }, [imageFileIds, imgUrlsLoading, fetchImgUrlsDispatched, client, dispatch]);
+
+  if (!suite) {
+    history.push('/');
+  }
 
   if (!suitesLoaded) {
     return null;
@@ -44,16 +84,6 @@ const SuiteOverview: React.FC = () => {
   if (suitesLoading || userSpaceLoading) {
     return <Loader />;
   }
-
-  if (!suite) {
-    history.push('/');
-  }
-
-  const { title, color, boards } = suite || {};
-
-  const infographicsBoards = boards?.filter(
-    (board) => board.type === 'infographics'
-  );
 
   const handleOpenModal = (modalType: ModalType, modalProps: any) => {
     dispatch(modalOpen({ modalType, modalProps }));

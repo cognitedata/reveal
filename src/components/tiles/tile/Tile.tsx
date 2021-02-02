@@ -8,8 +8,8 @@ import {
   TileDescription,
   StyledTitle,
 } from 'components/tiles/elements';
-import TilePreviewImage from 'components/tiles/tilePreviewImage/TilePreviewImage';
 import { Board, Suite, SuiteRowDelete } from 'store/suites/types';
+import TilePreviewImage from 'components/tiles/tilePreviewImage';
 import { useLastVisited } from 'hooks';
 import { Flex } from 'styles/common';
 import { renderIframe } from 'utils/iframe';
@@ -39,7 +39,11 @@ export const Tile: React.FC<Props> = ({
       return renderIframe((item as Board).embedTag as string);
     }
     if ((item as Board).imageFileId) {
-      return <TilePreviewImage imageFileId={(item as Board).imageFileId} />;
+      return (
+        <TilePreview>
+          <TilePreviewImage imageFileId={(item as Board).imageFileId} />
+        </TilePreview>
+      );
     }
     return (
       <TilePreview>

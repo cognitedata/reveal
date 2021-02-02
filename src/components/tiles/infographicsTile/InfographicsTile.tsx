@@ -11,6 +11,7 @@ import {
   LargeTilePreview,
   StyledTitle,
 } from '../elements';
+import TilePreviewImage from '../tilePreviewImage';
 
 const TilePreviewHeight = '576';
 const TilePreviewWidth = '952';
@@ -27,6 +28,16 @@ export const InfographicsTile: React.FC<Props> = ({
   menu,
 }: Props) => {
   const { setAsLastvisited } = useLastVisited(dataItem);
+  const renderTile = (item: Board) => {
+    if (item.embedTag) {
+      return renderIframe(item.embedTag, TilePreviewHeight, TilePreviewWidth);
+    }
+    if (item.imageFileId) {
+      return <TilePreviewImage imageFileId={item.imageFileId} />;
+    }
+    return null;
+  };
+
   return (
     <LargeTileContainer onClick={setAsLastvisited}>
       <TileHeader color={color} isBoard>
@@ -40,10 +51,7 @@ export const InfographicsTile: React.FC<Props> = ({
         </Flex>
         {menu}
       </TileHeader>
-      <LargeTilePreview>
-        {dataItem.embedTag &&
-          renderIframe(dataItem.embedTag, TilePreviewHeight, TilePreviewWidth)}
-      </LargeTilePreview>
+      <LargeTilePreview>{renderTile(dataItem)}</LargeTilePreview>
     </LargeTileContainer>
   );
 };

@@ -1,4 +1,10 @@
-import { RawDBRow, RawDBRowInsert, RawDBRowKey } from '@cognite/sdk';
+import {
+  FileLink,
+  IdEither,
+  RawDBRow,
+  RawDBRowInsert,
+  RawDBRowKey,
+} from '@cognite/sdk';
 import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 
@@ -11,6 +17,9 @@ export enum SuitesTableActionTypes {
   SUITES_TABLE_ROW_INSERT_ERROR = 'suitesTable/INSERT_ERROR',
   SUITES_TABLE_ROW_DELETE = 'suitesTable/DELETE',
   SUITES_TABLE_ROW_DELETE_ERROR = 'suitesTable/DELETE_ERROR',
+  FETCH_IMG_URLS = 'FETCH_IMG_URLS',
+  FETCHED_IMG_URLS = 'FETCHED_IMG_URLS',
+  FETCH_IMG_URLS_ERROR = 'FETCH_IMG_URLS_ERROR',
 }
 
 export type SuitesTableRootAction = ActionType<typeof actions>;
@@ -46,6 +55,13 @@ export type Suite = {
   lastUpdatedTime?: Date;
 };
 
+export type ImgUrlLink = FileLink & IdEither;
+
+export type ImgUrls = {
+  loading: boolean;
+  urls: ImgUrlLink[];
+};
+
 export interface SuiteRow extends RawDBRow {}
 export interface SuiteRowInsert extends RawDBRowInsert {}
 export interface SuiteRowDelete extends RawDBRowKey {}
@@ -55,4 +71,5 @@ export interface SuitesTableState {
   loaded: boolean;
   error?: string;
   suites: Suite[] | null;
+  imageUrls: ImgUrls;
 }

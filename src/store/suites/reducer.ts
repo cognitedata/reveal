@@ -1,15 +1,22 @@
 import { createReducer } from 'typesafe-actions';
 import {
+  ImgUrlLink,
   SuitesTableActionTypes,
   SuitesTableRootAction,
   SuitesTableState,
 } from './types';
+
+const getInitialImageUrls = () => ({
+  loading: false,
+  urls: [],
+});
 
 const initialState: SuitesTableState = {
   loading: false,
   loaded: false,
   error: '',
   suites: null,
+  imageUrls: getInitialImageUrls(),
 };
 
 export const SuitesReducer = createReducer(initialState)
@@ -29,11 +36,11 @@ export const SuitesReducer = createReducer(initialState)
   .handleAction(
     SuitesTableActionTypes.SUITES_TABLE_LOADED,
     (state: SuitesTableState, action: SuitesTableRootAction) => ({
-      ...state,
       loading: false,
       error: '',
       loaded: true,
       suites: action.payload,
+      imageUrls: getInitialImageUrls(),
     })
   )
   .handleAction(
@@ -70,5 +77,35 @@ export const SuitesReducer = createReducer(initialState)
       ...state,
       loading: false,
       error: (action.payload as Error)?.message,
+    })
+  )
+  .handleAction(
+    SuitesTableActionTypes.FETCH_IMG_URLS,
+    (state: SuitesTableState) => ({
+      ...state,
+      imageUrls: {
+        loading: true,
+        urls: [],
+      },
+    })
+  )
+  .handleAction(
+    SuitesTableActionTypes.FETCHED_IMG_URLS,
+    (state: SuitesTableState, action: SuitesTableRootAction) => ({
+      ...state,
+      imageUrls: {
+        loading: false,
+        urls: action.payload as ImgUrlLink[],
+      },
+    })
+  )
+  .handleAction(
+    SuitesTableActionTypes.FETCH_IMG_URLS_ERROR,
+    (state: SuitesTableState) => ({
+      ...state,
+      imageUrls: {
+        loading: false,
+        urls: [], // silent mode. track to Sentry?
+      },
     })
   );
