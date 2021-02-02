@@ -51,6 +51,8 @@ import {
 } from '../..';
 import { PropType } from '../../utilities/reflection';
 
+type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
+
 /**
  * @example
  * ```js
@@ -322,7 +324,7 @@ export class Cognite3DViewer {
    * @param callback
    */
   on(
-    event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed',
+    event: Cognite3DViewerEvents,
     callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate | DisposedDelegate
   ): void {
     switch (event) {
@@ -368,7 +370,7 @@ export class Cognite3DViewer {
    * @param event
    * @param callback
    */
-  off(event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed', callback: any): void {
+  off(event: Cognite3DViewerEvents, callback: any): void {
     switch (event) {
       case 'click':
         this.eventListeners.click = this.eventListeners.click.filter(x => x !== callback);
