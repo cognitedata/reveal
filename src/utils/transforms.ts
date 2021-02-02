@@ -28,7 +28,7 @@ export type DSPFunctionConfig = {
   }[];
 };
 
-export function fromDspFunctionToConfig(
+export function getConfigFromDspFunction(
   dspFunction: DSPFunction
 ): DSPFunctionConfig {
   const pins = Array(dspFunction.n_inputs)
