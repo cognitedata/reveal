@@ -10,6 +10,7 @@ export type DSPFunction = {
   parameters: {
     param: string;
     type: string;
+    default?: any;
   }[];
   type_info: string[][];
 };

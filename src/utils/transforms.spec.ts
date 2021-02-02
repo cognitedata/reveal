@@ -1,5 +1,105 @@
 import { Workflow } from 'reducers/workflows';
-import { getStepsFromWorkflow } from './transforms';
+import {
+  getStepsFromWorkflow,
+  getConfigFromDspFunction,
+  DSPFunction,
+} from './transforms';
+
+describe('getConfigFromDspFunction', () => {
+  it('generates correct config from dsp function description (case 1)', () => {
+    const dspFunctionDescription: DSPFunction = {
+      description: 'Data smoother - Saviztky-Golay Filter',
+      n_inputs: 1,
+      n_outputs: 1,
+      op: 'SG_SMOOTHER',
+      parameters: [
+        {
+          default: null,
+          param: 'window_length',
+          type: 'int',
+        },
+        {
+          default: 1,
+          param: 'polyorder',
+          type: 'int',
+        },
+      ],
+      type_info: [['ts']],
+    };
+
+    const config = getConfigFromDspFunction(dspFunctionDescription);
+
+    expect(config).toEqual({
+      input: [
+        {
+          name: 'Input 1',
+          field: 'input0',
+          types: ['TIMESERIES'],
+          pin: true,
+        },
+        {
+          name: 'window_length',
+          field: 'window_length',
+          types: ['CONSTANT'],
+          pin: false,
+        },
+        {
+          name: 'polyorder',
+          field: 'polyorder',
+          types: ['CONSTANT'],
+          pin: false,
+        },
+      ],
+      output: [
+        {
+          name: 'Output',
+          field: 'result',
+          type: 'TIMESERIES',
+        },
+      ],
+    });
+  });
+
+  it('generates correct config from dsp function description (case 2)', () => {
+    const dspFunctionDescription: DSPFunction = {
+      description: 'Maximum function (element-wise)',
+      n_inputs: 2,
+      n_outputs: 1,
+      op: 'MAX',
+      parameters: [],
+      type_info: [
+        ['ts', 'const'],
+        ['ts', 'const'],
+      ],
+    };
+
+    const config = getConfigFromDspFunction(dspFunctionDescription);
+
+    expect(config).toEqual({
+      input: [
+        {
+          name: 'Input 1',
+          field: 'input0',
+          types: ['TIMESERIES', 'CONSTANT'],
+          pin: true,
+        },
+        {
+          name: 'Input 2',
+          field: 'input1',
+          types: ['TIMESERIES', 'CONSTANT'],
+          pin: true,
+        },
+      ],
+      output: [
+        {
+          name: 'Output',
+          field: 'result',
+          type: 'TIMESERIES',
+        },
+      ],
+    });
+  });
+});
 
 describe('getStepsFromWorkflow', () => {
   it('generates correct steps (empty workflow)', () => {
