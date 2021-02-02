@@ -13,118 +13,112 @@ that follows the object it's attached to. Note that these overlays always will b
 they will not be hidden when the object is obscured by other objects.
 To achieve this it's necessary to use custom 3D objects.
 
+:::note
+There should be a limited number of HTML overlay elements as it can impact performance negatively if there's too many.
+:::
+
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 Attaching HTML elements to 3D objects/positions requires the following operations:
 
-1. Create a HTML element and place it as a child of the viewer DOM-element (i.e. `Cognite3DViewer.domElement`)
+1. Create an HTML element and apply style `position: absolute` to the element. There also some other recommended 
+   styles that should be applied (see below).
 2. Determine 3D world coordinate of the pivot point (e.g. using intersection when user clicks an object)
-3. Translate 3D world coordinate to 2D screen position (using `Cognite3DViewer.worldToScreen`)
-4. Update overlay position whenever 3D camera changes
+3. Attach overlay using `HtmlOverlayTool.add`.
 
-First, let's create an HTML overlay element you want to overlay on top of a 3D object:
+This will attach the overlay to the 2D position corresponding to the 3D coordinate, then it will provide the updated
+coordinate whenever navigating the viewer.
 
-```jsx live=true
-<div
-  id="overlay-demo"
-  style={{
-    top: 0,
-    left: 0,
-    zIndex: 1,
-    padding: '10px',
-    width: '200px',
-    minHeight: '50px',
-    color: '#fff',
-    background: '#232323da',
-    borderRadius: '0.25em',
-    border: '#ffffff22 solid 2px',
-  }}
->
-  I am an overlay
-</div>
-```
-
-Note that the overlay is not placed as a child of the viewer DOM-element. We will do this below.
-
-Next, lets handle mouse clicks and place the overlay where the user clicks.
+There might be "any" number of attached HTML overlays in a viewer, but avoid too many to avoid cluttering the
+view.
 
 ```jsx runnable
-const existingOverlay = document.getElementById('overlay');
-if (existingOverlay) {
-  existingOverlay.remove()
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
+function createOverlay() {
+  const element = document.createElement('div');
+  element.innerText = `Overlay!`;
+  element.style.cssText = `
+    position: absolute;
+    
+    /* Anchor to the center of the element and ignore events */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    touch-action: none;
+
+    /* Make it look nice */
+    padding: 10px;
+    minHeight: 50px;
+    color: #fff;
+    background: #232323da;
+    borderRadius: 0.25em;
+    border: '#ffffff22 solid 2px;
+  `;
+  return element;
 }
 
-// Clone the overlay and make it to be a child of the viewer
-const overlay = document.getElementById('overlay-demo').cloneNode(true);
-overlay.id = 'overlay';
-viewer.domElement.appendChild(overlay);
-
-// Handle mouse clicks
-viewer.on('click', (event) => {
-  // Find 3D coordinate of what the user clicks
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-  if (intersection) {
-    // Map from 3D coordinate to relative screen coordinate
-    const screenPos = viewer.worldToScreen(intersection.point);
-
-    // Move overlay
-    overlay.style.left = `${screenPos.x}px`;
-    overlay.style.top = `${screenPos.y}px`;
-    overlay.style.display = 'block';
-    overlay.style.position = 'absolute';
-  }
-});
-```
-
-When the user clicks a position in the 3D model, the overlay will now be placed at the clicked position.
-
-<video preload="auto" autoPlay="autoplay" loop controls>
-  <source src={useBaseUrl('/img/cad-overlay-fixed.webm')} />
-</video>
-
-However, as shown in the video above, the position is not updated when the camera moves. To do this, we need to update the overlay position when the camera moves.
-
-```jsx runnable
-const existingOverlay = document.getElementById('overlay');
-if (existingOverlay) {
-  existingOverlay.remove()
-}
-// Clone the overlay and make it to be a child of the viewer
-const overlay = document.getElementById('overlay-demo').cloneNode(true);
-overlay.id = 'overlay';
-viewer.domElement.appendChild(overlay);
-
-function updateOverlayPosition(position3d) {
-  // Map from 3D coordinate to relative screen coordinate
-  const screenPos = viewer.worldToScreen(position3d);
-
-  if (screenPos) {
-    // Move overlay
-    overlay.style.left = `${screenPos.x}px`;
-    overlay.style.top = `${screenPos.y}px`;
-    overlay.style.display = 'block';
-    overlay.style.position = 'absolute';
-  } else {
-    // Outside the screen
-    overlay.style.display = 'none';
-  }
-}
-
-// Handle mouse clicks
+// Attach overlay on click
+const overlays = new HtmlOverlayTool(viewer);
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
   const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
   if (intersection) {
-    updateOverlayPosition(intersection.point);
-    viewer.on('cameraChange', (_position, _target) => {
-      updateOverlayPosition(intersection.point);
-    });
+    const el = createOverlay();
+    overlays.add(el, intersection.point);
+    // Remove overlay after 5 seconds
+    setTimeout(() => overlays.remove(el), 5000);
   }
 });
 ```
 
-Now, the overlay position is updated whenever the camera is moved. Note that we also handle the case when the clicked position goes out of view by hiding the overlay.
+It's also possible to apply styling based on the position of the 
+overlay, e.g. to vary the opacity of the overlay based on distance 
+from the camera. To do this, provide an `options`-argument with a 
+`positionUpdatedCallback` to `HtmlOverlayTool.add`. This
+callback is triggered every time the HTML overlay is updated.
 
-<video preload="auto" autoPlay="autoplay" loop controls>
-  <source src={useBaseUrl('/img/cad-overlay-updating.webm')} />
-</video>
+```js runnable
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
+function createOverlay() {
+  const element = document.createElement('div');
+  element.innerText = `Overlay!`;
+  element.style.cssText = `
+    position: absolute;
+    
+    /* Anchor to the center of the element and ignore events */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    touch-action: none;
+
+    /* Make it look nice */
+    padding: 10px;
+    color: #fff;
+    background: #232323da;
+    borderRadius: 0.25em;
+    border: '#ffffff22 solid 2px;
+  `;
+  return element;
+}
+
+const overlays = new HtmlOverlayTool(viewer);
+viewer.on('click', event => {
+  // Find 3D coordinate of what the user clicks
+  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const el = createOverlay();
+    const options = {
+      positionUpdatedCallback: (element, position2D, position3D, distanceToCamera) => {
+        // Compute opacity based on distance to camera
+        const opacity = 0.3 + 0.7 * (1.0 - (Math.min(Math.max(distanceToCamera, 10), 110) - 10) / 100.0);
+        element.style.opacity = opacity;
+      }
+    };
+    overlays.add(el, intersection.point, options);
+  }
+});
+```
+
+As shown above, overlays can be removed using `remove()`. It is also possible to remove all 
+overlays by calling `clear()` or by disposing the tool using `dispose()`. The tool cannot
+be used after calling `dispose()`.
