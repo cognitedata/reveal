@@ -47,15 +47,15 @@ export const StartContainer = styled.div`
   }
 `;
 
-export const DropdownWithMargin = styled.div`
-  margin-left: 16px;
+export const DropdownMargin = styled.div`
+  margin-right: 16px;
 `;
 
 export const DropdownWrapper = styled.div`
   display: flex;
   flex-direction: row;
 
-  ${({ disabled }: { disabled: boolean }) =>
+  ${({ disabled }: { disabled?: boolean }) =>
     disabled &&
     css`
       opacity: 0.5;
@@ -63,9 +63,15 @@ export const DropdownWrapper = styled.div`
     `}
 `;
 
+export const DateDropdownWrapper = styled.div`
+  align-self: flex-end;
+  margin-left: 0.5rem;
+  margin-bottom: 0.5rem;
+`;
+
 export const DropdownSeparator = styled.div`
   line-height: 36px;
-  margin: 0 16px;
+  margin-right: 16px;
 `;
 
 export const SecondaryFilters = styled.div`

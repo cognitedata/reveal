@@ -268,7 +268,6 @@ const DataTransfers: React.FC = () => {
   ] = useState<SelectedDateRangeType | null>(null);
   const [datatypes, setDatatypes] = useState<string[]>([]);
   const [selectedDatatype, setSelectedDatatype] = useState<string | null>(null);
-  const [filterByProjects, setFilterByProjects] = useState<boolean>(false);
 
   const { api } = useContext(ApiContext);
   const { addError } = useContext(APIErrorContext);
@@ -641,13 +640,6 @@ const DataTransfers: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDatatype]);
 
-  useEffect(() => {
-    setSelectedConfiguration(null);
-    setSelectedSource(null);
-    clearData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterByProjects]);
-
   if (error) {
     return (
       <ErrorMessage
@@ -662,7 +654,7 @@ const DataTransfers: React.FC = () => {
   }
 
   function getNoDataText() {
-    let message = filterByProjects ? 'Select source' : 'Select configuration';
+    let message = 'Select configuration';
     if (selectedSource) {
       if (selectedSourceProject) {
         if (selectedTarget) {
@@ -743,8 +735,6 @@ const DataTransfers: React.FC = () => {
               onSelectDate: (nextSelected) =>
                 setSelectedDateRange(nextSelected),
             }}
-            filterByProjects={filterByProjects}
-            setFilterByProjects={setFilterByProjects}
             onNameSearchChange={filterByNameSearch}
           />
         )}
