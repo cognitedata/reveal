@@ -16,9 +16,9 @@ interface OwnProps {
   id: string;
   schedule?: string;
 }
-enum SupportedScheduleStrings {
+export enum SupportedScheduleStrings {
   ON_TRIGGER = 'On Trigger',
-  STREAMED = 'Streamed',
+  CONTINUOUS = 'Continuous',
 }
 type Props = OwnProps;
 
@@ -27,7 +27,7 @@ const Schedule: FunctionComponent<Props> = ({ schedule, ...rest }: Props) => {
     case undefined:
       return <span>Not defined</span>;
     case SupportedScheduleStrings.ON_TRIGGER:
-    case SupportedScheduleStrings.STREAMED:
+    case SupportedScheduleStrings.CONTINUOUS:
       return <span>{schedule}</span>;
     default: {
       let parsedExpression = schedule;

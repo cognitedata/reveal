@@ -1,18 +1,18 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Schedule from './Schedule';
+import Schedule, { SupportedScheduleStrings } from './Schedule';
 
 describe('<Schedule/>', () => {
   const cases = [
     {
       desc: 'Render On Trigger when scheduled is On Trigger',
-      value: 'On Trigger',
+      value: SupportedScheduleStrings.ON_TRIGGER,
       expected: /On Trigger/i,
     },
     {
-      desc: 'Render Streamed when scheduled is Streamed',
-      value: 'Streamed',
-      expected: /Streamed/i,
+      desc: 'Render Continuous when scheduled is Continuous',
+      value: SupportedScheduleStrings.CONTINUOUS,
+      expected: /Continuous/i,
     },
     {
       desc:
