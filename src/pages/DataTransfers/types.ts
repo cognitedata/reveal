@@ -87,13 +87,17 @@ interface Data {
   columns: ColumnsType<DataTransferObject>;
 }
 
+export type FilterListFiltersSource = string[] | GenericResponseObject[];
+
 export type FilterListFilters = {
-  content: any;
+  source: FilterListFiltersSource;
   name: keyof FilterTypes;
   label: string;
+  onSelect: (action: any) => void;
   buttonText: string;
   visible: boolean;
 }[];
+
 export interface FilterListProps {
   filters: FilterListFilters;
   closeHandler: () => void;

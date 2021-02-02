@@ -3,6 +3,7 @@ import { Dropdown } from '@cognite/cogs.js';
 
 import { FilterListProps } from './types';
 import { DropdownLabel, DropdownButton, DropdownMargin } from './elements';
+import { FilterListItems } from './FilterListItems';
 
 export const FilterList = ({
   filters,
@@ -16,7 +17,11 @@ export const FilterList = ({
         dropdown.visible && (
           <DropdownMargin>
             <Dropdown
-              content={dropdown.content}
+              content={FilterListItems(
+                dropdown.source,
+                dropdown.onSelect,
+                closeHandler
+              )}
               visible={openFilter === dropdown.name}
               onClickOutside={closeHandler}
             >

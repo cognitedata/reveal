@@ -5,7 +5,6 @@ import { Button } from '@cognite/cogs.js';
 import { SelectedDateRangeType } from 'typings/interfaces';
 
 import { FiltersProps, FilterTypes, FilterListFilters } from './types';
-import { getDateFilter, getFilters } from './FilterContent';
 import { FilterList } from './FilterList';
 import { RenderSecondaryFilters } from './RenderSecondaryFilters';
 import {
@@ -26,19 +25,9 @@ const Filters = ({
   const [nameFilter, setNameFilter] = useState('');
   const [openFilter, setOpenFilter] = useState<keyof FilterTypes | ''>('');
 
-  const filters: FilterTypes = getFilters(
-    source,
-    target,
-    datatype,
-    configuration,
-    setOpenFilter
-  );
-
   if (!source.sources || source.sources.length < 1) {
     return null;
   }
-
-  const DateContent = getDateFilter(date, setOpenFilter, openFilter === 'date');
 
   const getFormattedDateRange = (selectedRange: SelectedDateRangeType) => {
     const first = selectedRange[0];
@@ -70,8 +59,9 @@ const Filters = ({
     {
       name: 'config',
       label: 'Configuration',
-      content: filters.config,
+      source: configuration.configurations,
       visible: true,
+      onSelect: configuration.onSelectConfiguration,
       buttonText: configuration.selected
         ? configuration.selected.name
         : 'Select',
@@ -82,19 +72,17 @@ const Filters = ({
     {
       name: 'source',
       label: 'Source',
-      content: filters.source,
-      visible: !!(source.sources.length > 0 && filters.source),
+      source: source.sources,
+      onSelect: source.onSelectSource,
+      visible: source.sources.length > 0,
       buttonText: source.selected || 'Select',
     },
     {
       name: 'sourceProject',
       label: 'Source project',
-      content: filters.sourceProject,
-      visible: !!(
-        source.selected &&
-        source.projects.length > 0 &&
-        filters.sourceProject
-      ),
+      source: source.projects,
+      onSelect: source.onSelectProject,
+      visible: !!(source.selected && source.projects.length > 0),
       buttonText: source.selectedProject
         ? source.selectedProject.external_id
         : 'Select project',
@@ -102,24 +90,21 @@ const Filters = ({
     {
       name: 'target',
       label: 'Target',
-      content: filters.target,
+      source: target.targets,
+      onSelect: target.onSelectTarget,
       visible: !!(
         source.selected &&
         source.selectedProject &&
-        target.targets.length > 0 &&
-        filters.target
+        target.targets.length > 0
       ),
       buttonText: target.selected || 'Select',
     },
     {
       name: 'targetProject',
       label: 'Target project',
-      content: filters.targetProject,
-      visible: !!(
-        target.selected &&
-        target.projects.length > 0 &&
-        filters.targetProject
-      ),
+      source: target.projects,
+      onSelect: target.onSelectProject,
+      visible: !!(target.selected && target.projects.length > 0),
       buttonText: target.selectedProject
         ? target.selectedProject.external_id
         : 'Select',
@@ -129,7 +114,7 @@ const Filters = ({
   return (
     <FiltersWrapper>
       <>
-        {configuration.configurations.length > 0 && filters.config && (
+        {configuration.configurations.length > 0 && (
           <StartContainer>
             <DropdownWrapper disabled={!!source.selected}>
               <FilterList
@@ -171,10 +156,8 @@ const Filters = ({
             onNameSearchChange={onNameSearchChange}
             openFilter={openFilter}
             datatype={datatype}
-            filters={filters}
             closeFilters={closeFilters}
             toggleFilter={toggleFilter}
-            DateContent={DateContent}
             date={date}
             getFormattedDateRange={getFormattedDateRange}
           />
