@@ -35,7 +35,7 @@ import Revisions from './Revisions';
 import config from './datatransfer.config';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
 import { getMappedColumnName, getFormattedTimestampOrString } from './utils';
-import Filters from './Filters';
+import { Filters } from './Filters';
 import DetailView, {
   DetailDataProps,
 } from '../../components/Organisms/DetailView/DetailView';

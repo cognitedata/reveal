@@ -14,7 +14,7 @@ import {
   DropdownSeparator,
 } from './elements';
 
-const Filters = ({
+export const Filters = ({
   source,
   target,
   date,
@@ -160,5 +160,3 @@ const Filters = ({
     </FiltersWrapper>
   );
 };
-
-export default Filters;

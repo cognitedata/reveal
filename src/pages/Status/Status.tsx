@@ -4,7 +4,7 @@ import Card from 'components/Atoms/Card';
 import { StatusContainer, CardContent, HeadingContainer } from './elements';
 import StatusCardHeader from './StatusCardHeader';
 import Heartbeats from './Heartbeats';
-import { DropdownLabel } from '../DataTransfers/elements';
+import { DropdownLabel } from '../DataTransfers/Filters/elements';
 import {
   DATE_RANGE_VALUES,
   DateRangeValueType,
