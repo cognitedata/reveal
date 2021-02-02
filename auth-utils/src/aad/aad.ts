@@ -11,17 +11,6 @@ import {
   PopupRequest,
 } from '@azure/msal-browser';
 
-const log = (message: string, data: unknown = '') => {
-  const ENV = process.env.REACT_APP_ENV || process.env.NODE_ENV;
-
-  const isEnvironment = (environement: string) => ENV === environement;
-
-  if (isEnvironment('development')) {
-    // eslint-disable-next-line no-console
-    console.log('[CogniteAuth-AAD]', message, data);
-  }
-};
-
 class AzureAD {
   private myMSALObj: PublicClientApplication; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/classes/_src_app_publicclientapplication_.publicclientapplication.html
 
@@ -88,7 +77,10 @@ class AzureAD {
   }
 
   private getCDFScopes(): string[] {
-    return [`https://${this.cluster}.cognitedata.com/user_impersonation`];
+    return [
+      `https://${this.cluster}.cognitedata.com/user_impersonation`,
+      `https://${this.cluster}.cognitedata.com/IDENTITY`,
+    ];
   }
 
   /**
@@ -141,18 +133,12 @@ class AzureAD {
   getAccount(): AccountInfo | null {
     // need to call getAccount here?
     const currentAccounts = this.myMSALObj.getAllAccounts();
-    log('currentAccounts', currentAccounts);
     if (currentAccounts === null) {
-      log('No accounts detected');
       return null;
     }
 
     if (currentAccounts.length > 1) {
       // Add choose account code here
-      log(
-        'Multiple accounts detected, need to add choose account code.',
-        currentAccounts
-      );
       return currentAccounts[0];
     }
     if (currentAccounts.length === 1) {
@@ -181,10 +167,8 @@ class AzureAD {
    */
   async loadAuthModule(): Promise<AccountInfo | boolean> {
     try {
-      log('Checking if we are on a redirect', window.location.href);
       const res = await this.myMSALObj.handleRedirectPromise();
       if (res) {
-        log('user is being redirected from azure. Selecting account', res);
         const { account } = res;
         if (account) {
           this.account = account;
@@ -193,14 +177,11 @@ class AzureAD {
         return this.account;
       }
 
-      log('No authentication flow detected, attempt to find accounts');
       const account = this.getAccount();
       if (account) {
-        log('Account found');
         this.account = account;
         return this.account;
       }
-      log('The user is not logged in and is not coming from a redirect');
       return false;
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -264,7 +245,6 @@ class AzureAD {
       const response: AuthenticationResult = await this.myMSALObj.acquireTokenSilent(
         this.silentCDFTokenRequest
       );
-      log('CDF-token request');
       return response.accessToken;
     }
     return undefined;
@@ -279,12 +259,9 @@ class AzureAD {
   ): Promise<AuthenticationResult | undefined | void> {
     try {
       const response = await this.myMSALObj.acquireTokenSilent(silentRequest);
-      log('getTokenRedirect', response);
       return response;
     } catch (e) {
-      log('silent token acquisition fails.');
       if (e instanceof InteractionRequiredAuthError) {
-        log('acquiring token using redirect');
         return this.myMSALObj
           .acquireTokenRedirect(interactiveRequest)
           .catch(() => undefined);

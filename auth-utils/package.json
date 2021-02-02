@@ -1,6 +1,6 @@
 {
   "name": "@cognite/auth-utils",
-  "version": "0.3.0",
+  "version": "0.4.1",
   "description": "The auth layer of all cognite react apps",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -30,7 +30,6 @@
   "dependencies": {
     "@azure/msal-browser": "^2.8.0",
     "@cognite/sdk": "^3.3.0",
-    "axios": "^0.21.0",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.20"
   },

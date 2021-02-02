@@ -1,8 +1,4 @@
-export type AuthFlow =
-  | 'COGNITE_AUTH'
-  | 'AZURE_AD_MULTI_TENANCY'
-  | 'ADFS'
-  | 'OAUTH_GENERIC';
+export type AuthFlow = 'COGNITE_AUTH' | 'AZURE_AD' | 'ADFS' | 'OAUTH_GENERIC';
 
 export type AuthResult = {
   idToken?: string;

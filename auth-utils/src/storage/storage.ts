@@ -1,11 +1,18 @@
 import noop from 'lodash/noop';
 
-import { AuthFlow, AuthResult, AuthResults } from './types';
+import { AuthFlow } from './types';
 
-const STORAGE_VERSION = 3;
-// export for testing:
-export const getKey = () => `cognite__auth__v${STORAGE_VERSION}__storage`;
-const NO_PROJECT_KEY = '__noproject__';
+const STORAGE_VERSION = 4;
+
+export const getKey = (tenant?: string, env?: string) => {
+  const environment = env ? `env_${env}` : '';
+  return tenant
+    ? `cognite__auth__v${STORAGE_VERSION}_tenant_${tenant}_${environment}`
+    : `cognite__auth__v${STORAGE_VERSION}`;
+};
+
+const getFlowKey = (tenant?: string, env?: string) =>
+  `${getKey(tenant, env)}_flow`;
 
 /**
  * Define a no-op localStorage implementation to use as a fallback when
@@ -19,18 +26,6 @@ const FAKE_LOCAL_STORAGE = {
 };
 
 const SAFE_LOCAL_STORAGE = localStorage || FAKE_LOCAL_STORAGE;
-
-const getTenant = () => {
-  const { pathname } = window.location;
-  if (!pathname) {
-    return NO_PROJECT_KEY;
-  }
-  const match = pathname.match(/^\/([a-z0-9-]+)\/?/);
-  if (!match) {
-    return NO_PROJECT_KEY;
-  }
-  return match[1];
-};
 
 const saveToLocalStorage = <T>(key: string, payload: T) => {
   try {
@@ -54,49 +49,32 @@ const getFromLocalStorage = <T>(key: string) => {
   return undefined;
 };
 
-export const saveAuthResult = (
-  authresult: AuthResult,
-  optTenant?: string
-): void => {
-  const tenant = getTenant();
-  const data = getFromLocalStorage<AuthResults>(getKey()) || {};
-  saveToLocalStorage(getKey(), { ...data, [optTenant || tenant]: authresult });
-};
+export function saveTenantFlow(
+  { tenant, env }: { tenant: string; env?: string },
+  flow: AuthFlow,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options?: any
+) {
+  saveToLocalStorage(getFlowKey(tenant, env), { flow, options });
+}
 
-export const retrieveAuthResult = (): AuthResult | undefined => {
-  const tenant = getTenant();
-  const data = getFromLocalStorage<AuthResults>(getKey()) || {};
-  return data[tenant];
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function saveFlow(flow: AuthFlow, options?: any) {
+  saveToLocalStorage(getFlowKey(), { flow, options });
+}
 
-export const clearByProject = (project: string): void => {
-  const data = getFromLocalStorage<AuthResults>(getKey()) || {};
-  delete data[project];
-  saveToLocalStorage(getKey(), data);
-};
-
-export const clearByNoProject = (): void => {
-  const project = NO_PROJECT_KEY;
-  clearByProject(project);
-};
-
-export const initialiseOnRedirectFlow = (authFlow: AuthFlow): void => {
-  const tenant = getTenant();
-  if (tenant !== NO_PROJECT_KEY) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      'Trying to initialize redirect when already a project is selected'
-    );
-    throw Error('Cannot initialise redirect on a project route');
-  }
-  saveAuthResult({ authFlow });
-};
-
-export const isAuthFlow = (authFlow: AuthFlow): boolean => {
-  const res = retrieveAuthResult();
-  return !!(res && res.authFlow === authFlow);
-};
-
-export const isNoAuthFlow = (): boolean => {
-  return !retrieveAuthResult();
-};
+export function getFlow(tenant?: string, env?: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tenantFlow = getFromLocalStorage<{ flow: AuthFlow; options?: any }>(
+    getFlowKey(tenant, env)
+  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const generalFlow = getFromLocalStorage<{ flow: AuthFlow; options?: any }>(
+    getFlowKey()
+  );
+  const f = tenantFlow || generalFlow;
+  return {
+    flow: f?.flow,
+    options: f?.options,
+  };
+}
