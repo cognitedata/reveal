@@ -1,4 +1,25 @@
-export const modalSettings = {
+export type ModalConfig = {
+  header: {
+    suite: string;
+    boards: string;
+  };
+  buttons: {
+    save: string;
+    suite: Record<string, string>;
+    boards: Record<string, string>;
+  };
+  width: {
+    suite: number;
+    boards: number;
+  };
+};
+
+export type ModalSettings = {
+  create: ModalConfig;
+  edit: ModalConfig;
+};
+
+export const modalSettings: ModalSettings = {
   create: {
     header: { suite: 'Create a new suite', boards: 'Add board to suite' },
     buttons: {

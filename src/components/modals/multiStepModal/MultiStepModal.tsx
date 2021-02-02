@@ -8,7 +8,6 @@ import { RootDispatcher } from 'store/types';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
 import { ModalFooter } from 'components/modals/elements';
-import { TS_FIX_ME } from 'types/core';
 import { modalClose } from 'store/modals/actions';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useFormState } from 'hooks';
@@ -16,11 +15,12 @@ import { saveForm } from 'store/forms/thunks';
 import { BoardForm, SuiteForm } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
+import { ModalConfig } from '../config';
 
 type Step = 'suite' | 'boards';
 
 interface Props {
-  modalSettings: TS_FIX_ME;
+  modalSettings: ModalConfig;
 }
 
 export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {

@@ -4,10 +4,10 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import { updateLastVisited } from 'store/userSpace/thunks';
 import { now } from 'utils/date';
 import { getLastVisited } from 'store/userSpace/selectors';
-import { Board } from 'store/suites/types';
+import { Board, Suite } from 'store/suites/types';
 import { RootDispatcher } from 'store/types';
 
-export const useLastVisited = (dataItem: Board) => {
+export const useLastVisited = (dataItem: Board | Suite) => {
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const lastVisited = useSelector(getLastVisited) || [];
