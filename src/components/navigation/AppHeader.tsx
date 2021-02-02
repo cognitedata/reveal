@@ -12,6 +12,7 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { logout } from 'utils/logout';
 import sidecar from 'utils/sidecar';
 import { useIntercom } from 'react-use-intercom';
+import { getReleaseVersion } from 'utils/release';
 import { CogniteLogo, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
@@ -113,6 +114,8 @@ const AppHeader: React.FC = () => {
               Privacy policy
             </CustomLink>
           </Menu.Item>
+          <Menu.Divider />
+          <Menu.Item disabled>Version: {getReleaseVersion()}</Menu.Item>
           <Menu.Divider />
           <Menu.Item>
             <CustomMenuItem

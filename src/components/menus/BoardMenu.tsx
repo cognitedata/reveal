@@ -24,7 +24,10 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
   const admin = useSelector(isAdmin);
 
   const handleMenuOpen = (event: React.MouseEvent) => {
+    // prevent from cliking on link
     event.preventDefault();
+    // prevent from calling quick access click handler
+    event.stopPropagation();
     setIsComponentVisible(() => !isComponentVisible);
   };
 
@@ -35,6 +38,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     modalProps: any
   ) => {
     event.preventDefault();
+    event.stopPropagation();
     setIsComponentVisible(() => !isComponentVisible);
     dispatch(modalOpen({ modalType, modalProps }));
   };

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Loader, Title, Button, Icon, Graphic } from '@cognite/cogs.js';
 import Glider from 'react-glider';
@@ -28,8 +27,6 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 
 const Home = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { t } = useTranslation('Home');
   const itemsToDisplay = 6;
   const glideItemWidth = 348;
   const dispatch = useDispatch<RootDispatcher>();

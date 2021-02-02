@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
@@ -20,8 +19,6 @@ const renderNavigationItem = (item: Suite) => (
 );
 
 const LeftSidebar: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { t } = useTranslation('Home');
   const { suites } = useSelector(getSuitesTableState);
 
   const sideBarState = JSON.parse(
