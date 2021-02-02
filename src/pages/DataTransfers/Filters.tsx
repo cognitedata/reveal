@@ -62,9 +62,7 @@ const Filters = ({
       source: configuration.configurations,
       visible: true,
       onSelect: configuration.onSelectConfiguration,
-      buttonText: configuration.selected
-        ? configuration.selected.name
-        : 'Select',
+      value: configuration?.selected?.name,
     },
   ];
 
@@ -75,7 +73,7 @@ const Filters = ({
       source: source.sources,
       onSelect: source.onSelectSource,
       visible: source.sources.length > 0,
-      buttonText: source.selected || 'Select',
+      value: source.selected,
     },
     {
       name: 'sourceProject',
@@ -83,9 +81,7 @@ const Filters = ({
       source: source.projects,
       onSelect: source.onSelectProject,
       visible: !!(source.selected && source.projects.length > 0),
-      buttonText: source.selectedProject
-        ? source.selectedProject.external_id
-        : 'Select project',
+      value: source?.selectedProject?.external_id,
     },
     {
       name: 'target',
@@ -97,7 +93,7 @@ const Filters = ({
         source.selectedProject &&
         target.targets.length > 0
       ),
-      buttonText: target.selected || 'Select',
+      value: target.selected,
     },
     {
       name: 'targetProject',
@@ -105,9 +101,7 @@ const Filters = ({
       source: target.projects,
       onSelect: target.onSelectProject,
       visible: !!(target.selected && target.projects.length > 0),
-      buttonText: target.selectedProject
-        ? target.selectedProject.external_id
-        : 'Select',
+      value: target?.selectedProject?.external_id,
     },
   ];
 

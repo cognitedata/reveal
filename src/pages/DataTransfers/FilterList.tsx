@@ -33,7 +33,7 @@ export const FilterList = ({
                   iconPlacement="right"
                   onClick={() => toggleFilter(dropdown.name)}
                 >
-                  {dropdown.buttonText}
+                  {dropdown.value || 'Select'}
                 </DropdownButton>
               </>
             </Dropdown>

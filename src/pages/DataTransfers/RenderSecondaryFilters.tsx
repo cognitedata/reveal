@@ -83,7 +83,7 @@ export const RenderSecondaryFilters = ({
       source: datatype.types,
       visible: !!(datatype.types.length > 0 && openFilter !== 'date'),
       onSelect: datatype.onSelectType,
-      buttonText: datatype.selected || 'Select datatype',
+      value: datatype.selected,
     },
   ];
 

@@ -94,7 +94,7 @@ export type FilterListFilters = {
   name: keyof FilterTypes;
   label: string;
   onSelect: (action: any) => void;
-  buttonText: string;
+  value: string | null;
   visible: boolean;
 }[];
 
