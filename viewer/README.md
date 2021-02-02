@@ -34,10 +34,10 @@ There are 2 different types of projects:
 
 1. These where CDN is available (no restrictive Content-Security-Policy is set)
 2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-that forbids to fetch scripts from jsdeliver.
+that forbids to fetch scripts from apps-cdn.cognitedata.com.
 
-By default, the reveal will try to fetch its worker/wasm files from [jsdeliver](https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.0.0/dist/cdn/).
-If there is no CSP in your project, then it will just work without any additional steps.
+By default, Reveal tries to fetch its worker/wasm files from `apps-cdn.cognitedata.com`.
+If there is no CSP in your project or `apps-cdn.cognitedata.com` is whitelisted, then it will just work without any additional steps.
 
 In case if you see an error like that:
 
