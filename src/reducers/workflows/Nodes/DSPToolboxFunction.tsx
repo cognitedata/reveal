@@ -83,7 +83,7 @@ export const configPanel = ({
       );
 
       const availableOperations =
-        functionResult.data.response.all_available_ops;
+        functionResult.data.response?.all_available_ops || [];
 
       /* eslint-disable no-console */
       console.log({
