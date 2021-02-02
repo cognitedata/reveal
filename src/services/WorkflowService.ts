@@ -25,7 +25,9 @@ export class WorkflowService {
    * @param newWorkflow New or existing workflow
    */
   async saveWorkflow(workflow: Workflow): Promise<void> {
-    return this.firebaseCollection.doc(workflow.id).set(workflow);
+    return this.firebaseCollection
+      .doc(workflow.id)
+      .set(JSON.parse(JSON.stringify(workflow)));
   }
 
   async deleteWorkflow(workflow: Workflow): Promise<any> {

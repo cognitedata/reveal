@@ -18,12 +18,20 @@ import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
 import { renameChart, saveExistingChart } from 'reducers/charts/api';
 import ChartComponent from 'components/Chart';
-import { runWorkflow } from 'reducers/workflows/utils';
-import workflowSlice, { Workflow, WorkflowRunStatus } from 'reducers/workflows';
-import { NodeProgress } from '@cognite/connect';
+import workflowSlice, {
+  LatestWorkflowRun,
+  Workflow,
+  WorkflowRunStatus,
+} from 'reducers/workflows';
 import DatePicker from 'react-datepicker';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
+import DataQualityReport from 'components/DataQualityReport';
+import { getStepsFromWorkflow } from 'utils/transforms';
+import { calculateGranularity } from 'utils/timeseries';
+import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
+import sdk from 'services/CogniteSDK';
+import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import {
   Header,
   TopPaneWrapper,
@@ -61,11 +69,18 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, String(chartId))
   );
-  const context = { chart };
+  const tenant = useSelector((state) => state.environment.tenant);
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
+  const isWorkspaceMode = workspaceMode === 'workspace';
   const isEditorMode = workspaceMode === 'editor';
+  const isDataQualityMode = workspaceMode === 'report';
+
+  const [dataQualityReport, setDataQualityReport] = useState<{
+    timeSeriesId?: string;
+    reportType?: string;
+  }>({});
 
   const workflows = useSelector((state) =>
     chart?.workflowCollection?.map(({ id }) => state.workflows.entities[id])
@@ -74,40 +89,157 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const error = useSelector((state) => state.charts.status.error);
 
   const runWorkflows = async () => {
+    // console.log('Running all workflows');
+
+    if (!chart) {
+      return;
+    }
+
     (workflows || []).forEach(async (flow) => {
       if (!flow) {
         return;
       }
-      let progressTracker = {};
-      const nextLatestRun = await runWorkflow(
-        flow,
-        (nextProgress: NodeProgress) => {
-          progressTracker = { ...progressTracker, ...nextProgress };
-          dispatch(
-            workflowSlice.actions.updateWorkflow({
-              id: flow.id,
-              changes: {
-                latestRun: {
-                  status: 'RUNNING',
-                  nodeProgress: progressTracker,
-                  timestamp: Date.now(),
-                },
-              },
-            })
-          );
-        },
-        context
+
+      if (!tenant) {
+        return;
+      }
+
+      const steps = getStepsFromWorkflow(flow);
+
+      /* eslint-disable no-console */
+      console.log('Running workflow');
+      /* eslint-enable no-console */
+
+      if (!steps.length) {
+        return;
+      }
+
+      const computation = {
+        steps,
+        start_time: new Date(chart.dateFrom).getTime(),
+        end_time: new Date(chart.dateTo).getTime(),
+        granularity: calculateGranularity(
+          [
+            new Date(chart.dateFrom).getTime(),
+            new Date(chart.dateTo).getTime(),
+          ],
+          1000
+        ),
+      };
+
+      /* eslint-disable no-console */
+      console.log({ computation });
+      /* eslint-enable no-console */
+
+      const functions = await sdk.get<{ items: CogniteFunction[] }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
       );
+
+      const simpleCalc = functions.data.items.find(
+        (func) => func.name === 'simple_calc-master'
+      );
+
+      if (!simpleCalc) {
+        return;
+      }
 
       dispatch(
         workflowSlice.actions.updateWorkflow({
           id: flow.id,
           changes: {
             latestRun: {
-              ...nextLatestRun,
-              status: 'SUCCESS',
-              nodeProgress: progressTracker,
+              timestamp: Date.now(),
+              status: 'RUNNING',
+              nodeProgress: flow.nodes.reduce((output, node) => {
+                return {
+                  ...output,
+                  [node.id]: { status: 'RUNNING' },
+                };
+              }, {}),
             },
+          },
+        })
+      );
+
+      const functionCall = await sdk.post<{ id: number }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/call`,
+        {
+          data: {
+            data: { computation_graph: computation },
+          },
+        }
+      );
+
+      const status = await waitOnFunctionComplete(
+        tenant,
+        simpleCalc.id,
+        functionCall.data.id
+      );
+
+      const functionResult = await sdk.get<{ response: Record<string, any> }>(
+        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
+      );
+
+      /* eslint-disable no-console */
+      console.log({
+        status,
+        result: functionResult.data,
+      });
+      /* eslint-enable no-console */
+
+      if (
+        !functionResult.data.response ||
+        functionResult.data?.response?.error
+      ) {
+        dispatch(
+          workflowSlice.actions.updateWorkflow({
+            id: flow.id,
+            changes: {
+              latestRun: {
+                timestamp: Date.now(),
+                status: 'FAILED',
+                nodeProgress: flow.nodes.reduce((output, node) => {
+                  return {
+                    ...output,
+                    [node.id]: { status: 'FAILED' },
+                  };
+                }, {}),
+              },
+            },
+          })
+        );
+
+        return;
+      }
+
+      const latestRun: LatestWorkflowRun = {
+        status: 'SUCCESS',
+        timestamp: Date.now(),
+        errors: [],
+        results: {
+          datapoints: {
+            unit: 'Unknown',
+            datapoints: functionResult.data.response.value.map(
+              (_: any, i: number) => ({
+                timestamp: functionResult.data.response.timestamp[i],
+                value: functionResult.data.response.value[i],
+              })
+            ),
+          },
+        },
+        nodeProgress: flow.nodes.reduce((output, node) => {
+          return {
+            ...output,
+            [node.id]: { status: 'DONE' },
+          };
+        }, {}),
+      };
+
+      dispatch(
+        workflowSlice.actions.updateWorkflow({
+          id: flow.id,
+          changes: {
+            latestRun,
           },
         })
       );
@@ -268,6 +400,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
+  const handleOpenDataQualityReport = (timeSeriesId: string) => {
+    setDataQualityReport({ timeSeriesId, reportType: 'gaps' });
+  };
+
+  const handleCloseDataQualityReport = () => {
+    setDataQualityReport({});
+  };
+
   const renderStatusIcon = (status?: WorkflowRunStatus) => {
     switch (status) {
       case 'RUNNING':
@@ -304,7 +444,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <SourceName>Name</SourceName>
         </SourceItem>
       </th>
-      {!isEditorMode && (
+      {isWorkspaceMode && (
         <>
           <th style={{ width: 110 }}>
             <SourceItem>
@@ -324,6 +464,20 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <th>
             <SourceItem>
               <SourceName>Description</SourceName>
+            </SourceItem>
+          </th>
+        </>
+      )}
+      {isDataQualityMode && (
+        <>
+          <th style={{ width: 200 }}>
+            <SourceItem>
+              <SourceName>Data Quality Reports</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Warnings</SourceName>
             </SourceItem>
           </th>
         </>
@@ -352,9 +506,27 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
       );
 
-      const unitConversionOptions = preferredUnitOption?.conversions?.map(
+      const unitConversionOptions = inputUnitOption?.conversions?.map(
         (conversion) =>
           units.find((unitOption) => unitOption.value === conversion)
+      );
+
+      const unitOverrideMenuItems = units.map((unitOption) => (
+        <Menu.Item onClick={() => handleSetInputUnit(id, unitOption.value)}>
+          {unitOption.label}
+          {unit?.toLowerCase() === unitOption.value && ' (selected)'}
+          {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
+        </Menu.Item>
+      ));
+
+      const unitConversionMenuItems = unitConversionOptions?.map(
+        (unitOption) => (
+          <Menu.Item onClick={() => handleSetOutputUnit(id, unitOption?.value)}>
+            {unitOption?.label}{' '}
+            {preferredUnit?.toLowerCase() === unitOption?.value &&
+              ' (selected)'}
+          </Menu.Item>
+        )
       );
 
       return (
@@ -428,7 +600,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               </SourceMenu>
             </SourceItem>
           </td>
-          {!isEditorMode && (
+          {isWorkspaceMode && (
             <>
               <td>
                 <Dropdown
@@ -439,20 +611,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           Select input unit (override)
                         </span>
                       </Menu.Header>
-                      {units.map((unitOption) => (
-                        <Menu.Item
-                          onClick={() =>
-                            handleSetInputUnit(id, unitOption.value)
-                          }
-                        >
-                          {unitOption.label}
-
-                          {unit?.toLowerCase() === unitOption.value &&
-                            ' (selected)'}
-                          {originalUnit?.toLowerCase() === unitOption.value &&
-                            ' (original)'}
-                        </Menu.Item>
-                      ))}
+                      {unitOverrideMenuItems}
                     </Menu>
                   }
                 >
@@ -474,17 +633,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           Select preferred unit
                         </span>
                       </Menu.Header>
-                      {unitConversionOptions?.map((unitOption) => (
-                        <Menu.Item
-                          onClick={() =>
-                            handleSetOutputUnit(id, unitOption?.value)
-                          }
-                        >
-                          {unitOption?.label}{' '}
-                          {originalUnit?.toLowerCase() === unitOption?.value &&
-                            ' (selected)'}
-                        </Menu.Item>
-                      ))}
+                      {unitConversionMenuItems}
                     </Menu>
                   }
                 >
@@ -501,6 +650,38 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               <td>
                 <SourceItem>
                   <SourceName>{description}</SourceName>
+                </SourceItem>
+              </td>
+            </>
+          )}
+          {isDataQualityMode && (
+            <>
+              <td>
+                <Dropdown
+                  content={
+                    <Menu>
+                      <Menu.Header>
+                        <span style={{ wordBreak: 'break-word' }}>
+                          Select data quality report
+                        </span>
+                      </Menu.Header>
+                      <Menu.Item
+                        onClick={() => handleOpenDataQualityReport(id)}
+                      >
+                        Gap Analysis
+                      </Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <SourceItem style={{ justifyContent: 'space-between' }}>
+                    <SourceName>Reports</SourceName>
+                    <Icon style={{ marginRight: 10 }} type="CaretDown" />
+                  </SourceItem>
+                </Dropdown>
+              </td>
+              <td>
+                <SourceItem>
+                  <Icon type="TriangleWarning" />
                 </SourceItem>
               </td>
             </>
@@ -565,7 +746,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             </SourceMenu>
           </SourceItem>
         </td>
-        {!isEditorMode && (
+        {isWorkspaceMode && (
           <>
             <td>
               <SourceItem>
@@ -574,7 +755,26 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             </td>
             <td>
               <SourceItem>
-                <SourceName>Calculation</SourceName>
+                <SourceName>*</SourceName>
+              </SourceItem>
+            </td>
+            <td>
+              <SourceItem>
+                <SourceName>-</SourceName>
+              </SourceItem>
+            </td>
+            <td>
+              <SourceItem>
+                <SourceName>-</SourceName>
+              </SourceItem>
+            </td>
+          </>
+        )}
+        {isDataQualityMode && (
+          <>
+            <td>
+              <SourceItem>
+                <SourceName>-</SourceName>
               </SourceItem>
             </td>
             <td>
@@ -703,10 +903,23 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           >
             <ToolbarIcon type="Edit" />
             <span style={{ paddingLeft: 10, paddingRight: 10 }}>
-              Node Editor
+              Calculations
+            </span>
+          </BottombarItem>
+          <BottombarItem
+            isActive={workspaceMode === 'report'}
+            onClick={() => setWorkspaceMode('report')}
+          >
+            <ToolbarIcon type="BarChart" />
+            <span style={{ paddingLeft: 10, paddingRight: 10 }}>
+              Data Quality Report
             </span>
           </BottombarItem>
         </BottombarWrapper>
+        <DataQualityReport
+          handleClose={handleCloseDataQualityReport}
+          {...dataQualityReport}
+        />
       </ContentWrapper>
     </ChartViewContainer>
   );

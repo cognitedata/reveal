@@ -5,7 +5,6 @@ import {
   ControllerProvider,
   Node,
   Connection,
-  NodeProgress,
   NodeContainer,
 } from '@cognite/connect';
 import { Menu, Input, Button } from '@cognite/cogs.js';
@@ -19,8 +18,12 @@ import workflowSlice, {
 } from 'reducers/workflows';
 import useDispatch from 'hooks/useDispatch';
 import { saveExistingWorkflow } from 'reducers/workflows/api';
-import { runWorkflow } from 'reducers/workflows/utils';
 import { chartSelectors } from 'reducers/charts';
+import { getStepsFromWorkflow } from 'utils/transforms';
+import { calculateGranularity } from 'utils/timeseries';
+import sdk from 'services/CogniteSDK';
+import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
+import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { pinTypes, isWorkflowRunnable } from './utils';
 import defaultNodeOptions from '../../reducers/workflows/Nodes';
 import ConfigPanel from './ConfigPanel';
@@ -44,6 +47,8 @@ type WorkflowEditorProps = {
 const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<StorableNode>();
+
+  const tenant = useSelector((state) => state.environment.tenant);
 
   const workflow = useSelector((state) =>
     workflowSelectors.selectById(state, workflowId || '')
@@ -123,30 +128,136 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     if (!workflow) {
       return;
     }
-    let progressTracker = {};
-    const finalResult = await runWorkflow(
-      workflow,
-      (nextProgress: NodeProgress) => {
-        progressTracker = { ...progressTracker, ...nextProgress };
-        dispatch(
-          workflowSlice.actions.updateWorkflow({
-            id: workflow.id,
-            changes: {
-              latestRun: {
-                status: 'RUNNING',
-                nodeProgress: progressTracker,
-                timestamp: Date.now(),
-              },
-            },
-          })
-        );
-      },
-      context
-    );
-    const latestRun: LatestWorkflowRun = {
-      ...finalResult,
-      nodeProgress: progressTracker,
+
+    if (!tenant) {
+      return;
+    }
+
+    const steps = getStepsFromWorkflow(workflow);
+
+    /* eslint-disable no-console */
+    console.log('Running workflow');
+    /* eslint-enable no-console */
+
+    if (!steps.length) {
+      return;
+    }
+
+    const computation = {
+      steps,
+      start_time: new Date(chart.dateFrom).getTime(),
+      end_time: new Date(chart.dateTo).getTime(),
+      granularity: calculateGranularity(
+        [new Date(chart.dateFrom).getTime(), new Date(chart.dateTo).getTime()],
+        1000
+      ),
     };
+
+    /* eslint-disable no-console */
+    console.log({ computation });
+    /* eslint-enable no-console */
+
+    const functions = await sdk.get<{ items: CogniteFunction[] }>(
+      `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
+    );
+
+    const simpleCalc = functions.data.items.find(
+      (func) => func.name === 'simple_calc-master'
+    );
+
+    if (!simpleCalc) {
+      return;
+    }
+
+    dispatch(
+      workflowSlice.actions.updateWorkflow({
+        id: workflow.id,
+        changes: {
+          latestRun: {
+            timestamp: Date.now(),
+            status: 'RUNNING',
+            nodeProgress: workflow.nodes.reduce((output, node) => {
+              return {
+                ...output,
+                [node.id]: { status: 'RUNNING' },
+              };
+            }, {}),
+          },
+        },
+      })
+    );
+
+    const functionCall = await sdk.post<{ id: number }>(
+      `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/call`,
+      {
+        data: {
+          data: { computation_graph: computation },
+        },
+      }
+    );
+
+    const status = await waitOnFunctionComplete(
+      tenant,
+      simpleCalc.id,
+      functionCall.data.id
+    );
+
+    const functionResult = await sdk.get<{ response: Record<string, any> }>(
+      `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
+    );
+
+    /* eslint-disable no-console */
+    console.log({
+      status,
+      result: functionResult.data,
+    });
+    /* eslint-enable no-console */
+
+    if (!functionResult.data.response || functionResult.data?.response?.error) {
+      dispatch(
+        workflowSlice.actions.updateWorkflow({
+          id: workflow.id,
+          changes: {
+            latestRun: {
+              timestamp: Date.now(),
+              status: 'FAILED',
+              nodeProgress: workflow.nodes.reduce((output, node) => {
+                return {
+                  ...output,
+                  [node.id]: { status: 'FAILED' },
+                };
+              }, {}),
+            },
+          },
+        })
+      );
+
+      return;
+    }
+
+    const latestRun: LatestWorkflowRun = {
+      status: 'SUCCESS',
+      timestamp: Date.now(),
+      errors: [],
+      results: {
+        datapoints: {
+          unit: 'Unknown',
+          datapoints: functionResult.data.response.value.map(
+            (_: any, i: number) => ({
+              timestamp: functionResult.data.response.timestamp[i],
+              value: functionResult.data.response.value[i],
+            })
+          ),
+        },
+      },
+      nodeProgress: workflow.nodes.reduce((output, node) => {
+        return {
+          ...output,
+          [node.id]: { status: 'DONE' },
+        };
+      }, {}),
+    };
+
     dispatch(
       workflowSlice.actions.updateWorkflow({
         id: workflow.id,
