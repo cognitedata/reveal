@@ -120,9 +120,6 @@ export function getInputFromNode(node: StorableNode, allNodes: StorableNode[]) {
   }
 }
 
-/**
- * TODO: Write test
- */
 export function getStepsFromWorkflow(workflow: Workflow) {
   const outputNode = workflow.nodes.find(
     (node) => !node.outputPins || node.outputPins.length === 0
