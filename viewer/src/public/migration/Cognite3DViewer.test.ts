@@ -10,7 +10,7 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
 import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
-import { SceneRenderedDelegate } from '../types';
+import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
@@ -70,6 +70,15 @@ describe('Cognite3DViewer', () => {
     expect(_sectorCuller.dispose).toBeCalledTimes(1);
   });
 
+  test('dispose raises disposed-event', () => {
+    const disposedListener: DisposedDelegate = jest.fn();
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    viewer.on('disposed', disposedListener);
+
+    viewer.dispose();
+
+    expect(disposedListener).toBeCalledTimes(1);
+  });
   test('on cameraChange triggers when position and target is changed', () => {
     // Arrange
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();

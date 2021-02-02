@@ -151,4 +151,21 @@ describe('HtmlOverlayTool', () => {
     // Assert
     expect(canvasContainer.children.length).toBe(initialNumberOfElements);
   });
+
+  test('all elements are removed when viewer is disposed', () => {
+    // Arrange
+    const initialNumberOfElements = canvasContainer.children.length;
+    const helper = new HtmlOverlayTool(viewer);
+    for (let i = 0; i < 10; i++) {
+      const element = document.createElement('div');
+      element.style.position = 'absolute';
+      helper.add(element, new THREE.Vector3(0, 0, 0));
+    }
+
+    // Act
+    viewer.dispose();
+
+    // Assert
+    expect(canvasContainer.children.length).toBeLessThanOrEqual(initialNumberOfElements);
+  });
 });

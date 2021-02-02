@@ -120,45 +120,5 @@ viewer.on('click', event => {
 ```
 
 As shown above, overlays can be removed using `remove()`. It is also possible to remove all 
-overlays by disposing the tool:
-
-```js runnable
-// import { HtmlOverlayTool } from '@cognite/reveal/tools';
-
-function createOverlay() {
-  const element = document.createElement('div');
-  element.innerText = `!`;
-  element.style.cssText = `
-    position: absolute;
-    
-    /* Anchor to the center of the element and ignore events */
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    touch-action: none;
-
-    /* Make it look nice */
-    padding: 10px;
-    minHeight: 50px;
-    color: #000000;
-    background: #f5a614;
-    borderRadius: 0.25em;
-    border: '#ffffff22 solid 2px;
-  `;
-  return element;
-}
-
-const overlays = new HtmlOverlayTool(viewer);
-const bounds = model.getModelBoundingBox();
-for (let i = 0; i < 100; i++) {
-  const s = [Math.random(), Math.random(), Math.random()];
-  const pos = new THREE.Vector3(
-      bounds.min.x + (bounds.max.x - bounds.min.x) * s[0],
-      bounds.min.y + (bounds.max.y - bounds.min.y) * s[1],
-      bounds.min.z + (bounds.max.z - bounds.min.z) * s[2]
-    );
-  overlays.add(createOverlay(), pos);
-}
-
-// Dispose all overlays after 10 seconds
-setTimeout(() => overlays.dispose(), 10000);
-```
+overlays by calling `clear()` or by disposing the tool using `dispose()`. The tool cannot
+be used after calling `dispose()`.

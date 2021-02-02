@@ -282,6 +282,8 @@ export class Cognite3DViewer {
     }
     this.models.splice(0);
     this.spinner.dispose();
+
+    this.eventListeners.disposed.forEach(x => x());
   }
 
   /**

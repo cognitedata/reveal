@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { SceneRenderedDelegate } from '../public/types';
+import { DisposedDelegate, SceneRenderedDelegate } from '../public/types';
 
 import { worldToViewport } from '../utilities/worldToViewport';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
@@ -70,6 +70,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
+  private readonly _onViewerDisposedHandler: DisposedDelegate;
   // Allocate variables needed for processing once to avoid allocations
   private readonly _preallocatedVariables = {
     camPos: new THREE.Vector3(),
@@ -96,8 +97,10 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     super();
 
     this._onSceneRenderedHandler = this.onSceneRendered.bind(this);
+    this._onViewerDisposedHandler = this.onViewerDisposed.bind(this);
     this._viewer = viewer;
     this._viewer.on('sceneRendered', this._onSceneRenderedHandler);
+    this._viewer.on('disposed', this._onViewerDisposedHandler);
   }
 
   /**
@@ -106,6 +109,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    */
   dispose(): void {
     this._viewer.off('sceneRendered', this._onSceneRenderedHandler);
+    this._viewer.off('disposed', this._onViewerDisposedHandler);
     this.clear();
     super.dispose();
   }
@@ -216,5 +220,9 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
   private onSceneRendered(): void {
     this.forceUpdate();
+  }
+
+  private onViewerDisposed(): void {
+    this.dispose();
   }
 }
