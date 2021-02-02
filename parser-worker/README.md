@@ -111,3 +111,8 @@ revealEnv.publicPath = `https://localhost:3000/local-cdn/`;
 // ... then use reveal normally ...
 const viewer = new Cognite3DViewer(/*...*/)
 ```
+
+Note, that if you make any changes in build setup, it's important to run another examples-server on a different port than local-cdn,
+to have cross-domain worker initialisation in examples, and make sure both cases (same domain and different one) work fine.
+
+See: https://github.com/cognitedata/reveal/blob/master/viewer/src/utilities/workers/WorkerPool.ts#L60-L65
