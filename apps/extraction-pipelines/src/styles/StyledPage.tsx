@@ -54,8 +54,12 @@ export const GridMainWrapper = styled(MainPanelGrid)`
   grid-row-gap: 1rem;
   grid-template-areas:
     '. title2 .'
+    '. description .'
     '. main .'
     '. btn .';
+  .description {
+    grid-area: description;
+  }
   p,
   form {
     grid-area: main;
