@@ -22,6 +22,7 @@ import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 import { RenderOptions } from '..';
+import { EventTrigger } from '../utilities/events';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -38,9 +39,9 @@ export class RevealManager<TModelIdentifier> {
 
   private _isDisposed = false;
   private readonly _subscriptions = new Subscription();
-  private readonly eventListeners = {
-    sectorNodeIdToTreeIndexMapLoaded: new Array<SectorNodeIdToTreeIndexMapLoadedListener>(),
-    loadingStateChanged: new Array<LoadingStateChangeListener>()
+  private readonly _events = {
+    sectorNodeIdToTreeIndexMapLoaded: new EventTrigger<SectorNodeIdToTreeIndexMapLoadedListener>(),
+    loadingStateChanged: new EventTrigger<LoadingStateChangeListener>()
   };
 
   private readonly _updateSubject: Subject<void>;
@@ -144,11 +145,11 @@ export class RevealManager<TModelIdentifier> {
   ): void {
     switch (event) {
       case 'loadingStateChanged':
-        this.eventListeners.loadingStateChanged.push(listener as LoadingStateChangeListener);
+        this._events.loadingStateChanged.subscribe(listener as LoadingStateChangeListener);
         break;
 
       case 'nodeIdToTreeIndexMapLoaded':
-        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.push(listener as SectorNodeIdToTreeIndexMapLoadedListener);
+        this._events.sectorNodeIdToTreeIndexMapLoaded.subscribe(listener as SectorNodeIdToTreeIndexMapLoadedListener);
         break;
 
       default:
@@ -164,13 +165,11 @@ export class RevealManager<TModelIdentifier> {
   ): void {
     switch (event) {
       case 'loadingStateChanged':
-        this.eventListeners.loadingStateChanged = this.eventListeners.loadingStateChanged.filter(x => x !== listener);
+        this._events.loadingStateChanged.unsubscribe(listener as LoadingStateChangeListener);
         break;
 
       case 'nodeIdToTreeIndexMapLoaded':
-        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded = this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.filter(
-          x => x !== listener
-        );
+        this._events.sectorNodeIdToTreeIndexMapLoaded.unsubscribe(listener as SectorNodeIdToTreeIndexMapLoadedListener);
         break;
 
       default:
@@ -257,15 +256,11 @@ export class RevealManager<TModelIdentifier> {
 
   private notifySectorNodeIdToTreeIndexMapLoaded(blobUrl: string, nodeIdToTreeIndexMap: Map<number, number>): void {
     const event: SectorNodeIdToTreeIndexMapLoadedEvent = { blobUrl, nodeIdToTreeIndexMap };
-    this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.forEach(listener => {
-      listener(event);
-    });
+    this._events.sectorNodeIdToTreeIndexMapLoaded.fire(event);
   }
 
   private notifyLoadingStateChanged(loadingState: LoadingState) {
-    this.eventListeners.loadingStateChanged.forEach(handler => {
-      handler(loadingState);
-    });
+    this._events.loadingStateChanged.fire(loadingState);
   }
 
   private initLoadingStateObserver(
