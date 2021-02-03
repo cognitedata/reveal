@@ -3,13 +3,14 @@
  */
 
 import { assertNever } from '../utilities/assertNever';
+import { EventTrigger } from '../utilities/events';
 
 /**
  * Base class for tools attaching to a {@see Cognite3DViewer}.
  * @internal
  */
 export abstract class Cognite3DViewerToolBase {
-  private readonly _disposedListeners = new Set<() => void>();
+  private readonly _disposedEvent = new EventTrigger<() => void>();
   private _disposed = false;
 
   /**
@@ -22,10 +23,7 @@ export abstract class Cognite3DViewerToolBase {
   on(event: 'disposed', handler: () => void) {
     switch (event) {
       case 'disposed':
-        if (this._disposedListeners.has(handler)) {
-          throw new Error('Handler has already been added');
-        }
-        this._disposedListeners.add(handler);
+        this._disposedEvent.subscribe(handler);
         break;
 
       default:
@@ -41,10 +39,7 @@ export abstract class Cognite3DViewerToolBase {
   off(event: 'disposed', handler: () => void) {
     switch (event) {
       case 'disposed':
-        const wasRemoved = this._disposedListeners.delete(handler);
-        if (!wasRemoved) {
-          throw new Error('Handler is not added');
-        }
+        this._disposedEvent.unsubscribe(handler);
         break;
 
       default:
@@ -61,8 +56,8 @@ export abstract class Cognite3DViewerToolBase {
       throw new Error('Already disposed');
     }
     this._disposed = true;
-    this._disposedListeners.forEach(h => h());
-    this._disposedListeners.clear();
+    this._disposedEvent.fire();
+    this._disposedEvent.unsubscribeAll();
   }
 
   /**
