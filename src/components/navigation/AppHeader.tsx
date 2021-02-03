@@ -1,8 +1,12 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, TopBar, Menu, Tooltip } from '@cognite/cogs.js';
-import { useSelector } from 'react-redux';
-import { isAdmin } from 'store/groups/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getGroupsState,
+  getUsersGroupNames,
+  isAdmin,
+} from 'store/groups/selectors';
 import { getUserId } from 'store/auth/selectors';
 import isEqual from 'lodash/isEqual';
 import customerLogo from 'images/dt_logo.png';
@@ -13,12 +17,16 @@ import { logout } from 'utils/logout';
 import sidecar from 'utils/sidecar';
 import { useIntercom } from 'react-use-intercom';
 import { getReleaseVersion } from 'utils/release';
-import { CogniteLogo, LogoWrapper } from './elements';
+import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
+import { CogniteLogo, GroupPreview, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
+  const dispatch = useDispatch();
   const admin = useSelector(isAdmin);
   const email = useSelector(getUserId);
+  const { filter: groupsFilter } = useSelector(getGroupsState);
   const { privacyPolicyUrl, intercomTourId } = sidecar;
+  const allGroupNames = useSelector(getUsersGroupNames);
 
   const {
     startTour,
@@ -39,6 +47,16 @@ const AppHeader: React.FC = () => {
     await logout(client, shutdownIntercom);
   };
 
+  const setFilter = (groupName: string) => {
+    const alreadyChecked = groupsFilter.includes(groupName);
+    if (alreadyChecked) {
+      dispatch(clearGroupsFilter());
+    } else {
+      dispatch(setGroupsFilter([groupName]));
+    }
+  };
+  const clearGroupFilter = () => dispatch(clearGroupsFilter());
+
   const actions = [
     {
       key: 'view',
@@ -50,9 +68,17 @@ const AppHeader: React.FC = () => {
       menu: (
         <Menu>
           <Menu.Header>Select Group Access to View:</Menu.Header>
-          <Menu.Item>Operations Control Managers</Menu.Item>
-          <Menu.Item>Testing team</Menu.Item>
-          <Menu.Item>Management team</Menu.Item>
+          {allGroupNames.map((groupName) => (
+            <Menu.Item selected={groupsFilter.includes(groupName)}>
+              <CustomMenuItem
+                key={groupName}
+                onClick={() => setFilter(groupName)}
+                onKeyPress={() => setFilter(groupName)}
+              >
+                {groupName}
+              </CustomMenuItem>
+            </Menu.Item>
+          ))}
         </Menu>
       ),
     },
@@ -137,32 +163,55 @@ const AppHeader: React.FC = () => {
     : actions;
 
   return (
-    <TopBar>
-      <TopBar.Left>
-        <LogoWrapper>
-          <Link to="/">
-            <TopBar.Logo
-              logo={<img src={customerLogo} alt="Customer logo" />}
-            />
-          </Link>
-        </LogoWrapper>
-      </TopBar.Left>
-      <TopBar.Right>
-        <CogniteLogo>
-          <TopBar.Item>
-            <a
-              href="https://www.cognite.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={cogniteLogo} alt="Cognite logo" />
-            </a>
-          </TopBar.Item>
-        </CogniteLogo>
+    <>
+      {!!groupsFilter?.length && (
+        <GroupPreview>
+          <TopBar>
+            <TopBar.Left>
+              <TopBar.Logo
+                title={groupsFilter.join(',')}
+                logo={
+                  <Icon type="Public" style={{ margin: '6px 8px 0 12px' }} />
+                }
+              />
+            </TopBar.Left>
+            <TopBar.Right>
+              <TopBar.Action
+                icon="Close"
+                text="Clear view"
+                onClick={clearGroupFilter}
+              />
+            </TopBar.Right>
+          </TopBar>
+        </GroupPreview>
+      )}
+      <TopBar>
+        <TopBar.Left>
+          <LogoWrapper>
+            <Link to="/">
+              <TopBar.Logo
+                logo={<img src={customerLogo} alt="Customer logo" />}
+              />
+            </Link>
+          </LogoWrapper>
+        </TopBar.Left>
+        <TopBar.Right>
+          <CogniteLogo>
+            <TopBar.Item>
+              <a
+                href="https://www.cognite.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={cogniteLogo} alt="Cognite logo" />
+              </a>
+            </TopBar.Item>
+          </CogniteLogo>
 
-        <TopBar.Actions actions={filteredActions} />
-      </TopBar.Right>
-    </TopBar>
+          <TopBar.Actions actions={filteredActions} />
+        </TopBar.Right>
+      </TopBar>
+    </>
   );
 };
 

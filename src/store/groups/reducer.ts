@@ -13,6 +13,7 @@ const initialState: GroupsState = {
   error: '',
   groups: null,
   isAdmin: false,
+  filter: [],
 };
 
 export const GroupsReducer = createReducer(initialState)
@@ -33,6 +34,7 @@ export const GroupsReducer = createReducer(initialState)
       error: '',
       groups: action.payload,
       isAdmin: checkIsAdmin(action.payload as Group[]),
+      filter: [],
     })
   )
   .handleAction(
@@ -41,5 +43,19 @@ export const GroupsReducer = createReducer(initialState)
       ...state,
       loading: false,
       error: (action.payload as Error)?.message,
+    })
+  )
+  .handleAction(
+    UserGroupsActionTypes.SET_GROUP_FILTER,
+    (state: GroupsState, action: UserGroupsootAction) => ({
+      ...state,
+      filter: action.payload as string[],
+    })
+  )
+  .handleAction(
+    UserGroupsActionTypes.CLEAR_GROUP_FILTER,
+    (state: GroupsState) => ({
+      ...state,
+      filter: [],
     })
   );

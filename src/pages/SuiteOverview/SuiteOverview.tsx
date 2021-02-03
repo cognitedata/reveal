@@ -41,6 +41,8 @@ const SuiteOverview: React.FC = () => {
   );
   const [fetchImgUrlsDispatched, setFetchImgUrlsDispatched] = useState(false);
 
+  const [goHomeDispatched, setGoHomeDispatched] = useState(false);
+
   const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
 
   const { title, color, boards } = suite || {};
@@ -73,8 +75,15 @@ const SuiteOverview: React.FC = () => {
     }
   }, [imageFileIds, imgUrlsLoading, fetchImgUrlsDispatched, client, dispatch]);
 
+  const redirectHome = () => {
+    if (!goHomeDispatched) {
+      setGoHomeDispatched(true);
+      history.push('/');
+    }
+  };
+
   if (!suite) {
-    history.push('/');
+    redirectHome();
   }
 
   if (!suitesLoaded) {

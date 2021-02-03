@@ -82,3 +82,21 @@ export const CogniteLogo = styled.div`
     border-left: 0;
   }
 `;
+
+export const GroupPreview = styled.div`
+  background-color: var(--cogs-greyscale-grey8);
+  color: var(--cogs-white);
+  height: 56px;
+  & .cogs-icon-Public {
+    height: 22px;
+  }
+  & .cogs-btn {
+    color: var(--cogs-white);
+  }
+  & .cogs-topbar [class*='cogs-topbar--item'] {
+    border-left: none;
+  }
+  .cogs-topbar .cogs-topbar--item__action:hover {
+    background-color: var(--cogs-greyscale-grey6);
+  }
+`;

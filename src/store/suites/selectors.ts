@@ -1,20 +1,28 @@
+import { getCurrentFilter } from 'store/groups/selectors';
 import { StoreState } from 'store/types';
 import { LastVisited } from 'store/userSpace/types';
 import { findLastVisitedTimeByKey } from 'utils/userSpace';
+import { filterSuitesByGroups } from 'utils/filters';
 import { Board, ImgUrls, Suite, SuitesTableState } from './types';
 
 export const getSuitesTableState = (state: StoreState): SuitesTableState => {
-  const sortedSuites =
-    state.suitesTable?.suites?.sort(
-      (x: Suite, y: Suite) => x?.createdTime - y?.createdTime
-    ) || [];
-  return { ...state.suitesTable, suites: sortedSuites };
+  const { suites: suitesState } = state.suitesTable;
+  let suites = (suitesState || []).sort(
+    (x: Suite, y: Suite) => x?.createdTime - y?.createdTime
+  );
+
+  const groupFilter = getCurrentFilter(state);
+  if (groupFilter.length) {
+    suites = filterSuitesByGroups(suites, groupFilter);
+  }
+
+  return { ...state.suitesTable, suites };
 };
 
 export const getBoardsBySuite = (key: string) => (
   state: StoreState
 ): Suite | undefined =>
-  state.suitesTable.suites?.find((suite) => suite.key === key);
+  getSuitesTableState(state).suites?.find((suite) => suite.key === key);
 
 export const getLastVisitedBoards = (
   lastVisited: LastVisited[],
