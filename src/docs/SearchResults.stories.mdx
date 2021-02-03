@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks';
+import { DataExplorationProvider } from '../context';
+import { QueryBuilder } from './QueryBuilder.stories.tsx';
+
+<Meta
+  title="Search Results/Get Started"
+  component={DataExplorationProvider}
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: { canvas: { hidden: true } },
+  }}
+/>
+
+# Using `Search Result` components
+
+## Use Case 1 - Accomplish "Query Building"
+
+Through using things like `DataSetFilter` and `SourceFilter`, they will directly affect the `<resource>Filter` within the `ResourceSelectionContext`
+
+Then, then any component like the `SearchResultTable` or the `<resource>SearchResult` would already read the filter from the context, and do the search via `React-Query` automatically.
+
+<Canvas>
+  <Story story={QueryBuilder} />
+</Canvas>
