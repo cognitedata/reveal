@@ -26,10 +26,6 @@ export const Filters = ({
   const [nameFilter, setNameFilter] = useState('');
   const [openFilter, setOpenFilter] = useState<keyof FilterTypes | ''>('');
 
-  if (!source.sources || source.sources.length < 1) {
-    return null;
-  }
-
   const getFormattedDateRange = (selectedRange: SelectedDateRangeType) => {
     const first = selectedRange[0];
     const second = selectedRange[1];
