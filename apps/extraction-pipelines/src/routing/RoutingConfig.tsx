@@ -52,6 +52,14 @@ const LazyCreateIntegrationContacts = React.lazy(
     )
 );
 
+const LazyCreateIntegrationDataSet = React.lazy(
+  () =>
+    import(
+      '../pages/create/DataSetPage'
+      /* webpackChunkName: "pnid_integration_create_data_set" */
+    )
+);
+
 interface IntegrationsRoute {
   name: string;
   path: string;
@@ -60,10 +68,17 @@ interface IntegrationsRoute {
 }
 export type RouterParams = { id: string };
 export const INTEGRATION = `integration`;
+export const SCHEDULE_PAGE_PATH = `/${INTEGRATIONS}/create/schedule`;
+export const DATA_SET_PAGE_PATH = `/${INTEGRATIONS}/create/dataset`;
+export const CRON_PAGE_PATH = `/${INTEGRATIONS}/create/cron`;
+export const DATA_SET_ID_PAGE_PATH = `/${INTEGRATIONS}/create/dataset-id`;
+export const RAW_TABLE_PAGE_PATH = `/${INTEGRATIONS}/create/raw-table`;
+export const CREATE_INTEGRATION_PAGE_PATH = `/${INTEGRATIONS}/create`;
+export const INTEGRATIONS_OVERVIEW_PAGE_PATH = `/${INTEGRATIONS}`;
 const createIntegrationRoutes = [
   {
     name: 'Create integration - create',
-    path: `/:tenant/${INTEGRATIONS}/create`,
+    path: `/:tenant${CREATE_INTEGRATION_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationCreate,
   },
@@ -91,11 +106,17 @@ const createIntegrationRoutes = [
     exact: true,
     component: LazyCreateIntegrationContacts,
   },
+  {
+    name: 'Create integration - data set',
+    path: `/:tenant${DATA_SET_PAGE_PATH}`,
+    exact: true,
+    component: LazyCreateIntegrationDataSet,
+  },
 ];
 export const routingConfig: IntegrationsRoute[] = [
   {
     name: 'Integrations',
-    path: `/:tenant/${INTEGRATIONS}`,
+    path: `/:tenant${INTEGRATIONS_OVERVIEW_PAGE_PATH}`,
     exact: true,
     component: LazyIntegrations,
   },
