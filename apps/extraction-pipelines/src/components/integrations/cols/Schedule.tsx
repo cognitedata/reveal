@@ -17,15 +17,17 @@ interface OwnProps {
   schedule?: string;
 }
 export enum SupportedScheduleStrings {
+  NOT_DEFINED = 'Not defined',
   ON_TRIGGER = 'On Trigger',
   CONTINUOUS = 'Continuous',
+  SCHEDULED = 'Scheduled',
 }
 type Props = OwnProps;
 
 const Schedule: FunctionComponent<Props> = ({ schedule, ...rest }: Props) => {
   switch (schedule) {
     case undefined:
-      return <span>Not defined</span>;
+      return <span>{SupportedScheduleStrings.NOT_DEFINED}</span>;
     case SupportedScheduleStrings.ON_TRIGGER:
     case SupportedScheduleStrings.CONTINUOUS:
       return <span>{schedule}</span>;

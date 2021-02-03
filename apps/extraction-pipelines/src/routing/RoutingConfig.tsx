@@ -68,6 +68,14 @@ const LazyCreateIntegrationRawTable = React.lazy(
     )
 );
 
+const LazyCreateIntegrationSchedule = React.lazy(
+  () =>
+    import(
+      '../pages/create/SchedulePage'
+      /* webpackChunkName: "pnid_integration_create_schedule" */
+    )
+);
+
 interface IntegrationsRoute {
   name: string;
   path: string;
@@ -128,6 +136,12 @@ const createIntegrationRoutes = [
     path: `/:tenant${RAW_TABLE_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationRawTable,
+  },
+  {
+    name: 'Create integration - schedule',
+    path: `/:tenant/${INTEGRATIONS}/create/schedule`,
+    exact: true,
+    component: LazyCreateIntegrationSchedule,
   },
 ];
 export const routingConfig: IntegrationsRoute[] = [
