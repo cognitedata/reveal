@@ -76,6 +76,14 @@ const LazyCreateIntegrationSchedule = React.lazy(
     )
 );
 
+const LazyCreateIntegrationDataSetId = React.lazy(
+  () =>
+    import(
+      '../pages/create/DataSetIdPage'
+      /* webpackChunkName: "pnid_integration_create_data_set_id" */
+    )
+);
+
 interface IntegrationsRoute {
   name: string;
   path: string;
@@ -142,6 +150,12 @@ const createIntegrationRoutes = [
     path: `/:tenant/${INTEGRATIONS}/create/schedule`,
     exact: true,
     component: LazyCreateIntegrationSchedule,
+  },
+  {
+    name: 'Create integration - Data set id',
+    path: `/:tenant${DATA_SET_ID_PAGE_PATH}`,
+    exact: true,
+    component: LazyCreateIntegrationDataSetId,
   },
 ];
 export const routingConfig: IntegrationsRoute[] = [
