@@ -7,11 +7,11 @@ import { setupMixpanel } from 'utils/config';
 setupMixpanel();
 
 const App = () => {
+  const subAppName = 'cdf-vision-subapp';
   return (
-    // If styles are broken please check: .rescripts#PrefixWrap(
     <GlobalStyles>
       <SubAppWrapper>
-        <AuthWrapper subAppName="unified-cdf-ui-demo">
+        <AuthWrapper subAppName={subAppName}>
           <Home />
         </AuthWrapper>
       </SubAppWrapper>

@@ -29,6 +29,9 @@ const lifecycles = singleSpaReact({
     // Customize the root error boundary for your microfrontend here.
     return <span>An error occured in your app</span>;
   },
+
+  // must be aligned with that id https://github.com/cognitedata/cdf-hub/pull/896/files#diff-bb6612be43d4f0ceceee1b286daf301a80e54aa1fc25edd5017a1aff986d6503R96
+  domElementGetter: () => document.getElementById('cdf-vision-subapp')!,
 });
 
 export const { bootstrap, mount, unmount } = lifecycles;
