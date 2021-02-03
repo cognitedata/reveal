@@ -3,7 +3,6 @@ import { Cell, CellProps, Column, HeaderProps } from 'react-table';
 import { calculateStatus } from 'utils/integrationUtils';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import { DataSet as CogniteDataSet } from '@cognite/sdk';
 import { Integration } from '../../model/Integration';
 import UserGroup from '../integrations/cols/UserGroup';
 import Name from '../integrations/cols/Name';
@@ -17,6 +16,7 @@ import RelativeTimeWithTooltip from '../integrations/cols/RelativeTimeWithToolti
 import SorterIndicator from './SorterIndicator';
 import MessageIcon from '../message/MessageIcon';
 import { Status } from '../../model/Status';
+import { DataSetModel } from '../../model/DataSetModel';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -57,7 +57,7 @@ export const createSearchStringForContacts = (contacts?: User[]) => {
 };
 export const createSearchStringForDataSet = (
   dataSetId: string,
-  dataSet?: CogniteDataSet
+  dataSet?: DataSetModel
 ) => {
   return `${dataSetId} ${dataSet ? dataSet.name : ''}`;
 };

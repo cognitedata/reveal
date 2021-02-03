@@ -1,5 +1,5 @@
-import { DataSet } from '@cognite/sdk';
 import { Integration } from '../model/Integration';
+import { DataSetModel } from '../model/DataSetModel';
 
 export const mockDataSetResponse = () => [
   {
@@ -43,7 +43,7 @@ const mockResponseV2 = {
       dataSet: {
         name: 'Test data set',
         id: 1398950266713987,
-      } as DataSet,
+      } as DataSetModel,
       lastSuccess: 1584066700000,
       lastFailure: 1584065700000,
       lastSeen: 1604271600000,
@@ -78,12 +78,13 @@ const mockResponseV2 = {
         id: 6415110216649677,
         lastUpdatedTime: new Date(1605349802859),
         metadata: {
-          consoleAdditionalDocs: '[]',
-          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
-          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleAdditionalDocs: [],
+          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
+          consoleLabels: ['Test', 'Lisa', 'Itera'],
           consoleMetaDataVersion: '3',
-          consoleOwners:
-            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+          consoleOwners: [
+            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
+          ],
         },
         name: 'AkerBP extractor test',
         writeProtected: false,
@@ -126,16 +127,17 @@ const mockResponseV2 = {
         id: 6415110216649677,
         lastUpdatedTime: new Date(1605349802859),
         metadata: {
-          consoleAdditionalDocs: '[]',
-          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
-          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleAdditionalDocs: [],
+          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
+          consoleLabels: ['Test', 'Lisa', 'Itera'],
           consoleMetaDataVersion: '3',
-          consoleOwners:
-            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+          consoleOwners: [
+            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
+          ],
         },
         name: 'Lisas test data set',
         writeProtected: false,
-      },
+      } as DataSetModel,
       rawTables: [
         {
           dbName: 'informatica',
@@ -177,12 +179,13 @@ const mockResponseV2 = {
         id: 6415110216649677,
         lastUpdatedTime: new Date(1605349802859),
         metadata: {
-          consoleAdditionalDocs: '[]',
-          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
-          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleAdditionalDocs: [],
+          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
+          consoleLabels: ['Test', 'Lisa', 'Itera'],
           consoleMetaDataVersion: '3',
-          consoleOwners:
-            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+          consoleOwners: [
+            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
+          ],
         },
         name: 'Lisas test data set',
         writeProtected: false,
@@ -228,12 +231,13 @@ const mockResponseV2 = {
         id: 6415110216649677,
         lastUpdatedTime: new Date(1605349802859),
         metadata: {
-          consoleAdditionalDocs: '[]',
-          consoleCreatedBy: "{ username: 'lisa.halvorsen@cognitedata.com' }",
-          consoleLabels: "['Test', 'Lisa', 'Itera']",
+          consoleAdditionalDocs: [],
+          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
+          consoleLabels: ['Test', 'Lisa', 'Itera'],
           consoleMetaDataVersion: '3',
-          consoleOwners:
-            "[ { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' }, ]",
+          consoleOwners: [
+            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
+          ],
         },
         name: 'Lisas test data set',
         writeProtected: false,

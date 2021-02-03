@@ -11,7 +11,7 @@ import { calculateStatus } from '../../utils/integrationUtils';
 import Schedule from '../integrations/cols/Schedule';
 import { Status } from '../../model/Status';
 import { TableHeadings } from '../table/IntegrationTableCol';
-import { DetailFieldNames } from '../../model/Integration';
+import { DetailFieldNames, Integration, Raw } from '../../model/Integration';
 import { AbsoluteRelativeTime } from '../TimeDisplay/AbsoluteRelativeTime';
 import { TwoColGrid } from '../../styles/grid/StyledGrid';
 import ContactsList from '../ContactInformation/ContactsList';
@@ -139,6 +139,26 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
     );
   };
 
+  const dataSetGovernanceStatus = (int: Integration) => {
+    if (int?.dataSet?.metadata?.consoleGoverned === undefined) {
+      return 'Not defined';
+    }
+    if (int?.dataSet?.metadata?.consoleGoverned === false) {
+      return 'Ungoverned';
+    }
+    return 'Governed';
+  };
+
+  const dataSetRawTables = (int: Integration): Raw[] | undefined => {
+    return int?.dataSet?.metadata?.rawTables?.map(
+      ({ databaseName, tableName }) => {
+        return {
+          tableName,
+          dbName: databaseName,
+        };
+      }
+    );
+  };
   return (
     <Wrapper>
       <LatestRunWrapper className={`${lastRun.status.toLowerCase()}`}>
@@ -222,18 +242,102 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
         <i className="additional-info">Location where data is stored in CDF</i>
         <span className="info-field">
           <span className="info-label">{TableHeadings.DATA_SET}: </span>
-          {integration.dataSet && (
-            <span className="text-normal">
-              Data set name:{' '}
-              <span className="text-bold">{integration.dataSet.name}</span>
-            </span>
-          )}
-          <span className="flex">
-            Data set id:{' '}
+          <span className="flex text-normal">
+            Id:{' '}
             <InteractiveCopyWithText textToCopy={integration.dataSetId}>
               {integration.dataSetId}
             </InteractiveCopyWithText>
           </span>
+          {integration.dataSet && (
+            <>
+              <span className="text-normal">
+                Name:{' '}
+                <span className="text-bold">{integration.dataSet.name}</span>
+              </span>
+              <span className="text-normal">
+                Created by:{' '}
+                <span className="text-bold">
+                  {integration.dataSet.metadata?.consoleCreatedBy?.username}
+                </span>
+              </span>
+              <span className="text-normal">
+                Owners:{' '}
+                <span className="text-bold">
+                  {integration?.dataSet?.metadata?.consoleOwners?.map(
+                    ({ name, email }) => {
+                      return (
+                        <span key={`dataset-owner-${email}`}>
+                          {name} {email}
+                        </span>
+                      );
+                    }
+                  )}
+                </span>
+              </span>
+              <span className="text-normal">
+                Labels:{' '}
+                <span className="text-bold">
+                  {integration?.dataSet?.metadata?.consoleLabels?.map(
+                    (label) => {
+                      return (
+                        <span key={`dataset-label-${label}`}>{label} </span>
+                      );
+                    }
+                  )}
+                </span>
+              </span>
+              <span className="text-normal">
+                Source names:{' '}
+                <span className="text-bold">
+                  {integration?.dataSet?.metadata?.consoleSource?.names?.map(
+                    (name) => {
+                      return (
+                        <span key={`dataset-source-name-${name}`}>{name} </span>
+                      );
+                    }
+                  )}
+                </span>
+              </span>
+              <span className="text-normal">
+                Extractor accounts:{' '}
+                <span className="text-bold">
+                  {integration?.dataSet?.metadata?.consoleExtractors?.accounts?.map(
+                    (account) => {
+                      return (
+                        <span key={`dataset-extractor-account-${account}`}>
+                          {account}{' '}
+                        </span>
+                      );
+                    }
+                  )}
+                </span>
+              </span>
+              <span className="text-normal">
+                Governance status:{' '}
+                <span className="text-bold">
+                  {dataSetGovernanceStatus(integration)}
+                </span>
+              </span>
+              <span className="text-normal">
+                Raw tables:{' '}
+                <RawTable rawTables={dataSetRawTables(integration)} />
+              </span>
+              <span className="text-normal">
+                Transformations:{' '}
+                {integration?.dataSet?.metadata?.transformations?.map(
+                  ({ name, type, details }) => {
+                    return (
+                      <React.Fragment key={name}>
+                        <div>Name: {name}</div>
+                        <div>Type: {type}</div>
+                        <div>Details: {details}</div>
+                      </React.Fragment>
+                    );
+                  }
+                )}
+              </span>
+            </>
+          )}
         </span>
         <span className="info-field">
           <span className="info-label">{DetailFieldNames.RAW_TABLE}: </span>

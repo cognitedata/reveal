@@ -16,6 +16,7 @@ import {
 describe('OverviewTab', () => {
   test('Render with out fail', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
+    sdkv3.datasets.retrieve.mockResolvedValue([]);
     const client = new QueryClient();
     const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
       client,

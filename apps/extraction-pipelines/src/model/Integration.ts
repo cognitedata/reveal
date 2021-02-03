@@ -1,6 +1,6 @@
-import { DataSet } from '@cognite/sdk';
 import { MetaData } from './MetaData';
 import { User } from './User';
+import { DataSetModel } from './DataSetModel';
 
 export interface Raw {
   dbName: string;
@@ -13,7 +13,7 @@ export interface Integration {
   lastUpdatedTime: number; // milliseconds
   schedule?: string;
   dataSetId: string;
-  dataSet?: DataSet;
+  dataSet?: DataSetModel;
   externalId: string;
   description: string;
   metadata: MetaData;

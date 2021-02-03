@@ -1,5 +1,6 @@
 import { DataSet } from '@cognite/sdk';
 import { Integration } from '../model/Integration';
+import { DataSetMetadata, DataSetModel } from '../model/DataSetModel';
 
 export const mapUniqueDataSetIds = (integrations?: Integration[]) => {
   return integrations
@@ -14,11 +15,11 @@ export const mapUniqueDataSetIds = (integrations?: Integration[]) => {
 
 export const mapDataSetToIntegration = (
   integrations?: Integration[],
-  dataSets?: DataSet[]
+  dataSets?: DataSetModel[]
 ) => {
   return integrations
     ? integrations.map((integration) => {
-        const dataSetMatch = dataSets?.filter((data: DataSet) => {
+        const dataSetMatch = dataSets?.filter((data: DataSetModel) => {
           return data.id === parseInt(integration.dataSetId, 10);
         });
         return {
@@ -27,6 +28,25 @@ export const mapDataSetToIntegration = (
         };
       })
     : [];
+};
+export const parseDataSetMeta = (metadata: object): DataSetMetadata => {
+  return Object.entries(metadata).reduce((acc, [k, v]) => {
+    try {
+      const json = JSON.parse(v);
+      return { ...acc, [k]: json };
+    } catch (_) {
+      return { ...acc, [k]: v };
+    }
+  }, {});
+};
+export const mapDataSetResponse = (response: DataSet[]): DataSetModel[] => {
+  return response.map((r: DataSet) => {
+    if (r.metadata) {
+      const meta = parseDataSetMeta(r.metadata);
+      return { ...r, metadata: meta } as DataSetModel;
+    }
+    return r as DataSetModel;
+  });
 };
 
 interface GetDataSetLinkProps {

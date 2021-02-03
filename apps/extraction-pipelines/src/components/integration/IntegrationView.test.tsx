@@ -65,8 +65,8 @@ describe('IntegrationView', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(new RegExp(DetailFieldNames.RAW_TABLE, 'i'))
-    ).toBeInTheDocument();
+      screen.getAllByText(new RegExp(DetailFieldNames.RAW_TABLE, 'i'))
+    ).toBeDefined();
     mockIntegration.rawTables.forEach(({ tableName, dbName }) => {
       expect(screen.getByText(dbName)).toBeInTheDocument();
       expect(screen.getByText(tableName)).toBeInTheDocument();
