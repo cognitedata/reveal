@@ -60,6 +60,14 @@ const LazyCreateIntegrationDataSet = React.lazy(
     )
 );
 
+const LazyCreateIntegrationRawTable = React.lazy(
+  () =>
+    import(
+      '../pages/create/RawTablePage'
+      /* webpackChunkName: "pnid_integration_create_raw_table" */
+    )
+);
+
 interface IntegrationsRoute {
   name: string;
   path: string;
@@ -68,11 +76,14 @@ interface IntegrationsRoute {
 }
 export type RouterParams = { id: string };
 export const INTEGRATION = `integration`;
+
 export const SCHEDULE_PAGE_PATH = `/${INTEGRATIONS}/create/schedule`;
 export const DATA_SET_PAGE_PATH = `/${INTEGRATIONS}/create/dataset`;
-export const CRON_PAGE_PATH = `/${INTEGRATIONS}/create/cron`;
 export const DATA_SET_ID_PAGE_PATH = `/${INTEGRATIONS}/create/dataset-id`;
+export const CRON_PAGE_PATH = `/${INTEGRATIONS}/create/cron`;
 export const RAW_TABLE_PAGE_PATH = `/${INTEGRATIONS}/create/raw-table`;
+export const RAW_TABLE_LIST_PAGE_PATH = `/${INTEGRATIONS}/create/raw-table-list`;
+export const METADATA_PAGE_PATH = `/${INTEGRATIONS}/create/meta-data`;
 export const CREATE_INTEGRATION_PAGE_PATH = `/${INTEGRATIONS}/create`;
 export const INTEGRATIONS_OVERVIEW_PAGE_PATH = `/${INTEGRATIONS}`;
 const createIntegrationRoutes = [
@@ -111,6 +122,12 @@ const createIntegrationRoutes = [
     path: `/:tenant${DATA_SET_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationDataSet,
+  },
+  {
+    name: 'Create integration - Raw Tables',
+    path: `/:tenant${RAW_TABLE_PAGE_PATH}`,
+    exact: true,
+    component: LazyCreateIntegrationRawTable,
   },
 ];
 export const routingConfig: IntegrationsRoute[] = [
