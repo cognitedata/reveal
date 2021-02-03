@@ -692,6 +692,14 @@ const DataTransfers: React.FC = () => {
     setFilteredData(filtered);
   }
 
+  function resetFilters() {
+    fetchProjects();
+    clearData();
+    setSelectedSourceProject(null);
+    setSelectedTarget(null);
+    setSelectedTargetProject(null);
+  }
+
   if (!sources) {
     return null;
   }
@@ -736,6 +744,7 @@ const DataTransfers: React.FC = () => {
                 setSelectedDateRange(nextSelected),
             }}
             onNameSearchChange={filterByNameSearch}
+            onReset={resetFilters}
           />
         )}
         {(selectedConfiguration || selectedSourceProject) && (

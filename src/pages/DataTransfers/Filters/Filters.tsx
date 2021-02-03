@@ -21,6 +21,7 @@ export const Filters = ({
   datatype,
   configuration,
   onNameSearchChange,
+  onReset,
 }: FiltersProps) => {
   const [nameFilter, setNameFilter] = useState('');
   const [openFilter, setOpenFilter] = useState<keyof FilterTypes | ''>('');
@@ -45,6 +46,7 @@ export const Filters = ({
     configuration.onSelectConfiguration(null);
     datatype.onSelectType('');
     date.onSelectDate(null);
+    onReset();
   };
 
   const toggleFilter = (filterName: keyof FilterTypes) => {

@@ -47,6 +47,7 @@ export type FiltersProps = {
   datatype: FilterDataTypeType;
   date: FilterDateType;
   onNameSearchChange: (searchString: string) => void;
+  onReset: () => void;
 };
 
 export interface FilterTypes {
