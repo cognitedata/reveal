@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=8000 rescripts start",
+    "start": "BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=8000 HTTPS=true rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
-    "generate-preview-artifacts": "cdf-ui-cli -pr -b cdf-hub-production -p @cognite/cdf-vision-subapp -o index.js -d ./build",
+    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-vision-subapp -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
-    "@cognite/cdf-ui-cli": "^0.1.0",
+    "@cognite/cdf-ui-cli": "^1.0.0",
     "@cognite/eslint-config": "^1.6.1",
     "@cognite/eslint-plugin": "^1.3.8",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
