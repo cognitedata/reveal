@@ -7,7 +7,7 @@ import {
 } from './types';
 import { checkIsAdmin } from './thunks';
 
-const initialState: GroupsState = {
+export const initialState: GroupsState = {
   loading: false,
   loaded: false,
   error: '',

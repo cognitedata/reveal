@@ -2,14 +2,44 @@ import React from 'react';
 // Here is where our custom render is being defined, so we don't need this check
 /* eslint-disable-next-line @cognite/rtl-use-custom-render-function */
 import { render, RenderOptions } from '@testing-library/react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { createMockCdfClient, createMockApiClient } from 'utils/test/client';
+import { CdfClientProvider } from 'providers/CdfClientProvider';
+import { ApiClientProvider } from 'providers/ApiClientProvider';
+import { TenantProvider } from 'providers/TenantProvider';
+import { BrowserRouter } from 'react-router-dom';
+import { StoreState } from 'store/types';
+import { createMockStore } from './store';
 
 export default (
-  ui: React.ReactElement,
-  options?: Omit<RenderOptions, 'queries'>
+  ui: React.ReactNode,
+  options?: Omit<RenderOptions, 'queries'> & StoreState
 ) => {
+  const store = createMockStore(options as StoreState);
+  const cdfClient = createMockCdfClient();
+  const apiClient = createMockApiClient();
+  const tenant = 'unit-test';
+
+  type Props = {
+    children: React.ReactNode;
+  };
+  const AppProviders: React.FC<Props> = ({ children }) => (
+    <ReduxProvider store={store}>
+      <CdfClientProvider client={cdfClient}>
+        <ApiClientProvider apiClient={apiClient}>
+          <TenantProvider tenant={tenant}>
+            <BrowserRouter>
+              <>{children}</>
+            </BrowserRouter>
+          </TenantProvider>
+        </ApiClientProvider>
+      </CdfClientProvider>
+    </ReduxProvider>
+  );
+
   // This is where you can wrap your rendered UI component in redux stores,
   // providers, or anything else you might want.
-  const component = <>{ui}</>;
+  const component = <AppProviders>{ui}</AppProviders>;
 
   return render(component, options);
 };

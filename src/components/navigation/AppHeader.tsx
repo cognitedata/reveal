@@ -62,18 +62,21 @@ const AppHeader: React.FC = () => {
       key: 'view',
       component: (
         <Tooltip content="View what other groups has access to">
-          <Icon type="Public" />
+          <Icon type="Public" data-testid="select-group-preview-menu" />
         </Tooltip>
       ),
       menu: (
         <Menu>
           <Menu.Header>Select Group Access to View:</Menu.Header>
           {allGroupNames.map((groupName) => (
-            <Menu.Item selected={groupsFilter.includes(groupName)}>
+            <Menu.Item
+              selected={groupsFilter.includes(groupName)}
+              key={groupName}
+            >
               <CustomMenuItem
-                key={groupName}
                 onClick={() => setFilter(groupName)}
                 onKeyPress={() => setFilter(groupName)}
+                data-testid={`menu-item-${groupName}`}
               >
                 {groupName}
               </CustomMenuItem>
@@ -165,11 +168,11 @@ const AppHeader: React.FC = () => {
   return (
     <>
       {!!groupsFilter?.length && (
-        <GroupPreview>
+        <GroupPreview data-testid="user-group-preview-bar">
           <TopBar>
             <TopBar.Left>
               <TopBar.Logo
-                title={groupsFilter.join(',')}
+                title={groupsFilter.join(', ')}
                 logo={
                   <Icon type="Public" style={{ margin: '6px 8px 0 12px' }} />
                 }

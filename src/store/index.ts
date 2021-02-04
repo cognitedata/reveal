@@ -17,6 +17,13 @@ const composedEnhancers: StoreEnhancer = compose(
   ...enhancers
 );
 
-const store = createStore(rootReducer, {} as StoreState, composedEnhancers);
+export const configureStore = (initialState?: StoreState) =>
+  createStore(
+    rootReducer,
+    (initialState || {}) as StoreState,
+    composedEnhancers
+  );
+
+const store = configureStore();
 
 export default store;
