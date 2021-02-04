@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Menu, Dropdown, Button } from '@cognite/cogs.js';
+
 import Card from 'components/Atoms/Card';
+import Label from 'components/Atoms/Label';
+
 import { StatusContainer, CardContent, HeadingContainer } from './elements';
 import StatusCardHeader from './StatusCardHeader';
 import Heartbeats from './Heartbeats';
-import { DropdownLabel } from '../DataTransfers/Filters/elements';
 import {
   DATE_RANGE_VALUES,
   DateRangeValueType,
@@ -60,7 +62,7 @@ const Status = () => {
               onClickOutside={() => setDateRangeOpen(false)}
             >
               <>
-                <DropdownLabel>Date range</DropdownLabel>
+                <Label>Date range</Label>
                 <Button
                   icon="Select"
                   iconPlacement="right"

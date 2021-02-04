@@ -1,9 +1,6 @@
 import { ReactElement } from 'react';
-import {
-  DataTransferObject,
-  GenericResponseObject,
-  SelectedDateRangeType,
-} from 'typings/interfaces';
+import { Range } from '@cognite/cogs.js';
+import { DataTransferObject, GenericResponseObject } from 'typings/interfaces';
 
 export type FilterSourceType = {
   sources: string[];
@@ -30,8 +27,8 @@ export type FilterDataTypeType = {
 };
 
 export type FilterDateType = {
-  selectedRange: SelectedDateRangeType | null;
-  onSelectDate: (selected: SelectedDateRangeType | null) => void;
+  selectedRange: Range;
+  onSelectDate: (selected: Range) => void;
 };
 
 export type FilterConfigurationType = {

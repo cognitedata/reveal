@@ -3,7 +3,7 @@ import { Icon } from '@cognite/cogs.js';
 import { Table } from 'antd';
 
 export const TableActions = styled.div`
-  padding: 2rem;
+  padding: 2rem 2rem 1rem 2rem;
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
   justify-content: flex-start;
@@ -17,7 +17,7 @@ export const TableActions = styled.div`
 export const ColumnsSelector = styled.div`
   margin-left: auto;
   align-self: flex-end;
-  margin-bottom: 0.3rem;
+  margin-bottom: 1rem;
 
   > div {
     margin-top: 2rem;

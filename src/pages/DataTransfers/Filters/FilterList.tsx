@@ -1,8 +1,9 @@
 import React from 'react';
-import { Dropdown } from '@cognite/cogs.js';
 
+import Label from 'components/Atoms/Label';
+import { Dropdown } from '@cognite/cogs.js';
 import { FilterListProps } from './types';
-import { DropdownLabel, DropdownButton, DropdownMargin } from './elements';
+import { DropdownButton, FieldWrapper } from './elements';
 import { FilterListItems } from './FilterListItems';
 
 export const FilterList = ({
@@ -15,7 +16,7 @@ export const FilterList = ({
     {filters.map(
       (dropdown) =>
         dropdown.visible && (
-          <DropdownMargin>
+          <FieldWrapper>
             <Dropdown
               content={FilterListItems(
                 dropdown.source,
@@ -26,7 +27,7 @@ export const FilterList = ({
               onClickOutside={closeHandler}
             >
               <>
-                <DropdownLabel>{dropdown.label}</DropdownLabel>
+                <Label>{dropdown.label}</Label>
                 <DropdownButton
                   type="secondary"
                   icon="Down"
@@ -37,7 +38,7 @@ export const FilterList = ({
                 </DropdownButton>
               </>
             </Dropdown>
-          </DropdownMargin>
+          </FieldWrapper>
         )
     )}
   </>
