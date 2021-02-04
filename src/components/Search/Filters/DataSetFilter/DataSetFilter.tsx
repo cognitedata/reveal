@@ -57,9 +57,7 @@ export const DataSetFilter = ({
         <Select
           options={validDatasets?.map(formatOption)}
           isDisabled={!hasPermissions}
-          onChange={(
-            newValue: OptionsType<OptionTypeBase> | null | undefined
-          ) => {
+          onChange={newValue => {
             setDataSetFilter(
               newValue
                 ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
