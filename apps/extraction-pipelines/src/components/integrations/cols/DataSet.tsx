@@ -4,6 +4,10 @@ import styled from 'styled-components';
 import LinkWithCopy from 'components/links/LinkWithCopy';
 import { useAppEnv } from '../../../hooks/useAppEnv';
 import { getDataSetsLink } from '../../../utils/dataSetUtils';
+import {
+  NO_DATA_SET_ID_SET,
+  NO_DATA_SET_ID_SET_TOOLTIP,
+} from '../../../utils/constants';
 
 const DatasetTooltip = styled.div`
   display: flex;
@@ -17,9 +21,6 @@ interface OwnProps {
 }
 
 type Props = OwnProps;
-
-export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
-const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> = 'No data set registered';
 
 export const DataSet: FunctionComponent<Props> = ({
   dataSetId,

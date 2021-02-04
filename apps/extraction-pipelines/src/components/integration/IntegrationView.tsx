@@ -17,6 +17,7 @@ import { TwoColGrid } from '../../styles/grid/StyledGrid';
 import ContactsList from '../ContactInformation/ContactsList';
 import { RouterParams } from '../../routing/RoutingConfig';
 import { MetaData } from './MetaData';
+import { DataSetView } from './DataSetView';
 
 const Wrapper = styled.div`
   overflow-y: auto;
@@ -242,18 +243,12 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
         <i className="additional-info">Location where data is stored in CDF</i>
         <span className="info-field">
           <span className="info-label">{TableHeadings.DATA_SET}: </span>
-          <span className="flex text-normal">
-            Id:{' '}
-            <InteractiveCopyWithText textToCopy={integration.dataSetId}>
-              {integration.dataSetId}
-            </InteractiveCopyWithText>
-          </span>
+          <DataSetView
+            dataSetId={integration.dataSetId}
+            dataSet={integration.dataSet}
+          />
           {integration.dataSet && (
             <>
-              <span className="text-normal">
-                Name:{' '}
-                <span className="text-bold">{integration.dataSet.name}</span>
-              </span>
               <span className="text-normal">
                 Created by:{' '}
                 <span className="text-bold">

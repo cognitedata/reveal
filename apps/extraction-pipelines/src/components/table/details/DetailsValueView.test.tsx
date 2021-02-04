@@ -5,7 +5,7 @@ import { getMockResponse } from 'utils/mockResponse';
 import DetailsValueView from './DetailsValueView';
 import { render } from '../../../utils/test';
 import { calculateStatus } from '../../../utils/integrationUtils';
-import { NO_DATA_SET_ID_SET } from '../../integrations/cols/DataSet';
+import { NO_DATA_SET_ID_SET } from '../../../utils/constants';
 
 describe('<DetailsValueView />', () => {
   test('Display name for data set when data set exist', () => {

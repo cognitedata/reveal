@@ -2,7 +2,8 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from '../../../utils/test';
 import { getMockResponse } from '../../../utils/mockResponse';
-import { DataSet, NO_DATA_SET_ID_SET } from './DataSet';
+import { DataSet } from './DataSet';
+import { NO_DATA_SET_ID_SET } from '../../../utils/constants';
 
 describe('<DataSet />', () => {
   test('Should render without error', () => {

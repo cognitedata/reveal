@@ -21,6 +21,9 @@ export const CLOSE: Readonly<string> = 'Close';
 export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
 
+export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
+export const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> =
+  'No data set registered';
 export const NO_META_DATA: Readonly<string> = 'No metadata registered';
 export const OK: Readonly<string> = 'OK';
 export const NEXT: Readonly<string> = 'Next';

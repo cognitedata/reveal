@@ -58,8 +58,11 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
     : [];
   const dataset = useDataSets(dataSetId);
   useEffect(() => {
-    if (int.data && dataset.data) {
-      const res: Integration = { ...int.data, dataSet: dataset.data[0] };
+    if (int.data || dataset.data) {
+      const res: Integration = {
+        ...int.data,
+        ...(dataset.data && { dataSet: dataset.data[0] }),
+      } as Integration;
       setIntegration(res);
     }
   }, [int.data, dataset.data, setIntegration]);
