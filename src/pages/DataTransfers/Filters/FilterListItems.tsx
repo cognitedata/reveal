@@ -2,6 +2,7 @@ import React from 'react';
 import { Menu } from '@cognite/cogs.js';
 import uniqueId from 'lodash/uniqueId';
 import isObject from 'lodash/isObject';
+import { GenericResponseObject } from 'typings/interfaces';
 
 import { FilterListFiltersSource } from './types';
 
@@ -18,7 +19,7 @@ export const FilterListItems = (
   closeHandler: () => void
 ) => (
   <Menu>
-    {(filterList as any[]).map((source: SourceType) => (
+    {(filterList as GenericResponseObject[]).map((source: SourceType) => (
       <Menu.Item
         key={uniqueId()}
         onClick={() => {
