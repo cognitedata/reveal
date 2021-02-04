@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { OutlineColor } from '../NodeAppearance';
 import { FixedNodeSet } from './FixedNodeSet';
 import { IndexSet } from './IndexSet';
@@ -73,5 +75,26 @@ describe('NodeStyleTextureBuilder', () => {
 
     const texels = Array.from(builder.overrideColorPerTreeIndexTexture.image.data);
     expect(texels).toEqual([0, 0, 0, 1 + (OutlineColor.Orange << 3)]);
+  });
+
+  test('build() applies transform', () => {
+    // Arrange
+    builder.build();
+    const originalLookupTexels = Array.from(builder.overrideTransformPerTreeIndexTexture.image.data);
+    const originalTransformLookupTexels = Array.from(builder.transformsLookupTexture.image.data);
+
+    // Act
+    const transform = new THREE.Matrix4().setPosition(10, 11, 12);
+    styleProvider.addStyledSet(nodeSet, { worldTransform: transform });
+    builder.build();
+
+    // Assert
+    const lookupTexels = Array.from(builder.overrideTransformPerTreeIndexTexture.image.data);
+    expect(lookupTexels.length).toEqual(3);
+    expect(lookupTexels).not.toEqual(originalLookupTexels);
+
+    const transformTexels = Array.from(builder.transformsLookupTexture.image.data);
+    expect(transformTexels.length).toBeGreaterThan(0);
+    expect(transformTexels).not.toEqual(originalTransformLookupTexels);
   });
 });

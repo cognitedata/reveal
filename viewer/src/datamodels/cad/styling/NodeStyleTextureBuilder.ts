@@ -5,7 +5,9 @@
 import * as THREE from 'three';
 
 import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
+
 import { NodeAppearance } from '../NodeAppearance';
+import { TransformOverrideBuffer } from '../rendering/TransformOverrideBuffer';
 import { IndexSet } from './IndexSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 
@@ -16,6 +18,7 @@ export class NodeStyleTextureBuilder {
   private _needsUpdate = true;
   private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
   private readonly _overrideTransformPerTreeIndexTexture: THREE.DataTexture;
+  private readonly _transformOverrideBuffer: TransformOverrideBuffer;
 
   constructor(treeIndexCount: number, styleProvider: NodeStyleProvider) {
     this._styleProvider = styleProvider;
@@ -24,18 +27,35 @@ export class NodeStyleTextureBuilder {
     const textures = allocateTextures(treeIndexCount);
     this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
     this._overrideTransformPerTreeIndexTexture = textures.transformOverrideIndexTexture;
+    this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
   }
 
   get needsUpdate(): boolean {
     return this._needsUpdate;
   }
 
+  /**
+   * A texture holding at least one element per node with color override
+   * and style information. RGB is used to store color, A is used to store
+   * style toggles, with the following bit layout:
+   * - 0  : visible bit   - when set the node is visible
+   * - 1  : in front bit  - when set the node is rendered in front of other objects
+   * - 2  : ghosted bit   - when set the node is rendered 'ghosted'
+   * - 3-5: outline color - outline toggle and color ({@see OutlineColor}).
+   * - 6-7: unused
+   * Note that in-front and ghost information also is available from
+   * the {@see inFrontTreeIndices} and {@see ghostedTreeIndices} collections.
+   */
   get overrideColorPerTreeIndexTexture(): THREE.DataTexture {
     return this._overrideColorPerTreeIndexTexture;
   }
 
   get overrideTransformPerTreeIndexTexture(): THREE.DataTexture {
     return this._overrideTransformPerTreeIndexTexture;
+  }
+
+  get transformsLookupTexture(): THREE.DataTexture {
+    return this._transformOverrideBuffer.dataTexture;
   }
 
   dispose() {
@@ -45,17 +65,22 @@ export class NodeStyleTextureBuilder {
   }
 
   build() {
-    this._styleProvider.applyStyles((_styleId, treeIndices, style) => {
+    // TODO 2021-02-04 larsmoa: Currently transform overrides are never removed
+    this._styleProvider.applyStyles((styleId, treeIndices, style) => {
       const colorRgba = appearanceToColorOverride(style);
-      const transformRgb = appearanceToTransformOverride(style);
+      const transformLookupIndexRgb = appearanceToTransformOverride(styleId, style, this._transformOverrideBuffer);
 
       applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
-      applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformRgb);
+      applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformLookupIndexRgb);
     });
     this._needsUpdate = false;
   }
 
   private handleStylesChanged() {
+    this._needsUpdate = true;
+  }
+
+  private handleNewTransformTexture(newTexture: THREE.DataTexture) {
     this._needsUpdate = true;
   }
 }
@@ -98,8 +123,22 @@ function appearanceToColorOverride(appearance: NodeAppearance): [number, number,
   return [r, g, b, bytePattern];
 }
 
-function appearanceToTransformOverride(apperance: NodeAppearance): [number, number, number] {
-  return [0, 0, 0];
+function appearanceToTransformOverride(
+  overrideId: number,
+  appearance: NodeAppearance,
+  transformTextureBuffer: TransformOverrideBuffer
+): [number, number, number] {
+  if (appearance.worldTransform === undefined) {
+    return [0, 0, 0];
+  }
+
+  // TODO 2021-02-04 larsmoa: Rename usage overrideId in TransformOverrideBuffer
+  const lookupIndex = transformTextureBuffer.addOverrideTransform(overrideId, appearance.worldTransform);
+  return [
+    Math.min((lookupIndex + 1) >> 16, 255),
+    Math.min((lookupIndex + 1) >> 8, 255),
+    Math.min((lookupIndex + 1) >> 0, 255)
+  ];
 }
 
 function applyRGBA(texture: THREE.DataTexture, treeIndices: IndexSet, rgba: [number, number, number, number]) {
@@ -123,4 +162,33 @@ function applyRGB(texture: THREE.DataTexture, treeIndices: IndexSet, rgb: [numbe
     buffer[3 * treeIndex + 2] = b;
   }
   texture.needsUpdate = true;
+}
+
+function resetTransformTexel(
+  treeIndex: number,
+  indexTexture: THREE.DataTexture,
+  transformTextureBuffer: TransformOverrideBuffer
+) {
+  indexTexture.image.data[treeIndex * 3 + 0] = 0;
+  indexTexture.image.data[treeIndex * 3 + 1] = 0;
+  indexTexture.image.data[treeIndex * 3 + 2] = 0;
+
+  transformTextureBuffer.removeOverrideTransform(treeIndex);
+
+  indexTexture.needsUpdate = true;
+}
+
+function setTransformTexel(
+  treeIndex: number,
+  transform: THREE.Matrix4,
+  indexTexture: THREE.DataTexture,
+  transformTextureBuffer: TransformOverrideBuffer
+) {
+  const transformIndex = transformTextureBuffer.addOverrideTransform(treeIndex, transform);
+
+  indexTexture.image.data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
+  indexTexture.image.data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
+  indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
+
+  indexTexture.needsUpdate = true;
 }
