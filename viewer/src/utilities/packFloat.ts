@@ -2,14 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-
 // https://stackoverflow.com/questions/7059962/how-do-i-convert-a-vec4-rgba-value-to-a-float @ Arjan
 
-export function packFloat(f: number) {
+export function packFloat(f: number): [number, number, number, number] {
   const F = abs(f);
   if (F == 0) {
-    return new THREE.Vector4(0, 0, 0, 0);
+    return [0, 0, 0, 0];
   }
   const Sign = step(0.0, -f);
   let Exponent = floor(log2(F));
@@ -20,11 +18,12 @@ export function packFloat(f: number) {
 
   Exponent += 127;
 
-  const rgba = new THREE.Vector4();
-  rgba.x = 128.0 * Sign + floor(Exponent * exp2(-1.0));
-  rgba.y = 128.0 * mod(Exponent, 2.0) + mod(floor(Mantissa * 128.0), 128.0);
-  rgba.z = floor(mod(floor(Mantissa * exp2(23.0 - 8.0)), exp2(8.0)));
-  rgba.w = floor(exp2(23.0) * mod(Mantissa, exp2(-15.0)));
+  const rgba: [number, number, number, number] = [
+    128.0 * Sign + floor(Exponent * exp2(-1.0)),
+    128.0 * mod(Exponent, 2.0) + mod(floor(Mantissa * 128.0), 128.0),
+    floor(mod(floor(Mantissa * exp2(23.0 - 8.0)), exp2(8.0))),
+    floor(exp2(23.0) * mod(Mantissa, exp2(-15.0)))
+  ];
   return rgba;
 }
 
@@ -48,12 +47,12 @@ export function packFloatInto(f: number, targetBuffer: Uint8ClampedArray, offset
   targetBuffer[offset + 3] = floor(exp2(23.0) * mod(Mantissa, exp2(-15.0)));
 }
 
-export function unpackFloat4(packedFloat: THREE.Vector4) {
-  const rgba = packedFloat;
-  const sign = 1.0 - step(128.0, rgba.x) * 2.0;
-  const exponent = 2.0 * mod(rgba.x, 128.0) + step(128.0, rgba.y) - 127.0;
+export function unpackFloat4(packedFloat: [number, number, number, number]) {
+  const [r, g, b, a] = packedFloat;
+  const sign = 1.0 - step(128.0, r) * 2.0;
+  const exponent = 2.0 * mod(r, 128.0) + step(128.0, g) - 127.0;
   if (exponent == -127) return 0;
-  const mantissa = mod(rgba.y, 128.0) * 65536.0 + rgba.z * 256.0 + rgba.w + 8388608.0;
+  const mantissa = mod(g, 128.0) * 65536.0 + b * 256.0 + a + 8388608.0;
   return sign * exp2(exponent - 23.0) * mantissa;
 }
 
