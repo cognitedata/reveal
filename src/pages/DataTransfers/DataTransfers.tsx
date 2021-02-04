@@ -1,17 +1,11 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { format } from 'date-fns';
 import set from 'date-fns/set';
-import { useHistory, useRouteMatch } from 'react-router-dom';
-import {
-  DataTransferObject,
-  GenericResponseObject,
-  RESTTransfersFilter,
-  RevisionObject,
-  SelectedDateRangeType,
-} from 'typings/interfaces';
-import { Checkbox, Table } from 'antd';
+import 'antd/dist/antd.css';
 import { ColumnsType } from 'antd/es/table';
+import { Checkbox, Table } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import {
   Button,
   Dropdown,
@@ -20,6 +14,7 @@ import {
   Colors,
   Tooltip,
 } from '@cognite/cogs.js';
+
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import sortBy from 'lodash/sortBy';
@@ -27,7 +22,23 @@ import indexOf from 'lodash/indexOf';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
 import { apiStatuses } from 'utils/statuses';
 import { useQuery } from 'utils/functions';
+import {
+  DataTransferObject,
+  GenericResponseObject,
+  RESTTransfersFilter,
+  RevisionObject,
+  SelectedDateRangeType,
+} from 'typings/interfaces';
+
 import { ContentContainer } from '../../elements';
+import Revisions from './Revisions';
+import config from './datatransfer.config';
+import ErrorMessage from '../../components/Molecules/ErrorMessage';
+import { getMappedColumnName, getFormattedTimestampOrString } from './utils';
+import { Filters } from './Filters';
+import DetailView, {
+  DetailDataProps,
+} from '../../components/Organisms/DetailView/DetailView';
 import {
   TableActions,
   ColumnsSelector,
@@ -35,57 +46,14 @@ import {
   StatusDot,
   DetailViewWrapper,
 } from './elements';
-import Revisions from './Revisions';
-import 'antd/dist/antd.css';
-import config from './datatransfer.config';
-import DetailView, {
-  DetailDataProps,
-} from '../../components/Organisms/DetailView/DetailView';
-import ErrorMessage from '../../components/Molecules/ErrorMessage';
-import { getMappedColumnName, getFormattedTimestampOrString } from './utils';
-import Filters from './Filters';
-
-enum ProgressState {
-  LOADING = 'loading',
-  SUCCESS = 'success',
-  ERROR = 'error',
-}
-
-enum Action {
-  LOAD = 'load',
-  SUCCEED = 'succeed',
-  FAIL = 'fail',
-  ADD_COLUMN = 'add_column',
-  REMOVE_COLUMN = 'remove_column',
-}
-
-type DataTransfersError = {
-  message: string;
-  status: number;
-};
-
-interface Data {
-  data: DataTransferObject[];
-  rawColumns: ColumnsType<DataTransferObject>;
-  allColumnNames: string[];
-  selectedColumnNames: string[];
-  columns: ColumnsType<DataTransferObject>;
-}
-
-interface DataTransfersState {
-  status: ProgressState;
-  data: Data;
-  error: DataTransfersError | undefined;
-}
-
-type DataTransfersAction =
-  | { type: Action.LOAD }
-  | { type: Action.SUCCEED; payload?: Data }
-  | { type: Action.FAIL; error: DataTransfersError };
-
-type UserAction =
-  | { type: Action.ADD_COLUMN; payload: string }
-  | { type: Action.REMOVE_COLUMN; payload: string };
+import {
+  ProgressState,
+  Action,
+  DataTransfersError,
+  DataTransfersState,
+  DataTransfersAction,
+  UserAction,
+} from './types';
 
 const initialDataTransfersState: DataTransfersState = {
   status: ProgressState.LOADING,
@@ -300,7 +268,6 @@ const DataTransfers: React.FC = () => {
   ] = useState<SelectedDateRangeType | null>(null);
   const [datatypes, setDatatypes] = useState<string[]>([]);
   const [selectedDatatype, setSelectedDatatype] = useState<string | null>(null);
-  const [filterByProjects, setFilterByProjects] = useState<boolean>(false);
 
   const { api } = useContext(ApiContext);
   const { addError } = useContext(APIErrorContext);
@@ -673,13 +640,6 @@ const DataTransfers: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDatatype]);
 
-  useEffect(() => {
-    setSelectedConfiguration(null);
-    setSelectedSource(null);
-    clearData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterByProjects]);
-
   if (error) {
     return (
       <ErrorMessage
@@ -694,7 +654,7 @@ const DataTransfers: React.FC = () => {
   }
 
   function getNoDataText() {
-    let message = filterByProjects ? 'Select source' : 'Select configuration';
+    let message = 'Select configuration';
     if (selectedSource) {
       if (selectedSourceProject) {
         if (selectedTarget) {
@@ -730,6 +690,14 @@ const DataTransfers: React.FC = () => {
       );
     }
     setFilteredData(filtered);
+  }
+
+  function resetFilters() {
+    fetchProjects();
+    clearData();
+    setSelectedSourceProject(null);
+    setSelectedTarget(null);
+    setSelectedTargetProject(null);
   }
 
   if (!sources) {
@@ -775,9 +743,8 @@ const DataTransfers: React.FC = () => {
               onSelectDate: (nextSelected) =>
                 setSelectedDateRange(nextSelected),
             }}
-            filterByProjects={filterByProjects}
-            setFilterByProjects={setFilterByProjects}
             onNameSearchChange={filterByNameSearch}
+            onReset={resetFilters}
           />
         )}
         {(selectedConfiguration || selectedSourceProject) && (
@@ -819,15 +786,12 @@ const DataTransfers: React.FC = () => {
         expandable={{
           expandedRowRender: renderExpandedRow,
           // eslint-disable-next-line react/prop-types
-          expandIcon: ({ expanded, onExpand, record }) =>
-            expanded ? (
-              <ExpandRowIcon type="Down" onClick={(e) => onExpand(record, e)} />
-            ) : (
-              <ExpandRowIcon
-                type="Right"
-                onClick={(e) => onExpand(record, e)}
-              />
-            ),
+          expandIcon: ({ expanded, onExpand, record }) => (
+            <ExpandRowIcon
+              type={expanded ? 'Down' : 'Right'}
+              onClick={(e) => onExpand(record, e)}
+            />
+          ),
         }}
         locale={{
           emptyText: getNoDataText(),

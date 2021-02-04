@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
@@ -8,8 +9,12 @@ import AppSwitcher from '../Atoms/AppSwitcher';
 const Header = styled.header`
   display: flex;
   justify-content: space-between;
-
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 56px;
+  z-index: 2;
 
   background-color: var(--cogs-white);
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
