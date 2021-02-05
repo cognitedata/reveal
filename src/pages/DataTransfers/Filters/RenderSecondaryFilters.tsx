@@ -42,6 +42,8 @@ export const RenderSecondaryFilters = ({
     },
   ];
 
+  console.log(date);
+
   return (
     <StartContainer>
       <FieldWrapper>
@@ -72,6 +74,8 @@ export const RenderSecondaryFilters = ({
         <Label>Filter by date</Label>
         <DateRange
           showClose
+          months={2}
+          direction="horizontal"
           onChange={(range: Range) => {
             date.onSelectDate(range);
             closeFilters();

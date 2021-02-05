@@ -84,9 +84,6 @@ function selectColumns(
           sorter: !config.nonSortableColumns.includes(key)
             ? (a, b) => (a[key] < b[key] ? -1 : 1)
             : false,
-          filters: config.filterableColumns.includes(key)
-            ? createFiltersArrayForColumn(dataTransferObjects, key)
-            : undefined,
           onFilter: (value, record) => record[key]?.includes(value),
           width: key === 'status' ? 70 : undefined,
           render: (value) => {
@@ -197,37 +194,6 @@ const SelectColumnsMenu = ({
     })}
   </Menu>
 );
-
-function getAllValuesFromColumn(
-  dataSet: DataTransferObject[],
-  columnName: string
-): string[] {
-  const results: string[] = [];
-  dataSet.forEach((row) => results.push(row[columnName]));
-  return results;
-}
-
-function getDistinctValuesFromStringArray(values: string[]): string[] {
-  return values.filter(
-    (value, index) => value !== null && values.indexOf(value) === index
-  );
-}
-
-function createFiltersArrayForColumn(
-  dataSet: DataTransferObject[],
-  columnName: string
-): { text: string; value: string }[] {
-  const results: { text: string; value: string }[] = [];
-  const all: string[] = getAllValuesFromColumn(dataSet, columnName);
-  const distinct: string[] = getDistinctValuesFromStringArray(all);
-  distinct.sort().forEach((value) =>
-    results.push({
-      text: value,
-      value,
-    })
-  );
-  return results;
-}
 
 const DataTransfers: React.FC = () => {
   const [{ status, data, error }, dispatch] = useReducer(
