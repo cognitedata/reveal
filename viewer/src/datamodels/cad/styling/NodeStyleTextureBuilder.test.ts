@@ -3,10 +3,11 @@
  */
 
 import * as THREE from 'three';
+import { IndexSet } from '../../../utilities/IndexSet';
 
 import { OutlineColor } from '../NodeAppearance';
 import { FixedNodeSet } from './FixedNodeSet';
-import { IndexSet } from '../../../utilities/IndexSet';
+
 import { NodeSet } from './NodeSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 import { NodeStyleTextureBuilder } from './NodeStyleTextureBuilder';
@@ -19,7 +20,7 @@ describe('NodeStyleTextureBuilder', () => {
   beforeEach(() => {
     styleProvider = new NodeStyleProvider();
     builder = new NodeStyleTextureBuilder(1, styleProvider);
-    nodeSet = new FixedNodeSet(new IndexSet([0]));
+    nodeSet = new FixedNodeSet([0]);
   });
 
   test('needsUpdate is initially true', () => {
@@ -96,5 +97,29 @@ describe('NodeStyleTextureBuilder', () => {
     const transformTexels = Array.from(builder.transformsLookupTexture.image.data);
     expect(transformTexels.length).toBeGreaterThan(0);
     expect(transformTexels).not.toEqual(originalTransformLookupTexels);
+  });
+
+  test('build() adds new ghosted indices to correct set', () => {
+    builder.build();
+    expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
+    expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([]));
+
+    styleProvider.addStyledSet(nodeSet, { renderGhosted: true });
+    builder.build();
+
+    expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([]));
+    expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([0]));
+  });
+
+  test('build() adds new infront indices to correct set', () => {
+    builder.build();
+    expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
+    expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([]));
+
+    styleProvider.addStyledSet(nodeSet, { renderInFront: true });
+    builder.build();
+
+    expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([]));
+    expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([0]));
   });
 });
