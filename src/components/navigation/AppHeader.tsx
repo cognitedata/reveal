@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
 import { Avatar, Icon, TopBar, Menu, Tooltip } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { isAdmin } from 'store/groups/selectors';
@@ -13,11 +12,14 @@ import { logout } from 'utils/logout';
 import sidecar from 'utils/sidecar';
 import { useIntercom } from 'react-use-intercom';
 import { getReleaseVersion } from 'utils/release';
+import { useHistory } from 'react-router-dom';
 import { CogniteLogo, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
   const email = useSelector(getUserId);
+  const history = useHistory();
+
   const { privacyPolicyUrl, intercomTourId } = sidecar;
 
   const {
@@ -38,6 +40,8 @@ const AppHeader: React.FC = () => {
   const performLogout = async () => {
     await logout(client, shutdownIntercom);
   };
+
+  const goHome = () => history.push('/');
 
   const actions = [
     {
@@ -140,11 +144,10 @@ const AppHeader: React.FC = () => {
     <TopBar>
       <TopBar.Left>
         <LogoWrapper>
-          <Link to="/">
-            <TopBar.Logo
-              logo={<img src={customerLogo} alt="Customer logo" />}
-            />
-          </Link>
+          <TopBar.Logo
+            onLogoClick={goHome}
+            logo={<img src={customerLogo} alt="Customer logo" />}
+          />
         </LogoWrapper>
       </TopBar.Left>
       <TopBar.Right>
