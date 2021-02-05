@@ -10,8 +10,23 @@ describe('<Schedule/>', () => {
       expected: /On Trigger/i,
     },
     {
+      desc: 'Render On Trigger when scheduled is on trigger',
+      value: 'on trigger',
+      expected: /On Trigger/i,
+    },
+    {
+      desc: 'Render On Trigger when scheduled is oN triGGer',
+      value: 'oN triGGer',
+      expected: /On Trigger/i,
+    },
+    {
       desc: 'Render Continuous when scheduled is Continuous',
       value: SupportedScheduleStrings.CONTINUOUS,
+      expected: /Continuous/i,
+    },
+    {
+      desc: 'Render Continuous when scheduled is ConTINuous',
+      value: 'conTINuous',
       expected: /Continuous/i,
     },
     {

@@ -27,9 +27,7 @@ export const getMonitoringTableCol = (): Column<Run>[] => {
       accessor: 'timestamp',
       sortType: 'basic',
       Cell: ({ row }: Cell<Run>) => {
-        return (
-          <TimeDisplay value={row.values.timestamp} relative withTooltip />
-        );
+        return <TimeDisplay value={row.values.timestamp} withTooltip />;
       },
       disableFilters: true,
     },

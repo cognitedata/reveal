@@ -1,5 +1,5 @@
 import { Tooltip } from '@cognite/cogs.js';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import styled from 'styled-components';
 import { parseCron } from '../../../utils/cronUtils';
 import InteractiveCopy from '../../InteractiveCopy';
@@ -24,38 +24,41 @@ export enum SupportedScheduleStrings {
 }
 type Props = OwnProps;
 
-const Schedule: FunctionComponent<Props> = ({ schedule, ...rest }: Props) => {
-  switch (schedule) {
-    case undefined:
-      return <span>{SupportedScheduleStrings.NOT_DEFINED}</span>;
-    case SupportedScheduleStrings.ON_TRIGGER:
-    case SupportedScheduleStrings.CONTINUOUS:
-      return <span>{schedule}</span>;
-    default: {
-      let parsedExpression = schedule;
-      try {
-        parsedExpression = parseCron(schedule ?? '');
-      } catch (e) {
-        const errorMessage = `Schedule: "${schedule}" - ${e}`;
-        return (
-          <Tooltip content={errorMessage}>
-            <i>Not valid</i>
-          </Tooltip>
-        );
-      }
-      return (
-        <Tooltip content={schedule}>
-          <InteractiveCopyWrapper {...rest}>
-            {parsedExpression} <InteractiveCopy text={schedule} />
-          </InteractiveCopyWrapper>
-        </Tooltip>
-      );
-    }
+const Schedule: FunctionComponent<Props> = ({
+  schedule,
+  ...rest
+}: PropsWithoutRef<Props>) => {
+  if (!schedule) {
+    return <span>{SupportedScheduleStrings.NOT_DEFINED}</span>;
   }
-};
-
-Schedule.defaultProps = {
-  schedule: undefined,
+  if (
+    schedule.toLowerCase() === SupportedScheduleStrings.ON_TRIGGER.toLowerCase()
+  ) {
+    return <span>{SupportedScheduleStrings.ON_TRIGGER}</span>;
+  }
+  if (
+    schedule.toLowerCase() === SupportedScheduleStrings.CONTINUOUS.toLowerCase()
+  ) {
+    return <span>{SupportedScheduleStrings.CONTINUOUS}</span>;
+  }
+  let parsedExpression = schedule;
+  try {
+    parsedExpression = parseCron(schedule ?? '');
+  } catch (e) {
+    const errorMessage = `Schedule: "${schedule}" - ${e}`;
+    return (
+      <Tooltip content={errorMessage}>
+        <i>Not valid</i>
+      </Tooltip>
+    );
+  }
+  return (
+    <Tooltip content={schedule}>
+      <InteractiveCopyWrapper {...rest}>
+        {parsedExpression} <InteractiveCopy text={schedule} />
+      </InteractiveCopyWrapper>
+    </Tooltip>
+  );
 };
 
 export default Schedule;

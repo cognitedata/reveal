@@ -3,7 +3,7 @@ import { Tooltip } from '@cognite/cogs.js';
 import moment from 'moment';
 
 export const DATE_FORMAT: Readonly<string> = 'YYYY-MM-DD';
-export const DATE_TIME_FORMAT: Readonly<string> = 'YYYY-MM-DD HH:mm';
+export const DATE_TIME_FORMAT: Readonly<string> = 'YYYY-MM-DD HH:mm:ss';
 export interface TimeDisplayProps {
   value: number | Date;
   relative?: boolean;
