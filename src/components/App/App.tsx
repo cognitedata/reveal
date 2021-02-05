@@ -2,6 +2,9 @@ import React from 'react';
 
 import AppProviders from 'components/AppProviders';
 import AppAuth from 'components/AppAuth';
+import sdk from 'services/CogniteSDK';
+import { DataExplorationProvider } from '@cognite/data-exploration';
+import { QueryClientProvider, QueryClient } from 'react-query';
 
 const sanitizeTenant = (tenant: string = '') =>
   tenant.toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -28,10 +31,19 @@ const App = () => {
     );
   }
 
+  const queryClient = new QueryClient();
+
   return (
-    <AppProviders tenant={tenant} initialState={{ environment: { tenant } }}>
-      <AppAuth tenant={tenant} />
-    </AppProviders>
+    <QueryClientProvider client={queryClient}>
+      <DataExplorationProvider sdk={sdk}>
+        <AppProviders
+          tenant={tenant}
+          initialState={{ environment: { tenant } }}
+        >
+          <AppAuth tenant={tenant} />
+        </AppProviders>
+      </DataExplorationProvider>
+    </QueryClientProvider>
   );
 };
 
