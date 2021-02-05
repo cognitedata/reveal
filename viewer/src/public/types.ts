@@ -65,7 +65,7 @@ export type RenderOptions = {
 export const defaultRenderOptions: Required<RenderOptions> = {
   antiAliasing: AntiAliasingMode.FXAA,
   multiSampleCountHint: 1,
-  ssaoRenderParameters: { sampleSize: 64, sampleRadius: 1.0, depthCheckBias: 0.0125 }
+  ssaoRenderParameters: { sampleSize: 32, sampleRadius: 1.0, depthCheckBias: 0.0125 }
 };
 
 /**
