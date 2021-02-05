@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { format } from 'date-fns';
 
 import { Button } from '@cognite/cogs.js';
-import { SelectedDateRangeType } from 'typings/interfaces';
 
 import { FiltersProps, FilterTypes, FilterListFilters } from './types';
 import { FilterList } from './FilterList';
@@ -26,22 +24,13 @@ export const Filters = ({
   const [nameFilter, setNameFilter] = useState('');
   const [openFilter, setOpenFilter] = useState<keyof FilterTypes | ''>('');
 
-  const getFormattedDateRange = (selectedRange: SelectedDateRangeType) => {
-    const first = selectedRange[0];
-    const second = selectedRange[1];
-    if (first && second) {
-      return `${format(first, 'P')} - ${format(second, 'P')}`;
-    }
-    return selectedRange.join(' - ');
-  };
-
   const resetFilters = () => {
     setNameFilter('');
     source.onSelectSource('');
     target.onSelectTarget('');
     configuration.onSelectConfiguration(null);
     datatype.onSelectType('');
-    date.onSelectDate(null);
+    date.onSelectDate({});
     onReset();
   };
 
@@ -129,6 +118,8 @@ export const Filters = ({
             <Button
               variant="ghost"
               type="danger"
+              size="large"
+              style={{ marginRight: 16 }}
               disabled={!source.selected && !configuration.selected}
               onClick={resetFilters}
             >
@@ -151,7 +142,6 @@ export const Filters = ({
             closeFilters={closeFilters}
             toggleFilter={toggleFilter}
             date={date}
-            getFormattedDateRange={getFormattedDateRange}
           />
         )}
       </>

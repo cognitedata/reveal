@@ -9,10 +9,10 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import {
   Button,
   Dropdown,
-  Icon,
   Menu,
   Colors,
   Tooltip,
+  Range,
 } from '@cognite/cogs.js';
 
 import ApiContext from 'contexts/ApiContext';
@@ -27,7 +27,6 @@ import {
   GenericResponseObject,
   RESTTransfersFilter,
   RevisionObject,
-  SelectedDateRangeType,
 } from 'typings/interfaces';
 
 import { ContentContainer } from '../../elements';
@@ -85,9 +84,6 @@ function selectColumns(
           sorter: !config.nonSortableColumns.includes(key)
             ? (a, b) => (a[key] < b[key] ? -1 : 1)
             : false,
-          filters: config.filterableColumns.includes(key)
-            ? createFiltersArrayForColumn(dataTransferObjects, key)
-            : undefined,
           onFilter: (value, record) => record[key]?.includes(value),
           width: key === 'status' ? 70 : undefined,
           render: (value) => {
@@ -199,37 +195,6 @@ const SelectColumnsMenu = ({
   </Menu>
 );
 
-function getAllValuesFromColumn(
-  dataSet: DataTransferObject[],
-  columnName: string
-): string[] {
-  const results: string[] = [];
-  dataSet.forEach((row) => results.push(row[columnName]));
-  return results;
-}
-
-function getDistinctValuesFromStringArray(values: string[]): string[] {
-  return values.filter(
-    (value, index) => value !== null && values.indexOf(value) === index
-  );
-}
-
-function createFiltersArrayForColumn(
-  dataSet: DataTransferObject[],
-  columnName: string
-): { text: string; value: string }[] {
-  const results: { text: string; value: string }[] = [];
-  const all: string[] = getAllValuesFromColumn(dataSet, columnName);
-  const distinct: string[] = getDistinctValuesFromStringArray(all);
-  distinct.sort().forEach((value) =>
-    results.push({
-      text: value,
-      value,
-    })
-  );
-  return results;
-}
-
 const DataTransfers: React.FC = () => {
   const [{ status, data, error }, dispatch] = useReducer(
     DataTransfersReducer,
@@ -262,10 +227,7 @@ const DataTransfers: React.FC = () => {
     selectedTargetProject,
     setSelectedTargetProject,
   ] = useState<DataTransferObject | null>(null);
-  const [
-    selectedDateRange,
-    setSelectedDateRange,
-  ] = useState<SelectedDateRangeType | null>(null);
+  const [selectedDateRange, setSelectedDateRange] = useState<Range>({});
   const [datatypes, setDatatypes] = useState<string[]>([]);
   const [selectedDatatype, setSelectedDatatype] = useState<string | null>(null);
 
@@ -342,13 +304,12 @@ const DataTransfers: React.FC = () => {
         };
       }
       if (selectedDateRange) {
-        let after = selectedDateRange[0];
-        let before = selectedDateRange[1];
-        if (after && before) {
-          after = set(after, { hours: 0, minutes: 0, seconds: 0 });
-          before = set(before, { hours: 23, minutes: 59, seconds: 59 });
-          options.updated_after = Number(format(after, 't'));
-          options.updated_before = Number(format(before, 't'));
+        let { startDate, endDate } = selectedDateRange;
+        if (startDate && endDate) {
+          startDate = set(startDate, { hours: 0, minutes: 0, seconds: 0 });
+          endDate = set(endDate, { hours: 23, minutes: 59, seconds: 59 });
+          options.updated_after = Number(format(startDate, 't'));
+          options.updated_before = Number(format(endDate, 't'));
         }
       }
       if (selectedConfiguration) {
@@ -760,13 +721,11 @@ const DataTransfers: React.FC = () => {
                 }
               >
                 <Button
-                  type="link"
-                  size="small"
-                  style={{ marginTop: '0.3rem' }}
+                  size="large"
+                  style={{ width: 42, height: 42 }}
                   aria-label="Show/hide table columns"
-                >
-                  <Icon type="Settings" />
-                </Button>
+                  icon="Settings"
+                />
               </Dropdown>
             </Tooltip>
           </ColumnsSelector>
