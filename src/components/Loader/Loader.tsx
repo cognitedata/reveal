@@ -2,13 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { Colors, Icon } from '@cognite/cogs.js';
 
-export const Loader = () => {
-  return (
-    <Wrapper>
-      <Icon type="Loading" />
-    </Wrapper>
-  );
-};
+export const Loader = () => (
+  <Wrapper>
+    <Icon type="Loading" />
+  </Wrapper>
+);
 
 const Wrapper = styled.div`
   height: 100%;

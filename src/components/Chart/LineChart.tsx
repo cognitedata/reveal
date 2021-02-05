@@ -142,77 +142,71 @@ export const LineChart = ({
 
   const numRowTicks = Math.max(minRowTicks, Math.floor(height / 30));
   const numColumnTicks = Math.max(5, Math.floor(width / 100));
-  const getXWithScale = (d: DatapointAggregate) => {
-    return dateScale(getDate(d));
-  };
+  const getXWithScale = (d: DatapointAggregate) => dateScale(getDate(d));
 
-  const renderGrid = () => {
-    return (
-      <>
-        {(showGridLine === 'both' || showGridLine === 'horizontal') && (
-          <GridRows
-            scale={valuesScale}
-            width={innerWidth}
-            height={innerHeight}
-            numTicks={numColumnTicks}
-            strokeDasharray="1,3"
-            stroke={lightGrey}
-            strokeWidth="1.3"
-          />
-        )}
-        {(showGridLine === 'both' || showGridLine === 'vertical') && (
-          <GridColumns
-            scale={dateScale}
-            width={innerWidth}
-            height={innerHeight}
-            numTicks={numRowTicks}
-            stroke={lightGrey}
-            strokeWidth="1.3"
-          />
-        )}
-      </>
-    );
-  };
+  const renderGrid = () => (
+    <>
+      {(showGridLine === 'both' || showGridLine === 'horizontal') && (
+        <GridRows
+          scale={valuesScale}
+          width={innerWidth}
+          height={innerHeight}
+          numTicks={numColumnTicks}
+          strokeDasharray="1,3"
+          stroke={lightGrey}
+          strokeWidth="1.3"
+        />
+      )}
+      {(showGridLine === 'both' || showGridLine === 'vertical') && (
+        <GridColumns
+          scale={dateScale}
+          width={innerWidth}
+          height={innerHeight}
+          numTicks={numRowTicks}
+          stroke={lightGrey}
+          strokeWidth="1.3"
+        />
+      )}
+    </>
+  );
 
-  const renderAxis = () => {
-    return (
-      <>
-        {(showAxis === 'both' || showAxis === 'horizontal') && (
-          <AxisBottom
-            top={innerHeight}
-            scale={dateScale}
-            numTicks={numColumnTicks}
-            tickStroke={lightGrey}
-            strokeWidth={0}
-            tickLabelProps={() => ({
-              fontFamily: 'Inter',
-              fontSize: showSmallerTicks ? 10 : 12,
-              fill: Colors['greyscale-grey6'].hex(),
-              textAnchor: 'middle',
-            })}
-            tickLength={showSmallerTicks ? 4 : 8}
-          />
-        )}
-        {(showAxis === 'both' || showAxis === 'vertical') && (
-          <AxisRight
-            scale={valuesScale}
-            left={innerWidth}
-            numTicks={numRowTicks}
-            tickStroke={lightGrey}
-            strokeWidth={0}
-            tickLabelProps={() => ({
-              fontFamily: 'Inter',
-              fontSize: 12,
-              dy: 5,
-              dx: 8,
-              fill: Colors['greyscale-grey6'].hex(),
-              textAnchor: 'start',
-            })}
-          />
-        )}
-      </>
-    );
-  };
+  const renderAxis = () => (
+    <>
+      {(showAxis === 'both' || showAxis === 'horizontal') && (
+        <AxisBottom
+          top={innerHeight}
+          scale={dateScale}
+          numTicks={numColumnTicks}
+          tickStroke={lightGrey}
+          strokeWidth={0}
+          tickLabelProps={() => ({
+            fontFamily: 'Inter',
+            fontSize: showSmallerTicks ? 10 : 12,
+            fill: Colors['greyscale-grey6'].hex(),
+            textAnchor: 'middle',
+          })}
+          tickLength={showSmallerTicks ? 4 : 8}
+        />
+      )}
+      {(showAxis === 'both' || showAxis === 'vertical') && (
+        <AxisRight
+          scale={valuesScale}
+          left={innerWidth}
+          numTicks={numRowTicks}
+          tickStroke={lightGrey}
+          strokeWidth={0}
+          tickLabelProps={() => ({
+            fontFamily: 'Inter',
+            fontSize: 12,
+            dy: 5,
+            dx: 8,
+            fill: Colors['greyscale-grey6'].hex(),
+            textAnchor: 'start',
+          })}
+        />
+      )}
+    </>
+  );
 
   const renderableValues = values.filter(el => {
     const data = getDataPointAverage(el);
@@ -232,9 +226,7 @@ export const LineChart = ({
         width={innerWidth}
         height={innerHeight}
         x={d => getXWithScale(d)!}
-        y1={d => {
-          return valuesScale(getDataPointAverage(d)!)!;
-        }}
+        y1={d => valuesScale(getDataPointAverage(d)!)!}
         y0={0}
         yScale={valuesScale}
         strokeWidth={0}
@@ -244,21 +236,17 @@ export const LineChart = ({
     );
   };
 
-  const renderLine = () => {
-    return (
-      <LinePath<DatapointAggregate>
-        data={renderableValues}
-        width={innerWidth}
-        height={innerHeight}
-        x={d => getXWithScale(d)!}
-        y={d => {
-          return valuesScale(getDataPointAverage(d)!)!;
-        }}
-        strokeWidth={2}
-        stroke={primaryColor}
-      />
-    );
-  };
+  const renderLine = () => (
+    <LinePath<DatapointAggregate>
+      data={renderableValues}
+      width={innerWidth}
+      height={innerHeight}
+      x={d => getXWithScale(d)!}
+      y={d => valuesScale(getDataPointAverage(d)!)!}
+      strokeWidth={2}
+      stroke={primaryColor}
+    />
+  );
 
   const renderThreshold = () => {
     if (!enableMinMaxArea) {
@@ -279,12 +267,8 @@ export const LineChart = ({
         id={`${Math.random()}`}
         data={renderableMinMaxValues}
         x={d => getXWithScale(d)!}
-        y0={d => {
-          return valuesScale(getDataPointMinValue(d)!)!;
-        }}
-        y1={d => {
-          return valuesScale(getDataPointMaxValue(d)!)!;
-        }}
+        y0={d => valuesScale(getDataPointMinValue(d)!)!}
+        y1={d => valuesScale(getDataPointMaxValue(d)!)!}
         clipAboveTo={0}
         clipBelowTo={innerHeight}
         belowAreaProps={{

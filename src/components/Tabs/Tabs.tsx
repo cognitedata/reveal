@@ -72,9 +72,9 @@ export type TabPaneProps = {
   style?: React.CSSProperties;
 };
 
-const TabPane: React.FC<TabPaneProps> = ({ children, style }: TabPaneProps) => {
-  return <div style={{ flex: 1, overflow: 'auto', ...style }}>{children}</div>;
-};
+const TabPane: React.FC<TabPaneProps> = ({ children, style }: TabPaneProps) => (
+  <div style={{ flex: 1, overflow: 'auto', ...style }}>{children}</div>
+);
 
 Tabs.Pane = TabPane;
 

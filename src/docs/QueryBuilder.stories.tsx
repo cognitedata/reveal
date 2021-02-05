@@ -27,11 +27,9 @@ export const QueryBuilder = () => {
   );
 };
 QueryBuilder.decorators = [
-  Story => {
-    return (
-      <Wrapper>
-        <Story />
-      </Wrapper>
-    );
-  },
+  Story => (
+    <Wrapper>
+      <Story />
+    </Wrapper>
+  ),
 ];

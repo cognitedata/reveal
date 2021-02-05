@@ -10,27 +10,23 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <AssetTreeTable
-      filter={{}}
-      onAssetClicked={action('onAssetClicked')}
-      query={text('query', '')}
-      isSelected={() => {}}
-    />
-  );
-};
-export const ExampleSingleSelect = () => {
-  return (
-    <AssetTreeTable
-      selectionMode="single"
-      filter={{}}
-      onAssetClicked={action('onAssetClicked')}
-      query={text('query', '')}
-      isSelected={() => {}}
-    />
-  );
-};
+export const Example = () => (
+  <AssetTreeTable
+    filter={{}}
+    onAssetClicked={action('onAssetClicked')}
+    query={text('query', '')}
+    isSelected={() => {}}
+  />
+);
+export const ExampleSingleSelect = () => (
+  <AssetTreeTable
+    selectionMode="single"
+    filter={{}}
+    onAssetClicked={action('onAssetClicked')}
+    query={text('query', '')}
+    isSelected={() => {}}
+  />
+);
 
 const Container = styled.div`
   padding: 20px;

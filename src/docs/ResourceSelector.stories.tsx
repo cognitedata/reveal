@@ -89,13 +89,11 @@ const ArgType: {
 };
 SelectingResources.argTypes = ArgType;
 SelectingResources.decorators = [
-  Story => {
-    return (
-      <Wrapper style={{ height: 800 }}>
-        <Story />
-      </Wrapper>
-    );
-  },
+  Story => (
+    <Wrapper style={{ height: 800 }}>
+      <Story />
+    </Wrapper>
+  ),
 ];
 export default {
   title: 'Resource Selector',

@@ -11,25 +11,21 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <TimeseriesTable
-      items={timeseries}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
-export const ExampleSingleSelect = () => {
-  return (
-    <TimeseriesTable
-      selectionMode="single"
-      items={timeseries}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
+export const Example = () => (
+  <TimeseriesTable
+    items={timeseries}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
+export const ExampleSingleSelect = () => (
+  <TimeseriesTable
+    selectionMode="single"
+    items={timeseries}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
 
 const Container = styled.div`
   height: 600px;

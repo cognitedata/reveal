@@ -186,8 +186,8 @@ export const TimeseriesChart = ({
         end: presetZoom[1].getTime(),
       },
     ],
-    async () => {
-      return (
+    async () =>
+      (
         await sdk.datapoints.retrieve({
           items: [{ id: timeseriesId }],
           end: presetZoom[1].valueOf(),
@@ -199,8 +199,7 @@ export const TimeseriesChart = ({
           limit: numberOfPoints,
           aggregates: ['count', 'min', 'max', 'average'],
         })
-      )[0];
-    },
+      )[0],
     {
       staleTime: Infinity,
     }

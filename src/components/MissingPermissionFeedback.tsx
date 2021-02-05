@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { notification } from 'antd';
 import { useParams } from 'react-router-dom';
 
-import { ids } from 'cogs-variables';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 type Props = {
@@ -35,10 +34,6 @@ export default function MissingPermissionFeedback(props: Props) {
             and set up any missing permissions or contact your administrator!
           </p>
         ),
-        getContainer: () =>
-          document
-            .getElementsByClassName(ids.styleScope)
-            .item(0)! as HTMLElement,
       });
     }
   }, [groupPermission, tenant]);
@@ -60,10 +55,6 @@ export default function MissingPermissionFeedback(props: Props) {
             and set up any missing permissions or contact your administrator!
           </p>
         ),
-        getContainer: () =>
-          document
-            .getElementsByClassName(ids.styleScope)
-            .item(0)! as HTMLElement,
       });
     }
   }, [groupPermission, hasPermission, key, type, tenant]);

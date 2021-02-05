@@ -13,9 +13,10 @@ export default {
 };
 
 export const Default = () => {
-  const [pendingAnnotation, setPendingAnnotation] = useState<
-    ProposedCogniteAnnotation
-  >({
+  const [
+    pendingAnnotation,
+    setPendingAnnotation,
+  ] = useState<ProposedCogniteAnnotation>({
     id: uuid(),
     status: 'verified',
     version: CURRENT_VERSION,

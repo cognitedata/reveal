@@ -11,25 +11,21 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <AssetTable
-      items={assets}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
-export const ExampleSingleSelect = () => {
-  return (
-    <AssetTable
-      selectionMode="single"
-      items={assets}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
+export const Example = () => (
+  <AssetTable
+    items={assets}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
+export const ExampleSingleSelect = () => (
+  <AssetTable
+    selectionMode="single"
+    items={assets}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
 
 const Container = styled.div`
   height: 600px;

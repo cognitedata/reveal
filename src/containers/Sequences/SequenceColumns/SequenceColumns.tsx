@@ -16,12 +16,10 @@ const formatSequenceColumns = (columns: SequenceColumn[]) =>
     [] as { column: string; value: string }[]
   );
 
-export const SequenceColumns = ({ sequence }: { sequence: Sequence }) => {
-  return (
-    <>
-      {formatSequenceColumns((sequence && sequence.columns) ?? {}).map(el => (
-        <DetailsItem key={el.column} name={el.column} value={el.value} />
-      ))}
-    </>
-  );
-};
+export const SequenceColumns = ({ sequence }: { sequence: Sequence }) => (
+  <>
+    {formatSequenceColumns((sequence && sequence.columns) ?? {}).map(el => (
+      <DetailsItem key={el.column} name={el.column} value={el.value} />
+    ))}
+  </>
+);

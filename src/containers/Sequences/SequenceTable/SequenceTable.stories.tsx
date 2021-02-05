@@ -11,25 +11,21 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <SequenceTable
-      items={sequences}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
-export const ExampleSingleSelect = () => {
-  return (
-    <SequenceTable
-      selectionMode="single"
-      items={sequences}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
+export const Example = () => (
+  <SequenceTable
+    items={sequences}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
+export const ExampleSingleSelect = () => (
+  <SequenceTable
+    selectionMode="single"
+    items={sequences}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
 
 const Container = styled.div`
   padding: 20px;

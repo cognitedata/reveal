@@ -52,19 +52,17 @@ const HighlightCell = ({
   text?: string;
   query?: string;
   lines?: number;
-}) => {
-  return (
-    <EllipsisText level={2} strong lines={lines}>
-      <Tooltip content={text} placement="top-start" arrow={false} interactive>
-        <Highlighter
-          searchWords={(query || '').split(' ')}
-          textToHighlight={text || ''}
-          autoEscape
-        />
-      </Tooltip>
-    </EllipsisText>
-  );
-};
+}) => (
+  <EllipsisText level={2} strong lines={lines}>
+    <Tooltip content={text} placement="top-start" arrow={false} interactive>
+      <Highlighter
+        searchWords={(query || '').split(' ')}
+        textToHighlight={text || ''}
+        autoEscape
+      />
+    </Tooltip>
+  </EllipsisText>
+);
 
 export type TableProps<T> = Partial<BaseTableProps<T>> & {
   query?: string;
@@ -88,17 +86,15 @@ export const Table = <T extends { id: AllowedTableStateId }>({
 }: TableProps<T>) => {
   const ref = useRef<ReactBaseTable<T>>();
   const renderSelectButton = useCallback(
-    (item: T, isSelected: boolean, isHovered: boolean) => {
-      return (
-        <ActionCell
-          item={item}
-          selectionMode={selectionMode}
-          onItemSelected={onRowSelected}
-          isSelected={isSelected}
-          isHovered={isHovered}
-        />
-      );
-    },
+    (item: T, isSelected: boolean, isHovered: boolean) => (
+      <ActionCell
+        item={item}
+        selectionMode={selectionMode}
+        onItemSelected={onRowSelected}
+        isSelected={isSelected}
+        isHovered={isHovered}
+      />
+    ),
     [selectionMode, onRowSelected]
   );
 
@@ -153,13 +149,12 @@ export const Table = <T extends { id: AllowedTableStateId }>({
                         container: {
                           state: { hoveredRowKey },
                         },
-                      }) => {
-                        return renderSelectButton(
+                      }) =>
+                        renderSelectButton(
                           item,
                           (ids as number[]).some(el => item.id === el),
                           hoveredRowKey === item.id
-                        );
-                      },
+                        ),
                     } as ColumnShape<T>,
                   ]
                 : []),

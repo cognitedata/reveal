@@ -7,22 +7,18 @@ import { AssetTable, FileTable, Splitter } from '..';
 import { useResourcePreview, ResourcePreviewProvider } from '../context';
 import { Wrapper } from './utils';
 
-export const ResourcesLargeTables = () => {
-  return (
-    <Splitter percentage secondaryMinSize={50}>
-      <AssetTable items={assets} onItemClicked={action('onItemClicked')} />
-      <FileTable items={files} onItemClicked={action('onItemClicked')} />
-    </Splitter>
-  );
-};
+export const ResourcesLargeTables = () => (
+  <Splitter percentage secondaryMinSize={50}>
+    <AssetTable items={assets} onItemClicked={action('onItemClicked')} />
+    <FileTable items={files} onItemClicked={action('onItemClicked')} />
+  </Splitter>
+);
 ResourcesLargeTables.decorators = [
-  Story => {
-    return (
-      <Wrapper>
-        <Story />
-      </Wrapper>
-    );
-  },
+  Story => (
+    <Wrapper>
+      <Story />
+    </Wrapper>
+  ),
 ];
 
 const extraStyles: React.CSSProperties = {
@@ -73,13 +69,11 @@ export const NestingPreviews = () => {
   );
 };
 NestingPreviews.decorators = [
-  Story => {
-    return (
-      <Wrapper>
-        <Story />
-      </Wrapper>
-    );
-  },
+  Story => (
+    <Wrapper>
+      <Story />
+    </Wrapper>
+  ),
 ];
 export default {
   title: 'Data Exploration Components',
