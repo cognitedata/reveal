@@ -14,13 +14,9 @@ export const Wrapper = ({
 }: {
   children: React.ReactNode;
   style?: React.CSSProperties;
-}) => {
-  return (
-    <Container style={style}>
-      {/** @ts-ignores */}
-      <DataExplorationProvider sdk={sdkMock}>
-        {children}
-      </DataExplorationProvider>
-    </Container>
-  );
-};
+}) => (
+  <Container style={style}>
+    {/** @ts-ignores */}
+    <DataExplorationProvider sdk={sdkMock}>{children}</DataExplorationProvider>
+  </Container>
+);

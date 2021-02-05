@@ -11,26 +11,22 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <FileTable
-      items={files}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
+export const Example = () => (
+  <FileTable
+    items={files}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
 
-export const ExampleSingleSelect = () => {
-  return (
-    <FileTable
-      selectionMode="single"
-      items={files}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
+export const ExampleSingleSelect = () => (
+  <FileTable
+    selectionMode="single"
+    items={files}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
 
 const Container = styled.div`
   height: 600px;

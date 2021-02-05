@@ -8,15 +8,13 @@ export default {
   component: FileUploader,
 };
 
-export const Example = () => {
-  return (
-    <FileUploader
-      validExtensions={array('validExtensions', [])}
-      onUploadSuccess={action('onUploadSuccess')}
-      onUploadFailure={action('onUploadFailure')}
-      onCancel={action('onCancel')}
-      beforeUploadStart={action('beforeUploadStart')}
-      onFileListChange={action('onFileListChange')}
-    />
-  );
-};
+export const Example = () => (
+  <FileUploader
+    validExtensions={array('validExtensions', [])}
+    onUploadSuccess={action('onUploadSuccess')}
+    onUploadFailure={action('onUploadFailure')}
+    onCancel={action('onCancel')}
+    beforeUploadStart={action('beforeUploadStart')}
+    onFileListChange={action('onFileListChange')}
+  />
+);

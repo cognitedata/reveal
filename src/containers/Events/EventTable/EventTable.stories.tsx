@@ -11,25 +11,21 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <EventTable
-      items={events}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
-export const ExampleSingleSelect = () => {
-  return (
-    <EventTable
-      selectionMode="single"
-      items={events}
-      onItemClicked={action('onItemClicked')}
-      query={text('query', '')}
-    />
-  );
-};
+export const Example = () => (
+  <EventTable
+    items={events}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
+export const ExampleSingleSelect = () => (
+  <EventTable
+    selectionMode="single"
+    items={events}
+    onItemClicked={action('onItemClicked')}
+    query={text('query', '')}
+  />
+);
 const Container = styled.div`
   height: 600px;
 `;

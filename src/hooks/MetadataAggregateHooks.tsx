@@ -9,10 +9,9 @@ export const useAssetMetadataKeys = (
   const sdk = useSDK();
   const { data, ...rest } = useQuery(
     ['assets', 'aggregate', 'metadataKeys', filter],
-    async () => {
+    async () =>
       // @ts-ignore
-      return sdk.assets.aggregate({ filter, aggregate: 'metadataKeys' });
-    },
+      sdk.assets.aggregate({ filter, aggregate: 'metadataKeys' }),
     {
       staleTime: 60 * 1000,
       ...config,
@@ -29,13 +28,12 @@ export const useAssetMetadataValues = (
   const sdk = useSDK();
   const { data, ...rest } = useQuery(
     ['assets', 'aggregate', 'metadataValues', key],
-    async () => {
-      return sdk.assets.aggregate({
+    async () =>
+      sdk.assets.aggregate({
         // @ts-ignore
         keys: [key],
         aggregate: 'metadataValues',
-      });
-    },
+      }),
     {
       enabled: !!key && config?.enabled,
       staleTime: 60 * 1000,

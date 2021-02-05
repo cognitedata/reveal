@@ -226,243 +226,229 @@ export const FilePreviewOverview = ({
     { enabled: sequenceIds && sequenceIds.length > 0 }
   );
 
-  const renderDetectedResources = () => {
-    return (
-      <>
-        <Input
-          style={{ width: '100%' }}
-          containerStyle={{ width: '100%', marginBottom: 16 }}
-          variant="noBorder"
-          icon="Search"
-          placeholder="Search for resource in file..."
-          onChange={ev => setQuery(ev.target.value)}
-          value={query}
-        />
-        <Collapse
-          // @ts-ignore
-          onChange={(key?: string[]) => setOpen(key || [])}
-          activeKey={open}
+  const renderDetectedResources = () => (
+    <>
+      <Input
+        style={{ width: '100%' }}
+        containerStyle={{ width: '100%', marginBottom: 16 }}
+        variant="noBorder"
+        icon="Search"
+        placeholder="Search for resource in file..."
+        onChange={ev => setQuery(ev.target.value)}
+        value={query}
+      />
+      <Collapse
+        // @ts-ignore
+        onChange={(key?: string[]) => setOpen(key || [])}
+        activeKey={open}
+      >
+        {/** Assets */}
+        <Collapse.Panel
+          showArrow={false}
+          key="assets"
+          header={
+            <CollapseHeader>
+              <Icon className="cogs-icon resource-icon" type="DataStudio" />
+              <Title level={5}>Assets</Title>
+              <div className="spacer" />
+              <Badge
+                text={`${categorizedAnnotations.asset.annotations.length}`}
+                background={Colors['purple-5'].hex()}
+              />
+              <Icon type={open.includes('assets') ? 'Up' : 'Down'} />
+            </CollapseHeader>
+          }
         >
-          {/** Assets */}
-          <Collapse.Panel
-            showArrow={false}
-            key="assets"
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="DataStudio" />
-                <Title level={5}>Assets</Title>
-                <div className="spacer" />
-                <Badge
-                  text={`${categorizedAnnotations.asset.annotations.length}`}
-                  background={Colors['purple-5'].hex()}
-                />
-                <Icon type={open.includes('assets') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {assets.map(asset => {
-                return (
-                  <FilePreviewOverview.AssetItem
-                    onItemClick={() => asset && onAssetClickedCallback(asset)}
-                    key={asset.id}
-                    asset={asset}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.asset.annotations.filter(
-                      el =>
-                        asset &&
-                        ((el.resourceId && el.resourceId === asset.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === asset.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
-
-          {/** Files */}
-          <Collapse.Panel
-            showArrow={false}
-            key="files"
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="Document" />
-                <Title level={5}>Files</Title>
-                <div className="spacer" />
-                <Badge
-                  text={`${categorizedAnnotations.file.annotations.length}`}
-                  background={Colors['midorange-5'].hex()}
-                />
-                <Icon type={open.includes('files') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {files.map(linkedFile => {
-                return (
-                  <FilePreviewOverview.FileItem
-                    onItemClick={() => file && onFileClickedCallback(file)}
-                    key={linkedFile.id}
-                    file={linkedFile}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.file.annotations.filter(
-                      el =>
-                        linkedFile &&
-                        ((el.resourceId && el.resourceId === linkedFile.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === linkedFile.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
-
-          {/** Time series */}
-          <Collapse.Panel
-            showArrow={false}
-            key="timeseries"
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="Timeseries" />
-                <Title level={5}>Time series</Title>
-                <div className="spacer" />
-                <Badge
-                  text={`${categorizedAnnotations.timeSeries.annotations.length}`}
-                  background={Colors['lightblue-5'].hex()}
-                />
-                <Icon type={open.includes('timeseries') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {timeseries.map(ts => {
-                return (
-                  <FilePreviewOverview.TimeseriesItem
-                    onItemClick={() => ts && onTimeseriesClickedCallback(ts)}
-                    key={ts.id}
-                    timeseries={ts}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.timeSeries.annotations.filter(
-                      el =>
-                        ts &&
-                        ((el.resourceId && el.resourceId === ts.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === ts.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
-
-          {/** Events */}
-          <Collapse.Panel
-            key="events"
-            showArrow={false}
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="Events" />
-                <Title level={5}>Events</Title>
-                <div className="spacer" />
-                <Badge
-                  text={`${categorizedAnnotations.event.annotations.length}`}
-                  background={Colors['pink-5'].hex()}
-                />
-                <Icon type={open.includes('events') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {events.map(event => {
-                return (
-                  <FilePreviewOverview.EventItem
-                    onItemClick={() => event && onEventClickedCallback(event)}
-                    key={event.id}
-                    event={event}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.event.annotations.filter(
-                      el =>
-                        event &&
-                        ((el.resourceId && el.resourceId === event.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === event.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
-
-          {/** Sequences */}
-          <Collapse.Panel
-            showArrow={false}
-            key="sequences"
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="GridFilled" />
-                <Title level={5}>Sequences</Title>
-                <div className="spacer" />
-                <Badge
-                  text={`${categorizedAnnotations.sequence.annotations.length}`}
-                  background={Colors['yellow-5'].hex()}
-                />
-                <Icon type={open.includes('sequences') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {sequences.map(sequence => {
-                return (
-                  <FilePreviewOverview.SequenceItem
-                    onItemClick={() =>
-                      sequence && onSequenceClickedCallback(sequence)
-                    }
-                    key={sequence.id}
-                    sequence={sequence}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.sequence.annotations.filter(
-                      el =>
-                        sequence &&
-                        ((el.resourceId && el.resourceId === sequence.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === sequence.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
-        </Collapse>
-      </>
-    );
-  };
-
-  const renderFileDetails = () => {
-    return (
-      <>
-        <FileDetails file={file} />
-        {file && file!.metadata && (
-          <InfoGrid noBorders>
-            {Object.keys(file!.metadata).map(key => (
-              <DetailsItem name={key} value={file!.metadata![key]} />
+          <div>
+            {assets.map(asset => (
+              <FilePreviewOverview.AssetItem
+                onItemClick={() => asset && onAssetClickedCallback(asset)}
+                key={asset.id}
+                asset={asset}
+                currentPage={page}
+                query={query}
+                annotations={categorizedAnnotations.asset.annotations.filter(
+                  el =>
+                    asset &&
+                    ((el.resourceId && el.resourceId === asset.id) ||
+                      (el.resourceExternalId &&
+                        el.resourceExternalId === asset.externalId))
+                )}
+                selectPage={onPageChange}
+              />
             ))}
-          </InfoGrid>
-        )}
-      </>
-    );
-  };
+          </div>
+        </Collapse.Panel>
+
+        {/** Files */}
+        <Collapse.Panel
+          showArrow={false}
+          key="files"
+          header={
+            <CollapseHeader>
+              <Icon className="cogs-icon resource-icon" type="Document" />
+              <Title level={5}>Files</Title>
+              <div className="spacer" />
+              <Badge
+                text={`${categorizedAnnotations.file.annotations.length}`}
+                background={Colors['midorange-5'].hex()}
+              />
+              <Icon type={open.includes('files') ? 'Up' : 'Down'} />
+            </CollapseHeader>
+          }
+        >
+          <div>
+            {files.map(linkedFile => (
+              <FilePreviewOverview.FileItem
+                onItemClick={() => file && onFileClickedCallback(file)}
+                key={linkedFile.id}
+                file={linkedFile}
+                currentPage={page}
+                query={query}
+                annotations={categorizedAnnotations.file.annotations.filter(
+                  el =>
+                    linkedFile &&
+                    ((el.resourceId && el.resourceId === linkedFile.id) ||
+                      (el.resourceExternalId &&
+                        el.resourceExternalId === linkedFile.externalId))
+                )}
+                selectPage={onPageChange}
+              />
+            ))}
+          </div>
+        </Collapse.Panel>
+
+        {/** Time series */}
+        <Collapse.Panel
+          showArrow={false}
+          key="timeseries"
+          header={
+            <CollapseHeader>
+              <Icon className="cogs-icon resource-icon" type="Timeseries" />
+              <Title level={5}>Time series</Title>
+              <div className="spacer" />
+              <Badge
+                text={`${categorizedAnnotations.timeSeries.annotations.length}`}
+                background={Colors['lightblue-5'].hex()}
+              />
+              <Icon type={open.includes('timeseries') ? 'Up' : 'Down'} />
+            </CollapseHeader>
+          }
+        >
+          <div>
+            {timeseries.map(ts => (
+              <FilePreviewOverview.TimeseriesItem
+                onItemClick={() => ts && onTimeseriesClickedCallback(ts)}
+                key={ts.id}
+                timeseries={ts}
+                currentPage={page}
+                query={query}
+                annotations={categorizedAnnotations.timeSeries.annotations.filter(
+                  el =>
+                    ts &&
+                    ((el.resourceId && el.resourceId === ts.id) ||
+                      (el.resourceExternalId &&
+                        el.resourceExternalId === ts.externalId))
+                )}
+                selectPage={onPageChange}
+              />
+            ))}
+          </div>
+        </Collapse.Panel>
+
+        {/** Events */}
+        <Collapse.Panel
+          key="events"
+          showArrow={false}
+          header={
+            <CollapseHeader>
+              <Icon className="cogs-icon resource-icon" type="Events" />
+              <Title level={5}>Events</Title>
+              <div className="spacer" />
+              <Badge
+                text={`${categorizedAnnotations.event.annotations.length}`}
+                background={Colors['pink-5'].hex()}
+              />
+              <Icon type={open.includes('events') ? 'Up' : 'Down'} />
+            </CollapseHeader>
+          }
+        >
+          <div>
+            {events.map(event => (
+              <FilePreviewOverview.EventItem
+                onItemClick={() => event && onEventClickedCallback(event)}
+                key={event.id}
+                event={event}
+                currentPage={page}
+                query={query}
+                annotations={categorizedAnnotations.event.annotations.filter(
+                  el =>
+                    event &&
+                    ((el.resourceId && el.resourceId === event.id) ||
+                      (el.resourceExternalId &&
+                        el.resourceExternalId === event.externalId))
+                )}
+                selectPage={onPageChange}
+              />
+            ))}
+          </div>
+        </Collapse.Panel>
+
+        {/** Sequences */}
+        <Collapse.Panel
+          showArrow={false}
+          key="sequences"
+          header={
+            <CollapseHeader>
+              <Icon className="cogs-icon resource-icon" type="GridFilled" />
+              <Title level={5}>Sequences</Title>
+              <div className="spacer" />
+              <Badge
+                text={`${categorizedAnnotations.sequence.annotations.length}`}
+                background={Colors['yellow-5'].hex()}
+              />
+              <Icon type={open.includes('sequences') ? 'Up' : 'Down'} />
+            </CollapseHeader>
+          }
+        >
+          <div>
+            {sequences.map(sequence => (
+              <FilePreviewOverview.SequenceItem
+                onItemClick={() =>
+                  sequence && onSequenceClickedCallback(sequence)
+                }
+                key={sequence.id}
+                sequence={sequence}
+                currentPage={page}
+                query={query}
+                annotations={categorizedAnnotations.sequence.annotations.filter(
+                  el =>
+                    sequence &&
+                    ((el.resourceId && el.resourceId === sequence.id) ||
+                      (el.resourceExternalId &&
+                        el.resourceExternalId === sequence.externalId))
+                )}
+                selectPage={onPageChange}
+              />
+            ))}
+          </div>
+        </Collapse.Panel>
+      </Collapse>
+    </>
+  );
+
+  const renderFileDetails = () => (
+    <>
+      <FileDetails file={file} />
+      {file && file!.metadata && (
+        <InfoGrid noBorders>
+          {Object.keys(file!.metadata).map(key => (
+            <DetailsItem name={key} value={file!.metadata![key]} />
+          ))}
+        </InfoGrid>
+      )}
+    </>
+  );
 
   return (
     <Sidebar>

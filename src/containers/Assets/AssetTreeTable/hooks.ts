@@ -217,15 +217,14 @@ const constructTree = <T>(
   ids: number[],
   idsChildrenMap: { [key in number]: number[] },
   resourceMap: { [key in number]: T }
-): (T & { children?: T[] })[] => {
-  return ids.map(id => ({
+): (T & { children?: T[] })[] =>
+  ids.map(id => ({
     ...resourceMap[id],
     children: idsChildrenMap[id]
       ? constructTree(idsChildrenMap[id], idsChildrenMap, resourceMap)
       : // @ts-ignore
         resourceMap[id].children,
   }));
-};
 
 export const useRootPath = (
   assetId: any,

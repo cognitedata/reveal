@@ -58,13 +58,11 @@ const ArgType: {
 };
 PreviewingResources.argTypes = ArgType;
 PreviewingResources.decorators = [
-  Story => {
-    return (
-      <Wrapper>
-        <Story />
-      </Wrapper>
-    );
-  },
+  Story => (
+    <Wrapper>
+      <Story />
+    </Wrapper>
+  ),
 ];
 
 export default {

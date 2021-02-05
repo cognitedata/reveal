@@ -5,6 +5,5 @@ export const getIdParam = (id: number | string) => {
   return { id };
 };
 
-export const sleep = (milliseconds: number) => {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
-};
+export const sleep = (milliseconds: number) =>
+  new Promise(resolve => setTimeout(resolve, milliseconds));

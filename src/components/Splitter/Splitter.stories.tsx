@@ -5,20 +5,18 @@ import { Splitter } from './Splitter';
 
 export default { title: 'Component/Splitter', component: Splitter };
 
-export const Example = () => {
-  return (
-    <Container>
-      <Splitter>
-        <div>
-          <Title>1</Title>
-        </div>
-        <div>
-          <Title>2</Title>
-        </div>
-      </Splitter>
-    </Container>
-  );
-};
+export const Example = () => (
+  <Container>
+    <Splitter>
+      <div>
+        <Title>1</Title>
+      </div>
+      <div>
+        <Title>2</Title>
+      </div>
+    </Splitter>
+  </Container>
+);
 export const ExampleHide = () => {
   const [visible, setVisible] = useState(false);
   return (
