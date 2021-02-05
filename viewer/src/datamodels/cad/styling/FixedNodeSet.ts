@@ -7,9 +7,15 @@ import { NodeSet } from './NodeSet';
 export class FixedNodeSet extends NodeSet {
   private _set: IndexSet;
 
-  constructor(set: IndexSet) {
+  constructor(treeIndexSet: IndexSet);
+  constructor(treeIndices: Iterable<number>);
+  constructor(values: IndexSet | Iterable<number>) {
     super();
-    this._set = set;
+    if (values instanceof IndexSet) {
+      this._set = values;
+    } else {
+      this._set = new IndexSet(values);
+    }
   }
 
   updateSet(nodeSet: IndexSet) {
