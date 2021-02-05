@@ -16,9 +16,25 @@ type SourceType = {
 export const FilterListItems = (
   filterList: FilterListFiltersSource,
   onSelect: (source: SourceType) => void,
-  closeHandler: () => void
+  closeHandler: () => void,
+  onReset?: () => void,
+  resetText: string = 'Reset'
 ) => (
   <Menu>
+    {onReset && (
+      <>
+        <Menu.Item
+          key="Reset"
+          onClick={() => {
+            onReset();
+            closeHandler();
+          }}
+        >
+          {resetText}
+        </Menu.Item>
+        <Menu.Divider />
+      </>
+    )}
     {(filterList as GenericResponseObject[]).map((source: SourceType) => (
       <Menu.Item
         key={uniqueId()}

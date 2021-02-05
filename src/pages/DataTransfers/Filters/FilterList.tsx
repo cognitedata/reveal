@@ -10,7 +10,10 @@ export const FilterList = ({
   filters,
   closeHandler,
   toggleFilter,
+  onReset,
+  resetText,
   openFilter,
+  placeholder = 'Select',
 }: FilterListProps) => (
   <>
     {filters.map(
@@ -21,7 +24,9 @@ export const FilterList = ({
               content={FilterListItems(
                 dropdown.source,
                 dropdown.onSelect,
-                closeHandler
+                closeHandler,
+                onReset,
+                resetText
               )}
               visible={openFilter === dropdown.name}
               onClickOutside={closeHandler}
@@ -34,7 +39,7 @@ export const FilterList = ({
                   iconPlacement="right"
                   onClick={() => toggleFilter(dropdown.name)}
                 >
-                  {dropdown.value || 'Select'}
+                  {dropdown.value || placeholder}
                 </DropdownButton>
               </>
             </Dropdown>

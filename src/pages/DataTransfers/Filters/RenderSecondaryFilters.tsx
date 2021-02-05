@@ -60,6 +60,9 @@ export const RenderSecondaryFilters = ({
         />
       </FieldWrapper>
       <FilterList
+        onReset={() => datatype.onSelectType(null)}
+        resetText="All DataTypes"
+        placeholder="All"
         closeHandler={closeFilters}
         toggleFilter={toggleFilter}
         openFilter={openFilter}

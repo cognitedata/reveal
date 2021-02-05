@@ -73,4 +73,7 @@ export interface FilterListProps {
   closeHandler: () => void;
   openFilter: keyof FilterTypes | '';
   toggleFilter: (name: keyof FilterTypes) => void;
+  onReset?: () => void;
+  resetText?: string;
+  placeholder?: string;
 }

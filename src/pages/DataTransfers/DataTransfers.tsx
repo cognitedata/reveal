@@ -9,7 +9,6 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import {
   Button,
   Dropdown,
-  Icon,
   Menu,
   Colors,
   Tooltip,
