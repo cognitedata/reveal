@@ -4,7 +4,6 @@
 
 import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
-import { DistanceMeasurement } from './pages/DistanceMeasurement';
 import { SideBySide } from './pages/SideBySide';
 import { Clipping } from './pages/Clipping';
 import { Filtering } from './pages/Filtering';
@@ -41,6 +40,7 @@ import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCl
 
 // import { revealEnv } from '@cognite/reveal';
 // import { revealEnv as revealEnv2 } from '@cognite/reveal/experimental'
+
 // revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 // revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 
@@ -76,11 +76,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
     path: '/clipping',
     menuTitle: 'Clipping planes',
     component: <Clipping />,
-  },
-  {
-    path: '/distance-measurement',
-    menuTitle: 'Distance Measurement',
-    component: <DistanceMeasurement />,
   },
   {
     path: '/filtering',

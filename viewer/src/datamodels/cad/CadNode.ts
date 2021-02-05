@@ -17,6 +17,7 @@ import { MaterialManager } from './MaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
 import { toThreeVector3, toThreeJsBox3, NumericRange } from '../../utilities';
+import { EventTrigger } from '../../utilities/events';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -45,9 +46,9 @@ export class CadNode extends THREE.Object3D {
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
 
-  private readonly eventListeners = {
-    renderHintsChanged: new Array<RenderHintsChangeListener>(),
-    loadingHintsChanged: new Array<LoadingHintsChangeListener>()
+  private readonly _events = {
+    renderHintsChanged: new EventTrigger<RenderHintsChangeListener>(),
+    loadingHintsChanged: new EventTrigger<LoadingHintsChangeListener>()
   };
 
   constructor(model: CadModelMetadata, materialManager: MaterialManager) {
@@ -137,6 +138,7 @@ export class CadNode extends THREE.Object3D {
 
   set renderHints(hints: Readonly<CadRenderHints>) {
     this._renderHints = hints;
+    this._events.renderHintsChanged.fire(hints);
     // this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
   }
 
@@ -146,7 +148,7 @@ export class CadNode extends THREE.Object3D {
 
   set loadingHints(hints: Readonly<CadLoadingHints>) {
     this._loadingHints = hints;
-    this.notifyLoadingHintsChanged(hints);
+    this._events.loadingHintsChanged.fire(hints);
   }
 
   get loadingHints(): Readonly<CadLoadingHints> {
@@ -236,11 +238,11 @@ export class CadNode extends THREE.Object3D {
   ): void {
     switch (event) {
       case 'loadingHintsChanged':
-        this.eventListeners.loadingHintsChanged.push(listener as LoadingHintsChangeListener);
+        this._events.loadingHintsChanged.subscribe(listener as LoadingHintsChangeListener);
         break;
 
       case 'renderHintsChanged':
-        this.eventListeners.renderHintsChanged.push(listener as RenderHintsChangeListener);
+        this._events.renderHintsChanged.subscribe(listener as RenderHintsChangeListener);
         break;
 
       default:
@@ -256,21 +258,15 @@ export class CadNode extends THREE.Object3D {
   ): void {
     switch (event) {
       case 'loadingHintsChanged':
-        this.eventListeners.loadingHintsChanged = this.eventListeners.loadingHintsChanged.filter(x => x !== listener);
+        this._events.loadingHintsChanged.unsubscribe(listener as LoadingHintsChangeListener);
         break;
 
       case 'renderHintsChanged':
-        this.eventListeners.renderHintsChanged = this.eventListeners.renderHintsChanged.filter(x => x !== listener);
+        this._events.renderHintsChanged.unsubscribe(listener as RenderHintsChangeListener);
         break;
 
       default:
         throw new Error(`Unsupported event '${event}'`);
     }
-  }
-
-  private notifyLoadingHintsChanged(loadingHint: CadLoadingHints) {
-    this.eventListeners.loadingHintsChanged.forEach(handler => {
-      handler(loadingHint);
-    });
   }
 }

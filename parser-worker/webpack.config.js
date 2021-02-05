@@ -1,6 +1,6 @@
 const path = require("path");
 const { DefinePlugin } = require("webpack");
-const { publicPath, getWorkerCDNPath, cdnDistFolderPath, getEnvArg } = require("./buildUtils");
+const { publicPath, getWorkerCdnUrl, cdnBuildOutputPath, getEnvArg } = require("./buildUtils");
 const logger = require("webpack-log")("parser-worker");
 
 const createBaseConfig = (env) => {
@@ -8,9 +8,6 @@ const createBaseConfig = (env) => {
 
   return {
     mode: development ? "development" : "production",
-    experiments: {
-      syncWebAssembly: true,
-    },
     target: "webworker",
     entry: {
       "reveal.parser.worker": "./index.ts",
@@ -32,7 +29,7 @@ const createBaseConfig = (env) => {
         },
       ],
     },
-    devtool: development ? "inline-source-map" : "source-map",
+    devtool: development && "inline-source-map",
     plugins: [
       new DefinePlugin({
         VERSION: JSON.stringify(require('./package.json').version)
@@ -55,9 +52,9 @@ const createLocalBuildConfig = (env) => {
 
 const createCdnConfig = (env) => {
   const cdnConfig = createBaseConfig(env);
-  const workerCDNPath = getWorkerCDNPath();
+  const workerCDNPath = getWorkerCdnUrl();
 
-  cdnConfig.output.path = path.join(__dirname, cdnDistFolderPath);
+  cdnConfig.output.path = path.join(__dirname, cdnBuildOutputPath);
   cdnConfig.output.publicPath = workerCDNPath;
 
   logger.info("Worker CDN build config:");

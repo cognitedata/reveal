@@ -21,13 +21,15 @@ export function from3DPositionToRelativeViewportCoordinates(
 }
 
 export function worldToViewport(
-  canvas: HTMLCanvasElement,
+  renderer: THREE.WebGLRenderer,
   camera: THREE.PerspectiveCamera,
   position3D: THREE.Vector3
 ): Position2D {
+  const pixelRatio = renderer.getPixelRatio();
+  const canvas = renderer.domElement;
   const relativeCoordinates = from3DPositionToRelativeViewportCoordinates(camera, position3D);
   return {
-    x: Math.round(relativeCoordinates.x * (canvas.width / window.devicePixelRatio)),
-    y: Math.round(relativeCoordinates.y * (canvas.height / window.devicePixelRatio))
+    x: Math.round(relativeCoordinates.x * (canvas.width / pixelRatio)),
+    y: Math.round(relativeCoordinates.y * (canvas.height / pixelRatio))
   };
 }

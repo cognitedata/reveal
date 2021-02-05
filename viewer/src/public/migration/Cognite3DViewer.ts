@@ -30,14 +30,14 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { DisposedDelegate, SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
-import { clickOrTouchEventOffset } from '../../utilities/events';
+import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
@@ -50,6 +50,8 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
+
+type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
 /**
  * @example
@@ -80,9 +82,17 @@ export class Cognite3DViewer {
    * If not specified, the DOM element will be created automatically.
    * The DOM element cannot be changed after the viewer has been created.
    */
-  readonly domElement: HTMLElement;
+  get domElement(): HTMLElement {
+    return this._domElement;
+  }
 
-  private readonly renderer: THREE.WebGLRenderer;
+  /**
+   * Returns the renderer used to produce images from 3D geometry.
+   */
+  get renderer(): THREE.WebGLRenderer {
+    return this._renderer;
+  }
+
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
@@ -90,13 +100,17 @@ export class Cognite3DViewer {
   private readonly _updateCameraNearAndFarSubject: Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>;
   private readonly _subscription = new Subscription();
   private readonly _revealManager: RevealManager<CdfModelIdentifier>;
+  private readonly _domElement: HTMLElement;
+  private readonly _renderer: THREE.WebGLRenderer;
 
-  private readonly eventListeners = {
-    cameraChange: new Array<CameraChangeDelegate>(),
-    click: new Array<PointerEventDelegate>(),
-    hover: new Array<PointerEventDelegate>(),
-    sceneRendered: new Array<SceneRenderedDelegate>()
+  private readonly _events = {
+    cameraChange: new EventTrigger<CameraChangeDelegate>(),
+    click: new EventTrigger<PointerEventDelegate>(),
+    hover: new EventTrigger<PointerEventDelegate>(),
+    sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
+    disposed: new EventTrigger<DisposedDelegate>()
   };
+
   private readonly models: CogniteModelBase[] = [];
   private readonly extraObjects: THREE.Object3D[] = [];
 
@@ -162,7 +176,7 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    this.renderer = options.renderer || new THREE.WebGLRenderer();
+    this._renderer = options.renderer || new THREE.WebGLRenderer();
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -170,8 +184,8 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
-    this.domElement = options.domElement || createCanvasWrapper();
-    this.domElement.appendChild(this.canvas);
+    this._domElement = options.domElement || createCanvasWrapper();
+    this._domElement.appendChild(this.canvas);
     this.spinner = new Spinner(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -185,9 +199,7 @@ export class Cognite3DViewer {
     this.controls.dollyFactor = 0.992;
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
-      this.eventListeners.cameraChange.forEach(f => {
-        f(position.clone(), target.clone());
-      });
+      this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
     this.sdkClient = options.sdk;
@@ -271,7 +283,15 @@ export class Cognite3DViewer {
     }
     this.models.splice(0);
     this.spinner.dispose();
+
+    this._events.disposed.fire();
   }
+
+  /**
+   * Triggered when the viewer is disposed. Listeners should clean up any
+   * resources held and remove the reference to the viewer.
+   */
+  on(event: 'disposed', callback: DisposedDelegate): void;
 
   /**
    * @example
@@ -303,24 +323,28 @@ export class Cognite3DViewer {
    * @param callback
    */
   on(
-    event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered',
-    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate
+    event: Cognite3DViewerEvents,
+    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate | DisposedDelegate
   ): void {
     switch (event) {
       case 'click':
-        this.eventListeners.click.push(callback as PointerEventDelegate);
+        this._events.click.subscribe(callback as PointerEventDelegate);
         break;
 
       case 'hover':
-        this.eventListeners.hover.push(callback as PointerEventDelegate);
+        this._events.hover.subscribe(callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
-        this.eventListeners.cameraChange.push(callback as CameraChangeDelegate);
+        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
         break;
 
       case 'sceneRendered':
-        this.eventListeners.sceneRendered.push(callback as SceneRenderedDelegate);
+        this._events.sceneRendered.subscribe(callback as SceneRenderedDelegate);
+        break;
+
+      case 'disposed':
+        this._events.disposed.subscribe(callback as DisposedDelegate);
         break;
 
       default:
@@ -337,28 +361,34 @@ export class Cognite3DViewer {
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+  off(event: 'disposed', callback: DisposedDelegate): void;
+
   /**
    * Remove event listener from the viewer.
    * Call {@link Cognite3DViewer.on} to add event listener.
    * @param event
    * @param callback
    */
-  off(event: 'click' | 'hover' | 'cameraChange' | 'sceneRendered', callback: any): void {
+  off(event: Cognite3DViewerEvents, callback: any): void {
     switch (event) {
       case 'click':
-        this.eventListeners.click = this.eventListeners.click.filter(x => x !== callback);
+        this._events.click.unsubscribe(callback);
         break;
 
       case 'hover':
-        this.eventListeners.hover = this.eventListeners.hover.filter(x => x !== callback);
+        this._events.hover.unsubscribe(callback);
         break;
 
       case 'cameraChange':
-        this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
+        this._events.cameraChange.unsubscribe(callback);
         break;
 
       case 'sceneRendered':
-        this.eventListeners.sceneRendered = this.eventListeners.sceneRendered.filter(x => x !== callback);
+        this._events.sceneRendered.unsubscribe(callback);
+        break;
+
+      case 'disposed':
+        this._events.disposed.unsubscribe(callback);
         break;
 
       default:
@@ -654,7 +684,7 @@ export class Cognite3DViewer {
    * @obvious
    * @returns The THREE.Camera used for rendering.
    */
-  getCamera(): THREE.Camera {
+  getCamera(): THREE.PerspectiveCamera {
     return this.camera;
   }
 
@@ -1164,9 +1194,7 @@ export class Cognite3DViewer {
         this._slicingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
-        this.eventListeners.sceneRendered.forEach(listener => {
-          listener({ frameNumber, renderTime });
-        });
+        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
       }
     }
   }
@@ -1336,7 +1364,7 @@ export class Cognite3DViewer {
     let validClick = false;
 
     const onHoverCallback = debounce((e: MouseEvent) => {
-      this.eventListeners.hover.forEach(fn => fn(clickOrTouchEventOffset(e, canvas)));
+      this._events.hover.fire(clickOrTouchEventOffset(e, canvas));
     }, 100);
 
     const onMove = (e: MouseEvent | TouchEvent) => {
@@ -1357,9 +1385,7 @@ export class Cognite3DViewer {
       const clickDuration = e.timeStamp - pointerDownTimestamp;
       if (pointerDown && validClick && clickDuration < maxClickDuration) {
         // trigger events
-        this.eventListeners.click.forEach(func => {
-          func(clickOrTouchEventOffset(e, canvas));
-        });
+        this._events.click.fire(clickOrTouchEventOffset(e, canvas));
       }
       pointerDown = false;
       validClick = false;
