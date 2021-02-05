@@ -32,6 +32,7 @@ import { GhostModeTestPage } from './pages/e2e/cad/GhostModeTestPage';
 import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModelTestPage';
 import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTargetTestPage';
 import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
+import { SsaoTestPage } from './pages/e2e/cad/SsaoTestPage';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -154,6 +155,7 @@ const cadTestPages: Record<TestCaseCad, JSX.Element> = {
   [TestCaseCad.ghostMode]: <GhostModeTestPage />,
   [TestCaseCad.scaledModel]: <ScaledModelTestPage />,
   [TestCaseCad.userRenderTarget]: <UserRenderTargetTestPage />,
+  [TestCaseCad.ssao]: <SsaoTestPage />,
 };
 
 const pointcloudTestPages: Record<TestCasePointCloud, JSX.Element> = {
