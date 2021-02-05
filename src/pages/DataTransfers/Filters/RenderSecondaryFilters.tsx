@@ -42,7 +42,6 @@ export const RenderSecondaryFilters = ({
     },
   ];
 
-  console.log(date);
 
   return (
     <StartContainer>
