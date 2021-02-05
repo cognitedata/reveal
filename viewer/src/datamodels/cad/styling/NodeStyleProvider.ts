@@ -4,7 +4,7 @@
 
 import { NodeAppearance } from '..';
 import { EventTrigger } from '../../../utilities/events';
-import { IndexSet } from './IndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
 export type ApplyStyleDelegate = (styleId: number, treeIndices: IndexSet, apperance: NodeAppearance) => void;

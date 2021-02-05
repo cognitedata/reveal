@@ -48,6 +48,7 @@ export function createInstancedMeshes(
       const obj = new THREE.Mesh(geometry, material);
       obj.name = `Instanced mesh ${meshFile.fileId}`;
 
+      // TODO 2021-02-04 larsmoa: Store treeIndices as IndexSet instead
       obj.userData.treeIndices = new Set(instancedMesh.treeIndices);
       obj.onAfterRender = () => {
         disposeAttributeArrayOnUpload.bind(buffer)();

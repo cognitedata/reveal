@@ -6,9 +6,7 @@ import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
 import { SideBySide } from './pages/SideBySide';
 import { Clipping } from './pages/Clipping';
-import { Filtering } from './pages/Filtering';
 import { Migration } from './pages/Migration';
-import { Picking } from './pages/Picking';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
 import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
@@ -78,22 +76,12 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <Clipping />,
   },
   {
-    path: '/filtering',
-    menuTitle: 'Filtering',
-    component: <Filtering />,
-  },
-  {
     path:
       `/migration?project=${project}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Migration',
     component: <Migration />,
-  },
-  {
-    path: '/picking',
-    menuTitle: 'Picking',
-    component: <Picking />,
   },
   {
     path:

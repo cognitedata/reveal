@@ -213,7 +213,7 @@ export class RevealManager<TModelIdentifier> {
 
     switch (type) {
       case 'cad': {
-        const cadNode = await this._cadManager.addModel(modelIdentifier, nodeAppearanceProvider);
+        const cadNode = await this._cadManager.addModel(modelIdentifier);
         this._subscriptions.add(
           this._cadManager
             .getParsedData()

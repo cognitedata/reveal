@@ -15,6 +15,9 @@ export { CognitePointCloudModel } from './public/migration/CognitePointCloudMode
 
 export * from './public/types';
 
+export * from './datamodels/cad/styling';
+export { IndexSet } from './utilities/IndexSet';
+
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';
 export { THREE };

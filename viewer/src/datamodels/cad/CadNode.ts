@@ -16,8 +16,9 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { MaterialManager } from './MaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
-import { toThreeVector3, toThreeJsBox3, NumericRange } from '../../utilities';
+import { toThreeVector3, toThreeJsBox3 } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
+import { NodeStyleProvider } from './styling/NodeStyleProvider';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -81,6 +82,10 @@ export class CadNode extends THREE.Object3D {
     this.setModelTransformation(model.modelMatrix);
   }
 
+  get nodeApperanceProvider(): NodeStyleProvider {
+    return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.blobUrl);
+  }
+
   get clippingPlanes(): THREE.Plane[] {
     return this._materialManager.clippingPlanes;
   }
@@ -95,21 +100,6 @@ export class CadNode extends THREE.Object3D {
 
   set clipIntersection(intersection: boolean) {
     this._materialManager.clipIntersection = intersection;
-  }
-
-  requestNodeUpdate(treeIndices: number[]): void;
-  // @internal
-  requestNodeUpdate(treeIndices: NumericRange): void;
-  requestNodeUpdate(treeIndices: number[] | NumericRange) {
-    if (treeIndices instanceof NumericRange) {
-      // TODO 2020-08-10 larsmoa: Avoid expanding the array to avoid uncessary allocations (this
-      // will allocate ~16 Mb for a medium sized model)
-      const asArray = treeIndices.toArray();
-      this._materialManager.updateModelNodes(this._cadModelMetadata.blobUrl, asArray);
-    } else {
-      this._materialManager.updateModelNodes(this._cadModelMetadata.blobUrl, treeIndices);
-    }
-    this.dispatchEvent({ type: 'update' });
   }
 
   get cadModelMetadata() {

@@ -3,12 +3,13 @@
  */
 
 import * as THREE from 'three';
+import { NumericRange } from '../../../utilities';
 
 import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
 
 import { NodeAppearance } from '../NodeAppearance';
 import { TransformOverrideBuffer } from '../rendering/TransformOverrideBuffer';
-import { IndexSet } from './IndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 
 export class NodeStyleTextureBuilder {
@@ -19,6 +20,9 @@ export class NodeStyleTextureBuilder {
   private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
   private readonly _overrideTransformPerTreeIndexTexture: THREE.DataTexture;
   private readonly _transformOverrideBuffer: TransformOverrideBuffer;
+  private readonly _regularNodesTreeIndices: IndexSet;
+  private readonly _ghostedNodesTreeIndices: IndexSet;
+  private readonly _infrontNodesTreeIndices: IndexSet;
 
   constructor(treeIndexCount: number, styleProvider: NodeStyleProvider) {
     this._styleProvider = styleProvider;
@@ -28,6 +32,22 @@ export class NodeStyleTextureBuilder {
     this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
     this._overrideTransformPerTreeIndexTexture = textures.transformOverrideIndexTexture;
     this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
+
+    this._regularNodesTreeIndices = new IndexSet(new NumericRange(0, treeIndexCount).values());
+    this._ghostedNodesTreeIndices = new IndexSet();
+    this._infrontNodesTreeIndices = new IndexSet();
+  }
+
+  get regularNodeTreeIndices(): IndexSet {
+    return this._regularNodesTreeIndices;
+  }
+
+  get ghostedNodeTreeIndices(): IndexSet {
+    return this._ghostedNodesTreeIndices;
+  }
+
+  get infrontNodeTreeIndices(): IndexSet {
+    return this._infrontNodesTreeIndices;
   }
 
   get needsUpdate(): boolean {
@@ -80,7 +100,7 @@ export class NodeStyleTextureBuilder {
     this._needsUpdate = true;
   }
 
-  private handleNewTransformTexture(newTexture: THREE.DataTexture) {
+  private handleNewTransformTexture() {
     this._needsUpdate = true;
   }
 }
@@ -89,17 +109,17 @@ function allocateTextures(
   treeIndexCount: number
 ): { overrideColorPerTreeIndexTexture: THREE.DataTexture; transformOverrideIndexTexture: THREE.DataTexture } {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
-
+  const textureElementCount = width * height;
   // Color and style override texture
-  const colors = new Uint8Array(4 * treeIndexCount);
+  const colors = new Uint8Array(4 * textureElementCount);
   // Set alpha to 1
-  for (let i = 0; i < treeIndexCount; ++i) {
+  for (let i = 0; i < textureElementCount; ++i) {
     colors[4 * i + 3] = 1;
   }
   const overrideColorPerTreeIndexTexture = new THREE.DataTexture(colors, width, height);
 
   // Texture for holding node transforms (translation, scale, rotation)
-  const transformOverrideIndexBuffer = new Uint8ClampedArray(treeIndexCount * 3);
+  const transformOverrideIndexBuffer = new Uint8ClampedArray(3 * textureElementCount);
   const transformOverrideIndexTexture = new THREE.DataTexture(
     transformOverrideIndexBuffer,
     width,

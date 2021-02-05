@@ -5,9 +5,8 @@
 import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from './RenderMode';
-import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
+
 import matCapTextureImage from './matCapTextureData';
-import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
 export interface Materials {
   // Materials
@@ -26,36 +25,16 @@ export interface Materials {
   instancedMesh: THREE.ShaderMaterial;
   triangleMesh: THREE.ShaderMaterial;
   simple: THREE.ShaderMaterial;
-  // Data textures
-  overrideColorPerTreeIndex: THREE.DataTexture;
-  transformOverrideIndexTexture: THREE.DataTexture;
-  transformOverrideBuffer: TransformOverrideBuffer;
 }
 
 export function createMaterials(
-  treeIndexCount: number,
   renderMode: RenderMode,
-  clippingPlanes: THREE.Plane[]
+  clippingPlanes: THREE.Plane[],
+  overrideColorPerTreeIndex: THREE.DataTexture,
+  transformOverrideIndexTexture: THREE.DataTexture,
+  transformOverrideLookupTexture: THREE.DataTexture
 ): Materials {
-  const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
-  const textureElementCount = textureDims.width * textureDims.height;
-  const treeIndexTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
   const transparent = false;
-
-  const colors = new Uint8Array(4 * textureElementCount);
-  for (let i = 0; i < textureElementCount; i++) {
-    colors[4 * i + 3] = 1;
-  }
-  const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
-
-  const transformOverrideIndexBuffer = new Uint8Array(textureElementCount * 3);
-
-  const transformOverrideIndexTexture = new THREE.DataTexture(
-    transformOverrideIndexBuffer,
-    textureDims.width,
-    textureDims.height,
-    THREE.RGBFormat
-  );
 
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
@@ -307,45 +286,38 @@ export function createMaterials(
     simple: simpleMaterial
   };
 
-  const transformOverrideBuffer = new TransformOverrideBuffer((newOverrideDataTexture: THREE.DataTexture) => {
-    for (const material of Object.values(allMaterials)) {
-      material.uniforms.transformOverrideTexture.value = newOverrideDataTexture;
-      material.uniforms.transformOverrideTextureSize.value = new THREE.Vector2(
-        newOverrideDataTexture.image.width,
-        newOverrideDataTexture.image.height
-      );
-    }
-  });
-
   for (const material of Object.values(allMaterials)) {
     updateDefinesAndUniforms(
       material,
-      treeIndexTextureSize,
       overrideColorPerTreeIndex,
       transformOverrideIndexTexture,
-      transformOverrideBuffer.dataTexture,
+      transformOverrideLookupTexture,
       matCapTexture,
       renderMode
     );
   }
 
   return {
-    ...allMaterials,
-    overrideColorPerTreeIndex,
-    transformOverrideIndexTexture,
-    transformOverrideBuffer: transformOverrideBuffer
+    ...allMaterials
   };
 }
 
 function updateDefinesAndUniforms(
   material: THREE.ShaderMaterial,
-  treeIndexTextureSize: THREE.Vector2,
   overrideColorPerTreeIndex: THREE.DataTexture,
   transformOverrideIndexTexture: THREE.DataTexture,
   transformOverrideTexture: THREE.DataTexture,
   matCapTexture: THREE.Texture,
   renderMode: RenderMode
 ) {
+  const treeIndexTextureSize = new THREE.Vector2(
+    overrideColorPerTreeIndex.image.width,
+    overrideColorPerTreeIndex.image.height
+  );
+  const transformOverrideTextureSize = new THREE.Vector2(
+    transformOverrideTexture.image.width,
+    transformOverrideTexture.image.height
+  );
   const oldUniforms = material.uniforms;
   material.setValues({
     ...shaderDefines,
@@ -354,20 +326,20 @@ function updateDefinesAndUniforms(
       renderMode: {
         value: renderMode
       },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
       treeIndexTextureSize: {
         value: treeIndexTextureSize
+      },
+      transformOverrideTextureSize: {
+        value: transformOverrideTextureSize
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       },
       transformOverrideIndexTexture: {
         value: transformOverrideIndexTexture
       },
       transformOverrideTexture: {
         value: transformOverrideTexture
-      },
-      transformOverrideTextureSize: {
-        value: new THREE.Vector2(transformOverrideTexture.image.width, transformOverrideTexture.image.height)
       },
       matCapTexture: {
         value: matCapTexture

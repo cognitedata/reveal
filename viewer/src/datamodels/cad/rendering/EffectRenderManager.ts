@@ -321,9 +321,9 @@ export class EffectRenderManager {
       const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.blobUrl);
       const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
       const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.blobUrl);
-      const hasBackElements = backSet.size > 0;
-      const hasInFrontElements = infrontSet.size > 0;
-      const hasGhostElements = ghostSet.size > 0;
+      const hasBackElements = backSet.count > 0;
+      const hasInFrontElements = infrontSet.count > 0;
+      const hasGhostElements = ghostSet.count > 0;
       result.hasBackElements = result.hasBackElements || hasBackElements;
       result.hasInFrontElements = result.hasInFrontElements || hasInFrontElements;
       result.hasGhostElements = result.hasGhostElements || hasGhostElements;
@@ -346,12 +346,12 @@ export class EffectRenderManager {
         const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
 
         if (objectTreeIndices) {
-          if (hasInFrontElements && hasIntersection(infrontSet, objectTreeIndices)) {
+          if (hasInFrontElements && infrontSet.hasIntersectionWith(objectTreeIndices)) {
             this._inFrontSceneBuilder.addElement(element, infrontRoot);
           }
           // Note! When we don't have any ghost, we use _cadScene to hold back objects, so no action required
           if (hasBackElements && !hasGhostElements) {
-          } else if (hasGhostElements && hasIntersection(backSet, objectTreeIndices)) {
+          } else if (hasGhostElements && backSet.hasIntersectionWith(objectTreeIndices)) {
             this._normalSceneBuilder.addElement(element, backRoot);
             // Use _cadScene to hold ghost objects (we assume we have more ghost objects than back objects)
           }
@@ -532,22 +532,6 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
   outlineTextureData[4 * colorIndex + 1] = Math.floor(255 * color.g);
   outlineTextureData[4 * colorIndex + 2] = Math.floor(255 * color.b);
   outlineTextureData[4 * colorIndex + 3] = 255;
-}
-
-function hasIntersection(left: Set<number>, right: Set<number>): boolean {
-  // Can we improve performance by using a bloom filter before comparing full sets?
-  const needles = left.size < right.size ? left : right;
-  const haystack = left.size > right.size ? left : right;
-
-  let intersects = false;
-  const it = needles.values();
-  let itCurr = it.next();
-  while (!intersects && !itCurr.done) {
-    intersects = haystack.has(itCurr.value);
-    itCurr = it.next();
-  }
-
-  return intersects;
 }
 
 /**

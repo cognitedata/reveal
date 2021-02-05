@@ -4,7 +4,7 @@
 
 import { CombinedNodeSet } from './CombinedNodeSet';
 import { FixedNodeSet } from './FixedNodeSet';
-import { IndexSet } from './IndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 
 describe('CombinedNodeSet', () => {
   test('empty set, returns empty index', () => {

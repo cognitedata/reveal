@@ -38,6 +38,15 @@ export class IndexSet {
       this._indices.add(index);
     }
   }
+  hasIntersectionWith(other: Set<number>): boolean;
+  hasIntersectionWith(other: IndexSet): boolean;
+  hasIntersectionWith(other: IndexSet | Set<number>): boolean {
+    if (other instanceof IndexSet) {
+      return hasIntersection(this._indices, other._indices);
+    } else {
+      return hasIntersection(this._indices, other);
+    }
+  }
 
   intersectWith(other: IndexSet): void {
     for (const index of this._indices) {
@@ -54,4 +63,20 @@ export class IndexSet {
   values(): Iterable<number> {
     return this._indices.values();
   }
+}
+
+function hasIntersection(left: Set<number>, right: Set<number>): boolean {
+  // Can we improve performance by using a bloom filter before comparing full sets?
+  const needles = left.size < right.size ? left : right;
+  const haystack = left.size > right.size ? left : right;
+
+  let intersects = false;
+  const it = needles.values();
+  let itCurr = it.next();
+  while (!intersects && !itCurr.done) {
+    intersects = haystack.has(itCurr.value);
+    itCurr = it.next();
+  }
+
+  return intersects;
 }

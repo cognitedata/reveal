@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { OutlineColor } from '../NodeAppearance';
 import { FixedNodeSet } from './FixedNodeSet';
-import { IndexSet } from './IndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 import { NodeStyleTextureBuilder } from './NodeStyleTextureBuilder';

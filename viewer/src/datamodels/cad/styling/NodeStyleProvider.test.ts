@@ -4,7 +4,7 @@
 
 import { NodeAppearance } from '..';
 import { FixedNodeSet } from './FixedNodeSet';
-import { IndexSet } from './IndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 
 describe('NodeStyleProvider', () => {

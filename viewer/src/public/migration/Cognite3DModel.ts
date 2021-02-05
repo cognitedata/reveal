@@ -11,11 +11,11 @@ import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWr
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
 import { CadRenderHints, CadNode } from '../../experimental';
 import { trackError } from '../../utilities/metrics';
-import { DefaultNodeAppearance } from '../../datamodels/cad/NodeAppearance';
-import { SupportedModelTypes, CadLoadingHints, CadModelMetadata, NodeAppearanceProvider } from '../types';
+
+import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
-import { NodeStyleUpdater } from './NodeStyleUpdater';
+import { NodeStyleProvider } from '../../datamodels/cad/styling/NodeStyleProvider';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -25,6 +25,9 @@ import { NodeStyleUpdater } from './NodeStyleUpdater';
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
 
+  get nodeApperanceProvider(): NodeStyleProvider {
+    return this.cadNode.nodeApperanceProvider;
+  }
   /**
    * Get settings used for rendering.
    */
@@ -75,7 +78,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly ghostedNodes: Set<number>;
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly nodeStyleUpdater: NodeStyleUpdater;
 
   /**
    * @param modelId
@@ -97,32 +99,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.ghostedNodes = new Set();
     const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
-    this.nodeStyleUpdater = new NodeStyleUpdater(cadNode.requestNodeUpdate.bind(cadNode));
-
-    const nodeAppearanceProvider: NodeAppearanceProvider = {
-      styleNode: (treeIndex: number) => {
-        let style = DefaultNodeAppearance.NoOverrides;
-        if (this.hiddenNodes.has(treeIndex)) {
-          style = { ...style, ...DefaultNodeAppearance.Hidden };
-        }
-        if (this.nodeColors.has(treeIndex)) {
-          style = { ...style, color: this.nodeColors.get(treeIndex) };
-        }
-        if (this.ghostedNodes.has(treeIndex)) {
-          style = { ...style, ...DefaultNodeAppearance.Ghosted };
-        }
-        if (this.selectedNodes.has(treeIndex)) {
-          style = { ...style, ...DefaultNodeAppearance.Highlighted };
-        }
-        if (this.nodeTransforms.has(treeIndex)) {
-          style = { ...style, worldTransform: this.nodeTransforms.get(treeIndex)! };
-        }
-        return style;
-      }
-    };
-
-    cadNode.materialManager.setNodeAppearanceProvider(this.cadModel.blobUrl, nodeAppearanceProvider);
-    cadNode.requestNodeUpdate([...Array(cadNode.sectorScene.maxTreeIndex + 1).keys()]);
 
     this.cadNode = cadNode;
 
@@ -871,13 +847,5 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /** @private */
-  private updateNodeStyle(treeIndices: number[] | NumericRange | number) {
-    if (treeIndices instanceof NumericRange) {
-      this.nodeStyleUpdater.triggerUpdateRange(treeIndices);
-    } else if (treeIndices instanceof Array) {
-      this.nodeStyleUpdater.triggerUpdateArray(treeIndices);
-    } else {
-      this.nodeStyleUpdater.triggerUpdateSingle(treeIndices);
-    }
-  }
+  private updateNodeStyle(_treeIndices: number[] | NumericRange | number) {}
 }

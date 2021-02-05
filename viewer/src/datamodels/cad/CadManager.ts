@@ -9,7 +9,7 @@ import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { discardSector } from './sector/sectorUtilities';
 import { Subscription, Observable } from 'rxjs';
-import { NodeAppearanceProvider } from './NodeAppearance';
+
 import { trackError } from '../../utilities/metrics';
 import { SectorGeometry } from './sector/types';
 import { SectorQuads } from './rendering/types';
@@ -142,13 +142,13 @@ export class CadManager<TModelIdentifier> {
     this._materialManager.setRenderMode(renderMode);
   }
 
-  async addModel(modelIdentifier: TModelIdentifier, nodeAppearanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
+  async addModel(modelIdentifier: TModelIdentifier): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
     if (this._cadModelMap.has(metadata.blobUrl)) {
       throw new Error(`Model ${modelIdentifier} has already been added`);
     }
 
-    const model = this._cadModelFactory.createModel(metadata, nodeAppearanceProvider);
+    const model = this._cadModelFactory.createModel(metadata);
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.addModel(model);

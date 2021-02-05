@@ -15,8 +15,10 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
+import * as reveal from '@cognite/reveal'
 
 window.THREE = THREE;
+(window as any).reveal = reveal;
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);

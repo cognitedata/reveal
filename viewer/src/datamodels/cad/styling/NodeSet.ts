@@ -3,7 +3,7 @@
  */
 
 import { EventTrigger } from '../../../utilities/events/EventTrigger';
-import { IndexSet } from './IndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 
 export abstract class NodeSet {
   private readonly _changedEvent = new EventTrigger<() => void>();

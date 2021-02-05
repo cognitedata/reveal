@@ -121,4 +121,22 @@ describe('IndexSet', () => {
 
     expect(cloned.contains(11)).toBeFalse();
   });
+
+  test('hasIntersectionWith returns true if there is any overlap', () => {
+    const set1 = new IndexSet();
+    set1.add(1, 5);
+    const set2 = new IndexSet();
+    set2.add(3, 4);
+
+    expect(set1.hasIntersectionWith(set2)).toBeTrue();
+  });
+
+  test('hasIntersectionWith returns false if there is no overlap', () => {
+    const set1 = new IndexSet();
+    set1.add(1, 5);
+    const set2 = new IndexSet();
+    set2.add(10, 4);
+
+    expect(set1.hasIntersectionWith(set2)).toBeFalse();
+  });
 });

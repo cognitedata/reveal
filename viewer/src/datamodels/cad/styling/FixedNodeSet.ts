@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { IndexSet } from './IndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
 export class FixedNodeSet extends NodeSet {
