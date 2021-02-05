@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
 import { Avatar, Icon, TopBar, Menu, Tooltip } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -18,6 +17,7 @@ import sidecar from 'utils/sidecar';
 import { useIntercom } from 'react-use-intercom';
 import { getReleaseVersion } from 'utils/release';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
+import { useHistory } from 'react-router-dom';
 import { CogniteLogo, GroupPreview, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
@@ -25,6 +25,8 @@ const AppHeader: React.FC = () => {
   const admin = useSelector(isAdmin);
   const email = useSelector(getUserId);
   const { filter: groupsFilter } = useSelector(getGroupsState);
+  const history = useHistory();
+
   const { privacyPolicyUrl, intercomTourId } = sidecar;
   const allGroupNames = useSelector(getUsersGroupNames);
 
@@ -56,6 +58,8 @@ const AppHeader: React.FC = () => {
     }
   };
   const clearGroupFilter = () => dispatch(clearGroupsFilter());
+
+  const goHome = () => history.push('/');
 
   const actions = [
     {
@@ -191,11 +195,10 @@ const AppHeader: React.FC = () => {
       <TopBar>
         <TopBar.Left>
           <LogoWrapper>
-            <Link to="/">
-              <TopBar.Logo
-                logo={<img src={customerLogo} alt="Customer logo" />}
-              />
-            </Link>
+            <TopBar.Logo
+              onLogoClick={goHome}
+              logo={<img src={customerLogo} alt="Customer logo" />}
+            />
           </LogoWrapper>
         </TopBar.Left>
         <TopBar.Right>
