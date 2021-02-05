@@ -65,11 +65,6 @@ vec3 computeWorldNormalFromDepth(sampler2D depthTexture, vec2 resolution, vec2 u
 void main(){
   float d = texture2D(tDepth, vUv).r;
 
-  if(d >= 1.0){
-    gl_FragColor = vec4(0.0);
-    return;
-  }
-
   vec3 viewNormal = computeWorldNormalFromDepth(tDepth, resolution, vUv, d);
 
   vec3 viewPosition = viewPosFromDepth(d, vUv);
