@@ -11,6 +11,8 @@ import dat from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { defaultRenderOptions } from '@cognite/reveal';
+import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 
 CameraControls.install({ THREE });
 
@@ -31,13 +33,19 @@ export function SSAO() {
 
       const scene = new THREE.Scene();
 
+      const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
+        styleNode(_: number) {
+          return reveal.DefaultNodeAppearance.NoOverrides;
+        }
+      };
+
       let model: reveal.CadNode;
       if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision);
+        model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
       } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager({ logMetrics: false });
-        model = await revealManager.addModel('cad', modelUrl);
+        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -46,7 +54,6 @@ export function SSAO() {
 
       scene.add(model);
 
-      const effect = new reveal.SsaoEffect();
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });
@@ -73,43 +80,33 @@ export function SSAO() {
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
-      let effectNeedsUpdate = false;
+      // const ssaoParameters: SsaoParameters = {
+      //   sampleRadius: 1.0,
+      //   sampleSize: 32,
+      //   depthCheckBias: 0.0125
+      // };
+
+      const renderOptions = defaultRenderOptions;
+
       const updateEffect = () => {
-        effectNeedsUpdate = true;
+        revealManager.renderOptions = renderOptions;
       };
 
-      const renderSettings = {
-        pass: reveal.SsaoPassType.Antialias,
-      };
+      gui.add(renderOptions.ssaoRenderParameters, 'sampleRadius').min(0.0).max(30.0).onChange(updateEffect);
 
-      gui
-        .add(renderSettings, 'pass', {
-          Regular: reveal.SsaoPassType.Regular,
-          Ssao: reveal.SsaoPassType.Ssao,
-          SsaoFinal: reveal.SsaoPassType.SsaoFinal,
-          Antialias: reveal.SsaoPassType.Antialias,
-        })
-        .onChange(updateEffect);
+      gui.add(renderOptions.ssaoRenderParameters, 'sampleSize').min(0).max(256).step(1).onChange(updateEffect);
 
-      gui.add(effect, 'kernelRadius').min(0.1).max(30.0).onChange(updateEffect);
+      gui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias').min(0.0).max(1.0).onChange(updateEffect);
 
-      gui.add(effect, 'minDistance').min(0.0).max(0.001).onChange(updateEffect);
-
-      gui.add(effect, 'maxDistance').min(0.0).max(0.2).onChange(updateEffect);
-
-      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime: number) => {
+        let needsResize = resizeRendererToDisplaySize(renderer, camera);
         const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
 
-        if (
-          controlsNeedUpdate ||
-          revealManager.needsRedraw ||
-          effectNeedsUpdate
-        ) {
-          effect.render(renderer, scene, camera, renderSettings.pass);
-          effectNeedsUpdate = false;
+        if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
+          revealManager.render(renderer, camera, scene);
           revealManager.resetRedraw();
         }
       });

@@ -45,6 +45,8 @@ export class RevealManager<TModelIdentifier> {
 
   private readonly _updateSubject: Subject<void>;
 
+  private _renderOptions: RenderOptions;
+
   constructor(
     cadManager: CadManager<TModelIdentifier>,
     pointCloudManager: PointCloudManager<TModelIdentifier>,
@@ -52,6 +54,7 @@ export class RevealManager<TModelIdentifier> {
   ) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
+    this._renderOptions = renderOptions;
     this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager, renderOptions);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
     this._updateSubject = new Subject();
@@ -82,6 +85,15 @@ export class RevealManager<TModelIdentifier> {
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
+  }
+
+  public get renderOptions(): RenderOptions {
+    return this._renderOptions;
+  }
+
+  public set renderOptions(options: RenderOptions) {
+    this._renderOptions = options;
+    this._effectRenderManager.renderOptions = options;
   }
 
   get needsRedraw(): boolean {
