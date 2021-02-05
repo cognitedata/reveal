@@ -11,27 +11,23 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => {
-  return (
-    <FileGridPreview
-      item={files[0]}
-      onItemClicked={action('onItemClicked')}
-      isSelected={() => {}}
-      query={text('query', '')}
-    />
-  );
-};
-export const ExampleSingleSelect = () => {
-  return (
-    <FileGridPreview
-      selectionMode="single"
-      item={files[0]}
-      onItemClicked={action('onItemClicked')}
-      isSelected={() => {}}
-      query={text('query', '')}
-    />
-  );
-};
+export const Example = () => (
+  <FileGridPreview
+    item={files[0]}
+    onItemClicked={action('onItemClicked')}
+    isSelected={() => {}}
+    query={text('query', '')}
+  />
+);
+export const ExampleSingleSelect = () => (
+  <FileGridPreview
+    selectionMode="single"
+    item={files[0]}
+    onItemClicked={action('onItemClicked')}
+    isSelected={() => {}}
+    query={text('query', '')}
+  />
+);
 
 const Container = styled.div`
   height: 600px;

@@ -14,14 +14,12 @@ export const DataExplorationProvider = ({
   sdk,
 }: DataExplorationProviderProps & {
   children: React.ReactNode;
-}) => {
-  return (
-    <SDKProvider sdk={sdk}>
-      <FileContextualizationContextProvider>
-        <ResourcePreviewProvider>
-          <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
-        </ResourcePreviewProvider>
-      </FileContextualizationContextProvider>
-    </SDKProvider>
-  );
-};
+}) => (
+  <SDKProvider sdk={sdk}>
+    <FileContextualizationContextProvider>
+      <ResourcePreviewProvider>
+        <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
+      </ResourcePreviewProvider>
+    </FileContextualizationContextProvider>
+  </SDKProvider>
+);
