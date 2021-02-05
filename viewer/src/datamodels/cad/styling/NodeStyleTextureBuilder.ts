@@ -92,6 +92,12 @@ export class NodeStyleTextureBuilder {
 
       applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
       applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformLookupIndexRgb);
+
+      const infront = !!style.renderInFront;
+      const ghosted = !!style.renderGhosted;
+      updateLookupSet(this._infrontNodesTreeIndices, treeIndices, infront);
+      updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, ghosted);
+      updateLookupSet(this._regularNodesTreeIndices, treeIndices, !infront && !ghosted);
     });
     this._needsUpdate = false;
   }
@@ -182,6 +188,14 @@ function applyRGB(texture: THREE.DataTexture, treeIndices: IndexSet, rgb: [numbe
     buffer[3 * treeIndex + 2] = b;
   }
   texture.needsUpdate = true;
+}
+
+function updateLookupSet(set: IndexSet, treeIndices: IndexSet, addToSet: boolean) {
+  if (addToSet) {
+    set.unionWith(treeIndices);
+  } else {
+    set.differenceWith(treeIndices);
+  }
 }
 
 function resetTransformTexel(
