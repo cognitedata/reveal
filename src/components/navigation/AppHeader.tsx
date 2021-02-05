@@ -30,19 +30,12 @@ const AppHeader: React.FC = () => {
   const { privacyPolicyUrl, intercomTourId } = sidecar;
   const allGroupNames = useSelector(getUsersGroupNames);
 
-  const {
-    startTour,
-    show: showIntercomChat,
-    shutdown: shutdownIntercom,
-  } = useIntercom();
+  const { startTour, shutdown: shutdownIntercom } = useIntercom();
 
   const startIntercomTour = () => {
     startTour(intercomTourId);
   };
 
-  const handleOnSupportClick = () => {
-    showIntercomChat();
-  };
   const client = useContext(CdfClientContext);
 
   const performLogout = async () => {
@@ -88,15 +81,6 @@ const AppHeader: React.FC = () => {
           ))}
         </Menu>
       ),
-    },
-    {
-      key: 'feedback',
-      component: (
-        <Tooltip content="Support">
-          <Icon type="Feedback" />
-        </Tooltip>
-      ),
-      onClick: handleOnSupportClick,
     },
     {
       key: 'help',
