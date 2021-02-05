@@ -19,7 +19,7 @@ export const FilterList = ({
     {filters.map(
       (dropdown) =>
         dropdown.visible && (
-          <FieldWrapper>
+          <FieldWrapper key={dropdown.name}>
             <Dropdown
               content={FilterListItems(
                 dropdown.source,
