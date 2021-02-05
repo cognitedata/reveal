@@ -19,7 +19,7 @@ import {
 } from 'store/suites/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
-import { isAdmin } from 'store/groups/selectors';
+import { getGroupsState, isAdmin } from 'store/groups/selectors';
 import { UserSpaceState } from 'store/userSpace/types';
 import { fetchUserSpace } from 'store/userSpace/thunks';
 import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
@@ -34,6 +34,9 @@ const Home = () => {
     getSuitesTableState
   );
   const admin = useSelector(isAdmin);
+  const { filter: groupsFilter } = useSelector(getGroupsState);
+  const canEdit = admin && !groupsFilter?.length;
+
   const apiClient = useContext(ApiClientContext);
   const {
     loaded: userSpaceLoaded,
@@ -74,7 +77,7 @@ const Home = () => {
       <Suitebar
         headerText="Executive overview"
         actionButton={
-          admin && (
+          canEdit && (
             <Button
               variant="outline"
               type="secondary"
@@ -130,7 +133,7 @@ const Home = () => {
                 <Tile
                   key={suite.key}
                   dataItem={suite}
-                  {...(admin && { menu: <SuiteMenu dataItem={suite} /> })}
+                  {...(canEdit && { menu: <SuiteMenu dataItem={suite} /> })}
                   avatar
                 />
               </Link>
