@@ -16,9 +16,8 @@ export const fetchUserGroups = (apiClient: ApiClient) => async (
   }
 };
 
+export const getGroupNames = (groups: Group[] = []): string[] =>
+  groups.map((group) => group.name);
+
 export const checkIsAdmin = (groups: Group[]): boolean =>
   getGroupNames(groups).includes(ADMIN_GROUP_NAME);
-
-function getGroupNames(groups: Group[] = []): string[] {
-  return groups.map((group) => group.name);
-}

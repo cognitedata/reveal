@@ -13,3 +13,11 @@ export const loadedGroups = createAction(
 export const loadGroupsError = createAction(
   UserGroupsActionTypes.USER_GROUPS_ERROR
 )<Error>();
+
+export const setGroupsFilter = createAction(
+  UserGroupsActionTypes.SET_GROUP_FILTER
+)<string[]>();
+
+export const clearGroupsFilter = createAction(
+  UserGroupsActionTypes.CLEAR_GROUP_FILTER
+)<void>();
