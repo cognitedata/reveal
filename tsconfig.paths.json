@@ -1,0 +1,11 @@
+// it's used because react-scripts doesn't support path aliases
+// and webstorm poorly work with resolving file usages when path aliases are not set
+// see https://github.com/facebook/create-react-app/issues/5645
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["src/*"]
+    }
+  }
+}

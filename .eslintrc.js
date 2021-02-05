@@ -6,5 +6,6 @@ module.exports = {
       'warn',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
+    'no-console': 'off',
   },
 };

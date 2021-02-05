@@ -1,14 +1,14 @@
 const { edit, remove, getPaths } = require('@rescripts/utilities');
 const PrefixWrap = require('postcss-prefixwrap');
-const { styleScope } = require('./src/utils/styleScope');
+const { colors, ids } = require('./src/cogs-variables.js');
 
 const addLoaders = (config) => {
   const cssRegex = /\.css$/;
 
   //Matchers to find the array of rules and css-file loader
-  const loadersMatcher = (inQuestion) =>
-    inQuestion.rules &&
-    inQuestion.rules.find((rule) => Array.isArray(rule.oneOf));
+  const loadersMatcher = ({ rules }) =>
+    Array.isArray(rules) && rules.find((rule) => Array.isArray(rule.oneOf));
+
   const cssMatcher = (inQuestion) =>
     inQuestion.test && inQuestion.test.toString() === cssRegex.toString();
 
@@ -21,6 +21,10 @@ const addLoaders = (config) => {
         // the root app is mounted / unmounted
         esModule: true,
         injectType: 'lazyStyleTag',
+        insert: function insertAtTop(element) {
+          var parent = document.querySelector('head');
+          parent.insertBefore(element, parent.firstChild);
+        },
       },
     },
     {
@@ -37,7 +41,7 @@ const addLoaders = (config) => {
       loader: 'postcss-loader',
       options: {
         plugins: [
-          PrefixWrap(`.${styleScope}`, {
+          PrefixWrap(`.${ids.styleScope}`, {
             ignoredSelectors: [':root'],
           }),
         ],
@@ -56,6 +60,21 @@ const addLoaders = (config) => {
             test: cssRegex,
             use: getStyleLoader(),
             sideEffects: true,
+          },
+          {
+            test: /\.less$/,
+            use: [
+              ...getStyleLoader(),
+              {
+                loader: 'less-loader',
+                options: {
+                  lessOptions: {
+                    modifyVars: colors,
+                    javascriptEnabled: true,
+                  },
+                },
+              },
+            ],
           },
           ...match.rules.find((rule) => Array.isArray(rule.oneOf)).oneOf,
         ],
