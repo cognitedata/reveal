@@ -139,4 +139,15 @@ describe('IndexSet', () => {
 
     expect(set1.hasIntersectionWith(set2)).toBeFalse();
   });
+
+  test('differenceWith removes overlapping elements', () => {
+    const set1 = new IndexSet();
+    set1.add(1, 5);
+    const set2 = new IndexSet();
+    set2.add(3, 5);
+
+    set1.differenceWith(set2);
+
+    expect(Array.from(set1.values()).sort()).toEqual([1, 2]);
+  });
 });

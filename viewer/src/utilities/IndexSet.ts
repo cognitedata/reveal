@@ -56,6 +56,14 @@ export class IndexSet {
     }
   }
 
+  differenceWith(other: IndexSet): void {
+    for (const index of other._indices) {
+      if (this.contains(index)) {
+        this.remove(index);
+      }
+    }
+  }
+
   toArray(): number[] {
     return Array.from(this._indices);
   }
