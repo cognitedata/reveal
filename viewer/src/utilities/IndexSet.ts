@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import { NumericRange } from './NumericRange';
+
 export class IndexSet {
   private readonly _indices: Set<number>;
 
@@ -13,16 +15,28 @@ export class IndexSet {
     return new IndexSet(this._indices);
   }
 
-  add(index: number, rangeCount: number = 1) {
-    for (let i = 0; i < rangeCount; ++i) {
-      this._indices.add(index + i);
+  add(index: number) {
+    this._indices.add(index);
+  }
+
+  addRange(range: NumericRange) {
+    for (let index = range.from; index <= range.toInclusive; ++index) {
+      this._indices.add(index);
     }
   }
 
-  remove(index: number, rangeCount: number = 1) {
-    for (let i = 0; i < rangeCount; ++i) {
-      this._indices.delete(index + i);
+  remove(index: number) {
+    this._indices.delete(index);
+  }
+
+  removeRange(range: NumericRange) {
+    for (let index = range.from; index <= range.toInclusive; ++index) {
+      this._indices.delete(index);
     }
+  }
+
+  clear() {
+    this._indices.clear();
   }
 
   get count(): number {
