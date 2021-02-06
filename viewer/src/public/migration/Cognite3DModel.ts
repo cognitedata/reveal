@@ -16,6 +16,8 @@ import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeStyleProvider } from '../../datamodels/cad/styling/NodeStyleProvider';
+import { FixedNodeSet } from '../../datamodels/cad/styling';
+import { DefaultNodeAppearance } from '../../datamodels/cad';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -73,9 +75,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly nodeColors: Map<number, [number, number, number]>;
   private readonly nodeTransforms: Map<number, THREE.Matrix4>;
 
-  private readonly selectedNodes: Set<number>;
-  private readonly hiddenNodes: Set<number>;
-  private readonly ghostedNodes: Set<number>;
+  private readonly _selectedNodeSet = new FixedNodeSet([]);
+  private readonly _ghostedNodeSet = new FixedNodeSet([]);
+  private readonly _hiddenNodeSet = new FixedNodeSet([]);
+
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
@@ -94,15 +97,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.client = client;
     this.nodeColors = new Map();
     this.nodeTransforms = new Map();
-    this.hiddenNodes = new Set();
-    this.selectedNodes = new Set();
-    this.ghostedNodes = new Set();
     const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
 
     this.cadNode = cadNode;
 
     this.add(this.cadNode);
+
+    this.nodeApperanceProvider.addStyledSet(this._selectedNodeSet, DefaultNodeAppearance.Highlighted);
+    this.nodeApperanceProvider.addStyledSet(this._ghostedNodeSet, DefaultNodeAppearance.Ghosted);
+    this.nodeApperanceProvider.addStyledSet(this._hiddenNodeSet, DefaultNodeAppearance.Hidden);
   }
 
   /**
@@ -502,21 +506,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise with a number of selected tree indices.
    */
   async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.selectedNodes.add(idx);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.selectedNodes.add(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
+    return this.addToNodeSet(this._selectedNodeSet, treeIndex, applyToChildren);
   }
 
   /**
@@ -535,30 +525,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.selectedNodes.delete(idx);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.selectedNodes.delete(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
+    return this.removeFromNodeSet(this._selectedNodeSet, treeIndex, applyToChildren);
   }
 
   /**
    * Removes selection from all nodes.
    */
   deselectAllNodes(): void {
-    const selectedNodes = Array.from(this.selectedNodes);
-    this.selectedNodes.clear();
-    this.updateNodeStyle(selectedNodes);
+    this.clearNodeSet(this._selectedNodeSet);
   }
 
   /**
@@ -588,6 +562,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       this.updateNodeStyle(treeIndex);
       return 1;
     }
+  }
+
+  /**
+   * @private
+   */
+  private updateNodeStyle(_treeIndices: NumericRange | number | number[]) {
+    throw new Error('Method not implemented.');
   }
 
   /**
@@ -623,21 +604,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise that resolves to the number of affected nodes.
    */
   async ghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.ghostedNodes.add(idx);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.ghostedNodes.add(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
+    return this.addToNodeSet(this._ghostedNodeSet, treeIndex, applyToChildren);
   }
 
   /**
@@ -648,21 +615,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Promise that resolves to the number of affected nodes.
    */
   async unghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.ghostedNodes.delete(idx);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.ghostedNodes.delete(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
+    return this.removeFromNodeSet(this._ghostedNodeSet, treeIndex, applyToChildren);
   }
 
   /**
@@ -671,10 +624,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @version new in 1.1.0
    */
   ghostAllNodes(): void {
-    for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
-      this.ghostedNodes.add(i);
-    }
-    this.updateNodeStyle(new NumericRange(0, this.cadModel.scene.maxTreeIndex + 1));
+    this.addAllToNodeSet(this._ghostedNodeSet);
   }
 
   /**
@@ -682,9 +632,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @version new in 1.1.0
    */
   unghostAllNodes(): void {
-    const ghostedNodes = Array.from(this.ghostedNodes);
-    this.ghostedNodes.clear();
-    this.updateNodeStyle(ghostedNodes);
+    this.clearNodeSet(this._ghostedNodeSet);
   }
 
   /**
@@ -712,21 +660,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @returns Number of nodes affected.
    */
   async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.hiddenNodes.delete(idx);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.hiddenNodes.delete(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
+    return this.removeFromNodeSet(this._hiddenNodeSet, treeIndex, applyToChildren);
   }
 
   /**
@@ -734,9 +668,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}.
    */
   showAllNodes(): void {
-    const wasHidden = Array.from(this.hiddenNodes.values());
-    this.hiddenNodes.clear();
-    this.updateNodeStyle(wasHidden);
+    this.clearNodeSet(this._hiddenNodeSet);
   }
 
   /**
@@ -748,9 +680,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
-    const treeIndices = new NumericRange(0, this.cadModel.scene.maxTreeIndex + 1);
-    treeIndices.forEach(idx => this.hiddenNodes.add(idx));
-    this.updateNodeStyle(treeIndices);
+    this.addAllToNodeSet(this._hiddenNodeSet);
   }
 
   /**
@@ -777,10 +707,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
-    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    treeIndices.forEach(idx => this.hiddenNodes.add(idx));
-    this.updateNodeStyle(treeIndices);
-    return treeIndices.count;
+    return this.addToNodeSet(this._hiddenNodeSet, treeIndex, applyToChildren);
   }
 
   /**
@@ -846,6 +773,55 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return new NumericRange(treeIndex, subtreeSize);
   }
 
-  /** @private */
-  private updateNodeStyle(_treeIndices: number[] | NumericRange | number) {}
+  /**
+   * @private
+   */
+  private async addToNodeSet(nodeSet: FixedNodeSet, treeIndex: number, applyToChildren = false): Promise<number> {
+    const set = nodeSet.getIndexSet();
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, true);
+      set.addRange(treeIndices);
+      nodeSet.updateSet(set);
+      return treeIndices.count;
+    } else {
+      set.add(treeIndex);
+      nodeSet.updateSet(set);
+      return 1;
+    }
+  }
+
+  /**
+   * @private
+   */
+  private async removeFromNodeSet(nodeSet: FixedNodeSet, treeIndex: number, applyToChildren = false): Promise<number> {
+    const set = nodeSet.getIndexSet();
+    if (applyToChildren) {
+      const treeIndices = await this.determineTreeIndices(treeIndex, true);
+      set.removeRange(treeIndices);
+      nodeSet.updateSet(set);
+      return treeIndices.count;
+    } else {
+      set.remove(treeIndex);
+      nodeSet.updateSet(set);
+      return 1;
+    }
+  }
+
+  /**
+   * @private
+   */
+  private addAllToNodeSet(nodeSet: FixedNodeSet) {
+    const set = nodeSet.getIndexSet();
+    set.addRange(new NumericRange(0, this.cadNode.cadModelMetadata.scene.maxTreeIndex + 1));
+    nodeSet.updateSet(set);
+  }
+
+  /**
+   * @private
+   */
+  private clearNodeSet(nodeSet: FixedNodeSet) {
+    const set = nodeSet.getIndexSet();
+    set.clear();
+    nodeSet.updateSet(set);
+  }
 }
