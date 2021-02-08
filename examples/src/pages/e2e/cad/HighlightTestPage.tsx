@@ -14,7 +14,7 @@ export function HighlightTestPage() {
     const pickedNodes = new Set([...Array(15).keys()]);
     return {
       styleNode(treeIndex: number) {
-        let style = reveal.DefaultNodeAppearance.NoOverrides;
+        let style = reveal.DefaultNodeAppearance.Default;
         if (pickedNodes.has(treeIndex)) {
           style = { ...style, ...reveal.DefaultNodeAppearance.Highlighted };
         }

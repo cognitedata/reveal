@@ -13,7 +13,7 @@ import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 
 export class NodeStyleTextureBuilder {
-  private readonly _defaultStyle: NodeAppearance | undefined;
+  private _defaultStyle: NodeAppearance = {};
   private readonly _styleProvider: NodeStyleProvider;
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
@@ -24,20 +24,41 @@ export class NodeStyleTextureBuilder {
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
+  private readonly _currentlyAppliedStyles = new Map<number, { revision: number; treeIndices: IndexSet }>();
 
   constructor(treeIndexCount: number, styleProvider: NodeStyleProvider) {
-    this._defaultStyle = DefaultNodeAppearance.NoOverrides;
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
 
-    const textures = allocateTextures(treeIndexCount, this._defaultStyle);
+    const textures = allocateTextures(treeIndexCount);
     this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
     this._overrideTransformPerTreeIndexTexture = textures.transformOverrideIndexTexture;
     this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
+    this.setDefaultStyle(DefaultNodeAppearance.Default);
 
     this._regularNodesTreeIndices = new IndexSet(new NumericRange(0, treeIndexCount).values());
     this._ghostedNodesTreeIndices = new IndexSet();
     this._infrontNodesTreeIndices = new IndexSet();
+  }
+
+  getDefaultStyle(): NodeAppearance {
+    return this._defaultStyle;
+  }
+
+  /**
+   * Sets the default style and invalidates the builder. Note that this causes a full
+   * recomputation of values the next time {@link build} is called, so using this might be
+   * expensive.
+   * @param appearance New style that is applied to all 'unstyled' elements.
+   */
+  setDefaultStyle(appearance: NodeAppearance) {
+    if (!equalNodeAppearances(appearance, this._defaultStyle)) {
+      this._defaultStyle = appearance;
+      fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
+      // Force full update as we might have overwritten previously applied styles
+      this._currentlyAppliedStyles.clear();
+      this._needsUpdate = true;
+    }
   }
 
   get regularNodeTreeIndices(): IndexSet {
@@ -86,8 +107,6 @@ export class NodeStyleTextureBuilder {
     this._overrideTransformPerTreeIndexTexture.dispose();
   }
 
-  private readonly _currentlyAppliedStyles = new Map<number, { revision: number; treeIndices: IndexSet }>();
-
   build() {
     const defaultColorRgba = appearanceToColorOverride(this._defaultStyle);
     const defaultTransformLookupIndexRgb: [number, number, number] = [0, 0, 0]; // Special value for no transform
@@ -102,7 +121,8 @@ export class NodeStyleTextureBuilder {
       }
 
       // Translate from style to magic values in textures
-      const colorRgba = appearanceToColorOverride(style);
+      const fullStyle = { ...this._defaultStyle, ...style };
+      const colorRgba = appearanceToColorOverride(fullStyle);
       const transformLookupIndexRgb = appearanceToTransformOverride(styleId, style, this._transformOverrideBuffer);
 
       if (currentlyApplied !== undefined) {
@@ -163,27 +183,17 @@ export class NodeStyleTextureBuilder {
 }
 
 function allocateTextures(
-  treeIndexCount: number,
-  style: NodeAppearance | undefined
+  treeIndexCount: number
 ): { overrideColorPerTreeIndexTexture: THREE.DataTexture; transformOverrideIndexTexture: THREE.DataTexture } {
-  if (style !== undefined && style.worldTransform !== undefined) {
-    throw new Error('Cannot allocate textures with for style with default world transform');
-  }
-
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
-  const defaultColorRgba = appearanceToColorOverride(style);
 
   // Color and style override texture
-  const colors = new Uint8Array(4 * textureElementCount);
-  // Set alpha to 1
-  for (let i = 0; i < textureElementCount; ++i) {
-    colors[4 * i + 0] = defaultColorRgba[0];
-    colors[4 * i + 1] = defaultColorRgba[1];
-    colors[4 * i + 2] = defaultColorRgba[2];
-    colors[4 * i + 3] = defaultColorRgba[3];
-  }
-  const overrideColorPerTreeIndexTexture = new THREE.DataTexture(colors, width, height);
+  const overrideColorPerTreeIndexTexture = new THREE.DataTexture(
+    new Uint8ClampedArray(4 * textureElementCount),
+    width,
+    height
+  );
 
   // Texture for holding node transforms (translation, scale, rotation)
   const transformOverrideIndexBuffer = new Uint8ClampedArray(3 * textureElementCount);
@@ -197,15 +207,25 @@ function allocateTextures(
   return { overrideColorPerTreeIndexTexture, transformOverrideIndexTexture };
 }
 
-function appearanceToColorOverride(appearance: NodeAppearance | undefined): [number, number, number, number] {
-  if (appearance === undefined) {
-    return [0, 0, 0, 1]; // Visible, no color override
+function fillColorTexture(colorTexture: THREE.DataTexture, appearance: NodeAppearance) {
+  const colorRgba = appearanceToColorOverride(appearance);
+  const colors = colorTexture.image.data;
+  const textureElementCount = colorTexture.image.width * colorTexture.image.height;
+  for (let i = 0; i < textureElementCount; ++i) {
+    colors[4 * i + 0] = colorRgba[0];
+    colors[4 * i + 1] = colorRgba[1];
+    colors[4 * i + 2] = colorRgba[2];
+    colors[4 * i + 3] = colorRgba[3];
   }
+  colorTexture.needsUpdate = true;
+}
+
+function appearanceToColorOverride(appearance: NodeAppearance): [number, number, number, number] {
   const [r, g, b] = appearance.color || [0, 0, 0];
   const isVisible = appearance.visible !== undefined ? !!appearance.visible : true;
   const inFront = !!appearance.renderInFront;
   const ghosted = !!appearance.renderGhosted;
-  const outlineColor = appearance.outlineColor ? appearance.outlineColor : 0;
+  const outlineColor = appearance.outlineColor ? Number(appearance.outlineColor) : 0;
   // Byte layout:
   // [isVisible, renderInFront, renderGhosted, outlineColor0, outlineColor1, outlineColor2, unused, unused]
   const bytePattern = (isVisible ? 1 << 0 : 0) + (inFront ? 1 << 1 : 0) + (ghosted ? 1 << 2 : 0) + (outlineColor << 3);
@@ -289,4 +309,9 @@ function setTransformTexel(
   indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
 
   indexTexture.needsUpdate = true;
+}
+
+function equalNodeAppearances(left: NodeAppearance, right: NodeAppearance) {
+  // https://stackoverflow.com/a/1144249/167251
+  return JSON.stringify(left) === JSON.stringify(right);
 }

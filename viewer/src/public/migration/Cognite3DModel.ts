@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
-import { Color, CameraConfiguration } from './types';
+import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
@@ -16,8 +16,8 @@ import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeStyleProvider } from '../../datamodels/cad/styling/NodeStyleProvider';
-import { FixedNodeSet } from '../../datamodels/cad/styling';
-import { DefaultNodeAppearance } from '../../datamodels/cad';
+import { NodeSet } from '../../datamodels/cad/styling';
+import { NodeAppearance } from '../../datamodels/cad';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -28,8 +28,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
 
   get nodeApperanceProvider(): NodeStyleProvider {
-    return this.cadNode.nodeApperanceProvider;
+    return this.cadNode.nodeAppearanceProvider;
   }
+
   /**
    * Get settings used for rendering.
    */
@@ -72,12 +73,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadNode: CadNode;
 
   private readonly cadModel: CadModelMetadata;
-  private readonly nodeColors: Map<number, [number, number, number]>;
   private readonly nodeTransforms: Map<number, THREE.Matrix4>;
-
-  private readonly _selectedNodeSet = new FixedNodeSet([]);
-  private readonly _ghostedNodeSet = new FixedNodeSet([]);
-  private readonly _hiddenNodeSet = new FixedNodeSet([]);
 
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
@@ -95,7 +91,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
-    this.nodeColors = new Map();
     this.nodeTransforms = new Map();
     const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
@@ -103,12 +98,63 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode = cadNode;
 
     this.add(this.cadNode);
-
-    this.nodeApperanceProvider.addStyledSet(this._selectedNodeSet, DefaultNodeAppearance.Highlighted);
-    this.nodeApperanceProvider.addStyledSet(this._ghostedNodeSet, DefaultNodeAppearance.Ghosted);
-    this.nodeApperanceProvider.addStyledSet(this._hiddenNodeSet, DefaultNodeAppearance.Hidden);
   }
 
+  /**
+   * Sets the default appearance for nodes that are not styled using
+   * {@link addStyledNodesSet}. Updating the default style can be an
+   * expensive operation, so use with care.
+   *
+   * @param appearance  Default node appereance. Note that this apperance cannot
+   * have a transform ({@link NodeAppearance.worldTransform}).
+   */
+  setDefaultNodeAppearance(appearance: NodeAppearance) {
+    this.cadNode.defaultNodeAppearance = appearance;
+  }
+
+  /**
+   * Gets the default appearance for nodes that are not styled using
+   * {@link addStyledNodesSet}.
+   */
+  getDefaultNodeAppearance(): NodeAppearance {
+    return this.cadNode.defaultNodeAppearance;
+  }
+
+  /**
+   * Customizes rendering style for a set of nodes, e.g. to highlight, hide
+   * or color code a set of 3D objects. This allows for custom look and feel
+   * of the 3D model which is useful to highlight certain parts or to
+   * color code the 3D model based on information (e.g. coloring the 3D model
+   * by construction status).
+   *
+   * The {@link NodeSet} can be updated dynamically and the rendered nodes will be
+   * updated automatically as the styling changes. The appearance of the style nodes
+   * cannot be changed.
+   *
+   * Nodes are expected to only be in one style set, and the behaviour is undefined
+   * when a node is part of two different sets.
+   *
+   * @param nodes Dynamic set of nodes to apply the provided appearance to.
+   * @param appearance Apperance to style the provided set with.
+   *
+   * @example
+   * ```js
+   * model.setDefaultNodeApperance({ rendererGhosted: true });
+   * const visibleSet = new FixedNodeSet(someTreeIndices);
+   * model.addStyledSet(visibleSet, { rendererGhosted: false });
+   * ```
+   */
+  addStyledNodesSet(nodes: NodeSet, appearance: NodeAppearance) {
+    this.nodeApperanceProvider.addStyledSet(nodes, appearance);
+  }
+
+  /**
+   * Removes styling for previously added set, resetting the style to the default.
+   * @param nodes   Node set previously added using {@see addStyledSet}.
+   */
+  removeStyledNodeSet(nodes: NodeSet) {
+    this.nodeApperanceProvider.removedStyledSet(nodes);
+  }
   /**
    * Maps a position retrieved from the CDF API (e.g. 3D node information) to
    * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
@@ -373,169 +419,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Not supported.
-   * @param _nodeId
-   * @deprecated This function is no longer supported. There is no replacement.
-   * @throws NotSupportedInMigrationWrapperError.
-   */
-  getNodeColor(_nodeId: number): Promise<Color> {
-    throw new NotSupportedInMigrationWrapperError('getNodeColor() is not supported');
-  }
-
-  /**
-   * Set node color by node ID.
-   * This method is async because nodeId might be not loaded yet.
-   * @deprecated Use {@link Cognite3DModel.setNodeColorByTreeIndex}.
-   * @param nodeId
-   * @param r       Red component (0-255).
-   * @param g       Green component (0-255).
-   * @param b       Blue componenet (0-255).
-   */
-  async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    await this.setNodeColorByTreeIndex(treeIndex, r, g, b);
-  }
-
-  /**
-   * Update color of a 3D node identified by it's tree index.
-   * @param treeIndex       Tree index of the node to update.
-   * @param r               Red component (0-255).
-   * @param g               Green component (0-255).
-   * @param b               Blue component (0-255).
-   * @param applyToChildren When true, the color will be applied to all descendants.
-   * @returns               Promise that resolves to number of nodes affected.
-   */
-  async setNodeColorByTreeIndex(
-    treeIndex: number,
-    r: number,
-    g: number,
-    b: number,
-    applyToChildren = false
-  ): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    const color: [number, number, number] = [r, g, b];
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, true);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.nodeColors.set(idx, color);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.nodeColors.set(treeIndex, color);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
-  }
-
-  /**
-   * Set original node color by node ID.
-   * This method is async because node ID might be not loaded yet.
-   * @deprecated {@link Cognite3DModel.resetNodeColorByTreeIndex}
-   * @param nodeId
-   */
-  async resetNodeColor(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    await this.resetNodeColorByTreeIndex(treeIndex);
-  }
-
-  /**
-   * Set original node color by tree index.
-   * @param treeIndex
-   * @param applyToChildren
-   */
-  async resetNodeColorByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.nodeColors.delete(idx);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.nodeColors.delete(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
-  }
-
-  /**
-   * Overrrides color for all nodes in the scene.
-   * @param r Red component between 0 and 255.
-   * @param g Green component between 0 and 255.
-   * @param b Blue component between 0 and 255.
-   * @version new in 1.1.0
-   */
-  setAllNodeColors(r: number, g: number, b: number): void {
-    const color: [number, number, number] = [r, g, b];
-    for (let i = 0; i <= this.cadModel.scene.maxTreeIndex; i++) {
-      this.nodeColors.set(i, color);
-    }
-    this.updateNodeStyle(new NumericRange(0, this.cadModel.scene.maxTreeIndex + 1));
-  }
-
-  /**
-   * Restore original colors for all nodes.
-   */
-  resetAllNodeColors() {
-    const treeIndices = [...this.nodeColors.keys()];
-    this.nodeColors.clear();
-    this.updateNodeStyle(treeIndices);
-  }
-
-  /**
-   * Highlight node by node ID.
-   * This method is async because node ID might be not loaded yet.
-   * @param nodeId
-   * @deprecated Use {@link Cognite3DModel.selectNodeByTreeIndex}.
-   */
-  async selectNode(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    await this.selectNodeByTreeIndex(treeIndex);
-  }
-
-  /**
-   * Highlight node by tree index.
-   * @param treeIndex
-   * @param applyToChildren
-   * @returns Promise with a number of selected tree indices.
-   */
-  async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.addToNodeSet(this._selectedNodeSet, treeIndex, applyToChildren);
-  }
-
-  /**
-   * Removes selection from the node by node ID.
-   * @param nodeId
-   * @deprecated Use {@link Cognite3DModel.deselectNodeByTreeIndex}.
-   */
-  async deselectNode(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    await this.deselectNodeByTreeIndex(treeIndex);
-  }
-
-  /**
-   * Removes selection from the node by tree index.
-   * @param treeIndex
-   * @param applyToChildren
-   */
-  async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.removeFromNodeSet(this._selectedNodeSet, treeIndex, applyToChildren);
-  }
-
-  /**
-   * Removes selection from all nodes.
-   */
-  deselectAllNodes(): void {
-    this.clearNodeSet(this._selectedNodeSet);
-  }
-
-  /**
    * Set override transform of the node by tree index.
    * @version new in 1.1.0
    * @param treeIndex
@@ -593,121 +476,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       this.updateNodeStyle(treeIndex);
       return 1;
     }
-  }
-
-  /**
-   * Enables ghost mode for the tree index given, making the object appear transparent and gray.
-   * Note that ghosted objects are ignored in ray picking actions.
-   * @version new in 1.1.0
-   * @param treeIndex       Tree index of node to ghost.
-   * @param applyToChildren When true, all descendants of the node is also ghosted.
-   * @returns Promise that resolves to the number of affected nodes.
-   */
-  async ghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.addToNodeSet(this._ghostedNodeSet, treeIndex, applyToChildren);
-  }
-
-  /**
-   * Disables ghost mode for the tree index given, making the object be rendered normal.
-   * @version new in 1.1.0
-   * @param treeIndex       Tree index of node to un-ghost.
-   * @param applyToChildren When true, all descendants of the node is also un-ghosted.
-   * @returns Promise that resolves to the number of affected nodes.
-   */
-  async unghostNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.removeFromNodeSet(this._ghostedNodeSet, treeIndex, applyToChildren);
-  }
-
-  /**
-   * Enable ghost mode for all nodes in the model, making the whole model be rendered transparent
-   * and in gray.
-   * @version new in 1.1.0
-   */
-  ghostAllNodes(): void {
-    this.addAllToNodeSet(this._ghostedNodeSet);
-  }
-
-  /**
-   * Disable ghost mode for all nodes in the model.
-   * @version new in 1.1.0
-   */
-  unghostAllNodes(): void {
-    this.clearNodeSet(this._ghostedNodeSet);
-  }
-
-  /**
-   * Show the node by node ID, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
-   * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
-   * This method is async because nodeId might be not loaded yet.
-   * @deprecated Use {@link Cognite3DModel.showNodeByTreeIndex}.
-   * @param nodeId
-   * @example
-   * ```js
-   * model.hideAllNodes();
-   * model.showNode(nodeId);
-   * ```
-   */
-  async showNode(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    await this.showNodeByTreeIndex(treeIndex);
-  }
-
-  /**
-   * Show the node by tree index, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
-   * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}.
-   * @param treeIndex Tree index of node to make visible.
-   * @param applyToChildren When true all descendants of the provided node is also shown.
-   * @returns Number of nodes affected.
-   */
-  async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
-    return this.removeFromNodeSet(this._hiddenNodeSet, treeIndex, applyToChildren);
-  }
-
-  /**
-   * Show all the nodes that were hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
-   * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}.
-   */
-  showAllNodes(): void {
-    this.clearNodeSet(this._hiddenNodeSet);
-  }
-
-  /**
-   * Hides all nodes in the model.
-   * @param makeGray Not supported.
-   * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed.
-   */
-  hideAllNodes(makeGray?: boolean): void {
-    if (makeGray) {
-      throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
-    }
-    this.addAllToNodeSet(this._hiddenNodeSet);
-  }
-
-  /**
-   * Hide the node by node ID.
-   * This method is async because nodeId might be not loaded yet.
-   * @deprecated Use {@link Cognite3DModel.hideNodeByTreeIndex}.
-   * @param nodeId
-   * @param makeGray Not supported yet.
-   */
-  async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    await this.hideNodeByTreeIndex(treeIndex, makeGray);
-  }
-
-  /**
-   * Hide the node by tree index.
-   * @param treeIndex Tree index of node to hide.
-   * @param makeGray Not supported.
-   * @param applyToChildren When true, all descendants of the node is also hidden.
-   * @returns Number of nodes affected.
-   * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed.
-   */
-  async hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean, applyToChildren = false): Promise<number> {
-    if (makeGray) {
-      throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
-    }
-    return this.addToNodeSet(this._hiddenNodeSet, treeIndex, applyToChildren);
   }
 
   /**
@@ -771,57 +539,5 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       subtreeSize = subtreeSizePromise ? subtreeSizePromise : 1;
     }
     return new NumericRange(treeIndex, subtreeSize);
-  }
-
-  /**
-   * @private
-   */
-  private async addToNodeSet(nodeSet: FixedNodeSet, treeIndex: number, applyToChildren = false): Promise<number> {
-    const set = nodeSet.getIndexSet();
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, true);
-      set.addRange(treeIndices);
-      nodeSet.updateSet(set);
-      return treeIndices.count;
-    } else {
-      set.add(treeIndex);
-      nodeSet.updateSet(set);
-      return 1;
-    }
-  }
-
-  /**
-   * @private
-   */
-  private async removeFromNodeSet(nodeSet: FixedNodeSet, treeIndex: number, applyToChildren = false): Promise<number> {
-    const set = nodeSet.getIndexSet();
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, true);
-      set.removeRange(treeIndices);
-      nodeSet.updateSet(set);
-      return treeIndices.count;
-    } else {
-      set.remove(treeIndex);
-      nodeSet.updateSet(set);
-      return 1;
-    }
-  }
-
-  /**
-   * @private
-   */
-  private addAllToNodeSet(nodeSet: FixedNodeSet) {
-    const set = nodeSet.getIndexSet();
-    set.addRange(new NumericRange(0, this.cadNode.cadModelMetadata.scene.maxTreeIndex + 1));
-    nodeSet.updateSet(set);
-  }
-
-  /**
-   * @private
-   */
-  private clearNodeSet(nodeSet: FixedNodeSet) {
-    const set = nodeSet.getIndexSet();
-    set.clear();
-    nodeSet.updateSet(set);
   }
 }

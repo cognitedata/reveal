@@ -26,7 +26,7 @@ export function NodeTransformTestPage() {
         if (transformedNodes.has(treeIndex)) {
           return { worldTransform: transformedNodes.get(treeIndex)! };
         }
-        return reveal.DefaultNodeAppearance.NoOverrides;
+        return reveal.DefaultNodeAppearance.Default;
       },
     };
   };

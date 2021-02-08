@@ -69,7 +69,7 @@ const GhostedApperance: NodeAppearance = {
 };
 
 export const DefaultNodeAppearance = {
-  NoOverrides: undefined as NodeAppearance | undefined,
+  Default: { visible: true },
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,

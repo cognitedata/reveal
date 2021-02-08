@@ -13,7 +13,9 @@ import {
   Cognite3DModel,
   CognitePointCloudModel,
   PotreePointColorType, 
-  PotreePointShape
+  PotreePointShape,
+  FixedNodeSet,
+  IndexSet
 } from '@cognite/reveal';
 import * as reveal from '@cognite/reveal'
 
@@ -227,6 +229,8 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
+      const selectedSet = new FixedNodeSet([]);
+      
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -239,8 +243,9 @@ export function Migration() {
               const { treeIndex, point, model } = intersection;
               console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
               // highlight the object
-              model.deselectAllNodes();
-              model.selectNodeByTreeIndex(treeIndex);
+              selectedSet.updateSet(new IndexSet([treeIndex]));
+              // model.deselectAllNodes();
+              // model.selectNodeByTreeIndex(treeIndex);
               const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
               viewer.fitCameraToBoundingBox(boundingBox, 1000);
             }

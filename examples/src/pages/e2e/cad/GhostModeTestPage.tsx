@@ -15,7 +15,7 @@ export function GhostModeTestPage() {
     const pickedNodes = new Set([0, 1, 2, 3, 4, 5, 6, 20, 22, 33, 34, 35]);
     return {
       styleNode(treeIndex: number) {
-        let style = reveal.DefaultNodeAppearance.NoOverrides;
+        let style = reveal.DefaultNodeAppearance.Default;
         if (pickedNodes.has(treeIndex)) {
           style = { ...style, ...reveal.DefaultNodeAppearance.Highlighted };
         }

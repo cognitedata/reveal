@@ -10,6 +10,7 @@ import { IndexSet } from '../../utilities/IndexSet';
 
 import { NodeStyleProvider } from './styling/NodeStyleProvider';
 import { NodeStyleTextureBuilder } from './styling/NodeStyleTextureBuilder';
+import { NodeAppearance } from '.';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -72,6 +73,16 @@ export class MaterialManager {
   getModelNodeAppearanceProvider(modelIdentifier: string): NodeStyleProvider {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceProvider;
+  }
+
+  getModelDefaultNodeAppearance(modelIdentifier: string): NodeAppearance {
+    const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
+    return wrapper.textureBuilder.getDefaultStyle();
+  }
+
+  setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance) {
+    const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
+    wrapper.textureBuilder.setDefaultStyle(defaultAppearance);
   }
 
   getModelBackTreeIndices(modelIdentifier: string): IndexSet {

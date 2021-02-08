@@ -137,4 +137,29 @@ describe('NodeStyleTextureBuilder', () => {
     texels = Array.from(builder.overrideColorPerTreeIndexTexture.image.data);
     expect(texels).toEqual([0, 0, 0, 1]);
   });
+
+  test('setDefaultStyle() triggers needs update', () => {
+    builder.build(); // Clear needsUpdate
+    expect(builder.needsUpdate).toBeFalse();
+
+    builder.setDefaultStyle({ renderGhosted: true, outlineColor: OutlineColor.Blue });
+    expect(builder.needsUpdate).toBeTrue();
+  });
+
+  test('setDefaultStyle() causes computer recompute the next time build() is called', () => {
+    builder.setDefaultStyle({ color: [244, 133, 66], visible: false });
+    builder.build();
+
+    const texels = Array.from(builder.overrideColorPerTreeIndexTexture.image.data);
+    expect(texels).toEqual([244, 133, 66, 0]);
+  });
+
+  test('setDefaultStyle() has effect for unset fields in styled sets', () => {
+    builder.setDefaultStyle({ color: [1, 2, 3], renderGhosted: true });
+    styleProvider.addStyledSet(new FixedNodeSet([0]), { renderGhosted: false });
+    builder.build();
+
+    const texels = Array.from(builder.overrideColorPerTreeIndexTexture.image.data);
+    expect(texels).toEqual([1, 2, 3, 1]); // Color is from default style, but 'renderGhosted' from styled set
+  });
 });

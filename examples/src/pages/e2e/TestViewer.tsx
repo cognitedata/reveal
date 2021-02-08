@@ -118,7 +118,7 @@ export function TestViewer(props: Props) {
 
       const defaultNodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode() {
-          return reveal.DefaultNodeAppearance.NoOverrides;
+          return reveal.DefaultNodeAppearance.Default;
         },
       };
 

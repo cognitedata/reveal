@@ -19,6 +19,7 @@ import { suggestCameraConfig } from './cameraconfig';
 import { toThreeVector3, toThreeJsBox3 } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
 import { NodeStyleProvider } from './styling/NodeStyleProvider';
+import { NodeAppearance } from '.';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -82,8 +83,16 @@ export class CadNode extends THREE.Object3D {
     this.setModelTransformation(model.modelMatrix);
   }
 
-  get nodeApperanceProvider(): NodeStyleProvider {
+  get nodeAppearanceProvider(): NodeStyleProvider {
     return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.blobUrl);
+  }
+
+  get defaultNodeAppearance(): NodeAppearance {
+    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.blobUrl);
+  }
+
+  set defaultNodeAppearance(appearance: NodeAppearance) {
+    this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.blobUrl, appearance);
   }
 
   get clippingPlanes(): THREE.Plane[] {
