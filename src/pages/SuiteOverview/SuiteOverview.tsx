@@ -22,6 +22,7 @@ import { getUserSpace } from 'store/userSpace/selectors';
 import isEqual from 'lodash/isEqual';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { fetchImageUrls } from 'store/suites/thunks';
+import * as actions from 'store/suites/actions';
 import { StyledTitle, LargeTilesContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
@@ -34,12 +35,11 @@ const SuiteOverview: React.FC = () => {
   const {
     loading: suitesLoading,
     loaded: suitesLoaded,
-    imageUrls: { loading: imgUrlsLoading },
+    imageUrls: { loading: imgUrlsLoading, loaded: imgUrlsLoaded },
   } = useSelector(getSuitesTableState);
   const { loading: userSpaceLoading }: UserSpaceState = useSelector(
     getUserSpace
   );
-  const [fetchImgUrlsDispatched, setFetchImgUrlsDispatched] = useState(false);
 
   const [goHomeDispatched, setGoHomeDispatched] = useState(false);
 
@@ -58,22 +58,22 @@ const SuiteOverview: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = history.listen(() => {
-      setFetchImgUrlsDispatched(false);
+      // when select another suite
+      dispatch(actions.clearImgUrls());
     });
     return () => {
       unsubscribe();
     };
-  }, [history, setFetchImgUrlsDispatched]);
+  }, [history, dispatch]);
 
   useEffect(() => {
     const fetchImgUrls = async (ids: string[]) => {
       await dispatch(fetchImageUrls(client, ids));
     };
-    if (imageFileIds?.length && !imgUrlsLoading && !fetchImgUrlsDispatched) {
-      setFetchImgUrlsDispatched(true);
+    if (imageFileIds?.length && !imgUrlsLoaded && !imgUrlsLoading) {
       fetchImgUrls(imageFileIds);
     }
-  }, [imageFileIds, imgUrlsLoading, fetchImgUrlsDispatched, client, dispatch]);
+  }, [imageFileIds, imgUrlsLoading, imgUrlsLoaded, client, dispatch]);
 
   const redirectHome = () => {
     if (!goHomeDispatched) {

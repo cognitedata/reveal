@@ -19,7 +19,7 @@ const TilePreviewImage: React.FC<Props> = ({ imageFileId }) => {
       {loading ? (
         <Icon type="Loading" />
       ) : (
-        <img src={downloadUrl} alt="Board preview" />
+        downloadUrl && <img src={downloadUrl} alt="Board preview" />
       )}
     </ImgPreview>
   );

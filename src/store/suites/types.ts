@@ -20,6 +20,7 @@ export enum SuitesTableActionTypes {
   FETCH_IMG_URLS = 'FETCH_IMG_URLS',
   FETCHED_IMG_URLS = 'FETCHED_IMG_URLS',
   FETCH_IMG_URLS_ERROR = 'FETCH_IMG_URLS_ERROR',
+  CLEAR_IMG_URLS = 'CLEAR_IMG_URLS',
 }
 
 export type SuitesTableRootAction = ActionType<typeof actions>;
@@ -59,6 +60,7 @@ export type ImgUrlLink = FileLink & IdEither;
 
 export type ImgUrls = {
   loading: boolean;
+  loaded: boolean;
   urls: ImgUrlLink[];
 };
 
