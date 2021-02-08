@@ -14906,10 +14906,10 @@ react-virtualized-auto-sizer@^1.0.2, react-virtualized-auto-sizer@^1.0.4:
   resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.4.tgz#2b83adb5ecdee8dcb33784e96ee0074eb5369665"
   integrity sha512-fdrY0ZX4Ywv0IIYPY/grQXcVQ44OLOsftl2u81coKe2Ga1wT3ps4JXaeu1JdlfjQxDI5BVsWjZQbpzmjmtI7Qw==
 
-react-window-infinite-loader@^1.0.5:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/react-window-infinite-loader/-/react-window-infinite-loader-1.0.6.tgz#bf0903a1877385248a0a7a5edcad92a7cc5905ed"
-  integrity sha512-gFn/Yxw5UXnLCbGYnAraIDj8dGpEQmpt578TRocFShgpDt1symccHnTllLveu1r0FAoKIJz6TQRqQC1qp+qFyw==
+react-window-infinite-loader@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/react-window-infinite-loader/-/react-window-infinite-loader-1.0.7.tgz#958ef1a689d20dce122ef377583acd987760aee8"
+  integrity sha512-wg3LWkUpG21lhv+cZvNy+p0+vtclZw+9nP2vO6T9PKT50EN1cUq37Dq6FzcM38h/c2domE0gsUhb6jHXtGogAA==
 
 react-window@^1.8.2, react-window@^1.8.6:
   version "1.8.6"
