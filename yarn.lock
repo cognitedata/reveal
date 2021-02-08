@@ -7918,10 +7918,10 @@ i18next-locize-backend@^4.1.1, i18next-locize-backend@^4.1.8:
   dependencies:
     node-fetch "2.6.1"
 
-i18next-pseudo@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/i18next-pseudo/-/i18next-pseudo-2.2.0.tgz#89cf29339b07a18251dc48168beceab1ad838517"
-  integrity sha512-nEZlbvxJaOCdX5rNOpwRKWk3U8I1ElnYRQOhnU/cRnv+2HyBnS8tm9yKAT9Y3yI/cnWYx+dAMghZFX48XgLBvg==
+i18next-pseudo@^2.2.0, i18next-pseudo@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/i18next-pseudo/-/i18next-pseudo-2.2.1.tgz#f926587a10e37b0ab525fc3330133dbf134ead76"
+  integrity sha512-wGybHZl+D7GXZLxLAWN5AhyrmVBxPd5kPpHgcgPw1yOoJcEEvxRk5+ZpbaAc8R59JHeyXLl99rWIXdg/zCvKFQ==
   dependencies:
     i18next "^19.1.0"
 
