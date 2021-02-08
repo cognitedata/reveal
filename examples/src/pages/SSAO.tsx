@@ -80,12 +80,6 @@ export function SSAO() {
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
-      // const ssaoParameters: SsaoParameters = {
-      //   sampleRadius: 1.0,
-      //   sampleSize: 32,
-      //   depthCheckBias: 0.0125
-      // };
-
       const renderOptions = defaultRenderOptions;
 
       const updateEffect = () => {

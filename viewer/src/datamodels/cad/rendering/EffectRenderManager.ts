@@ -557,11 +557,17 @@ export class EffectRenderManager {
       bias: { value: params?.depthCheckBias ?? defaultSsaoParameters.depthCheckBias! }
     };
 
+    this._ssaoMaterial.uniformsNeedUpdate = true;
+
     if (params?.sampleSize !== this._renderOptions.ssaoRenderParameters?.sampleSize) {
       const sampleSize = params?.sampleSize ?? defaultSsaoParameters.sampleSize!;
 
       const kernel = this.createKernel(sampleSize);
-      this._ssaoMaterial.uniforms.kernel.value = kernel;
+
+      this._ssaoMaterial.uniforms = {
+        ...this._ssaoMaterial.uniforms,
+        kernel: { value: kernel }
+      };
 
       this._ssaoMaterial.defines = {
         MAX_KERNEL_SIZE: sampleSize

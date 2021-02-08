@@ -10,17 +10,9 @@ import { defaultRenderOptions } from '@cognite/reveal';
 export function SsaoTestPage() {
   return (
     <TestViewer
-      modifyTestEnv={({renderer, revealManager, scene, camera }: TestEnvCad) => {
+      modifyTestEnv={({revealManager }: TestEnvCad) => {
         
-        //revealManager.render(renderer, camera, scene);
-
-        const renderOptions = defaultRenderOptions;
-
-        renderOptions.ssaoRenderParameters.depthCheckBias = 0.0125;
-        renderOptions.ssaoRenderParameters.sampleRadius = 2.0;
-        renderOptions.ssaoRenderParameters.sampleSize = 64;
-
-        revealManager.renderOptions = renderOptions;
+        revealManager.renderOptions = defaultRenderOptions;
 
         return {
           cameraConfig: {
