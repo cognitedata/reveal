@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { IndexSet } from '../../../utilities/IndexSet';
 
-import { OutlineColor } from '../NodeAppearance';
+import { NodeAppearance, OutlineColor } from '../NodeAppearance';
 import { FixedNodeSet } from './FixedNodeSet';
 
 import { NodeSet } from './NodeSet';
@@ -121,5 +121,20 @@ describe('NodeStyleTextureBuilder', () => {
 
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([]));
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([0]));
+  });
+
+  test('add then remove index from set, resets styling', () => {
+    const set = new FixedNodeSet(new IndexSet([0]));
+    const style: NodeAppearance = { color: [127, 128, 192], visible: false };
+    styleProvider.addStyledSet(set, style);
+
+    builder.build();
+    let texels = Array.from(builder.overrideColorPerTreeIndexTexture.image.data);
+    expect(texels).toEqual([127, 128, 192, 0]);
+
+    set.updateSet(new IndexSet([]));
+    builder.build();
+    texels = Array.from(builder.overrideColorPerTreeIndexTexture.image.data);
+    expect(texels).toEqual([0, 0, 0, 1]);
   });
 });

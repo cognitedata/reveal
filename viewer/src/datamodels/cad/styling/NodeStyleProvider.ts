@@ -7,16 +7,33 @@ import { EventTrigger } from '../../../utilities/events';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
-export type ApplyStyleDelegate = (styleId: number, treeIndices: IndexSet, apperance: NodeAppearance) => void;
+/**
+ * Delegate for applying styles in {@see NodeStyleProvider}.
+ * @param styleId     Unique identifier of style being applied to distinguish/identify sets
+ *                    between multiple calls.
+ * @param revision    Running number that is incremented whenever the styled set changes.
+ *                    Can be used to identify if a set has been changed.
+ * @param treeIndices Set of tree indices that the style is applied to.
+ * @param appearance  Style to be applied to the nodes.
+ */
+export type ApplyStyleDelegate = (
+  styleId: number,
+  revision: number,
+  treeIndices: IndexSet,
+  appearance: NodeAppearance
+) => void;
+
+type StyledSet = {
+  styleId: number;
+  revision: number;
+  nodeSet: NodeSet;
+  appearance: NodeAppearance;
+  handleNodeSetChangedListener: () => void;
+};
 
 export class NodeStyleProvider {
-  private _styledSet = new Array<{ styleId: number; nodeSet: NodeSet; appearance: NodeAppearance }>();
-  private _handleNodeSetChangedListener: () => void;
+  private _styledSet = new Array<StyledSet>();
   private _changedEvent = new EventTrigger<() => void>();
-
-  constructor() {
-    this._handleNodeSetChangedListener = this.handleNodeSetChanged.bind(this);
-  }
 
   on(_event: 'changed', listener: () => void) {
     this._changedEvent.subscribe(listener);
@@ -27,9 +44,18 @@ export class NodeStyleProvider {
   }
 
   addStyledSet(nodeSet: NodeSet, appearance: NodeAppearance) {
-    const styleId = this._styledSet.length + 1;
-    this._styledSet.push({ styleId, nodeSet, appearance });
-    nodeSet.on('changed', this._handleNodeSetChangedListener);
+    const styledSet: StyledSet = {
+      styleId: this._styledSet.length + 1,
+      revision: 0,
+      nodeSet,
+      appearance,
+      handleNodeSetChangedListener: () => {
+        this.handleNodeSetChanged(styledSet);
+      }
+    };
+
+    this._styledSet.push(styledSet);
+    nodeSet.on('changed', styledSet.handleNodeSetChangedListener);
     this.notifyChanged();
   }
 
@@ -38,16 +64,17 @@ export class NodeStyleProvider {
     if (index === -1) {
       throw new Error('Node set not added');
     }
+    const styledSet = this._styledSet[index];
 
     this._styledSet.splice(index, 1);
-    nodeSet.off('changed', this._handleNodeSetChangedListener);
+    nodeSet.off('changed', styledSet.handleNodeSetChangedListener);
     this.notifyChanged();
   }
 
   applyStyles(applyCb: ApplyStyleDelegate) {
-    this._styledSet.forEach(x => {
-      const set = x.nodeSet.getIndexSet();
-      applyCb(x.styleId, set, x.appearance);
+    this._styledSet.forEach(styledSet => {
+      const set = styledSet.nodeSet.getIndexSet();
+      applyCb(styledSet.styleId, styledSet.revision, set, styledSet.appearance);
     });
   }
 
@@ -55,7 +82,8 @@ export class NodeStyleProvider {
     this._changedEvent.fire();
   }
 
-  private handleNodeSetChanged() {
+  private handleNodeSetChanged(styledSet: StyledSet) {
+    styledSet.revision++;
     this.notifyChanged();
   }
 }

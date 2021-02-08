@@ -106,7 +106,7 @@ export class MaterialManager {
   updateMaterials(modelIdentifier: string) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     if (wrapper.textureBuilder.needsUpdate) {
-      console.log('Updating materials for ', modelIdentifier);
+      const start = performance.now();
       const { textureBuilder, materials } = wrapper;
       textureBuilder.build();
 
@@ -119,6 +119,7 @@ export class MaterialManager {
         material.uniforms.transformOverrideTexture.value = transformsLookupTexture;
         material.uniforms.transformOverrideTextureSize.value = transformsLookupTextureSize;
       });
+      console.log('Updating materials for ', modelIdentifier, 'took', performance.now() - start, 'ms');
     }
   }
 

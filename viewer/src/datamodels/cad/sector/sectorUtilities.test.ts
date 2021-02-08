@@ -16,7 +16,13 @@ import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../
 import 'jest-extended';
 
 describe('sectorUtilities', () => {
-  const materials = createMaterials(10, RenderMode.Color, []);
+  const materials = createMaterials(
+    RenderMode.Color,
+    [],
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4)
+  );
 
   describe('consumeSectorDetailed', () => {
     const metadata: SectorMetadata = {

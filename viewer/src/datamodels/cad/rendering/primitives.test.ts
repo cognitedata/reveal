@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { SectorGeometry } from '../sector/types';
 import { createPrimitives } from './primitives';
 import { createEmptySector } from '../../../__testutilities__/emptySector';
@@ -39,7 +41,13 @@ function createMockAttributeBufferFromAttributes(attributes: Map<string, ParsePr
 }
 
 describe('createPrimitives', () => {
-  const materials = createMaterials(64, RenderMode.Color, []);
+  const materials = createMaterials(
+    RenderMode.Color,
+    [],
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4)
+  );
   let emptySector: SectorGeometry;
   let mockAttributes: Map<string, ParsePrimitiveAttribute>;
   let mockAttributeBuffer: Uint8Array;

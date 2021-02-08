@@ -62,20 +62,22 @@ export class IndexSet {
     }
   }
 
-  intersectWith(other: IndexSet): void {
+  intersectWith(other: IndexSet): IndexSet {
     for (const index of this._indices) {
       if (!other.contains(index)) {
         this.remove(index);
       }
     }
+    return this;
   }
 
-  differenceWith(other: IndexSet): void {
+  differenceWith(other: IndexSet): IndexSet {
     for (const index of other._indices) {
       if (this.contains(index)) {
         this.remove(index);
       }
     }
+    return this;
   }
 
   toArray(): number[] {

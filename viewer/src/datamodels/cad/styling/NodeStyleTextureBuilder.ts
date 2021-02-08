@@ -7,12 +7,13 @@ import { NumericRange } from '../../../utilities';
 
 import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
 
-import { NodeAppearance } from '../NodeAppearance';
+import { DefaultNodeAppearance, NodeAppearance } from '../NodeAppearance';
 import { TransformOverrideBuffer } from '../rendering/TransformOverrideBuffer';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 
 export class NodeStyleTextureBuilder {
+  private readonly _defaultStyle: NodeAppearance | undefined;
   private readonly _styleProvider: NodeStyleProvider;
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
@@ -25,10 +26,11 @@ export class NodeStyleTextureBuilder {
   private readonly _infrontNodesTreeIndices: IndexSet;
 
   constructor(treeIndexCount: number, styleProvider: NodeStyleProvider) {
+    this._defaultStyle = DefaultNodeAppearance.NoOverrides;
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
 
-    const textures = allocateTextures(treeIndexCount);
+    const textures = allocateTextures(treeIndexCount, this._defaultStyle);
     this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
     this._overrideTransformPerTreeIndexTexture = textures.transformOverrideIndexTexture;
     this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
@@ -84,21 +86,70 @@ export class NodeStyleTextureBuilder {
     this._overrideTransformPerTreeIndexTexture.dispose();
   }
 
+  private readonly _currentlyAppliedStyles = new Map<number, { revision: number; treeIndices: IndexSet }>();
+
   build() {
+    const defaultColorRgba = appearanceToColorOverride(this._defaultStyle);
+    const defaultTransformLookupIndexRgb: [number, number, number] = [0, 0, 0]; // Special value for no transform
+
+    const appliedStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
     // TODO 2021-02-04 larsmoa: Currently transform overrides are never removed
-    this._styleProvider.applyStyles((styleId, treeIndices, style) => {
+    this._styleProvider.applyStyles((styleId, revision, treeIndices, style) => {
+      const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
+      if (currentlyApplied !== undefined && currentlyApplied.revision === revision) {
+        // Unchanged - nothing to do
+        return;
+      }
+
+      // Translate from style to magic values in textures
       const colorRgba = appearanceToColorOverride(style);
       const transformLookupIndexRgb = appearanceToTransformOverride(styleId, style, this._transformOverrideBuffer);
 
-      applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
-      applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformLookupIndexRgb);
+      if (currentlyApplied !== undefined) {
+        // Apply difference (new revision)
+        const addedTreeIndices = treeIndices.clone().differenceWith(currentlyApplied.treeIndices);
+        const removedTreeIndices = currentlyApplied.treeIndices.differenceWith(treeIndices); // Note! We reuse the set here to avoid GC
 
-      const infront = !!style.renderInFront;
-      const ghosted = !!style.renderGhosted;
-      updateLookupSet(this._infrontNodesTreeIndices, treeIndices, infront);
-      updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, ghosted);
-      updateLookupSet(this._regularNodesTreeIndices, treeIndices, !infront && !ghosted);
+        applyRGBA(this._overrideColorPerTreeIndexTexture, removedTreeIndices, defaultColorRgba);
+        applyRGBA(this._overrideColorPerTreeIndexTexture, addedTreeIndices, colorRgba);
+        applyRGB(this._overrideTransformPerTreeIndexTexture, removedTreeIndices, defaultTransformLookupIndexRgb);
+        applyRGB(this._overrideTransformPerTreeIndexTexture, addedTreeIndices, transformLookupIndexRgb);
+
+        const infront = !!style.renderInFront;
+        const ghosted = !!style.renderGhosted;
+
+        updateLookupSet(this._infrontNodesTreeIndices, addedTreeIndices, infront);
+        updateLookupSet(this._ghostedNodesTreeIndices, addedTreeIndices, ghosted);
+        updateLookupSet(this._regularNodesTreeIndices, addedTreeIndices, !infront && !ghosted);
+
+        if (infront) {
+          updateLookupSet(this._infrontNodesTreeIndices, removedTreeIndices, false);
+        }
+        if (ghosted) {
+          updateLookupSet(this._ghostedNodesTreeIndices, removedTreeIndices, false);
+        }
+        if (infront || ghosted) {
+          updateLookupSet(this._regularNodesTreeIndices, removedTreeIndices, true);
+        }
+      } else if (currentlyApplied === undefined) {
+        // The first time this style is applied
+        applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
+        applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformLookupIndexRgb);
+
+        const infront = !!style.renderInFront;
+        const ghosted = !!style.renderGhosted;
+        updateLookupSet(this._infrontNodesTreeIndices, treeIndices, infront);
+        updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, ghosted);
+        updateLookupSet(this._regularNodesTreeIndices, treeIndices, !infront && !ghosted);
+      }
+
+      appliedStyleIds.delete(styleId);
+      this._currentlyAppliedStyles.set(styleId, { revision, treeIndices: treeIndices.clone() });
     });
+
+    // Clean up orphan styles
+    appliedStyleIds.forEach(styleId => this._currentlyAppliedStyles.delete(styleId));
+
     this._needsUpdate = false;
   }
 
@@ -112,15 +163,25 @@ export class NodeStyleTextureBuilder {
 }
 
 function allocateTextures(
-  treeIndexCount: number
+  treeIndexCount: number,
+  style: NodeAppearance | undefined
 ): { overrideColorPerTreeIndexTexture: THREE.DataTexture; transformOverrideIndexTexture: THREE.DataTexture } {
+  if (style !== undefined && style.worldTransform !== undefined) {
+    throw new Error('Cannot allocate textures with for style with default world transform');
+  }
+
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
+  const defaultColorRgba = appearanceToColorOverride(style);
+
   // Color and style override texture
   const colors = new Uint8Array(4 * textureElementCount);
   // Set alpha to 1
   for (let i = 0; i < textureElementCount; ++i) {
-    colors[4 * i + 3] = 1;
+    colors[4 * i + 0] = defaultColorRgba[0];
+    colors[4 * i + 1] = defaultColorRgba[1];
+    colors[4 * i + 2] = defaultColorRgba[2];
+    colors[4 * i + 3] = defaultColorRgba[3];
   }
   const overrideColorPerTreeIndexTexture = new THREE.DataTexture(colors, width, height);
 
@@ -136,7 +197,10 @@ function allocateTextures(
   return { overrideColorPerTreeIndexTexture, transformOverrideIndexTexture };
 }
 
-function appearanceToColorOverride(appearance: NodeAppearance): [number, number, number, number] {
+function appearanceToColorOverride(appearance: NodeAppearance | undefined): [number, number, number, number] {
+  if (appearance === undefined) {
+    return [0, 0, 0, 1]; // Visible, no color override
+  }
   const [r, g, b] = appearance.color || [0, 0, 0];
   const isVisible = appearance.visible !== undefined ? !!appearance.visible : true;
   const inFront = !!appearance.renderInFront;
