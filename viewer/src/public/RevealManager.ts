@@ -89,7 +89,7 @@ export class RevealManager<TModelIdentifier> {
   }
 
   public get renderOptions(): RenderOptions {
-    return this._renderOptions;
+    return this._effectRenderManager.renderOptions;
   }
 
   public set renderOptions(options: RenderOptions) {
