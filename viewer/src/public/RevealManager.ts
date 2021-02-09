@@ -46,7 +46,6 @@ export class RevealManager<TModelIdentifier> {
 
   private readonly _updateSubject: Subject<void>;
 
-  private _renderOptions: RenderOptions;
 
   constructor(
     cadManager: CadManager<TModelIdentifier>,
