@@ -4035,17 +4035,17 @@
     "@types/react" "*"
     prop-types "^15.5.7"
 
-"@visx/grid@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@visx/grid/-/grid-1.2.0.tgz#ed02a5d75278641d5499295c95824fb2b224a322"
-  integrity sha512-JygMeVTb/X4mIRRlbdlH9r55iC6fxKsEWNWwbwjLKOGrLKqAM7Nsgneqo2cwBDlo/1FH7bKUrrgztFLSDkgryQ==
+"@visx/grid@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@visx/grid/-/grid-1.4.0.tgz#802ab931568c92f1bd551e7af371f9791fae7fdf"
+  integrity sha512-POwnGByfqYlZc5MOHU2I8RFXA5qO97LVx8ibSXLk2cV44Uoif7zHwQMZ+qup3JpYDKhtvjdO6GkBJ4UCE0apmg==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
     "@visx/group" "1.0.0"
     "@visx/point" "1.0.0"
-    "@visx/scale" "1.1.0"
-    "@visx/shape" "1.2.0"
+    "@visx/scale" "1.4.0"
+    "@visx/shape" "1.4.0"
     classnames "^2.2.5"
     prop-types "^15.6.2"
 
