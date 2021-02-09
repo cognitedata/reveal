@@ -12,7 +12,7 @@ import {
 } from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBoardsBySuite, getSuitesTableState } from 'store/suites/selectors';
-import { isAdmin } from 'store/groups/selectors';
+import { getGroupsState, isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
@@ -29,8 +29,11 @@ const SuiteOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const dispatch = useDispatch<RootDispatcher>();
-  const admin = useSelector(isAdmin);
   const client = useContext(CdfClientContext);
+
+  const admin = useSelector(isAdmin);
+  const { filter: groupsFilter } = useSelector(getGroupsState);
+  const canEdit = admin && !groupsFilter?.length;
 
   const {
     loading: suitesLoading,
@@ -104,7 +107,7 @@ const SuiteOverview: React.FC = () => {
       <Title as={StyledTitle} level={5}>
         {title}
       </Title>
-      {admin && <SuiteMenu dataItem={suite} />}
+      {canEdit && <SuiteMenu dataItem={suite} />}
     </>
   );
   return (
@@ -112,7 +115,7 @@ const SuiteOverview: React.FC = () => {
       <Suitebar
         leftCustomHeader={<Header />}
         actionButton={
-          admin && (
+          canEdit && (
             <Button
               variant="outline"
               type="secondary"

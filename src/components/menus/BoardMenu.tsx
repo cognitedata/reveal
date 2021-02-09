@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
 import { useClickAwayListener } from 'hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import { isAdmin } from 'store/groups/selectors';
+import { getGroupsState, isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
@@ -21,7 +21,10 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     isComponentVisible,
     setIsComponentVisible,
   } = useClickAwayListener(false);
+
   const admin = useSelector(isAdmin);
+  const { filter: groupsFilter } = useSelector(getGroupsState);
+  const canEdit = admin && !groupsFilter?.length;
 
   const handleMenuOpen = (event: React.MouseEvent) => {
     // prevent from cliking on link
@@ -53,7 +56,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
       <ActionsContainer>
         {isComponentVisible && (
           <Menu>
-            {admin && (
+            {canEdit && (
               <>
                 <Menu.Item>
                   <MenuItemContent
