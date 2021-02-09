@@ -2,6 +2,8 @@
 
 variant="${1:-development}"
 
+export REACT_APP_RELEASE_DATE="$(date +%s)"
+
 case "$variant": in
   dev*) # development
     export REACT_APP_ENV="development"

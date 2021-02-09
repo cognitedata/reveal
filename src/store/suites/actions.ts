@@ -43,3 +43,6 @@ export const fetchedImgUrls = createAction(
 export const fetchImgUrlsError = createAction(
   SuitesTableActionTypes.FETCH_IMG_URLS_ERROR
 )<Error>();
+export const clearImgUrls = createAction(
+  SuitesTableActionTypes.CLEAR_IMG_URLS
+)<void>();

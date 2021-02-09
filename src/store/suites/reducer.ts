@@ -8,6 +8,7 @@ import {
 
 const getInitialImageUrls = () => ({
   loading: false,
+  loaded: false,
   urls: [],
 });
 
@@ -31,7 +32,11 @@ export const SuitesReducer = createReducer(initialState)
   )
   .handleAction(
     SuitesTableActionTypes.SUITES_TABLE_LOAD,
-    (state: SuitesTableState) => ({ ...state, loading: true, error: '' })
+    (state: SuitesTableState) => ({
+      ...state,
+      loading: true,
+      error: '',
+    })
   )
   .handleAction(
     SuitesTableActionTypes.SUITES_TABLE_LOADED,
@@ -85,6 +90,7 @@ export const SuitesReducer = createReducer(initialState)
       ...state,
       imageUrls: {
         loading: true,
+        loaded: false,
         urls: [],
       },
     })
@@ -95,6 +101,7 @@ export const SuitesReducer = createReducer(initialState)
       ...state,
       imageUrls: {
         loading: false,
+        loaded: true,
         urls: action.payload as ImgUrlLink[],
       },
     })
@@ -105,7 +112,15 @@ export const SuitesReducer = createReducer(initialState)
       ...state,
       imageUrls: {
         loading: false,
+        loaded: false,
         urls: [], // silent mode. track to Sentry?
       },
+    })
+  )
+  .handleAction(
+    SuitesTableActionTypes.CLEAR_IMG_URLS,
+    (state: SuitesTableState) => ({
+      ...state,
+      imageUrls: getInitialImageUrls(),
     })
   );
