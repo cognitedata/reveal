@@ -26,10 +26,11 @@ export enum AntiAliasingMode {
  * SSAO rendering quality modes supported by Reveal.
  */
 export enum SsaoSampleQuality {
-  Default = 32,
+  Medium = 32,
   High = 64,
   VeryHigh = 128,
-  None = 1
+  None = 1,
+  Default = Medium
 }
 
 /**
