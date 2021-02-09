@@ -54,7 +54,7 @@ export class RevealManager<TModelIdentifier> {
   ) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
-    this._renderOptions = renderOptions;
+    this.renderOptions = renderOptions;
     this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager, renderOptions);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
     this._updateSubject = new Subject();
