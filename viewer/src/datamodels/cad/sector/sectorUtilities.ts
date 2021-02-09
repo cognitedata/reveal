@@ -43,11 +43,6 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
   }
 
-  // TODO j-bjorne 16-04-2020: Should move this to some debug utils and attach it to pipe
-  // const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
-  // const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
-  // boundsRenderer.name = `Bounding box ${sectorId}`;
-
   const geometry = new THREE.InstancedBufferGeometry();
 
   const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(sector.buffer, stride);
