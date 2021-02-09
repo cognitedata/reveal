@@ -3979,18 +3979,18 @@
     "@typescript-eslint/types" "4.1.1"
     eslint-visitor-keys "^2.0.0"
 
-"@visx/axis@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.2.0.tgz#2f6aea2a171975b5f324120b0ef6294e4320f719"
-  integrity sha512-G0KOFCSJJHC+N6G89gp+9WMUtr0D0PMD7oH3+ST9NlAVf8QYvvTT6Yo72/UXE93UQ+eiTI+d/1TlEBetV5BlhQ==
+"@visx/axis@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.4.0.tgz#6a8737d0fb7d4313cf311f9c8b8071e7744b8e7c"
+  integrity sha512-VBq170tBu+PJ1XJLk6xwzmNEXrqriaSiaP808peR3oArXd0yMOgmI+HKm18qzPS2hbdRgxZNQOnlDZvB43H95w==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
     "@visx/group" "1.0.0"
     "@visx/point" "1.0.0"
-    "@visx/scale" "1.1.0"
-    "@visx/shape" "1.2.0"
-    "@visx/text" "1.1.0"
+    "@visx/scale" "1.4.0"
+    "@visx/shape" "1.4.0"
+    "@visx/text" "1.3.0"
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
@@ -4095,22 +4095,10 @@
     d3-scale "^3.0.1"
     d3-time "^1.1.0"
 
-"@visx/scale@1.4.0":
+"@visx/scale@1.4.0", "@visx/scale@^1.1.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@visx/scale/-/scale-1.4.0.tgz#16cf4ba63dbc595e446397f5bf262591ffe9efd6"
   integrity sha512-uNy/hsZCmCtL1hC7rTasMUtf9/faG/QcXNtQioe6VYwtbZxCMR53+yvz3W1oqAW8Y0bslGfKRMzT8T29OjAD/g==
-  dependencies:
-    "@types/d3-interpolate" "^1.3.1"
-    "@types/d3-scale" "^3.2.1"
-    "@types/d3-time" "^1.0.10"
-    d3-interpolate "^1.4.0"
-    d3-scale "^3.2.3"
-    d3-time "^1.1.0"
-
-"@visx/scale@^1.1.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@visx/scale/-/scale-1.3.0.tgz#6b48537d4ee29a4a565de5a85d39b7ca1f89b572"
-  integrity sha512-u7ksnRs4UE0Q0sydTCcK4SYX+X9deQoAQ9wc6tYUKBspzFeYejIP+NO4fRTtjLsKpYFXad34HKW7vErL7f8FZg==
   dependencies:
     "@types/d3-interpolate" "^1.3.1"
     "@types/d3-scale" "^3.2.1"
@@ -4157,10 +4145,10 @@
     lodash "^4.17.15"
     prop-types "^15.5.10"
 
-"@visx/text@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@visx/text/-/text-1.1.0.tgz#da5a89e00014963e58a5a2150c360a7ea935fb7e"
-  integrity sha512-uESE4spCqQUo7Qia+7rAFU5X8Xe1FN/SR5TVeulufih5oQkiDFhu1KL79VUFsb9sZe9D6iQ85GiGuKwErPczRQ==
+"@visx/text@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@visx/text/-/text-1.3.0.tgz#8ad1afe6819b32c3ab903ca85a32011ea4e223a6"
+  integrity sha512-fmFZ1S26DOH6u5ublcY33GmCBMyUufh9Mna8i30YZkS6kk7WO7ZCxMR9fVF71hrZ+rYWLylswXGwzL95LroE8g==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/lodash" "^4.14.160"
