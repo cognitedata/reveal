@@ -103,6 +103,8 @@ export class Cognite3DViewer {
   private readonly _domElement: HTMLElement;
   private readonly _renderer: THREE.WebGLRenderer;
 
+  private readonly _boundAnimate = this.animate.bind(this);
+
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
     click: new EventTrigger<PointerEventDelegate>(),
@@ -1168,7 +1170,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
+    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
 
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
