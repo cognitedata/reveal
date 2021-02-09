@@ -207,7 +207,6 @@ export function createMaterials(
     },
     vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.torusSegmentPrimitive.fragment,
-    // TODO we can drop the double sided rendering if we add end caps
     side: THREE.DoubleSide,
     transparent
   });
@@ -263,6 +262,7 @@ export function createMaterials(
         value: new THREE.Matrix4()
       }
     },
+    side: THREE.FrontSide,
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex,
     transparent
