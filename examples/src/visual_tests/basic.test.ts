@@ -24,7 +24,7 @@ async function screenShotTest(url: string, snapshotName: string, failureThreshol
   const image = await canvas!.screenshot();
 
   expect(image).toMatchImageSnapshot({
-    failureThreshold: failureThreshold, // 0.1% of all pixels may differ
+    failureThreshold: failureThreshold,
     failureThresholdType: 'percent',
     customSnapshotIdentifier: snapshotName,
   });
