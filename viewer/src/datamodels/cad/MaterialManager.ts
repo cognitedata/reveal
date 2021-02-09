@@ -99,7 +99,6 @@ export class MaterialManager {
     this.applyToAllMaterials(material => {
       material.uniforms.renderMode.value = mode;
       material.transparent = transparent;
-      material.side = THREE.DoubleSide;
     });
   }
 
