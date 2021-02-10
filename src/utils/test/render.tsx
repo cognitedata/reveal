@@ -9,9 +9,9 @@ import { ApiClientProvider } from 'providers/ApiClientProvider';
 import { TenantProvider } from 'providers/TenantProvider';
 import { BrowserRouter } from 'react-router-dom';
 import { StoreState } from 'store/types';
-import { createMockStore } from './store';
 import { CdfClient } from 'utils/cdfClient';
 import { ApiClient } from 'utils/apiClient';
+import { createMockStore } from './store';
 
 export default (
   ui: React.ReactNode,
