@@ -11,7 +11,7 @@ const RETRIES = parseInt(process.env.RETRIES!) || 3;
 
 jest.retryTimes(RETRIES);
 
-async function screenShotTest(url: string, snapshotName: string, failureThreshold = 0.001) {
+async function screenShotTest(url: string, snapshotName: string, blur = 0) {
   const testPage = await browser.newPage();
 
   await testPage.goto(url, {
@@ -24,9 +24,11 @@ async function screenShotTest(url: string, snapshotName: string, failureThreshol
   const image = await canvas!.screenshot();
 
   expect(image).toMatchImageSnapshot({
-    failureThreshold: failureThreshold,
+    failureThreshold: 0.001,
     failureThresholdType: 'percent',
     customSnapshotIdentifier: snapshotName,
+    comparisonMethod: 'ssim',
+    blur: blur
   });
 
   await testPage.close();
@@ -44,10 +46,10 @@ describe('Reveal visual tests', () => {
     const snapshotName = 'cad_' + test;
     const url = `http://localhost:3000` + cadTestBasePath + test;
     
-    const failureThreshold = (test === 'ssao') ? 0.05 : 0.001;
+    const blur = (test === 'ssao') ? 2 : 0;
 
     retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
-      await screenShotTest(url, snapshotName, failureThreshold);
+      await screenShotTest(url, snapshotName, blur);
     });
   });
 
