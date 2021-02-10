@@ -26,7 +26,7 @@ describe('AppHeader', () => {
         isAdmin: true,
         filter: ['dc-team-developers'],
       });
-      render(<AppHeader />, { groups: groupsState });
+      render(<AppHeader />, { state: { groups: groupsState } });
 
       const broupPreviewBar = screen.queryByTestId('user-group-preview-bar');
       expect(broupPreviewBar).toBeTruthy();
@@ -36,7 +36,7 @@ describe('AppHeader', () => {
       const groupsState: GroupsState = merge({}, groupsInitialStore, {
         groups: devUserGroups,
       });
-      render(<AppHeader />, { groups: groupsState });
+      render(<AppHeader />, { state: { groups: groupsState } });
 
       const broupPreviewBar = screen.queryByTestId('user-group-preview-bar');
       expect(broupPreviewBar).toBeFalsy();
@@ -48,7 +48,7 @@ describe('AppHeader', () => {
         groups: allUserGroups,
         isAdmin: true,
       });
-      render(<AppHeader />, { groups: groupsState });
+      render(<AppHeader />, { state: { groups: groupsState } });
 
       const previewIcon = await screen.findByTestId(
         'select-group-preview-menu'
@@ -69,7 +69,7 @@ describe('AppHeader', () => {
         isAdmin: true,
         filter: [selectedGroupName],
       });
-      render(<AppHeader />, { groups: groupsState });
+      render(<AppHeader />, { state: { groups: groupsState } });
 
       const clearViewBtn = screen.queryByText('Clear view');
       expect(clearViewBtn).toBeTruthy();
