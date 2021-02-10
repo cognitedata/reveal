@@ -233,9 +233,14 @@ export class EffectRenderManager {
       fragmentShader: ssaoBlurCombineShaders.fragment
     });
 
+    const diffuseTexture =
+      isWebGL2 || renderer.extensions.has('EXT_frag_depth')
+        ? this._ssaoBlurTarget.texture
+        : this._compositionTarget.texture;
+
     this._fxaaMaterial = new THREE.ShaderMaterial({
       uniforms: {
-        tDiffuse: { value: this._ssaoBlurTarget.texture },
+        tDiffuse: { value: diffuseTexture },
         tDepth: { value: this._compositionTarget.depthTexture },
         resolution: { value: new THREE.Vector2() },
         inverseResolution: { value: new THREE.Vector2() }
@@ -330,6 +335,8 @@ export class EffectRenderManager {
         }
       }
 
+      const hasDepthWriteCapabilities = renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth');
+
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
           // Composite view
@@ -338,17 +345,24 @@ export class EffectRenderManager {
           // Anti-aliased version to screen
           renderer.autoClear = original.autoClear;
 
-          this._ssaoMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
-          this._ssaoMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
+          if (hasDepthWriteCapabilities) {
+            this.renderSsao(renderer, this._ssaoTarget, camera);
+            this.renderBlurredSsao(renderer, this._ssaoBlurTarget);
+          }
 
-          this.renderSsao(renderer, this._ssaoTarget);
-          this.renderBlurredSsao(renderer, this._ssaoBlurTarget);
           this.renderAntiAlias(renderer, this.renderTarget);
           break;
 
         case AntiAliasingMode.NoAA:
           renderer.autoClear = original.autoClear;
-          this.renderComposition(renderer, camera, this.renderTarget);
+
+          const compositionOutTarget = hasDepthWriteCapabilities ? this._compositionTarget : this.renderTarget;
+          this.renderComposition(renderer, camera, compositionOutTarget);
+
+          if (hasDepthWriteCapabilities) {
+            this.renderSsao(renderer, this._ssaoTarget, camera);
+            this.renderBlurredSsao(renderer, this.renderTarget);
+          }
           break;
 
         default:
@@ -570,7 +584,10 @@ export class EffectRenderManager {
     }
   }
 
-  private renderSsao(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
+  private renderSsao(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null, camera: THREE.Camera) {
+    this._ssaoMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
+    this._ssaoMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
+
     renderer.setRenderTarget(target);
     renderer.render(this._ssaoScene, this._orthographicCamera);
   }
