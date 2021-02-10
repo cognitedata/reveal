@@ -212,7 +212,6 @@ export class EffectRenderManager {
         kernel: { value: sampleKernel },
         sampleRadius: { value: sampleRadius },
         bias: { value: depthCheckBias },
-        numberOfSamples: { value: numberOfSamples },
         projMatrix: { value: new THREE.Matrix4() },
         inverseProjectionMatrix: { value: new THREE.Matrix4() },
         resolution: { value: new THREE.Vector2() }
@@ -549,25 +548,19 @@ export class EffectRenderManager {
   }
 
   private setSsaoParameters(params: SsaoParameters | undefined) {
+    if (!this._isInitialized) return;
+
     const defaultSsaoParameters = defaultRenderOptions.ssaoRenderParameters;
 
-    this._ssaoMaterial.uniforms = {
-      ...this._ssaoMaterial.uniforms,
-      sampleRadius: { value: params?.sampleRadius ?? defaultSsaoParameters.sampleRadius! },
-      bias: { value: params?.depthCheckBias ?? defaultSsaoParameters.depthCheckBias! }
-    };
-
-    this._ssaoMaterial.uniformsNeedUpdate = true;
+    this._ssaoMaterial.uniforms.sampleRadius.value = params?.sampleRadius ?? defaultSsaoParameters.sampleRadius!;
+    this._ssaoMaterial.uniforms.bias.value = params?.depthCheckBias ?? defaultSsaoParameters.depthCheckBias!;
 
     if (params?.sampleSize !== this._renderOptions.ssaoRenderParameters?.sampleSize) {
       const sampleSize = params?.sampleSize ?? defaultSsaoParameters.sampleSize!;
 
       const kernel = this.createKernel(sampleSize);
 
-      this._ssaoMaterial.uniforms = {
-        ...this._ssaoMaterial.uniforms,
-        kernel: { value: kernel }
-      };
+      this._ssaoMaterial.uniforms.kernel.value = kernel;
 
       this._ssaoMaterial.defines = {
         MAX_KERNEL_SIZE: sampleSize

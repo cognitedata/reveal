@@ -12,7 +12,6 @@ uniform vec2 resolution;
 
 uniform float sampleRadius;
 uniform float bias;
-uniform int numberOfSamples;
 
 vec3 viewPosFromDepth(float depth, vec2 uv) {
   // Depth to clip space: [0, 1] -> [-1, 1]
@@ -82,10 +81,6 @@ void main(){
 
   for (int i = 0; i < MAX_KERNEL_SIZE; i++){
     
-    if(i >= numberOfSamples){
-      break;
-    }
-
     vec3 sampleVector = TBN * kernel[i];
     sampleVector = viewPosition + sampleVector * sampleRadius;
 
@@ -101,7 +96,7 @@ void main(){
     occlusion += (realPos.z >= sampleVector.z + bias ? 1.0 : 0.0) * rangeCheck;
   }
 
-  float occlusionFactor = 1.0 - clamp(occlusion / float(numberOfSamples), 0.0, 1.0);
+  float occlusionFactor = 1.0 - clamp(occlusion / float(MAX_KERNEL_SIZE), 0.0, 1.0);
 
   gl_FragColor = vec4(vec3(occlusionFactor), 1.0);
 }

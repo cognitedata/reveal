@@ -81,7 +81,7 @@ export function SSAO() {
       revealManager.update(camera);
 
       const renderOptions = defaultRenderOptions;
-
+      
       const updateEffect = () => {
         revealManager.renderOptions = renderOptions;
       };
