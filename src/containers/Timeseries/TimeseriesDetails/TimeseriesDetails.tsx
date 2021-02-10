@@ -8,11 +8,7 @@ import {
   AssetsItem,
 } from 'components';
 
-export default function TimeseriesDetails({
-  timeseries,
-}: {
-  timeseries: Timeseries;
-}) {
+export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
   return (
     <DetailsTabGrid>
       <DetailsTabItem name="Name" value={timeseries.name} copyable />

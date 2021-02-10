@@ -22,7 +22,7 @@ type Props = {
   resourceType: ResourceType;
   onItemClicked: (id: number) => void;
 };
-export default function AnnotationTable({
+export function AnnotationTable({
   fileId,
   resourceType,
   onItemClicked,

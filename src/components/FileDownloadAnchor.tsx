@@ -5,7 +5,7 @@ import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
-export default function FileDownloadAnchor({
+export function FileDownloadAnchor({
   id,
   text,
   errorFeedback,

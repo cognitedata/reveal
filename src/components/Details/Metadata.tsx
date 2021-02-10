@@ -3,11 +3,7 @@ import { Input, Table } from 'antd';
 import { Checkbox } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-export default function Metadata({
-  metadata,
-}: {
-  metadata?: { [k: string]: string };
-}) {
+export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   const [query, setQuery] = useState('');
   const [hideEmpty, setHideEmpty] = useState(false);
 
