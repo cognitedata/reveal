@@ -2,13 +2,8 @@ import React from 'react';
 
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
-import {
-  getTitle as getResourceTypeTitle,
-  convertResourceType,
-  ResourceItem,
-  ResourceIcons,
-} from 'lib';
+import { Icon, Button } from '@cognite/cogs.js';
+import { convertResourceType, ResourceItem, ResourceIcons } from 'lib';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { lightGrey } from 'lib/utils/Colors';
@@ -76,16 +71,7 @@ export default function ResourceTitleRow({
           }}
         >
           <Space>
-            <Tooltip
-              content={`All ${getResourceTypeTitle(type)?.toLowerCase()}`}
-            >
-              <Button
-                icon="ArrowBack"
-                onClick={() =>
-                  history.push(createLink(`/explore/search/${type}/${id}`))
-                }
-              />
-            </Tooltip>
+            <Button icon="ArrowBack" onClick={() => history.goBack()} />
             <Divider type="vertical" style={{ height: '36px' }} />
           </Space>
         </div>
