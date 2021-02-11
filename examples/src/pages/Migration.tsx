@@ -74,7 +74,8 @@ export function Migration() {
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
-        antiAliasingHint: (urlParams.get('antialias') || undefined) as any
+        antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
+        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       });
       (window as any).viewer = viewer;
 
@@ -107,7 +108,9 @@ export function Migration() {
         modelId: 0,
         revisionId: 0,
         showSectorBoundingBoxes: false,
-        antiAliasing: urlParams.get('antialias')
+        antiAliasing: urlParams.get('antialias'),
+        ssaoQuality: urlParams.get('ssao')
+
       };
       function applySettingsToModels() {
         cadModels.forEach((m) => {
@@ -146,6 +149,14 @@ export function Migration() {
           urlParams.set('antialias', v);
           window.location.href = url.toString();
       });
+      gui.add(guiState, 'ssaoQuality', 
+        [
+          'disabled','medium','high','veryhigh'
+        ]).name('SSAO').onFinishChange(v => {
+          urlParams.set('ssao', v);
+          window.location.href = url.toString();
+      });
+
 
       const slicing = gui.addFolder('Slicing');
       

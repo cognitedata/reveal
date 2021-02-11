@@ -30,7 +30,13 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { DisposedDelegate, SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import {
+  DisposedDelegate,
+  SceneRenderedDelegate,
+  SectorNodeIdToTreeIndexMapLoadedEvent,
+  SsaoParameters,
+  SsaoSampleQuality
+} from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
@@ -1482,10 +1488,12 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   const revealOptions: RevealOptions = { internal: {} };
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
+  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
 
   revealOptions.renderOptions = {
     antiAliasing,
-    multiSampleCountHint: multiSampleCount
+    multiSampleCountHint: multiSampleCount,
+    ssaoRenderParameters
   };
   return revealOptions;
 }
@@ -1519,5 +1527,24 @@ function determineAntiAliasingMode(
     default:
       // Ensures there is a compile error if a case is missing
       assertNever(mode, `Unsupported anti-aliasing mode: ${mode}`);
+  }
+}
+
+type SsaoQuality = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;
+function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters | undefined {
+  switch (quality) {
+    case undefined:
+      return undefined;
+    case 'medium':
+      return { sampleSize: SsaoSampleQuality.Medium };
+    case 'high':
+      return { sampleSize: SsaoSampleQuality.High };
+    case 'veryhigh':
+      return { sampleSize: SsaoSampleQuality.VeryHigh };
+    case 'disabled':
+      return { sampleSize: SsaoSampleQuality.None };
+
+    default:
+      assertNever(quality, `Unexpected SSAO quality mode: '${quality}'`);
   }
 }
