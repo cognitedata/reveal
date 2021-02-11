@@ -6,6 +6,7 @@ import StatusFilterDropdown from './StatusFilterDropdown';
 import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 import { Run } from '../../model/Runs';
 import SorterIndicator from './SorterIndicator';
+import StatusMarkerWithError from '../integrations/cols/StatusMarkerWithError';
 
 export enum MonitoringTableHeadings {
   TIMESTAMP = 'Timestamp',
@@ -35,7 +36,16 @@ export const getMonitoringTableCol = (): Column<Run>[] => {
       Header: MonitoringTableHeadings.STATUS_RUN,
       accessor: 'status',
       Cell: ({ row }: Cell<Run>) => {
-        return <StatusMarker status={row.values.status} />;
+        return (
+          <>
+            {row.original.status && (
+              <StatusMarkerWithError
+                status={row.original.status}
+                tooltipText={row.original.message}
+              />
+            )}{' '}
+          </>
+        );
       },
       disableSortBy: true,
       Filter: StatusFilterDropdown,

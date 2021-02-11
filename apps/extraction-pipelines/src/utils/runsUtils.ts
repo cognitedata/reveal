@@ -9,6 +9,7 @@ const mapRuns = (response: RunResponse[] = []) => {
         timestamp: status.createdTime,
         status: undefined,
         statusSeen: Status.OK,
+        message: undefined,
         subRows: [],
       };
       const index = result.length;
@@ -19,6 +20,7 @@ const mapRuns = (response: RunResponse[] = []) => {
           break;
         case 'failure':
           run.status = Status.FAIL;
+          run.message = status.message;
           result.push(run);
           break;
         case 'seen':

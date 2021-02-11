@@ -1,4 +1,4 @@
-import { Status } from '../model/Status';
+import { Status } from './Status';
 
 export interface RunsAPIResponse {
   items: RunResponse[];
@@ -12,6 +12,8 @@ export interface RunResponse {
 }
 
 export interface StatusRow {
+  id: number;
+  message?: string;
   createdTime: number;
   status: string;
 }
@@ -24,4 +26,5 @@ export interface Run {
   timestamp: number;
   status: Status | undefined;
   statusSeen: Status;
+  message?: string;
 }
