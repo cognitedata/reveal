@@ -1275,10 +1275,10 @@
     jwt-decode "^3.1.2"
     lodash "^4.17.20"
 
-"@cognite/cogs.js@^2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.13.0.tgz#6db535943627e760983bee25f74cc444f8d31f20"
-  integrity sha512-SVpydgkFAeXgIQzc/Rdqp6Hi+fx3s3qiPullWL+VwW8ICM6TpFUMzHkGumGKt4bPZhdzs3C5vQL4OvYiTq1yMQ==
+"@cognite/cogs.js@^2.13.1":
+  version "2.13.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.13.1.tgz#6a244d25314e1628ec99144a33d8b9eecc5a78ae"
+  integrity sha512-A8qF0ceBzHe/2AEB30kTXWvc5QmnwAXc1iY/v7fF+YzPenYIBjhsq9wXE4BWj2dcN4/RhcH1T7I1eGbunapdTg==
   dependencies:
     "@tippyjs/react" "4.0.2"
     "@types/react-date-range" "^1.1.2"

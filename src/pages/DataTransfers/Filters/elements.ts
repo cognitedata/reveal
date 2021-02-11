@@ -30,6 +30,10 @@ export const FieldWrapper = styled.div`
   flex-direction: column;
   justify-content: flex-end;
 
+  .cogs-input {
+    text-align: left;
+  }
+
   .rc-tabs.rc-tabs-top.cogs-tabs {
     height: 38px;
   }

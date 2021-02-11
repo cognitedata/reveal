@@ -14,7 +14,7 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^2.13.0",
+    "@cognite/cogs.js": "^2.13.1",
     "@cognite/metrics": "^1.0.0",
     "@cognite/react-container": "^0.6.0",
     "@cognite/sdk": "^3.3.0",

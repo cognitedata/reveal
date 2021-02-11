@@ -74,6 +74,8 @@ export const RenderSecondaryFilters = ({
           showClose
           months={2}
           direction="horizontal"
+          startDatePlaceholder="From date"
+          endDatePlaceholder="To date"
           onChange={(range: Range) => {
             date.onSelectDate(range);
             closeFilters();
