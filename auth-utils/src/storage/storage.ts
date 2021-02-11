@@ -27,7 +27,7 @@ const FAKE_LOCAL_STORAGE = {
 
 const SAFE_LOCAL_STORAGE = localStorage || FAKE_LOCAL_STORAGE;
 
-const saveToLocalStorage = <T>(key: string, payload: T) => {
+export const saveToLocalStorage = <T>(key: string, payload: T) => {
   try {
     SAFE_LOCAL_STORAGE.setItem(key, JSON.stringify(payload));
   } catch (e) {
@@ -36,7 +36,7 @@ const saveToLocalStorage = <T>(key: string, payload: T) => {
   }
 };
 
-const getFromLocalStorage = <T>(key: string) => {
+export const getFromLocalStorage = <T>(key: string) => {
   try {
     const item = SAFE_LOCAL_STORAGE.getItem(key);
     if (!item) return undefined;

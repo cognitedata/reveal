@@ -68,7 +68,6 @@ class CogniteAuth {
     this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
 
     this.setupInitializing();
-
     this.initialize();
   }
 
@@ -84,7 +83,11 @@ class CogniteAuth {
           },
         });
         // eslint-disable-next-line no-empty
-      } catch {}
+      } catch {
+        this.state.error = true;
+        this.state.initializing = false;
+        this.publishAuthState();
+      }
     }
     if (this.options.adfs) {
       try {
@@ -97,7 +100,11 @@ class CogniteAuth {
           },
         });
         // eslint-disable-next-line no-empty
-      } catch {}
+      } catch {
+        this.state.error = true;
+        this.state.initializing = false;
+        this.publishAuthState();
+      }
     }
 
     if (this.isSignedIn()) {
@@ -120,26 +127,47 @@ class CogniteAuth {
     }
 
     if (this.initializingComplete) {
+      this.state.initializing = false;
+      this.publishAuthState();
       this.initializingComplete();
     }
   }
 
   private async initAADAuth(msalConfig: Configuration) {
     this.azureAdClient = new AzureAD(msalConfig, this.getCluster());
-    const account = await this.azureAdClient.loadAuthModule();
 
-    if (!account) {
+    try {
+      const account = await this.azureAdClient.loadAuthModule();
+
+      if (!account) {
+        this.state.initializing = false;
+        this.publishAuthState();
+        return;
+      }
+
+      const authResult = await this.azureAdClient.getProfileTokenRedirect();
+
+      if (authResult) {
+        this.state.authResult = {
+          authFlow: 'AZURE_AD',
+          idToken: authResult.idToken,
+        };
+      } else {
+        this.state.error = true;
+      }
+      const cdfAccessToken = await this.azureAdClient.getCDFToken();
+
+      if (cdfAccessToken && authResult) {
+        this.state.authResult = {
+          authFlow: 'AZURE_AD',
+          idToken: authResult.idToken,
+          accessToken: cdfAccessToken,
+        };
+      }
+    } catch (e) {
       this.state.error = true;
-      return;
-    }
-    const authResult = await this.azureAdClient.getProfileTokenRedirect();
-    const cdfAccessToken = await this.azureAdClient.getCDFToken();
-    if (authResult) {
-      this.state.authResult = {
-        authFlow: 'AZURE_AD',
-        accessToken: cdfAccessToken,
-        idToken: authResult.idToken,
-      };
+    } finally {
+      this.publishAuthState();
     }
   }
 
@@ -164,6 +192,7 @@ class CogniteAuth {
       tenant: this.state.project,
       initialising: this.state.initializing,
       token: this.state.authResult?.accessToken,
+      error: this.state.error,
     };
   }
 
@@ -326,4 +355,5 @@ export type AuthenticatedUser = {
   project?: string;
   tenant?: string;
   token?: string;
+  error?: boolean;
 };

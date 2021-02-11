@@ -5,11 +5,13 @@ import {
   Configuration,
   LogLevel,
   AccountInfo,
-  InteractionRequiredAuthError,
   EndSessionRequest,
   RedirectRequest,
   PopupRequest,
 } from '@azure/msal-browser';
+import { getFromLocalStorage, saveToLocalStorage } from '../storage';
+
+const PREFERRED_USER_KEY = 'cognite_prefered_ad_user';
 
 class AzureAD {
   private myMSALObj: PublicClientApplication; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/classes/_src_app_publicclientapplication_.publicclientapplication.html
@@ -19,10 +21,6 @@ class AzureAD {
   private loginRedirectRequest!: RedirectRequest; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_redirectrequest_.html
 
   private loginRequest!: PopupRequest; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_popuprequest_.html
-
-  private profileRedirectRequest!: RedirectRequest;
-
-  private profileRequest!: PopupRequest;
 
   private silentProfileRequest!: SilentRequest; // https://azuread.github.io/microsoft-authentication-library-for-js/ref/msal-browser/modules/_src_request_silentrequest_.html
 
@@ -90,21 +88,12 @@ class AzureAD {
     this.loginRequest = {
       scopes: this.userScopes,
       extraScopesToConsent: this.getCDFScopes(),
+      prompt: 'select_account',
     };
 
     this.loginRedirectRequest = {
       ...this.loginRequest,
       redirectStartPage: window.location.origin,
-    };
-
-    this.profileRequest = {
-      scopes: this.userScopes,
-      extraScopesToConsent: this.getCDFScopes(),
-    };
-
-    this.profileRedirectRequest = {
-      ...this.profileRequest,
-      redirectStartPage: window.location.href,
     };
 
     this.silentProfileRequest = {
@@ -132,32 +121,21 @@ class AzureAD {
    */
   getAccount(): AccountInfo | null {
     // need to call getAccount here?
-    const currentAccounts = this.myMSALObj.getAllAccounts();
-    if (currentAccounts === null) {
-      return null;
-    }
-
-    if (currentAccounts.length > 1) {
-      // Add choose account code here
-      return currentAccounts[0];
-    }
-    if (currentAccounts.length === 1) {
-      return currentAccounts[0];
+    const userId = getFromLocalStorage<string>(PREFERRED_USER_KEY);
+    if (userId) {
+      return this.myMSALObj.getAccountByLocalId(userId);
     }
     return null;
   }
 
   /**
-   * Gets the token to read user profile data from MS Graph silently, or falls back to interactive redirect.
+   * Gets the token to read user profile data from MS Graph silently
    */
   async getProfileTokenRedirect(): Promise<
     void | AuthenticationResult | undefined
   > {
     this.silentProfileRequest.account = this.account;
-    return this.getTokenRedirect(
-      this.silentProfileRequest,
-      this.profileRedirectRequest
-    );
+    return this.getTokenRedirect(this.silentProfileRequest);
   }
 
   /**
@@ -166,28 +144,23 @@ class AzureAD {
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirect-apis
    */
   async loadAuthModule(): Promise<AccountInfo | boolean> {
-    try {
-      const res = await this.myMSALObj.handleRedirectPromise();
-      if (res) {
-        const { account } = res;
-        if (account) {
-          this.account = account;
-          return this.account;
-        }
-        return this.account;
-      }
-
-      const account = this.getAccount();
+    const res = await this.myMSALObj.handleRedirectPromise();
+    if (res) {
+      const { account } = res;
       if (account) {
+        saveToLocalStorage(PREFERRED_USER_KEY, account.localAccountId);
         this.account = account;
         return this.account;
       }
-      return false;
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Error in loadAuthModule', e);
-      return false;
+      return this.account;
     }
+
+    const account = this.getAccount();
+    if (account) {
+      this.account = account;
+      return this.account;
+    }
+    return false;
   }
 
   /**
@@ -232,6 +205,7 @@ class AzureAD {
    * Logs out of current account.
    */
   logout(): void {
+    saveToLocalStorage(PREFERRED_USER_KEY, null);
     const logOutRequest: EndSessionRequest = {
       account: this.account || undefined,
     };
@@ -254,19 +228,12 @@ class AzureAD {
    * Gets a token silently, or falls back to interactive redirect.
    */
   private async getTokenRedirect(
-    silentRequest: SilentRequest,
-    interactiveRequest: RedirectRequest
+    silentRequest: SilentRequest
   ): Promise<AuthenticationResult | undefined | void> {
     try {
       const response = await this.myMSALObj.acquireTokenSilent(silentRequest);
       return response;
     } catch (e) {
-      if (e instanceof InteractionRequiredAuthError) {
-        return this.myMSALObj
-          .acquireTokenRedirect(interactiveRequest)
-          .catch(() => undefined);
-      }
-
       // eslint-disable-next-line no-console
       console.error(e);
       return undefined;
