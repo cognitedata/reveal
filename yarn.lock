@@ -1275,7 +1275,28 @@
     jwt-decode "^3.1.2"
     lodash "^4.17.20"
 
-"@cognite/cogs.js@^2.11.2", "@cognite/cogs.js@^2.4.0":
+"@cognite/cogs.js@^2.13.1":
+  version "2.13.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.13.1.tgz#6a244d25314e1628ec99144a33d8b9eecc5a78ae"
+  integrity sha512-A8qF0ceBzHe/2AEB30kTXWvc5QmnwAXc1iY/v7fF+YzPenYIBjhsq9wXE4BWj2dcN4/RhcH1T7I1eGbunapdTg==
+  dependencies:
+    "@tippyjs/react" "4.0.2"
+    "@types/react-date-range" "^1.1.2"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    focus-visible "^5.1.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    tippy.js "6.2.0"
+
+"@cognite/cogs.js@^2.4.0":
   version "2.11.3"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.11.3.tgz#ab808c7fc518968cdb1cb6bfe8dccbdde908d60f"
   integrity sha512-RSyCiyaUQZFdJRoxgRACREzU/VRYVEeuypnCDOX7jJotuqRiY5srF8PqPnByzHgTt9q0qedRihfJ4SSpD86+/A==
