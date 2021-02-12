@@ -82,7 +82,6 @@ const LoginWithCognite: React.FC<Props> = ({
           if (isValid) {
             if (authClient) {
               authClient.login('COGNITE_AUTH', {
-                project: formState.tenant.value,
                 cluster,
               });
             }
@@ -105,7 +104,6 @@ const LoginWithCognite: React.FC<Props> = ({
         if (isValid) {
           if (authClient) {
             authClient.login('COGNITE_AUTH', {
-              project: formState.tenant.value,
               cluster,
             });
           }
@@ -138,7 +136,9 @@ const LoginWithCognite: React.FC<Props> = ({
     }
     return errors.map((error) => {
       return (
-        <CardFooterError style={{ marginTop: '16px' }}>{error}</CardFooterError>
+        <CardFooterError key={`error-${error}`} style={{ marginTop: '16px' }}>
+          {error}
+        </CardFooterError>
       );
     });
   }, [errors]);

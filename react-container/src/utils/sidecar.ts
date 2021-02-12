@@ -1,23 +1,24 @@
 type SidecarConfig = {
   __sidecarFormatVersion: number;
-  appsApiBaseUrl: string;
-  applicationId: string;
-  applicationName: string;
-  cdfApiBaseUrl: string;
-  backgroundImage: string;
-  helpLink: string;
   AADClientID?: string;
   AADTenantID?: string;
+  applicationId: string;
+  applicationName: string;
+  appsApiBaseUrl: string;
+  backgroundImage: string;
+  cdfApiBaseUrl: string;
+  cdfCluster: string;
+  helpLink: string;
 };
 
 const DEFAULT_SIDECAR: SidecarConfig = {
   // -- Bluefield -- (Azure)
-  // appsApiBaseUrl: 'https://apps-api.bluefield.cognite.ai',
-  // cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
+  appsApiBaseUrl: 'https://apps-api.bluefield.cognite.ai',
+  cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
 
   // -- EW1 --
-  appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
-  cdfApiBaseUrl: 'https://api.cognitedata.com',
+  // appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
+  // cdfApiBaseUrl: 'https://api.cognitedata.com',
 
   // -- Greenfield --
   // appsApiBaseUrl: 'https://apps-api.greenfield.cognite.ai',
@@ -29,9 +30,18 @@ const DEFAULT_SIDECAR: SidecarConfig = {
   backgroundImage: '',
   helpLink: '',
 
+  cdfCluster: 'bluefield',
+  // cdfCluster: 'ew1',
+  // cdfCluster: 'greenfield',
+
   // use the demo app if you are testing this:
-  // AADClientID: 'b7c57241-915b-495a-bd0c-f13140f1c93b', // Cognite React Demo APP: (staging)
-  // AADTenantID: 'a9ae5b54-3600-4917-a9dc-3020723360b3', // cognitedata
+  // if you need access, please ask in #frontend
+  AADTenantID: 'reactdemoapp.onmicrosoft.com',
+
+  // created with terraform:
+  AADClientID: '7e8b0cb9-c1bf-46df-bf79-13cb1b19a8f8', // Demo App: bluefield (staging)
+  // AADClientID: '52106ea0-e93b-40bc-99dc-5f7deacceda1', // Demo App: ew1 (staging)
+  // AADClientID: 'e0e9ac77-f9cc-49ca-9bb2-eef01313751b', // Demo App: greenfield (staging)
 };
 
 export const getSidecar = (): SidecarConfig => {

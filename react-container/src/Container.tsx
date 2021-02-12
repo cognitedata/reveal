@@ -2,30 +2,35 @@ import * as React from 'react';
 import { Router } from 'react-router-dom';
 import { Store } from 'redux';
 
-import { withI18nSuspense, configureI18n } from '@cognite/react-i18n';
+import { withI18nSuspense } from '@cognite/react-i18n';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { TenantSelector } from '@cognite/react-tenant-selector';
 import { Loader } from '@cognite/cogs.js';
 
-import { AuthContainer, AuthContainerForApiKeyMode } from './components';
+import {
+  AuthContainer,
+  AuthContainerForApiKeyMode,
+  TranslationWrapper,
+} from './components';
 import { createBrowserHistory } from './internal';
-import { storage, getTenantInfo, configureCogniteSDKClient } from './utils';
+import {
+  storage,
+  getTenantInfo,
+  configureCogniteSDKClient,
+  getSidecar,
+} from './utils';
 import { ConditionalReduxProvider } from './providers';
 
-configureI18n({
-  useSuspense: true,
-});
-
 interface Props {
-  appName: string;
   store?: Store;
   children: React.ReactChild;
 }
-
-const RawContainer: React.FC<Props> = ({ children, store, appName }: Props) => {
+const RawContainer: React.FC<Props> = ({ children, store }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
-  storage.init({ tenant: possibleTenant, appName });
+  const { applicationId } = getSidecar();
+
+  storage.init({ tenant: possibleTenant, appName: applicationId });
 
   const [history] = React.useState(() => createBrowserHistory(possibleTenant));
 
@@ -67,22 +72,33 @@ const RawContainer: React.FC<Props> = ({ children, store, appName }: Props) => {
     return <Loader />;
   }
 
-  let AuthWrapper = AuthContainer;
+  let ChosenAuthContainer = AuthContainer;
 
   if (apiKey) {
-    AuthWrapper = AuthContainerForApiKeyMode;
+    ChosenAuthContainer = AuthContainerForApiKeyMode;
   }
 
+  const authError = () => {
+    document.location.href = '/';
+  };
+
   return (
-    <AuthWrapper sdkClient={client} tenant={initialTenant}>
-      <ConditionalReduxProvider store={store}>
-        <ErrorBoundary instanceId="app-root">
-          <Router history={history}>{children}</Router>
-        </ErrorBoundary>
-      </ConditionalReduxProvider>
-    </AuthWrapper>
+    <TranslationWrapper>
+      <ChosenAuthContainer
+        sdkClient={client}
+        authError={authError}
+        tenant={initialTenant}
+      >
+        <ConditionalReduxProvider store={store}>
+          <ErrorBoundary instanceId="app-root">
+            <Router history={history}>{children}</Router>
+          </ErrorBoundary>
+        </ConditionalReduxProvider>
+      </ChosenAuthContainer>
+    </TranslationWrapper>
   );
 };
 
+// @ts-expect-error what is up? - Type 'undefined' is not assignable to type 'ReactChild'
 export const Container = withI18nSuspense(RawContainer);
 export const ContainerWithoutI18N = RawContainer;

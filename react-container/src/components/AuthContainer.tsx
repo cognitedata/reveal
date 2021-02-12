@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { CogniteClient } from '@cognite/sdk';
-import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
+import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 
-import { getClusterFromCdfApiBaseUrl } from 'utils/cluster';
 import { getSidecar, log } from '../utils';
 
 export interface AuthContext {
   client?: CogniteClient;
   authState?: AuthenticatedUser;
+  initialized?: Promise<unknown>;
 }
 
 // exporting so users can also directly do:
@@ -23,38 +23,37 @@ export type EnabledModes = {
   aad?: boolean;
 };
 interface AuthContainerProps {
+  // why?
+  // eslint-disable-next-line react/no-unused-prop-types
+  authError: () => void;
   sdkClient: CogniteClient;
   tenant: string;
   children: React.ReactNode;
 }
 export const AuthContainer: React.FC<AuthContainerProps> = ({
+  authError,
   sdkClient,
   tenant,
   children,
-}: AuthContainerProps) => {
+}) => {
   const [authState, setAuthState] = React.useState<AuthContext | undefined>();
+  const [loading, setLoading] = React.useState(true);
+  const { flow } = getFlow();
 
-  const {
-    AADClientID,
-    AADTenantID,
-    applicationId,
-    cdfApiBaseUrl,
-  } = getSidecar();
-
-  const cluster = getClusterFromCdfApiBaseUrl(cdfApiBaseUrl);
+  const { AADClientID, AADTenantID, applicationId, cdfCluster } = getSidecar();
 
   React.useEffect(() => {
     const authClient = new CogniteAuth(sdkClient, {
-      azureAdClientId: AADClientID,
-      azureAdTenantId: AADTenantID,
-      cluster,
+      aad: { appId: AADClientID || '', directoryTenantId: AADTenantID },
+      cluster: cdfCluster,
     });
 
-    log('[AuthContainer] Main Auth client:', [authClient], 1);
+    log('[AuthContainer] CogniteAuth:', [authClient], 1);
 
-    if (authClient.initializingPromise) {
+    const flowToUse = flow || authClient.state.authResult?.authFlow;
+    if (authClient.initializingPromise && flowToUse) {
       authClient.initializingPromise.then(() => {
-        authClient.loginAndAuthIfNeeded(tenant, cluster);
+        authClient.loginAndAuthIfNeeded(flowToUse, tenant, cdfCluster);
       });
     }
 
@@ -62,8 +61,14 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       applicationId,
       (authResponse: AuthenticatedUser) => {
         if (!authClient.state.initializing) {
-          log('[AuthContainer] setting AuthState', [], 1);
+          log('[AuthContainer] onAuthChanged authResponse', [authResponse], 1);
+          log(
+            '[AuthContainer] onAuthChanged authClient.state',
+            [authClient.state],
+            1
+          );
           setAuthState({
+            initialized: authClient.initializingPromise,
             client: authClient.getClient(),
             authState: authResponse,
           });
@@ -76,25 +81,39 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     };
   }, []);
 
-  const hasBeenLoggedIn = !!authState?.authState?.username;
+  React.useEffect(() => {
+    log(
+      '[AuthContainer] State info:',
+      [{ tenant, authState: authState?.authState, sdkClient }],
+      1
+    );
+    if (!authState?.authState?.authenticated) {
+      log(
+        '[AuthContainer] UnAuthenticated state found, going to login page.',
+        [authState],
+        2
+      );
+      if (authState?.initialized && authError) {
+        authState.initialized.then(() => {
+          authError();
+        });
+      }
+    } else {
+      setLoading(false);
+    }
+  }, [authState]);
 
-  log(
-    '[AuthContainer] State info:',
-    [{ tenant, authState: authState?.authState, sdkClient }],
-    1
-  );
   log(
     '[AuthContainer] Render gates:',
     [
       {
         authenticated: authState?.authState?.authenticated,
-        loggedin: hasBeenLoggedIn,
       },
     ],
     1
   );
 
-  if (!authState?.authState?.authenticated || !hasBeenLoggedIn) {
+  if (loading || !authState) {
     return <Loader />;
   }
 
@@ -103,7 +122,8 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   );
 };
 
-export const AuthContainerForApiKeyMode: React.FC<AuthContainerProps> = ({
+type AuthContainerForApiKeyModeProps = Exclude<AuthContainerProps, 'AuthError'>;
+export const AuthContainerForApiKeyMode: React.FC<AuthContainerForApiKeyModeProps> = ({
   sdkClient,
   tenant,
   children,

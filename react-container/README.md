@@ -19,12 +19,18 @@ yarn add @cognite/react-container
 ```ts
 import { Container } from '@cognite/react-container';
 
-<Container appName="demo-app">... my app now has all the fun stuff ...</Container>;
+<Container>... my app now has all the fun stuff ...</Container>;
 ```
 
-This can be found in the demo app [here](https://github.com/cognitedata/react-demo-app/blob/master/src/App.tsx#L18)
+The prime example can be found in the demo app [here](https://github.com/cognitedata/react-demo-app/blob/master/src/App.tsx#L18)
 
-The fun stuff includes:
+## Overview
+
+![alt text](https://github.com/cognitedata/frontend/tree/master/packages/browser/react/react-container/overview.png 'Hover text really needs a good joke here...')
+
+## Details about the fun stuff
+
+This container includes:
 
 - Error boundary
 - React router setup

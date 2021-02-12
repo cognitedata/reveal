@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
-import { CogniteAuth } from '@cognite/auth-utils';
+import { CogniteAuth, saveFlow } from '@cognite/auth-utils';
 
 const LoginWithAzureAD = ({
   cluster,
@@ -11,7 +11,9 @@ const LoginWithAzureAD = ({
 }) => {
   const handleClick = () => {
     if (authClient) {
-      authClient.login('AZURE_AD_MULTI_TENANCY', { cluster });
+      // console.log('Starting AZURE_AD login flow');
+      saveFlow('AZURE_AD');
+      authClient.login('AZURE_AD', { cluster });
     }
   };
 

@@ -1,4 +1,12 @@
-## 0.6.0 Jan 22 2020
+## 0.7.0 Feb 10 2021
+
+### Changes
+
+- get applicationId from sidecar not props
+- Updated to use auth-utils@0.5.0
+- add a note saying `retrieveAuthResult` was broken since 0.5.0
+
+## 0.6.0 Jan 22 2021
 
 ### Changes
 

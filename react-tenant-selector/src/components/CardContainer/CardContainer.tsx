@@ -1,10 +1,14 @@
 import * as React from 'react';
-import { Button, Dropdown, Icons, Menu } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js';
 import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
 
 import { getSidecar } from '../../utils';
-import { getClusterFromCdfApiBaseUrl } from '../../utils/cluster';
-import { LoginTip, TitleChanger, CardContainerHeader } from '../../components';
+import {
+  LoginTip,
+  TitleChanger,
+  CardContainerHeader,
+  ProjectSelector,
+} from '../../components';
 import {
   LoginOrWrapper,
   LoginWithAzure,
@@ -59,6 +63,7 @@ const CardContainer = ({
 }: Props) => {
   const [containerHeight, setContainerHeight] = React.useState<string>();
   const container = React.createRef<HTMLDivElement>();
+  const { cdfCluster } = getSidecar();
 
   React.useEffect(() => {
     if (container?.current) {
@@ -68,8 +73,13 @@ const CardContainer = ({
     }
   }, [container]);
 
-  const { cdfApiBaseUrl } = getSidecar();
-  const deploymentCluster = `${getClusterFromCdfApiBaseUrl(cdfApiBaseUrl)}`;
+  const showProjectSelection =
+    authState && authState?.authenticated && !authState?.project;
+  const showLoginOptions = !showProjectSelection;
+
+  // console.log('Render gates', { showProjectSelection, showLoginOptions });
+
+  const showLoading = false;
 
   return (
     <StyledCardContainer style={{ height: `${containerHeight}` }}>
@@ -78,27 +88,26 @@ const CardContainer = ({
           <TitleChanger />
           <CardContainerHeader />
 
-          {/* testing error from AD: */}
-          {authClient?.state.error && <div>ERROR</div>}
+          {/* Error from AD: */}
+          {authClient?.state.error && (
+            <div>ERROR: {authClient?.state.errorMessage}</div>
+          )}
 
-          {authState?.availableProjects && (
-            <ProjectAndClusterSelectorForm
+          {showLoading && <Loader />}
+
+          {showProjectSelection && (
+            <ProjectSelector
+              authState={authState}
               authClient={authClient}
-              onSelected={(project) => handleSubmit(project)}
-              projects={
-                authState.availableProjects || []
-                // { urlName: 'react-demo-app-bluefield', cluster: 'bluefield' },
-              }
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              selectedTenantId={authState.tenantId}
+              onSelected={handleSubmit}
             />
           )}
-          {!authState && (
+
+          {showLoginOptions && (
             <>
               {enabledLoginModes.cognite && (
                 <LoginWithCognite
-                  cluster={deploymentCluster}
+                  cluster={cdfCluster}
                   initialTenant={initialTenant}
                   errors={errors}
                   loading={loading}
@@ -118,7 +127,7 @@ const CardContainer = ({
               {enabledLoginModes.aad && (
                 <LoginWithAzureAD
                   authClient={authClient}
-                  cluster={deploymentCluster}
+                  cluster={cdfCluster}
                 />
               )}
             </>
@@ -128,78 +137,6 @@ const CardContainer = ({
         <LoginTip helpLink={helpLink || 'https://docs.cognite.com/'} />
       </div>
     </StyledCardContainer>
-  );
-};
-
-const ProjectAndClusterSelectorForm = ({
-  onSelected,
-  projects,
-  authClient,
-}: {
-  projects: { urlName: string; cluster?: string }[];
-  authClient?: CogniteAuth;
-  onSelected: (project: string, cluster: string) => void;
-}) => {
-  const [selectedProject, setSelectedProject] = React.useState<string>();
-  React.useEffect(() => {
-    if (projects.length === 1) {
-      setSelectedProject(projects[0].urlName);
-    }
-  }, [projects]);
-
-  const ProjectsContent = (
-    <Menu>
-      {projects.map((dir) => (
-        <Menu.Item
-          onClick={() => setSelectedProject(dir.urlName)}
-          key={dir.urlName}
-        >
-          {dir.urlName}
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
-  return (
-    <div>
-      <p style={{ color: '#404040', fontWeight: 600, fontSize: 13 }}>
-        Project <Icons.Help />{' '}
-      </p>
-      <Dropdown content={ProjectsContent}>
-        <Button
-          style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: 30,
-          }}
-          disabled={projects.length === 1}
-          variant="outline"
-          icon="Down"
-          iconPlacement="right"
-        >
-          {selectedProject || 'Select project'}
-        </Button>
-      </Dropdown>
-      <br />
-      <Button
-        style={{ marginTop: 30, height: 40, width: '100%' }}
-        size="large"
-        variant="default"
-        type="primary"
-        onClick={() => {
-          if (authClient && selectedProject) {
-            authClient.selectProject(selectedProject);
-            onSelected(
-              selectedProject,
-              projects.find((p) => p.urlName === selectedProject)?.cluster ||
-                'api'
-            );
-          }
-        }}
-      >
-        Continue
-      </Button>
-    </div>
   );
 };
 

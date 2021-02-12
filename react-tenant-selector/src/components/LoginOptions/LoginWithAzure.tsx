@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
-import { CogniteAuth } from '@cognite/auth-utils';
+import { CogniteAuth, saveFlow } from '@cognite/auth-utils';
 
 interface Props {
   authClient?: CogniteAuth;
@@ -8,6 +8,7 @@ interface Props {
 const LoginWithAzure: React.FC<Props> = ({ authClient }: Props) => {
   const handleClick = () => {
     if (authClient) {
+      saveFlow('ADFS');
       authClient.login('ADFS');
     }
   };

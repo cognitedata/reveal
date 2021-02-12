@@ -25,7 +25,11 @@ const TenantSelectorBackground = ({
 }: Props) => {
   const isDesktop = useIsDesktop();
   return (
-    <Background className={className} backgroundImage={backgroundImage}>
+    <Background
+      role="img"
+      className={className}
+      backgroundImage={backgroundImage}
+    >
       <CogniteLogo>
         <StyledIconWrapper>
           <LogoWithText />

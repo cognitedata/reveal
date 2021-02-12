@@ -5,5 +5,6 @@ module.exports = {
   rules: {
     ...baseConfig.rules,
     'react/require-default-props': [0],
+    'react/prop-types': 'off',
   },
 };

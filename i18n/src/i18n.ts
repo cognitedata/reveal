@@ -33,7 +33,7 @@ type ConfigureI18nOptions = {
   localStorageLanguageKey?: string;
 };
 
-const configureI18n = ({
+const configureI18n = async ({
   debug = REACT_APP_I18N_DEBUG === 'true',
   pseudo = REACT_APP_I18N_PSEUDO === 'true',
   lng = REACT_APP_LANGUAGE,
@@ -130,13 +130,15 @@ const configureI18n = ({
 
   i18next.use(ChainedBackend);
   i18next.use(initReactI18next);
-  return i18next.init({
+  await i18next.init({
     ...initOptions,
     backend: {
       backends,
       backendOptions,
     },
   });
+
+  return i18next;
 };
 
 export default configureI18n;

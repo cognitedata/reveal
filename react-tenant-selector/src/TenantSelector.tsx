@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
+import { configureI18n } from '@cognite/react-i18n';
+import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
+import { QueryClientProvider, QueryClient } from 'react-query';
 
 // note: only using relative paths until we can setup storybook baseUrl properly:
-import { getClusterFromCdfApiBaseUrl } from './utils/cluster';
 import CardContainer, { EnabledModes } from './components/CardContainer';
 import { TenantSelectorBackground } from './components';
 import { getSidecar } from './utils';
@@ -14,15 +15,27 @@ import background from './assets/background.jpg';
 
 import '@cognite/cogs.js/dist/cogs.css';
 
+const {
+  applicationId,
+  cdfCluster,
+  backgroundImage,
+  helpLink,
+  AADClientID,
+  locizeProjectId,
+  AADTenantID,
+} = getSidecar();
+
+configureI18n({
+  useSuspense: true,
+  // required here to we can override translations from
+  // localhost or the hosted version
+  locize: {
+    projectId: locizeProjectId || process.env.REACT_APP_LOCIZE_PROJECT_ID || '',
+    apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '',
+  },
+});
+
 export const TenantSelector: React.FC = () => {
-  const {
-    applicationId,
-    cdfApiBaseUrl,
-    backgroundImage,
-    helpLink,
-    AADClientID,
-    AADTenantID,
-  } = getSidecar();
   const [authenticating, setAuthenticating] = useState(false);
 
   const [authState, setAuthState] = useState<AuthenticatedUser | undefined>();
@@ -31,6 +44,15 @@ export const TenantSelector: React.FC = () => {
     /^\/([^/]*).*$/,
     '$1'
   );
+
+  const cache = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60000,
+        retry: false,
+      },
+    },
+  });
 
   const {
     onTenantSelected,
@@ -82,38 +104,38 @@ export const TenantSelector: React.FC = () => {
     appId: applicationId,
   });
 
-  let msalConfig;
-
   const enabledLoginModes: EnabledModes = {
     cognite: true,
+    // if we want to enable other modes in testing
+    // we would use a setting here like this:
     // adfs: true,
   };
 
-  if (AADClientID) {
-    msalConfig = {
-      auth: {
-        authority:
-          // 'https://login.microsoftonline.com/common',
-          // 'https://login.microsoftonline.com/organizations',
-          `https://login.microsoftonline.com/${AADTenantID}`,
-        clientId: AADClientID,
-        redirectUri: `${window.location.origin}`,
-      },
-    };
+  const { flow, options } = getFlow(initialTenant || '', cdfCluster);
 
+  let aad;
+  if (AADClientID) {
     enabledLoginModes.aad = true;
+
+    aad = {
+      appId: AADClientID,
+      directoryTenantId: options?.directory || AADTenantID,
+    };
   }
 
   const authClient = new CogniteAuth(sdkClient, {
-    msalConfig,
-    cluster: getClusterFromCdfApiBaseUrl(cdfApiBaseUrl),
+    cluster: cdfCluster,
+    flow,
+    aad,
   });
 
   useEffect(() => {
     const unsubscribe = authClient.onAuthChanged(
       applicationId,
       (user: AuthenticatedUser) => {
-        setAuthState(user);
+        if (user) {
+          setAuthState(user);
+        }
       }
     );
 
@@ -123,7 +145,7 @@ export const TenantSelector: React.FC = () => {
   }, []);
 
   return (
-    <>
+    <QueryClientProvider client={cache}>
       <GlobalStyles />
       <TenantSelectorBackground backgroundImage={backgroundImage || background}>
         <CardContainer
@@ -139,6 +161,6 @@ export const TenantSelector: React.FC = () => {
           enabledLoginModes={enabledLoginModes}
         />
       </TenantSelectorBackground>
-    </>
+    </QueryClientProvider>
   );
 };

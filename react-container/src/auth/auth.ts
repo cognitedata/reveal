@@ -1,10 +1,11 @@
-import { retrieveAuthResult } from '@cognite/auth-utils';
+// import { retrieveAuthResult } from '@cognite/auth-utils';
 
 import { log } from '../utils/log';
 import { AuthHeaders } from './types';
 
 export const getAuthHeaders = (apiKeyHeader = 'api-key'): AuthHeaders => {
-  const authResult = retrieveAuthResult();
+  // -TODO: get from SDK once that is ready. for now, this is not possible (easily)
+  const authResult = { accessToken: '' };
 
   if (authResult?.accessToken) {
     return { Authorization: `Bearer ${authResult.accessToken}` };

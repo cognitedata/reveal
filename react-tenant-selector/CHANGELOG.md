@@ -1,3 +1,14 @@
+## 0.4.0 Feb 10 2021
+
+### Changes
+
+- Updated to use auth-utils@0.5.0
+- Upgraded to use new container (in syn with new auth-utils)
+- Refactored project selector to new component for new flow
+- Use react-query for project selection
+- allow locize settings to be overwritten from process.env
+- remove old getCuster as it's in sidecar now
+
 ## 0.3.1 Jan 25 2021
 
 ### Changes
