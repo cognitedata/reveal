@@ -12,6 +12,7 @@ import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters } from '../../..';
 import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
+import { SsaoSampleQuality } from '../../../public/types';
 
 export class EffectRenderManager {
   private readonly _materialManager: MaterialManager;
@@ -86,7 +87,11 @@ export class EffectRenderManager {
   private autoSetTargetSize: boolean = false;
 
   public set renderOptions(options: RenderOptions) {
-    this.setSsaoParameters(options.ssaoRenderParameters);
+    const inputSsaoOptions = { ...options.ssaoRenderParameters };
+    if (options.ssaoRenderParameters?.sampleSize == SsaoSampleQuality.None) {
+      inputSsaoOptions.sampleRadius = 0.0;
+    }
+    this.setSsaoParameters(inputSsaoOptions);
     this._renderOptions = { ...options, ssaoRenderParameters: { ...options.ssaoRenderParameters } };
   }
 
