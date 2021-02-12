@@ -3,6 +3,7 @@ import isFunction from 'lodash/isFunction';
 import { Configuration } from '@azure/msal-browser';
 
 import type { AuthFlow, AuthResult } from '../storage/types';
+import { getFlow } from '../storage';
 import AzureAD from '../aad/aad';
 import ADFS, { AdfsConfig } from '../adfsModule';
 
@@ -37,8 +38,6 @@ class CogniteAuth {
   public initializingComplete?: () => void;
 
   public setupInitializing = (): Promise<void> => {
-    this.state.initializing = true;
-
     this.initializingPromise = new Promise((resolve) => {
       this.initializingComplete = () => {
         this.state.initializing = false;
@@ -63,10 +62,11 @@ class CogniteAuth {
         directoryTenantId: string;
         scope: string;
       };
-    }
+    } = { flow: getFlow().flow }
   ) {
     this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
 
+    this.state.initializing = true;
     this.setupInitializing();
     this.initialize();
   }
@@ -82,8 +82,9 @@ class CogniteAuth {
             clientId: this.options.aad.appId,
           },
         });
-        // eslint-disable-next-line no-empty
       } catch {
+        // eslint-disable-next-line no-console
+        console.error('Error initializing AAD Auth');
         this.state.error = true;
         this.state.initializing = false;
         this.publishAuthState();
@@ -99,22 +100,27 @@ class CogniteAuth {
             scope: this.options.adfs.scope,
           },
         });
-        // eslint-disable-next-line no-empty
       } catch {
+        // eslint-disable-next-line no-console
+        console.error('Error initializing ADFS Auth');
         this.state.error = true;
         this.state.initializing = false;
         this.publishAuthState();
       }
     }
 
+    // the token will be set by one of the above auth systems
+    // which will cause a page reload
+    // and the second time this is rendered it will have the auth token
+    // or it will get it from LS
+    // then we can put it into the cognite sdk client here
     if (this.isSignedIn()) {
       this.state.authenticated = true;
 
       if (this.state.authResult) {
         this.state.idToken = this.state.authResult.idToken;
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error http is private
       this.getClient().http.setBearerToken(this.state.authResult?.accessToken);
       this.publishAuthState();
     } else if (
@@ -166,6 +172,8 @@ class CogniteAuth {
       }
     } catch (e) {
       this.state.error = true;
+      this.state.errorMessage = 'Account setup for AAD client failed.';
+      return;
     } finally {
       this.publishAuthState();
     }
@@ -176,11 +184,7 @@ class CogniteAuth {
 
     const authResult = this.adfsClient.processSigninResponse();
 
-    if (
-      authResult &&
-      authResult.accessToken &&
-      authResult.accessToken.length !== 0
-    ) {
+    if (authResult?.accessToken && authResult.accessToken.length !== 0) {
       this.state.authResult = authResult;
     }
   }
@@ -203,11 +207,11 @@ class CogniteAuth {
   }
 
   private isSignedIn() {
-    return (
-      this.state.authResult &&
-      this.state.authResult.idToken &&
-      this.state.authResult.idToken.length > 0
-    );
+    if (!this.state.authResult?.idToken) {
+      return false;
+    }
+
+    return this.state.authResult?.idToken.length > 0;
   }
 
   public getAccessToken(): string | undefined {
@@ -316,12 +320,11 @@ class CogniteAuth {
             }
           },
         });
-        this.state.initialized = true;
         const projectResponse = await this.getClient().projects.retrieve(
           newTenant
         );
-
         this.state.project = projectResponse.urlName;
+        this.state.initialized = true;
         this.publishAuthState();
       }
     } else if (this.options.flow === 'AZURE_AD') {
@@ -330,6 +333,7 @@ class CogniteAuth {
           project: newTenant,
           accessToken: this.state.authResult?.accessToken,
           onAuthenticate: async (login) => {
+            this.state.project = newTenant;
             if (isFunction(login)) {
               await login('AZURE_AD', {
                 cluster: this.getCluster(),

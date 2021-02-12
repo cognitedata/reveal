@@ -61,7 +61,6 @@ class AzureAD {
     };
 
     this.myMSALObj = new PublicClientApplication(this.msalConfig);
-    // this.account = undefined;
     this.setCluster(cluster);
   }
 
@@ -98,16 +97,14 @@ class AzureAD {
 
     this.silentProfileRequest = {
       scopes: this.userScopes,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error Type 'null' is not assignable to type 'AccountInfo | undefined'
       account: null,
       forceRefresh: true,
     };
 
     this.silentCDFTokenRequest = {
       scopes: this.getCDFScopes(),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error Type 'null' is not assignable to type 'AccountInfo | undefined'
       account: null,
       forceRefresh: true,
     };

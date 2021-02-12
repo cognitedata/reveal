@@ -8,5 +8,6 @@ module.exports = {
   displayName: pack.name,
   name: pack.name,
   setupFiles: ['jest-localstorage-mock'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testEnvironment: 'jsdom',
 };
