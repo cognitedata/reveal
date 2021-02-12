@@ -53,7 +53,7 @@
     "@types/fetch-mock": "^7.3.3",
     "@types/jest": "^26.0.20",
     "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.22",
+    "@types/node": "^14.14.27",
     "@types/react": "^17.0.1",
     "@types/react-dom": "^16.9.9",
     "@types/react-modal": "^3.12.0",
