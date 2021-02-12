@@ -335,7 +335,7 @@ export class EffectRenderManager {
         }
       }
 
-      const hasDepthWriteCapabilities =
+      const supportsSsao =
         !isMobileOrTablet() && (renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth'));
 
       switch (this.antiAliasingMode) {
@@ -346,7 +346,7 @@ export class EffectRenderManager {
           // Anti-aliased version to screen
           renderer.autoClear = original.autoClear;
 
-          if (hasDepthWriteCapabilities) {
+          if (supportsSsao) {
             this.renderSsao(renderer, this._ssaoTarget, camera);
             this.renderBlurredSsao(renderer, this._ssaoBlurTarget);
           }
@@ -357,12 +357,12 @@ export class EffectRenderManager {
         case AntiAliasingMode.NoAA:
           renderer.autoClear = original.autoClear;
 
-          const compositionOutTarget = hasDepthWriteCapabilities ? this._compositionTarget : this.renderTarget;
-          this.renderComposition(renderer, camera, compositionOutTarget);
-
-          if (hasDepthWriteCapabilities) {
+          if (supportsSsao) {
+            this.renderComposition(renderer, camera, this._compositionTarget);
             this.renderSsao(renderer, this._ssaoTarget, camera);
             this.renderBlurredSsao(renderer, this.renderTarget);
+          } else {
+            this.renderComposition(renderer, camera, this.renderTarget);
           }
           break;
 
