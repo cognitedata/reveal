@@ -6,7 +6,7 @@ import { MaterialManager } from '../MaterialManager';
 import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
 
-import { CogniteColors } from '../../../utilities';
+import { CogniteColors, isMobileOrTablet } from '../../../utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
@@ -234,7 +234,7 @@ export class EffectRenderManager {
     });
 
     const diffuseTexture =
-      isWebGL2 || renderer.extensions.has('EXT_frag_depth')
+      !isMobileOrTablet() && (isWebGL2 || renderer.extensions.has('EXT_frag_depth'))
         ? this._ssaoBlurTarget.texture
         : this._compositionTarget.texture;
 
@@ -335,7 +335,8 @@ export class EffectRenderManager {
         }
       }
 
-      const hasDepthWriteCapabilities = renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth');
+      const hasDepthWriteCapabilities =
+        !isMobileOrTablet() && (renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth'));
 
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
