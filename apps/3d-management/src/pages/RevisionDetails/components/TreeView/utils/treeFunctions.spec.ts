@@ -2,6 +2,7 @@ import { DataNode } from 'antd-v4/lib/tree';
 import {
   addChildrenIntoTree,
   BasicTree,
+  getAncestors,
   getNodeByTreeIndex,
   hasBranch,
   removeNodeFromTree,
@@ -443,6 +444,55 @@ describe('treeFunctions test cases', () => {
           title: '',
         },
       ]);
+    });
+
+    describe('getAncestors', () => {
+      it('returns ancestors from root to node specified', () => {
+        const keyToFind = 100500;
+        const tree = [
+          {
+            key: 1,
+            title: '',
+            children: [
+              {
+                key: 2,
+                title: '',
+                children: [
+                  { key: 3, title: '', children: [] },
+                  { key: keyToFind, title: '', children: [] },
+                  { key: 5, title: '', children: [] },
+                ],
+              },
+              { key: 6, title: '', children: [] },
+            ],
+          },
+        ];
+        expect(getAncestors(tree, keyToFind)).toEqual([1, 2, keyToFind]);
+
+        expect(getAncestors([{ key: 1, title: '' }], 1)).toEqual([1]);
+      });
+
+      it('returns undefined when there is no such node in the tree', () => {
+        const notExistingNode = 100500;
+        const tree = [
+          {
+            key: 1,
+            title: '',
+            children: [
+              {
+                key: 2,
+                title: '',
+                children: [
+                  { key: 3, title: '', children: [] },
+                  { key: 5, title: '', children: [] },
+                ],
+              },
+              { key: 6, title: '', children: [] },
+            ],
+          },
+        ];
+        expect(getAncestors(tree, notExistingNode)).toBeUndefined();
+      });
     });
   });
 });

@@ -35,7 +35,6 @@ export function useSelectedNodesHighlights({
   const dispatch = useDispatch();
   const viewerNodeClickListener: PointerEventDelegate = useCallback(
     (event) => {
-      const { revisionId, modelId } = model;
       const intersection = viewer.getIntersectionFromPixel(
         event.offsetX,
         event.offsetY
@@ -49,13 +48,13 @@ export function useSelectedNodesHighlights({
             dispatch(selectNodes([{ treeIndex, nodeId, subtreeSize: 1 }]));
             dispatch(
               expandNodeByTreeIndex({
-                modelId,
-                revisionId,
                 treeIndex,
                 nodeId,
                 onSuccess: () => {
                   if (treeViewRef.current) {
-                    treeViewRef.current.scrollTo(treeIndex);
+                    treeViewRef.current.scrollTo({
+                      key: treeIndex,
+                    });
                   }
                 },
               })

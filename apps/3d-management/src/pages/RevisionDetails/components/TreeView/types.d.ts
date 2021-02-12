@@ -23,8 +23,6 @@ export interface TreeLoadMoreNode extends DataNodeWithTitle {
 
 export type CustomDataNode = TreeDataNode | TreeLoadMoreNode;
 
-export type EventLoadChildren = EventDataNode & TreeDataNode;
-
 export type EventTreeNodeSelected<T = TreeDataNode> = {
   event: 'select';
   selected: boolean;

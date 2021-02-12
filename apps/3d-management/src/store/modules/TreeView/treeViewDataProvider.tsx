@@ -6,8 +6,8 @@ import {
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
-import { node3dToCustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/node3dToCustomDataNode';
 import promiseRetry from 'promise-retry';
+import { node3dToCustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
 
 export const FETCH_PARAMS: v3.List3DNodesQuery = {
   depth: 1,
@@ -18,7 +18,7 @@ export type RevisionId = {
   modelId: number;
   revisionId: number;
 };
-export type FetchNodesArgs = RevisionId & {
+export type FetchNodesArgs = {
   cursor?: string;
   parent: TreeLoadMoreNode['parent'];
   params?: Pick<v3.List3DNodesQuery, 'depth' | 'limit'>;
@@ -66,7 +66,7 @@ export async function fetchTreeNodes({
   cursor,
   parent,
   params,
-}: FetchNodesArgs): Promise<CustomDataNode[]> {
+}: RevisionId & FetchNodesArgs): Promise<CustomDataNode[]> {
   const data = await v3Client.revisions3D.list3DNodes(modelId, revisionId, {
     ...FETCH_PARAMS,
     ...params,

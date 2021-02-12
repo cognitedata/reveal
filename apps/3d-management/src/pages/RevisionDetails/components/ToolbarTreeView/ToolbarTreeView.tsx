@@ -3,7 +3,7 @@ import TreeView, {
 } from 'src/pages/RevisionDetails/components/TreeView/NodesTreeView';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  EventLoadChildren,
+  TreeDataNode,
   TreeLoadMoreNode,
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
@@ -16,6 +16,7 @@ import {
   fetchInitialNodes,
   loadNodeChildren,
   loadSiblings,
+  resetTreeViewState,
   SelectedNode,
   selectNodes,
   TreeIndex,
@@ -23,7 +24,9 @@ import {
 } from 'src/store/modules/TreeView';
 import Spinner from 'src/components/Spinner';
 import styled from 'styled-components';
-import { NodeInfoModal } from 'src/pages/RevisionDetails/components/ToolbarTreeView/NodeInfoModal';
+import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
+import { NodeInfoModal } from './NodeInfoModal';
+
 import { useResizeHandler } from './hooks/useResizeHander';
 import { useSelectedNodesHighlights } from './hooks/useSelectedNodesHighlights';
 import { useCheckedNodesVisibility } from './hooks/useCheckedNodesVisibility';
@@ -56,6 +59,9 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
 
   useEffect(() => {
     dispatch(fetchInitialNodes(modelId, revisionId));
+    return () => {
+      dispatch(resetTreeViewState());
+    };
   }, [modelId, revisionId, dispatch]);
 
   useEffect(() => {
@@ -74,15 +80,13 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
 
   useCheckedNodesVisibility(props.viewer, props.model, state.checkedNodes);
 
-  const loadChildren = async (treeNode: EventLoadChildren): Promise<void> => {
+  const loadChildren = async (treeNode: TreeDataNode): Promise<void> => {
     if (treeNode.children && treeNode.children.length) {
       return;
     }
 
     dispatch(
       loadNodeChildren({
-        modelId,
-        revisionId,
         parent: {
           nodeId: treeNode.meta.id,
           treeIndex: treeNode.key,
@@ -97,8 +101,6 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
         cursor,
         cursorKey: key,
         parent,
-        modelId,
-        revisionId,
       })
     );
   };
@@ -132,7 +134,7 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
       treeData={state.treeData}
       checkedKeys={state.checkedNodes}
       expandedKeys={state.expandedNodes}
-      selectedKeys={state.selectedNodes.map(({ treeIndex }) => treeIndex)}
+      selectedNodes={state.selectedNodes}
       loadChildren={loadChildren}
       loadSiblings={loadMoreClicked}
       onCheck={nodeChecked}
@@ -161,7 +163,14 @@ export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
 
   return (
     <Container>
-      <Container style={style} ref={treeViewContainer}>
+      <Container
+        style={style}
+        ref={treeViewContainer}
+        id={treeViewFocusContainerId}
+        tabIndex={
+          -1 /* antd Tree doesn't support keyboard handling, focus, tabindex, that's why it's done here */
+        }
+      >
         <ToolbarTreeViewComponent
           {...restProps}
           height={treeViewHeight}
@@ -171,8 +180,6 @@ export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
           }}
         />
       </Container>
-      {/* Uncomment it later when multiselection will be here */}
-      {/* <SelectedNodeInfo style={{ marginTop: '4px' }} /> */}
       <NodeInfoModal
         treeIndex={nodeInfoTreeIndex}
         onClose={() => setInfoModalOpen(false)}

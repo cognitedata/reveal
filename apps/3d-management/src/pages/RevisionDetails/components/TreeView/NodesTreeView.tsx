@@ -1,75 +1,97 @@
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import Tree from 'antd-v4/lib/tree';
 import { TreeProps } from 'antd-v4/lib/tree/Tree';
-import { SelectedNode } from 'src/store/modules/TreeView';
+import { SelectedNode, TreeIndex } from 'src/store/modules/TreeView';
 import { INFO_BTN_CLASSNAME } from 'src/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
 import {
-  CheckInfo,
+  calcRangeKeys,
+  convertKeysToSelectedNodes,
+} from 'src/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
+import {
   CustomDataNode,
-  EventLoadChildren,
   EventTreeNodeSelected,
   TreeDataNode,
   TreeLoadMoreNode,
 } from './types';
 import antd4Styles from './antd4-tree-styles.css';
+import { useKeyboardHandler } from './hooks/useKeyboardHandler';
 
-type Props = Omit<TreeProps, 'onSelect' | 'onCheck' | 'onExpand' | 'loadData'> &
-  Required<Pick<TreeProps, 'checkedKeys' | 'expandedKeys' | 'selectedKeys'>> & {
-    treeData: Array<CustomDataNode>;
+type ModifiedTreeProps = {
+  treeData: Array<TreeDataNode>;
 
-    width: number;
-    height: number;
+  checkedKeys: Array<TreeIndex>;
+  expandedKeys: Array<TreeIndex>;
+  selectedNodes: Array<SelectedNode>;
 
-    onNodeInfoRequest: (treeIndex: number) => void;
-    onSelect: (
-      selectedKeys: Array<SelectedNode>,
-      info: EventTreeNodeSelected
-    ) => void;
-    onCheck: (checkedKeys: Array<number>, info: CheckInfo) => void;
-    onExpand: (
-      expandedKeys: Array<number>,
-      info: {
-        node: TreeDataNode;
-        expanded: boolean;
-        nativeEvent: MouseEvent;
-      }
-    ) => void;
-    loadChildren: (node: EventLoadChildren) => Promise<void>;
-    loadSiblings: (node: TreeLoadMoreNode) => void;
+  width: number;
+  height: number;
 
-    // When checkable and checkStrictly is true, its object has checked and halfChecked
-    // we don't support that case
-    checkStrictly?: false;
-  };
+  onNodeInfoRequest: (treeIndex: number) => void;
+  onSelect: (selectedKeys: Array<SelectedNode>) => void;
+  onCheck: (checkedKeys: Array<number>) => void;
+  onExpand: (expandedKeys: Array<number>) => void;
+  loadChildren: (node: TreeDataNode) => Promise<void>;
+  loadSiblings: (node: TreeLoadMoreNode) => void;
+
+  // When checkable and checkStrictly is true, onCheck arg has checked and halfChecked
+  // instead of single array of checked items. We don't support that case.
+  checkStrictly?: false;
+};
+export type NodesTreeViewProps = Omit<TreeProps, keyof ModifiedTreeProps> &
+  ModifiedTreeProps;
 
 // struggled with proper ref type so used that type with actually used methods
 export type NodesTreeViewRefType = {
-  scrollTo: (key: string | number) => void;
+  scrollTo: (args: {
+    key: string | number;
+    align?: 'top' | 'bottom' | 'auto';
+    offset?: number;
+  }) => void;
 };
 
-const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
+const NodesTreeView = React.forwardRef<
+  NodesTreeViewRefType,
+  NodesTreeViewProps
+>(
   (
     {
+      checkedKeys,
+      expandedKeys,
       height,
-      width,
+      loadChildren,
       loadSiblings,
-      onSelect,
       onCheck,
       onExpand,
-      loadChildren,
       onNodeInfoRequest,
+      onSelect,
+      selectedNodes,
+      treeData,
+      width,
       ...restProps
-    }: Props,
+    }: NodesTreeViewProps,
     forwardedRef
   ) => {
     useGlobalStyles([antd4Styles]);
 
-    const isInfoIconClicked = (
-      info:
-        | EventTreeNodeSelected<CustomDataNode>
-        | EventTreeNodeSelected<TreeDataNode>
-    ) => {
+    const {
+      lastSelectedKeyRef,
+      cachedSelectedKeysRef,
+      lastSelectedRangeTailRef,
+    } = useKeyboardHandler({
+      checkedKeys,
+      expandedKeys,
+      loadChildren,
+      onCheck,
+      onExpand,
+      onSelect,
+      selectedNodes,
+      treeData,
+
+      treeRef: forwardedRef as MutableRefObject<NodesTreeViewRefType>,
+    });
+
+    const isInfoIconClicked = (info: EventTreeNodeSelected<any>) => {
       return info.nativeEvent.composedPath().some((el) => {
         // @ts-ignore EventTarget type declaration is very short
         const classList = el && el.classList;
@@ -79,6 +101,61 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
 
         return classList.contains(INFO_BTN_CLASSNAME);
       });
+    };
+
+    const getSelectedNodes = (
+      keys: Array<TreeIndex>,
+      event: EventTreeNodeSelected<TreeDataNode>
+    ): Array<SelectedNode> => {
+      const { node, nativeEvent } = event;
+      const { key } = node;
+
+      // Windows / Mac single pick
+      const ctrlPick: boolean = nativeEvent.ctrlKey || nativeEvent.metaKey;
+      const shiftPick: boolean = nativeEvent.shiftKey;
+
+      let newSelectedKeys: Array<TreeIndex>;
+
+      if (shiftPick && lastSelectedKeyRef.current) {
+        lastSelectedRangeTailRef.current = key;
+        // cachedSelectedKeysRef isn't updated here on purpose
+        // to have an ability to shrink what's selected
+        // todo: check if there are any bugs for shift + click the same node
+        newSelectedKeys = Array.from(
+          new Set([
+            ...(cachedSelectedKeysRef.current || []),
+            ...calcRangeKeys({
+              treeData,
+              expandedKeys,
+              startKey: lastSelectedKeyRef.current,
+              endKey: lastSelectedRangeTailRef.current,
+            }),
+          ])
+        );
+      } else {
+        lastSelectedRangeTailRef.current = undefined;
+        if (ctrlPick) {
+          // Control click
+          newSelectedKeys = keys;
+          lastSelectedKeyRef.current = key;
+          cachedSelectedKeysRef.current = newSelectedKeys;
+        }
+        // Single click
+        else if (
+          selectedNodes.length === 1 &&
+          selectedNodes[0].treeIndex === key
+        ) {
+          newSelectedKeys = [];
+          lastSelectedKeyRef.current = undefined;
+          cachedSelectedKeysRef.current = newSelectedKeys;
+        } else {
+          newSelectedKeys = [key];
+          lastSelectedKeyRef.current = key;
+          cachedSelectedKeysRef.current = newSelectedKeys;
+        }
+      }
+
+      return convertKeysToSelectedNodes(treeData, newSelectedKeys);
     };
 
     const onNodeClicked = (
@@ -93,19 +170,15 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
         onNodeInfoRequest(info.node.meta.treeIndex);
       } else {
         onSelect(
-          (info as EventTreeNodeSelected<TreeDataNode>).selectedNodes.map(
-            (node) => ({
-              treeIndex: node.key,
-              nodeId: node.meta.id,
-              subtreeSize: node.meta.subtreeSize,
-            })
-          ),
-          info as EventTreeNodeSelected<TreeDataNode>
+          getSelectedNodes(
+            selectedKeys as Array<TreeIndex>,
+            info as EventTreeNodeSelected<TreeDataNode>
+          )
         );
       }
     };
 
-    if (!restProps.treeData.length) {
+    if (!treeData.length) {
       return <div />;
     }
 
@@ -113,9 +186,14 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
       <Tree
         ref={forwardedRef as any}
         style={{
+          userSelect: 'none',
           width,
           maxHeight: height,
         }}
+        treeData={treeData}
+        checkedKeys={checkedKeys}
+        selectedKeys={selectedNodes.map(({ treeIndex }) => treeIndex)}
+        expandedKeys={expandedKeys}
         showLine={{ showLeafIcon: false }}
         checkable
         loadData={loadChildren as any}
@@ -124,6 +202,7 @@ const NodesTreeView = React.forwardRef<NodesTreeViewRefType, Props>(
         onExpand={onExpand as any}
         height={height}
         virtual
+        multiple
         {...restProps}
       />
     );

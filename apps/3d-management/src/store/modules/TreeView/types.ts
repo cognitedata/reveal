@@ -50,6 +50,7 @@ export type NodeSelected = {
 
 export type InitialFetch = {
   type: 'treeView/initialFetch';
+  payload: { modelId: number; revisionId: number };
 };
 export type InitialFetchOk = {
   type: 'treeView/initialFetchOk';
@@ -66,14 +67,17 @@ export type InitialFetchError = {
 // };
 export type LoadAncestorsOk = {
   type: 'treeView/loadAncestorsOk';
-  payload: { treeData: Array<CustomDataNode> };
+  payload: { treeData: Array<TreeDataNode>; checkedNodes: Array<TreeIndex> };
 };
 export type LoadAncestorsError = {
   type: 'treeView/loadAncestorsError';
   payload: { error: Error };
 };
 
+export type ResetState = { type: 'treeView/resetState' };
+
 export type Actions =
+  | ResetState
   | InitialFetch
   | InitialFetchOk
   | InitialFetchError
@@ -97,15 +101,23 @@ export type Actions =
 export type SelectedNode = {
   treeIndex: number;
   nodeId: number;
-  subtreeSize?: number;
+  subtreeSize: number;
 };
 
 export type TreeViewState = {
-  treeData: Array<CustomDataNode>;
   checkedNodes: Array<TreeIndex>;
-  expandedNodes: Array<TreeIndex>;
-  selectedNodes: Array<SelectedNode>;
   error: Error | null;
-  loading: boolean; // used only for initial loading state
+  expandedNodes: Array<TreeIndex>;
+
+  // used only for initial loading state
+  loading: boolean;
+
   loadingCursors: Array<string>;
+
+  // used to track if fetched data is still needed
+  revisionId: number | null;
+  modelId: number | null;
+
+  selectedNodes: Array<SelectedNode>;
+  treeData: Array<TreeDataNode>;
 };

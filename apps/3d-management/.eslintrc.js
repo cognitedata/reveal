@@ -7,5 +7,6 @@ module.exports = {
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
     'no-console': 'off',
+    'no-debugger': 'off',
   },
 };

@@ -150,3 +150,27 @@ export function updateNodeById<
     return item;
   });
 }
+
+export function getAncestors<T extends BasicTree<KeyAndTitle>>(
+  list: Array<T>,
+  key: T['key'],
+  branch: Array<T['key']> = []
+): Array<T['key']> | undefined {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].key === key) {
+      return [list[i].key].concat(branch);
+    }
+  }
+
+  for (let i = 0; i < list.length; i++) {
+    const { children } = list[i];
+    if (children) {
+      const childBranch = getAncestors(children, key, branch);
+      if (childBranch) {
+        return branch.concat(list[i].key, childBranch);
+      }
+    }
+  }
+
+  return undefined;
+}

@@ -27,7 +27,6 @@ import {
 import {
   CustomDataNode,
   TreeDataNode,
-  TreeLoadMoreNode,
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
 import {
@@ -35,21 +34,40 @@ import {
   FetchNodesArgs,
   fetchRootTreeNodes,
   fetchTreeNodes,
-  RevisionId,
 } from 'src/store/modules/TreeView/treeViewDataProvider';
-import { ReduxThunk } from 'src/store';
-import { node3dToCustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/node3dToCustomDataNode';
+import { ReduxThunk, RootState } from 'src/store';
+import { node3dToCustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
 
 function getDefaultState(): TreeViewState {
   return {
     error: null,
     loading: false,
+    revisionId: null,
+    modelId: null,
     treeData: [],
     checkedNodes: [0], // to avoid viewer be blocked by tree loading
     expandedNodes: [0],
     selectedNodes: [],
     loadingCursors: [],
   };
+}
+
+// when we add nodes into the tree and their parent is checked, nodes must be checked too
+function getNewCheckedNodes(
+  prevCheckedNodes: Array<number>,
+  parentTreeIndex: number,
+  newChildren: Array<CustomDataNode> = []
+) {
+  if (prevCheckedNodes.includes(parentTreeIndex)) {
+    const set = new Set(prevCheckedNodes);
+    newChildren.forEach(({ key }) => {
+      if (typeof key === 'number') {
+        set.add(key);
+      }
+    });
+    return Array.from(set);
+  }
+  return prevCheckedNodes;
 }
 
 export default function treeDataReducer(
@@ -60,6 +78,8 @@ export default function treeDataReducer(
     case 'treeView/initialFetch': {
       return {
         ...getDefaultState(),
+        revisionId: action.payload.revisionId,
+        modelId: action.payload.modelId,
         loading: true,
         error: null,
       };
@@ -68,6 +88,11 @@ export default function treeDataReducer(
       return {
         ...prevState,
         treeData: action.payload,
+        checkedNodes: getNewCheckedNodes(
+          prevState.checkedNodes,
+          0,
+          action.payload[0]!.children
+        ),
         loading: false,
       };
     }
@@ -107,8 +132,13 @@ export default function treeDataReducer(
     case 'treeView/loadChildrenOk': {
       return {
         ...prevState,
-        treeData: addChildrenIntoTree<CustomDataNode>(
+        treeData: addChildrenIntoTree(
           prevState.treeData,
+          action.payload.parentTreeIndex,
+          action.payload.subtreeItems
+        ) as TreeDataNode[],
+        checkedNodes: getNewCheckedNodes(
+          prevState.checkedNodes,
           action.payload.parentTreeIndex,
           action.payload.subtreeItems
         ),
@@ -160,12 +190,17 @@ export default function treeDataReducer(
         loadingCursors: prevState.loadingCursors.filter(
           (cursor) => cursor !== action.payload.cursorKey
         ),
-        treeData: updateNodeById<CustomDataNode>(
+        treeData: updateNodeById<TreeDataNode>(
           prevState.treeData,
           parentNode.key,
           {
             children: newChildren,
           }
+        ),
+        checkedNodes: getNewCheckedNodes(
+          prevState.checkedNodes,
+          parentNode.key,
+          action.payload.subtreeItems
         ),
       };
     }
@@ -176,7 +211,7 @@ export default function treeDataReducer(
         loadingCursors: prevState.loadingCursors.filter(
           (cursor) => cursor !== action.payload.cursorKey
         ),
-        treeData: updateNodeById<CustomDataNode, TreeLoadMoreNode>(
+        treeData: updateNodeById<TreeDataNode, CustomDataNode>(
           prevState.treeData,
           action.payload.cursorKey,
           {
@@ -189,10 +224,10 @@ export default function treeDataReducer(
     //   return prevState; // nothing is going on here
     // }
     case 'treeView/loadAncestorsOk': {
-      // would be also nice to handle edge-case when ALL nodes are already in the tree (worth to refetch then)
       return {
         ...prevState,
         treeData: action.payload.treeData,
+        checkedNodes: action.payload.checkedNodes,
       };
     }
     case 'treeView/loadAncestorsError': {
@@ -206,6 +241,19 @@ export default function treeDataReducer(
   return prevState;
 }
 
+// make sure we update state for the currently viewed tree, not some that was open before it
+function getSafeDispatch(
+  getState: () => RootState,
+  dispatch: Function,
+  revisionId: number
+) {
+  return (...args: any[]) => {
+    if (getState().treeView.revisionId === revisionId) {
+      dispatch(...args);
+    }
+  };
+}
+
 export const fetchInitialNodes = (
   modelId: number,
   revisionId: number
@@ -213,7 +261,8 @@ export const fetchInitialNodes = (
   dispatch,
   getState
 ) => {
-  dispatch({ type: 'treeView/initialFetch' });
+  dispatch({ type: 'treeView/initialFetch', payload: { modelId, revisionId } });
+  const safeDispatch = getSafeDispatch(getState, dispatch, revisionId);
 
   try {
     const treeData: TreeDataNode[] = await fetchRootTreeNodes({
@@ -221,37 +270,46 @@ export const fetchInitialNodes = (
       revisionId,
     });
 
-    dispatch({ type: 'treeView/initialFetchOk', payload: treeData });
+    safeDispatch({ type: 'treeView/initialFetchOk', payload: treeData });
 
     // in case user already clicked some node - expand it after initial loading is finished
     const { selectedNodes } = getState().treeView;
 
     if (selectedNodes.length) {
       const { treeIndex, nodeId } = selectedNodes[0];
-      dispatch(
+      safeDispatch(
         expandNodeByTreeIndex({
           treeIndex,
           nodeId,
-          modelId,
-          revisionId,
         })
       );
     }
   } catch (error) {
-    dispatch({ type: 'treeView/initialFetchError', payload: { error } });
+    safeDispatch({ type: 'treeView/initialFetchError', payload: { error } });
   }
 };
 
 export const loadNodeChildren = (
   payload: FetchNodesArgs
 ): ReduxThunk<LoadChildren | LoadChildrenOk | LoadChildrenError> => async (
-  dispatch
+  dispatch,
+  getState
 ) => {
-  dispatch({ type: 'treeView/loadChildren' });
-  try {
-    const subtreeItems: CustomDataNode[] = await fetchTreeNodes(payload);
+  const { revisionId, modelId } = getState().treeView;
+  if (!revisionId || !modelId) {
+    return;
+  }
+  const safeDispatch = getSafeDispatch(getState, dispatch, revisionId);
 
-    dispatch({
+  safeDispatch({ type: 'treeView/loadChildren' });
+  try {
+    const subtreeItems: CustomDataNode[] = await fetchTreeNodes({
+      revisionId,
+      modelId,
+      ...payload,
+    });
+
+    safeDispatch({
       type: 'treeView/loadChildrenOk',
       payload: {
         subtreeItems,
@@ -259,7 +317,7 @@ export const loadNodeChildren = (
       },
     });
   } catch (error) {
-    dispatch({
+    safeDispatch({
       type: 'treeView/loadChildrenError',
       payload: { error },
     });
@@ -272,17 +330,28 @@ export const loadSiblings = (
   dispatch,
   getState
 ) => {
-  const { cursor, parent, cursorKey } = payload;
   const { treeView } = getState();
+  const { revisionId, modelId } = treeView;
+  if (!revisionId || !modelId) {
+    return;
+  }
+  const safeDispatch = getSafeDispatch(getState, dispatch, revisionId);
+
+  const { cursor, parent, cursorKey } = payload;
+
   if (treeView.loadingCursors.includes(cursor)) {
     return;
   }
 
-  dispatch({ type: 'treeView/loadSiblings', payload: { cursorKey } });
+  safeDispatch({ type: 'treeView/loadSiblings', payload: { cursorKey } });
   try {
-    const subtreeItems: CustomDataNode[] = await fetchTreeNodes(payload);
+    const subtreeItems: CustomDataNode[] = await fetchTreeNodes({
+      ...payload,
+      revisionId,
+      modelId,
+    });
 
-    dispatch({
+    safeDispatch({
       type: 'treeView/loadSiblingsOk',
       payload: {
         cursorKey,
@@ -291,7 +360,7 @@ export const loadSiblings = (
       },
     });
   } catch (error) {
-    dispatch({
+    safeDispatch({
       type: 'treeView/loadSiblingsError',
       payload: { cursorKey, error },
     });
@@ -300,29 +369,42 @@ export const loadSiblings = (
 
 export const expandNodeByTreeIndex = (() => {
   let latestAncestorsRequester: number | null = null;
-  return (
-    payload: RevisionId & {
-      nodeId: number;
-      treeIndex: number;
-      onSuccess?: () => void; // awkward way to wait until things are fetched
-    }
-  ): ReduxThunk<LoadAncestorsOk | LoadAncestorsError | NodeExpanded> => {
+  return (payload: {
+    nodeId: number;
+    treeIndex: number;
+    onSuccess?: () => void; // awkward way to wait until things are fetched
+  }): ReduxThunk<LoadAncestorsOk | LoadAncestorsError | NodeExpanded> => {
     latestAncestorsRequester = payload.nodeId;
     return async (dispatch, getState) => {
-      // dispatch({ type: 'treeView/loadAncestors', payload: { treeIndex } })
-      const { treeData } = getState().treeView;
-      if (!treeData.length) {
+      const {
+        modelId,
+        revisionId,
+        treeData,
+        checkedNodes,
+      } = getState().treeView;
+
+      if (!revisionId || !modelId || !treeData.length) {
+        // tree can be not loaded yet when fn is called, that's why treeData.length is checked
         return;
       }
+
+      const safeDispatch = getSafeDispatch(getState, dispatch, revisionId);
+
+      // dispatch({ type: 'treeView/loadAncestors', payload: { treeIndex } })
+
       try {
-        const nodes = await fetchAncestors(payload);
+        const nodes = await fetchAncestors({
+          ...payload,
+          revisionId,
+          modelId,
+        });
         if (
           !hasBranch(
             treeData,
             nodes.map((n) => n.treeIndex)
           )
         ) {
-          let treeBranch: CustomDataNode[] = [
+          let treeBranch: TreeDataNode[] = [
             {
               ...(treeData[0] as TreeDataNode),
               children: [...treeData[0].children!],
@@ -337,8 +419,8 @@ export const expandNodeByTreeIndex = (() => {
 
           for (let i = 1; i < nodes.length; i++) {
             wholeHierarchyCursors[nodes[i - 1].treeIndex] = fetchTreeNodes({
-              modelId: payload.modelId,
-              revisionId: payload.revisionId,
+              modelId,
+              revisionId,
               parent: {
                 treeIndex: nodes[i - 1].treeIndex,
                 nodeId: nodes[i - 1].id,
@@ -351,6 +433,7 @@ export const expandNodeByTreeIndex = (() => {
           }
 
           let parent = treeBranch[0] as TreeDataNode;
+          let newCheckedNodes = checkedNodes;
 
           // we don't check root since we always have it
           for (let i = 1; i < nodes.length; i++) {
@@ -368,6 +451,11 @@ export const expandNodeByTreeIndex = (() => {
             const newChildren: CustomDataNode[] = node3dToCustomDataNode([
               nodes[i],
             ]);
+            newCheckedNodes = getNewCheckedNodes(
+              newCheckedNodes,
+              parent.key,
+              newChildren
+            );
 
             if (!parentChildren.find((n) => 'cursor' in n)) {
               const currentSubtreeSize = (parentChildren as TreeDataNode[]).reduce(
@@ -392,20 +480,16 @@ export const expandNodeByTreeIndex = (() => {
               return list.concat(list2);
             };
 
-            treeBranch = updateNodeById<CustomDataNode>(
-              treeBranch,
-              parent.key,
-              {
-                children: concatAfterCursor(parentChildren, newChildren),
-              }
-            );
+            treeBranch = updateNodeById<TreeDataNode>(treeBranch, parent.key, {
+              children: concatAfterCursor(parentChildren, newChildren),
+            });
 
             parent = newChildren[0] as TreeDataNode;
           }
 
-          dispatch({
+          safeDispatch({
             type: 'treeView/loadAncestorsOk',
-            payload: { treeData: treeBranch },
+            payload: { treeData: treeBranch, checkedNodes: newCheckedNodes },
           });
         }
 
@@ -416,12 +500,15 @@ export const expandNodeByTreeIndex = (() => {
             .map((node) => node.treeIndex)
         );
 
-        dispatch({
+        safeDispatch({
           type: 'treeView/nodeExpanded',
           payload: expandedNodes,
         });
       } catch (error) {
-        dispatch({ type: 'treeView/loadAncestorsError', payload: { error } });
+        safeDispatch({
+          type: 'treeView/loadAncestorsError',
+          payload: { error },
+        });
       }
 
       if (latestAncestorsRequester === payload.nodeId && payload.onSuccess) {
@@ -431,13 +518,18 @@ export const expandNodeByTreeIndex = (() => {
   };
 })();
 
-export const checkNodes = (payload: NodeChecked['payload']) => (dispatch) =>
-  dispatch({ type: 'treeView/nodeChecked', payload });
+export const resetTreeViewState = () => (dispatch: (arg: Actions) => void) =>
+  dispatch({ type: 'treeView/resetState' });
+
+export const checkNodes = (payload: NodeChecked['payload']) => (
+  dispatch: (arg: Actions) => void
+) => dispatch({ type: 'treeView/nodeChecked', payload });
 
 export const selectNodes = (payload: NodeSelected['payload']) => (
   dispatch
 ): ReduxThunk<NodeSelected> =>
   dispatch({ type: 'treeView/nodeSelected', payload });
 
-export const expandNodes = (payload: NodeExpanded['payload']) => (dispatch) =>
-  dispatch({ type: 'treeView/nodeExpanded', payload });
+export const expandNodes = (payload: NodeExpanded['payload']) => (
+  dispatch: (arg: Actions) => void
+) => dispatch({ type: 'treeView/nodeExpanded', payload });

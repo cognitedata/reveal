@@ -1,7 +1,19 @@
 import React from 'react';
+import {
+  CustomDataNode,
+  TreeDataNode,
+} from 'src/pages/RevisionDetails/components/TreeView/types';
+import { SelectedNode } from 'src/store/modules/TreeView';
 import { v3 } from '@cognite/cdf-sdk-singleton';
-import { CustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { NodeWithInfoButton } from 'src/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
+
+export function treeDataNodeToSelectedNode(node: TreeDataNode): SelectedNode {
+  return {
+    treeIndex: node.meta.treeIndex,
+    subtreeSize: node.meta.subtreeSize,
+    nodeId: node.meta.id,
+  };
+}
 
 export function node3dToCustomDataNode(items: v3.Node3D[]): CustomDataNode[] {
   return items.map((item) => {
