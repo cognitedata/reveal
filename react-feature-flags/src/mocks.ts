@@ -5,6 +5,7 @@ export const clientMock = {
   on: jest.fn(),
   off: jest.fn(),
   isEnabled: jest.fn(),
+  variant: jest.fn(),
 };
 
 jest.mock('unleash-proxy-client', () => ({
