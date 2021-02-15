@@ -1,14 +1,7 @@
 import { Status } from './Status';
 
 export interface RunsAPIResponse {
-  items: RunResponse[];
-}
-
-export interface RunResponse {
-  createdTime: number;
-  lastUpdatedTime: number;
-  externalId: string;
-  statuses: StatusRow[];
+  items: StatusRow[];
 }
 
 export interface StatusRow {

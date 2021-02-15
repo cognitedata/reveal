@@ -1,6 +1,6 @@
 import { Integration } from '../model/Integration';
 import { DataSetModel } from '../model/DataSetModel';
-import { RunResponse } from '../model/Runs';
+import { StatusRow } from '../model/Runs';
 
 export const mockDataSetResponse = () => [
   {
@@ -275,56 +275,49 @@ export const unauthorizedError = {
   },
 };
 
-export const mockDataRunsResponse: { items: RunResponse[] } = {
+export const mockDataRunsResponse: { items: StatusRow[] } = {
   items: [
     {
-      createdTime: 1584065700000,
-      lastUpdatedTime: 1584137100000,
-      externalId: 'dataIntegration0001',
-      statuses: [
-        {
-          id: 1,
-          createdTime: 1605575298134,
-          status: 'failure',
-          message: 'This is an error message',
-        },
-        {
-          id: 2,
-          createdTime: 1605555298134,
-          status: 'seen',
-        },
-        {
-          id: 3,
-          createdTime: 1605535298134,
-          status: 'seen',
-        },
-        {
-          id: 4,
-          createdTime: 1605418198134,
-          status: 'success',
-        },
-        {
-          id: 5,
-          createdTime: 1604918198134,
-          status: 'success',
-        },
-        {
-          id: 6,
-          createdTime: 1604218198134,
-          status: 'success',
-        },
-        {
-          id: 7,
-          createdTime: 1603918198134,
-          status: 'failure',
-          message: 'This is an error message foo bar',
-        },
-        {
-          id: 8,
-          createdTime: 1600923198134,
-          status: 'success',
-        },
-      ],
+      id: 1,
+      createdTime: 1605575298134,
+      status: 'failure',
+      message: 'This is an error message',
+    },
+    {
+      id: 2,
+      createdTime: 1605555298134,
+      status: 'seen',
+    },
+    {
+      id: 3,
+      createdTime: 1605535298134,
+      status: 'seen',
+    },
+    {
+      id: 4,
+      createdTime: 1605418198134,
+      status: 'success',
+    },
+    {
+      id: 5,
+      createdTime: 1604918198134,
+      status: 'success',
+    },
+    {
+      id: 6,
+      createdTime: 1604218198134,
+      status: 'success',
+    },
+    {
+      id: 7,
+      createdTime: 1603918198134,
+      status: 'failure',
+      message: 'This is an error message foo bar',
+    },
+    {
+      id: 8,
+      createdTime: 1600923198134,
+      status: 'success',
     },
   ],
 };
