@@ -53,7 +53,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/single-spa-react": "^3.0.1",
     "@types/styled-components": "^5.1.7",
-    "commander": "^5.1.0",
+    "commander": "^7.1.0",
     "concurrently": "^5.3.0",
     "cross-var": "^1.1.0",
     "eslint-config-airbnb": "^18.2.1",
