@@ -3,7 +3,7 @@ export const getFASVersionName = (): string =>
 
 export const getReleaseDate = (): string => {
   const releaseDate = process.env.REACT_APP_RELEASE_DATE
-    ? new Date(Number(process.env.REACT_APP_RELEASE_DATE))
+    ? new Date(Number(process.env.REACT_APP_RELEASE_DATE) * 1000)
     : new Date();
   return releaseDate.toISOString().split('T')[0];
 };

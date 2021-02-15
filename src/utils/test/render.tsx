@@ -9,15 +9,21 @@ import { ApiClientProvider } from 'providers/ApiClientProvider';
 import { TenantProvider } from 'providers/TenantProvider';
 import { BrowserRouter } from 'react-router-dom';
 import { StoreState } from 'store/types';
+import { CdfClient } from 'utils/cdfClient';
+import { ApiClient } from 'utils/apiClient';
 import { createMockStore } from './store';
 
 export default (
   ui: React.ReactNode,
-  options?: Omit<RenderOptions, 'queries'> & StoreState
+  options?: Omit<RenderOptions, 'queries'> & {
+    state: any; // StoreState;
+    cdfClient?: CdfClient;
+    apiClient?: ApiClient;
+  }
 ) => {
-  const store = createMockStore(options as StoreState);
-  const cdfClient = createMockCdfClient();
-  const apiClient = createMockApiClient();
+  const store = createMockStore((options?.state || {}) as StoreState);
+  const cdfClient = options?.cdfClient || createMockCdfClient();
+  const apiClient = options?.apiClient || createMockApiClient();
   const tenant = 'unit-test';
 
   type Props = {

@@ -6,13 +6,13 @@ import {
   SuitesTableState,
 } from './types';
 
-const getInitialImageUrls = () => ({
+export const getInitialImageUrls = () => ({
   loading: false,
   loaded: false,
   urls: [],
 });
 
-const initialState: SuitesTableState = {
+export const initialState: SuitesTableState = {
   loading: false,
   loaded: false,
   error: '',
