@@ -15,9 +15,14 @@ import {
   GridMainWrapper,
   GridTitleWrapper,
 } from '../../styles/StyledPage';
-import { INTEGRATIONS } from '../../utils/baseURL';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
+import {
+  CRON_EXPRESSION_PAGE_PATH,
+  DATA_SET_PAGE_PATH,
+  DESCRIPTION_PAGE_PATH,
+  INTEGRATIONS_OVERVIEW_PAGE_PATH,
+} from '../../routing/RoutingConfig';
 
 const StyledRadioGroup = styled.fieldset`
   display: flex;
@@ -114,17 +119,15 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
       case SupportedScheduleStrings.NOT_DEFINED:
       case SupportedScheduleStrings.ON_TRIGGER:
       case SupportedScheduleStrings.CONTINUOUS: {
-        history.push(
-          createLink(`/${INTEGRATIONS}/create/integration-data-set`)
-        );
+        history.push(createLink(DATA_SET_PAGE_PATH));
         break;
       }
       case SupportedScheduleStrings.SCHEDULED: {
-        history.push(createLink(`/${INTEGRATIONS}/create/integration-cron`));
+        history.push(createLink(CRON_EXPRESSION_PAGE_PATH));
         break;
       }
       default: {
-        history.push(createLink(`/${INTEGRATIONS}`));
+        history.push(createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH));
         break;
       }
     }
@@ -132,9 +135,7 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
   const v = watch('schedule');
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper
-        to={createLink(`/${INTEGRATIONS}/create/integration-description`)}
-      >
+      <GridBreadCrumbsWrapper to={createLink(DESCRIPTION_PAGE_PATH)}>
         Back
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>

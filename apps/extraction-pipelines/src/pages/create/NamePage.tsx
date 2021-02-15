@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
-import { useAppEnv } from '../../hooks/useAppEnv';
+import { createLink } from '@cognite/cdf-utilities';
 import {
   CreateIntegrationPageWrapper,
   GridBreadCrumbsWrapper,
@@ -14,9 +14,12 @@ import {
   GridMainWrapper,
   GridTitleWrapper,
 } from '../../styles/StyledPage';
-import { INTEGRATIONS } from '../../utils/baseURL';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
+import {
+  CREATE_INTEGRATION_PAGE_PATH,
+  EXTERNAL_ID_PAGE_PATH,
+} from '../../routing/RoutingConfig';
 
 const StyledInput = styled.input`
   width: 50%;
@@ -36,7 +39,6 @@ const nameSchema = yup.object().shape({
   name: yup.string().required(NAME_REQUIRED),
 });
 const NamePage: FunctionComponent<NamePageProps> = () => {
-  const { cdfEnv, project } = useAppEnv();
   const history = useHistory();
   const { register, handleSubmit, errors } = useForm<NameFormInput>({
     resolver: yupResolver(nameSchema),
@@ -44,20 +46,11 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
     reValidateMode: 'onSubmit',
   });
   const handleNext = () => {
-    history.push(
-      `/${project}/${INTEGRATIONS}/create/integration-external-id${
-        cdfEnv ? `?env=${cdfEnv}` : ''
-      }`
-    );
+    history.push(createLink(EXTERNAL_ID_PAGE_PATH));
   };
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper
-        to={{
-          pathname: `/${project}/${INTEGRATIONS}/create`,
-          search: cdfEnv ? `?env=${cdfEnv}` : '',
-        }}
-      >
+      <GridBreadCrumbsWrapper to={createLink(CREATE_INTEGRATION_PAGE_PATH)}>
         Back
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>

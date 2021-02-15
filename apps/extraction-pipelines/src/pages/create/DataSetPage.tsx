@@ -17,7 +17,7 @@ import {
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
-  CRON_PAGE_PATH,
+  CRON_EXPRESSION_PAGE_PATH,
   DATA_SET_ID_PAGE_PATH,
   INTEGRATIONS_OVERVIEW_PAGE_PATH,
   RAW_TABLE_PAGE_PATH,
@@ -135,7 +135,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
         break;
       }
       case DataSetOptions.CREATE: {
-        history.push(createLink(CRON_PAGE_PATH));
+        history.push(createLink(CRON_EXPRESSION_PAGE_PATH));
         break;
       }
       default: {

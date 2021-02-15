@@ -1,8 +1,11 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { INTEGRATIONS } from '../../utils/baseURL';
-import { useAppEnv } from '../../hooks/useAppEnv';
+import {
+  INTEGRATIONS_OVERVIEW_PAGE_PATH,
+  NAME_PAGE_PATH,
+} from 'routing/RoutingConfig';
+import { createLink } from '@cognite/cdf-utilities';
 import {
   CreateIntegrationPageWrapper,
   GridTitleWrapper,
@@ -21,25 +24,15 @@ interface CreateIntegrationProps {}
 const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
   _: PropsWithChildren<CreateIntegrationProps>
 ) => {
-  const { cdfEnv, project } = useAppEnv();
   const history = useHistory();
 
   const handleNext = () => {
-    history.push(
-      `/${project}/${INTEGRATIONS}/create/integration-name${
-        cdfEnv ? `?env=${cdfEnv}` : ''
-      }`
-    );
+    history.push(createLink(NAME_PAGE_PATH));
   };
 
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper
-        to={{
-          pathname: `/${project}/${INTEGRATIONS}`,
-          search: cdfEnv ? `?env=${cdfEnv}` : '',
-        }}
-      >
+      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
         Integrations overview
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>{CREATE_INTEGRATION_HEADING}</GridTitleWrapper>

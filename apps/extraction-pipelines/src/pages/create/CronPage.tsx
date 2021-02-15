@@ -17,8 +17,8 @@ import {
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
-  CONTACTS_PAGE_PATH,
-  NAME_PAGE_PATH,
+  DATA_SET_PAGE_PATH,
+  SCHEDULE_PAGE_PATH,
 } from '../../routing/RoutingConfig';
 
 const StyledInput = styled.input`
@@ -27,63 +27,66 @@ const StyledInput = styled.input`
     border-color: ${Colors.danger.hex()};
   }
 `;
-interface ExternalIdPageProps {}
+export const CRON_LABEL: Readonly<string> = 'Cron expression';
+export const INTEGRATION_CRON_HEADING: Readonly<string> =
+  'Integration schedule - Cron Expression';
+export const CRON_TIP: Readonly<string> =
+  'Enter a cron expression for when the integration is scheduled to run.';
+export const CRON_REQUIRED: Readonly<string> = 'Cron is required';
+const cronSchema = yup.object().shape({
+  cron: yup.string(),
+});
 
-interface ExternalIdFormInput {
-  externalId: string;
+interface CronPageProps {}
+
+interface CronFormInput {
+  cron: string;
 }
 
-export const INTEGRATION_EXTERNAL_ID_HEADING: Readonly<string> =
-  'Integration external id';
-export const EXTERNAL_ID_REQUIRED: Readonly<string> = 'External id is required';
-const nameSchema = yup.object().shape({
-  externalId: yup.string().required(EXTERNAL_ID_REQUIRED),
-});
-const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
+const CronPage: FunctionComponent<CronPageProps> = () => {
   const history = useHistory();
-  const { register, handleSubmit, errors } = useForm<ExternalIdFormInput>({
-    resolver: yupResolver(nameSchema),
+  const { register, handleSubmit, errors } = useForm<CronFormInput>({
+    resolver: yupResolver(cronSchema),
     defaultValues: {},
     reValidateMode: 'onSubmit',
   });
   const handleNext = () => {
-    history.push(createLink(CONTACTS_PAGE_PATH));
+    history.push(createLink(DATA_SET_PAGE_PATH));
   };
+
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(NAME_PAGE_PATH)}>
+      <GridBreadCrumbsWrapper to={createLink(SCHEDULE_PAGE_PATH)}>
         Back
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>
       <GridMainWrapper>
-        <GridH2Wrapper>{INTEGRATION_EXTERNAL_ID_HEADING}</GridH2Wrapper>
+        <GridH2Wrapper>{INTEGRATION_CRON_HEADING}</GridH2Wrapper>
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-          <label htmlFor="integration-external-id" className="input-label">
-            External id
+          <label htmlFor="cron-input" className="input-label">
+            {CRON_LABEL}
           </label>
-          <span id="external-id-hint" className="input-hint">
-            The external id is the id used to refer to this integration
-            externally. It must be unique. Follow company conventions.
+          <span id="cron-hint" className="input-hint">
+            {CRON_TIP}
           </span>
           <ErrorMessage
             errors={errors}
-            name="externalId"
+            name="cron"
             render={({ message }) => (
-              <span id="external-id-error" className="error-message">
+              <span id="cron-error" className="error-message">
                 {message}
               </span>
             )}
           />
           <StyledInput
-            id="integration-external-id"
-            name="externalId"
+            id="cron-input"
+            name="cron"
             type="text"
             ref={register}
-            className={`cogs-input ${errors.externalId ? 'has-error' : ''}`}
-            aria-invalid={!!errors.externalId}
-            aria-describedby="external-id-hint external-id-error"
+            className={`cogs-input ${errors.cron ? 'has-error' : ''}`}
+            aria-invalid={!!errors.cron}
+            aria-describedby="cron-hint cron-error"
           />
-
           <Button type="primary" htmlType="submit">
             {NEXT}
           </Button>
@@ -92,4 +95,4 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
     </CreateIntegrationPageWrapper>
   );
 };
-export default ExternalIdPage;
+export default CronPage;

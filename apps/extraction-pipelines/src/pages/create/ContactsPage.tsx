@@ -14,9 +14,12 @@ import {
   GridMainWrapper,
   GridTitleWrapper,
 } from '../../styles/StyledPage';
-import { INTEGRATIONS } from '../../utils/baseURL';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
+import {
+  DESCRIPTION_PAGE_PATH,
+  EXTERNAL_ID_PAGE_PATH,
+} from '../../routing/RoutingConfig';
 
 const StyledInput = styled.input`
   width: 50%;
@@ -101,7 +104,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
   });
   register('sendNotification');
   const handleNext = () => {
-    history.push(createLink(`/${INTEGRATIONS}/create/integration-description`));
+    history.push(createLink(DESCRIPTION_PAGE_PATH));
   };
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -112,9 +115,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
 
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper
-        to={createLink(`/${INTEGRATIONS}/create/integration-external-id`)}
-      >
+      <GridBreadCrumbsWrapper to={createLink(EXTERNAL_ID_PAGE_PATH)}>
         Back
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>

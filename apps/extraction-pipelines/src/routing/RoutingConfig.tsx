@@ -84,6 +84,14 @@ const LazyCreateIntegrationDataSetId = React.lazy(
     )
 );
 
+const LazyCreateIntegrationCronExpression = React.lazy(
+  () =>
+    import(
+      '../pages/create/CronPage'
+      /* webpackChunkName: "pnid_integration_create_cron" */
+    )
+);
+
 interface IntegrationsRoute {
   name: string;
   path: string;
@@ -93,10 +101,14 @@ interface IntegrationsRoute {
 export type RouterParams = { id: string };
 export const INTEGRATION = `integration`;
 
+export const NAME_PAGE_PATH = `/${INTEGRATIONS}/create/name`;
+export const EXTERNAL_ID_PAGE_PATH = `/${INTEGRATIONS}/create/external-id`;
+export const DESCRIPTION_PAGE_PATH = `/${INTEGRATIONS}/create/description`;
+export const CONTACTS_PAGE_PATH = `/${INTEGRATIONS}/create/contacts`;
 export const SCHEDULE_PAGE_PATH = `/${INTEGRATIONS}/create/schedule`;
+export const CRON_EXPRESSION_PAGE_PATH = `/${INTEGRATIONS}/create/cron`;
 export const DATA_SET_PAGE_PATH = `/${INTEGRATIONS}/create/dataset`;
 export const DATA_SET_ID_PAGE_PATH = `/${INTEGRATIONS}/create/dataset-id`;
-export const CRON_PAGE_PATH = `/${INTEGRATIONS}/create/cron`;
 export const RAW_TABLE_PAGE_PATH = `/${INTEGRATIONS}/create/raw-table`;
 export const RAW_TABLE_LIST_PAGE_PATH = `/${INTEGRATIONS}/create/raw-table-list`;
 export const METADATA_PAGE_PATH = `/${INTEGRATIONS}/create/meta-data`;
@@ -111,25 +123,25 @@ const createIntegrationRoutes = [
   },
   {
     name: 'Create integration - name',
-    path: `/:tenant/${INTEGRATIONS}/create/integration-name`,
+    path: `/:tenant${NAME_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationName,
   },
   {
     name: 'Create integration - external id',
-    path: `/:tenant/${INTEGRATIONS}/create/integration-external-id`,
+    path: `/:tenant${EXTERNAL_ID_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationExternalId,
   },
   {
     name: 'Create integration - description',
-    path: `/:tenant/${INTEGRATIONS}/create/integration-description`,
+    path: `/:tenant${DESCRIPTION_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationDescription,
   },
   {
     name: 'Create integration - contacts',
-    path: `/:tenant/${INTEGRATIONS}/create/integration-contacts`,
+    path: `/:tenant${CONTACTS_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationContacts,
   },
@@ -147,7 +159,7 @@ const createIntegrationRoutes = [
   },
   {
     name: 'Create integration - schedule',
-    path: `/:tenant/${INTEGRATIONS}/create/schedule`,
+    path: `/:tenant${SCHEDULE_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationSchedule,
   },
@@ -156,6 +168,12 @@ const createIntegrationRoutes = [
     path: `/:tenant${DATA_SET_ID_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationDataSetId,
+  },
+  {
+    name: 'Create integration - Cron expression',
+    path: `/:tenant${CRON_EXPRESSION_PAGE_PATH}`,
+    exact: true,
+    component: LazyCreateIntegrationCronExpression,
   },
 ];
 export const routingConfig: IntegrationsRoute[] = [
