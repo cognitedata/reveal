@@ -10,12 +10,11 @@ import RawTablePage, {
   RawTableOptions,
   INTEGRATION_RAW_TABLE_HEADING,
 } from './RawTablePage';
-import { RAW_TABLE_PAGE_PATH } from '../../routing/RoutingConfig';
+import { RAW_TABLE_PAGE_PATH } from '../../routing/CreateRouteConfig';
 
 describe('RawTablePage', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
       PROJECT_ITERA_INT_GREEN,

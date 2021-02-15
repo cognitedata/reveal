@@ -10,18 +10,17 @@ import CronPage, {
   CRON_TIP,
   INTEGRATION_CRON_HEADING,
 } from './CronPage';
-import { CRON_EXPRESSION_PAGE_PATH } from '../../routing/RoutingConfig';
+import { CRON_PAGE_PATH } from '../../routing/CreateRouteConfig';
 
 describe('CronPage', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
       PROJECT_ITERA_INT_GREEN,
       ORIGIN_DEV,
       undefined,
-      CRON_EXPRESSION_PAGE_PATH
+      CRON_PAGE_PATH
     );
     render(<CronPage />, { wrapper });
   });

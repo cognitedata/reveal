@@ -40,7 +40,7 @@ describe('Monitoring', () => {
       },
     });
     await act(async () => {
-      const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+      const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
         client,
         ORIGIN_DEV,
         PROJECT_ITERA_INT_GREEN,

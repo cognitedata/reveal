@@ -8,9 +8,8 @@ import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
 import ContactsPage, { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
 
 describe('ContactsPage', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
       PROJECT_ITERA_INT_GREEN,

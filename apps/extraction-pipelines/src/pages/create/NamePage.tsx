@@ -16,10 +16,8 @@ import {
 } from '../../styles/StyledPage';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
-import {
-  CREATE_INTEGRATION_PAGE_PATH,
-  EXTERNAL_ID_PAGE_PATH,
-} from '../../routing/RoutingConfig';
+import { CREATE_INTEGRATION_PAGE_PATH } from '../../routing/RoutingConfig';
+import { EXTERNAL_ID_PAGE_PATH } from '../../routing/CreateRouteConfig';
 
 const StyledInput = styled.input`
   width: 50%;

@@ -97,7 +97,7 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
       </AppEnvProvider>
     </QueryClientProvider>
   );
-  return wrapper;
+  return { wrapper, history };
 };
 
 export const renderWithQueryClient = (client: QueryClient) => {

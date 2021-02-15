@@ -19,7 +19,7 @@ import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
   CONTACTS_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
-} from '../../routing/RoutingConfig';
+} from '../../routing/CreateRouteConfig';
 
 const StyledTextArea = styled.textarea`
   width: 80%;

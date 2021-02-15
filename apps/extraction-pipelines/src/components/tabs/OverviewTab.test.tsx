@@ -18,7 +18,7 @@ describe('OverviewTab', () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
     sdkv3.datasets.retrieve.mockResolvedValue([]);
     const client = new QueryClient();
-    const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       client,
       ORIGIN_DEV,
       PROJECT_ITERA_INT_GREEN,
@@ -37,7 +37,7 @@ describe('OverviewTab', () => {
       defaultOptions: { queries: { retry: false } },
     });
     await act(async () => {
-      const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+      const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
         queryCache,
         ORIGIN_DEV,
         PROJECT_ITERA_INT_GREEN,
@@ -55,7 +55,7 @@ describe('OverviewTab', () => {
       defaultOptions: { queries: { retry: false } },
     });
     await act(async () => {
-      const wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+      const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
         queryCache,
         ORIGIN_DEV,
         PROJECT_ITERA_INT_GREEN,

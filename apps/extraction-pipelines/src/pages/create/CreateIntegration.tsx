@@ -1,10 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import {
-  INTEGRATIONS_OVERVIEW_PAGE_PATH,
-  NAME_PAGE_PATH,
-} from 'routing/RoutingConfig';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { createLink } from '@cognite/cdf-utilities';
 import {
   CreateIntegrationPageWrapper,
@@ -18,6 +15,7 @@ import {
   NEXT,
   WIZARD_HEADING,
 } from '../../utils/constants';
+import { NAME_PAGE_PATH } from '../../routing/CreateRouteConfig';
 
 interface CreateIntegrationProps {}
 

@@ -9,9 +9,8 @@ import SchedulePage, { INTEGRATION_SCHEDULE_HEADING } from './SchedulePage';
 import { SupportedScheduleStrings } from '../../components/integrations/cols/Schedule';
 
 describe('SchedulePage', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
       PROJECT_ITERA_INT_GREEN,

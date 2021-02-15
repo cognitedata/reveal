@@ -9,9 +9,8 @@ import { NEXT } from '../../utils/constants';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
 
 describe('NamePage', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
       PROJECT_ITERA_INT_GREEN,

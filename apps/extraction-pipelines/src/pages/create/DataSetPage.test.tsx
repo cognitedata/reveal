@@ -11,12 +11,11 @@ import DataSetPage, {
   DataSetOptions,
   INTEGRATION_DATA_SET_HEADING,
 } from './DataSetPage';
-import { DATA_SET_PAGE_PATH } from '../../routing/RoutingConfig';
+import { DATA_SET_PAGE_PATH } from '../../routing/CreateRouteConfig';
 
 describe('DatasetPage', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
       PROJECT_ITERA_INT_GREEN,

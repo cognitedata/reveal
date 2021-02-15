@@ -17,12 +17,12 @@ import {
 } from '../../styles/StyledPage';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import {
-  CRON_EXPRESSION_PAGE_PATH,
+  CRON_PAGE_PATH,
   DATA_SET_PAGE_PATH,
   DESCRIPTION_PAGE_PATH,
-  INTEGRATIONS_OVERVIEW_PAGE_PATH,
-} from '../../routing/RoutingConfig';
+} from '../../routing/CreateRouteConfig';
 
 const StyledRadioGroup = styled.fieldset`
   display: flex;
@@ -123,7 +123,7 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
         break;
       }
       case SupportedScheduleStrings.SCHEDULED: {
-        history.push(createLink(CRON_EXPRESSION_PAGE_PATH));
+        history.push(createLink(CRON_PAGE_PATH));
         break;
       }
       default: {

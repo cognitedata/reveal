@@ -19,7 +19,7 @@ import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
   CONTACTS_PAGE_PATH,
   NAME_PAGE_PATH,
-} from '../../routing/RoutingConfig';
+} from '../../routing/CreateRouteConfig';
 
 const StyledInput = styled.input`
   width: 50%;

@@ -16,12 +16,12 @@ import {
 } from '../../styles/StyledPage';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import {
   DATA_SET_PAGE_PATH,
-  INTEGRATIONS_OVERVIEW_PAGE_PATH,
   METADATA_PAGE_PATH,
   RAW_TABLE_LIST_PAGE_PATH,
-} from '../../routing/RoutingConfig';
+} from '../../routing/CreateRouteConfig';
 
 const StyledRadioGroup = styled.fieldset`
   display: flex;
