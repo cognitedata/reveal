@@ -24,7 +24,6 @@ const LazyCreateIntegrationCreateRoot = React.lazy(
       /* webpackChunkName: "pnid_integration_create_create_routes" */
     )
 );
-
 interface IntegrationsRoute {
   name: string;
   path: string;

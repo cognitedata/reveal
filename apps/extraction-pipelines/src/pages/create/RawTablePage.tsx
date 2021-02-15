@@ -20,7 +20,7 @@ import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import {
   DATA_SET_PAGE_PATH,
   METADATA_PAGE_PATH,
-  RAW_TABLE_LIST_PAGE_PATH,
+  CONNECT_RAW_TABLES_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
 
 const StyledRadioGroup = styled.fieldset`
@@ -124,7 +124,7 @@ const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
     const value = getValues('rawTable');
     switch (value) {
       case RawTableOptions.YES: {
-        history.push(createLink(RAW_TABLE_LIST_PAGE_PATH));
+        history.push(createLink(CONNECT_RAW_TABLES_PAGE_PATH));
         break;
       }
       case RawTableOptions.NO: {
