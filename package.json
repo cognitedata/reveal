@@ -63,7 +63,7 @@
     "eslint-plugin-testcafe": "^0.2.1",
     "fs-extra": "^9.1.0",
     "husky": "^4.3.8",
-    "less": "^3.13.1",
+    "less": "^4.1.1",
     "less-loader": "^7.3.0",
     "postcss-prefixwrap": "^1.21.0",
     "prettier": "^2.2.1",
