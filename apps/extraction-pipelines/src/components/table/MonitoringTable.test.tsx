@@ -4,7 +4,7 @@ import MonitoringTable from './MonitoringTable';
 import {
   getMonitoringTableCol,
   MonitoringTableHeadings,
-} from '../table/MonitoringTableCol';
+} from './MonitoringTableCol';
 import { mockDataRunsResponse } from '../../utils/mockResponse';
 import mapRuns from '../../utils/runsUtils';
 
@@ -65,5 +65,25 @@ describe('<MonitoringTable/>', () => {
     fireEvent.click(statusAllMenuItem);
     const bodyAll = screen.getAllByRole('row');
     expect(bodyAll.length).toEqual(7); // 5 rows + header
+  });
+
+  test('Interact with pagination', () => {
+    const TEST_PAGE_SIZE = 5;
+    const HEADING = 1;
+    const rowsOnPage2 = tableData.length - TEST_PAGE_SIZE;
+    render(
+      <MonitoringTable
+        data={tableData}
+        columns={columns}
+        pageSize={TEST_PAGE_SIZE}
+      />
+    );
+    const allRows = screen.getAllByRole('row');
+    expect(allRows.length).toEqual(TEST_PAGE_SIZE + HEADING);
+    const pagination2 = screen.getByText('2');
+    expect(pagination2).toBeInTheDocument();
+    fireEvent.click(pagination2);
+    const page2Rows = screen.getAllByRole('row');
+    expect(page2Rows.length).toEqual(rowsOnPage2 + HEADING);
   });
 });

@@ -4,6 +4,9 @@ import {
   UseExpandedOptions,
   UseExpandedRowProps,
   UseExpandedState,
+  UsePaginationInstanceProps,
+  UsePaginationOptions,
+  UsePaginationState,
   UseRowSelectHooks,
   UseRowSelectInstanceProps,
   UseRowSelectOptions,
@@ -32,6 +35,7 @@ declare module 'react-table' {
 
   export interface TableOptions<D extends Record<string, unknown>>
     extends UseExpandedOptions<D>,
+      UsePaginationOptions<D>,
       UseRowSelectOptions<D>,
       UseFiltersOptions<D>,
       UseGlobalFiltersOptions<D>,
@@ -46,6 +50,7 @@ declare module 'react-table' {
   export interface TableInstance<
     D extends Record<string, unknown> = Record<string, unknown>
   > extends UseExpandedInstanceProps<D>,
+      UsePaginationInstanceProps<D>,
       UseRowSelectInstanceProps<D>,
       UseFiltersInstanceProps<D>,
       UseGlobalFiltersInstanceProps<D>,
@@ -54,6 +59,7 @@ declare module 'react-table' {
   export interface TableState<
     D extends Record<string, unknown> = Record<string, unknown>
   > extends UseExpandedState<D>,
+      UsePaginationState<D>,
       UseRowSelectState<D>,
       UseFiltersState<D>,
       UseGlobalFiltersState<D>,

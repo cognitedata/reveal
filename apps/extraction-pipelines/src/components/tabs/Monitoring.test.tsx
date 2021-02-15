@@ -1,9 +1,7 @@
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { screen, render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 import React from 'react';
 import { QueryClient } from 'react-query';
-import { mockError, getMockResponse } from '../../utils/mockResponse';
+import { mockError, mockDataRunsResponse } from '../../utils/mockResponse';
 import Monitoring from '../tabs/Monitoring';
 import {
   renderWithReactQueryCacheProvider,
@@ -14,11 +12,18 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '../../utils/baseURL';
+import { useRuns } from '../../hooks/useRuns';
+
+jest.mock('../../hooks/useRuns', () => {
+  return {
+    useRuns: jest.fn(),
+  };
+});
 
 describe('Monitoring', () => {
   const externalId = 'dataIntegration000-1';
   test('Render table with out fail', async () => {
-    sdkv3.get.mockResolvedValue({ data: getMockResponse() });
+    useRuns.mockReturnValue({ data: mockDataRunsResponse.items });
     const wrapper = renderWithReactQueryCacheProvider(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
@@ -31,7 +36,7 @@ describe('Monitoring', () => {
   });
 
   test('Render error on fail', async () => {
-    sdkv3.get.mockRejectedValue(mockError);
+    useRuns.mockReturnValue(mockError);
     const client = new QueryClient({
       defaultOptions: {
         queries: {
@@ -39,16 +44,14 @@ describe('Monitoring', () => {
         },
       },
     });
-    await act(async () => {
-      const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
-        client,
-        ORIGIN_DEV,
-        PROJECT_ITERA_INT_GREEN,
-        CDF_ENV_GREENFIELD
-      );
-      render(<Monitoring externalId={externalId} />, { wrapper });
-      const errorMessage = await screen.findByText(mockError.error.message);
-      expect(errorMessage).toBeInTheDocument();
-    });
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
+      client,
+      ORIGIN_DEV,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD
+    );
+    render(<Monitoring externalId={externalId} />, { wrapper });
+    const errorMessage = await screen.findByText(mockError.error.message);
+    expect(errorMessage).toBeInTheDocument();
   });
 });
