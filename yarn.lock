@@ -3633,10 +3633,10 @@
     "@typescript-eslint/types" "4.14.2"
     eslint-visitor-keys "^2.0.0"
 
-"@visx/axis@^1.2.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.4.0.tgz#6a8737d0fb7d4313cf311f9c8b8071e7744b8e7c"
-  integrity sha512-VBq170tBu+PJ1XJLk6xwzmNEXrqriaSiaP808peR3oArXd0yMOgmI+HKm18qzPS2hbdRgxZNQOnlDZvB43H95w==
+"@visx/axis@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.5.0.tgz#da645e24ab484321fda33e35a3052653fe140a96"
+  integrity sha512-POHG9mmRo/tUvEsDEUIITpPf9/bDtm/BPaaVtEj9IemWz0GEJXClGZLUyKzsVYeAfXwB7OuRcfA7cBNyDtrz5A==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
