@@ -4,12 +4,17 @@ import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
-import { ErrorFeedback, Loader, Tabs } from 'lib/components';
-import { TimeseriesChart } from 'lib/containers/Timeseries';
+import {
+  ErrorFeedback,
+  Loader,
+  Tabs,
+  TimeseriesChart,
+  Metadata,
+  TimeseriesDetails,
+} from '@cognite/data-exploration';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { createLink } from '@cognite/cdf-utilities';
-import TimeseriesDetails from 'lib/containers/Timeseries/TimeseriesDetails/TimeseriesDetails';
-import Metadata from 'lib/components/Details/Metadata';
+
 import { useDateRange } from 'app/context/DateRangeContext';
 
 export type TimeseriesPreviewTabType =

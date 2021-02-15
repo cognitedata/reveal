@@ -2,13 +2,14 @@ import React from 'react';
 import { Dropdown, Menu, Tooltip, Space } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { ResourceItem, isModelRunning } from 'lib/types';
 import {
+  ResourceItem,
+  isModelRunning,
   useDeleteFindObjectsJob,
   useFindObjectsJobId,
   useFindObjects,
   useJob,
-} from 'lib/hooks/objectDetection';
+} from '@cognite/data-exploration';
 
 export const ContextualizationButton = ({
   item: { id, type },

@@ -10,7 +10,9 @@ import {
   ResourceTypeTabs,
   getTitle,
   ResourceType,
-} from 'lib';
+  EnsureNonEmptyResource,
+} from '@cognite/data-exploration';
+import { Colors } from '@cognite/cogs.js';
 import { Row, Col } from 'antd';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
@@ -20,7 +22,6 @@ import ResourceSelectionContext, {
 import { useDebounce } from 'use-debounce/lib';
 import styled from 'styled-components';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
-import { lightGrey } from 'lib/utils/Colors';
 import {
   useQueryString,
   useQueryStringArray,
@@ -32,7 +33,6 @@ import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
 import { useDateRange } from 'app/context/DateRangeContext';
 import { PageTitle } from '@cognite/cdf-utilities';
-import EnsureNonEmptyResource from 'lib/components/EnsureNonEmptyResource';
 import FilterToggleButton from './FilterToggleButton';
 import { LabelsQuickSelect } from './LabelsQuickSelect';
 
@@ -109,7 +109,7 @@ function SearchPage() {
       case 'asset':
         return (
           <AssetSearchResults
-            onClick={item =>
+            onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
             filter={assetFilter}
@@ -121,7 +121,7 @@ function SearchPage() {
           <FileSearchResults
             filter={fileFilter}
             allowEdit={editable}
-            onClick={item =>
+            onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
             {...commonProps}
@@ -130,7 +130,7 @@ function SearchPage() {
       case 'sequence':
         return (
           <SequenceSearchResults
-            onClick={item =>
+            onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
             filter={sequenceFilter}
@@ -140,7 +140,7 @@ function SearchPage() {
       case 'timeSeries':
         return (
           <TimeseriesSearchResults
-            onClick={item =>
+            onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
             filter={timeseriesFilter}
@@ -151,7 +151,7 @@ function SearchPage() {
       case 'event':
         return (
           <EventSearchResults
-            onClick={item =>
+            onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
             filter={eventFilter}
@@ -189,7 +189,9 @@ function SearchPage() {
           style={{
             width: active ? 440 : 'unset',
             flex: active ? 'unset' : 1,
-            borderRight: active ? `1px solid ${lightGrey}` : 'unset',
+            borderRight: active
+              ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+              : 'unset',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -291,7 +293,7 @@ const SearchResultWrapper = styled.div`
 `;
 
 const SearchInputContainer = styled(Row)`
-  border-bottom: 1px solid ${lightGrey};
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   padding-top: 20px;
   padding-bottom: 16px;
 `;

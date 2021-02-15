@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
-import { ResourceSelectorProvider } from 'lib/context/ResourceSelectorContext';
+import { ResourceSelectorProvider } from '@cognite/data-exploration';
 import styled from 'styled-components';
 import { ResourceDetailsPage } from 'app/containers/ResourceDetails';
 import SearchRedirect from './SearchRedirect';

@@ -3,12 +3,15 @@ import { Dropdown, Menu, Tooltip } from 'antd';
 import { MenuItemProps } from 'antd/es/menu/MenuItem';
 import { FileInfo } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
-import { convertResourceType } from 'lib';
-import FileDownloadAnchor from 'lib/components/FileDownloadAnchor';
+import {
+  convertResourceType,
+  ResourceItem,
+  FileDownloadAnchor,
+} from '@cognite/data-exploration';
+
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { ResourceItem } from 'lib/types';
 import { trackUsage } from 'app/utils/Metrics';
 
 type Props = {

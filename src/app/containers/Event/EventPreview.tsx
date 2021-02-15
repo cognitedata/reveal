@@ -2,12 +2,16 @@ import React, { useEffect } from 'react';
 import { useRouteMatch, useLocation } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { EventDetails } from 'lib/containers/Events';
-import { renderTitle } from 'lib/utils/EventsUtils';
+import {
+  EventDetails,
+  ErrorFeedback,
+  Loader,
+  Tabs,
+  Metadata,
+} from '@cognite/data-exploration';
+import { renderTitle } from 'app/utils/EventsUtils';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
-import { ErrorFeedback, Loader, Tabs } from 'lib/components';
-import Metadata from 'lib/components/Details/Metadata';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';

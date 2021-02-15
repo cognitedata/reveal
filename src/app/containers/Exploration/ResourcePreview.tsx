@@ -4,7 +4,7 @@ import { FilePreview } from 'app/containers/File/FilePreview';
 import { SequencePreview } from 'app/containers/Sequence/SequencePreview';
 import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
 import { EventPreview } from 'app/containers/Event/EventPreview';
-import { ResourceItem } from 'lib/types';
+import { ResourceItem } from '@cognite/data-exploration';
 import { Button } from '@cognite/cogs.js';
 import { Tooltip } from 'antd';
 

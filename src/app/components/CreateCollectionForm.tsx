@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Input, Button } from '@cognite/cogs.js';
-import { CollectionSpec } from 'lib/hooks/CollectionsHooks';
+import { CollectionSpec } from 'app/hooks';
 
 interface Props {
   onCreate: (newCollection: Omit<CollectionSpec, 'type'>) => void;

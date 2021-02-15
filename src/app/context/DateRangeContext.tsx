@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { TIME_SELECT } from 'lib/containers/Timeseries/TimeseriesChart/TimeseriesChart';
+import { TIME_SELECT } from '@cognite/data-exploration';
 
 export type DateRangeObserver = {
   range: [Date, Date];

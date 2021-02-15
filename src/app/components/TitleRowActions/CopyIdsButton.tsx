@@ -1,9 +1,14 @@
 import React from 'react';
 import { Menu, Dropdown, notification, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
-import { ResourceType } from 'lib';
-import { useEnv, useTenant } from 'lib/hooks/CustomHooks';
-import { ResourceItem, convertResourceType } from 'lib/types';
+import {
+  ResourceType,
+  ResourceItem,
+  convertResourceType,
+  useEnv,
+  useTenant,
+} from '@cognite/data-exploration';
+
 import { trackUsage } from 'app/utils/Metrics';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 

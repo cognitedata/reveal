@@ -7,8 +7,8 @@ import {
   useCreateCollections,
   useUpdateCollections,
   CollectionSpec,
-} from 'lib/hooks/CollectionsHooks';
-import { ResourceType } from 'lib/types';
+} from 'app/hooks';
+import { ResourceType } from '@cognite/data-exploration';
 import CreateCollectionForm from 'app/components/CreateCollectionForm';
 import { useCollectionFeature } from 'app/utils/featureFlags';
 import { trackUsage } from 'app/utils/Metrics';

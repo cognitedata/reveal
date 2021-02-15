@@ -1,10 +1,14 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { Tabs, TabPaneProps } from 'lib/components';
-import { ResourceType, ResourceItem, getTitle } from 'lib/types';
-import { useRelatedResourceCounts } from 'lib/hooks/RelationshipHooks';
-import { Badge } from '@cognite/cogs.js';
-import { lightGrey } from 'lib/utils/Colors';
+import {
+  Tabs,
+  TabPaneProps,
+  useRelatedResourceCounts,
+  ResourceType,
+  ResourceItem,
+  getTitle,
+} from '@cognite/data-exploration';
+import { Badge, Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
@@ -79,7 +83,10 @@ export const ResourceDetailsTabs = ({
         title={
           <>
             <TabTitle>{getTitle(key)}</TabTitle>
-            <Badge text={counts[key]} background={lightGrey} />
+            <Badge
+              text={counts[key]}
+              background={Colors['greyscale-grey3'].hex()}
+            />
           </>
         }
       >

@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { isProduction, isStaging } from 'lib/utils/environment';
+import { isProduction, isStaging } from 'app/utils/environment';
 
 export function setupSentry() {
   if (isProduction() || isStaging()) {

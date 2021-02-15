@@ -2,7 +2,7 @@ import React from 'react';
 import { Space, Divider, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import CollectionsDropdown from 'app/components/CollectionsDropdown';
-import { ResourceItem } from 'lib/types';
+import { ResourceItem } from '@cognite/data-exploration';
 import DownloadButton from './DownloadButton';
 import { PowerBIButton, GrafanaButton } from './CopyIdsButton';
 

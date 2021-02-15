@@ -1,6 +1,6 @@
 import React from 'react';
 import { InternalId } from '@cognite/sdk';
-import { ResourceType } from 'lib';
+import { ResourceType } from '@cognite/data-exploration';
 
 import SelectedResourcesTitleRow from './SelectedResourcesTitleRow';
 import Summary from './Summary';

@@ -141,20 +141,6 @@ pods {
             )
           }
         },
-        'Storybook': {
-          if(!isPullRequest) {
-            print "No PR previews for release builds"
-            return;
-          }
-          stageWithNotify('Build and deploy Storybook') {
-            previewServer(
-              buildCommand: 'yarn build-storybook',
-              prefix: 'storybook',
-              buildFolder: 'storybook-static',
-              commentPrefix: STORYBOOK_COMMENT_MARKER
-            )
-          }
-        },
         'Build': {
           if(isPullRequest) {
             print "No builds for prs"
@@ -178,12 +164,6 @@ pods {
         fas.publish(
           shouldPublishSourceMap: false
         )
-      }
-    } else {
-      stageWithNotify('Build the explorer library') {
-        container('fas') {
-          sh("yarn build-lib")
-        }
       }
     }
   }

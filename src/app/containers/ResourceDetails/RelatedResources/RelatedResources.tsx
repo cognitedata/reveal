@@ -5,14 +5,15 @@ import {
   SelectableItemsProps,
   convertResourceType,
   AssetIdTable,
-} from 'lib';
+  RelatedResourceType,
+  LinkedResourceTable,
+  useRelatedResourceCount,
+  AnnotationTable,
+  AnnotatedWithTable,
+} from '@cognite/data-exploration';
 import { Select } from '@cognite/cogs.js';
-import { RelatedResourceType } from 'lib/hooks/RelatedResourcesHooks';
+
 import styled from 'styled-components';
-import { LinkedResourceTable } from 'lib/containers/Relationships';
-import { useRelatedResourceCount } from 'lib/hooks/RelationshipHooks';
-import AnnotationTable from 'lib/containers/Relationships/AnnotationTable';
-import { AnnotatedWithTable } from 'lib/containers/Relationships/AnnotatedWithTable';
 
 type TypeOption = {
   label: string;

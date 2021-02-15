@@ -2,11 +2,14 @@ import React from 'react';
 
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import { Icon, Button } from '@cognite/cogs.js';
-import { convertResourceType, ResourceItem, ResourceIcons } from 'lib';
+import { Icon, Button, Colors } from '@cognite/cogs.js';
+import {
+  convertResourceType,
+  ResourceItem,
+  ResourceIcons,
+} from '@cognite/data-exploration';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
-import { lightGrey } from 'lib/utils/Colors';
 import { trackUsage } from 'app/utils/Metrics';
 import { useQueryString } from 'app/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
@@ -119,7 +122,7 @@ export const TitleRowWrapper = styled.div`
   }
   margin: 16px 0px;
   padding-left: 16px;
-  border-bottom: 1px solid ${lightGrey};
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   padding-bottom: 10px;
 `;
 

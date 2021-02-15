@@ -2,7 +2,7 @@ import React from 'react';
 import { Space } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { InternalId } from '@cognite/sdk';
-import { ResourceType, getIcon, getTitle } from 'lib';
+import { ResourceType, getIcon, getTitle } from '@cognite/data-exploration';
 import { TitleRowWrapper } from '../ResourceTitleRow';
 import { Actions } from './Actions';
 

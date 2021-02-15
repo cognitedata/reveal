@@ -1,15 +1,19 @@
 import React, { useEffect, useContext, useState } from 'react';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
-import { FilePreview as CogniteFilePreview } from 'lib/containers/Files/FilePreview';
+import {
+  FilePreview as CogniteFilePreview,
+  ErrorFeedback,
+  Loader,
+  Tabs,
+  FileDetails,
+  Metadata,
+} from '@cognite/data-exploration';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
-import { FileDetails } from 'lib';
-import Metadata from 'lib/components/Details/Metadata';
 import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
 import styled from 'styled-components';
 import { Colors, Body } from '@cognite/cogs.js';

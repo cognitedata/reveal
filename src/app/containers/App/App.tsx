@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, Suspense } from 'react';
 import { Metrics } from '@cognite/metrics';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
-import { Loader } from 'lib/components';
+import {
+  Loader,
+  FileContextualizationContextProvider,
+  useUserStatus,
+} from '@cognite/data-exploration';
 import { ResourceActionsProvider } from 'app/context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'app/context/ResourceSelectionContext';
-import { FileContextualizationContextProvider } from 'lib/context/FileContextualization';
-import { useUserStatus } from 'lib/hooks/CustomHooks';
+
 import { DateRangeProvider } from 'app/context/DateRangeContext';
 
 const Spinner = () => <Loader />;

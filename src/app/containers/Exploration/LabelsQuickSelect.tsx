@@ -9,7 +9,7 @@ import {
   LabelContainsAnyFilter,
 } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
-import { SpacedRow } from 'lib';
+import { SpacedRow } from '@cognite/data-exploration';
 import { trackUsage } from 'app/utils/Metrics';
 
 export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {

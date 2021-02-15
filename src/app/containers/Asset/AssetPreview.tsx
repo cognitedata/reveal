@@ -3,16 +3,21 @@ import { useRouteMatch } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import { useLocation, useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';
-import { AssetDetails, AssetTreeTable } from 'lib/containers/Assets';
-import Metadata from 'lib/components/Details/Metadata';
+import {
+  AssetDetails,
+  AssetTreeTable,
+  Loader,
+  ErrorFeedback,
+  Tabs,
+  Metadata,
+  ResourceItem,
+} from '@cognite/data-exploration';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Asset } from '@cognite/sdk';
-import { Loader, ErrorFeedback, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useCurrentResourceId } from 'app/hooks';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
-import { ResourceItem } from 'lib/types';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -109,7 +114,7 @@ export const AssetPreview = ({
           >
             <AssetTreeTable
               filter={{ parentIds: [asset.id] }}
-              onAssetClicked={newAsset => openAsset(newAsset.id)}
+              onAssetClicked={(newAsset: Asset) => openAsset(newAsset.id)}
               selectionMode={mode}
               onSelect={onSelect}
               isSelected={isSelected}

@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/data-exploration",
+  "name": "@cognite/data-explorer",
   "version": "0.5.1",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -9,7 +9,8 @@
     "@babel/runtime": "^7.12.5",
     "@cognite/annotations": "^1.1.0",
     "@cognite/cdf-utilities": "^0.9.0",
-    "@cognite/cogs.js": "^2.7.2",
+    "@cognite/cogs.js": "^2.12.4",
+    "@cognite/data-exploration": "^0.5.4",
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-feature-flags": "^0.1.0",
@@ -87,8 +88,6 @@
   "scripts": {
     "start": "env BROWSER=none WDS_SOCKET_PORT=3010 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3010 rescripts --max_old_space_size=8192 start",
     "build": "rescripts --max_old_space_size=8192 build",
-    "build-lib": "yarn clean ; NODE_ENV=production rollup -c",
-    "watch-lib": "NODE_ENV=development rollup -cw",
     "clean": "rm -rf dist/",
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-data-exploration --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
@@ -99,8 +98,6 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .jsx,.js,.tsx,.ts --fix",
     "ci": "yarn lint --max-warnings 0",
-    "storybook": "start-storybook -c ./src/lib/.storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -c ./src/lib/.storybook -s public",
     "deploy": "gsutil -m cp -r build/. gs://cdf-hub-dev"
   },
   "browserslist": {

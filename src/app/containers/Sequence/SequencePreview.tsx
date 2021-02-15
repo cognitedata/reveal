@@ -4,11 +4,13 @@ import { trackUsage } from 'app/utils/Metrics';
 import {
   SequenceDetails,
   SequencePreview as SequenceTabPreview,
-} from 'lib/containers/Sequences';
-import Metadata from 'lib/components/Details/Metadata';
+  ErrorFeedback,
+  Loader,
+  Tabs,
+  Metadata,
+} from '@cognite/data-exploration';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Sequence } from '@cognite/sdk';
-import { ErrorFeedback, Loader, Tabs } from 'lib/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { useHistory } from 'react-router';
 import { createLink } from '@cognite/cdf-utilities';

@@ -2,9 +2,12 @@ import React from 'react';
 import { Space } from 'antd';
 import { InternalId } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
-import { ResourceType, convertResourceType } from 'lib';
+import {
+  ResourceType,
+  convertResourceType,
+  FileDownloadAnchor,
+} from '@cognite/data-exploration';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import FileDownloadAnchor from 'lib/components/FileDownloadAnchor';
 
 type ItemProps = {
   id: number;

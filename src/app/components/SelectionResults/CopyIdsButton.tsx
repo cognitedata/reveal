@@ -1,8 +1,13 @@
 import React from 'react';
 import { Menu, Dropdown } from 'antd';
 import { Button } from '@cognite/cogs.js';
-import { ResourceType, convertResourceType } from 'lib';
-import { useEnv, useTenant } from 'lib/hooks/CustomHooks';
+import {
+  ResourceType,
+  convertResourceType,
+  useEnv,
+  useTenant,
+} from '@cognite/data-exploration';
+
 import { InternalId } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { copyIdsToClipboard } from '../TitleRowActions/CopyIdsButton';
