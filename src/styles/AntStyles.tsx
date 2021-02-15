@@ -5,6 +5,7 @@ import {
   ConfigProvider,
   Modal,
   // Tooltip,
+  message,
   notification,
   Dropdown,
   Spin,
@@ -46,7 +47,7 @@ import dropdownStyle from 'antd/es/dropdown/style/index.less';
 // import localeProviderStyle from 'antd/es/locale-provider/style/index.less';
 // import mentionsStyle from 'antd/es/mentions/style/index.less';
 // import menuStyle from 'antd/es/menu/style/index.less';
-// import messageStyle from 'antd/es/message/style/index.less';
+import messageStyle from 'antd/es/message/style/index.less';
 // import mixinsStyle from 'antd/es/style/mixins/index.less';
 import modalStyle from 'antd/es/modal/style/index.less';
 import notificationStyle from 'antd/es/notification/style/index.less';
@@ -64,7 +65,7 @@ import notificationStyle from 'antd/es/notification/style/index.less';
 // import spaceStyle from 'antd/es/space/style/index.less';
 import spinStyle from 'antd/es/spin/style/index.less';
 // import statisticStyle from 'antd/es/statistic/style/index.less';
-// import stepsStyle from 'antd/es/steps/style/index.less';
+import stepsStyle from 'antd/es/steps/style/index.less';
 // import switchStyle from 'antd/es/switch/style/index.less';
 // import tableStyle from 'antd/es/table/style/index.less';
 // import tabsStyle from 'antd/es/tabs/style/index.less';
@@ -78,6 +79,7 @@ import spinStyle from 'antd/es/spin/style/index.less';
 // import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
+import { getContainer } from 'src/utils';
 
 const styles = [
   // affixStyle,
@@ -101,7 +103,7 @@ const styles = [
   // inputStyle,
   // listStyle,
   // menuStyle,
-  // messageStyle,
+  messageStyle,
   modalStyle,
   notificationStyle,
   // paginationStyle,
@@ -112,6 +114,7 @@ const styles = [
   // selectStyle,
   // spaceStyle,
   spinStyle,
+  stepsStyle,
   // tableStyle,
   // tabsStyle,
   // tooltipStyle,
@@ -122,27 +125,26 @@ const styles = [
 
 Modal.defaultProps = {
   ...Modal.defaultProps,
-  getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
+  getContainer,
 };
 
 // Tooltip.defaultProps = {
 //   ...Tooltip.defaultProps,
-//   getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
+//   getContainer: getContainer,
 // };
 
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
-  appendTo: () => document.getElementsByClassName(ids.styleScope).item(0)!,
+  appendTo: getContainer,
 };
 
-notification.config({
-  getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
-});
+notification.config({ getContainer });
+
+message.config({ getContainer });
 
 Dropdown.defaultProp = {
   ...Dropdown.defaultProps,
-  getPopupContainer: () =>
-    document.getElementsByClassName(ids.styleScope).item(0)!,
+  getPopupContainer: getContainer,
 };
 
 Spin.setDefaultIndicator(<Icon type="Loading" />);
@@ -154,11 +156,7 @@ export default function AntStyles(props: { children: React.Node }) {
   }, []);
 
   return (
-    <ConfigProvider
-      getPopupContainer={() =>
-        document.getElementsByClassName(ids.styleScope).item(0)!
-      }
-    >
+    <ConfigProvider getPopupContainer={getContainer}>
       <div className={ids.styleScope}>{props.children}</div>
     </ConfigProvider>
   );

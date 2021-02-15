@@ -13,7 +13,9 @@ const Home = () => {
       <Loader />
       <Container>
         <p>Your Unified UI Subapp is now running! Congrats {user.username}!</p>
-        <Link to={createLink('/vision/upload')}>Go to upload page</Link>
+        <Link to={createLink('/vision/workflow/upload')}>
+          Go to upload page
+        </Link>
       </Container>
     </>
   );

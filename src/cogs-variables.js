@@ -15,6 +15,9 @@ module.exports = {
     'box-shadow-base': '0 2px 8px rgba(0, 0, 0, 0.15)',
     'component-background': 'var(--cogs-greyscale-grey2)',
   },
+  margin: {
+    default: '16px',
+  },
   ids: {
     styleScope: 'cdf-vision-subapp-style-scope',
   },

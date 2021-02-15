@@ -10,6 +10,10 @@ import AntStyles from 'src/styles/AntStyles';
 import theme from 'src/styles/theme';
 import { Loader } from '@cognite/cogs.js';
 import { ThemeProvider } from 'styled-components';
+import { SDKProvider } from '@cognite/sdk-provider';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { Provider as ReduxProvider } from 'react-redux';
+import store from 'src/store';
 import rootStyles from './styles/index.css';
 
 setupMixpanel();
@@ -28,21 +32,25 @@ const App = () => {
   }, []);
   return (
     <AntStyles>
-      <SubAppWrapper>
-        <AuthWrapper
-          subAppName={subAppName}
-          showLoader
-          includeGroups
-          loadingScreen={<Loader />}
-        >
-          <ThemeProvider theme={theme}>
-            <Router history={history}>
-              <Routes />
-            </Router>
-          </ThemeProvider>
-          <GlobalStyles theme={theme} />
-        </AuthWrapper>
-      </SubAppWrapper>
+      <AuthWrapper
+        subAppName={subAppName}
+        showLoader
+        includeGroups
+        loadingScreen={<Loader />}
+      >
+        <ThemeProvider theme={theme}>
+          <SDKProvider sdk={sdkv3}>
+            <ReduxProvider store={store}>
+              <SubAppWrapper padding={false}>
+                <Router history={history}>
+                  <Routes />
+                </Router>
+              </SubAppWrapper>
+            </ReduxProvider>
+          </SDKProvider>
+        </ThemeProvider>
+        <GlobalStyles theme={theme} />
+      </AuthWrapper>
     </AntStyles>
   );
 };

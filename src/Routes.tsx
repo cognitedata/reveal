@@ -5,22 +5,23 @@ import NotFound from 'src/pages/NotFound';
 import { LazyWrapper } from 'src/components/LazyWrapper';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import { handleUserIdentification } from 'src/utils/config';
+import { userHasCapabilities } from 'src/utils';
+import NoAccessPage from 'src/pages/NoAccessPage';
 
 function routeWrapper(
   Component: any,
   user: AuthenticatedUserWithGroups
 ): (routerProps: RouteComponentProps) => any {
   return (routeProps: RouteComponentProps) => {
-    // if (
-    //   !userHasCapabilities(user, [
-    //     {
-    //       acl: 'threedAcl',
-    //       actions: ['READ'],
-    //     },
-    //   ])
-    // ) {
-    //   return <NoAccessPage />;
-    // }
+    const capabilities = [
+      {
+        acl: 'filesAcl',
+        actions: ['READ', 'WRITE'],
+      },
+    ];
+    if (!userHasCapabilities(user, capabilities)) {
+      return <NoAccessPage capabilities={capabilities} />;
+    }
     return <Component {...routeProps} user={user} />;
   };
 }
@@ -32,10 +33,10 @@ const routes = [
     component: (props) => LazyWrapper(props, () => import('src/pages/Home')),
   },
   {
-    exact: true,
-    path: '/:tenant/vision/upload',
+    exact: false,
+    path: '/:tenant/vision/workflow/:step',
     component: (props) =>
-      LazyWrapper(props, () => import('src/pages/UploadPage')),
+      LazyWrapper(props, () => import('src/pages/Workflow/WorkflowContainer')),
   },
 ];
 
