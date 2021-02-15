@@ -1,8 +1,9 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import RawTable, { NO_RAW_TABLES_MESSAGE } from './RawTable';
+import RawTable from './RawTable';
 import { render } from '../../../utils/test';
 import { getMockResponse } from '../../../utils/mockResponse';
+import { NO_RAW_TABLES_MESSAGE } from '../../../utils/constants';
 
 describe('<RawTable />', () => {
   test('Should render without error', () => {

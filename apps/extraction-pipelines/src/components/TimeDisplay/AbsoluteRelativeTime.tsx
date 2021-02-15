@@ -1,13 +1,19 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { TimeDisplay, TimeDisplayProps } from './TimeDisplay';
 
-type AbsoluteRelativeTimeProps = Pick<TimeDisplayProps, 'value'> &
-  React.HTMLAttributes<HTMLSpanElement>;
-
+interface AbsoluteRelativeTimeProps
+  extends React.HTMLAttributes<HTMLSpanElement>,
+    Pick<TimeDisplayProps, 'value'> {
+  noValueMessage?: string;
+}
 export const AbsoluteRelativeTime: FunctionComponent<AbsoluteRelativeTimeProps> = ({
   value,
+  noValueMessage = '',
   ...rest
-}: AbsoluteRelativeTimeProps) => {
+}: PropsWithoutRef<AbsoluteRelativeTimeProps>) => {
+  if (!value) {
+    return noValueMessage ? <i>{noValueMessage}</i> : <></>;
+  }
   return (
     <span {...rest}>
       <TimeDisplay value={value} /> (

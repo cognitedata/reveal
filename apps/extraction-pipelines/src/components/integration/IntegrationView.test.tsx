@@ -10,6 +10,13 @@ import { TableHeadings } from '../table/IntegrationTableCol';
 import { DetailFieldNames } from '../../model/Integration';
 import { DATE_FORMAT } from '../TimeDisplay/TimeDisplay';
 import { uppercaseFirstWord } from '../../utils/primitivesUtils';
+import {
+  NO_CONTACTS_MSG,
+  NO_META_DATA,
+  NO_RAW_TABLES_MESSAGE,
+  NO_SCHEDULE,
+  NO_DATA_SET_ID_SET,
+} from '../../utils/constants';
 
 describe('IntegrationView', () => {
   test('Displays integration', () => {
@@ -20,8 +27,8 @@ describe('IntegrationView', () => {
       route: `${INTEGRATIONS}/${mockIntegration.id}`,
     });
     expect(
-      screen.getByText(new RegExp(TableHeadings.LATEST_RUN, 'i'))
-    ).toBeInTheDocument();
+      screen.getAllByText(new RegExp(TableHeadings.LATEST_RUN, 'i'))
+    ).toBeDefined();
 
     expect(
       screen.getByText(new RegExp(DetailFieldNames.DESCRIPTION, 'i'))
@@ -85,5 +92,24 @@ describe('IntegrationView', () => {
       ).toBeInTheDocument();
       expect(screen.getByText(v)).toBeInTheDocument();
     });
+  });
+
+  test('Renders with minimal required info', () => {
+    const mockIntegration = {
+      id: 123,
+      externalId: 'lisa.external.id',
+      name: 'My integration',
+    };
+    renderWithSelectedIntegrationContext(<IntegrationView />, {
+      initIntegration: mockIntegration,
+      client: new QueryClient(),
+      route: `${INTEGRATIONS}/${mockIntegration.id}`,
+    });
+    expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
+    expect(screen.getByText(NO_CONTACTS_MSG)).toBeInTheDocument();
+    expect(screen.getByText(NO_META_DATA)).toBeInTheDocument();
+    expect(screen.getByText(NO_SCHEDULE)).toBeInTheDocument();
+    expect(screen.getByText(NO_RAW_TABLES_MESSAGE)).toBeInTheDocument();
+    expect(screen.getByText(NO_DATA_SET_ID_SET)).toBeInTheDocument();
   });
 });

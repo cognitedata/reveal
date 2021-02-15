@@ -170,7 +170,7 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
           Status information from the last time the integration executed
         </i>
         <span className="info-field">
-          <span className="info-label">Time since last run: </span>
+          <span className="info-label">{TableHeadings.LATEST_RUN}: </span>
           <AbsoluteRelativeTime value={lastRun.time} />
         </span>
         {renderErrorMessage(lastRun.status, integration.lastMessage)}
@@ -181,9 +181,7 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
           Time since last time integration signaled that it is alive
         </i>
         <span className="info-field">
-          <span className="info-label">
-            Time since {TableHeadings.LAST_SEEN.toLowerCase()}:{' '}
-          </span>
+          <span className="info-label">{TableHeadings.LAST_SEEN}: </span>
           <AbsoluteRelativeTime value={integration.lastSeen ?? 0} />
         </span>
       </LastSeenWrapper>

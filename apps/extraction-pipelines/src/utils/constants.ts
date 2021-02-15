@@ -20,13 +20,17 @@ export const CANCEL: Readonly<string> = 'Cancel';
 export const CLOSE: Readonly<string> = 'Close';
 export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
+export const OK: Readonly<string> = 'OK';
+export const NEXT: Readonly<string> = 'Next';
 
 export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
 export const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> =
   'No data set registered';
 export const NO_META_DATA: Readonly<string> = 'No metadata registered';
-export const OK: Readonly<string> = 'OK';
-export const NEXT: Readonly<string> = 'Next';
+export const NO_SCHEDULE: Readonly<string> = 'Not defined';
+export const NO_CONTACTS_MSG: Readonly<string> = 'No contacts registered';
+export const NO_RAW_TABLES_MESSAGE: Readonly<string> =
+  'No raw tables registered';
 
 export const SERVER_ERROR_TITLE: Readonly<string> =
   'Your changes have not been saved';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ContactCard } from './ContactCard';
 import { User } from '../../model/User';
+import { NO_CONTACTS_MSG } from '../../utils/constants';
 
 interface ContactsListProps {
   title: string;
@@ -10,7 +11,7 @@ interface ContactsListProps {
 const ContactsList = ({ title, contacts }: ContactsListProps) => {
   const renderList = (titleText: string, users?: User[]) => {
     if (!users || users.length === 0) {
-      return <i>{`No ${titleText.toLowerCase()} set`}</i>;
+      return <i>{NO_CONTACTS_MSG}</i>;
     }
     return (
       <>

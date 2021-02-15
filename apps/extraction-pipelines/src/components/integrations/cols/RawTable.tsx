@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import LinkWithCopy from 'components/links/LinkWithCopy';
+import { NO_RAW_TABLES_MESSAGE } from 'utils/constants';
 import { Raw } from '../../../model/Integration';
 import { useAppEnv } from '../../../hooks/useAppEnv';
 
@@ -30,7 +31,6 @@ const RawTableWrapper = styled.table`
   }
 `;
 
-export const NO_RAW_TABLES_MESSAGE: Readonly<string> = 'No raw tables set';
 interface OwnProps {
   // eslint-disable-next-line
   rawTables?: Raw[];
