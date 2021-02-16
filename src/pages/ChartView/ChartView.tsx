@@ -17,7 +17,6 @@ import {
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
 import { renameChart, saveExistingChart } from 'reducers/charts/api';
-import ChartComponent from 'components/Chart';
 import workflowSlice, {
   LatestWorkflowRun,
   Workflow,
@@ -27,6 +26,7 @@ import DatePicker from 'react-datepicker';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
 import DataQualityReport from 'components/DataQualityReport';
+import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
@@ -857,7 +857,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <SplitPaneLayout>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
-                <ChartComponent chart={chart} />
+                <PlotlyChartComponent chart={chart} />
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">
