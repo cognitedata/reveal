@@ -1,3 +1,9 @@
+## 0.4.1 Feb 12 2021
+
+### Changes
+
+- Add disabled option for translations
+
 ## 0.4.0 Feb 10 2021
 
 ### Changes

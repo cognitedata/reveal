@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { TFunction, i18n } from 'i18next';
 import { withTranslation } from 'react-i18next';
 
-import { useTranslation } from './Provider';
+import { useTranslation } from './i18n';
 import { withI18nSuspense } from './withI18nSuspense';
 
 describe('withI18nSuspense', () => {
@@ -11,7 +11,7 @@ describe('withI18nSuspense', () => {
     const Test = () => {
       const { t } = useTranslation();
 
-      return <div>TRANS: {t('test_string', 'COMPLETE')}</div>;
+      return <div>TRANS: {t('test_string', { defaultValue: 'COMPLETE' })}</div>;
     };
     const Wrapped = withI18nSuspense(Test);
 
@@ -29,7 +29,9 @@ describe('withI18nSuspense', () => {
       render() {
         const { t } = this.props;
 
-        return <div>TRANS: {t('test_string', 'COMPLETE')}</div>;
+        return (
+          <div>TRANS: {t('test_string', { defaultValue: 'COMPLETE' })}</div>
+        );
       }
     }
 

@@ -24,8 +24,13 @@ import { ConditionalReduxProvider } from './providers';
 interface Props {
   store?: Store;
   children: React.ReactChild;
+  disableTranslations?: boolean;
 }
-const RawContainer: React.FC<Props> = ({ children, store }) => {
+const RawContainer: React.FC<Props> = ({
+  children,
+  store,
+  disableTranslations = false,
+}) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
   const { applicationId } = getSidecar();
@@ -63,7 +68,7 @@ const RawContainer: React.FC<Props> = ({ children, store }) => {
   // which is served by FAS when browsing to '/'
   if (!possibleTenant) {
     if (!initialTenantOrApiKeyTenant) {
-      return <TenantSelector />;
+      return <TenantSelector disableTranslations={disableTranslations} />;
     }
 
     history.push(`/${initialTenantOrApiKeyTenant}/`);
@@ -83,7 +88,7 @@ const RawContainer: React.FC<Props> = ({ children, store }) => {
   };
 
   return (
-    <TranslationWrapper>
+    <TranslationWrapper disabled={disableTranslations}>
       <ChosenAuthContainer
         sdkClient={client}
         authError={authError}

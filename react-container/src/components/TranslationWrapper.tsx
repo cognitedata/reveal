@@ -14,11 +14,14 @@ import { configureI18n } from '@cognite/react-i18n';
  */
 export const TranslationWrapper = ({
   children,
+  disabled,
 }: {
   children: React.ReactElement;
+  disabled?: boolean;
 }) => {
   configureI18n({
     useSuspense: true,
+    disabled,
   });
 
   return children;

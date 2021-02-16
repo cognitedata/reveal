@@ -3,7 +3,31 @@ import ChainedBackend from 'i18next-chained-backend';
 import LocalStorageBackend from 'i18next-localstorage-backend';
 import LocizeBackend from 'i18next-locize-backend';
 import Pseudo from 'i18next-pseudo';
-import { initReactI18next } from 'react-i18next';
+import {
+  useTranslation as useOrigTranslations,
+  Trans as OrigTrans,
+  initReactI18next,
+} from 'react-i18next';
+
+let enabled = true;
+
+export const useTranslation = (input?: string) => {
+  if (enabled) {
+    return useOrigTranslations(input);
+  }
+
+  return {
+    t: (_id: string, { defaultValue } = { defaultValue: '' }) =>
+      defaultValue || input,
+  };
+};
+export const Trans = (props: unknown) => {
+  if (enabled) {
+    return OrigTrans;
+  }
+
+  return () => props;
+};
 
 const {
   NODE_ENV,
@@ -31,6 +55,7 @@ type ConfigureI18nOptions = {
   wait?: boolean;
   useSuspense?: boolean;
   localStorageLanguageKey?: string;
+  disabled?: boolean;
 };
 
 const configureI18n = async ({
@@ -40,8 +65,13 @@ const configureI18n = async ({
   locize,
   env = REACT_APP_ENV || NODE_ENV,
   localStorageLanguageKey = 'currentLanguage',
+  disabled = false,
   ...rest
 }: ConfigureI18nOptions = {}) => {
+  if (disabled) {
+    enabled = false;
+    return Promise.resolve();
+  }
   const { wait = env !== 'test', useSuspense = env === 'test' } = rest;
   const {
     projectId: locizeProjectId,

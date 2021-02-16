@@ -1,3 +1,9 @@
+## 0.3.0 - Feb 12 2021
+
+### Changes
+
+- Add disabled prop to return noop translations (useful as a workaround for blocked networks)
+
 ## 0.2.4 - Feb 5 2021
 
 ### Changes

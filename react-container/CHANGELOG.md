@@ -1,3 +1,9 @@
+## 0.7.1 Feb 12 2021
+
+### Changes
+
+- update deps for TSC+i18n
+
 ## 0.7.0 Feb 10 2021
 
 ### Changes

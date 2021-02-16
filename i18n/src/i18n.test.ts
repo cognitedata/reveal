@@ -1,10 +1,16 @@
 import i18next from 'i18next';
-import configureI18n from './i18n';
+import configureI18n, { useTranslation } from './i18n';
 
 describe('i18n setup', () => {
   it('setting language from props - default', () => {
     configureI18n();
     expect(i18next.options.lng).toEqual('en');
+  });
+
+  it('test disabled mode', () => {
+    configureI18n({ disabled: true });
+    const { t } = useTranslation('test');
+    expect(t('test', { defaultValue: 'testing' })).toEqual('testing');
   });
 
   it('setting language from props - lng prop', () => {

@@ -78,6 +78,7 @@ const CardContainer = ({
   const showLoginOptions = !showProjectSelection;
 
   // console.log('Render gates', { showProjectSelection, showLoginOptions });
+  // console.log('authClient.state', authClient?.state);
 
   const showLoading = false;
 
@@ -87,11 +88,6 @@ const CardContainer = ({
         <StyledContentWrapper>
           <TitleChanger />
           <CardContainerHeader />
-
-          {/* Error from AD: */}
-          {authClient?.state.error && (
-            <div>ERROR: {authClient?.state.errorMessage}</div>
-          )}
 
           {showLoading && <Loader />}
 
@@ -125,10 +121,17 @@ const CardContainer = ({
                 <LoginWithAzure authClient={authClient} />
               )}
               {enabledLoginModes.aad && (
-                <LoginWithAzureAD
-                  authClient={authClient}
-                  cluster={cdfCluster}
-                />
+                <>
+                  {/* Error from AD: */}
+                  {authClient?.state.error && (
+                    <div>ERROR: {authClient?.state.errorMessage}</div>
+                  )}
+
+                  <LoginWithAzureAD
+                    authClient={authClient}
+                    cluster={cdfCluster}
+                  />
+                </>
               )}
             </>
           )}

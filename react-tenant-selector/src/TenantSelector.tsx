@@ -25,17 +25,9 @@ const {
   AADTenantID,
 } = getSidecar();
 
-configureI18n({
-  useSuspense: true,
-  // required here to we can override translations from
-  // localhost or the hosted version
-  locize: {
-    projectId: locizeProjectId || process.env.REACT_APP_LOCIZE_PROJECT_ID || '',
-    apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '',
-  },
-});
-
-export const TenantSelector: React.FC = () => {
+export const TenantSelector: React.FC<{
+  disableTranslations?: boolean;
+}> = ({ disableTranslations }) => {
   const [authenticating, setAuthenticating] = useState(false);
 
   const [authState, setAuthState] = useState<AuthenticatedUser | undefined>();
@@ -44,6 +36,20 @@ export const TenantSelector: React.FC = () => {
     /^\/([^/]*).*$/,
     '$1'
   );
+
+  useEffect(() => {
+    configureI18n({
+      useSuspense: true,
+      // required here so we can override translations from
+      // localhost or the hosted version
+      locize: {
+        projectId:
+          locizeProjectId || process.env.REACT_APP_LOCIZE_PROJECT_ID || '',
+        apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '',
+      },
+      disabled: disableTranslations,
+    });
+  }, []);
 
   const cache = new QueryClient({
     defaultOptions: {
