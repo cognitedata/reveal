@@ -256,7 +256,6 @@ export const ChartWrapper = styled.div`
   height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 0 40px;
 
   > div {
     height: 100%;

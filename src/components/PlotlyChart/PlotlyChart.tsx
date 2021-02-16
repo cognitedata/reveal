@@ -147,7 +147,7 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
   const layout = {
     margin: {
       l: 50,
-      r: 0,
+      r: 50,
       b: 50,
       t: 50,
     },
@@ -156,12 +156,12 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
       domain: [0.06 * (seriesData.length - 1), 1],
     },
     showlegend: true,
-    legend: { orientation: 'h' },
+    legend: { orientation: 'h', yshift: 10 },
+    annotations: [],
   };
 
   seriesData.forEach(({ unit, color }, index) => {
     (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-      title: unit,
       linecolor: color,
       linewidth: 3,
       tickcolor: color,
@@ -172,6 +172,21 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
       position: 0.05 * index,
       showline: true,
     };
+
+    if (unit) {
+      (layout.annotations as any[]).push({
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.05 * index,
+        xanchor: 'left',
+        y: 1,
+        yanchor: 'bottom',
+        text: unit,
+        showarrow: false,
+        xshift: -3,
+        yshift: 5,
+      });
+    }
   });
 
   return (
