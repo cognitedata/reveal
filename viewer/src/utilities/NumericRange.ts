@@ -17,6 +17,10 @@ export class NumericRange {
     this.toInclusive = from + count - 1;
   }
 
+  static createFromInterval(from: number, toInclusive: number): NumericRange {
+    return new NumericRange(from, toInclusive - from + 1);
+  }
+
   *values(): Generator<number> {
     for (let i = this.from; i <= this.toInclusive; ++i) {
       yield i;

@@ -17,3 +17,55 @@ export function createOffsetsArray(array: number[]): number[] {
   });
   return offsets;
 }
+
+/**
+ * Shifts values in an array to the right. The far right elements of the array is lost.
+ * @param array Array to shift values inplace.
+ * @param index First element to shift to the right
+ * @param shiftCount How far to shift all affected elements.
+ * @returns The input array which has been modified.
+ */
+export function shiftValuesRight<T>(array: T[], index: number, shiftCount: number): T[] {
+  if (index + shiftCount >= array.length) {
+    throw new Error('Cannot shift values outside the array');
+  }
+  if (index < 0) {
+    throw new Error('Negative index');
+  }
+  if (shiftCount < 0) {
+    throw new Error('Cannot shift values with a negative offset');
+  }
+
+  for (let i = array.length - shiftCount - 1; i >= index; --i) {
+    array[i + shiftCount] = array[i];
+  }
+  return array;
+}
+
+export function binarySearchLastIndexOf(haystack: number[], needle: number, haystackCount?: number): number {
+  let low = 0;
+  const lastHaystackIndex =
+    haystackCount === undefined ? haystack.length - 1 : Math.min(haystackCount - 1, haystack.length - 1);
+  let high = lastHaystackIndex;
+
+  while (low <= high) {
+    let mid = Math.floor((low + high) / 2.0);
+    const guess = haystack[mid];
+
+    if (guess === needle) {
+      // When there are a series of equal values we want to return the last index
+      while (mid <= lastHaystackIndex && haystack[mid + 1] === guess) {
+        mid++;
+      }
+      return mid;
+    }
+
+    if (guess > needle) {
+      high = mid - 1;
+    } else {
+      low = mid + 1;
+    }
+  }
+
+  return -low - 1; //if not found
+}
