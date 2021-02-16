@@ -19,7 +19,7 @@ export const LabelFilter = ({
   const allowLabels = resourceType === 'asset' || resourceType === 'file';
   const { data: labels = [] } = useList<LabelDefinition>(
     'labels',
-    { filter: {} },
+    { filter: {}, limit: 1000 },
     {
       enabled: hasPermission,
     },

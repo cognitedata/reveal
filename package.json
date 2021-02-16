@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/index.d.ts",
