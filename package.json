@@ -31,7 +31,7 @@
     "single-spa": "^5.8.3",
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
-    "systemjs-webpack-interop": "^2.3.4",
+    "systemjs-webpack-interop": "^2.3.5",
     "use-debounce": "^5.2.0"
   },
   "files": [
