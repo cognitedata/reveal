@@ -23,7 +23,7 @@
     "antd": "^4.12.3",
     "chart.js": "^2.9.4",
     "date-fns": "^2.17.0",
-    "i18next": "^19.8.7",
+    "i18next": "^19.8.8",
     "i18next-chained-backend": "^2.0.1",
     "i18next-http-backend": "^1.1.0",
     "i18next-localstorage-backend": "^3.1.2",
