@@ -2,10 +2,21 @@
  * Copyright 2021 Cognite AS
  */
 
+import { measureTime } from '../__testutilities__/measureTime';
 import { IndexSet } from './IndexSet';
 import { NumericRange } from './NumericRange';
 
 describe('IndexSet', () => {
+  function runTest(params: { ranges: [number, number][]; add: [number, number]; expected: [number, number][] }) {
+    const { ranges, add, expected } = params;
+    const set = new IndexSet();
+    ranges.forEach(r => set.addRange(NumericRange.createFromInterval(r[0], r[1])));
+
+    set.addRange(NumericRange.createFromInterval(add[0], add[1]));
+
+    const received = Array.from(set.ranges()).map(x => [x.from, x.toInclusive]);
+    expect(received).toEqual(expected);
+  }
   test('addRange first time adds a single range', () => {
     const set = new IndexSet();
     set.addRange(NumericRange.createFromInterval(1, 11));
@@ -13,12 +24,13 @@ describe('IndexSet', () => {
   });
 
   test('add two non-overlapping ranges', () => {
-    const ranges = [NumericRange.createFromInterval(1, 3), NumericRange.createFromInterval(5, 7)];
     const set = new IndexSet();
-    for (const range of ranges) {
-      set.addRange(range);
-    }
-    expect(Array.from(set.ranges())).toEqual(ranges);
+    set.addRange(NumericRange.createFromInterval(1, 3));
+    set.addRange(NumericRange.createFromInterval(5, 7));
+    expect(Array.from(set.ranges())).toEqual([
+      NumericRange.createFromInterval(1, 3),
+      NumericRange.createFromInterval(5, 7)
+    ]);
   });
 
   test('insert non-overlapping range before already added range', () => {
@@ -96,13 +108,51 @@ describe('IndexSet', () => {
     expect(Array.from(set.ranges())).toEqual([NumericRange.createFromInterval(1, 4)]);
   });
 
-  test('add [2..5] to [2..4] -> [1..5]', () => {
+  test('add [2..5] to [2..4] -> [2..5]', () => {
     const set = new IndexSet();
     set.addRange(NumericRange.createFromInterval(2, 4));
 
     set.addRange(NumericRange.createFromInterval(2, 5));
 
     expect(Array.from(set.ranges())).toEqual([NumericRange.createFromInterval(2, 5)]);
+  });
+
+  test('add [5..10] to [4..7] -> [4..10]', () => {
+    runTest({ ranges: [[4, 7]], add: [5, 10], expected: [[4, 10]] });
+  });
+
+  test('add [4..10] to [4..7] -> [4..10]', () => {
+    runTest({ ranges: [[4, 7]], add: [4, 10], expected: [[4, 10]] });
+  });
+
+  test('add [3..6] to [4..7] -> [3..7]', () => {
+    runTest({ ranges: [[4, 7]], add: [3, 6], expected: [[3, 7]] });
+  });
+
+  test('add [3..11] to [4..7] -> [3..11]', () => {
+    runTest({ ranges: [[4, 7]], add: [3, 11], expected: [[3, 11]] });
+  });
+
+  test('add [5..10] to ([4..7],[9..11]) -> [4..11]', () => {
+    runTest({
+      ranges: [
+        [4, 7],
+        [9, 11]
+      ],
+      add: [5, 10],
+      expected: [[4, 11]]
+    });
+  });
+
+  test('add [5..12] to ([4..7],[9..11]) -> [4..12]', () => {
+    runTest({
+      ranges: [
+        [4, 7],
+        [9, 11]
+      ],
+      add: [5, 12],
+      expected: [[4, 12]]
+    });
   });
 
   test('add [2..4] to [1..3] -> [1..4]', () => {
@@ -182,45 +232,53 @@ describe('IndexSet', () => {
     expect(Array.from(set.ranges())).toEqual([NumericRange.createFromInterval(1, 10)]);
   });
 
-  test('add random ranges, matches plain Set<number>', () => {
-    const indexSet = new IndexSet();
-    const plainSet = new Set<number>();
-    for (let i = 0; i < 1000; i++) {
-      const start = Math.floor(Math.random() * 10000);
-      const count = Math.floor(Math.random() * 1000);
-
-      console.log(`Add [${start}, ${start + count}]`);
-      indexSet.addRange(new NumericRange(start, count));
-      for (let j = 0; j < count; ++j) plainSet.add(start + j);
-      expect(indexSet.toPlainSet()).toEqual(plainSet);
-    }
-  });
-
   test('add known failing', () => {
     const indexSet = new IndexSet();
     const plainSet = new Set<number>();
+
     for (const r of [
-      [8135, 8550],
-      [6356, 7023],
-      [2394, 2997],
-      [9467, 9655],
-      [7489, 8086],
-      [4740, 5246],
-      [4563, 5253],
-      [7195, 7343],
-      [6844, 7131],
-      [5390, 5911]
+      [6108, 6259],
+      [5118, 5440],
+      [2050, 2186],
+      [6363, 7136]
     ]) {
       const range = NumericRange.createFromInterval(r[0], r[1]);
       indexSet.addRange(range);
       for (let i = r[0]; i <= r[1]; ++i) plainSet.add(i);
     }
-
-    const range = NumericRange.createFromInterval(7443, 7533);
+    const range = NumericRange.createFromInterval(7419, 7753);
     indexSet.addRange(range);
     for (let i = range.from; i <= range.toInclusive; ++i) plainSet.add(i);
 
     expect(indexSet.toPlainSet()).toEqual(plainSet);
+  });
+
+  test('add random ranges, matches plain Set<number>', () => {
+    let accumulatedTimeAddIndexSet = 0;
+    let accumulatedTimeAddPlainSet = 0;
+    const indexSet = new IndexSet();
+    const plainSet = new Set<number>();
+    for (let i = 0; i < 10000; i++) {
+      const start = Math.floor(Math.random() * 10000);
+      const count = Math.floor(Math.random() * 1000);
+
+      accumulatedTimeAddIndexSet += measureTime(() => {
+        indexSet.addRange(new NumericRange(start, count));
+      });
+      accumulatedTimeAddPlainSet += measureTime(() => {
+        for (let j = 0; j < count; ++j) plainSet.add(start + j);
+      });
+    }
+
+    const lookupTimeIndexSet = measureTime(() => {
+      for (let i = 0; i < 1000000; i++) {
+        const index = Math.floor(Math.random() * 11000);
+        indexSet.contains(index);
+      }
+    });
+
+    expect(indexSet.toPlainSet()).toEqual(plainSet);
+    console.log(`IndexSet: ${accumulatedTimeAddIndexSet} ms, plain set: ${accumulatedTimeAddPlainSet} ms`);
   });
 
   // test('contains all elements after adding range', () => {

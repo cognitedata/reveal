@@ -42,7 +42,7 @@ export class IndexSet {
     // - elements are sorted, and the array is strictly non-decreasing
 
     function getInsertIdx(idx: number): number {
-      return -idx - 1;
+      return idx < 0 ? -idx - 1 : idx;
     }
     function isExistingIdx(idx: number): boolean {
       return idx >= 0;
@@ -50,72 +50,39 @@ export class IndexSet {
     function isStartIdx(idx: number): boolean {
       return idx % 2 == 0;
     }
-    function isEndIdx(idx: number): boolean {
-      return idx % 2 == 1;
-    }
 
-    const idx1 = binarySearchLastIndexOf(this._intervals, range.from);
-    const idx2 = binarySearchLastIndexOf(this._intervals, range.toInclusive);
+    const idx1 = binarySearchLastIndexOf(this._intervals, range.from, this._intervalsCount);
+    const idx2 = binarySearchLastIndexOf(this._intervals, range.toInclusive, this._intervalsCount);
+    const insertIdx1 = getInsertIdx(idx1);
+    const insertIdx2 = getInsertIdx(idx2);
 
-    if (!isExistingIdx(idx1) && idx1 === idx2) {
-      // Single range-interval not found in existing interval endpoints
-      const insertIdx = getInsertIdx(idx1);
-      if (isStartIdx(insertIdx)) {
-        // New range, no modification of existing ranges
-        this.makeRoomAt(insertIdx);
+    if (!isExistingIdx(idx1) && isStartIdx(insertIdx1) && idx1 === idx2) {
+      // New range
+      this.makeRoomAt(insertIdx1);
 
-        this._intervals[insertIdx] = range.from;
-        this._intervals[insertIdx + 1] = range.toInclusive;
-
-        this._intervalsCount += 2;
-      }
-      // else: nothing to do, range is fully inside another range
-    } else if (!isExistingIdx(idx1) && !isExistingIdx(idx2)) {
-      // From and to is not in list of existing interval endpoints
-      const insertIdx1 = getInsertIdx(idx1);
-      const insertIdx2 = getInsertIdx(idx2);
-      if (isStartIdx(idx1) && insertIdx2 == insertIdx1 + 2) {
-        // Range encapsulates an existing range, extend
-        // insert [1..4] into [2..3] -> [1..4]
-        this._intervals[insertIdx1] = range.from;
-        this._intervals[insertIdx2 - 1] = range.toInclusive;
-      } else if (isEndIdx(insertIdx1) && insertIdx2 === insertIdx1 + 1) {
-        // Range extends an existing range
-        // insert [2..4] into [1..3] -> [1..4]
-        this._intervals[insertIdx1] = range.toInclusive;
-      } else {
-        // Range encapsulates more than one existing interval
-        // insert [1..10] into ([2,3],[4,5],[7,8]) -> [1..10]
-        this._intervals[insertIdx1] = range.from;
-        this._intervals[insertIdx2 - 1] = range.toInclusive;
-        this.mergeIntervals(insertIdx1 + 1, insertIdx2 - 1);
-      }
-    } else if (!isExistingIdx(idx1) && isExistingIdx(idx2)) {
-      // From is not in list of interval endpoints, to is
-      const insertIdx1 = getInsertIdx(idx1);
-      if (isStartIdx(insertIdx1)) {
-        // From is not contained within existing intervals
-        // insert [1..4] into [2...4] -> modify start
-        this._intervals[insertIdx1] = range.from;
-      }
-      // else:
-      // From is contained within existing intervals
-      // insert [2..4] into [1...4] -> [1..4] (unchanged)
-    } else if (isExistingIdx(idx1) && !isExistingIdx(idx2)) {
-      // From is in list of interval endpoints, to is not
-      const insertIdx2 = getInsertIdx(idx2);
-      if (isStartIdx(insertIdx2)) {
-        // To is not contained withing existing intervals
-        // insert [1..5] into [2..4] -> modify end
-        this._intervals[insertIdx2 - 1] = range.toInclusive;
-      }
-      // else:
-      // To is contained within an existing interval
-      // insert [1..3] into [1..4] -> [1..4] (unchanged)
-    } else if (isExistingIdx(idx1) && (idx1 === idx2 || idx2 === idx1 + 1)) {
-      // Nothing to do, range is already embedded in other range
+      this._intervals[insertIdx1] = range.from;
+      this._intervals[insertIdx1 + 1] = range.toInclusive;
+      this._intervalsCount += 2;
     } else {
-      throw new Error(`Not implemented (idx1: ${idx1}, idx2: ${idx2})`);
+      let firstToRemove = insertIdx1;
+      let lastToRemove = insertIdx2;
+
+      // Handle start
+      if (!isExistingIdx(idx1) && isStartIdx(insertIdx1)) {
+        this._intervals[insertIdx1] = range.from;
+        firstToRemove++;
+      }
+
+      // Hande end
+      if (!isExistingIdx(idx2) && isStartIdx(insertIdx2)) {
+        this._intervals[insertIdx2 - 1] = range.toInclusive;
+        lastToRemove--;
+      }
+
+      // Repair/merge
+      if (lastToRemove > firstToRemove + 1) {
+        this.mergeIntervals(firstToRemove, lastToRemove);
+      }
     }
   }
 
@@ -225,9 +192,7 @@ export class IndexSet {
 
   private mergeIntervals(indexFrom: number, indexTo: number) {
     const reductionCount = indexTo - indexFrom;
-    for (let i = 0; i < reductionCount; i++) {
-      this._intervals[i + indexFrom] = this._intervals[i + indexTo];
-    }
+    this._intervals.splice(indexFrom, reductionCount);
     this._intervalsCount -= reductionCount;
   }
 }
