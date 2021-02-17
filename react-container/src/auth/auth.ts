@@ -1,14 +1,14 @@
 // import { retrieveAuthResult } from '@cognite/auth-utils';
-
+import * as React from 'react';
+import { AuthProvider } from '../components/AuthContainer';
 import { log } from '../utils/log';
 import { AuthHeaders } from './types';
 
 export const getAuthHeaders = (apiKeyHeader = 'api-key'): AuthHeaders => {
-  // -TODO: get from SDK once that is ready. for now, this is not possible (easily)
-  const authResult = { accessToken: '' };
+  const { authState } = React.useContext(AuthProvider);
 
-  if (authResult?.accessToken) {
-    return { Authorization: `Bearer ${authResult.accessToken}` };
+  if (authState?.token) {
+    return { Authorization: `Bearer ${authState?.token}` };
   }
 
   const apiKey = process.env.REACT_APP_API_KEY || '';

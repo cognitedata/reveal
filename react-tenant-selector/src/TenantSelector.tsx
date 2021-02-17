@@ -20,14 +20,18 @@ const {
   cdfCluster,
   backgroundImage,
   helpLink,
-  AADClientID,
+  aadApplicationId,
   locizeProjectId,
   AADTenantID,
 } = getSidecar();
 
 export const TenantSelector: React.FC<{
   disableTranslations?: boolean;
-}> = ({ disableTranslations }) => {
+  // when using this on localhost from another application
+  // that app will NOT want to use the TSA's sidecar value,
+  // but instead override it here
+  aadApplicationId?: string;
+}> = ({ disableTranslations, aadApplicationId: AADAppIDFromExternalApp }) => {
   const [authenticating, setAuthenticating] = useState(false);
 
   const [authState, setAuthState] = useState<AuthenticatedUser | undefined>();
@@ -36,6 +40,9 @@ export const TenantSelector: React.FC<{
     /^\/([^/]*).*$/,
     '$1'
   );
+
+  const AzureActiveDirectoryApplicationId =
+    AADAppIDFromExternalApp || aadApplicationId;
 
   useEffect(() => {
     configureI18n({
@@ -120,11 +127,11 @@ export const TenantSelector: React.FC<{
   const { flow, options } = getFlow(initialTenant || '', cdfCluster);
 
   let aad;
-  if (AADClientID) {
+  if (AzureActiveDirectoryApplicationId) {
     enabledLoginModes.aad = true;
 
     aad = {
-      appId: AADClientID,
+      appId: AzureActiveDirectoryApplicationId,
       directoryTenantId: options?.directory || AADTenantID,
     };
   }

@@ -1,3 +1,10 @@
+## 0.7.2 Feb 16 2021
+
+### Changes
+
+- Add prop aadApplicationId to allow for local TSA
+- Fix bug with auth token name change
+
 ## 0.7.1 Feb 12 2021
 
 ### Changes

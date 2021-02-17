@@ -1,5 +1,5 @@
 type SidecarConfig = {
-  AADClientID?: string;
+  aadApplicationId?: string;
   AADTenantID?: string;
   applicationId: string;
   applicationName: string;
@@ -38,11 +38,8 @@ const DEFAULT_SIDECAR: SidecarConfig = {
 
   // use the demo app if you are testing this:
   AADTenantID: 'reactdemoapp.onmicrosoft.com',
-  // AADTenantID: `cognitedata.com`,
 
-  AADClientID: '7e8b0cb9-c1bf-46df-bf79-13cb1b19a8f8', // Demo App: bluefield (staging)
-  // AADClientID: '52106ea0-e93b-40bc-99dc-5f7deacceda1', // Demo App: ew1 (staging)
-  // AADClientID: 'e0e9ac77-f9cc-49ca-9bb2-eef01313751b', // Demo App: greenfield (staging)
+  aadApplicationId: '7e8b0cb9-c1bf-46df-bf79-13cb1b19a8f8', // Demo App: bluefield (staging)
 };
 
 export default (): SidecarConfig => {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CogniteAuth } from '@cognite/auth-utils';
+import { CogniteAuth, saveFlow } from '@cognite/auth-utils';
 
 import {
   CardFooterError,
@@ -120,6 +120,8 @@ const LoginWithCognite: React.FC<Props> = ({
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     event.stopPropagation();
+
+    saveFlow('COGNITE_AUTH');
 
     if (!loading) {
       if (!formState.cluster.value) {

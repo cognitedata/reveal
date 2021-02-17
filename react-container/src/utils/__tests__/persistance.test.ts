@@ -4,6 +4,9 @@ import {
   persistAuthResult,
 } from '../persistance';
 
+// @ts-expect-error - missing other keys
+global.console = { warn: jest.fn() };
+
 const writeToken = () => {
   persistAuthResult({
     user: 'test-user',
@@ -19,6 +22,8 @@ describe('persistance', () => {
   it('should get a set token', () => {
     writeToken();
     expect(retrieveAccessToken()).toEqual('test-token');
+    // eslint-disable-next-line no-console
+    expect(console.warn).toBeCalled();
   });
   it('should remove a token', () => {
     writeToken();

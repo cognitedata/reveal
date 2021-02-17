@@ -1,3 +1,9 @@
+## 0.4.2 Feb 16 2021
+
+### Changes
+
+- rename AADClientID -> aadApplicationId
+
 ## 0.4.1 Feb 12 2021
 
 ### Changes

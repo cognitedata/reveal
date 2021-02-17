@@ -25,11 +25,13 @@ interface Props {
   store?: Store;
   children: React.ReactChild;
   disableTranslations?: boolean;
+  aadApplicationId?: string;
 }
 const RawContainer: React.FC<Props> = ({
   children,
   store,
   disableTranslations = false,
+  aadApplicationId,
 }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
@@ -68,7 +70,12 @@ const RawContainer: React.FC<Props> = ({
   // which is served by FAS when browsing to '/'
   if (!possibleTenant) {
     if (!initialTenantOrApiKeyTenant) {
-      return <TenantSelector disableTranslations={disableTranslations} />;
+      return (
+        <TenantSelector
+          aadApplicationId={aadApplicationId}
+          disableTranslations={disableTranslations}
+        />
+      );
     }
 
     history.push(`/${initialTenantOrApiKeyTenant}/`);
