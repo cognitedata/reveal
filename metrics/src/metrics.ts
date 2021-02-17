@@ -10,7 +10,6 @@ import {
   Properties,
   ITimer,
   Callback,
-  IClassName,
   InitOptions,
   MetricsDebugger,
 } from './types';
@@ -55,7 +54,7 @@ class Timer implements ITimer {
 class Metrics {
   static DEBUGGER: MetricsDebugger = NoopDebugger;
 
-  private readonly className: string;
+  private readonly className: string | undefined;
 
   private readonly properties: Properties = {};
 
@@ -145,10 +144,7 @@ class Metrics {
     mixpanel.people.set(info);
   }
 
-  public static create(
-    className: string,
-    properties: Properties = {}
-  ): Metrics {
+  public static create(className?: string, properties?: Properties): Metrics {
     return new Metrics(className, properties, false);
   }
 
@@ -163,7 +159,7 @@ class Metrics {
   }
 
   private constructor(
-    className: IClassName,
+    className?: string,
     properties: Properties = {},
     deprecated = true
   ) {
@@ -174,12 +170,19 @@ class Metrics {
       );
     }
 
-    this.className = String(className.name || className);
+    this.className = className;
     this.properties = { ...properties };
   }
 
+  private getEventString(name: string): string {
+    if (this.className) {
+      return `${this.className}.${name}`;
+    }
+    return name;
+  }
+
   public start(name: string, properties: Properties = {}): ITimer {
-    return new Timer(`${this.className}.${name}`, {
+    return new Timer(this.getEventString(name), {
       ...this.properties,
       ...properties,
     });
@@ -192,7 +195,7 @@ class Metrics {
   ): void {
     const combined = { ...globalProperties, ...this.properties, ...properties };
     try {
-      const event = `${this.className}.${name}`;
+      const event = this.getEventString(name);
       // Mixpanel modifies their params, so spread the props.
       mixpanel.track(event, { ...combined }, callback);
       Metrics.DEBUGGER.track(event, combined);
