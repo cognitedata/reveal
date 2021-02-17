@@ -46,7 +46,7 @@ const mockResponseV2 = {
         id: 1398950266713987,
       } as DataSetModel,
       lastSuccess: 1584066700000,
-      lastFailure: 1584065700000,
+      lastFailure: 1584065800000,
       lastSeen: 1604271600000,
       lastMessage: 'This is a mock failed run error message',
       schedule: '0 0 9 1/1 * ? *',
@@ -145,9 +145,10 @@ const mockResponseV2 = {
           tableName: 'oracle',
         },
       ],
-      lastSuccess: 1584064700012,
-      lastFailure: 1584066700013,
-      lastSeen: 1584065700011,
+      lastSuccess: 1584065800000,
+      lastFailure: 1584066700000,
+      lastSeen: 1604271600000,
+      lastMessage: 'This is a mock failed run error message',
       schedule: 'On Trigger',
       contacts: [
         {

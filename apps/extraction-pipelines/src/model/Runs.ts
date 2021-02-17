@@ -11,6 +11,13 @@ export interface StatusRow {
   status: string;
 }
 
+export interface StatusRun {
+  id: number;
+  message?: string;
+  createdTime: number;
+  status: Status | null;
+}
+
 export interface RunRow extends Run {
   subRows: Run[];
 }

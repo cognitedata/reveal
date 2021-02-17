@@ -11,7 +11,6 @@ import { DetailFieldNames } from '../../model/Integration';
 import { DATE_FORMAT } from '../TimeDisplay/TimeDisplay';
 import { uppercaseFirstWord } from '../../utils/primitivesUtils';
 import {
-  NO_CONTACTS_MSG,
   NO_META_DATA,
   NO_RAW_TABLES_MESSAGE,
   NO_SCHEDULE,
@@ -78,11 +77,6 @@ describe('IntegrationView', () => {
       expect(screen.getByText(dbName)).toBeInTheDocument();
       expect(screen.getByText(tableName)).toBeInTheDocument();
     });
-    expect(screen.getByText(TableHeadings.CONTACTS)).toBeInTheDocument();
-    mockIntegration.contacts.forEach(({ email, name }) => {
-      expect(screen.getByText(name)).toBeInTheDocument();
-      expect(screen.getByText(email)).toBeInTheDocument();
-    });
     expect(
       screen.getByText(new RegExp(DetailFieldNames.META_DATA, 'i'))
     ).toBeInTheDocument();
@@ -106,7 +100,6 @@ describe('IntegrationView', () => {
       route: `${INTEGRATIONS}/${mockIntegration.id}`,
     });
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
-    expect(screen.getByText(NO_CONTACTS_MSG)).toBeInTheDocument();
     expect(screen.getByText(NO_META_DATA)).toBeInTheDocument();
     expect(screen.getByText(NO_SCHEDULE)).toBeInTheDocument();
     expect(screen.getByText(NO_RAW_TABLES_MESSAGE)).toBeInTheDocument();

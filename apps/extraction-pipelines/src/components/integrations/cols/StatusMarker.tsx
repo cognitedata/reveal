@@ -1,11 +1,10 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { Badge, Tooltip } from '@cognite/cogs.js';
 import { Status } from '../../../model/Status';
 
 interface OwnProps {
-  // eslint-disable-next-line
   id?: string;
-  status: Status;
+  status: Status | null;
   dataTestId?: string;
 }
 
@@ -15,7 +14,7 @@ const StatusMarker: FunctionComponent<Props> = ({
   status,
   dataTestId = '',
   ...rest
-}: Props) => {
+}: PropsWithoutRef<Props>) => {
   switch (status) {
     case Status.OK:
       return (
@@ -70,9 +69,6 @@ const StatusMarker: FunctionComponent<Props> = ({
     default:
       return <></>;
   }
-};
-StatusMarker.defaultProps = {
-  dataTestId: '',
 };
 
 export default StatusMarker;

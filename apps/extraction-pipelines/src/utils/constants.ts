@@ -47,3 +47,7 @@ export const NOTIFICATION_DIALOG_CONTENT: Readonly<string> =
 
 export const REMOVE_DIALOG_TEXT_PART: Readonly<string> =
   'Are you sure you want to remove';
+
+export const DETAILS: Readonly<string> = 'Details';
+export const RUNS: Readonly<string> = 'Runs';
+export const CONTACTS: Readonly<string> = 'Contacts';

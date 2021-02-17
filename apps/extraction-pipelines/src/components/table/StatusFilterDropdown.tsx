@@ -80,7 +80,7 @@ function StatusFilterDropdown<D extends object>({
   return (
     <StyledDropdown content={MenuContent}>
       <NoStyleBtn icon="CaretDown" iconPlacement="right">
-        {Header}
+        {Header} {filterValue ? `- ${filterValue}` : '- ALL'}
       </NoStyleBtn>
     </StyledDropdown>
   );

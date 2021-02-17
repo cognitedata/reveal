@@ -1,23 +1,33 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { Loader } from '@cognite/cogs.js';
-import { useLocation } from 'react-router-dom';
+import { Colors, Loader } from '@cognite/cogs.js';
+import {
+  NavLink,
+  Route,
+  Switch,
+  useLocation,
+  useRouteMatch,
+} from 'react-router-dom';
 import styled from 'styled-components';
-import { MainSidePanelGrid } from 'styles/grid/StyledGrid';
 import { Integration } from 'model/Integration';
 import { IdEither } from '@cognite/sdk';
-import OverviewSidePanel from '../../components/tabs/OverviewSidePanel';
+import { ContactsView } from 'components/integration/ContactsView';
 import { useIntegrationById } from '../../hooks/useIntegration';
 import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
 import { StyledRouterLink } from '../../components/integrations/cols/Name';
 import { INTEGRATIONS } from '../../utils/baseURL';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import InteractiveCopyWithText from '../../components/InteractiveCopyWithText';
-import { IntegrationView } from '../../components/integration/IntegrationView';
+import {
+  IntegrationView,
+  Wrapper,
+} from '../../components/integration/IntegrationView';
 import { PageTitle } from '../../styles/StyledHeadings';
 import { PageWrapper } from '../../styles/StyledPage';
 import { useDataSets } from '../../hooks/useDataSets';
 import { RouterParams } from '../../routing/RoutingConfig';
+import { RunLogsView } from '../../components/integration/RunLogsView';
+import { CONTACTS, DETAILS, RUNS } from '../../utils/constants';
 
 const IntegrationPageWrapper = styled((props) => (
   <PageWrapper {...props}>{props.children}</PageWrapper>
@@ -45,10 +55,46 @@ const IntegrationPageWrapper = styled((props) => (
     }
   }
 `;
+const SingleIntegrationGrid = styled.div`
+  grid-area: main;
+  display: grid;
+  grid-template-columns: auto;
+  padding: 0;
+  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+`;
+
+const PageNav = styled.ul`
+  margin: 0;
+  padding: 1rem 0 0.5rem 0;
+  list-style: none;
+  display: flex;
+  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+  li {
+    margin: 0;
+    padding: 0;
+    &:first-child {
+      margin: 0 0 0 1rem;
+    }
+    .tab-link {
+      padding: 0.75rem 1rem;
+      margin: 0 1rem;
+      color: ${Colors.black.hex()};
+      font-weight: bold;
+      &:hover {
+        background-color: ${Colors['midblue-7'].hex()};
+      }
+      &.active {
+        border-bottom: 3px solid ${Colors.primary.hex()};
+      }
+    }
+  }
+`;
+
 interface IntegrationPageProps {}
 
 const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   const { pathname, search } = useLocation();
+  const { path, url } = useRouteMatch();
   const { cdfEnv, project, origin } = useAppEnv();
   const { id } = useParams<RouterParams>();
   const { integration, setIntegration } = useSelectedIntegration();
@@ -88,10 +134,38 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
       >
         <>Copy link to this page</>
       </InteractiveCopyWithText>
-      <MainSidePanelGrid>
-        <IntegrationView />
-        <OverviewSidePanel />
-      </MainSidePanelGrid>
+      <SingleIntegrationGrid>
+        <PageNav>
+          <li>
+            <NavLink to={`${url}${search}`} exact className="tab-link">
+              {DETAILS}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${url}/logs${search}`} exact className="tab-link">
+              {RUNS}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${url}/contacts${search}`} exact className="tab-link">
+              {CONTACTS}
+            </NavLink>
+          </li>
+        </PageNav>
+        <Switch>
+          <Route exact path={path}>
+            <IntegrationView />
+          </Route>
+          <Route path={`${path}/logs`}>
+            <RunLogsView integration={integration} />
+          </Route>
+          <Route path={`${path}/contacts`}>
+            <Wrapper>
+              <ContactsView integration={integration} />
+            </Wrapper>
+          </Route>
+        </Switch>
+      </SingleIntegrationGrid>
     </IntegrationPageWrapper>
   );
 };

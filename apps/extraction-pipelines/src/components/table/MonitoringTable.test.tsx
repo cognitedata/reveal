@@ -17,7 +17,7 @@ describe('<MonitoringTable/>', () => {
       ([_, v]) => v
     );
     colsWithHeaders.forEach((h) => {
-      const header = screen.getByText(h);
+      const header = screen.getByText(new RegExp(h, 'i'));
       expect(header).toBeInTheDocument();
     });
 

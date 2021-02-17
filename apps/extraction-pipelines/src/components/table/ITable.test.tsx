@@ -23,7 +23,7 @@ describe('<ITable/>', () => {
   test('Render without errors', () => {
     const colsWithHeaders = Object.entries(TableHeadings).map(([_, v]) => v);
     colsWithHeaders.forEach((heading) => {
-      const header = screen.getByText(heading);
+      const header = screen.getByText(new RegExp(heading, 'i'));
       expect(header).toBeInTheDocument();
     });
   });

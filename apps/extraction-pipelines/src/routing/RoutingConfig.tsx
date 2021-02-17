@@ -51,7 +51,7 @@ export const routingConfig: IntegrationsRoute[] = [
   {
     name: 'Integration',
     path: `/:tenant/${INTEGRATIONS}/${INTEGRATION}/:id`,
-    exact: true,
+    exact: false,
     component: LazyIntegration,
   },
 ];
