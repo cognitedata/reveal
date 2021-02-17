@@ -32,6 +32,22 @@ class MyComponent extends React.Component {
   // ...
 }
 ```
+or
+
+```js
+import { Metrics } from '@cognite/metrics';
+
+class MyComponent extends React.Component {
+  metrics = Metrics.create();
+
+  onItemClicked = (itemId) => {
+    metrics.track('MyComponent.onItemClicked', { itemClicked: itemId });
+    // ...
+  };
+
+  // ...
+}
+```
 
 There is also a hook you can use in functional components:
 

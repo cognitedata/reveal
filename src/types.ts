@@ -5,11 +5,6 @@ export type Callback = () => void;
 
 export type Properties = Dict;
 
-export interface IClassName {
-  name?: string;
-  toString: () => string;
-}
-
 export interface ITimer {
   stop: (props?: Properties, callback?: Callback) => void;
 }

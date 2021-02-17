@@ -34,6 +34,26 @@ describe('Metrics', () => {
     ]);
   });
 
+  it('should not prefix an empty name', () => {
+    const stub = sandbox.stub(mixpanel, 'track');
+    const metrics1 = Metrics.create('');
+    const metrics2 = Metrics.create();
+    const properties = { foo: 'bar', nested: { foo: 'bar' } };
+    metrics1.track('event', properties);
+    expect(stub.lastCall.args).toEqual([
+      'event',
+      { foo: 'bar', nested: { foo: 'bar' } },
+      undefined,
+    ]);
+
+    metrics2.track('other-event', properties);
+    expect(stub.lastCall.args).toEqual([
+      'other-event',
+      { foo: 'bar', nested: { foo: 'bar' } },
+      undefined,
+    ]);
+  });
+
   it('should merge class properties into track event', () => {
     const stub = sandbox.stub(mixpanel, 'track');
     const metrics = Metrics.create('SimpleMetrics', { go: 'ba' });
