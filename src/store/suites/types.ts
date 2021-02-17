@@ -9,17 +9,15 @@ import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 
 export enum SuitesTableActionTypes {
-  SUITES_TABLE_REQUEST_SUCCESS = 'suitesTable/REQUEST_SUCCESS',
   SUITES_TABLE_LOAD = 'suitesTable/LOAD',
   SUITES_TABLE_LOADED = 'suitesTable/LOADED',
-  SUITES_TABLE_LOAD_ERROR = 'suitesTable/ERROR',
+  SUITES_TABLE_LOAD_FAILED = 'suitesTable/LOAD_FAILED',
   SUITES_TABLE_ROW_INSERT = 'suitesTable/INSERT',
-  SUITES_TABLE_ROW_INSERT_ERROR = 'suitesTable/INSERT_ERROR',
+  SUITES_TABLE_ROW_ERROR = 'suitesTable/ERROR',
   SUITES_TABLE_ROW_DELETE = 'suitesTable/DELETE',
-  SUITES_TABLE_ROW_DELETE_ERROR = 'suitesTable/DELETE_ERROR',
   FETCH_IMG_URLS = 'FETCH_IMG_URLS',
   FETCHED_IMG_URLS = 'FETCHED_IMG_URLS',
-  FETCH_IMG_URLS_ERROR = 'FETCH_IMG_URLS_ERROR',
+  FETCH_IMG_URLS_FAILED = 'FETCH_IMG_URLS_FAILED',
   CLEAR_IMG_URLS = 'CLEAR_IMG_URLS',
 }
 
@@ -61,6 +59,7 @@ export type ImgUrlLink = FileLink & IdEither;
 export type ImgUrls = {
   loading: boolean;
   loaded: boolean;
+  failed: boolean;
   urls: ImgUrlLink[];
 };
 
@@ -71,7 +70,7 @@ export interface SuiteRowDelete extends RawDBRowKey {}
 export interface SuitesTableState {
   loading: boolean;
   loaded: boolean;
-  error?: string;
+  loadFailed: boolean;
   suites: Suite[] | null;
   imageUrls: ImgUrls;
 }

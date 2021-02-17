@@ -41,9 +41,6 @@ const Home = () => {
   const {
     loaded: userSpaceLoaded,
     loading: userSpaceLoading,
-    // TODO(DTC-167)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    error: userSpaceError,
   }: UserSpaceState = useSelector(getUserSpace);
   const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
 

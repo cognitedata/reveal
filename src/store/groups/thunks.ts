@@ -2,6 +2,7 @@ import { ApiClient } from 'utils';
 import { RootDispatcher } from 'store/types';
 import { Group } from '@cognite/sdk';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
+import { setHttpError } from 'store/notification/thunks';
 import * as actions from './actions';
 
 export const fetchUserGroups = (apiClient: ApiClient) => async (
@@ -13,6 +14,8 @@ export const fetchUserGroups = (apiClient: ApiClient) => async (
     dispatch(actions.loadedGroups(groups));
   } catch (e) {
     dispatch(actions.loadGroupsError(e));
+    dispatch(setHttpError('Failed to fetch user groups', e));
+    // trach to sentry
   }
 };
 

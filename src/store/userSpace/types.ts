@@ -24,6 +24,5 @@ export type UserSpacePayload = {
 export interface UserSpaceState {
   loading: boolean;
   loaded: boolean;
-  error?: string;
   lastVisited?: LastVisited[];
 }

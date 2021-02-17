@@ -123,7 +123,7 @@ export const FormReducer = createReducer(initialState)
     ...state,
     imageFile: {
       loading: false,
-      fileInfo: null, // silent mode. track to Sentry?
+      fileInfo: null,
     },
   }))
   .handleAction(
@@ -152,7 +152,7 @@ export const FormReducer = createReducer(initialState)
       ...state,
       files: {
         ...state.files,
-        errors: state.files.errors.push(action.payload as FileUpdateError),
+        errors: [...state.files.errors, action.payload as FileUpdateError],
       },
     })
   )
@@ -169,5 +169,6 @@ export const FormReducer = createReducer(initialState)
     files: {
       uploading: false,
       uploaded: true,
+      errors: [],
     },
   }));

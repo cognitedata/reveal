@@ -22,7 +22,7 @@ const LeftSidebar: React.FC = () => {
   const { suites } = useSelector(getSuitesTableState);
 
   const sideBarState = JSON.parse(
-    localStorage.getItem('sideBarState') || 'true'
+    localStorage.getItem('sideBarState') || 'true' // TODO(DTC-215) store in state
   );
   const [isOpen, setOpen] = useState(sideBarState);
 
