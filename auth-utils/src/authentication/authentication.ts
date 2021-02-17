@@ -1,5 +1,6 @@
 import type { CogniteClient } from '@cognite/sdk';
 import isFunction from 'lodash/isFunction';
+import isObject from 'lodash/isObject';
 import { Configuration } from '@azure/msal-browser';
 
 import type { AuthFlow, AuthResult } from '../storage/types';
@@ -16,6 +17,7 @@ class CogniteAuth {
     authenticated: boolean;
     idToken?: string;
     username?: string;
+    email?: string;
     project?: string;
     authResult?: AuthResult;
   } = {
@@ -120,8 +122,24 @@ class CogniteAuth {
       if (this.state.authResult) {
         this.state.idToken = this.state.authResult.idToken;
       }
-      // @ts-expect-error http is private
-      this.getClient().http.setBearerToken(this.state.authResult?.accessToken);
+
+      if (this.state.authResult?.accessToken) {
+        // @ts-expect-error http is private - SDK v3
+        if (this.getClient().http) {
+          // @ts-expect-error http is private
+          this.getClient().http.setBearerToken(
+            this.state.authResult?.accessToken
+          );
+        }
+        // @ts-expect-error httpClient is private - SDK v2
+        if (this.getClient().httpClient) {
+          // @ts-expect-error http is private
+          this.getClient().httpClient.setBearerToken(
+            this.state.authResult?.accessToken
+          );
+        }
+      }
+
       this.publishAuthState();
     } else if (
       this.options.flow === 'ADFS' ||
@@ -152,6 +170,11 @@ class CogniteAuth {
       }
 
       const authResult = await this.azureAdClient.getProfileTokenRedirect();
+
+      if (isObject(account)) {
+        this.state.username = account.name;
+        this.state.email = account.username;
+      }
 
       if (authResult) {
         this.state.authResult = {
@@ -197,6 +220,8 @@ class CogniteAuth {
       initialising: this.state.initializing,
       token: this.state.authResult?.accessToken,
       error: this.state.error,
+      email: this.state.email,
+      username: this.state.username,
     };
   }
 
@@ -360,4 +385,6 @@ export type AuthenticatedUser = {
   tenant?: string;
   token?: string;
   error?: boolean;
+  username?: string;
+  email?: string;
 };

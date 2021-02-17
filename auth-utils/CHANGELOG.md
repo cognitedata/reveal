@@ -1,3 +1,9 @@
+## 0.7.0 Feb 17 2021
+
+### Changes
+
+- Add `username` and `email` to AuthenticatedUser
+
 ## 0.6.0 Feb 12 2021
 
 ### Changes
