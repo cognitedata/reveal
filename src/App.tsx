@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { Container, AuthConsumer, AuthContext } from '@cognite/react-container';
+import { Container } from '@cognite/react-container';
 
 import GlobalStyles from 'global-styles';
 
@@ -17,37 +17,33 @@ import { APIErrorProvider } from './contexts/APIErrorContext';
 const App = () => (
   <>
     <GlobalStyles />
-    <Container appName="cognuit">
+    <Container disableTranslations>
       <ApiProvider>
         <APIErrorProvider>
-          <AuthConsumer>
-            {({ authState }: AuthContext) => (
-              <Layout>
-                <Main>
-                  <MainHeader user={authState?.username} />
-                  <Content>
-                    <Switch>
-                      <Route exact path="/">
-                        <Home />
-                      </Route>
-                      <Route exact path="/configurations">
-                        <Configurations />
-                      </Route>
-                      <Route exact path="/configurations/new/:type">
-                        <New />
-                      </Route>
-                      <Route exact path="/data-transfers">
-                        <DataTransfers />
-                      </Route>
-                      <Route exact path="/status">
-                        <Status />
-                      </Route>
-                    </Switch>
-                  </Content>
-                </Main>
-              </Layout>
-            )}
-          </AuthConsumer>
+          <Layout>
+            <Main>
+              <MainHeader />
+              <Content>
+                <Switch>
+                  <Route exact path="/">
+                    <Home />
+                  </Route>
+                  <Route exact path="/configurations">
+                    <Configurations />
+                  </Route>
+                  <Route exact path="/configurations/new/:type">
+                    <New />
+                  </Route>
+                  <Route exact path="/data-transfers">
+                    <DataTransfers />
+                  </Route>
+                  <Route exact path="/status">
+                    <Status />
+                  </Route>
+                </Switch>
+              </Content>
+            </Main>
+          </Layout>
         </APIErrorProvider>
       </ApiProvider>
     </Container>

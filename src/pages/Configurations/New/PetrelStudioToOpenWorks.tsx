@@ -50,7 +50,8 @@ enum ChangeType {
 
 const PetrelStudioToOpenWorks = ({ name }: Props) => {
   const { authState } = useContext<AuthContext>(AuthProvider);
-  const user = authState?.username;
+  const user = authState?.email;
+
   const [configuration, setConfiguration] = useState<Configuration>({
     name,
     source: {
