@@ -99,4 +99,12 @@ describe('binarySearchLastIndexOf', () => {
       expect(binarySearchLastIndexOf(haystack, x)).toEqual(haystack.lastIndexOf(x));
     }
   });
+
+  test('item is not found and to be inserted at first index', () => {
+    const haystack = [0, 1, 2, 3, 4];
+    const result = binarySearchLastIndexOf(haystack, -1);
+    expect(result).toBeNegative();
+    const insertIdx = -result - 1;
+    expect(insertIdx).toEqual(0);
+  });
 });

@@ -6,8 +6,9 @@ import { binarySearchLastIndexOf, shiftValuesRight } from './arrays';
 import { NumericRange } from './NumericRange';
 
 export class IndexSet {
-  // private readonly _intervals = new IntervalTree<number>();
-  // Sorted pairs of [from,to]-elements of the contained ranges
+  // Sorted pairs of [from,to]-elements of the contained ranges. The elements
+  // are sorted and strictly non-decreasing (there can be equal elements
+  // for single-element intervals)
   private _intervals: number[] = [];
   // Number of elements used in the _intervals-array (note! will always be a multiple of 2)
   private _intervalsCount = 0;
@@ -35,20 +36,8 @@ export class IndexSet {
   }
 
   addRange(range: NumericRange) {
-    // Some 'rules' to keep in mind:
-    // - intervals array contains pairs, [startIdx,endIndex]
-    // - elements at even positions are startIndexes
-    // - elements at odd positions are endIndexes
-    // - elements are sorted, and the array is strictly non-decreasing
-
     function getInsertIdx(idx: number): number {
       return idx < 0 ? -idx - 1 : idx;
-    }
-    function isExistingIdx(idx: number): boolean {
-      return idx >= 0;
-    }
-    function isStartIdx(idx: number): boolean {
-      return idx % 2 == 0;
     }
 
     const idx1 = binarySearchLastIndexOf(this._intervals, range.from, this._intervalsCount);
@@ -71,6 +60,8 @@ export class IndexSet {
       if (!isExistingIdx(idx1) && isStartIdx(insertIdx1)) {
         this._intervals[insertIdx1] = range.from;
         firstToRemove++;
+      } else if (isExistingIdx(idx1) && isStartIdx(insertIdx1)) {
+        firstToRemove++;
       }
 
       // Hande end
@@ -86,14 +77,81 @@ export class IndexSet {
     }
   }
 
-  remove(index: number) {
-    // this._indices.delete(index);
+  removeRange(range: NumericRange): void {
+    function getRemoveIdx(idx: number): number {
+      return idx < 0 ? -idx - 1 : idx;
+    }
+
+    const newEndpoints = NumericRange.createFromInterval(range.from - 1, range.toInclusive + 1);
+    const idx1 = binarySearchLastIndexOf(this._intervals, newEndpoints.from, this._intervalsCount);
+    let removeIdx1 = getRemoveIdx(idx1);
+
+    // Handle start
+    switch (true) {
+      case !isExistingIdx(idx1) && isEndIdx(removeIdx1):
+        this.makeRoomAt(removeIdx1);
+        this._intervals[removeIdx1] = newEndpoints.from;
+        this._intervals[removeIdx1 + 1] = newEndpoints.from + 1;
+        this._intervalsCount += 2;
+        removeIdx1++;
+        break;
+
+      case !isExistingIdx(idx1) && isStartIdx(removeIdx1):
+        break;
+
+      case isExistingIdx(idx1) && isStartIdx(removeIdx1):
+        break;
+
+      case isExistingIdx(idx1) && isEndIdx(removeIdx1):
+        removeIdx1++;
+        break;
+
+      default:
+        throw new Error('Not supported');
+    }
+
+    const idx2 = binarySearchLastIndexOf(this._intervals, newEndpoints.toInclusive, this._intervalsCount);
+    let removeIdx2 = getRemoveIdx(idx2);
+    // Handle end
+    switch (true) {
+      case !isExistingIdx(idx2) && isEndIdx(removeIdx2):
+        this._intervals[removeIdx2 - 1] = newEndpoints.toInclusive;
+        removeIdx2--;
+        break;
+
+      case !isExistingIdx(idx2) && isStartIdx(removeIdx2):
+        break;
+
+      case isExistingIdx(idx2) && isStartIdx(removeIdx2):
+        break;
+
+      case isExistingIdx(idx2) && isEndIdx(removeIdx2):
+        break;
+
+      default:
+        throw new Error('Not supported');
+    }
+
+    // Repair
+    if (removeIdx1 < removeIdx2) {
+      this.mergeIntervals(removeIdx1, removeIdx2);
+    }
+
+    // if (!isExistingIdx(idx1) && isEndIdx(removeIdx1)) {
+    //   // [1..6] - [3..4] -> [1..2],[5..6]
+    //   this._intervals[removeIdx1] = range.from - 1;
+    // } else {
+    // }
+
+    // // [1..6] - [3..4] ->
+    // // Handle end
+    // if (!isExistingIdx(idx2) && isEndIdx(removeIdx2)) {
+    //   this._intervals[]
+    // }
   }
 
-  removeRange(range: NumericRange) {
-    // for (let index = range.from; index <= range.toInclusive; ++index) {
-    //   this._indices.delete(index);
-    // }
+  remove(index: number) {
+    // this._indices.delete(index);
   }
 
   clear() {
@@ -108,23 +166,15 @@ export class IndexSet {
     return count;
   }
 
-  contains(index: number): boolean {
-    const intervalIdx = binarySearchLastIndexOf(this._intervals, index, this._intervalsCount);
-    if (intervalIdx >= 0) {
-      return true;
-    }
-
-    throw new Error('Not implemented');
+  contains(value: number): boolean {
+    const intervalIdx = binarySearchLastIndexOf(this._intervals, value, this._intervalsCount);
+    return isExistingIdx(intervalIdx) || !isStartIdx(intervalIdx);
   }
 
   *ranges(): Generator<NumericRange> {
     for (let i = 0; i < this._intervalsCount; i += 2) {
       yield NumericRange.createFromInterval(this._intervals[i], this._intervals[i + 1]);
     }
-  }
-
-  raw(): number[] {
-    return this._intervals.slice(0, this._intervalsCount);
   }
 
   toPlainSet(): Set<number> {
@@ -135,11 +185,11 @@ export class IndexSet {
     return set;
   }
 
-  // unionWith(other: IndexSet): void {
-  //   for (const index of other._indices) {
-  //     this._indices.add(index);
-  //   }
-  // }
+  unionWith(other: IndexSet): void {
+    for (const range of other.ranges()) {
+      this.addRange(range);
+    }
+  }
   // hasIntersectionWith(other: Set<number>): boolean;
   // hasIntersectionWith(other: IndexSet): boolean;
   // hasIntersectionWith(other: IndexSet | Set<number>): boolean {
@@ -210,4 +260,16 @@ function hasIntersection(left: Set<number>, right: Set<number>): boolean {
   }
 
   return intersects;
+}
+
+function isExistingIdx(idx: number): boolean {
+  return idx >= 0;
+}
+
+function isStartIdx(idx: number): boolean {
+  return idx % 2 == 0;
+}
+
+function isEndIdx(idx: number): boolean {
+  return !isStartIdx(idx);
 }
