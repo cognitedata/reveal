@@ -7,3 +7,5 @@ interface ResizeObserver {
   unobserve(target: Element): void;
   disconnect(): void;
 }
+
+declare module '@cognite/gcs-browser-upload';

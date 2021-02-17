@@ -6,7 +6,7 @@ export function useUploadedFilesCount() {
     (state: RootState) => state.uploadedFiles
   );
   const count = uploadedFiles.length;
-  const fileOrFiles = count % 10 === 1 ? 'file' : 'files';
+  const fileOrFiles = count % 10 === 1 && count % 100 !== 11 ? 'file' : 'files';
   const countStr = `${count} ${fileOrFiles}`;
   return { count, countStr };
 }

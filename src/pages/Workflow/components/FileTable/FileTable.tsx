@@ -1,14 +1,66 @@
 import { Badge, Button, Dropdown, Menu } from '@cognite/cogs.js';
 import React from 'react';
-import { v3 } from '@cognite/cdf-sdk-singleton';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
-import ReactBaseTable, { BaseTableProps, ColumnShape } from 'react-base-table';
+import ReactBaseTable, {
+  BaseTableProps,
+  Column,
+  ColumnShape,
+} from 'react-base-table';
+import { Annotation, JobStatus } from 'src/api/annotationJob';
+import { TimeDisplay } from '@cognite/data-exploration';
 import { TableWrapper } from './FileTableWrapper';
 
-type FileTableProps = Omit<BaseTableProps<v3.FileInfo>, 'width'>;
+export type TableDataItem = {
+  id: number;
+  mimeType: string;
+  name: string;
+  status: JobStatus | '';
+  statusTime: number;
+  annotations: Array<Annotation>;
+};
+
+type CellRenderer = { rowData: TableDataItem };
+
+type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
+
+function AnnotationCell({ rowData }: CellRenderer) {
+  const getMessage = () => {
+    switch (rowData.status) {
+      case 'QUEUED': {
+        return 'ML queued';
+      }
+      case 'RUNNING': {
+        return 'Detecting...';
+      }
+      case 'COMPLETED': {
+        return rowData.annotations.length
+          ? 'Annotations detected'
+          : 'No annotations detected';
+      }
+      case 'FAILED': {
+        return 'Error occurred';
+      }
+      default: {
+        return 'Run ML to detect';
+      }
+    }
+  };
+
+  const badge = rowData.annotations.length
+    ? String(rowData.annotations.length)
+    : '–';
+
+  return (
+    <div>
+      <Badge text={badge} size={13} background="purple" />
+      {` ${getMessage()}`}
+    </div>
+  );
+}
+
 export function FileTable(props: FileTableProps) {
-  const columns: ColumnShape<v3.FileInfo>[] = [
+  const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
       title: 'Name',
@@ -25,10 +77,23 @@ export function FileTable(props: FileTableProps) {
     {
       key: 'status',
       title: 'Status',
-      width: 200,
+      width: 250,
+      align: Column.Alignment.CENTER,
       // ML processing job status: Queued, In Progress, Processed <DateTime>
-      cellRenderer: () => {
-        return <div>–</div>;
+      cellRenderer: ({ rowData }: CellRenderer) => {
+        if (rowData.status === 'COMPLETED') {
+          return (
+            <div>
+              Processed{' '}
+              <TimeDisplay value={rowData.statusTime} relative withTooltip />
+            </div>
+          );
+        }
+        return (
+          <div style={{ textTransform: 'capitalize' }}>
+            {rowData.status.toLowerCase() || '–'}
+          </div>
+        );
       },
     },
     {
@@ -37,23 +102,7 @@ export function FileTable(props: FileTableProps) {
       width: 0,
       flexGrow: 1,
       // ML based or custom annotations count for the file
-      cellRenderer: ({ rowData: file }: { rowData: v3.FileInfo }) => {
-        const hasViolations = file && file.id % 2;
-        return (
-          <div>
-            <div>
-              <Badge text="101" size={10} background="purple" /> Annotations
-              detected
-            </div>
-            {hasViolations ? (
-              /* todo: Badge.text add support of react elements. string-only for now */
-              <div>
-                <Badge text="!" size={10} background="red" /> Sensitive data
-              </div>
-            ) : null}
-          </div>
-        );
-      },
+      cellRenderer: AnnotationCell,
     },
     {
       key: 'action',
@@ -92,7 +141,7 @@ export function FileTable(props: FileTableProps) {
     <TableWrapper>
       <AutoSizer>
         {({ width, height }) => (
-          <ReactBaseTable<v3.FileInfo>
+          <ReactBaseTable<TableDataItem>
             columns={columns}
             height={height}
             width={width}

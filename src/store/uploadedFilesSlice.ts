@@ -21,9 +21,6 @@ const uploadedFilesSlice = createSlice({
       state.uploadedFiles = uploadedFiles;
     },
     addUploadedFile(state, action: PayloadAction<v3.FileInfo>) {
-      Object.keys(action.payload).forEach((key) =>
-        console.log(key, typeof action.payload[key as any], action.payload[key])
-      );
       state.uploadedFiles = state.uploadedFiles.concat(action.payload);
     },
   },

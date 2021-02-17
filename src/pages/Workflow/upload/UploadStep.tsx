@@ -2,7 +2,7 @@ import { FileUploader } from 'src/components/FileUploader';
 import React from 'react';
 import styled from 'styled-components';
 import { margin } from 'src/cogs-variables';
-import { Detail } from '@cognite/cogs.js';
+import { Detail, Title } from '@cognite/cogs.js';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -12,7 +12,7 @@ const supportedExtensions = ['jpeg', 'jpg', 'png', 'tiff'];
 
 const FileUploaderWrapper = styled.div`
   max-width: 800px;
-  margin: ${margin.default};
+  margin: ${margin.default} 0;
 `;
 
 export default function UploadStep() {
@@ -29,6 +29,8 @@ export default function UploadStep() {
 
   return (
     <>
+      <Title level={2}>Upload file</Title>
+      <br />
       <FileUploaderWrapper>
         <FileUploader
           validExtensions={supportedExtensions}

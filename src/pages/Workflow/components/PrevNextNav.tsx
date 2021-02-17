@@ -11,12 +11,14 @@ type ClickHandler = React.DetailedHTMLProps<
 
 type Props = {
   titleNext?: string;
+  disableNext?: boolean;
   onPrevClicked?: ClickHandler;
   onNextClicked?: ClickHandler;
 };
 
 export function PrevNextNav({
   titleNext,
+  disableNext,
   onPrevClicked,
   onNextClicked,
 }: Props) {
@@ -27,16 +29,8 @@ export function PrevNextNav({
 
       <div style={{ flexGrow: 1 }} />
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          marginRight: margin.default,
-        }}
-      >
-        {countStr}
-      </div>
-      <Button type="primary" onClick={onNextClicked}>
+      <FilesCount>{countStr}</FilesCount>
+      <Button type="primary" disabled={disableNext} onClick={onNextClicked}>
         {titleNext || 'Next'}
       </Button>
     </PrevNextRoot>
@@ -48,4 +42,11 @@ const PrevNextRoot = styled.div`
 
   padding: 8px;
   background: var(--cogs-white);
+`;
+
+const FilesCount = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: ${margin.default};
+  font-weight: 500;
 `;

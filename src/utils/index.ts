@@ -27,6 +27,7 @@ export const userHasCapabilities = (
       group.capabilities.forEach((cap) => {
         if (acl.acl in cap) {
           acl.actions.forEach((action, index) => {
+            // @ts-ignore
             if (cap[acl.acl].actions.includes(action)) {
               // eslint-disable-next-line no-param-reassign
               acl.actions[index] = '';

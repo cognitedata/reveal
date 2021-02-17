@@ -88,7 +88,7 @@ export const FileUploader = ({
 
     message.info('Starting Upload...');
 
-    const uploadFile = async (file) => {
+    const uploadFile = async (file: UploadFile) => {
       const mimeType = getMIMEType(file.name);
 
       const fileMetadata = (await sdk.files.upload({

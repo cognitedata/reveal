@@ -6,32 +6,24 @@ import {
   Switch,
   useHistory,
 } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
 import { Steps } from 'antd';
 import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import styled from 'styled-components';
+import { ProcessStepActionButtons } from 'src/pages/Workflow/process/ProcessStepActionButtons';
+import {
+  getLink,
+  workflowRoutes,
+  WorkflowStepKey,
+} from 'src/pages/Workflow/workflowRoutes';
 
 const { Step } = Steps;
 
-const UploadStep = (props) =>
+const UploadStep = (props: RouteComponentProps) =>
   LazyWrapper(props, () => import('src/pages/Workflow/upload/UploadStep'));
 
 // tried to use memo to avoid remount of this component between steps, but without success...
-const ProcessAndReviewStep = (props) =>
+const ProcessAndReviewStep = (props: RouteComponentProps) =>
   LazyWrapper(props, () => import('src/pages/Workflow/process/ProcessStep'));
-
-type WorkflowStepKey = 'upload' | 'process' | 'review';
-
-const workflowRoutes: Record<WorkflowStepKey, string> = {
-  upload: '/:tenant/vision/workflow/upload',
-  process: '/:tenant/vision/workflow/process',
-  review: '/:tenant/vision/workflow/review',
-};
-
-// use for programmatic route updates with history.push
-function getLink(route: string) {
-  return createLink(route.slice('/:tenant'.length));
-}
 
 function getStepNumberByStepName(stepName: WorkflowStepKey) {
   if (stepName === 'review') {
@@ -98,17 +90,7 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
             key="process-step"
             path={workflowRoutes.process}
             exact
-            component={() => (
-              <PrevNextNav
-                onPrevClicked={() =>
-                  history.push(getLink(workflowRoutes.upload))
-                }
-                onNextClicked={() =>
-                  history.push(getLink(workflowRoutes.review))
-                }
-                titleNext="Process"
-              />
-            )}
+            component={ProcessStepActionButtons}
           />
 
           <Route
