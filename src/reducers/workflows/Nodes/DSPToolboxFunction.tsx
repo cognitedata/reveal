@@ -6,6 +6,7 @@ import sdk from 'services/CogniteSDK';
 import useSelector from 'hooks/useSelector';
 import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
+import pMemoize from 'p-memoize';
 import { ConfigPanelComponentProps, StorableNode } from '../types';
 
 type FunctionData = {
@@ -34,6 +35,51 @@ export const effect = async (funcData: FunctionData) => {
 
 export const effectId = 'TOOLBOX_FUNCTION';
 
+async function getAvailableOperations(tenant: string) {
+  const functions = await sdk.get<{ items: CogniteFunction[] }>(
+    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
+  );
+
+  const getAllOps = functions.data.items.find(
+    (func) => func.name === 'get_all_ops-master'
+  );
+
+  if (!getAllOps) {
+    return [];
+  }
+
+  const functionCall = await sdk.post<{ id: number }>(
+    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/call`,
+    {
+      data: {},
+    }
+  );
+
+  const status = await waitOnFunctionComplete(
+    tenant,
+    getAllOps.id,
+    functionCall.data.id
+  );
+
+  const functionResult = await sdk.get<{ response: Record<string, any> }>(
+    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/calls/${functionCall.data.id}/response`
+  );
+
+  const availableOperations =
+    functionResult.data.response?.all_available_ops || [];
+
+  /* eslint-disable no-console */
+  console.log({
+    status,
+    availableOperations,
+  });
+  /* eslint-enable no-console */
+
+  return availableOperations;
+}
+
+const memoizedGetAvailableOperations = pMemoize(getAvailableOperations);
+
 export const configPanel = ({
   node,
   onUpdateNode,
@@ -53,45 +99,9 @@ export const configPanel = ({
         return;
       }
 
-      const functions = await sdk.get<{ items: CogniteFunction[] }>(
-        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
+      const availableOperations: DSPFunction[] = await memoizedGetAvailableOperations(
+        tenant
       );
-
-      const getAllOps = functions.data.items.find(
-        (func) => func.name === 'get_all_ops-master'
-      );
-
-      if (!getAllOps) {
-        return;
-      }
-
-      const functionCall = await sdk.post<{ id: number }>(
-        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/call`,
-        {
-          data: {},
-        }
-      );
-
-      const status = await waitOnFunctionComplete(
-        tenant,
-        getAllOps.id,
-        functionCall.data.id
-      );
-
-      const functionResult = await sdk.get<{ response: Record<string, any> }>(
-        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/calls/${functionCall.data.id}/response`
-      );
-
-      const availableOperations =
-        functionResult.data.response?.all_available_ops || [];
-
-      /* eslint-disable no-console */
-      console.log({
-        status,
-        availableOperations,
-      });
-      /* eslint-enable no-console */
-
       setAvailableFunctions(availableOperations);
       setLoading(false);
     }
