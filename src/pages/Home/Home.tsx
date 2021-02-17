@@ -90,9 +90,7 @@ const Home = () => {
       {!suitesLoaded || !suites?.length ? (
         <NoItemsContainer>
           <Graphic type="DataSets" />
-          <Title level={5}>
-            You don’t have any suites yet. Get started by clicking “New suite”.
-          </Title>
+          <Title level={5}>You don’t have any suites yet.</Title>
         </NoItemsContainer>
       ) : (
         <OverviewContainer>
