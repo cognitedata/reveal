@@ -56,6 +56,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     log('[AuthContainer] CogniteAuth:', [authClient], 1);
 
     const flowToUse = flow || authClient.state.authResult?.authFlow;
+
     if (authClient.initializingPromise && flowToUse) {
       authClient.initializingPromise.then(() => {
         authClient.loginAndAuthIfNeeded(flowToUse, tenant, cdfCluster);
@@ -92,7 +93,15 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       [{ tenant, authState: authState?.authState, sdkClient }],
       1
     );
-    if (!authState?.authState?.authenticated) {
+
+    if (flow === 'COGNITE_AUTH') {
+      setLoading(false);
+      return;
+    }
+
+    if (authState?.authState?.authenticated) {
+      setLoading(false);
+    } else {
       log(
         '[AuthContainer] UnAuthenticated state found, going to login page.',
         [authState],
@@ -103,8 +112,6 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
           authError();
         });
       }
-    } else {
-      setLoading(false);
     }
   }, [authState]);
 
@@ -112,6 +119,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     '[AuthContainer] Render gates:',
     [
       {
+        loading,
         authenticated: authState?.authState?.authenticated,
       },
     ],

@@ -44,7 +44,7 @@
     "jest-css-modules-transform": "^2.1.1"
   },
   "dependencies": {
-    "@cognite/auth-utils": "^0.6.0",
+    "@cognite/auth-utils": "^0.7.1",
     "@cognite/react-errors": "^0.0.4",
     "@cognite/react-i18n": "^0.3.0",
     "@cognite/react-tenant-selector": "^0.4.2",
