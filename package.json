@@ -16,7 +16,7 @@
   "dependencies": {
     "@cognite/cogs.js": "^2.13.1",
     "@cognite/metrics": "^1.0.0",
-    "@cognite/react-container": "^0.7.1",
+    "@cognite/react-container": "^0.7.3",
     "@cognite/sdk": "^3.3.0",
     "@sentry/browser": "^6.1.0",
     "@types/lodash": "^4.14.165",
