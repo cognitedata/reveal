@@ -3,6 +3,7 @@ import { SUITES_TABLE_NAME } from 'constants/cdf';
 import { RootDispatcher } from 'store/types';
 import { setNotification } from 'store/notification/actions';
 import { setHttpError } from 'store/notification/thunks';
+import * as Sentry from '@sentry/browser';
 import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
 import * as actions from './actions';
 
@@ -16,7 +17,7 @@ export const fetchSuites = (apiClient: ApiClient) => async (
   } catch (e) {
     dispatch(actions.loadSuitesTableFailed());
     dispatch(setHttpError(`Failed to fetch suites`, e));
-    // track to Senrty
+    Sentry.captureException(e);
   }
 };
 
@@ -34,7 +35,7 @@ export const insertSuite = (
   } catch (e) {
     dispatch(actions.suiteTableRowError());
     dispatch(setHttpError('Failed to save a suite', e));
-    // track to Senrty
+    Sentry.captureException(e);
   }
 };
 
@@ -51,7 +52,7 @@ export const deleteSuite = (
   } catch (e) {
     dispatch(actions.suiteTableRowError());
     dispatch(setHttpError('Failed to delete a suite', e));
-    // track to Senrty
+    Sentry.captureException(e);
   }
 };
 
@@ -65,7 +66,7 @@ export const fetchImageUrls = (client: CdfClient, ids: string[]) => async (
   } catch (e) {
     dispatch(actions.fetchImgUrlsFailed());
     dispatch(setHttpError('Failed to fetch image urls ', e));
-    // track to Senrty
+    Sentry.captureException(e);
   }
 };
 

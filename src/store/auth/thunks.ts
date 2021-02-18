@@ -2,6 +2,7 @@ import { ApiClient, CdfClient } from 'utils';
 import { REDIRECT } from '@cognite/sdk';
 import { RootDispatcher } from 'store/types';
 import jwtDecode from 'jwt-decode';
+import * as Sentry from '@sentry/browser';
 import * as actions from './actions';
 
 export function authenticate(
@@ -26,13 +27,14 @@ export function authenticate(
       .authenticate()
       .then((authenticated: boolean) => {
         if (!authenticated) {
-          // eslint-disable-next-line no-console
-          console.log('Could not authenticate to CDF');
+          Sentry.captureMessage(
+            'Could not authenticate to CDF',
+            Sentry.Severity.Log
+          );
         }
       })
       .catch((error: Error) => {
-        // eslint-disable-next-line no-console
-        console.log(error);
+        Sentry.captureException(error);
       });
   };
 }

@@ -11,6 +11,7 @@ import { ApiClient, CdfClient } from 'utils';
 import { insertSuite } from 'store/suites/thunks';
 import { Board, Suite } from 'store/suites/types';
 import { setHttpError } from 'store/notification/thunks';
+import * as Sentry from '@sentry/browser';
 import * as actions from './actions';
 import { BoardState } from './types';
 
@@ -63,7 +64,7 @@ export function uploadFiles(
       } catch (e) {
         dispatch(actions.fileUploadError({ boardKey, error: e?.message }));
         dispatch(setHttpError(`Failed to upload file ${externalId}`, e));
-        // track to sentry
+        Sentry.captureException(e);
       }
     }
     dispatch(actions.filesUploaded());
@@ -102,7 +103,7 @@ export function retrieveFileInfo(
       dispatch(
         setHttpError(`Failed to fetch file name for ${fileExternalId}`, e)
       );
-      // track to sentry
+      Sentry.captureException(e);
     }
   };
 }

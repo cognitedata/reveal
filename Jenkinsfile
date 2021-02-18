@@ -16,12 +16,8 @@ static final String APPLICATION_REPO_ID = "digital-cockpit"
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
 static final String SENTRY_PROJECT_NAME = "digital-cockpit"
 
-// The Sentry DSN is the URL used to report issues into Sentry. This can be
-// found on your Sentry's project page, or by going here:
-// https://docs.sentry.io/error-reporting/quickstart/?platform=browser
-//
-// If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN = ""
+// The Sentry DSN is the URL used to report issues into Sentry.
+static final String SENTRY_DSN = "https://327fcc3805594b24aa95d16ecf383c07@o124058.ingest.sentry.io/5557692"
 
 // Specify your Mixpanel project token. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.

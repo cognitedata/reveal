@@ -1,4 +1,5 @@
 import { CdfClient } from 'utils';
+import * as Sentry from '@sentry/browser';
 
 export const logout = async (
   client: CdfClient,
@@ -13,12 +14,10 @@ export const logout = async (
     if (logoutUrl) {
       window.location.href = logoutUrl;
     } else {
-      // eslint-disable-next-line no-console
-      console.log('No logout URL');
+      Sentry.captureMessage('Logout: No logout URL', Sentry.Severity.Error);
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error);
+    Sentry.captureException(error);
     window.location.pathname = redirectUrl as string;
   }
 };
