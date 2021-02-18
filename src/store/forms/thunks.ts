@@ -10,6 +10,7 @@ import { ApiClient, CdfClient } from 'utils';
 
 import { insertSuite } from 'store/suites/thunks';
 import { Board, Suite } from 'store/suites/types';
+import { setHttpError } from 'store/notification/thunks';
 import * as actions from './actions';
 import { BoardState } from './types';
 
@@ -61,6 +62,8 @@ export function uploadFiles(
         );
       } catch (e) {
         dispatch(actions.fileUploadError({ boardKey, error: e?.message }));
+        dispatch(setHttpError(`Failed to upload file ${externalId}`, e));
+        // track to sentry
       }
     }
     dispatch(actions.filesUploaded());
@@ -96,6 +99,10 @@ export function retrieveFileInfo(
       dispatch(actions.retrievedFile(fileInfo));
     } catch (e) {
       dispatch(actions.fileRetrieveError(e));
+      dispatch(
+        setHttpError(`Failed to fetch file name for ${fileExternalId}`, e)
+      );
+      // track to sentry
     }
   };
 }

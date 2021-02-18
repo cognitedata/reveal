@@ -8,10 +8,11 @@ import { fetchUserGroups } from 'store/groups/thunks';
 import { RootDispatcher } from 'store/types';
 import { getAuthState } from 'store/auth/selectors';
 import { getGroupsState } from 'store/groups/selectors';
-import { Body, Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useIntercom } from 'react-use-intercom';
+import ErrorPage from 'pages/ErrorPage';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -23,7 +24,7 @@ const Authentication = (): JSX.Element => {
   const {
     loading: suitesLoading,
     loaded: suitesLoaded,
-    error: suitesLoadError,
+    loadFailed: suitesLoadError,
   } = useSelector(getSuitesTableState);
   const {
     loading: groupsLoading,
@@ -84,11 +85,7 @@ const Authentication = (): JSX.Element => {
   ]);
 
   if (hasError) {
-    return (
-      <>
-        <Body>Failed to fetch data from database</Body>
-      </>
-    );
+    return <ErrorPage />;
   }
 
   return <>{authenticated && dataLoaded ? <Routes /> : <Loader />}</>;

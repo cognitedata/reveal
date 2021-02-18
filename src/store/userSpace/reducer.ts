@@ -9,7 +9,6 @@ import {
 const initialState: UserSpaceState = {
   loading: false,
   loaded: false,
-  error: '',
   lastVisited: [],
 };
 
@@ -19,7 +18,6 @@ export const UserSpaceReducer = createReducer(initialState)
     (state: UserSpaceState) => ({
       ...state,
       loading: true,
-      error: '',
     })
   )
   .handleAction(
@@ -27,37 +25,33 @@ export const UserSpaceReducer = createReducer(initialState)
     (state: UserSpaceState, action: UserSpaceRootAction) => ({
       loading: false,
       loaded: true,
-      error: '',
       lastVisited: (action.payload as UserSpacePayload)?.lastVisited,
     })
   )
   .handleAction(
     UserSpaceActionTypes.USER_SPACE_LOAD_ERROR,
-    (state: UserSpaceState, action: UserSpaceRootAction) => ({
+    (state: UserSpaceState) => ({
       ...state,
       loading: false,
-      error: (action.payload as Error)?.message,
     })
   )
   .handleAction(
     UserSpaceActionTypes.LAST_VISITED_UPDATE,
-    (state: UserSpaceState) => ({ ...state, loading: true, error: '' })
+    (state: UserSpaceState) => ({ ...state, loading: true })
   )
   .handleAction(
     UserSpaceActionTypes.LAST_VISITED_UPDATED,
     (state: UserSpaceState, action: UserSpaceRootAction) => ({
       ...state,
       loading: false,
-      error: '',
       loaded: true,
       lastVisited: action.payload,
     })
   )
   .handleAction(
     UserSpaceActionTypes.LAST_VISITED_UPDATE_ERROR,
-    (state: UserSpaceState, action: UserSpaceRootAction) => ({
+    (state: UserSpaceState) => ({
       ...state,
       loading: false,
-      error: (action.payload as Error)?.message,
     })
   );

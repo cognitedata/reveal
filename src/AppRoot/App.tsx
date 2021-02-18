@@ -5,8 +5,10 @@ import {
   createBrowserHistory as createNewBrowserHistory,
   History,
 } from 'history';
+import { Body } from '@cognite/cogs.js';
 import Authentication from './Authentication';
 import AppProviders from './AppProviders';
+import ErrorBoundary from './ErrorBoundary';
 
 const AppRoot = (): JSX.Element => {
   const tenant = usePossibleTenant();
@@ -26,12 +28,14 @@ const AppRoot = (): JSX.Element => {
   }, [tenant]);
 
   if (!tenantOk || !tenant) {
-    return <></>;
+    return <Body>Missing tenant name</Body>;
   }
 
   return (
     <AppProviders history={history} tenant={tenant}>
-      <Authentication />
+      <ErrorBoundary>
+        <Authentication />
+      </ErrorBoundary>
     </AppProviders>
   );
 };

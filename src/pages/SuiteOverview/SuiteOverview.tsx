@@ -38,7 +38,11 @@ const SuiteOverview: React.FC = () => {
   const {
     loading: suitesLoading,
     loaded: suitesLoaded,
-    imageUrls: { loading: imgUrlsLoading, loaded: imgUrlsLoaded },
+    imageUrls: {
+      loading: imgUrlsLoading,
+      loaded: imgUrlsLoaded,
+      failed: imgUrlsFailed,
+    },
   } = useSelector(getSuitesTableState);
   const { loading: userSpaceLoading }: UserSpaceState = useSelector(
     getUserSpace
@@ -64,19 +68,29 @@ const SuiteOverview: React.FC = () => {
       // when select another suite
       dispatch(actions.clearImgUrls());
     });
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [history, dispatch]);
 
   useEffect(() => {
     const fetchImgUrls = async (ids: string[]) => {
       await dispatch(fetchImageUrls(client, ids));
     };
-    if (imageFileIds?.length && !imgUrlsLoaded && !imgUrlsLoading) {
+    if (
+      imageFileIds?.length &&
+      !imgUrlsLoaded &&
+      !imgUrlsLoading &&
+      !imgUrlsFailed
+    ) {
       fetchImgUrls(imageFileIds);
     }
-  }, [imageFileIds, imgUrlsLoading, imgUrlsLoaded, client, dispatch]);
+  }, [
+    imageFileIds,
+    imgUrlsLoading,
+    imgUrlsLoaded,
+    imgUrlsFailed,
+    client,
+    dispatch,
+  ]);
 
   const redirectHome = () => {
     if (!goHomeDispatched) {

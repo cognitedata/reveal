@@ -23,4 +23,4 @@ export const lastVisitedUpdated = createAction(
 
 export const lastVisitedUpdateError = createAction(
   UserSpaceActionTypes.LAST_VISITED_UPDATE_ERROR
-)<Error>();
+)<void>();

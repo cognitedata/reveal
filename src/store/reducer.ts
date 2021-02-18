@@ -5,6 +5,7 @@ import { ModalReducer } from './modals/reducer';
 import { GroupsReducer } from './groups/reducer';
 import { UserSpaceReducer } from './userSpace/reducer';
 import { FormReducer } from './forms/reducer';
+import { NotificationReducer } from './notification/reducer';
 
 const rootReducer = combineReducers({
   suitesTable: SuitesReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   groups: GroupsReducer,
   userSpace: UserSpaceReducer,
   form: FormReducer,
+  notification: NotificationReducer,
 });
 
 export default rootReducer;

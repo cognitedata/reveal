@@ -1,6 +1,8 @@
 import { CdfClient, ApiClient } from 'utils';
 import { SUITES_TABLE_NAME } from 'constants/cdf';
 import { RootDispatcher } from 'store/types';
+import { setNotification } from 'store/notification/actions';
+import { setHttpError } from 'store/notification/thunks';
 import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
 import * as actions from './actions';
 
@@ -12,7 +14,9 @@ export const fetchSuites = (apiClient: ApiClient) => async (
     const suites: Suite[] = await getSuites(apiClient);
     dispatch(actions.loadedSuitesTable(suites as Suite[]));
   } catch (e) {
-    dispatch(actions.loadSuitesTableError(e));
+    dispatch(actions.loadSuitesTableFailed());
+    dispatch(setHttpError(`Failed to fetch suites`, e));
+    // track to Senrty
   }
 };
 
@@ -25,10 +29,12 @@ export const insertSuite = (
   try {
     const suiteRow = fromSuiteToRow(suite);
     await client.insertTableRow(SUITES_TABLE_NAME, suiteRow);
-    dispatch(actions.suiteTableRequestSuccess());
     dispatch(fetchSuites(apiClient));
+    dispatch(setNotification('Saved'));
   } catch (e) {
-    dispatch(actions.insertSuiteTableRowError(e));
+    dispatch(actions.suiteTableRowError());
+    dispatch(setHttpError('Failed to save a suite', e));
+    // track to Senrty
   }
 };
 
@@ -40,10 +46,12 @@ export const deleteSuite = (
   try {
     dispatch(actions.deleteSuiteTableRow());
     await client.deleteTableRow(SUITES_TABLE_NAME, key);
-    dispatch(actions.suiteTableRequestSuccess());
     dispatch(fetchSuites(apiClient));
+    dispatch(setNotification('Deleted successfully'));
   } catch (e) {
-    dispatch(actions.deleteSuiteTableRowError(e));
+    dispatch(actions.suiteTableRowError());
+    dispatch(setHttpError('Failed to delete a suite', e));
+    // track to Senrty
   }
 };
 
@@ -55,7 +63,9 @@ export const fetchImageUrls = (client: CdfClient, ids: string[]) => async (
     const imgUrls = await client.getDownloadUrls(ids);
     dispatch(actions.fetchedImgUrls(imgUrls));
   } catch (e) {
-    dispatch(actions.fetchImgUrlsError(e));
+    dispatch(actions.fetchImgUrlsFailed());
+    dispatch(setHttpError('Failed to fetch image urls ', e));
+    // track to Senrty
   }
 };
 

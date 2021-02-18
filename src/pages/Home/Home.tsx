@@ -41,9 +41,6 @@ const Home = () => {
   const {
     loaded: userSpaceLoaded,
     loading: userSpaceLoading,
-    // TODO(DTC-167)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    error: userSpaceError,
   }: UserSpaceState = useSelector(getUserSpace);
   const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
 
@@ -93,9 +90,7 @@ const Home = () => {
       {!suitesLoaded || !suites?.length ? (
         <NoItemsContainer>
           <Graphic type="DataSets" />
-          <Title level={5}>
-            You don’t have any suites yet. Get started by clicking “New suite”.
-          </Title>
+          <Title level={5}>You don’t have any suites yet.</Title>
         </NoItemsContainer>
       ) : (
         <OverviewContainer>
