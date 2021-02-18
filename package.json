@@ -18,7 +18,8 @@
     "testcafe:start-live": "./scripts/testcafe-start.sh",
     "testcafe:build": "./scripts/testcafe-build.sh",
     "testcafe:serve": "serve -s build -l 11111",
-    "commit": "git cz"
+    "commit": "git cz",
+    "postinstall": "husky install"
   },
   "dependencies": {
     "@cognite/gcs-browser-upload": "^1.1.0",
