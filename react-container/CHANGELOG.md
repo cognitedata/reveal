@@ -1,3 +1,9 @@
+## 0.7.3 Feb 18 2021
+
+### Changes
+
+- Bump tenant-selector-component
+
 ## 0.7.2 Feb 16 2021
 
 ### Changes

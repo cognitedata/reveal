@@ -1,3 +1,9 @@
+## 0.4.3 Feb 18 2021
+
+### Changes
+
+- Bump auth-utils
+
 ## 0.4.2 Feb 16 2021
 
 ### Changes
