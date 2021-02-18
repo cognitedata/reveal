@@ -2,7 +2,7 @@
 
 The auth layer for all Cognite apps
 
-For more info, please read up on Confulence (here)[https://cognitedata.atlassian.net/wiki/spaces/AD/pages/2334818447/Enable+OIDC+Tokens+for+an+Application]
+For more info, please read up on Confulence [here](https://cognitedata.atlassian.net/wiki/spaces/AD/pages/2334818447/Enable+OIDC+Tokens+for+an+Application)
 
 ## Installation
 
@@ -28,4 +28,4 @@ Long term
 
 ## How to use
 
-The full guide is found on Conflence (here)[https://cognitedata.atlassian.net/wiki/spaces/AD/pages/2334818447/Enable+OIDC+Tokens+for+an+Application]
+The full guide is found on Conflence [here](https://cognitedata.atlassian.net/wiki/spaces/AD/pages/2334818447/Enable+OIDC+Tokens+for+an+Application)
