@@ -2,7 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import { binarySearchLastIndexOf, createOffsets, shiftValuesRight } from './arrays';
+import {
+  binarySearch,
+  binarySearchFirstIndexOf,
+  binarySearchLastIndexOf,
+  createOffsets,
+  shiftValuesRight
+} from './arrays';
 import 'jest-extended';
 
 describe('createOffsets', () => {
@@ -39,35 +45,35 @@ describe('shiftValuesRight', () => {
   });
 });
 
-describe('binarySearchLastIndexOf', () => {
+describe('binarySearch', () => {
   test('needle is first element', () => {
     const haystack = [1, 2, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 1)).toEqual(0);
+    expect(binarySearch(haystack, 1)).toEqual(0);
   });
 
   test('needle is last element', () => {
     const haystack = [1, 2, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 10)).toEqual(3);
+    expect(binarySearch(haystack, 10)).toEqual(3);
   });
 
   test('needle is mid element', () => {
     const haystack = [1, 2, 5, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 5)).toEqual(2);
+    expect(binarySearch(haystack, 5)).toEqual(2);
   });
 
   test('needle is low-mid element', () => {
     const haystack = [1, 2, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 2)).toEqual(1);
+    expect(binarySearch(haystack, 2)).toEqual(1);
   });
 
   test('needle is high-mid element', () => {
     const haystack = [1, 2, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 6)).toEqual(2);
+    expect(binarySearch(haystack, 6)).toEqual(2);
   });
 
   test('needle is before first element, return -1', () => {
     const haystack = [1, 2, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 2)).toEqual(1);
+    expect(binarySearch(haystack, 2)).toEqual(1);
   });
 
   test('not found returns bitwise complement of insertion point', () => {
@@ -75,24 +81,26 @@ describe('binarySearchLastIndexOf', () => {
       return -x - 1;
     }
     const haystack = [1, 3, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 0)).toEqual(bitwiseComplement(0));
-    expect(binarySearchLastIndexOf(haystack, 2)).toEqual(bitwiseComplement(1));
-    expect(binarySearchLastIndexOf(haystack, 4)).toEqual(bitwiseComplement(2));
-    expect(binarySearchLastIndexOf(haystack, 7)).toEqual(bitwiseComplement(3));
-    expect(binarySearchLastIndexOf(haystack, 11)).toEqual(bitwiseComplement(4));
+    expect(binarySearch(haystack, 0)).toEqual(bitwiseComplement(0));
+    expect(binarySearch(haystack, 2)).toEqual(bitwiseComplement(1));
+    expect(binarySearch(haystack, 4)).toEqual(bitwiseComplement(2));
+    expect(binarySearch(haystack, 7)).toEqual(bitwiseComplement(3));
+    expect(binarySearch(haystack, 11)).toEqual(bitwiseComplement(4));
   });
 
   test('partial search only', () => {
     const haystack = [1, 2, 4, 5, 6, 10];
-    expect(binarySearchLastIndexOf(haystack, 1, 3)).toEqual(0);
-    expect(binarySearchLastIndexOf(haystack, 2, 3)).toEqual(1);
-    expect(binarySearchLastIndexOf(haystack, 4, 3)).toEqual(2);
-    expect(binarySearchLastIndexOf(haystack, 5, 3)).toBeNegative();
-    expect(binarySearchLastIndexOf(haystack, 6, 3)).toBeNegative();
-    expect(binarySearchLastIndexOf(haystack, 10, 3)).toBeNegative();
-    expect(binarySearchLastIndexOf(haystack, 10, 100)).toEqual(5);
+    expect(binarySearch(haystack, 1, 3)).toEqual(0);
+    expect(binarySearch(haystack, 2, 3)).toEqual(1);
+    expect(binarySearch(haystack, 4, 3)).toEqual(2);
+    expect(binarySearch(haystack, 5, 3)).toBeNegative();
+    expect(binarySearch(haystack, 6, 3)).toBeNegative();
+    expect(binarySearch(haystack, 10, 3)).toBeNegative();
+    expect(binarySearch(haystack, 10, 100)).toEqual(5);
   });
+});
 
+describe('binarySearchLastIndexOf', () => {
   test('array contains series of equal values, returns last index', () => {
     const haystack = [1, 1, 2, 2, 3, 4, 5, 5, 5, 5, 6, 7, 7];
     for (let x = 0; x <= 7; x++) {
@@ -103,6 +111,23 @@ describe('binarySearchLastIndexOf', () => {
   test('item is not found and to be inserted at first index', () => {
     const haystack = [0, 1, 2, 3, 4];
     const result = binarySearchLastIndexOf(haystack, -1);
+    expect(result).toBeNegative();
+    const insertIdx = -result - 1;
+    expect(insertIdx).toEqual(0);
+  });
+});
+
+describe('binarySearchFirstIndexOf', () => {
+  test('array contains series of equal values, returns first index', () => {
+    const haystack = [1, 1, 2, 2, 3, 4, 5, 5, 5, 5, 6, 7, 7];
+    for (let x = 0; x <= 7; x++) {
+      expect(binarySearchFirstIndexOf(haystack, x)).toEqual(haystack.indexOf(x));
+    }
+  });
+
+  test('item is not found and to be inserted at first index', () => {
+    const haystack = [0, 1, 2, 3, 4];
+    const result = binarySearchFirstIndexOf(haystack, -1);
     expect(result).toBeNegative();
     const insertIdx = -result - 1;
     expect(insertIdx).toEqual(0);

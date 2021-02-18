@@ -42,21 +42,17 @@ export function shiftValuesRight<T>(array: T[], index: number, shiftCount: numbe
   return array;
 }
 
-export function binarySearchLastIndexOf(haystack: number[], needle: number, haystackCount?: number): number {
+export function binarySearch(haystack: number[], needle: number, haystackCount?: number): number {
   let low = 0;
   const lastHaystackIndex =
     haystackCount === undefined ? haystack.length - 1 : Math.min(haystackCount - 1, haystack.length - 1);
   let high = lastHaystackIndex;
 
   while (low <= high) {
-    let mid = Math.floor((low + high) / 2.0);
+    const mid = Math.floor((low + high) / 2.0);
     const guess = haystack[mid];
 
     if (guess === needle) {
-      // When there are a series of equal values we want to return the last index
-      while (mid <= lastHaystackIndex && haystack[mid + 1] === guess) {
-        mid++;
-      }
       return mid;
     }
 
@@ -68,4 +64,24 @@ export function binarySearchLastIndexOf(haystack: number[], needle: number, hays
   }
 
   return -low - 1; //if not found
+}
+
+export function binarySearchLastIndexOf(haystack: number[], needle: number, haystackCount?: number): number {
+  const lastHaystackIndex =
+    haystackCount === undefined ? haystack.length - 1 : Math.min(haystackCount - 1, haystack.length - 1);
+  let index = binarySearch(haystack, needle, haystackCount);
+  // When there are a series of equal values we want to return the last index
+  while (index >= 0 && index <= lastHaystackIndex && haystack[index + 1] === needle) {
+    index++;
+  }
+  return index;
+}
+
+export function binarySearchFirstIndexOf(haystack: number[], needle: number, haystackCount?: number): number {
+  let index = binarySearch(haystack, needle, haystackCount);
+  // When there are a series of equal values we want to return the first index
+  while (index > 0 && haystack[index - 1] === needle) {
+    index--;
+  }
+  return index;
 }
