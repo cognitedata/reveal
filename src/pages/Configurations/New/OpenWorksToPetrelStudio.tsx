@@ -59,7 +59,7 @@ const ROOT_FOLDER = null;
 
 const OpenWorksToPetrelStudio = ({ name }: Props) => {
   const { authState } = useContext<AuthContext>(AuthProvider);
-  const user = authState?.username;
+  const user = authState?.email;
 
   const [configuration, setConfiguration] = useState<ConfigurationOWtoPS>({
     name,

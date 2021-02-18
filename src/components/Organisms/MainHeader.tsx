@@ -1,9 +1,11 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import Logo from 'components/Atoms/Logo';
+import styled from 'styled-components';
 import { Avatar, Tooltip } from '@cognite/cogs.js';
+
+import { AuthConsumer } from '@cognite/react-container';
+import Logo from 'components/Atoms/Logo';
 import AppSwitcher from '../Atoms/AppSwitcher';
 
 const Header = styled.header`
@@ -104,7 +106,7 @@ const ActionsContainer = styled(HeaderItem)`
   padding: 0 12px;
 `;
 
-const MainHeader = ({ user }: { user: string | null | undefined }) => (
+const MainHeader = () => (
   <Header>
     <TitleContainer>
       <div>
@@ -133,9 +135,16 @@ const MainHeader = ({ user }: { user: string | null | undefined }) => (
       </nav>
     </MenuContainer>
     <AvatarContainer>
-      <Tooltip content={`Logged in: ${String(user)}`}>
-        <Avatar text={String(user)} />
-      </Tooltip>
+      <AuthConsumer>
+        {({ authState }) => {
+          const user = authState?.email || '';
+          return (
+            <Tooltip content={`Logged in: ${String(user)}`}>
+              <Avatar text={String(user)} />
+            </Tooltip>
+          );
+        }}
+      </AuthConsumer>
     </AvatarContainer>
     <ActionsContainer>
       <AppSwitcher />

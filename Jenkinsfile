@@ -38,7 +38,6 @@ def pods = { body ->
 }
 
 pods {
-  def gitCommit
   def contexts = [
     checkout: "continuous-integration/jenkins/checkout",
     setup: "continuous-integration/jenkins/setup",
@@ -50,9 +49,11 @@ pods {
     publishRelease: "continuous-integration/jenkins/publish-release",
   ]
 
-  def isStaging = env.BRANCH_NAME == "master"
-  def isRelease = env.BRANCH_NAME.startsWith("release-")
-  def isPullRequest = !!env.CHANGE_ID
+  static final Map<String, Boolean> version = versioning.getEnv(
+    versioningStrategy: "multi-branch"
+  )
+  final boolean isStaging = version.isStaging
+  final boolean isPullRequest = version.isPullRequest
 
   stageWithNotify('Checkout code', contexts.checkout) {
     checkout(scm)
@@ -91,7 +92,7 @@ pods {
         )
       }
     },
-    'Release': {
+    'Build': {
       stageWithNotify('Build for release', contexts.buildRelease) {
         if (isPullRequest) {
           print "No release builds for PRs"
