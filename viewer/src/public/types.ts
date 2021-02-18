@@ -40,15 +40,15 @@ export type SsaoParameters = {
   /**
    * Quality (Number of samples) to estimate occlusion factor.
    */
-  sampleSize?: SsaoSampleQuality;
+  sampleSize: SsaoSampleQuality;
   /**
    * Maximum length of sample vector.
    */
-  sampleRadius?: number;
+  sampleRadius: number;
   /**
    * Applied bias when depth testing to reduce output noise.
    */
-  depthCheckBias?: number;
+  depthCheckBias: number;
 };
 
 /**

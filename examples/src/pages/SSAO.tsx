@@ -88,7 +88,7 @@ export function SSAO() {
 
       gui.add(renderOptions.ssaoRenderParameters, 'sampleRadius').min(0.0).max(30.0).onChange(updateEffect);
 
-      gui.add(renderOptions.ssaoRenderParameters, 'sampleSize').min(0).max(256).step(1).onChange(updateEffect);
+      gui.add(renderOptions.ssaoRenderParameters, 'sampleSize').min(1).max(256).step(1).onChange(updateEffect);
 
       gui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias').min(0.0).max(1.0).onChange(updateEffect);
 

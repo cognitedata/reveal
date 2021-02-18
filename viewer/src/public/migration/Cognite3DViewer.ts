@@ -31,6 +31,7 @@ import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
 import {
+  defaultRenderOptions,
   DisposedDelegate,
   SceneRenderedDelegate,
   SectorNodeIdToTreeIndexMapLoadedEvent,
@@ -1531,20 +1532,27 @@ function determineAntiAliasingMode(
 }
 
 type SsaoQuality = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;
-function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters | undefined {
+function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
+  const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
   switch (quality) {
     case undefined:
-      return undefined;
+      break;
     case 'medium':
-      return { sampleSize: SsaoSampleQuality.Medium };
+      ssaoParameters.sampleSize = SsaoSampleQuality.Medium;
+      break;
     case 'high':
-      return { sampleSize: SsaoSampleQuality.High };
+      ssaoParameters.sampleSize = SsaoSampleQuality.High;
+      break;
     case 'veryhigh':
-      return { sampleSize: SsaoSampleQuality.VeryHigh };
+      ssaoParameters.sampleSize = SsaoSampleQuality.VeryHigh;
+      break;
     case 'disabled':
-      return { sampleSize: SsaoSampleQuality.None };
+      ssaoParameters.sampleSize = SsaoSampleQuality.None;
+      break;
 
     default:
       assertNever(quality, `Unexpected SSAO quality mode: '${quality}'`);
   }
+
+  return ssaoParameters;
 }

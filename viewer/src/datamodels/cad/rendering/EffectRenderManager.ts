@@ -87,12 +87,14 @@ export class EffectRenderManager {
   private autoSetTargetSize: boolean = false;
 
   public set renderOptions(options: RenderOptions) {
-    const inputSsaoOptions = { ...options.ssaoRenderParameters };
-    if (options.ssaoRenderParameters?.sampleSize == SsaoSampleQuality.None) {
-      inputSsaoOptions.sampleRadius = 0.0;
-    }
+    const ssaoParameters = this.ssaoParameters(options);
+    const inputSsaoOptions = { ...ssaoParameters };
     this.setSsaoParameters(inputSsaoOptions);
-    this._renderOptions = { ...options, ssaoRenderParameters: { ...options.ssaoRenderParameters } };
+    this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
+  }
+
+  private ssaoParameters(renderOptions: RenderOptions): SsaoParameters {
+    return renderOptions?.ssaoRenderParameters ?? { ...defaultRenderOptions.ssaoRenderParameters };
   }
 
   private get antiAliasingMode(): AntiAliasingMode {
@@ -204,11 +206,13 @@ export class EffectRenderManager {
 
     const noiseTexture = this.createNoiseTexture();
 
-    const numberOfSamples = this._renderOptions.ssaoRenderParameters?.sampleSize ?? 64;
+    const ssaoParameters = this.ssaoParameters(this._renderOptions);
+
+    const numberOfSamples = ssaoParameters.sampleSize;
     const sampleKernel = this.createKernel(numberOfSamples);
 
-    const sampleRadius = this._renderOptions.ssaoRenderParameters?.sampleRadius ?? 1.0;
-    const depthCheckBias = this._renderOptions.ssaoRenderParameters?.depthCheckBias ?? 0.0125;
+    const sampleRadius = ssaoParameters.sampleRadius;
+    const depthCheckBias = ssaoParameters.depthCheckBias;
 
     this._ssaoMaterial = new THREE.ShaderMaterial({
       uniforms: {
@@ -238,10 +242,9 @@ export class EffectRenderManager {
       fragmentShader: ssaoBlurCombineShaders.fragment
     });
 
-    const diffuseTexture =
-      !isMobileOrTablet() && (isWebGL2 || renderer.extensions.has('EXT_frag_depth'))
-        ? this._ssaoBlurTarget.texture
-        : this._compositionTarget.texture;
+    const diffuseTexture = this.supportsSsao(renderer, ssaoParameters)
+      ? this._ssaoBlurTarget.texture
+      : this._compositionTarget.texture;
 
     this._fxaaMaterial = new THREE.ShaderMaterial({
       uniforms: {
@@ -261,6 +264,14 @@ export class EffectRenderManager {
     this.setupFxaaScene();
 
     this._isInitialized = true;
+  }
+
+  private supportsSsao(renderer: THREE.WebGLRenderer, ssaoParameters: SsaoParameters) {
+    return (
+      !isMobileOrTablet() &&
+      (renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth')) &&
+      ssaoParameters.sampleSize !== SsaoSampleQuality.None
+    );
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
@@ -340,8 +351,7 @@ export class EffectRenderManager {
         }
       }
 
-      const supportsSsao =
-        !isMobileOrTablet() && (renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth'));
+      const supportsSsao = this.supportsSsao(renderer, this.ssaoParameters(this._renderOptions));
 
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
@@ -567,18 +577,21 @@ export class EffectRenderManager {
     renderer.render(this._compositionScene, this._orthographicCamera);
   }
 
-  private setSsaoParameters(params: SsaoParameters | undefined) {
+  private setSsaoParameters(params: SsaoParameters) {
     if (!this._isInitialized) return;
 
     const defaultSsaoParameters = defaultRenderOptions.ssaoRenderParameters;
 
-    this._ssaoMaterial.uniforms.sampleRadius.value = params?.sampleRadius ?? defaultSsaoParameters.sampleRadius!;
-    this._ssaoMaterial.uniforms.bias.value = params?.depthCheckBias ?? defaultSsaoParameters.depthCheckBias!;
+    this._ssaoMaterial.uniforms.sampleRadius.value = params.sampleRadius;
+    this._ssaoMaterial.uniforms.bias.value = params.depthCheckBias;
 
-    if (params?.sampleSize !== this._renderOptions.ssaoRenderParameters?.sampleSize) {
+    if (params.sampleSize !== this.ssaoParameters(this._renderOptions).sampleSize) {
       const sampleSize = params?.sampleSize ?? defaultSsaoParameters.sampleSize!;
 
       const kernel = this.createKernel(sampleSize);
+
+      this._fxaaMaterial.uniforms.tDiffuse.value =
+        params.sampleSize !== SsaoSampleQuality.None ? this._ssaoBlurTarget.texture : this._compositionTarget.texture;
 
       this._ssaoMaterial.uniforms.kernel.value = kernel;
 
