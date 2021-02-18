@@ -315,6 +315,12 @@ class CogniteAuth {
       if (!this.state.initialized) {
         this.getClient().loginWithOAuth({
           project: newTenant,
+          onTokens: async (tokens) => {
+            this.state.authResult = {
+              authFlow: 'COGNITE_AUTH',
+              ...tokens,
+            };
+          },
         });
         this.state.initialized = true;
       }
@@ -327,6 +333,7 @@ class CogniteAuth {
           status = await this.getClient().login.status();
           if (status) {
             this.state.project = status.project;
+            this.state.email = status.user;
           }
           this.publishAuthState();
         }

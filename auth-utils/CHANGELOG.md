@@ -1,3 +1,9 @@
+## 0.7.1 Feb 17 2021
+
+### Changes
+
+- `COGNITE_AUTH` now exposes `email` and `tokens`
+
 ## 0.7.0 Feb 17 2021
 
 ### Changes
