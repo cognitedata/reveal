@@ -15,6 +15,8 @@ const {
   NODE_ENV,
 } = process.env;
 
+const { disableTranslations } = SIDECAR;
+
 export const App = () => {
   React.useEffect(() => {
     if (REACT_APP_SENTRY_DSN) {
@@ -35,7 +37,7 @@ export const App = () => {
     });
   }, []);
 
-  return <TenantSelector disableTranslations={SIDECAR.disableTranslations} />;
+  return <TenantSelector disableTranslations={disableTranslations} />;
 };
 
-export default withI18nSuspense(App);
+export default disableTranslations ? App : withI18nSuspense(App);
