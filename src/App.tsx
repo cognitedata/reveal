@@ -5,6 +5,8 @@ import { TenantSelector } from '@cognite/react-tenant-selector';
 import { withI18nSuspense } from '@cognite/react-i18n';
 import { Metrics } from '@cognite/metrics';
 
+import { SIDECAR } from './sidecar';
+
 const {
   REACT_APP_RELEASE_ID,
   REACT_APP_SENTRY_DSN,
@@ -33,7 +35,7 @@ export const App = () => {
     });
   }, []);
 
-  return <TenantSelector />;
+  return <TenantSelector disableTranslations={SIDECAR.disableTranslations} />;
 };
 
 export default withI18nSuspense(App);

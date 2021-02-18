@@ -2051,14 +2051,13 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.2.1.tgz#edbafcfa2935ba78026d8f10cf46d7d035a7367d"
-  integrity sha512-hxosfaFUoUUY7PphT5GiXWcyCMmLZrsMRXPG5FPphnlb+aewzjxfcrUcocIxEHgyhDW9fkclL316ho7N02al6g==
+"@cognite/auth-utils@^0.7.1":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.7.2.tgz#c5c77ab48155cdacb3048070b87477c002d4cf2a"
+  integrity sha512-WMnfVCiWSucAcsudB2gZ8PzlDIf7OrRR/GOy+TYSLc2hRAfeZDKQfAI2BPUXVcM/ssXxP4zwvMphMxRuCIvLxg==
   dependencies:
     "@azure/msal-browser" "^2.8.0"
     "@cognite/sdk" "^3.3.0"
-    axios "^0.21.0"
     jwt-decode "^3.1.2"
     lodash "^4.17.20"
 
@@ -2143,17 +2142,32 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.8.5"
 
-"@cognite/react-tenant-selector@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.3.1.tgz#f4549d4884ae54c2c88fb40dbacdb7484553098f"
-  integrity sha512-a1G5DkUeNtEIw9MgZPYMn2Go9rA8wg371gPIkVGAuVGuahRRCMQM/oVnHoXTIi/3lU/yu7MDlKfxKt28Jg4bKQ==
+"@cognite/react-i18n@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.0.tgz#7f7fe5e84584723628d421aae88d41a954963227"
+  integrity sha512-ewyaVOvwlPVv7nCPQhn1R1oiMXvCLgaKRlyX+TT32I8dduDlp+GgEe0idgge/2pROQHBOaxOR7S5qmlrZ483uA==
   dependencies:
-    "@cognite/auth-utils" "^0.2.1"
+    i18next "^19.8.4"
+    i18next-chained-backend "^2.0.1"
+    i18next-localstorage-backend "^3.1.1"
+    i18next-locize-backend "^4.1.1"
+    i18next-pseudo "^2.2.0"
+    i18next-xhr-backend "^3.2.2"
+    react-i18next "^11.8.5"
+
+"@cognite/react-tenant-selector@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.4.3.tgz#baaf4030ab47c112aca4c8d262673c8654ba6514"
+  integrity sha512-K0Aj6gVopGcQlyhimxGu4zoPZKW2oizFOGs/jhZ1Q3YF8znPM1r6gWjIj5WeLRyZqpyCekudsrWgXwtEMm/oNw==
+  dependencies:
+    "@cognite/auth-utils" "^0.7.1"
     "@cognite/cogs.js" "^2.4.0"
     "@cognite/metrics" "^1.0.0"
-    "@cognite/react-i18n" "^0.2.2"
+    "@cognite/react-i18n" "^0.3.0"
     "@cognite/sdk" "^3.3.0"
+    axios "^0.21.1"
     react-helmet "^6.1.0"
+    react-query "^3.7.1"
     styled-components "^5.1.0"
 
 "@cognite/sdk-core@^1.0.4":
@@ -4880,7 +4894,7 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.10.0.tgz#a17b3a8ea811060e74d47d306122400ad4497ae2"
   integrity sha512-3YDiu347mtVtjpyV3u5kVqQLP242c06zwDOgpeRnybmXlYYsLbtTrUBUm8i8srONt+FWobl5aibnU1030PeeuA==
 
-axios@^0.21.0:
+axios@^0.21.1:
   version "0.21.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
   integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
@@ -11221,6 +11235,14 @@ markdown-to-jsx@^6.11.4:
     prop-types "^15.6.2"
     unquote "^1.1.0"
 
+match-sorter@^6.0.2:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.2.0.tgz#e3f29d4733ef835a0baccc7b9d291c07264985e8"
+  integrity sha512-yhmUTR5q6JP/ssR1L1y083Wp+C+TdR8LhYTxWI4IRgEUr8IXJu2mE6L3SwryCgX95/5J7qZdEg0G091sOxr1FQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    remove-accents "0.4.2"
+
 material-colors@^1.2.1:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/material-colors/-/material-colors-1.2.6.tgz#6d1958871126992ceecc72f4bcc4d8f010865f46"
@@ -14000,6 +14022,14 @@ react-popper@^2.2.4:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
 
+react-query@^3.7.1:
+  version "3.9.8"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.9.8.tgz#b6345af86f81b342eb228b11d2415a7a04ca5ada"
+  integrity sha512-cO3DdlHFSE/FDeIhrYVfYaUPm7ElmMW/3sp1QaMSP/aiGfsM62a2gRwd34YVA4dBchNk22L9yu2fZ657A6cdvA==
+  dependencies:
+    "@babel/runtime" "^7.5.5"
+    match-sorter "^6.0.2"
+
 react-refresh@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
@@ -14460,6 +14490,11 @@ remark-squeeze-paragraphs@4.0.0:
   integrity sha512-8qRqmL9F4nuLPIgl92XUuxI3pFxize+F1H0e/W3llTk0UsjJaj01+RrirkMw7P21RKe4X6goQhYRSvNWX+70Rw==
   dependencies:
     mdast-squeeze-paragraphs "^4.0.0"
+
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  integrity sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
