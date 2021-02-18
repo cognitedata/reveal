@@ -195,7 +195,7 @@ class CogniteAuth {
       }
     } catch (e) {
       this.state.error = true;
-      this.state.errorMessage = 'Account setup for AAD client failed.';
+      this.state.errorMessage = e.message;
       return;
     } finally {
       this.publishAuthState();
@@ -220,6 +220,7 @@ class CogniteAuth {
       initialising: this.state.initializing,
       token: this.state.authResult?.accessToken,
       error: this.state.error,
+      errorMessage: this.state.errorMessage,
       email: this.state.email,
       username: this.state.username,
     };
@@ -392,6 +393,7 @@ export type AuthenticatedUser = {
   tenant?: string;
   token?: string;
   error?: boolean;
+  errorMessage?: string;
   username?: string;
   email?: string;
 };
