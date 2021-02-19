@@ -21,6 +21,11 @@ describe('runsUtils', () => {
       expect(statusSeen).toBeDefined();
     });
   });
+  test('mapRuns - handles undefined', () => {
+    const mock = undefined;
+    const res = mapRuns(mock);
+    expect(res.length).toEqual(0);
+  });
 
   test('mapStatus - maps api status to view status', () => {
     const apiStatus = [

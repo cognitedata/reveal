@@ -24,7 +24,7 @@ export const RunLogsView: FunctionComponent<LogsViewProps> = ({
   if (error) {
     return <ErrorFeedback error={error} />;
   }
-  const statuses: StatusRun[] = filterRuns(data);
+  const statuses: StatusRun[] = filterRuns(data?.items);
   return (
     <TableWrapper>
       <RunLogsTable data={statuses} columns={columns} />

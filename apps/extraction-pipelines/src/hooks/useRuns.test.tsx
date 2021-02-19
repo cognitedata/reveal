@@ -10,7 +10,13 @@ describe('useRuns', () => {
   let client: QueryClient;
   let wrapper;
   beforeEach(() => {
-    client = new QueryClient();
+    client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
     wrapper = renderWithQueryClient(client);
   });
 
@@ -20,12 +26,11 @@ describe('useRuns', () => {
       wrapper,
     });
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockDataRunsResponse.items);
+      expect(result.current.data).toEqual(mockDataRunsResponse);
     });
   });
 
   test('Returns error on fail', async () => {
-    jest.setTimeout(10000);
     const rejectValue = mockError;
     sdkv3.get.mockRejectedValue(rejectValue);
     const { result, waitFor } = renderHook(() => useRuns(externalId), {

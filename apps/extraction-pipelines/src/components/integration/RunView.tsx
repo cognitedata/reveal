@@ -47,7 +47,7 @@ export const RunView: FunctionComponent<RunViewProps> = ({
     return <ErrorFeedback error={error} />;
   }
 
-  const errorsInThePastWeek = filterRuns(data).filter(
+  const errorsInThePastWeek = filterRuns(data?.items).filter(
     and<StatusRun>(filterByStatus(Status.FAIL), isWithinDaysInThePast(7))
   );
 

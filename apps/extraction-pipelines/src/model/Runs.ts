@@ -2,6 +2,7 @@ import { Status } from './Status';
 
 export interface RunsAPIResponse {
   items: StatusRow[];
+  nextCursor: string;
 }
 
 export interface StatusRow {

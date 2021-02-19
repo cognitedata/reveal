@@ -37,7 +37,7 @@ describe('RunLogsView', () => {
     expect(screen.getByText(mockError.error.message)).toBeInTheDocument();
   });
   it('renders runs on success', () => {
-    useRuns.mockReturnValue({ data: mockDataRunsResponse.items });
+    useRuns.mockReturnValue({ data: mockDataRunsResponse });
     const mockIntegration = getMockResponse()[0];
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
