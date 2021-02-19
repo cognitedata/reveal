@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-demo-app",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -22,9 +22,10 @@
   "dependencies": {
     "@cognite/cogs.js": "2.8.0",
     "@cognite/metrics": "^1.0.0",
-    "@cognite/react-container": "^0.5.0-rc7",
+    "@cognite/react-container": "^0.8.0",
     "@cognite/react-errors": "^0.0.4",
-    "@cognite/react-i18n": "^0.2.0",
+    "@cognite/react-i18n": "^0.3.0",
+    "@cognite/react-tenant-selector": "^0.4.4",
     "@cognite/sdk": "^3.3.2",
     "@sentry/browser": "^5.29.2",
     "lodash": "^4.17.19",

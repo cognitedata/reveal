@@ -11,7 +11,11 @@ type Sidecar = {
   nomaApiBaseUrl: string;
 };
 
-const sidecar = merge(
+// we are overwriting the window.__cogniteSidecar object because the tenant-selector
+// reads from this variable, so when you test on localhost, it (TSA) will not access via this file
+// but via the window.__cogniteSidecar global
+// now that this var is updated, all should work as expected.
+(window as any).__cogniteSidecar = merge(
   {},
   {
     // -- Bluefield -- (Azure)
@@ -26,6 +30,8 @@ const sidecar = merge(
     // appsApiBaseUrl: 'https://apps-api.greenfield.cognite.ai',
     // cdfApiBaseUrl: 'https://greenfield.cognitedata.com',
 
+    cdfCluster: '',
+
     __sidecarFormatVersion: 1,
     applicationId: 'fas-demo',
     applicationName: 'React Demo (staging)',
@@ -37,4 +43,4 @@ const sidecar = merge(
   (window as any).__cogniteSidecar
 ) as Sidecar;
 
-export default sidecar;
+export default (window as any).__cogniteSidecar;

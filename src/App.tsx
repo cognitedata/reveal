@@ -14,7 +14,7 @@ const App = () => (
   <>
     <GlobalStyles />
     <React.Suspense fallback={<Loader />}>
-      <Container appName="demo-app">
+      <Container>
         <>
           <MenuBar />
 
