@@ -1,6 +1,6 @@
 {
   "name": "@cognite/tenant-selector-app",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -16,7 +16,7 @@
     "@cognite/cogs.js": "2.8.0",
     "@cognite/metrics": "^1.0.0",
     "@cognite/react-i18n": "^0.3.0",
-    "@cognite/react-tenant-selector": "^0.4.3",
+    "@cognite/react-tenant-selector": "^0.4.4",
     "@sentry/browser": "^5.15.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
