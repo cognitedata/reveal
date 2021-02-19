@@ -12,6 +12,8 @@ export type ChartTimeSeries = {
   id: string;
   name: string;
   color: string;
+  lineWeight?: number;
+  lineStyle?: 'solid' | 'dashed' | 'dotted';
   enabled: boolean;
   unit?: string;
   originalUnit?: string;
@@ -22,6 +24,8 @@ export type ChartTimeSeries = {
 export type ChartWorkflow = {
   id: string;
   name: string;
+  lineWeight?: number;
+  lineStyle?: 'solid' | 'dashed' | 'dotted';
   color: string;
   enabled: boolean;
 };

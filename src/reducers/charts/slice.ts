@@ -113,6 +113,8 @@ const chartsSlice = createSlice({
               originalUnit: timeSeries.unit || '*',
               preferredUnit: timeSeries.unit || '*',
               color: getEntryColor(),
+              lineWeight: 2,
+              lineStyle: 'solid',
               enabled: true,
               description: timeSeries.description || '-',
             } as ChartTimeSeries,
@@ -225,6 +227,138 @@ const chartsSlice = createSlice({
         changes: {
           dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
           dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
+        },
+      });
+    },
+
+    changeTimeseriesColor: (
+      state,
+      action: PayloadAction<{ id: string; timeSeriesId: string; color: string }>
+    ) => {
+      const { id, timeSeriesId, color } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          timeSeriesCollection: chart?.timeSeriesCollection?.map(
+            (timeSeries) => {
+              return {
+                ...timeSeries,
+                color:
+                  timeSeries.id === timeSeriesId ? color : timeSeries.color,
+              };
+            }
+          ),
+        },
+      });
+    },
+
+    changeWorkflowColor: (
+      state,
+      action: PayloadAction<{ id: string; workflowId: string; color: string }>
+    ) => {
+      const { id, workflowId, color } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            return {
+              ...workflow,
+              color: workflow.id === workflowId ? color : workflow.color,
+            };
+          }),
+        },
+      });
+    },
+
+    changeTimeseriesLineWeight: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        timeSeriesId: string;
+        lineWeight: number;
+      }>
+    ) => {
+      const { id, timeSeriesId, lineWeight } = action.payload;
+      const chart = state.entities[id];
+
+      const timeSeries = chart?.timeSeriesCollection?.find(
+        (entry) => entry.id === timeSeriesId
+      )!;
+      timeSeries.lineWeight = lineWeight;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
+    changeWorkflowLineWeight: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        workflowId: string;
+        lineWeight: number;
+      }>
+    ) => {
+      const { id, workflowId, lineWeight } = action.payload;
+      const chart = state.entities[id];
+
+      const workflow = chart?.workflowCollection?.find(
+        (entry) => entry.id === workflowId
+      )!;
+      workflow.lineWeight = lineWeight;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
+    changeTimeseriesLineStyle: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        timeSeriesId: string;
+        lineStyle: 'solid' | 'dashed' | 'dotted';
+      }>
+    ) => {
+      const { id, timeSeriesId, lineStyle } = action.payload;
+      const chart = state.entities[id];
+      const timeSeries = chart?.timeSeriesCollection?.find(
+        (entry) => entry.id === timeSeriesId
+      )!;
+      timeSeries.lineStyle = lineStyle;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
+        },
+      });
+    },
+
+    changeWorkflowLineStyle: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        workflowId: string;
+        lineStyle: 'solid' | 'dashed' | 'dotted';
+      }>
+    ) => {
+      const { id, workflowId, lineStyle } = action.payload;
+      const chart = state.entities[id];
+
+      const workflow = chart?.workflowCollection?.find(
+        (entry) => entry.id === workflowId
+      )!;
+      workflow.lineStyle = lineStyle;
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          ...chart,
         },
       });
     },

@@ -25,6 +25,7 @@ import workflowSlice, {
 import DatePicker from 'react-datepicker';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
+import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import DataQualityReport from 'components/DataQualityReport';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import { getStepsFromWorkflow } from 'utils/transforms';
@@ -346,6 +347,78 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     );
   };
 
+  const handleChangeTimeSeriesColor = (timeSeriesId: string, color: string) => {
+    dispatch(
+      chartsSlice.actions.changeTimeseriesColor({
+        id: chart?.id || '',
+        timeSeriesId,
+        color,
+      })
+    );
+  };
+
+  const handleChangeTimeSeriesLineWeight = (
+    timeSeriesId: string,
+    lineWeight: number
+  ) => {
+    dispatch(
+      chartsSlice.actions.changeTimeseriesLineWeight({
+        id: chart?.id || '',
+        timeSeriesId,
+        lineWeight,
+      })
+    );
+  };
+
+  const handleChangeTimeSeriesLineStyle = (
+    timeSeriesId: string,
+    lineStyle: 'solid' | 'dashed' | 'dotted'
+  ) => {
+    dispatch(
+      chartsSlice.actions.changeTimeseriesLineStyle({
+        id: chart?.id || '',
+        timeSeriesId,
+        lineStyle,
+      })
+    );
+  };
+
+  const handleChangeWorkflowColor = (workflowId: string, color: string) => {
+    dispatch(
+      chartsSlice.actions.changeWorkflowColor({
+        id: chart?.id || '',
+        workflowId,
+        color,
+      })
+    );
+  };
+
+  const handleChangeWorkflowLineWeight = (
+    workflowId: string,
+    lineWeight: number
+  ) => {
+    dispatch(
+      chartsSlice.actions.changeWorkflowLineWeight({
+        id: chart?.id || '',
+        workflowId,
+        lineWeight,
+      })
+    );
+  };
+
+  const handleChangeWorkflowLineStyle = (
+    workflowId: string,
+    lineStyle: 'solid' | 'dashed' | 'dotted'
+  ) => {
+    dispatch(
+      chartsSlice.actions.changeWorkflowLineStyle({
+        id: chart?.id || '',
+        workflowId,
+        lineStyle,
+      })
+    );
+  };
+
   if (!hasData) {
     return <Icon type="Loading" />;
   }
@@ -558,6 +631,29 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                           <Menu>
                             <Menu.Submenu
                               content={
+                                <AppearanceDropdown
+                                  onColorSelected={(newColor) =>
+                                    handleChangeTimeSeriesColor(id, newColor)
+                                  }
+                                  onWeightSelected={(newWeight) =>
+                                    handleChangeTimeSeriesLineWeight(
+                                      id,
+                                      newWeight
+                                    )
+                                  }
+                                  onStyleSelected={(newStyle) =>
+                                    handleChangeTimeSeriesLineStyle(
+                                      id,
+                                      newStyle
+                                    )
+                                  }
+                                />
+                              }
+                            >
+                              <span>Appearance</span>
+                            </Menu.Submenu>
+                            <Menu.Submenu
+                              content={
                                 <Menu>
                                   <Menu.Item>Gaps</Menu.Item>
                                   <Menu.Item>Freshness</Menu.Item>
@@ -721,6 +817,23 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                         {flowEntry?.name}
                       </span>
                     </Menu.Header>
+                    <Menu.Submenu
+                      content={
+                        <AppearanceDropdown
+                          onColorSelected={(newColor) =>
+                            handleChangeWorkflowColor(flow.id, newColor)
+                          }
+                          onWeightSelected={(newWeight) =>
+                            handleChangeWorkflowLineWeight(flow.id, newWeight)
+                          }
+                          onStyleSelected={(newStyle) =>
+                            handleChangeWorkflowLineStyle(flow.id, newStyle)
+                          }
+                        />
+                      }
+                    >
+                      <span>Appearance</span>
+                    </Menu.Submenu>
                     <Menu.Item
                       onClick={() => handleRenameWorkflow(flow.id)}
                       appendIcon="Edit"

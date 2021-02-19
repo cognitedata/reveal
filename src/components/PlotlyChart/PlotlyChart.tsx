@@ -12,6 +12,7 @@ import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
+import { convertLineStyle } from 'components/PlotlyChart';
 
 type ChartProps = {
   chart?: Chart;
@@ -96,6 +97,13 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
           color: chart?.timeSeriesCollection?.find(
             ({ id }) => id === ts.externalId
           )?.color,
+          width: chart?.timeSeriesCollection?.find(
+            ({ id }) => id === ts.externalId
+          )?.lineWeight,
+          dash: convertLineStyle(
+            chart?.timeSeriesCollection?.find(({ id }) => id === ts.externalId)
+              ?.lineStyle
+          ),
           unit: units.find(
             (unitOption) =>
               unitOption.value ===
@@ -115,6 +123,14 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
           color: chart?.workflowCollection?.find(
             (chartWorkflow) => workflow?.id === chartWorkflow.id
           )?.color,
+          width: chart?.workflowCollection?.find(
+            (chartWorkflow) => workflow?.id === chartWorkflow.id
+          )?.lineWeight,
+          dash: convertLineStyle(
+            chart?.workflowCollection?.find(
+              (chartWorkflow) => workflow?.id === chartWorkflow.id
+            )?.lineStyle
+          ),
           unit: workflow?.latestRun?.results?.datapoints.unit,
           datapoints: workflow?.latestRun?.results?.datapoints.datapoints as (
             | Datapoints
@@ -123,26 +139,34 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
         })),
     ].filter(({ datapoints }) => datapoints?.length) || [];
 
-  const data = seriesData.map(({ name, color, datapoints }, index) => {
-    return {
-      type: 'scatter',
-      mode: 'line',
-      name,
-      marker: {
-        color,
-        line: { color },
-      },
-      yaxis: `y${index !== 0 ? index + 1 : ''}`,
-      x: (datapoints as (Datapoints | DatapointAggregate)[]).map((datapoint) =>
-        'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
-      ),
-      y: (datapoints as (Datapoints | DatapointAggregate)[]).map((datapoint) =>
-        'average' in datapoint
-          ? datapoint.average
-          : (datapoint as DoubleDatapoint).value
-      ),
-    };
-  });
+  const data = seriesData.map(
+    ({ name, color, width, dash, datapoints }, index) => {
+      return {
+        type: 'scatter',
+        mode: 'line',
+        name,
+        marker: {
+          color,
+        },
+        line: { color, width: width || 2, dash: dash || 'solid' },
+        yaxis: `y${index !== 0 ? index + 1 : ''}`,
+        x: (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
+        ),
+        y: (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'average' in datapoint
+            ? datapoint.average
+            : (datapoint as DoubleDatapoint).value
+        ),
+      };
+    }
+  );
 
   const layout = {
     margin: {
