@@ -33,6 +33,9 @@ class AzureAD {
       cacheLocation: 'localStorage', // This configures where your cache will be stored
       storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
     };
+    // Setting this to true + specifying redirectStartPage = location.href will restore the original
+    // URL state after redirecting back to `redirectUri`.
+    this.msalConfig.auth.navigateToLoginRequestUrl = true;
     this.msalConfig.system = {
       loggerOptions: {
         loggerCallback: (level, message, containsPii) => {
@@ -92,7 +95,7 @@ class AzureAD {
 
     this.loginRedirectRequest = {
       ...this.loginRequest,
-      redirectStartPage: window.location.origin,
+      redirectStartPage: window.location.href,
     };
 
     this.silentProfileRequest = {
