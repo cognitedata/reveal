@@ -7,6 +7,7 @@ type SidecarConfig = {
   backgroundImage: string;
   cdfApiBaseUrl: string;
   cdfCluster: string;
+  disableTranslations?: boolean;
   helpLink: string;
   locizeProjectId?: string;
 };

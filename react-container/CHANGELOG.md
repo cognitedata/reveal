@@ -1,3 +1,11 @@
+## 0.8.0 Feb 19 2021
+
+### Changes
+
+- Removed CdfAuthContainer -> now use just Container and AuthContainer/AuthProvider
+- Removed getSDKClient -> use the client from AuthContainer/AuthProvider
+- Fixed container not passing cdfApiBaseUrl to CogniteClient correctly
+
 ## 0.7.3 Feb 18 2021
 
 ### Changes

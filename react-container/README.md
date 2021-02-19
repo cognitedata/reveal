@@ -38,14 +38,32 @@ This container includes:
 - i18n container
 - LocalStorage helpers
 
-## Other helpers
+## How to access auth information
 
-### `getLoginToken`
+### `AuthConsumer`
 
-> Get the current login token (saved in localstorage)
+> Get the current login token
 
 ```ts
-import { getLoginToken } from '@cognite/react-container';
+import { getLAuthProvideroginToken } from '@cognite/react-container';
+
+...
+
+const authState = useContext(AuthProvider)
+```
+
+> or wrap some of your components:
+
+```ts
+import { AuthConsumer } from '@cognite/react-container';
+
+...
+
+<AuthConsumer>
+  {({ authState }) => {
+    console.log('Auth state information:', authState);
+  }}
+</AuthConsumer>
 ```
 
 ### `storage` (Marked for refactoring to a separate package)
@@ -58,6 +76,5 @@ import { storage } from '@cognite/react-container';
 
 ## Future features
 
-- [ ] Optional Redux provider (Not complete)
+- [ ] Optional Redux provider
 - [ ] Global Store container
-- [ ] Lots of useful hooks

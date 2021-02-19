@@ -20,12 +20,11 @@ This provides a way to use the tenant selector logic using localhost development
 
 ## How to enable 'Login with Azure'
 
-You need to have the following fields in your sidecar:
+You need to have the following field in your sidecar:
 
-  `AADClientID`
-  `AADTenantID`
+`aadApplicationId`
 
-See [@cognite/auth-utils](https://github.com/cognitedata/frontend/blob/master/packages/browser/commonjs/auth-utils/README.md) for more info on how to setup Azure login.
+See [Confulence](https://cognitedata.atlassian.net/wiki/spaces/AD/pages/2334818447/Enable+OIDC+Tokens+for+an+Application) for more info on how to setup Azure login.
 
 ## How to run this component locally
 
@@ -53,7 +52,7 @@ in this folder and then going to your `react-demo-app` and restarting the server
 Try skipping linking and yalc all together:
 
 ```
-yarn build && cp dist/* ~/dev/cognite/react-demo-app/node_modules/@cognite/react-tenant-selector/dist  
+yarn build && cp dist/* ~/dev/cognite/react-demo-app/node_modules/@cognite/react-tenant-selector/dist
 ```
 
 ## Still getting the 'react hooks' error of doom?

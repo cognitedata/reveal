@@ -12,13 +12,8 @@ import {
   AuthContainerForApiKeyMode,
   TranslationWrapper,
 } from './components';
-import { createBrowserHistory } from './internal';
-import {
-  storage,
-  getTenantInfo,
-  configureCogniteSDKClient,
-  getSidecar,
-} from './utils';
+import { configureCogniteSDKClient, createBrowserHistory } from './internal';
+import { storage, getTenantInfo, getSidecar } from './utils';
 import { ConditionalReduxProvider } from './providers';
 
 interface Props {
@@ -35,13 +30,15 @@ const RawContainer: React.FC<Props> = ({
 }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
-  const { applicationId } = getSidecar();
+  const { applicationId, cdfApiBaseUrl } = getSidecar();
 
   storage.init({ tenant: possibleTenant, appName: applicationId });
 
   const [history] = React.useState(() => createBrowserHistory(possibleTenant));
 
-  const client = configureCogniteSDKClient();
+  const client = configureCogniteSDKClient(applicationId, {
+    baseUrl: cdfApiBaseUrl,
+  });
 
   const {
     REACT_APP_API_KEY: apiKey,

@@ -2,6 +2,7 @@ import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { render, screen } from '@testing-library/react';
 
+import { mock as mockedAuthUtils } from '../../__mocks/auth-utils';
 import { AuthContainer } from '../AuthContainer';
 
 const mock = jest.fn().mockImplementation(() => {
@@ -9,29 +10,7 @@ const mock = jest.fn().mockImplementation(() => {
 });
 
 jest.mock('utils/log', mock);
-jest.mock('@cognite/auth-utils', () => {
-  return {
-    getFlow: () => {
-      return {
-        flow: 'test-flow',
-      };
-    },
-    CogniteAuth: () => ({
-      state: {},
-      getClient: jest.fn(),
-      onAuthChanged: (
-        applicationId: string,
-        callback: (state: unknown) => void
-      ) => {
-        callback({
-          applicationId,
-          authenticated: true,
-        });
-        return jest.fn();
-      },
-    }),
-  };
-});
+jest.mock('@cognite/auth-utils', () => mockedAuthUtils);
 
 describe('AuthContainer', () => {
   it('should get token from provider', () => {
