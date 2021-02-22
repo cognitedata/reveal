@@ -20,7 +20,7 @@
     "@cognite/data-exploration": "^0.5.3",
     "@cognite/metrics": "^0.1.7",
     "@reduxjs/toolkit": "^1.5.0",
-    "@sentry/browser": "^5.29.2",
+    "@sentry/browser": "^6.2.0",
     "@types/react-redux": "^7.1.16",
     "antd": "^4.12.2",
     "lodash": "^4.17.21",
