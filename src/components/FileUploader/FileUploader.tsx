@@ -3,18 +3,19 @@
  * todo consider to update the original FileUploader
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Upload, Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse, FileInfo } from '@cognite/sdk';
-import { UploadFile } from 'antd/lib/upload/interface';
+import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import { Body, Icon, Button } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
+import { getHumanReadableFileSize } from 'src/components/FileUploader/utils/getHumanReadableFileSize';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
 
-export const GCSUploader = (
+const GCSUploader = (
   file: Blob | UploadFile,
   uploadUrl: string,
   callback: (info: any) => void = () => {}
@@ -48,14 +49,17 @@ enum STATUS {
   PAUSED,
 }
 
-type Props = {
+export type { UploadFile } from 'antd/lib/upload/interface';
+
+export type FileUploaderProps = UploadProps & {
   assetIds?: number[];
   validExtensions?: string[];
+  maxTotalSizeInBytes?: number;
   onUploadSuccess?: (file: FileInfo) => void;
   onFileListChange?: (fileList: UploadFile[]) => void;
   onUploadFailure?: (error: string) => void;
   onCancel?: () => void;
-  beforeUploadStart?: () => void;
+  beforeUploadStart?: (fileList: UploadFile[]) => void;
   children?: React.ReactNode;
 };
 const currentUploads: { [key: string]: any } = {};
@@ -64,25 +68,45 @@ export const FileUploader = ({
   children,
   assetIds,
   validExtensions,
+  maxTotalSizeInBytes,
   onUploadSuccess = () => {},
   onUploadFailure = alert,
   onCancel = () => {},
   beforeUploadStart = () => {},
-  onFileListChange = () => {}, // mn: that returns outdated (prev version) of file list everywhere here
-}: Props) => {
+  onFileListChange = () => {},
+  ...props
+}: FileUploaderProps) => {
   const sdk = useSDK();
   const [uploadStatus, setUploadStatus] = useState<STATUS>(STATUS.WAITING);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  useEffect(() => {
+    onFileListChange(fileList);
+  }, [fileList]);
 
   const startUpload = async () => {
     if (uploadStatus !== STATUS.READY) {
       return;
     }
 
+    if (maxTotalSizeInBytes) {
+      const totalSize = fileList.reduce((totalSizeAcc, file) => {
+        return totalSizeAcc + file.size;
+      }, 0);
+      if (totalSize > maxTotalSizeInBytes) {
+        onUploadFailure(
+          `You exceeded the upload limit by ${getHumanReadableFileSize(
+            totalSize - maxTotalSizeInBytes
+          )}. Please remove some files for uploading.`
+        );
+        return;
+      }
+    }
+
     try {
-      beforeUploadStart();
+      beforeUploadStart(fileList);
     } catch (e) {
-      onUploadFailure('Unable to start upload');
+      onUploadFailure(e?.message || 'Unable to start upload');
       return;
     }
 
@@ -104,7 +128,6 @@ export const FileUploader = ({
         return;
       }
 
-      // mn: no idea why reassign is needed here actually, needs verifying
       // eslint-disable-next-line no-param-reassign
       file.status = 'uploading';
       // eslint-disable-next-line no-param-reassign
@@ -221,7 +244,6 @@ export const FileUploader = ({
 
   const removeFile = (file: UploadFile) => {
     setFileList((list) => list.filter((el) => el.uid !== file.uid));
-    onFileListChange(fileList);
   };
 
   const setupFilesBeforeUpload = (file: any) => {
@@ -232,14 +254,13 @@ export const FileUploader = ({
     ) {
       setFileList((list) => [...list, file]);
       setUploadStatus(STATUS.READY);
-      onFileListChange(fileList);
     } else {
       setFileList([]);
       setUploadStatus(STATUS.WAITING);
       message.error(`${file.name} has an invalid extension`);
     }
 
-    // false stops them from automatically using their upload functionaility
+    // false stops antd from automatically using their upload functionality
     return false;
   };
 
@@ -305,6 +326,7 @@ export const FileUploader = ({
         onRemove={removeFile}
         beforeUpload={setupFilesBeforeUpload}
         fileList={fileList}
+        {...props}
       >
         <Icon type="Upload" />
         <Body>

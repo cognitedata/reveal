@@ -33,6 +33,8 @@ export default function UploadStep() {
       <br />
       <FileUploaderWrapper>
         <FileUploader
+          accept={supportedExtensions.map((e) => `image/${e}`).join(', ')}
+          maxTotalSizeInBytes={5 * 1024 ** 3 /* 5 Gb */}
           validExtensions={supportedExtensions}
           onUploadSuccess={onUploadSuccess}
         >
