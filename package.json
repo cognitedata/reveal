@@ -42,7 +42,7 @@
     "@google-cloud/storage": "^5.7.2",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@rescripts/cli": "^0.0.15",
-    "@rescripts/rescript-use-babel-config": "^0.0.10",
+    "@rescripts/rescript-use-babel-config": "^0.0.12",
     "@rescripts/utilities": "^0.0.8",
     "@testing-library/jest-dom": "^5.11.9",
     "@types/jest": "^26.0.20",
