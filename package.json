@@ -32,7 +32,7 @@
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
     "systemjs-webpack-interop": "^2.3.5",
-    "use-debounce": "^5.2.0"
+    "use-debounce": "^5.2.1"
   },
   "files": [
     "dist",
