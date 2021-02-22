@@ -71,7 +71,7 @@ export async function putFilesToProcessingQueue(
   return Promise.all(promisesArr);
 }
 
-export function fetchJobById(jobId: number): Promise<AnnotationJobResponse> {
+export function fetchJobById(jobId: number) {
   const url = `${sdk.getBaseUrl()}/api/playground/projects/${
     sdk.project
   }/context/vision/ocr/${jobId}`;
@@ -80,7 +80,7 @@ export function fetchJobById(jobId: number): Promise<AnnotationJobResponse> {
     if (response.status === 200) {
       // todo VIS-54 either change JobStatus, or remove conversion if api will return uppercase status
       response.data.status = response.data.status.toUpperCase() as JobStatus;
-      return response.data;
+      return response;
     }
     // todo: handle error
     throw new Error(JSON.stringify(response));

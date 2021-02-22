@@ -1,31 +1,62 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   AnnotationJobResponse,
   fetchJobById,
   putFilesToProcessingQueue,
 } from 'src/api/annotationJob';
+import { RootState } from 'src/store/rootReducer';
+import { fetchUntilComplete } from 'src/utils';
 
 type State = {
   jobByFileId: Record<string, AnnotationJobResponse | undefined>;
   error?: string;
 };
 
+type ThunkConfig = { state: RootState };
+
 const initialState: State = {
   jobByFileId: {},
   error: undefined,
 };
 
-export const pollAnnotationJobStatus = createAsyncThunk<
-  AnnotationJobResponse,
-  number
->('process/pollFileAnnotationJobStatus', (jobId) => {
-  return fetchJobById(jobId);
-});
+// create annotation jobs for every file and run polling for each of them
+export const detectAnnotations = createAsyncThunk<void, void, ThunkConfig>(
+  'process/detectAnnotations',
+  async (_, { dispatch, getState }) => {
+    const fileIds = getState()
+      .uploadedFiles.uploadedFiles.filter(
+        (file) =>
+          // for now we don't need to post more jobs for a file that already have some
+          // later when files will have more than one job associated, we'll need to check job type here
+          !getState().processSlice.jobByFileId[file.id]
+      )
+      .map((file) => file.id);
 
-export const detectAnnotations = createAsyncThunk<
+    await dispatch(postAnnotationJobs(fileIds));
+
+    const { jobByFileId } = getState().processSlice;
+
+    fileIds.forEach((fileId) => {
+      const job = jobByFileId[fileId];
+      if (!job) {
+        console.warn('File has no job scheduled', fileId); // should never happen
+        return;
+      }
+      const { status, jobId } = job;
+      if (
+        !(status === 'COMPLETED' || status === 'FAILED') &&
+        jobId !== -1 /* fake jobId for optimistic update */
+      ) {
+        dispatch(pollAnnotationJobStatus({ fileId, jobId }));
+      }
+    });
+  }
+);
+
+const postAnnotationJobs = createAsyncThunk<
   Record<string, AnnotationJobResponse>,
   Array<number>
->('process/detectAnnotations', async (fileIds) => {
+>('process/postAnnotationJobs', async (fileIds) => {
   const response = await putFilesToProcessingQueue(fileIds);
   return fileIds.reduce((acc, fileId, index) => {
     acc[fileId] = response[index]; // not nice, but API doesn't return fileId back
@@ -34,15 +65,59 @@ export const detectAnnotations = createAsyncThunk<
   }, {} as Record<string, AnnotationJobResponse>);
 });
 
+const pollAnnotationJobStatus = createAsyncThunk<
+  AnnotationJobResponse,
+  { fileId: number; jobId: number },
+  ThunkConfig
+>(
+  'process/pollFileAnnotationJobStatus',
+  ({ fileId, jobId }, { dispatch, getState }) => {
+    const fileStillExist = () =>
+      getState().uploadedFiles.uploadedFiles.find((file) => file.id === fileId);
+
+    return new Promise((resolve, reject) => {
+      return fetchUntilComplete<AnnotationJobResponse>(
+        () => fetchJobById(jobId),
+        {
+          isCompleted: (job) =>
+            job.status === 'COMPLETED' ||
+            job.status === 'FAILED' ||
+            !fileStillExist(), // we don't want to poll jobs for removed files
+
+          onTick: (job) => {
+            if (fileStillExist()) {
+              dispatch(updateJob({ fileId, job }));
+            }
+          },
+
+          onComplete: resolve,
+          onError: reject,
+        }
+      );
+    });
+  }
+);
+
 const processSlice = createSlice({
   name: 'processSlice',
   initialState,
   /* eslint-disable no-param-reassign */
-  reducers: {},
+  reducers: {
+    updateJob(
+      state,
+      action: PayloadAction<{
+        fileId: string | number;
+        job: AnnotationJobResponse;
+      }>
+    ) {
+      const { fileId, job } = action.payload;
+      state.jobByFileId[fileId] = job;
+    },
+  },
   extraReducers: (builder) => {
-    /* detectAnnotations */
+    /* postAnnotationJobs */
 
-    builder.addCase(detectAnnotations.pending, (state, { meta }) => {
+    builder.addCase(postAnnotationJobs.pending, (state, { meta }) => {
       state.jobByFileId = meta.arg.reduce((acc, fileId) => {
         const now = Date.now();
         acc[fileId] = {
@@ -56,11 +131,11 @@ const processSlice = createSlice({
       }, {} as Record<string, AnnotationJobResponse>);
     });
 
-    builder.addCase(detectAnnotations.fulfilled, (state, { payload }) => {
+    builder.addCase(postAnnotationJobs.fulfilled, (state, { payload }) => {
       state.jobByFileId = payload;
     });
 
-    builder.addCase(detectAnnotations.rejected, (state, { error }) => {
+    builder.addCase(postAnnotationJobs.rejected, (state, { error }) => {
       state.jobByFileId = {};
       state.error = error.message;
       console.error(error); // todo remove later once ui can handle that
@@ -71,13 +146,8 @@ const processSlice = createSlice({
     builder.addCase(
       pollAnnotationJobStatus.fulfilled,
       (state, { payload, meta }) => {
-        const jobId = meta.arg;
-        const fileId = Object.keys(state.jobByFileId).find((fileIdKey) => {
-          return state.jobByFileId[fileIdKey]?.jobId === jobId;
-        });
-        if (fileId) {
-          state.jobByFileId[fileId] = payload;
-        }
+        const { fileId } = meta.arg;
+        state.jobByFileId[fileId] = payload;
       }
     );
 
@@ -88,5 +158,7 @@ const processSlice = createSlice({
   },
   /* eslint-enable no-param-reassign */
 });
+
+export const { updateJob } = processSlice.actions;
 
 export default processSlice.reducer;

@@ -4,6 +4,8 @@ import { AccessPermission } from 'src/utils/types';
 import { getProject } from '@cognite/cdf-utilities';
 import { ids } from 'src/cogs-variables';
 
+export * from './fetchUntilComplete';
+
 export const projectName = getProject();
 
 // Use this getContainer for all antd components such as: dropdown, tooltip, popover, modals etc
