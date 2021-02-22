@@ -5,6 +5,7 @@ import { detectAnnotations } from 'src/store/processSlice';
 import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { useAnnotationJobs } from 'src/store/hooks/useAnnotationJobs';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const ProcessStepActionButtons = () => {
   const history = useHistory();
@@ -16,21 +17,27 @@ export const ProcessStepActionButtons = () => {
 
   const onNextClicked = () => {
     if (isPollingFinished) {
-      history.push(getLink(workflowRoutes.review));
+      history.push(createLink('/explore/search/file')); // data-exploration app
     } else {
       setDetectBtnClicked(true);
       dispatch(detectAnnotations());
     }
   };
 
-  const titleNext = isPollingFinished ? 'Review' : 'Detect';
+  const nextBtnTitle = isPollingFinished ? 'Complete' : 'Detect';
+  const nextBtnDisabled = detectBtnClicked && !isPollingFinished;
 
   return (
     <PrevNextNav
-      onPrevClicked={() => history.push(getLink(workflowRoutes.upload))}
-      onNextClicked={onNextClicked}
-      titleNext={titleNext}
-      disableNext={detectBtnClicked && !isPollingFinished}
+      prevBtnProps={{
+        onClick: () => history.push(getLink(workflowRoutes.upload)),
+      }}
+      nextBtnProps={{
+        onClick: onNextClicked,
+        children: nextBtnTitle,
+        disabled: nextBtnDisabled,
+        loading: nextBtnDisabled,
+      }}
     />
   );
 };

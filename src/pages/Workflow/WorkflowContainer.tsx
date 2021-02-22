@@ -5,8 +5,9 @@ import {
   RouteComponentProps,
   Switch,
   useHistory,
+  Link,
 } from 'react-router-dom';
-import { Steps } from 'antd';
+import { Steps as AntdSteps } from 'antd';
 import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import styled from 'styled-components';
 import { ProcessStepActionButtons } from 'src/pages/Workflow/process/ProcessStepActionButtons';
@@ -15,20 +16,17 @@ import {
   workflowRoutes,
   WorkflowStepKey,
 } from 'src/pages/Workflow/workflowRoutes';
+import { VerticalContainer } from 'src/components/VerticalContainer';
 
-const { Step } = Steps;
+const { Step } = AntdSteps;
 
 const UploadStep = (props: RouteComponentProps) =>
   LazyWrapper(props, () => import('src/pages/Workflow/upload/UploadStep'));
 
-// tried to use memo to avoid remount of this component between steps, but without success...
-const ProcessAndReviewStep = (props: RouteComponentProps) =>
+const ProcessStep = (props: RouteComponentProps) =>
   LazyWrapper(props, () => import('src/pages/Workflow/process/ProcessStep'));
 
 function getStepNumberByStepName(stepName: WorkflowStepKey) {
-  if (stepName === 'review') {
-    return 2;
-  }
   if (stepName === 'process') {
     return 1;
   }
@@ -43,10 +41,21 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
   return (
     <VerticalContainer>
       <MainContent>
-        <Steps current={getStepNumberByStepName(props.match.params.step)}>
-          <Step title="Upload" />
-          <Step title="Process" />
-          <Step title="Review" />
+        <Steps
+          current={getStepNumberByStepName(props.match.params.step)}
+          style={{ paddingBottom: 16 }}
+        >
+          <Step
+            title={
+              <Link
+                to={getLink(workflowRoutes.upload)}
+                style={{ color: 'inherit' }}
+              >
+                Upload
+              </Link>
+            }
+          />
+          <Step title="Process & Review" />
         </Steps>
 
         <StepContent>
@@ -59,9 +68,9 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
             />
             <Route
               key="process-and-review"
-              path={[workflowRoutes.process, workflowRoutes.review]}
+              path={workflowRoutes.process}
               exact
-              component={ProcessAndReviewStep}
+              component={ProcessStep}
             />
           </Switch>
         </StepContent>
@@ -75,13 +84,17 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
             exact
             component={() => (
               <PrevNextNav
-                onPrevClicked={() => {
-                  console.info('Exit...');
-                  // history.push(createLink('/explore/search/file'));
+                prevBtnProps={{
+                  onClick() {
+                    console.info('Exit...');
+                    // history.push(createLink('/explore/search/file'));
+                  },
                 }}
-                onNextClicked={() =>
-                  history.push(getLink(workflowRoutes.process))
-                }
+                nextBtnProps={{
+                  onClick() {
+                    history.push(getLink(workflowRoutes.process));
+                  },
+                }}
               />
             )}
           />
@@ -92,35 +105,11 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
             exact
             component={ProcessStepActionButtons}
           />
-
-          <Route
-            key="review-step"
-            path={workflowRoutes.review}
-            exact
-            component={() => (
-              <PrevNextNav
-                onPrevClicked={() =>
-                  history.push(getLink(workflowRoutes.process))
-                }
-                onNextClicked={() => {
-                  console.info('Complete...');
-                  // history.push(createLink('/explore/search/file'));
-                }}
-                titleNext="Complete"
-              />
-            )}
-          />
         </Switch>
       </BottomNavContainer>
     </VerticalContainer>
   );
 }
-
-const VerticalContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
 
 const MainContent = styled(VerticalContainer)`
   min-width: 900px; /* totally random, but mocks have one size for now */
@@ -132,6 +121,11 @@ const MainContent = styled(VerticalContainer)`
   @media (min-width: 992px) {
     padding: 20px 50px;
   }
+`;
+
+const Steps = styled(AntdSteps)`
+  padding-bottom: 16px;
+  max-width: 500px;
 `;
 
 const StepContent = styled.div`
