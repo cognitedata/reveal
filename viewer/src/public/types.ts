@@ -23,6 +23,35 @@ export enum AntiAliasingMode {
 }
 
 /**
+ * SSAO rendering quality modes supported by Reveal.
+ */
+export enum SsaoSampleQuality {
+  Medium = 32,
+  High = 64,
+  VeryHigh = 128,
+  None = 1,
+  Default = Medium
+}
+
+/**
+ * Screen-space ambient occlusion parameters supported by Reveal.
+ */
+export type SsaoParameters = {
+  /**
+   * Quality (Number of samples) to estimate occlusion factor.
+   */
+  sampleSize: SsaoSampleQuality;
+  /**
+   * Maximum length of sample vector.
+   */
+  sampleRadius: number;
+  /**
+   * Applied bias when depth testing to reduce output noise.
+   */
+  depthCheckBias: number;
+};
+
+/**
  * Options and hints for how the Reveal viewer applies rendering effects.
  */
 export type RenderOptions = {
@@ -35,6 +64,10 @@ export type RenderOptions = {
    * available. Ignored if using WebGL 1.
    */
   multiSampleCountHint?: number;
+  /**
+   * Determines the parameters used for ambient occlusion heuristic shading.
+   */
+  ssaoRenderParameters?: SsaoParameters;
 };
 
 /**
@@ -42,7 +75,8 @@ export type RenderOptions = {
  */
 export const defaultRenderOptions: Required<RenderOptions> = {
   antiAliasing: AntiAliasingMode.FXAA,
-  multiSampleCountHint: 1
+  multiSampleCountHint: 1,
+  ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 }
 };
 
 /**

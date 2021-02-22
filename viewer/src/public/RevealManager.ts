@@ -9,7 +9,8 @@ import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
 import {
   SectorNodeIdToTreeIndexMapLoadedListener,
   SectorNodeIdToTreeIndexMapLoadedEvent,
-  LoadingStateChangeListener
+  LoadingStateChangeListener,
+  defaultRenderOptions
 } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, share, filter, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
@@ -83,6 +84,14 @@ export class RevealManager<TModelIdentifier> {
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
+  }
+
+  public get renderOptions(): RenderOptions {
+    return this._effectRenderManager.renderOptions;
+  }
+
+  public set renderOptions(options: RenderOptions) {
+    this._effectRenderManager.renderOptions = options ?? defaultRenderOptions;
   }
 
   get needsRedraw(): boolean {
