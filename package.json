@@ -15,7 +15,7 @@
     "@cognite/sdk": "^3.3.2",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^3.0.0",
-    "@sentry/browser": "^5.29.2",
+    "@sentry/browser": "^6.2.0",
     "@types/react-datepicker": "^3.1.2",
     "antd": "^4.10.3",
     "history": "^4.10.1",
