@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { Container } from '@cognite/react-container';
+import { ContainerWithoutI18N } from '@cognite/react-container';
 
 import GlobalStyles from 'global-styles';
 
@@ -17,7 +17,7 @@ import { APIErrorProvider } from './contexts/APIErrorContext';
 const App = () => (
   <>
     <GlobalStyles />
-    <Container disableTranslations>
+    <ContainerWithoutI18N disableTranslations>
       <ApiProvider>
         <APIErrorProvider>
           <Layout>
@@ -46,7 +46,7 @@ const App = () => (
           </Layout>
         </APIErrorProvider>
       </ApiProvider>
-    </Container>
+    </ContainerWithoutI18N>
   </>
 );
 

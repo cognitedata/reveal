@@ -1,4 +1,4 @@
-import { SIDECAR } from 'utils/sidecar';
+import SIDECAR from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
 import {
   GenericResponseObject,
