@@ -35,7 +35,7 @@ export function SSAO() {
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(_: number) {
-          return reveal.DefaultNodeAppearance.NoOverrides;
+          return reveal.DefaultNodeAppearance.Default;
         }
       };
 
