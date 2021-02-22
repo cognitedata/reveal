@@ -5,7 +5,6 @@
 import { CadNode, SuggestedCameraConfig } from './CadNode';
 import { CadModelMetadata } from './CadModelMetadata';
 import { SectorMetadata } from './sector/types';
-import { SsaoEffect, SsaoPassType } from './rendering/post-processing/ssao';
 import { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './NodeAppearance';
 
 export {
@@ -15,7 +14,5 @@ export {
   DefaultNodeAppearance,
   CadModelMetadata,
   SectorMetadata,
-  SsaoEffect,
-  SsaoPassType,
   SuggestedCameraConfig
 };

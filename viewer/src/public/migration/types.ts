@@ -87,6 +87,14 @@ export interface Cognite3DViewerOptions {
     | 'msaa8'
     | 'msaa16';
 
+  /**
+   * Hints the renderer of the quality it should aim for for screen space ambient occlusion,
+   * an effect creating shadows and that gives the rendered image more depth.
+   *
+   * @version new in 1.4.0
+   */
+  ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
+
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 

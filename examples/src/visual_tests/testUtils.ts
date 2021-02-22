@@ -11,6 +11,7 @@ export enum TestCaseCad {
   ghostMode = 'ghostMode',
   scaledModel = 'scaledModel',
   userRenderTarget = 'userRenderTarget',
+  ssao = 'ssao'
 }
 
 export enum TestCasePointCloud {

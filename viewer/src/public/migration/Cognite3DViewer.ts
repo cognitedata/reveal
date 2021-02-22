@@ -30,7 +30,14 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { DisposedDelegate, SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import {
+  defaultRenderOptions,
+  DisposedDelegate,
+  SceneRenderedDelegate,
+  SectorNodeIdToTreeIndexMapLoadedEvent,
+  SsaoParameters,
+  SsaoSampleQuality
+} from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
@@ -1482,10 +1489,12 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   const revealOptions: RevealOptions = { internal: {} };
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
+  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
 
   revealOptions.renderOptions = {
     antiAliasing,
-    multiSampleCountHint: multiSampleCount
+    multiSampleCountHint: multiSampleCount,
+    ssaoRenderParameters
   };
   return revealOptions;
 }
@@ -1520,4 +1529,30 @@ function determineAntiAliasingMode(
       // Ensures there is a compile error if a case is missing
       assertNever(mode, `Unsupported anti-aliasing mode: ${mode}`);
   }
+}
+
+type SsaoQuality = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;
+function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
+  const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
+  switch (quality) {
+    case undefined:
+      break;
+    case 'medium':
+      ssaoParameters.sampleSize = SsaoSampleQuality.Medium;
+      break;
+    case 'high':
+      ssaoParameters.sampleSize = SsaoSampleQuality.High;
+      break;
+    case 'veryhigh':
+      ssaoParameters.sampleSize = SsaoSampleQuality.VeryHigh;
+      break;
+    case 'disabled':
+      ssaoParameters.sampleSize = SsaoSampleQuality.None;
+      break;
+
+    default:
+      assertNever(quality, `Unexpected SSAO quality mode: '${quality}'`);
+  }
+
+  return ssaoParameters;
 }

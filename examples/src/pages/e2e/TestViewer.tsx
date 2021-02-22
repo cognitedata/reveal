@@ -6,6 +6,7 @@ import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/experimental';
+import { defaultRenderOptions, RenderOptions } from '@cognite/reveal';
 
 type CadModelEnv = {
   modelType: 'cad';
@@ -122,7 +123,16 @@ export function TestViewer(props: Props) {
         },
       };
 
-      revealManager = reveal.createLocalRevealManager({ logMetrics: false });
+      const renderOptions: RenderOptions = {
+        ...defaultRenderOptions, 
+        ssaoRenderParameters: {
+          depthCheckBias: 0.0,
+          sampleRadius: 0.0,
+          sampleSize: 1
+        }
+      };
+
+      revealManager = reveal.createLocalRevealManager({ logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
       let model: reveal.internal.PointCloudNode | reveal.CadNode;
