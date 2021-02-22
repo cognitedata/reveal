@@ -1,10 +1,8 @@
-import React, { useEffect, useMemo, Suspense } from 'react';
-import { Metrics } from '@cognite/metrics';
+import React, { useMemo, Suspense } from 'react';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
 import {
   Loader,
   FileContextualizationContextProvider,
-  useUserStatus,
 } from '@cognite/data-exploration';
 import { ResourceActionsProvider } from 'app/context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'app/context/ResourceSelectionContext';
@@ -15,15 +13,6 @@ const Spinner = () => <Loader />;
 
 export default function App() {
   const { pathname, search, hash } = useLocation();
-
-  const { data: status, isFetched } = useUserStatus();
-  const username = isFetched && !!status && status.user;
-
-  useEffect(() => {
-    if (username) {
-      Metrics.identify(username);
-    }
-  }, [username]);
 
   return (
     <Suspense fallback={<Spinner />}>
