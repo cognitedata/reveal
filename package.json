@@ -28,7 +28,7 @@
     "@cognite/react-tenant-selector": "^0.4.4",
     "@cognite/sdk": "^3.3.2",
     "@sentry/browser": "^5.29.2",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-helmet": "^6.1.0",
