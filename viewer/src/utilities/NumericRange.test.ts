@@ -9,6 +9,10 @@ describe('NumericRange', () => {
     expect(() => new NumericRange(0, -1)).toThrowError();
   });
 
+  test('constructor does not accept zero count', () => {
+    expect(() => new NumericRange(0, 0)).toThrowError();
+  });
+
   test('toInclusive is less than from when range is empty', () => {
     const range = new NumericRange(15, 0);
     expect(range.toInclusive).toBeLessThan(range.from);
