@@ -8,18 +8,36 @@ import { NodeSet } from './NodeSet';
 export type CombineNodeSetOperator = 'intersection' | 'union';
 
 export class CombinedNodeSet extends NodeSet {
-  private _nodeSets: NodeSet[];
+  private _nodeSets: NodeSet[] = [];
   private _operator: CombineNodeSetOperator;
   private _changedUnderlyingNodeSetHandler: () => void;
   private _cachedCombinedSet: IndexSet | undefined = undefined;
 
-  constructor(nodeSets: NodeSet[], combinationOperator: CombineNodeSetOperator) {
+  constructor(combinationOperator: CombineNodeSetOperator, nodeSets?: NodeSet[]) {
     super();
 
     this._changedUnderlyingNodeSetHandler = this.makeDirty.bind(this);
-    this._nodeSets = [...nodeSets];
-    this._nodeSets.forEach(s => s.on('changed', this._changedUnderlyingNodeSetHandler));
     this._operator = combinationOperator;
+    if (nodeSets) {
+      nodeSets.forEach(x => this.addSet(x));
+    }
+  }
+
+  addSet(nodeSet: NodeSet) {
+    nodeSet.on('changed', this._changedUnderlyingNodeSetHandler);
+    this._nodeSets.push(nodeSet);
+    this.makeDirty();
+  }
+
+  removeSet(nodeSet: NodeSet) {
+    const index = this._nodeSets.indexOf(nodeSet);
+    if (index < 0) {
+      throw new Error('Could not find set');
+    }
+
+    nodeSet.off('changed', this._changedUnderlyingNodeSetHandler);
+    this._nodeSets.splice(index, 1);
+    this.makeDirty();
   }
 
   private makeDirty(): void {

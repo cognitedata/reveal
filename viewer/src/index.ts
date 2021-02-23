@@ -15,7 +15,15 @@ export { CognitePointCloudModel } from './public/migration/CognitePointCloudMode
 
 export * from './public/types';
 
-export * from './datamodels/cad/styling';
+export { NodeAppearance, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
+
+export {
+  NodeSet,
+  FixedNodeSet,
+  ByNodePropertyNodeSet,
+  CombinedNodeSet,
+  NodeStyleProvider
+} from './datamodels/cad/styling';
 export { IndexSet } from './utilities/IndexSet';
 
 // Export ThreeJS to enable easy import for our users
