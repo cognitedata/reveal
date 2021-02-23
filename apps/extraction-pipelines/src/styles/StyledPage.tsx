@@ -51,12 +51,15 @@ export const GridMainWrapper = styled(MainPanelGrid)`
   grid-area: main;
   display: grid;
   grid-template-columns: auto 70% auto;
+  grid-template-rows: 2rem 2rem auto;
   grid-row-gap: 1rem;
   grid-template-areas:
     '. title2 .'
     '. description .'
     '. main .'
     '. btn .';
+  overflow-y: auto;
+  height: calc(100vh - 16.375rem);
   .description {
     grid-area: description;
   }

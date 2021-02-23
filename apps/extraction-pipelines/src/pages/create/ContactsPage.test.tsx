@@ -6,6 +6,7 @@ import render, {
 } from '../../utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
 import ContactsPage, { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
+import { ADD_CONTACT } from '../../utils/constants';
 
 describe('ContactsPage', () => {
   beforeEach(() => {
@@ -21,13 +22,12 @@ describe('ContactsPage', () => {
   });
   test('Renders', () => {
     expect(screen.getByText(INTEGRATION_CONTACTS_HEADING)).toBeInTheDocument();
-    expect(screen.getByLabelText('Name')).toBeInTheDocument();
-    expect(screen.getByLabelText('E-mail')).toBeInTheDocument();
-    expect(screen.getByLabelText('Role')).toBeInTheDocument();
-    expect(screen.getByLabelText('Notification')).toBeInTheDocument();
+    expect(screen.getByText(ADD_CONTACT)).toBeInTheDocument();
   });
 
   test('Interact with form', async () => {
+    const addContact = screen.getByText(ADD_CONTACT);
+    fireEvent.click(addContact);
     const nameInput = screen.getByLabelText('Name');
     const nameString = 'My name is';
     fireEvent.change(nameInput, { target: { value: nameString } });

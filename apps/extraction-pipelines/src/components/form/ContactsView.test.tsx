@@ -13,10 +13,7 @@ import {
   removeContact,
 } from '../../utils/test/utilsFn';
 import { renderQueryCacheIntegration } from '../../utils/test/render';
-import ContactsView, {
-  ContactBtnTestIds,
-  ContactsErrorMsg,
-} from './ContactsView';
+import ContactsView, { ContactBtnTestIds } from './ContactsView';
 import { Integration } from '../../model/Integration';
 import { User } from '../../model/User';
 import {
@@ -37,6 +34,7 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '../../utils/baseURL';
+import { ContactsErrorMsg } from '../../utils/validation/contactsSchema';
 
 function createIntegrationWithContacts(
   contacts: User[] | undefined | null

@@ -5,9 +5,6 @@ export const CreateFormWrapper = styled.form`
   display: flex;
   flex-direction: column;
 
-  button[type='submit'] {
-    align-self: flex-start;
-  }
   .input-label {
     font-weight: bold;
   }

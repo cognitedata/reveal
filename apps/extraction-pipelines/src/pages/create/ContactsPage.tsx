@@ -1,8 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
@@ -14,12 +13,26 @@ import {
   GridMainWrapper,
   GridTitleWrapper,
 } from '../../styles/StyledPage';
-import { NEXT } from '../../utils/constants';
+import { ADD_CONTACT, NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
   DESCRIPTION_PAGE_PATH,
   EXTERNAL_ID_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
+import { contactsSchema } from '../../utils/validation/contactsSchema';
+
+const StyledBtn = styled(Button)`
+  align-self: flex-start;
+`;
+const AddContact = styled(StyledBtn)`
+  margin-bottom: 1rem;
+`;
+const ContactWrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  border-bottom: 0.125rem solid ${Colors['greyscale-grey6'].hex()};
+  margin-bottom: 1rem;
+`;
 
 const StyledInput = styled.input`
   width: 50%;
@@ -73,21 +86,17 @@ const Switchbutton = styled.button`
 interface ContactsPageProps {}
 
 interface ContactsFormInput {
-  name: string;
-  email: string;
-  role: string;
-  sendNotification: boolean;
+  contacts: {
+    name: string;
+    email: string;
+    role: string;
+    sendNotification: boolean;
+  }[];
 }
 
 export const INTEGRATION_CONTACTS_HEADING: Readonly<string> =
   'Integration contacts';
-export const EMAIL_REQUIRED: Readonly<string> = 'Email is required';
-const contactsSchema = yup.object().shape({
-  name: yup.string(),
-  email: yup.string().required(EMAIL_REQUIRED),
-  role: yup.string(),
-  sendNotification: yup.boolean(),
-});
+
 const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
   const history = useHistory();
   const {
@@ -97,21 +106,34 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
     setValue,
     getValues,
     watch,
+    control,
   } = useForm<ContactsFormInput>({
     resolver: yupResolver(contactsSchema),
-    defaultValues: {},
+    defaultValues: {
+      contacts: [],
+    },
     reValidateMode: 'onSubmit',
   });
-  register('sendNotification');
+
+  const { fields, append } = useFieldArray({
+    control,
+    name: 'contacts',
+  });
+
   const handleNext = () => {
     history.push(createLink(DESCRIPTION_PAGE_PATH));
   };
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const s = getValues('sendNotification');
-    setValue('sendNotification', !s);
+  const handleClick = (index: number) => {
+    const s = getValues(`contacts[${index}].sendNotification`) ?? false;
+    setValue(`contacts[${index}].sendNotification`, !s);
   };
-  const notification = watch('sendNotification');
+  const calcChecked = (index: number): boolean => {
+    return watch(`contacts[${index}].sendNotification`) ?? false;
+  };
+
+  const addContact = () => {
+    append({ name: '', email: '', role: '', sendNotification: false });
+  };
 
   return (
     <CreateIntegrationPageWrapper>
@@ -126,114 +148,163 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
           This is to ensure someone is notified when an error occurs.
         </i>
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-          <label htmlFor="integration-contacts-name" className="input-label">
-            Name
-          </label>
-          <span id="external-id-hint" className="input-hint" />
-          <ErrorMessage
-            errors={errors}
-            name="name"
-            render={({ message }) => (
-              <span id="contact-name-error" className="error-message">
-                {message}
-              </span>
-            )}
-          />
-          <StyledInput
-            id="integration-contacts-name"
-            name="name"
-            type="text"
-            ref={register}
-            className={`cogs-input ${errors.name ? 'has-error' : ''}`}
-            aria-invalid={!!errors.name}
-            aria-describedby="contact-name-hint contact-name-error"
-          />
+          {fields.map((field, index) => {
+            return (
+              <ContactWrapper role="group" key={field.id}>
+                <label
+                  htmlFor="integration-contacts-name"
+                  className="input-label"
+                >
+                  Name
+                </label>
+                <span id="external-id-hint" className="input-hint" />
+                <ErrorMessage
+                  errors={errors}
+                  name={`contacts[${index}].name`}
+                  render={({ message }) => (
+                    <span
+                      id={`contact-${index}-name-error`}
+                      className="error-message"
+                    >
+                      {message}
+                    </span>
+                  )}
+                />
+                <StyledInput
+                  id="integration-contacts-name"
+                  name={`contacts[${index}].name`}
+                  type="text"
+                  ref={register}
+                  className={`cogs-input ${
+                    errors.contacts?.[index]?.name ? 'has-error' : ''
+                  }`}
+                  aria-invalid={!!errors.contacts?.[index]?.name}
+                  aria-describedby={`contact-name-hint contact-${index}-name-error`}
+                />
 
-          <label htmlFor="integration-contacts-email" className="input-label">
-            E-mail
-          </label>
-          <span id="contacts-email-hint" className="input-hint" />
-          <ErrorMessage
-            errors={errors}
-            name="email"
-            render={({ message }) => (
-              <span id="contact-email-error" className="error-message">
-                {message}
-              </span>
-            )}
-          />
-          <StyledInput
-            id="integration-contacts-email"
-            name="email"
-            type="email"
-            ref={register}
-            className={`cogs-input ${errors.email ? 'has-error' : ''}`}
-            aria-invalid={!!errors.email}
-            aria-describedby="contact-email-hint contact-email-error"
-          />
+                <label
+                  htmlFor="integration-contacts-email"
+                  className="input-label"
+                >
+                  E-mail
+                </label>
+                <span id="contacts-email-hint" className="input-hint" />
+                <ErrorMessage
+                  errors={errors}
+                  name={`contacts[${index}].email`}
+                  render={({ message }) => (
+                    <span
+                      id={`contact-${index}-email-error`}
+                      className="error-message"
+                    >
+                      {message}
+                    </span>
+                  )}
+                />
+                <StyledInput
+                  id="integration-contacts-email"
+                  name={`contacts[${index}].email`}
+                  type="email"
+                  ref={register}
+                  className={`cogs-input ${
+                    errors.contacts?.[index]?.email ? 'has-error' : ''
+                  }`}
+                  aria-invalid={!!errors.contacts?.[index]?.email}
+                  aria-describedby={`contact-email-hint contact-${index}-email-error`}
+                />
 
-          <label htmlFor="integration-contacts-role" className="input-label">
-            Role
-          </label>
-          <span id="contacts-role-hint" className="input-hint">
-            The role this contact has related to this integration.
-          </span>
-          <ErrorMessage
-            errors={errors}
-            name="role"
-            render={({ message }) => (
-              <span id="contact-email-error" className="error-message">
-                {message}
-              </span>
-            )}
-          />
-          <StyledInput
-            id="integration-contacts-role"
-            name="role"
-            type="text"
-            ref={register}
-            className={`cogs-input ${errors.role ? 'has-error' : ''}`}
-            aria-invalid={!!errors.role}
-            aria-describedby="contact-role-hint contact-role-error"
-          />
+                <label
+                  htmlFor="integration-contacts-role"
+                  className="input-label"
+                >
+                  Role
+                </label>
+                <span id="contacts-role-hint" className="input-hint">
+                  The role this contact has related to this integration.
+                </span>
+                <ErrorMessage
+                  errors={errors}
+                  name={`contacts[${index}].role`}
+                  render={({ message }) => (
+                    <span
+                      id={`contact-${index}-role-error`}
+                      className="error-message"
+                    >
+                      {message}
+                    </span>
+                  )}
+                />
+                <StyledInput
+                  id="integration-contacts-role"
+                  name={`contacts[${index}].role`}
+                  type="text"
+                  ref={register}
+                  className={`cogs-input ${
+                    errors.contacts?.[index]?.role ? 'has-error' : ''
+                  }`}
+                  aria-invalid={!!errors.contacts?.[index]?.role}
+                  aria-describedby={`contact-role-hint contact-${index}-role-error`}
+                />
 
-          <label
-            id="integration-contacts-notification-label"
-            htmlFor="integration-contacts-notification"
-            className="input-label checkbox-label"
+                <label
+                  id="integration-contacts-notification-label"
+                  htmlFor="integration-contacts-notification"
+                  className="input-label checkbox-label"
+                >
+                  Notification
+                </label>
+                <span
+                  id={`contacts-${index}-notification-hint`}
+                  className="input-hint"
+                >
+                  When turned on, the contact will receive an email if the
+                  integration fails.
+                </span>
+                <ErrorMessage
+                  errors={errors}
+                  name={`contacts[${index}].sendNotification`}
+                  render={({ message }) => (
+                    <span
+                      id={`contact-${index}-notification-error`}
+                      className="error-message"
+                    >
+                      {message}
+                    </span>
+                  )}
+                />
+                <Controller
+                  as={
+                    <Switchbutton
+                      id="integration-contacts-notification"
+                      role="switch"
+                      type="button"
+                      ref={register}
+                      onClick={() => handleClick(index)}
+                      aria-checked={calcChecked(index)}
+                      aria-labelledby="integration-contacts-notification-label"
+                      aria-describedby={`contact-${index}-notification-hint contact-${index}-notification-error`}
+                    >
+                      <span className="on">On</span>
+                      <span className="off">Off</span>
+                    </Switchbutton>
+                  }
+                  name={`contacts[${index}].sendNotification`}
+                  control={control}
+                  defaultValue={field.sendNotification}
+                />
+              </ContactWrapper>
+            );
+          })}
+          <AddContact
+            type="secondary"
+            htmlType="button"
+            onClick={() => addContact()}
           >
-            Notification
-          </label>
-          <span id="contacts-notification-hint" className="input-hint">
-            When turned on, the contact will receive an email if the integration
-            fails.
-          </span>
-          <ErrorMessage
-            errors={errors}
-            name="sendNotification"
-            render={({ message }) => (
-              <span id="contact-email-error" className="error-message">
-                {message}
-              </span>
-            )}
-          />
-          <Switchbutton
-            id="integration-contacts-notification"
-            name="sendNotification"
-            role="switch"
-            type="button"
-            onClick={handleClick}
-            aria-checked={notification ?? false}
-            aria-labelledby="integration-contacts-notification-label"
-            aria-describedby="contact-notification-hint contact-notification-error"
-          >
-            <span className="on">On</span>
-            <span className="off">Off</span>
-          </Switchbutton>
-
-          <Button type="primary" htmlType="submit">
+            {ADD_CONTACT}
+          </AddContact>
+          <StyledBtn type="primary" htmlType="submit">
             {NEXT}
-          </Button>
+          </StyledBtn>
         </CreateFormWrapper>
       </GridMainWrapper>
     </CreateIntegrationPageWrapper>

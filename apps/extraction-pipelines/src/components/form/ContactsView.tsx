@@ -7,10 +7,10 @@ import {
   useForm,
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import styled from 'styled-components';
 import { useIntegration } from '../../hooks/details/IntegrationContext';
 import { ContactView } from './ContactView';
+import { contactsSchema } from '../../utils/validation/contactsSchema';
 
 export const ContactBtnTestIds = {
   EDIT_BTN: 'edit-contact-btn-',
@@ -52,25 +52,6 @@ export const AlignedSpan = styled((props) => (
 ))`
   align-self: center;
 `;
-
-export const ContactsErrorMsg = {
-  NAME_REQUIRED: 'Contact name is required',
-  EMAIL_REQUIRED: 'Contact email is required',
-  EMAIL_INVALID: 'Contact email must be a valid email',
-};
-
-const contactsSchema = yup.object().shape({
-  contacts: yup.array().of(
-    yup.object().shape({
-      name: yup.string().required(ContactsErrorMsg.NAME_REQUIRED),
-      email: yup
-        .string()
-        .required(ContactsErrorMsg.EMAIL_REQUIRED)
-        .email(ContactsErrorMsg.EMAIL_INVALID),
-      role: yup.string(),
-    })
-  ),
-});
 
 interface ContactsForm extends FieldValues {
   name: string;
