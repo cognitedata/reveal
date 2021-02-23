@@ -1,7 +1,12 @@
-/* eslint-disable no-alert */
-
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
+import {
+  Button,
+  DateRange,
+  Dropdown,
+  Icon,
+  Menu,
+  toast,
+} from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import chartsSlice, { chartSelectors, ChartTimeSeries } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -22,12 +27,12 @@ import workflowSlice, {
   Workflow,
   WorkflowRunStatus,
 } from 'reducers/workflows';
-import DatePicker from 'react-datepicker';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import DataQualityReport from 'components/DataQualityReport';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
+import TimeSelector from 'components/TimeSelector';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
@@ -332,6 +337,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       chartsSlice.actions.renameTimeSeries({
         id: chart?.id || '',
         timeSeriesId,
+        // eslint-disable-next-line no-alert
         name: prompt('Provide new name for time series') || 'unnamed',
       })
     );
@@ -342,6 +348,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       chartsSlice.actions.renameWorkflow({
         id: chart?.id || '',
         workflowId,
+        // eslint-disable-next-line no-alert
         name: prompt('Provide new name for workflow') || 'unnamed',
       })
     );
@@ -915,30 +922,54 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             <h4>by {chart?.user}</h4>
           </hgroup>
           <section className="daterange">
-            <div style={{ display: 'flex' }}>
-              <div style={{ marginRight: 10 }}>
-                From:{' '}
-                <DatePicker
-                  selected={new Date(chart.dateFrom || new Date())}
-                  onChange={(date: Date) =>
-                    handleDateChange({ dateFrom: date })
-                  }
-                  timeInputLabel="Time:"
-                  dateFormat="MM/dd/yyyy h:mm aa"
-                  showTimeInput
-                />
-              </div>
-              <div>
-                To:{' '}
-                <DatePicker
-                  selected={new Date(chart.dateTo || new Date())}
-                  onChange={(date: Date) => handleDateChange({ dateTo: date })}
-                  timeInputLabel="Time:"
-                  dateFormat="MM/dd/yyyy h:mm aa"
-                  showTimeInput
-                />
-              </div>
-            </div>
+            <DateRange
+              range={{
+                startDate: new Date(chart.dateFrom || new Date()),
+                endDate: new Date(chart.dateTo || new Date()),
+              }}
+              onChange={({ startDate, endDate }) => {
+                const currentStart = new Date(chart.dateFrom);
+                const currentEnd = new Date(chart.dateTo);
+
+                const newStart = new Date(startDate || new Date());
+                newStart.setHours(currentStart.getHours());
+                newStart.setMinutes(currentStart.getMinutes());
+
+                const newEnd = new Date(endDate || new Date());
+                newEnd.setHours(currentEnd.getHours());
+                newEnd.setMinutes(currentEnd.getMinutes());
+
+                handleDateChange({
+                  dateFrom: newStart,
+                  dateTo: newEnd,
+                });
+              }}
+              prependComponent={() => (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                  }}
+                >
+                  <div>
+                    <TimeSelector
+                      value={new Date(chart.dateFrom)}
+                      onChange={(value) => {
+                        handleDateChange({ dateFrom: value });
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <TimeSelector
+                      value={new Date(chart.dateTo)}
+                      onChange={(value) => {
+                        handleDateChange({ dateTo: value });
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            />
           </section>
           <section className="actions">
             <Button
