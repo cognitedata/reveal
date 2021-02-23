@@ -106,7 +106,7 @@ export const FileUploader = ({
     try {
       beforeUploadStart(fileList);
     } catch (e) {
-      onUploadFailure(e?.message || 'Unable to start upload');
+      onUploadFailure(`Unable to start upload.${e ? ` ${e.message}` : ''}`);
       return;
     }
 

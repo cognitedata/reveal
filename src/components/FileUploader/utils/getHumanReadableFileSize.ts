@@ -2,8 +2,8 @@
  * @param sizeInBytes
  * @returns the most suitable size string
  * @example
- *  getHumanReadableFileSize(1) // returns "1 Byte"
- *  getHumanReadableFileSize(1024) // returns "1 KB"
+ *  getHumanReadableFileSize(1) // returns "1 B"
+ *  getHumanReadableFileSize(1024) // returns "1 kB"
  *  getHumanReadableFileSize(999 * 1024 ** 2) // returns "999 MB"
  *  getHumanReadableFileSize(10 * 1024 ** 3) // returns "10 GB"
  */

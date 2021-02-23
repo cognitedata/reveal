@@ -38,7 +38,9 @@ export default function UploadStep() {
           validExtensions={supportedExtensions}
           onUploadSuccess={onUploadSuccess}
         >
-          <Detail>Files supported: jpeg, png, tiff.</Detail>
+          <Detail>
+            Files supported: jpeg, png, tiff. Total size limit: 5 Gb.
+          </Detail>
         </FileUploader>
 
         <UploadedFilesInfo uploadedFiles={uploadedFiles} />
