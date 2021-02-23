@@ -18,6 +18,7 @@ export class NodeStyleTextureBuilder {
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
+  private readonly _treeIndexCount: number;
   private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
   private readonly _overrideTransformPerTreeIndexTexture: THREE.DataTexture;
   private readonly _transformOverrideBuffer: TransformOverrideBuffer;
@@ -27,6 +28,7 @@ export class NodeStyleTextureBuilder {
   private readonly _currentlyAppliedStyles = new Map<number, { revision: number; treeIndices: IndexSet }>();
 
   constructor(treeIndexCount: number, styleProvider: NodeStyleProvider) {
+    this._treeIndexCount = treeIndexCount;
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
 
@@ -34,11 +36,12 @@ export class NodeStyleTextureBuilder {
     this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
     this._overrideTransformPerTreeIndexTexture = textures.transformOverrideIndexTexture;
     this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
-    this.setDefaultStyle(DefaultNodeAppearance.Default);
 
-    this._regularNodesTreeIndices = new IndexSet(new NumericRange(0, treeIndexCount).values());
+    this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
     this._infrontNodesTreeIndices = new IndexSet();
+
+    this.setDefaultStyle(DefaultNodeAppearance.Default);
   }
 
   getDefaultStyle(): NodeAppearance {
@@ -57,6 +60,23 @@ export class NodeStyleTextureBuilder {
       fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
       // Force full update as we might have overwritten previously applied styles
       this._currentlyAppliedStyles.clear();
+      this._infrontNodesTreeIndices.clear();
+      this._ghostedNodesTreeIndices.clear();
+      this._regularNodesTreeIndices.clear();
+
+      const allIndicesRange = new NumericRange(0, this._treeIndexCount);
+      const infront = !!appearance.renderInFront;
+      const ghosted = !!appearance.renderGhosted;
+      if (infront) {
+        this._infrontNodesTreeIndices.addRange(allIndicesRange);
+      }
+      if (ghosted) {
+        this._ghostedNodesTreeIndices.addRange(allIndicesRange);
+      }
+      if (!infront && !ghosted) {
+        this._regularNodesTreeIndices.addRange(allIndicesRange);
+      }
+
       this._needsUpdate = true;
     }
   }

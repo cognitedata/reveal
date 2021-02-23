@@ -162,4 +162,25 @@ describe('NodeStyleTextureBuilder', () => {
     const texels = Array.from(builder.overrideColorPerTreeIndexTexture.image.data);
     expect(texels).toEqual([1, 2, 3, 1]); // Color is from default style, but 'renderGhosted' from styled set
   });
+
+  test('setDefaultStyle() recomputes geometry type collections', () => {
+    const builder = new NodeStyleTextureBuilder(3, styleProvider);
+    styleProvider.addStyledSet(new FixedNodeSet([1]), { renderGhosted: true });
+    styleProvider.addStyledSet(new FixedNodeSet([2]), { renderInFront: true });
+
+    builder.build();
+    expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
+    expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([1]));
+    expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([2]));
+
+    builder.setDefaultStyle({ renderGhosted: true });
+    builder.build();
+    expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([0, 1]));
+    expect(builder.regularNodeTreeIndices).toEqual(new IndexSet());
+
+    builder.setDefaultStyle({ renderInFront: true });
+    builder.build();
+    expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([0, 2]));
+    expect(builder.regularNodeTreeIndices).toEqual(new IndexSet());
+  });
 });
