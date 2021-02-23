@@ -34,12 +34,12 @@ export default function UploadStep() {
       <FileUploaderWrapper>
         <FileUploader
           accept={supportedExtensions.map((e) => `image/${e}`).join(', ')}
-          maxTotalSizeInBytes={5 * 1024 ** 3 /* 5 Gb */}
+          maxTotalSizeInBytes={5 * 1024 ** 3 /* 5 GB */}
           validExtensions={supportedExtensions}
           onUploadSuccess={onUploadSuccess}
         >
           <Detail>
-            Files supported: jpeg, png, tiff. Total size limit: 5 Gb.
+            Files supported: jpeg, png, tiff. Total size limit: 5 GB.
           </Detail>
         </FileUploader>
 
