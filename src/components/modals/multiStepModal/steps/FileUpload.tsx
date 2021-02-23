@@ -15,14 +15,16 @@ import { boardState, imageFileState } from 'store/forms/selectors';
 import { Board } from 'store/suites/types';
 import { boardValidator } from 'validators';
 import { useForm } from 'hooks';
+import { useMetrics } from '@cognite/metrics';
 
 type Props = {
   filesUploadQueue: Map<string, File>;
 };
 
 export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
-  const { key: boardKey } = useSelector(boardState) as Board;
+  const { key: boardKey, title: boardTitle } = useSelector(boardState) as Board;
   const { loading, fileInfo: currentFileInfo } = useSelector(imageFileState);
+  const metrics = useMetrics('EditSuite');
   let uploadQueuedName = filesUploadQueue.get(boardKey || newFileKey)?.name;
 
   const { setErrors, errors } = useForm(boardValidator);
@@ -37,6 +39,11 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
         ...prevState,
         imageFileId: boardValidator.imageFile?.mimeType,
       }));
+      metrics.track('FileUploadValidationError_FileType', {
+        boardKey,
+        board: boardTitle,
+        fileType: file?.type,
+      });
       return;
     }
     if (!validateFileSize(file)) {
@@ -44,6 +51,11 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
         ...prevState,
         imageFileId: boardValidator.imageFile?.maxSize?.message,
       }));
+      metrics.track('FileUploadValidationError_MaxSize', {
+        boardKey,
+        board: boardTitle,
+        fileSize: file?.size,
+      });
       return;
     }
     setErrors((prevState: Board) => ({
@@ -52,6 +64,13 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
     }));
     filesUploadQueue.set(boardKey || newFileKey, file);
     uploadQueuedName = file.name;
+    metrics.track('FileUpload', {
+      boardKey,
+      board: boardTitle,
+      fileOriginalName: uploadQueuedName,
+      fileSize: file?.size,
+      fileType: file?.type,
+    });
   };
 
   const renderFileName = () => {

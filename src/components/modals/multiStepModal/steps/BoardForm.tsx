@@ -27,6 +27,7 @@ import { boardValidator } from 'validators';
 import { RootDispatcher } from 'store/types';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { flushFilesQueue } from 'utils/files';
+import { useMetrics } from '@cognite/metrics';
 import { FileUpload } from './FileUpload';
 import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';
@@ -52,6 +53,7 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
   const board = useSelector(boardState) as Board;
   const dispatch = useDispatch<RootDispatcher>();
   const client = useContext(CdfClientContext);
+  const metrics = useMetrics('EditSuite');
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
@@ -70,11 +72,22 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
 
   const deleteBoardFromList = (event: React.MouseEvent, boardKey: string) => {
     event.stopPropagation();
+    metrics.track('DeleteBoard', {
+      boardKey,
+      board: board.title,
+      suiteKey: suite.key,
+      suite: suite.title,
+      component: 'BoardForm',
+    });
     dispatch(deleteBoard(boardKey));
   };
 
   const openBoard = (boardItem: Board) => {
     flushFilesQueue(filesUploadQueue);
+    metrics.track('SelectBoard', {
+      boardKey: boardItem.key,
+      board: boardItem.title,
+    });
     dispatch(setBoardState(client, boardItem));
   };
 

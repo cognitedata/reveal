@@ -13,6 +13,7 @@ import { modalSettings } from 'components/modals/config';
 import { ModalFooter, ModalContainer } from 'components/modals/elements';
 import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
+import { useMetrics } from '@cognite/metrics';
 
 interface Props {
   dataItem: Suite;
@@ -27,6 +28,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
   const hasErrors = !useSelector(isErrorListEmpty);
   const { saving: formSaving } = useSelector(formState);
   const [filesUploadQueue] = useState(new Map());
+  const metrics = useMetrics('EditSuite');
 
   useEffect(() => {
     initForm(dataItem);
@@ -41,12 +43,22 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
   const handleSubmit = async () => {
     if (hasErrors) return;
     await dispatch(saveForm(client, apiClient, filesUploadQueue, suite));
+    metrics.track('Saved', {
+      suiteKey: suite.key,
+      suite: suite.title,
+      component: 'AddBoardModal',
+    });
+    handleCloseModal();
+  };
+
+  const cancel = () => {
+    metrics.track('Cancel', { component: 'AddBoardModal' });
     handleCloseModal();
   };
 
   const footer = (
     <ModalFooter>
-      <Button variant="ghost" onClick={handleCloseModal} disabled={formSaving}>
+      <Button variant="ghost" onClick={cancel} disabled={formSaving}>
         Cancel
       </Button>
       {formSaving ? (
@@ -63,7 +75,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
     <>
       <Modal
         visible
-        onCancel={handleCloseModal}
+        onCancel={cancel}
         headerText="Add board to suite"
         footer={footer}
         width={modalSettings.create.width.boards}

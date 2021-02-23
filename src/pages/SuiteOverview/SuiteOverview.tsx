@@ -23,6 +23,7 @@ import isEqual from 'lodash/isEqual';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { fetchImageUrls } from 'store/suites/thunks';
 import * as actions from 'store/suites/actions';
+import { useMetrics } from '@cognite/metrics';
 import { StyledTitle, LargeTilesContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {
@@ -51,6 +52,8 @@ const SuiteOverview: React.FC = () => {
   const [goHomeDispatched, setGoHomeDispatched] = useState(false);
 
   const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
+
+  const metrics = useMetrics('SuiteOverview');
 
   const { title, color, boards } = suite || {};
 
@@ -111,7 +114,15 @@ const SuiteOverview: React.FC = () => {
     return <Loader />;
   }
 
-  const handleOpenModal = (modalType: ModalType, modalProps: any) => {
+  const handleOpenModal = (
+    modalType: ModalType,
+    modalProps: { dataItem: Suite }
+  ) => {
+    const { dataItem: suiteItem } = modalProps;
+    metrics.track(`Select_${modalType}`, {
+      suiteKey: suiteItem.key,
+      suite: suiteItem.title,
+    });
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
@@ -157,6 +168,14 @@ const SuiteOverview: React.FC = () => {
                   href={board.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    metrics.track('InfographicsBoard_Click', {
+                      boardKey: board.key,
+                      board: board.title,
+                      suiteKey: suite.key,
+                      suite: suite.title,
+                    })
+                  }
                 >
                   <InfographicsTile
                     dataItem={board}
@@ -175,6 +194,14 @@ const SuiteOverview: React.FC = () => {
                       href={board.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() =>
+                        metrics.track('Board_Click', {
+                          boardKey: board.key,
+                          board: board.title,
+                          suiteKey: suite.key,
+                          suite: suite.title,
+                        })
+                      }
                     >
                       <Tile
                         dataItem={board}

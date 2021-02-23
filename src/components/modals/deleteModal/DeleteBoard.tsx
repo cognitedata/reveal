@@ -9,6 +9,7 @@ import { Button, Title } from '@cognite/cogs.js';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 import { Board, Suite } from 'store/suites/types';
+import { useMetrics } from '@cognite/metrics';
 
 interface Props {
   suite: Suite;
@@ -19,12 +20,20 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
+  const metrics = useMetrics('EditSuite');
 
   const handleCloseModal = () => {
     dispatch(modalClose());
   };
 
   const handleDeleteSuite = async () => {
+    metrics.track('DeleteBoard', {
+      boardKey: board.key,
+      board: board.title,
+      suiteKey: suite.key,
+      suite: suite.title,
+      component: 'DeleteBoard',
+    });
     handleCloseModal();
     await dispatch(
       insertSuite(client, apiClient, {
@@ -34,9 +43,14 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
     );
   };
 
+  const cancel = () => {
+    metrics.track('Cancel_DeleteBoard', { component: 'DeleteBoard' });
+    handleCloseModal();
+  };
+
   const footer = (
     <DeleteModalFooter>
-      <Button onClick={handleCloseModal}>Keep board</Button>
+      <Button onClick={cancel}>Keep board</Button>
       <Button
         type="danger"
         icon="Trash"
@@ -52,7 +66,7 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
     <>
       <Modal
         visible
-        onCancel={handleCloseModal}
+        onCancel={cancel}
         headerText="Remove board?"
         footer={footer}
         width={400}

@@ -13,6 +13,7 @@ import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useIntercom } from 'react-use-intercom';
 import ErrorPage from 'pages/ErrorPage';
+import { Metrics } from '@cognite/metrics';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -70,6 +71,12 @@ const Authentication = (): JSX.Element => {
         email: userId,
         customAttributes: { hide_default_launcher: true },
       });
+      Metrics.identify(userId);
+      Metrics.people({
+        name: userId,
+        email: userId,
+      });
+      Metrics.props({ tenant });
       fetch();
     }
   }, [
@@ -82,6 +89,7 @@ const Authentication = (): JSX.Element => {
     fetchDispatched,
     bootIntercom,
     userId,
+    tenant,
   ]);
 
   if (hasError) {

@@ -18,6 +18,7 @@ import { useIntercom } from 'react-use-intercom';
 import { getReleaseVersion } from 'utils/release';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
+import { useMetrics } from '@cognite/metrics';
 import { CogniteLogo, GroupPreview, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
@@ -26,6 +27,7 @@ const AppHeader: React.FC = () => {
   const email = useSelector(getUserId);
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const history = useHistory();
+  const metrics = useMetrics('AppHeader');
 
   const { privacyPolicyUrl, intercomTourId } = sidecar;
   const allGroupNames = useSelector(getUsersGroupNames);
@@ -33,12 +35,14 @@ const AppHeader: React.FC = () => {
   const { startTour, shutdown: shutdownIntercom } = useIntercom();
 
   const startIntercomTour = () => {
+    metrics.track('HelpMenu_StartIntercomTour');
     startTour(intercomTourId);
   };
 
   const client = useContext(CdfClientContext);
 
   const performLogout = async () => {
+    metrics.track('Profile_Logout');
     await logout(client, shutdownIntercom);
   };
 
@@ -46,20 +50,32 @@ const AppHeader: React.FC = () => {
     const alreadyChecked = groupsFilter.includes(groupName);
     if (alreadyChecked) {
       dispatch(clearGroupsFilter());
+      metrics.track('GroupMenu_UnselectGroup', { groupName });
     } else {
       dispatch(setGroupsFilter([groupName]));
+      metrics.track('GroupMenu_SelectGroup', { groupName });
     }
   };
-  const clearGroupFilter = () => dispatch(clearGroupsFilter());
+  const clearGroupFilter = () => {
+    metrics.track('ClearGroupFilter');
+    dispatch(clearGroupsFilter());
+  };
 
-  const goHome = () => history.push('/');
+  const goHome = () => {
+    metrics.track('CustomerLogo_Click');
+    history.push('/');
+  };
 
   const actions = [
     {
       key: 'view',
       component: (
         <Tooltip content="View what other groups has access to">
-          <Icon type="Public" data-testid="select-group-preview-menu" />
+          <Icon
+            type="Public"
+            data-testid="select-group-preview-menu"
+            onClick={() => metrics.track('GroupMenu_Click')}
+          />
         </Tooltip>
       ),
       menu: (
@@ -86,7 +102,7 @@ const AppHeader: React.FC = () => {
       key: 'help',
       component: (
         <Tooltip content="Help">
-          <Icon type="Help" />
+          <Icon type="Help" onClick={() => metrics.track('HelpMenu_Click')} />
         </Tooltip>
       ),
       menu: (
@@ -98,11 +114,11 @@ const AppHeader: React.FC = () => {
               href="https://pr-567.docs.preview.cogniteapp.com/cockpit/"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => metrics.track('HelpMenu_GettingStarted')}
             >
               Getting Started
             </CustomLink>
           </Menu.Item>
-          <Menu.Item>FAQs</Menu.Item>
           <Menu.Divider />
           <Menu.Item>
             <CustomMenuItem
@@ -119,7 +135,12 @@ const AppHeader: React.FC = () => {
     },
     {
       key: 'user',
-      component: <Avatar text={email} />,
+      component: (
+        <Avatar
+          text={email}
+          onClick={() => metrics.track('ProfileMenu_Click')}
+        />
+      ),
       menu: (
         <Menu>
           <Menu.Item>
@@ -127,6 +148,7 @@ const AppHeader: React.FC = () => {
               href={privacyPolicyUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => metrics.track('ProfileMenu_PrivacyPolicy')}
             >
               Privacy policy
             </CustomLink>
@@ -192,6 +214,7 @@ const AppHeader: React.FC = () => {
                 href="https://www.cognite.com/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => metrics.track('CogniteLogo_Click')}
               >
                 <img src={cogniteLogo} alt="Cognite logo" />
               </a>
