@@ -42,7 +42,7 @@
     "p-memoize": "^4.0.1",
     "plotly.js-basic-dist": "^1.58.4",
     "react": "^17.0.1",
-    "react-datepicker": "^3.3.0",
+    "react-datepicker": "^3.6.0",
     "react-dom": "^17.0.1",
     "react-i18next": "^11.8.1",
     "react-plotly.js": "^2.5.1",
