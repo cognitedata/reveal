@@ -46,7 +46,7 @@
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
     "@storybook/preset-create-react-app": "^3.1.6",
-    "@storybook/react": "^6.1.18",
+    "@storybook/react": "^6.1.19",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.5",
     "@types/jest": "^26.0.17",
