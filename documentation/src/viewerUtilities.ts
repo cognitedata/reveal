@@ -1,6 +1,4 @@
 import {
-  CameraChangeDelegate,
-  PointerEventDelegate,
   Cognite3DViewer,
 } from '@cognite/reveal';
 
