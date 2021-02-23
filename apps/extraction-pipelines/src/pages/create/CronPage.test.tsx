@@ -11,6 +11,9 @@ import CronPage, {
   INTEGRATION_CRON_HEADING,
 } from './CronPage';
 import { CRON_PAGE_PATH } from '../../routing/CreateRouteConfig';
+import { NEXT } from '../../utils/constants';
+import { CRON_INVALID } from '../../utils/validation/cronValidation';
+import { parseCron } from '../../utils/cronUtils';
 
 describe('CronPage', () => {
   beforeEach(() => {
@@ -32,9 +35,17 @@ describe('CronPage', () => {
   });
 
   test('Interact with form', async () => {
+    const next = screen.getByText(NEXT);
     const dataSetId = screen.getByLabelText(CRON_LABEL);
+    const invalid = '0 0 9';
+    fireEvent.change(dataSetId, { target: { value: invalid } });
+    fireEvent.click(next);
+    expect(
+      await screen.findByText(new RegExp(CRON_INVALID, 'i'))
+    ).toBeInTheDocument();
     const value = '0 0 9 1/1 * ? *';
     fireEvent.change(dataSetId, { target: { value } });
     expect(screen.getByDisplayValue(value)).toBeInTheDocument();
+    expect(screen.getByText(parseCron(value))).toBeInTheDocument();
   });
 });

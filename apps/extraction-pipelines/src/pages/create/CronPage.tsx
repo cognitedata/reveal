@@ -1,8 +1,7 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Button, Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
@@ -20,22 +19,25 @@ import {
   DATA_SET_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
+import { parseCron } from '../../utils/cronUtils';
+import { Link } from '../../components/buttons/Link';
+import { cronSchema } from '../../utils/validation/cronValidation';
 
 const StyledInput = styled.input`
   width: 50%;
+  margin-bottom: 0.5rem;
   &.has-error {
     border-color: ${Colors.danger.hex()};
   }
+`;
+const ReadBack = styled.i`
+  margin-bottom: 1rem;
 `;
 export const CRON_LABEL: Readonly<string> = 'Cron expression';
 export const INTEGRATION_CRON_HEADING: Readonly<string> =
   'Integration schedule - Cron Expression';
 export const CRON_TIP: Readonly<string> =
   'Enter a cron expression for when the integration is scheduled to run.';
-export const CRON_REQUIRED: Readonly<string> = 'Cron is required';
-const cronSchema = yup.object().shape({
-  cron: yup.string(),
-});
 
 interface CronPageProps {}
 
@@ -44,6 +46,7 @@ interface CronFormInput {
 }
 
 const CronPage: FunctionComponent<CronPageProps> = () => {
+  const [input, setInput] = useState<string>('');
   const history = useHistory();
   const { register, handleSubmit, errors } = useForm<CronFormInput>({
     resolver: yupResolver(cronSchema),
@@ -53,7 +56,17 @@ const CronPage: FunctionComponent<CronPageProps> = () => {
   const handleNext = () => {
     history.push(createLink(DATA_SET_PAGE_PATH));
   };
-
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+  const readCron = (exp: string) => {
+    try {
+      const parsed = parseCron(exp);
+      return <ReadBack>{parsed}</ReadBack>;
+    } catch (_) {
+      return <></>;
+    }
+  };
   return (
     <CreateIntegrationPageWrapper>
       <GridBreadCrumbsWrapper to={createLink(SCHEDULE_PAGE_PATH)}>
@@ -62,12 +75,16 @@ const CronPage: FunctionComponent<CronPageProps> = () => {
       <GridTitleWrapper>Create integration</GridTitleWrapper>
       <GridMainWrapper>
         <GridH2Wrapper>{INTEGRATION_CRON_HEADING}</GridH2Wrapper>
+        <i className="description">{CRON_TIP}</i>
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
           <label htmlFor="cron-input" className="input-label">
             {CRON_LABEL}
           </label>
           <span id="cron-hint" className="input-hint">
-            {CRON_TIP}
+            <Link
+              href="https://crontab.guru/"
+              linkText="How do I write a cron expression?"
+            />
           </span>
           <ErrorMessage
             errors={errors}
@@ -82,11 +99,14 @@ const CronPage: FunctionComponent<CronPageProps> = () => {
             id="cron-input"
             name="cron"
             type="text"
+            onChange={onChange}
             ref={register}
             className={`cogs-input ${errors.cron ? 'has-error' : ''}`}
             aria-invalid={!!errors.cron}
             aria-describedby="cron-hint cron-error"
+            autoComplete="off"
           />
+          {readCron(input)}
           <Button type="primary" htmlType="submit">
             {NEXT}
           </Button>
