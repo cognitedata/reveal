@@ -1322,10 +1322,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@^0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.7.2.tgz#c5c77ab48155cdacb3048070b87477c002d4cf2a"
-  integrity sha512-WMnfVCiWSucAcsudB2gZ8PzlDIf7OrRR/GOy+TYSLc2hRAfeZDKQfAI2BPUXVcM/ssXxP4zwvMphMxRuCIvLxg==
+"@cognite/auth-utils@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.8.0.tgz#05366a1ef2c257ea7e6098a0872c56a389686abd"
+  integrity sha512-D0JJaCjLtRXE5Mzw2hMRjR5yjIQPtmHfyYHb+Ez28ac1eFlsJGk8Yz5FVJDCFbaPKcf1hFfRhI+jRWeVrD1nQg==
   dependencies:
     "@azure/msal-browser" "^2.8.0"
     "@cognite/sdk" "^3.3.0"
@@ -1397,15 +1397,15 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-container@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-0.8.0.tgz#211115de26bdf1828d553d50f373faf23f6ee523"
-  integrity sha512-CtJiFZ+KTtS1YYAfa3MZHgSUtLXUFnxRNq4iA6g1tP1CGxemS41wA+QG5ph2mV7H1COkEDZXQloZVOlKGYj/sg==
+"@cognite/react-container@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-0.9.0.tgz#b3eb3771b9cef4d2aa18ac674153edf27093c420"
+  integrity sha512-jOaZn0NhqxuTO1yyD0h9Df3DwOJLcUh35oQ0IUEuAe/jdeIDIxNhrzkpYQjSOK7LgouL/QjpGn7lNMDuJap+Yw==
   dependencies:
-    "@cognite/auth-utils" "^0.7.2"
+    "@cognite/auth-utils" "^0.8.0"
     "@cognite/react-errors" "^0.0.4"
     "@cognite/react-i18n" "^0.3.0"
-    "@cognite/react-tenant-selector" "^0.4.4"
+    "@cognite/react-tenant-selector" "^0.6.0"
     jwt-decode "^3.0.0"
     react-redux "^7.2.2"
     react-router-dom "^5.2.0"
@@ -1430,12 +1430,12 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.8.5"
 
-"@cognite/react-tenant-selector@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.4.4.tgz#99b5f79eb44ac17946daa72d0cf9213f6516e841"
-  integrity sha512-iVS3Yuh4VXFxnVQlm6m9I3y3YFMsEhaIX97WhIF4B/iZg5qOj8v3qMzKUt/b6hwlQzxl3WkJcb+Xii+wwk4fRg==
+"@cognite/react-tenant-selector@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.6.0.tgz#0b4ed4c1cb882d1a6aec781ff499963bacc41bcb"
+  integrity sha512-BpUEdiR3KbOuO4wkEt+vYEsFj1UpWq1vn9JhwFo/DAXcZG4UgCjOhtqCJMP6krvgEHZA+0aToPAFBVtdMwV+eA==
   dependencies:
-    "@cognite/auth-utils" "^0.7.2"
+    "@cognite/auth-utils" "^0.8.0"
     "@cognite/cogs.js" "^2.4.0"
     "@cognite/metrics" "^1.0.0"
     "@cognite/react-i18n" "^0.3.0"
