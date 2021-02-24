@@ -2,12 +2,16 @@ import React from 'react';
 import { useTranslation } from '@cognite/react-i18n';
 
 import { StyledHeading, CogniteMark } from '../../styles/elements';
-import { getSidecar } from '../../utils';
 import { StyledCardContainerHeader } from './elements';
 
-const CardContainerHeader = () => {
+const CardContainerHeader = ({
+  applicationName,
+  applicationId,
+}: {
+  applicationName: string;
+  applicationId: string;
+}) => {
   const { t } = useTranslation('TenantSelector');
-  const { applicationName, applicationId } = getSidecar();
   return (
     <StyledCardContainerHeader>
       <h3 className="cogs-title-5">

@@ -6,6 +6,6 @@ import { Base } from './TenantSelectorBackground.stories';
 describe('TenantSelectorBackground', () => {
   it('Renders children', () => {
     render(<Base />);
-    expect(screen.getByRole('img')).toBeTruthy();
+    expect(screen.getAllByRole('img')).toBeTruthy();
   });
 });

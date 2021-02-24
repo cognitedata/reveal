@@ -14,6 +14,7 @@ export const StyledHeading = styled.p`
   font-weight: 600;
   color: #000000;
   margin-top: 6px;
+  overflow-wrap: break-word;
 `;
 
 export const Centered = styled.div`

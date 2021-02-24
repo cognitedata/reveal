@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Loader } from '@cognite/cogs.js';
 import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
 
-import { getSidecar } from '../../utils';
 import {
   LoginTip,
   TitleChanger,
@@ -16,7 +15,7 @@ import {
   LoginWithCognite,
 } from '../LoginOptions';
 
-import { StyledCardContainer, StyledContentWrapper } from './elements';
+import { StyledCardContainer, StyledContentWrapper, Error } from './elements';
 
 export type EnabledModes = {
   cognite?: boolean;
@@ -33,37 +32,42 @@ export type FormState = {
 };
 
 type Props = {
-  handleSubmit: (tenant: string) => void;
-  handleClusterSubmit: (tenant: string, cluster: string) => void;
-  validateTenant: (tenant: string) => Promise<boolean>;
-  validateCluster: (tenant: string, cluster: string) => Promise<boolean>;
-  loading: boolean;
-  initialTenant?: string;
-  errors?: React.ReactNode[];
-  helpLink?: string;
+  applicationId: string;
+  applicationName: string;
   authClient?: CogniteAuth;
   authState?: AuthenticatedUser;
+  cdfCluster: string;
   enabledLoginModes: EnabledModes;
+  errors?: React.ReactNode[];
+  handleClusterSubmit: (tenant: string, cluster: string) => void;
+  handleSubmit: (tenant: string) => void;
+  helpLink?: string;
+  initialTenant?: string;
+  loading: boolean;
+  validateCluster: (tenant: string, cluster: string) => Promise<boolean>;
+  validateTenant: (tenant: string) => Promise<boolean>;
 };
 
 const CardContainer = ({
+  applicationId,
+  applicationName,
   authClient,
-  handleSubmit,
+  authState,
+  cdfCluster,
+  errors,
   handleClusterSubmit,
-  validateTenant,
-  validateCluster,
+  handleSubmit,
+  helpLink,
   initialTenant,
   loading,
-  errors,
-  helpLink,
-  authState,
+  validateCluster,
+  validateTenant,
   enabledLoginModes = {
     cognite: true,
   },
 }: Props) => {
   const [containerHeight, setContainerHeight] = React.useState<string>();
   const container = React.createRef<HTMLDivElement>();
-  const { cdfCluster } = getSidecar();
 
   React.useEffect(() => {
     if (container?.current) {
@@ -71,23 +75,33 @@ const CardContainer = ({
         setContainerHeight(`${container?.current?.clientHeight}px`);
       }
     }
-  }, [container]);
+  }, [container, authState?.error, authState?.project]);
 
-  const showProjectSelection =
-    authState && authState?.authenticated && !authState?.project;
-  const showLoginOptions = !showProjectSelection;
+  const showLoading =
+    authClient?.state.initialized && (!authState || authState?.initialising);
 
-  // console.log('Render gates', { showProjectSelection, showLoginOptions });
-  // console.log('authClient.state', authClient?.state);
+  const showProjectSelection = !showLoading && authState?.authenticated;
 
-  const showLoading = false;
+  const showLoginOptions = !showProjectSelection && !showLoading;
+
+  // console.log('Render gates', {
+  //   showProjectSelection,
+  //   showLoginOptions,
+  //   showLoading,
+  // });
 
   return (
     <StyledCardContainer style={{ height: `${containerHeight}` }}>
       <div ref={container}>
         <StyledContentWrapper>
-          <TitleChanger />
-          <CardContainerHeader />
+          <TitleChanger
+            applicationName={applicationName}
+            applicationId={applicationId}
+          />
+          <CardContainerHeader
+            applicationName={applicationName}
+            applicationId={applicationId}
+          />
 
           {showLoading && <Loader />}
 
@@ -123,8 +137,11 @@ const CardContainer = ({
               {enabledLoginModes.aad && (
                 <>
                   {/* Error from AD: */}
-                  {authClient?.state.error && (
-                    <div>ERROR: {authClient?.state.errorMessage}</div>
+                  {authState?.error && (
+                    <Error>
+                      <strong>ERROR: </strong>
+                      {authState?.errorMessage}
+                    </Error>
                   )}
 
                   <LoginWithAzureAD
@@ -137,7 +154,9 @@ const CardContainer = ({
           )}
         </StyledContentWrapper>
         {/* Can we provide a better default link? */}
-        <LoginTip helpLink={helpLink || 'https://docs.cognite.com/'} />
+        {!showLoading && (
+          <LoginTip helpLink={helpLink || 'https://docs.cognite.com/'} />
+        )}
       </div>
     </StyledCardContainer>
   );

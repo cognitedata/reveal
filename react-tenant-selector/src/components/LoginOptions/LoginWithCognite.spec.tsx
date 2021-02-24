@@ -29,9 +29,9 @@ describe('<LoginWithCognite />', () => {
     expect(tenantInput.value).toEqual('akerbp');
   });
 
-  it('Should switch between cluster and tenant selectors on [Specify cluster] and [Back] buttons click', () => {
+  it('Should switch between cluster and tenant selectors on [Specify Cluster] and [Back] buttons click', () => {
     const { getByText } = render(<Base {...props} />);
-    const toClusterButton = getByText('Specify cluster') as HTMLButtonElement;
+    const toClusterButton = getByText('Specify Cluster') as HTMLButtonElement;
     act(() => {
       fireEvent.click(toClusterButton);
     });
@@ -39,6 +39,6 @@ describe('<LoginWithCognite />', () => {
     act(() => {
       fireEvent.click(backToTenantButton);
     });
-    expect(getByText('Specify cluster')).toBeInTheDocument();
+    expect(getByText('Specify Cluster')).toBeInTheDocument();
   });
 });

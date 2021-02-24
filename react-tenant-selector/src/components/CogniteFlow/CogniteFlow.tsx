@@ -64,7 +64,7 @@ const CogniteFlow = ({
             setClusterSelectorShown(true);
           }}
         >
-          {t('specify-cluster_button', { defaultValue: 'Specify cluster' })}
+          {t('specify-cluster_button', { defaultValue: 'Specify Cluster' })}
         </Button>
       </StyledSpecifyCluster>
     </>

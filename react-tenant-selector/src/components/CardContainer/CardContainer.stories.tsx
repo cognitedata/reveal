@@ -8,6 +8,9 @@ export default {
 };
 
 const cardContainerProps = {
+  applicationId: 'test-id',
+  applicationName: 'test-name',
+  cdfCluster: 'test-cdfCluster',
   handleSubmit: action('handleSubmit'),
   handleClusterSubmit: action('handleClusterSubmit'),
   validateTenant: () => Promise.resolve(true),

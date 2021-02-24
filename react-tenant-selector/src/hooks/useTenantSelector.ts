@@ -1,10 +1,8 @@
 import { useState } from 'react';
 
 import axios from 'axios';
-import { getSidecar } from '../utils';
 
-const useTenantSelector = (appName: string) => {
-  const { appsApiBaseUrl } = getSidecar();
+const useTenantSelector = (appName: string, appsApiBaseUrl: string) => {
   const [validatingTenant, setValidatingTenant] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 

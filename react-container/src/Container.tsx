@@ -4,7 +4,7 @@ import { Store } from 'redux';
 
 import { withI18nSuspense } from '@cognite/react-i18n';
 import { ErrorBoundary } from '@cognite/react-errors';
-import { TenantSelector } from '@cognite/react-tenant-selector';
+import { TenantSelector, SidecarConfig } from '@cognite/react-tenant-selector';
 import { Loader } from '@cognite/cogs.js';
 
 import {
@@ -13,24 +13,18 @@ import {
   TranslationWrapper,
 } from './components';
 import { configureCogniteSDKClient, createBrowserHistory } from './internal';
-import { storage, getTenantInfo, getSidecar } from './utils';
+import { storage, getTenantInfo } from './utils';
 import { ConditionalReduxProvider } from './providers';
 
 interface Props {
   store?: Store;
   children: React.ReactChild;
-  disableTranslations?: boolean;
-  aadApplicationId?: string;
+  sidecar: SidecarConfig;
 }
-const RawContainer: React.FC<Props> = ({
-  children,
-  store,
-  disableTranslations = false,
-  aadApplicationId,
-}) => {
+const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
-  const { applicationId, cdfApiBaseUrl } = getSidecar();
+  const { applicationId, cdfApiBaseUrl, disableTranslations } = sidecar;
 
   storage.init({ tenant: possibleTenant, appName: applicationId });
 
@@ -67,12 +61,7 @@ const RawContainer: React.FC<Props> = ({
   // which is served by FAS when browsing to '/'
   if (!possibleTenant) {
     if (!initialTenantOrApiKeyTenant) {
-      return (
-        <TenantSelector
-          aadApplicationId={aadApplicationId}
-          disableTranslations={disableTranslations}
-        />
-      );
+      return <TenantSelector sidecar={sidecar} />;
     }
 
     history.push(`/${initialTenantOrApiKeyTenant}/`);
@@ -94,12 +83,13 @@ const RawContainer: React.FC<Props> = ({
   return (
     <TranslationWrapper disabled={disableTranslations}>
       <ChosenAuthContainer
+        sidecar={sidecar}
         sdkClient={client}
         authError={authError}
         tenant={initialTenant}
       >
         <ConditionalReduxProvider store={store}>
-          <ErrorBoundary instanceId="app-root">
+          <ErrorBoundary instanceId="container-root">
             <Router history={history}>{children}</Router>
           </ErrorBoundary>
         </ConditionalReduxProvider>
@@ -110,4 +100,10 @@ const RawContainer: React.FC<Props> = ({
 
 // @ts-expect-error what is up? - Type 'undefined' is not assignable to type 'ReactChild'
 export const Container = withI18nSuspense(RawContainer);
-export const ContainerWithoutI18N = RawContainer;
+
+export const ContainerWithoutI18N = (props: Props) => (
+  <RawContainer
+    {...props}
+    sidecar={{ ...props.sidecar, disableTranslations: true }}
+  />
+);

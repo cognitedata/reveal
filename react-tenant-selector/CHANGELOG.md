@@ -1,3 +1,23 @@
+## 0.6.0 Feb 24 2021
+
+### Changes
+
+- Make sidecar a prop
+- Bump auth-utils to 0.8.0
+- Minor style updates
+
+## 0.5.0 Feb 24 2021
+
+### Changes
+
+- Update cluster selection logic
+
+### Changes
+
+- Make sidecar a prop
+- Bump auth-utils to 0.8.0
+- Minor style updates
+
 ## 0.4.3 Feb 18 2021
 
 ### Changes

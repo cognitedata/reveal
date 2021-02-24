@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 
+export const Error = styled.div`
+  background: var(--cogs-midorange-4);
+  padding: 6px;
+`;
+
 export const StyledCardContainer = styled.div`
   width: 480px;
   min-height: 480px;
@@ -14,7 +19,9 @@ export const StyledCardContainer = styled.div`
 
 export const StyledContentWrapper = styled.div`
   padding: 0 32px;
+  padding-bottom: 32px;
   background: white;
+  border-radius: 4px;
   button {
     width: 100%;
     height: 40px;
@@ -30,6 +37,20 @@ export const StyledContentWrapper = styled.div`
   }
 
   .content {
-    margin-top: 60px;
+    margin-top: 32px;
+  }
+  .cogs-input.cogs-input-title-as-placeholder:not(:placeholder-shown)
+    ~ .placeholder,
+  .cogs-input.cogs-input-title-as-placeholder.placeholder-not-shown
+    ~ .placeholder,
+  .cogs-input.cogs-input-title-as-placeholder:focus ~ .placeholder {
+    top: calc(50% - 12px / 2 - 12px);
+  }
+`;
+
+export const LoaderWrapper = styled.div`
+  height: 200px;
+  & > .cogs-loader {
+    margin-top: 30px;
   }
 `;

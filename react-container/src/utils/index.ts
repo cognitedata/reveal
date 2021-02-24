@@ -2,5 +2,4 @@ export * from './log';
 export * from './env';
 export * from './localStorage';
 export * from './tenancy';
-export * from './sidecar';
 export { retrieveAccessToken } from './persistance';

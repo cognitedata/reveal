@@ -27,10 +27,12 @@ export const StyledIconWrapper = styled.div`
   height: 38px;
 `;
 
-export const CLetter = styled.div`
-  background-image: url(${CLetterImage});
+export const CLetter = styled.img.attrs(() => ({
+  src: CLetterImage,
+}))`
   width: 180px;
   height: 165px;
+  padding: 5px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100% 100%;
@@ -39,8 +41,9 @@ export const CLetter = styled.div`
   top: 9%;
 `;
 
-export const NLetter = styled.div`
-  background-image: url(${NLetterImage});
+export const NLetter = styled.img.attrs(() => ({
+  src: NLetterImage,
+}))`
   width: 268px;
   height: 246px;
   background-position: center center;

@@ -1,3 +1,11 @@
+## 0.9.0 Feb 23 2021
+
+### Changes
+
+- Make sidecar a prop
+- Bump auth-utils to 0.8.0
+- Add display of AD error message
+
 ## 0.8.0 Feb 19 2021
 
 ### Changes

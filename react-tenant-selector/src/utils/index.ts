@@ -1,3 +1,3 @@
 export { default as config } from './config';
-export { default as getSidecar } from './sidecar';
+export type { SidecarConfig } from './sidecar';
 export * from './tenancy';

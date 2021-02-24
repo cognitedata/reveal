@@ -5,9 +5,10 @@ import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
 // note: only using relative paths until we can setup storybook baseUrl properly:
+import { Loader } from '@cognite/cogs.js';
 import CardContainer, { EnabledModes } from './components/CardContainer';
 import { TenantSelectorBackground } from './components';
-import { getSidecar } from './utils';
+import { SidecarConfig } from './utils';
 import useTenantSelector from './hooks/useTenantSelector';
 import useClusterSelector from './hooks/useClusterSelector';
 import GlobalStyles from './global-styles';
@@ -15,24 +16,24 @@ import background from './assets/background.jpg';
 
 import '@cognite/cogs.js/dist/cogs.css';
 
-const {
-  applicationId,
-  cdfCluster,
-  backgroundImage,
-  helpLink,
-  aadApplicationId,
-  locizeProjectId,
-  AADTenantID,
-} = getSidecar();
-
 export const TenantSelector: React.FC<{
-  disableTranslations?: boolean;
-  // when using this on localhost from another application
-  // that app will NOT want to use the TSA's sidecar value,
-  // but instead override it here
-  aadApplicationId?: string;
-}> = ({ disableTranslations, aadApplicationId: AADAppIDFromExternalApp }) => {
+  sidecar: SidecarConfig;
+}> = ({ sidecar }) => {
+  const {
+    aadApplicationId,
+    applicationId,
+    applicationName,
+    appsApiBaseUrl,
+    backgroundImage,
+    cdfCluster,
+    directoryTenantId,
+    disableTranslations,
+    helpLink,
+    locizeProjectId,
+  } = sidecar;
+
   const [authenticating, setAuthenticating] = useState(false);
+  const [setup, setSetup] = useState(false);
 
   const [authState, setAuthState] = useState<AuthenticatedUser | undefined>();
 
@@ -40,9 +41,6 @@ export const TenantSelector: React.FC<{
     /^\/([^/]*).*$/,
     '$1'
   );
-
-  const AzureActiveDirectoryApplicationId =
-    AADAppIDFromExternalApp || aadApplicationId;
 
   useEffect(() => {
     configureI18n({
@@ -55,7 +53,7 @@ export const TenantSelector: React.FC<{
         apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '',
       },
       disabled: disableTranslations,
-    });
+    }).then(() => setSetup(true));
   }, []);
 
   const cache = new QueryClient({
@@ -73,7 +71,7 @@ export const TenantSelector: React.FC<{
     validatingTenant,
     redirecting,
     initialTenant,
-  } = useTenantSelector(applicationId);
+  } = useTenantSelector(applicationId, appsApiBaseUrl);
 
   const {
     onClusterSelected,
@@ -127,12 +125,12 @@ export const TenantSelector: React.FC<{
   const { flow, options } = getFlow(initialTenant || '', cdfCluster);
 
   let aad;
-  if (AzureActiveDirectoryApplicationId) {
+  if (aadApplicationId) {
     enabledLoginModes.aad = true;
 
     aad = {
-      appId: AzureActiveDirectoryApplicationId,
-      directoryTenantId: options?.directory || AADTenantID,
+      appId: aadApplicationId,
+      directoryTenantId: options?.directory || directoryTenantId,
     };
   }
 
@@ -157,21 +155,28 @@ export const TenantSelector: React.FC<{
     };
   }, []);
 
+  if (!setup) {
+    return <Loader />;
+  }
+
   return (
     <QueryClientProvider client={cache}>
       <GlobalStyles />
       <TenantSelectorBackground backgroundImage={backgroundImage || background}>
         <CardContainer
-          authState={authState}
-          validateTenant={performValidation}
-          validateCluster={performClusterValidation}
-          handleSubmit={onTenantSelected}
-          handleClusterSubmit={onClusterSelected}
-          loading={isLoading}
-          initialTenant={initialTenant || ''}
-          helpLink={helpLink || ''}
+          applicationId={applicationId}
+          applicationName={applicationName}
           authClient={authClient}
+          authState={authState}
+          cdfCluster={cdfCluster}
           enabledLoginModes={enabledLoginModes}
+          handleClusterSubmit={onClusterSelected}
+          handleSubmit={onTenantSelected}
+          helpLink={helpLink || ''}
+          initialTenant={initialTenant || ''}
+          loading={isLoading}
+          validateCluster={performClusterValidation}
+          validateTenant={performValidation}
         />
       </TenantSelectorBackground>
     </QueryClientProvider>

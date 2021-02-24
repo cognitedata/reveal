@@ -5,11 +5,12 @@ import { useTranslation } from '@cognite/react-i18n';
 import { StyledLoginTip } from './elements';
 
 type Props = {
-  helpLink: string;
+  helpLink?: string;
 };
 
 const LoginTip = ({ helpLink }: Props) => {
   const { t } = useTranslation('TenantSelector');
+  if (!helpLink) return null;
   return (
     <StyledLoginTip>
       <div className="login-tip-wrapper">

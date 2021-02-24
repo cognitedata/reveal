@@ -2,8 +2,9 @@ import * as React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
+import { SidecarConfig } from '@cognite/react-tenant-selector';
 
-import { getSidecar, log } from '../utils';
+import { log } from '../utils';
 
 export interface AuthContext {
   client?: CogniteClient;
@@ -23,29 +24,24 @@ export type EnabledModes = {
   aad?: boolean;
 };
 interface AuthContainerProps {
-  // why?
-  // eslint-disable-next-line react/no-unused-prop-types
   authError: () => void;
   sdkClient: CogniteClient;
   tenant: string;
+  sidecar: SidecarConfig;
   children: React.ReactNode;
 }
 export const AuthContainer: React.FC<AuthContainerProps> = ({
   authError,
   sdkClient,
   tenant,
+  sidecar,
   children,
 }) => {
   const [authState, setAuthState] = React.useState<AuthContext | undefined>();
   const [loading, setLoading] = React.useState(true);
   const { flow } = getFlow();
 
-  const {
-    aadApplicationId,
-    AADTenantID,
-    applicationId,
-    cdfCluster,
-  } = getSidecar();
+  const { aadApplicationId, AADTenantID, applicationId, cdfCluster } = sidecar;
 
   React.useEffect(() => {
     const authClient = new CogniteAuth(sdkClient, {
@@ -135,12 +131,15 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   );
 };
 
-type AuthContainerForApiKeyModeProps = Exclude<AuthContainerProps, 'AuthError'>;
+type AuthContainerForApiKeyModeProps = Exclude<
+  AuthContainerProps,
+  'AuthError' | 'sidecar'
+>;
 export const AuthContainerForApiKeyMode: React.FC<AuthContainerForApiKeyModeProps> = ({
   sdkClient,
   tenant,
   children,
-}: AuthContainerProps) => {
+}) => {
   return (
     <AuthProvider.Provider
       value={{

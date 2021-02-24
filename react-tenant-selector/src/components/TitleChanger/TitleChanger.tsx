@@ -2,10 +2,13 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from '@cognite/react-i18n';
 
-import { getSidecar } from '../../utils';
-
-const TitleChanger = () => {
-  const { applicationName, applicationId } = getSidecar();
+const TitleChanger = ({
+  applicationName,
+  applicationId,
+}: {
+  applicationName: string;
+  applicationId: string;
+}) => {
   const { t } = useTranslation('Title');
   return (
     <Helmet>

@@ -8,6 +8,11 @@ export const StyledSpecifyCluster = styled.div`
   font-weight: bold;
   display: flex;
   justify-content: center;
-  border-top: 1px solid var(--cogs-greyscale-grey4);
-  margin-top: 25px;
+  & > button {
+    padding-left: 14px;
+  }
+  & > button:hover {
+    border-top: none;
+    height: 40px;
+  }
 `;

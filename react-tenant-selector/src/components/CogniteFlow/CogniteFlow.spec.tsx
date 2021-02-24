@@ -6,7 +6,7 @@ import { Base, Loading } from './CogniteFlow.stories';
 describe('<CogniteFlow />', () => {
   it('Should show tenant selector by default', () => {
     const { getByText } = render(<Base />);
-    expect(getByText('Specify cluster')).toBeInTheDocument();
+    expect(getByText('Specify Cluster')).toBeInTheDocument();
   });
 
   it('Should auto-focus on page render', async () => {

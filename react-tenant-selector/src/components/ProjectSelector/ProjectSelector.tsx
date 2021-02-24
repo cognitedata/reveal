@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Button, Dropdown, Icons, Menu, Loader } from '@cognite/cogs.js';
-import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
 import { useQuery } from 'react-query';
+import { Button, Dropdown, Menu, Loader } from '@cognite/cogs.js';
+import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
+
+import { StyledProjectFormContainer } from './elements';
 
 interface Props {
   authClient?: CogniteAuth;
@@ -14,6 +16,7 @@ const ProjectSelector: React.FC<Props> = ({
   authState,
 }) => {
   const [selectedProject, setSelectedProject] = React.useState<string>();
+  const [showMenu, setShowMenu] = React.useState(false);
 
   const { data = [], isFetched, isError } = useQuery<{ urlName: string }[]>(
     ['projects'],
@@ -47,7 +50,10 @@ const ProjectSelector: React.FC<Props> = ({
     <Menu>
       {projects.map((dir) => (
         <Menu.Item
-          onClick={() => setSelectedProject(dir.urlName)}
+          onClick={() => {
+            setSelectedProject(dir.urlName);
+            setShowMenu(false);
+          }}
           key={dir.urlName}
         >
           {dir.urlName}
@@ -80,11 +86,13 @@ const ProjectSelector: React.FC<Props> = ({
   }
 
   return (
-    <div>
-      <p style={{ color: '#404040', fontWeight: 600, fontSize: 13 }}>
-        Project <Icons.Help />{' '}
-      </p>
-      <Dropdown content={ProjectsContent}>
+    <StyledProjectFormContainer>
+      <p style={{ color: '#404040', fontWeight: 600, fontSize: 13 }}>Project</p>
+      <Dropdown
+        content={ProjectsContent}
+        visible={showMenu}
+        onClickOutside={() => setShowMenu(false)}
+      >
         <Button
           style={{
             width: '100%',
@@ -92,17 +100,20 @@ const ProjectSelector: React.FC<Props> = ({
             justifyContent: 'space-between',
             marginBottom: 30,
           }}
-          disabled={projects.length === 1}
+          onClick={() => setShowMenu(true)}
+          disabled={projects.length <= 1}
           variant="outline"
           icon="Down"
           iconPlacement="right"
         >
-          {selectedProject || 'Select project'}
+          {projects.length === 0
+            ? 'No available projects'
+            : selectedProject || 'Select a project'}
         </Button>
       </Dropdown>
       <br />
       <Button
-        style={{ marginTop: 30, height: 40, width: '100%' }}
+        style={{ height: 40, width: '100%' }}
         size="large"
         variant="default"
         type="primary"
@@ -110,7 +121,7 @@ const ProjectSelector: React.FC<Props> = ({
       >
         Continue
       </Button>
-    </div>
+    </StyledProjectFormContainer>
   );
 };
 

@@ -26,7 +26,7 @@ The prime example can be found in the demo app [here](https://github.com/cognite
 
 ## Overview
 
-![alt text](https://github.com/cognitedata/frontend/tree/master/packages/browser/react/react-container/overview.png 'Hover text really needs a good joke here...')
+![alt text](./overview.png 'Hover text really needs a good joke here...')
 
 ## Details about the fun stuff
 

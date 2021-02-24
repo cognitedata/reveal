@@ -10,7 +10,7 @@ const Line = styled.span`
 const OrWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin: 30px 0;
+  margin: 18px 0;
 `;
 
 const LoginOrWrapper: React.FC = () => {

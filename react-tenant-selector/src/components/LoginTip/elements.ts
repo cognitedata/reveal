@@ -4,7 +4,7 @@ export const StyledLoginTip = styled.div`
   display: flex;
   justify-content: center;
   /* background-color: var(--cogs-greyscale-grey1); */
-  padding: 16px 0;
+  padding: 32px 0;
   font-size: 14px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;

@@ -1,7 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { mock as mockedAuthUtils } from '../__mocks/auth-utils';
 
+import { generateSidecar } from '__mocks/sidecar';
+
+import { mock as mockedAuthUtils } from '../__mocks/auth-utils';
 import { AuthConsumer } from '../components/AuthContainer';
 import { ContainerWithoutI18N } from '../Container';
 
@@ -10,10 +12,6 @@ jest.mock('../utils', () => {
   const utils = jest.requireActual('../utils');
   return {
     ...utils,
-    getSidecar: jest.fn(() => ({
-      applicationId: 'test-app',
-      cdfApiBaseUrl: 'test-api',
-    })),
     getTenantInfo: () => {
       return ['one', 'one'];
     },
@@ -23,8 +21,10 @@ jest.mock('../utils', () => {
 describe('ContainerWithoutI18N', () => {
   it('should get correctly setup cognite client', () => {
     const Test = () => {
+      const sidecar = generateSidecar();
+
       return (
-        <ContainerWithoutI18N disableTranslations>
+        <ContainerWithoutI18N sidecar={sidecar}>
           <AuthConsumer>
             {(authState) => {
               return (
@@ -42,6 +42,6 @@ describe('ContainerWithoutI18N', () => {
     render(<Test />);
 
     expect(screen.getByText('TEST-CONTENT')).toBeInTheDocument();
-    expect(screen.getByText('test-api')).toBeInTheDocument();
+    expect(screen.getByText('https://api.cognitedata.com')).toBeInTheDocument();
   });
 });

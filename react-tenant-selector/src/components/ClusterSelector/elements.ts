@@ -8,6 +8,9 @@ export const StyledClusterSelector = styled.div`
     .cogs-input-container:first-child {
       margin-right: 8px;
     }
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
   }
 
   .cluster-selector_buttons-wrapper {
