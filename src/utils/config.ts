@@ -13,8 +13,12 @@ export const isStaging = () => checkUrl('staging') || checkUrl('pr');
 export const isProduction = () => !(isStaging() || isDevelopment());
 
 export const getEnvironment = () => {
-  if (isDevelopment()) return 'development';
-  if (isStaging()) return 'staging';
+  if (isDevelopment()) {
+    return 'development';
+  }
+  if (isStaging()) {
+    return 'staging';
+  }
   return 'production';
 };
 
@@ -41,10 +45,10 @@ export const setupMixpanel = () => {
 
 export const handleUserIdentification = (email: string) => {
   Metrics.identify(email || 'not-identified-yet');
-  Metrics.people({
-    email,
-    name: email,
-  });
+  // Metrics.people({
+  //   email,
+  //   name: email,
+  // });
 };
 
 export default {

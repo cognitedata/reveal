@@ -20,6 +20,7 @@ import App from './App';
 // }
 
 const lifecycles = singleSpaReact({
+  // @ts-ignore
   React,
   ReactDOM,
   rootComponent: App,
