@@ -246,17 +246,31 @@ export const FileUploader = ({
     setFileList((list) => list.filter((el) => el.uid !== file.uid));
   };
 
-  const setupFilesBeforeUpload = (file: any) => {
+  const setupFilesBeforeUpload = (file: UploadFile) => {
     if (
       validExtensions === undefined ||
       validExtensions.length === 0 ||
-      validExtensions.includes(file.name.split('.').pop().toLowerCase())
+      validExtensions.includes((file.name.split('.').pop() || '').toLowerCase())
     ) {
-      setFileList((list) => [...list, file]);
+      setFileList((list) => {
+        if (
+          list.find(({ name, size, lastModified, type }) => {
+            return (
+              name === file.name &&
+              size === file.size &&
+              lastModified === file.lastModified &&
+              type === file.type
+            );
+          })
+        ) {
+          return list;
+        }
+        return [...list, file];
+      });
       setUploadStatus(STATUS.READY);
-    } else {
-      setFileList([]);
-      setUploadStatus(STATUS.WAITING);
+    } else if (
+      file.name[0] !== '.' /* do nothing at all about hidden files */
+    ) {
       message.error(`${file.name} has an invalid extension`);
     }
 
