@@ -43,7 +43,7 @@ const routes = [
     exact: true,
     path: '/:tenant/vision/annotations/file/:fileId',
     component: (props: RouteComponentProps) =>
-      LazyWrapper(props, () => import('src/pages/Annotations/AnnotationsEdit')),
+      LazyWrapper(props, () => import('src/pages/Preview/AnnotationsEdit')),
   },
 ];
 

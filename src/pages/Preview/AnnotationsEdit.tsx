@@ -2,13 +2,15 @@ import React from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { Button, Title } from '@cognite/cogs.js';
-import { FilePreview } from 'src/pages/Annotations/components/FilePreview/FilePreview';
+import { FilePreview } from 'src/pages/Preview/components/FilePreview/FilePreview';
 import { Tabs } from '@cognite/data-exploration';
-import { Contextualization } from 'src/pages/Annotations/components/Contextualization/Contextualization';
-import { FileDetailsComp } from 'src/pages/Annotations/components/FileDetails/FileDetailsComp';
-import { RouteComponentProps } from 'react-router-dom';
+import { Contextualization } from 'src/pages/Preview/components/Contextualization/Contextualization';
+import { FileDetailsComp } from 'src/pages/Preview/components/FileDetails/FileDetailsComp';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { AnnotationJobCompleted } from 'src/api/annotationJob';
+import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 
 const Container = styled.div`
   width: 100%;
@@ -52,12 +54,26 @@ const TabsContainer = styled.div`
 `;
 
 const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
+  const history = useHistory();
+  const { fileId } = props.match.params;
+
   const file = useSelector((state: RootState) => {
     // yeah I know repeating doesn't look good, perhaps it worth merging of these processSlice and uploadedFilesSlice
     return state.uploadedFiles.uploadedFiles.find(
-      (f) => f.id === parseInt(props.match.params.fileId, 10)
+      (f) => f.id === parseInt(fileId, 10)
     );
   });
+
+  const annotations = useSelector(({ processSlice }: RootState) => {
+    return AnnotationUtils.convertToAnnotations(
+      (processSlice.jobByFileId[fileId] as AnnotationJobCompleted).items[0]
+        .annotations
+    );
+  });
+
+  const onBackButtonClick = () => {
+    history.goBack();
+  };
 
   return (
     <>
@@ -67,7 +83,7 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
           <Title level={3}>Edit Annotations and Enrich File</Title>
         </TitleRow>
         <ToolBar className="z-4">
-          <Button type="secondary" shape="round">
+          <Button type="secondary" shape="round" onClick={onBackButtonClick}>
             Back
           </Button>
           <Title level={3}>{file?.name}</Title>
@@ -81,7 +97,7 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
         <AnnotationContainer>
           <FilePreviewMetadataContainer>
             <div>
-              <FilePreview fileObj={file} />
+              {file && <FilePreview fileObj={file} annotations={annotations} />}
             </div>
             <TabsContainer className="z-8">
               <Tabs
@@ -90,12 +106,10 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
                 style={{ fontSize: 14, fontWeight: 600, lineHeight: '20px' }}
               >
                 <Tabs.Pane title="Contextualization" key="context">
-                  <Contextualization />
+                  <Contextualization annotations={annotations} />
                 </Tabs.Pane>
                 <Tabs.Pane title="File Details" key="file-detail">
-                  <div>
-                    <FileDetailsComp fileObj={file} />
-                  </div>
+                  <div>{file && <FileDetailsComp fileObj={file} />}</div>
                 </Tabs.Pane>
               </Tabs>
             </TabsContainer>
