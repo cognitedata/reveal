@@ -36,7 +36,7 @@ const LeftSidebar: React.FC = () => {
       to={`/suites/${item.key}`}
       key={item.key}
       onClick={() =>
-        metrics.track('SelectSuite', { suiteKey: item.key, suite: item.title })
+        metrics.track('Suite_Click', { suiteKey: item.key, suite: item.title })
       }
     >
       <NavigationItem dataItem={item} />

@@ -84,7 +84,7 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
 
   const openBoard = (boardItem: Board) => {
     flushFilesQueue(filesUploadQueue);
-    metrics.track('SelectBoard', {
+    metrics.track('Select_Board', {
       boardKey: boardItem.key,
       board: boardItem.title,
     });

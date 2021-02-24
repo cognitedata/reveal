@@ -23,12 +23,13 @@ if (process.env.REACT_APP_SENTRY_DSN) {
   });
 }
 
-if (process.env.REACT_APP_MIXPANEL_TOKEN) {
+const { mixpanel, applicationId } = sidecar;
+if (mixpanel) {
   Metrics.init({
-    mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN,
+    mixpanelToken: mixpanel,
     debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',
     environment: config.env,
-    applicationId: sidecar.applicationId,
+    applicationId,
     versionName: getFASVersionName(),
     releaseId: getReleaseVersion(),
   });

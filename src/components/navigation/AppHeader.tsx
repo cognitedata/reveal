@@ -203,7 +203,7 @@ const AppHeader: React.FC = () => {
           <LogoWrapper>
             <TopBar.Logo
               onLogoClick={goHome}
-              logo={<img src={customerLogo} alt="Customer logo" />}
+              logo={<img src={customerLogo} alt="Digital Twin" />}
             />
           </LogoWrapper>
         </TopBar.Left>
@@ -216,7 +216,7 @@ const AppHeader: React.FC = () => {
                 rel="noopener noreferrer"
                 onClick={() => metrics.track('CogniteLogo_Click')}
               >
-                <img src={cogniteLogo} alt="Cognite logo" />
+                <img src={cogniteLogo} alt="Cognite" />
               </a>
             </TopBar.Item>
           </CogniteLogo>
