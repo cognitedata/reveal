@@ -129,7 +129,7 @@ export class Cognite3DViewer {
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _slicingNeedsUpdate: boolean = false;
-  private _geometryFilters: GeometryFilter[] = [];
+  private _geometryFilters: [Cognite3DModel, GeometryFilter][] = [];
 
   private readonly spinner: Spinner;
 
@@ -457,15 +457,12 @@ export class Cognite3DViewer {
     if (options.onComplete) {
       throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
-    if (options.geometryFilter) {
-      this._geometryFilters.push(options.geometryFilter);
-      this.setSlicingPlanes(this._revealManager.clippingPlanes);
-    }
     const { modelId, revisionId } = options;
     const cadNode = await this._revealManager.addModel('cad', {
       modelId,
       revisionId
     });
+
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
     this.models.push(model3d);
     this.scene.add(model3d);
@@ -480,6 +477,12 @@ export class Cognite3DViewer {
         }
       })
     );
+
+    if (options.geometryFilter) {
+      const geometryFilter = transformGeometryFilterToModelSpace(options.geometryFilter, model3d);
+      this._geometryFilters.push([model3d, geometryFilter]);
+      this.updateSlicingPlanes();
+    }
 
     return model3d;
   }
@@ -542,6 +545,7 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
+        this.removeGeometryFilterForModel(cadModel);
         this._revealManager.removeModel(model.type, cadModel.cadNode);
         return;
 
@@ -680,7 +684,10 @@ export class Cognite3DViewer {
    */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
     const geometryFilterPlanes = this._geometryFilters
-      .map(x => new BoundingBoxClipper(x.boundingBox).clippingPlanes)
+      .map(x => {
+        const [, filter] = x;
+        return new BoundingBoxClipper(filter.boundingBox).clippingPlanes;
+      })
       .reduce((a, b) => a.concat(b), []);
 
     const combinedSlicingPlanes = slicingPlanes.concat(geometryFilterPlanes);
@@ -1436,6 +1443,31 @@ export class Cognite3DViewer {
     // on hover callback
     canvas.addEventListener('mousemove', onHoverCallback);
   };
+
+  /**
+   * Removes a geometry filter for the model provided.
+   * @param model
+   * @returns True if a filter was removed, false if not.
+   */
+  private removeGeometryFilterForModel(model: Cognite3DModel): boolean {
+    const filterIndex = this._geometryFilters.findIndex(x => {
+      const [candidateModel] = x;
+      return candidateModel === model;
+    });
+    if (filterIndex >= 0) {
+      this._geometryFilters.splice(filterIndex, 0);
+      this.updateSlicingPlanes();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Updates slicing planes. Must be called after manipulating geometry filters.
+   */
+  private updateSlicingPlanes() {
+    this.setSlicingPlanes(this._revealManager.clippingPlanes);
+  }
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
@@ -1555,4 +1587,15 @@ function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
   }
 
   return ssaoParameters;
+}
+
+function transformGeometryFilterToModelSpace(filter: GeometryFilter, model: Cognite3DModel): GeometryFilter {
+  if (filter.boundingBox === undefined) {
+    return filter;
+  }
+
+  const min = model.mapFromCdfToModelCoordinates(filter.boundingBox.min);
+  const max = model.mapFromCdfToModelCoordinates(filter.boundingBox.max);
+  const modelSpaceBounds = new THREE.Box3().setFromPoints([min, max]);
+  return { ...filter, boundingBox: modelSpaceBounds };
 }
