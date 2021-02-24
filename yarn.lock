@@ -1222,10 +1222,10 @@
   dependencies:
     query-string "^6.13.7"
 
-"@cognite/cogs.js@^2.13.1":
-  version "2.13.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.13.1.tgz#6a244d25314e1628ec99144a33d8b9eecc5a78ae"
-  integrity sha512-A8qF0ceBzHe/2AEB30kTXWvc5QmnwAXc1iY/v7fF+YzPenYIBjhsq9wXE4BWj2dcN4/RhcH1T7I1eGbunapdTg==
+"@cognite/cogs.js@^2.15.1":
+  version "2.15.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.15.1.tgz#b730a95976b7e2d60836d4a5aea80534a2c63c2d"
+  integrity sha512-nnK1tfqFnYqjPgpRaoAkFg9t12UI10rxJ8jumLQ7KSvztJPUwh46I51MeNeD4J3izYH5IUO2JiAr0XKgF0MnEw==
   dependencies:
     "@tippyjs/react" "4.0.2"
     "@types/react-date-range" "^1.1.2"
@@ -1374,6 +1374,29 @@
   version "1.10.4"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.10.4.tgz#803fe952afacd423c8dbd860b0d3dd9afbf5a75e"
   integrity sha512-Db2T8nWTKyiGc5ieIqGdnHCZyCydaF5UTDJSYDHhYB6IoI39cXRZxeIXDsig53sveke+TK/V/EQsSPetFvObEg==
+  dependencies:
+    "@cognite/annotations" "^1.1.0"
+    "@cognite/cogs.js" "^2.4.2"
+    "@cognite/sdk" "^3.3.0"
+    "@storybook/addon-knobs" "^6.1.10"
+    "@types/lodash" "^4.14.165"
+    "@types/react-splitter-layout" "^3.0.0"
+    parse-color "^1.0.0"
+    pdf-lib "^1.12.0"
+    pdfjs-dist "2.6.347"
+    react-archer "^3.0.0"
+    react-draggable "^4.4.3"
+    react-is "^17.0.1"
+    react-splitter-layout "^4.0.0"
+    reselect "^4.0.0"
+    styled-components "^5.2.0"
+    typescript "^4.1.2"
+    uuid "^8.3.0"
+
+"@cognite/react-picture-annotation@^1.11.0":
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.11.0.tgz#8cce0cf833bac718cf0c54b3da890366737b4477"
+  integrity sha512-k/NjKY9JyONnjFcQeempEMVIDINe7iKdCgKtr9Ewu+x0wAcZn5xBNsiP300sQ9gCYQxZGnJIamZmyPpdzRtzJA==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/cogs.js" "^2.4.2"
@@ -5835,6 +5858,13 @@ create-react-context@0.3.0, create-react-context@^0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
+cross-env@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-7.0.3.tgz#865264b29677dc015ba8418918965dd232fc54cf"
+  integrity sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==
+  dependencies:
+    cross-spawn "^7.0.1"
+
 cross-fetch@^3.0.4:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
@@ -5853,7 +5883,7 @@ cross-spawn@6.0.5, cross-spawn@^6.0.0:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.2:
+cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.3.tgz#f73a85b9d5d41d045551c177e2882d4ac85728a6"
   integrity sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==
@@ -12978,6 +13008,14 @@ react-query@^3.5.0, react-query@^3.5.16:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.8.2.tgz#e2dac76b5d9b3465d854f4ca040a35ba4bcae1ae"
   integrity sha512-Ha8+WZLIHOUkKhqE4+2RZZB03WvEWmNhN4WIIw3zWVCtR7blo2n2TXtu+d3YhaY1o6dt+sHT+J+zNV8IzR583w==
+  dependencies:
+    "@babel/runtime" "^7.5.5"
+    match-sorter "^6.0.2"
+
+react-query@^3.9.9:
+  version "3.9.9"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.9.9.tgz#23f95d49be83602decb9aa11c8036bff237bca5d"
+  integrity sha512-ojsIV2mqX2AuuEJcqKKcmi9UIm+RerIw923+2w2ezp0XOMhikbcj36XNtNJRL+5UIim7YLS1EzlJ+g/VIffAAg==
   dependencies:
     "@babel/runtime" "^7.5.5"
     match-sorter "^6.0.2"

@@ -39,6 +39,12 @@ const routes = [
     component: (props: RouteComponentProps) =>
       LazyWrapper(props, () => import('src/pages/Workflow/WorkflowContainer')),
   },
+  {
+    exact: true,
+    path: '/:tenant/vision/annotations/file/:fileId',
+    component: (props: RouteComponentProps) =>
+      LazyWrapper(props, () => import('src/pages/Annotations/AnnotationsEdit')),
+  },
 ];
 
 export function Routes() {

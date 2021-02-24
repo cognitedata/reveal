@@ -11,6 +11,11 @@ import { Annotation, JobStatus } from 'src/api/annotationJob';
 import { TimeDisplay } from '@cognite/data-exploration';
 import { TableWrapper } from './FileTableWrapper';
 
+export type MenuActions = {
+  annotationsAvailable: boolean;
+  onAnnotationEditClick?: () => void;
+};
+
 export type TableDataItem = {
   id: number;
   mimeType: string;
@@ -18,9 +23,12 @@ export type TableDataItem = {
   status: JobStatus | '';
   statusTime: number;
   annotations: Array<Annotation>;
+  menu: MenuActions;
 };
 
-type CellRenderer = { rowData: TableDataItem };
+type CellRenderer = {
+  rowData: TableDataItem;
+};
 
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
@@ -107,8 +115,15 @@ export function FileTable(props: FileTableProps) {
     {
       key: 'action',
       title: 'Action',
+      dataKey: 'menu',
       width: 100,
-      cellRenderer: () => {
+      cellRenderer: ({ rowData }: CellRenderer) => {
+        const { menu } = rowData;
+        const handleAnnotationEdit = () => {
+          if (menu?.onAnnotationEditClick) {
+            menu.onAnnotationEditClick();
+          }
+        };
         // todo: bind actions
         const MenuContent = (
           <Menu
@@ -120,7 +135,12 @@ export function FileTable(props: FileTableProps) {
 
             <Menu.Item disabled>Attach events file</Menu.Item>
 
-            <Menu.Item disabled>Edit annotations</Menu.Item>
+            <Menu.Item
+              disabled={!menu.annotationsAvailable}
+              onClick={handleAnnotationEdit}
+            >
+              Edit annotations
+            </Menu.Item>
 
             <Menu.Item>Delete</Menu.Item>
           </Menu>

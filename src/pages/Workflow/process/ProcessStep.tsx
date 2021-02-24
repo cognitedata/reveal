@@ -4,12 +4,19 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   FileTable,
+  MenuActions,
   TableDataItem,
 } from 'src/pages/Workflow/components/FileTable/FileTable';
 import { Title } from '@cognite/cogs.js';
 import { Annotation } from 'src/api/annotationJob';
+import {
+  getParamLink,
+  workflowRoutes,
+} from 'src/pages/Workflow/workflowRoutes';
+import { useHistory } from 'react-router-dom';
 
 export default function ProcessStep() {
+  const history = useHistory();
   const { uploadedFiles } = useSelector(
     (state: RootState) => state.uploadedFiles
   );
@@ -28,6 +35,16 @@ export default function ProcessStep() {
       annotations = job.items[0].annotations;
     }
 
+    const menuActions: MenuActions = { annotationsAvailable: false };
+    if (job.status === 'COMPLETED') {
+      menuActions.annotationsAvailable = !!annotations.length;
+      menuActions.onAnnotationEditClick = () => {
+        history.push(
+          getParamLink(workflowRoutes.review, ':fileId', String(file.id))
+        );
+      };
+    }
+
     return {
       id: file.id,
       name: file.name,
@@ -35,6 +52,7 @@ export default function ProcessStep() {
       status: job.status,
       statusTime: job.statusTime,
       annotations,
+      menu: menuActions,
     };
   });
   return (
