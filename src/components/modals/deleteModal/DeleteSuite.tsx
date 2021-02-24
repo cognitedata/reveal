@@ -5,7 +5,7 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { RootDispatcher } from 'store/types';
 import { deleteSuite } from 'store/suites/thunks';
 import { modalClose } from 'store/modals/actions';
-import { Button, Body, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
@@ -33,14 +33,14 @@ const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
 
   const footer = (
     <DeleteModalFooter>
-      <Button onClick={handleClose}>Keep Suite</Button>
+      <Button onClick={handleClose}>Keep suite</Button>
       <Button
         type="danger"
         icon="Trash"
         iconPlacement="left"
         onClick={handleDeleteSuite}
       >
-        Delete Suite
+        Delete suite
       </Button>
     </DeleteModalFooter>
   );
@@ -50,16 +50,13 @@ const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
       <Modal
         visible
         onCancel={handleClose}
-        headerText="Delete this suite?"
+        headerText="Delete suite?"
         footer={footer}
         width={400}
         underlineColor="#db0657"
       >
         <ModalContainer>
           <Title level={5}>Delete &quot;{dataItem.title}&quot;?</Title>
-          <Body level={1}>
-            The suite and all its configured boards will be deleted permanently
-          </Body>
         </ModalContainer>
       </Modal>
     </>

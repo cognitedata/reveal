@@ -5,7 +5,7 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import { RootDispatcher } from 'store/types';
 import { insertSuite } from 'store/suites/thunks';
 import { modalClose } from 'store/modals/actions';
-import { Button, Body, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 import { Board, Suite } from 'store/suites/types';
@@ -36,14 +36,14 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
 
   const footer = (
     <DeleteModalFooter>
-      <Button onClick={handleCloseModal}>Keep Board</Button>
+      <Button onClick={handleCloseModal}>Keep board</Button>
       <Button
         type="danger"
         icon="Trash"
         iconPlacement="left"
         onClick={handleDeleteSuite}
       >
-        Remove Board
+        Remove board
       </Button>
     </DeleteModalFooter>
   );
@@ -60,7 +60,6 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
       >
         <ModalContainer>
           <Title level={5}>Remove &quot;{board.title}&quot;?</Title>
-          <Body level={1}>It will be removed permanently</Body>
         </ModalContainer>
       </Modal>
     </>
