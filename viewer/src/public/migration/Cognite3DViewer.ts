@@ -1447,9 +1447,8 @@ export class Cognite3DViewer {
   /**
    * Removes a geometry filter for the model provided.
    * @param model
-   * @returns True if a filter was removed, false if not.
    */
-  private removeGeometryFilterForModel(model: Cognite3DModel): boolean {
+  private removeGeometryFilterForModel(model: Cognite3DModel) {
     const filterIndex = this._geometryFilters.findIndex(x => {
       const [candidateModel] = x;
       return candidateModel === model;
@@ -1457,9 +1456,7 @@ export class Cognite3DViewer {
     if (filterIndex >= 0) {
       this._geometryFilters.splice(filterIndex, 0);
       this.updateSlicingPlanes();
-      return true;
     }
-    return false;
   }
 
   /**
