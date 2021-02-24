@@ -3757,10 +3757,10 @@
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/@types/parse5/-/parse5-5.0.3.tgz#e7b5aebbac150f8b5fdd4a46e7f0bd8e65e19109"
 
-"@types/plotly.js@*", "@types/plotly.js@^1.54.7":
-  version "1.54.7"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.54.7.tgz#db784d781e17d66482cee91ea5e72d61589ab043"
-  integrity sha512-4oNu0FHeMnL7ZB45MOs+MEstw0GvCVBRg2YvABrIPbN/hy65wg0Cy8Z0pyGwAXaXL9BeXjJJhQqFawjwZgobbQ==
+"@types/plotly.js@*", "@types/plotly.js@^1.54.9":
+  version "1.54.9"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.54.9.tgz#cb909c8fea9abb793bca46e0c999864d64ad7b63"
+  integrity sha512-9eTHpAHuEWgBMpgclhNOBjK9IYE1P4V/m0PWwKCPcPhPyzb49sE/ZdaCgP0ZTDfyGcgH6Z1zNlS0a7aYSEb6jQ==
   dependencies:
     "@types/d3" "^3"
 
