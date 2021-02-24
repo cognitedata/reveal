@@ -11,6 +11,8 @@ import { IndexSet } from '../../utilities/IndexSet';
 import { NodeStyleProvider } from './styling/NodeStyleProvider';
 import { NodeStyleTextureBuilder } from './styling/NodeStyleTextureBuilder';
 import { NodeAppearance } from '.';
+import { EventTrigger } from '../../utilities/events';
+import { assertNever } from '../../utilities';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -19,6 +21,10 @@ interface MaterialsWrapper {
 }
 
 export class MaterialManager {
+  private readonly _events = {
+    materialsChanged: new EventTrigger<() => void>()
+  };
+
   get clippingPlanes(): THREE.Plane[] {
     return this._clippingPlanes;
   }
@@ -28,6 +34,7 @@ export class MaterialManager {
     this.applyToAllMaterials(material => {
       material.clippingPlanes = clippingPlanes;
     });
+    this.triggerMaterialsChanged();
   }
 
   get clipIntersection(): boolean {
@@ -39,12 +46,36 @@ export class MaterialManager {
     this.applyToAllMaterials(material => {
       material.clipIntersection = intersection;
     });
+    this.triggerMaterialsChanged();
   }
+
   private _renderMode: RenderMode = RenderMode.Color;
   private readonly materialsMap: Map<string, MaterialsWrapper> = new Map();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: THREE.Plane[] = [];
   private _clipIntersection: boolean = false;
+
+  public on(event: 'materialsChanged', listener: () => void): void {
+    switch (event) {
+      case 'materialsChanged':
+        this._events.materialsChanged.subscribe(listener);
+        break;
+
+      default:
+        assertNever(event, `Unexpected event '${event}`);
+    }
+  }
+
+  public off(event: 'materialsChanged', listener: () => void): void {
+    switch (event) {
+      case 'materialsChanged':
+        this._events.materialsChanged.unsubscribe(listener);
+        break;
+
+      default:
+        assertNever(event, `Unexpected event '${event}`);
+    }
+  }
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const nodeAppearanceProvider = new NodeStyleProvider();
@@ -83,6 +114,7 @@ export class MaterialManager {
   setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     wrapper.textureBuilder.setDefaultStyle(defaultAppearance);
+    this.updateMaterials(modelIdentifier);
   }
 
   getModelBackTreeIndices(modelIdentifier: string): IndexSet {
@@ -107,13 +139,14 @@ export class MaterialManager {
       material.uniforms.renderMode.value = mode;
       material.transparent = transparent;
     });
+    this.triggerMaterialsChanged();
   }
 
   getRenderMode(): RenderMode {
     return this._renderMode;
   }
 
-  updateMaterials(modelIdentifier: string) {
+  private updateMaterials(modelIdentifier: string) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     if (wrapper.textureBuilder.needsUpdate) {
       const start = performance.now();
@@ -129,6 +162,8 @@ export class MaterialManager {
         material.uniforms.transformOverrideTexture.value = transformsLookupTexture;
         material.uniforms.transformOverrideTextureSize.value = transformsLookupTextureSize;
       });
+      this.triggerMaterialsChanged();
+
       console.log('Updating materials for ', modelIdentifier, 'took', performance.now() - start, 'ms');
     }
   }
@@ -146,6 +181,10 @@ export class MaterialManager {
       const materials = materialWrapper.materials;
       applyToModelMaterials(materials, callback);
     }
+  }
+
+  private triggerMaterialsChanged() {
+    this._events.materialsChanged.fire();
   }
 }
 

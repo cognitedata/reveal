@@ -28,7 +28,9 @@ export class CadManager<TModelIdentifier> {
   private readonly _subscription: Subscription = new Subscription();
 
   private _needsRedraw: boolean = false;
+
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
+  private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
   get materialManager() {
     return this._materialManager;
@@ -52,6 +54,8 @@ export class CadManager<TModelIdentifier> {
     this._cadModelMetadataRepository = cadModelMetadataRepository;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
+    this._materialManager.on('materialsChanged', this._materialsChangedListener);
+
     this._subscription.add(
       this._cadModelUpdateHandler.consumedSectorObservable().subscribe(
         sector => {
@@ -95,6 +99,7 @@ export class CadManager<TModelIdentifier> {
   dispose() {
     this._cadModelUpdateHandler.dispose();
     this._subscription.unsubscribe();
+    this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
 
   requestRedraw(): void {
@@ -174,5 +179,9 @@ export class CadManager<TModelIdentifier> {
 
   private markNeedsRedraw(): void {
     this._needsRedraw = true;
+  }
+
+  private handleMaterialsChanged() {
+    this.requestRedraw();
   }
 }
