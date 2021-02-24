@@ -11,6 +11,7 @@ export enum FormActionTypes {
   UPDATE_BOARD = 'form/UPDATE_BOARD',
   DELETE_BOARD = 'form/DELETE_BOARD',
   CLEAR_FORM = 'form/CLEAR_FORM',
+  CLEAR_BOARD_FORM = 'form/CLEAR_BOARD_FORM',
   FORM_SAVING = 'form/FORM_SAVING',
   FORM_SAVED = 'form/FORM_SAVED',
   FILE_CLEAR = 'form/FILE_CLEAR',

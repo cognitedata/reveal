@@ -3,7 +3,8 @@ import { useDispatch } from 'react-redux';
 import {
   setHasError,
   setSuite,
-  clearForm as clearFormState,
+  clearForm as clearFormAction,
+  clearBoardForm as clearBoardFormAction,
 } from 'store/forms/actions';
 import { Suite, Board } from 'store/suites/types';
 import isFunction from 'lodash/isFunction';
@@ -30,12 +31,16 @@ export const useFormState = () => {
     }
   };
 
+  const clearBoardForm = () => {
+    dispatch(clearBoardFormAction());
+  };
   const clearForm = () => {
-    dispatch(clearFormState());
+    dispatch(clearFormAction());
   };
   return {
     initForm,
     clearForm,
+    clearBoardForm,
   };
 };
 
