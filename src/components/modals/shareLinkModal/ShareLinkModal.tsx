@@ -4,26 +4,41 @@ import { useDispatch } from 'react-redux';
 import { modalClose } from 'store/modals/actions';
 import { RootDispatcher } from 'store/types';
 import { Body, Button } from '@cognite/cogs.js';
-import { Board } from 'store/suites/types';
+import { Board, Suite } from 'store/suites/types';
 import {
   ShareURLInput,
   ShareURLInputContainer,
 } from 'components/modals/elements';
 import { useMetrics } from 'utils/metrics';
+import { useLink } from 'hooks';
 
 interface Props {
   board: Board;
+  suite: Suite;
 }
 const ModalWidth = 528;
 
-const ShareBoardModal: React.FC<Props> = ({ board }: Props) => {
+const ShareLinkModal: React.FC<Props> = ({ board, suite }: Props) => {
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch<RootDispatcher>();
   const metrics = useMetrics('ShareBoard');
+  const { createLink } = useLink();
   const handleCloseModal = () => {
     dispatch(modalClose());
   };
+  let entity = '';
+  let url = '';
+  let title = '';
+  if (board) {
+    entity = 'board';
+    ({ url, title } = board);
+  } else if (suite) {
+    entity = 'suite';
+    ({ title } = suite);
+    url = createLink(`/suites/${suite.key}`);
+  }
+
   const copyToClipboard = () => {
     if (ref.current) {
       ref.current.select();
@@ -37,13 +52,13 @@ const ShareBoardModal: React.FC<Props> = ({ board }: Props) => {
     <Modal
       visible
       onCancel={handleCloseModal}
-      headerText="Share this board"
+      headerText={`Share this ${entity}`}
       hasFooter={false}
       width={ModalWidth}
     >
-      {copySuccess && <Body level={2}>Link copied to clipboard</Body>}
+      <Body>{title}</Body>
       <ShareURLInputContainer>
-        <ShareURLInput ref={ref} value={board.url} readOnly />
+        <ShareURLInput ref={ref} value={url} readOnly />
         <Button type="primary" variant="ghost" onClick={copyToClipboard}>
           {copySuccess ? 'Copied' : 'Copy'}
         </Button>
@@ -52,4 +67,4 @@ const ShareBoardModal: React.FC<Props> = ({ board }: Props) => {
   );
 };
 
-export default ShareBoardModal;
+export default ShareLinkModal;
