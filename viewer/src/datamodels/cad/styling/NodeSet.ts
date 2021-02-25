@@ -16,6 +16,7 @@ export abstract class NodeSet {
     this._changedEvent.unsubscribe(listener);
   }
 
+  abstract get isLoading(): boolean;
   abstract getIndexSet(): IndexSet;
 
   protected notifyChanged() {

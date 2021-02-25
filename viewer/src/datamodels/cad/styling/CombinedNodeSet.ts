@@ -57,6 +57,13 @@ export class CombinedNodeSet extends NodeSet {
     return this._cachedCombinedSet;
   }
 
+  /**
+   * @override
+   */
+  get isLoading(): boolean {
+    return this._nodeSets.some(x => x.isLoading);
+  }
+
   private createCachedCombinedSet(): IndexSet {
     switch (this._operator) {
       case 'intersection':

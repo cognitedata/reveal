@@ -26,4 +26,8 @@ export class FixedNodeSet extends NodeSet {
   getIndexSet(): IndexSet {
     return this._set;
   }
+
+  get isLoading(): boolean {
+    return false;
+  }
 }
