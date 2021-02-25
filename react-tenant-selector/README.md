@@ -62,3 +62,20 @@ Make sure you are using:
     "@cognite/metrics": "^1.0.0",
 
 Previous versions of metrics packaged react in this module, and trigger this error.
+
+## Process for updating the Tenant Selector
+
+1. Make your changes here (in the `frontend` lib(s))
+   1. Update and unit tests/storybooks
+2. Build a local project and test this out
+   1. For example to test with the demo app, you can run:
+      `yarn build && cp -r dist/* ~/dev/react-demo-app/node_modules/@cognite/react-tenant-selector/dist` (remember to stop the dev server and re-run `yarn start` after doing this)
+   1. Or use `yalc`
+   1. Or `yarn link`
+3. Bump this projects version
+4. Bump @cognite/react-container to match that version (so people use it during locahost development)
+5. Create a PR and get it deployed
+6. Test these changes again in a local project, this time using the versions published from NPM
+7. Create a PR for the `tenant-selector` application to use this new version
+8. Upgrade your application to use this version of the `tenant-selector` in `release-configs` staging
+9. Confirm on staging and proceed to release `tenant-selector` to prod, and update prod `release-configs` for your app
