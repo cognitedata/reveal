@@ -12,12 +12,13 @@ const TitleRow = styled.div`
 `;
 
 const ModelSelectContainer = styled.div`
-  display: grid;
+  display: none;
   grid-template-columns: auto 200px;
   column-gap: 10px;
 `;
 
 const ModelTitle = styled.p`
+  display: none;
   margin-bottom: 5px;
   margin-left: 5px;
 `;

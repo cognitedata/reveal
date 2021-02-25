@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationJobCompleted } from 'src/api/annotationJob';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 
 const Container = styled.div`
   width: 100%;
@@ -64,11 +65,17 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
     );
   });
 
+  if (!file) { // navigate to upload step if file is not available(if the user uses a direct link)
+    history.push(getLink(workflowRoutes.upload));
+  }
+
   const annotations = useSelector(({ processSlice }: RootState) => {
-    return AnnotationUtils.convertToAnnotations(
-      (processSlice.jobByFileId[fileId] as AnnotationJobCompleted).items[0]
-        .annotations
-    );
+    const job = processSlice.jobByFileId[fileId] as AnnotationJobCompleted;
+
+    if (job) {
+      return AnnotationUtils.convertToAnnotations(job.items[0].annotations);
+    }
+    return [];
   });
 
   const onBackButtonClick = () => {

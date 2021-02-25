@@ -19,6 +19,7 @@ export const FilePreview: React.FC<FilePreviewProps> = ({
         file={fileObj}
         disableAutoFetch
         hideDownload
+        hideSearch
         annotations={annotations}
         allowCustomAnnotations
       />
