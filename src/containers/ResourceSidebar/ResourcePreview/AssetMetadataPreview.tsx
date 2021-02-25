@@ -1,42 +1,24 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  itemSelector as assetSelector,
-  retrieve as retrieveAsset,
-} from 'modules/assets';
 import { Button, Icon, Title } from '@cognite/cogs.js';
-import { List, Tabs, message } from 'antd';
+import { List, Tabs } from 'antd';
 import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
 import { AssetDetailsPanel } from '@cognite/gearbox/dist/components/AssetDetailsPanel';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
-import { TimeseriesPreview } from '@cognite/gearbox/dist/components/TimeseriesPreview';
 import {
   linkedFilesSelectorByAssetId,
   listFilesLinkedToAsset,
 } from 'modules/annotations';
 import {
+  itemSelector as assetSelector,
+  retrieve as retrieveAsset,
+} from 'modules/assets';
+import {
   list as listFiles,
   retrieve as retrieveFiles,
   listSelector as listFileSelector,
 } from 'modules/files';
-import {
-  list as listTimeseries,
-  listSelector as listTimeseriesSelector,
-} from 'modules/timeseries';
-import {
-  listSelector as listEventSelector,
-  list as listEvent,
-} from 'modules/events';
-import {
-  listSelector as listSequenceSelector,
-  list as listSequence,
-} from 'modules/sequences';
-import {
-  TimeseriesFilterQuery,
-  SequenceListScope,
-  EventFilterRequest,
-  FilesSearchFilter,
-} from '@cognite/sdk';
+import { FilesSearchFilter } from '@cognite/sdk';
 import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
 import { DetailsItem } from 'components/Common';
@@ -48,19 +30,6 @@ const createFilesFilter = (assetId: number): FilesSearchFilter => ({
   filter: { assetSubtreeIds: [{ id: assetId }] },
   limit: 1000,
 });
-const createTimeseriesFilter = (assetId: number): TimeseriesFilterQuery => ({
-  filter: { assetSubtreeIds: [{ id: assetId }] },
-  limit: 1000,
-});
-const createSequenceFilter = (assetId: number): SequenceListScope => ({
-  filter: { assetIds: [assetId] },
-  limit: 1000,
-});
-const createEventFilter = (assetId: number): EventFilterRequest => ({
-  filter: { assetIds: [assetId] },
-  limit: 1000,
-});
-
 export const AssetMetadataPreview = ({
   assetId,
   extraActions,
@@ -79,18 +48,6 @@ export const AssetMetadataPreview = ({
     createFilesFilter(assetId),
     true
   );
-  const { items: timeseries } = useSelector(listTimeseriesSelector)(
-    createTimeseriesFilter(assetId),
-    true
-  );
-  const { items: sequences } = useSelector(listSequenceSelector)(
-    createSequenceFilter(assetId),
-    true
-  );
-  const { items: events } = useSelector(listEventSelector)(
-    createEventFilter(assetId),
-    true
-  );
 
   const files = unionBy(filesByAnnotations, filesByAssetId, (el) => el.id);
 
@@ -99,9 +56,6 @@ export const AssetMetadataPreview = ({
       await dispatch(retrieveAsset([{ id: assetId }]));
       await dispatch(listFilesLinkedToAsset(assetId));
       await dispatch(listFiles(createFilesFilter(assetId), true));
-      await dispatch(listTimeseries(createTimeseriesFilter(assetId), true));
-      await dispatch(listEvent(createEventFilter(assetId), true));
-      await dispatch(listSequence(createSequenceFilter(assetId), true));
     })();
   }, [dispatch, assetId]);
 
@@ -166,35 +120,6 @@ export const AssetMetadataPreview = ({
           <AssetDetailsPanel assetId={assetId} />
         </Tabs.TabPane>
         <Tabs.TabPane
-          key="timeseries"
-          tab={<span>Linked Timeseries ({timeseries.length})</span>}
-        >
-          <List
-            renderItem={(ts) => (
-              <List.Item
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (ts) {
-                    dispatch(
-                      onResourceSelected(
-                        {
-                          timeseriesId: ts.id,
-                          showSidebar: true,
-                        },
-                        history
-                      )
-                    );
-                  }
-                }}
-              >
-                <TimeseriesPreview timeseriesId={ts.id} />
-              </List.Item>
-            )}
-            pagination={{ position: 'bottom' }}
-            dataSource={timeseries}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
           key="files"
           tab={<span>Linked Files ({files.length})</span>}
         >
@@ -221,67 +146,6 @@ export const AssetMetadataPreview = ({
             )}
             pagination={{ position: 'bottom' }}
             dataSource={files}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          key="sequences"
-          tab={<span>Linked Sequences ({sequences.length})</span>}
-        >
-          <List
-            renderItem={(sequence) => (
-              <List.Item
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (sequence) {
-                    dispatch(
-                      onResourceSelected(
-                        { sequenceId: sequence.id, showSidebar: true },
-                        history
-                      )
-                    );
-                  }
-                }}
-              >
-                <List.Item.Meta
-                  title={sequence.name}
-                  description={sequence.externalId}
-                />
-              </List.Item>
-            )}
-            pagination={{ position: 'bottom' }}
-            dataSource={sequences}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          key="events"
-          tab={<span>Linked Events ({events.length})</span>}
-        >
-          <List
-            renderItem={(event) => (
-              <List.Item
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (event) {
-                    message.info('Coming soon...');
-                    // dispatch(
-                    //   onResourceSelected(
-                    //     { eventId: event.id, showSidebar: true },
-                    //     history
-                    //   )
-                    // );
-                  }
-                }}
-              >
-                <List.Item.Meta
-                  title={`${[event.type, event.subtype]
-                    .filter((el) => !!el)
-                    .join(' - ')}: ${event.externalId || event.id}`}
-                  description={event.externalId}
-                />
-              </List.Item>
-            )}
-            pagination={{ position: 'bottom' }}
-            dataSource={events}
           />
         </Tabs.TabPane>
         <Tabs.TabPane key="children" tab="Children">

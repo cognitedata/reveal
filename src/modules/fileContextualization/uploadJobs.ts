@@ -12,8 +12,6 @@ import {
 } from '@cognite/annotations';
 import { itemSelector as fileSelector } from 'modules/files';
 import { itemSelector as assetSelector } from 'modules/assets';
-import { itemSelector as timeseriesSelector } from 'modules/timeseries';
-import { itemSelector as sequenceSelector } from 'modules/sequences';
 import { createSelector } from 'reselect';
 import * as UploadJobs from './uploadJobs';
 import { itemSelector } from '../files';
@@ -87,20 +85,6 @@ const addLabelsToAnnotations = (
           annotation.resourceExternalId || annotation.resourceId
         );
         return file?.name;
-      }
-      case 'timeSeries': {
-        const timeseries = timeseriesSelector(getState())(
-          annotation.resourceExternalId || annotation.resourceId
-        );
-        return timeseries?.name;
-      }
-      case 'event':
-        return `event id ${annotation.id}`;
-      case 'sequence': {
-        const sequence = sequenceSelector(getState())(
-          annotation.resourceExternalId || annotation.resourceId
-        );
-        return sequence?.name;
       }
       default:
         return undefined;

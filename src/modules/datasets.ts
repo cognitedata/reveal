@@ -1,15 +1,12 @@
-import { zipObject } from 'lodash';
+import zipObject from 'lodash/zipObject';
 import { createSelector } from 'reselect';
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 // import { batch } from 'react-redux';
 import { DataSet, DataSetFilterRequest } from '@cognite/sdk';
 import { RootState } from 'reducers';
-import { count as countTimeseries } from 'modules/timeseries';
 import { count as countAssets } from 'modules/assets';
 import { count as countFiles } from 'modules/files';
-import { count as countSequences } from 'modules/sequences';
-import { count as countEvents } from 'modules/events';
 
 import sdk from 'sdk-singleton';
 import { followCursors } from 'helpers';
@@ -97,10 +94,7 @@ export function getResourceCount(id: number) {
     const filter = { filter: { dataSetIds: [{ id }] } };
     await Promise.all([
       dispatch(countAssets(filter)),
-      dispatch(countTimeseries(filter)),
       dispatch(countFiles(filter)),
-      dispatch(countSequences(filter)),
-      dispatch(countEvents(filter)),
     ]);
   };
 }
@@ -152,11 +146,8 @@ export default function reducer(
 
 type DataSetCount = {
   [key: number]: {
-    timeseries: number;
     files: number;
     assets: number;
-    events: number;
-    sequences: number;
   };
 };
 
@@ -164,18 +155,8 @@ type DataSetCount = {
 export const dataSetCounts = createSelector(
   (state: RootState) => state.dataSets.items,
   (state: RootState) => state.assets.count,
-  (state: RootState) => state.timeseries.count,
   (state: RootState) => state.files.count,
-  (state: RootState) => state.events.count,
-  (state: RootState) => state.sequences.count,
-  (
-    datasets,
-    assetCounts,
-    timeseriesCounts,
-    fileCounts,
-    eventCounts,
-    sequenceCounts
-  ) => {
+  (datasets, assetCounts, fileCounts) => {
     return Object.values(datasets).reduce((accl, dataset) => {
       const key = JSON.stringify({
         filter: { dataSetIds: [{ id: dataset.id }] },
@@ -183,12 +164,8 @@ export const dataSetCounts = createSelector(
       return {
         ...accl,
         [dataset.id]: {
-          timeseries:
-            (timeseriesCounts[key] && timeseriesCounts[key].count) || 0,
           files: (fileCounts[key] && fileCounts[key].count) || 0,
           assets: (assetCounts[key] && assetCounts[key].count) || 0,
-          events: (eventCounts[key] && eventCounts[key].count) || 0,
-          sequences: (sequenceCounts[key] && sequenceCounts[key].count) || 0,
         },
       };
     }, {} as DataSetCount) as DataSetCount;

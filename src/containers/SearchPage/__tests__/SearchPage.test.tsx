@@ -87,44 +87,6 @@ const initialStoreState: any = {
       },
     },
   },
-  timeseries: {
-    items: {
-      items: Map([
-        [
-          4448195087284397,
-          {
-            id: 4448195087284397,
-            name: 'TS 2',
-          },
-        ],
-        [
-          1,
-          {
-            id: 1,
-            name: 'TS 1',
-          },
-        ],
-      ]),
-    },
-    search: {},
-    list: {
-      '{"filter":{},"all":false}': {
-        '1/1': {
-          fetching: false,
-          error: false,
-          done: true,
-          ids: [4448195087284397, 1],
-        },
-      },
-    },
-    count: {
-      '{"filter":{}}': {
-        count: 12,
-      },
-    },
-  },
-  events: { list: {}, search: {}, items: { items: Map() }, count: {} },
-  sequences: { list: {}, search: {}, items: { items: Map() }, count: {} },
   assets: {
     items: {
       items: Map([

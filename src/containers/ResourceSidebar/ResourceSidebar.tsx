@@ -3,9 +3,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   FileMetadataPreview,
-  TimeseriesMetadataPreview,
   AssetMetadataPreview,
-  SequenceMetadataPreview,
 } from 'containers/ResourceSidebar';
 import queryString from 'query-string';
 import { Drawer } from 'antd';
@@ -31,12 +29,7 @@ export const ResourceSidebar = ({
 }: {
   extraButtons?:
     | React.ReactNode[]
-    | ((props: {
-        assetId?: number;
-        fileId?: number;
-        timeseriesId?: number;
-        sequenceId?: number;
-      }) => React.ReactNode[]);
+    | ((props: { assetId?: number; fileId?: number }) => React.ReactNode[]);
 }) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -45,14 +38,10 @@ export const ResourceSidebar = ({
     showSidebar: showSidebarString,
     assetId: previewAssetId,
     fileId: previewFileId,
-    timeseriesId: previewTimeseriesId,
-    sequenceId: previewSequenceId,
   }: {
     showSidebar?: string;
     assetId?: number;
     fileId?: number;
-    timeseriesId?: number;
-    sequenceId?: number;
   } = queryString.parse(search, {
     parseNumbers: true,
   });
@@ -67,7 +56,6 @@ export const ResourceSidebar = ({
         ? extraButtons({
             assetId: previewAssetId,
             fileId: previewFileId,
-            timeseriesId: previewTimeseriesId,
           })
         : (extraButtons as React.ReactNode[]);
   }
@@ -81,26 +69,10 @@ export const ResourceSidebar = ({
         />
       );
     }
-    if (previewTimeseriesId && Number.isInteger(Number(previewTimeseriesId))) {
-      return (
-        <TimeseriesMetadataPreview
-          timeseriesId={previewTimeseriesId as number}
-          extraActions={extraActions}
-        />
-      );
-    }
     if (previewAssetId && Number.isInteger(Number(previewAssetId))) {
       return (
         <AssetMetadataPreview
           assetId={previewAssetId as number}
-          extraActions={extraActions}
-        />
-      );
-    }
-    if (previewSequenceId && Number.isInteger(Number(previewSequenceId))) {
-      return (
-        <SequenceMetadataPreview
-          sequenceId={previewSequenceId as number}
           extraActions={extraActions}
         />
       );

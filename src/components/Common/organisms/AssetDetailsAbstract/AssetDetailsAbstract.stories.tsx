@@ -5,7 +5,6 @@ import 'antd/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
 import { Asset } from '@cognite/sdk';
 import { Popover } from 'components/Common/';
-import { TimeseriesDetailsAbstract } from 'components/Common/organisms';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';
 
 const asset: Asset = {
@@ -36,17 +35,6 @@ export const Example = () => {
             createdTime: new Date(),
           },
         ]}
-        timeseries={[
-          {
-            name: 'Hello',
-            id: 123,
-            isString: false,
-            isStep: false,
-            description: 'asdfasdfdas',
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
       />
     </Container>
   );
@@ -66,38 +54,10 @@ export const WithActions = () => {
             createdTime: new Date(),
           },
         ]}
-        timeseries={[
-          {
-            name: 'Hello',
-            id: 123,
-            isString: false,
-            isStep: false,
-            description: 'asdfasdfdas',
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
         actions={[
           <Button type="primary">Click me</Button>,
           <Button>Click me too</Button>,
         ]}
-        timeseriesPreview={(timeseries, content) => (
-          <Popover
-            key={timeseries.id}
-            content={
-              <TimeseriesDetailsAbstract
-                timeSeries={timeseries}
-                actions={[
-                  <Button key="view" type="primary" icon="ArrowRight">
-                    View Details
-                  </Button>,
-                ]}
-              />
-            }
-          >
-            <div style={{ position: 'relative' }}>{content}</div>
-          </Popover>
-        )}
       >
         <Button>Hover me!</Button>
       </AssetDetailsAbstract>
@@ -118,17 +78,6 @@ export const WithExtras = () => {
             createdTime: new Date(),
           },
         ]}
-        timeseries={[
-          {
-            name: 'Hello',
-            id: 123,
-            isString: false,
-            isStep: false,
-            description: 'asdfasdfdas',
-            lastUpdatedTime: new Date(),
-            createdTime: new Date(),
-          },
-        ]}
         extras={
           <Button
             type="primary"
@@ -137,23 +86,6 @@ export const WithExtras = () => {
             icon="VerticalEllipsis"
           />
         }
-        timeseriesPreview={(timeseries, content) => (
-          <Popover
-            key={timeseries.id}
-            content={
-              <TimeseriesDetailsAbstract
-                timeSeries={timeseries}
-                actions={[
-                  <Button key="view" type="primary" icon="ArrowRight">
-                    View Details
-                  </Button>,
-                ]}
-              />
-            }
-          >
-            <div style={{ position: 'relative' }}>{content}</div>
-          </Popover>
-        )}
       >
         <Button>Hover me!</Button>
       </AssetDetailsAbstract>

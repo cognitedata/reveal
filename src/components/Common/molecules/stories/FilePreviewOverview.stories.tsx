@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { mockStore } from 'utils/mockStore';
 import { Map } from 'immutable';
 import { CogniteAnnotation } from '@cognite/annotations';
-import { FilePreviewOverview } from './FilePreviewOverview';
+import { FilePreviewOverview } from '../FilePreviewOverview';
 
 export default { title: 'Molecules/FilePreviewOverview' };
 
@@ -37,24 +37,6 @@ const store = {
       items: Map([[1, { name: 'Sample file', mimeType: 'png' }]]),
     },
   },
-  sequences: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([[1, { name: 'Sample sequence' }]]),
-    },
-  },
-  events: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([[1, { type: 'Sample event' }]]),
-    },
-  },
-  timeseries: {
-    items: {
-      getById: { 1: { done: true } },
-      items: Map([[1, { name: 'Sample ts' }]]),
-    },
-  },
 };
 
 export const Example = () => (
@@ -64,7 +46,9 @@ export const Example = () => (
       <FilePreviewOverview
         file={file}
         annotations={[]}
-        onPageChange={() => {}}
+        onPageChange={() => {
+          alert('!');
+        }}
       />
     </Wrapper>
   </Provider>
@@ -102,31 +86,15 @@ export const ExampleWithAnnotations = () => (
             ...filler,
           } as CogniteAnnotation,
           {
-            id: 2,
-            resourceId: 1,
-            resourceType: 'timeSeries',
-            ...filler,
-          } as CogniteAnnotation,
-          {
             id: 3,
             resourceId: 1,
             resourceType: 'file',
             ...filler,
           } as CogniteAnnotation,
-          {
-            id: 4,
-            resourceId: 1,
-            resourceType: 'event',
-            ...filler,
-          } as CogniteAnnotation,
-          {
-            id: 5,
-            resourceId: 1,
-            resourceType: 'sequence',
-            ...filler,
-          } as CogniteAnnotation,
         ]}
-        onPageChange={() => {}}
+        onPageChange={() => {
+          alert('!');
+        }}
       />
     </Wrapper>
   </Provider>

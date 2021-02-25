@@ -2,8 +2,6 @@ import { Store, combineReducers, AnyAction } from 'redux';
 import app from 'modules/app';
 import assets from 'modules/assets';
 import dataSets from 'modules/datasets';
-import timeseries from 'modules/timeseries';
-import events from 'modules/events';
 import files from 'modules/files';
 import fileContextualization from 'modules/fileContextualization';
 import selection, {
@@ -12,7 +10,6 @@ import selection, {
   LSSelection,
 } from 'modules/selection';
 import annotations from 'modules/annotations';
-import sequences from 'modules/sequences';
 
 const createRootReducer = () =>
   combineReducers({
@@ -20,12 +17,9 @@ const createRootReducer = () =>
     app,
     assets,
     dataSets,
-    timeseries,
-    events,
     files,
     fileContextualization,
     selection,
-    sequences,
   });
 
 export type RootState = ReturnType<ReturnType<typeof createRootReducer>>;

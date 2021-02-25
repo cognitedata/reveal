@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CountLabel } from './CountLabel';
+import { CountLabel } from '../CountLabel';
 
 export default { title: 'Atoms/CountLabel' };
 

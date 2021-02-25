@@ -26,31 +26,6 @@ export const selectAnnotationColor = <T extends PendingCogniteAnnotation>(
     }
     return Colors['midorange-2'].hex();
   }
-
-  // TS are light blue
-  if (annotation.resourceType === 'timeSeries') {
-    if (getPnIDAnnotationType(annotation).includes('Model')) {
-      return Colors['lightblue-3'].hex();
-    }
-    return Colors['lightblue-2'].hex();
-  }
-
-  // Sequences are yellow
-  if (annotation.resourceType === 'sequence') {
-    if (getPnIDAnnotationType(annotation).includes('Model')) {
-      return Colors['yellow-3'].hex();
-    }
-    return Colors['yellow-2'].hex();
-  }
-
-  // Events are pink
-  if (annotation.resourceType === 'event') {
-    if (getPnIDAnnotationType(annotation).includes('Model')) {
-      return Colors['pink-3'].hex();
-    }
-    return Colors['pink-2'].hex();
-  }
-
   // Undefined are secondary
   return Colors['text-color-secondary'].hex();
 };

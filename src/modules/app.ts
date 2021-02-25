@@ -11,10 +11,7 @@ import sdk, { getAuthState } from 'sdk-singleton';
 export type OnResourceSelectedParams = {
   assetId?: number;
   fileId?: number;
-  timeseriesId?: number;
   showSidebar?: boolean;
-  eventId?: number;
-  sequenceId?: number;
 };
 
 export const SET_APP_STATE = 'app/SET_APP_STATE';
@@ -139,10 +136,7 @@ export const onResourceSelected = (
   const { search } = history.location;
   const currentSearch = queryString.parse(search);
   delete currentSearch.assetId;
-  delete currentSearch.timeseriesId;
   delete currentSearch.fileId;
-  delete currentSearch.sequenceId;
-  delete currentSearch.eventId;
 
   const newState = {
     ...currentSearch,

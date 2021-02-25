@@ -23,18 +23,12 @@ import {
   retrieveExternal as fileExternalRetrieve,
 } from 'modules/files';
 import {
-  itemSelector as sequenceItemSelector,
-  retrieve as sequenceRetrieve,
-  retrieveExternal as sequenceExternalRetrieve,
-} from 'modules/sequences';
-import {
   AssetHoverPreview,
   FileHoverPreview,
-  SequenceHoverPreview,
   RenderResourceActionsFunction,
 } from 'containers/HoverPreview';
 import { onResourceSelected } from 'modules/app';
-import { FileInfo, Asset, Sequence } from '@cognite/sdk';
+import { FileInfo, Asset } from '@cognite/sdk';
 import { SmallTitle } from 'components/Common';
 import { useHistory } from 'react-router-dom';
 import { ProposedCogniteAnnotation } from './CogniteFileViewer';
@@ -97,7 +91,6 @@ type Props = {
   extraActions?: ExtraEditorOption[];
   children?: React.ReactNode;
   onFileClicked?: (file: FileInfo) => void;
-  onSequenceClicked?: (sequence: Sequence) => void;
   onAssetClicked?: (asset: Asset) => void;
   renderResourceActions?: RenderResourceActionsFunction;
   height: number | string | undefined;
@@ -112,7 +105,6 @@ export const CogniteFileViewerEditor = ({
   height,
   onFileClicked,
   onAssetClicked,
-  onSequenceClicked,
   renderResourceActions = () => [],
 }: Props) => {
   const dispatch = useDispatch();
@@ -121,15 +113,12 @@ export const CogniteFileViewerEditor = ({
 
   const getAsset = useSelector(assetItemSelector);
   const getFile = useSelector(fileItemSelector);
-  const getSequence = useSelector(sequenceItemSelector);
 
   const [label, setLabel] = useState(annotation ? annotation.label : undefined);
   const [assetId, setAssetId] = useState<number | undefined>(undefined);
   const [fileId, setFileId] = useState<number | undefined>(undefined);
-  const [sequenceId, setSequenceId] = useState<number | undefined>(undefined);
   const currentAsset = assetId ? getAsset(assetId) : undefined;
   const currentFile = fileId ? getFile(fileId) : undefined;
-  const currentSequence = sequenceId ? getSequence(sequenceId) : undefined;
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -163,19 +152,8 @@ export const CogniteFileViewerEditor = ({
         }
         break;
       }
-      case 'sequence': {
-        const sequence = getSequence(
-          annotation.resourceExternalId || annotation.resourceId
-        );
-        if (sequence) {
-          setSequenceId(sequence.id);
-        } else {
-          setSequenceId(undefined);
-        }
-        break;
-      }
     }
-  }, [annotation, getAsset, getFile, getSequence]);
+  }, [annotation, getAsset, getFile]);
 
   useEffect(() => {
     switch (annotation.resourceType) {
@@ -200,18 +178,6 @@ export const CogniteFileViewerEditor = ({
           );
         } else {
           dispatch(fileRetrieve([{ id: annotation.resourceId! }]));
-        }
-        break;
-      }
-      case 'sequence': {
-        if (annotation.resourceExternalId) {
-          dispatch(
-            sequenceExternalRetrieve([
-              { externalId: annotation.resourceExternalId! },
-            ])
-          );
-        } else {
-          dispatch(sequenceRetrieve([{ id: annotation.resourceId! }]));
         }
         break;
       }
@@ -428,46 +394,6 @@ export const CogniteFileViewerEditor = ({
                 icon="Select"
               >
                 Open File
-              </Button>,
-              ...popoverActions,
-            ]}
-          />
-          {children}
-        </div>
-      );
-    }
-    if (currentSequence) {
-      content = (
-        <div>
-          <SequenceHoverPreview
-            sequence={currentSequence}
-            disableSidebarToggle
-            extras={[
-              <Dropdown content={ellipsisActions} key="extra">
-                <Button icon="VerticalEllipsis" />
-              </Dropdown>,
-            ]}
-            actions={[
-              <Button
-                key="open"
-                onClick={() => {
-                  if (onSequenceClicked) {
-                    onSequenceClicked(currentSequence!);
-                  } else {
-                    dispatch(
-                      onResourceSelected(
-                        {
-                          showSidebar: true,
-                          sequenceId: currentSequence.id,
-                        },
-                        history
-                      )
-                    );
-                  }
-                }}
-                icon="Select"
-              >
-                Open Sequence
               </Button>,
               ...popoverActions,
             ]}

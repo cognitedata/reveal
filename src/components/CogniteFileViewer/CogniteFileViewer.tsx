@@ -32,7 +32,7 @@ import {
   FilePreviewOverview,
   IAnnotationWithPage,
 } from 'components/Common';
-import { FileInfo, Asset, Sequence } from '@cognite/sdk';
+import { FileInfo, Asset } from '@cognite/sdk';
 import sdk, { getAuthState } from 'sdk-singleton';
 import { RenderResourceActionsFunction } from 'containers/HoverPreview';
 import { useLocation, useHistory } from 'react-router';
@@ -82,7 +82,6 @@ type Props = {
   children?: React.ReactNode;
   onFileClicked?: (file: FileInfo) => void;
   onAssetClicked?: (asset: Asset) => void;
-  onSequenceClicked?: (sequence: Sequence) => void;
   renderResourceActions?: RenderResourceActionsFunction;
 };
 
@@ -97,7 +96,6 @@ export const CogniteFileViewer = ({
   children,
   onFileClicked,
   onAssetClicked,
-  onSequenceClicked,
   renderResourceActions,
 }: Props) => {
   const { search } = useLocation();
@@ -542,7 +540,6 @@ export const CogniteFileViewer = ({
             annotations={pnidAnnotations}
             onAssetClicked={onAssetClicked}
             onFileClicked={onFileClicked}
-            onSequenceClicked={onSequenceClicked}
             onPageChange={setPage}
             extras={renderMenuButton()}
           />

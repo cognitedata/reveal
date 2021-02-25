@@ -35,8 +35,7 @@ export default function DataKitLoadingProgress(props: Props) {
   return (
     <>
       <Text strong>
-        Loading {type === 'timeseries' ? 'time series' : type} (
-        <Text type="secondary">{downloaded}</Text>)
+        Loading {type} (<Text type="secondary">{downloaded}</Text>)
       </Text>
       <Progress
         percent={percent}

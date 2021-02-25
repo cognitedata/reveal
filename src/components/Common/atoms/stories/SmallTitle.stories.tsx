@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SmallTitle } from './SmallTitle';
+import { SmallTitle } from '../SmallTitle';
 
 export default { title: 'Atoms/SmallTitle' };
 

@@ -14,13 +14,7 @@ import {
   CogniteAnnotation,
   AnnotationResourceType,
 } from '@cognite/annotations';
-import {
-  FileInfo,
-  Asset,
-  Timeseries,
-  Sequence,
-  CogniteEvent,
-} from '@cognite/sdk';
+import { FileInfo, Asset } from '@cognite/sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   itemSelector as fileSelector,
@@ -32,31 +26,10 @@ import {
   retrieve as retrieveAsset,
   retrieveExternal as retrieveExternalAsset,
 } from 'modules/assets';
-import {
-  itemSelector as timeseriesSelector,
-  retrieve as retrieveTimeSeries,
-  retrieveExternal as retrieveExternalTimeSeries,
-} from 'modules/timeseries';
-import {
-  itemSelector as eventSelector,
-  retrieve as retrieveEvent,
-  retrieveExternal as retrieveExternalEvent,
-} from 'modules/events';
-import {
-  itemSelector as sequenceSelector,
-  retrieve as retrieveSequence,
-  retrieveExternal as retrieveExternalSequence,
-} from 'modules/sequences';
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
 import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
-import {
-  AssetItem,
-  EventItem,
-  SequenceItem,
-  FileItem,
-  TimeseriesItem,
-} from './FilePreviewOverviewItems';
+import { AssetItem, FileItem } from './FilePreviewOverviewItems';
 
 const Sidebar = styled.div`
   display: flex;
@@ -143,9 +116,6 @@ type FilePreviewOverviewProps = {
   onPageChange: (page: number) => void;
   onAssetClicked?: (item: Asset) => void;
   onFileClicked?: (item: FileInfo) => void;
-  onTimeseriesClicked?: (item: Timeseries) => void;
-  onEventClicked?: (item: CogniteEvent) => void;
-  onSequenceClicked?: (item: Sequence) => void;
 };
 
 type CategorizedAnnotations = {
@@ -163,9 +133,6 @@ export const FilePreviewOverview = ({
   onPageChange,
   onAssetClicked,
   onFileClicked,
-  onTimeseriesClicked,
-  onEventClicked,
-  onSequenceClicked,
 }: FilePreviewOverviewProps) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -206,53 +173,11 @@ export const FilePreviewOverview = ({
         )
       );
     });
-  const onTimeseriesClickedCallback =
-    onTimeseriesClicked ||
-    ((item) => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            timeseriesId: item.id,
-          },
-          history
-        )
-      );
-    });
-  const onEventClickedCallback =
-    onEventClicked ||
-    ((item) => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            eventId: item.id,
-          },
-          history
-        )
-      );
-    });
-  const onSequenceClickedCallback =
-    onSequenceClicked ||
-    ((item) => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            sequenceId: item.id,
-          },
-          history
-        )
-      );
-    });
   const categorizedAnnotations: CategorizedAnnotations = {
     file: { annotations: [], ids: new Set() },
     asset: { annotations: [], ids: new Set() },
-    timeSeries: { annotations: [], ids: new Set() },
     threeD: { annotations: [], ids: new Set() },
     threeDRevision: { annotations: [], ids: new Set() },
-    event: { annotations: [], ids: new Set() },
-    sequence: { annotations: [], ids: new Set() },
   };
 
   annotations.forEach((annotation) => {
@@ -313,72 +238,6 @@ export const FilePreviewOverview = ({
     );
   }, [dispatch, assetIds]);
 
-  const timeseriesIds = Array.from(categorizedAnnotations.timeSeries.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveTimeSeries(
-        (timeseriesIds.filter((el) => typeof el === 'number') as number[]).map(
-          (id) => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalTimeSeries(
-        (timeseriesIds.filter((el) => typeof el === 'string') as string[]).map(
-          (externalId) => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, timeseriesIds]);
-
-  const eventIds = Array.from(categorizedAnnotations.event.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveEvent(
-        (eventIds.filter((el) => typeof el === 'number') as number[]).map(
-          (id) => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalEvent(
-        (eventIds.filter((el) => typeof el === 'string') as string[]).map(
-          (externalId) => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, eventIds]);
-
-  const sequenceIds = Array.from(categorizedAnnotations.sequence.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveSequence(
-        (sequenceIds.filter((el) => typeof el === 'number') as number[]).map(
-          (id) => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalSequence(
-        (sequenceIds.filter((el) => typeof el === 'string') as string[]).map(
-          (externalId) => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, sequenceIds]);
-
   const uniqueResources = (resourceList: any): string => {
     return [
       ...new Set(
@@ -390,10 +249,7 @@ export const FilePreviewOverview = ({
   };
 
   const getAsset = useSelector(assetSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
   const getFile = useSelector(fileSelector);
-  const getSequence = useSelector(sequenceSelector);
-  const getEvent = useSelector(eventSelector);
 
   const renderDetectedResources = () => {
     return (
@@ -511,160 +367,6 @@ export const FilePreviewOverview = ({
               })}
             </div>
           </Collapse.Panel>
-
-          {/** Time series */}
-          <Collapse.Panel
-            showArrow={false}
-            key="timeseries"
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="Timeseries" />
-                <Title level={5}>Time series</Title>
-                <div className="spacer" />
-                <Badge
-                  text={uniqueResources(categorizedAnnotations.timeSeries)}
-                  background={Colors['lightblue-5'].hex()}
-                />
-                <Icon type={open.includes('timeseries') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {timeseriesIds.map((id) => {
-                const timeseries = getTimeseries(id);
-                if (timeseries && query.length > 0) {
-                  if (
-                    `${timeseries.name}${timeseries.externalId}${timeseries.description}${timeseries.id}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
-                return (
-                  <FilePreviewOverview.TimeseriesItem
-                    onItemClick={() =>
-                      timeseries && onTimeseriesClickedCallback(timeseries)
-                    }
-                    key={id}
-                    timeseries={timeseries}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.timeSeries.annotations.filter(
-                      (el) =>
-                        timeseries &&
-                        ((el.resourceId && el.resourceId === timeseries.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === timeseries.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
-
-          {/** Events */}
-          <Collapse.Panel
-            key="events"
-            showArrow={false}
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="Events" />
-                <Title level={5}>Events</Title>
-                <div className="spacer" />
-                <Badge
-                  text={uniqueResources(categorizedAnnotations.event)}
-                  background={Colors['pink-5'].hex()}
-                />
-                <Icon type={open.includes('events') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {eventIds.map((id) => {
-                const event = getEvent(id);
-                if (event && query.length > 0) {
-                  if (
-                    `${event.type}${event.subtype}${event.description}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
-                return (
-                  <FilePreviewOverview.EventItem
-                    onItemClick={() => event && onEventClickedCallback(event)}
-                    key={id}
-                    event={event}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.event.annotations.filter(
-                      (el) =>
-                        event &&
-                        ((el.resourceId && el.resourceId === event.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === event.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
-
-          {/** Sequences */}
-          <Collapse.Panel
-            showArrow={false}
-            key="sequences"
-            header={
-              <CollapseHeader>
-                <Icon className="cogs-icon resource-icon" type="GridFilled" />
-                <Title level={5}>Sequences</Title>
-                <div className="spacer" />
-                <Badge
-                  text={uniqueResources(categorizedAnnotations.sequence)}
-                  background={Colors['yellow-5'].hex()}
-                />
-                <Icon type={open.includes('sequences') ? 'Up' : 'Down'} />
-              </CollapseHeader>
-            }
-          >
-            <div>
-              {sequenceIds.map((id) => {
-                const sequence = getSequence(id);
-                if (sequence && query.length > 0) {
-                  if (
-                    `${sequence.name}${sequence.externalId}${sequence.description}${sequence.id}`
-                      .toLocaleLowerCase()
-                      .indexOf(query.toLocaleLowerCase()) === -1
-                  ) {
-                    return null;
-                  }
-                }
-                return (
-                  <FilePreviewOverview.SequenceItem
-                    onItemClick={() =>
-                      sequence && onSequenceClickedCallback(sequence)
-                    }
-                    key={id}
-                    sequence={sequence}
-                    currentPage={page}
-                    query={query}
-                    annotations={categorizedAnnotations.sequence.annotations.filter(
-                      (el) =>
-                        sequence &&
-                        ((el.resourceId && el.resourceId === sequence.id) ||
-                          (el.resourceExternalId &&
-                            el.resourceExternalId === sequence.externalId))
-                    )}
-                    selectPage={onPageChange}
-                  />
-                );
-              })}
-            </div>
-          </Collapse.Panel>
         </Collapse>
       </>
     );
@@ -730,11 +432,4 @@ export const FilePreviewOverview = ({
 };
 
 FilePreviewOverview.AssetItem = AssetItem;
-
-FilePreviewOverview.TimeseriesItem = TimeseriesItem;
-
 FilePreviewOverview.FileItem = FileItem;
-
-FilePreviewOverview.SequenceItem = SequenceItem;
-
-FilePreviewOverview.EventItem = EventItem;

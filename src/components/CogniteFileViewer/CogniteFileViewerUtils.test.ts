@@ -24,21 +24,6 @@ describe('CogniteFileViewerUtils', () => {
         selectAnnotationColor({ ...stubAnnotation, resourceType: 'file' })
       ).toBeDefined();
     });
-    it('timeSeries', () => {
-      expect(
-        selectAnnotationColor({ ...stubAnnotation, resourceType: 'timeSeries' })
-      ).toBeDefined();
-    });
-    it('sequence', () => {
-      expect(
-        selectAnnotationColor({ ...stubAnnotation, resourceType: 'sequence' })
-      ).toBeDefined();
-    });
-    it('event', () => {
-      expect(
-        selectAnnotationColor({ ...stubAnnotation, resourceType: 'event' })
-      ).toBeDefined();
-    });
     it('selected', () => {
       expect(selectAnnotationColor({ ...stubAnnotation }, true)).toBeDefined();
     });

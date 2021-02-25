@@ -29,9 +29,6 @@ import { dateSorter, stringCompare } from 'modules/fileContextualization/utils';
 import NoNamePreview from 'components/NoNamePreview';
 import AssetSearchBar from './AssetSearchBar';
 import FileSearchBar from './FileSearchBar';
-import TimeseriesSearchBar from './TimeseriesSearchBar';
-import SequencesSearchBar from './SequencesSearchBar';
-import EventSearchBar from './EventSearchBar';
 import { searchCountSelector, searchItemSelector } from './selectors';
 
 const getColumns = (type: ResourceType) => {
@@ -123,14 +120,6 @@ const getSearchBar = (
       );
     case 'assets':
       return <AssetSearchBar filter={filter} updateFilter={updateFilter} />;
-    case 'timeseries':
-      return (
-        <TimeseriesSearchBar filter={filter} updateFilter={updateFilter} />
-      );
-    case 'sequences':
-      return <SequencesSearchBar filter={filter} updateFilter={updateFilter} />;
-    case 'events':
-      return <EventSearchBar filter={filter} updateFilter={updateFilter} />;
     default:
       throw new Error(`type '${type}' not supported`);
   }

@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { match as matchRoute } from 'path-to-regexp';
 import styled from 'styled-components';
 import 'antd/dist/antd.css';
-import { Row as BaseRow, Steps, StepsType } from 'components/Common';
+import { Flex as BaseFlex, Steps, StepsType } from 'components/Common';
 
-const Row = styled(BaseRow)`
+const Flex = styled(BaseFlex)`
   margin-bottom: 40px;
   padding-bottom: 30px;
   height: 20px;
@@ -51,8 +51,8 @@ export const Breadcrumbs = (props: BreadcrumbsProps) => {
     return <span />;
   }
   return (
-    <Row flex>
+    <Flex row>
       <Steps steps={steps} current={currentStep} className="breadcrumb-steps" />
-    </Row>
+    </Flex>
   );
 };

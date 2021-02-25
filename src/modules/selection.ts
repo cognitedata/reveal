@@ -1,21 +1,12 @@
 import produce from 'immer';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { isFinite } from 'lodash';
+import isFinite from 'lodash/isFinite';
 import { v4 as uuid } from 'uuid';
 import { createSelector } from 'reselect';
 import { InternalId } from '@cognite/sdk';
 import { RootState } from '../reducers/index';
 import { ResourceType } from './sdk-builder/types';
-import {
-  countSelector as countTimeseriesSelector,
-  list as listTimeseries,
-  count as countTimeseries,
-  listParallel as listTimeseriesParallel,
-  listSelector as listTimeseriesSelector,
-  retrieve as retrieveTimeseries,
-  searchSelector as searchTimeseriesSelector,
-} from './timeseries';
 
 import {
   countSelector as countFileSelector,
@@ -34,22 +25,6 @@ import {
   retrieve as retrieveAssets,
   searchSelector as searchAssetSelector,
 } from './assets';
-import {
-  countSelector as countSequencesSelector,
-  list as listSequences,
-  count as countSequences,
-  listSelector as listSequencesSelector,
-  retrieve as retrieveSequences,
-  searchSelector as searchSequencesSelector,
-} from './sequences';
-import {
-  countSelector as countEventsSelector,
-  list as listEvents,
-  count as countEvents,
-  listSelector as listEventsSelector,
-  retrieve as retrieveEvents,
-  searchSelector as searchEventsSelector,
-} from './events';
 
 // Constants
 const CREATE_SELECTION = 'selection/CREATE_SELECTION';
@@ -224,12 +199,6 @@ function getCountAction(type: ResourceType) {
       return countFiles;
     case 'assets':
       return countAssets;
-    case 'timeseries':
-      return countTimeseries;
-    case 'sequences':
-      return countSequences;
-    case 'events':
-      return countEvents;
     default:
       throw new Error(`type '${type}' not supported`);
   }
@@ -241,12 +210,6 @@ function getRetrieveAction(type: ResourceType) {
       return retrieveFiles;
     case 'assets':
       return retrieveAssets;
-    case 'timeseries':
-      return retrieveTimeseries;
-    case 'sequences':
-      return retrieveSequences;
-    case 'events':
-      return retrieveEvents;
     default:
       throw new Error(`type '${type}' not supported`);
   }
@@ -278,26 +241,12 @@ export const loadResourceSelection = (selectionId: string, loadAll = true) => {
               case 'files':
                 await dispatch(listFiles(selection.query, loadAll));
                 break;
-              case 'events':
-                await dispatch(listEvents(selection.query, loadAll));
-                break;
-              case 'sequences':
-                await dispatch(listSequences(selection.query, loadAll));
-                break;
               case 'assets': {
                 if (loadAll) {
                   await dispatch(listAssetsParallel(selection.query));
                   break;
                 }
                 await dispatch(listAssets(selection.query));
-                break;
-              }
-              case 'timeseries': {
-                if (loadAll) {
-                  await dispatch(listTimeseriesParallel(selection.query));
-                  break;
-                }
-                await dispatch(listTimeseries(selection.query));
                 break;
               }
             }
@@ -326,27 +275,12 @@ export const stuffForTesting = {
 export const getCountsSelector = createSelector(
   countAssetSelector,
   countFileSelector,
-  countTimeseriesSelector,
-  countSequencesSelector,
-  countEventsSelector,
-  (
-    assetCounter,
-    fileCounter,
-    timeseriesCounter,
-    sequencesCounter,
-    eventsCounter
-  ) => (type: ResourceType) => {
+  (assetCounter, fileCounter) => (type: ResourceType) => {
     switch (type) {
       case 'files':
         return fileCounter;
       case 'assets':
         return assetCounter;
-      case 'timeseries':
-        return timeseriesCounter;
-      case 'sequences':
-        return sequencesCounter;
-      case 'events':
-        return eventsCounter;
       default:
         throw new Error(`type '${type}' not supported`);
     }
@@ -356,23 +290,12 @@ export const getCountsSelector = createSelector(
 export const getItemsSearchSelector = createSelector(
   searchFileSelector,
   searchAssetSelector,
-  searchTimeseriesSelector,
-  searchSequencesSelector,
-  searchEventsSelector,
-  (fileSearch, assetSearch, timeseriesSearch, sequenceSearch, eventSearch) => (
-    type: ResourceType
-  ) => {
+  (fileSearch, assetSearch) => (type: ResourceType) => {
     switch (type) {
       case 'assets':
         return assetSearch;
       case 'files':
         return fileSearch;
-      case 'timeseries':
-        return timeseriesSearch;
-      case 'sequences':
-        return sequenceSearch;
-      case 'events':
-        return eventSearch;
       default:
         throw new Error(`type '${type}' is not supported`);
     }
@@ -382,23 +305,12 @@ export const getItemsSearchSelector = createSelector(
 export const getItemListSelector = createSelector(
   listFileSelector,
   listAssetSelector,
-  listTimeseriesSelector,
-  listSequencesSelector,
-  listEventsSelector,
-  (fileList, assetList, timeseriesList, sequenceList, eventsList) => (
-    type: ResourceType
-  ) => {
+  (fileList, assetList) => (type: ResourceType) => {
     switch (type) {
       case 'assets':
         return assetList;
       case 'files':
         return fileList;
-      case 'timeseries':
-        return timeseriesList;
-      case 'sequences':
-        return sequenceList;
-      case 'events':
-        return eventsList;
       default:
         throw new Error(`type '${type}' is not supported`);
     }

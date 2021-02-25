@@ -1,11 +1,6 @@
 import { Limit } from '@cognite/sdk';
 
-export type ResourceType =
-  | 'assets'
-  | 'events'
-  | 'files'
-  | 'sequences'
-  | 'timeseries';
+export type ResourceType = 'assets' | 'files';
 
 export interface ApiCall {
   fetching: boolean;
