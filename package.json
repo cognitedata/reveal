@@ -34,7 +34,7 @@
     "@sentry/browser": "^5.29.0",
     "date-fns": "^2.16.1",
     "firebase": "^8.2.9",
-    "highcharts": "^8.2.2",
+    "highcharts": "^9.0.1",
     "highcharts-react-official": "^3.0.0",
     "jszip": "^3.6.0",
     "lodash": "^4.17.21",
