@@ -32,15 +32,18 @@ type StyledSet = {
 };
 
 export class NodeStyleProvider {
-  private _styledSet = new Array<StyledSet>();
-  private _changedEvent = new EventTrigger<() => void>();
+  private readonly _styledSet = new Array<StyledSet>();
+
+  private readonly _events = {
+    changed: new EventTrigger<() => void>()
+  };
 
   on(_event: 'changed', listener: () => void) {
-    this._changedEvent.subscribe(listener);
+    this._events.changed.subscribe(listener);
   }
 
   off(_event: 'changed', listener: () => void) {
-    this._changedEvent.unsubscribe(listener);
+    this._events.changed.unsubscribe(listener);
   }
 
   addStyledSet(nodeSet: NodeSet, appearance: NodeAppearance) {
@@ -79,7 +82,7 @@ export class NodeStyleProvider {
   }
 
   private notifyChanged() {
-    this._changedEvent.fire();
+    this._events.changed.fire();
   }
 
   private handleNodeSetChanged(styledSet: StyledSet) {
