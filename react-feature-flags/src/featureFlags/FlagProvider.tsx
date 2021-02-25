@@ -14,6 +14,7 @@ type Props = {
   proxyUrl?: string;
   refreshInterval?: number;
   children: ReactNode;
+  disableMetrics?: boolean;
 };
 
 export const FlagProvider = ({
@@ -24,6 +25,7 @@ export const FlagProvider = ({
   refreshInterval /* This is defaulted to 30 sec by the unleash-proxy-client */,
   projectName,
   remoteAddress,
+  disableMetrics,
 }: Props) => {
   const client = useRef<UnleashClient>(
     new UnleashClient({
@@ -31,6 +33,7 @@ export const FlagProvider = ({
       clientKey: apiToken,
       url: proxyUrl,
       refreshInterval,
+      disableMetrics,
     })
   );
 
