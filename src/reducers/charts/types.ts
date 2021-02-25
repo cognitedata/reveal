@@ -6,6 +6,7 @@ export type Chart = {
   workflowCollection?: ChartWorkflow[];
   dateFrom: string;
   dateTo: string;
+  visibleRange?: any[];
 };
 
 export type ChartTimeSeries = {
@@ -19,6 +20,7 @@ export type ChartTimeSeries = {
   originalUnit?: string;
   preferredUnit?: string;
   description?: string;
+  range?: number[];
 };
 
 export type ChartWorkflow = {
@@ -28,4 +30,5 @@ export type ChartWorkflow = {
   lineStyle?: 'solid' | 'dashed' | 'dotted';
   color: string;
   enabled: boolean;
+  range?: number[];
 };

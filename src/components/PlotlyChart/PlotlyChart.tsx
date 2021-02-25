@@ -7,21 +7,30 @@ import {
   DatapointAggregates,
   Datapoints,
   DoubleDatapoint,
+  StringDatapoint,
 } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
+import {
+  AxisUpdate,
+  getXaxisUpdateFromEventData,
+  getYaxisUpdatesFromEventData,
+  PlotlyEventData,
+  SeriesData,
+} from './utils';
 
 type ChartProps = {
   chart?: Chart;
+  onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
 const Plot = createPlotlyComponent(Plotly);
 
-const PlotlyChartComponent = ({ chart }: ChartProps) => {
+const PlotlyChartComponent = ({ chart, onAxisChange }: ChartProps) => {
   const [timeSeriesDataPoints, setTimeSeriesDataPoints] = useState<
     (Datapoints | DatapointAggregates)[]
   >([]);
@@ -85,12 +94,16 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
       .map(({ id }) => state.workflows.entities[id])
   )?.filter(Boolean);
 
-  const seriesData =
+  const seriesData: SeriesData[] =
     [
       ...timeSeriesDataPoints
         .filter((ts) => !ts.isString)
         .map((ts) => ({
           id: ts.externalId,
+          type: 'timeseries',
+          range: chart?.timeSeriesCollection?.find(
+            ({ id }) => id === ts.externalId
+          )?.range,
           name: chart?.timeSeriesCollection?.find(
             ({ id }) => id === ts.externalId
           )?.name,
@@ -117,6 +130,10 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
         .filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
         .map((workflow) => ({
           id: workflow?.id,
+          type: 'workflow',
+          range: chart?.workflowCollection?.find(
+            (chartWorkflow) => workflow?.id === chartWorkflow.id
+          )?.range,
           name: chart?.workflowCollection?.find(
             (chartWorkflow) => workflow?.id === chartWorkflow.id
           )?.name,
@@ -133,7 +150,8 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
           ),
           unit: workflow?.latestRun?.results?.datapoints.unit,
           datapoints: workflow?.latestRun?.results?.datapoints.datapoints as (
-            | Datapoints
+            | StringDatapoint
+            | DoubleDatapoint
             | DatapointAggregate
           )[],
         })),
@@ -168,6 +186,22 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
     }
   );
 
+  const handleRelayout = (eventdata: PlotlyEventData) => {
+    if (onAxisChange) {
+      onAxisChange({
+        x: getXaxisUpdateFromEventData(eventdata),
+        y: getYaxisUpdatesFromEventData(seriesData, eventdata),
+      });
+    }
+  };
+
+  /**
+   * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
+   */
+  const serializedXRange = chart?.visibleRange
+    ? JSON.parse(JSON.stringify(chart?.visibleRange))
+    : undefined;
+
   const layout = {
     margin: {
       l: 50,
@@ -178,13 +212,21 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
     xaxis: {
       type: 'date',
       domain: [0.06 * (seriesData.length - 1), 1],
+      range: serializedXRange,
     },
     showlegend: true,
     legend: { orientation: 'h', yshift: 10 },
     annotations: [],
   };
 
-  seriesData.forEach(({ unit, color }, index) => {
+  seriesData.forEach(({ unit, color, range }, index) => {
+    /**
+     * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
+     */
+    const serializedYRange = range
+      ? JSON.parse(JSON.stringify(range))
+      : undefined;
+
     (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
       linecolor: color,
       linewidth: 3,
@@ -195,6 +237,7 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
       anchor: 'free',
       position: 0.05 * index,
       showline: true,
+      range: serializedYRange,
     };
 
     if (unit) {
@@ -220,6 +263,7 @@ const PlotlyChartComponent = ({ chart }: ChartProps) => {
       // @ts-ignore
       layout={layout}
       config={{ responsive: true, scrollZoom: true }}
+      onRelayout={handleRelayout}
     />
   );
 };

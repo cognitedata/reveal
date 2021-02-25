@@ -38,6 +38,7 @@ import { calculateGranularity } from 'utils/timeseries';
 import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
 import sdk from 'services/CogniteSDK';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
+import { AxisUpdate } from 'components/PlotlyChart';
 import {
   Header,
   TopPaneWrapper,
@@ -486,6 +487,30 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   const handleCloseDataQualityReport = () => {
     setDataQualityReport({});
+  };
+
+  const handleChangeSourceAxis = (axis: { x: number[]; y: AxisUpdate[] }) => {
+    if (!chart) {
+      return;
+    }
+
+    if (axis.x.length) {
+      dispatch(
+        chartsSlice.actions.changeVisibleDateRange({
+          id: chart?.id || '',
+          range: axis.x,
+        })
+      );
+    }
+
+    if (axis.y.length) {
+      dispatch(
+        chartsSlice.actions.changeSourceYaxis({
+          id: chart?.id || '',
+          axisUpdates: axis.y,
+        })
+      );
+    }
   };
 
   const renderStatusIcon = (status?: WorkflowRunStatus) => {
@@ -1001,7 +1026,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <SplitPaneLayout>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
-                <PlotlyChartComponent chart={chart} />
+                <PlotlyChartComponent
+                  chart={chart}
+                  onAxisChange={handleChangeSourceAxis}
+                />
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">

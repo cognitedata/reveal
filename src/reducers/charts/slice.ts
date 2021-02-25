@@ -5,6 +5,7 @@ import {
   createEntityAdapter,
   Update,
 } from '@reduxjs/toolkit';
+import { AxisUpdate } from 'components/PlotlyChart';
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
 import { ValueOf } from 'typings/utils';
@@ -227,6 +228,59 @@ const chartsSlice = createSlice({
         changes: {
           dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
           dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
+        },
+      });
+    },
+
+    changeVisibleDateRange: (
+      state,
+      action: PayloadAction<{ id: string; range: any[] }>
+    ) => {
+      const { id, range } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          visibleRange: range || chart?.visibleRange,
+        },
+      });
+    },
+
+    changeSourceYaxis: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        axisUpdates: AxisUpdate[];
+      }>
+    ) => {
+      const { id, axisUpdates } = action.payload;
+      const chart = state.entities[id];
+
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          timeSeriesCollection: chart?.timeSeriesCollection?.map(
+            (timeSeries) => {
+              const matchingUpdate = axisUpdates
+                .filter(({ type }) => type === 'timeseries')
+                .find((update) => update.id === timeSeries.id);
+
+              return {
+                ...timeSeries,
+                range: matchingUpdate ? matchingUpdate.range : timeSeries.range,
+              };
+            }
+          ),
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            const matchingUpdate = axisUpdates
+              .filter(({ type }) => type === 'workflow')
+              .find((update) => update.id === workflow.id);
+
+            return {
+              ...workflow,
+              range: matchingUpdate ? matchingUpdate.range : workflow.range,
+            };
+          }),
         },
       });
     },
