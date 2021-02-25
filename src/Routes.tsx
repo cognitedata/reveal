@@ -34,16 +34,16 @@ const routes = [
       LazyWrapper(props, () => import('src/pages/Home')),
   },
   {
+    exact: true,
+    path: '/:tenant/vision/workflow/review/:fileId',
+    component: (props: RouteComponentProps) =>
+      LazyWrapper(props, () => import('src/pages/Preview/AnnotationsEdit')),
+  },
+  {
     exact: false,
     path: '/:tenant/vision/workflow/:step',
     component: (props: RouteComponentProps) =>
       LazyWrapper(props, () => import('src/pages/Workflow/WorkflowContainer')),
-  },
-  {
-    exact: true,
-    path: '/:tenant/vision/annotations/file/:fileId',
-    component: (props: RouteComponentProps) =>
-      LazyWrapper(props, () => import('src/pages/Annotations/AnnotationsEdit')),
   },
 ];
 

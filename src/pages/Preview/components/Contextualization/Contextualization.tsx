@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button, Select, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AnnotationsTable } from 'src/pages/Annotations/components/AnnotationsTable/AnnotationsTable';
+import { AnnotationsTable } from 'src/pages/Preview/components/AnnotationsTable/AnnotationsTable';
+import { CogniteAnnotation } from 'src/utils/AnnotationUtils';
 
 const Container = styled.div``;
 
@@ -11,12 +12,13 @@ const TitleRow = styled.div`
 `;
 
 const ModelSelectContainer = styled.div`
-  display: grid;
+  display: none;
   grid-template-columns: auto 200px;
   column-gap: 10px;
 `;
 
 const ModelTitle = styled.p`
+  display: none;
   margin-bottom: 5px;
   margin-left: 5px;
 `;
@@ -34,7 +36,9 @@ const StyledButton = styled(Button)`
   margin-left: 10px;
 `;
 
-export const Contextualization = () => {
+export const Contextualization = (props: {
+  annotations: CogniteAnnotation[];
+}) => {
   return (
     <Container>
       <TitleRow>
@@ -67,7 +71,7 @@ export const Contextualization = () => {
           Delete
         </StyledButton>
       </EditContainer>
-      <AnnotationsTable annotations={[{}]} />
+      <AnnotationsTable annotations={props.annotations} />
     </Container>
   );
 };

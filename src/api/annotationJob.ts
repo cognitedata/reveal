@@ -24,7 +24,7 @@ interface AnnotationJobRunning extends AnnotationJobBase {
   startTime: number;
   status: 'RUNNING';
 }
-interface AnnotationJobCompleted extends AnnotationJobBase {
+export interface AnnotationJobCompleted extends AnnotationJobBase {
   status: 'COMPLETED';
   createdTime: number;
   startTime: number;
