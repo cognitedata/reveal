@@ -12,6 +12,8 @@ import { TransformOverrideBuffer } from '../rendering/TransformOverrideBuffer';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
 
+type AppliedStyle = { revision: number; treeIndices: IndexSet; style: NodeAppearance };
+
 export class NodeStyleTextureBuilder {
   private _defaultStyle: NodeAppearance = {};
   private readonly _styleProvider: NodeStyleProvider;
@@ -25,7 +27,7 @@ export class NodeStyleTextureBuilder {
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
-  private readonly _currentlyAppliedStyles = new Map<number, { revision: number; treeIndices: IndexSet }>();
+  private readonly _currentlyAppliedStyles = new Map<number, AppliedStyle>();
 
   constructor(treeIndexCount: number, styleProvider: NodeStyleProvider) {
     this._treeIndexCount = treeIndexCount;
@@ -58,8 +60,6 @@ export class NodeStyleTextureBuilder {
     if (!equalNodeAppearances(appearance, this._defaultStyle)) {
       this._defaultStyle = appearance;
       fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
-      // Force full update as we might have overwritten previously applied styles
-      this._currentlyAppliedStyles.clear();
       this._infrontNodesTreeIndices.clear();
       this._ghostedNodesTreeIndices.clear();
       this._regularNodesTreeIndices.clear();
@@ -69,14 +69,14 @@ export class NodeStyleTextureBuilder {
       const ghosted = !!appearance.renderGhosted;
       if (infront) {
         this._infrontNodesTreeIndices.addRange(allIndicesRange);
-      }
-      if (ghosted) {
+      } else if (ghosted) {
         this._ghostedNodesTreeIndices.addRange(allIndicesRange);
-      }
-      if (!infront && !ghosted) {
+      } else {
         this._regularNodesTreeIndices.addRange(allIndicesRange);
       }
 
+      // Force full update as we might have overwritten previously applied styles
+      this._currentlyAppliedStyles.clear();
       this._needsUpdate = true;
     }
   }
@@ -128,11 +128,34 @@ export class NodeStyleTextureBuilder {
   }
 
   build() {
-    const defaultColorRgba = appearanceToColorOverride(this._defaultStyle);
-    const defaultTransformLookupIndexRgb: [number, number, number] = [0, 0, 0]; // Special value for no transform
-
-    const appliedStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
+    const orphanStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
     // TODO 2021-02-04 larsmoa: Currently transform overrides are never removed
+
+    // 1. Reset nodes that has been removed from nodesets to default style
+    this._styleProvider.applyStyles((styleId, revision, treeIndices, style) => {
+      orphanStyleIds.delete(styleId);
+
+      const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
+      if (currentlyApplied === undefined || currentlyApplied.revision === revision) {
+        // Unchanged - nothing to do
+        return;
+      }
+
+      const removedTreeIndices = currentlyApplied.treeIndices.clone().differenceWith(treeIndices);
+      this.resetToDefaultStyle(removedTreeIndices, currentlyApplied.style);
+    });
+
+    // 2. Clean up orphan styles
+    for (const styleId of orphanStyleIds) {
+      const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
+      if (currentlyApplied !== undefined) {
+        this.resetToDefaultStyle(currentlyApplied.treeIndices, currentlyApplied.style);
+      }
+      this._currentlyAppliedStyles.delete(styleId);
+    }
+
+    // 2. Apply new style to all nodes that has been added to node sets
+    // Note! This is done in separate stages to support nodes moving from one set to another
     this._styleProvider.applyStyles((styleId, revision, treeIndices, style) => {
       const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
       if (currentlyApplied !== undefined && currentlyApplied.revision === revision) {
@@ -142,55 +165,57 @@ export class NodeStyleTextureBuilder {
 
       // Translate from style to magic values in textures
       const fullStyle = { ...this._defaultStyle, ...style };
-      const colorRgba = appearanceToColorOverride(fullStyle);
-      const transformLookupIndexRgb = appearanceToTransformOverride(styleId, style, this._transformOverrideBuffer);
+      const addedTreeIndices =
+        currentlyApplied === undefined ? treeIndices : treeIndices.clone().differenceWith(currentlyApplied.treeIndices);
+      this._currentlyAppliedStyles.set(styleId, { revision, treeIndices: treeIndices.clone(), style: fullStyle });
 
-      if (currentlyApplied !== undefined) {
-        // Apply difference (new revision)
-        const addedTreeIndices = treeIndices.clone().differenceWith(currentlyApplied.treeIndices);
-        const removedTreeIndices = currentlyApplied.treeIndices.differenceWith(treeIndices); // Note! We reuse the set here to avoid GC
-
-        applyRGBA(this._overrideColorPerTreeIndexTexture, removedTreeIndices, defaultColorRgba);
-        applyRGBA(this._overrideColorPerTreeIndexTexture, addedTreeIndices, colorRgba);
-        applyRGB(this._overrideTransformPerTreeIndexTexture, removedTreeIndices, defaultTransformLookupIndexRgb);
-        applyRGB(this._overrideTransformPerTreeIndexTexture, addedTreeIndices, transformLookupIndexRgb);
-
-        const infront = !!style.renderInFront;
-        const ghosted = !!style.renderGhosted;
-
-        updateLookupSet(this._infrontNodesTreeIndices, addedTreeIndices, infront);
-        updateLookupSet(this._ghostedNodesTreeIndices, addedTreeIndices, ghosted);
-        updateLookupSet(this._regularNodesTreeIndices, addedTreeIndices, !infront && !ghosted);
-
-        if (infront) {
-          updateLookupSet(this._infrontNodesTreeIndices, removedTreeIndices, false);
-        }
-        if (ghosted) {
-          updateLookupSet(this._ghostedNodesTreeIndices, removedTreeIndices, false);
-        }
-        if (infront || ghosted) {
-          updateLookupSet(this._regularNodesTreeIndices, removedTreeIndices, true);
-        }
-      } else if (currentlyApplied === undefined) {
-        // The first time this style is applied
-        applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
-        applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformLookupIndexRgb);
-
-        const infront = !!style.renderInFront;
-        const ghosted = !!style.renderGhosted;
-        updateLookupSet(this._infrontNodesTreeIndices, treeIndices, infront);
-        updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, ghosted);
-        updateLookupSet(this._regularNodesTreeIndices, treeIndices, !infront && !ghosted);
-      }
-
-      appliedStyleIds.delete(styleId);
-      this._currentlyAppliedStyles.set(styleId, { revision, treeIndices: treeIndices.clone() });
+      this.applyStyleToNodes(addedTreeIndices, styleId, fullStyle);
     });
 
-    // Clean up orphan styles
-    appliedStyleIds.forEach(styleId => this._currentlyAppliedStyles.delete(styleId));
-
     this._needsUpdate = false;
+  }
+
+  private resetToDefaultStyle(treeIndices: IndexSet, currentStyle: NodeAppearance) {
+    if (treeIndices.count === 0) {
+      return;
+    }
+
+    const defaultColorRgba = appearanceToColorOverride(this._defaultStyle);
+    const defaultTransformLookupIndexRgb: [number, number, number] = [0, 0, 0]; // Special value for no transform
+
+    const infront = !!currentStyle.renderInFront;
+    const ghosted = !infront && !!currentStyle.renderGhosted;
+
+    applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, defaultColorRgba);
+    applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, defaultTransformLookupIndexRgb);
+
+    if (infront) {
+      updateLookupSet(this._infrontNodesTreeIndices, treeIndices, false);
+    } else if (ghosted) {
+      updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, false);
+    }
+    if (infront || ghosted) {
+      updateLookupSet(this._regularNodesTreeIndices, treeIndices, true);
+    }
+  }
+
+  private applyStyleToNodes(treeIndices: IndexSet, styleId: number, style: NodeAppearance) {
+    if (treeIndices.count === 0) {
+      return;
+    }
+
+    const colorRgba = appearanceToColorOverride(style);
+    const transformLookupIndexRgb = appearanceToTransformOverride(styleId, style, this._transformOverrideBuffer);
+
+    applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
+    applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformLookupIndexRgb);
+
+    const infront = !!style.renderInFront;
+    const ghosted = !infront && !!style.renderGhosted;
+
+    updateLookupSet(this._infrontNodesTreeIndices, treeIndices, infront);
+    updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, ghosted);
+    updateLookupSet(this._regularNodesTreeIndices, treeIndices, !infront && !ghosted);
   }
 
   private handleStylesChanged() {

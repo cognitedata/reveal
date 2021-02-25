@@ -47,7 +47,7 @@ describe('NodeStyleProvider', () => {
     provider.addStyledSet(set1, style1);
     provider.addStyledSet(set2, style2);
 
-    provider.removedStyledSet(set2);
+    provider.removeStyledSet(set2);
     provider.applyStyles(applyCb);
 
     expect(applyCb).toBeCalledTimes(1);
@@ -62,7 +62,7 @@ describe('NodeStyleProvider', () => {
     provider.addStyledSet(set, {});
     expect(listener).toBeCalledTimes(1);
 
-    provider.removedStyledSet(set);
+    provider.removeStyledSet(set);
     expect(listener).toBeCalledTimes(2);
   });
 
@@ -82,7 +82,7 @@ describe('NodeStyleProvider', () => {
     const set = new FixedNodeSet(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
     provider.addStyledSet(set, style);
-    provider.removedStyledSet(set);
+    provider.removeStyledSet(set);
     const listener = jest.fn();
     provider.on('changed', listener);
 

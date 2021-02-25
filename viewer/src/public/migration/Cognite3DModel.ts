@@ -153,7 +153,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodes   Node set previously added using {@see addStyledSet}.
    */
   removeStyledNodeSet(nodes: NodeSet) {
-    this.nodeApperanceProvider.removedStyledSet(nodes);
+    this.nodeApperanceProvider.removeStyledSet(nodes);
   }
   /**
    * Maps a position retrieved from the CDF API (e.g. 3D node information) to

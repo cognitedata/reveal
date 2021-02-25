@@ -59,7 +59,7 @@ export class NodeStyleProvider {
     this.notifyChanged();
   }
 
-  removedStyledSet(nodeSet: NodeSet) {
+  removeStyledSet(nodeSet: NodeSet) {
     const index = this._styledSet.findIndex(x => x.nodeSet === nodeSet);
     if (index === -1) {
       throw new Error('Node set not added');
