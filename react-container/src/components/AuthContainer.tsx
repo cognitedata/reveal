@@ -44,9 +44,15 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   const { aadApplicationId, AADTenantID, applicationId, cdfCluster } = sidecar;
 
   React.useEffect(() => {
+    let aad;
+    if (aadApplicationId) {
+      aad = { appId: aadApplicationId || '', directoryTenantId: AADTenantID };
+    }
+
     const authClient = new CogniteAuth(sdkClient, {
-      aad: { appId: aadApplicationId || '', directoryTenantId: AADTenantID },
+      aad,
       cluster: cdfCluster,
+      flow,
     });
 
     log('[AuthContainer] CogniteAuth:', [authClient], 1);

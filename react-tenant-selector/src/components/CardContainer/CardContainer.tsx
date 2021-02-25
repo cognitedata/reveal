@@ -62,9 +62,7 @@ const CardContainer = ({
   loading,
   validateCluster,
   validateTenant,
-  enabledLoginModes = {
-    cognite: true,
-  },
+  enabledLoginModes,
 }: Props) => {
   const [containerHeight, setContainerHeight] = React.useState<string>();
   const container = React.createRef<HTMLDivElement>();

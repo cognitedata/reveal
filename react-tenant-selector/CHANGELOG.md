@@ -1,3 +1,9 @@
+## 0.6.1 Feb 24 2021
+
+### Changes
+
+- Make sure authClient is only setup once
+
 ## 0.6.0 Feb 24 2021
 
 ### Changes

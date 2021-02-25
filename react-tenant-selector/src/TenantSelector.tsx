@@ -2,10 +2,10 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { configureI18n } from '@cognite/react-i18n';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
+import { Loader } from '@cognite/cogs.js';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
 // note: only using relative paths until we can setup storybook baseUrl properly:
-import { Loader } from '@cognite/cogs.js';
 import CardContainer, { EnabledModes } from './components/CardContainer';
 import { TenantSelectorBackground } from './components';
 import { SidecarConfig } from './utils';
@@ -33,37 +33,21 @@ export const TenantSelector: React.FC<{
   } = sidecar;
 
   const [authenticating, setAuthenticating] = useState(false);
-  const [setup, setSetup] = useState(false);
-
   const [authState, setAuthState] = useState<AuthenticatedUser | undefined>();
+  const [authClient, setAuthClient] = useState<CogniteAuth | undefined>();
 
   const possibleTenant = window.location.pathname.replace(
     /^\/([^/]*).*$/,
     '$1'
   );
 
-  useEffect(() => {
-    configureI18n({
-      useSuspense: true,
-      // required here so we can override translations from
-      // localhost or the hosted version
-      locize: {
-        projectId:
-          locizeProjectId || process.env.REACT_APP_LOCIZE_PROJECT_ID || '',
-        apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '',
-      },
-      disabled: disableTranslations,
-    }).then(() => setSetup(true));
-  }, []);
-
-  const cache = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60000,
-        retry: false,
-      },
-    },
-  });
+  const enabledLoginModes: EnabledModes = {
+    cognite: true,
+    aad: !!aadApplicationId,
+    // if we want to enable other modes in testing
+    // we would use a setting here like this:
+    // adfs: true,
+  };
 
   const {
     onTenantSelected,
@@ -88,6 +72,69 @@ export const TenantSelector: React.FC<{
     redirectingToCluster ||
     initialTenant === possibleTenant;
 
+  const doSetup = async () => {
+    const sdkClient = new CogniteClient({
+      appId: applicationId,
+    });
+
+    await configureI18n({
+      useSuspense: true,
+      // required here so we can override translations from
+      // localhost or the hosted version
+      locize: {
+        projectId:
+          locizeProjectId || process.env.REACT_APP_LOCIZE_PROJECT_ID || '',
+        apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '',
+      },
+      disabled: disableTranslations,
+    });
+
+    const { flow, options } = getFlow(initialTenant || '', cdfCluster);
+
+    const cogniteAuth = new CogniteAuth(sdkClient, {
+      aad: aadApplicationId
+        ? {
+            appId: aadApplicationId,
+            directoryTenantId: options?.directory || directoryTenantId,
+          }
+        : undefined,
+      cluster: cdfCluster,
+      flow,
+    });
+
+    const unsubscribe = cogniteAuth.onAuthChanged(
+      applicationId,
+      (user: AuthenticatedUser) => {
+        if (user) {
+          setAuthState(user);
+        }
+      }
+    );
+
+    setAuthClient(cogniteAuth);
+
+    return unsubscribe;
+  };
+
+  useEffect(() => {
+    const callbacks = doSetup();
+
+    return () => {
+      callbacks.then((action) => {
+        action();
+      });
+    };
+  }, [sidecar]);
+
+  const cache = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60000,
+        retry: false,
+      },
+    },
+  });
+
   // --TODO: Set a timeout here so that we detect if we're ever
   // in this loading state for too long.
 
@@ -111,51 +158,7 @@ export const TenantSelector: React.FC<{
     [checkClusterValidity]
   );
 
-  const sdkClient = new CogniteClient({
-    appId: applicationId,
-  });
-
-  const enabledLoginModes: EnabledModes = {
-    cognite: true,
-    // if we want to enable other modes in testing
-    // we would use a setting here like this:
-    // adfs: true,
-  };
-
-  const { flow, options } = getFlow(initialTenant || '', cdfCluster);
-
-  let aad;
-  if (aadApplicationId) {
-    enabledLoginModes.aad = true;
-
-    aad = {
-      appId: aadApplicationId,
-      directoryTenantId: options?.directory || directoryTenantId,
-    };
-  }
-
-  const authClient = new CogniteAuth(sdkClient, {
-    cluster: cdfCluster,
-    flow,
-    aad,
-  });
-
-  useEffect(() => {
-    const unsubscribe = authClient.onAuthChanged(
-      applicationId,
-      (user: AuthenticatedUser) => {
-        if (user) {
-          setAuthState(user);
-        }
-      }
-    );
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  if (!setup) {
+  if (!authClient) {
     return <Loader />;
   }
 
