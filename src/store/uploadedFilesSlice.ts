@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v3 } from '@cognite/cdf-sdk-singleton';
+import fakeFiles from './fakeFiles.json';
 
 type State = {
   uploadedFiles: Array<v3.FileInfo>;
 };
 
 const initialState: State = {
-  uploadedFiles: [],
-  // uploadedFiles: fakeFiles as any, // real has js Date instances, fake has strings, it's fine for now
+  // uploadedFiles: [],
+  uploadedFiles: fakeFiles as any, // real has js Date instances, fake has strings, it's fine for now
 };
 
 const uploadedFilesSlice = createSlice({

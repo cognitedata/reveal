@@ -20,6 +20,7 @@ export const FilePreview: React.FC<FilePreviewProps> = ({
         disableAutoFetch
         hideDownload
         annotations={annotations}
+        allowCustomAnnotations
       />
     );
   }

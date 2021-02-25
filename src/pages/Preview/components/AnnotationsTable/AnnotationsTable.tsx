@@ -2,7 +2,7 @@ import { Button, Col, Input, Radio, Row } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 import { Divider } from '@cognite/data-exploration';
-import { CogniteAnnotation } from 'src/utils/AnnotationUtils';
+import { AnnotationUtils, CogniteAnnotation } from 'src/utils/AnnotationUtils';
 
 const Container = styled.div`
   width: 100%;
@@ -35,11 +35,14 @@ const ShowHideBtn = styled(Button)`
   padding: 4px;
 `;
 
-const AnnotationBadge = styled.div`
+interface BadgeProps {
+  backgroundColor: string;
+}
+const AnnotationBadge = styled.div<BadgeProps>`
   width: 28px;
   height: 28px;
   border-radius: 4px;
-  background-color: blue;
+  background-color: ${(props) => props.backgroundColor};
   color: white;
   display: flex;
   align-items: center;
@@ -49,6 +52,7 @@ const AnnotationBadge = styled.div`
 export const AnnotationsTable = (props: {
   annotations: CogniteAnnotation[];
 }) => {
+  const { annotationColor } = AnnotationUtils;
   return (
     <Container>
       <StyledRow>
@@ -84,7 +88,9 @@ export const AnnotationsTable = (props: {
                 icon="EyeShow"
                 iconPlacement="right"
               >
-                <AnnotationBadge>{annotation.id}</AnnotationBadge>
+                <AnnotationBadge backgroundColor={annotationColor}>
+                  {annotation.id}
+                </AnnotationBadge>
               </ShowHideBtn>
             </StyledCol>
           </StyledRow>

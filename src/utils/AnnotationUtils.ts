@@ -14,9 +14,17 @@ export interface CogniteAnnotation extends Omit<OCRAnnotation, 'boundingBox'> {
   source: string;
   status: AnnotationStatus;
   version: number;
+  mark?: {
+    backgroundColor?: string;
+    strokeColor?: string;
+    strokeWidth?: number;
+    highlight?: boolean;
+  };
 }
 
 export class AnnotationUtils {
+  public static annotationColor = '#C945DB';
+
   public static convertToAnnotations(
     ocrAnnotations: OCRAnnotation[]
   ): CogniteAnnotation[] {
@@ -29,6 +37,11 @@ export class AnnotationUtils {
         source: 'ocr',
         version: 1,
         status: 'verified',
+        mark: {
+          strokeColor: AnnotationUtils.annotationColor,
+          strokeWidth: 2,
+          highlight: false,
+        },
       };
     });
   }
