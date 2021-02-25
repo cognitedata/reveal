@@ -1,3 +1,15 @@
+## 0.8.1 Feb 25 2021
+
+### Changes
+
+- Add mocks
+
+## 0.8.0 Feb 22 2021
+
+### Changes
+
+- Restore URL state after auth redirect
+
 ## 0.7.1 Feb 17 2021
 
 ### Changes

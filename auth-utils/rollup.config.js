@@ -21,6 +21,22 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
       'lodash/isFunction',
       'lodash/noop',
+      'lodash/isObject',
+    ],
+    plugins: [
+      typescript({
+        typescript: require('typescript'),
+      }),
+      json(),
+    ],
+  },
+  {
+    input: 'src/mocks.ts',
+    output: [
+      {
+        file: 'dist/mocks.js',
+        format: 'cjs',
+      },
     ],
     plugins: [
       typescript({
