@@ -9,9 +9,9 @@ import { FileDetailsComp } from 'src/pages/Preview/components/FileDetails/FileDe
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationJobCompleted } from 'src/api/annotationJob';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
+import { AnnotationJobCompleted } from 'src/api/types';
 
 const Container = styled.div`
   width: 100%;

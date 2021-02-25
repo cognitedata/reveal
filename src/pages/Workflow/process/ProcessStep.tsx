@@ -1,26 +1,33 @@
 import React from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   FileTable,
   MenuActions,
   TableDataItem,
 } from 'src/pages/Workflow/components/FileTable/FileTable';
-import { Title } from '@cognite/cogs.js';
-import { Annotation } from 'src/api/annotationJob';
+import { Detail, Title } from '@cognite/cogs.js';
+import { Annotation, DetectionModelType } from 'src/api/types';
 import {
   getParamLink,
   workflowRoutes,
 } from 'src/pages/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
+import { setSelectedDetectionModels } from 'src/store/processSlice';
+import { DetectionModelSelect } from 'src/pages/Workflow/process/DetectionModelSelect';
 
 export default function ProcessStep() {
   const history = useHistory();
   const { uploadedFiles } = useSelector(
     (state: RootState) => state.uploadedFiles
   );
-  const { jobByFileId } = useSelector((state: RootState) => state.processSlice);
+  const { jobByFileId, selectedDetectionModels } = useSelector(
+    (state: RootState) => state.processSlice
+  );
+
+  const dispatch = useDispatch();
+
   const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
     const job = jobByFileId[file.id] || {
       status: '',
@@ -58,6 +65,16 @@ export default function ProcessStep() {
   return (
     <>
       <Title level={2}>Process and detect annotations</Title>
+      <div style={{ maxWidth: 300, marginLeft: 'auto' }}>
+        <Detail strong>ML model</Detail>
+        <DetectionModelSelect
+          value={selectedDetectionModels}
+          onChange={(models: Array<DetectionModelType>) =>
+            dispatch(setSelectedDetectionModels(models))
+          }
+        />
+      </div>
+
       <br />
       <FileTable data={tableData} />
     </>

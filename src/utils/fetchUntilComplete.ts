@@ -1,10 +1,5 @@
 import noop from 'lodash/noop';
 
-type Response<T> = {
-  status: number;
-  data: T;
-};
-
 type Options<T> = {
   /* check data to see if there is no calls needed */
   isCompleted: (data: T) => boolean;
@@ -21,7 +16,7 @@ type Options<T> = {
 };
 
 export async function fetchUntilComplete<Data>(
-  networkFn: () => Promise<Response<Data>>,
+  fn: () => Promise<Data>,
   {
     isCompleted,
     onComplete = noop,
@@ -31,26 +26,22 @@ export async function fetchUntilComplete<Data>(
   }: Options<Data>
 ) {
   try {
-    const { status, data } = await networkFn();
-    if (status === 200) {
-      onTick(data);
-      if (isCompleted(data)) {
-        onComplete(data);
-      } else {
-        setTimeout(
-          () =>
-            fetchUntilComplete(networkFn, {
-              isCompleted,
-              onComplete,
-              onTick,
-              onError,
-              pollingInterval,
-            }),
-          pollingInterval
-        );
-      }
+    const data = await fn();
+    onTick(data);
+    if (isCompleted(data)) {
+      onComplete(data);
     } else {
-      onError(`Server error: code ${status}. ${JSON.stringify(data)}`);
+      setTimeout(
+        () =>
+          fetchUntilComplete(fn, {
+            isCompleted,
+            onComplete,
+            onTick,
+            onError,
+            pollingInterval,
+          }),
+        pollingInterval
+      );
     }
   } catch (e) {
     onError(e);

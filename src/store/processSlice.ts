@@ -1,20 +1,21 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  AnnotationJobResponse,
-  fetchJobById,
-  putFilesToProcessingQueue,
-} from 'src/api/annotationJob';
+import { fetchJobById, putFilesToProcessingQueue } from 'src/api/annotationJob';
 import { RootState } from 'src/store/rootReducer';
 import { fetchUntilComplete } from 'src/utils';
+import { AnnotationJobResponse, DetectionModelType } from 'src/api/types';
 
 type State = {
+  selectedDetectionModels: Array<any>;
   jobByFileId: Record<string, AnnotationJobResponse | undefined>;
   error?: string;
 };
 
 type ThunkConfig = { state: RootState };
 
+const modelType = DetectionModelType.Text; // todo: refactor
+
 const initialState: State = {
+  selectedDetectionModels: [DetectionModelType.Text],
   jobByFileId: {},
   error: undefined,
 };
@@ -57,7 +58,7 @@ const postAnnotationJobs = createAsyncThunk<
   Record<string, AnnotationJobResponse>,
   Array<number>
 >('process/postAnnotationJobs', async (fileIds) => {
-  const response = await putFilesToProcessingQueue(fileIds);
+  const response = await putFilesToProcessingQueue(modelType, fileIds);
   return fileIds.reduce((acc, fileId, index) => {
     acc[fileId] = response[index]; // not nice, but API doesn't return fileId back
 
@@ -77,7 +78,7 @@ const pollAnnotationJobStatus = createAsyncThunk<
 
     return new Promise((resolve, reject) => {
       return fetchUntilComplete<AnnotationJobResponse>(
-        () => fetchJobById(jobId),
+        () => fetchJobById(modelType, jobId),
         {
           isCompleted: (job) =>
             job.status === 'COMPLETED' ||
@@ -103,6 +104,12 @@ const processSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
+    setSelectedDetectionModels(
+      state,
+      action: PayloadAction<Array<DetectionModelType>>
+    ) {
+      state.selectedDetectionModels = action.payload;
+    },
     updateJob(
       state,
       action: PayloadAction<{
@@ -159,6 +166,6 @@ const processSlice = createSlice({
   /* eslint-enable no-param-reassign */
 });
 
-export const { updateJob } = processSlice.actions;
+export const { updateJob, setSelectedDetectionModels } = processSlice.actions;
 
 export default processSlice.reducer;

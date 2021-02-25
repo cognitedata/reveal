@@ -7,8 +7,8 @@ import ReactBaseTable, {
   Column,
   ColumnShape,
 } from 'react-base-table';
-import { Annotation, JobStatus } from 'src/api/annotationJob';
 import { TimeDisplay } from '@cognite/data-exploration';
+import { Annotation, JobStatus } from 'src/api/types';
 import { TableWrapper } from './FileTableWrapper';
 
 export type MenuActions = {

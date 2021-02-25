@@ -1,4 +1,4 @@
-import { OCRAnnotation } from '../api/ocrAnnotations';
+import { OCRAnnotation } from 'src/api/ocr/types';
 
 export type AnnotationStatus = 'verified' | 'deleted' | 'unhandled';
 
