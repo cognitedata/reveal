@@ -65,7 +65,8 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
     );
   });
 
-  if (!file) { // navigate to upload step if file is not available(if the user uses a direct link)
+  if (!file) {
+    // navigate to upload step if file is not available(if the user uses a direct link)
     history.push(getLink(workflowRoutes.upload));
   }
 
