@@ -7,14 +7,14 @@ import { FileUploadResult } from 'store/forms/types';
 
 export const key = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
-export const suiteEmpty = {
+export const getEmptySuite = () => ({
   key: key(),
   title: '',
   description: '',
   color: '',
   createdTime: now(),
   boards: [],
-};
+});
 export const updatedBoardList: Board[] = [];
 
 export const updateSuite = (suite: Suite, board: Board) => {

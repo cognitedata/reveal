@@ -2,7 +2,7 @@ import { FileInfo } from '@cognite/sdk';
 import { Board } from 'store/suites/types';
 import { createReducer } from 'typesafe-actions';
 import {
-  suiteEmpty,
+  getEmptySuite,
   updateSuite,
   deleteBoardFromSuite,
   updatedBoardList,
@@ -28,16 +28,16 @@ const getFilesInitialState = (): FilesUploadState => ({
   errors: [],
 });
 
-const initialState: FormState = {
+const getInitialState = (): FormState => ({
   isErrorListEmpty: true,
-  suite: suiteEmpty,
+  suite: getEmptySuite(),
   board: {},
   imageFile: getImageFileInitialState(),
   files: getFilesInitialState(),
   saving: false,
-};
+});
 
-export const FormReducer = createReducer(initialState)
+export const FormReducer = createReducer(getInitialState())
   .handleAction(
     FormActionTypes.SET_IS_ERROR_LIST_EMPTY,
     (state: FormState, action: FormRootAction) => ({
@@ -91,10 +91,13 @@ export const FormReducer = createReducer(initialState)
         : updatedBoardList[0] || {},
     })
   )
-  .handleAction(FormActionTypes.CLEAR_FORM, (state: FormState) => ({
+  .handleAction(FormActionTypes.CLEAR_BOARD_FORM, (state: FormState) => ({
     ...state,
-    board: initialState.board,
+    board: {},
     imageFile: getImageFileInitialState(),
+  }))
+  .handleAction(FormActionTypes.CLEAR_FORM, () => ({
+    ...getInitialState(),
   }))
   .handleAction(FormActionTypes.FORM_SAVING, (state: FormState) => ({
     ...state,

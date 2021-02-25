@@ -66,6 +66,7 @@ export const SuiteForm: React.FC = () => {
           value={suite.description}
           placeholder="Description that clearly explains the purpose of the suite"
           onChange={handleOnChange}
+          maxLength={maxDescriptionLength}
         />
         <ValidationContainer exceedWarningLength={exceedMaxLength}>
           {errors?.description && (

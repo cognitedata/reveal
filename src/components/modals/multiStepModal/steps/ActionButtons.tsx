@@ -7,7 +7,7 @@ import {
   suiteState,
   boardState,
 } from 'store/forms/selectors';
-import { addBoard, clearForm, updateBoard } from 'store/forms/actions';
+import { addBoard, clearBoardForm, updateBoard } from 'store/forms/actions';
 import isEmpty from 'lodash/isEmpty';
 import { Board } from 'store/suites/types';
 import { RootDispatcher } from 'store/types';
@@ -37,7 +37,7 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
     replaceNewFileKey(filesUploadQueue, newKey); // if uploaded a file => give it a key
     dispatch(addBoard(newKey));
 
-    dispatch(clearForm());
+    dispatch(clearBoardForm());
   };
 
   const updateExistingBoard = () => {
@@ -51,7 +51,7 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
     } else {
       flushFilesQueue(filesUploadQueue);
     }
-    dispatch(clearForm());
+    dispatch(clearBoardForm());
   };
   return (
     <ActionButtonsContainer>
