@@ -36,7 +36,7 @@
     "firebase": "^8.2.9",
     "highcharts": "^8.2.2",
     "highcharts-react-official": "^3.0.0",
-    "jszip": "^3.5.0",
+    "jszip": "^3.6.0",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.40.0",
     "p-memoize": "^4.0.1",
