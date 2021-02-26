@@ -255,8 +255,6 @@ export function Migration() {
               console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
               // highlight the object
               selectedSet.updateSet(new IndexSet([treeIndex]));
-              // model.deselectAllNodes();
-              // model.selectNodeByTreeIndex(treeIndex);
               const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
               viewer.fitCameraToBoundingBox(boundingBox, 1000);
             }
