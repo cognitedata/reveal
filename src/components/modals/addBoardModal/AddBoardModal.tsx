@@ -13,7 +13,7 @@ import { modalSettings } from 'components/modals/config';
 import { ModalFooter, ModalContainer } from 'components/modals/elements';
 import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 
 interface Props {
   dataItem: Suite;

@@ -23,7 +23,7 @@ import isEqual from 'lodash/isEqual';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { fetchImageUrls } from 'store/suites/thunks';
 import * as actions from 'store/suites/actions';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 import { StyledTitle, LargeTilesContainer } from './elements';
 
 const SuiteOverview: React.FC = () => {

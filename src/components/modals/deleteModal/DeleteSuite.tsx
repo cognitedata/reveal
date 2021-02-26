@@ -10,7 +10,7 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 import { Suite } from 'store/suites/types';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 
 interface Props {
   dataItem: Suite;

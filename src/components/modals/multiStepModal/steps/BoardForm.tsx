@@ -27,7 +27,7 @@ import { boardValidator } from 'validators';
 import { RootDispatcher } from 'store/types';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { flushFilesQueue } from 'utils/files';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 import { FileUpload } from './FileUpload';
 import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';

@@ -4,7 +4,7 @@ import { Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 import NavigationItem from './NavigationItem';
 import {
   TitleContainer,

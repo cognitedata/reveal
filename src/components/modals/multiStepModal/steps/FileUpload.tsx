@@ -15,7 +15,7 @@ import { boardState, imageFileState } from 'store/forms/selectors';
 import { Board } from 'store/suites/types';
 import { boardValidator } from 'validators';
 import { useForm } from 'hooks';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 
 type Props = {
   filesUploadQueue: Map<string, File>;

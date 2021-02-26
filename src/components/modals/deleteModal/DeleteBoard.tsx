@@ -9,7 +9,7 @@ import { Button, Title } from '@cognite/cogs.js';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 import { Board, Suite } from 'store/suites/types';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 
 interface Props {
   suite: Suite;

@@ -4,7 +4,7 @@ import { Group } from '@cognite/sdk';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
-import { Metrics } from '@cognite/metrics';
+import { getMetrics } from 'utils/metrics';
 import * as actions from './actions';
 
 export const fetchUserGroups = (apiClient: ApiClient) => async (
@@ -20,7 +20,7 @@ export const fetchUserGroups = (apiClient: ApiClient) => async (
       message: `Is admin user: ${isAdmin}`,
       level: Sentry.Severity.Info,
     });
-    Metrics.people({ isAdmin });
+    getMetrics().people({ isAdmin });
   } catch (e) {
     dispatch(actions.loadGroupsError(e));
     dispatch(setHttpError('Failed to fetch user groups', e));

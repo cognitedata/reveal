@@ -25,7 +25,7 @@ import { fetchUserSpace } from 'store/userSpace/thunks';
 import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 
 const Home = () => {
   const itemsToDisplay = 6;

@@ -9,7 +9,7 @@ import {
   ShareURLInput,
   ShareURLInputContainer,
 } from 'components/modals/elements';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 
 interface Props {
   board: Board;

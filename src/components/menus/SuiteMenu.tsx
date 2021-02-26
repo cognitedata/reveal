@@ -7,7 +7,7 @@ import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { Suite } from 'store/suites/types';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {

@@ -17,7 +17,7 @@ import {
   flushFilesQueue,
   replaceNewFileKey,
 } from 'utils/files';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 
 type Props = {
   filesUploadQueue: Map<string, File>;

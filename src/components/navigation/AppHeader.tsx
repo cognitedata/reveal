@@ -18,7 +18,7 @@ import { useIntercom } from 'react-use-intercom';
 import { getReleaseVersion } from 'utils/release';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 import { CogniteLogo, GroupPreview, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {

@@ -12,7 +12,7 @@ import { modalClose } from 'store/modals/actions';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'utils/metrics';
 import { BoardForm, SuiteForm } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
