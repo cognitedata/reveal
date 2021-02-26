@@ -18,3 +18,8 @@ sdkv3.post = jest.fn();
 sdkv3.datasets = {
   retrieve: jest.fn(),
 };
+// @ts-ignore
+sdkv3.raw = {
+  listDatabases: jest.fn(),
+  listTables: jest.fn(),
+};

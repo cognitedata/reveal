@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { Ref } from 'react-hook-form/dist/types/fields';
 import styled from 'styled-components';
 
-const CheckboxLabel = styled((props) => (
+export const CheckboxLabel = styled((props) => (
   <label {...props} htmlFor={props.htmlFor}>
     {props.children}
   </label>

@@ -322,3 +322,15 @@ export const mockDataRunsResponse: { items: StatusRow[] } = {
     },
   ],
 };
+
+export const dbResponse = { items: [{ name: 'my_db' }, { name: 'foo' }] };
+export const tableResponse = {
+  items: [{ name: 'my_table' }, { name: 'foo_table' }],
+};
+export const table2Response = {
+  items: [{ name: 'table_123' }, { name: 'table_321' }],
+};
+export const databaseListMock = [
+  { database: dbResponse.items[0], tables: [...tableResponse.items] },
+  { database: dbResponse.items[1], tables: [...table2Response.items] },
+];
