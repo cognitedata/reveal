@@ -3,6 +3,7 @@
  */
 
 import { NodeAppearance } from '..';
+import { assertNever } from '../../../utilities';
 import { EventTrigger } from '../../../utilities/events';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
@@ -33,17 +34,43 @@ type StyledSet = {
 
 export class NodeStyleProvider {
   private readonly _styledSet = new Array<StyledSet>();
+  private _lastFiredLoadingState?: boolean;
 
   private readonly _events = {
-    changed: new EventTrigger<() => void>()
+    changed: new EventTrigger<() => void>(),
+    loadingStateChanged: new EventTrigger<(isLoading: boolean) => void>()
   };
 
-  on(_event: 'changed', listener: () => void) {
-    this._events.changed.subscribe(listener);
+  on(event: 'changed', listener: () => void): void;
+  on(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
+  on(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+    switch (event) {
+      case 'changed':
+        this._events.changed.subscribe(listener as () => void);
+        break;
+      case 'loadingStateChanged':
+        this._events.loadingStateChanged.subscribe(listener as (isLoading: boolean) => void);
+        break;
+
+      default:
+        assertNever(event, `Unsupported event: '${event}'`);
+    }
   }
 
-  off(_event: 'changed', listener: () => void) {
-    this._events.changed.unsubscribe(listener);
+  off(event: 'changed', listener: () => void): void;
+  off(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
+  off(event: 'changed' | 'loadingStateChanged', listener: (() => void) | ((isLoading: boolean) => void)): void {
+    switch (event) {
+      case 'changed':
+        this._events.changed.unsubscribe(listener as () => void);
+        break;
+      case 'loadingStateChanged':
+        this._events.loadingStateChanged.unsubscribe(listener as (isLoading: boolean) => void);
+        break;
+
+      default:
+        assertNever(event, `Unsupported event: '${event}'`);
+    }
   }
 
   addStyledSet(nodeSet: NodeSet, appearance: NodeAppearance) {
@@ -81,12 +108,24 @@ export class NodeStyleProvider {
     });
   }
 
+  get isLoading(): boolean {
+    return this._styledSet.some(x => x.nodeSet.isLoading);
+  }
+
   private notifyChanged() {
     this._events.changed.fire();
+  }
+
+  private notifyLoadingStateChanged() {
+    if (this._lastFiredLoadingState !== this.isLoading) {
+      this._lastFiredLoadingState = this.isLoading;
+      this._events.loadingStateChanged.fire(this.isLoading);
+    }
   }
 
   private handleNodeSetChanged(styledSet: StyledSet) {
     styledSet.revision++;
     this.notifyChanged();
+    this.notifyLoadingStateChanged();
   }
 }

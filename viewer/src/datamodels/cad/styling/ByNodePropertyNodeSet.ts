@@ -66,6 +66,6 @@ export class ByNodePropertyNodeSet extends NodeSet {
   }
 
   get isLoading(): boolean {
-    return this._lastCompletedQueryId === this._lastStartedQueryId;
+    return this._lastCompletedQueryId !== this._lastStartedQueryId;
   }
 }

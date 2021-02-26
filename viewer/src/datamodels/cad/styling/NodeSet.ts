@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assert } from 'console';
+import assert from 'assert';
 import { EventTrigger } from '../../../utilities/events/EventTrigger';
 import { IndexSet } from '../../../utilities/IndexSet';
 

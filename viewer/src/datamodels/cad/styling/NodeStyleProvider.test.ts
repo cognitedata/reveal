@@ -2,10 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodeAppearance } from '..';
+import { NodeAppearance } from '../NodeAppearance';
 import { FixedNodeSet } from './FixedNodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeStyleProvider } from './NodeStyleProvider';
+import { NodeSet } from './NodeSet';
+import { OutlineColor } from '../NodeAppearance';
 
 describe('NodeStyleProvider', () => {
   let provider: NodeStyleProvider;
@@ -105,4 +107,31 @@ describe('NodeStyleProvider', () => {
     provider.applyStyles(applyCb);
     expect(applyCb).toBeCalledWith(expect.anything(), 1, expect.anything(), expect.anything());
   });
+
+  test('loadingStateChanged is triggered while NodeSet is loading', () => {
+    const isLoadingChangedListener = jest.fn();
+    provider.on('loadingStateChanged', isLoadingChangedListener);
+    const nodeSet = new StubNodeSet();
+    provider.addStyledSet(nodeSet, { outlineColor: OutlineColor.Blue });
+
+    nodeSet.isLoading = true;
+    nodeSet.triggerChanged();
+    expect(isLoadingChangedListener).toBeCalledWith(true);
+    isLoadingChangedListener.mockReset();
+
+    nodeSet.isLoading = false;
+    nodeSet.triggerChanged();
+    expect(isLoadingChangedListener).toBeCalledWith(false);
+  });
 });
+
+class StubNodeSet extends NodeSet {
+  public isLoading = false;
+
+  getIndexSet(): IndexSet {
+    return new IndexSet();
+  }
+  triggerChanged() {
+    this.notifyChanged();
+  }
+}
