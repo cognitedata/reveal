@@ -1462,6 +1462,13 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
+"@cognite/react-feature-flags@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-0.2.2.tgz#99bd31853500ca7bdc18e4d0327458b14f6cc17a"
+  integrity sha512-nZpr4Un3hNP9EtI65bj6SHedtvkdRjy+yC7KI+EqAEY7MfRhP7ge47ql5eHJe85kdJKFgvMhOGL864MOAmnPvw==
+  dependencies:
+    unleash-proxy-client "^1.0.1"
+
 "@cognite/react-picture-annotation@^1.10.4":
   version "1.10.4"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.10.4.tgz#803fe952afacd423c8dbd860b0d3dd9afbf5a75e"

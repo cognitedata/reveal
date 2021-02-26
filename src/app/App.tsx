@@ -67,6 +67,8 @@ export default () => {
                   appName="data-exploration"
                   projectName={tenant}
                   remoteAddress={window.location.hostname}
+                  disableMetrics
+                  refreshInterval={86400}
                 >
                   <Router history={history}>
                     <Switch>
