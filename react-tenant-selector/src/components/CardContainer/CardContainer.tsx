@@ -15,7 +15,12 @@ import {
   LoginWithCognite,
 } from '../LoginOptions';
 
-import { StyledCardContainer, StyledContentWrapper, Error } from './elements';
+import {
+  StyledCardContainer,
+  StyledContentWrapper,
+  Error,
+  LoginSpacer,
+} from './elements';
 
 export type EnabledModes = {
   cognite?: boolean;
@@ -82,10 +87,20 @@ const CardContainer = ({
 
   const showLoginOptions = !showProjectSelection && !showLoading;
 
+  const showSpacer =
+    !enabledLoginModes.cognite &&
+    (enabledLoginModes.aad || enabledLoginModes.adfs);
+
+  const showOr =
+    enabledLoginModes.cognite &&
+    (enabledLoginModes.aad || enabledLoginModes.adfs);
+
   // console.log('Render gates', {
   //   showProjectSelection,
   //   showLoginOptions,
   //   showLoading,
+  //   showSpacer,
+  //   showOr,
   // });
 
   return (
@@ -126,15 +141,13 @@ const CardContainer = ({
                   validateCluster={validateCluster}
                 />
               )}
-              {(enabledLoginModes.aad || enabledLoginModes.adfs) && (
-                <LoginOrWrapper />
-              )}
+              {showSpacer && <LoginSpacer />}
+              {showOr && <LoginOrWrapper />}
               {enabledLoginModes.adfs && (
                 <LoginWithAzure authClient={authClient} />
               )}
               {enabledLoginModes.aad && (
                 <>
-                  {/* Error from AD: */}
                   {authState?.error && (
                     <Error>
                       <strong>ERROR: </strong>

@@ -1,3 +1,9 @@
+## 0.6.2 Feb 26 2021
+
+### Changes
+
+- Add `disableLegacyLogin` option
+
 ## 0.6.1 Feb 24 2021
 
 ### Changes

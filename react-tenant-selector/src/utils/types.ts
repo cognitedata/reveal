@@ -10,6 +10,7 @@ export type SidecarConfig = {
   cdfCluster: string;
   directoryTenantId?: string;
   disableTranslations?: boolean;
+  disableLegacyLogin?: boolean;
   helpLink?: string;
   locizeProjectId?: string;
 };

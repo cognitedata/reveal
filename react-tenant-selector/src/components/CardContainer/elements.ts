@@ -5,9 +5,12 @@ export const Error = styled.div`
   padding: 6px;
 `;
 
+export const LoginSpacer = styled.div`
+  margin-top: 30px;
+`;
+
 export const StyledCardContainer = styled.div`
   width: 480px;
-  min-height: 480px;
   max-width: 100%;
   background: #fff;
   border-radius: 4px;

@@ -28,6 +28,12 @@ export const Base = () => {
   return <CardContainer {...cardContainerProps} />;
 };
 
+export const WithoutLegacy = () => {
+  return (
+    <CardContainer {...cardContainerProps} enabledLoginModes={{ aad: true }} />
+  );
+};
+
 export const WithInitialTenant = () => {
   return (
     <CardContainer {...cardContainerProps} initialTenant="initial-tenant" />
