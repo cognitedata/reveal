@@ -30,7 +30,7 @@ export const ColorDropdown = ({
     <DropdownMenu>
       <Menu.Header>Color</Menu.Header>
       {availableColors.map((color) => (
-        <Menu.Item onClick={() => onColorSelected(color)}>
+        <Menu.Item key={color} onClick={() => onColorSelected(color)}>
           <ColorPreview color={color} />
           {color}
         </Menu.Item>
@@ -50,7 +50,10 @@ export const WeightDropdown = ({
     <Menu>
       <Menu.Header>Weight</Menu.Header>
       {weightOptions.map((weight) => (
-        <Menu.Item onClick={() => onWeightSelected(weight)}>
+        <Menu.Item
+          key={weight.toString()}
+          onClick={() => onWeightSelected(weight)}
+        >
           <WeightPreview weight={weight} />
           {weight}px
         </Menu.Item>
@@ -71,6 +74,7 @@ export const TypeDropdown = ({
       <Menu.Header>Type</Menu.Header>
       {styleOptions.map((style) => (
         <Menu.Item
+          key={style}
           onClick={() =>
             onStyleSelected(style as 'solid' | 'dashed' | 'dotted')
           }

@@ -617,7 +617,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       );
 
       const unitOverrideMenuItems = units.map((unitOption) => (
-        <Menu.Item onClick={() => handleSetInputUnit(id, unitOption.value)}>
+        <Menu.Item
+          key={unitOption.value}
+          onClick={() => handleSetInputUnit(id, unitOption.value)}
+        >
           {unitOption.label}
           {unit?.toLowerCase() === unitOption.value && ' (selected)'}
           {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
@@ -626,7 +629,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
       const unitConversionMenuItems = unitConversionOptions?.map(
         (unitOption) => (
-          <Menu.Item onClick={() => handleSetOutputUnit(id, unitOption?.value)}>
+          <Menu.Item
+            key={unitOption?.value}
+            onClick={() => handleSetOutputUnit(id, unitOption?.value)}
+          >
             {unitOption?.label}{' '}
             {preferredUnit?.toLowerCase() === unitOption?.value &&
               ' (selected)'}
@@ -635,7 +641,11 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       );
 
       return (
-        <SourceRow onClick={handleClick} isActive={activeSourceItem === id}>
+        <SourceRow
+          key={id}
+          onClick={handleClick}
+          isActive={activeSourceItem === id}
+        >
           <td>
             <SourceItem
               isActive={activeSourceItem === id}
@@ -826,6 +836,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
     return (
       <SourceRow
+        key={flow.id}
         onClick={() => setActiveSourceItem(flow.id)}
         isActive={activeSourceItem === flow.id}
       >
