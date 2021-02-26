@@ -14,8 +14,9 @@ import ThreeDViewerToolbar from '../ThreeDViewerToolbar';
 import { ThreeDViewerProps } from './ThreeDViewer.d';
 import { Legacy3DModel, Legacy3DViewer } from './legacyViewerTypes';
 
+// todo: remove once reveal has that link internally as default one
 revealEnv.publicPath =
-  'https://cdf-hub-bundles.cogniteapp.com/dependencies/@cognite/reveal-parser-worker/1.1.0/';
+  'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/';
 
 const ThreeDViewerStyled = styled.div`
   position: relative;
