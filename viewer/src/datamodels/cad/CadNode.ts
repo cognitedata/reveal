@@ -8,7 +8,6 @@ import { SectorMetadata, SectorGeometry, SectorScene } from './sector/types';
 import { SectorQuads } from './rendering/types';
 import { CadRenderHints } from './rendering/CadRenderHints';
 import { LevelOfDetail } from './sector/LevelOfDetail';
-import { NodeAppearanceProvider } from './NodeAppearance';
 import { ConsumedSector } from './sector/types';
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './rendering/RenderMode';
@@ -25,10 +24,6 @@ export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry
 
 export type LoadingHintsChangeListener = (loadingHint: CadLoadingHints) => void;
 export type RenderHintsChangeListener = (renderHint: CadRenderHints) => void;
-
-export interface CadNodeOptions {
-  nodeAppearanceProvider?: NodeAppearanceProvider;
-}
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;

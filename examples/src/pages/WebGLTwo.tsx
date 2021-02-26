@@ -35,22 +35,14 @@ export function WebGLTwo() {
       const client = new CogniteClient({ appId: 'reveal.example.WebGLTwo' });
       client.loginWithOAuth({ project });
 
-      const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
-        styleNode(treeIndex) {
-          if(treeIndex % 2 === 0)
-            return reveal.DefaultNodeAppearance.Outlined;
-          return reveal.DefaultNodeAppearance.Highlighted;
-        }
-      };
-
       const scene = new THREE.Scene();
       let model: reveal.CadNode;
       if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
+        model = await revealManager.addModel('cad', modelRevision);
       } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager({ logMetrics: false });
-        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'

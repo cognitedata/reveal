@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodeAppearanceProvider } from '../datamodels/cad';
 import { SectorGeometry } from '../datamodels/cad/sector/types';
 import { SectorQuads } from '../datamodels/cad/rendering/types';
 import { SectorCuller } from '../internal';
@@ -86,7 +85,6 @@ export const defaultRenderOptions: Required<RenderOptions> = {
  */
 export type RevealOptions = {
   logMetrics?: boolean;
-  nodeAppearanceProvider?: NodeAppearanceProvider;
   renderOptions?: RenderOptions;
   internal?: {
     parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
@@ -123,4 +121,3 @@ export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
 
 export { SupportedModelTypes } from '../datamodels/base';
 export { CadModelMetadata } from '../datamodels/cad/CadModelMetadata';
-export { NodeAppearanceProvider } from '../datamodels/cad/NodeAppearance';

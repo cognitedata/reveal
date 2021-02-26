@@ -33,19 +33,14 @@ export function SSAO() {
 
       const scene = new THREE.Scene();
 
-      const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
-        styleNode(_: number) {
-          return reveal.DefaultNodeAppearance.Default;
-        }
-      };
 
       let model: reveal.CadNode;
       if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
+        model = await revealManager.addModel('cad', modelRevision);
       } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager({ logMetrics: false });
-        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'

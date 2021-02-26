@@ -15,7 +15,7 @@ import {
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, share, filter, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { trackError, trackLoadModel, trackCameraNavigation } from '../utilities/metrics';
-import { NodeAppearanceProvider, CadNode } from '../datamodels/cad';
+import { CadNode } from '../datamodels/cad';
 import { RenderMode } from '../datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
 import { SupportedModelTypes } from '../datamodels/base';
@@ -199,23 +199,17 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.setRenderTarget(target, autoSetTargetSize);
   }
 
-  public addModel(
-    type: 'cad',
-    modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
-  ): Promise<CadNode>;
+  public addModel(type: 'cad', modelIdentifier: TModelIdentifier): Promise<CadNode>;
   public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
-    modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
+    modelIdentifier: TModelIdentifier
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
-        type,
-        options: { nodeAppearanceProvider }
+        type
       },
       modelIdentifier
     );

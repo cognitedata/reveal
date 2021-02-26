@@ -46,10 +46,6 @@ export type NodeAppearance = {
   readonly worldTransform?: THREE.Matrix4;
 };
 
-export interface NodeAppearanceProvider {
-  styleNode(treeIndex: number): NodeAppearance | undefined;
-}
-
 const OutlinedAppearance: NodeAppearance = {
   outlineColor: OutlineColor.White
 };
