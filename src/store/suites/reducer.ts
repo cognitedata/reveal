@@ -97,7 +97,7 @@ export const SuitesReducer = createReducer(initialState)
         loading: false,
         loaded: false,
         failed: true,
-        urls: [], // silent mode. track to Sentry?
+        urls: [],
       },
     })
   )

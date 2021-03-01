@@ -8,6 +8,8 @@ import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
+import { useMetrics } from 'utils/metrics';
+import assign from 'lodash/assign';
 import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {
@@ -21,16 +23,32 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     isComponentVisible,
     setIsComponentVisible,
   } = useClickAwayListener(false);
+  const metrics = useMetrics('BoardMenu');
 
   const admin = useSelector(isAdmin);
   const { filter: groupsFilter } = useSelector(getGroupsState);
+
   const canEdit = admin && !groupsFilter?.length;
+
+  const trackMetrics = (
+    name: string,
+    modalProps: { board?: Board; suite?: Suite }
+  ) => {
+    const { suite: suiteItem, board: boardItem } = modalProps;
+    const props = assign(
+      {},
+      suiteItem ? { suiteKey: suiteItem.key, suite: suiteItem.title } : null,
+      boardItem ? { boardKey: boardItem.key, board: boardItem.title } : null
+    );
+    metrics.track(`Select_${name}`, props);
+  };
 
   const handleMenuOpen = (event: React.MouseEvent) => {
     // prevent from cliking on link
     event.preventDefault();
     // prevent from calling quick access click handler
     event.stopPropagation();
+    trackMetrics('OpenMenu', { board, suite });
     setIsComponentVisible(() => !isComponentVisible);
   };
 
@@ -38,11 +56,12 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     event: React.MouseEvent,
     modalType: ModalType,
     // TODO(dtc-255) change type
-    modalProps: any
+    modalProps: { board?: Board; suite?: Suite }
   ) => {
     event.preventDefault();
     event.stopPropagation();
     setIsComponentVisible(() => !isComponentVisible);
+    trackMetrics(modalType as string, modalProps);
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
@@ -65,8 +84,8 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                     // TODO(dtc-256) avoid using callbacks with passed modal type and data
                     onClick={(event) =>
                       handleOpenModal(event, 'EditBoard', {
-                        boardItem: board,
-                        suiteItem: suite,
+                        board,
+                        suite,
                       })
                     }
                   >

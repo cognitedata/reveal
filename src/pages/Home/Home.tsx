@@ -25,6 +25,7 @@ import { fetchUserSpace } from 'store/userSpace/thunks';
 import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
+import { useMetrics } from 'utils/metrics';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -49,6 +50,8 @@ const Home = () => {
     getLastVisitedBoards(lastVisited, itemsToDisplay)
   );
 
+  const metrics = useMetrics('Home');
+
   useEffect(() => {
     if (!userSpaceLoaded && !userSpaceLoading && !userSpaceLoadDispatched) {
       dispatch(fetchUserSpace(apiClient));
@@ -67,6 +70,7 @@ const Home = () => {
   }
 
   const handleOpenModal = (modalType: ModalType) => {
+    metrics.track('NewSuite_Click');
     dispatch(modalOpen({ modalType }));
   };
   return (
@@ -109,6 +113,12 @@ const Home = () => {
                 <div className="glider-track">
                   {lastVisitedBoards?.map((board: Board) => (
                     <a
+                      onClick={() =>
+                        metrics.track('QuickAccess_Board_Click', {
+                          boardKey: board.key,
+                          board: board.title,
+                        })
+                      }
                       key={board.key}
                       href={board.url}
                       target="_blank"
@@ -124,7 +134,16 @@ const Home = () => {
           <TilesContainer>
             <Title level={6}>All suites</Title>
             {suites?.map((suite: Suite) => (
-              <Link to={`/suites/${suite.key}`} key={suite.key}>
+              <Link
+                to={`/suites/${suite.key}`}
+                key={suite.key}
+                onClick={() =>
+                  metrics.track('Suite_Click', {
+                    suiteKey: suite.key,
+                    suite: suite.title,
+                  })
+                }
+              >
                 <Tile
                   key={suite.key}
                   dataItem={suite}

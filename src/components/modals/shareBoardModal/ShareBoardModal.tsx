@@ -9,6 +9,7 @@ import {
   ShareURLInput,
   ShareURLInputContainer,
 } from 'components/modals/elements';
+import { useMetrics } from 'utils/metrics';
 
 interface Props {
   board: Board;
@@ -19,6 +20,7 @@ const ShareBoardModal: React.FC<Props> = ({ board }: Props) => {
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch<RootDispatcher>();
+  const metrics = useMetrics('ShareBoard');
   const handleCloseModal = () => {
     dispatch(modalClose());
   };
@@ -27,6 +29,7 @@ const ShareBoardModal: React.FC<Props> = ({ board }: Props) => {
       ref.current.select();
       document.execCommand('copy');
       setCopySuccess(true);
+      metrics.track('Copied', { boardKey: board.key, board: board.title });
     }
   };
 

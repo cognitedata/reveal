@@ -10,6 +10,7 @@ type Sidecar = {
   docsSiteBaseUrl: string;
   intercom: string;
   privacyPolicyUrl: string;
+  mixpanel: string;
 };
 
 const sidecar = merge(
