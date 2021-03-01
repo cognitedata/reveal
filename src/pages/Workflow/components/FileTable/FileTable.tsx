@@ -8,7 +8,7 @@ import ReactBaseTable, {
   ColumnShape,
 } from 'react-base-table';
 import { TimeDisplay } from '@cognite/data-exploration';
-import { Annotation, JobStatus } from 'src/api/types';
+import { JobStatus } from 'src/api/types';
 import { TableWrapper } from './FileTableWrapper';
 
 export type MenuActions = {
@@ -22,7 +22,7 @@ export type TableDataItem = {
   name: string;
   status: JobStatus | '';
   statusTime: number;
-  annotations: Array<Annotation>;
+  annotationsCount: number;
   menu: MenuActions;
 };
 
@@ -35,18 +35,18 @@ type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 function AnnotationCell({ rowData }: CellRenderer) {
   const getMessage = () => {
     switch (rowData.status) {
-      case 'QUEUED': {
+      case 'Queued': {
         return 'ML queued';
       }
-      case 'RUNNING': {
+      case 'Running': {
         return 'Detecting...';
       }
-      case 'COMPLETED': {
-        return rowData.annotations.length
+      case 'Completed': {
+        return rowData.annotationsCount
           ? 'Annotations detected'
           : 'No annotations detected';
       }
-      case 'FAILED': {
+      case 'Failed': {
         return 'Error occurred';
       }
       default: {
@@ -55,8 +55,8 @@ function AnnotationCell({ rowData }: CellRenderer) {
     }
   };
 
-  const badge = rowData.annotations.length
-    ? String(rowData.annotations.length)
+  const badge = rowData.annotationsCount
+    ? String(rowData.annotationsCount)
     : '–';
 
   return (
@@ -89,7 +89,7 @@ export function FileTable(props: FileTableProps) {
       align: Column.Alignment.CENTER,
       // ML processing job status: Queued, In Progress, Processed <DateTime>
       cellRenderer: ({ rowData }: CellRenderer) => {
-        if (rowData.status === 'COMPLETED') {
+        if (rowData.status === 'Completed') {
           return (
             <div>
               Processed{' '}

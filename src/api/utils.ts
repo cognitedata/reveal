@@ -1,7 +1,5 @@
-import { DetectionModelDataProvider, DetectionModelType } from 'src/api/types';
+import { AnnotationJobQueued, DetectionModelType } from 'src/api/types';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { OCRDetectionDataProvider } from 'src/api/ocr/OCRDetectionDataProvider';
-import { MockDataProvider } from 'src/api/MockDataProvider';
 
 // it's not strictly necessary to have that mapping, but it's just handy to have an overview in one place
 export function getDetectionModelEndpoint(modelType: DetectionModelType) {
@@ -15,16 +13,13 @@ export function getDetectionModelEndpoint(modelType: DetectionModelType) {
   }/context/vision/${mapping[modelType]}`;
 }
 
-export function getDetectionModelDataProvider(
-  modelType: DetectionModelType
-): DetectionModelDataProvider {
-  switch (modelType) {
-    case DetectionModelType.Text: {
-      return new OCRDetectionDataProvider();
-    }
-    default: {
-      // todo: implement other data providers and remove that default case and fake provider itself
-      return new MockDataProvider();
-    }
-  }
+export function getFakeQueuedJob(): AnnotationJobQueued {
+  const now = Date.now();
+  return {
+    jobId: -1,
+    createdTime: now,
+    status: 'Queued',
+    startTime: null,
+    statusTime: now,
+  };
 }

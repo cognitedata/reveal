@@ -7,7 +7,8 @@ type State = {
 
 const initialState: State = {
   uploadedFiles: [],
-  // uploadedFiles: fakeFiles as any, // real has js Date instances, fake has strings, it's fine for now
+  // eslint-disable-next-line global-require
+  // uploadedFiles: require('./fakeFiles.json'), // real has js Date instances, fake has strings, it's fine for now
 };
 
 const uploadedFilesSlice = createSlice({

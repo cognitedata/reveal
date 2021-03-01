@@ -15,6 +15,9 @@ export const ProcessStepActionButtons = () => {
   const selectedDetectionModels = useSelector(
     (state: RootState) => state.processSlice.selectedDetectionModels
   );
+  const { uploadedFiles } = useSelector(
+    (state: RootState) => state.uploadedFiles
+  );
 
   const [detectBtnClicked, setDetectBtnClicked] = useState(false);
 
@@ -29,7 +32,12 @@ export const ProcessStepActionButtons = () => {
         return;
       }
       setDetectBtnClicked(true);
-      dispatch(detectAnnotations());
+      dispatch(
+        detectAnnotations({
+          fileIds: uploadedFiles.map(({ id }) => id),
+          detectionModels: selectedDetectionModels,
+        })
+      );
     }
   };
 

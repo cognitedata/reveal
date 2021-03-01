@@ -1,4 +1,5 @@
 import { OCRAnnotation } from 'src/api/ocr/types';
+import { DetectionModelType } from 'src/api/types';
 
 export type AnnotationStatus = 'verified' | 'deleted' | 'unhandled';
 
@@ -26,11 +27,12 @@ export class AnnotationUtils {
   public static annotationColor = '#C945DB';
 
   public static convertToAnnotations(
-    ocrAnnotations: OCRAnnotation[]
+    ocrAnnotations: OCRAnnotation[],
+    modelType: DetectionModelType
   ): CogniteAnnotation[] {
     return ocrAnnotations.map<CogniteAnnotation>((value, index) => {
       return {
-        id: String(index),
+        id: `${modelType}-${index}`,
         label: String(index),
         box: value.boundingBox,
         ...value,

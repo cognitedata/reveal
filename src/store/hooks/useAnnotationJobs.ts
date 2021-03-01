@@ -3,15 +3,17 @@ import { RootState } from 'src/store/rootReducer';
 
 export function useAnnotationJobs() {
   return useSelector((state: RootState) => {
-    const { jobByFileId } = state.processSlice;
+    const { jobsByFileId } = state.processSlice;
     const { uploadedFiles } = state.uploadedFiles;
     const isPollingFinished = uploadedFiles.every((file) => {
-      const job = jobByFileId[file.id];
-      if (!job) {
+      const jobs = jobsByFileId[file.id];
+      if (!jobs || !jobs.length) {
         return false;
       }
-      return job.status === 'COMPLETED' || job.status === 'FAILED';
+      return jobs.every(
+        (job) => job.status === 'Completed' || job.status === 'Failed'
+      );
     });
-    return { isPollingFinished, jobByFileId };
+    return { isPollingFinished, jobsByFileId };
   });
 }

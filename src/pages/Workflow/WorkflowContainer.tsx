@@ -86,8 +86,7 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
               <PrevNextNav
                 prevBtnProps={{
                   onClick() {
-                    console.info('Exit...');
-                    // history.push(createLink('/explore/search/file'));
+                    history.goBack();
                   },
                 }}
                 nextBtnProps={{

@@ -1,101 +1,87 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchJobById, putFilesToProcessingQueue } from 'src/api/annotationJob';
+import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
 import { RootState } from 'src/store/rootReducer';
 import { fetchUntilComplete } from 'src/utils';
-import { AnnotationJobResponse, DetectionModelType } from 'src/api/types';
+import { AnnotationJob, DetectionModelType } from 'src/api/types';
+import { getFakeQueuedJob } from 'src/api/utils';
 
 type State = {
-  selectedDetectionModels: Array<any>;
-  jobByFileId: Record<string, AnnotationJobResponse | undefined>;
+  selectedDetectionModels: Array<DetectionModelType>;
+  jobsByFileId: Record<string, Array<AnnotationJob> | undefined>;
   error?: string;
 };
 
 type ThunkConfig = { state: RootState };
 
-const modelType = DetectionModelType.Text; // todo: refactor
-
 const initialState: State = {
   selectedDetectionModels: [DetectionModelType.Text],
-  jobByFileId: {},
+  jobsByFileId: {},
   error: undefined,
 };
 
-// create annotation jobs for every file and run polling for each of them
-export const detectAnnotations = createAsyncThunk<void, void, ThunkConfig>(
+// for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
+export const detectAnnotations = createAsyncThunk<
+  void,
+  { fileIds: Array<number>; detectionModels: Array<DetectionModelType> },
+  ThunkConfig
+>(
   'process/detectAnnotations',
-  async (_, { dispatch, getState }) => {
-    const fileIds = getState()
-      .uploadedFiles.uploadedFiles.filter(
-        (file) =>
-          // for now we don't need to post more jobs for a file that already have some
-          // later when files will have more than one job associated, we'll need to check job type here
-          !getState().processSlice.jobByFileId[file.id]
-      )
-      .map((file) => file.id);
+  async ({ fileIds, detectionModels }, { dispatch, getState }) => {
+    if (!detectionModels.length) {
+      throw new Error(
+        'To detect annotations at least one detection model must be selected'
+      );
+    }
 
-    await dispatch(postAnnotationJobs(fileIds));
-
-    const { jobByFileId } = getState().processSlice;
+    const { jobsByFileId } = getState().processSlice;
 
     fileIds.forEach((fileId) => {
-      const job = jobByFileId[fileId];
-      if (!job) {
-        console.warn('File has no job scheduled', fileId); // should never happen
-        return;
-      }
-      const { status, jobId } = job;
-      if (
-        !(status === 'COMPLETED' || status === 'FAILED') &&
-        jobId !== -1 /* fake jobId for optimistic update */
-      ) {
-        dispatch(pollAnnotationJobStatus({ fileId, jobId }));
-      }
+      detectionModels.forEach((modelType) => {
+        const existingJobs = jobsByFileId[fileId] || [];
+        if (!existingJobs.find((job) => job.type === modelType)) {
+          dispatch(postAnnotationJob({ modelType, fileId }));
+        }
+      });
     });
   }
 );
 
-const postAnnotationJobs = createAsyncThunk<
-  Record<string, AnnotationJobResponse>,
-  Array<number>
->('process/postAnnotationJobs', async (fileIds) => {
-  const response = await putFilesToProcessingQueue(modelType, fileIds);
-  return fileIds.reduce((acc, fileId, index) => {
-    acc[fileId] = response[index]; // not nice, but API doesn't return fileId back
-
-    return acc;
-  }, {} as Record<string, AnnotationJobResponse>);
-});
-
-const pollAnnotationJobStatus = createAsyncThunk<
-  AnnotationJobResponse,
-  { fileId: number; jobId: number },
+// for passed fileId create job and setup polling on it
+const postAnnotationJob = createAsyncThunk<
+  AnnotationJob,
+  { modelType: DetectionModelType; fileId: number },
   ThunkConfig
 >(
-  'process/pollFileAnnotationJobStatus',
-  ({ fileId, jobId }, { dispatch, getState }) => {
-    const fileStillExist = () =>
+  'process/postAnnotationJobs',
+  async ({ modelType, fileId }, { dispatch, getState }) => {
+    const createdJob = await createAnnotationJob(modelType, fileId);
+
+    const doesFileExist = () =>
       getState().uploadedFiles.uploadedFiles.find((file) => file.id === fileId);
 
-    return new Promise((resolve, reject) => {
-      return fetchUntilComplete<AnnotationJobResponse>(
-        () => fetchJobById(modelType, jobId),
-        {
-          isCompleted: (job) =>
-            job.status === 'COMPLETED' ||
-            job.status === 'FAILED' ||
-            !fileStillExist(), // we don't want to poll jobs for removed files
+    fetchUntilComplete<AnnotationJob>(
+      () => fetchJobById(createdJob.type, createdJob.jobId),
+      {
+        isCompleted: (latestJobVersion) =>
+          latestJobVersion.status === 'Completed' ||
+          latestJobVersion.status === 'Failed' ||
+          !doesFileExist(), // we don't want to poll jobs for removed files
 
-          onTick: (job) => {
-            if (fileStillExist()) {
-              dispatch(updateJob({ fileId, job }));
-            }
-          },
+        onTick: (latestJobVersion) => {
+          if (doesFileExist()) {
+            dispatch(updateJob({ fileId, job: latestJobVersion }));
+          }
+        },
 
-          onComplete: resolve,
-          onError: reject,
-        }
-      );
-    });
+        onError: (error) => {
+          dispatch(removeJobByType({ fileId, modelType }));
+          // eslint-disable-next-line no-console
+          console.error(error); // todo better error handling of polling errors
+        },
+      }
+    );
+
+    return createdJob;
   }
 );
 
@@ -114,58 +100,69 @@ const processSlice = createSlice({
       state,
       action: PayloadAction<{
         fileId: string | number;
-        job: AnnotationJobResponse;
+        job: AnnotationJob;
       }>
     ) {
       const { fileId, job } = action.payload;
-      state.jobByFileId[fileId] = job;
+      const existingJobs = state.jobsByFileId[fileId] || [];
+      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
+        existingJob.jobId === job.jobId ? job : existingJob
+      );
+    },
+    removeJobByType(
+      state,
+      action: PayloadAction<{
+        fileId: string | number;
+        modelType: DetectionModelType;
+      }>
+    ) {
+      const { fileId, modelType } = action.payload;
+      const existingJobs = state.jobsByFileId[fileId] || [];
+      state.jobsByFileId[fileId] = existingJobs.filter(
+        (existingJob) => existingJob.type !== modelType
+      );
     },
   },
   extraReducers: (builder) => {
     /* postAnnotationJobs */
 
-    builder.addCase(postAnnotationJobs.pending, (state, { meta }) => {
-      state.jobByFileId = meta.arg.reduce((acc, fileId) => {
-        const now = Date.now();
-        acc[fileId] = {
-          createdTime: now,
-          jobId: -1,
-          startTime: null,
-          status: 'QUEUED',
-          statusTime: now,
-        };
-        return acc;
-      }, {} as Record<string, AnnotationJobResponse>);
+    builder.addCase(postAnnotationJob.pending, (state, { meta }) => {
+      const { fileId, modelType } = meta.arg;
+      const existingJobs = state.jobsByFileId[fileId] || [];
+      existingJobs.push({
+        ...getFakeQueuedJob(),
+        type: modelType,
+      });
+      state.jobsByFileId[fileId] = existingJobs;
     });
 
-    builder.addCase(postAnnotationJobs.fulfilled, (state, { payload }) => {
-      state.jobByFileId = payload;
+    builder.addCase(postAnnotationJob.fulfilled, (state, { payload, meta }) => {
+      const newJob = payload;
+      const { fileId, modelType } = meta.arg;
+      const existingJobs = state.jobsByFileId[fileId] || [];
+      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
+        existingJob.type === modelType ? newJob : existingJob
+      );
     });
 
-    builder.addCase(postAnnotationJobs.rejected, (state, { error }) => {
-      state.jobByFileId = {};
+    builder.addCase(postAnnotationJob.rejected, (state, { error, meta }) => {
+      const { fileId, modelType } = meta.arg;
+      const existingJobs = state.jobsByFileId[fileId] || [];
+      state.jobsByFileId[fileId] = existingJobs.filter(
+        (existingJob) => existingJob.type !== modelType
+      );
       state.error = error.message;
-      console.error(error); // todo remove later once ui can handle that
-    });
-
-    /* pollAnnotationJobStatus */
-
-    builder.addCase(
-      pollAnnotationJobStatus.fulfilled,
-      (state, { payload, meta }) => {
-        const { fileId } = meta.arg;
-        state.jobByFileId[fileId] = payload;
-      }
-    );
-
-    builder.addCase(pollAnnotationJobStatus.rejected, (state, { error }) => {
-      state.error = error.message;
+      // eslint-disable-next-line no-console
       console.error(error); // todo remove later once ui can handle that
     });
   },
   /* eslint-enable no-param-reassign */
 });
 
-export const { updateJob, setSelectedDetectionModels } = processSlice.actions;
+export const {
+  updateJob,
+  removeJobByType,
+  setSelectedDetectionModels,
+} = processSlice.actions;
 
 export default processSlice.reducer;

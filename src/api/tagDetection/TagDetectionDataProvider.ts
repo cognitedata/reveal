@@ -4,6 +4,6 @@ import { singleton } from '@keenondrums/singleton';
 import { BaseDetectionModelDataProvider } from 'src/api/BaseDetectionModelDataProvider';
 
 @singleton
-export class OCRDetectionDataProvider extends BaseDetectionModelDataProvider {
-  url = getDetectionModelEndpoint(DetectionModelType.Text);
+export class TagDetectionDataProvider extends BaseDetectionModelDataProvider {
+  url = getDetectionModelEndpoint(DetectionModelType.Tag);
 }

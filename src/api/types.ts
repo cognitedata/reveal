@@ -11,7 +11,7 @@ export interface DetectionModelDataProvider {
   fetchJobById(jobId: number): Promise<AnnotationJobResponse>;
 }
 
-export type JobStatus = 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+export type JobStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
 export type Annotation = OCRAnnotation; // later will be at least " | TagAnnotation"
 export type AnnotationJobResultItem = {
@@ -28,14 +28,14 @@ export interface AnnotationJobBase {
 }
 export interface AnnotationJobQueued extends AnnotationJobBase {
   startTime: null;
-  status: 'QUEUED';
+  status: 'Queued';
 }
 export interface AnnotationJobRunning extends AnnotationJobBase {
   startTime: number;
-  status: 'RUNNING';
+  status: 'Running';
 }
 export interface AnnotationJobCompleted extends AnnotationJobBase {
-  status: 'COMPLETED';
+  status: 'Completed';
   createdTime: number;
   startTime: number;
   statusTime: number;
@@ -46,7 +46,7 @@ export interface AnnotationJobCompleted extends AnnotationJobBase {
   items: Array<AnnotationJobResultItem>;
 }
 export interface AnnotationJobFailed extends AnnotationJobBase {
-  status: 'FAILED';
+  status: 'Failed';
 }
 
 export type AnnotationJobResponse =
@@ -54,3 +54,8 @@ export type AnnotationJobResponse =
   | AnnotationJobRunning
   | AnnotationJobCompleted
   | AnnotationJobFailed;
+
+// some extension over api response for more convenient usage in app
+export type AnnotationJob = AnnotationJobResponse & {
+  type: DetectionModelType;
+};

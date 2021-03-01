@@ -1,19 +1,51 @@
-import { AnnotationJobResponse, DetectionModelType } from 'src/api/types';
-import { getDetectionModelDataProvider } from 'src/api/utils';
+import {
+  AnnotationJob,
+  DetectionModelDataProvider,
+  DetectionModelType,
+} from 'src/api/types';
+import { OCRDetectionDataProvider } from 'src/api/ocr/OCRDetectionDataProvider';
+import { MockDataProvider } from 'src/api/MockDataProvider';
+import { TagDetectionDataProvider } from 'src/api/tagDetection/TagDetectionDataProvider';
 
-export async function putFilesToProcessingQueue(
-  modelType: DetectionModelType,
-  fileIds: Array<number>
-): Promise<Array<AnnotationJobResponse>> {
-  const dataProvider = getDetectionModelDataProvider(modelType);
-  const promises = fileIds.map((fileId) => dataProvider.postJob(fileId));
-  return Promise.all(promises);
+function getDetectionModelDataProvider(
+  modelType: DetectionModelType
+): DetectionModelDataProvider {
+  switch (modelType) {
+    case DetectionModelType.Text: {
+      return new OCRDetectionDataProvider();
+    }
+    case DetectionModelType.Tag: {
+      return new TagDetectionDataProvider();
+    }
+    default: {
+      // todo: implement other data providers and remove that default case and fake provider itself
+      return new MockDataProvider();
+    }
+  }
 }
 
-export function fetchJobById(
-  modelType: DetectionModelType,
+// when api will support putting many files to one job you should change that function
+// to accept many files and simplify postAnnotationJobs thunk
+export async function createAnnotationJob(
+  detectionModel: DetectionModelType,
+  fileId: number
+): Promise<AnnotationJob> {
+  const dataProvider = getDetectionModelDataProvider(detectionModel);
+  const job = await dataProvider.postJob(fileId);
+  return {
+    type: detectionModel,
+    ...job,
+  };
+}
+
+export async function fetchJobById(
+  detectionModel: DetectionModelType,
   jobId: number
-): Promise<AnnotationJobResponse> {
-  const dataProvider = getDetectionModelDataProvider(modelType);
-  return dataProvider.fetchJobById(jobId);
+): Promise<AnnotationJob> {
+  const dataProvider = getDetectionModelDataProvider(detectionModel);
+  const job = await dataProvider.fetchJobById(jobId);
+  return {
+    type: detectionModel,
+    ...job,
+  };
 }

@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
-import { AnnotationJobCompleted } from 'src/api/types';
+import { AnnotationJob, AnnotationJobCompleted } from 'src/api/types';
 
 const Container = styled.div`
   width: 100%;
@@ -66,10 +66,22 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
   });
 
   const annotations = useSelector(({ processSlice }: RootState) => {
-    const job = processSlice.jobByFileId[fileId] as AnnotationJobCompleted;
+    const jobs = processSlice.jobsByFileId[fileId] as Array<
+      AnnotationJobCompleted & AnnotationJob
+    >;
 
-    if (job) {
-      return AnnotationUtils.convertToAnnotations(job.items[0].annotations);
+    if (jobs) {
+      return jobs
+        .map((job) =>
+          AnnotationUtils.convertToAnnotations(
+            job.items[0].annotations,
+            job.type
+          )
+        )
+        .reduce(
+          (acc, annotationsFromOneJob) => acc.concat(annotationsFromOneJob),
+          []
+        );
     }
     return [];
   });
