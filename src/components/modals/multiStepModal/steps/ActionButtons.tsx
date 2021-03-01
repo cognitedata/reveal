@@ -38,7 +38,6 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
     const newKey = key();
     replaceNewFileKey(filesUploadQueue, newKey); // if uploaded a file => give it a key
     dispatch(addBoard(newKey));
-
     metrics.track('AddNewBoard', {
       boardKey: newKey,
       board: board?.title,

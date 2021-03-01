@@ -111,12 +111,23 @@ const AppHeader: React.FC = () => {
           <Menu.Item>
             <CustomLink
               // TODO(DTC-224) replace with stable link as soon as it is available
-              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/"
+              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => metrics.track('HelpMenu_GettingStarted')}
             >
-              Getting Started
+              Learn the basics
+            </CustomLink>
+          </Menu.Item>
+          <Menu.Item>
+            <CustomLink
+              // TODO(DTC-224) replace with stable link as soon as it is available
+              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => metrics.track('HelpMenu_AdminRole')}
+            >
+              System Administrator role
             </CustomLink>
           </Menu.Item>
           <Menu.Divider />
