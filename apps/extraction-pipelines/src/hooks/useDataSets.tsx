@@ -1,8 +1,8 @@
 import { IdEither } from '@cognite/sdk';
 import { QueryFunctionContext, useQuery } from 'react-query';
-import { getDataSets } from '../utils/IntegrationsAPI';
 import { SDKError } from '../model/SDKErrors';
 import { DataSetModel } from '../model/DataSetModel';
+import { getDataSets } from '../utils/DataSetAPI';
 
 export const useDataSets = (dataSetIds: IdEither[]) => {
   return useQuery<DataSetModel[], SDKError>(

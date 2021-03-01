@@ -322,6 +322,16 @@ export const mockDataRunsResponse: { items: StatusRow[] } = {
     },
   ],
 };
+export const datasetMockResponse = () => {
+  return {
+    items: [
+      { id: 123, name: 'data set 1' },
+      { id: 321, name: 'other name' },
+      { id: 111, name: 'something data' },
+      { id: 222, name: 'foo bar' },
+    ],
+  };
+};
 
 export const dbResponse = { items: [{ name: 'my_db' }, { name: 'foo' }] };
 export const tableResponse = {
