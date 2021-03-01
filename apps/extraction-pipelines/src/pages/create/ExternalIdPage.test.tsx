@@ -1,36 +1,51 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
-import render, {
-  renderWithReQueryCacheSelectedIntegrationContext,
-} from '../../utils/test/render';
+import { renderRegisterContext } from '../../utils/test/render';
 import { NEXT } from '../../utils/constants';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '../../utils/baseURL';
 import ExternalIdPage, {
   EXTERNAL_ID_REQUIRED,
   INTEGRATION_EXTERNAL_ID_HEADING,
 } from './ExternalIdPage';
 
 describe('ExternalIdPage', () => {
-  beforeEach(() => {
-    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
-      new QueryClient(),
-      PROJECT_ITERA_INT_GREEN,
-      PROJECT_ITERA_INT_GREEN,
-      ORIGIN_DEV,
-      undefined,
-      `create/integration-external-id`
-    );
-    render(<ExternalIdPage />, { wrapper });
-  });
+  const props = {
+    client: new QueryClient(),
+    project: PROJECT_ITERA_INT_GREEN,
+    cdfEnv: CDF_ENV_GREENFIELD,
+    origin: ORIGIN_DEV,
+    route: `create/integration-external-id`,
+    initRegisterIntegration: {},
+  };
   test('Renders', () => {
+    renderRegisterContext(<ExternalIdPage />, { ...props });
     expect(
       screen.getByText(INTEGRATION_EXTERNAL_ID_HEADING)
     ).toBeInTheDocument();
     expect(screen.getByLabelText('External id')).toBeInTheDocument();
   });
 
+  test('Renders stored value', () => {
+    const externalId = 'external_id_1';
+    const withExternalId = {
+      ...props,
+      initRegisterIntegration: { externalId },
+    };
+    renderRegisterContext(<ExternalIdPage />, { ...withExternalId });
+    const externalIdInput = screen.getByLabelText(
+      /external id/i
+    ) as HTMLInputElement;
+    expect(externalIdInput).toBeInTheDocument();
+    expect(externalIdInput.value).toEqual(externalId);
+  });
+
   test('Interact with form', async () => {
+    renderRegisterContext(<ExternalIdPage />, { ...props });
     const nameInput = screen.getByLabelText('External id');
     const nextBtn = screen.getByText(NEXT);
     fireEvent.click(nextBtn);

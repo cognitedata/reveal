@@ -1,6 +1,10 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { get, getBaseUrl } from './baseURL';
-import { Integration, IntegrationFieldValue } from '../model/Integration';
+import {
+  Integration,
+  IntegrationFieldValue,
+  RegisterIntegrationInfo,
+} from '../model/Integration';
 import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
 
 export const getIntegrations = async (
@@ -38,6 +42,22 @@ export const saveUpdate = async (
     {
       data: {
         items,
+      },
+      withCredentials: true,
+    }
+  );
+  return response.data.items[0];
+};
+
+export const registerIntegration = async (
+  project: string,
+  integration: Partial<RegisterIntegrationInfo>
+) => {
+  const response = await sdkv3.post<IntegrationAPIResponse>(
+    `${getBaseUrl(project)}`,
+    {
+      data: {
+        items: [integration],
       },
       withCredentials: true,
     }

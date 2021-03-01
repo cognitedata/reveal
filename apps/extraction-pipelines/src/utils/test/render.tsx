@@ -7,8 +7,9 @@ import { createMemoryHistory } from 'history';
 import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
 import { AppEnvProvider } from '../../hooks/useAppEnv';
 import { IntegrationProvider } from '../../hooks/details/IntegrationContext';
-import { Integration } from '../../model/Integration';
+import { Integration, RegisterIntegrationInfo } from '../../model/Integration';
 import { INTEGRATIONS } from '../baseURL';
+import { RegisterIntegrationProvider } from '../../hooks/useStoredRegisterIntegration';
 
 export default (
   ui: React.ReactElement,
@@ -98,6 +99,38 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
     </QueryClientProvider>
   );
   return { wrapper, history };
+};
+export const renderRegisterContext = (
+  ui: React.ReactNode,
+  {
+    client,
+    project,
+    cdfEnv,
+    origin,
+    route = INTEGRATIONS,
+    initRegisterIntegration = {},
+    ...renderOptions
+  }: {
+    client: QueryClient;
+    project: string;
+    cdfEnv: string;
+    origin: string;
+    route: string;
+    initRegisterIntegration: Partial<RegisterIntegrationInfo>;
+  }
+) => {
+  const history = createMemoryHistory();
+  history.push(route);
+  return render(
+    <QueryClientProvider client={client}>
+      <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
+        <RegisterIntegrationProvider initIntegration={initRegisterIntegration}>
+          <Router history={history}>{ui}</Router>
+        </RegisterIntegrationProvider>
+      </AppEnvProvider>
+    </QueryClientProvider>,
+    renderOptions
+  );
 };
 
 export const renderWithQueryClient = (client: QueryClient) => {

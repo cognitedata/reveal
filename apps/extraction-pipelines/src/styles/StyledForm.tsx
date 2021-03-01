@@ -10,11 +10,17 @@ export const CreateFormWrapper = styled.form`
   }
   .input-hint {
     font-style: italic;
+    margin-bottom: 0.5rem;
   }
   .error-message {
     color: ${Colors.danger.hex()};
   }
   .cogs-input {
     margin-bottom: 1rem;
+  }
+  button {
+    grid-area: btn;
+    justify-self: start;
+    width: fit-content;
   }
 `;

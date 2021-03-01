@@ -35,6 +35,12 @@ export const GridBreadCrumbsWrapper = styled(StyledRouterLink)`
   grid-area: breadcrumbs;
   margin: 0.5rem 0 0 2rem;
 `;
+export const BackWrapper = styled(StyledRouterLink)`
+  grid-area: back;
+  display: flex;
+  align-items: center;
+  text-decoration: underline;
+`;
 export const GridTitleWrapper = styled(PageTitle)`
   grid-area: title1;
 `;
@@ -44,31 +50,22 @@ export const GridH2Wrapper = styled((props) => (
     {props.children}
   </Title>
 ))`
-  grid-area: title2;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
 `;
 
 export const GridMainWrapper = styled(MainPanelGrid)`
   grid-area: main;
   display: grid;
   grid-template-columns: auto 70% auto;
-  grid-template-rows: 2rem 2rem auto;
+  grid-template-rows: 1rem auto;
   grid-row-gap: 1rem;
   grid-template-areas:
-    '. title2 .'
-    '. description .'
-    '. main .'
-    '. btn .';
+    '. back .'
+    '. form .';
   overflow-y: auto;
   height: calc(100vh - 16.375rem);
-  .description {
-    grid-area: description;
-  }
-  p,
   form {
-    grid-area: main;
-  }
-  button {
-    grid-area: btn;
-    justify-self: start;
+    grid-area: form;
   }
 `;

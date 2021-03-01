@@ -7,18 +7,21 @@ export interface Raw {
   tableName: string;
 }
 
-export interface Integration {
+export interface RegisterIntegrationInfo {
   name: string;
-  createdTime: number; // milliseconds
-  lastUpdatedTime: number; // milliseconds
+  externalId: string;
   schedule?: string;
   dataSetId: string;
-  dataSet?: DataSetModel;
-  externalId: string;
-  description: string;
-  metadata: MetaData;
-  id: number;
+  description?: string;
+  metadata?: MetaData;
   contacts: User[];
+  rawTables?: Raw[];
+}
+export interface Integration extends RegisterIntegrationInfo {
+  id: number;
+  createdTime: number; // milliseconds
+  lastUpdatedTime: number; // milliseconds
+  dataSet?: DataSetModel;
   lastSuccess?: number; // milliseconds
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds
