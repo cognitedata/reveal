@@ -21,7 +21,11 @@ import {
 } from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
-import { renameChart, saveExistingChart } from 'reducers/charts/api';
+import {
+  renameChart,
+  saveExistingChart,
+  duplicateChart,
+} from 'reducers/charts/api';
 import workflowSlice, {
   LatestWorkflowRun,
   Workflow,
@@ -519,6 +523,15 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           axisUpdates: axis.y,
         })
       );
+    }
+  };
+
+  const handleDuplicateChart = async () => {
+    try {
+      await dispatch(duplicateChart(chart!));
+      toast.success('Successfully duplicated!');
+    } catch (e) {
+      toast.error('Unable to duplicate - try again!');
     }
   };
 
@@ -1040,6 +1053,20 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             <Button icon="Download" variant="ghost">
               Export
             </Button>
+            <Dropdown
+              content={
+                <Menu>
+                  <Menu.Item onClick={() => handleDuplicateChart()}>
+                    <Icon type="Duplicate" />
+                    <span>Duplicate</span>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <Button icon="Down" iconPlacement="right">
+                Actions
+              </Button>
+            </Dropdown>
           </section>
         </Header>
         <ChartContainer>
