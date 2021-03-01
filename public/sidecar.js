@@ -5,7 +5,5 @@
 /* eslint-disable */
 
 (function () {
-  window.__cogniteSidecar = {
-    intercom: 'ou1uyk2p',
-  };
+  window.__cogniteSidecar = {};
 })();

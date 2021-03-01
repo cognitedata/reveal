@@ -1,16 +1,12 @@
 import { CdfClient } from 'utils';
 import * as Sentry from '@sentry/browser';
 
-export const logout = async (
-  client: CdfClient,
-  shutdownIntercom: () => void
-) => {
+export const logout = async (client: CdfClient) => {
   const redirectUrl = `https://${window.location.host}/`;
   try {
     const logoutUrl = await client.cogniteClient.logout.getUrl({
       redirectUrl,
     });
-    shutdownIntercom();
     if (logoutUrl) {
       window.location.href = logoutUrl;
     } else {

@@ -8,8 +8,6 @@ import GlobalStyles from 'global-styles';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from 'store';
 import { History } from 'history';
-import sidecar from 'utils/sidecar';
-import { IntercomProvider } from 'react-use-intercom';
 
 type Props = {
   children?: React.ReactNode;
@@ -19,7 +17,6 @@ type Props = {
 
 const cdfClient = createClient();
 const apiClient = createApiClient();
-const { intercom: intercomId } = sidecar;
 
 const AppProviders: React.FC<Props> = ({
   children,
@@ -30,10 +27,8 @@ const AppProviders: React.FC<Props> = ({
     <CdfClientProvider client={cdfClient}>
       <ApiClientProvider apiClient={apiClient}>
         <TenantProvider tenant={tenant}>
-          <IntercomProvider appId={intercomId}>
-            <GlobalStyles />
-            <Router history={history}>{children}</Router>
-          </IntercomProvider>
+          <GlobalStyles />
+          <Router history={history}>{children}</Router>
         </TenantProvider>
       </ApiClientProvider>
     </CdfClientProvider>

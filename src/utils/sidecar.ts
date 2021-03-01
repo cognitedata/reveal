@@ -9,7 +9,6 @@ type Sidecar = {
   digitalCockpitApiBaseUrl: string;
   docsSiteBaseUrl: string;
   intercom: string;
-  intercomTourId: number;
   privacyPolicyUrl: string;
   mixpanel: string;
 };
@@ -23,8 +22,6 @@ const sidecar = merge(
     cdfApiBaseUrl: 'https://api.cognitedata.com',
     digitalCockpitApiBaseUrl: 'https://digital-cockpit-api.staging.cognite.ai',
     docsSiteBaseUrl: 'https://docs.cognite.com',
-    intercom: 'ou1uyk2p',
-    intercomTourId: 199165,
     privacyPolicyUrl: 'https://www.cognite.com/en/policy',
   },
   /* eslint-disable @typescript-eslint/no-explicit-any */

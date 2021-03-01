@@ -11,7 +11,6 @@ import { getGroupsState } from 'store/groups/selectors';
 import { Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
-import { useIntercom } from 'react-use-intercom';
 import ErrorPage from 'pages/ErrorPage';
 import { getMetrics } from 'utils/metrics';
 import Routes from './Routes';
@@ -32,8 +31,6 @@ const Authentication = (): JSX.Element => {
     loaded: groupsLoaded,
     error: groupsLoadError,
   } = useSelector(getGroupsState);
-
-  const { boot: bootIntercom } = useIntercom();
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
   const [fetchDispatched, setFetchDispatched] = useState(false);
@@ -69,10 +66,6 @@ const Authentication = (): JSX.Element => {
       await dispatch(fetchSuites(apiClient));
     };
     if (authenticated && !fetchDispatched && !loading && !hasError) {
-      bootIntercom({
-        email: userId,
-        customAttributes: { hide_default_launcher: true },
-      });
       Metrics.identify(userId);
       Metrics.people({
         name: userId,
@@ -89,7 +82,6 @@ const Authentication = (): JSX.Element => {
     loading,
     hasError,
     fetchDispatched,
-    bootIntercom,
     userId,
     tenant,
     Metrics,

@@ -14,7 +14,6 @@ import { CustomLink, CustomMenuItem } from 'styles/common';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { logout } from 'utils/logout';
 import sidecar from 'utils/sidecar';
-import { useIntercom } from 'react-use-intercom';
 import { getReleaseVersion } from 'utils/release';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
@@ -29,21 +28,14 @@ const AppHeader: React.FC = () => {
   const history = useHistory();
   const metrics = useMetrics('AppHeader');
 
-  const { privacyPolicyUrl, intercomTourId } = sidecar;
+  const { privacyPolicyUrl } = sidecar;
   const allGroupNames = useSelector(getUsersGroupNames);
-
-  const { startTour, shutdown: shutdownIntercom } = useIntercom();
-
-  const startIntercomTour = () => {
-    metrics.track('HelpMenu_StartIntercomTour');
-    startTour(intercomTourId);
-  };
 
   const client = useContext(CdfClientContext);
 
   const performLogout = async () => {
     metrics.track('Profile_Logout');
-    await logout(client, shutdownIntercom);
+    await logout(client);
   };
 
   const setFilter = (groupName: string) => {
@@ -137,13 +129,8 @@ const AppHeader: React.FC = () => {
             </CustomLink>
           </Menu.Item>
           <Menu.Divider />
-          <Menu.Item>
-            <CustomMenuItem
-              role="button"
-              tabIndex={0}
-              onClick={startIntercomTour}
-              onKeyDown={startIntercomTour}
-            >
+          <Menu.Item disabled>
+            <CustomMenuItem role="button">
               Introduction to Digital Cockpit
             </CustomMenuItem>
           </Menu.Item>
