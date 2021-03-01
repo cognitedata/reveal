@@ -5,7 +5,8 @@ import * as Sentry from '@sentry/browser';
 import config from 'utils/config';
 import { Metrics } from '@cognite/metrics';
 
-import { getReleaseVersion } from 'utils/release';
+import { getFASVersionName, getReleaseVersion } from 'utils/release';
+import sidecar from 'utils/sidecar';
 import AppRoot from './AppRoot/App';
 import * as serviceWorker from './serviceWorker';
 
@@ -22,11 +23,15 @@ if (process.env.REACT_APP_SENTRY_DSN) {
   });
 }
 
-if (process.env.REACT_APP_MIXPANEL_TOKEN) {
+const { mixpanel, applicationId } = sidecar;
+if (mixpanel) {
   Metrics.init({
-    mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN,
+    mixpanelToken: mixpanel,
     debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',
     environment: config.env,
+    applicationId,
+    versionName: getFASVersionName(),
+    releaseId: getReleaseVersion(),
   });
 }
 

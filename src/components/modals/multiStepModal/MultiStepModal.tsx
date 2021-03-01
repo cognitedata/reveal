@@ -12,6 +12,7 @@ import { modalClose } from 'store/modals/actions';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
+import { useMetrics } from 'utils/metrics';
 import { BoardForm, SuiteForm } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
@@ -35,9 +36,15 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const { clearForm } = useFormState();
   const { saving: formSaving } = useSelector(formState);
   const [filesUploadQueue] = useState(new Map());
+  const metrics = useMetrics('EditSuite');
+
+  const trackMetrics = (name: string, props?: any) => {
+    metrics.track(name, { ...props, component: 'MultiStepModal' });
+  };
 
   const nextStep = () => {
     if (hasErrors) return;
+    trackMetrics('Select_EditBoards');
     setStep('boards');
   };
 
@@ -51,14 +58,22 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
     if (hasErrors) return;
 
     await dispatch(saveForm(client, apiClient, filesUploadQueue, suite));
-
+    trackMetrics('Saved', {
+      suiteKey: suite.key,
+      suite: suite.title,
+    });
     handleCloseModal();
     history.push(`/suites/${suite.key}`);
   };
 
+  const cancel = () => {
+    trackMetrics('Cancel');
+    handleCloseModal();
+  };
+
   const Footer = () => (
     <ModalFooter>
-      <Button variant="ghost" onClick={handleCloseModal} disabled={formSaving}>
+      <Button variant="ghost" onClick={cancel} disabled={formSaving}>
         Cancel
       </Button>
       <div>
@@ -88,7 +103,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   return (
     <Modal
       visible
-      onCancel={handleCloseModal}
+      onCancel={cancel}
       headerText={modalSettings.header[step]}
       width={modalSettings.width[step]}
       footer={<Footer />}

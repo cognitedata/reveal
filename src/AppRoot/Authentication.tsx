@@ -12,6 +12,7 @@ import { Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import ErrorPage from 'pages/ErrorPage';
+import { getMetrics } from 'utils/metrics';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -38,6 +39,8 @@ const Authentication = (): JSX.Element => {
   const dataLoaded = suitesLoaded && groupsLoaded;
   const hasError = suitesLoadError || groupsLoadError;
 
+  const Metrics = getMetrics();
+
   useEffect(() => {
     const auth = async () => {
       await dispatch(authenticate(tenant, client, apiClient));
@@ -63,6 +66,12 @@ const Authentication = (): JSX.Element => {
       await dispatch(fetchSuites(apiClient));
     };
     if (authenticated && !fetchDispatched && !loading && !hasError) {
+      Metrics.identify(userId);
+      Metrics.people({
+        name: userId,
+        $email: userId,
+      });
+      Metrics.props({ tenant });
       fetch();
     }
   }, [
@@ -74,6 +83,8 @@ const Authentication = (): JSX.Element => {
     hasError,
     fetchDispatched,
     userId,
+    tenant,
+    Metrics,
   ]);
 
   if (hasError) {

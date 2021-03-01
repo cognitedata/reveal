@@ -13,13 +13,17 @@ import { modalSettings } from 'components/modals/config';
 import { ModalContainer, ModalFooter } from 'components/modals/elements';
 import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
+import { useMetrics } from 'utils/metrics';
 
 interface Props {
-  suiteItem: Suite;
-  boardItem: Board;
+  suite: Suite;
+  board: Board;
 }
 
-const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
+const EditBoardModal: React.FC<Props> = ({
+  suite: suiteItem,
+  board: boardItem,
+}: Props) => {
   const { initForm, clearForm } = useFormState();
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
@@ -28,6 +32,7 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
   const hasErrors = !useSelector(isErrorListEmpty);
   const { saving: formSaving } = useSelector(formState);
   const [filesUploadQueue] = useState(new Map());
+  const metrics = useMetrics('EditSuite');
 
   useEffect(() => {
     initForm(suiteItem, boardItem);
@@ -42,12 +47,22 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
   const handleSubmit = async () => {
     if (hasErrors) return;
     await dispatch(saveForm(client, apiClient, filesUploadQueue, suite));
+    metrics.track('Saved', {
+      suiteKey: suite.key,
+      suite: suite.title,
+      component: 'EditBoardModal',
+    });
+    handleCloseModal();
+  };
+
+  const cancel = () => {
+    metrics.track('Cancel', { component: 'EditBoardModal' });
     handleCloseModal();
   };
 
   const footer = (
     <ModalFooter>
-      <Button variant="ghost" onClick={handleCloseModal} disabled={formSaving}>
+      <Button variant="ghost" onClick={cancel} disabled={formSaving}>
         Cancel
       </Button>
       {formSaving ? (
@@ -64,7 +79,7 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
     <>
       <Modal
         visible
-        onCancel={handleCloseModal}
+        onCancel={cancel}
         headerText="Edit board"
         footer={footer}
         width={modalSettings.create.width.boards}
