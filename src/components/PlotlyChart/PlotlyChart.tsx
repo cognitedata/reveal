@@ -214,8 +214,7 @@ const PlotlyChartComponent = ({ chart, onAxisChange }: ChartProps) => {
       domain: [0.06 * (seriesData.length - 1), 1],
       range: serializedXRange,
     },
-    showlegend: true,
-    legend: { orientation: 'h', yshift: 10 },
+    showlegend: false,
     annotations: [],
   };
 
@@ -238,6 +237,7 @@ const PlotlyChartComponent = ({ chart, onAxisChange }: ChartProps) => {
       position: 0.05 * index,
       showline: true,
       range: serializedYRange,
+      hoverformat: '.2f',
     };
 
     if (unit) {
