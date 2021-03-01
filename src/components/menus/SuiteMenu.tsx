@@ -83,7 +83,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'ShareBoard', { suite: dataItem })
+                  handleOpenModal(event, 'ShareBoard', { dataItem })
                 }
               >
                 Share suite
