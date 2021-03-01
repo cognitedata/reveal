@@ -82,7 +82,6 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
               <MenuItemContent
                 role="button"
                 tabIndex={0}
-                // will be fixed when feature implemented
                 onClick={(event) =>
                   handleOpenModal(event, 'ShareBoard', { suite: dataItem })
                 }
