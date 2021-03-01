@@ -6,17 +6,10 @@ import logoSvg from 'assets/logo.svg';
 import useSelector from 'hooks/useSelector';
 import { selectUser } from 'reducers/environment';
 import { useHistory } from 'react-router-dom';
-import useDispatch from 'hooks/useDispatch';
-import { createNewChart } from 'reducers/charts/api';
 
 const TopBarWrapper = () => {
   const user = useSelector(selectUser);
   const history = useHistory();
-  const dispatch = useDispatch();
-
-  const handleClickNewChart = () => {
-    dispatch(createNewChart());
-  };
 
   return (
     <TopBar>
@@ -32,11 +25,6 @@ const TopBarWrapper = () => {
               />
             </Button>
           }
-        />
-        <TopBar.Action
-          icon="ChartMergedView"
-          text="New chart"
-          onClick={() => handleClickNewChart()}
         />
         <TopBar.Navigation links={[]} />
       </TopBar.Left>

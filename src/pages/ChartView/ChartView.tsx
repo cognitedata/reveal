@@ -77,6 +77,9 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     chartSelectors.selectById(state, String(chartId))
   );
   const tenant = useSelector((state) => state.environment.tenant);
+  const newlyCreatedChart = useSelector(
+    (state) => state.charts.newlyCreatedChart
+  );
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
@@ -280,6 +283,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       runWorkflows();
     }
   }, [chart?.dateFrom, chart?.dateTo, updateAutomatically]);
+
+  useEffect(() => {
+    if (newlyCreatedChart) {
+      dispatch(chartsSlice.actions.clearNewlyCreatedChart());
+    }
+  }, [newlyCreatedChart]);
 
   const handleClickNewWorkflow = () => {
     if (chart) {

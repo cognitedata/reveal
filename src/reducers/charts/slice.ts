@@ -21,6 +21,7 @@ const chartsSlice = createSlice({
   initialState: chartAdapter.getInitialState({
     status: { status: 'IDLE' } as LoadingStatus,
     initialized: false,
+    newlyCreatedChart: null as Chart | null,
   }),
   reducers: {
     // Loading charts
@@ -423,11 +424,15 @@ const chartsSlice = createSlice({
     },
     storedNewChart: (state, action: PayloadAction<Chart>) => {
       state.status.status = 'SUCCESS';
+      state.newlyCreatedChart = action.payload;
       chartAdapter.addOne(state, action.payload);
     },
     failedStoringNewChart: (state, action: PayloadAction<Error>) => {
       state.status.status = 'FAILED';
       state.status.error = action.payload;
+    },
+    clearNewlyCreatedChart: (state) => {
+      state.newlyCreatedChart = null;
     },
   },
 });

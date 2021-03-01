@@ -17,4 +17,5 @@ export const CHARTS_STATE: ChartState = {
     status: 'SUCCESS',
   },
   initialized: true,
+  newlyCreatedChart: null,
 };

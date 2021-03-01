@@ -1,13 +1,14 @@
-import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import useDispatch from 'hooks/useDispatch';
 import useSelector from 'hooks/useSelector';
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Chart, chartSelectors } from 'reducers/charts';
 import {
   fetchAllCharts,
   renameChart,
   deleteChart,
+  createNewChart,
   duplicateChart,
 } from 'reducers/charts/api';
 import thumb from 'assets/thumb.png';
@@ -17,10 +18,20 @@ const ChartList = () => {
   const allCharts = useSelector(chartSelectors.selectAll);
   const loadingStatus = useSelector((state) => state.charts.status);
   const error = useSelector((state) => state.charts.status.error);
+  const newlyCreatedChart = useSelector(
+    (state) => state.charts.newlyCreatedChart
+  );
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(fetchAllCharts());
   }, []);
+
+  useEffect(() => {
+    if (newlyCreatedChart) {
+      history.push(`/${newlyCreatedChart.id}`);
+    }
+  }, [newlyCreatedChart]);
 
   const handleRenameChart = (chart: Chart) => {
     dispatch(renameChart(chart));
@@ -28,6 +39,10 @@ const ChartList = () => {
 
   const handleDeleteChart = (chart: Chart) => {
     dispatch(deleteChart(chart));
+  };
+
+  const handleNewChart = async () => {
+    dispatch(createNewChart());
   };
 
   const handleDuplicateChart = (chart: Chart) => {
@@ -77,19 +92,19 @@ const ChartList = () => {
                   onClick={() => handleRenameChart(chart)}
                   appendIcon="Edit"
                 >
-                  <span>Rename workspace</span>
+                  <span>Rename</span>
                 </Menu.Item>
                 <Menu.Item
                   onClick={() => handleDeleteChart(chart)}
                   appendIcon="Delete"
                 >
-                  <span>Delete workspace</span>
+                  <span>Delete</span>
                 </Menu.Item>
                 <Menu.Item
                   onClick={() => handleDuplicateChart(chart)}
                   appendIcon="Duplicate"
                 >
-                  <span>Duplicate workspace</span>
+                  <span>Duplicate</span>
                 </Menu.Item>
               </Menu>
             }
@@ -129,6 +144,11 @@ const ChartList = () => {
 
   return (
     <div id="chart-list" style={{ padding: 16 }}>
+      <div style={{ margin: 20 }}>
+        <Button type="primary" icon="Plus" onClick={handleNewChart}>
+          New chart
+        </Button>
+      </div>
       <div style={{ textAlign: 'center' }}>
         {loadingStatus.status === 'LOADING' && <Icon type="Loading" />}
       </div>

@@ -1,5 +1,3 @@
-/* eslint-disable no-alert */
-
 import subDays from 'date-fns/subDays';
 import { toast } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
@@ -47,15 +45,21 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
     return;
   }
 
+  const dateFrom = subDays(new Date(), 30);
+  dateFrom.setHours(0, 0);
+
+  const dateTo = new Date();
+  dateTo.setHours(23, 59);
+
   const id = nanoid();
   const newChart: Chart = {
     id,
     user,
-    name: prompt('Name your chart', 'New Chart') || 'New Chart',
+    name: 'New chart',
     timeSeriesCollection: [],
     workflowCollection: [],
-    dateFrom: subDays(new Date(), 30).toJSON(),
-    dateTo: new Date().toJSON(),
+    dateFrom: dateFrom.toJSON(),
+    dateTo: dateTo.toJSON(),
   };
 
   dispatch(chartsSlice.actions.startStoringNewChart());
@@ -143,6 +147,7 @@ export const renameChart = (chart: Chart): AppThunk => async (
   try {
     const updatedChart = {
       ...chart,
+      // eslint-disable-next-line no-alert
       name: prompt('Rename chart', chart.name) || chart.name,
     } as Chart;
 
