@@ -7,6 +7,7 @@ export const ROLE_LABEL: Readonly<string> = 'Role';
 export const ROLE_PLACEHOLDER: Readonly<string> = 'Enter role';
 export const EMAIL_LABEL: Readonly<string> = 'E-mail';
 export const EMAIL_PLACEHOLDER: Readonly<string> = 'Enter email address';
+export const NOTIFICATION_LABEL: Readonly<string> = 'Notification';
 
 export const CONTACT_NAME_TEST_ID: Readonly<string> = 'contacts-name-';
 export const CONTACT_EMAIL_TEST_ID: Readonly<string> = 'contacts-email-';
@@ -23,6 +24,7 @@ export const SAVE: Readonly<string> = 'Save';
 export const OK: Readonly<string> = 'OK';
 export const NEXT: Readonly<string> = 'Next';
 export const ADD_CONTACT: Readonly<string> = 'Add contact';
+export const REMOVE_CONTACT: Readonly<string> = 'Remove contact';
 
 export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
 export const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> =

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Colors } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,13 +13,22 @@ import {
   GridMainWrapper,
   GridTitleWrapper,
 } from '../../styles/StyledPage';
-import { ADD_CONTACT, NEXT } from '../../utils/constants';
+import {
+  ADD_CONTACT,
+  EMAIL_LABEL,
+  NAME_LABEL,
+  NEXT,
+  NOTIFICATION_LABEL,
+  REMOVE_CONTACT,
+  ROLE_LABEL,
+} from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
   DESCRIPTION_PAGE_PATH,
   EXTERNAL_ID_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
 import { contactsSchema } from '../../utils/validation/contactsSchema';
+import { DivFlex } from '../../styles/flex/StyledFlex';
 
 const StyledBtn = styled(Button)`
   align-self: flex-start;
@@ -115,7 +124,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
     reValidateMode: 'onSubmit',
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'contacts',
   });
@@ -135,6 +144,12 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
     append({ name: '', email: '', role: '', sendNotification: false });
   };
 
+  function removeContact(index: number) {
+    return function onClickRemove(_: React.MouseEvent<HTMLButtonElement>) {
+      remove(index);
+    };
+  }
+
   return (
     <CreateIntegrationPageWrapper>
       <GridBreadCrumbsWrapper to={createLink(EXTERNAL_ID_PAGE_PATH)}>
@@ -152,10 +167,10 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
             return (
               <ContactWrapper role="group" key={field.id}>
                 <label
-                  htmlFor="integration-contacts-name"
+                  htmlFor={`integration-contacts-name-${index}`}
                   className="input-label"
                 >
-                  Name
+                  {NAME_LABEL}
                 </label>
                 <span id="external-id-hint" className="input-hint" />
                 <ErrorMessage
@@ -171,7 +186,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                   )}
                 />
                 <StyledInput
-                  id="integration-contacts-name"
+                  id={`integration-contacts-name-${index}`}
                   name={`contacts[${index}].name`}
                   type="text"
                   ref={register}
@@ -183,10 +198,10 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                 />
 
                 <label
-                  htmlFor="integration-contacts-email"
+                  htmlFor={`integration-contacts-email-${index}`}
                   className="input-label"
                 >
-                  E-mail
+                  {EMAIL_LABEL}
                 </label>
                 <span id="contacts-email-hint" className="input-hint" />
                 <ErrorMessage
@@ -202,9 +217,8 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                   )}
                 />
                 <StyledInput
-                  id="integration-contacts-email"
+                  id={`integration-contacts-email-${index}`}
                   name={`contacts[${index}].email`}
-                  type="email"
                   ref={register}
                   className={`cogs-input ${
                     errors.contacts?.[index]?.email ? 'has-error' : ''
@@ -214,10 +228,10 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                 />
 
                 <label
-                  htmlFor="integration-contacts-role"
+                  htmlFor={`integration-contacts-role-${index}`}
                   className="input-label"
                 >
-                  Role
+                  {ROLE_LABEL}
                 </label>
                 <span id="contacts-role-hint" className="input-hint">
                   The role this contact has related to this integration.
@@ -235,7 +249,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                   )}
                 />
                 <StyledInput
-                  id="integration-contacts-role"
+                  id={`integration-contacts-role-${index}`}
                   name={`contacts[${index}].role`}
                   type="text"
                   ref={register}
@@ -246,60 +260,69 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                   aria-describedby={`contact-role-hint contact-${index}-role-error`}
                 />
 
-                <label
-                  id="integration-contacts-notification-label"
-                  htmlFor="integration-contacts-notification"
-                  className="input-label checkbox-label"
-                >
-                  Notification
-                </label>
-                <span
-                  id={`contacts-${index}-notification-hint`}
-                  className="input-hint"
-                >
-                  When turned on, the contact will receive an email if the
-                  integration fails.
-                </span>
-                <ErrorMessage
-                  errors={errors}
-                  name={`contacts[${index}].sendNotification`}
-                  render={({ message }) => (
+                <DivFlex direction="row" justify="space-between">
+                  <DivFlex direction="column" align="flex-start">
+                    <label
+                      id="integration-contacts-notification-label"
+                      htmlFor={`integration-contacts-notification-${index}`}
+                      className="input-label checkbox-label"
+                    >
+                      {NOTIFICATION_LABEL}
+                    </label>
                     <span
-                      id={`contact-${index}-notification-error`}
-                      className="error-message"
+                      id={`contacts-${index}-notification-hint`}
+                      className="input-hint"
                     >
-                      {message}
+                      When turned on, the contact will receive an email if the
+                      integration fails.
                     </span>
-                  )}
-                />
-                <Controller
-                  as={
-                    <Switchbutton
-                      id="integration-contacts-notification"
-                      role="switch"
-                      type="button"
-                      ref={register}
-                      onClick={() => handleClick(index)}
-                      aria-checked={calcChecked(index)}
-                      aria-labelledby="integration-contacts-notification-label"
-                      aria-describedby={`contact-${index}-notification-hint contact-${index}-notification-error`}
-                    >
-                      <span className="on">On</span>
-                      <span className="off">Off</span>
-                    </Switchbutton>
-                  }
-                  name={`contacts[${index}].sendNotification`}
-                  control={control}
-                  defaultValue={field.sendNotification}
-                />
+                    <ErrorMessage
+                      errors={errors}
+                      name={`contacts[${index}].sendNotification`}
+                      render={({ message }) => (
+                        <span
+                          id={`contact-${index}-notification-error`}
+                          className="error-message"
+                        >
+                          {message}
+                        </span>
+                      )}
+                    />
+
+                    <Controller
+                      as={
+                        <Switchbutton
+                          id={`integration-contacts-notification-${index}`}
+                          role="switch"
+                          type="button"
+                          ref={register}
+                          onClick={() => handleClick(index)}
+                          aria-checked={calcChecked(index)}
+                          aria-labelledby="integration-contacts-notification-label"
+                          aria-describedby={`contact-${index}-notification-hint contact-${index}-notification-error`}
+                        >
+                          <span className="on">On</span>
+                          <span className="off">Off</span>
+                        </Switchbutton>
+                      }
+                      name={`contacts[${index}].sendNotification`}
+                      control={control}
+                      defaultValue={field.sendNotification}
+                    />
+                  </DivFlex>
+                  <Button
+                    type="secondary"
+                    variant="outline"
+                    aria-label={REMOVE_CONTACT}
+                    onClick={removeContact(index)}
+                  >
+                    <Icon type="Delete" />
+                  </Button>
+                </DivFlex>
               </ContactWrapper>
             );
           })}
-          <AddContact
-            type="secondary"
-            htmlType="button"
-            onClick={() => addContact()}
-          >
+          <AddContact type="secondary" htmlType="button" onClick={addContact}>
             {ADD_CONTACT}
           </AddContact>
           <StyledBtn type="primary" htmlType="submit">
