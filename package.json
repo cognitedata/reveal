@@ -17,10 +17,10 @@
     "@cognite/cogs.js": "^2.13.1",
     "@cognite/metrics": "^1.0.0",
     "@cognite/react-container": "^0.7.3",
-    "@cognite/sdk": "^3.3.0",
+    "@cognite/sdk": "^3.3.3",
     "@sentry/browser": "^6.2.0",
     "@types/lodash": "^4.14.165",
-    "antd": "^4.12.3",
+    "antd": "^4.13.0",
     "chart.js": "^2.9.4",
     "date-fns": "^2.17.0",
     "i18next": "^19.9.0",
@@ -42,7 +42,7 @@
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.1",
+    "@babel/core": "^7.13.8",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
     "@storybook/preset-create-react-app": "^3.1.6",
