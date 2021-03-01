@@ -29,6 +29,7 @@
     "@cognite/react-loop-detector": "^0.0.1",
     "@cognite/sdk": "^3.3.2",
     "@cognite/sdk-provider": "^1.0.0",
+    "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@cognite/z-index": "^0.1.0",
     "@reduxjs/toolkit": "^1.5.0",
     "@sentry/browser": "^5.29.0",
@@ -56,7 +57,7 @@
   },
   "devDependencies": {
     "@cognite/eslint-config": "^1.6.0",
-    "@cognite/eslint-plugin": "^1.3.0",
+    "@cognite/eslint-plugin": "^1.4.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@storybook/addon-docs": "^6.0.28",
     "@storybook/addon-knobs": "^6.1.20",

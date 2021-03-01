@@ -1,70 +1,22 @@
 import React, { ChangeEvent, useState } from 'react';
-import { Drawer, Icon, Input } from '@cognite/cogs.js';
+import { Drawer, Input } from '@cognite/cogs.js';
 import {
   selectActiveChartId,
   selectSearchVisibility,
 } from 'reducers/search/selectors';
+import { SearchResultTable } from 'components/SearchResultTable';
 import useSelector from 'hooks/useSelector';
 import useDispatch from 'hooks/useDispatch';
 import searchSlice from 'reducers/search/slice';
 import styled from 'styled-components/macro';
 import { Timeseries } from '@cognite/sdk';
 import { addTimeSeriesToChart } from 'reducers/charts/api';
-import useTimeSeriesSearch from './useTimeSeriesSearch';
-
-const SEARCH_RESULT_LIMIT = 20;
-
-const LoadingContainer = styled.div`
-  text-align: center;
-  margin: 1rem;
-`;
+import { useDebounce } from 'use-debounce/lib';
 
 const SearchResultsContainer = styled.div`
   margin-top: 1rem;
-`;
-
-const SearchResult = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-
-  width: 100%;
-  height: 2.5rem;
-  padding: 5px;
-
-  cursor: pointer;
-
-  & > :last-child {
-    visibility: hidden;
-  }
-
-  &:hover {
-    background: var(--cogs-greyscale-grey2);
-
-    & > :last-child {
-      visibility: visible;
-    }
-  }
-`;
-
-const SearchResultIcon = styled.span`
-  display: flex;
-  align-items: center;
-  padding-left: 0.2rem;
-  padding-right: 1rem;
-`;
-
-const SearchResultText = styled.span`
-  display: flex;
-  align-items: center;
-`;
-
-const SearchResultActions = styled.span`
-  display: flex;
-  flex-grow: 1;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 0.2rem;
+  height: calc(100% - 70px);
+  overflow-y: hidden;
 `;
 
 const Search = () => {
@@ -72,54 +24,26 @@ const Search = () => {
   const isVisible = useSelector(selectSearchVisibility);
   const activeChartId = useSelector(selectActiveChartId);
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [debouncedQuery] = useDebounce(searchInputValue, 100);
 
   const handleCancel = () => {
     dispatch(searchSlice.actions.hideSearch());
   };
 
-  const {
-    searchResults: timeseriesSearchResults,
-    searchFunction: timeseriesSearch,
-    isSearching: isSearchingTimeseries,
-    clearResults: clearTimeseriesResults,
-  } = useTimeSeriesSearch();
-
   const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSearchInputValue(value);
-    if (!value) {
-      clearTimeseriesResults();
-      return;
-    }
-    timeseriesSearch({ search: { query: value }, limit: SEARCH_RESULT_LIMIT });
   };
 
   const handleTimeSeriesClick = async (timeseries: Timeseries) => {
     dispatch(addTimeSeriesToChart(activeChartId, timeseries));
   };
 
-  const resultElements = timeseriesSearchResults.map((timeseries) => {
-    return (
-      <SearchResult
-        key={timeseries.id}
-        onClick={() => handleTimeSeriesClick(timeseries)}
-      >
-        <SearchResultIcon>
-          <Icon type="LineChart" />
-        </SearchResultIcon>
-        <SearchResultText>{timeseries.name}</SearchResultText>
-        <SearchResultActions>
-          <Icon type="Plus" />
-        </SearchResultActions>
-      </SearchResult>
-    );
-  });
-
   return (
     <Drawer
       visible={isVisible}
       title="Search"
-      width={500}
+      width={1010}
       placement="left"
       footer={null}
       onCancel={handleCancel}
@@ -131,10 +55,12 @@ const Search = () => {
         onChange={handleSearchInputChange}
         value={searchInputValue}
       />
-      <LoadingContainer>
-        {isSearchingTimeseries && <Icon type="Loading" />}
-      </LoadingContainer>
-      <SearchResultsContainer>{resultElements}</SearchResultsContainer>
+      <SearchResultsContainer>
+        <SearchResultTable
+          query={debouncedQuery}
+          onTimeseriesClick={handleTimeSeriesClick}
+        />
+      </SearchResultsContainer>
     </Drawer>
   );
 };
