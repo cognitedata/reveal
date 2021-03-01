@@ -82,8 +82,9 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
               <MenuItemContent
                 role="button"
                 tabIndex={0}
-                // will be fixed when feature implemented
-                onClick={(event) => event.preventDefault()}
+                onClick={(event) =>
+                  handleOpenModal(event, 'ShareBoard', { dataItem })
+                }
               >
                 Share suite
               </MenuItemContent>

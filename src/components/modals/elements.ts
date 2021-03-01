@@ -230,7 +230,7 @@ export const ValidationContainer = styled.div<{ exceedWarningLength: boolean }>`
 
 export const ShareURLInputContainer = styled.div`
   display: flex;
-  padding-top: 8px;
+  padding-top: 10px;
   & > .cogs-btn {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;

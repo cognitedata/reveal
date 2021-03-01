@@ -66,6 +66,12 @@ const AppHeader: React.FC = () => {
     history.push('/');
   };
 
+  const releaseVersion = `Version: ${getReleaseVersion()}`;
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(releaseVersion);
+  };
+
   const actions = [
     {
       key: 'view',
@@ -165,7 +171,13 @@ const AppHeader: React.FC = () => {
             </CustomLink>
           </Menu.Item>
           <Menu.Divider />
-          <Menu.Item disabled>Version: {getReleaseVersion()}</Menu.Item>
+          <Menu.Item disabled>
+            <Tooltip content="Click to copy to clipboard">
+              <CustomMenuItem onClick={copyToClipboard}>
+                {releaseVersion}
+              </CustomMenuItem>
+            </Tooltip>
+          </Menu.Item>
           <Menu.Divider />
           <Menu.Item>
             <CustomMenuItem
