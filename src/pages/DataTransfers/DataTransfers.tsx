@@ -571,28 +571,24 @@ const DataTransfers: React.FC = () => {
   }, [selectedTarget, selectedTargetProject, selectedDateRange]);
 
   useEffect(() => {
-    if (configurationNameFromUrl && configurations.length > 0) {
+    if (configurationNameFromUrl) {
       const selectedConfig = configurations.find(
         (item) => item.name === configurationNameFromUrl
       );
       if (selectedConfig) {
         setSelectedConfiguration(selectedConfig);
-        fetchDatatypes();
+      } else {
+        setSelectedConfiguration(null);
       }
+    } else {
+      setSelectedConfiguration(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configurations]);
+  }, [configurationNameFromUrl, configurations]);
 
   useEffect(() => {
-    if (selectedConfiguration) {
-      history.push(`${url}?configuration=${selectedConfiguration?.name}`);
-    } else {
-      history.push(url);
-    }
     clearData();
     fetchDataTransfers();
     fetchDatatypes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConfiguration]);
 
   useEffect(() => {
@@ -691,8 +687,13 @@ const DataTransfers: React.FC = () => {
             configuration={{
               configurations,
               selected: selectedConfiguration,
-              onSelectConfiguration: (nextSelected) =>
-                setSelectedConfiguration(nextSelected),
+              onSelectConfiguration: (nextSelected) => {
+                history.push(
+                  nextSelected
+                    ? `${url}?configuration=${nextSelected?.name}`
+                    : url
+                );
+              },
             }}
             datatype={{
               types: datatypes,
