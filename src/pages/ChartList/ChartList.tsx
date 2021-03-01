@@ -4,7 +4,12 @@ import useSelector from 'hooks/useSelector';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Chart, chartSelectors } from 'reducers/charts';
-import { fetchAllCharts, renameChart, deleteChart } from 'reducers/charts/api';
+import {
+  fetchAllCharts,
+  renameChart,
+  deleteChart,
+  duplicateChart,
+} from 'reducers/charts/api';
 import thumb from 'assets/thumb.png';
 
 const ChartList = () => {
@@ -23,6 +28,10 @@ const ChartList = () => {
 
   const handleDeleteChart = (chart: Chart) => {
     dispatch(deleteChart(chart));
+  };
+
+  const handleDuplicateChart = (chart: Chart) => {
+    dispatch(duplicateChart(chart));
   };
 
   const renderList = () => {
@@ -75,6 +84,12 @@ const ChartList = () => {
                   appendIcon="Delete"
                 >
                   <span>Delete workspace</span>
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => handleDuplicateChart(chart)}
+                  appendIcon="Duplicate"
+                >
+                  <span>Duplicate workspace</span>
                 </Menu.Item>
               </Menu>
             }

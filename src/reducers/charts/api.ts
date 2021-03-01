@@ -71,6 +71,39 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
   }
 };
 
+export const duplicateChart = (chart: Chart): AppThunk => async (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  if (!tenant || !user) {
+    // Must have tenant and user set
+    return;
+  }
+
+  const id = nanoid();
+  const newChart: Chart = {
+    ...chart,
+    id,
+    name: `${chart.name} Copy`,
+  };
+
+  dispatch(chartsSlice.actions.startStoringNewChart());
+
+  try {
+    // Create the chart
+    const chartService = new ChartService(tenant, user);
+    await chartService.saveChart(newChart);
+
+    dispatch(chartsSlice.actions.storedNewChart(newChart));
+  } catch (e) {
+    dispatch(dispatch(chartsSlice.actions.failedStoringNewChart(e)));
+  }
+};
+
 export const saveExistingChart = (chart: Chart): AppThunk => async (
   _,
   getState
