@@ -4,6 +4,7 @@ import { Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
+import { useMetrics } from 'utils/metrics';
 import NavigationItem from './NavigationItem';
 import {
   TitleContainer,
@@ -12,14 +13,9 @@ import {
   SidebarContainer,
 } from './elements';
 
-const renderNavigationItem = (item: Suite) => (
-  <NavLink to={`/suites/${item.key}`} key={item.key}>
-    <NavigationItem dataItem={item} />
-  </NavLink>
-);
-
 const LeftSidebar: React.FC = () => {
   const { suites } = useSelector(getSuitesTableState);
+  const metrics = useMetrics('LeftSidebar');
 
   const sideBarState = JSON.parse(
     localStorage.getItem('sideBarState') || 'true' // TODO(DTC-215) store in state
@@ -31,8 +27,21 @@ const LeftSidebar: React.FC = () => {
   }, [isOpen]);
 
   const handleHideSidebar = () => {
+    metrics.track(isOpen ? 'Hide' : 'Show');
     setOpen(() => !isOpen);
   };
+
+  const renderNavigationItem = (item: Suite) => (
+    <NavLink
+      to={`/suites/${item.key}`}
+      key={item.key}
+      onClick={() =>
+        metrics.track('Suite_Click', { suiteKey: item.key, suite: item.title })
+      }
+    >
+      <NavigationItem dataItem={item} />
+    </NavLink>
+  );
 
   return (
     <SidebarContainer open={isOpen}>

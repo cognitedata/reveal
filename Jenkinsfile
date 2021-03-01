@@ -19,11 +19,6 @@ static final String SENTRY_PROJECT_NAME = "digital-cockpit"
 // The Sentry DSN is the URL used to report issues into Sentry.
 static final String SENTRY_DSN = "https://327fcc3805594b24aa95d16ecf383c07@o124058.ingest.sentry.io/5557692"
 
-// Specify your Mixpanel project token. If you do not have one of these, please
-// stop by #frontend to get a project created under the Cognite umbrella.
-// Remember: if you can't measure it, you can't improve it!
-static final String MIXPANEL_TOKEN = ""
-
 // This determines how this app is versioned. See https://cog.link/releases for
 // more information. The options available here are:
 //
@@ -76,7 +71,6 @@ def pods = { body ->
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
         sentryDsn: SENTRY_DSN,
-        mixpanelToken: MIXPANEL_TOKEN,
       ) {
         testcafe.pod() {
           properties([

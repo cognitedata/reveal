@@ -11,6 +11,7 @@ type Sidecar = {
   intercom: string;
   intercomTourId: number;
   privacyPolicyUrl: string;
+  mixpanel: string;
 };
 
 const sidecar = merge(

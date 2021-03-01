@@ -10,6 +10,7 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 import { Suite } from 'store/suites/types';
+import { useMetrics } from 'utils/metrics';
 
 interface Props {
   dataItem: Suite;
@@ -20,12 +21,17 @@ const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
+  const metrics = useMetrics('EditSuite');
 
   const handleClose = () => {
     dispatch(modalClose());
   };
 
   const handleDeleteSuite = async () => {
+    metrics.track('DeleteSuite', {
+      suiteKey: dataItem.key,
+      suite: dataItem.title,
+    });
     handleClose();
     await dispatch(deleteSuite(client, apiClient, [{ key: dataItem.key }]));
     history.push('/');

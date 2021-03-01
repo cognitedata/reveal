@@ -7,6 +7,7 @@ import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import { Suite } from 'store/suites/types';
+import { useMetrics } from 'utils/metrics';
 import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {
@@ -20,18 +21,28 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
     setIsComponentVisible,
   } = useClickAwayListener(false);
 
+  const metrics = useMetrics('SuiteMenu');
+
   const handleMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsComponentVisible(() => !isComponentVisible);
+    metrics.track(`OpenMenu`, {
+      suiteKey: dataItem?.key,
+      suite: dataItem?.title,
+    });
   };
 
   const handleOpenModal = (
     event: React.MouseEvent,
     modalType: ModalType,
-    modalProps: any
+    modalProps: { dataItem: Suite }
   ) => {
     event.preventDefault();
     setIsComponentVisible(() => !isComponentVisible);
+    metrics.track(`Select_${modalType}`, {
+      suiteKey: modalProps.dataItem?.key,
+      suite: modalProps.dataItem?.title,
+    });
     dispatch(modalOpen({ modalType, modalProps }));
   };
 

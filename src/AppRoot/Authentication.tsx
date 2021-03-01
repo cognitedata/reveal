@@ -13,6 +13,7 @@ import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useIntercom } from 'react-use-intercom';
 import ErrorPage from 'pages/ErrorPage';
+import { getMetrics } from 'utils/metrics';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -40,6 +41,8 @@ const Authentication = (): JSX.Element => {
   const loading = authenticating || suitesLoading || groupsLoading;
   const dataLoaded = suitesLoaded && groupsLoaded;
   const hasError = suitesLoadError || groupsLoadError;
+
+  const Metrics = getMetrics();
 
   useEffect(() => {
     const auth = async () => {
@@ -70,6 +73,12 @@ const Authentication = (): JSX.Element => {
         email: userId,
         customAttributes: { hide_default_launcher: true },
       });
+      Metrics.identify(userId);
+      Metrics.people({
+        name: userId,
+        $email: userId,
+      });
+      Metrics.props({ tenant });
       fetch();
     }
   }, [
@@ -82,6 +91,8 @@ const Authentication = (): JSX.Element => {
     fetchDispatched,
     bootIntercom,
     userId,
+    tenant,
+    Metrics,
   ]);
 
   if (hasError) {
