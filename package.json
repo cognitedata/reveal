@@ -18,7 +18,7 @@
     "@cognite/metrics": "^1.0.0",
     "@cognite/react-container": "^0.7.3",
     "@cognite/sdk": "^3.3.5",
-    "@sentry/browser": "^6.2.0",
+    "@sentry/browser": "^6.2.1",
     "@types/lodash": "^4.14.165",
     "antd": "^4.13.0",
     "chart.js": "^2.9.4",
