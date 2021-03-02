@@ -11,6 +11,8 @@ import {
 } from 'components/modals/elements';
 import { useMetrics } from 'utils/metrics';
 import { useLink } from 'hooks';
+import * as Sentry from '@sentry/browser';
+import assign from 'lodash/assign';
 
 interface Props {
   board: Board;
@@ -22,7 +24,7 @@ const ShareLinkModal: React.FC<Props> = ({ board, suite }: Props) => {
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch<RootDispatcher>();
-  const metrics = useMetrics('ShareBoard');
+  const metrics = useMetrics('ShareLink');
   const { createLink } = useLink();
   const handleCloseModal = () => {
     dispatch(modalClose());
@@ -37,6 +39,11 @@ const ShareLinkModal: React.FC<Props> = ({ board, suite }: Props) => {
     entity = 'suite';
     ({ title } = suite);
     url = createLink(`/suites/${suite.key}`);
+  } else {
+    Sentry.captureMessage(
+      'Missing data item for ShareLinkModal',
+      Sentry.Severity.Error
+    );
   }
 
   const copyToClipboard = () => {
@@ -44,7 +51,12 @@ const ShareLinkModal: React.FC<Props> = ({ board, suite }: Props) => {
       ref.current.select();
       document.execCommand('copy');
       setCopySuccess(true);
-      metrics.track('Copied', { boardKey: board.key, board: board.title });
+      const props = assign(
+        {},
+        suite ? { suiteKey: suite.key, suite: suite.title } : null,
+        board ? { boardKey: board.key, board: board.title } : null
+      );
+      metrics.track('Copied', props);
     }
   };
 

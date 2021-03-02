@@ -5,15 +5,15 @@ import { Suite } from 'store/suites/types';
 import { MultiStepModal } from '../multiStepModal/MultiStepModal';
 
 interface Props {
-  dataItem: Suite;
+  suite: Suite;
 }
 
-const EditSuiteModal: React.FC<Props> = ({ dataItem }: Props) => {
+const EditSuiteModal: React.FC<Props> = ({ suite }: Props) => {
   const { initForm } = useFormState();
 
   useEffect(() => {
-    initForm(dataItem);
-  }, [initForm, dataItem]);
+    initForm(suite);
+  }, [initForm, suite]);
 
   return <MultiStepModal modalSettings={modalSettings.edit} />;
 };

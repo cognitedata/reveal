@@ -35,13 +35,13 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
   const handleOpenModal = (
     event: React.MouseEvent,
     modalType: ModalType,
-    modalProps: { dataItem: Suite }
+    modalProps: { suite: Suite }
   ) => {
     event.preventDefault();
     setIsComponentVisible(() => !isComponentVisible);
     metrics.track(`Select_${modalType}`, {
-      suiteKey: modalProps.dataItem?.key,
-      suite: modalProps.dataItem?.title,
+      suiteKey: modalProps.suite?.key,
+      suite: modalProps.suite?.title,
     });
     dispatch(modalOpen({ modalType, modalProps }));
   };
@@ -61,7 +61,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'EditSuite', { dataItem })
+                  handleOpenModal(event, 'EditSuite', { suite: dataItem })
                 }
               >
                 Edit suite
@@ -72,7 +72,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'DeleteSuite', { dataItem })
+                  handleOpenModal(event, 'DeleteSuite', { suite: dataItem })
                 }
               >
                 Delete suite
@@ -83,7 +83,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'ShareBoard', { dataItem })
+                  handleOpenModal(event, 'ShareLink', { suite: dataItem })
                 }
               >
                 Share suite

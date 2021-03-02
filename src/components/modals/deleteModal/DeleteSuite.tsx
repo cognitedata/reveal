@@ -13,10 +13,10 @@ import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 
 interface Props {
-  dataItem: Suite;
+  suite: Suite;
 }
 
-const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
+const DeleteSuite: React.FC<Props> = ({ suite }: Props) => {
   const history = useHistory();
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
@@ -29,11 +29,11 @@ const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
 
   const handleDeleteSuite = async () => {
     metrics.track('DeleteSuite', {
-      suiteKey: dataItem.key,
-      suite: dataItem.title,
+      suiteKey: suite.key,
+      suite: suite.title,
     });
     handleClose();
-    await dispatch(deleteSuite(client, apiClient, [{ key: dataItem.key }]));
+    await dispatch(deleteSuite(client, apiClient, [{ key: suite.key }]));
     history.push('/');
   };
 
@@ -62,7 +62,7 @@ const DeleteSuite: React.FC<Props> = ({ dataItem }: Props) => {
         underlineColor="#db0657"
       >
         <ModalContainer>
-          <Title level={5}>Delete &quot;{dataItem.title}&quot;?</Title>
+          <Title level={5}>Delete &quot;{suite.title}&quot;?</Title>
         </ModalContainer>
       </Modal>
     </>

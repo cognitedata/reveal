@@ -110,7 +110,7 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'ShareBoard', { board })
+                  handleOpenModal(event, 'ShareLink', { board })
                 }
               >
                 Share board
