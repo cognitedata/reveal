@@ -67,11 +67,12 @@ Previous versions of metrics packaged react in this module, and trigger this err
 
 1. Make your changes here (in the `frontend` lib(s))
    1. Update and unit tests/storybooks
+   2. NOTE: it is recommended to use storybook to develop any changes
 2. Build a local project and test this out
    1. For example to test with the demo app, you can run:
       `yarn build && cp -r dist/* ~/dev/react-demo-app/node_modules/@cognite/react-tenant-selector/dist` (remember to stop the dev server and re-run `yarn start` after doing this)
-   1. Or use `yalc`
-   1. Or `yarn link`
+   2. Or use `yalc`
+   3. Or `yarn link`
 3. Bump this projects version
 4. Bump @cognite/react-container to match that version (so people use it during locahost development)
 5. Create a PR and get it deployed

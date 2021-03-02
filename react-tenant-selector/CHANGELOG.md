@@ -1,3 +1,16 @@
+## 0.6.3 Mar 1 2021
+
+### Changes
+
+- Show errors from Azure login in a nicer way
+
+### Extras
+
+- Refactor CardFooterError -> Error
+- Add ErrorExpandable
+- Fix naming issue with LoginWithAzureAD -> LoginWithADFS
+- Update cogs
+
 ## 0.6.2 Feb 26 2021
 
 ### Changes

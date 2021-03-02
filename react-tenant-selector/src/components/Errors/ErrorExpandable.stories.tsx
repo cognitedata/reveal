@@ -1,19 +1,19 @@
 import React from 'react';
 
-import CardFooterError from './CardFooterError';
+import ErrorExpandable from './ErrorExpandable';
 
 export default {
-  title: 'Errors/CardFooterError',
+  title: 'Errors/ErrorExpandable',
 };
 
 export const Base = () => {
   return (
-    <CardFooterError>
+    <ErrorExpandable title="There has been an error">
       <div>Something is taking longer than usual. Please refresh the page.</div>
       <div>
         Contact <a href="mailto:support@cognite.com">support@cognite.com</a> if
         the problem persists.
       </div>
-    </CardFooterError>
+    </ErrorExpandable>
   );
 };

@@ -3,22 +3,23 @@ import { Loader } from '@cognite/cogs.js';
 import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
 
 import {
+  ErrorExpandable,
   LoginTip,
   TitleChanger,
   CardContainerHeader,
   ProjectSelector,
 } from '../../components';
+
 import {
   LoginOrWrapper,
   LoginWithAzure,
-  LoginWithAzureAD,
+  LoginWithADFS,
   LoginWithCognite,
 } from '../LoginOptions';
 
 import {
   StyledCardContainer,
   StyledContentWrapper,
-  Error,
   LoginSpacer,
 } from './elements';
 
@@ -103,6 +104,20 @@ const CardContainer = ({
   //   showOr,
   // });
 
+  const ErrorDisplay = () => {
+    if (!authState?.error) {
+      return null;
+    }
+    return (
+      <ErrorExpandable
+        title="There has been an error"
+        style={{ marginTop: '30px' }}
+      >
+        {authState?.errorMessage || ''}
+      </ErrorExpandable>
+    );
+  };
+
   return (
     <StyledCardContainer style={{ height: `${containerHeight}` }}>
       <div ref={container}>
@@ -115,6 +130,8 @@ const CardContainer = ({
             applicationName={applicationName}
             applicationId={applicationId}
           />
+
+          <ErrorDisplay />
 
           {showLoading && <Loader />}
 
@@ -144,22 +161,10 @@ const CardContainer = ({
               {showSpacer && <LoginSpacer />}
               {showOr && <LoginOrWrapper />}
               {enabledLoginModes.adfs && (
-                <LoginWithAzure authClient={authClient} />
+                <LoginWithADFS authClient={authClient} />
               )}
               {enabledLoginModes.aad && (
-                <>
-                  {authState?.error && (
-                    <Error>
-                      <strong>ERROR: </strong>
-                      {authState?.errorMessage}
-                    </Error>
-                  )}
-
-                  <LoginWithAzureAD
-                    authClient={authClient}
-                    cluster={cdfCluster}
-                  />
-                </>
+                <LoginWithAzure authClient={authClient} cluster={cdfCluster} />
               )}
             </>
           )}

@@ -2,7 +2,7 @@ import React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import { StyledContentWrapper } from '../CardContainer/elements';
-import { CardFooterError } from '../../components';
+import { Error } from '../../components';
 import CogniteFlow from './CogniteFlow';
 
 export default {
@@ -49,9 +49,7 @@ export const WithError = () => {
       <CogniteFlow
         {...cogniteFlowProps}
         errorList={
-          <CardFooterError style={{ marginTop: '16px' }}>
-            This is just a storybook
-          </CardFooterError>
+          <Error style={{ marginTop: '16px' }}>This is just a storybook</Error>
         }
       />
     </StyledContentWrapper>

@@ -12,21 +12,23 @@ const getProps = () => {
 
   authClient.login = jest.fn();
 
-  return { authClient };
+  return { cluster: 'test', authClient };
 };
 
 describe('<LoginWithAzure />', () => {
   it('Should render the button', () => {
     render(<Base {...getProps()} />);
-    expect(screen.getByText('Login with ADFS')).toBeTruthy();
+    expect(screen.getByText('Login with Microsoft Azure')).toBeTruthy();
   });
 
   it('Should trigger login on click', () => {
     const props = getProps();
     render(<Base {...props} />);
 
-    fireEvent.click(screen.getByText('Login with ADFS'));
+    fireEvent.click(screen.getByText('Login with Microsoft Azure'));
     expect(props.authClient.login).toBeCalledTimes(1);
-    expect(props.authClient.login).toHaveBeenCalledWith('ADFS');
+    expect(props.authClient.login).toHaveBeenCalledWith('AZURE_AD', {
+      cluster: 'test',
+    });
   });
 });

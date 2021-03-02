@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledCardFooterError = styled.div`
+export const StyledError = styled.div`
   display: flex;
   padding: 8px 8px 8px 4px;
   background: #fff3eb;
@@ -24,5 +24,15 @@ export const StyledCardFooterError = styled.div`
     height: 100%;
     width: 4px;
     background: #ff9429;
+  }
+`;
+
+export const StyledContainer = styled.div`
+  *:focus {
+    outline: none;
+  }
+
+  div {
+    background-color: inherit;
   }
 `;

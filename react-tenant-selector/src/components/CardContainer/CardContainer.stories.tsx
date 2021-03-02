@@ -34,6 +34,22 @@ export const WithoutLegacy = () => {
   );
 };
 
+export const WithoutLegacyWithErrors = () => {
+  return (
+    <CardContainer
+      {...cardContainerProps}
+      enabledLoginModes={{ aad: true }}
+      authState={{
+        authenticated: false,
+        initialising: false,
+        error: true,
+        errorMessage:
+          'This is a really long error message with technical details that spans many lines. That is why we want to hide it.',
+      }}
+    />
+  );
+};
+
 export const WithInitialTenant = () => {
   return (
     <CardContainer {...cardContainerProps} initialTenant="initial-tenant" />
@@ -52,9 +68,6 @@ export const Loading = () => {
 
 export const WithError = () => {
   return (
-    <CardContainer
-      {...cardContainerProps}
-      errors={['This is just a storybook']}
-    />
+    <CardContainer {...cardContainerProps} errors={['This is a login error']} />
   );
 };

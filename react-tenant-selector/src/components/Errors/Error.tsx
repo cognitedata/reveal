@@ -3,7 +3,7 @@ import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { Centered } from '../../styles/elements';
-import { StyledCardFooterError } from './elements';
+import { StyledError } from './elements';
 
 type Props = {
   children: React.ReactNode;
@@ -12,9 +12,9 @@ type Props = {
 
 const VerticalAligned = styled.div``;
 
-const CardFooterError = ({ children, style }: Props) => {
+const Error = ({ children, style }: Props) => {
   return (
-    <StyledCardFooterError style={style}>
+    <StyledError style={style}>
       <div className="color-overlay" />
       <Centered style={{ padding: '0 16px' }}>
         <Icon type="Warning" style={{ fontSize: '14px' }} />
@@ -22,8 +22,8 @@ const CardFooterError = ({ children, style }: Props) => {
       <VerticalAligned>
         <div className="message">{children}</div>
       </VerticalAligned>
-    </StyledCardFooterError>
+    </StyledError>
   );
 };
 
-export default React.memo(CardFooterError);
+export default React.memo(Error);

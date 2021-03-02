@@ -2,14 +2,18 @@ import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { CogniteAuth, saveFlow } from '@cognite/auth-utils';
 
-interface Props {
+const LoginWithAzure = ({
+  cluster,
+  authClient,
+}: {
+  cluster: string;
   authClient?: CogniteAuth;
-}
-const LoginWithAzure: React.FC<Props> = ({ authClient }: Props) => {
+}) => {
   const handleClick = () => {
     if (authClient) {
-      saveFlow('ADFS');
-      authClient.login('ADFS');
+      // console.log('Starting AZURE_AD login flow');
+      saveFlow('AZURE_AD');
+      authClient.login('AZURE_AD', { cluster });
     }
   };
 
@@ -20,7 +24,7 @@ const LoginWithAzure: React.FC<Props> = ({ authClient }: Props) => {
       type="secondary"
       onClick={handleClick}
     >
-      Login with ADFS
+      Login with Microsoft Azure
     </Button>
   );
 };

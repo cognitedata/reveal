@@ -4,7 +4,7 @@ import { CogniteAuth } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
 import { render } from '../../utils/test';
 
-import Base from './LoginWithAzureAD';
+import Base from './LoginWithADFS';
 
 const getProps = () => {
   const client = new CogniteClient({ appId: 'test' });
@@ -12,23 +12,21 @@ const getProps = () => {
 
   authClient.login = jest.fn();
 
-  return { cluster: 'test', authClient };
+  return { authClient };
 };
 
-describe('<LoginWithAzureAD />', () => {
+describe('<LoginWithADFS />', () => {
   it('Should render the button', () => {
     render(<Base {...getProps()} />);
-    expect(screen.getByText('Login with Microsoft Azure')).toBeTruthy();
+    expect(screen.getByText('Login with ADFS')).toBeTruthy();
   });
 
   it('Should trigger login on click', () => {
     const props = getProps();
     render(<Base {...props} />);
 
-    fireEvent.click(screen.getByText('Login with Microsoft Azure'));
+    fireEvent.click(screen.getByText('Login with ADFS'));
     expect(props.authClient.login).toBeCalledTimes(1);
-    expect(props.authClient.login).toHaveBeenCalledWith('AZURE_AD', {
-      cluster: 'test',
-    });
+    expect(props.authClient.login).toHaveBeenCalledWith('ADFS');
   });
 });

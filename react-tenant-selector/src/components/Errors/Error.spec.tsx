@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import { Base } from './CardFooterError.stories';
+import { Base } from './Error.stories';
 
-describe('CardFooterError', () => {
+describe('Error', () => {
   it('Renders children', () => {
     const { getByText } = render(<Base />);
     getByText(

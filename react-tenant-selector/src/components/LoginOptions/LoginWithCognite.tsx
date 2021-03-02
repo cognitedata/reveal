@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { CogniteAuth, saveFlow } from '@cognite/auth-utils';
 
-import {
-  CardFooterError,
-  CogniteFlow,
-  ClusterSelector,
-} from '../../components';
+import { Error, CogniteFlow, ClusterSelector } from '../../components';
 import { sanitizeTenant, errorSchema } from '../../utils';
 
 export type FormState = {
@@ -138,9 +134,9 @@ const LoginWithCognite: React.FC<Props> = ({
     }
     return errors.map((error) => {
       return (
-        <CardFooterError key={`error-${error}`} style={{ marginTop: '16px' }}>
+        <Error key={`error-${error}`} style={{ marginTop: '16px' }}>
           {error}
-        </CardFooterError>
+        </Error>
       );
     });
   }, [errors]);
