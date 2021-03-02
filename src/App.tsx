@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { ContainerWithoutI18N } from '@cognite/react-container';
+import { AuthConsumer, ContainerWithoutI18N } from '@cognite/react-container';
+import { Loader } from '@cognite/cogs.js';
 
 import GlobalStyles from 'global-styles';
 
@@ -24,23 +25,33 @@ const App = () => (
             <Main>
               <MainHeader />
               <Content>
-                <Switch>
-                  <Route exact path="/">
-                    <Home />
-                  </Route>
-                  <Route exact path="/configurations">
-                    <Configurations />
-                  </Route>
-                  <Route exact path="/configurations/new/:type">
-                    <New />
-                  </Route>
-                  <Route exact path="/data-transfers">
-                    <DataTransfers />
-                  </Route>
-                  <Route exact path="/status">
-                    <Status />
-                  </Route>
-                </Switch>
+                <AuthConsumer>
+                  {({ authState }) => {
+                    if (!authState || !authState.authenticated) {
+                      return <Loader darkMode={false} />;
+                    }
+
+                    return (
+                      <Switch>
+                        <Route exact path="/">
+                          <Home />
+                        </Route>
+                        <Route exact path="/configurations">
+                          <Configurations />
+                        </Route>
+                        <Route exact path="/configurations/new/:type">
+                          <New />
+                        </Route>
+                        <Route exact path="/data-transfers">
+                          <DataTransfers />
+                        </Route>
+                        <Route exact path="/status">
+                          <Status />
+                        </Route>
+                      </Switch>
+                    );
+                  }}
+                </AuthConsumer>
               </Content>
             </Main>
           </Layout>
