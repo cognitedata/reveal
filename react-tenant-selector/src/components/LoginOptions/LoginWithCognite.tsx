@@ -14,6 +14,7 @@ export type FormState = {
 
 interface Props {
   initialTenant?: string;
+  initialCluster?: string;
   loading: boolean;
   cluster: string;
 
@@ -27,6 +28,7 @@ interface Props {
 const LoginWithCognite: React.FC<Props> = ({
   cluster,
   initialTenant,
+  initialCluster,
   loading,
   handleSubmit,
   handleClusterSubmit,
@@ -44,7 +46,7 @@ const LoginWithCognite: React.FC<Props> = ({
       error: '',
     },
     cluster: {
-      value: '',
+      value: initialCluster || '',
       // Cluster is not required field
       isValid: true,
       error: '',

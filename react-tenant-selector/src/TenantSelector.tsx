@@ -63,6 +63,7 @@ export const TenantSelector: React.FC<{
     checkClusterValidity,
     redirectingToCluster,
     validatingCluster,
+    initialCluster,
   } = useClusterSelector(applicationId);
 
   const isLoading =
@@ -177,6 +178,7 @@ export const TenantSelector: React.FC<{
           handleClusterSubmit={onClusterSelected}
           handleSubmit={onTenantSelected}
           helpLink={helpLink || ''}
+          initialCluster={initialCluster || ''}
           initialTenant={initialTenant || ''}
           loading={isLoading}
           validateCluster={performClusterValidation}

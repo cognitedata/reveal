@@ -10,6 +10,7 @@ const useTenantSelector = (appName: string, appsApiBaseUrl: string) => {
 
   const onTenantSelected = (newTenant: string) => {
     localStorage.setItem('initialTenant', newTenant);
+    localStorage.removeItem('initialCluster');
     setRedirecting(true);
     const { hash, search } = window.location;
     const url = [`/${newTenant}`, search, hash].filter(Boolean).join('');

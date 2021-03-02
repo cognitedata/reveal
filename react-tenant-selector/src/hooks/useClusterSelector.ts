@@ -64,8 +64,11 @@ const useClusterSelector = (appName: string) => {
 
   const { hostname } = window.location;
 
+  const initialCluster = localStorage.getItem('initialCluster');
+
   const onClusterSelected = (newTenant: string, cluster: string) => {
     localStorage.setItem('initialTenant', newTenant);
+    localStorage.setItem('initialCluster', cluster);
     setRedirectingToCluster(true);
     const { hash, search } = window.location;
     const url = [
@@ -104,6 +107,7 @@ const useClusterSelector = (appName: string) => {
     onClusterSelected,
     redirectingToCluster,
     validatingCluster,
+    initialCluster,
   };
 };
 

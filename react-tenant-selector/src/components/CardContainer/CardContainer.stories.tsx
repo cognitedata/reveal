@@ -56,6 +56,16 @@ export const WithInitialTenant = () => {
   );
 };
 
+export const WithInitialCluster = () => {
+  return (
+    <CardContainer
+      {...cardContainerProps}
+      initialTenant="initial-tenant"
+      initialCluster="initial-cluster"
+    />
+  );
+};
+
 export const Loading = () => {
   return (
     <CardContainer

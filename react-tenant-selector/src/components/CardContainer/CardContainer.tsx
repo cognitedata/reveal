@@ -48,6 +48,7 @@ type Props = {
   handleClusterSubmit: (tenant: string, cluster: string) => void;
   handleSubmit: (tenant: string) => void;
   helpLink?: string;
+  initialCluster?: string;
   initialTenant?: string;
   loading: boolean;
   validateCluster: (tenant: string, cluster: string) => Promise<boolean>;
@@ -65,6 +66,7 @@ const CardContainer = ({
   handleSubmit,
   helpLink,
   initialTenant,
+  initialCluster,
   loading,
   validateCluster,
   validateTenant,
@@ -149,6 +151,7 @@ const CardContainer = ({
                 <LoginWithCognite
                   cluster={cdfCluster}
                   initialTenant={initialTenant}
+                  initialCluster={initialCluster}
                   errors={errors}
                   loading={loading}
                   authClient={authClient}
