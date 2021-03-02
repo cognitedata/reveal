@@ -3,6 +3,10 @@ update_configs:
   - package_manager: 'javascript'
     directory: '/'
     update_schedule: 'weekly'
+    ignored_updates:
+      - match:
+          dependency_name: 'husky'
+          version_requirement: '5.x' # messes with hooks
     automerged_updates:
       - match:
           dependency_type: 'all'
