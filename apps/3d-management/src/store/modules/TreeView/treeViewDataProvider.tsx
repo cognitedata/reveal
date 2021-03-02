@@ -6,8 +6,9 @@ import {
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
-import promiseRetry from 'promise-retry';
 import { node3dToCustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+import { getProject } from '@cognite/cdf-utilities';
+import promiseRetry from 'promise-retry';
 
 export const FETCH_PARAMS: v3.List3DNodesQuery = {
   depth: 1,
@@ -24,38 +25,64 @@ export type FetchNodesArgs = {
   params?: Pick<v3.List3DNodesQuery, 'depth' | 'limit'>;
 };
 
+async function fetchRootNode(modelId, revisionId): Promise<v3.Node3D> {
+  // having this function separated from first request is not a performance optimisation
+  // we just need to know rootId to fetch its children
+  // because it's not guaranteed that API will give you rootNode in the first response
+  // (it might be in another response chunk which you access by using a cursor)
+  // alternative is to use huge limit for the first request to cover any potential cases
+  // when model has LOTS of nodes with depth=1 i.e. direct children of root node
+
+  // /nodes endpoint doesn't have treeIndex filter, so here we go...
+  const outputsUrl = `${v3Client.getBaseUrl()}/api/v1/projects/${getProject()}/3d/models/${modelId}/revisions/${revisionId}/nodes/internalids/bytreeindices`;
+  const rootNodeIdResponse = await v3Client.post<{ items: number[] }>(
+    outputsUrl,
+    {
+      data: { items: [0] },
+    }
+  );
+  if (rootNodeIdResponse.status !== 200) {
+    throw new Error(
+      rootNodeIdResponse.data
+        ? JSON.stringify(rootNodeIdResponse.data)
+        : `${rootNodeIdResponse.status} - failed to fetch the root node.`
+    );
+  }
+  const rootNodeId = rootNodeIdResponse.data.items[0];
+
+  const rootNodeObjResponse = await v3Client.revisions3D.list3DNodes(
+    modelId,
+    revisionId,
+    {
+      nodeId: rootNodeId,
+      limit: 1,
+      depth: 0,
+    }
+  );
+
+  return rootNodeObjResponse.items[0];
+}
+
+// the first request is really slow for big models, we need an index for depth param to make it work smooth
 export async function fetchRootTreeNodes({
   modelId,
   revisionId,
 }: RevisionId): Promise<TreeDataNode[]> {
+  const rootNode = await fetchRootNode(modelId, revisionId);
+  const treeData = node3dToCustomDataNode([rootNode]) as TreeDataNode[];
+
   // at the time of writing the initial fetch is very slow because it causes index to be created
   // so for big models it sometimes fails with timeout
-  const data = await promiseRetry(
+  treeData[0].children = await promiseRetry(
     (retry) => {
-      return v3Client.revisions3D
-        .list3DNodes(modelId, revisionId, {
-          ...FETCH_PARAMS,
-        })
-        .catch(retry);
+      return fetchTreeNodes({
+        modelId,
+        revisionId,
+        parent: { nodeId: rootNode.id, treeIndex: 0 },
+      }).catch(retry);
     },
     { retries: 3 }
   );
-  const treeData = node3dToCustomDataNode(
-    data.items.slice(0, 1) // root node
-  ) as TreeDataNode[];
-
-  treeData[0].children = node3dToCustomDataNode(data.items.slice(1));
-
-  if (data.nextCursor) {
-    const loadMoreOption: TreeLoadMoreNode = createLoadMoreOption({
-      cursor: data.nextCursor,
-      parent: {
-        nodeId: data.items[0].id,
-        treeIndex: data.items[0].treeIndex,
-      },
-    });
-    treeData[0].children!.push(loadMoreOption);
-  }
 
   return treeData;
 }
@@ -74,11 +101,10 @@ export async function fetchTreeNodes({
     nodeId: parent.nodeId,
   });
 
-  // first item is always the node that passed in request options as nodeId
-  // unless cursor is passed
-  const useAll = cursor || params?.limit === 1;
   const subtreeItems: CustomDataNode[] = node3dToCustomDataNode(
-    useAll ? data.items : data.items.slice(1)
+    params?.limit === 1
+      ? data.items
+      : data.items.filter((node) => node.id !== parent.nodeId) // nodeId passed in request appears in random order
   );
 
   if (data.nextCursor) {
