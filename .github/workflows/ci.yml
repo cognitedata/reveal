@@ -86,7 +86,7 @@ jobs:
       run: 'yarn ci:e2e'
 
     - name: Check for failed visual test diffs
-      if: steps.visualtests.outcome == 'failure'
+      if: failure()
       working-directory: examples
       run: |
         yarn
@@ -95,7 +95,7 @@ jobs:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload image diffs for failed visual tests
-      if: steps.visualtests.outcome == 'failure'
+      if: failure()
       uses: actions/upload-artifact@v2
       with:
         name: image-diffs-${{ github.sha }}
