@@ -23,7 +23,7 @@ export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
 export const OK: Readonly<string> = 'OK';
 export const NEXT: Readonly<string> = 'Next';
-export const ADD_CONTACT: Readonly<string> = 'Add contact';
+export const ADD_CONTACT: Readonly<string> = 'Add another contact';
 export const REMOVE_CONTACT: Readonly<string> = 'Remove contact';
 
 export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';

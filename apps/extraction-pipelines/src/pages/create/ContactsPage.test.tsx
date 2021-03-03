@@ -1,10 +1,12 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
-import render, {
-  renderWithReQueryCacheSelectedIntegrationContext,
-} from '../../utils/test/render';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
+import { renderRegisterContext } from '../../utils/test/render';
+import {
+  CDF_ENV_GREENFIELD,
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '../../utils/baseURL';
 import ContactsPage, { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
 import {
   ADD_CONTACT,
@@ -14,25 +16,26 @@ import {
   REMOVE_CONTACT,
   ROLE_LABEL,
 } from '../../utils/constants';
+import { CONTACTS_PAGE_PATH } from '../../routing/CreateRouteConfig';
 
 describe('ContactsPage', () => {
-  beforeEach(() => {
-    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
-      new QueryClient(),
-      PROJECT_ITERA_INT_GREEN,
-      PROJECT_ITERA_INT_GREEN,
-      ORIGIN_DEV,
-      undefined,
-      `create/integration-contacts`
-    );
-    render(<ContactsPage />, { wrapper });
-  });
+  const props = {
+    client: new QueryClient(),
+    project: PROJECT_ITERA_INT_GREEN,
+    cdfEnv: CDF_ENV_GREENFIELD,
+    origin: ORIGIN_DEV,
+    route: `/:tenant${CONTACTS_PAGE_PATH}`,
+    initRegisterIntegration: {},
+  };
+
   test('Renders', () => {
+    renderRegisterContext(<ContactsPage />, { ...props });
     expect(screen.getByText(INTEGRATION_CONTACTS_HEADING)).toBeInTheDocument();
     expect(screen.getByText(ADD_CONTACT)).toBeInTheDocument();
   });
 
   test('Interact with form', async () => {
+    renderRegisterContext(<ContactsPage />, { ...props });
     const addContact = screen.getByText(ADD_CONTACT);
     fireEvent.click(addContact);
     const nameInput = screen.getByLabelText(NAME_LABEL);
@@ -68,6 +71,7 @@ describe('ContactsPage', () => {
   });
 
   test('Add and remove', async () => {
+    renderRegisterContext(<ContactsPage />, { ...props });
     const addContact = screen.getByText(ADD_CONTACT);
     fireEvent.click(addContact);
     const nameInput = screen.getAllByLabelText(NAME_LABEL);
@@ -84,5 +88,36 @@ describe('ContactsPage', () => {
 
     fireEvent.click(screen.getAllByLabelText(REMOVE_CONTACT)[1]);
     expect(screen.getAllByLabelText(NAME_LABEL).length).toEqual(2);
+  });
+
+  test('Renders stored value', () => {
+    const contact = {
+      name: 'My name',
+      email: 'my@name.com',
+      role: 'developer',
+      sendNotification: true,
+    };
+    const withContact = {
+      ...props,
+      initRegisterIntegration: { contacts: [contact] },
+    };
+    renderRegisterContext(<ContactsPage />, { ...withContact });
+    const nameInput = screen.getByLabelText(NAME_LABEL) as HTMLInputElement;
+    expect(nameInput).toBeInTheDocument();
+    expect(nameInput.value).toEqual(contact.name);
+
+    const emailInput = screen.getByLabelText(EMAIL_LABEL) as HTMLInputElement;
+    expect(emailInput).toBeInTheDocument();
+    expect(emailInput.value).toEqual(contact.email);
+
+    const roleInput = screen.getByLabelText(ROLE_LABEL) as HTMLInputElement;
+    expect(roleInput).toBeInTheDocument();
+    expect(roleInput.value).toEqual(contact.role);
+
+    const sendNotificationInput = screen.getByLabelText(
+      NOTIFICATION_LABEL
+    ) as HTMLInputElement;
+    expect(sendNotificationInput).toBeInTheDocument();
+    expect(sendNotificationInput.value).toEqual(`${contact.sendNotification}`);
   });
 });

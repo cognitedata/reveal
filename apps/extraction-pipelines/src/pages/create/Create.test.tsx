@@ -9,7 +9,12 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '../../utils/baseURL';
-import { CREATE_INTEGRATION_HEADING, NEXT } from '../../utils/constants';
+import {
+  CREATE_INTEGRATION_HEADING,
+  EMAIL_LABEL,
+  NAME_LABEL,
+  NEXT,
+} from '../../utils/constants';
 import {
   CREATE_INTEGRATION_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
@@ -97,6 +102,16 @@ describe('Register', () => {
     // contacts page
     await waitFor(() => {
       screen.getByText(INTEGRATION_CONTACTS_HEADING);
+    });
+    const contactName = 'My name';
+    const contactNameInput = screen.getByLabelText(NAME_LABEL);
+    fireEvent.change(contactNameInput, {
+      target: { value: contactName },
+    });
+    const contactEmail = 'my@email.com';
+    const contactEmailInput = screen.getByLabelText(EMAIL_LABEL);
+    fireEvent.change(contactEmailInput, {
+      target: { value: contactEmail },
     });
     fireEvent.click(screen.getByText(NEXT));
 

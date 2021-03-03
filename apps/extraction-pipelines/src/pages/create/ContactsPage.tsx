@@ -28,7 +28,10 @@ import {
   EXTERNAL_ID_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
 import { contactsSchema } from '../../utils/validation/contactsSchema';
+import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
 import { DivFlex } from '../../styles/flex/StyledFlex';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
+import { BackBtn } from '../../components/buttons/BackBtn';
 
 const StyledBtn = styled(Button)`
   align-self: flex-start;
@@ -109,6 +112,10 @@ export const INTEGRATION_CONTACTS_HEADING: Readonly<string> =
 const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
   const history = useHistory();
   const {
+    storedIntegration,
+    setStoredIntegration,
+  } = useStoredRegisterIntegration();
+  const {
     register,
     handleSubmit,
     errors,
@@ -119,7 +126,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
   } = useForm<ContactsFormInput>({
     resolver: yupResolver(contactsSchema),
     defaultValues: {
-      contacts: [],
+      contacts: storedIntegration?.contacts ?? [],
     },
     reValidateMode: 'onSubmit',
   });
@@ -128,8 +135,8 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
     control,
     name: 'contacts',
   });
-
-  const handleNext = () => {
+  const handleNext = (field: ContactsFormInput) => {
+    setStoredIntegration({ ...storedIntegration, ...field });
     history.push(createLink(DESCRIPTION_PAGE_PATH));
   };
   const handleClick = (index: number) => {
@@ -152,17 +159,19 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
 
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(EXTERNAL_ID_PAGE_PATH)}>
-        Back
+      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
+        Integration overview
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>
       <GridMainWrapper>
-        <GridH2Wrapper>{INTEGRATION_CONTACTS_HEADING}</GridH2Wrapper>
-        <i className="description">
-          An integration requires that a contact has set the send notification.
-          This is to ensure someone is notified when an error occurs.
-        </i>
+        <BackBtn path={EXTERNAL_ID_PAGE_PATH} />
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          <GridH2Wrapper>{INTEGRATION_CONTACTS_HEADING}</GridH2Wrapper>
+          <i className="description">
+            An integration requires that a contact has set the send
+            notification. This is to ensure someone is notified when an error
+            occurs.
+          </i>
           {fields.map((field, index) => {
             return (
               <ContactWrapper role="group" key={field.id}>
@@ -190,6 +199,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                   name={`contacts[${index}].name`}
                   type="text"
                   ref={register}
+                  defaultValue={field.name}
                   className={`cogs-input ${
                     errors.contacts?.[index]?.name ? 'has-error' : ''
                   }`}
@@ -220,6 +230,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                   id={`integration-contacts-email-${index}`}
                   name={`contacts[${index}].email`}
                   ref={register}
+                  defaultValue={field.email}
                   className={`cogs-input ${
                     errors.contacts?.[index]?.email ? 'has-error' : ''
                   }`}
@@ -253,6 +264,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
                   name={`contacts[${index}].role`}
                   type="text"
                   ref={register}
+                  defaultValue={field.role}
                   className={`cogs-input ${
                     errors.contacts?.[index]?.role ? 'has-error' : ''
                   }`}
