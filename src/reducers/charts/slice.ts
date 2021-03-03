@@ -227,8 +227,27 @@ const chartsSlice = createSlice({
       chartAdapter.updateOne(state, {
         id,
         changes: {
+          millisecondsFromNow: undefined,
           dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
           dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
+        },
+      });
+    },
+
+    updateRelativeDateRange: (
+      state,
+      action: PayloadAction<{ id: string; millisecondsFromNow: number }>
+    ) => {
+      const { id, millisecondsFromNow } = action.payload;
+      const currentDate = new Date();
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          millisecondsFromNow,
+          dateFrom: new Date(
+            currentDate.getTime() - millisecondsFromNow
+          ).toJSON(),
+          dateTo: currentDate.toJSON(),
         },
       });
     },

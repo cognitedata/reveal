@@ -4,6 +4,7 @@ export type Chart = {
   user: string;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
+  millisecondsFromNow?: number;
   dateFrom: string;
   dateTo: string;
   visibleRange?: any[];

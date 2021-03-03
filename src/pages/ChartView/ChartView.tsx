@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  DateRange,
-  Dropdown,
-  Icon,
-  Menu,
-  toast,
-} from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import chartsSlice, { chartSelectors, ChartTimeSeries } from 'reducers/charts';
 import { useParams } from 'react-router-dom';
@@ -36,7 +29,7 @@ import { units } from 'utils/units';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import DataQualityReport from 'components/DataQualityReport';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
-import TimeSelector from 'components/TimeSelector';
+import DateRangeSelector from 'components/DateRangeSelector';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
@@ -443,22 +436,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   if (!hasData) {
     return <Icon type="Loading" />;
   }
-
-  const handleDateChange = ({
-    dateFrom,
-    dateTo,
-  }: {
-    dateFrom?: Date;
-    dateTo?: Date;
-  }) => {
-    dispatch(
-      chartsSlice.actions.changeDateRange({
-        id: chart?.id || '',
-        dateFrom,
-        dateTo,
-      })
-    );
-  };
 
   const onDeleteWorkflow = (workflow: Workflow) => {
     if (chart) {
@@ -980,54 +957,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             <h4>by {chart?.user}</h4>
           </hgroup>
           <section className="daterange">
-            <DateRange
-              range={{
-                startDate: new Date(chart.dateFrom || new Date()),
-                endDate: new Date(chart.dateTo || new Date()),
-              }}
-              onChange={({ startDate, endDate }) => {
-                const currentStart = new Date(chart.dateFrom);
-                const currentEnd = new Date(chart.dateTo);
-
-                const newStart = new Date(startDate || new Date());
-                newStart.setHours(currentStart.getHours());
-                newStart.setMinutes(currentStart.getMinutes());
-
-                const newEnd = new Date(endDate || new Date());
-                newEnd.setHours(currentEnd.getHours());
-                newEnd.setMinutes(currentEnd.getMinutes());
-
-                handleDateChange({
-                  dateFrom: newStart,
-                  dateTo: newEnd,
-                });
-              }}
-              prependComponent={() => (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-evenly',
-                  }}
-                >
-                  <div>
-                    <TimeSelector
-                      value={new Date(chart.dateFrom)}
-                      onChange={(value) => {
-                        handleDateChange({ dateFrom: value });
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <TimeSelector
-                      value={new Date(chart.dateTo)}
-                      onChange={(value) => {
-                        handleDateChange({ dateTo: value });
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-            />
+            <DateRangeSelector chart={chart} />
           </section>
           <section className="actions">
             <Button
