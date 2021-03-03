@@ -5,20 +5,20 @@
 import * as THREE from 'three';
 import { IndexSet } from '../../../utilities/IndexSet';
 
-import { NodeAppearance, OutlineColor } from '../NodeAppearance';
+import { NodeAppearance, NodeOutlineColor } from '../NodeAppearance';
 import { FixedNodeSet } from './FixedNodeSet';
 
-import { NodeStyleProvider } from './NodeStyleProvider';
-import { NodeStyleTextureBuilder } from './NodeStyleTextureBuilder';
+import { NodeAppearanceProvider } from './NodeAppearanceProvider';
+import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 
-describe('NodeStyleTextureBuilder', () => {
-  let styleProvider: NodeStyleProvider;
-  let builder: NodeStyleTextureBuilder;
+describe('NodeAppearanceTextureBuilder', () => {
+  let styleProvider: NodeAppearanceProvider;
+  let builder: NodeAppearanceTextureBuilder;
   let nodeSet: FixedNodeSet;
 
   beforeEach(() => {
-    styleProvider = new NodeStyleProvider();
-    builder = new NodeStyleTextureBuilder(1, styleProvider);
+    styleProvider = new NodeAppearanceProvider();
+    builder = new NodeAppearanceTextureBuilder(1, styleProvider);
     nodeSet = new FixedNodeSet([0]);
   });
 
@@ -66,10 +66,10 @@ describe('NodeStyleTextureBuilder', () => {
   });
 
   test('build() applies outline', () => {
-    styleProvider.addStyledSet(nodeSet, { outlineColor: OutlineColor.Orange });
+    styleProvider.addStyledSet(nodeSet, { outlineColor: NodeOutlineColor.Orange });
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (OutlineColor.Orange << 3)]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 3)]);
   });
 
   test('build() applies transform', () => {
@@ -155,7 +155,10 @@ describe('NodeStyleTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([127, 128, 192, 0]);
 
     set.updateSet(new IndexSet([]));
+    jest.runAllTimers();
     builder.build();
+    jest.runAllTimers();
+
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1]);
   });
 
@@ -163,19 +166,19 @@ describe('NodeStyleTextureBuilder', () => {
     builder.build(); // Clear needsUpdate
     expect(builder.needsUpdate).toBeFalse();
 
-    builder.setDefaultStyle({ renderGhosted: true, outlineColor: OutlineColor.Blue });
+    builder.setDefaultAppearance({ renderGhosted: true, outlineColor: NodeOutlineColor.Blue });
     expect(builder.needsUpdate).toBeTrue();
   });
 
   test('setDefaultStyle() causes computer recompute the next time build() is called', () => {
-    builder.setDefaultStyle({ color: [244, 133, 66], visible: false });
+    builder.setDefaultAppearance({ color: [244, 133, 66], visible: false });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([244, 133, 66, 0]);
   });
 
   test('setDefaultStyle() has effect for unset fields in styled sets', () => {
-    builder.setDefaultStyle({ color: [1, 2, 3], renderGhosted: true });
+    builder.setDefaultAppearance({ color: [1, 2, 3], renderGhosted: true });
     styleProvider.addStyledSet(new FixedNodeSet([0]), { renderGhosted: false });
     builder.build();
 
@@ -183,7 +186,7 @@ describe('NodeStyleTextureBuilder', () => {
   });
 
   test('setDefaultStyle() recomputes geometry type collections', () => {
-    const builder = new NodeStyleTextureBuilder(3, styleProvider);
+    const builder = new NodeAppearanceTextureBuilder(3, styleProvider);
     builder.build();
     // Initially, all nodes are 'regular'
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0, 1, 2]));
@@ -199,14 +202,14 @@ describe('NodeStyleTextureBuilder', () => {
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([2]));
 
     // Make ghosted the default mode, adding node 0 to the ghosted set
-    builder.setDefaultStyle({ renderGhosted: true });
+    builder.setDefaultAppearance({ renderGhosted: true });
     builder.build();
     expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([0, 1]));
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([2]));
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet());
 
     // Make infront the default mode, adding node 0 to the infront set
-    builder.setDefaultStyle({ renderInFront: true });
+    builder.setDefaultAppearance({ renderInFront: true });
     builder.build();
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([0, 1, 2]));
     expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet());

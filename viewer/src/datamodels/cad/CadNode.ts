@@ -17,7 +17,7 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
 import { toThreeVector3, toThreeJsBox3 } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
-import { NodeStyleProvider } from './styling/NodeStyleProvider';
+import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
 import { NodeAppearance } from '.';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
@@ -78,7 +78,7 @@ export class CadNode extends THREE.Object3D {
     this.setModelTransformation(model.modelMatrix);
   }
 
-  get nodeAppearanceProvider(): NodeStyleProvider {
+  get nodeAppearanceProvider(): NodeAppearanceProvider {
     return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.blobUrl);
   }
 

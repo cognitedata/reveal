@@ -5,15 +5,20 @@
 import { NodeAppearance } from '../NodeAppearance';
 import { FixedNodeSet } from './FixedNodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeStyleProvider } from './NodeStyleProvider';
+import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { NodeSet } from './NodeSet';
-import { OutlineColor } from '../NodeAppearance';
+import { NodeOutlineColor } from '../NodeAppearance';
 
-describe('NodeStyleProvider', () => {
-  let provider: NodeStyleProvider;
+describe('NodeAppearanceProvider', () => {
+  let provider: NodeAppearanceProvider;
 
   beforeEach(() => {
-    provider = new NodeStyleProvider();
+    provider = new NodeAppearanceProvider();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   test('applyStyles() when there are no added sets does nothing', () => {
@@ -76,6 +81,7 @@ describe('NodeStyleProvider', () => {
     provider.on('changed', listener);
 
     set.updateSet(new IndexSet([3, 4, 5, 6]));
+    jest.runAllTimers();
 
     expect(listener).toBeCalledTimes(1);
   });
@@ -89,6 +95,7 @@ describe('NodeStyleProvider', () => {
     provider.on('changed', listener);
 
     set.updateSet(new IndexSet([3, 4, 5, 6]));
+    jest.runAllTimers();
 
     expect(listener).not.toBeCalled();
   });
@@ -104,6 +111,7 @@ describe('NodeStyleProvider', () => {
     applyCb.mockClear();
 
     set.updateSet(new IndexSet([2, 3, 4]));
+    jest.runAllTimers();
     provider.applyStyles(applyCb);
     expect(applyCb).toBeCalledWith(expect.anything(), 1, expect.anything(), expect.anything());
   });
@@ -112,15 +120,17 @@ describe('NodeStyleProvider', () => {
     const isLoadingChangedListener = jest.fn();
     provider.on('loadingStateChanged', isLoadingChangedListener);
     const nodeSet = new StubNodeSet();
-    provider.addStyledSet(nodeSet, { outlineColor: OutlineColor.Blue });
+    provider.addStyledSet(nodeSet, { outlineColor: NodeOutlineColor.Blue });
 
     nodeSet.isLoading = true;
     nodeSet.triggerChanged();
+    jest.runAllTimers();
     expect(isLoadingChangedListener).toBeCalledWith(true);
     isLoadingChangedListener.mockReset();
 
     nodeSet.isLoading = false;
     nodeSet.triggerChanged();
+    jest.runAllTimers();
     expect(isLoadingChangedListener).toBeCalledWith(false);
   });
 });

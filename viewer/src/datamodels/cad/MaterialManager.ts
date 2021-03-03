@@ -8,16 +8,16 @@ import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 import { IndexSet } from '../../utilities/IndexSet';
 
-import { NodeStyleProvider } from './styling/NodeStyleProvider';
-import { NodeStyleTextureBuilder } from './styling/NodeStyleTextureBuilder';
+import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
+import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBuilder';
 import { NodeAppearance } from '.';
 import { EventTrigger } from '../../utilities/events';
 import { assertNever } from '../../utilities';
 
 interface MaterialsWrapper {
   materials: Materials;
-  nodeAppearanceProvider: NodeStyleProvider;
-  textureBuilder: NodeStyleTextureBuilder;
+  nodeAppearanceProvider: NodeAppearanceProvider;
+  textureBuilder: NodeAppearanceTextureBuilder;
 }
 
 export class MaterialManager {
@@ -78,8 +78,8 @@ export class MaterialManager {
   }
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
-    const nodeAppearanceProvider = new NodeStyleProvider();
-    const textureBuilder = new NodeStyleTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
+    const nodeAppearanceProvider = new NodeAppearanceProvider();
+    const textureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
     textureBuilder.build();
 
     nodeAppearanceProvider.on('changed', () => {
@@ -101,19 +101,19 @@ export class MaterialManager {
     return wrapper.materials;
   }
 
-  getModelNodeAppearanceProvider(modelIdentifier: string): NodeStyleProvider {
+  getModelNodeAppearanceProvider(modelIdentifier: string): NodeAppearanceProvider {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceProvider;
   }
 
   getModelDefaultNodeAppearance(modelIdentifier: string): NodeAppearance {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.textureBuilder.getDefaultStyle();
+    return wrapper.textureBuilder.getDefaultAppearance();
   }
 
   setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    wrapper.textureBuilder.setDefaultStyle(defaultAppearance);
+    wrapper.textureBuilder.setDefaultAppearance(defaultAppearance);
     this.updateMaterials(modelIdentifier);
   }
 

@@ -15,7 +15,7 @@ import { trackError } from '../../utilities/metrics';
 import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
-import { NodeStyleProvider } from '../../datamodels/cad/styling/NodeStyleProvider';
+import { NodeAppearanceProvider } from '../../datamodels/cad/styling/NodeAppearanceProvider';
 import { NodeSet } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 
@@ -27,7 +27,7 @@ import { NodeAppearance } from '../../datamodels/cad';
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
 
-  get nodeApperanceProvider(): NodeStyleProvider {
+  get nodeApperanceProvider(): NodeAppearanceProvider {
     return this.cadNode.nodeAppearanceProvider;
   }
 

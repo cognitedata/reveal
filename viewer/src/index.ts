@@ -15,14 +15,15 @@ export { CognitePointCloudModel } from './public/migration/CognitePointCloudMode
 
 export * from './public/types';
 
-export { NodeAppearance, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
+export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
 
 export {
   NodeSet,
   FixedNodeSet,
   ByNodePropertyNodeSet,
   CombinedNodeSet,
-  NodeStyleProvider
+  InvertedNodeSet,
+  NodeAppearanceProvider
 } from './datamodels/cad/styling';
 export { IndexSet } from './utilities/IndexSet';
 

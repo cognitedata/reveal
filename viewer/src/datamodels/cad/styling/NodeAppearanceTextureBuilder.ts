@@ -10,13 +10,13 @@ import { determinePowerOfTwoDimensions } from '../../../utilities/determinePower
 import { DefaultNodeAppearance, NodeAppearance } from '../NodeAppearance';
 import { TransformOverrideBuffer } from '../rendering/TransformOverrideBuffer';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeStyleProvider } from './NodeStyleProvider';
+import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 
 type AppliedStyle = { revision: number; treeIndices: IndexSet; style: NodeAppearance };
 
-export class NodeStyleTextureBuilder {
-  private _defaultStyle: NodeAppearance = {};
-  private readonly _styleProvider: NodeStyleProvider;
+export class NodeAppearanceTextureBuilder {
+  private _defaultAppearance: NodeAppearance = {};
+  private readonly _styleProvider: NodeAppearanceProvider;
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
@@ -29,7 +29,7 @@ export class NodeStyleTextureBuilder {
   private readonly _infrontNodesTreeIndices: IndexSet;
   private readonly _currentlyAppliedStyles = new Map<number, AppliedStyle>();
 
-  constructor(treeIndexCount: number, styleProvider: NodeStyleProvider) {
+  constructor(treeIndexCount: number, styleProvider: NodeAppearanceProvider) {
     this._treeIndexCount = treeIndexCount;
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
@@ -43,11 +43,11 @@ export class NodeStyleTextureBuilder {
     this._ghostedNodesTreeIndices = new IndexSet();
     this._infrontNodesTreeIndices = new IndexSet();
 
-    this.setDefaultStyle(DefaultNodeAppearance.Default);
+    this.setDefaultAppearance(DefaultNodeAppearance.Default);
   }
 
-  getDefaultStyle(): NodeAppearance {
-    return this._defaultStyle;
+  getDefaultAppearance(): NodeAppearance {
+    return this._defaultAppearance;
   }
 
   /**
@@ -56,9 +56,9 @@ export class NodeStyleTextureBuilder {
    * expensive.
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
-  setDefaultStyle(appearance: NodeAppearance) {
-    if (!equalNodeAppearances(appearance, this._defaultStyle)) {
-      this._defaultStyle = appearance;
+  setDefaultAppearance(appearance: NodeAppearance) {
+    if (!equalNodeAppearances(appearance, this._defaultAppearance)) {
+      this._defaultAppearance = appearance;
       fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
       this._infrontNodesTreeIndices.clear();
       this._ghostedNodesTreeIndices.clear();
@@ -132,7 +132,7 @@ export class NodeStyleTextureBuilder {
     // TODO 2021-02-04 larsmoa: Currently transform overrides are never removed
 
     // 1. Reset nodes that has been removed from nodesets to default style
-    this._styleProvider.applyStyles((styleId, revision, treeIndices, style) => {
+    this._styleProvider.applyStyles((styleId, revision, treeIndices) => {
       orphanStyleIds.delete(styleId);
 
       const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
@@ -156,7 +156,7 @@ export class NodeStyleTextureBuilder {
 
     // 2. Apply new style to all nodes that has been added to node sets
     // Note! This is done in separate stages to support nodes moving from one set to another
-    this._styleProvider.applyStyles((styleId, revision, treeIndices, style) => {
+    this._styleProvider.applyStyles((styleId, revision, treeIndices, appearance) => {
       const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
       if (currentlyApplied !== undefined && currentlyApplied.revision === revision) {
         // Unchanged - nothing to do
@@ -164,7 +164,7 @@ export class NodeStyleTextureBuilder {
       }
 
       // Translate from style to magic values in textures
-      const fullStyle = { ...this._defaultStyle, ...style };
+      const fullStyle = { ...this._defaultAppearance, ...appearance };
       const addedTreeIndices =
         currentlyApplied === undefined ? treeIndices : treeIndices.clone().differenceWith(currentlyApplied.treeIndices);
       this._currentlyAppliedStyles.set(styleId, { revision, treeIndices: treeIndices.clone(), style: fullStyle });
@@ -180,7 +180,7 @@ export class NodeStyleTextureBuilder {
       return;
     }
 
-    const defaultColorRgba = appearanceToColorOverride(this._defaultStyle);
+    const defaultColorRgba = appearanceToColorOverride(this._defaultAppearance);
     const defaultTransformLookupIndexRgb: [number, number, number] = [0, 0, 0]; // Special value for no transform
 
     const infront = !!currentStyle.renderInFront;

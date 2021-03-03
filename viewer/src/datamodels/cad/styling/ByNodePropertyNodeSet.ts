@@ -7,6 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { NodeSet } from './NodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
+import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 
 export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
@@ -15,20 +16,20 @@ export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _revisionId: number;
 
   private _lastStartedQueryId = 0;
-  private _lastCompletedQueryId = -1;
+  private _lastCompletedQueryId = 0;
 
-  constructor(client: CogniteClient, modelId: number, revisionId: number) {
+  constructor(client: CogniteClient, model: Cognite3DModel) {
     super();
     this._client = client;
-    this._modelId = modelId;
-    this._revisionId = revisionId;
+    this._modelId = model.modelId;
+    this._revisionId = model.revisionId;
   }
 
-  async setQuery(query: {
+  async executeFilter(query: {
     [category: string]: {
       [key: string]: string;
     };
-  }) {
+  }): Promise<void> {
     const queryId = ++this._lastStartedQueryId;
     const indexSet = new IndexSet();
 

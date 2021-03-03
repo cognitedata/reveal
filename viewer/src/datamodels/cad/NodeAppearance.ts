@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export enum OutlineColor {
+export enum NodeOutlineColor {
   NoOutline = 0,
   White,
   Black,
@@ -38,7 +38,7 @@ export type NodeAppearance = {
    * When set, an outline is drawn around the
    * node to make it stand out.
    */
-  readonly outlineColor?: OutlineColor;
+  readonly outlineColor?: NodeOutlineColor;
   /**
    * When set, a matrix4 transformation is applied
    * to the node in world space.
@@ -47,7 +47,7 @@ export type NodeAppearance = {
 };
 
 const OutlinedAppearance: NodeAppearance = {
-  outlineColor: OutlineColor.White
+  outlineColor: NodeOutlineColor.White
 };
 
 const HiddenAppearance: NodeAppearance = {

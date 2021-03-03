@@ -9,7 +9,7 @@ import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
 /**
- * Delegate for applying styles in {@see NodeStyleProvider}.
+ * Delegate for applying styles in {@see NodeAppearanceProvider}.
  * @param styleId     Unique identifier of style being applied to distinguish/identify sets
  *                    between multiple calls.
  * @param revision    Running number that is incremented whenever the styled set changes.
@@ -32,9 +32,10 @@ type StyledSet = {
   handleNodeSetChangedListener: () => void;
 };
 
-export class NodeStyleProvider {
+export class NodeAppearanceProvider {
   private readonly _styledSet = new Array<StyledSet>();
   private _lastFiredLoadingState?: boolean;
+  private _scheduleUpdateHandle: ReturnType<typeof setTimeout> | undefined;
 
   private readonly _events = {
     changed: new EventTrigger<() => void>(),
@@ -80,7 +81,7 @@ export class NodeStyleProvider {
       nodeSet,
       appearance,
       handleNodeSetChangedListener: () => {
-        this.handleNodeSetChanged(styledSet);
+        this.scheduleUpdate(styledSet);
       }
     };
 
@@ -120,6 +121,15 @@ export class NodeStyleProvider {
     if (this._lastFiredLoadingState !== this.isLoading) {
       this._lastFiredLoadingState = this.isLoading;
       this._events.loadingStateChanged.fire(this.isLoading);
+    }
+  }
+
+  private scheduleUpdate(styledSet: StyledSet) {
+    if (this._scheduleUpdateHandle === undefined) {
+      this._scheduleUpdateHandle = setTimeout(() => {
+        this.handleNodeSetChanged(styledSet);
+        this._scheduleUpdateHandle = undefined;
+      }, 50);
     }
   }
 

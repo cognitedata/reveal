@@ -4,5 +4,6 @@
 export { CombinedNodeSet } from './CombinedNodeSet';
 export { ByNodePropertyNodeSet } from './ByNodePropertyNodeSet';
 export { FixedNodeSet } from './FixedNodeSet';
+export { InvertedNodeSet } from './InvertedNodeSet';
 export { NodeSet } from './NodeSet';
-export { NodeStyleProvider } from './NodeStyleProvider';
+export { NodeAppearanceProvider } from './NodeAppearanceProvider';
