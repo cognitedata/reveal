@@ -89,7 +89,7 @@ jobs:
       working-directory: examples
       run: 
         yarn add @actions/core @actions/github
-        yarn test:ghprcomment
+        yarn 'test:ghprcomment'
       env:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
