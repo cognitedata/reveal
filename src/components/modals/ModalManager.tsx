@@ -5,7 +5,7 @@ import CreateSuite from 'components/modals/createSuiteModal/CreateSuiteModal';
 import AddBoard from 'components/modals/addBoardModal/AddBoardModal';
 import EditSuite from 'components/modals/editModal/EditSuiteModal';
 import EditBoard from 'components/modals/editModal/EditBoardModal';
-import ShareBoard from 'components/modals/shareLinkModal/ShareLinkModal';
+import ShareLink from 'components/modals/shareLinkModal/ShareLinkModal';
 import { useSelector } from 'react-redux';
 import { getModalState } from 'store/modals/selectors';
 
@@ -16,7 +16,7 @@ const modalComponentLookupTable = {
   AddBoard,
   EditSuite,
   EditBoard,
-  ShareBoard,
+  ShareLink,
 };
 
 const ModalManager: React.FC = () => {
