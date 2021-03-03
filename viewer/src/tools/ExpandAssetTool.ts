@@ -7,7 +7,8 @@ import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export class ExpandAssetTool extends Cognite3DViewerToolBase {
   private _cadModel: Cognite3DModel;
-  private _treeBoundingBoxdata: Promise<{ treeIndex: number; direction: THREE.Vector3; transform: THREE.Matrix4 }[]>;
+  private _treeBoundingBoxdata!: Promise<{ treeIndex: number; direction: THREE.Vector3; transform: THREE.Matrix4 }[]>;
+  private _rootTreeIndex: number;
 
   public get isReady(): boolean {
     return this._isReady;
@@ -19,7 +20,33 @@ export class ExpandAssetTool extends Cognite3DViewerToolBase {
     super();
 
     this._cadModel = cadModel;
+    this._rootTreeIndex = treeIndex;
 
+    this.preloadBoundingBoxData(cadModel, treeIndex);
+  }
+
+  public async expand(expandRadius: number): Promise<void> {
+    const expandData = await this._treeBoundingBoxdata;
+
+    await Promise.all(
+      expandData.map(({ treeIndex, direction, transform }) => {
+        if (expandRadius === 0) {
+          this._cadModel.resetNodeTransformByTreeIndex(treeIndex);
+          return Promise.resolve(0);
+        }
+
+        transform.setPosition(direction.x * expandRadius, direction.y * expandRadius, direction.z * expandRadius);
+
+        return this._cadModel.setNodeTransformByTreeIndex(treeIndex, transform);
+      })
+    );
+  }
+
+  public reset(): void {
+    this._cadModel.resetNodeTransformByTreeIndex(this._rootTreeIndex, true);
+  }
+
+  private preloadBoundingBoxData(cadModel: Cognite3DModel, treeIndex: number) {
     const rootTreeIndexBoundingBox = cadModel
       .getBoundingBoxByTreeIndex(treeIndex)
       .then(rootBoundingBox => rootBoundingBox.getCenter(new THREE.Vector3()));
@@ -38,6 +65,7 @@ export class ExpandAssetTool extends Cognite3DViewerToolBase {
 
     this._treeBoundingBoxdata = Promise.all([rootTreeIndexBoundingBox, subTreeBoundingBoxes]).then(data => {
       const [rootCenter, subTreeCenters] = data;
+      this._isReady = true;
       return subTreeCenters.map(({ subTreeIndex, subTreeIndexBoundingBoxCenter }) => {
         return {
           treeIndex: subTreeIndex,
@@ -46,22 +74,5 @@ export class ExpandAssetTool extends Cognite3DViewerToolBase {
         };
       });
     });
-  }
-
-  public async expand(expandRadius: number): Promise<void> {
-    const expandData = await this._treeBoundingBoxdata;
-
-    await Promise.all(
-      expandData.map(({ treeIndex, direction, transform }) => {
-        if (expandRadius === 0) {
-          this._cadModel.resetNodeTransformByTreeIndex(treeIndex);
-          return Promise.resolve(0);
-        }
-
-        transform.setPosition(direction.x * expandRadius, direction.y * expandRadius, direction.z * expandRadius);
-
-        return this._cadModel.setNodeTransformByTreeIndex(treeIndex, transform);
-      })
-    );
   }
 }

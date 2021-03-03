@@ -15,6 +15,7 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
+import { ExpandAssetTool } from '@cognite/reveal/tools';
 
 window.THREE = THREE;
 
@@ -236,6 +237,48 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
+      
+
+      let expandTool: ExpandAssetTool | null;
+
+      const assetExplode = gui.addFolder('Asset Inspect');
+
+      const exlopdeParams = { explodeFactor: 0.0, rootTreeIndex: 0};
+      const explodeActions = { 
+        selectAssetTreeIndex: async () => {
+        //const rootTreeIndex = 467125;
+
+          const rootTreeIndex = exlopdeParams.rootTreeIndex;
+          cadModels[0].hideAllNodes();
+          cadModels[0].showNodeByTreeIndex(rootTreeIndex, true);
+        
+          const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
+          viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
+
+          expandTool = new ExpandAssetTool(rootTreeIndex, cadModels[0]);
+        },
+        reset: () => {
+          expandTool?.reset();
+          cadModels[0].showAllNodes();
+          exlopdeParams.explodeFactor = 0;
+          expandTool = null;
+        }
+      };
+      assetExplode.add(exlopdeParams, 'rootTreeIndex').name('Tree index');
+      assetExplode.add(explodeActions, 'selectAssetTreeIndex').name('Inspect tree index');
+      assetExplode
+      .add(exlopdeParams, 'explodeFactor', 0, 1)
+      .name('Explode Factor')
+        .step(0.01)
+        .onChange(p => {
+          if(expandTool && expandTool.isReady){
+            expandTool.expand(p);
+          }
+        });
+        assetExplode.add(explodeActions, 'reset').name('Reset');
+        
+        
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -250,7 +293,9 @@ export function Migration() {
               // highlight the object
               model.deselectAllNodes();
               model.selectNodeByTreeIndex(treeIndex);
-              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+              model.mapTreeIndexToNodeId(treeIndex).then(p => {
+                console.log(`NodeId: ${p}`);
+              });              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
               viewer.fitCameraToBoundingBox(boundingBox, 1000);
             }
             break;

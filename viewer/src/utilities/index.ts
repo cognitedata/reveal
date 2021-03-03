@@ -14,7 +14,7 @@ export { LocalModelIdentifier, CdfModelIdentifier } from './networking/types';
 export { createOffsetsArray } from './arrays';
 export { Box3 } from './Box3';
 export { HtmlOverlayTool as HtmlOverlayHelper } from '../tools/HtmlOverlayTool';
-export { ExpandAssetTool as ExpandAssetHelper } from '../tools';
+export { ExpandAssetTool } from '../tools';
 export { worldToViewport } from './worldToViewport';
 export { toThreeVector3, toThreeJsBox3, fromThreeJsBox3 } from './threeConverters';
 export { BoundingBoxClipper } from './BoundingBoxClipper';
