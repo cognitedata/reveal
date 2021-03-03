@@ -7,6 +7,10 @@ import render, {
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
 import SchedulePage, { INTEGRATION_SCHEDULE_HEADING } from './SchedulePage';
 import { SupportedScheduleStrings } from '../../components/integrations/cols/Schedule';
+import { CRON_INVALID } from '../../utils/validation/cronValidation';
+import { CRON_LABEL } from '../../components/inputs/cron/CronInput';
+import { NEXT } from '../../utils/constants';
+import { parseCron } from '../../utils/cronUtils';
 
 describe('SchedulePage', () => {
   beforeEach(() => {
@@ -44,5 +48,25 @@ describe('SchedulePage', () => {
     await waitFor(() => {
       expect(onTriggerInput.getAttribute('aria-checked')).toEqual('true');
     });
+
+    const scheduled = screen.getByLabelText(SupportedScheduleStrings.SCHEDULED);
+    fireEvent.click(scheduled);
+    await waitFor(() => {
+      screen.getByLabelText(CRON_LABEL);
+    });
+    const cron = screen.getByLabelText(CRON_LABEL);
+    expect(cron).toBeInTheDocument();
+
+    const invalid = '0 0 9';
+    fireEvent.change(cron, { target: { value: invalid } });
+    fireEvent.click(screen.getByText(NEXT));
+    await waitFor(() => {
+      screen.getByText(new RegExp(CRON_INVALID, 'i'));
+    });
+
+    const value = '0 0 9 1/1 * ? *';
+    fireEvent.change(cron, { target: { value } });
+    expect(screen.getByDisplayValue(value)).toBeInTheDocument();
+    expect(screen.getByText(parseCron(value))).toBeInTheDocument();
   });
 });

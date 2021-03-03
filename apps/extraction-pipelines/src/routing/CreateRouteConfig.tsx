@@ -75,13 +75,6 @@ export const LazyCreateIntegrationDataSetId = React.lazy(
       /* webpackChunkName: "pnid_integration_create_data_set_id" */
     )
 );
-const LazyCreateIntegrationCronExpression = React.lazy(
-  () =>
-    import(
-      '../pages/create/CronPage'
-      /* webpackChunkName: "pnid_integration_create_cron" */
-    )
-);
 
 export const NAME_PATH = `name`;
 export const NAME_PAGE_PATH = `/${INTEGRATIONS}/create/${NAME_PATH}`;
@@ -97,8 +90,6 @@ const DATA_SET = `dataset`;
 export const DATA_SET_PAGE_PATH = `/${INTEGRATIONS}/create/${DATA_SET}`;
 const DATA_SET_ID = `dataset-id`;
 export const DATA_SET_ID_PAGE_PATH = `/${INTEGRATIONS}/create/${DATA_SET_ID}`;
-const CRON = `cron`;
-export const CRON_PAGE_PATH = `/${INTEGRATIONS}/create/${CRON}`;
 const RAW_TABLES = `raw-table`;
 export const RAW_TABLE_PAGE_PATH = `/${INTEGRATIONS}/create/${RAW_TABLES}`;
 const RAW_TABLE_LIST = `raw-table-list`;
@@ -159,12 +150,6 @@ export const createIntegrationRoutes = [
     path: `/:tenant${SCHEDULE_PAGE_PATH}`,
     exact: true,
     component: LazyCreateIntegrationSchedule,
-  },
-  {
-    name: 'Create integration - schedule cron',
-    path: `/:tenant${CRON_PAGE_PATH}`,
-    exact: true,
-    component: LazyCreateIntegrationCronExpression,
   },
   {
     name: 'Create integration - Data set id',

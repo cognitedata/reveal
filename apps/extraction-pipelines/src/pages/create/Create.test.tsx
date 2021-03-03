@@ -25,10 +25,10 @@ import { INTEGRATION_SCHEDULE_HEADING } from './SchedulePage';
 import { SupportedScheduleStrings } from '../../components/integrations/cols/Schedule';
 import { DataSetOptions, INTEGRATION_DATA_SET_HEADING } from './DataSetPage';
 import { INTEGRATION_RAW_TABLE_HEADING, RawTableOptions } from './RawTablePage';
-import { INTEGRATION_CRON_HEADING } from './CronPage';
 import { INTEGRATION_NAME_HEADING } from './NamePage';
 import { INTEGRATION_EXTERNAL_ID_HEADING } from './ExternalIdPage';
 import { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
+import { CRON_LABEL } from '../../components/inputs/cron/CronInput';
 
 describe('Register', () => {
   window.location.href =
@@ -203,11 +203,13 @@ describe('Register', () => {
       SupportedScheduleStrings.SCHEDULED
     );
     fireEvent.click(scheduledOption);
+    const value = '0 0 9 1/1 * ? *';
+    fireEvent.change(screen.getByLabelText(CRON_LABEL), { target: { value } });
     fireEvent.click(screen.getByText(NEXT));
 
     // cron page
     await waitFor(() => {
-      screen.getByText(INTEGRATION_CRON_HEADING);
+      screen.getByText(INTEGRATION_DATA_SET_HEADING);
     });
   });
 });

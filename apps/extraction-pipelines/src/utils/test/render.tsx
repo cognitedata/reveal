@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'utils/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
+import { FormProvider, useForm } from 'react-hook-form';
 import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
 import { AppEnvProvider } from '../../hooks/useAppEnv';
 import { IntegrationProvider } from '../../hooks/details/IntegrationContext';
@@ -139,3 +140,15 @@ export const renderWithQueryClient = (client: QueryClient) => {
   );
   return wrapper;
 };
+
+export function renderWithReactHookForm(
+  ui: React.ReactElement,
+  { defaultValues = {} } = {}
+) {
+  const Wrapper: FunctionComponent = ({ children }: PropsWithChildren<{}>) => {
+    const methods = useForm({ defaultValues });
+    return <FormProvider {...methods}>{children}</FormProvider>;
+  };
+
+  return { ...render(ui, { wrapper: Wrapper }) };
+}
