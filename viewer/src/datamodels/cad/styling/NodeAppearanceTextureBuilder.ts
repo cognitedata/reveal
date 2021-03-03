@@ -327,34 +327,34 @@ function updateLookupSet(set: IndexSet, treeIndices: IndexSet, addToSet: boolean
   }
 }
 
-function resetTransformTexel(
-  treeIndex: number,
-  indexTexture: THREE.DataTexture,
-  transformTextureBuffer: TransformOverrideBuffer
-) {
-  indexTexture.image.data[treeIndex * 3 + 0] = 0;
-  indexTexture.image.data[treeIndex * 3 + 1] = 0;
-  indexTexture.image.data[treeIndex * 3 + 2] = 0;
+// function resetTransformTexel(
+//   treeIndex: number,
+//   indexTexture: THREE.DataTexture,
+//   transformTextureBuffer: TransformOverrideBuffer
+// ) {
+//   indexTexture.image.data[treeIndex * 3 + 0] = 0;
+//   indexTexture.image.data[treeIndex * 3 + 1] = 0;
+//   indexTexture.image.data[treeIndex * 3 + 2] = 0;
 
-  transformTextureBuffer.removeOverrideTransform(treeIndex);
+//   transformTextureBuffer.removeOverrideTransform(treeIndex);
 
-  indexTexture.needsUpdate = true;
-}
+//   indexTexture.needsUpdate = true;
+// }
 
-function setTransformTexel(
-  treeIndex: number,
-  transform: THREE.Matrix4,
-  indexTexture: THREE.DataTexture,
-  transformTextureBuffer: TransformOverrideBuffer
-) {
-  const transformIndex = transformTextureBuffer.addOverrideTransform(treeIndex, transform);
+// function setTransformTexel(
+//   treeIndex: number,
+//   transform: THREE.Matrix4,
+//   indexTexture: THREE.DataTexture,
+//   transformTextureBuffer: TransformOverrideBuffer
+// ) {
+//   const transformIndex = transformTextureBuffer.addOverrideTransform(treeIndex, transform);
 
-  indexTexture.image.data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
-  indexTexture.image.data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
-  indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
+//   indexTexture.image.data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
+//   indexTexture.image.data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
+//   indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
 
-  indexTexture.needsUpdate = true;
-}
+//   indexTexture.needsUpdate = true;
+// }
 
 function equalNodeAppearances(left: NodeAppearance, right: NodeAppearance) {
   // https://stackoverflow.com/a/1144249/167251
