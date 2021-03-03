@@ -7,6 +7,7 @@ export type Chart = {
   dateFrom: string;
   dateTo: string;
   visibleRange?: any[];
+  public?: boolean;
 };
 
 export type ChartTimeSeries = {

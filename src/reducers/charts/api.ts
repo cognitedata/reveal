@@ -60,6 +60,7 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
     workflowCollection: [],
     dateFrom: dateFrom.toJSON(),
     dateTo: dateTo.toJSON(),
+    public: false,
   };
 
   dispatch(chartsSlice.actions.startStoringNewChart());
