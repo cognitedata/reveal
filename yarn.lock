@@ -1257,10 +1257,10 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
-  version "7.12.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
-  integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.6", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+  version "7.13.9"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.13.9.tgz#97dbe2116e2630c489f22e0656decd60aaa1fcee"
+  integrity sha512-aY2kU+xgJ3dJ1eU6FMB9EH8dIe8dmusF1xEku52joLvw6eAFN0AI+WxCLDnpev2LEejWBAy2sBvBOBAjI3zmvA==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -8631,7 +8631,7 @@ html-minifier-terser@^5.0.1:
     relateurl "^0.2.7"
     terser "^4.6.3"
 
-html-parse-stringify2@2.0.1:
+html-parse-stringify2@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/html-parse-stringify2/-/html-parse-stringify2-2.0.1.tgz#dc5670b7292ca158b7bc916c9a6735ac8872834a"
   integrity sha1-3FZwtyksoVi3vJFsmmc1rIhyg0o=
@@ -13453,21 +13453,13 @@ react-hotkeys@2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-i18next@^11.8.5:
-  version "11.8.5"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.8.5.tgz#a093335822e36252cda6efc0f55facef6253643f"
-  integrity sha512-2jY/8NkhNv2KWBnZuhHxTn13aMxAbvhiDUNskm+1xVVnrPId78l8fA7fCyVeO3XU1kptM0t4MtvxV1Nu08cjLw==
+react-i18next@^11.8.5, react-i18next@^11.8.8:
+  version "11.8.8"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.8.8.tgz#23d34518c784f2ada7cec41cfe439ac4ae51875c"
+  integrity sha512-Z8Daifh+FRpcQsCp48mWQViYSlojv0WiL2bf6e9DOzpfVMDaTT6qsYRbHCjLEeDeEioxoaWHMiWu2JPTW3Ni4w==
   dependencies:
-    "@babel/runtime" "^7.3.1"
-    html-parse-stringify2 "2.0.1"
-
-react-i18next@^11.8.7:
-  version "11.8.7"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.8.7.tgz#845f31e01e2aa92a3954c374ebcc4bd54df1cace"
-  integrity sha512-IDK/a73cJN4J2C6yTqmDS/r8iikwKaN283hltqps8UiRaFVTvlSxE85HkamEFD6lULG4hFZExecXJ/hA27DW3Q==
-  dependencies:
-    "@babel/runtime" "^7.3.1"
-    html-parse-stringify2 "2.0.1"
+    "@babel/runtime" "^7.13.6"
+    html-parse-stringify2 "^2.0.1"
 
 react-input-autosize@^2.2.2:
   version "2.2.2"
