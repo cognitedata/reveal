@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Metrics } from '@cognite/metrics';
 import * as Sentry from '@sentry/browser';
 import { Button } from '@cognite/cogs.js';
 
@@ -12,8 +11,6 @@ const defaultProps = {};
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
-
-  metrics = Metrics.create('ErrorBoundary');
 
   componentDidCatch(error, errorInfo) {
     // Display fallback UI

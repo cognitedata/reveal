@@ -7,7 +7,7 @@ import Tooltip from 'antd/lib/tooltip';
 import { projectName, getContainer } from 'src/utils';
 import Drawer from 'antd/lib/drawer';
 import Iframe from 'react-iframe';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'src/hooks/useMetrics';
 
 const Title = styled.h5`
   color: black;

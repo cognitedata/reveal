@@ -1,12 +1,10 @@
 import * as Sentry from '@sentry/browser';
 import {
-  getProject,
   getEnvironment,
   isDevelopment,
   checkUrl,
   isProduction,
 } from '@cognite/cdf-utilities';
-import { Metrics } from '@cognite/metrics';
 
 const setupSupportChat = () => {
   // if we are on dev, we set the Intercom widget to a mock function
@@ -38,33 +36,7 @@ const setupSentry = () => {
   }
 };
 
-const setupMixpanel = () => {
-  const mixpanelFusionToken = '5c4d853e7c3b77b1eb4468d5329b278c'; // pragma: allowlist secret
-
-  Metrics.init({
-    mixpanelToken: mixpanelFusionToken,
-    debug: isDevelopment(),
-  });
-
-  // We opt out of tracking if we are on development
-  if (isDevelopment()) {
-    Metrics.optOut();
-  } else {
-    Metrics.optIn();
-  }
-};
-
 export const setupUserTracking = () => {
-  setupMixpanel();
   setupSupportChat();
   setupSentry();
-};
-
-export const handleUserIdentification = (email: string) => {
-  Metrics.identify(email || 'not-identified-yet');
-  Metrics.people({
-    email,
-    release: process.env.REACT_APP_RELEASE || 'unknown',
-    project: getProject(),
-  });
 };

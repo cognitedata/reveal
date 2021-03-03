@@ -1,7 +1,7 @@
 import { RouteComponentProps } from 'react-router';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import styled from 'styled-components';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'src/hooks/useMetrics';
 import React, { useState } from 'react';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { getContainer, userHasCapabilities } from 'src/utils';

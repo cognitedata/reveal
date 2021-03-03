@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from 'react';
-import { Metrics } from '@cognite/metrics';
 import Table from 'antd/lib/table';
 import { Button, Input } from '@cognite/cogs.js';
 import Popover from 'antd/lib/popover';
@@ -62,8 +61,6 @@ type Props = {
 };
 
 class ModelsTable extends React.Component<Props> {
-  metrics = Metrics.create('3D.Models');
-
   get tableDataSource() {
     const searchStr = this.props.app.modelTableState.filters.modelNameFilter
       .toLowerCase()
@@ -142,7 +139,6 @@ class ModelsTable extends React.Component<Props> {
       selectedModels.push(record.id);
     }
     this.props.setSelectedModels(selectedModels);
-    this.metrics.track('Expand', { id: record.id });
   };
 
   handleChange = (pagination, _filters, sorter) => {

@@ -8,3 +8,8 @@ interface ResizeObserver {
   unobserve(target: Element): void;
   disconnect(): void;
 }
+
+// https://github.com/cognitedata/data-exploration/pull/510/files
+declare module '@cognite/cdf-route-tracker' {
+  export declare function trackEvent(name: string, options?: any): void;
+}

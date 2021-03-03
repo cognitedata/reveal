@@ -9,7 +9,7 @@ import {
   userHasCapabilities,
 } from 'src/utils';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'src/hooks/useMetrics';
 import React, { useEffect, useState } from 'react';
 import message from 'antd/lib/message';
 

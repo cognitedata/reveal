@@ -1,6 +1,6 @@
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
-import { useMetrics } from '@cognite/metrics';
+import { useMetrics } from 'src/hooks/useMetrics';
 import React, { ChangeEvent, useState } from 'react';
 import ModelRevisions from 'src/pages/AllModels/components/ModelRevisions/ModelRevisions';
 import { APP_TITLE, getContainer, userHasCapabilities } from 'src/utils';
