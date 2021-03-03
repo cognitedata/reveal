@@ -87,9 +87,9 @@ jobs:
     - name: Check for failed visual test diffs
       if: failure()
       working-directory: examples
-      run: 
+      run: |
         yarn add @actions/core @actions/github
-        yarn 'test:ghprcomment'
+        yarn test:ghprcomment
       env:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
