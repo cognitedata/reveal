@@ -32,6 +32,7 @@ export const Header = styled.header`
   .daterange {
     display: flex;
     justify-self: flex-start;
+    padding: 0 24px;
   }
 `;
 
@@ -52,25 +53,7 @@ export const BottomPaneWrapper = styled.div`
 export const ChartViewContainer = styled.div`
   display: flex;
   flex-direction: row;
-`;
-
-export const ToolbarWrapper = styled.div`
-  min-width: 56px;
-  width: 56px;
-  border-right: 1px solid var(--cogs-greyscale-grey4);
-  background-color: var(--cogs-greyscale-grey1);
-`;
-
-export const ToolbarItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 56px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--cogs-greyscale-grey3);
-  }
+  width: 100%;
 `;
 
 export const BottombarWrapper = styled.div`
@@ -79,7 +62,6 @@ export const BottombarWrapper = styled.div`
   height: 56px;
   border-top: 1px solid var(--cogs-greyscale-grey4);
   background-color: var(--cogs-greyscale-grey1);
-  padding-left: 90px;
 `;
 
 export const BottombarItem = styled.div`
@@ -103,8 +85,9 @@ export const BottombarItem = styled.div`
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   max-height: 100%;
+  width: ${(props: { showSearch: boolean }) =>
+    props.showSearch ? '50%' : 'calc(100% - 56px)'};
 `;
 
 export const ToolbarIcon = styled(Icon)`

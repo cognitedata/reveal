@@ -25,12 +25,17 @@ import {
 type ChartProps = {
   chart?: Chart;
   onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
+  showYAxis?: boolean;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
 const Plot = createPlotlyComponent(Plotly);
 
-const PlotlyChartComponent = ({ chart, onAxisChange }: ChartProps) => {
+const PlotlyChartComponent = ({
+  chart,
+  onAxisChange,
+  showYAxis,
+}: ChartProps) => {
   const [timeSeriesDataPoints, setTimeSeriesDataPoints] = useState<
     (Datapoints | DatapointAggregates)[]
   >([]);
@@ -211,7 +216,7 @@ const PlotlyChartComponent = ({ chart, onAxisChange }: ChartProps) => {
     },
     xaxis: {
       type: 'date',
-      domain: [0.06 * (seriesData.length - 1), 1],
+      domain: showYAxis ? [0.06 * (seriesData.length - 1), 1] : [0, 1],
       range: serializedXRange,
     },
     showlegend: false,
@@ -226,33 +231,43 @@ const PlotlyChartComponent = ({ chart, onAxisChange }: ChartProps) => {
       ? JSON.parse(JSON.stringify(range))
       : undefined;
 
-    (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-      linecolor: color,
-      linewidth: 3,
-      tickcolor: color,
-      tickwidth: 3,
-      side: 'right',
-      overlaying: index !== 0 ? 'y' : undefined,
-      anchor: 'free',
-      position: 0.05 * index,
-      showline: true,
-      range: serializedYRange,
-      hoverformat: '.2f',
-    };
+    if (showYAxis) {
+      (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
+        linecolor: color,
+        linewidth: 3,
+        tickcolor: color,
+        tickwidth: 3,
+        side: 'right',
+        overlaying: index !== 0 ? 'y' : undefined,
+        anchor: 'free',
+        position: 0.05 * index,
+        range: serializedYRange,
+        hoverformat: '.2f',
+      };
 
-    if (unit) {
-      (layout.annotations as any[]).push({
-        xref: 'paper',
-        yref: 'paper',
-        x: 0.05 * index,
-        xanchor: 'left',
-        y: 1,
-        yanchor: 'bottom',
-        text: unit,
-        showarrow: false,
-        xshift: -3,
-        yshift: 5,
-      });
+      if (unit) {
+        (layout.annotations as any[]).push({
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.05 * index,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: unit,
+          showarrow: false,
+          xshift: -3,
+          yshift: 5,
+        });
+      }
+    } else {
+      (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
+        showline: false,
+        showticklabels: false,
+        ticks: '',
+        range: serializedYRange,
+        overlaying: index !== 0 ? 'y' : undefined,
+        hoverformat: '.2f',
+      };
     }
   });
 

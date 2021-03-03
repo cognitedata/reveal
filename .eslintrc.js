@@ -9,6 +9,5 @@ module.exports = {
         ignoredNamesRegex: '^_',
       },
     ],
-    '@cognite/no-sdk-submodule-imports': 'off',
   },
 };

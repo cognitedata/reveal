@@ -36,14 +36,14 @@ import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
 import sdk from 'services/CogniteSDK';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { AxisUpdate } from 'components/PlotlyChart';
+import Search from 'components/Search';
+import { Toolbar } from 'components/Toolbar';
 import {
   Header,
   TopPaneWrapper,
   BottomPaneWrapper,
   ChartViewContainer,
-  ToolbarWrapper,
   ContentWrapper,
-  ToolbarItem,
   BottombarWrapper,
   BottombarItem,
   ToolbarIcon,
@@ -77,6 +77,8 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   const newlyCreatedChart = useSelector(
     (state) => state.charts.newlyCreatedChart
   );
+
+  const [showSearch, setShowSearch] = useState(false);
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
@@ -291,10 +293,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     if (chart) {
       dispatch(createNewWorkflow(chart));
     }
-  };
-
-  const handleClickSearch = () => {
-    dispatch(searchSlice.actions.showSearch());
   };
 
   const handleClickSave = async () => {
@@ -945,7 +943,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   return (
     <ChartViewContainer id="chart-view">
-      <ContentWrapper>
+      {!showSearch && (
+        <Toolbar
+          onSearchClick={() => setShowSearch(true)}
+          onNewWorkflowClick={handleClickNewWorkflow}
+        />
+      )}
+      <Search visible={showSearch} onClose={() => setShowSearch(false)} />
+      <ContentWrapper showSearch={showSearch}>
         <Header>
           <hgroup>
             <ChartTitle onClick={() => handleRenameChart()}>
@@ -959,45 +964,47 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
           <section className="daterange">
             <DateRangeSelector chart={chart} />
           </section>
-          <section className="actions">
-            <Button
-              icon={updateAutomatically ? 'Checkmark' : 'XCompact'}
-              type="secondary"
-              onClick={() => handleToggleAutomaticUpdates()}
-            >
-              Automatic Update
-            </Button>
-            <Button type="secondary" onClick={() => runWorkflows()}>
-              Run workflows
-            </Button>
-            <Button
-              icon="Checkmark"
-              type="primary"
-              onClick={() => handleClickSave()}
-            >
-              Save
-            </Button>
-            <Button icon="Share" variant="ghost">
-              Share
-            </Button>
-            <Button icon="Download" variant="ghost">
-              Export
-            </Button>
-            <Dropdown
-              content={
-                <Menu>
-                  <Menu.Item onClick={() => handleDuplicateChart()}>
-                    <Icon type="Duplicate" />
-                    <span>Duplicate</span>
-                  </Menu.Item>
-                </Menu>
-              }
-            >
-              <Button icon="Down" iconPlacement="right">
-                Actions
+          {!showSearch && (
+            <section className="actions">
+              <Button
+                icon={updateAutomatically ? 'Checkmark' : 'XCompact'}
+                type="secondary"
+                onClick={() => handleToggleAutomaticUpdates()}
+              >
+                Automatic Update
               </Button>
-            </Dropdown>
-          </section>
+              <Button type="secondary" onClick={() => runWorkflows()}>
+                Run workflows
+              </Button>
+              <Button
+                icon="Checkmark"
+                type="primary"
+                onClick={() => handleClickSave()}
+              >
+                Save
+              </Button>
+              <Button icon="Share" variant="ghost">
+                Share
+              </Button>
+              <Button icon="Download" variant="ghost">
+                Export
+              </Button>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Item onClick={() => handleDuplicateChart()}>
+                      <Icon type="Duplicate" />
+                      <span>Duplicate</span>
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button icon="Down" iconPlacement="right">
+                  Actions
+                </Button>
+              </Dropdown>
+            </section>
+          )}
         </Header>
         <ChartContainer>
           <SplitPaneLayout>
@@ -1006,22 +1013,12 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
                 <PlotlyChartComponent
                   chart={chart}
                   onAxisChange={handleChangeSourceAxis}
+                  showYAxis={!showSearch}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">
               <div style={{ display: 'flex', height: '100%' }}>
-                <ToolbarWrapper>
-                  <ToolbarItem onClick={() => handleClickSearch()}>
-                    <ToolbarIcon
-                      title="Search for and add time series"
-                      type="Search"
-                    />
-                  </ToolbarItem>
-                  <ToolbarItem onClick={() => handleClickNewWorkflow()}>
-                    <ToolbarIcon title="Create new calculation" type="Plus" />
-                  </ToolbarItem>
-                </ToolbarWrapper>
                 <SourceTableWrapper>
                   <SourceTable>
                     <thead>{sourceTableHeaderRow}</thead>

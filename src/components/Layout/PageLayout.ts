@@ -10,7 +10,7 @@ export default styled.div`
   #chart-view {
     height: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
   }
   #chart-view {
     height: 100%;

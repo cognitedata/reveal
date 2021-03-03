@@ -2,7 +2,6 @@ import React from 'react';
 import { Loader } from '@cognite/cogs.js';
 import Routes from 'components/Routes';
 import TopBar from 'components/TopBar';
-import Search from 'components/Search';
 import PageLayout from 'components/Layout/PageLayout';
 import useSelector from 'hooks/useSelector';
 import useLogin from './useLogin';
@@ -22,7 +21,6 @@ const App = ({ tenant }: AppAuthProps) => {
   return (
     <PageLayout>
       <TopBar />
-      <Search />
       <main>
         <Routes />
       </main>

@@ -4,16 +4,9 @@ import { ValueOf } from 'typings/utils';
 const searchSlice = createSlice({
   name: 'search',
   initialState: {
-    isVisible: false,
     activeChartId: '',
   },
   reducers: {
-    showSearch: (state) => {
-      state.isVisible = true;
-    },
-    hideSearch: (state) => {
-      state.isVisible = false;
-    },
     setActiveChartId: (state, action: PayloadAction<string>) => {
       state.activeChartId = action.payload;
     },
