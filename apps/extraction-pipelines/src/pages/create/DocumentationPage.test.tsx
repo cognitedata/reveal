@@ -5,9 +5,10 @@ import render, {
   renderWithReQueryCacheSelectedIntegrationContext,
 } from '../../utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
-import DescriptionPage, {
-  INTEGRATION_DESCRIPTION_HEADING,
-} from './DescriptionPage';
+import DocumentationPage, {
+  DESCRIPTION_LABEL,
+  INTEGRATION_DOCUMENTATION_HEADING,
+} from './DocumentationPage';
 
 describe('DescriptionPage', () => {
   beforeEach(() => {
@@ -19,17 +20,17 @@ describe('DescriptionPage', () => {
       undefined,
       `create/integration-description`
     );
-    render(<DescriptionPage />, { wrapper });
+    render(<DocumentationPage />, { wrapper });
   });
   test('Renders', () => {
     expect(
-      screen.getByText(INTEGRATION_DESCRIPTION_HEADING)
+      screen.getByText(INTEGRATION_DOCUMENTATION_HEADING)
     ).toBeInTheDocument();
-    expect(screen.getByLabelText('Description')).toBeInTheDocument();
+    expect(screen.getByLabelText(DESCRIPTION_LABEL)).toBeInTheDocument();
   });
 
   test('Interact with form', async () => {
-    const nameInput = screen.getByLabelText('Description');
+    const nameInput = screen.getByLabelText(DESCRIPTION_LABEL);
     const description = 'Im entering a description for the integration';
     fireEvent.change(nameInput, { target: { value: description } });
     await waitFor(() => {

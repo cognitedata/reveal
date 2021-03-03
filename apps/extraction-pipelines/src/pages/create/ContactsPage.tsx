@@ -24,8 +24,8 @@ import {
 } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
-  DESCRIPTION_PAGE_PATH,
   EXTERNAL_ID_PAGE_PATH,
+  SCHEDULE_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
 import { contactsSchema } from '../../utils/validation/contactsSchema';
 import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
@@ -137,7 +137,7 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
   });
   const handleNext = (field: ContactsFormInput) => {
     setStoredIntegration({ ...storedIntegration, ...field });
-    history.push(createLink(DESCRIPTION_PAGE_PATH));
+    history.push(createLink(SCHEDULE_PAGE_PATH));
   };
   const handleClick = (index: number) => {
     const s = getValues(`contacts[${index}].sendNotification`) ?? false;

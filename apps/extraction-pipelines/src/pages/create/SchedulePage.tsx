@@ -18,8 +18,8 @@ import {
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
+  CONTACTS_PAGE_PATH,
   DATA_SET_PAGE_PATH,
-  DESCRIPTION_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
 import CronInput from '../../components/inputs/cron/CronInput';
 import { DivFlex } from '../../styles/flex/StyledFlex';
@@ -141,7 +141,7 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
   const v = watch('schedule');
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(DESCRIPTION_PAGE_PATH)}>
+      <GridBreadCrumbsWrapper to={createLink(CONTACTS_PAGE_PATH)}>
         Back
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>

@@ -20,7 +20,7 @@ import {
   SCHEDULE_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
 import '../../utils/test/windowLocation';
-import { INTEGRATION_DESCRIPTION_HEADING } from './DescriptionPage';
+import { INTEGRATION_DOCUMENTATION_HEADING } from './DocumentationPage';
 import { INTEGRATION_SCHEDULE_HEADING } from './SchedulePage';
 import { SupportedScheduleStrings } from '../../components/integrations/cols/Schedule';
 import { DataSetOptions, INTEGRATION_DATA_SET_HEADING } from './DataSetPage';
@@ -115,12 +115,6 @@ describe('Register', () => {
     });
     fireEvent.click(screen.getByText(NEXT));
 
-    // description page
-    await waitFor(() => {
-      screen.getByText(INTEGRATION_DESCRIPTION_HEADING);
-    });
-    fireEvent.click(screen.getByText(NEXT));
-
     // schedule page
     await waitFor(() => {
       screen.getByText(INTEGRATION_SCHEDULE_HEADING);
@@ -145,6 +139,12 @@ describe('Register', () => {
     });
     const rawOption = screen.getByLabelText(RawTableOptions.NO);
     fireEvent.click(rawOption);
+    fireEvent.click(screen.getByText(NEXT));
+
+    // documentation page
+    await waitFor(() => {
+      screen.getByText(INTEGRATION_DOCUMENTATION_HEADING);
+    });
   });
 
   test('Navigation - from schedule page', async () => {

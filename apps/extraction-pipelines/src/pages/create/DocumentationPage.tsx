@@ -17,9 +17,11 @@ import {
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
-  CONTACTS_PAGE_PATH,
+  RAW_TABLE_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
+import { BackBtn } from '../../components/buttons/BackBtn';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 
 const StyledTextArea = styled.textarea`
   width: 80%;
@@ -31,57 +33,62 @@ const StyledTextArea = styled.textarea`
 interface DescriptionPageProps {}
 
 interface ExternalIdFormInput {
-  description: string;
+  documentation: string;
 }
 
-export const INTEGRATION_DESCRIPTION_HEADING: Readonly<string> =
-  'Integration description';
-const descriptionSchema = yup.object().shape({
-  description: yup.string(),
+export const INTEGRATION_DOCUMENTATION_HEADING: Readonly<string> =
+  'Integration documentation';
+export const DESCRIPTION_LABEL: Readonly<string> = 'Describe the integration';
+const documentationSchema = yup.object().shape({
+  documentation: yup.string(),
 });
-const DescriptionPage: FunctionComponent<DescriptionPageProps> = () => {
+const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
   const history = useHistory();
   const { register, handleSubmit, errors } = useForm<ExternalIdFormInput>({
-    resolver: yupResolver(descriptionSchema),
+    resolver: yupResolver(documentationSchema),
     defaultValues: {},
     reValidateMode: 'onSubmit',
   });
   const handleNext = () => {
     history.push(createLink(SCHEDULE_PAGE_PATH));
   };
+
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(CONTACTS_PAGE_PATH)}>
-        Back
+      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
+        Integration overview
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>
       <GridMainWrapper>
-        <GridH2Wrapper>{INTEGRATION_DESCRIPTION_HEADING}</GridH2Wrapper>
+        <BackBtn path={RAW_TABLE_PAGE_PATH} />
+        <GridH2Wrapper>{INTEGRATION_DOCUMENTATION_HEADING}</GridH2Wrapper>
+        <i className="description">
+          Register any relevant information about your integration. This will
+          help while troubleshooting if there is an issue.
+        </i>
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-          <label htmlFor="integration-description" className="input-label">
-            Description
+          <label htmlFor="integration-documentation" className="input-label">
+            {DESCRIPTION_LABEL}
           </label>
-          <span id="description-hint" className="input-hint">
-            Describe the the integration as best you can.
-          </span>
+          <span id="documentation-hint" className="input-hint" />
           <ErrorMessage
             errors={errors}
-            name="description"
+            name="documentation"
             render={({ message }) => (
-              <span id="description-error" className="error-message">
+              <span id="documentation-error" className="error-message">
                 {message}
               </span>
             )}
           />
           <StyledTextArea
-            id="integration-description"
-            name="description"
+            id="integration-documentation"
+            name="documentation"
             cols={30}
             rows={10}
             ref={register}
-            className={`cogs-input ${errors.description ? 'has-error' : ''}`}
-            aria-invalid={!!errors.description}
-            aria-describedby="description-hint description-error"
+            className={`cogs-input ${errors.documentation ? 'has-error' : ''}`}
+            aria-invalid={!!errors.documentation}
+            aria-describedby="documentation-hint documentation-error"
           />
 
           <Button type="primary" htmlType="submit">
@@ -92,4 +99,4 @@ const DescriptionPage: FunctionComponent<DescriptionPageProps> = () => {
     </CreateIntegrationPageWrapper>
   );
 };
-export default DescriptionPage;
+export default DocumentationPage;

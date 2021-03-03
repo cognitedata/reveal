@@ -58,14 +58,22 @@ export const GridMainWrapper = styled(MainPanelGrid)`
   grid-area: main;
   display: grid;
   grid-template-columns: auto 70% auto;
-  grid-template-rows: 1rem auto;
+  grid-template-rows: min-content min-content min-content auto;
   grid-row-gap: 1rem;
   grid-template-areas:
     '. back .'
+    '. title .'
+    '. description .'
     '. form .';
   overflow-y: auto;
   height: calc(100vh - 16.375rem);
   form {
     grid-area: form;
+  }
+  h2 {
+    grid-area: title;
+  }
+  .description {
+    grid-area: description;
   }
 `;

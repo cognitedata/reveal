@@ -19,8 +19,8 @@ import { CreateFormWrapper } from '../../styles/StyledForm';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import {
   DATA_SET_PAGE_PATH,
-  METADATA_PAGE_PATH,
   CONNECT_RAW_TABLES_PAGE_PATH,
+  DOCUMENTATION_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
 
 const StyledRadioGroup = styled.fieldset`
@@ -128,7 +128,7 @@ const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
         break;
       }
       case RawTableOptions.NO: {
-        history.push(createLink(METADATA_PAGE_PATH));
+        history.push(createLink(DOCUMENTATION_PAGE_PATH));
         break;
       }
       default: {

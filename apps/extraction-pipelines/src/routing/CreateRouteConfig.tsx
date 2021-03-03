@@ -22,11 +22,11 @@ export const LazyCreateIntegrationExternalId = React.lazy(
       /* webpackChunkName: "pnid_integration_create_external_id" */
     )
 );
-export const LazyCreateIntegrationDescription = React.lazy(
+export const LazyCreateIntegrationDocumentation = React.lazy(
   () =>
     import(
-      '../pages/create/DescriptionPage'
-      /* webpackChunkName: "pnid_integration_create_description" */
+      '../pages/create/DocumentationPage'
+      /* webpackChunkName: "pnid_integration_create_documentation" */
     )
 );
 export const LazyCreateIntegrationContacts = React.lazy(
@@ -80,8 +80,8 @@ export const NAME_PATH = `name`;
 export const NAME_PAGE_PATH = `/${INTEGRATIONS}/create/${NAME_PATH}`;
 export const EXTERNAL_ID = `external-id`;
 export const EXTERNAL_ID_PAGE_PATH = `/${INTEGRATIONS}/create/${EXTERNAL_ID}`;
-export const DESCRIPTION = `description`;
-export const DESCRIPTION_PAGE_PATH = `/${INTEGRATIONS}/create/${DESCRIPTION}`;
+export const DOCUMENTATION = `documentation`;
+export const DOCUMENTATION_PAGE_PATH = `/${INTEGRATIONS}/create/${DOCUMENTATION}`;
 const CONTACTS = `contacts`;
 export const CONTACTS_PAGE_PATH = `/${INTEGRATIONS}/create/${CONTACTS}`;
 const SCHEDULE = `schedule`;
@@ -116,10 +116,10 @@ export const createIntegrationRoutes = [
     component: LazyCreateIntegrationExternalId,
   },
   {
-    name: 'Create integration - description',
-    path: `/:tenant${DESCRIPTION_PAGE_PATH}`,
+    name: 'Create integration - documentation',
+    path: `/:tenant${DOCUMENTATION_PAGE_PATH}`,
     exact: true,
-    component: LazyCreateIntegrationDescription,
+    component: LazyCreateIntegrationDocumentation,
   },
   {
     name: 'Create integration - contacts',
