@@ -1,11 +1,11 @@
-import { OCRAnnotation } from 'src/api/ocr/types';
-import { DetectionModelType } from 'src/api/types';
+import { DetectionModelType, Annotation } from 'src/api/types';
 
 export type AnnotationStatus = 'verified' | 'deleted' | 'unhandled';
 
-export interface CogniteAnnotation extends Omit<OCRAnnotation, 'boundingBox'> {
+export interface CogniteAnnotation extends Omit<Annotation, 'shape'> {
   id: string;
   label: string;
+  type: string;
   box: {
     xMax: number;
     xMin: number;
@@ -27,14 +27,20 @@ export class AnnotationUtils {
   public static annotationColor = '#C945DB';
 
   public static convertToAnnotations(
-    ocrAnnotations: OCRAnnotation[],
+    annotations: Annotation[],
     modelType: DetectionModelType
   ): CogniteAnnotation[] {
-    return ocrAnnotations.map<CogniteAnnotation>((value, index) => {
+    return annotations.map<CogniteAnnotation>((value, index) => {
       return {
         id: `${modelType}-${index}`,
         label: String(index),
-        box: value.boundingBox,
+        type: value.shape.type,
+        box: {
+          xMin: value.shape.vertices[0].x,
+          yMin: value.shape.vertices[0].y,
+          xMax: value.shape.vertices[1].x,
+          yMax: value.shape.vertices[1].y,
+        },
         ...value,
         source: 'ocr',
         version: 1,

@@ -1,5 +1,3 @@
-import { OCRAnnotation } from 'src/api/ocr/types';
-
 export enum DetectionModelType {
   Text = 1,
   Tag,
@@ -12,12 +10,27 @@ export interface DetectionModelDataProvider {
 }
 
 export type JobStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
+export type ShapeType = 'points' | 'rectangle' | 'polygon' | 'polyline';
+export type Vertex = {
+  x: number;
+  y: number;
+};
+export type Annotation = {
+  description: string;
+  confidence: number;
+  attributes: any;
+  shape: {
+    type: ShapeType;
+    vertices: Array<Vertex>;
+  };
+};
 
-export type Annotation = OCRAnnotation; // later will be at least " | TagAnnotation"
 export type AnnotationJobResultItem = {
+  fileId: number;
+  fileExternalId?: string;
   annotations: Array<Annotation>;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 };
 
 export interface AnnotationJobBase {
@@ -40,9 +53,7 @@ export interface AnnotationJobCompleted extends AnnotationJobBase {
   startTime: number;
   statusTime: number;
   jobId: number;
-  fileId: number;
-  fileExternalId: string;
-  useCache?: boolean;
+  options?: any;
   items: Array<AnnotationJobResultItem>;
 }
 export interface AnnotationJobFailed extends AnnotationJobBase {

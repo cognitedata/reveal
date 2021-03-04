@@ -77,7 +77,7 @@ export const AnnotationsTable = (props: {
                 <Input
                   disabled
                   style={{ width: `100%` }}
-                  value={annotation.text}
+                  value={annotation.description}
                 />
               </AnnotationLbl>
             </StyledCol>
