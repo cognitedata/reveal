@@ -6,7 +6,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import GlobalStyle from 'app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import sdk from 'sdk-singleton';
+import { CogniteClient } from '@cognite/sdk';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
@@ -60,7 +61,7 @@ export default () => {
             loadingScreen={<Loader darkMode={false} />}
             subAppName="data-exploration"
           >
-            <SDKProvider sdk={sdk}>
+            <SDKProvider sdk={(sdkv3 as unknown) as CogniteClient}>
               <ThemeProvider theme={theme}>
                 <FlagProvider
                   apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"

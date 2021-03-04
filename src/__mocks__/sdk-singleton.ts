@@ -5,7 +5,3 @@ export default {
   // @ts-ingore
   get: jest.fn(),
 };
-
-export const getAuthState = () => ({
-  username: 'someone@cognite.com',
-});
