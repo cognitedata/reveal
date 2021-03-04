@@ -1,16 +1,10 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { QueryClient } from 'react-query';
-import render, {
-  renderWithReQueryCacheSelectedIntegrationContext,
-} from '../../utils/test/render';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
-import DataSetIdPage, {
+import { renderWithReactHookForm } from '../../utils/test/render';
+import DataSetIdInput, {
   DATA_SET_ID_LABEL,
   DATA_SET_ID_TIP,
-  INTEGRATION_DATA_SET_ID_HEADING,
-} from './DataSetIdPage';
-import { DATA_SET_ID_PAGE_PATH } from '../../routing/CreateRouteConfig';
+} from './DataSetIdInput';
 import { useDataSetsList } from '../../hooks/useDataSetsList';
 import { datasetMockResponse } from '../../utils/mockResponse';
 
@@ -20,31 +14,15 @@ jest.mock('../../hooks/useDataSetsList', () => {
   };
 });
 describe('RawTablePage', () => {
-  let renderWrapper;
-  beforeEach(() => {
-    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
-      new QueryClient(),
-      PROJECT_ITERA_INT_GREEN,
-      PROJECT_ITERA_INT_GREEN,
-      ORIGIN_DEV,
-      undefined,
-      DATA_SET_ID_PAGE_PATH
-    );
-    renderWrapper = wrapper;
-  });
   test('Renders', () => {
     useDataSetsList.mockReturnValue({ data: { items: [] }, status: 'success' });
-    render(<DataSetIdPage />, { wrapper: renderWrapper });
-    const heading = screen.getAllByRole('heading');
-    expect(heading[1].textContent).toEqual(INTEGRATION_DATA_SET_ID_HEADING);
-    expect(
-      screen.getByText(INTEGRATION_DATA_SET_ID_HEADING)
-    ).toBeInTheDocument();
+    renderWithReactHookForm(<DataSetIdInput />, { defaultValues: {} });
+    expect(screen.getByText(DATA_SET_ID_LABEL)).toBeInTheDocument();
     expect(screen.getByText(DATA_SET_ID_TIP)).toBeInTheDocument();
   });
   test('Renders - "backup"-input on error', () => {
     useDataSetsList.mockReturnValue({ data: { items: [] }, status: 'error' });
-    render(<DataSetIdPage />, { wrapper: renderWrapper });
+    renderWithReactHookForm(<DataSetIdInput />, { defaultValues: {} });
     const datasetInput = screen.getByLabelText(DATA_SET_ID_LABEL);
     expect(datasetInput).toBeInTheDocument();
     const inputValue = 'my data set';
@@ -58,7 +36,9 @@ describe('RawTablePage', () => {
       data: mock,
       status: 'success',
     });
-    const { container } = render(<DataSetIdPage />, { wrapper: renderWrapper });
+    const { container } = renderWithReactHookForm(<DataSetIdInput />, {
+      defaultValues: {},
+    });
     const selectInput = await container.querySelector(
       '.cogs-select__input input'
     );
