@@ -18,6 +18,7 @@ import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networkin
 import { NodeAppearanceProvider } from '../../datamodels/cad/styling/NodeAppearanceProvider';
 import { NodeSet } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
+import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -27,8 +28,18 @@ import { NodeAppearance } from '../../datamodels/cad';
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
 
-  get nodeApperanceProvider(): NodeAppearanceProvider {
+  /**
+   * @internal
+   */
+  private get nodeApperanceProvider(): NodeAppearanceProvider {
     return this.cadNode.nodeAppearanceProvider;
+  }
+
+  /**
+   * @internal
+   */
+  private get nodeTransformProvider(): NodeTransformProvider {
+    return this.cadNode.nodeTransformProvider;
   }
 
   /**
@@ -155,6 +166,28 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   removeStyledNodeSet(nodes: NodeSet) {
     this.nodeApperanceProvider.removeStyledSet(nodes);
   }
+
+  /**
+   * Apply a transformation matrix to the tree indices given, changing
+   * rotation, scale and/or position.
+   *
+   * Note that setting multiple transformations for the same
+   * node isn't supported and might lead to undefined results.
+   * @param treeIndices       Tree indices of nodes to apply the transformation to.
+   * @param transformMatrix   Transformation to apply.
+   */
+  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4) {
+    this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
+  }
+
+  /**
+   * Resets the transformation for the nodes given.
+   * @param treeIndices Tree indices of the nodes to reset transforms for.
+   */
+  resetNodeTransform(treeIndices: NumericRange) {
+    this.nodeTransformProvider.resetNodeTransform(treeIndices);
+  }
+
   /**
    * Maps a position retrieved from the CDF API (e.g. 3D node information) to
    * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed

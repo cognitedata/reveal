@@ -27,6 +27,10 @@ export class NumericRange {
     return Array.from(this.values());
   }
 
+  equal(other: NumericRange): boolean {
+    return this.from === other.from && this.count === other.count;
+  }
+
   contains(value: number): boolean {
     return value >= this.from && value <= this.toInclusive;
   }

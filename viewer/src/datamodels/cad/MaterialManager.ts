@@ -13,11 +13,15 @@ import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBui
 import { NodeAppearance } from '.';
 import { EventTrigger } from '../../utilities/events';
 import { assertNever } from '../../utilities';
+import { NodeTransformTextureBuilder } from './styling/NodeTransformTextureBuilder';
+import { NodeTransformProvider } from './styling/NodeTransformProvider';
 
 interface MaterialsWrapper {
   materials: Materials;
   nodeAppearanceProvider: NodeAppearanceProvider;
-  textureBuilder: NodeAppearanceTextureBuilder;
+  nodeTransformProvider: NodeTransformProvider;
+  nodeApperanceTextureBuilder: NodeAppearanceTextureBuilder;
+  nodeTransformTextureBuilder: NodeTransformTextureBuilder;
 }
 
 export class MaterialManager {
@@ -79,21 +83,34 @@ export class MaterialManager {
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const nodeAppearanceProvider = new NodeAppearanceProvider();
-    const textureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
-    textureBuilder.build();
+    const nodeApperanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
+    nodeApperanceTextureBuilder.build();
+
+    const nodeTransformProvider = new NodeTransformProvider();
+    const nodeTransformTextureBuilder = new NodeTransformTextureBuilder(maxTreeIndex + 1, nodeTransformProvider);
+    nodeTransformTextureBuilder.build();
 
     nodeAppearanceProvider.on('changed', () => {
+      this.updateMaterials(modelIdentifier);
+    });
+    nodeTransformProvider.on('changed', () => {
       this.updateMaterials(modelIdentifier);
     });
 
     const materials = createMaterials(
       this._renderMode,
       this._clippingPlanes,
-      textureBuilder.overrideColorPerTreeIndexTexture,
-      textureBuilder.overrideTransformPerTreeIndexTexture,
-      textureBuilder.transformsLookupTexture
+      nodeApperanceTextureBuilder.overrideColorPerTreeIndexTexture,
+      nodeTransformTextureBuilder.overrideTransformIndexTexture,
+      nodeTransformTextureBuilder.transformLookupTexture
     );
-    this.materialsMap.set(modelIdentifier, { materials, nodeAppearanceProvider, textureBuilder });
+    this.materialsMap.set(modelIdentifier, {
+      materials,
+      nodeAppearanceProvider,
+      nodeTransformProvider,
+      nodeApperanceTextureBuilder,
+      nodeTransformTextureBuilder
+    });
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
@@ -106,30 +123,35 @@ export class MaterialManager {
     return wrapper.nodeAppearanceProvider;
   }
 
+  getModelNodeTransformProvider(modelIdentifier: string): NodeTransformProvider {
+    const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
+    return wrapper.nodeTransformProvider;
+  }
+
   getModelDefaultNodeAppearance(modelIdentifier: string): NodeAppearance {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.textureBuilder.getDefaultAppearance();
+    return wrapper.nodeApperanceTextureBuilder.getDefaultAppearance();
   }
 
   setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    wrapper.textureBuilder.setDefaultAppearance(defaultAppearance);
+    wrapper.nodeApperanceTextureBuilder.setDefaultAppearance(defaultAppearance);
     this.updateMaterials(modelIdentifier);
   }
 
   getModelBackTreeIndices(modelIdentifier: string): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.textureBuilder.regularNodeTreeIndices;
+    return wrapper.nodeApperanceTextureBuilder.regularNodeTreeIndices;
   }
 
   getModelInFrontTreeIndices(modelIdentifier: string): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.textureBuilder.infrontNodeTreeIndices;
+    return wrapper.nodeApperanceTextureBuilder.infrontNodeTreeIndices;
   }
 
   getModelGhostedTreeIndices(modelIdentifier: string): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.textureBuilder.ghostedNodeTreeIndices;
+    return wrapper.nodeApperanceTextureBuilder.ghostedNodeTreeIndices;
   }
 
   setRenderMode(mode: RenderMode) {
@@ -148,12 +170,19 @@ export class MaterialManager {
 
   private updateMaterials(modelIdentifier: string) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    if (wrapper.textureBuilder.needsUpdate) {
+    if (wrapper.nodeApperanceTextureBuilder.needsUpdate) {
       const start = performance.now();
-      const { textureBuilder, materials } = wrapper;
-      textureBuilder.build();
+      const { nodeApperanceTextureBuilder } = wrapper;
+      nodeApperanceTextureBuilder.build();
 
-      const transformsLookupTexture = textureBuilder.transformsLookupTexture;
+      console.log('Updating materials for ', modelIdentifier, 'took', performance.now() - start, 'ms');
+    }
+
+    if (wrapper.nodeTransformTextureBuilder.needsUpdate) {
+      const { nodeTransformTextureBuilder, materials } = wrapper;
+      nodeTransformTextureBuilder.build();
+
+      const transformsLookupTexture = nodeTransformTextureBuilder.transformLookupTexture;
       const transformsLookupTextureSize = new THREE.Vector2(
         transformsLookupTexture.image.width,
         transformsLookupTexture.image.height
@@ -162,10 +191,8 @@ export class MaterialManager {
         material.uniforms.transformOverrideTexture.value = transformsLookupTexture;
         material.uniforms.transformOverrideTextureSize.value = transformsLookupTextureSize;
       });
-      this.triggerMaterialsChanged();
-
-      console.log('Updating materials for ', modelIdentifier, 'took', performance.now() - start, 'ms');
     }
+    this.triggerMaterialsChanged();
   }
 
   private getModelMaterialsWrapper(modelIdentifier: string): MaterialsWrapper {

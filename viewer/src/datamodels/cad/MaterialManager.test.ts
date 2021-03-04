@@ -8,6 +8,7 @@ import { IndexSet } from '../../utilities/IndexSet';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { FixedNodeSet } from './styling';
+import { NumericRange } from '../../utilities';
 
 describe('MaterialManager', () => {
   let manager: MaterialManager;
@@ -51,30 +52,36 @@ describe('MaterialManager', () => {
     expect(materialsChangedListener).toBeCalledTimes(1);
   });
 
-  test('setModelDefaultNodeAppearance, materials are updated', () => {
+  test('setModelDefaultNodeAppearance, node sets are updated', () => {
     manager.addModelMaterials('model', 4);
-    const materialsChangedListener = jest.fn();
-    manager.on('materialsChanged', materialsChangedListener);
 
     manager.setModelDefaultNodeAppearance('model', { renderGhosted: true });
-    expect(materialsChangedListener).toBeCalledTimes(1);
 
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet());
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([0, 1, 2, 3, 4]));
   });
 
-  test('style provider triggers update, materials are updated', () => {
+  test('style provider triggers update, node sets are updated', () => {
     manager.addModelMaterials('model', 4);
     const provider = manager.getModelNodeAppearanceProvider('model');
-
-    const materialsChangedListener = jest.fn();
-    manager.on('materialsChanged', materialsChangedListener);
+    const listener = jest.fn();
+    manager.on('materialsChanged', listener);
 
     provider.addStyledSet(new FixedNodeSet(new IndexSet([1, 2, 3])), { renderGhosted: true });
 
-    expect(materialsChangedListener).toBeCalledTimes(1);
-
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet([0, 4]));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([1, 2, 3]));
+    expect(listener).toBeCalled();
+  });
+
+  test('transform provider triggers update, triggers materialChanged', () => {
+    manager.addModelMaterials('model', 4);
+    const listener = jest.fn();
+    manager.on('materialsChanged', listener);
+    const provider = manager.getModelNodeTransformProvider('model');
+
+    provider.setNodeTransform(new NumericRange(0, 2), new THREE.Matrix4().makeRotationY(Math.PI / 4.0));
+
+    expect(listener).toBeCalled();
   });
 });

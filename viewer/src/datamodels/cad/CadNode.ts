@@ -19,6 +19,7 @@ import { toThreeVector3, toThreeJsBox3 } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
 import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
 import { NodeAppearance } from '.';
+import { NodeTransformProvider } from './styling/NodeTransformProvider';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -76,6 +77,10 @@ export class CadNode extends THREE.Object3D {
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
     this.setModelTransformation(model.modelMatrix);
+  }
+
+  get nodeTransformProvider(): NodeTransformProvider {
+    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.blobUrl);
   }
 
   get nodeAppearanceProvider(): NodeAppearanceProvider {

@@ -8,7 +8,6 @@ import { NumericRange } from '../../../utilities';
 import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
 
 import { DefaultNodeAppearance, NodeAppearance } from '../NodeAppearance';
-import { TransformOverrideBuffer } from '../rendering/TransformOverrideBuffer';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 
@@ -22,8 +21,6 @@ export class NodeAppearanceTextureBuilder {
   private _needsUpdate = true;
   private readonly _treeIndexCount: number;
   private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
-  private readonly _overrideTransformPerTreeIndexTexture: THREE.DataTexture;
-  private readonly _transformOverrideBuffer: TransformOverrideBuffer;
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
@@ -36,8 +33,6 @@ export class NodeAppearanceTextureBuilder {
 
     const textures = allocateTextures(treeIndexCount);
     this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
-    this._overrideTransformPerTreeIndexTexture = textures.transformOverrideIndexTexture;
-    this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
 
     this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
@@ -113,18 +108,9 @@ export class NodeAppearanceTextureBuilder {
     return this._overrideColorPerTreeIndexTexture;
   }
 
-  get overrideTransformPerTreeIndexTexture(): THREE.DataTexture {
-    return this._overrideTransformPerTreeIndexTexture;
-  }
-
-  get transformsLookupTexture(): THREE.DataTexture {
-    return this._transformOverrideBuffer.dataTexture;
-  }
-
   dispose() {
     this._styleProvider.off('changed', this._handleStylesChangedListener);
     this._overrideColorPerTreeIndexTexture.dispose();
-    this._overrideTransformPerTreeIndexTexture.dispose();
   }
 
   build() {
@@ -181,13 +167,11 @@ export class NodeAppearanceTextureBuilder {
     }
 
     const defaultColorRgba = appearanceToColorOverride(this._defaultAppearance);
-    const defaultTransformLookupIndexRgb: [number, number, number] = [0, 0, 0]; // Special value for no transform
 
     const infront = !!currentStyle.renderInFront;
     const ghosted = !infront && !!currentStyle.renderGhosted;
 
     applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, defaultColorRgba);
-    applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, defaultTransformLookupIndexRgb);
 
     if (infront) {
       updateLookupSet(this._infrontNodesTreeIndices, treeIndices, false);
@@ -205,10 +189,7 @@ export class NodeAppearanceTextureBuilder {
     }
 
     const colorRgba = appearanceToColorOverride(style);
-    const transformLookupIndexRgb = appearanceToTransformOverride(styleId, style, this._transformOverrideBuffer);
-
     applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
-    applyRGB(this._overrideTransformPerTreeIndexTexture, treeIndices, transformLookupIndexRgb);
 
     const infront = !!style.renderInFront;
     const ghosted = !infront && !!style.renderGhosted;
@@ -278,24 +259,6 @@ function appearanceToColorOverride(appearance: NodeAppearance): [number, number,
   return [r, g, b, bytePattern];
 }
 
-function appearanceToTransformOverride(
-  overrideId: number,
-  appearance: NodeAppearance,
-  transformTextureBuffer: TransformOverrideBuffer
-): [number, number, number] {
-  if (appearance.worldTransform === undefined) {
-    return [0, 0, 0];
-  }
-
-  // TODO 2021-02-04 larsmoa: Rename usage overrideId in TransformOverrideBuffer
-  const lookupIndex = transformTextureBuffer.addOverrideTransform(overrideId, appearance.worldTransform);
-  return [
-    Math.min((lookupIndex + 1) >> 16, 255),
-    Math.min((lookupIndex + 1) >> 8, 255),
-    Math.min((lookupIndex + 1) >> 0, 255)
-  ];
-}
-
 function applyRGBA(texture: THREE.DataTexture, treeIndices: IndexSet, rgba: [number, number, number, number]) {
   const buffer = texture.image.data;
   const [r, g, b, a] = rgba;
@@ -308,17 +271,6 @@ function applyRGBA(texture: THREE.DataTexture, treeIndices: IndexSet, rgba: [num
   texture.needsUpdate = true;
 }
 
-function applyRGB(texture: THREE.DataTexture, treeIndices: IndexSet, rgb: [number, number, number]) {
-  const buffer = texture.image.data;
-  const [r, g, b] = rgb;
-  for (const treeIndex of treeIndices.values()) {
-    buffer[3 * treeIndex + 0] = r;
-    buffer[3 * treeIndex + 1] = g;
-    buffer[3 * treeIndex + 2] = b;
-  }
-  texture.needsUpdate = true;
-}
-
 function updateLookupSet(set: IndexSet, treeIndices: IndexSet, addToSet: boolean) {
   if (addToSet) {
     set.unionWith(treeIndices);
@@ -326,35 +278,6 @@ function updateLookupSet(set: IndexSet, treeIndices: IndexSet, addToSet: boolean
     set.differenceWith(treeIndices);
   }
 }
-
-// function resetTransformTexel(
-//   treeIndex: number,
-//   indexTexture: THREE.DataTexture,
-//   transformTextureBuffer: TransformOverrideBuffer
-// ) {
-//   indexTexture.image.data[treeIndex * 3 + 0] = 0;
-//   indexTexture.image.data[treeIndex * 3 + 1] = 0;
-//   indexTexture.image.data[treeIndex * 3 + 2] = 0;
-
-//   transformTextureBuffer.removeOverrideTransform(treeIndex);
-
-//   indexTexture.needsUpdate = true;
-// }
-
-// function setTransformTexel(
-//   treeIndex: number,
-//   transform: THREE.Matrix4,
-//   indexTexture: THREE.DataTexture,
-//   transformTextureBuffer: TransformOverrideBuffer
-// ) {
-//   const transformIndex = transformTextureBuffer.addOverrideTransform(treeIndex, transform);
-
-//   indexTexture.image.data[treeIndex * 3 + 0] = (transformIndex + 1) >> 16;
-//   indexTexture.image.data[treeIndex * 3 + 1] = (transformIndex + 1) >> 8;
-//   indexTexture.image.data[treeIndex * 3 + 2] = (transformIndex + 1) >> 0;
-
-//   indexTexture.needsUpdate = true;
-// }
 
 function equalNodeAppearances(left: NodeAppearance, right: NodeAppearance) {
   // https://stackoverflow.com/a/1144249/167251
