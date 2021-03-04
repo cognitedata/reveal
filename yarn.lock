@@ -2079,10 +2079,10 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^2.4.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.9.0.tgz#a5f50a0fb9a02e634539b33599ccc8f39425b625"
-  integrity sha512-ZBjHvuAag/SafSF/zZ6MIJTnTYceNuHxS4udI+0tCglQZHq+wNJsCR+4ys94MspG6YM8SCwU7IbYgGrwnCnOhg==
+"@cognite/cogs.js@^2.17.0":
+  version "2.17.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.17.2.tgz#c68a7d0f6f5e8775a78f44f792c2ac46429dd83c"
+  integrity sha512-ZztR01qigr3WJHpu7ZgHRtu6gIXRyOmsRhaGIQsONYREVBCr6gZsVoPMvs7Ferf79er1r/kvwTXRGuqxr1Rr5g==
   dependencies:
     "@tippyjs/react" "4.0.2"
     "@types/react-date-range" "^1.1.2"
@@ -2142,13 +2142,13 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.8.5"
 
-"@cognite/react-tenant-selector@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.6.1.tgz#d13341f876e405d09489bb5f66c70ab3c6cc5234"
-  integrity sha512-xzMbXjWmcArTOymmOt5G/K89Jr/t0rAA+GupF7rOIZScGohs0i3itmXhcNGcIAS3wQYaVCMtOhVu2tpRSoMXhg==
+"@cognite/react-tenant-selector@^0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.6.3.tgz#99f4142149ab9c7358d1194fa10a5438fa3b0442"
+  integrity sha512-fOw9gHZc6x6M+h+XUuYh+fV+MFMC3ssqCv5fb5TI9ycz5YX+ECia3GJhYPzZWmmuZ5SB8GkugZxZoIuBPQVH1w==
   dependencies:
     "@cognite/auth-utils" "^0.8.1"
-    "@cognite/cogs.js" "^2.4.0"
+    "@cognite/cogs.js" "^2.17.0"
     "@cognite/metrics" "^1.0.0"
     "@cognite/react-i18n" "^0.3.0"
     "@cognite/sdk" "^3.3.0"

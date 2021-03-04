@@ -6,3 +6,9 @@ This tenant selector is responsible only for selecting a Cognite project (or app
 More information can be found in the [design doc].
 
 [design doc]: https://cog.link/tsa
+
+## How to update this lib
+
+For information about making changes to the Tenant Selector
+
+[see here]: https://github.com/cognitedata/frontend/blob/master/packages/browser/react/react-tenant-selector/README.md#process-for-updating-the-tenant-selector
