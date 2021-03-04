@@ -4,6 +4,7 @@ import useSelector from 'hooks/useSelector';
 import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Chart, chartSelectors } from 'reducers/charts';
+import { selectUser } from 'reducers/environment';
 import {
   fetchAllCharts,
   renameChart,
@@ -22,6 +23,7 @@ const ChartList = () => {
     (state) => state.charts.newlyCreatedChart
   );
   const history = useHistory();
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     dispatch(fetchAllCharts());
@@ -50,86 +52,96 @@ const ChartList = () => {
   };
 
   const renderList = () => {
-    return allCharts.map((chart) => (
-      <div
-        key={chart.id}
-        style={{
-          width: 'calc(25% - 40px)',
-          margin: '20px',
-          padding: 20,
-          paddingTop: 80,
-          border: '1px solid #ccc',
-          borderRadius: 10,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: 50,
-            backgroundColor: '#ccc',
-            borderBottom: '1px solid #ccc',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Dropdown
-            content={
-              <Menu>
-                <Menu.Header>
-                  <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
-                </Menu.Header>
-                <Menu.Item
-                  onClick={() => handleRenameChart(chart)}
-                  appendIcon="Edit"
-                >
-                  <span>Rename</span>
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => handleDeleteChart(chart)}
-                  appendIcon="Delete"
-                >
-                  <span>Delete</span>
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => handleDuplicateChart(chart)}
-                  appendIcon="Duplicate"
-                >
-                  <span>Duplicate</span>
-                </Menu.Item>
-              </Menu>
-            }
+    return (
+      allCharts
+        // Filter to only show charts where the
+        // current user is the owner. Remove this
+        // filter when firebase security rules are
+        // in place
+        .filter((chart) => chart.user === user.email)
+        .map((chart) => (
+          <div
+            key={chart.id}
+            style={{
+              width: 'calc(25% - 40px)',
+              margin: '20px',
+              padding: 20,
+              paddingTop: 80,
+              border: '1px solid #ccc',
+              borderRadius: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
           >
-            <div style={{ display: 'flex', padding: 10 }}>
-              <Icon type="VerticalEllipsis" />
-            </div>
-          </Dropdown>
-        </div>
-        <Link to={`/${chart.id}`} key={chart.id}>
-          <div style={{ width: '100%' }}>
-            <img
+            <div
               style={{
-                width: 'calc(100% - 20px)',
-                margin: 10,
-                border: '1px solid #ddd',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: 50,
+                backgroundColor: '#ccc',
+                borderBottom: '1px solid #ccc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
               }}
-              src={thumb}
-              alt={chart.name}
-            />
+            >
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Header>
+                      <span style={{ wordBreak: 'break-word' }}>
+                        {chart.name}
+                      </span>
+                    </Menu.Header>
+                    <Menu.Item
+                      onClick={() => handleRenameChart(chart)}
+                      appendIcon="Edit"
+                    >
+                      <span>Rename</span>
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleDeleteChart(chart)}
+                      appendIcon="Delete"
+                    >
+                      <span>Delete</span>
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleDuplicateChart(chart)}
+                      appendIcon="Duplicate"
+                    >
+                      <span>Duplicate</span>
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <div style={{ display: 'flex', padding: 10 }}>
+                  <Icon type="VerticalEllipsis" />
+                </div>
+              </Dropdown>
+            </div>
+            <Link to={`/${chart.id}`} key={chart.id}>
+              <div style={{ width: '100%' }}>
+                <img
+                  style={{
+                    width: 'calc(100% - 20px)',
+                    margin: 10,
+                    border: '1px solid #ddd',
+                  }}
+                  src={thumb}
+                  alt={chart.name}
+                />
+              </div>
+              <h3 style={{ textAlign: 'center' }}>{chart.name}</h3>
+            </Link>
           </div>
-          <h3 style={{ textAlign: 'center' }}>{chart.name}</h3>
-        </Link>
-      </div>
-    ));
+        ))
+    );
   };
 
   const renderError = () => {

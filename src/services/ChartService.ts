@@ -6,11 +6,7 @@ export class ChartService {
     firebase.firestore.DocumentData
   >;
 
-  private readonly user: string;
-
-  constructor(tenant: string, user: string) {
-    this.user = user;
-
+  constructor(tenant: string) {
     this.firebaseCollection = firebase
       .firestore()
       .collection('tenants')
@@ -19,9 +15,7 @@ export class ChartService {
   }
 
   async getCharts(): Promise<Chart[]> {
-    const snapshot = await this.firebaseCollection
-      .where('user', '==', this.user)
-      .get();
+    const snapshot = await this.firebaseCollection.get();
     return snapshot.docs.map((doc) => doc.data()) as Chart[];
   }
 

@@ -26,7 +26,7 @@ export const fetchAllCharts = (): AppThunk => async (dispatch, getState) => {
   dispatch(chartsSlice.actions.startLoadingAllCharts());
 
   try {
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     const allCharts = await chartService.getCharts();
 
     dispatch(chartsSlice.actions.finishedLoadingAllCharts(allCharts));
@@ -67,7 +67,7 @@ export const createNewChart = (): AppThunk => async (dispatch, getState) => {
 
   try {
     // Create the chart
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.saveChart(newChart);
 
     dispatch(chartsSlice.actions.storedNewChart(newChart));
@@ -100,7 +100,7 @@ export const duplicateChart = (chart: Chart): AppThunk => async (
 
   try {
     // Create the chart
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.saveChart(newChart);
 
     dispatch(chartsSlice.actions.storedNewChart(newChart));
@@ -124,7 +124,7 @@ export const saveExistingChart = (chart: Chart): AppThunk => async (
 
   try {
     // Create the workflow
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.saveChart(chart);
     toast.success('Chart saved!');
   } catch (e) {
@@ -159,7 +159,7 @@ export const renameChart = (chart: Chart): AppThunk => async (
       })
     );
     // Create the workflow
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.saveChart(updatedChart);
     toast.success('Chart renamed!');
   } catch (e) {
@@ -189,7 +189,7 @@ export const addTimeSeriesToChart = (
     );
 
     const chart = chartSelectors.selectById(getState(), id);
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.saveChart(chart!);
     toast.success('Added time series!');
   } catch (e) {
@@ -213,7 +213,7 @@ export const deleteChart = (chart: Chart): AppThunk => async (
   try {
     dispatch(chartsSlice.actions.removeChart(chart));
     // Create the workflow
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.deleteChart(chart);
     toast.success('Chart deleted!');
   } catch (e) {
@@ -227,9 +227,8 @@ export const toggleChartAccess = (chart: Chart): AppThunk => async (
 ) => {
   const state = getState();
   const tenant = selectTenant(state);
-  const { email: user } = selectUser(state);
 
-  if (!tenant || !user) {
+  if (!tenant) {
     // Must have tenant set
     return;
   }
@@ -247,7 +246,7 @@ export const toggleChartAccess = (chart: Chart): AppThunk => async (
       })
     );
     // Create the workflow
-    const chartService = new ChartService(tenant, user);
+    const chartService = new ChartService(tenant);
     await chartService.saveChart(updatedChart);
     toast.success(
       `Chart set to ${updatedChart.public ? 'public' : 'private'}!`
