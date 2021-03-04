@@ -207,6 +207,7 @@ export const FormReducer = createReducer(getInitialState())
   .handleAction(FormActionTypes.FILES_DELETED, (state: FormState) => ({
     ...state,
     files: {
+      ...state.files,
       deleteQueue: [],
     },
   }));
