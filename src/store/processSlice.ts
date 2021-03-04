@@ -34,7 +34,7 @@ export const detectAnnotations = createAsyncThunk<
     }
 
     const { jobsByFileId } = getState().processSlice;
-
+    // TODO: send batch of files
     fileIds.forEach((fileId) => {
       detectionModels.forEach((modelType) => {
         const existingJobs = jobsByFileId[fileId] || [];
