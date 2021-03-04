@@ -3,7 +3,12 @@ import { useHistory } from 'react-router-dom';
 import { Button, Icon } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
-import { formState, isErrorListEmpty, suiteState } from 'store/forms/selectors';
+import {
+  filesUploadState,
+  formState,
+  isErrorListEmpty,
+  suiteState,
+} from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
@@ -35,6 +40,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const hasErrors = !useSelector(isErrorListEmpty) || !isValid;
   const { clearForm } = useFormState();
   const { saving: formSaving } = useSelector(formState);
+  const { deleteQueue } = useSelector(filesUploadState);
   const [filesUploadQueue] = useState(new Map());
   const metrics = useMetrics('EditSuite');
 
@@ -57,7 +63,9 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const handleSubmit = async () => {
     if (hasErrors) return;
 
-    await dispatch(saveForm(client, apiClient, filesUploadQueue, suite));
+    await dispatch(
+      saveForm(client, apiClient, suite, filesUploadQueue, deleteQueue)
+    );
     trackMetrics('Saved', {
       suiteKey: suite.key,
       suite: suite.title,

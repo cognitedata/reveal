@@ -6,8 +6,9 @@ import {
   isErrorListEmpty,
   suiteState,
   boardState,
+  filesUploadState,
 } from 'store/forms/selectors';
-import { addBoard, clearBoardForm, updateBoard } from 'store/forms/actions';
+import * as actions from 'store/forms/actions';
 import isEmpty from 'lodash/isEmpty';
 import { Board } from 'store/suites/types';
 import { RootDispatcher } from 'store/types';
@@ -26,9 +27,11 @@ type Props = {
 const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
   const suite = useSelector(suiteState);
   const board = useSelector(boardState) as Board;
+  const { deleteQueue } = useSelector(filesUploadState);
   const isValid =
     !isEmpty(board.title) && !isEmpty(board.type) && !isEmpty(board.url);
   const hasErrors = !useSelector(isErrorListEmpty) || !isValid;
+
   const dispatch = useDispatch<RootDispatcher>();
   const metrics = useMetrics('EditSuite');
 
@@ -37,19 +40,22 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
 
     const newKey = key();
     replaceNewFileKey(filesUploadQueue, newKey); // if uploaded a file => give it a key
-    dispatch(addBoard(newKey));
+    dispatch(actions.addBoard(newKey));
     metrics.track('AddNewBoard', {
       boardKey: newKey,
       board: board?.title,
       useEmbedTag: !!board?.embedTag,
       useImagePreview: filesUploadQueue.has(newKey),
     });
-    dispatch(clearBoardForm());
+    dispatch(actions.clearBoardForm());
   };
 
   const updateExistingBoard = () => {
     if (hasErrors) return;
-    dispatch(updateBoard());
+    if (deleteQueue.includes(board?.imageFileId)) {
+      dispatch(actions.excludeFileFromBoard(board.imageFileId));
+    }
+    dispatch(actions.updateBoard());
     metrics.track('UpdateBoard', {
       boardKey: board?.key,
       board: board?.title,
@@ -64,8 +70,12 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
     } else {
       flushFilesQueue(filesUploadQueue);
     }
+    // remove current file from delete queue
+    if (deleteQueue.includes(board?.imageFileId)) {
+      dispatch(actions.excludeFileFromDeleteQueue(board.imageFileId));
+    }
+    dispatch(actions.clearBoardForm());
     metrics.track('Cancel_BoardForm', { component: 'BoardForm' });
-    dispatch(clearBoardForm());
   };
   return (
     <ActionButtonsContainer>

@@ -30,13 +30,17 @@ export function setBoardState(client: CdfClient, board: BoardState) {
 export function saveForm(
   client: CdfClient,
   apiClient: ApiClient,
+  suite: Suite,
   filesUploadQueue: Map<string, File>,
-  suite: Suite
+  filesDeleteQueue: CogniteExternalId[]
 ) {
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.formSaving());
     if (filesUploadQueue.size) {
       await dispatch(uploadFiles(client, filesUploadQueue));
+    }
+    if (filesDeleteQueue?.length) {
+      await dispatch(deleteFiles(client, filesDeleteQueue));
     }
     await dispatch(insertSuite(client, apiClient, suite));
     dispatch(actions.formSaved());
@@ -85,6 +89,26 @@ async function uploadFile(
   }
   const currentUpload = await GCSUploader(fileToUpload, uploadUrl);
   return currentUpload.start();
+}
+
+export function deleteFiles(
+  client: CdfClient,
+  fileExternalIds: CogniteExternalId[]
+) {
+  return async (dispatch: RootDispatcher) => {
+    try {
+      await client.deleteFiles(fileExternalIds);
+      dispatch(actions.filesDeleted());
+    } catch (e) {
+      Sentry.captureException(e);
+      dispatch(
+        setHttpError(
+          `Failed to image preview(s): ${fileExternalIds.join(', ')}`,
+          e
+        )
+      );
+    }
+  };
 }
 
 export function retrieveFileInfo(

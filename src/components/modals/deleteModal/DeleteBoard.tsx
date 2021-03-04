@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { RootDispatcher } from 'store/types';
-import { insertSuite } from 'store/suites/thunks';
+import { insertSuite, deleteFiles } from 'store/suites/thunks';
 import { modalClose } from 'store/modals/actions';
 import { Button, Title } from '@cognite/cogs.js';
 import Modal from 'components/modals/simpleModal/Modal';
@@ -35,6 +35,9 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
       component: 'DeleteBoard',
     });
     handleCloseModal();
+    if (board.imageFileId) {
+      dispatch(deleteFiles(client, [board.imageFileId]));
+    }
     await dispatch(
       insertSuite(client, apiClient, {
         ...suite,

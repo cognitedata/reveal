@@ -290,6 +290,10 @@ export const UploadImageContainer = styled(CustomInputContainer)<Props>`
   }
 `;
 
-export const UploadFileName = styled(EllipsisText)`
+export const UploadFileNameContainer = styled(EllipsisText)`
   padding-left: 10px;
+  .cogs-tag {
+    max-width: 100%;
+    display: inline;
+  }
 `;

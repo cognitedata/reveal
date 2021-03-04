@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/sdk';
+import { CogniteExternalId, FileInfo } from '@cognite/sdk';
 import { Suite } from 'store/suites/types';
 import { createAction } from 'typesafe-actions';
 import {
@@ -40,6 +40,7 @@ export const fileRetrieveError = createAction(
 export const retrievedFile = createAction(
   FormActionTypes.FILE_RETRIEVED
 )<FileInfo>();
+// file upload queue
 export const fileUploadError = createAction(
   FormActionTypes.FILE_UPLOAD_ERROR
 )<FileUpdateError>();
@@ -51,3 +52,14 @@ export const filesUpload = createAction(FormActionTypes.FILES_UPLOAD)<void>();
 export const filesUploaded = createAction(
   FormActionTypes.FILES_UPLOADED
 )<void>();
+
+export const addFileToDeleteQueue = createAction(
+  FormActionTypes.FILE_ADD_TO_DELETE_QUEUE
+)<CogniteExternalId>();
+export const excludeFileFromDeleteQueue = createAction(
+  FormActionTypes.FILE_EXCLUDE_FROM_DELETE_QUEUE
+)<CogniteExternalId>();
+export const excludeFileFromBoard = createAction(
+  FormActionTypes.FILE_EXCLUDE_FROM_BOARD
+)<CogniteExternalId>();
+export const filesDeleted = createAction(FormActionTypes.FILES_DELETED)<void>();

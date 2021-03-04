@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { A, Button, Icon, Input, Micro, Tooltip } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { suiteState, boardState } from 'store/forms/selectors';
-import { deleteBoard } from 'store/forms/actions';
+import { deleteBoard, addFileToDeleteQueue } from 'store/forms/actions';
 import { setBoardState } from 'store/forms/thunks';
 import {
   FormContainer,
@@ -70,16 +70,19 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
     }));
   };
 
-  const deleteBoardFromList = (event: React.MouseEvent, boardKey: string) => {
+  const deleteBoardFromList = (event: React.MouseEvent, boardItem: Board) => {
     event.stopPropagation();
     metrics.track('DeleteBoard', {
-      boardKey,
-      board: board.title,
+      boardKey: boardItem.key,
+      board: boardItem.title,
       suiteKey: suite.key,
       suite: suite.title,
       component: 'BoardForm',
     });
-    dispatch(deleteBoard(boardKey));
+    if (boardItem?.imageFileId) {
+      dispatch(addFileToDeleteQueue(boardItem.imageFileId));
+    }
+    dispatch(deleteBoard(boardItem.key));
   };
 
   const openBoard = (boardItem: Board) => {
@@ -162,9 +165,7 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
                   </Tooltip>
                   <Button
                     unstyled
-                    onClick={(event) =>
-                      deleteBoardFromList(event, boardItem.key)
-                    }
+                    onClick={(event) => deleteBoardFromList(event, boardItem)}
                     icon="Trash"
                   />
                 </AddedBoardItem>

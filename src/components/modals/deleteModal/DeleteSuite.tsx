@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { RootDispatcher } from 'store/types';
-import { deleteSuite } from 'store/suites/thunks';
+import { deleteSuite, deleteFiles } from 'store/suites/thunks';
 import { modalClose } from 'store/modals/actions';
 import { Button, Title } from '@cognite/cogs.js';
 import { ApiClientContext } from 'providers/ApiClientProvider';
@@ -33,6 +33,15 @@ const DeleteSuite: React.FC<Props> = ({ suite }: Props) => {
       suite: suite.title,
     });
     handleClose();
+
+    // delete boards image preview files
+    const imageFileIds = suite.boards
+      .filter((board) => !!board.imageFileId)
+      .map((board) => board.imageFileId);
+    if (imageFileIds.length) {
+      dispatch(deleteFiles(client, imageFileIds));
+    }
+
     await dispatch(deleteSuite(client, apiClient, [{ key: suite.key }]));
     history.push('/');
   };
