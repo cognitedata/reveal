@@ -1,4 +1,4 @@
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Menu, Body } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 
@@ -261,4 +261,21 @@ export const ChartTitle = styled.h1`
   &:hover > span {
     visibility: visible;
   }
+`;
+
+export const SharingMenu = styled(Menu)`
+  min-width: 500px;
+`;
+
+export const SharingSwitchContainer = styled.div`
+  margin: 16px 0 0 -8px;
+`;
+
+export const SharingMenuContent = styled.div`
+  margin: 16px;
+`;
+
+export const SharingMenuBody = styled(Body)`
+  margin: 8px 0 0;
+  height: 40px;
 `;

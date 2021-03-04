@@ -220,3 +220,41 @@ export const deleteChart = (chart: Chart): AppThunk => async (
     toast.error('Failed to delete chart');
   }
 };
+
+export const toggleChartAccess = (chart: Chart): AppThunk => async (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  if (!tenant || !user) {
+    // Must have tenant set
+    return;
+  }
+
+  try {
+    const updatedChart = {
+      ...chart,
+      public: chart.public !== undefined ? !chart.public : true,
+    } as Chart;
+
+    dispatch(
+      chartsSlice.actions.updateChart({
+        id: chart.id,
+        changes: updatedChart,
+      })
+    );
+    // Create the workflow
+    const chartService = new ChartService(tenant, user);
+    await chartService.saveChart(updatedChart);
+    toast.success(
+      `Chart set to ${updatedChart.public ? 'public' : 'private'}!`
+    );
+  } catch (e) {
+    toast.error(
+      `Failed to set chart to ${chart.public ? 'private' : 'public'}`
+    );
+  }
+};
