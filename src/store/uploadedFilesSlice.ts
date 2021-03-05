@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 
 type State = {
@@ -30,3 +30,14 @@ const uploadedFilesSlice = createSlice({
 export const { setUploadedFiles, addUploadedFile } = uploadedFilesSlice.actions;
 
 export default uploadedFilesSlice.reducer;
+
+export const uploadedFiles = (state: State): Array<v3.FileInfo> =>
+  state.uploadedFiles;
+
+export const selectFileById = createSelector(
+  (_: State, fileId: string) => fileId,
+  uploadedFiles,
+  (fileId, files) => {
+    return files.find((f) => f.id === parseInt(fileId, 10))!;
+  }
+);

@@ -47,7 +47,7 @@ export const detectAnnotations = createAsyncThunk<
 );
 
 // for passed fileId create job and setup polling on it
-const postAnnotationJob = createAsyncThunk<
+export const postAnnotationJob = createAsyncThunk<
   AnnotationJob,
   { modelType: DetectionModelType; fileId: number },
   ThunkConfig

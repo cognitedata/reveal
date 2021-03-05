@@ -1,11 +1,32 @@
-import { DetectionModelType, Annotation } from 'src/api/types';
+import { Annotation, DetectionModelType } from 'src/api/types';
 
-export type AnnotationStatus = 'verified' | 'deleted' | 'unhandled';
+export enum AnnotationStatus {
+  Verified = 'verified',
+  Deleted = 'deleted',
+  Unhandled = 'unhandled',
+}
 
-export interface CogniteAnnotation extends Omit<Annotation, 'shape'> {
-  id: string;
+export type DrawFunction = (
+  canvas: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+) => void;
+
+export type AnnotationStyle = {
+  backgroundColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  highlight?: boolean;
+  draw?: DrawFunction;
+};
+
+export interface VisionAnnotation extends Omit<Annotation, 'shape'> {
+  displayId: number;
   label: string;
   type: string;
+  color: string;
   box: {
     xMax: number;
     xMin: number;
@@ -15,24 +36,85 @@ export interface CogniteAnnotation extends Omit<Annotation, 'shape'> {
   source: string;
   status: AnnotationStatus;
   version: number;
-  mark?: {
-    backgroundColor?: string;
-    strokeColor?: string;
-    strokeWidth?: number;
-    highlight?: boolean;
-  };
 }
 
+export const ModelTypeColorMap = {
+  [DetectionModelType.Text]: '#C945DB',
+  [DetectionModelType.Tag]: '#FF6918',
+  [DetectionModelType.GDPR]: 'yellow',
+};
+
 export class AnnotationUtils {
-  public static annotationColor = '#C945DB';
+  public static lineWidth = 5;
+
+  public static getModelId(fileId: string, modelType: number): string {
+    return `${modelType}-${fileId}`;
+  }
+
+  public static getAnnotationColor(modelType: DetectionModelType): string {
+    return ModelTypeColorMap[modelType];
+  }
+
+  public static generateAnnotationId(
+    fileId: string,
+    modelType: number,
+    index: number
+  ): string {
+    return `${index}-${AnnotationUtils.getModelId(fileId, modelType)}`;
+  }
+
+  public static getAnnotationStyle(
+    color: string,
+    status?: AnnotationStatus
+  ): AnnotationStyle {
+    const lineColor = color;
+    const { lineWidth } = AnnotationUtils;
+
+    if (status && status === AnnotationStatus.Verified) {
+      return {
+        strokeColor: lineColor,
+        strokeWidth: lineWidth,
+        highlight: false,
+      };
+    }
+
+    const drawDashedRectangle = (
+      canvas: CanvasRenderingContext2D,
+      x: number,
+      y: number,
+      width: number,
+      height: number
+    ) => {
+      canvas.beginPath();
+      /* eslint-disable no-param-reassign */
+      canvas.strokeStyle = lineColor;
+      canvas.lineWidth = lineWidth;
+      /* eslint-enable no-param-reassign */
+      canvas.setLineDash([5, 5]);
+      canvas.moveTo(x, y);
+      canvas.rect(
+        x - lineWidth / 2,
+        y - lineWidth / 2,
+        width + lineWidth,
+        height + lineWidth
+      );
+      canvas.stroke();
+    };
+
+    return {
+      draw: drawDashedRectangle,
+    };
+  }
 
   public static convertToAnnotations(
+    fileId: string,
     annotations: Annotation[],
     modelType: DetectionModelType
-  ): CogniteAnnotation[] {
-    return annotations.map<CogniteAnnotation>((value, index) => {
+  ): VisionAnnotation[] {
+    return annotations.map<VisionAnnotation>((value, index) => {
       return {
-        id: `${modelType}-${index}`,
+        displayId: index,
+        color: AnnotationUtils.getAnnotationColor(modelType),
         label: String(index),
         type: value.shape.type,
         box: {
@@ -41,15 +123,12 @@ export class AnnotationUtils {
           xMax: value.shape.vertices[1].x,
           yMax: value.shape.vertices[1].y,
         },
-        ...value,
         source: 'ocr',
         version: 1,
-        status: 'verified',
-        mark: {
-          strokeColor: AnnotationUtils.annotationColor,
-          strokeWidth: 2,
-          highlight: false,
-        },
+        status: AnnotationStatus.Unhandled,
+        description: value.description,
+        confidence: value.confidence,
+        attributes: value.attributes,
       };
     });
   }

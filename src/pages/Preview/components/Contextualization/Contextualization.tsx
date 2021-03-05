@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Select, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/pages/Preview/components/AnnotationsTable/AnnotationsTable';
-import { CogniteAnnotation } from 'src/utils/AnnotationUtils';
+import { VisionAnnotationState } from 'src/store/previewSlice';
 
 const Container = styled.div``;
 
@@ -37,7 +37,7 @@ const StyledButton = styled(Button)`
 `;
 
 export const Contextualization = (props: {
-  annotations: CogniteAnnotation[];
+  annotations: VisionAnnotationState[];
 }) => {
   return (
     <Container>

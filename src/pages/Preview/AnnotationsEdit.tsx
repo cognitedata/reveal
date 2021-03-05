@@ -9,9 +9,12 @@ import { FileDetailsComp } from 'src/pages/Preview/components/FileDetails/FileDe
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import {
+  selectNonRejectedAnnotations,
+  selectVisibleAnnotationsByFileId,
+} from 'src/store/previewSlice';
+import { selectFileById } from 'src/store/uploadedFilesSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
-import { AnnotationJob, AnnotationJobCompleted } from 'src/api/types';
 
 const Container = styled.div`
   width: 100%;
@@ -58,33 +61,17 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
   const history = useHistory();
   const { fileId } = props.match.params;
 
-  const file = useSelector((state: RootState) => {
-    // yeah I know repeating doesn't look good, perhaps it worth merging of these processSlice and uploadedFilesSlice
-    return state.uploadedFiles.uploadedFiles.find(
-      (f) => f.id === parseInt(fileId, 10)
-    );
-  });
+  const file = useSelector(({ uploadedFiles }: RootState) =>
+    selectFileById(uploadedFiles, fileId)
+  );
 
-  const annotations = useSelector(({ processSlice }: RootState) => {
-    const jobs = processSlice.jobsByFileId[fileId] as Array<
-      AnnotationJobCompleted & AnnotationJob
-    >;
+  const nonRejectedAnnotations = useSelector(({ previewSlice }: RootState) =>
+    selectNonRejectedAnnotations(previewSlice, fileId)
+  );
 
-    if (jobs) {
-      return jobs
-        .map((job) =>
-          AnnotationUtils.convertToAnnotations(
-            job.items[0].annotations,
-            job.type
-          )
-        )
-        .reduce(
-          (acc, annotationsFromOneJob) => acc.concat(annotationsFromOneJob),
-          []
-        );
-    }
-    return [];
-  });
+  const visibleAnnotations = useSelector(({ previewSlice }: RootState) =>
+    selectVisibleAnnotationsByFileId(previewSlice, fileId)
+  );
 
   if (!file) {
     // navigate to upload step if file is not available(if the user uses a direct link)
@@ -118,7 +105,9 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
         <AnnotationContainer>
           <FilePreviewMetadataContainer>
             <div>
-              {file && <FilePreview fileObj={file} annotations={annotations} />}
+              {file && (
+                <FilePreview fileObj={file} annotations={visibleAnnotations} />
+              )}
             </div>
             <TabsContainer className="z-8">
               <Tabs
@@ -127,7 +116,7 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
                 style={{ fontSize: 14, fontWeight: 600, lineHeight: '20px' }}
               >
                 <Tabs.Pane title="Contextualization" key="context">
-                  <Contextualization annotations={annotations} />
+                  <Contextualization annotations={nonRejectedAnnotations} />
                 </Tabs.Pane>
                 <Tabs.Pane title="File Details" key="file-detail">
                   <div>{file && <FileDetailsComp fileObj={file} />}</div>

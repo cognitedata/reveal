@@ -1,9 +1,10 @@
 import React from 'react';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { CogniteAnnotation } from 'src/utils/AnnotationUtils';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { VisionAnnotationState } from 'src/store/previewSlice';
+import { AnnotationStyle, AnnotationUtils } from 'src/utils/AnnotationUtils';
 
 const LoaderContainer = styled.div`
   width: 100%;
@@ -15,8 +16,12 @@ const LoaderContainer = styled.div`
 
 type FilePreviewProps = {
   fileObj: FileInfo;
-  annotations: CogniteAnnotation[];
+  annotations: VisionAnnotationState[];
 };
+
+export interface StyledVisionAnnotation extends VisionAnnotationState {
+  mark: AnnotationStyle;
+}
 
 const LoaderView = () => {
   return (
@@ -30,6 +35,12 @@ export const FilePreview: React.FC<FilePreviewProps> = ({
   fileObj,
   annotations,
 }: FilePreviewProps) => {
+  const styledAnnotations: StyledVisionAnnotation[] = annotations.map(
+    (item) => ({
+      ...item,
+      mark: AnnotationUtils.getAnnotationStyle(item.color, item.status),
+    })
+  );
   return (
     <CogniteFileViewer
       sdk={sdk}
@@ -37,7 +48,7 @@ export const FilePreview: React.FC<FilePreviewProps> = ({
       disableAutoFetch
       hideDownload
       hideSearch
-      annotations={annotations}
+      annotations={styledAnnotations}
       allowCustomAnnotations
       loader={<LoaderView />}
     />

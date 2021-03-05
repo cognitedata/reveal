@@ -1,8 +1,22 @@
-import { Button, Col, Input, Radio, Row } from '@cognite/cogs.js';
+import {
+  Button,
+  Col,
+  Dropdown,
+  Input,
+  Menu,
+  Radio,
+  Row,
+} from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 import { Divider } from '@cognite/data-exploration';
-import { AnnotationUtils, CogniteAnnotation } from 'src/utils/AnnotationUtils';
+import { useDispatch } from 'react-redux';
+import {
+  annotationApproval,
+  toggleAnnotationVisibility,
+  VisionAnnotationState,
+} from 'src/store/previewSlice';
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 const Container = styled.div`
   width: 100%;
@@ -49,10 +63,69 @@ const AnnotationBadge = styled.div<BadgeProps>`
   justify-content: center;
 `;
 
-export const AnnotationsTable = (props: {
-  annotations: CogniteAnnotation[];
+const MenuContent = (
+  <Menu>
+    <Menu.Header>Component menu</Menu.Header>
+    <Menu.Item>Option 1</Menu.Item>
+    <Menu.Item appendIcon="ThreeD">
+      <span>Option 2</span>
+    </Menu.Item>
+
+    <Menu.Item>Option 3</Menu.Item>
+    <Menu.Divider />
+  </Menu>
+);
+
+const ApproveButtons = (props: {
+  id: string;
+  approveStatus: AnnotationStatus;
 }) => {
-  const { annotationColor } = AnnotationUtils;
+  const dispatch = useDispatch();
+
+  if (props.approveStatus === AnnotationStatus.Unhandled) {
+    return (
+      <>
+        <AcceptBtn
+          type="primary"
+          icon="Check"
+          onClick={() => {
+            dispatch(
+              annotationApproval({
+                annotationId: props.id,
+                status: AnnotationStatus.Verified,
+              })
+            );
+          }}
+        />
+        <RejectBtn
+          type="primary"
+          icon="Close"
+          onClick={() => {
+            dispatch(
+              annotationApproval({
+                annotationId: props.id,
+                status: AnnotationStatus.Deleted,
+              })
+            );
+          }}
+        />
+      </>
+    );
+  }
+  if (props.approveStatus === AnnotationStatus.Verified) {
+    return (
+      <Dropdown content={MenuContent}>
+        <Button icon="MoreOverflowEllipsisHorizontal" iconPlacement="left" />
+      </Dropdown>
+    );
+  }
+  return null;
+};
+
+export const AnnotationsTable = (props: {
+  annotations: VisionAnnotationState[];
+}) => {
+  const dispatch = useDispatch();
   return (
     <Container>
       <StyledRow>
@@ -69,8 +142,10 @@ export const AnnotationsTable = (props: {
               <Radio id="example7" name="example" value="Option 1" />
             </StyledCol>
             <StyledCol span={5}>
-              <AcceptBtn type="primary" icon="Check" />
-              <RejectBtn type="primary" icon="Close" />
+              <ApproveButtons
+                approveStatus={annotation.status}
+                id={annotation.id}
+              />
             </StyledCol>
             <StyledCol span={12}>
               <AnnotationLbl>
@@ -85,11 +160,16 @@ export const AnnotationsTable = (props: {
               <ShowHideBtn
                 type="secondary"
                 variant="outline"
-                icon="EyeShow"
+                icon={annotation.show ? 'EyeShow' : 'EyeHide'}
                 iconPlacement="right"
+                onClick={() =>
+                  dispatch(
+                    toggleAnnotationVisibility({ annotationId: annotation.id })
+                  )
+                }
               >
-                <AnnotationBadge backgroundColor={annotationColor}>
-                  {annotation.id}
+                <AnnotationBadge backgroundColor={annotation.color}>
+                  {annotation.displayId}
                 </AnnotationBadge>
               </ShowHideBtn>
             </StyledCol>
