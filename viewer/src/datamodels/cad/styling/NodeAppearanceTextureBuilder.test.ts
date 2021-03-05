@@ -72,27 +72,6 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 3)]);
   });
 
-  test('build() applies transform', () => {
-    // Arrange
-    builder.build();
-    const originalLookupTexels = texelsOf(builder.overrideTransformPerTreeIndexTexture);
-    const originalTransformLookupTexels = texelsOf(builder.transformsLookupTexture);
-
-    // Act
-    const transform = new THREE.Matrix4().setPosition(10, 11, 12);
-    styleProvider.addStyledSet(nodeSet, { worldTransform: transform });
-    builder.build();
-
-    // Assert
-    const lookupTexels = texelsOf(builder.overrideTransformPerTreeIndexTexture);
-    expect(lookupTexels.length).toEqual(3);
-    expect(lookupTexels).not.toEqual(originalLookupTexels);
-
-    const transformTexels = texelsOf(builder.transformsLookupTexture);
-    expect(transformTexels.length).toBeGreaterThan(0);
-    expect(transformTexels).not.toEqual(originalTransformLookupTexels);
-  });
-
   test('build() adds new ghosted indices to correct set', () => {
     builder.build();
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
@@ -217,6 +196,6 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 });
 
-function texelsOf(texture: THREE.DataTexture): number[] {
+function texelsOf(texture: THREE.DataTexture): number[] | undefined {
   return Array.from(texture.image.data);
 }
