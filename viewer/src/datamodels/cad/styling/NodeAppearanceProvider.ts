@@ -11,9 +11,9 @@ import { NodeSet } from './NodeSet';
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
  * @param styleId     Unique identifier of style being applied to distinguish/identify sets
- *                    between multiple calls.
+ * between multiple calls.
  * @param revision    Running number that is incremented whenever the styled set changes.
- *                    Can be used to identify if a set has been changed.
+ * Can be used to identify if a set has been changed.
  * @param treeIndices Set of tree indices that the style is applied to.
  * @param appearance  Style to be applied to the nodes.
  */
