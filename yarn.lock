@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@azure/msal-browser@^2.11.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.12.0.tgz#c1fb66c08bd28a34ca5bda2677db50ffde789cc0"
+  integrity sha512-yBbP/1W3bMTvRIZ7QAKiS3Euz+8NpRQ0rpqvbkT/UPu6uoCKOkHpIjYpRYa67O5wMavwjHobW7fESqVw6tDGkg==
+  dependencies:
+    "@azure/msal-common" "^4.0.2"
+
 "@azure/msal-browser@^2.8.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.8.0.tgz#16e310e430b57768eba5b14289c7e16975a4dd7d"
@@ -13,6 +20,13 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-2.0.0.tgz#70a0574f63ba302a1e4269593d4ceafd14436569"
   integrity sha512-d1RNcJb+P1EGzMHtgbZoVlHLQWjlVfr504jywNk9YEfoq8Hw3BxJ0wepu+1w0hc64D8zG0wljcvHaIH1jTn2SA==
+  dependencies:
+    debug "^4.1.1"
+
+"@azure/msal-common@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.0.2.tgz#6489d66929ba71fb30e03f559f2e9ee792088827"
+  integrity sha512-Z6FiDV+uWUZ4jcchRciKYYYKRWOc0sh/UaF5evfx7lXEp/8+KxO7cY1efgD7VOK75FkpRI5YyUzZAdX7I7sTAg==
   dependencies:
     debug "^4.1.1"
 
@@ -1438,23 +1452,24 @@
     react-query "^3.7.1"
     styled-components "^5.1.0"
 
-"@cognite/sdk-core@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.4.tgz#f1a1cb8b677ddffa5d409d91f0ed64acff623426"
-  integrity sha512-WcCauuBr/K4yz/eO66QwXnw/iC8PCHxlmBZMNY95sJUhfZosK80jhBGKZew8vvT0VKNB7TPZ/3eUsqSpE0BmaQ==
+"@cognite/sdk-core@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.1.0.tgz#5b18d57c042280feb70d861566f2ec5fbff5a80c"
+  integrity sha512-+C5s9ASW8g2uKG9xFIWiR6K98X6+FPk0wAfNYX5AVmjT6DiXQx3txCq0hzhAgG8TIYhaaLDFRWQ1oUxZScq/Sg==
   dependencies:
+    "@azure/msal-browser" "^2.11.0"
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.2":
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.2.tgz#757421933531ff42202f7ac8dc5af579a8347065"
-  integrity sha512-6jrHQR0PrABfX28TctF8V4Ns7lsJGTfKX0wHvJ9vwTwh1nq7lLcr9GsleSY1xvTEuDi4Oaupjyn7/53m64O2Ew==
+"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.5":
+  version "3.3.5"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.5.tgz#4b2ddd6ea34771a918b306f9971783b7a12db99c"
+  integrity sha512-GWG1BRmubeqFKKOmjfL7TgHO9j8npnvQ5YsjSSliUOaux/IWX3gOTjeQu+v/2pRuneljKnGouN7u4TuPfaH4LA==
   dependencies:
-    "@cognite/sdk-core" "^1.0.4"
+    "@cognite/sdk-core" "^1.1.0"
     lodash "^4.17.11"
 
 "@csstools/convert-colors@^1.4.0":
