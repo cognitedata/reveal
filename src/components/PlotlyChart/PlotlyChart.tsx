@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import useSelector from 'hooks/useSelector';
 import { Chart } from 'reducers/charts';
 import client from 'services/CogniteSDK';
 import {
@@ -93,11 +92,9 @@ const PlotlyChartComponent = ({
     performQuery();
   }, [chart?.timeSeriesCollection, chart?.dateFrom, chart?.dateTo]);
 
-  const enabledWorkflows = useSelector((state) =>
-    chart?.workflowCollection
-      ?.filter((flow) => flow?.enabled)
-      .map(({ id }) => state.workflows.entities[id])
-  )?.filter(Boolean);
+  const enabledWorkflows = chart?.workflowCollection?.filter(
+    (flow) => flow?.enabled
+  );
 
   const seriesData: SeriesData[] =
     [
@@ -136,23 +133,11 @@ const PlotlyChartComponent = ({
         .map((workflow) => ({
           id: workflow?.id,
           type: 'workflow',
-          range: chart?.workflowCollection?.find(
-            (chartWorkflow) => workflow?.id === chartWorkflow.id
-          )?.range,
-          name: chart?.workflowCollection?.find(
-            (chartWorkflow) => workflow?.id === chartWorkflow.id
-          )?.name,
-          color: chart?.workflowCollection?.find(
-            (chartWorkflow) => workflow?.id === chartWorkflow.id
-          )?.color,
-          width: chart?.workflowCollection?.find(
-            (chartWorkflow) => workflow?.id === chartWorkflow.id
-          )?.lineWeight,
-          dash: convertLineStyle(
-            chart?.workflowCollection?.find(
-              (chartWorkflow) => workflow?.id === chartWorkflow.id
-            )?.lineStyle
-          ),
+          range: workflow.range,
+          name: workflow.name,
+          color: workflow.color,
+          width: workflow.lineWeight,
+          dash: convertLineStyle(workflow.lineStyle),
           unit: workflow?.latestRun?.results?.datapoints.unit,
           datapoints: workflow?.latestRun?.results?.datapoints.datapoints as (
             | StringDatapoint

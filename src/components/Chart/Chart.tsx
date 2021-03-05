@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import useSelector from 'hooks/useSelector';
 import { Chart } from 'reducers/charts';
 import client from 'services/CogniteSDK';
 import {
@@ -97,11 +96,9 @@ const ChartComponent = ({ chart }: ChartProps) => {
     performQuery();
   }, [chart?.timeSeriesCollection, chart?.dateFrom, chart?.dateTo]);
 
-  const enabledWorkflows = useSelector((state) =>
-    chart?.workflowCollection
-      ?.filter((flow) => flow?.enabled)
-      .map(({ id }) => state.workflows.entities[id])
-  )?.filter(Boolean);
+  const enabledWorkflows = chart?.workflowCollection?.filter(
+    (flow) => flow?.enabled
+  );
 
   const seriesData =
     [
@@ -127,13 +124,9 @@ const ChartComponent = ({ chart }: ChartProps) => {
       ...(enabledWorkflows || [])
         .filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
         .map((workflow) => ({
-          id: workflow?.id,
-          name: chart?.workflowCollection?.find(
-            (chartWorkflow) => workflow?.id === chartWorkflow.id
-          )?.name,
-          color: chart?.workflowCollection?.find(
-            (chartWorkflow) => workflow?.id === chartWorkflow.id
-          )?.color,
+          id: workflow.id,
+          name: workflow.name,
+          color: workflow.color,
           unit: workflow?.latestRun?.results?.datapoints.unit,
           datapoints: workflow?.latestRun?.results?.datapoints.datapoints as (
             | Datapoints

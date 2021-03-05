@@ -9,17 +9,17 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
-import chartsSlice, { chartSelectors, ChartTimeSeries } from 'reducers/charts';
+import chartsSlice, {
+  chartSelectors,
+  ChartTimeSeries,
+  ChartWorkflow,
+  LatestWorkflowRun,
+  WorkflowRunStatus,
+} from 'reducers/charts';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import useDispatch from 'hooks/useDispatch';
-import {
-  fetchWorkflowsForChart,
-  createNewWorkflow,
-  deleteWorkflow,
-  createWorkflowFromTimeSeries,
-} from 'reducers/workflows/api';
 import useEnsureData from 'hooks/useEnsureData';
 import searchSlice from 'reducers/search';
 import {
@@ -27,12 +27,9 @@ import {
   saveExistingChart,
   duplicateChart,
   toggleChartAccess,
+  addWorkflowToChart,
+  createWorkflowFromTimeSeries,
 } from 'reducers/charts/api';
-import workflowSlice, {
-  LatestWorkflowRun,
-  Workflow,
-  WorkflowRunStatus,
-} from 'reducers/workflows';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
@@ -41,7 +38,7 @@ import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
-import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
+import { CogniteFunction } from 'reducers/charts/Nodes/DSPToolboxFunction';
 import sdk from 'services/CogniteSDK';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { AxisUpdate } from 'components/PlotlyChart';
@@ -91,6 +88,8 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     (state) => state.charts.newlyCreatedChart
   );
 
+  const workflows = chart?.workflowCollection || [];
+
   const [showSearch, setShowSearch] = useState(false);
 
   const [workflowsRan, setWorkflowsRan] = useState(false);
@@ -103,10 +102,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     timeSeriesId?: string;
     reportType?: string;
   }>({});
-
-  const workflows = useSelector((state) =>
-    chart?.workflowCollection?.map(({ id }) => state.workflows.entities[id])
-  )?.filter(Boolean) as Workflow[];
 
   const error = useSelector((state) => state.charts.status.error);
 
@@ -166,19 +161,18 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       }
 
       dispatch(
-        workflowSlice.actions.updateWorkflow({
-          id: flow.id,
-          changes: {
-            latestRun: {
-              timestamp: Date.now(),
-              status: 'RUNNING',
-              nodeProgress: flow.nodes.reduce((output, node) => {
-                return {
-                  ...output,
-                  [node.id]: { status: 'RUNNING' },
-                };
-              }, {}),
-            },
+        chartsSlice.actions.updateWorkflowLatestRun({
+          chartId: chart.id,
+          workflowId: flow.id,
+          latestRun: {
+            timestamp: Date.now(),
+            status: 'RUNNING',
+            nodeProgress: flow.nodes?.reduce((output, node) => {
+              return {
+                ...output,
+                [node.id]: { status: 'RUNNING' },
+              };
+            }, {}),
           },
         })
       );
@@ -214,19 +208,18 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
         functionResult.data?.response?.error
       ) {
         dispatch(
-          workflowSlice.actions.updateWorkflow({
-            id: flow.id,
-            changes: {
-              latestRun: {
-                timestamp: Date.now(),
-                status: 'FAILED',
-                nodeProgress: flow.nodes.reduce((output, node) => {
-                  return {
-                    ...output,
-                    [node.id]: { status: 'FAILED' },
-                  };
-                }, {}),
-              },
+          chartsSlice.actions.updateWorkflowLatestRun({
+            chartId: chart.id,
+            workflowId: flow.id,
+            latestRun: {
+              timestamp: Date.now(),
+              status: 'FAILED',
+              nodeProgress: flow.nodes?.reduce((output, node) => {
+                return {
+                  ...output,
+                  [node.id]: { status: 'FAILED' },
+                };
+              }, {}),
             },
           })
         );
@@ -249,7 +242,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
             ),
           },
         },
-        nodeProgress: flow.nodes.reduce((output, node) => {
+        nodeProgress: flow.nodes?.reduce((output, node) => {
           return {
             ...output,
             [node.id]: { status: 'DONE' },
@@ -258,23 +251,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       };
 
       dispatch(
-        workflowSlice.actions.updateWorkflow({
-          id: flow.id,
-          changes: {
-            latestRun,
-          },
+        chartsSlice.actions.updateWorkflowLatestRun({
+          chartId: chart.id,
+          workflowId: flow.id,
+          latestRun,
         })
       );
     });
   };
-
-  useEffect(() => {
-    if (chart?.workflowCollection) {
-      dispatch(
-        fetchWorkflowsForChart(chart?.workflowCollection.map(({ id }) => id))
-      );
-    }
-  }, [chart?.id]);
 
   useEffect(() => {
     if (chart) {
@@ -304,7 +288,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
 
   const handleClickNewWorkflow = () => {
     if (chart) {
-      dispatch(createNewWorkflow(chart));
+      dispatch(addWorkflowToChart(chart.id));
     }
   };
 
@@ -448,9 +432,14 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     return <Icon type="Loading" />;
   }
 
-  const onDeleteWorkflow = (workflow: Workflow) => {
+  const onDeleteWorkflow = (workflow: ChartWorkflow) => {
     if (chart) {
-      dispatch(deleteWorkflow(chart, workflow));
+      dispatch(
+        chartsSlice.actions.removeWorkflow({
+          id: chart.id,
+          workflowId: workflow.id,
+        })
+      );
     }
   };
 

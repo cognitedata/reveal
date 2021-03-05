@@ -1,5 +1,10 @@
 import { getNodeOutput, NodeProgress, Node } from '@cognite/connect';
-import { LatestWorkflowRun, NodeOption, StorableNode, Workflow } from './types';
+import {
+  ChartWorkflow,
+  LatestWorkflowRun,
+  StorableNode,
+} from 'reducers/charts';
+import { NodeOption } from './types';
 import nodeOptions from './Nodes';
 
 export const convertStoredNodeToNode = (
@@ -20,13 +25,13 @@ export const convertStoredNodeToNode = (
 };
 
 export const runWorkflow = async (
-  workflow: Workflow,
+  workflow: ChartWorkflow,
   onProgressUpdate: (nextProgress: Partial<NodeProgress>) => void,
   context: { [key: string]: any }
 ): Promise<LatestWorkflowRun> => {
   // In order to run our stored workflow, we need to go into each node
   // and replace its `functionEffectType` with its actual `functionEffect`.
-  const runnableNodes = workflow.nodes.map((node) =>
+  const runnableNodes = workflow.nodes?.map((node) =>
     convertStoredNodeToNode(
       { ...node, functionData: { ...node.functionData, context, node } },
       nodeOptions
@@ -34,7 +39,7 @@ export const runWorkflow = async (
   );
   // Right now we support a single output node.
   // In the future we could update this to support more
-  const outputNode = runnableNodes.find(
+  const outputNode = runnableNodes?.find(
     (node) => !node.outputPins || node.outputPins.length === 0
   );
   if (!outputNode) {
@@ -48,7 +53,7 @@ export const runWorkflow = async (
   try {
     const workflowResult = await getNodeOutput(
       outputNode,
-      runnableNodes.reduce((acc, a) => ({ ...acc, [a.id]: a }), {}),
+      runnableNodes?.reduce((acc, a) => ({ ...acc, [a.id]: a }), {}),
       workflow.connections,
       onProgressUpdate
     );

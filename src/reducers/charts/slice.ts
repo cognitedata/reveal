@@ -5,12 +5,19 @@ import {
   createEntityAdapter,
   Update,
 } from '@reduxjs/toolkit';
+import { Connection } from '@cognite/connect';
 import { AxisUpdate } from 'components/PlotlyChart';
 import { RootState } from 'reducers';
 import { LoadingStatus } from 'reducers/types';
 import { ValueOf } from 'typings/utils';
 import { getEntryColor } from 'utils/colors';
-import { Chart, ChartTimeSeries } from './types';
+import {
+  Chart,
+  ChartTimeSeries,
+  ChartWorkflow,
+  LatestWorkflowRun,
+  StorableNode,
+} from './types';
 
 const chartAdapter = createEntityAdapter<Chart>({
   selectId: (chart) => chart.id,
@@ -122,6 +129,36 @@ const chartsSlice = createSlice({
             } as ChartTimeSeries,
             ...(chart?.timeSeriesCollection || []),
           ],
+        },
+      });
+    },
+
+    addWorkflow: (
+      state,
+      action: PayloadAction<{ id: string; workflow: ChartWorkflow }>
+    ) => {
+      const { id, workflow } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          workflowCollection: [workflow, ...(chart?.workflowCollection || [])],
+        },
+      });
+    },
+
+    removeWorkflow: (
+      state,
+      action: PayloadAction<{ id: string; workflowId: string }>
+    ) => {
+      const { id, workflowId } = action.payload;
+      const chart = state.entities[id];
+      chartAdapter.updateOne(state, {
+        id,
+        changes: {
+          workflowCollection: (chart?.workflowCollection || []).filter(
+            (workflow) => workflow.id !== workflowId
+          ),
         },
       });
     },
@@ -452,6 +489,111 @@ const chartsSlice = createSlice({
     },
     clearNewlyCreatedChart: (state) => {
       state.newlyCreatedChart = null;
+    },
+
+    // Editing workflow nodes
+    updateWorkflowNodes: (
+      state,
+      action: PayloadAction<{
+        chartId: string;
+        workflowId: string;
+        nodes: StorableNode[];
+      }>
+    ) => {
+      const { chartId, workflowId, nodes } = action.payload;
+      const chart = state.entities[chartId];
+      chartAdapter.updateOne(state, {
+        id: chartId,
+        changes: {
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            return {
+              ...workflow,
+              nodes: workflow.id === workflowId ? nodes : workflow.nodes,
+            };
+          }),
+        },
+      });
+    },
+
+    updateWorkflowConnections: (
+      state,
+      action: PayloadAction<{
+        chartId: string;
+        workflowId: string;
+        connections: Record<string, Connection>;
+      }>
+    ) => {
+      const { chartId, workflowId, connections } = action.payload;
+      const chart = state.entities[chartId];
+      chartAdapter.updateOne(state, {
+        id: chartId,
+        changes: {
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            return {
+              ...workflow,
+              connections:
+                workflow.id === workflowId ? connections : workflow.connections,
+            };
+          }),
+        },
+      });
+    },
+
+    updateWorkflowLatestRun: (
+      state,
+      action: PayloadAction<{
+        chartId: string;
+        workflowId: string;
+        latestRun: LatestWorkflowRun;
+      }>
+    ) => {
+      const { chartId, workflowId, latestRun } = action.payload;
+      const chart = state.entities[chartId];
+      chartAdapter.updateOne(state, {
+        id: chartId,
+        changes: {
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            return {
+              ...workflow,
+              latestRun:
+                workflow.id === workflowId ? latestRun : workflow.latestRun,
+            };
+          }),
+        },
+      });
+    },
+
+    updateWorkflowNode: (
+      state,
+      action: PayloadAction<{
+        chartId: string;
+        workflowId: string;
+        nodeUpdate: Update<StorableNode>;
+      }>
+    ) => {
+      const { chartId, workflowId, nodeUpdate } = action.payload;
+      const chart = state.entities[chartId];
+      chartAdapter.updateOne(state, {
+        id: chartId,
+        changes: {
+          workflowCollection: chart?.workflowCollection?.map((workflow) => {
+            return workflowId === workflow.id
+              ? {
+                  ...workflow,
+                  nodes: workflow.nodes?.map((node) => {
+                    if (node.id === nodeUpdate.id) {
+                      return {
+                        ...node,
+                        ...nodeUpdate.changes,
+                      };
+                    }
+                    return node;
+                  }),
+                }
+              : workflow;
+          }),
+        },
+      });
     },
   },
 });

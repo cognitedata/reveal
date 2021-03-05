@@ -5,8 +5,11 @@ import { nanoid } from '@reduxjs/toolkit';
 import { selectTenant, selectUser } from 'reducers/environment';
 import ChartService from 'services/ChartService';
 import { AppThunk } from 'store';
+import { getEntryColor } from 'utils/colors';
 import chartsSlice, { chartSelectors } from './slice';
-import { Chart } from './types';
+import { Chart, ChartWorkflow } from './types';
+import { node as TimeSeriesReferenceNode } from './Nodes/TimeSeriesReference';
+import { node as OutputSeriesNode } from './Nodes/OutputSeries';
 
 export const fetchAllCharts = (): AppThunk => async (dispatch, getState) => {
   const state = getState();
@@ -218,6 +221,119 @@ export const deleteChart = (chart: Chart): AppThunk => async (
     toast.success('Chart deleted!');
   } catch (e) {
     toast.error('Failed to delete chart');
+  }
+};
+
+export const addWorkflowToChart = (id: string): AppThunk => async (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  if (!tenant || !user) {
+    // Must have tenant set
+    return;
+  }
+
+  const workflow: ChartWorkflow = {
+    id: nanoid(),
+    name: 'New Calculation',
+    color: getEntryColor(),
+    lineWeight: 2,
+    lineStyle: 'solid',
+    enabled: true,
+    nodes: [],
+    connections: [],
+  };
+
+  try {
+    dispatch(chartsSlice.actions.addWorkflow({ id, workflow }));
+    const chart = chartSelectors.selectById(getState(), id);
+    const chartService = new ChartService(tenant);
+    await chartService.saveChart(chart!);
+    toast.success('Created new calculation!');
+  } catch (e) {
+    toast.error('Failed to add calculation');
+  }
+};
+
+export const createWorkflowFromTimeSeries = (
+  chart: Chart,
+  timeSeriesId: string
+): AppThunk => async (dispatch, getState) => {
+  const state = getState();
+  const tenant = selectTenant(state);
+  const { email: user } = selectUser(state);
+
+  if (!chart) {
+    return;
+  }
+
+  if (!tenant || !user) {
+    // Must have tenant set
+    return;
+  }
+
+  const chartTimeSeries = chart.timeSeriesCollection?.find(
+    ({ id }) => timeSeriesId === id
+  );
+
+  const workflowId = nanoid();
+  const inputNodeId = `${TimeSeriesReferenceNode.subtitle}-${nanoid()}`;
+  const outputNodeId = `${OutputSeriesNode.subtitle}-${nanoid()}`;
+  const connectionId = nanoid();
+
+  const workflow: ChartWorkflow = {
+    id: workflowId,
+    name: `${chartTimeSeries?.name} (workflow)`,
+    nodes: [
+      {
+        id: inputNodeId,
+        ...TimeSeriesReferenceNode,
+        title: chartTimeSeries?.name,
+        subtitle: `DATAPOINTS (${chartTimeSeries?.id})`,
+        functionData: {
+          timeSeriesExternalId: timeSeriesId,
+        },
+        x: 50,
+        y: 50,
+      },
+      {
+        id: outputNodeId,
+        ...OutputSeriesNode,
+        x: 800,
+        y: 70,
+      },
+    ],
+    connections: {
+      [connectionId]: {
+        id: connectionId,
+        inputPin: {
+          nodeId: outputNodeId,
+          pinId: OutputSeriesNode.inputPins[0].id,
+        },
+        outputPin: {
+          nodeId: inputNodeId,
+          pinId: TimeSeriesReferenceNode.outputPins[0].id,
+        },
+      },
+    },
+    color: getEntryColor(),
+    lineWeight: 2,
+    lineStyle: 'solid',
+    enabled: true,
+  };
+
+  try {
+    dispatch(chartsSlice.actions.addWorkflow({ id: chart.id, workflow }));
+    const updatedChart = chartSelectors.selectById(getState(), chart.id);
+    const chartService = new ChartService(tenant);
+    await chartService.saveChart(updatedChart!);
+    toast.success('Created new calculation!');
+  } catch (e) {
+    toast.error('Failed to create calculation');
   }
 };
 

@@ -1,7 +1,7 @@
 import { Button, Input } from '@cognite/cogs.js';
 import React, { useEffect, useState } from 'react';
-import { StorableNode } from 'reducers/workflows';
-import defaultNodeOptions from 'reducers/workflows/Nodes';
+import { StorableNode } from 'reducers/charts';
+import defaultNodeOptions from 'reducers/charts/Nodes';
 import styled from 'styled-components/macro';
 
 const ConfigPanelWrapper = styled.div`
