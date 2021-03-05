@@ -134,9 +134,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([127, 128, 192, 0]);
 
     set.updateSet(new IndexSet([]));
-    jest.runAllTimers();
     builder.build();
-    jest.runAllTimers();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1]);
   });
