@@ -4,20 +4,24 @@
 
 import React from 'react';
 
-import { TestViewer } from '../TestViewer';
+import { TestEnvCad, TestViewer } from '../TestViewer';
 import * as THREE from 'three';
+import { DefaultNodeAppearance, FixedNodeSet } from '@cognite/reveal';
 
 export function HighlightTestPage() {
   return (
     <TestViewer
-      modifyTestEnv={() => {
-        return {
-          camera: new THREE.PerspectiveCamera(),
-          cameraConfig: {
-            position: new THREE.Vector3(12, -4, -45),
-          },
-        };
-      }}
+    modifyTestEnv={({ model }: TestEnvCad) => {
+      const nodeApperanceProvider = model.nodeAppearanceProvider;
+      const nodes = new FixedNodeSet([...Array(15).keys()]);
+      nodeApperanceProvider.addStyledSet(nodes, DefaultNodeAppearance.Highlighted);
+
+      return {
+        camera: new THREE.PerspectiveCamera(),
+        cameraConfig: {
+          position: new THREE.Vector3(12, -4, -45),
+        },
+      }}}
     />
   );
 }
