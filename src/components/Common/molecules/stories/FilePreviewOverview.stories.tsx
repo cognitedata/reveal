@@ -46,9 +46,7 @@ export const Example = () => (
       <FilePreviewOverview
         file={file}
         annotations={[]}
-        onPageChange={() => {
-          alert('!');
-        }}
+        onPageChange={() => {}}
       />
     </Wrapper>
   </Provider>
@@ -92,9 +90,7 @@ export const ExampleWithAnnotations = () => (
             ...filler,
           } as CogniteAnnotation,
         ]}
-        onPageChange={() => {
-          alert('!');
-        }}
+        onPageChange={() => {}}
       />
     </Wrapper>
   </Provider>

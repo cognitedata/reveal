@@ -14,6 +14,7 @@ import { startConvertFileToSvgJob } from 'modules/fileContextualization/uploadJo
 import { RootState } from 'reducers';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import { checkPermission } from 'modules/app';
+import Layers from 'utils/zindex';
 import { notification } from 'antd';
 
 const Wrapper = styled.div`
@@ -29,7 +30,7 @@ const Header = styled.div`
   border-radius: 12px;
   flex-direction: row;
   align-items: center;
-  z-index: 1;
+  z-index: ${Layers.MINIMUM};
   margin-top: 40px;
   background: #fff;
   button {

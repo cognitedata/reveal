@@ -309,8 +309,7 @@ export const startDocumentParsingJob = (
                 const flattenedEntities: Array<any> = data.items
                   .map((el: any) =>
                     Object.values(el.matches).map((value: any) => {
-                      value.page = el.page;
-                      return value as PnidResponseEntity;
+                      return { ...value, page: el.page } as PnidResponseEntity;
                     })
                   )
                   .flat(1);

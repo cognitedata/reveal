@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Icon, Title } from '@cognite/cogs.js';
 import { List, Tabs } from 'antd';
-import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
-import { AssetDetailsPanel } from '@cognite/gearbox/dist/components/AssetDetailsPanel';
-import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
+import { Button, Icon, Title } from '@cognite/cogs.js';
+import {
+  AssetBreadcrumb,
+  AssetDetailsPanel,
+  AssetTree,
+} from '@cognite/gearbox';
 import {
   linkedFilesSelectorByAssetId,
   listFilesLinkedToAsset,

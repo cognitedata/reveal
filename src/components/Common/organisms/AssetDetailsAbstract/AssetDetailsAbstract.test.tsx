@@ -34,18 +34,6 @@ const files = [
   },
 ];
 
-const ts = [
-  {
-    name: 'Whaoopoo',
-    id: 123,
-    isString: false,
-    isStep: false,
-    description: 'asdfasdfdas',
-    lastUpdatedTime: new Date(),
-    createdTime: new Date(),
-  },
-];
-
 const sdk = {
   assets: {
     list: jest.fn().mockResolvedValue({ items: [asset] }),
@@ -79,7 +67,7 @@ describe('AssetDetailsAbstract', () => {
     expect(container.text()).toContain(asset.name);
     expect(container.text()).toContain('P&IDs2');
   });
-  it('render files and timeseries', () => {
+  it('render files', () => {
     const container = mount(
       <ClientSDKProvider client={sdk}>
         <AssetDetailsAbstract asset={asset} files={files} />
@@ -90,7 +78,7 @@ describe('AssetDetailsAbstract', () => {
     container.find('div#pnids').simulate('click');
     expect(container.text()).toContain(files[0].name);
   });
-  it('custom render files and timeseries', () => {
+  it('custom render files', () => {
     const container = mount(
       <ClientSDKProvider client={sdk}>
         <AssetDetailsAbstract
@@ -104,7 +92,6 @@ describe('AssetDetailsAbstract', () => {
     expect(container.text()).toContain(asset.name);
     container.find('div#pnids').simulate('click');
     expect(container.text()).toContain('wow a file');
-    container.find(Button).simulate('click');
     container.find(Button).simulate('click');
     expect(container.text()).toContain(asset.name);
   });

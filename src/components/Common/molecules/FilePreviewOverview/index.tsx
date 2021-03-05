@@ -29,6 +29,7 @@ import {
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
 import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
+import Layers from 'utils/zindex';
 import { AssetItem, FileItem } from './FilePreviewOverviewItems';
 
 const Sidebar = styled.div`
@@ -39,7 +40,7 @@ const Sidebar = styled.div`
   box-sizing: border-box;
   border-radius: 8px;
   box-shadow: 0px 0px 16px ${Colors['greyscale-grey3'].hex()};
-  z-index: 1;
+  z-index: ${Layers.MINIMUM};
   background: #fff;
   width: 100%;
   height: 100%;
@@ -176,6 +177,9 @@ export const FilePreviewOverview = ({
   const categorizedAnnotations: CategorizedAnnotations = {
     file: { annotations: [], ids: new Set() },
     asset: { annotations: [], ids: new Set() },
+    sequence: { annotations: [], ids: new Set() },
+    timeSeries: { annotations: [], ids: new Set() },
+    event: { annotations: [], ids: new Set() },
     threeD: { annotations: [], ids: new Set() },
     threeDRevision: { annotations: [], ids: new Set() },
   };
@@ -183,6 +187,7 @@ export const FilePreviewOverview = ({
   annotations.forEach((annotation) => {
     if (
       annotation.resourceType &&
+      categorizedAnnotations[annotation.resourceType] &&
       (annotation.resourceExternalId || annotation.resourceId)
     ) {
       categorizedAnnotations[annotation.resourceType].annotations.push(

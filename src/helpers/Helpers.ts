@@ -72,10 +72,12 @@ export async function callUntilCompleted(
   }
 }
 
+// eslint-disable-next-line
 // TODO text?
 export const stripWhitespace = (text: string) =>
   text ? text.replace(/\s/g, '').toLowerCase() : text;
 
+// eslint-disable-next-line
 // TODO: fix proper generics typing
 export function mergeItems(
   newStuff: any[],

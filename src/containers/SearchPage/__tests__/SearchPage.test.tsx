@@ -136,7 +136,6 @@ const initialStoreState: any = {
   search: {
     assets: { filter: {} },
     files: { filter: {} },
-    timeseries: { filter: {} },
   } as Partial<SearchStore>,
   app: {
     groups: {},
@@ -148,25 +147,6 @@ const store = mockStore(initialStoreState);
 describe('Search Bar', () => {
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('show all timeseries', () => {
-    const container = mount(
-      <Provider store={store}>
-        <MemoryRouter>
-          <SearchPage type="timeseries" onNextClicked={onButtonClicked} />
-        </MemoryRouter>
-      </Provider>
-    );
-
-    expect(container.find('#count-text').text()).toContain('12 results.');
-    expect(container.find('#count-text').text()).toContain('0 selected.');
-    expect(
-      container.find('.ant-table-row.ant-table-row-level-0 td').at(1).text()
-    ).toContain('TS');
-
-    // rendered correct search bar
-    container.find(FileSearchBar).exists();
   });
 
   it('show all files', () => {

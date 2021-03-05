@@ -5,7 +5,6 @@ import { init, setCdfEnv } from 'modules/app';
 import queryString from 'query-string';
 import SwitchWithBreadcrumbs from 'components/SwitchWithBreadcrumbs';
 import { trackUsage } from 'utils/Metrics';
-import * as mixpanelConfig from 'mixpanel-browser';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { RootState } from 'reducers';
 import { getAuthState } from 'sdk-singleton';

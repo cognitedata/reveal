@@ -1,4 +1,4 @@
-import { chunk } from 'lodash';
+import chunk from 'lodash/chunk';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RootState } from 'reducers';

@@ -1,6 +1,5 @@
 const { edit, remove, getPaths } = require('@rescripts/utilities');
 const PrefixWrap = require('postcss-prefixwrap');
-const { styleScope } = require('./src/utils/styleScope');
 const { colors, ids } = require('./src/cogs-variables.js');
 
 const addLoaders = (config) => {
@@ -109,6 +108,7 @@ module.exports = [
         'react-dom': 'react-dom',
         'single-spa': 'single-spa',
         '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
+        '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
       };
       return config;
     },

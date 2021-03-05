@@ -7,13 +7,10 @@ import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
 import { SDKProvider } from '@cognite/sdk-provider';
 import AntStyles from 'components/AntStyles';
 import { setupSentry } from 'utils/setupSentry';
-import { setupMixpanel } from 'utils/config';
 import RootApp from 'pages/App';
 import sdk from 'sdk-singleton';
 import GlobalStyles from 'styles/GlobalStyles';
 import store from './store';
-
-setupMixpanel();
 
 const App = () => {
   const history = createBrowserHistory();

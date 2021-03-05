@@ -1,4 +1,5 @@
 import React from 'react';
+import Layers from 'utils/zindex';
 import { Row } from 'antd';
 
 type Justify =
@@ -22,7 +23,7 @@ export default function StickyBottomRow(props: {
       style={{
         background: 'white',
         position: 'fixed',
-        zIndex: 1051,
+        zIndex: Layers.BOTTOM_ROW,
         width: '100%',
         bottom: 0,
         left: 0,

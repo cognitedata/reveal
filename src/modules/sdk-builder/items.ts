@@ -137,18 +137,18 @@ export default function buildItems<
           ? overrideRetrieveFn(sdk)
           : ((sdk as any)[type].retrieve as (q: IdEither[]) => Promise<T[]>);
         const requests = getRequests(state);
-        ids = getIdsToFetch(ids, requests, forceFetch);
-        if (ids.length === 0 && !forceFetch) {
+        const idsToFetch = getIdsToFetch(ids, requests, forceFetch);
+        if (!idsToFetch?.length && !forceFetch) {
           return;
         }
 
         dispatch({
           type: startAction,
-          ids,
+          ids: idsToFetch,
         });
 
         try {
-          const result = await retrieveFn(ids);
+          const result = await retrieveFn(idsToFetch);
           dispatch({
             type: UPDATE_ITEMS,
             result,
@@ -156,13 +156,13 @@ export default function buildItems<
 
           dispatch({
             type: doneAction,
-            ids,
+            ids: idsToFetch,
             items: result,
           });
         } catch (e) {
           dispatch({
             type: errorAction,
-            ids,
+            ids: idsToFetch,
           });
         }
       };
@@ -203,6 +203,7 @@ export default function buildItems<
     }
   }
 
+  // eslint-disable-next-line
   // TODO: merge with external reducer
   function buildRetrieveReducer(
     startAction: string,
@@ -370,6 +371,7 @@ export default function buildItems<
         const itemId: number | undefined = getByExternalId[key]?.item;
         const item = itemId && items.get(itemId);
         if (item) {
+          // eslint-disable-next-line no-param-reassign
           accl[key] = item;
         }
         return accl;

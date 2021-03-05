@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Popover as AntDPopover } from 'antd';
+import Layers from 'utils/zindex';
 import { TooltipPlacement, TooltipTrigger } from 'antd/lib/tooltip';
 
 interface PopoverProps {
@@ -43,7 +44,7 @@ export const Popover = (props: PopoverProps) => {
         trigger={trigger}
         style={{ display: 'inline-block' }}
         overlayClassName="popover__no-padding popover__no-arrow"
-        overlayStyle={{ zIndex: 1100 }}
+        overlayStyle={{ zIndex: Layers.POPOVER }}
         content={
           <div style={{ background: '#fff', maxWidth: '400px' }}>{content}</div>
         }

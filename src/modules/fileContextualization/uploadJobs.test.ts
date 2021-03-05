@@ -124,7 +124,7 @@ describe('UploadJobs store', () => {
         // @ts-ignore
         const store = mockStore(initialStore);
         await store.dispatch(UploadJobs.startConvertFileToSvgJob(1, []));
-        expect(store.getActions().length).toEqual(5);
+        expect(store.getActions().length).toEqual(6);
       });
       it('empty annotations', async () => {
         summarizeAssetIdsFromAnnotations.mockReturnValue([]);
@@ -153,7 +153,7 @@ describe('UploadJobs store', () => {
         // @ts-ignore
         const store = mockStore(initialStore);
         await store.dispatch(UploadJobs.startConvertFileToSvgJob(1, []));
-        expect(store.getActions().length).toEqual(5);
+        expect(store.getActions().length).toEqual(6);
       });
       it('invalid conversion of file', async () => {
         summarizeAssetIdsFromAnnotations.mockReturnValue([]);

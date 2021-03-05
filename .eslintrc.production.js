@@ -15,6 +15,13 @@ module.exports = {
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],
     'class-methods-use-this': ['off'],
+    'no-param-reassign': [
+      'error',
+      {
+        props: true,
+        ignorePropertyModificationsFor: ['draft', 'state', 'prev'],
+      },
+    ],
 
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
@@ -27,8 +34,11 @@ module.exports = {
     'lodash/prefer-lodash-method': ['off'],
     'lodash/prop-shorthand': ['off'],
     'lodash/prefer-constant': ['off'],
+    'lodash/prefer-includes': ['off'],
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
+    'lodash/prefer-noop': ['off'],
+    'lodash/prefer-lodash-typecheck': ['off'],
 
     '@typescript-eslint/no-unused-vars': [
       'error',

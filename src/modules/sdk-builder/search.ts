@@ -5,7 +5,8 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { InternalId } from '@cognite/sdk';
 import sdk from 'sdk-singleton';
-import { RootState } from 'reducers/';
+import { RootState } from 'reducers';
+// eslint-disable-next-line
 import { Dictionary } from 'lodash';
 import { ResourceType, ApiResult, Result, Query } from './types';
 
@@ -82,6 +83,7 @@ export default function buildSearch<T extends InternalId, Q extends Query>(
         // a subset is changed. Can be optimized, e.g with immer.
         const searchKeys = Object.keys(searches);
         return searchKeys.reduce((accl, key) => {
+          // eslint-disable-next-line no-param-reassign
           accl[key] = {
             ...searches[key],
             items: (searches[key].ids || [])

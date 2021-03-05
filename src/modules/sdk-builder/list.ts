@@ -1,4 +1,5 @@
 import produce from 'immer';
+// eslint-disable-next-line
 import { Dictionary } from 'lodash';
 import { createSelector } from 'reselect';
 import { Action, AnyAction } from 'redux';
@@ -297,6 +298,7 @@ export default function buildList<Q extends Query, T extends InternalId>(
             (a: boolean, p: ApiResult) => a || !!p.error,
             false
           );
+          // eslint-disable-next-line no-param-reassign
           accl[key] = {
             items,
             ids,

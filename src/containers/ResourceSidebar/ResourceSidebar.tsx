@@ -7,6 +7,7 @@ import {
 } from 'containers/ResourceSidebar';
 import queryString from 'query-string';
 import { Drawer } from 'antd';
+import Layers from 'utils/zindex';
 import { onResourceSelected } from 'modules/app';
 import { useDispatch } from 'react-redux';
 
@@ -97,7 +98,7 @@ export const ResourceSidebar = ({
           )
         )
       }
-      zIndex={1001}
+      zIndex={Layers.SIDEBAR}
       destroyOnClose
       className="pnid-sidebar"
       visible={showSidebar}

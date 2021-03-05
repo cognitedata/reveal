@@ -8,6 +8,7 @@ import { Button, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Pagination } from 'antd';
 import { Loader } from 'components/Common';
+import Layers from 'utils/zindex';
 import { FileInfo, CogniteClient } from '@cognite/sdk';
 
 const DocumentPagination = styled(Pagination)`
@@ -26,7 +27,7 @@ const DocumentPagination = styled(Pagination)`
 const Buttons = styled.div`
   display: inline-flex;
   position: absolute;
-  z-index: 1000;
+  z-index: ${Layers.MEDIUM};
   right: 24px;
   bottom: 24px;
   && #controls {

@@ -1,54 +1,7 @@
-import * as mixpanelConfig from 'mixpanel-browser';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getAuthState } from 'sdk-singleton';
 
-export const ENTITY_MATCHING_METRICS = {
-  pipeline: {
-    start: 'EntityMatching.pipeline.start',
-    created: 'EntityMatching.pipeline.created',
-    rerun: 'EntityMatching.pipeline.rerun',
-    finish: 'EntityMatching.pipeline.finish',
-    selectData: 'EntityMatching.pipeline.data',
-    config: 'EntityMatching.pipeline.config',
-    duplicate: 'EntityMatching.pipeline.duplicate',
-    delete: 'EntityMatching.pipeline.delete',
-    edit: 'EntityMatching.pipeline.edit',
-    cancelCreate: 'EntityMatching.pipeline.cancelCreate',
-    open: 'EntityMatching.pipeline.open',
-    saveToCdf: 'EntityMatching.pipeline.saveToCdf',
-    byPattern: 'EntityMatching.pipeline.byPattern',
-    byMatchItem: 'EntityMatching.pipeline.byMatchItem',
-    saveToPipeline: 'EntityMatching.pipeline.saveToPipeline',
-    tabChange: 'EntityMatching.pipeline.results.tabChange',
-  },
-  quickMatch: {
-    start: 'EntityMatching.quickmatch.start',
-    selectData: 'EntityMatching.quickmatch.data',
-    config: 'EntityMatching.quickmatch.config',
-    saveToCdf: 'EntityMatching.quickmatch.saveToCdf',
-    byPattern: 'EntityMatching.quickmatch.byPattern',
-    byMatchItem: 'EntityMatching.quickmatch.byMatchItem',
-    tabChange: 'EntityMatching.quickmatch.results.tabChange',
-  },
-  search: {
-    assetSearch: 'EntityMatching.search.assetSearch',
-    assetSelect: 'EntityMatching.search.assetSelect',
-  },
-  manualMatching: {
-    apply: 'EntityMatching.manualMatching.apply',
-    assetSearch: 'EntityMatching.manualMatching.assetSearch',
-  },
-  results: {
-    tab: 'EntityMatching.results.activeTab',
-  },
-};
-
-const MIXPANEL_TOKEN = '5c4d853e7c3b77b1eb4468d5329b278c'; // pragma: allowlist secret
-
-const mixpanel = mixpanelConfig.init(
-  MIXPANEL_TOKEN,
-  { persistence: 'localStorage' },
-  'datastudio'
-);
+export const PNID_METRICS = {};
 
 export type Props = { [key: string]: string | number | boolean | Props | null };
 
@@ -67,7 +20,7 @@ export const trackUsage = (
   const { username } = getAuthState();
 
   if (host.indexOf('localhost') === -1) {
-    mixpanel.track(event, {
+    trackEvent(`ContextUIPnid.${event}`, {
       ...metadata,
       project: sdk.project,
       version: 1,
@@ -91,7 +44,7 @@ export class Timer {
     this.startProps = startProps;
 
     try {
-      mixpanel.time_event(event);
+      trackEvent(`ContextUIPnid.time_event`, event);
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
