@@ -155,7 +155,7 @@ export class NodeAppearanceTextureBuilder {
         currentlyApplied === undefined ? treeIndices : treeIndices.clone().differenceWith(currentlyApplied.treeIndices);
       this._currentlyAppliedStyles.set(styleId, { revision, treeIndices: treeIndices.clone(), style: fullStyle });
 
-      this.applyStyleToNodes(addedTreeIndices, styleId, fullStyle);
+      this.applyStyleToNodes(addedTreeIndices, fullStyle);
     });
 
     this._needsUpdate = false;
@@ -183,7 +183,7 @@ export class NodeAppearanceTextureBuilder {
     }
   }
 
-  private applyStyleToNodes(treeIndices: IndexSet, styleId: number, style: NodeAppearance) {
+  private applyStyleToNodes(treeIndices: IndexSet, style: NodeAppearance) {
     if (treeIndices.count === 0) {
       return;
     }
@@ -200,10 +200,6 @@ export class NodeAppearanceTextureBuilder {
   }
 
   private handleStylesChanged() {
-    this._needsUpdate = true;
-  }
-
-  private handleNewTransformTexture() {
     this._needsUpdate = true;
   }
 }
