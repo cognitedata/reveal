@@ -13,6 +13,10 @@ export enum NodeOutlineColor {
   Orange
 }
 
+/**
+ * Type for defining node appearance profiles to style a 3D CAD model.
+ * @see {@link DefaultNodeAppearance}
+ */
 export type NodeAppearance = {
   /**
    * Overrides the default color of the node.
@@ -39,11 +43,6 @@ export type NodeAppearance = {
    * node to make it stand out.
    */
   readonly outlineColor?: NodeOutlineColor;
-  /**
-   * When set, a matrix4 transformation is applied
-   * to the node in world space.
-   */
-  readonly worldTransform?: THREE.Matrix4;
 };
 
 const OutlinedAppearance: NodeAppearance = {

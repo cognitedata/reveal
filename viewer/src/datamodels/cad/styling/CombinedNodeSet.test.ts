@@ -3,7 +3,7 @@
  */
 
 import { CombinedNodeSet } from './CombinedNodeSet';
-import { FixedNodeSet } from './FixedNodeSet';
+import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from '.';
 
@@ -14,25 +14,25 @@ describe('CombinedNodeSet', () => {
   });
 
   test('single INTERSECTION set, getIndexSet() returns original', () => {
-    const set = new CombinedNodeSet('intersection', [new FixedNodeSet(new IndexSet([1, 2, 3]))]);
+    const set = new CombinedNodeSet('intersection', [new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]))]);
     expect(set.getIndexSet()).toEqual(new IndexSet([1, 2, 3]));
   });
 
   test('single UNION set, getIndexSet() returns original', () => {
-    const set = new CombinedNodeSet('union', [new FixedNodeSet(new IndexSet([1, 2, 3]))]);
+    const set = new CombinedNodeSet('union', [new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]))]);
     expect(set.getIndexSet()).toEqual(new IndexSet([1, 2, 3]));
   });
 
   test('two INTERSECTION sets, getIndexSet() returns intersection', () => {
-    const setA = new FixedNodeSet(new IndexSet([1, 2, 3]));
-    const setB = new FixedNodeSet(new IndexSet([2, 3, 4]));
+    const setA = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
+    const setB = new ByTreeIndexNodeSet(new IndexSet([2, 3, 4]));
     const combinedSet = new CombinedNodeSet('intersection', [setA, setB]);
     expect(combinedSet.getIndexSet()).toEqual(new IndexSet([2, 3]));
   });
 
   test('two UNION sets, getIndexSet() returns union', () => {
-    const setA = new FixedNodeSet(new IndexSet([1, 2, 3]));
-    const setB = new FixedNodeSet(new IndexSet([2, 3, 4]));
+    const setA = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
+    const setB = new ByTreeIndexNodeSet(new IndexSet([2, 3, 4]));
     const combinedSet = new CombinedNodeSet('union', [setA, setB]);
     expect(combinedSet.getIndexSet()).toEqual(new IndexSet([1, 2, 3, 4]));
   });

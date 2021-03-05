@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { IndexSet } from '../../../utilities/IndexSet';
 
 import { NodeAppearance, NodeOutlineColor } from '../NodeAppearance';
-import { FixedNodeSet } from './FixedNodeSet';
+import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
 
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
@@ -14,12 +14,12 @@ import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 describe('NodeAppearanceTextureBuilder', () => {
   let styleProvider: NodeAppearanceProvider;
   let builder: NodeAppearanceTextureBuilder;
-  let nodeSet: FixedNodeSet;
+  let nodeSet: ByTreeIndexNodeSet;
 
   beforeEach(() => {
     styleProvider = new NodeAppearanceProvider();
     builder = new NodeAppearanceTextureBuilder(1, styleProvider);
-    nodeSet = new FixedNodeSet([0]);
+    nodeSet = new ByTreeIndexNodeSet([0]);
   });
 
   test('needsUpdate is initially true', () => {
@@ -126,7 +126,7 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 
   test('add then remove index from set, resets styling', () => {
-    const set = new FixedNodeSet(new IndexSet([0]));
+    const set = new ByTreeIndexNodeSet(new IndexSet([0]));
     const style: NodeAppearance = { color: [127, 128, 192], visible: false };
     styleProvider.addStyledSet(set, style);
 
@@ -156,7 +156,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('setDefaultStyle() has effect for unset fields in styled sets', () => {
     builder.setDefaultAppearance({ color: [1, 2, 3], renderGhosted: true });
-    styleProvider.addStyledSet(new FixedNodeSet([0]), { renderGhosted: false });
+    styleProvider.addStyledSet(new ByTreeIndexNodeSet([0]), { renderGhosted: false });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([1, 2, 3, 1]); // Color is from default style, but 'renderGhosted' from styled set
@@ -171,8 +171,8 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet());
 
     // Override settings for node 1+2, moving these into ghosted and infront sets
-    styleProvider.addStyledSet(new FixedNodeSet([1]), { renderGhosted: true });
-    styleProvider.addStyledSet(new FixedNodeSet([2]), { renderInFront: true });
+    styleProvider.addStyledSet(new ByTreeIndexNodeSet([1]), { renderGhosted: true });
+    styleProvider.addStyledSet(new ByTreeIndexNodeSet([2]), { renderInFront: true });
     builder.build();
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
     expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([1]));

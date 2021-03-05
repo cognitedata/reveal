@@ -412,6 +412,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * Returns the number of t.
+   */
+  get nodes(): number {
+    return this.cadModel.scene.maxTreeIndex + 1;
+  }
+
+  /**
    * @param _nodeId
    * @param _action
    * @param _treeIndex

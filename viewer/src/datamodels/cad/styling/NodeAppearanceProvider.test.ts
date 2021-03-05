@@ -3,7 +3,7 @@
  */
 
 import { NodeAppearance } from '../NodeAppearance';
-import { FixedNodeSet } from './FixedNodeSet';
+import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { NodeSet } from './NodeSet';
@@ -31,9 +31,9 @@ describe('NodeAppearanceProvider', () => {
 
   test('applyStyles() applies styles in the order they were added', () => {
     const applyCb = jest.fn();
-    const set1 = new FixedNodeSet(new IndexSet([1, 2, 3]));
+    const set1 = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
     const style1: NodeAppearance = { visible: false };
-    const set2 = new FixedNodeSet(new IndexSet([2, 3, 4]));
+    const set2 = new ByTreeIndexNodeSet(new IndexSet([2, 3, 4]));
     const style2: NodeAppearance = { visible: true };
     provider.addStyledSet(set1, style1);
     provider.addStyledSet(set2, style2);
@@ -47,9 +47,9 @@ describe('NodeAppearanceProvider', () => {
 
   test('applyStyles() is not invoced for removed style set', () => {
     const applyCb = jest.fn();
-    const set1 = new FixedNodeSet(new IndexSet([1, 2, 3]));
+    const set1 = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
     const style1: NodeAppearance = { visible: false };
-    const set2 = new FixedNodeSet(new IndexSet([2, 3, 4]));
+    const set2 = new ByTreeIndexNodeSet(new IndexSet([2, 3, 4]));
     const style2: NodeAppearance = { visible: true };
     provider.addStyledSet(set1, style1);
     provider.addStyledSet(set2, style2);
@@ -63,7 +63,7 @@ describe('NodeAppearanceProvider', () => {
 
   test('add and remove style triggers changed', () => {
     const listener = jest.fn();
-    const set = new FixedNodeSet(new IndexSet([1, 2, 3]));
+    const set = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
     provider.on('changed', listener);
 
     provider.addStyledSet(set, {});
@@ -74,7 +74,7 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('triggers changed when underlying set is changed', () => {
-    const set = new FixedNodeSet(new IndexSet([1, 2, 3]));
+    const set = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
     provider.addStyledSet(set, style);
     const listener = jest.fn();
@@ -87,7 +87,7 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('does not trigger changed when removed set is changed', () => {
-    const set = new FixedNodeSet(new IndexSet([1, 2, 3]));
+    const set = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
     provider.addStyledSet(set, style);
     provider.removeStyledSet(set);
@@ -102,7 +102,7 @@ describe('NodeAppearanceProvider', () => {
 
   test('applyStyles() triggers with incremented revision after changing set', () => {
     const applyCb = jest.fn();
-    const set = new FixedNodeSet(new IndexSet([1, 2, 3]));
+    const set = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
 
     provider.addStyledSet(set, style);

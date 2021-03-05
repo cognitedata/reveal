@@ -4,7 +4,7 @@
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
-export class FixedNodeSet extends NodeSet {
+export class ByTreeIndexNodeSet extends NodeSet {
   private _set: IndexSet;
 
   constructor(treeIndexSet: IndexSet);
