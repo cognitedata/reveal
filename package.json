@@ -23,7 +23,7 @@
     "@cognite/griff-react": "~0.4.2",
     "@cognite/react-feature-flags": "^0.2.1",
     "@cognite/react-picture-annotation": "^0.15.0",
-    "@cognite/sdk": "^3.3.2",
+    "@cognite/sdk": "^3.3.6",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/z-index": "^0.2.0",
     "@google-cloud/storage": "^5.7.2",
