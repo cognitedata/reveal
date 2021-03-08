@@ -20,7 +20,5 @@ export const CreateFormWrapper = styled.form`
   }
   button {
     grid-area: btn;
-    justify-self: start;
-    width: fit-content;
   }
 `;

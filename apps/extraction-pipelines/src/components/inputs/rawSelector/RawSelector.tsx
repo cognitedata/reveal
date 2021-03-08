@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { RawDB, RawDBTable } from 'cognite-sdk-v3';
-import { Input, Table, Title } from '@cognite/cogs.js';
+import { Graphic, Input, Table, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { DatabaseSelector } from './DatabaseSelector';
-import { DatabaseTables } from './DatabaseTables';
-import { SelectionColumns } from './SelectedDBTablesColumns';
-import { getDatabaseTables } from '../../../utils/raw/rawUtils';
+import { DivFlex } from 'styles/flex/StyledFlex';
+import { getDatabaseTables } from 'utils/raw/rawUtils';
+import { SelectionColumns } from 'components/inputs/rawSelector/SelectedDBTablesColumns';
+import { DatabaseTables } from 'components/inputs/rawSelector/DatabaseTables';
+import { DatabaseSelector } from 'components/inputs/rawSelector/DatabaseSelector';
 
 const Selector = styled.div`
+  width: 100%;
   display: flex;
   margin-bottom: 1rem;
 `;
@@ -119,8 +121,19 @@ const RawSelector = ({
     }
   };
 
+  function localeEmpty() {
+    return {
+      emptyText: (
+        <DivFlex direction="column" align="center">
+          <Graphic type="Search" />
+          Select raw tables
+        </DivFlex>
+      ),
+    };
+  }
+
   return (
-    <div>
+    <>
       <Selector>
         <SearchWrapper>
           <Title level={3}>{DBS_LABEL}</Title>
@@ -165,11 +178,12 @@ const RawSelector = ({
       </Selector>
       <Table<SelectedTable>
         pagination
+        locale={localeEmpty()}
         columns={SelectionColumns}
         dataSource={selectedTables}
         pageSize={DEFAULT_SELECTED_PAGE_SIZE}
       />
-    </div>
+    </>
   );
 };
 

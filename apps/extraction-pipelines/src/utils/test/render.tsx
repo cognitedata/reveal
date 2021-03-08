@@ -4,7 +4,7 @@ import { styleScope } from 'utils/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
 import { AppEnvProvider } from '../../hooks/useAppEnv';
 import { IntegrationProvider } from '../../hooks/details/IntegrationContext';

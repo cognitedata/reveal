@@ -1,11 +1,10 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { Icon, Menu, Tooltip } from '@cognite/cogs.js';
+import { Checkbox, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { SelectedTable } from './RawSelector';
-import { CheckboxLabel } from '../CheckboxWithRef';
-import { StyledMenu } from './DatabaseSelector';
+import { StyledMenu } from 'components/inputs/rawSelector/DatabaseSelector';
+import { SelectedTable } from 'components/inputs/rawSelector/RawSelector';
 
 const ExternalLink = styled.a`
   .visually-hidden {
@@ -55,28 +54,19 @@ export const DatabaseTables: FunctionComponent<DatabaseTablesProps> = ({
       {databaseTables.map((table) => {
         return (
           <DBTableItem key={`${selectedDb}/${table.name || ''}`}>
-            <CheckboxLabel
-              className="cogs-checkbox"
-              htmlFor={`${selectedDb}/${table.name || ''}`}
+            <Checkbox
+              name={table.name}
+              value={selectedTables.some(
+                (record) =>
+                  record.databaseName === selectedDb &&
+                  record.tableName === table.name
+              )}
+              onChange={() =>
+                onChangeTablesList(`${selectedDb}/${table.name || ''}`)
+              }
             >
-              <input
-                id={`${selectedDb}/${table.name || ''}`}
-                type="checkbox"
-                className="visible-input"
-                name={table.name}
-                checked={selectedTables.some(
-                  (record) =>
-                    record.databaseName === selectedDb &&
-                    record.tableName === table.name
-                )}
-                onChange={() => {
-                  onChangeTablesList(`${selectedDb}/${table.name || ''}`);
-                }}
-              />
-              <div className="checkbox-ui" />
               {table.name}
-            </CheckboxLabel>
-
+            </Checkbox>
             <Tooltip content="View or ingest data to this RAW table">
               <ExternalLink
                 href={createLink(`/raw/${selectedDb}/${table.name || ''}`)}

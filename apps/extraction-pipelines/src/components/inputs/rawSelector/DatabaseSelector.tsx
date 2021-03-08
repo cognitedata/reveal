@@ -4,10 +4,9 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Menu } from '@cognite/cogs.js';
+import { Checkbox, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { DatabaseWithTablesItem } from './RawSelector';
-import { CheckboxLabel } from '../CheckboxWithRef';
+import { DatabaseWithTablesItem } from 'components/inputs/rawSelector/RawSelector';
 
 export const StyledMenu = styled(Menu)`
   height: 10rem;
@@ -63,21 +62,13 @@ export const DatabaseSelector: FunctionComponent<DatabaseSelectorProps> = ({
             selected={selected}
             aria-selected={selected}
           >
-            <CheckboxLabel
-              className="cogs-checkbox"
-              htmlFor={item.database.name}
+            <Checkbox
+              name={item.database.name}
+              value={anyDbTableSelected(item.database.name)}
+              onChange={() => handleDatabaseChecked(item)}
             >
-              <input
-                id={item.database.name}
-                className="visible-input"
-                type="checkbox"
-                checked={anyDbTableSelected(item.database.name)}
-                name={item.database.name}
-                onChange={() => handleDatabaseChecked(item)}
-              />
-              <div className="checkbox-ui" />
               {item.database.name}
-            </CheckboxLabel>
+            </Checkbox>
           </Menu.Item>
         );
       })}
