@@ -43,6 +43,9 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
 
             if (viewer) {
               resetViewerEventHandlers(viewer);
+              if (model instanceof Cognite3DModel) {
+                resetCognite3DModel(model);
+              }
             } else {
               alert('Login is required to run examples');
               return;

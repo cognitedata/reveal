@@ -1,5 +1,5 @@
 import { Water } from 'three/examples/jsm/objects/Water';
-import { resetViewerEventHandlers } from '../viewerUtilities';
+import { resetViewerEventHandlers, resetCognite3DModel} from '../viewerUtilities';
 import * as THREE from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
@@ -8,6 +8,7 @@ const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal');
 
 export const customScope: Record<string, any> = {
   resetViewerEventHandlers,
+  resetCognite3DModel,
   HtmlOverlayTool,
   THREE,
   Water,
@@ -16,8 +17,5 @@ export const customScope: Record<string, any> = {
   urls: {
     skyUrl: '/img/sky007.jpg',
   },
-  PotreePointShape: reveal.PotreePointShape,
-  PotreePointColorType: reveal.PotreePointColorType,
-
-  WellKnownAsprsPointClassCodes: reveal.WellKnownAsprsPointClassCodes,
+  ...reveal
 };
