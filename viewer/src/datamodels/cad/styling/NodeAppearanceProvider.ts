@@ -108,6 +108,15 @@ export class NodeAppearanceProvider {
     });
   }
 
+  clear() {
+    for (const styledSet of this._styledSet) {
+      const nodeSet = styledSet.nodeSet;
+      nodeSet.off('changed', styledSet.handleNodeSetChangedListener);
+    }
+    this._styledSet.splice(0);
+    this.notifyChanged();
+  }
+
   get isLoading(): boolean {
     return this._styledSet.some(x => x.nodeSet.isLoading);
   }

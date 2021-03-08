@@ -113,7 +113,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Sets the default appearance for nodes that are not styled using
-   * {@link addStyledNodesSet}. Updating the default style can be an
+   * {@link addStyledNodeSet}. Updating the default style can be an
    * expensive operation, so use with care.
    *
    * @param appearance  Default node appereance. Note that this apperance cannot
@@ -125,7 +125,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Gets the default appearance for nodes that are not styled using
-   * {@link addStyledNodesSet}.
+   * {@link addStyledNodeSetSet}.
    */
   getDefaultNodeAppearance(): NodeAppearance {
     return this.cadNode.defaultNodeAppearance;
@@ -155,7 +155,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * model.addStyledSet(visibleSet, { rendererGhosted: false });
    * ```
    */
-  addStyledNodesSet(nodes: NodeSet, appearance: NodeAppearance) {
+  addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
     this.nodeApperanceProvider.addStyledSet(nodes, appearance);
   }
 
@@ -165,6 +165,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   removeStyledNodeSet(nodes: NodeSet) {
     this.nodeApperanceProvider.removeStyledSet(nodes);
+  }
+
+  /**
+   * Removes all styled sets, resetting the appearance of all nodes to the
+   * default apperance.
+   */
+  removeAllStyledNodeSets() {
+    this.nodeApperanceProvider.clear();
   }
 
   /**
@@ -209,6 +217,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Maps from a 3D position in "ThreeJS model space" (e.g. a ray intersection coordinate)
    * to coordinates in "CDF space". This is necessary because CDF has a right-handed
    * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
+   * This function also accounts for transformation applied to the model.
    * @param p       The ThreeJS coordinate to transform.
    * @param out     Optional preallocated buffer for storing the result. May be `p`.
    * @returns Transformed position.
@@ -217,6 +226,24 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     out = out !== undefined ? out : new THREE.Vector3();
     if (out !== p) {
       out.copy(p);
+    }
+    out.applyMatrix4(this.cadModel.inverseModelMatrix);
+    return out;
+  }
+
+  /**
+   * Maps from a 3D position in "ThreeJS model space" to coordinates in "CDF space".
+   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
+   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
+   * applied to the model.
+   * @param box     The box in ThreeJS/model coordinates.
+   * @param out     Optional preallocated bnuffer for storing the result. May be `box`.
+   * @returns       Transformed box.
+   */
+  mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
+    out = out !== undefined ? out : new THREE.Box3();
+    if (out !== box) {
+      out.copy(box);
     }
     out.applyMatrix4(this.cadModel.inverseModelMatrix);
     return out;
