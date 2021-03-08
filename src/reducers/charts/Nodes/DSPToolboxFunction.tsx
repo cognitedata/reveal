@@ -7,7 +7,8 @@ import useSelector from 'hooks/useSelector';
 import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import pMemoize from 'p-memoize';
-import { ConfigPanelComponentProps, StorableNode } from '../types';
+import { StorableNode } from 'reducers/charts';
+import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
   [key: string]: any;

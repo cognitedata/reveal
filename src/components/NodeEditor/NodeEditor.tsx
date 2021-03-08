@@ -11,21 +11,20 @@ import { Menu, Input, Button } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import useSelector from 'hooks/useSelector';
-import workflowSlice, {
+import useDispatch from 'hooks/useDispatch';
+import chartsSlice, {
+  chartSelectors,
   LatestWorkflowRun,
   StorableNode,
-  workflowSelectors,
-} from 'reducers/workflows';
-import useDispatch from 'hooks/useDispatch';
-import { saveExistingWorkflow } from 'reducers/workflows/api';
-import { chartSelectors } from 'reducers/charts';
+} from 'reducers/charts';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import sdk from 'services/CogniteSDK';
-import { CogniteFunction } from 'reducers/workflows/Nodes/DSPToolboxFunction';
+import { CogniteFunction } from 'reducers/charts/Nodes/DSPToolboxFunction';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
+import { saveExistingChart } from 'reducers/charts/api';
 import { pinTypes, isWorkflowRunnable } from './utils';
-import defaultNodeOptions from '../../reducers/workflows/Nodes';
+import defaultNodeOptions from '../../reducers/charts/Nodes';
 import ConfigPanel from './ConfigPanel';
 
 const WorkflowContainer = styled.div`
@@ -47,25 +46,23 @@ type WorkflowEditorProps = {
 const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<StorableNode>();
-
   const tenant = useSelector((state) => state.environment.tenant);
-
-  const workflow = useSelector((state) =>
-    workflowSelectors.selectById(state, workflowId || '')
-  );
-  const { nodes = [], connections = [] } = workflow || {};
-
   const chart = useSelector((state) =>
     chartSelectors.selectById(state, chartId || '')
   )!;
+  const workflow = chart.workflowCollection?.find(
+    (flow) => flow.id === workflowId
+  );
+  const { nodes = [], connections = [] } = workflow || {};
   const context = { chart };
 
   const setConnections = (nextConnections: Record<string, Connection>) => {
     if (workflowId) {
       dispatch(
-        workflowSlice.actions.updateWorkflow({
-          id: workflowId,
-          changes: { connections: nextConnections },
+        chartsSlice.actions.updateWorkflowConnections({
+          chartId: chart.id,
+          workflowId,
+          connections: nextConnections,
         })
       );
     }
@@ -74,9 +71,10 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
   const setNodes = (nextNodes: StorableNode[]) => {
     if (workflowId) {
       dispatch(
-        workflowSlice.actions.updateWorkflow({
-          id: workflowId,
-          changes: { nodes: nextNodes },
+        chartsSlice.actions.updateWorkflowNodes({
+          chartId: chart.id,
+          workflowId,
+          nodes: nextNodes,
         })
       );
     }
@@ -87,13 +85,12 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     // Our nodes have been updated - clear out the statuses for our last run
     if (workflow?.latestRun) {
       dispatch(
-        workflowSlice.actions.updateWorkflow({
-          id: workflow.id,
-          changes: {
-            latestRun: {
-              ...workflow.latestRun,
-              nodeProgress: undefined,
-            },
+        chartsSlice.actions.updateWorkflowLatestRun({
+          chartId: chart.id,
+          workflowId: workflow.id,
+          latestRun: {
+            ...workflow.latestRun,
+            nodeProgress: undefined,
           },
         })
       );
@@ -119,8 +116,8 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
   };
 
   const onSave = async () => {
-    if (workflow) {
-      dispatch(saveExistingWorkflow(workflow));
+    if (chart) {
+      dispatch(saveExistingChart(chart));
     }
   };
 
@@ -170,19 +167,18 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     }
 
     dispatch(
-      workflowSlice.actions.updateWorkflow({
-        id: workflow.id,
-        changes: {
-          latestRun: {
-            timestamp: Date.now(),
-            status: 'RUNNING',
-            nodeProgress: workflow.nodes.reduce((output, node) => {
-              return {
-                ...output,
-                [node.id]: { status: 'RUNNING' },
-              };
-            }, {}),
-          },
+      chartsSlice.actions.updateWorkflowLatestRun({
+        chartId: chart.id,
+        workflowId: workflow.id,
+        latestRun: {
+          timestamp: Date.now(),
+          status: 'RUNNING',
+          nodeProgress: workflow.nodes?.reduce((output, node) => {
+            return {
+              ...output,
+              [node.id]: { status: 'RUNNING' },
+            };
+          }, {}),
         },
       })
     );
@@ -215,19 +211,18 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
 
     if (!functionResult.data.response || functionResult.data?.response?.error) {
       dispatch(
-        workflowSlice.actions.updateWorkflow({
-          id: workflow.id,
-          changes: {
-            latestRun: {
-              timestamp: Date.now(),
-              status: 'FAILED',
-              nodeProgress: workflow.nodes.reduce((output, node) => {
-                return {
-                  ...output,
-                  [node.id]: { status: 'FAILED' },
-                };
-              }, {}),
-            },
+        chartsSlice.actions.updateWorkflowLatestRun({
+          chartId: chart.id,
+          workflowId: workflow.id,
+          latestRun: {
+            timestamp: Date.now(),
+            status: 'FAILED',
+            nodeProgress: workflow.nodes?.reduce((output, node) => {
+              return {
+                ...output,
+                [node.id]: { status: 'FAILED' },
+              };
+            }, {}),
           },
         })
       );
@@ -250,7 +245,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
           ),
         },
       },
-      nodeProgress: workflow.nodes.reduce((output, node) => {
+      nodeProgress: workflow.nodes?.reduce((output, node) => {
         return {
           ...output,
           [node.id]: { status: 'DONE' },
@@ -259,11 +254,10 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     };
 
     dispatch(
-      workflowSlice.actions.updateWorkflow({
-        id: workflow.id,
-        changes: {
-          latestRun,
-        },
+      chartsSlice.actions.updateWorkflowLatestRun({
+        chartId: chart.id,
+        workflowId: workflow.id,
+        latestRun,
       })
     );
   };

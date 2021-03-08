@@ -1,7 +1,7 @@
 import React from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts';
-import { StorableNode, ConfigPanelComponentProps } from '../types';
+import { Chart, StorableNode } from 'reducers/charts';
+import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
   timeSeriesExternalId: string;
