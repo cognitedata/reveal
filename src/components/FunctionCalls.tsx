@@ -15,25 +15,41 @@ const callTableColumns = [
     title: 'Call Time',
     key: 'Call Time',
     render: (call: Call) => {
-      const startTime = moment.utc(call.startTime);
-      const timeSince = moment(startTime).fromNow();
-      return timeSince;
+      return (
+        <FunctionCall
+          id={call.functionId}
+          callId={call.id}
+          renderCall={call => {
+            const startTime = moment.utc(call.startTime);
+            const timeSince = moment(startTime).fromNow();
+            return <>{timeSince}</>;
+          }}
+        />
+      );
     },
   },
   {
     title: 'Duration',
     key: 'duration',
     render: (call: Call) => {
-      // If the function isn't finished yet, show current duration with end time being now
-      const endTime = moment.utc(call.endTime) || moment.utc(new Date());
-      const startTime = moment.utc(call.startTime);
+      return (
+        <FunctionCall
+          id={call.functionId}
+          callId={call.id}
+          renderCall={call => {
+            // If the function isn't finished yet, show current duration with end time being now
+            const endTime = moment.utc(call.endTime) || moment.utc(new Date());
+            const startTime = moment.utc(call.startTime);
 
-      // round up to the nearest second
-      const duration = moment
-        .utc(endTime.diff(startTime))
-        .add(1, 'second')
-        .startOf('second');
-      return `${duration.format('mm:ss')} m`;
+            // round up to the nearest second
+            const duration = moment
+              .utc(endTime.diff(startTime))
+              .add(1, 'second')
+              .startOf('second');
+            return <>{duration.format('mm:ss')} m</>;
+          }}
+        />
+      );
     },
   },
   {
