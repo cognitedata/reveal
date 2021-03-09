@@ -24,7 +24,13 @@ export const SAVE: Readonly<string> = 'Save';
 export const OK: Readonly<string> = 'OK';
 export const NEXT: Readonly<string> = 'Next';
 export const ADD_CONTACT: Readonly<string> = 'Add another contact';
+export const REGISTER: Readonly<string> = 'Register';
+export const ADD_ROW: Readonly<string> = 'Add row';
+export const REMOVE_ROW: Readonly<string> = 'Remove row';
 export const REMOVE_CONTACT: Readonly<string> = 'Remove contact';
+export const METADATA_DESCRIPTION_LABEL: Readonly<string> =
+  'Metadata description';
+export const METADATA_CONTENT_LABEL: Readonly<string> = 'Metadata content';
 
 export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
 export const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> =
