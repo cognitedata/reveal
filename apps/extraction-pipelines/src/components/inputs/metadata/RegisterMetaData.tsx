@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { ButtonPlaced } from 'styles/StyledButton';
 import {
   ADD_ROW,
   METADATA_CONTENT_LABEL,
@@ -22,9 +23,6 @@ const StyledCaption = styled.caption`
   font-size: 0.875rem;
   font-weight: bold;
   color: ${Colors.black.hex()};
-`;
-const AddRowBtn = styled(Button)`
-  margin-bottom: 1rem;
 `;
 const StyledInput = styled.input`
   width: 100%;
@@ -124,9 +122,9 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
           })}
         </tbody>
       </MetaTable>
-      <AddRowBtn type="secondary" htmlType="button" onClick={addRow}>
+      <ButtonPlaced type="secondary" htmlType="button" onClick={addRow}>
         {ADD_ROW}
-      </AddRowBtn>
+      </ButtonPlaced>
     </>
   );
 };

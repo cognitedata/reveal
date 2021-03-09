@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Button, Colors, Radio } from '@cognite/cogs.js';
+import { Colors, Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import * as yup from 'yup';
@@ -25,11 +25,7 @@ import {
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { SelectedTable } from 'components/inputs/rawSelector/RawSelector';
 import { NEXT } from 'utils/constants';
-
-const ContentButton = styled(Button)`
-  justify-self: start;
-  width: fit-content;
-`;
+import { ButtonPlaced } from 'styles/StyledButton';
 
 const ConditionalWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -166,9 +162,9 @@ const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
                 {RawTableOptions.NO}
               </Radio>
             </StyledRadioGroup>
-            <ContentButton type="primary" htmlType="submit">
+            <ButtonPlaced type="primary" htmlType="submit">
               {NEXT}
-            </ContentButton>
+            </ButtonPlaced>
           </CreateFormWrapper>
         </FormProvider>
       </GridMainWrapper>

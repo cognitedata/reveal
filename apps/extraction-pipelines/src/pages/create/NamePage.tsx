@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
+import { ButtonPlaced } from 'styles/StyledButton';
 import {
   CreateIntegrationPageWrapper,
   GridBreadCrumbsWrapper,
@@ -89,9 +90,9 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
             aria-describedby="name-hint name-error"
           />
 
-          <Button type="primary" htmlType="submit">
+          <ButtonPlaced type="primary" htmlType="submit">
             {NEXT}
-          </Button>
+          </ButtonPlaced>
         </CreateFormWrapper>
         <TaskList list={taskListItems} />
       </GridMainWrapper>

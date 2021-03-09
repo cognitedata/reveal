@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
+import { ButtonPlaced } from 'styles/StyledButton';
 import {
   CreateIntegrationPageWrapper,
   GridBreadCrumbsWrapper,
@@ -33,12 +34,6 @@ import { DivFlex } from '../../styles/flex/StyledFlex';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import { BackBtn } from '../../components/buttons/BackBtn';
 
-const StyledBtn = styled(Button)`
-  align-self: flex-start;
-`;
-const AddContact = styled(StyledBtn)`
-  margin-bottom: 1rem;
-`;
 const ContactWrapper = styled.section`
   display: flex;
   flex-direction: column;
@@ -334,12 +329,12 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
               </ContactWrapper>
             );
           })}
-          <AddContact type="secondary" htmlType="button" onClick={addContact}>
+          <ButtonPlaced type="secondary" htmlType="button" onClick={addContact}>
             {ADD_CONTACT}
-          </AddContact>
-          <StyledBtn type="primary" htmlType="submit">
+          </ButtonPlaced>
+          <ButtonPlaced type="primary" htmlType="submit">
             {NEXT}
-          </StyledBtn>
+          </ButtonPlaced>
         </CreateFormWrapper>
       </GridMainWrapper>
     </CreateIntegrationPageWrapper>

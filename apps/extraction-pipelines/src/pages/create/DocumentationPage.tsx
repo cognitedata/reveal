@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import * as yup from 'yup';
@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
+import { ButtonPlaced } from 'styles/StyledButton';
 import {
   CreateIntegrationPageWrapper,
   GridBreadCrumbsWrapper,
@@ -34,9 +35,6 @@ const DividerLine = styled.hr`
 const WithBottomBorder = styled.div`
   padding-bottom: 2rem;
   border-bottom: 0.125rem solid ${Colors['greyscale-grey3'].hex()};
-`;
-const BottomButton = styled(Button)`
-  margin-bottom: 2rem;
 `;
 const StyledTextArea = styled.textarea`
   width: 80%;
@@ -122,9 +120,9 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
             <DividerLine />
             <RegisterMetaData />
             <DividerLine />
-            <BottomButton type="primary" htmlType="submit">
+            <ButtonPlaced type="primary" htmlType="submit">
               {REGISTER}
-            </BottomButton>
+            </ButtonPlaced>
           </CreateFormWrapper>
         </FormProvider>
       </GridMainWrapper>

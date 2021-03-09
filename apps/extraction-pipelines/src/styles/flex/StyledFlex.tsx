@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-interface DivFlexProps {
+export interface DivFlexProps {
   direction?: 'row' | 'column';
   justify?:
     | 'center'
@@ -9,6 +9,7 @@ interface DivFlexProps {
     | 'flex-start'
     | 'space-around';
   align?: 'flex-end' | 'flex-start' | 'center' | 'baseline' | 'stretch';
+  self?: 'flex-end' | 'flex-start' | 'center' | 'baseline' | 'stretch';
 }
 
 export const DivFlex = styled.div`
