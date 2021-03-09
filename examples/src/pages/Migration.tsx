@@ -237,17 +237,14 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
-      
-
       let expandTool: ExpandAssetTool | null;
+      let explodeSlider: dat.GUIController | null;
 
       const assetExplode = gui.addFolder('Asset Inspect');
 
       const exlopdeParams = { explodeFactor: 0.0, rootTreeIndex: 0};
       const explodeActions = { 
         selectAssetTreeIndex: async () => {
-        //const rootTreeIndex = 467125;
-
           const rootTreeIndex = exlopdeParams.rootTreeIndex;
           cadModels[0].hideAllNodes();
           cadModels[0].showNodeByTreeIndex(rootTreeIndex, true);
@@ -256,28 +253,32 @@ export function Migration() {
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
 
           expandTool = new ExpandAssetTool(rootTreeIndex, cadModels[0]);
+
+          await expandTool.readyPromise;
+          
+          explodeSlider = assetExplode
+          .add(exlopdeParams, 'explodeFactor', 0, 1)
+          .name('Explode Factor')
+            .step(0.01)
+            .onChange(p => {
+                expandTool!.expand(p);
+            });
         },
         reset: () => {
           expandTool?.reset();
           cadModels[0].showAllNodes();
           exlopdeParams.explodeFactor = 0;
           expandTool = null;
+          if(explodeSlider) {
+            assetExplode.remove(explodeSlider);
+            explodeSlider = null;
+          }
         }
       };
       assetExplode.add(exlopdeParams, 'rootTreeIndex').name('Tree index');
       assetExplode.add(explodeActions, 'selectAssetTreeIndex').name('Inspect tree index');
-      assetExplode
-      .add(exlopdeParams, 'explodeFactor', 0, 1)
-      .name('Explode Factor')
-        .step(0.01)
-        .onChange(p => {
-          if(expandTool && expandTool.isReady){
-            expandTool.expand(p);
-          }
-        });
-        assetExplode.add(explodeActions, 'reset').name('Reset');
-        
-        
+      
+      assetExplode.add(explodeActions, 'reset').name('Reset');
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;

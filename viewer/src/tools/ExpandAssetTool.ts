@@ -10,11 +10,9 @@ export class ExpandAssetTool extends Cognite3DViewerToolBase {
   private _treeBoundingBoxdata!: Promise<{ treeIndex: number; direction: THREE.Vector3; transform: THREE.Matrix4 }[]>;
   private _rootTreeIndex: number;
 
-  public get isReady(): boolean {
-    return this._isReady;
+  public get readyPromise(): Promise<void> {
+    return this._treeBoundingBoxdata.then();
   }
-
-  private _isReady = false;
 
   constructor(treeIndex: number, cadModel: Cognite3DModel) {
     super();
@@ -51,28 +49,45 @@ export class ExpandAssetTool extends Cognite3DViewerToolBase {
       .getBoundingBoxByTreeIndex(treeIndex)
       .then(rootBoundingBox => rootBoundingBox.getCenter(new THREE.Vector3()));
 
-    const subTreeBoundingBoxes = cadModel.getSubtreeTreeIndices(treeIndex).then(subTreeIndices => {
-      return Promise.all(
-        subTreeIndices.map(async subTreeIndex => {
-          const subTreeBox = await cadModel.getBoundingBoxByTreeIndex(subTreeIndex);
-          return {
-            subTreeIndex: subTreeIndex,
-            subTreeIndexBoundingBoxCenter: subTreeBox.getCenter(new THREE.Vector3())
-          };
-        })
-      );
-    });
+    const subTreeBoundingBoxes = cadModel
+      .getSubtreeTreeIndices(treeIndex)
+      .then(subTreeIndices => {
+        if (subTreeIndices.length > 1000) {
+          throw new Error(`Subtree size of ${subTreeIndices.length} is too large (max size = 1000)`);
+        }
 
-    this._treeBoundingBoxdata = Promise.all([rootTreeIndexBoundingBox, subTreeBoundingBoxes]).then(data => {
-      const [rootCenter, subTreeCenters] = data;
-      this._isReady = true;
-      return subTreeCenters.map(({ subTreeIndex, subTreeIndexBoundingBoxCenter }) => {
-        return {
-          treeIndex: subTreeIndex,
-          direction: new THREE.Vector3().subVectors(subTreeIndexBoundingBoxCenter, rootCenter),
-          transform: new THREE.Matrix4()
-        };
+        return subTreeIndices;
+      })
+      .then(subTreeIndices => {
+        return Promise.all(
+          subTreeIndices.map(async subTreeIndex => {
+            const subTreeBox = await cadModel.getBoundingBoxByTreeIndex(subTreeIndex);
+            return {
+              subTreeIndex: subTreeIndex,
+              subTreeIndexBoundingBoxCenter: subTreeBox.getCenter(new THREE.Vector3())
+            };
+          })
+        );
       });
-    });
+
+    this._treeBoundingBoxdata = Promise.all([rootTreeIndexBoundingBox, subTreeBoundingBoxes])
+      .then(data => {
+        const [rootCenter, subTreeCenters] = data;
+        return subTreeCenters.map(({ subTreeIndex, subTreeIndexBoundingBoxCenter }) => {
+          return {
+            treeIndex: subTreeIndex,
+            direction: new THREE.Vector3().subVectors(subTreeIndexBoundingBoxCenter, rootCenter),
+            transform: new THREE.Matrix4()
+          };
+        });
+      })
+      .then(async payloads => {
+        await Promise.all(
+          payloads.map(async payload => {
+            await cadModel.setNodeTransformByTreeIndex(payload.treeIndex, payload.transform);
+          })
+        );
+        return payloads;
+      });
   }
 }
