@@ -45,7 +45,7 @@
     "@babel/core": "^7.13.10",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
-    "@storybook/preset-create-react-app": "^3.1.6",
+    "@storybook/preset-create-react-app": "^3.1.7",
     "@storybook/react": "^6.1.21",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.5",
