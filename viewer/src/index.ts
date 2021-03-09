@@ -20,6 +20,7 @@ export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './datam
 export {
   NodeSet,
   FixedNodeSet,
+  ByAssetNodeSet,
   ByNodePropertyNodeSet,
   CombinedNodeSet,
   InvertedNodeSet,

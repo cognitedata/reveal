@@ -1,0 +1,98 @@
+---
+id: cad-styling
+title: Introduction
+describe: Reveal supports styling individual nodes by assigning appearance profiles.
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+Reveal supports flexible styling of inidivudal nodes (objects) in the 3D model. Styles can
+be compromised of several attributes to customize the visualization through the `NodeApperance`-type:
+
+| Field           | Field type                  | Description                                           |
+| --------------- | --------------------------- | ----------------------------------------------------- |
+| `color`         | `[number, number, number]?` | Override color by setting RGB values in range [0,255] |
+| `visible`       | `boolean?`                  | When false, the node(s) will be invisible             |
+| `renderInFront` | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
+| `renderGhosted` | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
+| `outlineColor`  | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
+
+These attributes can be combined to customize the look of nodes. For convinience, a set of default apperances are
+provided in the `DefaultNodeApperance`-constant:
+
+| Apperance           | Description                                                                      |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `Default`           | No overrides, use colors from the CAD model                                      |
+| `Ghosted`           | Render node(s) 'ghosted', i.e. make them translucent gray                        |
+| `Outlined`          | Outline node(s) with a white outline                                             |
+| `Hidden`            | Hide node(s)                                                                     |
+| `InFront`           | Render node(s) in front of all other nodes                                       |
+| `Highlighted`       | Highlight the node(s). Combination of `InFront`, `Outlined` and a custom color   |
+
+These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeSet`-object. `NodeSet`s 
+identify 3D nodes by `treeIndex`. There are several implementations of `NodeSet`:
+
+| Class                    |                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| `ByTreeIndexNodeSet`     | A set of nodes defined by a list of tree indices. Can be updated with a new set list of indices |
+| `ByNodePropertyNodeSet`  | A set of nodes defined by a query to the 3D backend to find nodes that matches one or more properties/attributes |
+| `ByAssetNodeSet`         | A set of nodes defined by [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) linking 3D nodes to [assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html) |
+| `InvertedNodeSet`        | Inverts the result of a `NodeSet` to match the opposite nodes (i.e. a NOT-operator) |
+| `CombinedNodeSet`        | Combines nodes from several `NodeSet` by applying set operations. Supported operations are [union]("https://en.wikipedia.org/wiki/Union_(set_theory)") and [intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
+
+It's also possible implement custom `NodeSet` (see below). This can be useful for specialized queries or to load
+sets from custom data sources.
+
+:::note
+The API for styling nodes has changed substantially since Reveal 1.x and upgrading Reveal 
+in applications will require manual steps to implement styling.
+:::
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+### Highlight a set of objects
+
+### Filtering nodes by assets
+
+3D nodes can be ["asset mapped"](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) to 
+[assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html) in Cognite Fusion. 
+Reveal supports styling nodes mapped to an asset by using `ByAssetNodeSet`.
+
+#### Style all asset mapped nodes
+
+If no options are provided, `ByAssetNodeSet` will accept any asset mapped node:
+
+```js runnable
+const assetMappedNodes = new ByAssetNodeSet(sdk, model);
+// When no asset ID is provided, all nodes mapped to assets are included
+assetMappedNodes.executeFilter({});
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(assetMappedNodes, {renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+```
+
+#### Style a given asset
+
+It is also possible to only style nodes mapped to a single asset.
+
+Assets can be identified by their 'ID':
+
+```js runnable
+const assetMappedNodes = new ByAssetNodeSet(sdk, model);
+// When no asset ID is provided, all nodes mapped to assets are included
+assetMappedNodes.executeFilter({ assetId: 4222791488928479 });
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(assetMappedNodes, {renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+```
+
+#### Style assets without an area
+
+To support proximity lookups
+
+Furthermore, a bounding box can be provided to only load assets within a given area:
+```js runnable
+```
+
+
+# Custom NodeSet implementation

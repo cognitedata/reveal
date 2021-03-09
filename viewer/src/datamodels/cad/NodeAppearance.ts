@@ -66,7 +66,7 @@ const GhostedApperance: NodeAppearance = {
 };
 
 export const DefaultNodeAppearance = {
-  Default: { visible: true },
+  Default: { visible: true, renderGhosted: false, renderInFront: false, outlineColor: NodeOutlineColor.NoOutline },
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,

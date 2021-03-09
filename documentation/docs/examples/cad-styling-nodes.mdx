@@ -1,0 +1,29 @@
+---
+id: cad-styling-nodes
+title: Filtering nodes by node properties
+describe: Applying styles to nodes based on node properties/attributes
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+3D nodes may have assosciated attribute/property data. Reveal allows for filtering based on
+these properties, allowinng queries such as "all pipes", "nodes within module P600" or "nodes 
+with status S5". Combinations are also possible by using `CombinedNodeSet`.
+
+`ByNodePropertyNodeSet` is used to query nodes based on node properties. It's possible to specify 
+multiple criterias which will be combined using `AND` - i.e. all criterias must be met for a node
+to match. To emulate `OR`, use `CombinedNodeSet` with a `union`-operator.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+# Show all pipes
+
+If nodes in the 3D model has an attribute `'PDMS.Type'` `ByNodePropertyNodeSet` can be used to
+retrieve nodes of a certain type. In the following example, only pipes are accepted:
+
+```js runnable
+const allPipes = new ByNodePropertyNodeSet(sdk, model);
+allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(allPipes, {renderGhosted: false, color: [40, 200, 20] } );
+```

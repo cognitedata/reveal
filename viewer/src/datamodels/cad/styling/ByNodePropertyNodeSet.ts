@@ -4,19 +4,16 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { NodeSet } from './NodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
+import { AsyncNodeSetBase } from './AsyncNodeSetBase';
 
-export class ByNodePropertyNodeSet extends NodeSet {
+export class ByNodePropertyNodeSet extends AsyncNodeSetBase {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
   private readonly _revisionId: number;
-
-  private _lastStartedQueryId = 0;
-  private _lastCompletedQueryId = 0;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
     super();
@@ -30,10 +27,10 @@ export class ByNodePropertyNodeSet extends NodeSet {
       [key: string]: string;
     };
   }): Promise<void> {
-    const queryId = ++this._lastStartedQueryId;
+    const queryId = this.startQuery();
     const indexSet = new IndexSet();
 
-    let request = await this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
+    const request = await this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
       properties: query,
       limit: 1000
     });
@@ -41,32 +38,14 @@ export class ByNodePropertyNodeSet extends NodeSet {
     this._indexSet = indexSet;
     this.notifyChanged();
 
-    while (this._indexSet === indexSet) {
-      const nextRequest = request.next ? request.next() : undefined;
-
-      request.items.forEach(node => {
-        if (!indexSet.contains(node.treeIndex)) {
-          indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
-        }
-      });
-
-      if (nextRequest) {
-        this.notifyChanged();
-        request = await nextRequest;
-      } else {
-        break;
+    await this.pageResults(queryId, request, node => {
+      if (!indexSet.contains(node.treeIndex)) {
+        indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
       }
-    }
-
-    this._lastCompletedQueryId = Math.max(this._lastCompletedQueryId, queryId);
-    this.notifyChanged();
+    });
   }
 
   getIndexSet(): IndexSet {
     return this._indexSet;
-  }
-
-  get isLoading(): boolean {
-    return this._lastCompletedQueryId !== this._lastStartedQueryId;
   }
 }

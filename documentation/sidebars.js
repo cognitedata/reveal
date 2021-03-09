@@ -19,6 +19,13 @@ module.exports = {
       items: [
         'examples/cad-basic',
         'examples/cad-colors',
+        { 
+          "Styling CAD models": [
+            'examples/cad-styling',
+            'examples/cad-styling-assets',
+            'examples/cad-styling-nodes',
+          ] 
+        },
         'examples/cad-highlighting',
         'examples/cad-transform-override',
         'examples/cad-ghostmode',
