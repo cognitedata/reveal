@@ -1,41 +1,33 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { ConditionalWrapper } from '../ConditionalWrapper';
+import {
+  WithPropsWithWrapper,
+  BaseWithWrapper,
+  BaseWithoutWrapper,
+} from '../__stories__/ConditionalWrapper.stories';
 
 describe('ConditionalWrapper', () => {
-  const Wrapper: React.FC = (children) => {
-    return (
-      <div>
-        WRAPPER_ADDED
-        {children}
-      </div>
-    );
-  };
-
   it('should not wrap', () => {
-    const Test = () => (
-      <ConditionalWrapper wrap={Wrapper} condition={false}>
-        <div>test-content</div>
-      </ConditionalWrapper>
-    );
-
-    render(<Test />);
+    render(<BaseWithoutWrapper />);
 
     expect(screen.queryByText('WRAPPER_ADDED')).toBeFalsy();
-    expect(screen.getByText('test-content')).toBeInTheDocument();
+    expect(screen.getByText('test-content 1')).toBeInTheDocument();
   });
 
   it('should wrap', () => {
-    const Test = () => (
-      <ConditionalWrapper wrap={Wrapper} condition>
-        <div>test-content</div>
-      </ConditionalWrapper>
-    );
-
-    render(<Test />);
+    render(<BaseWithWrapper />);
 
     expect(screen.getByText('WRAPPER_ADDED')).toBeInTheDocument();
-    expect(screen.getByText('test-content')).toBeInTheDocument();
+    expect(screen.getByText('test-content 2')).toBeInTheDocument();
+  });
+
+  it('should wrap with props', () => {
+    render(<WithPropsWithWrapper />);
+
+    expect(
+      screen.getByText('This string is from wrapper props')
+    ).toBeInTheDocument();
+    expect(screen.getByText('test-content 3')).toBeInTheDocument();
   });
 });

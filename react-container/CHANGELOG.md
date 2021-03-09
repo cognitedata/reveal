@@ -1,3 +1,9 @@
+## 0.9.3 Mar 8 2021
+
+### Changes
+
+- Add loopDetector
+
 ## 0.9.0 Feb 23 2021
 
 ### Changes

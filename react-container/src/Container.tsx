@@ -10,7 +10,9 @@ import { Loader } from '@cognite/cogs.js';
 import {
   AuthContainer,
   AuthContainerForApiKeyMode,
+  ConditionalWrapperWithProps,
   TranslationWrapper,
+  LoopDetector,
 } from './components';
 import { configureCogniteSDKClient, createBrowserHistory } from './internal';
 import { storage, getTenantInfo } from './utils';
@@ -24,7 +26,12 @@ interface Props {
 const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
-  const { applicationId, cdfApiBaseUrl, disableTranslations } = sidecar;
+  const {
+    applicationId,
+    cdfApiBaseUrl,
+    disableTranslations,
+    disableLoopDetector,
+  } = sidecar;
 
   storage.init({ tenant: possibleTenant, appName: applicationId });
 
@@ -81,20 +88,25 @@ const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
   };
 
   return (
-    <TranslationWrapper disabled={disableTranslations}>
-      <ChosenAuthContainer
-        sidecar={sidecar}
-        sdkClient={client}
-        authError={authError}
-        tenant={initialTenant}
-      >
-        <ConditionalReduxProvider store={store}>
-          <ErrorBoundary instanceId="container-root">
-            <Router history={history}>{children}</Router>
-          </ErrorBoundary>
-        </ConditionalReduxProvider>
-      </ChosenAuthContainer>
-    </TranslationWrapper>
+    <ConditionalWrapperWithProps
+      condition={disableLoopDetector}
+      wrap={LoopDetector}
+    >
+      <TranslationWrapper disabled={disableTranslations}>
+        <ChosenAuthContainer
+          sidecar={sidecar}
+          sdkClient={client}
+          authError={authError}
+          tenant={initialTenant}
+        >
+          <ConditionalReduxProvider store={store}>
+            <ErrorBoundary instanceId="container-root">
+              <Router history={history}>{children}</Router>
+            </ErrorBoundary>
+          </ConditionalReduxProvider>
+        </ChosenAuthContainer>
+      </TranslationWrapper>
+    </ConditionalWrapperWithProps>
   );
 };
 

@@ -11,6 +11,7 @@ export type SidecarConfig = {
   directoryTenantId?: string;
   disableTranslations?: boolean;
   disableLegacyLogin?: boolean;
+  disableLoopDetector?: boolean;
   helpLink?: string;
   locizeProjectId?: string;
 };
