@@ -12,7 +12,7 @@
     "@cognite/data-exploration": "^0.5.7",
     "@cognite/react-feature-flags": "^0.2.2",
     "@cognite/react-picture-annotation": "^1.10.4",
-    "@cognite/sdk": "^3.3.2",
+    "@cognite/sdk": "^3.3.6",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@sentry/browser": "^5.29.2",
