@@ -245,6 +245,10 @@ export function Migration() {
       const exlopdeParams = { explodeFactor: 0.0, rootTreeIndex: 0};
       const explodeActions = { 
         selectAssetTreeIndex: async () => {
+          if(expandTool){
+            explodeActions.reset();
+          }
+
           const rootTreeIndex = exlopdeParams.rootTreeIndex;
           cadModels[0].hideAllNodes();
           cadModels[0].showNodeByTreeIndex(rootTreeIndex, true);

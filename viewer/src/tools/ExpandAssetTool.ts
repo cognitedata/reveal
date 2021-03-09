@@ -83,8 +83,8 @@ export class ExpandAssetTool extends Cognite3DViewerToolBase {
       })
       .then(async payloads => {
         await Promise.all(
-          payloads.map(async payload => {
-            await cadModel.setNodeTransformByTreeIndex(payload.treeIndex, payload.transform);
+          payloads.map(payload => {
+            return cadModel.setNodeTransformByTreeIndex(payload.treeIndex, payload.transform);
           })
         );
         return payloads;
