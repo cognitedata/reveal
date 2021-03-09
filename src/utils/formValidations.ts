@@ -154,3 +154,25 @@ export const checkFile = (file?: UploadFile) => {
     message: '',
   };
 };
+
+export const checkFloat = (min: number, max: number) => (data: string) => {
+  if (data) {
+    const e = {
+      error: true,
+      message: `Number not valid in range [${min}, ${max}]`,
+    };
+    try {
+      const f = parseFloat(data);
+      if (f < min || f > max) {
+        return e;
+      }
+    } catch {
+      return e;
+    }
+  }
+
+  return {
+    error: false,
+    message: '',
+  };
+};
