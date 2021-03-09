@@ -1,12 +1,15 @@
 import React from 'react';
 
-import { Props as SentryProps, initSentry } from './utils';
+import { SentryProps, initSentry } from './utils';
 
-export interface Props extends SentryProps {
+export interface SentryComponentProps extends SentryProps {
   children: React.ReactElement<unknown> | null;
 }
 
-export const Sentry: React.FC<Props> = ({ children, ...rest }) => {
+export const Sentry: React.FC<SentryComponentProps> = ({
+  children,
+  ...rest
+}) => {
   React.useEffect(() => {
     initSentry(rest);
   }, []);

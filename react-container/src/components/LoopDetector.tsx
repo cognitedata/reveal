@@ -2,6 +2,8 @@ import React from 'react';
 import { LoopDetector as CogniteLoopDetector } from '@cognite/react-loop-detector';
 import { reportException } from '@cognite/react-errors';
 
+import { ConditionalWrapperWithProps } from './ConditionalWrapper';
+
 export const LoopDetector: React.FC<{ fallbackUrl?: string }> = ({
   children,
   fallbackUrl,
@@ -22,3 +24,12 @@ export const LoopDetector: React.FC<{ fallbackUrl?: string }> = ({
     </CogniteLoopDetector>
   );
 };
+
+export const ConditionalLoopDetector: React.FC<{
+  children: React.ReactElement;
+  disabled?: boolean;
+}> = ({ disabled, children }) => (
+  <ConditionalWrapperWithProps condition={disabled} wrap={LoopDetector}>
+    {children}
+  </ConditionalWrapperWithProps>
+);

@@ -1,8 +1,14 @@
+## 0.10.0 Mar 9 2021
+
+### Changes
+
+- Add default Sentry wrapper, use disableSentry to disable
+
 ## 0.9.3 Mar 8 2021
 
 ### Changes
 
-- Add loopDetector
+- Add default loopDetector, use disableLoopDetector to disable
 
 ## 0.9.0 Feb 23 2021
 

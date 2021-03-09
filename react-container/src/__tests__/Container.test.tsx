@@ -7,6 +7,9 @@ import { mock as mockedAuthUtils } from '../__mocks/auth-utils';
 import { AuthConsumer } from '../components/AuthContainer';
 import { ContainerWithoutI18N } from '../Container';
 
+// @ts-expect-error - missing other keys
+global.console = { warn: jest.fn() };
+
 jest.mock('@cognite/auth-utils', () => mockedAuthUtils);
 jest.mock('../utils', () => {
   const utils = jest.requireActual('../utils');
@@ -43,5 +46,8 @@ describe('ContainerWithoutI18N', () => {
 
     expect(screen.getByText('TEST-CONTENT')).toBeInTheDocument();
     expect(screen.getByText('https://api.cognitedata.com')).toBeInTheDocument();
+
+    // eslint-disable-next-line no-console
+    expect(console.warn).toBeCalled();
   });
 });

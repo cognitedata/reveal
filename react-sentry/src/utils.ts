@@ -2,11 +2,6 @@ import { BrowserOptions, init, setUser } from '@sentry/browser';
 import { log } from './log';
 import { isLocalhost } from './env';
 
-export interface SentryConfig {
-  environment: string;
-  dsn: string;
-}
-
 export const getReleaseSha = () =>
   (
     process.env.REACT_APP_RELEASE_ID ||
@@ -15,7 +10,7 @@ export const getReleaseSha = () =>
     ''
   ).substring(0, 8);
 
-export interface Props {
+export interface SentryProps {
   // EG:
   // ignoreErrors: [
   //   'Network request failed',
@@ -32,7 +27,7 @@ export interface Props {
   dsn?: string;
 }
 
-export const initSentry = ({ ignoreErrors, dsn }: Props) => {
+export const initSentry = ({ ignoreErrors, dsn }: SentryProps) => {
   const chosenDsn = dsn || process.env.REACT_APP_SENTRY_DSN;
 
   if (!chosenDsn) {

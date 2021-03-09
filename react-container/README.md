@@ -16,10 +16,14 @@ yarn add @cognite/react-container
 
 ## Main container usage
 
+This is recommended to be done at the highest level in your `App.tsx` file.
+
 ```ts
 import { Container } from '@cognite/react-container';
 
-<Container>... my app now has all the fun stuff ...</Container>;
+<Container sidecar={sidecar}>
+  ... my app now has all the fun stuff ...
+</Container>;
 ```
 
 The prime example can be found in the demo app [here](https://github.com/cognitedata/react-demo-app/blob/master/src/App.tsx#L18)
@@ -33,10 +37,22 @@ The prime example can be found in the demo app [here](https://github.com/cognite
 This container includes:
 
 - Error boundary
+- Loop detector
+- Sentry setup
+- i18n container
 - React router setup
 - Authentication provider - This makes sure your app is always authenticated and provides an initiated Cognite SDK
-- i18n container
 - LocalStorage helpers
+
+## How to disable unwanted features
+
+The container has one prop of the sidecar. You can add these keys to your sidecar:
+
+```
+  disableTranslations: false
+  disableLoopDetector: false
+  disableSentry: false
+```
 
 ## How to access auth information
 

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Sentry, Props } from './Sentry';
+import { Sentry } from './Sentry';
+import type { SentryProps } from './utils';
 
 export default {
   title: 'Sentry',
 };
 
-export const Example = (props: Partial<Props>) => (
+export const Example = (props: Partial<SentryProps>) => (
   <Sentry {...props}>
     <div>content</div>
   </Sentry>

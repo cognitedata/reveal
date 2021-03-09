@@ -10,18 +10,24 @@ import { Loader } from '@cognite/cogs.js';
 import {
   AuthContainer,
   AuthContainerForApiKeyMode,
-  ConditionalWrapperWithProps,
+  ConditionalSentry,
+  ConditionalLoopDetector,
   TranslationWrapper,
-  LoopDetector,
 } from './components';
 import { configureCogniteSDKClient, createBrowserHistory } from './internal';
 import { storage, getTenantInfo } from './utils';
 import { ConditionalReduxProvider } from './providers';
 
+interface ContainerSidecarConfig extends SidecarConfig {
+  disableTranslations?: boolean;
+  disableLoopDetector?: boolean;
+  disableSentry?: boolean;
+}
+
 interface Props {
   store?: Store;
   children: React.ReactChild;
-  sidecar: SidecarConfig;
+  sidecar: ContainerSidecarConfig;
 }
 const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
@@ -31,6 +37,7 @@ const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
     cdfApiBaseUrl,
     disableTranslations,
     disableLoopDetector,
+    disableSentry,
   } = sidecar;
 
   storage.init({ tenant: possibleTenant, appName: applicationId });
@@ -88,25 +95,24 @@ const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
   };
 
   return (
-    <ConditionalWrapperWithProps
-      condition={disableLoopDetector}
-      wrap={LoopDetector}
-    >
-      <TranslationWrapper disabled={disableTranslations}>
-        <ChosenAuthContainer
-          sidecar={sidecar}
-          sdkClient={client}
-          authError={authError}
-          tenant={initialTenant}
-        >
-          <ConditionalReduxProvider store={store}>
-            <ErrorBoundary instanceId="container-root">
-              <Router history={history}>{children}</Router>
-            </ErrorBoundary>
-          </ConditionalReduxProvider>
-        </ChosenAuthContainer>
-      </TranslationWrapper>
-    </ConditionalWrapperWithProps>
+    <ConditionalLoopDetector disabled={disableLoopDetector}>
+      <ConditionalSentry disabled={disableSentry}>
+        <TranslationWrapper disabled={disableTranslations}>
+          <ChosenAuthContainer
+            sidecar={sidecar}
+            sdkClient={client}
+            authError={authError}
+            tenant={initialTenant}
+          >
+            <ConditionalReduxProvider store={store}>
+              <ErrorBoundary instanceId="container-root">
+                <Router history={history}>{children}</Router>
+              </ErrorBoundary>
+            </ConditionalReduxProvider>
+          </ChosenAuthContainer>
+        </TranslationWrapper>
+      </ConditionalSentry>
+    </ConditionalLoopDetector>
   );
 };
 

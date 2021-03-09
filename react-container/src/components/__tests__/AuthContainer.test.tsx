@@ -6,11 +6,9 @@ import { generateSidecar } from '__mocks/sidecar';
 import { mock as mockedAuthUtils } from '../../__mocks/auth-utils';
 import { AuthContainer } from '../AuthContainer';
 
-const mock = jest.fn().mockImplementation(() => {
-  return { log: jest.fn() };
-});
+// @ts-expect-error - missing other keys
+global.console = { warn: jest.fn() };
 
-jest.mock('utils/log', mock);
 jest.mock('@cognite/auth-utils', () => mockedAuthUtils);
 
 describe('AuthContainer', () => {
@@ -32,5 +30,11 @@ describe('AuthContainer', () => {
     render(<Test />);
 
     expect(screen.getByText('test-content')).toBeInTheDocument();
+
+    // eslint-disable-next-line no-console
+    expect(console.warn).toBeCalledWith(
+      '[AuthContainer] UnAuthenticated state found, going to login page.',
+      undefined
+    );
   });
 });
