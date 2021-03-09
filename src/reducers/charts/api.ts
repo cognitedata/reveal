@@ -14,7 +14,7 @@ import { node as OutputSeriesNode } from './Nodes/OutputSeries';
 export const fetchAllCharts = (): AppThunk => async (dispatch, getState) => {
   const state = getState();
   const tenant = selectTenant(state);
-  const { email: user } = selectUser(state);
+  const user = selectUser(state);
 
   if (state.charts.status.status === 'LOADING') {
     // Do nothing if we're already loading data
@@ -30,7 +30,7 @@ export const fetchAllCharts = (): AppThunk => async (dispatch, getState) => {
 
   try {
     const chartService = new ChartService(tenant);
-    const allCharts = await chartService.getCharts();
+    const allCharts = await chartService.getCharts(user);
 
     dispatch(chartsSlice.actions.finishedLoadingAllCharts(allCharts));
   } catch (e) {
