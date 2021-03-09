@@ -95,6 +95,7 @@ export const duplicateChart = (chart: Chart): AppThunk => async (
   const id = nanoid();
   const newChart: Chart = {
     ...chart,
+    user,
     id,
     name: `${chart.name} Copy`,
   };
