@@ -6,10 +6,9 @@
     "start": "./scripts/start.sh",
     "build": "./scripts/build.sh",
     "test": "./scripts/test.sh",
-    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",
-    "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "lint": "eslint --config .eslintrc.production.js 'src/**/*.{ts,tsx}' 'public/index.html'",
+    "lint:fix": "yarn lint --fix",
     "storybook": "start-storybook -p 6006",
     "testcafe:run": "BASE_URL=http://localhost:11111 testcafe 'chromium:headless --no-sandbox' 'testcafe/desktop' --stop-on-first-fail",
     "testcafe:run-live": "BASE_URL=http://localhost:11111 testcafe 'chrome' 'testcafe/desktop' --live",
@@ -90,12 +89,10 @@
     "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.10.1",
-    "husky": "^4.3.5",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^12.0.0",
     "kill-port": "^1.6.1",
     "prettier": "^2.1.2",
-    "pretty-quick": "^3.1.0",
     "serve": "^11.3.2",
     "sinon": "^9.2.1",
     "testcafe": "^1.9.4",
@@ -119,10 +116,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }
