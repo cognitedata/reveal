@@ -25,6 +25,7 @@ import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import { translateServerErrorMessage } from '../../utils/error/TranslateErrorMessages';
 import { BackBtn } from '../../components/buttons/BackBtn';
 import { HeadingLabel } from '../../components/inputs/HeadingLabel';
+import { TaskList, taskListItems } from './TaskList';
 
 const StyledInput = styled.input`
   width: 50%;
@@ -144,6 +145,7 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
             {NEXT}
           </Button>
         </CreateFormWrapper>
+        <TaskList list={taskListItems} />
       </GridMainWrapper>
     </CreateIntegrationPageWrapper>
   );

@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useContext, useState } from 'react';
 import { RegisterIntegrationInfo } from '../model/Integration';
 
 interface ContextProps {
-  storedIntegration: Partial<RegisterIntegrationInfo> | null;
+  storedIntegration: Partial<RegisterIntegrationInfo>;
   setStoredIntegration: (integration: Partial<RegisterIntegrationInfo>) => void;
 }
 
@@ -18,12 +18,9 @@ const RegisterIntegrationProvider = ({
   initIntegration,
   children,
 }: PropsWithChildren<Props>) => {
-  const [
-    storedIntegration,
-    setIntegration,
-  ] = useState<Partial<RegisterIntegrationInfo> | null>(
-    initIntegration ?? null
-  );
+  const [storedIntegration, setIntegration] = useState<
+    Partial<RegisterIntegrationInfo>
+  >(initIntegration ?? {});
   return (
     <RegisterIntegrationContext.Provider
       value={{ storedIntegration, setStoredIntegration: setIntegration }}

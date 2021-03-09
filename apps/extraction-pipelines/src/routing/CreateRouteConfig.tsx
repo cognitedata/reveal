@@ -78,51 +78,53 @@ export const RAW_TABLE_PAGE_PATH = `/${INTEGRATIONS}/create/${RAW_TABLES}`;
 const META_DATA = `meta-data`;
 export const METADATA_PAGE_PATH = `/${INTEGRATIONS}/create/${META_DATA}`;
 export const CREATE_INTEGRATION_PAGE_PATH = `/${INTEGRATIONS}/create`;
-
+export const withTenant = (path: string) => {
+  return `/:tenant${path}`;
+};
 export const createIntegrationRoutes = [
   {
     name: 'Create integration - Intro',
-    path: `/:tenant${CREATE_INTEGRATION_PAGE_PATH}`,
+    path: withTenant(CREATE_INTEGRATION_PAGE_PATH),
     exact: true,
     component: LazyCreateIntegrationCreate,
   },
   {
     name: 'Create integration - name',
-    path: `/:tenant${NAME_PAGE_PATH}`,
+    path: withTenant(NAME_PAGE_PATH),
     component: LazyCreateIntegrationName,
   },
   {
     name: 'Create integration - external id',
-    path: `/:tenant${EXTERNAL_ID_PAGE_PATH}`,
+    path: withTenant(EXTERNAL_ID_PAGE_PATH),
     component: LazyCreateIntegrationExternalId,
   },
   {
     name: 'Create integration - documentation',
-    path: `/:tenant${DOCUMENTATION_PAGE_PATH}`,
+    path: withTenant(DOCUMENTATION_PAGE_PATH),
     exact: true,
     component: LazyCreateIntegrationDocumentation,
   },
   {
     name: 'Create integration - contacts',
-    path: `/:tenant${CONTACTS_PAGE_PATH}`,
+    path: withTenant(CONTACTS_PAGE_PATH),
     exact: true,
     component: LazyCreateIntegrationContacts,
   },
   {
     name: 'Create integration - data set',
-    path: `/:tenant${DATA_SET_PAGE_PATH}`,
+    path: withTenant(DATA_SET_PAGE_PATH),
     exact: true,
     component: LazyCreateIntegrationDataSet,
   },
   {
     name: 'Create integration - Raw Tables',
-    path: `/:tenant${RAW_TABLE_PAGE_PATH}`,
+    path: withTenant(RAW_TABLE_PAGE_PATH),
     exact: true,
     component: LazyCreateIntegrationRawTable,
   },
   {
     name: 'Create integration - schedule',
-    path: `/:tenant${SCHEDULE_PAGE_PATH}`,
+    path: withTenant(SCHEDULE_PAGE_PATH),
     exact: true,
     component: LazyCreateIntegrationSchedule,
   },

@@ -38,7 +38,7 @@ describe('NamePage', () => {
 
   test('Interact with form', async () => {
     renderRegisterContext(<NamePage />, { ...props });
-    expect(screen.getByText(INTEGRATION_NAME_HEADING)).toBeInTheDocument();
+    expect(screen.getByLabelText(INTEGRATION_NAME_HEADING)).toBeInTheDocument();
     const nameInput = screen.getByLabelText(INTEGRATION_NAME_HEADING);
     const nextBtn = screen.getByText(NEXT);
     fireEvent.click(nextBtn);

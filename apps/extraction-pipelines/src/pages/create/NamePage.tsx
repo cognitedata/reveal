@@ -19,6 +19,7 @@ import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import { EXTERNAL_ID_PAGE_PATH } from '../../routing/CreateRouteConfig';
 import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
 import { HeadingLabel } from '../../components/inputs/HeadingLabel';
+import { TaskList, taskListItems } from './TaskList';
 
 const StyledInput = styled.input`
   width: 50%;
@@ -92,6 +93,7 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
             {NEXT}
           </Button>
         </CreateFormWrapper>
+        <TaskList list={taskListItems} />
       </GridMainWrapper>
     </CreateIntegrationPageWrapper>
   );

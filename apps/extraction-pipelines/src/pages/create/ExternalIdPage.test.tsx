@@ -25,9 +25,11 @@ describe('ExternalIdPage', () => {
   test('Renders', () => {
     renderRegisterContext(<ExternalIdPage />, { ...props });
     expect(
-      screen.getByText(INTEGRATION_EXTERNAL_ID_HEADING)
+      screen.getByLabelText(INTEGRATION_EXTERNAL_ID_HEADING)
     ).toBeInTheDocument();
-    expect(screen.getByLabelText('External id')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(INTEGRATION_EXTERNAL_ID_HEADING)
+    ).toBeInTheDocument();
   });
 
   test('Renders stored value', () => {

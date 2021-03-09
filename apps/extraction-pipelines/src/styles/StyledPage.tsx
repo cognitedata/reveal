@@ -61,10 +61,10 @@ export const GridMainWrapper = styled(MainPanelGrid)`
   grid-template-rows: min-content min-content min-content auto;
   grid-row-gap: 1rem;
   grid-template-areas:
-    '. back .'
-    '. title .'
-    '. description .'
-    '. form .';
+    'left back .'
+    'left title .'
+    'left description .'
+    'left  form .';
   overflow-y: auto;
   height: calc(100vh - 16.375rem);
   form {

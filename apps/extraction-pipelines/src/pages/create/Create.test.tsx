@@ -18,6 +18,7 @@ import {
 import {
   CREATE_INTEGRATION_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
+  withTenant,
 } from '../../routing/CreateRouteConfig';
 import '../../utils/test/windowLocation';
 import { INTEGRATION_DOCUMENTATION_HEADING } from './DocumentationPage';
@@ -39,7 +40,7 @@ describe('Register', () => {
     project: PROJECT_ITERA_INT_GREEN,
     cdfEnv: CDF_ENV_GREENFIELD,
     origin: ORIGIN_DEV,
-    route: `/:tenant${CREATE_INTEGRATION_PAGE_PATH}`,
+    route: withTenant(CREATE_INTEGRATION_PAGE_PATH),
     initRegisterIntegration: {},
   };
   test('Navigation - simple path', async () => {
@@ -152,7 +153,7 @@ describe('Register', () => {
       <React.Suspense fallback="This is the fallback">
         <Create />
       </React.Suspense>,
-      { ...props, route: `/:tenant${SCHEDULE_PAGE_PATH}` }
+      { ...props, route: withTenant(SCHEDULE_PAGE_PATH) }
     );
 
     // schedule page
