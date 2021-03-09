@@ -30,10 +30,11 @@ Another good usecase would be to bind the `expand` function to a slider which th
 
 
 ```jsx runnable
+// import { ExpandAssetTool } from '@cognite/reveal/tools';
 
 const assetRootTreeIndex = 570730;
 
-const tool = new ExpandAssetTool(assetRootTreeIndex, model);
+const expandTool = new ExpandAssetTool(assetRootTreeIndex, model);
 
 model.hideAllNodes();
 model.showNodeByTreeIndex(assetRootTreeIndex, true);
@@ -43,7 +44,7 @@ const rootBoundingBox = model.getBoundingBoxByTreeIndex(assetRootTreeIndex)
     viewer.fitCameraToBoundingBox(boundingBox, 0);
   })
   .then(() => {
-    return tool.readyPromise;
+    return expandTool.readyPromise;
   })
   .then(() => {
     const clock = new THREE.Clock(true);
@@ -52,7 +53,7 @@ const rootBoundingBox = model.getBoundingBoxByTreeIndex(assetRootTreeIndex)
     setInterval(() =>{
       const elapsedTime = clock.getElapsedTime();
       const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5; 
-      tool.expand(expandRadius);
+      expandTool.expand(expandRadius);
     }, 20);
   });
 
