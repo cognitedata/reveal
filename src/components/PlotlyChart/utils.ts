@@ -44,7 +44,7 @@ export function getYaxisUpdatesFromEventData(
       .filter((key) => key.includes('yaxis'))
       .reduce((result: { [key: string]: any }, key) => {
         const axisIndex = (+key.split('.')[0].split('yaxis')[1] || 1) - 1;
-        const { id = '', type = '' } = seriesData[axisIndex];
+        const { id = '', type = '' } = seriesData[axisIndex] || {};
 
         return {
           ...result,
