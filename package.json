@@ -42,7 +42,7 @@
     "webpack": "4.44.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.8",
+    "@babel/core": "^7.13.10",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
