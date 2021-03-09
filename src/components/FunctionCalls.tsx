@@ -19,8 +19,8 @@ const callTableColumns = [
         <FunctionCall
           id={call.functionId}
           callId={call.id}
-          renderCall={call => {
-            const startTime = moment.utc(call.startTime);
+          renderCall={c => {
+            const startTime = moment.utc(c.startTime);
             const timeSince = moment(startTime).fromNow();
             return <>{timeSince}</>;
           }}
@@ -36,10 +36,10 @@ const callTableColumns = [
         <FunctionCall
           id={call.functionId}
           callId={call.id}
-          renderCall={call => {
+          renderCall={c => {
             // If the function isn't finished yet, show current duration with end time being now
-            const endTime = moment.utc(call.endTime) || moment.utc(new Date());
-            const startTime = moment.utc(call.startTime);
+            const endTime = moment.utc(c.endTime) || moment.utc(new Date());
+            const startTime = moment.utc(c.startTime);
 
             // round up to the nearest second
             const duration = moment
