@@ -15,7 +15,7 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
-import { ExpandAssetTool } from '@cognite/reveal/tools';
+import { ExplodedViewTool } from '@cognite/reveal/tools';
 
 window.THREE = THREE;
 
@@ -237,7 +237,7 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
-      let expandTool: ExpandAssetTool | null;
+      let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
 
       const assetExplode = gui.addFolder('Asset Inspect');
@@ -256,7 +256,7 @@ export function Migration() {
           const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
 
-          expandTool = new ExpandAssetTool(rootTreeIndex, cadModels[0]);
+          expandTool = new ExplodedViewTool(rootTreeIndex, cadModels[0]);
 
           await expandTool.readyPromise;
           
