@@ -6,9 +6,9 @@ import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export class ExpandAssetTool extends Cognite3DViewerToolBase {
-  private _cadModel: Cognite3DModel;
+  private readonly _cadModel: Cognite3DModel;
   private _treeBoundingBoxdata!: Promise<{ treeIndex: number; direction: THREE.Vector3; transform: THREE.Matrix4 }[]>;
-  private _rootTreeIndex: number;
+  private readonly _rootTreeIndex: number;
 
   public get readyPromise(): Promise<void> {
     return this._treeBoundingBoxdata.then();
