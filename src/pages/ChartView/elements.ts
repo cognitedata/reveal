@@ -243,11 +243,6 @@ export const ChartWrapper = styled.div`
   > div {
     height: 100%;
     width: 100%;
-
-    > .highcharts-container {
-      height: 100%;
-      width: 100%;
-    }
   }
 `;
 

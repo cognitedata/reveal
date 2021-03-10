@@ -288,6 +288,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
               </Menu.Item>
               {Object.values(defaultNodeOptions).map((nodeOption) => (
                 <Menu.Item
+                  key={nodeOption.name}
                   onClick={() => {
                     onNewNode({
                       id: `${nodeOption.node.subtitle}-${nanoid()}`,
@@ -305,6 +306,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
         >
           {nodes.map((node) => (
             <SourceNode
+              key={node.id}
               node={{ ...node, selected: node.id === activeNode?.id }}
               status={workflow.latestRun?.nodeProgress?.[node.id]}
               onUpdate={onUpdateNode}

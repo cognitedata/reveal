@@ -114,7 +114,7 @@ export const configPanel = ({
     <div>
       <h4>Tool Function</h4>
       {isLoading ? (
-        <Icon type="Loading" />
+        <Icon style={{ color: 'white' }} type="Loading" />
       ) : (
         <Select
           theme="dark"

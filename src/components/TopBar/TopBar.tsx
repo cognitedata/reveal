@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Menu, TopBar, Button } from '@cognite/cogs.js';
+import { Avatar, Menu, TopBar } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 
 import logoSvg from 'assets/logo.svg';
@@ -16,14 +16,15 @@ const TopBarWrapper = () => {
       <TopBar.Left>
         <TopBar.Logo
           title="Cognite Charts"
+          onLogoClick={() =>
+            history.location.pathname !== '/' && history.push('/')
+          }
           logo={
-            <Button unstyled onClick={() => history.push('/')}>
-              <img
-                src={logoSvg}
-                alt="Cognite Charts Logo"
-                style={{ margin: '0 12px 0 16px' }}
-              />
-            </Button>
+            <img
+              src={logoSvg}
+              alt="Cognite Charts Logo"
+              style={{ margin: '0 12px 0 16px' }}
+            />
           }
         />
         <TopBar.Navigation links={[]} />

@@ -77,6 +77,7 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
       <Column>
         {relativeTimeOptions.map((option) => (
           <Button
+            key={option.label}
             variant={
               chart.millisecondsFromNow === option.value ? 'default' : 'ghost'
             }

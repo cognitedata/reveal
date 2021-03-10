@@ -79,8 +79,10 @@ const useLogin = ({ project }: LoginOptions = {}) => {
 
         setToken(oAuthToken.accessToken);
         setAuthenticating(false);
-        Metrics.identify(status?.user || 'UNKNOWN');
-        Metrics.props({ tenant: project });
+        if (process.env.REACT_APP_MIXPANEL_TOKEN) {
+          Metrics.identify(status?.user || 'UNKNOWN');
+          Metrics.props({ tenant: project });
+        }
         dispatch(
           environmentSlice.actions.loginSuccess({ email: status?.user })
         );

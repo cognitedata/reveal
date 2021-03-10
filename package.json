@@ -6,10 +6,9 @@
     "start": "./scripts/start.sh",
     "build": "./scripts/build.sh",
     "test": "./scripts/test.sh",
-    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",
-    "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "lint": "eslint --config .eslintrc.production.js 'src/**/*.{ts,tsx}' 'public/index.html'",
+    "lint:fix": "yarn lint --fix",
     "storybook": "start-storybook -p 6006",
     "testcafe:run": "BASE_URL=http://localhost:11111 testcafe 'chromium:headless --no-sandbox' 'testcafe/desktop' --stop-on-first-fail",
     "testcafe:run-live": "BASE_URL=http://localhost:11111 testcafe 'chrome' 'testcafe/desktop' --live",
@@ -19,14 +18,10 @@
     "testcafe:serve": "serve -s build -l 11111"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^2.15.2",
+    "@cognite/cogs.js": "^2.18.2",
     "@cognite/connect": "^0.0.5",
     "@cognite/data-exploration": "^0.5.1",
     "@cognite/metrics": "^0.1.2",
-    "@cognite/react-container": "0.1.0",
-    "@cognite/react-errors": "^0.0.4",
-    "@cognite/react-i18n": "0.1.2",
-    "@cognite/react-loop-detector": "^0.0.1",
     "@cognite/sdk": "^3.3.2",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^3.0.0",
@@ -35,9 +30,6 @@
     "@sentry/browser": "^5.29.0",
     "date-fns": "^2.16.1",
     "firebase": "^8.2.9",
-    "highcharts": "^9.0.1",
-    "highcharts-react-official": "^3.0.0",
-    "jszip": "^3.6.0",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.40.0",
     "p-memoize": "^4.0.1",
@@ -45,7 +37,6 @@
     "react": "^17.0.1",
     "react-datepicker": "^3.6.0",
     "react-dom": "^17.0.1",
-    "react-i18next": "^11.8.8",
     "react-plotly.js": "^2.5.1",
     "react-query": "^3.7.1",
     "react-redux": "^7.2.2",
@@ -80,7 +71,6 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/sinon": "^9.0.9",
     "@types/styled-components": "^5.1.7",
-    "concurrently": "^5.3.0",
     "eslint": "^7.20.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^6.15.0",
@@ -90,12 +80,10 @@
     "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.10.1",
-    "husky": "^4.3.5",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^12.0.0",
     "kill-port": "^1.6.1",
     "prettier": "^2.1.2",
-    "pretty-quick": "^3.1.0",
     "serve": "^11.3.2",
     "sinon": "^9.2.1",
     "testcafe": "^1.9.4",
@@ -119,10 +107,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }
