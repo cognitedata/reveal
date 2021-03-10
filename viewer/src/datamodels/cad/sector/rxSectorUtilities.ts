@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DetermineSectorsInput } from './culling/types';
+import { DetermineSectorsInput, SectorLoadingSpendage } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
 import { OperatorFunction, from, Observable, asyncScheduler, EMPTY } from 'rxjs';
@@ -14,7 +14,8 @@ import { filter, switchMap, tap, publish, subscribeOn } from 'rxjs/operators';
 export function handleDetermineSectorsInput(
   sectorRepository: Repository,
   sectorCuller: SectorCuller,
-  modelStateHandler: ModelStateHandler
+  modelStateHandler: ModelStateHandler,
+  spendageReportCb: (spendage: SectorLoadingSpendage) => void
 ): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
   return publish((source$: Observable<DetermineSectorsInput>) => {
     const updateSector = (input: DetermineSectorsInput) => {
@@ -22,7 +23,9 @@ export function handleDetermineSectorsInput(
       if (cameraInMotion) {
         return EMPTY;
       }
-      return from(sectorCuller.determineSectors(input)).pipe(
+      const prioritizedResult = sectorCuller.determineSectors(input);
+      spendageReportCb(prioritizedResult.spendage);
+      return from(prioritizedResult.wantedSectors).pipe(
         subscribeOn(asyncScheduler),
         filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),
         sectorRepository.loadSector()
