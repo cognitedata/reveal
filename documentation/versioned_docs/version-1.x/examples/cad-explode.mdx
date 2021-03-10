@@ -21,8 +21,8 @@ For performance reasons, the root tree index must have a subtree size of less th
 `reset` resets the tool and any transform that has been applied to any nodes.
 
 :::note
-In addition, an instance of the `ExpandAssetTool` also contains a promise: `readyPromise`, which indicates when the tool is ready to be used.
-The reason you have to await is that initially the tool will make API calls to determine the individual locations of the nodes in the subtree.
+`ExpandAssetTool` contains a promise: `readyPromise`, which indicates when the tool is ready to be used.
+This indicates if the tool has cached necessary data from the Cognite Fusion API to determine the individual locations of the nodes in the subtree.
 :::
 
 Below is an example that expands a given pipe asset (that has a tree index of `570730`) which is animated by a sine function.
