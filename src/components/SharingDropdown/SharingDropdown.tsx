@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   Menu,
   Body,
   toast,
+  Input,
 } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts';
 import useDispatch from 'hooks/useDispatch';
@@ -18,12 +19,28 @@ interface SharingDropdownProps {
 }
 
 const SharingDropdown = ({ chart }: SharingDropdownProps) => {
+  const [shareIconType, setShareIconType] = useState<
+    'Copy' | 'Checkmark' | 'ErrorStroked'
+  >('Copy');
   const dispatch = useDispatch();
+  const shareableLink = window.location.href;
+
   const handleToggleChartAccess = async () => {
     try {
       await dispatch(toggleChartAccess(chart!));
     } catch (e) {
       toast.error('Unable to change chart access - try again!');
+    }
+  };
+
+  const handleCopyLinkClick = async () => {
+    try {
+      await navigator.clipboard.writeText(shareableLink);
+      setShareIconType('Checkmark');
+      setTimeout(() => setShareIconType('Copy'), 3000);
+    } catch (e) {
+      setShareIconType('ErrorStroked');
+      setTimeout(() => setShareIconType('Copy'), 3000);
     }
   };
 
@@ -47,6 +64,23 @@ const SharingDropdown = ({ chart }: SharingDropdownProps) => {
                 {chart.public ? 'Sharing on' : 'Sharing off'}
               </Switch>
             </SharingSwitchContainer>
+            <ShareLinkContainer>
+              <Input
+                variant="default"
+                value={shareableLink}
+                disabled={!chart.public}
+                htmlSize={32}
+              />
+              <Button
+                type="primary"
+                onClick={() => handleCopyLinkClick()}
+                icon={shareIconType}
+                iconPlacement="right"
+                disabled={!chart.public}
+              >
+                Copy link
+              </Button>
+            </ShareLinkContainer>
           </SharingMenuContent>
         </SharingMenu>
       }
@@ -73,6 +107,10 @@ export const SharingMenuContent = styled.div`
 export const SharingMenuBody = styled(Body)`
   margin: 8px 0 0;
   height: 40px;
+`;
+
+export const ShareLinkContainer = styled.div`
+  margin-top: 8px;
 `;
 
 export default SharingDropdown;
