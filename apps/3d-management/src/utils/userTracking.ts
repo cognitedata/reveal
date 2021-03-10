@@ -2,8 +2,8 @@ import * as Sentry from '@sentry/browser';
 import {
   getEnvironment,
   isDevelopment,
-  checkUrl,
   isProduction,
+  isStaging,
 } from '@cognite/cdf-utilities';
 
 const setupSupportChat = () => {
@@ -27,9 +27,10 @@ const setupSupportChat = () => {
 };
 
 const setupSentry = () => {
-  if (!checkUrl('dev')) {
+  if (isProduction() || isStaging()) {
     Sentry.init({
-      dsn: 'https://d09f6d3557114e6cbaa63b56d7ef86cc@sentry.io/1288725',
+      dsn:
+        'https://5ff4c7c90a914032a0aee8cd3dd7b05e@o124058.ingest.sentry.io/5658431',
       environment: getEnvironment(),
       release: process.env.REACT_APP_RELEASE || 'unknown',
     });
