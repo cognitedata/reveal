@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Dropdown,
-  Icon,
-  Menu,
-  toast,
-  Switch,
-  Title,
-} from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import useSelector from 'hooks/useSelector';
 import chartsSlice, {
   chartSelectors,
@@ -26,7 +18,6 @@ import {
   renameChart,
   saveExistingChart,
   duplicateChart,
-  toggleChartAccess,
   addWorkflowToChart,
   createWorkflowFromTimeSeries,
 } from 'reducers/charts/api';
@@ -44,6 +35,7 @@ import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
 import { Toolbar } from 'components/Toolbar';
+import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import {
   Header,
   TopPaneWrapper,
@@ -64,10 +56,6 @@ import {
   SourceTable,
   SourceRow,
   ChartTitle,
-  SharingMenu,
-  SharingSwitchContainer,
-  SharingMenuContent,
-  SharingMenuBody,
 } from './elements';
 
 type ChartViewProps = {
@@ -509,14 +497,6 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
       toast.success('Successfully duplicated!');
     } catch (e) {
       toast.error('Unable to duplicate - try again!');
-    }
-  };
-
-  const handleToggleChartAccess = async () => {
-    try {
-      await dispatch(toggleChartAccess(chart!));
-    } catch (e) {
-      toast.error('Unable to change chart access - try again!');
     }
   };
 
@@ -993,33 +973,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
               >
                 Save
               </Button>
-              <Dropdown
-                content={
-                  <SharingMenu>
-                    <SharingMenuContent>
-                      <Title level={3}>{chart.name}</Title>
-                      <SharingMenuBody level={1}>
-                        {chart.public
-                          ? 'This is a public chart. Copy the link to share it. Viewers will have to duplicate the chart in order to make changes.'
-                          : 'This is a private chart. It must be public to share it.'}
-                      </SharingMenuBody>
-                      <SharingSwitchContainer>
-                        <Switch
-                          name="toggleChartAccess"
-                          value={chart.public}
-                          onChange={handleToggleChartAccess}
-                        >
-                          {chart.public ? 'Sharing on' : 'Sharing off'}
-                        </Switch>
-                      </SharingSwitchContainer>
-                    </SharingMenuContent>
-                  </SharingMenu>
-                }
-              >
-                <Button icon="Share" variant="ghost">
-                  Share
-                </Button>
-              </Dropdown>
+              <SharingDropdown chart={chart} />
               <Button icon="Download" variant="ghost">
                 Export
               </Button>
