@@ -12,6 +12,7 @@ yarn react-scripts test "$@" \
   --reporters=default \
   --reporters=jest-junit \
   --runInBand \
+  --watchAll=false \
   --detectOpenHandles \
   --env=jest-environment-jsdom-sixteen \
   "$@"

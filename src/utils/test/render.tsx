@@ -7,6 +7,9 @@ import AppProviders from 'components/AppProviders';
 import merge from 'lodash/merge';
 import { StoryConfiguration } from 'storybook/configureStory';
 import { MOCK_ENVIRONMENT } from 'mocks/environment';
+import { SDKProvider } from '@cognite/sdk-provider';
+import { CogniteClient } from '@cognite/sdk';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 type RenderableComponent<Props, T> = React.ReactElement<
   Props,
@@ -30,9 +33,13 @@ const render = <Props, T extends StoryConfiguration>(
   );
 
   const renderResult = renderImpl(
-    <AppProviders tenant="" initialState={redux}>
-      {component}
-    </AppProviders>,
+    <QueryClientProvider client={new QueryClient()}>
+      <SDKProvider sdk={{} as CogniteClient}>
+        <AppProviders tenant="" initialState={redux}>
+          {component}
+        </AppProviders>
+      </SDKProvider>
+    </QueryClientProvider>,
     rest
   );
 
