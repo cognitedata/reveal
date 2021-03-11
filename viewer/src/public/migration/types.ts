@@ -42,6 +42,24 @@ export interface Cognite3DViewerOptions {
    */
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
 
+  /**
+   * When false, camera near and far planes will not be updated automatically (defaults to true).
+   * This can be useful when you have custom content in the 3D view and need to better
+   * control the view frustum.
+   * @version new in 1.4.0
+   */
+  automaticCameraNearFar?: boolean;
+
+  /**
+   * When false, the sensitivity of the camera controls will not be updated automatically.
+   * This can be useful to better control the sensitivity of the 3D navigation.
+   *
+   * When not set, control the sensitivity of the camera using `viewer.cameraControls.minDistance`
+   * and `viewer.cameraControls.maxDistance`.
+   * @version new in 1.4.0
+   */
+  automaticControlsSensitivity?: boolean;
+
   /** @deprecated And ignored. */
   highlightColor?: THREE.Color;
 
