@@ -32,7 +32,10 @@ jobs:
           key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
 
       - name: Install 🔧
-        run: yarn install --frozen-lockfile
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          yarn install --frozen-lockfile
+          rm .npmrc
 
       - name: Lint
         run: yarn lint
