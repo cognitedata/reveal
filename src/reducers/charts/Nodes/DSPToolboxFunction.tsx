@@ -1,13 +1,10 @@
 /* eslint camelcase: 0 */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Icon, Input, Select } from '@cognite/cogs.js';
-import sdk from 'services/CogniteSDK';
-import useSelector from 'hooks/useSelector';
 import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
-import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
-import pMemoize from 'p-memoize';
 import { StorableNode } from 'reducers/charts';
+import AvailableOps from 'components/NodeEditor/AvailableOps';
 import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
@@ -36,137 +33,73 @@ export const effect = async (funcData: FunctionData) => {
 
 export const effectId = 'TOOLBOX_FUNCTION';
 
-async function getAvailableOperations(tenant: string) {
-  const functions = await sdk.get<{ items: CogniteFunction[] }>(
-    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
-  );
-
-  const getAllOps = functions.data.items.find(
-    (func) => func.name === 'get_all_ops-master'
-  );
-
-  if (!getAllOps) {
-    return [];
-  }
-
-  const functionCall = await sdk.post<{ id: number }>(
-    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/call`,
-    {
-      data: {},
-    }
-  );
-
-  const status = await waitOnFunctionComplete(
-    tenant,
-    getAllOps.id,
-    functionCall.data.id
-  );
-
-  const functionResult = await sdk.get<{ response: Record<string, any> }>(
-    `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${getAllOps.id}/calls/${functionCall.data.id}/response`
-  );
-
-  const availableOperations =
-    functionResult.data.response?.all_available_ops || [];
-
-  /* eslint-disable no-console */
-  console.log({
-    status,
-    availableOperations,
-  });
-  /* eslint-enable no-console */
-
-  return availableOperations;
-}
-
-const memoizedGetAvailableOperations = pMemoize(getAvailableOperations);
-
 export const configPanel = ({
   node,
   onUpdateNode,
 }: ConfigPanelComponentProps) => {
-  const tenant = useSelector((state) => state.environment.tenant);
-  const [isLoading, setLoading] = useState(false);
-  const [availableFunctions, setAvailableFunctions] = useState<DSPFunction[]>(
-    []
-  );
   const { functionData } = node;
-
-  useEffect(() => {
-    async function populateOptions() {
-      setLoading(true);
-
-      if (!tenant) {
-        return;
-      }
-
-      const availableOperations: DSPFunction[] = await memoizedGetAvailableOperations(
-        tenant
-      );
-      setAvailableFunctions(availableOperations);
-      setLoading(false);
-    }
-
-    populateOptions();
-  }, []);
 
   return (
     <div>
       <h4>Tool Function</h4>
-      {isLoading ? (
-        <Icon style={{ color: 'white' }} type="Loading" />
-      ) : (
-        <Select
-          theme="dark"
-          defaultValue={
-            functionData?.toolFunction
-              ? {
-                  value: functionData?.toolFunction?.op,
-                  label: functionData?.toolFunction?.description,
-                }
-              : undefined
-          }
-          onChange={(nextValue: { value: string }) => {
-            const nextFunc = availableFunctions.find(
-              (x) => x.op === nextValue.value
-            );
+      <AvailableOps
+        renderLoading={() => <Icon style={{ color: 'white' }} type="Loading" />}
+        renderError={() => <Icon style={{ color: 'white' }} type="XLarge" />}
+        renderCall={(availableFunctions) => (
+          <Select
+            theme="dark"
+            defaultValue={
+              functionData?.toolFunction
+                ? {
+                    value: functionData?.toolFunction?.op,
+                    label: functionData?.toolFunction?.description,
+                  }
+                : undefined
+            }
+            onChange={(nextValue: { value: string }) => {
+              const nextFunc = availableFunctions.find(
+                (x) => x.op === nextValue.value
+              );
 
-            if (nextFunc) {
-              const { type_info, ...storableNextFunc } = nextFunc;
+              if (nextFunc) {
+                const { type_info, ...storableNextFunc } = nextFunc;
 
-              const inputPins = (getConfigFromDspFunction(nextFunc).input || [])
-                .filter((input) => input.pin)
-                .map((input) => ({
-                  id: input.field,
-                  title: input.name,
-                  types: input.types,
+                const inputPins = (
+                  getConfigFromDspFunction(nextFunc).input || []
+                )
+                  .filter((input) => input.pin)
+                  .map((input) => ({
+                    id: input.field,
+                    title: input.name,
+                    types: input.types,
+                  }));
+
+                const outputPins = (
+                  getConfigFromDspFunction(nextFunc).output || []
+                ).map((output) => ({
+                  id: `out-${output.field}`,
+                  title: output.name,
+                  type: output.type,
                 }));
 
-              const outputPins = (
-                getConfigFromDspFunction(nextFunc).output || []
-              ).map((output) => ({
-                id: `out-${output.field}`,
-                title: output.name,
-                type: output.type,
-              }));
-
-              onUpdateNode({
-                inputPins,
-                outputPins,
-                title: nextFunc.description,
-                functionData: {
-                  ...functionData,
-                  toolFunction: storableNextFunc,
-                },
-              });
-            }
-          }}
-          options={availableFunctions.map((func) => ({
-            value: func.op,
-            label: func.description,
-          }))}
-        />
-      )}
+                onUpdateNode({
+                  inputPins,
+                  outputPins,
+                  title: nextFunc.description,
+                  functionData: {
+                    ...functionData,
+                    toolFunction: storableNextFunc,
+                  },
+                });
+              }
+            }}
+            options={availableFunctions.map((func) => ({
+              value: func.op,
+              label: func.description,
+            }))}
+          />
+        )}
+      />
 
       {functionData?.toolFunction?.parameters?.length &&
         (functionData?.toolFunction?.parameters || []).map(

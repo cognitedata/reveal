@@ -5,6 +5,7 @@ import AppAuth from 'components/AppAuth';
 import sdk from 'services/CogniteSDK';
 import { DataExplorationProvider } from '@cognite/data-exploration';
 import { QueryClientProvider, QueryClient } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const sanitizeTenant = (tenant: string = '') =>
   tenant.toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -43,6 +44,7 @@ const App = () => {
           <AppAuth tenant={tenant} />
         </AppProviders>
       </DataExplorationProvider>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 };
