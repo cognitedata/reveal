@@ -67,7 +67,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
 const SearchContainer = styled.div<SearchProps>`
   height: 100%;
   border-right: 1px solid var(--cogs-greyscale-grey4);
-  width: ${(props) => (props.visible ? '50%' : 0)};
+  width: ${(props) => (props.visible ? '30%' : 0)};
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
   padding: ${(props) => (props.visible ? '20px 0 10px 10px' : 0)};
   transition: visibility 0s linear 200ms, width 200ms ease;

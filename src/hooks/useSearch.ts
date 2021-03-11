@@ -1,42 +1,29 @@
-import { useCallback, useState } from 'react';
-import debounce from 'lodash/debounce';
+import { useQuery } from 'react-query';
+import { useSDK } from '@cognite/sdk-provider';
 
-type UseSearchObject<T, Q> = {
-  searchResults: T[];
-  searchFunction: (query: Q) => void;
-  isSearching: boolean;
-  clearResults: () => void;
-};
+export const useAssetTimeseresSearch = (
+  query: string,
+  includeMissingTS: boolean = false
+) => {
+  const sdk = useSDK();
+  return useQuery(
+    ['search', query],
+    async () => {
+      const assets = await sdk.assets.search({ search: { query }, limit: 25 });
+      if (assets.length === 0) {
+        return [];
+      }
+      const timeseries = await sdk.timeseries.list({
+        filter: { assetIds: assets.map((a) => a.id) },
+      });
 
-type SearchFunction<T, Q> = (query: Q) => Promise<{ items: T[] }>;
-
-export default <T, Q>(
-  search: SearchFunction<T, Q>,
-  debounceTimeout: number = 300
-): UseSearchObject<T, Q> => {
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<T[]>([]);
-
-  const debouncedSearchFunction = useCallback(
-    debounce(async (query: Q) => {
-      const { items: results } = await search(query);
-      setSearchResults(results);
-      setIsSearching(false);
-    }, debounceTimeout),
-    [debounceTimeout]
+      return assets
+        .map((asset) => ({
+          asset,
+          ts: timeseries.items.filter((ts) => ts.assetId === asset.id),
+        }))
+        .filter(({ ts }) => includeMissingTS || ts.length > 0);
+    },
+    { enabled: query.length > 0 }
   );
-
-  const searchFunction = (query: Q) => {
-    setIsSearching(true);
-    return debouncedSearchFunction(query);
-  };
-
-  const clearResults = () => setSearchResults([]);
-
-  return {
-    searchResults,
-    searchFunction,
-    isSearching,
-    clearResults,
-  };
 };

@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { Icon } from '@cognite/cogs.js';
-import { SearchResultLoader, Table } from '@cognite/data-exploration';
-import { Asset, Timeseries } from '@cognite/sdk';
+import React from 'react';
+import moment from 'moment';
+import { Icon, Button } from '@cognite/cogs.js';
+import { TimeseriesChart } from '@cognite/data-exploration';
+import { Timeseries } from '@cognite/sdk';
+import { useAssetTimeseresSearch } from 'hooks/useSearch';
 import styled from 'styled-components/macro';
-import { TimeseriesResults } from 'components/SearchResultTable';
 
 export const SearchResultTable = ({
   query,
@@ -12,99 +13,94 @@ export const SearchResultTable = ({
   query: string;
   onTimeseriesClick: (timeseries: Timeseries) => void;
 }) => {
-  const columns = useMemo(
-    () => [
-      {
-        key: 'name',
-        title: 'Name',
-        dataKey: 'name',
-        width: 200,
-        cellRenderer: ({ rowData }: { rowData: Asset }) => {
-          return (
-            <span>
-              <Icon
-                type="ResourceAssets"
-                style={{ marginRight: 5, verticalAlign: 'text-top' }}
-              />
-              {rowData.name}
-            </span>
-          );
-        },
-      },
-      {
-        key: 'description',
-        title: 'Description',
-        dataKey: 'description',
-        width: 300,
-      },
-      {
-        key: 'preview',
-        title: 'Preview',
-        width: 250,
-      },
-      {
-        key: 'unit',
-        title: 'Unit',
-        width: 100,
-      },
-      {
-        key: 'actions',
-        title: '',
-        width: 100,
-      },
-    ],
-    []
-  );
+  const {
+    data: assets = [],
+    isFetching,
+    isFetched,
+    isError,
+  } = useAssetTimeseresSearch(query);
 
-  return (
-    <SearchResultLoader type="asset" query={query}>
-      {({ data = [], ...rest }: { data: Asset[] }) => (
-        <Table<Asset & { children?: { content: React.ReactNode }[] }>
-          data={data.map((asset: Asset) => ({
-            ...asset,
-            children: [
-              {
-                content: (
-                  <TimeseriesResults
-                    assetId={asset.id}
-                    onTimeseriesClick={onTimeseriesClick}
-                  />
-                ),
-              },
-            ],
-          }))}
-          columns={columns}
-          expandColumnKey="actions"
-          rowRenderer={rowRenderer}
-          estimatedRowHeight={50}
-          fixed
-          {...rest}
-        />
-      )}
-    </SearchResultLoader>
-  );
-};
-
-const rowRenderer = ({ rowData, cells }: any) => {
-  if (rowData.content) {
-    return <DetailRow>{rowData.content}</DetailRow>;
+  if (isError) {
+    return <Icon type="XLarge" />;
   }
 
-  const newCells = cells.map((cell: JSX.Element) => {
-    // Override each row's styles to set a fixed height
-    const style = {
-      ...cell.props.style,
-      height: 50,
-      alignSelf: 'flex-start',
-    };
-    return React.cloneElement(cell, { style });
-  });
+  if (isFetching && !isFetched) {
+    return <Icon type="Loading" />;
+  }
 
-  return newCells;
+  if (assets.length === 0) {
+    return null;
+  }
+
+  const sparklineStartDate = moment()
+    .subtract(1, 'years')
+    .startOf('day')
+    .toDate();
+
+  const sparklineEndDate = moment().endOf('day').toDate();
+
+  return (
+    <AssetList>
+      {assets.map(({ asset, ts }) => (
+        <li key={asset.id}>
+          <Icon type="ResourceAssets" />
+          <strong style={{ marginLeft: 10 }}>{asset.name}</strong>
+          <span style={{ marginLeft: 10 }}>{asset.description}</span>
+          <TSList>
+            {ts.map((t) => (
+              <li key={t.id}>
+                <p>
+                  <Icon type="ResourceTimeseries" />
+                  {t.name}
+                </p>
+                <p>{t.description}</p>
+                <TimeseriesChart
+                  height={65}
+                  showSmallerTicks
+                  timeseriesId={t.id}
+                  numberOfPoints={100}
+                  showAxis="horizontal"
+                  timeOptions={[]}
+                  showContextGraph={false}
+                  showPoints={false}
+                  enableTooltip={false}
+                  showGridLine="none"
+                  minRowTicks={2}
+                  dateRange={[sparklineStartDate, sparklineEndDate]}
+                />
+                <div>
+                  <Button type="link" onClick={() => onTimeseriesClick(t)}>
+                    <Icon type="Plus" />
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </TSList>
+        </li>
+      ))}
+    </AssetList>
+  );
 };
 
-const DetailRow = styled.div`
-  height: auto;
-  width: 100%;
-  align-self: flex-start;
+const AssetList = styled.ul`
+  height: 100%;
+  overflow: auto;
+  list-style: none;
+  padding: 0 10px;
+  li {
+    border-bottom: 1px solid rgb(232, 232, 232);
+    margin-bottom: 6px;
+    paddding-bottom: 6px;
+  }
+`;
+
+const TSList = styled.ul`
+  list-style: none;
+  li {
+    display: flex;
+    flex-direction: row;
+  }
+  .cogs-icon {
+    margin: 0 10px;
+  }
 `;
