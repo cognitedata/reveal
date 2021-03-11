@@ -46,6 +46,16 @@ export interface Cognite3DViewerOptions {
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better
    * control the view frustum.
+   *
+   * When automatic camera near/far planes are disabled, you are responsible for setting
+   * this on your own.
+   * @example
+   * ```
+   * viewer.camera.near = 0.1;
+   * viewer.camera.far = 1000.0;
+   * viewer.camera.updateProjectionMatrix();
+   * ```
+   *
    * @version new in 1.4.0
    */
   automaticCameraNearFar?: boolean;
