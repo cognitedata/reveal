@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
@@ -49,8 +49,6 @@ const SuiteOverview: React.FC = () => {
     getUserSpace
   );
 
-  const [goHomeDispatched, setGoHomeDispatched] = useState(false);
-
   const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
 
   const metrics = useMetrics('SuiteOverview');
@@ -95,15 +93,8 @@ const SuiteOverview: React.FC = () => {
     dispatch,
   ]);
 
-  const redirectHome = () => {
-    if (!goHomeDispatched) {
-      setGoHomeDispatched(true);
-      history.push('/');
-    }
-  };
-
   if (!suite) {
-    redirectHome();
+    return <Redirect to="/" />;
   }
 
   if (!suitesLoaded) {

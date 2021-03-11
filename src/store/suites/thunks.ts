@@ -4,6 +4,7 @@ import { RootDispatcher } from 'store/types';
 import { setNotification } from 'store/notification/actions';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
+import { CogniteExternalId } from '@cognite/sdk';
 import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
 import * as actions from './actions';
 
@@ -55,6 +56,25 @@ export const deleteSuite = (
     Sentry.captureException(e);
   }
 };
+
+export function deleteFiles(
+  client: CdfClient,
+  fileExternalIds: CogniteExternalId[]
+) {
+  return async (dispatch: RootDispatcher) => {
+    try {
+      await client.deleteFiles(fileExternalIds);
+    } catch (e) {
+      Sentry.captureException(e);
+      dispatch(
+        setHttpError(
+          `Failed to delete image preview(s): ${fileExternalIds.join(',')}`,
+          e
+        )
+      );
+    }
+  };
+}
 
 export const fetchImageUrls = (client: CdfClient, ids: string[]) => async (
   dispatch: RootDispatcher

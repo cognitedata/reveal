@@ -34,6 +34,11 @@ export class CdfClient {
   uploadFile(fileInfo: ExternalFileInfo) {
     return this.cogniteClient.files.upload(fileInfo, undefined, true);
   }
+  deleteFiles(externalIds: CogniteExternalId[]) {
+    return this.cogniteClient.files.delete(
+      externalIds.map((id) => ({ externalId: id })) as IdEither[]
+    );
+  }
   retrieveFilesMetadata(externalIds: CogniteExternalId[]) {
     return this.cogniteClient.files.retrieve(
       externalIds.map((id) => ({ externalId: id })) as IdEither[]

@@ -14,14 +14,22 @@ export enum FormActionTypes {
   CLEAR_BOARD_FORM = 'form/CLEAR_BOARD_FORM',
   FORM_SAVING = 'form/FORM_SAVING',
   FORM_SAVED = 'form/FORM_SAVED',
+  // image file metadata
   FILE_CLEAR = 'form/FILE_CLEAR',
   FILE_RETRIEVE = 'form/FILE_RETRIEVE',
   FILE_RETRIEVE_ERROR = 'form/FILE_RETRIEVE_ERROR',
   FILE_RETRIEVED = 'form/FILE_RETRIEVED',
+  // image files upload queue
   FILE_UPLOAD_ERROR = 'form/FILE_UPLOAD_ERROR',
   FILE_UPLOADED = 'form/FILE_UPLOADED',
   FILES_UPLOAD = 'form/FILES_UPLOAD',
   FILES_UPLOADED = 'form/FILES_UPLOADED',
+  // image files delete queue
+  FILE_ADD_TO_DELETE_QUEUE = 'form/FILE_ADD_TO_DELETE_QUEUE',
+  FILE_EXCLUDE_FROM_DELETE_QUEUE = 'form/FILE_EXCLUDE_FROM_DELETE_QUEUE',
+  FILE_EXCLUDE_FROM_BOARD = 'form/FILE_EXCLUDE_FROM_BOARD',
+  FILES_DELETED = 'form/FILES_DELETED',
+  // no actions to track the deletion process
 }
 
 export type FormRootAction = ActionType<typeof actions>;
@@ -37,6 +45,7 @@ export type FilesUploadState = {
   uploading: boolean;
   uploaded: boolean;
   errors: FileUpdateError[];
+  deleteQueue: CogniteExternalId[];
 };
 
 export interface FormState {

@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/sdk';
+import { CogniteExternalId, FileInfo } from '@cognite/sdk';
 import { Board } from 'store/suites/types';
 import { createReducer } from 'typesafe-actions';
 import {
@@ -26,6 +26,7 @@ const getFilesInitialState = (): FilesUploadState => ({
   uploading: false,
   uploaded: false,
   errors: [],
+  deleteQueue: [],
 });
 
 const getInitialState = (): FormState => ({
@@ -162,16 +163,51 @@ export const FormReducer = createReducer(getInitialState())
   .handleAction(FormActionTypes.FILES_UPLOAD, (state: FormState) => ({
     ...state,
     files: {
+      ...state.files,
       uploading: true,
       uploaded: false,
       errors: [],
     },
   }))
-  .handleAction(FormActionTypes.FILES_UPLOAD, (state: FormState) => ({
+  .handleAction(
+    FormActionTypes.FILE_ADD_TO_DELETE_QUEUE,
+    (state: FormState, action: FormRootAction) => ({
+      ...state,
+      files: {
+        ...state.files,
+        deleteQueue: [
+          ...state.files.deleteQueue,
+          action.payload as CogniteExternalId,
+        ],
+      },
+    })
+  )
+  .handleAction(
+    FormActionTypes.FILE_EXCLUDE_FROM_DELETE_QUEUE,
+    (state: FormState, action: FormRootAction) => ({
+      ...state,
+      files: {
+        ...state.files,
+        deleteQueue: state.files.deleteQueue.filter(
+          (item) => item !== (action.payload as CogniteExternalId)
+        ),
+      },
+    })
+  )
+  .handleAction(
+    FormActionTypes.FILE_EXCLUDE_FROM_BOARD,
+    (state: FormState) => ({
+      ...state,
+      board: {
+        ...state.board,
+        imageFileId: '',
+      },
+    })
+  )
+  .handleAction(FormActionTypes.FILES_DELETED, (state: FormState) => ({
     ...state,
     files: {
-      uploading: false,
-      uploaded: true,
-      errors: [],
+      ...state.files,
+      deleteQueue: [],
     },
   }));
