@@ -1,5 +1,5 @@
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { ExternalFileInfo } from '@cognite/sdk';
+import { CogniteInternalId, ExternalFileInfo } from '@cognite/sdk';
 
 export const validImgTypes = ['image/jpeg', 'image/png'];
 export const maximumFileSize = 1 * 1024 * 1024; // maximum 1Mb
@@ -17,13 +17,6 @@ export function validateFileSize(file: File): boolean {
 export function GCSUploader(file: Blob | File, uploadUrl: string) {
   // This is what is recommended from google when uploading files.
   // https://github.com/QubitProducts/gcs-browser-upload
-  // const chunkMultiple = Math.min(
-  //   Math.max(
-  //     2, // 0.5MB min chunks
-  //     Math.ceil((file.size / 20) * 262144) // will divide into 20 segments
-  //   ),
-  //   200 // 50 MB max
-  // );
 
   return new UploadGCS({
     id: 'digital-cockpit-upload',
@@ -32,13 +25,18 @@ export function GCSUploader(file: Blob | File, uploadUrl: string) {
   });
 }
 
-export function getExternalFileInfo(file: File, key: string): ExternalFileInfo {
+export function getExternalFileInfo(
+  file: File,
+  key: string,
+  dataSetId: CogniteInternalId
+): ExternalFileInfo {
   const fext = file.name.split('.').pop();
   const fname = `dc_preview_${key}.${fext}`;
   const fileInfo: ExternalFileInfo = {
     name: fname,
     mimeType: file.type,
     externalId: `dc_preview_${key}`, // to overwrite file
+    dataSetId,
   };
   return fileInfo;
 }

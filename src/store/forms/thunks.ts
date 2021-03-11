@@ -1,6 +1,7 @@
 import { GCSUploader, getExternalFileInfo } from 'utils/files';
 import {
   CogniteExternalId,
+  CogniteInternalId,
   ExternalFileInfo,
   FileInfo,
   FileUploadResponse,
@@ -12,6 +13,7 @@ import { insertSuite } from 'store/suites/thunks';
 import { Board, Suite } from 'store/suites/types';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
+import { setError } from 'store/notification/actions';
 import * as actions from './actions';
 import { BoardState } from './types';
 
@@ -32,30 +34,40 @@ export function saveForm(
   apiClient: ApiClient,
   suite: Suite,
   filesUploadQueue: Map<string, File>,
-  filesDeleteQueue: CogniteExternalId[]
+  filesDeleteQueue: CogniteExternalId[],
+  dataSetId?: CogniteInternalId
 ) {
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.formSaving());
-    if (filesUploadQueue.size) {
-      await dispatch(uploadFiles(client, filesUploadQueue));
-    }
     if (filesDeleteQueue?.length) {
       await dispatch(deleteFiles(client, filesDeleteQueue));
+    }
+    if (filesUploadQueue.size) {
+      if (!dataSetId) {
+        dispatch(setError(['Cannot upload image files', 'Missing DataSetId']));
+        Sentry.captureMessage(
+          `Skipping upload of ${filesUploadQueue.size} file(s): missing dataSetId`,
+          Sentry.Severity.Error
+        );
+      } else {
+        await dispatch(uploadFiles(client, filesUploadQueue, dataSetId));
+      }
     }
     await dispatch(insertSuite(client, apiClient, suite));
     dispatch(actions.formSaved());
   };
 }
 
-export function uploadFiles(
+function uploadFiles(
   client: CdfClient,
-  filesUploadQueue: Map<string, File>
+  filesUploadQueue: Map<string, File>,
+  dataSetId: CogniteInternalId
 ) {
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.filesUpload());
     // eslint-disable-next-line no-restricted-syntax
     for await (const [boardKey, file] of filesUploadQueue.entries()) {
-      const fileInfo = getExternalFileInfo(file as File, boardKey);
+      const fileInfo = getExternalFileInfo(file as File, boardKey, dataSetId);
       const { externalId } = fileInfo;
       try {
         await uploadFile(client, fileInfo, file);

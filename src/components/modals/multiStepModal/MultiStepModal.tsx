@@ -18,6 +18,7 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
 import { useMetrics } from 'utils/metrics';
+import { getConfigState } from 'store/config/selectors';
 import { BoardForm, SuiteForm } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
@@ -42,6 +43,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const { saving: formSaving } = useSelector(formState);
   const { deleteQueue } = useSelector(filesUploadState);
   const [filesUploadQueue] = useState(new Map());
+  const { dataSetId } = useSelector(getConfigState);
   const metrics = useMetrics('EditSuite');
 
   const trackMetrics = (name: string, props?: any) => {
@@ -64,7 +66,14 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
     if (hasErrors) return;
 
     await dispatch(
-      saveForm(client, apiClient, suite, filesUploadQueue, deleteQueue)
+      saveForm(
+        client,
+        apiClient,
+        suite,
+        filesUploadQueue,
+        deleteQueue,
+        dataSetId
+      )
     );
     trackMetrics('Saved', {
       suiteKey: suite.key,
