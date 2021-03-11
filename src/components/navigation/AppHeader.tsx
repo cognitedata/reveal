@@ -108,7 +108,7 @@ const AppHeader: React.FC = () => {
           <Menu.Header>Cognite documentation</Menu.Header>
           <Menu.Item>
             <CustomLink
-              // TODO(DTC-224) replace with stable link as soon as it is available
+              // TODO(DTC-348) replace with stable link as soon as it is available
               href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html"
               target="_blank"
               rel="noopener noreferrer"
@@ -119,7 +119,7 @@ const AppHeader: React.FC = () => {
           </Menu.Item>
           <Menu.Item>
             <CustomLink
-              // TODO(DTC-224) replace with stable link as soon as it is available
+              // TODO(DTC-348) replace with stable link as soon as it is available
               href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html"
               target="_blank"
               rel="noopener noreferrer"
