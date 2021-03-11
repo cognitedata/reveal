@@ -15,7 +15,7 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
-import { ExplodedViewTool } from '@cognite/reveal/tools';
+import { DebugLoadedSectorsTool, ExplodedViewTool } from '@cognite/reveal/tools';
 
 window.THREE = THREE;
 
@@ -108,19 +108,11 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
-        showSectorBoundingBoxes: false,
         antiAliasing: urlParams.get('antialias'),
-        ssaoQuality: urlParams.get('ssao')
+        ssaoQuality: urlParams.get('ssao'),
+        boundingBoxTools: new DebugLoadedSectorsTool(viewer, { colorBy: 'lod'})
 
       };
-      function applySettingsToModels() {
-        cadModels.forEach((m) => {
-          m.renderHints = {
-            ...m.renderHints,
-            showSectorBoundingBoxes: guiState.showSectorBoundingBoxes,
-          };
-        });
-      }
       const guiActions = {
         addModel: () =>
           addModel({
@@ -130,18 +122,19 @@ export function Migration() {
         fitToModel: () => {
           const model = cadModels[0] || pointCloudModels[0];
           viewer.fitCameraToModel(model);
+        },
+        showSectorBoundingBoxes: () => {
+          if (cadModels.length > 0) {
+            guiState.boundingBoxTools.showSectorBoundingBoxes(cadModels[0]);
+          }
         }
       };
 
-      const settingsGui = gui.addFolder('settings');
-      settingsGui
-        .add(guiState, 'showSectorBoundingBoxes')
-        .name('Show bounding boxes')
-        .onChange(applySettingsToModels);
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
+      gui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
       gui.add(guiState, 'antiAliasing', 
         [
           'disabled','fxaa','msaa4','msaa8','msaa16',
