@@ -3681,13 +3681,13 @@
     "@types/d3-shape" "^1.3.1"
     d3-shape "^1.0.6"
 
-"@visx/event@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@visx/event/-/event-1.3.0.tgz#bdbcf40910faf873bcfa972c8ba2c5a192c2dd6a"
-  integrity sha512-Nq0xz7c1eMc8j3CTt94hTZO+veQ1Ti7u22LZF4M2W36yKh5PtZRfM4O6tILSdO7cxigeNd1vbmZo9MSDmk5lbQ==
+"@visx/event@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@visx/event/-/event-1.6.1.tgz#db806405ab2b124e82a0de1e2da36445e838cbc2"
+  integrity sha512-JeZXW5lE2xWYEbwTJn7srVQfEcxu1Li8K6GeCBtMJ7MbeMkSUgd0SaJcGuf40VBMsG2qxAF7h1N/Rm5pTufowg==
   dependencies:
     "@types/react" "*"
-    "@visx/point" "1.0.0"
+    "@visx/point" "1.6.1"
 
 "@visx/gradient@^1.0.0":
   version "1.0.0"
