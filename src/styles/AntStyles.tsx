@@ -78,7 +78,7 @@ import stepsStyle from 'antd/es/steps/style/index.less';
 // import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 // import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
-import uploadStyle from 'antd/es/upload/style/index.less';
+// import uploadStyle from 'antd/es/upload/style/index.less';
 import { getContainer } from 'src/utils';
 
 const styles = [
@@ -120,7 +120,7 @@ const styles = [
   // tooltipStyle,
   // treeStyle,
   typographyStyle,
-  uploadStyle,
+  // uploadStyle,
 ];
 
 Modal.defaultProps = {

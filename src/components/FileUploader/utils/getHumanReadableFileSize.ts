@@ -1,5 +1,6 @@
 /**
  * @param sizeInBytes
+ * @param precision
  * @returns the most suitable size string
  * @example
  *  getHumanReadableFileSize(1) // returns "1 B"
@@ -7,12 +8,15 @@
  *  getHumanReadableFileSize(999 * 1024 ** 2) // returns "999 MB"
  *  getHumanReadableFileSize(10 * 1024 ** 3) // returns "10 GB"
  */
-export function getHumanReadableFileSize(sizeInBytes: number): string {
+export function getHumanReadableFileSize(
+  sizeInBytes: number,
+  precision = 2
+): string {
   if (sizeInBytes < 1) {
-    return `${sizeInBytes.toPrecision(2)} B`;
+    return `${sizeInBytes.toPrecision(precision)} B`;
   }
   const i = Math.floor(Math.log(sizeInBytes) / Math.log(1024));
-  return `${Number((sizeInBytes / 1024 ** i).toFixed(2))} ${
+  return `${Number((sizeInBytes / 1024 ** i).toFixed(precision))} ${
     ['B', 'kB', 'MB', 'GB', 'TB'][i]
   }`;
 }
