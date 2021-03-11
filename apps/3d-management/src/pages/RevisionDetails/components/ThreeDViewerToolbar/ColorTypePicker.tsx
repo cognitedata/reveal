@@ -10,6 +10,7 @@ const options: Record<PotreePointColorType, string> = {
   [PotreePointColorType.Depth]: 'Depth',
   [PotreePointColorType.Height]: 'Height',
   [PotreePointColorType.PointIndex]: 'Point index',
+  [PotreePointColorType.Intensity]: 'Intensity',
 };
 
 type Props = {
