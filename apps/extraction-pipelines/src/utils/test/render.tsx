@@ -5,12 +5,12 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { useForm, FormProvider } from 'react-hook-form';
-import { SelectedIntegrationProvider } from '../../hooks/useSelectedIntegration';
-import { AppEnvProvider } from '../../hooks/useAppEnv';
-import { IntegrationProvider } from '../../hooks/details/IntegrationContext';
-import { Integration, RegisterIntegrationInfo } from '../../model/Integration';
-import { INTEGRATIONS } from '../baseURL';
-import { RegisterIntegrationProvider } from '../../hooks/useStoredRegisterIntegration';
+import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
+import { AppEnvProvider } from 'hooks/useAppEnv';
+import { IntegrationProvider } from 'hooks/details/IntegrationContext';
+import { Integration, RegisterIntegrationInfo } from 'model/Integration';
+import { RegisterIntegrationProvider } from 'hooks/useStoredRegisterIntegration';
+import { INTEGRATIONS } from 'utils/baseURL';
 
 export default (
   ui: React.ReactElement,

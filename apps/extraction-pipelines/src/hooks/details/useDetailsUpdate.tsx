@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { Integration } from '../../model/Integration';
-import { IntegrationError } from '../../model/SDKErrors';
-import { IntegrationUpdateSpec, saveUpdate } from '../../utils/IntegrationsAPI';
+import { Integration } from 'model/Integration';
+import { IntegrationError } from 'model/SDKErrors';
+import { IntegrationUpdateSpec, saveUpdate } from 'utils/IntegrationsAPI';
 
 export const useDetailsUpdate = () => {
   const queryClient = useQueryClient();

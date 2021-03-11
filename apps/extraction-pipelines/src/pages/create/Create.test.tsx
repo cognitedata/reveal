@@ -2,32 +2,39 @@ import { QueryClient } from 'react-query';
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { renderRegisterContext } from '../../utils/test/render';
-import Create from './Create';
+import { renderRegisterContext } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
+} from 'utils/baseURL';
 import {
   CREATE_INTEGRATION_HEADING,
   EMAIL_LABEL,
   NAME_LABEL,
   NEXT,
-} from '../../utils/constants';
+} from 'utils/constants';
 import {
   CREATE_INTEGRATION_PAGE_PATH,
   withTenant,
-} from '../../routing/CreateRouteConfig';
+} from 'routing/CreateRouteConfig';
+import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
+import Create from 'pages/create/Create';
+import 'utils/test/windowLocation';
+import { INTEGRATION_DOCUMENTATION_HEADING } from 'pages/create/DocumentationPage';
+import { INTEGRATION_SCHEDULE_HEADING } from 'pages/create/SchedulePage';
+import {
+  DataSetOptions,
+  INTEGRATION_DATA_SET_HEADING,
+} from 'pages/create/DataSetPage';
+import {
+  INTEGRATION_RAW_TABLE_HEADING,
+  RawTableOptions,
+} from 'pages/create/RawTablePage';
+import { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
+import { INTEGRATION_EXTERNAL_ID_HEADING } from 'pages/create/ExternalIdPage';
+import { INTEGRATION_CONTACTS_HEADING } from 'pages/create/ContactsPage';
 import '../../utils/test/windowLocation';
-import { INTEGRATION_DOCUMENTATION_HEADING } from './DocumentationPage';
-import { INTEGRATION_SCHEDULE_HEADING } from './SchedulePage';
-import { SupportedScheduleStrings } from '../../components/integrations/cols/Schedule';
-import { DataSetOptions, INTEGRATION_DATA_SET_HEADING } from './DataSetPage';
-import { INTEGRATION_RAW_TABLE_HEADING, RawTableOptions } from './RawTablePage';
-import { INTEGRATION_NAME_HEADING } from './NamePage';
-import { INTEGRATION_EXTERNAL_ID_HEADING } from './ExternalIdPage';
-import { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
 
 describe('Register', () => {
   window.location.href =

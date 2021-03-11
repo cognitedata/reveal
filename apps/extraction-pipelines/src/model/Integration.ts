@@ -1,6 +1,6 @@
-import { MetaData } from './MetaData';
-import { User } from './User';
-import { DataSetModel } from './DataSetModel';
+import { MetaData } from 'model/MetaData';
+import { User } from 'model/User';
+import { DataSetModel } from 'model/DataSetModel';
 
 export interface Raw {
   dbName: string;

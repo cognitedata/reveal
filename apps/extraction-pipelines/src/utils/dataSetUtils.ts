@@ -1,6 +1,7 @@
-import { DataSet } from '@cognite/sdk';
-import { Integration } from '../model/Integration';
-import { DataSetMetadata, DataSetModel } from '../model/DataSetModel';
+import { DataSet, ListResponse } from '@cognite/sdk';
+import { DataSetFormInput, DataSetOptions } from 'pages/create/DataSetPage';
+import { Integration } from 'model/Integration';
+import { DataSetMetadata, DataSetModel } from 'model/DataSetModel';
 
 export const mapUniqueDataSetIds = (integrations?: Integration[]) => {
   return integrations
@@ -65,4 +66,22 @@ export const getDataSetsLink = ({
   return `${origin}/${project}/data-sets/data-set/${dataSetId}${
     cdfEnv ? `?env=${cdfEnv}` : ''
   }`;
+};
+
+export const getDataSetPageValues = (
+  dataSetId?: string,
+  data?: ListResponse<DataSet[]>
+): DataSetFormInput => {
+  if (!data || !dataSetId) {
+    return { dataset: '', datasetId: '' };
+  }
+  return hasDataSetId(data.items, dataSetId)
+    ? { dataset: DataSetOptions.YES, datasetId: dataSetId }
+    : { dataset: '', datasetId: '' };
+};
+
+const hasDataSetId = (data: DataSet[], dataSetId: string): boolean => {
+  return !!data.find(({ id }) => {
+    return id === parseInt(dataSetId, 10);
+  });
 };

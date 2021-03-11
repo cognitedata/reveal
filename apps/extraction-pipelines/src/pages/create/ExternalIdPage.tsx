@@ -13,19 +13,16 @@ import {
   GridBreadCrumbsWrapper,
   GridMainWrapper,
   GridTitleWrapper,
-} from '../../styles/StyledPage';
-import { NEXT } from '../../utils/constants';
-import { CreateFormWrapper } from '../../styles/StyledForm';
-import {
-  CONTACTS_PAGE_PATH,
-  NAME_PAGE_PATH,
-} from '../../routing/CreateRouteConfig';
-import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
-import { usePostIntegration } from '../../hooks/usePostIntegration';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
-import { translateServerErrorMessage } from '../../utils/error/TranslateErrorMessages';
-import { BackBtn } from '../../components/buttons/BackBtn';
-import { HeadingLabel } from '../../components/inputs/HeadingLabel';
+} from 'styles/StyledPage';
+import { NEXT } from 'utils/constants';
+import { CreateFormWrapper } from 'styles/StyledForm';
+import { CONTACTS_PAGE_PATH, NAME_PAGE_PATH } from 'routing/CreateRouteConfig';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { usePostIntegration } from 'hooks/usePostIntegration';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
+import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
+import { BackBtn } from 'components/buttons/BackBtn';
+import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { TaskList, taskListItems } from './TaskList';
 
 const StyledInput = styled.input`

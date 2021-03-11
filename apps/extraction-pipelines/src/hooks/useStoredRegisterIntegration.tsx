@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useContext, useState } from 'react';
-import { RegisterIntegrationInfo } from '../model/Integration';
+import { RegisterIntegrationInfo } from 'model/Integration';
 
 interface ContextProps {
   storedIntegration: Partial<RegisterIntegrationInfo>;

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import * as yup from 'yup';
@@ -14,16 +14,25 @@ import {
   GridH2Wrapper,
   GridMainWrapper,
   GridTitleWrapper,
-} from '../../styles/StyledPage';
-import { NEXT } from '../../utils/constants';
-import { CreateFormWrapper } from '../../styles/StyledForm';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
+} from 'styles/StyledPage';
+import { NEXT } from 'utils/constants';
+import { CreateFormWrapper } from 'styles/StyledForm';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import {
   RAW_TABLE_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
-} from '../../routing/CreateRouteConfig';
-import { DivFlex } from '../../styles/flex/StyledFlex';
-import DataSetIdInput, { DATA_SET_ID_REQUIRED } from './DataSetIdInput';
+} from 'routing/CreateRouteConfig';
+import { DivFlex } from 'styles/flex/StyledFlex';
+import DataSetIdInput, {
+  DATA_SET_ID_REQUIRED,
+  DATASET_LIST_LIMIT,
+} from 'pages/create/DataSetIdInput';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { getDataSetPageValues } from 'utils/dataSetUtils';
+import { useDataSetsList } from 'hooks/useDataSetsList';
+import { createUpdateSpec } from 'utils/contactsUtils';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import { useAppEnv } from 'hooks/useAppEnv';
 
 const DataSetIdWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -41,60 +50,7 @@ const StyledRadioGroup = styled.fieldset`
     margin-bottom: 0;
   }
 `;
-const RadioInputsWrapper = styled.div`
-  display: grid;
-  input[type='radio'] {
-    opacity: 0;
-    &:checked {
-      + label::after {
-        background: ${Colors.primary.hex()};
-      }
-      + label::before {
-        border: 0.125rem solid ${Colors.primary.hex()};
-      }
-    }
-    &:focus {
-      + label::before {
-        box-shadow: 0 0 0.5rem ${Colors.primary.hex()};
-      }
-    }
-    + label {
-      position: relative;
-      display: inline-block;
-      cursor: pointer;
-      margin-left: 1.875rem;
-      &:hover {
-        &::before {
-          border: 0.125rem solid ${Colors.primary.hex()};
-        }
-      }
 
-      &::before {
-        content: '';
-        position: absolute;
-        display: inline-block;
-        left: -1.875rem;
-        top: -0.1875rem;
-        border-radius: 50%;
-        border: 0.125rem solid ${Colors.black.hex()};
-        width: 1.5625rem;
-        height: 1.5625rem;
-        background: transparent;
-      }
-      &::after {
-        content: '';
-        position: absolute;
-        display: inline-block;
-        left: -1.5625rem;
-        top: 0.125rem;
-        border-radius: 50%;
-        width: 0.9375rem;
-        height: 0.9375rem;
-        background: transparent;
-      }
-    }
-  }
-`;
 export enum DataSetOptions {
   YES = 'Yes',
   NO = 'No',
@@ -117,7 +73,7 @@ const datasetSchema = yup.object().shape({
 
 interface DataSetPageProps {}
 
-interface DataSetFormInput {
+export interface DataSetFormInput {
   dataset: string;
   datasetId: string;
 }
@@ -125,26 +81,65 @@ interface DataSetFormInput {
 const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
   const history = useHistory();
   const [showDataSetId, setShowDataSetId] = useState(false);
+  const {
+    storedIntegration,
+    setStoredIntegration,
+  } = useStoredRegisterIntegration();
+  const { project } = useAppEnv();
+  const { mutate } = useDetailsUpdate();
+  const { data, status } = useDataSetsList(DATASET_LIST_LIMIT);
   const methods = useForm<DataSetFormInput>({
     resolver: yupResolver(datasetSchema),
-    defaultValues: {},
+    defaultValues: getDataSetPageValues(storedIntegration?.dataSetId, data),
     reValidateMode: 'onSubmit',
   });
-  const { register, handleSubmit, errors, getValues, watch } = methods;
+  const { register, handleSubmit, errors, watch, setValue, setError } = methods;
+  register('dataset');
+  register('datasetId');
   const datasetValue = watch('dataset');
   useEffect(() => {
-    if (datasetValue === DataSetOptions.YES) {
-      setShowDataSetId(true);
-    } else {
-      setShowDataSetId(false);
-    }
+    setShowDataSetId(datasetValue === DataSetOptions.YES);
   }, [datasetValue]);
-  const handleNext = () => {
-    const value = getValues('dataset');
-    switch (value) {
+
+  const handleNext = (fields: DataSetFormInput) => {
+    const valueToStore =
+      fields.dataset === DataSetOptions.YES ? fields.datasetId : undefined;
+    setStoredIntegration((prev) => ({ ...prev, dataSetId: valueToStore }));
+    switch (fields.dataset) {
       case DataSetOptions.YES:
       case DataSetOptions.NO: {
-        history.push(createLink(RAW_TABLE_PAGE_PATH));
+        if (storedIntegration?.id && project) {
+          const items = createUpdateSpec({
+            id: storedIntegration.id,
+            fieldName: 'dataSetId',
+            fieldValue: valueToStore,
+          });
+          mutate(
+            {
+              project,
+              items,
+              id: storedIntegration.id,
+            },
+            {
+              onSuccess: () => {
+                history.push(createLink(RAW_TABLE_PAGE_PATH));
+              },
+              onError: (serverError) => {
+                setError('datasetId', {
+                  type: 'server',
+                  message: serverError.data.message,
+                  shouldFocus: true,
+                });
+              },
+            }
+          );
+        } else {
+          setError('datasetId', {
+            type: 'No id',
+            message: 'No id. Select an integration',
+            shouldFocus: true,
+          });
+        }
         break;
       }
       case DataSetOptions.CREATE: {
@@ -156,7 +151,9 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
       }
     }
   };
-  const v = watch('dataset');
+  const radioChanged = (value: string) => {
+    setValue('dataset', value);
+  };
 
   return (
     <CreateIntegrationPageWrapper>
@@ -182,48 +179,48 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
                   </span>
                 )}
               />
-              <RadioInputsWrapper>
-                {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props */}
-                <input
-                  type="radio"
-                  id="yes-option"
-                  name="dataset"
-                  ref={register}
-                  aria-checked={v === DataSetOptions.YES}
-                  value={DataSetOptions.YES}
-                  aria-controls="data-set-id-wrapper"
-                  aria-expanded={showDataSetId}
-                />
-                <label htmlFor="yes-option">{DataSetOptions.YES}</label>
-                {showDataSetId && (
-                  <DataSetIdWrapper
-                    id="data-set-id-wrapper"
-                    role="region"
-                    direction="column"
-                    align="flex-start"
-                  >
-                    <DataSetIdInput />
-                  </DataSetIdWrapper>
-                )}
-                <input
-                  type="radio"
-                  id="no-option"
-                  name="dataset"
-                  aria-checked={v === DataSetOptions.NO}
-                  ref={register}
-                  value={DataSetOptions.NO}
-                />
-                <label htmlFor="no-option">{DataSetOptions.NO}</label>
-                <input
-                  type="radio"
-                  id="create-option"
-                  name="dataset"
-                  aria-checked={v === DataSetOptions.CREATE}
-                  ref={register}
-                  value={DataSetOptions.CREATE}
-                />
-                <label htmlFor="create-option">{CREATE_DATA_SET_LABEL}</label>
-              </RadioInputsWrapper>
+              <Radio
+                id="yes-option"
+                name="dataset"
+                value={DataSetOptions.YES}
+                checked={datasetValue === DataSetOptions.YES}
+                onChange={radioChanged}
+                aria-checked={datasetValue === DataSetOptions.YES}
+                aria-controls="data-set-id-wrapper"
+                aria-expanded={showDataSetId}
+              >
+                {DataSetOptions.YES}
+              </Radio>
+              {showDataSetId && (
+                <DataSetIdWrapper
+                  id="data-set-id-wrapper"
+                  role="region"
+                  direction="column"
+                  align="flex-start"
+                >
+                  <DataSetIdInput data={data} status={status} />
+                </DataSetIdWrapper>
+              )}
+              <Radio
+                id="no-option"
+                name="dataset"
+                value={DataSetOptions.NO}
+                checked={datasetValue === DataSetOptions.NO}
+                onChange={radioChanged}
+                aria-checked={datasetValue === DataSetOptions.NO}
+              >
+                {DataSetOptions.NO}
+              </Radio>
+              <Radio
+                id="create-option"
+                name="dataset"
+                value={DataSetOptions.CREATE}
+                checked={datasetValue === DataSetOptions.CREATE}
+                onChange={radioChanged}
+                aria-checked={datasetValue === DataSetOptions.CREATE}
+              >
+                {CREATE_DATA_SET_LABEL}
+              </Radio>
             </StyledRadioGroup>
             <ButtonPlaced type="primary" htmlType="submit">
               {NEXT}
