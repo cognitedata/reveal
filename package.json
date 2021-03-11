@@ -43,7 +43,7 @@
     "react-highlight-words": "^0.17.0",
     "react-query": "^3.12.1",
     "react-router-dom": "^5.2.0",
-    "react-select": "^4.1.0",
+    "react-select": "^4.2.1",
     "react-splitter-layout": "^4.0.0",
     "react-virtualized-auto-sizer": "^1.0.4",
     "react-window": "^1.8.6",
