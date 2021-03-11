@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { Integration } from '../../model/Integration';
-import { SDKError } from '../../model/SDKErrors';
+import { IntegrationError } from '../../model/SDKErrors';
 import { IntegrationUpdateSpec, saveUpdate } from '../../utils/IntegrationsAPI';
 
 export const useDetailsUpdate = () => {
   const queryClient = useQueryClient();
   return useMutation<
     Integration,
-    SDKError,
+    IntegrationError,
     { project: string; items: IntegrationUpdateSpec[]; id: number }
   >(
     ({ project, items }) => {

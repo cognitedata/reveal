@@ -33,6 +33,9 @@ import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterInteg
 import { DivFlex } from '../../styles/flex/StyledFlex';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import { BackBtn } from '../../components/buttons/BackBtn';
+import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
+import { useAppEnv } from '../../hooks/useAppEnv';
+import { createUpdateSpec } from '../../utils/contactsUtils';
 
 const ContactWrapper = styled.section`
   display: flex;
@@ -106,14 +109,17 @@ export const INTEGRATION_CONTACTS_HEADING: Readonly<string> =
 
 const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
   const history = useHistory();
+  const { project } = useAppEnv();
   const {
     storedIntegration,
     setStoredIntegration,
   } = useStoredRegisterIntegration();
+  const { mutate } = useDetailsUpdate();
   const {
     register,
     handleSubmit,
     errors,
+    setError,
     setValue,
     getValues,
     watch,
@@ -125,14 +131,44 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
     },
     reValidateMode: 'onSubmit',
   });
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'contacts',
   });
-  const handleNext = (field: ContactsFormInput) => {
-    setStoredIntegration({ ...storedIntegration, ...field });
-    history.push(createLink(SCHEDULE_PAGE_PATH));
+  const handleNext = async (field: ContactsFormInput) => {
+    setStoredIntegration((prev) => ({ ...prev, ...field }));
+    if (storedIntegration?.id && project) {
+      const items = createUpdateSpec({
+        id: storedIntegration.id,
+        fieldName: 'contacts',
+        fieldValue: field.contacts ?? [],
+      });
+      mutate(
+        {
+          project,
+          items,
+          id: storedIntegration.id,
+        },
+        {
+          onSuccess: () => {
+            history.push(createLink(SCHEDULE_PAGE_PATH));
+          },
+          onError: (serverError) => {
+            setError('contacts', {
+              type: 'server',
+              message: serverError.data.message,
+              shouldFocus: true,
+            });
+          },
+        }
+      );
+    } else {
+      setError('contacts', {
+        type: 'No id',
+        message: 'No id. Select an integration',
+        shouldFocus: true,
+      });
+    }
   };
   const handleClick = (index: number) => {
     const s = getValues(`contacts[${index}].sendNotification`) ?? false;
@@ -332,6 +368,15 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
           <ButtonPlaced type="secondary" htmlType="button" onClick={addContact}>
             {ADD_CONTACT}
           </ButtonPlaced>
+          <ErrorMessage
+            errors={errors}
+            name="contacts"
+            render={({ message }) => (
+              <span id="contact-error" className="error-message server-error">
+                {message}
+              </span>
+            )}
+          />
           <ButtonPlaced type="primary" htmlType="submit">
             {NEXT}
           </ButtonPlaced>

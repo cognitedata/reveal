@@ -8,6 +8,7 @@ export interface Raw {
 }
 
 export interface RegisterIntegrationInfo {
+  id?: number;
   name: string;
   externalId: string;
   schedule?: string;
@@ -17,7 +18,7 @@ export interface RegisterIntegrationInfo {
   contacts: User[];
   rawTables?: Raw[];
 }
-export interface Integration extends RegisterIntegrationInfo {
+export interface Integration extends Omit<RegisterIntegrationInfo, 'id'> {
   id: number;
   createdTime: number; // milliseconds
   lastUpdatedTime: number; // milliseconds

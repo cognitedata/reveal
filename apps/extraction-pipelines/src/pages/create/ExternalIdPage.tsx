@@ -73,10 +73,12 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
       role: 'Creator',
       sendNotification: true,
     };
-    setStoredIntegration({
-      ...storedIntegration,
-      ...field,
-      contacts: [creator],
+    setStoredIntegration((prev) => {
+      return {
+        ...prev,
+        ...field,
+        contacts: [creator],
+      };
     });
     if (storedIntegration?.name) {
       const integrationInfo = {
@@ -87,7 +89,10 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
       mutate(
         { integrationInfo },
         {
-          onSuccess: () => {
+          onSuccess: (data) => {
+            setStoredIntegration((prev) => {
+              return { ...prev, ...data };
+            });
             history.push(createLink(CONTACTS_PAGE_PATH));
           },
           onError: (error, variables) => {

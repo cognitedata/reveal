@@ -14,8 +14,7 @@ export interface ErrorVariations {
   data?: ErrorObj;
 }
 
-export interface SDKErrorResponse {
-  status: number;
+export interface IntegrationError {
   data: ErrorObj;
 }
 

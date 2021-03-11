@@ -45,7 +45,7 @@ describe('Register', () => {
   };
   test('Navigation - simple path', async () => {
     sdkv3.post.mockResolvedValue({
-      data: { items: [{ name: 'My integration' }] },
+      data: { items: [{ name: 'My integration', id: 123123123 }] },
     });
     renderRegisterContext(
       <React.Suspense fallback="This is the fallback">
