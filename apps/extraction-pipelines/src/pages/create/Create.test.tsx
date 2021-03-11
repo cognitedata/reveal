@@ -17,7 +17,6 @@ import {
 } from '../../utils/constants';
 import {
   CREATE_INTEGRATION_PAGE_PATH,
-  SCHEDULE_PAGE_PATH,
   withTenant,
 } from '../../routing/CreateRouteConfig';
 import '../../utils/test/windowLocation';
@@ -29,7 +28,6 @@ import { INTEGRATION_RAW_TABLE_HEADING, RawTableOptions } from './RawTablePage';
 import { INTEGRATION_NAME_HEADING } from './NamePage';
 import { INTEGRATION_EXTERNAL_ID_HEADING } from './ExternalIdPage';
 import { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
-import { CRON_LABEL } from '../../components/inputs/cron/CronInput';
 
 describe('Register', () => {
   window.location.href =
@@ -43,10 +41,15 @@ describe('Register', () => {
     route: withTenant(CREATE_INTEGRATION_PAGE_PATH),
     initRegisterIntegration: {},
   };
-  test('Navigation - simple path', async () => {
+  beforeEach(() => {
     sdkv3.post.mockResolvedValue({
       data: { items: [{ name: 'My integration', id: 123123123 }] },
     });
+  });
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+  test('Navigation - simple path', async () => {
     renderRegisterContext(
       <React.Suspense fallback="This is the fallback">
         <Create />
@@ -145,72 +148,6 @@ describe('Register', () => {
     // documentation page
     await waitFor(() => {
       screen.getByText(INTEGRATION_DOCUMENTATION_HEADING);
-    });
-  });
-
-  test('Navigation - from schedule page', async () => {
-    renderRegisterContext(
-      <React.Suspense fallback="This is the fallback">
-        <Create />
-      </React.Suspense>,
-      { ...props, route: withTenant(SCHEDULE_PAGE_PATH) }
-    );
-
-    // schedule page
-    await waitFor(() => {
-      screen.getByText(INTEGRATION_SCHEDULE_HEADING);
-    });
-
-    // option NOT_DEFINED
-    const notDefinedOption = screen.getByLabelText(
-      SupportedScheduleStrings.NOT_DEFINED
-    );
-    fireEvent.click(notDefinedOption);
-    fireEvent.click(screen.getByText(NEXT));
-
-    await waitFor(() => {
-      screen.getByText(INTEGRATION_DATA_SET_HEADING);
-    });
-    fireEvent.click(screen.getByText(/back/i));
-
-    // option ON_TRIGGER
-    const triggerOption = screen.getByLabelText(
-      SupportedScheduleStrings.ON_TRIGGER
-    );
-    fireEvent.click(triggerOption);
-    fireEvent.click(screen.getByText(NEXT));
-
-    // data set page
-    await waitFor(() => {
-      screen.getByText(INTEGRATION_DATA_SET_HEADING);
-    });
-    fireEvent.click(screen.getByText(/back/i));
-
-    // option CONTINUOUS
-    const continuousOption = screen.getByLabelText(
-      SupportedScheduleStrings.CONTINUOUS
-    );
-    fireEvent.click(continuousOption);
-    fireEvent.click(screen.getByText(NEXT));
-
-    // data set page
-    await waitFor(() => {
-      screen.getByText(INTEGRATION_DATA_SET_HEADING);
-    });
-    fireEvent.click(screen.getByText(/back/i));
-
-    // option SCHEDULED
-    const scheduledOption = screen.getByLabelText(
-      SupportedScheduleStrings.SCHEDULED
-    );
-    fireEvent.click(scheduledOption);
-    const value = '0 0 9 1/1 * ? *';
-    fireEvent.change(screen.getByLabelText(CRON_LABEL), { target: { value } });
-    fireEvent.click(screen.getByText(NEXT));
-
-    // cron page
-    await waitFor(() => {
-      screen.getByText(INTEGRATION_DATA_SET_HEADING);
     });
   });
 });

@@ -28,6 +28,16 @@ import {
   CRON_REQUIRED,
   cronValidator,
 } from '../../utils/validation/cronValidation';
+import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
+import {
+  mapModelToInput,
+  mapScheduleInputToModel,
+} from '../../utils/cronUtils';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
+import { BackBtn } from '../../components/buttons/BackBtn';
+import { createUpdateSpec } from '../../utils/contactsUtils';
+import { useAppEnv } from '../../hooks/useAppEnv';
+import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
 
 const CronWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -101,8 +111,9 @@ const RadioInputsWrapper = styled.div`
 `;
 interface SchedulePageProps {}
 
-interface ScheduleFormInput {
+export interface ScheduleFormInput {
   schedule: string;
+  cron: string;
 }
 
 export const INTEGRATION_SCHEDULE_HEADING: Readonly<string> =
@@ -112,7 +123,7 @@ const scheduleSchema = yup.object().shape({
   schedule: yup.string().required(SCHEDULE_REQUIRED),
   cron: yup.string().when('schedule', {
     is: (val: SupportedScheduleStrings) =>
-      val === SupportedScheduleStrings.SCHEDULED, // alternatively: (val) => val == true
+      val === SupportedScheduleStrings.SCHEDULED,
     then: yup
       .string()
       .required(CRON_REQUIRED)
@@ -121,13 +132,19 @@ const scheduleSchema = yup.object().shape({
 });
 const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
   const history = useHistory();
+  const { project } = useAppEnv();
+  const { mutate } = useDetailsUpdate();
   const [showCron, setShowCron] = useState(false);
+  const {
+    storedIntegration,
+    setStoredIntegration,
+  } = useStoredRegisterIntegration();
   const methods = useForm<ScheduleFormInput>({
     resolver: yupResolver(scheduleSchema),
-    defaultValues: {},
+    defaultValues: mapModelToInput(storedIntegration?.schedule),
     reValidateMode: 'onSubmit',
   });
-  const { register, handleSubmit, errors, watch } = methods;
+  const { register, handleSubmit, errors, watch, setError } = methods;
   const scheduleValue = watch('schedule');
   useEffect(() => {
     if (scheduleValue === SupportedScheduleStrings.SCHEDULED) {
@@ -136,17 +153,54 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
       setShowCron(false);
     }
   }, [scheduleValue]);
-  const handleNext = () => {
-    history.push(createLink(DATA_SET_PAGE_PATH));
+
+  const handleNext = (field: ScheduleFormInput) => {
+    const schedule = mapScheduleInputToModel(field);
+    setStoredIntegration((prev) => {
+      return { ...prev, schedule };
+    });
+    if (storedIntegration?.id && project) {
+      const items = createUpdateSpec({
+        id: storedIntegration.id,
+        fieldName: 'schedule',
+        fieldValue: schedule,
+      });
+      mutate(
+        {
+          project,
+          items,
+          id: storedIntegration.id,
+        },
+        {
+          onSuccess: () => {
+            history.push(createLink(DATA_SET_PAGE_PATH));
+          },
+          onError: (serverError) => {
+            setError('schedule', {
+              type: 'server',
+              message: serverError.data.message,
+              shouldFocus: true,
+            });
+          },
+        }
+      );
+    } else {
+      setError('schedule', {
+        type: 'No id',
+        message: 'No id. Select an integration',
+        shouldFocus: true,
+      });
+    }
   };
   const v = watch('schedule');
   return (
     <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(CONTACTS_PAGE_PATH)}>
-        Back
+      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
+        Integration overview
       </GridBreadCrumbsWrapper>
       <GridTitleWrapper>Create integration</GridTitleWrapper>
       <GridMainWrapper>
+        <BackBtn path={CONTACTS_PAGE_PATH} />
         <GridH2Wrapper>{INTEGRATION_SCHEDULE_HEADING}</GridH2Wrapper>
         <FormProvider {...methods}>
           <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>

@@ -122,16 +122,21 @@ export const renderRegisterContext = (
 ) => {
   const history = createMemoryHistory();
   history.push(route);
-  return render(
-    <QueryClientProvider client={client}>
-      <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-        <RegisterIntegrationProvider initIntegration={initRegisterIntegration}>
-          <Router history={history}>{ui}</Router>
-        </RegisterIntegrationProvider>
-      </AppEnvProvider>
-    </QueryClientProvider>,
-    renderOptions
-  );
+  return {
+    ...render(
+      <QueryClientProvider client={client}>
+        <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
+          <RegisterIntegrationProvider
+            initIntegration={initRegisterIntegration}
+          >
+            <Router history={history}>{ui}</Router>
+          </RegisterIntegrationProvider>
+        </AppEnvProvider>
+      </QueryClientProvider>,
+      renderOptions
+    ),
+    history,
+  };
 };
 
 export const renderWithQueryClient = (client: QueryClient) => {

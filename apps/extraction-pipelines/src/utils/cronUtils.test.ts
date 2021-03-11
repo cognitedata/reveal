@@ -1,4 +1,9 @@
-import { parseCron } from './cronUtils';
+import {
+  mapModelToInput,
+  mapScheduleInputToModel,
+  parseCron,
+} from './cronUtils';
+import { SupportedScheduleStrings } from '../components/integrations/cols/Schedule';
 
 describe('Cron Utils', () => {
   const cases = [
@@ -18,6 +23,95 @@ describe('Cron Utils', () => {
   cases.forEach(({ value, expected }) => {
     test(`Should parse ${value} to ${expected}`, () => {
       const res = parseCron(value);
+      expect(res).toEqual(expected);
+    });
+  });
+  const mapCases = [
+    {
+      desc: 'not defined to undefined',
+      field: {
+        schedule: SupportedScheduleStrings.NOT_DEFINED,
+      },
+      expected: undefined,
+    },
+    {
+      desc: 'scheduled cron to cron',
+      field: {
+        schedule: SupportedScheduleStrings.SCHEDULED,
+        cron: '15 15 * * *',
+      },
+      expected: '15 15 * * *',
+    },
+    {
+      desc: 'on trigger cron to on trigger',
+      field: {
+        schedule: SupportedScheduleStrings.ON_TRIGGER,
+        cron: '15 15 * * *',
+      },
+      expected: SupportedScheduleStrings.ON_TRIGGER,
+    },
+    {
+      desc: 'Continuous cron to Continuous',
+      field: {
+        schedule: SupportedScheduleStrings.CONTINUOUS,
+        cron: '15 15 * * *',
+      },
+      expected: SupportedScheduleStrings.CONTINUOUS,
+    },
+    {
+      desc: 'Something else cron to undefined',
+      field: {
+        schedule: 'what ever',
+        cron: '15 15 * * *',
+      },
+      expected: undefined,
+    },
+  ];
+  mapCases.forEach(({ desc, field, expected }) => {
+    test(`mapScheduleInputToModel - ${desc}`, () => {
+      const res = mapScheduleInputToModel(field);
+      expect(res).toEqual(expected);
+    });
+  });
+
+  const modelToInput = [
+    {
+      desc: 'undefined to empty string (not set)',
+      model: undefined,
+      expected: {
+        schedule: '',
+        cron: '',
+      },
+    },
+    {
+      desc: 'On trigger to On trigger',
+      model: SupportedScheduleStrings.ON_TRIGGER,
+      expected: {
+        schedule: SupportedScheduleStrings.ON_TRIGGER,
+        cron: '',
+      },
+    },
+    {
+      desc: 'CONTINUOUS to CONTINUOUS',
+      model: SupportedScheduleStrings.CONTINUOUS,
+      expected: {
+        schedule: SupportedScheduleStrings.CONTINUOUS,
+        cron: '',
+      },
+    },
+    {
+      desc: 'cron to scheduled cron',
+      model: '15 15 * * *',
+      expected: {
+        schedule: SupportedScheduleStrings.SCHEDULED,
+        cron: '15 15 * * *',
+      },
+    },
+  ];
+
+  modelToInput.forEach(({ desc, model, expected }) => {
+    test(`mapModelToInput - ${desc}`, () => {
+      const res = mapModelToInput(model);
       expect(res).toEqual(expected);
     });
   });
