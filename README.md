@@ -2,7 +2,7 @@
 
 ## Using the library
 
-To use the `@cognite/data-exploration` library, check out the [storybook](https://friendly-barnacle-ef2c761b.pages.github.io/).
+To use the `@cognite/data-exploration` library, check out the [storybook](https://cognitedata.github.io/data-exploration-components/).
 
 ## Releasing new version of @cognite/data-exploration
 
