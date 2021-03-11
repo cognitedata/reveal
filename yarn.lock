@@ -3657,10 +3657,10 @@
     "@types/react-dom" "*"
     prop-types "^15.5.10"
 
-"@visx/clip-path@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@visx/clip-path/-/clip-path-1.0.0.tgz#75fbc3414fb9ab2c42792545c70ffdd0d64e4038"
-  integrity sha512-s5Xdjlf/1RaOOS5kJO8d0xOY6BdEifP8dq0gIJwEfBMyQALOtTyiDNZ0v0yTT82qssLrtZ0fm3xVSRJC1cPB/Q==
+"@visx/clip-path@1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@visx/clip-path/-/clip-path-1.6.1.tgz#b29310d84202a3c06de395527259f3148a29a5a4"
+  integrity sha512-v8OSRiJEOK5QIdXhjEs488EYfH76COx6C7cCPCQwALJ8LKVR/lBFqT0kXNlKJ0XN6Wwnkuj6nEL4rkYos19RQQ==
   dependencies:
     "@types/react" "*"
     prop-types "^15.5.10"
@@ -3817,15 +3817,15 @@
     prop-types "^15.7.2"
     reduce-css-calc "^1.3.0"
 
-"@visx/threshold@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-1.4.0.tgz#b57f8455cf63fc326763497c1d9a8bcdb7b2bb59"
-  integrity sha512-WJ2QanIuDYJ6IYVPz3FY6ZWgK3Ru0iM46FcCyddOcPIpNigsCI7an/cEMSYAhn5YtrGZaKMKJaR4N3bKo/7czw==
+"@visx/threshold@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-1.6.1.tgz#97da828f75dbe55ff41815fa80b2eb74704bc36c"
+  integrity sha512-p0LqeKVSA2wTd04FHhhyLtJDAfIcgYgaONYdMUwybXf4NG+VhEoj4wpMAcDpwvddjtYZoZDF1wD9740XQgf4zw==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
-    "@visx/clip-path" "1.0.0"
-    "@visx/shape" "1.4.0"
+    "@visx/clip-path" "1.6.1"
+    "@visx/shape" "1.6.1"
     classnames "^2.2.5"
     prop-types "^15.5.10"
 
