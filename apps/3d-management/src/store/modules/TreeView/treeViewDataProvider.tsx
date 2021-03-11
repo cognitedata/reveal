@@ -50,17 +50,13 @@ async function fetchRootNode(modelId, revisionId): Promise<v3.Node3D> {
   }
   const rootNodeId = rootNodeIdResponse.data.items[0];
 
-  const rootNodeObjResponse = await v3Client.revisions3D.list3DNodes(
+  const rootNodeObjResponse = await v3Client.revisions3D.retrieve3DNodes(
     modelId,
     revisionId,
-    {
-      nodeId: rootNodeId,
-      limit: 1,
-      depth: 0,
-    }
+    [{ id: rootNodeId }]
   );
 
-  return rootNodeObjResponse.items[0];
+  return rootNodeObjResponse[0];
 }
 
 // the first request is really slow for big models, we need an index for depth param to make it work smooth
