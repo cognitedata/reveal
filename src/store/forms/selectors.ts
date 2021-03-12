@@ -7,8 +7,7 @@ import {
   ImageFileState,
 } from './types';
 
-export const isErrorListEmpty = (state: StoreState): boolean =>
-  state.form.isErrorListEmpty;
+export const isValid = (state: StoreState): boolean => state.form.valid;
 
 export const suiteState = (state: StoreState): Suite => state.form.suite;
 

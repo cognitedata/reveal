@@ -9,8 +9,6 @@ import { RootDispatcher } from 'store/types';
 import { boardState } from 'store/forms/selectors';
 import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
 import { Board } from 'store/suites/types';
-import { useForm } from 'hooks/useForm';
-import { boardValidator } from 'validators';
 import { OptionTypeBase } from 'types/core';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import { CdfClientContext } from 'providers/CdfClientProvider';
@@ -19,7 +17,6 @@ const exclude = [ADMIN_GROUP_NAME];
 
 const GroupsSelector: React.FC = () => {
   const dispatch = useDispatch<RootDispatcher>();
-  const { setErrors, validateField } = useForm(boardValidator);
   const { groups } = useSelector(getGroupsState);
   const board = useSelector(boardState) as Board;
   const client = useContext(CdfClientContext);
@@ -35,10 +32,6 @@ const GroupsSelector: React.FC = () => {
         visibleTo: (selectedOption || []).map((option) => option.value),
       })
     );
-    setErrors((prevState: Board) => ({
-      ...prevState,
-      visibleTo: validateField('visibleTo', ''),
-    }));
   };
 
   const groupsValue =

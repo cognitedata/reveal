@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   filesUploadState,
   formState,
-  isErrorListEmpty,
+  isValid,
   suiteState,
 } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
@@ -36,8 +36,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const [step, setStep] = useState<Step>('suite');
   const history = useHistory();
   const suite = useSelector(suiteState);
-  const isValid = !isEmpty(suite.title);
-  const hasErrors = !useSelector(isErrorListEmpty) || !isValid;
+  const hasErrors = !useSelector(isValid) || isEmpty(suite.title);
   const { clearForm } = useFormState();
   const { saving: formSaving } = useSelector(formState);
   const { deleteQueue } = useSelector(filesUploadState);

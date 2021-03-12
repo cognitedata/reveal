@@ -149,6 +149,7 @@ const Home = () => {
                   dataItem={suite}
                   {...(canEdit && { menu: <SuiteMenu dataItem={suite} /> })}
                   avatar
+                  color={suite.color}
                 />
               </Link>
             ))}

@@ -4,7 +4,7 @@ import { CogniteExternalId, FileInfo } from '@cognite/sdk';
 import * as actions from './actions';
 
 export enum FormActionTypes {
-  SET_IS_ERROR_LIST_EMPTY = 'form/SET_IS_ERROR_LIST_EMPTY',
+  SET_VALIDITY = 'form/SET_VALIDITY',
   SET_SUITE = 'form/SET_SUITE',
   SET_BOARD = 'form/SET_BOARD',
   ADD_BOARD = 'form/ADD_BOARD',
@@ -49,7 +49,7 @@ export type FilesUploadState = {
 };
 
 export interface FormState {
-  isErrorListEmpty: boolean;
+  valid: boolean;
   suite: Suite;
   board: BoardState;
   imageFile: ImageFileState;

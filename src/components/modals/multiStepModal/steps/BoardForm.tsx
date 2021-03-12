@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { A, Button, Icon, Input, Micro, Tooltip } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { suiteState, boardState } from 'store/forms/selectors';
@@ -21,7 +21,7 @@ import {
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
 import { Flex } from 'styles/common';
-import { Board, Suite } from 'store/suites/types';
+import { Board } from 'store/suites/types';
 import { useForm } from 'hooks/useForm';
 import { boardValidator } from 'validators';
 import { RootDispatcher } from 'store/types';
@@ -47,13 +47,35 @@ type Props = {
   filesUploadQueue: Map<string, File>;
 };
 
+type BoardTouchedFields = {
+  [Property in keyof Board]?: boolean;
+};
+
 export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
-  const { errors, setErrors, validateField } = useForm(boardValidator);
+  const {
+    errors,
+    setErrors,
+    validateField,
+    validateBoard,
+    clearErrors,
+    touched,
+  } = useForm(boardValidator);
   const suite = useSelector(suiteState);
   const board = useSelector(boardState) as Board;
   const dispatch = useDispatch<RootDispatcher>();
   const client = useContext(CdfClientContext);
   const metrics = useMetrics('EditSuite');
+  const [
+    initialValidationDispatched,
+    setInitialValidationDispatched,
+  ] = useState(false);
+
+  useEffect(() => {
+    if (!initialValidationDispatched) {
+      setInitialValidationDispatched(true);
+      validateBoard(board);
+    }
+  }, [board, initialValidationDispatched, validateBoard]);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
@@ -63,11 +85,11 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
         [name]: value,
       })
     );
-
-    setErrors((prevState: Suite) => ({
-      ...prevState,
-      [name]: validateField(name, value),
-    }));
+    validateField(name, value);
+  };
+  const handleOnBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = event.target;
+    validateField(name, value);
   };
 
   const deleteBoardFromList = (event: React.MouseEvent, boardItem: Board) => {
@@ -82,6 +104,9 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
     if (boardItem?.imageFileId) {
       dispatch(addFileToDeleteQueue(boardItem.imageFileId));
     }
+    if (boardItem.key === board.key) {
+      clearErrors();
+    }
     dispatch(deleteBoard(boardItem.key));
   };
 
@@ -91,7 +116,13 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
       boardKey: boardItem.key,
       board: boardItem.title,
     });
+    clearErrors();
     dispatch(setBoardState(client, boardItem));
+  };
+
+  const clear = () => {
+    clearErrors();
+    setInitialValidationDispatched(false);
   };
 
   return (
@@ -103,25 +134,31 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
               autoComplete="off"
               title="Title"
               name="title"
-              error={errors?.title}
+              error={touched.title && errors?.title}
               value={board.title || ''}
               variant="noBorder"
               placeholder="Title"
               onChange={handleOnChange}
+              onBlur={handleOnBlur}
               fullWidth
             />
           </CustomInputContainer>
-          <BoardTypeSelector />
+          <BoardTypeSelector
+            error={errors?.type}
+            touched={!!touched.type}
+            validate={validateField}
+          />
           <CustomInputContainer>
             <Input
               autoComplete="off"
               title="Add link to board"
               name="url"
-              error={errors?.url}
+              error={touched.url && errors?.url}
               value={board.url || ''}
               variant="noBorder"
               placeholder="URL"
               onChange={handleOnChange}
+              onBlur={handleOnBlur}
               fullWidth
             />
           </CustomInputContainer>
@@ -140,12 +177,17 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
               variant="noBorder"
               placeholder="Tag"
               onChange={handleOnChange}
+              onBlur={handleOnBlur}
               fullWidth
             />
           </SnapshotInputContainer>
-          <FileUpload filesUploadQueue={filesUploadQueue} />
+          <FileUpload
+            filesUploadQueue={filesUploadQueue}
+            error={errors?.imageFileId}
+            setErrors={setErrors}
+          />
           <GroupsSelector />
-          <ActionButtons filesUploadQueue={filesUploadQueue} />
+          <ActionButtons filesUploadQueue={filesUploadQueue} onCancel={clear} />
         </FormContainer>
         <BoardsContainer>
           <div>
