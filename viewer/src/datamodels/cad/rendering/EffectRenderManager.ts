@@ -478,13 +478,11 @@ export class EffectRenderManager {
   private renderNormalCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     this._normalSceneBuilder.populateTemporaryScene();
     renderer.setRenderTarget(this._normalRenderedCadModelTarget);
-    this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._normalScene, camera);
   }
 
   private renderNormalCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     renderer.setRenderTarget(this._normalRenderedCadModelTarget);
-    this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._cadScene, camera);
   }
 
