@@ -15,14 +15,14 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
-import { DebugLoadedSectorsTool, ExplodedViewTool } from '@cognite/reveal/tools';
+import { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
 
 window.THREE = THREE;
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI();
+    const gui = new dat.GUI({ width: 300 });
     let viewer: Cognite3DViewer;
 
     async function main() {
@@ -110,8 +110,16 @@ export function Migration() {
         revisionId: 0,
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
-        boundingBoxTools: new DebugLoadedSectorsTool(viewer, { colorBy: 'lod'})
-
+        debugLoadedSectors: {
+          options: {   
+            showSimpleSectors: true,
+            showDetailedSectors: true,
+            showDiscardedSectors: false,
+            colorBy: 'lod',
+            leafsOnly: false
+          } as DebugLoadedSectorsToolOptions,
+          tool: new DebugLoadedSectorsTool(viewer)
+        }
       };
       const guiActions = {
         addModel: () =>
@@ -124,8 +132,11 @@ export function Migration() {
           viewer.fitCameraToModel(model);
         },
         showSectorBoundingBoxes: () => {
+          const { tool, options } = guiState.debugLoadedSectors;
+          tool.setOptions(options);
           if (cadModels.length > 0) {
-            guiState.boundingBoxTools.showSectorBoundingBoxes(cadModels[0]);
+            cadModels[0].ghostAllNodes();
+            tool.showSectorBoundingBoxes(cadModels[0]);
           }
         }
       };
@@ -134,7 +145,6 @@ export function Migration() {
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
-      gui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
       gui.add(guiState, 'antiAliasing', 
         [
           'disabled','fxaa','msaa4','msaa8','msaa16',
@@ -151,9 +161,15 @@ export function Migration() {
           window.location.href = url.toString();
       });
 
+      const debugGui = gui.addFolder('Debug');
+      debugGui.add(guiState.debugLoadedSectors.options, 'colorBy', ['lod', 'depth']).name('Color by');
+      debugGui.add(guiState.debugLoadedSectors.options, 'leafsOnly').name('Leaf nodes only');
+      debugGui.add(guiState.debugLoadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
+      debugGui.add(guiState.debugLoadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
+      debugGui.add(guiState.debugLoadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
+      debugGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
 
       const slicing = gui.addFolder('Slicing');
-      
       // X 
       slicing
         .add(slicingParams, 'enabledX')

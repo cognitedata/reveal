@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { LevelOfDetail } from '../datamodels/cad/sector/LevelOfDetail';
 
 import { SectorNode } from '../datamodels/cad/sector/SectorNode';
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
@@ -12,7 +13,9 @@ import { assertNever } from '../utilities';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export type DebugLoadedSectorsToolOptions = {
-  lodLevels?: 'all' | 'simple' | 'detailed';
+  showSimpleSectors?: boolean;
+  showDetailedSectors?: boolean;
+  showDiscardedSectors?: boolean;
   colorBy?: 'depth' | 'lod';
   leafsOnly?: boolean;
 };
@@ -26,13 +29,20 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
   constructor(viewer: Cognite3DViewer, options: DebugLoadedSectorsToolOptions = {}) {
     super();
     this._viewer = viewer;
-    this._options = { lodLevels: 'all', colorBy: 'lod', leafsOnly: false, ...options };
     this._viewer.addObject3D(this._boundingBoxes);
+    this._options = {} as any; // Force - it's set in setOptions
     this.setOptions(options);
   }
 
   setOptions(options: DebugLoadedSectorsToolOptions) {
-    this._options = { lodLevels: 'all', colorBy: 'lod', leafsOnly: false, ...options };
+    this._options = {
+      showDetailedSectors: true,
+      showDiscardedSectors: false,
+      showSimpleSectors: true,
+      colorBy: 'lod',
+      leafsOnly: false,
+      ...options
+    };
   }
 
   dispose() {
@@ -50,14 +60,16 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
       return;
     }
     this._model.getModelTransformation(this._boundingBoxes.matrix);
+    const shouldShowLod: boolean[] = [];
+    shouldShowLod[LevelOfDetail.Discarded] = this._options.showDiscardedSectors;
+    shouldShowLod[LevelOfDetail.Simple] = this._options.showSimpleSectors;
+    shouldShowLod[LevelOfDetail.Detailed] = this._options.showDetailedSectors;
+
     this._model.cadNode.traverse(node => {
       if (isSectorNode(node)) {
         const sectorNode = node as SectorNode;
-        if (isLoaded(sectorNode)) {
-          if (this._options.leafsOnly && !isLeaf(sectorNode)) {
-            return;
-          }
 
+        if (shouldShowLod[sectorNode.levelOfDetail] && (!this._options.leafsOnly || isLeaf(sectorNode))) {
           const bboxNode = this.createBboxNodeFor(sectorNode);
           this._boundingBoxes.add(bboxNode);
         }
@@ -72,16 +84,25 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
     function determineColor() {
       switch (options.colorBy) {
         case 'depth':
-          return Colors.red;
+          const s = Math.min(1.0, node.depth / 8);
+          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
         case 'lod':
-          return isSimple(node) ? Colors.yellow : Colors.green;
+          switch (node.levelOfDetail) {
+            case LevelOfDetail.Simple:
+              return Colors.yellow;
+            case LevelOfDetail.Detailed:
+              return Colors.green;
+            case LevelOfDetail.Discarded:
+              return Colors.red;
+            default:
+              assertNever(node.levelOfDetail);
+          }
         default:
           assertNever(options.colorBy);
       }
     }
-    const bbox = new THREE.Box3().setFromObject(node);
     const color = determineColor();
-    return new THREE.Box3Helper(bbox, color);
+    return new THREE.Box3Helper(node.bounds, color);
   }
 }
 
@@ -93,15 +114,6 @@ const Colors = {
 
 function isSectorNode(node: THREE.Object3D) {
   return node.name.match(/^Sector \d+$/);
-}
-
-function isLoaded(node: SectorNode) {
-  return node.group !== undefined ? node.group.children.some(x => (x as THREE.Mesh).isMesh) : false;
-}
-
-function isSimple(node: SectorNode) {
-  debugger;
-  return node.group !== undefined ? node.group.name.match(/^Quads \d+$/) : false;
 }
 
 function isLeaf(node: SectorNode) {

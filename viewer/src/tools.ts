@@ -5,4 +5,4 @@
 export { HtmlOverlayTool, HtmlOverlayOptions } from './tools/HtmlOverlayTool';
 export { ExplodedViewTool } from './tools/ExplodedViewTool';
 export { Cognite3DViewerToolBase } from './tools/Cognite3DViewerToolBase';
-export { DebugLoadedSectorsTool } from './tools/DebugLoadedSectorsTool';
+export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './tools/DebugLoadedSectorsTool';
