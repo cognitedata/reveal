@@ -1292,13 +1292,6 @@
   optionalDependencies:
     typescript "^3.6"
 
-"@cognite/metrics@^0.0.32":
-  version "0.0.32"
-  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-0.0.32.tgz#5453306194c585feae6fff190abb4af1f3642498"
-  integrity sha512-ToLFqEXfM84tatdF7TizrOPkBDq9/mvLZ0ICGXURIWGcW5buX+61v566fn5GmURCRdNhfTkJtLMzPEGA4hIPTQ==
-  dependencies:
-    mixpanel-browser "^2.35.0"
-
 "@cognite/sdk-core@^1.0.2", "@cognite/sdk-core@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.3.tgz#203e504947a0d481656c34d1d71a0caebd2bcb12"
@@ -1336,7 +1329,7 @@
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^2.23.1"
 
-"@cognite/sdk@^3.0.0", "@cognite/sdk@^3.3.1":
+"@cognite/sdk@^3.0.0":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.1.tgz#5b38415547ccff1566da3da4676b4b085274f5a9"
   integrity sha512-HL1x2lhh90yrWbP4BdDDArxXidlhIenh61d8fEQ1xplbUvXLMqYNvMnp1G2mz07jOERfcCl4XupZMjD7jSlR8Q==
@@ -5783,10 +5776,15 @@ commander@^5.0.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
   integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
 
-commander@^6.2.0, commander@^6.2.1:
+commander@^6.2.0:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
   integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+
+commander@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-7.1.0.tgz#f2eaecf131f10e36e07d894698226e36ae0eb5ff"
+  integrity sha512-pRxBna3MJe6HKnBGsDyMv8ETbptw3axEdYHoqNh7gu5oDcew8fs0xnivZGm06Ogk8zGAJ9VX+OPEr2GXEQK4dg==
 
 common-tags@^1.8.0:
   version "1.8.0"
