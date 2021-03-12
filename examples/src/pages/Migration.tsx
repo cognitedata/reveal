@@ -15,7 +15,8 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
-import { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
+import { CadNode } from '@cognite/reveal/experimental';
 
 window.THREE = THREE;
 
@@ -119,7 +120,9 @@ export function Migration() {
             leafsOnly: false
           } as DebugLoadedSectorsToolOptions,
           tool: new DebugLoadedSectorsTool(viewer)
-        }
+        },
+        showCameraTool: new DebugCameraTool(viewer),
+        renderMode: 'Color'
       };
       const guiActions = {
         addModel: () =>
@@ -138,6 +141,9 @@ export function Migration() {
             cadModels[0].ghostAllNodes();
             tool.showSectorBoundingBoxes(cadModels[0]);
           }
+        },
+        showCameraHelper: () => {
+          guiState.showCameraTool.showCameraHelper();
         }
       };
 
@@ -145,6 +151,15 @@ export function Migration() {
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
+      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
+      gui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
+        const renderMode = renderModes.indexOf(value);
+        cadModels.forEach(m => {
+          const cadNode: CadNode = (m as any).cadNode;
+          cadNode.renderMode = renderMode;
+        });
+        viewer.forceRerender();
+      });
       gui.add(guiState, 'antiAliasing', 
         [
           'disabled','fxaa','msaa4','msaa8','msaa16',
@@ -168,6 +183,7 @@ export function Migration() {
       debugGui.add(guiState.debugLoadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugGui.add(guiState.debugLoadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
       debugGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
+      debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
 
       const slicing = gui.addFolder('Slicing');
       // X 
