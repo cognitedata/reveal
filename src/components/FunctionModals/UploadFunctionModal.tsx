@@ -29,6 +29,7 @@ import {
   checkExternalId,
   checkSecrets,
   checkFile,
+  checkFloat,
 } from 'utils/formValidations';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { allFunctionsKey } from 'utils/queryKeys';
@@ -88,6 +89,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [file, setFile] = useState<UploadFile>();
   const [fileTouched, setFileTouched] = useState(false);
   const [secrets, setSecrets] = useState([] as Secret[]);
+  const [cpu, setCpu] = useState('0.25');
+  const [memory, setMemory] = useState('1');
 
   const addSecret = () => {
     setSecrets(prevSecrets => [
@@ -118,6 +121,14 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     setSecrets(updatedSecrets);
   };
 
+  const handleCpuChange = (evt: { target: { value: string } }) => {
+    setCpu(evt.target.value);
+  };
+
+  const handleMemoryChange = (evt: { target: { value: string } }) => {
+    setMemory(evt.target.value);
+  };
+
   const handleFileUploadChange = (evt: UploadChangeParam) => {
     if (evt.file.status === 'removed') {
       setFile(undefined);
@@ -141,6 +152,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
           externalId,
           owner,
           apiKey,
+          cpu: cpu ? parseFloat(cpu) : undefined,
+          memory: memory ? parseFloat(memory) : undefined,
           secrets: secrets.reduce(
             (accl, s) => ({ ...accl, [s.key]: s.value }),
             {}
@@ -152,6 +165,9 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     }
   };
 
+  const checkCPU = checkFloat(0.1, 0.6);
+  const checkMemory = checkFloat(0.1, 2.5);
+
   const canBeSubmitted =
     !!file &&
     !checkFunctionName(functionName.value).error &&
@@ -160,6 +176,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     !checkApiKey(apiKey).error &&
     !checkExternalId(externalId).error &&
     checkSecrets(secrets, apiKey) &&
+    !checkCPU(cpu).error &&
+    !checkMemory(memory).error &&
     !checkFile(file).error;
 
   return (
@@ -343,6 +361,40 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 value={externalId}
                 allowClear
                 onChange={({ target: { value } }) => setExternalId(value)}
+              />
+            </Form.Item>
+            <Form.Item
+              label="CPU"
+              validateStatus={checkCPU(cpu).error ? 'error' : 'success'}
+              help={checkCPU(cpu).message}
+              style={{ fontWeight: 'bold' }}
+            >
+              <Input
+                name="cpu"
+                type="number"
+                step="0.05"
+                min="0.1"
+                max="0.6"
+                value={cpu}
+                onChange={handleCpuChange}
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item
+              label="Memory"
+              validateStatus={checkMemory(memory).error ? 'error' : 'success'}
+              help={checkMemory(memory).message}
+              style={{ fontWeight: 'bold' }}
+            >
+              <Input
+                name="Memory"
+                value={memory}
+                type="number"
+                step="0.1"
+                min="0.1"
+                max="2.5"
+                onChange={handleMemoryChange}
+                allowClear
               />
             </Form.Item>
             <Form.Item label="Secrets">

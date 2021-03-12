@@ -44,7 +44,7 @@ describe('UploadFunctionModal', () => {
       // should have function name, description, apikey, owneremail, file, externalId, secrets
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
       const allFormItems = wrapper.find(Form.Item);
-      expect(allFormItems).toHaveLength(7);
+      expect(allFormItems).toHaveLength(9);
       const allFormItemsLabels = allFormItems.map(i => i.text());
       expect(allFormItemsLabels).toContain('Function name');
       expect(allFormItemsLabels).toContain('Description');
@@ -52,7 +52,7 @@ describe('UploadFunctionModal', () => {
       expect(allFormItemsLabels).toContain('Owner');
       expect(wrapper.find(Upload).exists()).toBe(true);
       expect(allFormItemsLabels).toContain('External Id');
-      expect(allFormItemsLabels[6]).toContain('Secrets');
+      expect(allFormItemsLabels[8]).toContain('Secrets');
       expect(allFormItemsLabels[0]).toContain('Function File');
       wrapper.unmount();
     });

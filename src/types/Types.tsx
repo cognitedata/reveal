@@ -29,6 +29,8 @@ export interface CogFunctionUpload {
   owner: string;
   description?: string;
   apiKey?: string;
+  memory?: number;
+  cpu?: number;
   secrets?: {};
   externalId?: string;
 }
@@ -37,8 +39,6 @@ export interface CogFunction extends CogFunctionUpload {
   createdTime: number;
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
   error?: Error;
-  cpu: number;
-  memory: number;
 }
 
 export interface Error {
@@ -52,6 +52,8 @@ export interface CallResponse {
   id: number;
   functionId: number;
   response: any;
+  startTime?: number;
+  endTime?: number;
   status: CallStatus;
 }
 

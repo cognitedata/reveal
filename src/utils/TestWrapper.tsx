@@ -1,5 +1,5 @@
 import React from 'react';
-import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { QueryCache, ReactQueryCacheProvider, setConsole } from 'react-query';
 import { MemoryRouter } from 'react-router';
 
 export default function TestWrapper({
@@ -15,6 +15,11 @@ export default function TestWrapper({
         cacheTime: 60000,
       },
     },
+  });
+  setConsole({
+    log: () => {},
+    warn: () => {},
+    error: () => {},
   });
 
   return (

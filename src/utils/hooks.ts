@@ -10,11 +10,9 @@ import {
 } from 'types';
 import sdk from 'sdk-singleton';
 import {
-  allCallsPrefix,
   allFunctionsKey,
   allSchedulesKey,
   callKey,
-  callPrefix,
   callsKey,
   functionKey,
   logsKey,
@@ -106,8 +104,6 @@ export const useSDK = <T>(assetType: AssetType, method: Method, data: any) =>
 export const useRefreshApp = () => {
   const cache = useQueryCache();
   return () => {
-    cache.invalidateQueries(allFunctionsKey);
-    cache.invalidateQueries(allCallsPrefix);
-    cache.invalidateQueries(callPrefix);
+    cache.invalidateQueries();
   };
 };
