@@ -18,7 +18,7 @@ export const SearchResultTable = ({
     isFetching,
     isFetched,
     isError,
-  } = useAssetTimeseresSearch(query);
+  } = useAssetTimeseresSearch(query, true);
 
   if (isError) {
     return <Icon type="XLarge" />;
