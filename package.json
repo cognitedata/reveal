@@ -28,7 +28,7 @@
     "@cognite/z-index": "^0.1.0",
     "@reduxjs/toolkit": "^1.5.0",
     "@sentry/browser": "^5.29.0",
-    "date-fns": "^2.16.1",
+    "date-fns": "^2.19.0",
     "firebase": "^8.2.10",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.40.0",
