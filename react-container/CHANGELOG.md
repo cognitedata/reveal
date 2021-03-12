@@ -9,6 +9,7 @@
 ### Changes
 
 - Add default loopDetector, use disableLoopDetector to disable
+- Add new component `ConditionalWrapperWithProps` to allow to pass props to ConditionalWrapper
 
 ## 0.9.0 Feb 23 2021
 
