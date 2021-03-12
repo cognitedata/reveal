@@ -246,12 +246,10 @@ const PlotlyChartComponent = ({
       }
     } else {
       (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-        showline: false,
         showticklabels: false,
-        ticks: '',
-        range: serializedYRange,
-        overlaying: index !== 0 ? 'y' : undefined,
         hoverformat: '.2f',
+        domain: [index / seriesData.length, (index + 1) / seriesData.length],
+        zeroline: false,
       };
     }
   });
