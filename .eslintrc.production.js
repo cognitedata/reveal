@@ -31,6 +31,7 @@ module.exports = {
     'lodash/prefer-constant': ['off'],
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
+    'lodash/prefer-noop': ['off'],
 
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': [

@@ -1,26 +1,10 @@
+/* eslint-disable no-alert, no-console */
+
 import React, { useEffect, useState } from 'react';
 import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
-import useSelector from 'hooks/useSelector';
-import chartsSlice, {
-  chartSelectors,
-  ChartTimeSeries,
-  ChartWorkflow,
-  LatestWorkflowRun,
-  WorkflowRunStatus,
-} from 'reducers/charts';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import useDispatch from 'hooks/useDispatch';
-import useEnsureData from 'hooks/useEnsureData';
-import searchSlice from 'reducers/search';
-import {
-  renameChart,
-  saveExistingChart,
-  duplicateChart,
-  addWorkflowToChart,
-  createWorkflowFromTimeSeries,
-} from 'reducers/charts/api';
 import noop from 'lodash/noop';
 import { units } from 'utils/units';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
@@ -36,6 +20,15 @@ import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
 import { Toolbar } from 'components/Toolbar';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
+import { useChart, useUpdateChart, useUpdateWorkflow } from 'hooks/firebase';
+import { getTenantFromURL } from 'utils/env';
+import { nanoid } from '@reduxjs/toolkit';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  WorkflowRunStatus,
+} from 'reducers/charts';
+import { getEntryColor } from 'utils/colors';
 import {
   Header,
   TopPaneWrapper,
@@ -59,24 +52,19 @@ import {
 } from './elements';
 
 type ChartViewProps = {
-  chartId?: string;
+  chartId: string;
 };
 
-const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
-  const hasData = useEnsureData();
-  const dispatch = useDispatch();
+const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
+  const { chartId = chartIdProp } = useParams<{ chartId: string }>();
+  const { data: chart, isError, isFetched } = useChart(chartId);
+  const { mutate: updateWorkflow } = useUpdateWorkflow();
+  const { mutate: updateChart } = useUpdateChart();
+
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
   const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
-  const { chartId = propsChartId } = useParams<{ chartId: string }>();
-  const chart = useSelector((state) =>
-    chartSelectors.selectById(state, String(chartId))
-  );
-  const tenant = useSelector((state) => state.environment.tenant);
-  const newlyCreatedChart = useSelector(
-    (state) => state.charts.newlyCreatedChart
-  );
 
-  const workflows = chart?.workflowCollection || [];
+  const tenant = getTenantFromURL();
 
   const [showSearch, setShowSearch] = useState(false);
 
@@ -91,203 +79,177 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     reportType?: string;
   }>({});
 
-  const error = useSelector((state) => state.charts.status.error);
-
   const runWorkflows = async () => {
-    // console.log('Running all workflows');
-
-    if (!chart) {
-      return;
-    }
-
-    (workflows || []).forEach(async (flow) => {
-      if (!flow) {
-        return;
-      }
-
-      if (!tenant) {
-        return;
-      }
-
-      const steps = getStepsFromWorkflow(flow);
-
-      /* eslint-disable no-console */
-      console.log('Running workflow');
-      /* eslint-enable no-console */
-
-      if (!steps.length) {
-        return;
-      }
-
-      const computation = {
-        steps,
-        start_time: new Date(chart.dateFrom).getTime(),
-        end_time: new Date(chart.dateTo).getTime(),
-        granularity: calculateGranularity(
-          [
-            new Date(chart.dateFrom).getTime(),
-            new Date(chart.dateTo).getTime(),
-          ],
-          1000
-        ),
-      };
-
-      /* eslint-disable no-console */
-      console.log({ computation });
-      /* eslint-enable no-console */
-
-      const functions = await sdk.get<{ items: CogniteFunction[] }>(
-        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
-      );
-
-      const simpleCalc = functions.data.items.find(
-        (func) => func.name === 'simple_calc-master'
-      );
-
-      if (!simpleCalc) {
-        return;
-      }
-
-      dispatch(
-        chartsSlice.actions.updateWorkflowLatestRun({
-          chartId: chart.id,
-          workflowId: flow.id,
-          latestRun: {
-            timestamp: Date.now(),
-            status: 'RUNNING',
-            nodeProgress: flow.nodes?.reduce((output, node) => {
-              return {
-                ...output,
-                [node.id]: { status: 'RUNNING' },
-              };
-            }, {}),
-          },
-        })
-      );
-
-      const functionCall = await sdk.post<{ id: number }>(
-        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/call`,
-        {
-          data: {
-            data: { computation_graph: computation },
-          },
-        }
-      );
-
-      const status = await waitOnFunctionComplete(
-        tenant,
-        simpleCalc.id,
-        functionCall.data.id
-      );
-
-      const functionResult = await sdk.get<{ response: Record<string, any> }>(
-        `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
-      );
-
-      /* eslint-disable no-console */
-      console.log({
-        status,
-        result: functionResult.data,
-      });
-      /* eslint-enable no-console */
-
-      if (
-        !functionResult.data.response ||
-        functionResult.data?.response?.error
-      ) {
-        dispatch(
-          chartsSlice.actions.updateWorkflowLatestRun({
-            chartId: chart.id,
-            workflowId: flow.id,
-            latestRun: {
-              timestamp: Date.now(),
-              status: 'FAILED',
-              nodeProgress: flow.nodes?.reduce((output, node) => {
-                return {
-                  ...output,
-                  [node.id]: { status: 'FAILED' },
-                };
-              }, {}),
-            },
-          })
-        );
-
-        return;
-      }
-
-      const latestRun: LatestWorkflowRun = {
-        status: 'SUCCESS',
-        timestamp: Date.now(),
-        errors: [],
-        results: {
-          datapoints: {
-            unit: 'Unknown',
-            datapoints: functionResult.data.response.value.map(
-              (_: any, i: number) => ({
-                timestamp: functionResult.data.response.timestamp[i],
-                value: functionResult.data.response.value[i],
-              })
-            ),
-          },
-        },
-        nodeProgress: flow.nodes?.reduce((output, node) => {
-          return {
-            ...output,
-            [node.id]: { status: 'DONE' },
-          };
-        }, {}),
-      };
-
-      dispatch(
-        chartsSlice.actions.updateWorkflowLatestRun({
-          chartId: chart.id,
-          workflowId: flow.id,
-          latestRun,
-        })
-      );
-    });
+    //   // console.log('Running all workflows');
+    //   if (!chart || !chart?.workflowCollection) {
+    //     return;
+    //   }
+    //   (chart.workflowCollection || []).forEach(async (flow, i) => {
+    //     if (!flow) {
+    //       return;
+    //     }
+    //     if (!tenant) {
+    //       return;
+    //     }
+    //     const steps = getStepsFromWorkflow(flow);
+    //     if (!steps.length) {
+    //       return;
+    //     }
+    //     const computation = {
+    //       steps,
+    //       start_time: new Date(chart.dateFrom).getTime(),
+    //       end_time: new Date(chart.dateTo).getTime(),
+    //       granularity: calculateGranularity(
+    //         [
+    //           new Date(chart.dateFrom).getTime(),
+    //           new Date(chart.dateTo).getTime(),
+    //         ],
+    //         1000
+    //       ),
+    //     };
+    //     const functions = await sdk.get<{ items: CogniteFunction[] }>(
+    //       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
+    //     );
+    //     const simpleCalc = functions.data.items.find(
+    //       (func) => func.name === 'simple_calc-master'
+    //     );
+    //     if (!simpleCalc) {
+    //       return;
+    //     }
+    //     const foo = chart.workflowCollection?[i];
+    //     foo
+    //     updateWorkflow({
+    //       chartId,
+    //       workflowCollection: chart.workflowCollection.
+    //     })
+    //     dispatch(
+    //       chartsSlice.actions.updateWorkflowLatestRun({
+    //         chartId: chart.id,
+    //         workflowId: flow.id,
+    //         latestRun: {
+    //           timestamp: Date.now(),
+    //           status: 'RUNNING',
+    //           nodeProgress: flow.nodes?.reduce((output, node) => {
+    //             return {
+    //               ...output,
+    //               [node.id]: { status: 'RUNNING' },
+    //             };
+    //           }, {}),
+    //         },
+    //       })
+    //     );
+    //     const functionCall = await sdk.post<{ id: number }>(
+    //       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/call`,
+    //       {
+    //         data: {
+    //           data: { computation_graph: computation },
+    //         },
+    //       }
+    //     );
+    //     const status = await waitOnFunctionComplete(
+    //       tenant,
+    //       simpleCalc.id,
+    //       functionCall.data.id
+    //     );
+    //     const functionResult = await sdk.get<{ response: Record<string, any> }>(
+    //       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
+    //     );
+    //     /* eslint-disable no-console */
+    //     console.log({
+    //       status,
+    //       result: functionResult.data,
+    //     });
+    //     /* eslint-enable no-console */
+    //     if (
+    //       !functionResult.data.response ||
+    //       functionResult.data?.response?.error
+    //     ) {
+    //       dispatch(
+    //         chartsSlice.actions.updateWorkflowLatestRun({
+    //           chartId: chart.id,
+    //           workflowId: flow.id,
+    //           latestRun: {
+    //             timestamp: Date.now(),
+    //             status: 'FAILED',
+    //             nodeProgress: flow.nodes?.reduce((output, node) => {
+    //               return {
+    //                 ...output,
+    //                 [node.id]: { status: 'FAILED' },
+    //               };
+    //             }, {}),
+    //           },
+    //         })
+    //       );
+    //       return;
+    //     }
+    //     const latestRun: LatestWorkflowRun = {
+    //       status: 'SUCCESS',
+    //       timestamp: Date.now(),
+    //       errors: [],
+    //       results: {
+    //         datapoints: {
+    //           unit: 'Unknown',
+    //           datapoints: functionResult.data.response.value.map(
+    //             (_: any, i: number) => ({
+    //               timestamp: functionResult.data.response.timestamp[i],
+    //               value: functionResult.data.response.value[i],
+    //             })
+    //           ),
+    //         },
+    //       },
+    //       nodeProgress: flow.nodes?.reduce((output, node) => {
+    //         return {
+    //           ...output,
+    //           [node.id]: { status: 'DONE' },
+    //         };
+    //       }, {}),
+    //     };
+    //     dispatch(
+    //       chartsSlice.actions.updateWorkflowLatestRun({
+    //         chartId: chart.id,
+    //         workflowId: flow.id,
+    //         latestRun,
+    //       })
+    //     );
+    //   });
   };
 
-  useEffect(() => {
-    if (chart) {
-      dispatch(searchSlice.actions.setActiveChartId(chart.id));
-    }
-  }, [chart?.id]);
+  // useEffect(() => {
+  //   if ((workflows || []).length > 0 && updateAutomatically) {
+  //     runWorkflows();
+  //   }
+  // }, [chart?.dateFrom, chart?.dateTo, updateAutomatically]);
 
-  useEffect(() => {
-    if ((workflows || []).length > 0 && !workflowsRan) {
-      setWorkflowsRan(true);
-      // Run the existing workflows here
-      runWorkflows();
-    }
-  }, [workflows]);
-
-  useEffect(() => {
-    if ((workflows || []).length > 0 && updateAutomatically) {
-      runWorkflows();
-    }
-  }, [chart?.dateFrom, chart?.dateTo, updateAutomatically]);
-
-  useEffect(() => {
-    if (newlyCreatedChart) {
-      dispatch(chartsSlice.actions.clearNewlyCreatedChart());
-    }
-  }, [newlyCreatedChart]);
+  // useEffect(() => {
+  //   if (newlyCreatedChart) {
+  //     dispatch(chartsSlice.actions.clearNewlyCreatedChart());
+  //   }
+  // }, [newlyCreatedChart]);
 
   const handleClickNewWorkflow = () => {
     if (chart) {
-      dispatch(addWorkflowToChart(chart.id));
+      updateChart({
+        ...chart,
+        workflowCollection: [
+          ...(chart.workflowCollection || []),
+          {
+            id: nanoid(),
+            name: 'New Calculation',
+            color: getEntryColor(),
+            lineWeight: 2,
+            lineStyle: 'solid',
+            enabled: true,
+            nodes: [],
+            connections: [],
+          },
+        ],
+      });
     }
   };
 
   const handleClickSave = async () => {
     if (chart) {
-      try {
-        await dispatch(saveExistingChart(chart));
-        toast.success('Successfully saved nothing!');
-      } catch (e) {
-        toast.error('Unable to save - try again!');
-      }
+      updateChart(chart);
     }
   };
 
@@ -296,166 +258,194 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
   };
 
   const handleRemoveTimeSeries = (timeSeriesId: string) => {
-    dispatch(
-      chartsSlice.actions.removeTimeSeries({
-        id: chart?.id || '',
-        timeSeriesId,
-      })
-    );
+    if (!chart) {
+      return;
+    }
+    updateChart({
+      ...chart,
+      timeSeriesCollection: chart.timeSeriesCollection?.filter(
+        (t) => t.id !== timeSeriesId
+      ),
+    });
   };
 
   const handleToggleTimeSeries = (timeSeriesId: string) => {
-    dispatch(
-      chartsSlice.actions.toggleTimeSeries({
-        id: chart?.id || '',
-        timeSeriesId,
-      })
-    );
+    if (!chart) {
+      return;
+    }
+    updateChart({
+      ...chart,
+      timeSeriesCollection: chart.timeSeriesCollection?.map((t) => {
+        if (t.id === timeSeriesId) {
+          t.enabled = !t.enabled;
+        }
+        return t;
+      }),
+    });
   };
 
   const handleToggleWorkflow = (workflowId: string) => {
-    dispatch(
-      chartsSlice.actions.toggleWorkflow({
-        id: chart?.id || '',
-        workflowId,
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.toggleWorkflow({
+    //     id: chart?.id || '',
+    //     workflowId,
+    //   })
+    // );
   };
 
   const handleRenameTimeSeries = (timeSeriesId: string) => {
-    dispatch(
-      chartsSlice.actions.renameTimeSeries({
-        id: chart?.id || '',
-        timeSeriesId,
-        // eslint-disable-next-line no-alert
-        name: prompt('Provide new name for time series') || 'unnamed',
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.renameTimeSeries({
+    //     id: chart?.id || '',
+    //     timeSeriesId,
+    //     // eslint-disable-next-line no-alert
+    //     name: prompt('Provide new name for time series') || 'unnamed',
+    //   })
+    // );
   };
 
   const handleRenameWorkflow = (workflowId: string) => {
-    dispatch(
-      chartsSlice.actions.renameWorkflow({
-        id: chart?.id || '',
-        workflowId,
-        // eslint-disable-next-line no-alert
-        name: prompt('Provide new name for workflow') || 'unnamed',
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.renameWorkflow({
+    //     id: chart?.id || '',
+    //     workflowId,
+    //     // eslint-disable-next-line no-alert
+    //     name: prompt('Provide new name for workflow') || 'unnamed',
+    //   })
+    // );
   };
 
   const handleChangeTimeSeriesColor = (timeSeriesId: string, color: string) => {
-    dispatch(
-      chartsSlice.actions.changeTimeseriesColor({
-        id: chart?.id || '',
-        timeSeriesId,
-        color,
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.changeTimeseriesColor({
+    //     id: chart?.id || '',
+    //     timeSeriesId,
+    //     color,
+    //   })
+    // );
   };
 
   const handleChangeTimeSeriesLineWeight = (
     timeSeriesId: string,
     lineWeight: number
   ) => {
-    dispatch(
-      chartsSlice.actions.changeTimeseriesLineWeight({
-        id: chart?.id || '',
-        timeSeriesId,
-        lineWeight,
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.changeTimeseriesLineWeight({
+    //     id: chart?.id || '',
+    //     timeSeriesId,
+    //     lineWeight,
+    //   })
+    // );
   };
 
   const handleChangeTimeSeriesLineStyle = (
     timeSeriesId: string,
     lineStyle: 'solid' | 'dashed' | 'dotted'
   ) => {
-    dispatch(
-      chartsSlice.actions.changeTimeseriesLineStyle({
-        id: chart?.id || '',
-        timeSeriesId,
-        lineStyle,
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.changeTimeseriesLineStyle({
+    //     id: chart?.id || '',
+    //     timeSeriesId,
+    //     lineStyle,
+    //   })
+    // );
   };
 
   const handleChangeWorkflowColor = (workflowId: string, color: string) => {
-    dispatch(
-      chartsSlice.actions.changeWorkflowColor({
-        id: chart?.id || '',
-        workflowId,
-        color,
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.changeWorkflowColor({
+    //     id: chart?.id || '',
+    //     workflowId,
+    //     color,
+    //   })
+    // );
   };
 
   const handleChangeWorkflowLineWeight = (
     workflowId: string,
     lineWeight: number
   ) => {
-    dispatch(
-      chartsSlice.actions.changeWorkflowLineWeight({
-        id: chart?.id || '',
-        workflowId,
-        lineWeight,
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.changeWorkflowLineWeight({
+    //     id: chart?.id || '',
+    //     workflowId,
+    //     lineWeight,
+    //   })
+    // );
   };
 
   const handleChangeWorkflowLineStyle = (
     workflowId: string,
     lineStyle: 'solid' | 'dashed' | 'dotted'
   ) => {
-    dispatch(
-      chartsSlice.actions.changeWorkflowLineStyle({
-        id: chart?.id || '',
-        workflowId,
-        lineStyle,
-      })
-    );
+    console.log('TODO');
+    // dispatch(
+    //   chartsSlice.actions.changeWorkflowLineStyle({
+    //     id: chart?.id || '',
+    //     workflowId,
+    //     lineStyle,
+    //   })
+    // );
   };
 
-  if (!hasData) {
+  if (!isFetched) {
     return <Icon type="Loading" />;
   }
 
   const onDeleteWorkflow = (workflow: ChartWorkflow) => {
-    if (chart) {
-      dispatch(
-        chartsSlice.actions.removeWorkflow({
-          id: chart.id,
-          workflowId: workflow.id,
-        })
-      );
-    }
+    console.log('TODO');
+    // if (chart) {
+    //   dispatch(
+    //     chartsSlice.actions.removeWorkflow({
+    //       id: chart.id,
+    //       workflowId: workflow.id,
+    //     })
+    //   );
+    // }
   };
 
   const handleConvertToWorkflow = (id: string) => {
-    if (chart) {
-      dispatch(createWorkflowFromTimeSeries(chart, id));
-    }
+    console.log('TODO');
+    // if (chart) {
+    //   dispatch(createWorkflowFromTimeSeries(chart, id));
+    // }
   };
 
   const handleRenameChart = () => {
     if (chart) {
-      dispatch(renameChart(chart));
+      // eslint-disable-next-line no-alert
+      const name = prompt('Rename chart', chart.name) || chart.name;
+      updateChart({ ...chart, name });
     }
   };
 
   const handleSetInputUnit = (timeSeriesId: string, unit?: string) => {
     if (chart) {
-      dispatch(
-        chartsSlice.actions.setInputUnit({ id: chart.id, timeSeriesId, unit })
-      );
+      updateChart({
+        ...chart,
+        timeSeriesCollection: chart.timeSeriesCollection?.map((t) =>
+          t.id === timeSeriesId ? { ...t, unit } : t
+        ),
+      });
     }
   };
 
   const handleSetOutputUnit = (timeSeriesId: string, unit?: string) => {
     if (chart) {
-      dispatch(
-        chartsSlice.actions.setOutputUnit({ id: chart.id, timeSeriesId, unit })
-      );
+      updateChart({
+        ...chart,
+        timeSeriesCollection: chart.timeSeriesCollection?.map((t) =>
+          t.id === timeSeriesId ? { ...t, preferredUnit: unit } : t
+        ),
+      });
     }
   };
 
@@ -471,32 +461,34 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     if (!chart) {
       return;
     }
+    console.log('TODO');
+    // if (axis.x.length) {
+    //   dispatch(
+    //     chartsSlice.actions.changeVisibleDateRange({
+    //       id: chart?.id || '',
+    //       range: axis.x,
+    //     })
+    //   );
+    // }
 
-    if (axis.x.length) {
-      dispatch(
-        chartsSlice.actions.changeVisibleDateRange({
-          id: chart?.id || '',
-          range: axis.x,
-        })
-      );
-    }
-
-    if (axis.y.length) {
-      dispatch(
-        chartsSlice.actions.changeSourceYaxis({
-          id: chart?.id || '',
-          axisUpdates: axis.y,
-        })
-      );
-    }
+    // if (axis.y.length) {
+    //   dispatch(
+    //     chartsSlice.actions.changeSourceYaxis({
+    //       id: chart?.id || '',
+    //       axisUpdates: axis.y,
+    //     })
+    //   );
+    // }
   };
 
   const handleDuplicateChart = async () => {
-    try {
-      await dispatch(duplicateChart(chart!));
-      toast.success('Successfully duplicated!');
-    } catch (e) {
-      toast.error('Unable to duplicate - try again!');
+    if (chart) {
+      const newChart = {
+        ...chart,
+        name: `${chart.name} Copy`,
+        id: nanoid(),
+      };
+      updateChart(newChart);
     }
   };
 
@@ -513,12 +505,10 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   };
 
-  if (error) {
+  if (isError) {
     return (
       <div>
         <p>Could not load chart</p>
-        <pre>{error?.message}</pre>
-        <pre>{error?.stack}</pre>
       </div>
     );
   }
@@ -816,7 +806,7 @@ const ChartView = ({ chartId: propsChartId }: ChartViewProps) => {
     }
   );
 
-  const workflowRows = workflows?.map((flow) => {
+  const workflowRows = chart?.workflowCollection?.map((flow) => {
     const flowEntry = chart?.workflowCollection?.find(
       ({ id }) => id === flow.id
     );

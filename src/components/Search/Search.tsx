@@ -1,12 +1,8 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Button, Input, Tooltip } from '@cognite/cogs.js';
-import { selectActiveChartId } from 'reducers/search/selectors';
 import { SearchResultTable } from 'components/SearchResultTable';
-import useSelector from 'hooks/useSelector';
-import useDispatch from 'hooks/useDispatch';
 import styled from 'styled-components/macro';
 import { Timeseries } from '@cognite/sdk';
-import { addTimeSeriesToChart } from 'reducers/charts/api';
 import { useDebounce } from 'use-debounce/lib';
 
 type SearchProps = {
@@ -15,8 +11,7 @@ type SearchProps = {
 };
 
 const Search = ({ visible, onClose }: SearchProps) => {
-  const dispatch = useDispatch();
-  const activeChartId = useSelector(selectActiveChartId);
+  // const { chartId } = useParams<{ chartId: string }>();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedQuery] = useDebounce(searchInputValue, 100);
 
@@ -26,7 +21,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
   };
 
   const handleTimeSeriesClick = async (timeseries: Timeseries) => {
-    dispatch(addTimeSeriesToChart(activeChartId, timeseries));
+    // dispatch(addTimeSeriesToChart(activeChartId, timeseries));
   };
 
   return (

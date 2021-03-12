@@ -141,6 +141,13 @@ export const usePublicCharts = () => {
   );
 };
 
+export const useChart = (id: string) => {
+  return useQuery(['charts', id], async () => {
+    const doc: unknown = await charts().doc(id).get();
+    return doc as Chart;
+  });
+};
+
 export const useDeleteChart = () => {
   return useMutation(
     async (chartId: string) => charts().doc(chartId).delete(),

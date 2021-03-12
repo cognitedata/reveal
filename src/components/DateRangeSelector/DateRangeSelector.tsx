@@ -4,6 +4,7 @@ import { Button, DateRange } from '@cognite/cogs.js';
 import chartsSlice, { Chart } from 'reducers/charts';
 import useDispatch from 'hooks/useDispatch';
 import TimeSelector from 'components/TimeSelector';
+import { useUpdateChart } from 'hooks/firebase';
 
 interface DateRangeSelectorProps {
   chart: Chart;
@@ -39,8 +40,7 @@ const relativeTimeOptions = [
 ];
 
 const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
-  const dispatch = useDispatch();
-
+  const { mutate: updateChart } = useUpdateChart();
   const handleDateChange = ({
     dateFrom,
     dateTo,
@@ -48,22 +48,22 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     dateFrom?: Date;
     dateTo?: Date;
   }) => {
-    dispatch(
-      chartsSlice.actions.changeDateRange({
-        id: chart?.id || '',
-        dateFrom,
-        dateTo,
-      })
-    );
+    if (dateFrom && dateTo) {
+      updateChart({
+        ...chart,
+        dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
+        dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
+      });
+    }
   };
 
   const updateRelativeDateRange = (millisecondsFromNow: number) => {
-    dispatch(
-      chartsSlice.actions.updateRelativeDateRange({
-        id: chart?.id || '',
-        millisecondsFromNow,
-      })
-    );
+    // dispatch(
+    //   chartsSlice.actions.updateRelativeDateRange({
+    //     id: chart?.id || '',
+    //     millisecondsFromNow,
+    //   })
+    // );
   };
 
   useEffect(() => {
