@@ -32,7 +32,14 @@ const App = () => {
     );
   }
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 60000,
+        staleTime: 60000,
+      },
+    },
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
