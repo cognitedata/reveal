@@ -15,7 +15,7 @@ import {
   PotreePointColorType, 
   PotreePointShape
 } from '@cognite/reveal';
-import { ExplodedViewTool } from '@cognite/reveal/tools';
+import { ExplodedViewTool, DebugCameraTool } from '@cognite/reveal/tools';
 
 window.THREE = THREE;
 
@@ -110,7 +110,8 @@ export function Migration() {
         revisionId: 0,
         showSectorBoundingBoxes: false,
         antiAliasing: urlParams.get('antialias'),
-        ssaoQuality: urlParams.get('ssao')
+        ssaoQuality: urlParams.get('ssao'),
+        showCameraTool: new DebugCameraTool(viewer)
 
       };
       function applySettingsToModels() {
@@ -130,6 +131,9 @@ export function Migration() {
         fitToModel: () => {
           const model = cadModels[0] || pointCloudModels[0];
           viewer.fitCameraToModel(model);
+        },
+        showCameraHelper: () => {
+          guiState.showCameraTool.showCameraHelper();
         }
       };
 
@@ -142,6 +146,7 @@ export function Migration() {
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
+      gui.add(guiActions, 'showCameraHelper').name('Show camera');
       gui.add(guiState, 'antiAliasing', 
         [
           'disabled','fxaa','msaa4','msaa8','msaa16',
