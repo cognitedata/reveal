@@ -106,5 +106,5 @@ void main() {
 #endif
 
   float fragDepth = updateFragmentDepth(p, projectionMatrix);
-  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
+  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, true);
 }

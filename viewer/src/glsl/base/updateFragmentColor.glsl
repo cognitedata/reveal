@@ -9,6 +9,7 @@ const int RenderTypePackColorAndNormal = 4;
 const int RenderTypeDepth = 5;
 const int RenderTypeEffects = 6;
 const int RenderTypeGhost = 7;
+const int RenderTypeLOD = 8;
 
 #include <packing>
 
@@ -16,7 +17,7 @@ vec3 packNormalToRgb( const in vec3 normal ) {
     return normalize( normal ) * 0.5 + 0.5;
 }
 
-void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 normal, float depth, sampler2D matCapTexture) {
+void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 normal, float depth, sampler2D matCapTexture, bool isHighDetail) {
     if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
         vec3 hsv = rgb2hsv(color.rgb);
         hsv.z = min(0.5 * hsv.z + 0.5, 1.0);
@@ -53,6 +54,10 @@ void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 norma
         gl_FragColor = vec4(packIntToColor(treeIndex), 1.0);
     } else if (renderMode == RenderTypeDepth) {
         gl_FragColor = packDepthToRGBA(depth);
+    } else if (renderMode == RenderTypeLOD){
+        vec2 cap = normal.xy * 0.5 + 0.5;
+        vec3 mc = texture2D(matCapTexture, cap).rgb * 1.5;
+        gl_FragColor = isHighDetail ? vec4(vec3(0.0, 1.0, 0.0) * mc, color.a) : vec4(vec3(1.0, 1.0, 0.0) * mc, color.a);
     } else {
         // Unknown render mode - should not happen. 
         gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
