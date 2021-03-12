@@ -176,7 +176,7 @@ export const TimeseriesChart = ({
     }
   }, [timePeriod, cacheToDate]);
 
-  const { data: overallData, isLoading } = useQuery(
+  const { data: overallData, isFetched, isFetching } = useQuery(
     [
       ...baseCacheKey('timeseries'),
       'datapoints',
@@ -209,7 +209,7 @@ export const TimeseriesChart = ({
       <div style={{ ...(height ? { height } : { flex: 1 }), width: '100%' }}>
         <AutoSizer disableHeight={!!height}>
           {({ width, height: innerHeight }) => {
-            if (isLoading) {
+            if (isFetching && !isFetched) {
               return (
                 <div style={{ height: height || innerHeight, width }}>
                   <Loader />
