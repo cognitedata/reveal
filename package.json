@@ -12,7 +12,7 @@
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/react-feature-flags": "^0.1.0",
     "@cognite/react-picture-annotation": "^1.10.4",
-    "@cognite/sdk": "^3.3.2",
+    "@cognite/sdk": "^3.3.6",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@types/d3-array": "^2.8.0",
