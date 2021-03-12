@@ -16,6 +16,8 @@ import {
   PotreePointShape
 } from '@cognite/reveal';
 import { ExplodedViewTool, DebugCameraTool } from '@cognite/reveal/tools';
+import { CadNode } from '@cognite/reveal/experimental';
+import { RenderMode } from '@cognite/reveal/datamodels/cad/rendering/RenderMode';
 
 window.THREE = THREE;
 
@@ -111,7 +113,8 @@ export function Migration() {
         showSectorBoundingBoxes: false,
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
-        showCameraTool: new DebugCameraTool(viewer)
+        showCameraTool: new DebugCameraTool(viewer),
+        renderMode: 'Color'
 
       };
       function applySettingsToModels() {
@@ -147,6 +150,15 @@ export function Migration() {
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
       gui.add(guiActions, 'showCameraHelper').name('Show camera');
+      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
+      gui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
+        const renderMode = renderModes.indexOf(value);
+        cadModels.forEach(m => {
+          const cadNode: CadNode = (m as any).cadNode;
+          cadNode.renderMode = renderMode;
+        });
+        viewer.forceRerender();
+      });
       gui.add(guiState, 'antiAliasing', 
         [
           'disabled','fxaa','msaa4','msaa8','msaa16',
