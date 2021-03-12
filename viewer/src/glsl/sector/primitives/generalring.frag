@@ -44,5 +44,5 @@ void main() {
         discard;
     }
 
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, true);
 }
