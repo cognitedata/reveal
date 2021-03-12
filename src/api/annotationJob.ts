@@ -6,6 +6,7 @@ import {
 import { OCRDetectionDataProvider } from 'src/api/ocr/OCRDetectionDataProvider';
 import { MockDataProvider } from 'src/api/MockDataProvider';
 import { TagDetectionDataProvider } from 'src/api/tagDetection/TagDetectionDataProvider';
+import { ObjectDetectionDataProvider } from 'src/api/objectDetection/ObjectDetectionDataProvider';
 
 function getDetectionModelDataProvider(
   modelType: DetectionModelType
@@ -16,6 +17,9 @@ function getDetectionModelDataProvider(
     }
     case DetectionModelType.Tag: {
       return new TagDetectionDataProvider();
+    }
+    case DetectionModelType.GDPR: {
+      return new ObjectDetectionDataProvider();
     }
     default: {
       // todo: implement other data providers and remove that default case and fake provider itself

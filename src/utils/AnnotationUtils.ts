@@ -41,7 +41,7 @@ export interface VisionAnnotation extends Omit<Annotation, 'shape'> {
 export const ModelTypeColorMap = {
   [DetectionModelType.Text]: '#C945DB',
   [DetectionModelType.Tag]: '#FF6918',
-  [DetectionModelType.GDPR]: 'yellow',
+  [DetectionModelType.GDPR]: '#2F80ED',
 };
 
 export class AnnotationUtils {
