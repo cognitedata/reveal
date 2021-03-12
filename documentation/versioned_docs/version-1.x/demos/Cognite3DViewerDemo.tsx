@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
-  SupportedModelTypes,
+  SupportedModelTypes
 } from '@cognite/reveal';
 
 import { CanvasWrapper } from '@site/src/components/styled';
