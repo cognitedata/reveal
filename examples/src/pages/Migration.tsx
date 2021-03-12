@@ -108,20 +108,11 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
-        showSectorBoundingBoxes: false,
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         showCameraTool: new DebugCameraTool(viewer)
 
       };
-      function applySettingsToModels() {
-        cadModels.forEach((m) => {
-          m.renderHints = {
-            ...m.renderHints,
-            showSectorBoundingBoxes: guiState.showSectorBoundingBoxes,
-          };
-        });
-      }
       const guiActions = {
         addModel: () =>
           addModel({
@@ -137,11 +128,6 @@ export function Migration() {
         }
       };
 
-      const settingsGui = gui.addFolder('settings');
-      settingsGui
-        .add(guiState, 'showSectorBoundingBoxes')
-        .name('Show bounding boxes')
-        .onChange(applySettingsToModels);
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
