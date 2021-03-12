@@ -36,8 +36,11 @@ import GroupsSelector from './GroupsSelector';
 const SnapshotTooltip = () => (
   <CustomTooltipContainer>
     A snapshot is a preview of your data, you can learn more about snapshots{' '}
-    {/* TODO(dtc-224) provide with correct link */}
-    <A href="#" isExternal>
+    {/* TODO(DTC-348) replace with stable link as soon as it is available */}
+    <A
+      href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html#example-use-links-from-a-grafana-report-to-show-live-data-in-the-digital-cockpit-board"
+      isExternal
+    >
       here
     </A>
   </CustomTooltipContainer>
@@ -176,8 +179,11 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
             <Micro>
               To give access to the right groups, make sure groups are set-up
               correctly in Azure AD, see our{' '}
-              {/* TODO(dtc-224) provide with correct link */}
-              <StyledLink href="#" isExternal>
+              {/* TODO(DTC-348) replace with stable link as soon as it is available */}
+              <StyledLink
+                href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html#manage-access-to-a-board"
+                isExternal
+              >
                 documentation
               </StyledLink>
             </Micro>

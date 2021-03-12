@@ -55,7 +55,6 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
   const handleOpenModal = (
     event: React.MouseEvent,
     modalType: ModalType,
-    // TODO(dtc-255) change type
     modalProps: { board?: Board; suite?: Suite }
   ) => {
     event.preventDefault();
