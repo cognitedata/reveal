@@ -27,5 +27,5 @@ void main() {
 
     vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
     vec3 normal = derivateNormal(v_viewPosition);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, true);
 }

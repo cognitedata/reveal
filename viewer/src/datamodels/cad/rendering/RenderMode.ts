@@ -9,5 +9,6 @@ export enum RenderMode {
   PackColorAndNormal,
   Depth,
   Effects,
-  Ghost
+  Ghost,
+  LOD
 }
