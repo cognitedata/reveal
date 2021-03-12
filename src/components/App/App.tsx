@@ -10,13 +10,13 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { CogniteClient } from '@cognite/sdk';
 import { ToastContainer, Loader } from '@cognite/cogs.js';
 import { getTenantFromURL } from 'utils/env';
-import { useFirebase } from 'hooks/firebase';
+import { useFirebaseInit } from 'hooks/firebase';
 
 const App = () => {
   const [authenicating, setAuth] = useState(true);
   const project = getTenantFromURL();
 
-  const { isFetched: firebaseDone } = useFirebase(!authenicating);
+  const { isFetched: firebaseDone, isError } = useFirebaseInit(!authenicating);
 
   useEffect(() => {
     sdk.loginWithOAuth({
@@ -41,18 +41,21 @@ const App = () => {
     );
   }
 
-  if (authenicating || firebaseDone) {
+  if (authenicating || !firebaseDone) {
     return <Loader />;
   }
 
-  console.log(Routes, TopBar);
+  if (isError) {
+    return <>nope</>;
+  }
 
   return (
     <BrowserRouter basename={`/${project}`}>
       <ToastContainer />
       <PageLayout>
+        <TopBar />
         <main>
-          <TopBar />
+          <Routes />
         </main>
       </PageLayout>
     </BrowserRouter>
@@ -60,18 +63,20 @@ const App = () => {
 };
 
 const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        cacheTime: 60000,
-        staleTime: 60000,
-      },
+  defaultOptions: {
+    queries: {
+      cacheTime: 60000,
+      staleTime: 60000,
+      retry: false,
     },
-  });
+  },
+});
+
 const sdk = new CogniteClient({
   appId: 'Cognite Charts',
 });
 
-export default function () {
+export default function RootApp() {
   return (
     <QueryClientProvider client={queryClient}>
       <SDKProvider sdk={sdk}>

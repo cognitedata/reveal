@@ -1,10 +1,14 @@
 import { useSDK } from '@cognite/sdk-provider';
 import config from 'config';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getTenantFromURL } from 'utils/env';
 import firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
+import { useLoginStatus } from 'hooks';
+import { Chart, ChartWorkflow } from 'reducers/charts/types';
 
-export type EnvironmentConfig = {
+type EnvironmentConfig = {
   cognite: {
     project: string;
     baseUrl?: string;
@@ -14,12 +18,12 @@ export type EnvironmentConfig = {
   };
 };
 
-export type LoginToFirebaseResponse = {
+type LoginToFirebaseResponse = {
   firebaseToken: string;
   experiments: string[];
 };
 
-export type GetEnvironmentResponse = {
+type GetEnvironmentResponse = {
   tenant: string;
   config: EnvironmentConfig;
 };
@@ -32,7 +36,7 @@ const cacheOption = {
   cacheTime: Infinity,
 };
 
-export const useFirebaseToken = () => {
+const useFirebaseToken = (enabled: boolean) => {
   const sdk = useSDK();
   const project = getTenantFromURL();
 
@@ -54,11 +58,11 @@ export const useFirebaseToken = () => {
           } = result;
           return nextFirebaseToken as string;
         }),
-    cacheOption
+    { ...cacheOption, enabled }
   );
 };
 
-export const useFirebaseEnv = () => {
+const useFirebaseEnv = (enabled: boolean) => {
   const sdk = useSDK();
   const project = getTenantFromURL();
 
@@ -75,13 +79,13 @@ export const useFirebaseEnv = () => {
           withCredentials: true,
         })
         .then((result) => result.data.config),
-    cacheOption
+    { ...cacheOption, enabled }
   );
 };
 
-export const useFirebase = (enabled: boolean) => {
-  const { data: token, isFetched: tokenFetched } = useFirebaseToken();
-  const { data: env, isFetched: configFetched } = useFirebaseEnv();
+export const useFirebaseInit = (enabled: boolean) => {
+  const { data: token, isFetched: tokenFetched } = useFirebaseToken(enabled);
+  const { data: env, isFetched: configFetched } = useFirebaseEnv(enabled);
 
   return useQuery(
     ['firebase', 'init'],
@@ -97,8 +101,84 @@ export const useFirebase = (enabled: boolean) => {
       return true;
     },
     {
-      enabled: enabled && tokenFetched && configFetched && !!token && !!env,
       ...cacheOption,
+      enabled: enabled && tokenFetched && configFetched && !!token && !!env,
+    }
+  );
+};
+
+const charts = () => {
+  return firebase
+    .firestore()
+    .collection('tenants')
+    .doc(getTenantFromURL())
+    .collection('charts');
+};
+
+export const useMyCharts = () => {
+  const { data } = useLoginStatus();
+
+  return useQuery(
+    ['charts', 'mine'],
+    async () => {
+      const snapshot = await charts().where('user', '==', data?.user).get();
+      return snapshot.docs.map((doc) => doc.data()) as Chart[];
+    },
+    { enabled: !!data?.user }
+  );
+};
+
+export const usePublicCharts = () => {
+  const { data } = useLoginStatus();
+
+  return useQuery(
+    ['charts', 'public'],
+    async () => {
+      const snapshot = await charts().where('public', '==', true).get();
+      return snapshot.docs.map((doc) => doc.data()) as Chart[];
+    },
+    { enabled: !!data?.user }
+  );
+};
+
+export const useDeleteChart = () => {
+  return useMutation(
+    async (chartId: string) => charts().doc(chartId).delete(),
+    {
+      onSuccess() {
+        const cache = useQueryClient();
+        cache.invalidateQueries(['charts']);
+      },
+    }
+  );
+};
+
+export const useUpdateChart = () => {
+  return useMutation(
+    async (chart: Chart) => charts().doc(chart.id).set(chart),
+    {
+      onSuccess() {
+        const cache = useQueryClient();
+        cache.invalidateQueries(['charts']);
+      },
+    }
+  );
+};
+
+export const useUpdateWorkflow = () => {
+  return useMutation(
+    async ({
+      chartId,
+      workflowCollection,
+    }: {
+      chartId: string;
+      workflowCollection: ChartWorkflow[];
+    }) => charts().doc(chartId).update({ workflowCollection }),
+    {
+      onSuccess() {
+        const cache = useQueryClient();
+        cache.invalidateQueries(['charts']);
+      },
     }
   );
 };

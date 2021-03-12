@@ -1,64 +1,85 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, Dropdown, Icon, Input, Menu, Tabs } from '@cognite/cogs.js';
-import useDispatch from 'hooks/useDispatch';
-import useSelector from 'hooks/useSelector';
-import { Link, useHistory } from 'react-router-dom';
-import { Chart, chartSelectors } from 'reducers/charts';
-import { selectUser } from 'reducers/environment';
-import {
-  fetchAllCharts,
-  renameChart,
-  deleteChart,
-  createNewChart,
-  duplicateChart,
-} from 'reducers/charts/api';
+import { Link } from 'react-router-dom';
+import { Chart } from 'reducers/charts';
 import thumb from 'assets/thumb.png';
+import {
+  useDeleteChart,
+  useMyCharts,
+  usePublicCharts,
+  useUpdateChart,
+} from 'hooks/firebase';
+import { nanoid } from '@reduxjs/toolkit';
+import { subDays } from 'date-fns';
+import { useLoginStatus } from 'hooks';
 
 type ActiveTabOption = 'mine' | 'public';
 
 const ChartList = () => {
-  const dispatch = useDispatch();
-  const allCharts = useSelector(chartSelectors.selectAll);
-  const loadingStatus = useSelector((state) => state.charts.status);
-  const error = useSelector((state) => state.charts.status.error);
-  const newlyCreatedChart = useSelector(
-    (state) => state.charts.newlyCreatedChart
-  );
-  const history = useHistory();
-  const user = useSelector(selectUser);
+  const { data: login } = useLoginStatus();
+  const myCharts = useMyCharts();
+  const pubCharts = usePublicCharts();
+
+  const allCharts = useMemo(() => {
+    const mine = myCharts.data || [];
+    const pub = pubCharts.data || [];
+
+    return pub.concat(mine.filter((c) => !pub.find((pc) => c.id === pc.id)));
+  }, [myCharts.data, pubCharts.data]);
+
+  const loading =
+    (myCharts.isFetching && !myCharts.isFetched) ||
+    (pubCharts.isFetching && !pubCharts.isFetched);
+  const error = myCharts.isError || pubCharts.isError;
 
   const [filterText, setFilterText] = useState<string>('');
   const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
 
-  useEffect(() => {
-    dispatch(fetchAllCharts());
-  }, []);
-
-  useEffect(() => {
-    if (newlyCreatedChart) {
-      history.push(`/${newlyCreatedChart.id}`);
-    }
-  }, [newlyCreatedChart]);
+  const { mutate: updateChart } = useUpdateChart();
+  const { mutate: deleteChart } = useDeleteChart();
 
   const handleRenameChart = (chart: Chart) => {
-    dispatch(renameChart(chart));
+    // eslint-disable-next-line no-alert
+    const name = prompt('Rename chart', chart.name) || chart.name;
+    updateChart({ ...chart, name });
   };
 
   const handleDeleteChart = (chart: Chart) => {
-    dispatch(deleteChart(chart));
+    deleteChart(chart.id);
   };
 
   const handleNewChart = async () => {
-    dispatch(createNewChart());
+    if (!login?.user) {
+      return;
+    }
+    const dateFrom = subDays(new Date(), 30);
+    dateFrom.setHours(0, 0);
+    const dateTo = new Date();
+    dateTo.setHours(23, 59);
+    const id = nanoid();
+    const newChart: Chart = {
+      id,
+      user: login?.user,
+      name: 'New chart',
+      timeSeriesCollection: [],
+      workflowCollection: [],
+      dateFrom: dateFrom.toJSON(),
+      dateTo: dateTo.toJSON(),
+      public: false,
+    };
+    updateChart(newChart);
   };
 
   const handleDuplicateChart = (chart: Chart) => {
-    dispatch(duplicateChart(chart));
+    const id = nanoid();
+    const newChart = {
+      ...chart,
+      name: `${chart.name} Copy`,
+      id,
+    };
+
+    updateChart(newChart);
   };
-
-  const ownerFilter = (chart: Chart) => chart.user === user.email;
-
-  const publicFilter = (chart: Chart) => chart.public === true;
 
   const nameFilter = (chart: Chart) =>
     chart.name.toLocaleLowerCase().includes(filterText.toLocaleLowerCase());
@@ -71,9 +92,9 @@ const ChartList = () => {
       // current user is the owner. Remove this
       // filter when firebase security rules are
       // in place
-      filteredCharts = filteredCharts.filter(ownerFilter);
+      filteredCharts = myCharts.data || [];
     } else if (activeTab === 'public') {
-      filteredCharts = filteredCharts.filter(publicFilter);
+      filteredCharts = pubCharts.data || [];
     }
 
     if (filterText) {
@@ -166,8 +187,7 @@ const ChartList = () => {
     return (
       <div>
         <p>Could not load charts</p>
-        <pre>{error?.message}</pre>
-        <pre>{error?.stack}</pre>
+        <pre>{`${myCharts.error || pubCharts.error}`}</pre>
       </div>
     );
   };
@@ -198,7 +218,7 @@ const ChartList = () => {
         </Tabs>
       </div>
       <div style={{ textAlign: 'center' }}>
-        {loadingStatus.status === 'LOADING' && <Icon type="Loading" />}
+        {loading && <Icon type="Loading" />}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {error ? renderError() : renderList()}
