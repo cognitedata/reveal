@@ -17,7 +17,6 @@ import {
 } from '@cognite/reveal';
 import { ExplodedViewTool, DebugCameraTool } from '@cognite/reveal/tools';
 import { CadNode } from '@cognite/reveal/experimental';
-import { RenderMode } from '@cognite/reveal/datamodels/cad/rendering/RenderMode';
 
 window.THREE = THREE;
 
