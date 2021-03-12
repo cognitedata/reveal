@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from 'react-query';
 import { Chart } from 'reducers/charts';
 import client from 'services/CogniteSDK';
 import {
   DatapointAggregate,
   DatapointAggregates,
   Datapoints,
+  DatapointsMultiQuery,
   DoubleDatapoint,
   StringDatapoint,
 } from '@cognite/sdk';
+
 import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
@@ -35,24 +38,13 @@ const PlotlyChartComponent = ({
   onAxisChange,
   showYAxis,
 }: ChartProps) => {
-  const [timeSeriesDataPoints, setTimeSeriesDataPoints] = useState<
-    (Datapoints | DatapointAggregates)[]
-  >([]);
+  const pointsPerSeries = 1000;
+  const enabledTimeSeries = (chart?.timeSeriesCollection || []).filter(
+    ({ enabled }) => enabled
+  );
 
-  useEffect(() => {
-    async function performQuery() {
-      const enabledTimeSeries = (chart?.timeSeriesCollection || []).filter(
-        ({ enabled }) => enabled
-      );
-
-      if (!chart || !enabledTimeSeries.length) {
-        setTimeSeriesDataPoints([]);
-        return;
-      }
-
-      const pointsPerSeries = 1000;
-
-      const result = await client.datapoints.retrieve({
+  const query = chart
+    ? {
         items: enabledTimeSeries.map(({ id }) => ({ externalId: id })),
         start: new Date(chart.dateFrom),
         end: new Date(chart.dateTo),
@@ -65,8 +57,15 @@ const PlotlyChartComponent = ({
         ),
         aggregates: ['average'],
         limit: pointsPerSeries,
-      });
+      }
+    : undefined;
 
+  const { data: timeSeriesDataPoints = [] } = useQuery(
+    ['timeseries', query],
+    async () => {
+      const result = await client.datapoints.retrieve(
+        query as DatapointsMultiQuery
+      );
       const convertedResult = await Promise.all(
         (result as (Datapoints | DatapointAggregates)[]).map(
           async (ts: Datapoints | DatapointAggregates) => {
@@ -85,12 +84,12 @@ const PlotlyChartComponent = ({
           }
         )
       );
-
-      setTimeSeriesDataPoints(convertedResult);
+      return convertedResult;
+    },
+    {
+      enabled: !!query,
     }
-
-    performQuery();
-  }, [chart?.timeSeriesCollection, chart?.dateFrom, chart?.dateTo]);
+  );
 
   const enabledWorkflows = chart?.workflowCollection?.filter(
     (flow) => flow?.enabled
@@ -246,12 +245,10 @@ const PlotlyChartComponent = ({
       }
     } else {
       (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-        showline: false,
         showticklabels: false,
-        ticks: '',
-        range: serializedYRange,
-        overlaying: index !== 0 ? 'y' : undefined,
         hoverformat: '.2f',
+        domain: [index / seriesData.length, (index + 1) / seriesData.length],
+        zeroline: false,
       };
     }
   });
