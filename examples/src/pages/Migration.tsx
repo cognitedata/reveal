@@ -17,7 +17,6 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
 import { CadNode } from '@cognite/reveal/experimental';
-import { debug } from '@actions/core';
 
 window.THREE = THREE;
 
@@ -192,8 +191,14 @@ export function Migration() {
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
-        // @ts-expect-error
-        viewer._revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({suspendLoading: suspend})
+        try {
+          // @ts-expect-error
+          viewer._revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({suspendLoading: suspend})
+        }
+        catch (error) {
+          alert('Could not toggle suspend loading, check console for error');
+          throw error;
+        }
       });
       debugGui.add(guiState.debug, 'ghostAllNodes').name('Ghost all nodes').onFinishChange(ghost => {
         if (ghost) {
