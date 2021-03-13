@@ -3,10 +3,8 @@ import {
   MatcherOptions,
   RenderOptions as RtlRenderOptions,
 } from '@testing-library/react';
-import { PartialRootState } from 'store/types';
 
 export type BaseRenderOptions = {
-  redux?: PartialRootState;
   pathname?: string;
 };
 

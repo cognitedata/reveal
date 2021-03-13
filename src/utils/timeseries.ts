@@ -1,7 +1,7 @@
 import { node as TimeSeriesReferenceNode } from 'reducers/charts/Nodes/TimeSeriesReference';
 import { node as OutputSeriesNode } from 'reducers/charts//Nodes/OutputSeries';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
-import { nanoid } from '@reduxjs/toolkit';
+import { nanoid } from 'nanoid';
 import { getEntryColor } from './colors';
 
 export const calculateGranularity = (domain: number[], pps: number) => {

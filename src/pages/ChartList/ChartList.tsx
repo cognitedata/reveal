@@ -9,7 +9,7 @@ import {
   usePublicCharts,
   useUpdateChart,
 } from 'hooks/firebase';
-import { nanoid } from '@reduxjs/toolkit';
+import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
 import { useLoginStatus } from 'hooks';
 

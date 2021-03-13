@@ -1,6 +1,5 @@
 import React from 'react';
 import configureStory from 'storybook/configureStory';
-import { CHARTS_STATE } from 'mocks/charts';
 
 import ChartView from './ChartView';
 
@@ -13,7 +12,4 @@ export const Base = () => {
 };
 
 Base.story = configureStory({
-  redux: {
-    charts: CHARTS_STATE,
-  },
 });

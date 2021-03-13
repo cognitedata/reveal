@@ -17,7 +17,7 @@ import Search from 'components/Search';
 import { Toolbar } from 'components/Toolbar';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { useChart, useUpdateChart } from 'hooks/firebase';
-import { nanoid } from '@reduxjs/toolkit';
+import { nanoid } from 'nanoid';
 import { ChartTimeSeries, LatestWorkflowRun } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { getTenantFromURL } from 'utils/env';
@@ -55,13 +55,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     mutate: updateChart,
     isLoading: isUpdating,
     isError: updateError,
+    error: updateErrorMsg,
   } = useUpdateChart();
 
   useEffect(() => {
     if (updateError) {
-      toast.error('Chart could not be saved');
+      toast.error('Chart could not be saved!');
     }
-  }, [updateError]);
+    if (updateError && updateErrorMsg) {
+      toast.error(JSON.stringify(updateErrorMsg, null, 2));
+    }
+  }, [updateError, updateError]);
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
   const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);

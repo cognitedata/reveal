@@ -46,7 +46,6 @@ const Search = ({ visible, onClose }: SearchProps) => {
         timeSeriesCollection: [...(chart.timeSeriesCollection || []), ts],
       });
     }
-    // dispatch(addTimeSeriesToChart(activeChartId, timeseries));
   };
 
   return (
