@@ -1,12 +1,9 @@
 module.exports = {
   extends: [
     '@cognite',
-    'plugin:@cognite/all',
     'plugin:testing-library/react',
-    'plugin:lodash/recommended',
-    'plugin:testcafe/recommended',
   ],
-  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
+  plugins: ['@cognite', 'testing-library'],
   rules: {
     '@cognite/no-unissued-todos': [
       'error',
@@ -26,12 +23,6 @@ module.exports = {
     'jest/no-test-callback': ['off'],
     'jest/no-export': ['off'],
 
-    'lodash/prefer-lodash-method': ['off'],
-    'lodash/prop-shorthand': ['off'],
-    'lodash/prefer-constant': ['off'],
-    'lodash/prefer-is-nil': ['off'],
-    'lodash/prefer-get': ['off'],
-    'lodash/prefer-noop': ['off'],
 
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': [

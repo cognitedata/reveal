@@ -65,11 +65,12 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     }
   };
 
-  useEffect(() => {
-    if (chart.millisecondsFromNow !== undefined) {
-      updateRelativeDateRange(chart.millisecondsFromNow);
-    }
-  }, []);
+  // TODO: follow up
+  // useEffect(() => {
+  //   if (chart.millisecondsFromNow !== undefined && chart.millisecondsFromNow !== ) {
+  //     updateRelativeDateRange(chart.millisecondsFromNow);
+  //   }
+  // }, []);
 
   return (
     <Wrapper>

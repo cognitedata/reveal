@@ -1,7 +1,7 @@
 /* eslint-disable no-alert, no-console */
 
-import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
+import React, { useState } from 'react';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
@@ -19,7 +19,7 @@ import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
 import { Toolbar } from 'components/Toolbar';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
-import { useChart, useUpdateChart, useUpdateWorkflow } from 'hooks/firebase';
+import { useChart, useUpdateChart } from 'hooks/firebase';
 import { getTenantFromURL } from 'utils/env';
 import { nanoid } from '@reduxjs/toolkit';
 import {
@@ -28,7 +28,8 @@ import {
   WorkflowRunStatus,
 } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useSDK } from '@cognite/sdk-provider';
+import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 import {
   Header,
   TopPaneWrapper,
@@ -58,7 +59,6 @@ type ChartViewProps = {
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
-  const { mutate: updateWorkflow } = useUpdateWorkflow();
   const { mutate: updateChart } = useUpdateChart();
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
@@ -247,206 +247,70 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   };
 
-  const handleClickSave = async () => {
-    if (chart) {
-      updateChart(chart);
-    }
-  };
-
   const handleToggleAutomaticUpdates = async () => {
     setUpdateAutomatically((val) => !val);
   };
 
-  const handleRemoveTimeSeries = (timeSeriesId: string) => {
-    if (!chart) {
-      return;
+  const handleCollectionRemoval = (
+    id: string,
+    collectionType: 'workflowCollection' | 'timeSeriesCollection'
+  ) => {
+    if (chart) {
+      updateChart({
+        ...chart,
+        // @ts-ignore
+        [collectionType]: chart[collectionType]?.filter(
+          (item: { id: string }) => item.id !== id
+        ),
+      });
     }
-    updateChart({
-      ...chart,
-      timeSeriesCollection: chart.timeSeriesCollection?.filter(
-        (t) => t.id !== timeSeriesId
-      ),
-    });
   };
 
-  const handleToggleTimeSeries = (timeSeriesId: string) => {
-    if (!chart) {
-      return;
+  const handleCollectionUpdate = (
+    id: string,
+    collectionType: 'workflowCollection' | 'timeSeriesCollection',
+    update: Partial<ChartWorkflow> | Partial<ChartTimeSeries>
+  ) => {
+    if (chart) {
+      updateChart({
+        ...chart,
+        // @ts-ignore
+        [collectionType]: chart[collectionType]?.map(
+          (item: ChartTimeSeries | ChartWorkflow) =>
+            item.id === id
+              ? {
+                  ...item,
+                  ...update,
+                }
+              : item
+        ),
+      });
     }
-    updateChart({
-      ...chart,
-      timeSeriesCollection: chart.timeSeriesCollection?.map((t) => {
-        if (t.id === timeSeriesId) {
-          t.enabled = !t.enabled;
-        }
-        return t;
-      }),
-    });
-  };
-
-  const handleToggleWorkflow = (workflowId: string) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.toggleWorkflow({
-    //     id: chart?.id || '',
-    //     workflowId,
-    //   })
-    // );
-  };
-
-  const handleRenameTimeSeries = (timeSeriesId: string) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.renameTimeSeries({
-    //     id: chart?.id || '',
-    //     timeSeriesId,
-    //     // eslint-disable-next-line no-alert
-    //     name: prompt('Provide new name for time series') || 'unnamed',
-    //   })
-    // );
-  };
-
-  const handleRenameWorkflow = (workflowId: string) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.renameWorkflow({
-    //     id: chart?.id || '',
-    //     workflowId,
-    //     // eslint-disable-next-line no-alert
-    //     name: prompt('Provide new name for workflow') || 'unnamed',
-    //   })
-    // );
-  };
-
-  const handleChangeTimeSeriesColor = (timeSeriesId: string, color: string) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.changeTimeseriesColor({
-    //     id: chart?.id || '',
-    //     timeSeriesId,
-    //     color,
-    //   })
-    // );
-  };
-
-  const handleChangeTimeSeriesLineWeight = (
-    timeSeriesId: string,
-    lineWeight: number
-  ) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.changeTimeseriesLineWeight({
-    //     id: chart?.id || '',
-    //     timeSeriesId,
-    //     lineWeight,
-    //   })
-    // );
-  };
-
-  const handleChangeTimeSeriesLineStyle = (
-    timeSeriesId: string,
-    lineStyle: 'solid' | 'dashed' | 'dotted'
-  ) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.changeTimeseriesLineStyle({
-    //     id: chart?.id || '',
-    //     timeSeriesId,
-    //     lineStyle,
-    //   })
-    // );
-  };
-
-  const handleChangeWorkflowColor = (workflowId: string, color: string) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.changeWorkflowColor({
-    //     id: chart?.id || '',
-    //     workflowId,
-    //     color,
-    //   })
-    // );
-  };
-
-  const handleChangeWorkflowLineWeight = (
-    workflowId: string,
-    lineWeight: number
-  ) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.changeWorkflowLineWeight({
-    //     id: chart?.id || '',
-    //     workflowId,
-    //     lineWeight,
-    //   })
-    // );
-  };
-
-  const handleChangeWorkflowLineStyle = (
-    workflowId: string,
-    lineStyle: 'solid' | 'dashed' | 'dotted'
-  ) => {
-    console.log('TODO');
-    // dispatch(
-    //   chartsSlice.actions.changeWorkflowLineStyle({
-    //     id: chart?.id || '',
-    //     workflowId,
-    //     lineStyle,
-    //   })
-    // );
   };
 
   if (!isFetched) {
     return <Icon type="Loading" />;
   }
 
-  const onDeleteWorkflow = (workflow: ChartWorkflow) => {
-    console.log('TODO');
-    // if (chart) {
-    //   dispatch(
-    //     chartsSlice.actions.removeWorkflow({
-    //       id: chart.id,
-    //       workflowId: workflow.id,
-    //     })
-    //   );
-    // }
-  };
+  if (isError) {
+    return (
+      <div>
+        <p>Could not load chart</p>
+      </div>
+    );
+  }
+
+  if (!chart) {
+    return (
+      <div>This chart does not seem to exist. You might not have access</div>
+    );
+  }
 
   const handleConvertToWorkflow = (id: string) => {
     console.log('TODO');
     // if (chart) {
     //   dispatch(createWorkflowFromTimeSeries(chart, id));
     // }
-  };
-
-  const handleRenameChart = () => {
-    if (chart) {
-      // eslint-disable-next-line no-alert
-      const name = prompt('Rename chart', chart.name) || chart.name;
-      updateChart({ ...chart, name });
-    }
-  };
-
-  const handleSetInputUnit = (timeSeriesId: string, unit?: string) => {
-    if (chart) {
-      updateChart({
-        ...chart,
-        timeSeriesCollection: chart.timeSeriesCollection?.map((t) =>
-          t.id === timeSeriesId ? { ...t, unit } : t
-        ),
-      });
-    }
-  };
-
-  const handleSetOutputUnit = (timeSeriesId: string, unit?: string) => {
-    if (chart) {
-      updateChart({
-        ...chart,
-        timeSeriesCollection: chart.timeSeriesCollection?.map((t) =>
-          t.id === timeSeriesId ? { ...t, preferredUnit: unit } : t
-        ),
-      });
-    }
   };
 
   const handleOpenDataQualityReport = (timeSeriesId: string) => {
@@ -457,29 +321,36 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setDataQualityReport({});
   };
 
-  const handleChangeSourceAxis = (axis: { x: number[]; y: AxisUpdate[] }) => {
-    if (!chart) {
-      return;
-    }
-    console.log('TODO');
-    // if (axis.x.length) {
-    //   dispatch(
-    //     chartsSlice.actions.changeVisibleDateRange({
-    //       id: chart?.id || '',
-    //       range: axis.x,
-    //     })
-    //   );
-    // }
+  const handleChangeSourceAxis = debounce(
+    (axis: { x: number[]; y: AxisUpdate[] }) => {
+      if (chart) {
+        const newChart = { ...chart };
+        if (axis.x.length > 0) {
+          newChart.visibleRange = axis.x;
+        }
+        if (axis.x.length > 0) {
+          axis.y.forEach((update) => {
+            newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
+              (t) => (t.id === update.id ? { ...t, range: update.range } : t)
+            );
+            newChart.workflowCollection = newChart.workflowCollection?.map(
+              (wf) =>
+                wf.id === update.id ? { ...wf, range: update.range } : wf
+            );
+          });
+        }
+        if (!isEqual(chart, newChart)) {
+          console.log(
+            'nhart',
+            JSON.stringify(chart?.timeSeriesCollection?.map((t) => t.range))
+          );
 
-    // if (axis.y.length) {
-    //   dispatch(
-    //     chartsSlice.actions.changeSourceYaxis({
-    //       id: chart?.id || '',
-    //       axisUpdates: axis.y,
-    //     })
-    //   );
-    // }
-  };
+          updateChart(newChart);
+        }
+      }
+    },
+    3000
+  );
 
   const handleDuplicateChart = async () => {
     if (chart) {
@@ -504,20 +375,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         return null;
     }
   };
-
-  if (isError) {
-    return (
-      <div>
-        <p>Could not load chart</p>
-      </div>
-    );
-  }
-
-  if (!chart) {
-    return (
-      <div>This chart does not seem to exist. You might not have access</div>
-    );
-  }
 
   const sourceTableHeaderRow = (
     <tr>
@@ -596,7 +453,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       const unitOverrideMenuItems = units.map((unitOption) => (
         <Menu.Item
           key={unitOption.value}
-          onClick={() => handleSetInputUnit(id, unitOption.value)}
+          onClick={() =>
+            handleCollectionUpdate('id', 'timeSeriesCollection', {
+              unit: unitOption.value,
+            })
+          }
         >
           {unitOption.label}
           {unit?.toLowerCase() === unitOption.value && ' (selected)'}
@@ -608,7 +469,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         (unitOption) => (
           <Menu.Item
             key={unitOption?.value}
-            onClick={() => handleSetOutputUnit(id, unitOption?.value)}
+            onClick={() =>
+              handleCollectionUpdate('id', 'timeSeriesCollection', {
+                preferredUnit: unitOption?.value,
+              })
+            }
           >
             {unitOption?.label}{' '}
             {preferredUnit?.toLowerCase() === unitOption?.value &&
@@ -632,7 +497,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceCircle
                 onClick={(event) => {
                   event.stopPropagation();
-                  handleToggleTimeSeries(id);
+                  handleCollectionUpdate(id, 'timeSeriesCollection', {
+                    enabled: !enabled,
+                  });
                 }}
                 color={color}
                 fade={!enabled}
@@ -652,18 +519,28 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                               content={
                                 <AppearanceDropdown
                                   onColorSelected={(newColor) =>
-                                    handleChangeTimeSeriesColor(id, newColor)
+                                    handleCollectionUpdate(
+                                      id,
+                                      'timeSeriesCollection',
+                                      { color: newColor }
+                                    )
                                   }
                                   onWeightSelected={(newWeight) =>
-                                    handleChangeTimeSeriesLineWeight(
+                                    handleCollectionUpdate(
                                       id,
-                                      newWeight
+                                      'timeSeriesCollection',
+                                      {
+                                        lineWeight: newWeight,
+                                      }
                                     )
                                   }
                                   onStyleSelected={(newStyle) =>
-                                    handleChangeTimeSeriesLineStyle(
+                                    handleCollectionUpdate(
                                       id,
-                                      newStyle
+                                      'timeSeriesCollection',
+                                      {
+                                        lineStyle: newStyle,
+                                      }
                                     )
                                   }
                                 />
@@ -690,13 +567,23 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         <span>Tools</span>
                       </Menu.Submenu>
                       <Menu.Item
-                        onClick={() => handleRenameTimeSeries(id)}
+                        onClick={() => {
+                          // eslint-disable-next-line no-alert
+                          const newName = prompt('Rename timeseries');
+                          if (newName) {
+                            handleCollectionUpdate(id, 'timeSeriesCollection', {
+                              name: newName,
+                            });
+                          }
+                        }}
                         appendIcon="Edit"
                       >
                         <span>Rename</span>
                       </Menu.Item>
                       <Menu.Item
-                        onClick={() => handleRemoveTimeSeries(id)}
+                        onClick={() =>
+                          handleCollectionRemoval(id, 'timeSeriesCollection')
+                        }
                         appendIcon="Delete"
                       >
                         <span>Remove</span>
@@ -820,7 +707,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <td>
           <SourceItem key={flow.id}>
             <SourceSquare
-              onClick={() => handleToggleWorkflow(flow.id)}
+              onClick={() => {
+                handleCollectionUpdate(flow.id, 'workflowCollection', {
+                  enabled: !flow.enabled,
+                });
+              }}
               color={flowEntry?.color}
               fade={!flowEntry?.enabled}
             />
@@ -841,13 +732,25 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       content={
                         <AppearanceDropdown
                           onColorSelected={(newColor) =>
-                            handleChangeWorkflowColor(flow.id, newColor)
+                            handleCollectionUpdate(
+                              flow.id,
+                              'workflowCollection',
+                              { color: newColor }
+                            )
                           }
                           onWeightSelected={(newWeight) =>
-                            handleChangeWorkflowLineWeight(flow.id, newWeight)
+                            handleCollectionUpdate(
+                              flow.id,
+                              'workflowCollection',
+                              { lineWeight: newWeight }
+                            )
                           }
                           onStyleSelected={(newStyle) =>
-                            handleChangeWorkflowLineStyle(flow.id, newStyle)
+                            handleCollectionUpdate(
+                              flow.id,
+                              'workflowCollection',
+                              { lineStyle: newStyle }
+                            )
                           }
                         />
                       }
@@ -855,14 +758,25 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       <span>Appearance</span>
                     </Menu.Submenu>
                     <Menu.Item
-                      onClick={() => handleRenameWorkflow(flow.id)}
+                      onClick={() => {
+                        const newName = prompt('Rename calculation');
+                        if (newName) {
+                          handleCollectionUpdate(
+                            flow.id,
+                            'workflowCollection',
+                            {
+                              name: newName,
+                            }
+                          );
+                        }
+                      }}
                       appendIcon="Edit"
                     >
                       <span>Rename</span>
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
-                        onDeleteWorkflow(flow);
+                        handleCollectionRemoval(flow.id, 'workflowCollection');
                         if (activeSourceItem === flow.id) {
                           setActiveSourceItem(undefined);
                         }
@@ -921,6 +835,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     );
   });
 
+  console.log(
+    'chart',
+    JSON.stringify(chart?.timeSeriesCollection?.map((t) => t.range))
+  );
+
   return (
     <ChartViewContainer id="chart-view">
       {!showSearch && (
@@ -933,7 +852,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       <ContentWrapper showSearch={showSearch}>
         <Header>
           <hgroup>
-            <ChartTitle onClick={() => handleRenameChart()}>
+            <ChartTitle
+              onClick={() => {
+                if (chart) {
+                  // eslint-disable-next-line no-alert
+                  const name = prompt('Rename chart', chart.name) || chart.name;
+                  updateChart({ ...chart, name });
+                }
+              }}
+            >
               {chart?.name}{' '}
               <span>
                 <Icon type="Edit" />
@@ -955,13 +882,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               </Button>
               <Button type="secondary" onClick={() => runWorkflows()}>
                 Run workflows
-              </Button>
-              <Button
-                icon="Checkmark"
-                type="primary"
-                onClick={() => handleClickSave()}
-              >
-                Save
               </Button>
               <SharingDropdown chart={chart} />
               <Button icon="Download" variant="ghost">
@@ -990,7 +910,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <ChartWrapper>
                 <PlotlyChartComponent
                   chart={chart}
-                  onAxisChange={handleChangeSourceAxis}
+                  onAxisChange={(update) => {
+                    console.log('inline', update.y);
+                    handleChangeSourceAxis(update);
+                  }}
                   showYAxis={!showSearch}
                 />
               </ChartWrapper>

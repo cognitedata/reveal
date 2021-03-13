@@ -177,29 +177,15 @@ export const useUpdateChart = () => {
     },
     {
       onMutate(c) {
+        console.log('update', c);
         cache.setQueryData(['chart', c.id], c);
+      },
+      onError() {
+        console.error('update error');
       },
       onSettled(_, __, chart) {
         cache.invalidateQueries(['charts']);
-        cache.invalidateQueries(['chart', chart.id]);
-      },
-    }
-  );
-};
-
-export const useUpdateWorkflow = () => {
-  return useMutation(
-    async ({
-      chartId,
-      workflowCollection,
-    }: {
-      chartId: string;
-      workflowCollection: ChartWorkflow[];
-    }) => collection('charts').doc(chartId).update({ workflowCollection }),
-    {
-      onSuccess() {
-        const cache = useQueryClient();
-        cache.invalidateQueries(['charts']);
+        // cache.invalidateQueries(['chart', chart.id]);
       },
     }
   );

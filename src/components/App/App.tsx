@@ -22,10 +22,7 @@ const App = () => {
     sdk.loginWithOAuth({
       project,
     });
-    sdk.authenticate().then((a) => {
-      console.log(a);
-      setAuth(!a);
-    });
+    sdk.authenticate().then((a) => setAuth(!a));
   }, [project]);
 
   if (!project) {
