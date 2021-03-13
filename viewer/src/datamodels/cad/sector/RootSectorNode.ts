@@ -7,15 +7,19 @@ import * as THREE from 'three';
 import { SectorNode } from './SectorNode';
 import { CadModelMetadata } from '../CadModelMetadata';
 import { SectorMetadata } from './types';
+import { toThreeJsBox3 } from '../../../utilities';
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
 
   constructor(modelMetadata: CadModelMetadata) {
-    super(0, '/');
+    const modelBounds = toThreeJsBox3(new THREE.Box3(), modelMetadata.scene.root.bounds);
+    modelBounds.applyMatrix4(modelMetadata.modelMatrix);
+    super(0, '/', modelBounds);
+
     const { scene, modelMatrix } = modelMetadata;
     this.sectorNodeMap = new Map();
-    buildScene(scene.root, this, this.sectorNodeMap);
+    buildScene(scene.root, this, this.sectorNodeMap, modelMatrix);
 
     // Disable automatic update of matrices of the subtree as it
     // is quite time consuming. We trust that our owner keeps
@@ -34,8 +38,15 @@ export class RootSectorNode extends SectorNode {
   }
 }
 
-function buildScene(sector: SectorMetadata, parent: SectorNode, sectorNodeMap: Map<number, SectorNode>) {
-  const sectorGroup = new SectorNode(sector.id, sector.path);
+function buildScene(
+  sector: SectorMetadata,
+  parent: SectorNode,
+  sectorNodeMap: Map<number, SectorNode>,
+  modelMatrix: THREE.Matrix4
+) {
+  const bounds = toThreeJsBox3(new THREE.Box3(), sector.bounds);
+  bounds.applyMatrix4(modelMatrix);
+  const sectorGroup = new SectorNode(sector.id, sector.path, bounds);
   sectorGroup.name = `Sector ${sector.id}`;
   parent.add(sectorGroup);
   sectorGroup.matrixAutoUpdate = false;
@@ -43,6 +54,6 @@ function buildScene(sector: SectorMetadata, parent: SectorNode, sectorNodeMap: M
 
   sectorNodeMap.set(sector.id, sectorGroup);
   for (const child of sector.children) {
-    buildScene(child, sectorGroup, sectorNodeMap);
+    buildScene(child, sectorGroup, sectorNodeMap, modelMatrix);
   }
 }

@@ -1295,13 +1295,17 @@ export class Cognite3DViewer {
     combinedBbox.makeEmpty();
     this.models.forEach(model => {
       model.getModelBoundingBox(bbox);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     this.extraObjects.forEach(obj => {
       bbox.setFromObject(obj);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
