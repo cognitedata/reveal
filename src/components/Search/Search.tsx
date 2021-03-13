@@ -42,8 +42,10 @@ const Search = ({ visible, onClose }: SearchProps) => {
         description: timeSeries.description || '-',
       };
       updateChart({
-        ...chart,
-        timeSeriesCollection: [...(chart.timeSeriesCollection || []), ts],
+        chart: {
+          ...chart,
+          timeSeriesCollection: [...(chart.timeSeriesCollection || []), ts],
+        },
       });
     }
   };

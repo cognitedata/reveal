@@ -41,7 +41,7 @@ const ChartList = () => {
   const handleRenameChart = (chart: Chart) => {
     // eslint-disable-next-line no-alert
     const name = prompt('Rename chart', chart.name) || chart.name;
-    updateChart({ ...chart, name });
+    updateChart({ chart: { ...chart, name } });
   };
 
   const handleDeleteChart = (chart: Chart) => {
@@ -67,7 +67,7 @@ const ChartList = () => {
       dateTo: dateTo.toJSON(),
       public: false,
     };
-    updateChart(newChart);
+    updateChart({ chart: newChart });
   };
 
   const handleDuplicateChart = (chart: Chart) => {
@@ -78,7 +78,7 @@ const ChartList = () => {
       id,
     };
 
-    updateChart(newChart);
+    updateChart({ chart: newChart });
   };
 
   const nameFilter = (chart: Chart) =>

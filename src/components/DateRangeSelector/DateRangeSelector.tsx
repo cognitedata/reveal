@@ -49,9 +49,11 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
   }) => {
     if (dateFrom && dateTo) {
       updateChart({
-        ...chart,
-        dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
-        dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
+        chart: {
+          ...chart,
+          dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
+          dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
+        },
       });
     }
   };
@@ -59,8 +61,10 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
   const updateRelativeDateRange = (millisecondsFromNow: number) => {
     if (chart) {
       updateChart({
-        ...chart,
-        millisecondsFromNow,
+        chart: {
+          ...chart,
+          millisecondsFromNow,
+        },
       });
     }
   };

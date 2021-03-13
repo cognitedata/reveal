@@ -171,17 +171,28 @@ export const useDeleteChart = () => {
 export const useUpdateChart = () => {
   const cache = useQueryClient();
   return useMutation(
-    async (chart: Chart) => {
-      // The firestore SDK will retry indefinitely
-      await collection('charts').doc(chart.id).set(chart, { merge: true });
+    async ({
+      chart,
+      skipPersist = false,
+    }: {
+      chart: Chart;
+      skipPersist?: boolean;
+    }) => {
+      // skipPersist will result in only the local cache being updated.
+      if (!skipPersist) {
+        // The firestore SDK will retry indefinitely
+        await collection('charts').doc(chart.id).set(chart, { merge: true });
+      }
+
       return chart.id;
     },
     {
-      onMutate(c) {
-        cache.setQueryData(['chart', c.id], c);
+      onMutate({ chart }) {
+        cache.setQueryData(['chart', chart.id], chart);
       },
-      onError(_, c) {
-        cache.invalidateQueries(['chart', c.id]);
+      onError(e, { chart }) {
+        console.error(e);
+        cache.invalidateQueries(['chart', chart.id]);
       },
       onSettled() {
         cache.invalidateQueries(['charts']);

@@ -41,7 +41,7 @@ const WorkflowContainer = styled.div`
 type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
-  mutate: (c: Chart) => void;
+  mutate: (c: Chart, skip?: boolean) => void;
 };
 
 const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
@@ -113,6 +113,10 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
     });
     setNodes([...nodes].filter((n) => n.id !== node.id));
     setConnections(newConnections);
+    update({
+      nodes: [...nodes].filter((n) => n.id !== node.id),
+      connections: newConnections,
+    });
   };
 
   const onRun = async () => {
@@ -304,6 +308,14 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
           context={context}
         />
       )}
+
+      <Button
+        type="primary"
+        style={{ position: 'absolute', top: 16, right: 16 }}
+        onClick={() => mutate(chart)}
+      >
+        Save
+      </Button>
 
       <Button
         type="primary"
