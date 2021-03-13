@@ -12,7 +12,7 @@ import DataQualityReport from 'components/DataQualityReport';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
 import { getStepsFromWorkflow } from 'utils/transforms';
-import { calculateGranularity } from 'utils/timeseries';
+import { calculateGranularity, convertTsToWorkFlow } from 'utils/timeseries';
 import { CogniteFunction } from 'reducers/charts/Nodes/DSPToolboxFunction';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { AxisUpdate } from 'components/PlotlyChart';
@@ -28,8 +28,6 @@ import {
   WorkflowRunStatus,
 } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import debounce from 'lodash/debounce';
-import isEqual from 'lodash/isEqual';
 import {
   Header,
   TopPaneWrapper,
@@ -317,10 +315,19 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   }
 
   const handleConvertToWorkflow = (id: string) => {
-    console.log('TODO');
-    // if (chart) {
-    //   dispatch(createWorkflowFromTimeSeries(chart, id));
-    // }
+    if (chart) {
+      const ts = chart.timeSeriesCollection?.find((t) => t.id === id);
+      if (ts) {
+        const wf = convertTsToWorkFlow(ts);
+        updateChart({
+          ...chart,
+          timeSeriesCollection: chart.timeSeriesCollection?.filter(
+            (t) => t.id !== id
+          ),
+          workflowCollection: [...(chart.workflowCollection || []), wf],
+        });
+      }
+    }
   };
 
   const handleOpenDataQualityReport = (timeSeriesId: string) => {
@@ -340,7 +347,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   }) => {
     if (chart) {
       const newChart = { ...chart };
-      if (x.length > 0) {
+      if (x.length === 2) {
         newChart.visibleRange = x;
       }
       if (y.length > 0) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components/macro';
 import { Button, DateRange } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';

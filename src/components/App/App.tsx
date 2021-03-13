@@ -64,10 +64,12 @@ const App = () => {
 
 const queryClient = new QueryClient({
   defaultOptions: {
+    mutations: {
+      retry: false,
+    },
     queries: {
       cacheTime: 60000,
       staleTime: 60000,
-      retry: false,
     },
   },
 });

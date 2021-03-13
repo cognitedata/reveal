@@ -6,7 +6,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import { useLoginStatus } from 'hooks';
-import { Chart, ChartWorkflow } from 'reducers/charts/types';
+import { Chart } from 'reducers/charts/types';
 
 type EnvironmentConfig = {
   cognite: {
@@ -97,7 +97,7 @@ export const useFirebaseInit = (enabled: boolean) => {
       firebase.initializeApp(env?.firebase as any);
 
       await firebase.auth().signInWithCustomToken(token as string);
-      firebase.firestore().settings({ experimentalForceLongPolling: true });
+      // firebase.firestore().settings({   experimentalForceLongPolling: true });
       return true;
     },
     {
@@ -172,7 +172,8 @@ export const useUpdateChart = () => {
   const cache = useQueryClient();
   return useMutation(
     async (chart: Chart) => {
-      await collection('charts').doc(chart.id).set(chart);
+      // The firestore SDK will retry indefinitely
+      await collection('charts').doc(chart.id).set(chart, { merge: true });
       return chart.id;
     },
     {
