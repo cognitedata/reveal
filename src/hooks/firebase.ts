@@ -177,15 +177,13 @@ export const useUpdateChart = () => {
     },
     {
       onMutate(c) {
-        console.log('update', c);
         cache.setQueryData(['chart', c.id], c);
       },
-      onError() {
-        console.error('update error');
+      onError(_, c) {
+        cache.invalidateQueries(['chart', c.id]);
       },
-      onSettled(_, __, chart) {
+      onSettled() {
         cache.invalidateQueries(['charts']);
-        // cache.invalidateQueries(['chart', chart.id]);
       },
     }
   );

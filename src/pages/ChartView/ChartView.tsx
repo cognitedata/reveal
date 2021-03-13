@@ -1,7 +1,7 @@
 /* eslint-disable no-alert, no-console */
 
-import React, { useState } from 'react';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import React, { useEffect, useState } from 'react';
+import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
@@ -59,7 +59,17 @@ type ChartViewProps = {
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
+  const {
+    mutate: updateChart,
+    isLoading: isUpdating,
+    isError: updateError,
+  } = useUpdateChart();
+
+  useEffect(() => {
+    if (updateError) {
+      toast.error('Chart could not be saved');
+    }
+  }, [updateError]);
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
   const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
@@ -321,36 +331,37 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setDataQualityReport({});
   };
 
-  const handleChangeSourceAxis = debounce(
-    (axis: { x: number[]; y: AxisUpdate[] }) => {
-      if (chart) {
-        const newChart = { ...chart };
-        if (axis.x.length > 0) {
-          newChart.visibleRange = axis.x;
-        }
-        if (axis.x.length > 0) {
-          axis.y.forEach((update) => {
-            newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
-              (t) => (t.id === update.id ? { ...t, range: update.range } : t)
-            );
-            newChart.workflowCollection = newChart.workflowCollection?.map(
-              (wf) =>
-                wf.id === update.id ? { ...wf, range: update.range } : wf
-            );
-          });
-        }
-        if (!isEqual(chart, newChart)) {
-          console.log(
-            'nhart',
-            JSON.stringify(chart?.timeSeriesCollection?.map((t) => t.range))
-          );
-
-          updateChart(newChart);
-        }
+  const handleChangeSourceAxis = ({
+    x,
+    y,
+  }: {
+    x: number[];
+    y: AxisUpdate[];
+  }) => {
+    if (chart) {
+      const newChart = { ...chart };
+      if (x.length > 0) {
+        newChart.visibleRange = x;
       }
-    },
-    3000
-  );
+      if (y.length > 0) {
+        y.forEach((update) => {
+          newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
+            (t) => (t.id === update.id ? { ...t, range: update.range } : t)
+          );
+          newChart.workflowCollection = newChart.workflowCollection?.map((wf) =>
+            wf.id === update.id ? { ...wf, range: update.range } : wf
+          );
+        });
+      }
+
+      console.log(
+        'nhart',
+        JSON.stringify(chart?.timeSeriesCollection?.map((t) => t.range))
+      );
+
+      updateChart(newChart);
+    }
+  };
 
   const handleDuplicateChart = async () => {
     if (chart) {
@@ -835,11 +846,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     );
   });
 
-  console.log(
-    'chart',
-    JSON.stringify(chart?.timeSeriesCollection?.map((t) => t.range))
-  );
-
   return (
     <ChartViewContainer id="chart-view">
       {!showSearch && (
@@ -862,6 +868,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               }}
             >
               {chart?.name}{' '}
+              {isUpdating && (
+                <Icon
+                  style={{ color: 'var(--cogs-greyscale-grey5)' }}
+                  type="Loading"
+                />
+              )}
               <span>
                 <Icon type="Edit" />
               </span>
@@ -910,10 +922,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <ChartWrapper>
                 <PlotlyChartComponent
                   chart={chart}
-                  onAxisChange={(update) => {
-                    console.log('inline', update.y);
-                    handleChangeSourceAxis(update);
-                  }}
+                  onAxisChange={(update) => handleChangeSourceAxis(update)}
                   showYAxis={!showSearch}
                 />
               </ChartWrapper>
