@@ -155,7 +155,7 @@ export const {
 export const selectModelIdsByFileId = (
   state: State,
   fileId: string
-): string[] => state.modelsByFileId[fileId];
+): string[] => state.modelsByFileId[fileId] || [];
 
 export const modelsById = (state: State): { [id: string]: VisionModelState } =>
   state.models.byId;
@@ -184,7 +184,7 @@ export const selectAnnotationsByFileId = createSelector(
       })
       .reduce((acc, annotations) => {
         return acc.concat(annotations);
-      })
+      }, [])
       .map((id) => allAnnotations[id]);
   }
 );
