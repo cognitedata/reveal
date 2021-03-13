@@ -18,7 +18,11 @@ import { Toolbar } from 'components/Toolbar';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { ChartTimeSeries, LatestWorkflowRun } from 'reducers/charts/types';
+import {
+  Chart,
+  ChartTimeSeries,
+  LatestWorkflowRun,
+} from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { getTenantFromURL } from 'utils/env';
 import { useSDK } from '@cognite/sdk-provider';
@@ -52,11 +56,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
   const {
-    mutate: updateChart,
+    mutate,
     isLoading: isUpdating,
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
+  const updateChart = (updatedChart: Chart) => mutate({ chart: updatedChart });
 
   useEffect(() => {
     if (updateError) {
@@ -471,7 +476,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 </SourceTableWrapper>
                 {workspaceMode === 'editor' && !!activeSourceItem && (
                   <NodeEditor
-                    mutate={updateChart}
+                    mutate={mutate}
                     workflowId={activeSourceItem}
                     chart={chart}
                   />

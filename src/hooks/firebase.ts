@@ -179,6 +179,8 @@ export const useUpdateChart = () => {
       skipPersist?: boolean;
     }) => {
       // skipPersist will result in only the local cache being updated.
+      /* eslint-disable no-console */
+      console.log('mutate', { chart, skipPersist });
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely
         await collection('charts').doc(chart.id).set(chart, { merge: true });
@@ -187,11 +189,11 @@ export const useUpdateChart = () => {
       return chart.id;
     },
     {
-      onMutate({ chart }) {
+      onMutate({ chart, skipPersist }) {
+        console.log('onMutate', { chart, skipPersist });
         cache.setQueryData(['chart', chart.id], chart);
       },
-      onError(e, { chart }) {
-        console.error(e);
+      onError(_, { chart }) {
         cache.invalidateQueries(['chart', chart.id]);
       },
       onSettled() {

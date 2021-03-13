@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
-import debounce from 'lodash/debounce';
 import {
   SourceNode,
   ControllerProvider,
@@ -41,7 +40,7 @@ const WorkflowContainer = styled.div`
 type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
-  mutate: (c: Chart, skip?: boolean) => void;
+  mutate: (i: { chart: Chart; skipPersist?: boolean }) => void;
 };
 
 const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
@@ -53,9 +52,9 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
     (flow) => flow.id === workflowId
   );
 
-  const update = debounce(
-    (diff: Partial<ChartWorkflow>) =>
-      mutate({
+  const update = (diff: Partial<ChartWorkflow>) =>
+    mutate({
+      chart: {
         ...chart,
         workflowCollection: chart.workflowCollection?.map((wf) =>
           wf.id === workflowId
@@ -65,28 +64,18 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
               }
             : wf
         ),
-      }),
-    1000
-  );
+      },
+      skipPersist: true,
+    });
 
   const { nodes = [], connections = [] } = workflow || {};
   const context = { chart };
 
-  const setConnections = (nextConnections: Record<string, Connection>) => {
-    update({
-      connections: nextConnections,
-    });
-  };
-
-  const setNodes = (nextNodes: StorableNode[]) => {
-    update({
-      nodes: nextNodes,
-    });
-  };
-
   const onUpdateNode = (nextNode: Node) => {
-    setNodes(nodes.map((node) => (node.id === nextNode.id ? nextNode : node)));
-
+    console.log('hello', nextNode);
+    update({
+      nodes: nodes.map((node) => (node.id === nextNode.id ? nextNode : node)),
+    });
     if (workflow?.latestRun) {
       update({
         latestRun: {
@@ -98,7 +87,9 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
   };
 
   const onNewNode = (newNode: Node) => {
-    setNodes([...nodes, newNode]);
+    update({
+      nodes: [...nodes, newNode],
+    });
   };
 
   const onRemoveNode = (node: Node) => {
@@ -111,8 +102,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
         delete newConnections[conn.id];
       }
     });
-    setNodes([...nodes].filter((n) => n.id !== node.id));
-    setConnections(newConnections);
+
     update({
       nodes: [...nodes].filter((n) => n.id !== node.id),
       connections: newConnections,
@@ -253,7 +243,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
       <ControllerProvider
         pinTypes={pinTypes}
         connections={connections}
-        onConnectionsUpdate={setConnections}
+        onConnectionsUpdate={(c: Connection[]) => update({ connections: c })}
       >
         <NodeContainer
           contextMenu={(
@@ -312,7 +302,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
       <Button
         type="primary"
         style={{ position: 'absolute', top: 16, right: 16 }}
-        onClick={() => mutate(chart)}
+        onClick={() => mutate({ chart, skipPersist: false })}
       >
         Save
       </Button>
