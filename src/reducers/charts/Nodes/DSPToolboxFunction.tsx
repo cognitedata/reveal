@@ -3,7 +3,7 @@
 import React from 'react';
 import { Icon, Input, Select } from '@cognite/cogs.js';
 import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
-import { StorableNode } from 'reducers/charts';
+import { StorableNode } from 'reducers/charts/types';
 import AvailableOps from 'components/NodeEditor/AvailableOps';
 import { ConfigPanelComponentProps } from '../types';
 

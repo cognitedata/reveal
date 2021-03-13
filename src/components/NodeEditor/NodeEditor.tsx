@@ -12,17 +12,14 @@ import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import useSelector from 'hooks/useSelector';
 import useDispatch from 'hooks/useDispatch';
-import chartsSlice, {
-  chartSelectors,
-  LatestWorkflowRun,
-  StorableNode,
-} from 'reducers/charts';
+import chartsSlice, { chartSelectors } from 'reducers/charts';
+import { LatestWorkflowRun, StorableNode } from 'reducers/charts/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
-import sdk from 'services/CogniteSDK';
 import { CogniteFunction } from 'reducers/charts/Nodes/DSPToolboxFunction';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { saveExistingChart } from 'reducers/charts/api';
+import { useSDK } from '@cognite/sdk-provider';
 import { pinTypes, isWorkflowRunnable } from './utils';
 import defaultNodeOptions from '../../reducers/charts/Nodes';
 import ConfigPanel from './ConfigPanel';
@@ -44,6 +41,7 @@ type WorkflowEditorProps = {
 };
 
 const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
+  const sdk = useSDK();
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<StorableNode>();
   const tenant = useSelector((state) => state.environment.tenant);
@@ -193,6 +191,7 @@ const WorkflowEditor = ({ workflowId, chartId }: WorkflowEditorProps) => {
     );
 
     const status = await waitOnFunctionComplete(
+      sdk,
       tenant,
       simpleCalc.id,
       functionCall.data.id

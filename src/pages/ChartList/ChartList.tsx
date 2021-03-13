@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Button, Dropdown, Icon, Input, Menu, Tabs } from '@cognite/cogs.js';
 import { Link } from 'react-router-dom';
-import { Chart } from 'reducers/charts';
+import { Chart } from 'reducers/charts/types';
 import thumb from 'assets/thumb.png';
 import {
   useDeleteChart,

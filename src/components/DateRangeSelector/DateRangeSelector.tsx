@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Button, DateRange } from '@cognite/cogs.js';
-import chartsSlice, { Chart } from 'reducers/charts';
-import useDispatch from 'hooks/useDispatch';
+import { Chart } from 'reducers/charts/types';
 import TimeSelector from 'components/TimeSelector';
 import { useUpdateChart } from 'hooks/firebase';
 

@@ -10,7 +10,7 @@ import {
   toast,
   Input,
 } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts';
+import { Chart } from 'reducers/charts/types';
 
 import { useUpdateChart } from 'hooks/firebase';
 

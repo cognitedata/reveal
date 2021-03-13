@@ -1,7 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { Chart } from 'reducers/charts';
-import client from 'services/CogniteSDK';
+import { Chart } from 'reducers/charts/types';
 import {
   DatapointAggregate,
   DatapointAggregates,
@@ -10,12 +9,12 @@ import {
   DoubleDatapoint,
   StringDatapoint,
 } from '@cognite/sdk';
-
 import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   AxisUpdate,
   getXaxisUpdateFromEventData,
@@ -38,27 +37,28 @@ const PlotlyChartComponent = ({
   onAxisChange,
   showYAxis,
 }: ChartProps) => {
+  const client = useSDK();
   const pointsPerSeries = 1000;
   const enabledTimeSeries = (chart?.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
   );
-
-  const query = chart
-    ? {
-        items: enabledTimeSeries.map(({ id }) => ({ externalId: id })),
-        start: new Date(chart.dateFrom),
-        end: new Date(chart.dateTo),
-        granularity: calculateGranularity(
-          [
-            new Date(chart.dateFrom).getTime(),
-            new Date(chart.dateTo).getTime(),
-          ],
-          pointsPerSeries
-        ),
-        aggregates: ['average'],
-        limit: pointsPerSeries,
-      }
-    : undefined;
+  const query =
+    !!chart && enabledTimeSeries.length > 0
+      ? {
+          items: enabledTimeSeries.map(({ id }) => ({ externalId: id })),
+          start: new Date(chart.dateFrom),
+          end: new Date(chart.dateTo),
+          granularity: calculateGranularity(
+            [
+              new Date(chart.dateFrom).getTime(),
+              new Date(chart.dateTo).getTime(),
+            ],
+            pointsPerSeries
+          ),
+          aggregates: ['average'],
+          limit: pointsPerSeries,
+        }
+      : undefined;
 
   const { data: timeSeriesDataPoints = [] } = useQuery(
     ['timeseries', query],
@@ -66,7 +66,7 @@ const PlotlyChartComponent = ({
       const result = await client.datapoints.retrieve(
         query as DatapointsMultiQuery
       );
-      const convertedResult = await Promise.all(
+      return Promise.all(
         (result as (Datapoints | DatapointAggregates)[]).map(
           async (ts: Datapoints | DatapointAggregates) => {
             return {
@@ -84,7 +84,6 @@ const PlotlyChartComponent = ({
           }
         )
       );
-      return convertedResult;
     },
     {
       enabled: !!query,

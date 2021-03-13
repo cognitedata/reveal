@@ -14,7 +14,6 @@ import DateRangeSelector from 'components/DateRangeSelector';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { CogniteFunction } from 'reducers/charts/Nodes/DSPToolboxFunction';
-import sdk from 'services/CogniteSDK';
 import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
 import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
@@ -27,8 +26,9 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   WorkflowRunStatus,
-} from 'reducers/charts';
+} from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   Header,
   TopPaneWrapper,

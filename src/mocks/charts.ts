@@ -1,4 +1,5 @@
-import { Chart, ChartState } from 'reducers/charts';
+import { ChartState } from 'reducers/charts';
+import { Chart } from 'reducers/charts/types';
 
 export const SIMPLE_CHART: Chart = {
   id: '1',

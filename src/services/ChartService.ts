@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import { Chart, ChartWorkflow } from 'reducers/charts';
+import { Chart, ChartWorkflow } from 'reducers/charts/types';
 import { User } from 'reducers/environment';
 
 export class ChartService {

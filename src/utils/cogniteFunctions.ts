@@ -1,6 +1,7 @@
-import sdk from 'services/CogniteSDK';
+import { CogniteClient } from '@cognite/sdk';
 
 export const waitOnFunctionComplete = (
+  sdk: CogniteClient,
   tenant: string,
   funcId: number,
   callId: number
@@ -20,7 +21,7 @@ export const waitOnFunctionComplete = (
           // Wait 1 second before checking the status again
           new Promise((resolveWaiter) => setTimeout(resolveWaiter, 1000)).then(
             () => {
-              waitOnFunctionComplete(tenant, funcId, callId).then(resolve);
+              waitOnFunctionComplete(sdk, tenant, funcId, callId).then(resolve);
             }
           );
         } else if (result.data.status === 'Failed') {

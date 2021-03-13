@@ -3,7 +3,7 @@ import {
   ChartWorkflow,
   LatestWorkflowRun,
   StorableNode,
-} from 'reducers/charts';
+} from 'reducers/charts/types';
 import { NodeOption } from './types';
 import nodeOptions from './Nodes';
 

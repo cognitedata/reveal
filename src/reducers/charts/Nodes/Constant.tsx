@@ -1,6 +1,6 @@
 import { Input } from '@cognite/cogs.js';
 import React, { useState } from 'react';
-import { Chart, StorableNode } from 'reducers/charts';
+import { Chart, StorableNode } from 'reducers/charts/types';
 import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {

@@ -143,8 +143,8 @@ export const usePublicCharts = () => {
 
 export const useChart = (id: string) => {
   return useQuery(['charts', id], async () => {
-    const doc: unknown = await charts().doc(id).get();
-    return doc as Chart;
+    const snapshot = await charts().where('id', '==', id).get();
+    return snapshot.docs.map((doc) => doc.data())[0] as Chart;
   });
 };
 

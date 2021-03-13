@@ -1,4 +1,4 @@
-import { StorableNode } from 'reducers/charts';
+import { StorableNode } from 'reducers/charts/types';
 
 export const node = {
   title: 'Output',
