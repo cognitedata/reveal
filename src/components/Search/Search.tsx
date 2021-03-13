@@ -4,6 +4,10 @@ import { SearchResultTable } from 'components/SearchResultTable';
 import styled from 'styled-components/macro';
 import { Timeseries } from '@cognite/sdk';
 import { useDebounce } from 'use-debounce/lib';
+import { useChart, useUpdateChart } from 'hooks/firebase';
+import { useParams } from 'react-router-dom';
+import { getEntryColor } from 'utils/colors';
+import { ChartTimeSeries } from 'reducers/charts/types';
 
 type SearchProps = {
   visible: boolean;
@@ -11,16 +15,37 @@ type SearchProps = {
 };
 
 const Search = ({ visible, onClose }: SearchProps) => {
-  // const { chartId } = useParams<{ chartId: string }>();
+  const { chartId } = useParams<{ chartId: string }>();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedQuery] = useDebounce(searchInputValue, 100);
+  const { data: chart } = useChart(chartId);
+  const { mutate: updateChart } = useUpdateChart();
 
   const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSearchInputValue(value);
   };
 
-  const handleTimeSeriesClick = async (timeseries: Timeseries) => {
+  const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
+    if (chart) {
+      const ts: ChartTimeSeries = {
+        id: timeSeries.externalId || timeSeries.id.toString(),
+        name:
+          timeSeries.name || timeSeries.externalId || timeSeries.id.toString(),
+        unit: timeSeries.unit || '*',
+        originalUnit: timeSeries.unit || '*',
+        preferredUnit: timeSeries.unit || '*',
+        color: getEntryColor(),
+        lineWeight: 2,
+        lineStyle: 'solid',
+        enabled: true,
+        description: timeSeries.description || '-',
+      };
+      updateChart({
+        ...chart,
+        timeSeriesCollection: [...(chart.timeSeriesCollection || []), ts],
+      });
+    }
     // dispatch(addTimeSeriesToChart(activeChartId, timeseries));
   };
 

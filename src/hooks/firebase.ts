@@ -147,30 +147,41 @@ export const usePublicCharts = () => {
 
 export const useChart = (id: string) => {
   return useQuery(
-    ['charts', id],
+    ['chart', id],
     async () => (await collection('charts').doc(id).get()).data() as Chart
   );
 };
 
 export const useDeleteChart = () => {
   return useMutation(
-    async (chartId: string) => collection('charts').doc(chartId).delete(),
+    async (chartId: string) => {
+      await collection('charts').doc(chartId).delete();
+      return chartId;
+    },
     {
-      onSuccess() {
+      onSuccess(chartId) {
         const cache = useQueryClient();
         cache.invalidateQueries(['charts']);
+        cache.invalidateQueries(['chart', chartId]);
       },
     }
   );
 };
 
 export const useUpdateChart = () => {
+  const cache = useQueryClient();
   return useMutation(
-    async (chart: Chart) => collection('charts').doc(chart.id).set(chart),
+    async (chart: Chart) => {
+      await collection('charts').doc(chart.id).set(chart);
+      return chart.id;
+    },
     {
-      onSuccess() {
-        const cache = useQueryClient();
+      onMutate(c) {
+        cache.setQueryData(['chart', c.id], c);
+      },
+      onSettled(_, __, chart) {
         cache.invalidateQueries(['charts']);
+        cache.invalidateQueries(['chart', chart.id]);
       },
     }
   );

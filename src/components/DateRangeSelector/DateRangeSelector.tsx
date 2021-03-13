@@ -57,12 +57,12 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
   };
 
   const updateRelativeDateRange = (millisecondsFromNow: number) => {
-    // dispatch(
-    //   chartsSlice.actions.updateRelativeDateRange({
-    //     id: chart?.id || '',
-    //     millisecondsFromNow,
-    //   })
-    // );
+    if (chart) {
+      updateChart({
+        ...chart,
+        millisecondsFromNow,
+      });
+    }
   };
 
   useEffect(() => {
