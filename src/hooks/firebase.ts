@@ -107,12 +107,12 @@ export const useFirebaseInit = (enabled: boolean) => {
   );
 };
 
-const charts = () => {
+const collection = (c: 'charts' | 'workspace') => {
   return firebase
     .firestore()
     .collection('tenants')
     .doc(getTenantFromURL())
-    .collection('charts');
+    .collection(c);
 };
 
 export const useMyCharts = () => {
@@ -121,7 +121,9 @@ export const useMyCharts = () => {
   return useQuery(
     ['charts', 'mine'],
     async () => {
-      const snapshot = await charts().where('user', '==', data?.user).get();
+      const snapshot = await collection('charts')
+        .where('user', '==', data?.user)
+        .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
     { enabled: !!data?.user }
@@ -134,7 +136,9 @@ export const usePublicCharts = () => {
   return useQuery(
     ['charts', 'public'],
     async () => {
-      const snapshot = await charts().where('public', '==', true).get();
+      const snapshot = await collection('charts')
+        .where('public', '==', true)
+        .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
     { enabled: !!data?.user }
@@ -142,15 +146,15 @@ export const usePublicCharts = () => {
 };
 
 export const useChart = (id: string) => {
-  return useQuery(['charts', id], async () => {
-    const snapshot = await charts().where('id', '==', id).get();
-    return snapshot.docs.map((doc) => doc.data())[0] as Chart;
-  });
+  return useQuery(
+    ['charts', id],
+    async () => (await collection('charts').doc(id).get()).data() as Chart
+  );
 };
 
 export const useDeleteChart = () => {
   return useMutation(
-    async (chartId: string) => charts().doc(chartId).delete(),
+    async (chartId: string) => collection('charts').doc(chartId).delete(),
     {
       onSuccess() {
         const cache = useQueryClient();
@@ -162,7 +166,7 @@ export const useDeleteChart = () => {
 
 export const useUpdateChart = () => {
   return useMutation(
-    async (chart: Chart) => charts().doc(chart.id).set(chart),
+    async (chart: Chart) => collection('charts').doc(chart.id).set(chart),
     {
       onSuccess() {
         const cache = useQueryClient();
@@ -180,7 +184,7 @@ export const useUpdateWorkflow = () => {
     }: {
       chartId: string;
       workflowCollection: ChartWorkflow[];
-    }) => charts().doc(chartId).update({ workflowCollection }),
+    }) => collection('charts').doc(chartId).update({ workflowCollection }),
     {
       onSuccess() {
         const cache = useQueryClient();
