@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import styled from 'styled-components/macro';
 import { Button, DateRange } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
@@ -9,32 +10,39 @@ interface DateRangeSelectorProps {
   chart: Chart;
 }
 
-const millisecondsInADay = 1000 * 60 * 60 * 24;
+const startOfDay = dayjs().startOf('day');
+const endOfDay = dayjs().endOf('day');
 
 const relativeTimeOptions = [
   {
     label: '1D',
-    value: millisecondsInADay,
+    dateFrom: startOfDay,
+    dateTo: endOfDay,
   },
   {
     label: '2D',
-    value: 2 * millisecondsInADay,
+    dateFrom: startOfDay.subtract(1, 'day'),
+    dateTo: endOfDay,
   },
   {
     label: '1W',
-    value: 7 * millisecondsInADay,
+    dateFrom: startOfDay.subtract(1, 'week'),
+    dateTo: endOfDay,
   },
   {
     label: '1M',
-    value: 30 * millisecondsInADay,
+    dateFrom: startOfDay.subtract(1, 'month'),
+    dateTo: endOfDay,
   },
   {
     label: '6M',
-    value: 6 * 30 * millisecondsInADay,
+    dateFrom: startOfDay.subtract(6, 'months'),
+    dateTo: endOfDay,
   },
   {
     label: '1Y',
-    value: 365 * millisecondsInADay,
+    dateFrom: startOfDay.subtract(1, 'year'),
+    dateTo: endOfDay,
   },
 ];
 
@@ -58,34 +66,18 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     }
   };
 
-  const updateRelativeDateRange = (millisecondsFromNow: number) => {
-    if (chart) {
-      updateChart({
-        chart: {
-          ...chart,
-          millisecondsFromNow,
-        },
-      });
-    }
-  };
-
-  // TODO: follow up
-  // useEffect(() => {
-  //   if (chart.millisecondsFromNow !== undefined && chart.millisecondsFromNow !== ) {
-  //     updateRelativeDateRange(chart.millisecondsFromNow);
-  //   }
-  // }, []);
-
   return (
     <Wrapper>
       <Column>
         {relativeTimeOptions.map((option) => (
           <Button
             key={option.label}
-            variant={
-              chart.millisecondsFromNow === option.value ? 'default' : 'ghost'
+            onClick={() =>
+              handleDateChange({
+                dateFrom: option.dateFrom.toDate(),
+                dateTo: option.dateTo.toDate(),
+              })
             }
-            onClick={() => updateRelativeDateRange(option.value)}
           >
             {option.label}
           </Button>

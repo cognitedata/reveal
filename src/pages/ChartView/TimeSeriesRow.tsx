@@ -121,6 +121,7 @@ export default function TimeSeriesRow({
       {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
     </Menu.Item>
   ));
+  console.log('color', color);
 
   return (
     <SourceRow key={id} isActive={false}>

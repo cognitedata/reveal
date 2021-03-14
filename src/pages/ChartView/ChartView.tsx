@@ -285,10 +285,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     if (chart) {
       const newChart = { ...chart };
       if (x.length === 2) {
-        newChart.visibleRange = x;
+        newChart.dateFrom = `${x[0]}`;
+        newChart.dateTo = `${x[1]}`;
       }
       if (y.length > 0) {
         y.forEach((update) => {
+          console.log(update);
           newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
             (t) => (t.id === update.id ? { ...t, range: update.range } : t)
           );

@@ -24,7 +24,7 @@ import {
 } from './utils';
 
 type ChartProps = {
-  chart?: Chart;
+  chart: Chart;
   onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
   showYAxis?: boolean;
 };
@@ -39,13 +39,13 @@ const PlotlyChartComponent = ({
 }: ChartProps) => {
   const client = useSDK();
   const pointsPerSeries = 1000;
-  const enabledTimeSeries = (chart?.timeSeriesCollection || []).filter(
+  const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
   );
   const query =
     !!chart && enabledTimeSeries.length > 0
       ? {
-          items: enabledTimeSeries.map(({ id }) => ({ externalId: id })),
+          items: enabledTimeSeries.map(({ tsId }) => ({ id: tsId })),
           start: new Date(chart.dateFrom),
           end: new Date(chart.dateTo),
           granularity: calculateGranularity(
@@ -73,10 +73,10 @@ const PlotlyChartComponent = ({
               ...ts,
               datapoints: await convertUnits(
                 ts.datapoints,
-                chart?.timeSeriesCollection
+                chart.timeSeriesCollection
                   ?.find(({ id }) => id === ts.externalId)
                   ?.unit?.toLowerCase(),
-                chart?.timeSeriesCollection
+                chart.timeSeriesCollection
                   ?.find(({ id }) => id === ts.externalId)
                   ?.preferredUnit?.toLowerCase()
               ),
@@ -90,41 +90,26 @@ const PlotlyChartComponent = ({
     }
   );
 
-  const enabledWorkflows = chart?.workflowCollection?.filter(
+  const enabledWorkflows = chart.workflowCollection?.filter(
     (flow) => flow?.enabled
   );
 
   const seriesData: SeriesData[] =
     [
-      ...timeSeriesDataPoints
-        .filter((ts) => !ts.isString)
-        .map((ts) => ({
-          id: ts.externalId,
+      ...(chart.timeSeriesCollection || [])
+        .filter((t) => t.enabled)
+        .map((t) => ({
+          ...t,
           type: 'timeseries',
-          range: chart?.timeSeriesCollection?.find(
-            ({ id }) => id === ts.externalId
-          )?.range,
-          name: chart?.timeSeriesCollection?.find(
-            ({ id }) => id === ts.externalId
-          )?.name,
-          color: chart?.timeSeriesCollection?.find(
-            ({ id }) => id === ts.externalId
-          )?.color,
-          width: chart?.timeSeriesCollection?.find(
-            ({ id }) => id === ts.externalId
-          )?.lineWeight,
-          dash: convertLineStyle(
-            chart?.timeSeriesCollection?.find(({ id }) => id === ts.externalId)
-              ?.lineStyle
-          ),
+          width: t.lineWeight,
+          range: t.range,
+          datapoints:
+            timeSeriesDataPoints.find((dp) => t.tsId === dp.id)?.datapoints ||
+            [],
+          dash: convertLineStyle(t.lineStyle),
           unit: units.find(
-            (unitOption) =>
-              unitOption.value ===
-              chart?.timeSeriesCollection
-                ?.find(({ id }) => id === ts.externalId)
-                ?.preferredUnit?.toLowerCase()
+            (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
           )?.label,
-          datapoints: ts.datapoints,
         })),
       ...(enabledWorkflows || [])
         .filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
@@ -183,13 +168,6 @@ const PlotlyChartComponent = ({
     }
   };
 
-  /**
-   * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
-   */
-  const serializedXRange = chart?.visibleRange
-    ? JSON.parse(JSON.stringify(chart?.visibleRange))
-    : undefined;
-
   const layout = {
     margin: {
       l: 50,
@@ -200,7 +178,7 @@ const PlotlyChartComponent = ({
     xaxis: {
       type: 'date',
       domain: showYAxis ? [0.06 * (seriesData.length - 1), 1] : [0, 1],
-      range: serializedXRange,
+      range: [chart.dateFrom, chart.dateTo],
     },
     showlegend: false,
     annotations: [],

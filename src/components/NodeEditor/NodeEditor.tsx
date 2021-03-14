@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
+import debounce from 'lodash/debounce';
 import {
   SourceNode,
   ControllerProvider,
@@ -71,20 +72,22 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
   const { nodes = [], connections = [] } = workflow || {};
   const context = { chart };
 
-  const onUpdateNode = (nextNode: Node) => {
-    console.log('hello', nextNode);
+  // This have to be debouced as it is called continuously when dragging nodes
+  const onUpdateNode = debounce((nextNode: Node) => {
+    const nodeUpdate = nodes.map((node) =>
+      node.id === nextNode.id ? nextNode : node
+    );
+
     update({
-      nodes: nodes.map((node) => (node.id === nextNode.id ? nextNode : node)),
+      nodes: nodeUpdate,
+      latestRun: workflow?.latestRun
+        ? {
+            ...workflow?.latestRun,
+            nodeProgress: undefined,
+          }
+        : undefined,
     });
-    if (workflow?.latestRun) {
-      update({
-        latestRun: {
-          ...workflow?.latestRun,
-          nodeProgress: undefined,
-        },
-      });
-    }
-  };
+  }, 100);
 
   const onNewNode = (newNode: Node) => {
     update({
@@ -168,7 +171,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
       }
     );
 
-    const status = await waitOnFunctionComplete(
+    await waitOnFunctionComplete(
       sdk,
       tenant,
       simpleCalc.id,
@@ -178,13 +181,6 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
     const functionResult = await sdk.get<{ response: Record<string, any> }>(
       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
     );
-
-    /* eslint-disable no-console */
-    console.log({
-      status,
-      result: functionResult.data,
-    });
-    /* eslint-enable no-console */
 
     if (!functionResult.data.response || functionResult.data?.response?.error) {
       update({

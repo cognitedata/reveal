@@ -6,8 +6,9 @@ import { Timeseries } from '@cognite/sdk';
 import { useDebounce } from 'use-debounce/lib';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
-import { getEntryColor } from 'utils/colors';
+import { availableColors } from 'utils/colors';
 import { ChartTimeSeries } from 'reducers/charts/types';
+import { nanoid } from 'nanoid';
 
 type SearchProps = {
   visible: boolean;
@@ -29,13 +30,18 @@ const Search = ({ visible, onClose }: SearchProps) => {
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
       const ts: ChartTimeSeries = {
-        id: timeSeries.externalId || timeSeries.id.toString(),
+        id: nanoid(),
         name:
           timeSeries.name || timeSeries.externalId || timeSeries.id.toString(),
+        tsId: timeSeries.id,
+        tsExternalId: timeSeries.externalId,
         unit: timeSeries.unit || '*',
         originalUnit: timeSeries.unit || '*',
         preferredUnit: timeSeries.unit || '*',
-        color: getEntryColor(),
+        color:
+          availableColors[
+            (chart?.timeSeriesCollection?.length || 0) % availableColors.length
+          ],
         lineWeight: 2,
         lineStyle: 'solid',
         enabled: true,

@@ -27,6 +27,7 @@
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.29.0",
     "date-fns": "^2.19.0",
+    "dayjs": "^1.10.4",
     "firebase": "^8.2.10",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.40.0",

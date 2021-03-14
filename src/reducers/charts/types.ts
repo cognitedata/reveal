@@ -7,10 +7,8 @@ export type Chart = {
   user: string;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
-  millisecondsFromNow?: number;
   dateFrom: string;
   dateTo: string;
-  visibleRange?: any[];
   public?: boolean;
 };
 
@@ -18,6 +16,8 @@ export type ChartTimeSeries = {
   id: string;
   name: string;
   color: string;
+  tsId: number;
+  tsExternalId?: string;
   lineWeight?: number;
   lineStyle?: 'solid' | 'dashed' | 'dotted';
   enabled: boolean;
