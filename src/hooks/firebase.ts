@@ -107,12 +107,12 @@ export const useFirebaseInit = (enabled: boolean) => {
   );
 };
 
-const collection = (c: 'charts' | 'workspace') => {
+export const charts = () => {
   return firebase
     .firestore()
     .collection('tenants')
     .doc(getTenantFromURL())
-    .collection(c);
+    .collection('charts');
 };
 
 export const useMyCharts = () => {
@@ -121,9 +121,7 @@ export const useMyCharts = () => {
   return useQuery(
     ['charts', 'mine'],
     async () => {
-      const snapshot = await collection('charts')
-        .where('user', '==', data?.user)
-        .get();
+      const snapshot = await charts().where('user', '==', data?.user).get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
     { enabled: !!data?.user }
@@ -136,9 +134,7 @@ export const usePublicCharts = () => {
   return useQuery(
     ['charts', 'public'],
     async () => {
-      const snapshot = await collection('charts')
-        .where('public', '==', true)
-        .get();
+      const snapshot = await charts().where('public', '==', true).get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
     { enabled: !!data?.user }
@@ -148,14 +144,14 @@ export const usePublicCharts = () => {
 export const useChart = (id: string) => {
   return useQuery(
     ['chart', id],
-    async () => (await collection('charts').doc(id).get()).data() as Chart
+    async () => (await charts().doc(id).get()).data() as Chart
   );
 };
 
 export const useDeleteChart = () => {
   return useMutation(
     async (chartId: string) => {
-      await collection('charts').doc(chartId).delete();
+      await charts().doc(chartId).delete();
       return chartId;
     },
     {
@@ -181,7 +177,7 @@ export const useUpdateChart = () => {
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely
-        await collection('charts').doc(chart.id).set(chart, { merge: true });
+        await charts().doc(chart.id).set(chart, { merge: true });
       }
 
       return chart.id;

@@ -10,11 +10,12 @@ import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
 import { Toolbar } from 'components/Toolbar';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
-import { useChart, useUpdateChart } from 'hooks/firebase';
+import { charts, useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus } from 'hooks';
+import { useQueryClient } from 'react-query';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 import RunWorkflows from './RunWorkflowsButton';
@@ -41,6 +42,7 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
+  const cache = useQueryClient();
   const { data } = useLoginStatus();
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
@@ -64,6 +66,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       toast.error(JSON.stringify(updateErrorMsg, null, 2));
     }
   }, [updateError, updateError]);
+
+  useEffect(() => {
+    const doc = charts().doc(chartId);
+    return doc.onSnapshot({
+      next(snap) {
+        cache.setQueryData(['chart', chartId], snap.data());
+      },
+    });
+  }, [charts, chartId]);
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
   const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
