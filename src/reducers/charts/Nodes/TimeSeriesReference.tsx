@@ -36,7 +36,7 @@ export const configPanel = ({
 
   const selectedWorkspaceTimeSeriesLabel =
     workspaceTimeSeries.find(
-      ({ id }) => id === functionData.timeSeriesExternalId
+      ({ tsExternalId }) => tsExternalId === functionData.timeSeriesExternalId
     )?.name || '';
 
   const loadOptions = (
@@ -45,7 +45,7 @@ export const configPanel = ({
   ) => {
     callback(
       workspaceTimeSeries.map((result) => ({
-        value: result.id,
+        value: result.tsExternalId,
         label: result.name,
       }))
     );

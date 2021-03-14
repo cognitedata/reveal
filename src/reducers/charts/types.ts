@@ -1,4 +1,4 @@
-import { Node, Connection, NodeProgress } from '@cognite/connect';
+import { Node, Connection } from '@cognite/connect';
 import { FunctionComponent } from 'react';
 
 export type Chart = {

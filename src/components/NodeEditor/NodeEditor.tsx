@@ -198,15 +198,12 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
         <ConfigPanel
           node={activeNode}
           onSave={(node) => {
-            console.log('hello');
             onUpdateNode(node);
           }}
           onClose={() => {
-            console.log('there');
             setActiveNode(undefined);
           }}
           onRemove={() => {
-            console.log('rmeove');
             onRemoveNode(activeNode);
             setActiveNode(undefined);
           }}
