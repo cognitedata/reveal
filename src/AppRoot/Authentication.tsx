@@ -13,6 +13,7 @@ import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import ErrorPage from 'pages/ErrorPage';
 import { getMetrics } from 'utils/metrics';
+import { getDataSet } from 'store/config/thunks';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -30,10 +31,14 @@ const Authentication = (): JSX.Element => {
     loading: groupsLoading,
     loaded: groupsLoaded,
     error: groupsLoadError,
+    isAdmin,
   } = useSelector(getGroupsState);
 
   const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
   const [fetchDispatched, setFetchDispatched] = useState(false);
+  const [retrieveDataSetDispatched, setRetrieveDataSetDispatched] = useState(
+    false
+  );
 
   const loading = authenticating || suitesLoading || groupsLoading;
   const dataLoaded = suitesLoaded && groupsLoaded;
@@ -41,6 +46,7 @@ const Authentication = (): JSX.Element => {
 
   const Metrics = getMetrics();
 
+  // authentication
   useEffect(() => {
     const auth = async () => {
       await dispatch(authenticate(tenant, client, apiClient));
@@ -59,6 +65,7 @@ const Authentication = (): JSX.Element => {
     authenticated,
   ]);
 
+  // fetch suites & groups
   useEffect(() => {
     const fetch = async () => {
       setFetchDispatched(true);
@@ -86,6 +93,14 @@ const Authentication = (): JSX.Element => {
     tenant,
     Metrics,
   ]);
+
+  // retrieve/create data set if admin user
+  useEffect(() => {
+    if (dataLoaded && isAdmin && !retrieveDataSetDispatched) {
+      setRetrieveDataSetDispatched(true);
+      dispatch(getDataSet(client));
+    }
+  }, [dataLoaded, isAdmin, retrieveDataSetDispatched, client, dispatch]);
 
   if (hasError) {
     return <ErrorPage />;

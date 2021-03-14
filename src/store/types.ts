@@ -10,6 +10,7 @@ import {
   NotificationState,
   NotificationRootAction,
 } from './notification/types';
+import { ConfigState, ConfigRootAction } from './config/types';
 
 export type StoreAction =
   | SuitesTableRootAction
@@ -18,7 +19,8 @@ export type StoreAction =
   | ModalRootAction
   | UserSpaceRootAction
   | FormRootAction
-  | NotificationRootAction;
+  | NotificationRootAction
+  | ConfigRootAction;
 
 export type StoreState = {
   suitesTable: SuitesTableState;
@@ -28,6 +30,7 @@ export type StoreState = {
   userSpace: UserSpaceState;
   form: FormState;
   notification: NotificationState;
+  config: ConfigState;
 };
 
 export type AppStore = Store<StoreState, StoreAction>;

@@ -19,6 +19,7 @@ import { ModalContainer, ModalFooter } from 'components/modals/elements';
 import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
 import { useMetrics } from 'utils/metrics';
+import { getConfigState } from 'store/config/selectors';
 
 interface Props {
   suite: Suite;
@@ -38,6 +39,7 @@ const EditBoardModal: React.FC<Props> = ({
   const { saving: formSaving } = useSelector(formState);
   const { deleteQueue } = useSelector(filesUploadState);
   const [filesUploadQueue] = useState(new Map());
+  const { dataSetId } = useSelector(getConfigState);
   const metrics = useMetrics('EditSuite');
 
   useEffect(() => {
@@ -53,7 +55,14 @@ const EditBoardModal: React.FC<Props> = ({
   const handleSubmit = async () => {
     if (hasErrors) return;
     await dispatch(
-      saveForm(client, apiClient, suite, filesUploadQueue, deleteQueue)
+      saveForm(
+        client,
+        apiClient,
+        suite,
+        filesUploadQueue,
+        deleteQueue,
+        dataSetId
+      )
     );
     metrics.track('Saved', {
       suiteKey: suite.key,
