@@ -14,7 +14,6 @@ import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
-import { getTenantFromURL } from 'utils/env';
 import { useCallFunction } from 'utils/cogniteFunctions';
 import { pinTypes, isWorkflowRunnable } from './utils';
 import defaultNodeOptions from '../../reducers/charts/Nodes';
@@ -39,12 +38,10 @@ type WorkflowEditorProps = {
 
 const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
-  const tenant = getTenantFromURL();
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
   );
-  const { mutate: callFunction, data } = useCallFunction('simple_calc-master');
-  console.log({ data });
+  const { mutate: callFunction } = useCallFunction('simple_calc-master');
   const update = (diff: Partial<ChartWorkflow>) => {
     mutate({
       chart: {
@@ -95,10 +92,6 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
 
   const onRun = async () => {
     if (!workflow) {
-      return;
-    }
-
-    if (!tenant) {
       return;
     }
 

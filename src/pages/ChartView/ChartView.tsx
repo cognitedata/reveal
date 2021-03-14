@@ -1,5 +1,3 @@
-/* eslint-disable no-alert */
-
 import React, { useEffect, useState } from 'react';
 import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
@@ -18,6 +16,7 @@ import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
+import RunWorkflows from './RunWorkflowsButton';
 import {
   Header,
   TopPaneWrapper,
@@ -74,146 +73,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     timeSeriesId?: string;
     reportType?: string;
   }>({});
-
-  // const runWorkflows = async () => {
-  //   if (!chart || !chart?.workflowCollection) {
-  //     return;
-  //   }
-
-  //   (chart.workflowCollection || []).forEach(async (flow) => {
-  //     if (!flow) {
-  //       return;
-  //     }
-  //     if (!tenant) {
-  //       return;
-  //     }
-  //     const steps = getStepsFromWorkflow(flow);
-  //     if (!steps.length) {
-  //       return;
-  //     }
-  //     const computation = {
-  //       steps,
-  //       start_time: new Date(chart.dateFrom).getTime(),
-  //       end_time: new Date(chart.dateTo).getTime(),
-  //       granularity: calculateGranularity(
-  //         [
-  //           new Date(chart.dateFrom).getTime(),
-  //           new Date(chart.dateTo).getTime(),
-  //         ],
-  //         1000
-  //       ),
-  //     };
-  //     const functions = await sdk.get<{ items: CogniteFunction[] }>(
-  //       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
-  //     );
-  //     const simpleCalc = functions.data.items.find(
-  //       (func) => func.name === 'simple_calc-master'
-  //     );
-  //     if (!simpleCalc) {
-  //       return;
-  //     }
-
-  //     updateChart({
-  //       ...chart,
-  //       workflowCollection: chart.workflowCollection?.map((wf) =>
-  //         wf.id === flow.id
-  //           ? {
-  //               ...wf,
-  //               lastRun: {
-  //                 timestamp: Date.now(),
-  //                 status: 'RUNNING',
-  //                 nodeProgress: flow.nodes?.reduce((output, node) => {
-  //                   return {
-  //                     ...output,
-  //                     [node.id]: { status: 'RUNNING' },
-  //                   };
-  //                 }, {}),
-  //               },
-  //             }
-  //           : wf
-  //       ),
-  //     });
-
-  //     const functionCall = await sdk.post<{ id: number }>(
-  //       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/call`,
-  //       {
-  //         data: {
-  //           data: { computation_graph: computation },
-  //         },
-  //       }
-  //     );
-  //     await waitOnFunctionComplete(
-  //       sdk,
-  //       tenant,
-  //       simpleCalc.id,
-  //       functionCall.data.id
-  //     );
-  //     const functionResult = await sdk.get<{ response: Record<string, any> }>(
-  //       `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
-  //     );
-
-  //     if (
-  //       !functionResult.data.response ||
-  //       functionResult.data?.response?.error
-  //     ) {
-  //       updateChart({
-  //         ...chart,
-  //         workflowCollection: chart.workflowCollection?.map((wf) =>
-  //           wf.id === flow.id
-  //             ? {
-  //                 ...wf,
-  //                 latestRun: {
-  //                   timestamp: Date.now(),
-  //                   status: 'FAILED',
-  //                   nodeProgress: flow.nodes?.reduce((output, node) => {
-  //                     return {
-  //                       ...output,
-  //                       [node.id]: { status: 'FAILED' },
-  //                     };
-  //                   }, {}),
-  //                 },
-  //               }
-  //             : wf
-  //         ),
-  //       });
-  //       return;
-  //     }
-  //     const latestRun: LatestWorkflowRun = {
-  //       status: 'SUCCESS',
-  //       timestamp: Date.now(),
-  //       errors: [],
-  //       results: {
-  //         datapoints: {
-  //           unit: 'Unknown',
-  //           datapoints: functionResult.data.response.value.map(
-  //             (_: any, i: number) => ({
-  //               timestamp: functionResult.data.response.timestamp[i],
-  //               value: functionResult.data.response.value[i],
-  //             })
-  //           ),
-  //         },
-  //       },
-  //       nodeProgress: flow.nodes?.reduce((output, node) => {
-  //         return {
-  //           ...output,
-  //           [node.id]: { status: 'DONE' },
-  //         };
-  //       }, {}),
-  //     };
-
-  //     updateChart({
-  //       ...chart,
-  //       workflowCollection: chart.workflowCollection?.map((wf) =>
-  //         wf.id === flow.id
-  //           ? {
-  //               ...wf,
-  //               latestRun,
-  //             }
-  //           : wf
-  //       ),
-  //     });
-  //   });
-  // };
 
   const handleClickNewWorkflow = () => {
     if (chart) {
@@ -394,9 +253,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               >
                 Automatic Update
               </Button>
-              <Button type="secondary" onClick={() => console.log('todo')}>
-                Run workflows
-              </Button>
+              <RunWorkflows chart={chart} update={updateChart} />
               <SharingDropdown chart={chart} />
               <Button icon="Download" variant="ghost">
                 Export

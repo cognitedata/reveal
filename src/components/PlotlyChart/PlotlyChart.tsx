@@ -120,7 +120,7 @@ const PlotlyChartComponent = ({
           color: workflow.color,
           width: workflow.lineWeight,
           dash: convertLineStyle(workflow.lineStyle),
-          unit: 'todo',
+          unit: '',
           datapoints: [],
         })),
     ].filter(({ datapoints }) => datapoints?.length) || [];
