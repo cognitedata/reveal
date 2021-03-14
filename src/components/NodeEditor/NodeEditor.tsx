@@ -8,21 +8,14 @@ import {
   Connection,
   NodeContainer,
 } from '@cognite/connect';
-import { Menu, Input, Button } from '@cognite/cogs.js';
+import { Menu, Input, Button, toast } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
-import {
-  Chart,
-  ChartWorkflow,
-  LatestWorkflowRun,
-  StorableNode,
-} from 'reducers/charts/types';
+import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
-import { CogniteFunction } from 'reducers/charts/Nodes/DSPToolboxFunction';
-import { waitOnFunctionComplete } from 'utils/cogniteFunctions';
-import { useSDK } from '@cognite/sdk-provider';
 import { getTenantFromURL } from 'utils/env';
+import { useCallFunction } from 'utils/cogniteFunctions';
 import { pinTypes, isWorkflowRunnable } from './utils';
 import defaultNodeOptions from '../../reducers/charts/Nodes';
 import ConfigPanel from './ConfigPanel';
@@ -45,14 +38,13 @@ type WorkflowEditorProps = {
 };
 
 const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
-  const sdk = useSDK();
-
   const [activeNode, setActiveNode] = useState<StorableNode>();
   const tenant = getTenantFromURL();
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
   );
-
+  const { mutate: callFunction, data } = useCallFunction('simple_calc-master');
+  console.log({ data });
   const update = (diff: Partial<ChartWorkflow>) => {
     mutate({
       chart: {
@@ -79,14 +71,9 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
     );
     update({
       nodes: nodeUpdate,
+      calls: [],
     });
   }, 100);
-
-  const onNewNode = (newNode: Node) => {
-    update({
-      nodes: [...nodes, newNode],
-    });
-  };
 
   const onRemoveNode = (node: Node) => {
     const newConnections = { ...connections };
@@ -102,6 +89,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
     update({
       nodes: [...nodes].filter((n) => n.id !== node.id),
       connections: newConnections,
+      calls: [],
     });
   };
 
@@ -130,93 +118,25 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
       ),
     };
 
-    const functions = await sdk.get<{ items: CogniteFunction[] }>(
-      `https://api.cognitedata.com/api/playground/projects/${tenant}/functions`
-    );
-
-    const simpleCalc = functions.data.items.find(
-      (func) => func.name === 'simple_calc-master'
-    );
-
-    if (!simpleCalc) {
-      return;
-    }
-
-    update({
-      latestRun: {
-        timestamp: Date.now(),
-        status: 'RUNNING',
-        nodeProgress: workflow.nodes?.reduce((output, node) => {
-          return {
-            ...output,
-            [node.id]: { status: 'RUNNING' },
-          };
-        }, {}),
-      },
-    });
-
-    const functionCall = await sdk.post<{ id: number }>(
-      `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/call`,
+    callFunction(
+      { data: { computation_graph: computation } },
       {
-        data: {
-          data: { computation_graph: computation },
+        onSuccess({ functionId, callId }) {
+          update({
+            calls: [
+              {
+                callDate: Date.now(),
+                functionId,
+                callId,
+              },
+            ],
+          });
+        },
+        onError() {
+          toast.warn('Could not execute workflow');
         },
       }
     );
-
-    await waitOnFunctionComplete(
-      sdk,
-      tenant,
-      simpleCalc.id,
-      functionCall.data.id
-    );
-
-    const functionResult = await sdk.get<{ response: Record<string, any> }>(
-      `https://api.cognitedata.com/api/playground/projects/${tenant}/functions/${simpleCalc.id}/calls/${functionCall.data.id}/response`
-    );
-
-    if (!functionResult.data.response || functionResult.data?.response?.error) {
-      update({
-        latestRun: {
-          timestamp: Date.now(),
-          status: 'FAILED',
-          nodeProgress: workflow.nodes?.reduce((output, node) => {
-            return {
-              ...output,
-              [node.id]: { status: 'FAILED' },
-            };
-          }, {}),
-        },
-      });
-      return;
-    }
-
-    const latestRun: LatestWorkflowRun = {
-      status: 'SUCCESS',
-      timestamp: Date.now(),
-      errors: [],
-      results: {
-        datapoints: {
-          unit: 'Unknown',
-          datapoints: functionResult.data.response.value.map(
-            (_: any, i: number) => ({
-              timestamp: functionResult.data.response.timestamp[i],
-              value: functionResult.data.response.value[i],
-            })
-          ),
-        },
-      },
-      nodeProgress: workflow.nodes?.reduce((output, node) => {
-        return {
-          ...output,
-          [node.id]: { status: 'DONE' },
-        };
-      }, {}),
-    };
-
-    update({
-      latestRun,
-    });
   };
 
   if (!workflowId) {
@@ -247,10 +167,11 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
                 <Menu.Item
                   key={nodeOption.name}
                   onClick={() => {
-                    onNewNode({
+                    update({
                       id: nanoid(),
                       ...nodeOption.node,
                       ...nodePosition,
+                      calls: [],
                     });
                     onClose();
                   }}
@@ -265,7 +186,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
             <SourceNode
               key={node.id}
               node={{ ...node, selected: node.id === activeNode?.id }}
-              status={workflow.latestRun?.nodeProgress?.[node.id]}
+              status="LOADING"
               onUpdate={onUpdateNode}
               onClick={(clickedNode: Node) => {
                 setActiveNode(clickedNode);
@@ -290,7 +211,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
 
       <Button
         type="primary"
-        style={{ position: 'absolute', bottom: 16, right: 16 }}
+        style={{ position: 'absolute', top: 16, right: 16 }}
         disabled={!isWorkflowRunnable(nodes || [])}
         onClick={onRun}
       >

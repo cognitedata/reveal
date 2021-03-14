@@ -7,7 +7,6 @@ import {
   Datapoints,
   DatapointsMultiQuery,
   DoubleDatapoint,
-  StringDatapoint,
 } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
@@ -112,7 +111,7 @@ const PlotlyChartComponent = ({
           )?.label,
         })),
       ...(enabledWorkflows || [])
-        .filter((workflow) => workflow?.latestRun?.status === 'SUCCESS')
+        .filter(() => false)
         .map((workflow) => ({
           id: workflow?.id,
           type: 'workflow',
@@ -121,12 +120,8 @@ const PlotlyChartComponent = ({
           color: workflow.color,
           width: workflow.lineWeight,
           dash: convertLineStyle(workflow.lineStyle),
-          unit: workflow?.latestRun?.results?.datapoints.unit,
-          datapoints: workflow?.latestRun?.results?.datapoints.datapoints as (
-            | StringDatapoint
-            | DoubleDatapoint
-            | DatapointAggregate
-          )[],
+          unit: 'todo',
+          datapoints: [],
         })),
     ].filter(({ datapoints }) => datapoints?.length) || [];
 

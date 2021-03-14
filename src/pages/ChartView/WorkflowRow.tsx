@@ -1,7 +1,12 @@
 import React from 'react';
-import { Chart, ChartWorkflow, WorkflowRunStatus } from 'reducers/charts/types';
+import {
+  Chart,
+  ChartWorkflow,
+  FunctionCallStatus,
+} from 'reducers/charts/types';
 import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import FunctionCall from 'components/FunctionCall';
 import {
   SourceItem,
   SourceSquare,
@@ -10,13 +15,14 @@ import {
   SourceRow,
 } from './elements';
 
-const renderStatusIcon = (status?: WorkflowRunStatus) => {
+const renderStatusIcon = (status?: FunctionCallStatus) => {
   switch (status) {
-    case 'RUNNING':
+    case 'Running':
       return <Icon type="Loading" />;
-    case 'SUCCESS':
+    case 'Completed':
       return <Icon type="Check" />;
-    case 'FAILED':
+    case 'Failed':
+    case 'Timeout':
       return <Icon type="Close" />;
     default:
       return null;
@@ -41,7 +47,8 @@ export default function WorkflowRow({
   isDataQualityMode = false,
   mutate,
 }: Props) {
-  const { id, enabled, color, name, latestRun } = workflow;
+  const { id, enabled, color, name, calls } = workflow;
+  const call = calls?.sort((c) => c.callDate)[0];
 
   const update = (wfId: string, diff: Partial<ChartWorkflow>) =>
     mutate({
@@ -81,9 +88,16 @@ export default function WorkflowRow({
             color={color}
             fade={!enabled}
           />
-          <div style={{ marginRight: 10 }}>
-            {renderStatusIcon(latestRun?.status)}
-          </div>
+          {call && (
+            <div style={{ marginRight: 10 }}>
+              <FunctionCall
+                id={call.functionId}
+                callId={call.callId}
+                renderLoading={() => renderStatusIcon('Running')}
+                renderCall={({ status }) => renderStatusIcon(status)}
+              />
+            </div>
+          )}
           <SourceName>{name || 'noname'}</SourceName>
           <SourceMenu onClick={(e) => e.stopPropagation()}>
             <Dropdown

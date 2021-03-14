@@ -12,14 +12,6 @@ type FunctionData = {
   toolFunction?: DSPFunction;
 };
 
-export type CogniteFunction = {
-  id: number;
-  externalId: string;
-  name: string;
-  fileId: number;
-  description: string;
-};
-
 export const effect = async (funcData: FunctionData) => {
   if (!funcData.toolFunction) {
     throw new Error('No external id given in config');

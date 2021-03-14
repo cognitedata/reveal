@@ -33,14 +33,14 @@ export type StorableNode = Omit<Node, 'functionEffect'> & {
   functionEffectReference?: string;
 };
 
-export type WorkflowRunStatus = 'IDLE' | 'RUNNING' | 'SUCCESS' | 'FAILED';
+export type FunctionCallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
 
-export type LatestWorkflowRun = {
-  timestamp: number;
-  nodeProgress?: NodeProgress;
-  status: WorkflowRunStatus;
-  results?: Record<string, any>;
-  errors?: string[];
+type Call = {
+  functionId: number;
+  callId: number;
+  // Call date is also available from the function api but this allows us to sort chronologically
+  // based on firebase data
+  callDate: number;
 };
 
 export type ChartWorkflow = {
@@ -53,8 +53,7 @@ export type ChartWorkflow = {
   range?: number[];
   nodes?: StorableNode[]; // We don't need these functions until we 'compile'/run the workflow.
   connections?: Record<string, Connection>;
-  // Latest run of this workflow (not to be stored)
-  latestRun?: LatestWorkflowRun;
+  calls?: Call[];
 };
 
 export type ConfigPanelComponentProps = {
