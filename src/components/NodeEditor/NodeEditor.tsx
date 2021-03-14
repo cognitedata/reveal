@@ -161,10 +161,15 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
                   key={nodeOption.name}
                   onClick={() => {
                     update({
-                      id: nanoid(),
-                      ...nodeOption.node,
-                      ...nodePosition,
-                      calls: [],
+                      nodes: [
+                        ...nodes,
+                        {
+                          id: nanoid(),
+                          ...nodeOption.node,
+                          ...nodePosition,
+                          calls: [],
+                        },
+                      ],
                     });
                     onClose();
                   }}
@@ -192,9 +197,16 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
       {activeNode && (
         <ConfigPanel
           node={activeNode}
-          onSave={onUpdateNode}
-          onClose={() => setActiveNode(undefined)}
+          onSave={(node) => {
+            console.log('hello');
+            onUpdateNode(node);
+          }}
+          onClose={() => {
+            console.log('there');
+            setActiveNode(undefined);
+          }}
           onRemove={() => {
+            console.log('rmeove');
             onRemoveNode(activeNode);
             setActiveNode(undefined);
           }}

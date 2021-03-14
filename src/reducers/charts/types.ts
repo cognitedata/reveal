@@ -35,7 +35,7 @@ export type StorableNode = Omit<Node, 'functionEffect'> & {
 
 export type FunctionCallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
 
-type Call = {
+export type Call = {
   functionId: number;
   callId: number;
   // Call date is also available from the function api but this allows us to sort chronologically

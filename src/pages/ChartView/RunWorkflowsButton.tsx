@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, toast } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts/types';
+import { Button } from '@cognite/cogs.js';
+import { Chart, Call } from 'reducers/charts/types';
 import { useCallFunction } from 'utils/cogniteFunctions';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
@@ -10,57 +10,55 @@ type Props = {
   update: (c: Chart) => void;
 };
 export default function RunWorkflows({ chart, update }: Props) {
-  const { mutate: callFunction } = useCallFunction('simple_calc-master');
+  const { mutateAsync: callFunction } = useCallFunction('simple_calc-master');
 
   const handleRun = () => {
-    chart.workflowCollection?.map((wf) => {
-      const steps = getStepsFromWorkflow(wf);
+    const updates = chart.workflowCollection
+      ?.filter((wf) => getStepsFromWorkflow(wf).length > 0)
+      .map(async (wf) => {
+        const steps = getStepsFromWorkflow(wf);
 
-      if (!steps.length) {
-        return;
-      }
+        const computation = {
+          steps,
+          start_time: new Date(chart.dateFrom).getTime(),
+          end_time: new Date(chart.dateTo).getTime(),
+          granularity: calculateGranularity(
+            [
+              new Date(chart.dateFrom).getTime(),
+              new Date(chart.dateTo).getTime(),
+            ],
+            1000
+          ),
+        };
 
-      const computation = {
-        steps,
-        start_time: new Date(chart.dateFrom).getTime(),
-        end_time: new Date(chart.dateTo).getTime(),
-        granularity: calculateGranularity(
-          [
-            new Date(chart.dateFrom).getTime(),
-            new Date(chart.dateTo).getTime(),
-          ],
-          1000
-        ),
-      };
-
-      callFunction(
-        { data: { computation_graph: computation } },
-        {
-          onSuccess({ functionId, callId }) {
-            update({
-              ...chart,
-              workflowCollection: chart.workflowCollection?.map((w) =>
-                w.id === wf.id
-                  ? {
-                      ...w,
-                      calls: [
-                        {
-                          callDate: Date.now(),
-                          functionId,
-                          callId,
-                        },
-                      ],
-                    }
-                  : w
-              ),
-            });
-          },
-          onError() {
-            toast.warn('Could not execute workflow');
-          },
-        }
-      );
-    });
+        const call = await callFunction({
+          data: { computation_graph: computation },
+        });
+        return {
+          ...call,
+          callDate: Date.now(),
+          id: wf.id,
+        };
+      });
+    if (updates) {
+      Promise.all(updates).then((r) => {
+        const calls: Record<string, Call> = r.reduce(
+          (accl, c) => ({ ...accl, [c.id]: c }),
+          {}
+        );
+        update({
+          ...chart,
+          workflowCollection: chart?.workflowCollection?.map((w) => {
+            return calls[w.id]
+              ? {
+                  ...w,
+                  calls: [calls[w.id]],
+                }
+              : w;
+          }),
+        });
+      });
+    }
   };
 
   return (
