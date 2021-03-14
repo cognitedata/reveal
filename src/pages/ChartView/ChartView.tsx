@@ -14,6 +14,7 @@ import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
+import { useLoginStatus } from 'hooks';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 import RunWorkflows from './RunWorkflowsButton';
@@ -40,6 +41,7 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
+  const { data } = useLoginStatus();
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
   const {
@@ -48,7 +50,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
-  const updateChart = (updatedChart: Chart) => mutate({ chart: updatedChart });
+  const updateChart = (updatedChart: Chart) =>
+    mutate({
+      chart: updatedChart,
+      skipPersist: data?.user !== updatedChart.user,
+    });
 
   useEffect(() => {
     if (updateError) {
