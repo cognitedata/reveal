@@ -137,6 +137,6 @@ export const node = {
   outputPins: [],
   functionEffectReference: effectId,
   functionData: {
-    toolFunction: undefined,
+    toolFunction: '',
   },
 } as StorableNode;

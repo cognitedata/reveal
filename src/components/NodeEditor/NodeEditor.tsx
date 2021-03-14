@@ -53,7 +53,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
     (flow) => flow.id === workflowId
   );
 
-  const update = (diff: Partial<ChartWorkflow>) =>
+  const update = (diff: Partial<ChartWorkflow>) => {
     mutate({
       chart: {
         ...chart,
@@ -66,8 +66,8 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
             : wf
         ),
       },
-      skipPersist: true,
     });
+  };
 
   const { nodes = [], connections = [] } = workflow || {};
   const context = { chart };
@@ -77,15 +77,8 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
     const nodeUpdate = nodes.map((node) =>
       node.id === nextNode.id ? nextNode : node
     );
-
     update({
       nodes: nodeUpdate,
-      latestRun: workflow?.latestRun
-        ? {
-            ...workflow?.latestRun,
-            nodeProgress: undefined,
-          }
-        : undefined,
     });
   }, 100);
 
@@ -255,7 +248,7 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
                   key={nodeOption.name}
                   onClick={() => {
                     onNewNode({
-                      id: `${nodeOption.node.subtitle}-${nanoid()}`,
+                      id: nanoid(),
                       ...nodeOption.node,
                       ...nodePosition,
                     });
@@ -294,14 +287,6 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
           context={context}
         />
       )}
-
-      <Button
-        type="primary"
-        style={{ position: 'absolute', top: 16, right: 16 }}
-        onClick={() => mutate({ chart, skipPersist: false })}
-      >
-        Save
-      </Button>
 
       <Button
         type="primary"

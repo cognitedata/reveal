@@ -62,7 +62,7 @@ export const configPanel = ({
           onUpdateNode({
             title: nextValue.label,
             functionData: {
-              timeSeriesExternalId: nextValue.value,
+              timeSeriesExternalId: nextValue.value || '',
             },
           });
         }}
@@ -90,6 +90,6 @@ export const node = {
   ],
   functionEffectReference: effectId,
   functionData: {
-    timeSeriesExternalId: undefined,
+    timeSeriesExternalId: '',
   },
 } as StorableNode;

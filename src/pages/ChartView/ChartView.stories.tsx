@@ -11,5 +11,4 @@ export const Base = () => {
   return <ChartView chartId="1" />;
 };
 
-Base.story = configureStory({
-});
+Base.story = configureStory({});

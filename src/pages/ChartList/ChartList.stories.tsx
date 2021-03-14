@@ -11,5 +11,4 @@ export const Base = () => {
   return <ChartList />;
 };
 
-Base.story = configureStory({
-});
+Base.story = configureStory({});

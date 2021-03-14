@@ -88,7 +88,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   }>({});
 
   const runWorkflows = async () => {
-    // console.log('Running all workflows');
     if (!chart || !chart?.workflowCollection) {
       return;
     }
@@ -290,7 +289,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       }
       if (y.length > 0) {
         y.forEach((update) => {
-          console.log(update);
           newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
             (t) => (t.id === update.id ? { ...t, range: update.range } : t)
           );
