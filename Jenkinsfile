@@ -79,7 +79,7 @@ static final String[] DIRS = [
   'lint',
   'testcafe',
   'unit-tests',
-  'storybook',
+  // 'storybook',
   'preview',
   'staging',
   'production',
@@ -119,7 +119,7 @@ def pods = { body ->
               body()
             }
           }
-        } 
+        }
       }
     }
   }
@@ -162,11 +162,11 @@ pods {
           }
         },
 
-        'Storybook': {
-          previewServer.runStorybookStage(
-            shouldExecute: isPullRequest
-          )
-        },
+        // 'Storybook': {
+        //   previewServer.runStorybookStage(
+        //     shouldExecute: isPullRequest
+        //   )
+        // },
 
         'Preview': {
           dir('preview') {
@@ -255,7 +255,7 @@ pods {
         }
       }
     }
-    
+
 
     if (isProduction && PRODUCTION_APP_ID) {
       stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
