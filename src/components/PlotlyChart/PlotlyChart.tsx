@@ -1,6 +1,7 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import { Chart } from 'reducers/charts/types';
+import { useQueries, useQuery } from 'react-query';
+import zipWith from 'lodash/zipWith';
+import { Call, Chart } from 'reducers/charts/types';
 import {
   DatapointAggregate,
   DatapointAggregates,
@@ -36,7 +37,7 @@ const PlotlyChartComponent = ({
   onAxisChange,
   showYAxis,
 }: ChartProps) => {
-  const client = useSDK();
+  const sdk = useSDK();
   const pointsPerSeries = 1000;
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
@@ -62,7 +63,7 @@ const PlotlyChartComponent = ({
   const { data: timeSeriesDataPoints = [] } = useQuery(
     ['timeseries', query],
     async () => {
-      const result = await client.datapoints.retrieve(
+      const result = await sdk.datapoints.retrieve(
         query as DatapointsMultiQuery
       );
       return Promise.all(
@@ -92,6 +93,35 @@ const PlotlyChartComponent = ({
   const enabledWorkflows = chart.workflowCollection?.filter(
     (flow) => flow?.enabled
   );
+  const calls = (enabledWorkflows || [])
+    .map((wf) => wf.calls?.[0])
+    .filter(Boolean) as Call[];
+
+  const functionResults = useQueries(
+    calls.map((c) => ({
+      queryKey: ['functions', c.functionId, 'call', c.callId, 'response'],
+      queryFn: (): Promise<DoubleDatapoint[] | undefined> =>
+        sdk
+          .get(
+            `/api/playground/projects/${sdk.project}/functions/${c.functionId}/calls/${c.callId}/response`
+          )
+          .then((r) => r.data.response),
+    }))
+  );
+
+  const transformSimpleCalcResult = ({
+    value,
+    timestamp,
+  }: {
+    value?: number[];
+    timestamp?: number[];
+  }) =>
+    value?.length && timestamp?.length
+      ? zipWith(value, timestamp, (v, t) => ({
+          value: v,
+          timestamp: new Date(t),
+        }))
+      : ([] as DoubleDatapoint[]);
 
   const seriesData: SeriesData[] =
     [
@@ -111,8 +141,8 @@ const PlotlyChartComponent = ({
           )?.label,
         })),
       ...(enabledWorkflows || [])
-        .filter(() => false)
-        .map((workflow) => ({
+        .filter((wf) => wf.enabled)
+        .map((workflow, i) => ({
           id: workflow?.id,
           type: 'workflow',
           range: workflow.range,
@@ -121,7 +151,9 @@ const PlotlyChartComponent = ({
           width: workflow.lineWeight,
           dash: convertLineStyle(workflow.lineStyle),
           unit: '',
-          datapoints: [],
+          datapoints: transformSimpleCalcResult(
+            (functionResults?.[i]?.data as any) || {}
+          ),
         })),
     ].filter(({ datapoints }) => datapoints?.length) || [];
 

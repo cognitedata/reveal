@@ -40,7 +40,7 @@ function InnerFunctionCall({
     }
   );
   const { data: response } = useQuery<{ response?: string }>(
-    ['functions', id, 'call', callId],
+    ['functions', id, 'call', callId, 'response'],
     () =>
       sdk
         .get(
