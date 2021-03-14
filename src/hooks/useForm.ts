@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-  setHasError,
+  setIsValid,
   setSuite,
   clearForm as clearFormAction,
   clearBoardForm as clearBoardFormAction,
@@ -15,6 +15,8 @@ import { RootDispatcher } from 'store/types';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { setBoardState } from 'store/forms/thunks';
 import { Validator, ValidationRules } from 'validators';
+import set from 'lodash/set';
+import keys from 'lodash/keys';
 
 export const useFormState = () => {
   const dispatch = useDispatch<RootDispatcher>();
@@ -44,42 +46,86 @@ export const useFormState = () => {
   };
 };
 
+export type ValidateFieldFunction = (
+  name: string,
+  value: string | undefined
+) => void;
+type BoardTouchedFields = {
+  [Property in keyof Board]?: boolean;
+};
+
 export const useForm = (validations: Validator) => {
-  const [errors, setErrors] = useState<any>({});
   const dispatch = useDispatch<RootDispatcher>();
+  const [errors, setErrors] = useState<any>({});
+  const [touched, setTouched] = useState<BoardTouchedFields>({});
 
   useEffect(() => {
     dispatch(
-      setHasError(
+      setIsValid(
         isEmpty(errors) || values(errors).every((error) => isEqual(error, ''))
       )
     );
   }, [errors, dispatch]);
 
-  const validateField = (name: string, value: string) => {
+  const clearErrors = () => {
+    setTouched({});
+    setErrors({});
+  };
+
+  const validateFieldValue: ValidateFieldFunction = (
+    name: string,
+    value: string | undefined
+  ) => {
     const rules: ValidationRules = validations[name];
 
     if (!rules) return '';
     if (rules.required) {
-      if (!value.trim()) {
+      if (!value?.trim()) {
         return rules.required.message || 'required field';
       }
     }
     if (rules.pattern && value) {
-      if (!new RegExp(rules.pattern.value).exec(value)) {
+      if (!new RegExp(rules.pattern.value).exec(value as string)) {
         return rules.pattern.message || 'invalid field';
       }
     }
-    if (rules.validate && isFunction(rules.validate)) {
+    if (rules.validate && isFunction(rules.validate) && value) {
       const validationError = rules.validate(value);
       return validationError;
     }
     return '';
   };
 
+  const validateField: ValidateFieldFunction = (
+    name: string,
+    value: string | undefined
+  ) => {
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setErrors((prevState: Suite) => ({
+      ...prevState,
+      [name]: validateFieldValue(name, value),
+    }));
+  };
+
+  const validateBoard = (board: Board) => {
+    const boardErrors = {} as Board;
+    keys(validations).forEach((fieldName) => {
+      const value = board[fieldName as keyof Board] || '';
+      set(
+        boardErrors,
+        fieldName,
+        validateFieldValue(fieldName, value as string)
+      );
+    });
+    setErrors(boardErrors);
+  };
+
   return {
     validateField,
+    validateBoard,
     errors,
     setErrors,
+    touched,
+    clearErrors,
   };
 };

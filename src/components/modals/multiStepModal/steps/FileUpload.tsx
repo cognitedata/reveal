@@ -18,16 +18,21 @@ import {
 } from 'store/forms/selectors';
 import { Board } from 'store/suites/types';
 import { boardValidator } from 'validators';
-import { useForm } from 'hooks';
 import { useMetrics } from 'utils/metrics';
 
 import { addFileToDeleteQueue } from 'store/forms/actions';
 
 type Props = {
   filesUploadQueue: Map<string, File>;
+  setErrors: React.Dispatch<any>;
+  error: string;
 };
 
-export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
+export const FileUpload: React.FC<Props> = ({
+  filesUploadQueue,
+  error,
+  setErrors,
+}) => {
   const dispatch = useDispatch();
   const { key: boardKey, title: boardTitle, imageFileId } = useSelector(
     boardState
@@ -43,8 +48,6 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
 
   const inDeleteQueue = deleteQueue.includes(imageFileId);
 
-  const { setErrors, errors } = useForm(boardValidator);
-
   const handleFileInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files && e.currentTarget.files[0];
     if (!file) {
@@ -53,7 +56,7 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
     if (!validateFileType(file)) {
       setErrors((prevState: Board) => ({
         ...prevState,
-        imageFileId: boardValidator.imageFile?.mimeType,
+        imageFileId: boardValidator.imageFileId?.mimeType?.message,
       }));
       metrics.track('FileUploadValidationError_FileType', {
         boardKey,
@@ -65,7 +68,7 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
     if (!validateFileSize(file)) {
       setErrors((prevState: Board) => ({
         ...prevState,
-        imageFileId: boardValidator.imageFile?.maxSize?.message,
+        imageFileId: boardValidator.imageFileId?.maxSize?.message,
       }));
       metrics.track('FileUploadValidationError_MaxSize', {
         boardKey,
@@ -88,6 +91,7 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
       fileSize: file?.size,
       fileType: file?.type,
     });
+    e.currentTarget.value = ''; // reset the input
   };
 
   const cancelUpload = () => {
@@ -131,14 +135,14 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
   };
 
   const renderFileNameContainer = () => {
-    if (errors?.imageFileId) {
+    if (error) {
       return (
         <>
           {currentFileInfo?.name &&
             !inDeleteQueue &&
             renderFileName(currentFileInfo.name, deleteCurrentFile)}
           <span className="break" />
-          <span className="error-space">{errors?.imageFileId}</span>
+          <span className="error-space">{error}</span>
         </>
       );
     }
@@ -152,7 +156,7 @@ export const FileUpload: React.FC<Props> = ({ filesUploadQueue }) => {
   };
 
   return (
-    <UploadImageContainer hasError={errors?.imageFileId}>
+    <UploadImageContainer hasError={!!error}>
       <input
         type="file"
         name="uploadImage"

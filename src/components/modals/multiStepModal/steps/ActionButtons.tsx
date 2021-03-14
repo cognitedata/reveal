@@ -3,7 +3,7 @@ import { Button } from '@cognite/cogs.js';
 import { ActionButtonsContainer } from 'components/modals/elements';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  isErrorListEmpty,
+  isValid,
   suiteState,
   boardState,
   filesUploadState,
@@ -22,15 +22,15 @@ import { useMetrics } from 'utils/metrics';
 
 type Props = {
   filesUploadQueue: Map<string, File>;
+  onCancel: () => void;
 };
 
-const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
+const ActionButtons: React.FC<Props> = ({ filesUploadQueue, onCancel }) => {
   const suite = useSelector(suiteState);
   const board = useSelector(boardState) as Board;
+
   const { deleteQueue } = useSelector(filesUploadState);
-  const isValid =
-    !isEmpty(board.title) && !isEmpty(board.type) && !isEmpty(board.url);
-  const hasErrors = !useSelector(isErrorListEmpty) || !isValid;
+  const hasErrors = !useSelector(isValid);
 
   const dispatch = useDispatch<RootDispatcher>();
   const metrics = useMetrics('EditSuite');
@@ -75,6 +75,7 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue }) => {
       dispatch(actions.excludeFileFromDeleteQueue(board.imageFileId));
     }
     dispatch(actions.clearBoardForm());
+    onCancel();
     metrics.track('Cancel_BoardForm', { component: 'BoardForm' });
   };
   return (

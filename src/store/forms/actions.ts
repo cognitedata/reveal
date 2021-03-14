@@ -8,9 +8,7 @@ import {
   FileUpdateError,
 } from './types';
 
-export const setHasError = createAction(
-  FormActionTypes.SET_IS_ERROR_LIST_EMPTY
-)<boolean>();
+export const setIsValid = createAction(FormActionTypes.SET_VALIDITY)<boolean>();
 
 export const setSuite = createAction(FormActionTypes.SET_SUITE)<Suite>();
 

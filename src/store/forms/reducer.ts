@@ -30,7 +30,7 @@ const getFilesInitialState = (): FilesUploadState => ({
 });
 
 const getInitialState = (): FormState => ({
-  isErrorListEmpty: true,
+  valid: false,
   suite: getEmptySuite(),
   board: {},
   imageFile: getImageFileInitialState(),
@@ -40,10 +40,10 @@ const getInitialState = (): FormState => ({
 
 export const FormReducer = createReducer(getInitialState())
   .handleAction(
-    FormActionTypes.SET_IS_ERROR_LIST_EMPTY,
+    FormActionTypes.SET_VALIDITY,
     (state: FormState, action: FormRootAction) => ({
       ...state,
-      isErrorListEmpty: action.payload,
+      valid: action.payload,
     })
   )
   .handleAction(

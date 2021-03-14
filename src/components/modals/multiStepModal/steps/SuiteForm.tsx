@@ -1,6 +1,5 @@
 import React from 'react';
 import { Input, Micro } from '@cognite/cogs.js';
-import { Suite } from 'store/suites/types';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSuite } from 'store/forms/actions';
 import { suiteState } from 'store/forms/selectors';
@@ -16,7 +15,7 @@ import { RootDispatcher } from 'store/types';
 import ColorSelector from './ColorSelector';
 
 export const SuiteForm: React.FC = () => {
-  const { errors, setErrors, validateField } = useForm(suiteValidator);
+  const { errors, validateField, touched } = useForm(suiteValidator);
   const suite = useSelector(suiteState);
   const dispatch = useDispatch<RootDispatcher>();
   const maxDescriptionLength = 250;
@@ -34,10 +33,14 @@ export const SuiteForm: React.FC = () => {
         [name]: value,
       })
     );
-    setErrors((prevState: Suite) => ({
-      ...prevState,
-      [name]: validateField(name, value),
-    }));
+    validateField(name, value);
+  };
+
+  const handleOnBlur = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { value, name } = event.target;
+    validateField(name, value);
   };
 
   return (
@@ -47,11 +50,12 @@ export const SuiteForm: React.FC = () => {
           autoComplete="off"
           title="Title"
           name="title"
-          error={errors?.title}
+          error={touched.title && errors?.title}
           value={suite.title}
           variant="noBorder"
           placeholder="Name of suite"
           onChange={handleOnChange}
+          onBlur={handleOnBlur}
           fullWidth
         />
       </CustomInputContainer>
@@ -66,6 +70,7 @@ export const SuiteForm: React.FC = () => {
           value={suite.description}
           placeholder="Description that clearly explains the purpose of the suite"
           onChange={handleOnChange}
+          onBlur={handleOnBlur}
           maxLength={maxDescriptionLength}
         />
         <ValidationContainer exceedWarningLength={exceedMaxLength}>

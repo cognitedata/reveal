@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   filesUploadState,
   formState,
-  isErrorListEmpty,
+  isValid,
   suiteState,
 } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
@@ -31,7 +31,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const suite = useSelector(suiteState);
-  const hasErrors = !useSelector(isErrorListEmpty);
+  const hasErrors = !useSelector(isValid);
   const { saving: formSaving } = useSelector(formState);
   const { deleteQueue } = useSelector(filesUploadState);
   const [filesUploadQueue] = useState(new Map());
@@ -81,7 +81,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
       {formSaving ? (
         <Icon type="Loading" />
       ) : (
-        <Button type="primary" onClick={handleSubmit}>
+        <Button type="primary" onClick={handleSubmit} disabled={hasErrors}>
           {modalSettings.edit.buttons.save}
         </Button>
       )}

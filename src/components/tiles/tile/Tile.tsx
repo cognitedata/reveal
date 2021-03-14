@@ -57,9 +57,7 @@ export const Tile: React.FC<Props> = ({
       <TileContainer {...(isBoard && { onClick: setAsLastvisited })}>
         <TileHeader isBoard={isBoard} color={color}>
           <Flex>
-            {avatar && (
-              <SuiteAvatar title={dataItem.title} color={dataItem.color} />
-            )}
+            {avatar && <SuiteAvatar title={dataItem.title} color={color} />}
             <TileDescription>
               <Overline level={3}>{(dataItem as Board)?.type}</Overline>
               <Tooltip content={dataItem.title}>

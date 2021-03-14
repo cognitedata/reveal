@@ -6,9 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { suiteState } from 'store/forms/selectors';
 import { setSuite } from 'store/forms/actions';
 import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
-import { Suite } from 'store/suites/types';
-import { useForm } from 'hooks/useForm';
-import { suiteValidator } from 'validators';
 import { OptionTypeBase } from 'types/core';
 import { RootDispatcher } from 'store/types';
 
@@ -53,7 +50,6 @@ const colourStyles = {
 };
 
 const ColorSelector: React.FC = () => {
-  const { setErrors, validateField } = useForm(suiteValidator);
   const suite = useSelector(suiteState);
   const dispatch = useDispatch<RootDispatcher>();
 
@@ -64,10 +60,6 @@ const ColorSelector: React.FC = () => {
         color: selectedOption.value,
       })
     );
-    setErrors((prevState: Suite) => ({
-      ...prevState,
-      color: validateField('color', selectedOption.value),
-    }));
   };
 
   const suiteColorValue =
