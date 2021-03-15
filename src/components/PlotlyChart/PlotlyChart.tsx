@@ -1,16 +1,15 @@
 import React from 'react';
-import { useQueries, useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 import zipWith from 'lodash/zipWith';
 import { Call, Chart } from 'reducers/charts/types';
 import {
   DatapointAggregate,
-  DatapointAggregates,
   Datapoints,
   DatapointsMultiQuery,
   DoubleDatapoint,
 } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
-import { convertUnits, units } from 'utils/units';
+import { units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
@@ -43,53 +42,29 @@ const PlotlyChartComponent = ({
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
   );
-  const query =
-    !!chart && enabledTimeSeries.length > 0
-      ? {
-          items: enabledTimeSeries.map(({ tsId }) => ({ id: tsId })),
-          start: new Date(chart.dateFrom),
-          end: new Date(chart.dateTo),
-          granularity: calculateGranularity(
-            [
-              new Date(chart.dateFrom).getTime(),
-              new Date(chart.dateTo).getTime(),
-            ],
-            pointsPerSeries
-          ),
-          aggregates: ['average'],
-          limit: pointsPerSeries,
-        }
-      : undefined;
+  const queries = enabledTimeSeries?.map(({ tsId }) => ({
+    items: [{ id: tsId }],
+    start: new Date(chart.dateFrom),
+    end: new Date(chart.dateTo),
+    granularity: calculateGranularity(
+      [new Date(chart.dateFrom).getTime(), new Date(chart.dateTo).getTime()],
+      pointsPerSeries
+    ),
+    aggregates: ['average'],
+    limit: pointsPerSeries,
+  }));
 
-  const { data: timeSeriesDataPoints = [] } = useQuery(
-    ['timeseries', query],
-    async () => {
-      const result = await sdk.datapoints.retrieve(
-        query as DatapointsMultiQuery
-      );
-      return Promise.all(
-        (result as (Datapoints | DatapointAggregates)[]).map(
-          async (ts: Datapoints | DatapointAggregates) => {
-            return {
-              ...ts,
-              datapoints: await convertUnits(
-                ts.datapoints,
-                chart.timeSeriesCollection
-                  ?.find(({ id }) => id === ts.externalId)
-                  ?.unit?.toLowerCase(),
-                chart.timeSeriesCollection
-                  ?.find(({ id }) => id === ts.externalId)
-                  ?.preferredUnit?.toLowerCase()
-              ),
-            } as typeof ts;
-          }
-        )
-      );
-    },
-    {
-      enabled: !!query,
-    }
+  const queryResult = useQueries(
+    queries?.map((q) => ({
+      queryKey: ['timeseries', q],
+      queryFn: async (): Promise<DatapointAggregate[]> => {
+        const r = await sdk.datapoints.retrieve(q as DatapointsMultiQuery);
+        return r[0]?.datapoints || [];
+      },
+    }))
   );
+
+  console.log(queryResult);
 
   const enabledWorkflows = chart.workflowCollection?.filter(
     (flow) => flow?.enabled
@@ -126,21 +101,18 @@ const PlotlyChartComponent = ({
 
   const seriesData: SeriesData[] =
     [
-      ...(chart.timeSeriesCollection || [])
-        .filter((t) => t.enabled)
-        .map((t) => ({
-          ...t,
-          type: 'timeseries',
-          width: t.lineWeight,
-          range: t.range,
-          datapoints:
-            timeSeriesDataPoints.find((dp) => t.tsId === dp.id)?.datapoints ||
-            [],
-          dash: convertLineStyle(t.lineStyle),
-          unit: units.find(
-            (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
-          )?.label,
-        })),
+      ...(enabledTimeSeries || []).map((t, i) => ({
+        ...t,
+        type: 'timeseries',
+        width: t.lineWeight,
+        range: t.range,
+        // @ts-ignore
+        datapoints: (queryResult[i]?.data || []) as DatapointAggregate[],
+        dash: convertLineStyle(t.lineStyle),
+        unit: units.find(
+          (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
+        )?.label,
+      })),
       ...(enabledWorkflows || [])
         .filter((wf) => wf.enabled)
         .map((workflow, i) => ({
@@ -156,7 +128,7 @@ const PlotlyChartComponent = ({
             (functionResults?.[i]?.data as any) || {}
           ),
         })),
-    ].filter(({ datapoints }) => datapoints?.length) || [];
+    ] || [];
 
   const data = seriesData.map(
     ({ name, color, width, dash, datapoints }, index) => {
