@@ -16,6 +16,17 @@ export default function UploadStep() {
   const { uploadedFiles } = useSelector(
     (state: RootState) => state.uploadedFiles
   );
+  // todo: remove this once development is complete
+  // useEffect(() => {
+  //   dispatch(
+  //     fetchFilesById([
+  //       { id: 695604426880093 },
+  //       { id: 8733204951981 },
+  //       { id: 3901383492989027 },
+  //     ])
+  //   );
+  // }, []);
+
   const onUploadSuccess = React.useCallback(
     (file) => {
       dispatch(addUploadedFile(file));

@@ -10,6 +10,8 @@ import {
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { AnnotationJob, DetectionModelType } from 'src/api/types';
+import { MetadataItem } from 'src/pages/Preview/components/MetaDataTable/MetadataTable';
+import { v3 } from '@cognite/cdf-sdk-singleton';
 
 export interface VisionAnnotationState extends VisionAnnotation {
   id: string;
@@ -25,6 +27,8 @@ interface VisionModelState {
   annotations: string[];
 }
 
+type FileInfoValueState = string | v3.Label[] | null | undefined;
+
 type State = {
   annotations: {
     byId: Record<string, VisionAnnotationState>;
@@ -35,6 +39,9 @@ type State = {
     allIds: string[];
   };
   modelsByFileId: Record<string, string[]>;
+  metadataEdit: boolean;
+  fileDetails: Record<string, FileInfoValueState>;
+  fileMetaData: Record<number, MetadataItem>;
 };
 
 const initialState: State = {
@@ -47,6 +54,9 @@ const initialState: State = {
     allIds: [],
   },
   modelsByFileId: {},
+  metadataEdit: false,
+  fileDetails: {},
+  fileMetaData: {},
 };
 
 const processUpdate = createAction<{
@@ -89,6 +99,63 @@ const previewSlice = createSlice({
         );
         delete state.annotations.byId[annotation.id];
       }
+    },
+    toggleMetaDataTableEditMode(state, action: PayloadAction<MetadataItem[]>) {
+      const editMode = state.metadataEdit;
+
+      if (editMode) {
+        // filter empty keys when finishing edit mode
+        const metaRowKeys = Object.keys(state.fileMetaData);
+        metaRowKeys.forEach((rowKey) => {
+          const metaKey = state.fileMetaData[parseInt(rowKey, 10)].key;
+          if (!metaKey) {
+            delete state.fileMetaData[parseInt(rowKey, 10)];
+          }
+        });
+      } else {
+        // set metadata when starting edit mode
+        state.fileMetaData = {};
+        action.payload.forEach((item, index) => {
+          state.fileMetaData[index] = item;
+        });
+      }
+      state.metadataEdit = !editMode;
+    },
+    fileInfoEdit(
+      state,
+      action: PayloadAction<{
+        key: string;
+        value: FileInfoValueState;
+      }>
+    ) {
+      state.fileDetails[action.payload.key] = action.payload.value;
+    },
+    fileMetaDataEdit(
+      state,
+      action: PayloadAction<{
+        index: number;
+        key: string;
+        value: string;
+      }>
+    ) {
+      state.fileMetaData[action.payload.index] = {
+        key: action.payload.key,
+        value: action.payload.value || '',
+      };
+    },
+    fileMetaDataAddRow(state, action: PayloadAction<MetadataItem[]>) {
+      state.metadataEdit = true;
+      state.fileMetaData = {};
+      const metaLength = Object.keys(action.payload).length;
+      action.payload.forEach((item, index) => {
+        state.fileMetaData[index] = item;
+      });
+      state.fileMetaData[metaLength] = { key: '', value: '' };
+    },
+    resetEditHistory(state) {
+      state.metadataEdit = false;
+      state.fileMetaData = {};
+      state.fileDetails = {};
     },
   },
   extraReducers: (builder) => {
@@ -150,6 +217,11 @@ export default previewSlice.reducer;
 export const {
   toggleAnnotationVisibility,
   annotationApproval,
+  toggleMetaDataTableEditMode,
+  fileInfoEdit,
+  fileMetaDataEdit,
+  fileMetaDataAddRow,
+  resetEditHistory,
 } = previewSlice.actions;
 
 export const selectModelIdsByFileId = (

@@ -20,7 +20,19 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 const Container = styled.div`
   width: 100%;
+  display: grid;
+  grid-template-rows: 45px auto;
 `;
+
+const Header = styled.div`
+  width: 100%;
+`;
+
+const Body = styled.div`
+  overflow-y: auto;
+  width: 100%;
+`;
+
 const StyledRow = styled(Row)`
   margin-bottom: 8px;
 `;
@@ -128,54 +140,60 @@ export const AnnotationsTable = (props: {
   const dispatch = useDispatch();
   return (
     <Container>
-      <StyledRow>
-        <StyledCol span={2}> </StyledCol>
-        <StyledCol span={5}>Action</StyledCol>
-        <StyledCol span={12}>Annotations</StyledCol>
-        <StyledCol span={5}>Polygon</StyledCol>
-      </StyledRow>
-      <Divider.Horizontal />
-      {props.annotations.map((annotation) => {
-        return (
-          <StyledRow key={annotation.id}>
-            <StyledCol span={2}>
-              <Radio id="example7" name="example" value="Option 1" />
-            </StyledCol>
-            <StyledCol span={5}>
-              <ApproveButtons
-                approveStatus={annotation.status}
-                id={annotation.id}
-              />
-            </StyledCol>
-            <StyledCol span={12}>
-              <AnnotationLbl>
-                <Input
-                  disabled
-                  style={{ width: `100%` }}
-                  value={annotation.description}
+      <Header>
+        <StyledRow>
+          <StyledCol span={2}> </StyledCol>
+          <StyledCol span={5}>Action</StyledCol>
+          <StyledCol span={12}>Annotations</StyledCol>
+          <StyledCol span={5}>Polygon</StyledCol>
+        </StyledRow>
+        <Divider.Horizontal />
+      </Header>
+      <Body>
+        {props.annotations.map((annotation) => {
+          return (
+            <StyledRow key={annotation.id}>
+              <StyledCol span={2}>
+                <Radio id="example7" name="example" value="Option 1" />
+              </StyledCol>
+              <StyledCol span={5}>
+                <ApproveButtons
+                  approveStatus={annotation.status}
+                  id={annotation.id}
                 />
-              </AnnotationLbl>
-            </StyledCol>
-            <StyledCol span={5}>
-              <ShowHideBtn
-                type="secondary"
-                variant="outline"
-                icon={annotation.show ? 'EyeShow' : 'EyeHide'}
-                iconPlacement="right"
-                onClick={() =>
-                  dispatch(
-                    toggleAnnotationVisibility({ annotationId: annotation.id })
-                  )
-                }
-              >
-                <AnnotationBadge backgroundColor={annotation.color}>
-                  {annotation.displayId}
-                </AnnotationBadge>
-              </ShowHideBtn>
-            </StyledCol>
-          </StyledRow>
-        );
-      })}
+              </StyledCol>
+              <StyledCol span={12}>
+                <AnnotationLbl>
+                  <Input
+                    readOnly
+                    style={{ width: `100%` }}
+                    value={annotation.description}
+                  />
+                </AnnotationLbl>
+              </StyledCol>
+              <StyledCol span={5}>
+                <ShowHideBtn
+                  type="secondary"
+                  variant="outline"
+                  icon={annotation.show ? 'EyeShow' : 'EyeHide'}
+                  iconPlacement="right"
+                  onClick={() =>
+                    dispatch(
+                      toggleAnnotationVisibility({
+                        annotationId: annotation.id,
+                      })
+                    )
+                  }
+                >
+                  <AnnotationBadge backgroundColor={annotation.color}>
+                    {annotation.displayId}
+                  </AnnotationBadge>
+                </ShowHideBtn>
+              </StyledCol>
+            </StyledRow>
+          );
+        })}
+      </Body>
     </Container>
   );
 };

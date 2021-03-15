@@ -16,6 +16,8 @@ type ThunkConfig = { state: RootState };
 const initialState: State = {
   selectedDetectionModels: [DetectionModelType.Text],
   jobsByFileId: {},
+  // eslint-disable-next-line global-require
+  // jobsByFileId: require('./fakeJobs.json'),
   error: undefined,
 };
 

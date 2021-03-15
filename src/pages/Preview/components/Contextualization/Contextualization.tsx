@@ -1,35 +1,38 @@
 import React from 'react';
-import { Button, Select, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/pages/Preview/components/AnnotationsTable/AnnotationsTable';
 import { VisionAnnotationState } from 'src/store/previewSlice';
 
-const Container = styled.div``;
-
-const TitleRow = styled.div`
-  margin-top: 15px;
-  margin-bottom: 7px;
+const Container = styled.div`
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-row-gap: 15px;
+  grid-template-rows: auto auto calc(100% - 113px);
+  padding-top: 15px;
+  box-sizing: border-box;
 `;
 
-const ModelSelectContainer = styled.div`
-  display: none;
-  grid-template-columns: auto 200px;
-  column-gap: 10px;
-`;
+const TitleRow = styled.div``;
 
-const ModelTitle = styled.p`
-  display: none;
-  margin-bottom: 5px;
-  margin-left: 5px;
-`;
+// const ModelSelectContainer = styled.div`
+//   grid-template-columns: auto 200px;
+//   column-gap: 10px;
+// `;
+//
+// const ModelTitle = styled.p`
+//   margin-bottom: 5px;
+//   margin-left: 5px;
+// `;
+//
+// const SelectContainer = styled.div`
+//   padding-left: 5px;
+// `;
 
 const EditContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  padding: 10px 0 20px 0;
-`;
-const SelectContainer = styled.div`
-  padding-left: 5px;
 `;
 
 const StyledButton = styled(Button)`
@@ -44,22 +47,22 @@ export const Contextualization = (props: {
       <TitleRow>
         <Title level={3}>Detected Annotations</Title>
       </TitleRow>
-      <ModelTitle>ML training model</ModelTitle>
-      <ModelSelectContainer>
-        <SelectContainer>
-          <Select
-            value="v1"
-            placeholder
-            options={[
-              { value: 'v1', label: 'ML Corrossion v1' },
-              { value: 'v2', label: 'ML Corrossion v2' },
-            ]}
-          />
-        </SelectContainer>
-        <Button variant="outline" type="secondary" icon="Scan">
-          Detect Annotations
-        </Button>
-      </ModelSelectContainer>
+      {/* <ModelTitle>ML training model</ModelTitle> */}
+      {/* <ModelSelectContainer> */}
+      {/*  <SelectContainer> */}
+      {/*    <Select */}
+      {/*      value="v1" */}
+      {/*      placeholder */}
+      {/*      options={[ */}
+      {/*        { value: 'v1', label: 'ML Corrossion v1' }, */}
+      {/*        { value: 'v2', label: 'ML Corrossion v2' }, */}
+      {/*      ]} */}
+      {/*    /> */}
+      {/*  </SelectContainer> */}
+      {/*  <Button variant="outline" type="secondary" icon="Scan"> */}
+      {/*    Detect Annotations */}
+      {/*  </Button> */}
+      {/* </ModelSelectContainer> */}
       <EditContainer>
         <StyledButton type="primary" icon="Edit">
           Add Annotations
