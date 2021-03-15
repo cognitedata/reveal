@@ -1,18 +1,21 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
-import { DOCUMENTATION_PAGE_PATH } from 'routing/CreateRouteConfig';
+import {
+  DOCUMENTATION_PAGE_PATH,
+  RAW_TABLE_PAGE_PATH,
+} from 'routing/CreateRouteConfig';
 import { renderRegisterContext } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
+import { BACK, REGISTER } from 'utils/constants';
 import DocumentationPage, {
   DESCRIPTION_LABEL,
   INTEGRATION_DOCUMENTATION_HEADING,
 } from 'pages/create/DocumentationPage';
-import { REGISTER } from 'utils/constants';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
 describe('DocumentationPage', () => {
@@ -72,5 +75,12 @@ describe('DocumentationPage', () => {
         withCredentials: true,
       }
     );
+  });
+
+  test('Back btn path', () => {
+    renderRegisterContext(<DocumentationPage />, { ...props });
+    const back = screen.getByText(BACK);
+    const linkPath = back.getAttribute('href');
+    expect(linkPath.includes(RAW_TABLE_PAGE_PATH)).toEqual(true);
   });
 });

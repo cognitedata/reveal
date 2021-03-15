@@ -10,13 +10,17 @@ import {
 import ContactsPage, { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
 import {
   ADD_CONTACT,
+  BACK,
   EMAIL_LABEL,
   NAME_LABEL,
   NOTIFICATION_LABEL,
   REMOVE_CONTACT,
   ROLE_LABEL,
 } from '../../utils/constants';
-import { CONTACTS_PAGE_PATH } from '../../routing/CreateRouteConfig';
+import {
+  CONTACTS_PAGE_PATH,
+  EXTERNAL_ID_PAGE_PATH,
+} from '../../routing/CreateRouteConfig';
 
 describe('ContactsPage', () => {
   const props = {
@@ -119,5 +123,11 @@ describe('ContactsPage', () => {
     ) as HTMLInputElement;
     expect(sendNotificationInput).toBeInTheDocument();
     expect(sendNotificationInput.value).toEqual(`${contact.sendNotification}`);
+  });
+  test('Back btn path', () => {
+    renderRegisterContext(<ContactsPage />, { ...props });
+    const back = screen.getByText(BACK);
+    const linkPath = back.getAttribute('href');
+    expect(linkPath.includes(EXTERNAL_ID_PAGE_PATH)).toEqual(true);
   });
 });

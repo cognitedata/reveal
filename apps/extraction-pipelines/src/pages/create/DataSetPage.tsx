@@ -8,13 +8,8 @@ import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
-import {
-  CreateIntegrationPageWrapper,
-  GridBreadCrumbsWrapper,
-  GridH2Wrapper,
-  GridMainWrapper,
-  GridTitleWrapper,
-} from 'styles/StyledPage';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
+import { GridH2Wrapper } from 'styles/StyledPage';
 import { NEXT } from 'utils/constants';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
@@ -156,79 +151,73 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
   };
 
   return (
-    <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(SCHEDULE_PAGE_PATH)}>
-        Back
-      </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>Create integration</GridTitleWrapper>
-      <GridMainWrapper>
-        <GridH2Wrapper>{INTEGRATION_DATA_SET_HEADING}</GridH2Wrapper>
-        <FormProvider {...methods}>
-          <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-            <StyledRadioGroup>
-              <legend>Does the integration write to a data set?</legend>
-              <span id="data-set-hint" className="input-hint">
-                {DATA_SET_TIP}
-              </span>
-              <ErrorMessage
-                errors={errors}
-                name="dataset"
-                render={({ message }) => (
-                  <span id="data-set-error" className="error-message">
-                    {message}
-                  </span>
-                )}
-              />
-              <Radio
-                id="yes-option"
-                name="dataset"
-                value={DataSetOptions.YES}
-                checked={datasetValue === DataSetOptions.YES}
-                onChange={radioChanged}
-                aria-checked={datasetValue === DataSetOptions.YES}
-                aria-controls="data-set-id-wrapper"
-                aria-expanded={showDataSetId}
-              >
-                {DataSetOptions.YES}
-              </Radio>
-              {showDataSetId && (
-                <DataSetIdWrapper
-                  id="data-set-id-wrapper"
-                  role="region"
-                  direction="column"
-                  align="flex-start"
-                >
-                  <DataSetIdInput data={data} status={status} />
-                </DataSetIdWrapper>
+    <RegisterIntegrationLayout backPath={SCHEDULE_PAGE_PATH}>
+      <GridH2Wrapper>{INTEGRATION_DATA_SET_HEADING}</GridH2Wrapper>
+      <FormProvider {...methods}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          <StyledRadioGroup>
+            <legend>Does the integration write to a data set?</legend>
+            <span id="data-set-hint" className="input-hint">
+              {DATA_SET_TIP}
+            </span>
+            <ErrorMessage
+              errors={errors}
+              name="dataset"
+              render={({ message }) => (
+                <span id="data-set-error" className="error-message">
+                  {message}
+                </span>
               )}
-              <Radio
-                id="no-option"
-                name="dataset"
-                value={DataSetOptions.NO}
-                checked={datasetValue === DataSetOptions.NO}
-                onChange={radioChanged}
-                aria-checked={datasetValue === DataSetOptions.NO}
+            />
+            <Radio
+              id="yes-option"
+              name="dataset"
+              value={DataSetOptions.YES}
+              checked={datasetValue === DataSetOptions.YES}
+              onChange={radioChanged}
+              aria-checked={datasetValue === DataSetOptions.YES}
+              aria-controls="data-set-id-wrapper"
+              aria-expanded={showDataSetId}
+            >
+              {DataSetOptions.YES}
+            </Radio>
+            {showDataSetId && (
+              <DataSetIdWrapper
+                id="data-set-id-wrapper"
+                role="region"
+                direction="column"
+                align="flex-start"
               >
-                {DataSetOptions.NO}
-              </Radio>
-              <Radio
-                id="create-option"
-                name="dataset"
-                value={DataSetOptions.CREATE}
-                checked={datasetValue === DataSetOptions.CREATE}
-                onChange={radioChanged}
-                aria-checked={datasetValue === DataSetOptions.CREATE}
-              >
-                {CREATE_DATA_SET_LABEL}
-              </Radio>
-            </StyledRadioGroup>
-            <ButtonPlaced type="primary" htmlType="submit">
-              {NEXT}
-            </ButtonPlaced>
-          </CreateFormWrapper>
-        </FormProvider>
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+                <DataSetIdInput data={data} status={status} />
+              </DataSetIdWrapper>
+            )}
+            <Radio
+              id="no-option"
+              name="dataset"
+              value={DataSetOptions.NO}
+              checked={datasetValue === DataSetOptions.NO}
+              onChange={radioChanged}
+              aria-checked={datasetValue === DataSetOptions.NO}
+            >
+              {DataSetOptions.NO}
+            </Radio>
+            <Radio
+              id="create-option"
+              name="dataset"
+              value={DataSetOptions.CREATE}
+              checked={datasetValue === DataSetOptions.CREATE}
+              onChange={radioChanged}
+              aria-checked={datasetValue === DataSetOptions.CREATE}
+            >
+              {CREATE_DATA_SET_LABEL}
+            </Radio>
+          </StyledRadioGroup>
+          <ButtonPlaced type="primary" htmlType="submit">
+            {NEXT}
+          </ButtonPlaced>
+        </CreateFormWrapper>
+      </FormProvider>
+    </RegisterIntegrationLayout>
   );
 };
 export default DataSetPage;

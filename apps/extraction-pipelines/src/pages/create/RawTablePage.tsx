@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Colors, Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
@@ -15,15 +15,10 @@ import {
   DATA_SET_PAGE_PATH,
   DOCUMENTATION_PAGE_PATH,
 } from 'routing/CreateRouteConfig';
-import {
-  CreateIntegrationPageWrapper,
-  GridBreadCrumbsWrapper,
-  GridH2Wrapper,
-  GridMainWrapper,
-  GridTitleWrapper,
-} from 'styles/StyledPage';
+import { GridH2Wrapper } from 'styles/StyledPage';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { NEXT } from 'utils/constants';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
 import { IntegrationRawTable } from 'model/Integration';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
@@ -151,71 +146,65 @@ const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
     setValue('rawTable', value);
   };
   return (
-    <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(DATA_SET_PAGE_PATH)}>
-        Back
-      </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>Create integration</GridTitleWrapper>
-      <GridMainWrapper>
-        <GridH2Wrapper>{INTEGRATION_RAW_TABLE_HEADING}</GridH2Wrapper>
-        <FormProvider {...methods}>
-          <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-            <StyledRadioGroup>
-              <legend>{RAW_TABLE_LABEL}</legend>
-              <span id="raw-table-hint" className="input-hint">
-                {RAW_TABLE_TIP}
-              </span>
-              <ErrorMessage
-                errors={errors}
-                name="rawTable"
-                render={({ message }) => (
-                  <span id="raw-table-error" className="error-message">
-                    {message}
-                  </span>
-                )}
-              />
-              <Radio
-                id="yes-option"
-                name="rawTable"
-                value={RawTableOptions.YES}
-                checked={v === RawTableOptions.YES}
-                onChange={radioChanged}
-                aria-checked={v === RawTableOptions.YES}
-                aria-controls="raw-table-wrapper"
-                aria-expanded={showSelector}
-              >
-                {RawTableOptions.YES}
-              </Radio>
-              {showSelector && (
-                <ConditionalWrapper
-                  id="raw-table-wrapper"
-                  role="region"
-                  direction="column"
-                  align="flex-start"
-                >
-                  <ConnectRawTablesInput />
-                </ConditionalWrapper>
+    <RegisterIntegrationLayout backPath={DATA_SET_PAGE_PATH}>
+      <GridH2Wrapper>{INTEGRATION_RAW_TABLE_HEADING}</GridH2Wrapper>
+      <FormProvider {...methods}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          <StyledRadioGroup>
+            <legend>{RAW_TABLE_LABEL}</legend>
+            <span id="raw-table-hint" className="input-hint">
+              {RAW_TABLE_TIP}
+            </span>
+            <ErrorMessage
+              errors={errors}
+              name="rawTable"
+              render={({ message }) => (
+                <span id="raw-table-error" className="error-message">
+                  {message}
+                </span>
               )}
-              <Radio
-                id="no-option"
-                name="rawTable"
-                value={RawTableOptions.NO}
-                checked={v === RawTableOptions.NO}
-                onChange={radioChanged}
-                aria-checked={v === RawTableOptions.NO}
-                aria-controls="raw-table-wrapper"
-                aria-expanded={showSelector}
+            />
+            <Radio
+              id="yes-option"
+              name="rawTable"
+              value={RawTableOptions.YES}
+              checked={v === RawTableOptions.YES}
+              onChange={radioChanged}
+              aria-checked={v === RawTableOptions.YES}
+              aria-controls="raw-table-wrapper"
+              aria-expanded={showSelector}
+            >
+              {RawTableOptions.YES}
+            </Radio>
+            {showSelector && (
+              <ConditionalWrapper
+                id="raw-table-wrapper"
+                role="region"
+                direction="column"
+                align="flex-start"
               >
-                {RawTableOptions.NO}
-              </Radio>
-            </StyledRadioGroup>
-            <ButtonPlaced type="primary" htmlType="submit">
-              {NEXT}
-            </ButtonPlaced>
-          </CreateFormWrapper>
-        </FormProvider>
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+                <ConnectRawTablesInput />
+              </ConditionalWrapper>
+            )}
+            <Radio
+              id="no-option"
+              name="rawTable"
+              value={RawTableOptions.NO}
+              checked={v === RawTableOptions.NO}
+              onChange={radioChanged}
+              aria-checked={v === RawTableOptions.NO}
+              aria-controls="raw-table-wrapper"
+              aria-expanded={showSelector}
+            >
+              {RawTableOptions.NO}
+            </Radio>
+          </StyledRadioGroup>
+          <ButtonPlaced type="primary" htmlType="submit">
+            {NEXT}
+          </ButtonPlaced>
+        </CreateFormWrapper>
+      </FormProvider>
+    </RegisterIntegrationLayout>
   );
 };
 

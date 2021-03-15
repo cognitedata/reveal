@@ -7,21 +7,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink, useUserContext } from '@cognite/cdf-utilities';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
-import {
-  CreateIntegrationPageWrapper,
-  GridBreadCrumbsWrapper,
-  GridMainWrapper,
-  GridTitleWrapper,
-} from 'styles/StyledPage';
 import { NEXT } from 'utils/constants';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { CONTACTS_PAGE_PATH, NAME_PAGE_PATH } from 'routing/CreateRouteConfig';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { usePostIntegration } from 'hooks/usePostIntegration';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
-import { BackBtn } from 'components/buttons/BackBtn';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { TaskList, taskListItems } from 'pages/create/TaskList';
 
@@ -110,47 +103,40 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
     }
   };
   return (
-    <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
-        Integration overview
-      </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>Create integration</GridTitleWrapper>
-      <GridMainWrapper>
-        <BackBtn path={NAME_PAGE_PATH} />
-        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-          <HeadingLabel labelFor="integration-external-id">
-            {INTEGRATION_EXTERNAL_ID_HEADING}
-          </HeadingLabel>
-          <span id="external-id-hint" className="input-hint">
-            The external id is the id used to refer to this integration
-            externally. It must be unique. Follow company conventions.
-          </span>
-          <ErrorMessage
-            errors={errors}
-            name="externalId"
-            render={({ message }) => (
-              <span id="external-id-error" className="error-message">
-                {message}
-              </span>
-            )}
-          />
-          <StyledInput
-            id="integration-external-id"
-            name="externalId"
-            type="text"
-            ref={register}
-            className={`cogs-input ${errors.externalId ? 'has-error' : ''}`}
-            aria-invalid={!!errors.externalId}
-            aria-describedby="external-id-hint external-id-error"
-          />
+    <RegisterIntegrationLayout backPath={NAME_PAGE_PATH}>
+      <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+        <HeadingLabel labelFor="integration-external-id">
+          {INTEGRATION_EXTERNAL_ID_HEADING}
+        </HeadingLabel>
+        <span id="external-id-hint" className="input-hint">
+          The external id is the id used to refer to this integration
+          externally. It must be unique. Follow company conventions.
+        </span>
+        <ErrorMessage
+          errors={errors}
+          name="externalId"
+          render={({ message }) => (
+            <span id="external-id-error" className="error-message">
+              {message}
+            </span>
+          )}
+        />
+        <StyledInput
+          id="integration-external-id"
+          name="externalId"
+          type="text"
+          ref={register}
+          className={`cogs-input ${errors.externalId ? 'has-error' : ''}`}
+          aria-invalid={!!errors.externalId}
+          aria-describedby="external-id-hint external-id-error"
+        />
 
-          <ButtonPlaced type="primary" htmlType="submit">
-            {NEXT}
-          </ButtonPlaced>
-        </CreateFormWrapper>
-        <TaskList list={taskListItems} />
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+        <ButtonPlaced type="primary" htmlType="submit">
+          {NEXT}
+        </ButtonPlaced>
+      </CreateFormWrapper>
+      <TaskList list={taskListItems} />
+    </RegisterIntegrationLayout>
   );
 };
 export default ExternalIdPage;

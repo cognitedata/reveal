@@ -7,16 +7,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
-import {
-  CreateIntegrationPageWrapper,
-  GridBreadCrumbsWrapper,
-  GridMainWrapper,
-  GridTitleWrapper,
-} from '../../styles/StyledPage';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
 import { EXTERNAL_ID_PAGE_PATH } from '../../routing/CreateRouteConfig';
 import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
 import { HeadingLabel } from '../../components/inputs/HeadingLabel';
@@ -57,46 +51,40 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
     history.push(createLink(EXTERNAL_ID_PAGE_PATH));
   };
   return (
-    <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
-        Integration overview
-      </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>Create integration</GridTitleWrapper>
-      <GridMainWrapper>
-        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-          <HeadingLabel labelFor="integration-name">
-            {INTEGRATION_NAME_HEADING}
-          </HeadingLabel>
-          <span id="name-hint" className="input-hint">
-            Enter a name for your integration. It will be displayed in the
-            integration overview.
-          </span>
-          <ErrorMessage
-            errors={errors}
-            name="name"
-            render={({ message }) => (
-              <span id="name-error" className="error-message">
-                {message}
-              </span>
-            )}
-          />
-          <StyledInput
-            id="integration-name"
-            name="name"
-            type="text"
-            ref={register}
-            className={`cogs-input ${errors.name ? 'has-error' : ''}`}
-            aria-invalid={!!errors.name}
-            aria-describedby="name-hint name-error"
-          />
+    <RegisterIntegrationLayout>
+      <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+        <HeadingLabel labelFor="integration-name">
+          {INTEGRATION_NAME_HEADING}
+        </HeadingLabel>
+        <span id="name-hint" className="input-hint">
+          Enter a name for your integration. It will be displayed in the
+          integration overview.
+        </span>
+        <ErrorMessage
+          errors={errors}
+          name="name"
+          render={({ message }) => (
+            <span id="name-error" className="error-message">
+              {message}
+            </span>
+          )}
+        />
+        <StyledInput
+          id="integration-name"
+          name="name"
+          type="text"
+          ref={register}
+          className={`cogs-input ${errors.name ? 'has-error' : ''}`}
+          aria-invalid={!!errors.name}
+          aria-describedby="name-hint name-error"
+        />
 
-          <ButtonPlaced type="primary" htmlType="submit">
-            {NEXT}
-          </ButtonPlaced>
-        </CreateFormWrapper>
-        <TaskList list={taskListItems} />
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+        <ButtonPlaced type="primary" htmlType="submit">
+          {NEXT}
+        </ButtonPlaced>
+      </CreateFormWrapper>
+      <TaskList list={taskListItems} />
+    </RegisterIntegrationLayout>
   );
 };
 export default NamePage;

@@ -8,14 +8,9 @@ import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
-import {
-  CreateIntegrationPageWrapper,
-  GridBreadCrumbsWrapper,
-  GridH2Wrapper,
-  GridMainWrapper,
-  GridTitleWrapper,
-} from '../../styles/StyledPage';
+import { GridH2Wrapper } from '../../styles/StyledPage';
 import { NEXT } from '../../utils/constants';
 import { CreateFormWrapper } from '../../styles/StyledForm';
 import {
@@ -33,8 +28,6 @@ import {
   mapModelToInput,
   mapScheduleInputToModel,
 } from '../../utils/cronUtils';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
-import { BackBtn } from '../../components/buttons/BackBtn';
 import { createUpdateSpec } from '../../utils/contactsUtils';
 import { useAppEnv } from '../../hooks/useAppEnv';
 import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
@@ -194,101 +187,94 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
   };
   const v = watch('schedule');
   return (
-    <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
-        Integration overview
-      </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>Create integration</GridTitleWrapper>
-      <GridMainWrapper>
-        <BackBtn path={CONTACTS_PAGE_PATH} />
-        <GridH2Wrapper>{INTEGRATION_SCHEDULE_HEADING}</GridH2Wrapper>
-        <FormProvider {...methods}>
-          <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-            <StyledRadioGroup>
-              <legend>Schedule</legend>
-              <span id="schedule-hint" className="input-hint">
-                Select whether your integration runs according to a defined
-                schedule, is triggered by some irregular automatic or manual
-                event, or pushes data continuously, such as streaming or
-                continuous polling for new data.
-              </span>
-              <ErrorMessage
-                errors={errors}
+    <RegisterIntegrationLayout backPath={CONTACTS_PAGE_PATH}>
+      <GridH2Wrapper>{INTEGRATION_SCHEDULE_HEADING}</GridH2Wrapper>
+      <FormProvider {...methods}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          <StyledRadioGroup>
+            <legend>Schedule</legend>
+            <span id="schedule-hint" className="input-hint">
+              Select whether your integration runs according to a defined
+              schedule, is triggered by some irregular automatic or manual
+              event, or pushes data continuously, such as streaming or
+              continuous polling for new data.
+            </span>
+            <ErrorMessage
+              errors={errors}
+              name="schedule"
+              render={({ message }) => (
+                <span id="schedule-error" className="error-message">
+                  {message}
+                </span>
+              )}
+            />
+            <RadioInputsWrapper>
+              {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props */}
+              <input
+                type="radio"
+                id="scheduled"
                 name="schedule"
-                render={({ message }) => (
-                  <span id="schedule-error" className="error-message">
-                    {message}
-                  </span>
-                )}
+                aria-checked={SupportedScheduleStrings.SCHEDULED === v}
+                ref={register}
+                value={SupportedScheduleStrings.SCHEDULED}
+                aria-controls="cron-expression"
+                aria-expanded={showCron}
               />
-              <RadioInputsWrapper>
-                {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props */}
-                <input
-                  type="radio"
-                  id="scheduled"
-                  name="schedule"
-                  aria-checked={SupportedScheduleStrings.SCHEDULED === v}
-                  ref={register}
-                  value={SupportedScheduleStrings.SCHEDULED}
-                  aria-controls="cron-expression"
-                  aria-expanded={showCron}
-                />
-                <label id="scheduled-label" htmlFor="scheduled">
-                  {SupportedScheduleStrings.SCHEDULED}
-                </label>
-                {showCron && (
-                  <CronWrapper
-                    id="cron-expression"
-                    role="region"
-                    direction="column"
-                    align="flex-start"
-                  >
-                    <CronInput />
-                  </CronWrapper>
-                )}
+              <label id="scheduled-label" htmlFor="scheduled">
+                {SupportedScheduleStrings.SCHEDULED}
+              </label>
+              {showCron && (
+                <CronWrapper
+                  id="cron-expression"
+                  role="region"
+                  direction="column"
+                  align="flex-start"
+                >
+                  <CronInput />
+                </CronWrapper>
+              )}
 
-                <input
-                  type="radio"
-                  id="continuous"
-                  name="schedule"
-                  aria-checked={SupportedScheduleStrings.CONTINUOUS === v}
-                  ref={register}
-                  value={SupportedScheduleStrings.CONTINUOUS}
-                />
-                <label htmlFor="continuous">
-                  {SupportedScheduleStrings.CONTINUOUS}
-                </label>
-                <input
-                  type="radio"
-                  id="on-trigger"
-                  name="schedule"
-                  aria-checked={SupportedScheduleStrings.ON_TRIGGER === v}
-                  ref={register}
-                  value={SupportedScheduleStrings.ON_TRIGGER}
-                />
-                <label htmlFor="on-trigger">
-                  {SupportedScheduleStrings.ON_TRIGGER}
-                </label>
-                <input
-                  type="radio"
-                  id="not-defined"
-                  name="schedule"
-                  ref={register}
-                  aria-checked={SupportedScheduleStrings.NOT_DEFINED === v}
-                  value={SupportedScheduleStrings.NOT_DEFINED}
-                />
-                <label htmlFor="not-defined">
-                  {SupportedScheduleStrings.NOT_DEFINED}
-                </label>
-              </RadioInputsWrapper>
-            </StyledRadioGroup>
-            <ButtonPlaced type="primary" htmlType="submit">
-              {NEXT}
-            </ButtonPlaced>
-          </CreateFormWrapper>
-        </FormProvider>
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+              <input
+                type="radio"
+                id="continuous"
+                name="schedule"
+                aria-checked={SupportedScheduleStrings.CONTINUOUS === v}
+                ref={register}
+                value={SupportedScheduleStrings.CONTINUOUS}
+              />
+              <label htmlFor="continuous">
+                {SupportedScheduleStrings.CONTINUOUS}
+              </label>
+              <input
+                type="radio"
+                id="on-trigger"
+                name="schedule"
+                aria-checked={SupportedScheduleStrings.ON_TRIGGER === v}
+                ref={register}
+                value={SupportedScheduleStrings.ON_TRIGGER}
+              />
+              <label htmlFor="on-trigger">
+                {SupportedScheduleStrings.ON_TRIGGER}
+              </label>
+              <input
+                type="radio"
+                id="not-defined"
+                name="schedule"
+                ref={register}
+                aria-checked={SupportedScheduleStrings.NOT_DEFINED === v}
+                value={SupportedScheduleStrings.NOT_DEFINED}
+              />
+              <label htmlFor="not-defined">
+                {SupportedScheduleStrings.NOT_DEFINED}
+              </label>
+            </RadioInputsWrapper>
+          </StyledRadioGroup>
+          <ButtonPlaced type="primary" htmlType="submit">
+            {NEXT}
+          </ButtonPlaced>
+        </CreateFormWrapper>
+      </FormProvider>
+    </RegisterIntegrationLayout>
   );
 };
 export default SchedulePage;

@@ -22,6 +22,7 @@ export const CLOSE: Readonly<string> = 'Close';
 export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
 export const OK: Readonly<string> = 'OK';
+export const BACK: Readonly<string> = 'Back';
 export const NEXT: Readonly<string> = 'Next';
 export const ADD_CONTACT: Readonly<string> = 'Add another contact';
 export const REGISTER: Readonly<string> = 'Register';
@@ -57,6 +58,10 @@ export const NOTIFICATION_DIALOG_CONTENT: Readonly<string> =
 export const REMOVE_DIALOG_TEXT_PART: Readonly<string> =
   'Are you sure you want to remove';
 
+export const INTEGRATION_OVERVIEW: Readonly<string> = 'Integration overview';
 export const DETAILS: Readonly<string> = 'Details';
 export const RUNS: Readonly<string> = 'Runs';
 export const CONTACTS: Readonly<string> = 'Contacts';
+
+// Page headings
+export const REGISTER_INTEGRATION: Readonly<string> = 'Register integration';

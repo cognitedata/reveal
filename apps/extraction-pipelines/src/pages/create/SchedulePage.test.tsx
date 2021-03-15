@@ -12,9 +12,10 @@ import SchedulePage, { INTEGRATION_SCHEDULE_HEADING } from './SchedulePage';
 import { SupportedScheduleStrings } from '../../components/integrations/cols/Schedule';
 import { CRON_INVALID } from '../../utils/validation/cronValidation';
 import { CRON_LABEL } from '../../components/inputs/cron/CronInput';
-import { NEXT } from '../../utils/constants';
+import { BACK, NEXT } from '../../utils/constants';
 import { parseCron } from '../../utils/cronUtils';
 import {
+  CONTACTS_PAGE_PATH,
   DATA_SET_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
 } from '../../routing/CreateRouteConfig';
@@ -90,5 +91,11 @@ describe('SchedulePage', () => {
     expect(history.location.pathname.includes(DATA_SET_PAGE_PATH)).toEqual(
       true
     );
+  });
+  test('Back btn path', () => {
+    renderRegisterContext(<SchedulePage />, { ...props });
+    const back = screen.getByText(BACK);
+    const linkPath = back.getAttribute('href');
+    expect(linkPath.includes(CONTACTS_PAGE_PATH)).toEqual(true);
   });
 });

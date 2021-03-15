@@ -7,7 +7,10 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import { RAW_TABLE_PAGE_PATH } from 'routing/CreateRouteConfig';
+import {
+  DATA_SET_PAGE_PATH,
+  RAW_TABLE_PAGE_PATH,
+} from 'routing/CreateRouteConfig';
 import { databaseListMock } from 'utils/mockResponse';
 import RawTablePage, {
   INTEGRATION_RAW_TABLE_HEADING,
@@ -16,8 +19,8 @@ import RawTablePage, {
 } from 'pages/create/RawTablePage';
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { TABLE_REQUIRED } from 'components/inputs/rawSelector/ConnectRawTablesInput';
-import { NEXT } from 'utils/constants';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { BACK, NEXT } from 'utils/constants';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {
@@ -99,6 +102,13 @@ describe('RawTablePage', () => {
       screen.getByText(TABLE_REQUIRED);
     });
     expect(screen.getByText(TABLE_REQUIRED)).toBeInTheDocument();
+  });
+
+  test('Back btn path', () => {
+    renderRegisterContext(<RawTablePage />, { ...props });
+    const back = screen.getByText(BACK);
+    const linkPath = back.getAttribute('href');
+    expect(linkPath.includes(DATA_SET_PAGE_PATH)).toEqual(true);
   });
 
   test('Loads stored value', async () => {

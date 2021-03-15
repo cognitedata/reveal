@@ -1,8 +1,9 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
+import { NAME_PAGE_PATH } from 'routing/CreateRouteConfig';
 import { renderRegisterContext } from '../../utils/test/render';
-import { NEXT } from '../../utils/constants';
+import { BACK, NEXT } from '../../utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -60,5 +61,11 @@ describe('ExternalIdPage', () => {
     await waitFor(() => {
       expect(screen.queryByText(EXTERNAL_ID_REQUIRED)).not.toBeInTheDocument();
     });
+  });
+  test('Back btn path', () => {
+    renderRegisterContext(<ExternalIdPage />, { ...props });
+    const back = screen.getByText(BACK);
+    const linkPath = back.getAttribute('href');
+    expect(linkPath.includes(NAME_PAGE_PATH)).toEqual(true);
   });
 });

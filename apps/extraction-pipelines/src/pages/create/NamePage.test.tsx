@@ -4,7 +4,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
 import { renderRegisterContext } from '../../utils/test/render';
 import NamePage, { INTEGRATION_NAME_HEADING, NAME_REQUIRED } from './NamePage';
-import { NEXT } from '../../utils/constants';
+import { BACK, NEXT } from '../../utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -48,5 +48,10 @@ describe('NamePage', () => {
     const integrationName = 'My integration';
     fireEvent.change(nameInput, { target: { value: integrationName } });
     expect(screen.getByDisplayValue(integrationName)).toBeInTheDocument();
+  });
+  test('No back btn renders (this is the first page)', () => {
+    renderRegisterContext(<NamePage />, { ...props });
+    const back = screen.queryByText(BACK);
+    expect(back).not.toBeInTheDocument();
   });
 });

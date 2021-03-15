@@ -7,10 +7,13 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import { DATA_SET_PAGE_PATH } from 'routing/CreateRouteConfig';
+import {
+  DATA_SET_PAGE_PATH,
+  SCHEDULE_PAGE_PATH,
+} from 'routing/CreateRouteConfig';
 import { useDataSetsList } from 'hooks/useDataSetsList';
 import { datasetMockResponse } from 'utils/mockResponse';
-import { NEXT } from 'utils/constants';
+import { BACK, NEXT } from 'utils/constants';
 import {
   DATA_SET_ID_LABEL,
   DATA_SET_ID_REQUIRED,
@@ -24,7 +27,7 @@ import DataSetPage, {
 import { RegisterIntegrationInfo } from 'model/Integration';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
-jest.mock('hooks/useDataSetsList', () => {
+jest.mock('../../hooks/useDataSetsList', () => {
   return {
     useDataSetsList: jest.fn(),
   };
@@ -87,6 +90,17 @@ describe('DatasetPage', () => {
       screen.getByText(DATA_SET_ID_REQUIRED);
     });
     expect(screen.getByText(DATA_SET_ID_REQUIRED)).toBeInTheDocument();
+  });
+  test('Back btn path', () => {
+    const mock = datasetMockResponse();
+    useDataSetsList.mockReturnValue({
+      data: mock,
+      status: 'success',
+    });
+    renderRegisterContext(<DataSetPage />, { ...props });
+    const back = screen.getByText(BACK);
+    const linkPath = back.getAttribute('href');
+    expect(linkPath.includes(SCHEDULE_PAGE_PATH)).toEqual(true);
   });
 
   test('Loads stored value', () => {

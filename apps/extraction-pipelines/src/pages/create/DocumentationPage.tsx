@@ -8,17 +8,11 @@ import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
-import {
-  CreateIntegrationPageWrapper,
-  GridBreadCrumbsWrapper,
-  GridH2Wrapper,
-  GridMainWrapper,
-  GridTitleWrapper,
-} from 'styles/StyledPage';
+import { GridH2Wrapper } from 'styles/StyledPage';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { RAW_TABLE_PAGE_PATH } from 'routing/CreateRouteConfig';
-import { BackBtn } from 'components/buttons/BackBtn';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { REGISTER } from 'utils/constants';
 import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
@@ -27,7 +21,7 @@ import { createUpdateSpec } from 'utils/contactsUtils';
 import {
   MetaData,
   RegisterMetaData,
-} from '../../components/inputs/metadata/RegisterMetaData';
+} from 'components/inputs/metadata/RegisterMetaData';
 
 const DividerLine = styled.hr`
   height: 0.125rem;
@@ -126,53 +120,46 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
   };
 
   return (
-    <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
-        Integration overview
-      </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>Create integration</GridTitleWrapper>
-      <GridMainWrapper>
-        <BackBtn path={RAW_TABLE_PAGE_PATH} />
-        <GridH2Wrapper>{INTEGRATION_DOCUMENTATION_HEADING}</GridH2Wrapper>
-        <WithBottomBorder as="i" className="description">
-          Register any relevant information about your integration. This will
-          help while troubleshooting if there is an issue.
-        </WithBottomBorder>
-        <FormProvider {...methods}>
-          <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-            <label htmlFor="integration-description" className="input-label">
-              {DESCRIPTION_LABEL}
-            </label>
-            <span id="description-hint" className="input-hint" />
-            <ErrorMessage
-              errors={errors}
-              name="description"
-              render={({ message }) => (
-                <span id="description-error" className="error-message">
-                  {message}
-                </span>
-              )}
-            />
-            <StyledTextArea
-              id="integration-description"
-              name="description"
-              cols={30}
-              rows={10}
-              ref={register}
-              className={`cogs-input ${errors.description ? 'has-error' : ''}`}
-              aria-invalid={!!errors.description}
-              aria-describedby="description-hint description-error"
-            />
-            <DividerLine />
-            <RegisterMetaData />
-            <DividerLine />
-            <ButtonPlaced type="primary" htmlType="submit">
-              {REGISTER}
-            </ButtonPlaced>
-          </CreateFormWrapper>
-        </FormProvider>
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+    <RegisterIntegrationLayout backPath={RAW_TABLE_PAGE_PATH}>
+      <GridH2Wrapper>{INTEGRATION_DOCUMENTATION_HEADING}</GridH2Wrapper>
+      <WithBottomBorder as="i" className="description">
+        Register any relevant information about your integration. This will help
+        while troubleshooting if there is an issue.
+      </WithBottomBorder>
+      <FormProvider {...methods}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          <label htmlFor="integration-description" className="input-label">
+            {DESCRIPTION_LABEL}
+          </label>
+          <span id="description-hint" className="input-hint" />
+          <ErrorMessage
+            errors={errors}
+            name="description"
+            render={({ message }) => (
+              <span id="description-error" className="error-message">
+                {message}
+              </span>
+            )}
+          />
+          <StyledTextArea
+            id="integration-description"
+            name="description"
+            cols={30}
+            rows={10}
+            ref={register}
+            className={`cogs-input ${errors.description ? 'has-error' : ''}`}
+            aria-invalid={!!errors.description}
+            aria-describedby="description-hint description-error"
+          />
+          <DividerLine />
+          <RegisterMetaData />
+          <DividerLine />
+          <ButtonPlaced type="primary" htmlType="submit">
+            {REGISTER}
+          </ButtonPlaced>
+        </CreateFormWrapper>
+      </FormProvider>
+    </RegisterIntegrationLayout>
   );
 };
 export default DocumentationPage;
