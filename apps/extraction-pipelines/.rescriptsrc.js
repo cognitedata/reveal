@@ -57,21 +57,6 @@ const addLoaders = (config) => {
             use: getStyleLoader(),
             sideEffects: true,
           },
-          {
-            test: /\.less$/,
-            use: [
-              ...getStyleLoader(),
-              {
-                loader: 'less-loader',
-                options: {
-                  lessOptions: {
-                    modifyVars: colors,
-                    javascriptEnabled: true,
-                  },
-                },
-              },
-            ],
-          },
           ...match.rules.find((rule) => Array.isArray(rule.oneOf)).oneOf,
         ],
       },
