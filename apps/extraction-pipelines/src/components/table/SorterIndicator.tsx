@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { AriaAttributes } from 'react';
 import { ColumnInstance } from 'react-table';
-import { NoStyleBtn } from '../../styles/StyledButton';
+import { Button } from '@cognite/cogs.js';
+import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon';
 
-function getSortOrder<T extends object>(column: ColumnInstance<T>) {
+function getSortOrder<T extends object>(
+  column: ColumnInstance<T>
+): { icon: AllIconTypes; ariaSort: AriaAttributes['aria-sort'] } {
   if (column.isSorted) {
     if (column.isSortedDesc) {
       return {
@@ -30,9 +33,9 @@ const SorterIndicator = <T extends object>({
 }: SorterIndicatorProps<T>) => {
   const { icon, ariaSort } = getSortOrder(column);
   return (
-    <NoStyleBtn icon={icon} iconPlacement="right" aria-sort={ariaSort}>
+    <Button type="ghost" icon={icon} iconPlacement="right" aria-sort={ariaSort}>
       {name}
-    </NoStyleBtn>
+    </Button>
   );
 };
 

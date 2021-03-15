@@ -20,7 +20,7 @@ const RemoveEditBtns: FunctionComponent<Props> = ({
   return (
     <>
       <Button
-        variant="outline"
+        type="tertiary"
         className="edit-form-btn"
         onClick={onRemoveClick}
         data-testid={`${ContactBtnTestIds.REMOVE_BTN}${index}`}

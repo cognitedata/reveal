@@ -8,9 +8,9 @@ import {
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
-import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { ContactView } from './ContactView';
-import { contactsSchema } from '../../utils/validation/contactsSchema';
+import { useIntegration } from 'hooks/details/IntegrationContext';
+import { ContactView } from 'components/form/ContactView';
+import { contactsSchema } from 'utils/validation/contactsSchema';
 
 export const ContactBtnTestIds = {
   EDIT_BTN: 'edit-contact-btn-',
@@ -97,8 +97,8 @@ const ContactsView: FunctionComponent<Props> = () => {
             );
           })}
           <Button
+            type="tertiary"
             className="add-btn"
-            variant="outline"
             onClick={onClickAdd}
             data-testid="add-contact-btn"
           >

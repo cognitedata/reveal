@@ -109,8 +109,7 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
                 </StyledTd>
                 <StyledTd>
                   <Button
-                    type="secondary"
-                    variant="outline"
+                    type="tertiary"
                     aria-label={`${REMOVE_ROW} ${index}`}
                     onClick={removeRow(index)}
                   >

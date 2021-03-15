@@ -1,11 +1,10 @@
 import React from 'react';
 import { Row } from 'react-table';
-import { Badge, Colors, Menu } from '@cognite/cogs.js';
+import { Badge, Button, Colors, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { StyledDropdown } from 'styles/StyledDropdown';
-import { Status } from '../../model/Status';
-import { NoStyleBtn } from '../../styles/StyledButton';
+import { Status } from 'model/Status';
 
 const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
   .cogs-menu-item {
@@ -79,9 +78,9 @@ function StatusFilterDropdown<D extends object>({
 
   return (
     <StyledDropdown content={MenuContent}>
-      <NoStyleBtn icon="CaretDown" iconPlacement="right">
+      <Button type="ghost" icon="CaretDown" iconPlacement="right">
         {Header} {filterValue ? `- ${filterValue}` : '- ALL'}
-      </NoStyleBtn>
+      </Button>
     </StyledDropdown>
   );
 }

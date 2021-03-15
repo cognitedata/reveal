@@ -369,8 +369,7 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
                     />
                   </DivFlex>
                   <Button
-                    type="secondary"
-                    variant="outline"
+                    type="tertiary"
                     aria-label={REMOVE_CONTACT}
                     onClick={removeContact(index)}
                   >
