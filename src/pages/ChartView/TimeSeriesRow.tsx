@@ -44,13 +44,15 @@ export default function TimeSeriesRow({
     originalUnit,
     enabled,
     color,
+    tsId,
+    tsExternalId,
   } = timeseries;
 
-  const update = (tsId: string, diff: Partial<ChartTimeSeries>) =>
+  const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
     mutate({
       ...chart,
       timeSeriesCollection: chart.timeSeriesCollection?.map((t) =>
-        t.id === tsId
+        t.id === _tsId
           ? {
               ...t,
               ...diff,
@@ -59,16 +61,16 @@ export default function TimeSeriesRow({
       ),
     });
 
-  const remove = (tsId: string) =>
+  const remove = (_tsId: string) =>
     mutate({
       ...chart,
       timeSeriesCollection: chart.timeSeriesCollection?.filter(
-        (t) => t.id !== tsId
+        (t) => t.id !== _tsId
       ),
     });
 
-  const handleConvertToWorkflow = (tsId: string) => {
-    const ts = chart.timeSeriesCollection?.find((t) => t.id === tsId);
+  const handleConvertToWorkflow = (_tsId: string) => {
+    const ts = chart.timeSeriesCollection?.find((t) => t.id === _tsId);
     if (ts) {
       const wf = convertTsToWorkFlow(ts);
       mutate({
@@ -263,7 +265,9 @@ export default function TimeSeriesRow({
           </td>
           <td>
             <SourceItem>
-              <SourceName>{id}</SourceName>
+              <SourceName>
+                {tsExternalId ? `${tsExternalId} (${tsId})` : tsId}
+              </SourceName>
             </SourceItem>
           </td>
           <td>

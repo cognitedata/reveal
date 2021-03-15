@@ -318,6 +318,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           active={false}
                           disabled={isEditorMode}
                           isDataQualityMode={isDataQualityMode}
+                          isWorkspaceMode={isWorkspaceMode}
                           key={t.id}
                         />
                       ))}
