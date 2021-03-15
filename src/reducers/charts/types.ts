@@ -10,6 +10,7 @@ export type Chart = {
   dateFrom: string;
   dateTo: string;
   public?: boolean;
+  dirty?: boolean;
 };
 
 export type ChartTimeSeries = {

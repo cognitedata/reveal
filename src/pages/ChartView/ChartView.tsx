@@ -73,10 +73,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     const doc = charts().doc(chartId);
     return doc.onSnapshot({
       next(snap) {
-        cache.setQueryData(['chart', chartId], snap.data());
+        const key = ['chart', chartId];
+        const newChart = snap.data() as Chart;
+        const cacheChart = cache.getQueryData<Chart>(key);
+        if (cacheChart?.dirty && newChart.user !== data?.user) {
+          toast.warn('Chart have been changed by owner');
+        } else {
+          cache.setQueryData(key, newChart);
+        }
       },
     });
-  }, [charts, chartId]);
+  }, [charts, chartId, data]);
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
   const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);

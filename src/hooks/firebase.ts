@@ -1,4 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
+import omit from 'lodash/omit';
 import config from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getTenantFromURL } from 'utils/env';
@@ -160,7 +161,6 @@ export const useDeleteChart = () => {
     },
     {
       onSuccess(chartId) {
-        console.log('here chartId:', chartId);
         cache.invalidateQueries(['charts']);
         cache.invalidateQueries(['chart', chartId]);
       },
@@ -181,14 +181,16 @@ export const useUpdateChart = () => {
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely
-        await charts().doc(chart.id).set(chart, { merge: true });
+        await charts().doc(chart.id).set(omit(chart, 'dirty'), { merge: true });
       }
-
       return chart.id;
     },
     {
-      onMutate({ chart }) {
-        cache.setQueryData(['chart', chart.id], chart);
+      onMutate({ chart, skipPersist }) {
+        cache.setQueryData(['chart', chart.id], {
+          ...chart,
+          dirty: skipPersist,
+        });
       },
       onError(_, { chart }) {
         cache.invalidateQueries(['chart', chart.id]);
