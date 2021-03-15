@@ -1,5 +1,11 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
+import { InternalId, v3, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { RootState } from 'src/store/rootReducer';
 
 type State = {
   uploadedFiles: Array<v3.FileInfo>;
@@ -39,5 +45,18 @@ export const selectFileById = createSelector(
   uploadedFiles,
   (fileId, files) => {
     return files.find((f) => f.id === parseInt(fileId, 10))!;
+  }
+);
+
+type ThunkConfig = { state: RootState };
+
+export const fetchFilesById = createAsyncThunk<void, InternalId[], ThunkConfig>(
+  'uploadedFiles/fetchFiles',
+  async (fileIds, { dispatch }) => {
+    if (!fileIds.length) {
+      throw new Error('Provide at least one fileId');
+    }
+    const files = await sdk.files.retrieve(fileIds);
+    dispatch(setUploadedFiles({ uploadedFiles: files }));
   }
 );
