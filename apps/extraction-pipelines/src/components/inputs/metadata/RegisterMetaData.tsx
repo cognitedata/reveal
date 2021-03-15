@@ -8,7 +8,7 @@ import {
   METADATA_CONTENT_LABEL,
   METADATA_DESCRIPTION_LABEL,
   REMOVE_ROW,
-} from '../../../utils/constants';
+} from 'utils/constants';
 
 const StyledTd = styled.td`
   .cogs-input {

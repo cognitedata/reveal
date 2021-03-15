@@ -1,9 +1,9 @@
+import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
   mapModelToInput,
   mapScheduleInputToModel,
   parseCron,
 } from './cronUtils';
-import { SupportedScheduleStrings } from '../components/integrations/cols/Schedule';
 
 describe('Cron Utils', () => {
   const cases = [

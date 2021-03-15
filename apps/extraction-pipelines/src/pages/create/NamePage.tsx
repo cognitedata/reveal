@@ -9,12 +9,12 @@ import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
-import { NEXT } from '../../utils/constants';
-import { CreateFormWrapper } from '../../styles/StyledForm';
-import { EXTERNAL_ID_PAGE_PATH } from '../../routing/CreateRouteConfig';
-import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
-import { HeadingLabel } from '../../components/inputs/HeadingLabel';
-import { TaskList, taskListItems } from './TaskList';
+import { NEXT } from 'utils/constants';
+import { CreateFormWrapper } from 'styles/StyledForm';
+import { EXTERNAL_ID_PAGE_PATH } from 'routing/CreateRouteConfig';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { HeadingLabel } from 'components/inputs/HeadingLabel';
+import { TaskList, taskListItems } from 'pages/create/TaskList';
 
 const StyledInput = styled.input`
   width: 50%;

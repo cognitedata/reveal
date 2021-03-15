@@ -2,17 +2,17 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import { NAME_PAGE_PATH } from 'routing/CreateRouteConfig';
-import { renderRegisterContext } from '../../utils/test/render';
-import { BACK, NEXT } from '../../utils/constants';
+import { renderRegisterContext } from 'utils/test/render';
+import { BACK, NEXT } from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
+} from 'utils/baseURL';
 import ExternalIdPage, {
   EXTERNAL_ID_REQUIRED,
   INTEGRATION_EXTERNAL_ID_HEADING,
-} from './ExternalIdPage';
+} from 'pages/create/ExternalIdPage';
 
 describe('ExternalIdPage', () => {
   const props = {

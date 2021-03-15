@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
-import { GridH2Wrapper } from '../../styles/StyledPage';
+import { GridH2Wrapper } from 'styles/StyledPage';
 import {
   ADD_CONTACT,
   EMAIL_LABEL,
@@ -17,18 +17,18 @@ import {
   NOTIFICATION_LABEL,
   REMOVE_CONTACT,
   ROLE_LABEL,
-} from '../../utils/constants';
-import { CreateFormWrapper } from '../../styles/StyledForm';
+} from 'utils/constants';
+import { CreateFormWrapper } from 'styles/StyledForm';
 import {
   EXTERNAL_ID_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
-} from '../../routing/CreateRouteConfig';
-import { contactsSchema } from '../../utils/validation/contactsSchema';
-import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
-import { DivFlex } from '../../styles/flex/StyledFlex';
-import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { createUpdateSpec } from '../../utils/contactsUtils';
+} from 'routing/CreateRouteConfig';
+import { contactsSchema } from 'utils/validation/contactsSchema';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { DivFlex } from 'styles/flex/StyledFlex';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { createUpdateSpec } from 'utils/contactsUtils';
 
 const ContactWrapper = styled.section`
   display: flex;

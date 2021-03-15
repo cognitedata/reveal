@@ -2,16 +2,19 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
-import { renderRegisterContext } from '../../utils/test/render';
-import NamePage, { INTEGRATION_NAME_HEADING, NAME_REQUIRED } from './NamePage';
-import { BACK, NEXT } from '../../utils/constants';
+import { renderRegisterContext } from 'utils/test/render';
+import NamePage, {
+  INTEGRATION_NAME_HEADING,
+  NAME_REQUIRED,
+} from 'pages/create/NamePage';
+import { BACK, NEXT } from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
-import { NAME_PATH } from '../../routing/CreateRouteConfig';
-import '../../utils/test/windowLocation';
+} from 'utils/baseURL';
+import { NAME_PATH } from 'routing/CreateRouteConfig';
+import 'utils/test/windowLocation';
 
 describe('NamePage', () => {
   window.location.href =
@@ -49,6 +52,7 @@ describe('NamePage', () => {
     fireEvent.change(nameInput, { target: { value: integrationName } });
     expect(screen.getByDisplayValue(integrationName)).toBeInTheDocument();
   });
+
   test('No back btn renders (this is the first page)', () => {
     renderRegisterContext(<NamePage />, { ...props });
     const back = screen.queryByText(BACK);

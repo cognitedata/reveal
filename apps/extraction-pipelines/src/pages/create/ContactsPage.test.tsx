@@ -1,13 +1,12 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
-import { renderRegisterContext } from '../../utils/test/render';
+import { renderRegisterContext } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
-import ContactsPage, { INTEGRATION_CONTACTS_HEADING } from './ContactsPage';
+} from 'utils/baseURL';
 import {
   ADD_CONTACT,
   BACK,
@@ -16,11 +15,14 @@ import {
   NOTIFICATION_LABEL,
   REMOVE_CONTACT,
   ROLE_LABEL,
-} from '../../utils/constants';
+} from 'utils/constants';
 import {
   CONTACTS_PAGE_PATH,
   EXTERNAL_ID_PAGE_PATH,
-} from '../../routing/CreateRouteConfig';
+} from 'routing/CreateRouteConfig';
+import ContactsPage, {
+  INTEGRATION_CONTACTS_HEADING,
+} from 'pages/create/ContactsPage';
 
 describe('ContactsPage', () => {
   const props = {

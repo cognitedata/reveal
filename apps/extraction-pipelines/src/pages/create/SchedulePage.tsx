@@ -10,27 +10,21 @@ import { createLink } from '@cognite/cdf-utilities';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
-import { GridH2Wrapper } from '../../styles/StyledPage';
-import { NEXT } from '../../utils/constants';
-import { CreateFormWrapper } from '../../styles/StyledForm';
+import { GridH2Wrapper } from 'styles/StyledPage';
+import { NEXT } from 'utils/constants';
+import { CreateFormWrapper } from 'styles/StyledForm';
 import {
   CONTACTS_PAGE_PATH,
   DATA_SET_PAGE_PATH,
-} from '../../routing/CreateRouteConfig';
-import CronInput from '../../components/inputs/cron/CronInput';
-import { DivFlex } from '../../styles/flex/StyledFlex';
-import {
-  CRON_REQUIRED,
-  cronValidator,
-} from '../../utils/validation/cronValidation';
-import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
-import {
-  mapModelToInput,
-  mapScheduleInputToModel,
-} from '../../utils/cronUtils';
-import { createUpdateSpec } from '../../utils/contactsUtils';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
+} from 'routing/CreateRouteConfig';
+import CronInput from 'components/inputs/cron/CronInput';
+import { DivFlex } from 'styles/flex/StyledFlex';
+import { CRON_REQUIRED, cronValidator } from 'utils/validation/cronValidation';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { mapModelToInput, mapScheduleInputToModel } from 'utils/cronUtils';
+import { createUpdateSpec } from 'utils/contactsUtils';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 
 const CronWrapper = styled(DivFlex)`
   margin: 1rem 2rem;

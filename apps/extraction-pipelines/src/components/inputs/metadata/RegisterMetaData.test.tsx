@@ -1,13 +1,13 @@
 import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
-import { renderWithReactHookForm } from '../../../utils/test/render';
-import { RegisterMetaData } from './RegisterMetaData';
+import { renderWithReactHookForm } from 'utils/test/render';
+import { RegisterMetaData } from 'components/inputs/metadata/RegisterMetaData';
 import {
   ADD_ROW,
   METADATA_CONTENT_LABEL,
   METADATA_DESCRIPTION_LABEL,
   REMOVE_ROW,
-} from '../../../utils/constants';
+} from 'utils/constants';
 
 const { getByText } = screen;
 describe('RegisterMetaData', () => {

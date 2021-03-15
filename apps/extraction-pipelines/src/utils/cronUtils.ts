@@ -1,6 +1,6 @@
 import { toString as cronstureToString } from 'cronstrue';
-import { SupportedScheduleStrings } from '../components/integrations/cols/Schedule';
-import { ScheduleFormInput } from '../pages/create/SchedulePage';
+import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
+import { ScheduleFormInput } from 'pages/create/SchedulePage';
 
 export const parseCron = (cron: string) => {
   return cronstureToString(cron);
