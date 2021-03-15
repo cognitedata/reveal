@@ -35,11 +35,13 @@ import GroupsSelector from './GroupsSelector';
 
 const SnapshotTooltip = () => (
   <CustomTooltipContainer>
-    A snapshot is a preview of your data, you can learn more about snapshots{' '}
+    Find more information about how to embed a dashboard, e.g., Grafana,
+    PowerBI,&nbsp;
     {/* TODO(DTC-348) replace with stable link as soon as it is available */}
     <A
       href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html#example-use-links-from-a-grafana-report-to-show-live-data-in-the-digital-cockpit-board"
       isExternal
+      target="_blank"
     >
       here
     </A>
@@ -225,6 +227,7 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
               <StyledLink
                 href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html#manage-access-to-a-board"
                 isExternal
+                target="_blank"
               >
                 documentation
               </StyledLink>
