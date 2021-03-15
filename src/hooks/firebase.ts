@@ -144,7 +144,9 @@ export const usePublicCharts = () => {
 export const useChart = (id: string) => {
   return useQuery(
     ['chart', id],
-    async () => (await charts().doc(id).get()).data() as Chart
+    async () => (await charts().doc(id).get()).data() as Chart, {
+      staleTime: Infinity
+    }
   );
 };
 
