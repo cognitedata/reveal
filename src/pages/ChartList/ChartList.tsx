@@ -1,17 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { Button, Dropdown, Icon, Input, Menu, Tabs } from '@cognite/cogs.js';
-import { Link } from 'react-router-dom';
+import { Button, Icon, Input, Tabs, ButtonGroup } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
-import thumb from 'assets/thumb.png';
-import {
-  useDeleteChart,
-  useMyCharts,
-  usePublicCharts,
-  useUpdateChart,
-} from 'hooks/firebase';
+import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
 import { useLoginStatus } from 'hooks';
+import ChartListItem, { ViewOption } from 'components/ChartListItem';
 
 type ActiveTabOption = 'mine' | 'public';
 
@@ -34,19 +28,9 @@ const ChartList = () => {
 
   const [filterText, setFilterText] = useState<string>('');
   const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
+  const [viewOption, setViewOption] = useState<ViewOption>('list');
 
   const { mutate: updateChart } = useUpdateChart();
-  const { mutate: deleteChart } = useDeleteChart();
-
-  const handleRenameChart = (chart: Chart) => {
-    // eslint-disable-next-line no-alert
-    const name = prompt('Rename chart', chart.name) || chart.name;
-    updateChart({ chart: { ...chart, name } });
-  };
-
-  const handleDeleteChart = (chart: Chart) => {
-    deleteChart(chart.id);
-  };
 
   const handleNewChart = async () => {
     if (!login?.user) {
@@ -67,17 +51,6 @@ const ChartList = () => {
       dateTo: dateTo.toJSON(),
       public: false,
     };
-    updateChart({ chart: newChart });
-  };
-
-  const handleDuplicateChart = (chart: Chart) => {
-    const id = nanoid();
-    const newChart = {
-      ...chart,
-      name: `${chart.name} Copy`,
-      id,
-    };
-
     updateChart({ chart: newChart });
   };
 
@@ -102,84 +75,7 @@ const ChartList = () => {
     }
 
     return filteredCharts.map((chart) => (
-      <div
-        key={chart.id}
-        style={{
-          width: 'calc(25% - 40px)',
-          margin: '20px',
-          padding: 20,
-          paddingTop: 80,
-          border: '1px solid #ccc',
-          borderRadius: 10,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: 50,
-            backgroundColor: '#ccc',
-            borderBottom: '1px solid #ccc',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Dropdown
-            content={
-              <Menu>
-                <Menu.Header>
-                  <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
-                </Menu.Header>
-                <Menu.Item
-                  onClick={() => handleRenameChart(chart)}
-                  appendIcon="Edit"
-                >
-                  <span>Rename</span>
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => handleDeleteChart(chart)}
-                  appendIcon="Delete"
-                >
-                  <span>Delete</span>
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => handleDuplicateChart(chart)}
-                  appendIcon="Duplicate"
-                >
-                  <span>Duplicate</span>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <div style={{ display: 'flex', padding: 10 }}>
-              <Icon type="VerticalEllipsis" />
-            </div>
-          </Dropdown>
-        </div>
-        <Link to={`/${chart.id}`} key={chart.id}>
-          <div style={{ width: '100%' }}>
-            <img
-              style={{
-                width: 'calc(100% - 20px)',
-                margin: 10,
-                border: '1px solid #ddd',
-              }}
-              src={thumb}
-              alt={chart.name}
-            />
-          </div>
-          <h3 style={{ textAlign: 'center' }}>{chart.name}</h3>
-        </Link>
-      </div>
+      <ChartListItem key={chart.id} chart={chart} view={viewOption} />
     ));
   };
 
@@ -201,6 +97,7 @@ const ChartList = () => {
       </div>
       <div style={{ margin: 20 }}>
         <Input
+          size="large"
           placeholder="Filter charts"
           icon="Search"
           fullWidth
@@ -208,7 +105,9 @@ const ChartList = () => {
           onChange={(e) => setFilterText(e.target.value)}
         />
       </div>
-      <div style={{ margin: 20 }}>
+      <div
+        style={{ margin: 20, display: 'flex', justifyContent: 'space-between' }}
+      >
         <Tabs
           activeKey={activeTab}
           onChange={(activeKey) => setActiveTab(activeKey as ActiveTabOption)}
@@ -216,6 +115,17 @@ const ChartList = () => {
           <Tabs.TabPane key="mine" tab={<span>My charts</span>} />
           <Tabs.TabPane key="public" tab={<span>Public charts</span>} />
         </Tabs>
+        <ButtonGroup
+          currentKey={viewOption}
+          onButtonClicked={(key) => setViewOption(key as ViewOption)}
+        >
+          <ButtonGroup.Button key="grid">
+            <Icon type="Grid" />
+          </ButtonGroup.Button>
+          <ButtonGroup.Button key="list">
+            <Icon type="List" />
+          </ButtonGroup.Button>
+        </ButtonGroup>
       </div>
       <div style={{ textAlign: 'center' }}>
         {loading && <Icon type="Loading" />}
