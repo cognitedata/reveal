@@ -62,7 +62,7 @@ describe('SchedulePage', () => {
     );
     fireEvent.click(onTriggerInput);
     await waitFor(() => {
-      expect(onTriggerInput.getAttribute('aria-checked')).toEqual('true');
+      expect(onTriggerInput).toBeChecked();
     });
 
     const scheduled = screen.getByLabelText(SupportedScheduleStrings.SCHEDULED);

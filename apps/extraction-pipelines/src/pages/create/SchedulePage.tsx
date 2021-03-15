@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import * as yup from 'yup';
@@ -42,60 +42,7 @@ const StyledRadioGroup = styled.fieldset`
     margin-bottom: 0;
   }
 `;
-const RadioInputsWrapper = styled.div`
-  display: grid;
-  input[type='radio'] {
-    opacity: 0;
-    &:checked {
-      + label::after {
-        background: ${Colors.primary.hex()};
-      }
-      + label::before {
-        border: 0.125rem solid ${Colors.primary.hex()};
-      }
-    }
-    &:focus {
-      + label::before {
-        box-shadow: 0 0 0.5rem ${Colors.primary.hex()};
-      }
-    }
-    + label {
-      position: relative;
-      display: inline-block;
-      cursor: pointer;
-      margin-left: 1.875rem;
-      &:hover {
-        &::before {
-          border: 0.125rem solid ${Colors.primary.hex()};
-        }
-      }
 
-      &::before {
-        content: '';
-        position: absolute;
-        display: inline-block;
-        left: -1.875rem;
-        top: -0.1875rem;
-        border-radius: 50%;
-        border: 0.125rem solid ${Colors.black.hex()};
-        width: 1.5625rem;
-        height: 1.5625rem;
-        background: transparent;
-      }
-      &::after {
-        content: '';
-        position: absolute;
-        display: inline-block;
-        left: -1.5625rem;
-        top: 0.125rem;
-        border-radius: 50%;
-        width: 0.9375rem;
-        height: 0.9375rem;
-        background: transparent;
-      }
-    }
-  }
-`;
 interface SchedulePageProps {}
 
 export interface ScheduleFormInput {
@@ -131,7 +78,10 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
     defaultValues: mapModelToInput(storedIntegration?.schedule),
     reValidateMode: 'onSubmit',
   });
-  const { register, handleSubmit, errors, watch, setError } = methods;
+  const { register, handleSubmit, errors, watch, setError, setValue } = methods;
+  useEffect(() => {
+    register('schedule');
+  }, [register]);
   const scheduleValue = watch('schedule');
   useEffect(() => {
     if (scheduleValue === SupportedScheduleStrings.SCHEDULED) {
@@ -179,7 +129,10 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
       });
     }
   };
-  const v = watch('schedule');
+  const radioChanged = (value: string) => {
+    setValue('schedule', value);
+  };
+
   return (
     <RegisterIntegrationLayout backPath={CONTACTS_PAGE_PATH}>
       <GridH2Wrapper>{INTEGRATION_SCHEDULE_HEADING}</GridH2Wrapper>
@@ -202,66 +155,54 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
                 </span>
               )}
             />
-            <RadioInputsWrapper>
-              {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props */}
-              <input
-                type="radio"
-                id="scheduled"
-                name="schedule"
-                aria-checked={SupportedScheduleStrings.SCHEDULED === v}
-                ref={register}
-                value={SupportedScheduleStrings.SCHEDULED}
-                aria-controls="cron-expression"
-                aria-expanded={showCron}
-              />
-              <label id="scheduled-label" htmlFor="scheduled">
-                {SupportedScheduleStrings.SCHEDULED}
-              </label>
-              {showCron && (
-                <CronWrapper
-                  id="cron-expression"
-                  role="region"
-                  direction="column"
-                  align="flex-start"
-                >
-                  <CronInput />
-                </CronWrapper>
-              )}
-
-              <input
-                type="radio"
-                id="continuous"
-                name="schedule"
-                aria-checked={SupportedScheduleStrings.CONTINUOUS === v}
-                ref={register}
-                value={SupportedScheduleStrings.CONTINUOUS}
-              />
-              <label htmlFor="continuous">
-                {SupportedScheduleStrings.CONTINUOUS}
-              </label>
-              <input
-                type="radio"
-                id="on-trigger"
-                name="schedule"
-                aria-checked={SupportedScheduleStrings.ON_TRIGGER === v}
-                ref={register}
-                value={SupportedScheduleStrings.ON_TRIGGER}
-              />
-              <label htmlFor="on-trigger">
-                {SupportedScheduleStrings.ON_TRIGGER}
-              </label>
-              <input
-                type="radio"
-                id="not-defined"
-                name="schedule"
-                ref={register}
-                aria-checked={SupportedScheduleStrings.NOT_DEFINED === v}
-                value={SupportedScheduleStrings.NOT_DEFINED}
-              />
-              <label htmlFor="not-defined">
-                {SupportedScheduleStrings.NOT_DEFINED}
-              </label>
-            </RadioInputsWrapper>
+            <Radio
+              id="scheduled"
+              name="schedule"
+              value={SupportedScheduleStrings.SCHEDULED}
+              checked={SupportedScheduleStrings.SCHEDULED === scheduleValue}
+              onChange={radioChanged}
+              aria-controls="cron-expression"
+              aria-expanded={showCron}
+            >
+              {SupportedScheduleStrings.SCHEDULED}
+            </Radio>
+            {showCron && (
+              <CronWrapper
+                id="cron-expression"
+                role="region"
+                direction="column"
+                align="flex-start"
+              >
+                <CronInput />
+              </CronWrapper>
+            )}
+            <Radio
+              id="continuous"
+              name="schedule"
+              checked={SupportedScheduleStrings.CONTINUOUS === scheduleValue}
+              onChange={radioChanged}
+              value={SupportedScheduleStrings.CONTINUOUS}
+            >
+              {SupportedScheduleStrings.CONTINUOUS}
+            </Radio>
+            <Radio
+              id="on-trigger"
+              name="schedule"
+              checked={SupportedScheduleStrings.ON_TRIGGER === scheduleValue}
+              onChange={radioChanged}
+              value={SupportedScheduleStrings.ON_TRIGGER}
+            >
+              {SupportedScheduleStrings.ON_TRIGGER}
+            </Radio>
+            <Radio
+              id="not-defined"
+              name="schedule"
+              onChange={radioChanged}
+              checked={SupportedScheduleStrings.NOT_DEFINED === scheduleValue}
+              value={SupportedScheduleStrings.NOT_DEFINED}
+            >
+              {SupportedScheduleStrings.NOT_DEFINED}
+            </Radio>
           </StyledRadioGroup>
           <ButtonPlaced type="primary" htmlType="submit">
             {NEXT}
