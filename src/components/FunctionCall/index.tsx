@@ -1,7 +1,9 @@
-import { useSDK } from '@cognite/sdk-provider';
 import React, { useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
-import { FunctionCall as CogniteFunctionCall } from 'utils/cogniteFunctions';
+import {
+  FunctionCall as CogniteFunctionCall,
+  useFunctionCall,
+  useFunctionReponse,
+} from 'utils/cogniteFunctions';
 
 type Call = CogniteFunctionCall & {
   response?: string;
@@ -24,33 +26,14 @@ function InnerFunctionCall({
   renderCall,
   renderLoading,
 }: InnerProps) {
-  const sdk = useSDK();
   const [refetchInterval, setInterval] = useState<number | false>(1000);
 
-  const { data: call, isFetched } = useQuery<CogniteFunctionCall>(
-    ['functions', id, 'call', callId],
-    () =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}`
-        )
-        .then((r) => r.data),
-    {
-      refetchInterval,
-    }
-  );
-  const { data: response } = useQuery<{ response?: string }>(
-    ['functions', id, 'call', callId, 'response'],
-    () =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/response`
-        )
-        .then((r) => r.data),
-    {
-      enabled: call?.status === 'Completed',
-    }
-  );
+  const { data: call, isFetched } = useFunctionCall(id, callId, {
+    refetchInterval,
+  });
+  const { data: response } = useFunctionReponse(id, callId, {
+    refetchInterval,
+  });
 
   const callStatus = call?.status;
   useEffect(() => {
@@ -67,7 +50,7 @@ function InnerFunctionCall({
   if (isFetched && call) {
     return renderCall({
       ...call,
-      response: response?.response,
+      response,
     });
   }
   return null;

@@ -15,6 +15,7 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
 import { useSDK } from '@cognite/sdk-provider';
+import { functionResponseKey } from 'utils/cogniteFunctions';
 import {
   AxisUpdate,
   getXaxisUpdateFromEventData,
@@ -99,8 +100,8 @@ const PlotlyChartComponent = ({
 
   const functionResults = useQueries(
     calls.map((c) => ({
-      queryKey: ['functions', c.functionId, 'call', c.callId, 'response'],
-      queryFn: (): Promise<DoubleDatapoint[] | undefined> =>
+      queryKey: functionResponseKey(c.functionId, c.callId),
+      queryFn: (): Promise<string | undefined> =>
         sdk
           .get(
             `/api/playground/projects/${sdk.project}/functions/${c.functionId}/calls/${c.callId}/response`
