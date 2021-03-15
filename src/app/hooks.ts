@@ -1,4 +1,3 @@
-import memoize from 'lodash/memoize';
 import qs from 'query-string';
 import { useParams, useHistory } from 'react-router-dom';
 import { ResourceType } from '@cognite/data-exploration';
@@ -12,23 +11,23 @@ import { SEARCH_KEY } from './utils/constants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 
-const getSetItems = memoize(
-  (key: string, push: boolean, history: ReturnType<typeof useHistory>) => (
-    newItems: string | string[] | undefined
-  ) => {
-    const search = qs.parse(history?.location?.search, opts);
-    history[push ? 'push' : 'replace']({
-      pathname: history?.location?.pathname,
-      search: qs.stringify(
-        {
-          ...search,
-          [key]: newItems,
-        },
-        opts
-      ),
-    });
-  }
-);
+const getSetItems = (
+  key: string,
+  push: boolean,
+  history: ReturnType<typeof useHistory>
+) => (newItems: string | string[] | undefined) => {
+  const search = qs.parse(history?.location?.search, opts);
+  history[push ? 'push' : 'replace']({
+    pathname: history?.location?.pathname,
+    search: qs.stringify(
+      {
+        ...search,
+        [key]: newItems,
+      },
+      opts
+    ),
+  });
+};
 
 export function useQueryString(
   key: string,
