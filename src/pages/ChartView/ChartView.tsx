@@ -331,7 +331,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           setActiveSourceItem={setActiveSourceItem}
                           key={flow.id}
                           isDataQualityMode={isDataQualityMode}
-                          isWorkspaceMode={isDataQualityMode}
+                          isWorkspaceMode={isWorkspaceMode}
                         />
                       ))}
                     </tbody>
