@@ -9,38 +9,37 @@ import { useUpdateChart } from 'hooks/firebase';
 interface DateRangeSelectorProps {
   chart: Chart;
 }
-const now = dayjs();
 
 const relativeTimeOptions = [
   {
     label: '1D',
-    dateFrom: now.subtract(1, 'day'),
-    dateTo: now,
+    dateFrom: () => dayjs().subtract(1, 'day').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '2D',
-    dateFrom: now.subtract(2, 'day'),
-    dateTo: now,
+    dateFrom: () => dayjs().subtract(2, 'day').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '1W',
-    dateFrom: now.subtract(1, 'week'),
-    dateTo: now,
+    dateFrom: () => dayjs().subtract(1, 'week').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '1M',
-    dateFrom: now.subtract(1, 'month'),
-    dateTo: now,
+    dateFrom: () => dayjs().subtract(1, 'month').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '6M',
-    dateFrom: now.subtract(6, 'months'),
-    dateTo: now,
+    dateFrom: () => dayjs().subtract(6, 'months').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '1Y',
-    dateFrom: now.subtract(1, 'year'),
-    dateTo: now,
+    dateFrom: () => dayjs().subtract(1, 'year').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
 ];
 
@@ -72,8 +71,8 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
             key={option.label}
             onClick={() =>
               handleDateChange({
-                dateFrom: option.dateFrom.toDate(),
-                dateTo: option.dateTo.toDate(),
+                dateFrom: option.dateFrom().toDate(),
+                dateTo: option.dateTo().toDate(),
               })
             }
           >
