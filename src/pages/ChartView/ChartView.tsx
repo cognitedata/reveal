@@ -43,6 +43,7 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
+  const history = useHistory();
   const cache = useQueryClient();
   const { data } = useLoginStatus();
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
@@ -164,7 +165,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     500
   );
 
-  const history = useHistory();
   const handleDuplicateChart = async () => {
     if (chart) {
       const id = nanoid();
