@@ -149,6 +149,7 @@ export const useChart = (id: string) => {
 };
 
 export const useDeleteChart = () => {
+  const cache = useQueryClient();
   return useMutation(
     async (chartId: string) => {
       await charts().doc(chartId).delete();
@@ -156,7 +157,7 @@ export const useDeleteChart = () => {
     },
     {
       onSuccess(chartId) {
-        const cache = useQueryClient();
+        console.log('here chartId:', chartId);
         cache.invalidateQueries(['charts']);
         cache.invalidateQueries(['chart', chartId]);
       },
