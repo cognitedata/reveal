@@ -23,7 +23,7 @@ import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { BackBtn } from 'components/buttons/BackBtn';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
-import { TaskList, taskListItems } from './TaskList';
+import { TaskList, taskListItems } from 'pages/create/TaskList';
 
 const StyledInput = styled.input`
   width: 50%;

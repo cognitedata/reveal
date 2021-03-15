@@ -8,18 +8,22 @@ import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import {
   CreateIntegrationPageWrapper,
   GridBreadCrumbsWrapper,
   GridH2Wrapper,
   GridMainWrapper,
   GridTitleWrapper,
-} from '../../styles/StyledPage';
-import { REGISTER } from '../../utils/constants';
-import { CreateFormWrapper } from '../../styles/StyledForm';
-import { RAW_TABLE_PAGE_PATH } from '../../routing/CreateRouteConfig';
-import { BackBtn } from '../../components/buttons/BackBtn';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from '../../routing/RoutingConfig';
+} from 'styles/StyledPage';
+import { CreateFormWrapper } from 'styles/StyledForm';
+import { RAW_TABLE_PAGE_PATH } from 'routing/CreateRouteConfig';
+import { BackBtn } from 'components/buttons/BackBtn';
+import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
+import { REGISTER } from 'utils/constants';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { createUpdateSpec } from 'utils/contactsUtils';
 import {
   MetaData,
   RegisterMetaData,
@@ -55,7 +59,7 @@ const StyledTextArea = styled.textarea`
 interface DescriptionPageProps {}
 
 interface DocumentationFormInput {
-  documentation: string;
+  description: string;
   metadata: MetaData[];
 }
 
@@ -63,18 +67,62 @@ export const INTEGRATION_DOCUMENTATION_HEADING: Readonly<string> =
   'Integration documentation';
 export const DESCRIPTION_LABEL: Readonly<string> = 'Describe the integration';
 const documentationSchema = yup.object().shape({
-  documentation: yup.string(),
+  description: yup.string(),
 });
 const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
   const history = useHistory();
+  const {
+    storedIntegration,
+    setStoredIntegration,
+  } = useStoredRegisterIntegration();
+  const { project } = useAppEnv();
+  const { mutate } = useDetailsUpdate();
+
   const methods = useForm<DocumentationFormInput>({
     resolver: yupResolver(documentationSchema),
-    defaultValues: {},
+    defaultValues: {
+      description: storedIntegration?.description,
+    },
     reValidateMode: 'onSubmit',
   });
-  const { register, handleSubmit, errors } = methods;
-  const handleNext = (_: DocumentationFormInput) => {
-    history.push(createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH));
+  const { register, handleSubmit, errors, setError } = methods;
+  const handleNext = (fields: DocumentationFormInput) => {
+    setStoredIntegration((prev) => ({
+      ...prev,
+      description: fields.description,
+    }));
+    if (storedIntegration?.id && project) {
+      const items = createUpdateSpec({
+        id: storedIntegration.id,
+        fieldName: 'description',
+        fieldValue: fields.description,
+      });
+      mutate(
+        {
+          project,
+          items,
+          id: storedIntegration.id,
+        },
+        {
+          onSuccess: () => {
+            history.push(createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH));
+          },
+          onError: (serverError) => {
+            setError('description', {
+              type: 'server',
+              message: serverError.data.message,
+              shouldFocus: true,
+            });
+          },
+        }
+      );
+    } else {
+      setError('description', {
+        type: 'No id',
+        message: 'No id. Select an integration',
+        shouldFocus: true,
+      });
+    }
   };
 
   return (
@@ -92,30 +140,28 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
         </WithBottomBorder>
         <FormProvider {...methods}>
           <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-            <label htmlFor="integration-documentation" className="input-label">
+            <label htmlFor="integration-description" className="input-label">
               {DESCRIPTION_LABEL}
             </label>
-            <span id="documentation-hint" className="input-hint" />
+            <span id="description-hint" className="input-hint" />
             <ErrorMessage
               errors={errors}
-              name="documentation"
+              name="description"
               render={({ message }) => (
-                <span id="documentation-error" className="error-message">
+                <span id="description-error" className="error-message">
                   {message}
                 </span>
               )}
             />
             <StyledTextArea
-              id="integration-documentation"
-              name="documentation"
+              id="integration-description"
+              name="description"
               cols={30}
               rows={10}
               ref={register}
-              className={`cogs-input ${
-                errors.documentation ? 'has-error' : ''
-              }`}
-              aria-invalid={!!errors.documentation}
-              aria-describedby="documentation-hint documentation-error"
+              className={`cogs-input ${errors.description ? 'has-error' : ''}`}
+              aria-invalid={!!errors.description}
+              aria-describedby="description-hint description-error"
             />
             <DividerLine />
             <RegisterMetaData />
