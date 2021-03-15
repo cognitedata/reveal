@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import DataQualityReport from 'components/DataQualityReport';
@@ -48,13 +48,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
   const {
-    mutate,
+    mutateAsync,
     isLoading: isUpdating,
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
   const updateChart = (updatedChart: Chart) =>
-    mutate({
+    mutateAsync({
       chart: updatedChart,
       skipPersist: data?.user !== updatedChart.user,
     });
@@ -164,14 +164,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     500
   );
 
+  const history = useHistory();
   const handleDuplicateChart = async () => {
     if (chart) {
+      const id = nanoid();
       const newChart = {
         ...chart,
         name: `${chart.name} Copy`,
-        id: nanoid(),
+        id,
       };
-      updateChart(newChart);
+      await updateChart(newChart);
+      history.push(`/${id}`);
     }
   };
 
@@ -338,7 +341,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 </SourceTableWrapper>
                 {workspaceMode === 'editor' && !!activeSourceItem && (
                   <NodeEditor
-                    mutate={mutate}
+                    mutate={mutateAsync}
                     workflowId={activeSourceItem}
                     chart={chart}
                   />

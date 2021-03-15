@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
 import { useLoginStatus } from 'hooks';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
+import { useHistory } from 'react-router-dom';
 
 type ActiveTabOption = 'mine' | 'public';
 
@@ -30,8 +31,9 @@ const ChartList = () => {
   const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
   const [viewOption, setViewOption] = useState<ViewOption>('list');
 
-  const { mutate: updateChart } = useUpdateChart();
+  const { mutateAsync: updateChart } = useUpdateChart();
 
+  const history = useHistory();
   const handleNewChart = async () => {
     if (!login?.user) {
       return;
@@ -51,7 +53,8 @@ const ChartList = () => {
       dateTo: dateTo.toJSON(),
       public: false,
     };
-    updateChart({ chart: newChart });
+    await updateChart({ chart: newChart });
+    history.push(`/${id}`);
   };
 
   const nameFilter = (chart: Chart) =>

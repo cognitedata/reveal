@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
 
@@ -18,7 +18,8 @@ interface ChartListItemProps {
 }
 
 const ChartListItem = ({ chart, view }: ChartListItemProps) => {
-  const { mutate: updateChart } = useUpdateChart();
+  const history = useHistory();
+  const { mutateAsync: updateChart } = useUpdateChart();
   const { mutate: deleteChart } = useDeleteChart();
 
   const handleRenameChart = () => {
@@ -39,7 +40,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
       id,
     };
 
-    updateChart({ chart: newChart });
+    updateChart({ chart: newChart }).then(() => history.push(`/${id}`));
   };
 
   const mockPreview = (
