@@ -64,8 +64,6 @@ const PlotlyChartComponent = ({
     }))
   );
 
-  console.log(queryResult);
-
   const enabledWorkflows = chart.workflowCollection?.filter(
     (flow) => flow?.enabled
   );
@@ -106,7 +104,7 @@ const PlotlyChartComponent = ({
         type: 'timeseries',
         width: t.lineWeight,
         range: t.range,
-        // @ts-ignore
+        name: t.name,
         datapoints: (queryResult[i]?.data || []) as DatapointAggregate[],
         dash: convertLineStyle(t.lineStyle),
         unit: units.find(

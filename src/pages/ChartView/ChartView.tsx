@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import debounce from 'lodash/debounce';
 import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
@@ -138,32 +139,30 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setDataQualityReport({});
   };
 
-  const handleChangeSourceAxis = ({
-    x,
-    y,
-  }: {
-    x: number[];
-    y: AxisUpdate[];
-  }) => {
-    if (chart) {
-      const newChart = { ...chart };
-      if (x.length === 2) {
-        newChart.dateFrom = `${x[0]}`;
-        newChart.dateTo = `${x[1]}`;
+  const handleChangeSourceAxis = debounce(
+    ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
+      if (chart) {
+        const newChart = { ...chart };
+        if (x.length === 2) {
+          newChart.dateFrom = `${x[0]}`;
+          newChart.dateTo = `${x[1]}`;
+        }
+        if (y.length > 0) {
+          y.forEach((update) => {
+            newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
+              (t) => (t.id === update.id ? { ...t, range: update.range } : t)
+            );
+            newChart.workflowCollection = newChart.workflowCollection?.map(
+              (wf) =>
+                wf.id === update.id ? { ...wf, range: update.range } : wf
+            );
+          });
+        }
+        updateChart(newChart);
       }
-      if (y.length > 0) {
-        y.forEach((update) => {
-          newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
-            (t) => (t.id === update.id ? { ...t, range: update.range } : t)
-          );
-          newChart.workflowCollection = newChart.workflowCollection?.map((wf) =>
-            wf.id === update.id ? { ...wf, range: update.range } : wf
-          );
-        });
-      }
-      updateChart(newChart);
-    }
-  };
+    },
+    500
+  );
 
   const handleDuplicateChart = async () => {
     if (chart) {
