@@ -8,7 +8,7 @@ import {
 } from 'styles/StyledPage';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { INTEGRATION_OVERVIEW, REGISTER_INTEGRATION } from 'utils/constants';
-import { BackBtn } from '../buttons/BackBtn';
+import { BackBtn } from 'components/buttons/BackBtn';
 
 interface RegisterIntegrationLayoutProps {
   backPath?: string;

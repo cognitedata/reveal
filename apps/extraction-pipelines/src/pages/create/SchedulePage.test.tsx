@@ -1,6 +1,8 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { renderRegisterContext } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -11,8 +13,6 @@ import { CRON_INVALID } from 'utils/validation/cronValidation';
 import { CRON_LABEL } from 'components/inputs/cron/CronInput';
 import { BACK, NEXT } from 'utils/constants';
 import { parseCron } from 'utils/cronUtils';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { renderRegisterContext } from 'utils/test/render';
 import {
   CONTACTS_PAGE_PATH,
   DATA_SET_PAGE_PATH,

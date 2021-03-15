@@ -6,7 +6,7 @@ export const ContactsErrorMsg = {
   EMAIL_INVALID: 'Contact email must be a valid email',
 };
 
-export const contactsSchema = yup.object().shape({
+export const contactsRule = {
   contacts: yup.array().of(
     yup.object().shape({
       name: yup.string().required(ContactsErrorMsg.NAME_REQUIRED),
@@ -17,4 +17,6 @@ export const contactsSchema = yup.object().shape({
       role: yup.string(),
     })
   ),
-});
+};
+
+export const contactsSchema = yup.object().shape(contactsRule);

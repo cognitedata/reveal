@@ -27,7 +27,7 @@ import DataSetPage, {
 import { RegisterIntegrationInfo } from 'model/Integration';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
-jest.mock('../../hooks/useDataSetsList', () => {
+jest.mock('hooks/useDataSetsList', () => {
   return {
     useDataSetsList: jest.fn(),
   };

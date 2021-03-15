@@ -15,7 +15,8 @@ export const CreateFormWrapper = styled.form`
   .error-message {
     color: ${Colors.danger.hex()};
   }
-  .cogs-input {
+  .cogs-input,
+  .cogs-checkbox {
     margin-bottom: 1rem;
   }
   button {

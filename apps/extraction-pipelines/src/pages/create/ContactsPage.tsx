@@ -1,34 +1,47 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
-import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
+import { NotificationConfig } from 'components/inputs/NotificationConfig';
+import * as yup from 'yup';
+import {
+  MIN_IN_HOURS,
+  skipNotificationRule,
+} from 'utils/validation/notificationValidation';
 import { GridH2Wrapper } from 'styles/StyledPage';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import {
   ADD_CONTACT,
+  CONTACTS_DESCRIPTION,
   EMAIL_LABEL,
   NAME_LABEL,
   NEXT,
+  NOTIFICATION_HINT,
   NOTIFICATION_LABEL,
   REMOVE_CONTACT,
   ROLE_LABEL,
 } from 'utils/constants';
 import { CreateFormWrapper } from 'styles/StyledForm';
+import { contactsRule } from 'utils/validation/contactsSchema';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { DivFlex } from 'styles/flex/StyledFlex';
+import { createUpdateSpec } from 'utils/contactsUtils';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 import {
   EXTERNAL_ID_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
 } from 'routing/CreateRouteConfig';
-import { contactsSchema } from 'utils/validation/contactsSchema';
-import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
-import { DivFlex } from 'styles/flex/StyledFlex';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
-import { createUpdateSpec } from 'utils/contactsUtils';
 
 const ContactWrapper = styled.section`
   display: flex;
@@ -88,19 +101,23 @@ const Switchbutton = styled.button`
 
 interface ContactsPageProps {}
 
-interface ContactsFormInput {
+export interface ContactsFormInput {
   contacts: {
     name: string;
     email: string;
     role: string;
     sendNotification: boolean;
   }[];
+  skipNotificationInHours: number;
+  hasConfig: boolean;
 }
 
 export const INTEGRATION_CONTACTS_HEADING: Readonly<string> =
   'Integration contacts';
-
-const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
+const pageSchema = yup
+  .object()
+  .shape({ ...contactsRule, ...skipNotificationRule });
+const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
   const history = useHistory();
   const { project } = useAppEnv();
   const {
@@ -108,6 +125,19 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
     setStoredIntegration,
   } = useStoredRegisterIntegration();
   const { mutate } = useDetailsUpdate();
+  const methods = useForm<ContactsFormInput>({
+    resolver: yupResolver(pageSchema),
+    defaultValues: {
+      contacts: storedIntegration?.contacts ?? [],
+      skipNotificationInHours: storedIntegration?.skipNotificationInMinutes
+        ? storedIntegration?.skipNotificationInMinutes / MIN_IN_HOURS
+        : undefined,
+      hasConfig: storedIntegration?.skipNotificationInMinutes
+        ? storedIntegration?.skipNotificationInMinutes > 0
+        : false,
+    },
+    reValidateMode: 'onSubmit',
+  });
   const {
     register,
     handleSubmit,
@@ -117,19 +147,21 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
     getValues,
     watch,
     control,
-  } = useForm<ContactsFormInput>({
-    resolver: yupResolver(contactsSchema),
-    defaultValues: {
-      contacts: storedIntegration?.contacts ?? [],
-    },
-    reValidateMode: 'onSubmit',
-  });
+  } = methods;
+  useEffect(() => {
+    register('skipNotificationInHours');
+    register('hasConfig');
+  }, [register]);
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'contacts',
   });
   const handleNext = async (field: ContactsFormInput) => {
-    setStoredIntegration((prev) => ({ ...prev, ...field }));
+    setStoredIntegration({
+      ...storedIntegration,
+      contacts: field.contacts,
+      skipNotificationInMinutes: field.skipNotificationInHours * MIN_IN_HOURS,
+    });
     if (storedIntegration?.id && project) {
       const items = createUpdateSpec({
         id: storedIntegration.id,
@@ -183,191 +215,195 @@ const ExternalIdPage: FunctionComponent<ContactsPageProps> = () => {
 
   return (
     <RegisterIntegrationLayout backPath={EXTERNAL_ID_PAGE_PATH}>
-      <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-        <GridH2Wrapper>{INTEGRATION_CONTACTS_HEADING}</GridH2Wrapper>
-        <i className="description">
-          An integration requires that a contact has set the send notification.
-          This is to ensure someone is notified when an error occurs.
-        </i>
-        {fields.map((field, index) => {
-          return (
-            <ContactWrapper role="group" key={field.id}>
-              <label
-                htmlFor={`integration-contacts-name-${index}`}
-                className="input-label"
-              >
-                {NAME_LABEL}
-              </label>
-              <span id="external-id-hint" className="input-hint" />
-              <ErrorMessage
-                errors={errors}
-                name={`contacts[${index}].name`}
-                render={({ message }) => (
-                  <span
-                    id={`contact-${index}-name-error`}
-                    className="error-message"
-                  >
-                    {message}
-                  </span>
-                )}
-              />
-              <StyledInput
-                id={`integration-contacts-name-${index}`}
-                name={`contacts[${index}].name`}
-                type="text"
-                ref={register}
-                defaultValue={field.name}
-                className={`cogs-input ${
-                  errors.contacts?.[index]?.name ? 'has-error' : ''
-                }`}
-                aria-invalid={!!errors.contacts?.[index]?.name}
-                aria-describedby={`contact-name-hint contact-${index}-name-error`}
-              />
-
-              <label
-                htmlFor={`integration-contacts-email-${index}`}
-                className="input-label"
-              >
-                {EMAIL_LABEL}
-              </label>
-              <span id="contacts-email-hint" className="input-hint" />
-              <ErrorMessage
-                errors={errors}
-                name={`contacts[${index}].email`}
-                render={({ message }) => (
-                  <span
-                    id={`contact-${index}-email-error`}
-                    className="error-message"
-                  >
-                    {message}
-                  </span>
-                )}
-              />
-              <StyledInput
-                id={`integration-contacts-email-${index}`}
-                name={`contacts[${index}].email`}
-                ref={register}
-                defaultValue={field.email}
-                className={`cogs-input ${
-                  errors.contacts?.[index]?.email ? 'has-error' : ''
-                }`}
-                aria-invalid={!!errors.contacts?.[index]?.email}
-                aria-describedby={`contact-email-hint contact-${index}-email-error`}
-              />
-
-              <label
-                htmlFor={`integration-contacts-role-${index}`}
-                className="input-label"
-              >
-                {ROLE_LABEL}
-              </label>
-              <span id="contacts-role-hint" className="input-hint">
-                The role this contact has related to this integration.
-              </span>
-              <ErrorMessage
-                errors={errors}
-                name={`contacts[${index}].role`}
-                render={({ message }) => (
-                  <span
-                    id={`contact-${index}-role-error`}
-                    className="error-message"
-                  >
-                    {message}
-                  </span>
-                )}
-              />
-              <StyledInput
-                id={`integration-contacts-role-${index}`}
-                name={`contacts[${index}].role`}
-                type="text"
-                ref={register}
-                defaultValue={field.role}
-                className={`cogs-input ${
-                  errors.contacts?.[index]?.role ? 'has-error' : ''
-                }`}
-                aria-invalid={!!errors.contacts?.[index]?.role}
-                aria-describedby={`contact-role-hint contact-${index}-role-error`}
-              />
-
-              <DivFlex direction="row" justify="space-between">
-                <DivFlex direction="column" align="flex-start">
-                  <label
-                    id="integration-contacts-notification-label"
-                    htmlFor={`integration-contacts-notification-${index}`}
-                    className="input-label checkbox-label"
-                  >
-                    {NOTIFICATION_LABEL}
-                  </label>
-                  <span
-                    id={`contacts-${index}-notification-hint`}
-                    className="input-hint"
-                  >
-                    When turned on, the contact will receive an email if the
-                    integration fails.
-                  </span>
-                  <ErrorMessage
-                    errors={errors}
-                    name={`contacts[${index}].sendNotification`}
-                    render={({ message }) => (
-                      <span
-                        id={`contact-${index}-notification-error`}
-                        className="error-message"
-                      >
-                        {message}
-                      </span>
-                    )}
-                  />
-
-                  <Controller
-                    as={
-                      <Switchbutton
-                        id={`integration-contacts-notification-${index}`}
-                        role="switch"
-                        type="button"
-                        ref={register}
-                        onClick={() => handleClick(index)}
-                        aria-checked={calcChecked(index)}
-                        aria-labelledby="integration-contacts-notification-label"
-                        aria-describedby={`contact-${index}-notification-hint contact-${index}-notification-error`}
-                      >
-                        <span className="on">On</span>
-                        <span className="off">Off</span>
-                      </Switchbutton>
-                    }
-                    name={`contacts[${index}].sendNotification`}
-                    control={control}
-                    defaultValue={field.sendNotification}
-                  />
-                </DivFlex>
-                <Button
-                  type="secondary"
-                  variant="outline"
-                  aria-label={REMOVE_CONTACT}
-                  onClick={removeContact(index)}
+      <FormProvider {...methods}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          <GridH2Wrapper>{INTEGRATION_CONTACTS_HEADING}</GridH2Wrapper>
+          <i className="description">{CONTACTS_DESCRIPTION}</i>
+          {fields.map((field, index) => {
+            return (
+              <ContactWrapper role="group" key={field.id}>
+                <label
+                  htmlFor={`integration-contacts-name-${index}`}
+                  className="input-label"
                 >
-                  <Icon type="Delete" />
-                </Button>
-              </DivFlex>
-            </ContactWrapper>
-          );
-        })}
-        <ButtonPlaced type="secondary" htmlType="button" onClick={addContact}>
-          {ADD_CONTACT}
-        </ButtonPlaced>
-        <ErrorMessage
-          errors={errors}
-          name="contacts"
-          render={({ message }) => (
-            <span id="contact-error" className="error-message server-error">
-              {message}
-            </span>
-          )}
-        />
-        <ButtonPlaced type="primary" htmlType="submit">
-          {NEXT}
-        </ButtonPlaced>
-      </CreateFormWrapper>
+                  {NAME_LABEL}
+                </label>
+                <span id="external-id-hint" className="input-hint" />
+                <ErrorMessage
+                  errors={errors}
+                  name={`contacts[${index}].name`}
+                  render={({ message }) => (
+                    <span
+                      id={`contact-${index}-name-error`}
+                      className="error-message"
+                    >
+                      {message}
+                    </span>
+                  )}
+                />
+                <StyledInput
+                  id={`integration-contacts-name-${index}`}
+                  name={`contacts[${index}].name`}
+                  type="text"
+                  ref={register}
+                  defaultValue={field.name}
+                  className={`cogs-input ${
+                    errors.contacts?.[index]?.name ? 'has-error' : ''
+                  }`}
+                  aria-invalid={!!errors.contacts?.[index]?.name}
+                  aria-describedby={`contact-name-hint contact-${index}-name-error`}
+                />
+
+                <label
+                  htmlFor={`integration-contacts-email-${index}`}
+                  className="input-label"
+                >
+                  {EMAIL_LABEL}
+                </label>
+                <span id="contacts-email-hint" className="input-hint" />
+                <ErrorMessage
+                  errors={errors}
+                  name={`contacts[${index}].email`}
+                  render={({ message }) => (
+                    <span
+                      id={`contact-${index}-email-error`}
+                      className="error-message"
+                    >
+                      {message}
+                    </span>
+                  )}
+                />
+                <StyledInput
+                  id={`integration-contacts-email-${index}`}
+                  name={`contacts[${index}].email`}
+                  ref={register}
+                  defaultValue={field.email}
+                  className={`cogs-input ${
+                    errors.contacts?.[index]?.email ? 'has-error' : ''
+                  }`}
+                  aria-invalid={!!errors.contacts?.[index]?.email}
+                  aria-describedby={`contact-email-hint contact-${index}-email-error`}
+                />
+
+                <label
+                  htmlFor={`integration-contacts-role-${index}`}
+                  className="input-label"
+                >
+                  {ROLE_LABEL}
+                </label>
+                <span id="contacts-role-hint" className="input-hint">
+                  The role this contact has related to this integration.
+                </span>
+                <ErrorMessage
+                  errors={errors}
+                  name={`contacts[${index}].role`}
+                  render={({ message }) => (
+                    <span
+                      id={`contact-${index}-role-error`}
+                      className="error-message"
+                    >
+                      {message}
+                    </span>
+                  )}
+                />
+                <StyledInput
+                  id={`integration-contacts-role-${index}`}
+                  name={`contacts[${index}].role`}
+                  type="text"
+                  ref={register}
+                  defaultValue={field.role}
+                  className={`cogs-input ${
+                    errors.contacts?.[index]?.role ? 'has-error' : ''
+                  }`}
+                  aria-invalid={!!errors.contacts?.[index]?.role}
+                  aria-describedby={`contact-role-hint contact-${index}-role-error`}
+                />
+
+                <DivFlex direction="row" justify="space-between">
+                  <DivFlex direction="column" align="flex-start">
+                    <label
+                      id="integration-contacts-notification-label"
+                      htmlFor={`integration-contacts-notification-${index}`}
+                      className="input-label checkbox-label"
+                    >
+                      {NOTIFICATION_LABEL}
+                    </label>
+                    <span
+                      id={`contacts-${index}-notification-hint`}
+                      className="input-hint"
+                    >
+                      {NOTIFICATION_HINT}
+                    </span>
+                    <ErrorMessage
+                      errors={errors}
+                      name={`contacts[${index}].sendNotification`}
+                      render={({ message }) => (
+                        <span
+                          id={`contact-${index}-notification-error`}
+                          className="error-message"
+                        >
+                          {message}
+                        </span>
+                      )}
+                    />
+
+                    <Controller
+                      as={
+                        <Switchbutton
+                          id={`integration-contacts-notification-${index}`}
+                          role="switch"
+                          type="button"
+                          ref={register}
+                          onClick={() => handleClick(index)}
+                          aria-checked={calcChecked(index)}
+                          aria-labelledby="integration-contacts-notification-label"
+                          aria-describedby={`contact-${index}-notification-hint contact-${index}-notification-error`}
+                        >
+                          <span className="on">On</span>
+                          <span className="off">Off</span>
+                        </Switchbutton>
+                      }
+                      name={`contacts[${index}].sendNotification`}
+                      control={control}
+                      defaultValue={field.sendNotification}
+                    />
+                  </DivFlex>
+                  <Button
+                    type="secondary"
+                    variant="outline"
+                    aria-label={REMOVE_CONTACT}
+                    onClick={removeContact(index)}
+                  >
+                    <Icon type="Delete" />
+                  </Button>
+                </DivFlex>
+              </ContactWrapper>
+            );
+          })}
+          <ButtonPlaced
+            mb={2}
+            type="secondary"
+            htmlType="button"
+            onClick={addContact}
+          >
+            {ADD_CONTACT}
+          </ButtonPlaced>
+          <NotificationConfig />
+          <ErrorMessage
+            errors={errors}
+            name="contacts"
+            render={({ message }) => (
+              <span id="contact-error" className="error-message server-error">
+                {message}
+              </span>
+            )}
+          />
+          <ButtonPlaced type="primary" htmlType="submit">
+            {NEXT}
+          </ButtonPlaced>
+        </CreateFormWrapper>
+      </FormProvider>
     </RegisterIntegrationLayout>
   );
 };
-export default ExternalIdPage;
+export default ContactsPage;

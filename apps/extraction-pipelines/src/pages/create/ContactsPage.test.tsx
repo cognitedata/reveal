@@ -1,6 +1,16 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
+import {
+  HOURS_MAX_MSG,
+  HOURS_MIN_MSG,
+  HOURS_REQUIRED,
+  MIN_IN_HOURS,
+} from 'utils/validation/notificationValidation';
+import {
+  CONFIG_LABEL,
+  HOURS_LABEL,
+} from 'components/inputs/NotificationConfig';
 import { renderRegisterContext } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
@@ -12,6 +22,7 @@ import {
   BACK,
   EMAIL_LABEL,
   NAME_LABEL,
+  NEXT,
   NOTIFICATION_LABEL,
   REMOVE_CONTACT,
   ROLE_LABEL,
@@ -126,10 +137,54 @@ describe('ContactsPage', () => {
     expect(sendNotificationInput).toBeInTheDocument();
     expect(sendNotificationInput.value).toEqual(`${contact.sendNotification}`);
   });
+
   test('Back btn path', () => {
     renderRegisterContext(<ContactsPage />, { ...props });
     const back = screen.getByText(BACK);
     const linkPath = back.getAttribute('href');
     expect(linkPath.includes(EXTERNAL_ID_PAGE_PATH)).toEqual(true);
+  });
+
+  test('Interact with skip notification', async () => {
+    const NR_HOURS = 6;
+    const withSkip = {
+      ...props,
+      initRegisterIntegration: {
+        skipNotificationInMinutes: NR_HOURS * MIN_IN_HOURS,
+      },
+    };
+    renderRegisterContext(<ContactsPage />, { ...withSkip });
+    const skipNotification = screen.getByLabelText(CONFIG_LABEL);
+    expect(skipNotification).toBeChecked();
+    const hours = screen.getByLabelText(HOURS_LABEL);
+    expect(hours.value).toEqual(`${NR_HOURS}`);
+    fireEvent.click(skipNotification);
+    expect(screen.queryByLabelText(HOURS_LABEL)).not.toBeInTheDocument();
+    fireEvent.click(skipNotification);
+    const hours2 = screen.getByLabelText(HOURS_LABEL);
+    expect(hours2).toBeInTheDocument();
+    expect(hours2.value).toEqual(`${NR_HOURS}`);
+    const aboveMax = 30;
+    fireEvent.change(hours2, { target: { value: aboveMax } });
+    expect(screen.getByDisplayValue(aboveMax)).toBeInTheDocument();
+    fireEvent.click(screen.getByText(NEXT));
+    await waitFor(() => {
+      screen.getByText(HOURS_MAX_MSG);
+    });
+    expect(screen.getByText(HOURS_MAX_MSG)).toBeInTheDocument();
+    const belowMin = -2;
+    fireEvent.change(hours2, { target: { value: belowMin } });
+    fireEvent.click(screen.getByText(NEXT));
+    await waitFor(() => {
+      screen.getByText(HOURS_MIN_MSG);
+    });
+    expect(screen.getByText(HOURS_MIN_MSG)).toBeInTheDocument();
+    fireEvent.change(hours2, { target: { value: '' } });
+
+    fireEvent.click(screen.getByText(NEXT));
+    await waitFor(() => {
+      screen.getByText(HOURS_REQUIRED);
+    });
+    expect(screen.getByText(HOURS_REQUIRED)).toBeInTheDocument();
   });
 });

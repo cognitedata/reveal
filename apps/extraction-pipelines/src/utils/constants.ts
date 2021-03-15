@@ -1,13 +1,17 @@
 export const EMAIL_NOTIFICATION_TOOLTIP: Readonly<string> =
   'If checked, the person will receive e-mail notification when an integration run fails. To edit, please click Edit button.';
 
+export const CONTACTS_DESCRIPTION: Readonly<string> =
+  'Document contacts related to the integrations. This will help getting in touch with the right people on troubleshooting';
 export const NAME_LABEL: Readonly<string> = 'Name';
 export const NAME_PLACEHOLDER: Readonly<string> = 'Enter name';
 export const ROLE_LABEL: Readonly<string> = 'Role';
 export const ROLE_PLACEHOLDER: Readonly<string> = 'Enter role';
 export const EMAIL_LABEL: Readonly<string> = 'E-mail';
 export const EMAIL_PLACEHOLDER: Readonly<string> = 'Enter email address';
-export const NOTIFICATION_LABEL: Readonly<string> = 'Notification';
+export const NOTIFICATION_LABEL: Readonly<string> = 'Notification subscription';
+export const NOTIFICATION_HINT: Readonly<string> =
+  'When turned on, the contact will receive an email if the integration fails';
 
 export const CONTACT_NAME_TEST_ID: Readonly<string> = 'contacts-name-';
 export const CONTACT_EMAIL_TEST_ID: Readonly<string> = 'contacts-email-';
