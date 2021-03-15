@@ -196,6 +196,8 @@ export class EffectRenderManager {
         tGhost: { value: this._ghostObjectRenderTarget.texture },
         tGhostDepth: { value: this._ghostObjectRenderTarget.depthTexture },
         tOutlineColors: { value: outlineColorTexture },
+        resolution: { value: new THREE.Vector2(0, 0) },
+        texelSize: { value: new THREE.Vector2(0, 0) },
         cameraNear: { value: 0.1 },
         cameraFar: { value: 10000 },
         edgeStrengthMultiplier: { value: 2.5 },
@@ -476,13 +478,11 @@ export class EffectRenderManager {
   private renderNormalCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     this._normalSceneBuilder.populateTemporaryScene();
     renderer.setRenderTarget(this._normalRenderedCadModelTarget);
-    this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._normalScene, camera);
   }
 
   private renderNormalCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     renderer.setRenderTarget(this._normalRenderedCadModelTarget);
-    this._materialManager.setRenderMode(RenderMode.Color);
     renderer.render(this._cadScene, camera);
   }
 
@@ -529,38 +529,19 @@ export class EffectRenderManager {
       this._ssaoTarget.setSize(renderSize.x, renderSize.y);
       this._ssaoBlurTarget.setSize(renderSize.x, renderSize.y);
 
-      // Update GLSL uniforms related to resolution
-      this._combineOutlineDetectionMaterial.setValues({
-        uniforms: {
-          ...this._combineOutlineDetectionMaterial.uniforms,
-          texelSize: {
-            value: new THREE.Vector2(this.outlineTexelSize / renderSize.x, this.outlineTexelSize / renderSize.y)
-          },
-          resolution: { value: new THREE.Vector2(renderSize.x, renderSize.y) }
-        }
-      });
+      this._combineOutlineDetectionMaterial.uniforms.texelSize.value = new THREE.Vector2(
+        this.outlineTexelSize / renderSize.x,
+        this.outlineTexelSize / renderSize.y
+      );
 
-      this._ssaoMaterial.setValues({
-        uniforms: {
-          ...this._ssaoMaterial.uniforms,
-          resolution: { value: renderSize }
-        }
-      });
+      this._combineOutlineDetectionMaterial.uniforms.resolution.value = renderSize;
 
-      this._ssaoBlurMaterial.setValues({
-        uniforms: {
-          ...this._ssaoBlurMaterial.uniforms,
-          resolution: { value: renderSize }
-        }
-      });
+      this._ssaoMaterial.uniforms.resolution.value = renderSize;
 
-      this._fxaaMaterial.setValues({
-        uniforms: {
-          ...this._fxaaMaterial.uniforms,
-          resolution: { value: renderSize },
-          inverseResolution: { value: new THREE.Vector2(1.0 / renderSize.x, 1.0 / renderSize.y) }
-        }
-      });
+      this._ssaoBlurMaterial.uniforms.resolution.value = renderSize;
+
+      this._fxaaMaterial.uniforms.resolution.value = renderSize;
+      this._fxaaMaterial.uniforms.inverseResolution.value = new THREE.Vector2(1.0 / renderSize.x, 1.0 / renderSize.y);
     }
     return renderSize;
   }

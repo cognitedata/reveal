@@ -2,15 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-
 import { SectorMetadata, SectorGeometry } from './types';
 import { Box3 } from '../../../utilities/Box3';
 import { vec3 } from 'gl-matrix';
 import { createEmptySector } from '../../../__testutilities__/emptySector';
 import { createMaterials } from '../rendering/materials';
 import { RenderMode } from '../rendering/RenderMode';
-import { consumeSectorDetailed, consumeSectorSimple, discardSector } from './sectorUtilities';
+import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 
 import 'jest-extended';
@@ -215,33 +213,6 @@ describe('sectorUtilities', () => {
 
       // Act
       expect(() => consumeSectorSimple(sector, materials)).toThrowError();
-    });
-  });
-
-  describe('discardSector', () => {
-    let node: THREE.Group;
-
-    beforeEach(() => {
-      node = new THREE.Group();
-      jest.resetAllMocks();
-    });
-
-    test('discard undefined request does not throw', () => {
-      expect(() => discardSector(node)).not.toThrow();
-    });
-
-    test('disposes geometry', () => {
-      // Arrange
-      const geometryDisposeMock = jest.fn();
-      THREE.Geometry.prototype.dispose = geometryDisposeMock;
-      const mesh = new THREE.Mesh(new THREE.Geometry(), new THREE.Material());
-      node.add(mesh);
-
-      // Act
-      discardSector(node);
-
-      // Assert
-      expect(geometryDisposeMock).toBeCalledTimes(1);
     });
   });
 });

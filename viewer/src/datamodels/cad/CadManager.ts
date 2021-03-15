@@ -7,7 +7,6 @@ import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { discardSector } from './sector/sectorUtilities';
 import { Subscription, Observable } from 'rxjs';
 
 import { trackError } from '../../utilities/metrics';
@@ -75,15 +74,14 @@ export class CadManager<TModelIdentifier> {
           if (sectorNode.group) {
             sectorNode.group.userData.refCount -= 1;
             if (sectorNode.group.userData.refCount === 0) {
-              discardSector(sectorNode.group);
+              sectorNode.resetGeometry();
             }
             sectorNode.remove(sectorNode.group);
           }
           if (sector.group) {
-            // Is this correct now?
             sectorNode.add(sector.group);
           }
-          sectorNode.group = sector.group;
+          sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
           this.markNeedsRedraw();
         },
         error => {

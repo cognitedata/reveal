@@ -123,6 +123,9 @@ export class Cognite3DViewer {
   private readonly models: CogniteModelBase[] = [];
   private readonly extraObjects: THREE.Object3D[] = [];
 
+  private readonly _automaticNearFarPlane: boolean;
+  private readonly _automaticControlsSensitivity: boolean;
+
   private isDisposed = false;
 
   private readonly renderController: RenderController;
@@ -186,6 +189,9 @@ export class Cognite3DViewer {
     }
 
     this._renderer = options.renderer || new THREE.WebGLRenderer();
+    this._automaticNearFarPlane = options.automaticCameraNearFar !== undefined ? options.automaticCameraNearFar : true;
+    this._automaticControlsSensitivity =
+      options.automaticControlsSensitivity !== undefined ? options.automaticControlsSensitivity : true;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -206,6 +212,8 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
+    this.controls.minDistance = 1.0;
+    this.controls.maxDistance = 100.0;
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -776,6 +784,16 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
+   * for documentation. Note that by default the `minDistance` setting of the controls will
+   * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
+   * @version new in 1.4.0
+   */
+  get cameraControls(): ComboControls {
+    return this.controls;
+  }
+
+  /**
    * Gets wheter camera controls through mouse, touch and keyboard are enabled.
    * @version new in 1.2.0
    */
@@ -1260,6 +1278,10 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
+    if (!this._automaticControlsSensitivity && !this._automaticNearFarPlane) {
+      return;
+    }
+
     const {
       combinedBbox,
       bbox,
@@ -1273,13 +1295,17 @@ export class Cognite3DViewer {
     combinedBbox.makeEmpty();
     this.models.forEach(model => {
       model.getModelBoundingBox(bbox);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     this.extraObjects.forEach(obj => {
       bbox.setFromObject(obj);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
@@ -1311,15 +1337,19 @@ export class Cognite3DViewer {
     }
 
     // Apply
-    camera.near = near;
-    camera.far = far;
-    camera.updateProjectionMatrix();
-    // The minDistance of the camera controller determines at which distance
-    // we will push the target in front of us instead of getting closer to it.
-    // This is also used to determine the speed of the camera when flying with ASDW.
-    // We want to either let it be controlled by the near plane if we are far away,
-    // but no more than a fraction of the bounding box of the system if inside
-    this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+    if (this._automaticNearFarPlane) {
+      camera.near = near;
+      camera.far = far;
+      camera.updateProjectionMatrix();
+    }
+    if (this._automaticControlsSensitivity) {
+      // The minDistance of the camera controller determines at which distance
+      // we will push the target in front of us instead of getting closer to it.
+      // This is also used to determine the speed of the camera when flying with ASDW.
+      // We want to either let it be controlled by the near plane if we are far away,
+      // but no more than a fraction of the bounding box of the system if inside
+      this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+    }
   }
 
   /** @private */

@@ -16,8 +16,6 @@ import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttribu
 import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 
-const emptyGeometry = new THREE.Geometry();
-
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */
   -0.5, -0.5, 0.0,
@@ -112,18 +110,6 @@ export function consumeSectorDetailed(sector: SectorGeometry, metadata: SectorMe
   }
 
   return obj;
-}
-
-export function discardSector(group: THREE.Group) {
-  const meshes: THREE.Mesh[] = group.children.filter(x => x instanceof THREE.Mesh).map(x => x as THREE.Mesh);
-  for (const mesh of meshes) {
-    if (mesh.geometry) {
-      mesh.geometry.dispose();
-      // NOTE: Forcefully creating a new reference here to make sure
-      // there are no lingering references to the large geometry buffer
-      mesh.geometry = emptyGeometry;
-    }
-  }
 }
 
 export function distinctUntilLevelOfDetailChanged() {
