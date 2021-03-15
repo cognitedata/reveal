@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import LinkWithCopy from 'components/links/LinkWithCopy';
 import { NO_RAW_TABLES_MESSAGE } from 'utils/constants';
-import { Raw } from '../../../model/Integration';
-import { useAppEnv } from '../../../hooks/useAppEnv';
+import { IntegrationRawTable } from 'model/Integration';
+import { useAppEnv } from 'hooks/useAppEnv';
 
 const RawTableWrapper = styled.table`
   width: 50%;
@@ -33,7 +33,7 @@ const RawTableWrapper = styled.table`
 
 interface OwnProps {
   // eslint-disable-next-line
-  rawTables?: Raw[];
+  rawTables?: IntegrationRawTable[];
 }
 
 type Props = OwnProps;

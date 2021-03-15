@@ -2,7 +2,7 @@ import { MetaData } from 'model/MetaData';
 import { User } from 'model/User';
 import { DataSetModel } from 'model/DataSetModel';
 
-export interface Raw {
+export interface IntegrationRawTable {
   dbName: string;
   tableName: string;
 }
@@ -16,7 +16,7 @@ export interface RegisterIntegrationInfo {
   description?: string;
   metadata?: MetaData;
   contacts: User[];
-  rawTables?: Raw[];
+  rawTables?: IntegrationRawTable[];
 }
 export interface Integration extends Omit<RegisterIntegrationInfo, 'id'> {
   id: number;
@@ -27,7 +27,7 @@ export interface Integration extends Omit<RegisterIntegrationInfo, 'id'> {
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds
   lastMessage?: string;
-  rawTables?: Raw[];
+  rawTables?: IntegrationRawTable[];
 }
 
 export type IntegrationFieldName = keyof Integration | 'status' | 'latestRun';

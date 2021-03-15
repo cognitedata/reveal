@@ -17,6 +17,7 @@ import RawTablePage, {
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { TABLE_REQUIRED } from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import { NEXT } from 'utils/constants';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {
@@ -98,5 +99,79 @@ describe('RawTablePage', () => {
       screen.getByText(TABLE_REQUIRED);
     });
     expect(screen.getByText(TABLE_REQUIRED)).toBeInTheDocument();
+  });
+
+  test('Loads stored value', async () => {
+    const rawTables = [
+      {
+        dbName: mockData[0].database.name,
+        tableName: mockData[0].tables[0].name,
+      },
+    ];
+    useRawDBAndTables.mockReturnValue({ isLoading: false, data: mockData });
+    renderRegisterContext(<RawTablePage />, {
+      ...props,
+      initRegisterIntegration: { rawTables },
+    });
+    expect(screen.getByLabelText(RawTableOptions.YES)).toBeChecked();
+
+    expect(screen.getByLabelText(rawTables[0].dbName)).toBeChecked();
+    // selected db and listing in table
+    expect(screen.getAllByText(rawTables[0].dbName).length).toEqual(2);
+    // listing in table (selected table is not possible because if tables from multiple dbs are selected)
+    expect(screen.getByText(rawTables[0].tableName)).toBeInTheDocument();
+  });
+
+  test('Calls to update on yes', async () => {
+    const rawTables = [
+      {
+        dbName: mockData[0].database.name,
+        tableName: mockData[0].tables[0].name,
+      },
+    ];
+    useRawDBAndTables.mockReturnValue({ isLoading: false, data: mockData });
+    sdkv3.post.mockResolvedValue({ data: { items: [] } });
+    renderRegisterContext(<RawTablePage />, {
+      ...props,
+      initRegisterIntegration: { rawTables, id: 123 },
+    });
+    expect(screen.getByLabelText(RawTableOptions.YES)).toBeChecked();
+    fireEvent.click(screen.getByText(NEXT));
+    await waitFor(() => {
+      expect(sdkv3.post).toHaveBeenCalledTimes(1);
+    });
+    expect(sdkv3.post).toHaveBeenCalledWith(
+      '/api/playground/projects/itera-int-green/integrations/update',
+      {
+        data: {
+          items: [{ id: '123', update: { rawTables: { set: rawTables } } }],
+        },
+        withCredentials: true,
+      }
+    );
+  });
+
+  test('Calls to update on no', async () => {
+    useRawDBAndTables.mockReturnValue({ isLoading: false, data: mockData });
+    sdkv3.post.mockResolvedValue({ data: { items: [] } });
+    renderRegisterContext(<RawTablePage />, {
+      ...props,
+      initRegisterIntegration: { id: 123 },
+    });
+    fireEvent.click(screen.getByLabelText(RawTableOptions.NO));
+    fireEvent.click(screen.getByText(NEXT));
+    await waitFor(() => {
+      expect(sdkv3.post).toHaveBeenCalledTimes(1);
+    });
+
+    expect(sdkv3.post).toHaveBeenCalledWith(
+      '/api/playground/projects/itera-int-green/integrations/update',
+      {
+        data: {
+          items: [{ id: '123', update: { rawTables: { set: [] } } }],
+        },
+        withCredentials: true,
+      }
+    );
   });
 });

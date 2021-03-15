@@ -4,7 +4,7 @@ import { RawDBTable } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { StyledMenu } from 'components/inputs/rawSelector/DatabaseSelector';
-import { SelectedTable } from 'components/inputs/rawSelector/RawSelector';
+import { IntegrationRawTable } from 'model/Integration';
 
 const ExternalLink = styled.a`
   .visually-hidden {
@@ -29,7 +29,7 @@ export const NO_TABLES_IN_DB: Readonly<string> = 'No tables in this database';
 interface DatabaseTablesProps {
   selectedDb: string;
   databaseTables: RawDBTable[];
-  selectedTables: SelectedTable[];
+  selectedTables: IntegrationRawTable[];
   onChangeTablesList: (key: string) => void;
 }
 const Message = styled.p`
@@ -58,7 +58,7 @@ export const DatabaseTables: FunctionComponent<DatabaseTablesProps> = ({
               name={table.name}
               value={selectedTables.some(
                 (record) =>
-                  record.databaseName === selectedDb &&
+                  record.dbName === selectedDb &&
                   record.tableName === table.name
               )}
               onChange={() =>

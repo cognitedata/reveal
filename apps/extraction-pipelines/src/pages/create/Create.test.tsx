@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { renderRegisterContext } from 'utils/test/render';
+import Create from 'pages/create/Create';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -18,11 +19,10 @@ import {
   CREATE_INTEGRATION_PAGE_PATH,
   withTenant,
 } from 'routing/CreateRouteConfig';
-import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
-import Create from 'pages/create/Create';
 import 'utils/test/windowLocation';
 import { INTEGRATION_DOCUMENTATION_HEADING } from 'pages/create/DocumentationPage';
 import { INTEGRATION_SCHEDULE_HEADING } from 'pages/create/SchedulePage';
+import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
   DataSetOptions,
   INTEGRATION_DATA_SET_HEADING,
@@ -34,7 +34,6 @@ import {
 import { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
 import { INTEGRATION_EXTERNAL_ID_HEADING } from 'pages/create/ExternalIdPage';
 import { INTEGRATION_CONTACTS_HEADING } from 'pages/create/ContactsPage';
-import '../../utils/test/windowLocation';
 
 describe('Register', () => {
   window.location.href =
@@ -50,7 +49,7 @@ describe('Register', () => {
   };
   beforeEach(() => {
     sdkv3.post.mockResolvedValue({
-      data: { items: [{ name: 'My integration', id: 123123123 }] },
+      data: { items: [{ name: 'My integration', id: 123 }] },
     });
   });
   afterEach(() => {

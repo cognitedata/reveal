@@ -3,17 +3,17 @@ import Schedule, {
 } from 'components/integrations/cols/Schedule';
 import React from 'react';
 import { DataSet } from '@cognite/sdk';
-import StatusMarker from '../../integrations/cols/StatusMarker';
-import { Status } from '../../../model/Status';
-import InteractiveCopy from '../../InteractiveCopy';
-import { DataSet as DataSetDisplay } from '../../integrations/cols/DataSet';
-import RelativeTimeWithTooltip from '../../integrations/cols/RelativeTimeWithTooltip';
+import StatusMarker from 'components/integrations/cols/StatusMarker';
+import { Status } from 'model/Status';
+import InteractiveCopy from 'components/InteractiveCopy';
+import { DataSet as DataSetDisplay } from 'components/integrations/cols/DataSet';
+import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
 import {
   IntegrationFieldName,
   IntegrationFieldValue,
-  Raw,
-} from '../../../model/Integration';
-import RawTable from '../../integrations/cols/RawTable';
+  IntegrationRawTable,
+} from 'model/Integration';
+import RawTable from 'components/integrations/cols/RawTable';
 
 interface DetailsValueViewProps {
   fieldValue: IntegrationFieldValue;
@@ -53,7 +53,7 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
       );
     }
     case 'rawTables': {
-      return <RawTable rawTables={fieldValue as Raw[]} />;
+      return <RawTable rawTables={fieldValue as IntegrationRawTable[]} />;
     }
     case 'externalId':
       return (

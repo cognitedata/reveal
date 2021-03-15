@@ -1,5 +1,7 @@
 import { RawDBTable } from '@cognite/sdk';
-import { DatabaseWithTablesItem } from '../../components/inputs/rawSelector/RawSelector';
+import { IntegrationRawTable } from 'model/Integration';
+import { RawTableFormInput, RawTableOptions } from 'pages/create/RawTablePage';
+import { DatabaseWithTablesItem } from 'components/inputs/rawSelector/RawSelector';
 
 interface Args {
   databaseList: DatabaseWithTablesItem[];
@@ -23,4 +25,25 @@ export const getDatabaseTables = ({
     }
     return acc;
   }, [] as RawDBTable[]);
+};
+
+export const mapStoredToDefault = (
+  rawTables: IntegrationRawTable[] | undefined
+): RawTableFormInput => {
+  if (!rawTables) {
+    return {
+      rawTable: '',
+      selectedRawTables: [],
+    };
+  }
+  if (rawTables.length === 0) {
+    return {
+      rawTable: RawTableOptions.NO,
+      selectedRawTables: [],
+    };
+  }
+  return {
+    rawTable: RawTableOptions.YES,
+    selectedRawTables: rawTables,
+  };
 };

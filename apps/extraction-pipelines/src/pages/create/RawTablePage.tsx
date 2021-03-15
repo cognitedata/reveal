@@ -23,9 +23,14 @@ import {
   GridTitleWrapper,
 } from 'styles/StyledPage';
 import { CreateFormWrapper } from 'styles/StyledForm';
-import { SelectedTable } from 'components/inputs/rawSelector/RawSelector';
 import { NEXT } from 'utils/constants';
 import { ButtonPlaced } from 'styles/StyledButton';
+import { IntegrationRawTable } from 'model/Integration';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { mapStoredToDefault } from 'utils/raw/rawUtils';
+import { createUpdateSpec } from 'utils/contactsUtils';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 
 const ConditionalWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -71,22 +76,27 @@ const rawTableSchema = yup.object().shape({
 
 interface RawTablePageProps {}
 
-interface RawTableFormInput {
-  rawTable: string;
-  selectedRawTables: SelectedTable[];
+export interface RawTableFormInput {
+  rawTable: RawTableOptions | '';
+  selectedRawTables: IntegrationRawTable[];
 }
 
 const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
   const history = useHistory();
   const [showSelector, setSelector] = useState(false);
+  const { project } = useAppEnv();
+  const { mutate } = useDetailsUpdate();
+  const {
+    storedIntegration,
+    setStoredIntegration,
+  } = useStoredRegisterIntegration();
+
   const methods = useForm<RawTableFormInput>({
     resolver: yupResolver(rawTableSchema),
-    defaultValues: {
-      selectedRawTables: [],
-    },
+    defaultValues: mapStoredToDefault(storedIntegration?.rawTables),
     reValidateMode: 'onSubmit',
   });
-  const { register, handleSubmit, errors, watch, setValue } = methods;
+  const { register, handleSubmit, errors, watch, setValue, setError } = methods;
   register('rawTable');
   register('selectedRawTables');
 
@@ -95,8 +105,45 @@ const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
     setSelector(rawTableValue === RawTableOptions.YES);
   }, [rawTableValue]);
 
-  const handleNext = () => {
-    history.push(createLink(DOCUMENTATION_PAGE_PATH));
+  const handleNext = (field: RawTableFormInput) => {
+    const selected =
+      field.rawTable === RawTableOptions.YES ? field.selectedRawTables : [];
+    setStoredIntegration((prev) => {
+      return { ...prev, rawTables: selected };
+    });
+
+    if (storedIntegration?.id && project) {
+      const items = createUpdateSpec({
+        id: storedIntegration.id,
+        fieldName: 'rawTables',
+        fieldValue: selected,
+      });
+      mutate(
+        {
+          project,
+          items,
+          id: storedIntegration.id,
+        },
+        {
+          onSuccess: () => {
+            history.push(createLink(DOCUMENTATION_PAGE_PATH));
+          },
+          onError: (serverError) => {
+            setError('rawTables', {
+              type: 'server',
+              message: serverError.data.message,
+              shouldFocus: true,
+            });
+          },
+        }
+      );
+    } else {
+      setError('datasetId', {
+        type: 'No id',
+        message: 'No id. Select an integration',
+        shouldFocus: true,
+      });
+    }
   };
   const v = watch('rawTable');
 

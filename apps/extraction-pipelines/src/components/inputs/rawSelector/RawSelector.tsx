@@ -7,6 +7,7 @@ import { getDatabaseTables } from 'utils/raw/rawUtils';
 import { SelectionColumns } from 'components/inputs/rawSelector/SelectedDBTablesColumns';
 import { DatabaseTables } from 'components/inputs/rawSelector/DatabaseTables';
 import { DatabaseSelector } from 'components/inputs/rawSelector/DatabaseSelector';
+import { IntegrationRawTable } from 'model/Integration';
 
 const Selector = styled.div`
   width: 100%;
@@ -37,13 +38,11 @@ export type DatabaseWithTablesItem = {
   tables: RawDBTable[];
 };
 
-export type SelectedTable = { databaseName: string; tableName: string };
-
 interface RawSelectorProps {
   databaseList: DatabaseWithTablesItem[];
   setSelectedDb(value: string): void;
-  selectedTables: SelectedTable[];
-  setSelectedTables(value: SelectedTable[]): void;
+  selectedTables: IntegrationRawTable[];
+  setSelectedTables(value: IntegrationRawTable[]): void;
   setChangesSaved(value: boolean): void;
   selectedDb: string;
 }
@@ -61,21 +60,21 @@ const RawSelector = ({
 
   const onChangeTablesList = (key: string) => {
     const keyItem = {
-      databaseName: key.split('/')[0],
+      dbName: key.split('/')[0],
       tableName: key.split('/')[1],
     };
     setChangesSaved(false);
     if (
       selectedTables.some(
         (record) =>
-          record.databaseName === keyItem.databaseName &&
+          record.dbName === keyItem.dbName &&
           record.tableName === keyItem.tableName
       )
     ) {
       setSelectedTables(
         selectedTables.filter((item) => {
           return (
-            item.databaseName !== keyItem.databaseName ||
+            item.dbName !== keyItem.dbName ||
             item.tableName !== keyItem.tableName
           );
         })
@@ -86,7 +85,7 @@ const RawSelector = ({
   };
 
   const anyDbTableSelected = (dbName: string): boolean => {
-    return !!selectedTables.find((rawItem) => rawItem.databaseName === dbName);
+    return !!selectedTables.find((rawItem) => rawItem.dbName === dbName);
   };
 
   const allDbTableSelected = (item: DatabaseWithTablesItem): boolean => {
@@ -103,17 +102,17 @@ const RawSelector = ({
       // unselect all
       setSelectedTables(
         selectedTables.filter(
-          (selectedItem) => item.database.name !== selectedItem.databaseName
+          (selectedItem) => item.database.name !== selectedItem.dbName
         )
       );
     } else {
-      const selected = [
+      const selected: IntegrationRawTable[] = [
         ...item.tables.map((table) => ({
-          databaseName: item.database.name,
+          dbName: item.database.name,
           tableName: table.name,
         })),
         ...selectedTables.filter(
-          (rawItem) => rawItem.databaseName !== item.database.name
+          (rawItem) => rawItem.dbName !== item.database.name
         ),
       ];
       setSelectedDb(item.database.name);
@@ -176,7 +175,7 @@ const RawSelector = ({
           />
         </SearchWrapper>
       </Selector>
-      <Table<SelectedTable>
+      <Table<IntegrationRawTable>
         pagination
         locale={localeEmpty()}
         columns={SelectionColumns}

@@ -4,16 +4,20 @@ import { Colors } from '@cognite/cogs.js';
 import RawTable from 'components/integrations/cols/RawTable';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { useParams } from 'react-router';
-import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
-import Schedule from '../integrations/cols/Schedule';
-import { TableHeadings } from '../table/IntegrationTableCol';
-import { DetailFieldNames, Integration, Raw } from '../../model/Integration';
-import { AbsoluteRelativeTime } from '../TimeDisplay/AbsoluteRelativeTime';
-import { TwoColGrid } from '../../styles/grid/StyledGrid';
-import { RouterParams } from '../../routing/RoutingConfig';
-import { MetaData } from './MetaData';
-import { DataSetView } from './DataSetView';
-import { RunView } from './RunView';
+import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
+import Schedule from 'components/integrations/cols/Schedule';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import {
+  DetailFieldNames,
+  Integration,
+  IntegrationRawTable,
+} from 'model/Integration';
+import { AbsoluteRelativeTime } from 'components/TimeDisplay/AbsoluteRelativeTime';
+import { TwoColGrid } from 'styles/grid/StyledGrid';
+import { RouterParams } from 'routing/RoutingConfig';
+import { MetaData } from 'components/integration/MetaData';
+import { DataSetView } from 'components/integration/DataSetView';
+import { RunView } from 'components/integration/RunView';
 
 export const Wrapper = styled.div`
   overflow-y: auto;
@@ -94,7 +98,9 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
     return 'Governed';
   };
 
-  const dataSetRawTables = (int: Integration): Raw[] | undefined => {
+  const dataSetRawTables = (
+    int: Integration
+  ): IntegrationRawTable[] | undefined => {
     return int?.dataSet?.metadata?.rawTables?.map(
       ({ databaseName, tableName }) => {
         return {

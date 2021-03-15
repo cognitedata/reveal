@@ -2,10 +2,9 @@ import React, { FunctionComponent, useState } from 'react';
 import { Loader } from '@cognite/cogs.js';
 import { useFormContext } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import RawSelector, {
-  SelectedTable,
-} from 'components/inputs/rawSelector/RawSelector';
+import RawSelector from 'components/inputs/rawSelector/RawSelector';
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
+import { IntegrationRawTable } from 'model/Integration';
 
 interface ConnectRawTablesPageProps {}
 
@@ -28,7 +27,7 @@ const ConnectRawTablesInput: FunctionComponent<ConnectRawTablesPageProps> = () =
     clearErrors('selectedRawTables');
   }
 
-  const setSelectedTables = (values: SelectedTable[]) => {
+  const setSelectedTables = (values: IntegrationRawTable[]) => {
     setValue('selectedRawTables', values);
   };
 
