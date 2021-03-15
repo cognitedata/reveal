@@ -9,40 +9,38 @@ import { useUpdateChart } from 'hooks/firebase';
 interface DateRangeSelectorProps {
   chart: Chart;
 }
-
-const startOfDay = dayjs().startOf('day');
-const endOfDay = dayjs().endOf('day');
+const now = dayjs();
 
 const relativeTimeOptions = [
   {
     label: '1D',
-    dateFrom: startOfDay,
-    dateTo: endOfDay,
+    dateFrom: now.subtract(1, 'day'),
+    dateTo: now,
   },
   {
     label: '2D',
-    dateFrom: startOfDay.subtract(1, 'day'),
-    dateTo: endOfDay,
+    dateFrom: now.subtract(2, 'day'),
+    dateTo: now,
   },
   {
     label: '1W',
-    dateFrom: startOfDay.subtract(1, 'week'),
-    dateTo: endOfDay,
+    dateFrom: now.subtract(1, 'week'),
+    dateTo: now,
   },
   {
     label: '1M',
-    dateFrom: startOfDay.subtract(1, 'month'),
-    dateTo: endOfDay,
+    dateFrom: now.subtract(1, 'month'),
+    dateTo: now,
   },
   {
     label: '6M',
-    dateFrom: startOfDay.subtract(6, 'months'),
-    dateTo: endOfDay,
+    dateFrom: now.subtract(6, 'months'),
+    dateTo: now,
   },
   {
     label: '1Y',
-    dateFrom: startOfDay.subtract(1, 'year'),
-    dateTo: endOfDay,
+    dateFrom: now.subtract(1, 'year'),
+    dateTo: now,
   },
 ];
 
