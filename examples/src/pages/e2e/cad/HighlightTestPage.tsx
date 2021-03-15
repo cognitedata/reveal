@@ -6,14 +6,14 @@ import React from 'react';
 
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import * as THREE from 'three';
-import { DefaultNodeAppearance, FixedNodeSet } from '@cognite/reveal';
+import { DefaultNodeAppearance, ByTreeIndexNodeSet } from '@cognite/reveal';
 
 export function HighlightTestPage() {
   return (
     <TestViewer
     modifyTestEnv={({ model }: TestEnvCad) => {
       const nodeApperanceProvider = model.nodeAppearanceProvider;
-      const nodes = new FixedNodeSet([...Array(15).keys()]);
+      const nodes = new ByTreeIndexNodeSet([...Array(15).keys()]);
       nodeApperanceProvider.addStyledSet(nodes, DefaultNodeAppearance.Highlighted);
 
       return {

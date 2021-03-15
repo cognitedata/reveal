@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import * as THREE from 'three';
 
 import { SectorMetadata, SectorGeometry } from './types';
 import { Box3 } from '../../../utilities/Box3';

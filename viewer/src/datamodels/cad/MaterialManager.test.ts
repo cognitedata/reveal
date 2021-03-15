@@ -7,7 +7,7 @@ import { range } from 'lodash';
 import { IndexSet } from '../../utilities/IndexSet';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
-import { FixedNodeSet } from './styling';
+import { ByTreeIndexNodeSet } from './styling';
 import { NumericRange } from '../../utilities';
 
 describe('MaterialManager', () => {
@@ -67,7 +67,7 @@ describe('MaterialManager', () => {
     const listener = jest.fn();
     manager.on('materialsChanged', listener);
 
-    provider.addStyledSet(new FixedNodeSet(new IndexSet([1, 2, 3])), { renderGhosted: true });
+    provider.addStyledSet(new ByTreeIndexNodeSet(new IndexSet([1, 2, 3])), { renderGhosted: true });
 
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet([0, 4]));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([1, 2, 3]));
