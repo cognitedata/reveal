@@ -2,6 +2,20 @@
 # yarn lockfile v1
 
 
+"@azure/msal-browser@^2.11.0":
+  version "2.12.1"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.12.1.tgz#003bd69cdc54f1a6891458831dc23b8a801f669a"
+  integrity sha512-P1juZoLnoMI70p1W8/bd3Uk7cGLkYZ0xAUuDhUjCT5adnAWXyMsAyaJK+/WKY4B3sAnasvfC1TW6DDOedjJoiw==
+  dependencies:
+    "@azure/msal-common" "^4.0.3"
+
+"@azure/msal-common@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.0.3.tgz#e3bab249a9f7cfe011d07e3c264f62791d54cc6c"
+  integrity sha512-EihnqHh2EE6xcB0Dh2LF30jE1Ga9cgh9PyRkX4fj+KpvYfL4ae57hvQwJGkynUgpf3V1xQxU5yaJVXOElfXiGw==
+  dependencies:
+    debug "^4.1.1"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4":
   version "7.10.4"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.10.4.tgz#168da1a36e90da68ae8d49c0f1b48c7c6249213a"
@@ -308,12 +322,24 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.0.0.tgz#99c9f600129e1f525f2214a7f5f11cf90095e25f"
-  integrity sha512-5zyHEh8drYGQ++4NOjdRr/9XIzHdoI7ssL66ZTJ/uGaLxMhXGa/hq2GK8RaN6uGf0PsirOS9VeU08zA8b2baWQ==
+"@cognite/sdk-core@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.0.tgz#919a664b73c074de9558bcf8cf91e9cecd3f028b"
+  integrity sha512-RcrvPFUotytag3jfb8frYKGEmpfns34p/RpVQgyshxWcrKwu7tMA3k3lhCTwkVd/mfUsrG1J9ZDvRn2HH4D9nA==
   dependencies:
-    "@cognite/sdk-core" "^1.0.0"
+    "@azure/msal-browser" "^2.11.0"
+    cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
+"@cognite/sdk@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.4.0.tgz#d165f066dfd8223de11ad9b28638e7ecd0c5a89b"
+  integrity sha512-BQfW473UIeqQULruFLMJpHYV+e9qtZp9qUwjBdVEOhh1KsNMlWekxvO3ATUeSylRiH5Sy8DFWMdKPE2XlrYWCw==
+  dependencies:
+    "@cognite/sdk-core" "^1.2.0"
     lodash "^4.17.11"
 
 "@cognite/three-combo-controls@^1.4.3":
@@ -5214,6 +5240,11 @@ is-buffer@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+
+is-buffer@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.5.tgz#ebc252e400d22ff8d77fa09888821a24a658c191"
+  integrity sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==
 
 is-callable@^1.1.4, is-callable@^1.2.0:
   version "1.2.0"
