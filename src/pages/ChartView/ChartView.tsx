@@ -17,6 +17,7 @@ import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus } from 'hooks';
 import { useQueryClient } from 'react-query';
+import { duplicate } from 'utils/charts';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 import RunWorkflows from './RunWorkflowsButton';
@@ -45,7 +46,7 @@ type ChartViewProps = {
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const history = useHistory();
   const cache = useQueryClient();
-  const { data } = useLoginStatus();
+  const { data: login } = useLoginStatus();
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
   const {
@@ -57,7 +58,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const updateChart = (updatedChart: Chart) =>
     mutateAsync({
       chart: updatedChart,
-      skipPersist: data?.user !== updatedChart.user,
+      skipPersist: login?.user !== updatedChart.user,
     });
 
   useEffect(() => {
@@ -76,14 +77,14 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         const key = ['chart', chartId];
         const newChart = snap.data() as Chart;
         const cacheChart = cache.getQueryData<Chart>(key);
-        if (cacheChart?.dirty && newChart.user !== data?.user) {
+        if (cacheChart?.dirty && newChart.user !== login?.user) {
           toast.warn('Chart have been changed by owner');
         } else {
           cache.setQueryData(key, newChart);
         }
       },
     });
-  }, [charts, chartId, data]);
+  }, [charts, chartId, login]);
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
   const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
@@ -173,15 +174,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   );
 
   const handleDuplicateChart = async () => {
-    if (chart) {
-      const id = nanoid();
-      const newChart = {
-        ...chart,
-        name: `${chart.name} Copy`,
-        id,
-      };
+    if (login?.user) {
+      const newChart = duplicate(chart, login.user);
       await updateChart(newChart);
-      history.push(`/${id}`);
+      history.push(`/${newChart.id}`);
     }
   };
 

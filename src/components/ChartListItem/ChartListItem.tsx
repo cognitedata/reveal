@@ -6,7 +6,8 @@ import { Chart } from 'reducers/charts/types';
 
 import thumb from 'assets/thumb.png';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
-import { nanoid } from 'nanoid';
+import { useLoginStatus } from 'hooks';
+import { duplicate } from 'utils/charts';
 
 export type ViewOption = 'list' | 'grid';
 
@@ -19,6 +20,7 @@ interface ChartListItemProps {
 
 const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const history = useHistory();
+  const { data: login } = useLoginStatus();
   const { mutateAsync: updateChart } = useUpdateChart();
   const { mutate: deleteChart } = useDeleteChart();
 
@@ -33,14 +35,12 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   };
 
   const handleDuplicateChart = () => {
-    const id = nanoid();
-    const newChart = {
-      ...chart,
-      name: `${chart.name} Copy`,
-      id,
-    };
-
-    updateChart({ chart: newChart }).then(() => history.push(`/${id}`));
+    if (login?.user) {
+      const newChart = duplicate(chart, login.user);
+      updateChart({ chart: newChart }).then(() =>
+        history.push(`/${newChart.id}`)
+      );
+    }
   };
 
   const mockPreview = (
