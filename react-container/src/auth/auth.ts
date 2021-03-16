@@ -4,9 +4,19 @@ import { AuthProvider } from '../components/AuthContainer';
 import { log } from '../utils/log';
 import { AuthHeaders } from './types';
 
-export const getAuthHeaders = (apiKeyHeader = 'api-key'): AuthHeaders => {
+interface Options {
+  apiKeyHeader?: string;
+  useIdToken?: boolean;
+}
+export const getAuthHeaders = ({
+  apiKeyHeader,
+  useIdToken,
+}: Options = {}): AuthHeaders => {
   const { authState } = React.useContext(AuthProvider);
 
+  if (useIdToken && authState?.idToken) {
+    return { Authorization: `Bearer ${authState?.idToken}` };
+  }
   if (authState?.token) {
     return { Authorization: `Bearer ${authState?.token}` };
   }

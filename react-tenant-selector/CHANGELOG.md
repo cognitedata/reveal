@@ -1,3 +1,9 @@
+## 0.6.4 Mar 16 2021
+
+### Changes
+
+- Bump auth-utils to get updated types
+
 ## 0.6.3 Mar 1 2021
 
 ### Changes

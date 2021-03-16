@@ -1,3 +1,10 @@
+## 0.11.0 Mar 16 2021
+
+### Changes
+
+- Breaking, change props for `getAuthHeaders` from `apiKeyHeader?: string` to object form `{apiKeyHeader?: string}`
+- Add `useIdToken` props to `getAuthHeaders` to get the headers setup for sending the ID token instead of the auth token
+
 ## 0.10.0 Mar 9 2021
 
 ### Changes
