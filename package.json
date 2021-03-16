@@ -5,7 +5,9 @@
   "scripts": {
     "start": "./scripts/start.sh",
     "build": "./scripts/build.sh",
-    "test": "./scripts/test.sh",
+    "test": "./scripts/test.sh --watchAll=false",
+    "test:watch": "./scripts/test.sh",
+    "test:ci": "./scripts/test.sh --coverage --reporters=default --reporters=jest-junit --watchAll=false ",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "lint": "eslint --config .eslintrc.production.js 'src/**/*.{ts,tsx}' 'public/index.html'",
     "lint:fix": "yarn lint --fix",
@@ -36,6 +38,7 @@
     "react": "^17.0.1",
     "react-datepicker": "^3.6.0",
     "react-dom": "^17.0.1",
+
     "react-plotly.js": "^2.5.1",
     "react-query": "^3.7.1",
     "react-router-dom": "^5.2.0",
