@@ -72,6 +72,10 @@
         {
           "type": "doc",
           "id": "version-1.x/examples/antialiasing"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/cad-explode"
         }
       ]
     },

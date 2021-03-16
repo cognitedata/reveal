@@ -208,19 +208,19 @@ Run the build with that env variable. You will see the `publicPath` printed to c
     {label: 'Bash', value: 'bash'},
     {label: 'Windows', value: 'win'},
   ]
-  }>
-  <TabItem value="bash">
+}>
+<TabItem value="bash">
 
-    ```bash
-    PUBLIC_PATH="https://static.server/parser-worker/" yarn build:prod
-    ```
-  </TabItem>
-  <TabItem value="win">
+```bash
+PUBLIC_PATH="https://static.server/parser-worker/" yarn build:prod
+```
+</TabItem>
+<TabItem value="win">
 
-    ```bash
-    set PUBLIC_PATH="https://static.server/parser-worker/" && yarn build:prod
-    ```
-  </TabItem>
+```bash
+set PUBLIC_PATH="https://static.server/parser-worker/" && yarn build:prod
+```
+</TabItem>
 </Tabs>
 
 If you set the environment variable correctly, you should see it printed to console during the build:

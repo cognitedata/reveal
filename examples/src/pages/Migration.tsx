@@ -12,16 +12,18 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   CognitePointCloudModel,
-  PotreePointColorType, 
+  PotreePointColorType,
   PotreePointShape
 } from '@cognite/reveal';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
+import { CadNode } from '@cognite/reveal/experimental';
 
 window.THREE = THREE;
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI();
+    const gui = new dat.GUI({ width: 300 });
     let viewer: Cognite3DViewer;
 
     async function main() {
@@ -32,7 +34,7 @@ export function Migration() {
         throw new Error('Must provide "project"as URL parameter');
       }
 
-      const totalBounds  = new THREE.Box3();
+      const totalBounds = new THREE.Box3();
 
       const slicingParams = {
         enabledX: false,
@@ -107,19 +109,26 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
-        showSectorBoundingBoxes: false,
         antiAliasing: urlParams.get('antialias'),
-        ssaoQuality: urlParams.get('ssao')
-
+        ssaoQuality: urlParams.get('ssao'),
+        debug: {
+          loadedSectors: {
+            options: {
+              showSimpleSectors: true,
+              showDetailedSectors: true,
+              showDiscardedSectors: false,
+              colorBy: 'lod',
+              leafsOnly: false
+            } as DebugLoadedSectorsToolOptions,
+            tool: new DebugLoadedSectorsTool(viewer)
+          },
+          suspendLoading: false,
+          ghostAllNodes: false,
+          hideAllNodes: false
+        },
+        showCameraTool: new DebugCameraTool(viewer),
+        renderMode: 'Color'
       };
-      function applySettingsToModels() {
-        cadModels.forEach((m) => {
-          m.renderHints = {
-            ...m.renderHints,
-            showSectorBoundingBoxes: guiState.showSectorBoundingBoxes,
-          };
-        });
-      }
       const guiActions = {
         addModel: () =>
           addModel({
@@ -129,37 +138,84 @@ export function Migration() {
         fitToModel: () => {
           const model = cadModels[0] || pointCloudModels[0];
           viewer.fitCameraToModel(model);
+        },
+        showSectorBoundingBoxes: () => {
+          const { tool, options } = guiState.debug.loadedSectors;
+          tool.setOptions(options);
+          if (cadModels.length > 0) {
+            tool.showSectorBoundingBoxes(cadModels[0]);
+          }
+        },
+        showCameraHelper: () => {
+          guiState.showCameraTool.showCameraHelper();
         }
       };
 
-      const settingsGui = gui.addFolder('settings');
-      settingsGui
-        .add(guiState, 'showSectorBoundingBoxes')
-        .name('Show bounding boxes')
-        .onChange(applySettingsToModels);
       gui.add(guiState, 'modelId').name('Model ID');
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
-      gui.add(guiState, 'antiAliasing', 
+      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
+      gui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
+        const renderMode = renderModes.indexOf(value);
+        cadModels.forEach(m => {
+          const cadNode: CadNode = (m as any).cadNode;
+          cadNode.renderMode = renderMode;
+        });
+        viewer.forceRerender();
+      });
+      gui.add(guiState, 'antiAliasing',
         [
-          'disabled','fxaa','msaa4','msaa8','msaa16',
-          'msaa4+fxaa','msaa8+fxaa','msaa16+fxaa'
+          'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
+          'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
         ]).name('Anti-alias').onFinishChange(v => {
           urlParams.set('antialias', v);
           window.location.href = url.toString();
-      });
-      gui.add(guiState, 'ssaoQuality', 
+        });
+      gui.add(guiState, 'ssaoQuality',
         [
-          'disabled','medium','high','veryhigh'
+          'disabled', 'medium', 'high', 'veryhigh'
         ]).name('SSAO').onFinishChange(v => {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
+        });
+
+      const debugGui = gui.addFolder('Debug');
+      const debugSectorsGui = debugGui.addFolder('Loaded sectors');
+
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth']).name('Color by');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
+      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
+      debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
+      debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
+        try {
+          // @ts-expect-error
+          viewer._revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({suspendLoading: suspend})
+        }
+        catch (error) {
+          alert('Could not toggle suspend loading, check console for error');
+          throw error;
+        }
+      });
+      debugGui.add(guiState.debug, 'ghostAllNodes').name('Ghost all nodes').onFinishChange(ghost => {
+        if (ghost) {
+          cadModels.forEach(m => m.ghostAllNodes());
+        } else {
+          cadModels.forEach(m => m.unghostAllNodes());
+        }
+      });
+      debugGui.add(guiState.debug, 'hideAllNodes').name('Hide all nodes').onFinishChange(hide => {
+        if (hide) {
+          cadModels.forEach(m => m.hideAllNodes());
+        } else {
+          cadModels.forEach(m => m.showAllNodes());
+        }
       });
 
-
       const slicing = gui.addFolder('Slicing');
-      
       // X 
       slicing
         .add(slicingParams, 'enabledX')
@@ -174,7 +230,7 @@ export function Migration() {
         .step(0.1)
         .name('X')
         .onChange(updateSlicingPlanes);
-      
+
       // Y
       slicing
         .add(slicingParams, 'enabledY')
@@ -216,14 +272,14 @@ export function Migration() {
         LevelOfDetail: PotreePointColorType.LevelOfDetail,
         Classification: PotreePointColorType.Classification,
       }).onFinishChange(valueStr => {
-        pointCloudParams.pointColorType = parseInt(valueStr, 10);  
+        pointCloudParams.pointColorType = parseInt(valueStr, 10);
         pointCloudParams.apply()
       });
       pcSettings.add(pointCloudParams, 'pointShape', {
         Circle: PotreePointShape.Circle,
         Square: PotreePointShape.Square
       }).onFinishChange(valueStr => {
-        pointCloudParams.pointShape = parseInt(valueStr, 10);  
+        pointCloudParams.pointShape = parseInt(valueStr, 10);
         pointCloudParams.apply()
       });
 
@@ -236,6 +292,53 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
+      let expandTool: ExplodedViewTool | null;
+      let explodeSlider: dat.GUIController | null;
+
+      const assetExplode = gui.addFolder('Asset Inspect');
+
+      const exlopdeParams = { explodeFactor: 0.0, rootTreeIndex: 0 };
+      const explodeActions = {
+        selectAssetTreeIndex: async () => {
+          if (expandTool) {
+            explodeActions.reset();
+          }
+
+          const rootTreeIndex = exlopdeParams.rootTreeIndex;
+          cadModels[0].hideAllNodes();
+          cadModels[0].showNodeByTreeIndex(rootTreeIndex, true);
+
+          const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
+          viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
+
+          expandTool = new ExplodedViewTool(rootTreeIndex, cadModels[0]);
+
+          await expandTool.readyPromise;
+
+          explodeSlider = assetExplode
+            .add(exlopdeParams, 'explodeFactor', 0, 1)
+            .name('Explode Factor')
+            .step(0.01)
+            .onChange(p => {
+              expandTool!.expand(p);
+            });
+        },
+        reset: () => {
+          expandTool?.reset();
+          cadModels[0].showAllNodes();
+          exlopdeParams.explodeFactor = 0;
+          expandTool = null;
+          if (explodeSlider) {
+            assetExplode.remove(explodeSlider);
+            explodeSlider = null;
+          }
+        }
+      };
+      assetExplode.add(exlopdeParams, 'rootTreeIndex').name('Tree index');
+      assetExplode.add(explodeActions, 'selectAssetTreeIndex').name('Inspect tree index');
+
+      assetExplode.add(explodeActions, 'reset').name('Reset');
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -244,26 +347,28 @@ export function Migration() {
           console.log(intersection);
           switch (intersection.type) {
             case 'cad':
-            {
-              const { treeIndex, point, model } = intersection;
-              console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-              // highlight the object
-              model.deselectAllNodes();
-              model.selectNodeByTreeIndex(treeIndex);
-              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-              viewer.fitCameraToBoundingBox(boundingBox, 1000);
-            }
-            break;
+              {
+                const { treeIndex, point, model } = intersection;
+                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                // highlight the object
+                model.deselectAllNodes();
+                model.selectNodeByTreeIndex(treeIndex);
+                model.mapTreeIndexToNodeId(treeIndex).then(p => {
+                  console.log(`NodeId: ${p}`);
+                }); const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+                viewer.fitCameraToBoundingBox(boundingBox, 1000);
+              }
+              break;
 
             case 'pointcloud':
-            {
-              const { pointIndex, point } = intersection;
-              console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
-              const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
-              sphere.position.copy(point);
-              viewer.addObject3D(sphere);
-            }
-            break;
+              {
+                const { pointIndex, point } = intersection;
+                console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
+                const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+                sphere.position.copy(point);
+                viewer.addObject3D(sphere);
+              }
+              break;
           }
         }
       });
@@ -276,7 +381,7 @@ export function Migration() {
         slicingZGui.min(totalBounds.min.z);
         slicingZGui.max(totalBounds.max.z);
       }
-  
+
       function updateSlicingPlanes() {
         const dirX = new THREE.Vector3(1, 0, 0);
         const dirY = new THREE.Vector3(0, -1, 0);
@@ -296,7 +401,7 @@ export function Migration() {
           planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
         }
         viewer.setSlicingPlanes(planes);
-      }  
+      }
     }
 
     main();
