@@ -1,19 +1,19 @@
 import React from 'react';
 import { Cell, Column } from 'react-table';
-import StatusMarker from '../integrations/cols/StatusMarker';
-import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
-import StatusFilterDropdown from '../table/StatusFilterDropdown';
-import { StatusRun } from '../../model/Runs';
-import { MonitoringTableHeadings } from '../table/MonitoringTableCol';
-import { TableHeadings } from '../table/IntegrationTableCol';
+import StatusMarker from 'components/integrations/cols/StatusMarker';
+import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
+import StatusFilterDropdown from 'components/table/StatusFilterDropdown';
+import { StatusRun } from 'model/Runs';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
 
 export enum RunTableHeading {
+  TIMESTAMP = 'Timestamp',
   MESSAGE = 'Message',
 }
 export const getRunLogTableCol = (): Column<StatusRun>[] => {
   return [
     {
-      Header: MonitoringTableHeadings.TIMESTAMP,
+      Header: RunTableHeading.TIMESTAMP,
       accessor: 'createdTime',
       sortType: 'basic',
       Cell: ({ row }: Cell<StatusRun>) => {

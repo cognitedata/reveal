@@ -2,21 +2,17 @@ import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import { useLocation, useRouteMatch, useParams } from 'react-router-dom';
-import IntegrationPage from './IntegrationPage';
-import { CONTACTS, DETAILS, RUNS } from '../../utils/constants';
-import { renderWithReQueryCacheSelectedIntegrationContext } from '../../utils/test/render';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
-import { render } from '../../utils/test';
-import { useIntegrationById } from '../../hooks/useIntegration';
-import {
-  getMockResponse,
-  mockDataRunsResponse,
-} from '../../utils/mockResponse';
-import { useDataSets } from '../../hooks/useDataSets';
-import { MonitoringTableHeadings } from '../../components/table/MonitoringTableCol';
-import { TableHeadings } from '../../components/table/IntegrationTableCol';
-import { RunTableHeading } from '../../components/integration/RunLogsCols';
-import { useRuns } from '../../hooks/useRuns';
+import { CONTACTS, DETAILS, RUNS } from 'utils/constants';
+import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
+import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
+import { render } from 'utils/test';
+import { useIntegrationById } from 'hooks/useIntegration';
+import { getMockResponse, mockDataRunsResponse } from 'utils/mockResponse';
+import { useDataSets } from 'hooks/useDataSets';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { RunTableHeading } from 'components/integration/RunLogsCols';
+import { useRuns } from 'hooks/useRuns';
+import IntegrationPage from 'pages/Integration/IntegrationPage';
 
 jest.mock('react-router-dom', () => {
   const r = jest.requireActual('react-router-dom');
@@ -28,17 +24,17 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-jest.mock('../../hooks/useIntegration', () => {
+jest.mock('hooks/useIntegration', () => {
   return {
     useIntegrationById: jest.fn(),
   };
 });
-jest.mock('../../hooks/useDataSets', () => {
+jest.mock('hooks/useDataSets', () => {
   return {
     useDataSets: jest.fn(),
   };
 });
-jest.mock('../../hooks/useRuns', () => {
+jest.mock('hooks/useRuns', () => {
   return {
     useRuns: jest.fn(),
   };
@@ -117,9 +113,7 @@ describe('IntegrationPage', () => {
     expect(
       screen.queryByText(mockIntegration.contacts[0].name)
     ).not.toBeInTheDocument();
-    expect(
-      screen.getByText(MonitoringTableHeadings.TIMESTAMP)
-    ).toBeInTheDocument();
+    expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
       screen.getByText(new RegExp(TableHeadings.STATUS, 'i'))
     ).toBeInTheDocument();

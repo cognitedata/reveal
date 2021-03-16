@@ -2,16 +2,15 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors, Loader } from '@cognite/cogs.js';
 import { MainSidePanelGrid } from 'styles/grid/StyledGrid';
-import OverviewSidePanel from './OverviewSidePanel';
-import IntegrationsTable from '../integrations/IntegrationsTable';
-import { useIntegrations } from '../../hooks/useIntegrations';
+import { useIntegrations } from 'hooks/useIntegrations';
 import {
   mapDataSetToIntegration,
   mapUniqueDataSetIds,
-} from '../../utils/dataSetUtils';
-import { useDataSets } from '../../hooks/useDataSets';
-import { ErrorFeedback } from '../error/ErrorFeedback';
-import NoIntegrations from '../error/NoIntegrations';
+} from 'utils/dataSetUtils';
+import { useDataSets } from 'hooks/useDataSets';
+import { ErrorFeedback } from 'components/error/ErrorFeedback';
+import NoIntegrations from 'components/error/NoIntegrations';
+import IntegrationsTable from 'components/integrations/IntegrationsTable';
 
 const ErrorWrapper = styled.div`
   grid-area: main;
@@ -67,7 +66,6 @@ const OverviewTab: FunctionComponent<Props> = () => {
   return (
     <MainSidePanelGrid>
       <IntegrationsTable tableData={tableData} />
-      <OverviewSidePanel />
     </MainSidePanelGrid>
   );
 };

@@ -83,18 +83,8 @@ export const MainSidePanelGrid = styled((props) => (
   <div {...props}>{props.children}</div>
 ))`
   grid-area: main;
-  display: grid;
-  grid-template-columns: auto 25rem;
-  padding: 0;
+  padding: 0.75rem 2rem;
   border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-  > :first-child {
-    margin: 0 1rem;
-    padding: 1rem 0;
-  }
-  > :nth-child(2) {
-    border-left: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-    height: calc(100vh - 9.5625rem);
-  }
 `;
 export const MainPanelGrid = styled((props) => (
   <div {...props}>{props.children}</div>

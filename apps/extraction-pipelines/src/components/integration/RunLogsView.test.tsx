@@ -1,22 +1,21 @@
 import { screen } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import React from 'react';
-import { Status } from '../../model/Status';
-import { renderWithReQueryCacheSelectedIntegrationContext } from '../../utils/test/render';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
-import { render } from '../../utils/test';
-import { RunLogsView } from './RunLogsView';
+import { Status } from 'model/Status';
+import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
+import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
+import { render } from 'utils/test';
+import { RunLogsView } from 'components/integration/RunLogsView';
 import {
   getMockResponse,
   mockDataRunsResponse,
   mockError,
-} from '../../utils/mockResponse';
-import { useRuns } from '../../hooks/useRuns';
-import { MonitoringTableHeadings } from '../table/MonitoringTableCol';
-import { TableHeadings } from '../table/IntegrationTableCol';
-import { RunTableHeading } from './RunLogsCols';
+} from 'utils/mockResponse';
+import { useRuns } from 'hooks/useRuns';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { RunTableHeading } from 'components/integration/RunLogsCols';
 
-jest.mock('../../hooks/useRuns', () => {
+jest.mock('hooks/useRuns', () => {
   return {
     useRuns: jest.fn(),
   };
@@ -48,9 +47,7 @@ describe('RunLogsView', () => {
       '/'
     );
     render(<RunLogsView integration={mockIntegration} />, { wrapper });
-    expect(
-      screen.getByText(MonitoringTableHeadings.TIMESTAMP)
-    ).toBeInTheDocument();
+    expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
       screen.getByText(new RegExp(TableHeadings.STATUS, 'i'))
     ).toBeInTheDocument();

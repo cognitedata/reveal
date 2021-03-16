@@ -14,9 +14,13 @@ import {
   useFilters,
 } from 'react-table';
 import { matchSorter } from 'match-sorter';
-import IntegrationTableSearch from './IntegrationTableSearch';
-import { useSelectedIntegration } from '../../hooks/useSelectedIntegration';
-import { useAppEnv } from '../../hooks/useAppEnv';
+import { useHistory } from 'react-router-dom';
+import { createLink } from '@cognite/cdf-utilities';
+import { INTEGRATIONS } from 'utils/baseURL';
+import { INTEGRATION } from 'routing/RoutingConfig';
+import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
+import { useAppEnv } from 'hooks/useAppEnv';
+import IntegrationTableSearch from 'components/table/IntegrationTableSearch';
 
 const selectReducer = (
   newState: TableState,
@@ -55,6 +59,7 @@ function ITable<T extends { id: ReactText }>({
 }: ITableProps<T>) {
   const { setIntegration } = useSelectedIntegration();
   const { project } = useAppEnv();
+  const history = useHistory();
 
   const filterTypes = React.useMemo(
     () => ({
@@ -155,10 +160,24 @@ function ITable<T extends { id: ReactText }>({
                   onClick={handleClickOnRow}
                 >
                   {row.cells.map((cell: Cell<T>) => {
+                    const handleCellClick = (
+                      e: React.MouseEvent<HTMLTableDataCellElement>
+                    ) => {
+                      if (e.currentTarget === e.target) {
+                        history.push(
+                          createLink(
+                            `/${INTEGRATIONS}/${INTEGRATION}/${row.original.id}`
+                          )
+                        );
+                      }
+                    };
                     return (
+                      // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
+                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
                       <td
                         {...cell.getCellProps()}
                         className={`${cell.column.id}-cell`}
+                        onClick={handleCellClick}
                       >
                         {cell.render('Cell')}
                       </td>

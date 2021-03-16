@@ -3,15 +3,15 @@ import React from 'react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import { act } from '@testing-library/react-hooks';
-import OverviewTab from './OverviewTab';
-import { render } from '../../utils/test';
-import { getMockResponse, unauthorizedError } from '../../utils/mockResponse';
-import { renderWithReQueryCacheSelectedIntegrationContext } from '../../utils/test/render';
+import OverviewTab from 'components/tabs/OverviewTab';
+import { render } from 'utils/test';
+import { getMockResponse, unauthorizedError } from 'utils/mockResponse';
+import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
+} from 'utils/baseURL';
 
 describe('OverviewTab', () => {
   test('Render with out fail', async () => {
