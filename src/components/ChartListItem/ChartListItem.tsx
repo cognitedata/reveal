@@ -6,7 +6,6 @@ import { Chart } from 'reducers/charts/types';
 
 import thumb from 'assets/thumb.png';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
-import { nanoid } from 'nanoid';
 import { useLoginStatus } from 'hooks';
 import { duplicate } from 'utils/charts';
 
