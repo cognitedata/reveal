@@ -41,7 +41,7 @@
     "react-datepicker": "^3.6.0",
     "react-dom": "^16.14.0",
     "react-highlight-words": "^0.17.0",
-    "react-query": "^3.12.1",
+    "react-query": "^3.12.2",
     "react-router-dom": "^5.2.0",
     "react-select": "^4.2.1",
     "react-splitter-layout": "^4.0.0",
