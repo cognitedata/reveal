@@ -1,5 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { Button, Icon, Input, Tabs, ButtonGroup } from '@cognite/cogs.js';
+import {
+  Button,
+  Icon,
+  Input,
+  Tabs,
+  ButtonGroup,
+  Select,
+} from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
 import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
@@ -9,6 +16,21 @@ import ChartListItem, { ViewOption } from 'components/ChartListItem';
 import { useHistory } from 'react-router-dom';
 
 type ActiveTabOption = 'mine' | 'public';
+type SortOption = 'name' | 'owner';
+type SelectSortOption = { value: SortOption; label: string };
+
+const nameSorter = (a: Chart, b: Chart) => {
+  return a.name.localeCompare(b.name);
+};
+
+const ownerSorter = (a: Chart, b: Chart) => {
+  return a.user.localeCompare(b.user);
+};
+
+const sortOptions: SelectSortOption[] = [
+  { value: 'name', label: 'Name' },
+  { value: 'owner', label: 'Owner' },
+];
 
 const ChartList = () => {
   const { data: login } = useLoginStatus();
@@ -29,6 +51,7 @@ const ChartList = () => {
 
   const [filterText, setFilterText] = useState<string>('');
   const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
+  const [sortOption, setSortOption] = useState<SortOption>('name');
   const [viewOption, setViewOption] = useState<ViewOption>('list');
 
   const { mutateAsync: updateChart } = useUpdateChart();
@@ -61,23 +84,29 @@ const ChartList = () => {
     chart.name.toLocaleLowerCase().includes(filterText.toLocaleLowerCase());
 
   const renderList = () => {
-    let filteredCharts = allCharts;
+    let chartsToRender = allCharts;
 
     if (activeTab === 'mine') {
       // Filter to only show charts where the
       // current user is the owner. Remove this
       // filter when firebase security rules are
       // in place
-      filteredCharts = myCharts.data || [];
+      chartsToRender = myCharts.data || [];
     } else if (activeTab === 'public') {
-      filteredCharts = pubCharts.data || [];
+      chartsToRender = pubCharts.data || [];
     }
 
     if (filterText) {
-      filteredCharts = filteredCharts.filter(nameFilter);
+      chartsToRender = chartsToRender.filter(nameFilter);
     }
 
-    return filteredCharts.map((chart) => (
+    if (sortOption === 'name') {
+      chartsToRender.sort(nameSorter);
+    } else {
+      chartsToRender.sort(ownerSorter);
+    }
+
+    return chartsToRender.map((chart) => (
       <ChartListItem key={chart.id} chart={chart} view={viewOption} />
     ));
   };
@@ -118,17 +147,40 @@ const ChartList = () => {
           <Tabs.TabPane key="mine" tab={<span>My charts</span>} />
           <Tabs.TabPane key="public" tab={<span>Public charts</span>} />
         </Tabs>
-        <ButtonGroup
-          currentKey={viewOption}
-          onButtonClicked={(key) => setViewOption(key as ViewOption)}
-        >
-          <ButtonGroup.Button key="grid">
-            <Icon type="Grid" />
-          </ButtonGroup.Button>
-          <ButtonGroup.Button key="list">
-            <Icon type="List" />
-          </ButtonGroup.Button>
-        </ButtonGroup>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: 200 }}>
+            <Select
+              title="Sort by:"
+              icon="ArrowDown"
+              /*
+                Hack below: Cogs.js has a bug where passing the value makes it
+                always show the placeholder. So, I'm not passing the value and
+                setting the placeholder to the default option. This will have
+                the desired behavior, given the bug. It's not fixed in the
+                latest version of Cogs yet.
+              */
+              // value={sortOption}
+              placeholder="Name"
+              onChange={(option: SelectSortOption) =>
+                setSortOption(option.value)
+              }
+              options={sortOptions}
+            />
+          </div>
+          <div style={{ marginLeft: 16 }}>
+            <ButtonGroup
+              currentKey={viewOption}
+              onButtonClicked={(key) => setViewOption(key as ViewOption)}
+            >
+              <ButtonGroup.Button key="grid">
+                <Icon type="Grid" />
+              </ButtonGroup.Button>
+              <ButtonGroup.Button key="list">
+                <Icon type="List" />
+              </ButtonGroup.Button>
+            </ButtonGroup>
+          </div>
+        </div>
       </div>
       <div style={{ textAlign: 'center' }}>
         {loading && <Icon type="Loading" />}
