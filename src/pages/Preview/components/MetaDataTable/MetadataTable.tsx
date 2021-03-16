@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { Input, Title } from '@cognite/cogs.js';
 import React, { ReactText, useEffect } from 'react';
 import { TableWrapper } from 'src/pages/Workflow/components/FileTable/FileTableWrapper';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { TableDataItem } from 'src/pages/Workflow/components/FileTable/FileTable';
 import ReactBaseTable, {
   BaseTableProps,
@@ -13,8 +12,7 @@ import store from 'src/store';
 import { fileMetaDataEdit } from 'src/store/previewSlice';
 
 const Container = styled.div`
-  height: 380px;
-  width: 562px;
+  width: 500px;
 `;
 
 const TitleHeader = styled.div`
@@ -115,19 +113,15 @@ export const MetaDataTable = (props: MetadataTableProps) => {
         <Title level={6}>{props.title}</Title>
       </TitleHeader>
       <TableWrapper>
-        <AutoSizer>
-          {({ width, height }) => (
-            <ReactBaseTable<MetadataItem>
-              ref={setRef}
-              columns={columns}
-              height={height}
-              width={width}
-              fixed
-              data={props.data}
-              components={components}
-            />
-          )}
-        </AutoSizer>
+        <ReactBaseTable<MetadataItem>
+          ref={setRef}
+          columns={columns}
+          maxHeight={Infinity}
+          width={500}
+          fixed
+          data={props.data}
+          components={components}
+        />
       </TableWrapper>
     </Container>
   );

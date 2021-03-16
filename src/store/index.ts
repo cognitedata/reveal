@@ -9,6 +9,7 @@ const index = configureStore({
       ignoredActions: [
         'uploadedFiles/addUploadedFile',
         'uploadedFiles/setUploadedFiles',
+        'uploadedFiles/updateFileById/fulfilled',
       ],
       ignoredPaths: ['uploadedFiles'],
     },

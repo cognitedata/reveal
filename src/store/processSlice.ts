@@ -1,17 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
-import { RootState } from 'src/store/rootReducer';
 import { fetchUntilComplete } from 'src/utils';
 import { AnnotationJob, DetectionModelType } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
+import { fileProcessUpdate, ThunkConfig } from 'src/store/common';
+import { deleteFilesById } from 'src/store/uploadedFilesSlice';
 
 type State = {
   selectedDetectionModels: Array<DetectionModelType>;
   jobsByFileId: Record<string, Array<AnnotationJob> | undefined>;
   error?: string;
 };
-
-type ThunkConfig = { state: RootState };
 
 const initialState: State = {
   selectedDetectionModels: [DetectionModelType.Text],
@@ -61,7 +60,7 @@ export const postAnnotationJob = createAsyncThunk<
     const doesFileExist = () =>
       getState().uploadedFiles.uploadedFiles.find((file) => file.id === fileId);
 
-    fetchUntilComplete<AnnotationJob>(
+    await fetchUntilComplete<AnnotationJob>(
       () => fetchJobById(createdJob.type, createdJob.jobId),
       {
         isCompleted: (latestJobVersion) =>
@@ -71,7 +70,7 @@ export const postAnnotationJob = createAsyncThunk<
 
         onTick: (latestJobVersion) => {
           if (doesFileExist()) {
-            dispatch(updateJob({ fileId, job: latestJobVersion }));
+            dispatch(fileProcessUpdate({ fileId, job: latestJobVersion }));
           }
         },
 
@@ -126,6 +125,20 @@ const processSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(fileProcessUpdate, (state, { payload }) => {
+      const { fileId, job } = payload;
+      const existingJobs = state.jobsByFileId[fileId] || [];
+      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
+        existingJob.jobId === job.jobId ? job : existingJob
+      );
+    });
+
+    builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
+      payload.forEach((fileId) => {
+        delete state.jobsByFileId[fileId.id];
+      });
+    });
+
     /* postAnnotationJobs */
 
     builder.addCase(postAnnotationJob.pending, (state, { meta }) => {

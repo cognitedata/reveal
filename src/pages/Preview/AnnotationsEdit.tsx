@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Popconfirm, Title } from '@cognite/cogs.js';
 import { FilePreview } from 'src/pages/Preview/components/FilePreview/FilePreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/pages/Preview/components/Contextualization/Contextualization';
@@ -14,10 +14,10 @@ import {
   selectNonRejectedAnnotations,
   selectVisibleAnnotationsByFileId,
 } from 'src/store/previewSlice';
-import { selectFileById } from 'src/store/uploadedFilesSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { deleteFilesById, selectFileById } from 'src/store/uploadedFilesSlice';
 
 const Container = styled.div`
   width: 100%;
@@ -70,6 +70,19 @@ const TabsContainer = styled.div`
 
 const queryClient = new QueryClient();
 
+const DeleteButton = (props: { onConfirm: () => void }) => (
+  <Popconfirm
+    icon="WarningFilled"
+    placement="bottom-end"
+    onConfirm={props.onConfirm}
+    content="Are you sure you want to permanently delete this file?"
+  >
+    <Button type="danger" icon="Delete">
+      Delete file
+    </Button>
+  </Popconfirm>
+);
+
 const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -97,9 +110,14 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
     history.push(getLink(workflowRoutes.process));
   };
 
+  const handleFileDelete = () => {
+    dispatch(deleteFilesById([{ id: file.id }]));
+    onBackButtonClick();
+  };
+
   useEffect(() => {
     dispatch(resetEditHistory());
-  });
+  }, []);
 
   return (
     <>
@@ -113,9 +131,7 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
             Back
           </Button>
           <Title level={3}>{file?.name}</Title>
-          <Button type="secondary" icon="Delete">
-            Delete file
-          </Button>
+          <DeleteButton onConfirm={handleFileDelete} />
           <Button type="primary" shape="round" icon="Upload">
             Save To CDF
           </Button>

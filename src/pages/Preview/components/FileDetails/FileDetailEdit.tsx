@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Title, Button } from '@cognite/cogs.js';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
@@ -13,10 +13,15 @@ import {
   fileMetaDataAddRow,
   toggleMetaDataTableEditMode,
 } from 'src/store/previewSlice';
-import { DataSetItem, LabelFilter } from '@cognite/data-exploration';
+import { DataSetItem } from '@cognite/data-exploration';
 import { dateformat } from 'src/utils/DateUtils';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
-import { FileDetailFieldView } from 'src/pages/Preview/components/FileDetails/FileDetailEditChildren';
+import {
+  FileDetailFieldView,
+  LabelContainerView,
+} from 'src/pages/Preview/components/FileDetails/FileDetailEditChildren';
+import { updateFileById } from 'src/store/uploadedFilesSlice';
+import isEqual from 'lodash-es/isEqual';
 
 const Container = styled.div`
   width: 100%;
@@ -35,6 +40,7 @@ const DetailsContainer = styled.div`
   padding-right: 10px;
   overflow-y: auto;
   padding-left: 2px;
+  padding-bottom: 10px;
 `;
 
 const DetailsFormContainer = styled.div`
@@ -62,16 +68,23 @@ type FileDetailCompProps = { fileObj: v3.FileInfo };
 export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
   fileObj,
 }: FileDetailCompProps) => {
+  const detailContainer = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
 
-  const fileInfo = useSelector(({ previewSlice }: RootState) => {
-    const editedFileInfo = previewSlice.fileDetails;
+  const editedFileInfo = useSelector(
+    ({ previewSlice }: RootState) => previewSlice.fileDetails
+  );
+
+  const editedFileMeta = useSelector(
+    ({ previewSlice }: RootState) => previewSlice.fileMetaData
+  );
+
+  const fileInfo = useMemo(() => {
     const mergedInfo: v3.FileInfo = {
       ...fileObj,
       ...editedFileInfo,
     };
 
-    const editedFileMeta = previewSlice.fileMetaData;
     let metadata: MetadataItem[];
     if (Object.keys(editedFileMeta).length > 0) {
       metadata = Object.values(editedFileMeta);
@@ -83,7 +96,7 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
       metadata,
     };
     return info;
-  });
+  }, [editedFileInfo, editedFileMeta]);
 
   const tableEditMode = useSelector(
     ({ previewSlice }: RootState) => previewSlice.metadataEdit
@@ -91,10 +104,30 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
 
   const handleEditModeChange = () => {
     dispatch(toggleMetaDataTableEditMode(fileInfo.metadata));
+    if (tableEditMode) {
+      updateFileInfo('metadata');
+    }
   };
 
   const handleAddMetadataRow = () => {
+    setTimeout(() => {
+      if (detailContainer.current) {
+        // scroll container to bottom
+        detailContainer.current.scrollTop =
+          detailContainer.current.scrollHeight;
+      }
+    }, 100);
     dispatch(fileMetaDataAddRow(fileInfo.metadata));
+  };
+
+  const updateFileInfo = (key: string) => {
+    dispatch(updateFileById({ fileId: fileInfo.id, key }));
+  };
+
+  const onInput = (key: string, value: any) => {
+    if (!isEqual(fileInfo[key as keyof v3.FileInfo], value)) {
+      dispatch(fileInfoEdit({ key, value }));
+    }
   };
 
   return (
@@ -102,14 +135,13 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
       <TitleRow>
         <Title level={3}>File Details</Title>
       </TitleRow>
-      <DetailsContainer>
+      <DetailsContainer ref={detailContainer}>
         <DetailsFormContainer>
           <FileDetailFieldView
             id="name"
             title="File name"
             placeholder="None Set"
             value={fileInfo.name}
-            editable
           />
           <FileDetailFieldView
             id="id"
@@ -125,16 +157,16 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
             value={fileInfo.externalId}
             copyable
             editable
+            onBlur={updateFileInfo}
+            onInput={onInput}
           />
-          <LabelFieldContainer>
-            <LabelFilter
-              resourceType="asset"
-              value={fileInfo.labels}
-              setValue={(value) => {
-                dispatch(fileInfoEdit({ key: 'labels', value }));
-              }}
-            />
-          </LabelFieldContainer>
+          <LabelContainerView
+            value={fileInfo.labels}
+            setValue={(value) => {
+              onInput('labels', value);
+              updateFileInfo('labels');
+            }}
+          />
 
           <FileDetailFieldView
             id="source"
@@ -142,6 +174,8 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
             placeholder="None Set"
             value={fileInfo.source}
             editable
+            onBlur={updateFileInfo}
+            onInput={onInput}
           />
           {fileObj.mimeType && (
             <FileDetailFieldView
@@ -203,20 +237,6 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
   );
 };
 
-const LabelFieldContainer = styled.div`
-  width: 450px;
-  margin-bottom: 14px;
-
-  & div.title:first-child {
-    color: var(--cogs-b2-color);
-    font-size: var(--cogs-b2-font-size);
-    font-weight: 500;
-    line-height: var(--cogs-b2-line-height);
-    letter-spacing: var(--cogs-b2-letter-spacing);
-    margin-top: 0 !important;
-    margin-bottom: 4px !important;
-  }
-`;
 const DataSetFieldContainer = styled.div`
   margin-bottom: 14px;
 
