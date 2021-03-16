@@ -6,7 +6,7 @@
   "typings": "dist/lib/index.d.ts",
   "license": "UNLICENSED",
   "dependencies": {
-    "@babel/runtime": "^7.13.9",
+    "@babel/runtime": "^7.13.10",
     "@cognite/cdf-utilities": "^0.9.0",
     "@cognite/cogs.js": "^2.12.4",
     "@cognite/data-exploration": "^0.5.7",
