@@ -11,11 +11,19 @@ import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import { filter, switchMap, tap, publish, subscribeOn } from 'rxjs/operators';
 
+/**
+ * Creates a RxJS operator for loading sectors given camera, budget etc input.
+ * @param sectorRepository Repository to store sectors in
+ * @param sectorCuller Culler used to prioritize sectors for loading
+ * @param modelStateHandler Holds state about what sectors are loaded
+ * @param collectStatisticsCallback Callback to collect statistics on how much data is loaded
+ * @returns RxJS operator
+ */
 export function handleDetermineSectorsInput(
   sectorRepository: Repository,
   sectorCuller: SectorCuller,
   modelStateHandler: ModelStateHandler,
-  spendageReportCb: (spendage: SectorLoadingSpendage) => void
+  collectStatisticsCallback: (spendage: SectorLoadingSpendage) => void
 ): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
   return publish((source$: Observable<DetermineSectorsInput>) => {
     const updateSector = (input: DetermineSectorsInput) => {
@@ -24,7 +32,7 @@ export function handleDetermineSectorsInput(
         return EMPTY;
       }
       const prioritizedResult = sectorCuller.determineSectors(input);
-      spendageReportCb(prioritizedResult.spendage);
+      collectStatisticsCallback(prioritizedResult.spendage);
       return from(prioritizedResult.wantedSectors).pipe(
         subscribeOn(asyncScheduler),
         filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),

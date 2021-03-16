@@ -81,7 +81,7 @@ export class CadModelUpdateHandler {
       ]).pipe(map(makeClippingInput)),
       this.loadingModelObservable()
     ]);
-    const spendageReportCb = (spendage: SectorLoadingSpendage) => {
+    const collectStatisticsCallback = (spendage: SectorLoadingSpendage) => {
       this._lastSpendage = spendage;
     };
     this._updateObservable = combinator.pipe(
@@ -89,7 +89,7 @@ export class CadModelUpdateHandler {
       auditTime(250), // Take the last value every 250ms // TODO 07-08-2020 j-bjorne: look into throttle
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
-      handleDetermineSectorsInput(sectorRepository, sectorCuller, this._modelStateHandler, spendageReportCb),
+      handleDetermineSectorsInput(sectorRepository, sectorCuller, this._modelStateHandler, collectStatisticsCallback),
       finalize(() => {
         this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
       })
