@@ -1,6 +1,6 @@
 import React from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
-import { Chart, StorableNode } from 'reducers/charts';
+import { Chart, StorableNode } from 'reducers/charts/types';
 import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
@@ -36,7 +36,7 @@ export const configPanel = ({
 
   const selectedWorkspaceTimeSeriesLabel =
     workspaceTimeSeries.find(
-      ({ id }) => id === functionData.timeSeriesExternalId
+      ({ tsExternalId }) => tsExternalId === functionData.timeSeriesExternalId
     )?.name || '';
 
   const loadOptions = (
@@ -45,7 +45,7 @@ export const configPanel = ({
   ) => {
     callback(
       workspaceTimeSeries.map((result) => ({
-        value: result.id,
+        value: result.tsExternalId,
         label: result.name,
       }))
     );
@@ -62,7 +62,7 @@ export const configPanel = ({
           onUpdateNode({
             title: nextValue.label,
             functionData: {
-              timeSeriesExternalId: nextValue.value,
+              timeSeriesExternalId: nextValue.value || '',
             },
           });
         }}
@@ -90,6 +90,6 @@ export const node = {
   ],
   functionEffectReference: effectId,
   functionData: {
-    timeSeriesExternalId: undefined,
+    timeSeriesExternalId: '',
   },
 } as StorableNode;

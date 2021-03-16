@@ -3,12 +3,11 @@ import { Avatar, Menu, TopBar } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 
 import logoSvg from 'assets/logo.svg';
-import useSelector from 'hooks/useSelector';
-import { selectUser } from 'reducers/environment';
 import { useHistory } from 'react-router-dom';
+import { useLoginStatus } from 'hooks';
 
 const TopBarWrapper = () => {
-  const user = useSelector(selectUser);
+  const { data: user } = useLoginStatus();
   const history = useHistory();
 
   return (
@@ -51,7 +50,7 @@ const TopBarWrapper = () => {
             },
             {
               key: 'avatar',
-              component: <Avatar text={user.email || 'Unknown'} />,
+              component: <Avatar text={user?.user || 'Unknown'} />,
             },
           ]}
         />

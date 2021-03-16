@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import {
   Button,
@@ -10,9 +10,9 @@ import {
   toast,
   Input,
 } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts';
-import useDispatch from 'hooks/useDispatch';
-import { toggleChartAccess } from 'reducers/charts/api';
+import { Chart } from 'reducers/charts/types';
+
+import { useUpdateChart } from 'hooks/firebase';
 
 interface SharingDropdownProps {
   chart: Chart;
@@ -22,15 +22,22 @@ const SharingDropdown = ({ chart }: SharingDropdownProps) => {
   const [shareIconType, setShareIconType] = useState<
     'Copy' | 'Checkmark' | 'ErrorStroked'
   >('Copy');
-  const dispatch = useDispatch();
   const shareableLink = window.location.href;
+  const { mutate: updateChart, isError } = useUpdateChart();
 
-  const handleToggleChartAccess = async () => {
-    try {
-      await dispatch(toggleChartAccess(chart!));
-    } catch (e) {
+  useEffect(() => {
+    if (isError) {
       toast.error('Unable to change chart access - try again!');
     }
+  }, [isError]);
+
+  const handleToggleChartAccess = async () => {
+    updateChart({
+      chart: {
+        ...chart,
+        public: !chart.public,
+      },
+    });
   };
 
   const handleCopyLinkClick = async () => {

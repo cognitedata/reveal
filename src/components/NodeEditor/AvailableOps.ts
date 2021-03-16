@@ -3,18 +3,19 @@ import { CogniteClient } from '@cognite/sdk';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { DSPFunction } from 'utils/transforms';
+import { FunctionCallStatus } from 'reducers/charts/types';
 
 type Function = {
   id: number;
   externalId?: string;
   name: string;
 };
-type CallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
+
 export interface CallResponse {
   id: number;
   functionId: number;
   response: any;
-  status: CallStatus;
+  status: FunctionCallStatus;
 }
 
 const key = ['functions', 'get_all_ops'];
@@ -77,7 +78,7 @@ const getCallStatus = (
     .then((r) => r?.data);
 
   if (response?.status) {
-    return response.status as CallStatus;
+    return response.status as FunctionCallStatus;
   }
   return Promise.reject(new Error('could not find call status'));
 };
@@ -138,7 +139,9 @@ export default function AvailableOps({
   const callId = call || newCallId;
 
   const [refetchInterval, setRefetchInterval] = useState<number | false>(1000);
-  const { data: callStatus, isError: callStatusError } = useQuery<CallStatus>(
+  const { data: callStatus, isError: callStatusError } = useQuery<
+    FunctionCallStatus
+  >(
     [...key, callId, 'call_status'],
     getCallStatus(sdk, fnId as number, callId as number),
     {

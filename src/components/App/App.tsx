@@ -1,22 +1,31 @@
-import React from 'react';
-
-import AppProviders from 'components/AppProviders';
-import AppAuth from 'components/AppAuth';
-import sdk from 'services/CogniteSDK';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import Routes from 'components/Routes';
+import TopBar from 'components/TopBar';
+import PageLayout from 'components/Layout/PageLayout';
 import { DataExplorationProvider } from '@cognite/data-exploration';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-
-const sanitizeTenant = (tenant: string = '') =>
-  tenant.toLowerCase().replace(/[^a-z0-9-]/g, '');
-
-const getTenantFromURL = () =>
-  window.location.pathname.match(/^\/([^/]*)(.*)$/)?.[1];
+import { CogniteClient } from '@cognite/sdk';
+import { ToastContainer, Loader } from '@cognite/cogs.js';
+import { getTenantFromURL } from 'utils/env';
+import { useFirebaseInit } from 'hooks/firebase';
 
 const App = () => {
-  const tenant = sanitizeTenant(getTenantFromURL());
+  const [authenicating, setAuth] = useState(true);
+  const project = getTenantFromURL();
 
-  if (!tenant) {
+  const { isFetched: firebaseDone, isError } = useFirebaseInit(!authenicating);
+
+  useEffect(() => {
+    sdk.loginWithOAuth({
+      project,
+    });
+    sdk.authenticate().then((a) => setAuth(!a));
+  }, [project]);
+
+  if (!project) {
     return (
       <div>
         If you see this screen and you are not a developer, please contact us!
@@ -32,28 +41,52 @@ const App = () => {
     );
   }
 
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        cacheTime: 60000,
-        staleTime: 60000,
-      },
-    },
-  });
+  if (authenicating || !firebaseDone) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <>nope</>;
+  }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <DataExplorationProvider sdk={sdk}>
-        <AppProviders
-          tenant={tenant}
-          initialState={{ environment: { tenant } }}
-        >
-          <AppAuth tenant={tenant} />
-        </AppProviders>
-      </DataExplorationProvider>
-      <ReactQueryDevtools />
-    </QueryClientProvider>
+    <BrowserRouter basename={`/${project}`}>
+      <ToastContainer />
+      <PageLayout>
+        <TopBar />
+        <main>
+          <Routes />
+        </main>
+      </PageLayout>
+    </BrowserRouter>
   );
 };
 
-export default App;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    mutations: {
+      retry: false,
+    },
+    queries: {
+      cacheTime: 60000,
+      staleTime: 60000,
+    },
+  },
+});
+
+const sdk = new CogniteClient({
+  appId: 'Cognite Charts',
+});
+
+export default function RootApp() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SDKProvider sdk={sdk}>
+        <DataExplorationProvider sdk={sdk}>
+          <App />
+          <ReactQueryDevtools />
+        </DataExplorationProvider>
+      </SDKProvider>
+    </QueryClientProvider>
+  );
+}

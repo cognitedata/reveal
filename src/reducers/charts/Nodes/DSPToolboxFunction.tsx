@@ -3,21 +3,13 @@
 import React from 'react';
 import { Icon, Input, Select } from '@cognite/cogs.js';
 import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
-import { StorableNode } from 'reducers/charts';
+import { StorableNode } from 'reducers/charts/types';
 import AvailableOps from 'components/NodeEditor/AvailableOps';
 import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
   [key: string]: any;
   toolFunction?: DSPFunction;
-};
-
-export type CogniteFunction = {
-  id: number;
-  externalId: string;
-  name: string;
-  fileId: number;
-  description: string;
 };
 
 export const effect = async (funcData: FunctionData) => {
@@ -137,6 +129,6 @@ export const node = {
   outputPins: [],
   functionEffectReference: effectId,
   functionData: {
-    toolFunction: undefined,
+    toolFunction: '',
   },
 } as StorableNode;

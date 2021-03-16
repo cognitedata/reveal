@@ -87,7 +87,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   max-height: 100%;
   width: ${(props: { showSearch: boolean }) =>
-    props.showSearch ? '50%' : 'calc(100% - 56px)'};
+    props.showSearch ? '70%' : 'calc(100% - 56px)'};
 `;
 
 export const ToolbarIcon = styled(Icon)`

@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { Icon } from '@cognite/cogs.js';
-import { SearchResultLoader, Table } from '@cognite/data-exploration';
-import { Asset, Timeseries } from '@cognite/sdk';
+import React from 'react';
+import moment from 'moment';
+import { Icon, Button } from '@cognite/cogs.js';
+import { TimeseriesChart } from '@cognite/data-exploration';
+import { Timeseries } from '@cognite/sdk';
+import { useAssetTimeseresSearch } from 'hooks/useSearch';
 import styled from 'styled-components/macro';
-import { TimeseriesResults } from 'components/SearchResultTable';
 
 export const SearchResultTable = ({
   query,
@@ -12,99 +13,130 @@ export const SearchResultTable = ({
   query: string;
   onTimeseriesClick: (timeseries: Timeseries) => void;
 }) => {
-  const columns = useMemo(
-    () => [
-      {
-        key: 'name',
-        title: 'Name',
-        dataKey: 'name',
-        width: 200,
-        cellRenderer: ({ rowData }: { rowData: Asset }) => {
-          return (
-            <span>
-              <Icon
-                type="ResourceAssets"
-                style={{ marginRight: 5, verticalAlign: 'text-top' }}
-              />
-              {rowData.name}
-            </span>
-          );
-        },
-      },
-      {
-        key: 'description',
-        title: 'Description',
-        dataKey: 'description',
-        width: 300,
-      },
-      {
-        key: 'preview',
-        title: 'Preview',
-        width: 250,
-      },
-      {
-        key: 'unit',
-        title: 'Unit',
-        width: 100,
-      },
-      {
-        key: 'actions',
-        title: '',
-        width: 100,
-      },
-    ],
-    []
-  );
+  const {
+    data: assets = [],
+    isFetching,
+    isFetched,
+    isError,
+  } = useAssetTimeseresSearch(query, true);
 
-  return (
-    <SearchResultLoader type="asset" query={query}>
-      {({ data = [], ...rest }: { data: Asset[] }) => (
-        <Table<Asset & { children?: { content: React.ReactNode }[] }>
-          data={data.map((asset: Asset) => ({
-            ...asset,
-            children: [
-              {
-                content: (
-                  <TimeseriesResults
-                    assetId={asset.id}
-                    onTimeseriesClick={onTimeseriesClick}
-                  />
-                ),
-              },
-            ],
-          }))}
-          columns={columns}
-          expandColumnKey="actions"
-          rowRenderer={rowRenderer}
-          estimatedRowHeight={50}
-          fixed
-          {...rest}
-        />
-      )}
-    </SearchResultLoader>
-  );
-};
-
-const rowRenderer = ({ rowData, cells }: any) => {
-  if (rowData.content) {
-    return <DetailRow>{rowData.content}</DetailRow>;
+  if (isError) {
+    return <Icon type="XLarge" />;
   }
 
-  const newCells = cells.map((cell: JSX.Element) => {
-    // Override each row's styles to set a fixed height
-    const style = {
-      ...cell.props.style,
-      height: 50,
-      alignSelf: 'flex-start',
-    };
-    return React.cloneElement(cell, { style });
-  });
+  if (isFetching && !isFetched) {
+    return <Icon type="Loading" />;
+  }
 
-  return newCells;
+  if (assets.length === 0) {
+    return null;
+  }
+
+  const sparklineStartDate = moment()
+    .subtract(1, 'years')
+    .startOf('day')
+    .toDate();
+
+  const sparklineEndDate = moment().endOf('day').toDate();
+
+  return (
+    <AssetList>
+      {assets.map(({ asset, ts }) => (
+        <li>
+          <AssetItem key={asset.id}>
+            <Row>
+              <div style={{ padding: 5 }}>
+                <Icon type="ResourceAssets" />
+              </div>
+              <strong style={{ marginLeft: 10 }}>{asset.name}</strong>
+              <span style={{ marginLeft: 10, flexGrow: 2 }}>
+                {asset.description}
+              </span>
+              <AssetCount>{ts.length} </AssetCount>
+            </Row>
+            <Row>
+              <TSList>
+                {ts.map((t) => (
+                  <TSItem key={t.id}>
+                    <Row>
+                      <div style={{ padding: 5 }}>
+                        <Icon type="ResourceTimeseries" />
+                      </div>
+                      <span>{t.name}</span>
+                      <span>{t.description}</span>
+                      <TimeseriesChart
+                        height={65}
+                        showSmallerTicks
+                        timeseriesId={t.id}
+                        numberOfPoints={100}
+                        showAxis="horizontal"
+                        timeOptions={[]}
+                        showContextGraph={false}
+                        showPoints={false}
+                        enableTooltip={false}
+                        showGridLine="none"
+                        minRowTicks={2}
+                        dateRange={[sparklineStartDate, sparklineEndDate]}
+                      />
+
+                      <Button
+                        type="link"
+                        style={{ padding: 5 }}
+                        onClick={() => onTimeseriesClick(t)}
+                      >
+                        <Icon type="Plus" />
+                      </Button>
+                    </Row>
+                  </TSItem>
+                ))}
+              </TSList>
+            </Row>
+          </AssetItem>
+        </li>
+      ))}
+    </AssetList>
+  );
 };
 
-const DetailRow = styled.div`
-  height: auto;
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const AssetList = styled.ul`
+  height: 100%;
+  overflow: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const AssetItem = styled.div`
+  border: 1px solid var(--cogs-greyscale-grey4);
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px 15px 0px 15px;
+`;
+
+const AssetCount = styled.span`
+  border: 1px solid var(--cogs-greyscale-grey4);
+  border-radius: 5px;
+  float: right;
+  padding: 5px;
+`;
+
+const TSList = styled.ul`
   width: 100%;
-  align-self: flex-start;
+  padding: 0;
+  margin: 10px 0 10px 0;
+  list-style: none;
+`;
+
+const TSItem = styled.li`
+  border-radius: 5px;
+  :nth-child(odd) {
+    background-color: var(--cogs-greyscale-grey2);
+  }
 `;

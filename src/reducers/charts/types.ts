@@ -1,4 +1,4 @@
-import { Node, Connection, NodeProgress } from '@cognite/connect';
+import { Node, Connection } from '@cognite/connect';
 import { FunctionComponent } from 'react';
 
 export type Chart = {
@@ -7,17 +7,18 @@ export type Chart = {
   user: string;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
-  millisecondsFromNow?: number;
   dateFrom: string;
   dateTo: string;
-  visibleRange?: any[];
   public?: boolean;
+  dirty?: boolean;
 };
 
 export type ChartTimeSeries = {
   id: string;
   name: string;
   color: string;
+  tsId: number;
+  tsExternalId?: string;
   lineWeight?: number;
   lineStyle?: 'solid' | 'dashed' | 'dotted';
   enabled: boolean;
@@ -33,14 +34,14 @@ export type StorableNode = Omit<Node, 'functionEffect'> & {
   functionEffectReference?: string;
 };
 
-export type WorkflowRunStatus = 'IDLE' | 'RUNNING' | 'SUCCESS' | 'FAILED';
+export type FunctionCallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
 
-export type LatestWorkflowRun = {
-  timestamp: number;
-  nodeProgress?: NodeProgress;
-  status: WorkflowRunStatus;
-  results?: Record<string, any>;
-  errors?: string[];
+export type Call = {
+  functionId: number;
+  callId: number;
+  // Call date is also available from the function api but this allows us to sort chronologically
+  // based on firebase data
+  callDate: number;
 };
 
 export type ChartWorkflow = {
@@ -53,8 +54,7 @@ export type ChartWorkflow = {
   range?: number[];
   nodes?: StorableNode[]; // We don't need these functions until we 'compile'/run the workflow.
   connections?: Record<string, Connection>;
-  // Latest run of this workflow (not to be stored)
-  latestRun?: LatestWorkflowRun;
+  calls?: Call[];
 };
 
 export type ConfigPanelComponentProps = {

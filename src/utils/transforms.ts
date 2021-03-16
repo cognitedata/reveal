@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 
-import { ChartWorkflow, StorableNode } from 'reducers/charts';
+import { ChartWorkflow, StorableNode } from 'reducers/charts/types';
 
 export type DSPFunction = {
   description: string;

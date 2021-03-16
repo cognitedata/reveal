@@ -1,12 +1,8 @@
 import { DecoratorFunction } from '@storybook/addons';
-import { PartialRootState } from 'store/types';
-import { EnvironmentState } from 'reducers/environment';
 import { SetupMocks } from './useSandbox';
 import mockDecorator from './mockDecorator';
 
 type BaseRenderOptions = {
-  redux?: PartialRootState;
-  environment?: Partial<EnvironmentState>;
   pathname?: string;
 };
 
@@ -27,9 +23,7 @@ export type StoryConfiguration = AppProvidersParameters & {
 function configureStory<T extends StoryConfiguration>({
   decorators: passedDecorators = [],
   setupMocks,
-  redux = {},
   pathname,
-  environment = {},
   ...rest
 }: T) {
   const decorators = setupMocks
@@ -38,9 +32,7 @@ function configureStory<T extends StoryConfiguration>({
 
   const parameters: StorybookParameters = {
     [APP_PROVIDERS_PARAMETER_NAME]: {
-      redux,
       pathname,
-      environment,
     },
   };
 
@@ -49,7 +41,6 @@ function configureStory<T extends StoryConfiguration>({
     parameters,
     decorators,
     setupMocks,
-    redux,
   } as unknown) as T;
 }
 

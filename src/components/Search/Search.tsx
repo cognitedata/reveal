@@ -1,13 +1,14 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Button, Input, Tooltip } from '@cognite/cogs.js';
-import { selectActiveChartId } from 'reducers/search/selectors';
 import { SearchResultTable } from 'components/SearchResultTable';
-import useSelector from 'hooks/useSelector';
-import useDispatch from 'hooks/useDispatch';
 import styled from 'styled-components/macro';
 import { Timeseries } from '@cognite/sdk';
-import { addTimeSeriesToChart } from 'reducers/charts/api';
 import { useDebounce } from 'use-debounce/lib';
+import { useChart, useUpdateChart } from 'hooks/firebase';
+import { useParams } from 'react-router-dom';
+import { availableColors } from 'utils/colors';
+import { ChartTimeSeries } from 'reducers/charts/types';
+import { nanoid } from 'nanoid';
 
 type SearchProps = {
   visible: boolean;
@@ -15,18 +16,44 @@ type SearchProps = {
 };
 
 const Search = ({ visible, onClose }: SearchProps) => {
-  const dispatch = useDispatch();
-  const activeChartId = useSelector(selectActiveChartId);
+  const { chartId } = useParams<{ chartId: string }>();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [debouncedQuery] = useDebounce(searchInputValue, 100);
+  const { data: chart } = useChart(chartId);
+  const { mutate: updateChart } = useUpdateChart();
 
   const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSearchInputValue(value);
   };
 
-  const handleTimeSeriesClick = async (timeseries: Timeseries) => {
-    dispatch(addTimeSeriesToChart(activeChartId, timeseries));
+  const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
+    if (chart) {
+      const ts: ChartTimeSeries = {
+        id: nanoid(),
+        name:
+          timeSeries.name || timeSeries.externalId || timeSeries.id.toString(),
+        tsId: timeSeries.id,
+        tsExternalId: timeSeries.externalId,
+        unit: timeSeries.unit || '*',
+        originalUnit: timeSeries.unit || '*',
+        preferredUnit: timeSeries.unit || '*',
+        color:
+          availableColors[
+            (chart?.timeSeriesCollection?.length || 0) % availableColors.length
+          ],
+        lineWeight: 2,
+        lineStyle: 'solid',
+        enabled: true,
+        description: timeSeries.description || '-',
+      };
+      updateChart({
+        chart: {
+          ...chart,
+          timeSeriesCollection: [...(chart.timeSeriesCollection || []), ts],
+        },
+      });
+    }
   };
 
   return (
@@ -67,7 +94,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
 const SearchContainer = styled.div<SearchProps>`
   height: 100%;
   border-right: 1px solid var(--cogs-greyscale-grey4);
-  width: ${(props) => (props.visible ? '50%' : 0)};
+  width: ${(props) => (props.visible ? '30%' : 0)};
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
   padding: ${(props) => (props.visible ? '20px 0 10px 10px' : 0)};
   transition: visibility 0s linear 200ms, width 200ms ease;

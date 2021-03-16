@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
-import useDispatch from 'hooks/useDispatch';
-import { Chart } from 'reducers/charts';
-import { renameChart, deleteChart, duplicateChart } from 'reducers/charts/api';
+import { Chart } from 'reducers/charts/types';
+
 import thumb from 'assets/thumb.png';
+import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
+import { nanoid } from 'nanoid';
 
 export type ViewOption = 'list' | 'grid';
 
@@ -17,18 +18,29 @@ interface ChartListItemProps {
 }
 
 const ChartListItem = ({ chart, view }: ChartListItemProps) => {
-  const dispatch = useDispatch();
+  const history = useHistory();
+  const { mutateAsync: updateChart } = useUpdateChart();
+  const { mutate: deleteChart } = useDeleteChart();
 
   const handleRenameChart = () => {
-    dispatch(renameChart(chart));
+    // eslint-disable-next-line no-alert
+    const name = prompt('Rename chart', chart.name) || chart.name;
+    updateChart({ chart: { ...chart, name } });
   };
 
   const handleDeleteChart = () => {
-    dispatch(deleteChart(chart));
+    deleteChart(chart.id);
   };
 
   const handleDuplicateChart = () => {
-    dispatch(duplicateChart(chart));
+    const id = nanoid();
+    const newChart = {
+      ...chart,
+      name: `${chart.name} Copy`,
+      id,
+    };
+
+    updateChart({ chart: newChart }).then(() => history.push(`/${id}`));
   };
 
   const mockPreview = (

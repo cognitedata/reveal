@@ -1,46 +1,50 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import dayjs from 'dayjs';
 import styled from 'styled-components/macro';
 import { Button, DateRange } from '@cognite/cogs.js';
-import chartsSlice, { Chart } from 'reducers/charts';
-import useDispatch from 'hooks/useDispatch';
+import { Chart } from 'reducers/charts/types';
 import TimeSelector from 'components/TimeSelector';
+import { useUpdateChart } from 'hooks/firebase';
 
 interface DateRangeSelectorProps {
   chart: Chart;
 }
 
-const millisecondsInADay = 1000 * 60 * 60 * 24;
-
 const relativeTimeOptions = [
   {
     label: '1D',
-    value: millisecondsInADay,
+    dateFrom: () => dayjs().subtract(1, 'day').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '2D',
-    value: 2 * millisecondsInADay,
+    dateFrom: () => dayjs().subtract(2, 'day').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '1W',
-    value: 7 * millisecondsInADay,
+    dateFrom: () => dayjs().subtract(1, 'week').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '1M',
-    value: 30 * millisecondsInADay,
+    dateFrom: () => dayjs().subtract(1, 'month').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '6M',
-    value: 6 * 30 * millisecondsInADay,
+    dateFrom: () => dayjs().subtract(6, 'months').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
   {
     label: '1Y',
-    value: 365 * millisecondsInADay,
+    dateFrom: () => dayjs().subtract(1, 'year').startOf('minute'),
+    dateTo: () => dayjs().endOf('minute'),
   },
 ];
 
 const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
-  const dispatch = useDispatch();
-
+  const { mutate: updateChart } = useUpdateChart();
   const handleDateChange = ({
     dateFrom,
     dateTo,
@@ -48,29 +52,16 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     dateFrom?: Date;
     dateTo?: Date;
   }) => {
-    dispatch(
-      chartsSlice.actions.changeDateRange({
-        id: chart?.id || '',
-        dateFrom,
-        dateTo,
-      })
-    );
-  };
-
-  const updateRelativeDateRange = (millisecondsFromNow: number) => {
-    dispatch(
-      chartsSlice.actions.updateRelativeDateRange({
-        id: chart?.id || '',
-        millisecondsFromNow,
-      })
-    );
-  };
-
-  useEffect(() => {
-    if (chart.millisecondsFromNow !== undefined) {
-      updateRelativeDateRange(chart.millisecondsFromNow);
+    if (dateFrom && dateTo) {
+      updateChart({
+        chart: {
+          ...chart,
+          dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
+          dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
+        },
+      });
     }
-  }, []);
+  };
 
   return (
     <Wrapper>
@@ -78,10 +69,12 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
         {relativeTimeOptions.map((option) => (
           <Button
             key={option.label}
-            variant={
-              chart.millisecondsFromNow === option.value ? 'default' : 'ghost'
+            onClick={() =>
+              handleDateChange({
+                dateFrom: option.dateFrom().toDate(),
+                dateTo: option.dateTo().toDate(),
+              })
             }
-            onClick={() => updateRelativeDateRange(option.value)}
           >
             {option.label}
           </Button>
