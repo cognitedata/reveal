@@ -1,3 +1,9 @@
+## 0.8.2 Mar 16 2021
+
+### Changes
+
+- Expose ID token from auth results
+
 ## 0.8.1 Feb 25 2021
 
 ### Changes

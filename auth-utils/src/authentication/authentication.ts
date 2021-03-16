@@ -219,6 +219,7 @@ class CogniteAuth {
       tenant: this.state.project,
       initialising: this.state.initializing,
       token: this.state.authResult?.accessToken,
+      idToken: this.state.authResult?.idToken,
       error: this.state.error,
       errorMessage: this.state.errorMessage,
       email: this.state.email,
@@ -392,6 +393,7 @@ export type AuthenticatedUser = {
   project?: string;
   tenant?: string;
   token?: string;
+  idToken?: string;
   error?: boolean;
   errorMessage?: string;
   username?: string;
