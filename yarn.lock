@@ -3671,10 +3671,10 @@
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
-"@visx/bounds@1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@visx/bounds/-/bounds-1.6.1.tgz#fb9d303e04738378425dfc1fcf1a140b778cc77f"
-  integrity sha512-VR1vbLrNTtiuoYWb/TKjn3JeR6lpNE3MS/d6rXu8k4amQetyGE6YzDBM7AHqu6Jic9D1CvR+tyegsWblt3ZNFQ==
+"@visx/bounds@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@visx/bounds/-/bounds-1.7.0.tgz#cc32aaa5aa8711771b93ec4149ff087225dc0684"
+  integrity sha512-ajF6PTgDoZTfwv5J0ZTx1miXY8lk3sGhMVqE3UsMubdTZBlOgeZMT4OmtTPtbCJTBTgw0FD0gd7X3gZ+3X9HgQ==
   dependencies:
     "@types/react" "*"
     "@types/react-dom" "*"
@@ -3852,14 +3852,14 @@
     classnames "^2.2.5"
     prop-types "^15.5.10"
 
-"@visx/tooltip@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@visx/tooltip/-/tooltip-1.6.1.tgz#b7a7ae78f60e72b31bab9dd817c5ed519adc8d3a"
-  integrity sha512-tPYjycaY2D8H0e6Su2oQmVZD0O8K25ThNcv9lGBLa6VLWRwH5R7gdBJDChUzvcHpSandFGFPEbsKpAt7w27P4Q==
+"@visx/tooltip@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@visx/tooltip/-/tooltip-1.7.0.tgz#0e8be3ca56ba126a53a91e7a95de87fdcc2c4f7c"
+  integrity sha512-GV2cZduCAeuthUYyq2hzD1oDdd+Gkm0LWJcJOB2VkIaW8H7Uf1evN396lWNRSFNPPFYaAONKfyPM6JHsPsL1OA==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
-    "@visx/bounds" "1.6.1"
+    "@visx/bounds" "1.7.0"
     classnames "^2.2.5"
     prop-types "^15.5.10"
     react-use-measure "^2.0.3"
