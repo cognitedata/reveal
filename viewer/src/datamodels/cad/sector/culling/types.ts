@@ -46,7 +46,7 @@ export type SectorLoadingSpendage = {
   /**
    * How many sectors that was "forced prioritized".
    */
-  readonly forcedSectorCount: number;
+  readonly forcedDetailedSectorCount: number;
   /**
    * The total number of sectors in models we are loading.
    */

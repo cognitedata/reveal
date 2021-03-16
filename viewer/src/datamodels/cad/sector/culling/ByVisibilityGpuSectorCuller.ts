@@ -157,7 +157,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
     const takenSectorCount = nonDiscarded.length;
     const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
-    const forcedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
+    const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
     const accumulatedPriority = nonDiscarded
       .filter(x => Number.isFinite(x.priority) && x.priority > 0)
       .reduce((sum, x) => sum + x.priority, 0);
@@ -165,13 +165,13 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const takenPercent = ((100.0 * takenSectorCount) / totalSectorCount).toPrecision(3);
 
     this.log(
-      `Scene: ${takenSectorCount} (${forcedSectorCount} required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
+      `Scene: ${takenSectorCount} (${forcedDetailedSectorCount} required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
     const spendage: SectorLoadingSpendage = {
       drawCalls: takenSectors.totalCost.drawCalls,
       downloadSize: takenSectors.totalCost.downloadSize,
       totalSectorCount,
-      forcedSectorCount,
+      forcedDetailedSectorCount,
       loadedSectorCount: takenSectorCount,
       simpleSectorCount: takenSimpleCount,
       detailedSectorCount: takenSectorCount - takenSimpleCount,

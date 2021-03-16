@@ -52,7 +52,7 @@ export class CadModelUpdateHandler {
       loadedSectorCount: 0,
       simpleSectorCount: 0,
       detailedSectorCount: 0,
-      forcedSectorCount: 0,
+      forcedDetailedSectorCount: 0,
       totalSectorCount: 0,
       accumulatedPriority: 0
     };

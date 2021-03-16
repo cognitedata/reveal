@@ -24,9 +24,10 @@ export type CadModelSectorLoadStatistics = {
    */
   readonly detailedSectorCount: number;
   /**
-   * How many sectors that was "forced prioritized".
+   * How many sectors that was "forced prioritized", e.g.
+   * because they are near the camera.
    */
-  readonly forcedSectorCount: number;
+  readonly forcedDetailedSectorCount: number;
   /**
    * The total number of sectors in models we are loading.
    */
