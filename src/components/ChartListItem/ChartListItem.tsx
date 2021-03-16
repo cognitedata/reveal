@@ -61,12 +61,19 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
           <Menu.Header>
             <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
           </Menu.Header>
-          <Menu.Item onClick={() => handleRenameChart()} appendIcon="Edit">
-            <span>Rename</span>
-          </Menu.Item>
-          <Menu.Item onClick={() => handleDeleteChart()} appendIcon="Delete">
-            <span>Delete</span>
-          </Menu.Item>
+          {login?.user === chart.user && (
+            <>
+              <Menu.Item onClick={() => handleRenameChart()} appendIcon="Edit">
+                <span>Rename</span>
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => handleDeleteChart()}
+                appendIcon="Delete"
+              >
+                <span>Delete</span>
+              </Menu.Item>
+            </>
+          )}
           <Menu.Item
             onClick={() => handleDuplicateChart()}
             appendIcon="Duplicate"
