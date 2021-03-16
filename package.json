@@ -24,7 +24,7 @@
     "@cognite/connect": "^0.0.5",
     "@cognite/data-exploration": "^0.5.1",
     "@cognite/metrics": "^0.1.2",
-    "@cognite/sdk": "^3.3.2",
+    "@cognite/sdk": "^3.4.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.29.0",
