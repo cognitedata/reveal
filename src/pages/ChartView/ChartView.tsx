@@ -91,7 +91,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
 
-  const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
+  type Modes = 'workspace' | 'editor' | 'report';
+  const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const isWorkspaceMode = workspaceMode === 'workspace';
   const isEditorMode = workspaceMode === 'editor';
   const isDataQualityMode = workspaceMode === 'report';
@@ -333,7 +334,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           chart={chart}
                           workflow={flow}
                           isActive={activeSourceItem === flow.id}
-                          setActiveSourceItem={setActiveSourceItem}
+                          setActiveSourceItem={(id?: string) => {
+                            if (id) {
+                              setWorkspaceMode('editor');
+                            }
+                            setActiveSourceItem(id);
+                          }}
                           key={flow.id}
                           isDataQualityMode={isDataQualityMode}
                           isWorkspaceMode={isWorkspaceMode}
