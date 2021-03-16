@@ -50,6 +50,9 @@ export class ByAssetNodeSet extends AsyncNodeSetBase {
         indexSet.addRange(new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize));
       }
     });
+    if (this.completeQuery(queryId)) {
+      this.notifyChanged();
+    }
   }
 
   getIndexSet(): IndexSet {

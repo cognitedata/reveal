@@ -45,9 +45,5 @@ export abstract class AsyncNodeSetBase extends NodeSet {
         break;
       }
     }
-
-    if (this.completeQuery(queryId)) {
-      this.notifyChanged();
-    }
   }
 }
