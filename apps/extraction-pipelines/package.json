@@ -19,7 +19,7 @@
     "@cognite/cdf-sdk-singleton": "^0.6.1",
     "@cognite/cdf-utilities": "^0.9.0",
     "@cognite/cogs.js": "^3.0.0",
-    "@cognite/sdk": "^3.3.6",
+    "@cognite/sdk": "^3.4.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^1.0.0",
     "@cognite/z-index": "^0.1.0",
