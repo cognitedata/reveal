@@ -255,7 +255,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         );
       }
 
-      this.markSectorsAsDetailed(intersectingSectors, takenSectors, model, budget);
+      this.markSectorsAsDetailed(intersectingSectors, takenSectors, model);
     });
   }
 
@@ -302,8 +302,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private markSectorsAsDetailed(
     intersectingSectors: SectorMetadata[],
     takenSectors: TakenSectorMap,
-    model: CadModelMetadata,
-    budget: CadModelSectorBudget
+    model: CadModelMetadata
   ) {
     for (let i = 0; i < intersectingSectors.length; i++) {
       takenSectors.markSectorDetailed(model, intersectingSectors[i].id, Infinity);
