@@ -1,6 +1,7 @@
+import * as THREE from 'three';
+
 import { Water } from 'three/examples/jsm/objects/Water';
 import { resetViewerEventHandlers, resetCognite3DModel} from '../viewerUtilities';
-import * as THREE from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { ExplodedViewTool } from '@cognite/reveal/tools';

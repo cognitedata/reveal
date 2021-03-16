@@ -38,7 +38,7 @@ identify 3D nodes by `treeIndex`. There are several implementations of `NodeSet`
 | `ByNodePropertyNodeSet`  | A set of nodes defined by a query to the 3D backend to find nodes that matches one or more properties/attributes |
 | `ByAssetNodeSet`         | A set of nodes defined by [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) linking 3D nodes to [assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html) |
 | `InvertedNodeSet`        | Inverts the result of a `NodeSet` to match the opposite nodes (i.e. a NOT-operator) |
-| `CombinedNodeSet`        | Combines nodes from several `NodeSet` by applying set operations. Supported operations are [union]("https://en.wikipedia.org/wiki/Union_(set_theory)") and [intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
+| `CombinedNodeSet`        | Combines nodes from several `NodeSet` by applying set operations. Supported operations are [union](https://en.wikipedia.org/wiki/Union_(set_theory)") and [intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
 
 It's also possible implement custom `NodeSet` (see below). This can be useful for specialized queries or to load
 sets from custom data sources.
