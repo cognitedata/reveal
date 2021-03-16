@@ -33,9 +33,9 @@ jobs:
 
       - name: Install 🔧
         run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
           yarn install --frozen-lockfile
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          rm .npmrc
 
       - name: Lint
         run: yarn lint
