@@ -7,6 +7,7 @@ import {
 import { Dropdown, Icon } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow } from 'utils/charts';
+import { Modes } from 'pages/types';
 import {
   SourceItem,
   SourceSquare,
@@ -34,14 +35,16 @@ type Props = {
   chart: Chart;
   workflow: ChartWorkflow;
   setActiveSourceItem: (id?: string) => void;
-  isActive?: boolean;
-  isWorkspaceMode?: boolean;
-  isDataQualityMode?: boolean;
+  isActive: boolean;
+  isWorkspaceMode: boolean;
+  setWorkspaceMode: (m: Modes) => void;
+  isDataQualityMode: boolean;
   mutate: (c: Chart) => void;
 };
 export default function WorkflowRow({
   chart,
   workflow,
+  setWorkspaceMode,
   setActiveSourceItem,
   isActive = false,
   isWorkspaceMode = false,
@@ -80,7 +83,9 @@ export default function WorkflowRow({
               />
             </div>
           )}
-          <SourceName>{name || 'noname'}</SourceName>
+          <SourceName onClick={() => setWorkspaceMode('editor')}>
+            {name || 'noname'}
+          </SourceName>
           <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
             <Dropdown
               content={
