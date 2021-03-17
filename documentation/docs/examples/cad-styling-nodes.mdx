@@ -14,6 +14,9 @@ with status S5". Combinations are also possible by using `CombinedNodeSet`.
 multiple criterias which will be combined using `AND` - i.e. all criterias must be met for a node
 to match. To emulate `OR`, use `CombinedNodeSet` with a `union`-operator.
 
+Note that if a node is in a `ByNodePropertyNodeSet` all of its children will also be
+in the set. 
+
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 # Show all pipes
@@ -25,5 +28,22 @@ retrieve nodes of a certain type. In the following example, only pipes are accep
 const allPipes = new ByNodePropertyNodeSet(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.addStyledNodeSet(allPipes, {renderGhosted: false, color: [40, 200, 20] } );
+model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
 ```
+
+# Partioning requests
+
+For filters that match a lot of nodes, (paritioned requests)[https://docs.cognite.com/api/v1/#section/Parallel-retrieval]
+might increase the performance radically by fetching result from the server in parallel. 
+To partition requests, provide the number of partitions using the `requestPartitions`-option
+to the `ByNodePropertyNodeSet`-constructor:
+
+```js runnable
+const nodesFromFile = new ByNodePropertyNodeSet(sdk, model, { requestPartitions: 10 });
+// All nodes originating from a given file
+nodesFromFile.executeFilter({'Item': {'Source File': 'PRO-S_CD-MUM.rvm'}}); 
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(nodesFromFile, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+```
+
+To compare speed-up, set `requestPartitions` to `1`.
