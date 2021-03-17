@@ -18,6 +18,7 @@ import { getEntryColor } from 'utils/colors';
 import { useLoginStatus } from 'hooks';
 import { useQueryClient } from 'react-query';
 import { duplicate } from 'utils/charts';
+import { Modes } from 'pages/types';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 import RunWorkflows from './RunWorkflowsButton';
@@ -90,8 +91,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
 
   const [showSearch, setShowSearch] = useState(false);
-
-  const [workspaceMode, setWorkspaceMode] = useState<string>('workspace');
+  const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const isWorkspaceMode = workspaceMode === 'workspace';
   const isEditorMode = workspaceMode === 'editor';
   const isDataQualityMode = workspaceMode === 'report';
@@ -333,6 +333,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           chart={chart}
                           workflow={flow}
                           isActive={activeSourceItem === flow.id}
+                          setWorkspaceMode={setWorkspaceMode}
                           setActiveSourceItem={setActiveSourceItem}
                           key={flow.id}
                           isDataQualityMode={isDataQualityMode}
@@ -346,6 +347,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   <NodeEditor
                     mutate={mutateAsync}
                     workflowId={activeSourceItem}
+                    setWorkspaceMode={setWorkspaceMode}
                     chart={chart}
                   />
                 )}

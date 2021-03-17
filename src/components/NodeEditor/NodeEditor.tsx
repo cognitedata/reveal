@@ -15,6 +15,7 @@ import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { useCallFunction } from 'utils/cogniteFunctions';
+import { Modes } from 'pages/types';
 import { pinTypes, isWorkflowRunnable } from './utils';
 import defaultNodeOptions from '../../reducers/charts/Nodes';
 import ConfigPanel from './ConfigPanel';
@@ -33,10 +34,16 @@ const WorkflowContainer = styled.div`
 type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
+  setWorkspaceMode: (m: Modes) => void;
   mutate: (i: { chart: Chart; skipPersist?: boolean }) => void;
 };
 
-const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
+const WorkflowEditor = ({
+  workflowId,
+  chart,
+  setWorkspaceMode,
+  mutate,
+}: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
@@ -213,11 +220,17 @@ const WorkflowEditor = ({ workflowId, chart, mutate }: WorkflowEditorProps) => {
 
       <Button
         type="primary"
-        style={{ position: 'absolute', top: 16, right: 16 }}
+        style={{ position: 'absolute', top: 16, right: 100 }}
         disabled={!isWorkflowRunnable(nodes || [])}
         onClick={onRun}
       >
         Run
+      </Button>
+      <Button
+        style={{ position: 'absolute', top: 16, right: 16 }}
+        onClick={() => setWorkspaceMode('workspace')}
+      >
+        Close
       </Button>
     </WorkflowContainer>
   );
