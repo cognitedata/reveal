@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
-import config from 'config';
+import config, { CHART_VERSION } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getTenantFromURL } from 'utils/env';
 import firebase from 'firebase/app';
@@ -122,7 +122,10 @@ export const useMyCharts = () => {
   return useQuery(
     ['charts', 'mine'],
     async () => {
-      const snapshot = await charts().where('user', '==', data?.user).get();
+      const snapshot = await charts()
+        .where('version', '==', CHART_VERSION)
+        .where('user', '==', data?.user)
+        .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
     { enabled: !!data?.user }
@@ -135,7 +138,10 @@ export const usePublicCharts = () => {
   return useQuery(
     ['charts', 'public'],
     async () => {
-      const snapshot = await charts().where('public', '==', true).get();
+      const snapshot = await charts()
+        .where('version', '==', CHART_VERSION)
+        .where('public', '==', true)
+        .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
     { enabled: !!data?.user }

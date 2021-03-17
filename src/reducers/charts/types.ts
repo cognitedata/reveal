@@ -2,6 +2,7 @@ import { Node, Connection } from '@cognite/connect';
 import { FunctionComponent } from 'react';
 
 export type Chart = {
+  version: number;
   id: string;
   name: string;
   user: string;

@@ -1,6 +1,7 @@
 import { Chart } from 'reducers/charts/types';
 
 export const SIMPLE_CHART: Chart = {
+  version: 1,
   id: '1',
   name: 'SampleChart',
   user: 'test@email.com',
