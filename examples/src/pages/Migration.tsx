@@ -23,7 +23,7 @@ window.THREE = THREE;
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI({ width: 300 });
+    const gui = new dat.GUI({ width: 500 });
     let viewer: Cognite3DViewer;
 
     async function main() {
@@ -120,7 +120,12 @@ export function Migration() {
               colorBy: 'lod',
               leafsOnly: false
             } as DebugLoadedSectorsToolOptions,
-            tool: new DebugLoadedSectorsTool(viewer)
+            tool: new DebugLoadedSectorsTool(viewer),
+            statistics: {
+              insideSectors: 0,
+              maxSectorDepth: 0,
+              maxSectorDepthOfInsideSectors: 0
+            }
           },
           suspendLoading: false,
           ghostAllNodes: false,
@@ -188,6 +193,34 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
+      const insideSectorsController = debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'insideSectors').name('# sectors@camera');
+      const maxDepthInsideController = debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepthOfInsideSectors').name('Max sector depth@camera');
+      const maxDepthController = debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepth').name('Max sector tree depth');
+      setInterval(() => {
+        let insideSectors = 0;
+        let maxInsideDepth = -1;
+        let maxDepth = -1;
+        const cameraPosition = viewer.getCameraPosition();
+        cadModels.forEach(m => {
+          m.traverse(x => {
+            // Hacky way to access internals of SectorNode
+            const depth = (x.hasOwnProperty('depth') && typeof (x as any).depth === 'number') ? (x as any).depth as number : 0;
+            if (x.hasOwnProperty('bounds') && (x as any).bounds instanceof THREE.Box3 && (x as any).bounds.containsPoint(cameraPosition)) {
+              insideSectors++;
+              maxInsideDepth = Math.max(maxInsideDepth, depth);
+            }
+            maxDepth = Math.max(maxDepth, depth);
+          })
+        });
+        guiState.debug.loadedSectors.statistics.insideSectors = insideSectors;
+        guiState.debug.loadedSectors.statistics.maxSectorDepth = maxDepth;
+        guiState.debug.loadedSectors.statistics.maxSectorDepthOfInsideSectors = maxInsideDepth;
+
+        insideSectorsController.updateDisplay();
+        maxDepthInsideController.updateDisplay();
+        maxDepthController.updateDisplay();
+      }, 500);
+
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
