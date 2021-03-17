@@ -8,13 +8,15 @@ import oceanicNext from 'prism-react-renderer/themes/oceanicNext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 const defaultCodeTheme = oceanicNext;
 
-// Replacement for "import { customScope } from './customScope'" to avoid
-// build issues with React Server-side Rendering
-// which fails due to "window" not being defined in NodeJS
-const customScope = typeof window === 'undefined' ?
- {
-   urls: []
- } : require('./customScope');
+import { customScope } from './customScope';
+
+// // Replacement for "import { customScope } from './customScope'" to avoid
+// // build issues with React Server-side Rendering
+// // which fails due to "window" not being defined in NodeJS
+// const customScope = typeof window === 'undefined' ?
+//  {
+//    urls: []
+//  } : require('./customScope');
 
 export type LiveCodeSnippetProps = {
   children: string;
@@ -51,7 +53,8 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
             if (viewer) {
               resetViewerEventHandlers(viewer);
               if (model instanceof Cognite3DModel) {
-                resetCognite3DModel(model);
+                model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+                model.removeAllStyledNodeSets();
               }
             } else {
               alert('Login is required to run examples');

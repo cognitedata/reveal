@@ -1,8 +1,4 @@
-import {
-  Cognite3DModel,
-  Cognite3DViewer,
-  DefaultNodeAppearance,
-} from '@cognite/reveal';
+import { Cognite3DViewer } from '@cognite/reveal';
 
 /**
  * Resets all event handlers on the viewer provided. This uses
@@ -15,13 +11,4 @@ export function resetViewerEventHandlers(viewer: Cognite3DViewer): void {
   eventListeners.cameraChange.unsubscribeAll();
   eventListeners.click.unsubscribeAll();
   eventListeners.hover.unsubscribeAll();
-}
-
-/**
- * Resets state of model to the default state (i.e. apperance and styled sets)
- * @param model 
- */
-export function resetCognite3DModel(model: Cognite3DModel): void {
-  model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-  model.removeAllStyledNodeSets();
 }

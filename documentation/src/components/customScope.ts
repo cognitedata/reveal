@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { Water } from 'three/examples/jsm/objects/Water';
-import { resetViewerEventHandlers, resetCognite3DModel} from '../viewerUtilities';
+import { resetViewerEventHandlers } from '../viewerUtilities';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { ExplodedViewTool } from '@cognite/reveal/tools';
@@ -10,7 +10,6 @@ const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal');
 
 export const customScope: Record<string, any> = {
   resetViewerEventHandlers,
-  resetCognite3DModel,
   HtmlOverlayTool,
   ExplodedViewTool,
   THREE,
