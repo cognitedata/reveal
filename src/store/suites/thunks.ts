@@ -5,10 +5,11 @@ import { setNotification } from 'store/notification/actions';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { CogniteExternalId } from '@cognite/sdk';
+import { Metrics } from '@cognite/metrics';
 import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
 import * as actions from './actions';
 
-export const fetchSuites = (apiClient: ApiClient) => async (
+export const fetchSuites = (apiClient: ApiClient, metrics?: Metrics) => async (
   dispatch: RootDispatcher
 ) => {
   dispatch(actions.loadSuitesTable());
@@ -17,8 +18,12 @@ export const fetchSuites = (apiClient: ApiClient) => async (
     dispatch(actions.loadedSuitesTable(suites as Suite[]));
   } catch (e) {
     dispatch(actions.loadSuitesTableFailed());
-    dispatch(setHttpError(`Failed to fetch suites`, e));
-    Sentry.captureException(e);
+    if (e?.code === 403 && metrics) {
+      metrics.track('NotAuthorizedUser');
+    } else {
+      dispatch(setHttpError(`Failed to fetch suites`, e));
+      Sentry.captureException(e);
+    }
   }
 };
 

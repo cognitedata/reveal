@@ -13,6 +13,7 @@ import { getSuitesTableState } from 'store/suites/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import ErrorPage from 'pages/ErrorPage';
 import { getMetrics } from 'utils/metrics';
+import { Metrics as CogniteMetrics } from '@cognite/metrics';
 import { getDataSet } from 'store/config/thunks';
 import Routes from './Routes';
 
@@ -70,7 +71,9 @@ const Authentication = (): JSX.Element => {
     const fetch = async () => {
       setFetchDispatched(true);
       await dispatch(fetchUserGroups(apiClient));
-      await dispatch(fetchSuites(apiClient));
+      await dispatch(
+        fetchSuites(apiClient, Metrics.create('Auth') as CogniteMetrics)
+      );
     };
     if (authenticated && !fetchDispatched && !loading && !hasError) {
       Metrics.identify(userId);
