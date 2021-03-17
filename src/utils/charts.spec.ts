@@ -33,8 +33,12 @@ describe('charts util', () => {
         'test chart Copy'
       );
       expect(duplicate(chart, 'user_2@example.org').id).not.toEqual(id);
-      expect(duplicate(chart, 'user_2@example.org').created).not.toEqual(chart.created);
-      expect(duplicate(chart, 'user_2@example.org').updated).not.toEqual(chart.updated);
+      expect(duplicate(chart, 'user_2@example.org').created).not.toEqual(
+        chart.created
+      );
+      expect(duplicate(chart, 'user_2@example.org').updated).not.toEqual(
+        chart.updated
+      );
     });
     it('should not update the other fields', () => {
       expect(duplicate(chart, 'user_2@example.org').dateFrom).toEqual('then');
