@@ -10,6 +10,7 @@ import {
   CogsFileInfo,
 } from 'src/components/FileUploader/FilePicker/types';
 import FilePicker from 'src/components/FileUploader/FilePicker';
+import exifr from 'exifr';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
@@ -217,14 +218,35 @@ export const FileUploader = ({
     file.status = 'uploading';
     // since we patch files we trigger list updates to have things rendered with new info
     setFileList((list) => [...list]);
+    const coordinates = await exifr.gps(file);
+    const exifTags = await exifr.parse(file, [
+      'ISO',
+      'Orientation',
+      'LensModel',
+      'ExposureTime',
+      'ShutterSpeedValue',
+      'FNumber',
+      'FocalLength',
+    ]);
 
     const mimeType = getMIMEType(file.name);
-
+    console.log(exifTags);
     try {
       const fileMetadata = (await sdk.files.upload({
         name: file.name,
         mimeType: mimeType || undefined,
         source: 'CDF Vision',
+        geoLocation: coordinates && {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [
+              Number(coordinates.longitude.toFixed(6)),
+              Number(coordinates.latitude.toFixed(6)),
+            ],
+          },
+        },
+        metadata: exifTags && exifTags,
         // I can see directory in api docs, but looks like SDK misses it
         // https://docs.cognite.com/api/v1/#operation/initFileUpload
         ...(assetIds && { assetIds }),

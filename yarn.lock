@@ -7366,6 +7366,11 @@ exenv@^1.2.0:
   resolved "https://registry.yarnpkg.com/exenv/-/exenv-1.2.2.tgz#2ae78e85d9894158670b03d47bec1f03bd91bb9d"
   integrity sha1-KueOhdmJQVhnCwPUe+wfA72Ru50=
 
+exifr@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/exifr/-/exifr-6.1.1.tgz#b47ef4446ca04bbd015a7ef7661602a30b6dc6d5"
+  integrity sha512-nU5C4hyyVRMSQdTfSSSh2ScPV4QgtPnqAGU8ie2PzuJv4I6nbzeWctSfNA35KMJou6iglLrWcLmuYEDCF0tBOw==
+
 exit@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/exit/-/exit-0.1.2.tgz#0632638f8d877cc82107d30a0fff1a17cba1cd0c"

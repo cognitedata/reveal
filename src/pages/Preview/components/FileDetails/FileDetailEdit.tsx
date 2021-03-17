@@ -185,6 +185,15 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
               value={fileInfo.mimeType}
             />
           )}
+          {fileInfo.geoLocation && (
+            <FileDetailFieldView
+              id="geoLocation"
+              title="Geolocation (lon/lat)"
+              placeholder="None Set"
+              value={fileInfo.geoLocation?.geometry.coordinates.join(', ')}
+              copyable
+            />
+          )}
           <DataSetFieldContainer>
             <DataSetItem id={fileInfo.id} type="file" />
           </DataSetFieldContainer>
