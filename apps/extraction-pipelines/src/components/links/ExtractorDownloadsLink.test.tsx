@@ -1,14 +1,16 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'utils/test';
 import { QueryClient } from 'react-query';
-import ExtractorDownloadsLink from './ExtractorDownloadsLink';
-import { renderWithReactQueryCacheProvider } from '../../utils/test/render';
+import { trackUsage } from 'utils/Metrics';
+import { NAVIGATION } from 'utils/constants';
+import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
+} from 'utils/baseURL';
+import ExtractorDownloadsLink from './ExtractorDownloadsLink';
 
 describe('ExtractorDownloadsTab', () => {
   let client: QueryClient;
@@ -46,5 +48,18 @@ describe('ExtractorDownloadsTab', () => {
     const downloadLink = screen.getByText(/download extractors/i);
     expect(downloadLink).toBeInTheDocument();
     expect(downloadLink.href).toEqual(url);
+  });
+
+  test('Tracks click', () => {
+    const url = 'https://docs.cognite.com/cdf/integration/';
+    render(
+      <ExtractorDownloadsLink linkText="Download Extractors" link={{ url }} />,
+      { wrapper }
+    );
+    const downloadLink = screen.getByText(/download extractors/i);
+    expect(downloadLink).toBeInTheDocument();
+    fireEvent.click(downloadLink);
+    expect(trackUsage).toHaveBeenCalledTimes(1);
+    expect(trackUsage).toHaveBeenCalledWith(NAVIGATION, { href: url });
   });
 });

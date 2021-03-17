@@ -88,6 +88,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
           <InteractiveCopyWithText
             id="copy-link-this-page"
             textToCopy={`${origin}${pathname}${search}`}
+            copyType="pageLink"
           >
             <>Copy link to this page</>
           </InteractiveCopyWithText>

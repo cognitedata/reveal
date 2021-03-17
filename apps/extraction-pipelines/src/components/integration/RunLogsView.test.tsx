@@ -14,6 +14,8 @@ import {
 import { useRuns } from 'hooks/useRuns';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { RunTableHeading } from 'components/integration/RunLogsCols';
+import { trackUsage } from 'utils/Metrics';
+import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
 
 jest.mock('hooks/useRuns', () => {
   return {
@@ -21,6 +23,10 @@ jest.mock('hooks/useRuns', () => {
   };
 });
 describe('RunLogsView', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('renders error on request fail', () => {
     useRuns.mockReturnValue(mockError);
     const mockIntegration = getMockResponse()[0];
@@ -34,7 +40,14 @@ describe('RunLogsView', () => {
     );
     render(<RunLogsView integration={mockIntegration} />, { wrapper });
     expect(screen.getByText(mockError.error.message)).toBeInTheDocument();
+
+    // test tracking
+    expect(trackUsage).toHaveBeenCalledTimes(1);
+    expect(trackUsage).toHaveBeenCalledWith(SINGLE_INTEGRATION_RUNS, {
+      id: mockIntegration.id,
+    });
   });
+
   it('renders runs on success', () => {
     useRuns.mockReturnValue({ data: mockDataRunsResponse });
     const mockIntegration = getMockResponse()[0];

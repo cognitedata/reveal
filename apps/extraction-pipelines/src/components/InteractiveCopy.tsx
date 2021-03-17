@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Tooltip, Icons, Colors } from '@cognite/cogs.js';
+import { trackUsage } from 'utils/Metrics';
+import { ACTION_COPY } from 'utils/constants';
+import { CopyType } from 'components/InteractiveCopyWithText';
 
 interface InteractiveCopyProps {
   text: string;
+  copyType: CopyType;
   // eslint-disable-next-line react/require-default-props
   onCopy?: () => void;
 }
 
 const InteractiveCopy = ({
   text,
+  copyType,
   onCopy: onCopyCallback,
 }: InteractiveCopyProps) => {
   const [hasCopied, setHasCopied] = useState(false);
@@ -24,6 +29,7 @@ const InteractiveCopy = ({
 
   const onCopy = () => {
     const el = document.createElement('textarea');
+    trackUsage(ACTION_COPY, { copyType });
     el.value = text;
     document.body.appendChild(el);
     el.select();

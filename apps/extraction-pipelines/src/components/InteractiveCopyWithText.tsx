@@ -1,9 +1,20 @@
 import React, { useState, useEffect, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { Tooltip, Icons, Colors } from '@cognite/cogs.js';
+import { trackUsage } from 'utils/Metrics';
+import { ACTION_COPY } from 'utils/constants';
+
+export type CopyType =
+  | 'externalId'
+  | 'dataSetId'
+  | 'cronExpression'
+  | 'dbName'
+  | 'tableName'
+  | 'pageLink';
 
 interface InteractiveCopyWithTextProps {
   textToCopy: string;
+  copyType: CopyType;
   // eslint-disable-next-line react/require-default-props
   onCopy?: () => void;
 }
@@ -12,6 +23,7 @@ const InteractiveCopyWithText: React.FC<
   InteractiveCopyWithTextProps & React.HTMLAttributes<HTMLDivElement>
 > = ({
   textToCopy,
+  copyType,
   onCopy: onCopyCallback,
   children,
   ...rest
@@ -29,6 +41,7 @@ const InteractiveCopyWithText: React.FC<
   const onCopy = () => {
     const el = document.createElement('textarea');
     el.value = textToCopy;
+    trackUsage(ACTION_COPY, { copyType });
     document.body.appendChild(el);
     el.select();
     document.execCommand('copy');

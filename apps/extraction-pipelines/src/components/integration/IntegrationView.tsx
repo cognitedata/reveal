@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import RawTable from 'components/integrations/cols/RawTable';
@@ -18,6 +18,8 @@ import { RouterParams } from 'routing/RoutingConfig';
 import { MetaData } from 'components/integration/MetaData';
 import { DataSetView } from 'components/integration/DataSetView';
 import { RunView } from 'components/integration/RunView';
+import { trackUsage } from 'utils/Metrics';
+import { SINGLE_INTEGRATION } from 'utils/constants';
 import { bottomSpacing, mainContentSpaceSides } from 'styles/StyledVariables';
 
 export const Wrapper = styled.div`
@@ -86,6 +88,14 @@ const VIEW_ID_PREFIX: Readonly<string> = 'integration-view-';
 export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
   const { id } = useParams<RouterParams>();
   const { integration } = useSelectedIntegration();
+  const integrationId = integration?.id;
+
+  useEffect(() => {
+    if (integrationId) {
+      trackUsage(SINGLE_INTEGRATION, { id: integrationId });
+    }
+  }, [integrationId]);
+
   if (!integration) {
     return <p>{createNoIntegrationFoundMessage(id)}</p>;
   }
@@ -135,7 +145,10 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
             {DetailFieldNames.EXTERNAL_ID}
             {': '}
           </span>
-          <InteractiveCopyWithText textToCopy={integration.externalId}>
+          <InteractiveCopyWithText
+            textToCopy={integration.externalId}
+            copyType="externalId"
+          >
             <>{integration?.externalId}</>
           </InteractiveCopyWithText>
         </span>

@@ -1,7 +1,9 @@
 import { Icon } from '@cognite/cogs.js';
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { useAppEnv } from '../../hooks/useAppEnv';
+import { trackUsage } from 'utils/Metrics';
+import { NAVIGATION } from 'utils/constants';
+import { useAppEnv } from 'hooks/useAppEnv';
 
 const LinkIcon = styled((props) => <Icon {...props}>{props.children}</Icon>)`
   margin-left: 0.5rem;
@@ -32,6 +34,9 @@ const ExtractorDownloadsLink: FunctionComponent<OwnProps> = ({
   const { project, cdfEnv } = useAppEnv();
   const displayHref =
     url || `/${project}${path}${cdfEnv ? `?env=${cdfEnv}` : ''}`;
+  const onLinkClick = () => {
+    trackUsage(NAVIGATION, { href: displayHref });
+  };
   return (
     <>
       {(url || path) && (
@@ -40,6 +45,7 @@ const ExtractorDownloadsLink: FunctionComponent<OwnProps> = ({
           className="cogs-btn cogs-btn-link"
           target="_blank"
           rel="noopener noreferrer"
+          onClick={onLinkClick}
         >
           {linkText}
           <LinkIcon type="ExternalLink" />

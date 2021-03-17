@@ -5,10 +5,16 @@
 import '@testing-library/jest-dom/extend-expect';
 import './utils/test/matchMedia';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import './cognite-cdf-route-tracker.d.ts';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => {
   return {
     sdkv3: jest.fn(),
+  };
+});
+jest.mock('utils/Metrics', () => {
+  return {
+    trackUsage: jest.fn(),
   };
 });
 

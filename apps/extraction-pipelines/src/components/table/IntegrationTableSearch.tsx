@@ -1,6 +1,8 @@
 import React from 'react';
 import { FilterValue, Row, useAsyncDebounce } from 'react-table';
 import { Input, Tooltip } from '@cognite/cogs.js';
+import { trackUsage } from 'utils/Metrics';
+import { SEARCH } from 'utils/constants';
 
 interface GlobalSearchProps<D extends object> {
   preGlobalFilteredRows: Array<Row<D>>;
@@ -13,10 +15,10 @@ function IntegrationTableSearch<D extends object>({
   globalFilter,
   setGlobalFilter,
 }: GlobalSearchProps<D>) {
-  // console.log('preGlobalFilteredRows', preGlobalFilteredRows)
   const count = preGlobalFilteredRows.length;
   const [value, setValue] = React.useState(globalFilter);
   const onChange = useAsyncDebounce((val) => {
+    trackUsage(SEARCH, { query: val });
     setGlobalFilter(val || []);
   }, 200);
   return (

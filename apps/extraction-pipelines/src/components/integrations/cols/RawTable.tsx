@@ -60,6 +60,7 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
                   }`}
                   linkText={dbName}
                   copyText={dbName}
+                  copyType="dbName"
                 />
               </td>
               <td className="grid-cell cell-1">
@@ -69,6 +70,7 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
                   }`}
                   copyText={tableName}
                   linkText={tableName}
+                  copyType="tableName"
                 />
               </td>
             </tr>

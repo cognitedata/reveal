@@ -2,13 +2,13 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
 import { DetailFieldNames } from 'model/Integration';
-import Modal from '../../modals/Modal';
-import { ids } from '../../../cogs-variables';
-import InteractiveCopy from '../../InteractiveCopy';
-import { ModalContent } from '../../modals/ModalContent';
-import RelativeTimeWithTooltip from '../../integrations/cols/RelativeTimeWithTooltip';
-import { StyledHeader, StyledH2 } from '../../../styles/StyledModal';
-import { useSelectedIntegration } from '../../../hooks/useSelectedIntegration';
+import Modal from 'components/modals/Modal';
+import { ids } from 'cogs-variables';
+import InteractiveCopy from 'components/InteractiveCopy';
+import { ModalContent } from 'components/modals/ModalContent';
+import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
+import { StyledHeader, StyledH2 } from 'styles/StyledModal';
+import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 
 const StyledContent = styled.div`
   border: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
@@ -60,7 +60,10 @@ const FailMessageModal: FunctionComponent<Props> = ({
             </StyledH2>
             <span className="details-id">
               {DetailFieldNames.EXTERNAL_ID}: {integration?.externalId}{' '}
-              <InteractiveCopy text={`${integration?.externalId}`} />
+              <InteractiveCopy
+                text={`${integration?.externalId}`}
+                copyType="externalId"
+              />
             </span>
             <Button type="primary" onClick={onCancel}>
               <Icon type="Close" />

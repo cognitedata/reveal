@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { StyledDropdown } from 'styles/StyledDropdown';
 import { Status } from 'model/Status';
+import { trackUsage } from 'utils/Metrics';
+import { FILTER } from 'utils/constants';
 
 const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
   .cogs-menu-item {
@@ -31,12 +33,15 @@ function StatusFilterDropdown<D extends object>({
   column: { filterValue, setFilter, Header },
 }: StatusFilterDropdownProps<D>) {
   const onClickFail = () => {
+    trackUsage(FILTER, { field: 'status', value: Status.FAIL });
     setFilter(Status.FAIL);
   };
   const onClickOK = () => {
+    trackUsage(FILTER, { field: 'status', value: Status.OK });
     setFilter(Status.OK);
   };
   const onClickAll = () => {
+    trackUsage(FILTER, { field: 'status', value: 'All' });
     setFilter(undefined);
   };
   const MenuContent = (

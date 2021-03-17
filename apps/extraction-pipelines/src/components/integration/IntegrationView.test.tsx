@@ -2,22 +2,27 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import moment from 'moment';
-import { renderWithSelectedIntegrationContext } from '../../utils/test/render';
-import { IntegrationView } from './IntegrationView';
-import { getMockResponse } from '../../utils/mockResponse';
-import { INTEGRATIONS } from '../../utils/baseURL';
-import { TableHeadings } from '../table/IntegrationTableCol';
-import { DetailFieldNames } from '../../model/Integration';
-import { DATE_FORMAT } from '../TimeDisplay/TimeDisplay';
-import { uppercaseFirstWord } from '../../utils/primitivesUtils';
+import { renderWithSelectedIntegrationContext } from 'utils/test/render';
+import { getMockResponse } from 'utils/mockResponse';
+import { INTEGRATIONS } from 'utils/baseURL';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { DetailFieldNames } from 'model/Integration';
+import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
+import { uppercaseFirstWord } from 'utils/primitivesUtils';
 import {
   NO_META_DATA,
   NO_RAW_TABLES_MESSAGE,
   NO_SCHEDULE,
   NO_DATA_SET_ID_SET,
-} from '../../utils/constants';
+  SINGLE_INTEGRATION,
+} from 'utils/constants';
+import { IntegrationView } from 'components/integration/IntegrationView';
+import { trackUsage } from 'utils/Metrics';
 
 describe('IntegrationView', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
   test('Displays integration', () => {
     const mockIntegration = getMockResponse()[0];
     renderWithSelectedIntegrationContext(<IntegrationView />, {
@@ -25,6 +30,12 @@ describe('IntegrationView', () => {
       client: new QueryClient(),
       route: `${INTEGRATIONS}/${mockIntegration.id}`,
     });
+    // test tracking
+    expect(trackUsage).toHaveBeenCalledTimes(1);
+    expect(trackUsage).toHaveBeenCalledWith(SINGLE_INTEGRATION, {
+      id: mockIntegration.id,
+    });
+
     expect(
       screen.getAllByText(new RegExp(TableHeadings.LATEST_RUN, 'i'))
     ).toBeDefined();

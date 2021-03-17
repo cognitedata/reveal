@@ -1,10 +1,10 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import InteractiveCopyWithText from '../InteractiveCopyWithText';
-import { NO_DATA_SET_ID_SET } from '../../utils/constants';
-import { getDataSetsLink } from '../../utils/dataSetUtils';
-import { StyledLink } from '../../styles/StyledButtons';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { DataSetModel } from '../../model/DataSetModel';
+import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
+import { NO_DATA_SET_ID_SET } from 'utils/constants';
+import { getDataSetsLink } from 'utils/dataSetUtils';
+import { StyledLink } from 'styles/StyledButtons';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { DataSetModel } from 'model/DataSetModel';
 
 interface DataSetViewProps {
   dataSet?: DataSetModel;
@@ -36,7 +36,7 @@ export const DataSetView: FunctionComponent<DataSetViewProps> = ({
       )}
       <span className="flex">
         {DATA_SET_ID_LABEL}:{' '}
-        <InteractiveCopyWithText textToCopy={dataSetId}>
+        <InteractiveCopyWithText textToCopy={dataSetId} copyType="dataSetId">
           {dataSetId}
         </InteractiveCopyWithText>
       </span>

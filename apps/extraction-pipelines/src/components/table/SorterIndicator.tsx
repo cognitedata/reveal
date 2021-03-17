@@ -2,6 +2,8 @@ import React, { AriaAttributes } from 'react';
 import { ColumnInstance } from 'react-table';
 import { Button } from '@cognite/cogs.js';
 import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon';
+import { trackUsage } from 'utils/Metrics';
+import { SORT } from 'utils/constants';
 
 function getSortOrder<T extends object>(
   column: ColumnInstance<T>
@@ -32,8 +34,17 @@ const SorterIndicator = <T extends object>({
   name,
 }: SorterIndicatorProps<T>) => {
   const { icon, ariaSort } = getSortOrder(column);
+  const onClickSort = () => {
+    trackUsage(SORT, { field: name });
+  };
   return (
-    <Button type="ghost" icon={icon} iconPlacement="right" aria-sort={ariaSort}>
+    <Button
+      type="ghost"
+      icon={icon}
+      iconPlacement="right"
+      aria-sort={ariaSort}
+      onClick={onClickSort}
+    >
       {name}
     </Button>
   );

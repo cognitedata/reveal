@@ -1,8 +1,8 @@
 import { Tooltip } from '@cognite/cogs.js';
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import styled from 'styled-components';
-import { parseCron } from '../../../utils/cronUtils';
-import InteractiveCopy from '../../InteractiveCopy';
+import { parseCron } from 'utils/cronUtils';
+import InteractiveCopy from 'components/InteractiveCopy';
 
 export const InteractiveCopyWrapper = styled.span`
   display: flex;
@@ -55,7 +55,8 @@ const Schedule: FunctionComponent<Props> = ({
   return (
     <Tooltip content={schedule}>
       <InteractiveCopyWrapper {...rest}>
-        {parsedExpression} <InteractiveCopy text={schedule} />
+        {parsedExpression}{' '}
+        <InteractiveCopy text={schedule} copyType="cronExpression" />
       </InteractiveCopyWrapper>
     </Tooltip>
   );

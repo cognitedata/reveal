@@ -67,3 +67,19 @@ export const CONTACTS: Readonly<string> = 'Contacts';
 
 // Page headings
 export const REGISTER_INTEGRATION: Readonly<string> = 'Register integration';
+
+// Tracking constants
+export const ACTION: Readonly<string> = 'Action';
+export const ACTION_COPY: Readonly<string> = 'Action.Copy'; // + copyType
+export const ACTION_DOWNLOAD: Readonly<string> = 'Action.Download'; // + download name
+export const ACTION_EDIT: Readonly<string> = 'Action.Edit'; // + field and value
+export const ACTION_REGISTER: Readonly<string> = 'Action.Register';
+export const FILTER: Readonly<string> = 'Filter'; // + field and value
+export const INTEGRATIONS: Readonly<string> = 'Overview'; // + tenant
+export const NAVIGATION: Readonly<string> = 'Navigation'; // + href
+export const SEARCH: Readonly<string> = 'Search'; // + query
+export const SINGLE_INTEGRATION: Readonly<string> = 'Integration.Details'; // + id
+export const SINGLE_INTEGRATION_RUNS: Readonly<string> = 'Integration.Runs'; // + id
+export const SINGLE_INTEGRATION_CONTACTS: Readonly<string> =
+  'Integration.Contacts'; // + id
+export const SORT: Readonly<string> = 'Sort'; // + field

@@ -58,7 +58,8 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
     case 'externalId':
       return (
         <InteractiveCopyWrapper id={fieldName}>
-          {fieldValue} <InteractiveCopy text={`${fieldValue}`} />
+          {fieldValue}{' '}
+          <InteractiveCopy text={`${fieldValue}`} copyType="externalId" />
         </InteractiveCopyWrapper>
       );
     case 'lastSeen': {
