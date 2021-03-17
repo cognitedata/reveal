@@ -1,0 +1,40 @@
+---
+id: cad-styling-custom
+title: Create custom node sets
+describe: Create custom node sets to filter based on custom data sources and mechanisms
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+In many cases applications will need to filter 3D nodes by some custom data source or mechanism. This
+is done by extending the `NodeSet`-class. This class generates an `IndexSet` and
+provides notification when the set has changed. Implementations should 
+be non-blocking - slow operations should be executed async and the set should
+be incrementally updated to avoid blocking the viewer.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+# Simple, static node set
+
+```js runnable
+class MyNodeSet extends NodeSet {
+  isLoading = false;
+
+  constructor(model) {
+    super();
+    this._nodeCount = model.nodeCount;
+    this._indexSet = new IndexSet();
+    for (let i = 0; i < model.nodeCount; i += 100) {
+      this._indexSet.add(i);
+    }
+  }
+
+  getIndexSet() {
+    return this._indexSet;
+  }
+};
+
+const mySet = new MyNodeSet(model);
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(mySet, { renderGhosted: false, color: [40, 200, 20] } );
+```

@@ -24,6 +24,7 @@ module.exports = {
             'examples/cad-styling',
             'examples/cad-styling-assets',
             'examples/cad-styling-nodes',
+            'examples/cad-styling-custom',
           ] 
         },
         'examples/cad-highlighting',
