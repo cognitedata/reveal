@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { Colors, Title } from '@cognite/cogs.js';
 import React from 'react';
-import { StyledRouterLink } from '../components/integrations/cols/Name';
-import { PageTitle } from './StyledHeadings';
-import { MainPanelGrid } from './grid/StyledGrid';
+import { mainContentSpaceAround } from 'styles/StyledVariables';
+import { StyledRouterLink } from 'components/integrations/cols/Name';
+import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
 
 export const PageWrapper = styled.div`
   flex: 1;
@@ -11,9 +11,10 @@ export const PageWrapper = styled.div`
   background-color: ${Colors.white.hex()};
   display: grid;
   grid-template-areas:
+    'breadcrumbs breadcrumbs'
     'title links'
     'main main';
-  grid-template-rows: min-content;
+  grid-template-rows: minmax(1rem, min-content) min-content;
   h1 {
     grid-area: title;
     margin: 1.5rem 0 1.5rem 2rem;
@@ -21,28 +22,16 @@ export const PageWrapper = styled.div`
   }
 `;
 
-export const CreateIntegrationPageWrapper = styled.div`
-  display: grid;
-  grid-template-areas:
-    'breadcrumbs breadcrumbs'
-    'title1 links'
-    'main main';
-  h1 {
-    margin: 0.5rem 0 1.5rem 2rem;
-  }
-`;
 export const GridBreadCrumbsWrapper = styled(StyledRouterLink)`
   grid-area: breadcrumbs;
   margin: 0.5rem 0 0 2rem;
 `;
+
 export const BackWrapper = styled(StyledRouterLink)`
   grid-area: back;
   display: flex;
   align-items: center;
   text-decoration: underline;
-`;
-export const GridTitleWrapper = styled(PageTitle)`
-  grid-area: title1;
 `;
 
 export const GridH2Wrapper = styled((props) => (
@@ -54,8 +43,9 @@ export const GridH2Wrapper = styled((props) => (
   margin-bottom: 0.3rem;
 `;
 
-export const GridMainWrapper = styled(MainPanelGrid)`
+export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
   grid-area: main;
+  padding: ${mainContentSpaceAround};
   display: grid;
   grid-template-columns: auto 70% auto;
   grid-template-rows: min-content min-content min-content auto;

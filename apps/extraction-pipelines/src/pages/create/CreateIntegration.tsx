@@ -1,21 +1,12 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { Button } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { createLink } from '@cognite/cdf-utilities';
-import {
-  CreateIntegrationPageWrapper,
-  GridTitleWrapper,
-  GridMainWrapper,
-  GridBreadCrumbsWrapper,
-  GridH2Wrapper,
-} from '../../styles/StyledPage';
-import {
-  CREATE_INTEGRATION_HEADING,
-  NEXT,
-  WIZARD_HEADING,
-} from '../../utils/constants';
-import { NAME_PAGE_PATH } from '../../routing/CreateRouteConfig';
+import { GridH2Wrapper } from 'styles/StyledPage';
+import { NEXT, WIZARD_HEADING } from 'utils/constants';
+import { NAME_PAGE_PATH } from 'routing/CreateRouteConfig';
+import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
+import { CreateFormWrapper } from 'styles/StyledForm';
+import { ButtonPlaced } from 'styles/StyledButton';
 
 interface CreateIntegrationProps {}
 
@@ -29,12 +20,8 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
   };
 
   return (
-    <CreateIntegrationPageWrapper>
-      <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
-        Integrations overview
-      </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>{CREATE_INTEGRATION_HEADING}</GridTitleWrapper>
-      <GridMainWrapper>
+    <RegisterIntegrationLayout>
+      <CreateFormWrapper onSubmit={handleNext}>
         <GridH2Wrapper>{WIZARD_HEADING}</GridH2Wrapper>
         <p>
           Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -47,11 +34,11 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
           more recently with desktop publishing software like Aldus PageMaker
           including versions of Lorem Ipsum.
         </p>
-        <Button type="primary" onClick={handleNext}>
+        <ButtonPlaced type="primary" onClick={handleNext}>
           {NEXT}
-        </Button>
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+        </ButtonPlaced>
+      </CreateFormWrapper>
+    </RegisterIntegrationLayout>
   );
 };
 export default CreateIntegration;

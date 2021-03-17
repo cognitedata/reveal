@@ -9,3 +9,16 @@ export const ButtonPlaced = styled(Button)`
   margin-bottom: ${(props: ButtonPlacedProps) =>
     `${props.mb ? `${props.mb}rem` : bottomSpacing}`};
 `;
+
+export const LinkWrapper = styled.div`
+  grid-area: links;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 1.5rem 0;
+  a,
+  span {
+    align-self: center;
+    margin-right: 2rem;
+  }
+`;

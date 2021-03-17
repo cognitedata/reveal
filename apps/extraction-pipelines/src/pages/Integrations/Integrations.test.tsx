@@ -3,7 +3,7 @@ import React from 'react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import { act } from '@testing-library/react-hooks';
-import OverviewTab from 'components/tabs/OverviewTab';
+import Integrations from 'pages/Integrations/Integrations';
 import { render } from 'utils/test';
 import { getMockResponse, unauthorizedError } from 'utils/mockResponse';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
@@ -13,7 +13,7 @@ import {
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
 
-describe('OverviewTab', () => {
+describe('Integrations', () => {
   test('Render with out fail', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
     sdkv3.datasets.retrieve.mockResolvedValue([]);
@@ -24,7 +24,7 @@ describe('OverviewTab', () => {
       PROJECT_ITERA_INT_GREEN,
       CDF_ENV_GREENFIELD
     );
-    render(<OverviewTab />, { wrapper });
+    render(<Integrations />, { wrapper });
     await waitFor(() => {
       const sidePanelHeading = screen.getByRole('grid');
       expect(sidePanelHeading).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe('OverviewTab', () => {
         PROJECT_ITERA_INT_GREEN,
         CDF_ENV_GREENFIELD
       );
-      render(<OverviewTab />, { wrapper });
+      render(<Integrations />, { wrapper });
       const errorMessage = await screen.findByText(/No integration/i);
       expect(errorMessage).toBeInTheDocument();
     });
@@ -61,7 +61,7 @@ describe('OverviewTab', () => {
         PROJECT_ITERA_INT_GREEN,
         CDF_ENV_GREENFIELD
       );
-      render(<OverviewTab />, { wrapper });
+      render(<Integrations />, { wrapper });
       const errorMessage = await screen.findByText(
         unauthorizedError.data.message
       );

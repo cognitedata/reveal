@@ -2,17 +2,17 @@ import React, { FunctionComponent, useState } from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import Layers from 'utils/zindex';
-import { Integration } from '../../model/Integration';
-import ITable from '../table/ITable';
-import { getIntegrationTableCol } from '../table/IntegrationTableCol';
-import StyledTable from '../../styles/StyledTable';
-import FailMessageModal from '../form/viewEditIntegration/FailMessageModal';
+import { bottomSpacing, mainContentSpaceAround } from 'styles/StyledVariables';
+import { Integration } from 'model/Integration';
+import ITable from 'components/table/ITable';
+import { getIntegrationTableCol } from 'components/table/IntegrationTableCol';
+import StyledTable from 'styles/StyledTable';
+import FailMessageModal from 'components/form/viewEditIntegration/FailMessageModal';
 
-const StyledIntegrationsTable = styled((props) => (
-  <StyledTable {...props}>{props.children}</StyledTable>
-))`
+const StyledIntegrationsTable = styled(StyledTable)`
+  margin: ${mainContentSpaceAround};
   .cogs-input-container {
-    margin-bottom: 1rem;
+    margin-bottom: ${bottomSpacing};
   }
   .tableFixHead {
     overflow-y: auto;

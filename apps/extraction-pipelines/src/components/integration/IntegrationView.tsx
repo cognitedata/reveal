@@ -18,15 +18,17 @@ import { RouterParams } from 'routing/RoutingConfig';
 import { MetaData } from 'components/integration/MetaData';
 import { DataSetView } from 'components/integration/DataSetView';
 import { RunView } from 'components/integration/RunView';
+import { bottomSpacing, mainContentSpaceSides } from 'styles/StyledVariables';
 
 export const Wrapper = styled.div`
   overflow-y: auto;
   height: calc(100vh - 15rem);
   display: grid;
+  padding: 0 ${mainContentSpaceSides};
 `;
 export const DetailWrapper = styled.section`
   margin: 0;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 0;
   border-bottom: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
   display: flex;
   flex-direction: column;
@@ -45,7 +47,7 @@ export const DetailWrapper = styled.section`
     }
   }
   .info-field {
-    margin-bottom: 1rem;
+    margin-bottom: ${bottomSpacing};
     width: fit-content;
     display: flex;
     flex-direction: column;
@@ -57,7 +59,7 @@ export const DetailWrapper = styled.section`
 
 export const AdditionalInfo = styled.i`
   color: ${Colors['greyscale-grey6'].hex()};
-  margin-bottom: 1rem;
+  margin-bottom: ${bottomSpacing};
 `;
 
 const DestinationWrapper = styled(DetailWrapper)`

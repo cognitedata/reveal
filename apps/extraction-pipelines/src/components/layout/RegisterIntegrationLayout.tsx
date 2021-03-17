@@ -1,14 +1,14 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { createLink } from '@cognite/cdf-utilities';
 import {
-  CreateIntegrationPageWrapper,
+  PageWrapper,
   GridBreadCrumbsWrapper,
-  GridMainWrapper,
-  GridTitleWrapper,
+  MainWithAsidesWrapper,
 } from 'styles/StyledPage';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { INTEGRATION_OVERVIEW, REGISTER_INTEGRATION } from 'utils/constants';
 import { BackBtn } from 'components/buttons/BackBtn';
+import { PageTitle } from 'styles/StyledHeadings';
 
 interface RegisterIntegrationLayoutProps {
   backPath?: string;
@@ -19,15 +19,15 @@ export const RegisterIntegrationLayout: FunctionComponent<RegisterIntegrationLay
   children,
 }: PropsWithChildren<RegisterIntegrationLayoutProps>) => {
   return (
-    <CreateIntegrationPageWrapper>
+    <PageWrapper>
       <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
         {INTEGRATION_OVERVIEW}
       </GridBreadCrumbsWrapper>
-      <GridTitleWrapper>{REGISTER_INTEGRATION}</GridTitleWrapper>
-      <GridMainWrapper>
+      <PageTitle>{REGISTER_INTEGRATION}</PageTitle>
+      <MainWithAsidesWrapper>
         {backPath && <BackBtn path={backPath} />}
         {children}
-      </GridMainWrapper>
-    </CreateIntegrationPageWrapper>
+      </MainWithAsidesWrapper>
+    </PageWrapper>
   );
 };

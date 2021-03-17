@@ -9,12 +9,7 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import {
-  CREATE_INTEGRATION_HEADING,
-  EMAIL_LABEL,
-  NAME_LABEL,
-  NEXT,
-} from 'utils/constants';
+import { EMAIL_LABEL, NAME_LABEL, NEXT, WIZARD_HEADING } from 'utils/constants';
 import {
   CREATE_INTEGRATION_PAGE_PATH,
   withTenant,
@@ -63,7 +58,7 @@ describe('Register', () => {
       { ...props }
     );
 
-    const lazyElement = await screen.findByText(CREATE_INTEGRATION_HEADING);
+    const lazyElement = await screen.findByText(WIZARD_HEADING);
     expect(lazyElement).toBeInTheDocument();
     fireEvent.click(screen.getByText(NEXT));
 

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import React from 'react';
 import { Colors } from '@cognite/cogs.js';
 
 export const PaddedGridDiv = styled.div`
@@ -17,7 +16,7 @@ export const PaddedGridForm = styled.form`
   align-items: center;
 `;
 
-export const Grid = styled((props) => <div {...props}>{props.children}</div>)`
+export const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   %row-style {
@@ -52,15 +51,11 @@ export const Grid = styled((props) => <div {...props}>{props.children}</div>)`
   }
 `;
 
-export const GridWithTopMargin = styled((props) => (
-  <Grid {...props}>{props.children}</Grid>
-))`
+export const GridWithTopMargin = styled(Grid)`
   margin-top: 3rem;
 `;
 
-export const GridRowStyle = styled((props) => (
-  <PaddedGridDiv {...props}>{props.children}</PaddedGridDiv>
-))`
+export const GridRowStyle = styled(PaddedGridDiv)`
   grid-template-columns: 7rem 5rem 1.5fr 2fr 5rem 4rem;
   height: 4rem;
   align-items: center;
@@ -79,28 +74,18 @@ export const GridRowStyle = styled((props) => (
     display: flex;
   }
 `;
-export const MainSidePanelGrid = styled((props) => (
-  <div {...props}>{props.children}</div>
-))`
-  grid-area: main;
-  padding: 0.75rem 2rem;
-  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-`;
-export const MainPanelGrid = styled((props) => (
-  <div {...props}>{props.children}</div>
-))`
+
+export const MainFullWidthGrid = styled.div`
   grid-area: main;
   display: grid;
   grid-template-columns: auto;
-  padding: 1rem;
   border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
 `;
 
 export const SimpleGrid = styled.div`
   display: grid;
 `;
-export const TwoColGrid = styled((props) => (
-  <SimpleGrid {...props}>{props.children}</SimpleGrid>
-))`
+
+export const TwoColGrid = styled(SimpleGrid)`
   grid-template-columns: 8rem 1fr;
 `;

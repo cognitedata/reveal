@@ -51,8 +51,6 @@ export const SERVER_ERROR_TITLE: Readonly<string> =
 export const SERVER_ERROR_CONTENT: Readonly<string> =
   'Please try again later, or contact you system administrator.';
 
-export const CREATE_INTEGRATION_HEADING: Readonly<string> =
-  'Create integration';
 export const WIZARD_HEADING: Readonly<string> = 'Create integration wizard';
 export const NOTIFICATION_DIALOG_TITLE: Readonly<string> =
   'One contact with email notification';

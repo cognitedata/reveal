@@ -1,41 +1,37 @@
 import React from 'react';
 import { render } from 'utils/test';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import Home from './Home';
-import { getMockResponse } from '../../utils/mockResponse';
+import Home from 'pages/Home';
+import { getMockResponse } from 'utils/mockResponse';
 import {
-  renderWithReactQueryCacheProvider,
+  renderWithReQueryCacheSelectedIntegrationContext,
   renderWithSelectedIntegrationContext,
-} from '../../utils/test/render';
+} from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   INTEGRATIONS,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
+} from 'utils/baseURL';
 
 describe('<Home />', () => {
-  let client: QueryClient;
-  let wrapper;
-  beforeEach(() => {
-    client = new QueryClient();
-    wrapper = renderWithReactQueryCacheProvider(
-      client,
-      PROJECT_ITERA_INT_GREEN,
-      ORIGIN_DEV,
-      CDF_ENV_GREENFIELD
-    );
-  });
   test('Renders Home page', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
-
+    sdkv3.datasets.retrieve.mockResolvedValue([]);
     const history = createMemoryHistory();
     const route = `/${PROJECT_ITERA_INT_GREEN}/${INTEGRATIONS}`;
     history.push(route);
+    const client = new QueryClient();
+    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
+      client,
+      ORIGIN_DEV,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD
+    );
     render(
       <Router history={history}>
         <Home />
@@ -43,7 +39,10 @@ describe('<Home />', () => {
       { wrapper }
     );
     expect(history.location.pathname).toEqual(route);
-    const headings = await screen.findAllByRole('heading');
+    await waitFor(() => {
+      screen.getAllByRole('heading');
+    });
+    const headings = screen.getAllByRole('heading');
     expect(headings[0].textContent).toEqual('Integrations');
     expect(headings.length).toEqual(1);
   });
