@@ -17,7 +17,15 @@ to match. To emulate `OR`, use `CombinedNodeSet` with a `union`-operator.
 Note that if a node is in a `ByNodePropertyNodeSet` all of its children will also be
 in the set. 
 
+:::note
+The test model used in the documentation site is lacking and the examples shown is somewhat lacking
+as a result of this. To best utlize the filtering APIs we recommend providing a rich 3D models 
+with a good set of high-quality attributes assosciated with the nodes.
+:::
+
 <DemoWrapper name="Cognite3DViewerDemo" />
+
+
 
 # Show all pipes
 
@@ -47,3 +55,57 @@ model.addStyledNodeSet(nodesFromFile, { renderGhosted: false, outlineColor: Node
 ```
 
 To compare speed-up, set `requestPartitions` to `1`.
+
+# Combining filters
+
+Often one would want to match multiple criterias at the same type. Lets say we want to find all
+mechanical equipment with purpose 'STU'. We can either execute this as a single query, or as two
+seperate queries. 
+
+First, lets look how this looks when combined in a single query:
+
+```js runnable
+const stuMechNodes = new ByNodePropertyNodeSet(sdk, model);
+stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(stuMechNodes, { renderGhosted: false, color: [40, 200, 20] } );
+```
+
+Or, using two separate queries that is combined:
+
+```js runnable
+const mechNodes = new ByNodePropertyNodeSet(sdk, model);
+mechNodes.executeFilter({'PDMS': {':capDisc': 'MECH'}});
+const stuNodes = new ByNodePropertyNodeSet(sdk, model);
+stuNodes.executeFilter({'PDMS': {'Purpose': 'STU'}});
+const combined = new CombinedNodeSet('intersection');
+combined.addSet(mechNodes);
+combined.addSet(stuNodes);
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(combined, { renderGhosted: false, color: [40, 200, 20] } );
+```
+
+The two approaches as their pros and cons. Often it will be faster to combine the 
+filters into a single query as this will reduce the result set returned from the
+server. However, if the different combinations will be configured run-time (e.g. 
+so that the user will want to show 'PIPE'-nodes within the 'STU'-purpose it might 
+be better to use two separate queries and combine the results. Also, the latter 
+approach also allows for more complex types of filters.
+
+# Inverting filters
+
+Often it's interesting to invert results from filters to find elements that doesn't match the query. This 
+can be done using `InvertNodeSet`.
+
+```js runnable
+const livingQuarters = new ByNodePropertyNodeSet(sdk, model);
+livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
+const notLivingQuarters = new InvertedNodeSet(model, livingQuarters);
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(notLivingQuarters, { renderGhosted: false } );
+```
+
+

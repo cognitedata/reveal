@@ -52,47 +52,40 @@ in applications will require manual steps to implement styling.
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-### Highlight a set of objects
+To play around with the different styling options, we can use `Cognite3DModel.setDefaultNodeAppearance`. Below are
+a few example styles are shown.
 
-### Filtering nodes by assets
-
-3D nodes can be ["asset mapped"](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) to 
-[assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html) in Cognite Fusion. 
-Reveal supports styling nodes mapped to an asset by using `ByAssetNodeSet`.
-
-#### Style all asset mapped nodes
-
-If no options are provided, `ByAssetNodeSet` will accept any asset mapped node:
+### Ghosted style
 
 ```js runnable
-const assetMappedNodes = new ByAssetNodeSet(sdk, model);
-// When no asset ID is provided, all nodes mapped to assets are included
-assetMappedNodes.executeFilter({});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.addStyledNodeSet(assetMappedNodes, {renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
 ```
 
-#### Style a given asset
-
-It is also possible to only style nodes mapped to a single asset.
-
-Assets can be identified by their 'ID':
+### Highlighted
 
 ```js runnable
-const assetMappedNodes = new ByAssetNodeSet(sdk, model);
-// When no asset ID is provided, all nodes mapped to assets are included
-assetMappedNodes.executeFilter({ assetId: 4222791488928479 });
-model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.addStyledNodeSet(assetMappedNodes, {renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Highlighted);
 ```
+### Outline and custom color
 
-#### Style assets without an area
+By creating custom styles you have a powerful tool to customize how the model looks.
 
-To support proximity lookups
-
-Furthermore, a bounding box can be provided to only load assets within a given area:
 ```js runnable
+model.setDefaultNodeAppearance({ color: outlineColor: NodeOutlineColor.Orange });
 ```
 
-
-# Custom NodeSet implementation
+Note that `outlineColor` restricts the choice of color to a predefined set. This is
+a restriction imposed to reduce storage space for outlines to only 3 bits. The choice
+of colors are:
+```js
+enum NodeOutlineColor {
+  NoOutline = 0,
+  White = 1,
+  Black = 2,
+  Cyan = 3,
+  Blue = 4,
+  Purple = 5,
+  Pink = 6,
+  Orange = 7
+}
+```
