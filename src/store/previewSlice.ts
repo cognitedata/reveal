@@ -1,17 +1,14 @@
-import {
-  createAction,
-  createSelector,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   AnnotationStatus,
   AnnotationUtils,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { AnnotationJob, DetectionModelType } from 'src/api/types';
+import { DetectionModelType } from 'src/api/types';
 import { MetadataItem } from 'src/pages/Preview/components/MetaDataTable/MetadataTable';
 import { v3 } from '@cognite/cdf-sdk-singleton';
+import { fileProcessUpdate } from 'src/store/common';
+import { deleteFilesById, updateFileById } from 'src/store/uploadedFilesSlice';
 
 export interface VisionAnnotationState extends VisionAnnotation {
   id: string;
@@ -27,7 +24,7 @@ interface VisionModelState {
   annotations: string[];
 }
 
-type FileInfoValueState = string | v3.Label[] | null | undefined;
+export type FileInfoValueState = string | v3.Label[] | null | undefined;
 
 type State = {
   annotations: {
@@ -42,6 +39,7 @@ type State = {
   metadataEdit: boolean;
   fileDetails: Record<string, FileInfoValueState>;
   fileMetaData: Record<number, MetadataItem>;
+  loadingField: string | null;
 };
 
 const initialState: State = {
@@ -57,12 +55,8 @@ const initialState: State = {
   metadataEdit: false,
   fileDetails: {},
   fileMetaData: {},
+  loadingField: null,
 };
-
-const processUpdate = createAction<{
-  fileId: string | number;
-  job: AnnotationJob;
-}>('processSlice/updateJob');
 
 const previewSlice = createSlice({
   name: 'previewSlice',
@@ -104,11 +98,13 @@ const previewSlice = createSlice({
       const editMode = state.metadataEdit;
 
       if (editMode) {
-        // filter empty keys when finishing edit mode
+        // filter rows with empty keys and empty values when finishing edit mode
         const metaRowKeys = Object.keys(state.fileMetaData);
         metaRowKeys.forEach((rowKey) => {
           const metaKey = state.fileMetaData[parseInt(rowKey, 10)].key;
-          if (!metaKey) {
+          const metaValue = state.fileMetaData[parseInt(rowKey, 10)].value;
+
+          if (!(metaKey && metaValue)) {
             delete state.fileMetaData[parseInt(rowKey, 10)];
           }
         });
@@ -153,13 +149,59 @@ const previewSlice = createSlice({
       state.fileMetaData[metaLength] = { key: '', value: '' };
     },
     resetEditHistory(state) {
-      state.metadataEdit = false;
-      state.fileMetaData = {};
-      state.fileDetails = {};
+      resetEditHistoryState(state);
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(processUpdate, (state, { payload }) => {
+    // On Delete File //
+
+    builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
+      payload.forEach((fileId) => {
+        const models = state.modelsByFileId[fileId.id];
+
+        models.forEach((modelId) => {
+          const modelState = state.models.byId[modelId];
+          const { annotations } = modelState;
+
+          annotations.forEach((annotationId) => {
+            delete state.annotations.byId[annotationId];
+          });
+          state.annotations.allIds = Object.keys(state.annotations.byId);
+
+          delete state.models.byId[modelId];
+        });
+        state.models.allIds = Object.keys(state.models.byId);
+
+        delete state.modelsByFileId[fileId.id];
+      });
+    });
+
+    // On Update File //
+
+    builder.addCase(updateFileById.fulfilled, (state, { meta }) => {
+      const field = meta.arg.key;
+      if (field === 'metadata') {
+        state.fileMetaData = {};
+      } else {
+        delete state.fileDetails[field];
+      }
+      state.loadingField = null;
+    });
+
+    builder.addCase(updateFileById.pending, (state, { meta }) => {
+      const field = meta.arg.key;
+      state.loadingField = field;
+    });
+
+    builder.addCase(updateFileById.rejected, (state, { meta }) => {
+      const field = meta.arg.key;
+      delete state.fileDetails[field];
+      state.loadingField = null;
+    });
+
+    // On Job Update //
+
+    builder.addCase(fileProcessUpdate, (state, { payload }) => {
       const { job, fileId } = payload;
 
       if (job.status === 'Completed') {
@@ -276,3 +318,9 @@ export const selectVisibleAnnotationsByFileId = createSelector(
     return annotationIdsByFile.filter((item) => item.show);
   }
 );
+
+const resetEditHistoryState = (state: State) => {
+  state.metadataEdit = false;
+  state.fileMetaData = {};
+  state.fileDetails = {};
+};
