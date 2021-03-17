@@ -297,3 +297,7 @@ export const UploadFileNameContainer = styled(EllipsisText)`
     display: inline;
   }
 `;
+
+export const UploadLogoContainer = styled.div`
+  margin-bottom: 10px;
+`;

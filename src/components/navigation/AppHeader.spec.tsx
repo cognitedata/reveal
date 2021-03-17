@@ -1,45 +1,65 @@
 import React from 'react';
 import { sandbox, render } from 'utils/test';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { GroupsState } from 'store/groups/types';
 import { allUserGroups } from '__mocks/groups';
 import { initialState as groupsInitialStore } from 'store/groups/reducer';
 
 import merge from 'lodash/merge';
+import { createMockCdfClient } from 'utils/test/client';
 import AppHeader from './AppHeader';
 
 import { devUserGroups } from '../../__mocks/groups';
+
+const mockClient = createMockCdfClient();
 
 describe('AppHeader', () => {
   beforeAll(() => {
     window.fetch = sandbox.stub();
   });
+  beforeEach(() => {
+    sandbox
+      .stub(mockClient.cogniteClient.files, 'getDownloadUrls')
+      .throws({ status: 400 });
+  });
 
-  it('should render', () => {
-    const component = render(<AppHeader />);
-    expect(component).toBeTruthy();
+  it('should render', async () => {
+    const component = render(<AppHeader />, { cdfClient: mockClient });
+    await waitFor(() => {
+      expect(component).toBeTruthy();
+    });
   });
   describe('group preview', () => {
-    it('should show group preview button for admin user', () => {
+    it('should show group preview button for admin user', async () => {
       const groupsState: GroupsState = merge({}, groupsInitialStore, {
         groups: allUserGroups,
         isAdmin: true,
         filter: ['dc-team-developers'],
       });
-      render(<AppHeader />, { state: { groups: groupsState } });
+      render(<AppHeader />, {
+        state: { groups: groupsState },
+        cdfClient: mockClient,
+      });
 
-      const broupPreviewBar = screen.queryByTestId('user-group-preview-bar');
+      const broupPreviewBar = await screen.findByTestId(
+        'user-group-preview-bar'
+      );
       expect(broupPreviewBar).toBeTruthy();
     });
 
-    it('should NOT show group preview button for regular users', () => {
+    it('should NOT show group preview button for regular users', async () => {
       const groupsState: GroupsState = merge({}, groupsInitialStore, {
         groups: devUserGroups,
       });
-      render(<AppHeader />, { state: { groups: groupsState } });
+      render(<AppHeader />, {
+        state: { groups: groupsState },
+        cdfClient: mockClient,
+      });
 
-      const broupPreviewBar = screen.queryByTestId('user-group-preview-bar');
-      expect(broupPreviewBar).toBeFalsy();
+      await waitFor(() => {
+        const broupPreviewBar = screen.queryByTestId('user-group-preview-bar');
+        expect(broupPreviewBar).toBeFalsy();
+      });
     });
 
     it('should show group preview bar when select group to preview', async () => {
@@ -48,7 +68,10 @@ describe('AppHeader', () => {
         groups: allUserGroups,
         isAdmin: true,
       });
-      render(<AppHeader />, { state: { groups: groupsState } });
+      render(<AppHeader />, {
+        state: { groups: groupsState },
+        cdfClient: mockClient,
+      });
 
       const previewIcon = await screen.findByTestId(
         'select-group-preview-menu'
@@ -58,7 +81,9 @@ describe('AppHeader', () => {
         `menu-item-${selectedGroupName}`
       );
       groupMenuItem.click();
-      const groupPreviewBar = screen.queryByTestId('user-group-preview-bar');
+      const groupPreviewBar = await screen.findByTestId(
+        'user-group-preview-bar'
+      );
       expect(groupPreviewBar).toBeTruthy();
     });
 
@@ -69,10 +94,12 @@ describe('AppHeader', () => {
         isAdmin: true,
         filter: [selectedGroupName],
       });
-      render(<AppHeader />, { state: { groups: groupsState } });
+      render(<AppHeader />, {
+        state: { groups: groupsState },
+        cdfClient: mockClient,
+      });
 
-      const clearViewBtn = screen.queryByText('Clear view');
-      expect(clearViewBtn).toBeTruthy();
+      const clearViewBtn = await screen.findByText('Clear view');
       clearViewBtn.click();
 
       const groupPreviewBar = screen.queryByTestId('user-group-preview-bar');

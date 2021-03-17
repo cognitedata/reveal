@@ -71,6 +71,7 @@ export const AvailableSuitesContainer = styled.div`
 
 export const LogoWrapper = styled.div`
   & img {
+    padding-top: 3px;
     padding-left: 36px;
     padding-bottom: 8px;
   }

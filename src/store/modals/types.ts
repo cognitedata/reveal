@@ -16,6 +16,7 @@ export type ModalType =
   | 'AddBoard'
   | 'EditBoard'
   | 'ShareLink'
+  | 'UploadLogo'
   | null;
 
 export type Modal = {
