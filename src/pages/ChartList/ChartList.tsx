@@ -71,6 +71,8 @@ const ChartList = () => {
       id,
       user: login?.user,
       name: 'New chart',
+      updatedAt: Date.now(),
+      createdAt: Date.now(),
       timeSeriesCollection: [],
       workflowCollection: [],
       dateFrom: dateFrom.toJSON(),

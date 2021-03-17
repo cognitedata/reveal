@@ -187,7 +187,14 @@ export const useUpdateChart = () => {
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely
-        await charts().doc(chart.id).set(omit(chart, 'dirty'), { merge: true });
+        const updatedChart: Chart = omit(
+          {
+            ...chart,
+            updatedAt: Date.now(),
+          },
+          'dirty'
+        );
+        await charts().doc(chart.id).set(updatedChart, { merge: true });
       }
       return chart.id;
     },
