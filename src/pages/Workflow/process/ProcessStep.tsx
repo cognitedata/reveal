@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -7,7 +8,9 @@ import {
   MenuActions,
   TableDataItem,
 } from 'src/pages/Workflow/components/FileTable/FileTable';
-import { Detail, Title } from '@cognite/cogs.js';
+
+import { FileToolbar } from 'src/pages/Workflow/components/FileToolbar';
+import { Title } from '@cognite/cogs.js';
 import { DetectionModelType, JobStatus } from 'src/api/types';
 import {
   getParamLink,
@@ -15,8 +18,15 @@ import {
 } from 'src/pages/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
 import { setSelectedDetectionModels } from 'src/store/processSlice';
-import { DetectionModelSelect } from 'src/pages/Workflow/process/DetectionModelSelect';
 import { getFileJobsResultingStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
+import {
+  FileGridPreview,
+  GridTable,
+  GridCellProps,
+} from '@cognite/data-exploration';
+import { FileInfo } from 'cognite-sdk-v3/dist/src';
+
+const queryClient = new QueryClient();
 
 export default function ProcessStep() {
   const history = useHistory();
@@ -28,6 +38,7 @@ export default function ProcessStep() {
   );
 
   const dispatch = useDispatch();
+  const [currentView, setCurrentView] = useState<string>('list');
 
   const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
     const jobs = jobsByFileId[file.id] || [];
@@ -69,19 +80,35 @@ export default function ProcessStep() {
   });
   return (
     <>
-      <Title level={2}>Process and detect annotations</Title>
-      <div style={{ maxWidth: 300, marginLeft: 'auto' }}>
-        <Detail strong>ML model</Detail>
-        <DetectionModelSelect
+      <QueryClientProvider client={queryClient}>
+        <Title level={2}>Process and detect annotations</Title>
+        <FileToolbar
           value={selectedDetectionModels}
           onChange={(models: Array<DetectionModelType>) =>
             dispatch(setSelectedDetectionModels(models))
           }
+          currentView={currentView}
+          onViewChange={setCurrentView}
         />
-      </div>
-
-      <br />
-      <FileTable data={tableData} />
+        {currentView === 'grid' ? (
+          <GridTable
+            data={uploadedFiles}
+            onItemClicked={(item: FileInfo) => {
+              history.push(
+                getParamLink(workflowRoutes.review, ':fileId', String(item.id))
+              );
+            }}
+            isSelected={() => {}}
+            selectionMode="multiple"
+            onSelect={() => {}} // TODO: add to state for batch operations
+            renderCell={(cellProps: GridCellProps<FileInfo>) => (
+              <FileGridPreview {...cellProps} />
+            )}
+          />
+        ) : (
+          <FileTable data={tableData} />
+        )}
+      </QueryClientProvider>
     </>
   );
 }
