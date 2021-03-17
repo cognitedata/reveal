@@ -14,8 +14,11 @@ describe('charts util', () => {
   const id = nanoid();
   const chart: Chart = {
     id,
+    version: 1,
     name: 'test chart',
     user: 'user_1@example.org',
+    updated: 1615976865123,
+    created: 1615976863997,
     public: true,
     dateFrom: 'then',
     dateTo: 'now',
@@ -30,10 +33,13 @@ describe('charts util', () => {
         'test chart Copy'
       );
       expect(duplicate(chart, 'user_2@example.org').id).not.toEqual(id);
+      expect(duplicate(chart, 'user_2@example.org').created).not.toEqual(chart.created);
+      expect(duplicate(chart, 'user_2@example.org').updated).not.toEqual(chart.updated);
     });
     it('should not update the other fields', () => {
       expect(duplicate(chart, 'user_2@example.org').dateFrom).toEqual('then');
       expect(duplicate(chart, 'user_2@example.org').dateTo).toEqual('now');
+      expect(duplicate(chart, 'user_2@example.org').version).toEqual(1);
     });
   });
   describe('ChartTimerseries functions', () => {
