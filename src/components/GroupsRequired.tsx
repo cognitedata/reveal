@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from 'reducers';
+import { RootState } from 'store';
 import Spinner from './Spinner';
 
 export default function GroupsRequired(props: { children: JSX.Element }) {

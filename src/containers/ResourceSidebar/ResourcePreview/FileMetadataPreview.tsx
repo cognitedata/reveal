@@ -2,17 +2,17 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   itemSelector,
-  retrieve as retrieveFiles,
-  retrieveExternal as retrieveExternalFiles,
+  retrieveItemsById as retrieveFiles,
+  retrieveItemsByExternalId as retrieveExternalFiles,
 } from 'modules/files';
 import { Collapse, List } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import {
-  retrieve as retrieveAssets,
-  retrieveExternal as retrieveExternalAssets,
+  retrieveItemsById as retrieveAssets,
+  retrieveItemsByExternalId as retrieveExternalAssets,
 } from 'modules/assets';
 import {
-  listByFileId,
+  listAnnotationsByFileId,
   linkedAssetsSelector,
   linkedFilesSelectorByFileId,
 } from 'modules/annotations';
@@ -30,52 +30,42 @@ export const FileMetadataPreview = ({
 }) => {
   const history = useHistory();
   const dispatch = useDispatch();
+  // @ts-ignore
   const file = useSelector(itemSelector)(fileId);
   const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
   const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(fileId);
 
   useEffect(() => {
     (async () => {
-      await dispatch(retrieveFiles([{ id: fileId }]));
-      await dispatch(listByFileId(fileId));
+      await dispatch(retrieveFiles({ ids: [{ id: fileId }] }));
+      await dispatch(listAnnotationsByFileId({ fileId }));
     })();
   }, [dispatch, fileId]);
 
   useEffect(() => {
-    dispatch(
-      retrieveAssets(
-        (assetIds.filter((id) => typeof id === 'number') as number[]).map(
-          (id) => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalAssets(
-        (assetIds.filter(
-          (id) => typeof id === 'string'
-        ) as string[]).map((externalId) => ({ externalId }))
-      )
-    );
+    const assetToRetrieveById = (assetIds.filter(
+      (id: number | string) => typeof id === 'number'
+    ) as number[]).map((id) => ({
+      id,
+    }));
+    const assetsToRetrieveByExternalId = (assetIds.filter(
+      (id: number | string) => typeof id === 'string'
+    ) as string[]).map((externalId) => ({ externalId }));
+    dispatch(retrieveAssets({ ids: assetToRetrieveById }));
+    dispatch(retrieveExternalAssets({ ids: assetsToRetrieveByExternalId }));
   }, [dispatch, assetIds]);
+
   useEffect(() => {
-    dispatch(
-      retrieveFiles(
-        (fileIds.filter((id) => typeof id === 'number') as number[]).map(
-          (id) => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalFiles(
-        (fileIds.filter(
-          (id) => typeof id === 'string'
-        ) as string[]).map((externalId) => ({ externalId }))
-      )
-    );
+    const filesToRetrieveById = (fileIds.filter(
+      (id: number | string) => typeof id === 'number'
+    ) as number[]).map((id) => ({
+      id,
+    }));
+    const filesToRetrieveByExternalId = (fileIds.filter(
+      (id: number | string) => typeof id === 'string'
+    ) as string[]).map((externalId) => ({ externalId }));
+    dispatch(retrieveFiles({ ids: filesToRetrieveById }));
+    dispatch(retrieveExternalFiles({ ids: filesToRetrieveByExternalId }));
   }, [dispatch, fileIds]);
 
   return (
@@ -100,7 +90,7 @@ export const FileMetadataPreview = ({
           }
         >
           <List
-            renderItem={(asset) => (
+            renderItem={(asset: any) => (
               <List.Item
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
@@ -130,7 +120,7 @@ export const FileMetadataPreview = ({
           }
         >
           <List
-            renderItem={(linkedFile) => (
+            renderItem={(linkedFile: any) => (
               <List.Item
                 style={{ cursor: 'pointer' }}
                 onClick={() => {

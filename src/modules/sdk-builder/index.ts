@@ -1,100 +1,155 @@
-import { combineReducers } from 'redux';
+import { createSlice, ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { InternalId } from '@cognite/sdk';
-import { RootState } from 'reducers';
-import { ResourceType, Query, Result } from './types';
-
+import { ResourceType, ResourceState, Query } from './types';
 import buildCount from './count';
 import buildSearch from './search';
 import buildList from './list';
 import buildItems from './items';
+import {
+  updateAction,
+  update,
+  updateStatusAction,
+  updateStatus,
+} from './reducers';
 
 export default function resourceBuilder<
   Resource extends InternalId,
   Change extends { id: number; update: any },
   ListScope extends Query,
   SearchFilter extends Query
->(
-  resourceType: ResourceType,
-  itemProcessor: (r: Resource) => Resource = (r) => r
-) {
+>(resourceType: ResourceType) {
+  const initialState: ResourceState<Resource> = {
+    count: {},
+    search: {},
+    list: {},
+    items: {
+      list: {},
+      retrieve: {
+        byId: {},
+        byExternalId: {},
+      },
+      update: {
+        byId: {},
+        byExternalId: {},
+      },
+    },
+  };
+  const { count, countSelector } = buildCount<ListScope>(resourceType);
+  const { search, searchSelector } = buildSearch<Resource, SearchFilter>(
+    resourceType
+  );
   const {
-    retrieve,
-    retrieveExternal,
-    update,
-    itemReducer,
-    createItemSelector,
-    createRetrieveSelector,
+    retrieveItemsById,
+    retrieveItemsByExternalId,
+    updateItemsById,
+    itemSelector,
+    externalIdMapSelector,
+    retrieveSelector,
   } = buildItems<Resource, Change>(resourceType);
 
-  const {
-    listAction,
-    listParallelAction,
-    listReducer,
-    createListSelector,
-  } = buildList<ListScope, Resource>(resourceType, itemProcessor);
+  const { list, listParallel, listSelector } = buildList(resourceType);
 
-  const { searchAction, searchReducer, createSearchSelector } = buildSearch<
-    Resource,
-    SearchFilter
-  >(resourceType, itemProcessor);
+  const itemsResource = {
+    retrieveItemsById: retrieveItemsById.action,
+    retrieveItemsByExternalId: retrieveItemsByExternalId.action,
+    updateItemsById: updateItemsById.action,
+  };
 
-  const {
-    countAction,
-    countReducer,
-    createCountSelector,
-  } = buildCount<ListScope>(resourceType);
+  const countReducers = (
+    builder: ActionReducerMapBuilder<ResourceState<Resource>>
+  ) =>
+    builder
+      .addCase(count.action.pending, count.pending)
+      .addCase(count.action.rejected, count.rejected)
+      .addCase(count.action.fulfilled, count.fulfilled);
 
-  const reducer = combineReducers({
-    items: itemReducer,
-    list: listReducer,
-    search: searchReducer,
-    count: countReducer,
+  const listReducers = (
+    builder: ActionReducerMapBuilder<ResourceState<Resource>>
+  ) =>
+    builder
+      .addCase(list.action.pending, list.pending)
+      .addCase(list.action.rejected, list.rejected)
+      .addCase(list.action.fulfilled, list.fulfilled);
+
+  const searchReducers = (
+    builder: ActionReducerMapBuilder<ResourceState<Resource>>
+  ) =>
+    builder
+      .addCase(search.action.pending, search.pending)
+      .addCase(search.action.rejected, search.rejected)
+      .addCase(search.action.fulfilled, search.fulfilled);
+
+  const retrieveByIdReducers = (
+    builder: ActionReducerMapBuilder<ResourceState<Resource>>
+  ) =>
+    builder
+      .addCase(retrieveItemsById.action.pending, retrieveItemsById.pending)
+      .addCase(retrieveItemsById.action.rejected, retrieveItemsById.rejected)
+      .addCase(retrieveItemsById.action.fulfilled, retrieveItemsById.fulfilled);
+
+  const retrieveByExternalIdReducers = (
+    builder: ActionReducerMapBuilder<ResourceState<Resource>>
+  ) =>
+    builder
+      .addCase(
+        retrieveItemsByExternalId.action.pending,
+        retrieveItemsByExternalId.pending
+      )
+      .addCase(
+        retrieveItemsByExternalId.action.rejected,
+        retrieveItemsByExternalId.rejected
+      )
+      .addCase(
+        retrieveItemsByExternalId.action.fulfilled,
+        retrieveItemsByExternalId.fulfilled
+      );
+
+  const updateByIdReducers = (
+    builder: ActionReducerMapBuilder<ResourceState<Resource>>
+  ) =>
+    builder
+      .addCase(updateItemsById.action.pending, updateItemsById.pending)
+      .addCase(updateItemsById.action.rejected, updateItemsById.rejected)
+      .addCase(updateItemsById.action.fulfilled, updateItemsById.fulfilled);
+
+  const extraReducers = (
+    builder: ActionReducerMapBuilder<ResourceState<Resource>>
+  ) => {
+    countReducers(builder);
+    searchReducers(builder);
+    listReducers(builder);
+    retrieveByIdReducers(builder);
+    retrieveByExternalIdReducers(builder);
+    updateByIdReducers(builder);
+    builder.addCase(updateAction(resourceType), update);
+    builder.addCase(updateStatusAction(resourceType), updateStatus);
+  };
+
+  const slice = createSlice({
+    name: resourceType,
+    initialState,
+    reducers: {},
+    extraReducers,
   });
 
-  const searchSelector: (
-    _: RootState
-  ) => (q: SearchFilter) => Result<Resource> = createSearchSelector(
-    (state: RootState): Map<number, Resource> =>
-      // @ts-ignore
-      state[resourceType].items.items,
-    (state: RootState) => state[resourceType].search
-  );
-
-  const listSelector = createListSelector(
-    // @ts-ignore
-    (state: RootState) => state[resourceType].items.items,
-    (state: RootState) => state[resourceType].list
-  );
-
-  const countSelector = createCountSelector(
-    (state: RootState) => state[resourceType].count
-  );
-
-  const retrieveSelector = createRetrieveSelector(
-    // @ts-ignore
-    (state: RootState) => state[resourceType].items.items,
-    (state: RootState) => state[resourceType].items.getById
-  );
-
-  const itemSelector = createItemSelector(
-    // @ts-ignore
-    (state: RootState) => state[resourceType].items.items,
-    (state: RootState) => state[resourceType].items.getByExternalId
-  );
+  const { reducer } = slice;
 
   return {
     reducer,
-    retrieve,
-    update,
-    retrieveExternal,
-    search: searchAction,
-    count: countAction,
-    list: listAction,
-    listParallel: listParallelAction,
+    slice,
+    count: count.action,
+    search: search.action,
+    items: itemsResource,
+    list: list.action,
+    listParallel,
+    retrieveItemsById: retrieveItemsById.action,
+    retrieveItemsByExternalId: retrieveItemsByExternalId.action,
+    updateItemsById: updateItemsById.action,
+    countSelector,
     searchSelector,
     itemSelector,
     listSelector,
-    countSelector,
+    externalIdMapSelector,
     retrieveSelector,
   };
 }

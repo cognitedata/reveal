@@ -5,11 +5,11 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { mount } from 'enzyme';
 import { Select, Popover } from 'antd';
-import * as DataSetModule from 'modules/datasets';
+import * as DataSetSelectors from 'modules/datasets/selectors';
 import DataSetSelect from './DataSetSelect';
 
 const initialStoreState: any = {
-  dataSets: {
+  datasets: {
     items: {
       4448195087284397: {
         externalId: '693ad162-df1f-408b-87c7-e0ffdaa5e7cf',
@@ -25,7 +25,7 @@ const initialStoreState: any = {
       },
       4610653613010508: {
         externalId: '4223e48f-57f7-4823-aec1-9a6647512101',
-        name: 'Entity Matcher Output',
+        name: 'Entity Matcher Output Number 2',
         description: 'Made in Data Studio 4223e48f-57f7-4823-aec1-9a6647512101',
         metadata: {
           COGNITE__SOURCE: 'data-studio',
@@ -36,7 +36,7 @@ const initialStoreState: any = {
         lastUpdatedTime: 1576745154021,
       },
     },
-  } as Partial<DataSetModule.DataSetStore>,
+  },
   app: {
     groups: {
       groupsAcl: ['LIST', 'READ', 'CREATE', 'UPDATE', 'DELETE'],
@@ -47,9 +47,9 @@ const initialStoreState: any = {
 
 const store = configureStore([thunk])(initialStoreState);
 describe('Data set Select', () => {
-  jest.spyOn(DataSetModule, 'dataSetCounts').mockReturnValue({
-    4448195087284397: { timeseries: 1, files: 0, assets: 0 },
-    4610653613010508: { timeseries: 1, files: 0, assets: 0 },
+  jest.spyOn(DataSetSelectors, 'dataSetCounts').mockReturnValue({
+    4448195087284397: { files: 0, assets: 1 },
+    4610653613010508: { files: 0, assets: 1 },
   });
 
   afterEach(() => {
@@ -62,7 +62,10 @@ describe('Data set Select', () => {
     const container = mount(
       <Provider store={store}>
         <MemoryRouter>
-          <DataSetSelect onDataSetSelected={mockFunction} type="timeseries" />
+          <DataSetSelect
+            onDataSetSelected={mockFunction}
+            resourceType="assets"
+          />
         </MemoryRouter>
       </Provider>
     );
@@ -93,7 +96,7 @@ describe('Data set Select', () => {
           <DataSetSelect
             multiple
             onDataSetSelected={callback}
-            type="timeseries"
+            resourceType="assets"
           />
         </MemoryRouter>
       </Provider>
@@ -123,7 +126,10 @@ describe('Data set Select', () => {
     const container = mount(
       <Provider store={missingAclStore}>
         <MemoryRouter>
-          <DataSetSelect onDataSetSelected={mockFunction} type="timeseries" />
+          <DataSetSelect
+            onDataSetSelected={mockFunction}
+            resourceType="assets"
+          />
         </MemoryRouter>
       </Provider>
     );
@@ -153,7 +159,7 @@ describe('Data set Select', () => {
           <DataSetSelect
             disabled
             onDataSetSelected={mockFunction}
-            type="timeseries"
+            resourceType="assets"
           />
         </MemoryRouter>
       </Provider>

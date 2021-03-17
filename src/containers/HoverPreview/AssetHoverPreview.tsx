@@ -34,7 +34,7 @@ export const AssetHoverPreview = ({
   );
 
   useEffect(() => {
-    dispatch(listFilesLinkedToAsset(asset.id));
+    dispatch(listFilesLinkedToAsset.action({ assetId: asset.id }));
   }, [asset.id, dispatch]);
 
   return (

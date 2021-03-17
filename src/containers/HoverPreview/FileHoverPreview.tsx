@@ -3,15 +3,15 @@ import { FileInfo, InternalId, ExternalId } from '@cognite/sdk';
 import { FileDetailsAbstract } from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  retrieve as retrieveFiles,
-  retrieveExternal as retrieveFilesExternal,
+  retrieveItemsById as retrieveFiles,
+  retrieveItemsByExternalId as retrieveFilesExternal,
 } from 'modules/files';
 import {
-  retrieve as retrieveAssets,
-  retrieveExternal as retrieveAssetsExternal,
+  retrieveItemsById as retrieveAssets,
+  retrieveItemsByExternalId as retrieveAssetsExternal,
 } from 'modules/assets';
 import {
-  listByFileId,
+  listAnnotationsByFileId,
   linkedAssetsSelector,
   linkedFilesSelectorByFileId,
 } from 'modules/annotations';
@@ -39,43 +39,38 @@ export const FileHoverPreview = ({
   const hasPreview = file.mimeType === 'application/pdf';
 
   useEffect(() => {
-    (async () => {
-      await dispatch(retrieveFiles([{ id: file.id }]));
-      await dispatch(listByFileId(file.id));
-    })();
+    dispatch(retrieveFiles({ ids: [{ id: file.id }] }));
+    dispatch(listAnnotationsByFileId({ fileId: file.id }));
   }, [dispatch, file.id]);
 
   useEffect(() => {
-    dispatch(
-      retrieveAssets(
-        assetIds
-          .filter((id) => typeof id === 'number')
-          .map((id) => ({ id } as InternalId))
-      )
-    );
-    dispatch(
-      retrieveAssetsExternal(
-        assetIds
-          .filter((id) => typeof id === 'string')
-          .map((id) => ({ externalId: id } as ExternalId))
-      )
-    );
+    const ids = {
+      ids: assetIds
+        .filter((id: number | string) => typeof id === 'number')
+        .map((id: number) => ({ id } as InternalId)),
+    };
+    const externalIds = {
+      ids: assetIds
+        .filter((id: number | string) => typeof id === 'string')
+        .map((id: string) => ({ externalId: id } as ExternalId)),
+    };
+    dispatch(retrieveAssets(ids));
+    dispatch(retrieveAssetsExternal(externalIds));
   }, [dispatch, assetIds]);
+
   useEffect(() => {
-    dispatch(
-      retrieveFiles(
-        fileIds
-          .filter((id) => typeof id === 'number')
-          .map((id) => ({ id } as InternalId))
-      )
-    );
-    dispatch(
-      retrieveFilesExternal(
-        fileIds
-          .filter((id) => typeof id === 'string')
-          .map((id) => ({ externalId: id } as ExternalId))
-      )
-    );
+    const ids = {
+      ids: fileIds
+        .filter((id: number | string) => typeof id === 'number')
+        .map((id: number) => ({ id } as InternalId)),
+    };
+    const externalIds = {
+      ids: fileIds
+        .filter((id: number | string) => typeof id === 'string')
+        .map((id: string) => ({ externalId: id } as ExternalId)),
+    };
+    dispatch(retrieveFiles(ids));
+    dispatch(retrieveFilesExternal(externalIds));
   }, [dispatch, fileIds]);
 
   return (

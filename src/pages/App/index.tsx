@@ -1,60 +1,51 @@
 import React, { useEffect, useMemo, Suspense } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { init, setCdfEnv } from 'modules/app';
-import queryString from 'query-string';
-import SwitchWithBreadcrumbs from 'components/SwitchWithBreadcrumbs';
-import { trackUsage } from 'utils/Metrics';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { RootState } from 'reducers';
+import { RootState } from 'store';
 import { getAuthState } from 'sdk-singleton';
+import queryString from 'query-string';
+import { trackUsage } from 'utils/Metrics';
+import { setCdfEnv, setTenant, fetchUserGroups } from 'modules/app';
+import SwitchWithBreadcrumbs from 'components/SwitchWithBreadcrumbs';
 import Spinner from 'components/Spinner';
-
 import pnidBreadcrumbs from 'pages/PnIDParsing/breadcrumbs';
-
-function PageNotFound() {
-  return <h1>Page not found</h1>;
-}
+import NotFound from 'pages/NotFound';
 
 export default function App() {
   const dispatch = useDispatch();
   const history = useHistory();
   const { location } = history;
-
-  const {
-    params: { tenant: pathTenant },
-  } = useRouteMatch<{ tenant: string }>();
-  const cdfEnv = queryString.parse(window.location.search).env as string;
   const { username } = getAuthState();
 
-  useEffect(() => {
-    dispatch(init(pathTenant));
-  }, [dispatch, pathTenant]);
+  const cdfEnv = queryString.parse(window.location.search).env as string;
+  const {
+    params: { tenant },
+  } = useRouteMatch<{ tenant: string }>();
+
+  const init = () => {
+    dispatch(setTenant({ tenant }));
+    dispatch(setCdfEnv({ cdfEnv }));
+    dispatch(fetchUserGroups());
+  };
 
   useEffect(() => {
-    dispatch(setCdfEnv(cdfEnv));
-  }, [dispatch, cdfEnv]);
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenant, cdfEnv]);
 
-  const storeCdfEnv = useSelector((state: RootState) => state.app.cdfEnv);
+  const cdfEnvStore = useSelector((state: RootState) => state.app.cdfEnv);
 
   useEffect(() => {
-    if (storeCdfEnv && !cdfEnv) {
+    if (cdfEnvStore && !cdfEnv) {
       // if env is not visible via URL add it in
       history.replace({
         pathname: location.pathname,
-        search: `?env=${storeCdfEnv}`,
+        search: `?env=${cdfEnvStore}`,
       });
     }
-  }, [cdfEnv, storeCdfEnv, history, location.pathname]);
+  }, [cdfEnv, cdfEnvStore, history, location.pathname]);
 
   useEffect(() => {
-    if (username) {
-      const company = username.split('@').pop();
-      // @ts-ignore
-      mixpanelConfig.datastudio.add_group('company', company);
-      // @ts-ignore
-      mixpanelConfig.datastudio.identify(username);
-    }
     trackUsage('App.Load');
   }, [username]);
 
@@ -78,7 +69,7 @@ export default function App() {
         []
       ),
     },
-    { path: '/:tenant/*', component: PageNotFound },
+    { path: '/:tenant/*', component: NotFound },
   ];
 
   return (

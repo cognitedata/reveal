@@ -7,8 +7,8 @@ import {
 } from 'containers/ResourceSidebar';
 import queryString from 'query-string';
 import { Drawer } from 'antd';
-import Layers from 'utils/zindex';
 import { onResourceSelected } from 'modules/app';
+import Layers from 'utils/zindex';
 import { useDispatch } from 'react-redux';
 
 const DetailsWrapper = styled.div`

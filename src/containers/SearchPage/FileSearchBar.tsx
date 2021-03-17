@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Col, Select } from 'antd';
-import { Filter } from 'modules/search';
+import { Filter } from 'modules/sdk-builder/types';
 import DataSetSelect from 'components/DataSetSelect';
 import { Icon, Colors } from '@cognite/cogs.js';
 import omit from 'lodash/omit';
@@ -52,7 +52,7 @@ export default function FileSearchBar({
           noTypeCheck={noTypeCheck}
           style={{ width: '100%' }}
           selectedDataSetIds={selectedDataSetIds}
-          type="files"
+          resourceType="files"
           onDataSetSelected={(ids: number[]) => {
             const dataSetIds =
               ids.length === 0 ? undefined : ids.map((id) => ({ id }));

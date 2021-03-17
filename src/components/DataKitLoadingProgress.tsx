@@ -5,7 +5,7 @@ import {
   dataKitCountSelectorFactory,
 } from 'modules/selection';
 import { useSelector } from 'react-redux';
-import { RootState } from 'reducers';
+import { RootState } from 'store';
 
 const { Text } = Typography;
 

@@ -7,6 +7,7 @@ import {
   selectAllDataSets,
   dataSetCounts,
   getIsFetchingDatasets,
+  datasetsFetched,
 } from 'modules/datasets';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { checkPermission } from 'modules/app';
@@ -15,7 +16,7 @@ import { Body, Colors, Tooltip } from '@cognite/cogs.js';
 import {
   truncateString,
   stringContains,
-} from 'modules/fileContextualization/utils';
+} from 'modules/contextualization/utils';
 import Spin from 'antd/lib/spin';
 
 type Props = {
@@ -24,7 +25,7 @@ type Props = {
   disabled?: boolean;
   multiple?: boolean;
   selectedDataSetIds?: number[];
-  type: ResourceType;
+  resourceType: ResourceType;
   noTypeCheck?: boolean;
 };
 
@@ -35,19 +36,21 @@ const DataSetSelect = ({
   multiple = false,
   noTypeCheck = false,
   selectedDataSetIds,
-  type,
+  resourceType,
 }: Props) => {
   const dispatch = useDispatch();
-  const datasets = useSelector(selectAllDataSets);
-  const dataSetResourceCounts = useSelector(dataSetCounts);
-  const isLoading = useSelector(getIsFetchingDatasets);
 
-  const [datasetSearchResults, setDatasetSearchResults] = useState(
-    [] as DataSet[]
-  );
   const [currentSelection, setCurrentSelection] = useState([] as number[]);
   const [query, setQuery] = useState('');
   const [visible, setVisible] = useState<boolean>(false);
+  const [datasetSearchResults, setDatasetSearchResults] = useState(
+    [] as DataSet[]
+  );
+
+  const datasets = useSelector(selectAllDataSets);
+  const dataSetResourceCounts = useSelector(dataSetCounts);
+  const isLoading = useSelector(getIsFetchingDatasets);
+  const isLoaded = useSelector(datasetsFetched);
 
   const setSelectedValue = (ids?: number | number[]) => {
     if (!ids) {
@@ -65,15 +68,13 @@ const DataSetSelect = ({
 
   useEffect(() => {
     const dataSetsFilter = (dataset: DataSet) => {
-      return (
-        stringContains(dataset?.name, query) &&
-        type &&
-        dataSetResourceCounts[dataset.id][type] > 0
-      );
+      const containsQuery = stringContains(dataset?.name, query);
+      const containsData = dataSetResourceCounts[dataset.id][resourceType] > 0;
+      return resourceType && containsQuery && containsData;
     };
     const filter = datasets.filter(dataSetsFilter);
     setDatasetSearchResults(filter);
-  }, [query, datasets, type, dataSetResourceCounts, noTypeCheck]);
+  }, [query, datasets, resourceType, dataSetResourceCounts, noTypeCheck]);
 
   useEffect(() => {
     if (selectedDataSetIds) {
@@ -82,9 +83,11 @@ const DataSetSelect = ({
   }, [selectedDataSetIds]);
 
   useEffect(() => {
-    dispatch(list());
-    setVisible(false);
-  }, [dispatch, noTypeCheck]);
+    if (!isLoaded) {
+      dispatch(list({}));
+      setVisible(false);
+    }
+  }, [dispatch, noTypeCheck, isLoaded]);
 
   const getPermission = useMemo(
     () => checkPermission('datasetsAcl', 'READ'),

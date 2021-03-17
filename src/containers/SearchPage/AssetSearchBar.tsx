@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Col } from 'antd';
 import AssetSelect from 'components/AssetSelect';
 import { InternalId } from '@cognite/sdk';
-import { Filter } from 'modules/search';
+import { Filter } from 'modules/sdk-builder/types';
 import DataSetSelect from 'components/DataSetSelect';
 import { Icon, Colors } from '@cognite/cogs.js';
 
@@ -33,7 +33,7 @@ export default function AssetSearchBar({
           noTypeCheck={noTypeCheck}
           style={{ width: '100%' }}
           selectedDataSetIds={selectedDataSetIds}
-          type="assets"
+          resourceType="assets"
           onDataSetSelected={(ids: number[]) => {
             if (onDataSetsUpdate) {
               onDataSetsUpdate(ids.map((id) => ({ id })));

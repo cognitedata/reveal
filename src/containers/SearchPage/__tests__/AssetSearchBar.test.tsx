@@ -1,17 +1,14 @@
-import { Map } from 'immutable';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-
 import { mount } from 'enzyme';
-import { SearchStore } from 'modules/search';
-import * as DataSetModule from 'modules/datasets';
+import * as DataSetSelectors from 'modules/datasets/selectors';
 import { mockStore } from 'utils/mockStore';
 import AssetSelect from 'components/AssetSelect';
 import AssetSearchBar from '../AssetSearchBar';
 
 const initialStoreState: any = {
-  dataSets: {
+  datasets: {
     items: {
       1444819508728439: {
         externalId: '693ad162-df1f-408b-87c7-e0ffdaa5e7cf',
@@ -38,18 +35,15 @@ const initialStoreState: any = {
         lastUpdatedTime: 1576745154021,
       },
     },
-  } as Partial<DataSetModule.DataSetStore>,
+  },
   assets: {
     items: {
-      items: Map([
-        [
-          4448195087284397,
-          {
-            id: 4448195087284397,
-            name: 'Asset Select Correct',
-          },
-        ],
-      ]),
+      list: {
+        4448195087284397: {
+          id: 4448195087284397,
+          name: 'Asset Select Correct',
+        },
+      },
     },
     search: {
       '{"limit":100,"search":{},"filter":{"root":true}}': {
@@ -64,7 +58,7 @@ const initialStoreState: any = {
     assets: {
       filter: {},
     },
-  } as Partial<SearchStore>,
+  },
   app: {
     groups: {
       groupsAcl: ['LIST', 'READ', 'CREATE', 'UPDATE', 'DELETE'],
@@ -84,9 +78,9 @@ const initialStoreState: any = {
 const store = mockStore(initialStoreState);
 
 describe('Asset Search Bar', () => {
-  jest.spyOn(DataSetModule, 'dataSetCounts').mockReturnValue({
-    1444819508728439: { timeseries: 0, files: 0, assets: 1 },
-    1461065361301050: { timeseries: 0, files: 0, assets: 1 },
+  jest.spyOn(DataSetSelectors, 'dataSetCounts').mockReturnValue({
+    1444819508728439: { files: 0, assets: 1 },
+    1461065361301050: { files: 0, assets: 1 },
   });
   afterEach(() => {
     jest.clearAllMocks();

@@ -1,42 +1,29 @@
+import builder from 'modules/sdk-builder';
 import {
   Asset,
-  AssetSearchFilter,
-  AssetListScope,
   AssetChangeById,
+  AssetListScope,
+  AssetSearchFilter,
 } from '@cognite/sdk';
-import builder from './sdk-builder';
 
-const {
+const resourceType = 'assets';
+
+export const {
   reducer,
-  retrieve,
-  update,
-  retrieveExternal,
-  search,
   count,
+  search,
+  items,
   list,
   listParallel,
+  retrieveItemsById,
+  retrieveItemsByExternalId,
+  updateItemsById,
+  countSelector,
   searchSelector,
   itemSelector,
   listSelector,
-  countSelector,
+  externalIdMapSelector,
   retrieveSelector,
 } = builder<Asset, AssetChangeById, AssetListScope, AssetSearchFilter>(
-  'assets'
+  resourceType
 );
-
-export {
-  reducer,
-  retrieve,
-  update,
-  retrieveExternal,
-  search,
-  count,
-  list,
-  listParallel,
-  searchSelector,
-  itemSelector,
-  listSelector,
-  countSelector,
-  retrieveSelector,
-};
-export default reducer;

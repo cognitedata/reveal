@@ -1,28 +1,22 @@
-import { createStore, applyMiddleware } from 'redux';
-import ReduxThunk from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import createRootReducer from 'reducers';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import createRootReducer from './reducer';
 
-export default function configureStore(initialState = {}) {
-  const middlewares = [ReduxThunk];
-  const enhancers = [
-    applyMiddleware(...middlewares),
-    // other store enhancers if any
-  ];
-  const composeEnhancers = composeWithDevTools({
-    // other compose enhancers if any
-    // Specify here other options if needed
+export function createStore(): any {
+  const middleware = getDefaultMiddleware({
+    serializableCheck: false, // this is disabled because it marked all dates and timestamps
   });
-  const store = createStore(
-    createRootReducer(),
-    initialState,
-    composeEnhancers(...enhancers)
-  );
+  // const enhancers = [];
+  const store = configureStore({
+    reducer: createRootReducer(),
+    middleware,
+    devTools: true,
+  });
+
   if ((module as any).hot) {
     // Enable Webpack hot module replacement for reducers
-    (module as any).hot.accept('reducers', () => {
+    (module as any).hot.accept('store/reducer', () => {
       /* eslint-disable global-require */
-      const nextReducer = require('reducers').default;
+      const nextReducer = require('store/reducer').default;
       store.replaceReducer(nextReducer);
     });
   }

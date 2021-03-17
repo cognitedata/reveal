@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AssetListScope, FilesSearchFilter } from '@cognite/sdk';
-import { ResourceType } from 'modules/sdk-builder/types';
+import { ResourceType, Filter } from 'modules/sdk-builder/types';
 import {
   list as listAssets,
   search as searchAssets,
@@ -13,34 +13,25 @@ import {
   count as countFiles,
 } from './files';
 
-export interface Filter {
-  filter?: any;
-  search?: any;
-}
-// Reducer
-export type SearchStore = {
-  [key in ResourceType]: Filter;
-};
-
 const searchOrListAssets = (q: Filter) => async (
   dispatch: ThunkDispatch<any, void, AnyAction>
 ) => {
-  dispatch(countAssets({ filter: q.filter }));
+  dispatch(countAssets({ filter: q }));
   if (q.search) {
-    dispatch(searchAssets(q));
+    dispatch(searchAssets({ filter: q }));
   } else if (q.filter) {
-    dispatch(listAssets(q as AssetListScope));
+    dispatch(listAssets({ filter: q as AssetListScope }));
   }
 };
 
 const searchOrListFiles = (q: Filter) => async (
   dispatch: ThunkDispatch<any, void, AnyAction>
 ) => {
-  dispatch(countFiles({ filter: q.filter }));
+  dispatch(countFiles({ filter: q }));
   if (q.search) {
-    dispatch(searchFiles(q));
+    dispatch(searchFiles({ filter: q }));
   } else if (q.filter) {
-    dispatch(listFiles(q as FilesSearchFilter));
+    dispatch(listFiles({ filter: q as FilesSearchFilter }));
   }
 };
 

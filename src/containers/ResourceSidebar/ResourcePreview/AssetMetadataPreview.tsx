@@ -13,11 +13,11 @@ import {
 } from 'modules/annotations';
 import {
   itemSelector as assetSelector,
-  retrieve as retrieveAsset,
+  retrieveItemsById as retrieveAsset,
 } from 'modules/assets';
 import {
   list as listFiles,
-  retrieve as retrieveFiles,
+  retrieveItemsById as retrieveFiles,
   listSelector as listFileSelector,
 } from 'modules/files';
 import { FilesSearchFilter } from '@cognite/sdk';
@@ -41,29 +41,33 @@ export const AssetMetadataPreview = ({
 }) => {
   const history = useHistory();
   const dispatch = useDispatch();
+  // @ts-ignore
   const asset = useSelector(assetSelector)(assetId);
   const {
     files: filesByAnnotations,
     fileIds: filesByAnnotationsIds,
   } = useSelector(linkedFilesSelectorByAssetId)(assetId);
+  // @ts-ignore
   const { items: filesByAssetId } = useSelector(listFileSelector)(
     createFilesFilter(assetId),
     true
   );
 
-  const files = unionBy(filesByAnnotations, filesByAssetId, (el) => el.id);
+  const files = unionBy(filesByAnnotations, filesByAssetId, (el: any) => el.id);
 
   useEffect(() => {
     (async () => {
-      await dispatch(retrieveAsset([{ id: assetId }]));
-      await dispatch(listFilesLinkedToAsset(assetId));
-      await dispatch(listFiles(createFilesFilter(assetId), true));
+      const ids = { ids: [{ id: assetId }] };
+      dispatch(retrieveAsset(ids));
+      dispatch(listFilesLinkedToAsset.action({ assetId }));
+      dispatch(listFiles({ filter: createFilesFilter(assetId), all: true }));
     })();
   }, [dispatch, assetId]);
 
   useEffect(() => {
     if (filesByAnnotationsIds) {
-      dispatch(retrieveFiles(filesByAnnotationsIds.map((id) => ({ id }))));
+      const ids = { ids: filesByAnnotationsIds.map((id: any) => ({ id })) };
+      dispatch(retrieveFiles(ids));
     }
   }, [dispatch, filesByAnnotationsIds]);
 

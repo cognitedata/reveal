@@ -1,5 +1,5 @@
 import { FileInfo, Asset } from '@cognite/sdk';
-import { PnidResponseEntity } from 'modules/fileContextualization/parsingJobs';
+import { PnidResponseEntity } from 'modules/contextualization/parsingJobs';
 import { stripWhitespace } from 'helpers/Helpers';
 import {
   CogniteAnnotation,

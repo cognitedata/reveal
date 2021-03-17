@@ -1,18 +1,15 @@
-import { Map } from 'immutable';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { mount } from 'enzyme';
-import { SearchStore } from 'modules/search';
-import { DataSetStore } from 'modules/datasets';
 import { mockStore } from 'utils/mockStore';
-import SearchPage from '../SearchPage';
+import SearchPage from '..';
 import FileSearchBar from '../FileSearchBar';
 
 const onButtonClicked = jest.fn();
 
 const initialStoreState: any = {
-  dataSets: {
+  datasets: {
     items: {
       4448195087284397: {
         externalId: '693ad162-df1f-408b-87c7-e0ffdaa5e7cf',
@@ -39,25 +36,19 @@ const initialStoreState: any = {
         lastUpdatedTime: 1576745154021,
       },
     },
-  } as Partial<DataSetStore>,
+  },
   files: {
     items: {
-      items: Map([
-        [
-          4448195087284397,
-          {
-            id: 4448195087284397,
-            name: 'Asset Select Correct',
-          },
-        ],
-        [
-          1,
-          {
-            id: 1,
-            name: 'Test',
-          },
-        ],
-      ]),
+      list: {
+        4448195087284397: {
+          id: 4448195087284397,
+          name: 'Asset Select Correct',
+        },
+        1: {
+          id: 1,
+          name: 'Test',
+        },
+      },
     },
     search: {
       '{"limit":100,"search":{},"filter":{"root":true}}': {
@@ -89,22 +80,16 @@ const initialStoreState: any = {
   },
   assets: {
     items: {
-      items: Map([
-        [
-          4448195087284397,
-          {
-            id: 4448195087284397,
-            name: 'Asset Select Correct',
-          },
-        ],
-        [
-          1,
-          {
-            id: 1,
-            name: 'Test',
-          },
-        ],
-      ]),
+      list: {
+        4448195087284397: {
+          id: 4448195087284397,
+          name: 'Asset Select Correct',
+        },
+        1: {
+          id: 1,
+          name: 'Test',
+        },
+      },
     },
     search: {
       '{"limit":100,"search":{},"filter":{"root":true}}': {
@@ -136,7 +121,10 @@ const initialStoreState: any = {
   search: {
     assets: { filter: {} },
     files: { filter: {} },
-  } as Partial<SearchStore>,
+  },
+  selection: {
+    active: {},
+  },
   app: {
     groups: {},
   },
@@ -150,18 +138,19 @@ describe('Search Bar', () => {
   });
 
   it('show all files', () => {
+    const defaultFilters = {
+      files: {
+        filter: {
+          mimeType: 'application/pdf',
+        },
+      },
+    };
     const container = mount(
       <Provider store={store}>
         <MemoryRouter>
           <SearchPage
             type="files"
-            defaultFilters={{
-              files: {
-                filter: {
-                  mimeType: 'application/pdf',
-                },
-              },
-            }}
+            defaultFilters={defaultFilters}
             onNextClicked={onButtonClicked}
           />
         </MemoryRouter>
@@ -206,7 +195,7 @@ describe('Search Bar', () => {
       search: {
         assets: { filter: {} },
         files: { filter: {}, search: { name: '123' } },
-      } as Partial<SearchStore>,
+      },
     });
     const container = mount(
       <Provider store={newStore}>

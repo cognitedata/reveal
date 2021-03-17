@@ -13,14 +13,14 @@ import {
   AllIconTypes,
 } from '@cognite/cogs.js';
 import {
-  retrieve as assetRetrieve,
-  retrieveExternal as assetExternalRetrieve,
+  retrieveItemsById as assetRetrieve,
+  retrieveItemsByExternalId as assetExternalRetrieve,
   itemSelector as assetItemSelector,
 } from 'modules/assets';
 import {
   itemSelector as fileItemSelector,
-  retrieve as fileRetrieve,
-  retrieveExternal as fileExternalRetrieve,
+  retrieveItemsById as fileRetrieve,
+  retrieveItemsByExternalId as fileExternalRetrieve,
 } from 'modules/files';
 import {
   AssetHoverPreview,
@@ -111,8 +111,8 @@ export const CogniteFileViewerEditor = ({
   const history = useHistory();
   const wrapper = useRef<HTMLDivElement>(null);
 
-  const getAsset = useSelector(assetItemSelector);
-  const getFile = useSelector(fileItemSelector);
+  const getAsset: any = useSelector(assetItemSelector);
+  const getFile: any = useSelector(fileItemSelector);
 
   const [label, setLabel] = useState(annotation ? annotation.label : undefined);
   const [assetId, setAssetId] = useState<number | undefined>(undefined);
@@ -159,25 +159,21 @@ export const CogniteFileViewerEditor = ({
     switch (annotation.resourceType) {
       case 'asset': {
         if (annotation.resourceExternalId) {
-          dispatch(
-            assetExternalRetrieve([
-              { externalId: annotation.resourceExternalId! },
-            ])
-          );
+          const ids = { ids: [{ externalId: annotation.resourceExternalId! }] };
+          dispatch(assetExternalRetrieve(ids));
         } else {
-          dispatch(assetRetrieve([{ id: annotation.resourceId! }]));
+          const ids = { ids: [{ id: annotation.resourceId! }] };
+          dispatch(assetRetrieve(ids));
         }
         break;
       }
       case 'file': {
         if (annotation.resourceExternalId) {
-          dispatch(
-            fileExternalRetrieve([
-              { externalId: annotation.resourceExternalId! },
-            ])
-          );
+          const ids = { ids: [{ externalId: annotation.resourceExternalId! }] };
+          dispatch(fileExternalRetrieve(ids));
         } else {
-          dispatch(fileRetrieve([{ id: annotation.resourceId! }]));
+          const ids = { ids: [{ id: annotation.resourceId! }] };
+          dispatch(fileRetrieve(ids));
         }
         break;
       }

@@ -39,6 +39,7 @@ export default function AssetSelect(props: Props) {
     searchAssetSelector
   );
   const { items, fetching } = getAsset(assetSearch);
+  // @ts-ignore
   const { items: rootItems, fetching: rootFetching } = useSelector(
     searchAssetSelector
   )(assetRootSearch);
@@ -46,9 +47,9 @@ export default function AssetSelect(props: Props) {
   useEffect(() => {
     const [f1, f2] = getFilters(query);
     if (!rootOnly) {
-      dispatch(search(f1));
+      dispatch(search({ filter: f1 }));
     }
-    dispatch(search(f2));
+    dispatch(search({ filter: f2 }));
   }, [dispatch, query, rootOnly]);
 
   return (
@@ -73,7 +74,7 @@ export default function AssetSelect(props: Props) {
     >
       {rootItems.length !== 0 && (
         <Select.OptGroup label="Root assets" key="root">
-          {rootItems.map((asset) => (
+          {rootItems.map((asset: any) => (
             <Select.Option key={asset.id} value={asset.id}>
               <span>{asset.name}</span>
               <span style={{ color: '#ababab', marginLeft: '4px' }}>

@@ -18,13 +18,13 @@ import { FileInfo, Asset } from '@cognite/sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   itemSelector as fileSelector,
-  retrieve as retrieveFile,
-  retrieveExternal as retrieveExternalFile,
+  retrieveItemsById as retrieveFile,
+  retrieveItemsByExternalId as retrieveExternalFile,
 } from 'modules/files';
 import {
   itemSelector as assetSelector,
-  retrieve as retrieveAsset,
-  retrieveExternal as retrieveExternalAsset,
+  retrieveItemsById as retrieveAsset,
+  retrieveItemsByExternalId as retrieveExternalAsset,
 } from 'modules/assets';
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
 import { onResourceSelected } from 'modules/app';
@@ -140,6 +140,8 @@ export const FilePreviewOverview = ({
   const [currentTab, setTab] = useState('resources');
   const [open, setOpen] = useState<string[]>([]);
   const [query, setQuery] = useState<string>('');
+  const [retrievingAssets, setRetrievingAssets] = useState(false);
+  const [retrievingFiles, setRetrievingFiles] = useState(false);
 
   useEffect(() => {
     collapseStyles.use();
@@ -200,48 +202,49 @@ export const FilePreviewOverview = ({
   });
 
   const fileIds = Array.from(categorizedAnnotations.file.ids);
-  useEffect(() => {
-    dispatch(
-      retrieveFile(
-        (fileIds.filter((el) => typeof el === 'number') as number[]).map(
-          (id) => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalFile(
-        (fileIds.filter((el) => typeof el === 'string') as string[]).map(
-          (externalId) => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, fileIds]);
-
   const assetIds = Array.from(categorizedAnnotations.asset.ids);
+
   useEffect(() => {
-    dispatch(
-      retrieveAsset(
-        (assetIds.filter((el) => typeof el === 'number') as number[]).map(
-          (id) => ({
-            id,
-          })
-        )
-      )
-    );
-    dispatch(
-      retrieveExternalAsset(
-        (assetIds.filter((el) => typeof el === 'string') as string[]).map(
-          (externalId) => ({
-            externalId,
-          })
-        )
-      )
-    );
-  }, [dispatch, assetIds]);
+    if (retrievingFiles) return;
+    const ids = {
+      ids: (fileIds.filter(
+        (id: number | string) => typeof id === 'number'
+      ) as number[]).map((id: number) => ({
+        id,
+      })),
+    };
+    const externalIds = {
+      ids: (fileIds.filter(
+        (id: number | string) => typeof id === 'string'
+      ) as string[]).map((externalId: string) => ({
+        externalId,
+      })),
+    };
+    dispatch(retrieveFile(ids));
+    dispatch(retrieveExternalFile(externalIds));
+    setRetrievingFiles(true);
+  }, [dispatch, fileIds, retrievingFiles]);
+
+  useEffect(() => {
+    if (retrievingAssets) return;
+    const ids = {
+      ids: (assetIds.filter(
+        (id: number | string) => typeof id === 'number'
+      ) as number[]).map((id: number) => ({
+        id,
+      })),
+    };
+    const externalIds = {
+      ids: (assetIds.filter(
+        (id: number | string) => typeof id === 'string'
+      ) as string[]).map((externalId: string) => ({
+        externalId,
+      })),
+    };
+    dispatch(retrieveAsset(ids));
+    dispatch(retrieveExternalAsset(externalIds));
+    setRetrievingAssets(true);
+  }, [dispatch, assetIds, retrievingAssets]);
 
   const uniqueResources = (resourceList: any): string => {
     return [
@@ -253,8 +256,8 @@ export const FilePreviewOverview = ({
     ].length.toString();
   };
 
-  const getAsset = useSelector(assetSelector);
-  const getFile = useSelector(fileSelector);
+  const getAsset: any = useSelector(assetSelector);
+  const getFile: any = useSelector(fileSelector);
 
   const renderDetectedResources = () => {
     return (

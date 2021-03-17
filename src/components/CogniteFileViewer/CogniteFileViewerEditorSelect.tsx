@@ -7,7 +7,7 @@ import { AssetHoverPreview } from 'containers/HoverPreview';
 import {
   search as assetSearch,
   searchSelector as searchAssetSelector,
-  retrieve as assetRetrieve,
+  retrieveItemsById as assetRetrieve,
   itemSelector as assetItemSelector,
 } from 'modules/assets';
 import unionBy from 'lodash/unionBy';
@@ -17,11 +17,11 @@ import {
   itemSelector as fileItemSelector,
 } from 'modules/files';
 
-const buildAssetQuery = (query: string | undefined) => ({
+const buildAssetQuery: any = (query: string | undefined) => ({
   limit: 10,
   ...(query && query.length > 0 && { search: { query } }),
 });
-const buildFileQuery = (query: string | undefined) => ({
+const buildFileQuery: any = (query: string | undefined) => ({
   limit: 10,
   ...(query && query.length > 0 && { search: { name: query } }),
 });
@@ -44,13 +44,15 @@ export const CogniteFileViewerEditorSelect = ({
   const dispatch = useDispatch();
 
   const selectRef = useRef<Select<string[]> | null>(null);
-  const assetsMap = useSelector(assetItemSelector);
-  const filesMap = useSelector(fileItemSelector);
+  const assetsMap: any = useSelector(assetItemSelector);
+  const filesMap: any = useSelector(fileItemSelector);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  // @ts-ignore
   const { items: searchAssetsResult, fetching: isFetchingAsset } = useSelector(
     searchAssetSelector
   )(buildAssetQuery(query));
+  // @ts-ignore
   const { items: searchFilesResult, fetching: isFetchingFile } = useSelector(
     searchFileSelector
   )(buildFileQuery(query));
@@ -70,7 +72,7 @@ export const CogniteFileViewerEditorSelect = ({
 
   const assetIds = new Set<number>();
 
-  searchAssetsResult.forEach((result) => {
+  searchAssetsResult.forEach((result: any) => {
     if (result.rootId) {
       assetIds.add(result.rootId);
     }
@@ -93,7 +95,8 @@ export const CogniteFileViewerEditorSelect = ({
 
   useEffect(() => {
     if (!isFetchingAsset && assetIds.size > 0) {
-      dispatch(assetRetrieve([...assetIds].map((id) => ({ id }))));
+      const ids = { ids: [...assetIds].map((id) => ({ id })) };
+      dispatch(assetRetrieve(ids));
     }
   }, [assetIds, isFetchingAsset, dispatch]);
 

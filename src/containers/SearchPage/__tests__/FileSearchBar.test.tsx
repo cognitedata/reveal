@@ -1,15 +1,13 @@
-import { Map } from 'immutable';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { mount } from 'enzyme';
-import { SearchStore } from 'modules/search';
-import * as DataSetModule from 'modules/datasets';
+import * as DataSetSelectors from 'modules/datasets/selectors';
 import { mockStore } from 'utils/mockStore';
 import FileSearchBar from '../FileSearchBar';
 
 const initialStoreState: any = {
-  dataSets: {
+  datasets: {
     items: {
       4448195087284397: {
         externalId: '693ad162-df1f-408b-87c7-e0ffdaa5e7cf',
@@ -37,18 +35,15 @@ const initialStoreState: any = {
       },
     },
     done: true,
-  } as Partial<DataSetModule.DataSetStore>,
+  },
   files: {
     items: {
-      items: Map([
-        [
-          4448195087284397,
-          {
-            id: 4448195087284397,
-            name: 'Asset Select Correct',
-          },
-        ],
-      ]),
+      list: {
+        4448195087284397: {
+          id: 4448195087284397,
+          name: 'Asset Select Correct',
+        },
+      },
     },
     search: {
       '{"limit":100,"search":{},"filter":{"root":true}}': {
@@ -63,7 +58,7 @@ const initialStoreState: any = {
     files: {
       filter: {},
     },
-  } as Partial<SearchStore>,
+  },
   app: {
     groups: {
       groupsAcl: ['LIST', 'READ', 'CREATE', 'UPDATE', 'DELETE'],
@@ -83,11 +78,11 @@ const initialStoreState: any = {
 const store = mockStore(initialStoreState);
 
 describe('File Search Bar', () => {
-  jest.spyOn(DataSetModule, 'dataSetCounts').mockReturnValue({
-    4448195087284397: { timeseries: 0, files: 1, assets: 0 },
-    4610653613010508: { timeseries: 0, files: 1, assets: 0 },
+  jest.spyOn(DataSetSelectors, 'dataSetCounts').mockReturnValue({
+    4448195087284397: { files: 1, assets: 0 },
+    4610653613010508: { files: 1, assets: 0 },
   });
-  jest.spyOn(DataSetModule, 'getIsFetchingDatasets').mockReturnValue(true);
+  jest.spyOn(DataSetSelectors, 'getIsFetchingDatasets').mockReturnValue(true);
 
   afterEach(() => {
     jest.clearAllMocks();

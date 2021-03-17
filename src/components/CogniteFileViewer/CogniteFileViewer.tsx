@@ -8,13 +8,13 @@ import {
   CURRENT_VERSION,
 } from '@cognite/annotations';
 import {
-  retrieve as retrieveAssets,
-  retrieveExternal as retrieveExternalAssets,
+  retrieveItemsById as retrieveAssets,
+  retrieveItemsByExternalId as retrieveExternalAssets,
 } from 'modules/assets';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  create as createAnnotations,
-  remove as removeAnnotations,
+  createAnnotations,
+  deleteAnnotations,
   selectAnnotations,
   hardDeleteAnnotationsForFile,
 } from 'modules/annotations';
@@ -23,9 +23,9 @@ import { Button, Menu, Dropdown, Icon, Colors } from '@cognite/cogs.js';
 import { itemSelector as fileSelector } from 'modules/files';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { checkPermission } from 'modules/app';
-import { findSimilarObjects } from 'modules/fileContextualization/similarObjectJobs';
+import { findSimilarObjects } from 'modules/contextualization/similarObjectJobs';
 import { v4 as uuid } from 'uuid';
-import { RootState } from 'reducers';
+import { RootState } from 'store';
 import {
   SmallTitle,
   FileViewer,
@@ -117,7 +117,7 @@ export const CogniteFileViewer = ({
       });
     }
   };
-  const filesMap = useSelector(fileSelector);
+  const filesMap: any = useSelector(fileSelector);
   const { username } = getAuthState();
   const file = filesMap(fileId);
   const pnidAnnotations = useSelector(selectAnnotations)(fileId);
@@ -142,7 +142,7 @@ export const CogniteFileViewer = ({
     : false;
 
   const annotations = pnidAnnotations
-    .map((el) => {
+    .map((el: any) => {
       return {
         id: `${el.id}`,
         comment: el.label || 'No Label',
@@ -202,12 +202,12 @@ export const CogniteFileViewer = ({
       },
       new Set<number>()
     );
-    dispatch(retrieveAssets([...[...assetIds].map((id) => ({ id }))]));
-    dispatch(
-      retrieveExternalAssets([
-        ...[...assetExternalIds].map((id) => ({ externalId: id })),
-      ])
-    );
+    const assetsToRetrieveById = [...[...assetIds].map((id) => ({ id }))];
+    const assetsToRetrieveByExternalId = [
+      ...[...assetExternalIds].map((id) => ({ externalId: id })),
+    ];
+    dispatch(retrieveAssets({ ids: assetsToRetrieveById }));
+    dispatch(retrieveExternalAssets({ ids: assetsToRetrieveByExternalId }));
   }, [dispatch, pnidAnnotations]);
 
   const [renderFeedback, setRenderFeedback] = useState(false);
@@ -262,7 +262,9 @@ export const CogniteFileViewer = ({
       const pendingObj: any = { ...pendingAnnotation };
       delete pendingObj.id;
       delete pendingObj.metadata;
-      dispatch(createAnnotations(file!, [pendingObj]));
+      dispatch(
+        createAnnotations.action({ file, pendingAnnotations: [pendingObj] })
+      );
       setPendingPnidAnnotations(
         pendingPnidAnnotations.filter((el) => el.id !== pendingAnnotation.id)
       );
@@ -276,10 +278,10 @@ export const CogniteFileViewer = ({
       (pendingAnnotation.resourceExternalId || pendingAnnotation.resourceId)
     ) {
       const action = pendingAnnotation.resourceExternalId
-        ? retrieveExternalAssets([
-            { externalId: pendingAnnotation.resourceExternalId! },
-          ])
-        : retrieveAssets([{ id: pendingAnnotation.resourceId! }]);
+        ? retrieveExternalAssets({
+            ids: [{ externalId: pendingAnnotation.resourceExternalId! }],
+          })
+        : retrieveAssets({ ids: [{ id: pendingAnnotation.resourceId! }] });
       dispatch(action);
     }
   };
@@ -299,10 +301,15 @@ export const CogniteFileViewer = ({
         annotation,
       });
       const pnidIndex = pnidAnnotations.findIndex(
-        (el) => `${el.id}` === annotation.id
+        (el: any) => `${el.id}` === annotation.id
       );
       if (pnidIndex > -1) {
-        dispatch(removeAnnotations(file!, [pnidAnnotations[pnidIndex]]));
+        dispatch(
+          deleteAnnotations.action({
+            file,
+            annotations: [pnidAnnotations[pnidIndex]],
+          })
+        );
       }
     }
   };
@@ -500,7 +507,7 @@ export const CogniteFileViewer = ({
                   ),
                   onOk: async () => {
                     setCreatable(false);
-                    await dispatch(hardDeleteAnnotationsForFile(file!));
+                    dispatch(hardDeleteAnnotationsForFile.action({ file }));
                     message.success(
                       `Successfully cleared annotation for ${file!.name}`
                     );
@@ -563,7 +570,9 @@ export const CogniteFileViewer = ({
             onSelect={(annotation) => {
               if (annotation) {
                 const pnidAnnotation =
-                  pnidAnnotations.find((el) => `${el.id}` === annotation.id) ||
+                  pnidAnnotations.find(
+                    (el: any) => `${el.id}` === annotation.id
+                  ) ||
                   pendingPnidAnnotations.find((el) => el.id === annotation.id);
                 if (pnidAnnotation) {
                   setSelectedAnnotation(pnidAnnotation);
@@ -580,7 +589,9 @@ export const CogniteFileViewer = ({
               height
             ) => {
               const pnidAnnotation =
-                pnidAnnotations.find((el) => `${el.id}` === annotation.id) ||
+                pnidAnnotations.find(
+                  (el: any) => `${el.id}` === annotation.id
+                ) ||
                 pendingPnidAnnotations.find((el) => el.id === annotation.id);
               if (pnidAnnotation) {
                 if (similarSearchMode) {

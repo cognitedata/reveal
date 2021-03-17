@@ -3,15 +3,15 @@ import { useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, Title, Tooltip } from '@cognite/cogs.js';
-import { itemSelector as fileItemSelector, retrieve } from 'modules/files';
 import {
-  list as listAnnotations,
-  selectAnnotations,
-} from 'modules/annotations';
+  itemSelector as fileItemSelector,
+  retrieveItemsById as retrieve,
+} from 'modules/files';
+import { listAnnotations, selectAnnotations } from 'modules/annotations';
 import { CogniteFileViewer } from 'components/CogniteFileViewer/CogniteFileViewer';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
-import { startConvertFileToSvgJob } from 'modules/fileContextualization/uploadJobs';
-import { RootState } from 'reducers';
+import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
+import { RootState } from 'store';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import { checkPermission } from 'modules/app';
 import Layers from 'utils/zindex';
@@ -62,8 +62,9 @@ export default function PnIDParsingFilePreview() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const fileIdNumber = parseInt(fileId, 10);
+  const fileIdNumber = Number(fileId);
 
+  // @ts-ignore
   const file = useSelector(fileItemSelector)(fileIdNumber);
 
   const annotations = useSelector(selectAnnotations)(fileIdNumber);
@@ -72,7 +73,7 @@ export default function PnIDParsingFilePreview() {
       state.fileContextualization.uploadJobs[fileIdNumber] || {}
   );
   useEffect(() => {
-    dispatch(retrieve([{ id: fileIdNumber }]));
+    dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
   }, [dispatch, fileIdNumber]);
 
   useEffect(() => {
@@ -96,7 +97,13 @@ export default function PnIDParsingFilePreview() {
 
   useEffect(() => {
     if (file) {
-      dispatch(listAnnotations(file, false, true));
+      dispatch(
+        listAnnotations.action({
+          file,
+          shouldClear: false,
+          includeDeleted: true,
+        })
+      );
     }
   }, [dispatch, file]);
 
@@ -114,7 +121,7 @@ export default function PnIDParsingFilePreview() {
           icon="ArrowLeft"
           onClick={() =>
             history.push(
-              `/${tenant}/pnid_parsing/${filesDataKitId}/${assetsDataKitId}/${optionsId}`
+              `/${tenant}/pnid_parsing_new/${filesDataKitId}/${assetsDataKitId}/${optionsId}`
             )
           }
         >

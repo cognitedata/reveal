@@ -1,0 +1,206 @@
+import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { InternalId } from '@cognite/sdk';
+import sdk from 'sdk-singleton';
+// import { RootState } from 'store';
+import { followCursorsGenerator } from 'helpers/Helpers';
+import {
+  ResourceState,
+  ResourceType,
+  ApiListResult,
+  ApiResult,
+  Query,
+} from '../types';
+import { createListSelector } from './selectors';
+import { updateAction as update } from '../reducers';
+
+export const defaultListState: ApiListResult = {};
+export interface ListStore {
+  [key: string]: ApiListResult;
+}
+
+type ListAction = {
+  scope: Query;
+  all: boolean;
+  partition: number;
+  nth: number;
+};
+interface ListDoneAction extends ListAction {
+  result: number[];
+}
+
+function getKey(scope: any, all: any) {
+  return JSON.stringify({
+    ...scope,
+    all,
+    cursor: undefined,
+  });
+}
+
+function getSubkey(nth: number, partitions: number): string {
+  return `${nth}/${partitions}`;
+}
+
+export default function buildList<T extends InternalId, Q extends Query>(
+  resourceType: ResourceType,
+  processItemFn: (t: T) => T = (t) => t
+) {
+  const list = {
+    action: createAsyncThunk(
+      `${resourceType}/list`,
+      async (
+        {
+          filter,
+          all = false,
+          partition = 1,
+          nth = 1,
+          shouldFetch = (i: ApiResult) => !i?.status || i.status !== 'success',
+        }: {
+          filter: Q;
+          all?: boolean;
+          partition?: number;
+          nth?: number;
+          shouldFetch?: (i: ApiResult) => boolean;
+        },
+        { dispatch, getState }: any
+      ) => {
+        const state = getState()[resourceType];
+        const key = getKey(filter, all);
+        const subkey = getSubkey(nth, partition);
+
+        if (
+          state.list[key]?.[subkey] &&
+          !shouldFetch(state.list[key][subkey])
+        ) {
+          return {};
+        }
+
+        // @ts-ignore
+        const q: Q =
+          partition === 1 && nth === 1
+            ? filter
+            : {
+                ...filter,
+                partition: subkey,
+              };
+        // @ts-ignore
+        const listFn = sdk[resourceType].list as (
+          q: Q
+        ) => Promise<{ items: T[]; nextCursor?: string }>;
+
+        let items = [] as T[];
+        if (all) {
+          const generator = followCursorsGenerator<Q, T>(q, listFn);
+          /* eslint-disable no-restricted-syntax */
+          for await (const partialItems of generator) {
+            items = items.concat(partialItems);
+            const partialIds = partialItems.map((t: T) => t.id);
+            const partiallyDoneAction = {
+              payload: {
+                filter,
+                all,
+                partition,
+                nth,
+                result: partialIds,
+              },
+              type: `${resourceType}/partiallyDoneList`,
+            };
+            const itemsToUpdate = partialItems.map(processItemFn);
+            dispatch(update(resourceType)(itemsToUpdate));
+            dispatch(listPartiallyDone(state, partiallyDoneAction));
+          }
+        } else {
+          ({ items } = await listFn(q));
+          const itemsToUpdate = items.map(processItemFn);
+          dispatch(update(resourceType)(itemsToUpdate));
+        }
+
+        return {
+          filter,
+          result: items.map((t: T) => t.id),
+          all,
+          partition,
+          nth,
+        };
+      }
+    ),
+    pending: (state: any, action: any) => {
+      const { filter, all = false, partition = 1, nth = 1 } = action.meta.arg;
+      const key = getKey(filter, all);
+      const subkey = getSubkey(nth, partition);
+      if (!state.list[key]) {
+        state.list[key] = {};
+      }
+      if (!state.list[key][subkey]) {
+        state.list[key][subkey] = { ...defaultListState };
+      }
+      state.list[key][subkey].status = 'pending';
+    },
+    rejected: (state: any, action: any) => {
+      const { filter, all = false, partition = 1, nth = 1 } = action.meta.arg;
+      const key = getKey(filter, all);
+      const subkey = getSubkey(nth, partition);
+      state.list[key][subkey].status = 'error';
+    },
+    fulfilled: (state: any, action: any) => {
+      if (!action.payload) return;
+      const {
+        filter,
+        result: ids,
+        all = false,
+        partition = 1,
+        nth = 1,
+      } = action.payload;
+      const key = getKey(filter, all);
+      const subkey = getSubkey(nth, partition);
+      state.list[key][subkey].status = 'success';
+      state.list[key][subkey].ids = ids;
+    },
+  };
+
+  /**
+   * Additional action used when all of the items are being fetched and there is a need to use cursor.
+   */
+  const listPartiallyDone = (
+    state: ResourceState<T>,
+    action: PayloadAction<{
+      filter: Query;
+      all: boolean;
+      partition: number;
+      nth: number;
+      result: number[];
+    }>
+  ) => {
+    const { filter, all, partition, nth, result } = action.payload;
+    const key = getKey(filter, all);
+    const subkey = getSubkey(nth, partition);
+    const ids = result;
+    state.list[key][subkey].ids = {
+      ...state.list[key][subkey].ids,
+      ...ids,
+    };
+  };
+
+  const listParallelAction = (filter: Q, parallelity: number = 5) => {
+    return async (dispatch: any) => {
+      return Promise.all(
+        [...Array(parallelity).keys()].map((i) =>
+          dispatch(
+            list.action({
+              filter,
+              all: true,
+              partition: parallelity,
+              nth: i + 1,
+            })
+          )
+        )
+      );
+    };
+  };
+
+  const listSelector = createListSelector<T, Q>( // @ts-ignore
+    (state: RootState) => state[resourceType].items.list, // @ts-ignore
+    (state: RootState) => state[resourceType].list
+  ) as any;
+
+  return { list, listParallel: listParallelAction, listSelector };
+}

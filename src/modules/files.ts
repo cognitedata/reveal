@@ -1,45 +1,32 @@
+import builder from 'modules/sdk-builder';
 import {
-  FilesSearchFilter,
   FileInfo,
-  FileRequestFilter,
   FileChangeUpdateById,
+  FileRequestFilter,
+  FilesSearchFilter,
 } from '@cognite/sdk';
-import builder from './sdk-builder';
 
-const {
+const resourceType = 'files';
+
+export const {
   reducer,
-  retrieve,
-  update,
-  retrieveExternal,
-  search,
   count,
+  search,
+  items,
   list,
   listParallel,
+  retrieveItemsById,
+  retrieveItemsByExternalId,
+  updateItemsById,
+  countSelector,
   searchSelector,
   itemSelector,
   listSelector,
-  countSelector,
+  externalIdMapSelector,
   retrieveSelector,
 } = builder<
   FileInfo,
   FileChangeUpdateById,
   FileRequestFilter,
   FilesSearchFilter
->('files');
-
-export {
-  reducer,
-  retrieve,
-  update,
-  retrieveExternal,
-  search,
-  count,
-  list,
-  listParallel,
-  searchSelector,
-  itemSelector,
-  listSelector,
-  countSelector,
-  retrieveSelector,
-};
-export default reducer;
+>(resourceType);

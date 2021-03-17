@@ -1,11 +1,16 @@
-import { createStore, applyMiddleware } from 'redux';
-import ReduxThunk from 'redux-thunk';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import createRootReducer from './reducer';
 
-import createRootReducer from 'reducers';
+export function createStore(): any {
+  const middleware = getDefaultMiddleware({
+    serializableCheck: false,
+  });
+  // const enhancers = [];
+  const store = configureStore({
+    reducer: createRootReducer(),
+    middleware,
+    devTools: false,
+  });
 
-const middlewares = [ReduxThunk];
-const enhancer = [applyMiddleware(...middlewares)];
-
-export default function configureStore(initialState = {}) {
-  return createStore(createRootReducer(), initialState, ...enhancer);
+  return store;
 }

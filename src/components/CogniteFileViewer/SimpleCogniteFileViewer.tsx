@@ -21,12 +21,12 @@ type Props = {
 };
 
 export const CogniteFileViewerImage = ({ fileId }: Props) => {
-  const filesMap = useSelector(fileSelector);
-  const pnidAnnotations = useSelector(selectAnnotations)(fileId);
+  const filesMap: any = useSelector(fileSelector);
+  const pnidAnnotations: any = useSelector(selectAnnotations)(fileId);
 
   const annotations = pnidAnnotations
-    .filter((el) => el.page === 1 || el.page === undefined)
-    .map((el) => {
+    .filter((el: any) => el.page === 1 || el.page === undefined)
+    .map((el: any) => {
       return {
         id: `${el.id}`,
         comment: el.label || 'No Label',

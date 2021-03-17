@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, SyntheticEvent } from 'react';
 import { checkPermission } from 'modules/app';
 import { useSelector } from 'react-redux';
 import { notification } from 'antd';
-import { RootState } from 'reducers';
+import { RootState } from 'store';
 import { useParams, useHistory } from 'react-router-dom';
 
 type Props = {

@@ -33,8 +33,10 @@ describe('CogniteFileViewer', () => {
     const storeState = {
       assets: {
         items: {
-          items: Map(),
-          getById: {},
+          list: Map(),
+          retrieve: {
+            byId: {},
+          },
         },
       },
       login: {
@@ -42,8 +44,10 @@ describe('CogniteFileViewer', () => {
       },
       files: {
         items: {
-          items: Map(),
-          getById: {},
+          list: Map(),
+          retrieve: {
+            byId: {},
+          },
         },
       },
       fileContextualization: { similarObjectJobs: {} },

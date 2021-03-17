@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory, useRouteMatch } from 'react-router-dom';
-import { RootState } from 'reducers';
+import { RootState } from 'store';
 import { Card } from 'antd';
 import { Button, Checkbox, Input } from '@cognite/cogs.js';
 import { v4 as uuid } from 'uuid';
-import { setOptions, resetPnidParsingPipeline } from 'modules/pnidPipeline';
+import {
+  setOptions,
+  resetPnidParsingPipeline,
+} from 'modules/contextualization/pnidPipeline';
 import StickyBottomRow from 'components/StickyBottomRow';
 
 export default function PnIDOptions() {

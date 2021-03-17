@@ -1,4 +1,4 @@
-import { ResourceType } from 'modules/sdk-builder/types';
+import { ResourceType, Filter } from 'modules/sdk-builder/types';
 
 import {
   getCountsSelector,
@@ -6,13 +6,12 @@ import {
   getItemsSearchSelector,
 } from 'modules/selection';
 import { createSelector } from 'reselect';
-import { Filter } from 'modules/search';
 
 export const searchCountSelector = (type: ResourceType, filter: Filter) =>
   createSelector(
     getCountsSelector,
     getItemsSearchSelector,
-    (getCount, getItemsSearch) => {
+    (getCount: any, getItemsSearch: any) => {
       if (filter.search) {
         const search = getItemsSearch(type)(filter) || {};
         return search.items?.length || 0;
@@ -24,7 +23,10 @@ export const searchCountSelector = (type: ResourceType, filter: Filter) =>
 export const searchItemSelector = createSelector(
   getItemListSelector,
   getItemsSearchSelector,
-  (getItemsList, getItemsSearch) => (type: ResourceType, filter: Filter) => {
+  (getItemsList: any, getItemsSearch: any) => (
+    type: ResourceType,
+    filter: Filter
+  ) => {
     if (filter.search) {
       return getItemsSearch(type)(filter) as {
         fetching: boolean;
