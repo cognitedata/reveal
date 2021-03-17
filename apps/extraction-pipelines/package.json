@@ -51,7 +51,7 @@
     "react-table": "^7.6.3",
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
-    "systemjs-webpack-interop": "^2.3.4",
+    "systemjs-webpack-interop": "^2.3.6",
     "yup": "^0.32.8"
   },
   "devDependencies": {
