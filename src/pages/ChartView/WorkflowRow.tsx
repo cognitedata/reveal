@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Chart,
   ChartWorkflow,
   FunctionCallStatus,
 } from 'reducers/charts/types';
-import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
-import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import { Dropdown, Icon } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
+import { updateWorkflow } from 'utils/charts';
 import {
   SourceItem,
   SourceSquare,
@@ -14,6 +14,7 @@ import {
   SourceName,
   SourceRow,
 } from './elements';
+import WorkflowMenu from './WorkflowMenu';
 
 const renderStatusIcon = (status?: FunctionCallStatus) => {
   switch (status) {
@@ -47,36 +48,17 @@ export default function WorkflowRow({
   isDataQualityMode = false,
   mutate,
 }: Props) {
+  // Increasing this will cause a fresh render where the dropdown is closed
+  const [idHack, setIdHack] = useState(0);
   const { id, enabled, color, name, calls } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
 
-  const update = (wfId: string, diff: Partial<ChartWorkflow>) =>
-    mutate({
-      ...chart,
-      workflowCollection: chart.workflowCollection?.map((wf) =>
-        wf.id === wfId
-          ? {
-              ...wf,
-              ...diff,
-            }
-          : wf
-      ),
-    });
-
-  const remove = (wfId: string) =>
-    mutate({
-      ...chart,
-      workflowCollection: chart.workflowCollection?.filter(
-        (wf) => wf.id !== wfId
-      ),
-    });
+  const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
+    mutate(updateWorkflow(chart, wfId, diff));
+  };
 
   return (
-    <SourceRow
-      key={id}
-      onClick={() => setActiveSourceItem(id)}
-      isActive={isActive}
-    >
+    <SourceRow onClick={() => setActiveSourceItem(id)} isActive={isActive}>
       <td>
         <SourceItem key={id}>
           <SourceSquare
@@ -99,56 +81,14 @@ export default function WorkflowRow({
             </div>
           )}
           <SourceName>{name || 'noname'}</SourceName>
-          <SourceMenu onClick={(e) => e.stopPropagation()}>
+          <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
             <Dropdown
               content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>{name}</span>
-                  </Menu.Header>
-                  <Menu.Submenu
-                    content={
-                      <AppearanceDropdown
-                        onColorSelected={(newColor) =>
-                          update(id, { color: newColor })
-                        }
-                        onWeightSelected={(newWeight) =>
-                          update(id, { lineWeight: newWeight })
-                        }
-                        onStyleSelected={(newStyle) =>
-                          update(id, { lineStyle: newStyle })
-                        }
-                      />
-                    }
-                  >
-                    <span>Appearance</span>
-                  </Menu.Submenu>
-                  <Menu.Item
-                    onClick={() => {
-                      // eslint-disable-next-line no-alert
-                      const newName = prompt('Rename calculation');
-                      if (newName) {
-                        update(id, {
-                          name: newName,
-                        });
-                      }
-                    }}
-                    appendIcon="Edit"
-                  >
-                    <span>Rename</span>
-                  </Menu.Item>
-                  <Menu.Item
-                    onClick={() => {
-                      remove(id);
-                      if (isActive) {
-                        setActiveSourceItem(undefined);
-                      }
-                    }}
-                    appendIcon="Delete"
-                  >
-                    <span>Remove</span>
-                  </Menu.Item>
-                </Menu>
+                <WorkflowMenu
+                  chartId={chart.id}
+                  id={id}
+                  closeMenu={() => setIdHack(idHack + 1)}
+                />
               }
             >
               <Icon type="VerticalEllipsis" />

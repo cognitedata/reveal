@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { units } from 'utils/units';
-import { AppearanceDropdown } from 'components/AppearanceDropdown';
-import { convertTsToWorkFlow } from 'utils/timeseries';
 import {
   SourceItem,
   SourceCircle,
@@ -11,6 +9,7 @@ import {
   SourceName,
   SourceRow,
 } from './elements';
+import TimeSeriesMenu from './TimeSeriesMenu';
 
 type Props = {
   mutate: (c: Chart) => void;
@@ -47,7 +46,8 @@ export default function TimeSeriesRow({
     tsId,
     tsExternalId,
   } = timeseries;
-
+  // Increasing this will cause a fresh render where the dropdown is closed
+  const [idHack, setIdHack] = useState(0);
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
     mutate({
       ...chart,
@@ -60,28 +60,6 @@ export default function TimeSeriesRow({
           : t
       ),
     });
-
-  const remove = (_tsId: string) =>
-    mutate({
-      ...chart,
-      timeSeriesCollection: chart.timeSeriesCollection?.filter(
-        (t) => t.id !== _tsId
-      ),
-    });
-
-  const handleConvertToWorkflow = (_tsId: string) => {
-    const ts = chart.timeSeriesCollection?.find((t) => t.id === _tsId);
-    if (ts) {
-      const wf = convertTsToWorkFlow(ts);
-      mutate({
-        ...chart,
-        timeSeriesCollection: chart.timeSeriesCollection?.filter(
-          (t) => t.id !== id
-        ),
-        workflowCollection: [...(chart.workflowCollection || []), wf],
-      });
-    }
-  };
 
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
@@ -139,81 +117,14 @@ export default function TimeSeriesRow({
             fade={!enabled}
           />
           <SourceName title={name}>{name || 'noname'}</SourceName>
-          <SourceMenu onClick={(e) => e.stopPropagation()}>
+          <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
             <Dropdown
               content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>{id}</span>
-                  </Menu.Header>
-                  <Menu.Submenu
-                    content={
-                      <Menu>
-                        <Menu.Submenu
-                          content={
-                            <AppearanceDropdown
-                              onColorSelected={(newColor) =>
-                                update(id, {
-                                  color: newColor,
-                                })
-                              }
-                              onWeightSelected={(newWeight) =>
-                                update(id, {
-                                  lineWeight: newWeight,
-                                })
-                              }
-                              onStyleSelected={(newStyle) =>
-                                update(id, {
-                                  lineStyle: newStyle,
-                                })
-                              }
-                            />
-                          }
-                        >
-                          <span>Appearance</span>
-                        </Menu.Submenu>
-                        <Menu.Submenu
-                          content={
-                            <Menu>
-                              <Menu.Item>Gaps</Menu.Item>
-                              <Menu.Item>Freshness</Menu.Item>
-                              <Menu.Item>Drift Detector</Menu.Item>
-                            </Menu>
-                          }
-                        >
-                          <span>Data Quality</span>
-                        </Menu.Submenu>
-                        <Menu.Item>Min / Max</Menu.Item>
-                        <Menu.Item>Limit</Menu.Item>
-                      </Menu>
-                    }
-                  >
-                    <span>Tools</span>
-                  </Menu.Submenu>
-                  <Menu.Item
-                    onClick={() => {
-                      // eslint-disable-next-line no-alert
-                      const newName = prompt('Rename timeseries');
-                      if (newName) {
-                        update(id, {
-                          name: newName,
-                        });
-                      }
-                    }}
-                    appendIcon="Edit"
-                  >
-                    <span>Rename</span>
-                  </Menu.Item>
-                  <Menu.Item onClick={() => remove(id)} appendIcon="Delete">
-                    <span>Remove</span>
-                  </Menu.Item>
-                  <Menu.Item
-                    onClick={() => handleConvertToWorkflow(id)}
-                    appendIcon="Timeseries"
-                  >
-                    <span>Convert to calculation</span>
-                  </Menu.Item>
-                </Menu>
+                <TimeSeriesMenu
+                  chartId={chart.id}
+                  id={id}
+                  closeMenu={() => setIdHack(idHack + 1)}
+                />
               }
             >
               <Icon type="VerticalEllipsis" />
