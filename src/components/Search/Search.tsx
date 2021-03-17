@@ -6,9 +6,7 @@ import { Timeseries } from '@cognite/sdk';
 import { useDebounce } from 'use-debounce/lib';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
-import { availableColors } from 'utils/colors';
-import { ChartTimeSeries } from 'reducers/charts/types';
-import { nanoid } from 'nanoid';
+import { addTimeseries, covertTSToChartTS } from 'utils/charts';
 
 type SearchProps = {
   visible: boolean;
@@ -29,30 +27,11 @@ const Search = ({ visible, onClose }: SearchProps) => {
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
-      const ts: ChartTimeSeries = {
-        id: nanoid(),
-        name:
-          timeSeries.name || timeSeries.externalId || timeSeries.id.toString(),
-        tsId: timeSeries.id,
-        tsExternalId: timeSeries.externalId,
-        unit: timeSeries.unit || '*',
-        originalUnit: timeSeries.unit || '*',
-        preferredUnit: timeSeries.unit || '*',
-        color:
-          availableColors[
-            (chart?.timeSeriesCollection?.length || 0) % availableColors.length
-          ],
-        lineWeight: 2,
-        lineStyle: 'solid',
-        enabled: true,
-        description: timeSeries.description || '-',
-      };
-      updateChart({
-        chart: {
-          ...chart,
-          timeSeriesCollection: [...(chart.timeSeriesCollection || []), ts],
-        },
-      });
+      const ts = covertTSToChartTS(
+        timeSeries,
+        chart.timeSeriesCollection?.length
+      );
+      updateChart({ chart: addTimeseries(chart, ts) });
     }
   };
 

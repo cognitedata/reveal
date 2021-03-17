@@ -11,7 +11,7 @@ import {
 import { calculateGranularity } from 'utils/timeseries';
 import { units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import Plotly from 'plotly.js-basic-dist';
+import Plotly, { ModeBarDefaultButtons } from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
 import { useSDK } from '@cognite/sdk-provider';
 import { functionResponseKey } from 'utils/cogniteFunctions';
@@ -179,6 +179,7 @@ const PlotlyChartComponent = ({
       range: [chart.dateFrom, chart.dateTo],
     },
     showlegend: false,
+    dragmode: 'pan',
     annotations: [],
   };
 
@@ -193,15 +194,16 @@ const PlotlyChartComponent = ({
     if (showYAxis) {
       (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
         linecolor: color,
-        linewidth: 3,
+        linewidth: 1,
         tickcolor: color,
-        tickwidth: 3,
+        tickwidth: 1,
         side: 'right',
         overlaying: index !== 0 ? 'y' : undefined,
         anchor: 'free',
         position: 0.05 * index,
         range: serializedYRange,
         hoverformat: '.2f',
+        zeroline: false,
       };
 
       if (unit) {
@@ -228,13 +230,20 @@ const PlotlyChartComponent = ({
     }
   });
 
+  const config = {
+    responsive: true,
+    scrollZoom: true,
+    displaylogo: false,
+    modeBarButtons: [
+      ['pan2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d'],
+    ] as ModeBarDefaultButtons[][],
+  };
+
   return (
     <Plot
-      // @ts-ignore
-      data={data}
-      // @ts-ignore
-      layout={layout}
-      config={{ responsive: true, scrollZoom: true }}
+      data={data as Plotly.Data[]}
+      layout={(layout as unknown) as Plotly.Layout}
+      config={config as Plotly.Config}
       onRelayout={handleRelayout}
     />
   );
