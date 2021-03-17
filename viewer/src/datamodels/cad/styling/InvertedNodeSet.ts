@@ -19,8 +19,7 @@ export class InvertedNodeSet extends NodeSet {
       this.notifyChanged();
     });
 
-    const maxTreeIndex = model.cadNode.cadModelMetadata.scene.maxTreeIndex;
-    this._allTreeIndicesRange = new NumericRange(0, maxTreeIndex + 1);
+    this._allTreeIndicesRange = new NumericRange(0, model.nodeCount);
   }
 
   get isLoading(): boolean {
