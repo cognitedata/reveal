@@ -17,8 +17,8 @@ describe('charts util', () => {
     version: 1,
     name: 'test chart',
     user: 'user_1@example.org',
-    updated: 1615976865123,
-    created: 1615976863997,
+    updatedAt: 1615976865123,
+    createdAt: 1615976863997,
     public: true,
     dateFrom: 'then',
     dateTo: 'now',
@@ -33,11 +33,11 @@ describe('charts util', () => {
         'test chart Copy'
       );
       expect(duplicate(chart, 'user_2@example.org').id).not.toEqual(id);
-      expect(duplicate(chart, 'user_2@example.org').created).not.toEqual(
-        chart.created
+      expect(duplicate(chart, 'user_2@example.org').createdAt).not.toEqual(
+        chart.createdAt
       );
-      expect(duplicate(chart, 'user_2@example.org').updated).not.toEqual(
-        chart.updated
+      expect(duplicate(chart, 'user_2@example.org').updatedAt).not.toEqual(
+        chart.updatedAt
       );
     });
     it('should not update the other fields', () => {

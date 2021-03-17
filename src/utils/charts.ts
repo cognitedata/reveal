@@ -9,8 +9,8 @@ export function duplicate(chart: Chart, user: string): Chart {
   return {
     ...chart,
     id,
-    updated: Date.now(),
-    created: Date.now(),
+    updatedAt: Date.now(),
+    createdAt: Date.now(),
     name: `${chart.name} Copy`,
     public: false,
     user,

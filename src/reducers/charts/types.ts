@@ -7,8 +7,8 @@ export type Chart = {
   name: string;
   user: string;
   // could be undefined for old charts
-  created: number;
-  updated: number;
+  createdAt: number;
+  updatedAt: number;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
   dateFrom: string;
