@@ -13,6 +13,7 @@ import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
 import { useLoginStatus } from 'hooks';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
+import { CHART_VERSION } from 'config/';
 import { useHistory } from 'react-router-dom';
 
 type ActiveTabOption = 'mine' | 'public';
@@ -75,6 +76,7 @@ const ChartList = () => {
       dateFrom: dateFrom.toJSON(),
       dateTo: dateTo.toJSON(),
       public: false,
+      version: CHART_VERSION,
     };
     await updateChart({ chart: newChart });
     history.push(`/${id}`);

@@ -1,5 +1,7 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["__cogniteSidecar"] }] */
 
+export const CHART_VERSION = 1;
+
 const {
   REACT_APP_API_KEY: apiKey,
   REACT_APP_RELEASE: release = 'release',
