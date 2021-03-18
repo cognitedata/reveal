@@ -13,7 +13,7 @@ import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createInstancedMeshes } from '../rendering/instancedMeshes';
 import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
-import { toThreeJsBox3 } from '../../../utilities';
+import { Box3, toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 
 const quadVertexData = new Float32Array([
@@ -30,7 +30,7 @@ const quadVertexData = new Float32Array([
 
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
-export function consumeSectorSimple(sector: SectorQuads, materials: Materials): THREE.Group {
+export function consumeSectorSimple(sector: SectorQuads, sectorBounds: Box3, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
@@ -74,11 +74,15 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
 
   setTreeIndeciesToUserData();
 
-  // obj.name = `Quads ${sectorId}`;
-  // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we
-  // can avoid disabling it entirely
-  obj.frustumCulled = false;
+  const position = new THREE.Vector3(sectorBounds.center[0], sectorBounds.center[1], sectorBounds.center[2]);
+  const radius = sectorBounds.diagonalLength / 2.0;
+
+  obj.geometry.boundingSphere = new THREE.Sphere(position, radius);
+
+  obj.frustumCulled = true;
+
   group.add(obj);
+
   return group;
 
   function setTreeIndeciesToUserData() {

@@ -103,8 +103,13 @@ describe('sectorUtilities', () => {
         buffer: new Float32Array(0)
       };
 
+      const bounds = new Box3([
+        [0, 0, 0],
+        [1, 1, 1]
+      ]);
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const group = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
       expect(group.children).toBeEmpty();
@@ -128,8 +133,13 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new Box3([
+        [0, 0, 0],
+        [1, 1, 1]
+      ]);
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const group = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
       expect(group.children).not.toBeEmpty();
@@ -162,8 +172,13 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new Box3([
+        [0, 0, 0],
+        [1, 1, 1]
+      ]);
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const group = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
       expect(group.children.length).toBe(1);
@@ -189,8 +204,13 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new Box3([
+        [0, 0, 0],
+        [1, 1, 1]
+      ]);
+
       // Act
-      expect(() => consumeSectorSimple(sector, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
     });
 
     test('buffer missing bytes, throws', () => {
@@ -205,8 +225,13 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new Box3([
+        [0, 0, 0],
+        [1, 1, 1]
+      ]);
+
       // Act
-      expect(() => consumeSectorSimple(sector, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
     });
   });
 });
