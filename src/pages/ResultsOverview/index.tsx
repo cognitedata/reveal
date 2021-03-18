@@ -2,9 +2,9 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { Button, Icon, Colors, Tooltip, Badge } from '@cognite/cogs.js';
 import { Table, Spin, message, Dropdown, Menu, Row, Col, Popover } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
-import { Button, Icon, Colors, Tooltip, Badge } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import queryString from 'query-string';
 import { RootState } from 'store';
@@ -53,7 +53,7 @@ const stubAnnotation = {
   box: { xMin: 0, xMax: 0, yMin: 0, yMax: 0 },
 } as PendingCogniteAnnotation;
 
-export default function PnidParsing() {
+export default function ResultsOverview() {
   const history = useHistory();
   const dispatch = useDispatch();
 

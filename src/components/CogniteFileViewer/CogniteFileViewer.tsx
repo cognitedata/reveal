@@ -99,26 +99,15 @@ export const CogniteFileViewer = ({
   renderResourceActions,
 }: Props) => {
   const { search } = useLocation();
-
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { username } = getAuthState();
   const { page = 1 }: { page?: number } = queryString.parse(search, {
     parseNumbers: true,
   });
+  const [fetching, setFetching] = useState(false);
 
-  const history = useHistory();
-  const dispatch = useDispatch();
-  const setPage = async (newPage: number) => {
-    if (fileId) {
-      const currentSearch = queryString.parse(search);
-      history.replace({
-        search: queryString.stringify({
-          ...currentSearch,
-          page: newPage,
-        }),
-      });
-    }
-  };
   const filesMap: any = useSelector(fileSelector);
-  const { username } = getAuthState();
   const file = filesMap(fileId);
   const pnidAnnotations = useSelector(selectAnnotations)(fileId);
   const [pendingPnidAnnotations, setPendingPnidAnnotations] = useState(
@@ -184,6 +173,7 @@ export const CogniteFileViewer = ({
     );
 
   useEffect(() => {
+    if (fetching) return;
     const assetExternalIds = pnidAnnotations.reduce(
       (prev: Set<string>, el: CogniteAnnotation) => {
         if (el.resourceType === 'asset' && el.resourceExternalId) {
@@ -208,7 +198,8 @@ export const CogniteFileViewer = ({
     ];
     dispatch(retrieveAssets({ ids: assetsToRetrieveById }));
     dispatch(retrieveExternalAssets({ ids: assetsToRetrieveByExternalId }));
-  }, [dispatch, pnidAnnotations]);
+    setFetching(true);
+  }, [dispatch, pnidAnnotations, fetching]);
 
   const [renderFeedback, setRenderFeedback] = useState(false);
 
@@ -380,6 +371,18 @@ export const CogniteFileViewer = ({
           },
         ])
     );
+  };
+
+  const setPage = async (newPage: number) => {
+    if (fileId) {
+      const currentSearch = queryString.parse(search);
+      history.replace({
+        search: queryString.stringify({
+          ...currentSearch,
+          page: newPage,
+        }),
+      });
+    }
   };
 
   const getExtraActions = (

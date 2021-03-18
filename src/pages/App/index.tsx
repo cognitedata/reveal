@@ -8,7 +8,7 @@ import { trackUsage } from 'utils/Metrics';
 import { setCdfEnv, setTenant, fetchUserGroups } from 'modules/app';
 import SwitchWithBreadcrumbs from 'components/SwitchWithBreadcrumbs';
 import Spinner from 'components/Spinner';
-import pnidBreadcrumbs from 'pages/PnIDParsing/breadcrumbs';
+import pnidBreadcrumbs from 'pages/breadcrumbs';
 import NotFound from 'pages/NotFound';
 
 export default function App() {
@@ -62,7 +62,7 @@ export default function App() {
           React.lazy(
             () =>
               import(
-                'pages/PnIDParsing/PnIDParsingRoutes'
+                'pages/Routes'
                 /* webpackChunkName: "pnid_parsing_new" */
               )
           ),

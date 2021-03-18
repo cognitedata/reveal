@@ -1,51 +1,23 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
+import { notification } from 'antd';
 import { Button, Icon, Title, Tooltip } from '@cognite/cogs.js';
+import { RootState } from 'store';
+
+import { checkPermission } from 'modules/app';
+import { listAnnotations, selectAnnotations } from 'modules/annotations';
+import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
 import {
   itemSelector as fileItemSelector,
   retrieveItemsById as retrieve,
 } from 'modules/files';
-import { listAnnotations, selectAnnotations } from 'modules/annotations';
-import { CogniteFileViewer } from 'components/CogniteFileViewer/CogniteFileViewer';
-import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
-import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
-import { RootState } from 'store';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
-import { checkPermission } from 'modules/app';
-import Layers from 'utils/zindex';
-import { notification } from 'antd';
+import { CogniteFileViewer } from 'components/CogniteFileViewer';
+import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
+import { Wrapper, ContentWrapper, Header } from './components';
 
-const Wrapper = styled.div`
-  display: flex;
-  height: calc(100vh - 180px);
-  flex-direction: column;
-`;
-
-const Header = styled.div`
-  display: flex;
-  padding: 20px 24px;
-  box-shadow: 0px 0px 6px #cdcdcd;
-  border-radius: 12px;
-  flex-direction: row;
-  align-items: center;
-  z-index: ${Layers.MINIMUM};
-  margin-top: 40px;
-  background: #fff;
-  button {
-    margin-right: 26px;
-  }
-`;
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  margin-top: 20px;
-  box-sizing: border-box;
-`;
-
-export default function PnIDParsingFilePreview() {
+export default function FileOverview() {
   const {
     fileId,
     tenant,
@@ -66,12 +38,12 @@ export default function PnIDParsingFilePreview() {
 
   // @ts-ignore
   const file = useSelector(fileItemSelector)(fileIdNumber);
-
   const annotations = useSelector(selectAnnotations)(fileIdNumber);
   const { jobDone, jobError, jobStarted } = useSelector(
     (state: RootState) =>
       state.fileContextualization.uploadJobs[fileIdNumber] || {}
   );
+
   useEffect(() => {
     dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
   }, [dispatch, fileIdNumber]);

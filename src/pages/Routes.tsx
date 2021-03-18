@@ -1,11 +1,11 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import { PageTitle } from '@cognite/cdf-utilities';
-import SearchPage from 'containers/SearchPage';
+import SearchPage from 'pages/SearchPage';
+import ResultsOverview from 'pages/ResultsOverview';
+import FileOverview from 'pages/FileOverview';
+import Options from 'pages/Options';
 import GroupsRequired from 'components/GroupsRequired';
-import PnIDParsing from './PnIDParsing';
-import PnIDParsingFilePreview from './PnIDParsingFilePreview';
-import PnIDOptions from './PnIDOptions';
 
 const PDF_FILTER = {
   files: {
@@ -15,7 +15,7 @@ const PDF_FILTER = {
   },
 };
 
-function PnIDParsingRoutes() {
+export default function Routes() {
   const match = useRouteMatch<{ tenant: string; fileId?: string }>();
 
   return (
@@ -56,7 +56,7 @@ function PnIDParsingRoutes() {
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
-              <PnIDOptions />
+              <Options />
             </>
           )}
         />
@@ -66,7 +66,7 @@ function PnIDParsingRoutes() {
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
-              <PnIDParsing />
+              <ResultsOverview />
             </>
           )}
         />
@@ -75,8 +75,7 @@ function PnIDParsingRoutes() {
           path={`${match.path}/:filesDataKitId/:assetsDataKitId/:optionsId/pnid/:fileId`}
           render={() => (
             <>
-              <PageTitle title="P&ID Contextualization" />{' '}
-              <PnIDParsingFilePreview />
+              <PageTitle title="P&ID Contextualization" /> <FileOverview />
             </>
           )}
         />
@@ -84,5 +83,3 @@ function PnIDParsingRoutes() {
     </GroupsRequired>
   );
 }
-
-export default PnIDParsingRoutes;
