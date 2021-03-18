@@ -3,12 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Button, Icon } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  filesUploadState,
-  formState,
-  isValid,
-  suiteState,
-} from 'store/forms/selectors';
+import { filesUploadState, formState, suiteState } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
 import isEqual from 'lodash/isEqual';
 import isEmpty from 'lodash/isEmpty';
@@ -37,7 +32,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const [step, setStep] = useState<Step>('suite');
   const history = useHistory();
   const suite = useSelector(suiteState);
-  const hasErrors = !useSelector(isValid) || isEmpty(suite.title);
+  const hasErrors = isEmpty(suite.title);
   const { clearForm } = useFormState();
   const { saving: formSaving } = useSelector(formState);
   const { deleteQueue } = useSelector(filesUploadState);
@@ -63,7 +58,6 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
 
   const handleSubmit = async () => {
     if (hasErrors) return;
-
     await dispatch(
       saveForm(
         client,
@@ -94,11 +88,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
       </Button>
       <div>
         {isEqual(step, 'suite') && (
-          <Button
-            type="primary"
-            onClick={nextStep}
-            disabled={hasErrors || formSaving}
-          >
+          <Button type="primary" onClick={nextStep} disabled={hasErrors}>
             {modalSettings.buttons[step].goToBoards}
           </Button>
         )}

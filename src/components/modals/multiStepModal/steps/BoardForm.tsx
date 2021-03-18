@@ -192,7 +192,10 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
             setErrors={setErrors}
           />
           <GroupsSelector />
-          <ActionButtons filesUploadQueue={filesUploadQueue} onCancel={clear} />
+          <ActionButtons
+            filesUploadQueue={filesUploadQueue}
+            clearValidation={clear}
+          />
         </FormContainer>
         <BoardsContainer>
           <div>
