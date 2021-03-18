@@ -33,7 +33,7 @@
     "dayjs": "^1.10.4",
     "firebase": "^8.2.10",
     "lodash": "^4.17.21",
-    "mixpanel-browser": "^2.40.0",
+    "mixpanel-browser": "^2.41.0",
     "nanoid": "^3.1.22",
     "plotly.js-basic-dist": "^1.58.4",
     "react": "^17.0.1",
