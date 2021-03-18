@@ -80,7 +80,7 @@ const sdk = new CogniteClient({
 
 export default function RootApp() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient} contextSharing>
       <SDKProvider sdk={sdk}>
         <DataExplorationProvider sdk={sdk}>
           <App />

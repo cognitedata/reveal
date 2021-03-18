@@ -22,8 +22,9 @@
   "dependencies": {
     "@cognite/cogs.js": "^2.18.2",
     "@cognite/connect": "^0.0.5",
-    "@cognite/data-exploration": "^0.5.1",
+    "@cognite/data-exploration": "^0.5.7",
     "@cognite/metrics": "^0.1.2",
+    "@cognite/react-picture-annotation": "^1.12.0",
     "@cognite/sdk": "^3.4.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/z-index": "^0.1.0",
@@ -40,7 +41,7 @@
     "react-dom": "^17.0.1",
 
     "react-plotly.js": "^2.5.1",
-    "react-query": "^3.7.1",
+    "react-query": "^3.12.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-split-pane": "^0.1.92",
