@@ -14,8 +14,14 @@ type Props = {
   chartId: string;
   id: string;
   closeMenu?: () => void;
+  startRenaming?: () => void;
 };
-export default function TimeSeriesMenu({ id, chartId, closeMenu }: Props) {
+export default function TimeSeriesMenu({
+  id,
+  chartId,
+  closeMenu,
+  startRenaming,
+}: Props) {
   const { data: login } = useLoginStatus();
   const { data: chart } = useChart(chartId);
   const { mutate } = useUpdateChart();
@@ -40,13 +46,8 @@ export default function TimeSeriesMenu({ id, chartId, closeMenu }: Props) {
       <ToolsMenu update={update} />
       <Menu.Item
         onClick={() => {
-          // eslint-disable-next-line no-alert
-          const newName = prompt('Rename timeseries', ts.name);
-          if (newName) {
-            update({
-              name: newName,
-            });
-          }
+          if (startRenaming) startRenaming();
+          if (closeMenu) closeMenu();
         }}
         appendIcon="Edit"
       >

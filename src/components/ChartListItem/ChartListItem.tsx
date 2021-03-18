@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Link, useHistory } from 'react-router-dom';
 import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
+import EditableText from 'components/EditableText';
 
 import thumb from 'assets/thumb.png';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
@@ -23,11 +24,12 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const { data: login } = useLoginStatus();
   const { mutateAsync: updateChart, isError: renameError } = useUpdateChart();
   const { mutate: deleteChart, isError: deleteError } = useDeleteChart();
+  const [isEditingName, setIsEditingName] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  const handleRenameChart = () => {
-    // eslint-disable-next-line no-alert
-    const name = prompt('Rename chart', chart.name) || chart.name;
+  const handleRenameChart = (name: string) => {
     updateChart({ chart: { ...chart, name } });
+    setIsEditingName(false);
   };
 
   useEffect(() => {
@@ -66,16 +68,25 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     />
   );
 
+  const closeMenu = () => setIsMenuOpen(false);
+
+  const isChartMine = login?.user === chart.user;
+
   const dropdownMenu = (
     <Dropdown
+      visible={isMenuOpen}
+      onClickOutside={closeMenu}
       content={
-        <Menu>
+        <Menu onClick={closeMenu}>
           <Menu.Header>
             <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
           </Menu.Header>
-          {login?.user === chart.user && (
+          {isChartMine && (
             <>
-              <Menu.Item onClick={() => handleRenameChart()} appendIcon="Edit">
+              <Menu.Item
+                onClick={() => setIsEditingName(true)}
+                appendIcon="Edit"
+              >
                 <span>Rename</span>
               </Menu.Item>
               <Menu.Item
@@ -95,7 +106,11 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
         </Menu>
       }
     >
-      <Button variant="ghost" icon="VerticalEllipsis" />
+      <Button
+        variant="ghost"
+        icon="VerticalEllipsis"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      />
     </Dropdown>
   );
 
@@ -104,7 +119,15 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
       <ListViewWrapper>
         <ListViewLink to={`/${chart.id}`}>
           <ListViewImage>{mockPreview}</ListViewImage>
-          <ListViewName>{chart.name}</ListViewName>
+          <ListViewName>
+            <EditableText
+              value={chart.name}
+              onChange={handleRenameChart}
+              editing={isEditingName}
+              onCancel={() => setIsEditingName(false)}
+              hideEdit={!isChartMine}
+            />
+          </ListViewName>
           <ListViewOwner>{formatOwner(chart.user)}</ListViewOwner>
         </ListViewLink>
         <div>{dropdownMenu}</div>
@@ -120,7 +143,16 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
       <GridViewFooter>
         <GridViewLink to={`/${chart.id}`}>
           <GridViewOwner>{formatOwner(chart.user)}</GridViewOwner>
-          <GridViewName>{chart.name}</GridViewName>
+          <GridViewName>
+            <EditableText
+              value={chart.name}
+              onChange={handleRenameChart}
+              editing={isEditingName}
+              onCancel={() => setIsEditingName(false)}
+              hideButtons
+              hideEdit
+            />
+          </GridViewName>
         </GridViewLink>
         <div>{dropdownMenu}</div>
       </GridViewFooter>
@@ -179,7 +211,7 @@ const GridViewWrapper = styled.div`
 
 const GridViewFooter = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 16px;
 `;
 

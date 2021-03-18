@@ -7,6 +7,7 @@ import {
 import { Dropdown, Icon } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow } from 'utils/charts';
+import EditableText from 'components/EditableText';
 import { Modes } from 'pages/types';
 import {
   SourceItem,
@@ -51,6 +52,8 @@ export default function WorkflowRow({
   isDataQualityMode = false,
   mutate,
 }: Props) {
+  const [isEditingName, setIsEditingName] = useState<boolean>(false);
+
   // Increasing this will cause a fresh render where the dropdown is closed
   const [idHack, setIdHack] = useState(0);
   const { id, enabled, color, name, calls } = workflow;
@@ -84,7 +87,16 @@ export default function WorkflowRow({
             </div>
           )}
           <SourceName onClick={() => setWorkspaceMode('editor')}>
-            {name || 'noname'}
+            <EditableText
+              value={name || 'noname'}
+              onChange={(value) => {
+                update(id, { name: value });
+                setIsEditingName(false);
+              }}
+              onCancel={() => setIsEditingName(false)}
+              editing={isEditingName}
+              hideButtons
+            />
           </SourceName>
           <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
             <Dropdown
@@ -93,6 +105,7 @@ export default function WorkflowRow({
                   chartId={chart.id}
                   id={id}
                   closeMenu={() => setIdHack(idHack + 1)}
+                  startRenaming={() => setIsEditingName(true)}
                 />
               }
             >

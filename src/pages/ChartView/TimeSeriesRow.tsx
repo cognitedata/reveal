@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { units } from 'utils/units';
+import EditableText from 'components/EditableText';
 import {
   SourceItem,
   SourceCircle,
@@ -46,6 +47,9 @@ export default function TimeSeriesRow({
     tsId,
     tsExternalId,
   } = timeseries;
+
+  const [isEditingName, setIsEditingName] = useState<boolean>(false);
+
   // Increasing this will cause a fresh render where the dropdown is closed
   const [idHack, setIdHack] = useState(0);
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -116,7 +120,18 @@ export default function TimeSeriesRow({
             color={color}
             fade={!enabled}
           />
-          <SourceName title={name}>{name || 'noname'}</SourceName>
+          <SourceName title={name}>
+            <EditableText
+              value={name || 'noname'}
+              onChange={(value) => {
+                update(id, { name: value });
+                setIsEditingName(false);
+              }}
+              onCancel={() => setIsEditingName(false)}
+              editing={isEditingName}
+              hideButtons
+            />
+          </SourceName>
           <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
             <Dropdown
               content={
@@ -124,6 +139,7 @@ export default function TimeSeriesRow({
                   chartId={chart.id}
                   id={id}
                   closeMenu={() => setIdHack(idHack + 1)}
+                  startRenaming={() => setIsEditingName(true)}
                 />
               }
             >

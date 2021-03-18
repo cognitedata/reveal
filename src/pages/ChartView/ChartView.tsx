@@ -11,6 +11,7 @@ import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
 import { Toolbar } from 'components/Toolbar';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
+import EditableText from 'components/EditableText';
 import { charts, useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
@@ -37,7 +38,6 @@ import {
   SourceName,
   SourceTableWrapper,
   SourceTable,
-  ChartTitle,
 } from './elements';
 
 type ChartViewProps = {
@@ -52,7 +52,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { data: chart, isError, isFetched } = useChart(chartId);
   const {
     mutateAsync,
-    isLoading: isUpdating,
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
@@ -241,26 +240,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       <ContentWrapper showSearch={showSearch}>
         <Header>
           <hgroup>
-            <ChartTitle
-              onClick={() => {
-                if (chart) {
-                  // eslint-disable-next-line no-alert
-                  const name = prompt('Rename chart', chart.name) || chart.name;
-                  updateChart({ ...chart, name });
-                }
-              }}
-            >
-              {chart?.name}{' '}
-              {isUpdating && (
-                <Icon
-                  style={{ color: 'var(--cogs-greyscale-grey5)' }}
-                  type="Loading"
-                />
-              )}
-              <span>
-                <Icon type="Edit" />
-              </span>
-            </ChartTitle>
+            <h1>
+              <EditableText
+                value={chart.name}
+                onChange={(value) => {
+                  if (chart) {
+                    updateChart({ ...chart, name: value });
+                  }
+                }}
+              />
+            </h1>
             <h4>by {chart?.user}</h4>
           </hgroup>
           <section className="daterange">
