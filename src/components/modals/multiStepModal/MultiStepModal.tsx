@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { filesUploadState, formState, suiteState } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
 import isEqual from 'lodash/isEqual';
-import isEmpty from 'lodash/isEmpty';
 import { ModalFooter } from 'components/modals/elements';
 import { modalClose } from 'store/modals/actions';
 import { ApiClientContext } from 'providers/ApiClientProvider';
@@ -32,13 +31,13 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const [step, setStep] = useState<Step>('suite');
   const history = useHistory();
   const suite = useSelector(suiteState);
-  const hasErrors = isEmpty(suite.title);
   const { clearForm } = useFormState();
-  const { saving: formSaving } = useSelector(formState);
+  const { saving: formSaving, valid: isValid } = useSelector(formState);
   const { deleteQueue } = useSelector(filesUploadState);
   const [filesUploadQueue] = useState(new Map());
   const { dataSetId } = useSelector(getConfigState);
   const metrics = useMetrics('EditSuite');
+  const hasErrors = !isValid;
 
   const trackMetrics = (name: string, props?: any) => {
     metrics.track(name, { ...props, component: 'MultiStepModal' });
