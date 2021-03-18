@@ -9,7 +9,7 @@ import {
   DoubleDatapoint,
 } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
-import { units } from 'utils/units';
+import { convertUnits, units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly, { ModeBarDefaultButtons } from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
@@ -39,9 +39,11 @@ const PlotlyChartComponent = ({
 }: ChartProps) => {
   const sdk = useSDK();
   const pointsPerSeries = 1000;
+
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
   );
+
   const queries = enabledTimeSeries?.map(({ tsId }) => ({
     items: [{ id: tsId }],
     start: new Date(chart.dateFrom),
@@ -67,6 +69,7 @@ const PlotlyChartComponent = ({
   const enabledWorkflows = chart.workflowCollection?.filter(
     (flow) => flow?.enabled
   );
+
   const calls = (enabledWorkflows || [])
     .map((wf) => wf.calls?.[0])
     .filter(Boolean) as Call[];
@@ -105,7 +108,11 @@ const PlotlyChartComponent = ({
         width: t.lineWeight,
         range: t.range,
         name: t.name,
-        datapoints: (queryResult[i]?.data || []) as DatapointAggregate[],
+        datapoints: convertUnits(
+          (queryResult[i]?.data || []) as DatapointAggregate[],
+          t.unit,
+          t.preferredUnit
+        ),
         dash: convertLineStyle(t.lineStyle),
         unit: units.find(
           (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()

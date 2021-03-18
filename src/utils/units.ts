@@ -24,11 +24,11 @@ const conversions: any = {
   },
 };
 
-export const convertUnits = async (
+export const convertUnits = (
   datapoints: (DoubleDatapoint | DatapointAggregate)[],
   inputUnit: string = '',
   outputUnit: string = ''
-): Promise<(DoubleDatapoint | DatapointAggregate)[]> => {
+): (DoubleDatapoint | DatapointAggregate)[] => {
   const convert: (val: number) => number =
     (conversions[inputUnit] || {})[outputUnit] || ((val) => val);
 
