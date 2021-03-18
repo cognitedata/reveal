@@ -22,9 +22,11 @@ export const fetchUserGroups = (apiClient: ApiClient) => async (
     });
     getMetrics().people({ isAdmin });
   } catch (e) {
-    dispatch(actions.loadGroupsError(e));
-    dispatch(setHttpError('Failed to fetch user groups', e));
-    Sentry.captureException(e);
+    if (e?.code !== 403) {
+      dispatch(actions.loadGroupsError(e));
+      dispatch(setHttpError('Failed to fetch user groups', e));
+      Sentry.captureException(e);
+    }
   }
 };
 
