@@ -147,7 +147,7 @@ const Home = () => {
                 <Tile
                   key={suite.key}
                   dataItem={suite}
-                  {...(canEdit && { menu: <SuiteMenu dataItem={suite} /> })}
+                  menu={<SuiteMenu dataItem={suite} />}
                   avatar
                   color={suite.color}
                 />
