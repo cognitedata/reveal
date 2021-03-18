@@ -107,22 +107,23 @@ export const useForm = (validations: Validator) => {
     }));
   };
 
-  const validateBoard = (board: Board) => {
-    const boardErrors = {} as Board;
+  const validateForm = (item: Board | Suite) => {
+    const formErrors = {};
     keys(validations).forEach((fieldName) => {
-      const value = board[fieldName as keyof Board] || '';
+      const value = item[fieldName as keyof (Board | Suite)] || '';
       set(
-        boardErrors,
+        formErrors,
         fieldName,
         validateFieldValue(fieldName, value as string)
       );
     });
-    setErrors(boardErrors);
+    setErrors(formErrors);
   };
 
   return {
     validateField,
-    validateBoard,
+    validateBoard: (board: Board) => validateForm(board),
+    validateSuite: (suite: Suite) => validateForm(suite),
     errors,
     setErrors,
     touched,

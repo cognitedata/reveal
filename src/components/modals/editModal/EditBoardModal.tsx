@@ -85,7 +85,7 @@ const EditBoardModal: React.FC<Props> = ({
       {formSaving ? (
         <Icon type="Loading" />
       ) : (
-        <Button type="primary" onClick={handleSubmit} disabled={hasErrors}>
+        <Button type="primary" onClick={handleSubmit}>
           {modalSettings.edit.buttons.save}
         </Button>
       )}

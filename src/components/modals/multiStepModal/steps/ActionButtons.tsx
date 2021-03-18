@@ -22,10 +22,13 @@ import { useMetrics } from 'utils/metrics';
 
 type Props = {
   filesUploadQueue: Map<string, File>;
-  onCancel: () => void;
+  clearValidation: () => void;
 };
 
-const ActionButtons: React.FC<Props> = ({ filesUploadQueue, onCancel }) => {
+const ActionButtons: React.FC<Props> = ({
+  filesUploadQueue,
+  clearValidation,
+}) => {
   const suite = useSelector(suiteState);
   const board = useSelector(boardState) as Board;
 
@@ -41,13 +44,14 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue, onCancel }) => {
     const newKey = key();
     replaceNewFileKey(filesUploadQueue, newKey); // if uploaded a file => give it a key
     dispatch(actions.addBoard(newKey));
+    dispatch(actions.clearBoardForm());
+    clearValidation();
     metrics.track('AddNewBoard', {
       boardKey: newKey,
       board: board?.title,
       useEmbedTag: !!board?.embedTag,
       useImagePreview: filesUploadQueue.has(newKey),
     });
-    dispatch(actions.clearBoardForm());
   };
 
   const updateExistingBoard = () => {
@@ -56,6 +60,7 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue, onCancel }) => {
       dispatch(actions.excludeFileFromBoard(board.imageFileId));
     }
     dispatch(actions.updateBoard());
+    clearValidation();
     metrics.track('UpdateBoard', {
       boardKey: board?.key,
       board: board?.title,
@@ -75,7 +80,7 @@ const ActionButtons: React.FC<Props> = ({ filesUploadQueue, onCancel }) => {
       dispatch(actions.excludeFileFromDeleteQueue(board.imageFileId));
     }
     dispatch(actions.clearBoardForm());
-    onCancel();
+    clearValidation();
     metrics.track('Cancel_BoardForm', { component: 'BoardForm' });
   };
   return (
