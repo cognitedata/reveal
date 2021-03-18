@@ -9,5 +9,6 @@ export type ConfigItems = Record<string, any>;
 
 export interface ConfigState extends ConfigItems {
   dataSetId?: number;
+  customerLogoFetched?: boolean;
 }
 export type ConfigRootAction = ActionType<typeof actions>;

@@ -21,6 +21,8 @@ import { CUSTOMER_LOGO_ID } from 'constants/cdf';
 import * as Sentry from '@sentry/browser';
 import { setHttpError } from 'store/notification/thunks';
 import { modalOpen } from 'store/modals/actions';
+import { getConfigState } from 'store/config/selectors';
+import { addConfigItems } from 'store/config/actions';
 import CustomerLogo from './CustomerLogo';
 import { CogniteLogo, GroupPreview, LogoWrapper } from './elements';
 
@@ -31,6 +33,7 @@ const AppHeader: React.FC = () => {
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const history = useHistory();
   const metrics = useMetrics('AppHeader');
+  const { customerLogoFetched } = useSelector(getConfigState);
 
   const { privacyPolicyUrl } = sidecar;
   const allGroupNames = useSelector(getUsersGroupNames);
@@ -38,7 +41,6 @@ const AppHeader: React.FC = () => {
   const client = useContext(CdfClientContext);
 
   const [customerLogoUrl, setCustomerLogoUrl] = useState('');
-  const [customerLogoFetched, setCustomerLogoFetched] = useState(false);
 
   const performLogout = async () => {
     metrics.track('Profile_Logout');
@@ -74,7 +76,7 @@ const AppHeader: React.FC = () => {
         setCustomerLogoUrl(downloadUrl);
       } catch (e) {
         setCustomerLogoUrl(defaultCustomerLogo);
-        if (e.status !== 400) {
+        if (e.status !== 400 && e.status !== 403) {
           Sentry.captureException(e);
           dispatch(setHttpError(`Failed to fetch a logo`, e));
         }
@@ -82,9 +84,9 @@ const AppHeader: React.FC = () => {
     };
     if (!customerLogoFetched) {
       fetchCustomerLogoUrl();
-      setCustomerLogoFetched(true);
+      dispatch(addConfigItems({ customerLogoFetched: true }));
     }
-  }, [customerLogoFetched, setCustomerLogoFetched, dispatch, client]);
+  }, [customerLogoFetched, dispatch, client]);
 
   const releaseVersion = `Version: ${getReleaseVersion()}`;
 

@@ -25,6 +25,7 @@ import {
 import { CUSTOMER_LOGO_ID } from 'constants/cdf';
 import { ExternalFileInfo } from '@cognite/sdk';
 import { getConfigState } from 'store/config/selectors';
+import { addConfigItems } from 'store/config/actions';
 
 const ModalWidth = 528;
 
@@ -85,16 +86,16 @@ const UploadLogoModal: React.FC = () => {
       externalId: CUSTOMER_LOGO_ID,
       dataSetId,
     };
-    metrics.track('Upload');
     try {
       await uploadFile(client, fileInfo, selectedFile);
-      document.location.reload();
+      dispatch(addConfigItems({ customerLogoFetched: false }));
+      metrics.track('Uploaded');
     } catch (e) {
       dispatch(setHttpError(`Failed to upload customer logo`, e));
       Sentry.captureException(e);
-      setIsSaving(false);
-      handleCloseModal();
     }
+    setIsSaving(false);
+    handleCloseModal();
   };
 
   const Footer = () => (
