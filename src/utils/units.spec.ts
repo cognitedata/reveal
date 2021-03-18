@@ -2,7 +2,7 @@ import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 import { convertUnits } from './units';
 
 describe('convertUnits', () => {
-  it('should convert units successfully (double data points)', async () => {
+  it('should convert units successfully (double data points)', () => {
     const datapoints: DoubleDatapoint[] = [
       {
         timestamp: new Date('2021-02-02T12:19:28.330Z'),
@@ -20,7 +20,7 @@ describe('convertUnits', () => {
     const inputUnit = 'psi';
     const outputUnit = 'bar';
 
-    const output = await convertUnits(datapoints, inputUnit, outputUnit);
+    const output = convertUnits(datapoints, inputUnit, outputUnit);
 
     expect(output).toEqual([
       {
@@ -38,7 +38,7 @@ describe('convertUnits', () => {
     ]);
   });
 
-  it('should convert units successfully (aggregate data points)', async () => {
+  it('should convert units successfully (aggregate data points)', () => {
     const datapoints: DatapointAggregate[] = [
       {
         timestamp: new Date('2021-02-02T12:19:28.330Z'),
@@ -56,7 +56,7 @@ describe('convertUnits', () => {
     const inputUnit = 'pa';
     const outputUnit = 'bar';
 
-    const output = await convertUnits(datapoints, inputUnit, outputUnit);
+    const output = convertUnits(datapoints, inputUnit, outputUnit);
 
     expect(output).toEqual([
       {
