@@ -31,7 +31,8 @@ export interface AnnotationsStore {
   byAssetId: LinkedFilesByIdStore;
 }
 
-// [todo]
+// eslint-disable-next-line
+// TODO
 
 // interface ListFileLinkedToAssetAction
 //   extends Action<typeof LIST_FILES_LINKED_TO_ASSET> {

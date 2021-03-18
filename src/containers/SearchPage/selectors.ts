@@ -1,11 +1,10 @@
 import { ResourceType, Filter } from 'modules/sdk-builder/types';
-
+import { createSelector } from 'reselect';
 import {
   getCountsSelector,
   getItemListSelector,
   getItemsSearchSelector,
 } from 'modules/selection';
-import { createSelector } from 'reselect';
 
 export const searchCountSelector = (type: ResourceType, filter: Filter) =>
   createSelector(

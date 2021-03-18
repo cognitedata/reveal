@@ -5,6 +5,7 @@ import SearchPage from 'pages/SearchPage';
 import ResultsOverview from 'pages/ResultsOverview';
 import FileOverview from 'pages/FileOverview';
 import Options from 'pages/Options';
+import LandingPage from 'pages/LandingPage';
 import GroupsRequired from 'components/GroupsRequired';
 
 const PDF_FILTER = {
@@ -23,7 +24,17 @@ export default function Routes() {
       <Switch>
         <Route
           exact
-          path={`${match.path}/`}
+          path={`${match.path}`}
+          render={() => (
+            <>
+              <PageTitle title="P&ID Contextualization" />
+              <LandingPage />
+            </>
+          )}
+        />
+        <Route
+          exact
+          path={`${match.path}/files`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -38,7 +49,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/:filesDataKitId`}
+          path={`${match.path}/files/:filesDataKitId/assets`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -52,7 +63,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/:filesDataKitId/:assetsDataKitId`}
+          path={`${match.path}/files/:filesDataKitId/assets/:assetsDataKitId`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -62,7 +73,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/:filesDataKitId/:assetsDataKitId/:optionsId`}
+          path={`${match.path}/files/:filesDataKitId/assets/:assetsDataKitId/:optionsId`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -72,7 +83,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/:filesDataKitId/:assetsDataKitId/:optionsId/pnid/:fileId`}
+          path={`${match.path}/files/:filesDataKitId/assets/:assetsDataKitId/:optionsId/pnid/:fileId`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" /> <FileOverview />

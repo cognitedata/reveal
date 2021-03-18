@@ -104,7 +104,8 @@ export const selectionSlice = createSlice({
     },
   },
 
-  // [todo]
+  // eslint-disable-next-line
+  // TODO
   // extraReducers: (builder) => {
   //   builder
   //     .addCase(loadResourceSelection.pending, (state, action) => {})

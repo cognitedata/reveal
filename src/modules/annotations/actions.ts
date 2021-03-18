@@ -223,10 +223,12 @@ export const linkFileWithAssetsFromAnnotations = {
     }
   ),
   rejected: () => {
-    // [todo]
+    // eslint-disable-next-line
+    // TODO
   },
   fulfilled: () => {
-    // [todo]
+    // eslint-disable-next-line
+    // TODO
   },
 };
 

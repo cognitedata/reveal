@@ -25,7 +25,9 @@ export const loadDataKits = (...dataKitIds: string[]) => {
       }
       return Promise.resolve();
     });
-    // @ts-ignore // TODO
+    // eslint-disable-next-line
+    // TODO
+    // @ts-ignore
     return Promise.all(dataKitIdsMap);
   };
 };

@@ -1,7 +1,11 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getAuthState } from 'sdk-singleton';
 
-export const PNID_METRICS = {};
+export const PNID_METRICS = {
+  contextualization: {
+    start: 'PNID.contextualization.start',
+  },
+};
 
 export type Props = { [key: string]: string | number | boolean | Props | null };
 

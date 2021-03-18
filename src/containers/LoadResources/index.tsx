@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Progress, Col, Row, Collapse } from 'antd';
 import { useSelector } from 'react-redux';
+import { Progress, Col, Row, Collapse } from 'antd';
 import { FileInfo } from '@cognite/sdk';
 import { selectParsingJobForFileId } from 'modules/contextualization/parsingJobs';
 import { dataKitItemsSelectorFactory } from 'modules/selection';
-
 import DataKitLoadingProgress from 'components/DataKitLoadingProgress';
 
 interface LoadResourcesProps {
