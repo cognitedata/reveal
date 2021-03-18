@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Link, useHistory } from 'react-router-dom';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
 
 import thumb from 'assets/thumb.png';
@@ -21,8 +21,8 @@ interface ChartListItemProps {
 const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const history = useHistory();
   const { data: login } = useLoginStatus();
-  const { mutateAsync: updateChart } = useUpdateChart();
-  const { mutate: deleteChart } = useDeleteChart();
+  const { mutateAsync: updateChart, isError: renameError } = useUpdateChart();
+  const { mutate: deleteChart, isError: deleteError } = useDeleteChart();
 
   const handleRenameChart = () => {
     // eslint-disable-next-line no-alert
@@ -30,9 +30,21 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     updateChart({ chart: { ...chart, name } });
   };
 
+  useEffect(() => {
+    if (renameError) {
+      toast.error('Unable to rename chart - Try again!');
+    }
+  }, [renameError]);
+
   const handleDeleteChart = () => {
     deleteChart(chart.id);
   };
+
+  useEffect(() => {
+    if (deleteError) {
+      toast.error('Unable to delete chart - Try again!');
+    }
+  }, [deleteError]);
 
   const handleDuplicateChart = () => {
     if (login?.user) {
