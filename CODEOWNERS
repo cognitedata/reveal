@@ -1,0 +1,5 @@
+# By default, @cognitedata/datastudio receives all PRs.
+#
+# Make sure that @cognitedata/datastudio is on all other specifications in
+# this file.
+* @cognitedata/datastudio 

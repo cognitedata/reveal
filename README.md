@@ -1,24 +1,49 @@
-# Unified CDF UI Demo App
+# Context UI P&ID
 
-This repository shows how to bootstrap a [React]-based application at Cognite.
-It demonstrates best practices, such as:
+```js
+yarn
+yarn start
+```
 
-- Lint setup to use
-- Jenkinsfile steps
-- TypeScript usage
-- Folder / component layout
-- Test / utils already setup to work
-- ...
+Deployments are done via merging to `master`
 
-## Deploying the app
+## Testing
 
-Please see the [deployment guide] for more information how to actually get this app into production.
-(It should be pretty easy!)
+```js
+yarn test
+```
 
-## Template repo
+For non-interactive single run:
 
-This repo is configured as a template, so it's easy to get started.
-Simply go to the [create repo page] and select "cognitedata/unified-cdf-ui-demo-app" as a template.
+```js
+yarn test:once:unittests
+```
+
+## Running local copy online
+
+- clone the Context UI P&ID repository - `git clone https://github.com/cognitedata/datastudio.git`
+- `yarn` -> `yarn start`
+- navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
+- open Console
+- in the Console, use `importMapOverrides.enableUI()` command
+- click on the `{...}` icon that appeared in the bottom right corner
+- find `@cognite/cdf-context-ui-pnid` module name and click on the row including it
+- in the override URL, paste `https://localhost:3017/index.js` (port might differ depending on your local settings)
+- click `Apply override`
+- your local code is now available under the `dev.fusion.cogniteapp.com` address
+
+## Running local copy offline
+
+- clone [CDF-hub](https://github.com/cognitedata/cdf-hub) - `git clone https://github.com/cognitedata/cdf-hub.git`
+- `yarn` -> `yarn bootstrap` -> `yarn start`
+- clone the Context UI P&ID repository - `git clone https://github.com/cognitedata/context-ui-pnid.git`
+- `yarn` -> `yarn start
+
+## Running the preview
+
+```
+cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-context-ui-pnid -o index.js -d ./build
+```
 
 ## Help
 
@@ -36,9 +61,3 @@ If you have any questions related to fusion development, please join us in [#uni
 [#frontend slack channel](https://cognitedata.slack.com/archives/C6KNJCEEA)
 
 [Create repo page](https://github.com/organizations/cognitedata/repositories/new)
-
-## Run the preview
-
-```
-cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-context-ui-pnid -o index.js -d ./build
-```
