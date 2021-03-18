@@ -6,6 +6,7 @@ import AddBoard from 'components/modals/addBoardModal/AddBoardModal';
 import EditSuite from 'components/modals/editModal/EditSuiteModal';
 import EditBoard from 'components/modals/editModal/EditBoardModal';
 import ShareLink from 'components/modals/shareLinkModal/ShareLinkModal';
+import UploadLogo from 'components/modals/uploadLogoModal/UploadLogoModal';
 import { useSelector } from 'react-redux';
 import { getModalState } from 'store/modals/selectors';
 
@@ -17,6 +18,7 @@ const modalComponentLookupTable = {
   EditSuite,
   EditBoard,
   ShareLink,
+  UploadLogo,
 };
 
 const ModalManager: React.FC = () => {

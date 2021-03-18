@@ -1,11 +1,5 @@
-import { GCSUploader, getExternalFileInfo } from 'utils/files';
-import {
-  CogniteExternalId,
-  CogniteInternalId,
-  ExternalFileInfo,
-  FileInfo,
-  FileUploadResponse,
-} from '@cognite/sdk';
+import { getExternalFileInfo, uploadFile } from 'utils/files';
+import { CogniteExternalId, CogniteInternalId, FileInfo } from '@cognite/sdk';
 import { RootDispatcher } from 'store/types';
 import { ApiClient, CdfClient } from 'utils';
 
@@ -85,22 +79,6 @@ function uploadFiles(
     }
     dispatch(actions.filesUploaded());
   };
-}
-
-async function uploadFile(
-  client: CdfClient,
-  fileInfo: ExternalFileInfo,
-  fileToUpload: File
-) {
-  const fileMetadata = (await client.uploadFile(
-    fileInfo
-  )) as FileUploadResponse;
-  const { uploadUrl } = fileMetadata;
-  if (!uploadUrl) {
-    throw new Error('Unable to create file. Failed to get Upload URL.');
-  }
-  const currentUpload = await GCSUploader(fileToUpload, uploadUrl);
-  return currentUpload.start();
 }
 
 export function deleteFiles(

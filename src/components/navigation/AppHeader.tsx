@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Avatar, Icon, TopBar, Menu, Tooltip } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -7,8 +7,7 @@ import {
   isAdmin,
 } from 'store/groups/selectors';
 import { getUserId } from 'store/auth/selectors';
-import isEqual from 'lodash/isEqual';
-import customerLogo from 'images/dt_logo.png';
+import defaultCustomerLogo from 'images/default_logo.png';
 import cogniteLogo from 'images/cognite_logo.png';
 import { CustomLink, CustomMenuItem } from 'styles/common';
 import { CdfClientContext } from 'providers/CdfClientProvider';
@@ -18,6 +17,13 @@ import { getReleaseVersion } from 'utils/release';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
 import { useMetrics } from 'utils/metrics';
+import { CUSTOMER_LOGO_ID } from 'constants/cdf';
+import * as Sentry from '@sentry/browser';
+import { setHttpError } from 'store/notification/thunks';
+import { modalOpen } from 'store/modals/actions';
+import { getConfigState } from 'store/config/selectors';
+import { addConfigItems } from 'store/config/actions';
+import CustomerLogo from './CustomerLogo';
 import { CogniteLogo, GroupPreview, LogoWrapper } from './elements';
 
 const AppHeader: React.FC = () => {
@@ -27,11 +33,14 @@ const AppHeader: React.FC = () => {
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const history = useHistory();
   const metrics = useMetrics('AppHeader');
+  const { customerLogoFetched } = useSelector(getConfigState);
 
   const { privacyPolicyUrl } = sidecar;
   const allGroupNames = useSelector(getUsersGroupNames);
 
   const client = useContext(CdfClientContext);
+
+  const [customerLogoUrl, setCustomerLogoUrl] = useState('');
 
   const performLogout = async () => {
     metrics.track('Profile_Logout');
@@ -58,13 +67,62 @@ const AppHeader: React.FC = () => {
     history.push('/');
   };
 
+  useEffect(() => {
+    const fetchCustomerLogoUrl = async () => {
+      try {
+        const { downloadUrl } = (
+          await client.getDownloadUrls([CUSTOMER_LOGO_ID])
+        )[0];
+        setCustomerLogoUrl(downloadUrl);
+      } catch (e) {
+        setCustomerLogoUrl(defaultCustomerLogo);
+        if (e.status !== 400 && e.status !== 403) {
+          Sentry.captureException(e);
+          dispatch(setHttpError(`Failed to fetch a logo`, e));
+        }
+      }
+    };
+    if (!customerLogoFetched) {
+      fetchCustomerLogoUrl();
+      dispatch(addConfigItems({ customerLogoFetched: true }));
+    }
+  }, [customerLogoFetched, dispatch, client]);
+
   const releaseVersion = `Version: ${getReleaseVersion()}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(releaseVersion);
   };
 
+  const openUploadLogoModal = () => {
+    dispatch(modalOpen({ modalType: 'UploadLogo' }));
+  };
+
+  if (!customerLogoFetched) {
+    return null;
+  }
+
   const actions = [
+    {
+      key: 'settings',
+      component: (
+        <Tooltip content="Settings">
+          <Icon
+            type="Settings"
+            data-testid="select-settings-menu"
+            onClick={() => metrics.track('Settings_Click')}
+          />
+        </Tooltip>
+      ),
+      menu: (
+        <Menu>
+          <Menu.Header>System admin</Menu.Header>
+          <Menu.Item appendIcon="Upload" onClick={() => openUploadLogoModal()}>
+            Upload customer logo
+          </Menu.Item>
+        </Menu>
+      ),
+    },
     {
       key: 'view',
       component: (
@@ -181,8 +239,10 @@ const AppHeader: React.FC = () => {
     },
   ];
 
+  const adminActions = ['view', 'settings'];
+
   const filteredActions = !admin
-    ? actions.filter((action) => !isEqual(action.key, 'view'))
+    ? actions.filter((action) => !adminActions.includes(action.key))
     : actions;
 
   return (
@@ -213,7 +273,7 @@ const AppHeader: React.FC = () => {
           <LogoWrapper>
             <TopBar.Logo
               onLogoClick={goHome}
-              logo={<img src={customerLogo} alt="Digital Twin" />}
+              logo={<CustomerLogo imgUrl={customerLogoUrl} />}
             />
           </LogoWrapper>
         </TopBar.Left>

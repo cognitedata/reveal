@@ -1,8 +1,14 @@
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { CogniteInternalId, ExternalFileInfo } from '@cognite/sdk';
+import {
+  CogniteInternalId,
+  ExternalFileInfo,
+  FileUploadResponse,
+} from '@cognite/sdk';
+import { CdfClient } from './cdfClient';
 
-export const validImgTypes = ['image/jpeg', 'image/png'];
+export const validImgTypes = ['image/jpeg', 'image/png', 'image/svg+xml'];
 export const maximumFileSize = 1 * 1024 * 1024; // maximum 1Mb
+export const maximumLogoSize = 0.1 * 1024 * 1024; // maximum 100Kb
 
 export const newFileKey = '_new';
 
@@ -10,8 +16,11 @@ export function validateFileType(file: File): boolean {
   return validImgTypes.includes(file?.type);
 }
 
-export function validateFileSize(file: File): boolean {
-  return file?.size <= maximumFileSize;
+export function validateFileSize(
+  file: File,
+  maxSize = maximumFileSize
+): boolean {
+  return file?.size <= maxSize;
 }
 
 export function GCSUploader(file: Blob | File, uploadUrl: string) {
@@ -23,6 +32,22 @@ export function GCSUploader(file: Blob | File, uploadUrl: string) {
     url: uploadUrl,
     file,
   });
+}
+
+export async function uploadFile(
+  client: CdfClient,
+  fileInfo: ExternalFileInfo,
+  fileToUpload: File
+) {
+  const fileMetadata = (await client.uploadFile(
+    fileInfo
+  )) as FileUploadResponse;
+  const { uploadUrl } = fileMetadata;
+  if (!uploadUrl) {
+    throw new Error('Unable to create file. Failed to get Upload URL.');
+  }
+  const currentUpload = await GCSUploader(fileToUpload, uploadUrl);
+  return currentUpload.start();
 }
 
 export function getExternalFileInfo(
