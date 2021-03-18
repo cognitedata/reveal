@@ -25,7 +25,15 @@ import {
 
 type ChartProps = {
   chart: Chart;
-  onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
+  onAxisChange?: ({
+    x,
+    y,
+    dragmode,
+  }: {
+    x: number[];
+    y: AxisUpdate[];
+    dragmode?: string;
+  }) => void;
   showYAxis?: boolean;
 };
 
@@ -162,6 +170,7 @@ const PlotlyChartComponent = ({
       onAxisChange({
         x: getXaxisUpdateFromEventData(eventdata),
         y: getYaxisUpdatesFromEventData(seriesData, eventdata),
+        dragmode: eventdata.dragmode,
       });
     }
   };
@@ -179,7 +188,7 @@ const PlotlyChartComponent = ({
       range: [chart.dateFrom, chart.dateTo],
     },
     showlegend: false,
-    dragmode: 'pan',
+    dragmode: chart.dragmode || 'pan',
     annotations: [],
   };
 
