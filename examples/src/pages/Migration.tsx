@@ -112,6 +112,9 @@ export function Migration() {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
+          stats: {
+            drawCalls: 0
+          },
           loadedSectors: {
             options: {
               showSimpleSectors: true,
@@ -181,6 +184,15 @@ export function Migration() {
         });
 
       const debugGui = gui.addFolder('Debug');
+
+      const debugStatsGui = debugGui.addFolder('Statistics');
+      const asd = debugStatsGui.add(guiState.debug.stats, 'drawCalls').name('Draw Calls');
+      
+      viewer.on('sceneRendered', b => {
+        guiState.debug.stats.drawCalls = b.renderer.info.render.calls;
+        asd.updateDisplay();
+      });
+      
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth']).name('Color by');

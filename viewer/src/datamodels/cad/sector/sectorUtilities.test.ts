@@ -10,6 +10,7 @@ import { createMaterials } from '../rendering/materials';
 import { RenderMode } from '../rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
+import * as THREE from 'three';
 
 import 'jest-extended';
 
@@ -103,10 +104,7 @@ describe('sectorUtilities', () => {
         buffer: new Float32Array(0)
       };
 
-      const bounds = new Box3([
-        [0, 0, 0],
-        [1, 1, 1]
-      ]);
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
       const group = consumeSectorSimple(sector, bounds, materials);
@@ -133,10 +131,7 @@ describe('sectorUtilities', () => {
         ])
       };
 
-      const bounds = new Box3([
-        [0, 0, 0],
-        [1, 1, 1]
-      ]);
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
       const group = consumeSectorSimple(sector, bounds, materials);
@@ -172,10 +167,7 @@ describe('sectorUtilities', () => {
         ])
       };
 
-      const bounds = new Box3([
-        [0, 0, 0],
-        [1, 1, 1]
-      ]);
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
       const group = consumeSectorSimple(sector, bounds, materials);
@@ -204,10 +196,7 @@ describe('sectorUtilities', () => {
         ])
       };
 
-      const bounds = new Box3([
-        [0, 0, 0],
-        [1, 1, 1]
-      ]);
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
       expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
@@ -225,10 +214,7 @@ describe('sectorUtilities', () => {
         ])
       };
 
-      const bounds = new Box3([
-        [0, 0, 0],
-        [1, 1, 1]
-      ]);
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
       expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
