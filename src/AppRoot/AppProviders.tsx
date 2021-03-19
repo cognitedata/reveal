@@ -23,7 +23,11 @@ const AppProviders: React.FC<Props> = ({
 }: Props): JSX.Element => {
   const { client } = useContext(AuthProvider);
   const cdfClient = createClient(
-    { appId: 'digital-cockpit', dbName: '' },
+    {
+      appId: 'digital-cockpit',
+      dbName: 'digital-cockpit',
+      dataSetName: 'digital-cockpit',
+    },
     client
   );
   const apiClient = createApiClient(undefined, client);

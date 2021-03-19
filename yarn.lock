@@ -1196,7 +1196,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@^0.8.2":
+"@cognite/auth-utils@^0.8.0", "@cognite/auth-utils@^0.8.2":
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.8.2.tgz#e6bb08cd950c8623b5d9306684616036c1633bc2"
   integrity sha512-0PjfhmDrbas8mo80woE9h4PacAypECQB3c1bVFq/2OVdI/a4Qu4nlGlPGiBgzRWo3Qry57tz6quYgwF/SVfz2w==
@@ -1308,7 +1308,7 @@
     mixpanel-browser "^2.35.0"
     react "^16.13.1"
 
-"@cognite/metrics@^1.0.0", "@cognite/metrics@^1.1.0":
+"@cognite/metrics@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.1.0.tgz#7c4ecca2d7d083f7f3964797da47e9570c03b7d3"
   integrity sha512-XXdvTkkuTGkMytXQ/RWQQ0BtV4ZaVzy0RrvtlsSQ+MlpVHkL3FXkyU68STY4RWQv11+NjSDUKNOhGNwQihRM1A==
@@ -1316,17 +1316,15 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-container@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-0.11.0.tgz#231fb88dea39a8183d183dc3205c8cf5959955d6"
-  integrity sha512-Vl6wHNZmc84N3jrUoVWws8aThxqppkP6wPOpwH23flmsiafmXdin5nnaX8RWH4C/WIcoUKlw6Njns7YytoSrjA==
+"@cognite/react-container@^0.9.1":
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-0.9.3.tgz#50a036a01f54c5e7b700afb551837451c2dbb8ac"
+  integrity sha512-yw5tB8TA11rANmi8l/pa9AOgIMuDuPayfV4TKyUz5BZOF35dBmtNunST0lxGxGj6RaY7bpHiSOu5T4CUJGrHHg==
   dependencies:
-    "@cognite/auth-utils" "^0.8.2"
-    "@cognite/metrics" "^1.1.0"
+    "@cognite/auth-utils" "^0.8.0"
     "@cognite/react-errors" "^0.0.4"
     "@cognite/react-i18n" "^0.3.0"
     "@cognite/react-loop-detector" "^0.0.1"
-    "@cognite/react-sentry" "^0.1.0"
     "@cognite/react-tenant-selector" "^0.6.4"
     jwt-decode "^3.0.0"
     react-redux "^7.2.2"
@@ -1356,13 +1354,6 @@
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/react-loop-detector/-/react-loop-detector-0.0.1.tgz#e5bbdf26147e62ce8594f63adde09e33be63e1e5"
   integrity sha512-AZS8ErUc+LIYdTvBNmcFAjvCkXbI0FVgvqbMf3GdILLhiSI6psUpxlKceWgesfuHY8SqoyAwJu9ojWwu7GIp/w==
-
-"@cognite/react-sentry@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-sentry/-/react-sentry-0.1.0.tgz#8d94105f41da23eb9e117f81043737e25a8be746"
-  integrity sha512-e4yg5rqh0tngoT6xGCVOH6pv1zVkb6J98kQDnJ0dQ1krXT28KnZE6hn1GDf6hv13AH3lEsMiSaJG1jOGri7z4g==
-  dependencies:
-    "@sentry/browser" "^6.2.1"
 
 "@cognite/react-tenant-selector@^0.6.4":
   version "0.6.6"
@@ -1852,7 +1843,7 @@
     tslib "^2.0.0"
     warning "^4.0.3"
 
-"@sentry/browser@^6.2.1", "@sentry/browser@^6.2.2":
+"@sentry/browser@^6.2.2":
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-6.2.2.tgz#4df4ad7026b269d85b63b79a75387ce5370bc705"
   integrity sha512-K5UGyEePtVPZIFMoiRafhd4Ov0M1kdozVsVKIPZrOpJyjQdPNX+fYDNL/h0nVmgOlE2S/uu4fl4mEfe/6aLShw==
