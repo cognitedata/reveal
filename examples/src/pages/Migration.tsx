@@ -113,7 +113,11 @@ export function Migration() {
         ssaoQuality: urlParams.get('ssao'),
         debug: {
           stats: {
-            drawCalls: 0
+            drawCalls: 0,
+            points: 0,
+            triangles: 0,
+            geometries: 0,
+            textures: 0
           },
           loadedSectors: {
             options: {
@@ -186,11 +190,20 @@ export function Migration() {
       const debugGui = gui.addFolder('Debug');
 
       const debugStatsGui = debugGui.addFolder('Statistics');
-      const asd = debugStatsGui.add(guiState.debug.stats, 'drawCalls').name('Draw Calls');
+      debugStatsGui.add(guiState.debug.stats, 'drawCalls').name('Draw Calls');
+      debugStatsGui.add(guiState.debug.stats, 'points').name('Points');
+      debugStatsGui.add(guiState.debug.stats, 'triangles').name('Triangles');
+      debugStatsGui.add(guiState.debug.stats, 'geometries').name('Geometries');
+      debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       
-      viewer.on('sceneRendered', b => {
-        guiState.debug.stats.drawCalls = b.renderer.info.render.calls;
-        asd.updateDisplay();
+      viewer.on('sceneRendered', sceneRenderedEventArgs => {
+        guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
+        guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
+        guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
+        guiState.debug.stats.geometries = sceneRenderedEventArgs.renderer.info.memory.geometries;
+        guiState.debug.stats.textures = sceneRenderedEventArgs.renderer.info.memory.textures;
+
+        debugStatsGui.updateDisplay();
       });
       
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
