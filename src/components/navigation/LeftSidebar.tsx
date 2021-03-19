@@ -26,6 +26,11 @@ const LeftSidebar: React.FC = () => {
     localStorage.setItem('sideBarState', JSON.stringify(isOpen));
   }, [isOpen]);
 
+  if (!suites || suites.length === 0) {
+    // No suites? Lets remove this sidebar until we add some.
+    return null;
+  }
+
   const handleHideSidebar = () => {
     metrics.track(isOpen ? 'Hide' : 'Show');
     setOpen(() => !isOpen);
