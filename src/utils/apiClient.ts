@@ -1,4 +1,9 @@
-import { ClientOptions, Group, ListResponse } from '@cognite/sdk';
+import {
+  ClientOptions,
+  CogniteClient,
+  Group,
+  ListResponse,
+} from '@cognite/sdk';
 import { LastVisited, UserSpacePayload } from 'store/userSpace/types';
 import { SuiteRow } from 'store/suites/types';
 import sidecar from './sidecar';
@@ -12,58 +17,66 @@ type ApiClientOptions = ClientOptions & dcClientOptions;
 export class ApiClient {
   readonly appId: string;
   private readonly baseUrl: string;
-  private accessToken: string = '';
+  private client: CogniteClient | undefined;
 
-  constructor(options: ApiClientOptions) {
+  constructor(options: ApiClientOptions, client?: CogniteClient) {
     this.appId = options.appId;
     this.baseUrl = options.baseUrl;
-  }
-
-  keepToken(accessToken: string) {
-    this.accessToken = accessToken;
+    this.client = client;
   }
 
   getSuitesRows(): Promise<ListResponse<SuiteRow[]>> {
-    return this.makeRequest('/suites', 'GET');
+    return this.makeGETRequest('/suites');
   }
 
   getUserGroups(): Promise<Group[]> {
-    return this.makeRequest('/groups', 'GET');
+    return this.makeGETRequest('/groups');
   }
 
   getUserSpace(): Promise<UserSpacePayload> {
-    return this.makeRequest('/userSpace', 'GET');
+    return this.makeGETRequest('/userSpace');
   }
   updateLastVisited(lastVisited: LastVisited[]) {
-    return this.makeRequest('/lastVisited', 'POST', {
+    return this.makePOSTRequest('/lastVisited', {
       lastVisited,
     });
   }
 
   /**
-   * Helper method avoiding boiler plate.
+   * Helper POST function
    * @private
    */
-  private async makeRequest<T extends object>(
-    url: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-    body?: T
-  ) {
-    const response = await fetch(this.baseUrl + url, {
-      method,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.accessToken}`,
-        project: this.appId,
-      },
-      body: body ? JSON.stringify(body) : undefined,
+  private async makePOSTRequest<T extends object>(url: string, data?: T) {
+    if (!this.client) {
+      throw new Error('Unreachable code');
+    }
+    const response = await this.client.post(this.baseUrl + url, {
+      withCredentials: true,
+      data,
     });
 
-    return response.ok
-      ? Promise.resolve(await response.json())
+    return response.status === 200
+      ? Promise.resolve(await response.data)
       : // eslint-disable-next-line prefer-promise-reject-errors
-        Promise.reject((await response.json())?.error as Error);
+        Promise.reject((await response.data)?.error as Error);
+  }
+
+  /**
+   * Helper GET function
+   * @private
+   */
+  private async makeGETRequest<T extends object>(url: string) {
+    if (!this.client) {
+      throw new Error('Unreachable code');
+    }
+    const response = await this.client.get(this.baseUrl + url, {
+      withCredentials: true,
+    });
+
+    return response.status === 200
+      ? Promise.resolve(await response.data)
+      : // eslint-disable-next-line prefer-promise-reject-errors
+        Promise.reject((await response.data)?.error as Error);
   }
 }
 
@@ -72,8 +85,11 @@ const DEFAULT_CONFIG: ApiClientOptions = {
   baseUrl: sidecar.digitalCockpitApiBaseUrl,
 };
 
-export function createApiClient(options: ApiClientOptions = DEFAULT_CONFIG) {
-  return new ApiClient(options);
+export function createApiClient(
+  options: ApiClientOptions = DEFAULT_CONFIG,
+  client?: CogniteClient
+) {
+  return new ApiClient(options, client);
 }
 
 export const apiClient = createApiClient();
