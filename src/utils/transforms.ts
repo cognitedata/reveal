@@ -120,6 +120,15 @@ export function getInputFromNode(node: StorableNode, allNodes: StorableNode[]) {
   }
 }
 
+export function getOperationFromNode(node: StorableNode) {
+  switch (node.functionEffectReference) {
+    case 'TOOLBOX_FUNCTION':
+      return node.functionData.toolFunction.op;
+    default:
+      return 'PASSTHROUGH';
+  }
+}
+
 export function getStepsFromWorkflow(workflow: ChartWorkflow) {
   const outputNode = workflow.nodes?.find(
     (node) => !node.outputPins || node.outputPins.length === 0
@@ -129,7 +138,7 @@ export function getStepsFromWorkflow(workflow: ChartWorkflow) {
     return [];
   }
 
-  const validNodes: StorableNode[] = [];
+  const validNodes: StorableNode[] = [outputNode];
 
   /**
    * Resolve connected nodes from the output node (end) and backwards
@@ -168,7 +177,11 @@ export function getStepsFromWorkflow(workflow: ChartWorkflow) {
   resolveInputNodes(outputNode!);
 
   const steps = validNodes
-    .filter((node) => node.functionEffectReference === 'TOOLBOX_FUNCTION')
+    .filter((node) =>
+      ['TOOLBOX_FUNCTION', 'OUTPUT'].includes(
+        node.functionEffectReference || ''
+      )
+    )
     .map((node, i, allNodes) => {
       const inputs = node.inputPins
         .map((inputPin: any) => {
@@ -196,7 +209,7 @@ export function getStepsFromWorkflow(workflow: ChartWorkflow) {
 
       return {
         step: i,
-        op: node.functionData.toolFunction.op,
+        op: getOperationFromNode(node),
         inputs,
         ...(Object.keys(parameters).length ? { params: parameters } : {}),
       };

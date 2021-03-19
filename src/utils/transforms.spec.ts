@@ -524,6 +524,7 @@ describe('getStepsFromWorkflow', () => {
           subtitle: 'TIMESERIES',
           width: 162,
           outputPins: [],
+          functionEffectReference: 'OUTPUT',
           id: 'TIMESERIES-xalz43XcGFrlaP2-hngHN',
           title: 'Output',
         },
@@ -702,6 +703,100 @@ describe('getStepsFromWorkflow', () => {
           window_length: 10,
           polyorder: 2,
         },
+      },
+      {
+        step: 4,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 3,
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('generates correct steps (noop computation)', () => {
+    const workflow: Workflow = {
+      nodes: [
+        {
+          inputPins: [],
+          width: 304.46875,
+          y: -163.609375,
+          functionData: {
+            timeSeriesExternalId: 'VAL_RESERVOIR_PT_well01',
+          },
+          functionEffectReference: 'TIME_SERIES_REFERENCE',
+          subtitle: 'TIME SERIES',
+          outputPins: [
+            {
+              type: 'TIMESERIES',
+              id: 'result',
+              x: 486.46875,
+              title: 'Time Series',
+              y: -143.609375,
+            },
+          ],
+          icon: 'Function',
+          selected: false,
+          id: 'TIME SERIES-krihrlBzGmwCbf9pRuM-r',
+          color: '#FC2574',
+          title: 'VAL_RESERVOIR_PT_well01',
+          x: 182,
+        },
+        {
+          color: '#4A67FB',
+          selected: false,
+          y: 72.390625,
+          x: 1425,
+          icon: 'Icon',
+          inputPins: [
+            {
+              y: 134.390625,
+              types: ['TIMESERIES'],
+              title: 'Time Series',
+              id: 'datapoints',
+              x: 1425,
+            },
+          ],
+          subtitle: 'TIMESERIES',
+          width: 162,
+          outputPins: [],
+          functionEffectReference: 'OUTPUT',
+          id: 'TIMESERIES-xalz43XcGFrlaP2-hngHN',
+          title: 'Output',
+        },
+      ],
+      id: 'EkIfFAKj7_PkZGyzJqrSG',
+      connections: {
+        Vq1rcwlTRkmGQJr4ltkbQ: {
+          id: 'Vq1rcwlTRkmGQJr4ltkbQ',
+          outputPin: {
+            pinId: 'result',
+            nodeId: 'TIME SERIES-krihrlBzGmwCbf9pRuM-r',
+          },
+          inputPin: {
+            pinId: 'datapoints',
+            nodeId: 'TIMESERIES-xalz43XcGFrlaP2-hngHN',
+          },
+        },
+      },
+      name: 'New Calculation',
+    };
+
+    const steps = getStepsFromWorkflow(workflow);
+
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_RESERVOIR_PT_well01',
+          },
+        ],
       },
     ]);
   });
@@ -902,6 +997,7 @@ describe('getStepsFromWorkflow', () => {
           outputPins: [],
           color: '#4A67FB',
           y: 72.390625,
+          functionEffectReference: 'OUTPUT',
           title: 'Output',
           id: 'TIMESERIES-xalz43XcGFrlaP2-hngHN',
         },
@@ -1144,6 +1240,16 @@ describe('getStepsFromWorkflow', () => {
           window_length: 10,
           polyorder: 2,
         },
+      },
+      {
+        step: 4,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 3,
+          },
+        ],
       },
     ]);
   });
