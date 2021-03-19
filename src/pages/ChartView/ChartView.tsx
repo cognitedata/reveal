@@ -159,11 +159,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const handleChangeSourceAxis = debounce(
     ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
       if (chart) {
-        const newChart = { ...chart };
+        const newChart = {
+          ...chart,
+        };
+
         if (x.length === 2) {
           newChart.dateFrom = `${x[0]}`;
           newChart.dateTo = `${x[1]}`;
         }
+
         if (y.length > 0) {
           y.forEach((update) => {
             newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
@@ -175,6 +179,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             );
           });
         }
+
         updateChart(newChart);
       }
     },
