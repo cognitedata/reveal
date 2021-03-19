@@ -27,6 +27,7 @@ type ChartProps = {
   chart: Chart;
   onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
   showYAxis?: boolean;
+  isPreview?: boolean;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
@@ -36,9 +37,10 @@ const PlotlyChartComponent = ({
   chart,
   onAxisChange,
   showYAxis,
+  isPreview,
 }: ChartProps) => {
   const sdk = useSDK();
-  const pointsPerSeries = 1000;
+  const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
 
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
@@ -67,9 +69,9 @@ const PlotlyChartComponent = ({
     }))
   );
 
-  const enabledWorkflows = chart.workflowCollection?.filter(
-    (flow) => flow?.enabled
-  );
+  const enabledWorkflows = !isPreview
+    ? chart.workflowCollection?.filter((flow) => flow?.enabled)
+    : [];
 
   const calls = (enabledWorkflows || [])
     .map((wf) => wf.calls?.[0])
@@ -176,13 +178,10 @@ const PlotlyChartComponent = ({
     setDragmode(eventdata.dragmode || dragmode);
   };
 
+  const marginValue = isPreview ? 0 : 50;
+
   const layout = {
-    margin: {
-      l: 50,
-      r: 50,
-      b: 50,
-      t: 50,
-    },
+    margin: { l: marginValue, r: marginValue, b: marginValue, t: marginValue },
     xaxis: {
       type: 'date',
       domain: showYAxis ? [0.06 * (seriesData.length - 1), 1] : [0, 1],
@@ -201,8 +200,9 @@ const PlotlyChartComponent = ({
       ? JSON.parse(JSON.stringify(range))
       : undefined;
 
-    if (showYAxis) {
+    if (showYAxis || isPreview) {
       (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
+        visible: !isPreview,
         linecolor: color,
         linewidth: 1,
         tickcolor: color,
@@ -241,6 +241,7 @@ const PlotlyChartComponent = ({
   });
 
   const config = {
+    staticPlot: isPreview,
     responsive: true,
     scrollZoom: true,
     displaylogo: false,
@@ -255,6 +256,8 @@ const PlotlyChartComponent = ({
       layout={(layout as unknown) as Plotly.Layout}
       config={config as Plotly.Config}
       onRelayout={handleRelayout}
+      useResizeHandler
+      style={{ width: '100%', height: '100%' }}
     />
   );
 };
