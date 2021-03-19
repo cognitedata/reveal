@@ -4,8 +4,8 @@ import { Link, useHistory } from 'react-router-dom';
 import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
 import EditableText from 'components/EditableText';
+import PlotlyChart from 'components/PlotlyChart';
 
-import thumb from 'assets/thumb.png';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { useLoginStatus } from 'hooks';
 import { duplicate } from 'utils/charts';
@@ -57,17 +57,6 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     }
   };
 
-  const mockPreview = (
-    <img
-      style={{
-        width: '100%',
-        border: '1px solid #ddd',
-      }}
-      src={thumb}
-      alt={chart.name}
-    />
-  );
-
   const closeMenu = () => setIsMenuOpen(false);
 
   const isChartMine = login?.user === chart.user;
@@ -118,7 +107,9 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     return (
       <ListViewWrapper>
         <ListViewLink to={`/${chart.id}`}>
-          <ListViewImage>{mockPreview}</ListViewImage>
+          <ListViewImage>
+            <PlotlyChart chart={chart} isPreview />
+          </ListViewImage>
           <ListViewName>
             <EditableText
               value={chart.name}
@@ -138,7 +129,11 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   return (
     <GridViewWrapper>
       <Link to={`/${chart.id}`}>
-        <div>{mockPreview}</div>
+        <GridViewImageWrapper>
+          <GridViewImageContent>
+            <PlotlyChart chart={chart} isPreview />
+          </GridViewImageContent>
+        </GridViewImageWrapper>
       </Link>
       <GridViewFooter>
         <GridViewLink to={`/${chart.id}`}>
@@ -181,8 +176,10 @@ const ListViewLink = styled(Link)`
 `;
 
 const ListViewImage = styled.div`
-  width: 100px;
+  width: 120px;
+  height: 90px;
   flex-grow: 0;
+  border: 1px solid #dedede;
 `;
 
 const ListViewName = styled.div`
@@ -221,6 +218,22 @@ const GridViewLink = styled(Link)`
   &:hover {
     color: var(--cogs-text-color);
   }
+`;
+
+const GridViewImageWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  padding-bottom: 75%;
+  flex-grow: 0;
+  border: 1px solid #dedede;
+`;
+
+const GridViewImageContent = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 `;
 
 const GridViewOwner = styled.div`
