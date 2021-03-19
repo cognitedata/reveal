@@ -1,5 +1,7 @@
 import { StorableNode } from 'reducers/charts/types';
 
+export const effectId = 'OUTPUT';
+
 export const node = {
   title: 'Output',
   subtitle: 'TIMESERIES',
@@ -13,4 +15,5 @@ export const node = {
       types: ['TIMESERIES'],
     },
   ],
+  functionEffectReference: effectId,
 } as StorableNode;
