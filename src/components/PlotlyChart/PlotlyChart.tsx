@@ -39,7 +39,7 @@ const PlotlyChartComponent = ({
 }: ChartProps) => {
   const sdk = useSDK();
   const pointsPerSeries = 1000;
-  const [dragmode, setDragmode] = useState<string>('pan');
+  const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
 
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
