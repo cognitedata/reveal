@@ -1,27 +1,21 @@
-import React, { useMemo, useRef } from 'react';
-import { Title, Button } from '@cognite/cogs.js';
+import React, { useRef } from 'react';
+import { Title } from '@cognite/cogs.js';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
-import {
-  MetadataItem,
-  MetaDataTable,
-} from 'src/pages/Preview/components/MetaDataTable/MetadataTable';
+import { MetaDataTable } from 'src/components/FileMetadata/MetadataTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   fileInfoEdit,
-  fileMetaDataAddRow,
-  toggleMetaDataTableEditMode,
+  metadataEditMode,
+  selectUpdatedFileDetails,
+  selectUpdatedFileMeta,
 } from 'src/store/previewSlice';
-import { DataSetItem } from '@cognite/data-exploration';
-import { dateformat } from 'src/utils/DateUtils';
-import { generateKeyValueArray } from 'src/utils/FormatUtils';
-import {
-  FileDetailFieldView,
-  LabelContainerView,
-} from 'src/pages/Preview/components/FileDetails/FileDetailEditChildren';
 import { updateFileById } from 'src/store/uploadedFilesSlice';
 import isEqual from 'lodash-es/isEqual';
+import { FileMetadataFieldsContainer } from 'src/components/FileMetadata/FileMetadataFieldsContainer';
+import { VisionFileDetails } from 'src/components/FileMetadata/Types';
+import { MetadataTableToolBar } from 'src/components/FileMetadata/MetadataTableToolBar';
 
 const Container = styled.div`
   width: 100%;
@@ -43,26 +37,6 @@ const DetailsContainer = styled.div`
   padding-bottom: 10px;
 `;
 
-const DetailsFormContainer = styled.div`
-  width: 100%;
-`;
-
-const FieldRow = styled.div`
-  display: grid;
-  grid-template-columns: 145px 145px 145px;
-  grid-column-gap: 40px;
-`;
-
-const TableToolBar = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse;
-`;
-
-const StyledButton = styled(Button)`
-  margin-left: 15px;
-`;
-
 type FileDetailCompProps = { fileObj: v3.FileInfo };
 
 export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
@@ -71,45 +45,35 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
   const detailContainer = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
 
-  const editedFileInfo = useSelector(
-    ({ previewSlice }: RootState) => previewSlice.fileDetails
+  const fileDetails = useSelector((state: RootState) =>
+    selectUpdatedFileDetails(state, String(fileObj.id))
   );
 
-  const editedFileMeta = useSelector(
-    ({ previewSlice }: RootState) => previewSlice.fileMetaData
+  const tableEditMode = useSelector(({ previewSlice }: RootState) =>
+    metadataEditMode(previewSlice)
   );
 
-  const fileInfo = useMemo(() => {
-    const mergedInfo: v3.FileInfo = {
-      ...fileObj,
-      ...editedFileInfo,
-    };
+  const fileMetadata = useSelector((state: RootState) =>
+    selectUpdatedFileMeta(state, String(fileObj.id))
+  );
 
-    let metadata: MetadataItem[];
-    if (Object.keys(editedFileMeta).length > 0) {
-      metadata = Object.values(editedFileMeta);
-    } else {
-      metadata = generateKeyValueArray(mergedInfo.metadata);
+  const onFieldChange = (key: string, value: any) => {
+    if (!isEqual(fileDetails[key as keyof VisionFileDetails], value)) {
+      dispatch(fileInfoEdit({ key, value }));
     }
-    const info: Omit<v3.FileInfo, 'metadata'> & { metadata: MetadataItem[] } = {
-      ...mergedInfo,
-      metadata,
-    };
-    return info;
-  }, [editedFileInfo, editedFileMeta]);
+  };
 
-  const tableEditMode = useSelector(
-    ({ previewSlice }: RootState) => previewSlice.metadataEdit
-  );
+  const updateFileInfo = (key: string) => {
+    dispatch(updateFileById({ fileId: fileObj.id, key }));
+  };
 
-  const handleEditModeChange = () => {
-    dispatch(toggleMetaDataTableEditMode(fileInfo.metadata));
-    if (tableEditMode) {
+  const onEditModeChange = (mode: boolean) => {
+    if (mode) {
       updateFileInfo('metadata');
     }
   };
 
-  const handleAddMetadataRow = () => {
+  const onAddRow = () => {
     setTimeout(() => {
       if (detailContainer.current) {
         // scroll container to bottom
@@ -117,17 +81,6 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
           detailContainer.current.scrollHeight;
       }
     }, 100);
-    dispatch(fileMetaDataAddRow(fileInfo.metadata));
-  };
-
-  const updateFileInfo = (key: string) => {
-    dispatch(updateFileById({ fileId: fileInfo.id, key }));
-  };
-
-  const onInput = (key: string, value: any) => {
-    if (!isEqual(fileInfo[key as keyof v3.FileInfo], value)) {
-      dispatch(fileInfoEdit({ key, value }));
-    }
   };
 
   return (
@@ -136,131 +89,25 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
         <Title level={3}>File Details</Title>
       </TitleRow>
       <DetailsContainer ref={detailContainer}>
-        <DetailsFormContainer>
-          <FileDetailFieldView
-            id="name"
-            title="File name"
-            placeholder="None Set"
-            value={fileInfo.name}
-          />
-          <FileDetailFieldView
-            id="id"
-            title="ID"
-            placeholder="None Set"
-            value={fileInfo.id}
-            copyable
-          />
-          <FileDetailFieldView
-            id="externalId"
-            title="External ID"
-            placeholder="None Set"
-            value={fileInfo.externalId}
-            copyable
-            editable
-            onBlur={updateFileInfo}
-            onInput={onInput}
-          />
-          <LabelContainerView
-            value={fileInfo.labels}
-            setValue={(value) => {
-              onInput('labels', value);
-              updateFileInfo('labels');
-            }}
-          />
-
-          <FileDetailFieldView
-            id="source"
-            title="Source"
-            placeholder="None Set"
-            value={fileInfo.source}
-            editable
-            onBlur={updateFileInfo}
-            onInput={onInput}
-          />
-          {fileObj.mimeType && (
-            <FileDetailFieldView
-              id="mimeType"
-              title="MIME type"
-              placeholder="None Set"
-              value={fileInfo.mimeType}
-            />
-          )}
-          {fileInfo.geoLocation && (
-            <FileDetailFieldView
-              id="geoLocation"
-              title="Geolocation (lon/lat)"
-              placeholder="None Set"
-              value={fileInfo.geoLocation?.geometry.coordinates.join(', ')}
-              copyable
-            />
-          )}
-          <DataSetFieldContainer>
-            <DataSetItem id={fileInfo.id} type="file" />
-          </DataSetFieldContainer>
-
-          <FieldRow>
-            {fileInfo.uploaded && fileInfo.uploadedTime && (
-              <FileDetailFieldView
-                id="uploadedTime"
-                title="Uploaded at"
-                value={dateformat(fileInfo.uploadedTime)}
-              />
-            )}
-            <FileDetailFieldView
-              id="createdTime"
-              title="Created at"
-              value={dateformat(fileInfo.createdTime)}
-            />
-            <FileDetailFieldView
-              id="lastUpdatedTime"
-              title="Updated at"
-              value={dateformat(fileInfo.lastUpdatedTime)}
-            />
-          </FieldRow>
-        </DetailsFormContainer>
-        <TableToolBar>
-          <StyledButton
-            type="secondary"
-            icon="Plus"
-            onClick={handleAddMetadataRow}
-          >
-            Add row
-          </StyledButton>
-          <StyledButton
-            type="primary"
-            disabled={!fileInfo.metadata.length}
-            icon={tableEditMode ? 'Checkmark' : 'Edit'}
-            onClick={handleEditModeChange}
-          >
-            {tableEditMode ? 'Finish Editing' : 'Edit table'}
-          </StyledButton>
-        </TableToolBar>
+        <FileMetadataFieldsContainer
+          info={fileDetails}
+          onFieldChange={onFieldChange}
+          updateInfo={updateFileInfo}
+        />
+        <MetadataTableToolBar
+          editMode={tableEditMode}
+          metadata={fileMetadata}
+          onAddRow={onAddRow}
+          onEditModeChange={onEditModeChange}
+        />
         <MetaDataTable
           title="MetaData"
           rowHeight={35}
           editMode={tableEditMode}
-          data={fileInfo.metadata}
+          data={fileMetadata}
+          columnWidth={250}
         />
       </DetailsContainer>
     </Container>
   );
 };
-
-const DataSetFieldContainer = styled.div`
-  margin-bottom: 14px;
-
-  & div > div {
-    color: var(--cogs-b2-color);
-    font-size: var(--cogs-b2-font-size);
-    font-weight: 500;
-    line-height: var(--cogs-b2-line-height);
-    letter-spacing: var(--cogs-b2-letter-spacing);
-    margin-top: 0 !important;
-    margin-bottom: 4px !important;
-  }
-
-  & a {
-    font-size: 14px;
-    margin-left: 12px;
-  }
-`;

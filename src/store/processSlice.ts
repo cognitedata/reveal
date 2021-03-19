@@ -7,12 +7,16 @@ import { fileProcessUpdate, ThunkConfig } from 'src/store/common';
 import { deleteFilesById } from 'src/store/uploadedFilesSlice';
 
 type State = {
+  selectedFileId: number | null;
+  showFileMetadataDrawer: boolean;
   selectedDetectionModels: Array<DetectionModelType>;
   jobsByFileId: Record<string, Array<AnnotationJob> | undefined>;
   error?: string;
 };
 
 const initialState: State = {
+  selectedFileId: null,
+  showFileMetadataDrawer: false,
   selectedDetectionModels: [DetectionModelType.Text],
   jobsByFileId: {},
   // eslint-disable-next-line global-require
@@ -91,6 +95,15 @@ const processSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
+    toggleFileMetadataPreview(state) {
+      state.showFileMetadataDrawer = !state.showFileMetadataDrawer;
+    },
+    showFileMetadataPreview(state) {
+      state.showFileMetadataDrawer = true;
+    },
+    setSelectedFileId(state, action: PayloadAction<number>) {
+      state.selectedFileId = action.payload;
+    },
     setSelectedDetectionModels(
       state,
       action: PayloadAction<Array<DetectionModelType>>
@@ -178,6 +191,9 @@ export const {
   updateJob,
   removeJobByType,
   setSelectedDetectionModels,
+  toggleFileMetadataPreview,
+  showFileMetadataPreview,
+  setSelectedFileId,
 } = processSlice.actions;
 
 export default processSlice.reducer;

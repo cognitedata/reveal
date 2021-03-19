@@ -21,6 +21,7 @@ const CopyButton = styled(Button)`
 const CopyableTextContainer = styled.div`
   display: flex;
   align-items: center;
+  width: 100%;
 `;
 
 const CopyButtonContainer = (props: {

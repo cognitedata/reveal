@@ -33,7 +33,7 @@ import coreStyle from 'antd/es/style/core/index.less';
 // import datePickerStyle from 'antd/es/date-picker/style/index.less';
 // import descriptionsStyle from 'antd/es/descriptions/style/index.less';
 // import dividerStyle from 'antd/es/divider/style/index.less';
-// import drawerStyle from 'antd/es/drawer/style/index.less';
+import drawerStyle from 'antd/es/drawer/style/index.less';
 import dropdownStyle from 'antd/es/dropdown/style/index.less';
 // import emptyStyle from 'antd/es/empty/style/index.less';
 // import formStyle from 'antd/es/form/style/index.less';
@@ -94,7 +94,7 @@ const styles = [
   configProviderStyle,
   coreStyle,
   // dividerStyle,
-  // drawerStyle,
+  drawerStyle,
   dropdownStyle,
   // emptyStyle,
   // formStyle,

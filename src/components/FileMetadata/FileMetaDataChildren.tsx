@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 import { Body, Icon, Input } from '@cognite/cogs.js';
-import React, { ReactText, useEffect, useState } from 'react';
-import { CopyableText } from 'src/pages/Preview/components/CopyableText/CopyableText';
-import { LabelFilter } from '@cognite/data-exploration';
+import React, { ReactText } from 'react';
+import { CopyableText } from 'src/components/FileMetadata/CopyableText';
+import { DataSetItem, LabelFilter } from '@cognite/data-exploration';
 import { v3 } from '@cognite/cdf-sdk-singleton';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+import useIsFieldSavePending from 'src/store/hooks/useIsFieldSavePending';
 
 const FieldViewContainer = styled.div`
   margin-bottom: 14px;
@@ -17,12 +16,14 @@ const FieldViewTitle = styled(Body)`
 const FieldViewTextContainer = styled.div`
   display: flex;
   align-items: center;
+  width: 100%;
 `;
 const FieldViewText = styled.span`
   margin-left: 12px;
 `;
 const FieldViewInputContainer = styled.div`
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
 `;
 
 const FlexContainer = styled.div`
@@ -32,24 +33,6 @@ const FlexContainer = styled.div`
 `;
 
 const NOT_SET_PLACEHOLDER = 'None Set';
-
-const useIsFieldSavePending = (id: string) => {
-  const [loading, setLoadingState] = useState<boolean>(false);
-  const loadingField = useSelector(
-    ({ previewSlice }: RootState) => previewSlice.loadingField
-  );
-
-  useEffect(() => {
-    if (loadingField === id) {
-      setLoadingState(true);
-    }
-    if (loadingField === null) {
-      setLoadingState(false);
-    }
-  }, [loadingField]);
-
-  return loading;
-};
 
 const Loader = (props: { loading: boolean }) => {
   if (props.loading) {
@@ -139,6 +122,14 @@ export const LabelContainerView = (props: {
   );
 };
 
+export const DataSetFieldView = (props: { fileId: number }) => {
+  return (
+    <DataSetFieldContainer>
+      <DataSetItem id={props.fileId} type="file" />
+    </DataSetFieldContainer>
+  );
+};
+
 const LabelFieldContainer = styled.div`
   display: flex;
   align-items: center;
@@ -160,5 +151,24 @@ const LabelContainer = styled.div`
     letter-spacing: var(--cogs-b2-letter-spacing);
     margin-top: 0 !important;
     margin-bottom: 4px !important;
+  }
+`;
+
+const DataSetFieldContainer = styled.div`
+  margin-bottom: 14px;
+
+  & div > div {
+    color: var(--cogs-b2-color);
+    font-size: var(--cogs-b2-font-size);
+    font-weight: 500;
+    line-height: var(--cogs-b2-line-height);
+    letter-spacing: var(--cogs-b2-letter-spacing);
+    margin-top: 0 !important;
+    margin-bottom: 4px !important;
+  }
+
+  & a {
+    font-size: 14px;
+    margin-left: 12px;
   }
 `;

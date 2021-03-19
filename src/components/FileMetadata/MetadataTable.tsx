@@ -10,19 +10,16 @@ import ReactBaseTable, {
 } from 'react-base-table';
 import store from 'src/store';
 import { fileMetaDataEdit } from 'src/store/previewSlice';
+import { MetadataItem } from 'src/components/FileMetadata/Types';
 
 const Container = styled.div`
-  width: 500px;
+  width: 100%;
+  padding-bottom: 10px;
 `;
 
 const TitleHeader = styled.div`
   margin-bottom: 18px;
 `;
-
-export interface MetadataItem {
-  key: string;
-  value: ReactText;
-}
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 
@@ -30,6 +27,7 @@ type MetadataTableProps = TableProps & {
   title: string;
   editMode: boolean;
   data: MetadataItem[];
+  columnWidth: number;
 };
 
 const { dispatch } = store;
@@ -64,7 +62,12 @@ const EditableCell = (cellProps: {
   };
   if (cellProps.column.editMode) {
     return (
-      <Input type="text" value={cellProps.cellData} onChange={handleChange} />
+      <Input
+        type="text"
+        value={cellProps.cellData}
+        fullWidth
+        onChange={handleChange}
+      />
     );
   }
   return <span>{cellProps.cellData}</span>;
@@ -93,7 +96,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
       key: 'key',
       title: 'Key',
       dataKey: 'key',
-      width: 250,
+      width: props.columnWidth,
       align: Column.Alignment.LEFT,
       editMode: props.editMode,
     },
@@ -101,7 +104,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
       key: 'value',
       title: 'Value',
       dataKey: 'value',
-      width: 250,
+      width: props.columnWidth,
       align: Column.Alignment.LEFT,
       editMode: props.editMode,
     },
@@ -117,8 +120,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
           ref={setRef}
           columns={columns}
           maxHeight={Infinity}
-          width={500}
-          fixed
+          width={props.columnWidth * columns.length}
           data={props.data}
           components={components}
         />

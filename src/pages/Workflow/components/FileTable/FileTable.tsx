@@ -14,6 +14,7 @@ import { TableWrapper } from './FileTableWrapper';
 export type MenuActions = {
   annotationsAvailable: boolean;
   onAnnotationEditClick?: () => void;
+  showMetadataPreview: (fileId: number) => void;
 };
 
 export type TableDataItem = {
@@ -124,6 +125,12 @@ export function FileTable(props: FileTableProps) {
             menu.onAnnotationEditClick();
           }
         };
+
+        const handleMetadataEdit = () => {
+          if (menu?.showMetadataPreview) {
+            menu.showMetadataPreview(rowData.id);
+          }
+        };
         // todo: bind actions
         const MenuContent = (
           <Menu
@@ -131,7 +138,7 @@ export function FileTable(props: FileTableProps) {
               color: 'black' /* typpy styles make color to be white here ... */,
             }}
           >
-            <Menu.Item>Edit metadata</Menu.Item>
+            <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
 
             <Menu.Item disabled>Attach events file</Menu.Item>
 

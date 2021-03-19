@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LazyWrapper } from 'src/components/LazyWrapper';
 import {
   Route,
@@ -17,6 +17,11 @@ import {
   WorkflowStepKey,
 } from 'src/pages/Workflow/workflowRoutes';
 import { VerticalContainer } from 'src/components/VerticalContainer';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { FileMetadataPreview } from 'src/pages/Workflow/process/FileMetadataPreview';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { toggleFileMetadataPreview } from 'src/store/processSlice';
 
 const { Step } = AntdSteps;
 
@@ -37,43 +42,65 @@ type WorkflowContainerProps = RouteComponentProps<{ step: WorkflowStepKey }>;
 
 export default function WorkflowContainer(props: WorkflowContainerProps) {
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const showDrawer = useSelector(
+    ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer
+  );
+
+  useEffect(() => {
+    if (showDrawer) {
+      dispatch(toggleFileMetadataPreview());
+    }
+  }, [props.match.params.step]);
+
+  const queryClient = new QueryClient();
 
   return (
     <VerticalContainer>
       <MainContent>
-        <Steps
-          current={getStepNumberByStepName(props.match.params.step)}
-          style={{ paddingBottom: 16 }}
-        >
-          <Step
-            title={
-              <Link
-                to={getLink(workflowRoutes.upload)}
-                style={{ color: 'inherit' }}
-              >
-                Upload
-              </Link>
-            }
-          />
-          <Step title="Process & Review" />
-        </Steps>
+        <StepContainer>
+          <Steps
+            current={getStepNumberByStepName(props.match.params.step)}
+            style={{ paddingBottom: 16 }}
+          >
+            <Step
+              title={
+                <Link
+                  to={getLink(workflowRoutes.upload)}
+                  style={{ color: 'inherit' }}
+                >
+                  Upload
+                </Link>
+              }
+            />
+            <Step title="Process & Review" />
+          </Steps>
 
-        <StepContent>
-          <Switch>
-            <Route
-              key={workflowRoutes.upload}
-              path={workflowRoutes.upload}
-              exact
-              component={UploadStep}
-            />
-            <Route
-              key="process-and-review"
-              path={workflowRoutes.process}
-              exact
-              component={ProcessStep}
-            />
-          </Switch>
-        </StepContent>
+          <StepContent>
+            <Switch>
+              <Route
+                key={workflowRoutes.upload}
+                path={workflowRoutes.upload}
+                exact
+                component={UploadStep}
+              />
+              <Route
+                key="process-and-review"
+                path={workflowRoutes.process}
+                exact
+                component={ProcessStep}
+              />
+            </Switch>
+          </StepContent>
+        </StepContainer>
+        {showDrawer && (
+          <DrawerContent>
+            <QueryClientProvider client={queryClient}>
+              <FileMetadataPreview />
+            </QueryClientProvider>
+          </DrawerContent>
+        )}
       </MainContent>
 
       <BottomNavContainer className="z-4">
@@ -110,16 +137,10 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
   );
 }
 
-const MainContent = styled(VerticalContainer)`
-  min-width: 900px; /* totally random, but mocks have one size for now */
-
+const MainContent = styled.div`
+  display: flex;
   overflow: auto;
-
-  /* the same padding is used in SubAppWrapper but it's disabled to make bottom nav looking right */
-  padding: 20px;
-  @media (min-width: 992px) {
-    padding: 20px 50px;
-  }
+  height: 100%;
 `;
 
 const Steps = styled(AntdSteps)`
@@ -130,6 +151,27 @@ const Steps = styled(AntdSteps)`
 const StepContent = styled.div`
   padding-top: 20px;
   flex-grow: 1;
+`;
+
+const DrawerContent = styled.div`
+  width: 400px;
+  border-top: 1px solid #d9d9d9;
+  border-left: 1px solid #d9d9d9;
+  box-sizing: content-box;
+`;
+
+const StepContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  min-width: 900px; /* totally random, but mocks have one size for now */
+
+  /* the same padding is used in SubAppWrapper but it's disabled to make bottom nav looking right */
+  padding: 20px;
+  @media (min-width: 992px) {
+    padding: 20px 50px;
+  }
 `;
 
 const BottomNavContainer = styled.div`

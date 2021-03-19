@@ -17,7 +17,11 @@ import {
   workflowRoutes,
 } from 'src/pages/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
-import { setSelectedDetectionModels } from 'src/store/processSlice';
+import {
+  setSelectedDetectionModels,
+  setSelectedFileId,
+  showFileMetadataPreview,
+} from 'src/store/processSlice';
 import { getFileJobsResultingStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
 import {
   FileGridPreview,
@@ -58,7 +62,13 @@ export default function ProcessStep() {
       }
     });
 
-    const menuActions: MenuActions = { annotationsAvailable: false };
+    const menuActions: MenuActions = {
+      annotationsAvailable: false,
+      showMetadataPreview: (fileId: number) => {
+        dispatch(setSelectedFileId(fileId));
+        dispatch(showFileMetadataPreview());
+      },
+    };
     if (status === 'Completed') {
       menuActions.annotationsAvailable = annotationsCount > 0;
       menuActions.onAnnotationEditClick = () => {

@@ -5,10 +5,19 @@ import {
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { DetectionModelType } from 'src/api/types';
-import { MetadataItem } from 'src/pages/Preview/components/MetaDataTable/MetadataTable';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { fileProcessUpdate } from 'src/store/common';
-import { deleteFilesById, updateFileById } from 'src/store/uploadedFilesSlice';
+import {
+  deleteFilesById,
+  selectFileById,
+  updateFileById,
+} from 'src/store/uploadedFilesSlice';
+import {
+  MetadataItem,
+  VisionFileDetails,
+} from 'src/components/FileMetadata/Types';
+import { RootState } from 'src/store/rootReducer';
+import { generateKeyValueArray } from 'src/utils/FormatUtils';
 
 export interface VisionAnnotationState extends VisionAnnotation {
   id: string;
@@ -266,6 +275,12 @@ export const {
   resetEditHistory,
 } = previewSlice.actions;
 
+const resetEditHistoryState = (state: State) => {
+  state.metadataEdit = false;
+  state.fileMetaData = {};
+  state.fileDetails = {};
+};
+
 export const selectModelIdsByFileId = (
   state: State,
   fileId: string
@@ -319,8 +334,38 @@ export const selectVisibleAnnotationsByFileId = createSelector(
   }
 );
 
-const resetEditHistoryState = (state: State) => {
-  state.metadataEdit = false;
-  state.fileMetaData = {};
-  state.fileDetails = {};
-};
+// metadata selectors //
+
+export const metadataEditMode = (state: State): boolean => state.metadataEdit;
+
+export const editedFileDetails = (
+  state: State
+): Record<string, FileInfoValueState> => state.fileDetails;
+
+export const editedFileMeta = (state: State): Record<number, MetadataItem> =>
+  state.fileMetaData;
+
+export const selectUpdatedFileDetails = createSelector(
+  (state: RootState) => editedFileDetails(state.previewSlice),
+  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
+  (editedInfo, fileInfo) => {
+    const mergedInfo: VisionFileDetails = {
+      ...fileInfo,
+      ...editedInfo,
+    };
+    return mergedInfo;
+  }
+);
+
+export const selectUpdatedFileMeta = createSelector(
+  (state: RootState) => editedFileMeta(state.previewSlice),
+  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
+  (editedMeta, fileInfo) => {
+    let metadata: MetadataItem[] = generateKeyValueArray(fileInfo.metadata);
+
+    if (Object.keys(editedMeta).length > 0) {
+      metadata = Object.values(editedMeta);
+    }
+    return metadata;
+  }
+);
