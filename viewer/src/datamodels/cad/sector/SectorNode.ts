@@ -35,6 +35,8 @@ export class SectorNode extends THREE.Group {
     this.resetGeometry();
     this._group = geomtryGroup;
     this._lod = levelOfDetail;
+
+    this.updateMatrixWorld(true);
   }
 
   resetGeometry() {
