@@ -49,7 +49,7 @@ export const convertTsToWorkFlow = (ts: ChartTimeSeries): ChartWorkflow => {
         title: ts.name,
         subtitle: `DATAPOINTS (${ts.id})`,
         functionData: {
-          timeSeriesExternalId: ts.id,
+          timeSeriesExternalId: ts.tsExternalId,
         },
         x: 50,
         y: 50,
