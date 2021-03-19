@@ -2,12 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  filesUploadState,
-  formState,
-  isValid,
-  suiteState,
-} from 'store/forms/selectors';
+import { filesUploadState, formState, suiteState } from 'store/forms/selectors';
 import { RootDispatcher } from 'store/types';
 import { Suite, Board } from 'store/suites/types';
 import { modalClose } from 'store/modals/actions';
@@ -35,7 +30,6 @@ const EditBoardModal: React.FC<Props> = ({
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const suite = useSelector(suiteState);
-  const hasErrors = !useSelector(isValid);
   const { saving: formSaving } = useSelector(formState);
   const { deleteQueue } = useSelector(filesUploadState);
   const [filesUploadQueue] = useState(new Map());
@@ -53,7 +47,6 @@ const EditBoardModal: React.FC<Props> = ({
   };
 
   const handleSubmit = async () => {
-    if (hasErrors) return;
     await dispatch(
       saveForm(
         client,
