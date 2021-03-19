@@ -8,14 +8,13 @@ import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map
 
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
-
 import { createInstancedMeshes } from '../rendering/instancedMeshes';
 import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
-import { createPrimitives } from '../rendering/primitives';
+import { createPrimitives, setBoundingSphere } from '../rendering/primitives';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */
@@ -31,7 +30,7 @@ const quadVertexData = new Float32Array([
 
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
-export function consumeSectorSimple(sector: SectorQuads, materials: Materials): THREE.Group {
+export function consumeSectorSimple(sector: SectorQuads, sectorBounds: THREE.Box3, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
@@ -75,11 +74,11 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
 
   setTreeIndeciesToUserData();
 
-  // obj.name = `Quads ${sectorId}`;
-  // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we
-  // can avoid disabling it entirely
-  obj.frustumCulled = false;
+  obj.geometry.boundingSphere = new THREE.Sphere();
+  sectorBounds.getBoundingSphere(obj.geometry.boundingSphere);
+
   group.add(obj);
+
   return group;
 
   function setTreeIndeciesToUserData() {
@@ -98,6 +97,9 @@ export function consumeSectorDetailed(sector: SectorGeometry, metadata: SectorMe
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   const obj = new THREE.Group();
   for (const primtiveRoot of createPrimitives(sector, materials)) {
+    if (primtiveRoot instanceof THREE.Mesh) {
+      setBoundingSphere(primtiveRoot, bounds);
+    }
     obj.add(primtiveRoot);
   }
 

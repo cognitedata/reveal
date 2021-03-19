@@ -13,6 +13,7 @@ import { SectorQuads } from '../rendering/types';
 import { SectorGeometry, ParsedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
+import { toThreeJsBox3 } from '../../../utilities';
 
 export class SimpleAndDetailedToSector3D {
   private readonly materialManager: MaterialManager;
@@ -45,6 +46,7 @@ export class SimpleAndDetailedToSector3D {
             map(parsedSector =>
               consumeSectorSimple(
                 parsedSector.data as SectorQuads,
+                toThreeJsBox3(new THREE.Box3(), parsedSector.metadata.bounds),
                 this.materialManager.getModelMaterials(parsedSector.blobUrl)!
               )
             )
