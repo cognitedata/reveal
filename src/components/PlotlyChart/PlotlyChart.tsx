@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQueries } from 'react-query';
 import zipWith from 'lodash/zipWith';
 import { Call, Chart } from 'reducers/charts/types';
@@ -25,15 +25,7 @@ import {
 
 type ChartProps = {
   chart: Chart;
-  onAxisChange?: ({
-    x,
-    y,
-    dragmode,
-  }: {
-    x: number[];
-    y: AxisUpdate[];
-    dragmode?: string;
-  }) => void;
+  onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
   showYAxis?: boolean;
 };
 
@@ -47,6 +39,7 @@ const PlotlyChartComponent = ({
 }: ChartProps) => {
   const sdk = useSDK();
   const pointsPerSeries = 1000;
+  const [dragmode, setDragmode] = useState<string>('pan');
 
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
@@ -177,9 +170,10 @@ const PlotlyChartComponent = ({
       onAxisChange({
         x: getXaxisUpdateFromEventData(eventdata),
         y: getYaxisUpdatesFromEventData(seriesData, eventdata),
-        dragmode: eventdata.dragmode,
       });
     }
+
+    setDragmode(eventdata.dragmode || dragmode);
   };
 
   const layout = {
@@ -195,7 +189,7 @@ const PlotlyChartComponent = ({
       range: [chart.dateFrom, chart.dateTo],
     },
     showlegend: false,
-    dragmode: chart.dragmode || 'pan',
+    dragmode,
     annotations: [],
   };
 

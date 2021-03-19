@@ -15,7 +15,6 @@ export type Chart = {
   dateTo: string;
   public?: boolean;
   dirty?: boolean;
-  dragmode?: string;
 };
 
 export type ChartTimeSeries = {

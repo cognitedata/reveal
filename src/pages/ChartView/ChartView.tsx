@@ -148,19 +148,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleChangeSourceAxis = debounce(
-    ({
-      x,
-      y,
-      dragmode,
-    }: {
-      x: number[];
-      y: AxisUpdate[];
-      dragmode?: string;
-    }) => {
+    ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
       if (chart) {
         const newChart = {
           ...chart,
-          dragmode: dragmode || chart.dragmode || '',
         };
 
         if (x.length === 2) {
