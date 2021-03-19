@@ -8,13 +8,14 @@ import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map
 
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
-import { createPrimitives } from '../rendering/primitives';
-import { createTriangleMeshes } from '../rendering/triangleMeshes';
+
 import { createInstancedMeshes } from '../rendering/instancedMeshes';
 import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
+import { createTriangleMeshes } from '../rendering/triangleMeshes';
+import { createPrimitives } from '../rendering/primitives';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */

@@ -218,6 +218,7 @@ export class Cognite3DViewer {
     this.camera.lookAt(new THREE.Vector3());
 
     this.scene = new THREE.Scene();
+    this.scene.autoUpdate = false;
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 1.0;
@@ -628,6 +629,7 @@ export class Cognite3DViewer {
       return;
     }
     this.scene.add(object);
+    object.updateMatrixWorld(true);
     this.extraObjects.push(object);
     this.renderController.redraw();
     this.triggerUpdateCameraNearAndFar(true);
