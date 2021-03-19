@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { MutationStatus } from 'react-query';
 import { DataSet, ListResponse } from '@cognite/sdk';
 import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOption';
+import { InputController } from 'components/inputs/InputController';
 
 const StyledAutoComplete = styled(AutoComplete)`
   width: 50%;
@@ -22,12 +23,7 @@ const StyledAutoComplete = styled(AutoComplete)`
     display: none;
   }
 `;
-const StyledInput = styled.input`
-  width: 50%;
-  &.has-error {
-    border-color: ${Colors.danger.hex()};
-  }
-`;
+
 export const DATA_SET_ID_LABEL: Readonly<string> = 'Data set';
 export const DATA_SET_ID_TIP: Readonly<string> =
   'Type in the name or id of your data set';
@@ -44,7 +40,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   data,
   status,
 }: PropsWithoutRef<DataSetIdPageProps>) => {
-  const { register, setValue, errors, watch } = useFormContext();
+  const { setValue, errors, watch, control } = useFormContext();
   const storedValue = parseInt(watch('datasetId'), 10);
 
   const getOptions = (): SelectOption[] => {
@@ -74,12 +70,11 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   ) => {
     if (innerStatus === 'error') {
       return (
-        <StyledInput
-          id="data-set-id-input"
+        <InputController
           name="datasetId"
-          type="text"
-          ref={register}
-          className={`cogs-input ${errors.dataSetId ? 'has-error' : ''}`}
+          inputId="data-set-id-input"
+          control={control}
+          defaultValue=""
           aria-invalid={!!errors.dataSetId}
           aria-describedby="data-set-id-hint data-set-id-error"
         />

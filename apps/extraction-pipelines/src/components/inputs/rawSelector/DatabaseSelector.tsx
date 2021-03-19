@@ -11,7 +11,12 @@ import { DatabaseWithTablesItem } from 'components/inputs/rawSelector/RawSelecto
 export const StyledMenu = styled(Menu)`
   height: 10rem;
   overflow-y: auto;
+  label.cogs-checkbox {
+    width: fit-content;
+    margin-bottom: 0.5rem;
+  }
 `;
+
 interface DatabaseSelectorProps {
   databaseList: DatabaseWithTablesItem[];
   search: string;

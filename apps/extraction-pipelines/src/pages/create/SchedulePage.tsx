@@ -137,7 +137,7 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
     <RegisterIntegrationLayout backPath={CONTACTS_PAGE_PATH}>
       <GridH2Wrapper>{INTEGRATION_SCHEDULE_HEADING}</GridH2Wrapper>
       <FormProvider {...methods}>
-        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)} inputWidth={50}>
           <StyledRadioGroup>
             <legend>Schedule</legend>
             <span id="schedule-hint" className="input-hint">

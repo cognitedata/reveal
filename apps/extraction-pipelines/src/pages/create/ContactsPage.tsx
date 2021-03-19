@@ -42,6 +42,7 @@ import {
   EXTERNAL_ID_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
 } from 'routing/CreateRouteConfig';
+import { InputController } from 'components/inputs/InputController';
 
 const ContactWrapper = styled.section`
   display: flex;
@@ -50,16 +51,6 @@ const ContactWrapper = styled.section`
   margin-bottom: 1rem;
 `;
 
-const StyledInput = styled.input`
-  width: 50%;
-  &.has-error {
-    border-color: ${Colors.danger.hex()};
-  }
-  &:focus {
-    outline: -webkit-focus-ring-color auto 0.0625rem;
-    outline-offset: 0.0625rem;
-  }
-`;
 const Switchbutton = styled.button`
   width: 6rem;
   background: white;
@@ -216,7 +207,7 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
   return (
     <RegisterIntegrationLayout backPath={EXTERNAL_ID_PAGE_PATH}>
       <FormProvider {...methods}>
-        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)} inputWidth={50}>
           <GridH2Wrapper>{INTEGRATION_CONTACTS_HEADING}</GridH2Wrapper>
           <i className="description">{CONTACTS_DESCRIPTION}</i>
           {fields.map((field, index) => {
@@ -241,15 +232,11 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
                     </span>
                   )}
                 />
-                <StyledInput
-                  id={`integration-contacts-name-${index}`}
+                <InputController
                   name={`contacts[${index}].name`}
-                  type="text"
-                  ref={register}
+                  control={control}
+                  inputId={`integration-contacts-name-${index}`}
                   defaultValue={field.name}
-                  className={`cogs-input ${
-                    errors.contacts?.[index]?.name ? 'has-error' : ''
-                  }`}
                   aria-invalid={!!errors.contacts?.[index]?.name}
                   aria-describedby={`contact-name-hint contact-${index}-name-error`}
                 />
@@ -273,18 +260,14 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
                     </span>
                   )}
                 />
-                <StyledInput
-                  id={`integration-contacts-email-${index}`}
+                <InputController
                   name={`contacts[${index}].email`}
-                  ref={register}
+                  control={control}
+                  inputId={`integration-contacts-email-${index}`}
                   defaultValue={field.email}
-                  className={`cogs-input ${
-                    errors.contacts?.[index]?.email ? 'has-error' : ''
-                  }`}
                   aria-invalid={!!errors.contacts?.[index]?.email}
                   aria-describedby={`contact-email-hint contact-${index}-email-error`}
                 />
-
                 <label
                   htmlFor={`integration-contacts-role-${index}`}
                   className="input-label"
@@ -306,19 +289,14 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
                     </span>
                   )}
                 />
-                <StyledInput
-                  id={`integration-contacts-role-${index}`}
+                <InputController
                   name={`contacts[${index}].role`}
-                  type="text"
-                  ref={register}
+                  control={control}
+                  inputId={`integration-contacts-role-${index}`}
                   defaultValue={field.role}
-                  className={`cogs-input ${
-                    errors.contacts?.[index]?.role ? 'has-error' : ''
-                  }`}
                   aria-invalid={!!errors.contacts?.[index]?.role}
                   aria-describedby={`contact-role-hint contact-${index}-role-error`}
                 />
-
                 <DivFlex direction="row" justify="space-between">
                   <DivFlex direction="column" align="flex-start">
                     <label

@@ -1,11 +1,9 @@
 import React, { FunctionComponent } from 'react';
-import { Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import styled from 'styled-components';
 import { createLink, useUserContext } from '@cognite/cdf-utilities';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
@@ -17,13 +15,8 @@ import { usePostIntegration } from 'hooks/usePostIntegration';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { TaskList, taskListItems } from 'pages/create/TaskList';
+import { InputController } from 'components/inputs/InputController';
 
-const StyledInput = styled.input`
-  width: 50%;
-  &.has-error {
-    border-color: ${Colors.danger.hex()};
-  }
-`;
 interface ExternalIdPageProps {}
 
 interface ExternalIdFormInput {
@@ -45,7 +38,7 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
   const { mutate } = usePostIntegration();
   const user = useUserContext();
   const {
-    register,
+    control,
     handleSubmit,
     errors,
     setError,
@@ -104,7 +97,7 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
   };
   return (
     <RegisterIntegrationLayout backPath={NAME_PAGE_PATH}>
-      <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+      <CreateFormWrapper onSubmit={handleSubmit(handleNext)} inputWidth={50}>
         <HeadingLabel labelFor="integration-external-id">
           {INTEGRATION_EXTERNAL_ID_HEADING}
         </HeadingLabel>
@@ -121,16 +114,14 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
             </span>
           )}
         />
-        <StyledInput
-          id="integration-external-id"
+        <InputController
           name="externalId"
-          type="text"
-          ref={register}
-          className={`cogs-input ${errors.externalId ? 'has-error' : ''}`}
+          control={control}
+          inputId="integration-external-id"
+          defaultValue={storedIntegration?.externalId ?? ''}
           aria-invalid={!!errors.externalId}
           aria-describedby="external-id-hint external-id-error"
         />
-
         <ButtonPlaced type="primary" htmlType="submit">
           {NEXT}
         </ButtonPlaced>

@@ -9,6 +9,7 @@ import {
   METADATA_DESCRIPTION_LABEL,
   REMOVE_ROW,
 } from 'utils/constants';
+import { InputController } from 'components/inputs/InputController';
 
 const StyledTd = styled.td`
   .cogs-input {
@@ -24,21 +25,11 @@ const StyledCaption = styled.caption`
   font-weight: bold;
   color: ${Colors.black.hex()};
 `;
-const StyledInput = styled.input`
-  width: 100%;
-  &.has-error {
-    border-color: ${Colors.danger.hex()};
-  }
-  &:focus {
-    outline: -webkit-focus-ring-color auto 0.0625rem;
-    outline-offset: 0.0625rem;
-  }
-`;
 
 interface RegisterMetaDataProps {}
 export type MetaData = { description: string; content: string };
 export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => {
-  const { control, register, errors } = useFormContext();
+  const { control, errors } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'metadata',
@@ -80,29 +71,21 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
             return (
               <tr key={`${id}`}>
                 <StyledTd>
-                  <StyledInput
-                    id={`metadata-description-${index}`}
+                  <InputController
                     name={`metadata[${index}].description`}
-                    type="text"
-                    ref={register}
+                    control={control}
+                    inputId={`metadata-description-${index}`}
                     defaultValue={description}
-                    className={`cogs-input ${
-                      errors.metadata?.[index]?.description ? 'has-error' : ''
-                    }`}
                     aria-invalid={!!errors.metadata?.[index]?.description}
                     aria-label={`${METADATA_DESCRIPTION_LABEL} ${index}`}
                   />
                 </StyledTd>
                 <StyledTd>
-                  <StyledInput
-                    id={`metadata-content-${index}`}
+                  <InputController
                     name={`metadata[${index}].content`}
-                    type="text"
-                    ref={register}
+                    control={control}
+                    inputId={`metadata-content-${index}`}
                     defaultValue={content}
-                    className={`cogs-input ${
-                      errors.metadata?.[index]?.content ? 'has-error' : ''
-                    }`}
                     aria-invalid={!!errors.metadata?.[index]?.content}
                     aria-label={`${METADATA_CONTENT_LABEL} ${index}`}
                   />

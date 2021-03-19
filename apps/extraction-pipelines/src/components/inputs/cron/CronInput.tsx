@@ -1,22 +1,11 @@
-import React, { FunctionComponent, useState } from 'react';
-import { Colors } from '@cognite/cogs.js';
+import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
-import { parseCron } from '../../../utils/cronUtils';
-import { Link } from '../../buttons/Link';
+import { parseCron } from 'utils/cronUtils';
+import { Link } from 'components/buttons/Link';
+import { InputController } from 'components/inputs/InputController';
 
-const StyledInput = styled.input`
-  width: 50%;
-  margin-bottom: 0.5rem;
-  &.has-error {
-    border-color: ${Colors.danger.hex()};
-  }
-  &:focus {
-    outline: -webkit-focus-ring-color auto 0.0625rem;
-    outline-offset: 0.0625rem;
-  }
-`;
 const ReadBack = styled.i`
   margin-bottom: 1rem;
 `;
@@ -34,12 +23,8 @@ export const CRON_TIP: Readonly<string> =
 interface CronPageProps {}
 
 const CronInput: FunctionComponent<CronPageProps> = () => {
-  const [input, setInput] = useState<string>('');
-  const { register, errors } = useFormContext();
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
+  const { errors, control, watch } = useFormContext();
+  const i = watch('cron');
   const readCron = (exp: string) => {
     try {
       const parsed = parseCron(exp);
@@ -69,18 +54,15 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
           </span>
         )}
       />
-      <StyledInput
-        id="cron-input"
+      <InputController
         name="cron"
-        type="text"
-        onChange={onChange}
-        ref={register}
-        className={`cogs-input ${errors.cron ? 'has-error' : ''}`}
+        control={control}
+        inputId="cron-input"
+        defaultValue=""
         aria-invalid={!!errors.cron}
         aria-describedby="cron-hint cron-error"
-        autoComplete="off"
       />
-      {readCron(input)}
+      {readCron(i)}
     </>
   );
 };

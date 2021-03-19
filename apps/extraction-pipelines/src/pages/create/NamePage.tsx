@@ -1,11 +1,9 @@
 import React, { FunctionComponent } from 'react';
-import { Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
@@ -15,13 +13,8 @@ import { EXTERNAL_ID_PAGE_PATH } from 'routing/CreateRouteConfig';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { TaskList, taskListItems } from 'pages/create/TaskList';
+import { InputController } from 'components/inputs/InputController';
 
-const StyledInput = styled.input`
-  width: 50%;
-  &.has-error {
-    border-color: ${Colors.danger.hex()};
-  }
-`;
 interface NamePageProps {}
 
 interface NameFormInput {
@@ -39,20 +32,22 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
     storedIntegration,
     setStoredIntegration,
   } = useStoredRegisterIntegration();
-  const { register, handleSubmit, errors } = useForm<NameFormInput>({
+  const { handleSubmit, errors, control } = useForm<NameFormInput>({
     resolver: yupResolver(nameSchema),
     defaultValues: {
       name: storedIntegration?.name,
     },
     reValidateMode: 'onSubmit',
   });
+
   const handleNext = (field: NameFormInput) => {
     setStoredIntegration({ ...storedIntegration, ...field });
     history.push(createLink(EXTERNAL_ID_PAGE_PATH));
   };
+
   return (
     <RegisterIntegrationLayout>
-      <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+      <CreateFormWrapper onSubmit={handleSubmit(handleNext)} inputWidth={50}>
         <HeadingLabel labelFor="integration-name">
           {INTEGRATION_NAME_HEADING}
         </HeadingLabel>
@@ -69,16 +64,14 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
             </span>
           )}
         />
-        <StyledInput
-          id="integration-name"
+        <InputController
           name="name"
-          type="text"
-          ref={register}
-          className={`cogs-input ${errors.name ? 'has-error' : ''}`}
+          control={control}
+          inputId="integration-name"
+          defaultValue={storedIntegration?.name ?? ''}
           aria-invalid={!!errors.name}
           aria-describedby="name-hint name-error"
         />
-
         <ButtonPlaced type="primary" htmlType="submit">
           {NEXT}
         </ButtonPlaced>

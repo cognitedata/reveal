@@ -1,4 +1,4 @@
-import { Checkbox, Input } from '@cognite/cogs.js';
+import { Checkbox } from '@cognite/cogs.js';
 import React, { FunctionComponent } from 'react';
 import {
   Controller,
@@ -10,9 +10,10 @@ import styled from 'styled-components';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import { ErrorMessage } from '@hookform/error-message';
 import { ContactsFormInput } from 'pages/create/ContactsPage';
+import { InputController } from 'components/inputs/InputController';
 
 const HourWrapper = styled(DivFlex)`
-  .cogs-input {
+  #skipNotificationInHours {
     width: 3.5rem;
   }
   span {
@@ -84,24 +85,13 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ()
             )}
           />
           <HourWrapper>
-            <Controller
+            <InputController
               name="skipNotificationInHours"
               control={control}
+              inputId="skipNotificationInHours"
               defaultValue=""
-              render={({
-                onChange,
-                value,
-              }: ControllerRenderProps<
-                Pick<ContactsFormInput, 'skipNotificationInHours'>
-              >) => (
-                <Input
-                  id="skipNotificationInHours"
-                  type="number"
-                  value={value}
-                  onChange={onChange}
-                  aria-describedby="skip-notification-in-hours-hint skipNotificationInHours-error"
-                />
-              )}
+              aria-invalid={!!errors.skipNotificationInHours}
+              aria-describedby="skip-notification-in-hours-hint skipNotificationInHours-error"
             />
             <span>hours</span>
           </HourWrapper>
