@@ -206,6 +206,7 @@ const WorkflowEditor = ({
           node={activeNode}
           onSave={(node) => {
             onUpdateNode(node);
+            setActiveNode(undefined);
           }}
           onClose={() => {
             setActiveNode(undefined);
