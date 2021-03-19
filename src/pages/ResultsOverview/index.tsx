@@ -107,7 +107,7 @@ export default function ResultsOverview() {
   useEffect(() => {
     if (!assetDataKit || !fileDataKit) {
       message.error('Invalid Data Selections...');
-      history.push(`/${tenant}/pnid_parsing_new`);
+      history.push(`/${tenant}/pnid_parsing_new/pipeline`);
     }
   }, [history, tenant, assetDataKit, fileDataKit]);
   useEffect(() => {
@@ -488,7 +488,7 @@ export default function ResultsOverview() {
                 onClick={() => {
                   if (file) {
                     history.push(
-                      `/${tenant}/pnid_parsing_new/${filesDataKitId}/${assetsDataKitId}/${optionsId}/pnid/${file.id}`
+                      `/${tenant}/pnid_parsing_new/pipeline/${filesDataKitId}/${assetsDataKitId}/${optionsId}/pnid/${file.id}`
                     );
                   } else {
                     message.info(

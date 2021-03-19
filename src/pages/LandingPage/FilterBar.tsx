@@ -14,7 +14,7 @@ export default function FilterBar({ query, setQuery }: FilterBarProps) {
 
   const onContextualizeNew = () => {
     trackUsage(PNID_METRICS.contextualization.start);
-    history.push(`/${tenant}/pnid_parsing_new/files`);
+    history.push(`/${tenant}/pnid_parsing_new/pipeline`);
   };
 
   return (

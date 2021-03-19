@@ -93,7 +93,7 @@ export default function FileOverview() {
           icon="ArrowLeft"
           onClick={() =>
             history.push(
-              `/${tenant}/pnid_parsing_new/${filesDataKitId}/${assetsDataKitId}/${optionsId}`
+              `/${tenant}/pnid_parsing_new/pipeline/${filesDataKitId}/${assetsDataKitId}/${optionsId}`
             )
           }
         >

@@ -50,8 +50,11 @@ export const Breadcrumbs = (props: BreadcrumbsProps) => {
   if (!steps.length) {
     return <span />;
   }
+  if (currentStep === -1) {
+    return <></>;
+  }
   return (
-    <Flex row>
+    <Flex row style={{ margin: '24px 0 12px 0' }}>
       <Steps steps={steps} current={currentStep} className="breadcrumb-steps" />
     </Flex>
   );

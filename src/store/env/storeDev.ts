@@ -1,5 +1,5 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import createRootReducer from './reducer';
+import createRootReducer from 'store/reducer';
 
 export function createStore(): any {
   const middleware = getDefaultMiddleware({

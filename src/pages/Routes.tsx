@@ -34,7 +34,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/files`}
+          path={`${match.path}/pipeline`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -49,7 +49,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/files/:filesDataKitId/assets`}
+          path={`${match.path}/pipeline/:filesDataKitId`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -63,7 +63,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/files/:filesDataKitId/assets/:assetsDataKitId`}
+          path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -73,7 +73,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/files/:filesDataKitId/assets/:assetsDataKitId/:optionsId`}
+          path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId/:optionsId`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" />
@@ -83,7 +83,7 @@ export default function Routes() {
         />
         <Route
           exact
-          path={`${match.path}/files/:filesDataKitId/assets/:assetsDataKitId/:optionsId/pnid/:fileId`}
+          path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId/:optionsId/pnid/:fileId`}
           render={() => (
             <>
               <PageTitle title="P&ID Contextualization" /> <FileOverview />
