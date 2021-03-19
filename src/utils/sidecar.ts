@@ -20,7 +20,9 @@ const sidecar = merge(
     applicationId: 'digital-cockpit-dev',
     applicationName: 'Digital Cockpit (dev)',
     cdfApiBaseUrl: 'https://api.cognitedata.com',
-    digitalCockpitApiBaseUrl: 'https://digital-cockpit-api.staging.cognite.ai',
+    digitalCockpitApiBaseUrl:
+      process.env.REACT_APP_DC_API_URL ||
+      'https://digital-cockpit-api.staging.cognite.ai',
     docsSiteBaseUrl: 'https://docs.cognite.com',
     privacyPolicyUrl: 'https://www.cognite.com/en/policy',
   },
