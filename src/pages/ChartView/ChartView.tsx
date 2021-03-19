@@ -12,7 +12,12 @@ import Search from 'components/Search';
 import { Toolbar } from 'components/Toolbar';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import EditableText from 'components/EditableText';
-import { charts, useChart, useUpdateChart } from 'hooks/firebase';
+import {
+  charts,
+  useChart,
+  useUpdateChart,
+  useDeleteChart,
+} from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
@@ -50,16 +55,20 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { data: login } = useLoginStatus();
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
+
   const {
     mutateAsync,
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
+
   const updateChart = (updatedChart: Chart) =>
     mutateAsync({
       chart: updatedChart,
       skipPersist: login?.user !== updatedChart.user,
     });
+
+  const { mutate: deleteChart } = useDeleteChart();
 
   useEffect(() => {
     if (updateError) {
@@ -177,6 +186,21 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     500
   );
 
+  const onDeleteSuccess = () => {
+    history.push('/');
+  };
+
+  const onDeleteError = () => {
+    toast.error('There was a problem deleting the chart. Try again!');
+  };
+
+  const handleDeleteChart = async () => {
+    deleteChart(chart.id, {
+      onSuccess: onDeleteSuccess,
+      onError: onDeleteError,
+    });
+  };
+
   const handleDuplicateChart = async () => {
     if (login?.user) {
       const newChart = duplicate(chart, login.user);
@@ -281,6 +305,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       <Icon type="Duplicate" />
                       <span>Duplicate</span>
                     </Menu.Item>
+                    {login?.user === chart.user && (
+                      <Menu.Item onClick={() => handleDeleteChart()}>
+                        <Icon type="Delete" />
+                        <span>Delete</span>
+                      </Menu.Item>
+                    )}
                   </Menu>
                 }
               >
