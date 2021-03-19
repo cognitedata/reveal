@@ -10,6 +10,7 @@ import { createMaterials } from '../rendering/materials';
 import { RenderMode } from '../rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
+import * as THREE from 'three';
 
 import 'jest-extended';
 
@@ -103,8 +104,10 @@ describe('sectorUtilities', () => {
         buffer: new Float32Array(0)
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const group = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
       expect(group.children).toBeEmpty();
@@ -128,8 +131,10 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const group = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
       expect(group.children).not.toBeEmpty();
@@ -162,8 +167,10 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const group = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
       expect(group.children.length).toBe(1);
@@ -189,8 +196,10 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      expect(() => consumeSectorSimple(sector, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
     });
 
     test('buffer missing bytes, throws', () => {
@@ -205,8 +214,10 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      expect(() => consumeSectorSimple(sector, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
     });
   });
 });

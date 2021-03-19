@@ -170,8 +170,6 @@ function createBoxes(
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
-  // TODO add frustum culling back for all meshes after adding proper boudning boxes
-  mesh.frustumCulled = false;
   mesh.name = `Primitives (Boxes)`;
 
   return mesh;
@@ -192,8 +190,6 @@ function createCircles(
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
-  mesh.frustumCulled = false;
-
   mesh.name = `Primitives (Circles)`;
   return mesh;
 }
@@ -210,7 +206,6 @@ function createCones(
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, coneCollection, coneAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (Cones)`;
   return mesh;
@@ -228,7 +223,6 @@ function createEccentricCones(
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, eccentericConeCollection, eccentericConeAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (EccentricCones)`;
   return mesh;
@@ -246,7 +240,6 @@ function createEllipsoidSegments(
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, ellipsoidSegmentCollection, ellipsoidSegmentAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
@@ -264,7 +257,6 @@ function createGeneralCylinders(
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, generalCylinderCollection, generalCylinderAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (GeneralCylinders)`;
   return mesh;
@@ -282,7 +274,6 @@ function createGeneralRings(
   geometry.setAttribute('position', quadGeometry.position);
   setAttributes(geometry, generalRingCollection, generalRingAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (GeneralRings)`;
   return mesh;
@@ -309,7 +300,6 @@ function createSphericalSegments(
   geometry.setAttribute(`a_horizontalRadius`, geometry.getAttribute('a_radius'));
   geometry.setAttribute(`a_verticalRadius`, geometry.getAttribute('a_radius'));
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
@@ -328,7 +318,6 @@ function createQuads(
   geometry.setAttribute('normal', quadGeometry.normal);
   setAttributes(geometry, quadCollection, quadAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.name = `Primitives (Quads)`;
   return mesh;
 }
@@ -345,7 +334,6 @@ function createTrapeziums(
   geometry.setAttribute('position', trapeziumGeometry.position);
   setAttributes(geometry, trapeziumCollection, trapeziumAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (Trapeziums)`;
   return mesh;
@@ -426,7 +414,6 @@ function createNuts(
   geometry.setAttribute('normal', nutGeometry.normal);
   setAttributes(geometry, nutCollection, nutAttributes, mesh);
 
-  mesh.frustumCulled = false;
   mesh.name = `Primitives (Nuts)`;
   return mesh;
 }
@@ -437,4 +424,9 @@ function updateMaterialInverseModelMatrix(
 ) {
   const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
   inverseModelMatrix.copy(matrixWorld).invert();
+}
+
+export function setBoundingSphere(mesh: THREE.Mesh, sectorBounds: THREE.Box3) {
+  mesh.geometry.boundingSphere = new THREE.Sphere();
+  sectorBounds.getBoundingSphere(mesh.geometry.boundingSphere);
 }
