@@ -115,13 +115,21 @@ export class EffectRenderManager {
     this.renderTarget = null;
 
     this._cadScene = new THREE.Scene();
+    this._cadScene.autoUpdate = false;
     this._normalScene = new THREE.Scene();
+    this._normalScene.autoUpdate = false;
     this._inFrontScene = new THREE.Scene();
+    this._inFrontScene.autoUpdate = false;
     this._compositionScene = new THREE.Scene();
+    this._compositionScene.autoUpdate = false;
     this._fxaaScene = new THREE.Scene();
+    this._fxaaScene.autoUpdate = false;
     this._ssaoScene = new THREE.Scene();
+    this._ssaoScene.autoUpdate = false;
     this._ssaoBlurScene = new THREE.Scene();
+    this._ssaoBlurScene.autoUpdate = false;
     this._emptyScene = new THREE.Scene();
+    this._emptyScene.autoUpdate = false;
     this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
 
