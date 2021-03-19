@@ -49,13 +49,6 @@ export const SuiteForm: React.FC = () => {
     validateField(name, value);
   };
 
-  const handleOnBlur = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { value, name } = event.target;
-    validateField(name, value);
-  };
-
   return (
     <>
       <CustomInputContainer>
@@ -68,7 +61,6 @@ export const SuiteForm: React.FC = () => {
           variant="noBorder"
           placeholder="Name of suite"
           onChange={handleOnChange}
-          onBlur={handleOnBlur}
           fullWidth
         />
       </CustomInputContainer>
@@ -83,7 +75,6 @@ export const SuiteForm: React.FC = () => {
           value={suite.description}
           placeholder="Description that clearly explains the purpose of the suite"
           onChange={handleOnChange}
-          onBlur={handleOnBlur}
           maxLength={maxDescriptionLength}
         />
         <ValidationContainer exceedWarningLength={exceedMaxLength}>

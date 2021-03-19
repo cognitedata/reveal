@@ -37,7 +37,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const [filesUploadQueue] = useState(new Map());
   const { dataSetId } = useSelector(getConfigState);
   const metrics = useMetrics('EditSuite');
-  const hasErrors = !isValid;
+  const hasErrors = step === 'suite' && !isValid;
 
   const trackMetrics = (name: string, props?: any) => {
     metrics.track(name, { ...props, component: 'MultiStepModal' });
@@ -86,7 +86,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
         Cancel
       </Button>
       <div>
-        {isEqual(step, 'suite') && (
+        {step === 'suite' && (
           <Button type="primary" onClick={nextStep} disabled={hasErrors}>
             {modalSettings.buttons[step].goToBoards}
           </Button>
@@ -95,9 +95,9 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
           <Icon type="Loading" />
         ) : (
           <Button
-            type="secondary"
+            type={step === 'suite' ? 'secondary' : 'primary'}
             onClick={handleSubmit}
-            disabled={hasErrors || formSaving}
+            disabled={hasErrors}
           >
             {modalSettings.buttons.save}
           </Button>
