@@ -30,6 +30,7 @@ export function Migration() {
       const url = new URL(window.location.href);
       const urlParams = url.searchParams;
       const project = urlParams.get('project');
+      const baseUrl = urlParams.get('baseUrl') || undefined;
       if (!project) {
         throw new Error('Must provide "project"as URL parameter');
       }
@@ -65,7 +66,7 @@ export function Migration() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
       client.loginWithOAuth({ project });
       await client.authenticate();
 
