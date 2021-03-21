@@ -9,7 +9,7 @@ import { Color, CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
-import { CadRenderHints, CadNode } from '../../experimental';
+import { CadNode } from '../../experimental';
 import { trackError } from '../../utilities/metrics';
 import { DefaultNodeAppearance } from '../../datamodels/cad/NodeAppearance';
 import { SupportedModelTypes, CadLoadingHints, CadModelMetadata, NodeAppearanceProvider } from '../types';
@@ -24,21 +24,6 @@ import { NodeStyleUpdater } from './NodeStyleUpdater';
  */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
-
-  /**
-   * Get settings used for rendering.
-   */
-  get renderHints(): CadRenderHints {
-    return this.cadNode.renderHints;
-  }
-
-  /**
-   * Specify settings for rendering.
-   */
-  // TODO 2021-01-19 larsmoa: Remove rendering hints per model
-  set renderHints(hints: CadRenderHints) {
-    this.cadNode.renderHints = hints;
-  }
 
   /**
    * Get settings used for loading pipeline.
