@@ -119,7 +119,6 @@ export * from '../datamodels/pointcloud/types';
 export * from './migration/types';
 
 export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
-export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
 
 export { SupportedModelTypes } from '../datamodels/base';
 export { CadModelMetadata } from '../datamodels/cad/CadModelMetadata';
