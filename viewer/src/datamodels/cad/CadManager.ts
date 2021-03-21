@@ -67,9 +67,6 @@ export class CadManager<TModelIdentifier> {
             // Model has been removed - results can come in for a period just after removal
             return;
           }
-          if (cadModel.renderHints.showSectorBoundingBoxes) {
-            cadModel!.updateSectorBoundingBox(sector);
-          }
           const sectorNodeParent = cadModel.rootSector;
           const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
           if (!sectorNode) {
