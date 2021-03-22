@@ -118,7 +118,8 @@ export function Migration() {
             points: 0,
             triangles: 0,
             geometries: 0,
-            textures: 0
+            textures: 0,
+            renderTime: 0
           },
           loadedSectors: {
             options: {
@@ -161,6 +162,9 @@ export function Migration() {
         },
         showCameraHelper: () => {
           guiState.showCameraTool.showCameraHelper();
+        },
+        showBoundsForAllGeometries: () => {
+          cadModels.forEach(m => showBoundsForAllGeometries(m));
         }
       };
 
@@ -201,6 +205,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'triangles').name('Triangles');
       debugStatsGui.add(guiState.debug.stats, 'geometries').name('Geometries');
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
+      debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
       
       viewer.on('sceneRendered', sceneRenderedEventArgs => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
@@ -208,7 +213,7 @@ export function Migration() {
         guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
         guiState.debug.stats.geometries = sceneRenderedEventArgs.renderer.info.memory.geometries;
         guiState.debug.stats.textures = sceneRenderedEventArgs.renderer.info.memory.textures;
-
+        guiState.debug.stats.renderTime = sceneRenderedEventArgs.renderTime;
         debugStatsGui.updateDisplay();
       });
       
@@ -249,6 +254,7 @@ export function Migration() {
 
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
+      debugGui.add(guiActions, 'showBoundsForAllGeometries').name('Show geometry bounds');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
         try {
           // @ts-expect-error
@@ -460,8 +466,28 @@ export function Migration() {
           planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
         }
         viewer.setSlicingPlanes(planes);
-      }
+      }     
     }
+    
+
+    function showBoundsForAllGeometries(model: Cognite3DModel) {
+      const material = new THREE.MeshBasicMaterial({color: 'red', wireframe: true});
+      model.traverse(x => {
+        if (x instanceof THREE.Mesh) {
+          const mesh = x;
+          const geometry: THREE.Geometry | THREE.BufferGeometry = mesh.geometry;
+
+          if (geometry.boundingBox !== null) {
+            const box = geometry.boundingBox.clone();
+            box.applyMatrix4(mesh.matrixWorld);
+
+            const boxHelper = new THREE.Box3Helper(box);
+            viewer.addObject3D(boxHelper);
+          }
+        }
+      });
+    }
+
 
     main();
 
