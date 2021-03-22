@@ -31,3 +31,5 @@ export const isFileOfType = (file?: FileInfo, type?: string[]) => {
   const query = mimeType + name.substr(name.lastIndexOf('.'));
   return (type || []).some((el) => query.includes(el));
 };
+
+export const isVideo = (file?: FileInfo) => isFileOfType(file, ['mp4', 'm4v']);

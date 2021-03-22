@@ -31,7 +31,7 @@ const LoaderView = () => {
   );
 };
 
-export const FilePreview: React.FC<FilePreviewProps> = ({
+export const ImagePreview: React.FC<FilePreviewProps> = ({
   fileObj,
   annotations,
 }: FilePreviewProps) => {

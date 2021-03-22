@@ -28,5 +28,15 @@
     "uploadedTime": "2021-02-15T15:27:29.605Z",
     "createdTime": "2021-02-15T15:27:27.892Z",
     "lastUpdatedTime": "2021-02-15T15:27:29.605Z"
+  },
+  {
+    "id": 2623253131127118,
+    "name": "200609101642197@Stbd.mp4",
+    "mimeType": "video/x-m4v",
+    "source": "Cognite Data Fusion",
+    "uploaded": true,
+    "uploadedTime": 1616019488354,
+    "createdTime": 1616019487687,
+    "lastUpdatedTime": 1616019487687
   }
 ]
