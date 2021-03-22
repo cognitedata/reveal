@@ -119,10 +119,18 @@ type State = {
   uploadedFiles: Array<v3.FileInfo>;
 };
 
+// For debugging
+// const data = require('./fakeFiles.json');
+
+// Object.keys(data).forEach((key) => {
+//   data[key].uploadedTime = new Date(data[key].uploadedTime);
+//   data[key].createdTime = new Date(data[key].createdTime);
+//   data[key].lastUpdatedTime = new Date(data[key].lastUpdatedTime);
+// }, data);
 const initialState: State = {
   uploadedFiles: [],
   // eslint-disable-next-line global-require
-  // uploadedFiles: require('./fakeFiles.json'), // real has js Date instances, fake has strings, it's fine for now
+  // uploadedFiles: data,
 };
 
 const uploadedFilesSlice = createSlice({
