@@ -271,7 +271,6 @@ function createGeneralCylinders(
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, generalCylinderCollection, generalCylinderAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
-  // setBoundsFromVertices(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (GeneralCylinders)`;
