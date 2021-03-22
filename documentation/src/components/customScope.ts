@@ -1,15 +1,14 @@
 import * as THREE from 'three';
 
 import { Water } from 'three/examples/jsm/objects/Water';
-import { resetViewerEventHandlers } from '../viewerUtilities';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { ExplodedViewTool } from '@cognite/reveal/tools';
-
-const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal');
+import * as reveal from '@cognite/reveal';
+import * as viewerUtils from '../viewerUtilities';
 
 export const customScope: Record<string, any> = {
-  resetViewerEventHandlers,
+  ...viewerUtils,
   HtmlOverlayTool,
   ExplodedViewTool,
   THREE,
@@ -19,5 +18,5 @@ export const customScope: Record<string, any> = {
   urls: {
     skyUrl: '/img/sky007.jpg',
   },
-  ...reveal
+  ...reveal,
 };
