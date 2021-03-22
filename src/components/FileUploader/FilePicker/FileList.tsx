@@ -24,6 +24,9 @@ export function FileList({ files, onRemove, children }: FileListProps) {
           ...(!files.length && {
             background: `url(${SpiderImg}) top no-repeat`,
           }),
+          border: files.every(({ status }) => status === 'done')
+            ? '1px solid #31C25A'
+            : '1px solid #cccccc',
         }}
       >
         {files.map((file) => (
@@ -40,7 +43,7 @@ const TableContainer = styled.div`
   padding: 22px;
   margin: ${margin.default} 0;
 
-  height: 345px;
+  height: 409px;
   overflow: auto;
 
   & > *:nth-child(even) {
@@ -48,6 +51,5 @@ const TableContainer = styled.div`
   }
 
   box-shadow: 0 0 20px -5px rgba(133, 145, 243, 0.2);
-  border: 1px solid #cccccc;
   border-radius: 10px;
 `;

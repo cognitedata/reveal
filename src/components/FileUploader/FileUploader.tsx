@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse, FileInfo } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon, Title } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { getHumanReadableFileSize } from 'src/components/FileUploader/utils/getHumanReadableFileSize';
 import {
@@ -343,26 +343,14 @@ export const FileUploader = ({
     });
   };
 
-  const pauseUpload = () => {
-    setFileList((list) =>
-      list.map((file) => {
-        if (file.status === 'uploading') {
-          if (currentUploads[file.uid]) {
-            currentUploads[file.uid].pause();
-          }
-          // eslint-disable-next-line no-param-reassign
-          file.status = 'paused';
-        }
-        return file;
-      })
-    );
+  const removeFiles = () => {
+    setFileList((list) => list.filter((el) => el.status === 'done'));
   };
 
   const removeFile = (file: CogsFileInfo) => {
     clearLocalUploadMetadata(file);
     setFileList((list) => list.filter((el) => el.uid !== file.uid));
   };
-
   return (
     <div>
       <FilePicker
@@ -373,15 +361,12 @@ export const FileUploader = ({
         }}
         onError={(err) => message.error(err.message)}
         fileListChildren={
-          fileList.length ? (
-            <UploadControlButtons
-              fileList={fileList}
-              onUploadPause={pauseUpload}
-              onUploadResume={startOrResumeAllUploads}
-              onUploadStart={startUpload}
-              onUploadStop={stopUpload}
-            />
-          ) : null
+          <UploadControlButtons
+            fileList={fileList}
+            onUploadStart={startUpload}
+            onUploadStop={stopUpload}
+            onRemoveFiles={removeFiles}
+          />
         }
         {...props}
       >
@@ -395,42 +380,45 @@ type UploadControlButtonsProps = {
   fileList: CogsFileInfo[];
   onUploadStart: () => unknown;
   onUploadStop: () => unknown;
-  onUploadPause: () => unknown;
-  onUploadResume: () => unknown;
+  onRemoveFiles: () => unknown;
 };
 
 enum STATUS {
   NO_FILES,
   READY_TO_START,
   STARTED,
-  PAUSED,
+  DONE,
 }
 
 function UploadControlButtons({
   fileList,
   onUploadStart,
   onUploadStop,
-  onUploadPause,
-  onUploadResume,
+  onRemoveFiles,
 }: UploadControlButtonsProps) {
   let uploaderButton;
   let uploadStatus = STATUS.NO_FILES;
-
   if (fileList.find(({ status }) => status === 'uploading')) {
     uploadStatus = STATUS.STARTED;
-  } else if (fileList.find(({ status }) => status === 'paused')) {
-    uploadStatus = STATUS.PAUSED;
   } else if (fileList.find(({ status }) => status === 'idle')) {
     uploadStatus = STATUS.READY_TO_START;
+  } else if (
+    fileList.length &&
+    fileList.every(({ status }) => status === 'done')
+  ) {
+    uploadStatus = STATUS.DONE;
   }
 
   switch (uploadStatus) {
     case STATUS.NO_FILES:
       uploaderButton = (
         <>
-          <div style={{ flex: 1 }} />
           <Button type="primary" icon="Upload" disabled>
-            Upload
+            Upload files
+          </Button>
+          <div style={{ flex: 1 }} />
+          <Button type="danger" variant="ghost" disabled>
+            Remove all
           </Button>
         </>
       );
@@ -438,9 +426,12 @@ function UploadControlButtons({
     case STATUS.READY_TO_START:
       uploaderButton = (
         <>
-          <div style={{ flex: 1 }} />
           <Button type="primary" onClick={onUploadStart} icon="Upload">
-            Upload
+            Upload files
+          </Button>
+          <div style={{ flex: 1 }} />
+          <Button type="danger" variant="ghost" onClick={onRemoveFiles}>
+            Remove all
           </Button>
         </>
       );
@@ -448,22 +439,29 @@ function UploadControlButtons({
     case STATUS.STARTED:
       uploaderButton = (
         <>
-          <Button onClick={onUploadStop}>Cancel Upload</Button>
+          <Button type="primary" loading icon="Loading">
+            Uploading files
+          </Button>
           <div style={{ flex: 1 }} />
-          <Button type="primary" onClick={onUploadPause} icon="Loading">
-            Pause Upload
+          <Button type="danger" onClick={onUploadStop} icon="XLarge">
+            Cancel Upload
           </Button>
         </>
       );
       break;
-    case STATUS.PAUSED:
+    case STATUS.DONE:
       uploaderButton = (
         <>
-          <Button onClick={onUploadStop}>Cancel Upload</Button>
-          <div style={{ flex: 1 }} />
-          <Button type="primary" onClick={onUploadResume}>
-            Continue Upload
-          </Button>
+          <Title level={5} style={{ color: '#31C25A' }}>
+            <Icon
+              type="Checkmark"
+              style={{ marginRight: '8.7px' }}
+              onMouseOver={() => {
+                console.log('Mouse');
+              }}
+            />
+            Files uploaded
+          </Title>
         </>
       );
       break;

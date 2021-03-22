@@ -1,6 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Title } from '@cognite/cogs.js';
+import {
+  Button,
+  Title,
+  Select,
+  Checkbox,
+  Detail,
+  Icon,
+  PrimaryTooltip,
+} from '@cognite/cogs.js';
 import { margin } from 'src/cogs-variables';
 import { FilePickerHeadless } from './FilePickerHeadless';
 import { FileDropzone } from './FileDropzone';
@@ -37,6 +45,24 @@ export function FilePicker({
           <FileDropzoneStyled>
             <FilePickerContainer>
               <div>
+                <OptionContainer>
+                  <DatasetContainer>
+                    <DatasetTextContainer>
+                      <Detail strong>Add files to data set</Detail>
+                      <Detail color="#8C8C8C">(Optional)</Detail>
+                    </DatasetTextContainer>
+                    <Select value={1} onChange={() => {}} />
+                  </DatasetContainer>
+                  <Checkbox name="exif-option">
+                    Extract Exif-data from files
+                    <PrimaryTooltip
+                      tooltipTitle="Exif"
+                      tooltipText="By selecting this option, Exif-data will be extracted from the files (if available) and stored as metadata on the files."
+                    >
+                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                    </PrimaryTooltip>
+                  </Checkbox>
+                </OptionContainer>
                 <Title level={5} style={{ margin: `${margin.default} 0` }}>
                   Drag and drop files:
                 </Title>
@@ -74,10 +100,27 @@ export function FilePicker({
   );
 }
 
+const OptionContainer = styled.div`
+  display: flex;
+  column-gap: 72px;
+`;
+
+const DatasetContainer = styled.div`
+  display: grid;
+  row-gap: 4px;
+  width: 307px;
+`;
+
+const DatasetTextContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const FilePickerContainer = styled.div`
   display: grid;
   column-gap: 80px;
-  grid-template-columns: repeat(auto-fill, 626px);
+  grid-template-columns: repeat(auto-fill, 649px);
+  align-items: flex-end;
 `;
 
 const FilePickerButtonsContainer = styled.div`

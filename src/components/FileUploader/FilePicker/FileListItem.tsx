@@ -33,7 +33,7 @@ type FileStatusColumnProps = { file: CogsFileInfo };
 
 function FileStatusColumn({ file }: FileStatusColumnProps) {
   if (file.status === 'done') {
-    return <Icon type="Check" />;
+    return <Icon type="Check" style={{ color: '#31C25A' }} />;
   }
   if (file.status === 'uploading') {
     // todo: fancy progress bar
