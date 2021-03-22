@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
+import * as THREE from 'three';
 import { SectorGeometry } from '../sector/types';
 import { createPrimitives } from './primitives';
 import { createEmptySector } from '../../../__testutilities__/emptySector';
@@ -40,6 +40,7 @@ function createMockAttributeBufferFromAttributes(attributes: Map<string, ParsePr
 
 describe('createPrimitives', () => {
   const materials = createMaterials(64, RenderMode.Color, []);
+  const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
   let emptySector: SectorGeometry;
   let mockAttributes: Map<string, ParsePrimitiveAttribute>;
   let mockAttributeBuffer: Uint8Array;
@@ -51,7 +52,7 @@ describe('createPrimitives', () => {
   });
 
   test('no primitives doesnt return any nods', () => {
-    const nodes = Array.from(createPrimitives(emptySector, materials));
+    const nodes = Array.from(createPrimitives(emptySector, materials, bounds));
     expect(nodes).toBeEmpty();
   });
 
@@ -60,7 +61,7 @@ describe('createPrimitives', () => {
     boxSector.primitives.boxCollection = mockAttributeBuffer;
     boxSector.primitives.boxAttributes = mockAttributes;
 
-    testPrimitiveBase(boxSector, materials, mockAttributes, 'box', 2);
+    testPrimitiveBase(boxSector, materials, mockAttributes, 'box', bounds, 2);
   });
 
   test('Circle primitives, returns one geometry', () => {
@@ -68,7 +69,7 @@ describe('createPrimitives', () => {
     circleSector.primitives.circleCollection = mockAttributeBuffer;
     circleSector.primitives.circleAttributes = mockAttributes;
 
-    testPrimitiveBase(circleSector, materials, mockAttributes, 'circle', 2);
+    testPrimitiveBase(circleSector, materials, mockAttributes, 'circle', bounds, 2);
   });
 
   test('Cone primitives, returns one geometry', () => {
@@ -76,7 +77,7 @@ describe('createPrimitives', () => {
     coneSector.primitives.coneCollection = mockAttributeBuffer;
     coneSector.primitives.coneAttributes = mockAttributes;
 
-    testPrimitiveBase(coneSector, materials, mockAttributes, 'cone');
+    testPrimitiveBase(coneSector, materials, mockAttributes, 'cone', bounds);
   });
 
   test('Eccentric cone primitives, returns one geometry', () => {
@@ -84,7 +85,7 @@ describe('createPrimitives', () => {
     eccentricConeSector.primitives.eccentricConeCollection = mockAttributeBuffer;
     eccentricConeSector.primitives.eccentricConeAttributes = mockAttributes;
 
-    testPrimitiveBase(eccentricConeSector, materials, mockAttributes, 'eccentriccone');
+    testPrimitiveBase(eccentricConeSector, materials, mockAttributes, 'eccentriccone', bounds);
   });
 
   test('Ellipsoid segments primitives, returns one geometry', () => {
@@ -92,7 +93,7 @@ describe('createPrimitives', () => {
     ellipsoidSector.primitives.ellipsoidSegmentCollection = mockAttributeBuffer;
     ellipsoidSector.primitives.ellipsoidSegmentAttributes = mockAttributes;
 
-    testPrimitiveBase(ellipsoidSector, materials, mockAttributes, 'ellipsoid');
+    testPrimitiveBase(ellipsoidSector, materials, mockAttributes, 'ellipsoid', bounds);
   });
 
   test('General cylinder primitives, returns one geometry', () => {
@@ -100,7 +101,7 @@ describe('createPrimitives', () => {
     generalCylinderSector.primitives.generalCylinderCollection = mockAttributeBuffer;
     generalCylinderSector.primitives.generalCylinderAttributes = mockAttributes;
 
-    testPrimitiveBase(generalCylinderSector, materials, mockAttributes, 'generalcylinder');
+    testPrimitiveBase(generalCylinderSector, materials, mockAttributes, 'generalcylinder', bounds);
   });
 
   test('General ring primitives, returns one geometry', () => {
@@ -108,7 +109,7 @@ describe('createPrimitives', () => {
     generalRingSector.primitives.generalRingCollection = mockAttributeBuffer;
     generalRingSector.primitives.generalRingAttributes = mockAttributes;
 
-    testPrimitiveBase(generalRingSector, materials, mockAttributes, 'generalring');
+    testPrimitiveBase(generalRingSector, materials, mockAttributes, 'generalring', bounds);
   });
 
   test('Nut primitives, returns one geometry', () => {
@@ -116,7 +117,7 @@ describe('createPrimitives', () => {
     nutSector.primitives.nutCollection = mockAttributeBuffer;
     nutSector.primitives.nutAttributes = mockAttributes;
 
-    testPrimitiveBase(nutSector, materials, mockAttributes, 'nut', 2);
+    testPrimitiveBase(nutSector, materials, mockAttributes, 'nut', bounds, 2);
   });
 
   test('Quad primitives, returns one geometry', () => {
@@ -124,7 +125,7 @@ describe('createPrimitives', () => {
     quadSector.primitives.quadCollection = mockAttributeBuffer;
     quadSector.primitives.quadAttributes = mockAttributes;
 
-    testPrimitiveBase(quadSector, materials, mockAttributes, 'quad', 2);
+    testPrimitiveBase(quadSector, materials, mockAttributes, 'quad', bounds, 2);
   });
 
   test('Spherical segment primitives, returns one geometry', () => {
@@ -133,7 +134,7 @@ describe('createPrimitives', () => {
     sphericalSegmentSector.primitives.sphericalSegmentAttributes = mockAttributes;
 
     // The expected name is ellipsoid because we reuse that shader during rendering
-    testPrimitiveBase(sphericalSegmentSector, materials, mockAttributes, 'ellipsoidsegments', 3);
+    testPrimitiveBase(sphericalSegmentSector, materials, mockAttributes, 'ellipsoidsegments', bounds, 3);
   });
 
   test('Torus segment primitives, returns one geometry', () => {
@@ -146,7 +147,7 @@ describe('createPrimitives', () => {
 
     const result = [];
 
-    for (const primitiveRoot of createPrimitives(torusSegmentSector, materials)) {
+    for (const primitiveRoot of createPrimitives(torusSegmentSector, materials, bounds)) {
       result.push(primitiveRoot);
     }
 
@@ -170,7 +171,7 @@ describe('createPrimitives', () => {
     trapeziumSector.primitives.trapeziumCollection = mockAttributeBuffer;
     trapeziumSector.primitives.trapeziumAttributes = mockAttributes;
 
-    testPrimitiveBase(trapeziumSector, materials, mockAttributes, 'trapezium');
+    testPrimitiveBase(trapeziumSector, materials, mockAttributes, 'trapezium', bounds);
   });
 });
 
@@ -179,11 +180,12 @@ function testPrimitiveBase(
   materials: Materials,
   mockAttributes: Map<string, ParsePrimitiveAttribute>,
   expectedNameSubstring: string,
+  bounds: THREE.Box3,
   extraAttributes = 1
 ) {
   const result = [];
 
-  for (const primitiveRoot of createPrimitives(sector, materials)) {
+  for (const primitiveRoot of createPrimitives(sector, materials, bounds)) {
     result.push(primitiveRoot);
   }
 
