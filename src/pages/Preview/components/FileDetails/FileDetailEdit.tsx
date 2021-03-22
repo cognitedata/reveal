@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { Title } from '@cognite/cogs.js';
-import { v3 } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
 import { MetaDataTable } from 'src/components/FileMetadata/MetadataTable';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +13,9 @@ import {
 import { updateFileById } from 'src/store/uploadedFilesSlice';
 import isEqual from 'lodash-es/isEqual';
 import { FileMetadataFieldsContainer } from 'src/components/FileMetadata/FileMetadataFieldsContainer';
-import { VisionFileDetails } from 'src/components/FileMetadata/Types';
 import { MetadataTableToolBar } from 'src/components/FileMetadata/MetadataTableToolBar';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { VisionFileDetailKey } from 'src/components/FileMetadata/Types';
 
 const Container = styled.div`
   width: 100%;
@@ -37,7 +37,7 @@ const DetailsContainer = styled.div`
   padding-bottom: 10px;
 `;
 
-type FileDetailCompProps = { fileObj: v3.FileInfo };
+type FileDetailCompProps = { fileObj: FileInfo };
 
 export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
   fileObj,
@@ -57,8 +57,8 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
     selectUpdatedFileMeta(state, String(fileObj.id))
   );
 
-  const onFieldChange = (key: string, value: any) => {
-    if (!isEqual(fileDetails[key as keyof VisionFileDetails], value)) {
+  const onFieldChange = (key: VisionFileDetailKey, value: any) => {
+    if (!isEqual(fileDetails[key], value)) {
       dispatch(fileInfoEdit({ key, value }));
     }
   };

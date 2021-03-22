@@ -3,8 +3,9 @@ import { Body, Icon, Input } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
 import { CopyableText } from 'src/components/FileMetadata/CopyableText';
 import { DataSetItem, LabelFilter } from '@cognite/data-exploration';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Label } from '@cognite/cdf-sdk-singleton';
 import useIsFieldSavePending from 'src/store/hooks/useIsFieldSavePending';
+import { VisionFileDetailKey } from 'src/components/FileMetadata/Types';
 
 const FieldViewContainer = styled.div`
   margin-bottom: 14px;
@@ -46,14 +47,14 @@ const Loader = (props: { loading: boolean }) => {
 };
 
 export const FileDetailFieldView = (props: {
-  id: string;
+  id: VisionFileDetailKey;
   title: string;
   placeholder?: string;
   value?: ReactText;
   copyable?: boolean;
   editable?: boolean;
-  onBlur?: (key: string, value: ReactText) => void;
-  onInput?: (key: string, value: ReactText) => void;
+  onBlur?: (key: VisionFileDetailKey, value: ReactText) => void;
+  onInput?: (key: VisionFileDetailKey, value: ReactText) => void;
 }) => {
   const loading = useIsFieldSavePending(props.id);
 
@@ -100,12 +101,12 @@ export const FileDetailFieldView = (props: {
 };
 
 export const LabelContainerView = (props: {
-  value: v3.Label[] | undefined;
-  setValue: (labels?: v3.Label[]) => void;
+  value: Label[] | undefined;
+  setValue: (labels?: Label[]) => void;
 }) => {
   const loading = useIsFieldSavePending('labels');
 
-  const handleSetValue = (val?: v3.Label[]) => {
+  const handleSetValue = (val?: Label[]) => {
     props.setValue(val);
   };
   return (

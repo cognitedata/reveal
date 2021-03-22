@@ -95,11 +95,11 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
           </StepContent>
         </StepContainer>
         {showDrawer && (
-          <DrawerContent>
+          <DrawerContainer>
             <QueryClientProvider client={queryClient}>
               <FileMetadataPreview />
             </QueryClientProvider>
-          </DrawerContent>
+          </DrawerContainer>
         )}
       </MainContent>
 
@@ -138,33 +138,17 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
 }
 
 const MainContent = styled.div`
+  flex: 1;
   display: flex;
   overflow: auto;
-  height: 100%;
 `;
 
-const Steps = styled(AntdSteps)`
-  padding-bottom: 16px;
-  max-width: 500px;
-`;
-
-const StepContent = styled.div`
-  padding-top: 20px;
-  flex-grow: 1;
-`;
-
-const DrawerContent = styled.div`
-  width: 400px;
-  border-top: 1px solid #d9d9d9;
-  border-left: 1px solid #d9d9d9;
-  box-sizing: content-box;
+const BottomNavContainer = styled.div`
+  width: 100vw;
 `;
 
 const StepContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-
+  flex: 1;
   min-width: 900px; /* totally random, but mocks have one size for now */
 
   /* the same padding is used in SubAppWrapper but it's disabled to make bottom nav looking right */
@@ -172,9 +156,30 @@ const StepContainer = styled.div`
   @media (min-width: 992px) {
     padding: 20px 50px;
   }
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  box-sizing: content-box;
 `;
 
-const BottomNavContainer = styled.div`
-  position: sticky;
-  bottom: 0;
+const DrawerContainer = styled.div`
+  width: 400px;
+  border: 1px solid #d9d9d9;
+  box-sizing: content-box;
+  height: max-content;
+  flex-shrink: 0;
+`;
+
+const Steps = styled(AntdSteps)`
+  padding-bottom: 16px;
+  max-width: 500px;
+  flex-shrink: 0;
+`;
+
+const StepContent = styled.div`
+  padding-top: 20px;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
 `;

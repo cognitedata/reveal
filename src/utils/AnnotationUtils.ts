@@ -107,7 +107,6 @@ export class AnnotationUtils {
   }
 
   public static convertToAnnotations(
-    fileId: string,
     annotations: Annotation[],
     modelType: DetectionModelType
   ): VisionAnnotation[] {

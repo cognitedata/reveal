@@ -100,7 +100,6 @@ export const FileMetadataPreview = () => {
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 40px auto;

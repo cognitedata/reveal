@@ -14,7 +14,5 @@ export function getLink(route: string) {
 }
 
 export function getParamLink(route: string, param: string, paramVal: string) {
-  return createLink(
-    route.slice('/:tenant'.length).replace(':fileId', paramVal)
-  );
+  return createLink(route.slice('/:tenant'.length).replace(param, paramVal));
 }

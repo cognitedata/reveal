@@ -166,11 +166,11 @@ export function FileTable(props: FileTableProps) {
 
   return (
     <TableWrapper>
-      <AutoSizer>
-        {({ width, height }) => (
+      <AutoSizer style={{ width: 'auto', height: 'auto' }}>
+        {({ width }) => (
           <ReactBaseTable<TableDataItem>
             columns={columns}
-            height={height}
+            maxHeight={Infinity}
             width={width}
             {...props}
           />

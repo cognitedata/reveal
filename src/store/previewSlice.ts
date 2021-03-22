@@ -5,7 +5,6 @@ import {
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { DetectionModelType } from 'src/api/types';
-import { v3 } from '@cognite/cdf-sdk-singleton';
 import { fileProcessUpdate } from 'src/store/common';
 import {
   deleteFilesById,
@@ -18,6 +17,7 @@ import {
 } from 'src/components/FileMetadata/Types';
 import { RootState } from 'src/store/rootReducer';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
+import { Label } from '@cognite/cdf-sdk-singleton';
 
 export interface VisionAnnotationState extends VisionAnnotation {
   id: string;
@@ -33,7 +33,7 @@ interface VisionModelState {
   annotations: string[];
 }
 
-export type FileInfoValueState = string | v3.Label[] | null | undefined;
+export type FileInfoValueState = string | Label[] | null | undefined;
 
 type State = {
   annotations: {
@@ -238,7 +238,6 @@ const previewSlice = createSlice({
 
         const { annotations } = job.items[0];
         const visionAnnotations = AnnotationUtils.convertToAnnotations(
-          fileId.toString(),
           annotations,
           job.type
         );

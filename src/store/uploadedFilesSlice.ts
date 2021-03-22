@@ -4,14 +4,20 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { v3, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import {
+  FileInfo,
+  InternalId,
+  Label,
+  Metadata,
+  v3Client as sdk,
+} from '@cognite/cdf-sdk-singleton';
 import { ThunkConfig } from 'src/store/common';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import isEqual from 'lodash-es/isEqual';
 
 export const deleteFilesById = createAsyncThunk<
-  v3.InternalId[],
-  v3.InternalId[],
+  InternalId[],
+  InternalId[],
   ThunkConfig
 >('uploadedFiles/deleteFileById', async (fileIds) => {
   if (!fileIds) {
@@ -22,7 +28,7 @@ export const deleteFilesById = createAsyncThunk<
 });
 
 export const updateFileById = createAsyncThunk<
-  v3.FileInfo[],
+  FileInfo[],
   { fileId: number; key: string },
   ThunkConfig
 >('uploadedFiles/updateFileById', async ({ fileId, key }, { getState }) => {
@@ -47,10 +53,11 @@ export const updateFileById = createAsyncThunk<
         if (!Object.keys(editedFileDetails).includes(key)) {
           return [];
         }
-        const newLabels = (editedFileDetails[key] as v3.Label[]) || [];
-        const existingLabels = (fileDetails && fileDetails.labels) || [];
-        const addedLabels: v3.Label[] = [];
-        const removedLabels: v3.Label[] = [];
+        const newLabels = (editedFileDetails[key] as Label[]) || [];
+        const existingLabels: Label[] =
+          (fileDetails && fileDetails.labels) || [];
+        const addedLabels: Label[] = [];
+        const removedLabels: Label[] = [];
         existingLabels.forEach((existingLbl) => {
           const found = newLabels.find(
             (newLabel) => existingLbl.externalId === newLabel.externalId
@@ -73,7 +80,7 @@ export const updateFileById = createAsyncThunk<
         break;
       }
       case 'metadata': {
-        const metadata: v3.Metadata = {};
+        const metadata: Metadata = {};
 
         const editedFileMeta = getState().previewSlice.fileMetaData;
         const metaKeys = Object.keys(editedFileMeta);
@@ -96,7 +103,7 @@ export const updateFileById = createAsyncThunk<
         const value = editedFileDetails[key];
         if (
           !Object.keys(editedFileDetails).includes(key) ||
-          isEqual(value, fileDetails[key as keyof v3.FileInfo])
+          isEqual(value, fileDetails[key as keyof FileInfo])
         ) {
           return [];
         }
@@ -116,7 +123,7 @@ export const updateFileById = createAsyncThunk<
 });
 
 type State = {
-  uploadedFiles: Array<v3.FileInfo>;
+  uploadedFiles: Array<FileInfo>;
 };
 
 // For debugging
@@ -142,7 +149,7 @@ const uploadedFilesSlice = createSlice({
       const { uploadedFiles } = action.payload;
       state.uploadedFiles = uploadedFiles;
     },
-    addUploadedFile(state, action: PayloadAction<v3.FileInfo>) {
+    addUploadedFile(state, action: PayloadAction<FileInfo>) {
       state.uploadedFiles = state.uploadedFiles.concat(action.payload);
     },
   },
@@ -173,7 +180,7 @@ const uploadedFilesSlice = createSlice({
       }
     });
 
-    builder.addCase(updateFileById.rejected, (state, { error }) => {
+    builder.addCase(updateFileById.rejected, (_, { error }) => {
       if (error && error.message) {
         ToastUtils.onFailure(error?.message);
       }
@@ -185,7 +192,7 @@ export const { setUploadedFiles, addUploadedFile } = uploadedFilesSlice.actions;
 
 export default uploadedFilesSlice.reducer;
 
-export const uploadedFiles = (state: State): Array<v3.FileInfo> =>
+export const uploadedFiles = (state: State): Array<FileInfo> =>
   state.uploadedFiles;
 
 export const selectFileById = createSelector(

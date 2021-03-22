@@ -113,6 +113,7 @@ const TableWrapperInner = styled.div`
   .BaseTable .BaseTable__header,
   .BaseTable .BaseTable__body {
     outline: none;
+    overflow: visible !important;
   }
 
   .BaseTable__header-row,

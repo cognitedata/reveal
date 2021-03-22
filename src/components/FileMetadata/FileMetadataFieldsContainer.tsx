@@ -6,12 +6,15 @@ import {
   FileDetailFieldView,
   LabelContainerView,
 } from 'src/components/FileMetadata/FileMetaDataChildren';
-import { VisionFileDetails } from 'src/components/FileMetadata/Types';
+import {
+  VisionFileDetailKey,
+  VisionFileDetails,
+} from 'src/components/FileMetadata/Types';
 
 export const FileMetadataFieldsContainer = (props: {
   info: VisionFileDetails;
-  updateInfo: (key: string) => void;
-  onFieldChange: (key: string, value: any) => void;
+  updateInfo: (key: VisionFileDetailKey) => void;
+  onFieldChange: (key: VisionFileDetailKey, value: any) => void;
 }) => {
   const { info, updateInfo, onFieldChange } = props;
   return (
