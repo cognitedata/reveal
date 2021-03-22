@@ -10,3 +10,15 @@ export const isFileOfType = (file?: File, type?: string[]) => {
 
 export const isFilePreviewable = (file?: File) =>
   isFileOfType(file, PREVIEWABLE_FILE_TYPES);
+
+export const readablePreviewableFileTypes = () =>
+  PREVIEWABLE_FILE_TYPES.reduce((acc, current, i) => {
+    const fileType = current.toUpperCase();
+    if (i === 0) {
+      return `${fileType}`;
+    }
+    if (i !== PREVIEWABLE_FILE_TYPES.length - 1) {
+      return `${acc}, ${fileType}`;
+    }
+    return `${acc} or ${fileType}`;
+  }, '');

@@ -1,11 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
+import { Icon, Button } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
 import { useAssetTimeseresSearch } from 'hooks/useSearch';
 import styled from 'styled-components/macro';
-import { useHistory } from 'react-router-dom';
+import { PnidButton } from 'components/SearchResultTable';
 
 export const SearchResultTable = ({
   query,
@@ -14,8 +14,6 @@ export const SearchResultTable = ({
   query: string;
   onTimeseriesClick: (timeseries: Timeseries) => void;
 }) => {
-  const history = useHistory();
-
   const {
     data: assets = [],
     isFetching,
@@ -55,13 +53,7 @@ export const SearchResultTable = ({
               <span style={{ marginLeft: 10, flexGrow: 2 }}>
                 {asset.description}
               </span>
-              <Tooltip content="P&amp;IDs">
-                <Button
-                  variant="ghost"
-                  icon="SearchDocuments"
-                  onClick={() => history.push(`/files/${asset.id}`)}
-                />
-              </Tooltip>
+              <PnidButton asset={asset} />
               <AssetCount>{ts.length} </AssetCount>
             </Row>
             <Row>

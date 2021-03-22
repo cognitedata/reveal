@@ -20,6 +20,7 @@ type Props = {
   active?: boolean;
   isWorkspaceMode?: boolean;
   isDataQualityMode?: boolean;
+  isFileViewerMode?: boolean;
   setDataQualityReport: (input: {
     timeSeriesId: string;
     reportType: string;
@@ -33,6 +34,7 @@ export default function TimeSeriesRow({
   disabled = false,
   isDataQualityMode = false,
   isWorkspaceMode = false,
+  isFileViewerMode = false,
   setDataQualityReport,
 }: Props) {
   const {
@@ -121,31 +123,36 @@ export default function TimeSeriesRow({
             fade={!enabled}
           />
           <SourceName title={name}>
-            <EditableText
-              value={name || 'noname'}
-              onChange={(value) => {
-                update(id, { name: value });
-                setIsEditingName(false);
-              }}
-              onCancel={() => setIsEditingName(false)}
-              editing={isEditingName}
-              hideButtons
-            />
+            {!isFileViewerMode && (
+              <EditableText
+                value={name || 'noname'}
+                onChange={(value) => {
+                  update(id, { name: value });
+                  setIsEditingName(false);
+                }}
+                onCancel={() => setIsEditingName(false)}
+                editing={isEditingName}
+                hideButtons
+              />
+            )}
+            {isFileViewerMode && name}
           </SourceName>
-          <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
-            <Dropdown
-              content={
-                <TimeSeriesMenu
-                  chartId={chart.id}
-                  id={id}
-                  closeMenu={() => setIdHack(idHack + 1)}
-                  startRenaming={() => setIsEditingName(true)}
-                />
-              }
-            >
-              <Icon type="VerticalEllipsis" />
-            </Dropdown>
-          </SourceMenu>
+          {!isFileViewerMode && (
+            <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
+              <Dropdown
+                content={
+                  <TimeSeriesMenu
+                    chartId={chart.id}
+                    id={id}
+                    closeMenu={() => setIdHack(idHack + 1)}
+                    startRenaming={() => setIsEditingName(true)}
+                  />
+                }
+              >
+                <Icon type="VerticalEllipsis" />
+              </Dropdown>
+            </SourceMenu>
+          )}
         </SourceItem>
       </td>
       {isWorkspaceMode && (
@@ -190,6 +197,10 @@ export default function TimeSeriesRow({
               </SourceItem>
             </Dropdown>
           </td>
+        </>
+      )}
+      {(isWorkspaceMode || isFileViewerMode) && (
+        <>
           <td>
             <SourceItem>
               <SourceName>

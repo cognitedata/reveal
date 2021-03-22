@@ -20,7 +20,7 @@ const Routes = () => {
     <Switch>
       <Route path="/" exact component={ChartList} />
       <Route path="/:chartId" exact component={ChartView} />
-      <Route path="/files/:assetId" component={FileView} />
+      <Route path="/:chartId/files/:assetId" component={FileView} />
     </Switch>
   );
 };

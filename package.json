@@ -20,6 +20,7 @@
     "testcafe:serve": "serve -s build -l 11111"
   },
   "dependencies": {
+    "@cognite/annotations": "^1.1.0",
     "@cognite/cogs.js": "^2.18.2",
     "@cognite/connect": "^0.0.5",
     "@cognite/data-exploration": "^0.5.7",
@@ -39,7 +40,6 @@
     "react": "^17.0.1",
     "react-datepicker": "^3.6.0",
     "react-dom": "^17.0.1",
-
     "react-plotly.js": "^2.5.1",
     "react-query": "^3.12.3",
     "react-router-dom": "^5.2.0",

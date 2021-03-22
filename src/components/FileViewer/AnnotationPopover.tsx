@@ -1,0 +1,170 @@
+import React from 'react';
+import { CogniteAnnotation } from '@cognite/annotations';
+import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
+import { Body, Button, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
+import { useAsset, useAssetTimeseries } from 'hooks/api';
+import styled from 'styled-components/macro';
+import { TimeseriesChart } from '@cognite/data-exploration';
+import moment from 'moment';
+import { useParams } from 'react-router-dom';
+import { useChart, useUpdateChart } from 'hooks/firebase';
+import { Timeseries } from '@cognite/sdk';
+import { addTimeseries, covertTSToChartTS } from 'utils/charts';
+
+export const AnnotationPopover = ({
+  annotations,
+}: {
+  annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[];
+}) => {
+  const annotation = annotations[0];
+  const selectedAssetId =
+    annotation.resourceType === 'asset' ? annotation.resourceId : undefined;
+
+  const { data: asset, isLoading } = useAsset(selectedAssetId);
+
+  if (annotation.resourceType !== 'asset' || !selectedAssetId) {
+    return <></>;
+  }
+
+  if (isLoading) {
+    return <Icon type="Loading" />;
+  }
+
+  if (!asset) {
+    return <>Asset not found!</>;
+  }
+
+  return (
+    <StyledMenu>
+      <TitleContainer>
+        <IconBackground>
+          <Icon type="ResourceAssets" />
+        </IconBackground>
+        <AssetInfoContainer>
+          <Title level={5}>{asset.name}</Title>
+          <Body level={2}>{asset.description}</Body>
+        </AssetInfoContainer>
+      </TitleContainer>
+      <TimeseriesTitle>
+        <Overline level={2} style={{ color: 'var(--cogs-greyscale-grey6)' }}>
+          Time series:
+        </Overline>
+      </TimeseriesTitle>
+      <TimeseriesList assetId={selectedAssetId} />
+    </StyledMenu>
+  );
+};
+
+export const TimeseriesList = ({ assetId }: { assetId: number }) => {
+  const { chartId } = useParams<{ chartId: string }>();
+  const { data: chart } = useChart(chartId);
+  const { mutate: updateChart } = useUpdateChart();
+
+  const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
+
+  const sparklineStartDate = moment()
+    .subtract(1, 'years')
+    .startOf('day')
+    .toDate();
+
+  const sparklineEndDate = moment().endOf('day').toDate();
+
+  const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
+    if (chart) {
+      const ts = covertTSToChartTS(
+        timeSeries,
+        chart.timeSeriesCollection?.length
+      );
+      updateChart({ chart: addTimeseries(chart, ts) });
+    }
+  };
+
+  if (isLoading) {
+    return <Icon type="Loading" style={{ margin: 10 }} />;
+  }
+
+  if (timeseries.length === 0) {
+    return <span style={{ margin: 10 }}>No timeseries found</span>;
+  }
+
+  return (
+    <div>
+      {timeseries.map((ts) => (
+        <TimeseriesItem key={ts.id}>
+          <TimeseriesInfo>
+            <Title level={6}>{ts.name}</Title>
+            <Body level={2}>{ts.description}</Body>
+            <TimeseriesChart
+              height={55}
+              showSmallerTicks
+              timeseriesId={ts.id}
+              numberOfPoints={100}
+              showAxis="horizontal"
+              timeOptions={[]}
+              showContextGraph={false}
+              showPoints={false}
+              enableTooltip={false}
+              showGridLine="none"
+              minRowTicks={2}
+              dateRange={[sparklineStartDate, sparklineEndDate]}
+            />
+          </TimeseriesInfo>
+          <Button
+            icon="Plus"
+            variant="ghost"
+            onClick={() => handleTimeSeriesClick(ts)}
+          />
+        </TimeseriesItem>
+      ))}
+    </div>
+  );
+};
+
+const StyledMenu = styled(Menu)`
+  width: 350px;
+  max-height: 400px;
+  padding: 0;
+  overflow-y: auto;
+`;
+
+const TitleContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  padding: 15px;
+`;
+
+const AssetInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TimeseriesTitle = styled(Menu.Header)`
+  border-top: 1px solid var(--cogs-greyscale-grey4);
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
+`;
+
+const IconBackground = styled.div`
+  padding: 6px;
+  background-color: var(--cogs-greyscale-grey2);
+  color: var(--cogs-greyscale-grey7);
+  border-radius: 4px;
+  height: 26px;
+  margin-right: 10px;
+`;
+
+const TimeseriesItem = styled.div`
+  padding: 15px;
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const TimeseriesInfo = styled.div`
+  flex-grow: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;

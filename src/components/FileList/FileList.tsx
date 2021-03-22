@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Body, DocumentIcon, Icon, Overline } from '@cognite/cogs.js';
-import { FileInfo as File } from '@cognite/sdk';
+import { Asset, FileInfo as File } from '@cognite/sdk';
 import {
   isFilePreviewable,
   useFileIcon,
@@ -62,15 +62,15 @@ const FileListItem = ({
 };
 
 export const FileList = ({
-  assetId,
+  asset,
   selectedFileId,
   onFileClick,
 }: {
-  assetId: string;
+  asset: Asset;
   selectedFileId?: number;
   onFileClick: (file: File) => void;
 }) => {
-  const { data = [], isLoading } = useFilesAssetAppearsIn(assetId);
+  const { data = [], isLoading } = useFilesAssetAppearsIn(asset);
 
   if (isLoading) {
     return <Icon type="Loading" />;
@@ -79,6 +79,13 @@ export const FileList = ({
   if (data.length === 0) {
     return <ErrorFeedback>No files found</ErrorFeedback>;
   }
+
+  // Select first file on default
+  useEffect(() => {
+    if (!selectedFileId && data.length > 0) {
+      onFileClick(data[0]);
+    }
+  }, [selectedFileId, data]);
 
   return (
     <ListWrapper>
