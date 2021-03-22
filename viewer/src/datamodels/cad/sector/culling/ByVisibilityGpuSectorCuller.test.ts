@@ -65,7 +65,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const input = createDetermineSectorInput(camera, [model1, model2]);
 
     // Act
-    const sectors = culler.determineSectors(input);
+    const result = culler.determineSectors(input);
+    const sectors = result.wantedSectors;
 
     // Assert
     expect(orderSectorsByVisibilityMock).toBeCalledTimes(1); // Only render scene once
@@ -114,7 +115,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     });
 
     // Act
-    const sectors = culler.determineSectors(input);
+    const result = culler.determineSectors(input);
+    const sectors = result.wantedSectors;
 
     // Assert
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).map(x => x.metadata.id)).toEqual([0, 1]);
@@ -154,7 +156,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     });
 
     // Act
-    const sectors = culler.determineSectors(input);
+    const result = culler.determineSectors(input);
+    const sectors = result.wantedSectors;
 
     // Assert
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).map(x => x.metadata.id)).toEqual([0, 1]);

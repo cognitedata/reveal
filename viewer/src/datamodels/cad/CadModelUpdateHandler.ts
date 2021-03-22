@@ -22,7 +22,7 @@ import { assertNever, emissionLastMillis, LoadingState } from '../../utilities';
 import { CadModelMetadata } from '.';
 import { loadingEnabled, handleDetermineSectorsInput } from './sector/rxSectorUtilities';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
-import { DetermineSectorsInput } from './sector/culling/types';
+import { DetermineSectorsInput, SectorLoadingSpendage } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 
 export class CadModelUpdateHandler {
@@ -30,6 +30,7 @@ export class CadModelUpdateHandler {
   private readonly _sectorCuller: SectorCuller;
   private readonly _modelStateHandler: ModelStateHandler;
   private _budget: CadModelSectorBudget;
+  private _lastSpendage: SectorLoadingSpendage;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
@@ -45,6 +46,16 @@ export class CadModelUpdateHandler {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
     this._budget = defaultCadModelSectorBudget;
+    this._lastSpendage = {
+      downloadSize: 0,
+      drawCalls: 0,
+      loadedSectorCount: 0,
+      simpleSectorCount: 0,
+      detailedSectorCount: 0,
+      forcedDetailedSectorCount: 0,
+      totalSectorCount: 0,
+      accumulatedPriority: 0
+    };
 
     /* Creates and observable that emits an event when either of the observables emitts an item.
      * ------- new camera ---------\
@@ -70,12 +81,15 @@ export class CadModelUpdateHandler {
       ]).pipe(map(makeClippingInput)),
       this.loadingModelObservable()
     ]);
+    const collectStatisticsCallback = (spendage: SectorLoadingSpendage) => {
+      this._lastSpendage = spendage;
+    };
     this._updateObservable = combinator.pipe(
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
       auditTime(250), // Take the last value every 250ms // TODO 07-08-2020 j-bjorne: look into throttle
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
-      handleDetermineSectorsInput(sectorRepository, sectorCuller, this._modelStateHandler),
+      handleDetermineSectorsInput(sectorRepository, sectorCuller, this._modelStateHandler, collectStatisticsCallback),
       finalize(() => {
         this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
       })
@@ -105,6 +119,10 @@ export class CadModelUpdateHandler {
   set budget(b: CadModelSectorBudget) {
     this._budget = b;
     this._budgetSubject.next(b);
+  }
+
+  get lastBudgetSpendage(): SectorLoadingSpendage {
+    return this._lastSpendage;
   }
 
   addModel(model: CadNode) {

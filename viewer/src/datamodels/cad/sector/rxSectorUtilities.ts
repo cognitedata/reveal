@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DetermineSectorsInput } from './culling/types';
+import { DetermineSectorsInput, SectorLoadingSpendage } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
 import { OperatorFunction, from, Observable, asyncScheduler, EMPTY } from 'rxjs';
@@ -11,10 +11,19 @@ import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import { filter, switchMap, tap, publish, subscribeOn } from 'rxjs/operators';
 
+/**
+ * Creates a RxJS operator for loading sectors given camera, budget etc input.
+ * @param sectorRepository Repository to store sectors in
+ * @param sectorCuller Culler used to prioritize sectors for loading
+ * @param modelStateHandler Holds state about what sectors are loaded
+ * @param collectStatisticsCallback Callback to collect statistics on how much data is loaded
+ * @returns RxJS operator
+ */
 export function handleDetermineSectorsInput(
   sectorRepository: Repository,
   sectorCuller: SectorCuller,
-  modelStateHandler: ModelStateHandler
+  modelStateHandler: ModelStateHandler,
+  collectStatisticsCallback: (spendage: SectorLoadingSpendage) => void
 ): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
   return publish((source$: Observable<DetermineSectorsInput>) => {
     const updateSector = (input: DetermineSectorsInput) => {
@@ -22,7 +31,9 @@ export function handleDetermineSectorsInput(
       if (cameraInMotion) {
         return EMPTY;
       }
-      return from(sectorCuller.determineSectors(input)).pipe(
+      const prioritizedResult = sectorCuller.determineSectors(input);
+      collectStatisticsCallback(prioritizedResult.spendage);
+      return from(prioritizedResult.wantedSectors).pipe(
         subscribeOn(asyncScheduler),
         filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),
         sectorRepository.loadSector()

@@ -28,9 +28,19 @@ export class OverrideSectorCuller implements reveal.internal.SectorCuller {
 
   determineSectors(
     input: reveal.internal.DetermineSectorsInput
-  ): reveal.internal.WantedSector[] {
+  ) {
     if (this._wantedSectors) {
-      return this._wantedSectors;
+      const spendage: reveal.internal.CadModelSectorLoadStatistics = {
+        downloadSize : 0,
+        drawCalls : 0,
+        loadedSectorCount : 0,
+        simpleSectorCount : 0,
+        detailedSectorCount : 0,
+        forcedDetailedSectorCount : 0,
+        totalSectorCount : 0,
+        accumulatedPriority : 0
+      };
+      return {spendage, wantedSectors: this._wantedSectors };
     }
     return this._culler.determineSectors(input);
   }
