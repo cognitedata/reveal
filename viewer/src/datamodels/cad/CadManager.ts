@@ -16,6 +16,7 @@ import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
+import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;
@@ -39,6 +40,13 @@ export class CadManager<TModelIdentifier> {
 
   set budget(budget: CadModelSectorBudget) {
     this._cadModelUpdateHandler.budget = budget;
+  }
+
+  /**
+   * Returns statistics about how data loaded (or data about to be loaded).
+   */
+  get loadedStatistics(): CadModelSectorLoadStatistics {
+    return this._cadModelUpdateHandler.lastBudgetSpendage;
   }
 
   constructor(

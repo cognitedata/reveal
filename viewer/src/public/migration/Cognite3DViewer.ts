@@ -57,6 +57,7 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
+import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -178,6 +179,13 @@ export class Cognite3DViewer {
     // Note! Type here differes from the one in RevealManager to expose a documentated
     // type. This should map 1:1 with type in RevealManager
     this._revealManager.cadBudget = budget;
+  }
+
+  /**
+   * @internal
+   */
+  public get cadLoadedStatistics(): CadModelSectorLoadStatistics {
+    return this._revealManager.cadLoadedStatistics;
   }
 
   constructor(options: Cognite3DViewerOptions) {

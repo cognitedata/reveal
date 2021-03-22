@@ -16,3 +16,5 @@ export { DetermineSectorsInput } from './datamodels/cad/sector/culling/types';
 export { SectorCuller } from './datamodels/cad/sector/culling/SectorCuller';
 export { ByVisibilityGpuSectorCuller } from './datamodels/cad/sector/culling/ByVisibilityGpuSectorCuller';
 export { GpuOrderSectorsByVisibilityCoverage } from './datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+
+export { CadModelSectorLoadStatistics } from './datamodels/cad/CadModelSectorLoadStatistics';

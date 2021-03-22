@@ -18,7 +18,8 @@ import {
   DetermineSectorCostDelegate,
   DetermineSectorsInput,
   SectorCost,
-  addSectorCost
+  addSectorCost,
+  SectorLoadingSpendage
 } from './types';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
@@ -142,7 +143,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.options.coverageUtil.dispose();
   }
 
-  determineSectors(input: DetermineSectorsInput): WantedSector[] {
+  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spendage: SectorLoadingSpendage } {
     const takenSectors = this.update(
       input.camera,
       input.cadModelsMetadata,
@@ -151,23 +152,32 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       input.budget
     );
     const wanted = takenSectors.collectWantedSectors();
+    const nonDiscarded = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
     const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
-    const takenSectorCount = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length;
-    const takenSimpleCount = wanted.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
+    const takenSectorCount = nonDiscarded.length;
+    const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
+    const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
+    const accumulatedPriority = nonDiscarded
+      .filter(x => Number.isFinite(x.priority) && x.priority > 0)
+      .reduce((sum, x) => sum + x.priority, 0);
     const takenDetailedPercent = ((100.0 * (takenSectorCount - takenSimpleCount)) / totalSectorCount).toPrecision(3);
     const takenPercent = ((100.0 * takenSectorCount) / totalSectorCount).toPrecision(3);
 
     this.log(
-      `Scene: ${wanted.length} (${
-        wanted.filter(x => !Number.isFinite(x.priority)).length
-      } required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
+      `Scene: ${takenSectorCount} (${forcedDetailedSectorCount} required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
-    return wanted;
-  }
-
-  get lastWantedSectors(): PrioritizedWantedSector[] {
-    return this.takenSectors.collectWantedSectors();
+    const spendage: SectorLoadingSpendage = {
+      drawCalls: takenSectors.totalCost.drawCalls,
+      downloadSize: takenSectors.totalCost.downloadSize,
+      totalSectorCount,
+      forcedDetailedSectorCount,
+      loadedSectorCount: takenSectorCount,
+      simpleSectorCount: takenSimpleCount,
+      detailedSectorCount: takenSectorCount - takenSimpleCount,
+      accumulatedPriority
+    };
+    return { spendage, wantedSectors: wanted };
   }
 
   private update(
@@ -188,14 +198,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const prioritized = coverageUtil.orderSectorsByVisibility(camera);
 
     // Add high details for all sectors the camera is inside or near
-    this.addHighDetailsForNearSectors(
-      camera,
-      models,
-      budget.highDetailProximityThreshold,
-      takenSectors,
-      clippingPlanes,
-      clipIntersection
-    );
+    this.addHighDetailsForNearSectors(camera, models, budget, takenSectors, clippingPlanes, clipIntersection);
 
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;
@@ -222,13 +225,13 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private addHighDetailsForNearSectors(
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
-    proximityThreshold: number,
+    budget: CadModelSectorBudget,
     takenSectors: TakenSectorMap,
     clippingPlanes: THREE.Plane[] | null,
     clipIntersection: boolean
   ) {
     const shortRangeCamera = camera.clone(true);
-    shortRangeCamera.far = proximityThreshold;
+    shortRangeCamera.far = budget.highDetailProximityThreshold;
     shortRangeCamera.updateProjectionMatrix();
     const cameraMatrixWorldInverse = shortRangeCamera.matrixWorldInverse;
     const cameraProjectionMatrix = shortRangeCamera.projectionMatrix;

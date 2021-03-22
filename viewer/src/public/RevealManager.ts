@@ -22,6 +22,7 @@ import { SupportedModelTypes } from '../datamodels/base';
 import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
+import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
 import { RenderOptions } from '..';
 import { EventTrigger } from '../utilities/events';
 
@@ -120,6 +121,10 @@ export class RevealManager<TModelIdentifier> {
 
   public set cadBudget(budget: CadModelSectorBudget) {
     this._cadManager.budget = budget;
+  }
+
+  public get cadLoadedStatistics(): CadModelSectorLoadStatistics {
+    return this._cadManager.loadedStatistics;
   }
 
   public get renderMode(): RenderMode {
