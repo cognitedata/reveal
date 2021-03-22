@@ -471,7 +471,6 @@ export function Migration() {
     
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
-      const material = new THREE.MeshBasicMaterial({color: 'red', wireframe: true});
       model.traverse(x => {
         if (x instanceof THREE.Mesh) {
           const mesh = x;
