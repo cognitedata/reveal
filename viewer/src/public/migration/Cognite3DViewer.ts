@@ -1559,11 +1559,15 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
+  const edgeDetectionParameters = {
+    enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
+  };
 
   revealOptions.renderOptions = {
     antiAliasing,
     multiSampleCountHint: multiSampleCount,
-    ssaoRenderParameters
+    ssaoRenderParameters,
+    edgeDetectionParameters
   };
   return revealOptions;
 }

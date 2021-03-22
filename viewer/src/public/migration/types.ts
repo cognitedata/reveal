@@ -123,6 +123,11 @@ export interface Cognite3DViewerOptions {
    */
   ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
 
+  /**
+   * Enables / disables visualizing the edges of geometry. Defaults to true.
+   */
+  enableEdges?: boolean;
+
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 

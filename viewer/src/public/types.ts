@@ -34,6 +34,13 @@ export enum SsaoSampleQuality {
 }
 
 /**
+ * Edge detection parameters supported by Reveal.
+ */
+export type EdgeDetectionParameters = {
+  enabled: boolean;
+};
+
+/**
  * Screen-space ambient occlusion parameters supported by Reveal.
  */
 export type SsaoParameters = {
@@ -68,6 +75,10 @@ export type RenderOptions = {
    * Determines the parameters used for ambient occlusion heuristic shading.
    */
   ssaoRenderParameters?: SsaoParameters;
+  /**
+   * Determines the parameters used for visualizing edges of the geometry.
+   */
+  edgeDetectionParameters?: EdgeDetectionParameters;
 };
 
 /**
@@ -76,7 +87,8 @@ export type RenderOptions = {
 export const defaultRenderOptions: Required<RenderOptions> = {
   antiAliasing: AntiAliasingMode.FXAA,
   multiSampleCountHint: 1,
-  ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 }
+  ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 },
+  edgeDetectionParameters: { enabled: true }
 };
 
 /**
