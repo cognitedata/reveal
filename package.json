@@ -68,7 +68,7 @@
     "cross-var": "^1.1.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.1.0",
-    "eslint-plugin-lodash": "^7.1.0",
+    "eslint-plugin-lodash": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-testcafe": "^0.2.1",
     "fs-extra": "^9.1.0",
