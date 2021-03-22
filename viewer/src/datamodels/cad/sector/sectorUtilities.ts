@@ -14,7 +14,7 @@ import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttribu
 import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
-import { createPrimitives, setBoundingSphere } from '../rendering/primitives';
+import { createPrimitives } from '../rendering/primitives';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */
@@ -96,10 +96,7 @@ export function consumeSectorSimple(sector: SectorQuads, sectorBounds: THREE.Box
 export function consumeSectorDetailed(sector: SectorGeometry, metadata: SectorMetadata, materials: Materials) {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   const obj = new THREE.Group();
-  for (const primtiveRoot of createPrimitives(sector, materials)) {
-    if (primtiveRoot instanceof THREE.Mesh) {
-      setBoundingSphere(primtiveRoot, bounds);
-    }
+  for (const primtiveRoot of createPrimitives(sector, materials, bounds)) {
     obj.add(primtiveRoot);
   }
 
