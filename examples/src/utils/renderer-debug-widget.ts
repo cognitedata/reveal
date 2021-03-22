@@ -97,17 +97,8 @@ export function createRendererDebugWidget(
     RenderMode.AlwaysRender,
     RenderMode.DisableRendering,
   ];
-  const renderStyleOptions = { showBoundingBoxes: false };
   gui.add(renderOptions, 'loadingEnabled').name('Loading enabled');
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
-  gui
-    .add(renderStyleOptions, 'showBoundingBoxes')
-    .name('Show bounding boxes')
-    .onChange(() => {
-      cadNode.renderHints = Object.assign(cadNode.renderHints || {}, {
-        showSectorBoundingBoxes: renderStyleOptions.showBoundingBoxes,
-      });
-    });
 
   // Basic render performance
   const statsGui = gui.addFolder('Stats');
