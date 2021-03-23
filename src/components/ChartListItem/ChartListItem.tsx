@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components/macro';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts/types';
-import EditableText from 'components/EditableText';
-import PlotlyChart from 'components/PlotlyChart';
 
+import { Chart } from 'reducers/charts/types';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
-import { useLoginStatus } from 'hooks';
+import { useLoginStatus, useIsChartOwner } from 'hooks';
 import { duplicate } from 'utils/charts';
 
-export type ViewOption = 'list' | 'grid';
+import { ListViewItem } from './ListViewItem';
+import { GridViewItem } from './GridViewItem';
 
-const formatOwner = (email: string) => email.split('@')[0];
+export type ViewOption = 'list' | 'grid';
 
 interface ChartListItemProps {
   chart: Chart;
@@ -26,6 +24,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const { mutate: deleteChart, isError: deleteError } = useDeleteChart();
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const isChartOwner = useIsChartOwner(chart);
 
   const handleRenameChart = (name: string) => {
     updateChart({ chart: { ...chart, name } });
@@ -59,8 +58,6 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
 
   const closeMenu = () => setIsMenuOpen(false);
 
-  const isChartMine = login?.user === chart.user;
-
   const dropdownMenu = (
     <Dropdown
       visible={isMenuOpen}
@@ -70,7 +67,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
           <Menu.Header>
             <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
           </Menu.Header>
-          {isChartMine && (
+          {isChartOwner && (
             <>
               <Menu.Item
                 onClick={() => setIsEditingName(true)}
@@ -105,147 +102,25 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
 
   if (view === 'list') {
     return (
-      <ListViewWrapper>
-        <ListViewLink to={`/${chart.id}`}>
-          <ListViewImage>
-            <PlotlyChart chart={chart} isPreview />
-          </ListViewImage>
-          <ListViewName>
-            <EditableText
-              value={chart.name}
-              onChange={handleRenameChart}
-              editing={isEditingName}
-              onCancel={() => setIsEditingName(false)}
-              hideEdit={!isChartMine}
-            />
-          </ListViewName>
-          <ListViewOwner>{formatOwner(chart.user)}</ListViewOwner>
-        </ListViewLink>
-        <div>{dropdownMenu}</div>
-      </ListViewWrapper>
+      <ListViewItem
+        chart={chart}
+        dropdownMenu={dropdownMenu}
+        handleRenameChart={handleRenameChart}
+        isEditingName={isEditingName}
+        cancelEdition={() => setIsEditingName(false)}
+      />
     );
   }
 
   return (
-    <GridViewWrapper>
-      <Link to={`/${chart.id}`}>
-        <GridViewImageWrapper>
-          <GridViewImageContent>
-            <PlotlyChart chart={chart} isPreview />
-          </GridViewImageContent>
-        </GridViewImageWrapper>
-      </Link>
-      <GridViewFooter>
-        <GridViewLink to={`/${chart.id}`}>
-          <GridViewOwner>{formatOwner(chart.user)}</GridViewOwner>
-          <GridViewName>
-            <EditableText
-              value={chart.name}
-              onChange={handleRenameChart}
-              editing={isEditingName}
-              onCancel={() => setIsEditingName(false)}
-              hideButtons
-              hideEdit
-            />
-          </GridViewName>
-        </GridViewLink>
-        <div>{dropdownMenu}</div>
-      </GridViewFooter>
-    </GridViewWrapper>
+    <GridViewItem
+      chart={chart}
+      dropdownMenu={dropdownMenu}
+      handleRenameChart={handleRenameChart}
+      isEditingName={isEditingName}
+      cancelEdition={() => setIsEditingName(false)}
+    />
   );
 };
-
-const ListViewWrapper = styled.div`
-  width: 100%;
-  margin: 0 20px 20px 20px;
-  padding: 16px;
-  border: 1px solid #dedede;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-`;
-
-const ListViewLink = styled(Link)`
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  color: var(--cogs-text-color);
-  &:hover {
-    color: var(--cogs-text-color);
-  }
-`;
-
-const ListViewImage = styled.div`
-  width: 120px;
-  height: 90px;
-  flex-grow: 0;
-  border: 1px solid #dedede;
-`;
-
-const ListViewName = styled.div`
-  width: 40%;
-  margin-left: 16px;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--cogs-text-color);
-`;
-
-const ListViewOwner = styled.div`
-  flex-grow: 1;
-  margin-left: 16px;
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 600;
-`;
-
-const GridViewWrapper = styled.div`
-  width: calc(25% - 40px);
-  margin: 20px;
-  padding: 16px;
-  border: 1px solid #dedede;
-  border-radius: 4px;
-`;
-
-const GridViewFooter = styled.div`
-  display: flex;
-  align-items: flex-start;
-  margin-top: 16px;
-`;
-
-const GridViewLink = styled(Link)`
-  flex-grow: 1;
-  color: var(--cogs-text-color);
-  &:hover {
-    color: var(--cogs-text-color);
-  }
-`;
-
-const GridViewImageWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  padding-bottom: 75%;
-  flex-grow: 0;
-  border: 1px solid #dedede;
-`;
-
-const GridViewImageContent = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-`;
-
-const GridViewOwner = styled.div`
-  text-transform: uppercase;
-  font-size: 10px;
-  font-weight: 600;
-`;
-
-const GridViewName = styled.div`
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--cogs-text-color);
-`;
 
 export default ChartListItem;

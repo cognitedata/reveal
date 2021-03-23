@@ -58,6 +58,7 @@ const EditableText = ({
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={finishOnEnter}
+              onBlur={cancelEditing}
               autoFocus
               fullWidth
             />

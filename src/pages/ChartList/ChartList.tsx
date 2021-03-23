@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import styled from 'styled-components';
 import {
   Button,
   Icon,
@@ -17,7 +18,7 @@ import { CHART_VERSION } from 'config/';
 import { useHistory } from 'react-router-dom';
 
 type ActiveTabOption = 'mine' | 'public';
-type SortOption = 'name' | 'owner';
+type SortOption = 'name' | 'owner' | 'updatedAt';
 type SelectSortOption = { value: SortOption; label: string };
 
 const nameSorter = (a: Chart, b: Chart) => {
@@ -28,9 +29,14 @@ const ownerSorter = (a: Chart, b: Chart) => {
   return a.user.localeCompare(b.user);
 };
 
+const updatedAtSorter = (a: Chart, b: Chart) => {
+  return b.updatedAt - a.updatedAt;
+};
+
 const sortOptions: SelectSortOption[] = [
   { value: 'name', label: 'Name' },
   { value: 'owner', label: 'Owner' },
+  { value: 'updatedAt', label: 'Updated' },
 ];
 
 const ChartList = () => {
@@ -52,7 +58,7 @@ const ChartList = () => {
 
   const [filterText, setFilterText] = useState<string>('');
   const [activeTab, setActiveTab] = useState<ActiveTabOption>('mine');
-  const [sortOption, setSortOption] = useState<SortOption>('name');
+  const [sortOption, setSortOption] = useState<SortOption>('updatedAt');
   const [viewOption, setViewOption] = useState<ViewOption>('list');
 
   const { mutateAsync: updateChart } = useUpdateChart();
@@ -106,8 +112,10 @@ const ChartList = () => {
 
     if (sortOption === 'name') {
       chartsToRender.sort(nameSorter);
-    } else {
+    } else if (sortOption === 'owner') {
       chartsToRender.sort(ownerSorter);
+    } else {
+      chartsToRender.sort(updatedAtSorter);
     }
 
     return chartsToRender.map((chart) => (
@@ -164,7 +172,7 @@ const ChartList = () => {
                 latest version of Cogs yet.
               */
               // value={sortOption}
-              placeholder="Name"
+              placeholder="Updated"
               onChange={(option: SelectSortOption) =>
                 setSortOption(option.value)
               }
@@ -189,11 +197,29 @@ const ChartList = () => {
       <div style={{ textAlign: 'center' }}>
         {loading && <Icon type="Loading" />}
       </div>
+      {viewOption === 'list' && (
+        <ListHeader>
+          <div style={{ width: 120 }}>Preview</div>
+          <div style={{ width: '40%', marginLeft: 16 }}>Name</div>
+          <div style={{ flexGrow: 1 }}>Owner</div>
+          <div style={{ width: 127 }}>Updated</div>
+        </ListHeader>
+      )}
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {error ? renderError() : renderList()}
       </div>
     </div>
   );
 };
+
+const ListHeader = styled.div`
+  display: flex;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 16px;
+  text-transform: uppercase;
+  margin: 0 20px 10px 20px;
+  padding: 0 16px;
+`;
 
 export default ChartList;
