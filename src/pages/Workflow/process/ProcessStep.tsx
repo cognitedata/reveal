@@ -28,7 +28,9 @@ import {
   GridTable,
   GridCellProps,
 } from '@cognite/data-exploration';
-import { FileInfo } from 'cognite-sdk-v3/dist/src';
+import { resetEditHistory } from 'src/store/previewSlice';
+import styled from 'styled-components';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 const queryClient = new QueryClient();
 
@@ -66,6 +68,7 @@ export default function ProcessStep() {
       annotationsAvailable: false,
       showMetadataPreview: (fileId: number) => {
         dispatch(setSelectedFileId(fileId));
+        dispatch(resetEditHistory());
         dispatch(showFileMetadataPreview());
       },
     };
@@ -100,25 +103,35 @@ export default function ProcessStep() {
           currentView={currentView}
           onViewChange={setCurrentView}
         />
-        {currentView === 'grid' ? (
-          <GridTable
-            data={uploadedFiles}
-            onItemClicked={(item: FileInfo) => {
-              history.push(
-                getParamLink(workflowRoutes.review, ':fileId', String(item.id))
-              );
-            }}
-            isSelected={() => {}}
-            selectionMode="multiple"
-            onSelect={() => {}} // TODO: add to state for batch operations
-            renderCell={(cellProps: GridCellProps<FileInfo>) => (
-              <FileGridPreview {...cellProps} />
-            )}
-          />
-        ) : (
-          <FileTable data={tableData} />
-        )}
+        <Container>
+          {currentView === 'grid' ? (
+            <GridTable
+              data={uploadedFiles}
+              onItemClicked={(item: FileInfo) => {
+                history.push(
+                  getParamLink(
+                    workflowRoutes.review,
+                    ':fileId',
+                    String(item.id)
+                  )
+                );
+              }}
+              isSelected={() => {}}
+              selectionMode="multiple"
+              onSelect={() => {}} // TODO: add to state for batch operations
+              renderCell={(cellProps: GridCellProps<FileInfo>) => (
+                <FileGridPreview {...cellProps} />
+              )}
+            />
+          ) : (
+            <FileTable data={tableData} />
+          )}
+        </Container>
       </QueryClientProvider>
     </>
   );
 }
+
+const Container = styled.div`
+  flex: 1;
+`;
