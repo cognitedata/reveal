@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 
-export const formatOwner = (email: string) => email.split('@')[0];
+export const formatOwner = (email: string): string => email.split('@')[0];
 
-export const formatDate = (timestamp: number) =>
-  dayjs(timestamp).format('YYYY-MM-DD');
+export const formatDate = (timestamp?: number): string => {
+  if (timestamp) return dayjs(timestamp).format('YYYY-MM-DD');
+  return '';
+};

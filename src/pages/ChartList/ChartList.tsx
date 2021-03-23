@@ -30,6 +30,9 @@ const ownerSorter = (a: Chart, b: Chart) => {
 };
 
 const updatedAtSorter = (a: Chart, b: Chart) => {
+  if (!a.updatedAt && !b.updatedAt) return 0;
+  if (!a.updatedAt) return 1;
+  if (!b.updatedAt) return -1;
   return b.updatedAt - a.updatedAt;
 };
 
