@@ -9,8 +9,8 @@ import {
   quadGeometry,
   coneGeometry,
   trapeziumGeometry,
-  torusLODs,
-  nutGeometry
+  nutGeometry,
+  torusGeometry
 } from './primitiveGeometries';
 import { Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
@@ -359,45 +359,22 @@ function createTrapeziums(
   return mesh;
 }
 
-function calcLODDistance(size: number, lodLevel: number, numLevels: number): number {
-  if (lodLevel >= numLevels - 1) {
-    return 0;
-  }
-  const scaleFactor = 15; // Seems to be a reasonable number
-  return size * scaleFactor ** (numLevels - 1 - lodLevel);
-}
-
 function createTorusSegments(
   torusSegmentCollection: Uint8Array,
   torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial
 ) {
-  const sizes = getTorusSizes(torusSegmentCollection, torusSegmentAttributes);
-  if (!sizes) {
-    throw new Error('Torus segments are missing size attribute');
-  }
-  const biggestTorus = sizes.reduce((acc, size) => Math.max(acc, size));
-  const lod = new THREE.LOD();
-  lod.name = 'Primitives (TorusSegments)';
+  const geometry = new THREE.InstancedBufferGeometry();
+  const mesh = new THREE.Mesh(geometry, material);
 
-  for (const [level, torus] of torusLODs.entries()) {
-    const geometry = new THREE.InstancedBufferGeometry();
-    const mesh = new THREE.Mesh(geometry, material);
+  geometry.setIndex(torusGeometry.index);
+  geometry.setAttribute('position', torusGeometry.position);
+  setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes, mesh);
+  setBoundsFromInstanceMatrices(geometry);
 
-    geometry.setIndex(torus.index);
-    geometry.setAttribute('position', torus.position);
-    setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes, mesh);
-    setBoundsFromInstanceMatrices(geometry);
-
-    mesh.frustumCulled = false;
-    mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
-
-    lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLODs.length));
-
-    mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  }
-
-  return lod;
+  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.name = `Primitives (TorusSegments)`;
+  return mesh;
 }
 
 function getTorusSizes(
