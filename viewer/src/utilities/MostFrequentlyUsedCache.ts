@@ -38,6 +38,20 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
     }
   }
 
+  remove(key: TKey): boolean {
+    this._retrieves.delete(key);
+    if (this._cache.has(key)) {
+      this._cache.delete(key);
+      return true;
+    }
+    return false;
+  }
+
+  clear() {
+    this._retrieves.clear();
+    this._cache.clear();
+  }
+
   private ensureWithinCapacity(): void {
     if (this._capacity < this._cache.size) {
       const keys = Array.from(this._cache.keys());
