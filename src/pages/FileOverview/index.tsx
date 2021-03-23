@@ -13,7 +13,7 @@ import {
   retrieveItemsById as retrieve,
 } from 'modules/files';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
-import { CogniteFileViewer } from 'components/CogniteFileViewer';
+import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { Wrapper, ContentWrapper, Header } from './components';
 

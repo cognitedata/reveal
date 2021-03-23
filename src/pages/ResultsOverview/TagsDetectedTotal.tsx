@@ -7,7 +7,7 @@ import { selectAnnotations } from 'modules/annotations';
 import {
   getPnIdAnnotationCategories,
   selectAnnotationColor,
-} from 'components/CogniteFileViewer/CogniteFileViewerUtils';
+} from 'utils/AnnotationUtils';
 import { Flex } from 'components/Common';
 import { stubAnnotation } from './utils';
 

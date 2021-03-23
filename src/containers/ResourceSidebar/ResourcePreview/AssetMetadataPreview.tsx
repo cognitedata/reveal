@@ -4,9 +4,9 @@ import { List, Tabs } from 'antd';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import {
   AssetBreadcrumb,
-  AssetDetailsPanel,
-  AssetTree,
-} from '@cognite/gearbox';
+  AssetDetails,
+  AssetTreeTable,
+} from '@cognite/data-exploration';
 import {
   linkedFilesSelectorByAssetId,
   listFilesLinkedToAsset,
@@ -20,7 +20,7 @@ import {
   retrieveItemsById as retrieveFiles,
   listSelector as listFileSelector,
 } from 'modules/files';
-import { FilesSearchFilter } from '@cognite/sdk';
+import { Asset, FilesSearchFilter } from '@cognite/sdk';
 import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
 import { DetailsItem } from 'components/Common';
@@ -123,7 +123,7 @@ export const AssetMetadataPreview = ({
           <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
             Metadata
           </Title>
-          <AssetDetailsPanel assetId={assetId} />
+          <AssetDetails asset={asset} />
         </Tabs.TabPane>
         <Tabs.TabPane
           key="files"
@@ -155,15 +155,15 @@ export const AssetMetadataPreview = ({
           />
         </Tabs.TabPane>
         <Tabs.TabPane key="children" tab="Children">
-          <AssetTree
-            assetIds={[assetId]}
+          <AssetTreeTable
+            activeIds={[assetId]}
             defaultExpandedKeys={[assetId]}
-            onSelect={(newAsset) => {
-              if (newAsset.node) {
+            onAssetClicked={(newAsset: Asset) => {
+              if (newAsset.id) {
                 dispatch(
                   onResourceSelected(
                     {
-                      assetId: newAsset.node.id,
+                      assetId: newAsset.id,
                       showSidebar: true,
                     },
                     history

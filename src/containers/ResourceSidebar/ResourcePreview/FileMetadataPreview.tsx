@@ -17,7 +17,7 @@ import {
   linkedFilesSelectorByFileId,
 } from 'modules/annotations';
 import { onResourceSelected } from 'modules/app';
-import { CogniteFileViewer } from 'components/CogniteFileViewer';
+import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
 import { useHistory } from 'react-router-dom';
 import { Wrapper } from './Common';
 

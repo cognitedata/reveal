@@ -3,7 +3,6 @@ import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { message, Dropdown, Menu } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
 import { FileInfo } from '@cognite/sdk';
 import { checkPermission } from 'modules/app';
 import {
@@ -37,7 +36,7 @@ export default function FileActions({
   const canEditFiles = useSelector(getCanEditFiles);
   const annotations = annotationsMap(file.id);
 
-  const onLinkAssetsClick = (e: ClickParam, fileToLink: FileInfo) => {
+  const onLinkAssetsClick = (e: any, fileToLink: FileInfo) => {
     switch (e.key) {
       case 'link':
         if (canEditFiles) {

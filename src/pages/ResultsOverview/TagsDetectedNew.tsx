@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Colors, Badge, Body } from '@cognite/cogs.js';
 import { Spin, Popover } from 'antd';
 import { selectAnnotationsForSource } from 'modules/annotations';
-import { selectAnnotationColor } from 'components/CogniteFileViewer/CogniteFileViewerUtils';
+import { selectAnnotationColor } from 'utils/AnnotationUtils';
 import { stubAnnotation } from './utils';
 
 type Props = { file: any };

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { message, Modal } from 'antd';
-import { IAnnotation, IRectShapeData } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import {
   CogniteAnnotation,
@@ -13,36 +12,23 @@ import {
 } from 'modules/assets';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  createAnnotations,
-  deleteAnnotations,
   selectAnnotations,
   hardDeleteAnnotationsForFile,
 } from 'modules/annotations';
-import { trackUsage } from 'utils/Metrics';
-import { Button, Menu, Dropdown, Icon, Colors, Title } from '@cognite/cogs.js';
+import { Button, Menu, Dropdown, Icon, Colors } from '@cognite/cogs.js';
 import { itemSelector as fileSelector } from 'modules/files';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { checkPermission } from 'modules/app';
-import { findSimilarObjects } from 'modules/contextualization/similarObjectJobs';
 import { v4 as uuid } from 'uuid';
 import { RootState } from 'store';
-import {
-  SmallTitle,
-  FileViewer,
-  FilePreviewOverview,
-  IAnnotationWithPage,
-} from 'components/Common';
+import { FilePreviewOverview } from 'components/Common';
 import { FileInfo, Asset } from '@cognite/sdk';
-import sdk, { getAuthState } from 'sdk-singleton';
 import { RenderResourceActionsFunction } from 'containers/HoverPreview';
 import { useLocation, useHistory } from 'react-router';
 import queryString from 'query-string';
 import { PNID_ANNOTATION_TYPE } from 'utils/AnnotationUtils';
-import {
-  CogniteFileViewerEditor,
-  ExtraEditorOption,
-} from './CogniteFileViewerEditor';
-import { selectAnnotationColor } from './CogniteFileViewerUtils';
+import { FilePreview as CogniteFilePreview } from '@cognite/data-exploration';
+import { createLink } from '@cognite/cdf-utilities';
 
 const OverviewWrapper = styled.div`
   height: 100%;
@@ -53,15 +39,6 @@ const OverviewWrapper = styled.div`
   && > * {
     margin-bottom: 24px;
   }
-`;
-
-const CenteredPlaceholder = styled.div`
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  margin: 0 auto;
-  text-align: center;
 `;
 
 const Wrapper = styled.div`
@@ -91,17 +68,16 @@ export interface ProposedCogniteAnnotation extends PendingCogniteAnnotation {
 
 const visibleSimilarityJobs: { [key: string]: boolean } = {};
 
-export const CogniteFileViewer = ({
+export const ContextFileViewer = ({
   fileId,
   children,
   onFileClicked,
   onAssetClicked,
-  renderResourceActions,
 }: Props) => {
   const { search } = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { username } = getAuthState();
+
   const { page = 1 }: { page?: number } = queryString.parse(search, {
     parseNumbers: true,
   });
@@ -118,9 +94,6 @@ export const CogniteFileViewer = ({
 
   const [creatable, setCreatable] = useState(false);
   const [similarSearchMode, setSimilarSearchMode] = useState(false);
-  const [selectedAnnotation, setSelectedAnnotation] = useState<
-    ProposedCogniteAnnotation | CogniteAnnotation | undefined
-  >(undefined);
 
   const similarObjectJobs = useSelector((state: RootState) =>
     fileId ? state.fileContextualization.similarObjectJobs[fileId] : {}
@@ -129,48 +102,6 @@ export const CogniteFileViewer = ({
   const isFindingSimilarObjects = similarObjectJobs
     ? Object.values(similarObjectJobs).some((el: any) => !el.jobDone)
     : false;
-
-  const annotations = pnidAnnotations
-    .map((el: any) => {
-      return {
-        id: `${el.id}`,
-        comment: el.label || 'No Label',
-        page: el.page,
-        mark: {
-          type: 'RECT',
-          x: el.box.xMin,
-          y: el.box.yMin,
-          width: el.box.xMax - el.box.xMin,
-          height: el.box.yMax - el.box.yMin,
-          strokeWidth: 2,
-          strokeColor: selectAnnotationColor(
-            el,
-            el.resourceType === selectedAnnotation?.resourceType &&
-              (el.resourceExternalId ===
-                selectedAnnotation?.resourceExternalId ||
-                el.resourceId === selectedAnnotation?.resourceId)
-          ),
-        },
-      } as IAnnotation<IRectShapeData>;
-    })
-    .concat(
-      pendingPnidAnnotations.map(
-        (el) =>
-          ({
-            id: el.id,
-            comment: el.label || 'Pending Annotation',
-            page: el.page,
-            mark: {
-              type: 'RECT',
-              x: el.box.xMin,
-              y: el.box.yMin,
-              width: el.box.xMax - el.box.xMin,
-              height: el.box.yMax - el.box.yMin,
-              strokeColor: 'yellow',
-            },
-          } as IAnnotation<IRectShapeData>)
-      )
-    );
 
   useEffect(() => {
     if (fetching) return;
@@ -183,6 +114,7 @@ export const CogniteFileViewer = ({
       },
       new Set<string>()
     );
+
     const assetIds = pnidAnnotations.reduce(
       (prev: Set<number>, el: CogniteAnnotation) => {
         if (el.resourceType === 'asset' && el.resourceId) {
@@ -238,141 +170,6 @@ export const CogniteFileViewer = ({
     }
   }, [similarObjectJobs, fileId, pendingPnidAnnotations]);
 
-  const onSaveDetection = async (
-    pendingAnnotation: ProposedCogniteAnnotation | CogniteAnnotation
-  ) => {
-    if (!canEditEvents) {
-      setRenderFeedback(true);
-      return;
-    }
-
-    if (pendingPnidAnnotations.find((el) => el.id === pendingAnnotation.id)) {
-      trackUsage('Contextualization.PnidViewer.CreateAnnotation', {
-        annotation: pendingAnnotation,
-      });
-      const pendingObj: any = { ...pendingAnnotation };
-      delete pendingObj.id;
-      delete pendingObj.metadata;
-      dispatch(
-        createAnnotations.action({ file, pendingAnnotations: [pendingObj] })
-      );
-      setPendingPnidAnnotations(
-        pendingPnidAnnotations.filter((el) => el.id !== pendingAnnotation.id)
-      );
-    } else {
-      message.info('Coming Soon');
-    }
-
-    // load missing asset information
-    if (
-      pendingAnnotation.resourceType === 'asset' &&
-      (pendingAnnotation.resourceExternalId || pendingAnnotation.resourceId)
-    ) {
-      const action = pendingAnnotation.resourceExternalId
-        ? retrieveExternalAssets({
-            ids: [{ externalId: pendingAnnotation.resourceExternalId! }],
-          })
-        : retrieveAssets({ ids: [{ id: pendingAnnotation.resourceId! }] });
-      dispatch(action);
-    }
-  };
-
-  const onDeleteAnnotation = async (annotation: IAnnotation) => {
-    if (!canEditEvents) {
-      setRenderFeedback(true);
-      return;
-    }
-
-    if (pendingPnidAnnotations.find((el) => el.id === annotation.id)) {
-      setPendingPnidAnnotations(
-        pendingPnidAnnotations.filter((el) => el.id !== annotation.id)
-      );
-    } else {
-      trackUsage('Contextualization.PnidViewer.DeleteAnnotation', {
-        annotation,
-      });
-      const pnidIndex = pnidAnnotations.findIndex(
-        (el: any) => `${el.id}` === annotation.id
-      );
-      if (pnidIndex > -1) {
-        dispatch(
-          deleteAnnotations.action({
-            file,
-            annotations: [pnidAnnotations[pnidIndex]],
-          })
-        );
-      }
-    }
-  };
-
-  const onUpdateAnnotation = async (
-    annotation: IAnnotation<IRectShapeData>
-  ) => {
-    if (!canEditEvents) {
-      setRenderFeedback(true);
-      return;
-    }
-
-    if (pendingPnidAnnotations.find((el) => el.id === annotation.id)) {
-      setPendingPnidAnnotations(
-        pendingPnidAnnotations.reduce(
-          (prev: ProposedCogniteAnnotation[], el) => {
-            if (el.id !== annotation.id) {
-              prev.push(el);
-            } else {
-              prev.push({
-                ...el,
-                page: el.page,
-                box: {
-                  xMin: annotation.mark.x,
-                  yMin: annotation.mark.y,
-                  xMax: annotation.mark.x + annotation.mark.width,
-                  yMax: annotation.mark.y + annotation.mark.height,
-                },
-              });
-            }
-            return prev;
-          },
-          [] as ProposedCogniteAnnotation[]
-        )
-      );
-    }
-  };
-
-  const onCreateAnnotation = async (annotation: IAnnotationWithPage) => {
-    if (!canEditEvents || !fileId) {
-      setRenderFeedback(true);
-      return;
-    }
-    trackUsage('Contextualization.PnidViewer.LocalCreateAnnotation', {
-      annotation,
-    });
-    setPendingPnidAnnotations(
-      pendingPnidAnnotations
-        .filter((el) => el.label.length > 0)
-        .concat([
-          {
-            id: annotation.id,
-            status: 'verified',
-            ...(file!.externalId
-              ? { fileExternalId: file!.externalId }
-              : { fileId: file!.id }),
-            version: CURRENT_VERSION,
-            source: `email:${username}`,
-            label: '',
-            type: PNID_ANNOTATION_TYPE,
-            page: annotation.page,
-            box: {
-              xMin: annotation.mark.x,
-              yMin: annotation.mark.y,
-              xMax: annotation.mark.x + annotation.mark.width,
-              yMax: annotation.mark.y + annotation.mark.height,
-            },
-          },
-        ])
-    );
-  };
-
   const setPage = async (newPage: number) => {
     if (fileId) {
       const currentSearch = queryString.parse(search);
@@ -385,38 +182,6 @@ export const CogniteFileViewer = ({
     }
   };
 
-  const getExtraActions = (
-    annotation: ProposedCogniteAnnotation | CogniteAnnotation
-  ): ExtraEditorOption[] => {
-    return [
-      {
-        key: 'find-similar-button',
-        icon: isFindingSimilarObjects ? 'Loading' : 'Scan',
-        onClick: async () => {
-          if (fileId && !isFindingSimilarObjects) {
-            dispatch(findSimilarObjects(fileId, annotation.box));
-          }
-        },
-        action: 'Find Similar Tags',
-      },
-    ];
-  };
-  const renderExtraContent = (
-    annotation: ProposedCogniteAnnotation | CogniteAnnotation
-  ) => {
-    if ('metadata' in annotation) {
-      const { score, fromSimilarJob } = annotation.metadata!;
-      if (fromSimilarJob) {
-        return (
-          <div style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-            <SmallTitle>From Similar Object</SmallTitle>
-            <p>Score: {Math.round((Number(score) + Number.EPSILON) * 100)}%</p>
-          </div>
-        );
-      }
-    }
-    return null;
-  };
   const renderMenuButton = () => {
     if (similarSearchMode) {
       return (
@@ -555,104 +320,22 @@ export const CogniteFileViewer = ({
           />
         )}
       </OverviewWrapper>
-      <div style={{ flex: 1, position: 'relative' }}>
-        {file ? (
-          <FileViewer
-            file={file}
-            sdk={sdk}
-            page={page}
-            setPage={setPage}
-            annotations={annotations}
-            drawLabel={false}
-            editCallbacks={{
-              onDelete: () => {},
-              onCreate: onCreateAnnotation,
-              onUpdate: onUpdateAnnotation,
-            }}
-            creatable={similarSearchMode || creatable}
-            onSelect={(annotation) => {
-              if (annotation) {
-                const pnidAnnotation =
-                  pnidAnnotations.find(
-                    (el: any) => `${el.id}` === annotation.id
-                  ) ||
-                  pendingPnidAnnotations.find((el) => el.id === annotation.id);
-                if (pnidAnnotation) {
-                  setSelectedAnnotation(pnidAnnotation);
-                }
-              } else {
-                setSelectedAnnotation(undefined);
-              }
-            }}
-            renderItemPreview={(
-              _,
-              annotation,
-              onLabelChange,
-              onDelete,
-              height
-            ) => {
-              const pnidAnnotation =
-                pnidAnnotations.find(
-                  (el: any) => `${el.id}` === annotation.id
-                ) ||
-                pendingPnidAnnotations.find((el) => el.id === annotation.id);
-              if (pnidAnnotation) {
-                if (similarSearchMode) {
-                  return (
-                    <Button
-                      disabled={isFindingSimilarObjects}
-                      type="primary"
-                      onClick={async () => {
-                        if (fileId && !isFindingSimilarObjects) {
-                          await dispatch(
-                            findSimilarObjects(fileId, pnidAnnotation.box)
-                          );
-                          setSimilarSearchMode(false);
-                        }
-                      }}
-                      icon={isFindingSimilarObjects ? 'Loading' : 'Scan'}
-                    >
-                      Find Similar Tags
-                    </Button>
-                  );
-                }
-                return (
-                  <CogniteFileViewerEditor
-                    height={height}
-                    onFileClicked={onFileClicked}
-                    onAssetClicked={onAssetClicked}
-                    annotation={pnidAnnotation}
-                    onUpdateDetection={async (newAnnotation) => {
-                      onLabelChange(newAnnotation.label || 'No Label');
-                      await onSaveDetection(newAnnotation);
-                    }}
-                    renderResourceActions={renderResourceActions}
-                    onDeleteDetection={() => {
-                      Modal.confirm({
-                        title: 'Are you sure?',
-                        content:
-                          'Are you sure you want to delete this linkage?',
-                        onOk: () => {
-                          onDelete();
-                          onDeleteAnnotation(annotation);
-                        },
-                      });
-                    }}
-                    extraActions={getExtraActions(pnidAnnotation)}
-                  >
-                    {renderExtraContent(pnidAnnotation)}
-                  </CogniteFileViewerEditor>
-                );
-              }
-              return <></>;
-            }}
-          />
-        ) : (
-          <CenteredPlaceholder>
-            <Title level={2}>No P&ID Selected</Title>
-            <p>Please search for a P&ID to start viewing.</p>
-          </CenteredPlaceholder>
-        )}
+      <div
+        style={{
+          flex: '1',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
+        <CogniteFilePreview
+          fileId={fileId!}
+          creatable
+          contextualization
+          onItemClicked={(item) =>
+            window.open(createLink(`/explore/${item.type}/${item.id}`))
+          }
+        />
       </div>
     </Wrapper>
   );

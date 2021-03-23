@@ -310,7 +310,7 @@ export default function SearchPage({
 
   return (
     <>
-      <Row type="flex" gutter={[0, 20]}>
+      <Row gutter={[0, 20]}>
         <Col>
           <Title level={2}>
             Select data
@@ -320,7 +320,7 @@ export default function SearchPage({
           </Title>
         </Col>
       </Row>
-      <Row type="flex" gutter={[8, 12]}>
+      <Row gutter={[8, 12]}>
         {availableTypes.length > 0 && (
           <Col span={4}>
             <p>Resource type</p>
@@ -341,7 +341,7 @@ export default function SearchPage({
         {getSearchBar(currentType, filter, updateFilter, lockedFilters[type])}
       </Row>
 
-      <Row gutter={[0, 20]} type="flex">
+      <Row gutter={[0, 20]}>
         <Col span={24}>
           <p id="count-text">
             {count} results. {selectionSize} selected.
@@ -388,7 +388,7 @@ export default function SearchPage({
         columns={getColumns(currentType)}
         rowKey="id"
         pagination={{
-          position: 'bottom',
+          position: ['bottomLeft'],
           showQuickJumper: true,
           showSizeChanger: true,
           pageSize,

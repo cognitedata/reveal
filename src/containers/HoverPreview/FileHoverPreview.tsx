@@ -15,7 +15,7 @@ import {
   linkedAssetsSelector,
   linkedFilesSelectorByFileId,
 } from 'modules/annotations';
-import { CogniteFileViewerImage } from 'components/CogniteFileViewer';
+import { FileSmallPreview } from '@cognite/data-exploration';
 import { Button } from '@cognite/cogs.js';
 import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
@@ -104,7 +104,7 @@ export const FileHoverPreview = ({
               ...(actions || []),
             ]
       }
-      imgPreview={hasPreview && <CogniteFileViewerImage fileId={file.id} />}
+      imgPreview={hasPreview && <FileSmallPreview fileId={file.id} />}
     />
   );
 };

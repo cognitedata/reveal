@@ -10,7 +10,7 @@ import {
   CountLabel,
 } from 'components/Common';
 import { Asset, FileInfo, Timeseries } from '@cognite/sdk';
-import { AssetBreadcrumb } from '@cognite/gearbox';
+import { AssetBreadcrumb } from '@cognite/data-exploration';
 
 interface AssetDetailsProps {
   asset: Asset;
@@ -206,7 +206,7 @@ export const AssetDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <Row type="flex" gutter={12} justify="start" className="button-row">
+          <Row gutter={12} justify="start" className="button-row">
             {actions}
           </Row>
         </InfoCell>
