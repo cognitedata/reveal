@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory, useRouteMatch } from 'react-router-dom';
 import { RootState } from 'store';
-import { Button, Checkbox, Input } from '@cognite/cogs.js';
+import { Button, Checkbox, Input, Title } from '@cognite/cogs.js';
 import { Card } from 'antd';
 import { v4 as uuid } from 'uuid';
 import {
@@ -37,8 +37,8 @@ export default function Options() {
 
   return (
     <>
-      <h1>P&ID options</h1>
-      <Flex row>
+      <Title level={2}>P&ID options</Title>
+      <Flex row grow>
         <Card style={{ marginRight: '8px ' }}>
           <Card.Meta
             title={

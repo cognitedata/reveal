@@ -6,7 +6,7 @@ import {
   retrieveItemsByExternalId as retrieveExternalFiles,
 } from 'modules/files';
 import { Collapse, List } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import {
   retrieveItemsById as retrieveAssets,
   retrieveItemsByExternalId as retrieveExternalAssets,
@@ -73,7 +73,7 @@ export const FileMetadataPreview = ({
       <Button className="back-button" onClick={() => history.goBack()}>
         Back
       </Button>
-      <h1>{file ? file.name : 'Loading...'}</h1>
+      <Title level={2}>{file ? file.name : 'Loading...'}</Title>
       {extraActions}
       {file && file.mimeType === 'application/pdf' && (
         <div style={{ height: 800, marginTop: 24, marginBottom: 24 }}>

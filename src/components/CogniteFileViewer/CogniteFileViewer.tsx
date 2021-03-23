@@ -19,7 +19,7 @@ import {
   hardDeleteAnnotationsForFile,
 } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
-import { Button, Menu, Dropdown, Icon, Colors } from '@cognite/cogs.js';
+import { Button, Menu, Dropdown, Icon, Colors, Title } from '@cognite/cogs.js';
 import { itemSelector as fileSelector } from 'modules/files';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { checkPermission } from 'modules/app';
@@ -649,7 +649,7 @@ export const CogniteFileViewer = ({
           />
         ) : (
           <CenteredPlaceholder>
-            <h1>No P&ID Selected</h1>
+            <Title level={2}>No P&ID Selected</Title>
             <p>Please search for a P&ID to start viewing.</p>
           </CenteredPlaceholder>
         )}

@@ -24,7 +24,7 @@ import {
   message,
   Checkbox,
 } from 'antd';
-import { Button, Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
 import { usePrevious } from 'hooks/CustomHooks';
 import { FileHoverPreview, AssetHoverPreview } from 'containers/HoverPreview';
 import StickyBottomRow from 'components/StickyBottomRow';
@@ -312,12 +312,12 @@ export default function SearchPage({
     <>
       <Row type="flex" gutter={[0, 20]}>
         <Col>
-          <h1>
+          <Title level={2}>
             Select data
             <Tooltip content={dataTypeTooltip()} placement="right">
               <Icon type="Help" style={{ marginLeft: '10px' }} />
             </Tooltip>
-          </h1>
+          </Title>
         </Col>
       </Row>
       <Row type="flex" gutter={[8, 12]}>

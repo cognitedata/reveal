@@ -15,12 +15,13 @@ export default function buildCount<Q extends Query>(
       `${resourceType}/count`,
       async ({ filter }: { filter: Q }) => {
         const path = `/api/v1/projects/${sdk.project}/${resourceType}/aggregate`;
+        const adjustedFilter = filter.filter ? filter : { filter };
         const {
           data: {
             items: [{ count: aggregateCount }],
           },
         } = await sdk.post(path, {
-          data: filter || {},
+          data: adjustedFilter || {},
         });
         return {
           filter,

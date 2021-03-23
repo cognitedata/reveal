@@ -131,7 +131,6 @@ export const dataKitItemsSelectorFactory = (
     }
     const { type, endpoint, query, filter } = state.selection.items[datakitId];
     const filterKey = filter ?? 'missingAssetId';
-    // @ts-ignore
     const filterFn = filters[filterKey];
     const key = JSON.stringify({ ...query, all });
     const { list: items } = state[type]?.items;
@@ -141,12 +140,11 @@ export const dataKitItemsSelectorFactory = (
         const partitions = state[type]?.list[key] || {};
         const ids = Object.values(partitions).reduce(
           (accl: any, partition: any) => accl.concat(partition.ids || []),
-          [] as number[]
-        );
-        // @ts-ignore
-        return (ids.map((i) => items.get(i)).filter(Boolean) as Item[]).filter(
-          filterFn
-        );
+          []
+        ) as number[];
+        return (ids
+          .map((id: number) => items[id])
+          .filter(Boolean) as Item[]).filter(filterFn);
       }
       case 'retrieve': {
         const ids = query.map((i: any) =>

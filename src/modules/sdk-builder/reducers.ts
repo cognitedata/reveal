@@ -2,6 +2,10 @@ import { InternalId, ExternalId } from '@cognite/sdk';
 import { createAction } from '@reduxjs/toolkit';
 import { ResourceType, Status } from './types';
 
+/**
+ * Action that allows us to update specific type of items from any part of the store.
+ * You just need to pass the list of items to update.
+ */
 export const updateAction = (resourceType: ResourceType) =>
   createAction(`${resourceType}/update`, (items) => {
     return {

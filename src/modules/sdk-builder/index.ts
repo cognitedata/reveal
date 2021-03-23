@@ -47,7 +47,13 @@ export default function resourceBuilder<
     retrieveSelector,
   } = buildItems<Resource, Change>(resourceType);
 
-  const { list, listParallel, listSelector } = buildList(resourceType);
+  const {
+    list,
+    listParallel,
+    listPartiallyDoneAction,
+    listPartiallyDone,
+    listSelector,
+  } = buildList(resourceType);
 
   const itemsResource = {
     retrieveItemsById: retrieveItemsById.action,
@@ -123,6 +129,7 @@ export default function resourceBuilder<
     updateByIdReducers(builder);
     builder.addCase(updateAction(resourceType), update);
     builder.addCase(updateStatusAction(resourceType), updateStatus);
+    builder.addCase(listPartiallyDoneAction(), listPartiallyDone);
   };
 
   const slice = createSlice({

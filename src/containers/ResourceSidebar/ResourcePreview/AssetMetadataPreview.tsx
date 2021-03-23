@@ -92,9 +92,9 @@ export const AssetMetadataPreview = ({
           }
         />
       </div>
-      <h1>
+      <Title level={2}>
         <Icon type="DataStudio" /> {asset ? asset.name : 'Loading...'}
-      </h1>
+      </Title>
       {extraActions}
       <Tabs>
         <Tabs.TabPane key="asset-metadata" tab="Asset Details">

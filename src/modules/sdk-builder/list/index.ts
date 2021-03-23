@@ -1,7 +1,10 @@
-import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createAction,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import { InternalId } from '@cognite/sdk';
 import sdk from 'sdk-singleton';
-// import { RootState } from 'store';
 import { followCursorsGenerator } from 'helpers/Helpers';
 import {
   ResourceState,
@@ -17,6 +20,13 @@ export const defaultListState: ApiListResult = {};
 export interface ListStore {
   [key: string]: ApiListResult;
 }
+type ListPartialAction = {
+  filter: Query;
+  all: boolean;
+  partition: number;
+  nth: number;
+  result: number[];
+};
 
 type ListAction = {
   scope: Query;
@@ -95,18 +105,15 @@ export default function buildList<T extends InternalId, Q extends Query>(
             items = items.concat(partialItems);
             const partialIds = partialItems.map((t: T) => t.id);
             const partiallyDoneAction = {
-              payload: {
-                filter,
-                all,
-                partition,
-                nth,
-                result: partialIds,
-              },
-              type: `${resourceType}/partiallyDoneList`,
+              filter,
+              all,
+              partition,
+              nth,
+              result: partialIds,
             };
             const itemsToUpdate = partialItems.map(processItemFn);
             dispatch(update(resourceType)(itemsToUpdate));
-            dispatch(listPartiallyDone(state, partiallyDoneAction));
+            dispatch(listPartiallyDoneAction()(partiallyDoneAction));
           }
         } else {
           ({ items } = await listFn(q));
@@ -160,15 +167,24 @@ export default function buildList<T extends InternalId, Q extends Query>(
   /**
    * Additional action used when all of the items are being fetched and there is a need to use cursor.
    */
+  const listPartiallyDoneAction = () =>
+    createAction(
+      `${resourceType}/list/partiallyDone`,
+      ({ filter, all, partition, nth, result }: ListPartialAction) => {
+        return {
+          payload: {
+            filter,
+            all,
+            partition,
+            nth,
+            result,
+          },
+        };
+      }
+    );
   const listPartiallyDone = (
     state: ResourceState<T>,
-    action: PayloadAction<{
-      filter: Query;
-      all: boolean;
-      partition: number;
-      nth: number;
-      result: number[];
-    }>
+    action: PayloadAction<ListPartialAction>
   ) => {
     const { filter, all, partition, nth, result } = action.payload;
     const key = getKey(filter, all);
@@ -202,5 +218,11 @@ export default function buildList<T extends InternalId, Q extends Query>(
     (state: RootState) => state[resourceType].list
   ) as any;
 
-  return { list, listParallel: listParallelAction, listSelector };
+  return {
+    list,
+    listParallel: listParallelAction,
+    listPartiallyDoneAction,
+    listPartiallyDone,
+    listSelector,
+  };
 }

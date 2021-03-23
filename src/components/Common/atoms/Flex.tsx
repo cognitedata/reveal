@@ -5,6 +5,7 @@ type TFlex = {
   column?: boolean;
   justify?: boolean;
   align?: boolean;
+  grow?: boolean;
   style?: any;
 };
 
@@ -28,4 +29,8 @@ export const Flex = styled.div.attrs((props: TFlex) => {
   };
 })<TFlex>`
   display: flex;
+
+  > * {
+    flex-grow: ${(props) => (props.grow ? 1 : 'unset')};
+  }
 `;
