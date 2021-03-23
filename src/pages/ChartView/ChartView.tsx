@@ -96,7 +96,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   }, [charts, chartId, login]);
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
-  const [updateAutomatically, setUpdateAutomatically] = useState<boolean>(true);
 
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
@@ -128,10 +127,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         ],
       });
     }
-  };
-
-  const handleToggleAutomaticUpdates = async () => {
-    setUpdateAutomatically((val) => !val);
   };
 
   if (!isFetched) {
@@ -286,18 +281,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </section>
           {!showSearch && (
             <section className="actions">
-              <Button
-                icon={updateAutomatically ? 'Checkmark' : 'XCompact'}
-                type="secondary"
-                onClick={() => handleToggleAutomaticUpdates()}
-              >
-                Automatic Update
-              </Button>
               <RunWorkflows chart={chart} update={updateChart} />
               <SharingDropdown chart={chart} />
-              <Button icon="Download" variant="ghost">
-                Export
-              </Button>
               <Dropdown
                 content={
                   <Menu>
@@ -311,6 +296,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         <span>Delete</span>
                       </Menu.Item>
                     )}
+                    <Menu.Item disabled>
+                      {/* disabled doesn't change the color */}
+                      <span style={{ color: 'var(--cogs-greyscale-grey5)' }}>
+                        <Icon type="Download" />
+                        Export
+                      </span>
+                    </Menu.Item>
                   </Menu>
                 }
               >
