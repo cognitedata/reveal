@@ -19,30 +19,30 @@ import {
   useDeleteChart,
 } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { Chart, ChartTimeSeries } from 'reducers/charts/types';
+import { Chart } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus } from 'hooks';
 import { useQueryClient } from 'react-query';
 import { duplicate } from 'utils/charts';
 import { Modes } from 'pages/types';
-import TimeSeriesRow from './TimeSeriesRow';
-import WorkflowRow from './WorkflowRow';
+import TimeSeriesRows from './TimeSeriesRows';
+import WorkflowRows from './WorkflowRows';
 import RunWorkflows from './RunWorkflowsButton';
 import {
-  Header,
-  TopPaneWrapper,
   BottomPaneWrapper,
-  ChartViewContainer,
-  ContentWrapper,
-  BottombarWrapper,
   BottombarItem,
-  ToolbarIcon,
+  BottombarWrapper,
   ChartContainer,
-  SourceItem,
+  ChartViewContainer,
   ChartWrapper,
+  ContentWrapper,
+  Header,
+  SourceItem,
   SourceName,
-  SourceTableWrapper,
   SourceTable,
+  SourceTableWrapper,
+  ToolbarIcon,
+  TopPaneWrapper,
 } from './elements';
 
 type ChartViewProps = {
@@ -100,7 +100,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const isWorkspaceMode = workspaceMode === 'workspace';
-  const isEditorMode = workspaceMode === 'editor';
   const isDataQualityMode = workspaceMode === 'report';
 
   const [dataQualityReport, setDataQualityReport] = useState<{
@@ -330,30 +329,19 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   <SourceTable>
                     <thead>{sourceTableHeaderRow}</thead>
                     <tbody>
-                      {chart.timeSeriesCollection?.map((t: ChartTimeSeries) => (
-                        <TimeSeriesRow
-                          mutate={updateChart}
-                          chart={chart}
-                          timeseries={t}
-                          setDataQualityReport={setDataQualityReport}
-                          active={false}
-                          disabled={isEditorMode}
-                          isDataQualityMode={isDataQualityMode}
-                          isWorkspaceMode={isWorkspaceMode}
-                          key={t.id}
-                        />
-                      ))}
-                      {chart?.workflowCollection?.map((flow) => (
-                        <WorkflowRow
-                          mutate={updateChart}
-                          chart={chart}
-                          workflow={flow}
-                          isActive={activeSourceItem === flow.id}
-                          setWorkspaceMode={setWorkspaceMode}
-                          setActiveSourceItem={setActiveSourceItem}
-                          key={flow.id}
-                        />
-                      ))}
+                      <TimeSeriesRows
+                        chart={chart}
+                        updateChart={updateChart}
+                        mode={workspaceMode}
+                        setDataQualityReport={setDataQualityReport}
+                      />
+                      <WorkflowRows
+                        chart={chart}
+                        setActive={setActiveSourceItem}
+                        setMode={setWorkspaceMode}
+                        updateChart={updateChart}
+                        activeWorkflow={activeSourceItem}
+                      />
                     </tbody>
                   </SourceTable>
                 </SourceTableWrapper>

@@ -154,6 +154,9 @@ export const SourceTable = styled.table`
   }
 `;
 
+export const TypeLabel = styled.td`
+  color: var(--cogs-greyscale-grey7);
+`;
 export const SourceRow = styled.tr`
   background: ${(props: { isActive: boolean }) =>
     props.isActive ? 'var(--cogs-greyscale-grey1)' : 'none'};
