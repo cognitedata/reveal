@@ -34,7 +34,6 @@ import {
   defaultRenderOptions,
   DisposedDelegate,
   SceneRenderedDelegate,
-  SectorNodeIdToTreeIndexMapLoadedEvent,
   SsaoParameters,
   SsaoSampleQuality
 } from '../types';
@@ -483,17 +482,6 @@ export class Cognite3DViewer {
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
     this.models.push(model3d);
     this.scene.add(model3d);
-    this._subscription.add(
-      fromEventPattern<SectorNodeIdToTreeIndexMapLoadedEvent>(
-        h => this._revealManager.on('nodeIdToTreeIndexMapLoaded', h),
-        h => this._revealManager.off('nodeIdToTreeIndexMapLoaded', h)
-      ).subscribe(event => {
-        // TODO 2020-07-05 larsmoa: Fix a better way of identifying a model than blobUrl
-        if (event.blobUrl === cadNode.cadModelMetadata.blobUrl) {
-          model3d.updateNodeIdMaps(event.nodeIdToTreeIndexMap);
-        }
-      })
-    );
 
     if (options.geometryFilter) {
       const geometryFilter = transformGeometryFilterToModelSpace(options.geometryFilter, model3d);
