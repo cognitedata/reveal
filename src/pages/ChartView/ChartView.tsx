@@ -23,7 +23,7 @@ import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus } from 'hooks';
 import { useQueryClient } from 'react-query';
-import { duplicate } from 'utils/charts';
+import { duplicate, updateSourceAxisForChart } from 'utils/charts';
 import { Modes } from 'pages/types';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
@@ -154,28 +154,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const handleChangeSourceAxis = debounce(
     ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
       if (chart) {
-        const newChart = {
-          ...chart,
-        };
-
-        if (x.length === 2) {
-          newChart.dateFrom = `${x[0]}`;
-          newChart.dateTo = `${x[1]}`;
-        }
-
-        if (y.length > 0) {
-          y.forEach((update) => {
-            newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
-              (t) => (t.id === update.id ? { ...t, range: update.range } : t)
-            );
-            newChart.workflowCollection = newChart.workflowCollection?.map(
-              (wf) =>
-                wf.id === update.id ? { ...wf, range: update.range } : wf
-            );
-          });
-        }
-
-        updateChart(newChart);
+        const updatedChart = updateSourceAxisForChart(chart, { x, y });
+        updateChart(updatedChart);
       }
     },
     500
