@@ -1,46 +1,53 @@
-# React Demo App
+# Digital Cockpit
 
-This repository shows how to bootstrap a [React]-based application at Cognite.
-It demonstrates best practices, such as:
+Cognite Digital Cockpit allows heavy industry users to accumulate all their applications, use cases (such as dashboards from analytics and visualization tools like PowerBI, Grafana, Plotly dash, Spotfire, etc.), and helpful links into one place, suites, for the organization. These solutions can be implemented and delivered by Cognite or by other 3rd parties. To ensure governance, the system administrator can create, edit, and delete suites into logical themes that reflect the organization’s work areas. The system administrator also gives access to the relevant suites or work areas based on groups or roles defined in MS Azure Active Directory linked to Cognite Data Fusion (CDF).
 
-- Lint setup to use
-- Jenkinsfile steps
-- TypeScript usage
-- Testcafe
-- Folder / component layout
-- ...
+With live data from embedded dashboards & infographics overview of your KPIs, you can quickly get an overview of your organization´s status.
 
-## Deploying the app
+For more information please read the [https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html](documentation)
 
-Please see the [deployment guide] for more information how to actually get this app into production.
-(It should be pretty easy!)
+## Setup a new tenant for Digital Cockpit
 
-## Template repo
+### Setup user groups
 
-This repo is configured as a template, so it's easy to get started.
-Simply go to the [create repo page] and select "cognitedata/react-demo-app" as a template.
+All user groups has to be linked to the groups in source IdP system (e.g. AAD groups). Other user groups will not show up in the Digital Cockpit application.
 
-### Run e2e tests with testcafe
+**Admin** group name in CDF: `dc-system-admin`
+Required capabilities for the **dc-system-admin** group: `raw:read, raw:write, groups:list(all), files:read, files:write, datasets:read, datasets:write`
 
-End-to-end tests are written and run using the [Testcafe](https://github.com/DevExpress/testcafe) testing framework. They are stored in `/testcafe`.
+Required capabilities for a **regular user** group: `groups:list(currentUser), files:read`
 
-To run testcafe tests locally, first start the app on port 11111
+### Generate api-keys for all tenants that will be used by Digital Cockpit.
 
-```sh
-yarn testcafe:start-live
-```
+The api-key is used by [https://github.com/cognitedata/application-services/tree/master/services/digital-cockpit-api](digital-cockpit-api) to store&fetch _suites_ and _user data_ in CDF Raw database. Required capabilities for the **api-key** service account:
+`raw:read, raw:write, groups:list(all)`
 
-In order to run tests in the browser and keep the browser window open to watch and auto re-run on test file changes, run in a separate tab the following command:
+### Whitelist the following domains on tenants:
 
-```sh
-yarn testcafe:run-live
-```
+- `staging.digital-cockpit.cogniteapp.com`
+- `digital-cockpit.cogniteapp.com`
+- `*.digital-cockpit-dev.preview.cogniteapp.com`
+- `*.digital-cockpit.preview.cogniteapp.com`
 
-## Help
+### Create RAW database
 
-If you have any questions, please join us in [#frontend] and ask away!
+Name: `digital-cockpit`
 
-[react]: https://reactjs.org/
-[deployment guide]: https://cognitedata.atlassian.net/wiki/spaces/FAS/pages/1003225162/How+to+deploy+on+Frontend+App+Server+FAS
-[#frontend]: https://cognitedata.slack.com/archives/C6KNJCEEA
-[create repo page]: https://github.com/organizations/cognitedata/repositories/new
+Tables:
+
+- `suites`
+- `lastVisited`
+
+### Create a data set for image files (optional)
+
+The data set is used to store image files such as board previews and a customer logo.
+
+This is optinal requirement since when system admin logs in to the app for the first time, the _data set_ will be created automatically with attribute `externalId='digital-cockpit'`.
+
+Creating it manually gives you possibility to restrict the capability `files:write` and `files:read` to this data set for the **dc-system-admin** group, and also more options in configuring the data set itself.
+
+Creating it manually gives you more options in configuring the data set itself. When created it also gives possibility to restrict the capability `files:write` and `files:read` to this data set for the system admin group.
+
+**Name**: `digital-cockpit`
+
+**ExternalId**: `dc_img_preview_storage`
