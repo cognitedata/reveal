@@ -46,6 +46,7 @@ import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { Group } from 'three';
 import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
+import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {
@@ -65,9 +66,10 @@ export class CachedRepository implements Repository {
   > = new MemoryRequestCache({
     maxElementsInCache: 50
   });
-  private readonly _ctmFileCache: MemoryRequestCache<string, Observable<CtmFileResult>> = new MemoryRequestCache({
-    maxElementsInCache: 300
-  });
+  private readonly _ctmFileCache: MostFrequentlyUsedCache<
+    string,
+    Observable<CtmFileResult>
+  > = new MostFrequentlyUsedCache(10);
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
@@ -148,7 +150,9 @@ export class CachedRepository implements Repository {
        * \---------- cached wantedSectors ----------------
        *  \--------- uncached wantedSectors --------------
        */
-      const existsInCache = ({ key }: KeyedWantedSector) => this._consumedSectorCache.has(key);
+      const existsInCache = ({ key }: KeyedWantedSector) => {
+        return this._consumedSectorCache.has(key);
+      };
       const cached$ = simpleAndDetailed$.pipe(filter(existsInCache));
       const uncached$ = simpleAndDetailed$.pipe(
         filter((keyedWantedSector: KeyedWantedSector) => !existsInCache(keyedWantedSector))
@@ -315,8 +319,9 @@ export class CachedRepository implements Repository {
   private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
     return mergeMap(ctmRequest => {
       const key = this.ctmFileCacheKey(ctmRequest);
-      if (this._ctmFileCache.has(key)) {
-        return this._ctmFileCache.get(key);
+      const ctmFile = this._ctmFileCache.get(key);
+      if (ctmFile !== undefined) {
+        return ctmFile;
       } else {
         return this.loadCtmFileFromNetwork(ctmRequest);
       }
@@ -334,7 +339,7 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    this._ctmFileCache.forceInsert(this.ctmFileCacheKey(ctmRequest), networkObservable);
+    this._ctmFileCache.set(this.ctmFileCacheKey(ctmRequest), networkObservable);
     return networkObservable;
   }
 
