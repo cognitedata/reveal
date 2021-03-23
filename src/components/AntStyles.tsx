@@ -159,7 +159,7 @@ export default function AntStyles(props: { children: React.Node }) {
         document.getElementsByClassName(ids.styleScope).item(0)!
       }
     >
-      <div className="context-ui-pind-style-scope">{props.children}</div>
+      <div className="context-ui-pnid-style-scope">{props.children}</div>
     </ConfigProvider>
   );
 }
