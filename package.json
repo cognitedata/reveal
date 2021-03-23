@@ -34,7 +34,7 @@
     "react-dom": "^16.14.0",
     "react-glider": "^2.1.0",
     "react-modal": "^3.12.1",
-    "react-redux": "^7.2.2",
+    "react-redux": "^7.2.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.4",
     "redux-devtools-extension": "^2.13.9",
