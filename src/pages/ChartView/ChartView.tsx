@@ -283,9 +283,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <section className="actions">
               <RunWorkflows chart={chart} update={updateChart} />
               <SharingDropdown chart={chart} />
-              <Button icon="Download" variant="ghost">
-                Export
-              </Button>
               <Dropdown
                 content={
                   <Menu>
@@ -299,6 +296,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         <span>Delete</span>
                       </Menu.Item>
                     )}
+                    <Menu.Item disabled>
+                      {/* disabled doesn't change the color */}
+                      <span style={{ color: 'var(--cogs-greyscale-grey5)' }}>
+                        <Icon type="Download" />
+                        Export
+                      </span>
+                    </Menu.Item>
                   </Menu>
                 }
               >
