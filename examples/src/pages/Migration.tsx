@@ -133,7 +133,11 @@ export function Migration() {
             statistics: {
               insideSectors: 0,
               maxSectorDepth: 0,
-              maxSectorDepthOfInsideSectors: 0
+              maxSectorDepthOfInsideSectors: 0,
+              simpleSectorCount: 0,
+              detailedSectorCount: 0,
+              forceDetailedSectorCount: 0,
+              downloadSizeMb: 0
             }
           },
           suspendLoading: false,
@@ -224,9 +228,14 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
-      const insideSectorsController = debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'insideSectors').name('# sectors@camera');
-      const maxDepthInsideController = debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepthOfInsideSectors').name('Max sector depth@camera');
-      const maxDepthController = debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepth').name('Max sector tree depth');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'insideSectors').name('# sectors@camera');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepthOfInsideSectors').name('Max sector depth@camera');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepth').name('Max sector tree depth');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'simpleSectorCount').name('# simple sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'detailedSectorCount').name('# detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'forceDetailedSectorCount').name('# force detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'downloadSizeMb').name('Download size (Mb)');
+      
       setInterval(() => {
         let insideSectors = 0;
         let maxInsideDepth = -1;
@@ -246,10 +255,14 @@ export function Migration() {
         guiState.debug.loadedSectors.statistics.insideSectors = insideSectors;
         guiState.debug.loadedSectors.statistics.maxSectorDepth = maxDepth;
         guiState.debug.loadedSectors.statistics.maxSectorDepthOfInsideSectors = maxInsideDepth;
+        // @ts-expect-error
+        const loadedStats = viewer._revealManager.cadLoadedStatistics;
+        guiState.debug.loadedSectors.statistics.simpleSectorCount = loadedStats.simpleSectorCount;
+        guiState.debug.loadedSectors.statistics.detailedSectorCount = loadedStats.detailedSectorCount;
+        guiState.debug.loadedSectors.statistics.forceDetailedSectorCount = loadedStats.forcedDetailedSectorCount;
+        guiState.debug.loadedSectors.statistics.downloadSizeMb = loadedStats.downloadSize / 1024 / 1024;
 
-        insideSectorsController.updateDisplay();
-        maxDepthInsideController.updateDisplay();
-        maxDepthController.updateDisplay();
+        debugSectorsGui.updateDisplay();
       }, 500);
 
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
