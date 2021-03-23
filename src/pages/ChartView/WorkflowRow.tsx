@@ -37,9 +37,7 @@ type Props = {
   workflow: ChartWorkflow;
   setActiveSourceItem: (id?: string) => void;
   isActive: boolean;
-  isWorkspaceMode: boolean;
   setWorkspaceMode: (m: Modes) => void;
-  isDataQualityMode: boolean;
   mutate: (c: Chart) => void;
 };
 export default function WorkflowRow({
@@ -48,8 +46,6 @@ export default function WorkflowRow({
   setWorkspaceMode,
   setActiveSourceItem,
   isActive = false,
-  isWorkspaceMode = false,
-  isDataQualityMode = false,
   mutate,
 }: Props) {
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -114,44 +110,7 @@ export default function WorkflowRow({
           </SourceMenu>
         </SourceItem>
       </td>
-      {isWorkspaceMode && (
-        <>
-          <td>
-            <SourceItem>
-              <SourceName>*</SourceName>
-            </SourceItem>
-          </td>
-          <td>
-            <SourceItem>
-              <SourceName>*</SourceName>
-            </SourceItem>
-          </td>
-          <td>
-            <SourceItem>
-              <SourceName>-</SourceName>
-            </SourceItem>
-          </td>
-          <td>
-            <SourceItem>
-              <SourceName>-</SourceName>
-            </SourceItem>
-          </td>
-        </>
-      )}
-      {isDataQualityMode && (
-        <>
-          <td>
-            <SourceItem>
-              <SourceName>-</SourceName>
-            </SourceItem>
-          </td>
-          <td>
-            <SourceItem>
-              <SourceName>-</SourceName>
-            </SourceItem>
-          </td>
-        </>
-      )}
+      <td colSpan={4} />
     </SourceRow>
   );
 }
