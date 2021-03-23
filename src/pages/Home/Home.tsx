@@ -29,6 +29,7 @@ import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 import { useMetrics } from 'utils/metrics';
+import { ADMIN_GROUP_NAME } from 'constants/cdf';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -111,7 +112,7 @@ const Home = () => {
                 New suite
               </Button>
             ) : (
-              `You must have the user group 'dc-system-admin' to setup this area`
+              `You must have the user group ${ADMIN_GROUP_NAME} to setup this area`
             )}
           </Body>
         </NoItemsContainer>
