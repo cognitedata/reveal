@@ -4,10 +4,11 @@ import {
   ChartWorkflow,
   FunctionCallStatus,
 } from 'reducers/charts/types';
-import { Dropdown, Icon } from '@cognite/cogs.js';
+import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
+import { units } from 'utils/units';
 import { Modes } from 'pages/types';
 import {
   SourceItem,
@@ -52,12 +53,52 @@ export default function WorkflowRow({
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const [idHack, setIdHack] = useState(0);
-  const { id, enabled, color, name, calls } = workflow;
+  const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
 
   const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
     mutate(updateWorkflow(chart, wfId, diff));
   };
+
+  const inputUnitOption = units.find(
+    (unitOption) => unitOption.value === unit?.toLowerCase()
+  );
+
+  const preferredUnitOption = units.find(
+    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+  );
+
+  const unitConversionOptions = inputUnitOption?.conversions?.map(
+    (conversion) => units.find((unitOption) => unitOption.value === conversion)
+  );
+
+  const unitOverrideMenuItems = units.map((unitOption) => (
+    <Menu.Item
+      key={unitOption.value}
+      onClick={() =>
+        update(id, {
+          unit: unitOption.value,
+        })
+      }
+    >
+      {unitOption.label}
+      {unit?.toLowerCase() === unitOption.value && ' (selected)'}
+    </Menu.Item>
+  ));
+
+  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
+    <Menu.Item
+      key={unitOption?.value}
+      onClick={() =>
+        update(id, {
+          preferredUnit: unitOption?.value,
+        })
+      }
+    >
+      {unitOption?.label}{' '}
+      {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
+    </Menu.Item>
+  ));
 
   return (
     <SourceRow onClick={() => setActiveSourceItem(id)} isActive={isActive}>
@@ -110,7 +151,43 @@ export default function WorkflowRow({
           </SourceMenu>
         </SourceItem>
       </td>
-      <td colSpan={4} />
+      <td>
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Header>
+                <span style={{ wordBreak: 'break-word' }}>
+                  Select input unit (override)
+                </span>
+              </Menu.Header>
+              {unitOverrideMenuItems}
+            </Menu>
+          }
+        >
+          <SourceItem>
+            <SourceName>{inputUnitOption?.label || '-'}</SourceName>
+          </SourceItem>
+        </Dropdown>
+      </td>
+      <td>
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Header>
+                <span style={{ wordBreak: 'break-word' }}>
+                  Select preferred unit
+                </span>
+              </Menu.Header>
+              {unitConversionMenuItems}
+            </Menu>
+          }
+        >
+          <SourceItem>
+            <SourceName>{preferredUnitOption?.label || '-'}</SourceName>
+          </SourceItem>
+        </Dropdown>
+      </td>
+      <td colSpan={2} />
     </SourceRow>
   );
 }
