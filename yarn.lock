@@ -1428,10 +1428,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.4.0.tgz#d165f066dfd8223de11ad9b28638e7ecd0c5a89b"
-  integrity sha512-BQfW473UIeqQULruFLMJpHYV+e9qtZp9qUwjBdVEOhh1KsNMlWekxvO3ATUeSylRiH5Sy8DFWMdKPE2XlrYWCw==
+"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.0.tgz#87e14f0ed5b52067f8925b6b33fcc5a9c4212f52"
+  integrity sha512-nDQF71wZcglDxtGZ6lUzzB9Mhk4SJPpaz0vY6pyCn7+DWiKOwWhY1KE/DI7719L4PXLF0yWWzLQ7rw+DvLDbBQ==
   dependencies:
     "@cognite/sdk-core" "^1.2.0"
     lodash "^4.17.11"
