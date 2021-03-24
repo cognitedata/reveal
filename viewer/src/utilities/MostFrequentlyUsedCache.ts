@@ -21,11 +21,7 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
   }
 
   set(key: TKey, value: TValue): boolean {
-    if (this._cache.has(key)) {
-      this._cache.set(key, value);
-      return true;
-    } else if (this._capacity < this._cache.size) {
-      // Still room
+    if (this._cache.has(key) || this._capacity < this._cache.size) {
       this._cache.set(key, value);
       return true;
     } else {
