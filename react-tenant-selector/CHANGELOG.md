@@ -1,3 +1,9 @@
+## 0.6.7 Mar 24 2021
+
+### Changes
+
+- Move cogs.js to be a peerDependency instead of a dependency
+
 ## 0.6.4 Mar 16 2021
 
 ### Changes
