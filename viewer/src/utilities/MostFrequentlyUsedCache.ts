@@ -53,17 +53,16 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
   }
 
   private ensureWithinCapacity(): void {
-    if (this._capacity < this._cache.size) {
-      const keys = Array.from(this._cache.keys());
-      // Figure out what to remove
-      const keysForRemoval = keys
-        .map(x => ({ key: x, retrivalCount: this._retrieves.get(x) || 0 }))
-        .sort((a, b) => a.retrivalCount - b.retrivalCount)
-        .slice(0, this._cache.size - this._capacity)
-        .map(x => x.key);
-      for (const key of keysForRemoval) {
-        this._cache.delete(key);
-      }
+    if (this._capacity >= this._cache.size) return;
+    const keys = Array.from(this._cache.keys());
+    // Figure out what to remove
+    const keysForRemoval = keys
+      .map(x => ({ key: x, retrivalCount: this._retrieves.get(x) || 0 }))
+      .sort((a, b) => a.retrivalCount - b.retrivalCount)
+      .slice(0, this._cache.size - this._capacity)
+      .map(x => x.key);
+    for (const key of keysForRemoval) {
+      this._cache.delete(key);
     }
   }
 }
