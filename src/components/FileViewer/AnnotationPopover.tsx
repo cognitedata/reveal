@@ -1,7 +1,7 @@
 import React from 'react';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
-import { Body, Button, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
+import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
 import { useAsset, useAssetTimeseries } from 'hooks/api';
 import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
@@ -9,7 +9,11 @@ import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
-import { addTimeseries, covertTSToChartTS } from 'utils/charts';
+import {
+  addTimeseries,
+  removeTimeseries,
+  covertTSToChartTS,
+} from 'utils/charts';
 
 export const AnnotationPopover = ({
   annotations,
@@ -71,11 +75,18 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
-      const ts = covertTSToChartTS(
-        timeSeries,
-        chart.timeSeriesCollection?.length
+      const tsToRemove = chart.timeSeriesCollection?.find(
+        (t) => t.tsId === timeSeries.id
       );
-      updateChart({ chart: addTimeseries(chart, ts) });
+      if (tsToRemove) {
+        updateChart({ chart: removeTimeseries(chart, tsToRemove.id) });
+      } else {
+        const ts = covertTSToChartTS(
+          timeSeries,
+          chart.timeSeriesCollection?.length || 0
+        );
+        updateChart({ chart: addTimeseries(chart, ts) });
+      }
     }
   };
 
@@ -109,10 +120,13 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
               dateRange={[sparklineStartDate, sparklineEndDate]}
             />
           </TimeseriesInfo>
-          <Button
-            icon="Plus"
-            variant="ghost"
-            onClick={() => handleTimeSeriesClick(ts)}
+          <Checkbox
+            onClick={(e) => {
+              e.preventDefault();
+              handleTimeSeriesClick(ts);
+            }}
+            name={`${ts.id}`}
+            value={!!chart?.timeSeriesCollection?.find((t) => t.tsId === ts.id)}
           />
         </TimeseriesItem>
       ))}
