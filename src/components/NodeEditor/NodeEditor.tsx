@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 import {
   SourceNode,
   ControllerProvider,
@@ -49,6 +50,11 @@ const WorkflowEditor = ({
     (flow) => flow.id === workflowId
   );
   const { mutate: callFunction } = useCallFunction('simple_calc-master');
+
+  if (!workflowId || !workflow) {
+    return null;
+  }
+
   const update = (diff: Partial<ChartWorkflow>) => {
     mutate({
       chart: {
@@ -65,7 +71,7 @@ const WorkflowEditor = ({
     });
   };
 
-  const { nodes = [], connections = [] } = workflow || {};
+  const { nodes = [], connections = [] } = workflow;
   const context = { chart };
 
   // This have to be debouced as it is called continuously when dragging nodes
@@ -73,10 +79,24 @@ const WorkflowEditor = ({
     const nodeUpdate = nodes.map((node) =>
       node.id === nextNode.id ? nextNode : node
     );
-    update({
-      nodes: nodeUpdate,
-      calls: [],
-    });
+    const deleteCalls = !isEqual(
+      getStepsFromWorkflow(workflow),
+      getStepsFromWorkflow({
+        ...workflow,
+        nodes: nodeUpdate,
+      })
+    );
+
+    if (deleteCalls) {
+      update({
+        nodes: nodeUpdate,
+        calls: [],
+      });
+    } else {
+      update({
+        nodes: nodeUpdate,
+      });
+    }
   }, 100);
 
   const onRemoveNode = (node: Node) => {
@@ -138,14 +158,6 @@ const WorkflowEditor = ({
       }
     );
   };
-
-  if (!workflowId) {
-    return null;
-  }
-
-  if (!workflow) {
-    return null;
-  }
 
   return (
     <WorkflowContainer>
