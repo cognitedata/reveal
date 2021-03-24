@@ -1,3 +1,4 @@
+import React from 'react';
 import i18next, { InitOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
 import LocalStorageBackend from 'i18next-localstorage-backend';
@@ -7,27 +8,42 @@ import {
   useTranslation as useOrigTranslations,
   Trans as OrigTrans,
   initReactI18next,
+  TFuncKey,
+  Resources,
+  Namespace,
+  TransProps,
+  UseTranslationOptions,
+  UseTranslationResponse,
 } from 'react-i18next';
 
 let enabled = true;
 
-export const useTranslation = (input?: string) => {
+export const useTranslation = (
+  ns?: string,
+  options?: UseTranslationOptions
+): UseTranslationResponse<string> => {
   if (enabled) {
-    return useOrigTranslations(input);
+    return useOrigTranslations(ns, options);
   }
 
-  return {
+  return ({
     t: (_id: string, { defaultValue } = { defaultValue: '' }) =>
-      defaultValue || input,
-  };
+      defaultValue || ns,
+    i18n: {
+      changeLanguage: () => Promise.resolve(),
+    },
+    ready: true,
+  } as unknown) as UseTranslationResponse<string>;
 };
-export const Trans = (props: unknown) => {
-  if (enabled) {
-    return OrigTrans;
-  }
-
-  return () => props;
-};
+export const Trans = <
+  K extends TFuncKey<N, Resources> extends infer A ? A : never,
+  N extends Namespace<string> = string,
+  E extends Element = HTMLDivElement
+>({
+  children,
+  ...rest
+}: TransProps<K, N, E>): React.ReactElement =>
+  enabled ? <OrigTrans {...rest}>{children}</OrigTrans> : <>{children}</>;
 
 const {
   NODE_ENV,

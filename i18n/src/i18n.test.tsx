@@ -1,5 +1,7 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import i18next from 'i18next';
-import configureI18n, { useTranslation } from './i18n';
+import configureI18n, { Trans, useTranslation } from './i18n';
 
 describe('i18n setup', () => {
   it('setting language from props - default', () => {
@@ -11,6 +13,21 @@ describe('i18n setup', () => {
     configureI18n({ disabled: true });
     const { t } = useTranslation('test');
     expect(t('test', { defaultValue: 'testing' })).toEqual('testing');
+  });
+
+  it('test <Trans> in disabled mode', () => {
+    const Component = () => {
+      configureI18n({ disabled: true });
+      const { t } = useTranslation('test');
+      return (
+        <Trans t={t} i18nKey="some-key">
+          Some text
+        </Trans>
+      );
+    };
+
+    render(<Component />);
+    screen.getByText('Some text');
   });
 
   it('setting language from props - lng prop', () => {
