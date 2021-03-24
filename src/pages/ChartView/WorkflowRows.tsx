@@ -7,16 +7,19 @@ import { TypeLabel } from './elements';
 type Props = {
   chart: Chart;
   updateChart: (c: Chart) => void;
-  activeWorkflow?: string;
-  setActive: (id: string | undefined) => void;
+  mode: string;
   setMode: (m: Modes) => void;
+  selectedSourceId?: string;
+  onRowClick: (id: string | undefined) => void;
 };
+
 export default function WorkflowRows({
   chart,
   updateChart,
+  mode,
   setMode,
-  setActive,
-  activeWorkflow,
+  selectedSourceId,
+  onRowClick,
 }: Props) {
   return (
     <>
@@ -27,13 +30,14 @@ export default function WorkflowRows({
       )}
       {chart.workflowCollection?.map((flow) => (
         <WorkflowRow
-          mutate={updateChart}
-          chart={chart}
-          workflow={flow}
-          isActive={activeWorkflow === flow.id}
-          setWorkspaceMode={() => setMode('workspace')}
-          setActiveSourceItem={setActive}
           key={flow.id}
+          workflow={flow}
+          chart={chart}
+          isSelected={selectedSourceId === flow.id}
+          onRowClick={onRowClick}
+          mode={mode}
+          setMode={setMode}
+          mutate={updateChart}
         />
       ))}
     </>

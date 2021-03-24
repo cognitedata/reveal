@@ -36,17 +36,19 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
 type Props = {
   chart: Chart;
   workflow: ChartWorkflow;
-  setActiveSourceItem: (id?: string) => void;
-  isActive: boolean;
-  setWorkspaceMode: (m: Modes) => void;
+  isSelected?: boolean;
+  onRowClick?: (id?: string) => void;
+  setMode?: (m: Modes) => void;
+  mode: string;
   mutate: (c: Chart) => void;
 };
 export default function WorkflowRow({
   chart,
   workflow,
-  setWorkspaceMode,
-  setActiveSourceItem,
-  isActive = false,
+  onRowClick = () => {},
+  mode,
+  setMode = () => {},
+  isSelected = false,
   mutate,
 }: Props) {
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -55,6 +57,9 @@ export default function WorkflowRow({
   const [idHack, setIdHack] = useState(0);
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
+
+  const isWorkspaceMode = mode === 'workspace';
+  const isDataQualityMode = mode === 'report';
 
   const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
     mutate(updateWorkflow(chart, wfId, diff));
@@ -101,7 +106,7 @@ export default function WorkflowRow({
   ));
 
   return (
-    <SourceRow onClick={() => setActiveSourceItem(id)} isActive={isActive}>
+    <SourceRow onClick={() => onRowClick(id)} isActive={isSelected}>
       <td>
         <SourceItem key={id}>
           <SourceSquare
@@ -123,7 +128,7 @@ export default function WorkflowRow({
               />
             </div>
           )}
-          <SourceName onClick={() => setWorkspaceMode('editor')}>
+          <SourceName>
             <EditableText
               value={name || 'noname'}
               onChange={(value) => {
@@ -151,43 +156,61 @@ export default function WorkflowRow({
           </SourceMenu>
         </SourceItem>
       </td>
-      <td>
-        <Dropdown
-          content={
-            <Menu>
-              <Menu.Header>
-                <span style={{ wordBreak: 'break-word' }}>
-                  Select input unit (override)
-                </span>
-              </Menu.Header>
-              {unitOverrideMenuItems}
-            </Menu>
-          }
-        >
-          <SourceItem>
-            <SourceName>{inputUnitOption?.label || '-'}</SourceName>
-          </SourceItem>
-        </Dropdown>
-      </td>
-      <td>
-        <Dropdown
-          content={
-            <Menu>
-              <Menu.Header>
-                <span style={{ wordBreak: 'break-word' }}>
-                  Select preferred unit
-                </span>
-              </Menu.Header>
-              {unitConversionMenuItems}
-            </Menu>
-          }
-        >
-          <SourceItem>
-            <SourceName>{preferredUnitOption?.label || '-'}</SourceName>
-          </SourceItem>
-        </Dropdown>
-      </td>
-      <td colSpan={2} />
+      {isWorkspaceMode && (
+        <>
+          <td>
+            <Dropdown
+              content={
+                <Menu>
+                  <Menu.Header>
+                    <span style={{ wordBreak: 'break-word' }}>
+                      Select input unit (override)
+                    </span>
+                  </Menu.Header>
+                  {unitOverrideMenuItems}
+                </Menu>
+              }
+            >
+              <SourceItem>
+                <SourceName>{inputUnitOption?.label || '-'}</SourceName>
+              </SourceItem>
+            </Dropdown>
+          </td>
+          <td>
+            <Dropdown
+              content={
+                <Menu>
+                  <Menu.Header>
+                    <span style={{ wordBreak: 'break-word' }}>
+                      Select preferred unit
+                    </span>
+                  </Menu.Header>
+                  {unitConversionMenuItems}
+                </Menu>
+              }
+            >
+              <SourceItem>
+                <SourceName>{preferredUnitOption?.label || '-'}</SourceName>
+              </SourceItem>
+            </Dropdown>
+          </td>
+          <td colSpan={2} />
+          <td>
+            <SourceItem>
+              <SourceName>
+                <button type="button" onClick={() => setMode('editor')}>
+                  Edit
+                </button>
+              </SourceName>
+            </SourceItem>
+          </td>
+        </>
+      )}
+      {isDataQualityMode && (
+        <>
+          <td colSpan={2} />
+        </>
+      )}
     </SourceRow>
   );
 }

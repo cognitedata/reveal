@@ -130,7 +130,7 @@ const PlotlyChartComponent = ({
         )?.label,
       })),
       ...(enabledWorkflows || [])
-        .filter((wf) => wf.enabled)
+        .filter((workflow) => workflow.enabled)
         .map((workflow, i) => ({
           id: workflow?.id,
           type: 'workflow',

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Chart } from 'reducers/charts/types';
-import { Modes } from 'pages/types';
 import TimeSeriesRow from './TimeSeriesRow';
 import { TypeLabel } from './elements';
 
 type Props = {
   chart: Chart;
   updateChart: (c: Chart) => void;
-  mode: Modes;
+  mode: string;
+  selectedSourceId?: string;
+  onRowClick: (id: string | undefined) => void;
   setDataQualityReport: (input: {
     timeSeriesId: string;
     reportType: string;
@@ -18,6 +19,8 @@ export default function TimeSeriesRows({
   updateChart,
   setDataQualityReport,
   mode,
+  onRowClick,
+  selectedSourceId,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
@@ -32,15 +35,16 @@ export default function TimeSeriesRows({
       )}
       {chart?.timeSeriesCollection?.map((t) => (
         <TimeSeriesRow
+          key={t.id}
           mutate={updateChart}
           chart={chart}
           timeseries={t}
-          setDataQualityReport={setDataQualityReport}
-          active={false}
-          disabled={isEditorMode}
           isDataQualityMode={isDataQualityMode}
           isWorkspaceMode={isWorkspaceMode}
-          key={t.id}
+          onRowClick={onRowClick}
+          setDataQualityReport={setDataQualityReport}
+          isSelected={selectedSourceId === t.id}
+          disabled={isEditorMode}
         />
       ))}
     </>

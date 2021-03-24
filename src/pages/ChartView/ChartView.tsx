@@ -25,6 +25,7 @@ import { useLoginStatus } from 'hooks';
 import { useQueryClient } from 'react-query';
 import { duplicate, updateSourceAxisForChart } from 'utils/charts';
 import { Modes } from 'pages/types';
+import { ContextMenu } from 'components/ContextMenu';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
 import RunWorkflows from './RunWorkflowsButton';
@@ -55,6 +56,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { data: login } = useLoginStatus();
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
+  const [showContextMenu, setShowRightBar] = useState(false);
 
   const {
     mutateAsync,
@@ -95,7 +97,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     });
   }, [charts, chartId, login]);
 
-  const [activeSourceItem, setActiveSourceItem] = useState<string>();
+  const [selectedSourceId, setSelectedSourceItem] = useState<
+    string | undefined
+  >();
 
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
@@ -183,15 +187,31 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   };
 
-  const handleOpenSearch = () => {
+  const handleSourceClick = async (sourceId?: string) => {
+    setSelectedSourceItem(sourceId);
+    setShowRightBar(true);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  };
+
+  const handleCloseContextMenu = async () => {
+    setShowRightBar(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  };
+
+  const handleOpenSearch = async () => {
     setShowSearch(true);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
-  const handleCloseSearch = () => {
+  const handleCloseSearch = async () => {
     setShowSearch(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
+
+  const selectedSourceItem = [
+    ...(chart.timeSeriesCollection || []),
+    ...(chart.workflowCollection || []),
+  ].find(({ id }) => id === selectedSourceId);
 
   const sourceTableHeaderRow = (
     <tr>
@@ -220,6 +240,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           <th>
             <SourceItem>
               <SourceName>Description</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Actions</SourceName>
             </SourceItem>
           </th>
         </>
@@ -323,22 +348,25 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         chart={chart}
                         updateChart={updateChart}
                         mode={workspaceMode}
+                        selectedSourceId={selectedSourceId}
+                        onRowClick={handleSourceClick}
                         setDataQualityReport={setDataQualityReport}
                       />
                       <WorkflowRows
                         chart={chart}
-                        setActive={setActiveSourceItem}
-                        setMode={setWorkspaceMode}
                         updateChart={updateChart}
-                        activeWorkflow={activeSourceItem}
+                        mode={workspaceMode}
+                        setMode={setWorkspaceMode}
+                        selectedSourceId={selectedSourceId}
+                        onRowClick={handleSourceClick}
                       />
                     </tbody>
                   </SourceTable>
                 </SourceTableWrapper>
-                {workspaceMode === 'editor' && !!activeSourceItem && (
+                {workspaceMode === 'editor' && !!selectedSourceId && (
                   <NodeEditor
                     mutate={mutateAsync}
-                    workflowId={activeSourceItem}
+                    workflowId={selectedSourceId}
                     setWorkspaceMode={setWorkspaceMode}
                     chart={chart}
                   />
@@ -379,6 +407,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           {...dataQualityReport}
         />
       </ContentWrapper>
+      <ContextMenu
+        visible={showContextMenu}
+        onClose={handleCloseContextMenu}
+        sourceItem={selectedSourceItem}
+      />
     </ChartViewContainer>
   );
 };

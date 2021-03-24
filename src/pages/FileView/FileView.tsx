@@ -95,7 +95,6 @@ export const FileView = () => {
                       chart={chart}
                       timeseries={t}
                       setDataQualityReport={() => {}}
-                      active={false}
                       disabled={false}
                       key={t.id}
                       isFileViewerMode

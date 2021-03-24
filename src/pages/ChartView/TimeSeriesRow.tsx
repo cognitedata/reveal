@@ -17,7 +17,8 @@ type Props = {
   chart: Chart;
   timeseries: ChartTimeSeries;
   disabled?: boolean;
-  active?: boolean;
+  isSelected?: boolean;
+  onRowClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isDataQualityMode?: boolean;
   isFileViewerMode?: boolean;
@@ -30,10 +31,11 @@ export default function TimeSeriesRow({
   mutate,
   chart,
   timeseries,
-  active = false,
+  onRowClick = () => {},
   disabled = false,
-  isDataQualityMode = false,
+  isSelected = false,
   isWorkspaceMode = false,
+  isDataQualityMode = false,
   isFileViewerMode = false,
   setDataQualityReport,
 }: Props) {
@@ -109,9 +111,13 @@ export default function TimeSeriesRow({
   ));
 
   return (
-    <SourceRow key={id} isActive={false}>
+    <SourceRow
+      key={id}
+      onClick={() => !disabled && onRowClick(id)}
+      isActive={isSelected}
+    >
       <td>
-        <SourceItem isActive={active} isDisabled={disabled} key={id}>
+        <SourceItem isDisabled={disabled} key={id}>
           <SourceCircle
             onClick={(event) => {
               event.stopPropagation();
@@ -211,6 +217,11 @@ export default function TimeSeriesRow({
           <td>
             <SourceItem>
               <SourceName>{description}</SourceName>
+            </SourceItem>
+          </td>
+          <td>
+            <SourceItem>
+              <SourceName>-</SourceName>
             </SourceItem>
           </td>
         </>
