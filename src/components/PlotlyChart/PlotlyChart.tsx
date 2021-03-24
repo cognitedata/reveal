@@ -11,23 +11,29 @@ import {
 import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import Plotly, { ModeBarDefaultButtons } from 'plotly.js-basic-dist';
+import Plotly, {
+  ModeBarButton,
+  ModeBarDefaultButtons,
+} from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
 import { useSDK } from '@cognite/sdk-provider';
 import { functionResponseKey } from 'utils/cogniteFunctions';
 import {
   AxisUpdate,
+  calculateStackedYRange,
   getXaxisUpdateFromEventData,
   getYaxisUpdatesFromEventData,
   PlotlyEventData,
   SeriesData,
 } from './utils';
+import StackedChartIconPath from './StackedChartIcon';
 
 type ChartProps = {
   chart: Chart;
   onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
-  showYAxis?: boolean;
   isPreview?: boolean;
+  isInSearch?: boolean;
+  defaultStackedMode?: boolean;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
@@ -36,12 +42,14 @@ const Plot = createPlotlyComponent(Plotly);
 const PlotlyChartComponent = ({
   chart,
   onAxisChange,
-  showYAxis,
   isPreview,
+  isInSearch,
+  defaultStackedMode = false,
 }: ChartProps) => {
   const sdk = useSDK();
   const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
+  const [stackedMode, setStackedMode] = useState<boolean>(defaultStackedMode);
 
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
@@ -131,9 +139,16 @@ const PlotlyChartComponent = ({
           color: workflow.color,
           width: workflow.lineWeight,
           dash: convertLineStyle(workflow.lineStyle),
-          unit: '',
-          datapoints: transformSimpleCalcResult(
-            (functionResults?.[i]?.data as any) || {}
+          unit: units.find(
+            (unitOption) =>
+              unitOption.value === workflow.preferredUnit?.toLowerCase()
+          )?.label,
+          datapoints: convertUnits(
+            transformSimpleCalcResult(
+              (functionResults?.[i]?.data as any) || {}
+            ),
+            workflow.unit,
+            workflow.preferredUnit
           ),
         })),
     ] || [];
@@ -171,13 +186,17 @@ const PlotlyChartComponent = ({
     if (onAxisChange) {
       onAxisChange({
         x: getXaxisUpdateFromEventData(eventdata),
-        y: getYaxisUpdatesFromEventData(seriesData, eventdata),
+        // Should not edit the saved y-axis ranges if in stacked mode or in search
+        y: !(stackedMode || isInSearch)
+          ? getYaxisUpdatesFromEventData(seriesData, eventdata)
+          : [],
       });
     }
 
     setDragmode(eventdata.dragmode || dragmode);
   };
 
+  const showYAxis = !isInSearch && !isPreview;
   const marginValue = isPreview ? 0 : 50;
 
   const layout = {
@@ -192,7 +211,12 @@ const PlotlyChartComponent = ({
     annotations: [],
   };
 
-  seriesData.forEach(({ unit, color, range }, index) => {
+  const yAxisDefaults = {
+    hoverformat: '.2f',
+    zeroline: false,
+  };
+
+  seriesData.forEach(({ unit, color, range, datapoints }, index) => {
     /**
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
      */
@@ -200,8 +224,15 @@ const PlotlyChartComponent = ({
       ? JSON.parse(JSON.stringify(range))
       : undefined;
 
-    if (showYAxis || isPreview) {
+    if (isInSearch) {
       (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
+        ...yAxisDefaults,
+        showticklabels: false,
+        domain: [index / seriesData.length, (index + 1) / seriesData.length],
+      };
+    } else {
+      (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
+        ...yAxisDefaults,
         visible: !isPreview,
         linecolor: color,
         linewidth: 1,
@@ -211,11 +242,19 @@ const PlotlyChartComponent = ({
         overlaying: index !== 0 ? 'y' : undefined,
         anchor: 'free',
         position: 0.05 * index,
-        range: serializedYRange,
-        hoverformat: '.2f',
-        zeroline: false,
+        range: stackedMode
+          ? calculateStackedYRange(
+              datapoints as (Datapoints | DatapointAggregate)[],
+              index,
+              seriesData.length
+            )
+          : serializedYRange,
       };
 
+      /**
+       * Display units as annotations and manually placing them on top of y-axis lines
+       * Plotly does not support labels on top of axes
+       */
       if (unit) {
         (layout.annotations as any[]).push({
           xref: 'paper',
@@ -230,13 +269,6 @@ const PlotlyChartComponent = ({
           yshift: 5,
         });
       }
-    } else {
-      (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-        showticklabels: false,
-        hoverformat: '.2f',
-        domain: [index / seriesData.length, (index + 1) / seriesData.length],
-        zeroline: false,
-      };
     }
   });
 
@@ -246,8 +278,21 @@ const PlotlyChartComponent = ({
     scrollZoom: true,
     displaylogo: false,
     modeBarButtons: [
+      [
+        {
+          name: `${stackedMode ? 'Disable' : 'Enable'} stacking`,
+          icon: {
+            width: '16',
+            height: '16',
+            path: StackedChartIconPath,
+          },
+          click: () => {
+            setStackedMode(!stackedMode);
+          },
+        },
+      ],
       ['pan2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d'],
-    ] as ModeBarDefaultButtons[][],
+    ] as (ModeBarDefaultButtons[] | ModeBarButton[])[],
   };
 
   return (

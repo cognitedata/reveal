@@ -31,14 +31,22 @@ function InnerFunctionCall({
   const { data: call, isFetched } = useFunctionCall(id, callId, {
     refetchInterval,
   });
-  const { data: response } = useFunctionReponse(id, callId, {
-    refetchInterval,
-  });
+  const { data: response, refetch: getResponse } = useFunctionReponse(
+    id,
+    callId,
+    {
+      // manual refetch overrides enabled: false
+      enabled: false,
+    }
+  );
 
   const callStatus = call?.status;
   useEffect(() => {
     if (callStatus && callStatus !== 'Running') {
       setInterval(false);
+      if (callStatus === 'Completed') {
+        getResponse();
+      }
     } else {
       setInterval(1000);
     }
