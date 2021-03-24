@@ -139,9 +139,16 @@ const PlotlyChartComponent = ({
           color: workflow.color,
           width: workflow.lineWeight,
           dash: convertLineStyle(workflow.lineStyle),
-          unit: '',
-          datapoints: transformSimpleCalcResult(
-            (functionResults?.[i]?.data as any) || {}
+          unit: units.find(
+            (unitOption) =>
+              unitOption.value === workflow.preferredUnit?.toLowerCase()
+          )?.label,
+          datapoints: convertUnits(
+            transformSimpleCalcResult(
+              (functionResults?.[i]?.data as any) || {}
+            ),
+            workflow.unit,
+            workflow.preferredUnit
           ),
         })),
     ] || [];

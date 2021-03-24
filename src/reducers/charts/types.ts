@@ -53,6 +53,8 @@ export type ChartWorkflow = {
   name: string;
   lineWeight?: number;
   lineStyle?: 'solid' | 'dashed' | 'dotted';
+  unit?: string;
+  preferredUnit?: string;
   color: string;
   enabled: boolean;
   range?: number[];
