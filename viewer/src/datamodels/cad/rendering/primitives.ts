@@ -377,27 +377,6 @@ function createTorusSegments(
   return mesh;
 }
 
-function getTorusSizes(
-  torusSegmentCollection: Uint8Array,
-  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
-) {
-  const collectionStride = Array.from(torusSegmentAttributes.values()).reduce((sum, element) => sum + element.size, 0);
-
-  const numberOfTorusSegments = torusSegmentCollection.length / collectionStride;
-
-  const sizes = new Float32Array(numberOfTorusSegments);
-
-  const collectionView = new DataView(torusSegmentCollection.buffer);
-  const sizeAttribute = torusSegmentAttributes.get('size')!;
-  const sizeAttributeOffset = sizeAttribute.offset;
-
-  for (let i = 0; i < numberOfTorusSegments; i++) {
-    sizes[i] = collectionView.getFloat32(i * collectionStride + sizeAttributeOffset!, true);
-  }
-
-  return sizes;
-}
-
 function createNuts(
   nutCollection: Uint8Array,
   nutAttributes: Map<string, ParsePrimitiveAttribute>,
@@ -415,7 +394,6 @@ function createNuts(
   mesh.name = `Primitives (Nuts)`;
   return mesh;
 }
-
 function updateMaterialInverseModelMatrix(
   material: THREE.ShaderMaterial | THREE.RawShaderMaterial,
   matrixWorld: THREE.Matrix4
