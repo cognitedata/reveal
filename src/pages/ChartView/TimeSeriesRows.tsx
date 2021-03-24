@@ -30,7 +30,7 @@ export default function TimeSeriesRows({
     <>
       {(chart?.timeSeriesCollection?.length || 0) > 0 && (
         <tr>
-          <TypeLabel colSpan={5}>Time series</TypeLabel>
+          <TypeLabel colSpan={10}>Time series</TypeLabel>
         </tr>
       )}
       {chart?.timeSeriesCollection?.map((t) => (
