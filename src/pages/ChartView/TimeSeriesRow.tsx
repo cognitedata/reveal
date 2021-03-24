@@ -164,44 +164,48 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td>
-            <Dropdown
-              content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>
-                      Select input unit (override)
-                    </span>
-                  </Menu.Header>
-                  {unitOverrideMenuItems}
-                </Menu>
-              }
-            >
-              <SourceItem>
-                <SourceName>
-                  {inputUnitOption?.label}
-                  {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
-                    ' *'}
-                </SourceName>
-              </SourceItem>
-            </Dropdown>
+            <div role="none" onClick={(event) => event.stopPropagation()}>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Header>
+                      <span style={{ wordBreak: 'break-word' }}>
+                        Select input unit (override)
+                      </span>
+                    </Menu.Header>
+                    {unitOverrideMenuItems}
+                  </Menu>
+                }
+              >
+                <SourceItem>
+                  <SourceName>
+                    {inputUnitOption?.label}
+                    {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
+                      ' *'}
+                  </SourceName>
+                </SourceItem>
+              </Dropdown>
+            </div>
           </td>
           <td>
-            <Dropdown
-              content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>
-                      Select preferred unit
-                    </span>
-                  </Menu.Header>
-                  {unitConversionMenuItems}
-                </Menu>
-              }
-            >
-              <SourceItem>
-                <SourceName>{preferredUnitOption?.label}</SourceName>
-              </SourceItem>
-            </Dropdown>
+            <div role="none" onClick={(event) => event.stopPropagation()}>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Header>
+                      <span style={{ wordBreak: 'break-word' }}>
+                        Select preferred unit
+                      </span>
+                    </Menu.Header>
+                    {unitConversionMenuItems}
+                  </Menu>
+                }
+              >
+                <SourceItem>
+                  <SourceName>{preferredUnitOption?.label}</SourceName>
+                </SourceItem>
+              </Dropdown>
+            </div>
           </td>
         </>
       )}
