@@ -329,7 +329,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 <PlotlyChartComponent
                   chart={chart}
                   onAxisChange={(update) => handleChangeSourceAxis(update)}
-                  showYAxis={!showSearch}
+                  isInSearch={showSearch}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
