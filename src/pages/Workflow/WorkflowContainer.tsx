@@ -7,7 +7,7 @@ import {
   useHistory,
   Link,
 } from 'react-router-dom';
-import { Steps as AntdSteps } from 'antd';
+import { Modal, Steps as AntdSteps } from 'antd';
 import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import styled from 'styled-components';
 import { ProcessStepActionButtons } from 'src/pages/Workflow/process/ProcessStepActionButtons';
@@ -22,6 +22,7 @@ import { RootState } from 'src/store/rootReducer';
 import { FileMetadataPreview } from 'src/pages/Workflow/process/FileMetadataPreview';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { toggleFileMetadataPreview } from 'src/store/processSlice';
+import { createLink } from '@cognite/cdf-utilities';
 
 const { Step } = AntdSteps;
 
@@ -46,6 +47,10 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
 
   const showDrawer = useSelector(
     ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer
+  );
+
+  const files = useSelector(
+    ({ uploadedFiles }: RootState) => uploadedFiles.uploadedFiles
   );
 
   useEffect(() => {
@@ -117,8 +122,22 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
                   },
                 }}
                 nextBtnProps={{
+                  disabled: !files.length,
                   onClick() {
                     history.push(getLink(workflowRoutes.process));
+                  },
+                }}
+                skipBtnProps={{
+                  disabled: !files.length,
+                  onClick() {
+                    Modal.confirm({
+                      title: 'Just so you know',
+                      content:
+                        'By skipping processing you will be taken back to the home page. Your files are uploaded to Cognite Data Fusion and can be processed later.',
+                      onOk: () => {
+                        history.push(createLink('/explore/search/file'));
+                      },
+                    });
                   },
                 }}
               />

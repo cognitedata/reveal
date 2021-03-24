@@ -24,9 +24,10 @@ export function FileList({ files, onRemove, children }: FileListProps) {
           ...(!files.length && {
             background: `url(${SpiderImg}) top no-repeat`,
           }),
-          border: files.every(({ status }) => status === 'done')
-            ? '1px solid #31C25A'
-            : '1px solid #cccccc',
+          border:
+            files.length && files.every(({ status }) => status === 'done')
+              ? '1px solid #31C25A'
+              : '1px solid #cccccc',
         }}
       >
         {files.map((file) => (

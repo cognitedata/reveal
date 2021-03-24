@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { FileUploadResponse, FileInfo } from '@cognite/sdk';
+import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { getHumanReadableFileSize } from 'src/components/FileUploader/utils/getHumanReadableFileSize';
@@ -11,6 +11,9 @@ import {
 } from 'src/components/FileUploader/FilePicker/types';
 import FilePicker from 'src/components/FileUploader/FilePicker';
 import exifr from 'exifr';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { InternalId } from '@cognite/cdf-sdk-singleton';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
@@ -137,6 +140,10 @@ export const FileUploader = ({
   ...props
 }: FileUploaderProps) => {
   const sdk = useSDK();
+  const { dataSetIds } = useSelector((state: RootState) => state.uploadedFiles);
+  const { extractExif } = useSelector(
+    (state: RootState) => state.uploadedFiles
+  );
   const [fileList, setFileList] = useState<Array<CogsFileInfo | CogsFile>>(
     (initialUploadedFiles || []).map((file) => {
       const f: CogsFileInfo = {
@@ -213,11 +220,7 @@ export const FileUploader = ({
     );
   };
 
-  const uploadFile = async (file: CogsFile) => {
-    // eslint-disable-next-line no-param-reassign
-    file.status = 'uploading';
-    // since we patch files we trigger list updates to have things rendered with new info
-    setFileList((list) => [...list]);
+  const parseExif = async (file: File) => {
     const coordinates = await exifr.gps(file);
     const exifTags = await exifr.parse(file, [
       'ISO',
@@ -229,28 +232,57 @@ export const FileUploader = ({
       'FocalLength',
     ]);
 
+    const geoLocation =
+      coordinates &&
+      ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [
+            Number(coordinates.longitude.toFixed(6)),
+            Number(coordinates.latitude.toFixed(6)),
+          ],
+        },
+      } as FileGeoLocation);
+
+    return { geoLocation, exifTags };
+  };
+
+  const uploadFile = async (file: CogsFile) => {
+    // eslint-disable-next-line no-param-reassign
+    file.status = 'uploading';
+
+    // since we patch files we trigger list updates to have things rendered with new info
+    setFileList((list) => [...list]);
+
     const mimeType = getMIMEType(file.name);
-    console.log(exifTags);
     try {
       const fileMetadata = (await sdk.files.upload({
         name: file.name,
         mimeType: mimeType || undefined,
         source: 'CDF Vision',
-        geoLocation: coordinates && {
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [
-              Number(coordinates.longitude.toFixed(6)),
-              Number(coordinates.latitude.toFixed(6)),
-            ],
-          },
-        },
-        metadata: exifTags && exifTags,
+        dataSetId: dataSetIds ? (dataSetIds[0] as InternalId).id : undefined,
         // I can see directory in api docs, but looks like SDK misses it
         // https://docs.cognite.com/api/v1/#operation/initFileUpload
         ...(assetIds && { assetIds }),
       })) as FileUploadResponse;
+
+      // Add exif data async to the file if selected, after the file is uploaded
+      if (extractExif) {
+        parseExif(file).then((data) => {
+          if (data.exifTags || data.geoLocation) {
+            sdk.files.update([
+              {
+                id: fileMetadata.id,
+                update: {
+                  geoLocation: { set: data.geoLocation },
+                  metadata: { set: data.exifTags },
+                },
+              },
+            ]);
+          }
+        });
+      }
 
       if (!fileMetadata || !fileMetadata.uploadUrl || !fileMetadata.id) {
         onUploadFailure('Unable to create file');
@@ -356,6 +388,7 @@ export const FileUploader = ({
       <FilePicker
         onRemove={removeFile}
         files={fileList}
+        optionDisabled={fileList.some(({ status }) => status === 'uploading')}
         onChange={(files) => {
           setFileList(files);
         }}
@@ -417,7 +450,7 @@ function UploadControlButtons({
             Upload files
           </Button>
           <div style={{ flex: 1 }} />
-          <Button type="danger" variant="ghost" disabled>
+          <Button type="ghost-danger" disabled>
             Remove all
           </Button>
         </>
@@ -430,7 +463,7 @@ function UploadControlButtons({
             Upload files
           </Button>
           <div style={{ flex: 1 }} />
-          <Button type="danger" variant="ghost" onClick={onRemoveFiles}>
+          <Button type="ghost-danger" onClick={onRemoveFiles}>
             Remove all
           </Button>
         </>
