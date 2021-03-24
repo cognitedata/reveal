@@ -2,7 +2,11 @@ import React from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { ChartWorkflow } from 'reducers/charts/types';
-import { updateWorkflow, removeWorkflow } from 'utils/charts';
+import {
+  updateWorkflow,
+  removeWorkflow,
+  duplicateWorkflow,
+} from 'utils/charts';
 import { useLoginStatus } from 'hooks';
 import ToolsMenu from './ToolsMenu';
 
@@ -36,6 +40,8 @@ export default function WorkflowMenu({
     }
   };
   const remove = () => mutate({ chart: removeWorkflow(chart, id) });
+  const duplicate = () => mutate({ chart: duplicateWorkflow(chart, id) });
+
   return (
     <Menu>
       <ToolsMenu update={update} />
@@ -47,6 +53,9 @@ export default function WorkflowMenu({
         appendIcon="Edit"
       >
         <span>Rename</span>
+      </Menu.Item>
+      <Menu.Item onClick={() => duplicate()} appendIcon="Duplicate">
+        <span>Duplicate</span>
       </Menu.Item>
       <Menu.Item onClick={() => remove()} appendIcon="Delete">
         <span>Remove</span>

@@ -97,6 +97,20 @@ export function updateWorkflow(
 export function removeWorkflow(chart: Chart, wfId: string): Chart {
   return removeItem(chart, 'workflowCollection', wfId);
 }
+export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
+  const wf = chart.workflowCollection?.find((w) => w.id === wfId);
+  const n = (chart.workflowCollection?.length || 0) + 1;
+  if (wf) {
+    const newWf = {
+      ...wf,
+      id: nanoid(),
+      name: `${wf.name} Copy`,
+      color: availableColors[n % availableColors.length],
+    };
+    return addWorkflow(chart, newWf);
+  }
+  return chart;
+}
 export function addWorkflow(chart: Chart, wf: ChartWorkflow): Chart {
   return addItem(chart, 'workflowCollection', wf);
 }
