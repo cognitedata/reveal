@@ -7,9 +7,16 @@ import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import { setCdfEnv, setTenant, fetchUserGroups } from 'modules/app';
 import SwitchWithBreadcrumbs from 'components/SwitchWithBreadcrumbs';
-import Spinner from 'components/Spinner';
 import pnidBreadcrumbs from 'pages/breadcrumbs';
 import NotFound from 'pages/NotFound';
+import {
+  Loader,
+  FileContextualizationContextProvider,
+} from '@cognite/data-exploration';
+import { ResourceActionsProvider } from 'context/ResourceActionsContext';
+import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
+
+const Spinner = () => <Loader />;
 
 export default function App() {
   const dispatch = useDispatch();
@@ -22,16 +29,14 @@ export default function App() {
     params: { tenant },
   } = useRouteMatch<{ tenant: string }>();
 
-  const init = () => {
-    dispatch(setTenant({ tenant }));
-    dispatch(setCdfEnv({ cdfEnv }));
-    dispatch(fetchUserGroups());
-  };
-
   useEffect(() => {
+    const init = () => {
+      dispatch(setTenant({ tenant }));
+      dispatch(setCdfEnv({ cdfEnv }));
+      dispatch(fetchUserGroups());
+    };
     init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tenant, cdfEnv]);
+  }, [dispatch, tenant, cdfEnv]);
 
   const cdfEnvStore = useSelector((state: RootState) => state.app.cdfEnv);
 
@@ -74,7 +79,13 @@ export default function App() {
 
   return (
     <Suspense fallback={<Spinner />}>
-      <SwitchWithBreadcrumbs routes={routes} />
+      <FileContextualizationContextProvider>
+        <ResourceSelectionProvider allowEdit mode="multiple">
+          <ResourceActionsProvider>
+            <SwitchWithBreadcrumbs routes={routes} />
+          </ResourceActionsProvider>
+        </ResourceSelectionProvider>
+      </FileContextualizationContextProvider>
     </Suspense>
   );
 }

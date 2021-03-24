@@ -13,14 +13,12 @@ import { setupSentry } from 'utils/setupSentry';
 import store, { persistedState, loadLocalStorage } from 'store';
 import RootApp from 'pages/App';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { FileContextualizationContextProvider } from '@cognite/data-exploration';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
-import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
+import { Loader } from '@cognite/cogs.js';
+import { CogniteClient } from '@cognite/sdk';
 
 const App = () => {
   const tenant = window.location.pathname.split('/')[1];
   const history = createBrowserHistory();
-
   if (!tenant) {
     throw new Error('tenant missing');
   }
@@ -29,8 +27,7 @@ const App = () => {
 
   useEffect(() => {
     loadLocalStorage(LS_KEY, store);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [LS_KEY]);
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
@@ -51,7 +48,6 @@ const App = () => {
   useEffect(() => {
     cogsStyles.use();
     setupSentry();
-
     return () => {
       cogsStyles.unuse();
     };
@@ -60,32 +56,31 @@ const App = () => {
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(
     <QueryClientProvider client={queryClient}>
-      <FileContextualizationContextProvider>
-        <CogniteFileViewer.Provider sdk={sdk}>
-          <ResourceSelectionProvider>
-            <AntStyles>
-              <GlobalStyles>
-                <SubAppWrapper>
-                  <AuthWrapper subAppName="context-ui-pnid">
-                    <SDKProvider sdk={sdk}>
-                      <Provider store={store}>
-                        <Router history={history}>
-                          <Switch>
-                            <Route
-                              path="/:tenant/pnid_parsing_new"
-                              component={RootApp}
-                            />
-                          </Switch>
-                        </Router>
-                      </Provider>
-                    </SDKProvider>
-                  </AuthWrapper>
-                </SubAppWrapper>
-              </GlobalStyles>
-            </AntStyles>
-          </ResourceSelectionProvider>
-        </CogniteFileViewer.Provider>
-      </FileContextualizationContextProvider>
+      <GlobalStyles>
+        <AntStyles>
+          <SubAppWrapper>
+            <AuthWrapper
+              showLoader
+              includeGroups
+              loadingScreen={<Loader darkMode={false} />}
+              subAppName="context-ui-pnid"
+            >
+              <SDKProvider sdk={(sdk as unknown) as CogniteClient}>
+                <Provider store={store}>
+                  <Router history={history}>
+                    <Switch>
+                      <Route
+                        path="/:tenant/pnid_parsing_new"
+                        component={RootApp}
+                      />
+                    </Switch>
+                  </Router>
+                </Provider>
+              </SDKProvider>
+            </AuthWrapper>
+          </SubAppWrapper>
+        </AntStyles>
+      </GlobalStyles>
     </QueryClientProvider>
   );
 };

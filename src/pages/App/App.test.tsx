@@ -1,12 +1,5 @@
 /* eslint-disable import/first */
-jest.mock('mixpanel-browser', () => {
-  return {
-    datastudio: {
-      add_group: jest.fn(),
-      identify: jest.fn(),
-    },
-  };
-});
+
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';

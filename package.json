@@ -17,7 +17,7 @@
   "dependencies": {
     "@cognite/annotations": "^1.0.5",
     "@cognite/cdf-utilities": "^0.7.3",
-    "@cognite/cogs.js": "^2.13.0",
+    "@cognite/cogs.js": "^2.12.4",
     "@cognite/data-exploration": "^0.5.7",
     "@cognite/gcs-browser-upload": "^1.1.1",
     "@cognite/griff-react": "~0.4.2",
@@ -34,7 +34,6 @@
     "@storybook/addon-knobs": "^6.1.17",
     "@types/enzyme": "^3.10.8",
     "@types/lodash": "^4.14.168",
-    "@types/mixpanel-browser": "^2.35.6",
     "@types/react-highlight-words": "^0.16.1",
     "@types/react-redux": "^7.1.16",
     "@types/react-router-dom": "^5.1.7",
@@ -71,7 +70,7 @@
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
-    "@cognite/cdf-sdk-singleton": "^0.8.2",
+    "@cognite/cdf-sdk-singleton": "^0.6.1",
     "@cognite/cdf-ui-cli": "^1.0.0",
     "@cognite/eslint-config": "^1.6.1",
     "@cognite/eslint-plugin": "^1.3.8",

@@ -69,7 +69,7 @@
     lodash "^4.17.15"
     resize-observer-polyfill "^1.5.0"
 
-"@azure/msal-browser@^2.11.0", "@azure/msal-browser@^2.8.0":
+"@azure/msal-browser@^2.11.0":
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.12.1.tgz#003bd69cdc54f1a6891458831dc23b8a801f669a"
   integrity sha512-P1juZoLnoMI70p1W8/bd3Uk7cGLkYZ0xAUuDhUjCT5adnAWXyMsAyaJK+/WKY4B3sAnasvfC1TW6DDOedjJoiw==
@@ -1292,16 +1292,6 @@
   dependencies:
     lodash "^4.17.20"
 
-"@cognite/auth-utils@^0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.7.2.tgz#c5c77ab48155cdacb3048070b87477c002d4cf2a"
-  integrity sha512-WMnfVCiWSucAcsudB2gZ8PzlDIf7OrRR/GOy+TYSLc2hRAfeZDKQfAI2BPUXVcM/ssXxP4zwvMphMxRuCIvLxg==
-  dependencies:
-    "@azure/msal-browser" "^2.8.0"
-    "@cognite/sdk" "^3.3.0"
-    jwt-decode "^3.1.2"
-    lodash "^4.17.20"
-
 "@cognite/babel-plugin-styled-components@^1.10.7":
   version "1.10.7"
   resolved "https://registry.yarnpkg.com/@cognite/babel-plugin-styled-components/-/babel-plugin-styled-components-1.10.7.tgz#0674317cfca31a9d7d99e9c4fd99e492d663341d"
@@ -1312,20 +1302,13 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-sdk-singleton@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-sdk-singleton/-/cdf-sdk-singleton-0.8.2.tgz#afc8d779513895f2d31204081862c30501a455d8"
-  integrity sha512-H5cvMzYySveaUDG+TMDpbO39DkxeV0E9mH6x45ndOPWdnIqr9+XpHD/1UF/cRaiQca+AQ3PWWSS4znKsqInGWA==
+"@cognite/cdf-sdk-singleton@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-sdk-singleton/-/cdf-sdk-singleton-0.6.1.tgz#c5286184aaab4b60576ea91bc96593350c4caada"
+  integrity sha512-ktlOtCBJGo4mrzpA67HrKy1IN+OJ33V9Vn1/gQo804FuunfbWvRCXb61pMDw3IBjRJjgJMqIKWXr8mwM5mTldA==
   dependencies:
-    "@cognite/auth-utils" "^0.7.2"
-    "@cognite/sdk" "^3.3.0"
-    axios "^0.21.1"
-    dotenv "^8.2.0"
-    dotenv-webpack "^6.0.0"
-    isomorphic-fetch "^2.2.1"
-    jwt-decode "^3.1.2"
-    query-string "^6.13.8"
-    single-spa "^5.5.5"
+    "@cognite/sdk" "^3.0.0"
+    cognite-sdk-v3 "npm:@cognite/sdk@^3.0.0"
 
 "@cognite/cdf-ui-cli@^1.0.0":
   version "1.0.0"
@@ -1345,7 +1328,7 @@
   dependencies:
     query-string "^6.13.4"
 
-"@cognite/cogs.js@^2.13.0", "@cognite/cogs.js@^2.4.2", "@cognite/cogs.js@^2.7.2":
+"@cognite/cogs.js@^2.12.4", "@cognite/cogs.js@^2.4.2", "@cognite/cogs.js@^2.7.2":
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.20.0.tgz#734123e870d4ca1a6bd599bb66bce1c86b21f1bc"
   integrity sha512-WHIft3J9Mc+0LTO95y3ByvSLJhe0uhaKTITDRKzZeXNziq2UuGknMqHcSdz3dqZ+kYaTqO90IGLHLJBlSaFv8A==
@@ -1524,7 +1507,7 @@
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^3.5.0"
 
-"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.2", "@cognite/sdk@^3.3.6":
+"@cognite/sdk@^3.0.0", "@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.2", "@cognite/sdk@^3.3.6", "cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.4.0.tgz#d165f066dfd8223de11ad9b28638e7ecd0c5a89b"
   integrity sha512-BQfW473UIeqQULruFLMJpHYV+e9qtZp9qUwjBdVEOhh1KsNMlWekxvO3ATUeSylRiH5Sy8DFWMdKPE2XlrYWCw==
@@ -2973,11 +2956,6 @@
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
-
-"@types/mixpanel-browser@^2.35.6":
-  version "2.35.6"
-  resolved "https://registry.yarnpkg.com/@types/mixpanel-browser/-/mixpanel-browser-2.35.6.tgz#6a2c98471f3cf4473625a4345a4abd37d30dec84"
-  integrity sha512-wYzQ6nIr7HjPgpkyaO0nxXa3GIbm1I7kgJHuTJWxFGS+4/TFfOIy739a/GoDM2PczeSEX5v4FplLbOdzgxjttg==
 
 "@types/node-fetch@^2.5.4":
   version "2.5.8"
@@ -8119,13 +8097,6 @@ dotenv-defaults@^1.0.2:
   dependencies:
     dotenv "^6.2.0"
 
-dotenv-defaults@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/dotenv-defaults/-/dotenv-defaults-2.0.1.tgz#ea6f9632b3b5cc55e48b736760def5561f1cb7c0"
-  integrity sha512-ugFCyBF7ILuwpmznduHPQZBMucHHJ8T4OBManTEVjemxCm2+nqifSuW2lD2SNKdiKSH1E324kZSdJ8M04b4I/A==
-  dependencies:
-    dotenv "^8.2.0"
-
 dotenv-expand@5.1.0, dotenv-expand@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
@@ -8138,14 +8109,7 @@ dotenv-webpack@^1.7.0:
   dependencies:
     dotenv-defaults "^1.0.2"
 
-dotenv-webpack@^6.0.0:
-  version "6.0.4"
-  resolved "https://registry.yarnpkg.com/dotenv-webpack/-/dotenv-webpack-6.0.4.tgz#4874045d408598e45a95519d3cc71017c91c9104"
-  integrity sha512-WiTPNLanDNJ1O8AvgkBpsbarw78a4PMYG2EfJcQoxTHFWy+ji213HR+3f4PhWB1RBumiD9cbiuC3SNxJXbBp9g==
-  dependencies:
-    dotenv-defaults "^2.0.1"
-
-dotenv@8.2.0, dotenv@^8.0.0, dotenv@^8.2.0:
+dotenv@8.2.0, dotenv@^8.0.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
@@ -11179,7 +11143,7 @@ isobject@^4.0.0:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-4.0.0.tgz#3f1c9155e73b192022a80819bacd0343711697b0"
   integrity sha512-S/2fF5wH8SJA/kmwr6HYhK/RI/OkhD84k8ntalo0iJjZikgq1XFvR5M8NPT1x5F7fBwCG3qHfnzeP/Vh/ZxCUA==
 
-isomorphic-fetch@^2.1.1, isomorphic-fetch@^2.2.1:
+isomorphic-fetch@^2.1.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz#611ae1acf14f5e81f729507472819fe9733558a9"
   integrity sha1-YRrhrPFPXoH3KVB0coGf6XM1WKk=
@@ -11930,11 +11894,6 @@ jws@^4.0.0:
   dependencies:
     jwa "^2.0.0"
     safe-buffer "^5.0.1"
-
-jwt-decode@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
-  integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
 killable@^1.0.1:
   version "1.0.1"
@@ -17270,11 +17229,6 @@ single-spa-react@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-3.2.0.tgz#97bfcb03e418f7daa2b1bd05eab1c62632351d91"
   integrity sha512-s8K7AuS26WvN9n81z1NBlnZIe/Hin423P8jYLuG/DCNTYo5JbJMS5+Cb/wQd4ikG6YqoedpV4cb7nAcxvlLyhg==
-
-single-spa@^5.5.5:
-  version "5.9.2"
-  resolved "https://registry.yarnpkg.com/single-spa/-/single-spa-5.9.2.tgz#4bb9a6eb6c90e3198b1549d8cdeb03241401b15b"
-  integrity sha512-XYl0rWAuTsdz8juLVMk7jjFZPIpv0TVECUh3+SNzReFJ8OfjndnUNvCSF6e5jAd7/8CNnKItpPgIsAvKvDvpHw==
 
 sinon@^9.2.3:
   version "9.2.4"

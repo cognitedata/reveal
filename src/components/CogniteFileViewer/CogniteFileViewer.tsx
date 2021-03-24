@@ -29,6 +29,8 @@ import queryString from 'query-string';
 import { PNID_ANNOTATION_TYPE } from 'utils/AnnotationUtils';
 import { FilePreview as CogniteFilePreview } from '@cognite/data-exploration';
 import { createLink } from '@cognite/cdf-utilities';
+import sdk from 'sdk-singleton';
+import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 
 const OverviewWrapper = styled.div`
   height: 100%;
@@ -298,45 +300,47 @@ export const ContextFileViewer = ({
     );
   };
   return (
-    <Wrapper>
-      {renderFeedback && (
-        <MissingPermissionFeedback
-          key="eventsAcl"
-          acl="eventsAcl"
-          type="WRITE"
-        />
-      )}
-      <OverviewWrapper className="overview">
-        {children}
-        {file && (
-          <FilePreviewOverview
-            file={file}
-            page={page}
-            annotations={pnidAnnotations}
-            onAssetClicked={onAssetClicked}
-            onFileClicked={onFileClicked}
-            onPageChange={setPage}
-            extras={renderMenuButton()}
+    <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
+      <Wrapper>
+        {renderFeedback && (
+          <MissingPermissionFeedback
+            key="eventsAcl"
+            acl="eventsAcl"
+            type="WRITE"
           />
         )}
-      </OverviewWrapper>
-      <div
-        style={{
-          flex: '1',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-      >
-        <CogniteFilePreview
-          fileId={fileId!}
-          creatable
-          contextualization
-          onItemClicked={(item) =>
-            window.open(createLink(`/explore/${item.type}/${item.id}`))
-          }
-        />
-      </div>
-    </Wrapper>
+        <OverviewWrapper className="overview">
+          {children}
+          {file && (
+            <FilePreviewOverview
+              file={file}
+              page={page}
+              annotations={pnidAnnotations}
+              onAssetClicked={onAssetClicked}
+              onFileClicked={onFileClicked}
+              onPageChange={setPage}
+              extras={renderMenuButton()}
+            />
+          )}
+        </OverviewWrapper>
+        <div
+          style={{
+            flex: '1',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+          }}
+        >
+          <CogniteFilePreview
+            fileId={fileId!}
+            creatable
+            contextualization
+            onItemClicked={(item) =>
+              window.open(createLink(`/explore/${item.type}/${item.id}`))
+            }
+          />
+        </div>
+      </Wrapper>
+    </CogniteFileViewer.Provider>
   );
 };
