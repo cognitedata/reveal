@@ -31,6 +31,8 @@ export const logToSentry = (error) => {
   if (process.env.NODE_ENV === 'development') {
     // eslint-disable-next-line no-console
     console.error(error);
+  } else if (process.env.NODE_ENV === 'test') {
+    throw error;
   } else {
     Sentry.captureException(error);
   }
@@ -50,7 +52,7 @@ export const fireErrorNotification = (
   if (error && 'status' in error) {
     errorDescription = generateErrorMessage(error.status);
   }
-  logToSentry(error);
+  logToSentry(error || `${message}: ${description}`);
 
   notification.error({
     message,

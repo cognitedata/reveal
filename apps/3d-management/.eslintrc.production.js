@@ -3,10 +3,18 @@ module.exports = {
     '@cognite',
     'plugin:testing-library/react',
     'plugin:lodash/recommended',
-    'plugin:testcafe/recommended',
+    'plugin:testing-library/recommended',
+    'plugin:testing-library/react',
+    'plugin:jest-dom/recommended',
   ],
   parser: '@typescript-eslint/parser',
-  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
+  plugins: [
+    '@cognite',
+    'testing-library',
+    'lodash',
+    'testing-library',
+    'jest-dom',
+  ],
   rules: {
     '@cognite/no-unissued-todos': [
       'off',

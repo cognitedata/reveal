@@ -36,7 +36,7 @@ import {
   fetchTreeNodes,
 } from 'src/store/modules/TreeView/treeViewDataProvider';
 import { ReduxThunk, RootState } from 'src/store';
-import { node3dToCustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
 
 function getDefaultState(): TreeViewState {
   return {
@@ -448,7 +448,7 @@ export const expandNodeByTreeIndex = (() => {
               continue;
             }
 
-            const newChildren: CustomDataNode[] = node3dToCustomDataNode([
+            const newChildren: CustomDataNode[] = node3dToTreeDataNode([
               nodes[i],
             ]);
             newCheckedNodes = getNewCheckedNodes(

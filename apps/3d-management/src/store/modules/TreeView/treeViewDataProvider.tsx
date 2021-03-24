@@ -6,7 +6,7 @@ import {
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
-import { node3dToCustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
+import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
 import { getProject } from '@cognite/cdf-utilities';
 import promiseRetry from 'promise-retry';
 
@@ -65,7 +65,7 @@ export async function fetchRootTreeNodes({
   revisionId,
 }: RevisionId): Promise<TreeDataNode[]> {
   const rootNode = await fetchRootNode(modelId, revisionId);
-  const treeData = node3dToCustomDataNode([rootNode]) as TreeDataNode[];
+  const treeData = node3dToTreeDataNode([rootNode]);
 
   // at the time of writing the initial fetch is very slow because it causes index to be created
   // so for big models it sometimes fails with timeout
@@ -97,7 +97,7 @@ export async function fetchTreeNodes({
     nodeId: parent.nodeId,
   });
 
-  const subtreeItems: CustomDataNode[] = node3dToCustomDataNode(
+  const subtreeItems: CustomDataNode[] = node3dToTreeDataNode(
     params?.limit === 1
       ? data.items
       : data.items.filter((node) => node.id !== parent.nodeId) // nodeId passed in request appears in random order

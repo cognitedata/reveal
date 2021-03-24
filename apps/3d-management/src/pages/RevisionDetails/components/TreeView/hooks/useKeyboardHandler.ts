@@ -17,7 +17,7 @@ import {
 import { TreeIndex } from 'src/store/modules/TreeView';
 import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
 
-enum TrackedKeys {
+export enum TrackedKeys {
   ' ' = ' ',
   ArrowDown = 'ArrowDown',
   ArrowLeft = 'ArrowLeft',
@@ -38,7 +38,7 @@ type Props = Pick<
   | 'selectedNodes'
   | 'treeData'
 > & {
-  treeRef: React.MutableRefObject<NodesTreeViewRefType>;
+  treeRef: React.MutableRefObject<NodesTreeViewRefType> | null;
 };
 
 export function useKeyboardHandler(props: Props) {
@@ -207,7 +207,7 @@ export function useKeyboardHandler(props: Props) {
       lastSelectedKeyRef.current = treeData[0].key;
       cachedSelectedKeysRef.current = [treeData[0].key];
       props.onSelect([treeDataNodeToSelectedNode(treeData[0])]);
-      treeRef.current.scrollTo({ key: treeData[0].key });
+      treeRef?.current.scrollTo({ key: treeData[0].key });
       return;
     }
 
@@ -233,7 +233,7 @@ export function useKeyboardHandler(props: Props) {
               )
             )
           );
-          treeRef.current.scrollTo({ key: lastSelectedRangeTailRef.current });
+          treeRef?.current.scrollTo({ key: lastSelectedRangeTailRef.current });
         }
       } else {
         const nextNode = getNextNode(lastSelectedRangeTailRef.current);
@@ -258,7 +258,7 @@ export function useKeyboardHandler(props: Props) {
             )
           )
         );
-        treeRef.current.scrollTo({ key: nextNode.key });
+        treeRef?.current.scrollTo({ key: nextNode.key });
       }
     } else {
       const nextNode = getNextNode(
@@ -273,7 +273,7 @@ export function useKeyboardHandler(props: Props) {
 
       const newSelectedNodes = [treeDataNodeToSelectedNode(nextNode)];
       props.onSelect(newSelectedNodes);
-      treeRef.current.scrollTo({ key: nextNode.key });
+      treeRef?.current.scrollTo({ key: nextNode.key });
     }
   };
 
@@ -282,7 +282,7 @@ export function useKeyboardHandler(props: Props) {
       lastSelectedKeyRef.current = treeData[0].key;
       cachedSelectedKeysRef.current = [treeData[0].key];
       props.onSelect([treeDataNodeToSelectedNode(treeData[0])]);
-      treeRef.current.scrollTo({ key: treeData[0].key });
+      treeRef?.current.scrollTo({ key: treeData[0].key });
       return;
     }
 
@@ -308,7 +308,7 @@ export function useKeyboardHandler(props: Props) {
               )
             )
           );
-          treeRef.current.scrollTo({ key: lastSelectedRangeTailRef.current });
+          treeRef?.current.scrollTo({ key: lastSelectedRangeTailRef.current });
         }
       } else {
         const prevNode = getPrevNode(lastSelectedRangeTailRef.current);
@@ -333,7 +333,7 @@ export function useKeyboardHandler(props: Props) {
             )
           )
         );
-        treeRef.current.scrollTo({ key: prevNode.key });
+        treeRef?.current.scrollTo({ key: prevNode.key });
       }
     } else {
       const prevNode = getPrevNode(
@@ -348,7 +348,7 @@ export function useKeyboardHandler(props: Props) {
 
       const newSelectedNodes = [treeDataNodeToSelectedNode(prevNode)];
       props.onSelect(newSelectedNodes);
-      treeRef.current.scrollTo({ key: prevNode.key });
+      treeRef?.current.scrollTo({ key: prevNode.key });
     }
   };
 
@@ -379,10 +379,12 @@ export function useKeyboardHandler(props: Props) {
   };
 
   useEffect(() => {
-    const container = document.getElementById(treeViewFocusContainerId);
+    const container =
+      document.getElementById(treeViewFocusContainerId) || treeRef?.current;
     const keyPressed = (event: KeyboardEvent) => {
       // fixme: normally there should be tree ref, or at least its wrapper ref,
       //      but at the moment it's magic selector
+      //      it also requires tabindex=-1 to be set on the element that has that id to work 💩
       if (
         !(event.key in TrackedKeys) ||
         !treeData.length ||
@@ -409,7 +411,7 @@ export function useKeyboardHandler(props: Props) {
     document.addEventListener('keydown', keyPressed);
 
     return () => document.removeEventListener('keydown', keyPressed);
-  }, [treeRef.current, props]);
+  }, [props]);
 
   return {
     lastSelectedKeyRef,

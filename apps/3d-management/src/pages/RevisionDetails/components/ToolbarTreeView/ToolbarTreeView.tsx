@@ -120,7 +120,6 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
   const nodeInfoRequested = (treeIndex: number) => {
     props.onNodeInfoRequested(treeIndex);
   };
-
   if (state.loading) {
     return <Spinner />;
   }
@@ -147,7 +146,7 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
   );
 }
 
-type ToolbarTreeViewProps = { style?: React.CSSProperties } & Omit<
+export type ToolbarTreeViewProps = { style?: React.CSSProperties } & Omit<
   TreeViewWrapperProps,
   'height' | 'onNodeInfoRequested'
 >;

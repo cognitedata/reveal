@@ -88,7 +88,7 @@ const NodesTreeView = React.forwardRef<
       selectedNodes,
       treeData,
 
-      treeRef: forwardedRef as MutableRefObject<NodesTreeViewRefType>,
+      treeRef: forwardedRef as MutableRefObject<NodesTreeViewRefType> | null,
     });
 
     const isInfoIconClicked = (info: EventTreeNodeSelected<any>) => {
