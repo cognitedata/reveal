@@ -96,7 +96,7 @@ export const coneGeometry = (() => {
 
 export const torusGeometry = (() => {
   const tubularSegments = 7;
-  const radialSegments = 4;
+  const radialSegments = 7;
   const transformFunc = (u: number, v: number) => [u, v * 2.0 * Math.PI];
   return generatePlane3D(radialSegments, tubularSegments, transformFunc);
 })();
