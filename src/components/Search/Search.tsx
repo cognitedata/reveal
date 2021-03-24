@@ -6,7 +6,11 @@ import { Timeseries } from '@cognite/sdk';
 import { useDebounce } from 'use-debounce/lib';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
-import { addTimeseries, covertTSToChartTS } from 'utils/charts';
+import {
+  addTimeseries,
+  removeTimeseries,
+  covertTSToChartTS,
+} from 'utils/charts';
 
 type SearchProps = {
   visible: boolean;
@@ -27,11 +31,18 @@ const Search = ({ visible, onClose }: SearchProps) => {
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
-      const ts = covertTSToChartTS(
-        timeSeries,
-        chart.timeSeriesCollection?.length
+      const tsToRemove = chart.timeSeriesCollection?.find(
+        (t) => t.tsId === timeSeries.id
       );
-      updateChart({ chart: addTimeseries(chart, ts) });
+      if (tsToRemove) {
+        updateChart({ chart: removeTimeseries(chart, tsToRemove.id) });
+      } else {
+        const ts = covertTSToChartTS(
+          timeSeries,
+          chart.timeSeriesCollection?.length || 0
+        );
+        updateChart({ chart: addTimeseries(chart, ts) });
+      }
     }
   };
 
@@ -61,6 +72,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
         </SearchBar>
         <SearchResultsContainer>
           <SearchResultTable
+            selectedIds={chart?.timeSeriesCollection?.map((t) => t.tsId)}
             query={debouncedQuery}
             onTimeseriesClick={handleTimeSeriesClick}
           />

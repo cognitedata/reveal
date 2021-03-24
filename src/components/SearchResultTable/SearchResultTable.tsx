@@ -1,19 +1,22 @@
 import React from 'react';
 import moment from 'moment';
-import { Icon, Button } from '@cognite/cogs.js';
+import { Icon, Checkbox } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
 import { useAssetTimeseresSearch } from 'hooks/useSearch';
 import styled from 'styled-components/macro';
 import { PnidButton } from 'components/SearchResultTable';
 
-export const SearchResultTable = ({
-  query,
-  onTimeseriesClick,
-}: {
+type Props = {
   query: string;
   onTimeseriesClick: (timeseries: Timeseries) => void;
-}) => {
+  selectedIds?: number[];
+};
+export const SearchResultTable = ({
+  selectedIds,
+  query,
+  onTimeseriesClick,
+}: Props) => {
   const {
     data: assets = [],
     isFetching,
@@ -80,14 +83,14 @@ export const SearchResultTable = ({
                         minRowTicks={2}
                         dateRange={[sparklineStartDate, sparklineEndDate]}
                       />
-
-                      <Button
-                        type="link"
-                        style={{ padding: 5 }}
-                        onClick={() => onTimeseriesClick(t)}
-                      >
-                        <Icon type="Plus" />
-                      </Button>
+                      <Checkbox
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onTimeseriesClick(t);
+                        }}
+                        name={`${t.id}`}
+                        value={selectedIds?.includes(t.id)}
+                      />
                     </Row>
                   </TSItem>
                 ))}
