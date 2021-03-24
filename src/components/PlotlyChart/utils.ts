@@ -1,4 +1,4 @@
-import { DatapointAggregate, Datapoints } from '@cognite/sdk';
+import { DatapointAggregate, Datapoints, DoubleDatapoint } from '@cognite/sdk';
 
 export function convertLineStyle(lineStyle?: 'solid' | 'dashed' | 'dotted') {
   switch (lineStyle) {
@@ -67,4 +67,25 @@ export function getXaxisUpdateFromEventData(
   return Object.keys(eventdata)
     .filter((key) => key.includes('xaxis'))
     .map((key) => eventdata[key]);
+}
+
+export function calculateStackedYRange(
+  datapoints: (Datapoints | DatapointAggregate)[],
+  index: number,
+  numSeries: number
+): number[] {
+  const data = datapoints.map((datapoint) =>
+    'average' in datapoint
+      ? datapoint.average
+      : (datapoint as DoubleDatapoint).value
+  );
+
+  const min = Math.min(...(data as number[]));
+  const max = Math.max(...(data as number[]));
+  const range = max - min;
+
+  const lower = min - index * range;
+  const upper = lower + numSeries * range;
+
+  return [lower, upper];
 }

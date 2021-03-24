@@ -203,6 +203,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   };
 
+  const handleOpenSearch = () => {
+    setShowSearch(true);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  };
+
+  const handleCloseSearch = () => {
+    setShowSearch(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  };
+
   const sourceTableHeaderRow = (
     <tr>
       <th style={{ width: 350 }}>
@@ -255,11 +265,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     <ChartViewContainer id="chart-view">
       {!showSearch && (
         <Toolbar
-          onSearchClick={() => setShowSearch(true)}
+          onSearchClick={handleOpenSearch}
           onNewWorkflowClick={handleClickNewWorkflow}
         />
       )}
-      <Search visible={showSearch} onClose={() => setShowSearch(false)} />
+      <Search visible={showSearch} onClose={handleCloseSearch} />
       <ContentWrapper showSearch={showSearch}>
         <Header>
           <hgroup>
@@ -319,7 +329,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 <PlotlyChartComponent
                   chart={chart}
                   onAxisChange={(update) => handleChangeSourceAxis(update)}
-                  showYAxis={!showSearch}
+                  isInSearch={showSearch}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
