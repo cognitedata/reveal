@@ -27,10 +27,10 @@ import { RenderResourceActionsFunction } from 'containers/HoverPreview';
 import { useLocation, useHistory } from 'react-router';
 import queryString from 'query-string';
 import { PNID_ANNOTATION_TYPE } from 'utils/AnnotationUtils';
-import { FilePreview as CogniteFilePreview } from '@cognite/data-exploration';
-import { createLink } from '@cognite/cdf-utilities';
+
 import sdk from 'sdk-singleton';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
+import { FilePreview } from '../FileView';
 
 const OverviewWrapper = styled.div`
   height: 100%;
@@ -331,14 +331,7 @@ export const ContextFileViewer = ({
             height: '100%',
           }}
         >
-          <CogniteFilePreview
-            fileId={fileId!}
-            creatable
-            contextualization
-            onItemClicked={(item) =>
-              window.open(createLink(`/explore/${item.type}/${item.id}`))
-            }
-          />
+          <FilePreview fileId={fileId!} />
         </div>
       </Wrapper>
     </CogniteFileViewer.Provider>

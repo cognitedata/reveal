@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, Suspense } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { RootState } from 'store';
-import { getAuthState } from 'sdk-singleton';
+import sdk, { getAuthState } from 'sdk-singleton';
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import { setCdfEnv, setTenant, fetchUserGroups } from 'modules/app';
@@ -12,6 +12,7 @@ import NotFound from 'pages/NotFound';
 import {
   Loader,
   FileContextualizationContextProvider,
+  DataExplorationProvider,
 } from '@cognite/data-exploration';
 import { ResourceActionsProvider } from 'context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
@@ -82,7 +83,9 @@ export default function App() {
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
-            <SwitchWithBreadcrumbs routes={routes} />
+            <DataExplorationProvider sdk={sdk}>
+              <SwitchWithBreadcrumbs routes={routes} />
+            </DataExplorationProvider>
           </ResourceActionsProvider>
         </ResourceSelectionProvider>
       </FileContextualizationContextProvider>
