@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Select, Popover, Spin } from 'antd';
 import { DataSet } from '@cognite/sdk';
-import { useInfiniteList, usePermissions } from '@cognite/sdk-react-query-hooks';
+import {
+  useInfiniteList,
+  usePermissions,
+} from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { Body, Colors } from '@cognite/cogs.js';
 import { Link } from 'react-router-dom';
@@ -23,7 +26,7 @@ export const DataSetSelect = ({
   disabled = false,
   multiple = false,
   selectedDataSetIds,
-  limit=1000,
+  limit = 1000,
 }: DataSetSelectProps) => {
   const [currentSelection, setCurrentSelection] = useState([] as number[]);
   const [visible, setIsVisible] = useState<boolean>(false);
@@ -35,12 +38,15 @@ export const DataSetSelect = ({
 
   const { isFetching: isLoading, data: listData } = useInfiniteList<DataSet>(
     'datasets',
-     limit
+    limit
   );
 
-
   const listItems = useMemo(
-    () => listData?.pages?.reduce((accl, t) => accl.concat(t.items), [] as DataSet[]),
+    () =>
+      listData?.pages?.reduce(
+        (accl, t) => accl.concat(t.items),
+        [] as DataSet[]
+      ),
     [listData]
   );
 
@@ -64,15 +70,12 @@ export const DataSetSelect = ({
     }
   }, [selectedDataSetIds]);
 
-
   useEffect(() => {
-    const dataSetsFilter = (dataset: DataSet) => {
-      return !!stringContains(dataset?.name, query);
-    };
+    const dataSetsFilter = (dataset: DataSet) =>
+      !!stringContains(dataset?.name, query);
     const filteredDataSets = listItems?.filter(dataSetsFilter) || [];
     setDatasetSearchResults(filteredDataSets);
-  }, [query, listItems]); 
-
+  }, [query, listItems]);
 
   if (!canReadDataSets) {
     return (

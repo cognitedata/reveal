@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { sdkMock } from 'docs/stub';
-import { DataSetSelect, DataSetSelectProps } from './DataSetSelect';
+import { DataSetSelect } from './DataSetSelect';
 
 export default {
   title: 'Component/DataSetSelect',
