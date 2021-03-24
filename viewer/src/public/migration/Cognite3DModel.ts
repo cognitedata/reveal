@@ -245,14 +245,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @param sector
-   * @internal
-   */
-  updateNodeIdMaps(sector: Map<number, number>) {
-    this.nodeIdAndTreeIndexMaps.updateMaps(sector);
-  }
-
-  /**
    * Fetches a bounding box from the CDF by the nodeId.
    * @param nodeId
    * @param box Optional. Used to write result to.
