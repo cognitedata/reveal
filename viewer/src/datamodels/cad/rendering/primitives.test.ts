@@ -7,7 +7,6 @@ import { createPrimitives } from './primitives';
 import { createEmptySector } from '../../../__testutilities__/emptySector';
 import { createMaterials, Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
-import { InstancedBufferGeometry, LOD, Mesh } from 'three';
 import { RenderMode } from './RenderMode';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
@@ -164,24 +163,11 @@ describe('createPrimitives', () => {
     torusSegmentSector.primitives.torusSegmentCollection = new Uint8Array(mockAttributeBuffer.length + 4);
     torusSegmentSector.primitives.torusSegmentAttributes = mockAttributes;
 
+    testPrimitiveBase(torusSegmentSector, materials, mockAttributes, 'torussegment', bounds);
     const result = [];
 
     for (const primitiveRoot of createPrimitives(torusSegmentSector, materials, bounds)) {
       result.push(primitiveRoot);
-    }
-
-    expect(result.length).toBe(1);
-
-    const lodResult = result[0] as LOD;
-
-    expect(lodResult.name.toLowerCase().includes('torussegment')).toBeTrue();
-
-    for (const lodMesh of lodResult.children) {
-      const mesh = lodMesh as Mesh;
-      const geometry = mesh.geometry as InstancedBufferGeometry;
-
-      // one extra attribute is added (position/vertex)
-      expect(Object.entries(geometry.attributes).length).toBe(mockAttributes.size + 1);
     }
   });
 
@@ -210,11 +196,11 @@ function testPrimitiveBase(
 
   expect(result.length).toBe(1);
 
-  const meshResult = result[0] as Mesh;
+  const meshResult = result[0] as THREE.Mesh;
 
   expect(meshResult.name.toLowerCase().includes(expectedNameSubstring)).toBeTrue();
 
-  const geometry = meshResult.geometry as InstancedBufferGeometry;
+  const geometry = meshResult.geometry as THREE.InstancedBufferGeometry;
 
   // Should be additional attributes in the addition to our mock attributes
   // Because the f.ex position and other attributes may be added as well
