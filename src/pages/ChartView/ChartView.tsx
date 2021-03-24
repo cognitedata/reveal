@@ -56,7 +56,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { data: login } = useLoginStatus();
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
-  const [showContextMenu, setShowRightBar] = useState(false);
+  const [showContextMenu, setShowContextMenu] = useState(false);
 
   const {
     mutateAsync,
@@ -97,7 +97,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     });
   }, [charts, chartId, login]);
 
-  const [selectedSourceId, setSelectedSourceItem] = useState<
+  const [selectedSourceId, setSelectedSourceId] = useState<
     string | undefined
   >();
 
@@ -188,13 +188,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleSourceClick = async (sourceId?: string) => {
-    setSelectedSourceItem(sourceId);
-    setShowRightBar(true);
+    const isSameSource = sourceId === selectedSourceId;
+    const showMenu = isSameSource ? !showContextMenu : true;
+    setSelectedSourceId(sourceId);
+    setShowContextMenu(showMenu);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
   const handleCloseContextMenu = async () => {
-    setShowRightBar(false);
+    setShowContextMenu(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
