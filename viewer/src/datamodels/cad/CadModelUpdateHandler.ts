@@ -15,9 +15,9 @@ import { CadNode } from './CadNode';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
-import { ConsumedSector, SectorGeometry } from './sector/types';
+import { ConsumedSector } from './sector/types';
 import { Repository } from './sector/Repository';
-import { SectorQuads } from './rendering/types';
+
 import { assertNever, emissionLastMillis, LoadingState } from '../../utilities';
 import { CadModelMetadata } from '.';
 import { loadingEnabled, handleDetermineSectorsInput } from './sector/rxSectorUtilities';
@@ -145,10 +145,6 @@ export class CadModelUpdateHandler {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._sectorRepository.getLoadingStateObserver();
-  }
-
-  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
-    return this._sectorRepository.getParsedData();
   }
 
   /* When loading hints of a cadmodel changes, propagate the event down to the stream and either add or remove

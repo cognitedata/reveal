@@ -10,13 +10,11 @@ import {
   Observable,
   from,
   zip,
-  Subject,
   onErrorResumeNext,
   defer,
   scheduled,
   asyncScheduler,
-  merge,
-  NextObserver
+  merge
 } from 'rxjs';
 import {
   mergeMap,
@@ -26,7 +24,6 @@ import {
   take,
   retry,
   reduce,
-  distinct,
   catchError,
   throttleTime,
   startWith,
@@ -39,7 +36,7 @@ import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
-import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
+import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
 import { createOffsetsArray, LoadingState } from '../../../utilities';
 import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
@@ -55,7 +52,6 @@ type WantedSecorWithRequestObservable = {
 };
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
-type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
@@ -72,15 +68,6 @@ export class CachedRepository implements Repository {
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _taskTracker: RxTaskTracker = new RxTaskTracker();
-
-  // Adding this to support parse map for migration wrapper. Should be removed later.
-  private readonly _parsedDataSubject: Subject<{
-    blobUrl: string;
-    sectorId: number;
-    lod: string;
-    data: SectorGeometry | SectorQuads;
-  }> = new Subject();
-
   private readonly _concurrentNetworkOperations: number;
   private readonly _concurrentCtmRequests: number;
 
@@ -101,12 +88,6 @@ export class CachedRepository implements Repository {
   clear() {
     this._consumedSectorCache.clear();
     this._ctmFileCache.clear();
-  }
-
-  getParsedData(): Observable<ParsedData> {
-    return this._parsedDataSubject.pipe(
-      distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId + '.' + keySelector.lod)
-    ); // TODO: Should we do replay subject here instead of variable type?
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -233,19 +214,6 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private parsedDataObserver(wantedSector: WantedSector): NextObserver<SectorGeometry | SectorQuads> {
-    return {
-      next: data => {
-        this._parsedDataSubject.next({
-          blobUrl: wantedSector.blobUrl,
-          sectorId: wantedSector.metadata.id,
-          lod: wantedSector.levelOfDetail == LevelOfDetail.Simple ? 'simple' : 'detailed',
-          data
-        });
-      }
-    };
-  }
-
   private nameGroup(wantedSector: WantedSector): OperatorFunction<Group, Group> {
     return tap(group => {
       group.name = `Quads ${wantedSector.metadata.id}`;
@@ -259,7 +227,6 @@ export class CachedRepository implements Repository {
       ).pipe(
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
-        tap(this.parsedDataObserver(wantedSector)),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
         this.nameGroup(wantedSector),
@@ -296,7 +263,6 @@ export class CachedRepository implements Repository {
           return zip(i3dFileObservable, ctmFilesObservable).pipe(
             this.catchWantedSectorError(wantedSector, 'loadDetailedSectorFromNetwork'),
             map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
-            tap(this.parsedDataObserver(wantedSector)),
             map(data => {
               return { ...wantedSector, data };
             }),
