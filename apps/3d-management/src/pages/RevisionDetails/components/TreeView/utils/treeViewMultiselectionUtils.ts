@@ -3,7 +3,6 @@ import {
   TreeDataNode,
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { SelectedNode, TreeIndex } from 'src/store/modules/TreeView';
-import { BasicTree } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { ArrayElement } from 'src/utils/types';
 
 enum Record {
@@ -18,17 +17,17 @@ enum Record {
  * @param treeData
  * @param callback
  */
-export function traverseNodesKey<T extends BasicTree = BasicTree>(
-  treeData: Array<T>,
+export function traverseNodesKey(
+  treeData: TreeDataNode[] | CustomDataNode[],
   callback: (
-    key: T['key'] | ArrayElement<T['children']>['key'],
-    node: T | ArrayElement<T['children']>
+    key: typeof node['key'],
+    node: ArrayElement<typeof treeData>
   ) => boolean | void
 ) {
   treeData.forEach((dataNode) => {
     const { key, children } = dataNode;
     if (callback(key, dataNode) !== false) {
-      traverseNodesKey((children || []) as Array<T>, callback);
+      traverseNodesKey(children || [], callback);
     }
   });
 }
@@ -83,7 +82,7 @@ export function calcRangeKeys({
 }
 
 export function convertKeysToNodes(
-  treeData: Array<TreeDataNode | CustomDataNode>,
+  treeData: Array<TreeDataNode>,
   keys: Array<TreeIndex>
 ): Array<TreeDataNode> {
   const restKeys: Array<TreeIndex> = [...keys];
@@ -106,7 +105,7 @@ export function convertKeysToNodes(
 }
 
 export function convertKeysToSelectedNodes(
-  treeData: Array<TreeDataNode | CustomDataNode>,
+  treeData: Array<TreeDataNode>,
   keys: Array<TreeIndex>
 ): Array<SelectedNode> {
   return convertKeysToNodes(treeData, keys).map((n) => ({

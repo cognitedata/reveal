@@ -1,29 +1,23 @@
 import { DataNode } from 'antd-v4/lib/tree';
-import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
-
-type KeyAndTitle = {
-  key: string | number;
-  title: Pick<TreeDataNode, 'title'>['title'];
-};
-export type BasicTree<T extends KeyAndTitle = KeyAndTitle> = T & {
-  children?: Array<BasicTree<T>>;
-};
+import {
+  CustomDataNode,
+  TreeDataNode,
+} from 'src/pages/RevisionDetails/components/TreeView/types';
+import { ArrayElement } from 'src/utils/types';
+import { sortNaturally } from 'src/utils';
 
 /*
   what we do here is moving down one level for each item of branch and list
   to check if everyBranch key exists in the tree
   that's just more performant option than searching for every item in the whole tree
  */
-export function hasBranch<T extends DataNode>(
-  list: T[],
-  branchKeys: number[]
-): boolean {
+export function hasBranch(list: TreeDataNode[], branchKeys: number[]): boolean {
   if (!branchKeys.length) {
     throw new Error('hasBranch: branchKeys arg must not be empty');
   }
 
   let i = 0;
-  let nextChildren: T[] | undefined = list;
+  let nextChildren: CustomDataNode[] | undefined = list;
 
   while (i < branchKeys.length && nextChildren) {
     // eslint-disable-next-line no-loop-func
@@ -38,24 +32,28 @@ export function hasBranch<T extends DataNode>(
   return i === branchKeys.length;
 }
 
-export function getNodeByTreeIndex<T extends DataNode>(
-  list: T[],
-  subtreeRootId: number | undefined
-): T | undefined {
-  let found = list.find((item) => item.key === subtreeRootId);
+export function getNodeByTreeIndex(
+  list: TreeDataNode[] | CustomDataNode[],
+  subtreeRootKey: number | undefined
+): TreeDataNode {
+  let found = list.find((item) => item.key === subtreeRootKey);
 
   for (let i = 0; i < list.length && !found; i++) {
     if (list[i].children) {
-      found = getNodeByTreeIndex(list[i].children!, subtreeRootId) as T;
+      found = getNodeByTreeIndex(
+        list[i].children!,
+        subtreeRootKey
+      ) as TreeDataNode;
     }
   }
-  return found;
+
+  return found as TreeDataNode;
 }
 
-function insertUniqueChildren<T extends KeyAndTitle>(
-  left: T[],
-  right: T[]
-): T[] {
+function insertUniqueChildren(
+  left: CustomDataNode[],
+  right: CustomDataNode[]
+): CustomDataNode[] {
   return left
     .concat(
       right.filter(
@@ -64,18 +62,28 @@ function insertUniqueChildren<T extends KeyAndTitle>(
       )
     )
     .sort((a, b) => {
-      if (a.title === b.title) {
+      // it's totally impossible to have 2 elements without meta (Load more),
+      // but left 1,-1,0 for the sake of completeness
+      if (!('meta' in a) || !('meta' in b)) {
+        if (!('meta' in a)) {
+          return 1;
+        }
+        if (!('meta' in b)) {
+          return -1;
+        }
         return 0;
       }
-      return a.title < b.title ? -1 : 1;
+      return sortNaturally(a.meta.name, b.meta.name);
     });
 }
 
-export function addChildrenIntoTree<
-  T extends BasicTree<KeyAndTitle> = BasicTree<KeyAndTitle>
->(list: T[], subtreeRootId: number | undefined, children: T[]): T[] {
+export function addChildrenIntoTree(
+  list: TreeDataNode[] | CustomDataNode[],
+  subtreeRootId: number | undefined,
+  children: CustomDataNode[]
+): TreeDataNode[] | CustomDataNode[] {
   if (subtreeRootId === undefined) {
-    return insertUniqueChildren<T>(list, children);
+    return insertUniqueChildren(list, children);
   }
 
   return list.map((node) => {
@@ -118,14 +126,11 @@ export function removeNodeFromTree<T extends DataNode>(
   });
 }
 
-export function updateNodeById<
-  TreeType extends BasicTree<KeyAndTitle>,
-  NodeType extends KeyAndTitle = TreeType
->(
-  list: TreeType[],
-  nodeKey: string | number,
-  overrides: Partial<NodeType>
-): TreeType[] {
+export function updateNodeById<T extends TreeDataNode | CustomDataNode>(
+  list: T[],
+  nodeKey: ArrayElement<T['children']>['key'],
+  overrides: Partial<T>
+): ArrayElement<typeof list>[] {
   const index = list.findIndex((item) => item.key === nodeKey);
 
   if (index > -1) {
@@ -151,14 +156,14 @@ export function updateNodeById<
   });
 }
 
-export function getAncestors<T extends BasicTree<KeyAndTitle>>(
-  list: Array<T>,
-  key: T['key'],
-  branch: Array<T['key']> = []
-): Array<T['key']> | undefined {
+export function getAncestors(
+  list: CustomDataNode[],
+  key: number,
+  branch: number[] = []
+): number[] | undefined {
   for (let i = 0; i < list.length; i++) {
     if (list[i].key === key) {
-      return [list[i].key].concat(branch);
+      return [list[i].key as number].concat(branch);
     }
   }
 
@@ -167,7 +172,7 @@ export function getAncestors<T extends BasicTree<KeyAndTitle>>(
     if (children) {
       const childBranch = getAncestors(children, key, branch);
       if (childBranch) {
-        return branch.concat(list[i].key, childBranch);
+        return branch.concat(list[i].key as number, childBranch);
       }
     }
   }

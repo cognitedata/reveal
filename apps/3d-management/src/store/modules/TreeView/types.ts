@@ -61,10 +61,6 @@ export type InitialFetchError = {
   payload: { error: Error };
 };
 
-// export type LoadAncestors = {
-//   type: 'treeView/loadAncestors';
-//   payload: { treeIndex: number };
-// };
 export type LoadAncestorsOk = {
   type: 'treeView/loadAncestorsOk';
   payload: { treeData: Array<TreeDataNode>; checkedNodes: Array<TreeIndex> };
@@ -94,7 +90,6 @@ export type Actions =
   | LoadSiblingsOk
   | LoadSiblingsError
   //
-  // | LoadAncestors
   | LoadAncestorsOk
   | LoadAncestorsError;
 

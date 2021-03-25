@@ -1,7 +1,5 @@
-import { DataNode } from 'antd-v4/lib/tree';
 import {
   addChildrenIntoTree,
-  BasicTree,
   getAncestors,
   getNodeByTreeIndex,
   hasBranch,
@@ -12,7 +10,7 @@ import {
 describe('treeFunctions test cases', () => {
   describe('hasBranch', () => {
     it('returns `true` if every branch key is on the same level in the tree', () => {
-      const treeData: DataNode[] = [
+      const treeData = [
         {
           key: 1,
           children: [{ key: 2 }, { key: 4, children: [{ key: 5 }] }],
@@ -25,7 +23,7 @@ describe('treeFunctions test cases', () => {
     });
 
     it('returns `false` if NOT every branch key is on the same level in the tree', () => {
-      const treeData: DataNode[] = [
+      const treeData = [
         {
           key: 1,
           children: [{ key: 2 }, { key: 4, children: [{ key: 5 }] }],
@@ -48,7 +46,7 @@ describe('treeFunctions test cases', () => {
     it('returns found node', () => {
       const key = 100500;
       const subtreeToFind = { key, children: [{ key: 4 }] };
-      const treeData: DataNode[] = [
+      const treeData = [
         {
           key: 1,
           children: [{ key: 2 }, subtreeToFind],
@@ -60,7 +58,7 @@ describe('treeFunctions test cases', () => {
 
     it('returns undefined if not found', () => {
       const key = 100500;
-      const treeData: DataNode[] = [
+      const treeData = [
         {
           key: 1,
           children: [{ key: 2 }],
@@ -73,14 +71,18 @@ describe('treeFunctions test cases', () => {
 
   describe('addChildrenIntoTree', () => {
     it('initial state', () => {
-      const treeData: BasicTree[] = [];
-      const newTreeData: BasicTree[] = [
+      const treeData = [];
+      const newTreeData = [
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
-            { key: 3, title: '', children: [{ key: 4, title: '' }] },
+            { key: 2, meta: { name: '' } },
+            {
+              key: 3,
+              meta: { name: '' },
+              children: [{ key: 4, meta: { name: '' } }],
+            },
           ],
         },
       ];
@@ -92,18 +94,18 @@ describe('treeFunctions test cases', () => {
 
     it('find child and create its children', () => {
       const subtreeRootId = 2;
-      const treeData: BasicTree[] = [
+      const treeData = [
         {
           key: 1,
-          title: '',
-          children: [{ key: subtreeRootId, title: '' }],
+          meta: { name: '' },
+          children: [{ key: subtreeRootId, meta: { name: '' } }],
         },
       ];
-      const newTreeData: BasicTree[] = [
+      const newTreeData = [
         {
           key: 3,
-          title: '',
-          children: [{ key: 4, title: '' }],
+          meta: { name: '' },
+          children: [{ key: 4, meta: { name: '' } }],
         },
       ];
 
@@ -111,13 +113,17 @@ describe('treeFunctions test cases', () => {
         [
           {
             key: 1,
-            title: '',
+            meta: { name: '' },
             children: [
               {
                 key: subtreeRootId,
-                title: '',
+                meta: { name: '' },
                 children: [
-                  { key: 3, title: '', children: [{ key: 4, title: '' }] },
+                  {
+                    key: 3,
+                    meta: { name: '' },
+                    children: [{ key: 4, meta: { name: '' } }],
+                  },
                 ],
               },
             ],
@@ -128,64 +134,81 @@ describe('treeFunctions test cases', () => {
 
     it('inserts only unique children', () => {
       const subtreeRootId = 1;
-      const treeData: BasicTree[] = [
+      const treeData = [
         {
           key: subtreeRootId,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
-            { key: 3, title: '', children: [{ key: 4, title: '' }] },
+            { key: 2, meta: { name: '' } },
+            {
+              key: 3,
+              meta: { name: '' },
+              children: [{ key: 4, meta: { name: '' } }],
+            },
           ],
         },
       ];
-      const newTreeData: BasicTree[] = [
+      const newTreeData = [
         {
           key: 3,
-          title: '',
+          meta: { name: '' },
           children: [{ key: 4, title: 'that will be ignored' }],
         },
-        { key: 5, title: '', children: [{ key: 6, title: '' }] },
-        { key: 7, title: '' },
+        {
+          key: 5,
+          meta: { name: '' },
+          children: [{ key: 6, meta: { name: '' } }],
+        },
+        { key: 7, meta: { name: '' } },
       ];
       expect(addChildrenIntoTree(treeData, subtreeRootId, newTreeData)).toEqual(
         [
           {
             key: subtreeRootId,
-            title: '',
+            meta: { name: '' },
             children: [
-              { key: 2, title: '' },
-              { key: 3, title: '', children: [{ key: 4, title: '' }] },
-              { key: 5, title: '', children: [{ key: 6, title: '' }] },
-              { key: 7, title: '' },
+              { key: 2, meta: { name: '' } },
+              {
+                key: 3,
+                meta: { name: '' },
+                children: [{ key: 4, meta: { name: '' } }],
+              },
+              {
+                key: 5,
+                meta: { name: '' },
+                children: [{ key: 6, meta: { name: '' } }],
+              },
+              { key: 7, meta: { name: '' } },
             ],
           },
         ]
       );
     });
 
-    it('keeps result sorted by title', () => {
+    it('keeps result sorted by meta.name', () => {
       const subtreeRootId = 1;
 
       const expectedChildren = [
-        { key: 4444, title: '1' },
-        { key: 55555, title: '2' },
-        { key: 88888888, title: 'A' },
-        { key: 666666, title: 'B' },
-        { key: 15, title: 'C' },
+        { key: 4444, meta: { name: '1' } },
+        { key: 55555, meta: { name: '2' } },
+        { key: 1111, meta: { name: '11' } },
+        { key: 88888888, meta: { name: 'A' } },
+        { key: 666666, meta: { name: 'B' } },
+        { key: 15, meta: { name: 'C' } },
 
-        { key: 10, title: 'D' },
-        { key: 11, title: 'E' },
-        { key: 7777777, title: 'd' },
-        { key: 12, title: 'e' },
-        { key: 999999999, title: 'f' },
+        { key: 10, meta: { name: 'D' } },
+        { key: 7777777, meta: { name: 'd' } },
 
-        { key: 22, title: 'g' },
+        { key: 11, meta: { name: 'E' } },
+        { key: 12, meta: { name: 'e' } },
+        { key: 999999999, meta: { name: 'f' } },
+        { key: 22, meta: { name: 'g' } },
       ];
 
-      const treeData: BasicTree[] = [
+      const treeData = [
         {
           key: subtreeRootId,
-          title: '',
+          meta: { name: '' },
           children: [
             expectedChildren[0],
             expectedChildren[1],
@@ -197,7 +220,8 @@ describe('treeFunctions test cases', () => {
         },
       ];
 
-      const newTreeData: BasicTree[] = [
+      // duplicates won't appear more than once
+      const newTreeData = [
         expectedChildren[0],
         expectedChildren[2],
         expectedChildren[3],
@@ -205,13 +229,14 @@ describe('treeFunctions test cases', () => {
         expectedChildren[7],
         expectedChildren[9],
         expectedChildren[10],
+        expectedChildren[11],
       ];
 
       expect(addChildrenIntoTree(treeData, subtreeRootId, newTreeData)).toEqual(
         [
           {
             key: subtreeRootId,
-            title: '',
+            meta: { name: '' },
             children: expectedChildren,
           },
         ]
@@ -219,23 +244,31 @@ describe('treeFunctions test cases', () => {
     });
 
     it('concat children to the root', () => {
-      const treeData: BasicTree[] = [
+      const treeData = [
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
-            { key: 3, title: '', children: [{ key: 4, title: '' }] },
+            { key: 2, meta: { name: '' } },
+            {
+              key: 3,
+              meta: { name: '' },
+              children: [{ key: 4, meta: { name: '' } }],
+            },
           ],
         },
       ];
-      const newTreeData: BasicTree[] = [
+      const newTreeData = [
         {
           key: 5,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 6, title: '' },
-            { key: 7, title: '', children: [{ key: 8, title: '' }] },
+            { key: 6, meta: { name: '' } },
+            {
+              key: 7,
+              meta: { name: '' },
+              children: [{ key: 8, meta: { name: '' } }],
+            },
           ],
         },
       ];
@@ -243,18 +276,26 @@ describe('treeFunctions test cases', () => {
       expect(addChildrenIntoTree(treeData, undefined, newTreeData)).toEqual([
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
-            { key: 3, title: '', children: [{ key: 4, title: '' }] },
+            { key: 2, meta: { name: '' } },
+            {
+              key: 3,
+              meta: { name: '' },
+              children: [{ key: 4, meta: { name: '' } }],
+            },
           ],
         },
         {
           key: 5,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 6, title: '' },
-            { key: 7, title: '', children: [{ key: 8, title: '' }] },
+            { key: 6, meta: { name: '' } },
+            {
+              key: 7,
+              meta: { name: '' },
+              children: [{ key: 8, meta: { name: '' } }],
+            },
           ],
         },
       ]);
@@ -262,27 +303,31 @@ describe('treeFunctions test cases', () => {
 
     it('concat children to the child', () => {
       const subtreeRootId = 3;
-      const treeData: BasicTree[] = [
+      const treeData = [
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
+            { key: 2, meta: { name: '' } },
             {
               key: subtreeRootId,
-              title: '',
-              children: [{ key: 4, title: '' }],
+              meta: { name: '' },
+              children: [{ key: 4, meta: { name: '' } }],
             },
           ],
         },
       ];
-      const newTreeData: BasicTree[] = [
+      const newTreeData = [
         {
           key: 5,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 6, title: '' },
-            { key: 7, title: '', children: [{ key: 8, title: '' }] },
+            { key: 6, meta: { name: '' } },
+            {
+              key: 7,
+              meta: { name: '' },
+              children: [{ key: 8, meta: { name: '' } }],
+            },
           ],
         },
       ];
@@ -290,20 +335,24 @@ describe('treeFunctions test cases', () => {
         [
           {
             key: 1,
-            title: '',
+            meta: { name: '' },
             children: [
-              { key: 2, title: '' },
+              { key: 2, meta: { name: '' } },
               {
                 key: subtreeRootId,
-                title: '',
+                meta: { name: '' },
                 children: [
-                  { key: 4, title: '' },
+                  { key: 4, meta: { name: '' } },
                   {
                     key: 5,
-                    title: '',
+                    meta: { name: '' },
                     children: [
-                      { key: 6, title: '' },
-                      { key: 7, title: '', children: [{ key: 8, title: '' }] },
+                      { key: 6, meta: { name: '' } },
+                      {
+                        key: 7,
+                        meta: { name: '' },
+                        children: [{ key: 8, meta: { name: '' } }],
+                      },
                     ],
                   },
                 ],
@@ -318,7 +367,7 @@ describe('treeFunctions test cases', () => {
   describe('removeNodeFromTree', () => {
     it('remove from root', () => {
       const nodeIdToRemove = 100500;
-      const treeData: DataNode[] = [
+      const treeData = [
         {
           key: 1,
           children: [{ key: 2 }, { key: 3, children: [{ key: 4 }] }],
@@ -337,7 +386,7 @@ describe('treeFunctions test cases', () => {
 
     it('remove from children', () => {
       const nodeIdToRemove = 100500;
-      const treeData: DataNode[] = [
+      const treeData = [
         {
           key: 1,
           children: [
@@ -367,10 +416,14 @@ describe('treeFunctions test cases', () => {
       const treeData = [
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
-            { key: 3, title: '', children: [{ key: 4, title: '' }] },
+            { key: 2, meta: { name: '' } },
+            {
+              key: 3,
+              meta: { name: '' },
+              children: [{ key: 4, meta: { name: '' } }],
+            },
           ],
         },
         {
@@ -384,10 +437,14 @@ describe('treeFunctions test cases', () => {
       ).toEqual([
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
-            { key: 3, title: '', children: [{ key: 4, title: '' }] },
+            { key: 2, meta: { name: '' } },
+            {
+              key: 3,
+              meta: { name: '' },
+              children: [{ key: 4, meta: { name: '' } }],
+            },
           ],
         },
         {
@@ -403,22 +460,22 @@ describe('treeFunctions test cases', () => {
       const treeData = [
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
+            { key: 2, meta: { name: '' } },
             {
               key: 3,
-              title: '',
+              meta: { name: '' },
               children: [
                 { key: nodeIdToUpdate, title: 'foo', disabled: false },
-                { key: 4, title: '' },
+                { key: 4, meta: { name: '' } },
               ],
             },
           ],
         },
         {
           key: 5,
-          title: '',
+          meta: { name: '' },
         },
       ];
       expect(
@@ -426,22 +483,22 @@ describe('treeFunctions test cases', () => {
       ).toEqual([
         {
           key: 1,
-          title: '',
+          meta: { name: '' },
           children: [
-            { key: 2, title: '' },
+            { key: 2, meta: { name: '' } },
             {
               key: 3,
-              title: '',
+              meta: { name: '' },
               children: [
                 { key: nodeIdToUpdate, title: 'bar', disabled: false },
-                { key: 4, title: '' },
+                { key: 4, meta: { name: '' } },
               ],
             },
           ],
         },
         {
           key: 5,
-          title: '',
+          meta: { name: '' },
         },
       ]);
     });
@@ -452,24 +509,24 @@ describe('treeFunctions test cases', () => {
         const tree = [
           {
             key: 1,
-            title: '',
+            meta: { name: '' },
             children: [
               {
                 key: 2,
-                title: '',
+                meta: { name: '' },
                 children: [
-                  { key: 3, title: '', children: [] },
-                  { key: keyToFind, title: '', children: [] },
-                  { key: 5, title: '', children: [] },
+                  { key: 3, meta: { name: '' }, children: [] },
+                  { key: keyToFind, meta: { name: '' }, children: [] },
+                  { key: 5, meta: { name: '' }, children: [] },
                 ],
               },
-              { key: 6, title: '', children: [] },
+              { key: 6, meta: { name: '' }, children: [] },
             ],
           },
         ];
         expect(getAncestors(tree, keyToFind)).toEqual([1, 2, keyToFind]);
 
-        expect(getAncestors([{ key: 1, title: '' }], 1)).toEqual([1]);
+        expect(getAncestors([{ key: 1, meta: { name: '' } }], 1)).toEqual([1]);
       });
 
       it('returns undefined when there is no such node in the tree', () => {
@@ -477,17 +534,17 @@ describe('treeFunctions test cases', () => {
         const tree = [
           {
             key: 1,
-            title: '',
+            meta: { name: '' },
             children: [
               {
                 key: 2,
-                title: '',
+                meta: { name: '' },
                 children: [
-                  { key: 3, title: '', children: [] },
-                  { key: 5, title: '', children: [] },
+                  { key: 3, meta: { name: '' }, children: [] },
+                  { key: 5, meta: { name: '' }, children: [] },
                 ],
               },
-              { key: 6, title: '', children: [] },
+              { key: 6, meta: { name: '' }, children: [] },
             ],
           },
         ];

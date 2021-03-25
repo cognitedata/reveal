@@ -11,6 +11,7 @@ export * from './notifications';
 export * from './revealUtils';
 export * from './queryKeys';
 export * from './sdk/3dApiUtils';
+export * from './sortNaturally';
 
 export { styleScope } from './styleScope';
 

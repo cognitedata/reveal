@@ -8,7 +8,7 @@ import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
 import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
 import { getProject } from '@cognite/cdf-utilities';
-import promiseRetry from 'promise-retry';
+import { sortNaturally } from 'src/utils';
 
 export const FETCH_PARAMS: v3.List3DNodesQuery = {
   depth: 1,
@@ -59,7 +59,6 @@ async function fetchRootNode(modelId, revisionId): Promise<v3.Node3D> {
   return rootNodeObjResponse[0];
 }
 
-// the first request is really slow for big models, we need an index for depth param to make it work smooth
 export async function fetchRootTreeNodes({
   modelId,
   revisionId,
@@ -67,18 +66,11 @@ export async function fetchRootTreeNodes({
   const rootNode = await fetchRootNode(modelId, revisionId);
   const treeData = node3dToTreeDataNode([rootNode]);
 
-  // at the time of writing the initial fetch is very slow because it causes index to be created
-  // so for big models it sometimes fails with timeout
-  treeData[0].children = await promiseRetry(
-    (retry) => {
-      return fetchTreeNodes({
-        modelId,
-        revisionId,
-        parent: { nodeId: rootNode.id, treeIndex: 0 },
-      }).catch(retry);
-    },
-    { retries: 3 }
-  );
+  treeData[0].children = await fetchTreeNodes({
+    modelId,
+    revisionId,
+    parent: { nodeId: rootNode.id, treeIndex: 0 },
+  });
 
   return treeData;
 }
@@ -97,18 +89,22 @@ export async function fetchTreeNodes({
     nodeId: parent.nodeId,
   });
 
-  const subtreeItems: CustomDataNode[] = node3dToTreeDataNode(
+  let subtreeItems: TreeDataNode[] = node3dToTreeDataNode(
     params?.limit === 1
       ? data.items
       : data.items.filter((node) => node.id !== parent.nodeId) // nodeId passed in request appears in random order
   );
+
+  subtreeItems = subtreeItems.sort((a, b) => {
+    return sortNaturally(a.meta.name, b.meta.name);
+  });
 
   if (data.nextCursor) {
     const loadMoreOption = createLoadMoreOption({
       parent,
       cursor: data.nextCursor,
     });
-    subtreeItems.push(loadMoreOption);
+    return [...subtreeItems, loadMoreOption];
   }
 
   return subtreeItems;

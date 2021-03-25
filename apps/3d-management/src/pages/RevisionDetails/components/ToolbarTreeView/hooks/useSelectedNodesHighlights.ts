@@ -5,7 +5,7 @@ import {
 } from '@cognite/reveal';
 import React, { useCallback, useEffect } from 'react';
 import {
-  expandNodeByTreeIndex,
+  expandArbitraryNode,
   SelectedNode,
   selectNodes,
 } from 'src/store/modules/TreeView';
@@ -47,7 +47,7 @@ export function useSelectedNodesHighlights({
           .then((nodeId: number) => {
             dispatch(selectNodes([{ treeIndex, nodeId, subtreeSize: 1 }]));
             dispatch(
-              expandNodeByTreeIndex({
+              expandArbitraryNode({
                 treeIndex,
                 nodeId,
                 onSuccess: () => {

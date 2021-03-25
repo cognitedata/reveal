@@ -17,7 +17,7 @@ import {
   fixtureModelId,
   fixtureRevisionId,
 } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
-import { expandNodeByTreeIndex } from 'src/store/modules/TreeView';
+import { expandArbitraryNode } from 'src/store/modules/TreeView';
 
 jest.mock('antd/lib/notification');
 
@@ -71,7 +71,7 @@ describe('ToolbarTreeView poorly written test', () => {
   afterAll(() => server.close());
 
   // todo: rewrite. Test the action itself.
-  // alternative: write test component that will dispatch that expandNodeByTreeIndex action
+  // alternative: write test component that will dispatch that expandArbitraryNode action
   // currently there is no test isolation (store is outside which is too bad)
   it('loads ancestors of the specified nodeId and adds them into the tree', async () => {
     renderWithProviders(<ToolbarTreeViewWrapper />);
@@ -93,7 +93,7 @@ describe('ToolbarTreeView poorly written test', () => {
 
     dispatch(
       // @ts-ignore
-      expandNodeByTreeIndex({
+      expandArbitraryNode({
         treeIndex: 4,
         nodeId: fixtureCubeNodeFirstChildId,
       })

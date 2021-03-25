@@ -67,7 +67,8 @@ describe('ToolbarTreeView test cases', () => {
     expect(await screen.findByText('Cube')).toBeTruthy();
     expect(await screen.findByText('Camera')).toBeTruthy();
     expect(await screen.findByText('Light')).toBeTruthy();
-    // original model doesn't have it, we use fakeCursor to achieve it
+
+    // original model doesn't have it, we use fakeCursor in fixture to achieve it
     expect(await screen.findByText('Load more...')).toBeTruthy();
   });
 
@@ -86,11 +87,4 @@ describe('ToolbarTreeView test cases', () => {
     userEvent.click(await screen.findByText('Load more...'));
     expect(await screen.findByText('Fake child')).toBeTruthy();
   });
-
-  // to be fixed in D3M-35
-  // eslint-disable-next-line jest/no-commented-out-tests
-  // it('sorts items by title', () => {});
-
-  // eslint-disable-next-line jest/no-commented-out-tests
-  // it('sorts items by title after clicking "Load more..."', () => {});
 });

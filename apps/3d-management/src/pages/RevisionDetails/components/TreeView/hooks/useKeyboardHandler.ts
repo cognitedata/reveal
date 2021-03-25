@@ -62,7 +62,7 @@ export function useKeyboardHandler(props: Props) {
 
       const childrenToUncheck = new Set<number>();
 
-      const allParentsToUncheck = new Set<number>();
+      const allParentsToUncheck = new Set<number | string>();
 
       // every child of every selectedKey must be unchecked,
       selectedKeys.forEach((key) => {

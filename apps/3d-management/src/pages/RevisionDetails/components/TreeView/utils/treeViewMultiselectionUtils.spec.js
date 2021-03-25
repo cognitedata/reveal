@@ -15,23 +15,23 @@ describe('TreeViewMultiselectionUtils test cases', () => {
     ];
 
     it('traverse all the children', () => {
-      const visited: number[] = [];
+      const visitedTreeIndices = [];
       traverseNodesKey(tree, (key) => {
-        visited.push(key);
+        visitedTreeIndices.push(key);
       });
-      expect(visited).toEqual([0, 1, 2, 3, 4]);
+      expect(visitedTreeIndices).toEqual([0, 1, 2, 3, 4]);
     });
 
     it('traverse and ignore specified branch', () => {
-      const visited: number[] = [];
+      const visitedTreeIndices = [];
       traverseNodesKey(tree, (key) => {
-        visited.push(key);
+        visitedTreeIndices.push(key);
         if (key === 1) {
           return false;
         }
         return true;
       });
-      expect(visited).toEqual([0, 1, /* 2 ignored */ 3, 4]);
+      expect(visitedTreeIndices).toEqual([0, 1, /* 2 ignored */ 3, 4]);
     });
   });
 });
