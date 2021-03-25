@@ -5,18 +5,7 @@
 import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
-import {
-  OperatorFunction,
-  Observable,
-  from,
-  zip,
-  Subject,
-  onErrorResumeNext,
-  defer,
-  scheduled,
-  asyncScheduler,
-  NextObserver
-} from 'rxjs';
+import { OperatorFunction, Observable, from, zip, onErrorResumeNext, defer, scheduled, asyncScheduler } from 'rxjs';
 import {
   mergeMap,
   map,
@@ -25,7 +14,6 @@ import {
   take,
   retry,
   reduce,
-  distinct,
   catchError,
   throttleTime,
   startWith
@@ -34,39 +22,31 @@ import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
-import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
+import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
 import { assertNever, createOffsetsArray, LoadingState } from '../../../utilities';
 import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { Group } from 'three';
 import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
+import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
-type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
   private readonly _consumedSectorCache: MemoryRequestCache<string, Promise<ConsumedSector>> = new MemoryRequestCache({
     maxElementsInCache: 50
   });
-  private readonly _ctmFileCache: MemoryRequestCache<string, Observable<CtmFileResult>> = new MemoryRequestCache({
-    maxElementsInCache: 300
-  });
+  private readonly _ctmFileCache: MostFrequentlyUsedCache<
+    string,
+    Observable<CtmFileResult>
+  > = new MostFrequentlyUsedCache(10);
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _taskTracker: RxTaskTracker = new RxTaskTracker();
-
-  // Adding this to support parse map for migration wrapper. Should be removed later.
-  private readonly _parsedDataSubject: Subject<{
-    blobUrl: string;
-    sectorId: number;
-    lod: string;
-    data: SectorGeometry | SectorQuads;
-  }> = new Subject();
-
   private readonly _concurrentCtmRequests: number;
 
   constructor(
@@ -84,12 +64,6 @@ export class CachedRepository implements Repository {
   clear() {
     this._consumedSectorCache.clear();
     this._ctmFileCache.clear();
-  }
-
-  getParsedData(): Observable<ParsedData> {
-    return this._parsedDataSubject.pipe(
-      distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId + '.' + keySelector.lod)
-    ); // TODO: Should we do replay subject here instead of variable type?
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -160,19 +134,6 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private parsedDataObserver(wantedSector: WantedSector): NextObserver<SectorGeometry | SectorQuads> {
-    return {
-      next: data => {
-        this._parsedDataSubject.next({
-          blobUrl: wantedSector.blobUrl,
-          sectorId: wantedSector.metadata.id,
-          lod: wantedSector.levelOfDetail == LevelOfDetail.Simple ? 'simple' : 'detailed',
-          data
-        });
-      }
-    };
-  }
-
   private nameGroup(wantedSector: WantedSector): OperatorFunction<Group, Group> {
     return tap(group => {
       group.name = `Quads ${wantedSector.metadata.id}`;
@@ -186,7 +147,6 @@ export class CachedRepository implements Repository {
       ).pipe(
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
-        tap(this.parsedDataObserver(wantedSector)),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
         this.nameGroup(wantedSector),
@@ -223,7 +183,6 @@ export class CachedRepository implements Repository {
           return zip(i3dFileObservable, ctmFilesObservable).pipe(
             this.catchWantedSectorError(wantedSector, 'loadDetailedSectorFromNetwork'),
             map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
-            tap(this.parsedDataObserver(wantedSector)),
             map(data => {
               return { ...wantedSector, data };
             }),
@@ -242,8 +201,9 @@ export class CachedRepository implements Repository {
   private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
     return mergeMap(ctmRequest => {
       const key = this.ctmFileCacheKey(ctmRequest);
-      if (this._ctmFileCache.has(key)) {
-        return this._ctmFileCache.get(key);
+      const ctmFile = this._ctmFileCache.get(key);
+      if (ctmFile !== undefined) {
+        return ctmFile;
       } else {
         return this.loadCtmFileFromNetwork(ctmRequest);
       }
@@ -261,7 +221,7 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    this._ctmFileCache.forceInsert(this.ctmFileCacheKey(ctmRequest), networkObservable);
+    this._ctmFileCache.set(this.ctmFileCacheKey(ctmRequest), networkObservable);
     return networkObservable;
   }
 
