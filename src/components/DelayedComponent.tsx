@@ -4,11 +4,7 @@ type Props = {
   children: ReactNode;
   delay: number;
 };
-export default function DelayedComponent({
-  delay,
-
-  children,
-}: Props) {
+export default function DelayedComponent({ delay, children }: Props) {
   const [okToRender, setOk] = useState(false);
 
   useEffect(() => {
