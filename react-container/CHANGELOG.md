@@ -1,3 +1,10 @@
+## 0.11.3 Mar 25 2021
+
+### Changes
+
+- Bump `react-i18n` from `0.3.0` to `0.3.1`
+- Bump `react-tenant-selector` from `0.6.8` to `0.6.9`
+
 ## 0.11.1 Mar 24 2021
 
 ### Changes
