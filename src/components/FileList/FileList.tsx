@@ -51,7 +51,7 @@ const FileListItem = ({
         {isError && <Body level={3}>Unable to preview file.</Body>}
       </>
     );
-  }, [imageUrl, file, isError]);
+  }, [imageUrl, file, isError, isLoading]);
 
   return (
     <PreviewContainer onClick={() => onFileClick()} isActive={isActive}>
@@ -72,6 +72,13 @@ export const FileList = ({
 }) => {
   const { data = [], isLoading } = useFilesAssetAppearsIn(asset);
 
+  // Select first file on default
+  useEffect(() => {
+    if (!selectedFileId && data.length > 0) {
+      onFileClick(data[0]);
+    }
+  }, [selectedFileId, data, onFileClick]);
+
   if (isLoading) {
     return <Icon type="Loading" />;
   }
@@ -79,13 +86,6 @@ export const FileList = ({
   if (data.length === 0) {
     return <ErrorFeedback>No files found</ErrorFeedback>;
   }
-
-  // Select first file on default
-  useEffect(() => {
-    if (!selectedFileId && data.length > 0) {
-      onFileClick(data[0]);
-    }
-  }, [selectedFileId, data]);
 
   return (
     <ListWrapper>

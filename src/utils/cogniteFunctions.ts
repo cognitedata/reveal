@@ -37,7 +37,7 @@ export const useFunctionCall = (
           `/api/playground/projects/${sdk.project}/functions/${functionId}/calls/${callId}`
         )
         .then((r) => r.data),
-    queryOpts
+    { ...queryOpts, retry: 1, retryDelay: 1000 }
   );
 };
 
@@ -62,7 +62,7 @@ export const useFunctionReponse = (
           `/api/playground/projects/${sdk.project}/functions/${functionId}/calls/${callId}/response`
         )
         .then((r) => r.data.response),
-    opts
+    { ...opts, retry: 1, retryDelay: 1000 }
   );
 };
 

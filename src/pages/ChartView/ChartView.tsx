@@ -77,7 +77,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     if (updateError && updateErrorMsg) {
       toast.error(JSON.stringify(updateErrorMsg, null, 2));
     }
-  }, [updateError, updateError]);
+  }, [updateError, updateErrorMsg]);
 
   useEffect(() => {
     const doc = charts().doc(chartId);
@@ -93,7 +93,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         }
       },
     });
-  }, [charts, chartId, login]);
+  }, [chartId, login, cache]);
 
   const [activeSourceItem, setActiveSourceItem] = useState<string>();
 

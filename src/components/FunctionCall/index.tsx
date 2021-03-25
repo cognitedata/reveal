@@ -28,40 +28,39 @@ function InnerFunctionCall({
 }: InnerProps) {
   const [refetchInterval, setInterval] = useState<number | false>(1000);
 
-  const { data: call, isFetched } = useFunctionCall(id, callId, {
+  const { data: call, isError: callError } = useFunctionCall(id, callId, {
     refetchInterval,
   });
-  const { data: response, refetch: getResponse } = useFunctionReponse(
+  const { data: response, isError: responseError } = useFunctionReponse(
     id,
     callId,
     {
-      // manual refetch overrides enabled: false
-      enabled: false,
+      enabled: call?.status === 'Completed',
     }
   );
 
+  const apiError = callError || responseError;
   const callStatus = call?.status;
   useEffect(() => {
-    if (callStatus && callStatus !== 'Running') {
+    if ((callStatus && callStatus !== 'Running') || apiError) {
       setInterval(false);
-      if (callStatus === 'Completed') {
-        getResponse();
-      }
     } else {
       setInterval(1000);
     }
-  }, [call, callStatus]);
+  }, [call, callStatus, apiError]);
 
-  if (!isFetched) {
+  if (apiError) {
+    return renderCall({ id: callId, functionId: id, status: 'Failed' });
+  }
+
+  if (!call) {
     return renderLoading ? renderLoading() : null;
   }
-  if (isFetched && call) {
-    return renderCall({
-      ...call,
-      response,
-    });
-  }
-  return null;
+
+  return renderCall({
+    ...call,
+    response,
+  });
 }
 
 export default function FunctionCall({

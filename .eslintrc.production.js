@@ -2,6 +2,7 @@ module.exports = {
   extends: [
     '@cognite',
     'plugin:testing-library/react',
+    'plugin:react-hooks/recommended'
   ],
   plugins: ['@cognite', 'testing-library'],
   rules: {
