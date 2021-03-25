@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-container",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -41,7 +41,8 @@
     "@types/react-redux": "^7.1.9",
     "@types/react-router-dom": "^5.1.6",
     "babel-loader": "^8.1.0",
-    "jest-css-modules-transform": "^2.1.1"
+    "jest-css-modules-transform": "^2.1.1",
+    "react-router-dom": "^5.2.0"
   },
   "dependencies": {
     "@cognite/auth-utils": "^0.8.2",
@@ -52,8 +53,7 @@
     "@cognite/react-sentry": "^0.1.0",
     "@cognite/react-tenant-selector": "^0.6.4",
     "jwt-decode": "^3.0.0",
-    "react-redux": "^7.2.2",
-    "react-router-dom": "^5.2.0"
+    "react-redux": "^7.2.2"
   },
   "peerDependencies": {
     "@cognite/cogs.js": "^2.4.0",

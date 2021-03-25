@@ -1,3 +1,9 @@
+## 0.11.1 Mar 24 2021
+
+### Changes
+
+- Move `react-router-dom` from `dependencies` to `devDependencies` and `peerDependencies`
+
 ## 0.11.0 Mar 16 2021
 
 ### Changes
