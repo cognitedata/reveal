@@ -9112,10 +9112,10 @@ i18next-chained-backend@^2.0.1:
   dependencies:
     "@babel/runtime" "^7.4.5"
 
-i18next-http-backend@^1.0.23:
-  version "1.0.23"
-  resolved "https://registry.yarnpkg.com/i18next-http-backend/-/i18next-http-backend-1.0.23.tgz#9805d3066e0f0aba4daecc6226324f54439110ca"
-  integrity sha512-2iXwUmawM4kozvGN+k7G9u/bYQdgqtTXVK0cWvLSOpUCTaW30ZzRhgu0FBfinb71XjwUEvdqb95jNrEFjrwGKw==
+i18next-http-backend@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/i18next-http-backend/-/i18next-http-backend-1.2.1.tgz#50ced1a147c37c851daf64d230b3832fb7a20527"
+  integrity sha512-9L2sa+wybqi57/+VsrJPo5DCI7WLoudaK12xz0okYSmsi3Izyj7sCgrYL52WHy/O3BFY9HGORBwSwlD1WYuH6Q==
   dependencies:
     node-fetch "2.6.1"
 
