@@ -32,6 +32,12 @@ import { CadModelSectorBudget } from '../../CadModelSectorBudget';
  */
 export type ByVisibilityGpuSectorCullerOptions = {
   /**
+   * Callback that returns a depth texture providing the depth
+   * of allready loaded geometry.
+   */
+  // alreadyLoadedGeometryDepthTextureProvider: () => THREE.DepthTexture;
+
+  /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
@@ -178,6 +184,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       accumulatedPriority
     };
     return { spendage, wantedSectors: wanted };
+  }
+
+  filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
+    return Promise.resolve(wantedSectors);
   }
 
   private update(

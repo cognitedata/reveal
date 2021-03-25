@@ -17,6 +17,7 @@ describe('RevealManager', () => {
   } as any;
   const sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
+    filterSectorsToLoad: jest.fn(),
     dispose: jest.fn()
   };
   let manager: RevealManager<{ id: number }>;

@@ -40,7 +40,11 @@ export function handleDetermineSectorsInput(
         filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),
         bufferCount(5),
         mergeMap(batch => {
-          return from(filterSectorBatch(batch)).pipe(mergeMap(x => sectorRepository.loadSector(x)));
+          const filteredSectorsPromise = sectorCuller.filterSectorsToLoad(input, batch);
+          return from(filteredSectorsPromise).pipe(
+            mergeMap(x => x),
+            mergeMap(x => sectorRepository.loadSector(x))
+          );
         }, 1)
       );
     };
