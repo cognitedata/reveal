@@ -36,7 +36,16 @@ export const sdkMock = {
       return { data: { items: [{ count: 1 }] } };
     }
     if (query.includes('datasets')) {
-      return { data: { items: [{ name: 'david', id: 123 }] } };
+      return {
+        data: {
+          items: [
+            { name: 'david', id: 123 },
+            { name: 'issaaf', id: 124 },
+            { name: 'milad', id: 125 },
+            { name: 'data set with a really long name', id: 126 },
+          ],
+        },
+      };
     }
     if (query.includes('assets')) {
       if (body.data && body.data.filter && body.data.filter.dataSetIds) {

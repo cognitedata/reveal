@@ -22,3 +22,4 @@ export * from './GridTable/GridTable';
 export * from './Details';
 export * from './FileDownloadAnchor';
 export * from './EnsureNonEmptyResource';
+export * from './DataSetSelect';
