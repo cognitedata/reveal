@@ -110,7 +110,8 @@ export default function WorkflowRow({
       <td>
         <SourceItem key={id}>
           <SourceSquare
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation();
               update(id, {
                 enabled: !enabled,
               });
