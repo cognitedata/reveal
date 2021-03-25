@@ -18,6 +18,7 @@ export type Chart = {
 };
 
 export type ChartTimeSeries = {
+  type?: string;
   id: string;
   name: string;
   color: string;
@@ -31,6 +32,7 @@ export type ChartTimeSeries = {
   preferredUnit?: string;
   description?: string;
   range?: number[];
+  statisticsCalls?: Call[];
 };
 
 // We can't store function definitions, so we need to work around this.
@@ -49,6 +51,7 @@ export type Call = {
 };
 
 export type ChartWorkflow = {
+  type?: string;
   id: string;
   name: string;
   lineWeight?: number;
@@ -61,6 +64,7 @@ export type ChartWorkflow = {
   nodes?: StorableNode[]; // We don't need these functions until we 'compile'/run the workflow.
   connections?: Record<string, Connection>;
   calls?: Call[];
+  statisticsCalls?: Call[];
 };
 
 export type ConfigPanelComponentProps = {

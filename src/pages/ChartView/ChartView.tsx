@@ -19,7 +19,7 @@ import {
   useDeleteChart,
 } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { Chart } from 'reducers/charts/types';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus } from 'hooks';
 import { useQueryClient } from 'react-query';
@@ -211,8 +211,20 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const selectedSourceItem = [
-    ...(chart.timeSeriesCollection || []),
-    ...(chart.workflowCollection || []),
+    ...(chart.timeSeriesCollection || []).map(
+      (ts) =>
+        ({
+          type: 'timeseries',
+          ...ts,
+        } as ChartTimeSeries)
+    ),
+    ...(chart.workflowCollection || []).map(
+      (wf) =>
+        ({
+          type: 'workflow',
+          ...wf,
+        } as ChartWorkflow)
+    ),
   ].find(({ id }) => id === selectedSourceId);
 
   const sourceTableHeaderRow = (
@@ -410,6 +422,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         />
       </ContentWrapper>
       <ContextMenu
+        chart={chart}
         visible={showContextMenu}
         onClose={handleCloseContextMenu}
         sourceItem={selectedSourceItem}
