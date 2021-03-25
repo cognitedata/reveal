@@ -6,7 +6,7 @@ import {
 } from 'utils/cogniteFunctions';
 
 type Call = CogniteFunctionCall & {
-  response?: string;
+  response?: string | null;
 };
 
 interface Props {
@@ -31,16 +31,25 @@ function InnerFunctionCall({
   const { data: call, isError: callError } = useFunctionCall(id, callId, {
     refetchInterval,
   });
-  const { data: response, isError: responseError } = useFunctionReponse(
-    id,
-    callId,
-    {
-      enabled: call?.status === 'Completed',
-    }
-  );
+  const {
+    data: response,
+    isError: responseError,
+    refetch: refetchResponse,
+  } = useFunctionReponse(id, callId, {
+    // Some other compoment could have called this hook prematurly, setting it in a completed state
+    // in the query cache with null as the response body. It is therefore refetch below then the
+    // status is Completed.
+    enabled: call?.status === 'Completed',
+  });
 
   const apiError = callError || responseError;
   const callStatus = call?.status;
+  useEffect(() => {
+    if (response === null && call?.status === 'Completed') {
+      refetchResponse();
+    }
+  }, [call?.status, response, refetchResponse]);
+
   useEffect(() => {
     if ((callStatus && callStatus !== 'Running') || apiError) {
       setInterval(false);

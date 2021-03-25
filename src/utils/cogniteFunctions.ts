@@ -51,10 +51,10 @@ export const functionResponseKey = (functionId: number, callId: number) => [
 export const useFunctionReponse = (
   functionId: number,
   callId: number,
-  opts?: UseQueryOptions<string | undefined>
+  opts?: UseQueryOptions<string | null | undefined>
 ) => {
   const sdk = useSDK();
-  return useQuery<string | undefined>(
+  return useQuery<string | null | undefined>(
     functionResponseKey(functionId, callId),
     () =>
       sdk
