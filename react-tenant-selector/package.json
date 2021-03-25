@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-tenant-selector",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
