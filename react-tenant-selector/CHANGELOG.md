@@ -1,3 +1,9 @@
+## 0.6.9 Mar 25 2021
+
+### Changes
+
+- Bump react-i18n from `0.3.0` to `0.3.1`
+
 ## 0.6.7 Mar 24 2021
 
 ### Changes
