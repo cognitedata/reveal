@@ -269,7 +269,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           onNewWorkflowClick={handleClickNewWorkflow}
         />
       )}
-      <Search visible={showSearch} onClose={handleCloseSearch} />
+      {showSearch && (
+        <Search visible={showSearch} onClose={handleCloseSearch} />
+      )}
       <ContentWrapper showSearch={showSearch}>
         <Header>
           <hgroup>
