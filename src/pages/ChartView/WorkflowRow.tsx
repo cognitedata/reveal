@@ -203,7 +203,15 @@ export default function WorkflowRow({
           <td>
             <SourceItem>
               <SourceName>
-                <button type="button" onClick={() => setMode('editor')}>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    if (isSelected) {
+                      event.stopPropagation();
+                    }
+                    setMode('editor');
+                  }}
+                >
                   Edit
                 </button>
               </SourceName>
