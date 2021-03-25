@@ -11,10 +11,10 @@ const Routes = () => {
   const history = useHistory();
 
   useEffect(() => {
-    history.listen((location) => {
+    return history.listen((location) => {
       metrics.track('Page view', { pathname: location.pathname });
     });
-  }, []);
+  }, [history, metrics]);
 
   return (
     <Switch>

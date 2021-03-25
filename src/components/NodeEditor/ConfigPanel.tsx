@@ -69,7 +69,7 @@ const ConfigPanel = ({
     if (node.id !== workingNode.id) {
       setWorkingNode(node);
     }
-  }, [node]);
+  }, [node, workingNode.id]);
   const [isDirty, setDirty] = useState(false);
   const NodeSpecificConfigPanel = defaultNodeOptions.find(
     (opt) => opt.effectId === node?.functionEffectReference

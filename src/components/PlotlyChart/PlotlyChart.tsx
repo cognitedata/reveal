@@ -94,6 +94,8 @@ const PlotlyChartComponent = ({
             `/api/playground/projects/${sdk.project}/functions/${c.functionId}/calls/${c.callId}/response`
           )
           .then((r) => r.data.response),
+      retry: 1,
+      retryDelay: 1000,
     }))
   );
 

@@ -28,6 +28,7 @@ export const configPanel = ({
   node,
   onUpdateNode,
 }: ConfigPanelComponentProps) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [value, setValue] = useState<string>(String(node.functionData.value));
 
   return (
