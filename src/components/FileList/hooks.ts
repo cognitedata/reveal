@@ -25,7 +25,7 @@ export const useFilesAssetAppearsIn = (asset?: Asset) => {
   const sdk = useSDK();
 
   return useQuery<File[]>(
-    ['files', asset?.id],
+    ['annotated-files', { assetId: asset?.id }],
     async () => {
       return listFilesAnnotatedWithAssetId(sdk, asset!);
     },
