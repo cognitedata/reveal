@@ -12,7 +12,7 @@ type Call = CogniteFunctionCall & {
 interface Props {
   id: number;
   callId?: number;
-  renderCall: (call: Call) => JSX.Element | null;
+  renderCall?: (call: Call) => JSX.Element | null;
   renderLoading?: () => JSX.Element | null;
 }
 
@@ -23,7 +23,7 @@ interface InnerProps extends Props {
 function InnerFunctionCall({
   id,
   callId,
-  renderCall,
+  renderCall = () => null,
   renderLoading,
 }: InnerProps) {
   const [refetchInterval, setInterval] = useState<number | false>(1000);
