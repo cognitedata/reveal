@@ -1,3 +1,9 @@
+## 0.3.2 - Mar 25 2021
+
+### Changes
+
+- Expose saveMissing and updateMissing properties so apps are able to opt-out
+
 ## 0.3.0 - Feb 12 2021
 
 ### Changes

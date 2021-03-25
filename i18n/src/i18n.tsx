@@ -72,6 +72,8 @@ type ConfigureI18nOptions = {
   useSuspense?: boolean;
   localStorageLanguageKey?: string;
   disabled?: boolean;
+  saveMissing?: boolean;
+  updateMissing?: boolean;
 };
 
 const configureI18n = async ({
@@ -82,6 +84,8 @@ const configureI18n = async ({
   env = REACT_APP_ENV || NODE_ENV,
   localStorageLanguageKey = 'currentLanguage',
   disabled = false,
+  saveMissing,
+  updateMissing,
   ...rest
 }: ConfigureI18nOptions = {}) => {
   if (disabled) {
@@ -138,6 +142,8 @@ const configureI18n = async ({
     fallbackNS: ['global'],
     postProcess: [],
     react: { wait, useSuspense },
+    saveMissing: saveMissing ?? isDevEnv,
+    updateMissing: updateMissing ?? isDevEnv,
   };
 
   if (pseudo) {
@@ -171,8 +177,6 @@ const configureI18n = async ({
     apiKey: locizeApiKey,
     referenceLng: 'en',
   });
-  initOptions.saveMissing = isDevEnv;
-  initOptions.updateMissing = isDevEnv;
 
   i18next.use(ChainedBackend);
   i18next.use(initReactI18next);
