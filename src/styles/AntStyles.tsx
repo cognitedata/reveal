@@ -59,7 +59,7 @@ import notificationStyle from 'antd/es/notification/style/index.less';
 // import radioStyle from 'antd/es/radio/style/index.less';
 // import rateStyle from 'antd/es/rate/style/index.less';
 // import resultStyle from 'antd/es/result/style/index.less';
-// import selectStyle from 'antd/es/select/style/index.less';
+import selectStyle from 'antd/es/select/style/index.less';
 // import skeletonStyle from 'antd/es/skeleton/style/index.less';
 // import sliderStyle from 'antd/es/slider/style/index.less';
 // import spaceStyle from 'antd/es/space/style/index.less';
@@ -73,7 +73,7 @@ import stepsStyle from 'antd/es/steps/style/index.less';
 // import themeStyle from 'antd/es/style/themes/index.less';
 // import timePickerStyle from 'antd/es/time-picker/style/index.less';
 // import timelineStyle from 'antd/es/timeline/style/index.less';
-// import tooltipStyle from 'antd/es/tooltip/style/index.less';
+import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import transferStyle from 'antd/es/transfer/style/index.less';
 // import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 // import treeStyle from 'antd/es/tree/style/index.less';
@@ -111,13 +111,13 @@ const styles = [
   // progressStyle,
   // radioStyle,
   // resultStyle,
-  // selectStyle,
+  selectStyle,
   // spaceStyle,
   spinStyle,
   stepsStyle,
   // tableStyle,
   // tabsStyle,
-  // tooltipStyle,
+  tooltipStyle,
   // treeStyle,
   typographyStyle,
   // uploadStyle,

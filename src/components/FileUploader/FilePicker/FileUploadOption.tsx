@@ -30,6 +30,7 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
             <Detail color="#8C8C8C">(Optional)</Detail>
           </DatasetTextContainer>
           <DataSetSelect
+            style={{ width: '300px' }}
             onSelectionChange={(value) => {
               dispatch(setDataSetIds(value));
             }}
